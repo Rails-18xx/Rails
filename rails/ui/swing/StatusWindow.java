@@ -3,12 +3,8 @@ package rails.ui.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-//import java.awt.GraphicsConfiguration;
-//import java.awt.Rectangle;
 import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import javax.swing.*;
 
@@ -17,10 +13,8 @@ import org.apache.log4j.Logger;
 import rails.common.GuiDef;
 import rails.game.*;
 import rails.game.action.*;
-import rails.game.correct.*;
-import rails.ui.swing.elements.ActionButton;
-import rails.ui.swing.elements.ActionMenuItem;
-import rails.ui.swing.elements.ActionCheckBoxMenuItem;
+import rails.game.correct.CorrectionModeAction;
+import rails.ui.swing.elements.*;
 import rails.util.Config;
 import rails.util.LocalText;
 
@@ -93,7 +87,7 @@ public class StatusWindow extends JFrame implements ActionListener,
             Logger.getLogger(StatusWindow.class.getPackage().getName());
 
 //    GraphicsConfiguration graphicsConfiguration;
-    
+
 //    public StatusWindow(GraphicsConfiguration gc) {
 //        super(gc);
 //        this.graphicsConfiguration = gc;
@@ -175,7 +169,7 @@ public class StatusWindow extends JFrame implements ActionListener,
         menuItem.setMnemonic(KeyEvent.VK_R);
         menuItem.addActionListener(this);
         optMenu.add(menuItem);
-        
+
         // new config menu only for non legacy configgfiles
         if (!Config.isLegacyConfigFile()) {
             menuItem = new JCheckBoxMenuItem(LocalText.getText("CONFIG"));
@@ -354,18 +348,18 @@ public class StatusWindow extends JFrame implements ActionListener,
             }
         }
     }
-    
+
     public void setCorrectionMenu() {
 
         // Update the correction  menu
         correctionMenu.removeAll();
         correctionMenu.setEnabled(false);
 
-        // currently only shows CorrectionModeActions 
+        // currently only shows CorrectionModeActions
         List<CorrectionModeAction> corrections =
                 possibleActions.getType(CorrectionModeAction.class);
-        
-        
+
+
         if (corrections != null && !corrections.isEmpty()) {
             for (CorrectionModeAction a : corrections) {
                 ActionCheckBoxMenuItem item = new ActionCheckBoxMenuItem (
@@ -379,7 +373,7 @@ public class StatusWindow extends JFrame implements ActionListener,
             correctionMenu.setEnabled(true);
         }
     }
-    
+
     public boolean setupFor(RoundI round) {
 
         currentRound = round;
@@ -397,14 +391,14 @@ public class StatusWindow extends JFrame implements ActionListener,
 
         // correction actions always possible
         return gameStatus.initCashCorrectionActions();
-        
+
     }
 
     public void updateStatus() {
 
-        if (!(currentRound instanceof StockRound || currentRound instanceof EndOfGameRound)) 
+        if (!(currentRound instanceof StockRound || currentRound instanceof EndOfGameRound))
             return;
-        
+
         // Moved here from StatusWindow_1856. It's getting generic...
         if (possibleActions.contains(DiscardTrain.class)) {
             immediateAction = possibleActions.getType(DiscardTrain.class).get(0);
@@ -537,7 +531,7 @@ public class StatusWindow extends JFrame implements ActionListener,
         }
 
         if (currentRound instanceof EndOfGameRound) endOfGame();
-        
+
         pack();
 
         toFront();
@@ -703,50 +697,50 @@ public class StatusWindow extends JFrame implements ActionListener,
 //        setVisible(true);
 //        gameUIManager.reportWindow.setVisible(true);
 //        gameUIManager.stockChart.setVisible(true);
-        
+
         setTitle(LocalText.getText("EoGTitle"));
 
         // Enable Passbutton
         passButton.setEnabled(true);
         passButton.setText(LocalText.getText("END_OF_GAME_CLOSE_ALL_WINDOWS"));
-        
+
         gameUIManager.orWindow.finish();
     }
 
     public Player getCurrentPlayer () {
         return gameUIManager.getCurrentPlayer();
     }
-    
+
     public void endOfGameReport() {
 
-        GameManagerI gm = GameManager.getInstance();
-        
-        if (gm.getGameOverReportedUI()) 
+        GameManagerI gm = gameUIManager.getGameManager();
+
+        if (gm.getGameOverReportedUI())
             return;
         else
             gm.setGameOverReportedUI(true);
-        
+
         JOptionPane.showMessageDialog(this,
                 LocalText.getText("EoGPressButton"),
                 LocalText.getText("EoGFinalRanking"),
                 JOptionPane.PLAIN_MESSAGE
         );
-        
+
         // show game report line by line
-        List<String> gameReport = GameManager.getInstance().getGameReport();
+        List<String> gameReport = gm.getGameReport();
         Collections.reverse(gameReport);
-        
+
         StringBuilder report = new StringBuilder();
         for (String s:gameReport) {
             report.insert(0, s + "\n");
-            JOptionPane.showMessageDialog(this, 
+            JOptionPane.showMessageDialog(this,
                     report,
                     LocalText.getText("EoGFinalRanking"),
                     JOptionPane.PLAIN_MESSAGE
             );
         }
     }
-    
+
     public void keyReleased(KeyEvent e) {}
 
     public void keyPressed(KeyEvent e) {

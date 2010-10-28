@@ -6,7 +6,6 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
-import rails.game.GameManager;
 import rails.game.StockSpaceI;
 import rails.ui.swing.elements.GUIStockSpace;
 
@@ -108,7 +107,7 @@ public class StockChart extends JFrame implements KeyListener {
 
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_F1) {
-            HelpWindow.displayHelp(GameManager.getInstance().getHelp());
+            HelpWindow.displayHelp(gameUIManager.getGameManager().getHelp());
             e.consume();
         }
     }
