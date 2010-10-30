@@ -256,8 +256,11 @@ public class StatusWindow extends JFrame implements ActionListener,
             log.fatal("Cannot instantiate class " + gameStatusClassName, e);
             System.exit(1);
         }
+        
         gameStatus.init(this, gameUIManager);
-
+        // put gameStatus into a JScrollPane
+        JScrollPane gameStatusPane = new JScrollPane(gameStatus);
+        
         buttonPanel = new JPanel();
 
         passButton = new ActionButton(LocalText.getText("PASS"));
@@ -283,8 +286,8 @@ public class StatusWindow extends JFrame implements ActionListener,
         setTitle(LocalText.getText("GAME_STATUS_TITLE"));
         pane.setLayout(new BorderLayout());
         initMenu();
-        pane.add(gameStatus, BorderLayout.NORTH);
-        pane.add(buttonPanel, BorderLayout.CENTER);
+        pane.add(gameStatusPane, BorderLayout.CENTER);
+        pane.add(buttonPanel, BorderLayout.SOUTH);
         pane.setOpaque(true);
         setContentPane(pane);
         setVisible(true);
