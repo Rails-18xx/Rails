@@ -146,6 +146,7 @@ public class Bank implements CashHolder, ConfigurableComponentI {
          */
         if (money.getCash() <= 0 && !broken.booleanValue()) {
             broken.set(true);
+            money.setText(LocalText.getText("BROKEN"));
             GameManager.getInstance().registerBrokenBank();
         }
     }
