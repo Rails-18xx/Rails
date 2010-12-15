@@ -623,13 +623,22 @@ public class GameStatus extends GridPanel implements ActionListener {
                             startPrices =
                                     ((StartCompany) buy).getStartPrices();
                             Arrays.sort(startPrices);
-                            for (int i = 0; i < startPrices.length; i++) {
-                                options.add(LocalText.getText("StartCompany",
-                                        Bank.format(startPrices[i]),
-                                        sharePerCert,
-                                        Bank.format(sharesPerCert * startPrices[i]) ));
+                            if (startPrices.length > 1) {
+                                for (int i = 0; i < startPrices.length; i++) {
+                                    options.add(LocalText.getText("StartCompany",
+                                            Bank.format(startPrices[i]),
+                                            sharePerCert,
+                                            Bank.format(sharesPerCert * startPrices[i]) ));
+                                    buyActions.add(buy);
+                                    buyAmounts.add(startPrices[i]);
+                                }
+                            } else {
+                                options.add (LocalText.getText("StartACompany",
+                                        companyName,
+                                        company.getPresidentsShare().getShare(),
+                                        Bank.format(company.getPresidentsShare().getShares() * startPrices[0])));
                                 buyActions.add(buy);
-                                buyAmounts.add(startPrices[i]);
+                                buyAmounts.add(startPrices[0]);
                             }
                         } else {
                             startPrices = new int[] {((StartCompany) buy).getPrice()};
