@@ -38,7 +38,7 @@ public class StartCompany extends BuyCertificate {
     }
 
     public boolean mustSelectAPrice() {
-        return startPrices != null && startPrices.length > 1;
+        return startPrices != null/* && startPrices.length > 1*/;
     }
 
     public void setStartPrice(int startPrice) {
