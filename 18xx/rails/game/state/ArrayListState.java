@@ -43,7 +43,7 @@ public class ArrayListState<E>  {
     }
 
     public void add(int index, E element) {
-        new AddToList<E>(list, element, listName).atIndex(index);
+        new AddToList<E>(list, element, index, listName);
     }
 
     public boolean remove(E element) {

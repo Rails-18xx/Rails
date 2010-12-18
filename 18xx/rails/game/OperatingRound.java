@@ -2282,7 +2282,8 @@ public class OperatingRound extends Round implements Observer {
     }
 
     public int getOperatingCompanyIndex() {
-        return operatingCompanies.indexOf(getOperatingCompany());
+        int index = operatingCompanies.indexOf(getOperatingCompany());
+        return index;
     }
 
     /**
