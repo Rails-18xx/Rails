@@ -19,7 +19,7 @@ public class AddToList<E> extends Move {
     protected String listName;
     protected Integer index; // if supplied insert at index position
 
-    public AddToList(List<E> list, E object, String listName, 
+    public AddToList(List<E> list, E object, String listName,
             ModelObject modelToUpdate) {
         this.object = object;
         this.list = list;
@@ -29,14 +29,24 @@ public class AddToList<E> extends Move {
 
         MoveSet.add(this);
     }
-    
+
     public AddToList(List<E> list, E object, String listName) {
-        this (list, object, listName, null);
+        this.object = object;
+        this.list = list;
+        this.listName = listName;
+        this.index = null;
+
+        MoveSet.add(this);
     }
-    
-    public void atIndex(int index) {
+
+    public AddToList(List<E> list, E object, int index, String listName) {
+        this.object = object;
+        this.list = list;
+        this.listName = listName;
         this.index = index;
-    }
+
+        MoveSet.add(this);
+   }
 
     @Override
     public boolean execute() {
@@ -58,7 +68,7 @@ public class AddToList<E> extends Move {
 
     @Override
     public String toString() {
-        if (index == null) 
+        if (index == null)
             return "AddToList " + listName + ": " + object.toString();
         else
             return "AddToList " + listName + ": " + object.toString() + " at index " + index;
