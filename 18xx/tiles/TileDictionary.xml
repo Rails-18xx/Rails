@@ -19306,7 +19306,7 @@
 		</category>
 		<junctions>
 			<junction>
-				<junType>jtCity</junType>
+				<junType>jtDoubleCity</junType>
 				<position>tpCenter</position>
 				<revenue>
 					<value>40</value>

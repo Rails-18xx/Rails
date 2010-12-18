@@ -85,7 +85,6 @@ Limitation:
 		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
 		<Option name="NoMapMode" type="toggle" default="no" />
         <Option name="BeginnerGame" type="toggle" default="no" />
-		<Option name="WithOptional6Train" type="toggle" default="no"/>
 		<Option name="UnlimitedTopTrains" parm="D" type="toggle" default="yes"/>
 		<Option name="TwoPlayersCertLimit70Percent" type="toggle" default="no"/>
         <Option name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>

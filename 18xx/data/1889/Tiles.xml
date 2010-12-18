@@ -180,7 +180,7 @@
 		<Track from="city1" gauge="normal" to="side0"/>
 	</Tile>
 	<Tile colour="green" id="440" name="1889 K5 green">
-		<Station id="city1" position="0" slots="1" type="City" value="40"/>
+		<Station id="city1" position="0" slots="2" type="City" value="40"/>
 		<Track from="city1" gauge="normal" to="side5"/>
 		<Track from="city1" gauge="normal" to="side4"/>
 		<Track from="city1" gauge="normal" to="side3"/>
