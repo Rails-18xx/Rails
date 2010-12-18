@@ -139,8 +139,8 @@ public class GUITile {
                                 // stations must keep doing so (except when
                                 // downgrading to plain track, as in 1856)
                                 if (tile.hasStations()) {
-                                    log.debug("[" + i + "," + j + "] Found "
-                                          + oldTrack.getEndPoint(prevTileSide));
+                                    //log.debug("[" + i + "," + j + "] Found "
+                                    //     + oldTrack.getEndPoint(prevTileSide));
                                     oldCities.put(prevTileSide,
                                         oldTrack.getEndPoint(prevTileSide));
                                 } else {
@@ -157,7 +157,7 @@ public class GUITile {
                                             || prevTile.getTracksPerSide(otherOldEndPoint).isEmpty()) {
                                         continue rot;
                                     }
-                                    log.debug("[" + i + "," + j + "] Downgraded");
+                                    //log.debug("[" + i + "," + j + "] Downgraded");
                                 }
                             }
                         }
@@ -197,18 +197,18 @@ public class GUITile {
                         lll = (6 + l - prevTileRotation) % 6;
                         if (oldCities.get(lll) == null) continue;
                         // If new tile is missing a connection, skip
-                        log.debug("Found " + oldCities.get(kkk) + " & "
-                                  + oldCities.get(lll));
-                        log.debug("Check " + newCities.get(kkk) + " & "
-                                  + newCities.get(ll));
+                        //log.debug("Found " + oldCities.get(kkk) + " & "
+                        //          + oldCities.get(lll));
+                        //log.debug("Check " + newCities.get(kkk) + " & "
+                        //          + newCities.get(ll));
                         if (newCities.get(kk) == null
                             || newCities.get(ll) == null) continue rot;
                         // If connected cities do not correspond, skip
                         // (this is the "OO brown upgrade get-right" feature)
                         // Only apply this check if the number of cities has not decreased
                         if (getTile().getNumStations() < prevTile.getNumStations()) continue;
-                        log.debug("Compare "+oldCities.get(kkk)+"/"+oldCities.get(lll)
-                                +" ~ "+newCities.get(kk)+"/"+newCities.get(ll));
+                        //log.debug("Compare "+oldCities.get(kkk)+"/"+oldCities.get(lll)
+                        //        +" ~ "+newCities.get(kk)+"/"+newCities.get(ll));
                         if ((oldCities.get(kkk).equals(oldCities.get(lll)))
                                 != (newCities.get(kk).equals(newCities.get(ll)))) {
                             log.debug("No match!");
