@@ -14043,7 +14043,7 @@ object TTilesWrapper
         end>
       Junctions = <
         item
-          JunType = jtCity
+          JunType = jtDoubleCity
           Revenue = 40
           RevenuePosition = tp3CornerE
         end>
