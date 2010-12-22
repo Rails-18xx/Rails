@@ -84,7 +84,7 @@ public class LayTile extends PossibleORAction {
 
     public LayTile(Map<String, Integer> tileColours) {
         type = GENERIC;
-        this.tileColours = tileColours;
+        setTileColours (tileColours);
     }
 
     public LayTile(SpecialTileLay specialProperty) {
@@ -189,11 +189,19 @@ public class LayTile extends PossibleORAction {
     }
 
     public boolean isTileColourAllowed(String tileColour) {
-        return tileColours.containsKey(tileColour);
+        return tileColours != null
+            && tileColours.containsKey(tileColour)
+            && tileColours.get(tileColour) > 0;
     }
 
     public void setTileColours(Map<String, Integer> map) {
-        tileColours = map;
+        tileColours = new HashMap<String, Integer>();
+        // Check the map. Sometimes 0 values creep in, and these can't easily
+        // be intercepted in the UI code (see comment at previous method).
+        // TODO This is a dirty fix, but the quickest one too.
+        for (String colourName : map.keySet()) {
+            if (map.get(colourName) > 0) tileColours.put(colourName, map.get(colourName));
+        }
     }
 
 

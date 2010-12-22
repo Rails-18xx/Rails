@@ -91,17 +91,25 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
 
         for (LayTile layTile : hexMap.getTileAllowancesForHex(hex)) {
             tiles = layTile.getTiles();
-            if (tiles == null) {
+             if (tiles == null) {
                 for (TileI tile : uiHex.getCurrentTile().getValidUpgrades(hex,
                         orUIManager.gameUIManager.getCurrentPhase())) {
+                    // Skip if not allowed in LayTile
+                    if (!layTile.isTileColourAllowed(tile.getColourName())) continue;
+
                     if (!orUIManager.tileUpgrades.contains(tile))
                         orUIManager.tileUpgrades.add(tile);
                 }
             } else {
                 for (TileI tile : tiles) {
+                    // Skip if not allowed in LayTile
+                    if (layTile.getTileColours().get(tile.getColourName()) < 1) continue;
+
                     // special check: does the tile increase the colour number?
                     // this avoids that a special tile lay down or equalgrades existing tiles
-                    if (tile.getColourNumber() <= uiHex.getCurrentTile().getColourNumber()) continue;
+                    // TODO EV: I'm not sure if this is a necessary precaution.
+                    if (!layTile.isTileColourAllowed(tile.getColourName())) continue;
+
                     if (!orUIManager.tileUpgrades.contains(tile))
                         orUIManager.tileUpgrades.add(tile);
                 }
