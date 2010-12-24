@@ -174,7 +174,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
             orUIManager.setMessage(LocalText.getText("NoTiles"));
         } else {
             for (TileI tile : orUIManager.tileUpgrades) {
-                BufferedImage hexImage = getHexImage(tile.getId());
+                BufferedImage hexImage = getHexImage(tile.getPictureId());
                 ImageIcon hexIcon = new ImageIcon(hexImage);
 
                 // Cheap n' Easy rescaling.

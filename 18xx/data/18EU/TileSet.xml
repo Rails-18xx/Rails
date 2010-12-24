@@ -112,9 +112,9 @@
 	<Tile id="145" quantity="4" />
 	<Tile id="146" quantity="5" />
 	<Tile id="147" quantity="4" />
-	<Tile id="544" quantity="3" />
-	<Tile id="545" quantity="3" />
-	<Tile id="546" quantity="3" />
+	<Tile id="544" pic="3544" quantity="3" />
+	<Tile id="545" pic="3545" quantity="3" />
+	<Tile id="546" pic="3546" quantity="3" />
 	<Tile id="582" quantity="9" />
 	<Tile id="583" quantity="1">
 		<AllowsMultipleBasesOfOneCompany/>
