@@ -62,6 +62,7 @@ public class RemainingTilesWindow extends JFrame implements WindowListener,
         Field label;
         BufferedImage hexImage;
         ImageIcon hexIcon;
+        int picId;
 
         // Build the grid with tiles in the sequence as
         // these have been defined in Tiles.xml
@@ -72,8 +73,9 @@ public class RemainingTilesWindow extends JFrame implements WindowListener,
             if (tileId <= 0) continue;
 
             tile = tmgr.getTile(tileId);
+            picId = tile.getPictureId();
 
-            hexImage = GameUIManager.getImageLoader().getTile(tileId, 10);
+            hexImage = GameUIManager.getImageLoader().getTile(picId, 10);
             hexIcon = new ImageIcon(hexImage);
             hexIcon.setImage(hexIcon.getImage().getScaledInstance(
                     (int) (hexIcon.getIconWidth() * GUIHex.NORMAL_SCALE * 0.8),
