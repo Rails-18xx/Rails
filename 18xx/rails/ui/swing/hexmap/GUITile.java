@@ -24,6 +24,7 @@ public class GUITile {
     protected TileI tile = null;
     protected String tileType = null;
 
+    protected int picId;
     protected BufferedImage tileImage = null;
 
     protected int rotation = 0;
@@ -53,6 +54,7 @@ public class GUITile {
         this.hex = (MapHex)guiHex.getModel();
         TileManager tileManager = guiHex.getHexMap().orUIManager.getTileManager();
         tile = tileManager.getTile(tileId);
+        picId = tile.getPictureId();
 
         if (hex.getTileOrientation() == MapHex.EW) {
             baseRotation = 0.5 * DEG60;
@@ -250,7 +252,7 @@ public class GUITile {
 
         int zoomStep = guiHex.getHexMap().getZoomStep();
 
-        tileImage = imageLoader.getTile(tileId, zoomStep);
+        tileImage = imageLoader.getTile(picId, zoomStep);
 
         if (tileImage != null) {
 
