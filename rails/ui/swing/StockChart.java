@@ -33,6 +33,7 @@ public class StockChart extends JFrame implements KeyListener {
         stockPanel.setBackground(Color.LIGHT_GRAY);
 
         final JFrame frame = this;
+        final GameUIManager guiMgr = gameUIManager;
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -40,8 +41,24 @@ public class StockChart extends JFrame implements KeyListener {
                 frame.dispose();
             }
         });
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentMoved(ComponentEvent e) {
+                guiMgr.getWindowSettings().set(frame);
+            }
+            @Override
+            public void componentResized(ComponentEvent e) {
+                guiMgr.getWindowSettings().set(frame);
+            }
+        });
         addKeyListener(this);
         pack();
+
+        WindowSettings ws = gameUIManager.getWindowSettings();
+        Rectangle bounds = ws.getBounds(this);
+        if (bounds.x != -1 && bounds.y != -1) setLocation(bounds.getLocation());
+        if (bounds.width != -1 && bounds.height != -1) setSize(bounds.getSize());
+        ws.set(frame);
     }
 
     private void initialize() {

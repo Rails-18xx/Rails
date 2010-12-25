@@ -14750,28 +14750,32 @@ object TTilesWrapper
         end>
     end
     item
-      Code = 3082
-      LongName = '82'
+      Code = 3080
+      LongName = '80/18EU'
       Level = tlGreen
       Connections = <
         item
-          Position1 = tp4SideC
-          Position2 = tp4SideF
+          Position1 = tp4SideD
+          Position2 = tpCenter
         end
         item
-          Position1 = tp4SideA
-          Position2 = tpCenter
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
         end>
       Junctions = <>
     end
     item
       Code = 3081
-      LongName = '81'
+      LongName = '81/18EU'
       Level = tlGreen
       Connections = <
         item
-          Position1 = tp4SideA
-          Position2 = tpCenter
+          Position1 = tpCenter
+          Position2 = tp4SideA
         end
         item
           Position1 = tpCenter
@@ -14780,16 +14784,27 @@ object TTilesWrapper
         item
           Position1 = tpCenter
           Position2 = tp4SideC
+        end>
+      Junctions = <>
+    end
+    item
+      Code = 3082
+      LongName = '82/18EU'
+      Level = tlGreen
+      Connections = <
+        item
+          Position1 = tp4SideF
+          Position2 = tp4SideC
         end
         item
-          Position1 = tpCenter
-          Position2 = tp4SideC
+          Position1 = tp4SideA
+          Position2 = tpCenter
         end>
       Junctions = <>
     end
     item
       Code = 3083
-      LongName = '83'
+      LongName = '83/18EU'
       Level = tlGreen
       Connections = <
         item
@@ -14798,6 +14813,59 @@ object TTilesWrapper
         end
         item
           Position1 = tp4SideE
+          Position2 = tpCenter
+        end>
+      Junctions = <>
+    end
+    item
+      Code = 3544
+      LongName = '544'
+      Level = tlBrown
+      Connections = <
+        item
+          Position1 = tp4SideA
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tp4SideB
+          Position2 = tp4SideE
+        end>
+      Junctions = <>
+    end
+    item
+      Code = 3545
+      LongName = '545'
+      Level = tlBrown
+      Connections = <
+        item
+          Position1 = tp4SideA
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tp4SideF
+          Position2 = tpCenter
+        end
+        item
+          Position1 = tp4SideE
+          Position2 = tpCenter
+        end>
+      Junctions = <>
+    end
+    item
+      Code = 3546
+      LongName = '546'
+      Level = tlBrown
+      Connections = <
+        item
+          Position1 = tp4SideA
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tp4SideB
+          Position2 = tpCenter
+        end
+        item
+          Position1 = tp4SideF
           Position2 = tpCenter
         end>
       Junctions = <>
