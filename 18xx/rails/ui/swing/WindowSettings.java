@@ -82,7 +82,6 @@ public class WindowSettings {
             r.y = window.getY();
             r.width = window.getWidth();
             r.height = window.getHeight();
-            log.debug("+++ Set "+name+" bounds to "+r.x+","+r.y+"/"+r.width+","+r.height);
         }
         return;
     }
@@ -90,7 +89,7 @@ public class WindowSettings {
     public void save () {
 
         // Save all settings to file
-        log.debug("=== Saving all window settings");
+        log.debug("Saving all window settings");
         try {
             PrintWriter out = new PrintWriter (new FileWriter (new File (filepath)));
             Rectangle r;
