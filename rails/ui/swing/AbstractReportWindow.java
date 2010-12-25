@@ -1,7 +1,7 @@
 package rails.ui.swing;
 
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.Rectangle;
+import java.awt.event.*;
 
 import javax.swing.JFrame;
 
@@ -10,9 +10,15 @@ import rails.util.LocalText;
 
 public abstract class AbstractReportWindow extends JFrame {
     private static final long serialVersionUID = 1L;
-    
+
+    protected GameUIManager gameUIManager;
+
     // can be set to false, than it cannot be closed
     protected boolean closeable = true;
+
+    public AbstractReportWindow (GameUIManager gameUIManager) {
+        this.gameUIManager = gameUIManager;
+    }
 
     public void init() {
         setSize(400, 400);
@@ -29,12 +35,29 @@ public abstract class AbstractReportWindow extends JFrame {
                 frame.dispose();
             }
         });
-        
+        final GameUIManager guiMgr = gameUIManager;
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentMoved(ComponentEvent e) {
+                guiMgr.getWindowSettings().set(frame);
+            }
+            @Override
+            public void componentResized(ComponentEvent e) {
+                guiMgr.getWindowSettings().set(frame);
+            }
+        });
+
+        WindowSettings ws = gameUIManager.getWindowSettings();
+        Rectangle bounds = ws.getBounds(this);
+        if (bounds.x != -1 && bounds.y != -1) setLocation(bounds.getLocation());
+        if (bounds.width != -1 && bounds.height != -1) setSize(bounds.getSize());
+        ws.set(frame);
+
         setVisible("yes".equalsIgnoreCase(Config.get("report.window.open")));
     }
-    
+
     public abstract void updateLog();
-    
+
     public abstract void scrollDown();
 
 }

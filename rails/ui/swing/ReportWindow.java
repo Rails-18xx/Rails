@@ -31,7 +31,6 @@ public class ReportWindow extends AbstractReportWindow implements ActionListener
     private JMenuItem saveItem, loadItem, printItem;
     private JMenuItem findItem, findBackItem, findNextItem, findPrevItem;
 
-    private GameUIManager gameUIManager;
     private GameManagerI gameManager;
 
     private String reportDirectory = Config.get("report.directory");
@@ -52,8 +51,8 @@ public class ReportWindow extends AbstractReportWindow implements ActionListener
 
 
     public ReportWindow(GameUIManager gameUIManager) {
+        super(gameUIManager);
         messageWindow = this;
-        this.gameUIManager = gameUIManager;
         this.gameManager = gameUIManager.getGameManager();
 
         reportText = new JTextArea();
@@ -156,24 +155,6 @@ public class ReportWindow extends AbstractReportWindow implements ActionListener
         // default report window settings
         super.init();
 
-        final JFrame frame = this;
-        final GameUIManager guiMgr = gameUIManager;
-        addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentMoved(ComponentEvent e) {
-                guiMgr.getWindowSettings().set(frame);
-            }
-            @Override
-            public void componentResized(ComponentEvent e) {
-                guiMgr.getWindowSettings().set(frame);
-            }
-        });
-
-        WindowSettings ws = gameUIManager.getWindowSettings();
-        Rectangle bounds = ws.getBounds(this);
-        if (bounds.x != -1 && bounds.y != -1) setLocation(bounds.getLocation());
-        if (bounds.width != -1 && bounds.height != -1) setSize(bounds.getSize());
-        ws.set(frame);
     }
 
     /* (non-Javadoc)
