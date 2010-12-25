@@ -1,12 +1,6 @@
 package rails.ui.swing;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.EventQueue;
 import java.awt.Font;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -72,6 +66,8 @@ public class GameUIManager implements DialogOwner {
     protected SimpleDateFormat saveDateTimeFormat;
     protected File lastFile, lastDirectory;
 
+    protected WindowSettings windowSettings;
+
     protected boolean configuredStockChartVisibility = false;
 
     protected boolean previousStockChartVisibilityHint;
@@ -93,13 +89,29 @@ public class GameUIManager implements DialogOwner {
         this.gameManager = gameManager;
         uiHints = gameManager.getUIHints();
 
+        initWindowSettings();
         initSaveSettings();
         initFontSettings();
-        
+
         configuredStockChartVisibility = "yes".equalsIgnoreCase(Config.get("stockchart.window.open"));
 
     }
-    
+
+    private void initWindowSettings () {
+
+        windowSettings = new WindowSettings (gameManager.getGameName());
+        windowSettings.load();
+    }
+
+    public void terminate () {
+        getWindowSettings ().save();
+        System.exit(0);
+    }
+
+    public WindowSettings getWindowSettings () {
+        return windowSettings;
+    }
+
     private void initSaveSettings() {
         saveDirectory = Config.get("save.directory");
         if (!Util.hasValue(saveDirectory)) {
@@ -126,7 +138,7 @@ public class GameUIManager implements DialogOwner {
     }
 
     private void initFontSettings() {
-    
+
         // font settings, can be game specific
         String fontType = Config.getGameSpecific("font.ui.name");
         Font font = null;
@@ -149,14 +161,14 @@ public class GameUIManager implements DialogOwner {
         log.debug("Change text fonts to relative scale " + Scale.getFontScale());
         changeGlobalFont(font, Scale.getFontScale());
     }
-    
+
 
     public void gameUIInit(boolean newGame) {
 
         imageLoader = new ImageLoader();
         stockChart = new StockChart(this);
         if (Config.get("report.window.type").equalsIgnoreCase("static")) {
-            reportWindow = new ReportWindow(gameManager);
+            reportWindow = new ReportWindow(this);
         } else {
             reportWindow = new ReportWindowDynamic(this);
         }
@@ -174,7 +186,7 @@ public class GameUIManager implements DialogOwner {
 //            GraphicsDevice[] gs = ge.getScreenDevices();
 //            log.debug("ScreenDevices = " + Arrays.toString(gs));
 //            statusWindow = statusWindowClass.getConstructor(GraphicsConfiguration.class).newInstance(gs[1].getDefaultConfiguration());
-            
+
             statusWindow.init(this);
         } catch (Exception e) {
             log.fatal("Cannot instantiate class " + statusWindowClassName, e);
@@ -312,7 +324,7 @@ public class GameUIManager implements DialogOwner {
 
                 /* close current dialog */
                 setCurrentDialog(null, null);
-                
+
                 if (StockRound.class.isAssignableFrom(previousRoundType)) {
                     log.debug("UI leaving Stock Round "+previousRoundName);
                     statusWindow.finishRound();
@@ -454,7 +466,7 @@ public class GameUIManager implements DialogOwner {
         }
 
         updateStatus(activeWindow);
-        
+
     }
 
     /** Stub, to be overridden in subclasses for special round types */
@@ -708,7 +720,7 @@ public class GameUIManager implements DialogOwner {
 
         File proposedFile = new File(filename);
         jfc.setSelectedFile(proposedFile);
-        
+
         if (jfc.showSaveDialog(statusWindow) == JFileChooser.APPROVE_OPTION) {
             File selectedFile = jfc.getSelectedFile();
             String filepath = selectedFile.getPath();
@@ -760,7 +772,7 @@ public class GameUIManager implements DialogOwner {
             saveAction.setFilepath(filepath);
             processOnServer(saveAction);
         }
-        
+
     }
 
     public void setSaveDirectory(String saveDirectory) {
@@ -838,14 +850,14 @@ public class GameUIManager implements DialogOwner {
     public boolean getGameParameterAsBoolean (GuiDef.Parm key) {
         return (Boolean) getGameParameter(key);
     }
-   
+
     private void setEnabledWindow(boolean enabled, JFrame window, JFrame exceptionWindow) {
-        
+
         if (window != null && window != exceptionWindow) {
             window.setEnabled(enabled);
         }
     }
-    /** 
+    /**
      * deactivate all game windows, except the argument one
      */
     public void setEnabledAllWindows(boolean enabled, JFrame exceptionWindow) {
@@ -856,8 +868,8 @@ public class GameUIManager implements DialogOwner {
         setEnabledWindow(enabled, startRoundWindow, exceptionWindow);
         setEnabledWindow(enabled, statusWindow, exceptionWindow);
     }
-    
-    
+
+
     private void updateWindowsLookAndFeel() {
         SwingUtilities.updateComponentTreeUI(statusWindow);
         statusWindow.pack();
@@ -870,7 +882,7 @@ public class GameUIManager implements DialogOwner {
         SwingUtilities.updateComponentTreeUI(stockChart);
         stockChart.pack();
     }
-  
+
     /** update fonts settings
      * (after configuration changes)
      */

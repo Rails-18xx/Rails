@@ -186,8 +186,38 @@ public class StartRoundWindow extends JFrame implements ActionListener,
 
         addKeyListener(this);
 
+        // set closing behavior and listener
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE );
+        final JFrame thisFrame = this;
+        final GameUIManager guiMgr = gameUIManager;
+        addWindowListener(new WindowAdapter () {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                if (JOptionPane.showConfirmDialog(thisFrame, LocalText.getText("CLOSE_WINDOW"), LocalText.getText("Select"), JOptionPane.OK_CANCEL_OPTION)
+                        == JOptionPane.OK_OPTION) {
+                    thisFrame.dispose();
+                    guiMgr.terminate();
+                }
+            }
+        });
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentMoved(ComponentEvent e) {
+                guiMgr.getWindowSettings().set(thisFrame);
+            }
+            @Override
+            public void componentResized(ComponentEvent e) {
+                guiMgr.getWindowSettings().set(thisFrame);
+            }
+        });
 
         pack();
+
+        WindowSettings ws = gameUIManager.getWindowSettings();
+        Rectangle bounds = ws.getBounds(this);
+        if (bounds.x != -1 && bounds.y != -1) setLocation(bounds.getLocation());
+        if (bounds.width != -1 && bounds.height != -1) setSize(bounds.getSize());
+        ws.set(thisFrame);
     }
 
     private void init() {
@@ -321,19 +351,6 @@ public class StartRoundWindow extends JFrame implements ActionListener,
 
         dummyButton = new ClickField("", "", "", this, itemGroup);
 
-        // set closing behavior and listener
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE );
-        final JFrame thisFrame = this;
-        addWindowListener(new WindowAdapter () {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                if (JOptionPane.showConfirmDialog(thisFrame, LocalText.getText("CLOSE_WINDOW"), LocalText.getText("Select"), JOptionPane.OK_CANCEL_OPTION)
-                        == JOptionPane.OK_OPTION) {
-                    thisFrame.dispose();
-                    System.exit(0);
-                }
-            }
-        });
     }
 
     private void addField(JComponent comp, int x, int y, int width, int height,

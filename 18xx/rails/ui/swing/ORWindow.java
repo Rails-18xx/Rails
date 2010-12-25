@@ -3,8 +3,7 @@ package rails.ui.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Rectangle;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,7 +66,7 @@ public class ORWindow extends JFrame implements ActionPerformer {
         mapPanel = new MapPanel(gameUIManager);
         getContentPane().add(mapPanel, BorderLayout.CENTER);
 
-        
+
         upgradePanel = new UpgradesPanel(orUIManager);
         getContentPane().add(upgradePanel, BorderLayout.WEST);
         addMouseListener(upgradePanel);
@@ -93,6 +92,7 @@ public class ORWindow extends JFrame implements ActionPerformer {
         log.debug("OrWindow size = " + this.getSize());
 
         final JFrame frame = this;
+        final GameUIManager guiMgr = gameUIManager;
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -100,6 +100,24 @@ public class ORWindow extends JFrame implements ActionPerformer {
                 frame.dispose();
             }
         });
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentMoved(ComponentEvent e) {
+                guiMgr.getWindowSettings().set(frame);
+            }
+            @Override
+            public void componentResized(ComponentEvent e) {
+                guiMgr.getWindowSettings().set(frame);
+            }
+        });
+
+        pack();
+
+        WindowSettings ws = gameUIManager.getWindowSettings();
+        Rectangle bounds = ws.getBounds(this);
+        if (bounds.x != -1 && bounds.y != -1) setLocation(bounds.getLocation());
+        if (bounds.width != -1 && bounds.height != -1) setSize(bounds.getSize());
+        ws.set(frame);
 
         gameUIManager.reportWindow.updateLog();
     }

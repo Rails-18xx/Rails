@@ -3,12 +3,7 @@ package rails.ui.swing;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 
 import javax.swing.*;
 
@@ -17,9 +12,7 @@ import org.apache.log4j.Logger;
 import rails.game.GameManagerI;
 import rails.game.ReportBuffer;
 import rails.ui.swing.elements.ActionMenuItem;
-import rails.util.Config;
-import rails.util.LocalText;
-import rails.util.Util;
+import rails.util.*;
 
 /**
  * This is the UI for the LogWindow. It displays logged messages to the user
@@ -38,11 +31,12 @@ public class ReportWindow extends AbstractReportWindow implements ActionListener
     private JMenuItem saveItem, loadItem, printItem;
     private JMenuItem findItem, findBackItem, findNextItem, findPrevItem;
 
+    private GameUIManager gameUIManager;
     private GameManagerI gameManager;
-    
+
     private String reportDirectory = Config.get("report.directory");
     private String reportFile;
-    
+
     private boolean editable = "yes".equalsIgnoreCase(Config.get("report.window.editable"));
 
     protected static final String SAVE_CMD = "Save";
@@ -52,14 +46,15 @@ public class ReportWindow extends AbstractReportWindow implements ActionListener
     protected static final String FIND_BACK_CMD = "FindBack";
     protected static final String FIND_NEXT_CMD = "FindNext";
     protected static final String FIND_PREV_CMD = "FindPrev";
-  
+
     protected static Logger log =
         Logger.getLogger(ReportWindow.class.getPackage().getName());
 
-   
-    public ReportWindow(GameManagerI gameManager) {
+
+    public ReportWindow(GameUIManager gameUIManager) {
         messageWindow = this;
-        this.gameManager = gameManager;
+        this.gameUIManager = gameUIManager;
+        this.gameManager = gameUIManager.getGameManager();
 
         reportText = new JTextArea();
         reportText.setEditable(editable);
@@ -79,13 +74,13 @@ public class ReportWindow extends AbstractReportWindow implements ActionListener
         gbc.weightx = gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         messagePanel.add(messageScroller, gbc);
-        
+
         menuBar = new JMenuBar();
         fileMenu = new JMenu(LocalText.getText("FILE"));
         fileMenu.setMnemonic(KeyEvent.VK_F);
         editMenu = new JMenu(LocalText.getText("EDIT"));
         editMenu.setMnemonic(KeyEvent.VK_E);
- 
+
         loadItem = new ActionMenuItem(LocalText.getText("LOAD"));
         loadItem.setActionCommand(LOAD_CMD);
         loadItem.setMnemonic(KeyEvent.VK_L);
@@ -151,20 +146,40 @@ public class ReportWindow extends AbstractReportWindow implements ActionListener
 
         menuBar.add(fileMenu);
         menuBar.add(editMenu);
-        
+
         setJMenuBar(menuBar);
-        
+
         setContentPane(messagePanel);
 
         addKeyListener(this);
-        
+
         // default report window settings
         super.init();
+
+        final JFrame frame = this;
+        final GameUIManager guiMgr = gameUIManager;
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentMoved(ComponentEvent e) {
+                guiMgr.getWindowSettings().set(frame);
+            }
+            @Override
+            public void componentResized(ComponentEvent e) {
+                guiMgr.getWindowSettings().set(frame);
+            }
+        });
+
+        WindowSettings ws = gameUIManager.getWindowSettings();
+        Rectangle bounds = ws.getBounds(this);
+        if (bounds.x != -1 && bounds.y != -1) setLocation(bounds.getLocation());
+        if (bounds.width != -1 && bounds.height != -1) setSize(bounds.getSize());
+        ws.set(frame);
     }
 
     /* (non-Javadoc)
      * @see rails.ui.swing.ReportWindowI#updateLog()
      */
+    @Override
     public void updateLog() {
         String newText = ReportBuffer.get();
         if (newText.length() > 0) {
@@ -173,6 +188,7 @@ public class ReportWindow extends AbstractReportWindow implements ActionListener
         }
     }
 
+    @Override
     public void scrollDown () {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -197,7 +213,7 @@ public class ReportWindow extends AbstractReportWindow implements ActionListener
             findNext(true);
         }
     }
-    
+
     private void loadReportFile() {
 
         JFileChooser jfc = new JFileChooser();
@@ -212,7 +228,7 @@ public class ReportWindow extends AbstractReportWindow implements ActionListener
         } else {
             return;
         }
-        
+
         try {
             BufferedReader in = new BufferedReader (new FileReader(selectedFile));
             String line;
@@ -226,9 +242,9 @@ public class ReportWindow extends AbstractReportWindow implements ActionListener
                     e.getMessage(), "", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
     private void saveReportFile () {
-        
+
         JFileChooser jfc = new JFileChooser();
         if (Util.hasValue(reportDirectory)) {
             jfc.setCurrentDirectory(new File(reportDirectory));
@@ -243,7 +259,7 @@ public class ReportWindow extends AbstractReportWindow implements ActionListener
             if (!selectedFile.getName().equalsIgnoreCase(reportFile)) {
                 reportFile = filepath;
             }
-            
+
             try {
                 PrintWriter out = new PrintWriter (new FileWriter (new File (reportFile)));
                 out.print(reportText.getText());
@@ -255,40 +271,40 @@ public class ReportWindow extends AbstractReportWindow implements ActionListener
             }
         }
     }
-    
+
     private void findText(boolean backwards) {
-        
+
         String text = reportText.getText();
-        String target = JOptionPane.showInputDialog(reportText, 
+        String target = JOptionPane.showInputDialog(reportText,
                 LocalText.getText("EnterSearch"));
         if (!Util.hasValue(target)) return;
-        
-        int startPos = editable 
-                ? reportText.getCaretPosition() 
+
+        int startPos = editable
+                ? reportText.getCaretPosition()
                 : backwards ? text.length() : 0;
         int foundPos = backwards
                 ? text.lastIndexOf(target, startPos)
                 : text.indexOf(target, startPos);
         if (foundPos < 0) return;
-        
+
         reportText.select(foundPos, foundPos + target.length());
     }
-    
+
     private void findNext(boolean backwards) {
-        
+
         String text = reportText.getText();
         String target = reportText.getSelectedText();
         if (!Util.hasValue(target)) return;
-        
+
         int startPos = reportText.getSelectionStart();
         int foundPos = backwards
                 ? text.lastIndexOf(target, startPos-1)
                 : text.indexOf(target, startPos+1);
         if (foundPos < 0) return;
-        
+
         reportText.select(foundPos, foundPos + target.length());
     }
-    
+
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_F1) {
             HelpWindow.displayHelp(gameManager.getHelp());

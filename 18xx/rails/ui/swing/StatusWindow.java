@@ -1,10 +1,10 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.46 2010/06/15 20:16:54 evos Exp $*/
 package rails.ui.swing;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
+import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import java.util.List;
 
 import javax.swing.*;
 
@@ -256,11 +256,11 @@ public class StatusWindow extends JFrame implements ActionListener,
             log.fatal("Cannot instantiate class " + gameStatusClassName, e);
             System.exit(1);
         }
-        
+
         gameStatus.init(this, gameUIManager);
         // put gameStatus into a JScrollPane
         JScrollPane gameStatusPane = new JScrollPane(gameStatus);
-        
+
         buttonPanel = new JPanel();
 
         passButton = new ActionButton(LocalText.getText("PASS"));
@@ -299,19 +299,35 @@ public class StatusWindow extends JFrame implements ActionListener,
 
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE );
         final JFrame frame = this;
+        final GameUIManager guiMgr = gameUIManager;
         addWindowListener(new WindowAdapter () {
             @Override
             public void windowClosing(WindowEvent e) {
                 if (JOptionPane.showConfirmDialog(frame, LocalText.getText("CLOSE_WINDOW"), LocalText.getText("Select"), JOptionPane.OK_CANCEL_OPTION)
                         == JOptionPane.OK_OPTION) {
                     frame.dispose();
-                    System.exit(0);
+                    guiMgr.terminate();
                 }
             }
         });
-
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentMoved(ComponentEvent e) {
+                guiMgr.getWindowSettings().set(frame);
+            }
+            @Override
+            public void componentResized(ComponentEvent e) {
+                guiMgr.getWindowSettings().set(frame);
+            }
+        });
 
         pack();
+
+        WindowSettings ws = gameUIManager.getWindowSettings();
+        Rectangle bounds = ws.getBounds(this);
+        if (bounds.x != -1 && bounds.y != -1) setLocation(bounds.getLocation());
+        if (bounds.width != -1 && bounds.height != -1) setSize(bounds.getSize());
+        ws.set(frame);
     }
 
     public void setGameActions() {
@@ -596,7 +612,7 @@ public class StatusWindow extends JFrame implements ActionListener,
             process(executedAction);
 
         } else if (command.equals(QUIT_CMD)) {
-            System.exit(0);
+            gameUIManager.terminate();
         } else if (command.equals(REPORT_CMD)) {
             gameUIManager.reportWindow.setVisible(((JMenuItem) actor.getSource()).isSelected());
             gameUIManager.reportWindow.scrollDown();
