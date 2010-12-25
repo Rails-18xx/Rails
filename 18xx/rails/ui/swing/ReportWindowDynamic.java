@@ -1,22 +1,13 @@
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
 import java.util.List;
 
-import javax.swing.JButton;
-import javax.swing.JEditorPane;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.BadLocationException;
@@ -38,36 +29,34 @@ import rails.util.LocalText;
 public class ReportWindowDynamic extends AbstractReportWindow implements  ActionListener, HyperlinkListener {
     private static final long serialVersionUID = 1L;
 
-    private GameUIManager gameUIManager;
-    
     private JLabel message;
-    
+
     private JScrollPane reportPane;
     private JEditorPane editorPane;
-    
+
     private JPanel buttonPanel;
     private ActionButton forwardButton;
     private ActionButton backwardButton;
     private JButton returnButton;
     private JButton playFromHereButton;
     private JButton commentButton;
-    
+
     private boolean timeWarpMode;
-    
+
     protected static Logger log =
         Logger.getLogger(ReportWindowDynamic.class.getPackage().getName());
 
     public ReportWindowDynamic(GameUIManager gameUIManager) {
-        super();
-        this.gameUIManager = gameUIManager;
+        super(gameUIManager);
         init();
     }
 
+    @Override
     public void init() {
         super.init();
 
         setLayout(new BorderLayout());
-        
+
         JPanel messagePanel = new JPanel();
         messagePanel.setLayout(new BorderLayout());
 
@@ -75,7 +64,7 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
         message.setText( LocalText.getText("REPORT_TIMEWARP_ACTIVE"));
         message.setHorizontalAlignment(JLabel.CENTER);
         messagePanel.add(message, "North");
-        
+
         JPanel timeWarpButtons = new JPanel();
         returnButton = new JButton(LocalText.getText("REPORT_LEAVE_TIMEWARP"));
         returnButton.addActionListener(
@@ -98,7 +87,7 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
         timeWarpButtons.add(playFromHereButton);
         messagePanel.add(timeWarpButtons, "South");
         add(messagePanel, "North");
-        
+
         editorPane = new JEditorPane();
         editorPane.setEditable(false);
         editorPane.setContentType("text/html");
@@ -115,10 +104,10 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
 
         reportPane = new JScrollPane(editorPane);
         add(reportPane, "Center");
-        
+
         buttonPanel = new JPanel();
         add(buttonPanel, "South");
-        
+
         backwardButton = new ActionButton(LocalText.getText("REPORT_MOVE_BACKWARD"));
         backwardButton.addActionListener(this);
         buttonPanel.add(backwardButton);
@@ -126,8 +115,8 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
         forwardButton = new ActionButton(LocalText.getText("REPORT_MOVE_FORWARD"));
         forwardButton.addActionListener(this);
         buttonPanel.add(forwardButton);
-        
-        
+
+
         commentButton = new JButton(LocalText.getText("REPORT_COMMENT"));
         commentButton.addActionListener(
                 new ActionListener() {
@@ -150,15 +139,15 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
                 }
         );
         buttonPanel.add(commentButton);
-        
+
     }
-    
+
     @Override
     public void updateLog() {
-        // set the content of the pane to the current 
+        // set the content of the pane to the current
         editorPane.setText(ReportBuffer.getReportItems());
         scrollDown();
-        
+
         forwardButton.setEnabled(false);
         backwardButton.setEnabled(false);
 
@@ -173,7 +162,7 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
                 backwardButton.setEnabled(true);
                 break;
             case GameAction.FORCED_UNDO:
-                if (undoFlag) break; // only activate forced undo, if no other undo available 
+                if (undoFlag) break; // only activate forced undo, if no other undo available
                 backwardButton.setPossibleAction(action);
                 backwardButton.setEnabled(true);
                 break;
@@ -191,7 +180,7 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
     public void scrollDown() {
         // only set caret if visible
         if (!this.isVisible()) return;
-        
+
         // find the active message in the parsed html code (not identical to the position in the html string)
         // thus the message indicator is used
         int caretPosition;
@@ -206,7 +195,7 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
             editorPane.setCaretPosition(caretPositionStore);
         }
     }
-    
+
     public void actionPerformed(ActionEvent e) {
         ActionButton button = (ActionButton)e.getSource();
         GameAction action = (GameAction)button.getPossibleActions().get(0);
@@ -215,8 +204,8 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
                 activateTimeWarp();
             }
         }
-            
-        
+
+
         gameUIManager.processOnServer(action);
     }
 
@@ -235,7 +224,7 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
     private void gotoLastIndex() {
        gotoIndex(gameUIManager.getGameManager().getMoveStack().size());
     }
-    
+
     private void gotoIndex(int index) {
         MoveStack stack = gameUIManager.getGameManager().getMoveStack();
         int currentIndex = stack.getIndex();
