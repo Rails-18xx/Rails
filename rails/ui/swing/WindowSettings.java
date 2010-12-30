@@ -14,6 +14,8 @@ public class WindowSettings {
 
     private Map<String, Rectangle> settings = new HashMap<String, Rectangle>();
     private String filepath;
+    private String defaultpath;
+    private boolean defaultUsed = false;
 
     private static final String settingsfilename = "settings_xxxx.rails_ini";
 
@@ -21,8 +23,10 @@ public class WindowSettings {
         Logger.getLogger(WindowSettings.class.getPackage().getName());
 
     public WindowSettings (String gameName) {
-        String directory = Config.get("save.directory");
-        filepath = directory + File.separator + settingsfilename.replace("xxxx", gameName);
+        String directory = System.getProperty("settings.directory");
+        if (directory == null) directory = Config.get("save.directory");
+        defaultpath = directory + File.separator + settingsfilename;
+        filepath = defaultpath.replace("xxxx", gameName);
     }
 
     private Rectangle rectangle (String windowName) {
@@ -40,11 +44,26 @@ public class WindowSettings {
         return rectangle (w.getClass().getSimpleName());
     }
 
+    public boolean isDefaultUsed() {
+        return defaultUsed;
+    }
+
     public void load () {
 
+        FileReader file;
+        try {
+            file = new FileReader (filepath);
+        } catch (FileNotFoundException e1) {
+            try {
+                file = new FileReader (defaultpath);
+            } catch (FileNotFoundException e2) {
+                return;
+            }
+            defaultUsed = true;
+        }
         BufferedReader in;
         try {
-            in = new BufferedReader (new FileReader (filepath));
+            in = new BufferedReader (file);
             String line;
             String[] fields;
             int v;
@@ -62,9 +81,6 @@ public class WindowSettings {
                 }
             }
             in.close();
-        } catch (FileNotFoundException e) {
-            // No problem
-            return;
         } catch (Exception e) {
             log.error ("Error while loading "+filepath, e);
         }
@@ -103,7 +119,7 @@ public class WindowSettings {
             }
             out.close();
         } catch (Exception e) {
-
+            log.error ("Exception while saving window settings", e);
         }
 
     }
