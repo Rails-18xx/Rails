@@ -15,7 +15,7 @@ public class Bank implements CashHolder, ConfigurableComponentI {
     private static final int DEFAULT_BANK_AMOUNT = 12000;
     private static final String DEFAULT_MONEY_FORMAT = "$@";
 
-    /** The Bank's amont of cash */
+    /** The Bank's amount of cash */
     private CashModel money;
 
     /** The IPO */
