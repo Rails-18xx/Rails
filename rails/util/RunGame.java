@@ -10,7 +10,7 @@ public class RunGame {
 
     public static void main(String[] args) {
 
-        // intialize configuration
+        // Initialize configuration
         Config.setConfigSelection();
         
         int nargs = 0;
@@ -23,10 +23,32 @@ public class RunGame {
         }
 
         if (nargs >= 1) {
-            loadGame (args);
+            // We have to run loadGame on an AWT EventQueue to make sure
+            // that NDC will properly initialize game key so that
+            // GameManager instance can be properly queried for. This is a
+            // consequence of NDC abuse.
+            loadGameOnEventQueue(args);
         } else {
             /* Start the rails.game selector, which will do all the rest. */
             new GameSetupWindow();
+        }
+    }
+
+    static void loadGameOnEventQueue(final String[] args)
+    {
+        try {
+            java.awt.EventQueue.invokeAndWait(
+                new Runnable()
+                {
+                    public void run() {
+                        loadGame(args);
+                    }
+                }
+            );
+        } catch (Exception e) {
+            System.err.println("Cannot load game: "+e.getMessage());
+            e.printStackTrace(System.err);
+            System.exit(1);
         }
     }
 
@@ -48,6 +70,12 @@ public class RunGame {
                 Class.forName(gameUIManagerClassName).asSubclass(GameUIManager.class);
             gameUIManager = gameUIManagerClass.newInstance();
             gameUIManager.init(gameManager);
+
+            String directory = new java.io.File(filepath).getParent();
+            if(directory != null) {
+                gameUIManager.setSaveDirectory(directory);
+            }
+
             gameUIManager.startLoadedGame();
 
         } catch (Exception e) {
