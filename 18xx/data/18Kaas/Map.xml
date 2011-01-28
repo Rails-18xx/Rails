@@ -48,11 +48,20 @@
 	<Hex name="H19" tile="0"/>
 	<Hex name="I4" tile="-1" city="Hoek van Holland"/>
 	<Hex name="I6" tile="0"/>
-	<Hex name="I8" tile="-10" city="Gouda"/>
+	<IfOption name="Version" value="v1">
+	   <Hex name="I8" tile="-10" city="Gouda"/>
+    </IfOption>
+    <IfOption name="Version" value="v2">
+       <Hex name="I8" tile="0"/>
+    </IfOption>
 	<Hex name="I10" tile="0"/>
 	<Hex name="I12" tile="-10" cost="80" label="U" city="Utrecht"/>
 	<Hex name="I14" tile="-2" cost="80" city="Arnhem/Nijmegen"/>
-	<Hex name="I16" tile="0" cost="80"/>
+	<Hex name="I16" tile="0">
+	   <IfOption name="Version" value="v1">
+	       <Attributes cost="80"/>
+	   </IfOption>
+	</Hex>
 	<Hex name="I18" tile="0"/>
 	<Hex name="J3" tile="-901" orientation="4" value="10,60" city="Engeland"/>
 	<Hex name="J5" tile="-8" orientation="5"/>

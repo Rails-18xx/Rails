@@ -2,6 +2,7 @@
 <ComponentManager>
 	<Component name="GameManager" class="rails.game.GameManager">
 		<Game name="18Kaas"/>
+        <GameOption name="Version" values="v1,v2" default="v2" />
 		<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Deactivate" />
 		<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Deactivate" />
 		<GameOption name="18KaasRuhrgebiedDoublesOnlyMajors" type="toggle" default="yes" />
