@@ -349,6 +349,10 @@ public class GameSetupWindow extends JDialog implements ActionListener {
                         for (String value : option.getAllowedValues()) {
                             dropdown.addItem(value);
                         }
+                        String defaultValue = option.getDefaultValue();
+                        if (defaultValue != null) {
+                            dropdown.setSelectedItem(defaultValue);
+                        }
                         optionsPane.add(dropdown);
                         optionComponents.add(dropdown);
                     }
