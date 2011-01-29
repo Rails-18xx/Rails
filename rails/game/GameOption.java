@@ -2,6 +2,8 @@
 package rails.game;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import rails.util.LocalText;
 
@@ -27,10 +29,14 @@ public class GameOption {
     // Some other common game options
     public static final String VARIANT = "Variant";
 
+    // A regex to match parameters against
+    private static final Pattern pattern = Pattern.compile("\\{(.*)\\}");
 
     public GameOption(String name, String[] parameters) {
     	this.name = name;
-    	if (parameters != null) parm = parameters.clone();
+    	if (parameters != null) {
+    	    parm = parameters.clone();
+    	}
         parametrisedName = constructParametrisedName (name, parameters);
         optionsMap.put(parametrisedName, this);
     }
@@ -50,7 +56,15 @@ public class GameOption {
     }
 
     public String getLocalisedName() {
-        return LocalText.getText(name, (Object[]) parm);
+        String[] localisedParms = null;
+        if (parm != null) {
+            localisedParms = parm.clone();
+            for (int i=0; i<parm.length; i++) {
+                Matcher m = pattern.matcher(parm[i]);
+                if (m.matches()) localisedParms[i] = LocalText.getText(m.group(1));
+            }
+        }
+        return LocalText.getText(name, (Object[]) localisedParms);
     }
 
     public String getType() {
@@ -60,12 +74,6 @@ public class GameOption {
     public boolean isBoolean() {
         return isBoolean;
     }
-
-    /*
-    public void setParameters(String[] parameters) {
-        parm = parameters.clone();
-    }
-    */
 
     public void setAllowedValues(List<String> values) {
         allowedValues = values;
