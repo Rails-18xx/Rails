@@ -139,7 +139,8 @@ Not yet implemented:
 
 Should work, but has not been extensively tested. Limitations as with 1830.
 		</Description>
-        <Option name="Version" values="v1,v2" default="v2" />
+        <Option name="VersionOf" parm="{MAP}" values="v1,v2" default="v2" />
+        <!-- Note: a parameter in braces {...} will be localised for display-->
 		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
 		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
 		<Option name="18KaasRuhrgebiedDoublesOnlyMajors" type="toggle" default="yes" />
