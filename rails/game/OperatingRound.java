@@ -43,9 +43,9 @@ public class OperatingRound extends Round implements Observer {
     // Non-persistent lists (are recreated after each user action)
     protected List<SpecialPropertyI> currentSpecialProperties = null;
 
-    protected List<LayTile> currentSpecialTileLays = new ArrayList<LayTile>();
+    //protected List<LayTile> currentSpecialTileLays = new ArrayList<LayTile>();
 
-    protected List<LayTile> currentNormalTileLays = new ArrayList<LayTile>();
+    //protected List<LayTile> currentNormalTileLays = new ArrayList<LayTile>();
 
     protected HashMapState<String, Integer> tileLaysPerColour =
         new HashMapState<String, Integer>("tileLaysPerColour");
@@ -419,7 +419,7 @@ public class OperatingRound extends Round implements Observer {
             // Was a special property used?
             if (stl != null) {
                 stl.setExercised();
-                currentSpecialTileLays.remove(action);
+                //currentSpecialTileLays.remove(action);
                 log.debug("This was a special tile lay, "
                         + (extra ? "" : " not") + " extra");
 
@@ -428,14 +428,9 @@ public class OperatingRound extends Round implements Observer {
                 log.debug("This was a normal tile lay");
                 registerNormalTileLay(tile);
             }
-
-            setSpecialTileLays();
-            log.debug("There are now " + currentSpecialTileLays.size()
-                    + " special tile lay objects");
         }
 
-        if (tile == null || currentNormalTileLays.isEmpty()
-                && currentSpecialTileLays.isEmpty()) {
+        if (tile == null || !areTileLaysPossible()) {
             nextStep();
         }
 
@@ -460,33 +455,34 @@ public class OperatingRound extends Round implements Observer {
         int oldAllowedNumber = oldAllowedNumberObject.intValue();
         if (oldAllowedNumber <= 0) return false;
 
-        if (!update) return true;
+        if (update) updateAllowedTileColours(colour, oldAllowedNumber);     
+        return true;
+    }
 
-        /*
-         * We will assume that in all cases the following assertions hold: 1. If
-         * the allowed number for the colour of the just laid tile reaches zero,
-         * all normal tile lays have been consumed. 2. If any colour is laid, no
-         * different colours may be laid. THIS MAY NOT BE TRUE FOR ALL GAMES!
-         */
+    /*
+     * We will assume that in all cases the following assertions hold: 1. If
+     * the allowed number for the colour of the just laid tile reaches zero,
+     * all normal tile lays have been consumed. 2. If any colour is laid, no
+     * different colours may be laid. THIS MAY NOT BE TRUE FOR ALL GAMES!
+     */
 
+    protected void updateAllowedTileColours (String colour, int oldAllowedNumber) {
+        
         if (oldAllowedNumber <= 1) {
-            for (String key:tileLaysPerColour.viewKeySet()) {
-                tileLaysPerColour.put(key, new Integer(0));
-            }
+            tileLaysPerColour.clear();
             log.debug("No more normal tile lays allowed");
-            currentNormalTileLays.clear();
+            //currentNormalTileLays.clear();// Shouldn't be needed anymore ??
         } else {
             for (String key:tileLaysPerColour.viewKeySet()) {
                 if (colour.equals(key)) {
-                    tileLaysPerColour.put(colour, new Integer(oldAllowedNumber-1));
+                    tileLaysPerColour.put(colour, oldAllowedNumber-1);
                 } else  {
-                    tileLaysPerColour.put(key, new Integer(0));
+                    tileLaysPerColour.remove(colour);
                 }
             }
-            log.debug((oldAllowedNumber - 1) + " more " + colour
-                    + " tile lays allowed");
+            log.debug((oldAllowedNumber - 1) + " additional " + colour
+                    + " tile lays allowed; no other colours");
         }
-        return true;
     }
 
     public boolean layBaseToken(LayBaseToken action) {
@@ -1351,7 +1347,7 @@ public class OperatingRound extends Round implements Observer {
      * method should be called only once per company turn in an OR: at the start
      * of the tile laying step.
      */
-    protected void getNormalTileLays() {
+    protected void initNormalTileLays() {
 
         // duplicate the phase colours
         Map<String, Integer> newTileColours = new HashMap<String, Integer>(getCurrentPhase().getTileColours());
@@ -1364,45 +1360,79 @@ public class OperatingRound extends Round implements Observer {
         tileLaysPerColour.initFromMap(newTileColours);
     }
 
-    protected void setNormalTileLays() {
+    protected List<LayTile> getNormalTileLays(boolean display) {
 
         /* Normal tile lays */
-        currentNormalTileLays.clear();
+        List<LayTile> currentNormalTileLays = new ArrayList<LayTile>();
+        
+        // Check which colours can still be laid
+        Map <String, Integer> remainingTileLaysPerColour = new HashMap<String, Integer>();
 
-        //        Map<String,Integer> tileLaysPerColour = (Map<String,Integer>)(tileLaysPerColourState.getObject());
-
-        int sumLays = 0;
-        for (Integer i: tileLaysPerColour.viewValues())
-            sumLays = sumLays + i;
-        if (sumLays != 0) {
-            //        if (!tileLaysPerColour.isEmpty()) {
-            currentNormalTileLays.add(new LayTile(tileLaysPerColour.viewMap()));
+        int lays = 0;
+        for (String colourName: tileLaysPerColour.viewKeySet()) {
+            lays = tileLaysPerColour.get(colourName);
+            if (lays != 0) {
+                remainingTileLaysPerColour.put(colourName, lays);
+            }
         }
-
+        if (!remainingTileLaysPerColour.isEmpty()) {
+            currentNormalTileLays.add(new LayTile(remainingTileLaysPerColour));
+        }
+        
+        // NOTE: in a later stage tile lays will be specified per hex or set of hexes.
+        
+        if (display) {
+            int size = currentNormalTileLays.size();
+            if (size == 0) {
+                log.debug("No normal tile lays");
+            } else {
+                for (LayTile tileLay : currentNormalTileLays) {
+                    log.debug("Normal tile lay: " + tileLay.toString());
+                }
+            }
+        }
+        return currentNormalTileLays;
     }
 
     /**
      * Create a List of allowed special tile lays (see LayTile class). This
      * method should be called before each user action in the tile laying step.
      */
-    protected void setSpecialTileLays() {
+    protected List<LayTile> getSpecialTileLays(boolean display) {
 
         /* Special-property tile lays */
-        currentSpecialTileLays.clear();
+        List<LayTile> currentSpecialTileLays = new ArrayList<LayTile>();
 
-        if (!operatingCompany.get().canUseSpecialProperties()) return;
+        if (operatingCompany.get().canUseSpecialProperties()) {
 
-        for (SpecialTileLay stl : getSpecialProperties(SpecialTileLay.class)) {
-            if (
-//                 stl.getTile() != null && getCurrentPhase().isTileColourAllowed(stl.getTile().getColourName()) &&
-                 // if a tile is specified it must have a tile colour currently available
-                 // commented out as it is not required and makes 1856 save files invalid
-                  (stl.isExtra() || !currentNormalTileLays.isEmpty())) {
-                // If the special tile lay is not extra, it is only allowed if
-                // normal tile lays are also (still) allowed
-                currentSpecialTileLays.add(new LayTile(stl));
+            for (SpecialTileLay stl : getSpecialProperties(SpecialTileLay.class)) {
+                if (stl.isExtra() 
+                      // If the special tile lay is not extra, it is only allowed if
+                      // normal tile lays are also (still) allowed
+                      || stl.getTile() != null 
+                          && checkNormalTileLay(stl.getTile(), false)) {
+                    currentSpecialTileLays.add(new LayTile(stl));
+                }
             }
         }
+
+        if (display) {
+            int size = currentSpecialTileLays.size();
+            if (size == 0) {
+                log.debug("No special tile lays");
+            } else {
+                for (LayTile tileLay : currentSpecialTileLays) {
+                    log.debug("Special tile lay: " + tileLay.toString());
+                }
+            }
+        }
+        
+        return currentSpecialTileLays;
+    }
+    
+    protected boolean areTileLaysPossible() {
+        return !tileLaysPerColour.isEmpty()
+            || !getSpecialTileLays(false).isEmpty();
     }
 
     protected void setNormalTokenLays() {
@@ -2307,7 +2337,7 @@ public class OperatingRound extends Round implements Observer {
             if (noMapMode) {
                 nextStep (GameDef.OrStep.LAY_TOKEN);
             } else {
-                getNormalTileLays(); // new: only called once per turn ?
+                initNormalTileLays(); // new: only called once per turn ?
                 setStep (GameDef.OrStep.LAY_TRACK);
             }
         }
@@ -2321,13 +2351,8 @@ public class OperatingRound extends Round implements Observer {
                 possibleActions.add(new LayBaseToken (operatingCompany.get().getHomeHex()));
                 forced = true;
             } else {
-                setNormalTileLays();
-                setSpecialTileLays();
-                log.debug("Normal tile lays: " + currentNormalTileLays.size());
-                log.debug("Special tile lays: " + currentSpecialTileLays.size());
-
-                possibleActions.addAll(currentNormalTileLays);
-                possibleActions.addAll(currentSpecialTileLays);
+                possibleActions.addAll(getNormalTileLays(true));
+                possibleActions.addAll(getSpecialTileLays(true));
                 possibleActions.add(new NullAction(NullAction.SKIP));
             }
 

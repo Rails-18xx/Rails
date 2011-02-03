@@ -25,9 +25,11 @@ public class RemoveFromMap<K, V> extends Move {
     
     public RemoveFromMap (Map<K, V> map, K key) {
 
+        keyExisted = map.containsKey(key);
+        if (!keyExisted) return;  // Nothing to do
         this.map = map;
         this.key = key;
-        this.keyExisted = map.containsKey(key);
+        this.oldValue = map.get(key);
 
         MoveSet.add(this);
     }
@@ -49,7 +51,7 @@ public class RemoveFromMap<K, V> extends Move {
     }
     
     public String toString() {
-        return "RemoveFromMap: remove key="+key+" from map";
+        return "RemoveFromMap: remove key="+key+" value="+oldValue+" from map";
     }
 
 }

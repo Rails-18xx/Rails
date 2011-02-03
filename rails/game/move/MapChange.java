@@ -45,6 +45,8 @@ public class MapChange<K, V> extends Move {
     public boolean undo() {
         if (keyExisted) {
             map.put (key, oldValue);
+        } else {
+            map.remove(key);
         }
         return true;
     }

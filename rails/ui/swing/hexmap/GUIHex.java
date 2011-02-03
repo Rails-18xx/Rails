@@ -871,5 +871,9 @@ public class GUIHex implements ViewObject {
             hexMap.repaint(getBounds());
         }
     }
+    
+    public String toString () {
+        return getName() + " (" + currentTile.getName() + ")";
+    }
 
 }

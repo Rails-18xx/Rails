@@ -85,6 +85,7 @@ public class LayTile extends PossibleORAction {
     public LayTile(Map<String, Integer> tileColours) {
         type = GENERIC;
         setTileColours (tileColours);
+        // NOTE: tileColours is currently only used for Help purposes.
     }
 
     public LayTile(SpecialTileLay specialProperty) {
@@ -100,6 +101,8 @@ public class LayTile extends PossibleORAction {
                 tiles.add(tile);
             }
         }
+
+        
     }
 
     /**
@@ -199,8 +202,10 @@ public class LayTile extends PossibleORAction {
         // Check the map. Sometimes 0 values creep in, and these can't easily
         // be intercepted in the UI code (see comment at previous method).
         // TODO This is a dirty fix, but the quickest one too.
-        for (String colourName : map.keySet()) {
-            if (map.get(colourName) > 0) tileColours.put(colourName, map.get(colourName));
+        if (map != null) {
+            for (String colourName : map.keySet()) {
+                if (map.get(colourName) > 0) tileColours.put(colourName, map.get(colourName));
+            }
         }
     }
 

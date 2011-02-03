@@ -748,13 +748,48 @@ public class ORUIManager implements DialogOwner {
         if (selectedHex != null && selectedHex.canFixTile()) {
             List<LayTile> allowances =
                     map.getTileAllowancesForHex(selectedHex.getHexModel());
-            LayTile allowance = allowances.get(0); // TODO Wrong if we have an
-            // additional special
-            // property (18AL Lumber
-            // Terminal)
+            LayTile allowance = null;
+            TileI tile = selectedHex.getProvisionalTile();
+            if (allowances.size() == 1) {
+                allowance = allowances.get(0);
+            } else {
+                // Check which allowance applies
+                // We'll restrict to cases where we have both a special property
+                // and a normal 'blanket' allowance.
+                // First check which is which.
+                List<TileI> sp_tiles;
+                List<MapHex> sp_hexes;
+                LayTile gen_lt = null;
+                for (LayTile lt : allowances) {
+                    if (lt.getType() == LayTile.SPECIAL_PROPERTY) {
+                        // Cases where a special property is used include:
+                        // 1. SP refers to specified tiles, (one of) which is chosen:
+                        // (examples: 18AL Lumber Terminal, 1889 Port)
+                        if ((((sp_tiles = lt.getTiles()) != null
+                                && sp_tiles.contains(tile))
+                        // 2. SP does not refer to specific tiles but it does refer to 
+                        // specified hexes, (one of) which is chosen:
+                        // (example: 1830 hex B20)
+                          || (sp_tiles == null 
+                                && (sp_hexes = lt.getLocations()) != null) 
+                                && sp_hexes.contains(selectedHex.getModel()))) {
+                             allowance = lt;
+                             break;
+                        }
+                    } else {
+                        gen_lt = lt;
+                    }
+                }
+                
+                // Default case: the generic allowance
+                // TODO It is not clear that all possible cases have been covered yet.
+                // But at least this works for 1830, 1889
+                if (allowance == null) allowance = gen_lt;
+                
+            }
             allowance.setChosenHex(selectedHex.getHexModel());
             allowance.setOrientation(selectedHex.getProvisionalTileRotation());
-            allowance.setLaidTile(selectedHex.getProvisionalTile());
+            allowance.setLaidTile(tile);
 
             relayBaseTokens (allowance);
 
@@ -1726,7 +1761,7 @@ public class ORUIManager implements DialogOwner {
                 upgradePanel.setCancelEnabled(true);
                 break;
             case SELECT_TILE:
-                upgradePanel.populate();
+                upgradePanel.populate(gameUIManager.getCurrentPhase());
                 upgradePanel.setDoneEnabled(false);
                 break;
             case ROTATE_OR_CONFIRM_TILE:

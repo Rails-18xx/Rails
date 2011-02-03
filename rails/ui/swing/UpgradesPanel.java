@@ -6,6 +6,7 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -81,13 +82,14 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         add(scrollPane);
     }
 
-    public void populate() {
+    public void populate(PhaseI currentPhase) {
         if (hexMap == null) hexMap = orUIManager.getMapPanel().getMap();
 
         GUIHex uiHex = hexMap.getSelectedHex();
         MapHex hex = uiHex.getHexModel();
         orUIManager.tileUpgrades = new ArrayList<TileI>();
         List<TileI> tiles;
+        Set<String> allowedColours = currentPhase.getTileColours().keySet();
 
         for (LayTile layTile : hexMap.getTileAllowancesForHex(hex)) {
             tiles = layTile.getTiles();
@@ -95,20 +97,15 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
                 for (TileI tile : uiHex.getCurrentTile().getValidUpgrades(hex,
                         orUIManager.gameUIManager.getCurrentPhase())) {
                     // Skip if not allowed in LayTile
-                    if (!layTile.isTileColourAllowed(tile.getColourName())) continue;
-
+                    //if (!layTile.isTileColourAllowed(tile.getColourName())) continue;
+                    
                     if (!orUIManager.tileUpgrades.contains(tile))
                         orUIManager.tileUpgrades.add(tile);
                 }
             } else {
                 for (TileI tile : tiles) {
-                    // Skip if not allowed in LayTile
-                    if (layTile.getTileColours().get(tile.getColourName()) < 1) continue;
-
-                    // special check: does the tile increase the colour number?
-                    // this avoids that a special tile lay down or equalgrades existing tiles
-                    // TODO EV: I'm not sure if this is a necessary precaution.
-                    if (!layTile.isTileColourAllowed(tile.getColourName())) continue;
+                    // Skip if colour is not allowed yet
+                    if (!allowedColours.contains(tile.getColourName())) continue;
 
                     if (!orUIManager.tileUpgrades.contains(tile))
                         orUIManager.tileUpgrades.add(tile);
@@ -327,6 +324,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         }
     }
 
+    // NOTE: NOT USED
     private void setSelectedCorrectionToken() {
         if (correctionTokenLabels == null || correctionTokenLabels.isEmpty()) return;
         int index = -1;
@@ -475,7 +473,8 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
             super(tokenIcon);
             this.token = token;
         }
-
+        
+        // NOTE: NOT USED
         TokenI getToken() {
             return token;
         }

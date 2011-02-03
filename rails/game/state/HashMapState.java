@@ -1,8 +1,10 @@
 package rails.game.state;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -58,8 +60,13 @@ public class HashMapState<K,V>{
     }
     
     public void clear() {
-        for (K key:map.keySet()) {
-            remove(key);
+        // Two-step process to avoid concurrent modification exception
+        List<K> keys = new ArrayList<K>();
+        for (K key : map.keySet()) {
+            keys.add(key);
+        }
+        for (K key : keys) {
+            remove (key);
         }
     }
 
@@ -99,5 +106,9 @@ public class HashMapState<K,V>{
     
     public Collection<V> viewValues() {
         return Collections.unmodifiableCollection(map.values());
+    }
+    
+    public boolean isEmpty() {
+        return map.isEmpty();
     }
 }
