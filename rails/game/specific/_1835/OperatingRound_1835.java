@@ -138,7 +138,6 @@ public class OperatingRound_1835 extends OperatingRound {
 
     @Override
     public void resume() {
-
         PublicCompanyI prussian = companyManager.getPublicCompany(GameManager_1835.PR_ID);
 
         if (prussian.hasFloated() && !prussian.hasOperated()
@@ -149,7 +148,7 @@ public class OperatingRound_1835 extends OperatingRound {
             log.debug("M2 has not operated: PR can operate");
 
             // Insert the Prussian before the first major company
-            // with a lower current price that hoas not yet operated
+            // with a lower current price that has not yet operated
             // and isn't currently operating
 
             int index = 0;

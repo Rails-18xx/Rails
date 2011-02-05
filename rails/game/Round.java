@@ -268,6 +268,7 @@ public abstract class Round implements RoundI {
 
         Map<Integer, PublicCompanyI> operatingCompanies =
                 new TreeMap<Integer, PublicCompanyI>();
+        List<PublicCompanyI> newOperatingCompanies;
         StockSpaceI space;
         int key;
         int minorNo = 0;
@@ -276,13 +277,15 @@ public abstract class Round implements RoundI {
 
         int lastOperatingCompanyIndex;
         if (reorder) {
+            newOperatingCompanies = oldOperatingCompanies;
             lastOperatingCompanyIndex = oldOperatingCompanies.indexOf(lastOperatingCompany);
         } else {
+            newOperatingCompanies = companyManager.getAllPublicCompanies();
             lastOperatingCompanyIndex = -1;
         }
 
-        for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
-            if (!canCompanyOperateThisRound(company)) continue;
+        for (PublicCompanyI company : newOperatingCompanies) {
+            if (!reorder && !canCompanyOperateThisRound(company)) continue;
 
             if (reorder
                     && oldOperatingCompanies.indexOf(company) <= lastOperatingCompanyIndex) {
