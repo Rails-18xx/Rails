@@ -219,10 +219,12 @@ public class OperatingRound_1835 extends OperatingRound {
     }
     @Override
     public boolean layTile(LayTile action) {
+        
+        boolean hasJustLaidExtraOBBTile = action.getSpecialProperty() != null
+                && action.getSpecialProperty().getLocationNameString().matches("M1(5|7)");
 
         // The extra OBB tiles may not both be laid in the same round
-        if (action.getSpecialProperty() != null
-                && action.getSpecialProperty().getLocationNameString().matches("M1(5|7)")) {
+        if (hasJustLaidExtraOBBTile) {
             if (hasLaidExtraOBBTile.booleanValue()) {
                 String errMsg = LocalText.getText("InvalidTileLay");
                 DisplayBuffer.add(LocalText.getText("CannotLayTileOn",
@@ -232,14 +234,18 @@ public class OperatingRound_1835 extends OperatingRound {
                         Bank.format(0),
                         errMsg ));
                 return false;
+            } else {
+                hasLaidExtraOBBTile.set(true); 
+                // Done here to make getSpecialTileLays() return the correct value.
+                // It's provisional, on the assumption that other validations are OK.
             }
         }
 
         boolean result = super.layTile(action);
 
-        if (result && action.getSpecialProperty() != null
-                && action.getSpecialProperty().getLocationNameString().matches("M1(5|7)")) {
-            hasLaidExtraOBBTile.set(true);
+        if (!result && hasJustLaidExtraOBBTile) {
+            // Revert if tile lay is unsuccessful
+            hasLaidExtraOBBTile.set(false);
         }
 
         return result;
