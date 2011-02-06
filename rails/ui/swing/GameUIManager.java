@@ -54,7 +54,7 @@ public class GameUIManager implements DialogOwner {
 
     protected static final String DEFAULT_SAVE_DIRECTORY = "save";
     protected static final String DEFAULT_SAVE_PATTERN = "yyyyMMdd_HHmm";
-    protected static final String DEFAULT_SAVE_EXTENSION = "rails";
+    public static final String DEFAULT_SAVE_EXTENSION = "rails";
     protected static final String NEXT_PLAYER_SUFFIX = "NEXT_PLAYER";
 
     protected String saveDirectory;

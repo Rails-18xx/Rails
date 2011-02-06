@@ -4,6 +4,7 @@ package rails.ui.swing;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
@@ -13,8 +14,7 @@ import org.apache.log4j.Logger;
 
 import rails.common.GuiDef;
 import rails.game.*;
-import rails.util.Config;
-import rails.util.LocalText;
+import rails.util.*;
 
 /**
  * The Game Setup Window displays the first window presented to the user. This
@@ -25,7 +25,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
     private static final long serialVersionUID = 1L;
     GridBagConstraints gc;
     JPanel gameListPane, playersPane, buttonPane, optionsPane;
-    JButton newButton, loadButton, recoveryButton, quitButton, optionButton, infoButton,
+    JButton newButton, loadButton, recentButton, recoveryButton, quitButton, optionButton, infoButton,
         creditsButton, randomizeButton, configureButton;
     JComboBox gameNameBox = new JComboBox();
     JComboBox[] playerBoxes = new JComboBox[Player.MAX_PLAYERS];
@@ -39,6 +39,9 @@ public class GameSetupWindow extends JDialog implements ActionListener {
     List<GameOption> availableOptions = new ArrayList<GameOption>();
     String gameName;
     Game game;
+    
+    SortedSet<File> recentFiles;
+    String savedFileExtension;
 
     private ConfigWindow configWindow;
 
@@ -68,6 +71,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 
         newButton = new JButton(LocalText.getText("NewGame"));
         loadButton = new JButton(LocalText.getText("LoadGame"));
+        recentButton = new JButton(LocalText.getText("LoadRecentGame"));
         recoveryButton = new JButton(LocalText.getText("RecoverGame"));
         quitButton = new JButton(LocalText.getText("QUIT"));
         optionButton = new JButton(LocalText.getText("OPTIONS"));
@@ -77,6 +81,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 
         newButton.setMnemonic(KeyEvent.VK_N);
         loadButton.setMnemonic(KeyEvent.VK_L);
+        recentButton.setMnemonic(KeyEvent.VK_D);
         recoveryButton.setMnemonic(KeyEvent.VK_R);
         quitButton.setMnemonic(KeyEvent.VK_Q);
         optionButton.setMnemonic(KeyEvent.VK_O);
@@ -99,6 +104,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 
         newButton.addActionListener(this);
         loadButton.addActionListener(this);
+        recentButton.addActionListener(this);
         recoveryButton.addActionListener(this);
         quitButton.addActionListener(this);
         optionButton.addActionListener(this);
@@ -109,6 +115,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 
         buttonPane.add(newButton);
         buttonPane.add(loadButton);
+        buttonPane.add(recentButton);
         recoveryButton.setEnabled(Config.get("save.recovery.active", "no").equalsIgnoreCase("yes"));
         buttonPane.add(recoveryButton);
 
@@ -116,7 +123,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
         buttonPane.add(quitButton);
         buttonPane.add(creditsButton);
 
-        buttonPane.setLayout(new GridLayout(3, 2));
+        buttonPane.setLayout(new GridLayout(0, 2));
         buttonPane.setBorder(BorderFactory.createLoweredBevelBorder());
 
         optionsPane.setLayout(new FlowLayout());
@@ -252,6 +259,42 @@ public class GameSetupWindow extends JDialog implements ActionListener {
             } else { // cancel pressed
                 return;
             }
+        } else if (arg0.getSource().equals(recentButton)) {
+            File saveDirectory = new File(Config.get("save.directory"));
+            if (saveDirectory == null) return;
+            
+            recentFiles = new TreeSet<File>(new Comparator<File> (){
+                public int compare (File a, File b) {
+                    return Math.round(b.lastModified() - a.lastModified());
+                }
+            });
+            savedFileExtension = Config.get("save.filename.extension");
+            if (!Util.hasValue(savedFileExtension)) {
+                savedFileExtension = GameUIManager.DEFAULT_SAVE_EXTENSION;
+            }
+            savedFileExtension = "."+savedFileExtension;
+
+            getRecentFiles(saveDirectory);
+            if (recentFiles == null || recentFiles.size() == 0) return;
+            File[] files = recentFiles.toArray(new File[]{});
+            int numOptions = 20;
+            String[] options = new String[numOptions];
+            int dirPathLength = saveDirectory.getPath().length();
+            for (int i=0; i<numOptions;i++) {
+                // Get path relative to saveDirectory
+                options[i] = files[i].getPath().substring(dirPathLength+1);
+            }
+            String text = LocalText.getText("Select");
+            String result = (String) JOptionPane.showInputDialog(this, text, text,
+                    JOptionPane.OK_CANCEL_OPTION,  
+                    null, options, options[0]);
+            if (result == null) return;
+            File selectedFile = files[Arrays.asList(options).indexOf(result)];
+            if (selectedFile != null) {
+                loadAndStartGame(selectedFile.getPath(), selectedFile.getParent());
+            } else { // cancel pressed
+                return;
+            }
         } else if (arg0.getSource().equals(recoveryButton)) {
             String filePath = Config.get("save.recovery.filepath", "18xx_autosave.rails");
             loadAndStartGame(filePath, null);
@@ -314,6 +357,17 @@ public class GameSetupWindow extends JDialog implements ActionListener {
                     playerNameFields[i].setText(playerList.get(i));
 
                 }
+            }
+        }
+    }
+    
+    private void getRecentFiles (File dir) {
+        if (!dir.exists() || !dir.isDirectory()) return;
+        for (File entry : dir.listFiles()) {
+            if (entry.isFile() && entry.getName().endsWith(savedFileExtension)) {
+                recentFiles.add(entry);
+            } else if (entry.isDirectory()){
+                getRecentFiles(entry);
             }
         }
     }
