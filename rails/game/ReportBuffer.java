@@ -295,6 +295,7 @@ public final class ReportBuffer {
         int index = currentPlayerIndex;
         do {
             ReportItem item = instance.reportItems.get(index);
+            if (item == null) continue;
             String text = item.toText();
             String comment = instance.commentItems.get(index);
             if (text == null && comment == null) continue;
