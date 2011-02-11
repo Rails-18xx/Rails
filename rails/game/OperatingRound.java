@@ -473,12 +473,17 @@ public class OperatingRound extends Round implements Observer {
             log.debug("No more normal tile lays allowed");
             //currentNormalTileLays.clear();// Shouldn't be needed anymore ??
         } else {
+            List<String> coloursToRemove = new ArrayList<String>();
             for (String key:tileLaysPerColour.viewKeySet()) {
                 if (colour.equals(key)) {
-                    tileLaysPerColour.put(colour, oldAllowedNumber-1);
+                    tileLaysPerColour.put(key, oldAllowedNumber-1);
                 } else  {
-                    tileLaysPerColour.remove(colour);
+                    coloursToRemove.add(key);
                 }
+            }
+            // Two-step removal to prevent ConcurrentModificatioonException.
+            for (String key : coloursToRemove) {
+                tileLaysPerColour.remove(key);               
             }
             log.debug((oldAllowedNumber - 1) + " additional " + colour
                     + " tile lays allowed; no other colours");
