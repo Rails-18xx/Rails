@@ -18,7 +18,7 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
      * The 'external id', which is shown in the UI. Usually equal to the
      * internal id, but different in case of duplicates.
      */
-    private int externalId;
+    private String externalId;
     /**
      * The 'picture id', identifying the picture number to be loaded. Usually
      * equal to the internal id, but different in case of graphical variants
@@ -90,7 +90,8 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
 
     public Tile(Integer id) {
         this.id = id;
-        externalId = pictureId = id;
+        pictureId = id;
+        externalId = String.valueOf(id);
         name = "" + this.id;
 
         for (int i = 0; i < 6; i++)
@@ -201,7 +202,7 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
         }
 
         /* External (printed) id */
-        externalId = setTag.getAttributeAsInteger("extId", externalId);
+        externalId = setTag.getAttributeAsString("extId", externalId);
         /* Picture id */
         pictureId = setTag.getAttributeAsInteger("pic", pictureId);
         /* Quantity */
@@ -323,7 +324,7 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
         return id;
     }
 
-    public int getExternalId() {
+    public String getExternalId() {
         return externalId;
     }
 
@@ -520,7 +521,7 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
         Integer colour = this.getColourNumber();
         int result = colour.compareTo(anotherTile.getColourNumber());
         if (result == 0) { 
-            Integer externalId  = this.getExternalId();
+            //String externalId  = this.getExternalId();
             result = externalId.compareTo(anotherTile.getExternalId());
         }
         return result;

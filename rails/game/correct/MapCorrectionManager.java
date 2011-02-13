@@ -15,6 +15,7 @@ import rails.game.TileI;
 import rails.game.TileManager;
 import rails.game.TokenI;
 import rails.util.LocalText;
+import tools.Util;
 
 public class MapCorrectionManager extends CorrectionManager {
     
@@ -70,7 +71,8 @@ public class MapCorrectionManager extends CorrectionManager {
         String errMsg = null;
         while (true) {
             // check if chosenTile is still available (not for preprinted)
-            if (chosenTile != null && chosenTile.getExternalId() > 0 && chosenTile != hex.getCurrentTile()
+            if (chosenTile != null && Util.hasValue(chosenTile.getExternalId()) 
+                    && chosenTile != hex.getCurrentTile()
                     && chosenTile.countFreeTiles() == 0) {
                 errMsg =
                     LocalText.getText("TileNotAvailable",

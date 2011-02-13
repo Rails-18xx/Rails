@@ -23,7 +23,7 @@ public interface TileI {
      */
     public int getId();
 
-    public int getExternalId();
+    public String getExternalId();
 
     public int getPictureId();
 

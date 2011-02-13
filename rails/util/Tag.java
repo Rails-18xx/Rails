@@ -266,7 +266,6 @@ return getAttributeAsInteger(name, 0);
         Node attribute;
         String name, value;
         List<String> valueList;
-        String[] valueArray;
         StringBuffer textBuffer = new StringBuffer();
 
         for (int i = 0; i < childNodes.getLength(); i++) {

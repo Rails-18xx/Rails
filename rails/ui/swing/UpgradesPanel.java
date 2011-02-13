@@ -21,6 +21,7 @@ import rails.ui.swing.elements.ActionLabel;
 import rails.ui.swing.hexmap.GUIHex;
 import rails.ui.swing.hexmap.HexMap;
 import rails.util.LocalText;
+import tools.Util;
 
 public class UpgradesPanel extends Box implements MouseListener, ActionListener {
     private static final long serialVersionUID = 1L;
@@ -505,7 +506,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
 
         void setTextFromTile(TileI tile) {
             StringBuffer text = new StringBuffer();
-            if (tile.getExternalId() > 0) {
+            if (Util.hasValue(tile.getExternalId())) {
                 text.append("<HTML><BODY>" + tile.getExternalId());
                 if (tile.countFreeTiles() != -1) {
                     text.append("<BR> (" + tile.countFreeTiles() + ")");
