@@ -97,7 +97,12 @@
 	</Company>
 	<Company name="C&amp;O" type="Public" tokens="3" fgColour="000000" bgColour="A0E0FF"
 			longname="Chesapeake &amp; Ohio">
-		<Home hex="F6"/>
+		<IfOption name="Variant" value="Basegame,Pere Marquette">
+			<Home hex="F6"/>
+		</IfOption>
+		<IfOption name="Variant" value="Coalfields">
+			<Home hex="K13"/>
+		</IfOption>
 	</Company>
 	<Company name="CPR" type="Public" tokens="4" fgColour="FFFFFF" bgColour="FF0000"
 			longname="Canadian Pacific Railroad">
@@ -109,7 +114,14 @@
 			<Home hex="E5" city="0" allCitiesBlocked="yes" />
 		</Company>
 	</IfOption>
-		<StartPacket roundClass="rails.game.StartRound_1830">
+    <IfOption name="Variant" value="Coalfields">
+        <Company name="N&amp;W" type="Public" tokens="3" fgColour="FFFF00" bgColour="000080"
+                longname="Norfolk &amp; Western">
+            <Home hex="L16" city="0" allCitiesBlocked="yes" />
+        </Company>
+    </IfOption>
+	
+	<StartPacket roundClass="rails.game.StartRound_1830">
 		<Bidding initial="5" minimum="5" increment="1"/>
 		<Item name="SVNRR" type="Private" basePrice="20"/>
 		<Item name="C&amp;StL" type="Private" basePrice="40"/>

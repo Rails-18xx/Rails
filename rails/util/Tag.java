@@ -265,6 +265,8 @@ return getAttributeAsInteger(name, 0);
         String childTagName;
         Node attribute;
         String name, value;
+        List<String> valueList;
+        String[] valueArray;
         StringBuffer textBuffer = new StringBuffer();
 
         for (int i = 0; i < childNodes.getLength(); i++) {
@@ -297,6 +299,7 @@ return getAttributeAsInteger(name, 0);
                         throw new ConfigurationException(
                                 "IfOption has no optionValue attribute");
                     value = valueAttr.getNodeValue();
+                    valueList = Arrays.asList(value.split(","));
 
                     // Check if the option has been chosen; if not, skip the
                     // rest
@@ -327,7 +330,8 @@ return getAttributeAsInteger(name, 0);
 
                     }
 
-                    if (optionValue.equalsIgnoreCase(value)) {
+                    //if (optionValue.equalsIgnoreCase(value)) {
+                    if (valueList.contains(optionValue)) {
                         parseSubTags(childElement);
                     }
                 } else {

@@ -14721,6 +14721,7 @@ object TTilesWrapper
     end
     item
       Code = 200
+      LongName = '200'
       Level = tlBrown
       Connections = <
         item
@@ -14793,11 +14794,15 @@ object TTilesWrapper
       Level = tlGreen
       Connections = <
         item
-          Position1 = tp4SideF
+          Position1 = tpCenter
           Position2 = tp4SideC
         end
         item
           Position1 = tp4SideA
+          Position2 = tpCenter
+        end
+        item
+          Position1 = tp4SideF
           Position2 = tpCenter
         end>
       Junctions = <>
@@ -14809,10 +14814,14 @@ object TTilesWrapper
       Connections = <
         item
           Position1 = tp4SideF
-          Position2 = tp4SideC
+          Position2 = tpCenter
         end
         item
           Position1 = tp4SideE
+          Position2 = tpCenter
+        end
+        item
+          Position1 = tp4SideC
           Position2 = tpCenter
         end>
       Junctions = <>
@@ -14869,5 +14878,271 @@ object TTilesWrapper
           Position2 = tpCenter
         end>
       Junctions = <>
+    end
+    item
+      Code = -30001
+      LongName = 'N of Boston'
+      Connections = <
+        item
+          Position1 = tp4SideD
+          Position2 = tp4SideF
+        end
+        item
+          Position1 = tp4SideD
+          Position2 = tp4SideE
+        end>
+      Junctions = <>
+    end
+    item
+      Code = -30002
+      LongName = 'Altoona'
+      Connections = <
+        item
+          Position1 = tp4SideE
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tp4SideE
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tp4SideC
+          Position2 = tp4SideB
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Position = tp2CornerA
+          Revenue = 10
+          RevenuePosition = tp3CornerE
+        end>
+    end
+    item
+      Code = -30003
+      LongName = 'Altoon intern'
+      Connections = <
+        item
+          Position1 = tp4SideE
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tp4SideE
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tp4SideB
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tp4SideE
+          Position2 = tp2CornerA
+        end
+        item
+          Position1 = tp2CornerA
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tp2CornerA
+          Position2 = tp4SideC
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Position = tp2CornerA
+          Revenue = 10
+          RevenuePosition = tp3CornerE
+        end>
+    end
+    item
+      Code = -30004
+      LongName = 'Coalfields'
+      Category = 'Coalfields'
+      CategoryPosition = tp2SideD
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end>
+      Junctions = <
+        item
+          JunType = jtWhistlestop
+        end>
+    end
+    item
+      Code = -30005
+      LongName = 'Norfolk'
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+        end>
+    end
+    item
+      Code = 1062
+      LongName = 'NY Coalfields'
+      Category = 'NY'
+      Level = tlBrown
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end>
+      Junctions = <
+        item
+          JunType = jtQuadrupleCity
+          Revenue = 80
+          RevenuePosition = tp3CornerC
+        end>
+    end
+    item
+      Code = 2053
+      LongName = 'B Coalfields'
+      Category = 'B'
+      Level = tlGreen
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end>
+      Junctions = <
+        item
+          JunType = jtDoubleCity
+          Revenue = 50
+        end>
+    end
+    item
+      Code = 1061
+      LongName = 'B Coalfields'
+      Category = 'B'
+      Level = tlBrown
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end>
+      Junctions = <
+        item
+          JunType = jtDoubleCity
+          Revenue = 60
+        end>
+    end
+    item
+      Code = 2061
+      LongName = 'BA Coalfields'
+      Category = 'B'
+      Level = tlBrown
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideE
+        end>
+      Junctions = <
+        item
+          JunType = jtTripleCity
+          Revenue = 60
+        end>
+    end
+    item
+      Code = 1717
+      LongName = 'G17'
+      Level = tlBrown
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideE
+        end>
+      Junctions = <
+        item
+          JunType = jtWhistlestop
+          Revenue = 20
+        end>
     end>
 end

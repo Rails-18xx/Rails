@@ -160,6 +160,8 @@ public class ConvertTilesXML {
 
     private ConvertTilesXML() throws ConfigurationException {
 
+        System.out.println("Input file path: "+(new File(inputFilePath).getAbsolutePath()));
+        System.out.println("Output file path: "+(new File(outputFilePath).getAbsolutePath()));
         Element inputTopElement =
                 XmlUtils.findElementInFile(inputFilePath, "tiles");
 

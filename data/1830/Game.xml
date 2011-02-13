@@ -15,7 +15,7 @@
 		<!-- The options in Game.xml are not currently used.
 			 See GamesList.xml for the real ones.
 		--> 
-		<GameOption name="Variant" values="Basegame,Pere Marquette" default="Basegame" />
+		<GameOption name="Variant" values="Basegame,Pere Marquette,Coalfields" default="Basegame" />
 		<GameOption name="NoMapMode" type="toggle" default="no" />
 		<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Deactivate" />
 		<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Deactivate" />
@@ -48,7 +48,7 @@
 		</EndOfGame>
 	</Component>
 	<Component name="PlayerManager" class="rails.game.PlayerManager">
-		<IfOption name="Variant" value="Basegame">
+		<IfOption name="Variant" value="Basegame,">
 			<Players number="2" cash="1200" certLimit="28"/>
 			<Players number="3" cash="800" certLimit="20"/>
 			<Players number="4" cash="600" certLimit="16"/>
@@ -63,6 +63,14 @@
 			<Players number="6" cash="400" certLimit="12"/>
 			<Players number="7" cash="360" certLimit="11"/>
 		</IfOption>
+        <IfOption name="Variant" value="Coalfields">
+            <Players number="2" cash="1200" certLimit="29"/>
+            <Players number="3" cash="800" certLimit="21"/>
+            <Players number="4" cash="600" certLimit="17"/>
+            <Players number="5" cash="480" certLimit="14"/>
+            <Players number="6" cash="400" certLimit="12"/>
+            <Players number="7" cash="360" certLimit="11"/>
+        </IfOption>
 	</Component>
 	<Component name="Bank" class="rails.game.Bank">
 		<Bank amount="12000"/>

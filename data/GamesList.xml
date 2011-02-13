@@ -10,6 +10,7 @@ Designed by Francis Tresham and Bruce Shelley
 Limitations: 
 - The M&amp;H/NYC share swap can only be executed in the SR, in the owning player's turn.
 - Privates cannot be traded between players.
+- The Coalfields variant is currently in development stage.
 		</Description>
 		<!-- GAME OPTIONS must have:
 			- a name, which must also exist as an entry in LocalText.properties,
@@ -21,7 +22,7 @@ Limitations:
 			- optionally, a default value (only affects a toggle;
 			  in a dropdown the first item is always the default).
 		-->
-		<Option name="Variant" values="Basegame,Pere Marquette" default="Basegame" />
+		<Option name="Variant" values="Basegame,Pere Marquette,Coalfields" default="Basegame" />
 		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
 		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
 		<Option name="NoMapMode" type="toggle" default="no" />
