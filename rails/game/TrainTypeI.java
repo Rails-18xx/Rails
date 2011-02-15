@@ -1,6 +1,8 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainTypeI.java,v 1.14 2010/03/04 22:08:09 evos Exp $ */
 package rails.game;
 
+import java.util.List;
+
 public interface TrainTypeI
 extends ConfigurableComponentI, Cloneable {
 
@@ -51,7 +53,7 @@ extends ConfigurableComponentI, Cloneable {
     /**
      * @return Returns the releasedTrainType.
      */
-    public TrainTypeI getReleasedTrainType();
+    public List<TrainTypeI> getReleasedTrainTypes();
 
     /**
      * @return Returns the rustedTrainType.
@@ -91,7 +93,7 @@ extends ConfigurableComponentI, Cloneable {
 
     public boolean hasRusted();
 
-    public String getReleasedTrainTypeName();
+    public String getReleasedTrainTypeNames();
 
     public String getRustedTrainTypeName();
 
@@ -99,7 +101,7 @@ extends ConfigurableComponentI, Cloneable {
 
     public void setPermanent(boolean permanent);
 
-    public void setReleasedTrainType(TrainTypeI releasedTrainType);
+    public void setReleasedTrainTypes(List<TrainTypeI> releasedTrainTypes);
 
     public void setRustedTrainType(TrainTypeI rustedTrainType);
 

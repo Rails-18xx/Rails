@@ -2,6 +2,7 @@
 package rails.game;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -60,8 +61,8 @@ implements TrainTypeI {
     private String rustedTrainTypeName = null;
     protected TrainTypeI rustedTrainType = null;
 
-    private String releasedTrainTypeName = null;
-    protected TrainTypeI releasedTrainType = null;
+    private String releasedTrainTypeNames = null;
+    protected List<TrainTypeI> releasedTrainTypes = null;
 
     protected ArrayList<TrainI> trains = null;
 
@@ -141,7 +142,7 @@ implements TrainTypeI {
             rustedTrainTypeName = tag.getAttributeAsString("rustedTrain");
 
             // Other train type released for buying
-            releasedTrainTypeName = tag.getAttributeAsString("releasedTrain");
+            releasedTrainTypeNames = tag.getAttributeAsString("releasedTrain");
 
             // Can run as obsolete train
             obsoleting = tag.getAttributeAsBoolean("obsoleting");
@@ -331,10 +332,10 @@ implements TrainTypeI {
     }
 
     /**
-     * @return Returns the releasedTrainType.
+     * @return Returns the releasedTrainTypes.
      */
-    public TrainTypeI getReleasedTrainType() {
-        return releasedTrainType;
+    public List<TrainTypeI> getReleasedTrainTypes() {
+        return releasedTrainTypes;
     }
 
     /**
@@ -368,8 +369,8 @@ implements TrainTypeI {
     /**
      * @return Returns the releasedTrainTypeName.
      */
-    public String getReleasedTrainTypeName() {
-        return releasedTrainTypeName;
+    public String getReleasedTrainTypeNames() {
+        return releasedTrainTypeNames;
     }
 
     /**
@@ -386,8 +387,8 @@ implements TrainTypeI {
     /**
      * @param releasedTrainType The releasedTrainType to set.
      */
-    public void setReleasedTrainType(TrainTypeI releasedTrainType) {
-        this.releasedTrainType = releasedTrainType;
+    public void setReleasedTrainTypes(List<TrainTypeI> releasedTrainTypes) {
+        this.releasedTrainTypes = releasedTrainTypes;
     }
 
     /**
@@ -483,8 +484,8 @@ implements TrainTypeI {
         if (rustedTrainTypeName != null) {
             appendInfoText(b, LocalText.getText("RustsTrains", rustedTrainTypeName));
         }
-        if (releasedTrainTypeName != null) {
-            appendInfoText(b, LocalText.getText("ReleasesTrains", releasedTrainTypeName));
+        if (releasedTrainTypeNames != null) {
+            appendInfoText(b, LocalText.getText("ReleasesTrains", releasedTrainTypeNames));
         }
         if (b.length() == 6) b.append(LocalText.getText("None"));
 
