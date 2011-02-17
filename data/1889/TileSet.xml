@@ -157,11 +157,11 @@
 	</Tile>
 	<Tile id="28">
 		<Attributes quantity="1"/>
-		<Upgrade id="46"/>
+		<Upgrade id="39,46"/>
 	</Tile>
 	<Tile id="29">
 		<Attributes quantity="1"/>
-		<Upgrade id="45"/>
+		<Upgrade id="39,45"/>
 	</Tile>
 	<Tile id="205">
 		<Attributes quantity="1"/>
