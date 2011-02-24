@@ -105,14 +105,14 @@ public class OperatingRound_1856 extends OperatingRound {
         if (operatingCompany.get().canRunTrains()) {
 
             if (operatingCompany.get() instanceof PublicCompany_CGR
-                    && ((PublicCompany_CGR)operatingCompany.get()).runsWithBorrowedTrain()) {
-                DisplayBuffer.add(LocalText.getText("RunsWithBorrowedTrain",
-                        PublicCompany_CGR.NAME, "D"));
-                possibleActions.add(new SetDividend(
-                        operatingCompany.get().getLastRevenue(), true,
-                        new int[] {SetDividend.WITHHOLD }));
+                        && !((PublicCompany_CGR)operatingCompany.get()).hadPermanentTrain()) {
+                    DisplayBuffer.add(LocalText.getText("MustWithholdUntilPermanent",
+                            PublicCompany_CGR.NAME));
+                    possibleActions.add(new SetDividend(
+                            operatingCompany.get().getLastRevenue(), true,
+                            new int[] {SetDividend.WITHHOLD }));
             } else {
-
+                
                 int[] allowedRevenueActions =
                         operatingCompany.get().isSplitAlways()
                                 ? new int[] { SetDividend.SPLIT }
