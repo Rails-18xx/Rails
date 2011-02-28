@@ -2718,7 +2718,7 @@ public class OperatingRound extends Round implements Observer {
                                 && getGameParameterAsBoolean(GameDef.Parm.FIXED_PRICE_TRAINS_BETWEEN_PRESIDENTS)
                                 || operatingCompany.get().mustTradeTrainsAtFixedPrice()
                                 || company.mustTradeTrainsAtFixedPrice()) {
-                            if (cash >= train.getCost()) {
+                            if ((cash >= train.getCost()) && (operatingCompany.get().mayBuyTrainType(train))) {
                                 bt = new BuyTrain(train, pf, train.getCost());
                             } else {
                                 continue;
