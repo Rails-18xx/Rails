@@ -70,12 +70,18 @@ public class FoldIntoPrussian extends PossibleAction {
     }
     
     @Override
-    public boolean equals(PossibleAction action) {
+    public boolean equalsAsOption(PossibleAction action) {
         if (!(action instanceof FoldIntoPrussian)) return false;
         FoldIntoPrussian a = (FoldIntoPrussian) action;
         return a.foldableCompanyNames.equals(foldableCompanyNames);
     }
 
+    @Override
+    public boolean equalsAsAction(PossibleAction action) {
+        if (!(action instanceof FoldIntoPrussian)) return false;
+        FoldIntoPrussian a = (FoldIntoPrussian) action;
+        return a.equalsAsOption(this) && a.foldedCompanyNames.equals(foldedCompanyNames);
+    }
 
     /** Deserialize */
     private void readObject(ObjectInputStream in) throws IOException,

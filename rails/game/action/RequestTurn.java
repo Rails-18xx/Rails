@@ -24,10 +24,14 @@ public class RequestTurn extends PossibleAction {
     }
 
     @Override
-    public boolean equals(PossibleAction pa) {
+    public boolean equalsAsOption(PossibleAction pa) {
         return pa != null
                 && pa instanceof RequestTurn
                 && requestingPlayerName.equals(((RequestTurn)pa).requestingPlayerName);
+    }
+
+    public boolean equalsAsAction(PossibleAction pa) {
+        return equalsAsOption (pa);
     }
 
     private void readObject(ObjectInputStream in) throws IOException,

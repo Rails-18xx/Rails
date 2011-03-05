@@ -66,11 +66,20 @@ public class TakeLoans extends PossibleORAction {
     }
 
     @Override
-    public boolean equals(PossibleAction action) {
+    public boolean equalsAsOption(PossibleAction action) {
         if (!(action instanceof TakeLoans)) return false;
         TakeLoans a = (TakeLoans) action;
         return a.company == company
                && a.maxNumber == maxNumber
+               && a.price == price;
+    }
+
+    @Override
+    public boolean equalsAsAction(PossibleAction action) {
+        if (!(action instanceof TakeLoans)) return false;
+        TakeLoans a = (TakeLoans) action;
+        return a.company == company
+               && a.numberTaken == numberTaken
                && a.price == price;
     }
 

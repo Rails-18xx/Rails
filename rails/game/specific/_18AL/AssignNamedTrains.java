@@ -2,11 +2,10 @@ package rails.game.specific._18AL;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import rails.game.*;
-import rails.game.action.UseSpecialProperty;
+import rails.game.action.*;
 
 public class AssignNamedTrains extends UseSpecialProperty {
 
@@ -60,6 +59,12 @@ public class AssignNamedTrains extends UseSpecialProperty {
                 trainIndex++;
             }
         }
+    }
+    
+    public boolean equalsAsAction (PossibleAction action) {
+        if (!(action instanceof AssignNamedTrains)) return false;
+        AssignNamedTrains a = (AssignNamedTrains) action;
+        return Arrays.equals(a.postTrainIds, postTrainIds);
     }
 
     @Override

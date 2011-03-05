@@ -78,12 +78,21 @@ public class RepayLoans extends PossibleAction {
     }
 
     @Override
-    public boolean equals(PossibleAction action) {
+    public boolean equalsAsOption(PossibleAction action) {
         if (!(action instanceof RepayLoans)) return false;
         RepayLoans a = (RepayLoans) action;
         return a.company == company
                && a.minNumber == minNumber
                && a.maxNumber == maxNumber
+               && a.price == price;
+    }
+
+    @Override
+    public boolean equalsAsAction(PossibleAction action) {
+        if (!(action instanceof RepayLoans)) return false;
+        RepayLoans a = (RepayLoans) action;
+        return a.company == company
+               && a.numberRepaid == numberRepaid
                && a.price == price;
     }
 

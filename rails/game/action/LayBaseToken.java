@@ -71,10 +71,21 @@ public class LayBaseToken extends LayToken {
     }
 
     @Override
-    public boolean equals(PossibleAction action) {
+    public boolean equalsAsOption(PossibleAction action) {
         if (!(action instanceof LayBaseToken)) return false;
         LayBaseToken a = (LayBaseToken) action;
         return (a.locationNames == null && locationNames == null || a.locationNames.equals(locationNames))
+               && a.type == type
+               && a.company == company
+               && a.specialProperty == specialProperty;
+    }
+
+    @Override
+    public boolean equalsAsAction(PossibleAction action) {
+        if (!(action instanceof LayBaseToken)) return false;
+        LayBaseToken a = (LayBaseToken) action;
+        return a.chosenHex == chosenHex
+               && a.chosenStation == chosenStation
                && a.type == type
                && a.company == company
                && a.specialProperty == specialProperty;

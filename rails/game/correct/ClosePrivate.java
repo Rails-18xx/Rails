@@ -42,12 +42,17 @@ public class ClosePrivate extends PossibleAction {
     }
     
     @Override
-    public boolean equals(PossibleAction action) {
+    public boolean equalsAsOption(PossibleAction action) {
         if (!(action instanceof ClosePrivate)) return false;
         ClosePrivate a = (ClosePrivate) action;
         return (a.privateCompany == this.privateCompany);
     }
 
+    @Override
+    public boolean equalsAsAction(PossibleAction action) {
+        return action.equalsAsOption(this);
+    }
+    
     @Override
     public String toString() {
         StringBuffer b = new StringBuffer("ClosePrivate");

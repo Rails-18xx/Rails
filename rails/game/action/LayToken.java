@@ -92,19 +92,6 @@ public abstract class LayToken extends PossibleORAction {
         // TODO this.specialPropertyUniqueId = specialProperty.getUniqueId();
     }
 
-    /**
-     * @deprecated
-     * @return Returns the location.
-     */
-    @Deprecated
-	public MapHex getLocation() {
-        if (locations != null) {
-            return locations.get(0);
-        } else {
-            return null;
-        }
-    }
-
     public List<MapHex> getLocations() {
         return locations;
     }

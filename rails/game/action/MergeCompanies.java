@@ -100,11 +100,20 @@ public class MergeCompanies extends PossibleAction {
     }
 
     @Override
-    public boolean equals(PossibleAction action) {
+    public boolean equalsAsOption(PossibleAction action) {
         if (!(action instanceof MergeCompanies)) return false;
         MergeCompanies a = (MergeCompanies) action;
         return a.mergingCompanyName.equals(mergingCompanyName)
                && a.targetCompanyNames.equals(targetCompanyNames);
+    }
+
+    @Override
+    public boolean equalsAsAction(PossibleAction action) {
+        if (!(action instanceof MergeCompanies)) return false;
+        MergeCompanies a = (MergeCompanies) action;
+        return a.mergingCompanyName.equals(mergingCompanyName)
+               && a.selectedTargetCompanyName.equals(selectedTargetCompanyName)
+               && a.replaceToken == replaceToken;
     }
 
     @Override

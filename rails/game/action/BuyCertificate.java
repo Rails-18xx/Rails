@@ -106,11 +106,19 @@ public class BuyCertificate extends PossibleAction {
     }
 
     @Override
-    public boolean equals(PossibleAction action) {
+    public boolean equalsAsOption(PossibleAction action) {
         if (!(action instanceof BuyCertificate)) return false;
         BuyCertificate a = (BuyCertificate) action;
         return a.certificate == certificate && a.from == from
                && a.price == price && a.maximumNumber == maximumNumber;
+    }
+
+    @Override
+    public boolean equalsAsAction(PossibleAction action) {
+        if (!(action instanceof BuyCertificate)) return false;
+        BuyCertificate a = (BuyCertificate) action;
+        return a.certificate == certificate && a.from == from
+               && a.price == price && a.numberBought == numberBought;
     }
 
     @Override

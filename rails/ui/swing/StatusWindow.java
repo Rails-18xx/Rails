@@ -30,6 +30,8 @@ public class StatusWindow extends JFrame implements ActionListener,
 
     protected static final String SAVE_CMD = "Save";
 
+    protected static final String RELOAD_CMD = "Reload";
+
     protected static final String EXPORT_CMD = "Export";
 
     protected static final String UNDO_CMD = "Undo";
@@ -79,7 +81,7 @@ public class StatusWindow extends JFrame implements ActionListener,
     private JMenuItem menuItem;
 
     private ActionMenuItem saveItem;
-//    private ActionMenuItem exportItem;
+    private ActionMenuItem reloadItem;
 
     private ActionMenuItem undoItem, forcedUndoItem, redoItem, redoItem2;
 
@@ -116,6 +118,16 @@ public class StatusWindow extends JFrame implements ActionListener,
         saveItem.setEnabled(true);
         saveItem.setPossibleAction(new GameAction(GameAction.SAVE));
         fileMenu.add(saveItem);
+
+        reloadItem = new ActionMenuItem(LocalText.getText("Reload"));
+        reloadItem.setActionCommand(RELOAD_CMD);
+        reloadItem.setMnemonic(KeyEvent.VK_R);
+        reloadItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R,
+                ActionEvent.ALT_MASK));
+        reloadItem.addActionListener(this);
+        reloadItem.setEnabled(true);
+        reloadItem.setPossibleAction(new GameAction(GameAction.RELOAD));
+        fileMenu.add(reloadItem);
 
         // export menu item
 //        exportItem = new ActionMenuItem(LocalText.getText("EXPORT"));
@@ -629,6 +641,9 @@ public class StatusWindow extends JFrame implements ActionListener,
             switch (((GameAction) executedAction).getMode()) {
             case GameAction.SAVE:
                 gameUIManager.saveGame((GameAction) executedAction);
+                break;
+            case GameAction.RELOAD:
+                gameUIManager.reloadGame((GameAction) executedAction);
                 break;
             case GameAction.EXPORT:
                 gameUIManager.exportGame((GameAction) executedAction);

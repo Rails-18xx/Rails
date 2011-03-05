@@ -233,13 +233,24 @@ public class LayTile extends PossibleORAction {
     }
 
     @Override
-    public boolean equals(PossibleAction action) {
+    public boolean equalsAsOption(PossibleAction action) {
         if (!(action instanceof LayTile)) return false;
         LayTile a = (LayTile) action;
         return (a.locationNames == null && locationNames == null || a.locationNames.equals(locationNames))
                && a.type == type
                && a.tileColours == tileColours
-               && a.tiles == tiles && a.specialProperty == specialProperty;
+               && a.tiles == tiles 
+               && a.specialProperty == specialProperty;
+    }
+
+    @Override
+    public boolean equalsAsAction (PossibleAction action) {
+        if (!(action instanceof LayTile)) return false;
+        LayTile a = (LayTile) action;
+        return (a.laidTileId == laidTileId
+               && a.chosenHexName.equals(chosenHexName)
+               && a.orientation == orientation
+               && a.relaidBaseTokensString.equals(relaidBaseTokensString));
     }
 
     @Override

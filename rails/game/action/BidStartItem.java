@@ -68,14 +68,21 @@ public class BidStartItem extends StartItemAction {
         this.actualBid = actualBid;
     }
 
-    public boolean equals(PossibleAction action) {
+    public boolean equalsAsOption(PossibleAction action) {
         if (!(action instanceof BidStartItem)) return false;
         BidStartItem a = (BidStartItem) action;
         return a.startItem == startItem && a.itemIndex == itemIndex
                && a.minimumBid == minimumBid;
     }
 
-    public String toString() {
+    public boolean equalsAsAction(PossibleAction action) {
+        if (!(action instanceof BidStartItem)) return false;
+        BidStartItem a = (BidStartItem) action;
+        return a.equalsAsOption(this)
+               && a.actualBid == actualBid;
+    }
+
+   public String toString() {
         StringBuffer b = new StringBuffer();
         b.append("BidStartItem ").append(startItemName).append(" minbid=").append(
                 minimumBid).append(" selected=").append(selected).append(

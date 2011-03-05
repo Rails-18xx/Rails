@@ -212,6 +212,7 @@ public class Game {
         log.debug("Loading game from file " + filepath);
         String filename = filepath.replaceAll(".*[/\\\\]", "");
 
+        /*--- Remember to keep GameManager.reload() in sync with this code! ---*/
         try {
             ObjectInputStream ois =
                     new ObjectInputStream(new FileInputStream(
@@ -320,6 +321,7 @@ public class Game {
             }
 
             ois.close();
+            ois = null;
 
             gameManager.setReloading(false);
             gameManager.finishLoading();

@@ -40,13 +40,18 @@ public class CorrectionModeAction extends CorrectionAction {
     }
     
     @Override
-    public boolean equals(PossibleAction action) {
+    public boolean equalsAsOption(PossibleAction action) {
         if (!(action instanceof CorrectionModeAction)) return false;
         CorrectionModeAction a = (CorrectionModeAction) action;
         return (a.correctionType.equals(this.correctionType) && 
                     a.isActive() == this.isActive());
     }
 
+    @Override
+    public boolean equalsAsAction(PossibleAction action) {
+        return action.equalsAsOption(this);
+    }
+    
     @Override
     public String toString() {
         StringBuffer b = new StringBuffer("CorrectionModeAction");

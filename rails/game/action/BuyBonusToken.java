@@ -90,7 +90,7 @@ public class BuyBonusToken extends PossibleORAction {
     }
 
     @Override
-    public boolean equals(PossibleAction action) {
+    public boolean equalsAsOption(PossibleAction action) {
         if (!(action instanceof BuyBonusToken)) return false;
         BuyBonusToken a = (BuyBonusToken) action;
         return a.privateCompany == privateCompany
@@ -100,6 +100,10 @@ public class BuyBonusToken extends PossibleORAction {
                 && a.locationString.equals(locationString);
     }
 
+    public boolean equalsAsAction(PossibleAction action) {
+        return action.equalsAsOption (this);
+    }
+    
     @Override
     public String toString() {
         return "BuyBonusToken " + privateCompanyName

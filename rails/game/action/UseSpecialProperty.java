@@ -42,10 +42,14 @@ public class UseSpecialProperty extends PossibleORAction {
         return specialProperty;
     }
 
-    public boolean equals(PossibleAction action) {
+    public boolean equalsAsOption(PossibleAction action) {
         if (!(action instanceof UseSpecialProperty)) return false;
         UseSpecialProperty a = (UseSpecialProperty) action;
         return a.specialProperty == specialProperty;
+    }
+
+    public boolean equalsAsAction(PossibleAction action) {
+        return action.equalsAsOption(this);
     }
 
     public String toString() {

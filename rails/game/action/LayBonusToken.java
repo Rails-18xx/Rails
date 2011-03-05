@@ -44,10 +44,18 @@ public class LayBonusToken extends LayToken {
     }
 
     @Override
-    public boolean equals(PossibleAction action) {
+    public boolean equalsAsOption(PossibleAction action) {
         if (!(action instanceof LayBonusToken)) return false;
         LayBonusToken a = (LayBonusToken) action;
         return (a.locationNames == null && locationNames == null || a.locationNames.equals(locationNames))
+               && a.company == company && a.specialProperty == specialProperty;
+    }
+
+    @Override
+    public boolean equalsAsAction(PossibleAction action) {
+        if (!(action instanceof LayBonusToken)) return false;
+        LayBonusToken a = (LayBonusToken) action;
+        return a.chosenHex == chosenHex
                && a.company == company && a.specialProperty == specialProperty;
     }
 

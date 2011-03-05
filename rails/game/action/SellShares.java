@@ -91,13 +91,23 @@ public class SellShares extends PossibleAction {
     }
 
     @Override
-    public boolean equals(PossibleAction action) {
+    public boolean equalsAsOption(PossibleAction action) {
         if (!(action instanceof SellShares)) return false;
         SellShares a = (SellShares) action;
         return a.getCompanyName().equals(companyName)
                && a.getShareUnits() == shareUnits
                && a.getMaximumNumber() == maximumNumber
                && a.getPrice() == price;
+    }
+
+    @Override
+    public boolean equalsAsAction(PossibleAction action) {
+        if (!(action instanceof SellShares)) return false;
+        SellShares a = (SellShares) action;
+        return a.companyName.equals(companyName)
+               && a.shareUnits == shareUnits
+               && a.numberSold == numberSold
+               && a.price == price;
     }
 
     @Override

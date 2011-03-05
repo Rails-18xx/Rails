@@ -96,16 +96,17 @@ public class PossibleActions {
     /** Check if a given action exists in the current list of possible actions */
     public boolean validate(PossibleAction checkedAction) {
 
-        // Save is always allowed
+        // Some actions are always allowed
         if (checkedAction instanceof GameAction
                 && (((GameAction)checkedAction).getMode() == GameAction.SAVE
-                || ((GameAction)checkedAction).getMode() == GameAction.EXPORT)) {
+                    || ((GameAction)checkedAction).getMode() == GameAction.RELOAD
+                    || ((GameAction)checkedAction).getMode() == GameAction.EXPORT)) {
             return true;
         }
 
         // Check if action accurs in the list of possible actions
         for (PossibleAction action : possibleActions) {
-            if (action.equals(checkedAction)) {
+            if (action.equalsAsOption(checkedAction)) {
                 return true;
             }
         }

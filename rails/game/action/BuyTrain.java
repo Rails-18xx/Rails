@@ -242,11 +242,19 @@ public class BuyTrain extends PossibleORAction {
     }
 
     @Override
-    public boolean equals(PossibleAction action) {
+    public boolean equalsAsOption(PossibleAction action) {
         if (!(action instanceof BuyTrain)) return false;
         BuyTrain a = (BuyTrain) action;
         return a.getTrain() == getTrain() && a.from == from && a.fixedCost == fixedCost
                && a.trainsForExchange == trainsForExchange;
+    }
+
+    @Override
+    public boolean equalsAsAction(PossibleAction action) {
+        if (!(action instanceof BuyTrain)) return false;
+        BuyTrain a = (BuyTrain) action;
+        return a.getTrain() == getTrain() && a.from == from && a.pricePaid == pricePaid
+               && a.addedCash == addedCash && a.exchangedTrainUniqueId.equals(exchangedTrainUniqueId);
     }
 
     /** Deserialize */

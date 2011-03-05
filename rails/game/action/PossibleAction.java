@@ -72,7 +72,33 @@ public abstract class PossibleAction implements Serializable {
         this.acted = true;
     }
 
-    public abstract boolean equals(PossibleAction pa);
+    /** 
+     * Compare the choice options of two action objects, without regard to whatever choice has been made, if any.
+     * In other words: only the server-set (prior) attributes must be compared.
+     * <p>This method is used by the server (engine) to validate 
+     * the incoming action that has actually been chosen in the client (GUI),
+     * but only for the purpose to check if the chosen option was really on offer,
+     * not to check if the chosen action is actually valid. 
+     * These perspectives could give different results in cases where 
+     * the PossibleAction does not fully restrict choices to valid values only
+     * (such as the blanket LayTile that does no restrict the hex to lay a tile on,
+     * or the SetDividend that will accept any revenue value).
+     * @param pa Another PossibleAction to compare with.
+     * @return True if the compared PossibleAction object has equal choice options.
+     */
+    public abstract boolean equalsAsOption (PossibleAction pa);
+
+    /** 
+     * Compare the chosen actions of two action objects.
+     * In other words: the client-set (posterior) attributes must be compared,
+     * in addition to those server-set (prior) attributes that sufficiently identify the action.
+     * <p>This method is used by the server (engine) to check if two action 
+     * objects represent the same actual action, as is done when reloading a saved file
+     * (i.e. loading a later stage of the same game).
+     * @param pa Another PossibleAction to compare with.
+     * @return True if the compared PossibleAction object has equal selected action values.
+     */
+    public abstract boolean equalsAsAction (PossibleAction pa);
 
     protected GameManagerI getGameManager() {
         return GameManager.getInstance();

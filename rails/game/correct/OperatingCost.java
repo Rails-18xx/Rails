@@ -74,7 +74,7 @@ public class OperatingCost extends PossibleORAction {
    }
    
     @Override
-    public boolean equals(PossibleAction action) {
+    public boolean equalsAsOption(PossibleAction action) {
         if (!(action instanceof OperatingCost)) return false;
         OperatingCost a = (OperatingCost) action;
         return (a.company == this.company &&
@@ -83,6 +83,17 @@ public class OperatingCost extends PossibleORAction {
                 a.maximumCost == this.maximumCost
         );
     }
+    
+    @Override
+    public boolean equalsAsAction(PossibleAction action) {
+        if (!(action instanceof OperatingCost)) return false;
+        OperatingCost a = (OperatingCost) action;
+        return (a.company == this.company &&
+                a.operatingCostType == this.operatingCostType &&
+                a.operatingCost == this.operatingCost
+        );
+    }
+    
     @Override
     public String toString() {
         StringBuffer b = new StringBuffer("OperatingCost");

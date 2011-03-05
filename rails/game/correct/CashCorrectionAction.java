@@ -81,13 +81,23 @@ public class CashCorrectionAction extends CorrectionAction {
    }
     
     @Override
-    public boolean equals(PossibleAction action) {
+    public boolean equalsAsOption(PossibleAction action) {
         if (!(action instanceof CashCorrectionAction)) return false;
         CashCorrectionAction a = (CashCorrectionAction) action;
         return (a.correctCashHolder == this.correctCashHolder &&
                 a.maximumNegative == this.maximumNegative
         );
     }
+    
+    @Override
+    public boolean equalsAsAction(PossibleAction action) {
+        if (!(action instanceof CashCorrectionAction)) return false;
+        CashCorrectionAction a = (CashCorrectionAction) action;
+        return (a.correctCashHolder == this.correctCashHolder &&
+                a.correctAmount == this.correctAmount
+        );
+    }
+    
     @Override
     public String toString() {
         StringBuffer b = new StringBuffer("CashCorrectionAction ");

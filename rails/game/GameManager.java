@@ -920,6 +920,9 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         case GameAction.SAVE:
             result = save(gameAction);
             break;
+        case GameAction.RELOAD:
+            result = reload(gameAction);
+            break;
         case GameAction.UNDO:
             moveStack.undoMoveSet(false);
             result = true;
@@ -1109,6 +1112,128 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             }
         }
         return result;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected boolean reload(GameAction reloadAction) {
+
+        String filepath = reloadAction.getFilepath();
+        log.info("Reloading game from file " + filepath);
+        String filename = filepath.replaceAll(".*[/\\\\]", "");
+
+        try {
+            ObjectInputStream ois =
+                    new ObjectInputStream(new FileInputStream(
+                            new File(filepath)));
+
+            // See Game.load(). Here we don't do as much checking. */
+            Object object = ois.readObject();
+            if (object instanceof String) {
+                log.info("Reading Rails "+(String)object+" saved file "+filename);
+                object = ois.readObject();
+            } else {
+                log.info("Reading Rails (pre-1.0.7) saved file "+filename);
+            }
+            if (object instanceof String) {
+                log.info("File was saved at "+(String)object);
+                object = ois.readObject();
+            }
+            String name = (String) ois.readObject();
+            log.debug("Saved game="+name);
+            Map<String, String> selectedGameOptions =
+                    (Map<String, String>) ois.readObject();
+            List<String> playerNames = (List<String>) ois.readObject();
+
+            log.debug("Starting to compare loaded actions");
+
+            List<PossibleAction> savedActions;
+            int numberOfActions = 0;
+            setReloading(true);
+            
+            Object actionObject = ois.readObject();
+            if (actionObject instanceof List) {
+                // Old-style: one List of PossibleActions
+                savedActions = (List<PossibleAction>) actionObject;
+                numberOfActions = savedActions.size();
+            } else {
+                // New style: separate PossibleActionsObjects, since Rails 1.3.1
+                savedActions = new ArrayList<PossibleAction>();
+                while (actionObject instanceof PossibleAction) {
+                    savedActions.add((PossibleAction) actionObject);
+                    numberOfActions++;
+                    try {
+                        actionObject = ois.readObject();
+                    } catch (EOFException e) {
+                        break;
+                    }
+                }
+            }
+            
+            // Check size
+            if (numberOfActions < executedActions.size()) {
+                DisplayBuffer.add(LocalText.getText("LoadFailed",
+                        "loaded file has less actions than current game"));
+                return true;
+            }
+
+            // Check action identity
+            int index = 0;
+            PossibleAction executedAction;
+            for (PossibleAction savedAction : savedActions) {
+                if (index < executedActions.size()) {
+                    executedAction = executedActions.get(index);
+                    if (!savedAction.equalsAsAction(executedAction)) {
+                        DisplayBuffer.add(LocalText.getText("LoadFailed",
+                                "loaded action \""+savedAction.toString()
+                                +"\"<br>   is not same as game action \""+executedAction.toString()
+                                +"\""));
+                        return true;
+                    }
+                } else {
+                    if (index == executedActions.size()) {
+                        log.info("Finished comparing old actions, starting to process new actions");
+                    }
+                    // Found a new action: execute it
+                    if (!processOnReload(savedAction)) {
+                        log.error ("Reload interrupted");
+                        DisplayBuffer.add(LocalText.getText("LoadFailed",
+                                " loaded action \""+savedAction.toString()+"\" is invalid"));
+                        break;
+                    }
+                }
+                index++;
+            }
+            
+            if (actionObject instanceof SortedMap) {
+                ReportBuffer.setCommentItems((SortedMap<Integer, String>) actionObject);
+                log.debug("Found sorted map");
+            } else {
+                try {
+                    object = ois.readObject();
+                    if (object instanceof SortedMap) {
+                        ReportBuffer.setCommentItems((SortedMap<Integer, String>) object);
+                    }
+                } catch (IOException e) {
+                    // continue without comments, if any IOException occurs
+                    // sometimes not only the EOF Exception is raised
+                    // but also the java.io.StreamCorruptedException: invalid type code
+                }
+            }
+
+            ois.close();
+            ois = null;
+
+            setReloading(false);
+            finishLoading();
+            log.info("Reloading finished");
+ 
+        } catch (Exception e) {
+            log.error("Reload failed", e);
+            DisplayBuffer.add(LocalText.getText("LoadFailed", e.getMessage()));
+            return true;
+        }
+
+        return true;
     }
 
     protected boolean export(GameAction exportAction) {

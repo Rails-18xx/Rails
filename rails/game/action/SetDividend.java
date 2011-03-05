@@ -148,7 +148,7 @@ public class SetDividend extends PossibleORAction implements Cloneable {
     }
 
     @Override
-    public boolean equals(PossibleAction action) {
+    public boolean equalsAsOption(PossibleAction action) {
         if (!(action instanceof SetDividend)) return false;
         SetDividend a = (SetDividend) action;
         return a.company == company
@@ -157,6 +157,15 @@ public class SetDividend extends PossibleORAction implements Cloneable {
                && a.requiredCash == requiredCash
                && Arrays.equals(a.allowedRevenueAllocations,
                        allowedRevenueAllocations);
+    }
+
+    @Override
+    public boolean equalsAsAction(PossibleAction action) {
+        if (!(action instanceof SetDividend)) return false;
+        SetDividend a = (SetDividend) action;
+        return a.company == company
+               && a.actualRevenue == actualRevenue
+               && a.revenueAllocation == revenueAllocation;
     }
 
     @Override

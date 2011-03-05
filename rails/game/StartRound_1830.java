@@ -193,7 +193,7 @@ public class StartRound_1830 extends StartRound {
             // Check item
             boolean validItem = false;
             for (StartItemAction activeItem : possibleActions.getType(StartItemAction.class)) {
-                if (bidItem.equals(activeItem)) {
+                if (bidItem.equalsAsOption(activeItem)) {
                     validItem = true;
                     break;
                 }

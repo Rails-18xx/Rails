@@ -775,7 +775,23 @@ public class GameUIManager implements DialogOwner {
 
     }
 
-    public void setSaveDirectory(String saveDirectory) {
+    public void reloadGame(GameAction reloadAction) {
+
+        JFileChooser jfc = new JFileChooser();
+        jfc.setCurrentDirectory(new File(saveDirectory));
+
+        if (jfc.showOpenDialog(statusWindow) == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = jfc.getSelectedFile();
+            saveDirectory = selectedFile.getParent();
+            reloadAction.setFilepath(selectedFile.getPath());
+            processOnServer(reloadAction);
+        } else { // cancel pressed
+            return;
+        }
+
+    }
+    
+   public void setSaveDirectory(String saveDirectory) {
         this.saveDirectory = saveDirectory;
     }
 

@@ -71,10 +71,20 @@ public class ExchangeTokens extends PossibleORAction {
     }
     
     @Override
-    public boolean equals(PossibleAction action) {
+    public boolean equalsAsOption(PossibleAction action) {
         if (!(action instanceof ExchangeTokens)) return false;
         ExchangeTokens a = (ExchangeTokens) action;
         return a.tokensToExchange == tokensToExchange && a.company == company;
+    }
+
+    @Override
+    public boolean equalsAsAction(PossibleAction action) {
+        if (!action.equalsAsOption(this)) return false;
+        ExchangeTokens a = (ExchangeTokens) action;
+        for (int i=0; i<tokensToExchange.size(); i++) {
+            if (a.tokensToExchange.get(i).isSelected() != tokensToExchange.get(i).isSelected()) return false;
+        }
+        return true;
     }
 
     /** Deserialize */

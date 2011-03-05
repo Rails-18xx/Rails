@@ -68,12 +68,20 @@ public class BuyPrivate extends PossibleORAction {
     }
 
     @Override
-    public boolean equals(PossibleAction action) {
+    public boolean equalsAsOption(PossibleAction action) {
         if (!(action instanceof BuyPrivate)) return false;
         BuyPrivate a = (BuyPrivate) action;
         return a.privateCompany == privateCompany
                && a.minimumPrice == minimumPrice
                && a.maximumPrice == maximumPrice;
+    }
+
+    @Override
+    public boolean equalsAsAction(PossibleAction action) {
+        if (!(action instanceof BuyPrivate)) return false;
+        BuyPrivate a = (BuyPrivate) action;
+        return a.privateCompany == privateCompany
+               && a.price == price;
     }
 
     @Override

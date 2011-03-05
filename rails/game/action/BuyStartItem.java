@@ -76,14 +76,21 @@ public class BuyStartItem extends StartItemAction {
         return companyNeedingSharePrice;
     }
 
-    public boolean equals(PossibleAction action) {
+    public boolean equalsAsOption(PossibleAction action) {
         if (!(action instanceof BuyStartItem)) return false;
         BuyStartItem a = (BuyStartItem) action;
         return a.startItem == startItem && a.itemIndex == itemIndex
                && a.price == price;
     }
 
-    public String toString() {
+    public boolean equalsAsAction(PossibleAction action) {
+        if (!(action instanceof BuyStartItem)) return false;
+        BuyStartItem a = (BuyStartItem) action;
+        return a.equalsAsOption(this)
+               && a.associatedSharePrice == associatedSharePrice;
+    }
+
+   public String toString() {
         StringBuffer b = new StringBuffer();
         b.append("BuyStartItem ").append(startItemName).append(" price=").append(
                 price).append(" selected=").append(selected);

@@ -84,12 +84,19 @@ public class DiscardTrain extends PossibleORAction {
     }
 
     @Override
-    public boolean equals(PossibleAction action) {
+    public boolean equalsAsOption(PossibleAction action) {
         if (!(action instanceof DiscardTrain)) return false;
         DiscardTrain a = (DiscardTrain) action;
         return a.ownedTrains == ownedTrains && a.company == company;
     }
 
+    @Override
+    public boolean equalsAsAction(PossibleAction action) {
+        if (!(action instanceof DiscardTrain)) return false;
+        DiscardTrain a = (DiscardTrain) action;
+        return a.discardedTrain == discardedTrain && a.company == company;
+    }
+    
     /** Deserialize */
     private void readObject(ObjectInputStream in) throws IOException,
             ClassNotFoundException {

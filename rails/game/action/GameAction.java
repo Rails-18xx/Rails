@@ -10,16 +10,17 @@ public class GameAction extends PossibleAction {
     public static final int FORCED_UNDO = 3;
     public static final int REDO = 4;
     public static final int EXPORT = 5;
-    public static final int MAX_MODE = 5;
+    public static final int RELOAD = 6;
+    public static final int MAX_MODE = 6;
 
     private String[] name =
-            new String[] { "Save", "Load", "Undo", "Undo!", "Redo", "Export" };
+            new String[] { "Save", "Load", "Undo", "Undo!", "Redo", "Export", "Reload" };
 
     // Server-side settings
     protected int mode = -1;
 
     // Client-side settings
-    protected String filepath; // Only applies to SAVE and LOAD
+    protected String filepath = null; // Only applies to SAVE, LOAD and RELOAD
     protected int moveStackIndex = -1; // target moveStackIndex, only for FORCED_UNDO and REDO
 
     public static final long serialVersionUID = 1L;
@@ -50,10 +51,17 @@ public class GameAction extends PossibleAction {
         return mode;
     }
 
-    public boolean equals(PossibleAction action) {
+    public boolean equalsAsOption(PossibleAction action) {
         if (!(action instanceof GameAction)) return false;
         GameAction a = (GameAction) action;
         return a.mode == mode;
+    }
+
+    public boolean equalsAsAction(PossibleAction action) {
+        if (!(action instanceof GameAction)) return false;
+        GameAction a = (GameAction) action;
+        return a.mode == mode && (
+                (a.filepath == null && filepath == null) || a.filepath.equals(filepath));
     }
 
     public String toString() {

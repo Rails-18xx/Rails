@@ -2,8 +2,7 @@ package rails.game.correct;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import rails.game.correct.MapCorrectionManager.*;
 import rails.game.BaseToken;
@@ -177,10 +176,20 @@ public class MapCorrectionAction extends CorrectionAction {
     }
     
     @Override
-    public boolean equals(PossibleAction action) {
+    public boolean equalsAsOption(PossibleAction action) {
         if (!(action instanceof MapCorrectionAction)) return false;
         MapCorrectionAction a = (MapCorrectionAction) action;
         return (a.step == this.step);
+    }
+
+    @Override
+    public boolean equalsAsAction(PossibleAction action) {
+        if (!(action instanceof MapCorrectionAction)) return false;
+        MapCorrectionAction a = (MapCorrectionAction) action;
+        return (a.step == this.step
+                && a.location == location
+                && a.tiles.get(0) == tiles.get(0))
+                && a.orientation == orientation;
     }
 
     @Override

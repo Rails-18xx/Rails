@@ -61,16 +61,22 @@ public class ReachDestinations extends PossibleORAction {
         return reachedCompanies;
     }
 
-
-
     @Override
-    public boolean equals(PossibleAction pa) {
+    public boolean equalsAsOption(PossibleAction pa) {
         if (!(pa instanceof ReachDestinations)) return false;
         ReachDestinations rd = (ReachDestinations) pa;
         return possibleCompanyNames.equals(rd.getPossibleCompanyNames());
     }
 
-    @Override
+     @Override
+    public boolean equalsAsAction(PossibleAction pa) {
+        if (!(pa instanceof ReachDestinations)) return false;
+        ReachDestinations rd = (ReachDestinations) pa;
+        return possibleCompanyNames.equals(rd.possibleCompanyNames)
+                && reachedCompanyNames.equals(rd.reachedCompanyNames);
+    }
+
+   @Override
     public String toString() {
         StringBuffer text = new StringBuffer();
         text.append("ReachDestinations: ").append(possibleCompanyNames);

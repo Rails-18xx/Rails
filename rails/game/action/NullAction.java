@@ -37,13 +37,18 @@ public class NullAction extends PossibleAction {
     }
 
     @Override
-    public boolean equals(PossibleAction action) {
+    public boolean equalsAsOption(PossibleAction action) {
         if (!(action instanceof NullAction)) return false;
         NullAction a = (NullAction) action;
         return a.mode == mode;
     }
 
     @Override
+    public boolean equalsAsAction(PossibleAction action) {
+        return equalsAsOption(action);
+    }
+
+   @Override
     public String toString() {
         if (optionalLabel != null) return optionalLabel;
         return name[mode];
