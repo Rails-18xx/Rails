@@ -319,21 +319,6 @@ public class GUIHex implements ViewObject {
         return polygon;
     }
 
-    public void setNeighbor(int i, GUIHex hex) {
-        if (i >= 0 && i < 6) {
-            neighbors[i] = hex;
-            getHexModel().setNeighbor(i, hex.getHexModel());
-        }
-    }
-
-    public GUIHex getNeighbor(int i) {
-        if (i < 0 || i > 6) {
-            return null;
-        } else {
-            return neighbors[i];
-        }
-    }
-
     public void paint(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
 
@@ -704,9 +689,13 @@ public class GUIHex implements ViewObject {
         if (Util.hasValue(name)) {
             tt.append(" (").append(name).append(")");
         }
+        // For debugging: display x,y-coordinates
+        //tt.append("<small> x=" + x + " y="+y+"</small>");
+        
         tt.append("<br><b>Tile</b>: ").append(currentTile.getId());
-        // TEMPORARY
-        tt.append("<small> rot=" + currentTileOrientation + "</small>");
+        
+        // For debugging: display rotation
+        //tt.append("<small> rot=" + currentTileOrientation + "</small>");
 
         if (model.hasOffBoardValues()) {
             tt.append("<br>Value ");

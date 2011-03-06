@@ -356,6 +356,7 @@ StationHolder, TokenHolder {
     public void setNeighbor(int orientation, MapHex neighbour) {
         orientation %= 6;
         neighbours[orientation] = neighbour;
+        //log.debug("+++ Hex="+getName()+":"+orientation+"->"+neighbour.getName());
     }
 
     public MapHex getNeighbor(int orientation) {

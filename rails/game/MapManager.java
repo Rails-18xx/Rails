@@ -124,21 +124,16 @@ public class MapManager implements ConfigurableComponentI {
         }
 
         // Initialise the neighbours
+        int ii, jj;
         for (i = minX; i <= maxX; i++) {
             for (j = minY; j <= maxY; j++) {
                 if ((hex = hexes[i][j]) == null) continue;
 
                 for (k = 0; k < 6; k++) {
-                    if (tileOrientation == MapHex.EW) {
-                        dx = (j % 2 == 0 ? xYEvenDeltaEW[k] : xYOddDeltaEW[k]);
-                        dy = yDeltaEW[k];
-                    } else {
-                        dx = xDeltaNS[k];
-                        dy = (i % 2 == 0 ? yXEvenDeltaNS[k] : yXOddDeltaNS[k]);
-                    }
-                    if (i + dx >= minX && i + dx <= maxX && j + dy >= minY
-                        && j + dy <= maxY
-                        && (nb = hexes[i + dx][j + dy]) != null) {
+                    ii = getAdjacentX (i, j, k);
+                    jj = getAdjacentY (i, j, k);
+                    if (ii >= minX && ii <= maxX && jj >= minY && jj <= maxY
+                            && (nb = hexes[ii][jj]) != null) {
                         if (hex.isNeighbour(nb, k)
                             && nb.isNeighbour(hex, k + 3)) {
                             hex.setNeighbor(k, nb);
@@ -146,7 +141,6 @@ public class MapManager implements ConfigurableComponentI {
                         }
                         if (hex.isImpassable(nb) || nb.isImpassable(hex)) {
                             hex.addImpassableSide(k);
-                            //nb.addImpassableSide(k+3);
                         }
                     }
 
@@ -176,6 +170,25 @@ public class MapManager implements ConfigurableComponentI {
      */
     public boolean lettersGoHorizontal() {
         return lettersGoHorizontal;
+    }
+    
+    public int getAdjacentX (int x, int y, int orientation) {
+        
+         if (tileOrientation == MapHex.EW) {
+            return x + (y % 2 == 0 ? xYEvenDeltaEW[orientation] : xYOddDeltaEW[orientation]);
+         } else {
+            return x + xDeltaNS[orientation];
+         }
+    }
+    
+    public int getAdjacentY (int x, int y, int orientation) {
+        
+        if (tileOrientation == MapHex.EW) {
+            return y + yDeltaEW[orientation];
+        } else {
+            return y + ((x % 2 == 0) == letterAHasEvenNumbers ? 
+                    yXEvenDeltaNS[orientation] : yXOddDeltaNS[orientation]);
+        }
     }
 
     /**
