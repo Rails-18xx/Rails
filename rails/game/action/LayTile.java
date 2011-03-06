@@ -250,7 +250,8 @@ public class LayTile extends PossibleORAction {
         return (a.laidTileId == laidTileId
                && a.chosenHexName.equals(chosenHexName)
                && a.orientation == orientation
-               && a.relaidBaseTokensString.equals(relaidBaseTokensString));
+               && (a.relaidBaseTokensString == null && relaidBaseTokensString == null
+                       || a.relaidBaseTokensString.equals(relaidBaseTokensString)));
     }
 
     @Override

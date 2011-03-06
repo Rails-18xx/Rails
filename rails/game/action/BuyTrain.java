@@ -254,7 +254,9 @@ public class BuyTrain extends PossibleORAction {
         if (!(action instanceof BuyTrain)) return false;
         BuyTrain a = (BuyTrain) action;
         return a.getTrain() == getTrain() && a.from == from && a.pricePaid == pricePaid
-               && a.addedCash == addedCash && a.exchangedTrainUniqueId.equals(exchangedTrainUniqueId);
+               && a.addedCash == addedCash 
+               && (a.exchangedTrainUniqueId == null && exchangedTrainUniqueId == null
+                       || a.exchangedTrainUniqueId.equals(exchangedTrainUniqueId));
     }
 
     /** Deserialize */
