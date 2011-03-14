@@ -247,7 +247,29 @@ Known Issues:
         <Option name="UnlimitedTiles" type="toggle" default="no"/>
         <Option name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
   </Game>
-	
+  <Game name="18JR">
+    <Note>Prototype</Note>
+    <Description>18JR</Description>
+    <Players minimum="3" maximum="5" />
+	<Option name="Variant" values="Basegame,Cotton Port" default="Basegame" />
+	<Option name="NoMapMode" type="toggle" default="no" />
+	<Option name="RouteAwareness" values="Highlight,Deactivate" default="Deactivate" />
+	<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Deactivate" />
+	<Option name="BeginnerGame" type="toggle" default="no" />
+	<Option name="WithOptional6Train" type="toggle" default="no"/>
+	<Option name="UnlimitedTopTrains" parm="D" type="toggle" default="no"/>
+	<Option name="UnlimitedTiles" type="toggle" default="no"/>
+	<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
+	<Option name="TwoPlayersCertLimit70Percent" type="toggle" default="yes"/>
+	<Option name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
+
+  </Game>
+  <Game name="18VA">
+    <Note>Prototype</Note>
+    <Description>18VA</Description>
+    <Players minimum="2" maximum="5" />
+  </Game>
+    	
 	<Credits>Rails is a computer implementation of a number of railroad board games,
 that are collectively known as the "18xx" railway game system.		
 Rails is a Sourceforge project.
