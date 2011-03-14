@@ -15144,5 +15144,181 @@ object TTilesWrapper
           JunType = jtWhistlestop
           Revenue = 20
         end>
+    end
+    item
+      Code = -911
+      LongName = 'OMCity-1'
+      Level = tlOffMap
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+        end>
+    end
+    item
+      Code = -1911
+      LongName = 'OM1Slot-1'
+      Level = tlOffMap
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+        end>
+    end
+    item
+      Code = -1912
+      LongName = 'OM1Slot-2'
+      Level = tlOffMap
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+        end>
+    end
+    item
+      Code = -1913
+      LongName = 'OM1Slot-3'
+      Level = tlOffMap
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+        end>
+    end
+    item
+      Code = -1921
+      LongName = 'OM2Slot-1'
+      Level = tlOffMap
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end>
+      Junctions = <
+        item
+          JunType = jtDoubleCity
+        end>
+    end
+    item
+      Code = -1922
+      LongName = 'OM2Slot-2'
+      Level = tlOffMap
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end>
+      Junctions = <
+        item
+          JunType = jtDoubleCity
+        end>
+    end
+    item
+      Code = -1923
+      LongName = 'OM2Slot-3'
+      Level = tlOffMap
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end>
+      Junctions = <
+        item
+          JunType = jtDoubleCity
+        end>
+    end
+    item
+      Code = -4001
+      LongName = 'Port-1'
+      Level = tlOffMap
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end>
+      Junctions = <
+        item
+          JunType = jtWhistlestop
+        end>
+    end
+    item
+      Code = -4002
+      LongName = 'Port-2'
+      Level = tlOffMap
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end>
+      Junctions = <
+        item
+          JunType = jtWhistlestop
+        end>
+    end
+    item
+      Code = -4003
+      LongName = 'Port-3'
+      Level = tlOffMap
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end>
+      Junctions = <
+        item
+          JunType = jtWhistlestop
+        end>
     end>
 end
