@@ -4,7 +4,7 @@
 	<Hex name="B5" tile="-10" city="Hagerstown"/>
 	<Hex name="B7" tile="0"/>
 	<Hex name="C4" tile="0"/>
-	<Hex name="C6" tile="-10" city="Harper's Ferry" impassable="D7"/>
+	<Hex name="C6" tile="-10" city="Harper's Ferry" impassable="D5,E6"/>
 	<Hex name="C8" tile="-10" city="Baltimore" label="P"/>
 	<Hex name="D3" tile="-10" city="Cumberland"/>
 	<Hex name="D5" tile="0"/>
@@ -36,11 +36,11 @@
 	<Hex name="L1" tile="-1922" city="Roanoke"/>
 	<Hex name="L3" tile="-10" city="Lynchburg"/>
 	<Hex name="L5" tile="0"/>
-	<Hex name="L7" tile="0" impassable="M6"/>
+	<Hex name="L7" tile="0" impassable="M6,N7"/>
 	<Hex name="M2" tile="-1"/>
 	<Hex name="M4" tile="0"/>
 	<Hex name="M6" tile="-10" city="Petersburg" label="P"/>
-	<Hex name="M8" tile="57" city="Newport News" impassable="N7"/>
+	<Hex name="M8" tile="57" orientation="2" city="Newport News" impassable="N7,O8"/>
 	<Hex name="N3" tile="0"/>
 	<Hex name="N5" tile="0"/>
 	<Hex name="N7" tile="0"/>

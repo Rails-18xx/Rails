@@ -114,7 +114,15 @@ public class GUIHex implements ViewObject {
         tokenDiameter = (int)Math.round(NORMAL_TOKEN_SIZE * zoomFactor);
 
         if (hexMap.getMapManager().getTileOrientation() == MapHex.EW) {
-//            len = scale;
+            /* The numbering is unusual:
+             *         0
+             *        / \
+             *       5   1
+             *       |   |
+             *       4   2
+             *        \ /
+             *         3
+             */
             xVertex[0] = cx + SQRT3 * scale;
             yVertex[0] = cy + scale;
             xVertex[1] = cx + 2 * SQRT3 * scale;
@@ -130,7 +138,13 @@ public class GUIHex implements ViewObject {
 
             baseRotation = 30; // degrees
         } else {
-//            len = scale / 3.0;
+            /* The numbering is unusual:
+             *      4--3
+             *     /    \
+             *    5      2
+             *     \    /
+             *      0--1
+             */
             xVertex[0] = cx;
             yVertex[0] = cy;
             xVertex[1] = cx + 2 * scale;
@@ -230,10 +244,14 @@ public class GUIHex implements ViewObject {
     }
 
     public void addBar (int orientation) {
+        // NOTE: orientation here is its normal value in Rails + 3 (mod 6).
         orientation %= 6;
         if (barStartPoints == null) barStartPoints = new ArrayList<Integer>(2);
-        int offset = hexMap.getMapManager().getTileOrientation() == MapHex.EW ? 0 : 4;
-        barStartPoints.add((offset+5-orientation)%6);
+        if (hexMap.getMapManager().getTileOrientation() == MapHex.EW) {
+            barStartPoints.add((5-orientation)%6);
+        } else {
+            barStartPoints.add((3+orientation)%6);
+        }
     }
 
     public Rectangle getBounds() {

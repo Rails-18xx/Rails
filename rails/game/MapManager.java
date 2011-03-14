@@ -135,7 +135,7 @@ public class MapManager implements ConfigurableComponentI {
                     if (ii >= minX && ii <= maxX && jj >= minY && jj <= maxY
                             && (nb = hexes[ii][jj]) != null) {
                         if (hex.isNeighbour(nb, k)
-                            && nb.isNeighbour(hex, k + 3)) {
+                                && nb.isNeighbour(hex, k + 3)) {
                             hex.setNeighbor(k, nb);
                             nb.setNeighbor(k + 3, hex);
                         }

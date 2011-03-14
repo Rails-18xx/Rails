@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <ComponentManager>
 	<Component name="GameManager" class="rails.game.GameManager">
-		<Game name="1830"/>
+		<Game name="18VA"/>
 		<!-- GAME OPTIONS must have:
 			- a name, which must also exist as an entry in LocalText.properties,
 			- optionally 'type="toggle"', which has the effect that the
@@ -15,7 +15,6 @@
 		<!-- The options in Game.xml are not currently used.
 			 See GamesList.xml for the real ones.
 		--> 
-		<GameOption name="Variant" values="Basegame,Pere Marquette" default="Basegame" />
 		<GameParameters>
 			<PlayerShareLimit percentage="60">
 				<!-- Option "NumberOfPlayers" is automatically set 
