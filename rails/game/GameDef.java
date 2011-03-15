@@ -18,7 +18,8 @@ public class GameDef {
         TREASURY_SHARE_LIMIT(50),
         FIXED_PRICE_TRAINS_BETWEEN_PRESIDENTS(false),
         SKIP_FIRST_STOCK_ROUND(false),
-        NO_SALE_OF_JUST_BOUGHT_CERT(false);
+        NO_SALE_OF_JUST_BOUGHT_CERT(false),
+        REMOVE_TRAIN_BEFORE_SR(false);
 
         private Object defaultValue;
 

@@ -642,6 +642,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
                 if (bank.isBroken() && gameEndsAfterSetOfORs) {
                     finishGame();
                 } else {
+                    ((OperatingRound)round).checkForeignSales();
                     startStockRound();
                 }
             }

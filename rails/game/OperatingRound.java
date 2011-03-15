@@ -7,8 +7,7 @@ import rails.common.GuiDef;
 import rails.game.action.*;
 import rails.game.correct.ClosePrivate;
 import rails.game.correct.OperatingCost;
-import rails.game.move.CashMove;
-import rails.game.move.MapChange;
+import rails.game.move.*;
 import rails.game.special.*;
 import rails.game.state.*;
 import rails.util.LocalText;
@@ -1822,6 +1821,7 @@ public class OperatingRound extends Round implements Observer {
         operatingCompany.get().buyTrain(train, price);
         if (oldHolder == ipo) {
             train.getType().addToBoughtFromIPO();
+            trainManager.setAnyTrainBought(true);
             // Clone the train if infinitely available
             if (train.getType().hasInfiniteAmount()) {
                 ipo.addTrain(train.getType().cloneTrain());
@@ -2834,7 +2834,7 @@ public class OperatingRound extends Round implements Observer {
 
     public void payLoanInterest () {
         int amount = operatingCompany.get().getCurrentLoanValue()
-        * operatingCompany.get().getLoanInterestPct() / 100;
+                * operatingCompany.get().getLoanInterestPct() / 100;
         new CashMove (operatingCompany.get(), bank, amount);
         DisplayBuffer.add(LocalText.getText("CompanyPaysLoanInterest",
                 operatingCompany.get().getName(),
@@ -2844,6 +2844,15 @@ public class OperatingRound extends Round implements Observer {
                 Bank.format(operatingCompany.get().getValuePerLoan())));
     }
 
+    public void checkForeignSales() {
+        if (getGameParameterAsBoolean(GameDef.Parm.REMOVE_TRAIN_BEFORE_SR)
+                && trainManager.isAnyTrainBought()) {
+            TrainI train = trainManager.getAvailableNewTrains().get(0);
+            if (train.getType().hasInfiniteAmount()) return;
+            new ObjectMove (train, ipo, scrapHeap);
+            ReportBuffer.add(LocalText.getText("RemoveTrain", train.getName()));
+        }
+    }
 
     /* TODO This is just a start of a possible approach to a Help system */
     @Override
