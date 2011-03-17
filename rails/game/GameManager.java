@@ -37,6 +37,8 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     protected Class<? extends StockRound> stockRoundClass = StockRound.class;
     protected Class<? extends OperatingRound> operatingRoundClass =
         OperatingRound.class;
+    protected Class<? extends ShareSellingRound> shareSellingRoundClass
+        = ShareSellingRound.class;
 
     // Variable UI Class names
     protected String gameUIManagerClassName = GuiDef.getDefaultClassName(GuiDef.ClassName.GAME_UI_MANAGER);
@@ -176,7 +178,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     protected List<String> nextPlayerMessages = new ArrayList<String>();
 
     /**
-     * The ReportBuffer collectes messages to be shown in the Game Report.
+     * The ReportBuffer collects messages to be shown in the Game Report.
      */
     protected ReportBuffer reportBuffer;
 
@@ -356,6 +358,20 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
                 }
             }
 
+            // ShareSellingRound class
+            Tag ssrTag = gameParmTag.getChild("ShareSellingRound");
+            if (ssrTag != null) {
+                String ssrClassName =
+                    ssrTag.getAttributeAsString("class", "rails.game.ShareSellingRound");
+                try {
+                    shareSellingRoundClass =
+                        Class.forName(ssrClassName).asSubclass(ShareSellingRound.class);
+                } catch (ClassNotFoundException e) {
+                    throw new ConfigurationException("Cannot find class "
+                            + ssrClassName, e);
+                }
+            }
+            
             /* Max. % of shares of one company that a player may hold */
             Tag shareLimitTag = gameParmTag.getChild("PlayerShareLimit");
             if (shareLimitTag != null) {
@@ -756,7 +772,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         interruptedRound = getCurrentRound();
 
         // check if other companies can be dumped
-        createRound (ShareSellingRound.class, interruptedRound)
+        createRound (shareSellingRoundClass, interruptedRound)
             .start(player, cashToRaise, cashNeedingCompany,
                     !problemDumpOtherCompanies || forcedSellingCompanyDump);
         // the last parameter indicates if the dump of other companies is allowed, either this is explicit or
