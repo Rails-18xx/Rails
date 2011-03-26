@@ -4,7 +4,7 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.io.File;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -60,11 +60,20 @@ public class GameUIManager implements DialogOwner {
     protected String saveDirectory;
     protected String savePattern;
     protected String saveExtension;
+    protected String savePrefix;
     protected String saveSuffixSpec = "";
     protected String saveSuffix = "";
     protected String providedName = null;
     protected SimpleDateFormat saveDateTimeFormat;
     protected File lastFile, lastDirectory;
+    
+    protected boolean autoSaveLoadInitialized = false;
+    protected int autoSaveLoadStatus = 0;
+    protected int autoSaveLoadPollingInterval = 30;
+    protected AutoLoadPoller autoLoadPoller = null;
+    protected boolean myTurn = true;
+    protected String lastSavedFilenameFilepath;
+    protected String lastSavedFilename = "";
 
     protected WindowSettings windowSettings;
 
@@ -88,6 +97,7 @@ public class GameUIManager implements DialogOwner {
         instance = this;
         this.gameManager = gameManager;
         uiHints = gameManager.getUIHints();
+        savePrefix = gameManager.getGameName();
 
         initWindowSettings();
         initSaveSettings();
@@ -133,7 +143,9 @@ public class GameUIManager implements DialogOwner {
         }
         saveSuffixSpec = Config.get("save.filename.suffix");
         if (Util.hasValue(saveSuffixSpec) && !saveSuffixSpec.equals(NEXT_PLAYER_SUFFIX)) {
-            saveSuffix = "_" + saveSuffixSpec;
+            saveSuffix = saveSuffixSpec;
+        } else {
+            saveSuffix = getPlayerNames().get(0);
         }
     }
 
@@ -241,29 +253,25 @@ public class GameUIManager implements DialogOwner {
             // Follow-up the result
             log.debug("==Result from server: " + result);
             reportWindow.updateLog();
-            /*
-            if (DisplayBuffer.getAutoDisplay()) {
-                if (displayServerMessage()) {
-                    // Interrupt processing.
-                    // Will be continued via dialogActionPerformed().
-                    return true;
+            
+            // Process any autosaving and turn relinquishing, resp. autoloading and turn pickup
+            if (autoSaveLoadInitialized && autoSaveLoadStatus != AutoLoadPoller.OFF) {
+                Player newPlayer = getCurrentPlayer();
+                boolean wasMyTurn = myTurn;
+                myTurn = newPlayer.getName().equals(saveSuffix);
+                if (newPlayer != player) {
+                    if (wasMyTurn && !myTurn) {
+                        log.info ("Relinquishing turn to "+newPlayer.getName());
+                        autoSave (newPlayer.getName());
+                        autoLoadPoller.setLastSavedFilename(lastSavedFilename);
+                        autoLoadPoller.setActive(true);
+                    } else if (!wasMyTurn && myTurn) {
+                        log.info ("Resuming turn as "+saveSuffix);
+                        autoLoadPoller.setActive(false);
+                    }
                 }
-            }*/
+            }
         }
-
-        // End of game checks
-//        if (gameManager.isGameOver()) {
-//
-//            statusWindow.reportGameOver();
-//
-//            return true;
-//
-//        }
-//        else if (gameManager.getBank().isJustBroken()) {
-//
-//            statusWindow.reportBankBroken();
-//
-//        }
 
         // Check in which round we are now,
         // and make sure that the right window is active.
@@ -450,19 +458,19 @@ public class GameUIManager implements DialogOwner {
         if (StartRoundWindow.class.isAssignableFrom(activeWindow.getClass())) {
 
             log.debug("Updating Start round window");
-            startRoundWindow.updateStatus();
+            startRoundWindow.updateStatus(myTurn);
             startRoundWindow.setSRPlayerTurn(startRound.getCurrentPlayerIndex());
 
         } else if (StatusWindow.class.isAssignableFrom(activeWindow.getClass())) {
 //        } else {
 
             log.debug("Updating Stock (status) round window");
-            statusWindow.updateStatus();
+            statusWindow.updateStatus(myTurn);
 
         } else if (ORWindow.class.isAssignableFrom(activeWindow.getClass())) {
 
             log.debug("Updating Operating round window");
-            orUIManager.updateStatus();
+            orUIManager.updateStatus(myTurn);
         }
 
         updateStatus(activeWindow);
@@ -648,15 +656,47 @@ public class GameUIManager implements DialogOwner {
                     RepayLoans action = (RepayLoans) currentDialogAction;
                     int selected = dialog.getSelectedOption();
                     action.setNumberTaken(action.getMinNumber() + selected);
+                    
             } else if (currentDialog instanceof MessageDialog) {
                 // Nothing to do
                 currentDialogAction = null; // Should already be null
+                
+            } else if (currentDialog instanceof AutoSaveLoadDialog) {
+                
+                autoSaveLoadGame2 ((AutoSaveLoadDialog)currentDialog);
+
             } else {
                 return;
             }
         }
 
-        processOnServer(currentDialogAction);
+        if (currentDialogAction != null) processOnServer(currentDialogAction);
+
+    }
+    
+    protected void autoSave (String newPlayer) {
+        lastSavedFilename = savePrefix + "_"
+                    + saveDateTimeFormat.format(new Date()) + "_"
+                    + newPlayer + "."
+                    + saveExtension;
+        GameAction saveAction = new GameAction(GameAction.SAVE);
+        saveAction.setFilepath(saveDirectory + "/" + lastSavedFilename);
+        log.debug("Autosaving to "+lastSavedFilename);
+        processOnServer (saveAction);
+        
+        try {
+            File f = new File (lastSavedFilenameFilepath);
+            PrintWriter out = new PrintWriter (new FileWriter (f));
+            out.println (lastSavedFilename);
+            out.close();
+        } catch (IOException e) {
+            log.error ("Exception whilst autosaving file '"+lastSavedFilenameFilepath+"'", e);
+        }
+        
+    }
+    
+    protected boolean pollingIsOn () {
+        return autoLoadPoller != null && autoLoadPoller.getStatus() == AutoLoadPoller.ON;
     }
 
     /** Stub, can be overridden by subclasses */
@@ -713,8 +753,8 @@ public class GameUIManager implements DialogOwner {
         if (providedName != null) {
             filename = providedName;
         } else {
-            filename = saveDirectory + "/" + gameManager.getGameName() + "_"
-            + saveDateTimeFormat.format(new Date())
+            filename = saveDirectory + "/" + savePrefix + "_"
+            + saveDateTimeFormat.format(new Date())+ "_"
             + saveSuffix + ".txt";
         }
 
@@ -747,11 +787,11 @@ public class GameUIManager implements DialogOwner {
             filename = providedName;
         } else {
             if (NEXT_PLAYER_SUFFIX.equals(saveSuffixSpec)) {
-                saveSuffix = "_" + gameManager.getCurrentPlayer().getName().replaceAll("[^-\\w\\.]", "_");
+                saveSuffix = gameManager.getCurrentPlayer().getName().replaceAll("[^-\\w\\.]", "_");
             }
             filename =
-                    saveDirectory + "/" + gameManager.getGameName() + "_"
-                            + saveDateTimeFormat.format(new Date())
+                    saveDirectory + "/" + savePrefix + "_"
+                            + saveDateTimeFormat.format(new Date()) + "_"
                             + saveSuffix + "."
                             + saveExtension;
         }
@@ -767,7 +807,17 @@ public class GameUIManager implements DialogOwner {
             String filepath = selectedFile.getPath();
             saveDirectory = selectedFile.getParent();
             if (!selectedFile.getName().equalsIgnoreCase(proposedFile.getName())) {
-                providedName = filepath;
+                // User has not accepted the default name but entered a different one.
+                // Check the new name. If only the prefix has changed, only remember that part.
+                String[] proposedParts = proposedFile.getName().split("_", 2);
+                String[] selectedParts = selectedFile.getName().split("_", 2);
+                if (!proposedParts[0].equals(selectedParts[0])
+                        && proposedParts[1].equals(selectedParts[1])) {
+                    savePrefix = selectedParts[0];
+                } else {
+                // Otherwise, remember and keep using the whole filename.
+                    providedName = filepath;
+                }
             }
             saveAction.setFilepath(filepath);
             processOnServer(saveAction);
@@ -791,7 +841,81 @@ public class GameUIManager implements DialogOwner {
 
     }
     
-   public void setSaveDirectory(String saveDirectory) {
+    public void autoSaveLoadGame () {
+        
+        AutoSaveLoadDialog dialog = new AutoSaveLoadDialog (this,
+                        autoSaveLoadStatus,
+                        autoSaveLoadPollingInterval);
+        setCurrentDialog(dialog, null);
+    }
+    
+    public void autoSaveLoadGame2 (AutoSaveLoadDialog dialog) {
+        
+        autoSaveLoadStatus = dialog.getStatus();
+        autoSaveLoadPollingInterval = dialog.getInterval();
+        
+        if (autoLoadPoller == null && autoSaveLoadStatus > 0) {
+            autoLoadPoller = new AutoLoadPoller (this, saveDirectory, savePrefix, 
+                    saveSuffix, autoSaveLoadStatus, autoSaveLoadPollingInterval);
+            autoLoadPoller.start();
+        } else if (autoLoadPoller != null) {
+            autoLoadPoller.setStatus(autoSaveLoadStatus);
+            autoLoadPoller.setPollingInterval(autoSaveLoadPollingInterval);
+        }
+        log.debug("AutoSaveLoad parameters: status="+autoSaveLoadStatus
+                +" interval="+autoSaveLoadPollingInterval);
+        
+        if (autoLoadPoller != null && autoSaveLoadStatus != AutoLoadPoller.OFF
+                && !autoSaveLoadInitialized) {
+                
+            /* The first time (only) we use the normal save process,
+             * so the player can select a directory, and change
+             * the prefix if so desired. 
+             */
+            GameAction saveAction = new GameAction(GameAction.SAVE);
+            saveGame (saveAction);
+            File lastSavedFile = new File (saveAction.getFilepath());
+            saveDirectory = lastSavedFile.getParentFile().getPath();
+            
+            /* Now also save the "last saved file" file */
+            String lastSavedFilename = lastSavedFile.getName();
+            lastSavedFilenameFilepath = saveDirectory + "/" + savePrefix + ".last_rails";
+            try {
+                File f = new File (lastSavedFilenameFilepath);
+                PrintWriter out = new PrintWriter (new FileWriter (f));
+                out.println (lastSavedFilename);
+                out.close();
+                autoSaveLoadInitialized = true;
+            } catch (IOException e) {
+                log.error ("Exception whilst creating .last_rails file '" 
+                        + lastSavedFilenameFilepath + "'", e);
+            }
+        }
+            
+        myTurn = getCurrentPlayer().getName().equals(saveSuffix);
+        
+        if (!myTurn) {
+            // Start autoload polling
+            autoLoadPoller.setActive(autoSaveLoadStatus == AutoLoadPoller.ON && !myTurn);
+            log.debug("MyTurn="+myTurn+" poller status="+autoLoadPoller.getStatus()
+                    +" active="+autoLoadPoller.isActive());
+
+        } else {
+            myTurn = true;
+            log.debug("MyTurn="+myTurn);
+        }
+
+    }
+    
+    public boolean isMyTurn() {
+        return myTurn;
+    }
+
+    public void setMyTurn(boolean myTurn) {
+        this.myTurn = myTurn;
+    }
+
+    public void setSaveDirectory(String saveDirectory) {
         this.saveDirectory = saveDirectory;
     }
 

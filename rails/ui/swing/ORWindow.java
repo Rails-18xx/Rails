@@ -192,12 +192,12 @@ public class ORWindow extends JFrame implements ActionPerformer {
         requestFocus();
     }
 
-    public void updateStatus() {
+    public void updateStatus(boolean myTurn) {
         // Safety check. Do nothing if this method is called outside Operating Rounds,
         // for instance when a token is exchanged during a Stock Round.
         if (!(gameUIManager.getCurrentRound() instanceof OperatingRound)) return;
 
-        orUIManager.updateStatus();
+        orUIManager.updateStatus(myTurn);
         requestFocus();
     }
 

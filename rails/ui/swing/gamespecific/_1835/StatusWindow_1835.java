@@ -31,10 +31,10 @@ public class StatusWindow_1835 extends StatusWindow {
     }
 
     @Override
-    public void updateStatus() {
+    public void updateStatus(boolean myTurn) {
         RoundI currentRound = gameUIManager.getCurrentRound();
         if (!(currentRound instanceof PrussianFormationRound)) {
-            super.updateStatus();
+            super.updateStatus(myTurn);
         } else if (possibleActions.contains(FoldIntoPrussian.class)) {
             immediateAction = possibleActions.getType(FoldIntoPrussian.class).get(0);
         } else if (possibleActions.contains(DiscardTrain.class)) {

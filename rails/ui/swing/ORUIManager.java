@@ -498,7 +498,7 @@ public class ORUIManager implements DialogOwner {
             } else {
                 log.debug("Allocation is unknown, asking for it");
                 setLocalStep(SELECT_PAYOUT);
-                updateStatus(action);
+                updateStatus(action, true);
 
                 // Locally update revenue if we don't inform the server yet.
                 orPanel.setRevenue(orCompIndex, amount);
@@ -1443,13 +1443,13 @@ public class ORUIManager implements DialogOwner {
     }
 
 
-    public void updateStatus() {
+    public void updateStatus(boolean myTurn) {
 
-        updateStatus(null);
+        updateStatus(null, myTurn);
 
     }
 
-    public void updateStatus(PossibleAction actionToComplete) {
+    public void updateStatus(PossibleAction actionToComplete, boolean myTurn) {
 
         mapRelatedActions.clear();
 
@@ -1457,6 +1457,8 @@ public class ORUIManager implements DialogOwner {
 
         messagePanel.setMessage(null);
 
+        if (!myTurn) return;
+        
         if (actionToComplete != null) {
             log.debug("ExecutedAction: " + actionToComplete);
         }

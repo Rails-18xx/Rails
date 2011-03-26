@@ -38,6 +38,7 @@ public abstract class PossibleAction implements Serializable {
     public PossibleAction() {
 
         gameManager = GameManager.getInstance();
+        if (gameManager == null) return;  // TODO If created in client ?!?!
         Player player = gameManager.getCurrentPlayer();
         if (player != null) {
             playerName = player.getName();

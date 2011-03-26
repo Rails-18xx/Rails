@@ -5,7 +5,7 @@ import rails.game.action.PossibleAction;
 
 public interface ActionPerformer {
 
-    public void updateStatus();
+    public void updateStatus(boolean myTurn);
 
     public boolean process(PossibleAction action);
 

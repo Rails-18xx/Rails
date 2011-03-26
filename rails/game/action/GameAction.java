@@ -13,8 +13,8 @@ public class GameAction extends PossibleAction {
     public static final int RELOAD = 6;
     public static final int MAX_MODE = 6;
 
-    private String[] name =
-            new String[] { "Save", "Load", "Undo", "Undo!", "Redo", "Export", "Reload" };
+    private static String[] names =
+            new String[] { "Save", "Load", "Undo", "Undo!", "Redo", "Export", "Reload"};
 
     // Server-side settings
     protected int mode = -1;
@@ -65,6 +65,9 @@ public class GameAction extends PossibleAction {
     }
 
     public String toString() {
-        return name[mode];
+        StringBuilder b = new StringBuilder(names[mode]);
+        if (filepath != null) b.append(" path="+filepath);
+        if (moveStackIndex > -1) b.append (" index="+moveStackIndex);
+        return b.toString();
     }
 }

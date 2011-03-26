@@ -31,6 +31,8 @@ public class StatusWindow extends JFrame implements ActionListener,
     protected static final String SAVE_CMD = "Save";
 
     protected static final String RELOAD_CMD = "Reload";
+    
+    protected static final String AUTOSAVELOAD_CMD = "AutoSaveLoad";
 
     protected static final String EXPORT_CMD = "Export";
 
@@ -80,8 +82,7 @@ public class StatusWindow extends JFrame implements ActionListener,
 
     private JMenuItem menuItem;
 
-    private ActionMenuItem saveItem;
-    private ActionMenuItem reloadItem;
+    private ActionMenuItem actionMenuItem;
 
     private ActionMenuItem undoItem, forcedUndoItem, redoItem, redoItem2;
 
@@ -109,27 +110,36 @@ public class StatusWindow extends JFrame implements ActionListener,
         moderatorMenu.setMnemonic(KeyEvent.VK_M);
         specialMenu.setMnemonic(KeyEvent.VK_S);
 
-        saveItem = new ActionMenuItem(LocalText.getText("SAVE"));
-        saveItem.setActionCommand(SAVE_CMD);
-        saveItem.setMnemonic(KeyEvent.VK_S);
-        saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
+        actionMenuItem = new ActionMenuItem(LocalText.getText("SAVE"));
+        actionMenuItem.setActionCommand(SAVE_CMD);
+        actionMenuItem.setMnemonic(KeyEvent.VK_S);
+        actionMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
                 ActionEvent.ALT_MASK));
-        saveItem.addActionListener(this);
-        saveItem.setEnabled(true);
-        saveItem.setPossibleAction(new GameAction(GameAction.SAVE));
-        fileMenu.add(saveItem);
+        actionMenuItem.addActionListener(this);
+        actionMenuItem.setEnabled(true);
+        actionMenuItem.setPossibleAction(new GameAction(GameAction.SAVE));
+        fileMenu.add(actionMenuItem);
 
-        reloadItem = new ActionMenuItem(LocalText.getText("Reload"));
-        reloadItem.setActionCommand(RELOAD_CMD);
-        reloadItem.setMnemonic(KeyEvent.VK_R);
-        reloadItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R,
+        actionMenuItem = new ActionMenuItem(LocalText.getText("Reload"));
+        actionMenuItem.setActionCommand(RELOAD_CMD);
+        actionMenuItem.setMnemonic(KeyEvent.VK_R);
+        actionMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R,
                 ActionEvent.ALT_MASK));
-        reloadItem.addActionListener(this);
-        reloadItem.setEnabled(true);
-        reloadItem.setPossibleAction(new GameAction(GameAction.RELOAD));
-        fileMenu.add(reloadItem);
+        actionMenuItem.addActionListener(this);
+        actionMenuItem.setEnabled(true);
+        actionMenuItem.setPossibleAction(new GameAction(GameAction.RELOAD));
+        fileMenu.add(actionMenuItem);
 
-        // export menu item
+        menuItem = new JMenuItem(LocalText.getText("AutoSaveLoad"));
+        menuItem.setActionCommand(AUTOSAVELOAD_CMD);
+        menuItem.setMnemonic(KeyEvent.VK_A);
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A,
+                ActionEvent.ALT_MASK));
+        menuItem.addActionListener(this);
+        menuItem.setEnabled(true);
+        fileMenu.add(menuItem);
+
+       // export menu item
 //        exportItem = new ActionMenuItem(LocalText.getText("EXPORT"));
 //        exportItem.setActionCommand(EXPORT_CMD);
 //        exportItem.addActionListener(this);
@@ -182,7 +192,7 @@ public class StatusWindow extends JFrame implements ActionListener,
         menuItem.addActionListener(this);
         optMenu.add(menuItem);
 
-        // new config menu only for non legacy configgfiles
+        // new config menu only for non legacy configfiles
         if (!Config.isLegacyConfigFile()) {
             menuItem = new JCheckBoxMenuItem(LocalText.getText("CONFIG"));
             menuItem.setName(CONFIG_CMD);
@@ -289,9 +299,6 @@ public class StatusWindow extends JFrame implements ActionListener,
 
         setSize(800, 300);
 
-//        Rectangle bounds = graphicsConfiguration.getBounds();
-//        setLocation(bounds.x+ 25, bounds.y + 450);
-
         buttonPanel.setBorder(BorderFactory.createEtchedBorder());
         buttonPanel.setOpaque(false);
 
@@ -350,17 +357,13 @@ public class StatusWindow extends JFrame implements ActionListener,
         forcedUndoItem.setEnabled(false);
         redoItem.setEnabled(false);
         redoItem2.setEnabled(false);
-        // SAVE is always enabled
-
+        // SAVE, RELOAD, AUTOSAVELOAD are always enabled
+        
         List<GameAction> gameActions =
                 possibleActions.getType(GameAction.class);
         if (gameActions != null) {
             for (GameAction na : gameActions) {
                 switch (na.getMode()) {
-                // SAVE is now enabled by default
-                //case GameAction.SAVE:
-                //    saveItem.setPossibleAction(na);
-                //    break;
                 case GameAction.UNDO:
                     undoItem.setEnabled(true);
                     undoItem.setPossibleAction(na);
@@ -425,11 +428,13 @@ public class StatusWindow extends JFrame implements ActionListener,
 
     }
 
-    public void updateStatus() {
+    public void updateStatus(boolean myTurn) {
 
         if (!(currentRound instanceof StockRound || currentRound instanceof EndOfGameRound))
             return;
 
+        if (!myTurn) return;
+        
         // Moved here from StatusWindow_1856. It's getting generic...
         if (possibleActions.contains(DiscardTrain.class)) {
             immediateAction = possibleActions.getType(DiscardTrain.class).get(0);
@@ -635,6 +640,8 @@ public class StatusWindow extends JFrame implements ActionListener,
             gameUIManager.orWindow.setVisible(((JMenuItem) actor.getSource()).isSelected());
         } else if (command.equals(CONFIG_CMD)) {
             gameUIManager.configWindow.setVisible(((JMenuItem) actor.getSource()).isSelected());
+        } else if (command.equals(AUTOSAVELOAD_CMD)) {
+            gameUIManager.autoSaveLoadGame();
         } else if (executedAction == null) {
             ;
         } else if (executedAction instanceof GameAction) {

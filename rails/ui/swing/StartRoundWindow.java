@@ -374,7 +374,7 @@ public class StartRoundWindow extends JFrame implements ActionListener,
 
     }
 
-    public void updateStatus() {
+    public void updateStatus(boolean myTurn) {
         StartItem item;
         int i, j;
 
@@ -384,6 +384,8 @@ public class StartRoundWindow extends JFrame implements ActionListener,
         }
         // Unselect the selected private
         dummyButton.setSelected(true);
+        
+        if (!myTurn) return;
 
         // For debugging
         for (PossibleAction action : possibleActions.getList()) {
