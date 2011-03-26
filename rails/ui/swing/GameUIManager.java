@@ -268,7 +268,11 @@ public class GameUIManager implements DialogOwner {
                     } else if (!wasMyTurn && myTurn) {
                         log.info ("Resuming turn as "+saveSuffix);
                         autoLoadPoller.setActive(false);
-                    }
+                        setCurrentDialog(new MessageDialog(this,
+                                LocalText.getText("Message"),
+                                LocalText.getText("YourTurn", saveSuffix)),
+                            null);
+                   }
                 }
             }
         }
