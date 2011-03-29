@@ -2,10 +2,11 @@
 <CompanyManager>
  <!-- 	Specific PrivateCompany to avoid closing of Uno-Takamatsu Ferry -->
 	<CompanyType name="Private" class="rails.game.PrivateCompany">
+		<Tradeable toCompany="yes" lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
 	</CompanyType>
 	<CompanyType name="Public" class="rails.game.PublicCompany">
 		<IfOption name="BeginnerGame" value="no">
-			<CanBuyPrivates lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
+			<CanBuyPrivates/>
 		</IfOption>
 		<PoolPaysOut/>
 		<Float percentage="50"/>

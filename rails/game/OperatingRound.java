@@ -1967,7 +1967,8 @@ public class OperatingRound extends Round implements Observer {
         int price = action.getPrice();
         CashHolder owner = null;
         Player player = null;
-        int basePrice;
+        int upperPrice;
+        int lowerPrice;
 
         // Dummy loop to enable a quick jump out.
         while (true) {
@@ -1998,7 +1999,8 @@ public class OperatingRound extends Round implements Observer {
                 break;
             }
             player = (Player) owner;
-            basePrice = privateCompany.getBasePrice();
+            upperPrice = privateCompany.getUpperPrice();
+            lowerPrice = privateCompany.getLowerPrice();
 
             // Is private buying allowed?
             if (!getCurrentPhase().isPrivateSellingAllowed()) {
@@ -2007,21 +2009,19 @@ public class OperatingRound extends Round implements Observer {
             }
 
             // Price must be in the allowed range
-            if (price < basePrice
-                    * operatingCompany.get().getLowerPrivatePriceFactor()) {
+            if (lowerPrice != PrivateCompanyI.NO_PRICE_LIMIT && price < lowerPrice) {
                 errMsg =
                     LocalText.getText("PriceBelowLowerLimit",
                             Bank.format(price),
-                            Bank.format((int) (basePrice * operatingCompany.get().getLowerPrivatePriceFactor())),
+                            Bank.format(lowerPrice),
                             privateCompanyName );
                 break;
             }
-            if (price > basePrice
-                    * operatingCompany.get().getUpperPrivatePriceFactor()) {
+            if (upperPrice != PrivateCompanyI.NO_PRICE_LIMIT && price > upperPrice) {
                 errMsg =
                     LocalText.getText("PriceAboveUpperLimit",
                             Bank.format(price),
-                            Bank.format((int) (basePrice * operatingCompany.get().getUpperPrivatePriceFactor())),
+                            Bank.format(lowerPrice),
                             privateCompanyName );
                 break;
             }
@@ -2421,10 +2421,25 @@ public class OperatingRound extends Round implements Observer {
                     player = players.get(i % numberOfPlayers);
                     for (PrivateCompanyI privComp : player.getPortfolio().getPrivateCompanies()) {
 
-                        minPrice =
-                            (int) (privComp.getBasePrice() * operatingCompany.get().getLowerPrivatePriceFactor());
-                        maxPrice =
-                            (int) (privComp.getBasePrice() * operatingCompany.get().getUpperPrivatePriceFactor());
+                        // start: br 
+                        
+                        // check to see if the private can be sold to a company
+                        if (!privComp.tradeableToCompany()) {
+                            continue;
+                        }
+
+                        // changed so that Private companies know what prices they can be sold for
+                        minPrice = privComp.getLowerPrice();
+                        if (minPrice == PrivateCompanyI.NO_PRICE_LIMIT) {
+                            minPrice = 0;
+                        }
+                           
+                        maxPrice = privComp.getUpperPrice();
+                        if (maxPrice == PrivateCompanyI.NO_PRICE_LIMIT) {
+                            maxPrice = operatingCompany.get().getCash();
+                        }
+                        // end: br    
+                        
                         possibleActions.add(new BuyPrivate(privComp, minPrice,
                                 maxPrice));
                     }

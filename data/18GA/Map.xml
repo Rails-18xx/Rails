@@ -1,0 +1,117 @@
+<Map mapClass="rails.ui.swing.hexmap.EWHexMap" tileOrientation="EW" letterOrientation="vertical" even="B">
+	<Hex name="A3" tile="-902" orientation="1" value="30,60" city="Chattanooga" />
+
+	<Hex name="B2" tile="0" cost="60">
+		<Symbols>
+			<Symbol name="mountain" where="tp2SideA" anchorX="center" anchorY="center" fromPhase="0" toPhase="0" />
+		</Symbols>
+	</Hex>
+	<Hex name="B4" tile="0" />
+	<Hex name="B6" tile="0" cost="60">
+		<Symbols>
+			<Symbol name="mountain" where="tp2SideA" anchorX="center" anchorY="center" fromPhase="0" toPhase="0" />
+		</Symbols>
+	</Hex>
+	<Hex name="B8" tile="0" cost="60">
+		<Symbols>
+			<Symbol name="mountain" where="tp2SideA" anchorX="center" anchorY="center" fromPhase="0" toPhase="0" />
+		</Symbols>
+	</Hex>
+	<Hex name="B10" tile="-902" orientation="2" value="30,40" city="Greeneville" />
+
+	<Hex name="C1" tile="0" cost="60">
+		<Symbols>
+			<Symbol name="mountain" where="tp2SideA" anchorX="center" anchorY="center" fromPhase="0" toPhase="0" />
+		</Symbols>
+	</Hex>
+	<Hex name="C3" tile="-3008" city="Rome" />
+	<Hex name="C5" tile="0" cost="20">
+		<River from="center" to="D4" />
+	</Hex>
+	<Hex name="C7" tile="0" />
+	<Hex name="C9" tile="0" />
+
+	<Hex name="D2" tile="0" />
+	<Hex name="D4" tile="-3008" city="Atlanta" />
+	<Hex name="D6" tile="0" />
+	<Hex name="D8" tile="0" />
+	<Hex name="D10" tile="-3008" city="Augusta" />
+
+	<Hex name="E1" tile="-1143" orientation="1" value="30,40" city="Montgomery" />
+	<Hex name="E3" tile="0" cost="40">
+		<River from="D4" to="F2" />
+	</Hex>
+	<Hex name="E5" tile="0" />
+	<Hex name="E7" tile="-1" cost="20" city="Milledgeville">
+		<River from="center" to="F8" />
+	</Hex>
+	<Hex name="E9" tile="0" />
+	<Hex name="E11" tile="0" />
+
+	<Hex name="F2" tile="0" cost="40">
+		<River from="E3" to="G3" />
+	</Hex>
+	<Hex name="F4" tile="0">
+		<Private name="MBRR" />
+	</Hex>
+	<Hex name="F6" tile="-3008" city="Macon" />
+	<Hex name="F8" tile="0" cost="20">
+		<River from="E7" to="G9" />
+	</Hex>
+	<Hex name="F10" tile="0" />
+	<Hex name="F12" tile="0" cost="40">
+		<Symbols>
+			<Symbol name="swamp" where="tpCenter" anchorX="center" anchorY="bottom" fromPhase="0" toPhase="0" />
+		</Symbols>
+		<Private name="MRC" />
+	</Hex>
+
+	<Hex name="G1" tile="0">
+		<River from="G3" to="H2" />
+	</Hex>
+	<Hex name="G3" tile="-3008" cost="40" city="Columbus">
+		<River from="F2" to="G1" />
+	</Hex>
+	<Hex name="G5" tile="0" />
+	<Hex name="G7" tile="0">
+		<Private name="OSR" />
+	</Hex>
+	<Hex name="G9" tile="0" cost="20">
+		<River from="F8" to="H10" />
+	</Hex>
+	<Hex name="G11" tile="-1" city="Statesboro" />
+	<Hex name="G13" tile="-3008" city="Savannah" />
+
+	<Hex name="H2" tile="0" cost="40">
+		<River from="G1" to="I3" />
+	</Hex>
+	<Hex name="H4" tile="-3008" city="Albany" />
+	<Hex name="H6" tile="0" />
+	<Hex name="H8" tile="0" />
+	<Hex name="H10" tile="0" cost="20">
+		<River from="G9" to="H12" />
+	</Hex>
+	<Hex name="H12" tile="0" cost="20">
+		<River from="H10" to="H14" />
+	</Hex>
+
+	<Hex name="I3" tile="0" cost="40">
+		<River from="H2" to="J4" />
+	</Hex>
+	<Hex name="I5" tile="0" />
+	<Hex name="I7" tile="-1" city="Valdosta" />
+	<Hex name="I9" tile="-3008" city="Waycross">
+		<Private name="WSRR" />
+	</Hex>
+	<Hex name="I11" tile="-3008" city="Brunswick" />
+
+	<Hex name="J4" tile="-1143" value="20,50" city="Tallahassee" />
+	<Hex name="J6" tile="0" />
+	<Hex name="J8" tile="0" />
+	<Hex name="J10" tile="0">
+		<Symbols>
+			<Symbol name="swamp" where="tpCenter" anchorX="center" anchorY="bottom" fromPhase="0" toPhase="0" />
+		</Symbols>
+	</Hex>
+	<Hex name="J12" tile="-912" orientation="3" value="30,60" city="Jacksonville" />
+</Map>

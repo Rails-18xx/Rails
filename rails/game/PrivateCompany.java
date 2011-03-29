@@ -34,7 +34,27 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
 
     protected String blockedHexesString = null;
     protected List<MapHex> blockedHexes = null;
+  
+    // Maximum and minimum prices the private can be sold in for.
+    protected int upperPrice = NO_PRICE_LIMIT;
+    protected int lowerPrice = NO_PRICE_LIMIT;
+    
+    // Maximum and minimum price factor (used to set upperPrice and lowerPrice)
+    protected float lowerPriceFactor = NO_PRICE_LIMIT;
+    protected float upperPriceFactor = NO_PRICE_LIMIT;
 
+    // Maximum and minimum prices the private can be sold to a player for.
+    protected int upperPlayerPrice = NO_PRICE_LIMIT;
+    protected int lowerPlayerPrice = NO_PRICE_LIMIT;
+    
+    // Maximum and minimum price factor when selling to another player
+    protected float lowerPlayerPriceFactor = NO_PRICE_LIMIT;
+    protected float upperPlayerPriceFactor = NO_PRICE_LIMIT;
+    
+    // Can the private be bought by companies / players (when held by a player)
+    protected boolean tradeableToCompany = true;
+    protected boolean tradeableToPlayer = false;
+        
     public PrivateCompany() {
         super();
         this.privateNumber = numberOfPrivateCompanies++;
@@ -127,8 +147,48 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
                 Tag closeTag = closureTag.getChild("Phase");
                 if (closeTag != null) {
                     closeAtPhaseName = closeTag.getText();
+                }           
+            }
+            
+            // start: br
+            // Reads the Tradeable tags
+            List<Tag> tradeableTags = tag.getChildren("Tradeable");
+            if (tradeableTags != null) {
+                for (Tag tradeableTag : tradeableTags) {                        
+
+                    if (tradeableTag.hasAttribute("toCompany")) {
+                        tradeableToCompany = tradeableTag.getAttributeAsBoolean("toCompany");
+                    
+                        if (tradeableToCompany) {
+                            upperPrice =
+                                tradeableTag.getAttributeAsInteger("upperPrice", upperPrice);                            
+                            lowerPrice =
+                                tradeableTag.getAttributeAsInteger("lowerPrice", lowerPrice);                            
+                            lowerPriceFactor =
+                                tradeableTag.getAttributeAsFloat("lowerPriceFactor", lowerPriceFactor);
+                            upperPriceFactor =
+                                tradeableTag.getAttributeAsFloat("upperPriceFactor", upperPriceFactor);                        
+                        }
+                    }
+
+                    if (tradeableTag.hasAttribute("toPlayer")) {
+                        tradeableToPlayer = tradeableTag.getAttributeAsBoolean("toPlayer");
+                    
+                        if (tradeableToPlayer) {
+                            upperPlayerPrice =
+                                tradeableTag.getAttributeAsInteger("upperPrice", upperPlayerPrice);                            
+                            lowerPlayerPrice =
+                                tradeableTag.getAttributeAsInteger("lowerPrice", lowerPlayerPrice);                            
+                            lowerPlayerPriceFactor =
+                                tradeableTag.getAttributeAsFloat("lowerPriceFactor", lowerPlayerPriceFactor);
+                            upperPlayerPriceFactor =
+                                tradeableTag.getAttributeAsFloat("upperPriceFactor", upperPlayerPriceFactor);
+                        }
+                    }                    
                 }
             }
+            //end: br
+
         } catch (Exception e) {
             throw new ConfigurationException("Configuration error for Private "
                     + name, e);
@@ -162,6 +222,28 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
                 closingPhase.addObjectToClose(this);
             }
         }
+
+        // start: br
+        //if {upper,lower}PriceFactor is set but {upper,lower}Price is not, calculate the right value
+        if (upperPrice == NO_PRICE_LIMIT && upperPriceFactor != NO_PRICE_LIMIT) { 
+            
+            if (basePrice==0) {
+                throw new ConfigurationException("Configuration error for Private "
+                        + name + ": upperPriceFactor needs basePrice to be set");
+            }
+                             
+            upperPrice = (int)(basePrice * upperPriceFactor + 0.5f);
+        }
+        if (lowerPrice == NO_PRICE_LIMIT && lowerPriceFactor != NO_PRICE_LIMIT) { 
+
+            if (basePrice==0) {
+                throw new ConfigurationException("Configuration error for Private "
+                        + name + ": lowerPriceFactor needs basePrice to be set");
+            }
+
+            lowerPrice = (int)(basePrice * lowerPriceFactor + 0.5f);
+        }
+        // end: br
     }
 
     /** Initialisation, to be called directly after instantiation (cloning) */
@@ -412,5 +494,37 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
 
     public void close() {
         setClosed();
+    }
+    
+    public int getUpperPrice() {    
+        return getUpperPrice(false);
+    }
+    
+    public int getUpperPrice(boolean saleToPlayer) {
+        if (saleToPlayer) {
+            return upperPlayerPrice;
+        }
+        
+        return upperPrice;
+    }   
+    
+    public int getLowerPrice() {
+        return getLowerPrice(false);       
+    }
+    
+    public int getLowerPrice(boolean saleToPlayer) {
+        if (saleToPlayer) {       
+            return lowerPlayerPrice;
+        }
+            
+        return lowerPrice;
+    }
+    
+    public boolean tradeableToCompany() {
+        return tradeableToCompany;
+    }
+    
+    public boolean tradeableToPlayer() {
+        return tradeableToPlayer;
     }
 }

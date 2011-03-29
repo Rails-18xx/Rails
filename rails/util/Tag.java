@@ -98,7 +98,8 @@ public class Tag {
 
     public boolean hasChild (String tagName) throws ConfigurationException {
 
-        return getChildren ("AllowsMultipleBasesOfOneCompany") != null;
+        //br: this was hardcoded  to "AllowsMultipleBasesOfOneCompany" -- looks like a bug.
+        return getChildren(tagName) != null;
     }
 
     public String getText() throws ConfigurationException {
@@ -215,7 +216,13 @@ return getAttributeAsInteger(name, 0);
 
         return getAttributeAsBoolean(name, false);
     }
+    
+    // br: needed to test if a Tradeable tag has a toCompany or toPlayer attribute
+    public boolean hasAttribute(String name)
+        throws ConfigurationException {
 
+        return getAttributeAsString(name) != null;
+    }
     /**
      * Extract all attributes of an Element into a HashMap. This includes
      * conditional values, embedded in (possibly nested) &lt;IfOption&gt;

@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<CompanyManager>
+	<CompanyType name="Private" class="rails.game.PrivateCompany">
+		<ClosingConditions>
+            <Phase>5</Phase>
+		</ClosingConditions>
+	</CompanyType>
+	<CompanyType name="Public" class="rails.game.PublicCompany">
+		<CanBuyPrivates lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
+		<PoolPaysOut/>
+		<Float percentage="60"/>
+		<ShareUnit percentage="10"/>
+		<BaseTokens>
+			<!-- HomeBase lay options: "whenStarted", "whenFloated", "firstOR" (default) -->
+			<HomeBase lay="firstOR"/>
+			<!-- LayCost methods: only "sequence" (1830 style) implemented so far (default) -->
+			<LayCost method="sequence" cost="0,40,100"/>
+		</BaseTokens>
+		<Certificate type="President" shares="2"/>
+		<Certificate shares="1" number="8"/>
+		<Trains number="4,4,3,2"/>
+        <CanUseSpecialProperties/>
+	</CompanyType>
+	<Company name="SVNRR" type="Private" basePrice="20" revenue="5"
+			longname="Schuylkill Valley Navigation &amp; Railroad Company">
+	</Company>
+	<Company name="C&amp;StL" type="Private" basePrice="40" revenue="10"
+			longname="Champlain &amp; St.Lawrence">
+	</Company>
+	<Company name="D&amp;H" type="Private" basePrice="70" revenue="15"
+		longname="Delaware &amp; Hudson">
+	</Company>
+	<Company name="M&amp;H" type="Private" basePrice="110" revenue="20"
+		longname="Mohawk &amp; Hudson">
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByPlayer" when="anyTurn" class="rails.game.special.ExchangeForShare">
+				<ExchangeForShare company="NYC" share="10"/>
+			</SpecialProperty>
+		</SpecialProperties>
+	</Company>
+	<Company name="C&amp;A" type="Private" basePrice="160" revenue="25"
+		longname="Camden &amp; Amboy">
+		<Info key="ComesWithCertificate" parm="PRR,10"/>
+	</Company>
+	<Company name="B&amp;O" type="Private" basePrice="220" revenue="30"
+		longname="Baltimore &amp; Ohio">
+		<Info key="ComesWithPresidency" parm="B&amp;O,20"/>
+	</Company>
+	
+	<!-- Note two supported colour specification formats:
+	     RGB decimal with commas and RGB hexadecimal without commas -->
+		<Company name="B&amp;O" type="Public" tokens="2" fgColour="FFFFFF" bgColour="0,0,255"
+				longname="Baltimore and Ohio">
+			<Home hex="H6"/>
+		</Company>
+		<Company name="C&amp;A" type="Public" tokens="2" fgColour="000000" bgColour="FF8000"
+				longname="Camden and Amboy">
+			<Home hex="E11"/>
+		</Company>
+		<Company name="C&amp;O" type="Public" tokens="2" fgColour="000000" bgColour="A0E0FF"
+				longname="Chesapeake and Ohio Railway">
+			<Home hex="M7"/>
+		</Company>
+		<Company name="N&amp;W" type="Public" tokens="2" fgColour="FFFFFF" bgColour="B03B00"
+				longname="Norfolk and Western">
+			<Home hex="M3"/>
+		</Company>
+		<Company name="PLE" type="Public" tokens="2" fgColour="FFFFFF" bgColour="000000"
+				longname="Pittsburgh and Lake Erie Railroad">
+			<Home hex="C1"/>
+		</Company>
+		<Company name="PRR" type="Public" tokens="2" fgColour="FFFFFF" bgColour="008000"
+				longname="Pennsylvania Railroad">
+			<Home hex="D10"/>
+		</Company>
+		<Company name="SQ" type="Public" tokens="2" fgColour="000000" bgColour="FFFF00"
+				longname="New York, Susquehanna and Western Railway">
+			<Home hex="B6"/>
+		</Company>	<Company name="SRC" type="Public" tokens="2" fgColour="FFFF00" bgColour="FF0000"
+			longname="Strasburg Rail Road">
+		<FirstTrainCloses type="Private" name="B&amp;O"/>
+		<Home hex="D8"/>
+	</Company>
+	<IfOption name="Variant" value="Pere Marquette">
+		<Company name="PM" type="Public" tokens="2" fgColour="FFFF00" bgColour="000080"
+				longname="Pere Marquette">
+			<Home hex="C7"/>
+		</Company>
+	</IfOption>
+		<StartPacket roundClass="rails.game.StartRound_1830">
+		<Bidding initial="5" minimum="5" increment="1"/>
+		<Item name="SVNRR" type="Private" basePrice="20"/>
+		<Item name="C&amp;StL" type="Private" basePrice="40"/>
+		<Item name="D&amp;H" type="Private" basePrice="70"/>
+		<Item name="M&amp;H" type="Private" basePrice="110"/>
+		<Item name="C&amp;A" type="Private" basePrice="160"/>
+		<Item name="B&amp;O" type="Private" basePrice="220">
+			<SubItem name="B&amp;O" type="Public" president="yes"/>
+		</Item>
+	</StartPacket>
+</CompanyManager>

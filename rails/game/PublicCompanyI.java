@@ -233,16 +233,6 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolder {
     public int getNumberOfShares();
 
     /**
-     * @return Returns the lowerPrivatePriceFactor.
-     */
-    public float getLowerPrivatePriceFactor();
-
-    /**
-     * @return Returns the upperPrivatePriceFactor.
-     */
-    public float getUpperPrivatePriceFactor();
-
-    /**
      * Is company present on the Stock Market?
      *
      * @return True if the company has a stock price.

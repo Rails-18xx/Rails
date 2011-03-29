@@ -269,7 +269,13 @@ Known Issues:
     <Description>18VA</Description>
     <Players minimum="2" maximum="5" />
   </Game>
-    	
+     <Game name="18GA">
+        <Note>Prototype</Note>
+        <Description>18GA</Description>
+        <Players minimum="3" maximum="5"/>
+    </Game>
+
+   	
 	<Credits>Rails is a computer implementation of a number of railroad board games,
 that are collectively known as the "18xx" railway game system.		
 Rails is a Sourceforge project.

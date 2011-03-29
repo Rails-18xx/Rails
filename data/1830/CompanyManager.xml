@@ -4,9 +4,11 @@
 		<ClosingConditions>
             <Phase>5</Phase>
 		</ClosingConditions>
+		<Tradeable toCompany="yes" lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
+		<Tradeable toPlayer="yes"/>	
 	</CompanyType>
 	<CompanyType name="Public" class="rails.game.PublicCompany">
-		<CanBuyPrivates lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
+		<CanBuyPrivates/>
 		<PoolPaysOut/>
 		<Float percentage="60"/>
 		<ShareUnit percentage="10"/>
@@ -64,6 +66,7 @@
 		longname="Baltimore &amp; Ohio">
 		<Info key="ComesWithPresidency" parm="B&amp;O,20"/>
 		<Blocking hex="I13,I15"/>
+		<Tradeable toCompany="no"/>
 	</Company>
 	
 	<!-- Note two supported colour specification formats:

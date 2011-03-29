@@ -1,0 +1,236 @@
+<TileManager tiles="Tiles.xml">
+	<!-- Preprinted Tiles-->
+
+	<!-- Empty space -->
+	<Tile id="0">
+		<Upgrade id="7,8,9" />
+	</Tile>
+
+	<!-- Dit -->
+	<Tile id="-1">
+		<Upgrade id="3,4,58" />
+	</Tile>
+
+	<!-- City -->
+	<Tile id="-3008">
+		<Upgrade id="5,6,57" />
+	</Tile>
+
+	<!-- Chattanooga (A3), Greeneville (B10) -->
+	<Tile id="-902" />
+
+	<!-- Montgomery (E1), Tallahassee (J4) -->
+	<Tile id="-1143" />
+
+	<!-- Jacksonville (J12) -->
+	<Tile id="-912" />
+
+	<!-- Atlanta (D4) -->
+	<Tile id="-4010">
+		<Upgrade id="4451" />
+	</Tile>
+
+	<!-- Yellow Tiles -->
+
+	<!-- Sharp-curve dit (10) -->
+	<Tile id="3" quantity="3" >
+		<Upgrade id="141,142,143" />
+	</Tile>
+
+	<!-- Straight dit (10) -->
+	<Tile id="4" quantity="3">
+		<Upgrade id="141,142" />
+	</Tile>
+
+	<!-- Sharp-curve city (20) -->
+	<Tile id="5" quantity="2">
+		<Upgrade id="14,15" hex="-D10,-G13" />
+		<Upgrade id="4453" hex="D10" />
+		<Upgrade id="4454" hex="G13" />
+	</Tile>
+
+	<!-- Gentle-curve city (20) -->
+	<Tile id="6" quantity="2">
+		<Upgrade id="14,15" hex="-D10,-G13" />
+		<Upgrade id="4453" hex="D10" />
+		<Upgrade id="4454" hex="G13" />
+	</Tile>
+
+	<!-- Sharp curve -->
+	<Tile id="7" quantity="5">
+		<Upgrade id="26,27,28,29" />
+	</Tile>
+
+	<!-- Gentle curve -->
+	<Tile id="8" quantity="11">
+		<Upgrade id="16,17,19,23,24,25,28,29" />
+	</Tile>
+
+	<!-- Straight track -->
+	<Tile id="9" quantity="10">
+		<Upgrade id="19,20,23,24,26,27" />
+	</Tile>
+
+	<!-- Straight city (20) -->
+	<Tile id="57" quantity="4">
+		<Upgrade id="14,15" hex="-D10,-G13" />
+		<Upgrade id="4453" hex="D10" />
+		<Upgrade id="4454" hex="G13" />
+	</Tile>
+
+	<!-- Gentle-curve dit (10) -->
+	<Tile id="58" quantity="3">
+		<Upgrade id="141,142,143" />
+	</Tile>
+
+	<!-- Three dead-end cities (30), exits NW,NE,S, "Atlanta" -->
+	<Tile id="4451" quantity="1">
+		<Upgrade id="4452" />
+	</Tile>
+
+	<!-- Green Tiles -->
+
+	<!-- X-shape city (30) -->
+	<Tile id="14" quantity="4">
+		<Upgrade id="63" hex="-F6,-I11" />
+		<Upgrade id="4457" hex="I11" />
+		<Upgrade id="4458" hex="F6" />
+	</Tile>
+
+	<!-- K-shape city (30) -->
+	<Tile id="15" quantity="4">
+		<Upgrade id="63" hex="-F6,-I11" />
+		<Upgrade id="4457" hex="I11" />
+		<Upgrade id="4458" hex="F6" />
+	</Tile>
+
+	<!-- Two tracks crossing, K shape -->
+	<Tile id="16" quantity="1">
+		<Upgrade id="43,70" />
+	</Tile>
+
+	<!-- Two tracks non-crossing, )( shape -->
+	<Tile id="17" quantity="1">
+		<Upgrade id="47" />
+	</Tile>
+
+	<!-- Two tracks crossing, crossbow shape -->
+	<Tile id="19" quantity="1">
+		<Upgrade id="45,46" />
+	</Tile>
+
+	<!-- Two tracks crossing, X shape -->
+	<Tile id="20" quantity="1">
+		<Upgrade id="44,47" />
+	</Tile>
+
+	<!-- Switch, straight and gentle-curve right -->
+	<Tile id="23" quantity="4">
+		<Upgrade id="41,43,45,47" />
+	</Tile>
+
+	<!-- Switch, straight and gentle-curve left -->
+	<Tile id="24" quantity="4">
+		<Upgrade id="42,43,46,47" />
+	</Tile>
+
+	<!-- Switch, two gentle curves -->
+	<Tile id="25" quantity="1">
+		<Upgrade id="40,45,46" />
+	</Tile>
+
+	<!-- Switch, straight and sharp-curve right -->
+	<Tile id="26" quantity="1">
+		<Upgrade id="42,44,45" />
+	</Tile>
+
+	<!-- Switch, straight and sharp-curve left -->
+	<Tile id="27" quantity="1">
+		<Upgrade id="41,44,46" />
+	</Tile>
+
+	<!-- Switch, sharp and gentle curves right -->
+	<Tile id="28" quantity="2">
+		<Upgrade id="39,43,70" />
+	</Tile>
+
+	<!-- Switch, sharp and gentle curves left -->
+	<Tile id="29" quantity="2">
+		<Upgrade id="39,43,70" />
+	</Tile>
+
+	<!-- Dit (10), exits N,NE,S -->
+	<Tile id="141" quantity="2" />
+
+	<!-- Dit (10), exits N,NW,S -->
+	<Tile id="142" quantity="2" />
+
+	<!-- Dit (10), exits N,NW,NE -->
+	<Tile id="143" quantity="2" />
+
+	<!-- Three straight cities (20), crossing, "Atlanta" -->
+	<Tile id="4452" quantity="1">
+		<Upgrade id="4455" />
+	</Tile>
+
+	<!-- K-shape city (30), "Augusta" -->
+	<Tile id="4453" quantity="1">
+		<Upgrade id="4456" />
+	</Tile>
+
+	<!-- City (30), exits N,NW,SW, "Savannah" -->
+	<Tile id="4454" quantity="1">
+		<Upgrade id="4459" />
+	</Tile>
+
+	<!-- Brown Tiles -->
+
+	<!-- "Delta" interchange, exits N,NE,SE -->
+	<Tile id="39" quantity="2" />
+
+	<!-- "Delta" interchange, exits NW,NE,S -->
+	<Tile id="40" quantity="1" />
+
+	<!-- "Delta" interchange, exits N,NE,S -->
+	<Tile id="41" quantity="3" />
+
+	<!-- "Delta" interchange, exits N,NW,S -->
+	<Tile id="42" quantity="3" />
+
+	<!-- Interchange, tracks N-S, NE-SE, N-SE, S-NE -->
+	<Tile id="43" quantity="2" />
+
+	<!-- Interchange, tracks N-S, NW-SE, N-NW, S-SE -->
+	<Tile id="44" quantity="1" />
+
+	<!-- Interchange, tracks N-S, NW-NE, N-NW, S-NE -->
+	<Tile id="45" quantity="2" />
+
+	<!-- Interchange, tracks N-S, NW-NE, N-NE, S-NW -->
+	<Tile id="46" quantity="2" />
+
+	<!-- Interchange, tracks N-S, NW-SE, N-SE, S-NW -->
+	<Tile id="47" quantity="2" />
+
+	<!-- 6-way city (40) -->
+	<Tile id="63" quantity="4" />
+
+	<!-- Interchange, tracks N-SE, S-NE, N-NE, S-SE -->
+	<Tile id="70" quantity="1" />
+
+	<!-- Three straight cities (70), crossing, "Atlanta" -->
+	<Tile id="4455" quantity="1" />
+
+	<!-- K-shape city (50), "Augusta" -->
+	<Tile id="4456" quantity="1" />
+
+	<!-- 5-way city (40), "Brunswick" -->
+	<Tile id="4457" quantity="1" />
+
+	<!-- 5-way city (50), "Macon" -->
+	<Tile id="4458" quantity="1" />
+
+	<!-- City (60), exits N,NW,SW, "Savannah" -->
+	<Tile id="4459" quantity="1" />
+
+</TileManager>

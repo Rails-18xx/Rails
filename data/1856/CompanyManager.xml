@@ -1,9 +1,10 @@
 <?xml version="1.0"?>
 <CompanyManager>
 	<CompanyType name="Private" class="rails.game.PrivateCompany">
+		<Tradeable toCompany="yes" lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
 	</CompanyType>
 	<CompanyType name="Public" class="rails.game.specific._1856.PublicCompany_1856">
-		<CanBuyPrivates lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
+		<CanBuyPrivates/>
 		<PoolPaysOut/>
 		<ShareUnit percentage="10"/>
 		<Certificate type="President" shares="2"/>

@@ -3,10 +3,11 @@
 <CompanyManager>
 
 	<CompanyType name="Private" class="rails.game.PrivateCompany">
+		<Tradeable toCompany="yes" lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
 	</CompanyType>
 	
 	<CompanyType name="Public" class="rails.game.PublicCompany">
-		<CanBuyPrivates lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
+		<CanBuyPrivates/>
 		<IPOPaysOut/>
 		<Float percentage="60"/>
 		<CanSplitDividend/>

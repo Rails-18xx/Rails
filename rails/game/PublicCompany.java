@@ -332,20 +332,6 @@ public class PublicCompany extends Company implements PublicCompanyI {
         Tag privateBuyTag = tag.getChild("CanBuyPrivates");
         if (privateBuyTag != null) {
             canBuyPrivates = true;
-
-            String lower =
-                privateBuyTag.getAttributeAsString("lowerPriceFactor");
-            if (!Util.hasValue(lower))
-                throw new ConfigurationException(
-                "Lower private price factor missing");
-            lowerPrivatePriceFactor = Float.parseFloat(lower);
-
-            String upper =
-                privateBuyTag.getAttributeAsString("upperPriceFactor");
-            if (!Util.hasValue(upper))
-                throw new ConfigurationException(
-                "Upper private price factor missing");
-            upperPrivatePriceFactor = Float.parseFloat(upper);
         }
 
         Tag canUseSpecTag = tag.getChild("CanUseSpecialProperties");
@@ -1398,20 +1384,6 @@ public class PublicCompany extends Company implements PublicCompanyI {
     @Override
     public String toString() {
         return name;
-    }
-
-    /**
-     * @return Returns the lowerPrivatePriceFactor.
-     */
-    public float getLowerPrivatePriceFactor() {
-        return lowerPrivatePriceFactor;
-    }
-
-    /**
-     * @return Returns the upperPrivatePriceFactor.
-     */
-    public float getUpperPrivatePriceFactor() {
-        return upperPrivatePriceFactor;
     }
 
     public boolean hasStockPrice() {

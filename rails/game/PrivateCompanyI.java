@@ -9,7 +9,10 @@ public interface PrivateCompanyI extends CompanyI, Certificate, MoveableHolder, 
 
     public static final String TYPE_TAG = "Private";
     public static final String REVENUE = "revenue";
-
+   
+    //used by getUpperPrice and getLowerPrice to signal no limit
+    public static final int NO_PRICE_LIMIT = -1;    
+    
     /**
      * @return
      */
@@ -41,4 +44,28 @@ public interface PrivateCompanyI extends CompanyI, Certificate, MoveableHolder, 
     public boolean closesAtEndOfTurn();
     public boolean closesManually();
     public void checkClosingIfExercised(boolean endOfOR);
+    
+
+    /**
+     * @return Returns the upperPrice that the company can be sold in for.
+     */
+    public int getUpperPrice();
+    public int getUpperPrice(boolean saleToPlayer);
+    
+    /**
+     * @return Returns the lowerPrice that the company can be sold in for.
+     */    
+    public int getLowerPrice();
+    public int getLowerPrice(boolean saleToPlayer);
+    
+    /**
+     * @return Returns whether or not the company can be bought by a company
+     */    
+    public boolean tradeableToCompany();   
+    
+    /**
+     * @return Returns whether or not the company can be bought by a player (from another player)
+     */
+    public boolean tradeableToPlayer();
+    
 }

@@ -1,0 +1,65 @@
+<Map mapClass="rails.ui.swing.hexmap.NSHexMap" tileOrientation="NS" letterOrientation="vertical" even="B">
+
+	<Hex name="A5" tile="-7" orientation="1"/>
+	<Hex name="A7" tile="-7" orientation="2"/>
+	<Hex name="B2" tile="-902" orientation="1" value="40,50"/>
+	<Hex name="B4" tile="0" cost="120"/>
+	<Hex name="B6" tile="-10"/>
+	<Hex name="B8" tile="0"/>
+	<Hex name="B10" tile="0"/>
+	<Hex name="B12" tile="-902" orientation="2" value="40,50"/>
+	<Hex name="C1" tile="-104"/>
+	<Hex name="C3" tile="-10"/>
+	<Hex name="C5" tile="-10" cost="120"/>
+	<Hex name="C7" tile="-1" cost="40"/>
+	<Hex name="C9" tile="-1"/>
+	<Hex name="C11" tile="-2"/>
+	<Hex name="D2" tile="-2"/>
+	<Hex name="D4" tile="0" cost="120"/>
+	<Hex name="D6" tile="0"/>
+	<Hex name="D8" tile="-10" cost="40"/>
+	<Hex name="D10" tile="-10" cost="40"/>
+	<Hex name="D12" tile="0"/>
+	<Hex name="E3" tile="0"/>
+	<Hex name="E5" tile="0" cost="120"/>
+	<Hex name="E7" tile="0"/>
+	<Hex name="E9" tile="0" cost="40"/>
+	<Hex name="E11" tile="-10"/>
+	<Hex name="F2" tile="0"/>
+	<Hex name="F4" tile="0" cost="120"/>
+	<Hex name="F6" tile="0"/>
+	<Hex name="F8" tile="-10" cost="40"/>
+	<Hex name="F10" tile="0" cost="40"/>
+	<Hex name="G1" tile="-902" value="40,50"/>
+	<Hex name="G3" tile="-10"/>
+	<Hex name="G5" tile="0" cost="120"/>
+	<Hex name="G7" tile="0"/>
+	<Hex name="G9" tile="-10"/>
+	<Hex name="H2" tile="0"/>
+	<Hex name="H4" tile="0" cost="120"/>
+	<Hex name="H6" tile="-10"/>
+	<Hex name="H10" tile="0"/>
+	<Hex name="I3" tile="0"/>
+	<Hex name="I5" tile="-1"/>
+	<Hex name="I7" tile="0" cost="40"/>
+	<Hex name="I9" tile="0"/>
+	<Hex name="I11" tile="-901" orientation="3" value="40,50"/>
+	<Hex name="J2" tile="0"/>
+	<Hex name="J4" tile="0" cost="120"/>
+	<Hex name="J6" tile="0" cost="40"/>
+	<Hex name="J10" tile="0"/>
+	<Hex name="K3" tile="0"/>
+	<Hex name="K5" tile="-1"/>
+	<Hex name="K7" tile="0" cost="40"/>
+	<Hex name="K11" tile="-901" orientation="3" value="40,50"/>
+	<Hex name="L2" tile="0"/>
+	<Hex name="L4" tile="-10"/>
+	<Hex name="L6" tile="0"/>
+	<Hex name="L8" tile="0" cost="40"/>
+	<Hex name="M1" tile="-901" orientation="5" value="40,50"/>
+	<Hex name="M3" tile="-10" cost="120"/>
+	<Hex name="M5" tile="0"/>
+	<Hex name="M7" tile="-10"/>
+	<Hex name="N2" tile="-902" orientation="5" value="40,50"/>
+	<Hex name="N8" tile="-901" orientation="3" value="40,50"/>	
+</Map>
