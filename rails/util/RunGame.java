@@ -69,7 +69,7 @@ public class RunGame {
             Class<? extends GameUIManager> gameUIManagerClass =
                 Class.forName(gameUIManagerClassName).asSubclass(GameUIManager.class);
             gameUIManager = gameUIManagerClass.newInstance();
-            gameUIManager.init(gameManager);
+            gameUIManager.init(gameManager, true);
 
             String directory = new java.io.File(filepath).getParent();
             if(directory != null) {

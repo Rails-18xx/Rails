@@ -450,7 +450,7 @@ public class ORUIManager implements DialogOwner {
 
             } else if (actionType == ClosePrivate.class) {
 
-                gameUIManager.processOnServer(actions.get(0));
+                gameUIManager.processAction(actions.get(0));
 
             }
 
@@ -581,7 +581,7 @@ public class ORUIManager implements DialogOwner {
             return;
         }
 
-        gameUIManager.processOnServer(currentDialogAction);
+        gameUIManager.processAction(currentDialogAction);
     }
 
     public JDialog getCurrentDialog() {
@@ -1432,13 +1432,13 @@ public class ORUIManager implements DialogOwner {
     /* In fact currently not used */
     protected void useSpecialProperty (UseSpecialProperty action) {
 
-        gameUIManager.processOnServer(action);
+        gameUIManager.processAction(action);
 
     }
 
     protected void processCorrectionAction(CorrectionAction action) {
 
-        gameUIManager.processOnServer(action);
+        gameUIManager.processAction(action);
 
     }
 

@@ -433,7 +433,14 @@ public class StatusWindow extends JFrame implements ActionListener,
         if (!(currentRound instanceof StockRound || currentRound instanceof EndOfGameRound))
             return;
 
-        if (!myTurn) return;
+        passButton.setEnabled(false);
+        autopassButton.setEnabled(false);
+
+        log.debug ("MyTurn="+myTurn);
+        if (!myTurn) {
+            gameStatus.initTurn(getCurrentPlayer().getIndex(), false);
+            return;
+        }
         
         // Moved here from StatusWindow_1856. It's getting generic...
         if (possibleActions.contains(DiscardTrain.class)) {
@@ -447,14 +454,14 @@ public class StatusWindow extends JFrame implements ActionListener,
             setTitle(LocalText.getText(
                     "TRADE_TREASURY_SHARES_TITLE",
                     ((TreasuryShareRound) currentRound).getOperatingCompany().getName()));
-            gameStatus.initTurn(-1);
+            gameStatus.initTurn(-1, true);
             passButton.setEnabled(true);
 
         } else if ((currentRound instanceof ShareSellingRound)) {
             setTitle(LocalText.getText(
                     "EMERGENCY_SHARE_SELLING_TITLE",
                     (((ShareSellingRound) currentRound).getCompanyNeedingCash().getName())));
-            gameStatus.initTurn(gameUIManager.getCurrentPlayer().getIndex());
+            gameStatus.initTurn(getCurrentPlayer().getIndex(), true);
             gameStatus.setPriorityPlayer(gameUIManager.getPriorityPlayer().getIndex());
 
             passButton.setEnabled(false);
@@ -488,7 +495,7 @@ public class StatusWindow extends JFrame implements ActionListener,
             setTitle(LocalText.getText(
                     "STOCK_ROUND_TITLE",
                     String.valueOf(((StockRound) currentRound).getStockRoundNumber())));
-            gameStatus.initTurn(gameUIManager.getCurrentPlayer().getIndex());
+            gameStatus.initTurn(getCurrentPlayer().getIndex(), true);
             gameStatus.setPriorityPlayer(gameUIManager.getPriorityPlayer().getIndex());
 
             passButton.setEnabled(true);
@@ -673,7 +680,7 @@ public class StatusWindow extends JFrame implements ActionListener,
             return false;
         }
 
-        return gameUIManager.processOnServer(executedAction);
+        return gameUIManager.processAction(executedAction);
     }
 
     public boolean processImmediateAction() {
@@ -727,7 +734,7 @@ public class StatusWindow extends JFrame implements ActionListener,
 
     public void finishRound() {
         setTitle(LocalText.getText("GAME_STATUS_TITLE"));
-        gameStatus.initTurn(-1);
+        gameStatus.initTurn(-1, true);
         passButton.setEnabled(false);
     }
 

@@ -758,8 +758,8 @@ public class GameStatus extends GridPanel implements ActionListener {
             ActionEvent actor, PossibleAction chosenAction) {
         return chosenAction;
     }
-
-    public void initTurn(int actorIndex) {
+    
+    public void initTurn(int actorIndex, boolean myTurn) {
         int i, j;
 
         dummyButton.setSelected(true);
@@ -791,56 +791,58 @@ public class GameStatus extends GridPanel implements ActionListener {
             } else if (j == -1 && treasurySharesCaption != null) {
                 treasurySharesCaption.setHighlight(true);
             }
+            
+            if (myTurn) {
 
-            PublicCompanyI company;
-            Portfolio holder;
-            int index;
-            CashHolder owner;
-
-            List<BuyCertificate> buyableCerts =
-                    possibleActions.getType(BuyCertificate.class);
-            if (buyableCerts != null) {
-                for (BuyCertificate bCert : buyableCerts) {
-                    company = bCert.getCompany();
-                    index = company.getPublicNumber();
-                    holder = bCert.getFromPortfolio();
-                    owner = holder.getOwner();
-                    if (holder == ipo) {
-                        setIPOCertButton(index, true, bCert);
-                    } else if (holder == pool) {
-                        setPoolCertButton(index, true, bCert);
-                    } else if (owner instanceof Player) {
-                        setPlayerCertButton(index, ((Player)owner).getIndex(), true, bCert);
-                    } else if (owner instanceof PublicCompanyI && compCanHoldOwnShares) {
-                        setTreasuryCertButton(index, true, bCert);
+                PublicCompanyI company;
+                Portfolio holder;
+                int index;
+                CashHolder owner;
+    
+                List<BuyCertificate> buyableCerts =
+                        possibleActions.getType(BuyCertificate.class);
+                if (buyableCerts != null) {
+                    for (BuyCertificate bCert : buyableCerts) {
+                        company = bCert.getCompany();
+                        index = company.getPublicNumber();
+                        holder = bCert.getFromPortfolio();
+                        owner = holder.getOwner();
+                        if (holder == ipo) {
+                            setIPOCertButton(index, true, bCert);
+                        } else if (holder == pool) {
+                            setPoolCertButton(index, true, bCert);
+                        } else if (owner instanceof Player) {
+                            setPlayerCertButton(index, ((Player)owner).getIndex(), true, bCert);
+                        } else if (owner instanceof PublicCompanyI && compCanHoldOwnShares) {
+                            setTreasuryCertButton(index, true, bCert);
+                        }
+                    }
+                }
+    
+                List<SellShares> sellableShares =
+                        possibleActions.getType(SellShares.class);
+                if (sellableShares != null) {
+                    for (SellShares share : sellableShares) {
+                        company = share.getCompany();
+                        index = company.getPublicNumber();
+                        if (j >= 0) {
+                            setPlayerCertButton(index, j, true, share);
+                        } else if (j == -1 && compCanHoldOwnShares) {
+                            setTreasuryCertButton(index, true, share);
+                        }
+                    }
+                }
+    
+                initGameSpecificActions();
+    
+                List<NullAction> nullActions =
+                        possibleActions.getType(NullAction.class);
+                if (nullActions != null) {
+                    for (NullAction na : nullActions) {
+                        (parent).setPassButton(na);
                     }
                 }
             }
-
-            List<SellShares> sellableShares =
-                    possibleActions.getType(SellShares.class);
-            if (sellableShares != null) {
-                for (SellShares share : sellableShares) {
-                    company = share.getCompany();
-                    index = company.getPublicNumber();
-                    if (j >= 0) {
-                        setPlayerCertButton(index, j, true, share);
-                    } else if (j == -1 && compCanHoldOwnShares) {
-                        setTreasuryCertButton(index, true, share);
-                    }
-                }
-            }
-
-            initGameSpecificActions();
-
-            List<NullAction> nullActions =
-                    possibleActions.getType(NullAction.class);
-            if (nullActions != null) {
-                for (NullAction na : nullActions) {
-                    (parent).setPassButton(na);
-                }
-            }
-
         }
 
         repaint();

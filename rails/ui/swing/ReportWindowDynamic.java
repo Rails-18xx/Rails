@@ -206,7 +206,7 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
         }
 
 
-        gameUIManager.processOnServer(action);
+        gameUIManager.processAction(action);
     }
 
     public void hyperlinkUpdate(HyperlinkEvent e) {
@@ -231,11 +231,11 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
         if (index > currentIndex) { // move forward
             GameAction action = new GameAction(GameAction.REDO);
             action.setmoveStackIndex(index);
-            gameUIManager.processOnServer(action);
+            gameUIManager.processAction(action);
         } else if (index < currentIndex) { // move backward
             GameAction action = new GameAction(GameAction.FORCED_UNDO);
             action.setmoveStackIndex(index);
-            gameUIManager.processOnServer(action);
+            gameUIManager.processAction(action);
         }
     }
 

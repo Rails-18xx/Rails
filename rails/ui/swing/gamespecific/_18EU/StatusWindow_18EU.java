@@ -32,7 +32,7 @@ public class StatusWindow_18EU extends StatusWindow {
 
         if (currentRound instanceof FinalMinorExchangeRound) {
             setTitle(LocalText.getText("FinalMinorExchangeRoundTitle"));
-            gameStatus.initTurn(gameUIManager.getCurrentPlayer().getIndex());
+            gameStatus.initTurn(getCurrentPlayer().getIndex(), true);
             return true;
         }
         return false;

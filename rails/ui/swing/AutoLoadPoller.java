@@ -42,6 +42,9 @@ public class AutoLoadPoller extends Thread {
         
         lastSavedFilenameFilepath = saveDirectory + "/" + savePrefix + ".last_rails";
         
+        log.debug("Poller own postfix: "+ownPostfix);
+        log.debug("Poller last-filename path: "+lastSavedFilenameFilepath);
+        
     }
 
     @Override
@@ -54,7 +57,7 @@ public class AutoLoadPoller extends Thread {
 
         for (;;) {
 
-            log.debug ("Polling cycle");
+            log.debug ("Polling cycle, status="+pollingStatus+" active="+pollingActive);
             // Process
             if (pollingActive && pollingStatus == ON) {
                 log.debug("Polling...");
@@ -72,14 +75,14 @@ public class AutoLoadPoller extends Thread {
                         // The GUI must be accessed on the event dispatch thread only.
                         SwingUtilities.invokeLater (new Runnable() {
                             public void run() {
-                                guiMgr.processOnServer(reload);
+                                guiMgr.processAction(reload);
                             }
                         });
 
                     }
                     
                 } catch (IOException e) {
-                    
+                    log.error("Exception whilst polling "+lastSavedFilenameFilepath, e);
                 }
             }
             

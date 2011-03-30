@@ -736,6 +736,6 @@ public class StartRoundWindow extends JFrame implements ActionListener,
     public void keyTyped(KeyEvent e) {}
 
     public boolean process(PossibleAction action) {
-        return gameUIManager.processOnServer(action);
+        return gameUIManager.processAction(action);
     }
 }

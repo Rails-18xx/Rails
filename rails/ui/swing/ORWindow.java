@@ -151,7 +151,7 @@ public class ORWindow extends JFrame implements ActionPerformer {
         // Add the actor for safety checking in the server
         if (action != null) action.setPlayerName(orPanel.getORPlayer());
         // Process the action
-        boolean result = gameUIManager.processOnServer(action);
+        boolean result = gameUIManager.processAction(action);
         // Display any error message
         //displayServerMessage();
 

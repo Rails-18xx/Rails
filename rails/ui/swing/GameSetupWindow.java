@@ -218,7 +218,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
             JOptionPane.showMessageDialog(this,
                     DisplayBuffer.get(), "", JOptionPane.ERROR_MESSAGE);
         }
-        startGameUIManager(game);
+        startGameUIManager(game, true);
         if (saveDirectory != null) {
             gameUIManager.setSaveDirectory (saveDirectory);
         }
@@ -494,7 +494,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
                         JOptionPane.ERROR_MESSAGE);
                 System.exit(-1);
             }
-            startGameUIManager (game);
+            startGameUIManager (game, false);
             gameUIManager.gameUIInit(true); // true indicates new game
         }
 
@@ -503,14 +503,14 @@ public class GameSetupWindow extends JDialog implements ActionListener {
         killConfigWindow();
     }
 
-    private void startGameUIManager(Game game) {
+    private void startGameUIManager(Game game, boolean wasLoaded) {
         GameManagerI gameManager = game.getGameManager();
         String gameUIManagerClassName = gameManager.getClassName(GuiDef.ClassName.GAME_UI_MANAGER);
         try {
             Class<? extends GameUIManager> gameUIManagerClass =
                 Class.forName(gameUIManagerClassName).asSubclass(GameUIManager.class);
             gameUIManager = gameUIManagerClass.newInstance();
-            gameUIManager.init(gameManager);
+            gameUIManager.init(gameManager, wasLoaded);
         } catch (Exception e) {
             log.fatal("Cannot instantiate class " + gameUIManagerClassName, e);
             System.exit(1);
