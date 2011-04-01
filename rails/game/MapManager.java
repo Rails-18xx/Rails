@@ -112,7 +112,7 @@ public class MapManager implements ConfigurableComponentI {
         }
     }
 
-    public void finishConfiguration (GameManagerI gameManager) {
+    public void finishConfiguration (GameManagerI gameManager) throws ConfigurationException {
 
         MapHex hex;
         int i, j, k, dx, dy;

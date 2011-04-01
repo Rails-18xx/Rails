@@ -950,7 +950,7 @@ StationHolder, TokenHolder {
         return foundCity;
     }
 
-    public void addHome(PublicCompanyI company, int cityNumber) {
+    public void addHome(PublicCompanyI company, int cityNumber) throws ConfigurationException {
         if (homes == null) homes = new HashMap<PublicCompanyI, City>();
         if (cities.isEmpty()) {
             log.error("No cities for home station on hex " + name);
@@ -959,6 +959,9 @@ StationHolder, TokenHolder {
             if (cityNumber == 0) {
                 homes.put(company, null);
                 log.debug("Added home of " + company  + " in hex " + this.toString() +  " city not yet decided");
+            } else if (cityNumber > cities.size()) {
+                throw new ConfigurationException ("Invalid city number "+cityNumber+" for hex "+name
+                        +" which has "+cities.size()+" cities");
             } else {
                 City homeCity = cities.get(Math.max(cityNumber - 1, 0));
                 homes.put(company, homeCity);
