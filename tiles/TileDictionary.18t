@@ -7683,48 +7683,75 @@ object TTilesWrapper
         end>
     end
     item
-      Code = 391
-      LongName = '391'
-      Category = 'Atl'
-      CategoryPosition = tp3SideB
+      Code = 1451
+      LongName = 'GA451'
+      Category = 'Atlanta'
+      CategoryPosition = tp3SideA
       Level = tlYellow
       Connections = <
         item
-          Position1 = tp2SideC
-          Position2 = tp4SideC
+          Position1 = tp2SideB
+          Position2 = tp4SideB
         end
         item
-          Position1 = tp2SideA
-          Position2 = tp4SideA
+          Position1 = tp2SideD
+          Position2 = tp4SideD
         end
         item
-          Position1 = tp2SideE
-          Position2 = tp4SideE
+          Position1 = tp2SideF
+          Position2 = tp4SideF
         end>
       Junctions = <
         item
           JunType = jtCity
-          Position = tp2SideC
+          Position = tp2SideB
           Revenue = 30
-          RevenuePosition = tp3SideF
+          RevenuePosition = tp3SideE
         end
         item
           JunType = jtCity
-          Position = tp2SideA
+          Position = tp2SideD
           Revenue = 30
-          RevenuePosition = tp3SideF
+          RevenuePosition = tp3SideE
         end
         item
           JunType = jtCity
-          Position = tp2SideE
+          Position = tp2SideF
           Revenue = 30
-          RevenuePosition = tp3SideF
+          RevenuePosition = tp3SideE
         end>
     end
     item
-      Code = 392
-      LongName = '392'
-      Category = 'Sav'
+      Code = 1454
+      LongName = 'GA454'
+      Category = 'Savannah'
+      CategoryPosition = tp3SideA
+      Level = tlGreen
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideE
+        end>
+      Junctions = <
+        item
+          JunType = jtDoubleCity
+          Revenue = 30
+          RevenuePosition = tp3CornerE
+        end>
+    end
+    item
+      Code = 1453
+      LongName = 'GA453'
+      Category = 'Augusta'
+      CategoryPosition = tp3SideA
       Level = tlGreen
       Connections = <
         item
@@ -7738,30 +7765,6 @@ object TTilesWrapper
         item
           Position1 = tpCenter
           Position2 = tp4SideD
-        end>
-      Junctions = <
-        item
-          JunType = jtDoubleCity
-          Revenue = 30
-        end>
-    end
-    item
-      Code = 393
-      LongName = '393'
-      Category = 'Aug'
-      Level = tlGreen
-      Connections = <
-        item
-          Position1 = tpCenter
-          Position2 = tp4SideF
-        end
-        item
-          Position1 = tpCenter
-          Position2 = tp4SideC
-        end
-        item
-          Position1 = tpCenter
-          Position2 = tp4SideD
         end
         item
           Position1 = tpCenter
@@ -7770,13 +7773,15 @@ object TTilesWrapper
       Junctions = <
         item
           JunType = jtDoubleCity
-          Revenue = 30
+          Revenue = 40
+          RevenuePosition = tp3CornerE
         end>
     end
     item
-      Code = 394
-      LongName = '394'
-      Category = 'Atl'
+      Code = 1452
+      LongName = 'GA452'
+      Category = 'Atla   nta'
+      CategoryPosition = tpCurve1RightA
       Level = tlGreen
       Connections = <
         item
@@ -7812,27 +7817,31 @@ object TTilesWrapper
           JunType = jtCity
           Position = tp2SideF
           Revenue = 20
+          RevenuePosition = tp3CornerE
         end
         item
           JunType = jtCity
           Position = tp2SideB
           Revenue = 20
+          RevenuePosition = tp3CornerE
         end
         item
           JunType = jtCity
           Position = tp2SideD
           Revenue = 20
+          RevenuePosition = tp3CornerE
         end>
     end
     item
-      Code = 395
-      LongName = '395'
-      Category = 'Bru'
+      Code = 1457
+      LongName = 'GA457'
+      Category = 'Brunswick'
+      CategoryPosition = tp3SideA
       Level = tlBrown
       Connections = <
         item
           Position1 = tpCenter
-          Position2 = tp4SideA
+          Position2 = tp4SideF
         end
         item
           Position1 = tpCenter
@@ -7854,17 +7863,19 @@ object TTilesWrapper
         item
           JunType = jtDoubleCity
           Revenue = 40
+          RevenuePosition = tp3CornerE
         end>
     end
     item
-      Code = 396
-      LongName = '396'
-      Category = 'Aug'
+      Code = 1456
+      LongName = 'GA456'
+      Category = 'Augusta'
+      CategoryPosition = tp3SideA
       Level = tlBrown
       Connections = <
         item
           Position1 = tpCenter
-          Position2 = tp4SideF
+          Position2 = tp4SideB
         end
         item
           Position1 = tpCenter
@@ -7882,18 +7893,16 @@ object TTilesWrapper
         item
           JunType = jtDoubleCity
           Revenue = 50
+          RevenuePosition = tp3CornerE
         end>
     end
     item
-      Code = 397
-      LongName = '397'
-      Category = 'Sav'
+      Code = 1459
+      LongName = 'GA459'
+      Category = 'Savannah'
+      CategoryPosition = tp3SideA
       Level = tlBrown
       Connections = <
-        item
-          Position1 = tpCenter
-          Position2 = tp4SideB
-        end
         item
           Position1 = tpCenter
           Position2 = tp4SideC
@@ -7901,17 +7910,23 @@ object TTilesWrapper
         item
           Position1 = tpCenter
           Position2 = tp4SideD
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideE
         end>
       Junctions = <
         item
           JunType = jtDoubleCity
           Revenue = 60
+          RevenuePosition = tp3CornerE
         end>
     end
     item
-      Code = 398
-      LongName = '398'
-      Category = 'Atl'
+      Code = 1455
+      LongName = 'GA455'
+      Category = 'Atla   nta'
+      CategoryPosition = tpCurve1RightA
       Level = tlBrown
       Connections = <
         item
@@ -7947,16 +7962,19 @@ object TTilesWrapper
           JunType = jtCity
           Position = tp2SideF
           Revenue = 60
+          RevenuePosition = tp3CornerE
         end
         item
           JunType = jtCity
           Position = tp2SideB
           Revenue = 60
+          RevenuePosition = tp3CornerE
         end
         item
           JunType = jtCity
           Position = tp2SideD
           Revenue = 60
+          RevenuePosition = tp3CornerE
         end>
     end
     item
@@ -15319,6 +15337,176 @@ object TTilesWrapper
       Junctions = <
         item
           JunType = jtWhistlestop
+        end>
+    end
+    item
+      Code = 1458
+      LongName = 'GA458'
+      Category = 'Macon'
+      CategoryPosition = tp3SideA
+      Level = tlBrown
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Revenue = 50
+          RevenuePosition = tp3CornerE
+        end>
+    end
+    item
+      Code = -5015
+      LongName = 'GACPSav'
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideE
+        end>
+      Junctions = <
+        item
+          JunType = jtDoubleCity
+        end>
+    end
+    item
+      Code = 598
+      LongName = '598'
+      Category = 'Cha'
+      Level = tlGreen
+      Connections = <
+        item
+          Position1 = tp4SideB
+          Position2 = tpCenter
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end>
+      Junctions = <
+        item
+          JunType = jtDoubleCity
+          Revenue = 40
+        end>
+    end
+    item
+      Code = 599
+      LongName = '599'
+      Category = 'Nsh'
+      Level = tlGreen
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end>
+      Junctions = <
+        item
+          JunType = jtDoubleCity
+          Revenue = 40
+        end>
+    end
+    item
+      Code = 600
+      LongName = '600'
+      Category = 'P'
+      Level = tlGray
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end>
+      Junctions = <
+        item
+          JunType = jtTripleCity
+          Revenue = 60
+        end>
+    end
+    item
+      Code = -30
+      LongName = '3 cities'
+      Level = tlMapUpgradableToYellow
+      Connections = <>
+      Junctions = <
+        item
+          JunType = jtCity
+          Position = tp2CornerA
+        end
+        item
+          JunType = jtCity
+          Position = tp2CornerC
+        end
+        item
+          JunType = jtCity
+          Position = tp2CornerE
         end>
     end>
 end
