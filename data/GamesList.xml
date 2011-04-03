@@ -274,6 +274,11 @@ Known Issues:
         <Description>18GA</Description>
         <Players minimum="3" maximum="5"/>
     </Game>
+     <Game name="18TN">
+        <Note>Prototype</Note>
+        <Description>18TN</Description>
+        <Players minimum="3" maximum="5"/>
+    </Game>
 
    	
 	<Credits>Rails is a computer implementation of a number of railroad board games,
