@@ -47,4 +47,4 @@ closedir DIR;
 #    - From tiles/TDwoID: all tiles with an ID <= 0 (preprinted tiles).
 #      These images do not have the ID on the tile (create these separately from TD).
 #    - From tiles/handmade: all tiles in that dir will overwrite any of the above.
-#      These are the tiles modified by hand with Inkscape.
+#      These are the tiles modified by hand or with Inkscape.

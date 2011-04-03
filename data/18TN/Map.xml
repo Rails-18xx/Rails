@@ -2,7 +2,7 @@
 	letterOrientation="vertical" even="A">
 
 <Hex name="A16" tile="-902" city="Cincinnati" orientation="1" value="50,80"/>
-<Hex name="B13" tile="-10" city="Louisville"/>
+<Hex name="B13" tile="-10001" city="Louisville"/>
 <Hex name="B15" tile="0" cost="60" />
 <Hex name="B17" tile="-10" city="Lexington"/>
 <Hex name="C4" tile="-902" city="Saint Louis" value="40,60"/>
@@ -68,7 +68,7 @@
 <Hex name="I14" tile="0" cost="60" />
 <Hex name="I16" tile="0" cost="60" />
 <Hex name="J5" tile="-902" city="Gulf Coast" orientation="4" value="30,50"/>
-<Hex name="J11" tile="-143" city="Birmingham" orientation="5" value="30,40"/>
+<Hex name="J11" tile="-1143" city="Birmingham" value="30,40"/>
 <Hex name="J13" tile="0" cost="60" />
 <Hex name="J15" tile="0" />
 <Hex name="J17" tile="-902" city="Atlanta" orientation="3" value="40,60"/>

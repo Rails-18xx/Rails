@@ -15508,5 +15508,28 @@ object TTilesWrapper
           JunType = jtCity
           Position = tp2CornerE
         end>
+    end
+    item
+      Code = -10001
+      LongName = 'TNLouisville'
+      Connections = <
+        item
+          Position1 = tp4SideB
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tp1SideF
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tp1SideF
+          Position2 = tp4SideD
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Position = tp1SideF
+          Revenue = 30
+        end>
     end>
 end

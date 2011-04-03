@@ -21733,4 +21733,37 @@
 		</junctions>
 		<connections/>
 	</tile>
+	<tile>
+		<ID>-10001</ID>
+		<shape>tsHexagon</shape>
+		<level>tlMapFixed</level>
+		<name>TNLouisville</name>
+		<junctions>
+			<junction>
+				<junType>jtCity</junType>
+				<position>tp1SideF</position>
+				<revenue>
+					<value>30</value>
+					<position>tp3CornerA</position>
+				</revenue>
+			</junction>
+		</junctions>
+		<connections>
+			<connection>
+				<conType>ctNormal</conType>
+				<position1>tp4SideB</position1>
+				<position2>tp4SideD</position2>
+			</connection>
+			<connection>
+				<conType>ctNormal</conType>
+				<position1>tp1SideF</position1>
+				<position2>tp4SideB</position2>
+			</connection>
+			<connection>
+				<conType>ctNormal</conType>
+				<position1>tp1SideF</position1>
+				<position2>tp4SideD</position2>
+			</connection>
+		</connections>
+	</tile>
 </tiles>

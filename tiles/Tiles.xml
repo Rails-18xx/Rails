@@ -3813,4 +3813,10 @@
 		<Station id="city2" position="252" slots="1" type="City"/>
 		<Station id="city3" position="452" slots="1" type="City"/>
 	</Tile>
+	<Tile colour="fixed" id="-10001" name="TNLouisville">
+		<Station id="city1" position="501" slots="1" type="City" value="30"/>
+		<Track from="side1" gauge="normal" to="side3"/>
+		<Track from="city1" gauge="normal" to="side1"/>
+		<Track from="city1" gauge="normal" to="side3"/>
+	</Tile>
 </Tiles>
