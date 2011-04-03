@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<CompanyManager>
+	<CompanyType name="Private" class="rails.game.PrivateCompany">
+		<ClosingConditions>
+            <Phase>5</Phase>
+		</ClosingConditions>
+		<Tradeable toCompany="yes" lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
+		<Tradeable toPlayer="yes"/>	
+	</CompanyType>
+	<CompanyType name="Public" class="rails.game.PublicCompany">
+		<CanBuyPrivates/>
+		<PoolPaysOut/>
+		<Float percentage="60"/>
+		<ShareUnit percentage="10"/>
+		<BaseTokens>
+			<!-- HomeBase lay options: "whenStarted", "whenFloated", "firstOR" (default) -->
+			<HomeBase lay="firstOR"/>
+			<!-- LayCost methods: only "sequence" (1830 style) implemented so far (default) -->
+			<LayCost method="sequence" cost="0,40,100"/>
+		</BaseTokens>
+		<Certificate type="President" shares="2"/>
+		<Certificate shares="1" number="8"/>
+		<Trains number="4,4,3,2"/>
+        <CanUseSpecialProperties/>
+        		<TileLays>
+			<Number colour="yellow" phase="3,4,5,6,8" number="2"/>
+		</TileLays>
+	</CompanyType>
+	
+	<Company name="TCC" type="Private" basePrice="20" revenue="5"
+			longname="Tennessee Copper Company">
+		<Blocking hex="H17"/>
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
+				<SpecialTileLay location="H17" extra="yes" free="yes"/>
+			</SpecialProperty>
+		</SpecialProperties>
+	</Company>
+	<Company name="ET&amp;WNC" type="Private" basePrice="40" revenue="10"
+			longname="East Tennessee and Western North Carolina">
+		<Blocking hex="F19"/>
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
+				<SpecialTileLay location="F19" extra="yes" free="yes"/>
+			</SpecialProperty>
+		</SpecialProperties>
+	</Company>
+	<Company name="M&amp;C" type="Private" basePrice="70" revenue="15"
+			longname="Memphis and Charleston Railroad">
+		<Blocking hex="H5"/>
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
+				<SpecialTileLay location="H5" extra="yes" free="yes"/>
+			</SpecialProperty>
+		</SpecialProperties>
+	</Company>
+	<Company name="O&amp;W" type="Private" basePrice="100" revenue="20"
+			longname="Oneida and Western Railroad">
+		<Blocking hex="E16"/>
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
+				<SpecialTileLay location="E16" extra="yes" free="yes"/>
+			</SpecialProperty>
+		</SpecialProperties>
+	</Company>
+
+	
+	<Company name="GMO" type="Public" tokens="4" fgColour="FFFFFF" bgColour="B22222"
+			longname="Gulf, Mobile and Ohio Railroad">
+		<Home hex="G6"/>
+	</Company>
+	<Company name="IC" type="Public" tokens="3" fgColour="FFFFFF" bgColour="228B22"
+			longname="Illinois Central Railroad">
+		<Home hex="D7"/>
+	</Company>
+	<Company name="L&amp;N" type="Public" tokens="4" fgColour="FFFFFF" bgColour="1C86EE"
+			longname="Louisville and Nashville Railroad">
+		<Home hex="B13"/>
+		<Float percentage="20"/>
+	</Company>
+	<Company name="NC" type="Public" tokens="2" fgColour="FFFFFF" bgColour="FF0000"
+			longname="Nashville, Chattanooga and St. Louis Railway">
+		<Home hex="H15"/>
+	</Company>
+	<Company name="SOU" type="Public" tokens="4" fgColour="000000" bgColour="7CFC00"
+			longname="Southern Railway">
+		<Home hex="F17"/>
+	</Company>
+	<Company name="TC" type="Public" tokens="2" fgColour="FFFFFF" bgColour="000000"
+			longname="Tennessee Central Railway">
+		<Home hex="F11"/>
+	</Company>
+
+	<StartPacket roundClass="rails.game.StartRound_1830">
+		<Bidding initial="5" minimum="5" increment="1"/>
+		<Item name="TCC" type="Private" basePrice="20"/>
+		<Item name="ET&amp;WNC" type="Private" basePrice="40"/>
+		<Item name="M&amp;C" type="Private" basePrice="70"/>
+		<Item name="O&amp;W" type="Private" basePrice="100"/>
+		<Item name="L&amp;N"  type="Public" president="yes" basePrice="175"/>
+	</StartPacket>
+</CompanyManager>

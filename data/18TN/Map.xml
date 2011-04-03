@@ -1,0 +1,77 @@
+<Map mapClass="rails.ui.swing.hexmap.EWHexMap" tileOrientation="EW"
+	letterOrientation="vertical" even="A">
+
+<Hex name="A16" tile="-902" city="Cincinnati" orientation="1" value="50,80"/>
+<Hex name="B13" tile="-10" city="Louisville"/>
+<Hex name="B15" tile="0" cost="60" />
+<Hex name="B17" tile="-10" city="Lexington"/>
+<Hex name="C4" tile="-902" city="Saint Louis" value="40,60"/>
+<Hex name="C6" tile="0" />
+<Hex name="C8" tile="0" cost="40" />
+<Hex name="C12" tile="9" />
+<Hex name="C14" tile="0" cost="60" />
+<Hex name="C16" tile="-1" city="Danville"/>
+<Hex name="C18" tile="0" cost="60" />
+<Hex name="D5" tile="0" cost="60" />
+<Hex name="D7" tile="-10" cost="40" />
+<Hex name="D9" tile="0" />
+<Hex name="D11" tile="4" city="Bowling Green"/>
+<Hex name="D13" tile="0" />
+<Hex name="D15" tile="0" cost="60" />
+<Hex name="D17" tile="0" />
+<Hex name="D19" tile="0" cost="60" />
+<Hex name="E4" tile="0" cost="60" />
+<Hex name="E6" tile="0" />
+<Hex name="E8" tile="0" cost="40" />
+<Hex name="E10" tile="-1" city="Clarksville"/>
+<Hex name="E12" tile="0" />
+<Hex name="E14" tile="0" />
+<Hex name="E16" tile="0" cost="60" />
+<Hex name="E18" tile="0" />
+<Hex name="E20" tile="0" />
+<Hex name="E22" tile="-902" city="Bristol/Coalfields" orientation="2" value="60,40"/>
+<Hex name="F3" tile="0" cost="60" />
+<Hex name="F5" tile="-1" city="Dyersburg"/>
+<Hex name="F7" tile="0" />
+<Hex name="F9" tile="0" cost="40" />
+<Hex name="F11" tile="-10" city="Nashville" cost="40" />
+<Hex name="F13" tile="-1" city="Lebanon"/>
+<Hex name="F15" tile="0" cost="60" />
+<Hex name="F17" tile="-10" city="Knoxville" cost="40" />
+<Hex name="F19" tile="0" />
+<Hex name="F21" tile="0" cost="120" />
+<Hex name="G2" tile="0" />
+<Hex name="G4" tile="0" cost="60" />
+<Hex name="G6" tile="6" city="Jackson"/>
+<Hex name="G8" tile="0" cost="40" />
+<Hex name="G10" tile="0" />
+<Hex name="G12" tile="-10" city="Murfreesboro"/>
+<Hex name="G14" tile="0" cost="60" />
+<Hex name="G16" tile="0" cost="40" />
+<Hex name="G18" tile="0" cost="120" />
+<Hex name="G20" tile="0" cost="120" />
+<Hex name="H1" tile="-903" city="Little Rock" orientation="5" value="20,40"/>
+<Hex name="H3" tile="-10" city="Memphis" cost="60" />
+<Hex name="H5" tile="0" />
+<Hex name="H7" tile="-10" city="Corinth"/>
+<Hex name="H9" tile="0" cost="40" />
+<Hex name="H11" tile="0" cost="60" />
+<Hex name="H13" tile="0" cost="60" />
+<Hex name="H15" tile="6" city="Chattanooga" orientation="2"/>
+<Hex name="H17" tile="0" cost="120" />
+<Hex name="I2" tile="0" />
+<Hex name="I4" tile="0" />
+<Hex name="I6" tile="0" />
+<Hex name="I8" tile="0" />
+<Hex name="I10" tile="-1" city="Huntsville" cost="40" />
+<Hex name="I12" tile="0" cost="40" />
+<Hex name="I14" tile="0" cost="60" />
+<Hex name="I16" tile="0" cost="60" />
+<Hex name="J5" tile="-902" city="Gulf Coast" orientation="4" value="30,50"/>
+<Hex name="J11" tile="-143" city="Birmingham" orientation="5" value="30,40"/>
+<Hex name="J13" tile="0" cost="60" />
+<Hex name="J15" tile="0" />
+<Hex name="J17" tile="-902" city="Atlanta" orientation="3" value="40,60"/>
+
+
+</Map>

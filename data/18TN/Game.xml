@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<ComponentManager>
+	<Component name="GameManager" class="rails.game.GameManager">
+		<Game name="18TN"/>
+		
+		<GameParameters>
+			<PlayerShareLimit percentage="60">
+				<!-- Option "NumberOfPlayers" is automatically set 
+					by the game engine -->
+				<IfOption name="NumberOfPlayers" value="2">
+					<IfOption name="TwoPlayersCertLimit70Percent" value="yes">
+						<Attributes percentage="70"/>
+					</IfOption>
+				</IfOption>
+			</PlayerShareLimit>			
+			<BankPoolLimit percentage="50"/>
+			<StockRound>
+				<NoSaleInFirstSR/>
+			</StockRound>
+		</GameParameters>
+		<EndOfGame>
+			<Bankruptcy/>
+			<BankBreaks limit="0" finish="setOfORs"/>
+			<!-- "Runs out"; when "broken", -1 is the limit -->
+		</EndOfGame>
+	</Component>
+	<Component name="PlayerManager" class="rails.game.PlayerManager">
+
+			<Players number="3" cash="600" certLimit="16"/>
+			<Players number="4" cash="450" certLimit="12"/>
+			<Players number="5" cash="360" certLimit="10"/>
+
+	</Component>
+	<Component name="Bank" class="rails.game.Bank">
+		<Bank amount="8000"/>
+		<Money format="$@"/>
+	</Component>
+	<Component name="TileManager" class="rails.game.TileManager" 
+		file="TileSet.xml"/>
+	<Component name="Map" class="rails.game.MapManager" file="Map.xml"/>
+	<Component name="CompanyManager" class="rails.game.CompanyManager" 
+		file="CompanyManager.xml"/>
+	<Component name="StockMarket" class="rails.game.StockMarket" 
+		file="StockMarket.xml"/>
+	<Component name="TrainManager" class="rails.game.TrainManager">
+		<Defaults>
+			<Reach base="stops" countTowns="yes"/>
+			<!-- Alternative values: 
+				base="hexes" for H-trains as in 1826, 1849 etc.
+				countTowns="no" for all trains in 1841, 18EU, etc.,
+				  where towns score but do not count against the train length.
+				  Otherwise, towns are counted as minor or major stops,
+				  depending on the presence or absence of a "minorStops" value.
+			-->
+			<Score towns="yes"/>
+			<!-- Alternative values:
+				towns="no" for trains that ignore towns (e.g. 1826 TGV).
+				cities="double" if city-revenue is doubled (e.g. 1826 TGV).
+			-->
+		</Defaults>
+		<Train name="2" majorStops="2" cost="80" amount="5" obsoleting="yes"/>
+		<Train name="3" majorStops="3" cost="180" amount="5" obsoleting="yes" startPhase="3"/>
+		<Train name="4" majorStops="4" cost="300" amount="3" obsoleting="yes" startPhase="4" 
+			rustedTrain="2" />
+		<Train name="5" majorStops="5" cost="450" amount="2" startPhase="5"/>
+		<Train name="6" majorStops="6" cost="630" amount="2" startPhase="6" 
+			rustedTrain="3" />
+		<Train name="8" majorStops="8" cost="700" amount="8" startPhase="8" 
+			rustedTrain="4" />
+
+	</Component>
+	<Component name="PhaseManager" class="rails.game.PhaseManager">
+		<!-- Note: released and rusted trains are now specified per Train
+			but could as well be moved here. To be sorted out when we do 18US. -->
+		<!-- Each Phase's defaults are the previous one's values -->
+		<Phase name="2" >
+			<Tiles colour="yellow"/>
+			<Privates sellingAllowed="no"/>
+			<OperatingRounds number="1"/>
+			<Trains tradingAllowed="yes"/>
+		</Phase>
+		<Phase name="3">
+			<Tiles colour="yellow,green"/>
+			<Privates sellingAllowed="yes"/>
+			<OperatingRounds number="2"/>
+		</Phase>
+		<Phase name="4">
+			<Tiles colour="yellow,green"/>
+		</Phase>
+		<Phase name="5">
+			<Tiles colour="yellow,green,brown"/>
+			<!--Privates close="yes"/-->
+			<OperatingRounds number="3"/>
+			<OffBoardRevenue step="2"/>
+		</Phase>
+		<Phase name="6">
+			<Tiles colour="yellow,green,brown"/>
+		</Phase>
+		<Phase name="8">
+			<Tiles colour="yellow,green,brown"/>
+		</Phase>
+	</Component>
+</ComponentManager>
