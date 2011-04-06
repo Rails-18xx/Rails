@@ -711,6 +711,11 @@ public class GameUIManager implements DialogOwner {
         log.debug("Autosaving to "+lastSavedFilename);
         processOnServer (saveAction);
         
+        saveAutoSavedFilename (lastSavedFilename);
+    }
+    
+    protected void saveAutoSavedFilename (String lastSavedFilename) {
+        
         try {
             File f = new File (lastSavedFilenameFilepath);
             PrintWriter out = new PrintWriter (new FileWriter (f));
@@ -909,6 +914,7 @@ public class GameUIManager implements DialogOwner {
         if (gameWasLoaded) {
             autoSaveLoadInitialized = true;
             lastSavedFilenameFilepath = saveDirectory + "/" + savePrefix + ".last_rails";
+            saveAutoSavedFilename (lastSavedFilename);
         }
         
         if (autoLoadPoller != null && autoSaveLoadStatus != AutoLoadPoller.OFF

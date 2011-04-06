@@ -1457,8 +1457,6 @@ public class ORUIManager implements DialogOwner {
 
         messagePanel.setMessage(null);
 
-        if (!myTurn) return;
-        
         if (actionToComplete != null) {
             log.debug("ExecutedAction: " + actionToComplete);
         }
@@ -1480,6 +1478,8 @@ public class ORUIManager implements DialogOwner {
 
         orPanel.initORCompanyTurn(orComp, orCompIndex);
 
+        if (!myTurn) return;
+        
         privatesCanBeBoughtNow = possibleActions.contains(BuyPrivate.class);
         orPanel.initPrivateBuying(privatesCanBeBoughtNow);
 

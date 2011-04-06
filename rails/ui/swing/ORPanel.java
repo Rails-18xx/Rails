@@ -746,6 +746,8 @@ implements ActionListener, KeyListener, RevenueListener {
                 ((ActionMenuItem)item).clearPossibleActions();
             }
         }
+        undoButton.setEnabled(false);
+        
     }
 
     public void resetORCompanyTurn(int orCompIndex) {
