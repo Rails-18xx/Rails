@@ -99,12 +99,20 @@
 				cities="double" if city-revenue is doubled (e.g. 1826 TGV).
 			-->
 		</Defaults>
-		<Train name="2" majorStops="2" cost="80" amount="6" obsoleting="yes"/>
-		<Train name="3" majorStops="3" cost="180" amount="5" obsoleting="yes" startPhase="3"/>
-		<Train name="4" majorStops="4" cost="300" amount="4" obsoleting="yes" startPhase="4" 
+		<Train name="2" majorStops="2" cost="80" amount="6">
+			<IfOption name="Variant" value="Coalfields">
+                <Attributes obsoleting="yes"/>
+            </IfOption>
+		</Train>
+		<Train name="3" majorStops="3" cost="180" amount="5" startPhase="3">
+            <IfOption name="Variant" value="Coalfields">
+                <Attributes obsoleting="yes"/>
+            </IfOption>
+		</Train>
+		<Train name="4" majorStops="4" cost="300" amount="4" startPhase="4" 
 			rustedTrain="2">
 			<IfOption name="Variant" value="Coalfields">
-                <Attributes amount="5"/>
+                <Attributes obsoleting="yes" amount="5"/>
 			</IfOption>
 		</Train>
 		<Train name="5" majorStops="5" cost="450" amount="3" startPhase="5"/>
