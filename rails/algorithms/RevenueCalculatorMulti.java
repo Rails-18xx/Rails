@@ -1,6 +1,5 @@
 package rails.algorithms;
 
-import rails.algorithms.RevenueCalculator.Terminated;
 
 final class RevenueCalculatorMulti extends RevenueCalculator {
 

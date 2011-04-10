@@ -5,7 +5,6 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -20,15 +19,12 @@ import org.jgraph.JGraph;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jgrapht.ext.JGraphModelAdapter;
-import org.jgrapht.graph.Multigraph;
 import org.jgrapht.graph.SimpleGraph;
-import org.jgrapht.graph.Subgraph;
 
 import com.jgraph.layout.JGraphFacade;
 import com.jgraph.layout.JGraphLayout;
 import com.jgraph.layout.organic.JGraphFastOrganicLayout;
 
-import rails.algorithms.NetworkEdge.MergeResult;
 import rails.game.BaseToken;
 import rails.game.City;
 import rails.game.GameManagerI;
@@ -326,7 +322,6 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
         layout.run(facade);
         
         facade.scale(new Rectangle(1600,1200));
-        @SuppressWarnings("unchecked")
         Map nested = facade.createNestedMap(true,true);
         jgraph.getGraphLayoutCache().edit(nested);
 

@@ -115,7 +115,7 @@ public class MapManager implements ConfigurableComponentI {
     public void finishConfiguration (GameManagerI gameManager) throws ConfigurationException {
 
         MapHex hex;
-        int i, j, k, dx, dy;
+        int i, j, k;
         MapHex nb;
 
         for (String hexName : mHexes.keySet()) {

@@ -1,6 +1,5 @@
 package rails.ui.swing.gamespecific._1856;
 
-import javax.swing.JDialog;
 import javax.swing.WindowConstants;
 
 import rails.game.*;

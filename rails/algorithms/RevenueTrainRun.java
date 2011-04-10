@@ -3,15 +3,12 @@ package rails.algorithms;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.jgrapht.GraphPath;
-import org.jgrapht.Graphs;
 
 import rails.algorithms.NetworkVertex.StationType;
 import rails.algorithms.NetworkVertex.VertexType;

@@ -195,7 +195,6 @@ public class SetDividend extends PossibleORAction implements Cloneable {
     }
 
     /** Deserialize */
-    @SuppressWarnings("unchecked")
     private void readObject(ObjectInputStream in) throws IOException,
             ClassNotFoundException {
 

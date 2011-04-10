@@ -330,11 +330,6 @@ public class ConvertTilesXML {
             outputJunction.setAttribute("slots", station[1]);
         }
 
-        // String[] p = (String[]) ((String[]) stationMap.get(type)).clone();
-        if (station == null) {
-            throw new ConfigurationException("Unknown junction type: " + type);
-        }
-
         // Junction revenue
         Element revenue =
                 (Element) inputJunction.getElementsByTagName("revenue").item(0);

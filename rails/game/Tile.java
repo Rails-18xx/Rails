@@ -32,7 +32,6 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
     private final List<Upgrade> upgrades = new ArrayList<Upgrade>(); // Contains
     // Upgrade instances
     //private String upgradesString = "";
-    @SuppressWarnings("unchecked")
     private final List[] tracksPerSide = new ArrayList[6];
     // N.B. Cannot parametrise collection array
     private Map<Integer, List<Track>> tracksPerStation = null;

@@ -1,9 +1,7 @@
 package rails.game.specific._1856;
 
 import rails.game.*;
-import rails.game.action.BuyCertificate;
 import rails.game.state.IntegerState;
-import rails.util.LocalText;
 
 /** Needed to copy behaviour on share selling from StockRound_1856. */
 public class ShareSellingRound_1856 extends ShareSellingRound {

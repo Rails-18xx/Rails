@@ -10,7 +10,6 @@ import javax.swing.*;
 
 import org.apache.log4j.Logger;
 
-import org.jgrapht.graph.Multigraph;
 import org.jgrapht.graph.SimpleGraph;
 
 import rails.algorithms.*;

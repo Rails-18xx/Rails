@@ -13,7 +13,6 @@ import rails.game.PhaseI;
 import rails.game.PhaseManager;
 import rails.game.TrainManager;
 import rails.game.TrainTypeI;
-import rails.util.LocalText;
 import rails.util.Tag;
 
 /** 

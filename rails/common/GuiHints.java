@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import rails.game.GameDef;
 import rails.game.RoundI;
 import rails.game.move.StateChange;
 import rails.game.state.EnumState;

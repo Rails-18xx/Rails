@@ -1,9 +1,7 @@
 package rails.game.specific._18AL;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import rails.algorithms.NetworkTrain;
 import rails.algorithms.NetworkVertex;

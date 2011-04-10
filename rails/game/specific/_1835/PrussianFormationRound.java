@@ -279,6 +279,7 @@ public class PrussianFormationRound extends StockRound {
             break;
         }
 
+        // This is now dead code, but won't be when some sensible validations exist 
         if (errMsg != null) {
             DisplayBuffer.add(LocalText.getText("CannotMerge",
                     action.getFoldedCompanyNames(),

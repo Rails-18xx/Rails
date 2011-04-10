@@ -71,14 +71,6 @@ public class GUIHex implements ViewObject {
 
     protected String toolTip = "";
 
-    /**
-     * Stores the neighbouring views. This parallels the neighors field in
-     * MapHex, just on the view side.
-     *
-     * @todo check if we can avoid this
-     */
-    private GUIHex[] neighbors = new GUIHex[6];
-
     // GUI variables
     double[] xVertex = new double[6];
     double[] yVertex = new double[6];

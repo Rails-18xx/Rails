@@ -475,11 +475,6 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
             this.token = token;
         }
         
-        // NOTE: NOT USED
-        TokenI getToken() {
-            return token;
-        }
-
     }
 
     /** JLabel extension to allow attaching the internal hex ID */

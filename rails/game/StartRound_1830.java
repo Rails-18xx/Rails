@@ -360,6 +360,7 @@ public class StartRound_1830 extends StartRound {
 
                 }
             } else if (auctionItem != null) {
+                // TODO  Now dead code - should it be reactivated?
                 setNextBiddingPlayer(auctionItem);
             } else {
                 setNextPlayer();

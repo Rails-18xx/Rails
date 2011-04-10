@@ -87,8 +87,7 @@ public class StockRound_1825 extends StockRound {
         String compName;
         int price;
         int number;
-        int share, maxShareToSell;
-        boolean dumpAllowed;
+        int maxShareToSell;
         Portfolio playerPortfolio = currentPlayer.getPortfolio();
 
         /*
@@ -100,7 +99,7 @@ public class StockRound_1825 extends StockRound {
             // Check if shares of this company can be sold at all
             if (!mayPlayerSellShareOfCompany(company)) continue;
 
-            share = maxShareToSell = playerPortfolio.getShare(company);
+            maxShareToSell = playerPortfolio.getShare(company);
             if (maxShareToSell == 0) continue;
 
             /* May not sell more than the Pool can accept */

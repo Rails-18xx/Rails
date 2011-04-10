@@ -4,7 +4,6 @@ package rails.ui.swing;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
@@ -261,7 +260,6 @@ public class GameSetupWindow extends JDialog implements ActionListener {
             }
         } else if (arg0.getSource().equals(recentButton)) {
             File saveDirectory = new File(Config.get("save.directory"));
-            if (saveDirectory == null) return;
             
             recentFiles = new TreeSet<File>(new Comparator<File> (){
                 public int compare (File a, File b) {

@@ -1,7 +1,6 @@
 package rails.game.specific._1825;
 
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 

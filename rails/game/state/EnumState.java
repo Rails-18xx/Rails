@@ -7,6 +7,7 @@ public class EnumState<E extends Enum> extends State implements StateI {
         super (name, object);
     }
 
+    @SuppressWarnings("unchecked")
     public E value() {
         return (E)object;
     }
