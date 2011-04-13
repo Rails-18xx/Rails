@@ -279,6 +279,15 @@ Known Issues:
         <Description>18TN</Description>
         <Players minimum="3" maximum="5"/>
     </Game>
+    <Game name="1880">
+        <Note>Prototype</Note>
+        <Description>1880 - China
+        (c) 2010 Double O Games  Mayfair Games, Inc.
+        Designed by Leonhard Ogler and Helmut Ohley
+        Limitations:
+        All aspects not present in 1880 have not been implemented yet.</Description>
+        <Players minimum="3" maximum="7"/>
+    </Game>
 
    	
 	<Credits>Rails is a computer implementation of a number of railroad board games,

@@ -52,6 +52,7 @@ public class ConvertTilesXML {
         colourMap.put("tlMapUpgradableToYellow", "white");
         colourMap.put("tlMapUpgradableToGreen", "yellow");
         colourMap.put("tlMapUpgradableToBrown", "green");
+        colourMap.put("tlMapUpgradableToGray", "brown");
 
         stationMap = new HashMap<String, String[]>();
         stationMap.put("jtWhistlestop", new String[] { "Town", "0" });

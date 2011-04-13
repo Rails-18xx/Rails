@@ -1,0 +1,184 @@
+<?xml version="1.0"?>
+<!-- 1880 CompanyManager.xml -->
+<CompanyManager>
+
+	<CompanyType name="Investor" class="rails.game.PublicCompany">
+		<ShareUnit percentage="100" />
+		<Certificate type="President" shares="1" />
+		<StockPrice market="no" />
+		<BaseTokens>
+			<HomeBase lay="whenFloated" />
+		</BaseTokens>
+		<Payout split="no" />
+	</CompanyType>
+
+	<CompanyType name="Private" class="rails.game.PrivateCompany" />
+
+
+	<CompanyType name="Major" class="rails.game.PublicCompany" capitalisation="incremental" >
+		<Capitalisation Type="incremental" />
+		<TileLays>
+			<Number colour="yellow" phase="2,3,4,5,6,7,8" number="2" />
+		</TileLays>
+		<Float percentage="60" />
+		<StockPrice par="yes" />
+		<ShareUnit percentage="10" />
+		<Certificate type="President" shares="2" />
+		<Certificate shares="1" number="8" />
+		<BaseTokens>
+			<LayCost method="sequence" cost="0,40,100" />
+		</BaseTokens>
+		<Capitalisation type="incremental" />
+		<Trains number="4,4,3,3,3,3,2,2" />
+		<CanUseSpecialProperties />
+	</CompanyType>
+
+	<Company Name="A1" longname="Chinese Eastern Railway" type="Investor" tokens="1" >
+	<Home hex="A3" city="1" />
+	</Company>
+	<Company Name="A2" longname="South Manchuria Railway" type="Investor"  tokens="1" >
+	<Home hex="E13" city="1" />
+	</Company>>
+	<Company Name="A3" longname="Zeng Tai Railway" type="Investor"  tokens="1" >
+	<Home hex="H6" city="1" />
+	</Company>
+	<Company Name="A4" longname="Schantung-Eisenbahngesellschaft"
+		type="Investor"  tokens="1" >
+	<Home hex="H14" city="1" />
+	</Company>
+	<Company Name="A5" longname="Kowloon-Canton Railway" type="Investor"  tokens="1" >
+	<Home hex="Q15" city="1" />
+	</Company>
+	<Company Name="A6" longname="Macau Hafen" type="Investor"  tokens="1" >
+	<Home hex="P12" city="1" />
+	</Company>
+	<Company Name="A7" longname="Kunming-Hekou Railway" type="Investor"  tokens="1" >
+	<Home hex="Q7" city="1" />
+	</Company>
+	<Company name="WR" longname="Woosong Railway" type="Private"
+		basePrice="5" revenue="0">
+		<!--SpecialProperty condition="ifOwnedByPlayer" Phasenwechsel-Freie Lok -->
+		<ClosingConditions>
+			<Phase>4</Phase>
+			<SpecialProperties condition="ifExercised" />
+		</ClosingConditions>
+	</Company>
+	<Company name="KR" longname="Kaiping Railway" type="Private"
+		basePrice="10" revenue="5">
+		<ClosingConditions>
+			<Phase>4</Phase>
+		</ClosingConditions>
+	</Company>
+	<Company name="YC" longname="Yanda Ferry 
+			Company" type="Private"
+		basePrice="25" revenue="10"> <!-- SpecialProperty condition="ifOwnedByPlayer" when="revenuecalcStep" revenue="10" -->
+	</Company>
+	<Company name="TL" longname="Taiwan Western Line" type="Private"
+		basePrice="45" revenue="15"> <!-- SpecialProperty condition="ifOwnedByPlayer" when="revenuecalcStep" revenue="20" -->
+	</Company>
+	<Company name="CC" longname="Chinese Rivers Ferry 
+			Company"
+		type="Private" basePrice="70" revenue="20">
+		<SpecialProperty condition="ifOwnedByPlayer"
+		when="tileLayingStep" class="rails.game.special.SpecialTileLay">
+		<SpecialTileLay location="M15" extra="no" free="yes" />
+		</SpecialProperty>
+	</Company>
+	<Company name="JO" longname="Jeme Tien Yow Engineer Office"
+		type="Private" basePrice="70" revenue="20">
+		<SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep"
+		class="rails.game.specific._1880.BuildingPermit">
+		</SpecialProperty>
+	</Company>
+	<Company name="IG" longname="Imperial Qing Government" type="Private"
+		basePrice="160">
+		<Info key="ComesWithPresidency" parm="BCR,20" />
+	</Company>
+	<Company name="RC" longname="Rocket Company" type="Private"
+		basePrice="70" revenue="0"> 
+		<SpecialProperty condition="ifOwnedByPlayer" when="trainBuyingStep" class="rails.game.special.SpecialTrainBuy" />
+		<!--  Kostenfreie Lok bei Phasenwechsel durch Lokkauf --> 
+		<!-- Can exchange Certificate for actual train in one phase 2,2+3,3,3+3,4 
+			as soon as train has been bought -->
+		<!-- The train can be moved upon purchase into one company owned by the 
+			owner of the certificate --> <!-- Company must have space for the new train, but can hand back an older 
+			train to bank (2+2,3,3+3) -->
+		<ClosingConditions>
+			<Phase>5</Phase>
+			<SpecialProperties condition="ifExercised" />
+		</ClosingConditions>
+	</Company>
+	<Company name="BCR" longname="Baocheng Railway" type="Major"
+		tokens="3" fgColour="FFFFFF" bgColour="0000FF">
+		<Home hex="M3" />
+	</Company>
+	<Company name="JHA" longname="Jingha Railway" type="Major"
+		tokens="3" fgColour="FFFFFF" bgColour="FF0000">
+		<Home hex="F8" />
+	</Company>
+	<Company name="JHU" longname="Jinghu 
+			Railway" type="Major"
+		tokens="3" fgColour="FFFFFF" bgColour="FF0000">
+		<Home hex="F8" />
+	</Company>
+	<Company name="JGG" longname="Jingguang Railway" type="Major"
+		tokens="3" fgColour="FFFFFF" bgColour="FF0000">
+		<Home hex="F8" />
+	</Company>
+	<Company name="JLR" longname="Jinglan Railway" type="Major"
+		tokens="3" fgColour="FFFFFF" bgColour="FF0000">
+		<Home hex="F8" />
+	</Company>
+	<Company name="BZU" longname="Binzhou 
+			Railway" type="Major"
+		tokens="3" fgColour="FFFFFF" bgColour="FF0000">
+		<Home hex="B8" />
+	</Company>
+	<Company name="LHR" longname="Longhai Railway" type="Major"
+		tokens="3" fgColour="FFFFFF" bgColour="FF0000">
+		<Home hex="J2" />
+	</Company>
+	<Company name="SCR" longname="Schichang Railway" type="Major"
+		tokens="3" fgColour="FFFFFF" bgColour="FF0000">
+		<Home hex="N12" />
+	</Company>
+	<Company name="CKR" longname="Chengkun Railway" type="Major"
+		tokens="3" fgColour="FFFFFF" bgColour="FF0000">
+		<Home hex="O5" />
+	</Company>
+	<Company name="NXR" longname="Ningxi 
+			Railway" type="Major"
+		tokens="3" fgColour="FFFFFF" bgColour="FF0000">
+		<Home hex="J6" />
+	</Company>
+	<Company name="HKR" longname="Hukun Railway" type="Major"
+		tokens="3" fgColour="FFFFFF" bgColour="FF0000">
+		<Home hex="K14" />
+	</Company>
+	<Company name="NJR" longname="Najiang Railway" type="Major"
+		tokens="3" fgColour="FFFFFF" bgColour="FF0000">
+		<Home hex="K12" />
+	</Company>
+	<Company name="QSR" longname="Qinshen 
+			Railway" type="Major"
+		tokens="3" fgColour="FFFFFF" bgColour="FF0000">
+		<Home hex="D13" />
+	</Company>
+	<Company name="WNR" longname="Wunan Railway" type="Major"
+		tokens="3" fgColour="FFFFFF" bgColour="FF0000">
+		<Home hex="L10" />
+	</Company>
+	<StartPacket roundClass="rails.game.StartRound_1880">
+		<Bidding initial="5" minimum="5" increment="5" />
+		<Item name="WR" type="Private" />
+		<Item name="KR" type="Private" />
+		<Item name="YC" type="Private" />
+		<Item name="TL" type="Private" />
+		<Item name="CC" type="Public" />
+		<Item name="JO" type="Private" />
+		<Item name="IG" type="Private">
+			<SubItem name="BCR" type="Public" />
+		<Item name="RC" type="Private" />
+		</Item>
+	</StartPacket>
+</CompanyManager>

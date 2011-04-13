@@ -1,0 +1,142 @@
+<TileManager tiles="Tiles.xml">
+	<!-- Preprinted tiles -->
+	<Tile id="0"><!-- Empty space -->
+		<Upgrade id="7,8,9" />
+	</Tile>
+	<Tile id="-1"><!-- 1 town -->
+		<Upgrade id="8850,8851,8852" />
+	</Tile>
+	<Tile id="-2"><!-- 2 towns -->
+		<Upgrade id="8854,8855,8856,8857,8858" />
+	</Tile>
+	<Tile id="-10"><!-- 1 city -->
+		<Upgrade id="5,6,57"/>
+	</Tile>
+	<Tile id="-80020">
+		<Upgrade id="235" />
+	</Tile>
+	<Tile id="-80001">
+		<Upgrade id="5,6,57,8850,8851,8852" />
+	</Tile>
+	<Tile id="-80002">
+		<Upgrade id="8854,8855,8856,8857,8858,235" />
+	</Tile>
+	<Tile id="-80003">
+		<Upgrade id="8887" />
+	</Tile>
+	<Tile id="-80004">
+		<Upgrade id="8886" />
+	</Tile>
+	<Tile id="-901"/>
+	<Tile id="-902"/>
+	<Tile id="-903"/>
+	
+	<!-- Yellow -->
+	<Tile id="5" quantity="6">
+		<Upgrade id="14,15,619" />
+	</Tile>
+	<Tile id="6" quantity="6">
+		<Upgrade id="14,15,619" />
+	</Tile>
+	<Tile id="7" quantity="5">
+		<Upgrade id="18,26,27,28,29,30,31" />
+	</Tile>
+	<Tile id="8" quantity="15">
+		<Upgrade id="16,17,19,23,24,25,28,29,30,31" />
+	</Tile>
+	<Tile id="9" quantity="15">
+		<Upgrade id="18,19,20,23,24,26,27" />
+	</Tile>
+	<Tile id="57" quantity="6">
+	<Upgrade id="14,15,619" />
+	</Tile>
+	<Tile id="235" quantity="5">
+	<Upgrade id="8860,8861,8862,8863,8864,8865" />
+	</Tile>
+	<Tile id="8850" quantity="5" />
+	<Tile id="8851" quantity="6" />
+	<Tile id="8852" quantity="6" />
+	<Tile id="8854" quantity="2" />
+	<Tile id="8855" quantity="2" />
+	<Tile id="8856" quantity="2" />
+	<Tile id="8857" quantity="2" />
+	<Tile id="8858" quantity="2" />
+	<Tile id="8877" quantity="1"> <!-- Shanghai Yellow-->
+	<Upgrade id="8878" />
+	</Tile>
+	<!-- Green -->
+	<Tile id="14" quantity="4">
+		<Upgrade id="63" />
+		<Upgrade id="611" />
+	</Tile>
+	<Tile id="15" quantity="8">
+		<Upgrade id="63" />
+		<Upgrade id="611" />
+	</Tile>
+	<Tile id="619" quantity="4">
+		<Upgrade id="63" />
+		<Upgrade id="611" />
+	</Tile>
+	<Tile id="16" quantity="2" />
+	<Tile id="17" quantity="1" />
+	<Tile id="18" quantity="1" />
+	<Tile id="19" quantity="2" />
+	<Tile id="20" quantity="2" />
+	<Tile id="23" quantity="4" />
+	<Tile id="24" quantity="4" />
+	<Tile id="25" quantity="3" />
+	<Tile id="26" quantity="2" />
+	<Tile id="27" quantity="2" />
+	<Tile id="28" quantity="2" />
+	<Tile id="29" quantity="2" />
+	<Tile id="30" quantity="2" />
+	<Tile id="31" quantity="2" />
+	<Tile id="8886" quantity="1">
+	<Upgrade id="8887" />
+	</Tile>
+	<Tile id="8878" quantity="1">
+	<Upgrade id="8879" />
+	</Tile>
+	<Tile id="8860" quantity="1">
+	<Upgrade id="8872,8873,8874" />
+	</Tile>
+	<Tile id="8861" quantity="2">
+	<Upgrade id="8872,8873,8874" />
+	</Tile>
+	<Tile id="8862" quantity="1">
+	<Upgrade id="8872,8873,8874" />
+	</Tile>
+	<Tile id="8863" quantity="1">
+	<Upgrade id="8872,8873,8874" />
+	</Tile>
+	<Tile id="8864" quantity="1">
+	<Upgrade id="8872,8873,8874" />
+	</Tile>
+	<Tile id="8865" quantity="1">
+	<Upgrade id="8872,8873,8874" />
+	</Tile>
+	<Tile id="8866" quantity="3"/>
+	<Tile id="887" quantity="5"/>
+	<Tile id="888" quantity="3"/>
+	<!-- Brown-->
+	<Tile id="63" quantity="6" >
+	<Upgrade id="895,455" />
+	</Tile>
+	<Tile id="611" quantity="3" >
+	<Upgrade id="895,455" />
+	</Tile>
+	<Tile id="8871" quantity="3" />
+	<Tile id="8872" quantity="2" />
+	<Tile id="8873" quantity="2" />
+	<Tile id="8874" quantity="2" />
+	<Tile id="8879" quantity="1" />
+	<Tile id="8887" quantity="1" >
+	<Upgrade id="8888" />
+	</Tile>
+	<!-- Grey -->
+	<Tile id="455" quantity="3" />
+	<Tile id="895" quantity="3" />
+	<Tile id="8875" quantity="1" />
+	<Tile id="8880" quantity="1" />
+	<Tile id="8888" quantity="1" />
+</TileManager>

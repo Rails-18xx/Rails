@@ -1,0 +1,118 @@
+<Map mapClass="rails.ui.swing.hexmap.EWHexMap" tileOrientation="EW" letterOrientation="vertical" even="B">
+	<Hex name="A3" tile="-902" value="20,30,40,50" city="Russia" />
+	<Hex name="A5" tile="-10" city="Qiqihar"/>
+	<Hex name="A7" tile="-1" />
+	<Hex name="A9" tile="0" />
+	<Hex name="A11" tile="0" />
+	<Hex name="A13" tile="0" />
+	<Hex name="A15" tile="-902" orientation="2" value="10,20,30,40" />
+	<Hex name="B4" tile="0" />
+	<Hex name="B6" tile="0" />
+	<Hex name="B8" tile="-10" city="Harbin" />
+	<Hex name="B10" tile="0" />
+	<Hex name="B12" tile="-2" />
+	<Hex name="B14" tile="-80001" city="testa"/>
+	<Hex name="C3" tile="0" cost="30" />
+	<Hex name="C5" tile="0" cost="30" />
+	<Hex name="C7" tile="-1" />
+	<Hex name="C9" tile="-10" city="Changchun" />
+	<Hex name="C11" tile="-10" city="Jilin City" />
+	<Hex name="C13" tile="0" />
+	<Hex name="C15" tile="0" cost="30" />
+	<Hex name="D4" tile="0" cost="30"/>
+	<Hex name="D6" tile="0" cost="30"/>
+	<Hex name="D8" tile="0" cost="30"/>
+	<Hex name="D10" tile="0" />
+	<Hex name="D12" tile="-80020" city="Shenyang, Fushun" />
+	<Hex name="D14" tile="-1" />
+	<Hex name="E3" tile="0" cost="30" />
+	<Hex name="E5" tile="0" cost="30" />
+	<Hex name="E7" tile="0" cost="30" />
+	<Hex name="E9" tile="-80001" city="Test" />
+	<Hex name="E11" tile="0" impassable="E13" />
+	<Hex name="E13" tile="-10" city="Dalian" impassable="E11" />
+	<Hex name="F2" tile="0" />
+	<Hex name="F4" tile="-80020" city="Hohhot,Datong" />
+	<Hex name="F6" tile="-80001" city="Test8" cost="30" />
+	<Hex name="F8" tile="-80004" city="Beijing" orientation="5" label="Beijing"/>
+	<Hex name="F10" tile="-10" city="Tianjin" />
+	<Hex name="G1" tile="0" cost="20" />
+	<Hex name="G3" tile="-10" city="Baotou" cost="20" />
+	<Hex name="G5" tile="0" cost="50" />
+	<Hex name="G7" tile="0" />
+	<Hex name="G9" tile="-1" />
+	<Hex name="G11" tile="-1" cost="20" />
+	<Hex name="G13" tile="0" />
+	<Hex name="G15" tile="-1" />
+	<Hex name="H2" tile="0" cost="30"/>
+	<Hex name="H4" tile="0" cost="20" />
+	<Hex name="H6" tile="-10" city="Taiyuan" />
+	<Hex name="H8" tile="-80020"  city="Test9, Test10"/>
+	<Hex name="H10" tile="-10" city="Jinan" cost="20" />
+	<Hex name="H12" tile="-2" />
+	<Hex name="H14" tile="-10" city="Qingdao" />
+	<Hex name="I1" tile="-903" orientation="5" value="10,20,30,40" city="Orumqi" />
+	<Hex name="I3" tile="0" cost="30" />
+	<Hex name="I5" tile="0" cost="20" />
+	<Hex name="I7" tile="0" cost="50" />
+	<Hex name="I9" tile="-80020" city="Kaifeng, Zhengzhou" cost="20" />
+	<Hex name="I11" tile="0" />
+	<Hex name="I13" tile="0" />
+	<Hex name="J2" tile="-10" city="Lhasa" cost="50"/>
+	<Hex name="J4" tile="0" cost="30"/>
+	<Hex name="J6" tile="-10" cost="30" city="Xian" />
+	<Hex name="J8" tile="-2" cost="30" />
+	<Hex name="J10" tile="0" />
+	<Hex name="J12" tile="-10" city="Hefei" />
+	<Hex name="J14" tile="-1" cost="20"/>
+	<Hex name="K1" tile="-903" orientation="5" value="0,0,0,80" city="Lhasa" />
+	<Hex name="K3" tile="0" cost="30" />
+	<Hex name="K5" tile="-1" cost="30" />
+	<Hex name="K7" tile="-1" cost="30" />
+	<Hex name="K9" tile="0" cost="30" />
+	<Hex name="K11" tile="0" />
+	<Hex name="K13" tile="-10" cost="20" city="Nanjing" />
+	<Hex name="K15" tile="-10" city="Shanghai" label="S"/>
+	<Hex name="L2" tile="0" />
+	<Hex name="L4" tile="0" />
+	<Hex name="L6" tile="0" />
+	<Hex name="L8" tile="0" cost="50"/>
+	<Hex name="L10" tile="-10" city="Wuhan" cost="20"/>
+	<Hex name="L12" tile="-2" cost="20"/>
+	<Hex name="L14" tile="-80001" city="Test6" />
+	<Hex name="L16" tile="-1" />
+	<Hex name="M1" tile="0" cost="40"/>
+	<Hex name="M3" tile="-10" city="Chengdu" />
+	<Hex name="M5" tile="-1" cost="30" />
+	<Hex name="M7" tile="-10" city="Chongqing" cost="20" />
+	<Hex name="M9" tile="0" />
+	<Hex name="M11" tile="0" />
+	<Hex name="M13" tile="0" />
+	<Hex name="M15" tile="-1" />
+	<Hex name="N2" tile="0" cost="40" />
+	<Hex name="N4" tile="-80002" city="Test4,Test5" cost="20"/>
+	<Hex name="N6" tile="0" cost="20"/>
+	<Hex name="N8" tile="0" cost="30"/>
+	<Hex name="N10" tile="-80001" city="Test3" />
+	<Hex name="N12" tile="-80020" city="Changsha, Nanchang" />
+	<Hex name="N14" tile="0" />
+	<Hex name="N16" tile="-903" orientation="2" value="30,30,0,0" city="Taiwan" />
+	<Hex name="O1" tile="0" cost="60" />
+	<Hex name="O3" tile="-2" cost="20"/>
+	<Hex name="O5" tile="-10" city="Kunming" />
+	<Hex name="O7" tile="-80001" city="Test2" cost="30" />
+	<Hex name="O9" tile="0" cost="30" />
+	<Hex name="O11" tile="-2" />
+	<Hex name="O13" tile="0" />
+	<Hex name="O15" tile="-1" cost="30"/>
+	<Hex name="P2" tile="0" cost="40"/>
+	<Hex name="P4" tile="-1" cost="40"/>
+	<Hex name="P6" tile="-1" />
+	<Hex name="P8" tile="-10" city="Nanning" />
+	<Hex name="P10" tile="-1" cost="30" />
+	<Hex name="P12" tile="-10" city="Macau" />
+	<Hex name="P14" tile="-10" city="Guangzhu" />
+	<Hex name="Q7" tile="-902" orientation="4" value="30,40,50,60" city="French Indochina" />
+	<Hex name="Q13" tile="-902" orientation="4" value="20,30,40,50" city="Haikou" />
+	<Hex name="Q15" tile="-901" orientation="3" value="20,30,10,70" city="Hongkong"/>
+</Map>
