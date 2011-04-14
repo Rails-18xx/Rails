@@ -211,9 +211,13 @@ public class ORUIManager implements DialogOwner {
                     if (sp == null || !(sp instanceof SpecialTileLay) ||
                             ((SpecialTileLay)sp).requiresConnection())
                         break;
-                    case (LayTile.LOCATION_SPECIFIC):
-                        if (layTile.getLocations() != null)
+                    // else fall through
+                    case (LayTile.LOCATION_SPECIFIC): // NOT YET USED
+                        if (layTile.getLocations() != null) {
                             hexUpgrades.addAll(layTile.getLocations());
+                        } else {
+                            mapHexes = true;
+                        }
                     }
                 }
 
@@ -760,31 +764,29 @@ public class ORUIManager implements DialogOwner {
                 List<TileI> sp_tiles;
                 List<MapHex> sp_hexes;
                 LayTile gen_lt = null;
+                LayTile spec_lt = null;
                 for (LayTile lt : allowances) {
                     if (lt.getType() == LayTile.SPECIAL_PROPERTY) {
                         // Cases where a special property is used include:
                         // 1. SP refers to specified tiles, (one of) which is chosen:
                         // (examples: 18AL Lumber Terminal, 1889 Port)
-                        if ((((sp_tiles = lt.getTiles()) != null
-                                && sp_tiles.contains(tile))
-                        // 2. SP does not refer to specific tiles but it does refer to 
-                        // specified hexes, (one of) which is chosen:
+                        if ((sp_tiles = lt.getTiles()) != null
+                                && !sp_tiles.contains(tile)) continue;
+                        // 2. SP refers to specified hexes, (one of) which is chosen:
                         // (example: 1830 hex B20)
-                          || (sp_tiles == null 
-                                && (sp_hexes = lt.getLocations()) != null) 
-                                && sp_hexes.contains(selectedHex.getModel()))) {
-                             allowance = lt;
-                             break;
-                        }
+                        if ((sp_hexes = lt.getLocations()) != null 
+                                && !sp_hexes.contains(selectedHex.getModel())) continue;
+                        spec_lt = lt;
                     } else {
+                        // Default case: the generic allowance
                         gen_lt = lt;
                     }
                 }
                 
-                // Default case: the generic allowance
-                // TODO It is not clear that all possible cases have been covered yet.
-                // But at least this works for 1830, 1889
-                if (allowance == null) allowance = gen_lt;
+                allowance = spec_lt == null ? gen_lt :
+                            gen_lt == null ? spec_lt :
+                            spec_lt.getSpecialProperty().getPriority() 
+                                == SpecialPropertyI.Priority.FIRST ? spec_lt : gen_lt;
                 
             }
             allowance.setChosenHex(selectedHex.getHexModel());

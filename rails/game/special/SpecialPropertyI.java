@@ -51,6 +51,18 @@ public interface SpecialPropertyI extends ConfigurableComponentI, Moveable {
 
     public String getTransferText();
 
+    public enum Priority {
+        LAST,
+        ASKUSER,
+        FIRST;
+    };
+    
+    public static final Priority DEFAULT_PRIORITY = Priority.FIRST;
+
+    public Priority getPriority();
+
+    public void setPriority(Priority priority);
+
     public int getUniqueId();
 
     public String toMenu();

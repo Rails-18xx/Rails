@@ -1415,7 +1415,16 @@ public class OperatingRound extends Round implements Observer {
                       // normal tile lays are also (still) allowed
                       || stl.getTile() != null 
                           && checkNormalTileLay(stl.getTile(), false)) {
-                    currentSpecialTileLays.add(new LayTile(stl));
+                    LayTile lt = new LayTile(stl);
+                    String[] stlc = stl.getTileColours();
+                    if (stlc != null) {
+                        Map<String, Integer> tc = new HashMap<String, Integer>();
+                        for (String c : stlc) {
+                            tc.put(c, 1);
+                        }
+                        lt.setTileColours(tc);
+                    }
+                    currentSpecialTileLays.add(lt);
                 }
             }
         }

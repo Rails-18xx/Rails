@@ -75,6 +75,7 @@ public class LayTile extends PossibleORAction {
     /**
      * Allow laying a tile on a given location.
      */
+    // NOTE: NOT YET USED
     public LayTile(List<MapHex> locations, List<TileI> tiles) {
         type = LOCATION_SPECIFIC;
         this.locations = locations;

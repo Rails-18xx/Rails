@@ -18,6 +18,11 @@ public class SpecialTileLay extends SpecialProperty {
     boolean free = false;
     boolean connected = false; /* sfy 1889 extension */
 
+    /** Tile colours that can be laid with this special property.
+     * Default is same colours as is allowed in a a normal tile lay.
+     * Don't use if specific tiles are specified! */
+    protected String[] tileColours = null;
+    
     @Override
 	public void configureFromXML(Tag tag) throws ConfigurationException {
         super.configureFromXML(tag);
@@ -33,6 +38,11 @@ public class SpecialTileLay extends SpecialProperty {
 
         tileNumber = tileLayTag.getAttributeAsInteger("tile", 0);
 
+        String coloursString = tag.getAttributeAsString("colour");
+        if (Util.hasValue(coloursString)) {
+            tileColours = coloursString.split(",");
+        }
+       
         name = tileLayTag.getAttributeAsString("name");
 
         extra = tileLayTag.getAttributeAsBoolean("extra", extra);
@@ -116,6 +126,10 @@ public class SpecialTileLay extends SpecialProperty {
 
     public TileI getTile() {
         return tile;
+    }
+
+    public String[] getTileColours() {
+        return tileColours;
     }
 
     public String getName() {

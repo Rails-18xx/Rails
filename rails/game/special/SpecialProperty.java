@@ -1,8 +1,7 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.27 2010/03/23 18:45:23 stefanfrey Exp $ */
 package rails.game.special;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.log4j.Logger;
 
@@ -33,7 +32,15 @@ public abstract class SpecialProperty implements SpecialPropertyI {
     protected boolean permanent = false;
     protected boolean isORProperty = false;
     protected boolean isSRProperty = false;
-
+    
+    /** Priority indicates whether or not the UI should assign priority to
+     * the execution of a PossibleAction. For instance, if the same tile can
+     * be laid on a hex using this special property, and by not using it, 
+     * this attribute indicates which option will be used.
+     * TODO A third value means: ask the user (NOT YET IMPLEMENTED).
+     */
+    protected Priority priority = DEFAULT_PRIORITY;
+    
     /** Optional descriptive text, for display in menus and info text.
      * Subclasses may put real text in it.
      */
@@ -88,6 +95,16 @@ public abstract class SpecialProperty implements SpecialPropertyI {
         
         // sfy 1889
         permanent = tag.getAttributeAsBoolean("permanent", false);  
+        
+        String priorityString = tag.getAttributeAsString("priority");
+        if (Util.hasValue(priorityString)) {
+            try {
+                priority = Priority.valueOf(priorityString.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                throw new ConfigurationException ("Illegal value for SpecialProperty priority: "+priorityString, e);
+            }
+        }
+        
     }
 
     public void finishConfiguration (GameManagerI gameManager)
@@ -214,6 +231,14 @@ public abstract class SpecialProperty implements SpecialPropertyI {
 
     public String getTransferText() {
         return transferText;
+    }
+
+    public Priority getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Priority priority) {
+        this.priority = priority;
     }
 
     /**
