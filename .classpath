@@ -3,32 +3,10 @@
 	<classpathentry kind="src" path=""/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="lib/batik-1.6/batik.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/batik-1.6/lib/batik-transcoder.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/batik-1.6/lib/batik-dom.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/batik-1.6/lib/batik-bridge.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/batik-1.6/lib/batik-util.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/batik-1.6/lib/batik-gvt.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/batik-1.6/lib/batik-script.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/batik-1.6/lib/batik-ext.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/batik-1.6/lib/batik-awt-util.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/batik-1.6/extensions/batik-squiggle-ext.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/batik-1.6/lib/batik-css.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/batik-1.6/lib/batik-extension.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/batik-1.6/lib/batik-gui-util.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/batik-1.6/lib/batik-parser.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/batik-1.6/lib/batik-svg-dom.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/batik-1.6/lib/batik-svggen.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/batik-1.6/lib/batik-swing.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/batik-1.6/lib/batik-xml.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/batik-1.6/lib/js.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/batik-1.6/lib/pdf-transcoder.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/batik-1.6/lib/xerces_2_5_0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/batik-1.6/lib/xml-apis.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/batik-1.6/batik-rasterizer.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/batik-1.6/batik-slideshow.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/batik-1.6/batik-squiggle.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/batik-1.6/batik-svgpp.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/batik-1.6/batik-ttf2svg.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/log4j-1.2/log4j-1.2.14.jar"/>
 	<classpathentry kind="lib" path="lib/jgraph5/jgraph.jar"/>
 	<classpathentry kind="lib" path="lib/jgrapht-0.7.3/jgrapht-jdk1.5.jar"/>
