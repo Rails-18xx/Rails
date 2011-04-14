@@ -15536,7 +15536,7 @@ object TTilesWrapper
       Code = 235
       LongName = '235'
       Category = 'OO'
-      Level = tlMapUpgradableToGreen
+      Level = tlYellow
       Connections = <
         item
           Position1 = tp2SideF
@@ -15557,7 +15557,7 @@ object TTilesWrapper
     item
       Code = 8858
       LongName = '8858'
-      Level = tlMapUpgradableToGreen
+      Level = tlYellow
       Connections = <
         item
           Position1 = tp4SideE
@@ -15591,7 +15591,7 @@ object TTilesWrapper
     item
       Code = 8854
       LongName = '8854'
-      Level = tlMapUpgradableToGreen
+      Level = tlYellow
       Connections = <
         item
           Position1 = tp4SideC
@@ -15624,7 +15624,7 @@ object TTilesWrapper
     item
       Code = 8855
       LongName = '8855'
-      Level = tlMapUpgradableToGreen
+      Level = tlYellow
       Connections = <
         item
           Position1 = tp4SideD
@@ -15658,7 +15658,7 @@ object TTilesWrapper
     item
       Code = 8856
       LongName = '8856'
-      Level = tlMapUpgradableToGreen
+      Level = tlYellow
       Connections = <
         item
           Position1 = tp4SideD
@@ -15692,7 +15692,7 @@ object TTilesWrapper
     item
       Code = 8857
       LongName = '8857'
-      Level = tlMapUpgradableToGreen
+      Level = tlYellow
       Connections = <
         item
           Position1 = tp4SideD
@@ -15727,7 +15727,7 @@ object TTilesWrapper
       LongName = '8877'
       Category = 'S'
       CategoryPosition = tp3CornerC
-      Level = tlMapUpgradableToGreen
+      Level = tlYellow
       Connections = <
         item
           Position1 = tp4SideD
@@ -15748,7 +15748,7 @@ object TTilesWrapper
       LongName = '8886'
       Category = 'B'
       CategoryPosition = tp1SideA
-      Level = tlMapUpgradableToBrown
+      Level = tlGreen
       Connections = <
         item
           Position1 = tp3SideD
@@ -15824,7 +15824,7 @@ object TTilesWrapper
       Code = 8878
       LongName = '8878'
       Category = 'S'
-      Level = tlMapUpgradableToBrown
+      Level = tlGreen
       Connections = <
         item
           Position1 = tp4SideD
@@ -15852,7 +15852,7 @@ object TTilesWrapper
       Code = 8860
       LongName = '8860'
       Category = 'OO'
-      Level = tlMapUpgradableToBrown
+      Level = tlGreen
       Connections = <
         item
           Position1 = tp4SideD
@@ -15887,7 +15887,7 @@ object TTilesWrapper
       Code = 8861
       LongName = '8861'
       Category = 'OO'
-      Level = tlMapUpgradableToBrown
+      Level = tlGreen
       Connections = <
         item
           Position1 = tp4SideE
@@ -15922,7 +15922,7 @@ object TTilesWrapper
       Code = 8862
       LongName = '8862'
       Category = 'OO'
-      Level = tlMapUpgradableToBrown
+      Level = tlGreen
       Connections = <
         item
           Position1 = tp4SideA
@@ -15958,7 +15958,7 @@ object TTilesWrapper
       Code = 8863
       LongName = '8863'
       Category = 'OO'
-      Level = tlMapUpgradableToBrown
+      Level = tlGreen
       Connections = <
         item
           Position1 = tp4SideA
@@ -15993,7 +15993,7 @@ object TTilesWrapper
       Code = 8864
       LongName = '8864'
       Category = 'OO'
-      Level = tlMapUpgradableToBrown
+      Level = tlGreen
       Connections = <
         item
           Position1 = tp4SideA
@@ -16028,7 +16028,7 @@ object TTilesWrapper
       Code = 8865
       LongName = '8865'
       Category = 'OO'
-      Level = tlMapUpgradableToBrown
+      Level = tlGreen
       Connections = <
         item
           Position1 = tp4SideB
@@ -16062,7 +16062,7 @@ object TTilesWrapper
     item
       Code = 8866
       LongName = '8866'
-      Level = tlMapUpgradableToBrown
+      Level = tlGreen
       Connections = <
         item
           Position1 = tp4SideD
@@ -16089,7 +16089,7 @@ object TTilesWrapper
     item
       Code = 887
       LongName = '887'
-      Level = tlMapUpgradableToBrown
+      Level = tlGreen
       Connections = <
         item
           Position1 = tp4SideA
@@ -16116,7 +16116,7 @@ object TTilesWrapper
     item
       Code = 888
       LongName = '888'
-      Level = tlMapUpgradableToBrown
+      Level = tlGreen
       Connections = <
         item
           Position1 = tpCenter
@@ -16144,7 +16144,7 @@ object TTilesWrapper
       Code = 8879
       LongName = '8879'
       Category = 'S'
-      Level = tlMapUpgradableToGray
+      Level = tlBrown
       Connections = <
         item
           Position1 = tpCenter
@@ -16215,7 +16215,7 @@ object TTilesWrapper
       Code = 8872
       LongName = '8872'
       Category = 'OO'
-      Level = tlMapUpgradableToGray
+      Level = tlBrown
       Connections = <
         item
           Position1 = tpCenter
@@ -16243,7 +16243,7 @@ object TTilesWrapper
       Code = 8873
       LongName = '8873'
       Category = 'OO'
-      Level = tlMapUpgradableToGray
+      Level = tlBrown
       Connections = <
         item
           Position1 = tpCenter
@@ -16271,7 +16271,7 @@ object TTilesWrapper
       Code = 8874
       LongName = '8874'
       Category = 'OO'
-      Level = tlMapUpgradableToGray
+      Level = tlBrown
       Connections = <
         item
           Position1 = tp4SideA
@@ -16299,7 +16299,7 @@ object TTilesWrapper
       Code = 8887
       LongName = '8887'
       Category = 'B'
-      Level = tlMapUpgradableToGray
+      Level = tlBrown
       Connections = <
         item
           Position1 = tp3SideF
@@ -16508,7 +16508,7 @@ object TTilesWrapper
     item
       Code = 8850
       LongName = '8850'
-      Level = tlMapUpgradableToGreen
+      Level = tlYellow
       Connections = <
         item
           Position1 = tp4SideD
@@ -16528,7 +16528,7 @@ object TTilesWrapper
     item
       Code = 8852
       LongName = '8852'
-      Level = tlMapUpgradableToGreen
+      Level = tlYellow
       Connections = <
         item
           Position1 = tp4SideD
@@ -16547,7 +16547,7 @@ object TTilesWrapper
     item
       Code = 8851
       LongName = '8851'
-      Level = tlMapUpgradableToGreen
+      Level = tlYellow
       Connections = <
         item
           Position1 = tp4SideD
