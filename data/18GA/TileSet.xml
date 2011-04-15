@@ -26,9 +26,12 @@
 	<Tile id="-912" />
 
 	<!-- Atlanta (D4) -->
-	<Tile id="-4010">
-		<Upgrade id="4451" />
+	<Tile id="-30" >
+		<Upgrade id="1451" />
 	</Tile>
+	
+	<!-- Savannah (Cotton Port) -->
+	<Tile id="-5015" />
 
 	<!-- Yellow Tiles -->
 
@@ -45,15 +48,15 @@
 	<!-- Sharp-curve city (20) -->
 	<Tile id="5" quantity="2">
 		<Upgrade id="14,15" hex="-D10,-G13" />
-		<Upgrade id="4453" hex="D10" />
-		<Upgrade id="4454" hex="G13" />
+		<Upgrade id="1453" hex="D10" />
+		<Upgrade id="1454" hex="G13" />
 	</Tile>
 
 	<!-- Gentle-curve city (20) -->
 	<Tile id="6" quantity="2">
 		<Upgrade id="14,15" hex="-D10,-G13" />
-		<Upgrade id="4453" hex="D10" />
-		<Upgrade id="4454" hex="G13" />
+		<Upgrade id="1453" hex="D10" />
+		<Upgrade id="1454" hex="G13" />
 	</Tile>
 
 	<!-- Sharp curve -->
@@ -74,8 +77,8 @@
 	<!-- Straight city (20) -->
 	<Tile id="57" quantity="4">
 		<Upgrade id="14,15" hex="-D10,-G13" />
-		<Upgrade id="4453" hex="D10" />
-		<Upgrade id="4454" hex="G13" />
+		<Upgrade id="1453" hex="D10" />
+		<Upgrade id="1454" hex="G13" />
 	</Tile>
 
 	<!-- Gentle-curve dit (10) -->
@@ -84,8 +87,8 @@
 	</Tile>
 
 	<!-- Three dead-end cities (30), exits NW,NE,S, "Atlanta" -->
-	<Tile id="4451" quantity="1">
-		<Upgrade id="4452" />
+	<Tile id="1451" extId="451" quantity="1">
+		<Upgrade id="1452" />
 	</Tile>
 
 	<!-- Green Tiles -->
@@ -93,15 +96,15 @@
 	<!-- X-shape city (30) -->
 	<Tile id="14" quantity="4">
 		<Upgrade id="63" hex="-F6,-I11" />
-		<Upgrade id="4457" hex="I11" />
-		<Upgrade id="4458" hex="F6" />
+		<Upgrade id="1457" hex="I11" />
+		<Upgrade id="1458" hex="F6" />
 	</Tile>
 
 	<!-- K-shape city (30) -->
 	<Tile id="15" quantity="4">
 		<Upgrade id="63" hex="-F6,-I11" />
-		<Upgrade id="4457" hex="I11" />
-		<Upgrade id="4458" hex="F6" />
+		<Upgrade id="1457" hex="I11" />
+		<Upgrade id="1458" hex="F6" />
 	</Tile>
 
 	<!-- Two tracks crossing, K shape -->
@@ -169,18 +172,18 @@
 	<Tile id="143" quantity="2" />
 
 	<!-- Three straight cities (20), crossing, "Atlanta" -->
-	<Tile id="4452" quantity="1">
-		<Upgrade id="4455" />
+	<Tile id="1452" extId="452" quantity="1">
+		<Upgrade id="1455" />
 	</Tile>
 
-	<!-- K-shape city (30), "Augusta" -->
-	<Tile id="4453" quantity="1">
-		<Upgrade id="4456" />
+	<!-- K-shape city (40), "Augusta" -->
+	<Tile id="1453" extId="453" quantity="1">
+		<Upgrade id="1456" />
 	</Tile>
 
 	<!-- City (30), exits N,NW,SW, "Savannah" -->
-	<Tile id="4454" quantity="1">
-		<Upgrade id="4459" />
+	<Tile id="1454" extId="454" quantity="1">
+		<Upgrade id="1459" />
 	</Tile>
 
 	<!-- Brown Tiles -->
@@ -219,18 +222,18 @@
 	<Tile id="70" quantity="1" />
 
 	<!-- Three straight cities (70), crossing, "Atlanta" -->
-	<Tile id="4455" quantity="1" />
+	<Tile id="1455" extId="455" quantity="1" />
 
 	<!-- K-shape city (50), "Augusta" -->
-	<Tile id="4456" quantity="1" />
+	<Tile id="1456" extId="456" quantity="1" />
 
 	<!-- 5-way city (40), "Brunswick" -->
-	<Tile id="4457" quantity="1" />
+	<Tile id="1457" extId="457" quantity="1" />
 
 	<!-- 5-way city (50), "Macon" -->
-	<Tile id="4458" quantity="1" />
+	<Tile id="1458" extId="458" quantity="1" />
 
 	<!-- City (60), exits N,NW,SW, "Savannah" -->
-	<Tile id="4459" quantity="1" />
+	<Tile id="1459" extId="459" quantity="1" />
 
 </TileManager>
