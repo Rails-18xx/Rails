@@ -21104,7 +21104,7 @@
 		</category>
 		<junctions>
 			<junction>
-				<junType>jtCity</junType>
+				<junType>jtDoubleCity</junType>
 				<position>tpCenter</position>
 				<revenue>
 					<value>50</value>
@@ -23195,6 +23195,82 @@
 				<conType>ctNormal</conType>
 				<position1>tp3SideE</position1>
 				<position2>tp4SideF</position2>
+			</connection>
+		</connections>
+	</tile>
+	<tile>
+		<ID>-503</ID>
+		<shape>tsHexagon</shape>
+		<level>tlMapFixed</level>
+		<name>-503</name>
+		<junctions>
+			<junction>
+				<junType>jtWhistlestop</junType>
+				<position>tp2CornerE</position>
+			</junction>
+		</junctions>
+		<connections>
+			<connection>
+				<conType>ctNormal</conType>
+				<position1>tp4SideD</position1>
+				<position2>tp2CornerE</position2>
+			</connection>
+			<connection>
+				<conType>ctNormal</conType>
+				<position1>tp2CornerE</position1>
+				<position2>tp4SideE</position2>
+			</connection>
+		</connections>
+	</tile>
+	<tile>
+		<ID>-557</ID>
+		<shape>tsHexagon</shape>
+		<level>tlMapFixed</level>
+		<name>-557</name>
+		<junctions>
+			<junction>
+				<junType>jtCity</junType>
+				<position>tpCenter</position>
+			</junction>
+		</junctions>
+		<connections>
+			<connection>
+				<conType>ctNormal</conType>
+				<position1>tpCenter</position1>
+				<position2>tp4SideC</position2>
+			</connection>
+			<connection>
+				<conType>ctNormal</conType>
+				<position1>tpCenter</position1>
+				<position2>tp4SideF</position2>
+			</connection>
+		</connections>
+	</tile>
+	<tile>
+		<ID>-558</ID>
+		<shape>tsHexagon</shape>
+		<level>tlMapFixed</level>
+		<name>-558</name>
+		<junctions>
+			<junction>
+				<junType>jtWhistlestop</junType>
+				<position>tp1SideF</position>
+				<revenue>
+					<value>20</value>
+					<position>tp3CornerB</position>
+				</revenue>
+			</junction>
+		</junctions>
+		<connections>
+			<connection>
+				<conType>ctNormal</conType>
+				<position1>tp4SideA</position1>
+				<position2>tp1SideF</position2>
+			</connection>
+			<connection>
+				<conType>ctNormal</conType>
+				<position1>tp1SideF</position1>
+				<position2>tp4SideE</position2>
 			</connection>
 		</connections>
 	</tile>

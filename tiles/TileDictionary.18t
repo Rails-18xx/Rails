@@ -15368,7 +15368,7 @@ object TTilesWrapper
         end>
       Junctions = <
         item
-          JunType = jtCity
+          JunType = jtDoubleCity
           Revenue = 50
           RevenuePosition = tp3CornerE
         end>
@@ -16846,6 +16846,61 @@ object TTilesWrapper
           JunType = jtCity
           Position = tp3SideF
           Revenue = 80
+        end>
+    end
+    item
+      Code = -503
+      LongName = '-503'
+      Connections = <
+        item
+          Position1 = tp4SideD
+          Position2 = tp2CornerE
+        end
+        item
+          Position1 = tp2CornerE
+          Position2 = tp4SideE
+        end>
+      Junctions = <
+        item
+          JunType = jtWhistlestop
+          Position = tp2CornerE
+        end>
+    end
+    item
+      Code = -557
+      LongName = '-557'
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+        end>
+    end
+    item
+      Code = -558
+      LongName = '-558'
+      Connections = <
+        item
+          Position1 = tp4SideA
+          Position2 = tp1SideF
+        end
+        item
+          Position1 = tp1SideF
+          Position2 = tp4SideE
+        end>
+      Junctions = <
+        item
+          JunType = jtWhistlestop
+          Position = tp1SideF
+          Revenue = 20
+          RevenuePosition = tp3CornerB
         end>
     end>
 end
