@@ -16902,5 +16902,184 @@ object TTilesWrapper
           Revenue = 20
           RevenuePosition = tp3CornerB
         end>
+    end
+    item
+      Code = 1481
+      LongName = '1481'
+      Level = tlBrown
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end>
+      Junctions = <
+        item
+          JunType = jtDoubleCity
+          Revenue = 40
+        end>
+    end
+    item
+      Code = 1482
+      LongName = '1482'
+      Category = 'S'
+      CategoryPosition = tp3CornerE
+      Level = tlBrown
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideE
+        end>
+      Junctions = <
+        item
+          JunType = jtTripleCity
+          Revenue = 50
+        end>
+    end
+    item
+      Code = 1483
+      LongName = '1483'
+      Category = 'B'
+      CategoryPosition = tp3CornerE
+      Level = tlGreen
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end>
+      Junctions = <
+        item
+          JunType = jtDoubleCity
+          Revenue = 50
+          RevenuePosition = tp3CornerB
+        end>
+    end
+    item
+      Code = 1484
+      LongName = '1484'
+      Category = 'B'
+      CategoryPosition = tp3CornerE
+      Level = tlBrown
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end>
+      Junctions = <
+        item
+          JunType = jtTripleCity
+          Revenue = 70
+        end>
+    end
+    item
+      Code = -10002
+      LongName = '-10001'
+      Category = 'B'
+      CategoryPosition = tp3CornerE
+      Level = tlMapUpgradableToGreen
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Revenue = 30
+          RevenuePosition = tp3CornerB
+        end>
+    end
+    item
+      Code = -10003
+      LongName = '-10002'
+      Category = 'S'
+      CategoryPosition = tp3CornerE
+      Level = tlMapUpgradableToBrown
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideE
+        end>
+      Junctions = <
+        item
+          JunType = jtDoubleCity
+          Revenue = 30
+          RevenuePosition = tp3CornerB
+        end>
     end>
 end
