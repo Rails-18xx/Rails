@@ -7,8 +7,8 @@ import java.util.List;
 
 import org.apache.batik.bridge.*;
 import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
-import org.apache.batik.ext.awt.image.codec.PNGEncodeParam;
-import org.apache.batik.ext.awt.image.codec.PNGImageEncoder;
+import org.apache.batik.ext.awt.image.codec.png.PNGEncodeParam;
+import org.apache.batik.ext.awt.image.codec.png.PNGImageEncoder;
 import org.apache.batik.gvt.*;
 import org.apache.batik.gvt.renderer.*;
 import org.apache.batik.util.RunnableQueue;
