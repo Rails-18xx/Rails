@@ -526,7 +526,7 @@ public final class Config {
      * This method loads a property file.
      *
      * @param properties - the property to store
-     * @param filepath - filname as a String.
+     * @param filepath - filename as a String.
      * @param resource - if TRUE, loaded from jar (via classloader), otherwise from filesystem
      * @return TRUE if load was successful
      */
@@ -544,7 +544,7 @@ public final class Config {
             properties.load(inFile);
         } catch (Exception e) {
             log.error(e + " whilst loading properties file "
-                               + filepath);
+                               + filepath, e);
             result = false;
         }
         return result;
