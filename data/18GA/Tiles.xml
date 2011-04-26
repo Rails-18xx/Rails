@@ -13,7 +13,7 @@
 		<Track from="city1" gauge="normal" to="side1"/>
 	</Tile>
 	<Tile colour="fixed" id="-1143" name="Bham1851">
-		<Station id="city1" position="0" type="Town"/>
+		<Station id="city1" position="0" type="City"/>
 		<Track from="side5" gauge="normal" to="city1"/>
 		<Track from="city1" gauge="normal" to="side0"/>
 		<Track from="city1" gauge="normal" to="side1"/>

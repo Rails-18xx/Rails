@@ -32,7 +32,7 @@
 	<Hex name="C9" tile="0" />
 
 	<Hex name="D2" tile="0" />
-	<Hex name="D4" tile="-3008" city="Atlanta" />
+	<Hex name="D4" tile="-30" city="Atlanta" />
 	<Hex name="D6" tile="0" />
 	<Hex name="D8" tile="0" />
 	<Hex name="D10" tile="-3008" city="Augusta" />

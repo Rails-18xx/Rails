@@ -47,14 +47,14 @@
 
 	<!-- Sharp-curve city (20) -->
 	<Tile id="5" quantity="2">
-		<Upgrade id="14,15" hex="-D10,-G13" />
+		<Upgrade id="14,15" hex="-D10,G13" />
 		<Upgrade id="1453" hex="D10" />
 		<Upgrade id="1454" hex="G13" />
 	</Tile>
 
 	<!-- Gentle-curve city (20) -->
 	<Tile id="6" quantity="2">
-		<Upgrade id="14,15" hex="-D10,-G13" />
+		<Upgrade id="14,15" hex="-D10,G13" />
 		<Upgrade id="1453" hex="D10" />
 		<Upgrade id="1454" hex="G13" />
 	</Tile>
@@ -95,14 +95,14 @@
 
 	<!-- X-shape city (30) -->
 	<Tile id="14" quantity="4">
-		<Upgrade id="63" hex="-F6,-I11" />
+		<Upgrade id="63" hex="-F6,I11" />
 		<Upgrade id="1457" hex="I11" />
 		<Upgrade id="1458" hex="F6" />
 	</Tile>
 
 	<!-- K-shape city (30) -->
 	<Tile id="15" quantity="4">
-		<Upgrade id="63" hex="-F6,-I11" />
+		<Upgrade id="63" hex="-F6,I11" />
 		<Upgrade id="1457" hex="I11" />
 		<Upgrade id="1458" hex="F6" />
 	</Tile>
@@ -216,7 +216,7 @@
 	<Tile id="47" quantity="2" />
 
 	<!-- 6-way city (40) -->
-	<Tile id="63" quantity="4" />
+	<Tile id="63" quantity="4"/>
 
 	<!-- Interchange, tracks N-SE, S-NE, N-NE, S-SE -->
 	<Tile id="70" quantity="1" />
