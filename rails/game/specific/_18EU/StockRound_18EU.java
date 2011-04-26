@@ -387,7 +387,7 @@ public class StockRound_18EU extends StockRound {
         MapHex homeHex = null;
         int homeCityNumber = 1;
         if (minor != null) {
-            homeHex = minor.getHomeHex();
+            homeHex = minor.getHomeHexes().get(0);
             homeCityNumber = homeHex.getCityOfBaseToken(minor);
         } else if (selectedHomeCity != null) {
             homeHex = selectedHomeCity.getHolder();
@@ -536,7 +536,7 @@ public class StockRound_18EU extends StockRound {
             }
         }
 
-        MapHex homeHex = minor.getHomeHex();
+        MapHex homeHex = minor.getHomeHexes().get(0);
         int homeCityNumber = homeHex.getCityOfBaseToken(minor);
         minor.setClosed();
 

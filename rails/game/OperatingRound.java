@@ -2362,7 +2362,7 @@ public class OperatingRound extends Round implements Observer {
             if (!operatingCompany.get().hasLaidHomeBaseTokens()) {
                 // This can occur if the home hex has two cities and track,
                 // such as the green OO tile #59
-                possibleActions.add(new LayBaseToken (operatingCompany.get().getHomeHex()));
+                possibleActions.add(new LayBaseToken (operatingCompany.get().getHomeHexes()));
                 forced = true;
             } else {
                 possibleActions.addAll(getNormalTileLays(true));

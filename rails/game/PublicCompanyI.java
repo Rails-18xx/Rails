@@ -313,7 +313,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolder {
     public boolean removeBonus (String name);
     public List<Bonus> getBonuses();
 
-    public MapHex getHomeHex();
+    public List<MapHex> getHomeHexes();
 
     public void setHomeHex(MapHex homeHex);
 

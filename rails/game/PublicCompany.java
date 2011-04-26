@@ -14,7 +14,7 @@ import rails.util.*;
 
 /**
  * This class provides an implementation of a (perhaps only basic) public
- * company. Public companies emcompass all 18xx company-like entities that lay
+ * company. Public companies encompass all 18xx company-like entities that lay
  * tracks and run trains. <p> Ownership of companies will always be performed by
  * holding certificates. Some minor company types may have only one certificate,
  * but this will still be the form in which ownership is expressed. <p> Company
@@ -55,9 +55,13 @@ public class PublicCompany extends Company implements PublicCompanyI {
     /** Hexadecimal representation (RRGGBB) of the background colour. */
     protected String bgHexColour = "000000";
 
-    /** Home hex & city * */
-    protected String homeHexName = null;
-    protected MapHex homeHex = null;
+    /** Home hex & city * 
+     * Two home hexes is supported, but only if:<br>
+     * 1. The locations are fixed (i.e. configured by XML), and<br>
+     * 2. Any station (city) numbers are equal for the two home stations.
+     * There is no provision yet for two home hexes having different tile station numbers. */
+    protected String homeHexNames = null;
+    protected List<MapHex> homeHexes = null;
     protected int homeCityNumber = 1;
     protected boolean homeAllCitiesBlocked = false;
 
@@ -319,7 +323,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
         Tag homeBaseTag = tag.getChild("Home");
         if (homeBaseTag != null) {
-            homeHexName = homeBaseTag.getAttributeAsString("hex");
+            homeHexNames = homeBaseTag.getAttributeAsString("hex");
             homeCityNumber = homeBaseTag.getAttributeAsInteger("city", 1);
             homeAllCitiesBlocked = homeBaseTag.getAttributeAsBoolean("allCitiesBlocked", false);
         }
@@ -707,14 +711,19 @@ public class PublicCompany extends Company implements PublicCompanyI {
             freeBaseTokens.add(token);
         }
 
-        if (homeHexName != null) {
-            homeHex = mapManager.getHex(homeHexName);
-            if (homeHex == null) {
-                throw new ConfigurationException("Invalid home hex "
-                        + homeHexName
-                        + " for company " + name);
+        if (homeHexNames != null) {
+            homeHexes = new ArrayList<MapHex>(2);
+            MapHex homeHex;
+            for (String homeHexName : homeHexNames.split(",")) {
+                homeHex = mapManager.getHex(homeHexName);
+                if (homeHex == null) {
+                    throw new ConfigurationException("Invalid home hex "
+                            + homeHexName
+                            + " for company " + name);
+                }
+                homeHexes.add (homeHex);
+                infoText += "<br>Home: " + homeHex.getInfo();
             }
-            infoText += "<br>Home: " + homeHex.getInfo();
         }
 
         if (destinationHexName != null) {
@@ -789,17 +798,22 @@ public class PublicCompany extends Company implements PublicCompanyI {
     }
 
     /**
+     * Return the company's Home hexes (usually one).
      * @return Returns the homeHex.
      */
-    public MapHex getHomeHex() {
-        return homeHex;
+    public List<MapHex> getHomeHexes() {
+        return homeHexes;
     }
 
     /**
+     * Set a non-fixed company home hex.
+     * Only covers setting <i>one</i> home hex. 
+     * Having <i>two</i> home hexes is currently only supported if the locations are preconfigured.
      * @param homeHex The homeHex to set.
      */
     public void setHomeHex(MapHex homeHex) {
-        this.homeHex = homeHex;
+        if (homeHexes == null) homeHexes = new ArrayList<MapHex>(1);
+        homeHexes.set(0, homeHex);
     }
 
     /**
@@ -1662,7 +1676,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Calculate the cost of laying a token, given the hex where
-     * the token is laid. This only makes a diofference for de "distance" method.
+     * the token is laid. This only makes a difference for de "distance" method.
      * @param hex The hex where the token is to be laid.
      * @return The cost of laying that token.
      */
@@ -1683,7 +1697,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
             if (hex == null) {
                 return baseTokenLayCost[0];
             } else {
-                return mapManager.getHexDistance(homeHex, hex) * baseTokenLayCost[0];
+                // WARNING: no provision yet for multiple home hexes.
+                return mapManager.getHexDistance(homeHexes.get(0), hex) * baseTokenLayCost[0];
             }
         } else {
             return 0;
@@ -1699,7 +1714,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
         if (baseTokenLayCostMethod.equals(BASE_COST_SEQUENCE)) {
             return new int[] {getBaseTokenLayCost(null)};
         } else if (baseTokenLayCostMethod.equals(BASE_COST_DISTANCE)) {
-            int[] distances = mapManager.getCityDistances(homeHex);
+            // WARNING: no provision yet for multiple home hexes.
+            int[] distances = mapManager.getCityDistances(homeHexes.get(0));
             int[] costs = new int[distances.length];
             int i = 0;
             for (int distance : distances) {
@@ -1763,28 +1779,27 @@ public class PublicCompany extends Company implements PublicCompanyI {
     // Return value is not used
     public boolean layHomeBaseTokens() {
 
-        // TODO Assume for now that companies have only one home base.
-        // This is not true in 1841!
-        // TODO This does not yet cover cases where the user
-        // has a choice, such in 1830 Erie.
         if (hasLaidHomeBaseTokens()) return true;
 
-        if (homeCityNumber == 0) {
-            // This applies to cases like 1830 Erie and 1856 THB.
-            // On a trackless tile it does not matter, but if
-            // the tile has track (such as the green OO tile),
-            // the player must select a city.
-            Map<Integer, List<Track>> tracks
-            = homeHex.getCurrentTile().getTracksPerStationMap();
-            if (tracks == null || tracks.isEmpty()) {
-                homeCityNumber = 1;
-            } else {
-                return false;
+        for (MapHex homeHex : homeHexes) {
+            if (homeCityNumber == 0) {
+                // This applies to cases like 1830 Erie and 1856 THB.
+                // On a trackless tile it does not matter, but if
+                // the tile has track (such as the green OO tile),
+                // the player must select a city.
+                Map<Integer, List<Track>> tracks
+                = homeHex.getCurrentTile().getTracksPerStationMap();
+                if (tracks == null || tracks.isEmpty()) {
+                    homeCityNumber = 1;
+                } else {
+                    return false;
+                }
             }
+            log.debug(name + " lays home base on " + homeHex.getName() + " city "
+                    + homeCityNumber);
+            homeHex.layBaseToken(this, homeCityNumber);
         }
-        log.debug(name + " lays home base on " + homeHex.getName() + " city "
-                + homeCityNumber);
-        return homeHex.layBaseToken(this, homeCityNumber);
+        return true;
     }
 
     public BaseToken getFreeToken() {

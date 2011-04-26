@@ -28,7 +28,7 @@ public class MapManager implements ConfigurableComponentI {
     // upgrade costs on the map for noMapMode
     protected SortedSet<Integer> possibleTileCosts;
 
-    // information to define neighbors
+    // information to define neighbours
     protected static final int[] xDeltaNS = new int[] { 0, -1, -1, 0, +1, +1 };
     protected static final int[] yXEvenDeltaNS =
             new int[] { +1, 0, -1, -1, -1, 0 };
@@ -148,9 +148,12 @@ public class MapManager implements ConfigurableComponentI {
             }
         }
 
+        List<MapHex> homeHexes;
         for (PublicCompanyI company : gameManager.getCompanyManager().getAllPublicCompanies()) {
-            if ((hex = company.getHomeHex()) != null) {
-                hex.addHome(company, company.getHomeCityNumber());
+            if ((homeHexes = company.getHomeHexes()) != null) {
+                for (MapHex homeHex : homeHexes) {
+                    homeHex.addHome(company, company.getHomeCityNumber());
+                }
             }
             if ((hex = company.getDestinationHex()) != null) {
                 hex.addDestination(company);

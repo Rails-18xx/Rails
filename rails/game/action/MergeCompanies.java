@@ -50,7 +50,7 @@ public class MergeCompanies extends PossibleAction {
                 canReplaceToken.add(false);
             } else {
                 b.append(target.getName());
-                MapHex hex = mergingCompany.getHomeHex();
+                MapHex hex = mergingCompany.getHomeHexes().get(0);
                 canReplaceToken.add(target.getNumberOfFreeBaseTokens() > 0
                     && (!hex.hasTokenOfCompany(target)
                         || hex.getCurrentTile().allowsMultipleBasesOfOneCompany()

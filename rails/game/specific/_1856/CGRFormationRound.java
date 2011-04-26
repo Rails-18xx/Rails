@@ -532,7 +532,7 @@ public class CGRFormationRound extends SwitchableUIRound {
                     if (!bt.isPlaced()) continue;
                     city = (City) bt.getHolder();
                     hex = city.getHolder();
-                    if (hex == comp.getHomeHex()) {
+                    if (hex == comp.getHomeHexes()) {
                         homeTokens.add(bt);
                     } else {
                         nonHomeTokens.add(bt);
