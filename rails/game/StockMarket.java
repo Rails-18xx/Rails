@@ -4,6 +4,7 @@ package rails.game;
 import java.util.*;
 
 import rails.game.move.PriceTokenMove;
+import rails.game.state.BooleanState;
 import rails.util.LocalText;
 import rails.util.Tag;
 
@@ -20,6 +21,8 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
     protected ArrayList<StockSpaceI> startSpaces = new ArrayList<StockSpaceI>();
     protected int[] startPrices;
     protected StockSpaceTypeI defaultType;
+    
+    GameManagerI gameManager;
 
     /* Game-specific flags */
     protected boolean upOrDownRight = false; /*
@@ -28,10 +31,8 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
      */
 
     /* States */
-    protected boolean gameOver = false; /*
-     * Some games have "rails.game over"
-     * stockmarket squares
-     */
+    /** GameOver becomes true if a stock market square is reached that is marked as such */ 
+    protected BooleanState gameOver = new BooleanState ("GameOver", false);
 
     ArrayList<PublicCertificate> ipoPile;
 
@@ -155,7 +156,9 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
      */
     public void finishConfiguration (GameManagerI gameManager) {
 
-        for (PublicCompanyI comp : GameManager.getInstance().getCompanyManager().getAllPublicCompanies()) {
+        this.gameManager = gameManager;
+        
+        for (PublicCompanyI comp : gameManager.getCompanyManager().getAllPublicCompanies()) {
             if (!comp.hasStarted() && comp.getStartSpace() != null) {
                 comp.getStartSpace().addFixedStartPrice(comp);
             }
@@ -302,7 +305,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
             /* Check for rails.game closure */
             if (to.endsGame()) {
                 ReportBuffer.add(LocalText.getText("GAME_OVER"));
-                gameOver = true;
+                gameManager.registerMaxedSharePrice(company, to);
             }
 
         }
@@ -345,13 +348,6 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
             if (square.getPrice() == price) return square;
         }
         return null;
-    }
-
-    /**
-     * @return
-     */
-    public boolean isGameOver() {
-        return gameOver;
     }
 
     public PublicCertificate removeShareFromPile(PublicCertificate stock) {

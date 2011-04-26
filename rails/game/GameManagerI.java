@@ -67,7 +67,8 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
     public abstract void registerBankruptcy();
 
     public abstract void registerBrokenBank();
-
+    public void registerMaxedSharePrice(PublicCompanyI company, StockSpaceI space);
+    
     public boolean isDynamicOperatingOrder();
 
     /**

@@ -118,6 +118,9 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         new IntegerState("RelativeORNumber");
     protected IntegerState numOfORs = new IntegerState("numOfORs");
 
+    /** GameOver pending, a last OR or set of ORs must still be completed */
+    protected BooleanState gameOverPending = new BooleanState ("GameOverPending", false);
+    /** GameOver is executed, no more moves */
     protected BooleanState gameOver = new BooleanState("GameOver" ,false);
     protected Boolean gameOverReportedUI = false;
     protected BooleanState endedByBankruptcy = new BooleanState("EndedByBankruptcy", false);
@@ -415,9 +418,9 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
                     bankBreaksTag.getAttributeAsInteger("limit",
                             gameEndsWhenBankHasLessOrEqual);
                 String attr = bankBreaksTag.getAttributeAsString("finish");
-                if (attr.equalsIgnoreCase("SetOfORs")) {
+                if (attr.equalsIgnoreCase("setOfORs")) {
                     gameEndsAfterSetOfORs = true;
-                } else if (attr.equalsIgnoreCase("CurrentOR")) {
+                } else if (attr.equalsIgnoreCase("currentOR")) {
                     gameEndsAfterSetOfORs = false;
                 }
             }
@@ -645,7 +648,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             startOperatingRound(true);
 
         } else if (round instanceof OperatingRound) {
-            if (bank.isBroken() && !gameEndsAfterSetOfORs) {
+            if (gameOverPending.booleanValue() && !gameEndsAfterSetOfORs) {
 
                 finishGame();
 
@@ -655,7 +658,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             } else if (startPacket != null && !startPacket.areAllSold()) {
                 startStartRound();
             } else {
-                if (bank.isBroken() && gameEndsAfterSetOfORs) {
+                if (gameOverPending.booleanValue() && gameEndsAfterSetOfORs) {
                     finishGame();
                 } else {
                     ((OperatingRound)round).checkForeignSales();
@@ -1331,13 +1334,32 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
 
     public void registerBrokenBank(){
+        gameOverPending.set(true);
         ReportBuffer.add(LocalText.getText("BankIsBrokenReportText"));
         String msgContinue;
         if (gameEndsAfterSetOfORs)
-            msgContinue = LocalText.getText("bankIsBrokenPlaySetOfORs");
+            msgContinue = LocalText.getText("gameOverPlaySetOfORs");
         else
-            msgContinue = LocalText.getText("bankIsBrokenPlayOnlyOR");
+            msgContinue = LocalText.getText("gameOverPlayOnlyOR");
         String msg = LocalText.getText("BankIsBrokenDisplayText", msgContinue);
+        DisplayBuffer.add(msg);
+        addToNextPlayerMessages(msg, true);
+    }
+
+    public void registerMaxedSharePrice(PublicCompanyI company, StockSpaceI space){
+        gameOverPending.set(true);
+        ReportBuffer.add(LocalText.getText("MaxedSharePriceReportText",
+                company.getName(),
+                Bank.format(space.getPrice())));
+        String msgContinue;
+        if (gameEndsAfterSetOfORs)
+            msgContinue = LocalText.getText("gameOverPlaySetOfORs");
+        else
+            msgContinue = LocalText.getText("gameOverPlayOnlyOR");
+        String msg = LocalText.getText("MaxedSharePriceDisplayText", 
+                company.getName(),
+                Bank.format(space.getPrice()),
+                msgContinue);
         DisplayBuffer.add(msg);
         addToNextPlayerMessages(msg, true);
     }

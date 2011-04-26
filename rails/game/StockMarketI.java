@@ -41,8 +41,6 @@ public interface StockMarketI extends ConfigurableComponentI {
 
     public StockSpaceI getStartSpace(int price);
 
-    public boolean isGameOver();
-
     public void processMove(PublicCompanyI company, StockSpaceI from,
             StockSpaceI to);
 
