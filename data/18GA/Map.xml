@@ -90,7 +90,7 @@
 	</IfOption>
 	
 	<IfOption name="Variant" value="Cotton Port">
-		<Hex name="G13" tile="-5015" orientation="5" city="Savannah"/>
+		<Hex name="G13" tile="-5015" orientation="5" value="30,60" city="Savannah"/>
 	</IfOption>
 	
 	<IfOption name="Variant" value="Basegame">
