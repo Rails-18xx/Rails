@@ -572,10 +572,10 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             guiParameters.put(GuiDef.Parm.ROUTE_HIGHLIGHT, false);
             guiParameters.put(GuiDef.Parm.REVENUE_SUGGEST, false);
         } else {
-            if (getGameOption("RouteAwareness").equalsIgnoreCase("Highlight")) {
+            if ("Highlight".equalsIgnoreCase(getGameOption("RouteAwareness"))) {
                 guiParameters.put(GuiDef.Parm.ROUTE_HIGHLIGHT, true);
             }
-            if (getGameOption("RevenueCalculation").equalsIgnoreCase("Suggest")) {
+            if ("Suggest".equalsIgnoreCase(getGameOption("RevenueCalculation"))) {
                 guiParameters.put(GuiDef.Parm.REVENUE_SUGGEST, true);
             }
         }
