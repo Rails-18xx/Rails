@@ -272,7 +272,15 @@ Known Issues:
      <Game name="18GA">
         <Note>Prototype</Note>
         <Description>18GA</Description>
-        <Players minimum="3" maximum="5"/>
+		<Option name="Variant" values="Basegame,Cotton Port" default="Basegame" />
+		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
+		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
+		<Option name="NoMapMode" type="toggle" default="no" />
+		<Option name="UnlimitedTopTrains" parm="D" type="toggle" default="no"/>
+		<Option name="UnlimitedTiles" type="toggle" default="no"/>
+		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
+		<Option name="TwoPlayersCertLimit70Percent" type="toggle" default="no"/>
+        <Players minimum="2" maximum="5"/>
     </Game>
      <Game name="18TN">
         <Note>Prototype</Note>

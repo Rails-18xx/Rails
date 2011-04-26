@@ -2,8 +2,22 @@
 <ComponentManager>
 	<Component name="GameManager" class="rails.game.GameManager">
 		<Game name="18GA"/>
+		<GameOption name="Variant" values="Basegame,Cotton Port" default="Basegame" />
+		<GameOption name="NoMapMode" type="toggle" default="no" />
+		<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
+		<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
+		<GameOption name="UnlimitedTopTrains" parm="8" type="toggle" default="no"/>
+		<GameOption name="UnlimitedTiles" type="toggle" default="no"/>
+		<GameOption name="LeaveAuctionOnPass" type="toggle" default="no"/>
+		<GameOption name="TwoPlayersCertLimit70Percent" type="toggle" default="yes"/>
 		<GameParameters>
-			<PlayerShareLimit percentage="60"/>
+			<PlayerShareLimit percentage="60">
+				<IfOption name="NumberOfPlayers" value="2">
+					<IfOption name="TwoPlayersCertLimit70Percent" value="yes">
+						<Attributes percentage="70"/>
+					</IfOption>
+				</IfOption>
+			</PlayerShareLimit>
 			<BankPoolLimit percentage="50"/>
 			<StockRound>
 				 <NoSaleInFirstSR/>
@@ -20,6 +34,7 @@
 		</EndOfGame>
 	</Component>
 	<Component name="PlayerManager" class="rails.game.PlayerManager">
+		<Players number="2" cash="810" certLimit="20"/>
 		<Players number="3" cash="600" certLimit="15"/>
 		<Players number="4" cash="450" certLimit="12"/>
 		<Players number="5" cash="360" certLimit="10"/>
@@ -46,8 +61,15 @@
 		<Train name="5" majorStops="5" cost="450" amount="2" startPhase="5"/>
 		<Train name="6" majorStops="6" cost="630" amount="2" startPhase="6" 
 			rustedTrain="3"/>
-		<Train name="8" majorStops="8" cost="800" amount="5" startPhase="8" 
-			rustedTrain="4"/>
+		<Train name="8" majorStops="8" cost="800" startPhase="8" 
+			rustedTrain="4">
+			<IfOption name="UnlimitedTopTrains" value="yes">
+				<Attributes amount="-1"/>
+			</IfOption>
+			<IfOption name="UnlimitedTopTrains" value="no">
+				<Attributes amount="5"/>
+			</IfOption>
+		</Train>
 	</Component>
 	<Component name="PhaseManager" class="rails.game.PhaseManager">
 		<Phase name="2" >
