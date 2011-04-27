@@ -47,7 +47,7 @@
 	</Company>
 	<Company name="M&amp;C" type="Private" basePrice="70" revenue="15"
 			longname="Memphis and Charleston Railroad">
-		<Blocking hex="H5"/>
+		<Blocking hex="H3"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
 				<SpecialTileLay location="H5" extra="yes" free="yes"/>
@@ -72,6 +72,8 @@
 	<Company name="IC" type="Public" tokens="3" fgColour="FFFFFF" bgColour="228B22"
 			longname="Illinois Central Railroad">
 		<Home hex="D7"/>
+		<Certificate type="President" shares="3"/>
+		<Certificate shares="1" number="7"/>
 	</Company>
 	<Company name="L&amp;N" type="Public" tokens="4" fgColour="FFFFFF" bgColour="1C86EE"
 			longname="Louisville and Nashville Railroad">

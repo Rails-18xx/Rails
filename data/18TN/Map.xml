@@ -38,7 +38,7 @@
 <Hex name="F13" tile="-1" city="Lebanon"/>
 <Hex name="F15" tile="0" cost="60" />
 <Hex name="F17" tile="-10" city="Knoxville" cost="40" />
-<Hex name="F19" tile="0" />
+<Hex name="F19" tile="0" cost="120" />
 <Hex name="F21" tile="0" cost="120" />
 <Hex name="G2" tile="0" />
 <Hex name="G4" tile="0" cost="60" />

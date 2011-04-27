@@ -87,5 +87,7 @@
 <StockSpace name="N2" price="230"/>
 <StockSpace name="O1" price="275"/>
 <StockSpace name="O2" price="250"/>
-<StockSpace name="P1" price="300"/>
+<StockSpace name="P1" price="300">
+		<GameOver />
+</StockSpace>
 </StockMarket>

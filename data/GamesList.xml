@@ -276,7 +276,7 @@ Known Issues:
 		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
 		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
 		<Option name="NoMapMode" type="toggle" default="no" />
-		<Option name="UnlimitedTopTrains" parm="D" type="toggle" default="no"/>
+		<Option name="UnlimitedTopTrains" parm="8" type="toggle" default="no"/>
 		<Option name="UnlimitedTiles" type="toggle" default="no"/>
 		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
 		<Option name="TwoPlayersCertLimit70Percent" type="toggle" default="no"/>
@@ -285,7 +285,14 @@ Known Issues:
      <Game name="18TN">
         <Note>Prototype</Note>
         <Description>18TN</Description>
-        <Players minimum="3" maximum="5"/>
+		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
+		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
+		<Option name="NoMapMode" type="toggle" default="no" />
+		<Option name="UnlimitedTiles" type="toggle" default="no"/>
+		<Option name="UnlimitedTopTrains" parm="8" type="toggle" default="no"/>
+		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
+		<Option name="TwoPlayersCertLimit70Percent" type="toggle" default="no"/>
+        <Players minimum="2" maximum="5"/>
     </Game>
     <Game name="1880">
         <Note>Prototype</Note>
