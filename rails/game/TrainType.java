@@ -435,14 +435,16 @@ implements TrainTypeI {
     public void setRusted(Portfolio lastBuyingCompany) {
         rusted.set(true);
         for (TrainI train : trains) {
-            if (obsoleting && train.getHolder() != lastBuyingCompany) {
+            Portfolio holder = train.getHolder();
+            if (obsoleting && holder.getOwner() instanceof PublicCompanyI
+                    && holder != lastBuyingCompany) {
                 log.debug("Train " + train.getUniqueId() + " (owned by "
-                        + train.getHolder().getName() + ") obsoleted");
+                        + holder.getName() + ") obsoleted");
                 train.setObsolete();
-                train.getHolder().getTrainsModel().update();
+                holder.getTrainsModel().update();
             } else {
                 log.debug("Train " + train.getUniqueId() + " (owned by "
-                        + train.getHolder().getName() + ") rusted");
+                        + holder.getName() + ") rusted");
                 train.setRusted();
             }
         }

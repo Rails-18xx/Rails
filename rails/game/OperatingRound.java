@@ -1805,7 +1805,7 @@ public class OperatingRound extends Round implements Observer {
             TrainI oldTrain =
                 operatingCompany.get().getPortfolio().getTrainOfType(
                         exchangedTrain.getType());
-            pool.buyTrain(oldTrain, 0);
+            train.moveTo(train.isObsolete() ? scrapHeap : pool);
             ReportBuffer.add(LocalText.getText("ExchangesTrain",
                     companyName,
                     exchangedTrain.getName(),
@@ -1950,7 +1950,7 @@ public class OperatingRound extends Round implements Observer {
         //
         if (action.isForced()) moveStack.linkToPreviousMoveSet();
 
-        pool.buyTrain(train, 0);
+        train.moveTo(train.isObsolete() ? scrapHeap : pool);
         ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
                 companyName,
                 train.getName() ));
@@ -2726,7 +2726,6 @@ public class OperatingRound extends Round implements Observer {
             }
             // Scan trains per company per player, operating company president
             // first
-            //int currentPlayerIndex = operatingCompany.getObject().getPresident().getIndex();
             int currentPlayerIndex = getCurrentPlayer().getIndex();
             for (int i = currentPlayerIndex; i < currentPlayerIndex
             + numberOfPlayers; i++) {
