@@ -35,7 +35,7 @@
     <IfOption name="Variant" value="Basegame,Pere Marquette">
 	    <Hex name="D24" tile="-7" orientation="2"/>
     </IfOption>
-    <IfOption name="Variant" value="Coalfields">
+    <IfOption name="Variant" value="Coalfields,Reading">
 	    <Hex name="D24" tile="-30001"/>
     </IfOption>
 	<Hex name="E3" tile="0"/>
@@ -49,7 +49,7 @@
 	<Hex name="E19" tile="-10"/>
 	<Hex name="E21" tile="0" cost="120"/>
 	<Hex name="E23" tile="-11" orientation="5" label="B" city="Boston"/>
-	<IfOption name="Variant" value="Basegame,Pere Marquette">
+	<IfOption name="Variant" value="Basegame,Pere Marquette,Reading">
 		<Hex name="F2" tile="-903" orientation="5" value="40,70" city="Chicago"/>
 	</IfOption>
 	<IfOption name="Variant" value="Coalfields">
@@ -63,7 +63,7 @@
 	<Hex name="F14" tile="0"/>
 	<Hex name="F16" tile="-10" cost="120"/>
 	<Hex name="F18" tile="0"/>
-    <IfOption name="Variant" value="Basegame,Pere Marquette">
+    <IfOption name="Variant" value="Basegame,Pere Marquette,Reading">
 		<Hex name="F20" tile="-2"/>
     </IfOption>
     <IfOption name="Variant" value="Coalfields">
@@ -88,13 +88,19 @@
     <IfOption name="Variant" value="Basegame,Pere Marquette">
 	    <Hex name="H12" tile="-101" city="Altoona"/>
     </IfOption>
-    <IfOption name="Variant" value="Coalfields">
+    <IfOption name="Variant" value="Coalfields,Reading">
         <Hex name="H12" tile="-30003" pic="-30002" city="Altoona"/>
     </IfOption>
-	<Hex name="H14" tile="0"/>
+    <IfOption name="Variant" value="Basegame,Pere Marquette,Coalfields">
+		<Hex name="H14" tile="0"/>
+    </IfOption>
+    <IfOption name="Variant" value="Reading">
+        <Hex name="H14" tile="-30007" pic="-30006" city="Reading"/>
+    </IfOption>
+
 	<Hex name="H16" tile="-10"/>
 	<Hex name="H18" tile="-20" label="OO"/>
-	<IfOption name="Variant" value="Basegame,Pere Marquette">
+	<IfOption name="Variant" value="Basegame,Pere Marquette,Reading">
 		<Hex name="I1" tile="-901" orientation="5" value="30,60" city="Gulf"/>
 	</IfOption>
 	<IfOption name="Variant" value="Coalfields">
@@ -109,7 +115,7 @@
 	<Hex name="I15" tile="-11" label="B" city="Baltimore"/>
 	<Hex name="I17" tile="0" cost="80"/>
 	<Hex name="I19" tile="-3" orientation="2"/>
-	<IfOption name="Variant" value="Basegame,Pere Marquette">
+	<IfOption name="Variant" value="Basegame,Pere Marquette,Reading">
 		<Hex name="J2" tile="-902" orientation="5" value="30,60" city="Gulf"/>
 	</IfOption>
 	<IfOption name="Variant" value="Coalfields">
@@ -124,6 +130,10 @@
 	<IfOption name="Variant" value="Basegame,Pere Marquette">
 		<Hex name="K13" tile="-902" orientation="4" value="30,40" city="Deep South"/>
 		<Hex name="K15" tile="-104" orientation="3"/>
+	</IfOption>
+	<IfOption name="Variant" value="Reading">
+		<Hex name="K13" tile="-903" orientation="4" value="30,40" city="Deep South"/>
+		<Hex name="K15" tile="-30005" value="20" city="Norfolk"/>
 	</IfOption>
 	<IfOption name="Variant" value="Coalfields">
 		<Hex name="K1" tile="-908"/>

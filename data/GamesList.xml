@@ -28,7 +28,7 @@ Limitations:
 			- optionally, a default value (only affects a toggle;
 			  in a dropdown the first item is always the default).
 		-->
-		<Option name="Variant" values="Basegame,Pere Marquette,Coalfields" default="Basegame" />
+		<Option name="Variant" values="Basegame,Pere Marquette,Coalfields,Reading" default="Basegame" />
 		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
 		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
 		<Option name="NoMapMode" type="toggle" default="no" />
@@ -37,6 +37,7 @@ Limitations:
 		<Option name="UnlimitedTiles" type="toggle" default="no"/>
 		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
 		<Option name="TwoPlayersCertLimit70Percent" type="toggle" default="no"/>
+		<Option name="C&amp;ACertificate(ReadingOnly)" values="PRR,RDG" default="PRR" ></Option>
 		<Option name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
 		<Players minimum="2" maximum="6"/>
 	</Game>

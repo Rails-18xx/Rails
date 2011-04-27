@@ -17081,5 +17081,77 @@ object TTilesWrapper
           Revenue = 30
           RevenuePosition = tp3CornerB
         end>
+    end
+    item
+      Code = -30006
+      LongName = 'Reading'
+      Connections = <
+        item
+          Position1 = tp4SideE
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tp4SideE
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tp4SideB
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tp4SideD
+          Position2 = tp4SideC
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Position = tp2CornerA
+          Revenue = 10
+          RevenuePosition = tp3CornerB
+        end>
+    end
+    item
+      Code = -30007
+      LongName = 'Reading intern'
+      Connections = <
+        item
+          Position1 = tp4SideE
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tp4SideE
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tp4SideB
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tp4SideD
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tp4SideE
+          Position2 = tp2CornerA
+        end
+        item
+          Position1 = tp4SideD
+          Position2 = tp2CornerA
+        end
+        item
+          Position1 = tp4SideB
+          Position2 = tp2CornerA
+        end
+        item
+          Position1 = tp4SideC
+          Position2 = tp2CornerA
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Position = tp2CornerA
+          Revenue = 10
+          RevenuePosition = tp3CornerB
+        end>
     end>
 end

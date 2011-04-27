@@ -120,10 +120,13 @@ public class MakeGameTileSets {
             for (int i = 0; i < tiles.getLength(); i++) {
 
                 tileName = ((Element) tiles.item(i)).getAttribute("id");
-                System.out.println("Tile "+tileName);
                 // Save the tile in a Map so that we can check completeness
                 // later.
+                // If we already have it, skip
+                if (tilesInSet.containsKey(tileName)) continue;
                 tilesInSet.put(tileName, null);
+
+                System.out.println("Tile "+tileName);
 
                 // Get the Tile specification
                 Element tileSpec = (Element) tileMap.get(tileName);

@@ -123,6 +123,14 @@
             <Home hex="L16" city="0" allCitiesBlocked="yes" />
         </Company>
     </IfOption>
+    <IfOption name="Variant" value="Reading">
+        <Company name="RDG" type="Public" tokens="2" fgColour="000000" bgColour="C8F526"
+                longname="Reading Railroad">
+            <Home hex="H14"/>
+			<Certificate type="President" shares="3"/>
+			<Certificate shares="1" number="7"/>
+        </Company>
+    </IfOption>
 	
 	<StartPacket roundClass="rails.game.StartRound_1830">
 		<Bidding initial="5" minimum="5" increment="1"/>
@@ -131,7 +139,12 @@
 		<Item name="D&amp;H" type="Private" basePrice="70"/>
 		<Item name="M&amp;H" type="Private" basePrice="110"/>
 		<Item name="C&amp;A" type="Private" basePrice="160">
+    <IfOption name="C&amp;ACertificate(ReadingOnly)" value="PRR">
 			<SubItem name="PRR" type="Public" />
+	</IfOption>
+    <IfOption name="C&amp;ACertificate(ReadingOnly)" value="RDG">
+    		<SubItem name="RDG" type="Public" />
+    </IfOption>
 		</Item>
 		<Item name="B&amp;O" type="Private" basePrice="220">
 			<SubItem name="B&amp;O" type="Public" president="yes"/>
