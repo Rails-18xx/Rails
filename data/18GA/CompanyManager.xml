@@ -70,6 +70,9 @@
 		</IfOption>
 		<IfOption name="Variant" value="Cotton Port">
 			<Home hex="D10,E15"/>
+			<BaseTokens>
+				 <LayCost method="sequence" cost="0,0,40,100"/>
+			</BaseTokens>
 		</IfOption>
 	</Company>
 	<Company name="G&amp;F" type="Public" tokens="2" fgColour="000000"
