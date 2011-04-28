@@ -71,39 +71,21 @@
 	
 	<!-- Note two supported colour specification formats:
 	     RGB decimal with commas and RGB hexadecimal without commas -->
+	<Company name="B&amp;M" type="Public" tokens="2" fgColour="000000" bgColour="60E060"
+			longname="Boston &amp; Maine">
+		<Home hex="E23"/>
+	</Company>	     
 	<Company name="B&amp;O" type="Public" tokens="3" fgColour="255,255,255" bgColour="0,0,255"
 			longname="Baltimore &amp; Ohio">
 		<FirstTrainCloses type="Private" name="B&amp;O"/>
 		<Home hex="I15"/>
-	</Company>
-	<Company name="PRR" type="Public" tokens="4" fgColour="FFFFFF" bgColour="008000"
-			longname="Pennsylvania Railroad">
-		<Home hex="H12"/>
-	</Company>
-	<Company name="NYNH" type="Public" tokens="2" fgColour="000000" bgColour="FF8000"
-			longname="New York, New Haven &amp; Hartford">
-		<Home hex="G19" city="2"/>
-	</Company>
-	<Company name="NYC" type="Public" tokens="4" fgColour="FFFFFF" bgColour="000000"
-			longname="New York Central">
-		<Home hex="E19"/>
-	</Company>
-	<Company name="Erie" type="Public" tokens="3" fgColour="000000" bgColour="FFFF00"
-			longname="Erie Railroad">
-	<!--	city = 0 implies that this is not yet decided (OO-tiles), blocks means that 
-			in each city one slot has to be available -->
-		<Home hex="E11" city="0" allCitiesBlocked="yes"/>
-	</Company>
-	<Company name="B&amp;M" type="Public" tokens="2" fgColour="000000" bgColour="60E060"
-			longname="Boston &amp; Maine">
-		<Home hex="E23"/>
 	</Company>
 	<Company name="C&amp;O" type="Public" tokens="3" fgColour="000000" bgColour="A0E0FF"
 			longname="Chesapeake &amp; Ohio">
 		<IfOption name="Variant" value="Basegame,Pere Marquette">
 			<Home hex="F6"/>
 		</IfOption>
-		<IfOption name="Variant" value="Coalfields">
+		<IfOption name="Variant" value="Coalfields,Coalfields&amp;Reading">
 			<Home hex="K13"/>
 		</IfOption>
 	</Company>
@@ -111,19 +93,37 @@
 			longname="Canadian Pacific Railroad">
 		<Home hex="A19"/>
 	</Company>
+	<Company name="Erie" type="Public" tokens="3" fgColour="000000" bgColour="FFFF00"
+			longname="Erie Railroad">
+	<!--	city = 0 implies that this is not yet decided (OO-tiles), blocks means that 
+			in each city one slot has to be available -->
+		<Home hex="E11" city="0" allCitiesBlocked="yes"/>
+	</Company>
+    <IfOption name="Variant" value="Coalfields,Coalfields&amp;Reading">
+        <Company name="N&amp;W" type="Public" tokens="3" fgColour="FFFF00" bgColour="000080"
+                longname="Norfolk &amp; Western">
+            <Home hex="L16" city="0" allCitiesBlocked="yes" />
+        </Company>
+    </IfOption>
+	<Company name="NYC" type="Public" tokens="4" fgColour="FFFFFF" bgColour="000000"
+			longname="New York Central">
+		<Home hex="E19"/>
+	</Company>
+	<Company name="NYNH" type="Public" tokens="2" fgColour="000000" bgColour="FF8000"
+			longname="New York, New Haven &amp; Hartford">
+		<Home hex="G19" city="2"/>
+	</Company>
 	<IfOption name="Variant" value="Pere Marquette">
 		<Company name="PM" type="Public" tokens="3" fgColour="FFFF00" bgColour="000080"
 				longname="Pere Marquette">
 			<Home hex="E5" city="0" allCitiesBlocked="yes" />
 		</Company>
 	</IfOption>
-    <IfOption name="Variant" value="Coalfields">
-        <Company name="N&amp;W" type="Public" tokens="3" fgColour="FFFF00" bgColour="000080"
-                longname="Norfolk &amp; Western">
-            <Home hex="L16" city="0" allCitiesBlocked="yes" />
-        </Company>
-    </IfOption>
-    <IfOption name="Variant" value="Reading">
+	<Company name="PRR" type="Public" tokens="4" fgColour="FFFFFF" bgColour="008000"
+			longname="Pennsylvania Railroad">
+		<Home hex="H12"/>
+	</Company>
+    <IfOption name="Variant" value="Reading,Coalfields&amp;Reading">
         <Company name="RDG" type="Public" tokens="2" fgColour="000000" bgColour="C8F526"
                 longname="Reading Railroad">
             <Home hex="H14"/>

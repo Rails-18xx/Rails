@@ -28,7 +28,7 @@ Limitations:
 			- optionally, a default value (only affects a toggle;
 			  in a dropdown the first item is always the default).
 		-->
-		<Option name="Variant" values="Basegame,Pere Marquette,Coalfields,Reading" default="Basegame" />
+		<Option name="Variant" values="Basegame,Pere Marquette,Coalfields,Reading,Coalfields&amp;Reading" default="Basegame" />
 		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
 		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
 		<Option name="NoMapMode" type="toggle" default="no" />

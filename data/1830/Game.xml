@@ -15,7 +15,7 @@
 		<!-- The options in Game.xml are not currently used.
 			 See GamesList.xml for the real ones.
 		--> 
-		<GameOption name="Variant" values="Basegame,Pere Marquette,Coalfields,Reading" default="Basegame" />
+		<GameOption name="Variant" values="Basegame,Pere Marquette,Coalfields,Reading,Coalfields&amp;Reading" default="Basegame" />
 		<GameOption name="NoMapMode" type="toggle" default="no" />
 		<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Deactivate" />
 		<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Deactivate" />
@@ -80,9 +80,21 @@
 			<Players number="5" cash="480" certLimit="14"/>
 			<Players number="6" cash="400" certLimit="12"/>
 		</IfOption>
+        <IfOption name="Variant" value="Coalfields&amp;Reading">
+			<Players number="2" cash="1200" certLimit="30"/>
+			<Players number="3" cash="800" certLimit="22"/>
+			<Players number="4" cash="600" certLimit="18"/>
+			<Players number="5" cash="480" certLimit="15"/>
+			<Players number="6" cash="400" certLimit="13"/>
+		</IfOption>		
 	</Component>
 	<Component name="Bank" class="rails.game.Bank">
-		<Bank amount="12000"/>
+        <IfOption name="Variant" value="Basegame,Pere Marquette,Coalfields,Reading">
+			<Bank amount="12000"/>
+		</IfOption>
+        <IfOption name="Variant" value="Coalfields&amp;Reading">
+			<Bank amount="20000"/>
+		</IfOption>
 		<Money format="$@"/>
 	</Component>
 	<Component name="TileManager" class="rails.game.TileManager" 
@@ -109,12 +121,12 @@
 			-->
 		</Defaults>
 		<Train name="2" majorStops="2" cost="80" amount="6">
-			<IfOption name="Variant" value="Coalfields,Reading">
+			<IfOption name="Variant" value="Coalfields,Reading,Coalfields&amp;Reading">
                 <Attributes obsoleting="yes"/>
             </IfOption>
 		</Train>
 		<Train name="3" majorStops="3" cost="180" amount="5" startPhase="3">
-            <IfOption name="Variant" value="Coalfields,Reading">
+            <IfOption name="Variant" value="Coalfields,Reading,Coalfields&amp;Reading">
                 <Attributes obsoleting="yes"/>
             </IfOption>
 		</Train>
@@ -122,6 +134,9 @@
 			rustedTrain="2">
 			<IfOption name="Variant" value="Coalfields,Reading">
                 <Attributes obsoleting="yes" amount="5"/>
+			</IfOption>
+			<IfOption name="Variant" value="Coalfields&amp;Reading">
+                <Attributes obsoleting="yes" amount="6"/>
 			</IfOption>
 		</Train>
 		<Train name="5" majorStops="5" cost="450" amount="3" startPhase="5"/>
@@ -136,8 +151,11 @@
 			<IfOption name="Variant" value="Pere Marquette,Coalfields,Reading">
 				<Attributes amount="3" releasedTrain="7,D"/>
 			</IfOption>
+			<IfOption name="Variant" value="Coalfields&amp;Reading">
+				<Attributes amount="4" releasedTrain="7,D"/>
+			</IfOption>
 		</Train>
-		<IfOption name="Variant" value="Coalfields,Reading">
+		<IfOption name="Variant" value="Coalfields,Reading,Coalfields&amp;Reading">
 			<Train name="7" majorStops="7" cost="710" amount="2"/>
 		</IfOption>
 		<Train name="D" majorStops="99" startPhase="D" rustedTrain="4">
@@ -145,7 +163,7 @@
 				<Attributes cost="1100"/>
 				<Exchange cost="800"/>
 			</IfOption>
-            <IfOption name="Variant" value="Coalfields,Reading">
+            <IfOption name="Variant" value="Coalfields,Reading,Coalfields&amp;Reading">
                 <Attributes cost="900"/>
                 <Exchange cost="750"/>
             </IfOption>
