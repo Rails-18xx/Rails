@@ -11,31 +11,30 @@ public class OperatingRound_18TN extends OperatingRound {
     }
 
     protected boolean isPrivateSellingAllowed() {
-        return getCurrentPhase().isPrivateSellingAllowed() 
+        return super.isPrivateSellingAllowed() 
                 // 18TN special
-            || !operatingCompany.get().hasOperated() && !ownsPrivate(operatingCompany.get());
+            || gameManager.getAbsoluteORNumber() == 1 
+                && !ownsPrivate(operatingCompany.get());
     }
     
     protected int getPrivateMinimumPrice (PrivateCompanyI privComp) {
-        int minPrice = privComp.getLowerPrice();
-        if (minPrice == PrivateCompanyI.NO_PRICE_LIMIT) {
-            minPrice = 0;
-        } else if (!operatingCompany.get().hasOperated()) {
+        if (gameManager.getAbsoluteORNumber() == 1
+                && !getCurrentPhase().isPrivateSellingAllowed()) {
             // 18TN special
-            minPrice = privComp.getBasePrice();
+            return privComp.getBasePrice();
+        } else {
+            return super.getPrivateMinimumPrice(privComp);
         }
-        return minPrice;
     }
     
     protected int getPrivateMaximumPrice (PrivateCompanyI privComp) {
-        int maxPrice = privComp.getUpperPrice();
-        if (maxPrice == PrivateCompanyI.NO_PRICE_LIMIT) {
-            maxPrice = operatingCompany.get().getCash();
-        } else if (!operatingCompany.get().hasOperated()) {
+        if (gameManager.getAbsoluteORNumber() == 1
+                && !getCurrentPhase().isPrivateSellingAllowed()) {
             // 18TN special
-            maxPrice = privComp.getBasePrice();
+            return privComp.getBasePrice();
+        } else {
+            return super.getPrivateMaximumPrice(privComp);
         }
-        return maxPrice;
     }
     
     private boolean ownsPrivate (PublicCompanyI company) {

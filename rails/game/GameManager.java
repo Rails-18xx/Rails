@@ -743,6 +743,10 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             return String.valueOf(absoluteORNumber.intValue());
         }
     }
+    
+    public int getAbsoluteORNumber () {
+        return absoluteORNumber.intValue();
+    }
 
     /* (non-Javadoc)
      * @see rails.game.GameManagerI#getCompositeORNumber()

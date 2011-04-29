@@ -38,6 +38,7 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
     public String getORId ();
     public abstract String getCompositeORNumber();
     public int getRelativeORNumber();
+    public int getAbsoluteORNumber ();
 
     public abstract int getSRNumber();
 
