@@ -2012,7 +2012,7 @@ public class OperatingRound extends Round implements Observer {
             lowerPrice = privateCompany.getLowerPrice();
 
             // Is private buying allowed?
-            if (!getCurrentPhase().isPrivateSellingAllowed()) {
+            if (!isPrivateSellingAllowed()) {
                 errMsg = LocalText.getText("PrivateBuyingIsNotAllowed");
                 break;
             }
@@ -2417,7 +2417,7 @@ public class OperatingRound extends Round implements Observer {
             }
 
             // Can private companies be bought?
-            if (getCurrentPhase().isPrivateSellingAllowed()) {
+            if (isPrivateSellingAllowed()) {
 
                 // Create a list of players with the current one in front
                 int currentPlayerIndex = operatingCompany.get().getPresident().getIndex();
@@ -2430,24 +2430,14 @@ public class OperatingRound extends Round implements Observer {
                     player = players.get(i % numberOfPlayers);
                     for (PrivateCompanyI privComp : player.getPortfolio().getPrivateCompanies()) {
 
-                        // start: br 
-                        
                         // check to see if the private can be sold to a company
                         if (!privComp.tradeableToCompany()) {
                             continue;
                         }
 
-                        // changed so that Private companies know what prices they can be sold for
-                        minPrice = privComp.getLowerPrice();
-                        if (minPrice == PrivateCompanyI.NO_PRICE_LIMIT) {
-                            minPrice = 0;
-                        }
+                        minPrice = getPrivateMinimumPrice (privComp);
                            
-                        maxPrice = privComp.getUpperPrice();
-                        if (maxPrice == PrivateCompanyI.NO_PRICE_LIMIT) {
-                            maxPrice = operatingCompany.get().getCash();
-                        }
-                        // end: br    
+                        maxPrice = getPrivateMaximumPrice (privComp);
                         
                         possibleActions.add(new BuyPrivate(privComp, minPrice,
                                 maxPrice));
@@ -2526,6 +2516,26 @@ public class OperatingRound extends Round implements Observer {
         return true;
     }
 
+    protected boolean isPrivateSellingAllowed() {
+        return getCurrentPhase().isPrivateSellingAllowed();
+    }
+    
+    protected int getPrivateMinimumPrice (PrivateCompanyI privComp) {
+        int minPrice = privComp.getLowerPrice();
+        if (minPrice == PrivateCompanyI.NO_PRICE_LIMIT) {
+            minPrice = 0;
+        }
+        return minPrice;
+    }
+    
+    protected int getPrivateMaximumPrice (PrivateCompanyI privComp) {
+        int maxPrice = privComp.getUpperPrice();
+        if (maxPrice == PrivateCompanyI.NO_PRICE_LIMIT) {
+            maxPrice = operatingCompany.get().getCash();
+        }
+        return maxPrice;
+    }
+    
     protected void prepareRevenueAndDividendAction () {
 
         // There is only revenue if there are any trains

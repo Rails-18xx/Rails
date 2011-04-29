@@ -23,6 +23,7 @@
 			<StockRound>
 				<NoSaleInFirstSR/>
 			</StockRound>
+            <OperatingRound class="rails.game.specific._18TN.OperatingRound_18TN"/>
 		</GameParameters>
 		<EndOfGame>
 			<Bankruptcy/>

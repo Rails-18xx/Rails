@@ -1255,13 +1255,21 @@ public class ORUIManager implements DialogOwner {
         String chosenOption;
         BuyPrivate chosenAction = null;
         int minPrice = 0, maxPrice = 0;
+        String priceRange;
 
         for (BuyPrivate action : privates) {
+            minPrice = action.getMinimumPrice();
+            maxPrice = action.getMaximumPrice();
+            if (minPrice < maxPrice) {
+                priceRange = Bank.format(minPrice) + "..." + Bank.format(maxPrice);
+            } else {
+                priceRange = Bank.format(maxPrice);
+            }
+            
             privatesForSale.add(LocalText.getText("BuyPrivatePrompt",
                     action.getPrivateCompany().getName(),
                     action.getPrivateCompany().getPortfolio().getName(),
-                    Bank.format(action.getMinimumPrice()),
-                    Bank.format(action.getMaximumPrice()) ));
+                    priceRange ));
         }
 
         if (privatesForSale.size() > 0) {
@@ -1276,21 +1284,24 @@ public class ORUIManager implements DialogOwner {
                 chosenAction = privates.get(index);
                 minPrice = chosenAction.getMinimumPrice();
                 maxPrice = chosenAction.getMaximumPrice();
-                String price =
-                        JOptionPane.showInputDialog(orWindow,
-                                LocalText.getText("WHICH_PRIVATE_PRICE",
-                                        chosenOption,
-                                        Bank.format(minPrice),
-                                        Bank.format(maxPrice) ),
-                                LocalText.getText("WHICH_PRICE"),
-                                JOptionPane.QUESTION_MESSAGE);
-                try {
-                    amount = Integer.parseInt(price);
-                } catch (NumberFormatException e) {
-                    amount = 0; // This will generally be refused.
+                if (minPrice < maxPrice) {
+                    String price =
+                            JOptionPane.showInputDialog(orWindow,
+                                    LocalText.getText("WHICH_PRIVATE_PRICE",
+                                            chosenOption,
+                                            Bank.format(minPrice),
+                                            Bank.format(maxPrice) ),
+                                    LocalText.getText("WHICH_PRICE"),
+                                    JOptionPane.QUESTION_MESSAGE);
+                    try {
+                        amount = Integer.parseInt(price);
+                    } catch (NumberFormatException e) {
+                        amount = 0; // This will generally be refused.
+                    }
+                    chosenAction.setPrice(amount);
+                } else {
+                    chosenAction.setPrice(maxPrice);
                 }
-                chosenAction.setPrice(amount);
-
                 if (orWindow.process(chosenAction)) {
                     updateMessage();
                 }
