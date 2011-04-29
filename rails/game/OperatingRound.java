@@ -2426,8 +2426,9 @@ public class OperatingRound extends Round implements Observer {
                 List<Player> players = getPlayers();
                 int numberOfPlayers = getNumberOfPlayers();
                 for (int i = currentPlayerIndex; i < currentPlayerIndex
-                + numberOfPlayers; i++) {
+                        + numberOfPlayers; i++) {
                     player = players.get(i % numberOfPlayers);
+                    if (!maySellPrivate(player)) continue;
                     for (PrivateCompanyI privComp : player.getPortfolio().getPrivateCompanies()) {
 
                         // check to see if the private can be sold to a company
@@ -2534,6 +2535,10 @@ public class OperatingRound extends Round implements Observer {
             maxPrice = operatingCompany.get().getCash();
         }
         return maxPrice;
+    }
+    
+    protected boolean maySellPrivate (Player player) {
+        return true;
     }
     
     protected void prepareRevenueAndDividendAction () {
