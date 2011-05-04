@@ -16,8 +16,8 @@
 	<path id="18xx.classpath">
 		<pathelement location="classes"/>
 		<pathelement location="lib/log4j-1.2/log4j-1.2.14.jar"/>
-		<pathelement location="lib/batik-1.6/batik-rasterizer.jar"/>
-		<pathelement location="lib/batik-1.6/batik.jar"/>
+		<pathelement location="lib/batik-1.7/batik-rasterizer.jar"/>
+		<pathelement location="lib/batik-1.7/batik.jar"/>
 		<pathelement location="lib/jgraph5/jgraph.jar"/>
 		<pathelement location="lib/jgrapht-0.7.3/jgrapht-jdk1.5.jar"/>
 		<pathelement location="lib/junit_3.8.2/junit.jar"/>
