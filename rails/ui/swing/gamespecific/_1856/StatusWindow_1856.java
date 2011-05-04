@@ -98,6 +98,7 @@ public class StatusWindow_1856 extends StatusWindow {
         }
 
        RadioButtonDialog currentDialog = new RadioButtonDialog (gameUIManager,
+                this,
                 LocalText.getText("1856MergerDialog", action.getCompanyName()),
                 message,
                 options,

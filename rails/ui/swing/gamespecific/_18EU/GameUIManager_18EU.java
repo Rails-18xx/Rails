@@ -73,6 +73,7 @@ public class GameUIManager_18EU extends GameUIManager {
                                            + minor.getLongName();
                        }
                        dialog = new RadioButtonDialog (this,
+                               statusWindow,
                                LocalText.getText("PleaseSelect"),
                                LocalText.getText(
                                        "SelectMinorToMerge",
@@ -90,6 +91,7 @@ public class GameUIManager_18EU extends GameUIManager {
                                options[i] = cities.get(i).toString();
                            }
                            dialog = new RadioButtonDialog (this,
+                                   statusWindow,
                                    LocalText.getText("PleaseSelect"),
                                    LocalText.getText(
                                            "SelectHomeStation",

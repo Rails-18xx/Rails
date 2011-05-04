@@ -526,13 +526,14 @@ public class CGRFormationRound extends SwitchableUIRound {
         for (PublicCompanyI comp : mergingCompanies) {
 
             // Exchange home tokens and collect non-home tokens
+            List<MapHex> homeHexes = comp.getHomeHexes();
             for (TokenI token :comp.getTokens()) {
                 if (token instanceof BaseToken) {
                     bt = (BaseToken) token;
                     if (!bt.isPlaced()) continue;
                     city = (City) bt.getHolder();
                     hex = city.getHolder();
-                    if (hex == comp.getHomeHexes()) {
+                    if (homeHexes != null && homeHexes.contains(hex)) {
                         homeTokens.add(bt);
                     } else {
                         nonHomeTokens.add(bt);

@@ -812,8 +812,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
      * @param homeHex The homeHex to set.
      */
     public void setHomeHex(MapHex homeHex) {
-        if (homeHexes == null) homeHexes = new ArrayList<MapHex>(1);
-        homeHexes.set(0, homeHex);
+        homeHexes = new ArrayList<MapHex>(1);
+        homeHexes.add(homeHex);
     }
 
     /**

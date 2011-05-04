@@ -89,6 +89,7 @@ public class StatusWindow_1835 extends StatusWindow {
             			);
             }
             currentDialog = new CheckBoxDialog (gameUIManager,
+                    this,
                     LocalText.getText("Select"),
                     LocalText.getText("SelectCompaniesToFold", 
                             getCurrentPlayer().getName(),

@@ -349,7 +349,7 @@ public class StatusWindow extends JFrame implements ActionListener,
         ws.set(frame);
     }
 
-    public void setGameActions() {
+    public void initGameActions() {
 
         // Check the local Undo/Redo menu items,
         // which must always be up-to-date.
@@ -358,7 +358,9 @@ public class StatusWindow extends JFrame implements ActionListener,
         redoItem.setEnabled(false);
         redoItem2.setEnabled(false);
         // SAVE, RELOAD, AUTOSAVELOAD are always enabled
+    }
         
+    public void setGameActions() {       
         List<GameAction> gameActions =
                 possibleActions.getType(GameAction.class);
         if (gameActions != null) {

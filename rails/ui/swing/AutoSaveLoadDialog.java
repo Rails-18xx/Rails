@@ -129,7 +129,8 @@ public class AutoSaveLoadDialog extends JDialog implements ActionListener {
             }
             interval = ((Integer) intervalSpinner.getValue()).intValue();
         } else if (arg0.getSource().equals(cancelButton)) {
-            status = -1;
+            //status = -1;
+            // Better change nothing?
         }
         this.setVisible(false);
         this.dispose();

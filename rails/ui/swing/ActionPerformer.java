@@ -10,4 +10,6 @@ public interface ActionPerformer {
     public boolean process(PossibleAction action);
 
     public boolean processImmediateAction();
+    
+    //public void deactivate();
 }

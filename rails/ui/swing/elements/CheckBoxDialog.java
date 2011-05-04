@@ -35,12 +35,12 @@ public class CheckBoxDialog extends JDialog implements ActionListener {
     protected static Logger log =
             Logger.getLogger(CheckBoxDialog.class.getPackage().getName());
 
-    public CheckBoxDialog(DialogOwner owner, String title, String message,
+    public CheckBoxDialog(DialogOwner owner, JFrame window, String title, String message,
             String[] options) {
-        this (owner, title, message, options, null, false);
+        this (owner, window, title, message, options, null, false);
     }
 
-    public CheckBoxDialog(DialogOwner owner, String title, String message,
+    public CheckBoxDialog(DialogOwner owner, JFrame window, String title, String message,
             String[] options, boolean[] selectedOptions, boolean addCancelButton) {
         super((Frame) null, title, false); // Non-modal
         this.owner = owner;
@@ -58,16 +58,10 @@ public class CheckBoxDialog extends JDialog implements ActionListener {
         pack();
 
         // Center on owner
-        /*
-        int x =
-                (int) owner.getLocationOnScreen().getX()
-                        + (owner.getWidth() - getWidth()) / 2;
-        int y =
-                (int) owner.getLocationOnScreen().getY()
-                        + (owner.getHeight() - getHeight()) / 2;
-                        */
-        int x = 400;
-        int y = 400;
+        int x = (int) window.getLocationOnScreen().getX()
+                        + (window.getWidth() - getWidth()) / 2;
+        int y = (int) window.getLocationOnScreen().getY()
+                        + (window.getHeight() - getHeight()) / 2;
         setLocation(x, y);
 
         setVisible(true);

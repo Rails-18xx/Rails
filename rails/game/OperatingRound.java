@@ -1958,6 +1958,8 @@ public class OperatingRound extends Round implements Observer {
         // Check if any more companies must discard trains,
         // otherwise continue train buying
         if (!checkForExcessTrains()) {
+            // Trains may have been discarded by other players 
+            setCurrentPlayer (operatingCompany.get().getPresident());
             stepObject.set(GameDef.OrStep.BUY_TRAIN);
         }
 

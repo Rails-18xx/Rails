@@ -550,6 +550,7 @@ public class ORUIManager implements DialogOwner {
             orWindow.toFront();
 
             CheckBoxDialog dialog = new CheckBoxDialog(this,
+                    orWindow,
                     LocalText.getText("DestinationsReached"),
                     LocalText.getText("DestinationsReachedPrompt"),
                     options.toArray(new String[0]));
@@ -1226,6 +1227,7 @@ public class ORUIManager implements DialogOwner {
 
                 // TODO This must be split off from here, as in the future
                 // different clients may handle the discards of each company.
+                /*
                 while (possibleActions.contains(DiscardTrain.class)) {
                     // Check if there are any forced discards;
                     // otherwise, nothing to do here
@@ -1235,6 +1237,7 @@ public class ORUIManager implements DialogOwner {
 
                     gameUIManager.discardTrains(dt);
                 }
+                */
             }
 
             int newOffBoardRevenueStep =
@@ -1433,6 +1436,7 @@ public class ORUIManager implements DialogOwner {
                 }
             }
             RadioButtonDialog currentDialog = new RadioButtonDialog (gameUIManager,
+                    orWindow,
                     LocalText.getText("Select"),
                     LocalText.getText("SelectLoansToRepay", action.getCompanyName()),
                                        options,

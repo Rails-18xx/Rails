@@ -262,6 +262,7 @@ public class GameUIManager implements DialogOwner {
                     } else if (!wasMyTurn && isMyTurn) {
                         autoLoadPoller.setActive(false);
                         setCurrentDialog(new MessageDialog(this,
+                                (JFrame) activeWindow,
                                 LocalText.getText("Message"),
                                 LocalText.getText("YourTurn", localPlayerName)),
                             null);
@@ -280,6 +281,8 @@ public class GameUIManager implements DialogOwner {
         // and make sure that the right window is active.
         updateUI();
 
+        statusWindow.initGameActions();
+        if (!myTurn) return true;
         statusWindow.setGameActions();
         statusWindow.setCorrectionMenu();
 
@@ -328,6 +331,7 @@ public class GameUIManager implements DialogOwner {
         String[] message = DisplayBuffer.get();
         if (message != null) {
             setCurrentDialog(new MessageDialog(this,
+                    (JFrame) activeWindow,
                     LocalText.getText("Message"),
                     "<html>" + Util.joinWithDelimiter(message, "<br>")),
                 null);
@@ -606,6 +610,7 @@ public class GameUIManager implements DialogOwner {
             orWindow.toFront();
 
             CheckBoxDialog dialog = new CheckBoxDialog(this,
+                    orWindow, 
                     LocalText.getText("ExchangeTokens"),
                     prompt,
                     options.toArray(new String[0]));
@@ -697,7 +702,7 @@ public class GameUIManager implements DialogOwner {
             }
         }
 
-        if (currentDialogAction != null) processAction(currentDialogAction);
+        /*if (currentDialogAction != null)*/ processAction(currentDialogAction);
 
     }
     

@@ -28,7 +28,7 @@ public class MessageDialog extends JDialog implements ActionListener {
     protected static Logger log =
             Logger.getLogger(MessageDialog.class.getPackage().getName());
 
-    public MessageDialog(DialogOwner owner, String title, String message) {
+    public MessageDialog(DialogOwner owner, JFrame window, String title, String message) {
 
         super((Frame) null, title, false); // Non-modal
         this.owner = owner;
@@ -37,12 +37,15 @@ public class MessageDialog extends JDialog implements ActionListener {
         initialize();
         pack();
 
-        int x = 400;
-        int y = 400;
+        // Center on window
+        int x = (int) window.getLocationOnScreen().getX()
+                        + (window.getWidth() - getWidth()) / 2;
+        int y = (int) window.getLocationOnScreen().getY()
+                        + (window.getHeight() - getHeight()) / 2;
         setLocation(x, y);
 
         setVisible(true);
-        setAlwaysOnTop(true);
+        toFront();
     }
 
     private void initialize() {

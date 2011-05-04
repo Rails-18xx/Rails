@@ -70,6 +70,7 @@ public class GameStatus_18EU extends GameStatus {
             }
 
             RadioButtonDialog dialog = new RadioButtonDialog (gameUIManager,
+                    parent,
                     LocalText.getText("PleaseSelect"),
                     LocalText.getText("SelectCompanyToMergeMinorInto",
                             minor.getName()),

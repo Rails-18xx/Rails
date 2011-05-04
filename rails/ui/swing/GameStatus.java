@@ -675,7 +675,9 @@ public class GameStatus extends GridPanel implements ActionListener {
                 int index = 0;
                 if (options.size() > 1) {
                     if (startCompany) {
-                         RadioButtonDialog dialog = new RadioButtonDialog (gameUIManager,
+                         RadioButtonDialog dialog = new RadioButtonDialog (
+                                gameUIManager,
+                                parent,
                                 LocalText.getText("PleaseSelect"),
                                 LocalText.getText("WHICH_START_PRICE",
                                         playerName,
@@ -894,6 +896,20 @@ public class GameStatus extends GridPanel implements ActionListener {
         for (int j = 0; j < np; j++) {
             upperPlayerCaption[j].setText(players[j].getName()
                                           + (j == index ? " PD" : ""));
+        }
+    }
+    
+    public void highlightCurrentPlayer (int index) {
+        for (int j = 0; j < np; j++) {
+            upperPlayerCaption[j].setHighlight(j == index);
+            lowerPlayerCaption[j].setHighlight(j == index);
+        }
+    }
+
+    public void highlightLocalPlayer (int index) {
+        for (int j = 0; j < np; j++) {
+            upperPlayerCaption[j].setLocalPlayer(j == index);
+            lowerPlayerCaption[j].setLocalPlayer(j == index);
         }
     }
 

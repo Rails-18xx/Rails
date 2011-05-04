@@ -33,7 +33,7 @@ public class RadioButtonDialog extends JDialog implements ActionListener {
     protected static Logger log =
             Logger.getLogger(RadioButtonDialog.class.getPackage().getName());
 
-    public RadioButtonDialog(DialogOwner owner, String title, String message,
+    public RadioButtonDialog(DialogOwner owner, JFrame window, String title, String message,
             String[] options, int selectedOption) {
         super((Frame) null, title, false); // Non-modal
         this.owner = owner;
@@ -45,17 +45,11 @@ public class RadioButtonDialog extends JDialog implements ActionListener {
         initialize();
         pack();
 
-        // Center on owner
-        /*
-        int x =
-                (int) owner.getLocationOnScreen().getX()
-                        + (owner.getWidth() - getWidth()) / 2;
-        int y =
-                (int) owner.getLocationOnScreen().getY()
-                        + (owner.getHeight() - getHeight()) / 2;
-                        */
-        int x = 400;
-        int y = 400;
+        // Center on window
+        int x = (int) window.getLocationOnScreen().getX()
+                        + (window.getWidth() - getWidth()) / 2;
+        int y = (int) window.getLocationOnScreen().getY()
+                        + (window.getHeight() - getHeight()) / 2;
         setLocation(x, y);
 
         setVisible(true);
