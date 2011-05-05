@@ -1805,7 +1805,7 @@ public class OperatingRound extends Round implements Observer {
             TrainI oldTrain =
                 operatingCompany.get().getPortfolio().getTrainOfType(
                         exchangedTrain.getType());
-            train.moveTo(train.isObsolete() ? scrapHeap : pool);
+            oldTrain.moveTo(train.isObsolete() ? scrapHeap : pool);
             ReportBuffer.add(LocalText.getText("ExchangesTrain",
                     companyName,
                     exchangedTrain.getName(),
