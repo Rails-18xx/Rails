@@ -12,6 +12,7 @@ import rails.game.action.LayTile;
 import rails.game.model.ModelObject;
 import rails.game.move.Moveable;
 import rails.game.move.TileMove;
+
 import rails.game.state.BooleanState;
 import rails.util.*;
 
@@ -115,6 +116,35 @@ StationHolder, TokenHolder {
 
     /** Any open sides against which track may be laid even at board edges (1825) */
     protected boolean[] openHexSides;
+    
+    /** Run-through status of any "city"-type stations on the hex (whether visible or not).
+     * Indicates whether or not a single train can run through such stations, i.e. both enter and leave it.  
+     * Has no meaning if no "city"-type stations exist on this hex.
+     * <p>Values (see Run below for definitions):
+     * <br>- "yes" (default for all except off-map hexes) means that trains of all companies 
+     * may run through this station, unless it is completely filled with foreign base tokens. 
+     * <br>- "tokenOnly" means that trains may only run through the station if it contains a base token of the operating company.
+     * <br>- "no" (default for off-map hexes) means that no train may run through this hex.
+     */
+    protected Run runThroughAllowed = null;
+    
+    /** Run-to status of any "city"-type stations on the hex (whether visible or not).
+     * Indicates whether or not a single train can run from or to such stations, i.e. either enter or leave it.  
+     * Has no meaning if no "city"-type stations exist on this hex.
+     * <p>Values (see Run below for definitions):
+     * <br>- "yes" (default) means that trains of all companies may run to/from this station. 
+     * <br>- "tokenOnly" means that trains may only access the station if it contains a base token of the operating company.
+     * <br>- "no" would mean that the hex is inaccessible (like 18AL Birmingham in the early game), 
+     * but this option is not yet useful as there is no provision yet to change this setting 
+     * in an undoable way (no state variable). 
+     */
+    protected Run runToAllowed = null;
+    
+    public enum Run {
+        YES,
+        NO,
+        TOKENONLY
+    }
 
     protected MapManager mapManager = null;
 
@@ -225,6 +255,24 @@ StationHolder, TokenHolder {
             if (openHexSides == null) openHexSides = new boolean[6];
             openHexSides[side%6] = true;
         }
+        
+        String runThroughString = tag.getAttributeAsString("runThrough");
+        if (Util.hasValue(runThroughString)) {
+            try {
+                runThroughAllowed = Run.valueOf(runThroughString.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                throw new ConfigurationException ("Illegal value for MapHex runThrough property: "+runThroughString, e);
+            }
+        }
+        
+        String runToString = tag.getAttributeAsString("runTo");
+        if (Util.hasValue(runToString)) {
+            try {
+                runToAllowed = Run.valueOf(runToString.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                throw new ConfigurationException ("Illegal value for MapHex runTo property: "+runToString, e);
+            }
+        }
     }
 
     public void finishConfiguration (GameManagerI gameManager) {
@@ -239,6 +287,13 @@ StationHolder, TokenHolder {
             City c = new City(this, s.getNumber(), s);
             cities.add(c);
             mCities.put(c.getNumber(), c);
+        }
+        
+        if (runThroughAllowed == null) {
+            runThroughAllowed = currentTile.getColourName().equalsIgnoreCase("red") ? Run.NO : Run.YES;
+        }
+        if (runToAllowed == null) {
+            runToAllowed = Run.YES;
         }
     }
 
@@ -1237,6 +1292,14 @@ StationHolder, TokenHolder {
             }
         }
         return endpoints;
+    }
+
+    public Run isRunThroughAllowed() {
+        return runThroughAllowed;
+    }
+
+    public Run isRunToAllowed() {
+        return runToAllowed;
     }
 
 }
