@@ -1,0 +1,62 @@
+<Map mapClass="rails.ui.swing.hexmap.EWHexMap" tileOrientation="EW" letterOrientation="horizontal" even="A">
+	<!-- Hex name="" tile="" orientation="" value="" impassable="" label="" cost="" value="" port="yes/no" -->
+	<Hex name="A6" tile="-912" city="Kiel" value="20,30,50" orientation="5"/>
+	<Hex name="B5" tile="0"/>
+	<Hex name="B7" tile="-912" city="Stettin" value="10,30,60" orientation="5"/>
+	<Hex name="C6" tile="-10" city="Odense-Copenhagen" cost="40"/>
+	<Hex name="D1" tile="-911" city="Newcastle"  value="20,50,80"/>
+	<Hex name="D3" tile="-10" city="Stavauger"/>
+	<Hex name="D5" tile="-10" city="Århus" impassable="E5"/>
+	<Hex name="D7" tile="-10" city="Malmö" cost="40"/>
+	<Hex name="E2" tile="-10" city="Bergen" impassable="D3"/>
+	<Hex name="E4" tile="-1" city="Kristiansand" impassable="D5"/>
+	<Hex name="E6" tile="0" impassable="D5"/>
+	<Hex name="F1" tile="0" cost="60"/>
+	<Hex name="F3" tile="0" cost="60"/>
+	<Hex name="F5" tile="-10" city="Göteborg" impassable="D4"/>
+	<Hex name="F7" tile="0"/>
+	<Hex name="G2" tile="0" cost="60"/>
+	<Hex name="G4" tile="-10" city="Oslo"/>
+	<Hex name="G6" tile="-1" city="Norrköping"/>
+	<Hex name="H1" tile="0" cost="60"/>
+	<Hex name="H3" tile="0" cost="60"/>
+	<Hex name="H5" tile="0"/>
+	<Hex name="H7" tile="0"/>
+	<Hex name="I2" tile="0" cost="60"/>
+	<Hex name="I4" tile="0"/>
+	<Hex name="I6" tile="0"/>
+	<Hex name="J1" tile="0" cost="60"/>
+	<Hex name="J3" tile="0" cost="60"/>
+	<Hex name="J5" tile="-1" city="Gävle"/>
+	<Hex name="K2" tile="-10" city="Trondheim" cost="60"/>
+	<Hex name="K4" tile="0"/>
+	<Hex name="K6" tile="-10004" city="Stockholm" impassable="M6"/>
+	<Hex name="L3" tile="-1" city="Östersund"/>
+	<Hex name="L5" tile="0" impassable="N5,M6"/>
+	<Hex name="L7" tile="0"/>
+	<Hex name="M2" tile="0" cost="60"/>
+	<Hex name="M4" tile="0" impassable="N5"/>
+	<Hex name="M6" tile="-10" city="Turku"/>
+	<Hex name="M8" tile="-911" city="Tallinn" value="0,30,60" orientation="4"/>
+	<Hex name="N1" tile="0" cost="60"/>
+	<Hex name="N3" tile="0"/>
+	<Hex name="N5" tile="0"/>
+	<Hex name="N7" tile="-10" city="Helsinki"/>
+	<Hex name="O2" tile="0" cost="60"/>
+	<Hex name="O4" tile="-10" city="Umeå" impassable="N5,P5"/>
+	<Hex name="O6" tile="-10" city="Tampere"/>
+	<Hex name="P1" tile="0" cost="60"/>
+	<Hex name="P3" tile="0"/>
+	<Hex name="P5" tile="0"/>
+	<Hex name="P7" tile="-1" city="Lahti"/>
+	<Hex name="Q2" tile="0" cost="60"/>
+	<Hex name="Q4" tile="0" impassable="S4,P5,R5"/>
+	<Hex name="Q6" tile="0" city="Tampere"/>
+	<Hex name="Q8" tile="-911" city="Vyborg" value="30,50,80" orientation="3"/>
+	<Hex name="R1" tile="-10" city="Narvik" cost="60"/>
+	<Hex name="R3" tile="-1" city="Lulea"/>
+	<Hex name="R5" tile="0"/>
+	<Hex name="S2" tile="-10" city="Gällivare"/>
+	<Hex name="S4" tile="-1" city="Oulu"/>
+	<Hex name="T1" tile="-4002" city="Kiruna" value="10,50,10" orientation="2"/>
+</Map>

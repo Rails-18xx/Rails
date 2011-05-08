@@ -21,9 +21,9 @@ import tools.XmlUtils;
  */
 public class ConvertTilesXML {
 
-    private static String inputFilePath = "tiles/TileDictionary.xml";
+    private static String inputFilePath = "TileDictionary.xml";
 
-    private static String outputFilePath = "tiles/Tiles.xml";
+    private static String outputFilePath = "Tiles.xml";
 
     private static Map<String, String> colourMap, gaugeMap, sidesMap, cityMap;
     private static Map<String, String[]> stationMap;

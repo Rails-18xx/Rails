@@ -304,6 +304,11 @@ Known Issues:
         All aspects not present in 1880 have not been implemented yet.</Description>
         <Players minimum="3" maximum="7"/>
     </Game>
+   <Game name="18Scan">
+    <Note>Prototype</Note>
+    <Description>18Scan</Description>
+    <Players minimum="2" maximum="4" />
+  </Game>
 
    	
 	<Credits>Rails is a computer implementation of a number of railroad board games,

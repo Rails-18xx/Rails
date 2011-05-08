@@ -1,17 +1,20 @@
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/MakeGameTileSets.java,v 1.9 2010/01/31 22:22:37 macfreek Exp $*/
 package tools;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.*;
 
-import javax.xml.parsers.*;
-import javax.xml.transform.*;
-import javax.xml.transform.dom.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.*;
 
 import rails.game.ConfigurationException;
-import tools.XmlUtils;
+import rails.util.Tag;
 
 /**
  * Convert an XML tile dictionary, as created by Marco Rocci's Tile Designer, to
@@ -19,7 +22,8 @@ import tools.XmlUtils;
  */
 public class MakeGameTileSets {
 
-    private static String tilesFilePath = "tiles/Tiles.xml";
+    private static List<String> directories = new ArrayList<String>();
+    private static String tilesFilePath = "Tiles.xml";
 
     public static void main(String[] args) {
 
@@ -33,7 +37,7 @@ public class MakeGameTileSets {
 
                 List<String> games = new ArrayList<String>();
 
-                File gamesDir = new File("data");
+                File gamesDir = new File("../data");
                 if (gamesDir.exists() && gamesDir.isDirectory()) {
                     File[] files = gamesDir.listFiles();
                     for (int i = 0; i < files.length; i++) {
@@ -60,8 +64,9 @@ public class MakeGameTileSets {
 
     private MakeGameTileSets(String[] games) throws ConfigurationException {
 
+        directories.add("tiles");
         Element inputTopElement =
-                XmlUtils.findElementInFile(tilesFilePath, "Tiles");
+                Tag.findTopTagInFile(tilesFilePath, directories, "Tiles").getElement();
 
         Map<String, Element> tileMap = new HashMap<String, Element>();
         Element tileSpec;
@@ -74,30 +79,34 @@ public class MakeGameTileSets {
         }
 
         for (int i = 0; i < games.length; i++) {
-
+            System.out.println("Preparing "+games[i]);
             makeTileSet(games[i], tileMap);
 
         }
-
+        System.out.println("Done");
     }
 
-    private void makeTileSet(String gameName, Map<String, Element> tileMap)
+    private void makeTileSet(String gameName, Map tileMap)
             throws ConfigurationException {
 
+        directories.clear();
+        directories.add("../data/" + gameName);
+
         // Open and read the tile set for this rails.game
-        String tileSetPath = "data/" + gameName + "/TileSet.xml";
+        String tileSetPath = "TileSet.xml";
         Element tileSet =
-                XmlUtils.findElementInFile(tileSetPath, "TileManager");
+                Tag.findTopTagInFile(tileSetPath, directories, "TileManager").getElement();
         if (tileSet == null) return;
         NodeList tiles = tileSet.getElementsByTagName("Tile");
         Map<String, Object> tilesInSet = new HashMap<String, Object>();
 
         // Also open and read the map tiles.
-        String mapPath = "data/" + gameName + "/Map.xml";
-        Element mapHexes = XmlUtils.findElementInFile(mapPath, "Map");
+        String mapPath = "Map.xml";
+        Element mapHexes =
+                Tag.findTopTagInFile(mapPath, directories, "Map").getElement();
         NodeList hexes = mapHexes.getElementsByTagName("Hex");
 
-        String tilesPath = "data/" + gameName + "/Tiles.xml";
+        String tilesPath = "../data/" + gameName + "/Tiles.xml";
         Document outputDoc;
         String tileName;
 
@@ -114,15 +123,19 @@ public class MakeGameTileSets {
                 tileName = ((Element) tiles.item(i)).getAttribute("id");
                 // Save the tile in a Map so that we can check completeness
                 // later.
+                // If we already have it, skip
+                if (tilesInSet.containsKey(tileName)) continue;
                 tilesInSet.put(tileName, null);
 
+                System.out.println("Tile "+tileName);
+
                 // Get the Tile specification
-                Element tileSpec = tileMap.get(tileName);
+                Element tileSpec = (Element) tileMap.get(tileName);
                 if (tileSpec != null) {
                     // Copy it to the subset document
                     Element copy =
                             (Element) outputDoc.importNode(
-                                    (tileMap.get(tileName)), true);
+                                    ((Element) tileMap.get(tileName)), true);
                     outputDoc.getDocumentElement().appendChild(copy);
                 } else {
                     System.out.println("ERROR: specified " + gameName
@@ -143,12 +156,10 @@ public class MakeGameTileSets {
                                    + " preprinted map tile " + tileName
                                    + " does not occur in TileSet!");
 
-                // Get the Tile specification
-                // Element tileSpec = (Element) tileMap.get(tileName);
                 // Copy it to the subset document
                 Element copy =
                         (Element) outputDoc.importNode(
-                                (tileMap.get(tileName)), true);
+                                ((Element) tileMap.get(tileName)), true);
                 outputDoc.getDocumentElement().appendChild(copy);
 
             }

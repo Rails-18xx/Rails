@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<CompanyManager>
+	<CompanyType name="Private" class="rails.game.PrivateCompany">
+		<ClosingConditions>
+			<Phase>5</Phase>
+		</ClosingConditions>
+		<Tradeable toCompany="yes" lowerPriceFactor="0.5" upperPriceFactor="1.5"/>
+		<Tradeable toPlayer="yes"/>
+	</CompanyType>
+	<CompanyType name="Public" class="rails.game.PublicCompany">
+		<PoolPaysOut/>
+		<Float percentage="60"/>
+		<ShareUnit percentage="10"/>
+		<Certificate type="President" shares="2"/>
+		<Certificate shares="1" number="8"/>
+		<BaseTokens>
+			<HomeBase lay="firstOR"/>
+			<LayCost method="sequence" cost="0,40,100"/>
+		</BaseTokens>
+		<Trains number="4,4,3,2"/>
+		<CanBuyPrivates/>
+		<CanUseSpecialProperties/>
+	</CompanyType>
+	<Company name="P1" type="Private" basePrice="20" revenue="5"
+		longname="Private 1"></Company>
+	
+
+	<StartPacket roundClass="rails.game.StartRound_1830">
+		<Bidding initial="5" minimum="5" increment="1"/>
+		<Item name="P1" type="Private" basePrice="20"/>
+
+		
+	</StartPacket>
+</CompanyManager>
