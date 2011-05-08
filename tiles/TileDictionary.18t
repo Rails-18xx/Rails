@@ -4883,6 +4883,7 @@ object TTilesWrapper
       Code = 121
       LongName = '121'
       Category = 'Lon/Bar'
+      CategoryPosition = tp2SideD
       Level = tlGreen
       Connections = <
         item
@@ -17152,6 +17153,124 @@ object TTilesWrapper
           Position = tp2CornerA
           Revenue = 10
           RevenuePosition = tp3CornerB
+        end>
+    end
+    item
+      Code = -10004
+      LongName = 'Stockholm'
+      Level = tlMapUpgradableToGreen
+      Connections = <
+        item
+          Position1 = tp2CornerA
+          Position2 = tp4SideF
+        end
+        item
+          Position1 = tp2CornerE
+          Position2 = tp4SideE
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Position = tp2CornerA
+          Revenue = 30
+          RevenuePosition = tp2CornerC
+        end
+        item
+          JunType = jtCity
+          Position = tp2CornerE
+          Revenue = 30
+          RevenuePosition = tp2CornerC
+        end>
+    end
+    item
+      Code = 403
+      LongName = 'Copenhagen'
+      Category = 'COP'
+      CategoryPosition = tp2CornerC
+      Level = tlYellow
+      Connections = <
+        item
+          Position1 = tp1SideA
+          Position2 = tp3SideD
+        end
+        item
+          Position1 = tp3SideD
+          Position2 = tp4SideD
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Position = tp1SideA
+          Revenue = 30
+        end
+        item
+          JunType = jtWhistlestop
+          Position = tp3SideD
+          Revenue = 10
+          RevenuePosition = tp3CornerE
+        end>
+    end
+    item
+      Code = 1121
+      LongName = 'Copenhagen'
+      Category = 'COP'
+      CategoryPosition = tp2SideA
+      Level = tlGreen
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Revenue = 50
+          RevenuePosition = tp3CornerF
+        end>
+    end
+    item
+      Code = 1584
+      LongName = 'Copenhagen'
+      Category = 'COP'
+      CategoryPosition = tp3CornerB
+      Level = tlBrown
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end>
+      Junctions = <
+        item
+          JunType = jtTripleCity
+          Revenue = 60
         end>
     end>
 end
