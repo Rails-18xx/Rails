@@ -210,4 +210,7 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
 	public boolean isReloading();
 	public void setReloading(boolean reloading);
 	public void setSkipDone (GameDef.OrStep step);
+	
+	public Player reorderPlayersByCash(boolean high);
+    //public void reorderPlayersByCash(boolean high);
 }

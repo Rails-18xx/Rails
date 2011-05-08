@@ -1896,5 +1896,31 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 		skipNextDone = true;
 		skippedStep = step;
 	}
+	
+	/**
+	 *
+	 *@param ascending Boolean to determine if the playerlist will be sorted in ascending or descending order based on their cash
+	 *@return Returns the player at index position 0 that is either the player with the most or least cash depending on sort order. 
+	 */
+     public Player reorderPlayersByCash (boolean ascending) {
+
+         final boolean _ascending = ascending;
+         Collections.sort (players, new Comparator<Player>() {
+              public int compare (Player p1, Player p2) {
+                  return _ascending ? p1.getCash() - p2.getCash() : p2.getCash() - p1.getCash();
+              }
+         });
+
+         Player player;
+         for (int i=0; i<players.size(); i++) {
+             player = players.get(i);
+             player.setIndex (i);
+             playerNames.set (i, player.getName());
+             log.debug("New player "+i+" is "+player.getName() +" (cash="+Bank.format(player.getCash())+")");
+         }
+
+         return players.get(0);
+     }
+	 
 }
 

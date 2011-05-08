@@ -200,6 +200,10 @@ public class Player implements CashHolder, Comparable<Player> {
         return index;
     }
 
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
     public void setBankrupt () {
     	bankrupt.set(true);
     }

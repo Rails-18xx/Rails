@@ -55,43 +55,58 @@
 		<Train name="10" majorStops="10" cost="1000" amount="-1"/>
 	</Component>
 	<Component name="PhaseManager" class="rails.game.PhaseManager">
-		<Phase name="1">
+		<Phase name="A1">
 			<Tiles colour="yellow"/>
 			<OperatingRounds number="-1"/>
 			<Float percentage="20"/>
 			<Trains tradingAllowed="yes"/>
 			<Stocks avail="5"/>
 		</Phase>
-		<Phase name="2">
-			<Tiles colour="yellow,green"/>
-			<OffBoardRevenue step="2"/>
-			<Float percentage="30"/>
-			<Stocks avail="10"/>
-		</Phase>
-		<Phase name="3">
-			<Tiles colour="yellow,green"/>
+		<Phase name="A2">
+			<Tiles colour="yellow"/>
 			
 		</Phase>
-		<Phase name="4">
+		<Phase name="B1">
 			<Tiles colour="yellow,green"/>
+			<Float percentage="30"/>
+			<Stocks avail="10"/>
+			<OffBoardRevenue step="2"/>
+		</Phase>
+		<Phase name="B2">
+			<Tiles colour="yellow,green"/>
+			<OffBoardRevenue step="2"/>
+		</Phase>
+		<Phase name="B3">
+			<Tiles colour="yellow,green"/>
+			<OffBoardRevenue step="2"/>
 			<Privates close="yes"/>
 			<Investors active="no"/>
 			<Communists active="yes"/>
 			<Float percentage="40"/>
 		</Phase>
-		<Phase name="5">
+		<Phase name="C1">
 			<Tiles colour="yellow,green,brown"/>
 			<OffBoardRevenue step="3"/>
 		</Phase>
-		<Phase name="6">
+		<Phase name="C2">
 			<Tiles colour="yellow,green,brown"/>
-			<Float percentage="60"/>
 			<Comunists active="no"/>
+			<Float percentage="60"/>
+			<OffBoardRevenue step="3"/>
 		</Phase>
-		<Phase name="7">
+		<Phase name="C3">
 			<Tiles colour="yellow,green,brown"/>
+			<OffBoardRevenue step="3"/>
 		</Phase>
-		<Phase name="8">
+		<Phase name="D1">
+			<Tiles colour="yellow,green,brown,grey"/>
+			<OffBoardRevenue step="4"/>
+		</Phase>
+		<Phase name="D2">
+			<Tiles colour="yellow,green,brown,grey"/>
+			<OffBoardRevenue step="4"/>
+		</Phase>
+		<Phase name="D3">
 			<Tiles colour="yellow,green,brown,grey"/>
 			<OffBoardRevenue step="4"/>
 		</Phase>
