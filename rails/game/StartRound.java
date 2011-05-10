@@ -136,6 +136,8 @@ public abstract class StartRound extends Round {
             DisplayBuffer.add(LocalText.getText("UnexpectedAction",
                     action.toString()));
         }
+        
+        startPacketChecks();
 
         if (startPacket.areAllSold()) {
             /*
@@ -148,7 +150,10 @@ public abstract class StartRound extends Round {
         return result;
     }
 
-
+    /** Stub to allow start packets cleanups in subclasses */
+    protected void startPacketChecks() {
+        return;
+    }
 
     /*----- Processing player actions -----*/
 
