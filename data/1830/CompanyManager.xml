@@ -82,7 +82,7 @@
 	</Company>
 	<Company name="C&amp;O" type="Public" tokens="3" fgColour="000000" bgColour="A0E0FF"
 			longname="Chesapeake &amp; Ohio">
-		<IfOption name="Variant" value="Basegame,Pere Marquette">
+		<IfOption name="Variant" value="Basegame,Pere Marquette,Wabash">
 			<Home hex="F6"/>
 		</IfOption>
 		<IfOption name="Variant" value="Coalfields,Coalfields&amp;Reading">
@@ -129,6 +129,14 @@
             <Home hex="H14"/>
 			<Certificate type="President" shares="3"/>
 			<Certificate shares="1" number="7"/>
+        </Company>
+    </IfOption>
+    <IfOption name="Variant" value="Wabash">
+        <Company name="WR" type="Public" tokens="2" fgColour="000000" bgColour="FFFFFF"
+                longname="Wabash Railroad">
+            <Home hex="H2"/>
+            <Certificate type="President" shares="2"/>
+            <Certificate shares="1" number="8"/>
         </Company>
     </IfOption>
 	

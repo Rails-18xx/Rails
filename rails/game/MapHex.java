@@ -205,8 +205,8 @@ StationHolder, TokenHolder {
             if (getTileOrientation() == MapHex.EW) {
                 // Tiles with flat EW sides, letters go vertically.
                 // Most common case.
-                // Tested for 1830 and 1870.
-                x = (column + (letterAHasEvenNumbers() ? 1 : 0)) / 2;
+                // Tested for 1830 and 1870. OK with 1830 Wabash and 1825R2 (negative column numbers)
+                x = (column + 8 + (letterAHasEvenNumbers() ? 1 : 0)) / 2 - 4; // Divisor must be >0
                 y = row;
             } else {
                 // Tiles with flat NS sides, letters go vertically.
@@ -388,6 +388,16 @@ StationHolder, TokenHolder {
 
     public int getY() {
         return y;
+    }
+    
+    /** Add an X offset. Required to avoid negative coordinate values, as arise in 1830 Wabash. */
+    public void addX (int offset) {
+        x += offset;
+    }
+    
+    /** Add an Y offset. Required to avoid negative coordinate values. */
+    public void addY (int offset) {
+        y += offset;
     }
 
     /**

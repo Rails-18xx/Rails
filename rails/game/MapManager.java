@@ -97,18 +97,35 @@ public class MapManager implements ConfigurableComponentI {
             minRow = Math.min(minRow, hex.getRow());
             maxCol = Math.max(maxCol, hex.getColumn());
             maxRow = Math.max(maxRow, hex.getRow());
+            //log.debug("+++ Hex "+hex.getName()+" x="+hex.getX()+" y="+hex.getY()+" row="+hex.getRow()+" col="+hex.getColumn());
             int[] tileCosts = hex.getTileCostAsArray();
             for (int i=0; i<tileCosts.length; i++){
                 possibleTileCosts.add(tileCosts[i]);
             }
         }
         log.debug("Possible tileCosts on map are "+possibleTileCosts);
+        
+        int xOffset = 0;
+        int yOffset = 0;
+        if (minX < 0) {
+            xOffset = -minX;
+            maxX += xOffset;
+            minX = 0;
+        }
+        if (minY < 0) {
+            yOffset = -minY;
+            maxY += yOffset;
+            minY = 0;
+        }
 
         hexes = new MapHex[1 + maxX][1 + maxY];
 
         for (String hexName : mHexes.keySet()) {
             hex = mHexes.get(hexName);
+            if (xOffset > 0) hex.addX(xOffset);
+            if (yOffset > 0) hex.addY(yOffset);
             hexes[hex.getX()][hex.getY()] = hex;
+            //log.debug("--- Hex "+hex.getName()+" x="+hex.getX()+" y="+hex.getY()+" row="+hex.getRow()+" col="+hex.getColumn());
         }
     }
 

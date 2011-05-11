@@ -150,7 +150,7 @@ public abstract class StartRound extends Round {
         return result;
     }
 
-    /** Stub to allow start packets cleanups in subclasses */
+    /** Stub to allow start packet cleanups in subclasses */
     protected void startPacketChecks() {
         return;
     }
