@@ -16,6 +16,9 @@
 		<Track from="city1" gauge="normal" to="side1"/>
 		<Track from="city1" gauge="normal" to="side2"/>
 	</Tile>
+	<Tile colour="white" id="-3007" name="Y city (cent)">
+		<Station id="city1" position="0" slots="1" type="City"/>
+	</Tile>
 	<Tile colour="red" id="-4002" name="Port-2">
 		<Station id="city1" position="0" type="OffMapCity"/>
 		<Track from="city1" gauge="normal" to="side2"/>
