@@ -17158,6 +17158,7 @@ object TTilesWrapper
     item
       Code = -10004
       LongName = 'Stockholm'
+      Category = 'Y'
       Level = tlMapUpgradableToGreen
       Connections = <
         item
@@ -17272,5 +17273,38 @@ object TTilesWrapper
           JunType = jtTripleCity
           Revenue = 60
         end>
+    end
+    item
+      Code = -4007
+      LongName = 'Ferry'
+      Connections = <
+        item
+          Position1 = tp4SideD
+          Position2 = tp4SideE
+          ConType = ctSmall
+        end>
+      Junctions = <>
+    end
+    item
+      Code = -4008
+      LongName = 'Ferry'
+      Connections = <
+        item
+          Position1 = tp4SideD
+          Position2 = tp4SideF
+          ConType = ctSmall
+        end>
+      Junctions = <>
+    end
+    item
+      Code = -4009
+      LongName = 'Ferry'
+      Connections = <
+        item
+          Position1 = tp4SideD
+          Position2 = tp4SideA
+          ConType = ctSmall
+        end>
+      Junctions = <>
     end>
 end

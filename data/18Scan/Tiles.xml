@@ -21,6 +21,9 @@
 		<Track from="city1" gauge="normal" to="side2"/>
 		<Track from="city1" gauge="normal" to="side1"/>
 	</Tile>
+	<Tile colour="fixed" id="-4007" name="Ferry">
+		<Track from="side3" gauge="narrow" to="side4"/>
+	</Tile>
 	<Tile colour="yellow" id="-10004" name="Stockholm">
 		<Station id="city1" position="052" slots="1" type="City" value="30"/>
 		<Station id="city2" position="452" slots="1" type="City" value="30"/>

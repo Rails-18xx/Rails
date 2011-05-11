@@ -54,10 +54,9 @@
 	<Hex name="G4" tile="-10" city="Malmö" cost="40"/>
 	<Hex name="G6" tile="0"/>
 	<Hex name="G8" tile="0"/>
-	<Hex name="G12" tile="0"/>
+	<Hex name="G12" tile="-4007" orientation="2"/>
 	<Hex name="G14" tile="-10" city="Helsinki"/>
 	<Hex name="G16" tile="-1" city="Lahti"/>
 	<Hex name="H13" tile="-911" city="Tallinn" value="0,30,60" orientation="4"/>
-	<Hex name="H15" tile="0" />
 	<Hex name="H17" tile="-911" city="Vyborg" value="30,50,80" orientation="3"/>
 </Map>

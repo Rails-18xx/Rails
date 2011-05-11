@@ -23628,6 +23628,10 @@
 		<shape>tsHexagon</shape>
 		<level>tlMapUpgradableToGreen</level>
 		<name>Stockholm</name>
+		<category>
+			<value>Y</value>
+			<position>tp3CornerF</position>
+		</category>
 		<junctions>
 			<junction>
 				<junType>jtCity</junType>
@@ -23785,6 +23789,48 @@
 				<conType>ctNormal</conType>
 				<position1>tpCenter</position1>
 				<position2>tp4SideC</position2>
+			</connection>
+		</connections>
+	</tile>
+	<tile>
+		<ID>-4007</ID>
+		<shape>tsHexagon</shape>
+		<level>tlMapFixed</level>
+		<name>Ferry</name>
+		<junctions/>
+		<connections>
+			<connection>
+				<conType>ctSmall</conType>
+				<position1>tp4SideD</position1>
+				<position2>tp4SideE</position2>
+			</connection>
+		</connections>
+	</tile>
+	<tile>
+		<ID>-4008</ID>
+		<shape>tsHexagon</shape>
+		<level>tlMapFixed</level>
+		<name>Ferry</name>
+		<junctions/>
+		<connections>
+			<connection>
+				<conType>ctSmall</conType>
+				<position1>tp4SideD</position1>
+				<position2>tp4SideF</position2>
+			</connection>
+		</connections>
+	</tile>
+	<tile>
+		<ID>-4009</ID>
+		<shape>tsHexagon</shape>
+		<level>tlMapFixed</level>
+		<name>Ferry</name>
+		<junctions/>
+		<connections>
+			<connection>
+				<conType>ctSmall</conType>
+				<position1>tp4SideD</position1>
+				<position2>tp4SideA</position2>
 			</connection>
 		</connections>
 	</tile>
