@@ -4,12 +4,23 @@
 		<ClosingConditions>
 			<Phase>5</Phase>
 		</ClosingConditions>
-		<Tradeable toCompany="yes" lowerPriceFactor="0.5" upperPriceFactor="1.5"/>
-		<Tradeable toPlayer="yes"/>
 	</CompanyType>
+
+	<CompanyType name="Minor" class="rails.game.PublicCompany" fgColour="FFCC11" bgColour="9370DB">
+		<ShareUnit percentage="100"/>
+		<Certificate type="President" shares="1"/>
+	<StockPrice market="no"/>
+	<Payout split="always"/>
+	<BaseTokens>
+		<HomeBase lay="whenStarted"/>
+	</BaseTokens>
+	<Trains number="2,2,1,0" mandatory="no"/>
+	</CompanyType>
+	
 	<CompanyType name="Public" class="rails.game.PublicCompany">
-		<PoolPaysOut/>
-		<Float percentage="60"/>
+		<Capitalisation type="incremental"/>
+		<Float percentage="20"/>
+		<StockPrice par="no"/>
 		<ShareUnit percentage="10"/>
 		<Certificate type="President" shares="2"/>
 		<Certificate shares="1" number="8"/>
@@ -18,17 +29,59 @@
 			<LayCost method="sequence" cost="0,40,100"/>
 		</BaseTokens>
 		<Trains number="4,4,3,2"/>
-		<CanBuyPrivates/>
 		<CanUseSpecialProperties/>
 	</CompanyType>
-	<Company name="P1" type="Private" basePrice="20" revenue="5"
-		longname="Private 1"></Company>
-	
+	<Company name="Ferry" type="Private" basePrice="120" revenue="20"
+		longname="Stockholm-Åbo Ferry Company (Ferry)"></Company>
+	<Company name="Mine" type="Private" basePrice="150" revenue="25"
+		longname="Lapland Ore Line (Mine)"></Company>
+	<Company name="ZRC" type="Private" basePrice="180" revenue="30"
+		longname="Sjællandske Jernbaneselskab (Zeeland Railway Company)"></Company>
+
+	<Company name="1" type="Minor" tokens="2" longname="Västra Stambanan (Western Mainline)">
+		<Home hex="G4" />
+	</Company>
+	<Company name="2" type="Minor" tokens="2" longname="Nordvästra Stambanan (Northwestern Mainline)">
+		<Home hex="F11" />
+	</Company>
+	<Company name="3" type="Minor" tokens="2" longname="Södra Stambanan (Southern Mainline)">
+		<Home hex="F11" />
+	</Company>
+
+	<Company name="DSB" type="Public" tokens="3" fgColour="FFFFFF"
+		bgColour="EE2C2C" longname="Danske Statsbaner">
+		<Home hex="F3" />
+	</Company>
+	<Company name="NSB" type="Public" tokens="4" fgColour="FFFFFF"
+		bgColour="23238E" longname="Norges Statsbaner">
+		<Home hex="D7" />
+	</Company>
+	<Company name="S&amp;NJ" type="Public" tokens="3" fgColour="FFFFFF"
+		bgColour="228B22" longname="Sveriges &amp; Norges Järnvägar">
+		<Home hex="B19" />
+	</Company>
+	<Company name="VR" type="Public" tokens="4" fgColour="FFFFFF"
+		bgColour="1464F4" longname="Valtionrautatiet">
+		<Home hex="G14" />
+	</Company>
+	<Company name="SJ" type="Public" tokens="6" fgColour="FFCC11"
+		bgColour="9370DB" longname="Statens Järnvägar">
+	<Trains number="3"/>
+	</Company>
 
 	<StartPacket roundClass="rails.game.StartRound_1830">
 		<Bidding initial="5" minimum="5" increment="1"/>
-		<Item name="P1" type="Private" basePrice="20"/>
-
-		
+		<Item name="Ferry" type="Private" basePrice="120">
+			<SubItem name="VR" type="Public" />
+		</Item>
+		<Item name="Mine" type="Private" basePrice="150">
+			<SubItem name="S&amp;NJ" type="Public" />
+		</Item>
+		<Item name="ZRC" type="Private" basePrice="180">
+			<SubItem name="DSB" type="Public" president="yes"/>
+		</Item>
+		<Item name="1" type="Minor" basePrice="200"/>
+		<Item name="2" type="Minor" basePrice="220"/>
+		<Item name="3" type="Minor" basePrice="260"/>
 	</StartPacket>
 </CompanyManager>
