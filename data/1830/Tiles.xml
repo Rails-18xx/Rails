@@ -432,6 +432,20 @@
 		<Track from="side5" gauge="normal" to="side0"/>
 		<Track from="side4" gauge="normal" to="side0"/>
 	</Tile>
+    <Tile colour="gray" id="124" name="124">
+        <Station id="city1" position="0" slots="4" type="City" value="100"/>
+        <Track from="city1" gauge="normal" to="side0"/>
+        <Track from="city1" gauge="normal" to="side1"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+        <Track from="city1" gauge="normal" to="side3"/>
+    </Tile>
+	<Tile colour="brown" id="368" name="1889 dc K brown">
+		<Station id="city1" position="0" slots="2" type="City" value="40"/>
+		<Track from="city1" gauge="normal" to="side0"/>
+		<Track from="city1" gauge="normal" to="side1"/>
+		<Track from="city1" gauge="normal" to="side2"/>
+		<Track from="city1" gauge="normal" to="side3"/>
+	</Tile>
 	<Tile colour="brown" id="1717" name="G17">
 		<Station id="city1" position="0" type="Town" value="20"/>
 		<Track from="city1" gauge="normal" to="side0"/>

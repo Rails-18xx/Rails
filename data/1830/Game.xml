@@ -15,7 +15,7 @@
 		<!-- The options in Game.xml are not currently used.
 			 See GamesList.xml for the real ones.
 		--> 
-		<GameOption name="Variant" values="Basegame,Pere Marquette,Coalfields,Reading,Coalfields&amp;Reading,Wabash" default="Basegame" />
+		<GameOption name="Variant" values="Basegame,Pere Marquette,Coalfields,Reading,Coalfields&amp;Reading,Simple,Wabash" default="Basegame" />
 		<GameOption name="NoMapMode" type="toggle" default="no" />
 		<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Deactivate" />
 		<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Deactivate" />
@@ -50,7 +50,7 @@
 		</EndOfGame>
 	</Component>
 	<Component name="PlayerManager" class="rails.game.PlayerManager">
-		<IfOption name="Variant" value="Basegame">
+		<IfOption name="Variant" value="Basegame,Simple">
 			<Players number="2" cash="1200" certLimit="28"/>
 			<Players number="3" cash="800" certLimit="20"/>
 			<Players number="4" cash="600" certLimit="16"/>
@@ -96,7 +96,7 @@
         </IfOption>     
 	</Component>
 	<Component name="Bank" class="rails.game.Bank">
-        <IfOption name="Variant" value="Basegame,Pere Marquette,Coalfields,Reading">
+        <IfOption name="Variant" value="Basegame,Pere Marquette,Coalfields,Reading,Simple">
 			<Bank amount="12000"/>
 		</IfOption>
         <IfOption name="Variant" value="Coalfields&amp;Reading">
@@ -177,7 +177,7 @@
 			<IfOption name="Variant" value="Coalfields&amp;Reading">
 				<Attributes amount="4" releasedTrain="7,D"/>
 			</IfOption>
-            <IfOption name="Variant" value="Wabash">
+            <IfOption name="Variant" value="Simple,Wabash">
                 <Attributes amount="3"/>
             </IfOption>
 		</Train>
@@ -187,9 +187,9 @@
         <IfOption name="Variant" value="Wabash">
             <Train name="7" majorStops="7" cost="830" amount="-1"/>
         </IfOption>
-		<IfOption name="Variant" value="Basegame,Pere Marquette,Reading,Coalfields,Coalfields&amp;Reading">
+		<IfOption name="Variant" value="Basegame,Pere Marquette,Reading,Coalfields,Coalfields&amp;Reading,Simple">
 			<Train name="D" majorStops="99" startPhase="D" rustedTrain="4">
-				<IfOption name="Variant" value="Basegame,Pere Marquette">
+				<IfOption name="Variant" value="Basegame,Pere Marquette,Simple">
 					<Attributes cost="1100"/>
 					<Exchange cost="800"/>
 				</IfOption>
