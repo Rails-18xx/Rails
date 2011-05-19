@@ -38,21 +38,21 @@
 			<Reach base="stops" countTowns="major"/>
 			<Score towns="yes"/>
 		</Defaults>
-		<Train name="2" majorStops="2" cost="100" amount="10"/>
-		<Train name="2+2" majorStops="2" minorStops="2" cost="180" amount="5"/>
-		<Train name="3" majorStops="3" cost="180" amount="6" startPhase="2"/>
-		<Train name="3+3" majorStops="3"  minorStops="3" cost="300" amount="5" startPhase="3"/>
-		<Train name="4" majorStops="4" cost="300" amount="5" startPhase="4" rustedTrain="2"/>
-		<Train name="4+4" majorStops="4"  minorStops="4" cost="450" amount="5" startPhase="5" rustedTrain="2+2"/>
-		<Train name="6" majorStops="6" cost="600" amount="5" startPhase="6" rustedTrain="3"/>
-		<Train name="6e" majorStops="-1" cost="700" amount="5" startPhase="7" rustedTrain="3+3"/>
+		<Train name="2" majorStops="2" cost="100" quantity="10"/>
+		<Train name="2+2" majorStops="2" minorStops="2" cost="180" quantity="5"/>
+		<Train name="3" majorStops="3" cost="180" quantity="6" startPhase="2"/>
+		<Train name="3+3" majorStops="3"  minorStops="3" cost="300" quantity="5" startPhase="3"/>
+		<Train name="4" majorStops="4" cost="300" quantity="5" startPhase="4" rustedTrain="2"/>
+		<Train name="4+4" majorStops="4"  minorStops="4" cost="450" quantity="5" startPhase="5" rustedTrain="2+2"/>
+		<Train name="6" majorStops="6" cost="600" quantity="5" startPhase="6" rustedTrain="3"/>
+		<Train name="6e" majorStops="-1" cost="700" quantity="5" startPhase="7" rustedTrain="3+3"/>
 		<!-- majorStops="-1" indicates that this not a normally running train-->
 		<!-- The e-type trains are express trains that can ignore towns/cities on their way for a maximum payout-->
-		<Train name="8" majorStops="8" cost="800" amount="2" startPhase="8"	rustedTrain="4"/>
-		<Train name="8e" majorStops="-1" cost="900" amount="2" rustedTrain="4+4"/>
+		<Train name="8" majorStops="8" cost="800" quantity="2" startPhase="8"	rustedTrain="4"/>
+		<Train name="8e" majorStops="-1" cost="900" quantity="2" rustedTrain="4+4"/>
 		<!-- majorStops="-1" indicates that this not a normally running train-->
 		<!-- The e-type trains are express trains that can ignore towns/cities on their way for a maximum payout-->
-		<Train name="10" majorStops="10" cost="1000" amount="-1"/>
+		<Train name="10" majorStops="10" cost="1000" quantity="-1"/>
 	</Component>
 	<Component name="PhaseManager" class="rails.game.PhaseManager">
 		<Phase name="A1">

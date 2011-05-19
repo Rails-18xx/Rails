@@ -22,7 +22,7 @@ implements TrainTypeI {
     protected Class<? extends Train> trainClass;
 
     protected String name;
-    protected int amount;
+    protected int quantity;
     protected boolean infiniteAmount = false;
 
     /** Index: used for sorting trains lists in configured order. */
@@ -117,12 +117,12 @@ implements TrainTypeI {
             }
 
             // Amount
-            amount = tag.getAttributeAsInteger("amount");
-            if (amount == -1) {
+            quantity = tag.getAttributeAsInteger("quantity");
+            if (quantity == -1) {
                 infiniteAmount = true;
-            } else if (amount <= 0) {
+            } else if (quantity <= 0) {
                 throw new ConfigurationException(
-                        LocalText.getText("InvalidAmount"));
+                        LocalText.getText("InvalidQuantity", String.valueOf(quantity)));
             }
 
             // Major stops
@@ -153,7 +153,7 @@ implements TrainTypeI {
                         initialPortfolio);
         } else {
             name = "";
-            amount = 0;
+            quantity = 0;
         }
 
         // Reach
@@ -209,7 +209,7 @@ implements TrainTypeI {
                     train = createTrain();
                     trains.add(train);
                 } else {
-                    for (int i = 0; i < amount; i++) {
+                    for (int i = 0; i < quantity; i++) {
                         train = createTrain ();
                         trains.add(train);
                     }
@@ -479,7 +479,7 @@ implements TrainTypeI {
 
     public String getInfo() {
         StringBuilder b = new StringBuilder ("<html>");
-        b.append(LocalText.getText("TrainInfo", name, Bank.format(cost), amount));
+        b.append(LocalText.getText("TrainInfo", name, Bank.format(cost), quantity));
         if (Util.hasValue(startedPhaseName)) {
             appendInfoText(b, LocalText.getText("StartsPhase", startedPhaseName));
         }

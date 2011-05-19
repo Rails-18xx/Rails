@@ -256,7 +256,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
     protected boolean canClose = true;
 
     /** Initial train at floating time */
-    protected String initialTrain = null;
+    protected String initialTrainType = null;
+    protected int initialTrainCost = 0;
+    protected boolean initialTrainTradeable = true;
 
     /* Loans */
     protected int maxNumberOfLoans = 0;
@@ -396,10 +398,18 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
         Tag trainsTag = tag.getChild("Trains");
         if (trainsTag != null) {
-            trainLimit = trainsTag.getAttributeAsIntegerArray("number");
+            trainLimit = trainsTag.getAttributeAsIntegerArray("limit");
             mustOwnATrain =
                 trainsTag.getAttributeAsBoolean("mandatory", mustOwnATrain);
-            initialTrain = trainsTag.getAttributeAsString("initial");
+        }
+        
+        Tag initialTrainTag = tag.getChild("InitialTrain");
+        if (initialTrainTag != null) {
+            initialTrainType = initialTrainTag.getAttributeAsString("type");
+            initialTrainCost = initialTrainTag.getAttributeAsInteger("cost",
+                    initialTrainCost);
+            initialTrainTradeable = initialTrainTag.getAttributeAsBoolean("tradeable", 
+                    initialTrainTradeable);
         }
 
         Tag firstTrainTag = tag.getChild("FirstTrainCloses");
@@ -961,11 +971,12 @@ public class PublicCompany extends Company implements PublicCompanyI {
             layHomeBaseTokens();
         }
 
-        if (initialTrain != null) {
+        if (initialTrainType != null) {
             TrainManager trainManager = gameManager.getTrainManager();
-            TrainTypeI type = trainManager.getTypeByName(initialTrain);
+            TrainTypeI type = trainManager.getTypeByName(initialTrainType);
             TrainI train = bank.getIpo().getTrainOfType(type);
-            buyTrain(train, 0);
+            buyTrain(train, initialTrainCost);
+            train.setTradeable(initialTrainTradeable);
             trainManager.checkTrainAvailability(train, bank.getIpo());
         }
     }

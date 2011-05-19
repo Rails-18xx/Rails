@@ -1,37 +1,40 @@
 <?xml version="1.0"?>
 <CompanyManager>
-	<CompanyType name="Minor" class="rails.game.PublicCompany" fgColour="000000" bgColour="CCCCCC">
+	<CompanyType name="Minor" class="rails.game.PublicCompany" fgColour="000000"
+		bgColour="CCCCCC">
 		<ShareUnit percentage="100"/>
 		<Certificate type="President" shares="1"/>
-	<StockPrice market="no"/>
-	<Payout split="always"/>
+		<StockPrice market="no"/>
+		<Payout split="always"/>
 		<TileLays>
 			<Number colour="yellow" phase="2" number="2" occurrences="1"/>
 			<Number colour="green" phase="3,4,5,6,8" number="0"/>
 			<Number colour="brown" phase="5,6,8" number="0"/>
 			<Number colour="grey" phase="8" number="0"/>
 		</TileLays>
-	<BaseTokens>
-		<HomeBase lay="whenStarted"/>
-	</BaseTokens>
-	<Trains initial="2" number="2,2,1" mandatory="no"/>
+		<BaseTokens>
+			<HomeBase lay="whenStarted"/>
+		</BaseTokens>
+		<Trains limit="2,2,1" mandatory="no"/>
+		<InitialTrain type="2" cost="0" tradeable="yes"/>
 	</CompanyType>
-	<CompanyType name="Major" class="rails.game.PublicCompany" capitalisation="incremental" restartable="yes">
+	<CompanyType name="Major" class="rails.game.PublicCompany"
+		capitalisation="incremental" restartable="yes">
 		<Float percentage="50"/>
-        <TreasuryCanHoldOwnShares maxPerc="80"/>
-        <HomeBase lay="whenStarted"/>
-            <StockPrice par="no"/>
-            <ShareUnit percentage="10"/>
-            <Certificate type="President" shares="2"/>
-            <Certificate shares="1" number="8"/>
-        <Capitalisation type="incremental"/>
-        <BaseTokens>
-            <BuyCost initialTokenCost="100"/>
-            <HomeBase lay="whenStarted"/>
-        </BaseTokens>
-            <Payout split="allowed" mustExceedPriceToMove="yes"/>
-        <Trains number="4,4,3,2"/>
-        <TradeShares mustHaveOperated="yes"/>
+		<TreasuryCanHoldOwnShares maxPerc="80"/>
+		<HomeBase lay="whenStarted"/>
+		<StockPrice par="no"/>
+		<ShareUnit percentage="10"/>
+		<Certificate type="President" shares="2"/>
+		<Certificate shares="1" number="8"/>
+		<Capitalisation type="incremental"/>
+		<BaseTokens>
+			<BuyCost initialTokenCost="100"/>
+			<HomeBase lay="whenStarted"/>
+		</BaseTokens>
+		<Payout split="allowed" mustExceedPriceToMove="yes"/>
+		<Trains limit="4,4,3,2"/>
+		<TradeShares mustHaveOperated="yes"/>
 	</CompanyType>
 	
 	<Company name="1" longname="Chemin de Fer du Nord" type="Minor">
@@ -79,40 +82,49 @@
 	<Company name="15" longname="Grand Central" type="Minor">
 		<Home hex="Q2"/>
 	</Company>
-
-	<Company name="SNCB" longname="Société Nationale des Chemins de Fer Belges " type="Major" tokens="5" fgColour="000000" bgColour="DDAA00">
+	
+	<Company name="SNCB" longname="Société Nationale des Chemins de Fer Belges "
+		type="Major" tokens="5" fgColour="000000" bgColour="DDAA00">
 	</Company>
-	<Company name="NS" longname="Nederlandsche Spoorwegen" type="Major" tokens="5" fgColour="0000FF" bgColour="FFDD00">
+	<Company name="NS" longname="Nederlandsche Spoorwegen" type="Major" tokens="5"
+		fgColour="0000FF" bgColour="FFDD00">
 	</Company>
-	<Company name="KBS" longname="Königlich-Bayerische Staatseisenbahn" type="Major" tokens="5" fgColour="000000" bgColour="C0E0FF">
+	<Company name="KBS" longname="Königlich-Bayerische Staatseisenbahn"
+		type="Major" tokens="5" fgColour="000000" bgColour="C0E0FF">
 	</Company>
-	<Company name="KPEV" longname="Königlich-Preussische Eisenbahn-Verwaltung" type="Major" tokens="5" fgColour="000000" bgColour="2255FF">
+	<Company name="KPEV" longname="Königlich-Preussische Eisenbahn-Verwaltung"
+		type="Major" tokens="5" fgColour="000000" bgColour="2255FF">
 	</Company>
-	<Company name="KK&#214;B" longname="Kaiserlich-Königliche Österreichische Staatsbahn" type="Major" tokens="5" fgColour="000000" bgColour="FFFF00">
+	<Company name="KK&#214;B"
+		longname="Kaiserlich-Königliche Österreichische Staatsbahn" type="Major"
+		tokens="5" fgColour="000000" bgColour="FFFF00">
 	</Company>
-	<Company name="FS" longname="Ferrovie dello Stato" type="Major" tokens="5" fgColour="FFFFFF" bgColour="00AA00">
+	<Company name="FS" longname="Ferrovie dello Stato" type="Major" tokens="5"
+		fgColour="FFFFFF" bgColour="00AA00">
 	</Company>
-	<Company name="SNCF" longname="Société Nationale des Chemins de Fer Français" type="Major" tokens="5" fgColour="FFFFFF" bgColour="FF0000">
+	<Company name="SNCF" longname="Société Nationale des Chemins de Fer Français"
+		type="Major" tokens="5" fgColour="FFFFFF" bgColour="FF0000">
 	</Company>
-	<Company name="DR" longname="Deutsche Reichsbahn" type="Major" tokens="5" fgColour="FFFFFF" bgColour="000000">
+	<Company name="DR" longname="Deutsche Reichsbahn" type="Major" tokens="5"
+		fgColour="FFFFFF" bgColour="000000">
 	</Company>
 	
 	<StartPacket roundClass="rails.game.specific._18EU.StartRound_18EU">
 		<Bidding initial="0" minimum="5" increment="5"/>
-		<Item name="1"	 type="Minor" basePrice="100"/>
-		<Item name="2"	 type="Minor" basePrice="100"/>
-		<Item name="3"	 type="Minor" basePrice="100"/>
-		<Item name="4"	 type="Minor" basePrice="100"/>
-		<Item name="5"	 type="Minor" basePrice="100"/>
-		<Item name="6"	 type="Minor" basePrice="100"/>
-		<Item name="7"	 type="Minor" basePrice="100"/>
-		<Item name="8"	 type="Minor" basePrice="100"/>
-		<Item name="9"	 type="Minor" basePrice="100"/>
-		<Item name="10"		type="Minor" basePrice="100"/>
-		<Item name="11"		type="Minor" basePrice="100"/>
-		<Item name="12"		type="Minor" basePrice="100"/>
-		<Item name="13"		type="Minor" basePrice="100"/>
-		<Item name="14"		type="Minor" basePrice="100"/>
-		<Item name="15"		type="Minor" basePrice="100"/>
+		<Item name="1" type="Minor" basePrice="100"/>
+		<Item name="2" type="Minor" basePrice="100"/>
+		<Item name="3" type="Minor" basePrice="100"/>
+		<Item name="4" type="Minor" basePrice="100"/>
+		<Item name="5" type="Minor" basePrice="100"/>
+		<Item name="6" type="Minor" basePrice="100"/>
+		<Item name="7" type="Minor" basePrice="100"/>
+		<Item name="8" type="Minor" basePrice="100"/>
+		<Item name="9" type="Minor" basePrice="100"/>
+		<Item name="10" type="Minor" basePrice="100"/>
+		<Item name="11" type="Minor" basePrice="100"/>
+		<Item name="12" type="Minor" basePrice="100"/>
+		<Item name="13" type="Minor" basePrice="100"/>
+		<Item name="14" type="Minor" basePrice="100"/>
+		<Item name="15" type="Minor" basePrice="100"/>
 	</StartPacket>
 </CompanyManager>

@@ -20,7 +20,7 @@
 			<HomeBase lay="whenFloated"/>
 		</BaseTokens>
 		<Payout split="no"/>
-		<Trains number="1" mandatory="no"/>
+		<Trains limit="1" mandatory="no"/>
 	</CompanyType>
 	
 	<CompanyType name="Private" class="rails.game.PrivateCompany"/>
@@ -41,7 +41,7 @@
 			<LayCost method="sequence" cost="0,40,100"/>
 		</BaseTokens>
 		<Capitalisation type="incremental"/>
-		<Trains number="4,4,4,3,3,3,3,3,2,2,2"/>
+		<Trains limit="4,4,4,3,3,3,3,3,2,2,2"/>
 		<CanUseSpecialProperties/>
 	</CompanyType>
 	

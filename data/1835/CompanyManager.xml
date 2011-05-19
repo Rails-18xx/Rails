@@ -10,7 +10,7 @@
             <HomeBase lay="whenFloated"/>
         </BaseTokens>
 		<Payout split="always"/>
-	<Trains number="2,2,1" mandatory="no"/>
+	<Trains limit="2,2,1" mandatory="no"/>
 	</CompanyType>
 	<CompanyType name="Major" class="rails.game.PublicCompany" capitalisation="incremental">
 		<PoolPaysOut/>
@@ -28,7 +28,7 @@
             <HomeBase lay="whenFloated"/>
         </BaseTokens>
 		<Capitalisation type="incremental"/>
-		<Trains number="4,4,3,2"/>
+		<Trains limit="4,4,3,2"/>
         <CanUseSpecialProperties/>
 	</CompanyType>
 	
@@ -211,7 +211,7 @@
 		<Certificate shares="2" number="3"/>
 		<Certificate shares="2" number="4" status="reserved"/>
 		<Certificate shares="1" number="4" status="reserved"/>
-	   <Trains number="0,0,4,3"/>
+	   <Trains limit="0,0,4,3"/>
 	</Company>
 	
 	<StartPacket roundClass="rails.game.StartRound_1835" variant="Snake">

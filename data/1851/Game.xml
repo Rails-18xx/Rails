@@ -54,20 +54,20 @@
 				cities="double" if city-revenue is doubled (e.g. 1826 TGV).
 			-->
 		</Defaults>
-		<Train name="2" majorStops="2" cost="100" amount="5"/>
-		<Train name="3" majorStops="3" cost="200" amount="4" startPhase="3"/>
-		<Train name="4" majorStops="4" cost="300" amount="3" startPhase="4" 
+		<Train name="2" majorStops="2" cost="100" quantity="5"/>
+		<Train name="3" majorStops="3" cost="200" quantity="4" startPhase="3"/>
+		<Train name="4" majorStops="4" cost="300" quantity="3" startPhase="4" 
 			rustedTrain="2"/>
-		<Train name="5" majorStops="5" cost="500" amount="2" startPhase="5"/>
-		<Train name="6" majorStops="6" cost="600" amount="2" startPhase="6"
+		<Train name="5" majorStops="5" cost="500" quantity="2" startPhase="5"/>
+		<Train name="6" majorStops="6" cost="600" quantity="2" startPhase="6"
 			rustedTrain="3"/>
 		<Train name="8" majorStops="8" cost="800" startPhase="8" 
 			rustedTrain="4">
             			<IfOption name="UnlimitedTopTrains" value="yes">
-				<Attributes amount="-1"/>
+				<Attributes quantity="-1"/>
 			</IfOption>
 			<IfOption name="UnlimitedTopTrains" value="no">
-				<Attributes amount="4"/>
+				<Attributes quantity="4"/>
 			</IfOption>
         </Train>
 		<TrainBuyingRules>

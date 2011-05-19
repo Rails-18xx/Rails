@@ -130,62 +130,62 @@
 				cities="double" if city-revenue is doubled (e.g. 1826 TGV).
 			-->
 		</Defaults>
-		<Train name="2" majorStops="2" cost="80" amount="6">
+		<Train name="2" majorStops="2" cost="80" quantity="6">
 			<IfOption name="Variant" value="Coalfields,Reading,Coalfields&amp;Reading">
                 <Attributes obsoleting="yes"/>
             </IfOption>
             <IfOption name="Variant" value="Wabash">
-                <Attributes amount="7"/>
+                <Attributes quantity="7"/>
             </IfOption>
 		</Train>
-		<Train name="3" majorStops="3" cost="180" amount="5" startPhase="3">
+		<Train name="3" majorStops="3" cost="180" quantity="5" startPhase="3">
             <IfOption name="Variant" value="Coalfields,Reading,Coalfields&amp;Reading">
                 <Attributes obsoleting="yes"/>
             </IfOption>
             <IfOption name="Variant" value="Wabash">
-                <Attributes amount="6"/>
+                <Attributes quantity="6"/>
             </IfOption>
 		</Train>
-		<Train name="4" majorStops="4" cost="300" amount="4" startPhase="4" 
+		<Train name="4" majorStops="4" cost="300" quantity="4" startPhase="4" 
 			rustedTrain="2">
 			<IfOption name="Variant" value="Coalfields,Reading">
-                <Attributes obsoleting="yes" amount="5"/>
+                <Attributes obsoleting="yes" quantity="5"/>
 			</IfOption>
 			<IfOption name="Variant" value="Coalfields&amp;Reading">
-                <Attributes obsoleting="yes" amount="6"/>
+                <Attributes obsoleting="yes" quantity="6"/>
 			</IfOption>
             <IfOption name="Variant" value="Wabash">
-                <Attributes amount="5"/>
+                <Attributes quantity="5"/>
             </IfOption>
 		</Train>
-		<Train name="5" majorStops="5" cost="450" amount="3" startPhase="5">
+		<Train name="5" majorStops="5" cost="450" quantity="3" startPhase="5">
             <IfOption name="Variant" value="Wabash">
-                <Attributes amount="4"/>
+                <Attributes quantity="4"/>
             </IfOption>
 		</Train>
 		<Train name="6" majorStops="6" cost="630" startPhase="6" 
 			rustedTrain="3" releasedTrain="D">
 			<IfOption name="WithOptional6Train" value="yes">
-				<Attributes amount="3"/>
+				<Attributes quantity="3"/>
 			</IfOption>
 			<IfOption name="WithOptional6Train" value="no">
-				<Attributes amount="2"/>
+				<Attributes quantity="2"/>
 			</IfOption>
 			<IfOption name="Variant" value="Pere Marquette,Coalfields,Reading">
-				<Attributes amount="3" releasedTrain="7,D"/>
+				<Attributes quantity="3" releasedTrain="7,D"/>
 			</IfOption>
 			<IfOption name="Variant" value="Coalfields&amp;Reading">
-				<Attributes amount="4" releasedTrain="7,D"/>
+				<Attributes quantity="4" releasedTrain="7,D"/>
 			</IfOption>
             <IfOption name="Variant" value="Simple,Wabash">
-                <Attributes amount="3"/>
+                <Attributes quantity="3"/>
             </IfOption>
 		</Train>
 		<IfOption name="Variant" value="Coalfields,Reading,Coalfields&amp;Reading">
-			<Train name="7" majorStops="7" cost="710" amount="2"/>
+			<Train name="7" majorStops="7" cost="710" quantity="2"/>
 		</IfOption>
         <IfOption name="Variant" value="Wabash">
-            <Train name="7" majorStops="7" cost="830" amount="-1"/>
+            <Train name="7" majorStops="7" cost="830" quantity="-1"/>
         </IfOption>
 		<IfOption name="Variant" value="Basegame,Pere Marquette,Reading,Coalfields,Coalfields&amp;Reading,Simple">
 			<Train name="D" majorStops="99" startPhase="D" rustedTrain="4">
@@ -198,10 +198,10 @@
 					<Exchange cost="750"/>
 				</IfOption>
 				<IfOption name="UnlimitedTopTrains" value="yes">
-					<Attributes amount="-1"/>
+					<Attributes quantity="-1"/>
 				</IfOption>
 				<IfOption name="UnlimitedTopTrains" value="no">
-					<Attributes amount="6"/>
+					<Attributes quantity="6"/>
 				</IfOption>
 				<Exchange cost="800"/>
 			</Train>

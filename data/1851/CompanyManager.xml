@@ -10,7 +10,7 @@
 		<ShareUnit percentage="10"/>
 		<Certificate type="President" shares="2"/>
 		<Certificate shares="1" number="8"/>
-		<Trains number="4,4,3,2"/>
+		<Trains limit="4,4,3,2"/>
 		<BaseTokens>
 			<BuyCost initialTokenCost="100"/>
 			<HomeBase lay="whenFloated"/>

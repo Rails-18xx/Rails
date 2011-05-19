@@ -44,14 +44,14 @@
 			<Reach base="stops" countTowns="no"/>
 			<Score towns="yes"/>
 		</Defaults>
-		<Train name="2" majorStops="2" cost="100" amount="6"/>
-		<Train name="3" majorStops="3" cost="200" amount="4" startPhase="3"/>
-		<Train name="4" majorStops="4" cost="300" amount="3" startPhase="4" 
+		<Train name="2" majorStops="2" cost="100" quantity="6"/>
+		<Train name="3" majorStops="3" cost="200" quantity="4" startPhase="3"/>
+		<Train name="4" majorStops="4" cost="300" quantity="3" startPhase="4" 
 			rustedTrain="2" />
-		<Train name="5" majorStops="5" cost="500" amount="2" startPhase="5" releasedTrain="5E"/>
-		<Train name="5E" majorStops="5" cost="600" amount="2" startPhase="6" releasedTrain="4D"
+		<Train name="5" majorStops="5" cost="500" quantity="2" startPhase="5" releasedTrain="5E"/>
+		<Train name="5E" majorStops="5" cost="600" quantity="2" startPhase="6" releasedTrain="4D"
 			rustedTrain="3"/>
-		<Train name="4D" majorStops="4" cost="800" amount="6" startPhase="4D" 
+		<Train name="4D" majorStops="4" cost="800" quantity="6" startPhase="4D" 
 			rustedTrain="4">
 		</Train>
 	</Component>

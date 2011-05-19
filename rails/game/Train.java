@@ -17,6 +17,9 @@ public class Train implements TrainI {
     protected int cityScoreFactor;
     protected int townScoreFactor;
     protected int townCountIndicator;
+    
+    /** Some specific trains cannot be traded between companies */
+    protected boolean tradeable = true;
 
     protected String uniqueId;
 
@@ -140,6 +143,14 @@ public class Train implements TrainI {
 
     public String toDisplay() {
         return getName();
+    }
+
+    public boolean isTradeable() {
+        return tradeable;
+    }
+
+    public void setTradeable(boolean tradeable) {
+        this.tradeable = tradeable;
     }
 
 }

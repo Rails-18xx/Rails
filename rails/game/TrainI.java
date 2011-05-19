@@ -64,5 +64,7 @@ public interface TrainI extends Moveable {
     public boolean canBeExchanged();
 
     public String toDisplay();
-
+    
+    public boolean isTradeable();
+    public void setTradeable(boolean tradeable);
 }

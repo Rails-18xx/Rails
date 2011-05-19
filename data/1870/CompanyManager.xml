@@ -21,7 +21,7 @@
 		<BaseTokens>
 				<LayCost method="sequence" cost="0,40,100"/>
 		</BaseTokens>
-		<Trains number="4,4,3,2"/>
+		<Trains limit="4,4,3,2"/>
         <CanUseSpecialProperties/>
 	</CompanyType>
 	

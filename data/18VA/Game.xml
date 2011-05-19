@@ -71,16 +71,16 @@
 				cities="double" if city-revenue is doubled (e.g. 1826 TGV).
 			-->
 		</Defaults>
-		<Train name="2" majorStops="2" cost="100" amount="6"/>
-		<Train name="3" majorStops="3" cost="200" amount="5" startPhase="3"/>
-		<Train name="4" majorStops="4" cost="300" amount="4" startPhase="4" 
+		<Train name="2" majorStops="2" cost="100" quantity="6"/>
+		<Train name="3" majorStops="3" cost="200" quantity="5" startPhase="3"/>
+		<Train name="4" majorStops="4" cost="300" quantity="4" startPhase="4" 
 			rustedTrain="2"/>
-		<Train name="5" majorStops="5" cost="500" amount="3" startPhase="5"
+		<Train name="5" majorStops="5" cost="500" quantity="3" startPhase="5"
 			rustedTrain="3"/>
 		<Train name="6" majorStops="6" cost="600" startPhase="6" 
 			releasedTrain="4D">
 		</Train>
-		<Train name="4D" majorStops="99" cost="800" amount="10" startPhase="4D" 
+		<Train name="4D" majorStops="99" cost="800" quantity="10" startPhase="4D" 
 			rustedTrain="4">
 		</Train>
 	</Component>

@@ -80,27 +80,27 @@
 				cities="double" if city-revenue is doubled (e.g. 1826 TGV).
 			-->
 		</Defaults>
-		<Train name="2" majorStops="2" cost="80" amount="6"/>
-		<Train name="3" majorStops="3" cost="180" amount="5" startPhase="3"/>
-		<Train name="4" majorStops="4" cost="300" amount="4" startPhase="4" 
+		<Train name="2" majorStops="2" cost="80" quantity="6"/>
+		<Train name="3" majorStops="3" cost="180" quantity="5" startPhase="3"/>
+		<Train name="4" majorStops="4" cost="300" quantity="4" startPhase="4" 
 			rustedTrain="2"/>
-		<Train name="5" majorStops="5" cost="450" amount="3" startPhase="5"/>
+		<Train name="5" majorStops="5" cost="450" quantity="3" startPhase="5"/>
 		<Train name="6" majorStops="6" cost="630" startPhase="6" 
 			rustedTrain="3" releasedTrain="D">
 			<IfOption name="WithOptional6Train" value="yes">
-				<Attributes amount="3"/>
+				<Attributes quantity="3"/>
 			</IfOption>
 			<IfOption name="WithOptional6Train" value="no">
-				<Attributes amount="2"/>
+				<Attributes quantity="2"/>
 			</IfOption>
 		</Train>
 		<Train name="D" majorStops="99" cost="1100" startPhase="D" 
 			rustedTrain="4">
 			<IfOption name="UnlimitedTopTrains" value="yes">
-				<Attributes amount="-1"/>
+				<Attributes quantity="-1"/>
 			</IfOption>
 			<IfOption name="UnlimitedTopTrains" value="no">
-				<Attributes amount="6"/>
+				<Attributes quantity="6"/>
 			</IfOption>
 			<Exchange cost="800"/>
 		</Train>

@@ -70,10 +70,10 @@
 				cities="double" if city-revenue is doubled (e.g. 1826 TGV).
 			-->
 		</Defaults>
-		<Train name="2" majorStops="2" cost="180" amount="6"/>
-		<Train name="3" majorStops="3" cost="300" amount="4" startPhase="2"/>
-		<Train name="4" majorStops="4" cost="430" amount="3"/>
-		<Train name="5" majorStops="5" cost="550" amount="4"
+		<Train name="2" majorStops="2" cost="180" quantity="6"/>
+		<Train name="3" majorStops="3" cost="300" quantity="4" startPhase="2"/>
+		<Train name="4" majorStops="4" cost="430" quantity="3"/>
+		<Train name="5" majorStops="5" cost="550" quantity="4"
 			startPhase="3" rustedTrain="2" />
 	</Component>
 	<Component name="PhaseManager" class="rails.game.PhaseManager">

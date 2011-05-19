@@ -14,7 +14,7 @@
         </BaseTokens>
 		<Certificate type="President" shares="2"/>
 		<Certificate shares="1" number="8"/>
-		<Trains number="4,4,3"/>
+		<Trains limit="4,4,3"/>
 		<TileLays>
 			<Number colour="yellow" number="2" phase="1,2,3,4,5"></Number></TileLays></CompanyType>
 	<Company name="S&amp;M" type="Private" basePrice="30" revenue="5" longname="Swansea and Mumbles">

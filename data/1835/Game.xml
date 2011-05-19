@@ -53,19 +53,19 @@
 			<Reach base="stops" countTowns="yes"/>
 			<Score towns="yes"/>
 		</Defaults>
-		<Train name="2" majorStops="2" cost="80" amount="9"/>
-		<Train name="2+2" majorStops="2" minorStops="2" cost="120" amount="4"/>
-		<Train name="3" majorStops="3" cost="180" amount="4" startPhase="3"/>
-		<Train name="3+3" majorStops="3" minorStops="3" cost="270" amount="3"/>
-		<Train name="4" majorStops="4" cost="360" amount="3" startPhase="4"
+		<Train name="2" majorStops="2" cost="80" quantity="9"/>
+		<Train name="2+2" majorStops="2" minorStops="2" cost="120" quantity="4"/>
+		<Train name="3" majorStops="3" cost="180" quantity="4" startPhase="3"/>
+		<Train name="3+3" majorStops="3" minorStops="3" cost="270" quantity="3"/>
+		<Train name="4" majorStops="4" cost="360" quantity="3" startPhase="4"
 			rustedTrain="2"/>
-		<Train name="4+4" majorStops="4" minorStops="4" cost="440" amount="1"
+		<Train name="4+4" majorStops="4" minorStops="4" cost="440" quantity="1"
 			startPhase="4+4" rustedTrain="2+2"/>
-		<Train name="5" majorStops="5" cost="500" amount="2" startPhase="5"/>
-		<Train name="5+5" majorStops="5" minorStops="5" cost="600" amount="1"/>
-		<Train name="6" majorStops="6" cost="600" amount="2" startPhase="6"
+		<Train name="5" majorStops="5" cost="500" quantity="2" startPhase="5"/>
+		<Train name="5+5" majorStops="5" minorStops="5" cost="600" quantity="1"/>
+		<Train name="6" majorStops="6" cost="600" quantity="2" startPhase="6"
 			rustedTrain="3"/>
-		<Train name="6+6" majorStops="6" minorStops="6" cost="720" amount="4"
+		<Train name="6+6" majorStops="6" minorStops="6" cost="720" quantity="4"
 			rustedTrain="3+3"/>
 	</Component>
 	<Component name="PhaseManager" class="rails.game.PhaseManager">
