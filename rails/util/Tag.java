@@ -141,6 +141,8 @@ public class Tag {
         String value = attributes.get(name);
         if (value == null) return defaultValue;
         try {
+            // Unlike Java, we want to allow '+' signs
+            if (value.startsWith("+")) value = value.substring(1);
             return Integer.parseInt(value);
         } catch (Exception e) {
             throw new ConfigurationException("Invalid integer value: " + value,
@@ -168,10 +170,10 @@ public class Tag {
         }
     }
 
-public int getAttributeAsInteger(String name) throws ConfigurationException {
-
-return getAttributeAsInteger(name, 0);
-}
+    public int getAttributeAsInteger(String name) throws ConfigurationException {
+    
+        return getAttributeAsInteger(name, 0);
+    }
 
     public int[] getAttributeAsIntegerArray(String name, int[] defaultArray)
             throws ConfigurationException {

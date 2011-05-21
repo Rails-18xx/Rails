@@ -10,6 +10,12 @@ import rails.game.model.ModelObject;
 import rails.util.LocalText;
 import rails.util.Tag;
 
+/** Represents a certain tile <i>type</i>, identified by its id (tile number).
+ * <p> For each tile number, only one tile object is created. 
+ * The list <b>tilesLaid</b> records in which hexes a certain tile number has been laid. 
+ * @author Erik
+ *
+ */
 public class Tile extends ModelObject implements TileI, StationHolder, Comparable<TileI> {
 
     /** The 'internal id', identifying the tile in the XML files */
@@ -82,6 +88,10 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
 
     protected static final int TILE_NUMBER_OFFSET = 2;
 
+    /** Records in which hexes a certain tile number has been laid.
+     * The length of this list indicates the number of tiles laid on the map board.
+     * <p>As this list is not a State object, it must only be updated via the TileMove execute() and undo() methods.
+     */
     private final ArrayList<MapHex> tilesLaid = new ArrayList<MapHex>();
 
     /** Storage of revenueBonus that are bound to the tile */
@@ -204,12 +214,18 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
         externalId = setTag.getAttributeAsString("extId", externalId);
         /* Picture id */
         pictureId = setTag.getAttributeAsInteger("pic", pictureId);
+        
         /* Quantity */
         quantity = setTag.getAttributeAsInteger("quantity", 0);
         /* Value '99' and '-1' mean 'unlimited' */
         unlimited = (quantity == 99 || quantity == UNLIMITED_TILES
                 || "yes".equalsIgnoreCase(setTag.getGameOptions().get("UnlimitedTiles")));
-        if (unlimited) quantity = UNLIMITED_TILES;
+        if (unlimited) {
+            quantity = UNLIMITED_TILES;
+        } else {
+            quantity += setTag.getAttributeAsInteger("quantityIncrement", 0);
+        }
+        
         /* Multiple base tokens of one company allowed */
         allowsMultipleBasesOfOneCompany = setTag.hasChild(
                 "AllowsMultipleBasesOfOneCompany");
@@ -467,16 +483,17 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
         return relayBaseTokensOnUpgrade;
     }
 
-    public boolean lay(MapHex hex) {
-
+    /** Register a tile of this type being laid on the map.
+     * This method may only be called via the TileMove execute() and undo() methods. */
+    public boolean add(MapHex hex) {
         tilesLaid.add(hex);
         update();
-
         return true;
     }
 
+    /** Register a tile of this type being removed from the map.
+     * This method may only be called via the TileMove execute() and undo() methods. */
     public boolean remove(MapHex hex) {
-
         tilesLaid.remove(hex);
         update();
         return true;
@@ -498,6 +515,7 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
         return "#" + externalId + ": " + count;
     }
 
+    // NOT USED
     public int getQuantity() {
         return quantity;
     }

@@ -62,7 +62,7 @@ public interface TileI {
 
     public int getNumStations();
 
-    public boolean lay(MapHex hex);
+    public boolean add(MapHex hex);
 
     public boolean remove(MapHex hex);
 

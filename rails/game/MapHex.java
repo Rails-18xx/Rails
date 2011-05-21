@@ -804,7 +804,7 @@ StationHolder, TokenHolder {
                 + "/" + currentTileRotation + " by " + newTile.getId() + "/"
                 + newTileOrientation);
 
-        newTile.lay(this);
+        newTile.add(this);
 
         currentTile = newTile;
         currentTileRotation = newTileOrientation;
