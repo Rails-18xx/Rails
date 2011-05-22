@@ -136,6 +136,8 @@
             </IfOption>
             <IfOption name="Variant" value="Wabash">
                 <Attributes quantity="7"/>
+				<!-- NOTE: An alternative way to configure an extra train is: quantityIncrement="+1"
+					(the '+' is optional) -->
             </IfOption>
 		</Train>
 		<Train name="3" majorStops="3" cost="180" quantity="5" startPhase="3">

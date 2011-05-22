@@ -111,6 +111,8 @@
 	<Tile id="15" quantity="2">
         <IfOption name="Variant" value="Coalfields,Coalfields&amp;Reading,Wabash">
             <Attributes quantity="3"/>
+			<!-- NOTE: An alternative way to configure an extra tile is: quantityIncrement="+1"
+				(the '+' is optional) -->
         </IfOption>
         <IfOption name="Variant" value="Wabash">
             <Upgrade id="63,448"/>

@@ -123,6 +123,8 @@ implements TrainTypeI {
             } else if (quantity <= 0) {
                 throw new ConfigurationException(
                         LocalText.getText("InvalidQuantity", String.valueOf(quantity)));
+            } else {
+                quantity += tag.getAttributeAsInteger("quantityIncrement", 0);
             }
 
             // Major stops
