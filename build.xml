@@ -9,15 +9,19 @@
 	<property name="debuglevel" value="source,lines,vars"/>
 	<property name="target" value="1.5"/>
 	<property name="source" value="1.5"/>
-	<property name="version" value="1.4.1"/>
+	<property name="version" value="1.4.2"/>
 	<taskdef name="jarbundler" 
 		classpath="tools/lib/jarbundler-2.1.0.jar"
 		classname="net.sourceforge.jarbundler.JarBundler" />
 	<path id="18xx.classpath">
 		<pathelement location="classes"/>
 		<pathelement location="lib/log4j-1.2/log4j-1.2.14.jar"/>
-		<pathelement location="lib/batik-1.7/batik-rasterizer.jar"/>
 		<pathelement location="lib/batik-1.7/batik.jar"/>
+		<pathelement location="lib/batik-1.7/lib/batik-dom.jar"/>
+		<pathelement location="lib/batik-1.7/lib/batik-bridge.jar"/>
+		<pathelement location="lib/batik-1.7/lib/batik-util.jar"/>
+		<pathelement location="lib/batik-1.7/lib/batik-gvt.jar"/>
+		<pathelement location="lib/batik-1.7/lib/batik-ext.jar"/>
 		<pathelement location="lib/jgraph5/jgraph.jar"/>
 		<pathelement location="lib/jgrapht-0.7.3/jgrapht-jdk1.5.jar"/>
 		<pathelement location="lib/junit_3.8.2/junit.jar"/>
@@ -107,7 +111,17 @@
 		<jar destfile="rails-${version}/rails-${version}.jar" basedir="jar" duplicate="preserve">		
 			<manifest>
 				<attribute name="Main-Class" value="rails.util.RunGame" />
-				<attribute name="Class-Path" value="./my.properties ./LocalisedText.properties ./lib/log4j-1.2/log4j-1.2.14.jar ./lib/batik-1.6/lib/batik-transcoder.jar ./lib/batik-1.6/batik.jar ./lib/batik-1.6/lib/batik-util.jar ./lib/batik-1.6/lib/batik-script.jar ./lib/batik-1.6/lib/batik-bridge.jar ./lib/batik-1.6/lib/batik-ext.jar ./lib/batik-1.6/lib/batik-awt-util.jar ./lib/batik-1.6/lib/batik-dom.jar ./lib/batik-1.6/lib/batik-gvt.jar ./lib/jgraph5/jgraph.jar ./lib/jgrapht-0.7.3/jgrapht-jdk1.5.jar" />
+				<attribute name="Class-Path" value="./my.properties 
+					./LocalisedText.properties 
+					./lib/log4j-1.2/log4j-1.2.14.jar 
+					./lib/batik-1.7/batik.jar 
+					./lib/batik-1.7/lib/batik-util.jar 
+					./lib/batik-1.7/lib/batik-dom.jar 
+					./lib/batik-1.7/lib/batik-bridge.jar 
+					./lib/batik-1.7/lib/batik-ext.jar 
+					./lib/batik-1.7/lib/batik-gvt.jar 
+					./lib/jgraph5/jgraph.jar 
+					./lib/jgrapht-0.7.3/jgrapht-jdk1.5.jar" />
 			</manifest>
 		</jar>
 	</target>
