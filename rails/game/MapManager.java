@@ -157,7 +157,11 @@ public class MapManager implements ConfigurableComponentI {
         mapImageUsed = Util.hasValue(mapImageFilename) 
             && "yes".equalsIgnoreCase(Config.get("map.image.display"));
         if (mapImageUsed) {
-            mapImageFilepath = Config.get("map.root_directory") + "/" + mapImageFilename;
+            String rootDirectory = Config.get("map.root_directory");
+            if (!Util.hasValue(rootDirectory)) {
+                rootDirectory = "data";
+            }
+            mapImageFilepath = rootDirectory + "/" + mapImageFilename;
         }
         
         for (String hexName : mHexes.keySet()) {
