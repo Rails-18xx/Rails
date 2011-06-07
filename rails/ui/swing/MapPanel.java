@@ -1,9 +1,7 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/MapPanel.java,v 1.15 2010/06/24 21:48:08 stefanfrey Exp $*/
 package rails.ui.swing;
 
-import java.awt.BorderLayout;
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.List;
 
@@ -14,7 +12,7 @@ import org.apache.log4j.Logger;
 import rails.game.MapManager;
 import rails.game.action.LayTile;
 import rails.game.action.LayToken;
-import rails.ui.swing.hexmap.HexMap;
+import rails.ui.swing.hexmap.*;
 
 /**
  * MapWindow class displays the Map Window. It's shocking, I know.
@@ -24,8 +22,13 @@ public class MapPanel extends JPanel {
     private static final long serialVersionUID = 1L;
     private MapManager mmgr;
     private HexMap map;
+    private HexMapImage mapImage;
     private JScrollPane scrollPane;
     private GameUIManager gameUIManager;
+    
+    private JLayeredPane layeredPane;
+    private Dimension originalMapSize;
+    private Dimension currentMapSize;
 
     protected static Logger log =
             Logger.getLogger(MapPanel.class.getPackage().getName());
@@ -34,13 +37,14 @@ public class MapPanel extends JPanel {
         this.gameUIManager = gameUIManager;
         //Scale.set(15);
         Scale.set(16);
+        
         setLayout(new BorderLayout());
 
         mmgr = gameUIManager.getGameManager().getMapManager();
         try {
-            map =
-                    (HexMap) Class.forName(mmgr.getMapUIClassName()).newInstance();
+            map =(HexMap) Class.forName(mmgr.getMapUIClassName()).newInstance();
             map.init(gameUIManager.getORUIManager(), mmgr);
+            originalMapSize = map.getOriginalSize();
         } catch (Exception e) {
             log.fatal("Map class instantiation error:", e);
             e.printStackTrace();
@@ -49,15 +53,27 @@ public class MapPanel extends JPanel {
 
         ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
 
-        scrollPane = new JScrollPane(map);
-
+        layeredPane = new JLayeredPane();
+        layeredPane.setLayout(null);
+        layeredPane.setPreferredSize(originalMapSize);
+        map.setBounds(0, 0, originalMapSize.width, originalMapSize.height);
+        layeredPane.add(map, 0);
+        
+        if (mmgr.isMapImageUsed()) {
+            mapImage = new HexMapImage ();
+            mapImage.init(mmgr);
+            mapImage.setPreferredSize(originalMapSize);
+            mapImage.setBounds(0, 0, originalMapSize.width, originalMapSize.height);
+            layeredPane.add(mapImage, -1);
+        }
+        
+        scrollPane = new JScrollPane(layeredPane);
+        scrollPane.setSize(originalMapSize);
         add(scrollPane, BorderLayout.CENTER);
-
-        scrollPane.setSize(map.getPreferredSize());
         
-        setSize(map.getPreferredSize().width, map.getPreferredSize().height);
-        
+        setSize(originalMapSize);
         setLocation(25, 25);
+        
     }
 
     
@@ -96,12 +112,18 @@ public class MapPanel extends JPanel {
         map.setAllowedTokenLays(allowedTokenLays);
     }
 
-    public void zoomIn() {
-        map.zoomIn();
-    }
-
-    public void zoomOut() {
-        map.zoomOut();
+    public void zoom (boolean in) {
+        map.zoom(in);
+        currentMapSize = map.getCurrentSize();
+        map.setPreferredSize(currentMapSize);
+        map.setBounds(0, 0, currentMapSize.width, currentMapSize.height);
+        if (mapImage != null) {
+            //mapImage.zoom(in);
+            //mapImage.setPreferredSize(currentMapSize);
+            // FIXME setBounds() seems to be sufficient to resize a JSVGCanvas, but it doesn't always work...
+            mapImage.setBounds(0, 0, currentMapSize.width, currentMapSize.height);
+        }
+        layeredPane.revalidate();
     }
 
     public void keyPressed(KeyEvent e) {

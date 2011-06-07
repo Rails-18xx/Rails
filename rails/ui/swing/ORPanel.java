@@ -697,13 +697,13 @@ implements ActionListener, KeyListener, RevenueListener {
 
             orUIManager.processAction(command, executedActions);
         } else if (source == zoomIn) {
-            orWindow.getMapPanel().zoomIn();
+            orWindow.getMapPanel().zoom(true);
             if (revenueAdapter != null) {
                 revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
                 orUIManager.getMap().repaint();
             }
         } else if (source == zoomOut) {
-            orWindow.getMapPanel().zoomOut();
+            orWindow.getMapPanel().zoom(false);
             if (revenueAdapter != null) {
                 revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
                 orUIManager.getMap().repaint();

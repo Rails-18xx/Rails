@@ -86,6 +86,9 @@ public class GUIHex implements ViewObject {
     // Selection is in-between GUI and rails.game state.
     private boolean selected;
     private boolean selectable;
+    
+    /** Is tile actually painted (if not, there should be an underlying map image) */
+    protected boolean tilePainted = true;
 
     protected static Logger log =
             Logger.getLogger(GUIHex.class.getPackage().getName());
@@ -332,6 +335,9 @@ public class GUIHex implements ViewObject {
     public void paint(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
 
+        tilePainted = provisionalGUITile != null && hexMap.isTilePainted(provisionalGUITile.getTileId()) 
+                || currentGUITile != null && hexMap.isTilePainted(currentGUITile.getTileId());
+        
         if (getAntialias()) {
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
@@ -342,29 +348,52 @@ public class GUIHex implements ViewObject {
 
         Color terrainColor = Color.WHITE;
         if (isSelected()) {
-            g2.setColor(highlightColor);
-            g2.fill(hexagon);
+            if (!hexMap.hasMapImage()) {
+                g2.setColor(highlightColor);
+                g2.fill(hexagon);
+            
+                g2.setColor(terrainColor);
+                g2.fill(innerHexagonSelected);
 
-            g2.setColor(terrainColor);
-            g2.fill(innerHexagonSelected);
+                g2.setColor(Color.black);
+                g2.draw(innerHexagonSelected);
+            } else {
+                g2.setColor(highlightColor);                
+                g2.draw(hexagon);            
 
-            g2.setColor(Color.black);
-            g2.draw(innerHexagonSelected);
+                Stroke oldStroke = g2.getStroke();                
+                g2.setStroke(new BasicStroke(4));
+                                              
+                g2.draw(innerHexagonSelected);            
+                
+                g2.setStroke(oldStroke);                
+                g2.setColor(Color.black);
+            }
         } else if (isSelectable()) {
-            g2.setColor(selectableColor);
-            g2.fill(hexagon);
+            if (!hexMap.hasMapImage()) {
+                g2.setColor(selectableColor);
+                g2.fill(hexagon);
 
-            g2.setColor(terrainColor);
-            g2.fill(innerHexagonSelectable);
+                g2.setColor(terrainColor);
+                g2.fill(innerHexagonSelectable);
 
-            g2.setColor(Color.black);
-            g2.draw(innerHexagonSelectable);
+                g2.setColor(Color.black);
+                g2.draw(innerHexagonSelectable);
+            } else {
+                g2.setColor(selectableColor);
+                                              
+                g2.draw(hexagon);            
+                
+                g2.setColor(Color.black);
+            }
         }
 
-        paintOverlay(g2);
+        if (tilePainted) paintOverlay(g2);
         paintStationTokens(g2);
         paintOffStationTokens(g2);
 
+        if (!tilePainted) return;
+        
         FontMetrics fontMetrics = g2.getFontMetrics();
         if (getHexModel().getTileCost() > 0 ) {
             g2.drawString(
@@ -444,9 +473,13 @@ public class GUIHex implements ViewObject {
 
     private void paintOverlay(Graphics2D g2) {
         if (provisionalGUITile != null) {
-            provisionalGUITile.paintTile(g2, center.x, center.y);
+            if (hexMap.isTilePainted(provisionalGUITile.getTileId())) {
+                provisionalGUITile.paintTile(g2, center.x, center.y);
+            }
         } else {
-            currentGUITile.paintTile(g2, center.x, center.y);
+            if (hexMap.isTilePainted(currentGUITile.getTileId())) {
+                currentGUITile.paintTile(g2, center.x, center.y);
+            }
         }
     }
 

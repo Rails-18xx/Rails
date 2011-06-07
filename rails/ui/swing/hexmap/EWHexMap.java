@@ -35,9 +35,8 @@ public class EWHexMap extends HexMap {
        return Math.round(scale * 3 * rowAdj);
     }
     
-    @Override
-    protected void setSize() {
-        preferredSize = new Dimension( (int) calcXCoordinates(maxCol, flatMargin), 
+    protected void setOriginalSize() {
+        originalSize = new Dimension( (int) calcXCoordinates(maxCol, flatMargin), 
                         (int) calcYCoordinates(maxRow, peakMargin));
     }
 

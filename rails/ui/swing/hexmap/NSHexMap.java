@@ -33,8 +33,8 @@ public class NSHexMap extends HexMap {
        return Math.round(scale * 2 * GUIHex.SQRT3 * rowAdj);
     }
 
-    protected void setSize() {
-        preferredSize = new Dimension( (int) calcXCoordinates(maxCol, peakMargin), 
+    protected void setOriginalSize() {
+        originalSize = new Dimension( (int) calcXCoordinates(maxCol, peakMargin), 
                 (int) calcYCoordinates(maxRow, flatMargin));
     }
 

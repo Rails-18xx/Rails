@@ -5,7 +5,9 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
+import rails.util.Config;
 import rails.util.Tag;
+import tools.Util;
 
 /**
  * MapManager configures the map layout from XML
@@ -19,6 +21,14 @@ public class MapManager implements ConfigurableComponentI {
     protected int tileOrientation;
     protected boolean lettersGoHorizontal;
     protected boolean letterAHasEvenNumbers;
+    
+    // Optional map image (SVG file)
+    protected String mapImageFilename = null;
+    protected String mapImageFilepath = null;
+    protected int mapXOffset = 0;
+    protected int mapYOffset = 0;
+    protected float mapScale = (float)1.0;
+    protected boolean mapImageUsed = false;
 
     protected MapHex[][] hexes;
     protected Map<String, MapHex> mHexes = new HashMap<String, MapHex>();
@@ -80,6 +90,15 @@ public class MapManager implements ConfigurableComponentI {
         attr = tag.getAttributeAsString("even");
         letterAHasEvenNumbers = ((attr.toUpperCase().charAt(0) - 'A')) % 2 == 0;
 
+        // Map image attributes
+        Tag mapImageTag = tag.getChild("Image");
+        if (mapImageTag != null) {
+            mapImageFilename = mapImageTag.getAttributeAsString("file");
+            mapXOffset = mapImageTag.getAttributeAsInteger("x", mapXOffset);
+            mapYOffset = mapImageTag.getAttributeAsInteger("y", mapYOffset);
+            mapScale = mapImageTag.getAttributeAsFloat("scale", mapScale);
+        }
+
         List<Tag> hexTags = tag.getChildren("Hex");
         MapHex hex;
         minX = minY = minCol = minRow = 9999;
@@ -135,6 +154,12 @@ public class MapManager implements ConfigurableComponentI {
         int i, j, k;
         MapHex nb;
 
+        mapImageUsed = Util.hasValue(mapImageFilename) 
+            && "yes".equalsIgnoreCase(Config.get("map.image.display"));
+        if (mapImageUsed) {
+            mapImageFilepath = Config.get("map.root_directory") + "/" + mapImageFilename;
+        }
+        
         for (String hexName : mHexes.keySet()) {
             hex = mHexes.get(hexName);
             hex.finishConfiguration(gameManager);
@@ -371,6 +396,26 @@ public class MapManager implements ConfigurableComponentI {
         }
         uniqueCityDistances.put(hex, distances);
         return distances;
+    }
+
+    public String getMapImageFilepath() {
+        return mapImageFilepath;
+    }
+
+    public int getMapXOffset() {
+        return mapXOffset;
+    }
+
+    public int getMapYOffset() {
+        return mapYOffset;
+    }
+
+    public float getMapScale() {
+        return mapScale;
+    }
+
+    public boolean isMapImageUsed() {
+        return mapImageUsed;
     }
 
 }
