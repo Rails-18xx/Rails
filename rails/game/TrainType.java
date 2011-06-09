@@ -1,8 +1,7 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainType.java,v 1.32 2010/05/11 21:47:21 stefanfrey Exp $ */
 package rails.game;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import org.apache.log4j.Logger;
 
@@ -11,8 +10,7 @@ import rails.game.state.BooleanState;
 import rails.game.state.IntegerState;
 import rails.util.*;
 
-public class TrainType
-implements TrainTypeI {
+public class TrainType implements TrainTypeI {
 
     public final static int TOWN_COUNT_MAJOR = 2;
     public final static int TOWN_COUNT_MINOR = 1;
@@ -58,8 +56,8 @@ implements TrainTypeI {
     protected String startedPhaseName = null;
     // Phase startedPhase;
 
-    private String rustedTrainTypeName = null;
-    protected TrainTypeI rustedTrainType = null;
+    private Map<Integer, String> rustedTrainTypeNames = null;
+    protected Map<Integer, TrainTypeI> rustedTrainType = null;
 
     private String releasedTrainTypeNames = null;
     protected List<TrainTypeI> releasedTrainTypes = null;
@@ -141,7 +139,11 @@ implements TrainTypeI {
             startedPhaseName = tag.getAttributeAsString("startPhase", "");
 
             // Train type rusted
-            rustedTrainTypeName = tag.getAttributeAsString("rustedTrain");
+            String rustedTrainTypeName1 = tag.getAttributeAsString("rustedTrain");
+            if (Util.hasValue(rustedTrainTypeName1)) {
+                rustedTrainTypeNames = new HashMap<Integer, String>();
+                rustedTrainTypeNames.put(1, rustedTrainTypeName1);
+            }
 
             // Other train type released for buying
             releasedTrainTypeNames = tag.getAttributeAsString("releasedTrain");
@@ -153,6 +155,19 @@ implements TrainTypeI {
             initialPortfolio =
                 tag.getAttributeAsString("initialPortfolio",
                         initialPortfolio);
+            
+            // Configure any actions on other than the first train of a type
+            List<Tag> subs =  tag.getChildren("Sub");
+            if (subs != null) {
+                for (Tag sub : tag.getChildren("Sub")) {
+                    int index = sub.getAttributeAsInteger("index");
+                    rustedTrainTypeName1 = sub.getAttributeAsString("rustedTrain");
+                    if (rustedTrainTypeNames == null) {
+                        rustedTrainTypeNames = new HashMap<Integer, String>();
+                    }
+                    rustedTrainTypeNames.put(index, rustedTrainTypeName1);
+                }
+            }
         } else {
             name = "";
             quantity = 0;
@@ -343,8 +358,9 @@ implements TrainTypeI {
     /**
      * @return Returns the rustedTrainType.
      */
-    public TrainTypeI getRustedTrainType() {
-        return rustedTrainType;
+    public TrainTypeI getRustedTrainType(int index) {
+        if (rustedTrainType == null) return null;
+        return rustedTrainType.get(index);
     }
 
     /**
@@ -378,8 +394,8 @@ implements TrainTypeI {
     /**
      * @return Returns the rustedTrainTypeName.
      */
-    public String getRustedTrainTypeName() {
-        return rustedTrainTypeName;
+    public Map<Integer,String> getRustedTrainTypeNames() {
+        return rustedTrainTypeNames;
     }
 
     public boolean isObsoleting() {
@@ -396,8 +412,11 @@ implements TrainTypeI {
     /**
      * @param rustedTrainType The rustedTrainType to set.
      */
-    public void setRustedTrainType(TrainTypeI rustedTrainType) {
-        this.rustedTrainType = rustedTrainType;
+    public void setRustedTrainType(int index, TrainTypeI rustedTrainType) {
+        if (this.rustedTrainType == null) {
+            this.rustedTrainType = new HashMap<Integer, TrainTypeI>();
+        }
+        this.rustedTrainType.put(index, rustedTrainType);
     }
 
     public boolean isPermanent() {
@@ -485,8 +504,9 @@ implements TrainTypeI {
         if (Util.hasValue(startedPhaseName)) {
             appendInfoText(b, LocalText.getText("StartsPhase", startedPhaseName));
         }
-        if (rustedTrainTypeName != null) {
-            appendInfoText(b, LocalText.getText("RustsTrains", rustedTrainTypeName));
+        if (rustedTrainTypeNames != null) {
+            appendInfoText(b, LocalText.getText("RustsTrains", rustedTrainTypeNames.get(1)));
+            // Ignore any 'Sub' cases for now
         }
         if (releasedTrainTypeNames != null) {
             appendInfoText(b, LocalText.getText("ReleasesTrains", releasedTrainTypeNames));

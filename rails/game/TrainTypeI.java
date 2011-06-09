@@ -2,6 +2,7 @@
 package rails.game;
 
 import java.util.List;
+import java.util.Map;
 
 public interface TrainTypeI
 extends ConfigurableComponentI, Cloneable {
@@ -58,7 +59,7 @@ extends ConfigurableComponentI, Cloneable {
     /**
      * @return Returns the rustedTrainType.
      */
-    public TrainTypeI getRustedTrainType();
+    public TrainTypeI getRustedTrainType(int index);
 
     /**
      * @return Returns the startedPhaseName.
@@ -95,7 +96,7 @@ extends ConfigurableComponentI, Cloneable {
 
     public String getReleasedTrainTypeNames();
 
-    public String getRustedTrainTypeName();
+    public Map<Integer,String> getRustedTrainTypeNames();
 
     public boolean isPermanent();
 
@@ -103,7 +104,7 @@ extends ConfigurableComponentI, Cloneable {
 
     public void setReleasedTrainTypes(List<TrainTypeI> releasedTrainTypes);
 
-    public void setRustedTrainType(TrainTypeI rustedTrainType);
+    public void setRustedTrainType(int index, TrainTypeI rustedTrainType);
 
     public TrainI cloneTrain();
 

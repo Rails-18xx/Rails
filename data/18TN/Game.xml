@@ -72,7 +72,9 @@
 			rustedTrain="2" />
 		<Train name="5" majorStops="5" cost="450" quantity="2" startPhase="5"/>
 		<Train name="6" majorStops="6" cost="630" quantity="2" startPhase="6" 
-			rustedTrain="3" />
+			rustedTrain="3">
+			<Sub index="2" rustedTrain="4"/>
+		</Train>
 		<Train name="8" majorStops="8" cost="700" quantity="7" startPhase="8" 
 			rustedTrain="4" />
 	</Component>
