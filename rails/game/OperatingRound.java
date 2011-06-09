@@ -446,6 +446,11 @@ public class OperatingRound extends Round implements Observer {
 
     protected boolean checkNormalTileLay(TileI tile, boolean update) {
 
+        // Unspecified tile (e.g. 1889 D private, which is free on mountains)
+        if (tile == null) {
+            return !tileLaysPerColour.isEmpty();
+        }
+        
         String colour = tile.getColourName();
         Integer oldAllowedNumberObject = tileLaysPerColour.get(colour);
 
@@ -1413,8 +1418,7 @@ public class OperatingRound extends Round implements Observer {
                 if (stl.isExtra() 
                       // If the special tile lay is not extra, it is only allowed if
                       // normal tile lays are also (still) allowed
-                      || stl.getTile() != null 
-                          && checkNormalTileLay(stl.getTile(), false)) {
+                      || checkNormalTileLay(stl.getTile(), false)) {
                     LayTile lt = new LayTile(stl);
                     String[] stlc = stl.getTileColours();
                     if (stlc != null) {
