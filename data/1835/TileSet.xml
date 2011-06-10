@@ -13,8 +13,7 @@
 	<Tile id="-7"/>
 	<Tile id="-8"/>
 	<Tile id="-10"><!-- 1 city -->
-		<Upgrade id="5,6,57" hex="-H2,H20,I3,O15"/>
-		<Upgrade id="201,202" hex="H2,H20,I3,O15"/>
+		<Upgrade id="5,6,57"/>
 	</Tile>
 	<Tile id="-39"/>
 	<Tile id="-41"/>
@@ -43,6 +42,9 @@
 		<Upgrade id="218"/>
 	</Tile>
 	<Tile id="-901"/>
+	<Tile id="-3007">
+        <Upgrade id="201,202"/>
+	</Tile>
 	
 	<!-- yellow tiles -->
 	<Tile id="1" quantity="1">
