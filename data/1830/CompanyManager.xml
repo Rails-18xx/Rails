@@ -102,19 +102,19 @@
     <IfOption name="Variant" value="Simple">
         <Company name="L&amp;N" type="Public" tokens="3" fgColour="FFE600" bgColour="FF0000"
                 longname="Louisville &amp; Nashville">
-            <Home hex="H4" city="0" allCitiesBlocked="yes" />
+            <Home hex="H4"/>
         </Company>
     </IfOption>
     <IfOption name="Variant" value="Simple">
         <Company name="MILW" type="Public" tokens="3" fgColour="FFFFFF" bgColour="FF8000"
                 longname="Milwaukee Road">
-            <Home hex="D2" city="0" allCitiesBlocked="yes" />
+            <Home hex="D2"/>
         </Company>
     </IfOption>
     <IfOption name="Variant" value="Coalfields,Coalfields&amp;Reading">
         <Company name="N&amp;W" type="Public" tokens="3" fgColour="FFFF00" bgColour="000080"
                 longname="Norfolk &amp; Western">
-            <Home hex="L16" city="0" allCitiesBlocked="yes" />
+            <Home hex="L16"/>
         </Company>
     </IfOption>
 	<Company name="NYC" type="Public" tokens="4" fgColour="FFFFFF" bgColour="000000"
