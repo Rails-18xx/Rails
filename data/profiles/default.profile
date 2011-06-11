@@ -24,6 +24,7 @@ font.ui.style=bold
 
 ### Panel Map
 map.autoscroll=yes
+map.image.display=no
 map.zoomstep=10
 
 ### Panel Format
