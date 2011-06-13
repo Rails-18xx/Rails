@@ -1,4 +1,4 @@
-<Map mapClass="rails.ui.swing.hexmap.NSHexMap" tileOrientation="NS" letterOrientation="vertical" even="A">
+<Map tileOrientation="NS" letterOrientation="vertical" even="A">
 	<Image file="18EU/MapImage.svg" x="18" y="15" scale="0.952"/>
 	<!-- Hex name="" tile="" orientation="" value="" impassable="" label="" cost="" value="" port="yes/no" -->
 	<Hex name="A4" port="yes" value="10" tile="-800" orientation="0"/>

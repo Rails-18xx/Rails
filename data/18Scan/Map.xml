@@ -1,4 +1,4 @@
-<Map mapClass="rails.ui.swing.hexmap.EWHexMap" tileOrientation="EW" letterOrientation="vertical" even="A">
+<Map tileOrientation="EW" letterOrientation="vertical" even="A">
 	<!-- Hex name="" tile="" orientation="" value="" impassable="" label="" cost="" value="" port="yes/no" -->
 	<Hex name="A4" tile="-911" city="Newcastle"  value="20,50,80"/>
 	<Hex name="A6" tile="0" cost="60"/>

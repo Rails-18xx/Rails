@@ -4,7 +4,8 @@ package rails.ui.swing.hexmap;
 import java.awt.*;
 
 /**
- * Class EWHexMap displays a basic hex map with EW exit orientation.
+ * Class EWHexMap displays a basic hex map with
+ * {@link rails.game.TileOrientation#EW EW} exit orientation.
  */
 
 public class EWHexMap extends HexMap {

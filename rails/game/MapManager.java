@@ -18,7 +18,7 @@ public class MapManager implements ConfigurableComponentI {
 
     // The next attributes are duplicates in MapHex. We'll see what we really
     // need.
-    protected int tileOrientation;
+    protected TileOrientation tileOrientation;
     protected boolean lettersGoHorizontal;
     protected boolean letterAHasEvenNumbers;
     
@@ -60,21 +60,26 @@ public class MapManager implements ConfigurableComponentI {
      * @see rails.game.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
      */
     public void configureFromXML(Tag tag) throws ConfigurationException {
-        mapUIClassName = tag.getAttributeAsString("mapClass");
-        if (mapUIClassName == null) {
-            throw new ConfigurationException("Map class name missing");
-        }
-
         String attr = tag.getAttributeAsString("tileOrientation");
         if (attr == null)
             throw new ConfigurationException("Map orientation undefined");
-        if (attr.equals("EW")) {
-            tileOrientation = MapHex.EW;
-        } else if (attr.equals("NS")) {
-            tileOrientation = MapHex.NS;
-        } else {
-            throw new ConfigurationException("Invalid tile orientation: "
-                                             + attr);
+        try {
+            tileOrientation = TileOrientation.valueOf(attr);
+        }
+        catch(IllegalArgumentException exception) {
+            throw new ConfigurationException("Invalid tile orientation: " + attr, exception);
+        }
+
+        switch(tileOrientation) {
+        case NS:
+            mapUIClassName = "rails.ui.swing.hexmap.NSHexMap";
+            break;
+        case EW:
+            mapUIClassName = "rails.ui.swing.hexmap.EWHexMap";
+            break;
+        default:
+            // Unexpected default.
+            throw new AssertionError(tileOrientation);
         }
 
         attr = tag.getAttributeAsString("letterOrientation");
@@ -101,8 +106,8 @@ public class MapManager implements ConfigurableComponentI {
 
         List<Tag> hexTags = tag.getChildren("Hex");
         MapHex hex;
-        minX = minY = minCol = minRow = 9999;
-        maxX = maxY = maxCol = maxRow = -9999;
+        minX = minY = minCol = minRow = Integer.MAX_VALUE;
+        maxX = maxY = maxCol = maxRow = Integer.MIN_VALUE;
         possibleTileCosts = new TreeSet<Integer>();
         for (Tag hexTag : hexTags) {
             hex = new MapHex(this);
@@ -223,7 +228,7 @@ public class MapManager implements ConfigurableComponentI {
     
     public int getAdjacentX (int x, int y, int orientation) {
         
-         if (tileOrientation == MapHex.EW) {
+         if (tileOrientation == TileOrientation.EW) {
             return x + (y % 2 == 0 ? xYEvenDeltaEW[orientation] : xYOddDeltaEW[orientation]);
          } else {
             return x + xDeltaNS[orientation];
@@ -232,7 +237,7 @@ public class MapManager implements ConfigurableComponentI {
     
     public int getAdjacentY (int x, int y, int orientation) {
         
-        if (tileOrientation == MapHex.EW) {
+        if (tileOrientation == TileOrientation.EW) {
             return y + yDeltaEW[orientation];
         } else {
             return y + ((x % 2 == 0) == letterAHasEvenNumbers ? 
@@ -243,7 +248,7 @@ public class MapManager implements ConfigurableComponentI {
     /**
      * @return Returns the currentTileOrientation.
      */
-    public int getTileOrientation() {
+    public TileOrientation getTileOrientation() {
         return tileOrientation;
     }
 

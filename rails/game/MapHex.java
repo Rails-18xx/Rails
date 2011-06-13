@@ -19,14 +19,14 @@ import rails.util.*;
 /**
  * Represents a Hex on the Map from the Model side.
  *
- * <p> <b>Tile orientations</b>. Tiles can be oriented NS or EW; the directions
- * refer to the "flat" hex sides. <p> The term "rotation" is used to indicate
- * the amount of rotation (in 60 degree units) from the standard orientation of
- * the tile (sometimes the term orientation is also used to refer to rotation).
+ * <p> The term "rotation" is used to indicate the amount of rotation (in 60
+ * degree units) from the standard orientation of the tile (sometimes the term
+ * orientation is also used to refer to rotation).
  * <p>Rotation is always relative to the standard orientation, which has the
- * printed tile number on the S edge for NS oriented tiles, or on the SW edge
- * for EW oriented tiles. The rotation numbers are indicated in the below
- * picture for an NS-oriented tile: <p> <code>
+ * printed tile number on the S edge for {@link TileOrientation#NS}-oriented
+ * tiles, or on the SW edge for {@link TileOrientation#EW}-oriented tiles. The
+ * rotation numbers are indicated in the below picture for an
+ * {@code NS}-oriented tile: <p> <code>
  *
  *       ____3____
  *      /         \
@@ -35,14 +35,11 @@ import rails.util.*;
  *    \             /
  *     1           5
  *      \____0____/
- * </code> <p> For EW-oriented
+ * </code> <p> For {@code EW}-oriented
  * tiles the above picture should be rotated 30 degrees clockwise.
  */
 public class MapHex extends ModelObject implements ConfigurableComponentI,
 StationHolder, TokenHolder {
-
-    public static final int EW = 0;
-    public static final int NS = 1;
 
     private static final String[] ewOrNames =
     { "SW", "W", "NW", "NE", "E", "SE" };
@@ -186,7 +183,7 @@ StationHolder, TokenHolder {
         if (lettersGoHorizontal()) {
             row = number;
             column = letter - '@';
-            if (getTileOrientation() == MapHex.EW) {
+            if (getTileOrientation() == TileOrientation.EW) {
                 // Tiles with flat EW sides, letters go horizontally.
                 // Example: 1841 (NOT TESTED, PROBABLY WRONG).
                 x = column;
@@ -202,7 +199,7 @@ StationHolder, TokenHolder {
         {
             row = letter - '@';
             column = number;
-            if (getTileOrientation() == MapHex.EW) {
+            if (getTileOrientation() == TileOrientation.EW) {
                 // Tiles with flat EW sides, letters go vertically.
                 // Most common case.
                 // Tested for 1830 and 1870. OK with 1830 Wabash and 1825R2 (negative column numbers)
@@ -276,6 +273,9 @@ StationHolder, TokenHolder {
     }
 
     public void finishConfiguration (GameManagerI gameManager) {
+        if(gameManager == null) {
+            throw new IllegalArgumentException("gameManager must not be null");
+        }
 
         currentTile = gameManager.getTileManager().getTile(preprintedTileId);
         // We need completely new objects, not just references to the Tile's
@@ -335,7 +335,7 @@ StationHolder, TokenHolder {
         return openHexSides != null && openHexSides[side%6];
     }
 
-    public int getTileOrientation() {
+    public TileOrientation getTileOrientation() {
         return mapManager.getTileOrientation();
     }
 
@@ -355,7 +355,7 @@ StationHolder, TokenHolder {
 
     public String getOrientationName(int orientation) {
 
-        if (getTileOrientation() == EW) {
+        if (getTileOrientation() == TileOrientation.EW) {
             return ewOrNames[orientation % 6];
         } else {
             return nsOrNames[orientation % 6];

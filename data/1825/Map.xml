@@ -1,4 +1,4 @@
-<Map mapClass="rails.ui.swing.hexmap.EWHexMap" tileOrientation="EW" letterOrientation="vertical" even="R">
+<Map tileOrientation="EW" letterOrientation="vertical" even="R">
   <IfOption name="Include" parm="Unit3" value="yes">
 	<Hex name="B8" tile="-5" orientation="1" city="Inverness"/>
     <Hex name="B12" tile="-25011" city="Aberdeen"/>

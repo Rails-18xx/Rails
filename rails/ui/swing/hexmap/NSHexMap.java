@@ -4,7 +4,8 @@ package rails.ui.swing.hexmap;
 import java.awt.*;
 
 /**
- * Class NSHexMap displays a basic hex map with NS exit orientation.
+ * Class NSHexMap displays a basic hex map with
+ * {@link rails.game.TileOrientation#NS NS} exit orientation.
  */
 
 public class NSHexMap extends HexMap {

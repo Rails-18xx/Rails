@@ -108,7 +108,7 @@ public class GUIHex implements ViewObject {
         this.zoomFactor = zoomFactor;
         tokenDiameter = (int)Math.round(NORMAL_TOKEN_SIZE * zoomFactor);
 
-        if (hexMap.getMapManager().getTileOrientation() == MapHex.EW) {
+        if (hexMap.getMapManager().getTileOrientation() == TileOrientation.EW) {
             /* The numbering is unusual:
              *         0
              *        / \
@@ -242,7 +242,7 @@ public class GUIHex implements ViewObject {
         // NOTE: orientation here is its normal value in Rails + 3 (mod 6).
         orientation %= 6;
         if (barStartPoints == null) barStartPoints = new ArrayList<Integer>(2);
-        if (hexMap.getMapManager().getTileOrientation() == MapHex.EW) {
+        if (hexMap.getMapManager().getTileOrientation() == TileOrientation.EW) {
             barStartPoints.add((5-orientation)%6);
         } else {
             barStartPoints.add((3+orientation)%6);

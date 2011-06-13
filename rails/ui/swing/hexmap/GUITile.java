@@ -56,7 +56,7 @@ public class GUITile {
         tile = tileManager.getTile(tileId);
         picId = tile.getPictureId();
 
-        if (hex.getTileOrientation() == MapHex.EW) {
+        if (hex.getTileOrientation() == TileOrientation.EW) {
             baseRotation = 0.5 * DEG60;
         } else {
             baseRotation = 0.0;
