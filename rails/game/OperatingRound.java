@@ -1801,6 +1801,10 @@ public class OperatingRound extends Round implements Observer {
 
         if (actualPresidentCash > 0) {
             new CashMove(currentPlayer, operatingCompany.get(), presidentCash);
+            ReportBuffer.add(LocalText.getText("PresidentAddsCash",
+                    operatingCompany.get().getName(),
+                    currentPlayer.getName(),
+                    Bank.format(actualPresidentCash)));
         }
 
         Portfolio oldHolder = train.getHolder();
