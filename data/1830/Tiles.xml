@@ -88,11 +88,12 @@
 	<Tile colour="red" id="-908" name="OM wide curve">
 		<Track from="side0" gauge="normal" to="side2"/>
 	</Tile>
-	<Tile colour="red" id="-939" name="Goderich">
-		<Track from="side3" gauge="normal" to="side1"/>
-		<Track from="side3" gauge="normal" to="side2"/>
-		<Track from="side2" gauge="normal" to="side1"/>
-	</Tile>
+    <Tile colour="red" id="-939" name="Goderich">
+        <Station id="city1" position="0" slots="0" type="City" value="-1"/>
+        <Track from="side1" gauge="normal" to="city1"/>
+        <Track from="side2" gauge="normal" to="city1"/>
+        <Track from="side3" gauge="normal" to="city1"/>
+    </Tile>
 	<Tile colour="fixed" id="-25007" name="Bournemouth">
 		<Station id="city1" position="0" slots="1" type="City" value="20"/>
 		<Station id="city2" position="0" slots="1" type="City" value="20"/>
