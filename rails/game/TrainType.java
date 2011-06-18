@@ -21,10 +21,7 @@ public class TrainType implements TrainTypeI {
 
     protected String name;
     protected int quantity;
-    protected boolean infiniteAmount = false;
-
-    /** Index: used for sorting trains lists in configured order. */
-    protected int index;
+    protected boolean infiniteQuantity = false;
 
     private String reachBasis = "stops";
     protected boolean countHexes = false;
@@ -62,8 +59,6 @@ public class TrainType implements TrainTypeI {
     private String releasedTrainTypeNames = null;
     protected List<TrainTypeI> releasedTrainTypes = null;
 
-    protected ArrayList<TrainI> trains = null;
-
     protected int lastIndex = 0;
 
     protected BooleanState available;
@@ -98,8 +93,6 @@ public class TrainType implements TrainTypeI {
         }
 
         if (real) {
-            trains = new ArrayList<TrainI>();
-
             // Name
             name = tag.getAttributeAsString("name");
             if (name == null) {
@@ -117,7 +110,7 @@ public class TrainType implements TrainTypeI {
             // Amount
             quantity = tag.getAttributeAsInteger("quantity");
             if (quantity == -1) {
-                infiniteAmount = true;
+                infiniteQuantity = true;
             } else if (quantity <= 0) {
                 throw new ConfigurationException(
                         LocalText.getText("InvalidQuantity", String.valueOf(quantity)));
@@ -210,27 +203,10 @@ public class TrainType implements TrainTypeI {
             townCountIndicator =
                 countTowns.equals("no") ? NO_TOWN_COUNT : minorStops > 0
                         ? TOWN_COUNT_MINOR : TOWN_COUNT_MAJOR;
-                cityScoreFactor = scoreCities.equals("double") ? 2 : 1;
-                townScoreFactor = scoreTowns.equals("yes") ? 1 : 0;
-                // Actually we should meticulously check all values....
+            cityScoreFactor = scoreCities.equals("double") ? 2 : 1;
+            townScoreFactor = scoreTowns.equals("yes") ? 1 : 0;
+            // Actually we should meticulously check all values....
 
-                // log.debug("Train type "+name+": class "+trainClassName);
-
-                // Now create the trains of this type
-                TrainI train;
-                if (infiniteAmount) {
-                    /*
-                     * We create one train, but will add one more each time a train
-                     * of this type is bought.
-                     */
-                    train = createTrain();
-                    trains.add(train);
-                } else {
-                    for (int i = 0; i < quantity; i++) {
-                        train = createTrain ();
-                        trains.add(train);
-                    }
-                }
         }
 
         // Final initialisations
@@ -242,17 +218,9 @@ public class TrainType implements TrainTypeI {
     public void finishConfiguration (GameManagerI gameManager) {
 
         trainManager = gameManager.getTrainManager();
-        index = trainManager.getTrainTypes().indexOf(this);
+     }
 
-        Portfolio unavailable = gameManager.getBank().getUnavailable();
-
-        for (TrainI train : trains) {
-            train.init(this, lastIndex++);
-            unavailable.addTrain(train);
-        }
-    }
-
-    protected TrainI createTrain () throws ConfigurationException {
+    public TrainI createTrain () throws ConfigurationException {
 
         TrainI train;
         try {
@@ -268,20 +236,12 @@ public class TrainType implements TrainTypeI {
         return train;
     }
 
-    /** Create train without throwing exceptions.
-     * To be used <b>after</b> completing initialization,
-     * i.e. in cloning infinitely available trains.
-     */
+    public int getQuantity() {
+        return quantity;
+    }
 
-    public TrainI cloneTrain () {
-        TrainI train = null;
-        try {
-            train = createTrain();
-        } catch (ConfigurationException e) {
-            log.warn("Unexpected exception", e);
-        }
-        train.init(this, lastIndex++);
-        return train;
+    public boolean hasInfiniteQuantity() {
+        return infiniteQuantity;
     }
 
     /**
@@ -444,18 +404,14 @@ public class TrainType implements TrainTypeI {
             (initialPortfolio.equalsIgnoreCase("Pool") ? bank.getPool()
                     : bank.getIpo());
 
-        for (TrainI train : trains) {
+        for (TrainI train : trainManager.getTrainsOfType(this)) {
             new ObjectMove(train, bank.getUnavailable(), to);
         }
     }
 
-    public boolean hasInfiniteAmount() {
-        return infiniteAmount;
-    }
-
     public void setRusted(Portfolio lastBuyingCompany) {
         rusted.set(true);
-        for (TrainI train : trains) {
+        for (TrainI train : trainManager.getTrainsOfType(this)) {
             Portfolio holder = train.getHolder();
             if (obsoleting && holder.getOwner() instanceof PublicCompanyI
                     && holder != lastBuyingCompany) {
@@ -488,10 +444,6 @@ public class TrainType implements TrainTypeI {
         }
 
         return clone;
-    }
-
-    public int getIndex() {
-        return index;
     }
 
     public TrainManager getTrainManager() {

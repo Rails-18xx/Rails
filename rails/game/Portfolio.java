@@ -490,7 +490,7 @@ public class Portfolio implements TokenHolder, MoveableHolder {
             if (trainsOfType != null && !trainsOfType.isEmpty()) {
                 if (b.length() > 0) b.append(" ");
                 b.append(type.getName()).append("(");
-                if (type.hasInfiniteAmount()) {
+                if (type.hasInfiniteQuantity()) {
                     b.append("+");
                 } else {
                     b.append(trainsOfType.size());

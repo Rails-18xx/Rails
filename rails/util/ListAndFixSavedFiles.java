@@ -229,6 +229,9 @@ implements ActionListener, KeyListener {
                             action = (PossibleAction) ois.readObject();
                         } catch (EOFException e) {
                             break;
+                        } catch (ClassCastException e) {
+                            log.error ("Aborting on non-action object: "+ e.getMessage());
+                            break;
                         }
                     }
                 }

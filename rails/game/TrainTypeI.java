@@ -7,6 +7,11 @@ import java.util.Map;
 public interface TrainTypeI
 extends ConfigurableComponentI, Cloneable {
 
+    public TrainI createTrain () throws ConfigurationException;
+    
+    public int getQuantity();
+    public boolean hasInfiniteQuantity();
+
     /**
      * @return Returns the cityScoreFactor.
      */
@@ -83,8 +88,6 @@ extends ConfigurableComponentI, Cloneable {
 
     public boolean isObsoleting();
 
-    public boolean hasInfiniteAmount();
-
     /**
      * @param available The available to set.
      */
@@ -105,10 +108,6 @@ extends ConfigurableComponentI, Cloneable {
     public void setReleasedTrainTypes(List<TrainTypeI> releasedTrainTypes);
 
     public void setRustedTrainType(int index, TrainTypeI rustedTrainType);
-
-    public TrainI cloneTrain();
-
-    public int getIndex();
 
     public TrainManager getTrainManager();
     public String getInfo();

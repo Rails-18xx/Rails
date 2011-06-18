@@ -5,7 +5,7 @@ import rails.game.move.Moveable;
 
 public interface TrainI extends Moveable {
     
-    public void init(TrainTypeI type, int index);
+    public void init(TrainTypeI type, String uniqueId);
 
     /**
      * @return Returns the cost.

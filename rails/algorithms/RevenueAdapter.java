@@ -175,7 +175,7 @@ public final class RevenueAdapter implements Runnable {
         TrainTypeI trainType = gameManager.getTrainManager().getTypeByName(trainString.trim());
         if (trainType != null) { // string defines available trainType
             log.info("RA: found trainType" + trainType);
-            TrainI railsTrain = trainType.cloneTrain();
+            TrainI railsTrain = gameManager.getTrainManager().cloneTrain(trainType);
             return addTrain(railsTrain);
         } else { // otherwise interpret the train
             NetworkTrain train = NetworkTrain.createFromString(trainString);

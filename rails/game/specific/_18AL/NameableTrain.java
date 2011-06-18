@@ -12,9 +12,9 @@ public class NameableTrain extends Train {
     private State nameToken;
 
     @Override
-    public void init(TrainTypeI type, int index) {
+    public void init(TrainTypeI type, String uniqueId) {
 
-        super.init(type, index);
+        super.init(type, uniqueId);
         nameToken = new State(uniqueId + "_nameToken", NamedTrainToken.class);
     }
 

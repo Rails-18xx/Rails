@@ -1840,8 +1840,8 @@ public class OperatingRound extends Round implements Observer {
             train.getType().addToBoughtFromIPO();
             trainManager.setAnyTrainBought(true);
             // Clone the train if infinitely available
-            if (train.getType().hasInfiniteAmount()) {
-                ipo.addTrain(train.getType().cloneTrain());
+            if (train.getType().hasInfiniteQuantity()) {
+                ipo.addTrain(trainManager.cloneTrain(train.getType()));
             }
 
         }
@@ -1855,15 +1855,14 @@ public class OperatingRound extends Round implements Observer {
         }
 
         // Check if the phase has changed.
-        TrainManager tm = gameManager.getTrainManager();
-        tm.checkTrainAvailability(train, oldHolder);
+        trainManager.checkTrainAvailability(train, oldHolder);
 
         // Check if any companies must discard trains
         if (getCurrentPhase() != previousPhase && checkForExcessTrains()) {
             stepObject.set(GameDef.OrStep.DISCARD_TRAINS);
         }
 
-        if (tm.hasPhaseChanged()) newPhaseChecks();
+        if (trainManager.hasPhaseChanged()) newPhaseChecks();
 
         return true;
     }
@@ -2896,7 +2895,7 @@ public class OperatingRound extends Round implements Observer {
         if (getGameParameterAsBoolean(GameDef.Parm.REMOVE_TRAIN_BEFORE_SR)
                 && trainManager.isAnyTrainBought()) {
             TrainI train = trainManager.getAvailableNewTrains().get(0);
-            if (train.getType().hasInfiniteAmount()) return;
+            if (train.getType().hasInfiniteQuantity()) return;
             new ObjectMove (train, ipo, scrapHeap);
             ReportBuffer.add(LocalText.getText("RemoveTrain", train.getName()));
         }

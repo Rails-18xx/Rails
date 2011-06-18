@@ -11,13 +11,6 @@ public class Train implements TrainI {
 
     protected TrainTypeI type;
 
-    protected int majorStops;
-    protected int minorStops;
-    protected int cost;
-    protected int cityScoreFactor;
-    protected int townScoreFactor;
-    protected int townCountIndicator;
-    
     /** Some specific trains cannot be traded between companies */
     protected boolean tradeable = true;
 
@@ -31,18 +24,10 @@ public class Train implements TrainI {
 
     public Train() {}
 
-    public void init(TrainTypeI type, int index) {
+    public void init(TrainTypeI type, String uniqueId) {
 
         this.type = type;
-        this.majorStops = type.getMajorStops();
-        this.minorStops = type.getMinorStops();
-        this.cost = type.getCost();
-        this.cityScoreFactor = type.getCityScoreFactor();
-        this.townScoreFactor = type.getTownScoreFactor();
-        this.townCountIndicator = type.getTownCountIndicator();
-
-        uniqueId = type.getName() + "_" + index;
-        type.getTrainManager().addTrain(uniqueId, this);
+        this.uniqueId = uniqueId;
 
         obsolete = new BooleanState(uniqueId, false);
     }
@@ -55,42 +40,42 @@ public class Train implements TrainI {
      * @return Returns the cityScoreFactor.
      */
     public int getCityScoreFactor() {
-        return cityScoreFactor;
+        return type.getCityScoreFactor();
     }
 
     /**
      * @return Returns the cost.
      */
     public int getCost() {
-        return cost;
+        return type.getCost();
     }
 
     /**
      * @return Returns the majorStops.
      */
     public int getMajorStops() {
-        return majorStops;
+        return type.getMajorStops();
     }
 
     /**
      * @return Returns the minorStops.
      */
     public int getMinorStops() {
-        return minorStops;
+        return type.getMinorStops();
     }
 
     /**
      * @return Returns the townCountIndicator.
      */
     public int getTownCountIndicator() {
-        return townCountIndicator;
+        return type.getTownCountIndicator();
     }
 
     /**
      * @return Returns the townScoreFactor.
      */
     public int getTownScoreFactor() {
-        return townScoreFactor;
+        return type.getTownScoreFactor();
     }
 
     /**
