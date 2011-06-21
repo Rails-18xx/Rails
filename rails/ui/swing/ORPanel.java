@@ -516,14 +516,14 @@ implements ActionListener, KeyListener, RevenueListener {
     protected void addTrainsInfo() {
 
         TrainManager tm = orWindow.getGameUIManager().getGameManager().getTrainManager();
-        List<TrainTypeI> types = tm.getTrainTypes();
+        List<TrainType> types = tm.getTrainTypes();
         JMenu item;
 
         trainsInfoMenu = new JMenu(LocalText.getText("TRAINS"));
         trainsInfoMenu.setEnabled(true);
         infoMenu.add(trainsInfoMenu);
 
-        for (TrainTypeI type : types) {
+        for (TrainType type : types) {
             item = new JMenu (LocalText.getText("N_Train", type.getName()));
             item.setEnabled(true);
             item.add(new JMenuItem(type.getInfo()));

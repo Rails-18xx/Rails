@@ -11,11 +11,11 @@ public final class GenericState<E> extends ModelObject implements StateI {
 
     public GenericState(String name, E object) {
         stateName = name;
-        if (object == null) {
-            new Exception("NULL object not allowed in creating State wrapper").printStackTrace();
-        } else {
+        //if (object == null) {
+        //    new Exception("NULL object not allowed in creating State wrapper").printStackTrace();
+        //} else {
             stateObject = object;
-        }
+        //}
     }
 
     public void set(E object, boolean forced) {

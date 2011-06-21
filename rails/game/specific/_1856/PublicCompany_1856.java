@@ -60,7 +60,7 @@ public class PublicCompany_1856 extends PublicCompany {
     @Override
     public void buyTrain(TrainI train, int price) {
         super.buyTrain (train, price);
-        if (train.getType().isPermanent()) hadPermanentTrain = true;
+        if (train.isPermanent()) hadPermanentTrain = true;
     }
     
     public int getGameEndPrice() {

@@ -6,10 +6,16 @@ import org.apache.log4j.Logger;
 import rails.game.move.MoveableHolder;
 import rails.game.move.ObjectMove;
 import rails.game.state.BooleanState;
+import rails.game.state.GenericState;
 
 public class Train implements TrainI {
 
-    protected TrainTypeI type;
+    protected TrainCertificateType certificateType;
+    
+    protected GenericState<TrainType> type;
+    
+    /** Temporary variable, only used during moves. */
+    protected TrainType previousType = null;
 
     /** Some specific trains cannot be traded between companies */
     protected boolean tradeable = true;
@@ -24,12 +30,34 @@ public class Train implements TrainI {
 
     public Train() {}
 
-    public void init(TrainTypeI type, String uniqueId) {
+    public void init(TrainCertificateType certType, TrainType type, String uniqueId) {
 
-        this.type = type;
+        this.certificateType = certType;
         this.uniqueId = uniqueId;
+        this.type = new GenericState<TrainType>(certType.getName()+"_CurrentType", type);
+        this.previousType = type;
 
         obsolete = new BooleanState(uniqueId, false);
+    }
+    
+    public void setType (TrainType type) {
+        previousType = this.type.get();
+        this.type.set(type);
+    }
+
+    /**
+     * @return Returns the type.
+     */
+    public TrainCertificateType getCertType() {
+        return certificateType;
+    }
+    
+    public TrainType getType() {
+        return isAssigned() ? type.get() : null;
+    }
+
+    public TrainType getPreviousType() {
+        return previousType;
     }
 
     public String getUniqueId() {
@@ -40,53 +68,54 @@ public class Train implements TrainI {
      * @return Returns the cityScoreFactor.
      */
     public int getCityScoreFactor() {
-        return type.getCityScoreFactor();
+        return getType().getCityScoreFactor();
     }
 
     /**
      * @return Returns the cost.
      */
     public int getCost() {
-        return type.getCost();
+        return getType().getCost();
     }
 
     /**
      * @return Returns the majorStops.
      */
     public int getMajorStops() {
-        return type.getMajorStops();
+        return getType().getMajorStops();
     }
 
     /**
      * @return Returns the minorStops.
      */
     public int getMinorStops() {
-        return type.getMinorStops();
+        return getType().getMinorStops();
     }
 
     /**
      * @return Returns the townCountIndicator.
      */
     public int getTownCountIndicator() {
-        return type.getTownCountIndicator();
+        return getType().getTownCountIndicator();
     }
 
     /**
      * @return Returns the townScoreFactor.
      */
     public int getTownScoreFactor() {
-        return type.getTownScoreFactor();
+        return getType().getTownScoreFactor();
     }
 
-    /**
-     * @return Returns the type.
-     */
-    public TrainTypeI getType() {
-        return type;
+    public boolean isAssigned() {
+        return type.get() != null;
     }
-
+    
+    public boolean isPermanent() {
+        return certificateType.isPermanent();
+    }
+    
     public String getName() {
-        return type.getName();
+        return isAssigned() ? type.get().getName() : certificateType.getName();
     }
 
     public Portfolio getHolder() {
@@ -123,7 +152,7 @@ public class Train implements TrainI {
     }
 
     public boolean canBeExchanged() {
-        return type.nextCanBeExchanged();
+        return certificateType.nextCanBeExchanged();
     }
 
     public String toDisplay() {
@@ -138,4 +167,11 @@ public class Train implements TrainI {
         this.tradeable = tradeable;
     }
 
+    public String toString() {
+        StringBuilder b = new StringBuilder(uniqueId);
+        b.append(" certType=").append(getCertType());
+        b.append(" type=").append(getType());
+        b.append(" holder=").append(holder.getName());
+        return b.toString();
+    }
 }

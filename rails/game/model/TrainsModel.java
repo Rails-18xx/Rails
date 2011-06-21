@@ -17,9 +17,9 @@ public class TrainsModel extends ModelObject {
     @Override
     public String getText() {
         if (option == FULL_LIST) {
-            return portfolio.makeFullListOfTrains();
+            return portfolio.makeListOfTrains();
         } else if (option == ABBR_LIST) {
-            return portfolio.makeAbbreviatedListOfTrains();
+            return portfolio.makeListOfTrainCertificates();
         } else {
             return "";
         }

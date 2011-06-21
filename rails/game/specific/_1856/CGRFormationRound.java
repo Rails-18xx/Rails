@@ -550,7 +550,7 @@ public class CGRFormationRound extends SwitchableUIRound {
             List<TrainI> trains = new ArrayList<TrainI> (comp.getPortfolio().getTrainList());
             for (TrainI train : trains) {
                 train.moveTo(cgr.getPortfolio());
-                if (train.getType().isPermanent()) cgr.setHadPermanentTrain(true);
+                if (train.isPermanent()) cgr.setHadPermanentTrain(true);
             }
 
             // Move any still valid bonuses
@@ -661,7 +661,7 @@ bonuses:        for (Bonus bonus : bonuses) {
             int numberToDiscard = cgr.getNumberOfTrains() - trainLimit;
             List<TrainI> trainsToDiscard = new ArrayList<TrainI>(4);
             for (TrainI train : trains) {
-                if (!train.getType().isPermanent()) {
+                if (!train.isPermanent()) {
                     trainsToDiscard.add(train);
                     if (--numberToDiscard == 0) break;
                 }
@@ -758,7 +758,7 @@ bonuses:        for (Bonus bonus : bonuses) {
             // these may be discarded voluntarily
             trainsToDiscardFrom = new ArrayList<TrainI>();
             for (TrainI train : cgr.getPortfolio().getTrainList()) {
-                if (!train.getType().isPermanent()) {
+                if (!train.isPermanent()) {
                     trainsToDiscardFrom.add(train);
                }
             }

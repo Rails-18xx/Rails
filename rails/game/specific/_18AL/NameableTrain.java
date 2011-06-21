@@ -1,7 +1,6 @@
 package rails.game.specific._18AL;
 
-import rails.game.Train;
-import rails.game.TrainTypeI;
+import rails.game.*;
 import rails.game.move.MoveableHolder;
 import rails.game.move.ObjectMove;
 import rails.game.move.StateChange;
@@ -12,9 +11,9 @@ public class NameableTrain extends Train {
     private State nameToken;
 
     @Override
-    public void init(TrainTypeI type, String uniqueId) {
+    public void init(TrainCertificateType certType, TrainType type, String uniqueId) {
 
-        super.init(type, uniqueId);
+        super.init(certType, type, uniqueId);
         nameToken = new State(uniqueId + "_nameToken", NamedTrainToken.class);
     }
 

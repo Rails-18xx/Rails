@@ -51,8 +51,10 @@ public class Portfolio implements TokenHolder, MoveableHolder {
 
     /** Owned trains */
     protected List<TrainI> trains = new ArrayList<TrainI>();
-    protected Map<TrainTypeI, List<TrainI>> trainsPerType =
-        new HashMap<TrainTypeI, List<TrainI>>();
+    protected Map<TrainType, List<TrainI>> trainsPerType =
+        new HashMap<TrainType, List<TrainI>>();
+    protected Map<TrainCertificateType, List<TrainI>> trainsPerCertType =
+        new HashMap<TrainCertificateType, List<TrainI>>();
     protected TrainsModel trainsModel = new TrainsModel(this);
 
     /** Owned tokens */
@@ -73,6 +75,8 @@ public class Portfolio implements TokenHolder, MoveableHolder {
     protected String name;
     /** Unique name (including owner class name) */
     protected String uniqueName;
+    
+    GameManagerI gameManager;
 
     /** Specific portfolio names */
     public static final String IPO_NAME = "IPO";
@@ -88,7 +92,8 @@ public class Portfolio implements TokenHolder, MoveableHolder {
         this.owner = holder;
         this.uniqueName = holder.getClass().getSimpleName() + "_" + name;
 
-        GameManager.getInstance().addPortfolio(this);
+        gameManager = GameManager.getInstance();
+        gameManager.addPortfolio(this);
 
         if (owner instanceof PublicCompanyI) {
             trainsModel.setOption(TrainsModel.FULL_LIST);
@@ -390,24 +395,33 @@ public class Portfolio implements TokenHolder, MoveableHolder {
     }
 
     public void addTrain (TrainI train) {
-        addTrain (train, new int[] {-1,-1});
+        addTrain (train, new int[] {-1,-1,-1});
     }
 
     public void addTrain(TrainI train, int[] position) {
 
         Util.addToList(trains, train, position[0]);
-        TrainTypeI type = train.getType();
+        
+        TrainType type = train.getType();
         if (!trainsPerType.containsKey(type)) {
             trainsPerType.put(type, new ArrayList<TrainI>());
         }
-        Util.addToList(trainsPerType.get(train.getType()), train, position[1]);
+        Util.addToList(trainsPerType.get(type), train, position[1]);
+        
+        TrainCertificateType certType = train.getCertType();
+        if (!trainsPerCertType.containsKey(certType)) {
+            trainsPerCertType.put(certType, new ArrayList<TrainI>());
+        }
+        Util.addToList(trainsPerCertType.get(certType), train, position[2]);
+        
         train.setHolder(this);
         trainsModel.update();
     }
 
     public void removeTrain(TrainI train) {
         trains.remove(train);
-        trainsPerType.get(train.getType()).remove(train);
+        trainsPerType.get(train.getPreviousType()).remove(train);
+        trainsPerCertType.get(train.getCertType()).remove(train);
         train.setHolder(null);
         trainsModel.update();
     }
@@ -436,7 +450,7 @@ public class Portfolio implements TokenHolder, MoveableHolder {
         return trains;
     }
 
-    public TrainI[] getTrainsPerType(TrainTypeI type) {
+    public TrainI[] getTrainsPerType(TrainType type) {
 
         List<TrainI> trainsFound = new ArrayList<TrainI>();
         for (TrainI train : trains) {
@@ -454,8 +468,8 @@ public class Portfolio implements TokenHolder, MoveableHolder {
     public List<TrainI> getUniqueTrains() {
 
         List<TrainI> trainsFound = new ArrayList<TrainI>();
-        Map<TrainTypeI, Object> trainTypesFound =
-            new HashMap<TrainTypeI, Object>();
+        Map<TrainType, Object> trainTypesFound =
+            new HashMap<TrainType, Object>();
         for (TrainI train : trains) {
             if (!trainTypesFound.containsKey(train.getType())) {
                 trainsFound.add(train);
@@ -466,9 +480,9 @@ public class Portfolio implements TokenHolder, MoveableHolder {
 
     }
 
-    public TrainI getTrainOfType(TrainTypeI type) {
+    public TrainI getTrainOfType(TrainCertificateType type) {
         for (TrainI train : trains) {
-            if (train.getType() == type) return train;
+            if (train.getCertType() == type) return train;
         }
         return null;
     }
@@ -478,19 +492,19 @@ public class Portfolio implements TokenHolder, MoveableHolder {
      * IPO.
      */
 
-    public String makeAbbreviatedListOfTrains() {
+    public String makeListOfTrainCertificates() {
 
         if (trains == null || trains.isEmpty()) return "";
 
-        StringBuffer b = new StringBuffer();
+        StringBuilder b = new StringBuilder();
         List<TrainI> trainsOfType;
 
-        for (TrainTypeI type : GameManager.getInstance().getTrainManager().getTrainTypes()) {
-            trainsOfType = trainsPerType.get(type);
+        for (TrainCertificateType certType : gameManager.getTrainManager().getTrainCertTypes()) {
+            trainsOfType = trainsPerCertType.get(certType);
             if (trainsOfType != null && !trainsOfType.isEmpty()) {
                 if (b.length() > 0) b.append(" ");
-                b.append(type.getName()).append("(");
-                if (type.hasInfiniteQuantity()) {
+                b.append(certType.getName()).append("(");
+                if (certType.hasInfiniteQuantity()) {
                     b.append("+");
                 } else {
                     b.append(trainsOfType.size());
@@ -506,14 +520,14 @@ public class Portfolio implements TokenHolder, MoveableHolder {
      * Make a full list of trains, like "2 2 3 3", to show in any field
      * describing train possessions, except the IPO.
      */
-    public String makeFullListOfTrains() {
+    public String makeListOfTrains() {
 
         if (trains == null || trains.isEmpty()) return "";
 
         List<TrainI> trainsOfType;
-        StringBuffer b = new StringBuffer();
+        StringBuilder b = new StringBuilder();
 
-        for (TrainTypeI type : GameManager.getInstance().getTrainManager().getTrainTypes()) {
+        for (TrainType type : gameManager.getTrainManager().getTrainTypes()) {
             trainsOfType = trainsPerType.get(type);
             if (trainsOfType != null && !trainsOfType.isEmpty()) {
                 for (TrainI train : trainsOfType) {
@@ -603,7 +617,7 @@ public class Portfolio implements TokenHolder, MoveableHolder {
             addPrivate((PrivateCompanyI) object, position == null ? -1 : position[0]);
             return true;
         } else if (object instanceof TrainI) {
-            if (position == null) position = new int[] {-1, -1};
+            if (position == null) position = new int[] {-1, -1, -1};
             addTrain((TrainI) object, position);
             return true;
         } else if (object instanceof SpecialPropertyI) {
@@ -654,7 +668,8 @@ public class Portfolio implements TokenHolder, MoveableHolder {
             TrainI train = (TrainI) object;
             return new int[] {
                     trains.indexOf(train),
-                    trainsPerType.get(train.getType()).indexOf(train)
+                    train.getPreviousType() != null ? trainsPerType.get(train.getPreviousType()).indexOf(train) : -1,
+                    trainsPerCertType.get(train.getCertType()).indexOf(train)
             };
         } else if (object instanceof SpecialPropertyI) {
             return new int[] {specialProperties.indexOf(object)};

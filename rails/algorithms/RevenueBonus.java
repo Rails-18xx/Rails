@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 
 import rails.game.PhaseI;
 import rails.game.TrainI;
-import rails.game.TrainTypeI;
+import rails.game.TrainType;
 
 public final class RevenueBonus {
 
@@ -25,7 +25,7 @@ public final class RevenueBonus {
     
     // internal attributes
     private List<NetworkVertex> vertices;
-    private List<TrainTypeI> trainTypes;
+    private List<TrainType> trainTypes;
     private List<TrainI> trains;
     private List<PhaseI> phases;
     
@@ -34,7 +34,7 @@ public final class RevenueBonus {
         this.name = name;
      
         vertices = new ArrayList<NetworkVertex>();
-        trainTypes = new ArrayList<TrainTypeI>();
+        trainTypes = new ArrayList<TrainType>();
         trains = new ArrayList<TrainI>();
         phases = new ArrayList<PhaseI>();
     }
@@ -47,7 +47,7 @@ public final class RevenueBonus {
         this.vertices.addAll(vertices);
     }
 
-    public void addTrainType(TrainTypeI trainType) {
+    public void addTrainType(TrainType trainType) {
         trainTypes.add(trainType);
     }
     
@@ -71,7 +71,7 @@ public final class RevenueBonus {
         return vertices;
     }
     
-    public List<TrainTypeI> getTrainTypes() {
+    public List<TrainType> getTrainTypes() {
         return trainTypes;
     }
 

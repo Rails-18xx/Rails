@@ -110,7 +110,7 @@ public class PublicCompany_CGR extends PublicCompany implements RevenueStaticMod
     @Override
     public void buyTrain(TrainI train, int price) {
         super.buyTrain (train, price);
-        if (train.getType().isPermanent()) setHadPermanentTrain(true);
+        if (train.isPermanent()) setHadPermanentTrain(true);
     }
 
     public void setShareUnit (int percentage) {

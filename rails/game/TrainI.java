@@ -5,7 +5,7 @@ import rails.game.move.Moveable;
 
 public interface TrainI extends Moveable {
     
-    public void init(TrainTypeI type, String uniqueId);
+    public void init(TrainCertificateType certType, TrainType type, String uniqueId);
 
     /**
      * @return Returns the cost.
@@ -38,10 +38,13 @@ public interface TrainI extends Moveable {
      */
     public int getTownScoreFactor();
 
+    public void setType (TrainType type);
     /**
      * @return Returns the train type.
      */
-    public TrainTypeI getType();
+    public TrainType getType();
+    public TrainCertificateType getCertType();
+    public TrainType getPreviousType();
 
     public String getName();
 
@@ -52,6 +55,7 @@ public interface TrainI extends Moveable {
     public CashHolder getOwner();
 
     public boolean isObsolete();
+    public boolean isPermanent();
 
     public void setHolder(Portfolio newHolder);
 

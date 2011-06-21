@@ -12,7 +12,7 @@ import rails.game.MapHex;
 import rails.game.PhaseI;
 import rails.game.PhaseManager;
 import rails.game.TrainManager;
-import rails.game.TrainTypeI;
+import rails.game.TrainType;
 import rails.util.Tag;
 
 /** 
@@ -117,7 +117,7 @@ public final class RevenueBonusTemplate implements ConfigurableComponentI {
     
     private void convertTrainTypes(RevenueBonus bonus, TrainManager tm) {
         for (String identTrainType:identTrainTypes) {
-            TrainTypeI trainType = tm.getTypeByName(identTrainType);
+            TrainType trainType = tm.getTypeByName(identTrainType);
             if (trainType != null) {
                 bonus.addTrainType(trainType);
             }

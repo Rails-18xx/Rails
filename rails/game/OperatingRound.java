@@ -58,8 +58,8 @@ public class OperatingRound extends Round implements Observer {
     /** A List per player with owned companies that have excess trains */
     protected Map<Player, List<PublicCompanyI>> excessTrainCompanies = null;
 
-    protected List<TrainTypeI> trainsBoughtThisTurn =
-        new ArrayList<TrainTypeI>(4);
+    protected List<TrainCertificateType> trainsBoughtThisTurn =
+        new ArrayList<TrainCertificateType>(4);
 
     protected Map<PublicCompanyI, Integer> loansThisRound = null;
 
@@ -1763,7 +1763,7 @@ public class OperatingRound extends Round implements Observer {
                     //exchangedTrain = operatingCompany.getObject().getPortfolio().getTrainList().get(0);
                     //action.setExchangedTrain(exchangedTrain);
                     break;
-                } else if (operatingCompany.get().getPortfolio().getTrainOfType(exchangedTrain.getType()) == null) {
+                } else if (operatingCompany.get().getPortfolio().getTrainOfType(exchangedTrain.getCertType()) == null) {
                     errMsg = LocalText.getText("CompanyDoesNotOwnTrain",
                             operatingCompany.get().getName(),
                             exchangedTrain.getName());
@@ -1812,7 +1812,7 @@ public class OperatingRound extends Round implements Observer {
         if (exchangedTrain != null) {
             TrainI oldTrain =
                 operatingCompany.get().getPortfolio().getTrainOfType(
-                        exchangedTrain.getType());
+                        exchangedTrain.getCertType());
             oldTrain.moveTo(train.isObsolete() ? scrapHeap : pool);
             ReportBuffer.add(LocalText.getText("ExchangesTrain",
                     companyName,
@@ -1835,18 +1835,20 @@ public class OperatingRound extends Round implements Observer {
                     stb.getOriginalCompany().getName() ));
         }
 
+        train.setType(action.getType()); // Needed for dual trains bought from the Bank
+        
         operatingCompany.get().buyTrain(train, price);
         if (oldHolder == ipo) {
-            train.getType().addToBoughtFromIPO();
+            train.getCertType().addToBoughtFromIPO();
             trainManager.setAnyTrainBought(true);
             // Clone the train if infinitely available
-            if (train.getType().hasInfiniteQuantity()) {
-                ipo.addTrain(trainManager.cloneTrain(train.getType()));
+            if (train.getCertType().hasInfiniteQuantity()) {
+                ipo.addTrain(trainManager.cloneTrain(train.getCertType()));
             }
 
         }
         if (oldHolder.getOwner() instanceof Bank) {
-            trainsBoughtThisTurn.add(train.getType());
+            trainsBoughtThisTurn.add(train.getCertType());
         }
 
         if (stb != null) {
@@ -1957,6 +1959,11 @@ public class OperatingRound extends Round implements Observer {
         //
         if (action.isForced()) moveStack.linkToPreviousMoveSet();
 
+        // Reset type of dual trains
+        if (train.getCertType().getPotentialTrainTypes().size() > 1) {
+            train.setType(null);
+        }
+        
         train.moveTo(train.isObsolete() ? scrapHeap : pool);
         ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
                 companyName,
@@ -2623,7 +2630,7 @@ public class OperatingRound extends Round implements Observer {
 
         int cash = operatingCompany.get().getCash();
 
-        int cost;
+        int cost = 0;
         List<TrainI> trains;
 
         boolean hasTrains =
@@ -2650,24 +2657,30 @@ public class OperatingRound extends Round implements Observer {
             for (TrainI train : trains) {
                 if (!operatingCompany.get().mayBuyTrainType(train)) continue;
                 if (!mayBuyMoreOfEachType
-                        && trainsBoughtThisTurn.contains(train.getType())) {
+                        && trainsBoughtThisTurn.contains(train.getCertType())) {
                     continue;
                 }
-                cost = train.getCost();
-                if (cost <= cash) {
-                    if (canBuyTrainNow) {
-                        BuyTrain action = new BuyTrain(train, ipo, cost);
-                        action.setForcedBuyIfNoRoute(presidentMayHelp); // TEMPORARY
-                        possibleActions.add(action);
+                
+                // Allow dual trains (since jun 2011)
+                List<TrainType> types = train.getCertType().getPotentialTrainTypes();
+                for (TrainType type : types) { 
+                    cost = type.getCost();
+                    if (cost <= cash) {
+                        if (canBuyTrainNow) {
+                            BuyTrain action = new BuyTrain(train, type, ipo, cost);
+                            action.setForcedBuyIfNoRoute(presidentMayHelp); // TEMPORARY
+                            possibleActions.add(action);
+                        }
+                    } else if (costOfCheapestTrain == 0
+                            || cost < costOfCheapestTrain) {
+                        cheapestTrain = train;
+                        costOfCheapestTrain = cost;
                     }
-                } else if (costOfCheapestTrain == 0
-                        || cost < costOfCheapestTrain) {
-                    cheapestTrain = train;
-                    costOfCheapestTrain = cost;
                 }
+                
                 // Even at train limit, exchange is allowed (per 1856)
                 if (train.canBeExchanged() && hasTrains) {
-                    cost = train.getType().getExchangeCost();
+                    cost = train.getCertType().getExchangeCost();
                     if (cost <= cash) {
                         List<TrainI> exchangeableTrains =
                             operatingCompany.get().getPortfolio().getUniqueTrains();
@@ -2683,8 +2696,8 @@ public class OperatingRound extends Round implements Observer {
 
                 // Can a special property be used?
                 // N.B. Assume that this never occurs in combination with
-                // a train exchange, otherwise the below code must be duplicated
-                // above.
+                // dual trains or train exchanges, 
+                // otherwise the below code must be duplicated above.
                 for (SpecialTrainBuy stb : getSpecialProperties(SpecialTrainBuy.class)) {
                     int reducedPrice = stb.getPrice(cost);
                     if (reducedPrice > cash) continue;
@@ -2701,7 +2714,7 @@ public class OperatingRound extends Round implements Observer {
             trains = pool.getUniqueTrains();
             for (TrainI train : trains) {
                 if (!mayBuyMoreOfEachType
-                        && trainsBoughtThisTurn.contains(train.getType())) {
+                        && trainsBoughtThisTurn.contains(train.getCertType())) {
                     continue;
                 }
                 cost = train.getCost();
@@ -2895,7 +2908,7 @@ public class OperatingRound extends Round implements Observer {
         if (getGameParameterAsBoolean(GameDef.Parm.REMOVE_TRAIN_BEFORE_SR)
                 && trainManager.isAnyTrainBought()) {
             TrainI train = trainManager.getAvailableNewTrains().get(0);
-            if (train.getType().hasInfiniteQuantity()) return;
+            if (train.getCertType().hasInfiniteQuantity()) return;
             new ObjectMove (train, ipo, scrapHeap);
             ReportBuffer.add(LocalText.getText("RemoveTrain", train.getName()));
         }

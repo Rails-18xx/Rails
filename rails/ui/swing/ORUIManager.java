@@ -1084,7 +1084,7 @@ public class ORUIManager implements DialogOwner {
             b = new StringBuffer();
 
             b.append(LocalText.getText("BUY_TRAIN_FROM",
-                    train.getName(),
+                    bTrain.getType(),
                     from.getName() ));
             if (bTrain.isForExchange()) {
                 b.append(" (").append(LocalText.getText("EXCHANGED")).append(

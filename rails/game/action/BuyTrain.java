@@ -26,7 +26,7 @@ public class BuyTrain extends PossibleORAction {
     transient private Portfolio from;
     private String fromName;
     private int fixedCost = 0;
-    private boolean forcedBuyIfNoRoute = false; // TODO Remove once route checking exists
+    private boolean forcedBuyIfNoRoute = false; // TODO Can be disabled once route checking exists
     transient private List<TrainI> trainsForExchange = null;
     private String[] trainsForExchangeUniqueIds;
 
@@ -41,6 +41,11 @@ public class BuyTrain extends PossibleORAction {
     private int specialPropertyId = 0;
 
     private String extraMessage = null;
+    
+    // Added jun2011 by EV to cover dual trains.
+    // NOTE: Train objects from now on represent train *certificates* 
+    transient private TrainType type;
+    private String typeName;
 
     // User settings
     private int pricePaid = 0;
@@ -52,11 +57,17 @@ public class BuyTrain extends PossibleORAction {
 
     public BuyTrain(TrainI train, Portfolio from, int fixedCost) {
 
+        this (train, train.getType(), from, fixedCost);
+    }
+    
+    public BuyTrain(TrainI train, TrainType type, Portfolio from, int fixedCost) {
         this.train = train;
         this.trainUniqueId = train.getUniqueId();
         this.from = from;
         this.fromName = from.getName();
         this.fixedCost = fixedCost;
+        this.type = type;
+        this.typeName = type.getName();
     }
 
     public BuyTrain setTrainsForExchange(List<TrainI> trains) {
@@ -82,11 +93,6 @@ public class BuyTrain extends PossibleORAction {
         presidentCashToAdd = amount;
         return this;
     }
-
-    //public BuyTrain setForcedExchange(boolean value) {
-    //    forcedExchange = value;
-    //    return this;
-    //}
 
     public void setForcedBuyIfNoRoute(boolean hasNoTrains) {
         this.forcedBuyIfNoRoute = hasNoTrains;
@@ -134,6 +140,10 @@ public class BuyTrain extends PossibleORAction {
         return train;
     }
 
+    public TrainType getType() {
+        return type;
+    }
+
     public Portfolio getFromPortfolio() {
         return from;
     }
@@ -149,10 +159,6 @@ public class BuyTrain extends PossibleORAction {
     public List<TrainI> getTrainsForExchange() {
         return trainsForExchange;
     }
-
-    //public boolean isForcedExchange() {
-    //    return forcedExchange;
-    //}
 
     public boolean mustPresidentAddCash() {
         return presidentMustAddCash;
@@ -210,11 +216,11 @@ public class BuyTrain extends PossibleORAction {
         StringBuffer b = new StringBuffer();
         b.append(company.getName());
         if (train != null) { 
-            b.append(": buy ").append(getTrain().getName());
+            b.append(": buy ").append(typeName).append("-");
         } else {
-            b.append(": buy unlimited train, unique id = ").append(trainUniqueId);
+            b.append(": buy unlimited ");
         }
-        b.append("-train from ").append(from.getName());
+        b.append("train (").append(trainUniqueId).append(") from ").append(from.getName());
         if (fixedCost > 0) {
             b.append(" for ").append(Bank.format(fixedCost));
         } else {
@@ -267,6 +273,7 @@ public class BuyTrain extends PossibleORAction {
         // TEMPORARY Custom reading for backwards compatibility
         ObjectInputStream.GetField fields = in.readFields();
         trainUniqueId = (String) fields.get("trainUniqueId", trainUniqueId);
+        typeName = (String) fields.get("typeName", null);
         fromName = (String) fields.get("fromName", fromName);
         fixedCost = fields.get("fixedCost", fixedCost);
         forcedBuyIfNoRoute = fields.get("forcedBuyIfNoRoute", forcedBuyIfNoRoute);//TEMPORARY
@@ -290,6 +297,21 @@ public class BuyTrain extends PossibleORAction {
         train = trainManager.getTrainByUniqueId(trainUniqueId);
         // Note: the 2nd etc. copy of an unlimited quantity train will become null this way.
         // Set getTrain() for how this is fixed.
+        if (train == null) {
+            int i = 1;
+        }
+        if (typeName == null) {
+            if (train == null) {
+                // Kludge to cover not yet cloned unlimited trains
+                typeName = trainUniqueId.split("_")[0];
+                type = trainManager.getTypeByName(typeName);
+            } else {
+                type = train.getType();
+                typeName = type.getName();
+            }
+        } else {
+            type = trainManager.getTypeByName(typeName);
+        }
 
         from = gameManager.getPortfolioByName(fromName);
         if (trainsForExchangeUniqueIds != null

@@ -973,7 +973,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
         if (initialTrainType != null) {
             TrainManager trainManager = gameManager.getTrainManager();
-            TrainTypeI type = trainManager.getTypeByName(initialTrainType);
+            TrainCertificateType type = trainManager.getCertTypeByName(initialTrainType);
             TrainI train = bank.getIpo().getTrainOfType(type);
             buyTrain(train, initialTrainCost);
             train.setTradeable(initialTrainTradeable);

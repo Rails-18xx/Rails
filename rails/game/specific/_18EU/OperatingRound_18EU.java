@@ -15,14 +15,14 @@ import rails.util.LocalText;
  */
 public class OperatingRound_18EU extends OperatingRound {
 
-    protected TrainTypeI pullmannType;
+    protected TrainCertificateType pullmannType;
 
     protected BooleanState hasPullmannAtStart =
             new BooleanState("ORCompanyHasPullmannAtStart", false);
 
     public OperatingRound_18EU (GameManagerI gameManager) {
         super (gameManager);
-        pullmannType = trainManager.getTypeByName("P");
+        pullmannType = trainManager.getCertTypeByName("P");
     }
 
     @Override

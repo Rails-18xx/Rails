@@ -22,7 +22,7 @@ import rails.game.MapHex;
 import rails.game.PhaseI;
 import rails.game.PublicCompanyI;
 import rails.game.TrainI;
-import rails.game.TrainTypeI;
+import rails.game.TrainType;
 import rails.ui.swing.hexmap.HexMap;
 import rails.util.LocalText;
 
@@ -172,10 +172,10 @@ public final class RevenueAdapter implements Runnable {
     }
 
     public boolean addTrainByString(String trainString) {
-        TrainTypeI trainType = gameManager.getTrainManager().getTypeByName(trainString.trim());
+        TrainType trainType = gameManager.getTrainManager().getTypeByName(trainString.trim());
         if (trainType != null) { // string defines available trainType
             log.info("RA: found trainType" + trainType);
-            TrainI railsTrain = gameManager.getTrainManager().cloneTrain(trainType);
+            TrainI railsTrain = gameManager.getTrainManager().cloneTrain(trainType.getCertificateType());
             return addTrain(railsTrain);
         } else { // otherwise interpret the train
             NetworkTrain train = NetworkTrain.createFromString(trainString);

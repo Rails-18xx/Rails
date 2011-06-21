@@ -3,7 +3,7 @@ package rails.algorithms;
 import org.apache.log4j.Logger;
 
 import rails.game.TrainI;
-import rails.game.TrainTypeI;
+import rails.game.TrainType;
 
 public final class NetworkTrain {
 
@@ -118,7 +118,7 @@ public final class NetworkTrain {
         return railsTrain;
     }
     
-    public TrainTypeI getRailsTrainType() {
+    public TrainType getRailsTrainType() {
         if (railsTrain == null) return null;
         
         return railsTrain.getType();
