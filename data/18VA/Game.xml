@@ -71,21 +71,21 @@
 				cities="double" if city-revenue is doubled (e.g. 1826 TGV).
 			-->
 		</Defaults>
-		<Train name="2" majorStops="2" cost="100" quantity="6"/>
-		<Train name="3" majorStops="3" cost="200" quantity="5" startPhase="3"/>
-		<Train name="4" majorStops="4" cost="300" quantity="4" startPhase="4" 
+		<TrainType name="2" majorStops="2" cost="100" quantity="6"/>
+		<TrainType name="3" majorStops="3" cost="200" quantity="5" startPhase="3"/>
+		<TrainType name="4" majorStops="4" cost="300" quantity="4" startPhase="4" 
 			rustedTrain="2"/>
-		<Train name="5" majorStops="5" cost="500" quantity="3" startPhase="5"
+		<TrainType name="5" majorStops="5" cost="500" quantity="3" startPhase="5"
 			rustedTrain="3"/>
-		<Train name="6" majorStops="6" cost="600" startPhase="6" 
+		<TrainType name="6" majorStops="6" cost="600" startPhase="6" 
 			releasedTrain="4D">
-		</Train>
-		<Train name="4D" majorStops="99" cost="800" quantity="10" startPhase="4D" 
+		</TrainType>
+		<TrainType name="4D" majorStops="99" cost="800" quantity="10" startPhase="4D" 
 			rustedTrain="4">
-		</Train>
+		</TrainType>
 	</Component>
 	<Component name="PhaseManager" class="rails.game.PhaseManager">
-		<!-- Note: released and rusted trains are now specified per Train
+		<!-- Note: released and rusted trains are now specified per TrainType
 			but could as well be moved here. To be sorted out when we do 18US. -->
 		<!-- Each Phase's defaults are the previous one's values -->
 		<Phase name="2" >

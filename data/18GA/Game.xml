@@ -54,14 +54,14 @@
 			<Reach base="stops" countTowns="no"/>
 			<Score towns="yes"/>
 		</Defaults>
-		<Train name="2" majorStops="2" cost="100" quantity="5"/>
-		<Train name="3" majorStops="3" cost="180" quantity="4" startPhase="3"/>
-		<Train name="4" majorStops="4" cost="300" quantity="3" startPhase="4" 
+		<TrainType name="2" majorStops="2" cost="100" quantity="5"/>
+		<TrainType name="3" majorStops="3" cost="180" quantity="4" startPhase="3"/>
+		<TrainType name="4" majorStops="4" cost="300" quantity="3" startPhase="4" 
 			rustedTrain="2" />
-		<Train name="5" majorStops="5" cost="450" quantity="2" startPhase="5"/>
-		<Train name="6" majorStops="6" cost="630" quantity="2" startPhase="6" 
+		<TrainType name="5" majorStops="5" cost="450" quantity="2" startPhase="5"/>
+		<TrainType name="6" majorStops="6" cost="630" quantity="2" startPhase="6" 
 			rustedTrain="3"/>
-		<Train name="8" majorStops="8" cost="800" startPhase="8" 
+		<TrainType name="8" majorStops="8" cost="800" startPhase="8" 
 			rustedTrain="4">
 			<IfOption name="UnlimitedTopTrains" value="yes">
 				<Attributes quantity="-1"/>
@@ -69,7 +69,7 @@
 			<IfOption name="UnlimitedTopTrains" value="no">
 				<Attributes quantity="5"/>
 			</IfOption>
-		</Train>
+		</TrainType>
 	</Component>
 	<Component name="PhaseManager" class="rails.game.PhaseManager">
 		<Phase name="2" >

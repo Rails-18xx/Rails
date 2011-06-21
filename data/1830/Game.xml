@@ -130,7 +130,7 @@
 				cities="double" if city-revenue is doubled (e.g. 1826 TGV).
 			-->
 		</Defaults>
-		<Train name="2" majorStops="2" cost="80" quantity="6">
+		<TrainType name="2" majorStops="2" cost="80" quantity="6">
 			<IfOption name="Variant" value="Coalfields,Reading,Coalfields&amp;Reading">
                 <Attributes obsoleting="yes"/>
             </IfOption>
@@ -139,16 +139,16 @@
 				<!-- NOTE: An alternative way to configure an extra train is: quantityIncrement="+1"
 					(the '+' is optional) -->
             </IfOption>
-		</Train>
-		<Train name="3" majorStops="3" cost="180" quantity="5" startPhase="3">
+		</TrainType>
+		<TrainType name="3" majorStops="3" cost="180" quantity="5" startPhase="3">
             <IfOption name="Variant" value="Coalfields,Reading,Coalfields&amp;Reading">
                 <Attributes obsoleting="yes"/>
             </IfOption>
             <IfOption name="Variant" value="Wabash">
                 <Attributes quantity="6"/>
             </IfOption>
-		</Train>
-		<Train name="4" majorStops="4" cost="300" quantity="4" startPhase="4" 
+		</TrainType>
+		<TrainType name="4" majorStops="4" cost="300" quantity="4" startPhase="4" 
 			rustedTrain="2">
 			<IfOption name="Variant" value="Coalfields,Reading">
                 <Attributes obsoleting="yes" quantity="5"/>
@@ -159,13 +159,13 @@
             <IfOption name="Variant" value="Wabash">
                 <Attributes quantity="5"/>
             </IfOption>
-		</Train>
-		<Train name="5" majorStops="5" cost="450" quantity="3" startPhase="5">
+		</TrainType>
+		<TrainType name="5" majorStops="5" cost="450" quantity="3" startPhase="5">
             <IfOption name="Variant" value="Wabash">
                 <Attributes quantity="4"/>
             </IfOption>
-		</Train>
-		<Train name="6" majorStops="6" cost="630" startPhase="6" 
+		</TrainType>
+		<TrainType name="6" majorStops="6" cost="630" startPhase="6" 
 			rustedTrain="3" releasedTrain="D">
 			<IfOption name="WithOptional6Train" value="yes">
 				<Attributes quantity="3"/>
@@ -182,15 +182,15 @@
             <IfOption name="Variant" value="Simple,Wabash">
                 <Attributes quantity="3"/>
             </IfOption>
-		</Train>
+		</TrainType>
 		<IfOption name="Variant" value="Coalfields,Reading,Coalfields&amp;Reading">
-			<Train name="7" majorStops="7" cost="710" quantity="2"/>
+			<TrainType name="7" majorStops="7" cost="710" quantity="2"/>
 		</IfOption>
         <IfOption name="Variant" value="Wabash">
-            <Train name="7" majorStops="7" cost="830" quantity="-1"/>
+            <TrainType name="7" majorStops="7" cost="830" quantity="-1"/>
         </IfOption>
 		<IfOption name="Variant" value="Basegame,Pere Marquette,Reading,Coalfields,Coalfields&amp;Reading,Simple">
-			<Train name="D" majorStops="99" startPhase="D" rustedTrain="4">
+			<TrainType name="D" majorStops="99" startPhase="D" rustedTrain="4">
 				<IfOption name="Variant" value="Basegame,Pere Marquette,Simple">
 					<Attributes cost="1100"/>
 					<Exchange cost="800"/>
@@ -206,11 +206,11 @@
 					<Attributes quantity="6"/>
 				</IfOption>
 				<Exchange cost="800"/>
-			</Train>
+			</TrainType>
         </IfOption>
 	</Component>
 	<Component name="PhaseManager" class="rails.game.PhaseManager">
-		<!-- Note: released and rusted trains are now specified per Train
+		<!-- Note: released and rusted trains are now specified per TrainType
 			but could as well be moved here. To be sorted out when we do 18US. -->
 		<!-- Each Phase's defaults are the previous one's values -->
 		<Phase name="2" >
