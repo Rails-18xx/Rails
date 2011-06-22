@@ -173,13 +173,13 @@
 			<IfOption name="WithOptional6Train" value="no">
 				<Attributes quantity="2"/>
 			</IfOption>
-			<IfOption name="Variant" value="Pere Marquette,Coalfields,Reading">
+			<IfOption name="Variant" value="Coalfields,Reading">
 				<Attributes quantity="3" releasedTrain="7,D"/>
 			</IfOption>
 			<IfOption name="Variant" value="Coalfields&amp;Reading">
 				<Attributes quantity="4" releasedTrain="7,D"/>
 			</IfOption>
-            <IfOption name="Variant" value="Simple,Wabash">
+            <IfOption name="Variant" value="Pere Marquette,Simple,Wabash">
                 <Attributes quantity="3"/>
             </IfOption>
 		</TrainType>
