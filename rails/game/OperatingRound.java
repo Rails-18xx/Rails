@@ -1838,6 +1838,7 @@ public class OperatingRound extends Round implements Observer {
         train.setType(action.getType()); // Needed for dual trains bought from the Bank
         
         operatingCompany.get().buyTrain(train, price);
+        
         if (oldHolder == ipo) {
             train.getCertType().addToBoughtFromIPO();
             trainManager.setAnyTrainBought(true);
@@ -2772,7 +2773,7 @@ public class OperatingRound extends Round implements Observer {
                     trains = pf.getUniqueTrains();
 
                     for (TrainI train : trains) {
-                        if (train.isObsolete()) continue;
+                        if (train.isObsolete() || !train.isTradeable()) continue;
                         if (i != currentPlayerIndex
                                 //&& trainMgr.buyAtFaceValueBetweenDifferentPresidents()
                                 && getGameParameterAsBoolean(GameDef.Parm.FIXED_PRICE_TRAINS_BETWEEN_PRESIDENTS)
@@ -2848,7 +2849,7 @@ public class OperatingRound extends Round implements Observer {
     }
 
     /**
-     * Can the company buy a train now?
+     * Can the operating company buy a train now?
      * Normally only calls isBelowTrainLimit() to get the result.
      * May be overridden if other considerations apply (such as
      * having a Pullmann in 18EU).

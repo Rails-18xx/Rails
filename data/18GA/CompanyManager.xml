@@ -48,6 +48,7 @@
 	</Company>
 	<Company name="OSO" type="Private" basePrice="100" revenue="20"
 		longname="Ocilla Southern Railroad">
+		<!-- Note: name "OSO" is also used in OperatingRound_18GA -->
 		<Blocking hex="G7"/>
 	</Company>
 	<Company name="M&amp;B" type="Private" basePrice="150" revenue="25"

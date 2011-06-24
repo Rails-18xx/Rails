@@ -123,7 +123,7 @@ public class Train implements TrainI {
     }
 
     public CashHolder getOwner() {
-        return holder.getOwner();
+        return holder != null ? holder.getOwner() : null;
     }
 
     public boolean isObsolete() {
