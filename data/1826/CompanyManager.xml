@@ -53,7 +53,7 @@
 
 	<Company name="Est" type="Public" tokens="4" fgColour="000000" bgColour="FF6600"
 		longname="Chemin de Fer de L'Est">
-		<Home hex="G9"/>
+		<Home hex="G9" city="2"/>
 	</Company>
 
 	<Company name="GC" type="Public" tokens="4" fgColour="000000" bgColour="BCD2EE"
@@ -68,27 +68,27 @@
 	
 	<Company name="N" type="Public" tokens="4" fgColour="FFFFFF" bgColour="EE0000"
 		longname="Chemin de Fer du Nord">
-		<Home hex="G9"/>
+		<Home hex="G9" city="1"/>
 	</Company>
 
 	<Company name="Ouest" type="Public" tokens="4" fgColour="000000" bgColour="FF92BB"
 		longname="Chemin de Fer de L'Ouest">
-		<Home hex="G9"/>
+		<Home hex="G9" city="5"/>
 	</Company>
 	
 	<Company name="Paris" type="Public" tokens="4" fgColour="000000" bgColour="CECC15"
 		longname="Chemin de Fer de Paris">
-		<Home hex="G9"/>
+		<Home hex="G9" city="6"/>
 	</Company>
 
 	<Company name="PLM" type="Public" tokens="4" fgColour="FFFFFF" bgColour="691F01"
 		longname="Chemin de Fer Paris-Lyon-Méditerranée">
-		<Home hex="G9"/>
+		<Home hex="G9" city="3"/>
 	</Company>
 
 	<Company name="PO" type="Public" tokens="4" fgColour="FFFFFF" bgColour="0000CD"
 		longname="Chemin de Fer Paris-Orléans">
-		<Home hex="G9"/>
+		<Home hex="G9" city="4"/>
 	</Company>
 
 	<Company name="Etat" type="Public" tokens="4" fgColour="FFFFFF" bgColour="000000"

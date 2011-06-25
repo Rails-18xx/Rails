@@ -4182,4 +4182,30 @@
 	<Tile colour="fixed" id="-4009" name="Ferry">
 		<Track from="side3" gauge="narrow" to="side0"/>
 	</Tile>
+	<Tile colour="yellow" id="-26001" name="Paris">
+		<Station id="city1" position="003" slots="1" type="City" value="50"/>
+		<Station id="city2" position="103" slots="1" type="City" value="50"/>
+		<Station id="city3" position="203" slots="1" type="City" value="50"/>
+		<Station id="city4" position="303" slots="1" type="City" value="50"/>
+		<Station id="city5" position="403" slots="1" type="City" value="50"/>
+		<Station id="city6" position="503" slots="1" type="City" value="50"/>
+		<Track from="city1" gauge="normal" to="side0"/>
+		<Track from="city2" gauge="normal" to="side1"/>
+		<Track from="city3" gauge="normal" to="side2"/>
+		<Track from="city4" gauge="normal" to="side3"/>
+		<Track from="city5" gauge="normal" to="side4"/>
+		<Track from="city6" gauge="normal" to="side5"/>
+	</Tile>
+	<Tile colour="fixed" id="-26002" name="Nantes/Sstrasbourg">
+		<Station id="city1" position="0" slots="1" type="City" value="40"/>
+		<Track from="city1" gauge="normal" to="side0"/>
+		<Track from="city1" gauge="normal" to="side1"/>
+		<Track from="city1" gauge="normal" to="side2"/>
+	</Tile>
+	<Tile colour="fixed" id="-26003" name="Bordeaux">
+		<Station id="city1" position="0" slots="1" type="City" value="40"/>
+		<Track from="city1" gauge="normal" to="side0"/>
+		<Track from="city1" gauge="normal" to="side1"/>
+		<Track from="city1" gauge="normal" to="side3"/>
+	</Tile>
 </Tiles>

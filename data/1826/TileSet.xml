@@ -11,6 +11,10 @@
 	<Tile id="14"/>
 	<Tile id="619"/>
 	<Tile id="5"/>
-	<Tile id="-4007"/>
+    <Tile id="-26001"/>
+    <Tile id="-26002"/>
+    <Tile id="-26003"/>
+    <Tile id="-103"/>
+    <Tile id="-105"/>
 
 </TileManager>

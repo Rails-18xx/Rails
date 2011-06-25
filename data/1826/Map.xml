@@ -16,7 +16,7 @@
 	<Hex name="D12" tile="-1" city="Mons"/>
 	<Hex name="D14" tile="-1" city="Namur" cost="60"/>
 	<Hex name="D16" tile="-1" city="Luxembourg" cost="60"/>
-	<Hex name="E5" tile="-4007" city="Le Havre"/>
+	<Hex name="E5" tile="-103" orientation="5" city="Le Havre"/>
 	<Hex name="E7" tile="-1" city="Rouen" cost="40"/>
 	<Hex name="E9" tile="0"/>
 	<Hex name="E11" tile="0"/>
@@ -33,12 +33,12 @@
 	<Hex name="G3" tile="0"/>
 	<Hex name="G5" tile="0"/>
 	<Hex name="G7" tile="0"/>
-	<Hex name="G9" tile="-4007" city="Paris"/>
+	<Hex name="G9" tile="-26001" city="Paris"/>
 	<Hex name="G11" tile="0"/>
 	<Hex name="G13" tile="0"/>
 	<Hex name="G15" tile="0"/>
 	<Hex name="G17" tile="0"/>
-	<Hex name="G19" tile="-4007" city="Strasbourg"/>
+	<Hex name="G19" tile="-26002" orientation="3" city="Strasbourg"/>
 	<Hex name="H2" tile="-1" city="Rennes"/>
 	<Hex name="H4" tile="0"/>
 	<Hex name="H6" tile="-10" city="Le Mans"/>
@@ -48,7 +48,7 @@
 	<Hex name="H14" tile="0"/>
 	<Hex name="H16" tile="0"/>
 	<Hex name="H18" tile="-1" city="Mulhouse"/>
-	<Hex name="I1" tile="-4007" city="Nantes"/>
+	<Hex name="I1" tile="-26002" city="Nantes"/>
 	<Hex name="I3" tile="-1" city="Angers" cost="40"/>
 	<Hex name="I5" tile="0" cost="40"/>
 	<Hex name="I7" tile="57" city="Orléans"/>
@@ -73,7 +73,7 @@
 	<Hex name="K11" tile="-1" city="Clermont-Ferrand" cost="60"/>
 	<Hex name="K13" tile="0"/>
 	<Hex name="K15" tile="0"/>
-	<Hex name="K17" tile="-4007" city="Geneva"/>
+	<Hex name="K17" tile="-105" orientation="2" city="Geneva"/>
 	<Hex name="L4" tile="0"/>
 	<Hex name="L6" tile="0"/>
 	<Hex name="L8" tile="-1" city="Limoges"/>
@@ -81,7 +81,7 @@
 	<Hex name="L12" tile="0" cost="60"/>
 	<Hex name="L14" tile="14" city="Lyon" orientation="5"/>
 	<Hex name="L16" tile="0"/>
-	<Hex name="M3" tile="-4007" city="Bordeaux"/>
+	<Hex name="M3" tile="-26003" city="Bordeaux"/>
 	<Hex name="M5" tile="0" cost="40"/>
 	<Hex name="M7" tile="0"/>
 	<Hex name="M9" tile="0"/>

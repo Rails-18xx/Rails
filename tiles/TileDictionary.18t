@@ -17306,5 +17306,116 @@ object TTilesWrapper
           ConType = ctSmall
         end>
       Junctions = <>
+    end
+    item
+      Code = -26001
+      LongName = 'Paris'
+      Level = tlMapUpgradableToGreen
+      Connections = <
+        item
+          Position1 = tp3SideA
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tp3SideB
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tp3SideC
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tp3SideD
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tp3SideE
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tp3SideF
+          Position2 = tp4SideF
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Position = tp3SideA
+          Revenue = 50
+          RevenuePosition = tpCenter
+        end
+        item
+          JunType = jtCity
+          Position = tp3SideB
+          Revenue = 50
+          RevenuePosition = tpCenter
+        end
+        item
+          JunType = jtCity
+          Position = tp3SideC
+          Revenue = 50
+          RevenuePosition = tpCenter
+        end
+        item
+          JunType = jtCity
+          Position = tp3SideD
+          Revenue = 50
+          RevenuePosition = tpCenter
+        end
+        item
+          JunType = jtCity
+          Position = tp3SideE
+          Revenue = 50
+          RevenuePosition = tpCenter
+        end
+        item
+          JunType = jtCity
+          Position = tp3SideF
+          Revenue = 50
+          RevenuePosition = tpCenter
+        end>
+    end
+    item
+      Code = -26002
+      LongName = 'Nantes/Sstrasbourg'
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Revenue = 40
+        end>
+    end
+    item
+      Code = -26003
+      LongName = 'Bordeaux'
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Revenue = 40
+        end>
     end>
 end
