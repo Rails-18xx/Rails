@@ -23926,7 +23926,7 @@
 		<ID>-26002</ID>
 		<shape>tsHexagon</shape>
 		<level>tlMapFixed</level>
-		<name>Nantes/Sstrasbourg</name>
+		<name>Nantes/Strasbourg</name>
 		<junctions>
 			<junction>
 				<junType>jtCity</junType>
@@ -23985,6 +23985,138 @@
 				<conType>ctNormal</conType>
 				<position1>tpCenter</position1>
 				<position2>tp4SideD</position2>
+			</connection>
+		</connections>
+	</tile>
+	<tile>
+		<ID>-26004</ID>
+		<shape>tsHexagon</shape>
+		<level>tlMapUpgradableToGreen</level>
+		<name>Lille</name>
+		<junctions>
+			<junction>
+				<junType>jtCity</junType>
+				<position>tpCenter</position>
+				<revenue>
+					<value>20</value>
+					<position>tp3CornerA</position>
+				</revenue>
+			</junction>
+		</junctions>
+		<connections>
+			<connection>
+				<conType>ctNormal</conType>
+				<position1>tpCenter</position1>
+				<position2>tp4SideE</position2>
+			</connection>
+			<connection>
+				<conType>ctNormal</conType>
+				<position1>tpCenter</position1>
+				<position2>tp4SideD</position2>
+			</connection>
+		</connections>
+	</tile>
+	<tile>
+		<ID>-26005</ID>
+		<shape>tsHexagon</shape>
+		<level>tlMapUpgradableToGreen</level>
+		<name>Orleans</name>
+		<junctions>
+			<junction>
+				<junType>jtCity</junType>
+				<position>tpCenter</position>
+				<revenue>
+					<value>20</value>
+					<position>tp3CornerA</position>
+				</revenue>
+			</junction>
+		</junctions>
+		<connections>
+			<connection>
+				<conType>ctNormal</conType>
+				<position1>tpCenter</position1>
+				<position2>tp4SideA</position2>
+			</connection>
+			<connection>
+				<conType>ctNormal</conType>
+				<position1>tpCenter</position1>
+				<position2>tp4SideD</position2>
+			</connection>
+		</connections>
+	</tile>
+	<tile>
+		<ID>-26006</ID>
+		<shape>tsHexagon</shape>
+		<level>tlMapUpgradableToBrown</level>
+		<name>Brussels</name>
+		<junctions>
+			<junction>
+				<junType>jtDoubleCity</junType>
+				<position>tpCenter</position>
+				<revenue>
+					<value>30</value>
+					<position>tp3CornerA</position>
+				</revenue>
+			</junction>
+		</junctions>
+		<connections>
+			<connection>
+				<conType>ctNormal</conType>
+				<position1>tpCenter</position1>
+				<position2>tp4SideB</position2>
+			</connection>
+			<connection>
+				<conType>ctNormal</conType>
+				<position1>tpCenter</position1>
+				<position2>tp4SideC</position2>
+			</connection>
+			<connection>
+				<conType>ctNormal</conType>
+				<position1>tpCenter</position1>
+				<position2>tp4SideD</position2>
+			</connection>
+			<connection>
+				<conType>ctNormal</conType>
+				<position1>tpCenter</position1>
+				<position2>tp4SideF</position2>
+			</connection>
+		</connections>
+	</tile>
+	<tile>
+		<ID>-26007</ID>
+		<shape>tsHexagon</shape>
+		<level>tlMapUpgradableToBrown</level>
+		<name>Lyon</name>
+		<junctions>
+			<junction>
+				<junType>jtDoubleCity</junType>
+				<position>tpCenter</position>
+				<revenue>
+					<value>30</value>
+					<position>tp3CornerA</position>
+				</revenue>
+			</junction>
+		</junctions>
+		<connections>
+			<connection>
+				<conType>ctNormal</conType>
+				<position1>tpCenter</position1>
+				<position2>tp4SideA</position2>
+			</connection>
+			<connection>
+				<conType>ctNormal</conType>
+				<position1>tpCenter</position1>
+				<position2>tp4SideC</position2>
+			</connection>
+			<connection>
+				<conType>ctNormal</conType>
+				<position1>tpCenter</position1>
+				<position2>tp4SideD</position2>
+			</connection>
+			<connection>
+				<conType>ctNormal</conType>
+				<position1>tpCenter</position1>
+				<position2>tp4SideF</position2>
 			</connection>
 		</connections>
 	</tile>
