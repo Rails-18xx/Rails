@@ -1,0 +1,16 @@
+<TileManager tiles="Tiles.xml">
+
+
+	<Tile id="0"/>
+	<Tile id="-1"/>
+	<Tile id="-10"/>
+	<Tile id="57"/>
+	<Tile id="-901"/>
+	<Tile id="-902"/>
+	<Tile id="-903"/>
+	<Tile id="14"/>
+	<Tile id="619"/>
+	<Tile id="5"/>
+	<Tile id="-4007"/>
+
+</TileManager>

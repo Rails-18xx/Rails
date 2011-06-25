@@ -1,0 +1,117 @@
+<?xml version="1.0"?>
+<CompanyManager>
+	<CompanyType name="Private" class="rails.game.PrivateCompany">
+		<ClosingConditions>
+			<Phase>5</Phase>
+		</ClosingConditions>
+		<Tradeable toCompany="yes" lowerPriceFactor="0.5" upperPriceFactor="1.5"/>
+		<Tradeable toPlayer="yes"/>
+	</CompanyType>
+	<CompanyType name="Public" class="rails.game.PublicCompany">
+		<Capitalisation type="incremental"/>
+		<StockPrice par="no"/>
+		<Float percentage="60"/>
+		<ShareUnit percentage="10"/>
+		<Certificate type="President" shares="2"/>
+		<Certificate shares="1" number="8"/>
+		<BaseTokens>
+			<HomeBase lay="firstOR"/>
+			<LayCost method="sequence" cost="0,40,100"/>
+		</BaseTokens>
+		<Trains number="4,4,3,2"/>
+		<CanBuyPrivates/>
+		<CanUseSpecialProperties/>
+	</CompanyType>
+	
+	<Company name="Bridge" type="Private" basePrice="20" revenue="5"
+		longname="Ponts et Chaussées"></Company>
+
+	<Company name="Mail" type="Private" basePrice="40" revenue="10"
+		longname="Régie des Postes"></Company>
+		
+	<Company name="Algerian" type="Private" basePrice="70" revenue="15"
+		longname="Chemins de Fer D'Algérie"></Company>
+
+	<Company name="Belgian" type="Private" basePrice="110" revenue="20"
+		longname="Grand Central Belge"></Company>
+		
+	<Company name="Parisian" type="Private" basePrice="160" revenue="25"
+		longname="Compagnie Paris-Rouen"></Company>
+
+	<Company name="Alsatian" type="Private" basePrice="220" revenue="30"
+		longname="Ligne - Strasbourg-Bâle"></Company>
+
+	<Company name="A" type="Public" tokens="4" fgColour="FFFFFF" bgColour="120A8F"
+		longname="Chemin de Fer d'Alsace">
+		<Home hex="G19"/>
+	</Company>
+
+	<Company name="B" type="Public" tokens="4" fgColour="FFFFFF" bgColour="2E6444"
+		longname="Chemin de Fer de L'Etat Belge">
+		<Home hex="C13"/>
+	</Company>
+
+	<Company name="Est" type="Public" tokens="4" fgColour="000000" bgColour="FF6600"
+		longname="Chemin de Fer de L'Est">
+		<Home hex="G9"/>
+	</Company>
+
+	<Company name="GC" type="Public" tokens="4" fgColour="000000" bgColour="BCD2EE"
+		longname="Grand Central de France">
+		<Home hex="L14"/>
+	</Company>
+
+	<Company name="Midi" type="Public" tokens="4" fgColour="FFFFFF" bgColour="308014"
+		longname="Chemin de Fer du Midi">
+		<Home hex="M3"/>
+	</Company>
+	
+	<Company name="N" type="Public" tokens="4" fgColour="FFFFFF" bgColour="EE0000"
+		longname="Chemin de Fer du Nord">
+		<Home hex="G9"/>
+	</Company>
+
+	<Company name="Ouest" type="Public" tokens="4" fgColour="000000" bgColour="FF92BB"
+		longname="Chemin de Fer de L'Ouest">
+		<Home hex="G9"/>
+	</Company>
+	
+	<Company name="Paris" type="Public" tokens="4" fgColour="000000" bgColour="CECC15"
+		longname="Chemin de Fer de Paris">
+		<Home hex="G9"/>
+	</Company>
+
+	<Company name="PLM" type="Public" tokens="4" fgColour="FFFFFF" bgColour="691F01"
+		longname="Chemin de Fer Paris-Lyon-Méditerranée">
+		<Home hex="G9"/>
+	</Company>
+
+	<Company name="PO" type="Public" tokens="4" fgColour="FFFFFF" bgColour="0000CD"
+		longname="Chemin de Fer Paris-Orléans">
+		<Home hex="G9"/>
+	</Company>
+
+	<Company name="Etat" type="Public" tokens="4" fgColour="FFFFFF" bgColour="000000"
+		longname="Chemin de Fer de L'Etat">
+	</Company>
+
+	<Company name="SNCF" type="Public" tokens="4" fgColour="000000" bgColour="B3B3B3"
+		longname="Société Nationale des Chemins de fer Français">
+	</Company>	
+	
+	<StartPacket roundClass="rails.game.StartRound_1830">
+		<Bidding initial="5" minimum="5" increment="1"/>
+		<Item name="Bridge" type="Private" basePrice="20"/>
+		<Item name="Mail" type="Private" basePrice="40"/>
+		<Item name="Algerian" type="Private" basePrice="70"/>
+		<Item name="Belgian" type="Private" basePrice="110">
+			<SubItem name="B" type="Public" />
+		</Item>
+		<Item name="Parisian" type="Private" basePrice="160">
+			<SubItem name="Paris" type="Public" />
+		</Item>
+		<Item name="Alsatian" type="Private" basePrice="220">
+			<SubItem name="A" type="Public" president="yes"/>
+		</Item>
+	</StartPacket>
+</CompanyManager>

@@ -248,6 +248,11 @@ Known Issues:
         <Option name="UnlimitedTiles" type="toggle" default="no"/>
         <Option name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
   </Game>
+   <Game name="1826">
+    <Note>Prototype</Note>
+    <Description>1826</Description>
+    <Players minimum="2" maximum="6" />
+  </Game> 
   <Game name="18JR">
     <Note>Prototype</Note>
     <Description>18JR</Description>

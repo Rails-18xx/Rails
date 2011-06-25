@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Tiles>
+	<Tile colour="white" id="0" name="empty"/>
+	<Tile colour="white" id="-1" name="empty"/>
+	<Tile colour="white" id="-10" name="empty"/>
+	<Tile colour="white" id="57" name="empty"/>
+	<Tile colour="white" id="-901" name="empty"/>
+	<Tile colour="white" id="-902" name="empty"/>
+	<Tile colour="white" id="-903" name="empty"/>
+	<Tile colour="white" id="14" name="empty"/>
+	<Tile colour="white" id="619" name="empty"/>
+	<Tile colour="white" id="5" name="empty"/>
+	<Tile colour="white" id="-4007" name="empty"/>
+		
+</Tiles>
