@@ -17376,7 +17376,7 @@ object TTilesWrapper
     end
     item
       Code = -26002
-      LongName = 'Nantes/Sstrasbourg'
+      LongName = 'Nantes/Strasbourg'
       Connections = <
         item
           Position1 = tpCenter
@@ -17416,6 +17416,98 @@ object TTilesWrapper
         item
           JunType = jtCity
           Revenue = 40
+        end>
+    end
+    item
+      Code = -26004
+      LongName = 'Lille'
+      Level = tlMapUpgradableToGreen
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Revenue = 20
+        end>
+    end
+    item
+      Code = -26005
+      LongName = 'Orleans'
+      Level = tlMapUpgradableToGreen
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Revenue = 20
+        end>
+    end
+    item
+      Code = -26006
+      LongName = 'Brussels'
+      Level = tlMapUpgradableToBrown
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end>
+      Junctions = <
+        item
+          JunType = jtDoubleCity
+          Revenue = 30
+        end>
+    end
+    item
+      Code = -26007
+      LongName = 'Lyon'
+      Level = tlMapUpgradableToBrown
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end>
+      Junctions = <
+        item
+          JunType = jtDoubleCity
+          Revenue = 30
         end>
     end>
 end
