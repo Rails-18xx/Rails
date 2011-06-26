@@ -1912,9 +1912,9 @@
 		<Track from="city1" gauge="normal" to="side4"/>
 	</Tile>
 	<Tile colour="brown" id="1455" name="GA455">
-		<Station id="city1" position="502" slots="1" type="City" value="60"/>
-		<Station id="city2" position="102" slots="1" type="City" value="60"/>
-		<Station id="city3" position="302" slots="1" type="City" value="60"/>
+		<Station id="city1" position="502" slots="1" type="City" value="70"/>
+		<Station id="city2" position="102" slots="1" type="City" value="70"/>
+		<Station id="city3" position="302" slots="1" type="City" value="70"/>
 		<Track from="city2" gauge="normal" to="side1"/>
 		<Track from="city2" gauge="normal" to="side4"/>
 		<Track from="city1" gauge="normal" to="side5"/>
@@ -4196,7 +4196,7 @@
 		<Track from="city5" gauge="normal" to="side4"/>
 		<Track from="city6" gauge="normal" to="side5"/>
 	</Tile>
-	<Tile colour="fixed" id="-26002" name="Nantes/Strasbourg">
+	<Tile colour="fixed" id="-26002" name="Nantes/Sstrasbourg">
 		<Station id="city1" position="0" slots="1" type="City" value="40"/>
 		<Track from="city1" gauge="normal" to="side0"/>
 		<Track from="city1" gauge="normal" to="side1"/>
@@ -4207,29 +4207,5 @@
 		<Track from="city1" gauge="normal" to="side0"/>
 		<Track from="city1" gauge="normal" to="side1"/>
 		<Track from="city1" gauge="normal" to="side3"/>
-	</Tile>
-	<Tile colour="yellow" id="-26004" name="Lille">
-		<Station id="city1" position="0" slots="1" type="City" value="20"/>
-		<Track from="city1" gauge="normal" to="side4"/>
-		<Track from="city1" gauge="normal" to="side3"/>
-	</Tile>
-	<Tile colour="yellow" id="-26005" name="Orleans">
-		<Station id="city1" position="0" slots="1" type="City" value="20"/>
-		<Track from="city1" gauge="normal" to="side0"/>
-		<Track from="city1" gauge="normal" to="side3"/>
-	</Tile>
-	<Tile colour="green" id="-26006" name="Brussels">
-		<Station id="city1" position="0" slots="2" type="City" value="30"/>
-		<Track from="city1" gauge="normal" to="side1"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-		<Track from="city1" gauge="normal" to="side3"/>
-		<Track from="city1" gauge="normal" to="side5"/>
-	</Tile>
-	<Tile colour="green" id="-26007" name="Lyon">
-		<Station id="city1" position="0" slots="2" type="City" value="30"/>
-		<Track from="city1" gauge="normal" to="side0"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-		<Track from="city1" gauge="normal" to="side3"/>
-		<Track from="city1" gauge="normal" to="side5"/>
 	</Tile>
 </Tiles>

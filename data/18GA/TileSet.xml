@@ -49,14 +49,18 @@
 	<Tile id="5" quantity="2">
 		<Upgrade id="14,15" hex="-D10,G13" />
 		<Upgrade id="1453" hex="D10" />
-		<Upgrade id="1454" hex="G13" />
+		<IfOption name="Variant" value="Basegame">
+			<Upgrade id="1454" hex="G13" />
+		</IfOption>
 	</Tile>
 
 	<!-- Gentle-curve city (20) -->
 	<Tile id="6" quantity="2">
 		<Upgrade id="14,15" hex="-D10,G13" />
 		<Upgrade id="1453" hex="D10" />
-		<Upgrade id="1454" hex="G13" />
+		<IfOption name="Variant" value="Basegame">
+			<Upgrade id="1454" hex="G13" />
+		</IfOption>
 	</Tile>
 
 	<!-- Sharp curve -->
@@ -78,7 +82,9 @@
 	<Tile id="57" quantity="4">
 		<Upgrade id="14,15" hex="-D10,-G13" />
 		<Upgrade id="1453" hex="D10" />
-		<Upgrade id="1454" hex="G13" />
+		<IfOption name="Variant" value="Basegame">
+			<Upgrade id="1454" hex="G13" />
+		</IfOption>
 	</Tile>
 
 	<!-- Gentle-curve dit (10) -->
@@ -181,10 +187,12 @@
 		<Upgrade id="1456" />
 	</Tile>
 
-	<!-- City (30), exits N,NW,SW, "Savannah" -->
-	<Tile id="1454" extId="454" quantity="1">
-		<Upgrade id="1459" />
-	</Tile>
+	<IfOption name="Variant" value="Basegame">
+		<!-- City (30), exits N,NW,SW, "Savannah" -->
+		<Tile id="1454" extId="454" quantity="1">
+			<Upgrade id="1459" />
+		</Tile>
+	</IfOption>
 
 	<!-- Brown Tiles -->
 
@@ -233,7 +241,9 @@
 	<!-- 5-way city (50), "Macon" -->
 	<Tile id="1458" extId="458" quantity="1" />
 
-	<!-- City (60), exits N,NW,SW, "Savannah" -->
-	<Tile id="1459" extId="459" quantity="1" />
+	<IfOption name="Variant" value="Basegame">
+		<!-- City (60), exits N,NW,SW, "Savannah" -->
+		<Tile id="1459" extId="459" quantity="1" />
+	</IfOption>
 
 </TileManager>

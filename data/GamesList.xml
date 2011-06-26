@@ -128,7 +128,6 @@ Limitation:
 Published 2004 by Deep Thought Games, LLC
  
 Not yet implemented:
-- High mountain yellow to green upgrade cost ($60)
 - Bankruptcy rules (game currently hangs when a player goes bankrupt)
 		</Description>
 		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
@@ -139,6 +138,21 @@ Not yet implemented:
 		<Option name="UnlimitedTiles" type="toggle" default="no"/>
 		<Players minimum="2" maximum="6"/>
 	</Game>
+
+     <Game name="18GA">
+        <Note>Fully Playable</Note>
+        <Description>18GA - The Railroads Come to Georgia
+        Copyright 2000, 2007, Mark Derrick and John David Galt</Description>
+		<Option name="Variant" values="Basegame,Cotton Port" default="Basegame" />
+		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
+		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
+		<Option name="NoMapMode" type="toggle" default="no" />
+		<Option name="UnlimitedTopTrains" parm="8" type="toggle" default="no"/>
+		<Option name="UnlimitedTiles" type="toggle" default="no"/>
+		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
+		<Option name="TwoPlayersCertLimit70Percent" type="toggle" default="no"/>
+        <Players minimum="2" maximum="5"/>
+    </Game>
 
 	<Game name="18Kaas">
 		<Note>Fully playable</Note>
@@ -250,7 +264,7 @@ Known Issues:
   </Game>
    <Game name="1826">
     <Note>Prototype</Note>
-    <Description>1826</Description>
+    <Description>1826 - Railroading in France and Belgium from 1826</Description>
     <Players minimum="2" maximum="6" />
   </Game> 
   <Game name="18JR">
@@ -275,22 +289,10 @@ Known Issues:
     <Description>18VA</Description>
     <Players minimum="2" maximum="5" />
   </Game>
-     <Game name="18GA">
-        <Note>Prototype</Note>
-        <Description>18GA</Description>
-		<Option name="Variant" values="Basegame,Cotton Port" default="Basegame" />
-		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
-		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
-		<Option name="NoMapMode" type="toggle" default="no" />
-		<Option name="UnlimitedTopTrains" parm="8" type="toggle" default="no"/>
-		<Option name="UnlimitedTiles" type="toggle" default="no"/>
-		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
-		<Option name="TwoPlayersCertLimit70Percent" type="toggle" default="no"/>
-        <Players minimum="2" maximum="5"/>
-    </Game>
+
      <Game name="18TN">
         <Note>Prototype</Note>
-        <Description>18TN</Description>
+        <Description>18TN - The Railroads Come to Tennessee</Description>
 		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
 		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
 		<Option name="NoMapMode" type="toggle" default="no" />
