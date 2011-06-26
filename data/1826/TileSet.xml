@@ -17,4 +17,50 @@
     <Tile id="-103"/>
     <Tile id="-105"/>
 
+    <Tile id="3" quantity="2"/>
+    <Tile id="4" quantity="6"/>
+    <Tile id="5" quantity="2"/>
+    <Tile id="6" quantity="2"/>
+    <Tile id="7" quantity="4"/>
+    <Tile id="8" quantity="16"/>
+    <Tile id="9" quantity="21"/>
+    <Tile id="57" quantity="4"/>
+    <Tile id="58" quantity="6"/>
+    <Tile id="14" quantity="3"/>
+    <Tile id="15" quantity="3"/>
+    <Tile id="16" quantity="1"/>
+    <Tile id="19" quantity="1"/>
+    <Tile id="20" quantity="1"/>
+    <Tile id="23" quantity="5"/>
+    <Tile id="24" quantity="5"/>
+    <Tile id="25" quantity="3"/>
+    <Tile id="26" quantity="1"/>
+    <Tile id="27" quantity="1"/>
+    <Tile id="28" quantity="1"/>
+    <Tile id="29" quantity="1"/>
+    <Tile id="87" quantity="2"/>
+    <Tile id="88" quantity="2"/>
+    <Tile id="141" quantity="1"/>
+    <Tile id="142" quantity="1"/>
+    <Tile id="143" quantity="1"/>
+    <Tile id="203" quantity="1"/>
+    <Tile id="204" quantity="2"/>
+    <Tile id="514" quantity="1"/>
+    <Tile id="619" quantity="3"/>
+    <Tile id="39" quantity="1"/>
+    <Tile id="40" quantity="1"/>
+    <Tile id="41" quantity="2"/>
+    <Tile id="42" quantity="2"/>
+    <Tile id="43" quantity="3"/>
+    <Tile id="44" quantity="1"/>
+    <Tile id="45" quantity="2"/>
+    <Tile id="46" quantity="2"/>
+    <Tile id="47" quantity="3"/>
+    <Tile id="63" quantity="5"/>
+    <Tile id="70" quantity="1"/>
+    <Tile id="515" quantity="1"/>
+    <Tile id="611" quantity="2"/>
+    <Tile id="513" quantity="3"/>
+    <Tile id="516" quantity="1"/>
+
 </TileManager>
