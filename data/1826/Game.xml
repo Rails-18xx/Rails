@@ -66,13 +66,36 @@
 				cities="double" if city-revenue is doubled (e.g. 1826 TGV).
 			-->
 		</Defaults>
-		<TrainType name="2" majorStops="2" cost="80" quantity="5" obsoleting="yes"/>
+		<TrainType name="2H" majorStops="2" cost="100" quantity="8"/>
+		<TrainType name="4H" majorStops="4" cost="200" quantity="7" startPhase="4H"/>
+		<TrainType name="6H" majorStops="6" cost="300" quantity="6" startPhase="6H" 
+			rustedTrain="2H"/>
+		<TrainType name="10H" majorStops="10" cost="600" quantity="5" startPhase="10H" 
+			rustedTrain="4H"/>
+		<TrainType name="E" majorStops="6" cost="800" quantity="4" startPhase="E"
+			rustedTrain="6H"/>
+		<TrainType name="TGV" majorStops="4" cost="1000" quantity="10" startPhase="TGV"/>
 	</Component>
 	<Component name="PhaseManager" class="rails.game.PhaseManager">
-		<Phase name="2" >
+		<Phase name="2H" >
 			<Tiles colour="yellow"/>
 			<OperatingRounds number="1"/>
-			<Trains onePerTurn="yes" tradingAllowed="yes"/>
+			<Trains tradingAllowed="yes"/>
+		</Phase>
+		<Phase name="4H" >
+			<Tiles colour="yellow,green"/>
+			<OperatingRounds number="2"/>
+		</Phase>
+		<Phase name="6H" >
+		</Phase>
+		<Phase name="10H" >
+			<Tiles colour="yellow,green,brown"/>
+			<OperatingRounds number="3"/>
+		</Phase>
+		<Phase name="E" >
+		</Phase>
+		<Phase name="TGV" >
+			<Tiles colour="yellow,green,brown,gray"/>
 		</Phase>
 	</Component>
 	<Component name="RevenueManager" class="rails.algorithms.RevenueManager">
