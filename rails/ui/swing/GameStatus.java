@@ -73,6 +73,7 @@ public class GameStatus extends GridPanel implements ActionListener {
     protected Field playerCertCount[];
     protected int playerCertCountXOffset, playerCertCountYOffset;
     protected int certLimitXOffset, certLimitYOffset;
+    protected int phaseXOffset, phaseYOffset;
     protected Field bankCash;
     protected int bankCashXOffset, bankCashYOffset;
     protected Field poolTrains;
@@ -228,6 +229,8 @@ public class GameStatus extends GridPanel implements ActionListener {
         playerCertCountYOffset = ++lastY;
         certLimitXOffset = certInPoolXOffset;
         certLimitYOffset = playerCertCountYOffset;
+        phaseXOffset = certInPoolXOffset + 2;
+        phaseYOffset = playerCertCountYOffset;
         bankCashXOffset = certInPoolXOffset;
         bankCashYOffset = playerPrivatesYOffset;
         poolTrainsXOffset = bankCashXOffset + 2;
@@ -488,6 +491,13 @@ public class GameStatus extends GridPanel implements ActionListener {
         addField(new Field(gameUIManager.getGameManager().getPlayerCertificateLimitModel()),
                 certLimitXOffset,
                 certLimitYOffset, 1, 1, WIDE_TOP, true);
+
+        // Phase
+        addField(new Caption(LocalText.getText("PHASE")), phaseXOffset - 1,
+                phaseYOffset, 1, 1, WIDE_TOP + WIDE_LEFT, true);
+        addField(new Field(gameUIManager.getGameManager().getPhaseManager().getCurrentPhaseModel()),
+                phaseXOffset,
+                phaseYOffset, 1, 1, WIDE_TOP, true);
 
         // Bank
         addField(new Caption(LocalText.getText("BANK")), bankCashXOffset - 1,

@@ -5,6 +5,7 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
+import rails.game.model.ModelObject;
 import rails.game.state.State;
 import rails.util.Tag;
 
@@ -56,6 +57,10 @@ public class PhaseManager implements ConfigurableComponentI {
 
     public PhaseI getCurrentPhase() {
         return (PhaseI) currentPhase.get();
+    }
+    
+    public ModelObject getCurrentPhaseModel() {
+        return currentPhase;
     }
 
     public int getCurrentPhaseIndex() {
