@@ -188,6 +188,7 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
 
     public abstract String getClassName(GuiDef.ClassName key);
 
+    public void setGuiParameter (GuiDef.Parm key, boolean value);
     public abstract Object getGuiParameter(GuiDef.Parm key);
     public Object getGameParameter (GameDef.Parm key);
     public void setGameParameter (GameDef.Parm key, Object value);

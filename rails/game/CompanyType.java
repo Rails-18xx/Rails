@@ -24,8 +24,6 @@ public class CompanyType implements CompanyTypeI {
     protected String className;
     protected int capitalisation = PublicCompanyI.CAPITALISE_FULL;
 
-    private CompanyI dummyCompany;
-
     protected List<CompanyI> companies = new ArrayList<CompanyI>();
 
     /**
@@ -46,44 +44,26 @@ public class CompanyType implements CompanyTypeI {
      * @see rails.game.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
      */
     public void configureFromXML(Tag tag) throws ConfigurationException {
-
-        /* Create a dummy company implementing this company type */
-        try {
-            dummyCompany = (Company) Class.forName(className).newInstance();
-        } catch (Exception e) {
-            throw new ConfigurationException(LocalText.getText(
-                    "ClassCannotBeInstantiated", className), e);
-        }
-        dummyCompany.init("", this);
-        dummyCompany.configureFromXML(tag);
-
-        /*
-         * Must be rewritten to a new tag String capitalMode =
-         * XmlUtils.extractStringAttribute(nnp, "capitalisation", "full");
-         * setCapitalisation(capitalMode);
-         */
-
+        //No longer needed.
     }
 
     public void finishConfiguration (GameManagerI gameManager) {
 
     }
 
-    public CompanyI createCompany(String name, Tag tag)
-            throws ConfigurationException {
+    public CompanyI createCompany(String name, Tag typeTag, Tag tag)
+    throws ConfigurationException {
         CompanyI newCompany = null;
         try {
-            newCompany = (CompanyI) dummyCompany.clone();
-            if (newCompany == null) {
-                throw new ConfigurationException("Cannot clone company " + name);
-            }
-            newCompany.init(name, this);
-            newCompany.configureFromXML(tag);
-            companies.add(newCompany);
-        } catch (CloneNotSupportedException e) {
-            DisplayBuffer.add(LocalText.getText("CantCloneCompany",
-                    name, this.name ));
+            newCompany = (Company) Class.forName(className).newInstance();
+        } catch (Exception e) {
+            throw new ConfigurationException(LocalText.getText(
+                    "ClassCannotBeInstantiated", className), e);
         }
+        newCompany.init(name, this);
+        newCompany.configureFromXML(typeTag);
+        newCompany.configureFromXML(tag);
+        companies.add(newCompany);
         return newCompany;
     }
 
@@ -126,7 +106,4 @@ public class CompanyType implements CompanyTypeI {
         return capitalisation;
     }
 
-    public CompanyI getDummyCompany() {
-        return dummyCompany;
-    }
 }

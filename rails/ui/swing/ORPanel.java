@@ -90,10 +90,13 @@ implements ActionListener, KeyListener, RevenueListener {
     private Field trains[];
     private int trainsXOffset, trainsYOffset;
     private Field newTrainCost[];
+    private int rightsXOffset, rightsYOffset;
+    private Field rights[];
 
     private boolean privatesCanBeBought = false;
     private boolean bonusTokensExist = false;
     private boolean hasCompanyLoans = false;
+    private boolean hasRights;
 
     private Caption tileCaption, tokenCaption, revenueCaption, trainCaption,
             privatesCaption, loansCaption;
@@ -138,6 +141,7 @@ implements ActionListener, KeyListener, RevenueListener {
         privatesCanBeBought = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.CAN_ANY_COMPANY_BUY_PRIVATES);
         bonusTokensExist = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.DO_BONUS_TOKENS_EXIST);
         hasCompanyLoans = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_ANY_COMPANY_LOANS);
+        hasRights = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_ANY_RIGHTS);
 
         initButtonPanel();
         gbc = new GridBagConstraints();
@@ -296,6 +300,7 @@ implements ActionListener, KeyListener, RevenueListener {
         tokensLeft = new Field[nc];
         if (bonusTokensExist) tokenBonus = new Field[nc];
         if (hasCompanyLoans) compLoans = new Field[nc];
+        if (hasRights) rights = new Field[nc];
         revenue = new Field[nc];
         revenueSelect = new Spinner[nc];
         decision = new Field[nc];
@@ -342,6 +347,13 @@ implements ActionListener, KeyListener, RevenueListener {
             loansYOffset = leftCompNameYOffset;
             addField (loansCaption = new Caption(LocalText.getText("LOANS")),
                     loansXOffset, 0, lastXWidth = 1, 2, WIDE_RIGHT);
+        }
+        
+        if (hasRights) {
+            rightsXOffset = currentXOffset += lastXWidth;
+            rightsYOffset = leftCompNameYOffset;
+            addField (new Caption(LocalText.getText("RIGHTS")),
+                    rightsXOffset, 0, lastXWidth = 1, 2, WIDE_RIGHT);
         }
 
         tilesXOffset = currentXOffset += lastXWidth;
@@ -440,6 +452,11 @@ implements ActionListener, KeyListener, RevenueListener {
                     f = compLoans[i] = new Field ("");
                 }
                 addField (f, loansXOffset, loansYOffset + i, 1, 1, WIDE_RIGHT, visible);
+            }
+            
+            if (hasRights) {
+                f = rights[i] = new Field (c.getRightsModel());
+                addField (f, rightsXOffset, rightsYOffset + i, 1, 1, WIDE_RIGHT, visible);
             }
 
             f = tiles[i] = new Field(c.getTilesLaidThisTurnModel());

@@ -1,8 +1,7 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialPropertyI.java,v 1.12 2010/03/16 21:21:59 evos Exp $ */
 package rails.game.special;
 
-import rails.game.CompanyI;
-import rails.game.ConfigurableComponentI;
+import rails.game.*;
 import rails.game.move.Moveable;
 import rails.game.move.MoveableHolder;
 
@@ -25,7 +24,7 @@ public interface SpecialPropertyI extends ConfigurableComponentI, Moveable {
 
     public void setUsableIfOwnedByPlayer(boolean usableIfOwnedByPlayer);
 
-    public boolean isUsableDuringOR();
+    public boolean isUsableDuringOR(GameDef.OrStep step);
 
     public void setUsableDuringOR(boolean usableDuringOR);
 

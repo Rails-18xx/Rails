@@ -302,10 +302,12 @@ implements ActionListener, KeyListener {
             if (Util.hasValue(result)) {
                 try {
                     int index = Integer.parseInt(result);
-                    executedActions.remove(index);
+                    PossibleAction action = executedActions.get(index);
+                    executedActions.remove(action);
+                    savedObjects.remove(action);
                     setReportText(false);
                 } catch (NumberFormatException e) {
-
+                    log.error("Number format exception for '"+result+"'", e);
                 }
             }
         } else if ("SAVE".equalsIgnoreCase(command)) {

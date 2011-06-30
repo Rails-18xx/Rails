@@ -37,6 +37,7 @@ public class GuiDef {
         CAN_ANY_COMPANY_BUY_PRIVATES,
         DO_BONUS_TOKENS_EXIST,
         HAS_ANY_COMPANY_LOANS,
+        HAS_ANY_RIGHTS,
         NO_MAP_MODE,
         REVENUE_SUGGEST,
         ROUTE_HIGHLIGHT

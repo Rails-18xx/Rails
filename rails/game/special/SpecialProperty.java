@@ -169,8 +169,18 @@ public abstract class SpecialProperty implements SpecialPropertyI {
     }
     
 
-    public boolean isUsableDuringOR() {
-        return usableDuringOR;
+    public boolean isUsableDuringOR(GameDef.OrStep step) {
+        
+        if (usableDuringOR) return true;
+        
+        switch (step) {
+        case LAY_TRACK:
+            return usableDuringTileLayingStep;
+        case LAY_TOKEN:
+            return usableDuringTokenLayingStep;
+        default:
+            return false;
+        }
     }
 
     public void setUsableDuringOR(boolean usableDuringOR) {

@@ -28,7 +28,7 @@ public interface CompanyTypeI extends ConfigurableComponentI {
 
     // public void configureFromXML(Element el) throws ConfigurationException;
 
-    public CompanyI createCompany(String name, Tag tag)
+    public CompanyI createCompany(String name, Tag typeTag, Tag tag)
             throws ConfigurationException;
 
     /**
@@ -48,6 +48,4 @@ public interface CompanyTypeI extends ConfigurableComponentI {
     public void setCapitalisation(String mode);
 
     public int getCapitalisation();
-
-    public CompanyI getDummyCompany();
 }

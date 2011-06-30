@@ -241,6 +241,11 @@ public class OperatingRound extends Round implements Observer {
         } else if (selectedAction instanceof ClosePrivate) {
 
             result = executeClosePrivate((ClosePrivate)selectedAction);
+            
+        } else if (selectedAction instanceof UseSpecialProperty
+                && ((UseSpecialProperty)selectedAction).getSpecialProperty() instanceof SpecialRight) {
+            
+            result = buyRight ((UseSpecialProperty)selectedAction);
 
         } else if (selectedAction instanceof NullAction) {
 
@@ -2305,6 +2310,44 @@ public class OperatingRound extends Round implements Observer {
         return numberOfLoans * operatingCompany.get().getValuePerLoan();
     }
 
+    protected boolean buyRight (UseSpecialProperty action) {
+        
+        String errMsg = null;
+        
+        SpecialPropertyI sp = action.getSpecialProperty();
+        if (!(sp instanceof SpecialRight)) {
+            errMsg = "Wrong right property class: "+sp.toString();
+        }
+        
+        SpecialRight right = (SpecialRight) sp;
+        String rightName = right.getName();
+        String rightValue = right.getValue();
+
+        if (errMsg != null) {
+            DisplayBuffer.add(LocalText.getText("CannotBuyRight",
+                    action.getCompanyName(),
+                    rightName,
+                    Bank.format(right.getCost()),
+                    errMsg));
+
+            return false;
+        }
+
+        moveStack.start(true);
+
+        operatingCompany.get().setRight(rightName, rightValue);
+        new CashMove (operatingCompany.get(), bank, right.getCost());
+        
+        ReportBuffer.add(LocalText.getText("BuysRight",
+                operatingCompany.get().getName(),
+                rightName,
+                Bank.format(right.getCost())));
+        
+        sp.setExercised();
+
+        return true;
+    }
+    
     /*----- METHODS TO BE CALLED TO SET UP THE NEXT TURN -----*/
 
     /**
@@ -2486,10 +2529,13 @@ public class OperatingRound extends Round implements Observer {
 
                 // Are there other step-independent special properties owned by the company?
                 List<SpecialPropertyI> orsps = operatingCompany.get().getPortfolio().getAllSpecialProperties();
+                List<SpecialPropertyI> compsps = operatingCompany.get().getSpecialProperties();
+                if (compsps != null) orsps.addAll(compsps);
+                
                 if (orsps != null) {
                     for (SpecialPropertyI sp : orsps) {
                         if (!sp.isExercised() && sp.isUsableIfOwnedByCompany()
-                                && sp.isUsableDuringOR()) {
+                                && sp.isUsableDuringOR(step)) {
                             if (sp instanceof SpecialTokenLay) {
                                 if (getStep() != GameDef.OrStep.LAY_TOKEN) {
                                     possibleActions.add(new LayBaseToken((SpecialTokenLay)sp));
@@ -2505,7 +2551,7 @@ public class OperatingRound extends Round implements Observer {
                 if (orsps != null) {
                     for (SpecialPropertyI sp : orsps) {
                         if (!sp.isExercised() && sp.isUsableIfOwnedByPlayer()
-                                && sp.isUsableDuringOR()) {
+                                && sp.isUsableDuringOR(step)) {
                             if (sp instanceof SpecialTokenLay) {
                                 if (getStep() != GameDef.OrStep.LAY_TOKEN) {
                                     possibleActions.add(new LayBaseToken((SpecialTokenLay)sp));

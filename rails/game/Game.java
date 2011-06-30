@@ -258,13 +258,14 @@ public class Game {
                 return null;
             }
             GameManagerI gameManager = game.getGameManager();
-            int numberOfActions = 0;
 
             log.debug("Starting to execute loaded actions");
 
             gameManager.setReloading(true);
 
             Object actionObject = null;
+            int actionIndex = 0;
+            
             while (true) { // Single-pass loop.
                 try {
                     actionObject = ois.readObject();
@@ -276,8 +277,8 @@ public class Game {
                     // Old-style: one List of PossibleActions
                     List<PossibleAction> executedActions =
                         (List<PossibleAction>) actionObject;
-                    numberOfActions = executedActions.size();
                     for (PossibleAction action : executedActions) {
+                        ++actionIndex;
                         try {
                             if (!gameManager.processOnReload(action)) {
                                 log.error ("Load interrupted");
@@ -285,14 +286,14 @@ public class Game {
                                 break;
                             }
                         } catch (Exception e) {
-                            log.fatal("Action '"+action+"' reload exception", e);
+                            log.fatal("Action "+actionIndex+" '"+action+"' reload exception", e);
                             throw new Exception ("Reload exception", e);
                         }
                     }
                 } else if (actionObject instanceof PossibleAction) {
                     // New style: separate PossibleActionsObjects, since Rails 1.3.1
                     while (actionObject instanceof PossibleAction) {
-                        numberOfActions++;
+                        ++actionIndex;
                         try {
                             if (!gameManager.processOnReload((PossibleAction)actionObject)) {
                                 log.error ("Load interrupted");
@@ -300,7 +301,7 @@ public class Game {
                                 break;
                             }
                         } catch (Exception e) {
-                            log.fatal("Action '"+((PossibleAction)actionObject).toString()
+                            log.fatal("Action "+actionIndex+" '"+((PossibleAction)actionObject).toString()
                                     +"' reload exception", e);
                             throw new Exception ("Reload exception", e);
                         }

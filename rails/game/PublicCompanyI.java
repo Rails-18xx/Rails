@@ -342,9 +342,14 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolder {
     public int getMaxLoansPerRound();
     public int getValuePerLoan();
     public MoneyModel getLoanValueModel ();
+    public RightsModel getRightsModel ();
 
     public int sharesOwnedByPlayers();
     public String getExtraShareMarks ();
+
+    public void setRight (String nameOfRight, String value);
+    public boolean hasRight (String nameOfRight);
+    public String getRight (String nameOfRight);
 
     public ModelObject getInGameModel ();
     public ModelObject getIsClosedModel ();

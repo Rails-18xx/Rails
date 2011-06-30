@@ -1706,6 +1706,10 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             return false;
         }
     }
+    
+    public void setGuiParameter (GuiDef.Parm key, boolean value) {
+        guiParameters.put (key, value);
+    }
 
     public void setGameParameter (GameDef.Parm key, Object value) {
         gameParameters.put(key, value);

@@ -4,11 +4,11 @@ package rails.game;
 import java.awt.Color;
 import java.util.*;
 
+import rails.common.GuiDef;
 import rails.game.action.SetDividend;
 import rails.game.model.*;
 import rails.game.move.*;
-import rails.game.special.SellBonusToken;
-import rails.game.special.SpecialPropertyI;
+import rails.game.special.*;
 import rails.game.state.*;
 import rails.util.*;
 
@@ -274,6 +274,11 @@ public class PublicCompany extends Company implements PublicCompanyI {
     protected Bank bank;
     protected StockMarketI stockMarket;
     protected MapManager mapManager;
+    
+    /** Rights */
+    protected HashMapState<String, String> rights = null;
+    protected RightsModel rightsModel = new RightsModel();
+  
 
     /**
      * The constructor. The way this class is instantiated does not allow
@@ -607,6 +612,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
             ("mustTradeTrainsAtFixedPrice", mustTradeTrainsAtFixedPrice);
             canClose = optionsTag.getAttributeAsBoolean("canClose", canClose);
         }
+        
     }
 
     /** Initialisation, to be called directly after instantiation (cloning) */
@@ -652,28 +658,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
             canSharePriceVary = new BooleanState (name+"_CanSharePriceVary", true);
         }
 
-        if (turnsWithExtraTileLaysInit != null) {
-            turnsWithExtraTileLays = new HashMap<String, IntegerState>();
-            for (String colour : turnsWithExtraTileLaysInit.keySet()) {
-                turnsWithExtraTileLays.put(colour, new IntegerState(
-                        name + "_" + colour + "_ExtraTileTurns",
-                        turnsWithExtraTileLaysInit.get(colour)));
-            }
-        }
-
-        PublicCompanyI dummyCompany = (PublicCompanyI) type.getDummyCompany();
-        if (dummyCompany != null) {
-            fgHexColour = dummyCompany.getHexFgColour();
-            bgHexColour = dummyCompany.getHexBgColour();
-        }
-
-        if (maxNumberOfLoans != 0) {
-            currentNumberOfLoans = new IntegerState (name+"_Loans", 0);
-            currentLoanValue = new MoneyModel (name+"_LoanValue", 0);
-            currentLoanValue.setOption(MoneyModel.SUPPRESS_ZERO);
-        }
-
-    }
+   }
 
     public void setIndex (int index) {
         publicNumber = index;
@@ -689,6 +674,21 @@ public class PublicCompany extends Company implements PublicCompanyI {
         bank = gameManager.getBank();
         stockMarket = gameManager.getStockMarket();
         mapManager = gameManager.getMapManager();
+
+        if (turnsWithExtraTileLaysInit != null) {
+            turnsWithExtraTileLays = new HashMap<String, IntegerState>();
+            for (String colour : turnsWithExtraTileLaysInit.keySet()) {
+                turnsWithExtraTileLays.put(colour, new IntegerState(
+                        name + "_" + colour + "_ExtraTileTurns",
+                        turnsWithExtraTileLaysInit.get(colour)));
+            }
+        }
+
+       if (maxNumberOfLoans != 0) {
+            currentNumberOfLoans = new IntegerState (name+"_Loans", 0);
+            currentLoanValue = new MoneyModel (name+"_LoanValue", 0);
+            currentLoanValue.setOption(MoneyModel.SUPPRESS_ZERO);
+        }
 
         if (hasStockPrice && Util.hasValue(startSpace)) {
             parPrice.setPrice(stockMarket.getStockSpace(
@@ -756,6 +756,15 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
         infoText += parentInfoText;
         parentInfoText = "";
+        
+        // Can companies acquire special rights (such as in 1830 Coalfields)?
+        if (specialProperties != null) {
+            for (SpecialPropertyI sp : specialProperties) {
+                if (sp instanceof SpecialRight) {
+                    gameManager.setGuiParameter (GuiDef.Parm.HAS_ANY_RIGHTS, true);
+                }
+            }
+        }
     }
 
     /** Reset turn objects */
@@ -1973,11 +1982,32 @@ public class PublicCompany extends Company implements PublicCompanyI {
     public MoneyModel getLoanValueModel () {
         return currentLoanValue;
     }
+    
+    public RightsModel getRightsModel () {
+        return rightsModel;
+    }
 
     public boolean canClose() {
         return canClose;
     }
-
+    
+    public void setRight (String nameOfRight, String value) {
+        if (rights == null) {
+            rights = new HashMapState<String, String>(name+"_Rights");
+            rightsModel.init (rights);
+        }
+        rights.put(nameOfRight, value);
+        rightsModel.update();
+    }
+    
+    public boolean hasRight (String nameOfRight) {
+        return rights != null && rights.hasKey(nameOfRight);
+    }
+    
+    public String getRight (String nameOfRight) {
+        return rights != null ? rights.get(nameOfRight) : null;
+    }
+    
     @Override
     public Object clone() {
 
@@ -1995,6 +2025,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
          */
         if (certificates != null) {
             ((PublicCompanyI) clone).setCertificates(certificates);
+        }
+        if (specialProperties != null) {
+            ((PublicCompany) clone).specialProperties = new ArrayList<SpecialPropertyI>(specialProperties);
         }
 
         return clone;

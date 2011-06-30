@@ -59,6 +59,10 @@ public class HashMapState<K,V>{
        new RemoveFromMap<K,V>(map, key);
     }
     
+    public boolean hasKey(K key) {
+        return map.containsKey(key);
+    }
+    
     public void clear() {
         // Two-step process to avoid concurrent modification exception
         List<K> keys = new ArrayList<K>();

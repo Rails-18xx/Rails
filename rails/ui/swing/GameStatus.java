@@ -61,6 +61,8 @@ public class GameStatus extends GridPanel implements ActionListener {
     protected int compPrivatesXOffset, compPrivatesYOffset;
     protected Field compLoans[];
     protected int compLoansXOffset, compLoansYOffset;
+    protected int rightsXOffset, rightsYOffset;
+    protected Field rights[];
     protected Field playerCash[];
     protected ClickField playerCashButton[];
     protected int playerCashXOffset, playerCashYOffset;
@@ -100,6 +102,7 @@ public class GameStatus extends GridPanel implements ActionListener {
     protected boolean compCanHoldOwnShares = false;
     protected boolean compCanHoldForeignShares = false; // NOT YET USED
     protected boolean hasCompanyLoans = false;
+    protected boolean hasRights;
 
     // Current actor.
     // Players: 0, 1, 2, ...
@@ -148,6 +151,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         compCanBuyPrivates = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.CAN_ANY_COMPANY_BUY_PRIVATES);
         compCanHoldOwnShares = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.CAN_ANY_COMPANY_HOLD_OWN_SHARES);
         hasCompanyLoans = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_ANY_COMPANY_LOANS);
+        hasRights = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_ANY_RIGHTS);
 
         ipo = bank.getIpo();
         pool = bank.getPool();
@@ -171,6 +175,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         compTokens = new Field[nc];
         compPrivates = new Field[nc];
         compLoans = new Field[nc];
+        if (hasRights) rights = new Field[nc];
 
         playerCash = new Field[np];
         playerCashButton = new ClickField[np];
@@ -214,6 +219,10 @@ public class GameStatus extends GridPanel implements ActionListener {
         if (hasCompanyLoans) {
             compLoansXOffset = ++lastX;
             compLoansYOffset = lastY;
+        }
+        if (hasRights) {
+            rightsXOffset = ++lastX;
+            rightsYOffset = lastY;
         }
         rightCompCaptionXOffset = ++lastX;
 
@@ -296,6 +305,10 @@ public class GameStatus extends GridPanel implements ActionListener {
         if (hasCompanyLoans) {
             addField (new Caption (LocalText.getText("LOANS")),
                     compLoansXOffset, 1, 1, 1, WIDE_BOTTOM, true);
+        }
+        if (hasRights) {
+            addField (new Caption(LocalText.getText("RIGHTS")),
+                    rightsXOffset, 1, 1, 1, WIDE_BOTTOM, true);
         }
 
         addField(new Caption(LocalText.getText("COMPANY")),
@@ -419,6 +432,12 @@ public class GameStatus extends GridPanel implements ActionListener {
                 }
                 addField (f, compLoansXOffset, compLoansYOffset+i, 1, 1, 0, visible);
             }
+            
+            if (hasRights) {
+                f = rights[i] = new Field (c.getRightsModel());
+                addField (f, rightsXOffset, rightsYOffset + i, 1, 1, 0, visible);
+            }
+
 
             f = new Caption(c.getName());
             f.setForeground(c.getFgColour());
