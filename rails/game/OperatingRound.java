@@ -33,18 +33,11 @@ public class OperatingRound extends Round implements Observer {
 
     protected ArrayListState<PublicCompanyI> operatingCompanies;
 
-    //protected IntegerState operatingCompanyIndexObject;
-
     protected GenericState<PublicCompanyI> operatingCompany;
     // do not use a operatingCompany.getObject() as reference
-    //    protected PublicCompanyI operatingCompany.getObject() = null;
 
     // Non-persistent lists (are recreated after each user action)
     protected List<SpecialPropertyI> currentSpecialProperties = null;
-
-    //protected List<LayTile> currentSpecialTileLays = new ArrayList<LayTile>();
-
-    //protected List<LayTile> currentNormalTileLays = new ArrayList<LayTile>();
 
     protected HashMapState<String, Integer> tileLaysPerColour =
         new HashMapState<String, Integer>("tileLaysPerColour");
@@ -241,6 +234,11 @@ public class OperatingRound extends Round implements Observer {
         } else if (selectedAction instanceof ClosePrivate) {
 
             result = executeClosePrivate((ClosePrivate)selectedAction);
+            
+        } else if (selectedAction instanceof UseSpecialProperty
+                && ((UseSpecialProperty)selectedAction).getSpecialProperty() instanceof SpecialRight) {
+            
+            result = buyRight ((UseSpecialProperty)selectedAction);
 
         } else if (selectedAction instanceof NullAction) {
 
@@ -1207,7 +1205,7 @@ public class OperatingRound extends Round implements Observer {
     /** Take the next step after a given one (see nextStep()) */
     protected void nextStep(GameDef.OrStep step) {
 
-    	PublicCompanyI company = operatingCompany.get();
+        PublicCompanyI company = operatingCompany.get();
 
         // Cycle through the steps until we reach one where a user action is
         // expected.
@@ -1257,24 +1255,24 @@ public class OperatingRound extends Round implements Observer {
                 int poolShare = pool.getShare(company); // Expensive, do it once
                 // Can it buy?
                 boolean canBuy =
-                	ownShare < getGameParameterAsInt (GameDef.Parm.TREASURY_SHARE_LIMIT)
-                		&& company.getCash() >= company.getCurrentSpace().getPrice()
-                		&& poolShare > 0;
+                    ownShare < getGameParameterAsInt (GameDef.Parm.TREASURY_SHARE_LIMIT)
+                        && company.getCash() >= company.getCurrentSpace().getPrice()
+                        && poolShare > 0;
                 // Can it sell?
                 boolean canSell =
-                	company.getPortfolio().getShare(company) > 0
-                		&& poolShare < getGameParameterAsInt (GameDef.Parm.POOL_SHARE_LIMIT);
+                    company.getPortfolio().getShare(company) > 0
+                        && poolShare < getGameParameterAsInt (GameDef.Parm.POOL_SHARE_LIMIT);
                 // Above we ignore the possible existence of double shares (as in 1835).
 
                 if (!canBuy && !canSell) {
                     // XXX For BACKWARDS COMPATIBILITY only,
-                	// register a Done skip action during reloading.
-                	if (gameManager.isReloading()) {
-                		gameManager.setSkipDone(GameDef.OrStep.TRADE_SHARES);
+                    // register a Done skip action during reloading.
+                    if (gameManager.isReloading()) {
+                        gameManager.setSkipDone(GameDef.OrStep.TRADE_SHARES);
                         log.debug("If the next saved action is 'Done', skip it");
-                	}
-                	log.info("Skipping Treasury share trading step");
-                	continue;
+                    }
+                    log.info("Skipping Treasury share trading step");
+                    continue;
                 }
 
                 gameManager.startTreasuryShareTradingRound();
@@ -1613,8 +1611,8 @@ public class OperatingRound extends Round implements Observer {
                     company = newOperatingCompanies.get(i);
                     if (company != operatingCompanies.get(i)) {
                         log.debug("Company "+company.getName()
-                        		+" replaces "+operatingCompanies.get(i).getName()
-                        		+" in operating sequence");
+                                +" replaces "+operatingCompanies.get(i).getName()
+                                +" in operating sequence");
                         operatingCompanies.move(company, i);
                     }
                 }
@@ -2305,6 +2303,44 @@ public class OperatingRound extends Round implements Observer {
         return numberOfLoans * operatingCompany.get().getValuePerLoan();
     }
 
+    protected boolean buyRight (UseSpecialProperty action) {
+        
+        String errMsg = null;
+        
+        SpecialPropertyI sp = action.getSpecialProperty();
+        if (!(sp instanceof SpecialRight)) {
+            errMsg = "Wrong right property class: "+sp.toString();
+        }
+        
+        SpecialRight right = (SpecialRight) sp;
+        String rightName = right.getName();
+        String rightValue = right.getValue();
+
+        if (errMsg != null) {
+            DisplayBuffer.add(LocalText.getText("CannotBuyRight",
+                    action.getCompanyName(),
+                    rightName,
+                    Bank.format(right.getCost()),
+                    errMsg));
+
+            return false;
+        }
+
+        moveStack.start(true);
+
+        operatingCompany.get().setRight(rightName, rightValue);
+        new CashMove (operatingCompany.get(), bank, right.getCost());
+        
+        ReportBuffer.add(LocalText.getText("BuysRight",
+                operatingCompany.get().getName(),
+                rightName,
+                Bank.format(right.getCost())));
+        
+        sp.setExercised();
+
+        return true;
+    }
+    
     /*----- METHODS TO BE CALLED TO SET UP THE NEXT TURN -----*/
 
     /**
@@ -2486,10 +2522,13 @@ public class OperatingRound extends Round implements Observer {
 
                 // Are there other step-independent special properties owned by the company?
                 List<SpecialPropertyI> orsps = operatingCompany.get().getPortfolio().getAllSpecialProperties();
+                List<SpecialPropertyI> compsps = operatingCompany.get().getSpecialProperties();
+                if (compsps != null) orsps.addAll(compsps);
+                
                 if (orsps != null) {
                     for (SpecialPropertyI sp : orsps) {
                         if (!sp.isExercised() && sp.isUsableIfOwnedByCompany()
-                                && sp.isUsableDuringOR()) {
+                                && sp.isUsableDuringOR(step)) {
                             if (sp instanceof SpecialTokenLay) {
                                 if (getStep() != GameDef.OrStep.LAY_TOKEN) {
                                     possibleActions.add(new LayBaseToken((SpecialTokenLay)sp));
@@ -2505,7 +2544,7 @@ public class OperatingRound extends Round implements Observer {
                 if (orsps != null) {
                     for (SpecialPropertyI sp : orsps) {
                         if (!sp.isExercised() && sp.isUsableIfOwnedByPlayer()
-                                && sp.isUsableDuringOR()) {
+                                && sp.isUsableDuringOR(step)) {
                             if (sp instanceof SpecialTokenLay) {
                                 if (getStep() != GameDef.OrStep.LAY_TOKEN) {
                                     possibleActions.add(new LayBaseToken((SpecialTokenLay)sp));
