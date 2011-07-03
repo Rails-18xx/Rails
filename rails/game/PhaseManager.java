@@ -5,9 +5,10 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
+import rails.common.parser.ConfigurationException;
+import rails.common.parser.Tag;
 import rails.game.model.ModelObject;
 import rails.game.state.State;
-import rails.util.Tag;
 
 public class PhaseManager implements ConfigurableComponentI {
 

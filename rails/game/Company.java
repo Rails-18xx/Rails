@@ -6,10 +6,11 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import rails.common.parser.ConfigurationException;
+import rails.common.parser.Tag;
 import rails.game.move.MoveableHolder;
 import rails.game.special.SpecialPropertyI;
 import rails.game.state.BooleanState;
-import rails.util.Tag;
 import rails.util.Util;
 
 public abstract class Company implements CompanyI, ConfigurableComponentI,

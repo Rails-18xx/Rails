@@ -5,6 +5,9 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
+import rails.common.LocalText;
+import rails.common.parser.ConfigurationException;
+import rails.common.parser.Tag;
 import rails.game.*;
 import rails.game.move.MoveableHolder;
 import rails.game.move.ObjectMove;

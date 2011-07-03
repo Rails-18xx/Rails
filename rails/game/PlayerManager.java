@@ -3,8 +3,9 @@ package rails.game;
 
 import java.util.*;
 
-import rails.util.LocalText;
-import rails.util.Tag;
+import rails.common.LocalText;
+import rails.common.parser.ConfigurationException;
+import rails.common.parser.Tag;
 
 public class PlayerManager implements ConfigurableComponentI {
 

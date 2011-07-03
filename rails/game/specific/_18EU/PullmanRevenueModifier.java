@@ -8,7 +8,7 @@ import rails.algorithms.NetworkVertex;
 import rails.algorithms.RevenueAdapter;
 import rails.algorithms.RevenueDynamicModifier;
 import rails.algorithms.RevenueTrainRun;
-import rails.util.LocalText;
+import rails.common.LocalText;
 
 public class PullmanRevenueModifier implements RevenueDynamicModifier {
 

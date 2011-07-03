@@ -4,11 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rails.common.GuiDef;
+import rails.common.LocalText;
+import rails.common.parser.GameOption;
 import rails.game.action.*;
 import rails.game.model.ModelObject;
 import rails.game.state.IntegerState;
 import rails.game.state.State;
-import rails.util.LocalText;
 
 public abstract class StartRound extends Round {
 

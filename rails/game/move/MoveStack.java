@@ -10,8 +10,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import rails.common.LocalText;
 import rails.game.ReportBuffer;
-import rails.util.LocalText;
 
 /**
  * This class represent one game's complete "move stack", which is a list

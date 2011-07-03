@@ -1,6 +1,7 @@
 package rails.util;
 
 import rails.common.GuiDef;
+import rails.common.parser.Config;
 import rails.game.Game;
 import rails.game.GameManagerI;
 import rails.ui.swing.GameSetupWindow;

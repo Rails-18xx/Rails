@@ -4,9 +4,9 @@ package rails.game;
 import java.util.ArrayList;
 import java.util.List;
 
+import rails.common.LocalText;
 import rails.game.action.*;
 import rails.game.state.IntegerState;
-import rails.util.LocalText;
 
 /**
  * Implements an 1835-style startpacket sale.

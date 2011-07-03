@@ -13,10 +13,10 @@ import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 
 import rails.common.GuiDef;
+import rails.common.LocalText;
 import rails.game.GameManager;
 import rails.game.OperatingRound;
 import rails.game.action.*;
-import rails.util.LocalText;
 
 /**
  * This Window displays the available operations that may be performed during an

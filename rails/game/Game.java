@@ -7,10 +7,12 @@ import java.util.*;
 import org.apache.log4j.Logger;
 
 import rails.algorithms.RevenueManager;
+import rails.common.LocalText;
+import rails.common.parser.ConfigurationException;
+import rails.common.parser.GameOption;
+import rails.common.parser.Tag;
 import rails.game.action.PossibleAction;
 import rails.game.special.SpecialProperty;
-import rails.util.LocalText;
-import rails.util.Tag;
 
 public class Game {
     public static final String version = "1.4.1+";

@@ -1,5 +1,6 @@
 package rails.game.correct;
 
+import rails.common.LocalText;
 import rails.game.action.PossibleAction;
 import rails.util.*;
 

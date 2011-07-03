@@ -5,6 +5,9 @@ import java.awt.Color;
 import java.util.*;
 
 import rails.common.GuiDef;
+import rails.common.LocalText;
+import rails.common.parser.ConfigurationException;
+import rails.common.parser.Tag;
 import rails.game.action.SetDividend;
 import rails.game.model.*;
 import rails.game.move.*;

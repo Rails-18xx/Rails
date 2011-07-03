@@ -1,11 +1,11 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/StartRound_18EU.java,v 1.11 2010/06/21 22:57:52 stefanfrey Exp $ */
 package rails.game.specific._18EU;
 
+import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.state.IntegerState;
 import rails.game.state.State;
-import rails.util.LocalText;
 
 /**
  * Implements an 1835-style startpacket sale.

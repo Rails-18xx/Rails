@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rails.common.GuiDef;
+import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.MergeCompanies;
 import rails.game.action.NullAction;
-import rails.util.LocalText;
 
 
 /**

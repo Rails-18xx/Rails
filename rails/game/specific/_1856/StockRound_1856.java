@@ -1,9 +1,9 @@
 package rails.game.specific._1856;
 
+import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.BuyCertificate;
 import rails.game.state.IntegerState;
-import rails.util.LocalText;
 
 public class StockRound_1856 extends StockRound {
 

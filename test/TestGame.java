@@ -8,9 +8,9 @@ import java.util.Scanner;
 
 import org.apache.log4j.Logger;
 
+import rails.common.parser.Config;
 import rails.game.Game;
 import rails.game.ReportBuffer;
-import rails.util.Config;
 
 import junit.framework.TestCase;
 

@@ -1,11 +1,10 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameOption.java,v 1.12 2010/05/08 13:56:30 evos Exp $ */
-package rails.game;
+package rails.common.parser;
 
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import rails.util.LocalText;
+import rails.common.LocalText;
 
 public class GameOption {
 
@@ -32,8 +31,16 @@ public class GameOption {
     // A regex to match parameters against
     private static final Pattern pattern = Pattern.compile("\\{(.*)\\}");
 
-    public GameOption(String name, String[] parameters) {
+    public GameOption(String name) {
     	this.name = name;
+    }
+    
+    public GameOption(String name, String[] parameters) {
+        this(name);
+        this.setParameters(parameters);
+    }
+    
+    public void setParameters(String[] parameters) {
     	if (parameters != null) {
     	    parm = parameters.clone();
     	}

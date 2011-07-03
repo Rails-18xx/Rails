@@ -3,12 +3,12 @@ package rails.ui.swing.gamespecific._18EU;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
+import rails.common.LocalText;
 import rails.game.PublicCompanyI;
 import rails.game.action.MergeCompanies;
 import rails.game.action.PossibleAction;
 import rails.ui.swing.GameStatus;
 import rails.ui.swing.elements.RadioButtonDialog;
-import rails.util.LocalText;
 
 /**
  * This class is incorporated into StatusWindow and displays the bulk of

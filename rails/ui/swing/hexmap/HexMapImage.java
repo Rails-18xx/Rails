@@ -15,9 +15,9 @@ import org.apache.batik.swing.gvt.GVTTreeRendererAdapter;
 import org.apache.batik.swing.gvt.GVTTreeRendererEvent;
 import org.apache.log4j.Logger;
 
+import rails.common.parser.Config;
 import rails.game.*;
 import rails.ui.swing.*;
-import rails.util.Config;
 import rails.util.Util;
 
 /**

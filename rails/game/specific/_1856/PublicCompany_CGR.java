@@ -5,6 +5,7 @@ import java.util.List;
 
 import rails.algorithms.RevenueAdapter;
 import rails.algorithms.RevenueStaticModifier;
+import rails.common.parser.ConfigurationException;
 import rails.game.*;
 import rails.game.move.*;
 import rails.game.state.*;

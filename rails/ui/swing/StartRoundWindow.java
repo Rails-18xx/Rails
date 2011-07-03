@@ -10,11 +10,11 @@ import javax.swing.*;
 
 import org.apache.log4j.Logger;
 
+import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.special.SpecialPropertyI;
 import rails.ui.swing.elements.*;
-import rails.util.LocalText;
 
 /**
  * This displays the Auction Window

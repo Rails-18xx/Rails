@@ -11,12 +11,12 @@ import javax.swing.*;
 import org.apache.log4j.Logger;
 
 import rails.common.GuiDef;
+import rails.common.LocalText;
+import rails.common.parser.Config;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.correct.CorrectionModeAction;
 import rails.ui.swing.elements.*;
-import rails.util.Config;
-import rails.util.LocalText;
 
 /**
  * This is the Window used for displaying nearly all of the rails.game status.

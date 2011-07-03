@@ -14,10 +14,10 @@ import org.jgrapht.graph.SimpleGraph;
 
 import rails.algorithms.*;
 import rails.common.GuiDef;
+import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;
 import rails.ui.swing.elements.*;
-import rails.util.LocalText;
 import rails.util.Util;
 
 public class ORPanel extends GridPanel

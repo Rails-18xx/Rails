@@ -5,12 +5,12 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import rails.common.LocalText;
 import rails.game.DisplayBuffer;
 import rails.game.GameManager;
 import rails.game.ReportBuffer;
 import rails.game.move.StateChange;
 import rails.game.state.BooleanState;
-import rails.util.LocalText;
 
 public abstract class CorrectionManager implements CorrectionManagerI {
     

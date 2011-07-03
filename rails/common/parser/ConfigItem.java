@@ -1,11 +1,11 @@
-package rails.util;
+package rails.common.parser;
 
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import rails.game.ConfigurationException;
+import rails.util.Util;
 
 /**
  * Defines an item used for the configuration of rails

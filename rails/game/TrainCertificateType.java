@@ -4,6 +4,9 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
+import rails.common.LocalText;
+import rails.common.parser.ConfigurationException;
+import rails.common.parser.Tag;
 import rails.game.state.BooleanState;
 import rails.game.state.IntegerState;
 import rails.util.*;

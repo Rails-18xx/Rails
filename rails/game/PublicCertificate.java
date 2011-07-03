@@ -6,9 +6,9 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import rails.common.LocalText;
 import rails.game.move.MoveableHolder;
 import rails.game.move.ObjectMove;
-import rails.util.LocalText;
 
 public class PublicCertificate implements PublicCertificateI, Cloneable {
 

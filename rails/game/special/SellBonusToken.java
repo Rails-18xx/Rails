@@ -3,10 +3,11 @@ package rails.game.special;
 
 import java.util.List;
 
+import rails.common.parser.ConfigurationException;
+import rails.common.parser.Tag;
 import rails.game.*;
 import rails.game.state.IntegerState;
 import rails.game.state.State;
-import rails.util.Tag;
 import rails.util.Util;
 
 public class SellBonusToken extends SpecialProperty {

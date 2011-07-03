@@ -12,8 +12,8 @@ import org.apache.log4j.Logger;
 
 import rails.algorithms.NetworkVertex.StationType;
 import rails.algorithms.NetworkVertex.VertexType;
+import rails.common.LocalText;
 import rails.ui.swing.hexmap.HexMap;
-import rails.util.LocalText;
 
 /**
  * Links the results from the revenue calculator to the rails program

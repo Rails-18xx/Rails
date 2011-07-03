@@ -10,11 +10,11 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
+import rails.common.LocalText;
 import rails.game.model.*;
 import rails.game.move.*;
 import rails.game.special.LocatedBonus;
 import rails.game.special.SpecialPropertyI;
-import rails.util.LocalText;
 import rails.util.Util;
 
 /**

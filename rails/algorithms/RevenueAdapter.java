@@ -17,6 +17,7 @@ import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.SimpleGraph;
 
+import rails.common.LocalText;
 import rails.game.GameManagerI;
 import rails.game.MapHex;
 import rails.game.PhaseI;
@@ -24,7 +25,6 @@ import rails.game.PublicCompanyI;
 import rails.game.TrainI;
 import rails.game.TrainType;
 import rails.ui.swing.hexmap.HexMap;
-import rails.util.LocalText;
 
 
 public final class RevenueAdapter implements Runnable {

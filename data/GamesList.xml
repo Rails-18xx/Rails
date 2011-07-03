@@ -318,17 +318,33 @@ Known Issues:
   </Game>
 
    	
-	<Credits>Rails is a computer implementation of a number of railroad board games,
-that are collectively known as the "18xx" railway game system.		
-Rails is a Sourceforge project.
-Project founder: Brett Lentz.
-Developers: Erik Vos, Stefan Frey and Brett Lentz.
+	<Credits>Rails is a computer implementation of a number of board games. 
+	These games all have a railroad theme. They are collectively known as "18xx" 
+	games due to the naming scheme used by many games in the genre. 
 
-The 18xx railway game system was originated by Francis Tresham and Hartland Trefoil Ltd.
+Contributors: 
+	Erik Vos
+	Stefan Frey
+	Freek Dijkstra
+	Scott Peterson
+	Adam Badura
+	Phil Davies
+	Bill Rosgen
+	Martin Brumm
+	Chris Shaffer 
+	Brett Lentz
 
 All rights reserved by the respective owners of the original games 
 (see the Game Notes per game for specific acknowledgements).
-No challenge to their status is intended. 
+
+No challenge to the original author's or publisher's rights, licensing, or status is intended.
+
 Rails is intended as a play aid for owners of each respective boardgame.
+
+The Rails application and source code are distributed under 
+version 2 of the GNU Public License (GPL).
+
+A copy of the GPL should have been shipped with the game files and is also available here: 
+	http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	</Credits>
 </GamesList>

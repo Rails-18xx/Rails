@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.swing.JDialog;
 
+import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.DiscardTrain;
 import rails.game.special.ExchangeForShare;
@@ -12,7 +13,6 @@ import rails.ui.swing.GameUIManager;
 import rails.ui.swing.StatusWindow;
 import rails.ui.swing.elements.CheckBoxDialog;
 import rails.ui.swing.elements.ConfirmationDialog;
-import rails.util.LocalText;
 
 public class StatusWindow_1835 extends StatusWindow {
 

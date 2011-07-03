@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import rails.game.ConfigurationException;
+import rails.common.parser.ConfigurationException;
 import rails.game.move.Moveable;
 import rails.game.move.MoveableHolder;
 

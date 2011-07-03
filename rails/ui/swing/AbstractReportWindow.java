@@ -5,8 +5,8 @@ import java.awt.event.*;
 
 import javax.swing.JFrame;
 
-import rails.util.Config;
-import rails.util.LocalText;
+import rails.common.LocalText;
+import rails.common.parser.Config;
 
 public abstract class AbstractReportWindow extends JFrame {
     private static final long serialVersionUID = 1L;

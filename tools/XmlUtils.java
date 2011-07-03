@@ -10,7 +10,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
-import rails.game.ConfigurationException;
+import rails.common.parser.ConfigurationException;
 
 /**
  * Booch utility class providing helper functions for working with XML.

@@ -10,11 +10,11 @@ import java.util.*;
 import org.apache.log4j.Logger;
 
 import rails.common.GuiHints;
+import rails.common.LocalText;
 import rails.game.action.*;
 import rails.game.move.*;
 import rails.game.special.SpecialPropertyI;
 import rails.game.state.BooleanState;
-import rails.util.LocalText;
 
 /**
  * @author Erik Vos

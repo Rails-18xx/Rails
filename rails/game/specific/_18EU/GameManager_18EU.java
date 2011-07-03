@@ -4,10 +4,10 @@ package rails.game.specific._18EU;
 import java.util.ArrayList;
 import java.util.List;
 
+import rails.common.LocalText;
 import rails.game.*;
 import rails.game.move.CashMove;
 import rails.game.state.State;
-import rails.util.LocalText;
 import rails.util.Util;
 
 /**

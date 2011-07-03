@@ -12,12 +12,12 @@ import javax.swing.*;
 
 import org.apache.log4j.Logger;
 
+import rails.common.LocalText;
 import rails.game.TileI;
 import rails.game.TileManager;
 import rails.game.model.ModelObject;
 import rails.ui.swing.elements.Field;
 import rails.ui.swing.hexmap.GUIHex;
-import rails.util.LocalText;
 
 /**
  * This Window displays the available operations that may be performed during an

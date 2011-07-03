@@ -15,12 +15,12 @@ import javax.swing.text.html.HTMLDocument;
 
 import org.apache.log4j.Logger;
 
+import rails.common.LocalText;
 import rails.game.ReportBuffer;
 import rails.game.action.GameAction;
 import rails.game.action.PossibleActions;
 import rails.game.move.MoveStack;
 import rails.ui.swing.elements.ActionButton;
-import rails.util.LocalText;
 
 /**
  * Dynamic Report window that acts as linked game history

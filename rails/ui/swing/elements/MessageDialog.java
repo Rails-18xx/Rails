@@ -8,7 +8,7 @@ import javax.swing.*;
 
 import org.apache.log4j.Logger;
 
-import rails.util.LocalText;
+import rails.common.LocalText;
 
 /**
  * A generic dialog for presenting choices by checkboxes.

@@ -3,10 +3,10 @@ package rails.game.specific._18EU;
 
 import java.util.*;
 
+import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.BuyTrain;
 import rails.game.state.BooleanState;
-import rails.util.LocalText;
 
 /**
  * Implements a basic Operating Round. <p> A new instance must be created for

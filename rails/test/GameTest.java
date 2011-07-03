@@ -1,7 +1,7 @@
 package rails.test;
 
+import rails.common.parser.Config;
 import rails.ui.swing.GameSetupWindow;
-import rails.util.Config;
 
 public class GameTest {
 

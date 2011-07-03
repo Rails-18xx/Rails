@@ -5,8 +5,9 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
-import rails.util.LocalText;
-import rails.util.Tag;
+import rails.common.LocalText;
+import rails.common.parser.ConfigurationException;
+import rails.common.parser.Tag;
 
 public class Phase implements PhaseI {
 

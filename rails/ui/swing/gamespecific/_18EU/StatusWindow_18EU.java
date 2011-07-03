@@ -6,13 +6,13 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import rails.common.LocalText;
 import rails.game.PublicCompanyI;
 import rails.game.TrainI;
 import rails.game.action.DiscardTrain;
 import rails.game.action.PossibleAction;
 import rails.game.specific._18EU.FinalMinorExchangeRound;
 import rails.ui.swing.StatusWindow;
-import rails.util.LocalText;
 
 /**
  * This is the Window used for displaying nearly all of the rails.game status.

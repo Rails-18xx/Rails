@@ -1,8 +1,8 @@
 package rails.game.specific._18GA;
 
+import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.BuyPrivate;
-import rails.util.LocalText;
 
 public class OperatingRound_18GA extends OperatingRound {
 

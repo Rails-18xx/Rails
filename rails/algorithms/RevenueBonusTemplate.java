@@ -5,15 +5,15 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import rails.common.parser.ConfigurationException;
+import rails.common.parser.Tag;
 import rails.game.ConfigurableComponentI;
-import rails.game.ConfigurationException;
 import rails.game.GameManagerI;
 import rails.game.MapHex;
 import rails.game.PhaseI;
 import rails.game.PhaseManager;
 import rails.game.TrainManager;
 import rails.game.TrainType;
-import rails.util.Tag;
 
 /** 
  * defines a template for a revenue bonus at creation time of rails objects

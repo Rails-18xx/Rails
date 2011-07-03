@@ -4,6 +4,10 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import rails.common.LocalText;
+import rails.common.parser.Config;
+import rails.common.parser.ConfigurationException;
+import rails.common.parser.Tag;
 import rails.game.model.CashModel;
 import rails.game.model.ModelObject;
 import rails.game.state.BooleanState;

@@ -1,5 +1,5 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ConfigurationException.java,v 1.4 2008/06/04 19:00:30 evos Exp $ */
-package rails.game;
+package rails.common.parser;
 
 /**
  * Class for reporting problems with reading configuration files.

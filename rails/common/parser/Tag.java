@@ -1,5 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Tag.java,v 1.16 2010/04/30 15:22:42 evos Exp $*/
-package rails.util;
+package rails.common.parser;
 
 import java.io.IOException;
 import java.util.*;
@@ -10,8 +9,8 @@ import org.apache.log4j.Logger;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
-import rails.game.ConfigurationException;
-import rails.game.GameOption;
+import rails.common.ResourceLoader;
+import rails.util.Util;
 
 /**
  * Each object of this class both contains and represents a DOM Element object.

@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 
+import rails.common.parser.ConfigurationException;
 import rails.game.*;
 import rails.game.special.SpecialProperty;
 import rails.game.special.SpecialTokenLay;

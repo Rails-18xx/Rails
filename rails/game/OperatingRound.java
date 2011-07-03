@@ -4,13 +4,14 @@ package rails.game;
 import java.util.*;
 
 import rails.common.GuiDef;
+import rails.common.LocalText;
+import rails.common.parser.GameOption;
 import rails.game.action.*;
 import rails.game.correct.ClosePrivate;
 import rails.game.correct.OperatingCost;
 import rails.game.move.*;
 import rails.game.special.*;
 import rails.game.state.*;
-import rails.util.LocalText;
 import rails.util.SequenceUtil;
 
 /**

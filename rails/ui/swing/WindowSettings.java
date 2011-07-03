@@ -8,7 +8,7 @@ import javax.swing.JFrame;
 
 import org.apache.log4j.Logger;
 
-import rails.util.Config;
+import rails.common.parser.Config;
 
 public class WindowSettings {
 

@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rails.common.GuiDef;
+import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.move.CashMove;
 import rails.game.special.SellBonusToken;
 import rails.game.special.SpecialPropertyI;
 import rails.game.state.BooleanState;
-import rails.util.LocalText;
 
 public class OperatingRound_1856 extends OperatingRound {
 

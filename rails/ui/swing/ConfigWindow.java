@@ -45,11 +45,11 @@ import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.border.Border;
 
-import rails.game.ConfigurationException;
+import rails.common.LocalText;
+import rails.common.parser.Config;
+import rails.common.parser.ConfigItem;
+import rails.common.parser.ConfigurationException;
 import rails.ui.swing.elements.RailsIcon;
-import rails.util.Config;
-import rails.util.ConfigItem;
-import rails.util.LocalText;
 import rails.util.Util;
 
 class ConfigWindow extends JFrame {

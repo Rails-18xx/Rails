@@ -1,4 +1,3 @@
-    /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GameSetupWindow.java,v 1.24 2010/05/18 04:13:48 stefanfrey Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -9,9 +8,16 @@ import java.util.List;
 
 import javax.swing.*;
 
+import rails.common.parser.ConfigurationException;
+import rails.common.parser.GameInfoParser;
+
 import org.apache.log4j.Logger;
 
 import rails.common.GuiDef;
+import rails.common.LocalText;
+import rails.common.parser.Config;
+import rails.common.parser.GameOption;
+import rails.common.parser.GameInfo;
 import rails.game.*;
 import rails.util.*;
 
@@ -36,13 +42,15 @@ public class GameSetupWindow extends JDialog implements ActionListener {
     List<String> playerNames = new ArrayList<String>();
     List<JComponent> optionComponents = new ArrayList<JComponent>();
     List<GameOption> availableOptions = new ArrayList<GameOption>();
-    String gameName;
     Game game;
-    
+
     SortedSet<File> recentFiles;
     String savedFileExtension;
 
     private ConfigWindow configWindow;
+
+    private ArrayList<GameInfo> gameInfoList;
+    private String credits = "Credits";
 
     // Used by the player selection combo box.
     static final int NONE_PLAYER = 0;
@@ -54,6 +62,14 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 
     public GameSetupWindow() {
         super();
+        
+        GameInfoParser gip = new GameInfoParser();
+        try {
+            gameInfoList = gip.processGameList();
+            credits = gip.getCredits();
+        } catch (ConfigurationException e) {
+            log.error(e);
+        }
 
         initialize();
         populateGridBag();
@@ -92,7 +108,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
         this.setTitle("Rails: New Game");
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        populateGameList(GamesInfo.getGameNames(), gameNameBox);
+        populateGameList(gameInfoList, gameNameBox);
 
         gameListPane.add(new JLabel("Available Games:"));
         gameListPane.add(gameNameBox);
@@ -127,10 +143,6 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 
         optionsPane.setLayout(new FlowLayout());
         optionsPane.setVisible(false);
-
-        // Assure that these values are sensibly defaulted;
-        gameName = gameNameBox.getSelectedItem().toString().split(" ")[0];
-        availableOptions = GamesInfo.getOptions(gameName);
 
         // This needs to happen after we have a valid gameName.
         fillPlayersPane();
@@ -194,10 +206,11 @@ public class GameSetupWindow extends JDialog implements ActionListener {
         this.getContentPane().add(buttonPane, gc);
     }
 
-    private void populateGameList(List<String> gameNames, JComboBox gameNameBox) {
+    private void populateGameList(List<GameInfo> gameList, JComboBox gameNameBox) {
         String preferredgame = Config.get("default_game");
-        for (String gameName : gameNames) {
-            String gameText = gameName + " - " + GamesInfo.getNote(gameName);
+        for (GameInfo game : gameList) {
+            String gameName = game.getName();
+            String gameText = gameName + " - " + game.getNote();
             gameNameBox.addItem(gameText);
             if (preferredgame.equals(gameName)) {
                 gameNameBox.setSelectedItem(gameText);
@@ -297,20 +310,19 @@ public class GameSetupWindow extends JDialog implements ActionListener {
             String filePath = Config.get("save.recovery.filepath", "18xx_autosave.rails");
             loadAndStartGame(filePath, null);
         } else if (arg0.getSource().equals(infoButton)) {
-            JOptionPane.showMessageDialog(this,
-                    GamesInfo.getDescription(gameName), "Information about "
-                                                        + gameName,
+            GameInfo gameInfo = this.getSelectedGameInfo();
+            JOptionPane.showMessageDialog(this, 
+                    gameInfo.getDescription(), 
+                    "Information about " + gameInfo.getName(),
                     JOptionPane.INFORMATION_MESSAGE);
         } else if (arg0.getSource().equals(quitButton)) {
             System.exit(0);
         } else if (arg0.getSource().equals(creditsButton)) {
-            JOptionPane.showMessageDialog(this, GamesInfo.getCredits(),
+            JOptionPane.showMessageDialog(this, 
+                    credits,
                     LocalText.getText("CREDITS"),
                     JOptionPane.INFORMATION_MESSAGE);
         } else if (arg0.getSource().equals(gameNameBox)) {
-            // Game has changed, update the name variable.
-            gameName = gameNameBox.getSelectedItem().toString().split(" ")[0];
-
             fillPlayersPane();
 
             if (optionsPane.isVisible()) {
@@ -377,7 +389,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
             optionComponents.clear();
             optionButton.setText(LocalText.getText("OPTIONS"));
         } else {
-            availableOptions = GamesInfo.getOptions(gameName);
+            availableOptions = this.getSelectedGameInfo().getOptions();
 
             if (availableOptions != null && !availableOptions.isEmpty()) {
                 optionsPane.setLayout(new GridLayout((availableOptions.size()),
@@ -476,7 +488,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
             }
         }
 
-        game = new Game(gameName, playerNames, selectedOptions);
+        game = new Game(this.getSelectedGameInfo().getName(), playerNames, selectedOptions);
         if (!game.setup()) {
             JOptionPane.showMessageDialog(this, DisplayBuffer.get(), "",
                     JOptionPane.ERROR_MESSAGE);
@@ -518,7 +530,8 @@ public class GameSetupWindow extends JDialog implements ActionListener {
     private void fillPlayersPane() {
         playersPane.setVisible(false);
 
-        int maxPlayers = GamesInfo.getMaxPlayers(gameName);
+        int maxPlayers = this.getSelectedGameInfo().getMaxPlayers();
+        int minPlayers = this.getSelectedGameInfo().getMinPlayers();
 
         String[] playerList = new String[maxPlayers];
         String[] testPlayers = Config.get("default_players").split(",");
@@ -538,14 +551,13 @@ public class GameSetupWindow extends JDialog implements ActionListener {
         playersPane.setLayout(new GridLayout(maxPlayers + 1, 0));
         playersPane.setBorder(BorderFactory.createLoweredBevelBorder());
         playersPane.add(new JLabel("Players:"));
-//        playersPane.add(new JLabel("")); replaced by randomize button
 
         randomizeButton = new JButton(LocalText.getText("RandomizePlayers"));
         randomizeButton.setMnemonic(KeyEvent.VK_R);
         randomizeButton.addActionListener(this);
         playersPane.add(randomizeButton);
 
-        for (int i = 0; i < GamesInfo.getMaxPlayers(gameName); i++) {
+        for (int i = 0; i < this.getSelectedGameInfo().getMaxPlayers(); i++) {
             playerBoxes[i] = new JComboBox();
             playerBoxes[i].addItem("None");
             playerBoxes[i].addItem("Human");
@@ -562,7 +574,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
                 playerNameFields[i] = new JTextField();
             }
 
-            if (playerNameFields[i].getText().length() > 0) {
+            if (playerNameFields[i].getText().length() > 0 || i <= minPlayers) {
                 playerBoxes[i].setSelectedIndex(HUMAN_PLAYER);
             } else {
                 playerBoxes[i].setSelectedIndex(NONE_PLAYER);
@@ -573,4 +585,15 @@ public class GameSetupWindow extends JDialog implements ActionListener {
         }
         playersPane.setVisible(true);
     }
+
+    private GameInfo getSelectedGameInfo() {
+        String gameName = gameNameBox.getSelectedItem().toString().split(" ")[0];
+        for(GameInfo gi : gameInfoList) {
+            if (gi.getName().equals(gameName)) {
+                return gi;
+            }
+        }
+        return null;
+    }
+
 }

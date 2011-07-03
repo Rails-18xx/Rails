@@ -1,5 +1,5 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/ResourceLoader.java,v 1.5 2009/01/15 20:53:28 evos Exp $*/
-package rails.util;
+package rails.common;
 
 import java.awt.Font;
 import java.io.*;
@@ -89,7 +89,7 @@ public final class ResourceLoader {
     // A hardcoded '/' works in Unix, Windows, MacOS X, and jar files.
     private static final String pathSeparator = "/";
     private static final ClassLoader baseCL =
-            rails.util.ResourceLoader.class.getClassLoader();
+            rails.common.ResourceLoader.class.getClassLoader();
     private static final RailsClassLoader cl = new RailsClassLoader(baseCL);
 
     private static final Map<String, Object> fileCache =

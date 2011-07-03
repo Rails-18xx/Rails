@@ -1,9 +1,10 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTrainBuy.java,v 1.5 2010/03/02 21:14:16 evos Exp $ */
 package rails.game.special;
 
+import rails.common.LocalText;
+import rails.common.parser.ConfigurationException;
+import rails.common.parser.Tag;
 import rails.game.*;
-import rails.util.LocalText;
-import rails.util.Tag;
 import rails.util.Util;
 
 /**

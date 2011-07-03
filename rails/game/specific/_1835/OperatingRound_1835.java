@@ -2,6 +2,8 @@ package rails.game.specific._1835;
 
 import java.util.*;
 
+import rails.common.LocalText;
+import rails.common.parser.GameOption;
 import rails.game.*;
 import rails.game.action.DiscardTrain;
 import rails.game.action.LayTile;
@@ -9,7 +11,6 @@ import rails.game.move.CashMove;
 import rails.game.move.MapChange;
 import rails.game.special.*;
 import rails.game.state.BooleanState;
-import rails.util.LocalText;
 
 public class OperatingRound_1835 extends OperatingRound {
 

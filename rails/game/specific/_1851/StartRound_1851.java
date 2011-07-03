@@ -3,9 +3,9 @@ package rails.game.specific._1851;
 
 import java.util.List;
 
+import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;
-import rails.util.LocalText;
 
 /**
  * Implements an 1835-style startpacket sale.

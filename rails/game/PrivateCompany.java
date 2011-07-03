@@ -4,6 +4,9 @@ package rails.game;
 import java.util.ArrayList;
 import java.util.List;
 
+import rails.common.LocalText;
+import rails.common.parser.ConfigurationException;
+import rails.common.parser.Tag;
 import rails.game.move.*;
 import rails.game.special.SellBonusToken;
 import rails.game.special.SpecialPropertyI;

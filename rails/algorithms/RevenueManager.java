@@ -7,12 +7,12 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 
+import rails.common.LocalText;
+import rails.common.parser.ConfigurationException;
+import rails.common.parser.Tag;
 import rails.game.ConfigurableComponentI;
-import rails.game.ConfigurationException;
 import rails.game.GameManagerI;
 import rails.game.state.ArrayListState;
-import rails.util.LocalText;
-import rails.util.Tag;
 
 /**
  * Coordinates and stores all elements related to revenue calulcation,

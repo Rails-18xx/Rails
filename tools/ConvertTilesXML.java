@@ -11,7 +11,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.*;
 
-import rails.game.ConfigurationException;
+import rails.common.parser.ConfigurationException;
 import rails.util.Util;
 import tools.XmlUtils;
 

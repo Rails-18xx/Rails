@@ -4,6 +4,9 @@ package rails.game.special;
 import java.util.ArrayList;
 import java.util.List;
 
+import rails.common.LocalText;
+import rails.common.parser.ConfigurationException;
+import rails.common.parser.Tag;
 import rails.game.*;
 import rails.util.*;
 

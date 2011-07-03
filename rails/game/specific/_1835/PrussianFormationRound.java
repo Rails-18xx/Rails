@@ -3,13 +3,13 @@ package rails.game.specific._1835;
 import java.util.*;
 
 import rails.common.GuiDef;
+import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.DiscardTrain;
 import rails.game.action.PossibleAction;
 import rails.game.move.CashMove;
 import rails.game.special.ExchangeForShare;
 import rails.game.special.SpecialPropertyI;
-import rails.util.LocalText;
 
 public class PrussianFormationRound extends StockRound {
 

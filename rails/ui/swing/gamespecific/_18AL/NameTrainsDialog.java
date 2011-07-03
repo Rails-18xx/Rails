@@ -7,12 +7,12 @@ import javax.swing.*;
 
 import org.apache.log4j.Logger;
 
+import rails.common.LocalText;
 import rails.game.*;
 import rails.game.specific._18AL.AssignNamedTrains;
 import rails.game.specific._18AL.NameableTrain;
 import rails.game.specific._18AL.NamedTrainToken;
 import rails.ui.swing.ORWindow;
-import rails.util.*;
 
 import java.util.*;
 import java.util.List;

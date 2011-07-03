@@ -4,8 +4,9 @@ package rails.game;
 import java.util.ArrayList;
 import java.util.List;
 
-import rails.util.LocalText;
-import rails.util.Tag;
+import rails.common.LocalText;
+import rails.common.parser.ConfigurationException;
+import rails.common.parser.Tag;
 
 /**
  * Objects of this class represent a particular type of company, of which

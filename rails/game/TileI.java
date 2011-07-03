@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import rails.algorithms.RevenueBonusTemplate;
-import rails.util.Tag;
+import rails.common.parser.ConfigurationException;
+import rails.common.parser.Tag;
 
 public interface TileI {
 

@@ -1,5 +1,5 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Config.java,v 1.13 2010/06/24 21:48:08 stefanfrey Exp $*/
-package rails.util;
+package rails.common.parser;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,15 +16,17 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
-import rails.game.ConfigurationException;
 import rails.game.GameManager;
+import rails.util.Util;
 
 /**
  * This is a simple utility class with a collection of static functions to load
  * a property object from a property file, to retrieve a particular value from
  * the property file etc.
  *
- * @author Ramiah Bala, rewritten by Erik Vos, rewritten by Stefan Frey
+ * @author Ramiah Bala, 
+ * @author Erik Vos
+ * @author Stefan Frey
  * @version 2.0
  */
 public final class Config {

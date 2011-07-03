@@ -8,6 +8,9 @@ import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
 
 import rails.algorithms.RevenueBonusTemplate;
+import rails.common.LocalText;
+import rails.common.parser.ConfigurationException;
+import rails.common.parser.Tag;
 import rails.game.action.LayTile;
 import rails.game.model.ModelObject;
 import rails.game.move.Moveable;

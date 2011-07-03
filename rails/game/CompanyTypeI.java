@@ -3,7 +3,8 @@ package rails.game;
 
 import java.util.List;
 
-import rails.util.Tag;
+import rails.common.parser.ConfigurationException;
+import rails.common.parser.Tag;
 
 /**
  * The interface for StockSpaceType.

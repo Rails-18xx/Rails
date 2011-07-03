@@ -4,7 +4,7 @@ package rails.ui.swing;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 
-import rails.util.Config;
+import rails.common.parser.Config;
 import rails.util.Util;
 
 /**

@@ -15,6 +15,8 @@ import org.apache.log4j.Logger;
 
 import rails.common.GuiDef;
 import rails.common.GuiHints;
+import rails.common.LocalText;
+import rails.common.parser.Config;
 import rails.game.*;
 import rails.game.action.*;
 import rails.ui.swing.elements.*;

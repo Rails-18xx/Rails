@@ -3,10 +3,11 @@ package rails.game;
 
 import java.util.*;
 
+import rails.common.LocalText;
+import rails.common.parser.ConfigurationException;
+import rails.common.parser.Tag;
 import rails.game.move.PriceTokenMove;
 import rails.game.state.BooleanState;
-import rails.util.LocalText;
-import rails.util.Tag;
 
 public class StockMarket implements StockMarketI, ConfigurableComponentI {
 

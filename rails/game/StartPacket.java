@@ -6,7 +6,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import rails.util.Tag;
+import rails.common.parser.ConfigurationException;
+import rails.common.parser.Tag;
 import rails.util.Util;
 
 /**

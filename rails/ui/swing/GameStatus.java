@@ -11,11 +11,11 @@ import javax.swing.*;
 import org.apache.log4j.Logger;
 
 import rails.common.GuiDef;
+import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.correct.CashCorrectionAction;
 import rails.ui.swing.elements.*;
-import rails.util.LocalText;
 
 /**
  * This class is incorporated into StatusWindow and displays the bulk of

@@ -2,12 +2,12 @@ package rails.ui.swing.gamespecific._1856;
 
 import javax.swing.WindowConstants;
 
+import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.specific._1856.CGRFormationRound;
 import rails.ui.swing.StatusWindow;
 import rails.ui.swing.elements.RadioButtonDialog;
-import rails.util.LocalText;
 import rails.util.Util;
 
 public class StatusWindow_1856 extends StatusWindow {

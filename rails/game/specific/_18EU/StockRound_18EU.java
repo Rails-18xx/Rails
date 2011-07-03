@@ -2,13 +2,13 @@ package rails.game.specific._18EU;
 
 import java.util.*;
 
+import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.move.AddToList;
 import rails.game.move.CashMove;
 import rails.game.state.BooleanState;
 import rails.game.state.IntegerState;
-import rails.util.LocalText;
 import rails.util.Util;
 
 /**

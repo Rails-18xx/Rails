@@ -8,8 +8,8 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
-import rails.util.Config;
-import rails.util.LocalText;
+import rails.common.LocalText;
+import rails.common.parser.Config;
 import rails.util.Util;
 
 /**

@@ -4,13 +4,13 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import rails.common.LocalText;
 import rails.game.City;
 import rails.game.PublicCompanyI;
 import rails.game.action.MergeCompanies;
 import rails.game.specific._18EU.StartCompany_18EU;
 import rails.ui.swing.GameUIManager;
 import rails.ui.swing.elements.RadioButtonDialog;
-import rails.util.LocalText;
 
 public class GameUIManager_18EU extends GameUIManager {
 

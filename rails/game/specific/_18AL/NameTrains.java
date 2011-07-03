@@ -3,13 +3,13 @@ package rails.game.specific._18AL;
 import java.util.ArrayList;
 import java.util.List;
 
+import rails.common.LocalText;
+import rails.common.parser.ConfigurationException;
+import rails.common.parser.Tag;
 import rails.game.Bank;
-import rails.game.ConfigurationException;
 import rails.game.GameManagerI;
 import rails.game.move.Moveable;
 import rails.game.special.SpecialProperty;
-import rails.util.LocalText;
-import rails.util.Tag;
 
 public class NameTrains extends SpecialProperty implements Moveable {
 

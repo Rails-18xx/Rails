@@ -2,9 +2,9 @@ package rails.game.specific._1825;
 
 import java.util.List;
 
+import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;
-import rails.util.LocalText;
 
 public class StartRound_1825 extends StartRound {
 

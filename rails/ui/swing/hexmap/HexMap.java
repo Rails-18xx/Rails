@@ -14,10 +14,11 @@ import javax.swing.*;
 
 import org.apache.log4j.Logger;
 
+import rails.common.parser.Config;
+import rails.common.parser.ConfigurationException;
 import rails.game.*;
 import rails.game.action.*;
 import rails.ui.swing.*;
-import rails.util.Config;
 import rails.util.Util;
 
 /**

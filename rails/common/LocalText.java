@@ -1,5 +1,5 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/LocalText.java,v 1.7 2010/03/23 18:45:16 stefanfrey Exp $*/
-package rails.util;
+package rails.common;
 
 import java.text.MessageFormat;
 import java.util.Enumeration;
@@ -8,6 +8,9 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.apache.log4j.Logger;
+
+import rails.common.parser.Config;
+import rails.util.Util;
 
 public class LocalText extends ResourceBundle {
 

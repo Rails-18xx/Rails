@@ -1,8 +1,8 @@
 package rails.game.correct;
 
+import rails.common.LocalText;
 import rails.game.*;
 import rails.game.move.CashMove;
-import rails.util.*;
 import java.util.*;
 
 public final class CashCorrectionManager extends CorrectionManager {

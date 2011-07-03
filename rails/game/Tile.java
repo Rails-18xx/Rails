@@ -6,9 +6,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import rails.algorithms.RevenueBonusTemplate;
+import rails.common.LocalText;
+import rails.common.parser.ConfigurationException;
+import rails.common.parser.Tag;
 import rails.game.model.ModelObject;
-import rails.util.LocalText;
-import rails.util.Tag;
 
 /** Represents a certain tile <i>type</i>, identified by its id (tile number).
  * <p> For each tile number, only one tile object is created. 

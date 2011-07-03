@@ -1,6 +1,9 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/ExchangeForShare.java,v 1.19 2010/05/05 21:37:18 evos Exp $ */
 package rails.game.special;
 
+import rails.common.LocalText;
+import rails.common.parser.ConfigurationException;
+import rails.common.parser.Tag;
 import rails.game.*;
 import rails.util.*;
 

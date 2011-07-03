@@ -8,9 +8,9 @@ import javax.swing.*;
 
 import org.apache.log4j.Logger;
 
+import rails.common.LocalText;
 import rails.ui.swing.elements.DialogOwner;
 import rails.ui.swing.elements.Spinner;
-import rails.util.LocalText;
 
 /**
  * A generic dialog for presenting choices by radio buttons.

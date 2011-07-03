@@ -13,8 +13,8 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.*;
 
-import rails.game.ConfigurationException;
-import rails.util.Tag;
+import rails.common.parser.ConfigurationException;
+import rails.common.parser.Tag;
 
 /**
  * Convert an XML tile dictionary, as created by Marco Rocci's Tile Designer, to

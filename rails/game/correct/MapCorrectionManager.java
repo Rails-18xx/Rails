@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import rails.common.LocalText;
 import rails.game.BaseToken;
 import rails.game.City;
 import rails.game.DisplayBuffer;
@@ -14,7 +15,6 @@ import rails.game.Station;
 import rails.game.TileI;
 import rails.game.TileManager;
 import rails.game.TokenI;
-import rails.util.LocalText;
 import tools.Util;
 
 public class MapCorrectionManager extends CorrectionManager {

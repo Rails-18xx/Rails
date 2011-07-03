@@ -3,6 +3,7 @@ package rails.game;
 
 import java.awt.Color;
 
+import rails.common.parser.ConfigurationException;
 import rails.util.Util;
 
 /**

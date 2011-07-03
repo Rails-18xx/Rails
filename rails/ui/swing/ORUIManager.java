@@ -10,6 +10,8 @@ import org.jgrapht.graph.SimpleGraph;
 
 import rails.algorithms.*;
 import rails.common.GuiDef;
+import rails.common.LocalText;
+import rails.common.parser.Config;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.correct.*;

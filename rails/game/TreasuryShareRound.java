@@ -8,9 +8,9 @@ package rails.game;
 import java.util.*;
 
 import rails.common.GuiDef;
+import rails.common.LocalText;
 import rails.game.action.*;
 import rails.game.state.BooleanState;
-import rails.util.LocalText;
 
 /**
  * @author Erik Vos

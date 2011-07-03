@@ -8,10 +8,11 @@ package rails.game;
 import java.util.*;
 
 import rails.common.GuiDef;
+import rails.common.LocalText;
+import rails.common.parser.GameOption;
 import rails.game.action.PossibleAction;
 import rails.game.action.SellShares;
 import rails.game.state.IntegerState;
-import rails.util.LocalText;
 
 /**
  * @author Erik Vos

@@ -3,11 +3,11 @@ package rails.game.specific._18AL;
 import java.util.ArrayList;
 import java.util.List;
 
+import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.LayBaseToken;
 import rails.game.action.PossibleAction;
 import rails.game.move.CashMove;
-import rails.util.LocalText;
 
 public class OperatingRound_18AL extends OperatingRound {
 

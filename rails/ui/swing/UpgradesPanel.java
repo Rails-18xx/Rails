@@ -14,13 +14,13 @@ import javax.swing.border.EtchedBorder;
 
 import org.apache.log4j.Logger;
 
+import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.correct.MapCorrectionAction;
 import rails.ui.swing.elements.ActionLabel;
 import rails.ui.swing.hexmap.GUIHex;
 import rails.ui.swing.hexmap.HexMap;
-import rails.util.LocalText;
 import tools.Util;
 
 public class UpgradesPanel extends Box implements MouseListener, ActionListener {

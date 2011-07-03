@@ -7,9 +7,9 @@ package rails.game.specific._1880;
 import java.util.ArrayList;
 import java.util.List;
 
+import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.BuyCertificate;
-import rails.util.LocalText;
 
 public class StockRound_1880 extends StockRound {
 

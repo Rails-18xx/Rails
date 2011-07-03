@@ -3,12 +3,12 @@
  */
 package rails.game.specific._1880;
 
+import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.state.IntegerState;
 import rails.game.state.State;
 import rails.game.state.ArrayListState;
-import rails.util.LocalText;
 
 
 

@@ -2,7 +2,7 @@ package rails.game;
 
 import rails.common.GuiDef;
 import rails.common.GuiHints;
-import rails.util.LocalText;
+import rails.common.LocalText;
 
 /**
  * EndOfGameRound is a dummy implementation of the Round class

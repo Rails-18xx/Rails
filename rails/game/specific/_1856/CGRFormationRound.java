@@ -3,13 +3,13 @@ package rails.game.specific._1856;
 import java.util.*;
 
 import rails.common.GuiDef;
+import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.move.CashMove;
 import rails.game.special.SellBonusToken;
 import rails.game.state.BooleanState;
 import rails.game.state.IntegerState;
-import rails.util.LocalText;
 
 
 public class CGRFormationRound extends SwitchableUIRound {
