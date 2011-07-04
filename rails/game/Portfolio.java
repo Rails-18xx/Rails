@@ -114,6 +114,7 @@ public class Portfolio implements TokenHolder, MoveableHolder {
         Util.moveObjects(otherPortfolio.getCertificates(), this);
     }
 
+    /** Low-level method, only to be called by the local addObject() method and by initialisation code. */
     public void addPrivate(PrivateCompanyI privateCompany, int position) {
 
         if (!Util.addToList(privateCompanies, privateCompany, position)) return;
@@ -127,13 +128,16 @@ public class Portfolio implements TokenHolder, MoveableHolder {
             log.debug(privateCompany.getName() + " has no special properties");
         }
         privatesOwnedModel.update();
+        updatePlayerWorth ();
     }
 
+    /** Low-level method, only to be called by the local addObject() method and by initialisation code. */
     public void addCertificate(PublicCertificateI certificate){
         addCertificate (certificate, new int[] {-1,-1,-1});
     }
 
-    public void addCertificate(PublicCertificateI certificate, int[] position) {
+    /** Low-level method, only to be called by the local addObject() method. */
+    private void addCertificate(PublicCertificateI certificate, int[] position) {
         // When undoing a company start, put the President back at the top.
         if (certificate.isPresidentShare()) position = new int[] {0,0,0};
 
@@ -155,20 +159,21 @@ public class Portfolio implements TokenHolder, MoveableHolder {
         certificate.setPortfolio(this);
 
         getShareModel(certificate.getCompany()).addShare(certificate.getShare());
-        if (owner instanceof Player) {
-            ((Player)owner).updateWorth();
-        }
+        updatePlayerWorth ();
     }
 
-    public boolean removePrivate(PrivateCompanyI privateCompany) {
+    /** Low-level method, only to be called by the local addObject() method. */
+    private boolean removePrivate(PrivateCompanyI privateCompany) {
         boolean removed = privateCompanies.remove(privateCompany);
         if (removed) {
             privatesOwnedModel.update();
+            updatePlayerWorth ();
         }
         return removed;
     }
 
-    public void removeCertificate(PublicCertificateI certificate) {
+    /** Low-level method, only to be called by the local addObject() method. */
+    private void removeCertificate(PublicCertificateI certificate) {
         certificates.remove(certificate);
 
         String companyName = certificate.getCompany().getName();
@@ -186,12 +191,16 @@ public class Portfolio implements TokenHolder, MoveableHolder {
 
         getShareModel(certificate.getCompany()).addShare(
                 -certificate.getShare());
+        updatePlayerWorth ();
+    }
+
+    protected void updatePlayerWorth () {
         if (owner instanceof Player) {
             ((Player)owner).updateWorth();
         }
     }
-
-    public ShareModel getShareModel(PublicCompanyI company) {
+    
+   public ShareModel getShareModel(PublicCompanyI company) {
 
         if (!shareModelPerCompany.containsKey(company)) {
             shareModelPerCompany.put(company, new ShareModel(this, company));
@@ -394,11 +403,13 @@ public class Portfolio implements TokenHolder, MoveableHolder {
         return swapped;
     }
 
+    /** Low-level method, only to be called by initialisation code and by the local addObject() method. */
     public void addTrain (TrainI train) {
         addTrain (train, new int[] {-1,-1,-1});
     }
 
-    public void addTrain(TrainI train, int[] position) {
+    /** Low-level method, only to be called by the local addObject() method. */
+    private void addTrain(TrainI train, int[] position) {
 
         Util.addToList(trains, train, position[0]);
         
@@ -418,7 +429,8 @@ public class Portfolio implements TokenHolder, MoveableHolder {
         trainsModel.update();
     }
 
-    public void removeTrain(TrainI train) {
+    /** Low-level method, only to be called by Move objects */
+    private void removeTrain(TrainI train) {
         trains.remove(train);
         trainsPerType.get(train.getPreviousType()).remove(train);
         trainsPerCertType.get(train.getCertType()).remove(train);
@@ -543,11 +555,12 @@ public class Portfolio implements TokenHolder, MoveableHolder {
     /**
      * Add a special property. Used to make special properties independent of
      * the private company that originally held it.
+     * Low-level method, only to be called by Move objects.
      *
      * @param property The special property object to add.
      * @return True if successful.
      */
-    public boolean addSpecialProperty(SpecialPropertyI property, int position) {
+    private boolean addSpecialProperty(SpecialPropertyI property, int position) {
 
 
         if (specialProperties == null) {
@@ -579,11 +592,11 @@ public class Portfolio implements TokenHolder, MoveableHolder {
 
     /**
      * Remove a special property.
-     *
+     * Low-level method, only to be called by Move objects.
      * @param property The special property object to remove.
      * @return True if successful.
      */
-    public boolean removeSpecialProperty(SpecialPropertyI property) {
+    private boolean removeSpecialProperty(SpecialPropertyI property) {
 
         boolean result = false;
 
@@ -604,7 +617,7 @@ public class Portfolio implements TokenHolder, MoveableHolder {
 
     /**
      * Add an object.
-     *
+     * Low-level method, only to be called by Move objects.
      * @param object The object to add.
      * @return True if successful.
      */
@@ -631,6 +644,7 @@ public class Portfolio implements TokenHolder, MoveableHolder {
 
     /**
      * Remove an object.
+     * Low-level method, only to be called by Move objects.
      *
      * @param object The object to remove.
      * @return True if successful.
@@ -755,11 +769,13 @@ public class Portfolio implements TokenHolder, MoveableHolder {
         return privatesOwnedModel;
     }
 
+    /** Low-level method, only to be called by the local addObject() method. */
     public boolean addToken(TokenI token, int position) {
 
         return Util.addToList(tokens, token, position);
     }
 
+    /** Low-level method, only to be called by the local addObject() method. */
     public boolean removeToken(TokenI token) {
         return tokens.remove(token);
     }

@@ -12,7 +12,7 @@ import rails.game.move.MoveableHolder;
  */
 public interface TokenHolder extends MoveableHolder {
 
-    /*
+    /**
      * Add a token. Subclasses may override this method to implement side
      * effects.
      *
