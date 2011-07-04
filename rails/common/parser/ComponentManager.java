@@ -22,7 +22,10 @@ public class ComponentManager {
 
     protected Logger log = Logger.getLogger(ComponentManager.class.getPackage().getName());
     protected List<String> directories = new ArrayList<String>();
-
+    
+    private Map<String, ConfigurableComponentI> mComponentMap =
+            new HashMap<String, ConfigurableComponentI>();
+    
     public ComponentManager(String gameName, Tag tag, Map<String, String> gameOptions)
             throws ConfigurationException {
         this.gameName = gameName;
@@ -105,11 +108,14 @@ public class ComponentManager {
      * @param componentName the of the component sought.
      * @return the component sought, or null if it has not been configured.
      */
-    public ConfigurableComponentI findComponent(String componentName) {
-        return mComponentMap.get(componentName);
+    public ConfigurableComponentI findComponent(String componentName) throws ConfigurationException {
+        ConfigurableComponentI comp = mComponentMap.get(componentName);
+        
+        //FIXME: Revenue Manager is currently optional.
+        if (comp == null && componentName != "RevenueManager") {
+            throw new ConfigurationException("No XML element found for component named: " + componentName);
+        }
+        
+        return comp;
     }
-
-    private Map<String, ConfigurableComponentI> mComponentMap =
-            new HashMap<String, ConfigurableComponentI>();
-
 }
