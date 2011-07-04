@@ -7,6 +7,8 @@ package rails.game.move;
 
 import java.util.Map;
 
+import rails.game.model.ModelObject;
+
 /**
  * This Move class handles removable from a stateful map (collection)
  *
@@ -34,10 +36,23 @@ public class RemoveFromMap<K, V> extends Move {
         MoveSet.add(this);
     }
     
+    public RemoveFromMap (Map<K, V> map, K key, ModelObject modelToUpdate) {
+
+        keyExisted = map.containsKey(key);
+        if (!keyExisted) return;  // Nothing to do
+        this.map = map;
+        this.key = key;
+        this.oldValue = map.get(key);
+        if (modelToUpdate != null) registerModelToUpdate (modelToUpdate);
+
+        MoveSet.add(this);
+    }
+    
     @Override
     public boolean execute() {
         if (keyExisted) {
             map.remove(key);
+            updateModels();
         }
         return true;
     }
@@ -46,6 +61,7 @@ public class RemoveFromMap<K, V> extends Move {
     public boolean undo() {
         if (keyExisted) {
             map.put (key, oldValue);
+            updateModels();
         }
         return true;
     }

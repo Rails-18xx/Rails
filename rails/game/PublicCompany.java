@@ -280,7 +280,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     
     /** Rights */
     protected HashMapState<String, String> rights = null;
-    protected RightsModel rightsModel = new RightsModel();
+    //protected RightsModel rightsModel = new RightsModel();
   
 
     /**
@@ -765,6 +765,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
             for (SpecialPropertyI sp : specialProperties) {
                 if (sp instanceof SpecialRight) {
                     gameManager.setGuiParameter (GuiDef.Parm.HAS_ANY_RIGHTS, true);
+                    // Initialize rights here to prevent overhead if not used, 
+                    // but if rights are used, the GUI needs it from the start.
+                    if (rights == null) rights = new HashMapState<String, String>(name+"_Rights");
                 }
             }
         }
@@ -1986,8 +1989,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
         return currentLoanValue;
     }
     
-    public RightsModel getRightsModel () {
-        return rightsModel;
+    public ModelObject getRightsModel () {
+        //return rightsModel;
+        return rights;
     }
 
     public boolean canClose() {
@@ -1997,10 +2001,10 @@ public class PublicCompany extends Company implements PublicCompanyI {
     public void setRight (String nameOfRight, String value) {
         if (rights == null) {
             rights = new HashMapState<String, String>(name+"_Rights");
-            rightsModel.init (rights);
+            //rightsModel.init (rights);
         }
         rights.put(nameOfRight, value);
-        rightsModel.update();
+        //rightsModel.update();
     }
     
     public boolean hasRight (String nameOfRight) {

@@ -8,8 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import rails.game.model.ModelObject;
 import rails.game.move.MapChange;
 import rails.game.move.RemoveFromMap;
+import tools.Util;
 
 /**
  * State class that wraps a HashMap
@@ -23,7 +25,7 @@ import rails.game.move.RemoveFromMap;
  * 
  */
 
-public class HashMapState<K,V>{
+public class HashMapState<K,V> extends ModelObject {
 
     private final HashMap<K,V> map = new HashMap<K,V>();
     private String mapName;
@@ -42,12 +44,12 @@ public class HashMapState<K,V>{
     }
     
     public void put(K key, V value) {
-        new MapChange<K,V>(map, key, value);
+        new MapChange<K,V>(map, key, value, this);
     }
     
     public void putAll(Map<K,V> map) {
         for (K key:map.keySet()) {
-            new MapChange<K,V>(map, key, map.get(key));
+            new MapChange<K,V>(map, key, map.get(key), this);
         }
     }
     
@@ -56,7 +58,7 @@ public class HashMapState<K,V>{
     }
     
     public void remove(K key) {
-       new RemoveFromMap<K,V>(map, key);
+       new RemoveFromMap<K,V>(map, key, this);
     }
     
     public boolean hasKey(K key) {
@@ -72,6 +74,7 @@ public class HashMapState<K,V>{
         for (K key : keys) {
             remove (key);
         }
+        update();
     }
 
     /**
@@ -93,6 +96,7 @@ public class HashMapState<K,V>{
                 new MapChange<K,V>(map, key, initMap.get(key));
             }
         }
+        update();
     }
     
     /** 
@@ -115,4 +119,24 @@ public class HashMapState<K,V>{
     public boolean isEmpty() {
         return map.isEmpty();
     }
+    
+    @Override
+    public String getText() {
+
+        if (map == null) return "";
+        
+        StringBuilder buf = new StringBuilder("<html>");
+        for (K name : map.keySet()) {
+            if (buf.length() > 6) buf.append("<br>");
+            buf.append(name.toString());
+            Object value = map.get(name);
+            if (value != null && Util.hasValue(value.toString())) buf.append("=").append(value.toString());
+        }
+        if (buf.length() > 6) {
+            buf.append("</html>");
+        }
+        return buf.toString();
+
+    }
+
 }

@@ -7,6 +7,8 @@ package rails.game.move;
 
 import java.util.Map;
 
+import rails.game.model.ModelObject;
+
 /**
  * This Move class handles adding an entry to a Map.
  *
@@ -35,9 +37,22 @@ public class MapChange<K, V> extends Move {
         MoveSet.add(this);
     }
     
+    public MapChange (Map<K, V> map, K key, V newValue, ModelObject modelToUpdate) {
+
+        this.map = map;
+        this.key = key;
+        this.newValue = newValue;
+        this.oldValue = map.get(key);
+        this.keyExisted = map.containsKey(key);
+        if (modelToUpdate != null) registerModelToUpdate (modelToUpdate);
+
+        MoveSet.add(this);
+    }
+    
     @Override
     public boolean execute() {
         map.put(key, newValue);
+        updateModels();
         return true;
     }
 
@@ -48,6 +63,7 @@ public class MapChange<K, V> extends Move {
         } else {
             map.remove(key);
         }
+        updateModels();
         return true;
     }
     
