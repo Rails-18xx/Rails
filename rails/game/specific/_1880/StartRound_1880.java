@@ -3,6 +3,7 @@
  */
 package rails.game.specific._1880;
 
+import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;

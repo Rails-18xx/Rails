@@ -3,6 +3,7 @@ package rails.game;
 import java.util.ArrayList;
 import java.util.List;
 
+import rails.common.DisplayBuffer;
 import rails.common.GuiDef;
 import rails.common.LocalText;
 import rails.common.parser.GameOption;

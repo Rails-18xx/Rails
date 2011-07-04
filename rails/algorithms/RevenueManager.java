@@ -8,9 +8,9 @@ import org.apache.log4j.Logger;
 
 
 import rails.common.LocalText;
+import rails.common.parser.ConfigurableComponentI;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
-import rails.game.ConfigurableComponentI;
 import rails.game.GameManagerI;
 import rails.game.state.ArrayListState;
 

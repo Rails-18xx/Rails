@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.Map;
 
 import rails.algorithms.RevenueManager;
+import rails.common.DisplayBuffer;
 import rails.common.GuiDef;
 import rails.common.GuiHints;
+import rails.common.parser.ConfigurableComponentI;
 import rails.game.action.PossibleAction;
 import rails.game.correct.CorrectionManagerI;
 import rails.game.correct.CorrectionType;
@@ -17,7 +19,7 @@ import rails.game.special.SpecialPropertyI;
 public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
 
     /**
-     * @see rails.game.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
+     * @see rails.common.parser.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
      */
     public abstract void init(String gameName, PlayerManager playerManager,
             CompanyManagerI companyManager, PhaseManager phaseManager,

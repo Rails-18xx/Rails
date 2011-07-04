@@ -4,6 +4,7 @@ package rails.game;
 import java.util.*;
 
 import rails.common.LocalText;
+import rails.common.parser.ConfigurableComponentI;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.move.PriceTokenMove;
@@ -44,7 +45,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
     }
 
     /**
-     * @see rails.game.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
+     * @see rails.common.parser.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
      */
     public void configureFromXML(Tag tag) throws ConfigurationException {
 

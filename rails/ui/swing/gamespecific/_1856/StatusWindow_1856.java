@@ -2,6 +2,7 @@ package rails.ui.swing.gamespecific._1856;
 
 import javax.swing.WindowConstants;
 
+import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;

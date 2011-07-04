@@ -13,6 +13,7 @@ import rails.common.parser.GameInfoParser;
 
 import org.apache.log4j.Logger;
 
+import rails.common.DisplayBuffer;
 import rails.common.GuiDef;
 import rails.common.LocalText;
 import rails.common.parser.Config;
@@ -508,8 +509,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
             gameUIManager.gameUIInit(true); // true indicates new game
         }
 
-        this.setVisible(false); // XXX: At some point we should destroy this
-        // XXX: object rather than just making it invisible
+        this.setVisible(false);
         killConfigWindow();
     }
 

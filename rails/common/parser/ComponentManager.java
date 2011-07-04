@@ -1,5 +1,5 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ComponentManager.java,v 1.19 2010/05/18 04:12:23 stefanfrey Exp $ */
-package rails.game;
+package rails.common.parser;
 
 import java.lang.reflect.Constructor;
 import java.util.*;
@@ -7,8 +7,7 @@ import java.util.*;
 import org.apache.log4j.Logger;
 
 import rails.common.LocalText;
-import rails.common.parser.ConfigurationException;
-import rails.common.parser.Tag;
+import rails.common.parser.XMLTags;
 
 /**
  * ComponentManage - an implementation of ComponentManagerI, which handles the
@@ -19,60 +18,21 @@ public class ComponentManager {
 
     private String gameName;
 
-    /** The name of the XML tag used to configure the ComponentManager. */
-    public static final String ELEMENT_ID = "ComponentManager";
-
-    /** The name of the XML tag used to configure a component. */
-    public static final String COMPONENT_ELEMENT_ID = "Component";
-
-    /** The name of the XML attribute for the component's name. */
-    public static final String COMPONENT_NAME_TAG = "name";
-
-    /** The name of the XML attribute for the component's class. */
-    public static final String COMPONENT_CLASS_TAG = "class";
-
-    /** The name of the XML attribute for the component's configuration file. */
-    public static final String COMPONENT_FILE_TAG = "file";
-
     private List<Tag> componentTags;
-    private Map<String, String> gameOptions;
 
-    protected static Logger log =
-            Logger.getLogger(ComponentManager.class.getPackage().getName());
-//    protected static List<String> directories = new ArrayList<String>();
+    protected Logger log = Logger.getLogger(ComponentManager.class.getPackage().getName());
     protected List<String> directories = new ArrayList<String>();
 
-    public static synchronized ComponentManager configureInstance(String gameName, Tag tag,
-            Map<String, String> gameOptions)
+    public ComponentManager(String gameName, Tag tag, Map<String, String> gameOptions)
             throws ConfigurationException {
-        return new ComponentManager(gameName, tag, gameOptions);
-    }
-
-    private ComponentManager(String gameName, Tag tag, Map<String, String> gameOptions)
-            throws ConfigurationException {
-
-        this.gameOptions = gameOptions;
         this.gameName = gameName;
 
-        componentTags = tag.getChildren(COMPONENT_ELEMENT_ID);
+        componentTags = tag.getChildren(XMLTags.COMPONENT_ELEMENT_ID);
         for (Tag component : componentTags) {
             String compName = component.getAttributeAsString("name");
             log.debug("Found component " + compName);
-            if (compName.equalsIgnoreCase(GameManager.GM_NAME)) {
-                configureComponent(component);
-                break;
-            }
-        }
-    }
-
-    public synchronized void finishPreparation() throws ConfigurationException {
-
-        for (Tag componentTag : componentTags) {
-            componentTag.setGameOptions(gameOptions);
-            String compName = componentTag.getAttributeAsString("name");
-            if (compName.equalsIgnoreCase(GameManager.GM_NAME)) continue;
-            log.debug("Found component " + compName);
-            configureComponent(componentTag);
+            configureComponent(component);
+            component.setGameOptions(gameOptions);
         }
     }
 
@@ -80,17 +40,17 @@ public class ComponentManager {
             throws ConfigurationException {
 
         // Extract the attributes of the Component
-        String name = componentTag.getAttributeAsString(COMPONENT_NAME_TAG);
+        String name = componentTag.getAttributeAsString(XMLTags.NAME_ATTR);
         if (name == null) {
             throw new ConfigurationException(
                     LocalText.getText("UnnamedComponent"));
         }
-        String clazz = componentTag.getAttributeAsString(COMPONENT_CLASS_TAG);
+        String clazz = componentTag.getAttributeAsString(XMLTags.CLASS_ATTR);
         if (clazz == null) {
             throw new ConfigurationException(LocalText.getText(
                     "ComponentHasNoClass", name));
         }
-        String file = componentTag.getAttributeAsString(COMPONENT_FILE_TAG);
+        String file = componentTag.getAttributeAsString(XMLTags.FILE_ATTR);
 
         // Only one component per name.
         if (mComponentMap.get(name) != null) {
@@ -109,12 +69,10 @@ public class ComponentManager {
                     compClass.getConstructor(new Class[0]);
             component = compCons.newInstance(new Object[0]);
         } catch (Exception ex) {
-            // Not great to catch Exception, but there are MANY things that
-            // could go wrong
-            // here, and they all just mean that the configuration and code
-            // do not between
-            // them make a well-formed system. Debugging aided by chaining
-            // the caught exception.
+            // There are MANY things that could go wrong here.
+            // They all just mean that the configuration and code
+            // do not combine to make a well-formed system.
+            // Debugging aided by chaining the caught exception.
             throw new ConfigurationException(LocalText.getText(
                     "ComponentHasNoClass", clazz), ex);
 

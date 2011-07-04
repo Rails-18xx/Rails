@@ -54,7 +54,7 @@ public class TrainType implements Cloneable {
     }
 
     /**
-     * @see rails.game.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
+     * @see rails.common.parser.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
      */
     public void configureFromXML(Tag tag) throws ConfigurationException {
 

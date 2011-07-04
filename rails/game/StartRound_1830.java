@@ -1,6 +1,7 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.33 2010/06/21 22:57:53 stefanfrey Exp $ */
 package rails.game;
 
+import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.common.parser.GameOption;
 import rails.game.action.*;

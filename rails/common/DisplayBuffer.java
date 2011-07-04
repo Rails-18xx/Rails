@@ -1,11 +1,13 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/DisplayBuffer.java,v 1.9 2010/01/31 22:22:28 macfreek Exp $ */
-package rails.game;
+package rails.common;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import rails.game.GameManager;
+import rails.game.GameManagerI;
 import rails.util.Util;
 
 /**

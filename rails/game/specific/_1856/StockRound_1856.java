@@ -1,5 +1,6 @@
 package rails.game.specific._1856;
 
+import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.BuyCertificate;

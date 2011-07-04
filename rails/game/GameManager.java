@@ -10,10 +10,12 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.NDC;
 
 import rails.algorithms.RevenueManager;
+import rails.common.DisplayBuffer;
 import rails.common.GuiDef;
 import rails.common.GuiHints;
 import rails.common.LocalText;
 import rails.common.parser.Config;
+import rails.common.parser.ConfigurableComponentI;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.GameOption;
 import rails.common.parser.Tag;
@@ -101,9 +103,6 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
     protected EnumMap<GameDef.Parm, Object> gameParameters
             = new EnumMap<GameDef.Parm, Object>(GameDef.Parm.class);
-
-    //    protected EnumSet<CorrectionType> activeCorrections
-    //        = EnumSet.noneOf(CorrectionType.class);
 
     /**
      * Current round should not be set here but from within the Round classes.

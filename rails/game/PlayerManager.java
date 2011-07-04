@@ -4,6 +4,7 @@ package rails.game;
 import java.util.*;
 
 import rails.common.LocalText;
+import rails.common.parser.ConfigurableComponentI;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 

@@ -3,6 +3,8 @@ package rails.game;
 
 import java.util.Map;
 
+import rails.common.parser.ConfigurableComponentI;
+
 public interface PhaseI extends ConfigurableComponentI {
     public boolean isTileColourAllowed(String tileColour);
 

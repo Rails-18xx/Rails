@@ -5,6 +5,7 @@
  */
 package rails.game;
 
+import rails.common.parser.ConfigurableComponentI;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.move.ObjectMove;

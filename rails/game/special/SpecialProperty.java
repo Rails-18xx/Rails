@@ -54,20 +54,13 @@ public abstract class SpecialProperty implements SpecialPropertyI {
     /** To give subclasses access to the various 'managers' */
     protected GameManagerI gameManager;
 
-    protected static Map<Integer, SpecialPropertyI> spMap =
-            new HashMap<Integer, SpecialPropertyI>();
+    protected static Map<Integer, SpecialPropertyI> spMap = new HashMap<Integer, SpecialPropertyI>();
+    
     protected static int lastIndex = 0;
 
     protected static Logger log =
         Logger.getLogger(SpecialProperty.class.getPackage().getName());
 
-    // initialize the special properties static variables
-    public static void init() {
-        spMap = new HashMap<Integer, SpecialPropertyI>();
-        lastIndex = 0;
-        log.debug("Init special property static variables");
-    }
-    
     public SpecialProperty() {
         uniqueId = ++lastIndex;
         spMap.put(uniqueId, this);

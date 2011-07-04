@@ -9,6 +9,7 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
+import rails.common.DisplayBuffer;
 import rails.common.GuiHints;
 import rails.common.LocalText;
 import rails.game.action.*;

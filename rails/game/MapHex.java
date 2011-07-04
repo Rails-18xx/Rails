@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 
 import rails.algorithms.RevenueBonusTemplate;
 import rails.common.LocalText;
+import rails.common.parser.ConfigurableComponentI;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.action.LayTile;
@@ -156,7 +157,7 @@ StationHolder, TokenHolder {
     }
 
     /**
-     * @see rails.game.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
+     * @see rails.common.parser.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
      */
     public void configureFromXML(Tag tag) throws ConfigurationException {
         Pattern namePattern = Pattern.compile("(\\D+?)(-?\\d+)");

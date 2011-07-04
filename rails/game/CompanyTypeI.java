@@ -3,6 +3,7 @@ package rails.game;
 
 import java.util.List;
 
+import rails.common.parser.ConfigurableComponentI;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 

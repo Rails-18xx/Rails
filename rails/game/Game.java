@@ -7,10 +7,13 @@ import java.util.*;
 import org.apache.log4j.Logger;
 
 import rails.algorithms.RevenueManager;
+import rails.common.DisplayBuffer;
 import rails.common.LocalText;
+import rails.common.parser.ComponentManager;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.GameOption;
 import rails.common.parser.Tag;
+import rails.common.parser.XMLTags;
 import rails.game.action.PossibleAction;
 import rails.game.special.SpecialProperty;
 
@@ -79,26 +82,21 @@ public class Game {
         try {
             componentManagerTag =
                     Tag.findTopTagInFile(GAME_XML_FILE, directories,
-                            ComponentManager.ELEMENT_ID);
+                            XMLTags.COMPONENT_MANAGER_ELEMENT_ID);
             if (componentManagerTag == null) {
                 throw new ConfigurationException(
                         "No Game XML element found in file " + GAME_XML_FILE);
             }
 
             componentManagerTag.setGameOptions(gameOptions);
-            componentManager =
-                ComponentManager.configureInstance(name, componentManagerTag, gameOptions);
+            
+            // Have the ComponentManager work through the other rails.game files
+            //XXX: Ultimately calls everyone's configureFromXML() methods.
+            componentManager = new ComponentManager(name, componentManagerTag, gameOptions);
 
             log.info("========== Start of rails.game " + name + " ==========");
             log.info("Rails version "+version);
             ReportBuffer.add(LocalText.getText("GameIs", name));
-
-            // set special properties and token static variables
-            SpecialProperty.init();
-            Token.init();
-
-            // Have the ComponentManager work through the other rails.game files
-            componentManager.finishPreparation();
 
             playerManager = (PlayerManager) componentManager.findComponent("PlayerManager");
             if (playerManager == null) {

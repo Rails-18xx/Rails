@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.game.BaseToken;
 import rails.game.City;
-import rails.game.DisplayBuffer;
 import rails.game.GameManager;
 import rails.game.MapHex;
 import rails.game.ReportBuffer;

@@ -3,6 +3,8 @@ package rails.game;
 
 import java.util.List;
 
+import rails.common.parser.ConfigurableComponentI;
+
 /**
  * Interface for CompanyManager objects. A company manager is a factory which
  * vends Company objects.

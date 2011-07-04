@@ -3,6 +3,7 @@ package rails.game.specific._1851;
 
 import java.util.List;
 
+import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;

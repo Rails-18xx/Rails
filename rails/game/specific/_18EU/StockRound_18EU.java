@@ -2,6 +2,7 @@ package rails.game.specific._18EU;
 
 import java.util.*;
 
+import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;

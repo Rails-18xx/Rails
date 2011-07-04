@@ -3,6 +3,7 @@ package rails.game;
 
 import java.util.List;
 
+import rails.common.parser.ConfigurableComponentI;
 import rails.game.move.MoveableHolder;
 import rails.game.special.SpecialPropertyI;
 

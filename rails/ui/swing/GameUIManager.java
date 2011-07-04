@@ -13,6 +13,7 @@ import javax.swing.plaf.FontUIResource;
 
 import org.apache.log4j.Logger;
 
+import rails.common.DisplayBuffer;
 import rails.common.GuiDef;
 import rails.common.GuiHints;
 import rails.common.LocalText;

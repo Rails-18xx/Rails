@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 //import rails.algorithms.RevenueBonus;
 //import rails.algorithms.RevenueManager;
 //import rails.algorithms.RevenueStaticModifier;
+import rails.common.parser.ConfigurableComponentI;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.*;

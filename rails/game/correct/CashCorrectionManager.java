@@ -1,5 +1,6 @@
 package rails.game.correct;
 
+import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.game.*;
 import rails.game.move.CashMove;

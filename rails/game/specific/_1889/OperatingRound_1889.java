@@ -1,6 +1,7 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_1889/OperatingRound_1889.java,v 1.1 2010/02/23 22:21:40 stefanfrey Exp $ */
 package rails.game.specific._1889;
 
+import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.common.parser.GameOption;
 import rails.game.*;

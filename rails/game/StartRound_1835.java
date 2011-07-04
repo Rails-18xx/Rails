@@ -4,6 +4,7 @@ package rails.game;
 import java.util.ArrayList;
 import java.util.List;
 
+import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.game.action.*;
 import rails.game.state.IntegerState;
