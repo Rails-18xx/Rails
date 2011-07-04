@@ -73,7 +73,7 @@ public abstract class ModelObject extends Observable {
      */
     public void update() {
         /* Notify the observers about the change */
-        notifyViewObjects();
+        if (countObservers() > 0) notifyViewObjects();
 
         /* Also update all model objects that depend on this one */
         if (dependents != null) {
