@@ -13,6 +13,7 @@ import rails.common.parser.ConfigurationException;
 import rails.common.parser.GameFileParser;
 import rails.common.parser.GameOption;
 import rails.game.action.PossibleAction;
+import rails.util.GameLoader;
 
 public class Game {
     public static final String version = "1.4.1+";
@@ -118,9 +119,32 @@ public class Game {
         
         return true;
     }
+    
+    
+    public static Game load(String filepath)  {
+        
+        // use GameLoader object to load game
+        GameLoader gameLoader = new GameLoader();
+        gameLoader.loadGameData(filepath);
+        try{
+            gameLoader.initGame();
+            gameLoader.loadActionsAndComments();
+        } catch (ConfigurationException e)  {
+            log.fatal("Load failed", e);
+            DisplayBuffer.add(LocalText.getText("LoadFailed", e.getMessage()));
+        }
+        try{
+            gameLoader.replayGame();
+        } catch (Exception e) {
+            log.fatal("Replay failed", e);
+            DisplayBuffer.add(LocalText.getText("LoadFailed", e.getMessage()));
+        }
 
+        return gameLoader.getGame();
+    }
+    
     @SuppressWarnings("unchecked")
-    public static Game load(String filepath) {
+    public static Game load_old(String filepath) {
 
         Game game = null;
 

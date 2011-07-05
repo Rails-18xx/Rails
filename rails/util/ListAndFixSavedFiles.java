@@ -36,6 +36,7 @@ implements ActionListener, KeyListener {
 
     private List<Object> savedObjects = new ArrayList<Object>(512);
     private List<PossibleAction> executedActions;
+    private SortedMap<Integer,String> userComments;
 
     private int vbarPos;
 
@@ -156,100 +157,33 @@ implements ActionListener, KeyListener {
 
         JFileChooser jfc = new JFileChooser();
         jfc.setCurrentDirectory(new File(saveDirectory));
-
+        
         if (jfc.showOpenDialog(getContentPane()) == JFileChooser.APPROVE_OPTION) {
 
             File selectedFile = jfc.getSelectedFile();
             filepath = selectedFile.getPath();
             saveDirectory = selectedFile.getParent();
+            
+            // use GameLoader object to load game
+            GameLoader gameLoader = new GameLoader();
 
-            log.debug("Loading game from file " + filepath);
-            String filename = filepath.replaceAll(".*[/\\\\]", "");
-
-            try {
-                ObjectInputStream ois =
-                        new ObjectInputStream(new FileInputStream(
-                                new File(filepath)));
-
-                // New in 1.0.7: Rails version & save date/time.
-                // Allow for older saved file versions.
-
-                Object object = ois.readObject();
-                savedObjects.add(object);
-                if (object instanceof String) {
-                    add((String)object+" saved file "+filename);
-                    object = ois.readObject();
-                    savedObjects.add(object);
-                } else {
-                    add("Reading Rails (pre-1.0.7) saved file "+filename);
-                }
-                if (object instanceof String) {
-                    add("File was saved at "+(String)object);
-                    object = ois.readObject();
-                    savedObjects.add(object);
-                }
-
-                long versionID = (Long) object;
-                add("Saved versionID="+versionID+" (object="+object+")");
-                long saveFileVersionID = GameManager.saveFileVersionID;
-                String name = (String) ois.readObject();
-                savedObjects.add(name);
-                add("Saved game="+name);
-
-                Map<String, String> selectedGameOptions =
-                        (Map<String, String>) ois.readObject();
-                savedObjects.add(selectedGameOptions);
-                for (String key : selectedGameOptions.keySet()) {
-                    add("Option "+key+"="+selectedGameOptions.get(key));
-                }
-
-                List<String> playerNames = (List<String>) ois.readObject();
-                savedObjects.add(playerNames);
-                int i=1;
-                for (String player : playerNames) {
-                    add("Player "+(i++)+": "+player);
-                }
-
-                Game game = new Game(name, playerNames, selectedGameOptions);
-
-                if (!game.setup()) {
-                    throw new ConfigurationException("Error in setting up " + name);
-                }
-
-                Object firstActionObject = ois.readObject();
-                if (firstActionObject instanceof List) {
-                    // Old-style: one List of PossibleActions
-                    executedActions =
-                        (List<PossibleAction>) firstActionObject;
-                    savedObjects.add(executedActions);
-                } else {
-                    // New style: separate PossibleActionsObjects, since Rails 1.3.1
-                    executedActions = new ArrayList<PossibleAction>();
-                    PossibleAction action = (PossibleAction) firstActionObject;
-                    while (true) {
-                        savedObjects.add (action);
-                        executedActions.add(action);
-                        try {
-                            action = (PossibleAction) ois.readObject();
-                        } catch (EOFException e) {
-                            break;
-                        } catch (ClassCastException e) {
-                            log.error ("Aborting on non-action object: "+ e.getMessage());
-                            break;
-                        }
-                    }
-                }
+            gameLoader.loadGameData(filepath);
+            add(gameLoader.getGameData());
+            try{
+                gameLoader.initGame();
+                gameLoader.loadActionsAndComments();
+                executedActions = gameLoader.getActions();
+                userComments = gameLoader.getComments();
                 setReportText(true);
-
-                ois.close();
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-                e.printStackTrace();
+                
+            } catch (ConfigurationException e)  {
+                log.fatal("Load failed", e);
+                DisplayBuffer.add(LocalText.getText("LoadFailed", e.getMessage()));
             }
         }
 
     }
-
+    
     public void add (String text) {
         if (text.length() > 0) {
             headerText.append(text);

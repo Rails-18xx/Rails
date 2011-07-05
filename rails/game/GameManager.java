@@ -1049,8 +1049,8 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         return true;
     }
 
+    /** allows callback from GameLoader */
     public void finishLoading () {
-
         guiHints.clearVisibilityHints();
     }
 
@@ -1141,72 +1141,44 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         }
         return result;
     }
-
-    @SuppressWarnings("unchecked")
+    /**
+     * tries to reload the current game 
+     * executes the additional action(s)
+     */ 
     protected boolean reload(GameAction reloadAction) {
-
+        log.info("Reloading started");
+        
+        /* Use gameLoader to load the game data */
+        GameLoader gameLoader = new GameLoader();
         String filepath = reloadAction.getFilepath();
-        log.info("Reloading game from file " + filepath);
-        String filename = filepath.replaceAll(".*[/\\\\]", "");
+        gameLoader.loadGameData(filepath);
+        
+        /* followed by actions and comments */
+        try{
+            gameLoader.loadActionsAndComments();
+        } catch (ConfigurationException e)  {
+            log.fatal("Load failed", e);
+            DisplayBuffer.add(LocalText.getText("LoadFailed", e.getMessage()));
+        }
 
+        log.debug("Starting to compare loaded actions");
+        
+        /* gameLoader actions get compared to the executed actions of the current game */
+        List<PossibleAction> savedActions = gameLoader.getActions();
+        
+        setReloading(true);
+   
+        // Check size
+        if (savedActions.size() < executedActions.size()) {
+            DisplayBuffer.add(LocalText.getText("LoadFailed",
+                    "loaded file has less actions than current game"));
+            return true;
+        }
+        
+        // Check action identity
+        int index = 0;
+        PossibleAction executedAction;
         try {
-            ObjectInputStream ois =
-                    new ObjectInputStream(new FileInputStream(
-                            new File(filepath)));
-
-            // See Game.load(). Here we don't do as much checking. */
-            Object object = ois.readObject();
-            if (object instanceof String) {
-                log.info("Reading Rails "+(String)object+" saved file "+filename);
-                object = ois.readObject();
-            } else {
-                log.info("Reading Rails (pre-1.0.7) saved file "+filename);
-            }
-            if (object instanceof String) {
-                log.info("File was saved at "+(String)object);
-                object = ois.readObject();
-            }
-            String name = (String) ois.readObject();
-            log.debug("Saved game="+name);
-            Map<String, String> selectedGameOptions =
-                    (Map<String, String>) ois.readObject();
-            List<String> playerNames = (List<String>) ois.readObject();
-
-            log.debug("Starting to compare loaded actions");
-
-            List<PossibleAction> savedActions;
-            int numberOfActions = 0;
-            setReloading(true);
-            
-            Object actionObject = ois.readObject();
-            if (actionObject instanceof List) {
-                // Old-style: one List of PossibleActions
-                savedActions = (List<PossibleAction>) actionObject;
-                numberOfActions = savedActions.size();
-            } else {
-                // New style: separate PossibleActionsObjects, since Rails 1.3.1
-                savedActions = new ArrayList<PossibleAction>();
-                while (actionObject instanceof PossibleAction) {
-                    savedActions.add((PossibleAction) actionObject);
-                    numberOfActions++;
-                    try {
-                        actionObject = ois.readObject();
-                    } catch (EOFException e) {
-                        break;
-                    }
-                }
-            }
-            
-            // Check size
-            if (numberOfActions < executedActions.size()) {
-                DisplayBuffer.add(LocalText.getText("LoadFailed",
-                        "loaded file has less actions than current game"));
-                return true;
-            }
-
-            // Check action identity
-            int index = 0;
-            PossibleAction executedAction;
             for (PossibleAction savedAction : savedActions) {
                 if (index < executedActions.size()) {
                     executedAction = executedActions.get(index);
@@ -1230,39 +1202,24 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
                     }
                 }
                 index++;
-            }
-            
-            if (actionObject instanceof SortedMap) {
-                ReportBuffer.setCommentItems((SortedMap<Integer, String>) actionObject);
-                log.debug("Found sorted map");
-            } else {
-                try {
-                    object = ois.readObject();
-                    if (object instanceof SortedMap) {
-                        ReportBuffer.setCommentItems((SortedMap<Integer, String>) object);
-                    }
-                } catch (IOException e) {
-                    // continue without comments, if any IOException occurs
-                    // sometimes not only the EOF Exception is raised
-                    // but also the java.io.StreamCorruptedException: invalid type code
-                }
-            }
-
-            ois.close();
-            ois = null;
-
-            setReloading(false);
-            finishLoading();
-            log.info("Reloading finished");
- 
+            } 
         } catch (Exception e) {
             log.error("Reload failed", e);
             DisplayBuffer.add(LocalText.getText("LoadFailed", e.getMessage()));
             return true;
         }
+        
+        
+        setReloading(false);
+        finishLoading();
 
+        // use new comments (without checks)
+        ReportBuffer.setCommentItems(gameLoader.getComments());
+
+        log.info("Reloading finished");
         return true;
     }
+
 
     protected boolean export(GameAction exportAction) {
 
