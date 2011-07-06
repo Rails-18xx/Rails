@@ -165,10 +165,10 @@ implements ActionListener, KeyListener {
             saveDirectory = selectedFile.getParent();
             
             // use GameLoader object to load game
-            GameLoader gameLoader = new GameLoader();
+            GameFileIO gameLoader = new GameFileIO();
 
             gameLoader.loadGameData(filepath);
-            add(gameLoader.getGameData());
+            add(gameLoader.getGameDataAsText());
             try{
                 gameLoader.initGame();
                 gameLoader.loadActionsAndComments();

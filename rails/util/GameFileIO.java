@@ -3,9 +3,13 @@ package rails.util;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
@@ -23,62 +27,56 @@ import rails.game.ReportBuffer;
 import rails.game.action.PossibleAction;
 
 /**
+ * Functions to load and save games from/to file
+ * 
  * @author freystef
  *
  */
-public class GameLoader {
+public class GameFileIO {
 
     protected static Logger log =
         Logger.getLogger(Game.class.getPackage().getName());
     
-    private boolean dataLoadDone;
-    private boolean initialized;
-    
-    private ObjectInputStream ois;
+    private GameData gameData = new GameData();
 
-    private String saveVersion;
-    private String saveDate;
-    private Long saveFileVersionID;
-    private String saveGameName;
-    private Map<String, String> selectedGameOptions;
-    private List<String> playerNames;
-    private List<PossibleAction> listOfActions;
-    private SortedMap<Integer, String> userComments;
+    // fields for data load
+    private ObjectInputStream ois = null;
+    private Game loadedGame = null;
+    private boolean dataLoadDone = false;
+    private boolean initialized = false;
     
-    private Game loadedGame;
+    // fields for data save
+    private boolean initSave = false;
 
-    public String getGameData() {
-        StringBuilder s = new StringBuilder();
-        s.append("Rails saveVersion = " + saveVersion + "\n");
-        s.append("File was saved at " + saveDate + "\n");
-        s.append("Saved versionID=" + saveFileVersionID + "\n");
-        s.append("Save game=" + saveGameName + "\n");
-        for (String key : selectedGameOptions.keySet()) {
-            s.append("Option "+key+"="+selectedGameOptions.get(key)+ "\n");
-        }
-        int i=1;
-        for (String player : playerNames) {
-            s.append("Player "+(i++)+": "+player + "\n");
-        }
-        return s.toString();
+    public String getGameDataAsText() {
+        return gameData.metaDataAsText() + gameData.gameOptionsAsText() + gameData.playerNamesAsText();
     }
-    
+ 
     public Game getGame() {
         return loadedGame;
     }
     
     public List<PossibleAction> getActions() {
-        return listOfActions;
+        return gameData.actions;
+    }
+    
+    public void setActions(List<PossibleAction> actions) {
+        gameData.actions = actions;
     }
     
     public SortedMap<Integer, String> getComments() {
-        return userComments;
+        return gameData.userComments;
+    }
+
+    public void setComments(SortedMap<Integer, String> comments) {
+        gameData.userComments = comments;
     }
     
     @SuppressWarnings("unchecked")
     public void loadGameData(String filepath) {
 
         dataLoadDone = true;
+        
         log.info("Loading game from file " + filepath);
         String filename = filepath.replaceAll(".*[/\\\\]", "");
 
@@ -89,48 +87,47 @@ public class GameLoader {
             Object object = ois.readObject();
             if (object instanceof String) {
                 // New in 1.0.7: Rails version & save date/time.
-                saveVersion = (String)object;
+                gameData.meta.version = (String)object;
                 object = ois.readObject();
             } else {
                 // Allow for older saved file versions.
-                saveVersion = "pre-1.0.7";
+                gameData.meta.version = "pre-1.0.7";
             }
             
-            log.info("Reading Rails " + saveVersion +" saved file "+filename);
+            log.info("Reading Rails " + gameData.meta.version  +" saved file "+filename);
 
             if (object instanceof String) {
-                saveDate = (String)object;
-                log.info("File was saved at "+ saveDate);
+                gameData.meta.date = (String)object;
+                log.info("File was saved at "+ gameData.meta.date);
                 object = ois.readObject();
             }
 
             // read versionID for serialization compatibility
-            saveFileVersionID = (Long) object;
-            log.debug("Saved versionID="+saveFileVersionID+" (object="+object+")");
+            gameData.meta.fileVersionID = (Long) object;
+            log.debug("Saved versionID="+gameData.meta.fileVersionID+" (object="+object+")");
             long GMsaveFileVersionID = GameManager.saveFileVersionID;
             
-            if (saveFileVersionID != GMsaveFileVersionID) {
-                throw new Exception("Save version " + saveFileVersionID
+            if (gameData.meta.fileVersionID != GMsaveFileVersionID) {
+                throw new Exception("Save version " + gameData.meta.fileVersionID
                                     + " is incompatible with current version "
                                     + GMsaveFileVersionID);
             }
 
             // read name of saved game
-            saveGameName = (String) ois.readObject();
-            log.debug("Saved game="+ saveGameName);
+            gameData.meta.gameName = (String) ois.readObject();
+            log.debug("Saved game="+ gameData.meta.gameName);
            
             // read selected game options and player names
-            selectedGameOptions = (Map<String, String>) ois.readObject();
-            log.debug("Selected game options = " + selectedGameOptions);
-            playerNames = (List<String>) ois.readObject();
-            log.debug("Player names = " + playerNames);
+            gameData.gameOptions = (Map<String, String>) ois.readObject();
+            log.debug("Selected game options = " + gameData.gameOptions);
+            gameData.playerNames = (List<String>) ois.readObject();
+            log.debug("Player names = " + gameData.playerNames);
             
         } catch (Exception e) {
+            dataLoadDone = false;
             log.fatal("Load failed", e);
             DisplayBuffer.add(LocalText.getText("LoadFailed", e.getMessage()));
         }
-            
-            
     }
     
     public Game initGame() throws ConfigurationException {
@@ -141,11 +138,11 @@ public class GameLoader {
         }
 
         // initialize loadedGame
-        loadedGame = new Game(saveGameName, playerNames, selectedGameOptions);
+        loadedGame = new Game(gameData.meta.gameName, gameData.playerNames, gameData.gameOptions);
 
         if (!loadedGame.setup()) {
             loadedGame = null;
-            throw new ConfigurationException("Error in setting up " + saveGameName);
+            throw new ConfigurationException("Error in setting up " + gameData.meta.gameName);
         }
 
         String startError = loadedGame.start();
@@ -162,7 +159,7 @@ public class GameLoader {
         if (!dataLoadDone) {
             throw new ConfigurationException("No game was loaded");
         }
-      // Read game actions into listOfActions
+      // Read game actions into gameData.listOfActions
       try {
           // read next object in stream
           Object actionObject = null;
@@ -176,12 +173,12 @@ public class GameLoader {
               }
               if (actionObject instanceof List) {
                   // Until Rails 1.3: one List of PossibleAction
-                  listOfActions = (List<PossibleAction>) actionObject;
+                  gameData.actions = (List<PossibleAction>) actionObject;
               } else if (actionObject instanceof PossibleAction) {
-                  listOfActions = new ArrayList<PossibleAction>();
+                  gameData.actions = new ArrayList<PossibleAction>();
                   // Since Rails 1.3.1: separate PossibleActionsObjects
                   while (actionObject instanceof PossibleAction) {
-                      listOfActions.add((PossibleAction)actionObject);
+                      gameData.actions.add((PossibleAction)actionObject);
                       try {
                           actionObject = ois.readObject();
                       } catch (EOFException e) {
@@ -196,17 +193,17 @@ public class GameLoader {
           */
           
           // init user comments to have a defined object in any case
-          userComments = new TreeMap<Integer,String>();
+          gameData.userComments = new TreeMap<Integer,String>();
           
           // at the end of file user comments are added as SortedMap
           if (actionObject instanceof SortedMap) {
-              userComments = (SortedMap<Integer, String>) actionObject;
+              gameData.userComments = (SortedMap<Integer, String>) actionObject;
               log.debug("file load: found user comments");
           } else {
               try {
                   Object object = ois.readObject();
                   if (object instanceof SortedMap) {
-                      userComments = (SortedMap<Integer, String>) actionObject;
+                      gameData.userComments = (SortedMap<Integer, String>) actionObject;
                       log.debug("file load: found user comments");
                   }
               } catch (IOException e) {
@@ -235,7 +232,7 @@ public class GameLoader {
       log.debug("Starting to execute loaded actions");
       gameManager.setReloading(true);
         
-      for (PossibleAction action : listOfActions) {
+      for (PossibleAction action : gameData.actions) {
               if (!gameManager.processOnReload(action)) {
                   log.error ("Load interrupted");
                   DisplayBuffer.add(LocalText.getText("LoadInterrupted"));
@@ -244,9 +241,56 @@ public class GameLoader {
       }
       
       gameManager.setReloading(false);
-      ReportBuffer.setCommentItems(userComments);
+      ReportBuffer.setCommentItems(gameData.userComments);
 
       // callback to GameManager
       gameManager.finishLoading();
     }
+  
+    /**
+     * sets the meta data required for a game save
+     */
+    public void initSave(Long saveFileVersionID, String gameName, Map<String, String> gameOptions, List<String> playerNames) { 
+        gameData.meta.version = Game.version+" "+BuildInfo.buildDate;
+        gameData.meta.date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+        gameData.meta.fileVersionID = saveFileVersionID;
+        gameData.meta.gameName = gameName;
+        gameData.gameOptions = gameOptions;
+        gameData.playerNames = playerNames;
+        initSave = true;
+    }
+    
+    /**
+     * Stores the game to a file
+     * requires initSave and setting actions and comments
+     */
+    public boolean saveGame(File file, boolean displayErrorMessage, String errorMessageKey) {
+        if (!initSave || gameData.actions == null) return false;
+        boolean result = false;
+
+        try {
+            ObjectOutputStream oos =
+                new ObjectOutputStream(new FileOutputStream(file));
+            oos.writeObject(gameData.meta.version);
+            oos.writeObject(gameData.meta.date);
+            oos.writeObject(gameData.meta.fileVersionID);
+            oos.writeObject(gameData.meta.gameName);
+            oos.writeObject(gameData.gameOptions);
+            oos.writeObject(gameData.playerNames);
+            for (PossibleAction action : gameData.actions) {
+                oos.writeObject(action);
+            }
+            oos.writeObject(gameData.userComments);
+            oos.close();
+
+            result = true;
+        } catch (IOException e) {
+            log.error(errorMessageKey, e);
+            if (displayErrorMessage) {
+                DisplayBuffer.add(LocalText.getText("SaveFailed", e.getMessage()));
+            }
+        }
+        return result;
+    }
+    
 }

@@ -1115,31 +1115,11 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     }
 
     protected boolean save(File file, boolean displayErrorMessage, String errorMessageKey) {
-        boolean result = false;
-
-        try {
-            ObjectOutputStream oos =
-                new ObjectOutputStream(new FileOutputStream(file));
-            oos.writeObject(Game.version+" "+BuildInfo.buildDate);
-            oos.writeObject(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-            oos.writeObject(saveFileVersionID);
-            oos.writeObject(gameName);
-            oos.writeObject(gameOptions);
-            oos.writeObject(playerNames);
-            for (PossibleAction action : executedActions) {
-                oos.writeObject(action);
-            }
-            oos.writeObject(ReportBuffer.getCommentItems());
-            oos.close();
-
-            result = true;
-        } catch (IOException e) {
-            log.error(errorMessageKey, e);
-            if (displayErrorMessage) {
-                DisplayBuffer.add(LocalText.getText("SaveFailed", e.getMessage()));
-            }
-        }
-        return result;
+        GameFileIO gameSaver = new GameFileIO();
+        gameSaver.initSave(saveFileVersionID, gameName, gameOptions, playerNames);
+        gameSaver.setActions(executedActions);
+        gameSaver.setComments(ReportBuffer.getCommentItems());
+        return gameSaver.saveGame(file, displayErrorMessage, errorMessageKey);
     }
     /**
      * tries to reload the current game 
@@ -1149,7 +1129,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         log.info("Reloading started");
         
         /* Use gameLoader to load the game data */
-        GameLoader gameLoader = new GameLoader();
+        GameFileIO gameLoader = new GameFileIO();
         String filepath = reloadAction.getFilepath();
         gameLoader.loadGameData(filepath);
         

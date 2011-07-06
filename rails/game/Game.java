@@ -13,7 +13,7 @@ import rails.common.parser.ConfigurationException;
 import rails.common.parser.GameFileParser;
 import rails.common.parser.GameOption;
 import rails.game.action.PossibleAction;
-import rails.util.GameLoader;
+import rails.util.GameFileIO;
 
 public class Game {
     public static final String version = "1.4.1+";
@@ -124,7 +124,7 @@ public class Game {
     public static Game load(String filepath)  {
         
         // use GameLoader object to load game
-        GameLoader gameLoader = new GameLoader();
+        GameFileIO gameLoader = new GameFileIO();
         gameLoader.loadGameData(filepath);
         try{
             gameLoader.initGame();
