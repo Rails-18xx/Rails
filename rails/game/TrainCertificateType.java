@@ -22,6 +22,8 @@ public class TrainCertificateType {
 
     protected List<TrainType> potentialTrainTypes = new ArrayList<TrainType>(2);
     
+    protected Map<Integer, String> newPhaseNames;
+    
     protected Map<Integer, String> rustedTrainTypeNames = null;
     protected Map<Integer, TrainCertificateType> rustedTrainType = null;
     
@@ -37,9 +39,6 @@ public class TrainCertificateType {
     
     protected String trainClassName = "rails.game.Train";
     protected Class<? extends Train> trainClass;
-
- 
-    protected int lastIndex = 0;
 
     // State variables
     protected IntegerState numberBoughtFromIPO;
@@ -99,12 +98,28 @@ public class TrainCertificateType {
             for (Tag sub : tag.getChildren("Sub")) {
                 int index = sub.getAttributeAsInteger("index");
                 rustedTrainTypeName1 = sub.getAttributeAsString("rustedTrain");
-                    if (rustedTrainTypeNames == null) {
-                        rustedTrainTypeNames = new HashMap<Integer, String>();
-                    }
-                    rustedTrainTypeNames.put(index, rustedTrainTypeName1);
+                if (rustedTrainTypeNames == null) {
+                    rustedTrainTypeNames = new HashMap<Integer, String>();
                 }
+                rustedTrainTypeNames.put(index, rustedTrainTypeName1);
             }
+        }
+        
+        // New style phase changes (to replace 'startPhase' attribute and <Sub> tag)
+        List<Tag> newPhaseTags = tag.getChildren("NewPhase");
+        if (newPhaseTags != null) {
+            int index;
+            String phaseName;
+            newPhaseNames = new HashMap<Integer, String>();
+            for (Tag newPhaseTag : newPhaseTags) {
+                phaseName = newPhaseTag.getAttributeAsString("phaseName");
+                if (!Util.hasValue(phaseName)) {
+                    throw new ConfigurationException ("TrainType "+name+" has NewPhase without phase name");
+                }
+                index = newPhaseTag.getAttributeAsInteger("trainIndex", 1);
+                newPhaseNames.put(index, phaseName);
+            }
+        }
  
         // Exchangeable
         Tag swapTag = tag.getChild("Exchange");
@@ -137,6 +152,10 @@ public class TrainCertificateType {
         } else if (quantity <= 0) {
             throw new ConfigurationException("Invalid quantity "+quantity+" for train cert type "+name);
         }
+    }
+
+    public Map<Integer, String> getNewPhaseNames() {
+        return newPhaseNames;
     }
 
     public TrainI createTrain () throws ConfigurationException {
