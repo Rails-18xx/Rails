@@ -152,6 +152,8 @@ public class CGRFormationRound extends SwitchableUIRound {
                     numberOfLoans,
                     Bank.format(valuePerLoan),
                     Bank.format(numberOfLoans * valuePerLoan));
+            ReportBuffer.add(" ");
+            DisplayBuffer.add(" ", false);
             ReportBuffer.add(message);
             DisplayBuffer.add(message, false);
 
@@ -428,6 +430,8 @@ public class CGRFormationRound extends SwitchableUIRound {
         }
         message = LocalText.getText("CompanyHasShares",
                 cgr.getName(), 100/cgr.getShareUnit(), cgr.getShareUnit());
+        DisplayBuffer.add(" ");
+        ReportBuffer.add(" ");
         DisplayBuffer.add(message);
         ReportBuffer.add(message);
 

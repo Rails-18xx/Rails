@@ -39,4 +39,6 @@ public interface PhaseI extends ConfigurableComponentI {
 
     public String getParameterAsString (String key);
     public int getParameterAsInteger (String key);
+
+    public void setLastTrainBuyer(Portfolio lastTrainBuyer);
 }

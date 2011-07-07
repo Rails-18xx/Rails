@@ -52,14 +52,20 @@
 			<Score towns="yes"/>
 		</Defaults>
 		<TrainType name="2" majorStops="2" cost="100" quantity="6"/>
-		<TrainType name="3" majorStops="3" cost="225" quantity="5" startPhase="2"/>
-		<TrainType name="4" majorStops="4" cost="350" quantity="4" startPhase="3"
-			rustedTrain="2"/>
-		<TrainType name="5" majorStops="5" cost="550" quantity="3" startPhase="4"/>
-		<TrainType name="6" majorStops="6" cost="700" quantity="2" startPhase="5"
-			rustedTrain="3" releasedTrain="D"/>
-		<TrainType name="D" majorStops="99" cost="1100" quantity="-1" startPhase="6"
-			rustedTrain="4">
+		<TrainType name="3" majorStops="3" cost="225" quantity="5">
+            <NewPhase phaseName="2"/>
+        </TrainType>
+		<TrainType name="4" majorStops="4" cost="350" quantity="4">
+			<NewPhase phaseName="3"/>
+        </TrainType>
+		<TrainType name="5" majorStops="5" cost="550" quantity="3">
+            <NewPhase phaseName="4"/>
+        </TrainType>
+		<TrainType name="6" majorStops="6" cost="700" quantity="2">
+            <NewPhase phaseName="5"/>
+        </TrainType>
+		<TrainType name="D" majorStops="99" cost="1100" quantity="-1">
+            <NewPhase phaseName="6"/>
 			<Exchange cost="750"/>
 		</TrainType>
 	</Component>
@@ -76,7 +82,7 @@
 			<Privates sellingAllowed="yes"/>
 		</Phase>
 		<Phase name="3">
-			<Tiles colour="yellow,green"/>
+			<Trains rusted="2"/>
 		</Phase>
 		<Phase name="4">
 			<Tiles colour="yellow,green,brown"/>
@@ -86,10 +92,11 @@
 		</Phase>
 		<Phase name="5">
 			<Tiles colour="yellow,green,brown,grey"/>
+			<Trains rusted="3" released="D"/>
 			<Loans allowed="no"/>
 		</Phase>
 		<Phase name="6">
-			<Tiles colour="yellow,green,brown,grey"/>
+			<Trains rusted="4"/>
 			<OffBoardRevenue step="3"/>
 		</Phase>
 	</Component>

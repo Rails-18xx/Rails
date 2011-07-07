@@ -1312,6 +1312,7 @@ public class StockRound extends Round {
     @Override
     protected void finishRound () {
 
+        ReportBuffer.add(" ");
         ReportBuffer.add(LocalText.getText("END_SR",
                 String.valueOf(getStockRoundNumber())));
 

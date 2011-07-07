@@ -45,6 +45,17 @@ public class Phase implements PhaseI {
 
     /** Items to close if a phase gets activated */
     protected List<Closeable> closedObjects = null;
+    
+    /** Train types to rust or obsolete if a phase gets activated */
+    protected List<TrainCertificateType> rustedTrains;
+    String rustedTrainNames;
+    
+    /** Train types to release (make available for buying) if a phase gets activated */
+    protected List<TrainCertificateType> releasedTrains;
+    String releasedTrainNames;
+    
+    private TrainManager trainManager;
+    private Portfolio lastTrainBuyer;
 
     protected String extraInfo = "";
     
@@ -123,6 +134,8 @@ public class Phase implements PhaseI {
 
         Tag trainsTag = tag.getChild("Trains");
         if (trainsTag != null) {
+            rustedTrainNames = trainsTag.getAttributeAsString("rusted", null);
+            releasedTrainNames = trainsTag.getAttributeAsString("released", null);
             trainTradingAllowed =
                     trainsTag.getAttributeAsBoolean("tradingAllowed",
                             trainTradingAllowed);
@@ -159,7 +172,35 @@ public class Phase implements PhaseI {
 
     }
 
-    public void finishConfiguration (GameManagerI gameManager) {}
+    public void finishConfiguration (GameManagerI gameManager)
+    throws ConfigurationException {
+        
+        trainManager = gameManager.getTrainManager();
+        TrainCertificateType type;
+        
+        if (rustedTrainNames != null) {
+            rustedTrains = new ArrayList<TrainCertificateType>(2);
+            for (String typeName : rustedTrainNames.split(",")) {
+                type = trainManager.getCertTypeByName(typeName);
+                if (type == null) {
+                    throw new ConfigurationException (" Unknown rusted train type '"+typeName+"' for phase '"+name+"'"); 
+                }
+                rustedTrains.add(type);
+                type.setPermanent(false);
+            }
+        }
+
+        if (releasedTrainNames != null) {
+            releasedTrains = new ArrayList<TrainCertificateType>(2);
+            for (String typeName : releasedTrainNames.split(",")) {
+                type = trainManager.getCertTypeByName(typeName);
+                if (type == null) {
+                    throw new ConfigurationException (" Unknown released train type '"+typeName+"' for phase '"+name+"'"); 
+                }
+                releasedTrains.add(type);
+            }
+        }
+    }
 
     /** Called when a phase gets activated */
     public void activate() {
@@ -170,8 +211,24 @@ public class Phase implements PhaseI {
                 object.close();
             }
         }
+        
+        if (rustedTrains != null && !rustedTrains.isEmpty()) {
+            for (TrainCertificateType type : rustedTrains) {
+                 trainManager.rustTrainType(type, lastTrainBuyer);
+            }
+        }
+        
+        if (releasedTrains != null && !releasedTrains.isEmpty()) {
+            for (TrainCertificateType type : releasedTrains) {
+                trainManager.makeTrainAvailable(type);
+            }
+        }
     }
     
+    public void setLastTrainBuyer(Portfolio lastTrainBuyer) {
+        this.lastTrainBuyer = lastTrainBuyer;
+    }
+
     public String getInfo() {
         return extraInfo;
     }
@@ -231,6 +288,14 @@ public class Phase implements PhaseI {
 
     public int getNumberOfOperatingRounds() {
         return numberOfOperatingRounds;
+    }
+
+    public List<TrainCertificateType> getRustedTrains() {
+        return rustedTrains;
+    }
+
+    public List<TrainCertificateType> getReleasedTrains() {
+        return releasedTrains;
     }
 
     /**

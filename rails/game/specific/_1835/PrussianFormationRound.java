@@ -435,6 +435,7 @@ public class PrussianFormationRound extends StockRound {
     @Override
     protected void finishRound() {
         RoundI interruptedRound = gameManager.getInterruptedRound();
+        ReportBuffer.add(" ");
         if (interruptedRound != null) {  
             ReportBuffer.add(LocalText.getText("EndOfFormationRound", PR_ID, 
                 interruptedRound.getRoundName()));

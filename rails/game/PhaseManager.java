@@ -51,10 +51,16 @@ public class PhaseManager implements ConfigurableComponentI {
         }
     }
 
-    public void finishConfiguration (GameManagerI gameManager) {
+    public void finishConfiguration (GameManagerI gameManager) 
+    throws ConfigurationException {
         this.gameManager = gameManager;
+        
+        for (Phase phase : phaseList) {
+            phase.finishConfiguration(gameManager);
+        }
+        
         PhaseI initialPhase = phaseList.get(0);
-        setPhase(initialPhase);
+        setPhase(initialPhase, null);
     }
 
     public PhaseI getCurrentPhase() {
@@ -69,12 +75,13 @@ public class PhaseManager implements ConfigurableComponentI {
         return getCurrentPhase().getIndex();
     }
 
-    public void setPhase(String name) {
-        setPhase(phaseMap.get(name));
+    public void setPhase(String name, Portfolio lastTrainBuyer) {
+        setPhase(phaseMap.get(name), lastTrainBuyer);
     }
 
-    protected void setPhase(PhaseI phase) {
+    protected void setPhase(PhaseI phase, Portfolio lastTrainBuyer) {
         if (phase != null) {
+            phase.setLastTrainBuyer (lastTrainBuyer);
             currentPhase.set(phase);
 
             // TODO Redundant, should be replaced by phase.activate()

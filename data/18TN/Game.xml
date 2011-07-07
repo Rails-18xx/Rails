@@ -84,19 +84,17 @@
 			<NewPhase phaseName="3"/>
 			<NewPhase phaseName="3½" trainIndex="4"/>
 		</TrainType>
-        <TrainType name="4" majorStops="4" cost="300" quantity="3" obsoleting="yes"
-            rustedTrain="2">
+        <TrainType name="4" majorStops="4" cost="300" quantity="3" obsoleting="yes">
             <NewPhase phaseName="4"/>
 		</TrainType>
         <TrainType name="5" majorStops="5" cost="450" quantity="2">
             <NewPhase phaseName="5"/>
         </TrainType>
-        <TrainType name="6" majorStops="6" cost="630" quantity="2" rustedTrain="3">
+        <TrainType name="6" majorStops="6" cost="630" quantity="2">
             <NewPhase phaseName="6"/>
             <NewPhase phaseName="6½" trainIndex="2"/>
-           <Sub index="2" rustedTrain="4"/>
-        </TrainType>
-        <TrainType name="8" majorStops="8" cost="700" quantity="7" rustedTrain="4">
+         </TrainType>
+        <TrainType name="8" majorStops="8" cost="700" quantity="7">
             <NewPhase phaseName="8"/>
         </TrainType>
 	</Component>
@@ -116,10 +114,9 @@
 			<OperatingRounds number="2"/>
 		</Phase>
         <Phase name="3½">
-            <Tiles colour="yellow,green"/>
         </Phase>
 		<Phase name="4">
-			<Tiles colour="yellow,green"/>
+			<Trains rusted="2"/>
 		</Phase>
 		<Phase name="5">
 			<Tiles colour="yellow,green,brown"/>
@@ -128,13 +125,12 @@
 			<OffBoardRevenue step="2"/>
 		</Phase>
 		<Phase name="6">
-			<Tiles colour="yellow,green,brown"/>
+			<Trains rusted="3"/>
 		</Phase>
         <Phase name="6½">
-            <Tiles colour="yellow,green,brown"/>
+			<Trains rusted="4"/>
         </Phase>
 		<Phase name="8">
-			<Tiles colour="yellow,green,brown"/>
 		</Phase>
 	</Component>
 </ComponentManager>

@@ -244,6 +244,7 @@ public class StartRound_18EU extends StartRound {
                 setStep(OPEN_STEP);
             }
 
+            ReportBuffer.add(" ");
             ReportBuffer.add(LocalText.getText("SelectForAuctioning",
                     playerName,
                     item.getName() ));

@@ -1302,6 +1302,7 @@ public class OperatingRound extends Round implements Observer {
 
     protected void initTurn() {
         log.debug("Starting turn of "+operatingCompany.get().getName());
+        ReportBuffer.add(" ");
         ReportBuffer.add(LocalText.getText("CompanyOperates",
                 operatingCompany.get().getName(),
                 operatingCompany.get().getPresident().getName()));
@@ -1645,6 +1646,7 @@ public class OperatingRound extends Round implements Observer {
         //    priv.checkClosingIfExercised(true);
         //}
 
+        ReportBuffer.add(" ");
         ReportBuffer.add(LocalText.getText("EndOfOperatingRound", thisOrNumber));
 
         // Update the worth increase per player
