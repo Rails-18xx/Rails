@@ -1818,9 +1818,24 @@ public class PublicCompany extends Company implements PublicCompanyI {
                 Map<Integer, List<Track>> tracks
                 = homeHex.getCurrentTile().getTracksPerStationMap();
                 if (tracks == null || tracks.isEmpty()) {
+                    // No tracks, then it doesn't matter
                     homeCityNumber = 1;
                 } else {
-                    return false;
+                    // Cover the case that there already is another token.
+                    // Allowing this is optional for 1856 Hamilton (THB home)
+                    List<City> cities = homeHex.getCities();
+                    List<City> openCities = new ArrayList<City>();
+                    for (City city : cities) {
+                        if (city.hasTokenSlotsLeft()) openCities.add (city);
+                    }
+                    if (openCities.size() == 1) {
+                        // Just one spot: lay the home base there.
+                        homeCityNumber = openCities.get(0).getNumber();
+                    } else {
+                        // ??  
+                        // TODO Will player be asked??
+                        return false;
+                    }
                 }
             }
             log.debug(name + " lays home base on " + homeHex.getName() + " city "
