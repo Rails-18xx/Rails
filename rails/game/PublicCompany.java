@@ -768,6 +768,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
                     // Initialize rights here to prevent overhead if not used, 
                     // but if rights are used, the GUI needs it from the start.
                     if (rights == null) rights = new HashMapState<String, String>(name+"_Rights");
+                    // TODO: This is only a workaround for the missing finishConfiguration of special properties (SFY)
+                    sp.finishConfiguration(gameManager);
                 }
             }
         }

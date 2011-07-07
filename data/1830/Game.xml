@@ -240,4 +240,7 @@
 			<Tiles colour="yellow,green,brown"/>
 		</Phase>
 	</Component>
+	<Component name="RevenueManager" class="rails.algorithms.RevenueManager">
+<!--		Required for coalfield rights '-->
+	</Component>
 </ComponentManager>

@@ -1,13 +1,19 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialRight.java,v 1.19 2010/05/05 21:37:18 evos Exp $ */
 package rails.game.special;
 
+import java.util.Set;
+
+import rails.algorithms.NetworkVertex;
+import rails.algorithms.RevenueAdapter;
+import rails.algorithms.RevenueBonus;
+import rails.algorithms.RevenueStaticModifier;
 import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.*;
 import rails.util.*;
 
-public class SpecialRight extends SpecialProperty {
+public class SpecialRight extends SpecialProperty implements RevenueStaticModifier {
 
     /** The public company of which a share can be obtained. */
     protected String rightName;
@@ -35,6 +41,14 @@ public class SpecialRight extends SpecialProperty {
         cost = rightTag.getAttributeAsInteger("cost", 0);
     }
 
+    @Override
+    public void finishConfiguration (GameManagerI gameManager) throws ConfigurationException {
+        super.finishConfiguration(gameManager);
+        
+        // add them to the call list of the RevenueManager
+        gameManager.getRevenueManager().addStaticModifier(this);
+    }
+    
     public boolean isExecutionable() {
 
         return originalCompany.getPortfolio().getOwner() instanceof Player;
@@ -75,5 +89,19 @@ public class SpecialRight extends SpecialProperty {
     
     public String getInfo() {
         return toMenu();
+    }
+
+    /** 
+     *  modify revenue calculation of the 
+     *  TODO: rights is missing a location field, currently hardcoded for 1830 coalfields 
+     */
+    public void modifyCalculator(RevenueAdapter revenueAdapter) {
+        // 1. check operating company if it has the right then it is excluded from the removal
+        if (revenueAdapter.getCompany().hasRight(rightName)) return;
+        
+        // 2. find vertices to hex and remove those
+        MapHex hex = GameManager.getInstance().getMapManager().getHex("L10");
+        Set<NetworkVertex> verticesToRemove = NetworkVertex.getVerticesByHex(revenueAdapter.getVertices(), hex);
+        revenueAdapter.getGraph().removeAllVertices(verticesToRemove);
     }
 }
