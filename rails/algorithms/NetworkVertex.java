@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.jgrapht.Graph;
 import org.jgrapht.graph.SimpleGraph;
 
 import rails.game.City;
@@ -227,13 +228,22 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
        
     /** 
      * Initialize for rails vertexes
+     * @return true = can stay inside the network, false = has to be removed
      */
-    public void initRailsVertex(PublicCompanyI company) {
+    public boolean initRailsVertex(PublicCompanyI company) {
         // side vertices use the defaults, virtuals cannot use this function
-        if (virtual || type == VertexType.SIDE) return;
+        if (virtual || type == VertexType.SIDE) return true;
         
         log.info("Init of vertex " + this);
         
+        // check if it has to be removed because it is run-to only 
+        if (company != null) { // if company == null, then no vertex gets removed
+            if (hex.isRunToAllowed() == MapHex.Run.NO || hex.isRunToAllowed() == MapHex.Run.TOKENONLY && !city.hasTokenOf(company))
+            {
+                return false;
+            }
+        }
+
         // check if it is a major or minor
         if (station.getType().equals(Station.CITY) || station.getType().equals(Station.OFF_MAP_AREA)) {
             setStationType(StationType.MAJOR);
@@ -245,8 +255,14 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         // check if it is a sink 
         if (company == null) { // if company == null, then all sinks are deactivated
             sink = false;
-        } else if (station.getType().equals(Station.OFF_MAP_AREA) || 
-                station.getType().equals(Station.CITY) && !city.hasTokenSlotsLeft() && city.getSlots() != 0 && !city.hasTokenOf(company)) { 
+        } else if (station.getType().equals(Station.OFF_MAP_AREA) || (
+                // or station is city
+                station.getType().equals(Station.CITY)
+                // and is either fully tokened and has token slots or only tokens allow run through 
+                && ( city.getSlots() != 0 && !city.hasTokenSlotsLeft() || hex.isRunThroughAllowed() == MapHex.Run.TOKENONLY)
+                // and city does not have a token
+                && !city.hasTokenOf(company))
+                ) { 
             sink = true;
         }
         
@@ -262,6 +278,10 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
                 cityName = hex.getCityName() + "." + station.getCityName();
             }
         }
+        
+        // no removal
+        return true;
+        
     }
     
     public void setRailsVertexValue(PhaseI phase) {
@@ -269,7 +289,6 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         if (virtual || type == VertexType.SIDE) return;
 
         // define value
-//      if (station.getType().equals(Station.OFF_MAP_AREA) || station.getValue() == -1) {
         if (hex.hasOffBoardValues()) {
             value = hex.getCurrentOffBoardValue(phase);
         } else {
@@ -308,14 +327,28 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         }
     }
 
-    public static void initAllRailsVertices(Collection<NetworkVertex> vertices, 
+    /**
+     * 
+     * @param graph network graph
+     * @param company the company (with regard to values, sinks and removals)
+     * @param phase the current phase (with regard to values)
+     */
+    public static void initAllRailsVertices(Graph<NetworkVertex, NetworkEdge> graph, 
             PublicCompanyI company,  PhaseI phase) {
-        for (NetworkVertex v:vertices) {
-            if (company != null)
-                v.initRailsVertex(company);
-            if (phase != null)
+        
+        // store vertices for removal
+        List<NetworkVertex> verticesToRemove = new ArrayList<NetworkVertex>();
+        for (NetworkVertex v:graph.vertexSet()) {
+            if (company != null) {
+                if (!v.initRailsVertex(company)) {
+                    verticesToRemove.add(v);
+                }
+            }
+            if (phase != null) {
                 v.setRailsVertexValue(phase);
+            }
         }
+        graph.removeAllVertices(verticesToRemove);
     }
 
     /**

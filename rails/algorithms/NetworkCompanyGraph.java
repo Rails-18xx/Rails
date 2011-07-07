@@ -52,12 +52,24 @@ public class NetworkCompanyGraph {
        return new NetworkCompanyGraph(graphBuilder, company);
     }
     
+    public SimpleGraph<NetworkVertex, NetworkEdge> getRouteGraph() {
+        return routeGraph;
+    }
+    
+    public SimpleGraph<NetworkVertex, NetworkEdge> getRevenueGraph() {
+        return revenueGraph;
+    }
+    
+    public Multigraph<NetworkVertex, NetworkEdge> getPhase2Graph() {
+        return phase2Graph;
+    }
+    
     public SimpleGraph<NetworkVertex, NetworkEdge> createRouteGraph(boolean addHQ) {
         // get mapgraph from builder
         SimpleGraph<NetworkVertex, NetworkEdge> mapGraph = graphBuilder.getMapGraph();
         
         // set sinks on mapgraph
-        NetworkVertex.initAllRailsVertices(mapGraph.vertexSet(), company, null);
+        NetworkVertex.initAllRailsVertices(mapGraph, company, null);
         
         // initialized simple graph
         SimpleGraph<NetworkVertex, NetworkEdge> graph = new SimpleGraph<NetworkVertex, NetworkEdge>(NetworkEdge.class);
@@ -93,7 +105,7 @@ public class NetworkCompanyGraph {
         if (!addHQ) graph.removeVertex(hqVertex);
         
         // deactivate sinks on mapgraph
-        NetworkVertex.initAllRailsVertices(mapGraph.vertexSet(), null, null);
+        NetworkVertex.initAllRailsVertices(mapGraph, null, null);
         
         // store and return
         routeGraph = graph;

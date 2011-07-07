@@ -208,7 +208,7 @@ public final class RevenueAdapter implements Runnable {
         graph = companyGraph.createRouteGraph(false);
         
         // initialize vertices
-        NetworkVertex.initAllRailsVertices(graph.vertexSet(), company, phase);
+        NetworkVertex.initAllRailsVertices(graph, company, phase);
 
         // define startVertexes
         addStartVertices(companyGraph.getCompanyBaseTokenVertexes(company));
