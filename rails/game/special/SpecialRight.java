@@ -1,7 +1,7 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialRight.java,v 1.19 2010/05/05 21:37:18 evos Exp $ */
 package rails.game.special;
 
-import java.util.Set;
+import java.util.*;
 
 import rails.algorithms.NetworkVertex;
 import rails.algorithms.RevenueAdapter;
@@ -19,7 +19,9 @@ public class SpecialRight extends SpecialProperty implements RevenueStaticModifi
     protected String rightName;
     protected String rightDefaultValue;
     protected String rightValue;
-    protected int cost;
+    protected int cost = 0;
+    protected String locationNames;
+    protected List<MapHex> locations;
 
     @Override
     public void configureFromXML(Tag tag) throws ConfigurationException {
@@ -39,6 +41,8 @@ public class SpecialRight extends SpecialProperty implements RevenueStaticModifi
         rightDefaultValue = rightValue = rightTag.getAttributeAsString("defaultValue", null);
 
         cost = rightTag.getAttributeAsInteger("cost", 0);
+        
+        locationNames = rightTag.getAttributeAsString("location", null);
     }
 
     @Override
@@ -47,6 +51,19 @@ public class SpecialRight extends SpecialProperty implements RevenueStaticModifi
         
         // add them to the call list of the RevenueManager
         gameManager.getRevenueManager().addStaticModifier(this);
+        
+        if (locationNames != null) {
+            locations = new ArrayList<MapHex>();
+            MapManager mmgr = gameManager.getMapManager();
+            MapHex hex;
+            for (String hexName : locationNames.split(",")) {
+                hex = mmgr.getHex(hexName);
+                if (hex == null) {
+                    throw new ConfigurationException ("Unknown hex '"+hexName+"' for Special Right");
+                }
+                locations.add (hex);
+            }
+        }
     }
     
     public boolean isExecutionable() {
@@ -75,9 +92,21 @@ public class SpecialRight extends SpecialProperty implements RevenueStaticModifi
         return cost;
     }
 
+    public String getLocationNames() {
+        return locationNames;
+    }
+
+    public List<MapHex> getLocations() {
+        return locations;
+    }
+
     @Override
     public String toString() {
-        return "Buy '" + rightName + "' right for " + Bank.format(cost);
+        StringBuilder b = new StringBuilder();
+        b.append(cost > 0 ? "Buy '" : "Get '").append(rightName).append("'");
+        if (locationNames != null) b.append(" at ").append(locationNames);
+        if (cost > 0) b.append(" for ").append(Bank.format(cost));
+        return b.toString();
     }
     
     @Override

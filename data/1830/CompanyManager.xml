@@ -26,7 +26,7 @@
 			<CanUseSpecialProperties/>
 			<SpecialProperties>
 				<SpecialProperty condition="ifOwnedByCompany" when="orTurn" class="rails.game.special.SpecialRight">
-					<SpecialRight name="Coalfields" cost="140"/>
+					<SpecialRight name="Coalfields" cost="140" location="L10"/>
 				</SpecialProperty>
 			</SpecialProperties>
         </IfOption>
