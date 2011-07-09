@@ -34,9 +34,7 @@ implements ActionListener, KeyListener {
 
     private StringBuffer headerText = new StringBuffer();
 
-    private List<Object> savedObjects = new ArrayList<Object>(512);
-    private List<PossibleAction> executedActions;
-    private SortedMap<Integer,String> userComments;
+    private GameFileIO fileIO;
 
     private int vbarPos;
 
@@ -152,7 +150,6 @@ implements ActionListener, KeyListener {
 
     }
 
-    @SuppressWarnings("unchecked")
     private void load() {
 
         JFileChooser jfc = new JFileChooser();
@@ -165,15 +162,13 @@ implements ActionListener, KeyListener {
             saveDirectory = selectedFile.getParent();
             
             // use GameLoader object to load game
-            GameFileIO gameLoader = new GameFileIO();
+            fileIO = new GameFileIO();
 
-            gameLoader.loadGameData(filepath);
-            add(gameLoader.getGameDataAsText());
+            fileIO.loadGameData(filepath);
+            add(fileIO.getGameDataAsText());
             try{
-                gameLoader.initGame();
-                gameLoader.loadActionsAndComments();
-                executedActions = gameLoader.getActions();
-                userComments = gameLoader.getComments();
+                fileIO.initGame();
+                fileIO.loadActionsAndComments();
                 setReportText(true);
                 
             } catch (ConfigurationException e)  {
@@ -200,9 +195,15 @@ implements ActionListener, KeyListener {
         reportText.setText(headerText.toString());
         // append actionText
         int i=0;
-        for (PossibleAction action : executedActions) {
-            reportText.append("Action "+(i++)+" "+action.getPlayerName()+": "+action.toString());
+        for (PossibleAction action : fileIO.getActions()) {
+            reportText.append("Action "+i+" "+action.getPlayerName()+": "+action.toString());
             reportText.append("\n");
+            // check for comments for this action
+            String comment = fileIO.getComments().get(i);
+            if (comment!= null) {
+                reportText.append("Comment to action " + i + ": " + comment + "\n");
+            }
+            i++;
         }
         scrollDown(vbarPos);
     }
@@ -228,8 +229,15 @@ implements ActionListener, KeyListener {
             if (Util.hasValue(result)) {
                 try {
                     int index = Integer.parseInt(result);
-                    List<PossibleAction> toRemove = executedActions.subList(index, executedActions.size());
-                    toRemove.clear();
+                    // delete actions
+                    int size = fileIO.getActions().size();
+                    fileIO.getActions().subList(index + 1, size).clear();
+                    // delete comments
+                    for (int id = 0; id < size; id++) {
+                        if (id > index) {
+                            fileIO.getComments().remove(id);
+                        }
+                    }
                     setReportText(false);
                 } catch (NumberFormatException e) {
 
@@ -240,9 +248,17 @@ implements ActionListener, KeyListener {
             if (Util.hasValue(result)) {
                 try {
                     int index = Integer.parseInt(result);
-                    PossibleAction action = executedActions.get(index);
-                    executedActions.remove(action);
-                    savedObjects.remove(action);
+                    fileIO.getActions().remove(index);
+                    // delete and renumber in user Comments
+                    SortedMap<Integer, String> newComments = new TreeMap<Integer, String>();
+                    for (Integer id:fileIO.getComments().keySet()) {
+                        if (id < index) {
+                            newComments.put(id, fileIO.getComments().get(id));
+                        } else if (id > index) {
+                            newComments.put(id-1, fileIO.getComments().get(id));
+                        }
+                    }
+                    fileIO.setComments(newComments);
                     setReportText(false);
                 } catch (NumberFormatException e) {
                     log.error("Number format exception for '"+result+"'", e);
@@ -265,26 +281,7 @@ implements ActionListener, KeyListener {
         }
         if (jfc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
             File selectedFile = jfc.getSelectedFile();
-            filepath = selectedFile.getPath();
-            saveDirectory = selectedFile.getParent();
-
-            try {
-                try {
-                    ObjectOutputStream oos =
-                            new ObjectOutputStream(new FileOutputStream(new File(
-                                    filepath)));
-                    for (Object object : savedObjects) {
-                        oos.writeObject(object);
-                    }
-                    oos.close();
-                } catch (IOException e) {
-                    log.error("Save failed", e);
-                    DisplayBuffer.add(LocalText.getText("SaveFailed", e.getMessage()));
-                }
-           } catch (Exception e) {
-                System.out.println ("Error whilst writing file "+filepath);
-                e.printStackTrace();
-            }
+            fileIO.saveGame(selectedFile, true, "SaveFailed");
         }
 
     }

@@ -265,9 +265,12 @@ public class GameFileIO {
      * requires initSave and setting actions and comments
      */
     public boolean saveGame(File file, boolean displayErrorMessage, String errorMessageKey) {
-        if (!initSave || gameData.actions == null) return false;
+        if (!(initSave || dataLoadDone) || gameData.actions == null) {
+            log.warn("File save not possible due to missing data");
+            return false;
+        }
         boolean result = false;
-
+        log.info("Trying to save file to " + file.getAbsoluteFile());
         try {
             ObjectOutputStream oos =
                 new ObjectOutputStream(new FileOutputStream(file));
@@ -284,6 +287,7 @@ public class GameFileIO {
             oos.close();
 
             result = true;
+            log.info("File save successfull");
         } catch (IOException e) {
             log.error(errorMessageKey, e);
             if (displayErrorMessage) {
