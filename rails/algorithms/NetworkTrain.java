@@ -15,11 +15,11 @@ public final class NetworkTrain {
     private final boolean ignoreMinors;
     private final int multiplyMajors;
     private final int multiplyMinors;
-    private final String trainName;
+    private String trainName;
     private final TrainI railsTrain;
     
     
-    public NetworkTrain(int majors, int minors, boolean ignoreMinors,
+    private NetworkTrain(int majors, int minors, boolean ignoreMinors,
             int multiplyMajors, int multiplyMinors, String trainName, TrainI train) {
         this.majors = majors;
         this.minors = minors;
@@ -49,12 +49,18 @@ public final class NetworkTrain {
                 trainName, railsTrain); 
     }
     
-    static NetworkTrain createFromString(String trainString) {
+    public static NetworkTrain createFromString(String trainString) {
         String t = trainString.trim();
         int cities = 0; int towns = 0; boolean ignoreTowns = false; int multiplyCities = 1; int multiplyTowns = 1;
         if (t.equals("D")) {
             log.info("RA: found Diesel train");
             cities = 99;
+        } else if (t.equals("TGV")) {
+            log.info("RA: found TGV  train");
+            cities = 3;
+            ignoreTowns = true;
+            multiplyCities = 2;
+            multiplyTowns = 0;
         } else if (t.contains("+")) {
             log.info("RA: found Plus train");
             cities = Integer.parseInt(t.split("\\+")[0]); // + train
@@ -108,6 +114,10 @@ public final class NetworkTrain {
     
     boolean ignoresMinors() {
         return ignoreMinors;
+    }
+    
+    public void setTrainName(String name) {
+        trainName = name;
     }
     
     public String getTrainName() {

@@ -560,15 +560,31 @@ public final class RevenueAdapter implements Runnable {
     }
     
     public int calculateRevenue() {
-        return calculateRevenue(0, trains.size() - 1);
+        // allow dynamic modifiers to have their own revenue calculation method
+        boolean isModified = false;
+        int value = 0;
+        for (RevenueDynamicModifier modifier:dynamicModifiers) {
+            if (modifier.providesOwnCalculateRevenue()) {
+                isModified = true;
+                value += modifier.calculateRevenue(this);
+            }
+        }
+        // if no modifier was used, standard method is to evaluate all trains
+        if (isModified) {
+            return value; 
+        } else {
+            return calculateRevenue(0, trains.size() - 1);
+        }
     }
     
     public int calculateRevenue(int startTrain, int finalTrain) {
-        optimalRun = null;
         if (startTrain < 0 || finalTrain >= trains.size() || startTrain > finalTrain) {
             return 0;
         }
-        rc.initialPredictionRuns(startTrain, finalTrain);
+        // the optimal run might change
+        optimalRun = null;
+        rc.initRuns(startTrain, finalTrain);
+        rc.executePredictions(startTrain, finalTrain);
         int value = rc.calculateRevenue(startTrain, finalTrain);
         return value;
     }

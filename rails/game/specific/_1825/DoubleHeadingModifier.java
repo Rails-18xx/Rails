@@ -8,21 +8,23 @@ import rails.algorithms.NetworkTrain;
 import rails.algorithms.RevenueAdapter;
 import rails.algorithms.RevenueDynamicModifier;
 import rails.algorithms.RevenueTrainRun;
+import rails.common.LocalText;
+import rails.game.TrainManager;
 /**
- * 1825 modifiers:
- * Trains have to start and end in a major station
- * Allows two 2-trains to run as a 3-train (double heading)
+ * Double heading modifier
+ * Allows two trains to run as a longer train (double heading)
  */
 public class DoubleHeadingModifier implements RevenueDynamicModifier {
 
-    private final static String TRAIN_2_NAME = "2";
-    private final static String DUALHEAD_NAME = "2&2";
+    private final static String TRAIN_SINGLE = "2";
+    private final static String DOUBLEHEAD_NAME = "2&2";
+    private final static String TRAIN_DOUBLE = "3";
    
     public boolean prepareModifier(RevenueAdapter revenueAdapter) {
         int nbTrain2 = 0;
         for (NetworkTrain train:revenueAdapter.getTrains()) {
-            // checks name of traintype
-            if (train.getRailsTrainType().getName().equals(TRAIN_2_NAME)) {
+            // checks name of train
+            if (train.getTrainName().equals(TRAIN_SINGLE)) {
                 nbTrain2 ++;
             }
         }
@@ -30,7 +32,8 @@ public class DoubleHeadingModifier implements RevenueDynamicModifier {
         // add dualhead 3 train for each of a pair of 2-trains
         boolean hasDualHead = false;
         while (nbTrain2 >= 2) {
-            NetworkTrain dualHead = new NetworkTrain(3, 0, false, 1, 1, DUALHEAD_NAME, null);
+            NetworkTrain dualHead = NetworkTrain.createFromString(TRAIN_DOUBLE);
+            dualHead.setTrainName(DOUBLEHEAD_NAME);
             revenueAdapter.addTrain(dualHead);
             hasDualHead = true;
             nbTrain2 -= 2;
@@ -53,7 +56,7 @@ public class DoubleHeadingModifier implements RevenueDynamicModifier {
         // find and sort the train2Revenues
         List<RevenueTrainRun> train2Runs = new ArrayList<RevenueTrainRun>();
         for (RevenueTrainRun run:runs) {
-            if (run.getTrain().getTrainName().equals(TRAIN_2_NAME)) {
+            if (run.getTrain().getTrainName().equals(TRAIN_SINGLE)) {
                 train2Runs.add(run);
             }
         }
@@ -64,7 +67,7 @@ public class DoubleHeadingModifier implements RevenueDynamicModifier {
         // find DualHeads and remove two 2-train revenues
         for (RevenueTrainRun run:runs) {
             // only if train has non zero value
-            if (run.getTrain().getTrainName().equals(DUALHEAD_NAME) && run.getRunValue() !=0) {
+            if (run.getTrain().getTrainName().equals(DOUBLEHEAD_NAME) && run.getRunValue() !=0) {
                 // two trains get removed
                 index2Runs += 2;
             }
@@ -97,16 +100,25 @@ public class DoubleHeadingModifier implements RevenueDynamicModifier {
         // remove double heading trains that do not generate value
         List<RevenueTrainRun> removeDoubleHeading = new ArrayList<RevenueTrainRun>();
         for (RevenueTrainRun run:optimalRuns) {
-            if (run.getTrain().getTrainName().equals(DUALHEAD_NAME) && run.getRunValue() == 0) {
+            if (run.getTrain().getTrainName().equals(DOUBLEHEAD_NAME) && run.getRunValue() == 0) {
                 removeDoubleHeading.add(run);
             }
         }
         optimalRuns.removeAll(removeDoubleHeading);
     }
 
+    public boolean providesOwnCalculateRevenue() {
+        // does not
+        return false;
+    }
+
+    public int calculateRevenue(RevenueAdapter revenueAdpater) {
+        // zero does no change
+        return 0;
+    }
+
     public String prettyPrint(RevenueAdapter adapter) {
-        // nothing to print
-        return null;
+        return LocalText.getText("DoubleHeadingModifier1825", DOUBLEHEAD_NAME, TRAIN_SINGLE, TRAIN_DOUBLE);
     }
 
 }

@@ -49,6 +49,15 @@ public class PullmanRevenueModifier implements RevenueDynamicModifier {
         return maxValue;
     }
 
+    public boolean providesOwnCalculateRevenue() {
+        // does not
+        return false;
+    }
+
+    public int calculateRevenue(RevenueAdapter revenueAdpater) {
+        // zero does no change
+        return 0;
+    }
     public void adjustOptimalRun(List<RevenueTrainRun> optimalRuns) {
         // do nothing here (all is done by changing the evaluation value)
     }

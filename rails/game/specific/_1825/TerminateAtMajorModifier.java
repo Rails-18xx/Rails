@@ -48,6 +48,15 @@ public class TerminateAtMajorModifier implements RevenueDynamicModifier {
             run.getRunVertices().clear();
         }
     }
+    public boolean providesOwnCalculateRevenue() {
+        // does not
+        return false;
+    }
+
+    public int calculateRevenue(RevenueAdapter revenueAdpater) {
+        // zero does no change
+        return 0;
+    }
 
     public String prettyPrint(RevenueAdapter adapter) {
         // nothing to do

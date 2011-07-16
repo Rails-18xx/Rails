@@ -88,5 +88,9 @@
 			<Tiles colour="yellow,green,brown,grey"/>
 			<OffBoardRevenue step="3"/>
 		</Phase>
+	</Component>	
+	<Component name="RevenueManager" class="rails.algorithms.RevenueManager">
+		<Modifier class="rails.game.specific._1826.TGVModifier" /> 
 	</Component>
+	
 </ComponentManager>

@@ -142,6 +142,7 @@ abstract class RevenueCalculator {
         trainStackPos = new int[nbTrains];
         trainBottomActive = new boolean[nbTrains];
         trainStartEdge = new int[nbTrains];
+        maxCumulatedTrainRevenues = new int[nbTrains];
         
         bonusValue = new int[nbBonuses];
         bonusRequiresVertices = new int[nbBonuses];
@@ -324,21 +325,31 @@ abstract class RevenueCalculator {
         log.info("maxCumulatedTrainRevenues = " + Arrays.toString(maxCumulatedTrainRevenues));
     }
     
-    final void initialPredictionRuns(final int startTrain, final int finalTrain) {
-        
+    final void initRuns(final int startTrain, final int finalTrain) {
+        log.info("RC: init runs from " + startTrain + " to " + finalTrain);
         if (startTrain > finalTrain) return;
 
         this.startTrainSet = startTrain;
         this.finalTrainSet = finalTrain;
-        useRevenuePrediction = true;
-        this.maxCumulatedTrainRevenues = new int[nbTrains];
-        for (int i=0; i < nbTrains; i++) {
+
+        // initialize all trains and currentValues
+        for (int i = startTrain; i < finalTrain; i++) {
             currentBestRun[i][0] = -1;
         }
+        currentBestValue = 0;
+        
+    }
+    final void executePredictions(final int startTrain, final int finalTrain) {
+
+        useRevenuePrediction = true;
+        
+        if (startTrain > finalTrain) return;
 
         initRevenueValues(startTrain, finalTrain);
         
-        if (startTrain == finalTrain) return;
+        if (startTrain == finalTrain) {
+            return;
+        }
         
         // start prediction runs
         nbEvaluations = 0; nbPredictions = 0; nbEdgesTravelled = 0;
@@ -380,17 +391,8 @@ abstract class RevenueCalculator {
     final int calculateRevenue(final int startTrain, final int finalTrain) {
         log.info("RC: calculateRevenue trains from " + startTrain + " to " + finalTrain);
 
-        if (!useRevenuePrediction) {
-            for (int i=0; i < nbTrains; i++) {
-                currentBestRun[i][0] = -1;
-            }
-        }
-        
-        this.startTrainSet = startTrain;
-        this.finalTrainSet = finalTrain;
-
         this.startTrain = startTrain;
-        this.finalTrainSet = finalTrain;
+        this.finalTrain = finalTrain;
        
         runTrain(startTrain);
 

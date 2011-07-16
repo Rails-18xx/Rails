@@ -118,6 +118,16 @@ public class NamedTrainRevenueModifier implements RevenueStaticModifier, Revenue
         // do nothing here (all is done by changing the evaluation value)
     }
 
+    public boolean providesOwnCalculateRevenue() {
+        // does not
+        return false;
+    }
+
+    public int calculateRevenue(RevenueAdapter revenueAdpater) {
+        // zero does no change
+        return 0;
+    }
+    
     public String prettyPrint(RevenueAdapter revenueAdapter) {
         List<RevenueTrainRun> runs = revenueAdapter.getOptimalRun();
         StringBuffer prettyPrint = new StringBuffer();
