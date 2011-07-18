@@ -258,16 +258,17 @@ public class OperatingRound_1835 extends OperatingRound {
     @Override
     protected void newPhaseChecks() {
         PhaseI phase = getCurrentPhase();
-        if (phase.getName().equals("4") || phase.getName().equals("4+4")
-                || phase.getName().equals("5")) {
-            if (!PrussianFormationRound.prussianIsComplete(gameManager)) {
-                if (getStep() == GameDef.OrStep.DISCARD_TRAINS) {
-                    // Postpone until trains are discarded
-                    needPrussianFormationCall.set(true);
-                } else {
-                    // Do it immediately
-                    ((GameManager_1835)gameManager).startPrussianFormationRound (this);
-                }
+        if (phase.getName().equals("4") 
+                || phase.getName().equals("4+4") 
+                    && !companyManager.getPublicCompany(GameManager_1835.PR_ID).hasStarted()
+                || phase.getName().equals("5")
+                    && !PrussianFormationRound.prussianIsComplete(gameManager)) {
+            if (getStep() == GameDef.OrStep.DISCARD_TRAINS) {
+                // Postpone until trains are discarded
+                needPrussianFormationCall.set(true);
+            } else {
+                // Do it immediately
+                ((GameManager_1835)gameManager).startPrussianFormationRound (this);
             }
         }
     }
