@@ -2,15 +2,15 @@
 <classpath>
 	<classpathentry excluding="lib/batik-1.7/|lib/jgraph5/|lib/jgrapht-0.7.3/|lib/junit_3.8.2/|lib/log4j-1.2/|lib/batik-1.7/lib/|lib/jgraph5/|lib/jgrapht-0.7.3/|lib/junit_3.8.2/|lib/log4j-1.2/|lib/batik-1.7/|lib/batik-1.7/lib/" kind="src" path=""/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/log4j-1.2/log4j-1.2.14.jar"/>
-	<classpathentry kind="lib" path="lib/jgrapht-0.7.3/jgrapht-jdk1.5.jar"/>
-	<classpathentry kind="lib" path="lib/junit_3.8.2/junit.jar"/>
-	<classpathentry kind="lib" path="lib/jgraph5/jgraph.jar"/>
-	<classpathentry kind="lib" path="lib/batik-1.7/batik.jar"/>
-	<classpathentry kind="lib" path="lib/batik-1.7/lib/batik-bridge.jar"/>
-	<classpathentry kind="lib" path="lib/batik-1.7/lib/batik-dom.jar"/>
-	<classpathentry kind="lib" path="lib/batik-1.7/lib/batik-ext.jar"/>
-	<classpathentry kind="lib" path="lib/batik-1.7/lib/batik-gvt.jar"/>
-	<classpathentry kind="lib" path="lib/batik-1.7/lib/batik-util.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/log4j-1.2/log4j-1.2.14.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jgrapht-0.7.3/jgrapht-jdk1.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/junit_3.8.2/junit.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jgraph5/jgraph.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/batik-1.7/batik.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/batik-1.7/lib/batik-bridge.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/batik-1.7/lib/batik-dom.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/batik-1.7/lib/batik-ext.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/batik-1.7/lib/batik-gvt.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/batik-1.7/lib/batik-util.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
