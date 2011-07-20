@@ -65,6 +65,10 @@ public class GameInfoParser extends XMLParser {
 				if (child.getNodeName().equals(XMLTags.DESCR_TAG)) {
 					gameInfo.setDescription(getElementText(child.getChildNodes()));
 				}
+				
+				if (child.getNodeName().equals(XMLTags.NOTE_TAG)) {
+				    gameInfo.setNote(getElementText(child.getChildNodes()));
+				}
 
 				if (child.getNodeName().equals(XMLTags.PLAYERS_TAG)) {
 					gameInfo.setMinPlayers(getAttributeAsInteger(XMLTags.MIN_ATTR, child));
