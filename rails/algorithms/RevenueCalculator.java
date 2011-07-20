@@ -37,6 +37,7 @@ abstract class RevenueCalculator {
     protected final int[] trainMaxMinors;
     protected final int[] trainMaxBonuses;
     protected final boolean[] trainIgnoreMinors;
+    protected final boolean[] trainIsH; // true => train is H-train
     
     // dynamic train data
     protected final int[] trainCurrentValue;
@@ -48,7 +49,8 @@ abstract class RevenueCalculator {
     protected final int[] trainStackPos;
     protected final boolean [] trainBottomActive;
     protected final int [] trainStartEdge;
-    
+    protected final int[] trainDistance; // keeps track of distance travelled (for H-trains)
+     
     // static bonus data
     protected final int [] bonusValue;
     protected final boolean [][] bonusActiveForTrain; // dimensions: bonus x train
@@ -131,6 +133,7 @@ abstract class RevenueCalculator {
         trainMaxMinors = new int[nbTrains];
         trainMaxBonuses = new int[nbTrains]; // only required for revenue prediction
         trainIgnoreMinors = new boolean[nbTrains];
+        trainIsH = new boolean[nbTrains];
         
         trainCurrentValue = new int[nbTrains];
         trainMajors = new int[nbTrains];
@@ -142,6 +145,7 @@ abstract class RevenueCalculator {
         trainStackPos = new int[nbTrains];
         trainBottomActive = new boolean[nbTrains];
         trainStartEdge = new int[nbTrains];
+        trainDistance = new int[nbTrains];
         maxCumulatedTrainRevenues = new int[nbTrains];
         
         bonusValue = new int[nbBonuses];
@@ -192,11 +196,12 @@ abstract class RevenueCalculator {
 //        edgeNbTravelSets[edgeId] = 0;
     }
     
-    final void setTrain(int id, int majors, int minors, boolean ignoreMinors) {
+    final void setTrain(int id, int majors, int minors, boolean ignoreMinors, boolean isHTrain) {
         trainMaxMajors[id] = majors;
         trainMaxMinors[id] = minors;
         trainMaxBonuses[id] = 0;
         trainIgnoreMinors[id] = ignoreMinors;
+        trainIsH[id] = isHTrain;
     }
     
     final void setVisitSet(int[] vertices) {
@@ -479,9 +484,9 @@ abstract class RevenueCalculator {
 //      protected boolean travelEdge(int trainId, int edgeId, boolean previousGreedy);
 //      protected boolean travelEdge(int trainId, int edgeId);
 
-    abstract protected void returnEdge(final int edgeId);
+    abstract protected void returnEdge(final int trainId, final int edgeId);
     
-    protected final Terminated trainTerminated(final int trainId) {
+    protected Terminated trainTerminated(final int trainId) {
         Terminated terminated = Terminated.NotYet;
         if (trainIgnoreMinors[trainId]) {
             // express trains

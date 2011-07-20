@@ -75,7 +75,7 @@ final class RevenueCalculatorSimple extends RevenueCalculator {
                 if (travelEdge(trainId, edgeId, true)) {
                     trainStartEdge[trainId] = j; // store start edge
                     nextVertex(trainId, neighborId, edgeGreedy[edgeId]);
-                    returnEdge(edgeId);
+                    returnEdge(trainId, edgeId);
                 }
             }
 
@@ -126,7 +126,7 @@ final class RevenueCalculatorSimple extends RevenueCalculator {
            }
            if (travelEdge(trainId, edgeId, true)) {
                nextVertex(trainId, neighborId, edgeGreedy[edgeId]);
-               returnEdge(edgeId);
+               returnEdge(trainId, edgeId);
            }
        }
        
@@ -168,7 +168,7 @@ final class RevenueCalculatorSimple extends RevenueCalculator {
                    }
                    if (travelEdge(trainId, edgeId, previousGreedy)) {
                        nextVertex(trainId, neighborId, edgeGreedy[edgeId]);
-                       returnEdge(edgeId);
+                       returnEdge(trainId, edgeId);
                    }
                }
            }
@@ -210,7 +210,7 @@ final class RevenueCalculatorSimple extends RevenueCalculator {
    }
    
    @Override
-   protected final void returnEdge(final int edgeId) {
+   protected final void returnEdge(final int trainId, final int edgeId) {
        if (edgeUsed[edgeId]) {
            edgeUsed[edgeId] = false;
            countEdges--;

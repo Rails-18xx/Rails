@@ -37,6 +37,11 @@ public interface TrainI extends Moveable {
      * @return Returns the townScoreFactor (0 or 1).
      */
     public int getTownScoreFactor();
+    
+    /**
+     * @return true => hex train (examples 1826, 1844), false => standard 1830 type train
+     */
+    public boolean isHTrain();
 
     public void setType (TrainType type);
     /**

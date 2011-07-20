@@ -106,6 +106,11 @@ public class Train implements TrainI {
         return getType().getTownScoreFactor();
     }
 
+    public boolean isHTrain() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
     public boolean isAssigned() {
         return type.get() != null;
     }
@@ -174,4 +179,5 @@ public class Train implements TrainI {
         b.append(" holder=").append(holder.getName());
         return b.toString();
     }
+
 }

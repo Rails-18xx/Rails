@@ -1,7 +1,7 @@
 package rails.algorithms;
 
 
-final class RevenueCalculatorMulti extends RevenueCalculator {
+class RevenueCalculatorMulti extends RevenueCalculator {
 
     protected final int[] edgeNbTravelSets;
     protected final int[][] edgeTravelSets; // edge belongs to a travel set, dimension: nbEdges x nbTravelSets
@@ -31,21 +31,21 @@ final class RevenueCalculatorMulti extends RevenueCalculator {
     }
     
     @Override
-    void setEdge(int edgeId, boolean greedy, int distance) {
+    final void setEdge(int edgeId, boolean greedy, int distance) {
         super.setEdge(edgeId, greedy, distance);
         // default number for travel sets
         edgeNbTravelSets[edgeId] = 0;
     }
     
     // define edgeTravelSets
-    void setTravelSet(int edgeId, int[] edges) {
+    final void setTravelSet(int edgeId, int[] edges) {
         for (int j=0; j < edges.length; j++) {
             edgeTravelSets[edgeId][edgeNbTravelSets[edgeId]++] = edges[j];
         }
     }
     
     @Override
-    protected final void runTrain(final int trainId) {
+    protected void runTrain(final int trainId) {
         log.debug("RC: runTrain " + trainId);
         
         // initialize value
@@ -101,7 +101,7 @@ final class RevenueCalculatorMulti extends RevenueCalculator {
                 travelEdge(trainId, edgeId);
                 trainStartEdge[trainId] = j; // store start edge
                 nextVertex(trainId, neighborId);
-                returnEdge(edgeId);
+                returnEdge(trainId, edgeId);
                 trainStackPos[trainId]--; // pull from stack
             }
 
@@ -152,7 +152,7 @@ final class RevenueCalculatorMulti extends RevenueCalculator {
             }
             travelEdge(trainId, edgeId);
             nextVertex(trainId, neighborId);
-            returnEdge(edgeId);
+            returnEdge(trainId, edgeId);
             trainStackPos[trainId]--; // pull from stack
         }
         
@@ -193,7 +193,7 @@ final class RevenueCalculatorMulti extends RevenueCalculator {
                     }
                     travelEdge(trainId, edgeId);
                     nextVertex(trainId, neighborId);
-                    returnEdge(edgeId);
+                    returnEdge(trainId, edgeId);
                     trainStackPos[trainId]--; // pull from stack
                 }
             }
@@ -211,7 +211,7 @@ final class RevenueCalculatorMulti extends RevenueCalculator {
         encounterVertex(trainId, vertexId, false);
     }
 
-    private final void travelEdge(final int trainId, final int edgeId) {
+    protected void travelEdge(final int trainId, final int edgeId) {
         log.debug("RC: Travel edge id " + edgeId);
         edgeUsed[edgeId]++;
         trainStack[trainId][trainStackPos[trainId]++] = edgeId; // push to stack
@@ -227,7 +227,7 @@ final class RevenueCalculatorMulti extends RevenueCalculator {
     
     
     @Override
-    protected void returnEdge(int edgeId) {
+    protected void returnEdge(final int trainId, final int edgeId) {
           if (edgeUsed[edgeId] != 0) {
               edgeUsed[edgeId]--;
               countEdges--;

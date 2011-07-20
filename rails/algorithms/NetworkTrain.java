@@ -15,17 +15,19 @@ public final class NetworkTrain {
     private final boolean ignoreMinors;
     private final int multiplyMajors;
     private final int multiplyMinors;
+    private final boolean isHTrain;
     private String trainName;
     private final TrainI railsTrain;
     
     
     private NetworkTrain(int majors, int minors, boolean ignoreMinors,
-            int multiplyMajors, int multiplyMinors, String trainName, TrainI train) {
+            int multiplyMajors, int multiplyMinors, boolean isHTrain, String trainName, TrainI train) {
         this.majors = majors;
         this.minors = minors;
         this.ignoreMinors = ignoreMinors;
         this.multiplyMajors = multiplyMajors;
         this.multiplyMinors = multiplyMinors;
+        this.isHTrain = isHTrain;
         this.trainName = trainName;
         this.railsTrain = train;
         log.info("Created NetworkTrain " + this.toString() + " / " + this.attributes());
@@ -43,15 +45,18 @@ public final class NetworkTrain {
         if (multiplyMinors == 0){
             ignoreMinors = true;
         }
+        boolean isHTrain = railsTrain.isHTrain();
         String trainName = railsTrain.getName();
 
         return new NetworkTrain(majors, minors, ignoreMinors, multiplyMajors, multiplyMinors,
-                trainName, railsTrain); 
+                isHTrain, trainName, railsTrain); 
     }
     
     public static NetworkTrain createFromString(String trainString) {
         String t = trainString.trim();
-        int cities = 0; int towns = 0; boolean ignoreTowns = false; int multiplyCities = 1; int multiplyTowns = 1;
+        int cities = 0; int towns = 0;
+        boolean ignoreTowns = false; int multiplyCities = 1; int multiplyTowns = 1;
+        boolean isHTrain = false;
         if (t.equals("D")) {
             log.info("RA: found Diesel train");
             cities = 99;
@@ -76,16 +81,21 @@ public final class NetworkTrain {
             ignoreTowns = true;
             multiplyCities = 2;
             multiplyTowns = 0;
+        } else if (t.contains("H")) {
+            log.info("RA: found Hex train");
+            cities = Integer.parseInt(t.replace("H",  ""));
+            isHTrain = true;
         } else { 
             log.info("RA: found Default train");
             cities = Integer.parseInt(t);
         }
-        NetworkTrain train = new NetworkTrain(cities, towns, ignoreTowns, multiplyCities, multiplyTowns, t, null); 
+        NetworkTrain train = new NetworkTrain(cities, towns, ignoreTowns, multiplyCities, 
+                multiplyTowns, isHTrain, t, null); 
         return train;
     }
     
     void addToRevenueCalculator(RevenueCalculator rc, int trainId) {
-        rc.setTrain(trainId, majors, minors, ignoreMinors);
+        rc.setTrain(trainId, majors, minors, ignoreMinors, isHTrain);
     }
 
     int getMajors(){
@@ -116,6 +126,10 @@ public final class NetworkTrain {
         return ignoreMinors;
     }
     
+    boolean isHTrain() {
+        return isHTrain;
+    }
+    
     public void setTrainName(String name) {
         trainName = name;
     }
@@ -142,6 +156,7 @@ public final class NetworkTrain {
        attributes.append(", ignoreMinors = " + ignoreMinors);
        attributes.append(", mulitplyMajors = " + multiplyMajors);
        attributes.append(", mulitplyMinors = " + multiplyMinors);
+       attributes.append(", isHTrain = " + isHTrain);
        return attributes.toString(); 
     }
     

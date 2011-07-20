@@ -26,6 +26,12 @@ import rails.game.TrainI;
 import rails.game.TrainType;
 import rails.ui.swing.hexmap.HexMap;
 
+/**
+ * RevenueAdapter links the revenue algorithm to Rails.
+ *  
+ * @author freystef
+ *
+ */
 
 public final class RevenueAdapter implements Runnable {
 
@@ -76,7 +82,6 @@ public final class RevenueAdapter implements Runnable {
     private List<NetworkEdge> rcEdges;
     private List<RevenueTrainRun> optimalRun;
     private List<RevenueDynamicModifier> dynamicModifiers;
-    
     
     // revenue listener to communicate results
     private RevenueListener revenueListener;
@@ -279,6 +284,19 @@ public final class RevenueAdapter implements Runnable {
         log.info("RA: RevenueBonuses = " + revenueBonuses);
     }
 
+    /**
+     * checks the set of trains for H-trains
+     * @return true if H-trains are used
+     */
+    private boolean useHTrains() {
+        boolean useHTrains = false;
+        for (NetworkTrain train:trains) {
+            if (train.isHTrain()) {
+                useHTrains = true;
+            }
+        }
+        return useHTrains;
+    }
     
     public void initRevenueCalculator(boolean useMultiGraph){
         
@@ -318,8 +336,13 @@ public final class RevenueAdapter implements Runnable {
         int maxTravelEdges = maxTravelEdges();
          
         if (useMultiGraph) {
-            rc = new RevenueCalculatorMulti(this, rcVertices.size(), rcEdges.size(), 
-                    maxNeighbors, maxVisitVertices, maxTravelEdges, trains.size(), maxBonusVertices);
+            if (useHTrains()) {
+                rc = new RevenueCalculatorMultiHex(this, rcVertices.size(), rcEdges.size(), 
+                        maxNeighbors, maxVisitVertices, maxTravelEdges, trains.size(), maxBonusVertices);
+            } else {
+                rc = new RevenueCalculatorMulti(this, rcVertices.size(), rcEdges.size(), 
+                        maxNeighbors, maxVisitVertices, maxTravelEdges, trains.size(), maxBonusVertices);
+            }
         } else {
             rc = new RevenueCalculatorSimple(this, rcVertices.size(), rcEdges.size(), 
                     maxNeighbors, maxVisitVertices, trains.size(), maxBonusVertices); 
@@ -465,7 +488,7 @@ public final class RevenueAdapter implements Runnable {
             rc.setEdge(id, greedy, distance);
         }
         
-        // set trains
+        // set trains, check for H-trains
         for (int id=0; id < trains.size(); id++) {
             NetworkTrain train = trains.get(id);
             train.addToRevenueCalculator(rc, id);
@@ -609,8 +632,9 @@ public final class RevenueAdapter implements Runnable {
      */
     int dynamicEvaluation() {
         int value = 0;
+        List<RevenueTrainRun> run = this.getCurrentRun();
         for (RevenueDynamicModifier modifier:dynamicModifiers) {
-            value += modifier.evaluationValue(this.getCurrentRun(), false);
+            value += modifier.evaluationValue(run, false);
         }
         return value;
     }
