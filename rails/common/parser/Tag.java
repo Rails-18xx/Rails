@@ -326,9 +326,6 @@ public class Tag {
                     			break;
                     		}
                     	}
-                    }
-
-                    if (optionValue == null) {
                         // Take the default value
                         GameOption go = GameOption.getByName(name);
                         optionValue = go != null ? go.getDefaultValue() : "";
