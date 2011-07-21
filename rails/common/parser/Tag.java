@@ -320,7 +320,7 @@ public class Tag {
                 	// For backwards compatibility: search for an extended name
                     if (optionValue == null) {
                     	for (String optName : gameOptions.keySet()) {
-                    		if (optName.startsWith(name)) {
+                    		if (optName != null && optName.startsWith(name)) {
                     			optionValue = gameOptions.get(optName);
                     			log.warn("Option name "+name+" replaced by "+optName);
                     			break;
