@@ -318,6 +318,7 @@ public class Tag {
                     String optionValue = gameOptions.get(name);
 
                 	// For backwards compatibility: search for an extended name
+                    // TODO OBSOLETE??
                     if (optionValue == null) {
                     	for (String optName : gameOptions.keySet()) {
                     		if (optName != null && optName.startsWith(name)) {
@@ -326,7 +327,10 @@ public class Tag {
                     			break;
                     		}
                     	}
-                        // Take the default value
+                    }
+                    
+                    // If not assigned in the previous step, take the default value
+                    if (optionValue == null) {
                         GameOption go = GameOption.getByName(name);
                         optionValue = go != null ? go.getDefaultValue() : "";
                         log.warn("GameOption " + name + "=" + value
