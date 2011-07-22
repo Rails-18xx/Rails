@@ -26,7 +26,7 @@
 		<BaseTokens>
 			<LayCost method="sequence" cost="0,40,100"/>
 		</BaseTokens>
-		<Trains limit="0,0,0,3"/>
+		<Trains limit="3"/>
 		<Options mustTradeTrainsAtFixedPrice="yes" canClose="no"/>
 	</CompanyType>
 	

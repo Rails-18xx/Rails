@@ -14,6 +14,8 @@ public class Phase implements PhaseI {
     protected int index;
 
     protected String name;
+    
+    protected String realName;
 
     protected String colourList = "";
 
@@ -26,6 +28,12 @@ public class Phase implements PhaseI {
     protected int numberOfOperatingRounds = 1;
 
     protected int offBoardRevenueStep = 1;
+    
+    /** New style train limit configuration.
+     * TODO TEMPORARILY the default is 0 to allow distinguishing the old and new styles.
+     * This should be set to 1 once all game configs have been converted.
+     */
+    protected int trainLimitStep = 0;
     
     protected int privatesRevenueStep = 1; // sfy 1889
 
@@ -79,6 +87,7 @@ public class Phase implements PhaseI {
             privateSellingAllowed = defaults.privateSellingAllowed;
             numberOfOperatingRounds = defaults.numberOfOperatingRounds;
             offBoardRevenueStep = defaults.offBoardRevenueStep;
+            trainLimitStep = defaults.trainLimitStep;
             privatesRevenueStep = defaults.privatesRevenueStep;
             trainTradingAllowed = defaults.trainTradingAllowed;
             oneTrainPerTurn = defaults.oneTrainPerTurn;
@@ -91,6 +100,9 @@ public class Phase implements PhaseI {
                 }
             }
         }
+        
+        // Real name (as in the printed game)
+        realName = tag.getAttributeAsString("realName", null);
 
         // String colourList;
         String[] colourArray = new String[0];
@@ -124,16 +136,17 @@ public class Phase implements PhaseI {
                             numberOfOperatingRounds);
         }
 
-        // Off-board revenue steps
+        // Off-board revenue steps (starts at 1)
         Tag offBoardTag = tag.getChild("OffBoardRevenue");
         if (offBoardTag != null) {
             offBoardRevenueStep =
                     offBoardTag.getAttributeAsInteger("step",
                             offBoardRevenueStep);
         }
-
+        
         Tag trainsTag = tag.getChild("Trains");
         if (trainsTag != null) {
+            trainLimitStep = trainsTag.getAttributeAsInteger("limitStep", trainLimitStep);
             rustedTrainNames = trainsTag.getAttributeAsString("rusted", null);
             releasedTrainNames = trainsTag.getAttributeAsString("released", null);
             trainTradingAllowed =
@@ -245,12 +258,35 @@ public class Phase implements PhaseI {
         return colourList;
     }
 
+    public int getTrainLimitStep() {
+        return trainLimitStep;
+    }
+    
+    // TEMPORARILY included. To be removed when all games have been converted to new style train limit configuration.
+    public void setTrainLimitStep(int trainLimitStep) {
+        this.trainLimitStep = trainLimitStep;
+    }
+
+    public int getTrainLimitIndex() {
+        if(trainLimitStep > 0) {
+            // New style
+            return trainLimitStep - 1;
+        } else {
+            // TODO Old style, can be removed once all games have been converted
+            return index;
+        }
+    }
+
     public int getIndex() {
         return index;
     }
 
     public String getName() {
         return name;
+    }
+
+    public String getRealName() {
+        return realName;
     }
 
     /**
@@ -340,6 +376,10 @@ public class Phase implements PhaseI {
 
     @Override
     public String toString() {
-        return name;
+        if (realName == null) {
+            return name;
+        } else {
+            return name + " [" + realName+ "]";
+        }
     }
 }

@@ -1572,12 +1572,21 @@ public class PublicCompany extends Company implements PublicCompanyI {
         return 100 / shareUnit.intValue();
     }
 
-    public int getTrainLimit(int phaseIndex) {
-        return trainLimit[Math.min(phaseIndex, trainLimit.length - 1)];
+    /** Get the current maximum number of trains. 
+     * @parm index The limit for the given index (N.B. starts at 0).
+     * <p><i>Old style:</i> the index of the current phase.<br>
+     * <i>New style:</i> the index of the train limit step as defined for the current phase.
+     * <br>The limits per train (type) must follow the logic that is implemented for the current game,
+     * which is indicated by the absence or presence of 'limitStep' attributes in the &lt;Phase&gt; tags.
+     * <p>N.B. the new style limit steps per phase start at 1, 
+     * so one must be subtracted before calling this method.
+     */
+    protected int getTrainLimit(int index) {
+        return trainLimit[Math.min(index, trainLimit.length - 1)];
     }
 
     public int getCurrentTrainLimit() {
-        return getTrainLimit(GameManager.getInstance().getCurrentPhase().getIndex());
+        return getTrainLimit(gameManager.getCurrentPhase().getTrainLimitIndex());
     }
 
     public int getNumberOfTrains() {

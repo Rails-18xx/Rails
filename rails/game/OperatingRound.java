@@ -1877,7 +1877,7 @@ public class OperatingRound extends Round implements Observer {
         excessTrainCompanies = new HashMap<Player, List<PublicCompanyI>>();
         Player player;
         for (PublicCompanyI comp : operatingCompanies.viewList()) {
-            if (comp.getPortfolio().getNumberOfTrains() > comp.getTrainLimit(getCurrentPhase().getIndex())) {
+            if (comp.getPortfolio().getNumberOfTrains() > comp.getCurrentTrainLimit()) {
                 player = comp.getPresident();
                 if (!excessTrainCompanies.containsKey(player)) {
                     excessTrainCompanies.put(player,

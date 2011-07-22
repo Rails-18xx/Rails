@@ -258,8 +258,6 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolder {
 
     public void setCapitalisation(int capitalisation);
 
-    public int getTrainLimit(int phaseIndex);
-
     public int getCurrentTrainLimit();
 
     public int getNumberOfTrains();

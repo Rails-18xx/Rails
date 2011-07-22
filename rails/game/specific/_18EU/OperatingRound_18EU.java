@@ -238,7 +238,7 @@ public class OperatingRound_18EU extends OperatingRound {
 
             // A Pullmann always goes first, and automatically.
             // If the last train is a Pullmann, discard it.
-            if ((numberOfTrains > comp.getTrainLimit(getCurrentPhase().getIndex()) || numberOfTrains == 1)
+            if ((numberOfTrains > comp.getCurrentTrainLimit() || numberOfTrains == 1)
                 && pullmann != null) {
                 pullmann.moveTo(pool);
                 numberOfTrains--;
@@ -246,7 +246,7 @@ public class OperatingRound_18EU extends OperatingRound {
 
             // If we are still above the limit, make the list
             // of trains to select the discarded one from
-            if (numberOfTrains > comp.getTrainLimit(getCurrentPhase().getIndex())) {
+            if (numberOfTrains > comp.getCurrentTrainLimit()) {
                 player = comp.getPresident();
                 if (!excessTrainCompanies.containsKey(player)) {
                     excessTrainCompanies.put(player,

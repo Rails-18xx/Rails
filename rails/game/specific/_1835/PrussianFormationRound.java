@@ -118,7 +118,7 @@ public class PrussianFormationRound extends StockRound {
 
         } else if (step == Step.DISCARD_TRAINS) {
 
-            if (prussian.getNumberOfTrains() > prussian.getTrainLimit(getCurrentPhase().getIndex())) {
+            if (prussian.getNumberOfTrains() > prussian.getCurrentTrainLimit()) {
                 possibleActions.add(new DiscardTrain(prussian,
                         prussian.getPortfolio().getUniqueTrains(), true));
             }
@@ -189,7 +189,7 @@ public class PrussianFormationRound extends StockRound {
             if (skipCurrentPlayer) {
                 setNextPlayer();
                 if (getCurrentPlayer() == startingPlayer) {
-                    if (prussian.getNumberOfTrains() > prussian.getTrainLimit(getCurrentPhase().getIndex())) {
+                    if (prussian.getNumberOfTrains() > prussian.getCurrentTrainLimit()) {
                         step = Step.DISCARD_TRAINS;
                     } else {
                         finishRound();

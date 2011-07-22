@@ -26,7 +26,8 @@ public interface PhaseI extends ConfigurableComponentI {
     public int getPrivatesRevenueStep(); // sfy 1889
 
     public boolean isTrainTradingAllowed();
-
+    public int getTrainLimitStep();
+    public int getTrainLimitIndex();
     public boolean canBuyMoreTrainsPerTurn();
 
     public boolean canBuyMoreTrainsPerTypePerTurn();
