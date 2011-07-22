@@ -318,9 +318,15 @@ public class Tag {
                     String optionValue = gameOptions.get(name);
 
                 	// For backwards compatibility: search for an extended name
-                    // TODO OBSOLETE??
+                    /* This applies to parametrized options, such as "UnlimitedTopTrains".
+                     * It parametrized with a parameter "D" to allow display as "Unlimited D-trains"
+                     * and still remaining generic.
+                     * Parametrization means that the actual name is UnlimitedTopTrains_D,
+                     * for instance in saved files, and so the name must be shortened to find a match.
+                     */
                     if (optionValue == null) {
                     	for (String optName : gameOptions.keySet()) {
+                    	    // startsWith is a shortcut, perhaps it should be matches(name+"_.*").
                     		if (optName != null && optName.startsWith(name)) {
                     			optionValue = gameOptions.get(optName);
                     			log.warn("Option name "+name+" replaced by "+optName);
