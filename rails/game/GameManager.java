@@ -1882,7 +1882,6 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         if (id == null) id = 0;
         objectStorage.put(typeName + id, object);
         storageIds.put(typeName, id + 1); // store next id
-        log.debug("Stores " + typeName + " + on id " + id);
         return id;
     }
     

@@ -61,7 +61,9 @@ public abstract class SpecialProperty implements SpecialPropertyI {
 
     public SpecialProperty() {
         gameManager = GameManager.getInstance();
-        uniqueId = gameManager.storeObject(STORAGE_NAME, this);
+        uniqueId = gameManager.storeObject(STORAGE_NAME, this) + 1;
+        // increase unique id to allow loading old save files (which increase by 1)
+        // TODO: remove that legacy issue
     }
 
     public void configureFromXML(Tag tag) throws ConfigurationException {
@@ -109,8 +111,11 @@ public abstract class SpecialProperty implements SpecialPropertyI {
         return uniqueId;
     }
 
-    public static SpecialPropertyI getByUniqueId(int i) {
-        return (SpecialPropertyI)GameManager.getInstance().retrieveObject(STORAGE_NAME, i);
+    public static SpecialPropertyI getByUniqueId(int id) {
+        id -= 1;
+        // decrease retrieval id to allow loading old save files (which increase by 1)
+        // TODO: remove that legacy issue
+        return (SpecialPropertyI)GameManager.getInstance().retrieveObject(STORAGE_NAME, id);
     }
 
     public void setCompany(CompanyI company) {
