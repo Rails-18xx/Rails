@@ -67,7 +67,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     // map of correctionManagers
     protected Map<CorrectionType, CorrectionManagerI> correctionManagers =
         new HashMap<CorrectionType, CorrectionManagerI>();
-
+    
     protected String gameName;
     protected Map<String, String> gameOptions;
 
@@ -222,6 +222,11 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
      * considered separately.
      */
     protected GameDef.OrStep skippedStep = null;
+
+    // storage to replace static class variables
+    // TODO: Move that to a better place
+    protected Map<Integer, Object> objectStorage = new HashMap<Integer, Object>();
+    protected int storageId = 0;
 
     protected static Logger log =
         Logger.getLogger(GameManager.class.getPackage().getName());
@@ -1866,6 +1871,20 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
          return players.get(0);
      }
-	 
+
+    public void resetStorage() {
+        objectStorage = new HashMap<Integer, Object>();
+        storageId = 0;
+    }
+
+    public int storeObject(Object object) {
+        objectStorage.put(storageId++, object);
+        return storageId;
+    }
+    
+    public Object retrieveObject(int id) {
+        return objectStorage.get(id);
+    }
+     
 }
 

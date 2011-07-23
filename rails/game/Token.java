@@ -21,20 +21,20 @@ public abstract class Token implements TokenI {
     protected TokenHolder holder = null;
     protected String description = "";
     protected String uniqueId;
-
-    private static Map<String, TokenI> tokenMap = new HashMap<String, TokenI>();
-    private static int index = 0;
+    
+    // TODO: storing id in String is for legacy reasons
+    protected static String ID_PREFIX = "Token_";
 
     protected static Logger log =
         Logger.getLogger(Token.class.getPackage().getName());
 
     public Token() {
-        uniqueId = "Token_" + (index++);
-        tokenMap.put(uniqueId, this);
+        uniqueId = ID_PREFIX + GameManager.getInstance().storeObject(this);
     }
 
     public static TokenI getByUniqueId(String id) {
-        return tokenMap.get(id);
+        int i = Integer.valueOf(id.replace(ID_PREFIX, ""));
+        return (Token)GameManager.getInstance().retrieveObject(i);
     }
 
     public String getUniqueId() {

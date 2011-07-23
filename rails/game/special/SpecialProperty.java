@@ -54,17 +54,12 @@ public abstract class SpecialProperty implements SpecialPropertyI {
     /** To give subclasses access to the various 'managers' */
     protected GameManagerI gameManager;
 
-    protected static Map<Integer, SpecialPropertyI> spMap = new HashMap<Integer, SpecialPropertyI>();
-    
-    protected static int lastIndex = 0;
-
     protected static Logger log =
         Logger.getLogger(SpecialProperty.class.getPackage().getName());
 
     public SpecialProperty() {
-        uniqueId = ++lastIndex;
-        spMap.put(uniqueId, this);
         gameManager = GameManager.getInstance();
+        uniqueId = gameManager.storeObject(this);
     }
 
     public void configureFromXML(Tag tag) throws ConfigurationException {
@@ -113,7 +108,7 @@ public abstract class SpecialProperty implements SpecialPropertyI {
     }
 
     public static SpecialPropertyI getByUniqueId(int i) {
-        return spMap.get(i);
+        return (SpecialPropertyI)GameManager.getInstance().retrieveObject(i);
     }
 
     public void setCompany(CompanyI company) {

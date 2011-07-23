@@ -215,5 +215,31 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
 	public void setSkipDone (GameDef.OrStep step);
 	
 	public Player reorderPlayersByCash(boolean high);
-    //public void reorderPlayersByCash(boolean high);
+
+    /**
+     * reset the storage for other elements like tokens, special property
+     * that a referred by unique ids
+     * TODO
+     */
+	public void resetStorage();
+    
+    /**
+     * store element in storage
+     * @param object to store
+     * @return unique id of the object in the storage 
+     * TODO move to a better place
+     */
+    public int storeObject(Object object);
+    
+    /**
+     * ask storage for object
+     * @param identifier in storage
+     * @return object stored under the id (null if none is stored)
+     * TODO move to a better place
+     */
+    public Object retrieveObject(int id);
+
+
+
+
 }
