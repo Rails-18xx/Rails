@@ -1,8 +1,14 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><Tiles><Tile colour="white" id="0" name="empty"/><Tile colour="white" id="-1" name="1 village">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Tiles><Tile colour="white" id="0" name="empty"/>
+	 <Tile colour="white" id="-1" name="1 village">
 		<Station id="city1" position="002" type="Town"/>
 	</Tile><Tile colour="white" id="-2" name="2 villages">
 		<Station id="city1" position="102" type="Town"/>
 		<Station id="city2" position="302" type="Town"/>
+	</Tile><Tile colour="fixed" id="-4008">
+		<Track from="side3" gauge="narrow" to="side5"/>
+	</Tile><Tile colour="fixed" id="-4009">
+		<Track from="side3" gauge="normal" to="side0"/>
 	</Tile><Tile colour="white" id="-10" name="1 city">
 		<Station id="city1" position="302" slots="1" type="City"/>
 	</Tile><Tile colour="white" id="-80020" name="2 cities Initial">

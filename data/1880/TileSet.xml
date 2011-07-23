@@ -9,6 +9,8 @@
 	<Tile id="-2"><!-- 2 towns -->
 		<Upgrade id="8854,8855,8856,8857,8858" />
 	</Tile>
+	<Tile id="-4008"></Tile>
+	<Tile id="-4009"></Tile>
 	<Tile id="-10"><!-- 1 city -->
 		<Upgrade id="5,6,57"/>
 	</Tile>
@@ -19,7 +21,7 @@
 		<Upgrade id="5,6,57,8850,8851,8852" />
 	</Tile>
 	<Tile id="-80002">
-		<Upgrade id="8854,8855,8856,8857,8858,235" />
+		<Upgrade id="235,8854,8855,8856,8857,8858" />
 	</Tile>
 	<Tile id="-80003">
 		<Upgrade id="8887" />
