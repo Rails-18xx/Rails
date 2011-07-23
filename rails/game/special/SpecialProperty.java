@@ -50,6 +50,8 @@ public abstract class SpecialProperty implements SpecialPropertyI {
     protected String description = "";
 
     protected int uniqueId;
+    
+    protected static final String STORAGE_NAME = "SpecialProperty";
 
     /** To give subclasses access to the various 'managers' */
     protected GameManagerI gameManager;
@@ -59,7 +61,7 @@ public abstract class SpecialProperty implements SpecialPropertyI {
 
     public SpecialProperty() {
         gameManager = GameManager.getInstance();
-        uniqueId = gameManager.storeObject(this);
+        uniqueId = gameManager.storeObject(STORAGE_NAME, this);
     }
 
     public void configureFromXML(Tag tag) throws ConfigurationException {
@@ -108,7 +110,7 @@ public abstract class SpecialProperty implements SpecialPropertyI {
     }
 
     public static SpecialPropertyI getByUniqueId(int i) {
-        return (SpecialPropertyI)GameManager.getInstance().retrieveObject(i);
+        return (SpecialPropertyI)GameManager.getInstance().retrieveObject(STORAGE_NAME, i);
     }
 
     public void setCompany(CompanyI company) {

@@ -225,19 +225,21 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
     
     /**
      * store element in storage
+     * @param name to identify the type of the object to retrieve
      * @param object to store
      * @return unique id of the object in the storage 
      * TODO move to a better place
      */
-    public int storeObject(Object object);
+    public int storeObject(String typeName, Object object);
     
     /**
      * ask storage for object
+     * @param name to identify the type of the object to retrieve
      * @param identifier in storage
      * @return object stored under the id (null if none is stored)
      * TODO move to a better place
      */
-    public Object retrieveObject(int id);
+    public Object retrieveObject(String typeName, int id);
 
 
 

@@ -225,9 +225,9 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
     // storage to replace static class variables
     // TODO: Move that to a better place
-    protected Map<Integer, Object> objectStorage = new HashMap<Integer, Object>();
-    protected int storageId = 0;
-
+    protected Map<String, Object> objectStorage = new HashMap<String, Object>();
+    protected Map<String, Integer> storageIds = new HashMap<String, Integer>();
+    
     protected static Logger log =
         Logger.getLogger(GameManager.class.getPackage().getName());
 
@@ -1873,17 +1873,21 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
      }
 
     public void resetStorage() {
-        objectStorage = new HashMap<Integer, Object>();
-        storageId = 0;
+        objectStorage = new HashMap<String, Object>();
+        storageIds = new HashMap<String, Integer>();
     }
 
-    public int storeObject(Object object) {
-        objectStorage.put(storageId++, object);
-        return storageId;
+    public int storeObject(String typeName, Object object) {
+        Integer id = storageIds.get(typeName);
+        if (id == null) id = 0;
+        objectStorage.put(typeName + id, object);
+        storageIds.put(typeName, id + 1); // store next id
+        log.debug("Stores " + typeName + " + on id " + id);
+        return id;
     }
     
-    public Object retrieveObject(int id) {
-        return objectStorage.get(id);
+    public Object retrieveObject(String typeName, int id) {
+        return objectStorage.get(typeName + id);
     }
      
 }

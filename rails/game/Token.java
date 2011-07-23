@@ -23,18 +23,18 @@ public abstract class Token implements TokenI {
     protected String uniqueId;
     
     // TODO: storing id in String is for legacy reasons
-    protected static String ID_PREFIX = "Token_";
+    protected static String STORAGE_NAME = "Token";
 
     protected static Logger log =
         Logger.getLogger(Token.class.getPackage().getName());
 
     public Token() {
-        uniqueId = ID_PREFIX + GameManager.getInstance().storeObject(this);
+        uniqueId = STORAGE_NAME + "_" + GameManager.getInstance().storeObject(STORAGE_NAME, this);
     }
 
     public static TokenI getByUniqueId(String id) {
-        int i = Integer.valueOf(id.replace(ID_PREFIX, ""));
-        return (Token)GameManager.getInstance().retrieveObject(i);
+        int i = Integer.valueOf(id.replace(STORAGE_NAME + "_", ""));
+        return (Token)GameManager.getInstance().retrieveObject(STORAGE_NAME, i);
     }
 
     public String getUniqueId() {
