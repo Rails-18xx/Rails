@@ -5,7 +5,8 @@
  */
 package rails.game;
 
-import rails.game.move.Moveable;
+import rails.game.state.Moveable;
+import rails.game.state.Holder;
 
 /**
  * @author Erik Vos
@@ -16,9 +17,9 @@ public interface TokenI extends Moveable {
 
     public String getUniqueId();
 
-    public TokenHolder getHolder();
+    public Holder getHolder();
 
-    public String getName();
+    public String getId();
 
     public boolean equals(TokenI otherToken);
 

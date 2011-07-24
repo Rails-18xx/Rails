@@ -8,16 +8,17 @@ import org.apache.log4j.Logger;
 import rails.common.parser.ConfigurableComponentI;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
-import rails.game.model.ModelObject;
+import rails.game.state.AbstractItem;
+import rails.game.state.GenericState;
 import rails.game.state.State;
 
-public class PhaseManager implements ConfigurableComponentI {
+public class PhaseManager extends AbstractItem implements ConfigurableComponentI {
 
     protected ArrayList<Phase> phaseList;
     protected HashMap<String, Phase> phaseMap;
 
     protected int numberOfPhases = 0;
-    protected State currentPhase = new State("CurrentPhase", Phase.class);
+    protected GenericState<PhaseI> currentPhase = new GenericState<PhaseI>(this, "CurrentPhase");
 
     // Can be removed once setPhase() has been redone.
     protected GameManagerI gameManager;
@@ -67,7 +68,7 @@ public class PhaseManager implements ConfigurableComponentI {
         return (PhaseI) currentPhase.get();
     }
     
-    public ModelObject getCurrentPhaseModel() {
+    public State getCurrentPhaseModel() {
         return currentPhase;
     }
 

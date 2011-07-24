@@ -10,11 +10,13 @@ import rails.common.parser.ConfigurableComponentI;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.model.CashModel;
-import rails.game.model.ModelObject;
+import rails.game.model.AbstractModel;
+import rails.game.model.Model;
+import rails.game.state.AbstractItem;
 import rails.game.state.BooleanState;
 import rails.util.*;
 
-public class Bank implements CashHolder, ConfigurableComponentI {
+public class Bank extends AbstractItem implements CashHolder, ConfigurableComponentI {
 
     /** Default limit of shares in the bank pool */
     private static final int DEFAULT_BANK_AMOUNT = 12000;
@@ -35,7 +37,7 @@ public class Bank implements CashHolder, ConfigurableComponentI {
     private static Bank instance = null;
 
     /** Is the bank broken (remains true once set) */
-    private BooleanState broken = new BooleanState("Bank.broken", false);
+    private BooleanState broken = new BooleanState(this, "Bank.broken", false);
 
     /**
      * The money format template. '@' is replaced by the numeric amount, the
@@ -175,15 +177,15 @@ public class Bank implements CashHolder, ConfigurableComponentI {
         money.setCash(i);
     }
 
-    public String getName() {
+    public String getId() {
         return LocalText.getText("BANK");
     }
 
     public String getFormattedCash() {
-        return money.toString();
+        return money.getData();
     }
 
-    public ModelObject getCashModel() {
+    public Model<String> getCashModel() {
         return money;
     }
 

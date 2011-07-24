@@ -16,11 +16,13 @@ import rails.game.Stop.RunTo;
 import rails.game.Stop.Score;
 import rails.game.Stop.Type;
 import rails.game.action.LayTile;
-import rails.game.model.ModelObject;
-import rails.game.move.Moveable;
-import rails.game.move.TileMove;
+import rails.game.model.AbstractModel;
+
+import rails.game.state.ArrayListState;
 import rails.game.state.BooleanState;
-import rails.util.Util;
+import rails.game.state.Moveable;
+import rails.game.state.TileMove;
+import rails.util.*;
 
 /**
  * Represents a Hex on the Map from the Model side.
@@ -44,7 +46,7 @@ import rails.util.Util;
  * </code> <p> For {@code EW}-oriented
  * tiles the above picture should be rotated 30 degrees clockwise.
  */
-public class MapHex extends ModelObject implements ConfigurableComponentI,
+public class MapHex extends AbstractModel<String> implements ConfigurableComponentI,
 StationHolder, TokenHolder {
 
     private static final String[] ewOrNames =
@@ -112,7 +114,7 @@ StationHolder, TokenHolder {
     protected List<PublicCompanyI> destinations;
 
     /** Tokens that are not bound to a Station (City), such as Bonus tokens */
-    protected List<TokenI> offStationTokens;
+    protected ArrayListState<TokenI> offStationTokens;
 
     /** Storage of revenueBonus that are bound to the hex */
     protected List<RevenueBonusTemplate> revenueBonuses = null;
@@ -163,7 +165,9 @@ StationHolder, TokenHolder {
     protected static Logger log =
         Logger.getLogger(MapHex.class.getPackage().getName());
 
+    // TODO: MapHex as model has no id
     public MapHex(MapManager mapManager) {
+        super(mapManager, null);
         this.mapManager = mapManager;
     }
 
@@ -362,7 +366,7 @@ StationHolder, TokenHolder {
     }
 
     public boolean isImpassable (MapHex neighbour) {
-        return impassable != null && impassable.indexOf(neighbour.getName()) > -1;
+        return impassable != null && impassable.indexOf(neighbour.getId()) > -1;
     }
 
     public boolean isNeighbour(MapHex neighbour, int direction) {
@@ -371,7 +375,7 @@ StationHolder, TokenHolder {
          * sense that track may be laid to that border:
          */
         /* 1. The hex side is marked "impassable" */
-        if (impassable != null && impassable.indexOf(neighbour.getName()) > -1)
+        if (impassable != null && impassable.indexOf(neighbour.getId()) > -1)
             return false;
         /*
          * 2. The preprinted tile on this hex is offmap or fixed and has no
@@ -433,7 +437,7 @@ StationHolder, TokenHolder {
         return row;
     }
 
-    public String getName() {
+    public String getId() {
         return name;
     }
 
@@ -503,7 +507,7 @@ StationHolder, TokenHolder {
     }
 
     public int getTileCost() {
-        if (currentTile.getId() == preprintedTileId) {
+        if (currentTile.getNb() == preprintedTileId) {
             return getTileCost(0);
         } else {
             return getTileCost(currentTile.getColourNumber());
@@ -645,7 +649,7 @@ StationHolder, TokenHolder {
                     getTrackEndPoints(currentTile, currentTileRotation,
                             oldStation);
                 log.debug("Old city #"
-                        + currentTile.getId()
+                        + currentTile.getNb()
                         + " city "
                         + oldCity.getNumber()
                         + ": "
@@ -655,7 +659,7 @@ StationHolder, TokenHolder {
                     int[] newTrackEnds =
                         getTrackEndPoints(newTile, newRotation, newStation);
                     log.debug("New station #"
-                            + newTile.getId()
+                            + newTile.getNb()
                             + " station "
                             + newStation.getNumber()
                             + ": "
@@ -686,7 +690,7 @@ StationHolder, TokenHolder {
                                 log.debug("Assigned from "
                                         + oldCity.getUniqueId()
                                         + " #"
-                                        + currentTile.getId()
+                                        + currentTile.getNb()
                                         + "/"
                                         + currentTileRotation
                                         + " "
@@ -696,7 +700,7 @@ StationHolder, TokenHolder {
                                                 currentTileRotation,
                                                 oldStation.getNumber())
                                                 + " to " + newCity.getUniqueId()
-                                                + " #" + newTile.getId() + "/"
+                                                + " #" + newTile.getNb() + "/"
                                                 + newRotation + " "
                                                 + newStation.getId() + " "
                                                 + newTracks);
@@ -733,7 +737,7 @@ StationHolder, TokenHolder {
                                 log.debug("Assigned from "
                                         + oldCity.getUniqueId()
                                         + " #"
-                                        + currentTile.getId()
+                                        + currentTile.getNb()
                                         + "/"
                                         + currentTileRotation
                                         + " "
@@ -743,7 +747,7 @@ StationHolder, TokenHolder {
                                                 currentTileRotation,
                                                 oldStation.getNumber())
                                                 + " to " + newCity.getUniqueId()
-                                                + " #" + newTile.getId() + "/"
+                                                + " #" + newTile.getNb() + "/"
                                                 + newRotation + " "
                                                 + newCity.getRelatedStation().getId() + " "
                                                 + newCity.getTrackEdges());
@@ -776,7 +780,7 @@ StationHolder, TokenHolder {
                             newStation.getNumber());
                 newCity.setTrackEdges(newTracks);
                 log.debug("New city added " + newCity.getUniqueId() + " #"
-                        + newTile.getId() + "/" + newRotation + " "
+                        + newTile.getNb() + "/" + newRotation + " "
                         + newStation.getId() + " " + newTracks);
             }
 
@@ -800,20 +804,20 @@ StationHolder, TokenHolder {
                                     log.debug("Duplicate token "
                                             + token.getUniqueId()
                                             + " moved from "
-                                            + oldCity.getName() + " to "
-                                            + company.getName());
+                                            + oldCity.getId() + " to "
+                                            + company.getId());
                                     ReportBuffer.add(LocalText.getText(
                                             "DuplicateTokenRemoved",
-                                            company.getName(),
-                                            getName() ));
+                                            company.getId(),
+                                            getId() ));
                                     continue oldtoken;
                                 }
                             }
                         }
                         tokenDestinations.put(token, newCity);
                         log.debug("Token " + token.getUniqueId()
-                                + " moved from " + oldCity.getName() + " to "
-                                + newCity.getName());
+                                + " moved from " + oldCity.getId() + " to "
+                                + newCity.getId());
                     }
                 if (!tokenDestinations.isEmpty()) {
                     for (TokenI token : tokenDestinations.keySet()) {
@@ -848,15 +852,15 @@ StationHolder, TokenHolder {
 
         if (oldTile != currentTile) {
             new Exception("ERROR! Hex " + name + " wants to replace tile #"
-                    + oldTile.getId() + " but has tile #"
-                    + currentTile.getId() + "!").printStackTrace();
+                    + oldTile.getNb() + " but has tile #"
+                    + currentTile.getNb() + "!").printStackTrace();
         }
         if (currentTile != null) {
             currentTile.remove(this);
         }
 
-        log.debug("On hex " + name + " replacing tile " + currentTile.getId()
-                + "/" + currentTileRotation + " by " + newTile.getId() + "/"
+        log.debug("On hex " + name + " replacing tile " + currentTile.getNb()
+                + "/" + currentTileRotation + " by " + newTile.getNb() + "/"
                 + newTileOrientation);
 
         newTile.add(this);
@@ -870,7 +874,7 @@ StationHolder, TokenHolder {
             for (Stop city : stops) {
                 mStops.put(city.getNumber(), city);
                 log.debug("Tile #"
-                        + newTile.getId()
+                        + newTile.getNb()
                         + " station "
                         + city.getNumber()
                         + " has tracks to "
@@ -880,26 +884,26 @@ StationHolder, TokenHolder {
         }
         /* TODO: Further consequences to be processed here, e.g. new routes etc. */
 
-        update(); // To notify ViewObject (Observer)
+        notifyModel(); // To notify ViewObject (Observer)
 
     }
 
     public boolean layBaseToken(PublicCompanyI company, int station) {
         if (stops == null || stops.isEmpty()) {
-            log.error("Tile " + getName()
+            log.error("Tile " + getId()
                     + " has no station for home token of company "
-                    + company.getName());
+                    + company.getId());
             return false;
         }
         Stop city = mStops.get(station);
 
         BaseToken token = company.getFreeToken();
         if (token == null) {
-            log.error("Company " + company.getName() + " has no free token");
+            log.error("Company " + company.getId() + " has no free token");
             return false;
         } else {
             token.moveTo(city);
-            update();
+            notifyModel();
 
             if (isHomeFor(company)
                     && isBlockedForTokenLays != null
@@ -934,14 +938,14 @@ StationHolder, TokenHolder {
     public boolean addToken(TokenI token, int position) {
 
         if (offStationTokens == null)
-            offStationTokens = new ArrayList<TokenI>();
+            offStationTokens = new ArrayListState<TokenI>(this, "offStationTokens");
         if (offStationTokens.contains(token)) {
             return false;
         }
 
-        boolean result = Util.addToList(offStationTokens, token, position);
-        if (result) token.setHolder(this);
-        return result;
+        offStationTokens.add(position, token);
+        token.setHolder(this);
+        return true;
     }
 
     public List<BaseToken> getBaseTokens () {
@@ -957,7 +961,7 @@ StationHolder, TokenHolder {
         return tokens;
     }
 
-    public List<TokenI> getTokens() {
+    public ArrayListState<TokenI> getTokens() {
         return offStationTokens;
     }
 
@@ -965,14 +969,15 @@ StationHolder, TokenHolder {
         return offStationTokens.size() > 0;
     }
 
-    public boolean removeToken(TokenI token) {
-
-        return offStationTokens.remove(token);
+    public void removeToken(TokenI token) {
+        offStationTokens.remove(token);
     }
 
-    public boolean addObject(Moveable object, int[] position) {
+    // TODO: Rewrite this
+    public boolean addObject(Moveable object, int position) {
         if (object instanceof TokenI) {
-            return addToken((TokenI) object, position == null ? -1 : position[0]);
+            addToken((TokenI) object, position == null ? -1 : position[0]);
+            return true;
         } else {
             return false;
         }
@@ -980,7 +985,8 @@ StationHolder, TokenHolder {
 
     public boolean removeObject(Moveable object) {
         if (object instanceof TokenI) {
-            return removeToken((TokenI) object);
+            removeToken((TokenI) object);
+            return true;
         } else {
             return false;
         }
@@ -1026,7 +1032,7 @@ StationHolder, TokenHolder {
 
     public List<TokenI> getTokens(int cityNumber) {
         if (stops.size() > 0 && mStops.get(cityNumber) != null) {
-            return (mStops.get(cityNumber)).getTokens();
+            return (mStops.get(cityNumber)).getTokens().view();
         } else {
             return new ArrayList<TokenI>();
         }
@@ -1128,7 +1134,7 @@ StationHolder, TokenHolder {
      */
     public void setBlockedForTileLays(boolean isBlocked) {
         if (isBlockedForTileLays == null)
-            isBlockedForTileLays = new BooleanState(name+"_IsBlockedForTileLays", isBlocked);
+            isBlockedForTileLays = new BooleanState(this, name+"_IsBlockedForTileLays", isBlocked);
         else
             isBlockedForTileLays.set(isBlocked);
     }
@@ -1142,7 +1148,7 @@ StationHolder, TokenHolder {
             if (currentTile.isUpgradeable()) {
                 return true;
             } else {
-                log.debug("Hex " + name + " tile #" + currentTile.getId()
+                log.debug("Hex " + name + " tile #" + currentTile.getNb()
                         + " is not upgradable now");
                 return false;
             }
@@ -1240,7 +1246,7 @@ StationHolder, TokenHolder {
      */
     public void setBlockedForTokenLays(boolean isBlocked) {
         if (isBlockedForTokenLays == null)
-            isBlockedForTokenLays = new BooleanState(name+"_IsBlockedForTokenLays", isBlocked);
+            isBlockedForTokenLays = new BooleanState(this, name+"_IsBlockedForTokenLays", isBlocked);
         else
             isBlockedForTokenLays.set(isBlocked);
     }
@@ -1284,7 +1290,7 @@ StationHolder, TokenHolder {
     }
 
     public boolean equals(MapHex hex) {
-        if (hex.getName().equals(getName()) && hex.row == row
+        if (hex.getId().equals(getId()) && hex.row == row
                 && hex.column == column) return true;
         return false;
     }
@@ -1304,9 +1310,8 @@ StationHolder, TokenHolder {
      *
      * @TODO include tokens??
      */
-    @Override
-    public String getText() {
-        return currentTile.getId() + "/" + currentTileRotation;
+    public String getData() {
+        return currentTile.getNb() + "/" + currentTileRotation;
     }
 
     /**

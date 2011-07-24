@@ -11,7 +11,7 @@ import java.util.*;
  * @author VosE
  *
  */
-
+@Deprecated
 public class ViewUpdate implements Serializable {
 
     protected Map<String, Object> updates = new HashMap<String, Object>(4);

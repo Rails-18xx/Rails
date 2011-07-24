@@ -7,8 +7,8 @@ import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;
+import rails.game.state.GenericState;
 import rails.game.state.IntegerState;
-import rails.game.state.State;
 import rails.game.state.ArrayListState;
 
 
@@ -19,23 +19,23 @@ import rails.game.state.ArrayListState;
  */
 public class StartRound_1880 extends StartRound {
    
-    private final State startingPlayer =
-        new State("StartingPlayer", Player.class);
+    private final GenericState<Player> startingPlayer =
+        new GenericState<Player>(this, "StartingPlayer");
     
     private final IntegerState currentBuyPrice =
-        new IntegerState("CurrentBuyPrice", 0);
+        new IntegerState(this, "CurrentBuyPrice", 0);
     
     private final IntegerState initialItemRound = 
-        new IntegerState("InitialItemRound",0); 
+        new IntegerState(this, "InitialItemRound",0); 
     
-    private final State currentItem = 
-        new State("CurrentItem", StartItem.class);
+    private final GenericState<StartItem> currentItem = 
+        new GenericState<StartItem>(this, "CurrentItem");
     
     private final IntegerState currentStartRoundPhase = 
-        new IntegerState("CurrentStartRoundPhase",0); 
+        new IntegerState(this, "CurrentStartRoundPhase",0); 
     
    private final IntegerState investorChosen = 
-        new IntegerState("InvestorChosen",0);
+        new IntegerState(this, "InvestorChosen",0);
     
     /** A company in need for a par price. */
     PublicCompanyI companyNeedingPrice = null;
@@ -149,7 +149,7 @@ public class StartRound_1880 extends StartRound {
                      gameManager.setPriorityPlayer((Player) startingPlayer.get()); // Method doesn't exist in Startround ???
             }
            if (investorChosen.intValue() == getNumberOfPlayers()) {
-               for ( StartItem item1 : itemsToSell) {
+               for ( StartItem item1 : itemsToSell.view()) {
                    if (!item1.isSold()){
                        item1.setStatus(StartItem.UNAVAILABLE);
                        item1.setStatus(StartItem.SOLD);
@@ -159,7 +159,7 @@ public class StartRound_1880 extends StartRound {
                finishRound();
                return false;
            } else {
-               for ( StartItem item1 : itemsToSell) {
+               for ( StartItem item1 : itemsToSell.view()) {
                        if (!item1.isSold()){
                            item1.setStatus(StartItem.BUYABLE);
                            BuyStartItem possibleAction = new BuyStartItem(item1, 0, false);
@@ -186,8 +186,8 @@ public class StartRound_1880 extends StartRound {
         while (true) {
 
             // Check player
-            if (!playerName.equals(player.getName())) {
-                errMsg = LocalText.getText("WrongPlayer", playerName, player.getName());
+            if (!playerName.equals(player.getId())) {
+                errMsg = LocalText.getText("WrongPlayer", playerName, player.getId());
                 break;
             }
             // Check item
@@ -243,7 +243,7 @@ public class StartRound_1880 extends StartRound {
             return false;
         }
 
-        moveStack.start(false);
+        changeStack.start(false);
 
         item.setBid(bidAmount, player);
         ReportBuffer.add(LocalText.getText("BID_ITEM_LOG",
@@ -268,8 +268,8 @@ public class StartRound_1880 extends StartRound {
         while (true) {
 
             // Check player
-            if (!playerName.equals(player.getName())) {
-                errMsg = LocalText.getText("WrongPlayer", playerName, player.getName());
+            if (!playerName.equals(player.getId())) {
+                errMsg = LocalText.getText("WrongPlayer", playerName, player.getId());
                 break;
             }
             break;
@@ -284,7 +284,7 @@ public class StartRound_1880 extends StartRound {
 
         ReportBuffer.add(LocalText.getText("PASSES", playerName));
 
-        moveStack.start(false);
+        changeStack.start(false);
 
         numPasses.add(1);
         
@@ -321,7 +321,7 @@ public class StartRound_1880 extends StartRound {
             int price = auctionItem.getBid();
 
             log.debug("Highest bidder is "
-                      + auctionItem.getBidder().getName());
+                      + auctionItem.getBidder().getId());
             if (auctionItem.needsPriceSetting() != null) {
                 auctionItem.setStatus(StartItem.NEEDS_SHARE_PRICE);
             } else {

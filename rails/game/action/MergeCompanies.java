@@ -39,7 +39,7 @@ public class MergeCompanies extends PossibleAction {
     public MergeCompanies(PublicCompanyI mergingCompany,
             List<PublicCompanyI> targetCompanies) {
         this.mergingCompany = mergingCompany;
-        this.mergingCompanyName = mergingCompany.getName();
+        this.mergingCompanyName = mergingCompany.getId();
         this.targetCompanies = targetCompanies;
         StringBuffer b = new StringBuffer();
         canReplaceToken = new ArrayList<Boolean>(targetCompanies.size());
@@ -49,7 +49,7 @@ public class MergeCompanies extends PossibleAction {
                 b.append("null");
                 canReplaceToken.add(false);
             } else {
-                b.append(target.getName());
+                b.append(target.getId());
                 MapHex hex = mergingCompany.getHomeHexes().get(0);
                 canReplaceToken.add(target.getNumberOfFreeBaseTokens() > 0
                     && (!hex.hasTokenOfCompany(target)
@@ -88,7 +88,7 @@ public class MergeCompanies extends PossibleAction {
     public void setSelectedTargetCompany(PublicCompanyI selectedTargetCompany) {
         this.selectedTargetCompany = selectedTargetCompany;
         if (selectedTargetCompany != null)
-            selectedTargetCompanyName = selectedTargetCompany.getName();
+            selectedTargetCompanyName = selectedTargetCompany.getId();
     }
 
     public void setReplaceToken(boolean value) {

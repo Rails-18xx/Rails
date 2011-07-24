@@ -11,7 +11,9 @@ import javax.swing.*;
 import org.apache.log4j.Logger;
 
 import rails.game.*;
-import rails.game.model.ModelObject;
+import rails.game.model.AbstractModel;
+import rails.game.model.Model;
+import rails.game.model.View;
 import rails.game.state.BooleanState;
 import rails.ui.swing.elements.Field;
 import rails.ui.swing.elements.ViewObject;
@@ -127,30 +129,26 @@ implements ActionListener, KeyListener {
         }
     }
 
+    // FIXME: Has to be rewritten to work properly again
     public class RowVisibility implements ViewObject {
 
         private GridPanel parent;
-        private ModelObject modelObject;
+        private Model<String> modelObject;
         private int rowIndex;
         private boolean lastValue;
         private boolean reverseValue;
 
-        public RowVisibility (GridPanel parent, int rowIndex, ModelObject model, boolean reverseValue) {
+        public RowVisibility (GridPanel parent, int rowIndex, Model<String> model, boolean reverseValue) {
             this.parent = parent;
             this.modelObject = model;
             this.rowIndex = rowIndex;
             this.reverseValue = reverseValue;
-            modelObject.addObserver(this);
+            modelObject.addView(this);
             lastValue = ((BooleanState)modelObject).booleanValue() != reverseValue;
         }
 
         public boolean lastValue () {
             return lastValue;
-        }
-
-        /** Needed to satisfy the ViewObject interface. */
-        public ModelObject getModel() {
-            return modelObject;
         }
 
         /** Needed to satisfy the Observer interface.
@@ -162,11 +160,21 @@ implements ActionListener, KeyListener {
             }
         }
 
-        /** Needed to satisfy the ViewObject interface. Currently not used. */
-        public void deRegister() {
-            if (modelObject != null)
-                modelObject.deleteObserver(this);
+        public void update(String data) {
+            // TODO Auto-generated method stub
+            
         }
+
+        public Model<String> getModel() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        public void deRegister() {
+            // TODO Auto-generated method stub
+            
+        }
+
     }
 
 }

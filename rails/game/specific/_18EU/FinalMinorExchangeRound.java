@@ -32,7 +32,7 @@ public class FinalMinorExchangeRound extends StockRound_18EU {
         setCurrentPlayerIndex(playerToStartFMERound.getIndex());
         initPlayer();
         ReportBuffer.add(LocalText.getText("HasFirstTurn",
-                playerToStartFMERound.getName() ));
+                playerToStartFMERound.getId() ));
     }
 
     /*----- General methods -----*/
@@ -99,7 +99,7 @@ public class FinalMinorExchangeRound extends StockRound_18EU {
     // Autopassing does not apply here
     public boolean done(String playerName, boolean hasAutopassed) {
 
-        moveStack.start(false);
+        changeStack.start(false);
 
         for (PublicCompanyI comp : companyManager.getAllPublicCompanies()) {
             if (comp.getTypeName().equals("Minor")) {

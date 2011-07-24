@@ -50,13 +50,13 @@ public class ShareSellingRound extends StockRound {
     public void start(Player sellingPlayer, int cashToRaise,
             PublicCompanyI cashNeedingCompany, boolean dumpOtherCompaniesAllowed) {
         log.info("Share selling round started, player="
-                +sellingPlayer.getName()+" cash="+cashToRaise);
+                +sellingPlayer.getId()+" cash="+cashToRaise);
         ReportBuffer.add (LocalText.getText("PlayerMustSellShares",
-                sellingPlayer.getName(),
+                sellingPlayer.getId(),
                 Bank.format(cashToRaise)));
         currentPlayer = this.sellingPlayer = sellingPlayer;
         this.cashNeedingCompany = cashNeedingCompany;
-        this.cashToRaise = new IntegerState("CashToRaise", cashToRaise);
+        this.cashToRaise = new IntegerState(this, "CashToRaise", cashToRaise);
         this.dumpOtherCompaniesAllowed = dumpOtherCompaniesAllowed;
         log.debug("Forced selling, dumpOtherCompaniesAllowed = " + dumpOtherCompaniesAllowed);
         setCurrentPlayerIndex(sellingPlayer.getIndex());
@@ -81,7 +81,7 @@ public class ShareSellingRound extends StockRound {
         setSellableShares();
 
         for (PossibleAction pa : possibleActions.getList()) {
-            log.debug(currentPlayer.getName() + " may: " + pa.toString());
+            log.debug(currentPlayer.getId() + " may: " + pa.toString());
         }
 
         return true;
@@ -191,7 +191,7 @@ public class ShareSellingRound extends StockRound {
              */
             // Take care for max. 4 share units per share
             int[] shareCountPerUnit = new int[5];
-            compName = company.getName();
+            compName = company.getId();
             for (PublicCertificateI c : playerPortfolio.getCertificatesPerCompany(compName)) {
                 if (c.isPresidentShare()) {
                     shareCountPerUnit[1] += c.getShares();
@@ -237,7 +237,7 @@ public class ShareSellingRound extends StockRound {
     @Override
     public boolean sellShares(SellShares action) {
         Portfolio portfolio = currentPlayer.getPortfolio();
-        String playerName = currentPlayer.getName();
+        String playerName = currentPlayer.getId();
         String errMsg = null;
         String companyName = action.getCompanyName();
         PublicCompanyI company =
@@ -370,7 +370,8 @@ public class ShareSellingRound extends StockRound {
         }
         int cashAmount = numberSold * price * shareUnits;
 
-        moveStack.start(true).linkToPreviousMoveSet();
+        changeStack.start(true);
+        changeStack.linkToPreviousMoveSet();
 
         ReportBuffer.add(LocalText.getText("SELL_SHARES_LOG",
                 playerName,

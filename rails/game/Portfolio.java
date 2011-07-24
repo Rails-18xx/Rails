@@ -1,82 +1,43 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Portfolio.java,v 1.46 2010/03/16 21:22:17 evos Exp $
- *
- * Created on 09-Apr-2005 by Erik Vos
- *
- * Change Log:
- */
 package rails.game;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import com.google.common.collect.Maps;
+
 import rails.common.LocalText;
-import rails.game.model.*;
-import rails.game.move.*;
+import rails.game.model.AbstractModel;
+import rails.game.model.CertificateCountModel;
+import rails.game.model.HolderModel;
+import rails.game.model.PrivatesModel;
+import rails.game.model.CertificatesModel;
+import rails.game.model.TrainsModel;
 import rails.game.special.LocatedBonus;
 import rails.game.special.SpecialPropertyI;
+import rails.game.state.AbstractItem;
+import rails.game.state.ArrayListState;
+import rails.game.state.MoveUtils;
+import rails.game.state.Moveable;
+import rails.game.state.Holder;
 import rails.util.Util;
 
 /**
- * @author Erik
+ * A Portfolio(Model) stores several HolderModels
+ * 
+ * For the important MoveAble objects own methods are implemented
+ * 
+ * All other HolderModels can be added by the general methods
+ * 
+ * @author evos, freystef (2.0)
  */
-public class Portfolio implements TokenHolder, MoveableHolder {
+public final class Portfolio extends AbstractItem {
 
-    /** Owned private companies */
-    protected List<PrivateCompanyI> privateCompanies =
-        new ArrayList<PrivateCompanyI>();
-    protected PrivatesModel privatesOwnedModel =
-        new PrivatesModel(privateCompanies);
-
-    /** Owned public company certificates */
-    protected List<PublicCertificateI> certificates =
-        new ArrayList<PublicCertificateI>();
-
-    /** Owned public company certificates, organised in a HashMap per company */
-    protected Map<String, List<PublicCertificateI>> certPerCompany =
-        new HashMap<String, List<PublicCertificateI>>();
-
-    /**
-     * Owned public company certificates, organised in a HashMap per unique
-     * certificate type (company, share percentage, presidency). The key is the
-     * certificate type id (see PublicCertificate), the value is the number of
-     * certificates of that type.
-     */
-    protected Map<String, List<PublicCertificateI>> certsPerType =
-        new HashMap<String, List<PublicCertificateI>>();
-
-    /** Share model per company */
-    protected Map<PublicCompanyI, ShareModel> shareModelPerCompany =
-        new HashMap<PublicCompanyI, ShareModel>();
-
-    /** Owned trains */
-    protected List<TrainI> trains = new ArrayList<TrainI>();
-    protected Map<TrainType, List<TrainI>> trainsPerType =
-        new HashMap<TrainType, List<TrainI>>();
-    protected Map<TrainCertificateType, List<TrainI>> trainsPerCertType =
-        new HashMap<TrainCertificateType, List<TrainI>>();
-    protected TrainsModel trainsModel = new TrainsModel(this);
-
-    /** Owned tokens */
-    // TODO Currently only used to discard expired Bonus tokens.
-    protected List<TokenI> tokens = new ArrayList<TokenI>();
-
-    /**
-     * Private-independent special properties. When moved here, a special
-     * property no longer depends on the private company being alive. Example:
-     * 18AL named train tokens.
-     */
-    protected List<SpecialPropertyI> specialProperties;
-
-    /** Who owns the portfolio */
-    protected CashHolder owner;
-
-    /** Name of portfolio */
-    protected String name;
-    /** Unique name (including owner class name) */
-    protected String uniqueName;
-    
-    GameManagerI gameManager;
+    protected static Logger log =
+        Logger.getLogger(Portfolio.class.getPackage().getName());
 
     /** Specific portfolio names */
     public static final String IPO_NAME = "IPO";
@@ -84,66 +45,94 @@ public class Portfolio implements TokenHolder, MoveableHolder {
     public static final String SCRAPHEAP_NAME = "ScrapHeap";
     public static final String UNAVAILABLE_NAME = "Unavailable";
 
-    protected static Logger log =
-        Logger.getLogger(Portfolio.class.getPackage().getName());
+    /** Owner */
+    private final CashHolder owner;
+    
+    /** Owned private companies */
+    private final PrivatesModel privates = new PrivatesModel(this);
 
-    public Portfolio(String name, CashHolder holder) {
-        this.name = name;
+    /** Owned public company certificates */
+    private final Map<PublicCompanyI, CertificatesModel> certificates = Maps.newHashMap(); 
+
+    /** Owned trains */
+    private final TrainsModel trains = new TrainsModel(this);
+
+    /** Owned tokens */
+    // TODO Currently only used to discard expired Bonus tokens.
+    private final HolderModel<TokenI> tokens = new HolderModel<TokenI> (this, "tokens");
+    
+    /**
+     * Private-independent special properties. When moved here, a special
+     * property no longer depends on the private company being alive. Example:
+     * 18AL named train tokens.
+     */
+    private final HolderModel<SpecialPropertyI> specialProperties = 
+        new HolderModel<SpecialPropertyI>(this, "specialProperties");
+
+    private final GameManagerI gameManager;
+
+    public Portfolio(CashHolder holder, String id) {
+        super(holder, id);
         this.owner = holder;
-        this.uniqueName = holder.getClass().getSimpleName() + "_" + name;
 
         gameManager = GameManager.getInstance();
         gameManager.addPortfolio(this);
 
+        // change display style dependent on owner
         if (owner instanceof PublicCompanyI) {
-            trainsModel.setOption(TrainsModel.FULL_LIST);
-            privatesOwnedModel.setOption(PrivatesModel.SPACE);
+            trains.setAbbrList(false);
+            privates.setLineBreak(false);
         } else if (owner instanceof Bank) {
-            trainsModel.setOption(TrainsModel.ABBR_LIST);
+            trains.setAbbrList(true);
         } else if (owner instanceof Player) {
-            privatesOwnedModel.setOption(PrivatesModel.BREAK);
+            privates.setLineBreak(true);
         }
     }
 
     public void transferAssetsFrom(Portfolio otherPortfolio) {
 
         // Move trains
-        Util.moveObjects(otherPortfolio.getTrainList(), this);
+        MoveUtils.objectMoveAll(otherPortfolio.getTrainList(), this.getTrainList());
 
         // Move treasury certificates
-        Util.moveObjects(otherPortfolio.getCertificates(), this);
+        MoveUtils.objectMoveAll(otherPortfolio.getCertificates(), this.getCertificates());
     }
 
     /** Low-level method, only to be called by the local addObject() method and by initialisation code. */
     public void addPrivate(PrivateCompanyI privateCompany, int position) {
 
-        if (!Util.addToList(privateCompanies, privateCompany, position)) return;
-
+        // add to private Model
+        privates.addObject(privateCompany, position);
+        
+        // change the holder inside the private Company
         privateCompany.setHolder(this);
-        log.debug("Adding " + privateCompany.getName() + " to portfolio of "
-                + name);
+        
+        log.debug("Adding " + privateCompany.getId() + " to portfolio of "
+                + owner.getId());
+        
         if (privateCompany.getSpecialProperties() != null) {
-            log.debug(privateCompany.getName() + " has special properties!");
+            log.debug(privateCompany.getId() + " has special properties!");
         } else {
-            log.debug(privateCompany.getName() + " has no special properties");
+            log.debug(privateCompany.getId() + " has no special properties");
         }
-        privatesOwnedModel.update();
+
+        // TODO: This should not be necessary as soon as a PlayerModel
         updatePlayerWorth ();
     }
 
     /** Low-level method, only to be called by the local addObject() method and by initialisation code. */
     public void addCertificate(PublicCertificateI certificate){
-        addCertificate (certificate, new int[] {-1,-1,-1});
+        addCertificate (certificate, -1);
     }
 
     /** Low-level method, only to be called by the local addObject() method. */
-    private void addCertificate(PublicCertificateI certificate, int[] position) {
+    private void addCertificate(PublicCertificateI certificate, int position) {
         // When undoing a company start, put the President back at the top.
-        if (certificate.isPresidentShare()) position = new int[] {0,0,0};
+        if (certificate.isPresidentShare()) position = 0;
 
-        Util.addToList(certificates, certificate, position[0]);
+        certificates.add(position[0], certificate);
 
-        String companyName = certificate.getCompany().getName();
+        String companyName = certificate.getCompany().getId();
         if (!certPerCompany.containsKey(companyName)) {
             certPerCompany.put(companyName, new ArrayList<PublicCertificateI>());
         }
@@ -166,7 +155,7 @@ public class Portfolio implements TokenHolder, MoveableHolder {
     private boolean removePrivate(PrivateCompanyI privateCompany) {
         boolean removed = privateCompanies.remove(privateCompany);
         if (removed) {
-            privatesOwnedModel.update();
+            privates.notifyModel();
             updatePlayerWorth ();
         }
         return removed;
@@ -176,7 +165,7 @@ public class Portfolio implements TokenHolder, MoveableHolder {
     private void removeCertificate(PublicCertificateI certificate) {
         certificates.remove(certificate);
 
-        String companyName = certificate.getCompany().getName();
+        String companyName = certificate.getCompany().getId();
 
         List<PublicCertificateI> certs = getCertificatesPerCompany(companyName);
         certs.remove(certificate);
@@ -200,19 +189,19 @@ public class Portfolio implements TokenHolder, MoveableHolder {
         }
     }
     
-   public ShareModel getShareModel(PublicCompanyI company) {
+   public CertificatesModel getShareModel(PublicCompanyI company) {
 
         if (!shareModelPerCompany.containsKey(company)) {
-            shareModelPerCompany.put(company, new ShareModel(this, company));
+            shareModelPerCompany.put(company, new CertificatesModel(this, company));
         }
         return shareModelPerCompany.get(company);
     }
 
-    public List<PrivateCompanyI> getPrivateCompanies() {
+    public ArrayListState<PrivateCompanyI> getPrivateCompanies() {
         return privateCompanies;
     }
 
-    public List<PublicCertificateI> getCertificates() {
+    public ArrayListState<PublicCertificateI> getCertificates() {
         return certificates;
     }
 
@@ -263,7 +252,7 @@ public class Portfolio implements TokenHolder, MoveableHolder {
     /** Find a certificate for a given company. */
     public PublicCertificateI findCertificate(PublicCompanyI company,
             int shares, boolean president) {
-        String companyName = company.getName();
+        String companyName = company.getId();
         if (!certPerCompany.containsKey(companyName)) {
             return null;
         }
@@ -316,7 +305,7 @@ public class Portfolio implements TokenHolder, MoveableHolder {
     /**
      * @return
      */
-    public String getName() {
+    public String getId() {
         return name;
     }
 
@@ -335,20 +324,13 @@ public class Portfolio implements TokenHolder, MoveableHolder {
      * @return
      */
     public int getShare(PublicCompanyI company) {
-        int share = 0;
-        String name = company.getName();
-        if (certPerCompany.containsKey(name)) {
-            for (PublicCertificateI cert : certPerCompany.get(name)) {
-                share += cert.getShare();
-            }
-        }
-        return share;
+        return certificates.get(company).getShare();
     }
 
     public int ownsCertificates(PublicCompanyI company, int unit,
             boolean president) {
         int certs = 0;
-        String name = company.getName();
+        String name = company.getId();
         if (certPerCompany.containsKey(name)) {
             for (PublicCertificateI cert : certPerCompany.get(name)) {
                 if (president) {
@@ -411,7 +393,7 @@ public class Portfolio implements TokenHolder, MoveableHolder {
     /** Low-level method, only to be called by the local addObject() method. */
     private void addTrain(TrainI train, int[] position) {
 
-        Util.addToList(trains, train, position[0]);
+        trains.add(position[0], train);
         
         TrainType type = train.getType();
         if (!trainsPerType.containsKey(type)) {
@@ -426,7 +408,7 @@ public class Portfolio implements TokenHolder, MoveableHolder {
         Util.addToList(trainsPerCertType.get(certType), train, position[2]);
         
         train.setHolder(this);
-        trainsModel.update();
+        trainsModel.notifyModel();
     }
 
     /** Low-level method, only to be called by Move objects */
@@ -435,30 +417,30 @@ public class Portfolio implements TokenHolder, MoveableHolder {
         trainsPerType.get(train.getPreviousType()).remove(train);
         trainsPerCertType.get(train.getCertType()).remove(train);
         train.setHolder(null);
-        trainsModel.update();
+        trainsModel.notifyModel();
     }
 
     public void buyTrain(TrainI train, int price) {
         CashHolder oldOwner = train.getOwner();
         train.moveTo(this);
-        if (price > 0) new CashMove(owner, oldOwner, price);
+        if (price > 0) MoveUtils.cashMove(owner, oldOwner, price);
     }
 
     public void discardTrain(TrainI train) {
         train.moveTo(GameManager.getInstance().getBank().getPool());
         ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
-                name, train.getName() ));
+                name, train.getId() ));
     }
 
     public void updateTrainsModel() {
-        trainsModel.update();
+        trainsModel.notifyModel();
     }
 
     public int getNumberOfTrains() {
         return trains.size();
     }
 
-    public List<TrainI> getTrainList() {
+    public ArrayListState<TrainI> getTrainList() {
         return trains;
     }
 
@@ -472,7 +454,7 @@ public class Portfolio implements TokenHolder, MoveableHolder {
         return trainsFound.toArray(new TrainI[0]);
     }
 
-    public ModelObject getTrainsModel() {
+    public AbstractModel<String> getTrainsModel() {
         return trainsModel;
     }
 
@@ -493,66 +475,9 @@ public class Portfolio implements TokenHolder, MoveableHolder {
     }
 
     public TrainI getTrainOfType(TrainCertificateType type) {
-        for (TrainI train : trains) {
-            if (train.getCertType() == type) return train;
-        }
-        return null;
+        return trains.getTrainOfType(type);
     }
 
-    /**
-     * Make an abbreviated list of trains, like "2(6) 3(5)" etc, to show in the
-     * IPO.
-     */
-
-    public String makeListOfTrainCertificates() {
-
-        if (trains == null || trains.isEmpty()) return "";
-
-        StringBuilder b = new StringBuilder();
-        List<TrainI> trainsOfType;
-
-        for (TrainCertificateType certType : gameManager.getTrainManager().getTrainCertTypes()) {
-            trainsOfType = trainsPerCertType.get(certType);
-            if (trainsOfType != null && !trainsOfType.isEmpty()) {
-                if (b.length() > 0) b.append(" ");
-                b.append(certType.getName()).append("(");
-                if (certType.hasInfiniteQuantity()) {
-                    b.append("+");
-                } else {
-                    b.append(trainsOfType.size());
-                }
-                b.append(")");
-            }
-        }
-
-        return b.toString();
-    }
-
-    /**
-     * Make a full list of trains, like "2 2 3 3", to show in any field
-     * describing train possessions, except the IPO.
-     */
-    public String makeListOfTrains() {
-
-        if (trains == null || trains.isEmpty()) return "";
-
-        List<TrainI> trainsOfType;
-        StringBuilder b = new StringBuilder();
-
-        for (TrainType type : gameManager.getTrainManager().getTrainTypes()) {
-            trainsOfType = trainsPerType.get(type);
-            if (trainsOfType != null && !trainsOfType.isEmpty()) {
-                for (TrainI train : trainsOfType) {
-                    if (b.length() > 0) b.append(" ");
-                    if (train.isObsolete()) b.append("[");
-                    b.append(train.getName());
-                    if (train.isObsolete()) b.append("]");
-                }
-            }
-        }
-
-        return b.toString();
-    }
 
     /**
      * Add a special property. Used to make special properties independent of
@@ -579,12 +504,12 @@ public class Portfolio implements TokenHolder, MoveableHolder {
         if (owner instanceof PublicCompanyI && property instanceof LocatedBonus) {
             PublicCompanyI company = (PublicCompanyI)owner;
             LocatedBonus locBonus = (LocatedBonus)property;
-            Bonus bonus = new Bonus(company, locBonus.getName(), locBonus.getValue(),
+            Bonus bonus = new Bonus(company, locBonus.getId(), locBonus.getValue(),
                     locBonus.getLocations());
             company.addBonus(bonus);
             ReportBuffer.add(LocalText.getText("AcquiresBonus",
-                    owner.getName(),
-                    locBonus.getName(),
+                    owner.getId(),
+                    locBonus.getId(),
                     Bank.format(locBonus.getValue()),
                     locBonus.getLocationNameString()));
         }
@@ -610,7 +535,7 @@ public class Portfolio implements TokenHolder, MoveableHolder {
             if (owner instanceof PublicCompanyI && property instanceof LocatedBonus) {
                 PublicCompanyI company = (PublicCompanyI)owner;
                 LocatedBonus locBonus = (LocatedBonus)property;
-                company.removeBonus(locBonus.getName());
+                company.removeBonus(locBonus.getId());
             }
         }
 
@@ -623,7 +548,7 @@ public class Portfolio implements TokenHolder, MoveableHolder {
      * @param object The object to add.
      * @return True if successful.
      */
-    public boolean addObject(Moveable object, int[] position) {
+    public boolean addObject(Moveable object, int position) {
         if (object instanceof PublicCertificateI) {
             if (position == null) position = new int[] {-1, -1, -1};
             addCertificate((PublicCertificateI) object, position);
@@ -675,7 +600,7 @@ public class Portfolio implements TokenHolder, MoveableHolder {
             PublicCertificateI cert = (PublicCertificateI) object;
             return new int[] {
                    certificates.indexOf(object),
-                   certPerCompany.get(cert.getCompany().getName()).indexOf(cert),
+                   certPerCompany.get(cert.getCompany().getId()).indexOf(cert),
                    certsPerType.get(cert.getTypeId()).indexOf(cert)
             };
         } else if (object instanceof PrivateCompanyI) {
@@ -706,7 +631,7 @@ public class Portfolio implements TokenHolder, MoveableHolder {
     public List<SpecialPropertyI> getAllSpecialProperties() {
         List<SpecialPropertyI> sps = new ArrayList<SpecialPropertyI>();
         if (specialProperties != null) sps.addAll(specialProperties);
-        for (PrivateCompanyI priv : privateCompanies) {
+        for (PrivateCompanyI priv : privateCompanies.view()) {
             if (priv.getSpecialProperties() != null) {
                 sps.addAll(priv.getSpecialProperties());
             }
@@ -731,7 +656,7 @@ public class Portfolio implements TokenHolder, MoveableHolder {
 
         if (owner instanceof Player || owner instanceof PublicCompanyI) {
 
-            for (PrivateCompanyI priv : privateCompanies) {
+            for (PrivateCompanyI priv : privateCompanies.view()) {
 
                 sps = priv.getSpecialProperties();
                 if (sps == null) continue;
@@ -767,23 +692,19 @@ public class Portfolio implements TokenHolder, MoveableHolder {
         return result;
     }
 
-    public ModelObject getPrivatesOwnedModel() {
-        return privatesOwnedModel;
+    public PrivatesModel getPrivatesOwnedModel() {
+        return privates;
     }
 
     /** Low-level method, only to be called by the local addObject() method. */
     public boolean addToken(TokenI token, int position) {
-
-        return Util.addToList(tokens, token, position);
+        tokens.add(position, token);
+        return true;
     }
 
     /** Low-level method, only to be called by the local addObject() method. */
     public boolean removeToken(TokenI token) {
         return tokens.remove(token);
-    }
-
-    public List<TokenI> getTokens() {
-        return tokens;
     }
 
     public boolean hasTokens() {
@@ -802,12 +723,12 @@ public class Portfolio implements TokenHolder, MoveableHolder {
         // otherwise we get a ConcurrentModificationException on trains.
         for (TrainI train : trainsToRust) {
             ReportBuffer.add(LocalText.getText("TrainsObsoleteRusted",
-                    train.getName(), name));
+                    train.getId(), name));
             log.debug("Obsolete train " + train.getUniqueId() + " (owned by "
                     + name + ") rusted");
             train.setRusted();
         }
-        trainsModel.update();
+        trainsModel.notifyModel();
     }
 
 }

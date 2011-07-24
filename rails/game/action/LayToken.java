@@ -74,7 +74,7 @@ public abstract class LayToken extends PossibleORAction {
      */
     public void setChosenHex(MapHex chosenHex) {
         this.chosenHex = chosenHex;
-        this.chosenHexName = chosenHex.getName();
+        this.chosenHexName = chosenHex.getId();
     }
 
     /**
@@ -104,7 +104,7 @@ public abstract class LayToken extends PossibleORAction {
         StringBuffer b = new StringBuffer();
         for (MapHex hex : locations) {
             if (b.length() > 0) b.append(",");
-            b.append(hex.getName());
+            b.append(hex.getId());
         }
         locationNames = b.toString();
     }

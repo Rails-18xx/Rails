@@ -7,7 +7,7 @@ import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.LayBaseToken;
 import rails.game.action.PossibleAction;
-import rails.game.move.CashMove;
+import rails.game.state.MoveUtils;
 
 public class OperatingRound_18AL extends OperatingRound {
 
@@ -22,7 +22,7 @@ public class OperatingRound_18AL extends OperatingRound {
         
         for (NameTrains stl : getSpecialProperties(NameTrains.class)) {
             List<TrainI> trains =
-                    operatingCompany.get().getPortfolio().getTrainList();
+                    operatingCompany.get().getPortfolio().getTrainList().view();
             if (trains != null && !trains.isEmpty()) {
                 possibleActions.add(new AssignNamedTrains(stl, trains));
             }
@@ -57,7 +57,7 @@ public class OperatingRound_18AL extends OperatingRound {
                             tokens.get(i));
             }
 
-            moveStack.start(true);
+            changeStack.start(true);
 
             for (int i = 0; i < trains.size(); i++) {
                 oldToken = trains.get(i).getNameToken();
@@ -66,8 +66,8 @@ public class OperatingRound_18AL extends OperatingRound {
                     trains.get(i).setNameToken(newToken);
                     if (newToken != null) {
                         ReportBuffer.add(LocalText.getText("NamesTrain",
-                                operatingCompany.get().getName(),
-                                trains.get(i).getName(),
+                                operatingCompany.get().getId(),
+                                trains.get(i).getId(),
                                 newToken.getLongName() ));
                     }
                 }
@@ -85,11 +85,11 @@ public class OperatingRound_18AL extends OperatingRound {
             MapHex hex = action.getChosenHex();
             if (hex == operatingCompany.get().getDestinationHex()) {
                 int payout = 100;
-                new CashMove(bank, operatingCompany.get(), payout);
+                MoveUtils.cashMove(bank, operatingCompany.get(), payout);
                 ReportBuffer.add(LocalText.getText("DestinationReachedByToken",
-                        operatingCompany.get().getName(),
+                        operatingCompany.get().getId(),
                         Bank.format(payout),
-                        hex.getName() ));
+                        hex.getId() ));
             }
             return true;
         } else {

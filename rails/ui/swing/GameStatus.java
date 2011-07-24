@@ -321,7 +321,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                                    = new RowVisibility (this, certPerPlayerYOffset + i, c.getInGameModel(), false);
             boolean visible = rowVisibilityObservers[i].lastValue();
 
-            f = new Caption(c.getName());
+            f = new Caption(c.getId());
             f.setForeground(c.getFgColour());
             f.setBackground(c.getBgColour());
             addField(f, 0, certPerPlayerYOffset + i, 1, 1, WIDE_RIGHT, visible);
@@ -439,7 +439,7 @@ public class GameStatus extends GridPanel implements ActionListener {
             }
 
 
-            f = new Caption(c.getName());
+            f = new Caption(c.getId());
             f.setForeground(c.getFgColour());
             f.setBackground(c.getBgColour());
             addField(f, rightCompCaptionXOffset, certPerPlayerYOffset + i, 1,
@@ -500,7 +500,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         }
 
         for (int i = 0; i < np; i++) {
-            f = lowerPlayerCaption[i] = new Caption(players[i].getName());
+            f = lowerPlayerCaption[i] = new Caption(players[i].getId());
             addField(f, i + 1, playerCertCountYOffset + 1, 1, 1, WIDE_TOP, true);
         }
 
@@ -639,7 +639,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                     //cert = buy.getCertificate();
                     playerName = buy.getPlayerName ();
                     PublicCompanyI company = buy.getCompany();
-                    companyName = company.getName();
+                    companyName = company.getId();
                     sharePerCert = buy.getSharePerCertificate();
                     shareUnit = company.getShareUnit();
                     sharesPerCert = sharePerCert / shareUnit;
@@ -684,7 +684,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                         options.add(LocalText.getText("BuyCertificate",
                                 sharePerCert,
                                 companyName,
-                                buy.getFromPortfolio().getName(),
+                                buy.getFromPortfolio().getId(),
                                 Bank.format(sharesPerCert * buy.getPrice()) ));
                         buyActions.add(buy);
                         buyAmounts.add(1);
@@ -693,7 +693,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                                     i,
                                     sharePerCert,
                                     companyName,
-                                    buy.getFromPortfolio().getName(),
+                                    buy.getFromPortfolio().getId(),
                                     Bank.format(i * sharesPerCert
                                             * buy.getPrice()) ));
                             buyActions.add(buy);
@@ -910,7 +910,7 @@ public class GameStatus extends GridPanel implements ActionListener {
     public void setPriorityPlayer(int index) {
 
         for (int j = 0; j < np; j++) {
-            upperPlayerCaption[j].setText(players[j].getName()
+            upperPlayerCaption[j].setText(players[j].getId()
                     + (j == index ? " PD" : ""));
         }
     }
@@ -931,7 +931,7 @@ public class GameStatus extends GridPanel implements ActionListener {
 
     public String getSRPlayer() {
         if (actorIndex >= 0)
-            return players[actorIndex].getName();
+            return players[actorIndex].getId();
         else
             return "";
     }

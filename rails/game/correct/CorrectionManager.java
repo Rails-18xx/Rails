@@ -9,10 +9,10 @@ import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.game.GameManager;
 import rails.game.ReportBuffer;
-import rails.game.move.StateChange;
+import rails.game.state.AbstractItem;
 import rails.game.state.BooleanState;
 
-public abstract class CorrectionManager implements CorrectionManagerI {
+public abstract class CorrectionManager extends AbstractItem implements CorrectionManagerI {
     
     protected GameManager gameManager;
     
@@ -27,7 +27,7 @@ public abstract class CorrectionManager implements CorrectionManagerI {
     protected CorrectionManager(GameManager gm, CorrectionType ct) {
         gameManager = gm;
         correctionType = ct; 
-        active = new BooleanState(ct.name()); 
+        active = new BooleanState(this, ct.name(),false); 
     }
     
     public CorrectionType getCorrectionType() {
@@ -58,10 +58,10 @@ public abstract class CorrectionManager implements CorrectionManagerI {
     
     private boolean execute(CorrectionModeAction action) {
         
-        gameManager.getMoveStack().start(false);
+        gameManager.getChangeStack().start(false);
         if (!isActive()) {
             String text = LocalText.getText("CorrectionModeActivate",
-                    gameManager.getCurrentPlayer().getName(),
+                    gameManager.getCurrentPlayer().getId(),
                     LocalText.getText(getCorrectionType().name())
             );
             ReportBuffer.add(text);
@@ -69,11 +69,11 @@ public abstract class CorrectionManager implements CorrectionManagerI {
         }
         else {
             ReportBuffer.add(LocalText.getText("CorrectionModeDeactivate",
-                    gameManager.getCurrentPlayer().getName(),
+                    gameManager.getCurrentPlayer().getId(),
                     LocalText.getText(getCorrectionType().name())
             ));
         }
-        new StateChange(active, !isActive());
+        active.set(!active.booleanValue());
      
         return true;
     }

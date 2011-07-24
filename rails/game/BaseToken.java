@@ -34,8 +34,8 @@ public class BaseToken extends Token {
         return (holder instanceof Stop);
     }
 
-    public String getName() {
-        return company.getName();
+    public String getId() {
+        return company.getId();
     }
 
     public PublicCompanyI getCompany() {
@@ -44,7 +44,7 @@ public class BaseToken extends Token {
 
     @Override
     public String toString() {
-        return getName();
+        return getId();
     }
 
 }

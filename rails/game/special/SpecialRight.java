@@ -72,7 +72,7 @@ public class SpecialRight extends SpecialProperty implements RevenueStaticModifi
     }
 
  
-    public String getName() {
+    public String getId() {
         return rightName;
     }
 

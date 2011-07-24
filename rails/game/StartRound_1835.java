@@ -14,11 +14,13 @@ import rails.game.state.IntegerState;
  */
 public class StartRound_1835 extends StartRound {
 
+    // FIXME: State variables cannot stay as static members
+    
     /* To control the player sequence in the Clemens and Snake variants */
-    private static IntegerState turn = new IntegerState("TurnNumber", 0);
+    private static IntegerState turn = new IntegerState(GameManager.getInstance(), "TurnNumber", 0);
 
     private static IntegerState startRoundNumber =
-            new IntegerState("StartRoundNumber", 0);
+            new IntegerState(GameManager.getInstance(), "StartRoundNumber", 0);
 
     /* Additional variants */
     public static final String CLEMENS_VARIANT = "Clemens";
@@ -125,7 +127,7 @@ public class StartRound_1835 extends StartRound {
             if (possibleActions.isEmpty()) {
                 String message =
                         LocalText.getText("CannotBuyAnything",
-                                currentPlayer.getName());
+                                currentPlayer.getId());
                 ReportBuffer.add(message);
                 DisplayBuffer.add(message);
                 numPasses.add(1);
@@ -200,8 +202,8 @@ public class StartRound_1835 extends StartRound {
             Player oldPlayer = getCurrentPlayer();
             setCurrentPlayerIndex(newIndex);
             Player newPlayer = getCurrentPlayer();
-            log.debug("Game turn has moved from " + oldPlayer.getName()
-                      + " to " + newPlayer.getName() + " [startRound="
+            log.debug("Game turn has moved from " + oldPlayer.getId()
+                      + " to " + newPlayer.getId() + " [startRound="
                       + startRoundNumber + " cycle=" + cycleNumber + " turn="
                       + turnNumber + " newIndex=" + newIndex + "]");
 
@@ -211,8 +213,8 @@ public class StartRound_1835 extends StartRound {
             Player oldPlayer = getCurrentPlayer();
             super.setNextPlayer();
             Player newPlayer = getCurrentPlayer();
-            log.debug("Game turn has moved from " + oldPlayer.getName()
-                      + " to " + newPlayer.getName());
+            log.debug("Game turn has moved from " + oldPlayer.getId()
+                      + " to " + newPlayer.getId());
         }
 
         return;
@@ -232,8 +234,8 @@ public class StartRound_1835 extends StartRound {
         while (true) {
 
             // Check player
-            if (!playerName.equals(player.getName())) {
-                errMsg = LocalText.getText("WrongPlayer", playerName, player.getName());
+            if (!playerName.equals(player.getId())) {
+                errMsg = LocalText.getText("WrongPlayer", playerName, player.getId());
                 break;
             }
             break;
@@ -248,7 +250,7 @@ public class StartRound_1835 extends StartRound {
 
         ReportBuffer.add(LocalText.getText("PASSES", playerName));
 
-        moveStack.start(false);
+        changeStack.start(false);
 
         numPasses.add(1);
 

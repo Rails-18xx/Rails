@@ -19,7 +19,7 @@ public class OperatingRound_18GA extends OperatingRound {
         
         // If the Ocilla Southern has been bought, the company gets an extra 2-train, if possible
         if (result 
-                && action.getPrivateCompany().getName().equalsIgnoreCase(OS_NAME)
+                && action.getPrivateCompany().getId().equalsIgnoreCase(OS_NAME)
                 && isBelowTrainLimit()) {
             PublicCompanyI company = operatingCompany.get();
             TrainCertificateType certType = trainManager.getCertTypeByName(OS_EXTRA_TRAIN_TYPE);
@@ -28,9 +28,9 @@ public class OperatingRound_18GA extends OperatingRound {
                 company.getPortfolio().buyTrain(train, 0);
                 train.setTradeable(false);
                 ReportBuffer.add(LocalText.getText("GetsExtraTrain",
-                        company.getName(),
+                        company.getId(),
                         OS_EXTRA_TRAIN_TYPE));
-                company.getPortfolio().getTrainsModel().update();
+                company.getPortfolio().getTrainsModel().notifyModel();
             }
         }
         

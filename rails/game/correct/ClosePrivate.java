@@ -27,7 +27,7 @@ public class ClosePrivate extends PossibleAction {
     
     public ClosePrivate(PrivateCompanyI priv) {
         privateCompany = priv;
-        privateCompanyName = priv.getName();
+        privateCompanyName = priv.getId();
     }
     
     public PrivateCompanyI getPrivateCompany() {

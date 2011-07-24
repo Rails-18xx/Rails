@@ -2,16 +2,18 @@
 package rails.game.model;
 
 import rails.game.*;
-import rails.game.move.PriceMove;
-import rails.game.state.StateI;
+import rails.game.state.PriceMove;
 
-public class PriceModel extends ModelObject implements StateI {
+// TODO: Requires a complete rewrite
+
+public class PriceModel extends AbstractModel<String> {
 
     private StockSpaceI stockPrice = null;
     private PublicCompanyI company = null;
     private String name = null;
 
     public PriceModel(PublicCompanyI company, String name) {
+        super(company, name);
         this.company = company;
         this.name = name;
     }
@@ -28,18 +30,17 @@ public class PriceModel extends ModelObject implements StateI {
         return company;
     }
 
-    @Override
+    // FIXME: This is a reference to the usage of ViewUpdate
     public Object getUpdate() {
         if (stockPrice != null) {
-            return new ViewUpdate(getText())
+            return new ViewUpdate(getData())
                     .addObject(ViewUpdate.BGCOLOUR, stockPrice.getColour());
         } else {
-            return getText();
+            return getData();
         }
     }
 
-    @Override
-    public String getText() {
+    public String getData() {
         if (stockPrice != null) {
             return Bank.format(stockPrice.getPrice()) + " ("
                    + stockPrice.getName() + ")";
@@ -55,10 +56,10 @@ public class PriceModel extends ModelObject implements StateI {
     public void setState(Object object) {
         if (object == null) {
             stockPrice = null;
-            update();
+            notifyModel();
         } else if (object instanceof StockSpaceI) {
             stockPrice = (StockSpaceI) object;
-            update();
+            notifyModel();
         } else {
             new Exception("Incompatible object type "
                           + object.getClass().getName()

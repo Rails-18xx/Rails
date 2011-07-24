@@ -63,7 +63,7 @@ public class Bonus implements Closeable, RevenueStaticModifier {
         StringBuffer b = new StringBuffer();
         for (MapHex location : locations) {
             if (b.length() > 0) b.append(",");
-            b.append(location.getName());
+            b.append(location.getId());
         }
         return b.toString();
     }

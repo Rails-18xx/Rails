@@ -12,6 +12,7 @@ import rails.common.parser.ConfigurableComponentI;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.GameManagerI;
+import rails.game.state.AbstractItem;
 import rails.game.state.ArrayListState;
 
 /**
@@ -24,7 +25,7 @@ import rails.game.state.ArrayListState;
  *
  */
 
-public final class RevenueManager implements ConfigurableComponentI {
+public final class RevenueManager extends AbstractItem implements ConfigurableComponentI {
 
     protected static Logger log =
         Logger.getLogger(RevenueManager.class.getPackage().getName());
@@ -40,9 +41,9 @@ public final class RevenueManager implements ConfigurableComponentI {
     private RevenueDynamicModifier activeCalculator;
 
     public RevenueManager() {
-        graphModifiers = new ArrayListState<NetworkGraphModifier>("NetworkGraphModifiers"); 
-        staticModifiers = new ArrayListState<RevenueStaticModifier>("RevenueStaticModifiers"); 
-        dynamicModifiers = new ArrayListState<RevenueDynamicModifier>("RevenueDynamicModifiers");
+        graphModifiers = new ArrayListState<NetworkGraphModifier>(this, "NetworkGraphModifiers"); 
+        staticModifiers = new ArrayListState<RevenueStaticModifier>(this, "RevenueStaticModifiers"); 
+        dynamicModifiers = new ArrayListState<RevenueDynamicModifier>(this, "RevenueDynamicModifiers");
         configurableModifiers = new HashSet<ConfigurableComponentI>();
         
         activeStaticModifiers = new ArrayList<RevenueStaticModifier>();
@@ -152,14 +153,14 @@ public final class RevenueManager implements ConfigurableComponentI {
     }
 
     void initGraphModifiers(NetworkGraphBuilder graphBuilder) {
-        for (NetworkGraphModifier modifier:graphModifiers.viewList()) {
+        for (NetworkGraphModifier modifier:graphModifiers.view()) {
             modifier.modifyGraph(graphBuilder);
         }
     }
     
     void initStaticModifiers(RevenueAdapter revenueAdapter) {
         activeStaticModifiers.clear();
-        for (RevenueStaticModifier modifier:staticModifiers.viewList()) {
+        for (RevenueStaticModifier modifier:staticModifiers.view()) {
             if (modifier.modifyCalculator(revenueAdapter)) {
                 activeStaticModifiers.add(modifier);
             }
@@ -172,7 +173,7 @@ public final class RevenueManager implements ConfigurableComponentI {
      */
     boolean initDynamicModifiers(RevenueAdapter revenueAdapter) {
         activeDynamicModifiers.clear();
-        for (RevenueDynamicModifier modifier:dynamicModifiers.viewList()) {
+        for (RevenueDynamicModifier modifier:dynamicModifiers.view()) {
             if (modifier.prepareModifier(revenueAdapter))
                 activeDynamicModifiers.add(modifier);
         }

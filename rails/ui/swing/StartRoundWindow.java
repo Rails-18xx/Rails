@@ -275,7 +275,7 @@ public class StartRoundWindow extends JFrame implements ActionListener,
         addField(new Caption(LocalText.getText("PLAYERS")),
                 bidPerPlayerXOffset, 0, np, 1, 0);
         for (int i = 0; i < np; i++) {
-            f = upperPlayerCaption[i] = new Caption(players[i].getName());
+            f = upperPlayerCaption[i] = new Caption(players[i].getId());
             addField(f, bidPerPlayerXOffset + i, 1, 1, 1, WIDE_BOTTOM);
         }
 
@@ -344,7 +344,7 @@ public class StartRoundWindow extends JFrame implements ActionListener,
         }
 
         for (int i = 0; i < np; i++) {
-            f = lowerPlayerCaption[i] = new Caption(players[i].getName());
+            f = lowerPlayerCaption[i] = new Caption(players[i].getId());
             addField(f, playerFreeCashXOffset + i, playerFreeCashYOffset + 1,
                     1, 1, WIDE_TOP);
         }
@@ -659,7 +659,7 @@ public class StartRoundWindow extends JFrame implements ActionListener,
 
     public String getSRPlayer() {
         if (playerIndex >= 0)
-            return players[playerIndex].getName();
+            return players[playerIndex].getId();
         else
             return "";
     }
@@ -690,11 +690,11 @@ public class StartRoundWindow extends JFrame implements ActionListener,
                 List<MapHex> blockedHexes = priv.getBlockedHexes();
                 if (blockedHexes == null) {
                 } else if (blockedHexes.size() == 1) {
-                    b.append("<br>Blocked hex: ").append(blockedHexes.get(0).getName());
+                    b.append("<br>Blocked hex: ").append(blockedHexes.get(0).getId());
                 } else if (blockedHexes.size() > 1) {
                     b.append("<br>Blocked hexes:");
                     for (MapHex hex : blockedHexes) {
-                        b.append(" ").append(hex.getName());
+                        b.append(" ").append(hex.getId());
                     }
                 }
                 if (priv.hasSpecialProperties()) {

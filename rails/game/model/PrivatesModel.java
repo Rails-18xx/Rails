@@ -1,28 +1,27 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/PrivatesModel.java,v 1.6 2008/06/04 19:00:37 evos Exp $*/
 package rails.game.model;
 
-import java.util.List;
-
+import rails.game.Portfolio;
 import rails.game.PrivateCompanyI;
 
-public class PrivatesModel extends ModelObject {
+public final class PrivatesModel extends HolderModel<PrivateCompanyI> {
 
-    private List<PrivateCompanyI> privatesList;
+    private boolean addLineBreak = false;
 
-    public static final int SPACE = 0;
-    public static final int BREAK = 1;
-
-    public PrivatesModel(List<PrivateCompanyI> privatesList) {
-        this.privatesList = privatesList;
+    public PrivatesModel(Portfolio owner) {
+        super(owner, "PrivatesModel");
+    }
+    
+    public void setLineBreak(boolean lineBreak) {
+        this.addLineBreak = lineBreak;
     }
 
-    public String getText() {
+    public String getData() {
 
         StringBuffer buf = new StringBuffer("<html>");
-        for (PrivateCompanyI priv : privatesList) {
+        for (PrivateCompanyI priv : this.viewList()) {
             if (buf.length() > 6)
-                buf.append(option == BREAK ? "<br>" : "&nbsp;");
-            buf.append(priv.getName());
+                buf.append(addLineBreak ? "<br>" : "&nbsp;");
+            buf.append(priv.getId());
         }
         if (buf.length() > 6) {
             buf.append("</html>");

@@ -2,9 +2,10 @@
  */
 package rails.game;
 
-import rails.game.model.ModelObject;
+import rails.game.model.Model;
+import rails.game.state.Item;
 
-public interface CashHolder {
+public interface CashHolder extends Item {
 
     /**
      * Returns the amount of cash.
@@ -13,7 +14,7 @@ public interface CashHolder {
      */
     public abstract int getCash();
 
-    public ModelObject getCashModel();
+    public Model<String> getCashModel();
 
     /**
      * Add (or subtract) cash.
@@ -21,5 +22,5 @@ public interface CashHolder {
     public abstract void addCash(int amount);
 
     /** Get the cash owner's name (needed for logging) */
-    public abstract String getName();
+    public abstract String getId();
 }

@@ -68,7 +68,7 @@ public class NamedTrainToken extends Token implements ConfigurableComponentI /*,
         
     }
 
-    public String getName() {
+    public String getId() {
         return name;
     }
 

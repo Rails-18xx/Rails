@@ -33,7 +33,7 @@ public abstract class PossibleORAction extends PossibleAction {
         RoundI round = GameManager.getInstance().getCurrentRound();
         if (round instanceof OperatingRound) {
             company = ((OperatingRound) round).getOperatingCompany();
-            companyName = company.getName();
+            companyName = company.getId();
         }
     }
 
@@ -42,13 +42,13 @@ public abstract class PossibleORAction extends PossibleAction {
     }
 
     public String getCompanyName() {
-        return company.getName();
+        return company.getId();
     }
 
     /** To be used in the client (to enable safety check in the server) */
     public void setCompany(PublicCompanyI company) {
         this.company = company;
-        this.companyName = company.getName();
+        this.companyName = company.getId();
     }
 
     /** Deserialize */

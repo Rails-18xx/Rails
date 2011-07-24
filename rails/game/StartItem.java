@@ -5,8 +5,9 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
-import rails.game.model.ModelObject;
+import rails.game.model.Model;
 import rails.game.model.MoneyModel;
+import rails.game.state.AbstractItem;
 import rails.game.state.IntegerState;
 
 /**
@@ -16,7 +17,7 @@ import rails.game.state.IntegerState;
  * other attributes are saved. The certificate objects are linked to in the
  * later initialisation step.
  */
-public class StartItem {
+public class StartItem extends AbstractItem {
 
     // Fixed properties
     protected String name = null;
@@ -92,14 +93,14 @@ public class StartItem {
     public StartItem(String name, String type, int basePrice, int index, boolean president) {
         this.name = name;
         this.type = type;
-        this.basePrice = new MoneyModel(name + "_basePrice");
+        this.basePrice = new MoneyModel(this, "basePrice");
         this.basePrice.set(basePrice);
         this.index = index;
         this.president = president;
-        status = new IntegerState(name + "_status");
-        minimumBid = new MoneyModel(name + "_minimumBid");
-        minimumBid.setOption(MoneyModel.SUPPRESS_ZERO);
-        lastBidderIndex = new IntegerState(name + "_highestBidder", -1);
+        status = new IntegerState(this, "status");
+        minimumBid = new MoneyModel(this, "minimumBid");
+        minimumBid.setSuppressZero(true);
+        lastBidderIndex = new IntegerState(this, "highestBidder", -1);
 
         if (startItemMap == null)
             startItemMap = new HashMap<String, StartItem>();
@@ -131,8 +132,8 @@ public class StartItem {
         bids = new MoneyModel[numberOfPlayers];
         for (int i = 0; i < numberOfPlayers; i++) {
             bids[i] =
-                    new MoneyModel(name + "_bidBy_" + players.get(i).getName());
-            bids[i].setOption(MoneyModel.SUPPRESS_ZERO);
+                    new MoneyModel(this, "bidBy_" + players.get(i).getId());
+            bids[i].setSuppressZero(true);
 
         }
         // TODO Leave this for now, but it should be done
@@ -288,12 +289,11 @@ public class StartItem {
         } else if (amount == 0) {
             // Used in 18EU to force making the "bid"
             // (in fact: buy price) visible
-            bids[index].resetOption(MoneyModel.SUPPRESS_ZERO);
-            bids[index].update();
+            bids[index].notifyModel();
         } else if (amount == -1) {
             // Passed (standard type)
             bids[index].set(0);
-            bids[index].update();
+            bids[index].notifyModel();
         }
     }
 
@@ -456,7 +456,7 @@ public class StartItem {
         return status.intValue();
     }
 
-    public ModelObject getStatusModel () {
+    public Model<String> getStatusModel () {
         return status;
     }
 
@@ -468,15 +468,15 @@ public class StartItem {
         this.status.set(status);
     }
 
-    public ModelObject getBasePriceModel() {
+    public Model<String> getBasePriceModel() {
         return basePrice;
     }
 
-    public ModelObject getBidForPlayerModel(int index) {
+    public Model<String> getBidForPlayerModel(int index) {
         return bids[index];
     }
 
-    public ModelObject getMinimumBidModel() {
+    public Model<String> getMinimumBidModel() {
         return minimumBid;
     }
 

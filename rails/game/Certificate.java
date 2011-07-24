@@ -1,6 +1,6 @@
 package rails.game;
 
-import rails.game.move.Moveable;
+import rails.game.state.Moveable;
 
 /**
  * The superinterface of PrivateCompanyI and PublicCertificateI, which allows
@@ -14,6 +14,6 @@ public interface Certificate extends Moveable {
      */
     public Portfolio getPortfolio();
 
-    public String getName();
+    public String getId();
 
 }

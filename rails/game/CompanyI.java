@@ -4,13 +4,14 @@ package rails.game;
 import java.util.List;
 
 import rails.common.parser.ConfigurableComponentI;
-import rails.game.move.MoveableHolder;
 import rails.game.special.SpecialPropertyI;
+import rails.game.state.Item;
+import rails.game.state.Holder;
 
 /**
  * To be implemented by any Company object.
  */
-public interface CompanyI extends ConfigurableComponentI, MoveableHolder {
+public interface CompanyI extends Item, ConfigurableComponentI, Holder {
 
     /** The name of the XML tag used to configure a company. */
     public static final String COMPANY_ELEMENT_ID = "Company";
@@ -48,7 +49,7 @@ public interface CompanyI extends ConfigurableComponentI, MoveableHolder {
      *
      * @return the name of the Company
      */
-    public String getName();
+    public String getId();
 
     public String getLongName();
 

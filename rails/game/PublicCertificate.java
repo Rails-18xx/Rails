@@ -7,8 +7,8 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import rails.common.LocalText;
-import rails.game.move.MoveableHolder;
-import rails.game.move.ObjectMove;
+import rails.game.state.Holder;
+import rails.game.state.ObjectMove;
 
 public class PublicCertificate implements PublicCertificateI, Cloneable {
 
@@ -78,7 +78,7 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
         return certMap.get(certId);
     }
 
-    public void moveTo(MoveableHolder newHolder) {
+    public void moveTo(Holder newHolder) {
         new ObjectMove(this, portfolio, newHolder);
     }
 
@@ -89,7 +89,7 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
         return portfolio;
     }
 
-    public MoveableHolder getHolder() {
+    public Holder getHolder() {
         return portfolio;
     }
 
@@ -125,18 +125,18 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
      * occurs with e.g. 1835 minors), only the company name is given. If it is a
      * president's share, that fact is mentioned.
      */
-    public String getName() {
+    public String getId() {
         int share = getShare();
         if (share == 100) {
             /* Applies to shareless minors: just name the company */
-            return company.getName();
+            return company.getId();
         } else if (president) {
             return LocalText.getText("PRES_CERT_NAME",
-                    company.getName(),
+                    company.getId(),
                     getShare() );
         } else {
             return LocalText.getText("CERT_NAME",
-                    company.getName(),
+                    company.getId(),
                     getShare());
         }
     }
@@ -186,7 +186,7 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
      */
     public void setCompany(PublicCompanyI companyI) {
         company = companyI;
-        certTypeId = company.getName() + "_" + getShare() + "%";
+        certTypeId = company.getId() + "_" + getShare() + "%";
         if (president) certTypeId += "_P";
     }
 
@@ -222,6 +222,6 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
 
     @Override
     public String toString() {
-        return "PublicCertificate: " + getName();
+        return "PublicCertificate: " + getId();
     }
 }

@@ -1,28 +1,33 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/state/GenericState.java,v 1.1 2010/02/26 08:04:17 stefanfrey Exp $*/
 package rails.game.state;
+/**
+ * Generic State wrapper
+ * @author freystef
+ *
+ * @param <E> class to wrap
+ */
 
-import rails.game.model.ModelObject;
-import rails.game.move.StateChange;
+public final class GenericState<E> extends AbstractState {
 
-public final class GenericState<E> extends ModelObject implements StateI {
+    private E object;
 
-    private String stateName;
-    private E stateObject;
-
-    public GenericState(String name, E object) {
-        stateName = name;
-        //if (object == null) {
-        //    new Exception("NULL object not allowed in creating State wrapper").printStackTrace();
-        //} else {
-            stateObject = object;
-        //}
+    public GenericState(Item owner, String id) {
+        super(owner, id);
+        this.object = null;
     }
 
-    public void set(E object, boolean forced) {
+    public GenericState(Item owner, String id, E object) {
+        super(owner, id);
+        this.object = object;
+    }
+
+    private void set(E object, boolean forced) {
         if (object == null) {
-            if (stateObject != null) new StateChange(this, object);
-        } else if (!object.equals(stateObject) || forced)
-                new StateChange(this, object);
+            if (this.object != null) {
+                new StateChange<E>(this, object);
+            }
+        } else if (!object.equals(this.object) || forced) {
+                new StateChange<E>(this, object);
+        }
     }
 
     public void set(E object) {
@@ -34,31 +39,11 @@ public final class GenericState<E> extends ModelObject implements StateI {
     }
 
     public E get() {
-        return stateObject;
+        return this.object;
     }
 
-    /** Must only be called by the Move execute() and undo() methods */
-    public void setState(Object object) {
-       @SuppressWarnings("unchecked") E objE = (E)object;
-        stateObject = objE;
-        update();
+    void change(E object) {
+        this.object = object; 
     }
 
-    public String getName() {
-        return stateName;
-    }
-
-    @Override
-    public String getText() {
-        if (stateObject != null) {
-            return stateObject.toString();
-        } else {
-            return "";
-        }
-    }
-
-    @Override
-    public String toString() {
-        return stateName;
-    }
 }

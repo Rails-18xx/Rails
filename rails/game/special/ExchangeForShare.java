@@ -51,20 +51,20 @@ public class ExchangeForShare extends SpecialProperty {
         return share;
     }
 
-    public String getName() {
+    public String getId() {
         return toString();
     }
 
     @Override
     public String toString() {
-        return "Swap " + originalCompany.getName() + " for " + share
+        return "Swap " + originalCompany.getId() + " for " + share
                + "% share of " + publicCompanyName;
     }
 
     @Override
     public String toMenu() {
         return LocalText.getText("SwapPrivateForCertificate",
-                originalCompany.getName(),
+                originalCompany.getId(),
                 share,
                 publicCompanyName );
     }

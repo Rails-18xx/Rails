@@ -3,9 +3,9 @@ package rails.game;
 
 import java.util.List;
 
-import rails.game.move.MoveableHolder;
+import rails.game.state.Holder;
 
-public interface PrivateCompanyI extends CompanyI, Certificate, MoveableHolder, Closeable {
+public interface PrivateCompanyI extends CompanyI, Certificate, Holder, Closeable {
 
     public static final String TYPE_TAG = "Private";
     public static final String REVENUE = "revenue";

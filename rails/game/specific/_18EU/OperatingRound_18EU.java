@@ -18,7 +18,7 @@ public class OperatingRound_18EU extends OperatingRound {
     protected TrainCertificateType pullmannType;
 
     protected BooleanState hasPullmannAtStart =
-            new BooleanState("ORCompanyHasPullmannAtStart", false);
+            new BooleanState(this, "ORCompanyHasPullmannAtStart", false);
 
     public OperatingRound_18EU (GameManagerI gameManager) {
         super (gameManager);
@@ -128,7 +128,7 @@ public class OperatingRound_18EU extends OperatingRound {
                 companiesPerPlayer.add(new ArrayList<PublicCompanyI>(4));
             List<PublicCompanyI> companies;
             // Sort out which players preside over wich companies.
-            for (PublicCompanyI c : operatingCompanies.viewList()) {
+            for (PublicCompanyI c : operatingCompanies.view()) {
                 if (c == operatingCompany.get() || c.isClosed()) continue;
                 p = c.getPresident();
                 index = p.getIndex();
@@ -176,8 +176,8 @@ public class OperatingRound_18EU extends OperatingRound {
             if (pullmann != null) {  // must be non-null
                 pullmann.moveTo(pool);
                 ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
-                        operatingCompany.get().getName(),
-                        pullmann.getName() ));
+                        operatingCompany.get().getId(),
+                        pullmann.getId() ));
 
             }
         }
@@ -185,12 +185,12 @@ public class OperatingRound_18EU extends OperatingRound {
         // If train was bought from another company, check for a lone Pullmann
         Portfolio seller = action.getFromPortfolio();
         if (seller.getOwner() instanceof PublicCompanyI
-                && !action.getTrain().getName().equalsIgnoreCase("P")) {
+                && !action.getTrain().getId().equalsIgnoreCase("P")) {
             boolean hasPullmann = false;
             boolean hasNonPullmann = false;
             TrainI pullmann = null;
             for (TrainI sellerTrain : seller.getTrainList()) {
-                if ("P".equalsIgnoreCase(sellerTrain.getName())) {
+                if ("P".equalsIgnoreCase(sellerTrain.getId())) {
                     hasPullmann = true;
                     pullmann = sellerTrain;
                 } else if (sellerTrain != null){
@@ -200,8 +200,8 @@ public class OperatingRound_18EU extends OperatingRound {
             if (hasPullmann && !hasNonPullmann) {
                 pullmann.moveTo (pool);
                 ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
-                        seller.getOwner().getName(),
-                        pullmann.getName() ));
+                        seller.getOwner().getId(),
+                        pullmann.getId() ));
             }
         }
 
@@ -229,7 +229,7 @@ public class OperatingRound_18EU extends OperatingRound {
         Portfolio portfolio;
         int numberOfTrains;
 
-        for (PublicCompanyI comp : operatingCompanies.viewList()) {
+        for (PublicCompanyI comp : operatingCompanies.view()) {
             portfolio = comp.getPortfolio();
             numberOfTrains = portfolio.getNumberOfTrains();
 

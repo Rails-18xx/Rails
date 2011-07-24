@@ -135,13 +135,13 @@ public class SpecialTileLay extends SpecialProperty {
         return tileColours;
     }
 
-    public String getName() {
+    public String getId() {
         return name;
     }
 
     @Override
 	public String toString() {
-        return "SpecialTileLay comp=" + originalCompany.getName() + " hex="
+        return "SpecialTileLay comp=" + originalCompany.getId() + " hex="
                + locationCodes + " extra=" + extra + " cost=" + free + " connected=" + connected;
     }
 

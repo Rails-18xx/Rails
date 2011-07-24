@@ -33,10 +33,10 @@ public class OperatingRound_1889 extends OperatingRound {
         super (gameManager);
         
         privB = companyManager.getPrivateCompany("B");
-        activeSpPrivB = new BooleanState("ActiveSpPrivB", false);
+        activeSpPrivB = new BooleanState(this, "ActiveSpPrivB", false);
         
         privC = companyManager.getPrivateCompany("C");
-        activeSpPrivC = new BooleanState("ActiveSpPrivC", false);
+        activeSpPrivC = new BooleanState(this, "ActiveSpPrivC", false);
     
         beginnerGame = GameOption.convertValueToBoolean(getGameOption("BeginnerGame"));
     }
@@ -84,7 +84,7 @@ public class OperatingRound_1889 extends OperatingRound {
         if (action instanceof UseSpecialProperty) {
             UseSpecialProperty spAction=(UseSpecialProperty)action;
             if (spAction.getSpecialProperty() == privB.getSpecialProperties().get(0)) {
-                moveStack.start(true);
+                changeStack.start(true);
                 activeSpPrivB.set(true);
                 log.debug("1889 specific: Allows tile lay for B with player request");
                 return true;
@@ -98,7 +98,7 @@ public class OperatingRound_1889 extends OperatingRound {
     public boolean buyPrivate(BuyPrivate action){
 
        // store the seller name, playername in action is the owner of the buying company!
-       String sellerName = action.getPrivateCompany().getPortfolio().getOwner().getName();
+       String sellerName = action.getPrivateCompany().getPortfolio().getOwner().getId();
         
        boolean result = super.buyPrivate(action);
        
@@ -131,7 +131,7 @@ public class OperatingRound_1889 extends OperatingRound {
     public void skip() {
         if (activeSpPrivC.booleanValue()) {
             log.debug("1889 specific: Tile lay for C skipped, return to previous step");
-            moveStack.start(true);
+            changeStack.start(true);
             activeSpPrivC.set(false);
             stepObject.set(storeActiveStep);
         } else {

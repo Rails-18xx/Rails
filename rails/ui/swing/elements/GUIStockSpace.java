@@ -3,7 +3,6 @@ package rails.ui.swing.elements;
 
 import java.awt.*;
 import java.util.List;
-import java.util.Observable;
 
 import javax.swing.*;
 
@@ -11,7 +10,7 @@ import org.apache.log4j.Logger;
 
 import rails.game.PublicCompanyI;
 import rails.game.StockSpaceI;
-import rails.game.model.ModelObject;
+import rails.game.model.Model;
 import rails.ui.swing.GUIToken;
 import rails.util.Util;
 
@@ -56,7 +55,7 @@ public class GUIStockSpace extends JLayeredPane implements ViewObject {
                     ? Color.WHITE : Color.BLACK);
             priceLabel.setVerticalTextPosition(SwingConstants.TOP);
 
-            ((ModelObject) model).addObserver(this);
+            model.addView(this);
             if (model.isStart()) {
                 priceLabel.setBorder(BorderFactory.createLineBorder(Color.red,
                         2));
@@ -106,7 +105,7 @@ public class GUIStockSpace extends JLayeredPane implements ViewObject {
             bgColour = co.getBgColour();
             fgColour = co.getFgColour();
 
-            token = new GUIToken(fgColour, bgColour, co.getName(), xCenter, yCenter, diameter);
+            token = new GUIToken(fgColour, bgColour, co.getId(), xCenter, yCenter, diameter);
             token.setBounds(origin.x, origin.y, size.width, size.height);
 
             add(token, new Integer(0), 0);
@@ -119,8 +118,8 @@ public class GUIStockSpace extends JLayeredPane implements ViewObject {
      *
      * @see rails.ui.swing.elements.ViewObject#getModel()
      */
-    public ModelObject getModel() {
-        return (ModelObject) model;
+    public Model<String> getModel() {
+        return (Model<String>) model;
     }
 
     /*
@@ -130,7 +129,7 @@ public class GUIStockSpace extends JLayeredPane implements ViewObject {
      */
     public void deRegister() {
         if (model != null)
-            ((ModelObject) model).deleteObserver(this);
+            model.removeView(this);
 
     }
 
@@ -140,9 +139,9 @@ public class GUIStockSpace extends JLayeredPane implements ViewObject {
      * @see java.rails.util.Observer#update(java.rails.util.Observable,
      * java.lang.Object)
      */
-    public void update(Observable o1, Object o2) {
-
+    public void update(String data) {
         recreate();
     }
+
 
 }

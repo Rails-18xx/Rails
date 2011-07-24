@@ -4,7 +4,7 @@ package rails.game;
 import java.util.List;
 
 import rails.game.action.PossibleAction;
-import rails.game.model.ModelObject;
+import rails.game.model.Model;
 
 public interface StartRoundI extends RoundI {
 
@@ -18,11 +18,11 @@ public interface StartRoundI extends RoundI {
 
     public boolean process(PossibleAction action);
 
-    public ModelObject getBidModel(int privateIndex, int playerIndex);
+    public Model<String> getBidModel(int privateIndex, int playerIndex);
 
-    public ModelObject getMinimumBidModel(int privateIndex);
+    public Model<String> getMinimumBidModel(int privateIndex);
 
-    public ModelObject getFreeCashModel(int playerIndex);
+    public Model<String> getFreeCashModel(int playerIndex);
 
-    public ModelObject getBlockedCashModel(int playerIndex);
+    public Model<String> getBlockedCashModel(int playerIndex);
 }

@@ -86,7 +86,7 @@ public class SpecialTrainBuy extends SpecialProperty {
         return false;
     }
 
-    public String getName() {
+    public String getId() {
         return name;
     }
 
@@ -111,7 +111,7 @@ public class SpecialTrainBuy extends SpecialProperty {
     }
 
     public String toString() {
-        return "SpecialTrainBuy comp=" + originalCompany.getName() + " extra="
+        return "SpecialTrainBuy comp=" + originalCompany.getId() + " extra="
                + extra + " deduction=" + deductionString;
     }
     
@@ -120,13 +120,13 @@ public class SpecialTrainBuy extends SpecialProperty {
         if (trainTypeName.equals("")) {
             return LocalText.getText("SpecialTrainBuyAny",
                     deductionString,
-                    originalCompany.getName());
+                    originalCompany.getId());
         }
         else {
             return LocalText.getText("SpecialTrainBuy",
                     trainTypeName,
                     deductionString,
-                    originalCompany.getName());
+                    originalCompany.getId());
         }        
     }
     

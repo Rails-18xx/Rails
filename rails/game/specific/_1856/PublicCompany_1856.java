@@ -21,12 +21,12 @@ public class PublicCompany_1856 extends PublicCompany {
             = gameManager.getTrainManager().getAvailableNewTrains().get(0);
         int trainNumber;
         try {
-            trainNumber = Integer.parseInt(nextAvailableTrain.getName());
+            trainNumber = Integer.parseInt(nextAvailableTrain.getId());
         } catch (NumberFormatException e) {
             trainNumber = 6; // Diesel!
         }
         trainNumberAvailableAtStart
-                = new IntegerState (name+"_trainAtStart");
+                = new IntegerState (this, name+"_trainAtStart");
         trainNumberAvailableAtStart.set(trainNumber);
 
         if (trainNumber == 6) {
@@ -34,7 +34,7 @@ public class PublicCompany_1856 extends PublicCompany {
         }
 
         moneyInEscrow
-                = new IntegerState (name+"_moneyInEscrow", 0);
+                = new IntegerState (this, name+"_moneyInEscrow", 0);
     }
 
     public int getTrainNumberAvailableAtStart () {

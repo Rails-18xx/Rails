@@ -212,7 +212,7 @@ public class RevenueTrainRun implements Comparable<RevenueTrainRun> {
         if (vertex.isVirtual()) {
             return vertex.getIdentifier();
         } else {
-            return vertex.getHex().getName();
+            return vertex.getHex().getId();
         }
     }
     

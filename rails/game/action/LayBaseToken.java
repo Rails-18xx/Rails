@@ -98,7 +98,7 @@ public class LayBaseToken extends LayToken {
             b.append("type=").append(type).append(" location=").append(
                     locationNames).append(" spec.prop=").append(specialProperty);
         } else {
-            b.append("hex=").append(chosenHex.getName()).append(" station=").append(
+            b.append("hex=").append(chosenHex.getId()).append(" station=").append(
                     chosenStation);
         }
         return b.toString();

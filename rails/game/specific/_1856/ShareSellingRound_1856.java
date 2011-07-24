@@ -14,8 +14,8 @@ public class ShareSellingRound_1856 extends ShareSellingRound {
             RoundI parentRound) {
         super (aGameManager, parentRound);
 
-        sharesSoldSoFar = new IntegerState("CGR_SharesSoldSoFar", 0);
-        squaresDownSoFar = new IntegerState("CGR_SquaresDownSoFar", 0);
+        sharesSoldSoFar = new IntegerState(this, "CGR_SharesSoldSoFar", 0);
+        squaresDownSoFar = new IntegerState(this, "CGR_SquaresDownSoFar", 0);
     }
 
     @Override

@@ -6,8 +6,8 @@ import java.util.List;
 
 import rails.common.LocalText;
 import rails.game.*;
-import rails.game.move.CashMove;
-import rails.game.state.State;
+import rails.game.state.GenericState;
+import rails.game.state.MoveUtils;
 import rails.util.Util;
 
 /**
@@ -16,8 +16,8 @@ import rails.util.Util;
  */
 public class GameManager_18EU extends GameManager {
 
-    protected State playerToStartFMERound =
-        new State("playerToStartFMERound", Player.class);
+    protected GenericState<Player> playerToStartFMERound =
+        new GenericState<Player>(this, "playerToStartFMERound");
 
     @Override
     public void nextRound(RoundI round) {
@@ -55,7 +55,7 @@ public class GameManager_18EU extends GameManager {
 
         // Assume default case as in 18EU: all assets to Bank/Pool
         Player bankrupter = getCurrentPlayer();
-        new CashMove (bankrupter, bank, bankrupter.getCash());
+        MoveUtils.cashMove (bankrupter, bank, bankrupter.getCash());
         Portfolio bpf = bankrupter.getPortfolio();
         List<PublicCompanyI> presidencies = new ArrayList<PublicCompanyI>();
         for (PublicCertificateI cert : bpf.getCertificates()) {
@@ -80,11 +80,12 @@ public class GameManager_18EU extends GameManager {
                         newPresident.getPortfolio());
             } else {
                 company.setClosed();  // This also makes majors restartable
-                ReportBuffer.add(LocalText.getText("CompanyCloses", company.getName()));
+                ReportBuffer.add(LocalText.getText("CompanyCloses", company.getId()));
             }
         }
+        
         // Dump all shares
-        Util.moveObjects(bankrupter.getPortfolio().getCertificates(), bank.getPool());
+        MoveUtils.objectMoveAll(bankrupter.getPortfolio().getCertificates(), bank.getPool().getCertificates());
 
         bankrupter.setBankrupt();
 

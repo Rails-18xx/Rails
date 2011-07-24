@@ -112,22 +112,22 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
                 NetworkVertex vertex = getVertex(hex, side);
                 MapHex neighborHex = hex.getNeighbor(side);
                 if (neighborHex == null) {
-                    log.info("No connection for Hex " + hex.getName() + " at "
+                    log.info("No connection for Hex " + hex.getId() + " at "
                             + hex.getOrientationName(side) + ", No Neighbor");
                     continue;
                 }
                 NetworkVertex otherVertex = getVertex(neighborHex, side + 3);
                 if (vertex == null && otherVertex == null){
-                    log.info("Hex " + hex.getName() + " has no track at "
+                    log.info("Hex " + hex.getId() + " has no track at "
                             + hex.getOrientationName(side));
-                    log.info("And Hex " + neighborHex.getName() + " has no track at "
+                    log.info("And Hex " + neighborHex.getId() + " has no track at "
                             + neighborHex.getOrientationName(side + 3));
                     continue;
                 }
                 else if (vertex == null && otherVertex != null) { 
-                    log.info("Deadend connection for Hex " + neighborHex.getName() + " at "
+                    log.info("Deadend connection for Hex " + neighborHex.getId() + " at "
                             + neighborHex.getOrientationName(side + 3) + ", NeighborHex "
-                            + hex.getName() + " has no track at side " +
+                            + hex.getId() + " has no track at side " +
                             hex.getOrientationName(side));
                     vertex = new NetworkVertex(hex, side);
                     mapGraph.addVertex(vertex);
@@ -135,9 +135,9 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
                     log.info("Added deadend vertex " + vertex);
                 }
                 else if (otherVertex == null)  {
-                    log.info("Deadend connection for Hex " + hex.getName() + " at "
+                    log.info("Deadend connection for Hex " + hex.getId() + " at "
                             + hex.getOrientationName(side) + ", NeighborHex "
-                            + neighborHex.getName() + " has no track at side " +
+                            + neighborHex.getId() + " has no track at side " +
                             neighborHex.getOrientationName(side+3));
                     otherVertex = new NetworkVertex(neighborHex, side + 3);
                     mapGraph.addVertex(otherVertex);
@@ -186,19 +186,19 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
     }
     
     private NetworkVertex getVertex(MapHex hex, Station station) {
-        return mapVertexes.get(hex.getName() + "." + -station.getNumber());
+        return mapVertexes.get(hex.getId() + "." + -station.getNumber());
     }
     
     public NetworkVertex getVertex(MapHex hex, int side) {
         if (side >= 0)
             side = side % 6;
-        return mapVertexes.get(hex.getName() + "." + side);
+        return mapVertexes.get(hex.getId() + "." + side);
     }
     
     private NetworkVertex getVertexRotated(MapHex hex, int side) {
         if (side >= 0)
             side = (side + hex.getCurrentTileRotation()) % 6;
-        return mapVertexes.get(hex.getName() + "." + side);
+        return mapVertexes.get(hex.getId() + "." + side);
     }
 
     public static List<MapHex> getMapHexes(Graph<NetworkVertex, NetworkEdge> graph){
@@ -322,6 +322,7 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
         layout.run(facade);
         
         facade.scale(new Rectangle(1600,1200));
+        @SuppressWarnings("rawtypes")
         Map nested = facade.createNestedMap(true,true);
         jgraph.getGraphLayoutCache().edit(nested);
 

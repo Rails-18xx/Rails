@@ -301,7 +301,7 @@ public final class ReportBuffer {
             if (text == null && comment == null) continue;
             // comments first
             if (comment != null) {
-                s.append(item.player.getName() + " says: ' ");
+                s.append(item.player.getId() + " says: ' ");
                 s.append(comment + "'"  + NEWLINE_STRING);
             }
             // text afterwards
@@ -312,7 +312,7 @@ public final class ReportBuffer {
     
     public static String getReportItems() {
         // activeIndex is the index one before the current index for the next action
-        int activeIndex = GameManager.getInstance().getMoveStack().getCurrentIndex();
+        int activeIndex = GameManager.getInstance().getChangeStack().getCurrentIndex();
         ReportBuffer instance = getInstance();
         
         StringBuffer s = new StringBuffer();
@@ -326,7 +326,7 @@ public final class ReportBuffer {
             // comments first
             if (comment != null) {
                 s.append("<span style='color:green;font-size:80%;font-style:italic;'>");
-                s.append(item.player.getName() + " says: ' ");
+                s.append(item.player.getId() + " says: ' ");
                 s.append(comment + "'"  + NEWLINE_STRING);
                 s.append("</span>");
             }
@@ -370,7 +370,7 @@ public final class ReportBuffer {
                 instance.reportQueue.add(message);
                 return;
             }
-            int moveStackIndex = gm.getMoveStack().getCurrentIndex();
+            int moveStackIndex = gm.getChangeStack().getCurrentIndex();
             instance.addMessage(message, moveStackIndex);
         }
     }
@@ -383,7 +383,7 @@ public final class ReportBuffer {
            instance = gm.getReportBuffer();
        }
        if (instance != null) {
-           int index = gm.getMoveStack().getCurrentIndex(); // add one index before (active)
+           int index = gm.getChangeStack().getCurrentIndex(); // add one index before (active)
            instance.commentItems.put(index, comment);
            log.debug("Added comment = " + comment + " at index = " + index);
        }
@@ -398,7 +398,7 @@ public final class ReportBuffer {
        }
        String comment = null;
        if (instance != null) {
-           int index = gm.getMoveStack().getCurrentIndex();
+           int index = gm.getChangeStack().getCurrentIndex();
            comment = instance.commentItems.get(index);
        }
        return comment;

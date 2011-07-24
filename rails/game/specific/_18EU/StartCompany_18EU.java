@@ -41,7 +41,7 @@ public class StartCompany_18EU extends StartCompany {
             StringBuffer b = new StringBuffer();
             for (PublicCompanyI minor : minorsToMerge) {
                 if (b.length() > 0) b.append(",");
-                b.append(minor.getName());
+                b.append(minor.getId());
             }
             minorsToMergeNames = b.toString();
         }
@@ -54,7 +54,7 @@ public class StartCompany_18EU extends StartCompany {
             StringBuffer b = new StringBuffer();
             for (Stop station : availableHomeStations) {
                 if (b.length() > 0) b.append(",");
-                b.append(station.getName());
+                b.append(station.getId());
             }
             availableHomeStationNames = b.toString();
         }
@@ -74,7 +74,7 @@ public class StartCompany_18EU extends StartCompany {
 
     public void setChosenMinor(PublicCompanyI chosenMinor) {
         this.chosenMinor = chosenMinor;
-        this.chosenMinorName = chosenMinor.getName();
+        this.chosenMinorName = chosenMinor.getId();
     }
 
     public Stop getSelectedHomeStation() {
@@ -92,7 +92,7 @@ public class StartCompany_18EU extends StartCompany {
 
     public void setHomeStation(Stop homeStation) {
         selectedHomeStation = homeStation;
-        selectedHomeStationName = homeStation.getName();
+        selectedHomeStationName = homeStation.getId();
     }
 
     @Override

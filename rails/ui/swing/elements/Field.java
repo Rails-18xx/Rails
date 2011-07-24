@@ -8,11 +8,12 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.border.Border;
 
-import rails.game.model.ModelObject;
+import rails.game.model.Model;
+import rails.game.model.View;
 import rails.game.model.ViewUpdate;
 import rails.util.Util;
 
-public class Field extends JLabel implements ViewObject {
+public class Field extends JLabel implements ViewObject, View<String> {
 
     private static final long serialVersionUID = 1L;
 
@@ -22,7 +23,7 @@ public class Field extends JLabel implements ViewObject {
 
     private static final Color HIGHLIGHT_BG_COLOUR = new Color(255, 255, 80);
 
-    private ModelObject modelObject;
+    private Model<String> modelObject;
     private Color normalBgColour = NORMAL_BG_COLOUR;
 
     private List<JComponent> dependents = null;
@@ -45,36 +46,31 @@ public class Field extends JLabel implements ViewObject {
         this.setOpaque(true);
     }
 
-    public Field(ModelObject modelObject) {
+    public Field(Model<String> modelObject) {
         this("");
-        //this(modelObject.getText());
         this.modelObject = modelObject;
-        //Object mu = modelObject.getUpdate();
-        //if (mu instanceof ViewUpdate) {
-        //	updateDetails ((ViewUpdate) mu);
-        //}
-        modelObject.addObserver(this);
+        modelObject.addView(this);
     }
 
-    public Field(ModelObject modelObject, boolean pull) {
+    public Field(Model<String> modelObject, boolean pull) {
         this(modelObject);
         this.pull = pull;
     }
 
-    public Field(ModelObject modelObject, ImageIcon icon, int position) {
+    public Field(Model<String> modelObject, ImageIcon icon, int position) {
         this(modelObject);
         setIcon(icon);
         setHorizontalAlignment(position);
     }
 
-    public ModelObject getModel() {
+    public Model<String> getModel() {
         return modelObject;
     }
 
-    public void setModel(ModelObject m) {
-        modelObject.deleteObserver(this);
+    public void setModel(Model<String> m) {
+        modelObject.removeView(this);
         modelObject = m;
-        modelObject.addObserver(this);
+        modelObject.addView(this);
         update(null, null);
     }
 
@@ -87,7 +83,7 @@ public class Field extends JLabel implements ViewObject {
     @Override
     public void paintComponent(Graphics g) {
         if (modelObject != null && pull) {
-            setText(modelObject.getText());
+            setText(modelObject.getData());
         }
         super.paintComponent(g);
     }
@@ -117,7 +113,7 @@ public class Field extends JLabel implements ViewObject {
 
     /** Needed to satisfy the ViewObject interface. Currently not used. */
     public void deRegister() {
-        if (modelObject != null) modelObject.deleteObserver(this);
+        if (modelObject != null) modelObject.removeView(this);
         dependents = null;
     }
 
@@ -128,6 +124,11 @@ public class Field extends JLabel implements ViewObject {
 
     public List<JComponent> getDependents () {
         return dependents;
+    }
+
+    public void update(String data) {
+        // TODO Auto-generated method stub
+        
     }
 
 

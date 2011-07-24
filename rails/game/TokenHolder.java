@@ -1,16 +1,16 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TokenHolder.java,v 1.1 2010/01/08 21:30:46 evos Exp $ */
 package rails.game;
 
-import java.util.List;
 
-import rails.game.move.MoveableHolder;
+import rails.game.state.ArrayListState;
+import rails.game.state.Holder;
 
 /**
  * Interface for implementing a TokenHolder
  *
  * A TokenHolder is any object that can have a token played upon it.
  */
-public interface TokenHolder extends MoveableHolder {
+public interface TokenHolder extends Holder {
 
     /**
      * Add a token. Subclasses may override this method to implement side
@@ -26,14 +26,13 @@ public interface TokenHolder extends MoveableHolder {
      * effects.
      *
      * @param token The token object to remove.
-     * @return True if successful.
      */
-    public boolean removeToken(TokenI token);
+    public void removeToken(TokenI token);
 
     /**
      * @return ArrayList of all tokens we have.
      */
-    public List<TokenI> getTokens();
+    public ArrayListState<TokenI> getTokens();
 
     /**
      * Do we have any tokens?
@@ -48,5 +47,5 @@ public interface TokenHolder extends MoveableHolder {
      *
      * @return
      */
-    public String getName();
+    public String getId();
 }

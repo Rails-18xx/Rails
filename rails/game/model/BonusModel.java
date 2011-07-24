@@ -1,34 +1,30 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/BonusModel.java,v 1.3 2010/01/31 22:22:29 macfreek Exp $*/
 package rails.game.model;
-
-import java.util.List;
 
 import rails.game.Bank;
 import rails.game.Bonus;
-import rails.game.state.StringState;
+import rails.game.state.ArrayListState;
+import rails.game.state.Item;
 
-public class BonusModel extends StringState {
-
-    private List<Bonus> bonuses;
-
-    public BonusModel(String name) {
-        super(name, "");
+public class BonusModel extends AbstractModel<String> {
+    
+    private ArrayListState<Bonus> bonuses;
+    
+    public BonusModel(Item owner) {
+        super(owner, "BonusModel");
     }
-
-    public void set(List<Bonus> bonuses) {
-
+    
+    public void setBonuses(ArrayListState<Bonus> bonuses) {
         this.bonuses = bonuses;
-
+        bonuses.addModel(this);
     }
 
-    @Override
-    public String getText() {
+    public String getData() {
 
         if (bonuses == null || bonuses.isEmpty()) return "";
 
         StringBuffer b = new StringBuffer("<html><center>");
 
-        for (Bonus bonus : bonuses) {
+        for (Bonus bonus : bonuses.view()) {
             if (b.length() > 14) {
                 b.append("<br>");
             }

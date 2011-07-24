@@ -11,14 +11,18 @@ import org.apache.log4j.Logger;
 
 import rails.common.*;
 import rails.game.action.*;
-import rails.game.move.*;
 import rails.game.special.SpecialPropertyI;
+import rails.game.state.AbstractItem;
+import rails.game.state.ArrayListState;
 import rails.game.state.BooleanState;
+import rails.game.state.ChangeStack;
+import rails.game.state.Item;
+import rails.game.state.MoveUtils;
 
 /**
  * @author Erik Vos
  */
-public abstract class Round implements RoundI {
+public abstract class Round extends AbstractItem implements RoundI {
 
     protected PossibleActions possibleActions = PossibleActions.getInstance();
     protected GuiHints guiHints = null;
@@ -38,15 +42,15 @@ public abstract class Round implements RoundI {
     protected MapManager mapManager = null;
 
     //protected Class<? extends RoundI> roundTypeForUI = null;
-    protected BooleanState wasInterrupted = new BooleanState  ("RoundInterrupted", false);
+    protected BooleanState wasInterrupted = new BooleanState  (this, "RoundInterrupted", false);
 
-    protected MoveStack moveStack = null;
+    protected ChangeStack changeStack = null;
 
 
     /** Autopasses */
-    protected List<Player> autopasses = null;
-    protected List<Player> canRequestTurn = null;
-    protected List<Player> hasRequestedTurn = null;
+    protected ArrayListState<Player> autopasses = null;
+    protected ArrayListState<Player> canRequestTurn = null;
+    protected ArrayListState<Player> hasRequestedTurn = null;
 
     /**
      * Constructor with the GameManager, will call setGameManager with the parameter to initialize
@@ -71,7 +75,7 @@ public abstract class Round implements RoundI {
             stockMarket = gameManager.getStockMarket();
             mapManager = gameManager.getMapManager();
 
-            moveStack = gameManager.getMoveStack();
+            changeStack = gameManager.getChangeStack();
         }
 
         //roundTypeForUI = getClass();
@@ -197,8 +201,8 @@ public abstract class Round implements RoundI {
             return false;
         }
 
-        moveStack.start(true);
-        if (linkedMoveSet) moveStack.linkToPreviousMoveSet();
+        changeStack.start(getCurrentPlayer());
+        if (linkedMoveSet) changeStack.linkToPreviousMoveSet();
 
         if (exchanged > 0) {
             MapHex hex;
@@ -229,16 +233,16 @@ public abstract class Round implements RoundI {
                     if (hex.layBaseToken(comp, city.getNumber())) {
                         /* TODO: the false return value must be impossible. */
                         ReportBuffer.add(LocalText.getText("ExchangesBaseToken",
-                                comp.getName(),
+                                comp.getId(),
                                 token.getOldCompanyName(),
-                                city.getName()));
+                                city.getId()));
                         comp.layBaseToken(hex, 0);
                     }
                 } else {
                     ReportBuffer.add(LocalText.getText("NoBaseTokenExchange",
-                            comp.getName(),
+                            comp.getId(),
                             token.getOldCompanyName(),
-                            city.getName()));
+                            city.getId()));
                 }
             }
         }
@@ -387,20 +391,20 @@ public abstract class Round implements RoundI {
         // up)
 
         if (cash > 0) {
-            new CashMove(bank, company, cash);
+            MoveUtils.cashMove(bank, company, cash);
             ReportBuffer.add(LocalText.getText("FloatsWithCash",
-                    company.getName(),
+                    company.getId(),
                     Bank.format(cash) ));
         } else {
             ReportBuffer.add(LocalText.getText("Floats",
-                    company.getName()));
+                    company.getId()));
         }
 
         if (capitalisationMode == PublicCompanyI.CAPITALISE_INCREMENTAL
                 && company.canHoldOwnShares()) {
             List<Certificate> moving = new ArrayList<Certificate>();
             for (Certificate ipoCert : ipo.getCertificatesPerCompany(
-                    company.getName())) {
+                    company.getId())) {
                 moving.add(ipoCert);
             }
             for (Certificate ipoCert : moving) {
@@ -414,12 +418,12 @@ public abstract class Round implements RoundI {
         ReportBuffer.add("");
         for (PublicCompanyI c : companyManager.getAllPublicCompanies()) {
             if (c.hasFloated() && !c.isClosed()) {
-                ReportBuffer.add(LocalText.getText("Has", c.getName(),
+                ReportBuffer.add(LocalText.getText("Has", c.getId(),
                         Bank.format(c.getCash())));
             }
         }
         for (Player p : playerManager.getPlayers()) {
-            ReportBuffer.add(LocalText.getText("Has", p.getName(),
+            ReportBuffer.add(LocalText.getText("Has", p.getId(),
                     Bank.format(p.getCash())));
         }
         // Inform GameManager
@@ -461,13 +465,13 @@ public abstract class Round implements RoundI {
 
     protected void pay (CashHolder from, CashHolder to, int amount) {
         if (to != null && amount != 0) {
-            new CashMove (from, to, amount);
+            MoveUtils.cashMove (from, to, amount);
         }
     }
 
     protected void pay (Portfolio from, Portfolio to, int amount) {
         if (to != null && amount != 0) {
-            new CashMove (from.getOwner(), to.getOwner(), amount);
+            MoveUtils.cashMove (from.getOwner(), to.getOwner(), amount);
         }
     }
 
@@ -501,7 +505,7 @@ public abstract class Round implements RoundI {
 
     public boolean requestTurn (Player player) {
         if (canRequestTurn (player)) {
-            if (hasRequestedTurn == null) hasRequestedTurn = new ArrayList<Player>(2);
+            if (hasRequestedTurn == null) hasRequestedTurn = new ArrayListState<Player>(this, "hasRequestedTurn");
             if (!hasRequestedTurn.contains(player)) hasRequestedTurn.add(player);
             return true;
         }
@@ -513,20 +517,20 @@ public abstract class Round implements RoundI {
     }
 
     public void setCanRequestTurn (Player player, boolean value) {
-        if (canRequestTurn == null) canRequestTurn = new ArrayList<Player>(4);
+        if (canRequestTurn == null) canRequestTurn = new ArrayListState<Player>(this, "canRequestTurn");
         if (value && !canRequestTurn.contains(player)) {
-            new AddToList<Player>(canRequestTurn, player, "CanRequestTurn");
+            canRequestTurn.add(player);
         } else if (!value && canRequestTurn.contains(player)) {
-            new RemoveFromList<Player>(canRequestTurn, player, "CanRequestTurn");
+            canRequestTurn.remove(player);
         }
     }
 
     public void setAutopass (Player player, boolean value) {
-        if (autopasses == null) autopasses = new ArrayList<Player>(4);
+        if (autopasses == null) autopasses = new ArrayListState<Player>(this, "autopasses");
         if (value && !autopasses.contains(player)) {
-            new AddToList<Player>(autopasses, player, "Autopasses");
+            autopasses.add(player);
         } else if (!value && autopasses.contains(player)) {
-            new RemoveFromList<Player>(autopasses, player, "Autopasses");
+            autopasses.remove(player);
         }
     }
 
@@ -535,7 +539,7 @@ public abstract class Round implements RoundI {
     }
 
     public List<Player> getAutopasses() {
-        return autopasses;
+        return autopasses.view();
     }
 
     /** A stub for processing actions triggered by a phase change.

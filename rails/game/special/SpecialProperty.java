@@ -1,23 +1,22 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.27 2010/03/23 18:45:23 stefanfrey Exp $ */
 package rails.game.special;
 
-import java.util.*;
-
 import org.apache.log4j.Logger;
 
 import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.*;
-import rails.game.move.MoveableHolder;
-import rails.game.move.ObjectMove;
+import rails.game.state.AbstractItem;
 import rails.game.state.BooleanState;
+import rails.game.state.Holder;
+import rails.game.state.ObjectMove;
 import rails.util.*;
 
-public abstract class SpecialProperty implements SpecialPropertyI {
+public abstract class SpecialProperty extends AbstractItem implements SpecialPropertyI {
 
     protected CompanyI originalCompany;
-    protected MoveableHolder holder = null;
+    protected Holder holder = null;
     protected int closingValue = 0;
     protected BooleanState exercised;
     
@@ -122,7 +121,7 @@ public abstract class SpecialProperty implements SpecialPropertyI {
         originalCompany = company;
         holder = company;
         exercised =
-                new BooleanState(company.getName() + "_SP_" + uniqueId
+                new BooleanState(this, company.getId() + "_SP_" + uniqueId
                                  + "_Exercised", false);
     }
 
@@ -130,11 +129,11 @@ public abstract class SpecialProperty implements SpecialPropertyI {
         return originalCompany;
     }
 
-    public void setHolder(MoveableHolder holder) {
+    public void setHolder(Holder holder) {
         this.holder = holder;
     }
 
-    public MoveableHolder getHolder() {
+    public Holder getHolder() {
         return holder;
     }
 
@@ -253,7 +252,7 @@ public abstract class SpecialProperty implements SpecialPropertyI {
      * Move the special property to another holder.
      * Only to be used for special properties that have the "transfer" attribute.
      */
-    public void moveTo(MoveableHolder newHolder) {
+    public void moveTo(Holder newHolder) {
         if (transferText.equals("")) return;
         //if (newHolder instanceof Portfolio) {
             new ObjectMove(this, holder, newHolder);
@@ -263,7 +262,7 @@ public abstract class SpecialProperty implements SpecialPropertyI {
     @Override
     public String toString() {
         return getClass().getSimpleName() + " of private "
-               + originalCompany.getName();
+               + originalCompany.getId();
     }
 
     /**

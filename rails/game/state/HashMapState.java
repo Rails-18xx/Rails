@@ -2,47 +2,48 @@ package rails.game.state;
 
 import java.util.*;
 
-import rails.game.model.ModelObject;
-import rails.game.move.MapChange;
-import rails.game.move.RemoveFromMap;
+import com.google.common.collect.Sets;
+
+import rails.game.model.AbstractModel;
 
 /**
- * State class that wraps a HashMap
- * Generates according map moves
- *
- * Remark: Does not extend State or implements StateI do avoid additional overhead
- * All state/move mechanisms already contained in Move objects
- * For the future a simpler unified StateI would make things clearer
+ * A stateful version of a HashMap
  * 
- * TODO: Replace all stateful HashMaps by this class and simplify according move objects
- * 
+ * @author Erik Vos, Stefan Frey (V2.0)
  */
+public final class HashMapState<K,V> extends AbstractState {
 
-public class HashMapState<K,V> extends ModelObject {
-
-    private final HashMap<K,V> map = new HashMap<K,V>();
-    private String mapName;
+    private final HashMap<K,V> map;
 
     /**
-     * constructor for an empty map
+     * Creates an empty HashMap state variable
+     * @param owner object containing state (usually this)
+     * @param id id state variable
      */
-    public HashMapState(String listName) {
-        this.mapName = listName;
+    public HashMapState(Item owner, String id) {
+        super(owner, id);
+        map = new HashMap<K,V>();
     }
+
     /**
-     * constructor for a prefilled map
+     * @param owner object containing state (usually this)
+     * @param id id state variable
+     * @param map initial map 
      */
-    public HashMapState(String listName, Map<K,V> map) {
-        this(listName);
+    public HashMapState(Item owner, String id, Map<K,V> map) {
+        super(owner, id);
+        this.map = new HashMap<K,V>(map);
     }
 
     public void put(K key, V value) {
-        new MapChange<K,V>(map, key, value, this);
+        // check if element already has the specified value
+        if (map.containsKey(key) && map.get(key).equals(value)) return;
+        new HashMapChange<K,V>(this, key, value);
     }
 
     public void putAll(Map<K,V> map) {
         for (K key:map.keySet()) {
-            new MapChange<K,V>(map, key, map.get(key), this);
+            put(key, map.get(key));
         }
     }
 
@@ -51,45 +52,33 @@ public class HashMapState<K,V> extends ModelObject {
     }
 
     public void remove(K key) {
-        new RemoveFromMap<K,V>(map, key, this);
+        // check if map contains key
+        if (!map.containsKey(key)) return;
+        new HashMapChange<K,V>(this, key);
     }
 
-    public boolean hasKey(K key) {
+    public boolean containsKey(K key) {
         return map.containsKey(key);
     }
 
     public void clear() {
         // Two-step process to avoid concurrent modification exception
-        List<K> keys = new ArrayList<K>();
-        for (K key : map.keySet()) {
-            keys.add(key);
-        }
+        List<K> keys = new ArrayList<K>(map.keySet());
         for (K key : keys) {
             remove (key);
         }
-        update();
     }
 
     /**
      * (re)intializes the state map from another map
-     * efficiently generates the required moves
      */
     public void initFromMap(Map<K,V> initMap) {
-        for (K key:map.keySet()) {
-            // union elements
-            if (initMap.containsKey(key)) {
-                new MapChange<K,V>(map, key, initMap.get(key));
-            } else { // only in the old map
-                new RemoveFromMap<K,V>(map, key);
-            }
+        // all from initMap get added
+        putAll(initMap);
+        // remove those only in current map
+        for (K key:Sets.difference(map.keySet(), initMap.keySet())) {
+            remove(key);
         }
-        for (K key:initMap.keySet()) {
-            // new elements
-            if (!map.containsKey(key)) {
-                new MapChange<K,V>(map, key, initMap.get(key));
-            }
-        }
-        update();
     }
 
     /**
@@ -98,6 +87,7 @@ public class HashMapState<K,V> extends ModelObject {
     public Map<K,V> viewMap() {
         return Collections.unmodifiableMap(map);
     }
+
     /**
      * @return unmodifiable view of keyset
      */
@@ -113,8 +103,7 @@ public class HashMapState<K,V> extends ModelObject {
         return map.isEmpty();
     }
 
-    @Override
-    public String getText() {
+    public String getData() {
 
         if (map == null) return "";
 
@@ -130,6 +119,19 @@ public class HashMapState<K,V> extends ModelObject {
         }
         return buf.toString();
 
+    }
+    
+    @Override
+    public String toString() {
+        return map.toString();
+    }
+    
+    void change(K key, V value, boolean remove) {
+        if (remove) {
+            map.remove(key);
+        } else {
+            map.put(key, value);
+        }
     }
 
 }

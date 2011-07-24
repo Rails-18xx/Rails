@@ -10,7 +10,8 @@ import org.apache.log4j.Logger;
 
 import rails.algorithms.RevenueBonusTemplate;
 import rails.game.*;
-import rails.game.model.ModelObject;
+import rails.game.model.AbstractModel;
+import rails.game.model.Model;
 import rails.ui.swing.GUIToken;
 import rails.ui.swing.elements.ViewObject;
 import rails.util.Util;
@@ -227,15 +228,14 @@ public class GUIHex implements ViewObject {
     public void setHexModel(MapHex model) {
         this.model = model;
         currentTile = model.getCurrentTile();
-        hexName = model.getName();
-        currentTileId = model.getCurrentTile().getId();
+        hexName = model.getId();
+        currentTileId = model.getCurrentTile().getNb();
         currentTileOrientation = model.getCurrentTileRotation();
         currentGUITile = new GUITile(currentTileId, this);
         currentGUITile.setRotation(currentTileOrientation);
         toolTip = null;
 
-        model.addObserver(this);
-
+        model.addView(this);
     }
 
     public void addBar (int orientation) {
@@ -443,7 +443,7 @@ public class GUIHex implements ViewObject {
                 if (blocked != null) {
                     for (MapHex hex : blocked) {
                         if (getHexModel().equals(hex)) {
-                        	String text = "(" + p.getName() + ")";
+                        	String text = "(" + p.getId() + ")";
                             g2.drawString(
                                   text,
                                   rectBound.x
@@ -547,7 +547,7 @@ public class GUIHex implements ViewObject {
     private static int[] offStationTokenY = new int[] { -19, 0 };
 
     private void paintOffStationTokens(Graphics2D g2) {
-        List<TokenI> tokens = getHexModel().getTokens();
+        List<TokenI> tokens = getHexModel().getTokens().view();
         if (tokens == null) return;
 
         int i = 0;
@@ -572,7 +572,7 @@ public class GUIHex implements ViewObject {
     private void drawBaseToken(Graphics2D g2, PublicCompanyI co, Point center, int diameter) {
 
         GUIToken token =
-                new GUIToken(co.getFgColour(), co.getBgColour(), co.getName(),
+                new GUIToken(co.getFgColour(), co.getBgColour(), co.getId(),
                         center.x, center.y, diameter);
         token.setBounds(center.x-(int)(0.5*diameter), center.y-(int)(0.5*diameter),
                 diameter, diameter);
@@ -586,7 +586,7 @@ public class GUIHex implements ViewObject {
         Color oldColor = g2.getColor();
 
         double scale = 0.5 * zoomFactor;
-        String name = co.getName();
+        String name = co.getId();
 
         Font font = GUIToken.getTokenFont(name.length());
         g2.setFont(new Font("Helvetica", Font.BOLD,
@@ -735,7 +735,7 @@ public class GUIHex implements ViewObject {
         // For debugging: display x,y-coordinates
         //tt.append("<small> x=" + x + " y="+y+"</small>");
         
-        tt.append("<br><b>Tile</b>: ").append(currentTile.getId());
+        tt.append("<br><b>Tile</b>: ").append(currentTile.getNb());
         
         // For debugging: display rotation
         //tt.append("<small> rot=" + currentTileOrientation + "</small>");
@@ -767,7 +767,7 @@ public class GUIHex implements ViewObject {
                         int oldsize = tt.length();
                         for (TokenI token : tokens) {
                             if (tt.length() > oldsize) tt.append(",");
-                            tt.append(token.getName());
+                            tt.append(token.getId());
                         }
                         tt.append(")");
                     }
@@ -795,7 +795,7 @@ public class GUIHex implements ViewObject {
             tt.append("<br><b>Destination</b>:");
             for (PublicCompanyI dest : getHexModel().getDestinations()) {
                 tt.append(" ");
-                tt.append(dest.getName());
+                tt.append(dest.getId());
             }
         }
 
@@ -868,21 +868,18 @@ public class GUIHex implements ViewObject {
     /** Needed to satisfy the ViewObject interface. Currently not used. */
     public void deRegister() {
         if (model != null)
-            model.deleteObserver(this);
+            model.removeView(this);
     }
 
-    public ModelObject getModel() {
+    public Model<String> getModel() {
         return model;
     }
 
-    // Required to implement Observer pattern.
     // Used by Undo/Redo
-    public void update(Observable observable, Object notificationObject) {
-
-        if (notificationObject instanceof String) {
+    public void update(String notification) {
             // The below code so far only deals with tile lay undo/redo.
             // Tokens still to do
-            String[] elements = ((String) notificationObject).split("/");
+            String[] elements = notification.split("/");
             currentTileId = Integer.parseInt(elements[0]);
             currentTileOrientation = Integer.parseInt(elements[1]);
             currentGUITile = new GUITile(currentTileId, this);
@@ -899,13 +896,11 @@ public class GUIHex implements ViewObject {
             //if (GameUIManager.instance != null && GameUIManager.instance.orWindow != null) {
             //	GameUIManager.instance.orWindow.updateStatus();
             //}
-        } else {
-            hexMap.repaint(getBounds());
-        }
     }
     
     public String toString () {
-        return getName() + " (" + currentTile.getName() + ")";
+        return getName() + " (" + currentTile.getId() + ")";
     }
+
 
 }

@@ -93,7 +93,7 @@ public class NameTrainsDialog extends JDialog implements ActionListener {
         int x = 2;
         int y = 0;
         for (TrainI train : trains) {
-            addItem(new JLabel(train.getName(), SwingConstants.CENTER), x++, y);
+            addItem(new JLabel(train.getId(), SwingConstants.CENTER), x++, y);
         }
         addItem(new JLabel("None", SwingConstants.CENTER), x, y);
 
@@ -103,7 +103,7 @@ public class NameTrainsDialog extends JDialog implements ActionListener {
                     action.getPreTrainPerToken().get(tokens.indexOf(token));
             trainPerToken.set(tokens.indexOf(token), preAssignedTrain);
 
-            addItem(new JLabel(token.getName()), x, ++y);
+            addItem(new JLabel(token.getId()), x, ++y);
             addItem(new JLabel("+" + Bank.format(token.getValue())), ++x, y);
             group = new ButtonGroup();
             List<JRadioButton> buttons = new ArrayList<JRadioButton>();

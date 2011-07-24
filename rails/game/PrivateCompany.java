@@ -7,9 +7,12 @@ import java.util.List;
 import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
-import rails.game.move.*;
 import rails.game.special.SellBonusToken;
 import rails.game.special.SpecialPropertyI;
+import rails.game.state.MoveUtils;
+import rails.game.state.Moveable;
+import rails.game.state.MoveableHolder;
+import rails.game.state.ObjectMove;
 import rails.util.*;
 
 public class PrivateCompany extends Company implements PrivateCompanyI {
@@ -261,7 +264,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
     }
 
     public void moveTo(MoveableHolder newHolder) {
-        new ObjectMove(this, portfolio, newHolder);
+        MoveUtils.objectMove(this, portfolio.getPrivateCompanies(), newHolder.getPrivateCompanies());
     }
 
     /**
@@ -372,6 +375,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
     }
 
     /**
+     * FIXME: setHolder changes a non-state variable, has to be a state variable
      * @param portfolio
      */
     public void setHolder(Portfolio portfolio) {
@@ -530,4 +534,5 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
     public boolean tradeableToPlayer() {
         return tradeableToPlayer;
     }
+
 }

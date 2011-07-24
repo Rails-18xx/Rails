@@ -9,8 +9,8 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import rails.common.parser.ConfigurationException;
-import rails.game.move.Moveable;
-import rails.game.move.MoveableHolder;
+import rails.game.state.Moveable;
+import rails.game.state.Holder;
 
 public final class Util {
 
@@ -100,8 +100,9 @@ public final class Util {
      * @param to
      * @param objects
      */
+    @Deprecated
     public static <T extends Moveable> void moveObjects(List<T> objects,
-            MoveableHolder to) {
+            Holder to) {
 
         if (objects == null || objects.isEmpty()) return;
 
@@ -124,6 +125,8 @@ public final class Util {
      * <br>If any other value, nothing is done.
      * @return True if the insertion was successful.
      * */
+    
+    @Deprecated
     public static <T extends Moveable, U extends T> boolean addToList (List<T> objects,
             U object, int position) {
         if (objects == null || object == null) {

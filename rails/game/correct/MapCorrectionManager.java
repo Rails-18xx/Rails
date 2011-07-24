@@ -106,7 +106,7 @@ public class MapCorrectionManager extends CorrectionManager {
         if (errMsg != null) {
             DisplayBuffer.add(LocalText.getText("CorrectMapCannotLayTile",
                     chosenTile.getExternalId(),
-                    hex.getName(),
+                    hex.getId(),
                     errMsg ));
             ;
         }
@@ -166,14 +166,14 @@ public class MapCorrectionManager extends CorrectionManager {
                 return execute(action);
             }
         case FINISHED:
-            gameManager.getMoveStack().start(false);
+            gameManager.getChangeStack().start(false);
 
             // lays tile
             int orientation = action.getOrientation();
             hex.upgrade(chosenTile, orientation, new HashMap<String,Integer>());
 
             String msg = LocalText.getText("CorrectMapLaysTileAt",
-                    chosenTile.getExternalId(), hex.getName(), hex.getOrientationName(orientation));
+                    chosenTile.getExternalId(), hex.getId(), hex.getOrientationName(orientation));
             ReportBuffer.add(msg);
             gameManager.addToNextPlayerMessages(msg, true);
 

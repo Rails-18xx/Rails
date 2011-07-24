@@ -8,15 +8,15 @@ import rails.common.GuiDef;
 import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;
-import rails.game.move.CashMove;
 import rails.game.special.SellBonusToken;
 import rails.game.special.SpecialPropertyI;
 import rails.game.state.BooleanState;
+import rails.game.state.MoveUtils;
 
 public class OperatingRound_1856 extends OperatingRound {
 
     private BooleanState finalLoanRepaymentPending
-        = new BooleanState ("LoanRepaymentPending", false);
+        = new BooleanState (this, "LoanRepaymentPending", false);
 
     private Player playerToStartLoanRepayment = null;
 
@@ -72,7 +72,7 @@ public class OperatingRound_1856 extends OperatingRound {
                 TrainI nextAvailableTrain = gameManager.getTrainManager().getAvailableNewTrains().get(0);
                 int trainNumber;
                 try {
-                    trainNumber = Integer.parseInt(nextAvailableTrain.getName());
+                    trainNumber = Integer.parseInt(nextAvailableTrain.getId());
                 } catch (NumberFormatException e) {
                     trainNumber = 6; // Diesel!
                 }
@@ -84,7 +84,7 @@ public class OperatingRound_1856 extends OperatingRound {
 
                 if (soldPercentage < floatPercentage) {
                     DisplayBuffer.add(LocalText.getText("MayNotYetOperate",
-                            operatingCompany.get().getName(),
+                            operatingCompany.get().getId(),
                             String.valueOf(soldPercentage),
                             String.valueOf(floatPercentage)
                     ));
@@ -159,7 +159,7 @@ public class OperatingRound_1856 extends OperatingRound {
         int remainder = due;
 
         ReportBuffer.add((LocalText.getText("CompanyMustPayLoanInterest",
-                operatingCompany.get().getName(),
+                operatingCompany.get().getId(),
                 Bank.format(due))));
 
         // Can it be paid from company treasury?
@@ -213,14 +213,14 @@ public class OperatingRound_1856 extends OperatingRound {
         // Pay from company treasury
         int payment = Math.min(due, (operatingCompany.get().getCash() / 10) * 10);
         if (payment > 0) {
-            new CashMove (operatingCompany.get(), bank, payment);
+            MoveUtils.cashMove (operatingCompany.get(), bank, payment);
             if (payment == due) {
                 ReportBuffer.add (LocalText.getText("InterestPaidFromTreasury",
-                        operatingCompany.get().getName(),
+                        operatingCompany.get().getId(),
                         Bank.format(payment)));
             } else {
                 ReportBuffer.add (LocalText.getText("InterestPartlyPaidFromTreasury",
-                        operatingCompany.get().getName(),
+                        operatingCompany.get().getId(),
                         Bank.format(payment),
                         Bank.format(due)));
             }
@@ -234,7 +234,7 @@ public class OperatingRound_1856 extends OperatingRound {
             // Payment money remains in the bank
             remainder -= payment;
             ReportBuffer.add (LocalText.getText("InterestPaidFromRevenue",
-                    operatingCompany.get().getName(),
+                    operatingCompany.get().getId(),
                     Bank.format(payment),
                     Bank.format(due)));
             // This reduces train income
@@ -255,12 +255,12 @@ public class OperatingRound_1856 extends OperatingRound {
         } else {
 
             payment = remainder;
-            new CashMove (president, bank, payment);
+            MoveUtils.cashMove (president, bank, payment);
             ReportBuffer.add (LocalText.getText("InterestPaidFromPresidentCash",
-                    operatingCompany.get().getName(),
+                    operatingCompany.get().getId(),
                     Bank.format(payment),
                     Bank.format(due),
-                    president.getName()));
+                    president.getId()));
         }
 
         return amount;
@@ -270,7 +270,7 @@ public class OperatingRound_1856 extends OperatingRound {
     protected void setDestinationActions() {
 
         List<PublicCompanyI> possibleDestinations = new ArrayList<PublicCompanyI>();
-        for (PublicCompanyI comp : operatingCompanies.viewList()) {
+        for (PublicCompanyI comp : operatingCompanies.view()) {
             if (comp.hasDestination()
                     && ((PublicCompany_1856)comp).getTrainNumberAvailableAtStart() < 5
                     && !comp.hasReachedDestination()) {
@@ -288,9 +288,9 @@ public class OperatingRound_1856 extends OperatingRound {
         PublicCompany_1856 comp = (PublicCompany_1856) company;
         int cashInEscrow = comp.getMoneyInEscrow();
         if (cashInEscrow > 0) {
-            new CashMove (bank, company, cashInEscrow);
+            MoveUtils.cashMove (bank, company, cashInEscrow);
             ReportBuffer.add(LocalText.getText("ReleasedFromEscrow",
-                    company.getName(),
+                    company.getId(),
                     Bank.format(cashInEscrow)
             ));
         }
@@ -333,7 +333,7 @@ public class OperatingRound_1856 extends OperatingRound {
                 if (minNumber > 0) {
                     // Mandatory repayment
                     DisplayBuffer.add(LocalText.getText("MustRepayLoans",
-                            operatingCompany.get().getName(),
+                            operatingCompany.get().getId(),
                             minNumber,
                             Bank.format(operatingCompany.get().getValuePerLoan()),
                             Bank.format(minNumber * operatingCompany.get().getValuePerLoan())));
@@ -371,7 +371,7 @@ public class OperatingRound_1856 extends OperatingRound {
                     if (sp instanceof SellBonusToken) {
                         SellBonusToken sbt = (SellBonusToken)sp;
                         sbt.setSeller(bank);
-                        log.debug("SP "+sp.getName()+" is now buyable from the Bank");
+                        log.debug("SP "+sp.getId()+" is now buyable from the Bank");
                     }
                 }
             }
@@ -501,11 +501,11 @@ public class OperatingRound_1856 extends OperatingRound {
         //    operatingCompanyIndex = companies.indexOf(operatingCompany.getObject());
         //}
 
-        for (PublicCompanyI c : operatingCompanies.viewList()) {
+        for (PublicCompanyI c : operatingCompanies.view()) {
             if (c.isClosed()) {
-                log.info(c.getName()+" is closed");
+                log.info(c.getId()+" is closed");
             } else {
-                log.debug(c.getName()+" is operating");
+                log.debug(c.getId()+" is operating");
             }
         }
 
@@ -516,17 +516,17 @@ public class OperatingRound_1856 extends OperatingRound {
                 operatingCompanyIndex = Math.max (0, operatingCompanyIndex);
                 operatingCompanies.add(operatingCompanyIndex+1, cgr);
                 setOperatingCompany(cgr);
-                message = LocalText.getText("CanOperate", cgr.getName());
+                message = LocalText.getText("CanOperate", cgr.getId());
             } else {
-                message = LocalText.getText("CannotOperate", cgr.getName());
+                message = LocalText.getText("CannotOperate", cgr.getId());
                 roundFinished = !setNextOperatingCompany(false);
            }
         } else {
-            message = LocalText.getText("DoesNotForm", cgr.getName());
+            message = LocalText.getText("DoesNotForm", cgr.getId());
             roundFinished = !setNextOperatingCompany(false);
         }
         ReportBuffer.add(LocalText.getText("EndOfFormationRound",
-                cgr.getName(),
+                cgr.getId(),
                 getRoundName()));
         ReportBuffer.add (message);
         DisplayBuffer.add(message);
@@ -534,7 +534,7 @@ public class OperatingRound_1856 extends OperatingRound {
         // Find the first company that has not yet operated
         // and is not closed.
         if (!roundFinished) {
-            log.debug ("Next operating company: "+operatingCompany.get().getName());
+            log.debug ("Next operating company: "+operatingCompany.get().getId());
         } else {
             finishOR();
             return false;

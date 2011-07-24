@@ -8,8 +8,8 @@ import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.Bank;
 import rails.game.GameManagerI;
-import rails.game.move.Moveable;
 import rails.game.special.SpecialProperty;
+import rails.game.state.Moveable;
 
 public class NameTrains extends SpecialProperty implements Moveable {
 
@@ -90,7 +90,7 @@ public class NameTrains extends SpecialProperty implements Moveable {
     @Override
     public void setExercised() {}
 
-    public String getName() {
+    public String getId() {
         return name;
     }
 

@@ -8,27 +8,27 @@ import rails.common.parser.GameOption;
 import rails.game.*;
 import rails.game.action.DiscardTrain;
 import rails.game.action.LayTile;
-import rails.game.move.CashMove;
-import rails.game.move.MapChange;
 import rails.game.special.*;
 import rails.game.state.BooleanState;
+import rails.game.state.HashMapState;
+import rails.game.state.MoveUtils;
 
 public class OperatingRound_1835 extends OperatingRound {
 
     private BooleanState needPrussianFormationCall
-            = new BooleanState ("NeedPrussianFormationCall", false);
+            = new BooleanState (this, "NeedPrussianFormationCall", false);
     private BooleanState hasLaidExtraOBBTile
-            = new BooleanState ("HasLaidExtraOBBTile", false);
+            = new BooleanState (this, "HasLaidExtraOBBTile", false);
 
     /**
      * Registry of percentage of PR revenue to be denied per player
      * because of having produced revenue in the same OR.
      */
-    private Map<Player, Integer> deniedIncomeShare;
+    private HashMapState<Player, Integer> deniedIncomeShare;
 
     public OperatingRound_1835 (GameManagerI gameManager) {
         super (gameManager);
-        deniedIncomeShare = new HashMap<Player, Integer> ();
+        deniedIncomeShare = new HashMapState<Player, Integer> (this, "deniedIncomeShare");
     }
 
     /** Can a public company operate? (1835 special version) */
@@ -58,10 +58,10 @@ public class OperatingRound_1835 extends OperatingRound {
                     int revenue = priv.getRevenueByPhase(getCurrentPhase()); // sfy 1889: revenue by phase
                     if (count++ == 0) ReportBuffer.add("");
                     ReportBuffer.add(LocalText.getText("ReceivesFor",
-                            recipient.getName(),
+                            recipient.getId(),
                             Bank.format(revenue),
-                            priv.getName()));
-                    new CashMove(bank, recipient, revenue);
+                            priv.getId()));
+                    MoveUtils.cashMove(bank, recipient, revenue);
 
                     /* Register black private equivalent PR share value
                      * so it can be subtracted if PR operates */
@@ -88,10 +88,9 @@ public class OperatingRound_1835 extends OperatingRound {
     private void addIncomeDenialShare (Player player, int share) {
 
         if (!deniedIncomeShare.containsKey(player)) {
-            new MapChange<Player, Integer> (deniedIncomeShare, player, share);
+            deniedIncomeShare.put(player, share);
         } else {
-            new MapChange<Player, Integer> (deniedIncomeShare, player,
-                    share + deniedIncomeShare.get(player));
+            deniedIncomeShare.put(player, share + deniedIncomeShare.get(player));
         }
         //log.debug("+++ Denied "+share+"% share of PR income to "+player.getName());
     }
@@ -105,14 +104,14 @@ public class OperatingRound_1835 extends OperatingRound {
 
         Map<CashHolder, Integer> sharesPerRecipient = super.countSharesPerRecipient();
 
-        if (operatingCompany.get().getName().equalsIgnoreCase(GameManager_1835.PR_ID)) {
-            for (Player player : deniedIncomeShare.keySet()) {
+        if (operatingCompany.get().getId().equalsIgnoreCase(GameManager_1835.PR_ID)) {
+            for (Player player : deniedIncomeShare.viewKeySet()) {
                 if (!sharesPerRecipient.containsKey(player)) continue;
                 int share = deniedIncomeShare.get(player);
                 int shares = share / operatingCompany.get().getShareUnit();
                 sharesPerRecipient.put (player, sharesPerRecipient.get(player) - shares);
                 ReportBuffer.add(LocalText.getText("NoIncomeForPreviousOperation",
-                        player.getName(),
+                        player.getId(),
                         share,
                         GameManager_1835.PR_ID));
 
@@ -163,7 +162,7 @@ public class OperatingRound_1835 extends OperatingRound {
                         && company != operatingCompany.get()
                         && company.getCurrentSpace().getPrice()
                             < prussian.getCurrentSpace().getPrice()) {
-                    log.debug("PR will operate before "+company.getName());
+                    log.debug("PR will operate before "+company.getId());
                     break;
                 }
                 index++;
@@ -232,12 +231,12 @@ public class OperatingRound_1835 extends OperatingRound {
                 DisplayBuffer.add(LocalText.getText("CannotLayTileOn",
                         action.getCompanyName(),
                         action.getLaidTile().getExternalId(),
-                        action.getChosenHex().getName(),
+                        action.getChosenHex().getId(),
                         Bank.format(0),
                         errMsg ));
                 return false;
             } else {
-                moveStack.start(true); // Duplicate, but we have to
+                changeStack.start(true); // Duplicate, but we have to
                 hasLaidExtraOBBTile.set(true); 
                 // Done here to make getSpecialTileLays() return the correct value.
                 // It's provisional, on the assumption that other validations are OK.

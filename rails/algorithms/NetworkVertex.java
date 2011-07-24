@@ -107,9 +107,9 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         if (virtual)
             return virtualId;
         else if (isStation())
-            return hex.getName() + "." + -station.getNumber();
+            return hex.getId() + "." + -station.getNumber();
         else if (isSide())
-            return hex.getName() + "." + side;
+            return hex.getId() + "." + side;
         else
             return null;
     }
@@ -279,9 +279,9 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         if (isVirtual())
             message.append(virtualId);
         else if (isStation())
-            message.append(hex.getName() + "." + station.getNumber());
+            message.append(hex.getId() + "." + station.getNumber());
         else if (isSide())
-            message.append(hex.getName() + "." + hex.getOrientationName(side));
+            message.append(hex.getId() + "." + hex.getOrientationName(side));
         else
             message.append("HQ");
         if (isSink())
@@ -444,7 +444,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
     public static Point2D getVertexPoint2D(HexMap map, NetworkVertex vertex) {
         if (vertex.isVirtual()) return null;
 
-        GUIHex guiHex = map.getHexByName(vertex.getHex().getName());
+        GUIHex guiHex = map.getHexByName(vertex.getHex().getId());
         if (vertex.isMajor()) {
             return guiHex.getCityPoint2D(vertex.getCity());
         } else if (vertex.isMinor()) {

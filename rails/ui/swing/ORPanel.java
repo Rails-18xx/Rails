@@ -410,7 +410,7 @@ implements ActionListener, KeyListener, RevenueListener {
 
             boolean visible = !c.isClosed();
 
-            f = leftCompName[i] = new Caption(c.getName());
+            f = leftCompName[i] = new Caption(c.getId());
             f.setBackground(c.getBgColour());
             f.setForeground(c.getFgColour());
             addField(f, leftCompNameXOffset, leftCompNameYOffset + i, 1, 1,
@@ -497,7 +497,7 @@ implements ActionListener, KeyListener, RevenueListener {
             f = newTrainCost[i] = new Field(c.getTrainsSpentThisTurnModel());
             addField(f, trainsXOffset + 1, trainsYOffset + i, 1, 1, WIDE_RIGHT,  visible);
 
-            f = rightCompName[i] = new Caption(c.getName());
+            f = rightCompName[i] = new Caption(c.getId());
             f.setBackground(companies[i].getBgColour());
             f.setForeground(companies[i].getFgColour());
             addField(f, rightCompNameXOffset, rightCompNameYOffset + i, 1, 1, 0,  visible);
@@ -522,7 +522,7 @@ implements ActionListener, KeyListener, RevenueListener {
             compMenu.add(menu);
 
     		for (CompanyI comp : type.getCompanies()) {
-    			item = new JMenu(comp.getName());
+    			item = new JMenu(comp.getId());
     			item.setEnabled(true);
     			item.add(new JMenuItem(comp.getInfoText()));
     			menu.add(item);
@@ -606,7 +606,7 @@ implements ActionListener, KeyListener, RevenueListener {
             CompanyManagerI cm = orUIManager.getGameUIManager().getGameManager().getCompanyManager();
             for (PublicCompanyI comp : cm.getAllPublicCompanies()) {
                 if (!comp.hasFloated() || comp.isClosed()) continue;
-                JMenuItem item = new JMenuItem(comp.getName());
+                JMenuItem item = new JMenuItem(comp.getId());
                 item.addActionListener(this);
                 item.setActionCommand(NETWORK_INFO_CMD);
                 networkMenu.add(item);
@@ -1020,7 +1020,7 @@ implements ActionListener, KeyListener, RevenueListener {
 
     public String getORPlayer() {
         if (playerIndex >= 0)
-            return players[playerIndex].getName();
+            return players[playerIndex].getId();
         else
             return "";
     }

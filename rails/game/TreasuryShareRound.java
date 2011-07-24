@@ -39,10 +39,10 @@ public class TreasuryShareRound extends StockRound {
         sellingPlayer = operatingCompany.getPresident();
         log.debug("Creating TreasuryShareRound");
         hasBought =
-                new BooleanState(operatingCompany.getName() + "_boughtShares",
+                new BooleanState(this, operatingCompany.getId() + "_boughtShares",
                         false);
         hasSold =
-                new BooleanState(operatingCompany.getName() + "_soldShares",
+                new BooleanState(this, operatingCompany.getId() + "_soldShares",
                         false);
 
         setCurrentPlayerIndex(sellingPlayer.getIndex());
@@ -85,7 +85,7 @@ public class TreasuryShareRound extends StockRound {
         possibleActions.add(new NullAction(NullAction.DONE));
 
         for (PossibleAction pa : possibleActions.getList()) {
-            log.debug(operatingCompany.getName() + " may: " + pa.toString());
+            log.debug(operatingCompany.getId() + " may: " + pa.toString());
         }
 
         return true;
@@ -193,7 +193,7 @@ public class TreasuryShareRound extends StockRound {
              */
             // Take care for max. 4 share units per share
             int[] shareCountPerUnit = new int[5];
-            compName = company.getName();
+            compName = company.getId();
             for (PublicCertificateI c : companyPortfolio.getCertificatesPerCompany(compName)) {
                 if (c.isPresidentShare()) {
                     shareCountPerUnit[1] += c.getShares();
@@ -244,7 +244,7 @@ public class TreasuryShareRound extends StockRound {
 
         PublicCompanyI company = action.getCompany();
         Portfolio from = action.getFromPortfolio();
-        String companyName = company.getName();
+        String companyName = company.getId();
         int number = action.getNumberBought();
         int shareUnit = company.getShareUnit();
         int sharePerCert = action.getSharePerCertificate();
@@ -262,8 +262,8 @@ public class TreasuryShareRound extends StockRound {
 
             // Check everything
             // Only the player that has the turn may act
-            if (!playerName.equals(currentPlayer.getName())) {
-                errMsg = LocalText.getText("WrongPlayer", playerName, currentPlayer.getName());
+            if (!playerName.equals(currentPlayer.getId())) {
+                errMsg = LocalText.getText("WrongPlayer", playerName, currentPlayer.getId());
                 break;
             }
 
@@ -277,7 +277,7 @@ public class TreasuryShareRound extends StockRound {
                 errMsg =
                         LocalText.getText("WrongCompany",
                                 companyName,
-                                operatingCompany.getName() );
+                                operatingCompany.getId() );
 
             }
 
@@ -303,7 +303,7 @@ public class TreasuryShareRound extends StockRound {
                 errMsg =
                         LocalText.getText("NotAvailable",
                                 companyName,
-                                from.getName() );
+                                from.getId() );
                 break;
             }
 
@@ -334,7 +334,7 @@ public class TreasuryShareRound extends StockRound {
                     companyName,
                     shares,
                     companyName,
-                    from.getName(),
+                    from.getId(),
                     errMsg ));
             return false;
         }
@@ -347,7 +347,7 @@ public class TreasuryShareRound extends StockRound {
                     companyName,
                     shareUnit,
                     companyName,
-                    from.getName(),
+                    from.getId(),
                     Bank.format(cashAmount) ));
         } else {
             ReportBuffer.add(LocalText.getText("BUY_SHARES_LOG",
@@ -356,11 +356,11 @@ public class TreasuryShareRound extends StockRound {
                     shareUnit,
                     number * shareUnit,
                     companyName,
-                    from.getName(),
+                    from.getId(),
                     Bank.format(cashAmount) ));
         }
 
-        moveStack.start(true);
+        changeStack.start(true);
 
         pay (company, bank, cashAmount);
         PublicCertificateI cert2;
@@ -404,7 +404,7 @@ public class TreasuryShareRound extends StockRound {
                 errMsg =
                         LocalText.getText("WrongCompany",
                                 companyName,
-                                operatingCompany.getName() );
+                                operatingCompany.getId() );
                 break;
             }
 
@@ -484,7 +484,7 @@ public class TreasuryShareRound extends StockRound {
             sellPrices.put(companyName, sellPrice);
         }
 
-        moveStack.start(true);
+        changeStack.start(true);
 
         int cashAmount = numberSold * price;
         ReportBuffer.add(LocalText.getText("SELL_SHARES_LOG",
@@ -524,12 +524,12 @@ public class TreasuryShareRound extends StockRound {
 
         currentPlayer = getCurrentPlayer();
 
-        if (!playerName.equals(currentPlayer.getName())) {
-            DisplayBuffer.add(LocalText.getText("WrongPlayer", playerName, currentPlayer.getName()));
+        if (!playerName.equals(currentPlayer.getId())) {
+            DisplayBuffer.add(LocalText.getText("WrongPlayer", playerName, currentPlayer.getId()));
             return false;
         }
 
-        moveStack.start(false);
+        changeStack.start(false);
 
         // Inform GameManager
         gameManager.finishTreasuryShareRound();

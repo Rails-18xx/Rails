@@ -39,7 +39,7 @@ public class BuyStartItem extends StartItemAction {
         PublicCompanyI company;
         if ((company = startItem.needsPriceSetting()) != null) {
             sharePriceToSet = true;
-            companyNeedingSharePrice = company.getName();
+            companyNeedingSharePrice = company.getId();
         }
     }
 

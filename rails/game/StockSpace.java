@@ -6,12 +6,13 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import rails.game.model.ModelObject;
+import rails.game.model.AbstractModel;
+import rails.game.state.Item;
 
 /**
  * Objects of this class represent a square on the StockMarket.
  */
-public class StockSpace extends ModelObject implements StockSpaceI {
+public class StockSpace extends AbstractModel<String> implements StockSpaceI {
 
     /*--- Class attributes ---*/
 
@@ -36,7 +37,8 @@ public class StockSpace extends ModelObject implements StockSpaceI {
             Logger.getLogger(StockSpace.class.getPackage().getName());
 
     /*--- Contructors ---*/
-    public StockSpace(String name, int price, StockSpaceTypeI type) {
+    public StockSpace(Item owner, String name, int price, StockSpaceTypeI type) {
+        super(owner, name);
         this.name = name;
         this.price = price;
         this.type = type;
@@ -44,8 +46,8 @@ public class StockSpace extends ModelObject implements StockSpaceI {
         this.column = (name.toUpperCase().charAt(0) - '@') - 1;
     }
 
-    public StockSpace(String name, int price) {
-        this(name, price, null);
+    public StockSpace(Item owner, String name, int price) {
+        this(owner, name, price, null);
     }
 
     // No constructors for the booleans. Use the setters.
@@ -59,16 +61,16 @@ public class StockSpace extends ModelObject implements StockSpaceI {
      * @param company The company object to add.
      */
     public boolean addToken(PublicCompanyI company) {
-        log.debug(company.getName() + " price token added to " + name);
+        log.debug(company.getId() + " price token added to " + name);
         tokens.add(company);
-        update();
+        notifyModel();
         return true;
     }
 
     public boolean addTokenAtStackPosition(PublicCompanyI company, int stackPosition) {
-        log.debug(company.getName() + " price token added to " + name + "  at stack position "+stackPosition);
+        log.debug(company.getId() + " price token added to " + name + "  at stack position "+stackPosition);
         tokens.add(stackPosition, company);
-        update();
+        notifyModel();
         return true;
     }
 
@@ -79,11 +81,11 @@ public class StockSpace extends ModelObject implements StockSpaceI {
      * @return False if the token was not found.
      */
     public boolean removeToken(PublicCompanyI company) {
-        log.debug(company.getName() + " price token removed from " + name);
+        log.debug(company.getId() + " price token removed from " + name);
         int index = tokens.indexOf(company);
         if (index >= 0) {
             tokens.remove(index);
-            update();
+            notifyModel();
             return true;
         } else {
             return false;
@@ -262,13 +264,12 @@ public class StockSpace extends ModelObject implements StockSpaceI {
         return !tokens.isEmpty();
     }
 
-    @Override
-    public String getText() {
+    public String getData() {
         return Bank.format(price);
     }
 
     @Override
     public String toString() {
-        return getText();
+        return getData();
     }
 }

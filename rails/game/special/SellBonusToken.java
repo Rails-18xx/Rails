@@ -6,15 +6,15 @@ import java.util.List;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.*;
+import rails.game.state.GenericState;
 import rails.game.state.IntegerState;
-import rails.game.state.State;
 import rails.util.Util;
 
 public class SellBonusToken extends SpecialProperty {
 
     private String locationCodes = null;
     private List<MapHex> locations = null;
-    private State seller = null;
+    private GenericState<CashHolder> seller = null;
     private String name;
     private int price;
     private int value;
@@ -46,9 +46,9 @@ public class SellBonusToken extends SpecialProperty {
 
         maxNumberToSell = sellBonusTokenTag.getAttributeAsInteger("amount", 1);
 
-        seller = new State ("SellerOf_"+name+"_Bonus", CashHolder.class);
+        seller = new GenericState<CashHolder> (this, "SellerOf_"+name+"_Bonus");
         
-        numberSold = new IntegerState ("Bonus_"+name+"_sold", 0);
+        numberSold = new IntegerState (this, "Bonus_"+name+"_sold", 0);
     }
 
     @Override
@@ -86,7 +86,7 @@ public class SellBonusToken extends SpecialProperty {
         return locationCodes;
     }
 
-    public String getName() {
+    public String getId() {
         return name;
     }
 
@@ -108,7 +108,7 @@ public class SellBonusToken extends SpecialProperty {
 
     @Override
     public String toString() {
-        return "SellBonusToken comp=" + originalCompany.getName() + " hex="
+        return "SellBonusToken comp=" + originalCompany.getId() + " hex="
                + locationCodes + " value=" + value + " price=" + price
                + " max="+maxNumberToSell+" sold="+numberSold.intValue();
     }

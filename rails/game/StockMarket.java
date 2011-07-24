@@ -7,10 +7,11 @@ import rails.common.LocalText;
 import rails.common.parser.ConfigurableComponentI;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
-import rails.game.move.PriceTokenMove;
+import rails.game.state.AbstractItem;
 import rails.game.state.BooleanState;
+import rails.game.state.PriceTokenMove;
 
-public class StockMarket implements StockMarketI, ConfigurableComponentI {
+public class StockMarket extends AbstractItem implements StockMarketI, ConfigurableComponentI {
 
     protected HashMap<String, StockSpaceTypeI> stockSpaceTypes =
         new HashMap<String, StockSpaceTypeI>();
@@ -34,7 +35,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
 
     /* States */
     /** GameOver becomes true if a stock market square is reached that is marked as such */ 
-    protected BooleanState gameOver = new BooleanState ("GameOver", false);
+    protected BooleanState gameOver = new BooleanState (this, "GameOver", false);
 
     ArrayList<PublicCertificate> ipoPile;
 
@@ -118,7 +119,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
             }
 
             StockSpaceI space =
-                new StockSpace(name, Integer.parseInt(price), type);
+                new StockSpace(this, name, Integer.parseInt(price), type);
             stockChartSpaces.put(name, space);
 
             row = Integer.parseInt(name.substring(1));
@@ -290,7 +291,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
         // To be written to a log file in the future.
         if (from != null && from == to) {
             ReportBuffer.add(LocalText.getText("PRICE_STAYS_LOG",
-                    company.getName(),
+                    company.getId(),
                     Bank.format(from.getPrice()),
                     from.getName() ));
             return;
@@ -298,7 +299,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
             ;
         } else if (from != null && to != null) {
             ReportBuffer.add(LocalText.getText("PRICE_MOVES_LOG",
-                    company.getName(),
+                    company.getId(),
                     Bank.format(from.getPrice()),
                     from.getName(),
                     Bank.format(to.getPrice()),

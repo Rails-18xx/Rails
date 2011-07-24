@@ -4,7 +4,9 @@ package rails.game;
 import java.awt.Color;
 import java.util.*;
 
-public interface StockSpaceI // extends TokenHolderI
+import rails.game.model.Model;
+
+public interface StockSpaceI extends Model<String> // extends TokenHolderI
 {
 
     /*--- Constants ---*/

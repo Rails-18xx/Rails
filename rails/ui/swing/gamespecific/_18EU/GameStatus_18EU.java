@@ -62,10 +62,10 @@ public class GameStatus_18EU extends GameStatus {
             for (PublicCompanyI target : targets) {
                 if (target != null) {
                     options[i++] =
-                            target.getName() + " " + target.getLongName();
+                            target.getId() + " " + target.getLongName();
                 } else {
                     options[i++] =
-                            LocalText.getText("CloseMinor", minor.getName());
+                            LocalText.getText("CloseMinor", minor.getId());
                 }
             }
 
@@ -73,7 +73,7 @@ public class GameStatus_18EU extends GameStatus {
                     parent,
                     LocalText.getText("PleaseSelect"),
                     LocalText.getText("SelectCompanyToMergeMinorInto",
-                            minor.getName()),
+                            minor.getId()),
                             options, -1);
             gameUIManager.setCurrentDialog(dialog, action);
         }

@@ -11,12 +11,15 @@ import rails.common.parser.ConfigurableComponentI;
 import rails.game.action.PossibleAction;
 import rails.game.correct.CorrectionManagerI;
 import rails.game.correct.CorrectionType;
-import rails.game.model.ModelObject;
-import rails.game.move.MoveStack;
-import rails.game.move.MoveableHolder;
+import rails.game.model.AbstractModel;
+import rails.game.model.Model;
 import rails.game.special.SpecialPropertyI;
+import rails.game.state.ChangeStack;
+import rails.game.state.Item;
+import rails.game.state.Holder;
+import rails.game.state.StateManager;
 
-public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
+public interface GameManagerI extends Item, Holder, ConfigurableComponentI {
 
     /**
      * @see rails.common.parser.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
@@ -175,6 +178,7 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
     public StockMarketI getStockMarket();
     public MapManager getMapManager();
     public RevenueManager getRevenueManager();
+    public StateManager getStateManager();
     public Bank getBank ();
 
     public String getGameName ();
@@ -182,7 +186,7 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
 
     public int getPlayerCertificateLimit(Player player);
     public void setPlayerCertificateLimit(int newLimit);
-    public ModelObject getPlayerCertificateLimitModel ();
+    public Model<String> getPlayerCertificateLimitModel ();
 
     public abstract String getHelp();
 
@@ -202,7 +206,7 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
             Class<T> clazz, boolean includeExercised);
 
     public String getGMKey ();
-    public MoveStack getMoveStack ();
+    public ChangeStack getChangeStack ();
     public DisplayBuffer getDisplayBuffer();
     public void addToNextPlayerMessages(String s, boolean undoable);
     public ReportBuffer getReportBuffer();

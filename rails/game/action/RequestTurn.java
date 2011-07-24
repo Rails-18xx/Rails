@@ -15,7 +15,7 @@ public class RequestTurn extends PossibleAction {
         super();
         // Override player set by superclass
         if (player != null) {
-            requestingPlayerName = player.getName();
+            requestingPlayerName = player.getId();
         }
     }
 

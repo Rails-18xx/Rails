@@ -171,7 +171,7 @@ public class SetDividend extends PossibleORAction implements Cloneable {
     @Override
     public String toString() {
         StringBuffer b = new StringBuffer();
-        b.append(getClass().getSimpleName()).append(": ").append(company.getName());
+        b.append(getClass().getSimpleName()).append(": ").append(company.getId());
         if (mayUserSetRevenue) {
             b.append(", settable, previous=").append(Bank.format(presetRevenue));
             if (actualRevenue > 0) {

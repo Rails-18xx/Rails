@@ -47,7 +47,7 @@ public final class NetworkTrain implements Comparable<NetworkTrain>{
             ignoreMinors = true;
         }
         boolean isHTrain = railsTrain.isHTrain();
-        String trainName = railsTrain.getName();
+        String trainName = railsTrain.getId();
 
         return new NetworkTrain(majors, minors, ignoreMinors, multiplyMajors, multiplyMinors,
                 isHTrain, trainName, railsTrain); 

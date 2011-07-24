@@ -1,36 +1,55 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/MoneyModel.java,v 1.9 2010/01/01 14:00:31 evos Exp $*/
 package rails.game.model;
 
 import rails.game.Bank;
 import rails.game.state.BooleanState;
 import rails.game.state.IntegerState;
+import rails.game.state.Item;
 import rails.game.state.StringState;
-import rails.util.Util;
 
-public class MoneyModel extends IntegerState {
-    public static final int SUPPRESS_ZERO = 1;
-    public static final int SUPPRESS_INITIAL_ZERO = 2;
-    public static final int ADD_PLUS = 4;
-    public static final int ALLOW_NEGATIVE = 8;
+public class MoneyModel extends AbstractModel<String> {
+    // Data
+    private final IntegerState value;
     private BooleanState initialised;
     private StringState fixedText = null;
     
-    public MoneyModel(String name) {
-        super(name, 0);
+    // Options
+    private boolean suppressZero;
+    private boolean suppressInitialZero;
+    private boolean addPlus;
+    private boolean allowNegative;
+    
+    public MoneyModel(Item owner, String id) {
+        this(owner, id, 0);
     }
 
-    public MoneyModel(String name, int value) {
+    public MoneyModel(Item owner, String id, int value) {
+        super(owner, id);
+        this.value = new IntegerState(this, "value", value);
+        this.value.addModel(this);
+    }
+    
+    public void setSuppressZero(boolean suppressZero) {
+        this.suppressZero = suppressZero;
+    }
 
-        super(name, value);
+    public void setSuppressInitialZero(boolean suppressInitialZero) {
+        this.suppressInitialZero = suppressInitialZero;
+    }
+
+    public void setAddPlus(boolean addPlus) {
+        this.addPlus = addPlus;
+    }
+
+    public void setAllowNegative(boolean allowNegative) {
+        this.allowNegative = allowNegative;
     }
 
     public void set(int value) {
-
         boolean forced = false;
 
         /* Set initialisation state only if it matters */
-        if (Util.bitSet(option, SUPPRESS_INITIAL_ZERO) && initialised == null) {
-            initialised = new BooleanState(name + "_initialised", false);
+        if (suppressInitialZero && initialised == null) {
+            initialised = new BooleanState(this, "initialised", false);
         }
         if (initialised != null && !initialised.booleanValue()) {
             initialised.set(true);
@@ -40,13 +59,19 @@ public class MoneyModel extends IntegerState {
         /*
          * At the end, as update() is called from here. Used setForced() to
          * ensure clients are updated even at an initial zero revenue.
+         * TODO: Check if the missing forced handling matters
          */
         if (forced) {
-            super.setForced(value);
+            this.value.set(value);
         } else {
-            super.set(value);
+            this.value.set(value);
         }
     }
+    
+    public void add(int value) {
+        this.value.add(value);
+    }
+    
 
     /** Set a fixed text, which will override the money value
      * as long as it is not null and not "".
@@ -54,26 +79,31 @@ public class MoneyModel extends IntegerState {
      */
     public void setText (String text) {
         if (fixedText == null) {
-            fixedText = new StringState (name+"_FixedText", text);
+            fixedText = new StringState (this ,"fixedText", text);
         } else {
             fixedText.set(text);
         }
-        update();
+        notifyModel();
     }
     
-    public String getText() {
-        if (fixedText != null && !"".equals(fixedText.getText())) {
-            return fixedText.getText();
+    public int intValue() {
+        return value.intValue();
+    }
+    
+    
+    public String getData() {
+        if (fixedText != null && !"".equals(fixedText.stringValue())) {
+            return fixedText.stringValue();
         }
-        int amount = intValue();
+        int amount = value.intValue();
         if (amount == 0
-            && (Util.bitSet(option, SUPPRESS_ZERO) 
-                    || Util.bitSet(option, SUPPRESS_INITIAL_ZERO)
+            && (suppressZero 
+                    || suppressInitialZero
                         && (initialised == null || !initialised.booleanValue()))) {
             return "";
-        } else if (amount < 0 && !Util.bitSet(option, ALLOW_NEGATIVE)) {
+        } else if (amount < 0 && !allowNegative) {
             return "";
-        } else if (Util.bitSet(option, ADD_PLUS)) {
+        } else if (addPlus) {
             return "+" + Bank.format(amount);
         } else {
             return Bank.format(amount);

@@ -12,8 +12,9 @@ import rails.game.Stop.RunThrough;
 import rails.game.Stop.RunTo;
 import rails.game.Stop.Score;
 import rails.game.Stop.Type;
+import rails.game.model.Model;
 
-public interface TileI {
+public interface TileI extends Model<String> {
 
     public void configureFromXML(Tag se, Tag te) throws ConfigurationException;
 
@@ -27,7 +28,7 @@ public interface TileI {
     /**
      * @return Returns the id.
      */
-    public int getId();
+    public int getNb();
 
     public String getExternalId();
 
@@ -36,7 +37,7 @@ public interface TileI {
     /**
      * @return Returns the name.
      */
-    public String getName();
+    public String getId();
 
     public boolean hasTracks(int sideNumber);
 

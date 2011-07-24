@@ -6,7 +6,7 @@ import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.state.IntegerState;
-import rails.game.state.State;
+import rails.game.state.GenericState;
 
 /**
  * Implements an 1835-style startpacket sale.
@@ -19,16 +19,16 @@ public class StartRound_18EU extends StartRound {
     public final static int BID_STEP = 3;
 
     private final IntegerState currentStep =
-            new IntegerState("CurrentStep", SELECT_STEP);
+            new IntegerState(this, "CurrentStep", SELECT_STEP);
 
-    private final State selectingPlayer =
-            new State("SelectingPlayer", Player.class);
+    private final GenericState<Player> selectingPlayer =
+            new GenericState<Player>(this, "SelectingPlayer");
 
     private final IntegerState currentBuyPrice =
-            new IntegerState("CurrentBuyPrice", 0);
+            new IntegerState(this, "CurrentBuyPrice", 0);
 
-    private final State currentAuctionItem =
-            new State("CurrentAuctionItem", StartItem.class);
+    private final GenericState<StartItem> currentAuctionItem =
+            new GenericState<StartItem>(this, "CurrentAuctionItem");
 
     /**
      * Constructor, only to be used in dynamic instantiation.
@@ -70,7 +70,7 @@ public class StartRound_18EU extends StartRound {
             selectingPlayer.set(getCurrentPlayer());
             currentBuyPrice.set(100);
 
-            for (StartItem item : itemsToSell) {
+            for (StartItem item : itemsToSell.view()) {
                 if (!item.isSold()) {
                     item.setStatus(StartItem.SELECTABLE);
                     item.setMinimumBid(item.getBasePrice());
@@ -145,7 +145,7 @@ public class StartRound_18EU extends StartRound {
             return false;
         }
 
-        moveStack.start(false);
+        changeStack.start(false);
 
         assignItem(player, item, price, 0);
         ((PublicCertificateI) item.getPrimary()).getCompany().start();
@@ -229,13 +229,13 @@ public class StartRound_18EU extends StartRound {
             return false;
         }
 
-        moveStack.start(false);
+        changeStack.start(false);
 
         if (getStep() == SELECT_STEP) {
 
             currentAuctionItem.set(item);
             item.setStatus(StartItem.AUCTIONED);
-            for (StartItem item2 : itemsToSell) {
+            for (StartItem item2 : itemsToSell.view()) {
                 if (item2 != item && !item2.isSold()) {
                     item2.setStatus(StartItem.UNAVAILABLE);
                 }
@@ -295,7 +295,7 @@ public class StartRound_18EU extends StartRound {
 
         ReportBuffer.add(LocalText.getText("PASSES", playerName));
 
-        moveStack.start(false);
+        changeStack.start(false);
 
         StartItem auctionedItem = (StartItem) currentAuctionItem.get();
 

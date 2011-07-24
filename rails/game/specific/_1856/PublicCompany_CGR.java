@@ -7,7 +7,6 @@ import rails.algorithms.RevenueAdapter;
 import rails.algorithms.RevenueStaticModifier;
 import rails.common.parser.ConfigurationException;
 import rails.game.*;
-import rails.game.move.*;
 import rails.game.state.*;
 
 public class PublicCompany_CGR extends PublicCompany implements RevenueStaticModifier {
@@ -18,7 +17,7 @@ public class PublicCompany_CGR extends PublicCompany implements RevenueStaticMod
     private BooleanState hadPermanentTrain;
 
     /** If no player has 2 shares, we need a separate attribute to mark the president. */
-    private State temporaryPresident = null;
+    private GenericState<Player> temporaryPresident = null;
 
     /* Cope with multiple 5% share sales in one turn */
     private IntegerState sharesSoldSoFar;
@@ -28,7 +27,7 @@ public class PublicCompany_CGR extends PublicCompany implements RevenueStaticMod
     @Override
     public void init(String name, CompanyTypeI type) {
         super.init(name, type);
-        hadPermanentTrain = new BooleanState (name+"_HadPermanentTrain", false);
+        hadPermanentTrain = new BooleanState (this, name+"_HadPermanentTrain", false);
 
         // Share price is initially fixed
         canSharePriceVary.set(false);
@@ -65,7 +64,7 @@ public class PublicCompany_CGR extends PublicCompany implements RevenueStaticMod
     }
     
     public boolean mayBuyTrainType (TrainI train) {
-        return !"4".equals(train.getName());
+        return !"4".equals(train.getId());
     }
 
     @Override
@@ -79,7 +78,7 @@ public class PublicCompany_CGR extends PublicCompany implements RevenueStaticMod
 
     public void setTemporaryPresident(Player temporaryPresident) {
         if (this.temporaryPresident == null) {
-            this.temporaryPresident = new State ("CGR_TempPres", Player.class);
+            this.temporaryPresident = new GenericState<Player> (this, "CGR_TempPres");
         }
         this.temporaryPresident.set(temporaryPresident);
     }
@@ -120,13 +119,13 @@ public class PublicCompany_CGR extends PublicCompany implements RevenueStaticMod
                 && percentage == 10) {
             shareUnit.set(percentage);
             // Drop the last 10 shares
-            List<PublicCertificateI>certs = new ArrayList<PublicCertificateI>(certificates);
+            List<PublicCertificateI>certs = new ArrayList<PublicCertificateI>(certificates.view());
             int share = 0;
-            MoveableHolder scrapHeap = bank.getScrapHeap();
+            Holder scrapHeap = bank.getScrapHeap();
             for (PublicCertificateI cert : certs) {
                 if (share >= 100) {
                     cert.moveTo(scrapHeap);
-                    new RemoveFromList<PublicCertificateI>(certificates, cert, "CGR_Certs");
+                    certificates.remove(cert);
                 } else {
                     cert.setCertificateCount(1.0f);
                     share += cert.getShare();
@@ -137,7 +136,7 @@ public class PublicCompany_CGR extends PublicCompany implements RevenueStaticMod
             // to have the UI get the correct percentage
             List<Portfolio> done = new ArrayList<Portfolio>();
             Portfolio portfolio;
-            for (PublicCertificateI cert : certificates) {
+            for (PublicCertificateI cert : certificates.view()) {
                 portfolio = (Portfolio)cert.getHolder();
                 if (!done.contains(portfolio)) {
                     portfolio.getShareModel(this).setShare();

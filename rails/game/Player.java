@@ -2,6 +2,7 @@
 package rails.game;
 
 import rails.game.model.*;
+import rails.game.state.AbstractItem;
 import rails.game.state.BooleanState;
 import rails.game.state.IntegerState;
 
@@ -9,7 +10,7 @@ import rails.game.state.IntegerState;
  * Player class holds all player-specific data
  */
 
-public class Player implements CashHolder, Comparable<Player> {
+public class Player extends AbstractItem implements CashHolder, Comparable<Player> {
 
     public static int MAX_PLAYERS = 8;
 
@@ -21,7 +22,7 @@ public class Player implements CashHolder, Comparable<Player> {
 
     private CashModel wallet = new CashModel(this);
 
-    private CertCountModel certCount = new CertCountModel(this);
+    private CertificateCountModel certCount = new CertificateCountModel(this);
 
     private MoneyModel blockedCash;
     private CalculatedMoneyModel freeCash;
@@ -39,15 +40,15 @@ public class Player implements CashHolder, Comparable<Player> {
         this.index = index;
         portfolio = new Portfolio(name, this);
         freeCash = new CalculatedMoneyModel(this, "getFreeCash");
-        wallet.addDependent(freeCash);
-        blockedCash = new MoneyModel(name + "_blockedCash");
-        blockedCash.setOption(MoneyModel.SUPPRESS_ZERO);
+        wallet.addView(freeCash);
+        blockedCash = new MoneyModel(this, "blockedCash");
+        blockedCash.setSuppressZero(true);
         worth = new CalculatedMoneyModel(this, "getWorth");
-        wallet.addDependent(worth);
-        bankrupt = new BooleanState (name+"_isBankrupt", false);
-        lastORWorthIncrease = new MoneyModel (name+"_lastORIncome");
-        lastORWorthIncrease.setOption(MoneyModel.ALLOW_NEGATIVE);
-        worthAtORStart = new IntegerState (name+"_worthAtORStart");
+        wallet.addView(worth);
+        bankrupt = new BooleanState (this, "isBankrupt", false);
+        lastORWorthIncrease = new MoneyModel (this, "lastORIncome");
+        lastORWorthIncrease.setAllowNegative(true);
+        worthAtORStart = new IntegerState (this, "worthAtORStart");
     }
 
     /**
@@ -60,7 +61,7 @@ public class Player implements CashHolder, Comparable<Player> {
     /**
      * @return Returns the player's name.
      */
-    public String getName() {
+    public String getId() {
         return name;
     }
 
@@ -75,7 +76,7 @@ public class Player implements CashHolder, Comparable<Player> {
         return wallet.getCash();
     }
 
-    public ModelObject getCashModel() {
+    public Model<String> getCashModel() {
         return wallet;
     }
 
@@ -124,10 +125,10 @@ public class Player implements CashHolder, Comparable<Player> {
     }
 
     public void updateWorth () {
-        worth.update();
+        worth.notifyModel();
     }
 
-    public CertCountModel getCertCountModel() {
+    public CertificateCountModel getCertCountModel() {
         return certCount;
     }
 
@@ -162,7 +163,7 @@ public class Player implements CashHolder, Comparable<Player> {
             return false;
         } else {
             blockedCash.add(amount);
-            freeCash.update();
+            freeCash.notifyModel();
             return true;
         }
     }
@@ -178,7 +179,7 @@ public class Player implements CashHolder, Comparable<Player> {
             return false;
         } else {
             blockedCash.add(-amount);
-            freeCash.update();
+            freeCash.notifyModel();
             return true;
         }
     }
@@ -222,7 +223,7 @@ public class Player implements CashHolder, Comparable<Player> {
         int result = -new Integer(getWorth()).compareTo(new Integer(p.getWorth()));
         // then by name
         if (result == 0)
-            result = getName().compareTo(p.getName());
+            result = getId().compareTo(p.getId());
         return result;
     }
 }

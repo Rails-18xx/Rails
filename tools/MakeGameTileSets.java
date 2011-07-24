@@ -86,7 +86,7 @@ public class MakeGameTileSets {
         System.out.println("Done");
     }
 
-    private void makeTileSet(String gameName, Map tileMap)
+    private void makeTileSet(String gameName, Map<String, Element> tileMap)
             throws ConfigurationException {
 
         directories.clear();

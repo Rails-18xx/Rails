@@ -1,55 +1,58 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/CashModel.java,v 1.5 2008/06/04 19:00:37 evos Exp $*/
 package rails.game.model;
 
-import rails.game.*;
+import rails.game.Bank;
+import rails.game.CashHolder;
+import rails.game.PublicCompanyI;
+import rails.game.state.IntegerState;
 import rails.game.state.StringState;
 
-public class CashModel extends ModelObject {
+public final class CashModel extends AbstractModel<String> {
 
-    protected int cash;
-    protected CashHolder owner;
+    private final IntegerState cash;
+    private final CashHolder owner;
 
     /** Text to be displayed instead of the cash amount (if length > 0) */
-    protected StringState displayText = new StringState("BankCashDisplayText", "");
+    private final StringState displayText;
 
-    public static final int SUPPRESS_ZERO = 1;
+    private boolean suppressZero;
 
     public CashModel(CashHolder owner) {
-        cash = 0;
+        super(owner, "CashModel");
         this.owner = owner;
-        displayText.addDependent(this);
+        suppressZero = false;
+
+        cash = new IntegerState(owner, "Cash");
+        cash.addModel(this);
+        displayText = new StringState(owner, "BankCashDisplayText");
+        displayText.addModel(this);
     }
 
+    public void setSuppressZero(boolean value) {
+        this.suppressZero = value;
+    }
+    
     public void setCash(int newCash) {
-        cash = newCash;
-        update();
+        cash.set(newCash);
     }
 
     public void addCash(int addedCash) {
-        cash += addedCash;
-        update();
+        cash.add(addedCash);
     }
 
     public int getCash() {
-        return cash;
+        return cash.intValue();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see rails.rails.game.model.ModelObject#getValue()
-     */
-    @Override
-    public String getText() {
-        String fixedText = displayText.getText();
+    public String getData() {
+        String fixedText = displayText.stringValue();
         if (!"".equals(fixedText)) {
             return fixedText;
-        } else if (cash == 0 && (option & SUPPRESS_ZERO) > 0
+        } else if (cash.intValue() == 0 && suppressZero
             || owner instanceof PublicCompanyI
             && !((PublicCompanyI) owner).hasStarted()) {
             return "";
         } else {
-            return Bank.format(cash);
+            return Bank.format(cash.intValue());
         }
     }
 

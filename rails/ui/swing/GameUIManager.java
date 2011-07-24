@@ -247,7 +247,7 @@ public class GameUIManager implements DialogOwner {
         } else {
             
             Player oldPlayer = getCurrentPlayer();
-            boolean wasMyTurn = oldPlayer.getName().equals(localPlayerName);
+            boolean wasMyTurn = oldPlayer.getId().equals(localPlayerName);
 
             // Process the action on the server
             result = previousResult = processOnServer (action);
@@ -255,13 +255,13 @@ public class GameUIManager implements DialogOwner {
             // Process any autosaving and turn relinquishing, resp. autoloading and turn pickup
             if (autoSaveLoadInitialized && autoSaveLoadStatus != AutoLoadPoller.OFF) {
                 Player newPlayer = getCurrentPlayer();
-                boolean isMyTurn = newPlayer.getName().equals(localPlayerName);
+                boolean isMyTurn = newPlayer.getId().equals(localPlayerName);
                 if (newPlayer != oldPlayer) {
                     if (wasMyTurn && !isMyTurn) {
-                        autoSave (newPlayer.getName());
+                        autoSave (newPlayer.getId());
                         autoLoadPoller.setLastSavedFilename(lastSavedFilename);
                         autoLoadPoller.setActive(true);
-                        log.info ("Relinquishing turn to "+newPlayer.getName());
+                        log.info ("Relinquishing turn to "+newPlayer.getId());
                     } else if (!wasMyTurn && isMyTurn) {
                         autoLoadPoller.setActive(false);
                         setCurrentDialog(new MessageDialog(this,
@@ -271,11 +271,11 @@ public class GameUIManager implements DialogOwner {
                             null);
                         log.info ("Resuming turn as "+localPlayerName);
                     } else {
-                        log.info(newPlayer.getName()+" now has the turn");
+                        log.info(newPlayer.getId()+" now has the turn");
                     }
                     myTurn = isMyTurn;
                 } else {
-                    log.info(oldPlayer.getName()+" keeps the turn");
+                    log.info(oldPlayer.getId()+" keeps the turn");
                 }
             }
         }
@@ -311,13 +311,13 @@ public class GameUIManager implements DialogOwner {
         boolean result;
         
         action.setActed();
-        action.setPlayerName(getCurrentPlayer().getName());
+        action.setPlayerName(getCurrentPlayer().getId());
 
         log.debug("==Passing to server: " + action);
 
         Player player = getCurrentPlayer();
         if (player != null) {
-            action.setPlayerName(player.getName());
+            action.setPlayerName(player.getId());
         }
 
         // Process the action on the server
@@ -533,19 +533,19 @@ public class GameUIManager implements DialogOwner {
                     options[j++] = LocalText.getText("None")
             );
             prompt = LocalText.getText("MayDiscardTrain",
-                    c.getName());
+                    c.getId());
         }
         int offset = j;
         for (int i = 0; i < trains.size(); i++) {
             trainOptions.add(
                     options[j++] = LocalText.getText("N_Train",
-                            trains.get(i).getName())
+                            trains.get(i).getId())
             );
         }
         if (prompt == null) prompt = LocalText.getText(
                 "HAS_TOO_MANY_TRAINS",
                 playerName,
-                c.getName() );
+                c.getId() );
 
         String discardedTrainName =
                 (String) JOptionPane.showInputDialog(orWindow,
@@ -828,7 +828,7 @@ public class GameUIManager implements DialogOwner {
         } else {
             String currentSuffix;
             if (NEXT_PLAYER_SUFFIX.equals(saveSuffixSpec)) {
-                currentSuffix = getCurrentPlayer().getName().replaceAll("[^-\\w\\.]", "_");
+                currentSuffix = getCurrentPlayer().getId().replaceAll("[^-\\w\\.]", "_");
             } else {
                 currentSuffix = saveSuffix;
             }
@@ -953,7 +953,7 @@ public class GameUIManager implements DialogOwner {
             }
         }
             
-        myTurn = getCurrentPlayer().getName().equals(localPlayerName);
+        myTurn = getCurrentPlayer().getId().equals(localPlayerName);
         
         if (!myTurn) {
             // Start autoload polling

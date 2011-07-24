@@ -1,9 +1,11 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/CalculatedMoneyModel.java,v 1.5 2008/06/04 19:00:37 evos Exp $*/
 package rails.game.model;
 
 import java.lang.reflect.Method;
 
+import org.apache.log4j.Logger;
+
 import rails.game.Bank;
+import rails.game.state.Item;
 
 /**
  * This class allows calculated values to be used as model objects by using
@@ -14,27 +16,35 @@ import rails.game.Bank;
  * @author Erik Vos
  * 
  */
-public class CalculatedMoneyModel extends ModelObject {
+public class CalculatedMoneyModel extends AbstractModel<String> implements View<String> {
 
-    public static final int SUPPRESS_ZERO = 1;
+    protected static Logger log =
+        Logger.getLogger(CalculatedMoneyModel.class.getPackage().getName());
 
-    private Object object;
+    private Item owner;
     private String methodName;
 
-    public CalculatedMoneyModel(Object object, String methodName) {
+    public boolean suppressZero = false;
 
-        this.object = object;
+    public CalculatedMoneyModel(Item owner, String methodName) {
+        super(owner, methodName);
+        this.owner = owner;
         this.methodName = methodName;
-
     }
 
+    
+    public void setSuppressZero(boolean suppressZero) 
+    {
+        this.suppressZero = suppressZero;
+    }
+    
     protected int calculate() {
 
-        Class<?> objectClass = object.getClass();
+        Class<?> objectClass = owner.getClass();
         Integer amount;
         try {
             Method method = objectClass.getMethod(methodName, (Class[]) null);
-            amount = (Integer) method.invoke(object, (Object[]) null);
+            amount = (Integer) method.invoke(owner, (Object[]) null);
         } catch (Exception e) {
             log.error("ERROR while invoking method " + methodName
                       + " on class " + objectClass.getName(), e);
@@ -43,13 +53,21 @@ public class CalculatedMoneyModel extends ModelObject {
         return amount.intValue();
     }
 
-    @Override
-    public String getText() {
+    public String getData() {
         int amount = calculate();
-        if (amount == 0 && option == SUPPRESS_ZERO)
+        if (amount == 0 && suppressZero)
             return "";
         else
             return Bank.format(amount);
     }
+
+
+    public void update(String data) {
+        // use this to update its viewers
+        notifyModel();
+    }
+    
+    
+    
 
 }

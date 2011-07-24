@@ -118,7 +118,7 @@ public class LayTile extends PossibleORAction {
      */
     public void setChosenHex(MapHex chosenHex) {
         this.chosenHex = chosenHex;
-        this.chosenHexName = chosenHex.getName();
+        this.chosenHexName = chosenHex.getId();
     }
 
     public int getOrientation() {
@@ -141,7 +141,7 @@ public class LayTile extends PossibleORAction {
      */
     public void setLaidTile(TileI laidTile) {
         this.laidTile = laidTile;
-        this.laidTileId = laidTile.getId();
+        this.laidTileId = laidTile.getNb();
     }
 
     /**
@@ -173,7 +173,7 @@ public class LayTile extends PossibleORAction {
         this.tiles = tiles;
         this.tileIds = new int[tiles.size()];
         for (int i = 0; i < tiles.size(); i++) {
-            tileIds[i] = tiles.get(i).getId();
+            tileIds[i] = tiles.get(i).getNb();
         }
     }
 
@@ -272,8 +272,8 @@ public class LayTile extends PossibleORAction {
                 }
             }
         } else {
-            b.append(" tile=").append(laidTile.getId()).append(" hex=").append(
-                    chosenHex.getName()).append(" orientation=").append(
+            b.append(" tile=").append(laidTile.getNb()).append(" hex=").append(
+                    chosenHex.getId()).append(" orientation=").append(
                     orientation).append(" tokens=").append(relaidBaseTokensString);
         }
         return b.toString();
@@ -330,7 +330,7 @@ public class LayTile extends PossibleORAction {
         StringBuffer b = new StringBuffer();
         for (MapHex hex : locations) {
             if (b.length() > 0) b.append(",");
-            b.append(hex.getName());
+            b.append(hex.getId());
         }
         locationNames = b.toString();
     }

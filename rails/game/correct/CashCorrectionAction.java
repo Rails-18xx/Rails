@@ -41,7 +41,7 @@ public class CashCorrectionAction extends CorrectionAction {
     */
    public CashCorrectionAction(Player pl) {
        correctCashHolder = pl;
-       cashHolderName = pl.getName();
+       cashHolderName = pl.getId();
        cashHolderType = "Player";
        maximumNegative = pl.getCash();
        setCorrectionType(CorrectionType.CORRECT_CASH);
@@ -53,7 +53,7 @@ public class CashCorrectionAction extends CorrectionAction {
     */
    public CashCorrectionAction(PublicCompanyI pc) {
        correctCashHolder = pc;
-       cashHolderName = pc.getName();
+       cashHolderName = pc.getId();
        cashHolderType = "PublicCompany";
        maximumNegative = pc.getCash();
        setCorrectionType(CorrectionType.CORRECT_CASH);

@@ -13,7 +13,7 @@ import rails.common.*;
 import rails.common.parser.*;
 import rails.game.action.*;
 import rails.game.correct.*;
-import rails.game.move.*;
+import rails.game.model.Model;
 import rails.game.special.SpecialPropertyI;
 import rails.game.special.SpecialTokenLay;
 import rails.game.state.*;
@@ -24,7 +24,7 @@ import rails.util.Util;
  * This class manages the playing rounds by supervising all implementations of
  * Round. Currently everything is hardcoded &agrave; la 1830.
  */
-public class GameManager implements ConfigurableComponentI, GameManagerI {
+public class GameManager extends AbstractItem implements ConfigurableComponentI, GameManagerI {
     /** Version ID of the Save file header, as written in save() */
     private static final long saveFileHeaderVersionID = 3L;
     /**
@@ -55,6 +55,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     protected MapManager mapManager;
     protected TileManager tileManager;
     protected RevenueManager revenueManager;
+    protected StateManager stateManager;
     protected Bank bank;
 
     // map of correctionManagers
@@ -67,8 +68,8 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     protected List<Player> players;
     protected List<String> playerNames;
     protected int numberOfPlayers;
-    protected State currentPlayer = new State("CurrentPlayer", Player.class);
-    protected State priorityPlayer = new State("PriorityPlayer", Player.class);
+    protected GenericState<Player> currentPlayer = new GenericState<Player>(this, "CurrentPlayer");
+    protected GenericState<Player> priorityPlayer = new GenericState<Player>(this, "PriorityPlayer");
 
     /** Map relating portfolio names and objects, to enable deserialization.
      * OBSOLETE since Rails 1.3.1, but still required to enable reading old saved files */
@@ -79,7 +80,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         new HashMap<String, Portfolio> ();
 
     protected IntegerState playerCertificateLimit
-    = new IntegerState ("PlayerCertificateLimit", 0);
+    = new IntegerState (this, "PlayerCertificateLimit", 0);
     protected int currentNumberOfOperatingRounds = 1;
     protected boolean skipFirstStockRound = false;
     protected boolean showCompositeORNumber = true;
@@ -104,23 +105,23 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
      * been sold, it finishes by starting an Operating Round, which handles the
      * privates payout and then immediately starts a new Start Round.
      */
-    protected State currentRound = new State("CurrentRound", Round.class);
+    protected GenericState<RoundI> currentRound = new GenericState<RoundI>(this, "CurrentRound");
     protected RoundI interruptedRound = null;
 
-    protected IntegerState srNumber = new IntegerState ("SRNumber");
+    protected IntegerState srNumber = new IntegerState (this, "SRNumber");
 
     protected IntegerState absoluteORNumber =
-        new IntegerState("AbsoluteORNUmber");
+        new IntegerState(this, "AbsoluteORNUmber");
     protected IntegerState relativeORNumber =
-        new IntegerState("RelativeORNumber");
-    protected IntegerState numOfORs = new IntegerState("numOfORs");
+        new IntegerState(this, "RelativeORNumber");
+    protected IntegerState numOfORs = new IntegerState(this, "numOfORs");
 
     /** GameOver pending, a last OR or set of ORs must still be completed */
-    protected BooleanState gameOverPending = new BooleanState ("GameOverPending", false);
+    protected BooleanState gameOverPending = new BooleanState (this, "GameOverPending", false);
     /** GameOver is executed, no more moves */
-    protected BooleanState gameOver = new BooleanState("GameOver" ,false);
+    protected BooleanState gameOver = new BooleanState(this, "GameOver" ,false);
     protected Boolean gameOverReportedUI = false;
-    protected BooleanState endedByBankruptcy = new BooleanState("EndedByBankruptcy", false);
+    protected BooleanState endedByBankruptcy = new BooleanState(this, "EndedByBankruptcy", false);
 
     /** UI display hints */
     protected GuiHints guiHints;
@@ -166,7 +167,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     /**
      * The MoveSet stack is maintained to enable Undo and Redo throughout the game.
      */
-    protected MoveStack moveStack = new MoveStack();
+    protected ChangeStack changeStack = new ChangeStack();
 
     /**
      * The DisplayBuffer instance collects messages to be displayed in the UI.
@@ -175,7 +176,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     /**
      * nextPlayerMessages collects all messages to be displayed to the next player
      */
-    protected List<String> nextPlayerMessages = new ArrayList<String>();
+    protected ArrayListState<String> nextPlayerMessages = new ArrayListState<String>(this, "nextPlayerMessages");
 
     /**
      * The ReportBuffer collects messages to be shown in the Game Report.
@@ -189,7 +190,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
     protected PossibleActions possibleActions = PossibleActions.getInstance();
 
-    protected List<PossibleAction> executedActions = new ArrayList<PossibleAction>();
+    protected ArrayListState<PossibleAction> executedActions = new ArrayListState<PossibleAction>(this, "executedActions");
 
     /** Special properties that can be used by other players or companies
      * than just the owner (such as buyable bonus tokens as in 1856).
@@ -532,12 +533,13 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         this.mapManager = mapManager;
         this.tileManager = tileManager;
         this.revenueManager = revenueManager;
+        this.stateManager = new StateManager(); // nothing to init so far
         this.bank = bank;
 
         players = playerManager.getPlayers();
         playerNames = playerManager.getPlayerNames();
         numberOfPlayers = players.size();
-        priorityPlayer.setState(players.get(0));
+        priorityPlayer.set(players.get(0));
         setPlayerCertificateLimit (playerManager.getInitialPlayerCertificateLimit());
 
         showCompositeORNumber =  !"simple".equalsIgnoreCase(Config.get("or.number_format"));
@@ -560,7 +562,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         }
 
         // Initialisation is complete. Undoability starts here.
-        moveStack.enable();
+        changeStack.enable();
     }
 
     private void setGuiParameters () {
@@ -774,7 +776,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     }
 
     public String getNumOfORs () {
-        return numOfORs.getText();
+        return numOfORs.getData();
     }
 
     /* (non-Javadoc)
@@ -835,7 +837,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
             // Check player
             String actionPlayerName = action.getPlayerName();
-            String currentPlayerName = getCurrentPlayer().getName();
+            String currentPlayerName = getCurrentPlayer().getId();
             if (!actionPlayerName.equals(currentPlayerName)) {
                 DisplayBuffer.add(LocalText.getText("WrongPlayer",
                         actionPlayerName, currentPlayerName ));
@@ -864,8 +866,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             }
 
             if (result && !(action instanceof GameAction) && action.hasActed()) {
-                new AddToList<PossibleAction>(executedActions, action,
-                "ExecutedActions");
+                executedActions.add(action);
             }
         }
 
@@ -882,30 +883,31 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         // when setting possible actions
         if (action != null) {
             if (result && !(action instanceof GameAction) && action.hasActed()) {
-                if (moveStack.isOpen()) moveStack.finish();
+                if (changeStack.isOpen()) changeStack.finish();
                 recoverySave();
             } else {
-                if (moveStack.isOpen()) moveStack.cancel();
+                if (changeStack.isOpen()) changeStack.cancel();
             }
         }
 
         if (!isGameOver()) setCorrectionActions();
 
         // Add the Undo/Redo possibleActions here.
-        if (moveStack.isUndoableByPlayer()) {
+        // TODO: Check if this works correct (added player as argument)
+        if (changeStack.isUndoableByPlayer(getCurrentPlayer())) {
             possibleActions.add(new GameAction(GameAction.UNDO));
         }
-        if (moveStack.isUndoableByManager()) {
+        if (changeStack.isUndoableByManager()) {
             possibleActions.add(new GameAction(GameAction.FORCED_UNDO));
         }
-        if (moveStack.isRedoable()) {
+        if (changeStack.isRedoable()) {
             possibleActions.add(new GameAction(GameAction.REDO));
         }
 
 
         // logging of game actions activated
         for (PossibleAction pa : possibleActions.getList()) {
-            log.debug(((Player) currentPlayer.get()).getName() + " may: "
+            log.debug(((Player) currentPlayer.get()).getId() + " may: "
                     + pa.toString());
         }
 
@@ -962,22 +964,22 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             result = reload(gameAction);
             break;
         case GameAction.UNDO:
-            moveStack.undoMoveSet(false);
+            changeStack.undo(false);
             result = true;
             break;
         case GameAction.FORCED_UNDO:
             if (index != -1) {
-                moveStack.gotoIndex(index);
+                changeStack.gotoIndex(index);
             } else {
-                moveStack.undoMoveSet(true);
+                changeStack.undo(true);
             }
             result = true;
             break;
         case GameAction.REDO:
             if (index != -1) {
-                moveStack.gotoIndex(index);
+                changeStack.gotoIndex(index);
             } else {
-                moveStack.redoMoveSet();
+                changeStack.redoMoveSet();
             }
             result = true;
             break;
@@ -1034,14 +1036,14 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
                 +" is considered invalid by the game engine";
                 log.error(msg);
                 DisplayBuffer.add(msg);
-                if (moveStack.isOpen()) moveStack.finish();
+                if (changeStack.isOpen()) changeStack.finish();
                 return false;
             }
             possibleActions.clear();
             getCurrentRound().setPossibleActions();
 
             // Log possible actions (normally this is outcommented)
-            String playerName = getCurrentPlayer().getName();
+            String playerName = getCurrentPlayer().getId();
             for (PossibleAction a : possibleActions.getList()) {
                 log.debug(playerName+" may: "+a.toString());
             }
@@ -1053,10 +1055,11 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             log.error("Error while reprocessing " + action.toString(), e);
             throw new Exception("Reload failure", e);
         }
-        new AddToList<PossibleAction>(executedActions, action, "ExecutedActions");
-        if (moveStack.isOpen()) moveStack.finish();
+        executedActions.add(action);
+        
+        if (changeStack.isOpen()) changeStack.finish();
 
-        log.debug("Turn: "+getCurrentPlayer().getName());
+        log.debug("Turn: "+getCurrentPlayer().getId());
         return true;
     }
 
@@ -1128,7 +1131,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     protected boolean save(File file, boolean displayErrorMessage, String errorMessageKey) {
         GameFileIO gameSaver = new GameFileIO();
         gameSaver.initSave(saveFileVersionID, gameName, gameOptions, playerNames);
-        gameSaver.setActions(executedActions);
+        gameSaver.setActions(executedActions.view());
         gameSaver.setComments(ReportBuffer.getCommentItems());
         return gameSaver.saveGame(file, displayErrorMessage, errorMessageKey);
     }
@@ -1226,7 +1229,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             for (MapHex[] hexRow:allHexes)
                 for (MapHex hex:hexRow)
                     if (hex != null) {
-                        pw.println(hex.getName() + "," + hex.getCurrentTile().getExternalId() + ","
+                        pw.println(hex.getId() + "," + hex.getCurrentTile().getExternalId() + ","
                                 + hex.getCurrentTileRotation() + ","
                                 + hex.getOrientationName(hex.getCurrentTileRotation())
                         ) ;
@@ -1274,7 +1277,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         endedByBankruptcy.set(true);
         String message =
             LocalText.getText("PlayerIsBankrupt",
-                    getCurrentPlayer().getName());
+                    getCurrentPlayer().getId());
         ReportBuffer.add(message);
         DisplayBuffer.add(message);
         if (gameEndsWithBankruptcy) {
@@ -1305,7 +1308,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     public void registerMaxedSharePrice(PublicCompanyI company, StockSpaceI space){
         gameOverPending.set(true);
         ReportBuffer.add(LocalText.getText("MaxedSharePriceReportText",
-                company.getName(),
+                company.getId(),
                 Bank.format(space.getPrice())));
         String msgContinue;
         if (gameEndsAfterSetOfORs)
@@ -1313,7 +1316,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         else
             msgContinue = LocalText.getText("gameOverPlayOnlyOR");
         String msg = LocalText.getText("MaxedSharePriceDisplayText",
-                company.getName(),
+                company.getId(),
                 Bank.format(space.getPrice()),
                 msgContinue);
         DisplayBuffer.add(msg);
@@ -1375,14 +1378,14 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
         /* Report winner */
         Player winner = rankedPlayers.get(0);
-        b.add(LocalText.getText("EoGWinner") + winner.getName()+ "!");
+        b.add(LocalText.getText("EoGWinner") + winner.getId()+ "!");
         b.add(LocalText.getText("EoGFinalRanking") + " :");
 
         /* Report final ranking */
         int i = 0;
         for (Player p : rankedPlayers) {
             b.add((++i) + ". " + Bank.format(p.getWorth()) + " "
-                    + p.getName());
+                    + p.getId());
         }
 
         return b;
@@ -1419,8 +1422,8 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         // transfer messages for the next player to the display buffer
         if ((Player)currentPlayer.get() != player && !nextPlayerMessages.isEmpty()) {
             DisplayBuffer.add(
-                    LocalText.getText("NextPlayerMessage", getCurrentPlayer().getName()));
-            for (String s:nextPlayerMessages)
+                    LocalText.getText("NextPlayerMessage", getCurrentPlayer().getId()));
+            for (String s:nextPlayerMessages.view())
                 DisplayBuffer.add(s);
             nextPlayerMessages.clear();
         }
@@ -1443,7 +1446,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     public void setPriorityPlayer(Player player) {
         priorityPlayer.set(player);
         log.debug("Priority player set to " + player.getIndex() + " "
-                + player.getName());
+                + player.getId());
     }
 
     /* (non-Javadoc)
@@ -1489,7 +1492,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         playerCertificateLimit.set (newLimit);
     }
 
-    public IntegerState getPlayerCertificateLimitModel () {
+    public Model<String> getPlayerCertificateLimitModel () {
         return playerCertificateLimit;
     }
 
@@ -1526,7 +1529,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     }
 
     public void addPortfolio (Portfolio portfolio) {
-        portfolioMap.put(portfolio.getName(), portfolio);
+        portfolioMap.put(portfolio.getId(), portfolio);
         portfolioUniqueNameMap.put(portfolio.getUniqueName(), portfolio);
     }
 
@@ -1584,6 +1587,11 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     public RevenueManager getRevenueManager() {
         return revenueManager;
     }
+    
+    public StateManager getStateManager() {
+        return stateManager;
+    }
+    
 
     public Bank getBank () {
         return bank;
@@ -1685,7 +1693,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
      * @param object The object to add.
      * @return True if successful.
      */
-    public boolean addObject(Moveable object, int[] position) {
+    public boolean addObject(Moveable object, int position) {
         if (object instanceof SpecialPropertyI) {
             SpecialPropertyI sp = (SpecialPropertyI) object;
             sp.setHolder(null);
@@ -1767,7 +1775,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
      * Get name of the GM instance. Currently, the name is fixed,
      * but that will change whenever a multi-game server will be implemented.
      */
-    public String getName () {
+    public String getId () {
         return gmName;
     }
 
@@ -1775,17 +1783,18 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         return gmKey;
     }
 
-    public MoveStack getMoveStack () {
-        return moveStack;
+    public ChangeStack getChangeStack () {
+        return changeStack;
     }
 
     public DisplayBuffer getDisplayBuffer() {
         return displayBuffer;
     }
 
+    // TODO: undoable makes no sense anymore
     public void addToNextPlayerMessages(String s, boolean undoable) {
         if (undoable)
-            new AddToList<String>(nextPlayerMessages, s, "nextPlayerMessages");
+            nextPlayerMessages.add(s);
         else
             nextPlayerMessages.add(s);
     }
@@ -1871,8 +1880,8 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         for (int i=0; i<players.size(); i++) {
             player = players.get(i);
             player.setIndex (i);
-            playerNames.set (i, player.getName());
-            log.debug("New player "+i+" is "+player.getName() +" (cash="+Bank.format(player.getCash())+")");
+            playerNames.set (i, player.getId());
+            log.debug("New player "+i+" is "+player.getId() +" (cash="+Bank.format(player.getCash())+")");
         }
 
         return players.get(0);
@@ -1899,5 +1908,6 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     public void processPhaseAction (String name, String value) {
         getCurrentRound().processPhaseAction(name, value);
     }
+
 }
 

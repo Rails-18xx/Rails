@@ -3,8 +3,8 @@ package rails.game.special;
 
 import rails.common.parser.ConfigurableComponentI;
 import rails.game.*;
-import rails.game.move.Moveable;
-import rails.game.move.MoveableHolder;
+import rails.game.state.Moveable;
+import rails.game.state.Holder;
 
 public interface SpecialPropertyI extends ConfigurableComponentI, Moveable {
 
@@ -12,8 +12,8 @@ public interface SpecialPropertyI extends ConfigurableComponentI, Moveable {
 
     public CompanyI getOriginalCompany();
 
-    public void setHolder(MoveableHolder holder);
-    public MoveableHolder getHolder();
+    public void setHolder(Holder holder);
+    public Holder getHolder();
     
     public boolean isExecutionable();
 
@@ -67,10 +67,10 @@ public interface SpecialPropertyI extends ConfigurableComponentI, Moveable {
 
     public String toMenu();
 
-    public String getName();
+    public String getId();
 
     public String getInfo();
 
-    public void moveTo(MoveableHolder newHolder);
+    public void moveTo(Holder newHolder);
 
 }

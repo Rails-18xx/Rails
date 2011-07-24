@@ -15,7 +15,7 @@ import org.apache.log4j.Logger;
 import rails.common.LocalText;
 import rails.game.TileI;
 import rails.game.TileManager;
-import rails.game.model.ModelObject;
+import rails.game.model.AbstractModel;
 import rails.ui.swing.elements.Field;
 import rails.ui.swing.hexmap.GUIHex;
 
@@ -82,7 +82,7 @@ public class RemainingTilesWindow extends JFrame implements WindowListener,
                     (int) (hexIcon.getIconHeight() * GUIHex.NORMAL_SCALE * 0.8),
                     Image.SCALE_SMOOTH));
 
-            label = new Field((ModelObject) tile, hexIcon, Field.CENTER);
+            label = new Field(tile, hexIcon, Field.CENTER);
             label.setVerticalTextPosition(Field.BOTTOM);
             label.setHorizontalTextPosition(Field.CENTER);
             label.setVisible(true);

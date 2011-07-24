@@ -10,7 +10,6 @@ import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.action.SetDividend;
 import rails.game.model.*;
-import rails.game.move.*;
 import rails.game.special.*;
 import rails.game.state.*;
 import rails.util.*;
@@ -76,11 +75,11 @@ public class PublicCompany extends Company implements PublicCompanyI {
     /** Sequence number in the array of public companies - may not be useful */
     protected int publicNumber = -1; // For internal use
 
-    protected List<TokenI> allBaseTokens;
+    protected ArrayListState<TokenI> allBaseTokens;
 
-    protected List<TokenI> freeBaseTokens;
+    protected ArrayListState<TokenI> freeBaseTokens;
 
-    protected List<TokenI> laidBaseTokens;
+    protected ArrayListState<TokenI> laidBaseTokens;
 
     protected int numberOfBaseTokens = 0;
 
@@ -112,7 +111,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     protected BonusModel bonusValue = null;
 
     /** Acquires Bonus objects */
-    protected List<Bonus> bonuses = null;
+    protected ArrayListState<Bonus> bonuses = null;
 
     /** Most recent revenue earned. */
     protected MoneyModel lastRevenue = null;
@@ -200,7 +199,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     protected boolean mustHaveOperatedToTradeShares = false;
 
     /** The certificates of this company (minimum 1) */
-    protected ArrayList<PublicCertificateI> certificates;
+    protected ArrayListState<PublicCertificateI> certificates;
     /** Are the certificates available from the first SR? */
     boolean certsAreInitiallyAvailable = true;
 
@@ -325,7 +324,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
         Tag shareUnitTag = tag.getChild("ShareUnit");
         if (shareUnitTag != null) {
-            shareUnit = new IntegerState (name+"_ShareUnit",
+            shareUnit = new IntegerState (this, name+"_ShareUnit",
                     shareUnitTag.getAttributeAsInteger("percentage", DEFAULT_SHARE_UNIT));
             shareUnitsForSharePrice
             = shareUnitTag.getAttributeAsInteger("sharePriceUnits", shareUnitsForSharePrice);
@@ -502,7 +501,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
             int shareTotal = 0;
             boolean gotPresident = false;
             PublicCertificateI certificate;
-            certificates = new ArrayList<PublicCertificateI>(); // Throw away
+            certificates = new ArrayListState<PublicCertificateI>(this, "certificates"); // Throw away
             // the per-type
             // specification
 
@@ -623,42 +622,43 @@ public class PublicCompany extends Company implements PublicCompanyI {
     public void init(String name, CompanyTypeI type) {
         super.init(name, type);
 
-        inGameState = new BooleanState(name + "_InGame", true);
+        inGameState = new BooleanState(this, "InGame", true);
 
         this.portfolio = new Portfolio(name, this);
         treasury = new CashModel(this);
-        lastRevenue = new MoneyModel(name + "_lastRevenue");
-        lastRevenue.setOption(MoneyModel.SUPPRESS_INITIAL_ZERO);
-        lastRevenueAllocation = new StringState(name + "_lastAllocation");
-        baseTokensModel = new BaseTokensModel(this);
+        lastRevenue = new MoneyModel(this, "lastRevenue");
+        lastRevenue.setSuppressInitialZero(true);
+        lastRevenueAllocation = new StringState(this, "lastAllocation");
         presidentModel = new PresidentModel(this);
 
-        hasStarted = new BooleanState(name + "_hasStarted", false);
-        hasFloated = new BooleanState(name + "_hasFloated", false);
-        hasOperated = new BooleanState(name + "_hasOperated", false);
-        buyable = new BooleanState(name + "_isBuyable", false);
+        hasStarted = new BooleanState(this, "hasStarted", false);
+        hasFloated = new BooleanState(this, "hasFloated", false);
+        hasOperated = new BooleanState(this, "hasOperated", false);
+        buyable = new BooleanState(this, "isBuyable", false);
 
-        allBaseTokens = new ArrayList<TokenI>();
-        freeBaseTokens = new ArrayList<TokenI>();
-        laidBaseTokens = new ArrayList<TokenI>();
+        allBaseTokens = new ArrayListState<TokenI>(this, "allBaseTokens");
+        freeBaseTokens = new ArrayListState<TokenI>(this, "freeBaseTokens");
+        laidBaseTokens = new ArrayListState<TokenI>(this, "laidBaseTokens");
+        baseTokensModel = new BaseTokensModel(this, allBaseTokens, freeBaseTokens);
 
         /* Spendings in the current operating turn */
-        privatesCostThisTurn = new MoneyModel(name + "_spentOnPrivates");
-        privatesCostThisTurn.setOption(MoneyModel.SUPPRESS_ZERO);
-        tilesLaidThisTurn = new StringState(name + "_tilesLaid");
-        tilesCostThisTurn = new MoneyModel(name + "_spentOnTiles");
-        tilesCostThisTurn.setOption(MoneyModel.SUPPRESS_ZERO);
-        tokensLaidThisTurn = new StringState(name + "_tokensLaid");
-        tokensCostThisTurn = new MoneyModel(name + "_spentOnTokens");
-        tokensCostThisTurn.setOption(MoneyModel.SUPPRESS_ZERO);
-        trainsCostThisTurn = new MoneyModel(name + "_spentOnTrains");
-        trainsCostThisTurn.setOption(MoneyModel.SUPPRESS_ZERO|MoneyModel.ALLOW_NEGATIVE);
-        bonusValue = new BonusModel(name + "_bonusValue");
+        privatesCostThisTurn = new MoneyModel(this, "spentOnPrivates");
+        privatesCostThisTurn.setSuppressZero(true);
+        tilesLaidThisTurn = new StringState(this, "tilesLaid");
+        tilesCostThisTurn = new MoneyModel(this, "spentOnTiles");
+        tilesCostThisTurn.setSuppressZero(true);
+        tokensLaidThisTurn = new StringState(this, "tokensLaid");
+        tokensCostThisTurn = new MoneyModel(this, "spentOnTokens");
+        tokensCostThisTurn.setSuppressZero(true);
+        trainsCostThisTurn = new MoneyModel(this, "spentOnTrains");
+        trainsCostThisTurn.setSuppressZero(true);
+        trainsCostThisTurn.setAllowNegative(true);
+        bonusValue = new BonusModel(this);
 
         if (hasStockPrice) {
-            parPrice = new PriceModel(this, name + "_ParPrice");
-            currentPrice = new PriceModel(this, name + "_CurrentPrice");
-            canSharePriceVary = new BooleanState (name+"_CanSharePriceVary", true);
+            parPrice = new PriceModel(this, "ParPrice");
+            currentPrice = new PriceModel(this, "CurrentPrice");
+            canSharePriceVary = new BooleanState (this, name+"_CanSharePriceVary", true);
         }
 
    }
@@ -681,16 +681,16 @@ public class PublicCompany extends Company implements PublicCompanyI {
         if (turnsWithExtraTileLaysInit != null) {
             turnsWithExtraTileLays = new HashMap<String, IntegerState>();
             for (String colour : turnsWithExtraTileLaysInit.keySet()) {
-                turnsWithExtraTileLays.put(colour, new IntegerState(
-                        name + "_" + colour + "_ExtraTileTurns",
+                turnsWithExtraTileLays.put(colour, new IntegerState(this, 
+                        "" + colour + "_ExtraTileTurns",
                         turnsWithExtraTileLaysInit.get(colour)));
             }
         }
 
        if (maxNumberOfLoans != 0) {
-            currentNumberOfLoans = new IntegerState (name+"_Loans", 0);
-            currentLoanValue = new MoneyModel (name+"_LoanValue", 0);
-            currentLoanValue.setOption(MoneyModel.SUPPRESS_ZERO);
+            currentNumberOfLoans = new IntegerState (this, "Loans", 0);
+            currentLoanValue = new MoneyModel (this, "LoanValue", 0);
+            currentLoanValue.setSuppressZero(true);
         }
 
         if (hasStockPrice && Util.hasValue(startSpace)) {
@@ -705,7 +705,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         }
 
         if (shareUnit == null) {
-            shareUnit = new IntegerState (name+"_ShareUnit", DEFAULT_SHARE_UNIT);
+            shareUnit = new IntegerState (this, name+"_ShareUnit", DEFAULT_SHARE_UNIT);
         }
 
         // Give each certificate an unique Id
@@ -742,7 +742,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         if (destinationHexName != null) {
             destinationHex = mapManager.getHex(destinationHexName);
             if (destinationHex != null) {
-                hasReachedDestination = new BooleanState (name+"_reachedDestination", false);
+                hasReachedDestination = new BooleanState (this, name+"_reachedDestination", false);
             } else {
                 throw new ConfigurationException("Invalid destination hex "
                         + destinationHexName
@@ -767,7 +767,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
                     gameManager.setGuiParameter (GuiDef.Parm.HAS_ANY_RIGHTS, true);
                     // Initialize rights here to prevent overhead if not used, 
                     // but if rights are used, the GUI needs it from the start.
-                    if (rights == null) rights = new HashMapState<String, String>(name+"_Rights");
+                    if (rights == null) rights = new HashMapState<String, String>(this, name+"_Rights");
                     // TODO: This is only a workaround for the missing finishConfiguration of special properties (SFY)
                     sp.finishConfiguration(gameManager);
                 }
@@ -945,7 +945,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     public void transferAssetsFrom(PublicCompanyI otherCompany) {
 
         if (otherCompany.getCash() > 0) {
-            new CashMove(otherCompany, this, otherCompany.getCash());
+            MoveUtils.cashMove(otherCompany, this, otherCompany.getCash());
         }
         portfolio.transferAssetsFrom(otherCompany.getPortfolio());
     }
@@ -978,7 +978,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         if (hasOperated.booleanValue()) hasOperated.set(false);
 
         // Remove the "unfloated" indicator in GameStatus
-        getPresident().getPortfolio().getShareModel(this).update();
+        getPresident().getPortfolio().getShareModel(this).notifyModel();
 
         if (sharePriceUpOnFloating) {
             stockMarket.moveUp(this);
@@ -1039,30 +1039,33 @@ public class PublicCompany extends Company implements PublicCompanyI {
         }
 
         // Dispose of the certificates
-        for (PublicCertificateI cert : certificates) {
+        for (PublicCertificateI cert : certificates.view()) {
             if (cert.getHolder() != shareDestination) {
                 cert.moveTo(shareDestination);
             }
         }
 
         // Any trains go to the pool (from the 1856 rules)
-        Util.moveObjects(portfolio.getTrainList(), bank.getPool());
+        MoveUtils.objectMoveAll(portfolio.getTrainList(), bank.getPool().getTrainList());
 
         // Any cash goes to the bank (from the 1856 rules)
         int cash = treasury.getCash();
-        if (cash > 0) new CashMove (this, bank, cash);
+        if (cash > 0) {
+            treasury.setSuppressZero(true);
+            treasury.addCash(-cash);
+            bank.addCash(cash);
+        }
 
-        lastRevenue.setOption(MoneyModel.SUPPRESS_ZERO);
+        lastRevenue.setSuppressZero(true);
         setLastRevenue(0);
-        treasury.setOption(CashModel.SUPPRESS_ZERO);
-        treasury.update();
 
-        Util.moveObjects(laidBaseTokens, this);
+        // FIXME: This is plain wrong, as the viewList cannot be modified
+        Util.moveObjects(laidBaseTokens.view(), this);
         stockMarket.close(this);
 
     }
 
-    /** Reinitialise a company, i.e. close it and make the shares available for a new company start.
+    /** Reinitialize a company, i.e. close it and make the shares available for a new company start.
      * IMplemented rules are now as in 18EU.
      * TODO Will see later if this is generic enough.
      *
@@ -1075,11 +1078,11 @@ public class PublicCompany extends Company implements PublicCompanyI {
         if (currentPrice != null) currentPrice.setPrice(null);
     }
 
-    public ModelObject getInGameModel () {
+    public Model<String> getInGameModel () {
         return inGameState;
     }
 
-    public ModelObject getIsClosedModel () {
+    public Model<String> getIsClosedModel () {
         return closedObject;
     }
 
@@ -1178,7 +1181,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
         Map<Player, Boolean> done = new HashMap<Player, Boolean>(8);
         Player owner;
-        for (PublicCertificateI cert : certificates) {
+        for (PublicCertificateI cert : certificates.view()) {
             if (cert.getHolder() instanceof Portfolio
                     && ((Portfolio)cert.getHolder()).getOwner() instanceof Player) {
                 owner = (Player)((Portfolio)cert.getHolder()).getOwner();
@@ -1209,10 +1212,10 @@ public class PublicCompany extends Company implements PublicCompanyI {
     }
 
     public String getFormattedCash() {
-        return treasury.toString();
+        return treasury.getData();
     }
 
-    public ModelObject getCashModel() {
+    public Model<String> getCashModel() {
         return treasury;
     }
 
@@ -1230,7 +1233,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
      * share).
      */
     public List<PublicCertificateI> getCertificates() {
-        return certificates;
+        return certificates.view();
     }
 
     /**
@@ -1240,10 +1243,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
      * @param list ArrayList containing the certificates.
      */
     public void setCertificates(List<PublicCertificateI> list) {
-        certificates = new ArrayList<PublicCertificateI>();
-        for (PublicCertificateI cert : list) {
-            certificates.add(new PublicCertificate(cert));
-        }
+        certificates = new ArrayListState<PublicCertificateI>(this, "certificates", list);
     }
 
     /**
@@ -1252,7 +1252,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
      *
      */
     public void nameCertificates () {
-        for (PublicCertificateI cert : certificates) {
+        for (PublicCertificateI cert : certificates.view()) {
             cert.setCompany(this);
         }
     }
@@ -1264,7 +1264,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
      */
     public void addCertificate(PublicCertificateI certificate) {
         if (certificates == null)
-            certificates = new ArrayList<PublicCertificateI>();
+            certificates = new ArrayListState<PublicCertificateI>(this, "certificates");
         certificates.add(certificate);
     }
 
@@ -1321,7 +1321,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         return lastRevenue.intValue();
     }
 
-    public ModelObject getLastRevenueModel() {
+    public Model<String> getLastRevenueModel() {
         return lastRevenue;
     }
 
@@ -1338,7 +1338,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         return lastRevenueAllocation.stringValue();
     }
 
-    public ModelObject getLastRevenueAllocationModel() {
+    public Model<String> getLastRevenueAllocationModel() {
         return lastRevenueAllocation;
     }
 
@@ -1390,7 +1390,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     public boolean isSoldOut() {
         CashHolder owner;
 
-        for (PublicCertificateI cert : certificates) {
+        for (PublicCertificateI cert : certificates.view()) {
             owner = cert.getPortfolio().getOwner();
             if (owner instanceof Bank || owner == cert.getCompany()) {
                 return false;
@@ -1450,7 +1450,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     public int sharesOwnedByPlayers() {
         int shares = 0;
-        for (PublicCertificateI cert : certificates) {
+        for (PublicCertificateI cert : certificates.view()) {
             if (cert.getPortfolio().getOwner() instanceof Player) {
                 shares += cert.getShares();
             }
@@ -1492,7 +1492,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
             pres.getPortfolio().swapPresidentCertificate(this,
                     buyer.getPortfolio());
             ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
-                    buyer.getName(),
+                    buyer.getId(),
                     name ));
         }
     }
@@ -1519,7 +1519,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
                 seller.getPortfolio().swapPresidentCertificate(this,
                         player.getPortfolio());
                 ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
-                        player.getName(),
+                        player.getId(),
                         name ));
             }
         }
@@ -1545,7 +1545,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
                 president.getPortfolio().swapPresidentCertificate(this,
                         player.getPortfolio());
                 ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
-                        player.getName(),
+                        player.getId(),
                         name ));
                 return;
             }
@@ -1608,7 +1608,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         }
     }
 
-    public ModelObject getTrainsSpentThisTurnModel() {
+    public Model<String> getTrainsSpentThisTurnModel() {
         return trainsCostThisTurn;
     }
 
@@ -1620,8 +1620,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
             // move to elsewhere.
             ReportBuffer.add(LocalText.getText("BuysPrivateFromFor",
                     name,
-                    privateCompany.getName(),
-                    from.getName(),
+                    privateCompany.getId(),
+                    from.getId(),
                     Bank.format(price) ));
         }
 
@@ -1629,7 +1629,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         privateCompany.moveTo(portfolio);
 
         // Move the money
-        if (price > 0) new CashMove(this, from.owner, price);
+        if (price > 0) MoveUtils.cashMove(this, from.owner, price);
         privatesCostThisTurn.add(price);
 
         // Move any special abilities to the portfolio, if configured so
@@ -1658,20 +1658,20 @@ public class PublicCompany extends Company implements PublicCompanyI {
             }
             for (SpecialPropertyI sp : spsToMoveToGM) {
                 sp.moveTo(gameManager);
-                log.debug("SP "+sp.getName()+" is now a common property");
+                log.debug("SP "+sp.getId()+" is now a common property");
             }
         }
 
     }
 
-    public ModelObject getPrivatesSpentThisTurnModel() {
+    public Model<String> getPrivatesSpentThisTurnModel() {
         return privatesCostThisTurn;
     }
 
     public void layTile(MapHex hex, TileI tile, int orientation, int cost) {
 
         String tileLaid =
-            "#" + tile.getExternalId() + "/" + hex.getName() + "/"
+            "#" + tile.getExternalId() + "/" + hex.getId() + "/"
             + hex.getOrientationName(orientation);
         tilesLaidThisTurn.appendWithDelimiter(tileLaid, ", ");
 
@@ -1687,17 +1687,17 @@ public class PublicCompany extends Company implements PublicCompanyI {
         tilesLaidThisTurn.appendWithDelimiter(Bank.format(cost), ",");
     }
 
-    public ModelObject getTilesLaidThisTurnModel() {
+    public Model<String> getTilesLaidThisTurnModel() {
         return tilesLaidThisTurn;
     }
 
-    public ModelObject getTilesCostThisTurnModel() {
+    public Model<String> getTilesCostThisTurnModel() {
         return tilesCostThisTurn;
     }
 
     public void layBaseToken(MapHex hex, int cost) {
 
-        String tokenLaid = hex.getName();
+        String tokenLaid = hex.getId();
         tokensLaidThisTurn.appendWithDelimiter(tokenLaid, ", ");
         if (cost > 0) tokensCostThisTurn.add(cost);
     }
@@ -1761,11 +1761,11 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     }
 
-    public ModelObject getTokensLaidThisTurnModel() {
+    public Model<String> getTokensLaidThisTurnModel() {
         return tokensLaidThisTurn;
     }
 
-    public ModelObject getTokensCostThisTurnModel() {
+    public Model<String> getTokensCostThisTurnModel() {
         return tokensCostThisTurn;
     }
 
@@ -1775,22 +1775,23 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     public boolean addBonus(Bonus bonus) {
         if (bonuses == null) {
-            bonuses = new ArrayList<Bonus>(2);
-            bonusValue.set(bonuses);
+            bonuses = new ArrayListState<Bonus>(this, "Bonuses");
+            bonusValue.setBonuses(bonuses);
         }
-        new AddToList<Bonus> (bonuses, bonus, name+"_Bonuses", bonusValue);
+        bonuses.add(bonus);
         return true;
     }
 
     public boolean removeBonus(Bonus bonus) {
         bonus.close(); // close the bonus
-        new RemoveFromList<Bonus> (bonuses, bonus, name+"_Bonuses", bonusValue);
+        // TODO: add bonusValue as dependence to bonuses
+        bonuses.remove(bonus);
         return true;
     }
 
     public boolean removeBonus (String name) {
         if (bonuses != null && !bonuses.isEmpty()) {
-            for(Bonus bonus : bonuses) {
+            for(Bonus bonus : bonuses.view()) {
                 if (bonus.getName().equals(name)) return removeBonus(bonus);
             }
         }
@@ -1798,7 +1799,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     }
 
     public List<Bonus> getBonuses() {
-        return bonuses;
+        return bonuses.view();
     }
 
     public BonusModel getBonusTokensModel() {
@@ -1843,7 +1844,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
                     }
                 }
             }
-            log.debug(name + " lays home base on " + homeHex.getName() + " city "
+            log.debug(name + " lays home base on " + homeHex.getId() + " city "
                     + homeCityNumber);
             homeHex.layBaseToken(this, homeCityNumber);
         }
@@ -1865,21 +1866,22 @@ public class PublicCompany extends Company implements PublicCompanyI {
      * as well. The token is removed from the company laid token list and added
      * to the free token list.
      */
-
+    // TODO: Replace the  whole method, undo is done differently now
+    @Deprecated
     public boolean addToken(TokenI token, int position) {
-
         boolean result = false;
         if (token instanceof BaseToken
                 && laidBaseTokens.remove(token)
-                && Util.addToList(freeBaseTokens, token, position)) {
+                // FIXME: This is plain wrong as we cannot add the token to the view list
+                && Util.addToList(freeBaseTokens.view(), token, position)) {
             token.setHolder(this);
-            this.baseTokensModel.update();
+            this.baseTokensModel.notifyModel();
         }
         return result;
 
     }
 
-    public List<TokenI> getTokens() {
+    public ArrayListState<TokenI> getTokens() {
         return allBaseTokens;
     }
 
@@ -1905,18 +1907,16 @@ public class PublicCompany extends Company implements PublicCompanyI {
      * free token list and added to the laid token list. In other words: lay a
      * base token
      */
-    public boolean removeToken(TokenI token) {
+    public void removeToken(TokenI token) {
 
-        boolean result = false;
         if (token instanceof BaseToken && freeBaseTokens.remove(token)) {
-            result = laidBaseTokens.add(token);
-            this.baseTokensModel.update();
+            laidBaseTokens.add(token);
+            this.baseTokensModel.notifyModel();
         }
-        return result;
 
     }
 
-    public boolean addObject(Moveable object, int[] position) {
+    public boolean addObject(Moveable object, int position) {
         if (object instanceof TokenI) {
             return addToken((TokenI) object, position == null ? -1 : position[0]);
         } else {
@@ -1926,7 +1926,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     public boolean removeObject(Moveable object) {
         if (object instanceof BaseToken) {
-            return removeToken((TokenI) object);
+            removeToken((TokenI) object);
+            return true;
         } else {
             return false;
         }
@@ -2011,7 +2012,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         return currentLoanValue;
     }
     
-    public ModelObject getRightsModel () {
+    public Model<String> getRightsModel () {
         //return rightsModel;
         return rights;
     }
@@ -2022,15 +2023,13 @@ public class PublicCompany extends Company implements PublicCompanyI {
     
     public void setRight (String nameOfRight, String value) {
         if (rights == null) {
-            rights = new HashMapState<String, String>(name+"_Rights");
-            //rightsModel.init (rights);
+            rights = new HashMapState<String, String>(this, "Rights");
         }
         rights.put(nameOfRight, value);
-        //rightsModel.update();
     }
     
     public boolean hasRight (String nameOfRight) {
-        return rights != null && rights.hasKey(nameOfRight);
+        return rights != null && rights.containsKey(nameOfRight);
     }
     
     public String getRight (String nameOfRight) {
@@ -2053,7 +2052,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
          * the Company specification
          */
         if (certificates != null) {
-            ((PublicCompanyI) clone).setCertificates(certificates);
+            ((PublicCompanyI) clone).setCertificates(certificates.view());
         }
         if (specialProperties != null) {
             ((PublicCompany) clone).specialProperties = new ArrayList<SpecialPropertyI>(specialProperties);

@@ -174,7 +174,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
                             scale, i-minX+1, j-minY+1);
                     hex.setHexModel(mh);
                     hex.originalTileId = hex.currentTileId;
-                    hexesByName.put(mh.getName(), hex);
+                    hexesByName.put(mh.getId(), hex);
                     h[i][j] = hex;
                     hexes.add(hex);
                 }

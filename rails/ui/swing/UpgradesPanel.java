@@ -135,16 +135,16 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
                     PublicCompanyI comp = ((LayBaseToken) action).getCompany();
                     fgColour = comp.getFgColour();
                     bgColour = comp.getBgColour();
-                    description = text = comp.getName();
+                    description = text = comp.getId();
                     if (action.getSpecialProperty() != null) {
-                        description += " (" + action.getSpecialProperty().getOriginalCompany().getName()+")";
+                        description += " (" + action.getSpecialProperty().getOriginalCompany().getId()+")";
                     }
                 } else if (action instanceof LayBonusToken) {
                     fgColour = Color.BLACK;
                     bgColour = Color.WHITE;
                     BonusToken token =
                         (BonusToken) action.getSpecialProperty().getToken();
-                    description = token.getName();
+                    description = token.getId();
                     text = "+" + token.getValue();
                 }
                 icon = new TokenIcon(25, fgColour, bgColour, text);
@@ -179,8 +179,8 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
                         (int) (hexIcon.getIconHeight() * GUIHex.NORMAL_SCALE * 0.8),
                         Image.SCALE_SMOOTH));
 
-                HexLabel hexLabel = new HexLabel(hexIcon, tile.getId());
-                hexLabel.setName(tile.getName());
+                HexLabel hexLabel = new HexLabel(hexIcon, tile.getNb());
+                hexLabel.setName(tile.getId());
                 hexLabel.setTextFromTile(tile);
                 hexLabel.setOpaque(true);
                 hexLabel.setVisible(true);
@@ -219,7 +219,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
             panelLayout.setRows(Math.max(tiles.size() + 2, defaultNbPanelElements));
             for (TileI tile : tiles) {
 
-                BufferedImage hexImage = getHexImage(tile.getId());
+                BufferedImage hexImage = getHexImage(tile.getNb());
                 ImageIcon hexIcon = new ImageIcon(hexImage);
 
                 // Cheap n' Easy rescaling.
@@ -228,8 +228,8 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
                         (int) (hexIcon.getIconHeight() * GUIHex.NORMAL_SCALE * 0.8),
                         Image.SCALE_SMOOTH));
 
-                HexLabel hexLabel = new HexLabel(hexIcon, tile.getId());
-                hexLabel.setName(tile.getName());
+                HexLabel hexLabel = new HexLabel(hexIcon, tile.getNb());
+                hexLabel.setName(tile.getId());
                 hexLabel.setTextFromTile(tile);
                 hexLabel.setOpaque(true);
                 hexLabel.setVisible(true);
@@ -276,7 +276,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
                     PublicCompanyI comp = ((BaseToken)token).getCompany();
                     fgColour = comp.getFgColour();
                     bgColour = comp.getBgColour();
-                    description = text = comp.getName();
+                    description = text = comp.getId();
                 }
                 icon = new TokenIcon(25, fgColour, bgColour, text);
                 tokenLabel = new CorrectionTokenLabel(icon, token);
@@ -512,7 +512,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         protected void setToolTip() {
             TileI currentTile = orUIManager.getGameUIManager().getGameManager().getTileManager().getTile(internalId);
             StringBuffer tt = new StringBuffer("<html>");
-            tt.append("<b>Tile</b>: ").append(currentTile.getName()); // or
+            tt.append("<b>Tile</b>: ").append(currentTile.getId()); // or
             // getId()
             if (currentTile.hasStations()) {
                 // for (Station st : currentTile.getStations())

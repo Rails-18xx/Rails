@@ -5,8 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rails.game.RoundI;
-import rails.game.move.StateChange;
-import rails.game.state.EnumState;
+import rails.game.state.AbstractItem;
 import rails.game.state.GenericState;
 
 /**
@@ -17,7 +16,7 @@ import rails.game.state.GenericState;
  * @author VosE
  *
  */
-public class GuiHints implements Serializable {
+public class GuiHints extends AbstractItem implements Serializable{
 
     public static final long serialVersionUID = 1L;
 
@@ -28,18 +27,19 @@ public class GuiHints implements Serializable {
     private List<VisibilityHint> visibilityHints;
 
     /** Which window type is active and should be on top? */
-    private EnumState<GuiDef.Panel> activePanel = null;
+    private GenericState<GuiDef.Panel> activePanel = null;
 
     public Class<? extends RoundI> getCurrentRoundType() {
         return currentRoundType.get();
     }
 
     public void setCurrentRoundType(Class<? extends RoundI> currentRoundType) {
-        if (this.currentRoundType == null)
+        if (this.currentRoundType == null) {
             this.currentRoundType = new GenericState<Class<? extends RoundI>>
-                        ("CurrentRoundType",  currentRoundType);
-        else
-            new StateChange(this.currentRoundType, currentRoundType);
+                        (this, "CurrentRoundType",  currentRoundType);
+        } else {
+            this.currentRoundType.set(currentRoundType);
+        }
     }
 
     public List<VisibilityHint> getVisibilityHints() {
@@ -66,10 +66,11 @@ public class GuiHints implements Serializable {
     }
 
     public void setActivePanel(GuiDef.Panel activePanel) {
-        if (this.activePanel == null)
-            this.activePanel = new EnumState<GuiDef.Panel>("ActivePanel",  activePanel);
-        else
-            new StateChange(this.activePanel, activePanel);
+        if (this.activePanel == null) {
+            this.activePanel = new GenericState<GuiDef.Panel>(this, "ActivePanel", activePanel);
+        } else {
+            this.activePanel.set(activePanel);
+        }
     }
 
     public class VisibilityHint {
@@ -90,4 +91,5 @@ public class GuiHints implements Serializable {
             return visibility;
         }
     }
+
 }

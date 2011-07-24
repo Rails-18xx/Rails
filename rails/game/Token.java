@@ -10,8 +10,8 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import rails.game.move.MoveableHolder;
-import rails.game.move.ObjectMove;
+import rails.game.state.Holder;
+import rails.game.state.ObjectMove;
 
 /**
  * @author Erik Vos
@@ -45,11 +45,11 @@ public abstract class Token implements TokenI {
         this.holder = holder;
     }
 
-    public TokenHolder getHolder() {
+    public Holder getHolder() {
         return holder;
     }
 
-    public void moveTo(MoveableHolder newHolder) {
+    public void moveTo(Holder newHolder) {
         if (newHolder instanceof TokenHolder) {
             new ObjectMove(this, holder, newHolder);
         }

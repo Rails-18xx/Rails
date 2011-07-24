@@ -67,7 +67,7 @@ public class LayBonusToken extends LayToken {
             b.append(" location=").append(locationNames).append(" spec.prop=").append(
                     specialProperty);
         } else {
-            b.append("hex=").append(chosenHex.getName());
+            b.append("hex=").append(chosenHex.getId());
         }
         return b.toString();
     }

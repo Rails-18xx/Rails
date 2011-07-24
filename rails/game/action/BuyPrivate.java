@@ -33,7 +33,7 @@ public class BuyPrivate extends PossibleORAction {
             int maximumPrice) {
 
         this.privateCompany = privateCompany;
-        this.privateCompanyName = privateCompany.getName();
+        this.privateCompanyName = privateCompany.getId();
         this.minimumPrice = minimumPrice;
         this.maximumPrice = maximumPrice;
     }
@@ -86,8 +86,8 @@ public class BuyPrivate extends PossibleORAction {
 
     @Override
     public String toString() {
-        return "BuyPrivate " + privateCompany.getName() + " holder="
-               + privateCompany.getPortfolio().getName();
+        return "BuyPrivate " + privateCompany.getId() + " holder="
+               + privateCompany.getPortfolio().getId();
     }
 
     /** Deserialize */

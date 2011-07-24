@@ -8,7 +8,8 @@ package rails.game;
 import rails.common.parser.ConfigurableComponentI;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
-import rails.game.move.ObjectMove;
+import rails.game.state.MoveUtils;
+import rails.game.state.ObjectMove;
 import rails.util.Util;
 
 /**
@@ -65,8 +66,7 @@ public class BonusToken extends Token implements Closeable, ConfigurableComponen
      * See prepareForRemovel().
      */
     public void close() {
-
-        new ObjectMove(this, holder, GameManager.getInstance().getBank().getScrapHeap());
+        MoveUtils.objectMove(this, holder.getTokens(), GameManager.getInstance().getBank().getScrapHeap().tokens);
         if (user != null) {
             user.removeBonus(name);
         }
@@ -102,7 +102,7 @@ public class BonusToken extends Token implements Closeable, ConfigurableComponen
         return (holder instanceof MapHex);
     }
 
-    public String getName() {
+    public String getId() {
         return name;
     }
 

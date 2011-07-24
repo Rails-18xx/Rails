@@ -61,7 +61,7 @@ public class StartRound_1825 extends StartRound {
                     item.setStatus(StartItem.BUYABLE);
                     possibleActions.add(action =   
                         new BuyStartItem(item, item.getBasePrice(), false));
-                    log.debug(getCurrentPlayer().getName() + " may: "
+                    log.debug(getCurrentPlayer().getId() + " may: "
                             + action.toString());
                     //Found one, no need to find any others
                     itemAvailable = true;

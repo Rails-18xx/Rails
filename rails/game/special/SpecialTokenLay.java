@@ -55,7 +55,7 @@ public class SpecialTokenLay extends SpecialProperty {
                 token = bToken;
                 bToken.configureFromXML(tokenLayTag);
 
-                tokenName = bToken.getName();
+                tokenName = bToken.getId();
                 tokenValue = bToken.getValue();
                 numberAvailable =
                         tokenLayTag.getAttributeAsInteger("number",
@@ -125,13 +125,13 @@ public class SpecialTokenLay extends SpecialProperty {
         return token;
     }
 
-    public String getName() {
+    public String getId() {
         return toString();
     }
 
     @Override
     public String toString() {
-        return "SpecialTokenLay comp=" + originalCompany.getName() + " type="
+        return "SpecialTokenLay comp=" + originalCompany.getId() + " type="
                + tokenClass.getSimpleName() + ": "
                + (token != null ? token.toString() : "") + " hex="
                + locationCodes + " extra=" + extra + " cost=" + free;

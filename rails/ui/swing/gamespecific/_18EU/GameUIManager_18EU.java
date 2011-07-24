@@ -37,8 +37,8 @@ public class GameUIManager_18EU extends GameUIManager {
                     boolean replaceToken =
                             JOptionPane.showConfirmDialog(statusWindow, LocalText.getText(
                                         "WantToReplaceToken",
-                                        minor.getName(),
-                                        major.getName() ),
+                                        minor.getId(),
+                                        major.getId() ),
                                     LocalText.getText("PleaseSelect"),
                                     JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
                     action.setReplaceToken(replaceToken);
@@ -69,7 +69,7 @@ public class GameUIManager_18EU extends GameUIManager {
                        int i = 0;
                        for (PublicCompanyI minor : minors) {
                            options[i++] =
-                                   "Minor " + minor.getName() + " "
+                                   "Minor " + minor.getId() + " "
                                            + minor.getLongName();
                        }
                        dialog = new RadioButtonDialog (this,

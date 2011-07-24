@@ -14,7 +14,8 @@ import rails.game.Stop.RunThrough;
 import rails.game.Stop.RunTo;
 import rails.game.Stop.Score;
 import rails.game.Stop.Type;
-import rails.game.model.ModelObject;
+import rails.game.model.AbstractModel;
+import rails.game.state.Item;
 import rails.util.Util;
 
 /** Represents a certain tile <i>type</i>, identified by its id (tile number).
@@ -23,10 +24,10 @@ import rails.util.Util;
  * @author Erik
  *
  */
-public class Tile extends ModelObject implements TileI, StationHolder, Comparable<TileI> {
+public class Tile extends AbstractModel<String> implements TileI, StationHolder, Comparable<TileI> {
 
     /** The 'internal id', identifying the tile in the XML files */
-    private final int id;
+    private final int nb;
     /**
      * The 'external id', which is shown in the UI. Usually equal to the
      * internal id, but different in case of duplicates.
@@ -45,6 +46,7 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
     private final List<Upgrade> upgrades = new ArrayList<Upgrade>(); // Contains
     // Upgrade instances
     //private String upgradesString = "";
+    @SuppressWarnings("rawtypes")
     private final List[] tracksPerSide = new ArrayList[6];
     // N.B. Cannot parametrise collection array
     private Map<Integer, List<Track>> tracksPerStation = null;
@@ -113,11 +115,12 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
     /** Storage of revenueBonus that are bound to the tile */
     protected List<RevenueBonusTemplate> revenueBonuses = null;
 
-    public Tile(Integer id) {
-        this.id = id;
+    public Tile(Item owner, Integer id) {
+        super(owner, Integer.toString(id));
+        this.nb = id;
         pictureId = id;
         externalId = String.valueOf(id);
-        name = "" + this.id;
+        name = "" + this.nb;
 
         for (int i = 0; i < 6; i++)
             tracksPerSide[i] = new ArrayList<Track>();
@@ -133,7 +136,7 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
 
         if (defTag == null) {
             throw new ConfigurationException(LocalText.getText("TileMissing",
-                    String.valueOf(id)));
+                    String.valueOf(nb)));
         }
 
         name = defTag.getAttributeAsString("name", name);
@@ -141,7 +144,7 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
         colourName = defTag.getAttributeAsString("colour");
         if (colourName == null)
             throw new ConfigurationException(LocalText.getText(
-                    "TileColorMissing", String.valueOf(id)));
+                    "TileColorMissing", String.valueOf(nb)));
         colourName = colourName.toLowerCase();
         if (colourName.equals("gray")) colourName = "grey";
         colourNumber = VALID_COLOUR_NAMES.indexOf(colourName);
@@ -165,16 +168,16 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
                 sid = stationTag.getAttributeAsString("id");
                 if (sid == null)
                     throw new ConfigurationException(LocalText.getText(
-                            "TileStationHasNoID", String.valueOf(id)));
+                            "TileStationHasNoID", String.valueOf(nb)));
                 number = -getPointNumber(sid);
                 type = stationTag.getAttributeAsString("type");
                 if (type == null)
                     throw new ConfigurationException(LocalText.getText(
-                            "TileStationHasNoType", String.valueOf(id)));
+                            "TileStationHasNoType", String.valueOf(nb)));
                 if (!Station.isTypeValid(type)) {
                     throw new ConfigurationException(LocalText.getText(
                             "TileStationHasInvalidType",
-                            id,
+                            nb,
                             type ));
                 }
                 value = stationTag.getAttributeAsInteger("value", 0);
@@ -200,7 +203,7 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
                 toStr = trackTag.getAttributeAsString("to");
                 if (fromStr == null || toStr == null) {
                     throw new ConfigurationException(LocalText.getText(
-                            "FromOrToMissing", String.valueOf(id)));
+                            "FromOrToMissing", String.valueOf(nb)));
                 }
 
                 from = getPointNumber(fromStr);
@@ -387,7 +390,7 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
                 upgrade.setTile(tile);
             } else {
                 throw new ConfigurationException ("Cannot find upgrade tile #"
-                        +upgrade.getTileId()+" for tile #"+id);
+                        +upgrade.getTileId()+" for tile #"+nb);
             }
         }
     }
@@ -406,8 +409,8 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
     /**
      * @return Returns the id.
      */
-    public int getId() {
-        return id;
+    public int getNb() {
+        return nb;
     }
 
     public String getExternalId() {
@@ -421,7 +424,7 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
     /**
      * @return Returns the name.
      */
-    public String getName() {
+    public String getId() {
         return name;
     }
 
@@ -558,7 +561,7 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
      * This method may only be called via the TileMove execute() and undo() methods. */
     public boolean add(MapHex hex) {
         tilesLaid.add(hex);
-        update();
+        notifyModel();
         return true;
     }
 
@@ -566,7 +569,7 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
      * This method may only be called via the TileMove execute() and undo() methods. */
     public boolean remove(MapHex hex) {
         tilesLaid.remove(hex);
-        update();
+        notifyModel();
         return true;
     }
 
@@ -579,8 +582,7 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
     }
 
     /** Return a caption for the Remaining Tiles window */
-    @Override
-    public String getText() {
+    public String getData() {
 
         String count = unlimited ? "+" : String.valueOf(countFreeTiles());
         return "#" + externalId + ": " + count;
@@ -748,4 +750,5 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
             hexes = null; // Do this only once
         }
     }
+
 }

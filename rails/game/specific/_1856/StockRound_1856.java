@@ -21,8 +21,8 @@ public class StockRound_1856 extends StockRound {
     public StockRound_1856 (GameManagerI aGameManager) {
         super (aGameManager);
 
-        sharesSoldSoFar = new IntegerState("CGR_SharesSoldSoFar", 0);
-        squaresDownSoFar = new IntegerState("CGR_SquaresDownSoFar", 0);
+        sharesSoldSoFar = new IntegerState(this, "CGR_SharesSoldSoFar", 0);
+        squaresDownSoFar = new IntegerState(this, "CGR_SquaresDownSoFar", 0);
 }
 
     /**
@@ -88,7 +88,7 @@ public class StockRound_1856 extends StockRound {
         CashHolder recipient;
 
         if (price != 0
-                && !company.getName().equalsIgnoreCase(PublicCompany_CGR.NAME)
+                && !company.getId().equalsIgnoreCase(PublicCompany_CGR.NAME)
                 && from == ipo) {
 
             PublicCompany_1856 comp = (PublicCompany_1856)company;
@@ -105,7 +105,7 @@ public class StockRound_1856 extends StockRound {
                     ReportBuffer.addWaiting(LocalText.getText("HoldMoneyInEscrow",
                             Bank.format(price),
                             Bank.format(comp.getMoneyInEscrow()),
-                            comp.getName() ));
+                            comp.getId() ));
                     break;
                 }
                 // fall through
@@ -129,16 +129,16 @@ public class StockRound_1856 extends StockRound {
     protected void gameSpecificChecks (Portfolio boughtFrom,
             PublicCompanyI company) {
 
-        if (company.getName().equalsIgnoreCase(PublicCompany_CGR.NAME)
+        if (company.getId().equalsIgnoreCase(PublicCompany_CGR.NAME)
                 && ((PublicCompany_CGR)company).hasTemporaryPresident()) {
             log.debug("Resetting temp. president");
             ipo.swapPresidentCertificate(company,
                     currentPlayer.getPortfolio());
             Player oldPresident = company.getPresident();
             ((PublicCompany_CGR)company).setTemporaryPresident(null);
-            company.getPresident().getPortfolio().getShareModel(company).update();
+            company.getPresident().getPortfolio().getShareModel(company).notifyModel();
             if (currentPlayer != oldPresident) {
-                oldPresident.getPortfolio().getShareModel(company).update();
+                oldPresident.getPortfolio().getShareModel(company).notifyModel();
             }
         }
     }
@@ -171,8 +171,8 @@ public class StockRound_1856 extends StockRound {
                 if (price2 < lowestPrice) lowestPrice = price2;
             }
             DisplayBuffer.add(LocalText.getText("MustBuyExtraShareAsPresident",
-                    currentPlayer.getName(),
-                    cgr.getName(),
+                    currentPlayer.getId(),
+                    cgr.getId(),
                     cgr.getShareUnit()));
             if (lowestPrice > cash) {
                 gameManager.startShareSellingRound(currentPlayer,

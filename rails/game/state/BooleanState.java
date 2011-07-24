@@ -1,43 +1,48 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/state/BooleanState.java,v 1.3 2010/01/01 14:02:30 evos Exp $
- * 
- * Created on May 19, 2007
- * Change Log:
- */
 package rails.game.state;
 
 /**
- * @author Erik Vos
+ * A stateful version of a boolean variable
+ * 
+ * @author Erik Vos, Stefan Frey (V2.0)
  */
-public class BooleanState extends State {
+public final class BooleanState extends AbstractState {
 
+    private boolean value;
+    
     /**
-     * @param name
-     * @param clazz
+     * Boolean state variable with default value false
+     * @param owner object containing state (usually this)
+     * @param id id state variable
      */
-    public BooleanState(String name) {
-        super(name, Boolean.FALSE);
+    public BooleanState(Item owner, String id) {
+        this(owner, id, false);
     }
 
     /**
-     * @param name
-     * @param object
+     * @param owner object containing state (usually this)
+     * @param id id state variable
+     * @param value initial value
      */
-    public BooleanState(String name, boolean value) {
-        super(name, new Boolean(value));
+    public BooleanState(Item owner, String id, boolean value) {
+        super(owner, id);
+        this.value = value;
     }
 
     public void set(boolean value) {
-        super.set(new Boolean(value));
+        new BooleanChange(this, value);
     }
 
     public boolean booleanValue() {
-        return ((Boolean) object).booleanValue();
+        return value;
     }
     
-    /** Update is the boolean value */
-    public Object getUpdate () {
-        return object;
+    @Override
+    public String toString() {
+        return Boolean.toString(value);
     }
 
+    void change(boolean value) {
+        this.value = value;
+    }
  
 }

@@ -2,16 +2,24 @@
 package rails.game.model;
 
 import rails.game.PublicCompanyI;
+import rails.game.state.State;
 
-public class BaseTokensModel extends ModelObject {
+/**
+ * A model presenting the number of tokens
+ */
+
+public class BaseTokensModel extends AbstractModel<String> {
 
     private PublicCompanyI company;
 
-    public BaseTokensModel(PublicCompanyI company) {
+    public BaseTokensModel(PublicCompanyI company, State allTokenState, State freeTokenState) {
+        super(company, "baseTokensModel");
         this.company = company;
+        allTokenState.addModel(this);
+        freeTokenState.addModel(this);
     }
 
-    public String getText() {
+    public String getData() {
         int allTokens = company.getNumberOfBaseTokens();
         int freeTokens = company.getNumberOfFreeBaseTokens();
         if (allTokens == 0) {

@@ -1,47 +1,73 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/state/StringState.java,v 1.4 2008/06/04 19:00:36 evos Exp $
- * 
- * Created on May 19, 2007
- * Change Log:
- */
 package rails.game.state;
 
-import rails.game.move.StateChange;
-
 /**
- * @author Erik Vos
+ * A stateful version of a String variable
+ * 
+ * @author Erik Vos, Stefan Frey (v2.0)
  */
-public class StringState extends State {
+public final class StringState extends AbstractState {
+
+    private String value;
 
     /**
-     * @param name
-     * @param clazz
+     * String state variable with default value of an empty string ""
+     * @param owner object containing state (usually this)
+     * @param id id state variable
      */
-    public StringState(String name) {
-        super(name, "");
+    public StringState(Item owner, String id) {
+        this(owner, id, "");
     }
-
+    
     /**
-     * @param name
-     * @param object
+     * @param owner object containing state (usually this)
+     * @param id id state variable
+     * @param value initial value
      */
-    public StringState(String name, String value) {
-        super(name, value);
+    public StringState(Item owner, String id, String value) {
+        super(owner, id);
+        this.value = value;
     }
 
     public void set(String value) {
-        super.set(value);
+        new StringChange(this, value);
     }
-
+    
+    /**
+     * Append string to string state
+     * No change is created if value to append is null or empty ("")
+     * 
+     * @param value string to append
+     * @param delimiter to use before appending (only for non-empty value)
+     */
     public void appendWithDelimiter(String value, String delimiter) {
-        String oldValue = (String) object;
-        if (oldValue == null) oldValue = "";
-        StringBuffer newValue = new StringBuffer(oldValue);
-        if (newValue.length() > 0) newValue.append(delimiter);
-        newValue.append(value);
-        new StateChange(this, newValue.toString());
+        if (value == null || value.equals("") ) return;
+        
+        String newValue;
+        if (this.value == null || this.value.equals("")) {
+            newValue = value;
+        } else {
+            if (delimiter == null) {
+                newValue = this.value + value;
+            } else {
+                newValue = this.value + delimiter + value;
+            }
+        }
+        set(newValue);
+    }
+    
+    /**
+     * @return current value of string state
+     */
+    public String stringValue() {
+        return value;
     }
 
-    public String stringValue() {
-        return (String) object;
+    @Override 
+    public String toString() {
+        return value;
+    }
+
+    void change(String value) {
+        this.value = value;
     }
 }

@@ -1,7 +1,7 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCertificateI.java,v 1.12 2010/06/17 21:35:54 evos Exp $ */
 package rails.game;
 
-import rails.game.move.Moveable;
+import rails.game.state.Moveable;
 
 public interface PublicCertificateI extends Certificate, Moveable {
 

@@ -455,14 +455,14 @@ public class StatusWindow extends JFrame implements ActionListener,
 
             setTitle(LocalText.getText(
                     "TRADE_TREASURY_SHARES_TITLE",
-                    ((TreasuryShareRound) currentRound).getOperatingCompany().getName()));
+                    ((TreasuryShareRound) currentRound).getOperatingCompany().getId()));
             gameStatus.initTurn(-1, true);
             passButton.setEnabled(true);
 
         } else if ((currentRound instanceof ShareSellingRound)) {
             setTitle(LocalText.getText(
                     "EMERGENCY_SHARE_SELLING_TITLE",
-                    (((ShareSellingRound) currentRound).getCompanyNeedingCash().getName())));
+                    (((ShareSellingRound) currentRound).getCompanyNeedingCash().getId())));
             gameStatus.initTurn(getCurrentPlayer().getIndex(), true);
             gameStatus.setPriorityPlayer(gameUIManager.getPriorityPlayer().getIndex());
 

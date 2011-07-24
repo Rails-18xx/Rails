@@ -68,7 +68,7 @@ public class StartRound_1830 extends StartRound {
 
             Player currentPlayer = getCurrentPlayer();
 
-            for (StartItem item : itemsToSell) {
+            for (StartItem item : itemsToSell.view()) {
 
                 if (item.isSold()) {
                     // Don't include
@@ -188,8 +188,8 @@ public class StartRound_1830 extends StartRound {
         while (true) {
 
             // Check player
-            if (!playerName.equals(player.getName())) {
-                errMsg = LocalText.getText("WrongPlayer", playerName, player.getName());
+            if (!playerName.equals(player.getId())) {
+                errMsg = LocalText.getText("WrongPlayer", playerName, player.getId());
                 break;
             }
             // Check item
@@ -248,7 +248,7 @@ public class StartRound_1830 extends StartRound {
             return false;
         }
 
-        moveStack.start(false);
+        changeStack.start(false);
 
         item.setBid(bidAmount, player);
         if (previousBid > 0) player.unblockCash(previousBid);
@@ -286,8 +286,8 @@ public class StartRound_1830 extends StartRound {
         while (true) {
 
             // Check player
-            if (!playerName.equals(player.getName())) {
-                errMsg = LocalText.getText("WrongPlayer", playerName, player.getName());
+            if (!playerName.equals(player.getId())) {
+                errMsg = LocalText.getText("WrongPlayer", playerName, player.getId());
                 break;
             }
             break;
@@ -302,7 +302,7 @@ public class StartRound_1830 extends StartRound {
 
         ReportBuffer.add(LocalText.getText("PASSES", playerName));
 
-        moveStack.start(false);
+        changeStack.start(false);
 
         numPasses.add(1);
         if (auctionItem != null) {
@@ -312,7 +312,7 @@ public class StartRound_1830 extends StartRound {
                 int price = auctionItem.getBid();
 
                 log.debug("Highest bidder is "
-                          + auctionItem.getBidder().getName());
+                          + auctionItem.getBidder().getId());
                 if (auctionItem.needsPriceSetting() != null) {
                     auctionItem.setStatus(StartItem.NEEDS_SHARE_PRICE);
                 } else {

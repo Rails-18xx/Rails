@@ -39,7 +39,7 @@ public class DiscardTrain extends PossibleORAction {
             ownedTrainsUniqueIds[i] = trains.get(i).getUniqueId();
         }
         this.company = company;
-        this.companyName = company.getName();
+        this.companyName = company.getId();
     }
 
     public DiscardTrain(PublicCompanyI company, List<TrainI> trains,
@@ -69,14 +69,14 @@ public class DiscardTrain extends PossibleORAction {
     public String toString() {
 
         StringBuffer b = new StringBuffer();
-        b.append("Discard train: ").append(company.getName());
+        b.append("Discard train: ").append(company.getId());
         b.append(" one of");
         for (TrainI train : ownedTrains) {
-            b.append(" ").append(train.getName());
+            b.append(" ").append(train.getId());
         }
         b.append(forced ? "" : ", not").append (" forced");
         if (discardedTrain != null) {
-            b.append(", discards ").append(discardedTrain.getName());
+            b.append(", discards ").append(discardedTrain.getId());
         } else if ("".equalsIgnoreCase(getPlayerName())) {
             b.append(", discards nothing");
         }

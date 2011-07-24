@@ -11,12 +11,13 @@ import rails.game.Stop.RunThrough;
 import rails.game.Stop.RunTo;
 import rails.game.Stop.Score;
 import rails.game.Stop.Type;
+import rails.game.state.AbstractItem;
 import rails.util.Util;
 
 /**
  * MapManager configures the map layout from XML
  */
-public class MapManager implements ConfigurableComponentI {
+public class MapManager extends AbstractItem implements ConfigurableComponentI {
 
     private String mapUIClassName = null;
 
@@ -122,7 +123,7 @@ public class MapManager implements ConfigurableComponentI {
         for (Tag hexTag : hexTags) {
             hex = new MapHex(this);
             hex.configureFromXML(hexTag);
-            mHexes.put(hex.getName(), hex);
+            mHexes.put(hex.getId(), hex);
             minX = Math.min(minX, hex.getX());
             minY = Math.min(minY, hex.getY());
             maxX = Math.max(maxX, hex.getX());

@@ -1,47 +1,54 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/state/IntegerState.java,v 1.5 2010/01/31 22:22:33 macfreek Exp $
- *
- * Created on May 19, 2007
- * Change Log:
- */
 package rails.game.state;
 
 /**
- * @author Erik Vos
+ * A stateful version of an integer variable
+ * 
+ * @author Erik Vos, Stefan Frey (V2.0)
  */
-public class IntegerState extends State {
+public final class IntegerState extends AbstractState {
 
+    private int value;
+    
     /**
-     * @param name
-     * @param clazz
+     * Integer state variable with default value zero
+     * @param owner object containing state (usually this)
+     * @param id id state variable
      */
-    public IntegerState(String name) {
-        super(name, new Integer(0));
+    public IntegerState(Item owner, String id) {
+        this(owner, id, 0);
     }
 
     /**
-     * @param name
-     * @param object
+     * @param owner object containing state (usually this)
+     * @param id id state variable
+     * @param value initial value
      */
-    public IntegerState(String name, int value) {
-        super(name, new Integer(value));
+    public IntegerState(Item owner, String id, int value) {
+        super(owner, id);
+        this.value = value;
     }
 
     public void set(int value) {
-        super.set(new Integer(value));
+        new IntegerChange(this, value);
     }
 
     public int add(int value) {
-        int newValue = ((Integer) object).intValue() + value;
-        set(newValue);
+        int newValue = this.value + value;
+        set(this.value + value);
         return newValue;
     }
 
     public int intValue() {
-        return ((Integer) object).intValue();
+        return value;
     }
 
     @Override
-    public String getText() {
-        return ""+intValue();
+    public String toString() {
+        return Integer.toString(value);
     }
+
+    void change(int value) {
+        this.value = value;
+    }
+    
 }

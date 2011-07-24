@@ -1,7 +1,8 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainI.java,v 1.8 2009/10/10 15:25:49 evos Exp $ */
 package rails.game;
 
-import rails.game.move.Moveable;
+import rails.game.state.Moveable;
+import rails.game.state.Holder;
 
 public interface TrainI extends Moveable {
     
@@ -51,11 +52,11 @@ public interface TrainI extends Moveable {
     public TrainCertificateType getCertType();
     public TrainType getPreviousType();
 
-    public String getName();
+    public String getId();
 
     public String getUniqueId();
 
-    public Portfolio getHolder();
+    public Holder getHolder();
 
     public CashHolder getOwner();
 

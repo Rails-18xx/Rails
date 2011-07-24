@@ -72,7 +72,7 @@ public class OperatingRound_18TN extends OperatingRound {
         boolean result = super.buyPrivate(action);
 
         if (result && gameManager.getAbsoluteORNumber() == 1) {
-            if (playersSoldInOR1 == null) playersSoldInOR1 = new ArrayListState<Player>("PlayersSoldPrivateInOR1");
+            if (playersSoldInOR1 == null) playersSoldInOR1 = new ArrayListState<Player>(this, "PlayersSoldPrivateInOR1");
             if (!playersSoldInOR1.contains(sellingPlayer)) {
                 playersSoldInOR1.add(sellingPlayer);
             }

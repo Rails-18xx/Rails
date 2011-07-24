@@ -31,7 +31,7 @@ public class ReachDestinations extends PossibleORAction {
         StringBuffer b = new StringBuffer();
         for (PublicCompanyI company : companies) {
             if (b.length() > 0) b.append(",");
-            b.append (company.getName());
+            b.append (company.getId());
         }
         possibleCompanyNames = b.toString();
     }
@@ -54,7 +54,7 @@ public class ReachDestinations extends PossibleORAction {
         if (reachedCompanyNames.length() > 0) {
             reachedCompanyNames += ",";
         }
-        reachedCompanyNames += company.getName();
+        reachedCompanyNames += company.getId();
     }
 
     public List<PublicCompanyI> getReachedCompanies() {

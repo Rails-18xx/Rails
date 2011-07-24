@@ -8,9 +8,9 @@ import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.DiscardTrain;
 import rails.game.action.PossibleAction;
-import rails.game.move.CashMove;
 import rails.game.special.ExchangeForShare;
 import rails.game.special.SpecialPropertyI;
+import rails.game.state.MoveUtils;
 
 public class PrussianFormationRound extends StockRound {
 
@@ -73,7 +73,7 @@ public class PrussianFormationRound extends StockRound {
         if (step == Step.MERGE) {
             startingPlayer
                     = ((GameManager_1835)gameManager).getPrussianFormationStartingPlayer();
-            log.debug("Original Prussian starting player was "+startingPlayer.getName());
+            log.debug("Original Prussian starting player was "+startingPlayer.getId());
             setCurrentPlayer(startingPlayer);
             if (forcedMerge) {
                 List<SpecialPropertyI> sps;
@@ -108,7 +108,7 @@ public class PrussianFormationRound extends StockRound {
             startingPlayer = m2Owner;
             setCurrentPlayer(m2Owner);
             ReportBuffer.add(LocalText.getText("StartingPlayer",
-                    getCurrentPlayer().getName()));
+                    getCurrentPlayer().getId()));
 
             possibleActions.add(new FoldIntoPrussian(m2));
 
@@ -231,7 +231,8 @@ public class PrussianFormationRound extends StockRound {
         }
 
         // all actions linked during formation round to avoid serious undo problems
-        moveStack.start(false).linkToPreviousMoveSet();
+        changeStack.start(false);
+        changeStack.linkToPreviousMoveSet();
 
         if (folding) executeStartPrussian(false);
 
@@ -254,13 +255,13 @@ public class PrussianFormationRound extends StockRound {
         int cash = capFactor * prussian.getIPOPrice();
 
         if (cash > 0) {
-            new CashMove(bank, prussian, cash);
+            MoveUtils.cashMove(bank, prussian, cash);
             ReportBuffer.add(LocalText.getText("FloatsWithCash",
-                prussian.getName(),
+                prussian.getId(),
                 Bank.format(cash) ));
         } else {
             ReportBuffer.add(LocalText.getText("Floats",
-                    prussian.getName()));
+                    prussian.getId()));
         }
         
         executeExchange (Arrays.asList(new CompanyI[]{m2}), true, false);
@@ -270,7 +271,7 @@ public class PrussianFormationRound extends StockRound {
     private boolean mergeIntoPrussian (FoldIntoPrussian action) {
 
         // Validate
-        String errMsg = null;
+        // String errMsg = null;
 
         List<CompanyI> folded = action.getFoldedCompanies();
         boolean folding = folded != null && !folded.isEmpty();
@@ -280,17 +281,20 @@ public class PrussianFormationRound extends StockRound {
             break;
         }
 
-        // This is now dead code, but won't be when some sensible validations exist 
+        // TODO: This is now dead code, but won't be when some sensible validations exist 
+        /*
         if (errMsg != null) {
             DisplayBuffer.add(LocalText.getText("CannotMerge",
                     action.getFoldedCompanyNames(),
                     PR_ID,
                     errMsg));
-            return false;
+            return false; 
         }
+        */
 
         // all actions linked during formation round to avoid serious undo problems
-        moveStack.start(false).linkToPreviousMoveSet();
+        changeStack.start(false);
+        changeStack.linkToPreviousMoveSet();
 
         // Execute
         if (folding) executeExchange (folded, false, false);
@@ -307,7 +311,7 @@ public class PrussianFormationRound extends StockRound {
         PublicCertificateI cert;
         Player player;
         for (CompanyI company : companies) {
-            log.debug("Merging company "+company.getName());
+            log.debug("Merging company "+company.getId());
             if (company instanceof PrivateCompanyI) {
                 player = (Player)((PrivateCompanyI)company).getPortfolio().getOwner();
             } else {
@@ -320,8 +324,8 @@ public class PrussianFormationRound extends StockRound {
             cert.moveTo(player.getPortfolio());
             //company.setClosed();
             String message = LocalText.getText("MERGE_MINOR_LOG",
-                    player.getName(),
-                    company.getName(),
+                    player.getId(),
+                    company.getId(),
                     PR_ID,
                     company instanceof PrivateCompanyI ? "no"
                             : Bank.format(((PublicCompanyI)company).getCash()),
@@ -330,11 +334,11 @@ public class PrussianFormationRound extends StockRound {
             ReportBuffer.add(message);
             if (display) DisplayBuffer.add (message);
             message = LocalText.getText("GetShareForMinor",
-                    player.getName(),
+                    player.getId(),
                     cert.getShare(),
                     PR_ID,
-                    ipo.getName(),
-                    company.getName());
+                    ipo.getId(),
+                    company.getId());
             ReportBuffer.add(message);
             if (display) DisplayBuffer.add (message);
 
@@ -350,8 +354,8 @@ public class PrussianFormationRound extends StockRound {
                 if (!hex.hasTokenOfCompany(prussian) && hex.layBaseToken(prussian, city.getNumber())) {
                     /* TODO: the false return value must be impossible. */
                     message = LocalText.getText("ExchangesBaseToken",
-                            PR_ID, minor.getName(),
-                            city.getName());
+                            PR_ID, minor.getId(),
+                            city.getId());
                             ReportBuffer.add(message);
                             if (display) DisplayBuffer.add (message);
 
@@ -360,11 +364,11 @@ public class PrussianFormationRound extends StockRound {
 
                 // Move any cash
                 if (minor.getCash() > 0) {
-                    new CashMove (minor, prussian, minor.getCash());
+                    MoveUtils.cashMove (minor, prussian, minor.getCash());
                 }
 
                 // Move any trains
-                List<TrainI> trains = new ArrayList<TrainI> (minor.getPortfolio().getTrainList());
+                List<TrainI> trains = new ArrayList<TrainI> (minor.getPortfolio().getTrainList().view());
                 for (TrainI train : trains) {
                     train.moveTo(prussian.getPortfolio());
                 }
@@ -388,7 +392,7 @@ public class PrussianFormationRound extends StockRound {
             // Checks
             // Must be correct step
             if (company != prussian) {
-                errMsg = LocalText.getText("WrongCompany", company.getName(), prussian.getName());
+                errMsg = LocalText.getText("WrongCompany", company.getId(), prussian.getId());
                 break;
             }
 
@@ -401,8 +405,8 @@ public class PrussianFormationRound extends StockRound {
             if (!company.getPortfolio().getTrainList().contains(train)) {
                 errMsg =
                         LocalText.getText("CompanyDoesNotOwnTrain",
-                                company.getName(),
-                                train.getName() );
+                                company.getId(),
+                                train.getId() );
                 break;
             }
 
@@ -410,21 +414,21 @@ public class PrussianFormationRound extends StockRound {
         }
         if (errMsg != null) {
             DisplayBuffer.add(LocalText.getText("CannotDiscardTrain",
-                    company.getName(),
-                    (train != null ?train.getName() : "?"),
+                    company.getId(),
+                    (train != null ?train.getId() : "?"),
                     errMsg ));
             return false;
         }
 
         /* End of validation, start of execution */
-        moveStack.start(true);
+        changeStack.start(true);
         //
-        if (action.isForced()) moveStack.linkToPreviousMoveSet();
+        if (action.isForced()) changeStack.linkToPreviousMoveSet();
 
         pool.buyTrain(train, 0);
         ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
-                company.getName(),
-                train.getName() ));
+                company.getId(),
+                train.getId() ));
 
         // This always finished this type of round
         finishRound();

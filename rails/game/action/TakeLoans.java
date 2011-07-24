@@ -33,7 +33,7 @@ public class TakeLoans extends PossibleORAction {
             int price) {
 
         this.company = company;
-        this.companyName = company.getName();
+        this.companyName = company.getId();
         this.maxNumber = maxNumber;
         this.price = price;
     }
@@ -86,7 +86,7 @@ public class TakeLoans extends PossibleORAction {
     @Override
     public String toString() {
         StringBuffer b = new StringBuffer();
-        b.append ("TakeLoans ").append(company.getName())
+        b.append ("TakeLoans ").append(company.getId())
          .append(" maxNumber=").append(maxNumber)
          .append(" value=").append(price);
         if (numberTaken != 0) {

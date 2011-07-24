@@ -1,39 +1,38 @@
 package rails.game.specific._18AL;
 
 import rails.game.*;
-import rails.game.move.MoveableHolder;
-import rails.game.move.ObjectMove;
-import rails.game.move.StateChange;
-import rails.game.state.State;
+import rails.game.state.GenericState;
+import rails.game.state.MoveUtils;
+import rails.game.state.Holder;
 
 public class NameableTrain extends Train {
 
-    private State nameToken;
+    private GenericState<NamedTrainToken> nameToken;
 
     @Override
     public void init(TrainCertificateType certType, TrainType type, String uniqueId) {
 
         super.init(certType, type, uniqueId);
-        nameToken = new State(uniqueId + "_nameToken", NamedTrainToken.class);
+        nameToken = new GenericState<NamedTrainToken>(this, uniqueId + "_nameToken");
     }
 
     public void setNameToken(NamedTrainToken nameToken) {
-        // this.nameToken = nameToken;
-        new StateChange(this.nameToken, nameToken, holder.getTrainsModel());
+        // TODO: Add trainsmodel as dependency
+        // new StateChange(this.nameToken, nameToken, holder.getTrainsModel());
+        this.nameToken.set(nameToken);
+        
     }
 
     public NamedTrainToken getNameToken() {
         return (NamedTrainToken) nameToken.get();
     }
 
-    @Override
-    public void moveTo(MoveableHolder to) {
+    public void moveTo(Holder to) {
         if (holder != to) {
             if (getNameToken() != null) {
                 setNameToken(null);
             }
-            // new TrainMove (this, holder, to);
-            new ObjectMove(this, holder, to);
+            MoveUtils.objectMove(this, holder.getTrainList(), to.getTrainList());
         }
     }
 
@@ -41,9 +40,9 @@ public class NameableTrain extends Train {
     public String toDisplay() {
         NamedTrainToken token = getNameToken();
         if (token == null) {
-            return getName();
+            return getId();
         } else {
-            return getName() + "\'" + token.getName() + "\'";
+            return getId() + "\'" + token.getId() + "\'";
         }
     }
 

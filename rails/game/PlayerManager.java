@@ -68,7 +68,7 @@ public class PlayerManager implements ConfigurableComponentI {
             bank.addCash(-startCash);
             ReportBuffer.add(LocalText.getText("PlayerIs",
                     playerIndex,
-                    player.getName() ));
+                    player.getId() ));
         }
         ReportBuffer.add(LocalText.getText("PlayerCash", Bank.format(startCash)));
         ReportBuffer.add(LocalText.getText("BankHas",

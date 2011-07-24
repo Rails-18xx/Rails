@@ -7,11 +7,12 @@ import org.apache.log4j.Logger;
 import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
+import rails.game.state.AbstractItem;
 import rails.game.state.BooleanState;
 import rails.game.state.IntegerState;
 import rails.util.*;
 
-public class TrainCertificateType {
+public class TrainCertificateType extends AbstractItem {
 
     protected String name;
     protected int quantity = 0;
@@ -97,9 +98,9 @@ public class TrainCertificateType {
         obsoleting = tag.getAttributeAsBoolean("obsoleting");
 
         // Final initialisations
-        numberBoughtFromIPO = new IntegerState(name + "-trains_Bought", 0);
-        available = new BooleanState(name + "-trains_Available", false);
-        rusted = new BooleanState(name + "-trains_Rusted", false);
+        numberBoughtFromIPO = new IntegerState(this, name + "-trains_Bought", 0);
+        available = new BooleanState(this, name + "-trains_Available", false);
+        rusted = new BooleanState(this, name + "-trains_Rusted", false);
 
     }
 

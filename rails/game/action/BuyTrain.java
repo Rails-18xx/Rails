@@ -64,7 +64,7 @@ public class BuyTrain extends PossibleORAction {
         this.train = train;
         this.trainUniqueId = train.getUniqueId();
         this.from = from;
-        this.fromName = from.getName();
+        this.fromName = from.getId();
         this.fixedCost = fixedCost;
         this.type = type;
         this.typeName = type.getName();
@@ -214,20 +214,20 @@ public class BuyTrain extends PossibleORAction {
     public String toString() {
 
         StringBuffer b = new StringBuffer();
-        b.append(company.getName());
+        b.append(company.getId());
         if (train != null) { 
             b.append(": buy ").append(typeName).append("-");
         } else {
             b.append(": buy unlimited ");
         }
-        b.append("train (").append(trainUniqueId).append(") from ").append(from.getName());
+        b.append("train (").append(trainUniqueId).append(") from ").append(from.getId());
         if (fixedCost > 0) {
             b.append(" for ").append(Bank.format(fixedCost));
         } else {
             b.append(" for any amount");
         }
         if (specialProperty != null) {
-            b.append(" using ").append(specialProperty.getOriginalCompany().getName());
+            b.append(" using ").append(specialProperty.getOriginalCompany().getId());
         }
         if (isForExchange()) {
             b.append(forcedExchange ? " (forced exchange)" : " (exchange)");
@@ -241,7 +241,7 @@ public class BuyTrain extends PossibleORAction {
         if (acted) {
             b.append(" - paid: ").append(Bank.format(pricePaid));
             if (addedCash > 0) b.append(" pres.cash added: "+Bank.format(addedCash));
-            if (exchangedTrain != null) b.append(" exchanged for "+exchangedTrain.getName()+"-train");
+            if (exchangedTrain != null) b.append(" exchanged for "+exchangedTrain.getId()+"-train");
         }
 
         return b.toString();

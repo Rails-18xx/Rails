@@ -1,54 +1,52 @@
 package rails.game.state;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 
-import rails.game.move.AddToList;
-import rails.game.move.RemoveFromList;
+import com.google.common.collect.ImmutableList;
 
 /**
- * State class that wraps an ArrayList
- * Generates according list moves
- *
- * Remark: Does not extend State or implements StateI do avoid additional overhead
- * All state/move mechanisms already contained in Move objects
- * For the future a simpler unified StateI would make things clearer
- *
- * TODO: Replace all stateful lists by this class and simplify according move objects
- *
+ * A stateful version of an ArrayList
+ * 
+ * @author Erik Vos, Stefan Frey (V2.0)
  */
 
-public class ArrayListState<E>  {
+public final class ArrayListState<E> extends AbstractState implements Iterable<E>  {
 
-    private final ArrayList<E> list = new ArrayList<E>();
-    private String listName;
+    private final ArrayList<E> list;
 
     /**
-     * constructor for an empty list
-     * @param name
+     * Creates an empty ArrayList state variable
+     * @param owner object containing state (usually this)
+     * @param id id state variable
      */
-    public ArrayListState(String listName) {
-        this.listName = listName;
+    public ArrayListState(Item owner, String id) {
+        super(owner, id);
+        list = new ArrayList<E>();
     }
+
     /**
-     * constructor for a prefilled list
-     * @param element
+     * @param owner object containing state (usually this)
+     * @param id id state variable
+     * @param collection elements are added to the list at initialization
      */
-    public ArrayListState(String listName, Collection<E> collection) {
-        this(listName);
-        list.addAll(collection);
+    public ArrayListState(Item owner, String id, Collection<E> collection) {
+        super(owner, id);
+        list = new ArrayList<E>(collection);
     }
 
     public void add(E element) {
-        new AddToList<E>(list, element, listName);
+        new ArrayListChange<E>(this, element);
     }
 
     public void add(int index, E element) {
-        new AddToList<E>(list, element, index, listName);
+        new ArrayListChange<E>(this, element, index);
     }
 
     public boolean remove(E element) {
         if (list.contains(element)) {
-            new RemoveFromList<E>(list, element, listName);
+            new ArrayListChange<E>(this, list.indexOf(element));
             return true;
         } else {
             return false;
@@ -70,14 +68,18 @@ public class ArrayListState<E>  {
     }
 
     /**
-     * returns unmodifiable view of list
+     * returns immutable view of list
      */
-    public List<E> viewList() {
-        return Collections.unmodifiableList(list);
+    public ImmutableList<E> view() {
+        return ImmutableList.copyOf(list);
     }
 
     public int size() {
         return list.size();
+    }
+    
+    public boolean isEmpty() {
+        return list.isEmpty();
     }
 
     public int indexOf(Object o) {
@@ -87,4 +89,23 @@ public class ArrayListState<E>  {
     public E get(int index) {
         return list.get(index);
     }
+    
+    @Override
+    public String toString() {
+        return list.toString();
+    }
+    
+    public Iterator<E> iterator() {
+        return list.iterator();
+    }
+
+    void change(E object, int index, boolean addToList) {
+        if (addToList) {
+            list.add(index, object);
+        } else {
+            list.remove(index);
+        }
+    }
+
+    
 }

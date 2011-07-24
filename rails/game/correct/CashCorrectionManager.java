@@ -3,7 +3,8 @@ package rails.game.correct;
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.game.*;
-import rails.game.move.CashMove;
+import rails.game.state.MoveUtils;
+
 import java.util.*;
 
 public final class CashCorrectionManager extends CorrectionManager {
@@ -58,7 +59,7 @@ public final class CashCorrectionManager extends CorrectionManager {
             if ((amount + ch.getCash()) < 0) {
                 errMsg =
                     LocalText.getText("NotEnoughMoney", 
-                            ch.getName(),
+                            ch.getId(),
                             Bank.format(ch.getCash()),
                             Bank.format(-amount) 
                     );
@@ -69,28 +70,28 @@ public final class CashCorrectionManager extends CorrectionManager {
 
         if (errMsg != null) {
             DisplayBuffer.add(LocalText.getText("CorrectCashError",
-                    ch.getName(),
+                    ch.getId(),
                     errMsg));
             result = true;
         } else {
             // no error occured 
-            gameManager.getMoveStack().start(false);
+            gameManager.getChangeStack().start(false);
 
             Bank bank = gameManager.getBank();
 
             String msg;
             if (amount < 0) {
                 // negative amounts: remove cash from cashholder
-                new CashMove(ch, bank , -amount);
+                MoveUtils.cashMove(ch, bank , -amount);
 
                 msg = LocalText.getText("CorrectCashSubstractMoney",
-                        ch.getName(),
+                        ch.getId(),
                         Bank.format(-amount) );
             } else {
                 // positive amounts: add cash to cashholder
-                new CashMove(bank, ch, amount);
+                MoveUtils.cashMove(bank, ch, amount);
                 msg = LocalText.getText("CorrectCashAddMoney",
-                        ch.getName(),
+                        ch.getId(),
                         Bank.format(amount));
             }
             ReportBuffer.add(msg);

@@ -117,7 +117,7 @@ public class StockRound_1825 extends StockRound {
              */
             // Take care for max. 4 share units per share
             int[] shareCountPerUnit = new int[5];
-            compName = company.getName();
+            compName = company.getId();
             for (PublicCertificateI c : playerPortfolio.getCertificatesPerCompany(compName)) {
                 if (c.isPresidentShare()) {
                     shareCountPerUnit[1] += c.getShares();

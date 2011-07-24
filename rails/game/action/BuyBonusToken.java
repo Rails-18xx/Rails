@@ -41,10 +41,10 @@ public class BuyBonusToken extends PossibleORAction {
         this.specialProperty = specialProperty;
         this.specialPropertyId = specialProperty.getUniqueId();
         this.privateCompany = (PrivateCompanyI) specialProperty.getOriginalCompany();
-        this.privateCompanyName = privateCompany.getName();
+        this.privateCompanyName = privateCompany.getId();
         this.seller = specialProperty.getSeller();
-        if (seller != null) this.sellerName = seller.getName();
-        this.name = specialProperty.getName();
+        if (seller != null) this.sellerName = seller.getId();
+        this.name = specialProperty.getId();
         this.price = specialProperty.getPrice();
         this.value = specialProperty.getValue();
         this.locationString = specialProperty.getLocationNameString();

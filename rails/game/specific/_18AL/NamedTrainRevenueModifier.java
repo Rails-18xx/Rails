@@ -37,7 +37,7 @@ public class NamedTrainRevenueModifier implements RevenueStaticModifier, Revenue
         if (useLongname) {
             bonus = new RevenueBonus(token.getValue(), token.getLongName()); 
         } else {
-            bonus = new RevenueBonus(token.getValue(), token.getName());
+            bonus = new RevenueBonus(token.getValue(), token.getId());
         }
 
         for (MapHex hex:token.getHexesToPass()) {

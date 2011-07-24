@@ -66,12 +66,12 @@ public class StatusWindow_1835 extends StatusWindow {
         List<CompanyI> foldables = action.getFoldableCompanies();
         JDialog currentDialog;
 
-        if (foldables.get(0).getName().equals("M2")) {
+        if (foldables.get(0).getId().equals("M2")) {
             // Ask if the Prussian should be started
             currentDialog = new ConfirmationDialog (gameUIManager,
                     LocalText.getText("Select"),
                     LocalText.getText("MergeMinorConfirm",
-                            getCurrentPlayer().getName(),
+                            getCurrentPlayer().getId(),
                             GameManager_1835.M2_ID, GameManager_1835.PR_ID),
                     "Yes",
                     "No");
@@ -82,9 +82,9 @@ public class StatusWindow_1835 extends StatusWindow {
             for (int i=0; i<options.length; i++) {
             	company = foldables.get(i);
             	options[i] = LocalText.getText("MergeOption",
-            			company.getName(),
+            			company.getId(),
             			company.getLongName(),
-            			prussian.getName(),
+            			prussian.getId(),
             			((ExchangeForShare)(company.getSpecialProperties().get(0))).getShare()
             			);
             }
@@ -92,7 +92,7 @@ public class StatusWindow_1835 extends StatusWindow {
                     this,
                     LocalText.getText("Select"),
                     LocalText.getText("SelectCompaniesToFold", 
-                            getCurrentPlayer().getName(),
+                            getCurrentPlayer().getId(),
                             prussian.getLongName()),
                     options);
         }

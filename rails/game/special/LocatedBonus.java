@@ -61,7 +61,7 @@ public class LocatedBonus extends SpecialProperty {
         return locationCodes;
     }
 
-    public String getName() {
+    public String getId() {
         return name;
     }
 
@@ -72,7 +72,7 @@ public class LocatedBonus extends SpecialProperty {
 
     @Override
     public String toString() {
-        return "LocatedBonus "+name+" comp=" + originalCompany.getName() + " hex="
+        return "LocatedBonus "+name+" comp=" + originalCompany.getId() + " hex="
                + locationCodes + " value=" + value;
     }
 }

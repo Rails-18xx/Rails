@@ -63,7 +63,7 @@ public class MapCorrectionAction extends CorrectionAction {
     
     private void setLocation(MapHex location) {
         this.location = location;
-        locationCoordinates = location.getName(); 
+        locationCoordinates = location.getId(); 
     }
     
     public List<TileI> getTiles() {
@@ -81,7 +81,7 @@ public class MapCorrectionAction extends CorrectionAction {
         this.tiles = tiles;
         this.tileIds = new int[tiles.size()];
         for (int i = 0; i < tiles.size(); i++)
-            tileIds[i] = tiles.get(i).getId();
+            tileIds[i] = tiles.get(i).getNb();
     }
     
     public List<Station> getStationsForRelay() {
@@ -209,7 +209,7 @@ public class MapCorrectionAction extends CorrectionAction {
             executedStep = step;
         }
         if (step.ordinal() > ActionStep.SELECT_HEX.ordinal()) 
-            b.append(" Hex=" + location.getName());
+            b.append(" Hex=" + location.getId());
         if (step == ActionStep.SELECT_TILE)
             b.append(" Possible tiles=" + tiles);
         if (executedStep.ordinal() >= ActionStep.SELECT_TILE.ordinal())

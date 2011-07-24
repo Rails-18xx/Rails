@@ -1,8 +1,5 @@
 package rails.game.model;
 
-import java.util.Observable;
-import java.util.Observer;
-
 import rails.game.Player;
 import rails.game.PublicCompanyI;
 
@@ -11,24 +8,24 @@ import rails.game.PublicCompanyI;
  * gets registered by the ShareModels
  */
 
-public class PresidentModel extends ModelObject implements Observer {
+public class PresidentModel extends AbstractModel<String> implements View<String> {
 
     PublicCompanyI company;
     
     public PresidentModel(PublicCompanyI company) {
+        super(company, "PresidentModel");
         this.company = company;
     }
-       
-    public void update(Observable o, Object arg) {
-        // if notified by ShareModels, calls update itself
-        update();
-    }
 
-    @Override
-    public String getText() {
+    public String getData() {
         Player president = company.getPresident();
         if (president == null ) return "";
         else return company.getPresident().getNameAndPriority();
+    }
+
+    public void update(String data) {
+        // pass along the update as a viewer
+        notifyModel();
     }
 
 }

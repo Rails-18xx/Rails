@@ -3,12 +3,13 @@ package rails.game;
 
 import org.apache.log4j.Logger;
 
-import rails.game.move.MoveableHolder;
-import rails.game.move.ObjectMove;
+import rails.game.state.AbstractItem;
 import rails.game.state.BooleanState;
 import rails.game.state.GenericState;
+import rails.game.state.Holder;
+import rails.game.state.ObjectMove;
 
-public class Train implements TrainI {
+public class Train extends AbstractItem implements TrainI {
 
     protected TrainCertificateType certificateType;
     
@@ -34,10 +35,10 @@ public class Train implements TrainI {
 
         this.certificateType = certType;
         this.uniqueId = uniqueId;
-        this.type = new GenericState<TrainType>(certType.getName()+"_CurrentType", type);
+        this.type = new GenericState<TrainType>(this, certType.getName()+"_CurrentType", type);
         this.previousType = type;
 
-        obsolete = new BooleanState(uniqueId, false);
+        obsolete = new BooleanState(this, uniqueId, false);
     }
     
     public void setType (TrainType type) {
@@ -119,11 +120,11 @@ public class Train implements TrainI {
         return certificateType.isPermanent();
     }
     
-    public String getName() {
+    public String getId() {
         return isAssigned() ? type.get().getName() : certificateType.getName();
     }
 
-    public Portfolio getHolder() {
+    public Holder getHolder() {
         return holder;
     }
 
@@ -142,7 +143,7 @@ public class Train implements TrainI {
         holder = newHolder;
     }
 
-    public void moveTo(MoveableHolder to) {
+    public void moveTo(Holder to) {
 
         new ObjectMove(this, holder, to);
 
@@ -161,7 +162,7 @@ public class Train implements TrainI {
     }
 
     public String toDisplay() {
-        return getName();
+        return getId();
     }
 
     public boolean isTradeable() {
@@ -176,7 +177,7 @@ public class Train implements TrainI {
         StringBuilder b = new StringBuilder(uniqueId);
         b.append(" certType=").append(getCertType());
         b.append(" type=").append(getType());
-        b.append(" holder=").append(holder.getName());
+        b.append(" holder=").append(holder.getId());
         return b.toString();
     }
 

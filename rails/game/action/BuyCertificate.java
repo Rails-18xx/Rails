@@ -50,7 +50,7 @@ public class BuyCertificate extends PossibleAction {
         this.price = price;
         this.maximumNumber = maximumNumber;
 
-        companyName = company.getName();
+        companyName = company.getId();
     }
 
     /** Buy a certificate from some portfolio at a given price */
@@ -128,7 +128,7 @@ public class BuyCertificate extends PossibleAction {
         if (acted) text.append("Bought "+numberBought +" of ");
         if (maximumNumber > 1) text.append ("max."+maximumNumber+" of ");
         text.append(sharePerCert).append("% ").append(companyName)
-            .append(" from ").append(from.getName())
+            .append(" from ").append(from.getId())
             .append(" price=").append(Bank.format((sharePerCert/company.getShareUnit()) * price));
         return text.toString();
     }
@@ -161,7 +161,7 @@ public class BuyCertificate extends PossibleAction {
             certificate = PublicCertificate.getByUniqueId(certUniqueId);
             from = gameManager.getPortfolioByName(fromName);
             company = certificate.getCompany();
-            companyName = company.getName();
+            companyName = company.getId();
             sharePerCert = certificate.getShare();
         } else if (companyName != null) {
             // New style (since Rails.1.3.1)

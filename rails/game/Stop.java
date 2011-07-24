@@ -2,11 +2,12 @@
 package rails.game;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import rails.game.move.Moveable;
+import rails.game.state.AbstractItem;
+import rails.game.state.ArrayListState;
+import rails.game.state.Moveable;
 import rails.game.state.GenericState;
 import rails.util.Util;
 
@@ -26,13 +27,13 @@ import rails.util.Util;
  *
  * @author Erik Vos
  */
-public class Stop implements TokenHolder {
+public class Stop extends AbstractItem implements TokenHolder {
     private int number;
     private String uniqueId;
     //private Station relatedStation;
     private GenericState<Station> relatedStation;
     private int slots;
-    private ArrayList<TokenI> tokens;
+    private ArrayListState<TokenI> tokens;
     private MapHex mapHex;
     private String trackEdges;
 
@@ -101,11 +102,11 @@ public class Stop implements TokenHolder {
         this.mapHex = mapHex;
         this.number = number;
 
-        uniqueId = mapHex.getName() + "_" + number;
-        relatedStation = new GenericState<Station>("City_"+uniqueId+"_station", station);
+        uniqueId = mapHex.getId() + "_" + number;
+        relatedStation = new GenericState<Station>(this, "City_"+uniqueId+"_station", station);
         setRelatedStation(station);
 
-        tokens = new ArrayList<TokenI>(4);
+        tokens = new ArrayListState<TokenI>(this, "tokens");
 
         initStopProperties();
     }
@@ -171,13 +172,13 @@ public class Stop implements TokenHolder {
         if (scoreType == null) scoreType = tileManager.getScoreTypeDefault(type);
         if (scoreType == null) scoreType = type.getDefaultScoreType();
 
-        log.debug("+++ Hex="+mapHex.getName()+" tile="+tile.getId()+" city="+number
+        log.debug("+++ Hex="+mapHex.getId()+" tile="+tile.getNb()+" city="+number
                 +": stopType="+type+" runTo="+runToAllowed+" runThrough="+runThroughAllowed
                 +" loop="+loopAllowed+" scoreType="+scoreType);
     }
 
-    public String getName() {
-        return mapHex.getName() + "/" + number;
+    public String getId() {
+        return mapHex.getId() + "/" + number;
 
     }
 
@@ -219,13 +220,12 @@ public class Stop implements TokenHolder {
     public boolean addToken(TokenI token, int position) {
 
         if (tokens.contains(token)) return false;
-
-        boolean result = Util.addToList(tokens, token, position);
-        if (result) token.setHolder(this);
-        return result;
+        tokens.add(position, token);
+        token.setHolder(this);
+        return true;
     }
 
-    public boolean addObject(Moveable object, int[] position) {
+    public boolean addObject(Moveable object, int position) {
         if (object instanceof TokenI) {
             return addToken((TokenI) object, position == null ? -1 : position[0]);
         } else {
@@ -235,13 +235,14 @@ public class Stop implements TokenHolder {
 
     public boolean removeObject(Moveable object) {
         if (object instanceof TokenI) {
-            return removeToken((TokenI) object);
+            removeToken((TokenI) object);
+            return true;
         } else {
             return false;
         }
     }
 
-    public List<TokenI> getTokens() {
+    public ArrayListState<TokenI> getTokens() {
         return tokens;
     }
 
@@ -261,10 +262,8 @@ public class Stop implements TokenHolder {
         return slots - tokens.size();
     }
 
-    public boolean removeToken(TokenI token) {
-
-        boolean result = tokens.remove(token);
-        return result;
+    public void removeToken(TokenI token) {
+        tokens.remove(token);
     }
 
     /**
@@ -275,13 +274,13 @@ public class Stop implements TokenHolder {
      * of TokenI not a ArrayList of PublicCompanyI.
      */
     public boolean hasTokenOf(PublicCompanyI company) {
-        return hasTokenOf (company.getName());
+        return hasTokenOf (company.getId());
     }
 
     public boolean hasTokenOf (String companyName) {
         for (TokenI token : tokens) {
             if (token instanceof BaseToken
-                    && ((BaseToken)token).getCompany().getName().equals(companyName)) {
+                    && ((BaseToken)token).getCompany().getId().equals(companyName)) {
                 return true;
             }
         }
@@ -294,10 +293,6 @@ public class Stop implements TokenHolder {
         } else {
             return Moveable.AT_END;
         }
-    }
-
-    public void setTokens(ArrayList<TokenI> tokens) {
-        this.tokens = tokens;
     }
 
     public String getTrackEdges() {
@@ -367,7 +362,7 @@ public class Stop implements TokenHolder {
     @Override
     public String toString() {
         StringBuffer b = new StringBuffer();
-        b.append("Hex ").append(mapHex.getName());
+        b.append("Hex ").append(mapHex.getId());
         String cityName = mapHex.getCityName();
         b.append(" (");
         if (Util.hasValue(cityName)) {

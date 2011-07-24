@@ -199,13 +199,13 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolder {
      */
     public int getLastRevenue();
 
-    public ModelObject getLastRevenueModel();
+    public Model<String> getLastRevenueModel();
 
     public void setLastRevenueAllocation(int allocation);
 
     public String getlastRevenueAllocationText();
 
-    public ModelObject getLastRevenueAllocationModel();
+    public Model<String> getLastRevenueAllocationModel();
 
     public Player getPresident();
 
@@ -267,28 +267,28 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolder {
 
     public void buyTrain(TrainI train, int price);
 
-    public ModelObject getTrainsSpentThisTurnModel();
+    public Model<String> getTrainsSpentThisTurnModel();
 
     public void buyPrivate(PrivateCompanyI privateCompany, Portfolio from,
             int price);
 
-    public ModelObject getPrivatesSpentThisTurnModel();
+    public Model<String> getPrivatesSpentThisTurnModel();
 
     public void layTile(MapHex hex, TileI tile, int orientation, int cost);
 
     public void layTileInNoMapMode(int cost);
 
-    public ModelObject getTilesLaidThisTurnModel();
+    public Model<String> getTilesLaidThisTurnModel();
 
-    public ModelObject getTilesCostThisTurnModel();
+    public Model<String> getTilesCostThisTurnModel();
 
     public void layBaseToken(MapHex hex, int cost);
 
     public void layBaseTokenInNoMapMode(int cost);
 
-    public ModelObject getTokensLaidThisTurnModel();
+    public Model<String> getTokensLaidThisTurnModel();
 
-    public ModelObject getTokensCostThisTurnModel();
+    public Model<String> getTokensCostThisTurnModel();
 
     public boolean layHomeBaseTokens();
     public boolean hasLaidHomeBaseTokens();
@@ -340,7 +340,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolder {
     public int getMaxLoansPerRound();
     public int getValuePerLoan();
     public MoneyModel getLoanValueModel ();
-    public ModelObject getRightsModel ();
+    public Model<String> getRightsModel ();
 
     public int sharesOwnedByPlayers();
     public String getExtraShareMarks ();
@@ -349,8 +349,8 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolder {
     public boolean hasRight (String nameOfRight);
     public String getRight (String nameOfRight);
 
-    public ModelObject getInGameModel ();
-    public ModelObject getIsClosedModel ();
+    public Model<String> getInGameModel ();
+    public Model<String> getIsClosedModel ();
     
     /** Does the company has a route? */
     public boolean hasRoute();

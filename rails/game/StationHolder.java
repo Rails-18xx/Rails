@@ -10,6 +10,6 @@ package rails.game;
  */
 public interface StationHolder {
 
-    public String getName();
+    public String getId();
 
 }

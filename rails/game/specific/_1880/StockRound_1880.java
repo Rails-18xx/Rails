@@ -28,7 +28,7 @@ public class StockRound_1880 extends StockRound {
     // The sell-in-same-turn-at-decreasing-price option does not apply here
     protected int getCurrentSellPrice (PublicCompanyI company) {
 
-        String companyName = company.getName();
+        String companyName = company.getId();
         int price;
 
         if (sellPrices.containsKey(companyName)) {

@@ -48,7 +48,7 @@ public class StartCompany extends BuyCertificate {
     @Override
     public String toString() {
         StringBuilder text = new StringBuilder();
-        text.append("StartCompany: ").append(company != null ? company.getName() : null);
+        text.append("StartCompany: ").append(company != null ? company.getId() : null);
         if (price > 0) {
             text.append(" price=").append(Bank.format(price));
             if (numberBought > 1) {

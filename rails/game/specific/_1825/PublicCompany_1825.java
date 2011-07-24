@@ -12,7 +12,7 @@ public class PublicCompany_1825 extends PublicCompany {
     public void start(StockSpaceI startSpace) {
         super.start(startSpace);
         //PD: used to track flotation order
-        formationOrderIndex = new IntegerState(name+"_formationOrderIndex");
+        formationOrderIndex = new IntegerState(this, name+"_formationOrderIndex");
     }
 
     public int getFormationOrderIndex() {
@@ -52,7 +52,7 @@ public class PublicCompany_1825 extends PublicCompany {
         //Need to find out if other corps exist at this IPO price
         //If so increment formationOrderIndex to control Operating sequence
         for (PublicCompanyI company : gameManager.getAllPublicCompanies()) {
-            if (this.getIPOPrice() == company.getIPOPrice() && (this.getName() != company.getName())){
+            if (this.getIPOPrice() == company.getIPOPrice() && (this.getId() != company.getId())){
                 //Yes, we share IPO prices, has this other company been launched yet?
                 if (company.hasFloated()){
                     //it has, we need to skip ahead of this corp

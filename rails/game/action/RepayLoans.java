@@ -34,7 +34,7 @@ public class RepayLoans extends PossibleAction {
             int price) {
 
         this.company = company;
-        this.companyName = company.getName();
+        this.companyName = company.getId();
         this.minNumber = minNumber;
         this.maxNumber = maxNumber;
         this.price = price;
@@ -99,7 +99,7 @@ public class RepayLoans extends PossibleAction {
     @Override
     public String toString() {
         StringBuffer b = new StringBuffer();
-        b.append ("RepayLoans ").append(company.getName())
+        b.append ("RepayLoans ").append(company.getId())
          .append(" minNumber=").append(minNumber)
          .append(" maxNumber=").append(maxNumber)
          .append(" value=").append(price);

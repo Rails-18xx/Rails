@@ -8,18 +8,21 @@ import rails.common.GuiDef;
 import rails.common.LocalText;
 import rails.common.parser.GameOption;
 import rails.game.action.*;
-import rails.game.model.ModelObject;
+import rails.game.model.AbstractModel;
+import rails.game.model.Model;
+import rails.game.model.MoneyModel;
+import rails.game.state.ArrayListState;
+import rails.game.state.GenericState;
 import rails.game.state.IntegerState;
-import rails.game.state.State;
 
 public abstract class StartRound extends Round {
 
     protected StartPacket startPacket = null;
     protected int[] itemIndex;
-    protected List<StartItem> itemsToSell = null;
-    protected State auctionItemState =
-            new State("AuctionItem", StartItem.class);
-    protected IntegerState numPasses = new IntegerState("StartRoundPasses");
+    protected ArrayListState<StartItem> itemsToSell = null;
+    protected GenericState<StartItem> auctionItemState =
+            new GenericState<StartItem>(this, "AuctionItem");
+    protected IntegerState numPasses = new IntegerState(this, "StartRoundPasses");
     protected int numPlayers;
     protected String variant;
     protected Player currentPlayer;
@@ -67,7 +70,7 @@ public abstract class StartRound extends Round {
         if (variant == null) variant = "";
         numPlayers = gameManager.getNumberOfPlayers();
 
-        itemsToSell = new ArrayList<StartItem>();
+        itemsToSell = new ArrayListState<StartItem>(this, "itemsToSell");
         itemIndex = new int[startPacket.getItems().size()];
         int index = 0;
 
@@ -89,7 +92,7 @@ public abstract class StartRound extends Round {
 
         ReportBuffer.add(LocalText.getText("StartOfInitialRound"));
         ReportBuffer.add(LocalText.getText("HasPriority",
-                getCurrentPlayer().getName()));
+                getCurrentPlayer().getId()));
     }
 
     @Override
@@ -232,7 +235,7 @@ public abstract class StartRound extends Round {
             return false;
         }
 
-        moveStack.start(false);
+        changeStack.start(false);
 
         assignItem(player, item, price, sharePrice);
 
@@ -261,8 +264,8 @@ public abstract class StartRound extends Round {
             int sharePrice) {
         Certificate primary = item.getPrimary();
         ReportBuffer.add(LocalText.getText("BuysItemFor",
-                player.getName(),
-                primary.getName(),
+                player.getId(),
+                primary.getId(),
                 Bank.format(price) ));
         pay (player, bank, price);
         transferCertificate (primary, player.getPortfolio());
@@ -270,8 +273,8 @@ public abstract class StartRound extends Round {
         if (item.hasSecondary()) {
             Certificate extra = item.getSecondary();
             ReportBuffer.add(LocalText.getText("ALSO_GETS",
-                    player.getName(),
-                    extra.getName() ));
+                    player.getId(),
+                    extra.getId() ));
             transferCertificate (extra, player.getPortfolio());
             checksOnBuying(extra, sharePrice);
         }
@@ -295,7 +298,7 @@ public abstract class StartRound extends Round {
                         // Company has a known start price
                         comp.start();
                     } else {
-                        log.error("No start price for " + comp.getName());
+                        log.error("No start price for " + comp.getId());
                     }
                 }
             }
@@ -354,7 +357,7 @@ public abstract class StartRound extends Round {
 
     public List<StartItem> getStartItems() {
 
-        return itemsToSell;
+        return itemsToSell.view();
     }
 
     /**
@@ -375,19 +378,19 @@ public abstract class StartRound extends Round {
         return hasBasePrices;
     }
 
-    public ModelObject getBidModel(int privateIndex, int playerIndex) {
+    public Model<String> getBidModel(int privateIndex, int playerIndex) {
         return (itemsToSell.get(privateIndex)).getBidForPlayerModel(playerIndex);
     }
 
-    public ModelObject getMinimumBidModel(int privateIndex) {
+    public Model<String> getMinimumBidModel(int privateIndex) {
         return (itemsToSell.get(privateIndex)).getMinimumBidModel();
     }
 
-    public ModelObject getFreeCashModel(int playerIndex) {
+    public Model<String> getFreeCashModel(int playerIndex) {
         return gameManager.getPlayerByIndex(playerIndex).getFreeCashModel();
     }
 
-    public ModelObject getBlockedCashModel(int playerIndex) {
+    public Model<String> getBlockedCashModel(int playerIndex) {
         return gameManager.getPlayerByIndex(playerIndex).getBlockedCashModel();
     }
 

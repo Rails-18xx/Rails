@@ -70,7 +70,7 @@ public class Station {
 
     public String getName() {
         return "Station " + id + " on " + tile.getClass().getSimpleName() + " "
-        + tile.getName();
+        + tile.getId();
     }
 
     public String getCityName() {
@@ -150,7 +150,7 @@ public class Station {
 
     @Override
     public String toString() {
-        return "Station " + number + " on tile #" + tile.getId() + " ID: " + id
+        return "Station " + number + " on tile #" + tile.getNb() + " ID: " + id
         + ", Type: " + type + ", Slots: " + baseSlots + ", Value: "
         + value;
     }

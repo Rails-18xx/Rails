@@ -9,12 +9,13 @@ import org.apache.log4j.Logger;
 import rails.common.parser.ConfigurableComponentI;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
-import rails.game.move.MoveableHolder;
 import rails.game.special.SpecialPropertyI;
+import rails.game.state.AbstractItem;
 import rails.game.state.BooleanState;
+import rails.game.state.Holder;
 import rails.util.Util;
 
-public abstract class Company implements CompanyI, ConfigurableComponentI,
+public abstract class Company extends AbstractItem implements CompanyI, ConfigurableComponentI,
 Cloneable, Comparable<Company> {
 
     protected String name;
@@ -58,7 +59,7 @@ Cloneable, Comparable<Company> {
     public void init(String name, CompanyTypeI type) {
         this.name = name;
         this.type = type;
-        closedObject = new BooleanState(name + "_Closed", false);
+        closedObject = new BooleanState(this, name + "_Closed", false);
     }
 
     /** Only to be called from subclasses */
@@ -155,7 +156,7 @@ Cloneable, Comparable<Company> {
     /**
      * @return Name of company
      */
-    public String getName() {
+    public String getId() {
         return name;
     }
 
@@ -206,7 +207,7 @@ Cloneable, Comparable<Company> {
         value = i;
     }
 
-    public MoveableHolder getHolder() {
+    public Holder getHolder() {
         return portfolio;
     }
 
@@ -227,13 +228,13 @@ Cloneable, Comparable<Company> {
 
     @Override
     public String toString() {
-        return getTypeName() + ": " + getCompanyNumber() + ". " + getName()
+        return getTypeName() + ": " + getCompanyNumber() + ". " + getId()
         + " $" + this.getValue();
     }
 
     public boolean equals(CompanyI company) {
         if (this.companyNumber == company.getCompanyNumber()
-                && this.name.equals(company.getName())
+                && this.name.equals(company.getId())
                 && this.type.equals(company.getType())) return true;
 
         return false;
@@ -245,7 +246,7 @@ Cloneable, Comparable<Company> {
         result = this.getTypeName().compareTo(otherCompany.getTypeName());
         // if same typeName then name
         if (result == 0)
-            result = this.getName().compareTo(otherCompany.getName());
+            result = this.getId().compareTo(otherCompany.getId());
 
         return result;
     }
@@ -255,7 +256,7 @@ Cloneable, Comparable<Company> {
         if (companies != null) {
             for (CompanyI company : companies) {
                 if (b.length() > 0) b.append(delimiter);
-                b.append(company.getName());
+                b.append(company.getId());
             }
         }
         return b.toString();
