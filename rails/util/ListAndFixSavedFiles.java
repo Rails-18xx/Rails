@@ -161,6 +161,9 @@ implements ActionListener, KeyListener {
             filepath = selectedFile.getPath();
             saveDirectory = selectedFile.getParent();
             
+            // clear header text
+            headerText = new StringBuffer();
+            
             // use GameLoader object to load game
             fileIO = new GameFileIO();
 
