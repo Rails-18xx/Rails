@@ -16,7 +16,9 @@
 				<NoSaleInFirstSR/>
 				<NoSaleOfJustBoughtShare/>
 			</StockRound>
-			<OperatingRound class="rails.game.specific._1856.OperatingRound_1856"/>
+			<OperatingRound class="rails.game.specific._1856.OperatingRound_1856">
+                <EmergencyTrainBuying mustBuyCheapestTrain="yes" mayBuyFromCompany="no"/>
+			</OperatingRound>
 			<ShareSellingRound class="rails.game.specific._1856.ShareSellingRound_1856"/>
 			<PlayerShareLimit percentage="60"/>
 			<BankPoolLimit percentage="50"/>

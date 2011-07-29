@@ -352,8 +352,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             Tag orTag = gameParmTag.getChild("OperatingRound");
             if (orTag != null) {
                 String orClassName =
-                    orTag.getAttributeAsString("class",
-                    "rails.game.OperatingRound");
+                    orTag.getAttributeAsString("class", "rails.game.OperatingRound");
                 try {
                     operatingRoundClass =
                         Class.forName(orClassName).asSubclass(
@@ -367,6 +366,19 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
                 if (orderTag != null) {
                 	dynamicOperatingOrder = orderTag.getAttributeAsBoolean("dynamic",
                 			dynamicOperatingOrder);
+                }
+                
+                Tag emergencyTag = orTag.getChild("EmergencyTrainBuying");
+                if (emergencyTag != null) {
+                    setGameParameter (GameDef.Parm.EMERGENCY_MUST_BUY_CHEAPEST_TRAIN,
+                            emergencyTag.getAttributeAsBoolean("mustBuyCheapestTrain", 
+                                    GameDef.Parm.EMERGENCY_MUST_BUY_CHEAPEST_TRAIN.defaultValueAsBoolean()));
+                    setGameParameter (GameDef.Parm.EMERGENCY_MAY_ALWAYS_BUY_NEW_TRAIN,
+                            emergencyTag.getAttributeAsBoolean("mayAlwaysBuyNewTrain", 
+                                    GameDef.Parm.EMERGENCY_MAY_ALWAYS_BUY_NEW_TRAIN.defaultValueAsBoolean()));
+                    setGameParameter (GameDef.Parm.EMERGENCY_MAY_BUY_FROM_COMPANY,
+                            emergencyTag.getAttributeAsBoolean("mayBuyFromCompany", 
+                                    GameDef.Parm.EMERGENCY_MAY_BUY_FROM_COMPANY.defaultValueAsBoolean()));
                 }
             }
 

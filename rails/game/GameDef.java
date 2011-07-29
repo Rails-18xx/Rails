@@ -19,7 +19,10 @@ public class GameDef {
         FIXED_PRICE_TRAINS_BETWEEN_PRESIDENTS(false),
         SKIP_FIRST_STOCK_ROUND(false),
         NO_SALE_OF_JUST_BOUGHT_CERT(false),
-        REMOVE_TRAIN_BEFORE_SR(false);
+        REMOVE_TRAIN_BEFORE_SR(false),
+        EMERGENCY_MUST_BUY_CHEAPEST_TRAIN (true),
+        EMERGENCY_MAY_ALWAYS_BUY_NEW_TRAIN (false),
+        EMERGENCY_MAY_BUY_FROM_COMPANY (true);
 
         private Object defaultValue;
 

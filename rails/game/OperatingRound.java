@@ -2684,9 +2684,11 @@ public class OperatingRound extends Round implements Observer {
         if (cash == 0 && hasTrains) return;
 
         boolean canBuyTrainNow = canBuyTrainNow();
-        boolean presidentMayHelp = !hasTrains && operatingCompany.get().mustOwnATrain();
-        TrainI cheapestTrain = null;
-        int costOfCheapestTrain = 0;
+        boolean mustBuyTrain = !hasTrains && operatingCompany.get().mustOwnATrain();
+        boolean emergency = false;
+        
+        SortedMap<Integer, TrainI> newEmergencyTrains = new TreeMap<Integer, TrainI>();
+        SortedMap<Integer, TrainI> usedEmergencyTrains = new TreeMap<Integer, TrainI>();
         TrainManager trainMgr = gameManager.getTrainManager();
 
         // First check if any more trains may be bought from the Bank
@@ -2712,13 +2714,11 @@ public class OperatingRound extends Round implements Observer {
                     if (cost <= cash) {
                         if (canBuyTrainNow) {
                             BuyTrain action = new BuyTrain(train, type, ipo, cost);
-                            action.setForcedBuyIfNoRoute(presidentMayHelp); // TEMPORARY
+                            action.setForcedBuyIfNoRoute(mustBuyTrain); // TEMPORARY
                             possibleActions.add(action);
                         }
-                    } else if (costOfCheapestTrain == 0
-                            || cost < costOfCheapestTrain) {
-                        cheapestTrain = train;
-                        costOfCheapestTrain = cost;
+                    } else if (mustBuyTrain) {
+                        newEmergencyTrains.put(cost, train);
                     }
                 }
                 
@@ -2747,7 +2747,7 @@ public class OperatingRound extends Round implements Observer {
                     if (reducedPrice > cash) continue;
                     BuyTrain bt = new BuyTrain(train, ipo, reducedPrice);
                     bt.setSpecialProperty(stb);
-                    bt.setForcedBuyIfNoRoute(presidentMayHelp); // TEMPORARY
+                    bt.setForcedBuyIfNoRoute(mustBuyTrain); // TEMPORARY
                     possibleActions.add(bt);
                 }
 
@@ -2764,21 +2764,52 @@ public class OperatingRound extends Round implements Observer {
                 cost = train.getCost();
                 if (cost <= cash) {
                     BuyTrain bt = new BuyTrain(train, pool, cost);
-                    bt.setForcedBuyIfNoRoute(presidentMayHelp); // TEMPORARY
+                    bt.setForcedBuyIfNoRoute(mustBuyTrain); // TEMPORARY
                     possibleActions.add(bt);
-                } else if (costOfCheapestTrain == 0
-                        || cost < costOfCheapestTrain) {
-                    cheapestTrain = train;
-                    costOfCheapestTrain = cost;
+                } else if (mustBuyTrain) {
+                    usedEmergencyTrains.put(cost, train);
                 }
             }
-            if (!hasTrains && possibleActions.getType(BuyTrain.class).isEmpty()
-                    && cheapestTrain != null && presidentMayHelp) {
-                BuyTrain bt = new BuyTrain(cheapestTrain,
-                        cheapestTrain.getHolder(), costOfCheapestTrain);
-                bt.setPresidentMustAddCash(costOfCheapestTrain - cash);
-                bt.setForcedBuyIfNoRoute(presidentMayHelp); // TODO TEMPORARY
-                possibleActions.add(bt);
+            
+            emergency = mustBuyTrain && possibleActions.getType(BuyTrain.class).isEmpty();
+            
+            // If we must buy a train and haven't found one yet, the president must add cash.
+            if (emergency
+                    // Some people think it's allowed in 1835 to buy a new train with president cash
+                    // even if the company has enough cash to buy a used train.
+                    // Players who think differently can ignore that extra option.
+                    || getGameParameterAsBoolean (GameDef.Parm.EMERGENCY_MAY_ALWAYS_BUY_NEW_TRAIN)
+                        && !newEmergencyTrains.isEmpty()) {
+                if (getGameParameterAsBoolean (GameDef.Parm.EMERGENCY_MUST_BUY_CHEAPEST_TRAIN)) {
+                    // Find the cheapest one
+                    // Assume there is always one available from IPO
+                    int cheapestTrainCost = newEmergencyTrains.firstKey();
+                    TrainI cheapestTrain = newEmergencyTrains.get(cheapestTrainCost);
+                    if (!usedEmergencyTrains.isEmpty() 
+                            && usedEmergencyTrains.firstKey() < cheapestTrainCost) {
+                        cheapestTrainCost = usedEmergencyTrains.firstKey();
+                        cheapestTrain = usedEmergencyTrains.get(cheapestTrainCost);
+                    }
+                    BuyTrain bt = new BuyTrain(cheapestTrain,
+                            cheapestTrain.getHolder(), cheapestTrainCost);
+                    bt.setPresidentMustAddCash(cheapestTrainCost - cash);
+                    bt.setForcedBuyIfNoRoute(mustBuyTrain); // TODO TEMPORARY
+                    possibleActions.add(bt);
+                } else {
+                    // All possible bank trains are buyable
+                    for (TrainI train : newEmergencyTrains.values()) {
+                        BuyTrain bt = new BuyTrain(train, ipo, train.getCost());
+                        bt.setPresidentMustAddCash(train.getCost() - cash);
+                        bt.setForcedBuyIfNoRoute(mustBuyTrain); // TODO TEMPORARY
+                        possibleActions.add(bt);
+                    }
+                    for (TrainI train : usedEmergencyTrains.values()) {
+                        BuyTrain bt = new BuyTrain(train, pool, train.getCost());
+                        bt.setPresidentMustAddCash(train.getCost() - cash);
+                        bt.setForcedBuyIfNoRoute(mustBuyTrain); // TODO TEMPORARY
+                        possibleActions.add(bt);
+                    }
+                }
             }
         }
 
@@ -2791,6 +2822,7 @@ public class OperatingRound extends Round implements Observer {
             Portfolio pf;
             int index;
             int numberOfPlayers = getNumberOfPlayers();
+            int presidentCash = operatingCompany.get().getPresident().getCash(); 
 
             // Set up a list per player of presided companies
             List<List<PublicCompanyI>> companiesPerPlayer =
@@ -2809,7 +2841,7 @@ public class OperatingRound extends Round implements Observer {
             // first
             int currentPlayerIndex = getCurrentPlayer().getIndex();
             for (int i = currentPlayerIndex; i < currentPlayerIndex
-            + numberOfPlayers; i++) {
+                    + numberOfPlayers; i++) {
                 companies = companiesPerPlayer.get(i % numberOfPlayers);
                 for (PublicCompanyI company : companies) {
                     pf = company.getPortfolio();
@@ -2817,23 +2849,29 @@ public class OperatingRound extends Round implements Observer {
 
                     for (TrainI train : trains) {
                         if (train.isObsolete() || !train.isTradeable()) continue;
+                        bt = null;
                         if (i != currentPlayerIndex
-                                //&& trainMgr.buyAtFaceValueBetweenDifferentPresidents()
-                                && getGameParameterAsBoolean(GameDef.Parm.FIXED_PRICE_TRAINS_BETWEEN_PRESIDENTS)
+                                    && getGameParameterAsBoolean(GameDef.Parm.FIXED_PRICE_TRAINS_BETWEEN_PRESIDENTS)
                                 || operatingCompany.get().mustTradeTrainsAtFixedPrice()
                                 || company.mustTradeTrainsAtFixedPrice()) {
+                            // Fixed price
                             if ((cash >= train.getCost()) && (operatingCompany.get().mayBuyTrainType(train))) {
                                 bt = new BuyTrain(train, pf, train.getCost());
                             } else {
                                 continue;
                             }
-                        } else {
+                        } else if (cash > 0
+                                || emergency 
+                                && getGameParameterAsBoolean (GameDef.Parm.EMERGENCY_MAY_BUY_FROM_COMPANY)) {
                             bt = new BuyTrain(train, pf, 0);
+                         
+                            // In some games the president may add extra cash up to the list price
+                            if (emergency && cash < train.getCost()) {
+                                bt.setPresidentMayAddCash(Math.min(train.getCost() - cash,
+                                        presidentCash));                                     
+                            }
                         }
-                        if (presidentMayHelp && cash < train.getCost()) {
-                            bt.setPresidentMayAddCash(train.getCost() - cash);
-                        }
-                        possibleActions.add(bt);
+                        if (bt != null) possibleActions.add(bt);
                     }
                 }
             }
@@ -2857,7 +2895,7 @@ public class OperatingRound extends Round implements Observer {
 
     /** Reports if a tile lay is allowed by a certain company on a certain hex
      * <p>
-     * This method can be used both in retricting possible actions
+     * This method can be used both in restricting possible actions
      * and in validating submitted actions.
      * <p> Currently, only a few standard checks are included.
      * This method can be extended to perform other generic checks,
@@ -2874,7 +2912,7 @@ public class OperatingRound extends Round implements Observer {
 
     /** Reports if a token lay is allowed by a certain company on a certain hex and city
      * <p>
-     * This method can be used both in retricting possible actions
+     * This method can be used both in restricting possible actions
      * and in validating submitted actions.
      * <p> Currently, only a few standard checks are included.
      * This method can be extended to perform other generic checks,

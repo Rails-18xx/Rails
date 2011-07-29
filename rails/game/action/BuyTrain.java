@@ -33,8 +33,8 @@ public class BuyTrain extends PossibleORAction {
     /** Obsolete, but left in for backwards compatibility of saved files */
     private boolean forcedExchange = false;
 
-    private boolean presidentMustAddCash = false;
-    private boolean presidentMayAddCash = false;
+    private boolean presidentMustAddCash = false; // If buying from the bank
+    private boolean presidentMayAddCash = false;  // If buying from a company
     private int presidentCashToAdd = 0;
 
     transient private SpecialTrainBuy specialProperty = null;
