@@ -22,6 +22,9 @@
 			<StockRound>
 				 <NoSaleInFirstSR/>
 			</StockRound>
+            <OperatingRound>
+                <EmergencyTrainBuying mustBuyCheapestTrain="yes" mayBuyFromCompany="yes"/>
+            </OperatingRound>
 		</GameParameters>
 		<GuiClasses>
 		</GuiClasses>

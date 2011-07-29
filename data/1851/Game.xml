@@ -15,6 +15,9 @@
 			<StockRound sequence="SellBuy">
 				<NoSaleIfNotOperated/>
 			</StockRound>
+            <OperatingRound>
+                <EmergencyTrainBuying mustBuyCheapestTrain="yes" mayBuyFromCompany="yes"/>
+            </OperatingRound>
 		</GameParameters>
 		<EndOfGame>
 			<Bankruptcy/>

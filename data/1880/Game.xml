@@ -11,7 +11,9 @@
 			<StockRound class="rails.game.specific._1880.StockRound_1880" sequence="SellBuy">
 				<NoSaleInFirstSR/>
 			</StockRound>
-			<OperatingRound class="rails.game.specific._1880.OperatingRound_1880"/>
+			<OperatingRound class="rails.game.specific._1880.OperatingRound_1880">
+                <EmergencyTrainBuying mayBuyFromCompany="no"/>
+            </OperatingRound>
 		</GameParameters>
 		<GuiClasses>
 			<StatusWindow class="rails.ui.swing.StatusWindow"/>

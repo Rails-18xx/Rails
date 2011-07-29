@@ -18,6 +18,9 @@
 			<StockRound>
 				 <NoSaleInFirstSR/>
 			</StockRound>
+            <OperatingRound>
+                <EmergencyTrainBuying mustBuyCheapestTrain="yes" mayBuyFromCompany="no"/>
+            </OperatingRound>
 		</GameParameters>
 		<GuiClasses>
 			<ORUIManager class="rails.ui.swing.gamespecific._18AL.ORUIManager_18AL"/>

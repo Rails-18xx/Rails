@@ -23,7 +23,9 @@
 			<StockRound>
 				<NoSaleInFirstSR/>
 			</StockRound>
-            <OperatingRound class="rails.game.specific._18TN.OperatingRound_18TN"/>
+            <OperatingRound class="rails.game.specific._18TN.OperatingRound_18TN">
+                <EmergencyTrainBuying mustBuyCheapestTrain="yes" mayBuyFromCompany="no"/>
+            </OperatingRound>
 		</GameParameters>
 		<EndOfGame>
 			<Bankruptcy/>

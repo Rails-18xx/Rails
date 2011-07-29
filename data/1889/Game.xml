@@ -36,7 +36,9 @@
 			<StockRound sequence="SellBuyOrBuySell">
 				<NoSaleInFirstSR/>
 			</StockRound>
-			<OperatingRound class="rails.game.specific._1889.OperatingRound_1889"/>
+			<OperatingRound class="rails.game.specific._1889.OperatingRound_1889">
+                <EmergencyTrainBuying mustBuyCheapestTrain="yes" mayBuyFromCompany="no"/>
+            </OperatingRound>
 		</GameParameters>
 		<EndOfGame>
 			<ForcedSelling CompanyDump="no"/>
