@@ -143,16 +143,18 @@
 					(the '+' is optional) -->
             </IfOption>
 		</TrainType>
-		<TrainType name="3" majorStops="3" cost="180" quantity="5" startPhase="3">
-            <IfOption name="Variant" value="Coalfields,Reading,Coalfields&amp;Reading">
-                <Attributes obsoleting="yes"/>
-            </IfOption>
-            <IfOption name="Variant" value="Wabash">
-                <Attributes quantity="6"/>
-            </IfOption>
+		<TrainType name="3" majorStops="3" cost="180" quantity="5">
+			<NewPhase phaseName="3"/>
+			<IfOption name="Variant"
+				value="Coalfields,Reading,Coalfields&amp;Reading">
+				<Attributes obsoleting="yes"/>
+			</IfOption>
+			<IfOption name="Variant" value="Wabash">
+				<Attributes quantity="6"/>
+			</IfOption>
 		</TrainType>
-		<TrainType name="4" majorStops="4" cost="300" quantity="4" startPhase="4" 
-			rustedTrain="2">
+		<TrainType name="4" majorStops="4" cost="300" quantity="4">
+            <NewPhase phaseName="4"/>
 			<IfOption name="Variant" value="Coalfields,Reading">
                 <Attributes obsoleting="yes" quantity="5"/>
 			</IfOption>
@@ -163,13 +165,14 @@
                 <Attributes quantity="5"/>
             </IfOption>
 		</TrainType>
-		<TrainType name="5" majorStops="5" cost="450" quantity="3" startPhase="5">
-            <IfOption name="Variant" value="Wabash">
+		<TrainType name="5" majorStops="5" cost="450" quantity="3">
+            <NewPhase phaseName="5"/>
+           <IfOption name="Variant" value="Wabash">
                 <Attributes quantity="4"/>
             </IfOption>
 		</TrainType>
-		<TrainType name="6" majorStops="6" cost="630" startPhase="6" 
-			rustedTrain="3" releasedTrain="D">
+		<TrainType name="6" majorStops="6" cost="630">
+            <NewPhase phaseName="6"/>
 			<IfOption name="WithOptional6Train" value="yes">
 				<Attributes quantity="3"/>
 			</IfOption>
@@ -193,7 +196,8 @@
             <TrainType name="7" majorStops="7" cost="830" quantity="-1"/>
         </IfOption>
 		<IfOption name="Variant" value="Basegame,Pere Marquette,Reading,Coalfields,Coalfields&amp;Reading,Simple">
-			<TrainType name="D" majorStops="99" startPhase="D" rustedTrain="4">
+			<TrainType name="D" majorStops="99">
+            <NewPhase phaseName="D"/>
 				<IfOption name="Variant" value="Basegame,Pere Marquette,Simple">
 					<Attributes cost="1100"/>
 					<Exchange cost="800"/>
@@ -228,19 +232,28 @@
 			<OperatingRounds number="2"/>
 		</Phase>
 		<Phase name="4">
-			<Tiles colour="yellow,green"/>
+            <Trains rusted="2" limitStep="2"/>
 		</Phase>
 		<Phase name="5">
 			<Tiles colour="yellow,green,brown"/>
+			<Trains limitStep="3"/>
 			<!--Privates close="yes"/-->
 			<OperatingRounds number="3"/>
 			<OffBoardRevenue step="2"/>
 		</Phase>
 		<Phase name="6">
-			<Tiles colour="yellow,green,brown"/>
+			<Trains rusted="3">
+				<IfOption name="Variant" value="Basegame,Pere Marquette,Simple">
+					<Attributes released="D"/>
+				</IfOption>
+				<IfOption name="Variant"
+					value="Coalfields,Reading,Coalfields&amp;Reading">
+					<Attributes released="7,D"/>
+				</IfOption>
+			</Trains>
 		</Phase>
 		<Phase name="D">
-			<Tiles colour="yellow,green,brown"/>
+            <Trains rusted="4"/>
 		</Phase>
 	</Component>
 	<Component name="RevenueManager" class="rails.algorithms.RevenueManager">

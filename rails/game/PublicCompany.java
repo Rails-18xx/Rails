@@ -406,7 +406,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
         Tag trainsTag = tag.getChild("Trains");
         if (trainsTag != null) {
-            trainLimit = trainsTag.getAttributeAsIntegerArray("limit");
+            trainLimit = trainsTag.getAttributeAsIntegerArray("limit", trainLimit);
             mustOwnATrain =
                 trainsTag.getAttributeAsBoolean("mandatory", mustOwnATrain);
         }
@@ -1572,12 +1572,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
         return 100 / shareUnit.intValue();
     }
 
-    /** Get the current maximum number of trains. 
-     * @parm index The limit for the given index (N.B. starts at 0).
-     * <p><i>Old style:</i> the index of the current phase.<br>
-     * <i>New style:</i> the index of the train limit step as defined for the current phase.
-     * <br>The limits per train (type) must follow the logic that is implemented for the current game,
-     * which is indicated by the absence or presence of 'limitStep' attributes in the &lt;Phase&gt; tags.
+    /** Get the current maximum number of trains got a given limit index. 
+     * @parm index The index of the train limit step as defined for the current phase. Values start at 0.
      * <p>N.B. the new style limit steps per phase start at 1, 
      * so one must be subtracted before calling this method.
      */

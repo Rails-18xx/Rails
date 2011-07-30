@@ -7,7 +7,6 @@ import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.state.BooleanState;
-import rails.util.*;
 
 public class TrainType implements Cloneable {
 

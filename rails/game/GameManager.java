@@ -24,6 +24,7 @@ import rails.game.correct.*;
 import rails.game.move.*;
 import rails.game.special.SpecialPropertyI;
 import rails.game.special.SpecialTokenLay;
+import rails.game.specific._1856.CGRFormationRound;
 import rails.game.state.*;
 import rails.util.*;
 
@@ -1005,6 +1006,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
         // TEMPORARY FIX TO ALLOW OLD 1856 SAVED FILES TO BE PROCESSED
         if (gameName.equals("1856")
+                //&& currentRound.get().getClass() != CGRFormationRound.class
                 && possibleActions.contains(RepayLoans.class)
                 && (!possibleActions.contains(action.getClass())
                     || (action.getClass() == NullAction.class

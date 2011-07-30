@@ -2,24 +2,30 @@
 <ComponentManager>
 	<Component name="GameManager" class="rails.game.GameManager">
 		<Game name="1880"/>
-		<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Deactivate" />
-		<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Deactivate" />
+		<GameOption name="RouteAwareness" values="Highlight,Deactivate"
+			default="Deactivate"/>
+		<GameOption name="RevenueCalculation" values="Suggest,Deactivate"
+			default="Deactivate"/>
 		<GameOption name="UnlimitedTiles" type="toggle" default="no"/>
 		<GameOption name="LeaveAuctionOnPass" type="toggle" default="no"/>
 		<GameParameters>
-			<PlayerShareLimit percentage="100" />
-			<StockRound class="rails.game.specific._1880.StockRound_1880" sequence="SellBuy">
+			<PlayerShareLimit percentage="100"/>
+			<StockRound class="rails.game.specific._1880.StockRound_1880"
+				sequence="SellBuy">
 				<NoSaleInFirstSR/>
 			</StockRound>
-			<OperatingRound class="rails.game.specific._1880.OperatingRound_1880">
-                <EmergencyTrainBuying mayBuyFromCompany="no"/>
-            </OperatingRound>
+			<OperatingRound
+				class="rails.game.specific._1880.OperatingRound_1880">
+				<EmergencyTrainBuying mayBuyFromCompany="no"/>
+			</OperatingRound>
 		</GameParameters>
 		<GuiClasses>
 			<StatusWindow class="rails.ui.swing.StatusWindow"/>
-			<StartRoundWindow class="rails.ui.swing.gamespecific._1880.StartRoundWindow_1880"/>
+			<StartRoundWindow
+				class="rails.ui.swing.gamespecific._1880.StartRoundWindow_1880"/>
 		</GuiClasses>
 		<EndOfGame/>
+		
 		<!--  need to implement the 3 OR set limit after purchase of first 8 TrainType -->
 	</Component>
 	<Component name="PlayerManager" class="rails.game.PlayerManager">
@@ -37,7 +43,8 @@
 	<Component name="Map" class="rails.game.MapManager" file="Map.xml"/>
 	<Component name="CompanyManager" class="rails.game.CompanyManager"
 		file="CompanyManager.xml"/>
-	<Component name="StockMarket" class="rails.game.specific._1880.StockMarket_1880"
+	<Component name="StockMarket"
+		class="rails.game.specific._1880.StockMarket_1880"
 		file="StockMarket.xml"/>
 	<Component name="TrainManager" class="rails.game.TrainManager">
 		<Defaults>
@@ -46,38 +53,40 @@
 		</Defaults>
 		<TrainType name="2" majorStops="2" cost="100" quantity="10"/>
 		<TrainType name="2+2" majorStops="2" minorStops="2" cost="180" quantity="5">
-		<NewPhase phaseName="2+2"/>
+			<NewPhase phaseName="2+2"/>
 		</TrainType>
 		<TrainType name="3" majorStops="3" cost="180" quantity="6">
-		<NewPhase phaseName="3"/>
+			<NewPhase phaseName="3"/>
 		</TrainType>
-		<TrainType name="3+3" majorStops="3"  minorStops="3" cost="300" quantity="5">
-		<NewPhase phaseName="3+3"/>
+		<TrainType name="3+3" majorStops="3" minorStops="3" cost="300" quantity="5">
+			<NewPhase phaseName="3+3"/>
 		</TrainType>
 		<TrainType name="4" majorStops="4" cost="300" quantity="5">
-		<NewPhase phaseName="4"/>
+			<NewPhase phaseName="4"/>
 		</TrainType>
-		<TrainType name="4+4" majorStops="4"  minorStops="4" cost="450" quantity="5">
-		<NewPhase phaseName="4+4"/>
+		<TrainType name="4+4" majorStops="4" minorStops="4" cost="450" quantity="5">
+			<NewPhase phaseName="4+4"/>
 		</TrainType>
 		<TrainType name="6" majorStops="6" cost="600" quantity="5">
-		<NewPhase phaseName="6"/>
+			<NewPhase phaseName="6"/>
 		</TrainType>
 		<TrainType name="6e" majorStops="-1" cost="700" quantity="5">
-		<NewPhase phaseName="6e"/>
+			<NewPhase phaseName="6e"/>
 		</TrainType>
 		<!-- majorStops="-1" indicates that this not a normally running train-->
+		
 		<!-- The e-type trains are express trains that can ignore towns/cities on their way for a maximum payout-->
 		<TrainType name="8" majorStops="8" cost="800" quantity="2">
-		<NewPhase phaseName="8"/>
+			<NewPhase phaseName="8"/>
 		</TrainType>
 		<TrainType name="8e" majorStops="-1" cost="900" quantity="2">
-		<NewPhase phaseName="8e"/>
+			<NewPhase phaseName="8e"/>
 		</TrainType>
 		<!-- majorStops="-1" indicates that this not a normally running train-->
+		
 		<!-- The e-type trains are express trains that can ignore towns/cities on their way for a maximum payout-->
 		<TrainType name="10" majorStops="10" cost="1000" quantity="-1">
-		<NewPhase phaseName="8e"/>
+			<NewPhase phaseName="8e"/>
 		</TrainType>
 	</Component>
 	<Component name="PhaseManager" class="rails.game.PhaseManager">
@@ -88,8 +97,7 @@
 			<Trains tradingAllowed="yes"/>
 			<Stocks avail="5"/>
 		</Phase>
-		<Phase name="2+2" realName="A2">			
-		<Tiles colour="yellow"/>
+		<Phase name="2+2" realName="A2">
 		</Phase>
 		<Phase name="3" realName="B1">
 			<Tiles colour="yellow,green"/>
@@ -98,11 +106,9 @@
 			<OffBoardRevenue step="2"/>
 		</Phase>
 		<Phase name="3+3" realName="B2">
-			<Tiles colour="yellow,green"/>
 			<OffBoardRevenue step="2"/>
 		</Phase>
 		<Phase name="4" realName="B3">
-			<Tiles colour="yellow,green"/>
 			<OffBoardRevenue step="2"/>
 			<Privates close="yes"/>
 			<Investors active="no"/>
@@ -116,14 +122,12 @@
 			<Trains rusted="2+2"/>
 		</Phase>
 		<Phase name="6" realName="C2">
-			<Tiles colour="yellow,green,brown"/>
-			<Comunists active="no"/>
+			<Communists active="no"/>
 			<Float percentage="60"/>
 			<OffBoardRevenue step="3"/>
 			<Trains limitStep="3" rusted="3"/>
 		</Phase>
 		<Phase name="6e" realName="C3">
-			<Tiles colour="yellow,green,brown"/>
 			<OffBoardRevenue step="3"/>
 			<Trains limitStep="3" rusted="3+3"/>
 		</Phase>
@@ -133,19 +137,19 @@
 			<Trains limitStep="3" rusted="4"/>
 		</Phase>
 		<Phase name="8e" realName="D2">
-			<Tiles colour="yellow,green,brown,grey"/>
 			<OffBoardRevenue step="4"/>
 			<Trains limitStep="3" rusted="4+4"/>
 		</Phase>
 		<Phase name="8e" realName="D3">
 		</Phase>
 		<Component name="RevenueManager" class="rails.algorithms.RevenueManager">
-		<Modifier class="rails.game.specific._1880.OffBoardRevenueModifier" /> 
-		<Modifier class="rails.game.specific._1880.ExpressTrainRevenueModifier" /> 
+			<Modifier class="rails.game.specific._1880.OffBoardRevenueModifier"/>
+			<Modifier
+				class="rails.game.specific._1880.ExpressTrainRevenueModifier"/>
 		</Component>
 	</Component>
 	<Component name="RevenueManager" class="rails.algorithms.RevenueManager">
-		<Modifier class="rails.game.specific._1826.TGVModifier" /> 
+		<Modifier class="rails.game.specific._1826.TGVModifier"/>
 	</Component>
 	
 </ComponentManager>

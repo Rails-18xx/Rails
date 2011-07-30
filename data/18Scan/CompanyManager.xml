@@ -14,7 +14,7 @@
 	<BaseTokens>
 		<HomeBase lay="whenStarted"/>
 	</BaseTokens>
-	<Trains limit="2,2,1,0" mandatory="no"/>
+	<Trains limit="2,1" mandatory="no"/>
 	</CompanyType>
 	
 	<CompanyType name="Public" class="rails.game.PublicCompany">
@@ -28,7 +28,7 @@
 			<HomeBase lay="firstOR"/>
 			<LayCost method="sequence" cost="0,40,100"/>
 		</BaseTokens>
-		<Trains limit="4,4,3,2"/>
+		<Trains limit="4,3,2"/>
 		<CanUseSpecialProperties/>
 	</CompanyType>
 	<Company name="Ferry" type="Private" basePrice="120" revenue="20"
@@ -66,7 +66,7 @@
 	</Company>
 	<Company name="SJ" type="Public" tokens="6" fgColour="FFCC11"
 		bgColour="9370DB" longname="Statens Järnvägar">
-	<Trains limit="3"/>
+		<Trains limit="3"/>
 	</Company>
 
 	<StartPacket roundClass="rails.game.StartRound_1830">

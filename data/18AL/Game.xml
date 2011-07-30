@@ -53,23 +53,30 @@
 			<Score towns="yes"/>
 		</Defaults>
 		<TrainType name="2" majorStops="2" cost="100" quantity="5"/>
-		<TrainType name="3" majorStops="3" cost="180" quantity="4" startPhase="3"/>
-		<TrainType name="4" majorStops="4" cost="300" quantity="3" startPhase="4" 
-			rustedTrain="2" >
-			<IfOption name="Obsolete4Trains" value="yes">
+		<TrainType name="3" majorStops="3" cost="180" quantity="4">
+           <NewPhase phaseName="3"/>
+		</TrainType>
+		<TrainType name="4" majorStops="4" cost="300" quantity="3">
+            <NewPhase phaseName="4"/>
+ 			<IfOption name="Obsolete4Trains" value="yes">
 				<Attributes obsoleting="yes"/>
 			</IfOption>
 			<IfOption name="Obsolete4Trains" value="no">
 				<Attributes obsoleting="no"/>
 			</IfOption>
 		</TrainType>/>
-		<TrainType name="5" majorStops="5" cost="450" quantity="2" startPhase="5"/>
-		<TrainType name="6" majorStops="6" cost="630" quantity="1" startPhase="6" 
-			rustedTrain="3"/>
-		<TrainType name="7" majorStops="7" cost="700" quantity="1" startPhase="7" 
-			rustedTrain="4"/>
-		<TrainType name="4D" majorStops="4" cost="800" startPhase="4D">
-			<IfOption name="UnlimitedTopTrains" value="yes">
+		<TrainType name="5" majorStops="5" cost="450" quantity="2">
+            <NewPhase phaseName="5"/>
+        </TrainType>
+		<TrainType name="6" majorStops="6" cost="630" quantity="1">
+            <NewPhase phaseName="6"/>
+        </TrainType>
+		<TrainType name="7" majorStops="7" cost="700" quantity="1">
+            <NewPhase phaseName="7"/>
+        </TrainType>
+		<TrainType name="4D" majorStops="4" cost="800">
+            <NewPhase phaseName="4D"/>
+ 			<IfOption name="UnlimitedTopTrains" value="yes">
 				<Attributes quantity="-1"/>
 			</IfOption>
 			<IfOption name="UnlimitedTopTrains" value="no">
@@ -92,20 +99,20 @@
 			<OperatingRounds number="2"/>
 		</Phase>
 		<Phase name="4">
-			<Tiles colour="yellow,green"/>
-			<Trains onePerTurn="no"/>
+			<Trains rusted="2" limitStep="2" onePerTurn="no"/>
 		</Phase>
 		<Phase name="5">
 			<Tiles colour="yellow,green,brown"/>
+			<Trains limitStep="3"/>
 			<OperatingRounds number="3"/>
 			<Privates close="yes"/>
 			<OffBoardRevenue step="2"/>
 		</Phase>
 		<Phase name="6">
-			<Tiles colour="yellow,green,brown"/>
+            <Trains rusted="3"/>
 		</Phase>
 		<Phase name="7">
-			<Tiles colour="yellow,green,brown"/>
+            <Trains rusted="4"/>
 		</Phase>
 		<Phase name="4D">
 			<Tiles colour="yellow,green,brown,grey"/>

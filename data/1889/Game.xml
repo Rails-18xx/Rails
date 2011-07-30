@@ -83,12 +83,17 @@
 			-->
 		</Defaults>
 		<TrainType name="2" majorStops="2" cost="80" quantity="6"/>
-		<TrainType name="3" majorStops="3" cost="180" quantity="5" startPhase="3"/>
-		<TrainType name="4" majorStops="4" cost="300" quantity="4" startPhase="4" 
-			rustedTrain="2"/>
-		<TrainType name="5" majorStops="5" cost="450" quantity="3" startPhase="5"/>
-		<TrainType name="6" majorStops="6" cost="630" startPhase="6" 
-			rustedTrain="3" releasedTrain="D">
+		<TrainType name="3" majorStops="3" cost="180" quantity="5">
+            <NewPhase phaseName="3"/>
+        </TrainType>
+		<TrainType name="4" majorStops="4" cost="300" quantity="4">
+            <NewPhase phaseName="4"/>
+        </TrainType>
+		<TrainType name="5" majorStops="5" cost="450" quantity="3">
+            <NewPhase phaseName="5"/>
+        </TrainType>
+		<TrainType name="6" majorStops="6" cost="630">
+            <NewPhase phaseName="6"/>
 			<IfOption name="WithOptional6Train" value="yes">
 				<Attributes quantity="3"/>
 			</IfOption>
@@ -96,8 +101,8 @@
 				<Attributes quantity="2"/>
 			</IfOption>
 		</TrainType>
-		<TrainType name="D" majorStops="99" cost="1100" startPhase="D" 
-			rustedTrain="4">
+		<TrainType name="D" majorStops="99" cost="1100">
+            <NewPhase phaseName="D"/>
 			<IfOption name="UnlimitedTopTrains" value="yes">
 				<Attributes quantity="-1"/>
 			</IfOption>
@@ -123,19 +128,20 @@
 			<OperatingRounds number="2"/>
 		</Phase>
 		<Phase name="4">
-			<Tiles colour="yellow,green"/>
+			<Trains rusted="2" limitStep="2"/>
 		</Phase>
 		<Phase name="5">
 			<Tiles colour="yellow,green,brown"/>
+            <Trains limitStep="3"/>
 			<Privates sellingAllowed="no" close="yes" revenueStep="2"/> <!--G increases revenue and does not close - if owned by player-->
 			<OperatingRounds number="3"/>
 			<OffBoardRevenue step="2"/>
 		</Phase>
 		<Phase name="6">
-			<Tiles colour="yellow,green,brown"/>
+            <Trains rusted="3" released="D"/>
 		</Phase>
 		<Phase name="D">
-			<Tiles colour="yellow,green,brown"/>
+            <Trains rusted="4"/>
 		</Phase>
 	</Component>
 </ComponentManager>

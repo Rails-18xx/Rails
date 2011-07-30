@@ -68,19 +68,6 @@
 				cities="double" if city-revenue is doubled (e.g. 1826 TGV).
 			-->
 		</Defaults>
-		<!--
-		<TrainType name="2" majorStops="2" cost="80" quantity="5" obsoleting="yes"/>
-		<TrainType name="3" majorStops="3" cost="180" quantity="5" obsoleting="yes" startPhase="3"/>
-		<TrainType name="4" majorStops="4" cost="300" quantity="3" obsoleting="yes" startPhase="4" 
-			rustedTrain="2" />
-		<TrainType name="5" majorStops="5" cost="450" quantity="2" startPhase="5"/>
-		<TrainType name="6" majorStops="6" cost="630" quantity="2" startPhase="6" 
-			rustedTrain="3">
-			<Sub index="2" rustedTrain="4"/>
-		</TrainType>
-		<TrainType name="8" majorStops="8" cost="700" quantity="7" startPhase="8" 
-			rustedTrain="4" />
-			-->
         <TrainType name="2" majorStops="2" cost="80" quantity="5"/>
         <TrainType name="3" majorStops="3" cost="180" quantity="5">
 			<NewPhase phaseName="3"/>
@@ -101,8 +88,6 @@
         </TrainType>
 	</Component>
 	<Component name="PhaseManager" class="rails.game.PhaseManager">
-		<!-- Note: released and rusted trains are now specified per TrainType
-			but could as well be moved here. To be sorted out when we do 18US. -->
 		<!-- Each Phase's defaults are the previous one's values -->
 		<Phase name="2" >
 			<Tiles colour="yellow"/>
@@ -118,10 +103,11 @@
         <Phase name="3½">
         </Phase>
 		<Phase name="4">
-			<Trains rusted="2"/>
+			<Trains rusted="2" limitStep="2"/>
 		</Phase>
 		<Phase name="5">
 			<Tiles colour="yellow,green,brown"/>
+			<Trains limitStep="3"/>
 			<!--Privates close="yes"/-->
 			<OperatingRounds number="3"/>
 			<OffBoardRevenue step="2"/>

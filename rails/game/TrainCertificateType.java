@@ -17,21 +17,12 @@ public class TrainCertificateType {
     protected int quantity = 0;
     protected boolean infiniteQuantity = false;
 
-    protected String startedPhaseName = null;
-    // Phase startedPhase;
-
     protected List<TrainType> potentialTrainTypes = new ArrayList<TrainType>(2);
     
     protected Map<Integer, String> newPhaseNames;
     
-    protected Map<Integer, String> rustedTrainTypeNames = null;
-    protected Map<Integer, TrainCertificateType> rustedTrainType = null;
-    
     protected boolean permanent = true;
     protected boolean obsoleting = false;
-
-    protected String releasedTrainTypeNames = null;
-    protected List<TrainCertificateType> releasedTrainTypes = null;
 
     protected boolean canBeExchanged = false;
     protected int cost;
@@ -74,36 +65,10 @@ public class TrainCertificateType {
         quantity = tag.getAttributeAsInteger("quantity", quantity);
         quantity += tag.getAttributeAsInteger("quantityIncrement", 0);
 
-        // Phase started
-        startedPhaseName = tag.getAttributeAsString("startPhase", "");
-
-        // Train type rusted
-        String rustedTrainTypeName1 = tag.getAttributeAsString("rustedTrain");
-        if (Util.hasValue(rustedTrainTypeName1)) {
-            rustedTrainTypeNames = new HashMap<Integer, String>();
-            rustedTrainTypeNames.put(1, rustedTrainTypeName1);
-        }
-
-        // Other train type released for buying
-        releasedTrainTypeNames = tag.getAttributeAsString("releasedTrain");
-
         // From where is this type initially available
         initialPortfolio =
             tag.getAttributeAsString("initialPortfolio",
                     initialPortfolio);
-        
-        // Configure any actions on other than the first train of a type
-        List<Tag> subs =  tag.getChildren("Sub");
-        if (subs != null) {
-            for (Tag sub : tag.getChildren("Sub")) {
-                int index = sub.getAttributeAsInteger("index");
-                rustedTrainTypeName1 = sub.getAttributeAsString("rustedTrain");
-                if (rustedTrainTypeNames == null) {
-                    rustedTrainTypeNames = new HashMap<Integer, String>();
-                }
-                rustedTrainTypeNames.put(index, rustedTrainTypeName1);
-            }
-        }
         
         // New style phase changes (to replace 'startPhase' attribute and <Sub> tag)
         List<Tag> newPhaseTags = tag.getChildren("NewPhase");
@@ -211,37 +176,6 @@ public class TrainCertificateType {
         return name;
     }
 
-    /**
-     * @return Returns the releasedTrainTypeName.
-     */
-    public String getReleasedTrainTypeNames() {
-        return releasedTrainTypeNames;
-    }
-
-    /**
-     * @return Returns the rustedTrainTypeName.
-     */
-    public Map<Integer,String> getRustedTrainTypeNames() {
-        return rustedTrainTypeNames;
-    }
-
-    /**
-     * @param releasedTrainType The releasedTrainType to set.
-     */
-    public void setReleasedTrainTypes(List<TrainCertificateType> releasedTrainTypes) {
-        this.releasedTrainTypes = releasedTrainTypes;
-    }
-
-    /**
-     * @param rustedTrainType The rustedTrainType to set.
-     */
-    public void setRustedTrainType(int index, TrainCertificateType rustedTrainType) {
-        if (this.rustedTrainType == null) {
-            this.rustedTrainType = new HashMap<Integer, TrainCertificateType>();
-        }
-        this.rustedTrainType.put(index, rustedTrainType);
-    }
-
     public boolean isPermanent() {
         return permanent;
     }
@@ -252,28 +186,6 @@ public class TrainCertificateType {
 
     public void setPermanent(boolean permanent) {
         this.permanent = permanent;
-    }
-
-   /**
-     * @return Returns the releasedTrainTypes.
-     */
-    public List<TrainCertificateType> getReleasedTrainTypes() {
-        return releasedTrainTypes;
-    }
-
-    /**
-     * @return Returns the rustedTrainType.
-     */
-    public TrainCertificateType getRustedTrainType(int index) {
-        if (rustedTrainType == null) return null;
-        return rustedTrainType.get(index);
-    }
-
-    /**
-     * @return Returns the startedPhaseName.
-     */
-    public String getStartedPhaseName() {
-        return startedPhaseName;
     }
 
     public int getQuantity() {
@@ -311,16 +223,6 @@ public class TrainCertificateType {
     public String getInfo() {
         StringBuilder b = new StringBuilder ("<html>");
         b.append(LocalText.getText("TrainInfo", name, Bank.format(cost), quantity));
-        if (Util.hasValue(startedPhaseName)) {
-            appendInfoText(b, LocalText.getText("StartsPhase", startedPhaseName));
-        }
-        if (rustedTrainTypeNames != null) {
-            appendInfoText(b, LocalText.getText("RustsTrains", rustedTrainTypeNames.get(1)));
-            // Ignore any 'Sub' cases for now
-        }
-        if (releasedTrainTypeNames != null) {
-            appendInfoText(b, LocalText.getText("ReleasesTrains", releasedTrainTypeNames));
-        }
         if (b.length() == 6) b.append(LocalText.getText("None"));
 
         return b.toString();

@@ -30,10 +30,8 @@ public class Phase implements PhaseI {
     protected int offBoardRevenueStep = 1;
     
     /** New style train limit configuration.
-     * TODO TEMPORARILY the default is 0 to allow distinguishing the old and new styles.
-     * This should be set to 1 once all game configs have been converted.
      */
-    protected int trainLimitStep = 0;
+    protected int trainLimitStep = 1;
     
     protected int privatesRevenueStep = 1; // sfy 1889
 
@@ -262,19 +260,8 @@ public class Phase implements PhaseI {
         return trainLimitStep;
     }
     
-    // TEMPORARILY included. To be removed when all games have been converted to new style train limit configuration.
-    public void setTrainLimitStep(int trainLimitStep) {
-        this.trainLimitStep = trainLimitStep;
-    }
-
     public int getTrainLimitIndex() {
-        if(trainLimitStep > 0) {
-            // New style
-            return trainLimitStep - 1;
-        } else {
-            // TODO Old style, can be removed once all games have been converted
-            return index;
-        }
+        return trainLimitStep - 1;
     }
 
     public int getIndex() {
