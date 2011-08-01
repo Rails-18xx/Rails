@@ -57,24 +57,16 @@
 	<Component name="TrainManager" class="rails.game.TrainManager">
 		<Defaults>
 			<Reach base="stops" countTowns="yes"/>
-			<!-- Alternative values: 
-				base="hexes" for H-trains as in 1826, 1849 etc.
-				countTowns="no" for all trains in 1841, 18EU, etc.,
-				  where towns score but do not count against the train length.
-				  Otherwise, towns are counted as minor or major stops,
-				  depending on the presence or absence of a "minorStops" value.
-			-->
 			<Score towns="yes"/>
-			<!-- Alternative values:
-				towns="no" for trains that ignore towns (e.g. 1826 TGV).
-				cities="double" if city-revenue is doubled (e.g. 1826 TGV).
-			-->
 		</Defaults>
 		<TrainType name="2" majorStops="2" cost="180" quantity="6"/>
-		<TrainType name="3" majorStops="3" cost="300" quantity="4" startPhase="2"/>
+		<TrainType name="3" majorStops="3" cost="300" quantity="4">
+            <NewPhase phaseName="2"/>
+		</TrainType>
 		<TrainType name="4" majorStops="4" cost="430" quantity="3"/>
-		<TrainType name="5" majorStops="5" cost="550" quantity="4"
-			startPhase="3" rustedTrain="2" />
+		<TrainType name="5" majorStops="5" cost="550" quantity="4">
+            <NewPhase phaseName="3"/>
+		</TrainType>
 	</Component>
 	<Component name="PhaseManager" class="rails.game.PhaseManager">
 		<!-- Note: released and rusted trains are now specified per TrainType
@@ -92,6 +84,7 @@
 		</Phase>
 		<Phase name="3">
 			<Tiles colour="yellow,green,brown"/>
+			<Trains rusted="2" limitStep="2"/>
 			<OperatingRounds number="3"/>
 		</Phase>
 	</Component>

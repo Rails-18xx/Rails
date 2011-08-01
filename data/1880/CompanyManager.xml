@@ -29,7 +29,7 @@
 		capitalisation="incremental">
 		<Capitalisation Type="incremental"/>
 		<TileLays>
-			<Number colour="yellow" phase="A2,B1,B2,B3,C1,C2,C3,D1,D2,D3"
+			<Number colour="yellow" phase="2+2,3,3+3,4,4+4,6,6e,8,8e,10"
 				number="2"/>
 		</TileLays>
 		<Float percentage="60"/>
@@ -41,7 +41,7 @@
 			<LayCost method="sequence" cost="0,40,100"/>
 		</BaseTokens>
 		<Capitalisation type="incremental"/>
-		<Trains limit="4,4,4,3,3,3,3,3,2,2,2"/>
+		<Trains limit="4,3,2"/>
 		<CanUseSpecialProperties/>
 	</CompanyType>
 	
@@ -84,7 +84,7 @@
 		</SpecialProperty>
 	</Company>
 	<Company name="IG" longname="Imperial Qing Government" type="Private"
-		basePrice="160">
+		basePrice="160" revenue="20">
 		<Info key="ComesWithPresidency" parm="BCR,20"/>
 	</Company>
 	<Company name="RC" longname="Rocket Company" type="Private" basePrice="70"

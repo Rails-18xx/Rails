@@ -15,7 +15,7 @@
 		<BaseTokens>
 			<HomeBase lay="whenStarted"/>
 		</BaseTokens>
-		<Trains limit="2,2,1" mandatory="no"/>
+		<Trains limit="2,1" mandatory="no"/>
 		<InitialTrain type="2" cost="0" tradeable="yes"/>
 	</CompanyType>
 	<CompanyType name="Major" class="rails.game.PublicCompany"
@@ -33,7 +33,7 @@
 			<HomeBase lay="whenStarted"/>
 		</BaseTokens>
 		<Payout split="allowed" mustExceedPriceToMove="yes"/>
-		<Trains limit="4,4,3,2"/>
+		<Trains limit="4,3,2"/>
 		<TradeShares mustHaveOperated="yes"/>
 	</CompanyType>
 	

@@ -361,11 +361,11 @@ public class OperatingRound_1856 extends OperatingRound {
         PhaseI postPhase = getCurrentPhase();
 
         if (postPhase != prePhase) {
-            if (postPhase.getName().equals("5")) {
+            if (postPhase.getName().equals("6")) {
                 finalLoanRepaymentPending.set(true);
                 playerToStartLoanRepayment
                     = gameManager.getPlayerByIndex(action.getPlayerIndex());
-            } else if (postPhase.getName().equals("4")) {
+            } else if (postPhase.getName().equals("5")) {
                 // Make Bridge and Tunnel tokens buyable from the Bank.
                 for (SpecialPropertyI sp : gameManager.getCommonSpecialProperties()) {
                     if (sp instanceof SellBonusToken) {
@@ -391,7 +391,7 @@ public class OperatingRound_1856 extends OperatingRound {
             while (true) {
                 // Still allowed in current phase?
                 if (gameManager.getCurrentPhase().getIndex()
-                        > gameManager.getPhaseManager().getPhaseByName("4").getIndex()) {
+                        > gameManager.getPhaseManager().getPhaseByName("5").getIndex()) {
                     errMsg = LocalText.getText("WrongPhase",
                             gameManager.getCurrentPhase().getName());
                     break;

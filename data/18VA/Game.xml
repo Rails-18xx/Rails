@@ -3,32 +3,36 @@
 	<Component name="GameManager" class="rails.game.GameManager">
 		<Game name="18VA"/>
 		<!-- GAME OPTIONS must have:
-			- a name, which must also exist as an entry in LocalText.properties,
-			- optionally 'type="toggle"', which has the effect that the
-			  selection uses a checkbox instead of a dropdown list.
-			  In this case, 'values' must be absent 
-			  (the allowed values are fixed to "yes,no").
-			- optionally, 'values="a,b,c"' i,e, a list of allowed values.
-			- optionally, a default value (only affects a toggle;
-			  in a dropdown the first item is always the default).
+		- a name, which must also exist as an entry in LocalText.properties,
+		- optionally 'type="toggle"', which has the effect that the
+		selection uses a checkbox instead of a dropdown list.
+		In this case, 'values' must be absent 
+		(the allowed values are fixed to "yes,no").
+		- optionally, 'values="a,b,c"' i,e, a list of allowed values.
+		- optionally, a default value (only affects a toggle;
+		in a dropdown the first item is always the default).
 		-->
 		<!-- The options in Game.xml are not currently used.
-			 See GamesList.xml for the real ones.
-		--> 
+		See GamesList.xml for the real ones.
+		-->
 		<GameParameters>
 			<PlayerShareLimit percentage="60">
 				<!-- Option "NumberOfPlayers" is automatically set 
-					by the game engine -->
+				by the game engine -->
 				<IfOption name="NumberOfPlayers" value="2">
 					<IfOption name="TwoPlayersCertLimit70Percent" value="yes">
 						<Attributes percentage="70"/>
 					</IfOption>
 				</IfOption>
-			</PlayerShareLimit>			
+			</PlayerShareLimit>
 			<BankPoolLimit percentage="50"/>
 			<StockRound>
 				<NoSaleInFirstSR/>
 			</StockRound>
+			<OperatingRound>
+				<EmergencyTrainBuying mustBuyCheapestTrain="no"
+					mayBuyFromCompany="yes"/>
+			</OperatingRound>
 		</GameParameters>
 		<EndOfGame>
 			<Bankruptcy/>
@@ -48,47 +52,38 @@
 		<Bank amount="8000"/>
 		<Money format="$@"/>
 	</Component>
-	<Component name="TileManager" class="rails.game.TileManager" 
+	<Component name="TileManager" class="rails.game.TileManager"
 		file="TileSet.xml"/>
 	<Component name="Map" class="rails.game.MapManager" file="Map.xml"/>
-	<Component name="CompanyManager" class="rails.game.CompanyManager" 
+	<Component name="CompanyManager" class="rails.game.CompanyManager"
 		file="CompanyManager.xml"/>
-	<Component name="StockMarket" class="rails.game.StockMarket" 
+	<Component name="StockMarket" class="rails.game.StockMarket"
 		file="StockMarket.xml"/>
 	<Component name="TrainManager" class="rails.game.TrainManager">
 		<Defaults>
 			<Reach base="stops" countTowns="no"/>
-			<!-- Alternative values: 
-				base="hexes" for H-trains as in 1826, 1849 etc.
-				countTowns="no" for all trains in 1841, 18EU, etc.,
-				  where towns score but do not count against the train length.
-				  Otherwise, towns are counted as minor or major stops,
-				  depending on the presence or absence of a "minorStops" value.
-			-->
 			<Score towns="yes"/>
-			<!-- Alternative values:
-				towns="no" for trains that ignore towns (e.g. 1826 TGV).
-				cities="double" if city-revenue is doubled (e.g. 1826 TGV).
-			-->
 		</Defaults>
 		<TrainType name="2" majorStops="2" cost="100" quantity="6"/>
-		<TrainType name="3" majorStops="3" cost="200" quantity="5" startPhase="3"/>
-		<TrainType name="4" majorStops="4" cost="300" quantity="4" startPhase="4" 
-			rustedTrain="2"/>
-		<TrainType name="5" majorStops="5" cost="500" quantity="3" startPhase="5"
-			rustedTrain="3"/>
-		<TrainType name="6" majorStops="6" cost="600" startPhase="6" 
-			releasedTrain="4D">
+		<TrainType name="3" majorStops="3" cost="200" quantity="5">
+			<NewPhase phaseName="3"/>
 		</TrainType>
-		<TrainType name="4D" majorStops="99" cost="800" quantity="10" startPhase="4D" 
-			rustedTrain="4">
+		<TrainType name="4" majorStops="4" cost="300" quantity="4">
+			<NewPhase phaseName="4"/>
+		</TrainType>
+		<TrainType name="5" majorStops="5" cost="500" quantity="3">
+			<NewPhase phaseName="5"/>
+		</TrainType>
+		<TrainType name="6" majorStops="6" cost="600">
+			<NewPhase phaseName="6"/>
+		</TrainType>
+		<TrainType name="4D" majorStops="99" cost="800" quantity="10">
+			<NewPhase phaseName="4D"/>
 		</TrainType>
 	</Component>
 	<Component name="PhaseManager" class="rails.game.PhaseManager">
-		<!-- Note: released and rusted trains are now specified per TrainType
-			but could as well be moved here. To be sorted out when we do 18US. -->
 		<!-- Each Phase's defaults are the previous one's values -->
-		<Phase name="2" >
+		<Phase name="2">
 			<Tiles colour="yellow"/>
 			<Privates sellingAllowed="no"/>
 			<OperatingRounds number="1"/>
@@ -100,19 +95,20 @@
 			<OperatingRounds number="2"/>
 		</Phase>
 		<Phase name="4">
-			<Tiles colour="yellow,green"/>
+			<Trains rusted="2/1+1" limitStep="2"/>
 		</Phase>
 		<Phase name="5">
 			<Tiles colour="yellow,green,brown"/>
+			<Trains rusted="3/2+2" limitStep="3"/>
 			<!--Privates close="yes"/-->
 			<OperatingRounds number="3"/>
 			<OffBoardRevenue step="2"/>
 		</Phase>
 		<Phase name="6">
-			<Tiles colour="yellow,green,brown"/>
+			<Trains released="4D"/>
 		</Phase>
 		<Phase name="4D">
-			<Tiles colour="yellow,green,brown"/>
+			<Trains rusted="4/3+3"/>
 		</Phase>
 	</Component>
 </ComponentManager>

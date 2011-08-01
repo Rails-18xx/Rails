@@ -1,34 +1,44 @@
 <?xml version="1.0"?>
 <ComponentManager>
-	<Component name="GameManager" class="rails.game.specific._18EU.GameManager_18EU">
+	<Component name="GameManager"
+		class="rails.game.specific._18EU.GameManager_18EU">
 		<Game name="18EU"/>
-		<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Deactivate" />
-		<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Deactivate" />
+		<GameOption name="RouteAwareness" values="Highlight,Deactivate"
+			default="Deactivate"/>
+		<GameOption name="RevenueCalculation" values="Suggest,Deactivate"
+			default="Deactivate"/>
 		<GameOption name="Extra3Trains" values="0,1,2" default="0"/>
 		<GameOption name="Extra4Trains" values="0,1" default="0"/>
-		<GameOption name="NoMapMode" type="toggle" default="no" />
+		<GameOption name="NoMapMode" type="toggle" default="no"/>
 		<GameOption name="UnlimitedTiles" type="toggle" default="no"/>
-        <GameOption name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
+		<GameOption name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
 		<GameParameters>
-			<StockRound class="rails.game.specific._18EU.StockRound_18EU" 
-				sequence="sellBuy"
-				skipFirst="yes">
+			<StockRound class="rails.game.specific._18EU.StockRound_18EU"
+				sequence="sellBuy" skipFirst="yes">
 				<NoSaleInFirstSR/>
 				<NoSaleIfNotOperated/>
 			</StockRound>
-			<OperatingRound class="rails.game.specific._18EU.OperatingRound_18EU"/>
+			<OperatingRound
+				class="rails.game.specific._18EU.OperatingRound_18EU">
+				<EmergencyTrainBuying mustBuyCheapestTrain="no"
+					mayBuyFromCompany="yes"/>
+			</OperatingRound>
 			<PlayerShareLimit percentage="60"/>
 			<BankPoolLimit percentage="50"/>
 			<TreasuryShareLimit percentage="80"/>
 		</GameParameters>
 		<GuiClasses>
-			<GameStatus class="rails.ui.swing.gamespecific._18EU.GameStatus_18EU"/>
-			<StatusWindow class="rails.ui.swing.gamespecific._18EU.StatusWindow_18EU"/>
-			<GameUIManager class="rails.ui.swing.gamespecific._18EU.GameUIManager_18EU"/>
+			<GameStatus
+				class="rails.ui.swing.gamespecific._18EU.GameStatus_18EU"/>
+			<StatusWindow
+				class="rails.ui.swing.gamespecific._18EU.StatusWindow_18EU"/>
+			<GameUIManager
+				class="rails.ui.swing.gamespecific._18EU.GameUIManager_18EU"/>
 		</GuiClasses>
 		<EndOfGame>
 			<BankBreaks limit="0" finish="setOfORs"/>
 			<!-- "Runs out"; when "broken", -1 is the limit -->
+			
 			<!-- Also when the share value reaches $300; this is configured in teh stock market XML -->
 		</EndOfGame>
 	</Component>
@@ -38,16 +48,16 @@
 		<Players number="4" cash="350" certLimit="16"/>
 		<Players number="5" cash="300" certLimit="13"/>
 		<Players number="6" cash="250" certLimit="11"/>
-	</Component>	
+	</Component>
 	<Component name="Bank" class="rails.game.Bank">
 		<Bank amount="12000"/>
 	</Component>
-	<Component name="TileManager" class="rails.game.TileManager" 
+	<Component name="TileManager" class="rails.game.TileManager"
 		file="TileSet.xml"/>
 	<Component name="Map" class="rails.game.MapManager" file="Map.xml"/>
-	<Component name="CompanyManager" class="rails.game.CompanyManager" 
+	<Component name="CompanyManager" class="rails.game.CompanyManager"
 		file="CompanyManager.xml"/>
-	<Component name="StockMarket" class="rails.game.StockMarket" 
+	<Component name="StockMarket" class="rails.game.StockMarket"
 		file="StockMarket.xml"/>
 	<Component name="TrainManager" class="rails.game.TrainManager">
 		<Defaults>
@@ -55,7 +65,8 @@
 			<Score towns="yes"/>
 		</Defaults>
 		<TrainType name="2" majorStops="2" cost="100" quantity="15"/>
-		<TrainType name="3" majorStops="3" cost="200" startPhase="3" releasedTrain="P">
+		<TrainType name="3" majorStops="3" cost="200">
+			<NewPhase phaseName="3"/>
 			<IfOption name="Extra3Trains" value="0">
 				<Attributes quantity="5"/>
 			</IfOption>
@@ -66,8 +77,8 @@
 				<Attributes quantity="7"/>
 			</IfOption>
 		</TrainType>
-		<TrainType name="4" majorStops="4" cost="300" startPhase="4" 
-			rustedTrain="2">
+		<TrainType name="4" majorStops="4" cost="300">
+			<NewPhase phaseName="4"/>
 			<IfOption name="Extra4Trains" value="0">
 				<Attributes quantity="4"/>
 			</IfOption>
@@ -75,39 +86,47 @@
 				<Attributes quantity="5"/>
 			</IfOption>
 		</TrainType>
-		<TrainType name="5" majorStops="5" cost="500" quantity="3" startPhase="5"/>
-		<TrainType name="6" majorStops="6" cost="600" quantity="2" startPhase="6" 
-			rustedTrain="3"/>
-		<TrainType name="8" majorStops="8" cost="800" quantity="-1" startPhase="8" 
-			rustedTrain="4"/>
+		<TrainType name="5" majorStops="5" cost="500" quantity="3">
+			<NewPhase phaseName="5"/>
+		</TrainType>
+		<TrainType name="6" majorStops="6" cost="600" quantity="2">
+			<NewPhase phaseName="6"/>
+		</TrainType>
+		<TrainType name="8" majorStops="8" cost="800" quantity="-1">
+			<NewPhase phaseName="8"/>
+		</TrainType>
 		<!-- majorStops="-1" indicates that this not a normally running train-->
-		<TrainType name="P" initialPortfolio="Pool" majorStops="-1" cost="100" quantity="5"/>
+		<TrainType name="P" initialPortfolio="Pool" majorStops="-1" cost="100"
+			quantity="5"/>
 	</Component>
 	<Component name="PhaseManager" class="rails.game.PhaseManager">
-		<Phase name="2" >
+		<Phase name="2">
 			<Tiles colour="yellow"/>
 			<OperatingRounds number="2"/>
 			<Trains tradingAllowed="yes"/>
 		</Phase>
 		<Phase name="3">
 			<Tiles colour="yellow,green"/>
+			<Trains released="P"/>
 		</Phase>
 		<Phase name="4">
-			<Tiles colour="yellow,green"/>
+			<Trains rusted="2" limitStep="2"/>
 		</Phase>
 		<Phase name="5">
 			<Tiles colour="yellow,green,brown"/>
+			<Trains limitStep="2"/>
 			<OffBoardRevenue step="2"/>
 		</Phase>
 		<Phase name="6">
-			<Tiles colour="yellow,green,brown"/>
+			<Trains rusted="3"/>
 		</Phase>
 		<Phase name="8">
 			<Tiles colour="yellow,green,brown,grey"/>
+			<Trains rusted="4"/>
 		</Phase>
 	</Component>
 	<Component name="RevenueManager" class="rails.algorithms.RevenueManager">
-		<Modifier class="rails.game.specific._18EU.OffBoardRevenueModifier" /> 
-		<Modifier class="rails.game.specific._18EU.PullmanRevenueModifier" /> 
+		<Modifier class="rails.game.specific._18EU.OffBoardRevenueModifier"/>
+		<Modifier class="rails.game.specific._18EU.PullmanRevenueModifier"/>
 	</Component>
 </ComponentManager>

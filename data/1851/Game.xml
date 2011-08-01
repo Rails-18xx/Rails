@@ -15,6 +15,9 @@
 			<StockRound sequence="SellBuy">
 				<NoSaleIfNotOperated/>
 			</StockRound>
+            <OperatingRound>
+                <EmergencyTrainBuying mustBuyCheapestTrain="yes" mayBuyFromCompany="yes"/>
+            </OperatingRound>
 		</GameParameters>
 		<EndOfGame>
 			<Bankruptcy/>
@@ -55,14 +58,20 @@
 			-->
 		</Defaults>
 		<TrainType name="2" majorStops="2" cost="100" quantity="5"/>
-		<TrainType name="3" majorStops="3" cost="200" quantity="4" startPhase="3"/>
-		<TrainType name="4" majorStops="4" cost="300" quantity="3" startPhase="4" 
-			rustedTrain="2"/>
-		<TrainType name="5" majorStops="5" cost="500" quantity="2" startPhase="5"/>
-		<TrainType name="6" majorStops="6" cost="600" quantity="2" startPhase="6"
-			rustedTrain="3"/>
-		<TrainType name="8" majorStops="8" cost="800" startPhase="8" 
-			rustedTrain="4">
+		<TrainType name="3" majorStops="3" cost="200" quantity="4">
+            <NewPhase phaseName="3"/>
+		</TrainType>
+		<TrainType name="4" majorStops="4" cost="300" quantity="3">
+			<NewPhase phaseName="4"/>
+		</TrainType>
+		<TrainType name="5" majorStops="5" cost="500" quantity="2">
+            <NewPhase phaseName="5"/>
+        </TrainType>
+		<TrainType name="6" majorStops="6" cost="600" quantity="2">
+            <NewPhase phaseName="6"/>
+        </TrainType>
+		<TrainType name="8" majorStops="8" cost="800">
+            <NewPhase phaseName="8"/>
             			<IfOption name="UnlimitedTopTrains" value="yes">
 				<Attributes quantity="-1"/>
 			</IfOption>
@@ -89,20 +98,22 @@
 			<OperatingRounds number="2"/>
 		</Phase>
 		<Phase name="4">
-			<Tiles colour="yellow,green"/>
+			<Trains rusted="2" limitStep="2"/>
 			<OffBoardRevenue step="2"/>
 		</Phase>
 		<Phase name="5">
 			<Tiles colour="yellow,green,brown"/>
+            <Trains limitStep="3"/>
 			<Privates close="yes"/>
 			<OperatingRounds number="3"/>
 		</Phase>
 		<Phase name="6">
-			<Tiles colour="yellow,green,brown"/>
+			<Trains rusted="3"/>
 			<OffBoardRevenue step="3"/>
 		</Phase>
 		<Phase name="8">
 			<Tiles colour="yellow,green,brown,grey"/>
+			<Trains rusted="4"/>
 		</Phase>
 	</Component>
 		<Component name="RevenueManager" class="rails.algorithms.RevenueManager">

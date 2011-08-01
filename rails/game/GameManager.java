@@ -24,6 +24,7 @@ import rails.game.correct.*;
 import rails.game.move.*;
 import rails.game.special.SpecialPropertyI;
 import rails.game.special.SpecialTokenLay;
+import rails.game.specific._1856.CGRFormationRound;
 import rails.game.state.*;
 import rails.util.*;
 
@@ -352,8 +353,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             Tag orTag = gameParmTag.getChild("OperatingRound");
             if (orTag != null) {
                 String orClassName =
-                    orTag.getAttributeAsString("class",
-                    "rails.game.OperatingRound");
+                    orTag.getAttributeAsString("class", "rails.game.OperatingRound");
                 try {
                     operatingRoundClass =
                         Class.forName(orClassName).asSubclass(
@@ -367,6 +367,19 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
                 if (orderTag != null) {
                 	dynamicOperatingOrder = orderTag.getAttributeAsBoolean("dynamic",
                 			dynamicOperatingOrder);
+                }
+                
+                Tag emergencyTag = orTag.getChild("EmergencyTrainBuying");
+                if (emergencyTag != null) {
+                    setGameParameter (GameDef.Parm.EMERGENCY_MUST_BUY_CHEAPEST_TRAIN,
+                            emergencyTag.getAttributeAsBoolean("mustBuyCheapestTrain", 
+                                    GameDef.Parm.EMERGENCY_MUST_BUY_CHEAPEST_TRAIN.defaultValueAsBoolean()));
+                    setGameParameter (GameDef.Parm.EMERGENCY_MAY_ALWAYS_BUY_NEW_TRAIN,
+                            emergencyTag.getAttributeAsBoolean("mayAlwaysBuyNewTrain", 
+                                    GameDef.Parm.EMERGENCY_MAY_ALWAYS_BUY_NEW_TRAIN.defaultValueAsBoolean()));
+                    setGameParameter (GameDef.Parm.EMERGENCY_MAY_BUY_FROM_COMPANY,
+                            emergencyTag.getAttributeAsBoolean("mayBuyFromCompany", 
+                                    GameDef.Parm.EMERGENCY_MAY_BUY_FROM_COMPANY.defaultValueAsBoolean()));
                 }
             }
 
@@ -993,6 +1006,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
         // TEMPORARY FIX TO ALLOW OLD 1856 SAVED FILES TO BE PROCESSED
         if (gameName.equals("1856")
+                //&& currentRound.get().getClass() != CGRFormationRound.class
                 && possibleActions.contains(RepayLoans.class)
                 && (!possibleActions.contains(action.getClass())
                     || (action.getClass() == NullAction.class

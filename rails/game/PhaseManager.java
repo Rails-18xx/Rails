@@ -59,24 +59,6 @@ public class PhaseManager implements ConfigurableComponentI {
             phase.finishConfiguration(gameManager);
         }
         
-        /* TODO TEMPORARY CODE:
-         * If any phase has a train limit step > 0, all remaining 0 values must be set to 1.
-         * This code uses separate loops to allow easy removal.
-         */
-        boolean anyLimitStep = false;
-        for (Phase phase : phaseList) {
-            if (phase.getTrainLimitStep() > 0) {
-                anyLimitStep = true;
-                break;
-            }
-        }
-        if (anyLimitStep) {
-            for (Phase phase : phaseList) {
-                if (phase.getTrainLimitStep() == 0) phase.setTrainLimitStep(1);
-            }
-        }
-        // End of temporary code
-        
         PhaseI initialPhase = phaseList.get(0);
         setPhase(initialPhase, null);
     }
