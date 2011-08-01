@@ -92,22 +92,16 @@
 		<TrainType name="5" majorStops="5" cost="450" quantity="3">
             <NewPhase phaseName="5"/>
         </TrainType>
-		<TrainType name="6" majorStops="6" cost="630">
+		<TrainType name="6" majorStops="6" cost="630" quantity="2">
             <NewPhase phaseName="6"/>
 			<IfOption name="WithOptional6Train" value="yes">
 				<Attributes quantity="3"/>
 			</IfOption>
-			<IfOption name="WithOptional6Train" value="no">
-				<Attributes quantity="2"/>
-			</IfOption>
 		</TrainType>
-		<TrainType name="D" majorStops="99" cost="1100">
+		<TrainType name="D" majorStops="99" cost="1100" quantity="6">
             <NewPhase phaseName="D"/>
 			<IfOption name="UnlimitedTopTrains" value="yes">
 				<Attributes quantity="-1"/>
-			</IfOption>
-			<IfOption name="UnlimitedTopTrains" value="no">
-				<Attributes quantity="6"/>
 			</IfOption>
 			<Exchange cost="800"/>
 		</TrainType>

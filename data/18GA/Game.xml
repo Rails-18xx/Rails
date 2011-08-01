@@ -77,13 +77,10 @@
 		<TrainType name="6" majorStops="6" cost="630" quantity="2">
 			<NewPhase phaseName="6"/>
 		</TrainType>
-		<TrainType name="8" majorStops="8" cost="800">
+		<TrainType name="8" majorStops="8" cost="800" quantity="5">
 			<NewPhase phaseName="8"/>
 			<IfOption name="UnlimitedTopTrains" value="yes">
 				<Attributes quantity="-1"/>
-			</IfOption>
-			<IfOption name="UnlimitedTopTrains" value="no">
-				<Attributes quantity="5"/>
 			</IfOption>
 		</TrainType>
 	</Component>

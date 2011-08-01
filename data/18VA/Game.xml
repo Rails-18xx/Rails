@@ -74,7 +74,7 @@
 		<TrainType name="5" majorStops="5" cost="500" quantity="3">
 			<NewPhase phaseName="5"/>
 		</TrainType>
-		<TrainType name="6" majorStops="6" cost="600">
+		<TrainType name="6" majorStops="6" cost="600" quantity="2">
 			<NewPhase phaseName="6"/>
 		</TrainType>
 		<TrainType name="4D" majorStops="99" cost="800" quantity="10">
