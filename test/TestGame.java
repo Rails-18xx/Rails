@@ -45,18 +45,23 @@ public class TestGame extends TestCase {
         int line = 0;
         while (true) {
             // test for size of reports
-            if (line >= expectedReport.size()) 
-                if (line >= testReport.size())
-                    break; // test succesfull
-                else
+            if (line >= expectedReport.size()) { 
+                if (line >= testReport.size()) {
+                    break; // test successful
+                } else {
                     fail("Test report exceeeds expected report." +
                     		" Last line (" + line + "): " + testReport.get(line-1));
-            else
-                if (line >= testReport.size())
+                }
+            } else {
+                if (line >= testReport.size()) {
                     fail("Expected report exceeds test report." +
                     		" Last line (" + line + "): " + expectedReport.get(line-1));
-                    
-            assertEquals("Reports differ in line " + line+1, 
+                }
+            }
+            log.debug("Comparing line " + (line+1));
+            log.debug("Expected = " + expectedReport.get(line));
+            log.debug("Actual = " + testReport.get(line));
+            assertEquals("Reports differ in line " + (line+1), 
                     expectedReport.get(line), testReport.get(line));
             line = line + 1;
         }
