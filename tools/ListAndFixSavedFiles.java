@@ -1,4 +1,4 @@
-package rails.util;
+package tools;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -17,6 +17,8 @@ import rails.common.parser.ConfigurationException;
 import rails.game.*;
 import rails.game.action.PossibleAction;
 import rails.ui.swing.elements.ActionMenuItem;
+import rails.util.GameFileIO;
+import rails.util.Util;
 
 public class ListAndFixSavedFiles extends JFrame
 implements ActionListener, KeyListener {

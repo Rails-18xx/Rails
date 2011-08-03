@@ -4,9 +4,8 @@ package rails.ui.swing;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -21,7 +20,6 @@ import rails.game.correct.MapCorrectionAction;
 import rails.ui.swing.elements.ActionLabel;
 import rails.ui.swing.hexmap.GUIHex;
 import rails.ui.swing.hexmap.HexMap;
-import tools.Util;
 
 public class UpgradesPanel extends Box implements MouseListener, ActionListener {
     private static final long serialVersionUID = 1L;
@@ -45,12 +43,12 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
     private boolean tokenMode = false;
     private boolean correctionTokenMode = false;
     private JButton cancelButton =
-            new JButton(LocalText.getText(INIT_CANCEL_TEXT));
+        new JButton(LocalText.getText(INIT_CANCEL_TEXT));
     private JButton doneButton = new JButton(LocalText.getText(INIT_DONE_TEXT));
     private HexMap hexMap;
 
     protected static Logger log =
-            Logger.getLogger(UpgradesPanel.class.getPackage().getName());
+        Logger.getLogger(UpgradesPanel.class.getPackage().getName());
 
     public UpgradesPanel(ORUIManager orUIManager) {
         super(BoxLayout.Y_AXIS);
@@ -94,12 +92,12 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
 
         for (LayTile layTile : hexMap.getTileAllowancesForHex(hex)) {
             tiles = layTile.getTiles();
-             if (tiles == null) {
+            if (tiles == null) {
                 for (TileI tile : uiHex.getCurrentTile().getValidUpgrades(hex,
                         orUIManager.gameUIManager.getCurrentPhase())) {
                     // Skip if not allowed in LayTile
                     //if (!layTile.isTileColourAllowed(tile.getColourName())) continue;
-                    
+
                     if (!orUIManager.tileUpgrades.contains(tile))
                         orUIManager.tileUpgrades.add(tile);
                 }
@@ -123,7 +121,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         panelLayout.setRows(defaultNbPanelElements);
 
         if (tokenMode && possibleTokenLays != null
-            && possibleTokenLays.size() > 0) {
+                && possibleTokenLays.size() > 0) {
 
             Color fgColour = null;
             Color bgColour = null;
@@ -145,7 +143,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
                     fgColour = Color.BLACK;
                     bgColour = Color.WHITE;
                     BonusToken token =
-                            (BonusToken) action.getSpecialProperty().getToken();
+                        (BonusToken) action.getSpecialProperty().getToken();
                     description = token.getName();
                     text = "+" + token.getValue();
                 }
@@ -245,7 +243,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         upgradePanel.add(doneButton);
         upgradePanel.add(cancelButton);
 
-//      repaint();
+        //      repaint();
         revalidate();
     }
 
@@ -298,7 +296,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         upgradePanel.add(doneButton);
         upgradePanel.add(cancelButton);
 
-//      repaint();
+        //      repaint();
         revalidate();
 
     }
@@ -312,7 +310,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
 
     public void setSelectedTokenIndex(int index) {
         log.debug("Selected token index from " + selectedTokenIndex + " to "
-                  + index);
+                + index);
         selectedTokenIndex = index;
     }
 
@@ -474,7 +472,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
             super(tokenIcon);
             this.token = token;
         }
-        
+
     }
 
     /** JLabel extension to allow attaching the internal hex ID */
@@ -501,7 +499,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
 
         void setTextFromTile(TileI tile) {
             StringBuffer text = new StringBuffer();
-            if (Util.hasValue(tile.getExternalId())) {
+            if (rails.util.Util.hasValue(tile.getExternalId())) {
                 text.append("<HTML><BODY>" + tile.getExternalId());
                 if (tile.countFreeTiles() != -1) {
                     text.append("<BR> (" + tile.countFreeTiles() + ")");
@@ -515,7 +513,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
             TileI currentTile = orUIManager.getGameUIManager().getGameManager().getTileManager().getTile(internalId);
             StringBuffer tt = new StringBuffer("<html>");
             tt.append("<b>Tile</b>: ").append(currentTile.getName()); // or
-                                                                        // getId()
+            // getId()
             if (currentTile.hasStations()) {
                 // for (Station st : currentTile.getStations())
                 int cityNumber = 0;
@@ -524,11 +522,11 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
                     cityNumber++; // = city.getNumber();
                     tt.append("<br>  ").append(st.getType()).append(" ").append(
                             cityNumber) // .append("/").append(st.getNumber())
-                    .append(": value ");
+                            .append(": value ");
                     tt.append(st.getValue());
                     if (st.getBaseSlots() > 0) {
                         tt.append(", ").append(st.getBaseSlots()).append(
-                                " slots");
+                        " slots");
                     }
                 }
             }

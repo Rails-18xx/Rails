@@ -2,6 +2,7 @@
 package rails.util;
 
 import java.awt.Color;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,7 +80,7 @@ public final class Util {
         }
     }
 
-    
+
     /**
      * Convert java string to html string
      * Transformations:
@@ -88,9 +89,9 @@ public final class Util {
     public static String convertToHtml(String javaString) {
         return javaString.replace("\n", "<br>");
     }
-    
-    
-    
+
+
+
     /**
      * Safely move a list of objects from one holder to another, avoiding
      * ConcurrentModificationExceptions.
@@ -148,7 +149,7 @@ public final class Util {
         }
         return Boolean.parseBoolean(s);
     }
-    
+
     /**
      * Parse a colour definition string.
      * Currently supported formats:
@@ -183,9 +184,9 @@ public final class Util {
         return c;
     }
 
-    
-    
-    
+
+
+
     /**
      * Is a colour dark? (to check if FG colour needs be reversed)
      */
@@ -206,5 +207,22 @@ public final class Util {
 
     public static String lowerCaseFirst (String text) {
         return text.substring(0, 1).toLowerCase() + text.substring(1);
+    }
+
+    /**
+     * Open an input stream from a file, which may exist as a physical file or
+     * in a JAR file. The name must be valid for both options.
+     * 
+     * @author Erik Vos
+     */
+    public static InputStream getStreamForFile(String fileName)
+    throws IOException {
+
+        File file = new File(fileName);
+        if (file.exists()) {
+            return new FileInputStream(file);
+        } else {
+            return null;
+        }
     }
 }

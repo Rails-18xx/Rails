@@ -5,11 +5,7 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
-import rails.common.parser.Config;
-import rails.common.parser.ConfigurableComponentI;
-import rails.common.parser.ConfigurationException;
-import rails.common.parser.Tag;
-import tools.Util;
+import rails.common.parser.*;
 
 /**
  * MapManager configures the map layout from XML
@@ -23,7 +19,7 @@ public class MapManager implements ConfigurableComponentI {
     protected TileOrientation tileOrientation;
     protected boolean lettersGoHorizontal;
     protected boolean letterAHasEvenNumbers;
-    
+
     // Optional map image (SVG file)
     protected String mapImageFilename = null;
     protected String mapImageFilepath = null;
@@ -43,13 +39,13 @@ public class MapManager implements ConfigurableComponentI {
     // information to define neighbours
     protected static final int[] xDeltaNS = new int[] { 0, -1, -1, 0, +1, +1 };
     protected static final int[] yXEvenDeltaNS =
-            new int[] { +1, 0, -1, -1, -1, 0 };
+        new int[] { +1, 0, -1, -1, -1, 0 };
     protected static final int[] yXOddDeltaNS =
-            new int[] { +1, +1, 0, -1, 0, +1 };
+        new int[] { +1, +1, 0, -1, 0, +1 };
     protected static final int[] xYEvenDeltaEW =
-            new int[] { -1, -1, -1, 0, +1, 0 };
+        new int[] { -1, -1, -1, 0, +1, 0 };
     protected static final int[] xYOddDeltaEW =
-            new int[] { 0, -1, 0, +1, +1, +1 };
+        new int[] { 0, -1, 0, +1, +1, +1 };
     protected static final int[] yDeltaEW = new int[] { +1, 0, -1, -1, 0, +1 };
 
     protected static Logger log =
@@ -91,7 +87,7 @@ public class MapManager implements ConfigurableComponentI {
             lettersGoHorizontal = false;
         } else {
             throw new ConfigurationException("Invalid letter orientation: "
-                                             + attr);
+                    + attr);
         }
 
         attr = tag.getAttributeAsString("even");
@@ -130,7 +126,7 @@ public class MapManager implements ConfigurableComponentI {
             }
         }
         log.debug("Possible tileCosts on map are "+possibleTileCosts);
-        
+
         int xOffset = 0;
         int yOffset = 0;
         if (minX < 0) {
@@ -161,16 +157,16 @@ public class MapManager implements ConfigurableComponentI {
         int i, j, k;
         MapHex nb;
 
-        mapImageUsed = Util.hasValue(mapImageFilename) 
-            && "yes".equalsIgnoreCase(Config.get("map.image.display"));
+        mapImageUsed = rails.util.Util.hasValue(mapImageFilename)
+        && "yes".equalsIgnoreCase(Config.get("map.image.display"));
         if (mapImageUsed) {
             String rootDirectory = Config.get("map.root_directory");
-            if (!Util.hasValue(rootDirectory)) {
+            if (!rails.util.Util.hasValue(rootDirectory)) {
                 rootDirectory = "data";
             }
             mapImageFilepath = rootDirectory + "/" + mapImageFilename;
         }
-        
+
         for (String hexName : mHexes.keySet()) {
             hex = mHexes.get(hexName);
             hex.finishConfiguration(gameManager);
@@ -227,22 +223,22 @@ public class MapManager implements ConfigurableComponentI {
     public boolean lettersGoHorizontal() {
         return lettersGoHorizontal;
     }
-    
+
     public int getAdjacentX (int x, int y, int orientation) {
-        
-         if (tileOrientation == TileOrientation.EW) {
+
+        if (tileOrientation == TileOrientation.EW) {
             return x + (y % 2 == 0 ? xYEvenDeltaEW[orientation] : xYOddDeltaEW[orientation]);
-         } else {
+        } else {
             return x + xDeltaNS[orientation];
-         }
+        }
     }
-    
+
     public int getAdjacentY (int x, int y, int orientation) {
-        
+
         if (tileOrientation == TileOrientation.EW) {
             return y + yDeltaEW[orientation];
         } else {
-            return y + ((x % 2 == 0) == letterAHasEvenNumbers ? 
+            return y + ((x % 2 == 0) == letterAHasEvenNumbers ?
                     yXEvenDeltaNS[orientation] : yXOddDeltaNS[orientation]);
         }
     }
@@ -260,7 +256,7 @@ public class MapManager implements ConfigurableComponentI {
     public MapHex[][] getHexes() {
         return hexes;
     }
-    
+
     public List<MapHex> getHexesAsList() {
         return new ArrayList<MapHex>(mHexes.values());
     }
@@ -348,31 +344,31 @@ public class MapManager implements ConfigurableComponentI {
      */
     public int getHexDistance (MapHex hex1, MapHex hex2) {
 
-    	if (distances == null) distances = new HashMap<MapHex, Map<MapHex, Integer>> ();
-    	if (distances.get(hex1) == null) {
-    		distances.put(hex1, new HashMap<MapHex, Integer>());
-    		calculateHexDistances(hex1, hex1, 0);
-    	}
-    	return distances.get(hex1).get(hex2);
+        if (distances == null) distances = new HashMap<MapHex, Map<MapHex, Integer>> ();
+        if (distances.get(hex1) == null) {
+            distances.put(hex1, new HashMap<MapHex, Integer>());
+            calculateHexDistances(hex1, hex1, 0);
+        }
+        return distances.get(hex1).get(hex2);
     }
 
     private void calculateHexDistances (MapHex hex1, MapHex hex2, int depth) {
 
-		if (distances.get(hex1).get(hex2) == null) {
-			distances.get(hex1).put(hex2, depth);
-		} else {
-			if (distances.get(hex1).get(hex2) <= depth) return;
-			distances.get(hex1).put(hex2, depth);
-		}
+        if (distances.get(hex1).get(hex2) == null) {
+            distances.get(hex1).put(hex2, depth);
+        } else {
+            if (distances.get(hex1).get(hex2) <= depth) return;
+            distances.get(hex1).put(hex2, depth);
+        }
 
-    	for (MapHex hex3 : hex2.getNeighbors()) {
-    		if (hex3 == null) continue;
-    		if (distances.get(hex1).get(hex3) == null) {
-    			calculateHexDistances (hex1, hex3, depth+1);
-    		} else if (distances.get(hex1).get(hex3) > depth+1) {
-    			calculateHexDistances (hex1, hex3, depth+1);
-    		}
-    	}
+        for (MapHex hex3 : hex2.getNeighbors()) {
+            if (hex3 == null) continue;
+            if (distances.get(hex1).get(hex3) == null) {
+                calculateHexDistances (hex1, hex3, depth+1);
+            } else if (distances.get(hex1).get(hex3) > depth+1) {
+                calculateHexDistances (hex1, hex3, depth+1);
+            }
+        }
     }
 
     /** Cache to hold all unique distance values of tokenable cities from a given hex */

@@ -186,7 +186,7 @@ public final class XmlUtils {
             DocumentBuilder db = dbf.newDocumentBuilder();
 
             // Step 3: parse the input file to get a Document object
-            doc = db.parse(Util.getStreamForFile(fileName));
+            doc = db.parse(rails.util.Util.getStreamForFile(fileName));
 
         } catch (ParserConfigurationException e) {
             throw new ConfigurationException("Could not read/parse " + fileName
