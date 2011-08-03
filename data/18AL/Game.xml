@@ -74,13 +74,10 @@
 		<TrainType name="7" majorStops="7" cost="700" quantity="1">
             <NewPhase phaseName="7"/>
         </TrainType>
-		<TrainType name="4D" majorStops="4" cost="800">
+		<TrainType name="4D" majorStops="4" cost="800" quantity="5">
             <NewPhase phaseName="4D"/>
  			<IfOption name="UnlimitedTopTrains" value="yes">
 				<Attributes quantity="-1"/>
-			</IfOption>
-			<IfOption name="UnlimitedTopTrains" value="no">
-				<Attributes quantity="5"/>
 			</IfOption>
 			<Reach countTowns="no"/>
 			<Score scoreCities="double"/>

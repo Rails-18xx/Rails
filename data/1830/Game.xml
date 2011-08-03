@@ -171,13 +171,10 @@
                 <Attributes quantity="4"/>
             </IfOption>
 		</TrainType>
-		<TrainType name="6" majorStops="6" cost="630">
+		<TrainType name="6" majorStops="6" cost="630" quantity="2">
             <NewPhase phaseName="6"/>
 			<IfOption name="WithOptional6Train" value="yes">
 				<Attributes quantity="3"/>
-			</IfOption>
-			<IfOption name="WithOptional6Train" value="no">
-				<Attributes quantity="2"/>
 			</IfOption>
 			<IfOption name="Variant" value="Coalfields,Reading">
 				<Attributes quantity="3" releasedTrain="7,D"/>
@@ -196,7 +193,7 @@
             <TrainType name="7" majorStops="7" cost="830" quantity="-1"/>
         </IfOption>
 		<IfOption name="Variant" value="Basegame,Pere Marquette,Reading,Coalfields,Coalfields&amp;Reading,Simple">
-			<TrainType name="D" majorStops="99">
+			<TrainType name="D" majorStops="99" quantity="6">
             <NewPhase phaseName="D"/>
 				<IfOption name="Variant" value="Basegame,Pere Marquette,Simple">
 					<Attributes cost="1100"/>
@@ -208,9 +205,6 @@
 				</IfOption>
 				<IfOption name="UnlimitedTopTrains" value="yes">
 					<Attributes quantity="-1"/>
-				</IfOption>
-				<IfOption name="UnlimitedTopTrains" value="no">
-					<Attributes quantity="6"/>
 				</IfOption>
 				<Exchange cost="800"/>
 			</TrainType>
