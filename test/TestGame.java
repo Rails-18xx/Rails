@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import org.apache.log4j.Logger;
+import org.apache.log4j.NDC;
 
 import rails.common.parser.Config;
 import rails.game.Game;
@@ -94,8 +95,10 @@ public class TestGame extends TestCase {
         if (gameFile.exists()) {
             log.debug("Found gamefile at " + gameFilename);
             Game testGame = Game.load(gameFilename);
-            if (testGame != null)
+            if (testGame != null) {
                 testReport = ReportBuffer.getAsList();
+                NDC.clear(); // remove reference to GameManager
+            }
         } else {
             log.error("Did not find gamefile at " + gameFilename);
         }

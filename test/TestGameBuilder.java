@@ -11,6 +11,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
 
+import org.apache.log4j.NDC;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -37,6 +39,7 @@ public final class TestGameBuilder extends TestCase {
         
         if (game != null) {  
             List<String> report = ReportBuffer.getAsList();
+            NDC.clear(); // remove reference to GameManager
             PrintWriter reportFile = null;
             try{
                 reportFile = new PrintWriter(reportFilename);
