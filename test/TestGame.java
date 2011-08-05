@@ -23,6 +23,8 @@ public class TestGame extends TestCase {
     private List<String> testReport = null;
     private List<String> expectedReport = null;
     
+    private boolean passed = false;
+    
     protected static Logger log =
         Logger.getLogger(TestGame.class.getPackage().getName());
 
@@ -66,6 +68,7 @@ public class TestGame extends TestCase {
                     expectedReport.get(line), testReport.get(line));
             line = line + 1;
         }
+        passed = true;
     }
 
     protected void setUp() throws Exception {
@@ -105,11 +108,21 @@ public class TestGame extends TestCase {
    }
 
     protected void tearDown() throws Exception {
+        // test has failed, so save the test Report
+        String reportFilename = gamePath + File.separator + gameName + "." + Config.get("failed.filename.extension"); 
+        if (!passed) {
+            TestGameBuilder.saveGameReport(testReport, reportFilename, true);
+        } else { // otherwise check if the test Report exists and delete it 
+            File f = new File(reportFilename);
+            if (f.exists()) {
+                if (f.delete()) {
+                    System.out.println("Deleted failed report at " + reportFilename);
+                }
+            }
+        }
         super.tearDown();
         testReport.clear();
         expectedReport.clear();
-        
-        
     }
 
 }

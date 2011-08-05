@@ -30,6 +30,28 @@ public final class TestGameBuilder extends TestCase {
     // true = optimal for ant html reports, false = optimal for test runner
     private static boolean extendedTestNames = true; 
     
+    static void saveGameReport(List<String> report, String reportFilename, boolean failed) {
+        PrintWriter reportFile = null;
+        try{
+            reportFile = new PrintWriter(reportFilename);
+        } catch (IOException e)
+            {
+            System.err.print("Error: cannot open file " + reportFilename + " for report writing");
+            }
+        if (reportFile != null) { 
+            for (String msg:report){
+                reportFile.println(msg);
+            }
+            reportFile.close();
+            if (failed) {
+                System.out.println("Created failed report at " + reportFilename);
+            } else {
+                System.out.println("Created base line report file at " + reportFilename);
+            }
+        }
+    }
+    
+    
     private static void prepareGameReport(File gameFile, String reportFilename) {
         
         Game game = null;
@@ -39,21 +61,8 @@ public final class TestGameBuilder extends TestCase {
         
         if (game != null) {  
             List<String> report = ReportBuffer.getAsList();
+            saveGameReport(report, reportFilename, false);
             NDC.clear(); // remove reference to GameManager
-            PrintWriter reportFile = null;
-            try{
-                reportFile = new PrintWriter(reportFilename);
-            } catch (IOException e)
-                {
-                System.err.print("Cannot open file " + reportFilename + " to save game report");
-                }
-            if (reportFile != null) { 
-                for (String msg:report){
-                    reportFile.println(msg);
-                }
-                reportFile.close();
-                System.out.println("Created reportfile at " + reportFilename);
-            }
         }
     }
 

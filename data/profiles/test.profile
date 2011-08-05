@@ -63,6 +63,7 @@ save.filename.extension=rails
 # The date/time pattern must be as defined in the Java SimpleDateFormat class.
 #report.filename.date_time_pattern=yyyyMMdd
 report.filename.extension=report
+failed.filename.extension=failed
 
 ### Windows
 ##  Report window visibility
