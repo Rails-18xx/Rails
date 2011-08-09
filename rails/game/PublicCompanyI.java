@@ -352,4 +352,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolder {
     public ModelObject getInGameModel ();
     public ModelObject getIsClosedModel ();
     
+    /** Does the company has a route? */
+    public boolean hasRoute();
+    
 }

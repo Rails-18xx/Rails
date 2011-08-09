@@ -101,6 +101,7 @@
 			<OperatingRounds number="2"/>
 		</Phase>
         <Phase name="3½">
+			<Action name="CivilWar"/><!-- No value needed -->
         </Phase>
 		<Phase name="4">
 			<Trains rusted="2" limitStep="2"/>

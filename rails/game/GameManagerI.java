@@ -241,7 +241,8 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
      */
     public Object retrieveObject(String typeName, int id);
 
-
+    /** Process an action triggered by a phase change. */
+    public void processPhaseAction (String name, String value);
 
 
 }

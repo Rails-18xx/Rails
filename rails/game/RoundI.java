@@ -30,5 +30,5 @@ public interface RoundI {
 
     public String getRoundName();
 
-
+    public void processPhaseAction (String name, String value);
 }

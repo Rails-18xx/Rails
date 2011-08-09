@@ -2068,4 +2068,10 @@ public class PublicCompany extends Company implements PublicCompanyI {
         return "";
     }
     
+    /** Does the company has a route?
+     * Currently this is a stub that always returns true.
+     */
+    public boolean hasRoute() {
+        return true;
+    }
 }

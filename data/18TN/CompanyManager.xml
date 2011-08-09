@@ -7,7 +7,7 @@
 		<Tradeable toCompany="yes" lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
 		<Tradeable toPlayer="yes"/>	
 	</CompanyType>
-	<CompanyType name="Public" class="rails.game.PublicCompany">
+	<CompanyType name="Public" class="rails.game.specific._18TN.PublicCompany_18TN">
 		<CanBuyPrivates/>
 		<PoolPaysOut/>
 		<Float percentage="60"/>

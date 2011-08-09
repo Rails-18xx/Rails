@@ -8,13 +8,14 @@ import org.apache.log4j.Logger;
 import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
+import rails.util.Util;
 
 public class Phase implements PhaseI {
 
     protected int index;
 
     protected String name;
-    
+
     protected String realName;
 
     protected String colourList = "";
@@ -28,11 +29,11 @@ public class Phase implements PhaseI {
     protected int numberOfOperatingRounds = 1;
 
     protected int offBoardRevenueStep = 1;
-    
+
     /** New style train limit configuration.
      */
     protected int trainLimitStep = 1;
-    
+
     protected int privatesRevenueStep = 1; // sfy 1889
 
     protected boolean trainTradingAllowed = false;
@@ -51,27 +52,34 @@ public class Phase implements PhaseI {
 
     /** Items to close if a phase gets activated */
     protected List<Closeable> closedObjects = null;
-    
+
     /** Train types to rust or obsolete if a phase gets activated */
     protected List<TrainCertificateType> rustedTrains;
     String rustedTrainNames;
-    
+
     /** Train types to release (make available for buying) if a phase gets activated */
     protected List<TrainCertificateType> releasedTrains;
     String releasedTrainNames;
-    
-    private TrainManager trainManager;
+
+    /** Actions for this phase.
+     * When this phase is activated, the GameManager method phaseAction() will be called,
+     * which in turn will call the current Round, which is responsible to handle the action.
+     * <p>
+     * Set actions have a name and may have a value. */
+    protected Map<String, String> actions;
+
+    private GameManagerI gameManager;
     private Portfolio lastTrainBuyer;
 
     protected String extraInfo = "";
-    
+
     /** A HashMap to contain phase-dependent parameters
      * by name and value.
      */
     protected Map<String, String> parameters = null;
 
     protected static Logger log =
-            Logger.getLogger(Phase.class.getPackage().getName());
+        Logger.getLogger(Phase.class.getPackage().getName());
 
     public Phase(int index, String name, Phase previousPhase) {
         this.index = index;
@@ -98,7 +106,7 @@ public class Phase implements PhaseI {
                 }
             }
         }
-        
+
         // Real name (as in the printed game)
         realName = tag.getAttributeAsString("realName", null);
 
@@ -120,8 +128,8 @@ public class Phase implements PhaseI {
         Tag privatesTag = tag.getChild("Privates");
         if (privatesTag != null) {
             privateSellingAllowed =
-                    privatesTag.getAttributeAsBoolean("sellingAllowed",
-                            privateSellingAllowed);
+                privatesTag.getAttributeAsBoolean("sellingAllowed",
+                        privateSellingAllowed);
             privatesClose = privatesTag.getAttributeAsBoolean("close", false);
             privatesRevenueStep = privatesTag.getAttributeAsInteger("revenueStep", privatesRevenueStep); // sfy 1889
         }
@@ -130,32 +138,32 @@ public class Phase implements PhaseI {
         Tag orTag = tag.getChild("OperatingRounds");
         if (orTag != null) {
             numberOfOperatingRounds =
-                    orTag.getAttributeAsInteger("number",
-                            numberOfOperatingRounds);
+                orTag.getAttributeAsInteger("number",
+                        numberOfOperatingRounds);
         }
 
         // Off-board revenue steps (starts at 1)
         Tag offBoardTag = tag.getChild("OffBoardRevenue");
         if (offBoardTag != null) {
             offBoardRevenueStep =
-                    offBoardTag.getAttributeAsInteger("step",
-                            offBoardRevenueStep);
+                offBoardTag.getAttributeAsInteger("step",
+                        offBoardRevenueStep);
         }
-        
+
         Tag trainsTag = tag.getChild("Trains");
         if (trainsTag != null) {
             trainLimitStep = trainsTag.getAttributeAsInteger("limitStep", trainLimitStep);
             rustedTrainNames = trainsTag.getAttributeAsString("rusted", null);
             releasedTrainNames = trainsTag.getAttributeAsString("released", null);
             trainTradingAllowed =
-                    trainsTag.getAttributeAsBoolean("tradingAllowed",
-                            trainTradingAllowed);
+                trainsTag.getAttributeAsBoolean("tradingAllowed",
+                        trainTradingAllowed);
             oneTrainPerTurn =
-                    trainsTag.getAttributeAsBoolean("onePerTurn",
-                            oneTrainPerTurn);
+                trainsTag.getAttributeAsBoolean("onePerTurn",
+                        oneTrainPerTurn);
             oneTrainPerTypePerTurn =
-                    trainsTag.getAttributeAsBoolean("onePerTypePerTurn",
-                            oneTrainPerTypePerTurn);
+                trainsTag.getAttributeAsBoolean("onePerTypePerTurn",
+                        oneTrainPerTypePerTurn);
         }
 
         Tag loansTag = tag.getChild("Loans");
@@ -173,6 +181,17 @@ public class Phase implements PhaseI {
             }
         }
 
+        Tag setTag = tag.getChild("Action");
+        if (setTag != null) {
+            if (actions == null) actions = new HashMap<String, String>();
+            String key = setTag.getAttributeAsString("name");
+            if (!Util.hasValue(key)) {
+                throw new ConfigurationException ("Phase "+name+": <Set> without action name");
+            }
+            String value = setTag.getAttributeAsString("value", null);
+            actions.put (key, value);
+        }
+
         // Extra info text(usually related to extra-share special properties)
         Tag infoTag = tag.getChild("Info");
         if (infoTag != null) {
@@ -185,16 +204,17 @@ public class Phase implements PhaseI {
 
     public void finishConfiguration (GameManagerI gameManager)
     throws ConfigurationException {
-        
-        trainManager = gameManager.getTrainManager();
+
+        this.gameManager = gameManager;
+        TrainManager trainManager = gameManager.getTrainManager();
         TrainCertificateType type;
-        
+
         if (rustedTrainNames != null) {
             rustedTrains = new ArrayList<TrainCertificateType>(2);
             for (String typeName : rustedTrainNames.split(",")) {
                 type = trainManager.getCertTypeByName(typeName);
                 if (type == null) {
-                    throw new ConfigurationException (" Unknown rusted train type '"+typeName+"' for phase '"+name+"'"); 
+                    throw new ConfigurationException (" Unknown rusted train type '"+typeName+"' for phase '"+name+"'");
                 }
                 rustedTrains.add(type);
                 type.setPermanent(false);
@@ -206,7 +226,7 @@ public class Phase implements PhaseI {
             for (String typeName : releasedTrainNames.split(",")) {
                 type = trainManager.getCertTypeByName(typeName);
                 if (type == null) {
-                    throw new ConfigurationException (" Unknown released train type '"+typeName+"' for phase '"+name+"'"); 
+                    throw new ConfigurationException (" Unknown released train type '"+typeName+"' for phase '"+name+"'");
                 }
                 releasedTrains.add(type);
             }
@@ -222,20 +242,28 @@ public class Phase implements PhaseI {
                 object.close();
             }
         }
-        
+
+        TrainManager trainManager = gameManager.getTrainManager();
+
         if (rustedTrains != null && !rustedTrains.isEmpty()) {
             for (TrainCertificateType type : rustedTrains) {
-                 trainManager.rustTrainType(type, lastTrainBuyer);
+                trainManager.rustTrainType(type, lastTrainBuyer);
             }
         }
-        
+
         if (releasedTrains != null && !releasedTrains.isEmpty()) {
             for (TrainCertificateType type : releasedTrains) {
                 trainManager.makeTrainAvailable(type);
             }
         }
+
+        if (actions != null && !actions.isEmpty()) {
+            for (String actionName : actions.keySet()) {
+                gameManager.processPhaseAction (actionName, actions.get(actionName));
+            }
+        }
     }
-    
+
     public void setLastTrainBuyer(Portfolio lastTrainBuyer) {
         this.lastTrainBuyer = lastTrainBuyer;
     }
@@ -259,7 +287,7 @@ public class Phase implements PhaseI {
     public int getTrainLimitStep() {
         return trainLimitStep;
     }
-    
+
     public int getTrainLimitIndex() {
         return trainLimitStep - 1;
     }

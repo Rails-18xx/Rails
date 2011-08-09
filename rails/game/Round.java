@@ -9,9 +9,7 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
-import rails.common.DisplayBuffer;
-import rails.common.GuiHints;
-import rails.common.LocalText;
+import rails.common.*;
 import rails.game.action.*;
 import rails.game.move.*;
 import rails.game.special.SpecialPropertyI;
@@ -26,7 +24,7 @@ public abstract class Round implements RoundI {
     protected GuiHints guiHints = null;
 
     protected static Logger log =
-            Logger.getLogger(Round.class.getPackage().getName());
+        Logger.getLogger(Round.class.getPackage().getName());
 
     protected GameManagerI gameManager = null;
     protected CompanyManagerI companyManager = null;
@@ -144,7 +142,7 @@ public abstract class Round implements RoundI {
     public String getGameOption (String name) {
         return gameManager.getGameOption(name);
     }
-     /*
+    /*
      * (non-Javadoc)
      *
      * @see rails.game.RoundI#getHelp()
@@ -268,13 +266,13 @@ public abstract class Round implements RoundI {
             PublicCompanyI lastOperatingCompany) {
 
         Map<Integer, PublicCompanyI> operatingCompanies =
-                new TreeMap<Integer, PublicCompanyI>();
+            new TreeMap<Integer, PublicCompanyI>();
         List<PublicCompanyI> newOperatingCompanies;
         StockSpaceI space;
         int key;
         int minorNo = 0;
         boolean reorder = gameManager.isDynamicOperatingOrder()
-        		&& oldOperatingCompanies != null && lastOperatingCompany != null;
+        && oldOperatingCompanies != null && lastOperatingCompany != null;
 
         int lastOperatingCompanyIndex;
         if (reorder) {
@@ -297,9 +295,9 @@ public abstract class Round implements RoundI {
                 // is ascending.
                 space = company.getCurrentSpace();
                 key = 1000000 * (999 - space.getPrice())
-                        + 10000 * (99 - space.getColumn())
-                        + 100 * (space.getRow()+1)
-                        + space.getStackPosition(company);
+                + 10000 * (99 - space.getColumn())
+                + 100 * (space.getRow()+1)
+                + space.getStackPosition(company);
             } else {
                 key = 50 + ++minorNo;
             }
@@ -333,21 +331,21 @@ public abstract class Round implements RoundI {
     /** Determine sold percentage for floating purposes */
     protected int getSoldPercentage (PublicCompanyI company) {
 
-    	int soldPercentage = 0;
-    	for (PublicCertificateI cert : company.getCertificates()) {
-    		if (certCountsAsSold(cert)) {
-    			soldPercentage += cert.getShare();
-    		}
-    	}
-    	return soldPercentage;
+        int soldPercentage = 0;
+        for (PublicCertificateI cert : company.getCertificates()) {
+            if (certCountsAsSold(cert)) {
+                soldPercentage += cert.getShare();
+            }
+        }
+        return soldPercentage;
     }
 
     /** Can be subclassed for games with special rules */
     protected boolean certCountsAsSold (PublicCertificateI cert) {
-    	Portfolio holder = cert.getPortfolio();
-    	CashHolder owner = holder.getOwner();
-    	return owner instanceof Player
-    		|| holder == pool;
+        Portfolio holder = cert.getPortfolio();
+        CashHolder owner = holder.getOwner();
+        return owner instanceof Player
+        || holder == pool;
     }
 
     /**
@@ -391,15 +389,15 @@ public abstract class Round implements RoundI {
         if (cash > 0) {
             new CashMove(bank, company, cash);
             ReportBuffer.add(LocalText.getText("FloatsWithCash",
-                company.getName(),
-                Bank.format(cash) ));
+                    company.getName(),
+                    Bank.format(cash) ));
         } else {
             ReportBuffer.add(LocalText.getText("Floats",
                     company.getName()));
         }
 
         if (capitalisationMode == PublicCompanyI.CAPITALISE_INCREMENTAL
-            && company.canHoldOwnShares()) {
+                && company.canHoldOwnShares()) {
             List<Certificate> moving = new ArrayList<Certificate>();
             for (Certificate ipoCert : ipo.getCertificatesPerCompany(
                     company.getName())) {
@@ -413,7 +411,7 @@ public abstract class Round implements RoundI {
 
     protected void finishRound() {
         // Report financials
-    	ReportBuffer.add("");
+        ReportBuffer.add("");
         for (PublicCompanyI c : companyManager.getAllPublicCompanies()) {
             if (c.hasFloated() && !c.isClosed()) {
                 ReportBuffer.add(LocalText.getText("Has", c.getName(),
@@ -452,13 +450,13 @@ public abstract class Round implements RoundI {
 
     // Note: all transferred shares must come from the same old shareholder.
     protected void transferCertificates(List<? extends Certificate> certs,
-    		Portfolio newHolder) {
+            Portfolio newHolder) {
 
-    	for (Certificate cert : certs) {
-    		if (cert != null) {
-		        cert.moveTo(newHolder);
-    		}
-    	}
+        for (Certificate cert : certs) {
+            if (cert != null) {
+                cert.moveTo(newHolder);
+            }
+        }
     }
 
     protected void pay (CashHolder from, CashHolder to, int amount) {
@@ -540,5 +538,12 @@ public abstract class Round implements RoundI {
         return autopasses;
     }
 
+    /** A stub for processing actions triggered by a phase change.
+     * Must be overridden by subclasses that need to process such actions.
+     * @param name (required) The name of the action to be executed
+     * @param value (optional) The value of the action to be executed, if applicable
+     */
+    public void processPhaseAction (String name, String value) {
 
+    }
 }

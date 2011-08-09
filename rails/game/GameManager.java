@@ -3,30 +3,22 @@ package rails.game;
 
 import java.io.*;
 import java.lang.reflect.Constructor;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.NDC;
 
 import rails.algorithms.RevenueManager;
-import rails.common.DisplayBuffer;
-import rails.common.GuiDef;
-import rails.common.GuiHints;
-import rails.common.LocalText;
-import rails.common.parser.Config;
-import rails.common.parser.ConfigurableComponentI;
-import rails.common.parser.ConfigurationException;
-import rails.common.parser.GameOption;
-import rails.common.parser.Tag;
+import rails.common.*;
+import rails.common.parser.*;
 import rails.game.action.*;
 import rails.game.correct.*;
 import rails.game.move.*;
 import rails.game.special.SpecialPropertyI;
 import rails.game.special.SpecialTokenLay;
-import rails.game.specific._1856.CGRFormationRound;
 import rails.game.state.*;
-import rails.util.*;
+import rails.util.GameFileIO;
+import rails.util.Util;
 
 /**
  * This class manages the playing rounds by supervising all implementations of
@@ -46,7 +38,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     protected Class<? extends OperatingRound> operatingRoundClass =
         OperatingRound.class;
     protected Class<? extends ShareSellingRound> shareSellingRoundClass
-        = ShareSellingRound.class;
+    = ShareSellingRound.class;
 
     // Variable UI Class names
     protected String gameUIManagerClassName = GuiDef.getDefaultClassName(GuiDef.ClassName.GAME_UI_MANAGER);
@@ -68,7 +60,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     // map of correctionManagers
     protected Map<CorrectionType, CorrectionManagerI> correctionManagers =
         new HashMap<CorrectionType, CorrectionManagerI>();
-    
+
     protected String gameName;
     protected Map<String, String> gameOptions;
 
@@ -87,7 +79,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         new HashMap<String, Portfolio> ();
 
     protected IntegerState playerCertificateLimit
-            = new IntegerState ("PlayerCertificateLimit", 0);
+    = new IntegerState ("PlayerCertificateLimit", 0);
     protected int currentNumberOfOperatingRounds = 1;
     protected boolean skipFirstStockRound = false;
     protected boolean showCompositeORNumber = true;
@@ -103,7 +95,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     protected boolean reloading = false;
 
     protected EnumMap<GameDef.Parm, Object> gameParameters
-            = new EnumMap<GameDef.Parm, Object>(GameDef.Parm.class);
+    = new EnumMap<GameDef.Parm, Object>(GameDef.Parm.class);
 
     /**
      * Current round should not be set here but from within the Round classes.
@@ -228,7 +220,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     // TODO: Move that to a better place
     protected Map<String, Object> objectStorage = new HashMap<String, Object>();
     protected Map<String, Integer> storageIds = new HashMap<String, Integer>();
-    
+
     protected static Logger log =
         Logger.getLogger(GameManager.class.getPackage().getName());
 
@@ -276,11 +268,11 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
                 optionParameters = null;
                 optionNameParameters =
                     optionTag.getAttributeAsString("parm");
-	            if (optionNameParameters != null) {
-	            	optionParameters = optionNameParameters.split(",");
-	            }
+                if (optionNameParameters != null) {
+                    optionParameters = optionNameParameters.split(",");
+                }
                 optionName = GameOption.constructParametrisedName (
-                		optionName, optionParameters);
+                        optionName, optionParameters);
 
                 if (gameOptions.containsKey(optionName)) continue;
 
@@ -365,20 +357,20 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
                 Tag orderTag = orTag.getChild("OperatingOrder");
                 if (orderTag != null) {
-                	dynamicOperatingOrder = orderTag.getAttributeAsBoolean("dynamic",
-                			dynamicOperatingOrder);
+                    dynamicOperatingOrder = orderTag.getAttributeAsBoolean("dynamic",
+                            dynamicOperatingOrder);
                 }
-                
+
                 Tag emergencyTag = orTag.getChild("EmergencyTrainBuying");
                 if (emergencyTag != null) {
                     setGameParameter (GameDef.Parm.EMERGENCY_MUST_BUY_CHEAPEST_TRAIN,
-                            emergencyTag.getAttributeAsBoolean("mustBuyCheapestTrain", 
+                            emergencyTag.getAttributeAsBoolean("mustBuyCheapestTrain",
                                     GameDef.Parm.EMERGENCY_MUST_BUY_CHEAPEST_TRAIN.defaultValueAsBoolean()));
                     setGameParameter (GameDef.Parm.EMERGENCY_MAY_ALWAYS_BUY_NEW_TRAIN,
-                            emergencyTag.getAttributeAsBoolean("mayAlwaysBuyNewTrain", 
+                            emergencyTag.getAttributeAsBoolean("mayAlwaysBuyNewTrain",
                                     GameDef.Parm.EMERGENCY_MAY_ALWAYS_BUY_NEW_TRAIN.defaultValueAsBoolean()));
                     setGameParameter (GameDef.Parm.EMERGENCY_MAY_BUY_FROM_COMPANY,
-                            emergencyTag.getAttributeAsBoolean("mayBuyFromCompany", 
+                            emergencyTag.getAttributeAsBoolean("mayBuyFromCompany",
                                     GameDef.Parm.EMERGENCY_MAY_BUY_FROM_COMPANY.defaultValueAsBoolean()));
                 }
             }
@@ -396,7 +388,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
                             + ssrClassName, e);
                 }
             }
-            
+
             /* Max. % of shares of one company that a player may hold */
             Tag shareLimitTag = gameParmTag.getChild("PlayerShareLimit");
             if (shareLimitTag != null) {
@@ -765,7 +757,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             return String.valueOf(absoluteORNumber.intValue());
         }
     }
-    
+
     public int getAbsoluteORNumber () {
         return absoluteORNumber.intValue();
     }
@@ -802,8 +794,8 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
         // check if other companies can be dumped
         createRound (shareSellingRoundClass, interruptedRound)
-            .start(player, cashToRaise, cashNeedingCompany,
-                    !problemDumpOtherCompanies || forcedSellingCompanyDump);
+        .start(player, cashToRaise, cashNeedingCompany,
+                !problemDumpOtherCompanies || forcedSellingCompanyDump);
         // the last parameter indicates if the dump of other companies is allowed, either this is explicit or
         // the action does not require that check
     }
@@ -1009,8 +1001,8 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
                 //&& currentRound.get().getClass() != CGRFormationRound.class
                 && possibleActions.contains(RepayLoans.class)
                 && (!possibleActions.contains(action.getClass())
-                    || (action.getClass() == NullAction.class
-                            && ((NullAction)action).getMode() != NullAction.DONE))) {
+                        || (action.getClass() == NullAction.class
+                                && ((NullAction)action).getMode() != NullAction.DONE))) {
             // Insert "Done"
             log.debug("Action DONE inserted");
             getCurrentRound().process(new NullAction (NullAction.DONE));
@@ -1025,13 +1017,13 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             // FOR BACKWARDS COMPATIBILITY
             boolean doProcess = true;
             if (skipNextDone) {
-            	if (action instanceof NullAction
-            			&& ((NullAction)action).getMode() == NullAction.DONE) {
-            		if (currentRound.get() instanceof OperatingRound
-            				&& ((OperatingRound)currentRound.get()).getStep() == skippedStep) {
-            			doProcess = false;
-            		}
-            	}
+                if (action instanceof NullAction
+                        && ((NullAction)action).getMode() == NullAction.DONE) {
+                    if (currentRound.get() instanceof OperatingRound
+                            && ((OperatingRound)currentRound.get()).getStep() == skippedStep) {
+                        doProcess = false;
+                    }
+                }
             }
             skipNextDone = false;
             skippedStep = null;
@@ -1141,17 +1133,17 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         return gameSaver.saveGame(file, displayErrorMessage, errorMessageKey);
     }
     /**
-     * tries to reload the current game 
+     * tries to reload the current game
      * executes the additional action(s)
-     */ 
+     */
     protected boolean reload(GameAction reloadAction) {
         log.info("Reloading started");
-        
+
         /* Use gameLoader to load the game data */
         GameFileIO gameLoader = new GameFileIO();
         String filepath = reloadAction.getFilepath();
         gameLoader.loadGameData(filepath);
-        
+
         /* followed by actions and comments */
         try{
             gameLoader.loadActionsAndComments();
@@ -1161,19 +1153,19 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         }
 
         log.debug("Starting to compare loaded actions");
-        
+
         /* gameLoader actions get compared to the executed actions of the current game */
         List<PossibleAction> savedActions = gameLoader.getActions();
-        
+
         setReloading(true);
-   
+
         // Check size
         if (savedActions.size() < executedActions.size()) {
             DisplayBuffer.add(LocalText.getText("LoadFailed",
-                    "loaded file has less actions than current game"));
+            "loaded file has less actions than current game"));
             return true;
         }
-        
+
         // Check action identity
         int index = 0;
         PossibleAction executedAction;
@@ -1201,14 +1193,14 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
                     }
                 }
                 index++;
-            } 
+            }
         } catch (Exception e) {
             log.error("Reload failed", e);
             DisplayBuffer.add(LocalText.getText("LoadFailed", e.getMessage()));
             return true;
         }
-        
-        
+
+
         setReloading(false);
         finishLoading();
 
@@ -1320,7 +1312,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             msgContinue = LocalText.getText("gameOverPlaySetOfORs");
         else
             msgContinue = LocalText.getText("gameOverPlayOnlyOR");
-        String msg = LocalText.getText("MaxedSharePriceDisplayText", 
+        String msg = LocalText.getText("MaxedSharePriceDisplayText",
                 company.getName(),
                 Bank.format(space.getPrice()),
                 msgContinue);
@@ -1349,10 +1341,10 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
 
     public boolean isDynamicOperatingOrder() {
-		return dynamicOperatingOrder;
-	}
+        return dynamicOperatingOrder;
+    }
 
-	/* (non-Javadoc)
+    /* (non-Javadoc)
      * @see rails.game.GameManagerI#isGameOver()
      */
     public boolean isGameOver() {
@@ -1666,7 +1658,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             return false;
         }
     }
-    
+
     public void setGuiParameter (GuiDef.Parm key, boolean value) {
         guiParameters.put (key, value);
     }
@@ -1848,43 +1840,43 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         return new ArrayList<PublicCompanyI>(operatingCompanies.values());
     }
 
-	public boolean isReloading() {
-		return reloading;
-	}
+    public boolean isReloading() {
+        return reloading;
+    }
 
-	public void setReloading(boolean reloading) {
-		this.reloading = reloading;
-	}
+    public void setReloading(boolean reloading) {
+        this.reloading = reloading;
+    }
 
-	public void setSkipDone (GameDef.OrStep step) {
-		skipNextDone = true;
-		skippedStep = step;
-	}
-	
-	/**
-	 *
-	 *@param ascending Boolean to determine if the playerlist will be sorted in ascending or descending order based on their cash
-	 *@return Returns the player at index position 0 that is either the player with the most or least cash depending on sort order. 
-	 */
-     public Player reorderPlayersByCash (boolean ascending) {
+    public void setSkipDone (GameDef.OrStep step) {
+        skipNextDone = true;
+        skippedStep = step;
+    }
 
-         final boolean _ascending = ascending;
-         Collections.sort (players, new Comparator<Player>() {
-              public int compare (Player p1, Player p2) {
-                  return _ascending ? p1.getCash() - p2.getCash() : p2.getCash() - p1.getCash();
-              }
-         });
+    /**
+     *
+     *@param ascending Boolean to determine if the playerlist will be sorted in ascending or descending order based on their cash
+     *@return Returns the player at index position 0 that is either the player with the most or least cash depending on sort order.
+     */
+    public Player reorderPlayersByCash (boolean ascending) {
 
-         Player player;
-         for (int i=0; i<players.size(); i++) {
-             player = players.get(i);
-             player.setIndex (i);
-             playerNames.set (i, player.getName());
-             log.debug("New player "+i+" is "+player.getName() +" (cash="+Bank.format(player.getCash())+")");
-         }
+        final boolean _ascending = ascending;
+        Collections.sort (players, new Comparator<Player>() {
+            public int compare (Player p1, Player p2) {
+                return _ascending ? p1.getCash() - p2.getCash() : p2.getCash() - p1.getCash();
+            }
+        });
 
-         return players.get(0);
-     }
+        Player player;
+        for (int i=0; i<players.size(); i++) {
+            player = players.get(i);
+            player.setIndex (i);
+            playerNames.set (i, player.getName());
+            log.debug("New player "+i+" is "+player.getName() +" (cash="+Bank.format(player.getCash())+")");
+        }
+
+        return players.get(0);
+    }
 
     public void resetStorage() {
         objectStorage = new HashMap<String, Object>();
@@ -1898,10 +1890,14 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         storageIds.put(typeName, id + 1); // store next id
         return id;
     }
-    
+
     public Object retrieveObject(String typeName, int id) {
         return objectStorage.get(typeName + id);
     }
-     
+
+    /** Process an action triggered by a phase change. */
+    public void processPhaseAction (String name, String value) {
+        getCurrentRound().processPhaseAction(name, value);
+    }
 }
 
