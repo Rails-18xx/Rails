@@ -121,5 +121,8 @@
         </Phase>
 		<Phase name="8">
 		</Phase>
+		</Component>
+	<Component name="RevenueManager" class="rails.algorithms.RevenueManager">
+		<!--		Required for TN civil war '-->
 	</Component>
 </ComponentManager>
