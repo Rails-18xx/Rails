@@ -1,11 +1,12 @@
 package rails.algorithms;
 
+
 import org.apache.log4j.Logger;
 
 import rails.game.TrainI;
 import rails.game.TrainType;
 
-public final class NetworkTrain {
+public final class NetworkTrain implements Comparable<NetworkTrain>{
 
     protected static Logger log =
         Logger.getLogger(NetworkTrain.class.getPackage().getName());
@@ -164,4 +165,44 @@ public final class NetworkTrain {
         return trainName;
     }
     
+    
+    /**
+     * Comperator on trains as defined by train domination
+     * 
+     * A train dominates:
+     * it has to be longer in either majors and minors
+     * and at least equally long in both
+     * 
+     * Furthermore the dominating train has at least the same multiples as the shorter
+     */
+
+    public int compareTo(NetworkTrain other) {
+
+        // Check if A is the longer train first
+        boolean longerA = this.majors > other.majors && this.minors >= other.minors || this.majors == other.majors && this.minors > other.minors;        
+        
+        if (longerA) {
+            // then check the multiples
+            if (this.multiplyMajors >= other.multiplyMajors && this.multiplyMinors >= other.multiplyMinors) {
+                return 1;
+            } else {
+                return 0;
+            }
+        } else {
+            // otherwise B might B longer
+            boolean longerB = this.majors < other.majors && this.minors <= other.minors || this.majors == other.majors && this.minors < other.minors;
+            if (longerB) {
+                // then check the multiples
+                if (this.multiplyMajors <= other.multiplyMajors && this.multiplyMinors <= other.multiplyMinors) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            } else {
+                // none is longer
+                return 0;
+            }
+        }
+    }
+
 }

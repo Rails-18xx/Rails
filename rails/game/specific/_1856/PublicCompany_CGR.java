@@ -162,13 +162,20 @@ public class PublicCompany_CGR extends PublicCompany implements RevenueStaticMod
         return (hasTemporaryPresident() ? "T" : "");
     }
 
-    public void modifyCalculator(RevenueAdapter revenueAdapter) {
+    public boolean modifyCalculator(RevenueAdapter revenueAdapter) {
         // check if the running company is the cgr
-        if (revenueAdapter.getCompany() != this) return;
+        if (revenueAdapter.getCompany() != this) return false;
          
         // add the diesel train
         if (runsWithBorrowedTrain()) {
             revenueAdapter.addTrainByString("D");
+            return true;
         }
+        return false;
+    }
+
+    public String prettyPrint(RevenueAdapter revenueAdapter) {
+        
+        return null;
     }
 }

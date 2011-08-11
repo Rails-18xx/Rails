@@ -60,6 +60,7 @@ public final class RevenueAdapter implements Runnable {
     
     // basic links, to be defined at creation
     private final GameManagerI gameManager;
+    private final RevenueManager revenueManager;
     private final NetworkGraphBuilder graphBuilder;
     private final NetworkCompanyGraph companyGraph;
     private final PublicCompanyI company;
@@ -81,7 +82,8 @@ public final class RevenueAdapter implements Runnable {
     private List<NetworkVertex> rcVertices;
     private List<NetworkEdge> rcEdges;
     private List<RevenueTrainRun> optimalRun;
-    private List<RevenueDynamicModifier> dynamicModifiers;
+    private boolean hasDynamicModifiers;
+    private boolean hasDynamicCalculator;
     
     // revenue listener to communicate results
     private RevenueListener revenueListener;
@@ -89,6 +91,7 @@ public final class RevenueAdapter implements Runnable {
     public RevenueAdapter(GameManagerI gameManager, NetworkGraphBuilder graphBuilder, NetworkCompanyGraph companyGraph, 
             PublicCompanyI company, PhaseI phase){
         this.gameManager = gameManager;
+        this.revenueManager = gameManager.getRevenueManager();
         this.graphBuilder = graphBuilder;
         this.companyGraph = companyGraph;
         this.company = company;
@@ -231,8 +234,8 @@ public final class RevenueAdapter implements Runnable {
         }
 
         // add all static modifiers
-        if (gameManager.getRevenueManager() != null) {
-            gameManager.getRevenueManager().callStaticModifiers(this);
+        if (revenueManager != null) {
+            revenueManager.initStaticModifiers(this);
         }
 
     }
@@ -302,11 +305,10 @@ public final class RevenueAdapter implements Runnable {
         
         this.useMultiGraph = useMultiGraph;
 
-        // add all dynamic modifiers
-        if (gameManager.getRevenueManager() != null) {
-            dynamicModifiers = gameManager.getRevenueManager().callDynamicModifiers(this);
-        } else {
-            dynamicModifiers = new ArrayList<RevenueDynamicModifier>();
+        // check for dynamic modifiers (including an own calculator
+        if (revenueManager != null) {
+            hasDynamicModifiers = revenueManager.initDynamicModifiers(this);
+            hasDynamicCalculator = revenueManager.hasDynamicCalculator();
         }
         
         // define optimized graph
@@ -524,7 +526,7 @@ public final class RevenueAdapter implements Runnable {
 
         
         // activate dynamic modifiers
-        rc.setDynamicModifiers(!dynamicModifiers.isEmpty());
+        rc.setDynamicModifiers(hasDynamicModifiers);
     }
 
     public int getVertexValue(NetworkVertex vertex, NetworkTrain train, PhaseI phase) {
@@ -583,19 +585,10 @@ public final class RevenueAdapter implements Runnable {
     }
     
     public int calculateRevenue() {
-        // allow dynamic modifiers to have their own revenue calculation method
-        boolean isModified = false;
-        int value = 0;
-        for (RevenueDynamicModifier modifier:dynamicModifiers) {
-            if (modifier.providesOwnCalculateRevenue()) {
-                isModified = true;
-                value += modifier.calculateRevenue(this);
-            }
-        }
-        // if no modifier was used, standard method is to evaluate all trains
-        if (isModified) {
-            return value; 
-        } else {
+        // allows (one) dynamic modifiers to have their own revenue calculation method
+        if (hasDynamicCalculator) {
+            return revenueManager.revenueFromDynamicCalculator(this);
+        } else { // otherwise standard calculation
             return calculateRevenue(0, trains.size() - 1);
         }
     }
@@ -615,9 +608,8 @@ public final class RevenueAdapter implements Runnable {
     public  List<RevenueTrainRun> getOptimalRun() {
         if (optimalRun == null) {
             optimalRun = convertRcRun(rc.getOptimalRun());
-            // allow dynamic modifiers to change the optimal run
-            for (RevenueDynamicModifier modifier:dynamicModifiers) {
-                modifier.adjustOptimalRun(optimalRun);
+            if (hasDynamicModifiers) { 
+                revenueManager.adjustOptimalRun(optimalRun);
             }
         }
         return optimalRun;
@@ -632,9 +624,8 @@ public final class RevenueAdapter implements Runnable {
      */
     int dynamicEvaluation() {
         int value = 0;
-        List<RevenueTrainRun> run = this.getCurrentRun();
-        for (RevenueDynamicModifier modifier:dynamicModifiers) {
-            value += modifier.evaluationValue(run, false);
+        if (hasDynamicModifiers) {
+            value = revenueManager.evaluationValue(this.getCurrentRun(), false);
         }
         return value;
     }
@@ -644,8 +635,8 @@ public final class RevenueAdapter implements Runnable {
      */
     int dynamicPrediction() {
         int value = 0;
-        for (RevenueDynamicModifier modifier:dynamicModifiers) {
-            value += modifier.predictionValue();
+        if (hasDynamicModifiers) {
+            value = revenueManager.predictionValue();
         }
         return value;
     }
@@ -687,16 +678,13 @@ public final class RevenueAdapter implements Runnable {
             }
         }
         if (includeDetails) {
-            for (RevenueDynamicModifier modifier:dynamicModifiers) {
-                String modifierText = modifier.prettyPrint(this);
-                if (modifierText != null) {
-                    runPrettyPrint.append(modifierText);
-                }
+            if (revenueManager != null) {
+                runPrettyPrint.append(revenueManager.prettyPrint(this));
             }
         } else {
             int dynamicBonuses = 0;
-            for (RevenueDynamicModifier modifier:dynamicModifiers) {
-                dynamicBonuses += modifier.evaluationValue(this.getOptimalRun(), true);
+            if (hasDynamicModifiers) {
+                dynamicBonuses = revenueManager.evaluationValue(this.getOptimalRun(), true);
             }
             if (dynamicBonuses != 0) {
                 runPrettyPrint.append("; " + 

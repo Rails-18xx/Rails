@@ -104,17 +104,26 @@ public class Bonus implements Closeable, RevenueStaticModifier {
     /**
      * Add bonus value to revenue calculator
      */
-    public void modifyCalculator(RevenueAdapter revenueAdapter) {
+    public boolean modifyCalculator(RevenueAdapter revenueAdapter) {
         // 1. check operating company
-        if (owner != revenueAdapter.getCompany()) return;
+        if (owner != revenueAdapter.getCompany()) return false;
         
         // 2. find vertices to hex
+        boolean found = false;
         Set<NetworkVertex> bonusVertices = NetworkVertex.getVerticesByHexes(revenueAdapter.getVertices(), locations);
         for (NetworkVertex bonusVertex:bonusVertices) {
             if (!bonusVertex.isStation()) continue;
             RevenueBonus bonus = new RevenueBonus(value, name);
             bonus.addVertex(bonusVertex);
             revenueAdapter.addRevenueBonus(bonus);
+            found = true;
         }
+        return found;
     }
+
+    public String prettyPrint(RevenueAdapter revenueAdapter) {
+        if (name == null) return null;
+        return "Bonus active = " + name;
+    }
+    
 }
