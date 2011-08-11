@@ -54,6 +54,9 @@ public class PublicCompany_18TN extends PublicCompany implements RevenueStaticMo
      */
     public boolean modifyCalculator(RevenueAdapter revenueAdapter) {
         
+        // check first if it is the company for the revenue calculation
+        if (revenueAdapter.getCompany() != this) return false;
+        
         // check if it is civil war, otherwise no effect
         if (!isCivilWar()) return false;
         
@@ -72,8 +75,5 @@ public class PublicCompany_18TN extends PublicCompany implements RevenueStaticMo
     public String prettyPrint(RevenueAdapter revenueAdapter) {
         return LocalText.getText("CivilWarActive");
     }
-    
-    
-
 
 }
