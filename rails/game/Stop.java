@@ -36,6 +36,12 @@ public class Stop implements TokenHolder {
     private MapHex mapHex;
     private String trackEdges;
 
+
+    private Type type = null;
+    private RunTo runToAllowed = null;
+    private RunThrough runThroughAllowed = null;
+    private Loop loopAllowed = null;
+
     protected static Logger log =
         Logger.getLogger(Stop.class.getPackage().getName());
 
@@ -76,8 +82,65 @@ public class Stop implements TokenHolder {
         relatedStation = new GenericState<Station>("City_"+uniqueId+"_station", station);
         setRelatedStation(station);
 
-
         tokens = new ArrayList<TokenI>(4);
+
+        initStopProperties();
+    }
+
+    private void initStopProperties () {
+
+        Station station = relatedStation.get();
+        TileI tile = station.getTile();
+        MapManager mapManager = mapHex.getMapManager();
+        TileManager tileManager = tile.getTileManager();
+
+        // Type
+        type = mapHex.getStopType();
+        if (type == null) type = tile.getStopType();
+        if (type == null) {
+            String stationType = relatedStation.get().getType();
+            if (stationType.equals(Station.CITY)) {
+                type = Type.MAJOR;
+            } else if (stationType.equals(Station.TOWN)) {
+                type = Type.MINOR;
+            } else if (stationType.equals(Station.OFF_MAP_AREA)) {
+                type = Type.OFFMAP;
+            } else if (stationType.equals(Station.PASS)) {
+                type = Type.PASS;
+            } else {
+                // The above four types seem to be all that can be assigned in ConvertTileXML.
+                // If all else fails, assume City.
+                type = Type.MAJOR;
+            }
+        }
+
+        // RunTo
+        runToAllowed = mapHex.isRunToAllowed();
+        if (runToAllowed == null) runToAllowed = tile.isRunToAllowed();
+        if (runToAllowed == null) runToAllowed = mapManager.getRunToDefault(type);
+        if (runToAllowed == null) runToAllowed = tileManager.getRunToDefault(type);
+        if (runToAllowed == null) runToAllowed = mapManager.getRunToDefault(null);
+        if (runToAllowed == null) runToAllowed = tileManager.getRunToDefault(null);
+        if (runToAllowed == null) runToAllowed = RunTo.YES;
+
+        // RunThrough
+        runThroughAllowed = mapHex.isRunThroughAllowed();
+        if (runThroughAllowed == null) runThroughAllowed = tile.isRunThroughAllowed();
+        if (runThroughAllowed == null) runThroughAllowed = mapManager.getRunThroughDefault(type);
+        if (runThroughAllowed == null) runThroughAllowed = tileManager.getRunThroughDefault(type);
+        if (runThroughAllowed == null) runThroughAllowed = mapManager.getRunThroughDefault(null);
+        if (runThroughAllowed == null) runThroughAllowed = tileManager.getRunThroughDefault(null);
+        if (runThroughAllowed == null) runThroughAllowed = RunThrough.YES;
+
+        // Loop
+        loopAllowed = mapHex.isLoopAllowed();
+        if (loopAllowed == null) loopAllowed = tile.isLoopAllowed();
+        if (loopAllowed == null) loopAllowed = mapManager.getLoopDefault(type);
+        if (loopAllowed == null) loopAllowed = tileManager.getLoopDefault(type);
+        if (loopAllowed == null) loopAllowed = mapManager.getLoopDefault(null);
+        if (loopAllowed == null) loopAllowed = tileManager.getLoopDefault(null);
+        if (loopAllowed == null) loopAllowed = Loop.YES;
+
     }
 
     public String getName() {
@@ -210,6 +273,22 @@ public class Stop implements TokenHolder {
 
     public void setTrackEdges(String trackEdges) {
         this.trackEdges = trackEdges;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public RunTo isRunToAllowed() {
+        return runToAllowed;
+    }
+
+    public RunThrough isRunThroughAllowed() {
+        return runThroughAllowed;
+    }
+
+    public Loop isLoopAllowed() {
+        return loopAllowed;
     }
 
     @Override

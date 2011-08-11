@@ -9,11 +9,16 @@ import rails.algorithms.RevenueBonusTemplate;
 import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
+import rails.game.Stop.Loop;
+import rails.game.Stop.RunThrough;
+import rails.game.Stop.RunTo;
+import rails.game.Stop.Type;
 import rails.game.model.ModelObject;
+import rails.util.Util;
 
 /** Represents a certain tile <i>type</i>, identified by its id (tile number).
- * <p> For each tile number, only one tile object is created. 
- * The list <b>tilesLaid</b> records in which hexes a certain tile number has been laid. 
+ * <p> For each tile number, only one tile object is created.
+ * The list <b>tilesLaid</b> records in which hexes a certain tile number has been laid.
  * @author Erik
  *
  */
@@ -54,8 +59,16 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
 
     public static final int UNLIMITED_TILES = -1;
 
+    // Stop properties
+    protected Type stopType = null;
+    protected RunTo runToAllowed = null;
+    protected RunThrough runThroughAllowed = null;
+    protected Loop loopAllowed = null;
+
+    protected TileManager tileManager;
+
     /**
-     * Flag indicating that player must reposition any  basetokens during the upgrade.
+     * Flag indicating that player must reposition any basetokens during the upgrade.
      */
     boolean relayBaseTokensOnUpgrade = false;
 
@@ -78,9 +91,9 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
     public static final int GREY_COLOUR_NUMBER = 4;
 
     protected static final List<String> VALID_COLOUR_NAMES =
-            Arrays.asList(new String[] { RED_COLOUR_NAME, FIXED_COLOUR_NAME,
-                    WHITE_COLOUR_NAME, YELLOW_COLOUR_NAME, GREEN_COLOUR_NAME,
-                    BROWN_COLOUR_NAME, GREY_COLOUR_NAME });
+        Arrays.asList(new String[] { RED_COLOUR_NAME, FIXED_COLOUR_NAME,
+                WHITE_COLOUR_NAME, YELLOW_COLOUR_NAME, GREEN_COLOUR_NAME,
+                BROWN_COLOUR_NAME, GREY_COLOUR_NAME });
 
     /**
      * The offset to convert tile numbers to tilename index. Colour number 0 and
@@ -114,7 +127,7 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
      */
     @SuppressWarnings("unchecked")
     public void configureFromXML(Tag setTag, Tag defTag)
-            throws ConfigurationException {
+    throws ConfigurationException {
 
         if (defTag == null) {
             throw new ConfigurationException(LocalText.getText("TileMissing",
@@ -133,11 +146,11 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
         if (colourNumber < 0) {
             throw new ConfigurationException(LocalText.getText(
                     "InvalidTileColourName",
-                        name,
-                        colourName ));
+                    name,
+                    colourName ));
         }
         colourNumber -= TILE_NUMBER_OFFSET;
-        
+
         /* Stations */
         List<Tag> stationTags = defTag.getChildren("Station");
         Map<String, Station> stationMap = new HashMap<String, Station>();
@@ -159,16 +172,16 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
                 if (!Station.isTypeValid(type)) {
                     throw new ConfigurationException(LocalText.getText(
                             "TileStationHasInvalidType",
-                                    id,
-                                    type ));
+                            id,
+                            type ));
                 }
                 value = stationTag.getAttributeAsInteger("value", 0);
                 slots = stationTag.getAttributeAsInteger("slots", 0);
                 position = stationTag.getAttributeAsInteger("position", 0);
                 cityName = stationTag.getAttributeAsString("city");
                 station =
-                        new Station(this, number, sid, type, value, slots,
-                                position, cityName);
+                    new Station(this, number, sid, type, value, slots,
+                            position, cityName);
                 stations.add(station);
                 stationMap.put(sid, station);
             }
@@ -215,7 +228,7 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
         externalId = setTag.getAttributeAsString("extId", externalId);
         /* Picture id */
         pictureId = setTag.getAttributeAsInteger("pic", pictureId);
-        
+
         /* Quantity */
         quantity = setTag.getAttributeAsInteger("quantity", 0);
         /* Value '99' and '-1' mean 'unlimited' */
@@ -226,10 +239,10 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
         } else {
             quantity += setTag.getAttributeAsInteger("quantityIncrement", 0);
         }
-        
+
         /* Multiple base tokens of one company allowed */
         allowsMultipleBasesOfOneCompany = setTag.hasChild(
-                "AllowsMultipleBasesOfOneCompany");
+        "AllowsMultipleBasesOfOneCompany");
 
         fixedOrientation = setTag.getAttributeAsInteger("orientation", fixedOrientation);
 
@@ -291,9 +304,9 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
                 relayBaseTokensOnUpgrade = upgradeTag.getAttributeAsBoolean(
                         "relayBaseTokens",
                         relayBaseTokensOnUpgrade);
-             }
+            }
         }
-        
+
         // revenue bonus
         List<Tag> bonusTags = setTag.getChildren("RevenueBonus");
         if (bonusTags != null) {
@@ -304,11 +317,56 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
                 revenueBonuses.add(bonus);
             }
         }
- 
+
+        // Stop properties
+        Tag accessTag = setTag.getChild("Access");
+        if (accessTag != null) {
+            String runThroughString = accessTag.getAttributeAsString("runThrough");
+            if (Util.hasValue(runThroughString)) {
+                try {
+                    runThroughAllowed = RunThrough.valueOf(runThroughString.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    throw new ConfigurationException ("Illegal value for Tile"
+                            +name+" runThrough property: "+runThroughString, e);
+                }
+            }
+
+            String runToString = accessTag.getAttributeAsString("runTo");
+            if (Util.hasValue(runToString)) {
+                try {
+                    runToAllowed = RunTo.valueOf(runToString.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    throw new ConfigurationException ("Illegal value for Tile "
+                            +name+" runTo property: "+runToString, e);
+                }
+            }
+
+            String loopString = accessTag.getAttributeAsString("loop");
+            if (Util.hasValue(loopString)) {
+                try {
+                    loopAllowed = Loop.valueOf(loopString.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    throw new ConfigurationException ("Illegal value for Tile "
+                            +name+" loop property: "+loopString, e);
+                }
+            }
+
+            String typeString = accessTag.getAttributeAsString("type");
+            if (Util.hasValue(typeString)) {
+                try {
+                    stopType = Type.valueOf(typeString.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    throw new ConfigurationException ("Illegal value for Tile "
+                            +name+" type property: "+typeString, e);
+                }
+            }
+        }
     }
 
     public void finishConfiguration (TileManager tileManager)
     throws ConfigurationException {
+
+        this.tileManager = tileManager;
 
         for (Upgrade upgrade : upgrades) {
 
@@ -365,7 +423,7 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
         }
         // Should add some validation!
         throw new ConfigurationException(LocalText.getText("InvalidTrackEnd")
-                                         + ": " + trackEnd);
+                + ": " + trackEnd);
     }
 
     public boolean hasTracks(int sideNumber) {
@@ -414,7 +472,7 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
      *
      * @return A List of valid upgrade TileI objects.
      */
-    
+
     public List<TileI> getAllUpgrades(MapHex hex) {
         List<TileI> upgr = new ArrayList<TileI>();
         for (Upgrade upgrade : upgrades) {
@@ -448,8 +506,8 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
         for (Upgrade upgrade : upgrades) {
             tile = upgrade.getTile();
             if (phase.isTileColourAllowed(tile.getColourName())
-                && tile.countFreeTiles() != 0 /* -1 means unlimited */
-                && upgrade.isAllowedForHex(hex, phase.getName())) {
+                    && tile.countFreeTiles() != 0 /* -1 means unlimited */
+                    && upgrade.isAllowedForHex(hex, phase.getName())) {
                 valid.add(tile);
             }
         }
@@ -467,7 +525,7 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
     public List<Track> getTracks() {
         return tracks;
     }
-    
+
     public Map<Integer, List<Track>> getTracksPerStationMap() {
         return tracksPerStation;
     }
@@ -520,7 +578,7 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
     public int getQuantity() {
         return quantity;
     }
-    
+
     public int getFixedOrientation () {
         return fixedOrientation;
     }
@@ -538,13 +596,35 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
     public int compareTo(TileI anotherTile) {
         Integer colour = this.getColourNumber();
         int result = colour.compareTo(anotherTile.getColourNumber());
-        if (result == 0) { 
+        if (result == 0) {
             //String externalId  = this.getExternalId();
             result = externalId.compareTo(anotherTile.getExternalId());
         }
         return result;
     }
-    
+
+
+    public Type getStopType() {
+        return stopType;
+    }
+
+    public RunTo isRunToAllowed() {
+        return runToAllowed;
+    }
+
+    public RunThrough isRunThroughAllowed() {
+        return runThroughAllowed;
+    }
+
+    public Loop isLoopAllowed() {
+        return loopAllowed;
+    }
+
+    public TileManager getTileManager () {
+        return tileManager;
+    }
+
+
     protected class Upgrade {
 
         /** The upgrade tile id */
@@ -628,7 +708,6 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
         protected void setPhases (String phases) {
             allowedPhases = Arrays.asList(phases.split(","));
         }
-
 
         private void convertHexString(MapManager mapManager) {
 

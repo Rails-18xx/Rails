@@ -7,14 +7,18 @@ import java.util.Map;
 import rails.algorithms.RevenueBonusTemplate;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
+import rails.game.Stop.Loop;
+import rails.game.Stop.RunThrough;
+import rails.game.Stop.RunTo;
+import rails.game.Stop.Type;
 
 public interface TileI {
 
     public void configureFromXML(Tag se, Tag te) throws ConfigurationException;
 
-    public void finishConfiguration (TileManager tileManager) 
+    public void finishConfiguration (TileManager tileManager)
     throws ConfigurationException;
-    
+
     public String getColourName();
 
     public int getColourNumber();
@@ -44,7 +48,7 @@ public interface TileI {
     public List<Track> getTracksPerStation(int stationNumber);
 
     public boolean isUpgradeable();
-    
+
     public boolean allowsMultipleBasesOfOneCompany();
 
     public List<TileI> getUpgrades(MapHex hex, PhaseI phase);
@@ -56,7 +60,7 @@ public interface TileI {
     public String getUpgradesString(MapHex hex);
 
     public boolean relayBaseTokensOnUpgrade();
-        
+
     public boolean hasStations();
 
     public List<Station> getStations();
@@ -73,5 +77,12 @@ public interface TileI {
     public int getFixedOrientation ();
 
     public List<RevenueBonusTemplate> getRevenueBonuses();
+
+    public Type getStopType();
+    public RunTo isRunToAllowed();
+    public RunThrough isRunThroughAllowed();
+    public Loop isLoopAllowed();
+
+    public TileManager getTileManager();
 
 }

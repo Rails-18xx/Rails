@@ -498,15 +498,15 @@ public class MapManager implements ConfigurableComponentI {
     }
 
     public RunTo getRunToDefault(Type type) {
-        return runToDefaults.containsKey(type) ? runToDefaults.get(type) : runToDefaults.get(null);
+        return runToDefaults.containsKey(type) ? runToDefaults.get(type) : null;
     }
 
     public RunThrough getRunThroughDefault(Type type) {
-        return runThroughDefaults.containsKey(type) ? runThroughDefaults.get(type) : runThroughDefaults.get(null);
+        return runThroughDefaults.containsKey(type) ? runThroughDefaults.get(type) : null;
     }
 
     public Loop getLoopDefault(Type type) {
-        return loopDefaults.containsKey(type) ? loopDefaults.get(type) : loopDefaults.get(null);
+        return loopDefaults.containsKey(type) ? loopDefaults.get(type) : null;
     }
 
 }

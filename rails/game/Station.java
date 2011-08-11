@@ -43,11 +43,11 @@ public class Station {
     public static final String JUNCTION = "Junction"; // No station, just a
     // branching point.
     private static final String[] types =
-            { CITY, TOWN, HALT, OFF_MAP_AREA, PORT, PASS, JUNCTION };
+    { CITY, TOWN, HALT, OFF_MAP_AREA, PORT, PASS, JUNCTION };
     private static final List<String> validTypes = Arrays.asList(types);
 
     protected static Logger log =
-            Logger.getLogger(Station.class.getPackage().getName());
+        Logger.getLogger(Station.class.getPackage().getName());
 
     /** Check validity of a Station type */
     public static boolean isTypeValid(String type) {
@@ -70,9 +70,9 @@ public class Station {
 
     public String getName() {
         return "Station " + id + " on " + tile.getClass().getSimpleName() + " "
-               + tile.getName();
+        + tile.getName();
     }
-    
+
     public String getCityName() {
         return cityName;
     }
@@ -80,7 +80,7 @@ public class Station {
     /**
      * @return Returns the holder.
      */
-    public Object getTile() {
+    public TileI getTile() {
         return tile;
     }
 
@@ -151,8 +151,8 @@ public class Station {
     @Override
     public String toString() {
         return "Station " + number + " on tile #" + tile.getId() + " ID: " + id
-               + ", Type: " + type + ", Slots: " + baseSlots + ", Value: "
-               + value;
+        + ", Type: " + type + ", Slots: " + baseSlots + ", Value: "
+        + value;
     }
 
 }
