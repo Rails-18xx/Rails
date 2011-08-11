@@ -16,7 +16,7 @@ public class StartCompany_18EU extends StartCompany {
     protected String minorsToMergeNames = null;
     // From phase 5: select a Home station
     protected boolean requestStartSpaces = false;
-    protected transient List<City> availableHomeStations = null;
+    protected transient List<Stop> availableHomeStations = null;
     protected String availableHomeStationNames = null;
 
     // Client settings
@@ -24,7 +24,7 @@ public class StartCompany_18EU extends StartCompany {
     protected transient PublicCompanyI chosenMinor = null;
     protected String chosenMinorName = null;
     // From phase 5: selected Home station
-    protected transient City selectedHomeStation = null;
+    protected transient Stop selectedHomeStation = null;
     protected String selectedHomeStationName = null;
 
     public static final long serialVersionUID = 1L;
@@ -47,12 +47,12 @@ public class StartCompany_18EU extends StartCompany {
         }
     }
 
-    public void setAvailableHomeStations(List<City> stations) {
+    public void setAvailableHomeStations(List<Stop> stations) {
         availableHomeStations = stations;
 
         if (availableHomeStations != null) {
             StringBuffer b = new StringBuffer();
-            for (City station : availableHomeStations) {
+            for (Stop station : availableHomeStations) {
                 if (b.length() > 0) b.append(",");
                 b.append(station.getName());
             }
@@ -60,7 +60,7 @@ public class StartCompany_18EU extends StartCompany {
         }
     }
 
-    public List<City> getAvailableHomeStations() {
+    public List<Stop> getAvailableHomeStations() {
         return availableHomeStations;
     }
 
@@ -77,7 +77,7 @@ public class StartCompany_18EU extends StartCompany {
         this.chosenMinorName = chosenMinor.getName();
     }
 
-    public City getSelectedHomeStation() {
+    public Stop getSelectedHomeStation() {
         // use delayed selectedHomeStation initialization
         // as not all cities are defined immediately
         if (selectedHomeStation == null && selectedHomeStationName != null) {
@@ -90,7 +90,7 @@ public class StartCompany_18EU extends StartCompany {
         return selectedHomeStation;
     }
 
-    public void setHomeStation(City homeStation) {
+    public void setHomeStation(Stop homeStation) {
         selectedHomeStation = homeStation;
         selectedHomeStationName = homeStation.getName();
     }
@@ -132,7 +132,7 @@ public class StartCompany_18EU extends StartCompany {
 
         MapManager mapManager = GameManager.getInstance().getMapManager();
         if (availableHomeStationNames != null) {
-            availableHomeStations = new ArrayList<City>();
+            availableHomeStations = new ArrayList<Stop>();
             for (String cityName : availableHomeStationNames.split(",")) {
                 String[] parts = parseStationName (cityName);
                 MapHex hex = mapManager.getHex(parts[0]);

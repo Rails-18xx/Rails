@@ -9,16 +9,17 @@ import org.apache.log4j.Logger;
 
 import rails.algorithms.RevenueBonusTemplate;
 import rails.common.LocalText;
-import rails.common.parser.ConfigurableComponentI;
-import rails.common.parser.ConfigurationException;
-import rails.common.parser.Tag;
+import rails.common.parser.*;
+import rails.game.Stop.Loop;
+import rails.game.Stop.RunThrough;
+import rails.game.Stop.RunTo;
+import rails.game.Stop.Type;
 import rails.game.action.LayTile;
 import rails.game.model.ModelObject;
 import rails.game.move.Moveable;
 import rails.game.move.TileMove;
-
 import rails.game.state.BooleanState;
-import rails.util.*;
+import rails.util.Util;
 
 /**
  * Represents a Hex on the Map from the Model side.
@@ -86,8 +87,8 @@ StationHolder, TokenHolder {
     protected String impassable = null;
     protected List<Integer> impassableSides;
 
-    protected List<City> cities;
-    protected Map<Integer, City> mCities;
+    protected List<Stop> stops;
+    protected Map<Integer, Stop> mStops;
 
     /*
      * changed to state variable to fix undo bug #2954645
@@ -106,7 +107,7 @@ StationHolder, TokenHolder {
      */
     private BooleanState isBlockedForTokenLays = null;
 
-    protected Map<PublicCompanyI, City> homes;
+    protected Map<PublicCompanyI, Stop> homes;
     protected List<PublicCompanyI> destinations;
 
     /** Tokens that are not bound to a Station (City), such as Bonus tokens */
@@ -117,35 +118,40 @@ StationHolder, TokenHolder {
 
     /** Any open sides against which track may be laid even at board edges (1825) */
     protected boolean[] openHexSides;
-    
-    /** Run-through status of any "city"-type stations on the hex (whether visible or not).
-     * Indicates whether or not a single train can run through such stations, i.e. both enter and leave it.  
-     * Has no meaning if no "city"-type stations exist on this hex.
-     * <p>Values (see Run below for definitions):
-     * <br>- "yes" (default for all except off-map hexes) means that trains of all companies 
-     * may run through this station, unless it is completely filled with foreign base tokens. 
-     * <br>- "tokenOnly" means that trains may only run through the station if it contains a base token of the operating company.
+
+    /** Run-through status of any stops on the hex (whether visible or not).
+     * Indicates whether or not a single train can run through such stops, i.e. both enter and leave it.
+     * Has no meaning if no stops exist on this hex.
+     * <p>Values (see RunThrough below for definitions):
+     * <br>- "yes" (default for all except off-map hexes) means that trains of all companies
+     * may run through this station, unless it is completely filled with foreign base tokens.
+     * <br>- "tokenOnly" means that trains may only run through the station if it contains a base token
+     * of the operating company (applies to the 1830 PRR base).
      * <br>- "no" (default for off-map hexes) means that no train may run through this hex.
      */
-    protected Run runThroughAllowed = null;
-    
-    /** Run-to status of any "city"-type stations on the hex (whether visible or not).
-     * Indicates whether or not a single train can run from or to such stations, i.e. either enter or leave it.  
-     * Has no meaning if no "city"-type stations exist on this hex.
-     * <p>Values (see Run below for definitions):
-     * <br>- "yes" (default) means that trains of all companies may run to/from this station. 
-     * <br>- "tokenOnly" means that trains may only access the station if it contains a base token of the operating company.
-     * <br>- "no" would mean that the hex is inaccessible (like 18AL Birmingham in the early game), 
-     * but this option is not yet useful as there is no provision yet to change this setting 
-     * in an undoable way (no state variable). 
+    protected RunThrough runThroughAllowed = null;
+
+    /** Run-to status of any stops on the hex (whether visible or not).
+     * Indicates whether or not a single train can run from or to such stops, i.e. either enter or leave it.
+     * Has no meaning if no stops exist on this hex.
+     * <p>Values (see RunTo below for definitions):
+     * <br>- "yes" (default) means that trains of all companies may run to/from this station.
+     * <br>- "tokenOnly" means that trains may only access the station if it contains a base token
+     * of the operating company. Applies to the 18Scan off-map hexes.
+     * <br>- "no" would mean that the hex is inaccessible (like 1851 Birmingham in the early game),
+     * but this option is not yet useful as there is no provision yet to change this setting
+     * in an undoable way (no state variable).
      */
-    protected Run runToAllowed = null;
-    
-    public enum Run {
-        YES,
-        NO,
-        TOKENONLY
-    }
+    protected RunTo runToAllowed = null;
+
+    /** Loop: may one train touch this hex twice or more? */
+    protected Loop loopAllowed = Loop.YES;
+
+    /** Type of any stops on the hex.
+     * Normally the type will be derived from the tile properties.
+     * Hex-specific types are known to be required in 18VA (mine and offmap).
+     */
+    protected Type stopType = null;
 
     protected MapManager mapManager = null;
 
@@ -169,9 +175,9 @@ StationHolder, TokenHolder {
         }
         String letters = m.group(1);
         if (letters.length() == 1) {
-        	letter = letters.charAt(0);
+            letter = letters.charAt(0);
         } else { // for row 'AA' in 1825U1
-        	letter = 26 + letters.charAt(1);
+            letter = 26 + letters.charAt(1);
         }
         try {
             number = Integer.parseInt(m.group(2));
@@ -256,24 +262,47 @@ StationHolder, TokenHolder {
             if (openHexSides == null) openHexSides = new boolean[6];
             openHexSides[side%6] = true;
         }
-        
+
         String runThroughString = tag.getAttributeAsString("runThrough");
         if (Util.hasValue(runThroughString)) {
             try {
-                runThroughAllowed = Run.valueOf(runThroughString.toUpperCase());
+                runThroughAllowed = RunThrough.valueOf(runThroughString.toUpperCase());
             } catch (IllegalArgumentException e) {
-                throw new ConfigurationException ("Illegal value for MapHex runThrough property: "+runThroughString, e);
+                throw new ConfigurationException ("Illegal value for MapHex"
+                        +name+" runThrough property: "+runThroughString, e);
             }
         }
-        
+
         String runToString = tag.getAttributeAsString("runTo");
         if (Util.hasValue(runToString)) {
             try {
-                runToAllowed = Run.valueOf(runToString.toUpperCase());
+                runToAllowed = RunTo.valueOf(runToString.toUpperCase());
             } catch (IllegalArgumentException e) {
-                throw new ConfigurationException ("Illegal value for MapHex runTo property: "+runToString, e);
+                throw new ConfigurationException ("Illegal value for MapHex "
+                        +name+" runTo property: "+runToString, e);
             }
         }
+
+        String loopString = tag.getAttributeAsString("loop");
+        if (Util.hasValue(loopString)) {
+            try {
+                loopAllowed = Loop.valueOf(loopString.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                throw new ConfigurationException ("Illegal value for MapHex "
+                        +name+" loop property: "+loopString, e);
+            }
+        }
+
+        String typeString = tag.getAttributeAsString("type");
+        if (Util.hasValue(typeString)) {
+            try {
+                stopType = Type.valueOf(typeString.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                throw new ConfigurationException ("Illegal value for MapHex "
+                        +name+" type property: "+typeString, e);
+            }
+        }
+
     }
 
     public void finishConfiguration (GameManagerI gameManager) {
@@ -284,20 +313,21 @@ StationHolder, TokenHolder {
         currentTile = gameManager.getTileManager().getTile(preprintedTileId);
         // We need completely new objects, not just references to the Tile's
         // stations.
-        cities = new ArrayList<City>(4);
-        mCities = new HashMap<Integer, City>(4);
+        stops = new ArrayList<Stop>(4);
+        mStops = new HashMap<Integer, Stop>(4);
         for (Station s : currentTile.getStations()) {
             // sid, type, value, slots
-            City c = new City(this, s.getNumber(), s);
-            cities.add(c);
-            mCities.put(c.getNumber(), c);
+            Stop c = new Stop(this, s.getNumber(), s);
+            stops.add(c);
+            mStops.put(c.getNumber(), c);
         }
-        
+
         if (runThroughAllowed == null) {
-            runThroughAllowed = currentTile.getColourName().equalsIgnoreCase("red") ? Run.NO : Run.YES;
+            runThroughAllowed = currentTile.getColourName().equalsIgnoreCase("red")
+            ? RunThrough.NO : RunThrough.YES;
         }
         if (runToAllowed == null) {
-            runToAllowed = Run.YES;
+            runToAllowed = RunTo.YES;
         }
     }
 
@@ -393,12 +423,12 @@ StationHolder, TokenHolder {
     public int getY() {
         return y;
     }
-    
+
     /** Add an X offset. Required to avoid negative coordinate values, as arise in 1830 Wabash. */
     public void addX (int offset) {
         x += offset;
     }
-    
+
     /** Add an Y offset. Required to avoid negative coordinate values. */
     public void addY (int offset) {
         y += offset;
@@ -490,9 +520,9 @@ StationHolder, TokenHolder {
      */
     public void upgrade(TileI newTile, int newRotation, Map<String, Integer> relaidTokens) {
 
-        City newCity;
+        Stop newCity;
         String newTracks;
-        List<City> newCities;
+        List<Stop> newCities;
 
         if (relaidTokens == null) relaidTokens = new HashMap<String, Integer>();
 
@@ -502,11 +532,11 @@ StationHolder, TokenHolder {
             // keeping the original numbers (which therefore
             // may become different from the new tile's
             // station numbers).
-            Map<City, Station> citiesToStations = new HashMap<City, Station>();
+            Map<Stop, Station> citiesToStations = new HashMap<Stop, Station>();
 
             // Check for manual handling of tokens
             for (String compName : relaidTokens.keySet()) {
-                for (City city : cities) {
+                for (Stop city : stops) {
                     if (city.hasTokenOf(compName)) {
                         citiesToStations.put(city, newTile.getStations().get(relaidTokens.get(compName)-1));
                     }
@@ -515,7 +545,7 @@ StationHolder, TokenHolder {
 
             // Scan the old cities/stations,
             // and assign new stations where tracks correspond
-            for (City city : cities) {
+            for (Stop city : stops) {
                 if (citiesToStations.containsKey(city)) continue;
                 Station oldStation = city.getRelatedStation();
                 int[] oldTrackEnds =
@@ -538,7 +568,7 @@ StationHolder, TokenHolder {
             }
 
             // Map any unassigned cities randomly
-            city: for (City city : cities) {
+            city: for (Stop city : stops) {
                 if (citiesToStations.containsKey(city)) continue;
                 for (Station newStation : newTile.getStations()) {
                     if (citiesToStations.values().contains(newStation)) continue;
@@ -549,7 +579,7 @@ StationHolder, TokenHolder {
 
 
             // Assign the new Stations to the existing cities
-            for (City city : citiesToStations.keySet()) {
+            for (Stop city : citiesToStations.keySet()) {
                 Station newStation = citiesToStations.get(city);
                 Station oldStation = city.getRelatedStation();
                 city.setRelatedStation(newStation);
@@ -570,7 +600,7 @@ StationHolder, TokenHolder {
                                 + " to " + newStation.getId() + " "
                                 + newTracks);
             }
-            newCities = cities;
+            newCities = stops;
 
         } else {
             // If the number of stations does change,
@@ -578,16 +608,16 @@ StationHolder, TokenHolder {
 
             // Build a map from old to new cities,
             // so that we can move tokens at the end.
-            newCities = new ArrayList<City>(4);
-            Map<Integer, City> mNewCities = new HashMap<Integer, City>(4);
-            Map<City, City> oldToNewCities = new HashMap<City, City>();
-            Map<Station, City> newStationsToCities =
-                new HashMap<Station, City>();
+            newCities = new ArrayList<Stop>(4);
+            Map<Integer, Stop> mNewCities = new HashMap<Integer, Stop>(4);
+            Map<Stop, Stop> oldToNewCities = new HashMap<Stop, Stop>();
+            Map<Station, Stop> newStationsToCities =
+                new HashMap<Station, Stop>();
 
             // Scan the old cities/stations,
             // and assign new stations where tracks correspond
             int newCityNumber = 0;
-            for (City oldCity : cities) {
+            for (Stop oldCity : stops) {
                 int cityNumber = oldCity.getNumber();
                 Station oldStation = oldCity.getRelatedStation();
                 int[] oldTrackEnds =
@@ -616,7 +646,7 @@ StationHolder, TokenHolder {
                                 // Match found!
                                 if (!newStationsToCities.containsKey(newStation)) {
                                     newCity =
-                                        new City(this, ++newCityNumber,
+                                        new Stop(this, ++newCityNumber,
                                                 newStation);
                                     newCities.add(newCity);
                                     mNewCities.put(cityNumber, newCity);
@@ -660,7 +690,7 @@ StationHolder, TokenHolder {
 
             // If an old city is not yet connected, check if was
             // connected to another city it has merged into (1851 Louisville)
-            for (City oldCity : cities) {
+            for (Stop oldCity : stops) {
                 if (oldToNewCities.containsKey(oldCity)) continue;
                 Station oldStation = oldCity.getRelatedStation();
                 int[] oldTrackEnds =
@@ -671,7 +701,7 @@ StationHolder, TokenHolder {
                     if (oldTrackEnds[i] < 0) {
                         int oldStationNumber = -oldTrackEnds[i];
                         // Find the old city that has this number
-                        for (City oldCity2 : cities) {
+                        for (Stop oldCity2 : stops) {
                             log.debug("Old city "+oldCity2.getNumber()+" has station "+oldCity2.getRelatedStation().getNumber());
                             log.debug("  and links to new city "+oldToNewCities.get(oldCity2));
                             if (oldCity2.getRelatedStation().getNumber()
@@ -715,7 +745,7 @@ StationHolder, TokenHolder {
                 int cityNumber;
                 for (cityNumber = 1; mNewCities.containsKey(cityNumber); cityNumber++)
                     ;
-                newCity = new City(this, ++newCityNumber, newStation);
+                newCity = new Stop(this, ++newCityNumber, newStation);
                 newCities.add(newCity);
                 mNewCities.put(cityNumber, newCity);
                 newStationsToCities.put(newStation, newCity);
@@ -733,7 +763,7 @@ StationHolder, TokenHolder {
             Map<TokenI, TokenHolder> tokenDestinations =
                 new HashMap<TokenI, TokenHolder>();
 
-            for (City oldCity : cities) {
+            for (Stop oldCity : stops) {
                 newCity = oldToNewCities.get(oldCity);
                 if (newCity != null) {
                     oldtoken: for (TokenI token : oldCity.getTokens()) {
@@ -778,7 +808,7 @@ StationHolder, TokenHolder {
         }
 
         // Replace the tile
-        new TileMove(this, currentTile, currentTileRotation, cities,
+        new TileMove(this, currentTile, currentTileRotation, stops,
                 newTile, newRotation, newCities);
 
         /* TODO Further consequences to be processed here, e.g. new routes etc. */
@@ -793,7 +823,7 @@ StationHolder, TokenHolder {
      * @param newTileOrientation The orientation of the new tile (0-5).
      */
     public void replaceTile(TileI oldTile, TileI newTile,
-            int newTileOrientation, List<City> newCities) {
+            int newTileOrientation, List<Stop> newCities) {
 
         if (oldTile != currentTile) {
             new Exception("ERROR! Hex " + name + " wants to replace tile #"
@@ -813,11 +843,11 @@ StationHolder, TokenHolder {
         currentTile = newTile;
         currentTileRotation = newTileOrientation;
 
-        cities = newCities;
-        mCities.clear();
-        if (cities != null) {
-            for (City city : cities) {
-                mCities.put(city.getNumber(), city);
+        stops = newCities;
+        mStops.clear();
+        if (stops != null) {
+            for (Stop city : stops) {
+                mStops.put(city.getNumber(), city);
                 log.debug("Tile #"
                         + newTile.getId()
                         + " station "
@@ -834,13 +864,13 @@ StationHolder, TokenHolder {
     }
 
     public boolean layBaseToken(PublicCompanyI company, int station) {
-        if (cities == null || cities.isEmpty()) {
+        if (stops == null || stops.isEmpty()) {
             log.error("Tile " + getName()
                     + " has no station for home token of company "
                     + company.getName());
             return false;
         }
-        City city = mCities.get(station);
+        Stop city = mStops.get(station);
 
         BaseToken token = company.getFreeToken();
         if (token == null) {
@@ -894,9 +924,9 @@ StationHolder, TokenHolder {
     }
 
     public List<BaseToken> getBaseTokens () {
-        if (cities == null || cities.isEmpty()) return null;
+        if (stops == null || stops.isEmpty()) return null;
         List<BaseToken> tokens = new ArrayList<BaseToken>();
-        for (City city : cities) {
+        for (Stop city : stops) {
             for (TokenI token : city.getTokens()) {
                 if (token instanceof BaseToken) {
                     tokens.add((BaseToken)token);
@@ -947,18 +977,18 @@ StationHolder, TokenHolder {
 
     public boolean hasTokenSlotsLeft(int station) {
         if (station == 0) station = 1; // Temp. fix for old save files
-        City city = mCities.get(station);
+        Stop city = mStops.get(station);
         if (city != null) {
             return city.hasTokenSlotsLeft();
         } else {
             log.error("Invalid station " + station + ", max is "
-                    + (cities.size() - 1));
+                    + (stops.size() - 1));
             return false;
         }
     }
 
     public boolean hasTokenSlotsLeft() {
-        for (City city : cities) {
+        for (Stop city : stops) {
             if (city.hasTokenSlotsLeft()) return true;
         }
         return false;
@@ -967,15 +997,15 @@ StationHolder, TokenHolder {
     /** Check if the tile already has a token of a company in any station */
     public boolean hasTokenOfCompany(PublicCompanyI company) {
 
-        for (City city : cities) {
+        for (Stop city : stops) {
             if (city.hasTokenOf(company)) return true;
         }
         return false;
     }
 
     public List<TokenI> getTokens(int cityNumber) {
-        if (cities.size() > 0 && mCities.get(cityNumber) != null) {
-            return (mCities.get(cityNumber)).getTokens();
+        if (stops.size() > 0 && mStops.get(cityNumber) != null) {
+            return (mStops.get(cityNumber)).getTokens();
         } else {
             return new ArrayList<TokenI>();
         }
@@ -989,8 +1019,8 @@ StationHolder, TokenHolder {
      * @return
      */
     public int getCityOfBaseToken(PublicCompanyI company) {
-        if (cities == null || cities.isEmpty()) return 0;
-        for (City city : cities) {
+        if (stops == null || stops.isEmpty()) return 0;
+        for (Stop city : stops) {
             for (TokenI token : city.getTokens()) {
                 if (token instanceof BaseToken
                         && ((BaseToken) token).getCompany() == company) {
@@ -1001,17 +1031,17 @@ StationHolder, TokenHolder {
         return 0;
     }
 
-    public List<City> getCities() {
-        return cities;
+    public List<Stop> getCities() {
+        return stops;
     }
 
-    public City getCity(int cityNumber) {
-        return mCities.get(cityNumber);
+    public Stop getCity(int cityNumber) {
+        return mStops.get(cityNumber);
     }
 
-    public City getRelatedCity(Station station) {
-        City foundCity = null;
-        for (City city:mCities.values()) {
+    public Stop getRelatedCity(Station station) {
+        Stop foundCity = null;
+        for (Stop city:mStops.values()) {
             if (station == city.getRelatedStation()) {
                 foundCity = city;
             }
@@ -1020,26 +1050,26 @@ StationHolder, TokenHolder {
     }
 
     public void addHome(PublicCompanyI company, int cityNumber) throws ConfigurationException {
-        if (homes == null) homes = new HashMap<PublicCompanyI, City>();
-        if (cities.isEmpty()) {
+        if (homes == null) homes = new HashMap<PublicCompanyI, Stop>();
+        if (stops.isEmpty()) {
             log.error("No cities for home station on hex " + name);
         } else {
             // not yet decided
             if (cityNumber == 0) {
                 homes.put(company, null);
                 log.debug("Added home of " + company  + " in hex " + this.toString() +  " city not yet decided");
-            } else if (cityNumber > cities.size()) {
+            } else if (cityNumber > stops.size()) {
                 throw new ConfigurationException ("Invalid city number "+cityNumber+" for hex "+name
-                        +" which has "+cities.size()+" cities");
+                        +" which has "+stops.size()+" cities");
             } else {
-                City homeCity = cities.get(Math.max(cityNumber - 1, 0));
+                Stop homeCity = stops.get(Math.max(cityNumber - 1, 0));
                 homes.put(company, homeCity);
                 log.debug("Added home of " + company + " set to " + homeCity + " id= " +homeCity.getUniqueId());
             }
         }
     }
 
-    public Map<PublicCompanyI, City> getHomes() {
+    public Map<PublicCompanyI, Stop> getHomes() {
         return homes;
     }
 
@@ -1142,7 +1172,7 @@ StationHolder, TokenHolder {
             // Return MapHex attribute if defined
             return isBlockedForTokenLays.booleanValue();
         } else if (homes != null && !homes.isEmpty()) {
-            City cityToLay = this.getCity(cityNumber);
+            Stop cityToLay = this.getCity(cityNumber);
             if (cityToLay == null) { // city does not exist, this does not block itself
                 return false;
             }
@@ -1153,7 +1183,7 @@ StationHolder, TokenHolder {
             for (PublicCompanyI comp : homes.keySet()) {
                 if (comp.hasLaidHomeBaseTokens() || comp.isClosed()) continue;
                 // home base not laid yet
-                City homeCity = homes.get(comp);
+                Stop homeCity = homes.get(comp);
                 if (homeCity == null) {
                     if (comp.isHomeBlockedForAllCities()) {
                         allBlockCompanies ++; // undecided companies that block all cities
@@ -1174,7 +1204,7 @@ StationHolder, TokenHolder {
             }
             // check if the overall hex slots are sufficient
             int allTokenSlotsLeft = 0;
-            for (City city:cities) {
+            for (Stop city:stops) {
                 allTokenSlotsLeft += city.getTokenSlotsLeft();
             }
             if (allBlockCompanies + anyBlockCompanies  + cityBlockCompanies + 1 > allTokenSlotsLeft) {
@@ -1221,14 +1251,14 @@ StationHolder, TokenHolder {
     }
 
     public String getReservedForCompany() {
-		return reservedForCompany;
-	}
-
-    public boolean isReservedForCompany () {
-    	return reservedForCompany != null;
+        return reservedForCompany;
     }
 
-	public List<RevenueBonusTemplate> getRevenueBonuses() {
+    public boolean isReservedForCompany () {
+        return reservedForCompany != null;
+    }
+
+    public List<RevenueBonusTemplate> getRevenueBonuses() {
         return revenueBonuses;
     }
 
@@ -1267,7 +1297,7 @@ StationHolder, TokenHolder {
     public String getConnectionString(TileI tile, int rotation,
             int stationNumber) {
         StringBuffer b = new StringBuffer("");
-        if (cities != null && cities.size() > 0) {
+        if (stops != null && stops.size() > 0) {
             Map<Integer, List<Track>> tracks = tile.getTracksPerStationMap();
             if (tracks != null && tracks.get(stationNumber) != null) {
                 for (Track track : tracks.get(stationNumber)) {
@@ -1284,7 +1314,7 @@ StationHolder, TokenHolder {
 
     public String getConnectionString(int cityNumber) {
         int stationNumber =
-            mCities.get(cityNumber).getRelatedStation().getNumber();
+            mStops.get(cityNumber).getRelatedStation().getNumber();
         return getConnectionString(currentTile, currentTileRotation,
                 stationNumber);
     }
@@ -1308,12 +1338,20 @@ StationHolder, TokenHolder {
         return endpoints;
     }
 
-    public Run isRunThroughAllowed() {
+    public RunThrough isRunThroughAllowed() {
         return runThroughAllowed;
     }
 
-    public Run isRunToAllowed() {
+    public RunTo isRunToAllowed() {
         return runToAllowed;
+    }
+
+    public Loop isLoopAllowed () {
+        return loopAllowed;
+    }
+
+    public Type getStopType() {
+        return stopType;
     }
 
 }

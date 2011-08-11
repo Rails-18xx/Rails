@@ -2,25 +2,14 @@ package rails.algorithms;
 
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.log4j.Logger;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.SimpleGraph;
 
-import rails.game.City;
-import rails.game.MapHex;
-import rails.game.PhaseI;
-import rails.game.PublicCompanyI;
-import rails.game.Station;
-import rails.ui.swing.hexmap.EWHexMap;
-import rails.ui.swing.hexmap.GUIHex;
-import rails.ui.swing.hexmap.HexMap;
+import rails.game.*;
+import rails.ui.swing.hexmap.*;
 
 public final class NetworkVertex implements Comparable<NetworkVertex> {
 
@@ -52,12 +41,12 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
 
     // references to rails objects, if not virtual
     private final MapHex hex;
-    
+
     private final Station station;
-    private final City city;
+    private final Stop city;
     private final int side;
-    
-    
+
+
     /** constructor for station on mapHex */
     public NetworkVertex(MapHex hex, Station station) {
         this.type = VertexType.STATION;
@@ -74,7 +63,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         this.virtual = false;
         this.virtualId = null;
     }
-    
+
     /** constructor for side on mapHex */
     public NetworkVertex(MapHex hex, int side) {
         this.type = VertexType.SIDE;
@@ -82,16 +71,16 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         this.station = null;
         this.city = null;
         this.side = (side % 6);
-        
+
         this.virtual = false;
         this.virtualId = null;
     }
-    
+
     /**  constructor for public company hq */
     public NetworkVertex(PublicCompanyI company) {
         this(VertexType.HQ, "HQ");
     }
-    
+
     private NetworkVertex(VertexType type, String name) {
         this.type = type;
         this.hex = null;
@@ -102,9 +91,9 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         this.virtual = true;
         this.virtualId = name;
     }
-    
+
     /** factory method for virtual vertex
-    */
+     */
     public static NetworkVertex getVirtualVertex(VertexType type, String name) {
         NetworkVertex vertex = new NetworkVertex(type, name);
         return vertex;
@@ -120,7 +109,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         else if (isStation())
             return hex.getName() + "." + -station.getNumber();
         else if (isSide())
-            return hex.getName() + "." + side; 
+            return hex.getName() + "." + side;
         else
             return null;
     }
@@ -128,15 +117,15 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
     public boolean isVirtual() {
         return virtual;
     }
-    
+
     public boolean isStation(){
         return type == VertexType.STATION;
     }
-    
+
     public boolean isSide(){
         return type == VertexType.SIDE;
     }
-    
+
     public boolean isHQ(){
         return type == VertexType.HQ;
     }
@@ -144,15 +133,15 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
     public VertexType getType() {
         return type;
     }
-    
+
     public boolean isMajor(){
         return (stationType != null && stationType == StationType.MAJOR);
     }
-    
+
     public boolean isMinor(){
         return (stationType != null && stationType == StationType.MINOR);
     }
-    
+
     public StationType getStationType() {
         return stationType;
     }
@@ -165,7 +154,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
     public int getValue() {
         return value;
     }
-    
+
     public int getValueByTrain(NetworkTrain train) {
         int valueByTrain;
         if (isMajor()) {
@@ -181,43 +170,43 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         }
         return valueByTrain;
     }
-    
+
     public NetworkVertex setValue(int value) {
         this.value = value;
         return this;
     }
-    
+
     public boolean isSink() {
         return sink;
     }
-    
+
     public NetworkVertex setSink(boolean sink) {
         this.sink = sink;
         return this;
     }
-    
+
     public String getCityName() {
         return cityName;
     }
-    
+
     public NetworkVertex setCityName(String locationName) {
         this.cityName = locationName;
         return this;
     }
-    
+
     // getter for rails objects
     public MapHex getHex(){
         return hex;
     }
-    
+
     public Station getStation(){
         return station;
     }
-    
-    public City getCity() {
+
+    public Stop getCity() {
         return city;
     }
-    
+
     public int getSide(){
         return side;
     }
@@ -225,20 +214,20 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
     public boolean isOfType(VertexType vertexType, StationType stationType) {
         return (type == vertexType && (!isStation() || getStationType() == stationType));
     }
-       
-    /** 
+
+    /**
      * Initialize for rails vertexes
      * @return true = can stay inside the network, false = has to be removed
      */
     public boolean initRailsVertex(PublicCompanyI company) {
         // side vertices use the defaults, virtuals cannot use this function
         if (virtual || type == VertexType.SIDE) return true;
-        
+
         log.info("Init of vertex " + this);
-        
-        // check if it has to be removed because it is run-to only 
+
+        // check if it has to be removed because it is run-to only
         if (company != null) { // if company == null, then no vertex gets removed
-            if (hex.isRunToAllowed() == MapHex.Run.NO || hex.isRunToAllowed() == MapHex.Run.TOKENONLY && !city.hasTokenOf(company))
+            if (hex.isRunToAllowed() == Stop.RunTo.NO || hex.isRunToAllowed() == Stop.RunTo.TOKENONLY && !city.hasTokenOf(company))
             {
                 return false;
             }
@@ -251,21 +240,21 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
                 || station.getType().equals(Station.HALT)) {
             setStationType(StationType.MINOR);
         }
-        
-        // check if it is a sink 
+
+        // check if it is a sink
         if (company == null) { // if company == null, then all sinks are deactivated
             sink = false;
         } else if (station.getType().equals(Station.OFF_MAP_AREA) || (
                 // or station is city
                 station.getType().equals(Station.CITY)
-                // and is either fully tokened and has token slots or only tokens allow run through 
-                && ( city.getSlots() != 0 && !city.hasTokenSlotsLeft() || hex.isRunThroughAllowed() == MapHex.Run.TOKENONLY)
+                // and is either fully tokened and has token slots or only tokens allow run through
+                && ( city.getSlots() != 0 && !city.hasTokenSlotsLeft() || hex.isRunThroughAllowed() == Stop.RunThrough.TOKENONLY)
                 // and city does not have a token
                 && !city.hasTokenOf(company))
-                ) { 
+        ) {
             sink = true;
         }
-        
+
         // define locationName
         cityName = null;
         if (station.getType().equals(Station.OFF_MAP_AREA)) {
@@ -278,12 +267,12 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
                 cityName = hex.getCityName() + "." + station.getCityName();
             }
         }
-        
+
         // no removal
         return true;
-        
+
     }
-    
+
     public void setRailsVertexValue(PhaseI phase) {
         // side vertices and  virtuals cannot use this function
         if (virtual || type == VertexType.SIDE) return;
@@ -295,30 +284,30 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
             value = station.getValue();
         }
     }
-    
-    
+
+
     @Override
     public String toString(){
         StringBuffer message = new StringBuffer();
         if (isVirtual())
             message.append(virtualId);
-        else if (isStation()) 
+        else if (isStation())
             message.append(hex.getName() + "." + station.getNumber());
         else if (isSide())
             message.append(hex.getName() + "." + hex.getOrientationName(side));
-        else 
+        else
             message.append("HQ");
         if (isSink())
             message.append("/*");
         return message.toString();
     }
-    
+
     public int compareTo(NetworkVertex otherVertex) {
         return this.getIdentifier().compareTo(otherVertex.getIdentifier());
     }
-    
+
     public static final class ValueOrder implements Comparator<NetworkVertex> {
-        
+
         public int compare(NetworkVertex vA, NetworkVertex vB) {
             int result = -((Integer)vA.getValue()).compareTo(vB.getValue()); // compare by value, descending
             if (result == 0)
@@ -333,9 +322,9 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
      * @param company the company (with regard to values, sinks and removals)
      * @param phase the current phase (with regard to values)
      */
-    public static void initAllRailsVertices(Graph<NetworkVertex, NetworkEdge> graph, 
+    public static void initAllRailsVertices(Graph<NetworkVertex, NetworkEdge> graph,
             PublicCompanyI company,  PhaseI phase) {
-        
+
         // store vertices for removal
         List<NetworkVertex> verticesToRemove = new ArrayList<NetworkVertex>();
         for (NetworkVertex v:graph.vertexSet()) {
@@ -361,8 +350,8 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         }
         return maximum;
     }
-    
-    
+
+
     /**
      * Returns the number of specified vertex type in a vertex collection
      * If station then specify station type
@@ -374,14 +363,14 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         }
         return number;
     }
-    
+
     /**
      * creates a new virtual vertex with identical properties and links
      */
-    public static NetworkVertex duplicateVertex(SimpleGraph<NetworkVertex, NetworkEdge> graph, 
+    public static NetworkVertex duplicateVertex(SimpleGraph<NetworkVertex, NetworkEdge> graph,
             NetworkVertex vertex, String newIdentifier, boolean addOldVertexAsHidden) {
         // create new vertex
-        NetworkVertex newVertex = NetworkVertex.getVirtualVertex(vertex.type, newIdentifier); 
+        NetworkVertex newVertex = NetworkVertex.getVirtualVertex(vertex.type, newIdentifier);
         // copy values
         newVertex.stationType = vertex.stationType;
         newVertex.value = vertex.value;
@@ -393,7 +382,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         for (NetworkEdge edge:edges) {
             List<NetworkVertex> hiddenVertices;
             if (edge.getSource() == vertex) {
-                 hiddenVertices = edge.getHiddenVertices();
+                hiddenVertices = edge.getHiddenVertices();
                 if (addOldVertexAsHidden) hiddenVertices.add(vertex);
                 NetworkEdge newEdge = new NetworkEdge(newVertex, edge.getTarget(), edge.isGreedy(), edge.getDistance(), hiddenVertices);
                 graph.addEdge(newVertex, edge.getTarget(), newEdge);
@@ -407,12 +396,12 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         }
         return newVertex;
     }
-    
+
     /**
      * replaces one vertex by another for a network graph
      * copies all edges
      */
-    public static boolean replaceVertex(SimpleGraph<NetworkVertex, NetworkEdge> graph, 
+    public static boolean replaceVertex(SimpleGraph<NetworkVertex, NetworkEdge> graph,
             NetworkVertex oldVertex, NetworkVertex newVertex) {
         // add new vertex
         graph.addVertex(newVertex);
@@ -429,7 +418,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         // remove old vertex
         return graph.removeVertex(oldVertex);
     }
-    
+
     /**
      * Filters all vertices from a collection of vertices that lay in a specified collection of hexes
      */
@@ -442,7 +431,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         }
         return hexVertices;
     }
-    
+
     /**
      * Returns all vertices for a specified hex
      */
@@ -455,7 +444,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         }
         return hexVertices;
     }
-    
+
     public static NetworkVertex getVertexByIdentifier(Collection<NetworkVertex> vertices, String identifier) {
         for (NetworkVertex vertex:vertices) {
             if (vertex.getIdentifier().equals(identifier)) {
@@ -464,18 +453,18 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         }
         return null;
     }
-    
+
     public static Point2D getVertexPoint2D(HexMap map, NetworkVertex vertex) {
         if (vertex.isVirtual()) return null;
-        
+
         GUIHex guiHex = map.getHexByName(vertex.getHex().getName());
         if (vertex.isMajor()) {
             return guiHex.getCityPoint2D(vertex.getCity());
         } else if (vertex.isMinor()) {
             return guiHex.getCityPoint2D(vertex.getCity());
-//            return guiHex.getCenterPoint2D();
+            //            return guiHex.getCenterPoint2D();
         } else if (vertex.isSide()) {
-            if (map instanceof EWHexMap) 
+            if (map instanceof EWHexMap)
                 return guiHex.getSidePoint2D(5-vertex.getSide());
             else
                 return guiHex.getSidePoint2D((3+vertex.getSide())%6);
@@ -485,9 +474,9 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
     }
 
     public static Rectangle getVertexMapCoverage(HexMap map, Collection<NetworkVertex> vertices) {
-        
+
         Rectangle rectangle = null;
-        
+
         // find coverage are of the vertices
         double minX=0,minY=0,maxX=0,maxY=0;
         for (NetworkVertex vertex:vertices) {
@@ -505,10 +494,10 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
                     maxX = Math.max(maxX, point.getX());
                     maxY = Math.max(maxY, point.getY());
                 }
-            }   
+            }
         }
         log.info("Vertex Map Coverage minX=" + minX + ", minY=" + minY + ", maxX=" + maxX + ", maxY=" + maxY );
-//        Rectangle rectangle = new Rectangle((int)minX, (int)minY, (int)maxX, (int)maxY);
+        //        Rectangle rectangle = new Rectangle((int)minX, (int)minY, (int)maxX, (int)maxY);
         log.info("Created rectangle=" + rectangle);
         return (rectangle);
     }

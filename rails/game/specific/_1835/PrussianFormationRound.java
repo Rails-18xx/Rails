@@ -344,7 +344,7 @@ public class PrussianFormationRound extends StockRound {
 
                 // Replace the home token
                 BaseToken token = (BaseToken) minor.getTokens().get(0);
-                City city = (City) token.getHolder();
+                Stop city = (Stop) token.getHolder();
                 MapHex hex = city.getHolder();
                 token.moveTo(minor);
                 if (!hex.hasTokenOfCompany(prussian) && hex.layBaseToken(prussian, city.getNumber())) {

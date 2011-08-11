@@ -527,7 +527,7 @@ public class CGRFormationRound extends SwitchableUIRound {
         nonHomeTokens = new ArrayList<BaseToken>();
         BaseToken bt;
         MapHex hex;
-        City city;
+        Stop city;
         for (PublicCompanyI comp : mergingCompanies) {
 
             // Exchange home tokens and collect non-home tokens
@@ -536,7 +536,7 @@ public class CGRFormationRound extends SwitchableUIRound {
                 if (token instanceof BaseToken) {
                     bt = (BaseToken) token;
                     if (!bt.isPlaced()) continue;
-                    city = (City) bt.getHolder();
+                    city = (Stop) bt.getHolder();
                     hex = city.getHolder();
                     if (homeHexes != null && homeHexes.contains(hex)) {
                         homeTokens.add(bt);
@@ -593,7 +593,7 @@ bonuses:        for (Bonus bonus : bonuses) {
         // Replace the home tokens
         ReportBuffer.add("");
         for (BaseToken token : homeTokens) {
-            city = (City) token.getHolder();
+            city = (Stop) token.getHolder();
             hex = city.getHolder();
             token.moveTo(token.getCompany());
             if (hex.layBaseToken(cgr, city.getNumber())) {
@@ -607,7 +607,7 @@ bonuses:        for (Bonus bonus : bonuses) {
 
         // Clean up any non-home tokens on cities now having a CGR token
         for (BaseToken token : new ArrayList<BaseToken>(nonHomeTokens)) {
-            city = (City) token.getHolder();
+            city = (Stop) token.getHolder();
             hex = city.getHolder();
             List<BaseToken> otherTokens = hex.getBaseTokens();
             if (otherTokens != null) {
@@ -632,7 +632,7 @@ bonuses:        for (Bonus bonus : bonuses) {
             Map<String, String> oldTokens = new HashMap<String, String>();
             String cityName;
             for (BaseToken token : nonHomeTokens) {
-                if (token.getHolder() instanceof City) {
+                if (token.getHolder() instanceof Stop) {
                     cityName = token.getHolder().getName();
                     if (oldTokens.containsKey(cityName)) {
                         oldTokens.put(cityName,
@@ -681,12 +681,12 @@ bonuses:        for (Bonus bonus : bonuses) {
     }
 
    private void executeExchangeTokens (List<BaseToken> exchangedTokens) {
-        City city;
+        Stop city;
         MapHex hex;
         ReportBuffer.add("");
         for (BaseToken token : exchangedTokens) {
             // Remove old token
-            city = (City) token.getHolder();
+            city = (Stop) token.getHolder();
             hex = city.getHolder();
             token.moveTo(token.getCompany());
             // Replace it with a CGR token

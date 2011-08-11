@@ -210,7 +210,7 @@ public class GUIHex implements ViewObject {
         return hexMap;
     }
 
-    public Point2D getCityPoint2D(City city){
+    public Point2D getCityPoint2D(Stop city){
         Point tokenPoint = getTokenCenter(0, 1, 0, city.getNumber() - 1);
         return new Point2D.Double(tokenPoint.getX(), tokenPoint.getY());
     }
@@ -405,10 +405,10 @@ public class GUIHex implements ViewObject {
                             + ((fontMetrics.getHeight() + rectBound.height) * 9 / 15));
         }
 
-        Map<PublicCompanyI, City> homes = getHexModel().getHomes();
+        Map<PublicCompanyI, Stop> homes = getHexModel().getHomes();
 
         if (homes  != null) {
-            City homeCity;
+            Stop homeCity;
             Point p;
             for (PublicCompanyI company : homes.keySet()) {
                 if (company.isClosed()) continue;
@@ -418,8 +418,8 @@ public class GUIHex implements ViewObject {
                 homeCity = homes.get(company);
                 if (homeCity == null) { // not yet decided where the token will be
                     // find a free slot
-                    List<City> cities = getHexModel().getCities();
-                    for (City city:cities) {
+                    List<Stop> cities = getHexModel().getCities();
+                    for (Stop city:cities) {
                         if (city.hasTokenSlotsLeft()) {
                             homeCity = city;
                             break;
@@ -752,7 +752,7 @@ public class GUIHex implements ViewObject {
         } else if (currentTile.hasStations()) {
             Station st;
             int cityNumber;
-            for (City city : model.getCities()) {
+            for (Stop city : model.getCities()) {
                 cityNumber = city.getNumber();
                 st = city.getRelatedStation();
                 tt.append("<br>  ").append(st.getType()).append(" ").append(cityNumber)

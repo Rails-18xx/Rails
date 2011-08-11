@@ -5,7 +5,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import rails.common.LocalText;
-import rails.game.City;
+import rails.game.Stop;
 import rails.game.PublicCompanyI;
 import rails.game.action.MergeCompanies;
 import rails.game.specific._18EU.StartCompany_18EU;
@@ -84,7 +84,7 @@ public class GameUIManager_18EU extends GameUIManager {
                    } else {
 
                        // From phase 6, no minors are involved, but a home station must be chosen
-                       List<City> cities = action.getAvailableHomeStations();
+                       List<Stop> cities = action.getAvailableHomeStations();
                        if (cities != null && !cities.isEmpty()) {
                            String[] options = new String[cities.size()];
                            for (int i = 0; i < options.length; i++) {

@@ -78,7 +78,7 @@ public class StockRound_18EU extends StockRound {
         // start a company by trading in a Minor
         boolean mustMergeMinor = !phase5Reached;
         List<PublicCompanyI> minors = null;
-        List<City> freeStations = null;
+        List<Stop> freeStations = null;
         if (mustMergeMinor) {
             minors = new ArrayList<PublicCompanyI>();
             for (PublicCertificateI c : getCurrentPlayer().getPortfolio().getCertificates()) {
@@ -87,9 +87,9 @@ public class StockRound_18EU extends StockRound {
                 }
             }
         } else {
-            freeStations = new ArrayList<City>();
+            freeStations = new ArrayList<Stop>();
             MapManager map = gameManager.getMapManager();
-            for (City city : map.getCurrentStations()) {
+            for (Stop city : map.getCurrentStations()) {
                 if (city.getSlots() > city.getTokens().size()) {
                     freeStations.add(city);
                 }
@@ -284,7 +284,7 @@ public class StockRound_18EU extends StockRound {
         String companyName = company.getName();
         PublicCompanyI minor = null;
         StartCompany_18EU startAction = null;
-        City selectedHomeCity = null;
+        Stop selectedHomeCity = null;
 
         currentPlayer = getCurrentPlayer();
 

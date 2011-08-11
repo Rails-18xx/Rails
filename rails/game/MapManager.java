@@ -6,6 +6,11 @@ import java.util.*;
 import org.apache.log4j.Logger;
 
 import rails.common.parser.*;
+import rails.game.Stop.Loop;
+import rails.game.Stop.RunThrough;
+import rails.game.Stop.RunTo;
+import rails.game.Stop.Type;
+import rails.util.Util;
 
 /**
  * MapManager configures the map layout from XML
@@ -47,6 +52,11 @@ public class MapManager implements ConfigurableComponentI {
     protected static final int[] xYOddDeltaEW =
         new int[] { 0, -1, 0, +1, +1, +1 };
     protected static final int[] yDeltaEW = new int[] { +1, 0, -1, -1, 0, +1 };
+
+    // Stop property defaults per stop type
+    protected Map<Type,RunTo> runToDefaults = new HashMap<Type, RunTo>();
+    protected Map<Type,RunThrough> runThroughDefaults = new HashMap<Type, RunThrough>();
+    protected Map<Type,Loop> loopDefaults = new HashMap<Type, Loop>();
 
     protected static Logger log =
         Logger.getLogger(MapManager.class.getPackage().getName());
@@ -149,6 +159,63 @@ public class MapManager implements ConfigurableComponentI {
             hexes[hex.getX()][hex.getY()] = hex;
             //log.debug("--- Hex "+hex.getName()+" x="+hex.getX()+" y="+hex.getY()+" row="+hex.getRow()+" col="+hex.getColumn());
         }
+
+        // Parse default stop types
+        Type type;
+        RunTo runTo;
+        RunThrough runThrough;
+        Loop loop;
+        String s;
+        Tag defaultsTag = tag.getChild("Defaults");
+        if (defaultsTag != null) {
+            List<Tag> accessTags = defaultsTag.getChildren("Access");
+            for (Tag accessTag : accessTags) {
+                // Type
+                s = accessTag.getAttributeAsString("type", null);
+                if (Util.hasValue(s)) {
+                    try {
+                        type = Type.valueOf(s.toUpperCase());
+                    } catch (IllegalArgumentException e) {
+                        throw new ConfigurationException ("Illegal value for default property type: "+s, e);
+                    }
+                } else {
+                    type = null; // For default defaults
+                }
+                // RunTo
+                s = accessTag.getAttributeAsString("runTo", null);
+                if (Util.hasValue(s)) {
+                    try {
+                        runTo = RunTo.valueOf(s.toUpperCase());
+                    } catch (IllegalArgumentException e) {
+                        throw new ConfigurationException ("Illegal value for "
+                                +type+" default runTo property: "+s, e);
+                    }
+                    runToDefaults.put(type, runTo);
+                }
+                // RunThrough
+                s = accessTag.getAttributeAsString("runThrough", null);
+                if (Util.hasValue(s)) {
+                    try {
+                        runThrough = RunThrough.valueOf(s.toUpperCase());
+                    } catch (IllegalArgumentException e) {
+                        throw new ConfigurationException ("Illegal value for "
+                                +type+" default runThrough property: "+s, e);
+                    }
+                    runThroughDefaults.put(type, runThrough);
+                }
+                // Loop
+                s = accessTag.getAttributeAsString("loop", null);
+                if (Util.hasValue(s)) {
+                    try {
+                        loop = Loop.valueOf(s.toUpperCase());
+                    } catch (IllegalArgumentException e) {
+                        throw new ConfigurationException ("Illegal value for "
+                                +type+" default loop property: "+s, e);
+                    }
+                    loopDefaults.put(type, loop);
+                }
+            }
+        }
     }
 
     public void finishConfiguration (GameManagerI gameManager) throws ConfigurationException {
@@ -208,6 +275,11 @@ public class MapManager implements ConfigurableComponentI {
                 hex.addDestination(company);
             }
         }
+
+        // Define default Stop property defaults
+        if (!runToDefaults.containsKey(null)) runToDefaults.put(null, RunTo.YES);
+        if (!runThroughDefaults.containsKey(null)) runThroughDefaults.put(null, RunThrough.YES);
+        if (!loopDefaults.containsKey(null)) loopDefaults.put(null, Loop.YES);
     }
 
     /**
@@ -304,8 +376,8 @@ public class MapManager implements ConfigurableComponentI {
         return mHexes.get(locationCode);
     }
 
-    public List<City> getCurrentStations() {
-        List<City> stations = new ArrayList<City>();
+    public List<Stop> getCurrentStations() {
+        List<Stop> stations = new ArrayList<Stop>();
         for (MapHex hex : mHexes.values()) {
             stations.addAll(hex.getCities());
         }
@@ -423,6 +495,18 @@ public class MapManager implements ConfigurableComponentI {
 
     public boolean isMapImageUsed() {
         return mapImageUsed;
+    }
+
+    public RunTo getRunToDefault(Type type) {
+        return runToDefaults.containsKey(type) ? runToDefaults.get(type) : runToDefaults.get(null);
+    }
+
+    public RunThrough getRunThroughDefault(Type type) {
+        return runThroughDefaults.containsKey(type) ? runThroughDefaults.get(type) : runThroughDefaults.get(null);
+    }
+
+    public Loop getLoopDefault(Type type) {
+        return loopDefaults.containsKey(type) ? loopDefaults.get(type) : loopDefaults.get(null);
     }
 
 }

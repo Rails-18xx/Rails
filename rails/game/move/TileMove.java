@@ -17,14 +17,14 @@ public class TileMove extends Move {
     MapHex hex;
     TileI oldTile;
     int oldTileOrientation;
-    List<City> oldStations;
+    List<Stop> oldStations;
     TileI newTile;
     int newTileOrientation;
-    List<City> newStations;
+    List<Stop> newStations;
 
     public TileMove(MapHex hex, TileI oldTile, int oldTileOrientation,
-            List<City> oldStations, TileI newTile, int newTileOrientation,
-            List<City> newStations) {
+            List<Stop> oldStations, TileI newTile, int newTileOrientation,
+            List<Stop> newStations) {
 
         this.hex = hex;
         this.oldTile = oldTile;

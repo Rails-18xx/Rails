@@ -26,7 +26,7 @@ import com.jgraph.layout.JGraphLayout;
 import com.jgraph.layout.organic.JGraphFastOrganicLayout;
 
 import rails.game.BaseToken;
-import rails.game.City;
+import rails.game.Stop;
 import rails.game.GameManagerI;
 import rails.game.MapHex;
 import rails.game.MapManager;
@@ -178,8 +178,8 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
     public NetworkVertex getVertex(TokenI token) {
         if (!(token instanceof BaseToken)) return null;
         TokenHolder holder = token.getHolder();
-        if (!(holder instanceof City)) return null;
-        City city = (City)holder;
+        if (!(holder instanceof Stop)) return null;
+        Stop city = (Stop)holder;
         MapHex hex = city.getHolder();
         Station station = city.getRelatedStation();
         return getVertex(hex, station);
@@ -215,7 +215,7 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
                                 PublicCompanyI company){
         List<MapHex> hexes = new ArrayList<MapHex>();
         for(NetworkVertex vertex:graph.vertexSet()) {
-            City city = vertex.getCity();
+            Stop city = vertex.getCity();
             if (city != null && city.hasTokenSlotsLeft() && !city.hasTokenOf(company)) {
                 hexes.add(vertex.getHex());
             }

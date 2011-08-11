@@ -823,7 +823,7 @@ public class ORUIManager implements DialogOwner {
                 allowance = allowances.get(0);
             }
             int station;
-            List<City> stations = selectedHex.getHexModel().getCities();
+            List<Stop> stations = selectedHex.getHexModel().getCities();
 
             switch (stations.size()) {
             case 0: // No stations
@@ -837,9 +837,9 @@ public class ORUIManager implements DialogOwner {
                 // Check what connections each city has.
                 // Also remove any cities with no room.
                 List<String> prompts = new ArrayList<String>();
-                Map<String, City> promptToCityMap = new HashMap<String, City>();
+                Map<String, Stop> promptToCityMap = new HashMap<String, Stop>();
                 String prompt;
-                for (City city : stations) {
+                for (Stop city : stations) {
                     if (city.hasTokenSlotsLeft()) {
                         prompt = LocalText.getText(
                                 "SelectStationForTokenOption",
@@ -901,7 +901,7 @@ public class ORUIManager implements DialogOwner {
         TileI oldTile = hex.getCurrentTile();
          if (!action.isRelayBaseTokens()
                 && !oldTile.relayBaseTokensOnUpgrade()) return;
-        for (City oldCity : hex.getCities()) {
+        for (Stop oldCity : hex.getCities()) {
             if (oldCity.hasTokens()) {
                 // Assume only 1 token (no exceptions known)
                 PublicCompanyI company = ((BaseToken)oldCity.getTokens().get(0)).getCompany();

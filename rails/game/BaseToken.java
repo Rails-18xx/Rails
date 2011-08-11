@@ -31,7 +31,7 @@ public class BaseToken extends Token {
     }
 
     public boolean isPlaced() {
-        return (holder instanceof City);
+        return (holder instanceof Stop);
     }
 
     public String getName() {

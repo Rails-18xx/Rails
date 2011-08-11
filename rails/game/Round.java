@@ -202,7 +202,7 @@ public abstract class Round implements RoundI {
 
         if (exchanged > 0) {
             MapHex hex;
-            City city;
+            Stop city;
             String cityName, hexName;
             int cityNumber;
             String[] ct;

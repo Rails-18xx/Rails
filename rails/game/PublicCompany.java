@@ -1828,9 +1828,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
                 } else {
                     // Cover the case that there already is another token.
                     // Allowing this is optional for 1856 Hamilton (THB home)
-                    List<City> cities = homeHex.getCities();
-                    List<City> openCities = new ArrayList<City>();
-                    for (City city : cities) {
+                    List<Stop> cities = homeHex.getCities();
+                    List<Stop> openCities = new ArrayList<Stop>();
+                    for (Stop city : cities) {
                         if (city.hasTokenSlotsLeft()) openCities.add (city);
                     }
                     if (openCities.size() == 1) {

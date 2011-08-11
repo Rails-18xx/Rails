@@ -572,7 +572,7 @@ public class GameUIManager implements DialogOwner {
         String[] ct;
         MapHex hex;
         List<String> options = new ArrayList<String>();
-        City city;
+        Stop city;
         List<ExchangeableToken> oldTokens = action.getTokensToExchange();
 
         for (ExchangeableToken t : oldTokens) {

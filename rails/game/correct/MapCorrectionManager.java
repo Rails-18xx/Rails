@@ -149,7 +149,7 @@ public class MapCorrectionManager extends CorrectionManager {
                     || hex.getCurrentTile().relayBaseTokensOnUpgrade()) {
                 // define tokens for relays
                 List<BaseToken> tokens = new ArrayList<BaseToken>();
-                for (City oldCity:hex.getCities()) {
+                for (Stop oldCity:hex.getCities()) {
                     for (TokenI token:oldCity.getTokens()) {
                         if (token instanceof BaseToken) {
                             tokens.add((BaseToken)token);
