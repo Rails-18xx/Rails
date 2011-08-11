@@ -26,7 +26,7 @@ locale=te_ST
 # An overriding format can be specified here, but then applies to all games.
 # The @ character must be present and is replaced by the amount.
 # Example: �@ to specify a pound sign prefix: �100.
-#money_format=$@
+money_format=@
 
 ### Save file directory
 # If the below entry exists, is not empty, and specifies an existing

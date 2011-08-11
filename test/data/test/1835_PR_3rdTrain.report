@@ -2,47 +2,47 @@ GameIs,1835
 PlayerIs,1,Alice
 PlayerIs,2,Bob
 PlayerIs,3,Charlie
-PlayerCash,600M
-BankHas,10200M
+PlayerCash,600
+BankHas,10200
 StartOfPhase,2
-BankSizeIs,10200M
+BankSizeIs,10200
 StartOfInitialRound
 HasPriority,Alice
-BuysItemFor,Alice,NF,100M
+BuysItemFor,Alice,NF,100
 ALSO_GETS,Alice,CERT_NAME,BY,10
-BuysItemFor,Bob,M1,80M
-FloatsWithCash,M1,80M
-BuysItemFor,Charlie,LD,190M
+BuysItemFor,Bob,M1,80
+FloatsWithCash,M1,80
+BuysItemFor,Charlie,LD,190
 ALSO_GETS,Charlie,PRES_CERT_NAME,SX,20
-BuysItemFor,Alice,M2,170M
-FloatsWithCash,M2,170M
-BuysItemFor,Bob,M3,80M
-FloatsWithCash,M3,80M
-BuysItemFor,Charlie,M4,160M
-FloatsWithCash,M4,160M
-BuysItemFor,Alice,PRES_CERT_NAME,BY,20,184M
-BuysItemFor,Bob,BB,130M
-BuysItemFor,Charlie,HB,160M
-BuysItemFor,Alice,OBB,120M
+BuysItemFor,Alice,M2,170
+FloatsWithCash,M2,170
+BuysItemFor,Bob,M3,80
+FloatsWithCash,M3,80
+BuysItemFor,Charlie,M4,160
+FloatsWithCash,M4,160
+BuysItemFor,Alice,PRES_CERT_NAME,BY,20,184
+BuysItemFor,Bob,BB,130
+BuysItemFor,Charlie,HB,160
+BuysItemFor,Alice,OBB,120
 ALSO_GETS,Alice,CERT_NAME,BY,10
-BuysItemFor,Bob,PfB,150M
+BuysItemFor,Bob,PfB,150
 ALSO_GETS,Bob,CERT_NAME,BY,10
-FloatsWithCash,BY,460M
-BuysItemFor,Charlie,M5,80M
-FloatsWithCash,M5,80M
+FloatsWithCash,BY,460
+BuysItemFor,Charlie,M5,80
+FloatsWithCash,M5,80
 CannotBuyAnything,Alice
-BuysItemFor,Bob,M6,80M
-FloatsWithCash,M6,80M
-Has,M1,80M
-Has,M2,170M
-Has,M3,80M
-Has,M4,160M
-Has,M5,80M
-Has,M6,80M
-Has,BY,460M
-Has,Alice,26M
-Has,Bob,80M
-Has,Charlie,10M
+BuysItemFor,Bob,M6,80
+FloatsWithCash,M6,80
+Has,M1,80
+Has,M2,170
+Has,M3,80
+Has,M4,160
+Has,M5,80
+Has,M6,80
+Has,BY,460
+Has,Alice,26
+Has,Bob,80
+Has,Charlie,10
 StartStockRound,1
 HasPriority,Charlie
 PASSES,Charlie
@@ -50,725 +50,725 @@ PASSES,Alice
 PASSES,Bob
  
 END_SR,1
-Has,M1,80M
-Has,M2,170M
-Has,M3,80M
-Has,M4,160M
-Has,M5,80M
-Has,M6,80M
-Has,BY,460M
-Has,Alice,26M
-Has,Bob,80M
-Has,Charlie,10M
+Has,M1,80
+Has,M2,170
+Has,M3,80
+Has,M4,160
+Has,M5,80
+Has,M6,80
+Has,BY,460
+Has,Alice,26
+Has,Bob,80
+Has,Charlie,10
 START_OR,1.1
-ReceivesFor,Alice,5M,NF
-ReceivesFor,Alice,10M,OBB
-ReceivesFor,Bob,15M,PfB
-ReceivesFor,Charlie,20M,LD
-ReceivesFor,Bob,25M,BB
-ReceivesFor,Charlie,30M,HB
+ReceivesFor,Alice,5,NF
+ReceivesFor,Alice,10,OBB
+ReceivesFor,Bob,15,PfB
+ReceivesFor,Charlie,20,LD
+ReceivesFor,Bob,25,BB
+ReceivesFor,Charlie,30,HB
  
 CompanyOperates,M1,Bob
 LaysTileAt,M1,202,H2,W
 CompanyDoesNotPayDividend,M1
-BuysTrain,M1,2,IPO,80M
+BuysTrain,M1,2,IPO,80
 FirstTrainBought,2
  
 CompanyOperates,M2,Alice
 LaysTileAt,M2,8,E17,NW
 CompanyDoesNotPayDividend,M2
-BuysTrain,M2,2,IPO,80M
+BuysTrain,M2,2,IPO,80
  
 CompanyOperates,M3,Bob
 LaysTileAt,M3,6,F14,NW
 CompanyDoesNotPayDividend,M3
-BuysTrain,M3,2,IPO,80M
+BuysTrain,M3,2,IPO,80
  
 CompanyOperates,M4,Charlie
 LaysTileAt,M4,57,G5,SW
 CompanyDoesNotPayDividend,M4
-BuysTrain,M4,2,IPO,80M
-BuysTrain,M4,2,IPO,80M
+BuysTrain,M4,2,IPO,80
+BuysTrain,M4,2,IPO,80
  
 CompanyOperates,M5,Charlie
 LaysTileAt,M5,8,D18,NE
 CompanyDoesNotPayDividend,M5
-BuysTrain,M5,2,IPO,80M
+BuysTrain,M5,2,IPO,80
  
 CompanyOperates,M6,Bob
 LaysTileAt,M6,9,B10,NW
 CompanyDoesNotPayDividend,M6
-BuysTrain,M6,2,IPO,80M
+BuysTrain,M6,2,IPO,80
  
 CompanyOperates,BY,Alice
 LAYS_FREE_TOKEN_ON,BY,L14
 PrivateCloses,NF
-LaysTileAtFor,BY,9,K15,SW,70M
+LaysTileAtFor,BY,9,K15,SW,70
 LaysTileAt,BY,1,I17,SW
 LaysTileAt,BY,58,M15,SW
 CompanyDoesNotPayDividend,BY
-PRICE_MOVES_LOG,BY,92M,C3,86M,B3
-BuysTrain,BY,2,IPO,80M
-BuysTrain,BY,2,IPO,80M
+PRICE_MOVES_LOG,BY,92,C3,86,B3
+BuysTrain,BY,2,IPO,80
+BuysTrain,BY,2,IPO,80
 All 2-trains are sold out, 2+2-trains now available
-BuysTrain,BY,2+2,IPO,120M
+BuysTrain,BY,2+2,IPO,120
 FirstTrainBought,2+2
  
 EndOfOperatingRound,1.1
-ORWorthIncrease,Alice,1.1,-109M
-ORWorthIncrease,Bob,1.1,34M
-ORWorthIncrease,Charlie,1.1,50M
-Has,M1,0M
-Has,M2,90M
-Has,M3,0M
-Has,M4,0M
-Has,M5,0M
-Has,M6,0M
-Has,BY,110M
-Has,Alice,41M
-Has,Bob,120M
-Has,Charlie,60M
+ORWorthIncrease,Alice,1.1,-109
+ORWorthIncrease,Bob,1.1,34
+ORWorthIncrease,Charlie,1.1,50
+Has,M1,0
+Has,M2,90
+Has,M3,0
+Has,M4,0
+Has,M5,0
+Has,M6,0
+Has,BY,110
+Has,Alice,41
+Has,Bob,120
+Has,Charlie,60
 StartStockRound,2
 HasPriority,Charlie
 PASSES,Charlie
 PASSES,Alice
-BUY_SHARE_LOG,Bob,10,BY,IPO,92M
-PriceIsPaidTo,92M,BY
+BUY_SHARE_LOG,Bob,10,BY,IPO,92
+PriceIsPaidTo,92,BY
 PASSES,Charlie
 PASSES,Alice
 PASSES,Bob
  
 END_SR,2
-Has,M1,0M
-Has,M2,90M
-Has,M3,0M
-Has,M4,0M
-Has,M5,0M
-Has,M6,0M
-Has,BY,202M
-Has,Alice,41M
-Has,Bob,28M
-Has,Charlie,60M
+Has,M1,0
+Has,M2,90
+Has,M3,0
+Has,M4,0
+Has,M5,0
+Has,M6,0
+Has,BY,202
+Has,Alice,41
+Has,Bob,28
+Has,Charlie,60
 START_OR,2.1
-ReceivesFor,Alice,10M,OBB
-ReceivesFor,Bob,15M,PfB
-ReceivesFor,Charlie,20M,LD
-ReceivesFor,Bob,25M,BB
-ReceivesFor,Charlie,30M,HB
+ReceivesFor,Alice,10,OBB
+ReceivesFor,Bob,15,PfB
+ReceivesFor,Charlie,20,LD
+ReceivesFor,Bob,25,BB
+ReceivesFor,Charlie,30,HB
  
 CompanyOperates,M1,Bob
 LaysTileAt,M1,69,H4,NW
-CompanyRevenue,M1,40M
-CompanySplits,M1,40M
-M1 receives 20M
-Payout,Bob,20M,1,100
+CompanyRevenue,M1,40
+CompanySplits,M1,40
+M1 receives 20
+Payout,Bob,20,1,100
  
 CompanyOperates,M2,Alice
 LaysTileAt,M2,8,D16,SE
-CompanyRevenue,M2,0M
+CompanyRevenue,M2,0
 CompanyDoesNotPayDividend,M2
  
 CompanyOperates,M3,Bob
 LaysTileAt,M3,4,G15,NW
-CompanyRevenue,M3,40M
-CompanySplits,M3,40M
-M3 receives 20M
-Payout,Bob,20M,1,100
+CompanyRevenue,M3,40
+CompanySplits,M3,40
+M3 receives 20
+Payout,Bob,20,1,100
  
 CompanyOperates,M4,Charlie
 LaysTileAt,M4,4,F6,SW
-CompanyRevenue,M4,60M
-CompanySplits,M4,60M
-M4 receives 30M
-Payout,Charlie,30M,1,100
+CompanyRevenue,M4,60
+CompanySplits,M4,60
+M4 receives 30
+Payout,Charlie,30,1,100
  
 CompanyOperates,M5,Charlie
 LaysTileAt,M5,8,C19,E
-CompanyRevenue,M5,50M
-CompanySplits,M5,50M
-M5 receives 25M
-Payout,Charlie,25M,1,100
+CompanyRevenue,M5,50
+CompanySplits,M5,50
+M5 receives 25
+Payout,Charlie,25,1,100
  
 CompanyOperates,M6,Bob
 LaysTileAt,M6,6,A11,NW
-CompanyRevenue,M6,60M
-CompanySplits,M6,60M
-M6 receives 30M
-Payout,Bob,30M,1,100
+CompanyRevenue,M6,60
+CompanySplits,M6,60
+M6 receives 30
+Payout,Bob,30,1,100
  
 CompanyOperates,BY,Alice
 LaysTileAt,BY,202,H20,W
 LaysTileAt,BY,9,F20,NW
-LAYS_TOKEN_ON,BY,H20,160M
-CompanyRevenue,BY,160M
-CompanyPaysOutFull,BY,160M
-Payout,Bob,32M,2,10
-Payout,Alice,64M,4,10
-PRICE_MOVES_LOG,BY,86M,B3,92M,C3
+LAYS_TOKEN_ON,BY,H20,160
+CompanyRevenue,BY,160
+CompanyPaysOutFull,BY,160
+Payout,Bob,32,2,10
+Payout,Alice,64,4,10
+PRICE_MOVES_LOG,BY,86,B3,92,C3
  
 EndOfOperatingRound,2.1
-ORWorthIncrease,Alice,2.1,98M
-ORWorthIncrease,Bob,2.1,154M
-ORWorthIncrease,Charlie,2.1,105M
-Has,M1,20M
-Has,M2,90M
-Has,M3,20M
-Has,M4,30M
-Has,M5,25M
-Has,M6,30M
-Has,BY,42M
-Has,Alice,115M
-Has,Bob,170M
-Has,Charlie,165M
+ORWorthIncrease,Alice,2.1,98
+ORWorthIncrease,Bob,2.1,154
+ORWorthIncrease,Charlie,2.1,105
+Has,M1,20
+Has,M2,90
+Has,M3,20
+Has,M4,30
+Has,M5,25
+Has,M6,30
+Has,BY,42
+Has,Alice,115
+Has,Bob,170
+Has,Charlie,165
 StartStockRound,3
 HasPriority,Charlie
-BUY_SHARE_LOG,Charlie,10,BY,IPO,92M
-PriceIsPaidTo,92M,BY
-BUY_SHARE_LOG,Alice,10,BY,IPO,92M
-PriceIsPaidTo,92M,BY
-BUY_SHARE_LOG,Bob,10,BY,IPO,92M
-PriceIsPaidTo,92M,BY
+BUY_SHARE_LOG,Charlie,10,BY,IPO,92
+PriceIsPaidTo,92,BY
+BUY_SHARE_LOG,Alice,10,BY,IPO,92
+PriceIsPaidTo,92,BY
+BUY_SHARE_LOG,Bob,10,BY,IPO,92
+PriceIsPaidTo,92,BY
 PASSES,Charlie
 PASSES,Alice
 PASSES,Bob
  
 END_SR,3
-Has,M1,20M
-Has,M2,90M
-Has,M3,20M
-Has,M4,30M
-Has,M5,25M
-Has,M6,30M
-Has,BY,318M
-Has,Alice,23M
-Has,Bob,78M
-Has,Charlie,73M
+Has,M1,20
+Has,M2,90
+Has,M3,20
+Has,M4,30
+Has,M5,25
+Has,M6,30
+Has,BY,318
+Has,Alice,23
+Has,Bob,78
+Has,Charlie,73
 START_OR,3.1
-ReceivesFor,Alice,10M,OBB
-ReceivesFor,Bob,15M,PfB
-ReceivesFor,Charlie,20M,LD
-ReceivesFor,Bob,25M,BB
-ReceivesFor,Charlie,30M,HB
+ReceivesFor,Alice,10,OBB
+ReceivesFor,Bob,15,PfB
+ReceivesFor,Charlie,20,LD
+ReceivesFor,Bob,25,BB
+ReceivesFor,Charlie,30,HB
  
 CompanyOperates,M1,Bob
 LaysTileAt,M1,9,J2,NW
-CompanyRevenue,M1,40M
-CompanySplits,M1,40M
-M1 receives 20M
-Payout,Bob,20M,1,100
+CompanyRevenue,M1,40
+CompanySplits,M1,40
+M1 receives 20
+Payout,Bob,20,1,100
  
 CompanyOperates,M2,Alice
-LaysTileAtFor,M2,8,D14,NW,50M
-CompanyRevenue,M2,70M
-CompanySplits,M2,70M
-M2 receives 35M
-Payout,Alice,35M,1,100
+LaysTileAtFor,M2,8,D14,NW,50
+CompanyRevenue,M2,70
+CompanySplits,M2,70
+M2 receives 35
+Payout,Alice,35,1,100
  
 CompanyOperates,M3,Bob
 LaysTileAt,M3,6,H16,SE
-CompanyRevenue,M3,40M
-CompanySplits,M3,40M
-M3 receives 20M
-Payout,Bob,20M,1,100
+CompanyRevenue,M3,40
+CompanySplits,M3,40
+M3 receives 20
+Payout,Bob,20,1,100
  
 CompanyOperates,M4,Charlie
 LaysTileAt,M4,9,E7,SW
-CompanyRevenue,M4,60M
-CompanySplits,M4,60M
-M4 receives 30M
-Payout,Charlie,30M,1,100
+CompanyRevenue,M4,60
+CompanySplits,M4,60
+M4 receives 30
+Payout,Charlie,30,1,100
  
 CompanyOperates,M5,Charlie
-CompanyRevenue,M5,50M
-CompanySplits,M5,50M
-M5 receives 25M
-Payout,Charlie,25M,1,100
+CompanyRevenue,M5,50
+CompanySplits,M5,50
+M5 receives 25
+Payout,Charlie,25,1,100
  
 CompanyOperates,M6,Bob
 LaysTileAt,M6,58,B12,NW
-CompanyRevenue,M6,60M
-CompanySplits,M6,60M
-M6 receives 30M
-Payout,Bob,30M,1,100
+CompanyRevenue,M6,60
+CompanySplits,M6,60
+M6 receives 30
+Payout,Bob,30,1,100
  
 CompanyOperates,BY,Alice
 LaysTileAt,BY,8,N14,NE
 LaysTileAt,BY,201,O15,NW
-CompanyRevenue,BY,190M
-CompanyPaysOutFull,BY,190M
-Payout,Charlie,19M,1,10
-Payout,Bob,57M,3,10
-Payout,Alice,95M,5,10
-PRICE_MOVES_LOG,BY,92M,C3,100M,D3
-BuysTrain,BY,2+2,IPO,120M
+CompanyRevenue,BY,190
+CompanyPaysOutFull,BY,190
+Payout,Charlie,19,1,10
+Payout,Bob,57,3,10
+Payout,Alice,95,5,10
+PRICE_MOVES_LOG,BY,92,C3,100,D3
+BuysTrain,BY,2+2,IPO,120
  
 EndOfOperatingRound,3.1
-ORWorthIncrease,Alice,3.1,180M
-ORWorthIncrease,Bob,3.1,191M
-ORWorthIncrease,Charlie,3.1,132M
-Has,M1,40M
-Has,M2,75M
-Has,M3,40M
-Has,M4,60M
-Has,M5,50M
-Has,M6,60M
-Has,BY,198M
-Has,Alice,163M
-Has,Bob,245M
-Has,Charlie,197M
+ORWorthIncrease,Alice,3.1,180
+ORWorthIncrease,Bob,3.1,191
+ORWorthIncrease,Charlie,3.1,132
+Has,M1,40
+Has,M2,75
+Has,M3,40
+Has,M4,60
+Has,M5,50
+Has,M6,60
+Has,BY,198
+Has,Alice,163
+Has,Bob,245
+Has,Charlie,197
 StartStockRound,4
 HasPriority,Charlie
-BUY_SHARE_LOG,Charlie,10,SX,IPO,88M
-BUY_SHARE_LOG,Alice,10,BY,IPO,92M
-PriceIsPaidTo,92M,BY
-BUY_SHARE_LOG,Bob,10,SX,IPO,88M
-BUY_SHARE_LOG,Charlie,10,SX,IPO,88M
-FloatsWithCash,SX,440M
+BUY_SHARE_LOG,Charlie,10,SX,IPO,88
+BUY_SHARE_LOG,Alice,10,BY,IPO,92
+PriceIsPaidTo,92,BY
+BUY_SHARE_LOG,Bob,10,SX,IPO,88
+BUY_SHARE_LOG,Charlie,10,SX,IPO,88
+FloatsWithCash,SX,440
 PASSES,Alice
-BUY_SHARE_LOG,Bob,10,SX,IPO,88M
-PriceIsPaidTo,88M,SX
+BUY_SHARE_LOG,Bob,10,SX,IPO,88
+PriceIsPaidTo,88,SX
 PASSES,Charlie
 PASSES,Alice
 PASSES,Bob
  
 END_SR,4
-PRICE_MOVES_LOG,BY,100M,D3,108M,D2
-SoldOut,BY,100M,D3,108M,D2
-Has,M1,40M
-Has,M2,75M
-Has,M3,40M
-Has,M4,60M
-Has,M5,50M
-Has,M6,60M
-Has,BY,290M
-Has,SX,528M
-Has,Alice,71M
-Has,Bob,69M
-Has,Charlie,21M
+PRICE_MOVES_LOG,BY,100,D3,108,D2
+SoldOut,BY,100,D3,108,D2
+Has,M1,40
+Has,M2,75
+Has,M3,40
+Has,M4,60
+Has,M5,50
+Has,M6,60
+Has,BY,290
+Has,SX,528
+Has,Alice,71
+Has,Bob,69
+Has,Charlie,21
 START_OR,4.1
-ReceivesFor,Alice,10M,OBB
-ReceivesFor,Bob,15M,PfB
-ReceivesFor,Charlie,20M,LD
-ReceivesFor,Bob,25M,BB
-ReceivesFor,Charlie,30M,HB
+ReceivesFor,Alice,10,OBB
+ReceivesFor,Bob,15,PfB
+ReceivesFor,Charlie,20,LD
+ReceivesFor,Bob,25,BB
+ReceivesFor,Charlie,30,HB
  
 CompanyOperates,M1,Bob
 LaysTileAt,M1,4,K3,NW
-CompanyRevenue,M1,40M
-CompanySplits,M1,40M
-M1 receives 20M
-Payout,Bob,20M,1,100
+CompanyRevenue,M1,40
+CompanySplits,M1,40
+M1 receives 20
+Payout,Bob,20,1,100
  
 CompanyOperates,M2,Alice
-CompanyRevenue,M2,70M
-CompanySplits,M2,70M
-M2 receives 35M
-Payout,Alice,35M,1,100
+CompanyRevenue,M2,70
+CompanySplits,M2,70
+M2 receives 35
+Payout,Alice,35,1,100
  
 CompanyOperates,M3,Bob
 LaysTileAt,M3,57,F10,W
-CompanyRevenue,M3,40M
-CompanySplits,M3,40M
-M3 receives 20M
-Payout,Bob,20M,1,100
+CompanyRevenue,M3,40
+CompanySplits,M3,40
+M3 receives 20
+Payout,Bob,20,1,100
  
 CompanyOperates,M4,Charlie
-LaysTileAtFor,M4,5,D8,W,50M
-CompanyRevenue,M4,60M
-CompanySplits,M4,60M
-M4 receives 30M
-Payout,Charlie,30M,1,100
+LaysTileAtFor,M4,5,D8,W,50
+CompanyRevenue,M4,60
+CompanySplits,M4,60
+M4 receives 30
+Payout,Charlie,30,1,100
  
 CompanyOperates,M5,Charlie
-CompanyRevenue,M5,50M
-CompanySplits,M5,50M
-M5 receives 25M
-Payout,Charlie,25M,1,100
+CompanyRevenue,M5,50
+CompanySplits,M5,50
+M5 receives 25
+Payout,Charlie,25,1,100
  
 CompanyOperates,M6,Bob
 LaysTileAt,M6,58,B14,SE
-CompanyRevenue,M6,60M
-CompanySplits,M6,60M
-M6 receives 30M
-Payout,Bob,30M,1,100
+CompanyRevenue,M6,60
+CompanySplits,M6,60
+M6 receives 30
+Payout,Bob,30,1,100
  
 CompanyOperates,BY,Alice
-LaysTileAtFor,BY,9,J14,W,70M
+LaysTileAtFor,BY,9,J14,W,70
 LaysTileAt,BY,9,J12,W
-CompanyRevenue,BY,200M
-CompanyPaysOutFull,BY,200M
-Payout,Bob,60M,3,10
-Payout,Charlie,20M,1,10
-Payout,Alice,120M,6,10
-PRICE_MOVES_LOG,BY,108M,D2,120M,E2
+CompanyRevenue,BY,200
+CompanyPaysOutFull,BY,200
+Payout,Bob,60,3,10
+Payout,Charlie,20,1,10
+Payout,Alice,120,6,10
+PRICE_MOVES_LOG,BY,108,D2,120,E2
  
 CompanyOperates,SX,Charlie
 LaysTileAt,SX,8,H18,SE
 CompanyDoesNotPayDividend,SX
-PRICE_MOVES_LOG,SX,88M,C4,84M,B4
-BuysTrain,SX,2+2,IPO,120M
+PRICE_MOVES_LOG,SX,88,C4,84,B4
+BuysTrain,SX,2+2,IPO,120
 PrivateCloses,LD
-BuysTrain,SX,2+2,IPO,120M
+BuysTrain,SX,2+2,IPO,120
 All 2+2-trains are sold out, 3-trains now available
-BuysTrain,SX,3,IPO,180M
+BuysTrain,SX,3,IPO,180
 FirstTrainBought,3
 StartOfPhase,3
  
 EndOfOperatingRound,4.1
-ORWorthIncrease,Alice,4.1,237M
-ORWorthIncrease,Bob,4.1,198M
-ORWorthIncrease,Charlie,4.1,-69M
-Has,M1,60M
-Has,M2,110M
-Has,M3,60M
-Has,M4,40M
-Has,M5,75M
-Has,M6,90M
-Has,BY,220M
-Has,SX,108M
-Has,Alice,236M
-Has,Bob,239M
-Has,Charlie,146M
+ORWorthIncrease,Alice,4.1,237
+ORWorthIncrease,Bob,4.1,198
+ORWorthIncrease,Charlie,4.1,-69
+Has,M1,60
+Has,M2,110
+Has,M3,60
+Has,M4,40
+Has,M5,75
+Has,M6,90
+Has,BY,220
+Has,SX,108
+Has,Alice,236
+Has,Bob,239
+Has,Charlie,146
 StartStockRound,5
 HasPriority,Charlie
-BUY_SHARE_LOG,Charlie,10,SX,IPO,88M
-PriceIsPaidTo,88M,SX
-BUY_SHARE_LOG,Alice,10,SX,IPO,88M
-PriceIsPaidTo,88M,SX
-BUY_SHARE_LOG,Bob,10,SX,IPO,88M
-PriceIsPaidTo,88M,SX
+BUY_SHARE_LOG,Charlie,10,SX,IPO,88
+PriceIsPaidTo,88,SX
+BUY_SHARE_LOG,Alice,10,SX,IPO,88
+PriceIsPaidTo,88,SX
+BUY_SHARE_LOG,Bob,10,SX,IPO,88
+PriceIsPaidTo,88,SX
 PASSES,Charlie
-BUY_SHARE_LOG,Alice,10,SX,IPO,88M
-PriceIsPaidTo,88M,SX
+BUY_SHARE_LOG,Alice,10,SX,IPO,88
+PriceIsPaidTo,88,SX
 SharesReleased,All,BA
 PASSES,Bob
 PASSES,Charlie
 PASSES,Alice
  
 END_SR,5
-PRICE_MOVES_LOG,BY,120M,E2,132M,E1
-SoldOut,BY,120M,E2,132M,E1
-PRICE_MOVES_LOG,SX,84M,B4,86M,B3
-SoldOut,SX,84M,B4,86M,B3
-Has,M1,60M
-Has,M2,110M
-Has,M3,60M
-Has,M4,40M
-Has,M5,75M
-Has,M6,90M
-Has,BY,220M
-Has,SX,460M
-Has,Alice,60M
-Has,Bob,151M
-Has,Charlie,58M
+PRICE_MOVES_LOG,BY,120,E2,132,E1
+SoldOut,BY,120,E2,132,E1
+PRICE_MOVES_LOG,SX,84,B4,86,B3
+SoldOut,SX,84,B4,86,B3
+Has,M1,60
+Has,M2,110
+Has,M3,60
+Has,M4,40
+Has,M5,75
+Has,M6,90
+Has,BY,220
+Has,SX,460
+Has,Alice,60
+Has,Bob,151
+Has,Charlie,58
 START_OR,5.1
-ReceivesFor,Alice,10M,OBB
-ReceivesFor,Bob,15M,PfB
-ReceivesFor,Bob,25M,BB
-ReceivesFor,Charlie,30M,HB
+ReceivesFor,Alice,10,OBB
+ReceivesFor,Bob,15,PfB
+ReceivesFor,Bob,25,BB
+ReceivesFor,Charlie,30,HB
  
 CompanyOperates,M1,Bob
 LaysTileAt,M1,207,H2,E
-CompanyRevenue,M1,50M
-CompanySplits,M1,50M
-M1 receives 25M
-Payout,Bob,25M,1,100
+CompanyRevenue,M1,50
+CompanySplits,M1,50
+M1 receives 25
+Payout,Bob,25,1,100
  
 CompanyOperates,M2,Alice
 LaysTileAt,M2,209,E19,SW
-CompanyRevenue,M2,80M
-CompanySplits,M2,80M
-M2 receives 40M
-Payout,Alice,40M,1,100
-BuysTrain,M2,2+2,BY,150M
+CompanyRevenue,M2,80
+CompanySplits,M2,80
+M2 receives 40
+Payout,Alice,40,1,100
+BuysTrain,M2,2+2,BY,150
  
 CompanyOperates,M3,Bob
 LaysTileAt,M3,205,F14,SE
-CompanyRevenue,M3,50M
-CompanySplits,M3,50M
-M3 receives 25M
-Payout,Bob,25M,1,100
+CompanyRevenue,M3,50
+CompanySplits,M3,50
+M3 receives 25
+Payout,Bob,25,1,100
  
 CompanyOperates,M4,Charlie
 LaysTileAt,M4,14,G5,SW
-CompanyRevenue,M4,80M
-CompanySplits,M4,80M
-M4 receives 40M
-Payout,Charlie,40M,1,100
+CompanyRevenue,M4,80
+CompanySplits,M4,80
+M4 receives 40
+Payout,Charlie,40,1,100
  
 CompanyOperates,M5,Charlie
 LaysTileAt,M5,208,H20,W
-CompanyRevenue,M5,80M
-CompanySplits,M5,80M
-M5 receives 40M
-Payout,Charlie,40M,1,100
-BuysTrain,M5,2+2,SX,115M
+CompanyRevenue,M5,80
+CompanySplits,M5,80
+M5 receives 40
+Payout,Charlie,40,1,100
+BuysTrain,M5,2+2,SX,115
  
 CompanyOperates,M6,Bob
 LaysTileAt,M6,12,A11,W
-CompanyRevenue,M6,70M
-CompanySplits,M6,70M
-M6 receives 35M
-Payout,Bob,35M,1,100
+CompanyRevenue,M6,70
+CompanySplits,M6,70
+M6 receives 35
+Payout,Bob,35,1,100
  
 CompanyOperates,BY,Alice
 LaysTileAt,BY,9,J10,W
-LAYS_TOKEN_ON,BY,J8,120M
-CompanyRevenue,BY,240M
-CompanyPaysOutFull,BY,240M
-Payout,Bob,72M,3,10
-Payout,Alice,144M,6,10
-Payout,Charlie,24M,1,10
-PRICE_MOVES_LOG,BY,132M,E1,148M,F1
-BuysTrain,BY,3,IPO,180M
+LAYS_TOKEN_ON,BY,J8,120
+CompanyRevenue,BY,240
+CompanyPaysOutFull,BY,240
+Payout,Bob,72,3,10
+Payout,Alice,144,6,10
+Payout,Charlie,24,1,10
+PRICE_MOVES_LOG,BY,132,E1,148,F1
+BuysTrain,BY,3,IPO,180
  
 CompanyOperates,SX,Charlie
 LaysTileAt,SX,13,H16,W
-LAYS_TOKEN_ON,SX,E19,60M
-CompanyRevenue,SX,190M
-CompanyPaysOutFull,SX,190M
-Payout,Alice,38M,2,10
-Payout,Bob,57M,3,10
-Payout,Charlie,95M,5,10
-PRICE_MOVES_LOG,SX,86M,B3,92M,C3
-BuysTrain,SX,3,IPO,180M
-BuysTrain,SX,3,IPO,180M
+LAYS_TOKEN_ON,SX,E19,60
+CompanyRevenue,SX,190
+CompanyPaysOutFull,SX,190
+Payout,Alice,38,2,10
+Payout,Bob,57,3,10
+Payout,Charlie,95,5,10
+PRICE_MOVES_LOG,SX,86,B3,92,C3
+BuysTrain,SX,3,IPO,180
+BuysTrain,SX,3,IPO,180
 All 3-trains are sold out, 3+3-trains now available
  
 EndOfOperatingRound,5.1
-ORWorthIncrease,Alice,5.1,340M
-ORWorthIncrease,Bob,5.1,320M
-ORWorthIncrease,Charlie,5.1,275M
-Has,M1,85M
-Has,M2,0M
-Has,M3,85M
-Has,M4,80M
-Has,M5,0M
-Has,M6,125M
-Has,BY,70M
-Has,SX,155M
-Has,Alice,292M
-Has,Bob,405M
-Has,Charlie,287M
+ORWorthIncrease,Alice,5.1,340
+ORWorthIncrease,Bob,5.1,320
+ORWorthIncrease,Charlie,5.1,275
+Has,M1,85
+Has,M2,0
+Has,M3,85
+Has,M4,80
+Has,M5,0
+Has,M6,125
+Has,BY,70
+Has,SX,155
+Has,Alice,292
+Has,Bob,405
+Has,Charlie,287
 START_OR,5.2
-ReceivesFor,Alice,10M,OBB
-ReceivesFor,Bob,15M,PfB
-ReceivesFor,Bob,25M,BB
-ReceivesFor,Charlie,30M,HB
+ReceivesFor,Alice,10,OBB
+ReceivesFor,Bob,15,PfB
+ReceivesFor,Bob,25,BB
+ReceivesFor,Charlie,30,HB
  
 CompanyOperates,M1,Bob
-LaysTileAtFor,M1,211,G3,E,50M
-CompanyRevenue,M1,70M
-CompanySplits,M1,70M
-M1 receives 35M
-Payout,Bob,35M,1,100
+LaysTileAtFor,M1,211,G3,E,50
+CompanyRevenue,M1,70
+CompanySplits,M1,70
+M1 receives 35
+Payout,Bob,35,1,100
  
 CompanyOperates,M2,Alice
 LaysTileAt,M2,23,D18,NW
-CompanyRevenue,M2,180M
-CompanySplits,M2,180M
-M2 receives 90M
-Payout,Alice,90M,1,100
+CompanyRevenue,M2,180
+CompanySplits,M2,180
+M2 receives 90
+Payout,Alice,90,1,100
  
 CompanyOperates,M3,Bob
 LaysTileAt,M3,8,F8,E
-CompanyRevenue,M3,50M
-CompanySplits,M3,50M
-M3 receives 25M
-Payout,Bob,25M,1,100
+CompanyRevenue,M3,50
+CompanySplits,M3,50
+M3 receives 25
+Payout,Bob,25,1,100
  
 CompanyOperates,M4,Charlie
 LaysTileAt,M4,8,G7,W
-CompanyRevenue,M4,110M
-CompanySplits,M4,110M
-M4 receives 55M
-Payout,Charlie,55M,1,100
+CompanyRevenue,M4,110
+CompanySplits,M4,110
+M4 receives 55
+Payout,Charlie,55,1,100
  
 CompanyOperates,M5,Charlie
 LaysTileAt,M5,8,C17,SE
-CompanyRevenue,M5,180M
-CompanySplits,M5,180M
-M5 receives 90M
-Payout,Charlie,90M,1,100
+CompanyRevenue,M5,180
+CompanySplits,M5,180
+M5 receives 90
+Payout,Charlie,90,1,100
  
 CompanyOperates,M6,Bob
 LaysTileAt,M6,8,C15,NW
-CompanyRevenue,M6,70M
-CompanySplits,M6,70M
-M6 receives 35M
-Payout,Bob,35M,1,100
+CompanyRevenue,M6,70
+CompanySplits,M6,70
+M6 receives 35
+Payout,Bob,35,1,100
  
 CompanyOperates,BY,Alice
-LaysTileAtFor,BY,214,J6,SE,50M
-CompanyRevenue,BY,330M
-CompanyPaysOutFull,BY,330M
-Payout,Alice,198M,6,10
-Payout,Bob,99M,3,10
-Payout,Charlie,33M,1,10
-PRICE_MOVES_LOG,BY,148M,F1,166M,G1
+LaysTileAtFor,BY,214,J6,SE,50
+CompanyRevenue,BY,330
+CompanyPaysOutFull,BY,330
+Payout,Alice,198,6,10
+Payout,Bob,99,3,10
+Payout,Charlie,33,1,10
+PRICE_MOVES_LOG,BY,148,F1,166,G1
  
 CompanyOperates,SX,Charlie
 LaysTileAt,SX,23,H18,E
-LAYS_TOKEN_ON,SX,H20,40M
-CompanyRevenue,SX,370M
-CompanyPaysOutFull,SX,370M
-Payout,Alice,74M,2,10
-Payout,Bob,111M,3,10
-Payout,Charlie,185M,5,10
-PRICE_MOVES_LOG,SX,92M,C3,100M,D3
+LAYS_TOKEN_ON,SX,H20,40
+CompanyRevenue,SX,370
+CompanyPaysOutFull,SX,370
+Payout,Alice,74,2,10
+Payout,Bob,111,3,10
+Payout,Charlie,185,5,10
+PRICE_MOVES_LOG,SX,92,C3,100,D3
  
 EndOfOperatingRound,5.2
-ORWorthIncrease,Alice,5.2,496M
-ORWorthIncrease,Bob,5.2,423M
-ORWorthIncrease,Charlie,5.2,451M
-Has,M1,70M
-Has,M2,90M
-Has,M3,110M
-Has,M4,135M
-Has,M5,90M
-Has,M6,160M
-Has,BY,20M
-Has,SX,115M
-Has,Alice,664M
-Has,Bob,750M
-Has,Charlie,680M
+ORWorthIncrease,Alice,5.2,496
+ORWorthIncrease,Bob,5.2,423
+ORWorthIncrease,Charlie,5.2,451
+Has,M1,70
+Has,M2,90
+Has,M3,110
+Has,M4,135
+Has,M5,90
+Has,M6,160
+Has,BY,20
+Has,SX,115
+Has,Alice,664
+Has,Bob,750
+Has,Charlie,680
 StartStockRound,6
 HasPriority,Bob
-START_COMPANY_LOG,Bob,BA,84M,168M,2,20,BANK
+START_COMPANY_LOG,Bob,BA,84,168,2,20,BANK
 SharesReleased,4 10%,PR
-BUY_SHARE_LOG,Charlie,10,BA,IPO,84M
-BUY_SHARE_LOG,Alice,10,BA,IPO,84M
-BUY_SHARE_LOG,Bob,10,BA,IPO,84M
-FloatsWithCash,BA,420M
+BUY_SHARE_LOG,Charlie,10,BA,IPO,84
+BUY_SHARE_LOG,Alice,10,BA,IPO,84
+BUY_SHARE_LOG,Bob,10,BA,IPO,84
+FloatsWithCash,BA,420
 SharesReleased,All,WT
-BUY_SHARE_LOG,Charlie,10,BA,IPO,84M
-PriceIsPaidTo,84M,BA
-START_COMPANY_LOG,Alice,WT,84M,168M,2,20,BANK
-BUY_SHARE_LOG,Bob,10,BA,IPO,84M
-PriceIsPaidTo,84M,BA
-BUY_SHARE_LOG,Charlie,10,BA,IPO,84M
-PriceIsPaidTo,84M,BA
-BUY_SHARE_LOG,Alice,10,WT,IPO,84M
-BUY_SHARE_LOG,Bob,20,BA,IPO,168M
-PriceIsPaidTo,168M,BA
-BUY_SHARE_LOG,Charlie,10,WT,IPO,84M
-BUY_SHARE_LOG,Alice,10,WT,IPO,84M
-FloatsWithCash,WT,420M
+BUY_SHARE_LOG,Charlie,10,BA,IPO,84
+PriceIsPaidTo,84,BA
+START_COMPANY_LOG,Alice,WT,84,168,2,20,BANK
+BUY_SHARE_LOG,Bob,10,BA,IPO,84
+PriceIsPaidTo,84,BA
+BUY_SHARE_LOG,Charlie,10,BA,IPO,84
+PriceIsPaidTo,84,BA
+BUY_SHARE_LOG,Alice,10,WT,IPO,84
+BUY_SHARE_LOG,Bob,20,BA,IPO,168
+PriceIsPaidTo,168,BA
+BUY_SHARE_LOG,Charlie,10,WT,IPO,84
+BUY_SHARE_LOG,Alice,10,WT,IPO,84
+FloatsWithCash,WT,420
 SharesReleased,All,HE
-BUY_SHARE_LOG,Bob,10,WT,IPO,84M
-PriceIsPaidTo,84M,WT
-START_COMPANY_LOG,Charlie,HE,84M,168M,2,20,BANK
-BUY_SHARE_LOG,Alice,10,HE,IPO,84M
-BUY_SHARE_LOG,Bob,10,HE,IPO,84M
-BUY_SHARE_LOG,Charlie,10,HE,IPO,84M
-FloatsWithCash,HE,420M
-BUY_SHARE_LOG,Alice,10,HE,IPO,84M
-PriceIsPaidTo,84M,HE
+BUY_SHARE_LOG,Bob,10,WT,IPO,84
+PriceIsPaidTo,84,WT
+START_COMPANY_LOG,Charlie,HE,84,168,2,20,BANK
+BUY_SHARE_LOG,Alice,10,HE,IPO,84
+BUY_SHARE_LOG,Bob,10,HE,IPO,84
+BUY_SHARE_LOG,Charlie,10,HE,IPO,84
+FloatsWithCash,HE,420
+BUY_SHARE_LOG,Alice,10,HE,IPO,84
+PriceIsPaidTo,84,HE
 PASSES,Bob
-BUY_SHARE_LOG,Charlie,10,HE,IPO,84M
-PriceIsPaidTo,84M,HE
+BUY_SHARE_LOG,Charlie,10,HE,IPO,84
+PriceIsPaidTo,84,HE
 PASSES,Alice
 PASSES,Bob
 PASSES,Charlie
  
 END_SR,6
-PRICE_STAYS_LOG,BY,166M,G1
-SoldOutNoRaise,BY,166M,G1
-PRICE_MOVES_LOG,SX,100M,D3,108M,D2
-SoldOut,SX,100M,D3,108M,D2
-PRICE_MOVES_LOG,BA,84M,B4,86M,B3
-SoldOut,BA,84M,B4,86M,B3
-Has,M1,70M
-Has,M2,90M
-Has,M3,110M
-Has,M4,135M
-Has,M5,90M
-Has,M6,160M
-Has,BY,20M
-Has,SX,115M
-Has,BA,840M
-Has,WT,504M
-Has,HE,588M
-Has,Alice,76M
-Has,Bob,78M
-Has,Charlie,8M
+PRICE_STAYS_LOG,BY,166,G1
+SoldOutNoRaise,BY,166,G1
+PRICE_MOVES_LOG,SX,100,D3,108,D2
+SoldOut,SX,100,D3,108,D2
+PRICE_MOVES_LOG,BA,84,B4,86,B3
+SoldOut,BA,84,B4,86,B3
+Has,M1,70
+Has,M2,90
+Has,M3,110
+Has,M4,135
+Has,M5,90
+Has,M6,160
+Has,BY,20
+Has,SX,115
+Has,BA,840
+Has,WT,504
+Has,HE,588
+Has,Alice,76
+Has,Bob,78
+Has,Charlie,8
 START_OR,6.1
-ReceivesFor,Alice,10M,OBB
-ReceivesFor,Bob,15M,PfB
-ReceivesFor,Bob,25M,BB
-ReceivesFor,Charlie,30M,HB
+ReceivesFor,Alice,10,OBB
+ReceivesFor,Bob,15,PfB
+ReceivesFor,Bob,25,BB
+ReceivesFor,Charlie,30,HB
  
 CompanyOperates,M1,Bob
 LaysTileAt,M1,9,I5,SE
-CompanyRevenue,M1,70M
-CompanySplits,M1,70M
-M1 receives 35M
-Payout,Bob,35M,1,100
+CompanyRevenue,M1,70
+CompanySplits,M1,70
+M1 receives 35
+Payout,Bob,35,1,100
  
 CompanyOperates,M2,Alice
-CompanyRevenue,M2,180M
-CompanySplits,M2,180M
-M2 receives 90M
-Payout,Alice,90M,1,100
+CompanyRevenue,M2,180
+CompanySplits,M2,180
+M2 receives 90
+Payout,Alice,90,1,100
  
 CompanyOperates,M3,Bob
 LaysTileAt,M3,206,F10,SE
-CompanyRevenue,M3,50M
-CompanySplits,M3,50M
-M3 receives 25M
-Payout,Bob,25M,1,100
+CompanyRevenue,M3,50
+CompanySplits,M3,50
+M3 receives 25
+Payout,Bob,25,1,100
  
 CompanyOperates,M4,Charlie
 LaysTileAt,M4,15,D8,NE
-CompanyRevenue,M4,110M
-CompanySplits,M4,110M
-M4 receives 55M
-Payout,Charlie,55M,1,100
+CompanyRevenue,M4,110
+CompanySplits,M4,110
+M4 receives 55
+Payout,Charlie,55,1,100
  
 CompanyOperates,M5,Charlie
-CompanyRevenue,M5,180M
-CompanySplits,M5,180M
-M5 receives 90M
-Payout,Charlie,90M,1,100
+CompanyRevenue,M5,180
+CompanySplits,M5,180
+M5 receives 90
+Payout,Charlie,90,1,100
  
 CompanyOperates,M6,Bob
-CompanyRevenue,M6,70M
-CompanySplits,M6,70M
-M6 receives 35M
-Payout,Bob,35M,1,100
+CompanyRevenue,M6,70
+CompanySplits,M6,70
+M6 receives 35
+Payout,Bob,35,1,100
  
 CompanyOperates,BY,Alice
 LaysTileAt,BY,8,K5,NE
-CompanyRevenue,BY,330M
-CompanyPaysOutFull,BY,330M
-Payout,Alice,198M,6,10
-Payout,Bob,99M,3,10
-Payout,Charlie,33M,1,10
-PRICE_MOVES_LOG,BY,166M,G1,186M,H1
+CompanyRevenue,BY,330
+CompanyPaysOutFull,BY,330
+Payout,Alice,198,6,10
+Payout,Bob,99,3,10
+Payout,Charlie,33,1,10
+PRICE_MOVES_LOG,BY,166,G1,186,H1
  
 CompanyOperates,SX,Charlie
-CompanyRevenue,SX,370M
-CompanyPaysOutFull,SX,370M
-Payout,Alice,74M,2,10
-Payout,Bob,111M,3,10
-Payout,Charlie,185M,5,10
-PRICE_MOVES_LOG,SX,108M,D2,120M,E2
+CompanyRevenue,SX,370
+CompanyPaysOutFull,SX,370
+Payout,Alice,74,2,10
+Payout,Bob,111,3,10
+Payout,Charlie,185,5,10
+PRICE_MOVES_LOG,SX,108,D2,120,E2
  
 CompanyOperates,BA,Bob
 LaysTileAt,BA,210,L6,E
 CompanyDoesNotPayDividend,BA
-PRICE_MOVES_LOG,BA,86M,B3,82M,A3
-BuysTrain,BA,3+3,IPO,270M
+PRICE_MOVES_LOG,BA,86,B3,82,A3
+BuysTrain,BA,3+3,IPO,270
 FirstTrainBought,3+3
-BuysTrain,BA,3+3,IPO,270M
-BuysTrain,BA,3+3,IPO,270M
+BuysTrain,BA,3+3,IPO,270
+BuysTrain,BA,3+3,IPO,270
 All 3+3-trains are sold out, 4-trains now available
  
 CompanyOperates,WT,Alice
 LaysTileAt,WT,57,M9,W
 CompanyDoesNotPayDividend,WT
-PRICE_MOVES_LOG,WT,84M,B4,78M,A4
-BuysTrain,WT,4,IPO,360M
+PRICE_MOVES_LOG,WT,84,B4,78,A4
+BuysTrain,WT,4,IPO,360
 FirstTrainBought,4
 StartOfPhase,4
 CompanyDiscardsTrain,SX,2+2
@@ -778,50 +778,50 @@ StartingPlayer,Alice
 EndOfFormationRound,PR,OperatingRound 6.1
  
 CompanyOperates,HE,Charlie
-LaysTileAtFor,HE,9,K7,SW,50M
+LaysTileAtFor,HE,9,K7,SW,50
 CompanyDoesNotPayDividend,HE
-PRICE_MOVES_LOG,HE,84M,B4,78M,A4
-BuysTrain,HE,4,IPO,360M
+PRICE_MOVES_LOG,HE,84,B4,78,A4
+BuysTrain,HE,4,IPO,360
  
 EndOfOperatingRound,6.1
-ORWorthIncrease,Alice,6.1,476M
-ORWorthIncrease,Bob,6.1,405M
-ORWorthIncrease,Charlie,6.1,431M
-Has,M1,105M
-Has,M2,180M
-Has,M3,135M
-Has,M4,190M
-Has,M5,180M
-Has,M6,195M
-Has,BY,20M
-Has,SX,115M
-Has,BA,30M
-Has,WT,144M
-Has,HE,178M
-Has,Alice,448M
-Has,Bob,423M
-Has,Charlie,401M
+ORWorthIncrease,Alice,6.1,476
+ORWorthIncrease,Bob,6.1,405
+ORWorthIncrease,Charlie,6.1,431
+Has,M1,105
+Has,M2,180
+Has,M3,135
+Has,M4,190
+Has,M5,180
+Has,M6,195
+Has,BY,20
+Has,SX,115
+Has,BA,30
+Has,WT,144
+Has,HE,178
+Has,Alice,448
+Has,Bob,423
+Has,Charlie,401
 StartFormationRound,PR
 StartingPlayer,Alice
  
 EndOfFormationRoundNoInterrupt,PR
 START_OR,6.2
-ReceivesFor,Alice,10M,OBB
-ReceivesFor,Bob,15M,PfB
-ReceivesFor,Bob,25M,BB
-ReceivesFor,Charlie,30M,HB
+ReceivesFor,Alice,10,OBB
+ReceivesFor,Bob,15,PfB
+ReceivesFor,Bob,25,BB
+ReceivesFor,Charlie,30,HB
  
 CompanyOperates,M1,Bob
 LaysTileAt,M1,8,D10,W
 CompanyDoesNotPayDividend,M1
-BuysTrain,M1,3+3,BA,105M
+BuysTrain,M1,3+3,BA,105
  
 CompanyOperates,M2,Alice
 LaysTileAt,M2,203,B12,W
-CompanyRevenue,M2,100M
-CompanySplits,M2,100M
-M2 receives 50M
-Payout,Alice,50M,1,100
+CompanyRevenue,M2,100
+CompanySplits,M2,100
+M2 receives 50
+Payout,Alice,50,1,100
  
 CompanyOperates,M3,Bob
 LaysTileAt,M3,9,F16,W
@@ -829,213 +829,213 @@ CompanyDoesNotPayDividend,M3
  
 CompanyOperates,M4,Charlie
 CompanyDoesNotPayDividend,M4
-BuysTrain,M4,3,SX,190M
+BuysTrain,M4,3,SX,190
  
 CompanyOperates,M5,Charlie
-CompanyRevenue,M5,100M
-CompanySplits,M5,100M
-M5 receives 50M
-Payout,Charlie,50M,1,100
+CompanyRevenue,M5,100
+CompanySplits,M5,100
+M5 receives 50
+Payout,Charlie,50,1,100
  
 CompanyOperates,M6,Bob
 CompanyDoesNotPayDividend,M6
-BuysTrain,M6,3+3,BA,195M
+BuysTrain,M6,3+3,BA,195
  
 CompanyOperates,BY,Alice
 LaysTileAt,BY,23,F20,NW
-CompanyRevenue,BY,180M
-CompanyPaysOutFull,BY,180M
-Payout,Alice,108M,6,10
-Payout,Bob,54M,3,10
-Payout,Charlie,18M,1,10
-PRICE_MOVES_LOG,BY,186M,H1,208M,I1
-BuysTrain,BY,2+2,M2,1M
+CompanyRevenue,BY,180
+CompanyPaysOutFull,BY,180
+Payout,Alice,108,6,10
+Payout,Bob,54,3,10
+Payout,Charlie,18,1,10
+PRICE_MOVES_LOG,BY,186,H1,208,I1
+BuysTrain,BY,2+2,M2,1
  
 CompanyOperates,SX,Charlie
-CompanyRevenue,SX,220M
-CompanyPaysOutFull,SX,220M
-Payout,Alice,44M,2,10
-Payout,Bob,66M,3,10
-Payout,Charlie,110M,5,10
-PRICE_MOVES_LOG,SX,120M,E2,134M,F2
-BuysTrain,SX,2+2,M5,1M
+CompanyRevenue,SX,220
+CompanyPaysOutFull,SX,220
+Payout,Alice,44,2,10
+Payout,Bob,66,3,10
+Payout,Charlie,110,5,10
+PRICE_MOVES_LOG,SX,120,E2,134,F2
+BuysTrain,SX,2+2,M5,1
  
 CompanyOperates,BA,Bob
-CompanyRevenue,BA,120M
-CompanyPaysOutFull,BA,120M
-Payout,Alice,12M,1,10
-Payout,Bob,72M,6,10
-Payout,Charlie,36M,3,10
-PRICE_MOVES_LOG,BA,82M,A3,86M,B3
-BuysTrain,BA,3+3,M1,1M
+CompanyRevenue,BA,120
+CompanyPaysOutFull,BA,120
+Payout,Alice,12,1,10
+Payout,Bob,72,6,10
+Payout,Charlie,36,3,10
+PRICE_MOVES_LOG,BA,82,A3,86,B3
+BuysTrain,BA,3+3,M1,1
  
 CompanyOperates,WT,Alice
 LaysTileAt,WT,9,M11,W
-CompanyRevenue,WT,0M
+CompanyRevenue,WT,0
 CompanyDoesNotPayDividend,WT
-PRICE_MOVES_LOG,WT,78M,A4,72M,A5
+PRICE_MOVES_LOG,WT,78,A4,72,A5
  
 CompanyOperates,HE,Charlie
-CompanyRevenue,HE,130M
-CompanyPaysOutFull,HE,130M
-Payout,Alice,26M,2,10
-Payout,Bob,13M,1,10
-Payout,Charlie,52M,4,10
-PRICE_MOVES_LOG,HE,78M,A4,84M,B4
-BuysTrain,HE,3+3,M6,1M
+CompanyRevenue,HE,130
+CompanyPaysOutFull,HE,130
+Payout,Alice,26,2,10
+Payout,Bob,13,1,10
+Payout,Charlie,52,4,10
+PRICE_MOVES_LOG,HE,78,A4,84,B4
+BuysTrain,HE,3+3,M6,1
  
 EndOfOperatingRound,6.2
-ORWorthIncrease,Alice,6.2,402M
-ORWorthIncrease,Bob,6.2,377M
-ORWorthIncrease,Charlie,6.2,418M
-Has,M1,1M
-Has,M2,231M
-Has,M3,135M
-Has,M4,0M
-Has,M5,231M
-Has,M6,1M
-Has,BY,19M
-Has,SX,304M
-Has,BA,329M
-Has,WT,144M
-Has,HE,177M
-Has,Alice,698M
-Has,Bob,668M
-Has,Charlie,697M
+ORWorthIncrease,Alice,6.2,402
+ORWorthIncrease,Bob,6.2,377
+ORWorthIncrease,Charlie,6.2,418
+Has,M1,1
+Has,M2,231
+Has,M3,135
+Has,M4,0
+Has,M5,231
+Has,M6,1
+Has,BY,19
+Has,SX,304
+Has,BA,329
+Has,WT,144
+Has,HE,177
+Has,Alice,698
+Has,Bob,668
+Has,Charlie,697
 StartFormationRound,PR
 StartingPlayer,Alice
  
 EndOfFormationRoundNoInterrupt,PR
 StartStockRound,7
 HasPriority,Alice
-BUY_SHARE_LOG,Alice,10,PR,IPO,154M
-BUY_SHARE_LOG,Bob,10,PR,IPO,154M
-BUY_SHARE_LOG,Charlie,10,PR,IPO,154M
-BUY_SHARE_LOG,Alice,10,PR,IPO,154M
-SELL_SHARE_LOG,Bob,10,BY,208M
-PRICE_MOVES_LOG,BY,208M,I1,188M,I2
-BUY_SHARE_LOG,Charlie,10,HE,IPO,84M
-PriceIsPaidTo,84M,HE
-BUY_SHARE_LOG,Alice,10,BY,Pool,188M
-BUY_SHARE_LOG,Bob,20,HE,IPO,168M
-PriceIsPaidTo,168M,HE
-BUY_SHARE_LOG,Charlie,10,WT,IPO,84M
-PriceIsPaidTo,84M,WT
-BUY_SHARE_LOG,Alice,10,WT,IPO,84M
-PriceIsPaidTo,84M,WT
+BUY_SHARE_LOG,Alice,10,PR,IPO,154
+BUY_SHARE_LOG,Bob,10,PR,IPO,154
+BUY_SHARE_LOG,Charlie,10,PR,IPO,154
+BUY_SHARE_LOG,Alice,10,PR,IPO,154
+SELL_SHARE_LOG,Bob,10,BY,208
+PRICE_MOVES_LOG,BY,208,I1,188,I2
+BUY_SHARE_LOG,Charlie,10,HE,IPO,84
+PriceIsPaidTo,84,HE
+BUY_SHARE_LOG,Alice,10,BY,Pool,188
+BUY_SHARE_LOG,Bob,20,HE,IPO,168
+PriceIsPaidTo,168,HE
+BUY_SHARE_LOG,Charlie,10,WT,IPO,84
+PriceIsPaidTo,84,WT
+BUY_SHARE_LOG,Alice,10,WT,IPO,84
+PriceIsPaidTo,84,WT
 PASSES,Bob
 PASSES,Charlie
 PASSES,Alice
  
 END_SR,7
-PRICE_MOVES_LOG,BY,188M,I2,208M,I1
-SoldOut,BY,188M,I2,208M,I1
-PRICE_MOVES_LOG,SX,134M,F2,148M,F1
-SoldOut,SX,134M,F2,148M,F1
-SoldOutNoRaise,BA,86M,B3
-PRICE_MOVES_LOG,HE,84M,B4,86M,B3
-SoldOut,HE,84M,B4,86M,B3
-Has,M1,1M
-Has,M2,231M
-Has,M3,135M
-Has,M4,0M
-Has,M5,231M
-Has,M6,1M
-Has,BY,19M
-Has,SX,304M
-Has,BA,329M
-Has,WT,312M
-Has,HE,429M
-Has,Alice,118M
-Has,Bob,554M
-Has,Charlie,375M
+PRICE_MOVES_LOG,BY,188,I2,208,I1
+SoldOut,BY,188,I2,208,I1
+PRICE_MOVES_LOG,SX,134,F2,148,F1
+SoldOut,SX,134,F2,148,F1
+SoldOutNoRaise,BA,86,B3
+PRICE_MOVES_LOG,HE,84,B4,86,B3
+SoldOut,HE,84,B4,86,B3
+Has,M1,1
+Has,M2,231
+Has,M3,135
+Has,M4,0
+Has,M5,231
+Has,M6,1
+Has,BY,19
+Has,SX,304
+Has,BA,329
+Has,WT,312
+Has,HE,429
+Has,Alice,118
+Has,Bob,554
+Has,Charlie,375
 StartFormationRound,PR
 StartingPlayer,Alice
  
 EndOfFormationRoundNoInterrupt,PR
 START_OR,7.1
-ReceivesFor,Alice,10M,OBB
-ReceivesFor,Bob,15M,PfB
-ReceivesFor,Bob,25M,BB
-ReceivesFor,Charlie,30M,HB
+ReceivesFor,Alice,10,OBB
+ReceivesFor,Bob,15,PfB
+ReceivesFor,Bob,25,BB
+ReceivesFor,Charlie,30,HB
  
 CompanyOperates,M1,Bob
 CompanyDoesNotPayDividend,M1
  
 CompanyOperates,M2,Alice
 CompanyDoesNotPayDividend,M2
-BuysTrain,M2,2+2,BY,231M
+BuysTrain,M2,2+2,BY,231
  
 CompanyOperates,M3,Bob
 CompanyDoesNotPayDividend,M3
-BuysTrain,M3,3+3,BA,135M
+BuysTrain,M3,3+3,BA,135
  
 CompanyOperates,M4,Charlie
-CompanyRevenue,M4,90M
-CompanySplits,M4,90M
-M4 receives 45M
-Payout,Charlie,45M,1,100
+CompanyRevenue,M4,90
+CompanySplits,M4,90
+M4 receives 45
+Payout,Charlie,45,1,100
  
 CompanyOperates,M5,Charlie
 CompanyDoesNotPayDividend,M5
-BuysTrain,M5,2+2,SX,231M
+BuysTrain,M5,2+2,SX,231
  
 CompanyOperates,M6,Bob
 CompanyDoesNotPayDividend,M6
  
 CompanyOperates,BY,Alice
-CompanyRevenue,BY,190M
-CompanyPaysOutFull,BY,190M
-Payout,Alice,133M,7,10
-Payout,Bob,38M,2,10
-Payout,Charlie,19M,1,10
-PRICE_MOVES_LOG,BY,208M,I1,232M,J1
+CompanyRevenue,BY,190
+CompanyPaysOutFull,BY,190
+Payout,Alice,133,7,10
+Payout,Bob,38,2,10
+Payout,Charlie,19,1,10
+PRICE_MOVES_LOG,BY,208,I1,232,J1
  
 CompanyOperates,SX,Charlie
-CompanyRevenue,SX,220M
-CompanyPaysOutFull,SX,220M
-Payout,Alice,44M,2,10
-Payout,Bob,66M,3,10
-Payout,Charlie,110M,5,10
-PRICE_MOVES_LOG,SX,148M,F1,166M,G1
-BuysTrain,SX,4,IPO,360M
+CompanyRevenue,SX,220
+CompanyPaysOutFull,SX,220
+Payout,Alice,44,2,10
+Payout,Bob,66,3,10
+Payout,Charlie,110,5,10
+PRICE_MOVES_LOG,SX,148,F1,166,G1
+BuysTrain,SX,4,IPO,360
 All 4-trains are sold out, 4+4-trains now available
  
 CompanyOperates,BA,Bob
-CompanyRevenue,BA,120M
-CompanyPaysOutFull,BA,120M
-Payout,Alice,12M,1,10
-Payout,Bob,72M,6,10
-Payout,Charlie,36M,3,10
-PRICE_MOVES_LOG,BA,86M,B3,92M,C3
-BuysTrain,BA,4+4,IPO,440M
+CompanyRevenue,BA,120
+CompanyPaysOutFull,BA,120
+Payout,Alice,12,1,10
+Payout,Bob,72,6,10
+Payout,Charlie,36,3,10
+PRICE_MOVES_LOG,BA,86,B3,92,C3
+BuysTrain,BA,4+4,IPO,440
 All 4+4-trains are sold out, 5-trains now available
 FirstTrainBought,4+4
 StartOfPhase,4+4
 StartFormationRound,PR
-START_MERGED_COMPANY,PR,154M,154M
-FloatsWithCash,PR,616M
-MERGE_MINOR_LOG,Alice,M2,PR,0M,0
+START_MERGED_COMPANY,PR,154,154
+FloatsWithCash,PR,616
+MERGE_MINOR_LOG,Alice,M2,PR,0,0
 GetShareForMinor,Alice,10,PR,IPO,M2
 ExchangesBaseToken,PR,M2,E19/1
 MERGE_MINOR_LOG,Bob,BB,PR,no,no
 GetShareForMinor,Bob,10,PR,IPO,BB
 PrivateCloses,BB
-MERGE_MINOR_LOG,Bob,M6,PR,1M,0
+MERGE_MINOR_LOG,Bob,M6,PR,1,0
 GetShareForMinor,Bob,5,PR,IPO,M6
 ExchangesBaseToken,PR,M6,C11/1
-MERGE_MINOR_LOG,Bob,M3,PR,0M,1
+MERGE_MINOR_LOG,Bob,M3,PR,0,1
 GetShareForMinor,Bob,5,PR,IPO,M3
 ExchangesBaseToken,PR,M3,F14/1
-MERGE_MINOR_LOG,Bob,M1,PR,1M,0
+MERGE_MINOR_LOG,Bob,M1,PR,1,0
 GetShareForMinor,Bob,5,PR,IPO,M1
 ExchangesBaseToken,PR,M1,H2/1
 MERGE_MINOR_LOG,Charlie,HB,PR,no,no
 GetShareForMinor,Charlie,10,PR,IPO,HB
 PrivateCloses,HB
-MERGE_MINOR_LOG,Charlie,M5,PR,0M,0
+MERGE_MINOR_LOG,Charlie,M5,PR,0,0
 GetShareForMinor,Charlie,5,PR,IPO,M5
-MERGE_MINOR_LOG,Charlie,M4,PR,45M,1
+MERGE_MINOR_LOG,Charlie,M4,PR,45,1
 GetShareForMinor,Charlie,10,PR,IPO,M4
 ExchangesBaseToken,PR,M4,G5/1
  
@@ -1044,16 +1044,16 @@ IS_NOW_PRES_OF,Bob,PR
  
 CompanyOperates,HE,Charlie
 LaysTileAt,HE,24,K7,NE
-CompanyRevenue,HE,220M
-CompanyWithholds,HE,220M
-PRICE_MOVES_LOG,HE,86M,B3,82M,A3
+CompanyRevenue,HE,220
+CompanyWithholds,HE,220
+PRICE_MOVES_LOG,HE,86,B3,82,A3
  
 CompanyOperates,WT,Alice
-LaysTileAtFor,WT,8,M13,W,50M
-CompanyRevenue,WT,990M
-CompanyWithholds,WT,990M
-PRICE_MOVES_LOG,WT,72M,A5,64M,A6
-BuysTrain,WT,5,IPO,500M
+LaysTileAtFor,WT,8,M13,W,50
+CompanyRevenue,WT,990
+CompanyWithholds,WT,990
+PRICE_MOVES_LOG,WT,72,A5,64,A6
+BuysTrain,WT,5,IPO,500
 FirstTrainBought,5
 StartOfPhase,5
 PrivateCloses,OBB
@@ -1061,43 +1061,43 @@ PrivateCloses,PfB
 CompanyDiscardsTrain,SX,3
  
 EndOfOperatingRound,7.1
-ORWorthIncrease,Alice,7.1,549M
-ORWorthIncrease,Bob,7.1,824M
-ORWorthIncrease,Charlie,7.1,946M
-Has,BY,250M
-Has,SX,175M
-Has,BA,24M
-Has,WT,752M
-Has,HE,649M
-Has,PR,663M
-Has,Alice,317M
-Has,Bob,770M
-Has,Charlie,615M
+ORWorthIncrease,Alice,7.1,549
+ORWorthIncrease,Bob,7.1,824
+ORWorthIncrease,Charlie,7.1,946
+Has,BY,250
+Has,SX,175
+Has,BA,24
+Has,WT,752
+Has,HE,649
+Has,PR,663
+Has,Alice,317
+Has,Bob,770
+Has,Charlie,615
 START_OR,7.2
  
 CompanyOperates,BY,Alice
 LaysTileAt,BY,220,E19,SW
-CompanyRevenue,BY,140M
-CompanyPaysOutFull,BY,140M
-Payout,Alice,98M,7,10
-Payout,Bob,28M,2,10
-Payout,Charlie,14M,1,10
-PRICE_MOVES_LOG,BY,232M,J1,258M,K1
-BuysTrain,BY,5,WT,1M
+CompanyRevenue,BY,140
+CompanyPaysOutFull,BY,140
+Payout,Alice,98,7,10
+Payout,Bob,28,2,10
+Payout,Charlie,14,1,10
+PRICE_MOVES_LOG,BY,232,J1,258,K1
+BuysTrain,BY,5,WT,1
  
 CompanyOperates,SX,Charlie
 LaysTileAt,SX,216,H20,E
-CompanyRevenue,SX,300M
-CompanyWithholds,SX,300M
-PRICE_MOVES_LOG,SX,166M,G1,148M,F1
+CompanyRevenue,SX,300
+CompanyWithholds,SX,300
+PRICE_MOVES_LOG,SX,166,G1,148,F1
  
 CompanyOperates,PR,Bob
-LaysTileAtFor,PR,221,C11,SW,50M
-CompanyRevenue,PR,350M
-CompanyPaysOutFull,PR,350M
-Payout,Alice,105M,6,5
-Payout,Bob,123M,7,5
-Payout,Charlie,123M,7,5
-PRICE_MOVES_LOG,PR,154M,I4,172M,J4
-BuysTrain,PR,5,IPO,500M
+LaysTileAtFor,PR,221,C11,SW,50
+CompanyRevenue,PR,350
+CompanyPaysOutFull,PR,350
+Payout,Alice,105,6,5
+Payout,Bob,123,7,5
+Payout,Charlie,123,7,5
+PRICE_MOVES_LOG,PR,154,I4,172,J4
+BuysTrain,PR,5,IPO,500
 All 5-trains are sold out, 5+5-trains now available
