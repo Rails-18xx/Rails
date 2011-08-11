@@ -29,17 +29,24 @@ public final class RevenueManager implements ConfigurableComponentI {
     protected static Logger log =
         Logger.getLogger(RevenueManager.class.getPackage().getName());
 
+    private final HashSet<ConfigurableComponentI> configurableModifiers;
     
     private final ArrayListState<NetworkGraphModifier> graphModifiers;
     private final ArrayListState<RevenueStaticModifier> staticModifiers;
     private final ArrayListState<RevenueDynamicModifier> dynamicModifiers;
-    private final HashSet<ConfigurableComponentI> configurableModifiers;
+    
+    private final ArrayList<RevenueStaticModifier> activeStaticModifiers;
+    private final ArrayList<RevenueDynamicModifier> activeDynamicModifiers;
+    private RevenueDynamicModifier activeCalculator;
 
     public RevenueManager() {
         graphModifiers = new ArrayListState<NetworkGraphModifier>("NetworkGraphModifiers"); 
         staticModifiers = new ArrayListState<RevenueStaticModifier>("RevenueStaticModifiers"); 
         dynamicModifiers = new ArrayListState<RevenueDynamicModifier>("RevenueDynamicModifiers");
         configurableModifiers = new HashSet<ConfigurableComponentI>();
+        
+        activeStaticModifiers = new ArrayList<RevenueStaticModifier>();
+        activeDynamicModifiers = new ArrayList<RevenueDynamicModifier>();
     }
     
     public void configureFromXML(Tag tag) throws ConfigurationException {
@@ -144,25 +151,116 @@ public final class RevenueManager implements ConfigurableComponentI {
         return result;
     }
 
-    void callGraphModifiers(NetworkGraphBuilder graphBuilder) {
+    void initGraphModifiers(NetworkGraphBuilder graphBuilder) {
         for (NetworkGraphModifier modifier:graphModifiers.viewList()) {
             modifier.modifyGraph(graphBuilder);
         }
     }
     
-    void callStaticModifiers(RevenueAdapter revenueAdapter) {
+    void initStaticModifiers(RevenueAdapter revenueAdapter) {
+        activeStaticModifiers.clear();
         for (RevenueStaticModifier modifier:staticModifiers.viewList()) {
-            modifier.modifyCalculator(revenueAdapter);
+            if (modifier.modifyCalculator(revenueAdapter)) {
+                activeStaticModifiers.add(modifier);
+            }
         }
     }
 
-    List<RevenueDynamicModifier> callDynamicModifiers(RevenueAdapter revenueAdapter) {
-        List<RevenueDynamicModifier> activeModifiers = new ArrayList<RevenueDynamicModifier>();
+    /**
+     * @param revenueAdapter
+     * @return true if there are active dynamic modifiers
+     */
+    boolean initDynamicModifiers(RevenueAdapter revenueAdapter) {
+        activeDynamicModifiers.clear();
         for (RevenueDynamicModifier modifier:dynamicModifiers.viewList()) {
             if (modifier.prepareModifier(revenueAdapter))
-                activeModifiers.add(modifier);
+                activeDynamicModifiers.add(modifier);
         }
-        return activeModifiers;
+        return !activeDynamicModifiers.isEmpty();
+    }
+    
+    /**
+     * @return true if one of the dynamic modifiers is an calculator of its own
+     */
+    boolean hasDynamicCalculator() {
+        for (RevenueDynamicModifier modifier:activeDynamicModifiers) {
+            if (modifier.providesOwnCalculateRevenue()) {
+                activeCalculator = modifier;
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * @param revenueAdapter
+     * @return revenue from active calculator
+     */
+    int revenueFromDynamicCalculator(RevenueAdapter revenueAdapter) {
+        return activeCalculator.calculateRevenue(revenueAdapter);
+        
     }
 
+    /**
+     * Allows dynamic modifiers to adjust the optimal run 
+     * @param optimalRun
+     */
+    void adjustOptimalRun(List<RevenueTrainRun> optimalRun) {
+        // allow dynamic modifiers to change the optimal run
+        for (RevenueDynamicModifier modifier:activeDynamicModifiers) {
+            modifier.adjustOptimalRun(optimalRun);
+        }
+    }
+
+    /**
+     * @param run the current run
+     * @param optimal flag if this is the found optimal run
+     * @return total value of dynamic modifiers
+     */
+    int evaluationValue(List<RevenueTrainRun> run, boolean optimal) {
+         // allow dynamic modifiers to change the optimal run
+         int value = 0;
+         for (RevenueDynamicModifier modifier:activeDynamicModifiers) {
+             value += modifier.evaluationValue(run, optimal);
+         }
+         return value;
+     }
+
+    /**
+     * @return total prediction value of dynamic modifiers
+     */
+    int predictionValue() {
+         int value = 0;
+         for (RevenueDynamicModifier modifier:activeDynamicModifiers) {
+             value += modifier.predictionValue();
+         }
+         return value;
+     }
+    
+    /**
+     * 
+     * @param revenueAdapter
+     * @return pretty print output from all modifiers (both static and dynamic)
+     */
+    String prettyPrint(RevenueAdapter revenueAdapter) {
+        StringBuffer prettyPrint = new StringBuffer();
+        
+        for (RevenueStaticModifier modifier:activeStaticModifiers) {
+            String modifierText = modifier.prettyPrint(revenueAdapter);
+            if (modifierText != null) {
+                prettyPrint.append(modifierText + "\n");
+            }
+        }
+
+        for (RevenueDynamicModifier modifier:activeDynamicModifiers) {
+            String modifierText = modifier.prettyPrint(revenueAdapter);
+            if (modifierText != null) {
+                prettyPrint.append(modifierText + "\n");
+            }
+        }
+        
+        return prettyPrint.toString();
+    }
+    
+    
 }

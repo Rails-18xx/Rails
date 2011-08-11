@@ -13,7 +13,7 @@ public class OffBoardRevenueModifier implements RevenueStaticModifier {
 
     private static final int BONUS_VALUE = 10;
     
-    public void modifyCalculator(RevenueAdapter revenueAdapter) {
+    public boolean modifyCalculator(RevenueAdapter revenueAdapter) {
         // 1. get all off-board type stations and all other stations
         Set<NetworkVertex> offBoard = new HashSet<NetworkVertex>();
         Set<NetworkVertex> otherStations = new HashSet<NetworkVertex>();
@@ -43,5 +43,12 @@ public class OffBoardRevenueModifier implements RevenueStaticModifier {
                 }
             }
         }
+        // no additional text required
+        return false;
+    }
+
+    public String prettyPrint(RevenueAdapter revenueAdapter) {
+        // nothing to print
+        return null;
     }
 }

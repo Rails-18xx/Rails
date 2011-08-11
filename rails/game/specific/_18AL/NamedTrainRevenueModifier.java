@@ -57,9 +57,9 @@ public class NamedTrainRevenueModifier implements RevenueStaticModifier, Revenue
     }
     
     
-    public void modifyCalculator(RevenueAdapter revenueAdapter) {
+    public boolean modifyCalculator(RevenueAdapter revenueAdapter) {
         // static modifier
-        if (dynamic) return;
+        if (dynamic) return false;
         
         // 1. check all Trains for name Tokens
         for (NetworkTrain networkTrain:revenueAdapter.getTrains()) {
@@ -73,6 +73,8 @@ public class NamedTrainRevenueModifier implements RevenueStaticModifier, Revenue
             bonus.addTrain(train);
             revenueAdapter.addRevenueBonus(bonus);
         }
+        // no additional text required
+        return false;
     }
 
     public boolean prepareModifier(RevenueAdapter revenueAdapter) {
@@ -129,19 +131,24 @@ public class NamedTrainRevenueModifier implements RevenueStaticModifier, Revenue
     }
     
     public String prettyPrint(RevenueAdapter revenueAdapter) {
+
         List<RevenueTrainRun> runs = revenueAdapter.getOptimalRun();
         StringBuffer prettyPrint = new StringBuffer();
+        
+        boolean first = true;
         for (RevenueBonus bonus:bonuses) {
             for (RevenueTrainRun run:runs) {
                 if (run.getUniqueVertices().containsAll(bonus.getVertices())) {
-                    prettyPrint.append(bonus.getName() + " = " + bonus.getValue() + "\n");
+                    if (!first) {
+                        prettyPrint.append("\n"); // add line break, except for the first
+                    } else {
+                        first = false;
+                    }
+                    prettyPrint.append(bonus.getName() + " = " + bonus.getValue());
                     continue; // each bonus can only be scored once
                 }
             }
         }
         return prettyPrint.toString();
     }
-
-
-
 }

@@ -20,7 +20,7 @@ public class OffBoardRevenueModifier implements RevenueStaticModifier {
         Logger.getLogger(OffBoardRevenueModifier.class.getPackage().getName());
     
 
-    public void modifyCalculator(RevenueAdapter revenueAdapter) {
+    public boolean modifyCalculator(RevenueAdapter revenueAdapter) {
         
         // 1. define value
         PhaseI phase = revenueAdapter.getPhase();
@@ -32,7 +32,7 @@ public class OffBoardRevenueModifier implements RevenueStaticModifier {
         } else if (phase.isTileColourAllowed(Tile.GREEN_COLOUR_NAME)) {
             bonusValue = 10;
         } else {
-            return;
+            return false;
         }
 
         log.info("OffBoardRevenueModifier: bonusValue = " + bonusValue);
@@ -79,5 +79,13 @@ public class OffBoardRevenueModifier implements RevenueStaticModifier {
                 }
             }
         }
+        // no additional text required
+        return false;
+    }
+
+
+    public String prettyPrint(RevenueAdapter revenueAdapter) {
+        // nothing to do
+        return null;
     }
 }

@@ -122,15 +122,22 @@ public class SpecialRight extends SpecialProperty implements RevenueStaticModifi
 
     /** 
      *  modify revenue calculation of the 
-     *  TODO: rights is missing a location field, currently hardcoded for 1830 coalfields 
+     *  TODO: if owner would be known or only one rights object pretty print would be possible
      */
-    public void modifyCalculator(RevenueAdapter revenueAdapter) {
+    public boolean modifyCalculator(RevenueAdapter revenueAdapter) {
         // 1. check operating company if it has the right then it is excluded from the removal
-        if (revenueAdapter.getCompany().hasRight(rightName)) return;
+        if (revenueAdapter.getCompany().hasRight(rightName)) return false;
         
         // 2. find vertices to hex and remove those
-        MapHex hex = GameManager.getInstance().getMapManager().getHex("L10");
-        Set<NetworkVertex> verticesToRemove = NetworkVertex.getVerticesByHex(revenueAdapter.getVertices(), hex);
+        Set<NetworkVertex> verticesToRemove = NetworkVertex.getVerticesByHexes(revenueAdapter.getVertices(), locations);
         revenueAdapter.getGraph().removeAllVertices(verticesToRemove);
+        
+        // nothing to print, as the owner is unknown
+        return false;
+    }
+
+    public String prettyPrint(RevenueAdapter revenueAdapter) {
+        // nothing to print
+        return null;
     }
 }

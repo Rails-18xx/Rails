@@ -32,7 +32,7 @@ public class RuhrRevenueModifier implements RevenueStaticModifier, ConfigurableC
     }
 
     // creates revenueBonuses that double the value of each station/value vertex
-    public void modifyCalculator(RevenueAdapter revenueAdapter) {
+    public boolean modifyCalculator(RevenueAdapter revenueAdapter) {
          
         Set<NetworkVertex> ruhrGebied = new HashSet<NetworkVertex>();
         for (NetworkVertex vertex:revenueAdapter.getVertices()) {
@@ -41,6 +41,7 @@ public class RuhrRevenueModifier implements RevenueStaticModifier, ConfigurableC
                 ruhrGebied.add(vertex);
             } 
         }
+        
         // 2. add revenue bonuses for stations
         for (NetworkVertex vertex:revenueAdapter.getVertices()) {
             if (!ruhrGebied.contains(vertex) && vertex.isStation() && (vertex.isMajor() || !doublesOnlyMajors)) {
@@ -52,5 +53,13 @@ public class RuhrRevenueModifier implements RevenueStaticModifier, ConfigurableC
                 }
             }
         }
+        
+        // nothing to print
+        return false;
+    }
+
+    public String prettyPrint(RevenueAdapter revenueAdapter) {
+        // nothing to print
+        return null;
     }
 }
