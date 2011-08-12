@@ -145,7 +145,7 @@ StationHolder, TokenHolder {
     protected RunTo runToAllowed = null;
 
     /** Loop: may one train touch this hex twice or more? */
-    protected Loop loopAllowed = Loop.YES;
+    protected Loop loopAllowed = null;
 
     /** Type of any stops on the hex.
      * Normally the type will be derived from the tile properties.
@@ -263,43 +263,47 @@ StationHolder, TokenHolder {
             openHexSides[side%6] = true;
         }
 
-        String runThroughString = tag.getAttributeAsString("runThrough");
-        if (Util.hasValue(runThroughString)) {
-            try {
-                runThroughAllowed = RunThrough.valueOf(runThroughString.toUpperCase());
-            } catch (IllegalArgumentException e) {
-                throw new ConfigurationException ("Illegal value for MapHex"
-                        +name+" runThrough property: "+runThroughString, e);
+        // Stop properties
+        Tag accessTag = tag.getChild("Access");
+        if (accessTag != null) {
+            String runThroughString = accessTag.getAttributeAsString("runThrough");
+            if (Util.hasValue(runThroughString)) {
+                try {
+                    runThroughAllowed = RunThrough.valueOf(runThroughString.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    throw new ConfigurationException ("Illegal value for MapHex"
+                            +name+" runThrough property: "+runThroughString, e);
+                }
             }
-        }
 
-        String runToString = tag.getAttributeAsString("runTo");
-        if (Util.hasValue(runToString)) {
-            try {
-                runToAllowed = RunTo.valueOf(runToString.toUpperCase());
-            } catch (IllegalArgumentException e) {
-                throw new ConfigurationException ("Illegal value for MapHex "
-                        +name+" runTo property: "+runToString, e);
+            String runToString = accessTag.getAttributeAsString("runTo");
+            if (Util.hasValue(runToString)) {
+                try {
+                    runToAllowed = RunTo.valueOf(runToString.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    throw new ConfigurationException ("Illegal value for MapHex "
+                            +name+" runTo property: "+runToString, e);
+                }
             }
-        }
 
-        String loopString = tag.getAttributeAsString("loop");
-        if (Util.hasValue(loopString)) {
-            try {
-                loopAllowed = Loop.valueOf(loopString.toUpperCase());
-            } catch (IllegalArgumentException e) {
-                throw new ConfigurationException ("Illegal value for MapHex "
-                        +name+" loop property: "+loopString, e);
+            String loopString = accessTag.getAttributeAsString("loop");
+            if (Util.hasValue(loopString)) {
+                try {
+                    loopAllowed = Loop.valueOf(loopString.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    throw new ConfigurationException ("Illegal value for MapHex "
+                            +name+" loop property: "+loopString, e);
+                }
             }
-        }
 
-        String typeString = tag.getAttributeAsString("type");
-        if (Util.hasValue(typeString)) {
-            try {
-                stopType = Type.valueOf(typeString.toUpperCase());
-            } catch (IllegalArgumentException e) {
-                throw new ConfigurationException ("Illegal value for MapHex "
-                        +name+" type property: "+typeString, e);
+            String typeString = accessTag.getAttributeAsString("type");
+            if (Util.hasValue(typeString)) {
+                try {
+                    stopType = Type.valueOf(typeString.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    throw new ConfigurationException ("Illegal value for MapHex "
+                            +name+" type property: "+typeString, e);
+                }
             }
         }
 
@@ -322,6 +326,7 @@ StationHolder, TokenHolder {
             mStops.put(c.getNumber(), c);
         }
 
+        /* Superseded by new code in Stop - or do we still need it?
         if (runThroughAllowed == null) {
             runThroughAllowed = currentTile.getColourName().equalsIgnoreCase("red")
             ? RunThrough.NO : RunThrough.YES;
@@ -329,6 +334,7 @@ StationHolder, TokenHolder {
         if (runToAllowed == null) {
             runToAllowed = RunTo.YES;
         }
+         */
     }
 
     public void addImpassableSide (int orientation) {

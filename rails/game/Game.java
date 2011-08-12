@@ -9,9 +9,7 @@ import org.apache.log4j.Logger;
 import rails.algorithms.RevenueManager;
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
-import rails.common.parser.ConfigurationException;
-import rails.common.parser.GameFileParser;
-import rails.common.parser.GameOption;
+import rails.common.parser.*;
 import rails.game.action.PossibleAction;
 import rails.util.GameFileIO;
 
@@ -30,14 +28,14 @@ public class Game {
     protected RevenueManager revenueManager;
     protected Bank bank;
     protected String name;
-    
+
     protected List<String> directories = new ArrayList<String>();
     protected List<String> players;
-    
+
     protected Map<String, String> gameOptions;
 
     protected static Logger log =
-            Logger.getLogger(Game.class.getPackage().getName());
+        Logger.getLogger(Game.class.getPackage().getName());
 
     // The new Game entry point
     public Game(String name, List<String> players, Map<String, String> options) {
@@ -53,7 +51,7 @@ public class Game {
         }
         for (String optionName : gameOptions.keySet()) {
             log.debug("Option: " + optionName + "="
-                      + gameOptions.get(optionName));
+                    + gameOptions.get(optionName));
         }
 
 
@@ -69,7 +67,7 @@ public class Game {
         if (players.size() < playerManager.minPlayers
                 || players.size() > playerManager.maxPlayers) {
             return name+" is not configured to be played with "+players.size()+" players\n"
-                    + "Please enter a valid number of players, or add a <Players> entry to data/"+name+"/Game.xml";
+            + "Please enter a valid number of players, or add a <Players> entry to data/"+name+"/Game.xml";
         }
 
         gameManager.startGame(gameOptions);
@@ -102,11 +100,11 @@ public class Game {
             companyManager.finishConfiguration(gameManager);
             trainManager.finishConfiguration(gameManager);
             phaseManager.finishConfiguration(gameManager);
+            tileManager.finishConfiguration(gameManager);
             mapManager.finishConfiguration(gameManager);
             bank.finishConfiguration(gameManager);
             stockMarket.finishConfiguration(gameManager);
-            tileManager.finishConfiguration(gameManager);
-        
+
             if (revenueManager != null)
                 revenueManager.finishConfiguration(gameManager);
         } catch (ConfigurationException e) {
@@ -116,13 +114,13 @@ public class Game {
             DisplayBuffer.add(e.getMessage());
             return false;
         }
-        
+
         return true;
     }
-    
-    
+
+
     public static Game load(String filepath)  {
-        
+
         // use GameLoader object to load game
         GameFileIO gameLoader = new GameFileIO();
         gameLoader.loadGameData(filepath);
@@ -142,7 +140,7 @@ public class Game {
 
         return gameLoader.getGame();
     }
-    
+
     @SuppressWarnings("unchecked")
     public static Game load_old(String filepath) {
 
@@ -154,8 +152,8 @@ public class Game {
         /*--- Remember to keep GameManager.reload() in sync with this code! ---*/
         try {
             ObjectInputStream ois =
-                    new ObjectInputStream(new FileInputStream(
-                            new File(filepath)));
+                new ObjectInputStream(new FileInputStream(
+                        new File(filepath)));
 
             // New in 1.0.7: Rails version & save date/time.
             // Allow for older saved file versions.
@@ -176,13 +174,13 @@ public class Game {
             long saveFileVersionID = GameManager.saveFileVersionID;
             if (versionID != saveFileVersionID) {
                 throw new Exception("Save version " + versionID
-                                    + " is incompatible with current version "
-                                    + saveFileVersionID);
+                        + " is incompatible with current version "
+                        + saveFileVersionID);
             }
             String name = (String) ois.readObject();
             log.debug("Saved game="+name);
             Map<String, String> selectedGameOptions =
-                    (Map<String, String>) ois.readObject();
+                (Map<String, String>) ois.readObject();
             List<String> playerNames = (List<String>) ois.readObject();
 
             game = new Game(name, playerNames, selectedGameOptions);
@@ -204,7 +202,7 @@ public class Game {
 
             Object actionObject = null;
             int actionIndex = 0;
-            
+
             while (true) { // Single-pass loop.
                 try {
                     actionObject = ois.readObject();

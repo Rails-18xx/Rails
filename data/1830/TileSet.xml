@@ -1,4 +1,7 @@
 <TileManager tiles="Tiles.xml">
+	<Defaults>
+		<Access type="offmap" loop="yes"/>
+	</Defaults>
 	<!-- Preprinted tiles -->
 	<Tile id="0"><!-- Empty space -->
 		<Upgrade id="7,8,9"/>

@@ -2,7 +2,9 @@
 	<Image file="18EU/MapImage.svg" x="18" y="15" scale="0.952"/>
 	<!-- Hex name="" tile="" orientation="" value="" impassable="" label="" cost="" value="" port="yes/no" -->
 	<Hex name="A4" port="yes" value="10" tile="-800" orientation="0"/>
-	<Hex name="B7" value="30,50" tile="-939" orientation="1" city="Hamburg"/>
+	<Hex name="B7" value="30,50" tile="-939" orientation="1" city="Hamburg">
+		<Access runThrough="yes"/>
+	</Hex>
 	<Hex name="C4" label="Y" tile="-3007" city="Amsterdam"/>
 	<Hex name="C6" tile="-1" city="Bremen"/>
 	<Hex name="C8" tile="0" />
@@ -15,7 +17,9 @@
 	<Hex name="E4" tile="-1" city="Utrecht"/>
 	<Hex name="E6" tile="0" />
 	<Hex name="E8" tile="0" />
-	<Hex name="E10" label="B" tile="-3005" orientation="1" city="Berlin"/>
+	<Hex name="E10" label="B" tile="-3005" orientation="1" city="Berlin">
+		<Access loop="no"/>
+	</Hex>
 	<Hex name="E12" tile="-1" city="Thorn"/>
 	<Hex name="E14" value="20,30" tile="-901" orientation="2" city="Warsaw"/>
 	<Hex name="F1" value="40,70" tile="-902" orientation="1" city="London"/>
@@ -44,7 +48,9 @@
 	<Hex name="I8" tile="0" />
 	<Hex name="I10" cost="60" tile="0" />
 	<Hex name="I12" cost="60" tile="0" />
-	<Hex name="J1" label="P" tile="-3006" city="Paris"/>
+	<Hex name="J1" label="P" tile="-3006" city="Paris">
+        <Access loop="no"/>
+    </Hex>
 	<Hex name="J3" cost="60" tile="0" />
 	<Hex name="J5" tile="0" />
 	<Hex name="J7" tile="-1" city="Nuremberg"/>
@@ -75,7 +81,9 @@
 	<Hex name="N5" cost="60" tile="-1" city="Zurich"/>
 	<Hex name="N7" tile="0" />
 	<Hex name="N9" cost="60" tile="-1" city="Salzburg"/>
-	<Hex name="N11" label="V" tile="-3005" city="Vienna"/>
+	<Hex name="N11" label="V" tile="-3005" city="Vienna">
+        <Access loop="no"/>
+    </Hex>
 	<Hex name="N13" tile="0" />
 	<Hex name="O2" tile="0" />
 	<Hex name="O4" tile="-1" city="Basel"/>

@@ -130,7 +130,7 @@ public class Stop implements TokenHolder {
         if (runThroughAllowed == null) runThroughAllowed = tileManager.getRunThroughDefault(type);
         if (runThroughAllowed == null) runThroughAllowed = mapManager.getRunThroughDefault(null);
         if (runThroughAllowed == null) runThroughAllowed = tileManager.getRunThroughDefault(null);
-        if (runThroughAllowed == null) runThroughAllowed = RunThrough.YES;
+        if (runThroughAllowed == null) runThroughAllowed = type == Type.OFFMAP ? RunThrough.NO : RunThrough.YES;
 
         // Loop
         loopAllowed = mapHex.isLoopAllowed();
@@ -139,8 +139,11 @@ public class Stop implements TokenHolder {
         if (loopAllowed == null) loopAllowed = tileManager.getLoopDefault(type);
         if (loopAllowed == null) loopAllowed = mapManager.getLoopDefault(null);
         if (loopAllowed == null) loopAllowed = tileManager.getLoopDefault(null);
-        if (loopAllowed == null) loopAllowed = Loop.YES;
+        if (loopAllowed == null) loopAllowed = type == Type.OFFMAP ? Loop.NO : Loop.YES;
 
+        log.debug("+++ Hex="+mapHex.getName()+" tile="+tile.getId()+" city="+number
+                +": type="+type+" runTo="+runToAllowed+" runThrough="+runThroughAllowed
+                +" loop="+loopAllowed);
     }
 
     public String getName() {
