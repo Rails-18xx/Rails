@@ -823,7 +823,7 @@ public class ORUIManager implements DialogOwner {
                 allowance = allowances.get(0);
             }
             int station;
-            List<Stop> stations = selectedHex.getHexModel().getCities();
+            List<Stop> stations = selectedHex.getHexModel().getStops();
 
             switch (stations.size()) {
             case 0: // No stations
@@ -901,10 +901,10 @@ public class ORUIManager implements DialogOwner {
         TileI oldTile = hex.getCurrentTile();
          if (!action.isRelayBaseTokens()
                 && !oldTile.relayBaseTokensOnUpgrade()) return;
-        for (Stop oldCity : hex.getCities()) {
-            if (oldCity.hasTokens()) {
+        for (Stop oldStop : hex.getStops()) {
+            if (oldStop.hasTokens()) {
                 // Assume only 1 token (no exceptions known)
-                PublicCompanyI company = ((BaseToken)oldCity.getTokens().get(0)).getCompany();
+                PublicCompanyI company = ((BaseToken)oldStop.getTokens().get(0)).getCompany();
 
                 List<String> prompts = new ArrayList<String>();
                 Map<String, Integer> promptToCityMap = new HashMap<String, Integer>();

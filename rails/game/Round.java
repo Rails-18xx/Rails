@@ -220,7 +220,7 @@ public abstract class Round implements RoundI {
                     cityNumber = 1;
                 }
                 hex = mapManager.getHex(hexName);
-                city = hex.getCity(cityNumber);
+                city = hex.getStop(cityNumber);
 
                 if (token.isSelected()) {
 

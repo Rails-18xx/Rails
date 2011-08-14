@@ -9,6 +9,7 @@ import rails.common.parser.*;
 import rails.game.Stop.Loop;
 import rails.game.Stop.RunThrough;
 import rails.game.Stop.RunTo;
+import rails.game.Stop.Score;
 import rails.game.Stop.Type;
 import rails.util.Util;
 
@@ -57,6 +58,7 @@ public class MapManager implements ConfigurableComponentI {
     protected Map<Type,RunTo> runToDefaults = new HashMap<Type, RunTo>();
     protected Map<Type,RunThrough> runThroughDefaults = new HashMap<Type, RunThrough>();
     protected Map<Type,Loop> loopDefaults = new HashMap<Type, Loop>();
+    protected Map<Type,Score> scoreTypeDefaults = new HashMap<Type, Score>();
 
     protected static Logger log =
         Logger.getLogger(MapManager.class.getPackage().getName());
@@ -165,6 +167,7 @@ public class MapManager implements ConfigurableComponentI {
         RunTo runTo;
         RunThrough runThrough;
         Loop loop;
+        Score score;
         String s;
         Tag defaultsTag = tag.getChild("Defaults");
         if (defaultsTag != null) {
@@ -213,6 +216,17 @@ public class MapManager implements ConfigurableComponentI {
                                 +type+" default loop property: "+s, e);
                     }
                     loopDefaults.put(type, loop);
+                }
+                // Score type (not allowed for a null stop type)
+                s = accessTag.getAttributeAsString("scoreType", null);
+                if (type != null && Util.hasValue(s)) {
+                    try {
+                        score = Score.valueOf(s.toUpperCase());
+                    } catch (IllegalArgumentException e) {
+                        throw new ConfigurationException ("Illegal value for "
+                                +type+" default score type property: "+s, e);
+                    }
+                    scoreTypeDefaults.put(type, score);
                 }
             }
         }
@@ -275,11 +289,6 @@ public class MapManager implements ConfigurableComponentI {
                 hex.addDestination(company);
             }
         }
-
-        // Define default Stop property defaults
-        if (!runToDefaults.containsKey(null)) runToDefaults.put(null, RunTo.YES);
-        if (!runThroughDefaults.containsKey(null)) runThroughDefaults.put(null, RunThrough.YES);
-        if (!loopDefaults.containsKey(null)) loopDefaults.put(null, Loop.YES);
     }
 
     /**
@@ -379,7 +388,7 @@ public class MapManager implements ConfigurableComponentI {
     public List<Stop> getCurrentStations() {
         List<Stop> stations = new ArrayList<Stop>();
         for (MapHex hex : mHexes.values()) {
-            stations.addAll(hex.getCities());
+            stations.addAll(hex.getStops());
         }
         return stations;
     }
@@ -507,6 +516,10 @@ public class MapManager implements ConfigurableComponentI {
 
     public Loop getLoopDefault(Type type) {
         return loopDefaults.containsKey(type) ? loopDefaults.get(type) : null;
+    }
+
+    public Score getScoreTypeDefault(Type type) {
+        return scoreTypeDefaults.containsKey(type) ? scoreTypeDefaults.get(type) : null;
     }
 
 }

@@ -10,6 +10,7 @@ import rails.common.parser.Tag;
 import rails.game.Stop.Loop;
 import rails.game.Stop.RunThrough;
 import rails.game.Stop.RunTo;
+import rails.game.Stop.Score;
 import rails.game.Stop.Type;
 
 public interface TileI {
@@ -82,6 +83,7 @@ public interface TileI {
     public RunTo isRunToAllowed();
     public RunThrough isRunThroughAllowed();
     public Loop isLoopAllowed();
+    public Score getScoreType();
 
     public TileManager getTileManager();
 

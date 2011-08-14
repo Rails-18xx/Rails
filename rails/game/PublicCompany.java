@@ -1828,14 +1828,14 @@ public class PublicCompany extends Company implements PublicCompanyI {
                 } else {
                     // Cover the case that there already is another token.
                     // Allowing this is optional for 1856 Hamilton (THB home)
-                    List<Stop> cities = homeHex.getCities();
-                    List<Stop> openCities = new ArrayList<Stop>();
-                    for (Stop city : cities) {
-                        if (city.hasTokenSlotsLeft()) openCities.add (city);
+                    List<Stop> stops = homeHex.getStops();
+                    List<Stop> openStops = new ArrayList<Stop>();
+                    for (Stop stop : stops) {
+                        if (stop.hasTokenSlotsLeft()) openStops.add (stop);
                     }
-                    if (openCities.size() == 1) {
+                    if (openStops.size() == 1) {
                         // Just one spot: lay the home base there.
-                        homeCityNumber = openCities.get(0).getNumber();
+                        homeCityNumber = openStops.get(0).getNumber();
                     } else {
                         // ??  
                         // TODO Will player be asked??

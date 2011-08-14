@@ -12,6 +12,7 @@ import rails.common.parser.Tag;
 import rails.game.Stop.Loop;
 import rails.game.Stop.RunThrough;
 import rails.game.Stop.RunTo;
+import rails.game.Stop.Score;
 import rails.game.Stop.Type;
 import rails.game.model.ModelObject;
 import rails.util.Util;
@@ -64,6 +65,7 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
     protected RunTo runToAllowed = null;
     protected RunThrough runThroughAllowed = null;
     protected Loop loopAllowed = null;
+    protected Score scoreType = null;
 
     protected TileManager tileManager;
 
@@ -357,7 +359,17 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
                     stopType = Type.valueOf(typeString.toUpperCase());
                 } catch (IllegalArgumentException e) {
                     throw new ConfigurationException ("Illegal value for Tile "
-                            +name+" type property: "+typeString, e);
+                            +name+" stop type property: "+typeString, e);
+                }
+            }
+
+            String scoreTypeString = accessTag.getAttributeAsString("score");
+            if (Util.hasValue(scoreTypeString)) {
+                try {
+                    scoreType = Score.valueOf(scoreTypeString.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    throw new ConfigurationException ("Illegal value for Tile "
+                            +name+" sscore type property: "+scoreTypeString, e);
                 }
             }
         }
@@ -618,6 +630,10 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
 
     public Loop isLoopAllowed() {
         return loopAllowed;
+    }
+
+    public Score getScoreType() {
+        return scoreType;
     }
 
     public TileManager getTileManager () {

@@ -418,16 +418,16 @@ public class GUIHex implements ViewObject {
                 homeCity = homes.get(company);
                 if (homeCity == null) { // not yet decided where the token will be
                     // find a free slot
-                    List<Stop> cities = getHexModel().getCities();
-                    for (Stop city:cities) {
-                        if (city.hasTokenSlotsLeft()) {
-                            homeCity = city;
+                    List<Stop> stops = getHexModel().getStops();
+                    for (Stop stop:stops) {
+                        if (stop.hasTokenSlotsLeft()) {
+                            homeCity = stop;
                             break;
                         }
                     }
                 }
                 // check the number of tokens laid there already
-                p = getTokenCenter (1, homeCity.getTokens().size(), getHexModel().getCities().size(),
+                p = getTokenCenter (1, homeCity.getTokens().size(), getHexModel().getStops().size(),
                         homeCity.getNumber()-1);
                 drawHome (g2, company, p);
             }
@@ -509,7 +509,7 @@ public class GUIHex implements ViewObject {
 
     private void paintStationTokens(Graphics2D g2) {
 
-        if (getHexModel().getCities().size() > 1) {
+        if (getHexModel().getStops().size() > 1) {
             paintSplitStations(g2);
             return;
         }
@@ -525,7 +525,7 @@ public class GUIHex implements ViewObject {
     }
 
     private void paintSplitStations(Graphics2D g2) {
-        int numStations = getHexModel().getCities().size();
+        int numStations = getHexModel().getStops().size();
         int numTokens;
         List<TokenI> tokens;
         Point origin;
@@ -625,7 +625,7 @@ public class GUIHex implements ViewObject {
         Point p = new Point(center.x, center.y);
 
         int cityNumber = stationNumber + 1;
-        Station station = model.getCity(cityNumber).getRelatedStation();
+        Station station = model.getStop(cityNumber).getRelatedStation();
 
         // Find the correct position on the tile
         double x = 0;
@@ -751,17 +751,17 @@ public class GUIHex implements ViewObject {
             tt.append("]");
         } else if (currentTile.hasStations()) {
             Station st;
-            int cityNumber;
-            for (Stop city : model.getCities()) {
-                cityNumber = city.getNumber();
-                st = city.getRelatedStation();
-                tt.append("<br>  ").append(st.getType()).append(" ").append(cityNumber)
-                    .append(" (").append(model.getConnectionString(cityNumber))
+            int stopNumber;
+            for (Stop stop : model.getStops()) {
+                stopNumber = stop.getNumber();
+                st = stop.getRelatedStation();
+                tt.append("<br>  ").append(st.getType()).append(" ").append(stopNumber)
+                    .append(" (").append(model.getConnectionString(stopNumber))
                     .append("): value ");
                 tt.append(st.getValue());
                 if (st.getBaseSlots() > 0) {
                     tt.append(", ").append(st.getBaseSlots()).append(" slots");
-                    List<TokenI> tokens = model.getTokens(cityNumber);
+                    List<TokenI> tokens = model.getTokens(stopNumber);
                     if (tokens.size() > 0) {
                         tt.append(" (");
                         int oldsize = tt.length();

@@ -585,7 +585,7 @@ public class GameUIManager implements DialogOwner {
                 cityNumber = 1;
             }
             hex = orWindow.getMapPanel().getMap().getHexByName (hexName).getHexModel();
-            city = hex.getCity(cityNumber);
+            city = hex.getStop(cityNumber);
             oldCompName = t.getOldCompanyName();
             options.add(LocalText.getText("ExchangeableToken",
                     oldCompName,

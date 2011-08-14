@@ -84,7 +84,7 @@ public class StartCompany_18EU extends StartCompany {
             MapManager mapManager = GameManager.getInstance().getMapManager();
             String[] parts = parseStationName (selectedHomeStationName);
             MapHex hex = mapManager.getHex(parts[0]);
-            selectedHomeStation = hex.getCity(Integer.parseInt(parts[1]));
+            selectedHomeStation = hex.getStop(Integer.parseInt(parts[1]));
         }
         
         return selectedHomeStation;
@@ -136,7 +136,7 @@ public class StartCompany_18EU extends StartCompany {
             for (String cityName : availableHomeStationNames.split(",")) {
                 String[] parts = parseStationName (cityName);
                 MapHex hex = mapManager.getHex(parts[0]);
-                availableHomeStations.add (hex.getCity(Integer.parseInt(parts[1])));
+                availableHomeStations.add (hex.getStop(Integer.parseInt(parts[1])));
             }
         }
         // selectedHomeStation is delayed

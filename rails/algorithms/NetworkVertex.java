@@ -53,7 +53,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         this.hex = hex;
         this.station = station;
         this.side = -1;
-        this.city = hex.getRelatedCity(station);
+        this.city = hex.getRelatedStop(station);
         if (city != null) {
             log.info("Found city " + city);
         } else {

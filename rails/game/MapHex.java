@@ -13,6 +13,7 @@ import rails.common.parser.*;
 import rails.game.Stop.Loop;
 import rails.game.Stop.RunThrough;
 import rails.game.Stop.RunTo;
+import rails.game.Stop.Score;
 import rails.game.Stop.Type;
 import rails.game.action.LayTile;
 import rails.game.model.ModelObject;
@@ -149,9 +150,13 @@ StationHolder, TokenHolder {
 
     /** Type of any stops on the hex.
      * Normally the type will be derived from the tile properties.
-     * Hex-specific types are known to be required in 18VA (mine and offmap).
      */
     protected Type stopType = null;
+
+    /**
+     * Score type: do stops on this hex count as major or minor stops with respect to n+m trains?
+     */
+    protected Score scoreType = null;
 
     protected MapManager mapManager = null;
 
@@ -302,7 +307,17 @@ StationHolder, TokenHolder {
                     stopType = Type.valueOf(typeString.toUpperCase());
                 } catch (IllegalArgumentException e) {
                     throw new ConfigurationException ("Illegal value for MapHex "
-                            +name+" type property: "+typeString, e);
+                            +name+" stop type property: "+typeString, e);
+                }
+            }
+
+            String scoreTypeString = accessTag.getAttributeAsString("score");
+            if (Util.hasValue(scoreTypeString)) {
+                try {
+                    scoreType = Score.valueOf(scoreTypeString.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    throw new ConfigurationException ("Illegal value for MapHex "
+                            +name+" score type property: "+scoreTypeString, e);
                 }
             }
         }
@@ -1037,38 +1052,38 @@ StationHolder, TokenHolder {
         return 0;
     }
 
-    public List<Stop> getCities() {
+    public List<Stop> getStops() {
         return stops;
     }
 
-    public Stop getCity(int cityNumber) {
-        return mStops.get(cityNumber);
+    public Stop getStop(int stopNumber) {
+        return mStops.get(stopNumber);
     }
 
-    public Stop getRelatedCity(Station station) {
-        Stop foundCity = null;
-        for (Stop city:mStops.values()) {
-            if (station == city.getRelatedStation()) {
-                foundCity = city;
+    public Stop getRelatedStop(Station station) {
+        Stop foundStop = null;
+        for (Stop stop:mStops.values()) {
+            if (station == stop.getRelatedStation()) {
+                foundStop = stop;
             }
         }
-        return foundCity;
+        return foundStop;
     }
 
-    public void addHome(PublicCompanyI company, int cityNumber) throws ConfigurationException {
+    public void addHome(PublicCompanyI company, int stopNumber) throws ConfigurationException {
         if (homes == null) homes = new HashMap<PublicCompanyI, Stop>();
         if (stops.isEmpty()) {
             log.error("No cities for home station on hex " + name);
         } else {
             // not yet decided
-            if (cityNumber == 0) {
+            if (stopNumber == 0) {
                 homes.put(company, null);
                 log.debug("Added home of " + company  + " in hex " + this.toString() +  " city not yet decided");
-            } else if (cityNumber > stops.size()) {
-                throw new ConfigurationException ("Invalid city number "+cityNumber+" for hex "+name
+            } else if (stopNumber > stops.size()) {
+                throw new ConfigurationException ("Invalid city number "+stopNumber+" for hex "+name
                         +" which has "+stops.size()+" cities");
             } else {
-                Stop homeCity = stops.get(Math.max(cityNumber - 1, 0));
+                Stop homeCity = stops.get(Math.max(stopNumber - 1, 0));
                 homes.put(company, homeCity);
                 log.debug("Added home of " + company + " set to " + homeCity + " id= " +homeCity.getUniqueId());
             }
@@ -1178,7 +1193,7 @@ StationHolder, TokenHolder {
             // Return MapHex attribute if defined
             return isBlockedForTokenLays.booleanValue();
         } else if (homes != null && !homes.isEmpty()) {
-            Stop cityToLay = this.getCity(cityNumber);
+            Stop cityToLay = this.getStop(cityNumber);
             if (cityToLay == null) { // city does not exist, this does not block itself
                 return false;
             }
@@ -1360,4 +1375,7 @@ StationHolder, TokenHolder {
         return stopType;
     }
 
+    public Score getScoreType() {
+        return scoreType;
+    }
 }
