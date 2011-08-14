@@ -113,11 +113,11 @@ public class GameStatus extends GridPanel implements ActionListener {
     protected ClickField dummyButton; // To be selected if none else is.
 
     protected Map<PublicCompanyI, Integer> companyIndex =
-            new HashMap<PublicCompanyI, Integer>();
+        new HashMap<PublicCompanyI, Integer>();
     protected Map<Player, Integer> playerIndex = new HashMap<Player, Integer>();
 
     protected static Logger log =
-            Logger.getLogger(GameStatus.class.getPackage().getName());
+        Logger.getLogger(GameStatus.class.getPackage().getName());
 
     public GameStatus() {
         super();
@@ -271,8 +271,8 @@ public class GameStatus extends GridPanel implements ActionListener {
 
         if (compCanHoldOwnShares) {
             addField(treasurySharesCaption =
-                    new Caption(LocalText.getText("TREASURY_SHARES")),
-                    certInTreasuryXOffset, 0, 1, 2, WIDE_RIGHT + WIDE_BOTTOM, true);
+                new Caption(LocalText.getText("TREASURY_SHARES")),
+                certInTreasuryXOffset, 0, 1, 2, WIDE_RIGHT + WIDE_BOTTOM, true);
         }
 
         if (this.hasParPrices) {
@@ -289,7 +289,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         }
         addField(new Caption(LocalText.getText("COMPANY_DETAILS")),
                 compCashXOffset, 0, 4 + (compCanBuyPrivates ? 1 : 0)
-                                      + (hasCompanyLoans ? 1 : 0), 1, 0, true);
+                + (hasCompanyLoans ? 1 : 0), 1, 0, true);
         addField(new Caption(LocalText.getText("CASH")), compCashXOffset, 1, 1,
                 1, WIDE_BOTTOM, true);
         addField(new Caption(LocalText.getText("REVENUE")), compRevenueXOffset,
@@ -318,7 +318,7 @@ public class GameStatus extends GridPanel implements ActionListener {
             c = companies[i];
             companyIndex.put(c, new Integer(i));
             rowVisibilityObservers[i]
-                   = new RowVisibility (this, certPerPlayerYOffset + i, c.getInGameModel(), false);
+                                   = new RowVisibility (this, certPerPlayerYOffset + i, c.getInGameModel(), false);
             boolean visible = rowVisibilityObservers[i].lastValue();
 
             f = new Caption(c.getName());
@@ -328,29 +328,29 @@ public class GameStatus extends GridPanel implements ActionListener {
 
             for (int j = 0; j < np; j++) {
                 f =
-                        certPerPlayer[i][j] =
-                                new Field(
-                                        players[j].getPortfolio().getShareModel(
-                                                c));
+                    certPerPlayer[i][j] =
+                        new Field(
+                                players[j].getPortfolio().getShareModel(
+                                        c));
                 addField(f, certPerPlayerXOffset + j, certPerPlayerYOffset + i,
                         1, 1, 0, visible);
                 f =
-                        certPerPlayerButton[i][j] =
-                                new ClickField("", SELL_CMD,
-                                        LocalText.getText("ClickForSell"),
-                                        this, buySellGroup);
+                    certPerPlayerButton[i][j] =
+                        new ClickField("", SELL_CMD,
+                                LocalText.getText("ClickForSell"),
+                                this, buySellGroup);
                 addField(f, certPerPlayerXOffset + j, certPerPlayerYOffset + i,
                         1, 1, 0, false);
             }
             f = certInIPO[i] = new Field(ipo.getShareModel(c));
             addField(f, certInIPOXOffset, certInIPOYOffset + i, 1, 1, WIDE_LEFT, visible);
             f =
-                    certInIPOButton[i] =
-                            new ClickField(
-                                    certInIPO[i].getText(),
-                                    BUY_FROM_IPO_CMD,
-                                    LocalText.getText("ClickToSelectForBuying"),
-                                    this, buySellGroup);
+                certInIPOButton[i] =
+                    new ClickField(
+                            certInIPO[i].getText(),
+                            BUY_FROM_IPO_CMD,
+                            LocalText.getText("ClickToSelectForBuying"),
+                            this, buySellGroup);
             addField(f, certInIPOXOffset, certInIPOYOffset + i, 1, 1, WIDE_LEFT, false);
             certInIPO[i].setPreferredSize(certInIPOButton[i].getPreferredSize());
 
@@ -358,29 +358,29 @@ public class GameStatus extends GridPanel implements ActionListener {
             addField(f, certInPoolXOffset, certInPoolYOffset + i, 1, 1,
                     WIDE_RIGHT, visible);
             f =
-                    certInPoolButton[i] =
-                            new ClickField(
-                                    certInPool[i].getText(),
-                                    BUY_FROM_POOL_CMD,
-                                    LocalText.getText("ClickToSelectForBuying"),
-                                    this, buySellGroup);
+                certInPoolButton[i] =
+                    new ClickField(
+                            certInPool[i].getText(),
+                            BUY_FROM_POOL_CMD,
+                            LocalText.getText("ClickToSelectForBuying"),
+                            this, buySellGroup);
             addField(f, certInPoolXOffset, certInPoolYOffset + i, 1, 1,
                     WIDE_RIGHT, false);
             certInPool[i].setPreferredSize(certInIPOButton[i].getPreferredSize());/* sic */
 
             if (compCanHoldOwnShares) {
                 f =
-                        certInTreasury[i] =
-                                new Field(c.getPortfolio().getShareModel(c));
+                    certInTreasury[i] =
+                        new Field(c.getPortfolio().getShareModel(c));
                 addField(f, certInTreasuryXOffset, certInTreasuryYOffset + i,
                         1, 1, WIDE_RIGHT, visible);
                 f =
-                        certInTreasuryButton[i] =
-                                new ClickField(
-                                        certInTreasury[i].getText(),
-                                        BUY_FROM_POOL_CMD,
-                                        LocalText.getText("ClickForSell"),
-                                        this, buySellGroup);
+                    certInTreasuryButton[i] =
+                        new ClickField(
+                                certInTreasury[i].getText(),
+                                BUY_FROM_POOL_CMD,
+                                LocalText.getText("ClickForSell"),
+                                this, buySellGroup);
                 addField(f, certInTreasuryXOffset, certInTreasuryYOffset + i,
                         1, 1, WIDE_RIGHT, false);
                 certInTreasury[i].setPreferredSize(certInTreasuryButton[i].getPreferredSize());/* sic */
@@ -399,13 +399,13 @@ public class GameStatus extends GridPanel implements ActionListener {
             addField(f, compCashXOffset, compCashYOffset + i, 1, 1, 0, visible);
             f =
                 compCashButton[i] =
-                        new ClickField(
-                                compCash[i].getText(),
-                                CASH_CORRECT_CMD,
-                                LocalText.getText("CorrectCashToolTip"),
-                                this, buySellGroup);
+                    new ClickField(
+                            compCash[i].getText(),
+                            CASH_CORRECT_CMD,
+                            LocalText.getText("CorrectCashToolTip"),
+                            this, buySellGroup);
             addField(f, compCashXOffset, compCashYOffset + i, 1, 1,
-                WIDE_RIGHT, false);
+                    WIDE_RIGHT, false);
 
             f = compRevenue[i] = new Field(c.getLastRevenueModel());
             addField(f, compRevenueXOffset, compRevenueYOffset + i, 1, 1, 0, visible);
@@ -418,9 +418,9 @@ public class GameStatus extends GridPanel implements ActionListener {
 
             if (this.compCanBuyPrivates) {
                 f =
-                        compPrivates[i] =
-                                new Field(
-                                        c.getPortfolio().getPrivatesOwnedModel());
+                    compPrivates[i] =
+                        new Field(
+                                c.getPortfolio().getPrivatesOwnedModel());
                 addField(f, compPrivatesXOffset, compPrivatesYOffset + i, 1, 1,
                         0, visible);
             }
@@ -432,7 +432,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                 }
                 addField (f, compLoansXOffset, compLoansYOffset+i, 1, 1, 0, visible);
             }
-            
+
             if (hasRights) {
                 f = rights[i] = new Field (c.getRightsModel());
                 addField (f, rightsXOffset, rightsYOffset + i, 1, 1, 0, visible);
@@ -455,11 +455,11 @@ public class GameStatus extends GridPanel implements ActionListener {
                     WIDE_TOP, true);
             f =
                 playerCashButton[i] =
-                        new ClickField(
-                                playerCash[i].getText(),
-                                CASH_CORRECT_CMD,
-                                LocalText.getText("CorrectCashToolTip"),
-                                this, buySellGroup);
+                    new ClickField(
+                            playerCash[i].getText(),
+                            CASH_CORRECT_CMD,
+                            LocalText.getText("CorrectCashToolTip"),
+                            this, buySellGroup);
             addField(f, playerCashXOffset + i, playerCashYOffset, 1, 1,
                     WIDE_TOP, false);
         }
@@ -468,9 +468,9 @@ public class GameStatus extends GridPanel implements ActionListener {
                 WIDE_RIGHT, false);
         for (int i = 0; i < np; i++) {
             f =
-                    playerPrivates[i] =
-                            new Field(
-                                    players[i].getPortfolio().getPrivatesOwnedModel());
+                playerPrivates[i] =
+                    new Field(
+                            players[i].getPortfolio().getPrivatesOwnedModel());
             addField(f, playerPrivatesXOffset + i, playerPrivatesYOffset, 1, 1,
                     0, true);
         }
@@ -493,8 +493,8 @@ public class GameStatus extends GridPanel implements ActionListener {
                 WIDE_RIGHT + WIDE_TOP, true);
         for (int i = 0; i < np; i++) {
             f =
-                    playerCertCount[i] =
-                            new Field(players[i].getCertCountModel(), true);
+                playerCertCount[i] =
+                    new Field(players[i].getCertCountModel(), true);
             addField(f, playerCertCountXOffset + i, playerCertCountYOffset, 1,
                     1, WIDE_TOP, true);
         }
@@ -529,7 +529,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         // Trains
         addField(new Caption(LocalText.getText("TRAINS")),
                 poolTrainsXOffset - 1, poolTrainsYOffset - 1, 1, 2, WIDE_TOP
-                                                                    + WIDE_LEFT, true);
+                + WIDE_LEFT, true);
         addField(new Caption(LocalText.getText("USED")), poolTrainsXOffset,
                 poolTrainsYOffset - 1, 1, 1, WIDE_TOP, true);
         poolTrains = new Field(pool.getTrainsModel());
@@ -586,12 +586,12 @@ public class GameStatus extends GridPanel implements ActionListener {
 
                     for (int i = 1; i <= sale.getMaximumNumber(); i++) {
                         options.add(LocalText.getText("SellShares",
-                        		i,
+                                i,
                                 sale.getShare(),
                                 i * sale.getShare(),
                                 sale.getCompanyName(),
                                 Bank.format(i * sale.getShareUnits()
-                                                    * sale.getPrice()) ));
+                                        * sale.getPrice()) ));
                         sellActions.add(sale);
                         sellAmounts.add(i);
                     }
@@ -600,17 +600,17 @@ public class GameStatus extends GridPanel implements ActionListener {
                 if (options.size() > 1) {
                     String message = LocalText.getText("PleaseSelect");
                     String sp =
-                            (String) JOptionPane.showInputDialog(this, message,
-                                    message, JOptionPane.QUESTION_MESSAGE,
-                                    null, options.toArray(new String[0]),
-                                    options.get(0));
+                        (String) JOptionPane.showInputDialog(this, message,
+                                message, JOptionPane.QUESTION_MESSAGE,
+                                null, options.toArray(new String[0]),
+                                options.get(0));
                     index = options.indexOf(sp);
                 } else if (options.size() == 1) {
                     String message = LocalText.getText("PleaseConfirm");
                     int result =
-                            JOptionPane.showConfirmDialog(this, options.get(0),
-                                    message, JOptionPane.OK_CANCEL_OPTION,
-                                    JOptionPane.QUESTION_MESSAGE);
+                        JOptionPane.showConfirmDialog(this, options.get(0),
+                                message, JOptionPane.OK_CANCEL_OPTION,
+                                JOptionPane.QUESTION_MESSAGE);
                     index = (result == JOptionPane.OK_OPTION ? 0 : -1);
                 }
                 if (index < 0) {
@@ -624,7 +624,7 @@ public class GameStatus extends GridPanel implements ActionListener {
 
                 List<String> options = new ArrayList<String>();
                 List<BuyCertificate> buyActions =
-                        new ArrayList<BuyCertificate>();
+                    new ArrayList<BuyCertificate>();
                 List<Integer> buyAmounts = new ArrayList<Integer>();
                 BuyCertificate buy;
                 PublicCertificateI cert;
@@ -650,7 +650,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                         int[] startPrices;
                         if (((StartCompany) buy).mustSelectAPrice()) {
                             startPrices =
-                                    ((StartCompany) buy).getStartPrices();
+                                ((StartCompany) buy).getStartPrices();
                             Arrays.sort(startPrices);
                             if (startPrices.length > 1) {
                                 for (int i = 0; i < startPrices.length; i++) {
@@ -695,7 +695,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                                     companyName,
                                     buy.getFromPortfolio().getName(),
                                     Bank.format(i * sharesPerCert
-                                                        * buy.getPrice()) ));
+                                            * buy.getPrice()) ));
                             buyActions.add(buy);
                             buyAmounts.add(i);
                         }
@@ -704,34 +704,34 @@ public class GameStatus extends GridPanel implements ActionListener {
                 int index = 0;
                 if (options.size() > 1) {
                     if (startCompany) {
-                         RadioButtonDialog dialog = new RadioButtonDialog (
+                        RadioButtonDialog dialog = new RadioButtonDialog (
                                 gameUIManager,
                                 parent,
                                 LocalText.getText("PleaseSelect"),
                                 LocalText.getText("WHICH_START_PRICE",
                                         playerName,
                                         companyName),
-                                options.toArray(new String[0]), -1);
+                                        options.toArray(new String[0]), -1);
                         gameUIManager.setCurrentDialog(dialog, actions.get(0));
                         return;
                     } else {
                         String sp =
-                                (String) JOptionPane.showInputDialog(this,
-                                        LocalText.getText(startCompany
-                                                ? "WHICH_PRICE"
-                                                : "HOW_MANY_SHARES"),
-                                        LocalText.getText("PleaseSelect"),
-                                        JOptionPane.QUESTION_MESSAGE, null,
-                                        options.toArray(new String[0]),
-                                        options.get(0));
+                            (String) JOptionPane.showInputDialog(this,
+                                    LocalText.getText(startCompany
+                                            ? "WHICH_PRICE"
+                                                    : "HOW_MANY_SHARES"),
+                                                    LocalText.getText("PleaseSelect"),
+                                                    JOptionPane.QUESTION_MESSAGE, null,
+                                                    options.toArray(new String[0]),
+                                                    options.get(0));
                         index = options.indexOf(sp);
                     }
                 } else if (options.size() == 1) {
                     int result =
-                            JOptionPane.showConfirmDialog(this, options.get(0),
-                                    LocalText.getText("PleaseConfirm"),
-                                    JOptionPane.OK_CANCEL_OPTION,
-                                    JOptionPane.QUESTION_MESSAGE);
+                        JOptionPane.showConfirmDialog(this, options.get(0),
+                                LocalText.getText("PleaseConfirm"),
+                                JOptionPane.OK_CANCEL_OPTION,
+                                JOptionPane.QUESTION_MESSAGE);
                     index = (result == JOptionPane.OK_OPTION ? 0 : -1);
                 }
                 if (index < 0) {
@@ -763,7 +763,7 @@ public class GameStatus extends GridPanel implements ActionListener {
             } else {
 
                 chosenAction =
-                        processGameSpecificActions(actor, actions.get(0));
+                    processGameSpecificActions(actor, actions.get(0));
 
             }
         } else {
@@ -789,22 +789,12 @@ public class GameStatus extends GridPanel implements ActionListener {
             ActionEvent actor, PossibleAction chosenAction) {
         return chosenAction;
     }
-    
+
     public void initTurn(int actorIndex, boolean myTurn) {
         int i, j;
 
         dummyButton.setSelected(true);
 
-        // Reset previous highlights
-        if ((j = this.actorIndex) >= 0) {
-            upperPlayerCaption[j].setHighlight(false);
-            lowerPlayerCaption[j].setHighlight(false);
-            for (i = 0; i < nc; i++) {
-                setPlayerCertButton(i, j, false);
-            }
-        } else if (j == -1 && compCanHoldOwnShares) {
-            treasurySharesCaption.setHighlight(false);
-        }
         for (i = 0; i < nc; i++) {
             setIPOCertButton(i, false);
             setPoolCertButton(i, false);
@@ -814,24 +804,21 @@ public class GameStatus extends GridPanel implements ActionListener {
 
         this.actorIndex = actorIndex;
 
+        highlightCurrentPlayer(playerIndex.get(gameUIManager.getCurrentPlayer()));
+        if (treasurySharesCaption != null) treasurySharesCaption.setHighlight(actorIndex == -1);
+
         // Set new highlights
         if ((j = this.actorIndex) >= -1) {
-            if (j >= 0) {
-                upperPlayerCaption[j].setHighlight(true);
-                lowerPlayerCaption[j].setHighlight(true);
-            } else if (j == -1 && treasurySharesCaption != null) {
-                treasurySharesCaption.setHighlight(true);
-            }
-            
+
             if (myTurn) {
 
                 PublicCompanyI company;
                 Portfolio holder;
                 int index;
                 CashHolder owner;
-    
+
                 List<BuyCertificate> buyableCerts =
-                        possibleActions.getType(BuyCertificate.class);
+                    possibleActions.getType(BuyCertificate.class);
                 if (buyableCerts != null) {
                     for (BuyCertificate bCert : buyableCerts) {
                         company = bCert.getCompany();
@@ -849,9 +836,9 @@ public class GameStatus extends GridPanel implements ActionListener {
                         }
                     }
                 }
-    
+
                 List<SellShares> sellableShares =
-                        possibleActions.getType(SellShares.class);
+                    possibleActions.getType(SellShares.class);
                 if (sellableShares != null) {
                     for (SellShares share : sellableShares) {
                         company = share.getCompany();
@@ -863,11 +850,11 @@ public class GameStatus extends GridPanel implements ActionListener {
                         }
                     }
                 }
-    
+
                 initGameSpecificActions();
-    
+
                 List<NullAction> nullActions =
-                        possibleActions.getType(NullAction.class);
+                    possibleActions.getType(NullAction.class);
                 if (nullActions != null) {
                     for (NullAction na : nullActions) {
                         (parent).setPassButton(na);
@@ -924,10 +911,10 @@ public class GameStatus extends GridPanel implements ActionListener {
 
         for (int j = 0; j < np; j++) {
             upperPlayerCaption[j].setText(players[j].getName()
-                                          + (j == index ? " PD" : ""));
+                    + (j == index ? " PD" : ""));
         }
     }
-    
+
     public void highlightCurrentPlayer (int index) {
         for (int j = 0; j < np; j++) {
             upperPlayerCaption[j].setHighlight(j == index);
@@ -1045,7 +1032,7 @@ public class GameStatus extends GridPanel implements ActionListener {
             compCashButton[i].setText(compCash[i].getText());
         } else {
             compCashButton[i].clearPossibleActions();
-}
+        }
         compCash[i].setVisible(visible && !clickable);
         compCashButton[i].setVisible(visible && clickable);
         if (action != null)
