@@ -59,7 +59,10 @@ public class GameOption {
     }
 
     public String getName() {
-        return parametrisedName;
+        if (parametrisedName != null)
+            return parametrisedName;
+        
+        return name;
     }
 
     public String getLocalisedName() {

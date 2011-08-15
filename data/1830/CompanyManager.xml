@@ -90,7 +90,7 @@
 	</Company>
 	<Company name="C&amp;O" type="Public" tokens="3" fgColour="000000" bgColour="A0E0FF"
 			longname="Chesapeake &amp; Ohio">
-		<IfOption name="Variant" value="Basegame,Pere Marquette,Simple,Wabash">
+		<IfOption name="Variant" value="Basegame,Pere Marquette,Reading,Simple,Wabash">
 			<Home hex="F6"/>
 		</IfOption>
 		<IfOption name="Variant" value="Coalfields,Coalfields&amp;Reading">
