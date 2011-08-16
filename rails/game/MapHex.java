@@ -76,7 +76,7 @@ StationHolder, TokenHolder {
     protected MapHex[] neighbours = new MapHex[6];
 
     /** Values if this is an off-board hex */
-    protected int[] offBoardValues = null;
+    protected int[] valuesPerPhase = null;
 
     /*
      * Temporary storage for impassable hexsides. Once neighbours has been set
@@ -237,7 +237,7 @@ StationHolder, TokenHolder {
         tileCost = tag.getAttributeAsIntegerArray("cost", new int[0]);
 
         // Off-board revenue values
-        offBoardValues = tag.getAttributeAsIntegerArray("value", null);
+        valuesPerPhase = tag.getAttributeAsIntegerArray("value", null);
 
         // City name
         cityName = tag.getAttributeAsString("city", "");
@@ -1245,18 +1245,18 @@ StationHolder, TokenHolder {
             isBlockedForTokenLays.set(isBlocked);
     }
 
-    public boolean hasOffBoardValues() {
-        return offBoardValues != null && offBoardValues.length > 0;
+    public boolean hasValuesPerPhase() {
+        return valuesPerPhase != null && valuesPerPhase.length > 0;
     }
 
-    public int[] getOffBoardValues() {
-        return offBoardValues;
+    public int[] getValuesPerPhase() {
+        return valuesPerPhase;
     }
 
-    public int getCurrentOffBoardValue(PhaseI phase) {
-        if (hasOffBoardValues() && phase != null) {
-            return offBoardValues[Math.min(
-                    offBoardValues.length,
+    public int getCurrentValueForPhase(PhaseI phase) {
+        if (hasValuesPerPhase() && phase != null) {
+            return valuesPerPhase[Math.min(
+                    valuesPerPhase.length,
                     phase.getOffBoardRevenueStep()) - 1];
         } else {
             return 0;

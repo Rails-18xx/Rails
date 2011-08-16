@@ -328,6 +328,42 @@ public class Stop implements TokenHolder {
         return loopAllowed;
     }
 
+    public boolean isRunToAllowedFor (PublicCompanyI company) {
+        switch (runToAllowed) {
+        case YES:
+            return true;
+        case NO:
+            return false;
+        case TOKENONLY:
+            return hasTokenOf (company);
+        default:
+            // Dead code, only to satisfy the compiler
+            return true;
+        }
+    }
+
+    public boolean isRunThroughAllowedFor (PublicCompanyI company) {
+        switch (runThroughAllowed) {
+        case YES:
+            return hasTokenOf (company) || hasTokenSlotsLeft();
+        case NO:
+            return false;
+        case TOKENONLY:
+            return hasTokenOf (company);
+        default:
+            // Dead code, only to satisfy the compiler
+            return true;
+        }
+    }
+
+    public int getValueForPhase (PhaseI phase) {
+        if (mapHex.hasValuesPerPhase()) {
+            return mapHex.getCurrentValueForPhase(phase);
+        } else {
+            return relatedStation.get().getValue();
+        }
+    }
+
     @Override
     public String toString() {
         StringBuffer b = new StringBuffer();

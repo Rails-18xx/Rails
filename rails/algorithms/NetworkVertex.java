@@ -278,8 +278,8 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         if (virtual || type == VertexType.SIDE) return;
 
         // define value
-        if (hex.hasOffBoardValues()) {
-            value = hex.getCurrentOffBoardValue(phase);
+        if (hex.hasValuesPerPhase()) {
+            value = hex.getCurrentValueForPhase(phase);
         } else {
             value = station.getValue();
         }

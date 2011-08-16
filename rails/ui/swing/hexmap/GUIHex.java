@@ -740,10 +740,10 @@ public class GUIHex implements ViewObject {
         // For debugging: display rotation
         //tt.append("<small> rot=" + currentTileOrientation + "</small>");
 
-        if (model.hasOffBoardValues()) {
+        if (model.hasValuesPerPhase()) {
             tt.append("<br>Value ");
-            tt.append(model.getCurrentOffBoardValue(hexMap.getPhase())).append(" [");
-            int[] values = model.getOffBoardValues();
+            tt.append(model.getCurrentValueForPhase(hexMap.getPhase())).append(" [");
+            int[] values = model.getValuesPerPhase();
             for (int i = 0; i < values.length; i++) {
                 if (i > 0) tt.append(",");
                 tt.append(values[i]);
