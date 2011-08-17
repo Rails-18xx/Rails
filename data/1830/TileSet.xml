@@ -120,7 +120,7 @@
         <IfOption name="Variant" value="Wabash">
             <Upgrade id="63,448"/>
         </IfOption>
-        <IfOption name="Variant" value="Basegame,Pere Marquette,Coalfields,Coalfields&amp;Reading,Simple">
+        <IfOption name="Variant" value="Basegame,Pere Marquette,Coalfields,Coalfields&amp;Reading,Reading,Simple">
 			<Upgrade id="63" />
         </IfOption>
 	</Tile>
