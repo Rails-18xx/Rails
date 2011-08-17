@@ -226,33 +226,23 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         log.info("Init of vertex " + this);
 
         // check if it has to be removed because it is run-to only
-        if (company != null) { // if company == null, then no vertex gets removed
-            if (hex.isRunToAllowed() == Stop.RunTo.NO || hex.isRunToAllowed() == Stop.RunTo.TOKENONLY && !city.hasTokenOf(company))
-            {
+        // if company == null, then no vertex gets removed
+        if (company != null && !city.isRunToAllowedFor(company)) { 
                 return false;
-            }
         }
 
         // check if it is a major or minor
-        if (station.getType().equals(Station.CITY) || station.getType().equals(Station.OFF_MAP_AREA)) {
+        if (city.getScoreType() == Stop.Score.MAJOR) {
             setStationType(StationType.MAJOR);
-        } else if (station.getType().equals(Station.TOWN) || station.getType().equals(Station.PORT)
-                || station.getType().equals(Station.HALT)) {
+        } else if (city.getScoreType() == Stop.Score.MINOR) {
             setStationType(StationType.MINOR);
         }
 
         // check if it is a sink
         if (company == null) { // if company == null, then all sinks are deactivated
             sink = false;
-        } else if (station.getType().equals(Station.OFF_MAP_AREA) || (
-                // or station is city
-                station.getType().equals(Station.CITY)
-                // and is either fully tokened and has token slots or only tokens allow run through
-                && ( city.getSlots() != 0 && !city.hasTokenSlotsLeft() || hex.isRunThroughAllowed() == Stop.RunThrough.TOKENONLY)
-                // and city does not have a token
-                && !city.hasTokenOf(company))
-        ) {
-            sink = true;
+        } else {
+            sink = !city.isRunThroughAllowedFor(company);
         }
 
         // define locationName
@@ -278,11 +268,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         if (virtual || type == VertexType.SIDE) return;
 
         // define value
-        if (hex.hasValuesPerPhase()) {
-            value = hex.getCurrentValueForPhase(phase);
-        } else {
-            value = station.getValue();
-        }
+        value = city.getValueForPhase(phase);
     }
 
 
