@@ -32,7 +32,8 @@ public class GameOption {
     private static final Pattern pattern = Pattern.compile("\\{(.*)\\}");
 
     public GameOption(String name) {
-    	this.name = name;
+        this.name = name;
+        parametrisedName = constructParametrisedName (name, null);
     }
     
     public GameOption(String name, String[] parameters) {
