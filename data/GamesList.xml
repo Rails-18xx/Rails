@@ -140,7 +140,7 @@ Not yet implemented:
 	</Game>
 
      <Game name="18GA">
-        <Note>Fully Playable</Note>
+        <Note>Fully playable</Note>
         <Description>18GA - The Railroads Come to Georgia
         Copyright 2000, 2007, Mark Derrick and John David Galt</Description>
 		<Option name="Variant" values="Basegame,Cotton Port" default="Basegame" />
@@ -174,7 +174,24 @@ Should work, but has not been extensively tested. Limitations as with 1830.
         <Option name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
 		<Players minimum="3" maximum="6"/>
 	</Game>
-
+    
+	 <Game name="18TN">
+        <Note>Fully playable</Note>
+        <Description>18TN - The Railroads Come to Tennessee
+        Copyright 1996, 2006, Mark Derrick
+        Published by Deep Thought Games, LLC
+        
+        </Description>
+		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
+		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
+		<Option name="NoMapMode" type="toggle" default="no" />
+		<Option name="UnlimitedTiles" type="toggle" default="no"/>
+		<Option name="UnlimitedTopTrains" parm="8" type="toggle" default="no"/>
+		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
+		<Option name="TwoPlayersCertLimit70Percent" type="toggle" default="no"/>
+        <Players minimum="2" maximum="5"/>
+    </Game>
+	
 	<Game name="1835">
 		<Note>Almost playable</Note>
 		<Description>1835 (Germany)
@@ -290,18 +307,6 @@ Known Issues:
     <Players minimum="2" maximum="5" />
   </Game>
 
-     <Game name="18TN">
-        <Note>Prototype</Note>
-        <Description>18TN - The Railroads Come to Tennessee</Description>
-		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
-		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
-		<Option name="NoMapMode" type="toggle" default="no" />
-		<Option name="UnlimitedTiles" type="toggle" default="no"/>
-		<Option name="UnlimitedTopTrains" parm="8" type="toggle" default="no"/>
-		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
-		<Option name="TwoPlayersCertLimit70Percent" type="toggle" default="no"/>
-        <Players minimum="2" maximum="5"/>
-    </Game>
     <Game name="1880">
         <Note>Prototype</Note>
         <Description>1880 - China
