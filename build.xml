@@ -24,7 +24,7 @@
 		<pathelement location="lib/batik-1.7/lib/batik-ext.jar"/>
 		<pathelement location="lib/jgraph5/jgraph.jar"/>
 		<pathelement location="lib/jgrapht-0.7.3/jgrapht-jdk1.5.jar"/>
-		<pathelement location="lib/junit_3.8.2/junit.jar"/>
+		<pathelement location="lib/junit-4.8.2/junit.jar"/>
 	</path>
 	<target depends="clean" name="init">
 		<mkdir dir="classes"/>
