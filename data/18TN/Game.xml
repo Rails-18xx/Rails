@@ -93,7 +93,7 @@
 			<Tiles colour="yellow"/>
 			<Privates sellingAllowed="no"/>
 			<OperatingRounds number="1"/>
-			<Trains tradingAllowed="yes"/>
+			<Trains onePerTurn="yes" tradingAllowed="yes"/>
 		</Phase>
 		<Phase name="3">
 			<Tiles colour="yellow,green"/>
@@ -104,7 +104,7 @@
 			<Action name="CivilWar"/><!-- No value needed -->
         </Phase>
 		<Phase name="4">
-			<Trains rusted="2" limitStep="2"/>
+			<Trains rusted="2" limitStep="2" onePerTurn="no"/>
 		</Phase>
 		<Phase name="5">
 			<Tiles colour="yellow,green,brown"/>

@@ -20,14 +20,13 @@
 		<Certificate shares="1" number="8"/>
 		<Trains limit="4,3,2"/>
         <CanUseSpecialProperties/>
-        		<TileLays>
-			<Number colour="yellow" phase="3,3½,4,5,6,6½,8" number="2"/>
+        <TileLays>
+			<Number colour="yellow" phase="2,3,3½,4,5,6,6½,8" number="2"/>
 		</TileLays>
 	</CompanyType>
 	
 	<Company name="TCC" type="Private" basePrice="20" revenue="5"
 			longname="Tennessee Copper Company">
-		<Blocking hex="H17"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
 				<SpecialTileLay location="H17" extra="yes" free="yes"/>
@@ -36,7 +35,6 @@
 	</Company>
 	<Company name="ET&amp;WNC" type="Private" basePrice="40" revenue="10"
 			longname="East Tennessee and Western North Carolina">
-		<Blocking hex="F19"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
 				<SpecialTileLay location="F19" extra="yes" free="yes"/>
@@ -45,7 +43,6 @@
 	</Company>
 	<Company name="M&amp;C" type="Private" basePrice="70" revenue="15"
 			longname="Memphis and Charleston Railroad">
-		<Blocking hex="H3"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
 				<SpecialTileLay location="H5" extra="yes" free="yes"/>
@@ -54,7 +51,6 @@
 	</Company>
 	<Company name="O&amp;W" type="Private" basePrice="100" revenue="20"
 			longname="Oneida and Western Railroad">
-		<Blocking hex="E16"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
 				<SpecialTileLay location="E16" extra="yes" free="yes"/>
