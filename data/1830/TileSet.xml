@@ -210,7 +210,7 @@
         <Tile id="1061" extId="61" quantity="1" />
         <Tile id="2061" extId="BA" quantity="1" />
     </IfOption>
-    <IfOption name="Variant" value="Basegame,Pere Marquette,Reading">
+    <IfOption name="Variant" value="Basegame,Pere Marquette,Reading,Wabash">
 		<Tile id="62" quantity="1" />
     </IfOption>
     <IfOption name="Variant" value="Simple">
@@ -221,10 +221,7 @@
     <IfOption name="Variant" value="Coalfields,Coalfields&amp;Reading">
         <Tile id="1062" extId="62" quantity="1" />
     </IfOption>
-	<Tile id="63">
-        <IfOption name="Variant" value="Basegame,Pere Marquette,Reading,Simple">
-            <Attributes quantity="3"/>
-        </IfOption>
+	<Tile id="63" quantity="3">
         <IfOption name="Variant" value="Coalfields,Coalfields&amp;Reading">
             <Attributes quantity="4"/>
         </IfOption>
