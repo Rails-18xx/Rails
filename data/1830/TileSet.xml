@@ -174,7 +174,7 @@
         </Tile>
     </IfOption>
 	<Tile id="54" quantity="1">
-		<IfOption name="Variant" value="Basegame,Pere Marquette,Reading,Simple">
+		<IfOption name="Variant" value="Basegame,Pere Marquette,Reading,Simple,Wabash">
 			<Upgrade id="62" />
 		</IfOption>
 		<IfOption name="Variant" value="Coalfields,Coalfields&amp;Reading">
