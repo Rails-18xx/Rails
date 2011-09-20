@@ -344,8 +344,8 @@ public class Stop implements TokenHolder {
 
     public boolean isRunThroughAllowedFor (PublicCompanyI company) {
         switch (runThroughAllowed) {
-        case YES:
-            return hasTokenOf (company) || hasTokenSlotsLeft();
+        case YES: // either it has no tokens at all, or it has a company tokens or empty token slots
+            return !hasTokens() || hasTokenOf (company) || hasTokenSlotsLeft() ;
         case NO:
             return false;
         case TOKENONLY:

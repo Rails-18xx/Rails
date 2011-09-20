@@ -227,8 +227,9 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
 
         // check if it has to be removed because it is run-to only
         // if company == null, then no vertex gets removed
-        if (company != null && !city.isRunToAllowedFor(company)) { 
-                return false;
+        if (company != null && !city.isRunToAllowedFor(company)) {
+           log.info("Vertex is removed");
+           return false;
         }
 
         // check if it is a major or minor
