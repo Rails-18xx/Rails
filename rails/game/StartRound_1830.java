@@ -354,6 +354,10 @@ public class StartRound_1830 extends StartRound {
                                 startPacket.getFirstItem(), 0, 0);
                         gameManager.setPriorityPlayer();
                         // startPacket.getFirstItem().getName());
+                    } else {
+                        //BR: If the first item's price is reduced, but not to 0, 
+                        //    we still need to advance to the next player
+                        setNextPlayer();
                     }
                 } else {
                     numPasses.set(0);
