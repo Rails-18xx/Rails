@@ -190,7 +190,9 @@
 			<TrainType name="7" majorStops="7" cost="710" quantity="2"/>
 		</IfOption>
         <IfOption name="Variant" value="Wabash">
-            <TrainType name="7" majorStops="7" cost="830" quantity="-1"/>
+            <TrainType name="7" majorStops="7" cost="830" quantity="-1">
+            	<NewPhase phaseName="D"/>
+	    </TrainType>
         </IfOption>
 		<IfOption name="Variant" value="Basegame,Pere Marquette,Reading,Coalfields,Coalfields&amp;Reading,Simple">
 			<TrainType name="D" majorStops="99" quantity="6">
