@@ -76,9 +76,12 @@
 				<exclude name="**/*.launch"/>
 				<exclude name="**/*.java"/>
 				<exclude name="rails/test/*"/>
+				<exclude name="test/**"/>
+				<exclude name="tiles/*.*"/>
 				<exclude name="18xx.log"/>
 				<exclude name="build.xml"/>
 				<exclude name="buildinfo.xml"/>
+				<exclude name="user.profiles"/>
 				<exclude name="manifest"/>
 				<exclude name="doc/*"/>
 				<exclude name="html/*"/>
@@ -89,6 +92,9 @@
 				<exclude name="rails.sh"/>
 				<exclude name=".project"/>
 				<exclude name=".classpath"/>
+				<exclude name=".git/**"/>
+				<exclude name=".gitignore"/>
+				<exclude name="Rails-format.xml"/>
 				<exclude name="**/CVS/*"/>
 				<exclude name="**/.settings/*"/>
 				<exclude name="**/rails-${version}.jar"/>
