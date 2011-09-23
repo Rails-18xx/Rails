@@ -1,3 +1,3 @@
 #!/bin/bash
 
-java -jar ./rails-1.4.1.jar $1
+java -jar ./rails-1.5.jar $1
