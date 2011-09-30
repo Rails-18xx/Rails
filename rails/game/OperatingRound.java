@@ -361,7 +361,13 @@ public class OperatingRound extends Round implements View<String> {
             if (!operatingCompany.get().hasLaidHomeBaseTokens()) {
                 // This can occur if the home hex has two cities and track,
                 // such as the green OO tile #59
-                possibleActions.add(new LayBaseToken (operatingCompany.get().getHomeHexes()));
+                                
+                // BR: as this is a home token, need to call LayBaseToken with a MapHex, not a list
+                // to avoid the LayBaseToken action from being a regular token lay
+                // I am not sure that this will work with multiple home hexes.
+                for (MapHex home : operatingCompany.get().getHomeHexes()) {
+                    possibleActions.add(new LayBaseToken (home) );
+                }
                 forced = true;
             } else {
                 possibleActions.addAll(getNormalTileLays(true));
