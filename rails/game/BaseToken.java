@@ -1,8 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/BaseToken.java,v 1.4 2008/06/04 19:00:30 evos Exp $
- *
- * Created on Jan 1, 2007
- * Change Log:
- */
 package rails.game;
 
 /**
@@ -17,28 +12,30 @@ package rails.game;
  */
 public class BaseToken extends Token {
 
-    PublicCompanyI company;
+    PublicCompany company;
 
     /**
      * Create a BaseToken.
      */
-    public BaseToken(PublicCompanyI company) {
+    
+    // TODO: Seems that company is a duplicated reference to owner
+    public BaseToken(PublicCompany company) {
         super();
         this.company = company;
 
         /* Initially. a BaseToken is always owned by a company. */
-        setHolder(company);
+        this.moveTo(company);
     }
 
     public boolean isPlaced() {
-        return (holder instanceof Stop);
+        return (getOwner() instanceof Stop);
     }
 
     public String getId() {
         return company.getId();
     }
 
-    public PublicCompanyI getCompany() {
+    public PublicCompany getCompany() {
         return company;
     }
 

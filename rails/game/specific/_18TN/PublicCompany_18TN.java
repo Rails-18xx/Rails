@@ -8,7 +8,7 @@ import rails.algorithms.RevenueAdapter;
 import rails.algorithms.RevenueStaticModifier;
 import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
-import rails.game.GameManagerI;
+import rails.game.GameManager;
 import rails.game.PublicCompany;
 import rails.game.model.AbstractModel;
 import rails.game.model.Model;
@@ -23,7 +23,7 @@ public class PublicCompany_18TN extends PublicCompany implements RevenueStaticMo
     }
 
     @Override
-    public void finishConfiguration(GameManagerI gameManager)
+    public void finishConfiguration(GameManager gameManager)
     throws ConfigurationException {
         
         super.finishConfiguration(gameManager);

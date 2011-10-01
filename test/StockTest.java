@@ -48,14 +48,14 @@
  * 
  * List companies = companyManager.getAllCompanies();
  * System.out.println(companies.size() + " companies are registered"); for (int
- * i = 0; i < companies.size(); i++) { CompanyI company = (CompanyI)
+ * i = 0; i < companies.size(); i++) { Company company = (Company)
  * companies.get(i); System.out.println("Company " + i + " is called " +
  * company.getName() + ", and is of type " + company.getType()); if (company
- * instanceof PrivateCompanyI) { System.out.println(" Base price: " +
- * ((PrivateCompanyI) company).getBasePrice() + " revenue: " +
- * ((PrivateCompanyI) company).getRevenue()); } else { System.out.println("
- * Foreground colour: " + ((PublicCompanyI) company).getFgColour() + "
- * background colour: " + ((PublicCompanyI) company).getBgColour()); } } }
+ * instanceof PrivateCompany) { System.out.println(" Base price: " +
+ * ((PrivateCompany) company).getBasePrice() + " revenue: " +
+ * ((PrivateCompany) company).getRevenue()); } else { System.out.println("
+ * Foreground colour: " + ((PublicCompany) company).getFgColour() + "
+ * background colour: " + ((PublicCompany) company).getBgColour()); } } }
  * 
  * public static void StockUITest(String gameName) { Game game =
  * Game.getInstance(); Game.initialise(gameName);

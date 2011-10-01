@@ -12,7 +12,8 @@ import rails.game.model.PriceModel;
  * @author Erik Vos
  */
 @Deprecated
-public class PriceMove implements Move {
+//FIXME: Rewrite this mechanism
+public class PriceMove {
 
     protected StockSpaceI from, to;
     protected PriceModel price;

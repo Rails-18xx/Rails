@@ -18,19 +18,19 @@ import rails.game.*;
 public class DiscardTrain extends PossibleORAction {
 
     // Server settings
-    transient private List<TrainI> ownedTrains = null;
+    transient private List<Train> ownedTrains = null;
     private String[] ownedTrainsUniqueIds;
 
     /** True if discarding trains is mandatory */
     boolean forced = false;
 
     // Client settings
-    transient private TrainI discardedTrain = null;
+    transient private Train discardedTrain = null;
     private String discardedTrainUniqueId;
 
     public static final long serialVersionUID = 1L;
 
-    public DiscardTrain(PublicCompanyI company, List<TrainI> trains) {
+    public DiscardTrain(PublicCompany company, List<Train> trains) {
 
         super();
         this.ownedTrains = trains;
@@ -42,22 +42,22 @@ public class DiscardTrain extends PossibleORAction {
         this.companyName = company.getId();
     }
 
-    public DiscardTrain(PublicCompanyI company, List<TrainI> trains,
+    public DiscardTrain(PublicCompany company, List<Train> trains,
             boolean forced) {
         this(company, trains);
         this.forced = forced;
     }
 
-    public List<TrainI> getOwnedTrains() {
+    public List<Train> getOwnedTrains() {
         return ownedTrains;
     }
 
-    public void setDiscardedTrain(TrainI train) {
+    public void setDiscardedTrain(Train train) {
         discardedTrain = train;
         discardedTrainUniqueId = train.getUniqueId();
     }
 
-    public TrainI getDiscardedTrain() {
+    public Train getDiscardedTrain() {
         return discardedTrain;
     }
 
@@ -71,7 +71,7 @@ public class DiscardTrain extends PossibleORAction {
         StringBuffer b = new StringBuffer();
         b.append("Discard train: ").append(company.getId());
         b.append(" one of");
-        for (TrainI train : ownedTrains) {
+        for (Train train : ownedTrains) {
             b.append(" ").append(train.getId());
         }
         b.append(forced ? "" : ", not").append (" forced");
@@ -110,7 +110,7 @@ public class DiscardTrain extends PossibleORAction {
         }
 
         if (ownedTrainsUniqueIds != null && ownedTrainsUniqueIds.length > 0) {
-            ownedTrains = new ArrayList<TrainI>();
+            ownedTrains = new ArrayList<Train>();
             for (int i = 0; i < ownedTrainsUniqueIds.length; i++) {
                 ownedTrains.add(trainManager.getTrainByUniqueId(ownedTrainsUniqueIds[i]));
             }

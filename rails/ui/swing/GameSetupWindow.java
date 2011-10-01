@@ -514,7 +514,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
     }
 
     private void startGameUIManager(Game game, boolean wasLoaded) {
-        GameManagerI gameManager = game.getGameManager();
+        GameManager gameManager = game.getGameManager();
         String gameUIManagerClassName = gameManager.getClassName(GuiDef.ClassName.GAME_UI_MANAGER);
         try {
             Class<? extends GameUIManager> gameUIManagerClass =

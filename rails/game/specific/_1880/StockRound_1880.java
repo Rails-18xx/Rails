@@ -19,14 +19,14 @@ public class StockRound_1880 extends StockRound {
      * @param aGameManager The GameManager Object needed to initialize the Stock Round
      *
      */
-    public StockRound_1880 (GameManagerI aGameManager) {
+    public StockRound_1880 (GameManager aGameManager) {
         super (aGameManager);
     }
 
     
     @Override
     // The sell-in-same-turn-at-decreasing-price option does not apply here
-    protected int getCurrentSellPrice (PublicCompanyI company) {
+    protected int getCurrentSellPrice (PublicCompany company) {
 
         String companyName = company.getId();
         int price;
@@ -46,7 +46,7 @@ public class StockRound_1880 extends StockRound {
     /** Share price goes down 1 space for any number of shares sold.
      */
     @Override
-    protected void adjustSharePrice (PublicCompanyI company, int numberSold, boolean soldBefore) {
+    protected void adjustSharePrice (PublicCompany company, int numberSold, boolean soldBefore) {
         // No more changes if it has already dropped
         if (!soldBefore) {
             super.adjustSharePrice (company, 1, soldBefore);

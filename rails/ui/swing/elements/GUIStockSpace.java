@@ -8,7 +8,7 @@ import javax.swing.*;
 
 import org.apache.log4j.Logger;
 
-import rails.game.PublicCompanyI;
+import rails.game.PublicCompany;
 import rails.game.StockSpaceI;
 import rails.game.model.Model;
 import rails.ui.swing.GUIToken;
@@ -22,7 +22,7 @@ public class GUIStockSpace extends JLayeredPane implements ViewObject {
 
     int depth = 0;
     Dimension size = new Dimension(40, 40);
-    List<PublicCompanyI> tokenList;
+    List<PublicCompany> tokenList;
 
     private static final Color LIGHT_GRAY = new Color(200, 200, 200);
     
@@ -55,7 +55,7 @@ public class GUIStockSpace extends JLayeredPane implements ViewObject {
                     ? Color.WHITE : Color.BLACK);
             priceLabel.setVerticalTextPosition(SwingConstants.TOP);
 
-            model.addView(this);
+            model.addObserver(this);
             if (model.isStart()) {
                 priceLabel.setBorder(BorderFactory.createLineBorder(Color.red,
                         2));
@@ -88,7 +88,7 @@ public class GUIStockSpace extends JLayeredPane implements ViewObject {
         }
     }
 
-    private void placeToken(List<PublicCompanyI> tokenList) {
+    private void placeToken(List<PublicCompany> tokenList) {
 
         int xCenter = TOKEN_ORIGIN_X;
         int yCenter = TOKEN_ORIGIN_Y;
@@ -97,7 +97,7 @@ public class GUIStockSpace extends JLayeredPane implements ViewObject {
         Dimension size = new Dimension(40, 40);
         Color bgColour;
         Color fgColour;
-        PublicCompanyI co;
+        PublicCompany co;
         GUIToken token;
 
         for (int k = tokenList.size() - 1; k >= 0; k--) {
@@ -129,7 +129,7 @@ public class GUIStockSpace extends JLayeredPane implements ViewObject {
      */
     public void deRegister() {
         if (model != null)
-            model.removeView(this);
+            model.removeObserver(this);
 
     }
 
@@ -141,6 +141,11 @@ public class GUIStockSpace extends JLayeredPane implements ViewObject {
      */
     public void update(String data) {
         recreate();
+    }
+
+    public void update() {
+        // TODO Auto-generated method stub
+        
     }
 
 

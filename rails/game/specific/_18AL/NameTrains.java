@@ -7,11 +7,11 @@ import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.Bank;
-import rails.game.GameManagerI;
+import rails.game.GameManager;
+import rails.game.model.Ownable;
 import rails.game.special.SpecialProperty;
-import rails.game.state.Moveable;
 
-public class NameTrains extends SpecialProperty implements Moveable {
+public class NameTrains extends SpecialProperty implements Ownable {
 
     private String tokenClassName;
     private Class<?> tokenClass;
@@ -67,7 +67,7 @@ public class NameTrains extends SpecialProperty implements Moveable {
     }
 
     @Override
-    public void finishConfiguration (GameManagerI gameManager)
+    public void finishConfiguration (GameManager gameManager)
     throws ConfigurationException {
 
         for (NamedTrainToken token : tokens) {

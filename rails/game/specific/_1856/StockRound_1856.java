@@ -4,6 +4,9 @@ import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.BuyCertificate;
+import rails.game.model.CashOwner;
+import rails.game.model.Owner;
+import rails.game.model.Portfolio;
 import rails.game.state.IntegerState;
 
 public class StockRound_1856 extends StockRound {
@@ -18,7 +21,7 @@ public class StockRound_1856 extends StockRound {
      * @param aGameManager The GameManager Object needed to initialize the Stock Round
      *
      */
-    public StockRound_1856 (GameManagerI aGameManager) {
+    public StockRound_1856 (GameManager aGameManager) {
         super (aGameManager);
 
         sharesSoldSoFar = new IntegerState(this, "CGR_SharesSoldSoFar", 0);
@@ -31,7 +34,7 @@ public class StockRound_1856 extends StockRound {
      * @param company
      */
     @Override
-    protected void checkFlotation(PublicCompanyI company) {
+    protected void checkFlotation(PublicCompany company) {
 
         if (!company.hasStarted() || company.hasFloated()) return;
 
@@ -63,7 +66,7 @@ public class StockRound_1856 extends StockRound {
     }
 
     @Override
-	protected void adjustSharePrice (PublicCompanyI company, int numberSold, boolean soldBefore) {
+	protected void adjustSharePrice (PublicCompany company, int numberSold, boolean soldBefore) {
 
         if (!company.canSharePriceVary()) return;
 
@@ -83,9 +86,9 @@ public class StockRound_1856 extends StockRound {
     }
 
     @Override
-    protected CashHolder getSharePriceRecipient(PublicCompanyI company, Portfolio from, int price) {
+    protected CashOwner getSharePriceRecipient(PublicCompany company, Owner from, int price) {
 
-        CashHolder recipient;
+        CashOwner recipient;
 
         if (price != 0
                 && !company.getId().equalsIgnoreCase(PublicCompany_CGR.NAME)
@@ -117,7 +120,7 @@ public class StockRound_1856 extends StockRound {
                 recipient = bank;
             }
         } else {
-            recipient = from.getOwner();
+            recipient = (CashOwner)from; // TODO: Remove this cast?
         }
         return recipient;
     }
@@ -127,7 +130,7 @@ public class StockRound_1856 extends StockRound {
      */
     @Override
     protected void gameSpecificChecks (Portfolio boughtFrom,
-            PublicCompanyI company) {
+            PublicCompany company) {
 
         if (company.getId().equalsIgnoreCase(PublicCompany_CGR.NAME)
                 && ((PublicCompany_CGR)company).hasTemporaryPresident()) {
@@ -136,9 +139,11 @@ public class StockRound_1856 extends StockRound {
                     currentPlayer.getPortfolio());
             Player oldPresident = company.getPresident();
             ((PublicCompany_CGR)company).setTemporaryPresident(null);
-            company.getPresident().getPortfolio().getShareModel(company).notifyModel();
+            // TODO: is this still required?
+            company.getPresident().getPortfolio().getShareModel(company).update();
             if (currentPlayer != oldPresident) {
-                oldPresident.getPortfolio().getShareModel(company).notifyModel();
+                // TODO: is this still required?
+                oldPresident.getPortfolio().getShareModel(company).update();
             }
         }
     }
@@ -158,8 +163,8 @@ public class StockRound_1856 extends StockRound {
 
             // Player MUST buy an extra single certificate to obtain
             // the President's certificate
-            int cash = currentPlayer.getCash();
-            PublicCertificateI cert1, cert2;
+            int cash = currentPlayer.getCashValue();
+            PublicCertificate cert1, cert2;
             int price1 = 0;
             int price2 = 0;
             int lowestPrice = 999;

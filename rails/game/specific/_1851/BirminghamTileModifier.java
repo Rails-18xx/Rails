@@ -10,7 +10,7 @@ import rails.algorithms.NetworkGraphBuilder;
 import rails.algorithms.NetworkGraphModifier;
 import rails.algorithms.NetworkVertex;
 import rails.game.GameManager;
-import rails.game.GameManagerI;
+import rails.game.GameManager;
 import rails.game.MapHex;
 
 public class BirminghamTileModifier implements NetworkGraphModifier {
@@ -20,7 +20,7 @@ public class BirminghamTileModifier implements NetworkGraphModifier {
 
     public void modifyGraph(NetworkGraphBuilder graphBuilder) {
         
-        GameManagerI gm = GameManager.getInstance();
+        GameManager gm = GameManager.getInstance();
         SimpleGraph<NetworkVertex, NetworkEdge> graph = graphBuilder.getMapGraph();
         
         // 1. check Phase

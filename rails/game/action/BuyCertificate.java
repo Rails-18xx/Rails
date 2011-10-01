@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 
 import rails.game.*;
+import rails.game.model.Portfolio;
 
 /**
  * @author Erik Vos
@@ -22,11 +23,11 @@ public class BuyCertificate extends PossibleAction {
      * The certificate was in fact only used to find the below replacement
      * attributes. It was NOT actually used to select the bought certificate!
      */
-    transient protected PublicCertificateI certificate = null;
+    transient protected PublicCertificate certificate = null;
     protected String certUniqueId = null;
 
     /* Replacement for the above.*/
-    transient protected PublicCompanyI company;
+    transient protected PublicCompany company;
     protected String companyName;
     protected int sharePerCert; // Share % per buyable certificate.
 
@@ -40,7 +41,7 @@ public class BuyCertificate extends PossibleAction {
 
     public static final long serialVersionUID = 1L;
 
-    public BuyCertificate(PublicCompanyI company, int sharePerCert,
+    public BuyCertificate(PublicCompany company, int sharePerCert,
             Portfolio from,
             int price, int maximumNumber) {
         this.company = company;
@@ -54,7 +55,7 @@ public class BuyCertificate extends PossibleAction {
     }
 
     /** Buy a certificate from some portfolio at a given price */
-    public BuyCertificate(PublicCompanyI company, int sharePerCert,
+    public BuyCertificate(PublicCompany company, int sharePerCert,
             Portfolio from,
             int price) {
         this(company, sharePerCert, from, price, 1);
@@ -81,7 +82,7 @@ public class BuyCertificate extends PossibleAction {
         return price;
     }
 
-    public PublicCompanyI getCompany() {
+    public PublicCompany getCompany() {
         return company;
     }
 
@@ -149,7 +150,7 @@ public class BuyCertificate extends PossibleAction {
 
         numberBought = fields.get("numberBought", numberBought);
 
-        GameManagerI gameManager = GameManager.getInstance();
+        GameManager gameManager = GameManager.getInstance();
 
         /* Check for aliases (old company names) */
         CompanyManagerI companyManager = gameManager.getCompanyManager();

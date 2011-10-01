@@ -763,7 +763,7 @@ public class StatusWindow extends JFrame implements ActionListener,
 
     public void endOfGameReport() {
 
-        GameManagerI gm = gameUIManager.getGameManager();
+        GameManager gm = gameUIManager.getGameManager();
 
         if (gm.getGameOverReportedUI())
             return;

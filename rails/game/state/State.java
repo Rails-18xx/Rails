@@ -7,11 +7,8 @@ import rails.game.model.Model;
  * @author freystef
  *
  */
-public interface State extends Item, Model<String> {
-    
-    public void addModel(Notifiable toUpdate);
+public interface State extends Model<String> {
     
     public void addReceiver(Triggerable receiver);
-    
     
 }

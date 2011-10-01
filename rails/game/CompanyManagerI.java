@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyManagerI.java,v 1.15 2010/04/15 19:49:50 evos Exp $ */
 package rails.game;
 
 import java.util.List;
@@ -23,7 +22,7 @@ public interface CompanyManagerI extends ConfigurableComponentI {
      * @param name the name of the company sought
      * @return the Private Company with the supplied name
      */
-    PrivateCompanyI getPrivateCompany(String name);
+    PrivateCompany getPrivateCompany(String name);
 
     /**
      * Returns the Public Company identified by the supplied name.
@@ -31,21 +30,21 @@ public interface CompanyManagerI extends ConfigurableComponentI {
      * @param name the name of the company sought
      * @return the Public Company with the supplied name
      */
-    PublicCompanyI getPublicCompany(String name);
+    PublicCompany getPublicCompany(String name);
 
     /**
      * Gives a list of all the registered Private Companies.
      *
      * @return a list of all the registered Private Companies
      */
-    List<PrivateCompanyI> getAllPrivateCompanies();
+    List<PrivateCompany> getAllPrivateCompanies();
 
     /**
      * Gives a list of all the registered Private Companies.
      *
      * @return a list of all the registered Private Companies
      */
-    List<PublicCompanyI> getAllPublicCompanies();
+    List<PublicCompany> getAllPublicCompanies();
 
     /**
      * Find a company by type and name
@@ -54,7 +53,7 @@ public interface CompanyManagerI extends ConfigurableComponentI {
      * @param name The name of the Company
      * @return The company object, or null if not found.
      */
-    public CompanyI getCompany(String type, String name);
+    public Company getCompany(String type, String name);
 
     public String checkAlias (String alias);
     public String checkAliasInCertId (String certId);
@@ -63,7 +62,7 @@ public interface CompanyManagerI extends ConfigurableComponentI {
 
     public void closeAllPrivates();
 
-    public List<PrivateCompanyI> getPrivatesOwnedByPlayers();
+    public List<PrivateCompany> getPrivatesOwnedByPlayers();
 
     public StartPacket getStartPacket (int index);
     public StartPacket getStartPacket (String name);

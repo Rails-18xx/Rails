@@ -1,7 +1,7 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ConfigurableComponentI.java,v 1.7 2009/10/31 17:08:26 evos Exp $ */
 package rails.common.parser;
 
-import rails.game.GameManagerI;
+import rails.game.GameManager;
 
 /**
  * Interface for rails.game components which can be configured from an XML
@@ -31,7 +31,7 @@ public interface ConfigurableComponentI {
      * the 'child' to access any other object without the need to resort to
      * static calls where possible. 
      */
-    void finishConfiguration (GameManagerI parent)
+    void finishConfiguration (GameManager parent)
     throws ConfigurationException;
 
 }

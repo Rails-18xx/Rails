@@ -10,6 +10,8 @@ import java.util.List;
 import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.BuyCertificate;
+import rails.game.model.Owner;
+import rails.game.model.Portfolio;
 
 public class StockRound_1835 extends StockRound {
 
@@ -19,7 +21,7 @@ public class StockRound_1835 extends StockRound {
      * @param aGameManager The GameManager Object needed to initialize the Stock Round
      *
      */
-    public StockRound_1835 (GameManagerI aGameManager) {
+    public StockRound_1835 (GameManager aGameManager) {
         super (aGameManager);
     }
 
@@ -30,22 +32,20 @@ public class StockRound_1835 extends StockRound {
         if (companyBoughtThisTurnWrapper.get() != null) return;
 
         List<Player> otherPlayers = new ArrayList<Player>();
-        Portfolio holder;
-        CashHolder owner;
+        Owner owner;
         Player otherPlayer;
         int price;
-        int cash = currentPlayer.getCash();
+        int cash = currentPlayer.getCashValue();
 
         // Nationalization
-        for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
+        for (PublicCompany company : companyManager.getAllPublicCompanies()) {
             if (!company.getTypeName().equalsIgnoreCase("Major")) continue;
             if (!company.hasFloated()) continue;
             if (company.getPresident() != currentPlayer) continue;
             if (currentPlayer.getPortfolio().getShare(company) >= 55) {
                 otherPlayers.clear();
-                for (PublicCertificateI cert : company.getCertificates()) {
-                    holder = (Portfolio)cert.getHolder();
-                    owner = holder.getOwner(); 
+                for (PublicCertificate cert : company.getCertificates()) {
+                    owner = cert.getHolder().getOwner(); 
                     /* Would the player exceed the total certificate limit? */
                     StockSpaceI stockSpace = company.getCurrentSpace();
                     if ((stockSpace == null || !stockSpace.isNoCertLimit()) && !mayPlayerBuyCertificate(
@@ -57,7 +57,7 @@ public class StockRound_1835 extends StockRound {
                             price = (int)(1.5 * company.getCurrentPriceModel().getPrice().getPrice());
                             if (price <= cash) {
                                 possibleActions.add(new BuyCertificate (company, cert.getShare(),
-                                        holder,
+                                        cert.getPortfolio(),
                                     (int)(1.5 * company.getCurrentPriceModel().getPrice().getPrice()),
                                     1));
                             }
@@ -70,7 +70,7 @@ public class StockRound_1835 extends StockRound {
     }
 
     @Override
-    public boolean checkAgainstHoldLimit(Player player, PublicCompanyI company, int number) {
+    public boolean checkAgainstHoldLimit(Player player, PublicCompany company, int number) {
         return true;
     }
 
@@ -85,7 +85,7 @@ public class StockRound_1835 extends StockRound {
 
     @Override
     // The sell-in-same-turn-at-decreasing-price option does not apply here
-    protected int getCurrentSellPrice (PublicCompanyI company) {
+    protected int getCurrentSellPrice (PublicCompany company) {
 
         String companyName = company.getId();
         int price;
@@ -104,7 +104,7 @@ public class StockRound_1835 extends StockRound {
     /** Share price goes down 1 space for any number of shares sold.
      */
     @Override
-    protected void adjustSharePrice (PublicCompanyI company, int numberSold, boolean soldBefore) {
+    protected void adjustSharePrice (PublicCompany company, int numberSold, boolean soldBefore) {
         // No more changes if it has already dropped
         if (!soldBefore) {
             super.adjustSharePrice (company, 1, soldBefore);
@@ -123,7 +123,7 @@ public class StockRound_1835 extends StockRound {
      */
     @Override
     protected void gameSpecificChecks (Portfolio boughtFrom,
-            PublicCompanyI company) {
+            PublicCompany company) {
 
         if (boughtFrom != ipo) return;
 

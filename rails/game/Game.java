@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Game.java,v 1.56 2010/06/06 13:01:00 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -194,7 +193,7 @@ public class Game {
                 DisplayBuffer.add(startError);
                 return null;
             }
-            GameManagerI gameManager = game.getGameManager();
+            GameManager gameManager = game.getGameManager();
 
             log.debug("Starting to execute loaded actions");
 
@@ -286,7 +285,7 @@ public class Game {
 
     /*----- Getters -----*/
 
-    public GameManagerI getGameManager() {
+    public GameManager getGameManager() {
         return gameManager;
     }
 

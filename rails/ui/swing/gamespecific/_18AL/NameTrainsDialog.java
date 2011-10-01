@@ -92,7 +92,7 @@ public class NameTrainsDialog extends JDialog implements ActionListener {
 
         int x = 2;
         int y = 0;
-        for (TrainI train : trains) {
+        for (Train train : trains) {
             addItem(new JLabel(train.getId(), SwingConstants.CENTER), x++, y);
         }
         addItem(new JLabel("None", SwingConstants.CENTER), x, y);

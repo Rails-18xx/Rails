@@ -35,7 +35,7 @@ public class GameManager_1835 extends GameManager {
                 previousRound = null;
             }
         } else {
-        	PhaseI phase = getCurrentPhase();
+        	Phase phase = getCurrentPhase();
         	if ((phase.getName().equals("4") || phase.getName().equals("4+4")
         	                || phase.getName().equals("5"))
         	            && !PrussianFormationRound.prussianIsComplete(this)) {
@@ -65,7 +65,7 @@ public class GameManager_1835 extends GameManager {
     @Override
     public int getPlayerCertificateLimit(Player player) {
         int limit = playerCertificateLimit.intValue();
-        for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
+        for (PublicCompany company : companyManager.getAllPublicCompanies()) {
             if (company.getTypeName().equalsIgnoreCase("Major")
                     && company.getPresident() == player
                     && player.getPortfolio().getShare(company) >= 80) limit++;

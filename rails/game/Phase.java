@@ -1,16 +1,21 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Phase.java,v 1.19 2010/03/21 17:43:50 evos Exp $ */
 package rails.game;
 
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
 import rails.common.LocalText;
+import rails.common.parser.ConfigurableComponentI;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
+import rails.game.model.Owner;
 import rails.util.Util;
 
-public class Phase implements PhaseI {
+public class Phase implements ConfigurableComponentI {
 
     protected int index;
 
@@ -68,8 +73,8 @@ public class Phase implements PhaseI {
      * Set actions have a name and may have a value. */
     protected Map<String, String> actions;
 
-    private GameManagerI gameManager;
-    private Portfolio lastTrainBuyer;
+    private GameManager gameManager;
+    private Owner lastTrainBuyer;
 
     protected String extraInfo = "";
 
@@ -202,7 +207,7 @@ public class Phase implements PhaseI {
 
     }
 
-    public void finishConfiguration (GameManagerI gameManager)
+    public void finishConfiguration (GameManager gameManager)
     throws ConfigurationException {
 
         this.gameManager = gameManager;
@@ -264,7 +269,7 @@ public class Phase implements PhaseI {
         }
     }
 
-    public void setLastTrainBuyer(Portfolio lastTrainBuyer) {
+    public void setLastTrainBuyer(Owner lastTrainBuyer) {
         this.lastTrainBuyer = lastTrainBuyer;
     }
 

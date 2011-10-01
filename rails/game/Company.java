@@ -1,23 +1,33 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Company.java,v 1.18 2010/05/24 11:20:42 evos Exp $ */
 package rails.game;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import com.google.common.collect.ImmutableList;
+
 import rails.common.parser.ConfigurableComponentI;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
+import rails.game.model.DirectOwner;
+import rails.game.model.HolderModel;
+import rails.game.model.Portfolio;
 import rails.game.special.SpecialPropertyI;
-import rails.game.state.AbstractItem;
 import rails.game.state.BooleanState;
-import rails.game.state.Holder;
 import rails.util.Util;
 
-public abstract class Company extends AbstractItem implements CompanyI, ConfigurableComponentI,
+public abstract class Company extends DirectOwner implements ConfigurableComponentI,
 Cloneable, Comparable<Company> {
 
+    /** The name of the XML tag used to configure a company. */
+    public static final String COMPANY_ELEMENT_ID = "Company";
+
+    /** The name of the XML attribute for the company's name. */
+    public static final String COMPANY_NAME_TAG = "name";
+
+    /** The name of the XML attribute for the company's type. */
+    public static final String COMPANY_TYPE_TAG = "type";
+    
     protected String name;
     protected String longName;
     protected String alias = null; // To allow reloading files with old names after name changes
@@ -48,7 +58,7 @@ Cloneable, Comparable<Company> {
     protected BooleanState closedObject;
 
     // Moved here from PrivayeCOmpany on behalf of 1835
-    protected List<SpecialPropertyI> specialProperties = null;
+    protected HolderModel<SpecialPropertyI> specialProperties = null;
 
     protected static Logger log =
         Logger.getLogger(Company.class.getPackage().getName());
@@ -83,10 +93,11 @@ Cloneable, Comparable<Company> {
                     log.fatal ("Cannot instantiate "+className, e);
                     System.exit(-1);
                 }
-                sp.setCompany(this);
-                if (specialProperties == null) specialProperties = new ArrayList<SpecialPropertyI>(2);
-                specialProperties.add(sp);
+                if (specialProperties == null) {
+                    specialProperties = HolderModel.create(this, SpecialPropertyI.class);
+                }
                 sp.configureFromXML(spTag);
+                sp.moveTo(this);
                 parentInfoText += "<br>" + sp.getInfo();
             }
         }
@@ -95,8 +106,8 @@ Cloneable, Comparable<Company> {
     /**
      * @return ArrayList of all special properties we have.
      */
-    public List<SpecialPropertyI> getSpecialProperties() {
-        return specialProperties;
+    public ImmutableList<SpecialPropertyI> getSpecialProperties() {
+        return specialProperties.view();
     }
 
     /**
@@ -108,6 +119,10 @@ Cloneable, Comparable<Company> {
         return specialProperties != null && !specialProperties.isEmpty();
     }
 
+    public boolean hasPortfolio() {
+        return true;
+    }
+    
     /**
      * Get the Portfolio of this company, containing all privates and
      * certificates owned..
@@ -207,9 +222,11 @@ Cloneable, Comparable<Company> {
         value = i;
     }
 
-    public Holder getHolder() {
+    // TODO: Check if this is still required, moved to subclasses
+/*    public Portfolio  getHolder() {
         return portfolio;
     }
+*/
 
     @Override
     public Object clone() throws CloneNotSupportedException {
@@ -217,12 +234,12 @@ Cloneable, Comparable<Company> {
     }
 
     /**
-     * Stub method implemented to comply with TokenHolderI interface. Always
+     * Stub method implemented to comply with HolderModel<Token>I interface. Always
      * returns false.
      *
      * Use addToken(MapHex hex) method instead.
      */
-    public boolean addToken(CompanyI company, int position) {
+    public boolean addToken(Company company, int position) {
         return false;
     }
 
@@ -232,7 +249,7 @@ Cloneable, Comparable<Company> {
         + " $" + this.getValue();
     }
 
-    public boolean equals(CompanyI company) {
+    public boolean equals(Company company) {
         if (this.companyNumber == company.getCompanyNumber()
                 && this.name.equals(company.getId())
                 && this.type.equals(company.getType())) return true;
@@ -251,10 +268,10 @@ Cloneable, Comparable<Company> {
         return result;
     }
 
-    public static String joinNamesWithDelimiter (List<CompanyI> companies, String delimiter) {
+    public static String joinNamesWithDelimiter (List<Company> companies, String delimiter) {
         StringBuilder b = new StringBuilder("");
         if (companies != null) {
-            for (CompanyI company : companies) {
+            for (Company company : companies) {
                 if (b.length() > 0) b.append(delimiter);
                 b.append(company.getId());
             }

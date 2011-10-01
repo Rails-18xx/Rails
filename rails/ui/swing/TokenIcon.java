@@ -9,8 +9,8 @@ import java.awt.geom.Ellipse2D;
 
 import javax.swing.Icon;
 
-/** Inner class TokenIcon is used to draw a token on the Upgrade chart. */
-class TokenIcon implements Icon {
+/** Inner class Tokencon is used to draw a token on the Upgrade chart. */
+class Tokencon implements Icon {
 
     public static final int DEFAULT_DIAMETER = 21;
 
@@ -19,7 +19,7 @@ class TokenIcon implements Icon {
     private Color bgColour;
     private String text;
 
-    public TokenIcon(int diameter, Color fgColour, Color bgColour, String text) {
+    public Tokencon(int diameter, Color fgColour, Color bgColour, String text) {
 
         this.diameter = diameter;
         this.fgColour = fgColour;

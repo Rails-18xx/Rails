@@ -6,16 +6,16 @@ import rails.game.*;
 
 public class OperatingRound_1825 extends OperatingRound {
 
-    public OperatingRound_1825(GameManagerI gameManager) {
+    public OperatingRound_1825(GameManager gameManager) {
         super(gameManager);
     }
 
     @Override
-    public List<PublicCompanyI> setOperatingCompanies() {
-        Map<Integer, PublicCompanyI> operatingCompanies = new TreeMap<Integer, PublicCompanyI>();
+    public List<PublicCompany> setOperatingCompanies() {
+        Map<Integer, PublicCompany> operatingCompanies = new TreeMap<Integer, PublicCompany>();
         int space;
         int key;
-        for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
+        for (PublicCompany company : companyManager.getAllPublicCompanies()) {
             PublicCompany_1825 companycasted = (PublicCompany_1825)company;
             if (!canCompanyOperateThisRound(companycasted)) continue;    
             if (!canCompanyOperateThisRound(company)) continue;
@@ -31,12 +31,12 @@ public class OperatingRound_1825 extends OperatingRound {
             key = 1000000 - (space - companycasted.getFormationOrderIndex());
             operatingCompanies.put(new Integer(key), companycasted);
             }
-        return new ArrayList<PublicCompanyI>(operatingCompanies.values());
+        return new ArrayList<PublicCompany>(operatingCompanies.values());
      }
 
     @Override
-    public List<PublicCompanyI> setOperatingCompanies(List<PublicCompanyI> oldOperatingCompanies,
-            PublicCompanyI lastOperatingCompany) {
+    public List<PublicCompany> setOperatingCompanies(List<PublicCompany> oldOperatingCompanies,
+            PublicCompany lastOperatingCompany) {
         return setOperatingCompanies();
     }
 }

@@ -42,7 +42,7 @@ public class GameUIManager implements DialogOwner {
 
     public static ImageLoader imageLoader;
 
-    protected GameManagerI gameManager;
+    protected GameManager gameManager;
     protected PossibleAction lastAction;
     protected ActionPerformer activeWindow = null;
     protected StartRound startRound;
@@ -98,7 +98,7 @@ public class GameUIManager implements DialogOwner {
 
     }
 
-    public void init (GameManagerI gameManager, boolean wasLoaded) {
+    public void init (GameManager gameManager, boolean wasLoaded) {
 
         instance = this;
         this.gameManager = gameManager;
@@ -518,9 +518,9 @@ public class GameUIManager implements DialogOwner {
 
     public void discardTrains (DiscardTrain dt) {
 
-        PublicCompanyI c = dt.getCompany();
+        PublicCompany c = dt.getCompany();
         String playerName = dt.getPlayerName();
-        List<TrainI> trains = dt.getOwnedTrains();
+        List<Train> trains = dt.getOwnedTrains();
         int size = trains.size() + (dt.isForced() ? 0 : 1);
         List<String> trainOptions =
                 new ArrayList<String>(size);
@@ -556,7 +556,7 @@ public class GameUIManager implements DialogOwner {
         if (discardedTrainName != null) {
             int index = trainOptions.indexOf(discardedTrainName);
             if (index >= offset) {
-                TrainI discardedTrain =
+                Train discardedTrain =
                         trains.get(trainOptions.indexOf(discardedTrainName)-offset);
                 dt.setDiscardedTrain(discardedTrain);
             }
@@ -990,7 +990,7 @@ public class GameUIManager implements DialogOwner {
         return imageLoader;
     }
 
-    public GameManagerI getGameManager() {
+    public GameManager getGameManager() {
         return gameManager;
     }
 
@@ -1034,11 +1034,11 @@ public class GameUIManager implements DialogOwner {
         return gameManager.getPriorityPlayer();
     }
 
-    public PhaseI getCurrentPhase() {
+    public Phase getCurrentPhase() {
         return gameManager.getCurrentPhase();
     }
 
-    public List<PublicCompanyI> getAllPublicCompanies(){
+    public List<PublicCompany> getAllPublicCompanies(){
         return gameManager.getAllPublicCompanies();
     }
 

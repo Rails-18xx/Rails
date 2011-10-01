@@ -2,11 +2,17 @@ package rails.game;
 
 import java.util.*;
 
+import com.google.common.collect.ImmutableList;
+
 import rails.common.DisplayBuffer;
 import rails.common.GuiDef;
 import rails.common.LocalText;
 import rails.common.parser.GameOption;
 import rails.game.action.*;
+import rails.game.model.CashOwner;
+import rails.game.model.Owner;
+import rails.game.model.Owners;
+import rails.game.model.Portfolio;
 import rails.game.special.*;
 import rails.game.state.*;
 
@@ -23,8 +29,8 @@ public class StockRound extends Round {
     protected Player currentPlayer;
     protected Player startingPlayer;
 
-    protected GenericState<PublicCompanyI> companyBoughtThisTurnWrapper =
-        new GenericState<PublicCompanyI>(this, "CompanyBoughtThisTurn");
+    protected GenericState<PublicCompany> companyBoughtThisTurnWrapper =
+        new GenericState<PublicCompany>(this, "CompanyBoughtThisTurn");
 
     protected BooleanState hasSoldThisTurnBeforeBuying =
         new BooleanState(this, "HoldSoldBeforeBuyingThisTurn", false);
@@ -33,18 +39,18 @@ public class StockRound extends Round {
 
     protected IntegerState numPasses = new IntegerState(this, "StockRoundPasses");
 
-    protected Map<String, StockSpaceI> sellPrices =
-        new HashMap<String, StockSpaceI>();
+    protected Map<PublicCompany, StockSpaceI> sellPrices =
+        new HashMap<PublicCompany, StockSpaceI>();
 
     /** Records lifted share selling obligations in the current round<p>
      * Example: >60% ownership allowed after a merger in 18EU.
      */
-    protected HashSetState<PublicCompanyI> sellObligationLifted = null;
+    protected HashSetState<PublicCompany> sellObligationLifted = null;
 
     /* Transient data needed for rule enforcing */
     /** HashMap per player containing a HashMap per company */
-    protected HashMultimapState<Player, PublicCompanyI> playersThatSoldThisRound =
-        new HashMultimapState<Player, PublicCompanyI>(this, "playersThatSoldThisRound");
+    protected HashMultimapState<Player, PublicCompany> playersThatSoldThisRound =
+        new HashMultimapState<Player, PublicCompany>(this, "playersThatSoldThisRound");
 
     /* Rule constants */
     static protected final int SELL_BUY_SELL = 0;
@@ -64,7 +70,7 @@ public class StockRound extends Round {
      * @param aGameManager The GameManager Object needed to initialize the Round Class
      *
      */
-    public StockRound (GameManagerI aGameManager) {
+    public StockRound (GameManager aGameManager) {
         super (aGameManager);
 
         if (numberOfPlayers == 0)
@@ -157,24 +163,24 @@ public class StockRound extends Round {
     public void setBuyableCerts() {
         if (!mayCurrentPlayerBuyAnything()) return;
 
-        List<PublicCertificateI> certs;
-        PublicCertificateI cert;
-        PublicCompanyI comp;
+        List<PublicCertificate> certs;
+        PublicCertificate cert;
+        PublicCompany comp;
         StockSpaceI stockSpace;
         Portfolio from;
         int price;
         int number;
         int unitsForPrice;
 
-        int playerCash = currentPlayer.getCash();
+        int playerCash = currentPlayer.getCashValue();
 
         /* Get the next available IPO certificates */
         // Never buy more than one from the IPO
-        PublicCompanyI companyBoughtThisTurn =
-            (PublicCompanyI) companyBoughtThisTurnWrapper.get();
+        PublicCompany companyBoughtThisTurn =
+            (PublicCompany) companyBoughtThisTurnWrapper.get();
         if (companyBoughtThisTurn == null) {
             from = ipo;
-            Map<String, List<PublicCertificateI>> map =
+            Map<String, List<PublicCertificate>> map =
                 from.getCertsPerCompanyMap();
             int shares;
 
@@ -186,7 +192,7 @@ public class StockRound extends Round {
                 int lowestIndex = 99;
                 cert = null;
                 int index;
-                for (PublicCertificateI c : certs) {
+                for (PublicCertificate c : certs) {
                     index = c.getIndexInCompany();
                     if (index < lowestIndex) {
                         lowestIndex = index;
@@ -242,10 +248,10 @@ public class StockRound extends Round {
 
         /* Get the unique Pool certificates and check which ones can be bought */
         from = pool;
-        Map<String, List<PublicCertificateI>> map =
+        Map<String, List<PublicCertificate>> map =
             from.getCertsPerCompanyMap();
         /* Allow for multiple share unit certificates (e.g. 1835) */
-        PublicCertificateI[] uniqueCerts;
+        PublicCertificate[] uniqueCerts;
         int[] numberOfCerts;
         int shares;
         int shareUnit;
@@ -276,9 +282,9 @@ public class StockRound extends Round {
             /* Check what share multiples are available
              * Normally only 1, but 1 and 2 in 1835. Allow up to 4.
              */
-            uniqueCerts = new PublicCertificateI[5];
+            uniqueCerts = new PublicCertificate[5];
             numberOfCerts = new int[5];
-            for (PublicCertificateI cert2 : certs) {
+            for (PublicCertificate cert2 : certs) {
                 shares = cert2.getShares();
                 if (maxNumberOfSharesToBuy < shares) continue;
                 numberOfCerts[shares]++;
@@ -321,10 +327,11 @@ public class StockRound extends Round {
         // Get any shares in company treasuries that can be bought
         if (gameManager.canAnyCompanyHoldShares()) {
 
-            for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
-                certs =
-                    company.getPortfolio().getCertificatesPerCompany(
-                            company.getId());
+            for (PublicCompany company : companyManager.getAllPublicCompanies()) {
+                // TODO: Has to be rewritten (director)
+                certs = ImmutableList.copyOf(
+                    company.getPortfolio().getCertificates(
+                            company));
                 if (certs == null || certs.isEmpty()) continue;
                 cert = certs.get(0);
                 if (isSaleRecorded(currentPlayer, company)) continue;
@@ -362,7 +369,7 @@ public class StockRound extends Round {
          * First check of which companies the player owns stock, and what
          * maximum percentage he is allowed to sell.
          */
-        for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
+        for (PublicCompany company : companyManager.getAllPublicCompanies()) {
 
             // Check if shares of this company can be sold at all
             if (!mayPlayerSellShareOfCompany(company)) continue;
@@ -407,8 +414,7 @@ public class StockRound extends Round {
              */
             // Take care for max. 4 share units per share
             int[] shareCountPerUnit = new int[5];
-            compName = company.getId();
-            for (PublicCertificateI c : playerPortfolio.getCertificatesPerCompany(compName)) {
+            for (PublicCertificate c : playerPortfolio.getCertificates(company)) {
                 if (c.isPresidentShare()) {
                     shareCountPerUnit[1] += c.getShares();
                 } else {
@@ -443,7 +449,7 @@ public class StockRound extends Round {
                 }
                 if (number <= 0) continue;
 
-                possibleActions.add(new SellShares(compName, i, number, price));
+                possibleActions.add(new SellShares(company.getId(), i, number, price));
 
             }
         }
@@ -533,14 +539,14 @@ public class StockRound extends Round {
      * @return True if the company could be started. False indicates an error.
      */
     public boolean startCompany(String playerName, StartCompany action) {
-        PublicCompanyI company = action.getCompany();
+        PublicCompany company = action.getCompany();
         int price = action.getPrice();
         int shares = action.getNumberBought();
 
         String errMsg = null;
         StockSpaceI startSpace = null;
         int numberOfCertsToBuy = 0;
-        PublicCertificateI cert = null;
+        PublicCertificate cert = null;
         String companyName = company.getId();
         int cost = 0;
 
@@ -605,7 +611,7 @@ public class StockRound extends Round {
 
             // Check if the Player has the money.
             cost = shares * price;
-            if (currentPlayer.getCash() < cost) {
+            if (currentPlayer.getCashValue() < cost) {
                 errMsg = LocalText.getText("NoMoney");
                 break;
             }
@@ -627,7 +633,7 @@ public class StockRound extends Round {
         // All is OK, now start the company
         company.start(startSpace);
 
-        CashHolder priceRecipient = getSharePriceRecipient (company, ipo, price);
+        CashOwner priceRecipient = getSharePriceRecipient (company, ipo, price);
 
         // Transfer the President's certificate
         cert.moveTo(currentPlayer.getPortfolio());
@@ -641,7 +647,7 @@ public class StockRound extends Round {
         }
 
         // Pay for these shares
-        MoveUtils.cashMove (currentPlayer, priceRecipient, cost);
+        Owners.cashMove (currentPlayer, priceRecipient, cost);
 
         ReportBuffer.add(LocalText.getText("START_COMPANY_LOG",
                 playerName,
@@ -677,7 +683,7 @@ public class StockRound extends Round {
      */
     public boolean buyShares(String playerName, BuyCertificate action) {
 
-        PublicCompanyI company = action.getCompany();
+        PublicCompany company = action.getCompany();
         Portfolio from = action.getFromPortfolio();
         String companyName = company.getId();
         int number = action.getNumberBought();
@@ -725,8 +731,8 @@ public class StockRound extends Round {
 
             // The player may not have bought this turn, unless the company
             // bought before and now is in the brown area.
-            PublicCompanyI companyBoughtThisTurn =
-                (PublicCompanyI) companyBoughtThisTurnWrapper.get();
+            PublicCompany companyBoughtThisTurn =
+                (PublicCompany) companyBoughtThisTurnWrapper.get();
             if (companyBoughtThisTurn != null
                     && (companyBoughtThisTurn != company || !company.getCurrentSpace().isNoBuyLimit())) {
                 errMsg = LocalText.getText("AlreadyBought", playerName);
@@ -758,7 +764,7 @@ public class StockRound extends Round {
 
             // Check if player would not exceed the certificate limit.
             // (shortcut: assume 1 cert == 1 certificate)
-            PublicCertificateI cert = from.findCertificate(company, sharePerCert/shareUnit, false);
+            PublicCertificate cert = from.findCertificate(company, sharePerCert/shareUnit, false);
             if (cert == null) {
                 log.fatal("Cannot find "+sharePerCert+"% of "+company.getId()+" in "+from.getId());
             }
@@ -784,7 +790,7 @@ public class StockRound extends Round {
             cost = shares * price / company.getShareUnitsForSharePrice();
 
             // Check if the Player has the money.
-            if (currentPlayer.getCash() < cost) {
+            if (currentPlayer.getCashValue() < cost) {
                 errMsg = LocalText.getText("NoMoney");
                 break;
             }
@@ -805,7 +811,7 @@ public class StockRound extends Round {
         // All seems OK, now buy the shares.
         changeStack.start(true);
 
-        CashHolder priceRecipient = getSharePriceRecipient (company, from, cost);
+        CashOwner priceRecipient = getSharePriceRecipient (company, from, cost);
 
         if (number == 1) {
             ReportBuffer.add(LocalText.getText("BUY_SHARE_LOG",
@@ -826,7 +832,7 @@ public class StockRound extends Round {
         }
         ReportBuffer.getAllWaiting();
 
-        PublicCertificateI cert2;
+        PublicCertificate cert2;
         for (int i = 0; i < number; i++) {
             cert2 = from.findCertificate(company, sharePerCert/shareUnit, false);
             if (cert2 == null) {
@@ -835,7 +841,7 @@ public class StockRound extends Round {
             }
             cert2.moveTo(currentPlayer.getPortfolio());
         }
-        MoveUtils.cashMove (currentPlayer, priceRecipient, cost);
+        Owners.cashMove (currentPlayer, priceRecipient, cost);
 
         if (priceRecipient != from.getOwner()) {
             ReportBuffer.add(LocalText.getText("PriceIsPaidTo",
@@ -862,7 +868,7 @@ public class StockRound extends Round {
 
     /** Stub, may be overridden in subclasses */
     protected void gameSpecificChecks(Portfolio boughtFrom,
-            PublicCompanyI company) {
+            PublicCompany company) {
 
     }
 
@@ -878,16 +884,17 @@ public class StockRound extends Round {
      * @param cert
      * @return
      */
-    protected CashHolder getSharePriceRecipient (PublicCompanyI comp,
-            Portfolio from, int price) {
+    protected CashOwner getSharePriceRecipient (PublicCompany comp,
+            Owner from, int price) {
 
-        CashHolder recipient;
+        CashOwner recipient;
         if (comp.hasFloated()
                 && from == ipo
-                && comp.getCapitalisation() == PublicCompanyI.CAPITALISE_INCREMENTAL) {
+                && comp.getCapitalisation() == PublicCompany.CAPITALISE_INCREMENTAL) {
             recipient = comp;
         } else {
-            recipient = from.getOwner();
+            // FIXME: It could be one of the Bank portfolios
+            recipient = (CashOwner)from;
         }
         return recipient;
     }
@@ -896,20 +903,20 @@ public class StockRound extends Round {
      * by putting these in the IPO.
      * @param company The company to be released.
      */
-    protected void releaseCompanyShares(PublicCompanyI company) {
+    protected void releaseCompanyShares(PublicCompany company) {
 
-        for (PublicCertificateI cert : company.getCertificates()) {
+        for (PublicCertificate cert : company.getCertificates()) {
             if (cert.getHolder().equals(unavailable)) {
                 cert.moveTo(ipo);
             }
         }
     }
 
-    protected void recordSale(Player player, PublicCompanyI company) {
+    protected void recordSale(Player player, PublicCompany company) {
         playersThatSoldThisRound.put(player, company);
     }
 
-    protected boolean isSaleRecorded(Player player, PublicCompanyI company) {
+    protected boolean isSaleRecorded(Player player, PublicCompany company) {
         return playersThatSoldThisRound.containsEntry(player, company);
     }
 
@@ -921,12 +928,12 @@ public class StockRound extends Round {
         String playerName = currentPlayer.getId();
         String errMsg = null;
         String companyName = action.getCompanyName();
-        PublicCompanyI company =
+        PublicCompany company =
             companyManager.getPublicCompany(action.getCompanyName());
-        PublicCertificateI cert = null;
-        PublicCertificateI presCert = null;
-        List<PublicCertificateI> certsToSell =
-            new ArrayList<PublicCertificateI>();
+        PublicCertificate cert = null;
+        PublicCertificate presCert = null;
+        List<PublicCertificate> certsToSell =
+            new ArrayList<PublicCertificate>();
         Player dumpedPlayer = null;
         int presSharesToSell = 0;
         int numberToSell = action.getNumberSold();
@@ -978,8 +985,8 @@ public class StockRound extends Round {
             }
 
             // Find the certificates to sell
-            Iterator<PublicCertificateI> it =
-                portfolio.getCertificatesPerCompany(companyName).iterator();
+            Iterator<PublicCertificate> it =
+                portfolio.getCertificates(company).iterator();
             while (numberToSell > 0 && it.hasNext()) {
                 cert = it.next();
                 if (cert.isPresidentShare()) {
@@ -1051,9 +1058,9 @@ public class StockRound extends Round {
         int cashAmount = numberSold * price * shareUnits;
 
         // Save original price as it may be reused in subsequent sale actions in the same turn
-        boolean soldBefore = sellPrices.containsKey(companyName);
+        boolean soldBefore = sellPrices.containsKey(company);
         if (!soldBefore) {
-            sellPrices.put(companyName, company.getCurrentSpace());
+            sellPrices.put(company, company.getCurrentSpace());
         }
 
         changeStack.start(true);
@@ -1094,8 +1101,8 @@ public class StockRound extends Round {
         return true;
     }
 
-    protected void executeShareTransfer (PublicCompanyI company,
-    		List<PublicCertificateI> certsToSell,
+    protected void executeShareTransfer (PublicCompany company,
+    		List<PublicCertificate> certsToSell,
     		Player dumpedPlayer, int presSharesToSell) {
 
         Portfolio portfolio = currentPlayer.getPortfolio();
@@ -1107,7 +1114,7 @@ public class StockRound extends Round {
                     company.getId() ));
             // First swap the certificates
             Portfolio dumpedPortfolio = dumpedPlayer.getPortfolio();
-            List<PublicCertificateI> swapped =
+            List<PublicCertificate> swapped =
                 portfolio.swapPresidentCertificate(company, dumpedPortfolio);
             for (int i = 0; i < presSharesToSell; i++) {
                 certsToSell.add(swapped.get(i));
@@ -1134,14 +1141,14 @@ public class StockRound extends Round {
         }
     }
 
-    protected int getCurrentSellPrice (PublicCompanyI company) {
+    protected int getCurrentSellPrice (PublicCompany company) {
 
         String companyName = company.getId();
         int price;
 
-        if (sellPrices.containsKey(companyName)
+        if (sellPrices.containsKey(company)
                 && GameOption.convertValueToBoolean(getGameOption("SeparateSalesAtSamePrice"))) {
-            price = (sellPrices.get(companyName)).getPrice();
+            price = (sellPrices.get(company)).getPrice();
         } else {
             price = company.getCurrentSpace().getPrice();
         }
@@ -1150,7 +1157,7 @@ public class StockRound extends Round {
         return price;
     }
 
-    protected void adjustSharePrice (PublicCompanyI company, int numberSold, boolean soldBefore) {
+    protected void adjustSharePrice (PublicCompany company, int numberSold, boolean soldBefore) {
 
         if (!company.canSharePriceVary()) return;
 
@@ -1189,9 +1196,9 @@ public class StockRound extends Round {
 
     public boolean executeExchangeForShare (ExchangeForShare sp) {
 
-        PublicCompanyI publicCompany =
+        PublicCompany publicCompany =
             companyManager.getPublicCompany(sp.getPublicCompanyName());
-        CompanyI privateCompany = sp.getOriginalCompany();
+        Company privateCompany = sp.getOriginalCompany();
         Portfolio portfolio = privateCompany.getPortfolio();
         Player player = null;
         String errMsg = null;
@@ -1313,7 +1320,7 @@ public class StockRound extends Round {
                 String.valueOf(getStockRoundNumber())));
 
         /* Check if any companies are sold out. */
-        for (PublicCompanyI company : gameManager.getCompaniesInRunningOrder()) {
+        for (PublicCompany company : gameManager.getCompaniesInRunningOrder()) {
             if (company.hasStockPrice() && company.isSoldOut()) {
                 StockSpaceI oldSpace = company.getCurrentSpace();
                 stockMarket.soldOut(company);
@@ -1433,7 +1440,7 @@ public class StockRound extends Round {
         return true;
     }
 
-    public boolean mayPlayerSellShareOfCompany(PublicCompanyI company) {
+    public boolean mayPlayerSellShareOfCompany(PublicCompany company) {
 
         // Can't sell shares that have no price
         if (!company.hasStarted() || !company.hasStockPrice()) return false;
@@ -1471,7 +1478,7 @@ public class StockRound extends Round {
         }
 
         // Over the hold limit of any company?
-        for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
+        for (PublicCompany company : companyManager.getAllPublicCompanies()) {
             if (company.hasStarted() && company.hasStockPrice()
                     && !checkAgainstHoldLimit(player, company, 0)) {
                 violations.append(LocalText.getText("ExceedCertificateLimitCompany",
@@ -1495,7 +1502,7 @@ public class StockRound extends Round {
      * so).
      * @return True if it is allowed.
      */
-    public boolean mayPlayerBuyCertificate(Player player, PublicCompanyI comp, float number) {
+    public boolean mayPlayerBuyCertificate(Player player, PublicCompany comp, float number) {
         if (comp.hasFloated() && comp.getCurrentSpace().isNoCertLimit())
             return true;
         if (player.getPortfolio().getCertificateCount() + number > gameManager.getPlayerCertificateLimit(player))
@@ -1513,7 +1520,7 @@ public class StockRound extends Round {
      * @param number The number of shares (usually 1 but not always so)
      * @return True if it is allowed.
      */
-    public boolean checkAgainstHoldLimit(Player player, PublicCompanyI company,
+    public boolean checkAgainstHoldLimit(Player player, PublicCompany company,
             int number) {
         // Check for per-company share limit
         if (player.getPortfolio().getShare(company)
@@ -1537,7 +1544,7 @@ public class StockRound extends Round {
      * overrun the per-company share hold limit.
      */
     public int maxAllowedNumberOfSharesToBuy(Player player,
-            PublicCompanyI company,
+            PublicCompany company,
             int shareSize) {
 
         int limit;
@@ -1578,14 +1585,14 @@ public class StockRound extends Round {
         return toString();
     }
 
-	public boolean isSellObligationLifted(PublicCompanyI company) {
+	public boolean isSellObligationLifted(PublicCompany company) {
 		return sellObligationLifted != null
 				&& sellObligationLifted.contains(company);
 	}
 
-	public void setSellObligationLifted (PublicCompanyI company) {
+	public void setSellObligationLifted (PublicCompany company) {
 		if (sellObligationLifted == null) {
-			sellObligationLifted = new HashSetState<PublicCompanyI>(this, "SellObligationLifted");
+			sellObligationLifted = new HashSetState<PublicCompany>(this, "SellObligationLifted");
 		}
 		sellObligationLifted.add(company);
 	}

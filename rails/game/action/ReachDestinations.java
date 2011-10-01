@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rails.game.CompanyManagerI;
-import rails.game.PublicCompanyI;
+import rails.game.PublicCompany;
 import rails.util.Util;
 
 /** This class is needed until we have a means to determine reaching
@@ -17,19 +17,19 @@ import rails.util.Util;
 public class ReachDestinations extends PossibleORAction {
 
     // Server-side settings
-    transient protected List<PublicCompanyI> possibleCompanies;
+    transient protected List<PublicCompany> possibleCompanies;
     protected String possibleCompanyNames = "";
 
     // Client-side settings
-    transient protected List<PublicCompanyI> reachedCompanies;
+    transient protected List<PublicCompany> reachedCompanies;
     protected String reachedCompanyNames = "";
 
     public static final long serialVersionUID = 1L;
 
-    public ReachDestinations (List<PublicCompanyI> companies) {
+    public ReachDestinations (List<PublicCompany> companies) {
         possibleCompanies = companies;
         StringBuffer b = new StringBuffer();
-        for (PublicCompanyI company : companies) {
+        for (PublicCompany company : companies) {
             if (b.length() > 0) b.append(",");
             b.append (company.getId());
         }
@@ -39,7 +39,7 @@ public class ReachDestinations extends PossibleORAction {
     /** Required for deserialization */
     public ReachDestinations() {}
 
-    public List<PublicCompanyI> getPossibleCompanies() {
+    public List<PublicCompany> getPossibleCompanies() {
         return possibleCompanies;
     }
 
@@ -47,9 +47,9 @@ public class ReachDestinations extends PossibleORAction {
         return possibleCompanyNames;
     }
 
-    public void addReachedCompany (PublicCompanyI company) {
+    public void addReachedCompany (PublicCompany company) {
         if (reachedCompanies == null)
-            reachedCompanies = new ArrayList<PublicCompanyI>();
+            reachedCompanies = new ArrayList<PublicCompany>();
         reachedCompanies.add (company);
         if (reachedCompanyNames.length() > 0) {
             reachedCompanyNames += ",";
@@ -57,7 +57,7 @@ public class ReachDestinations extends PossibleORAction {
         reachedCompanyNames += company.getId();
     }
 
-    public List<PublicCompanyI> getReachedCompanies() {
+    public List<PublicCompany> getReachedCompanies() {
         return reachedCompanies;
     }
 
@@ -93,7 +93,7 @@ public class ReachDestinations extends PossibleORAction {
 
         CompanyManagerI cmgr = getCompanyManager();
 
-        possibleCompanies = new ArrayList<PublicCompanyI>();
+        possibleCompanies = new ArrayList<PublicCompany>();
         if (Util.hasValue(possibleCompanyNames)) {
             for (String cname : possibleCompanyNames.split(",")) {
                 if (!"".equals(cname)) {
@@ -101,7 +101,7 @@ public class ReachDestinations extends PossibleORAction {
                 }
             }
         }
-        reachedCompanies = new ArrayList<PublicCompanyI>();
+        reachedCompanies = new ArrayList<PublicCompany>();
         if (Util.hasValue(reachedCompanyNames)) {
             for (String cname : reachedCompanyNames.split(",")) {
                 if (!"".equals(cname)) {

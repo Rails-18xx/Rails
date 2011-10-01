@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartItem.java,v 1.22 2010/06/21 22:57:53 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -7,6 +6,7 @@ import org.apache.log4j.Logger;
 
 import rails.game.model.Model;
 import rails.game.model.MoneyModel;
+import rails.game.model.Portfolio;
 import rails.game.state.AbstractItem;
 import rails.game.state.IntegerState;
 
@@ -125,7 +125,7 @@ public class StartItem extends AbstractItem {
      * Initialisation, to be called after all XML parsing has completed, and
      * after IPO initialisation.
      */
-    public void init(GameManagerI gameManager) {
+    public void init(GameManager gameManager) {
 
         this.players = gameManager.getPlayers();
         numberOfPlayers = players.size();
@@ -145,13 +145,13 @@ public class StartItem extends AbstractItem {
 
         CompanyManagerI compMgr = gameManager.getCompanyManager();
 
-        CompanyI company = compMgr.getCompany(type, name);
-        if (company instanceof PrivateCompanyI) {
+        Company company = compMgr.getCompany(type, name);
+        if (company instanceof PrivateCompany) {
             primary = (Certificate) company;
         } else {
-            primary = ipo.findCertificate((PublicCompanyI) company, president);
+            primary = ipo.findCertificate((PublicCompany) company, president);
             // Move the certificate to the "unavailable" pool.
-            PublicCertificateI pubcert = (PublicCertificateI) primary;
+            PublicCertificate pubcert = (PublicCertificate) primary;
 
             if (pubcert.getPortfolio() == null
                 || pubcert.getPortfolio() != unavailable)
@@ -161,15 +161,15 @@ public class StartItem extends AbstractItem {
         // Check if there is another certificate
         if (name2 != null) {
 
-            CompanyI company2 = compMgr.getCompany(type2, name2);
-            if (company2 instanceof PrivateCompanyI) {
+            Company company2 = compMgr.getCompany(type2, name2);
+            if (company2 instanceof PrivateCompany) {
                 secondary = (Certificate) company2;
             } else {
                 secondary =
-                        ipo.findCertificate((PublicCompanyI) company2,
+                        ipo.findCertificate((PublicCompany) company2,
                                 president2);
                 // Move the certificate to the "unavailable" pool.
-                PublicCertificateI pubcert2 = (PublicCertificateI) secondary;
+                PublicCertificate pubcert2 = (PublicCertificate) secondary;
                 if (pubcert2.getPortfolio() != unavailable)
                     pubcert2.moveTo(unavailable);
             }
@@ -289,11 +289,13 @@ public class StartItem extends AbstractItem {
         } else if (amount == 0) {
             // Used in 18EU to force making the "bid"
             // (in fact: buy price) visible
-            bids[index].notifyModel();
+            // TODO: is this still required?
+            bids[index].update();
         } else if (amount == -1) {
             // Passed (standard type)
             bids[index].set(0);
-            bids[index].notifyModel();
+            // TODO: is this still required?
+            bids[index].update();
         }
     }
 
@@ -414,8 +416,8 @@ public class StartItem extends AbstractItem {
      *
      * @return A public company for which a price must be set.
      */
-    public PublicCompanyI needsPriceSetting() {
-        PublicCompanyI company;
+    public PublicCompany needsPriceSetting() {
+        PublicCompany company;
 
         if ((company = checkNeedForPriceSetting(primary)) != null) {
             return company;
@@ -434,15 +436,15 @@ public class StartItem extends AbstractItem {
      * @param certificate
      * @return Name of public company, or null
      */
-    protected PublicCompanyI checkNeedForPriceSetting(Certificate certificate) {
+    protected PublicCompany checkNeedForPriceSetting(Certificate certificate) {
 
-        if (!(certificate instanceof PublicCertificateI)) return null;
+        if (!(certificate instanceof PublicCertificate)) return null;
 
-        PublicCertificateI publicCert = (PublicCertificateI) certificate;
+        PublicCertificate publicCert = (PublicCertificate) certificate;
 
         if (!publicCert.isPresidentShare()) return null;
 
-        PublicCompanyI company = publicCert.getCompany();
+        PublicCompany company = publicCert.getCompany();
 
         if (!company.hasStockPrice()) return null;
 

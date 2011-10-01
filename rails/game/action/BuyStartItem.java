@@ -5,7 +5,7 @@
  */
 package rails.game.action;
 
-import rails.game.PublicCompanyI;
+import rails.game.PublicCompany;
 import rails.game.StartItem;
 
 /**
@@ -36,7 +36,7 @@ public class BuyStartItem extends StartItemAction {
         this.selected = selected;
         this.setSharePriceOnly = setSharePriceOnly;
 
-        PublicCompanyI company;
+        PublicCompany company;
         if ((company = startItem.needsPriceSetting()) != null) {
             sharePriceToSet = true;
             companyNeedingSharePrice = company.getId();

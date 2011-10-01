@@ -10,7 +10,7 @@ public class ShareSellingRound_1856 extends ShareSellingRound {
     private IntegerState sharesSoldSoFar;
     private IntegerState squaresDownSoFar;
 
-    public ShareSellingRound_1856 (GameManagerI aGameManager,
+    public ShareSellingRound_1856 (GameManager aGameManager,
             RoundI parentRound) {
         super (aGameManager, parentRound);
 
@@ -19,7 +19,7 @@ public class ShareSellingRound_1856 extends ShareSellingRound {
     }
 
     @Override
-	protected void adjustSharePrice (PublicCompanyI company, int numberSold, boolean soldBefore) {
+	protected void adjustSharePrice (PublicCompany company, int numberSold, boolean soldBefore) {
 
         if (!company.canSharePriceVary()) return;
 

@@ -8,10 +8,13 @@ import rails.common.parser.GameOption;
 import rails.game.*;
 import rails.game.action.DiscardTrain;
 import rails.game.action.LayTile;
+import rails.game.model.CashOwner;
+import rails.game.model.HolderModel;
+import rails.game.model.Owner;
 import rails.game.special.*;
 import rails.game.state.BooleanState;
 import rails.game.state.HashMapState;
-import rails.game.state.MoveUtils;
+import rails.game.model.Owners;
 
 public class OperatingRound_1835 extends OperatingRound {
 
@@ -26,14 +29,14 @@ public class OperatingRound_1835 extends OperatingRound {
      */
     private HashMapState<Player, Integer> deniedIncomeShare;
 
-    public OperatingRound_1835 (GameManagerI gameManager) {
+    public OperatingRound_1835 (GameManager gameManager) {
         super (gameManager);
         deniedIncomeShare = new HashMapState<Player, Integer> (this, "deniedIncomeShare");
     }
 
     /** Can a public company operate? (1835 special version) */
     @Override
-    protected boolean canCompanyOperateThisRound (PublicCompanyI company) {
+    protected boolean canCompanyOperateThisRound (PublicCompany company) {
         if (!company.hasFloated() || company.isClosed()) {
             return false;
         }
@@ -51,17 +54,18 @@ public class OperatingRound_1835 extends OperatingRound {
     @Override
     protected void privatesPayOut() {
         int count = 0;
-        for (PrivateCompanyI priv : companyManager.getAllPrivateCompanies()) {
+        for (PrivateCompany priv : companyManager.getAllPrivateCompanies()) {
             if (!priv.isClosed()) {
-                if (((Portfolio)priv.getHolder()).getOwner().getClass() != Bank.class) {
-                    CashHolder recipient = ((Portfolio)priv.getHolder()).getOwner();
+                // The bank portfolios are all not cashOwners themselves!
+                if (priv.getOwner() instanceof CashOwner) {
+                    Owner recipient = priv.getOwner();
                     int revenue = priv.getRevenueByPhase(getCurrentPhase()); // sfy 1889: revenue by phase
                     if (count++ == 0) ReportBuffer.add("");
                     ReportBuffer.add(LocalText.getText("ReceivesFor",
                             recipient.getId(),
                             Bank.format(revenue),
                             priv.getId()));
-                    MoveUtils.cashMove(bank, recipient, revenue);
+                    Owners.cashMove(bank, (CashOwner)recipient, revenue);
 
                     /* Register black private equivalent PR share value
                      * so it can be subtracted if PR operates */
@@ -100,9 +104,9 @@ public class OperatingRound_1835 extends OperatingRound {
      * income twice during an OR.
      */
     @Override
-    protected  Map<CashHolder, Integer>  countSharesPerRecipient () {
+    protected  Map<CashOwner, Integer>  countSharesPerRecipient () {
 
-        Map<CashHolder, Integer> sharesPerRecipient = super.countSharesPerRecipient();
+        Map<CashOwner, Integer> sharesPerRecipient = super.countSharesPerRecipient();
 
         if (operatingCompany.get().getId().equalsIgnoreCase(GameManager_1835.PR_ID)) {
             for (Player player : deniedIncomeShare.viewKeySet()) {
@@ -139,7 +143,7 @@ public class OperatingRound_1835 extends OperatingRound {
 
     @Override
     public void resume() {
-        PublicCompanyI prussian = companyManager.getPublicCompany(GameManager_1835.PR_ID);
+        PublicCompany prussian = companyManager.getPublicCompany(GameManager_1835.PR_ID);
 
         if (prussian.hasFloated() && !prussian.hasOperated()
                 // PR has just started. Check if it can operate this round
@@ -153,9 +157,9 @@ public class OperatingRound_1835 extends OperatingRound {
             // and isn't currently operating
 
             int index = 0;
-            int operatingCompanyIndex = getOperatingCompanyIndex();
-            for (PublicCompanyI company : setOperatingCompanies()) {
-                if (index > operatingCompanyIndex
+            int operatingCompanyndex = getOperatingCompanyndex();
+            for (PublicCompany company : setOperatingCompanies()) {
+                if (index > operatingCompanyndex
                         && company.hasStockPrice()
                         && company.hasFloated()
                         && !company.isClosed()
@@ -256,7 +260,7 @@ public class OperatingRound_1835 extends OperatingRound {
 
     @Override
     protected void newPhaseChecks() {
-        PhaseI phase = getCurrentPhase();
+        Phase phase = getCurrentPhase();
         if (phase.getName().equals("4") 
                 || phase.getName().equals("4+4") 
                     && !companyManager.getPublicCompany(GameManager_1835.PR_ID).hasStarted()

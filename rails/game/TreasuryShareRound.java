@@ -11,6 +11,7 @@ import rails.common.DisplayBuffer;
 import rails.common.GuiDef;
 import rails.common.LocalText;
 import rails.game.action.*;
+import rails.game.model.Portfolio;
 import rails.game.state.BooleanState;
 
 /**
@@ -19,7 +20,7 @@ import rails.game.state.BooleanState;
 public class TreasuryShareRound extends StockRound {
 
     Player sellingPlayer;
-    PublicCompanyI operatingCompany;
+    PublicCompany operatingCompany;
     private final BooleanState hasBought;
     private final BooleanState hasSold;
 
@@ -28,10 +29,10 @@ public class TreasuryShareRound extends StockRound {
      * and other parameters used by the Treasury Share Round Class
      *
      * @param aGameManager The GameManager Object needed to initialize the StockRound Class
-     * @param operatingCompany The PublicCompanyI Object that is selling shares
+     * @param operatingCompany The PublicCompany Object that is selling shares
      *
      */
-    public TreasuryShareRound(GameManagerI aGameManager,
+    public TreasuryShareRound(GameManager aGameManager,
                              RoundI parentRound) {
         super (aGameManager);
 
@@ -99,9 +100,9 @@ public class TreasuryShareRound extends StockRound {
      */
     @Override
     public void setBuyableCerts() {
-        List<PublicCertificateI> certs;
-        PublicCertificateI cert;
-        PublicCompanyI comp;
+        List<PublicCertificate> certs;
+        PublicCertificate cert;
+        PublicCompany comp;
         Portfolio from;
         int price;
         int number;
@@ -110,7 +111,7 @@ public class TreasuryShareRound extends StockRound {
 
         /* Get the unique Pool certificates and check which ones can be bought */
         from = pool;
-        Map<String, List<PublicCertificateI>> map =
+        Map<String, List<PublicCertificate>> map =
                 from.getCertsPerCompanyMap();
 
         for (String compName : map.keySet()) {
@@ -170,7 +171,7 @@ public class TreasuryShareRound extends StockRound {
          * First check of which companies the player owns stock, and what
          * maximum percentage he is allowed to sell.
          */
-        for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
+        for (PublicCompany company : companyManager.getAllPublicCompanies()) {
 
             // Can't sell shares that have no price
             if (!company.hasStarted()) continue;
@@ -194,7 +195,7 @@ public class TreasuryShareRound extends StockRound {
             // Take care for max. 4 share units per share
             int[] shareCountPerUnit = new int[5];
             compName = company.getId();
-            for (PublicCertificateI c : companyPortfolio.getCertificatesPerCompany(compName)) {
+            for (PublicCertificate c : companyPortfolio.getCertificates(company)) {
                 if (c.isPresidentShare()) {
                     shareCountPerUnit[1] += c.getShares();
                 } else {
@@ -242,7 +243,7 @@ public class TreasuryShareRound extends StockRound {
     @Override
     public boolean buyShares(String playerName, BuyCertificate action) {
 
-        PublicCompanyI company = action.getCompany();
+        PublicCompany company = action.getCompany();
         Portfolio from = action.getFromPortfolio();
         String companyName = company.getId();
         int number = action.getNumberBought();
@@ -253,8 +254,9 @@ public class TreasuryShareRound extends StockRound {
 
         String errMsg = null;
         int price = 0;
+        // TODO: Might not be needed anymore, replaced by company
         Portfolio portfolio = null;
-
+        
         currentPlayer = getCurrentPlayer();
 
         // Dummy loop to allow a quick jump out
@@ -363,10 +365,10 @@ public class TreasuryShareRound extends StockRound {
         changeStack.start(true);
 
         pay (company, bank, cashAmount);
-        PublicCertificateI cert2;
+        PublicCertificate cert2;
         for (int i = 0; i < number; i++) {
             cert2 = from.findCertificate(company, sharePerCert/shareUnit, false);
-            transferCertificate(cert2, portfolio);
+            transferCertificate(cert2, company);
         }
 
         hasBought.set(true);
@@ -379,10 +381,10 @@ public class TreasuryShareRound extends StockRound {
         Portfolio portfolio = operatingCompany.getPortfolio();
         String errMsg = null;
         String companyName = action.getCompanyName();
-        PublicCompanyI company = companyManager.getPublicCompany(companyName);
-        PublicCertificateI cert = null;
-        List<PublicCertificateI> certsToSell =
-                new ArrayList<PublicCertificateI>();
+        PublicCompany company = companyManager.getPublicCompany(companyName);
+        PublicCertificate cert = null;
+        List<PublicCertificate> certsToSell =
+                new ArrayList<PublicCertificate>();
         int numberToSell = action.getNumberSold();
         int shareUnits = action.getShareUnits();
 
@@ -439,8 +441,8 @@ public class TreasuryShareRound extends StockRound {
             }
 
             // Find the certificates to sell
-            Iterator<PublicCertificateI> it =
-                    portfolio.getCertificatesPerCompany(companyName).iterator();
+            Iterator<PublicCertificate> it =
+                    portfolio.getCertificates(company).iterator();
             while (numberToSell > 0 && it.hasNext()) {
                 cert = it.next();
                 if (shareUnits != cert.getShares()) {
@@ -476,12 +478,12 @@ public class TreasuryShareRound extends StockRound {
         int price;
 
         // Get the sell price (does not change within a turn)
-        if (sellPrices.containsKey(companyName)) {
-            price = (sellPrices.get(companyName)).getPrice();
+        if (sellPrices.containsKey(company)) {
+            price = (sellPrices.get(company)).getPrice();
         } else {
             sellPrice = company.getCurrentSpace();
             price = sellPrice.getPrice();
-            sellPrices.put(companyName, sellPrice);
+            sellPrices.put(company, sellPrice);
         }
 
         changeStack.start(true);
@@ -499,7 +501,7 @@ public class TreasuryShareRound extends StockRound {
         // Transfer the sold certificates
         transferCertificates (certsToSell, pool);
         /*
-        for (PublicCertificateI cert2 : certsToSell) {
+        for (PublicCertificate cert2 : certsToSell) {
             if (cert2 != null) {
                  transferCertificate (cert2, pool, cert2.getShares() * price);
             }
@@ -537,7 +539,7 @@ public class TreasuryShareRound extends StockRound {
         return true;
     }
 
-    public PublicCompanyI getOperatingCompany() {
+    public PublicCompany getOperatingCompany() {
         return this.operatingCompany;
     }
 

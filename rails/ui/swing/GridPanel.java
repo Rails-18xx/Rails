@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
 import rails.game.*;
 import rails.game.model.AbstractModel;
 import rails.game.model.Model;
-import rails.game.model.View;
+import rails.game.model.Observer;
 import rails.game.state.BooleanState;
 import rails.ui.swing.elements.Field;
 import rails.ui.swing.elements.ViewObject;
@@ -39,9 +39,9 @@ implements ActionListener, KeyListener {
     protected int np;
     protected Player[] players;
     protected int nc;
-    protected PublicCompanyI[] companies;
+    protected PublicCompany[] companies;
     protected RoundI round;
-    protected PublicCompanyI c;
+    protected PublicCompany c;
     protected JComponent f;
 
     protected List<ViewObject> observers = new ArrayList<ViewObject>();
@@ -143,7 +143,7 @@ implements ActionListener, KeyListener {
             this.modelObject = model;
             this.rowIndex = rowIndex;
             this.reverseValue = reverseValue;
-            modelObject.addView(this);
+            modelObject.addObserver(this);
             lastValue = ((BooleanState)modelObject).booleanValue() != reverseValue;
         }
 
@@ -171,6 +171,11 @@ implements ActionListener, KeyListener {
         }
 
         public void deRegister() {
+            // TODO Auto-generated method stub
+            
+        }
+
+        public void update() {
             // TODO Auto-generated method stub
             
         }

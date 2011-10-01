@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 
 import rails.common.LocalText;
 import rails.common.parser.Config;
-import rails.game.GameManagerI;
+import rails.game.GameManager;
 import rails.game.ReportBuffer;
 import rails.ui.swing.elements.ActionMenuItem;
 import rails.util.*;
@@ -33,7 +33,7 @@ public class ReportWindow extends AbstractReportWindow implements ActionListener
     private JMenuItem saveItem, loadItem, printItem;
     private JMenuItem findItem, findBackItem, findNextItem, findPrevItem;
 
-    private GameManagerI gameManager;
+    private GameManager gameManager;
 
     private String reportDirectory = Config.get("report.directory");
     private String reportFile;

@@ -16,7 +16,7 @@ public class StartRound_1851 extends StartRound {
     /**
      * Constructor, only to be used in dynamic instantiation.
      */
-    public StartRound_1851(GameManagerI gameManager) {
+    public StartRound_1851(GameManager gameManager) {
         super(gameManager);
         hasBidding = false;
     }

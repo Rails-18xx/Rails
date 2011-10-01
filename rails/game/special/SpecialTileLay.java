@@ -77,7 +77,7 @@ public class SpecialTileLay extends SpecialProperty {
     }
 
     @Override
-	public void finishConfiguration (GameManagerI gameManager)
+	public void finishConfiguration (GameManager gameManager)
     throws ConfigurationException {
 
         TileManager tmgr = gameManager.getTileManager();

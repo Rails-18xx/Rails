@@ -8,7 +8,7 @@ package rails.game.action;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-import rails.game.PublicCompanyI;
+import rails.game.PublicCompany;
 
 /**
  * @author Erik Vos
@@ -16,7 +16,7 @@ import rails.game.PublicCompanyI;
 public class RepayLoans extends PossibleAction {
 
     // Initial attributes
-    transient private PublicCompanyI company;
+    transient private PublicCompany company;
     private String companyName;
     private int minNumber;
     private int maxNumber;
@@ -30,7 +30,7 @@ public class RepayLoans extends PossibleAction {
     /**
      *
      */
-    public RepayLoans(PublicCompanyI company, int minNumber, int maxNumber,
+    public RepayLoans(PublicCompany company, int minNumber, int maxNumber,
             int price) {
 
         this.company = company;
@@ -54,7 +54,7 @@ public class RepayLoans extends PossibleAction {
     /**
      * @return Returns the company.
      */
-    public PublicCompanyI getCompany() {
+    public PublicCompany getCompany() {
         return company;
     }
 

@@ -1,11 +1,12 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SellBonusToken.java,v 1.8 2010/05/18 21:36:12 stefanfrey Exp $ */
 package rails.game.special;
 
 import java.util.List;
 
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
-import rails.game.*;
+import rails.game.GameManager;
+import rails.game.MapHex;
+import rails.game.model.Owner;
 import rails.game.state.GenericState;
 import rails.game.state.IntegerState;
 import rails.util.Util;
@@ -14,7 +15,7 @@ public class SellBonusToken extends SpecialProperty {
 
     private String locationCodes = null;
     private List<MapHex> locations = null;
-    private GenericState<CashHolder> seller = null;
+    private GenericState<Owner> seller = null;
     private String name;
     private int price;
     private int value;
@@ -46,13 +47,13 @@ public class SellBonusToken extends SpecialProperty {
 
         maxNumberToSell = sellBonusTokenTag.getAttributeAsInteger("amount", 1);
 
-        seller = new GenericState<CashHolder> (this, "SellerOf_"+name+"_Bonus");
+        seller = new GenericState<Owner> (this, "SellerOf_"+name+"_Bonus");
         
         numberSold = new IntegerState (this, "Bonus_"+name+"_sold", 0);
     }
 
     @Override
-    public void finishConfiguration (GameManagerI gameManager) 
+    public void finishConfiguration (GameManager gameManager) 
     throws ConfigurationException {
         
         locations = gameManager.getMapManager().parseLocations(locationCodes);
@@ -98,11 +99,11 @@ public class SellBonusToken extends SpecialProperty {
         return value;
     }
 
-    public CashHolder getSeller() {
-        return (CashHolder) seller.get();
+    public Owner getSeller() {
+        return seller.get();
     }
 
-    public void setSeller(CashHolder seller) {
+    public void setSeller(Owner seller) {
         this.seller.set(seller);
     }
 

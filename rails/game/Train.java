@@ -1,15 +1,15 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Train.java,v 1.16 2010/01/08 21:30:46 evos Exp $ */
 package rails.game;
 
 import org.apache.log4j.Logger;
 
-import rails.game.state.AbstractItem;
+import rails.game.model.AbstractOwnable;
+import rails.game.model.Owner;
+import rails.game.model.Portfolio;
+import rails.game.model.PortfolioOwner;
 import rails.game.state.BooleanState;
 import rails.game.state.GenericState;
-import rails.game.state.Holder;
-import rails.game.state.ObjectMove;
 
-public class Train extends AbstractItem implements TrainI {
+public class Train extends AbstractOwnable {
 
     protected TrainCertificateType certificateType;
     
@@ -23,7 +23,6 @@ public class Train extends AbstractItem implements TrainI {
 
     protected String uniqueId;
 
-    protected Portfolio holder;
     protected BooleanState obsolete;
 
     protected static Logger log =
@@ -107,6 +106,9 @@ public class Train extends AbstractItem implements TrainI {
         return getType().getTownScoreFactor();
     }
 
+    /**
+     * @return true => hex train (examples 1826, 1844), false => standard 1830 type train
+     */
     public boolean isHTrain() {
         // TODO Auto-generated method stub
         return false;
@@ -124,33 +126,12 @@ public class Train extends AbstractItem implements TrainI {
         return isAssigned() ? type.get().getName() : certificateType.getName();
     }
 
-    public Holder getHolder() {
-        return holder;
-    }
-
-    public CashHolder getOwner() {
-        return holder != null ? holder.getOwner() : null;
-    }
-
     public boolean isObsolete() {
         return obsolete.booleanValue();
     }
 
-    /**
-     * Move the train to another Portfolio.
-     */
-    public void setHolder(Portfolio newHolder) {
-        holder = newHolder;
-    }
-
-    public void moveTo(Holder to) {
-
-        new ObjectMove(this, holder, to);
-
-    }
-
     public void setRusted() {
-        new ObjectMove(this, holder, GameManager.getInstance().getBank().getScrapHeap());
+        moveTo(GameManager.getInstance().getBank().getScrapHeap());
     }
 
     public void setObsolete() {
@@ -172,13 +153,21 @@ public class Train extends AbstractItem implements TrainI {
     public void setTradeable(boolean tradeable) {
         this.tradeable = tradeable;
     }
+    
+    @Deprecated
+    public Portfolio getPortfolio() {
+        Owner owner = getOwner();
+        if (owner instanceof PortfolioOwner) {
+            return ((PortfolioOwner)owner).getPortfolio();
+        } else {
+            return null;
+        }
+    }
 
     public String toString() {
         StringBuilder b = new StringBuilder(uniqueId);
         b.append(" certType=").append(getCertType());
         b.append(" type=").append(getType());
-        b.append(" holder=").append(holder.getId());
         return b.toString();
     }
-
 }

@@ -9,7 +9,7 @@ public class OperatingRound_18GA extends OperatingRound {
     public final static String OS_NAME = "OSO";
     public final static String OS_EXTRA_TRAIN_TYPE = "2";
     
-    public OperatingRound_18GA (GameManagerI gameManager) {
+    public OperatingRound_18GA (GameManager gameManager) {
         super (gameManager);
     }
     
@@ -21,16 +21,17 @@ public class OperatingRound_18GA extends OperatingRound {
         if (result 
                 && action.getPrivateCompany().getId().equalsIgnoreCase(OS_NAME)
                 && isBelowTrainLimit()) {
-            PublicCompanyI company = operatingCompany.get();
+            PublicCompany company = operatingCompany.get();
             TrainCertificateType certType = trainManager.getCertTypeByName(OS_EXTRA_TRAIN_TYPE);
             if (!certType.hasRusted()) {  // I.e. before phase "4"
-                TrainI train = trainManager.cloneTrain(certType);
-                company.getPortfolio().buyTrain(train, 0);
+                Train train = trainManager.cloneTrain(certType);
+                train.moveTo(company);
                 train.setTradeable(false);
                 ReportBuffer.add(LocalText.getText("GetsExtraTrain",
                         company.getId(),
                         OS_EXTRA_TRAIN_TYPE));
-                company.getPortfolio().getTrainsModel().notifyModel();
+                // TODO: is this still required?
+                company.getPortfolio().getTrainsModel().update();
             }
         }
         

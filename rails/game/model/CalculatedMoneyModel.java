@@ -16,7 +16,7 @@ import rails.game.state.Item;
  * @author Erik Vos
  * 
  */
-public class CalculatedMoneyModel extends AbstractModel<String> implements View<String> {
+public class CalculatedMoneyModel extends AbstractModel<String> implements Observer {
 
     protected static Logger log =
         Logger.getLogger(CalculatedMoneyModel.class.getPackage().getName());
@@ -60,14 +60,5 @@ public class CalculatedMoneyModel extends AbstractModel<String> implements View<
         else
             return Bank.format(amount);
     }
-
-
-    public void update(String data) {
-        // use this to update its viewers
-        notifyModel();
-    }
-    
-    
-    
 
 }

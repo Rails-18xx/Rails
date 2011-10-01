@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/OperatingRound.java,v 1.133 2010/05/23 08:18:24 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -8,7 +7,11 @@ import rails.common.parser.GameOption;
 import rails.game.action.*;
 import rails.game.correct.ClosePrivate;
 import rails.game.correct.OperatingCost;
-import rails.game.model.View;
+import rails.game.model.CashOwner;
+import rails.game.model.Observer;
+import rails.game.model.Owner;
+import rails.game.model.Owners;
+import rails.game.model.Portfolio;
 import rails.game.special.*;
 import rails.game.state.*;
 import rails.util.SequenceUtil;
@@ -18,7 +21,7 @@ import rails.util.SequenceUtil;
  * each new Operating Round. At the end of a round, the current instance should
  * be discarded.
  */
-public class OperatingRound extends Round implements View<String> {
+public class OperatingRound extends Round implements Observer {
 
     /* Transient memory (per round only) */
     protected GenericState<GameDef.OrStep> stepObject;
@@ -28,12 +31,12 @@ public class OperatingRound extends Round implements View<String> {
     /* sfy: using rails without map support */
     protected boolean noMapMode = false;
 
-    protected List<PublicCompanyI> companiesOperatedThisRound
-    = new ArrayList<PublicCompanyI> ();
+    protected List<PublicCompany> companiesOperatedThisRound
+    = new ArrayList<PublicCompany> ();
 
-    protected ArrayListState<PublicCompanyI> operatingCompanies;
+    protected ArrayListState<PublicCompany> operatingCompanies;
 
-    protected GenericState<PublicCompanyI> operatingCompany;
+    protected GenericState<PublicCompany> operatingCompany;
     // do not use a operatingCompany.getObject() as reference
 
     // Non-persistent lists (are recreated after each user action)
@@ -49,12 +52,12 @@ public class OperatingRound extends Round implements View<String> {
         new ArrayList<LayBaseToken>();
 
     /** A List per player with owned companies that have excess trains */
-    protected Map<Player, List<PublicCompanyI>> excessTrainCompanies = null;
+    protected Map<Player, List<PublicCompany>> excessTrainCompanies = null;
 
     protected List<TrainCertificateType> trainsBoughtThisTurn =
         new ArrayList<TrainCertificateType>(4);
 
-    protected HashMapState<PublicCompanyI, Integer> loansThisRound = null;
+    protected HashMapState<PublicCompany, Integer> loansThisRound = null;
 
     protected String thisOrNumber;
 
@@ -87,10 +90,10 @@ public class OperatingRound extends Round implements View<String> {
     /**
      * Constructor with no parameters, call the super Class (Round's) Constructor with no parameters
      */
-    public OperatingRound(GameManagerI gameManager) {
+    public OperatingRound(GameManager gameManager) {
         super (gameManager);
 
-        operatingCompanies = new ArrayListState<PublicCompanyI>(this, "operatingCompanies", setOperatingCompanies());
+        operatingCompanies = new ArrayListState<PublicCompany>(this, "operatingCompanies", setOperatingCompanies());
 
         // sfy NoMapMode
         noMapMode = GameOption.convertValueToBoolean(getGameOption("NoMapMode"));
@@ -115,7 +118,7 @@ public class OperatingRound extends Round implements View<String> {
         if (operatingCompanies.size() > 0) {
 
             StringBuilder msg = new StringBuilder();
-            for (PublicCompanyI company : operatingCompanies.view()) {
+            for (PublicCompany company : operatingCompanies.view()) {
                 msg.append(",").append(company.getId());
             }
             if (msg.length() > 0) msg.deleteCharAt(0);
@@ -123,7 +126,7 @@ public class OperatingRound extends Round implements View<String> {
 
             if (stepObject == null) {
                 stepObject = new GenericState<GameDef.OrStep>(this, "ORStep",  GameDef.OrStep.INITIAL);
-                stepObject.addView(this);
+                stepObject.addObserver(this);
             }
 
             if (setNextOperatingCompany(true)){
@@ -141,17 +144,18 @@ public class OperatingRound extends Round implements View<String> {
 
     protected void privatesPayOut() {
         int count = 0;
-        for (PrivateCompanyI priv : companyManager.getAllPrivateCompanies()) {
+        for (PrivateCompany priv : companyManager.getAllPrivateCompanies()) {
             if (!priv.isClosed()) {
-                if (((Portfolio)priv.getHolder()).getOwner().getClass() != Bank.class) {
-                    CashHolder recipient = ((Portfolio)priv.getHolder()).getOwner();
+                // The bank portfolios are all not cashOwners themselves!
+                if (priv.getOwner() instanceof CashOwner) {
+                    Owner recipient = priv.getOwner();
                     int revenue = priv.getRevenueByPhase(getCurrentPhase()); // sfy 1889: revenue by phase
                     if (count++ == 0) ReportBuffer.add("");
                     ReportBuffer.add(LocalText.getText("ReceivesFor",
                             recipient.getId(),
                             Bank.format(revenue),
                             priv.getId()));
-                    MoveUtils.cashMove(bank, recipient, revenue);
+                    Owners.cashMove(bank, (CashOwner)recipient, revenue);
                 }
 
             }
@@ -183,7 +187,7 @@ public class OperatingRound extends Round implements View<String> {
 
         // Check if any privates must be closed
         // (now only applies to 1856 W&SR) - no, that is at end of TURN
-        //for (PrivateCompanyI priv : gameManager.getAllPrivateCompanies()) {
+        //for (PrivateCompany priv : gameManager.getAllPrivateCompanies()) {
         //    priv.checkClosingIfExercised(true);
         //}
 
@@ -220,7 +224,7 @@ public class OperatingRound extends Round implements View<String> {
         /* Check operating company */
         if (action instanceof PossibleORAction
                 && !(action instanceof DiscardTrain)) {
-            PublicCompanyI company = ((PossibleORAction) action).getCompany();
+            PublicCompany company = ((PossibleORAction) action).getCompany();
             if (company != operatingCompany.get()) {
                 DisplayBuffer.add(LocalText.getText("WrongCompany",
                         company.getId(),
@@ -416,7 +420,7 @@ public class OperatingRound extends Round implements View<String> {
             setGameSpecificPossibleActions();
 
             // Private Company manually closure
-            for (PrivateCompanyI priv: companyManager.getAllPrivateCompanies()) {
+            for (PrivateCompany priv: companyManager.getAllPrivateCompanies()) {
                 if (!priv.isClosed() && priv.closesManually())
                     possibleActions.add(new ClosePrivate(priv));
             }
@@ -434,7 +438,7 @@ public class OperatingRound extends Round implements View<String> {
                 + numberOfPlayers; i++) {
                     player = players.get(i % numberOfPlayers);
                     if (!maySellPrivate(player)) continue;
-                    for (PrivateCompanyI privComp : player.getPortfolio().getPrivateCompanies()) {
+                    for (PrivateCompany privComp : player.getPortfolio().getPrivateCompanies()) {
 
                         // check to see if the private can be sold to a company
                         if (!privComp.tradeableToCompany()) {
@@ -474,8 +478,10 @@ public class OperatingRound extends Round implements View<String> {
 
                 // Are there other step-independent special properties owned by the company?
                 List<SpecialPropertyI> orsps = operatingCompany.get().getPortfolio().getAllSpecialProperties();
-                List<SpecialPropertyI> compsps = operatingCompany.get().getSpecialProperties();
-                if (compsps != null) orsps.addAll(compsps);
+        
+                // TODO: Do we still need this directly from the operating company?
+//                List<SpecialPropertyI> compsps = operatingCompany.get().getSpecialProperties();
+//                if (compsps != null) orsps.addAll(compsps);
 
                 if (orsps != null) {
                     for (SpecialPropertyI sp : orsps) {
@@ -562,10 +568,7 @@ public class OperatingRound extends Round implements View<String> {
             operatingCompany.get().setOperated();
             companiesOperatedThisRound.add(operatingCompany.get());
 
-            // Check if any privates must be closed (now only applies to 1856 W&SR)
-            // Copy list first to avoid concurrent modifications
-            for (PrivateCompanyI priv :
-                new ArrayList<PrivateCompanyI> (operatingCompany.get().getPortfolio().getPrivateCompanies().view())) {
+            for (PrivateCompany priv : operatingCompany.get().getPortfolio().getPrivateCompanies()) {
                 priv.checkClosingIfExercised(true);
             }
         }
@@ -601,9 +604,9 @@ public class OperatingRound extends Round implements View<String> {
                 }
 
                 // Check if the operating order has changed
-                List<PublicCompanyI> newOperatingCompanies
+                List<PublicCompany> newOperatingCompanies
                 = setOperatingCompanies (operatingCompanies.view(), operatingCompany.get());
-                PublicCompanyI company;
+                PublicCompany company;
                 for (int i=0; i<newOperatingCompanies.size(); i++) {
                     company = newOperatingCompanies.get(i);
                     if (company != operatingCompanies.get(i)) {
@@ -623,10 +626,10 @@ public class OperatingRound extends Round implements View<String> {
         }
     }
 
-    protected void setOperatingCompany (PublicCompanyI company) {
+    protected void setOperatingCompany (PublicCompany company) {
         if (operatingCompany == null) {
             operatingCompany =
-                new GenericState<PublicCompanyI>(this, "OperatingCompany", company);
+                new GenericState<PublicCompany>(this, "OperatingCompany", company);
         } else {
             operatingCompany.set(company);
         }
@@ -637,15 +640,15 @@ public class OperatingRound extends Round implements View<String> {
      *
      * @return The currently operating company object.
      */
-    public PublicCompanyI getOperatingCompany() {
+    public PublicCompany getOperatingCompany() {
         return operatingCompany.get();
     }
 
-    public List<PublicCompanyI> getOperatingCompanies() {
+    public List<PublicCompany> getOperatingCompanies() {
         return operatingCompanies.view();
     }
 
-    public int getOperatingCompanyIndex() {
+    public int getOperatingCompanyndex() {
         int index = operatingCompanies.indexOf(getOperatingCompany());
         return index;
     }
@@ -690,7 +693,7 @@ public class OperatingRound extends Round implements View<String> {
     /** Take the next step after a given one (see nextStep()) */
     protected void nextStep(GameDef.OrStep step) {
 
-        PublicCompanyI company = operatingCompany.get();
+        PublicCompany company = operatingCompany.get();
 
         // Cycle through the steps until we reach one where a user action is
         // expected.
@@ -851,8 +854,8 @@ public class OperatingRound extends Round implements View<String> {
 
     public boolean discardTrain(DiscardTrain action) {
 
-        TrainI train = action.getDiscardedTrain();
-        PublicCompanyI company = action.getCompany();
+        Train train = action.getDiscardedTrain();
+        PublicCompany company = action.getCompany();
         String companyName = company.getId();
 
         String errMsg = null;
@@ -924,7 +927,7 @@ public class OperatingRound extends Round implements View<String> {
 
         // Scan the players in SR sequence, starting with the current player
         Player player;
-        List<PublicCompanyI> list;
+        List<PublicCompany> list;
         int currentPlayerIndex = getCurrentPlayerIndex();
         for (int i = currentPlayerIndex; i < currentPlayerIndex
         + getNumberOfPlayers(); i++) {
@@ -932,7 +935,7 @@ public class OperatingRound extends Round implements View<String> {
             if (excessTrainCompanies.containsKey(player)) {
                 setCurrentPlayer(player);
                 list = excessTrainCompanies.get(player);
-                for (PublicCompanyI comp : list) {
+                for (PublicCompany comp : list) {
                     possibleActions.add(new DiscardTrain(comp,
                             comp.getPortfolio().getUniqueTrains(), true));
                     // We handle one company at at time.
@@ -950,12 +953,12 @@ public class OperatingRound extends Round implements View<String> {
     public boolean buyPrivate(BuyPrivate action) {
 
         String errMsg = null;
-        PublicCompanyI publicCompany = action.getCompany();
+        PublicCompany publicCompany = action.getCompany();
         String publicCompanyName = publicCompany.getId();
-        PrivateCompanyI privateCompany = action.getPrivateCompany();
+        PrivateCompany privateCompany = action.getPrivateCompany();
         String privateCompanyName = privateCompany.getId();
         int price = action.getPrice();
-        CashHolder owner = null;
+        Owner owner = null;
         Player player = null;
         int upperPrice;
         int lowerPrice;
@@ -999,7 +1002,7 @@ public class OperatingRound extends Round implements View<String> {
             }
 
             // Price must be in the allowed range
-            if (lowerPrice != PrivateCompanyI.NO_PRICE_LIMIT && price < lowerPrice) {
+            if (lowerPrice != PrivateCompany.NO_PRICE_LIMIT && price < lowerPrice) {
                 errMsg =
                     LocalText.getText("PriceBelowLowerLimit",
                             Bank.format(price),
@@ -1007,7 +1010,7 @@ public class OperatingRound extends Round implements View<String> {
                             privateCompanyName );
                 break;
             }
-            if (upperPrice != PrivateCompanyI.NO_PRICE_LIMIT && price > upperPrice) {
+            if (upperPrice != PrivateCompany.NO_PRICE_LIMIT && price > upperPrice) {
                 errMsg =
                     LocalText.getText("PriceAboveUpperLimit",
                             Bank.format(price),
@@ -1057,17 +1060,17 @@ public class OperatingRound extends Round implements View<String> {
         return getCurrentPhase().isPrivateSellingAllowed();
     }
 
-    protected int getPrivateMinimumPrice (PrivateCompanyI privComp) {
+    protected int getPrivateMinimumPrice (PrivateCompany privComp) {
         int minPrice = privComp.getLowerPrice();
-        if (minPrice == PrivateCompanyI.NO_PRICE_LIMIT) {
+        if (minPrice == PrivateCompany.NO_PRICE_LIMIT) {
             minPrice = 0;
         }
         return minPrice;
     }
 
-    protected int getPrivateMaximumPrice (PrivateCompanyI privComp) {
+    protected int getPrivateMaximumPrice (PrivateCompany privComp) {
         int maxPrice = privComp.getUpperPrice();
-        if (maxPrice == PrivateCompanyI.NO_PRICE_LIMIT) {
+        if (maxPrice == PrivateCompany.NO_PRICE_LIMIT) {
             maxPrice = operatingCompany.get().getCash();
         }
         return maxPrice;
@@ -1079,7 +1082,7 @@ public class OperatingRound extends Round implements View<String> {
 
     protected boolean executeClosePrivate(ClosePrivate action) {
 
-        PrivateCompanyI priv = action.getPrivateCompany();
+        PrivateCompany priv = action.getPrivateCompany();
 
         log.debug("Executed close private action for private " + priv.getId());
 
@@ -1109,16 +1112,16 @@ public class OperatingRound extends Round implements View<String> {
      * Default version: no actions.
      * @param company
      */
-    protected void reachDestination (PublicCompanyI company) {
+    protected void reachDestination (PublicCompany company) {
 
     }
 
     public boolean reachDestinations (ReachDestinations action) {
 
-        List<PublicCompanyI> destinedCompanies
+        List<PublicCompany> destinedCompanies
         = action.getReachedCompanies();
         if (destinedCompanies != null) {
-            for (PublicCompanyI company : destinedCompanies) {
+            for (PublicCompany company : destinedCompanies) {
                 if (company.hasDestination()
                         && !company.hasReachedDestination()) {
                     if (!changeStack.isOpen()) changeStack.start(true);
@@ -1175,7 +1178,7 @@ public class OperatingRound extends Round implements View<String> {
     protected String validateTakeLoans (TakeLoans action) {
 
         String errMsg = null;
-        PublicCompanyI company = action.getCompany();
+        PublicCompany company = action.getCompany();
         String companyName = company.getId();
         int number = action.getNumberTaken();
 
@@ -1218,7 +1221,7 @@ public class OperatingRound extends Round implements View<String> {
         int number = action.getNumberTaken();
         int amount = calculateLoanAmount (number);
         operatingCompany.get().addLoans(number);
-        MoveUtils.cashMove (bank, operatingCompany.get(), amount);
+        Owners.cashMove (bank, operatingCompany.get(), amount);
         if (number == 1) {
             ReportBuffer.add(LocalText.getText("CompanyTakesLoan",
                     operatingCompany.get().getId(),
@@ -1237,7 +1240,7 @@ public class OperatingRound extends Round implements View<String> {
         if (operatingCompany.get().getMaxLoansPerRound() > 0) {
             int oldLoansThisRound = 0;
             if (loansThisRound == null) {
-                loansThisRound = new HashMapState<PublicCompanyI, Integer>(this, "loansThisRound");
+                loansThisRound = new HashMapState<PublicCompany, Integer>(this, "loansThisRound");
             } else if (loansThisRound.containsKey(operatingCompany.get())){
                 oldLoansThisRound = loansThisRound.get(operatingCompany.get());
             }
@@ -1265,7 +1268,7 @@ public class OperatingRound extends Round implements View<String> {
             // President must contribute
             int remainder = repayment - operatingCompany.get().getCash();
             Player president = operatingCompany.get().getPresident();
-            int presCash = president.getCash();
+            int presCash = president.getCashValue();
             if (remainder > presCash) {
                 // Start a share selling round
                 int cashToBeRaisedByPresident = remainder - presCash;
@@ -1305,7 +1308,7 @@ public class OperatingRound extends Round implements View<String> {
         payment = Math.min(amount, operatingCompany.get().getCash());
         remainder = amount - payment;
         if (payment > 0) {
-            MoveUtils.cashMove (operatingCompany.get(), bank, payment);
+            Owners.cashMove (operatingCompany.get(), bank, payment);
             ReportBuffer.add (LocalText.getText("CompanyRepaysLoans",
                     operatingCompany.get().getId(),
                     Bank.format(payment),
@@ -1315,9 +1318,9 @@ public class OperatingRound extends Round implements View<String> {
         }
         if (remainder > 0) {
             Player president = operatingCompany.get().getPresident();
-            if (president.getCash() >= remainder) {
+            if (president.getCashValue() >= remainder) {
                 payment = remainder;
-                MoveUtils.cashMove (president, bank, payment);
+                Owners.cashMove (president, bank, payment);
                 ReportBuffer.add (LocalText.getText("CompanyRepaysLoansWithPresCash",
                         operatingCompany.get().getId(),
                         Bank.format(payment),
@@ -1337,7 +1340,7 @@ public class OperatingRound extends Round implements View<String> {
     public void payLoanInterest () {
         int amount = operatingCompany.get().getCurrentLoanValue()
         * operatingCompany.get().getLoanInterestPct() / 100;
-        MoveUtils.cashMove (operatingCompany.get(), bank, amount);
+        Owners.cashMove (operatingCompany.get(), bank, amount);
         DisplayBuffer.add(LocalText.getText("CompanyPaysLoanInterest",
                 operatingCompany.get().getId(),
                 Bank.format(amount),
@@ -1376,7 +1379,7 @@ public class OperatingRound extends Round implements View<String> {
         changeStack.start(true);
 
         operatingCompany.get().setRight(rightName, rightValue);
-        MoveUtils.cashMove (operatingCompany.get(), bank, right.getCost());
+        Owners.cashMove (operatingCompany.get(), bank, right.getCost());
 
         ReportBuffer.add(LocalText.getText("BuysRight",
                 operatingCompany.get().getId(),
@@ -1399,7 +1402,7 @@ public class OperatingRound extends Round implements View<String> {
         SpecialTileLay stl = null;
         boolean extra = false;
 
-        PublicCompanyI company = action.getCompany();
+        PublicCompany company = action.getCompany();
         String companyName = company.getId();
         TileI tile = action.getLaidTile();
         MapHex hex = action.getChosenHex();
@@ -1513,7 +1516,7 @@ public class OperatingRound extends Round implements View<String> {
 
         if (tile != null) {
             if (cost > 0)
-                MoveUtils.cashMove(operatingCompany.get(), bank, cost);
+                Owners.cashMove(operatingCompany.get(), bank, cost);
             operatingCompany.get().layTile(hex, tile, orientation, cost);
 
             if (cost == 0) {
@@ -1724,7 +1727,7 @@ public class OperatingRound extends Round implements View<String> {
      * @param hex The hex on which a tile is laid.
      * @param orientation The orientation in which the tile is laid (-1 is any).
      */
-    protected boolean isTileLayAllowed (PublicCompanyI company,
+    protected boolean isTileLayAllowed (PublicCompany company,
             MapHex hex, int orientation) {
         return !hex.isBlockedForTileLays();
     }
@@ -1835,7 +1838,7 @@ public class OperatingRound extends Round implements View<String> {
             }
 
             if (cost > 0) {
-                MoveUtils.cashMove(operatingCompany.get(), bank, cost);
+                Owners.cashMove(operatingCompany.get(), bank, cost);
                 ReportBuffer.add(LocalText.getText("LAYS_TOKEN_ON",
                         companyName,
                         hex.getId(),
@@ -1898,7 +1901,7 @@ public class OperatingRound extends Round implements View<String> {
      * @param station The number of the station/city on which the token
      * is to be laid (0 if any or immaterial).
      */
-    protected boolean isTokenLayAllowed (PublicCompanyI company,
+    protected boolean isTokenLayAllowed (PublicCompany company,
             MapHex hex, int station) {
         return !hex.isBlockedForTokenLays(company, station);
     }
@@ -2034,7 +2037,7 @@ public class OperatingRound extends Round implements View<String> {
         String errMsg = null;
         int cost;
         SellBonusToken sbt = null;
-        CashHolder seller = null;
+        CashOwner seller = null;
 
         // Dummy loop to enable a quick jump out.
         while (true) {
@@ -2042,7 +2045,7 @@ public class OperatingRound extends Round implements View<String> {
             // Checks
             sbt = action.getSpecialProperty();
             cost = sbt.getPrice();
-            seller = sbt.getSeller();
+            seller = (CashOwner)sbt.getSeller(); // TODO: Remove the cast?
 
             // Does the company have the money?
             if (cost > operatingCompany.get().getCash()) {
@@ -2068,7 +2071,7 @@ public class OperatingRound extends Round implements View<String> {
         /* End of validation, start of execution */
         changeStack.start(true);
 
-        MoveUtils.cashMove (operatingCompany.get(), seller, cost);
+        Owners.cashMove(operatingCompany.get(), seller, cost);
         operatingCompany.get().addBonus(new Bonus(operatingCompany.get(),
                 sbt.getId(),
                 sbt.getValue(),
@@ -2141,7 +2144,7 @@ public class OperatingRound extends Round implements View<String> {
     protected String validateSetRevenueAndDividend (SetDividend action) {
 
         String errMsg = null;
-        PublicCompanyI company;
+        PublicCompany company;
         String companyName;
         int amount = 0;
         int revenueAllocation = -1;
@@ -2286,13 +2289,13 @@ public class OperatingRound extends Round implements View<String> {
         int part;
         int shares;
 
-        Map<CashHolder, Integer> sharesPerRecipient = countSharesPerRecipient();
+        Map<CashOwner, Integer> sharesPerRecipient = countSharesPerRecipient();
 
         // Calculate, round up, report and add the cash
 
         // Define a precise sequence for the reporting
-        Set<CashHolder> recipientSet = sharesPerRecipient.keySet();
-        for (CashHolder recipient : SequenceUtil.sortCashHolders(recipientSet)) {
+        Set<CashOwner> recipientSet = sharesPerRecipient.keySet();
+        for (CashOwner recipient : SequenceUtil.sortCashHolders(recipientSet)) {
             if (recipient instanceof Bank) continue;
             shares = (sharesPerRecipient.get(recipient));
             if (shares == 0) continue;
@@ -2302,7 +2305,7 @@ public class OperatingRound extends Round implements View<String> {
                     Bank.format(part),
                     shares,
                     operatingCompany.get().getShareUnit()));
-            pay (bank, recipient, part);
+            pay(bank, recipient, part);
         }
 
         // Move the token
@@ -2310,17 +2313,17 @@ public class OperatingRound extends Round implements View<String> {
 
     }
 
-    protected  Map<CashHolder, Integer>  countSharesPerRecipient () {
+    protected  Map<CashOwner, Integer>  countSharesPerRecipient () {
 
-        Map<CashHolder, Integer> sharesPerRecipient = new HashMap<CashHolder, Integer>();
+        Map<CashOwner, Integer> sharesPerRecipient = new HashMap<CashOwner, Integer>();
 
         // Changed to accomodate the CGR 5% share roundup rule.
         // For now it is assumed, that actual payouts are always rounded up
         // (the withheld half of split revenues is not handled here, see splitRevenue()).
 
         // First count the shares per recipient
-        for (PublicCertificateI cert : operatingCompany.get().getCertificates()) {
-            CashHolder recipient = getBeneficiary(cert);
+        for (PublicCertificate cert : operatingCompany.get().getCertificates()) {
+            CashOwner recipient = getBeneficiary(cert);
             if (!sharesPerRecipient.containsKey(recipient)) {
                 sharesPerRecipient.put(recipient, cert.getShares());
             } else {
@@ -2332,13 +2335,16 @@ public class OperatingRound extends Round implements View<String> {
     }
 
     /** Who gets the per-share revenue? */
-    protected CashHolder getBeneficiary(PublicCertificateI cert) {
-
-        Portfolio holder = cert.getPortfolio();
-        CashHolder beneficiary = holder.getOwner();
+    protected CashOwner getBeneficiary(PublicCertificate cert) {
+        CashOwner beneficiary;
+        
         // Special cases apply if the holder is the IPO or the Pool
         if (operatingCompany.get().paysOutToTreasury(cert)) {
             beneficiary = operatingCompany.get();
+        } else if (cert.getOwner() instanceof CashOwner) {
+            beneficiary = (CashOwner)cert.getOwner();
+        } else { // TODO: check if this is a correct assumption that otherwise the money goes to the bank
+            beneficiary = bank;
         }
         return beneficiary;
     }
@@ -2350,7 +2356,7 @@ public class OperatingRound extends Round implements View<String> {
      */
     public void withhold(int amount) {
 
-        PublicCompanyI company = operatingCompany.get();
+        PublicCompany company = operatingCompany.get();
 
         // Payout revenue to company
         pay (bank, company, amount);
@@ -2452,10 +2458,10 @@ public class OperatingRound extends Round implements View<String> {
 
         if (amount > 0) {
             // positive amounts: remove cash from cashholder
-            MoveUtils.cashMove(operatingCompany.get(), bank, amount);
+            Owners.cashMove(operatingCompany.get(), bank, amount);
         } else if (amount > 0) {
             // negative amounts: add cash to cashholder
-            MoveUtils.cashMove(bank, operatingCompany.get(), -amount);
+            Owners.cashMove(bank, operatingCompany.get(), -amount);
         }
 
         if (typeOC == OperatingCost.OCType.LAY_TILE) {
@@ -2473,7 +2479,7 @@ public class OperatingRound extends Round implements View<String> {
             } else {
                 token.moveTo(bank.getUnavailable());
             }
-            operatingCompany.get().layBaseTokenInNoMapMode(amount);
+            operatingCompany.get().layBaseTokennNoMapMode(amount);
             ReportBuffer.add(LocalText.getText("OCLayBaseTokenExecuted",
                     operatingCompany.get().getId(),
                     Bank.format(amount) ));
@@ -2550,10 +2556,10 @@ public class OperatingRound extends Round implements View<String> {
 
     public boolean buyTrain(BuyTrain action) {
 
-        TrainI train = action.getTrain();
-        PublicCompanyI company = action.getCompany();
+        Train train = action.getTrain();
+        PublicCompany company = action.getCompany();
         String companyName = company.getId();
-        TrainI exchangedTrain = action.getExchangedTrain();
+        Train exchangedTrain = action.getExchangedTrain();
         SpecialTrainBuy stb = null;
 
         String errMsg = null;
@@ -2607,12 +2613,12 @@ public class OperatingRound extends Round implements View<String> {
             if (action.mustPresidentAddCash()) {
                 // From the Bank
                 presidentCash = action.getPresidentCashToAdd();
-                if (currentPlayer.getCash() >= presidentCash) {
+                if (currentPlayer.getCashValue() >= presidentCash) {
                     actualPresidentCash = presidentCash;
                 } else {
                     presidentMustSellShares = true;
                     cashToBeRaisedByPresident =
-                        presidentCash - currentPlayer.getCash();
+                        presidentCash - currentPlayer.getCashValue();
                 }
             } else if (action.mayPresidentAddCash()) {
                 // From another company
@@ -2622,12 +2628,12 @@ public class OperatingRound extends Round implements View<String> {
                         LocalText.getText("PresidentMayNotAddMoreThan",
                                 Bank.format(action.getPresidentCashToAdd()));
                     break;
-                } else if (currentPlayer.getCash() >= presidentCash) {
+                } else if (currentPlayer.getCashValue() >= presidentCash) {
                     actualPresidentCash = presidentCash;
                 } else {
                     presidentMustSellShares = true;
                     cashToBeRaisedByPresident =
-                        presidentCash - currentPlayer.getCash();
+                        presidentCash - currentPlayer.getCashValue();
                 }
 
             } else {
@@ -2674,7 +2680,7 @@ public class OperatingRound extends Round implements View<String> {
 
         /* End of validation, start of execution */
         changeStack.start(true);
-        PhaseI previousPhase = getCurrentPhase();
+        Phase previousPhase = getCurrentPhase();
 
         if (presidentMustSellShares) {
             savedAction = action;
@@ -2686,17 +2692,18 @@ public class OperatingRound extends Round implements View<String> {
         }
 
         if (actualPresidentCash > 0) {
-            MoveUtils.cashMove(currentPlayer, operatingCompany.get(), presidentCash);
+            Owners.cashMove(currentPlayer, operatingCompany.get(), presidentCash);
             ReportBuffer.add(LocalText.getText("PresidentAddsCash",
                     operatingCompany.get().getId(),
                     currentPlayer.getId(),
                     Bank.format(actualPresidentCash)));
         }
 
-        Portfolio oldHolder = train.getHolder();
+        Owner oldOwner = train.getOwner();
+        Portfolio oldPortfolio = train.getPortfolio();
 
         if (exchangedTrain != null) {
-            TrainI oldTrain =
+            Train oldTrain =
                 operatingCompany.get().getPortfolio().getTrainOfType(
                         exchangedTrain.getCertType());
             oldTrain.moveTo(train.isObsolete() ? scrapHeap : pool);
@@ -2704,19 +2711,19 @@ public class OperatingRound extends Round implements View<String> {
                     companyName,
                     exchangedTrain.getId(),
                     train.getId(),
-                    oldHolder.getId(),
+                    oldOwner.getId(),
                     Bank.format(price) ));
         } else if (stb == null) {
             ReportBuffer.add(LocalText.getText("BuysTrain",
                     companyName,
                     train.getId(),
-                    oldHolder.getId(),
+                    oldOwner.getId(),
                     Bank.format(price) ));
         } else {
             ReportBuffer.add(LocalText.getText("BuysTrainUsingSP",
                     companyName,
                     train.getId(),
-                    oldHolder.getId(),
+                    oldOwner.getId(),
                     Bank.format(price),
                     stb.getOriginalCompany().getId() ));
         }
@@ -2725,16 +2732,16 @@ public class OperatingRound extends Round implements View<String> {
 
         operatingCompany.get().buyTrain(train, price);
 
-        if (oldHolder == ipo) {
+        if (oldOwner == ipo.getTrainsModel()) {
             train.getCertType().addToBoughtFromIPO();
             trainManager.setAnyTrainBought(true);
             // Clone the train if infinitely available
             if (train.getCertType().hasInfiniteQuantity()) {
-                ipo.addTrain(trainManager.cloneTrain(train.getCertType()));
+                trainManager.cloneTrain(train.getCertType()).moveTo(ipo);
             }
 
         }
-        if (oldHolder.getOwner() instanceof Bank) {
+        if (oldOwner instanceof Bank) {
             trainsBoughtThisTurn.add(train.getCertType());
         }
 
@@ -2744,7 +2751,7 @@ public class OperatingRound extends Round implements View<String> {
         }
 
         // Check if the phase has changed.
-        trainManager.checkTrainAvailability(train, oldHolder);
+        trainManager.checkTrainAvailability(train, oldPortfolio);
 
         // Check if any companies must discard trains
         if (getCurrentPhase() != previousPhase && checkForExcessTrains()) {
@@ -2769,14 +2776,14 @@ public class OperatingRound extends Round implements View<String> {
 
     public boolean checkForExcessTrains() {
 
-        excessTrainCompanies = new HashMap<Player, List<PublicCompanyI>>();
+        excessTrainCompanies = new HashMap<Player, List<PublicCompany>>();
         Player player;
-        for (PublicCompanyI comp : operatingCompanies.view()) {
+        for (PublicCompany comp : operatingCompanies.view()) {
             if (comp.getPortfolio().getNumberOfTrains() > comp.getCurrentTrainLimit()) {
                 player = comp.getPresident();
                 if (!excessTrainCompanies.containsKey(player)) {
                     excessTrainCompanies.put(player,
-                            new ArrayList<PublicCompanyI>(2));
+                            new ArrayList<PublicCompany>(2));
                 }
                 excessTrainCompanies.get(player).add(comp);
             }
@@ -2801,7 +2808,7 @@ public class OperatingRound extends Round implements View<String> {
         int cash = operatingCompany.get().getCash();
 
         int cost = 0;
-        List<TrainI> trains;
+        List<Train> trains;
 
         boolean hasTrains =
             operatingCompany.get().getPortfolio().getNumberOfTrains() > 0;
@@ -2813,8 +2820,8 @@ public class OperatingRound extends Round implements View<String> {
             boolean mustBuyTrain = !hasTrains && operatingCompany.get().mustOwnATrain();
             boolean emergency = false;
 
-            SortedMap<Integer, TrainI> newEmergencyTrains = new TreeMap<Integer, TrainI>();
-            SortedMap<Integer, TrainI> usedEmergencyTrains = new TreeMap<Integer, TrainI>();
+            SortedMap<Integer, Train> newEmergencyTrains = new TreeMap<Integer, Train>();
+            SortedMap<Integer, Train> usedEmergencyTrains = new TreeMap<Integer, Train>();
             TrainManager trainMgr = gameManager.getTrainManager();
 
             // First check if any more trains may be bought from the Bank
@@ -2826,7 +2833,7 @@ public class OperatingRound extends Round implements View<String> {
 
                 /* New trains */
                 trains = trainMgr.getAvailableNewTrains();
-                for (TrainI train : trains) {
+                for (Train train : trains) {
                     if (!operatingCompany.get().mayBuyTrainType(train)) continue;
                     if (!mayBuyMoreOfEachType
                             && trainsBoughtThisTurn.contains(train.getCertType())) {
@@ -2852,7 +2859,7 @@ public class OperatingRound extends Round implements View<String> {
                     if (train.canBeExchanged() && hasTrains) {
                         cost = train.getCertType().getExchangeCost();
                         if (cost <= cash) {
-                            List<TrainI> exchangeableTrains =
+                            List<Train> exchangeableTrains =
                                 operatingCompany.get().getPortfolio().getUniqueTrains();
                             BuyTrain action = new BuyTrain(train, ipo, cost);
                             action.setTrainsForExchange(exchangeableTrains);
@@ -2882,7 +2889,7 @@ public class OperatingRound extends Round implements View<String> {
 
                 /* Used trains */
                 trains = pool.getUniqueTrains();
-                for (TrainI train : trains) {
+                for (Train train : trains) {
                     if (!mayBuyMoreOfEachType
                             && trainsBoughtThisTurn.contains(train.getCertType())) {
                         continue;
@@ -2910,26 +2917,26 @@ public class OperatingRound extends Round implements View<String> {
                         // Find the cheapest one
                         // Assume there is always one available from IPO
                         int cheapestTrainCost = newEmergencyTrains.firstKey();
-                        TrainI cheapestTrain = newEmergencyTrains.get(cheapestTrainCost);
+                        Train cheapestTrain = newEmergencyTrains.get(cheapestTrainCost);
                         if (!usedEmergencyTrains.isEmpty()
                                 && usedEmergencyTrains.firstKey() < cheapestTrainCost) {
                             cheapestTrainCost = usedEmergencyTrains.firstKey();
                             cheapestTrain = usedEmergencyTrains.get(cheapestTrainCost);
                         }
                         BuyTrain bt = new BuyTrain(cheapestTrain,
-                                cheapestTrain.getHolder(), cheapestTrainCost);
+                                cheapestTrain.getPortfolio(), cheapestTrainCost);
                         bt.setPresidentMustAddCash(cheapestTrainCost - cash);
                         bt.setForcedBuyIfNoRoute(mustBuyTrain); // TODO TEMPORARY
                         possibleActions.add(bt);
                     } else {
                         // All possible bank trains are buyable
-                        for (TrainI train : newEmergencyTrains.values()) {
+                        for (Train train : newEmergencyTrains.values()) {
                             BuyTrain bt = new BuyTrain(train, ipo, train.getCost());
                             bt.setPresidentMustAddCash(train.getCost() - cash);
                             bt.setForcedBuyIfNoRoute(mustBuyTrain); // TODO TEMPORARY
                             possibleActions.add(bt);
                         }
-                        for (TrainI train : usedEmergencyTrains.values()) {
+                        for (Train train : usedEmergencyTrains.values()) {
                             BuyTrain bt = new BuyTrain(train, pool, train.getCost());
                             bt.setPresidentMustAddCash(train.getCost() - cash);
                             bt.setForcedBuyIfNoRoute(mustBuyTrain); // TODO TEMPORARY
@@ -2948,16 +2955,16 @@ public class OperatingRound extends Round implements View<String> {
                 Portfolio pf;
                 int index;
                 int numberOfPlayers = getNumberOfPlayers();
-                int presidentCash = operatingCompany.get().getPresident().getCash();
+                int presidentCash = operatingCompany.get().getPresident().getCashValue();
 
                 // Set up a list per player of presided companies
-                List<List<PublicCompanyI>> companiesPerPlayer =
-                    new ArrayList<List<PublicCompanyI>>(numberOfPlayers);
+                List<List<PublicCompany>> companiesPerPlayer =
+                    new ArrayList<List<PublicCompany>>(numberOfPlayers);
                 for (int i = 0; i < numberOfPlayers; i++)
-                    companiesPerPlayer.add(new ArrayList<PublicCompanyI>(4));
-                List<PublicCompanyI> companies;
+                    companiesPerPlayer.add(new ArrayList<PublicCompany>(4));
+                List<PublicCompany> companies;
                 // Sort out which players preside over which companies.
-                for (PublicCompanyI c : getOperatingCompanies()) {
+                for (PublicCompany c : getOperatingCompanies()) {
                     if (c.isClosed() || c == operatingCompany.get()) continue;
                     p = c.getPresident();
                     index = p.getIndex();
@@ -2969,11 +2976,11 @@ public class OperatingRound extends Round implements View<String> {
                 for (int i = currentPlayerIndex; i < currentPlayerIndex
                 + numberOfPlayers; i++) {
                     companies = companiesPerPlayer.get(i % numberOfPlayers);
-                    for (PublicCompanyI company : companies) {
+                    for (PublicCompany company : companies) {
                         pf = company.getPortfolio();
                         trains = pf.getUniqueTrains();
 
-                        for (TrainI train : trains) {
+                        for (Train train : trains) {
                             if (train.isObsolete() || !train.isTradeable()) continue;
                             bt = null;
                             if (i != currentPlayerIndex
@@ -3022,9 +3029,9 @@ public class OperatingRound extends Round implements View<String> {
     public void checkForeignSales() {
         if (getGameParameterAsBoolean(GameDef.Parm.REMOVE_TRAIN_BEFORE_SR)
                 && trainManager.isAnyTrainBought()) {
-            TrainI train = trainManager.getAvailableNewTrains().get(0);
+            Train train = trainManager.getAvailableNewTrains().get(0);
             if (train.getCertType().hasInfiniteQuantity()) return;
-            MoveUtils.objectMove(train, ipo.getTrainList(), scrapHeap.getTrainList());
+            train.moveTo(scrapHeap);
             ReportBuffer.add(LocalText.getText("RemoveTrain", train.getId()));
         }
     }
@@ -3114,7 +3121,7 @@ public class OperatingRound extends Round implements View<String> {
     /**
      * Update the status if the step has changed by an Undo or Redo
      */
-    public void update(String text) {
+    public void update() {
         prepareStep();
     }
 

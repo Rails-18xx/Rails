@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCertificate.java,v 1.19 2010/06/17 21:35:54 evos Exp $ */
 package rails.game;
 
 import java.util.HashMap;
@@ -7,13 +6,14 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import rails.common.LocalText;
-import rails.game.state.Holder;
-import rails.game.state.ObjectMove;
+import rails.game.model.AbstractOwnable;
+import rails.game.model.CertificatesModel;
+import rails.game.model.Portfolio;
 
-public class PublicCertificate implements PublicCertificateI, Cloneable {
+public class PublicCertificate extends AbstractOwnable implements Certificate, Cloneable {
 
     /** From which public company is this a certificate */
-    protected PublicCompanyI company;
+    protected PublicCompany company;
     /**
      * Share percentage represented by this certificate
      */
@@ -38,8 +38,8 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
     protected int indexInCompany;
 
     /** A map allowing to find certificates by unique id */
-    protected static Map<String, PublicCertificateI> certMap =
-            new HashMap<String, PublicCertificateI>();
+    protected static Map<String, PublicCertificate> certMap =
+            new HashMap<String, PublicCertificate>();
 
     protected static Logger log =
             Logger.getLogger(PublicCertificate.class.getPackage().getName());
@@ -53,7 +53,7 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
         this.indexInCompany = index;
     }
 
-    public PublicCertificate(PublicCertificateI oldCert) {
+    public PublicCertificate(PublicCertificate oldCert) {
         this.shares = oldCert.getShares();
         this.president = oldCert.isPresidentShare();
         this.initiallyAvailable = oldCert.isInitiallyAvailable();
@@ -61,11 +61,13 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
         this.indexInCompany = oldCert.getIndexInCompany();
     }
 
+    /** Set the certificate's unique ID, for use in deserializing */
     public void setUniqueId(String name, int index) {
         certId = name + "-" + index;
         certMap.put(certId, this);
     }
 
+    /** Set the certificate's unique ID */
     public String getUniqueId() {
         return certId;
     }
@@ -74,12 +76,8 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
         return indexInCompany;
     }
 
-    public static PublicCertificateI getByUniqueId(String certId) {
+    public static PublicCertificate getByUniqueId(String certId) {
         return certMap.get(certId);
-    }
-
-    public void moveTo(Holder newHolder) {
-        new ObjectMove(this, portfolio, newHolder);
     }
 
     /**
@@ -89,8 +87,8 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
         return portfolio;
     }
 
-    public Holder getHolder() {
-        return portfolio;
+    public CertificatesModel getHolder() {
+        return portfolio.getShareModel(company);
     }
 
     /**
@@ -177,14 +175,14 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
     /**
      * @return
      */
-    public PublicCompanyI getCompany() {
+    public PublicCompany getCompany() {
         return company;
     }
 
     /**
      * @param companyI
      */
-    public void setCompany(PublicCompanyI companyI) {
+    public void setCompany(PublicCompany companyI) {
         company = companyI;
         certTypeId = company.getId() + "_" + getShare() + "%";
         if (president) certTypeId += "_P";
@@ -204,8 +202,8 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
         }
     }
 
-    public PublicCertificateI copy() {
-        return (PublicCertificateI) this.clone();
+    public PublicCertificate copy() {
+        return (PublicCertificate) this.clone();
     }
 
     /**
@@ -215,7 +213,7 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
      * @param cert Public company certificate to compare with.
      * @return True if the certs are "equal" in the defined sense.
      */
-    public boolean equals(PublicCertificateI cert) {
+    public boolean equals(PublicCertificate cert) {
         return (cert != null && getCompany() == cert.getCompany()
                 && isPresidentShare() == cert.isPresidentShare() && getShares() == cert.getShares());
     }
@@ -224,4 +222,5 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
     public String toString() {
         return "PublicCertificate: " + getId();
     }
+
 }

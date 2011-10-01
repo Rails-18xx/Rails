@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PrivateCompany.java,v 1.42 2010/05/01 16:08:13 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -7,16 +6,23 @@ import java.util.List;
 import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
+import rails.game.model.HolderModel;
+import rails.game.model.Owner;
+import rails.game.model.OwnerState;
+import rails.game.model.Owners;
+import rails.game.model.Portfolio;
 import rails.game.special.SellBonusToken;
 import rails.game.special.SpecialPropertyI;
-import rails.game.state.MoveUtils;
-import rails.game.state.Moveable;
-import rails.game.state.MoveableHolder;
-import rails.game.state.ObjectMove;
 import rails.util.*;
 
-public class PrivateCompany extends Company implements PrivateCompanyI {
+public class PrivateCompany extends Company implements Certificate, Closeable {
 
+    public static final String TYPE_TAG = "Private";
+    public static final String REVENUE = "revenue";
+    //used by getUpperPrice and getLowerPrice to signal no limit
+    public static final int NO_PRICE_LIMIT = -1;    
+
+    
     protected static int numberOfPrivateCompanies = 0;
     protected int privateNumber; // For internal use
 
@@ -60,6 +66,8 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
     // Can the private be bought by companies / players (when held by a player)
     protected boolean tradeableToCompany = true;
     protected boolean tradeableToPlayer = false;
+    
+    private final OwnerState owner = new OwnerState(this);
         
     public PrivateCompany() {
         super();
@@ -202,7 +210,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
 
     }
 
-    public void finishConfiguration (GameManagerI gameManager)
+    public void finishConfiguration (GameManager gameManager)
     throws ConfigurationException {
 
         for (SpecialPropertyI sp : specialProperties) {
@@ -223,7 +231,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
         parentInfoText = "";
 
         if (Util.hasValue(closeAtPhaseName)) {
-            PhaseI closingPhase = gameManager.getPhaseManager().getPhaseByName(closeAtPhaseName);
+            Phase closingPhase = gameManager.getPhaseManager().getPhaseByName(closeAtPhaseName);
             if (closingPhase != null) {
                 closingPhase.addObjectToClose(this);
             }
@@ -257,14 +265,10 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
     public void init(String name, CompanyTypeI type) {
         super.init(name, type);
 
-        specialProperties = new ArrayList<SpecialPropertyI>();
+        specialProperties = HolderModel.create(this, SpecialPropertyI.class);
 
         /* start sfy 1889 */
         preventClosingConditions = new ArrayList<String>();
-    }
-
-    public void moveTo(MoveableHolder newHolder) {
-        MoveUtils.objectMove(this, portfolio.getPrivateCompanies(), newHolder.getPrivateCompanies());
     }
 
     /**
@@ -289,7 +293,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
     }
 
     //  start: sfy 1889: new method
-    public int getRevenueByPhase(PhaseI phase){
+    public int getRevenueByPhase(Phase phase){
         if (phase != null) {
             return revenue[Math.min(
                     revenue.length,
@@ -341,7 +345,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
         }
         for (SellBonusToken sbt : moveToGM) {
             sbt.moveTo(GameManager.getInstance());
-            log.debug("SP "+sbt.getName()+" is now a common property");
+            log.debug("SP "+sbt.getId()+" is now a common property");
         }
     }
 
@@ -351,12 +355,12 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
         if ((preventClosingConditions == null) || preventClosingConditions.isEmpty()) return true;
 
         if (preventClosingConditions.contains("doesNotClose")) {
-            log.debug("Private Company "+getName()+" does not close (unconditional).");
+            log.debug("Private Company "+getId()+" does not close (unconditional).");
             return false;
         }
         if (preventClosingConditions.contains("ifOwnedByPlayer")
                 && portfolio.getOwner() instanceof Player) {
-            log.debug("Private Company "+getName()+" does not close, as it is owned by a player.");
+            log.debug("Private Company "+getId()+" does not close, as it is owned by a player.");
             return false;
         }
         return true;
@@ -385,7 +389,7 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
          * If this private is blocking map hexes, unblock these hexes as soon as
          * it is bought by a company.
          */
-        if (portfolio.getOwner() instanceof CompanyI) {
+        if (portfolio.getOwner() instanceof Company) {
             unblockHexes();
         }
     }
@@ -418,39 +422,18 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
     }
 
     /**
-     * Stub to satisfy MoveableHolderI. Special properties are never added after
-     * completing the initial setup.
-     */
-    public boolean addObject(Moveable object, int[] position) {
-        if (object instanceof SpecialPropertyI) {
-            return Util.addToList(specialProperties, (SpecialPropertyI)object,
-                    position == null ? -1 : position[0]);
-        } else {
-            return false;
-        }
-    }
-
-    /**
      * Remove a special property. Only used to transfer a persistent special
      * property to a Portfolio, where it becomes independent of the private.
      *
      * @param token The special property object to remove.
      * @return True if successful.
      */
-    public boolean removeObject(Moveable object) {
-        if (object instanceof SpecialPropertyI) {
-            return specialProperties.remove(object);
-        } else {
-            return false;
-        }
+    public boolean removeObject(SpecialPropertyI object) {
+        return specialProperties.removeObject(object);
     }
 
-    public int[] getListIndex (Moveable object) {
-        if (object instanceof SpecialPropertyI) {
-            return new int[] {specialProperties.indexOf(object)};
-        } else {
-            return Moveable.AT_END;
-        }
+    public int getListIndex (SpecialPropertyI object) {
+        return specialProperties.getListIndex(object);
     }
 
     public List<MapHex> getBlockedHexes() {
@@ -503,6 +486,9 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
         setClosed();
     }
     
+    /**
+     * @return Returns the upperPrice that the company can be sold in for.
+     */
     public int getUpperPrice() {    
         return getUpperPrice(false);
     }
@@ -515,6 +501,9 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
         return upperPrice;
     }   
     
+    /**
+     * @return Returns the lowerPrice that the company can be sold in for.
+     */    
     public int getLowerPrice() {
         return getLowerPrice(false);       
     }
@@ -527,12 +516,31 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
         return lowerPrice;
     }
     
+    /**
+     * @return Returns whether or not the company can be bought by a company
+     */    
     public boolean tradeableToCompany() {
         return tradeableToCompany;
     }
     
+    /**
+     * @return Returns whether or not the company can be bought by a player (from another player)
+     */
     public boolean tradeableToPlayer() {
         return tradeableToPlayer;
+    }
+
+    // Ownable Interface methods
+    public void moveTo(Owner newOwner) {
+        Owners.move(this, newOwner);
+    }
+    
+    public void setOwner(Owner newOwner) {
+        owner.set(newOwner);
+    }
+    
+    public Owner getOwner() {
+        return owner.get();
     }
 
 }

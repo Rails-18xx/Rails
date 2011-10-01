@@ -6,7 +6,7 @@ package rails.game.state;
  * @param <E> class to wrap
  */
 
-public final class GenericState<E> extends AbstractState {
+public class GenericState<E> extends AbstractState {
 
     private E object;
 
@@ -23,10 +23,10 @@ public final class GenericState<E> extends AbstractState {
     private void set(E object, boolean forced) {
         if (object == null) {
             if (this.object != null) {
-                new StateChange<E>(this, object);
+                new GenericStateChange<E>(this, object);
             }
         } else if (!object.equals(this.object) || forced) {
-                new StateChange<E>(this, object);
+                new GenericStateChange<E>(this, object);
         }
     }
 

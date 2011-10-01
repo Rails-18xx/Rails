@@ -1,7 +1,7 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/BaseTokensModel.java,v 1.4 2008/06/04 19:00:37 evos Exp $*/
 package rails.game.model;
 
-import rails.game.PublicCompanyI;
+import rails.game.PublicCompany;
 import rails.game.state.State;
 
 /**
@@ -10,13 +10,13 @@ import rails.game.state.State;
 
 public class BaseTokensModel extends AbstractModel<String> {
 
-    private PublicCompanyI company;
+    private PublicCompany company;
 
-    public BaseTokensModel(PublicCompanyI company, State allTokenState, State freeTokenState) {
+    public BaseTokensModel(PublicCompany company, State allTokenState, State freeTokenState) {
         super(company, "baseTokensModel");
         this.company = company;
-        allTokenState.addModel(this);
-        freeTokenState.addModel(this);
+        allTokenState.addObserver(this);
+        freeTokenState.addObserver(this);
     }
 
     public String getData() {

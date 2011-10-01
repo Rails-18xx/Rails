@@ -16,6 +16,7 @@ import rails.game.*;
 import rails.game.action.*;
 import rails.game.correct.*;
 import rails.game.correct.MapCorrectionManager.ActionStep;
+import rails.game.model.Portfolio;
 import rails.game.special.*;
 import rails.ui.swing.elements.*;
 import rails.ui.swing.hexmap.GUIHex;
@@ -36,8 +37,8 @@ public class ORUIManager implements DialogOwner {
     protected TileManager tileManager;
 
     private OperatingRound oRound;
-    private PublicCompanyI[] companies;
-    private PublicCompanyI orComp;
+    private PublicCompany[] companies;
+    private PublicCompany orComp;
     private int orCompIndex;
 
     private GameDef.OrStep orStep;
@@ -55,8 +56,8 @@ public class ORUIManager implements DialogOwner {
 
     private boolean tokenLayingEnabled = false;
     public List<LayToken> allowedTokenLays = new ArrayList<LayToken>();
-    public List<? extends TokenI> tokenLays;
-    private int selectedTokenIndex;
+    public List<? extends Token> tokenLays;
+    private int selectedTokenndex;
     private LayToken selectedTokenAllowance;
 
     // map corrections
@@ -117,7 +118,7 @@ public class ORUIManager implements DialogOwner {
 
     public void initOR(OperatingRound or) {
         oRound = or;
-        companies = (oRound).getOperatingCompanies().toArray(new PublicCompanyI[0]);
+        companies = (oRound).getOperatingCompanies().toArray(new PublicCompany[0]);
         map.updateOffBoardToolTips();
         orWindow.activate(oRound);
     }
@@ -541,9 +542,9 @@ public class ORUIManager implements DialogOwner {
     protected void reachDestinations (ReachDestinations action) {
 
         List<String> options = new ArrayList<String>();
-        List<PublicCompanyI> companies = action.getPossibleCompanies();
+        List<PublicCompany> companies = action.getPossibleCompanies();
 
-        for (PublicCompanyI company : companies) {
+        for (PublicCompany company : companies) {
             options.add(company.getId());
         }
 
@@ -740,12 +741,12 @@ public class ORUIManager implements DialogOwner {
 
         if (tokenAllowance != null && allowedTokenLays.contains(tokenAllowance)) {
             selectedTokenAllowance = tokenAllowance;
-            selectedTokenIndex = allowedTokenLays.indexOf(tokenAllowance);
+            selectedTokenndex = allowedTokenLays.indexOf(tokenAllowance);
         } else {
             selectedTokenAllowance = null;
-            selectedTokenIndex = -1;
+            selectedTokenndex = -1;
         }
-        upgradePanel.setSelectedTokenIndex(selectedTokenIndex);
+        upgradePanel.setSelectedTokenndex(selectedTokenndex);
     }
 
     private void layTile() {
@@ -904,7 +905,7 @@ public class ORUIManager implements DialogOwner {
         for (Stop oldStop : hex.getStops()) {
             if (oldStop.hasTokens()) {
                 // Assume only 1 token (no exceptions known)
-                PublicCompanyI company = ((BaseToken)oldStop.getTokens().get(0)).getCompany();
+                PublicCompany company = ((BaseToken)oldStop.getTokens().get(0)).getCompany();
 
                 List<String> prompts = new ArrayList<String>();
                 Map<String, Integer> promptToCityMap = new HashMap<String, Integer>();
@@ -947,7 +948,7 @@ public class ORUIManager implements DialogOwner {
     private Station correctionRelayBaseToken(BaseToken token, List<Station> possibleStations){
         GUIHex selectedHex = map.getSelectedHex();
 
-        PublicCompanyI company = token.getCompany();
+        PublicCompany company = token.getCompany();
         List<String> prompts = new ArrayList<String>();
 
         Map<String, Station> promptToStationMap = new HashMap<String, Station>();
@@ -1065,7 +1066,7 @@ public class ORUIManager implements DialogOwner {
         List<String> prompts = new ArrayList<String>();
         Map<String, PossibleAction> promptToTrain =
                 new HashMap<String, PossibleAction>();
-        TrainI train;
+        Train train;
         String usingPrivates = "";
 
         PossibleAction selectedAction;
@@ -1152,7 +1153,7 @@ public class ORUIManager implements DialogOwner {
         Portfolio seller = buyAction.getFromPortfolio();
         int price = buyAction.getFixedCost();
 
-        if (price == 0 && seller.getOwner() instanceof PublicCompanyI) {
+        if (price == 0 && seller.getOwner() instanceof PublicCompany) {
             prompt = LocalText.getText("WHICH_TRAIN_PRICE",
                             orComp.getId(),
                             train.getId(),
@@ -1179,9 +1180,9 @@ public class ORUIManager implements DialogOwner {
             }
         }
 
-        TrainI exchangedTrain = null;
+        Train exchangedTrain = null;
         if (train != null && buyAction.isForExchange()) {
-            List<TrainI> oldTrains = buyAction.getTrainsForExchange();
+            List<Train> oldTrains = buyAction.getTrainsForExchange();
             if (oldTrains.size() == 1) {
                 exchangedTrain = oldTrains.get(0);
             } else {
@@ -1487,12 +1488,12 @@ public class ORUIManager implements DialogOwner {
         log.debug("OR company = " + orComp.getId());
         log.debug("OR step=" + orStep);
 
-        if (oRound.getOperatingCompanyIndex() != orCompIndex) {
+        if (oRound.getOperatingCompanyndex() != orCompIndex) {
             if (orCompIndex >= 0) orPanel.finishORCompanyTurn(orCompIndex);
 
             // Check if sequence has changed
             checkORCompanySequence(companies, oRound.getOperatingCompanies());
-            setORCompanyTurn(oRound.getOperatingCompanyIndex());
+            setORCompanyTurn(oRound.getOperatingCompanyndex());
         }
 
         orPanel.initORCompanyTurn(orComp, orCompIndex);
@@ -1595,7 +1596,7 @@ public class ORUIManager implements DialogOwner {
             for (BuyTrain bTrain : possibleActions.getType(BuyTrain.class)) {
                 if (bTrain.isForcedBuyIfNoRoute()) {
                     b.append("<br><font color=\"red\">");
-                    b.append(LocalText.getText("MustBuyTrainIfNoRoute"));
+                    b.append(LocalText.getText("MustBuyTrainfNoRoute"));
                     b.append("</font>");
                     break;
                 }
@@ -1731,7 +1732,7 @@ public class ORUIManager implements DialogOwner {
     }
 
     /** Redraw the ORPanel if the company operating order has changed */
-    protected void checkORCompanySequence (PublicCompanyI[] oldCompanies, List<PublicCompanyI> newCompanies) {
+    protected void checkORCompanySequence (PublicCompany[] oldCompanies, List<PublicCompany> newCompanies) {
         for (int i=0; i<newCompanies.size(); i++) {
             if (newCompanies.get(i) != oldCompanies[i]) {
                 log.debug("Detected a OR company sequence change: "+oldCompanies[i].getId()

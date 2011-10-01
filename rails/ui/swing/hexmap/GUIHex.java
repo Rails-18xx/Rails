@@ -63,7 +63,7 @@ public class GUIHex implements ViewObject {
     protected GUITile provisionalGUITile = null;
     protected boolean upgradeMustConnect;
 
-    protected List<TokenI> offStationTokens;
+    protected List<Token> offStationTokens;
     protected List<Integer> barStartPoints;
 
     protected GUIToken provisionalGUIToken = null;
@@ -235,7 +235,7 @@ public class GUIHex implements ViewObject {
         currentGUITile.setRotation(currentTileOrientation);
         toolTip = null;
 
-        model.addView(this);
+        model.addObserver(this);
     }
 
     public void addBar (int orientation) {
@@ -405,12 +405,12 @@ public class GUIHex implements ViewObject {
                             + ((fontMetrics.getHeight() + rectBound.height) * 9 / 15));
         }
 
-        Map<PublicCompanyI, Stop> homes = getHexModel().getHomes();
+        Map<PublicCompany, Stop> homes = getHexModel().getHomes();
 
         if (homes  != null) {
             Stop homeCity;
             Point p;
-            for (PublicCompanyI company : homes.keySet()) {
+            for (PublicCompany company : homes.keySet()) {
                 if (company.isClosed()) continue;
 
                 // Only draw the company name if there isn't yet a token of that company
@@ -434,11 +434,11 @@ public class GUIHex implements ViewObject {
         }
 
         if (getHexModel().isBlockedForTileLays()) {
-            List<PrivateCompanyI> privates =
+            List<PrivateCompany> privates =
                     //GameManager.getInstance().getCompanyManager().getAllPrivateCompanies();
             		hexMap.getOrUIManager().getGameUIManager().getGameManager()
             			.getCompanyManager().getAllPrivateCompanies();
-            for (PrivateCompanyI p : privates) {
+            for (PrivateCompany p : privates) {
                 List<MapHex> blocked = p.getBlockedHexes();
                 if (blocked != null) {
                     for (MapHex hex : blocked) {
@@ -515,10 +515,10 @@ public class GUIHex implements ViewObject {
         }
 
         int numTokens = getHexModel().getTokens(1).size();
-        List<TokenI> tokens = getHexModel().getTokens(1);
+        List<Token> tokens = getHexModel().getTokens(1);
 
         for (int i = 0; i < tokens.size(); i++) {
-            PublicCompanyI co = ((BaseToken) tokens.get(i)).getCompany();
+            PublicCompany co = ((BaseToken) tokens.get(i)).getCompany();
             Point center = getTokenCenter(numTokens, i, 1, 0);
             drawBaseToken(g2, co, center, tokenDiameter);
         }
@@ -527,9 +527,9 @@ public class GUIHex implements ViewObject {
     private void paintSplitStations(Graphics2D g2) {
         int numStations = getHexModel().getStops().size();
         int numTokens;
-        List<TokenI> tokens;
+        List<Token> tokens;
         Point origin;
-        PublicCompanyI co;
+        PublicCompany co;
 
         for (int i = 0; i < numStations; i++) {
             tokens = getHexModel().getTokens(i + 1);
@@ -547,18 +547,18 @@ public class GUIHex implements ViewObject {
     private static int[] offStationTokenY = new int[] { -19, 0 };
 
     private void paintOffStationTokens(Graphics2D g2) {
-        List<TokenI> tokens = getHexModel().getTokens().view();
+        List<Token> tokens = getHexModel().getTokens().view();
         if (tokens == null) return;
 
         int i = 0;
-        for (TokenI token : tokens) {
+        for (Token token : tokens) {
 
             Point origin =
                     new Point(center.x + offStationTokenX[i],
                             center.y + offStationTokenY[i]);
             if (token instanceof BaseToken) {
 
-                PublicCompanyI co = ((BaseToken) token).getCompany();
+                PublicCompany co = ((BaseToken) token).getCompany();
                 drawBaseToken(g2, co, origin, tokenDiameter);
 
             } else if (token instanceof BonusToken) {
@@ -569,7 +569,7 @@ public class GUIHex implements ViewObject {
         }
     }
 
-    private void drawBaseToken(Graphics2D g2, PublicCompanyI co, Point center, int diameter) {
+    private void drawBaseToken(Graphics2D g2, PublicCompany co, Point center, int diameter) {
 
         GUIToken token =
                 new GUIToken(co.getFgColour(), co.getBgColour(), co.getId(),
@@ -580,7 +580,7 @@ public class GUIHex implements ViewObject {
         token.drawToken(g2);
     }
 
-    private void drawHome (Graphics2D g2, PublicCompanyI co, Point origin) {
+    private void drawHome (Graphics2D g2, PublicCompany co, Point origin) {
 
         Font oldFont = g2.getFont();
         Color oldColor = g2.getColor();
@@ -761,11 +761,11 @@ public class GUIHex implements ViewObject {
                 tt.append(st.getValue());
                 if (st.getBaseSlots() > 0) {
                     tt.append(", ").append(st.getBaseSlots()).append(" slots");
-                    List<TokenI> tokens = model.getTokens(stopNumber);
+                    List<Token> tokens = model.getTokens(stopNumber);
                     if (tokens.size() > 0) {
                         tt.append(" (");
                         int oldsize = tt.length();
-                        for (TokenI token : tokens) {
+                        for (Token token : tokens) {
                             if (tt.length() > oldsize) tt.append(",");
                             tt.append(token.getId());
                         }
@@ -793,7 +793,7 @@ public class GUIHex implements ViewObject {
 
         if (getHexModel().getDestinations() != null) {
             tt.append("<br><b>Destination</b>:");
-            for (PublicCompanyI dest : getHexModel().getDestinations()) {
+            for (PublicCompany dest : getHexModel().getDestinations()) {
                 tt.append(" ");
                 tt.append(dest.getId());
             }
@@ -868,7 +868,7 @@ public class GUIHex implements ViewObject {
     /** Needed to satisfy the ViewObject interface. Currently not used. */
     public void deRegister() {
         if (model != null)
-            model.removeView(this);
+            model.removeObserver(this);
     }
 
     public Model<String> getModel() {
@@ -900,6 +900,11 @@ public class GUIHex implements ViewObject {
     
     public String toString () {
         return getName() + " (" + currentTile.getId() + ")";
+    }
+
+    public void update() {
+        // TODO Auto-generated method stub
+        
     }
 
 

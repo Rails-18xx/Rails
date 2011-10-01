@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapHex.java,v 1.45 2010/05/18 04:12:23 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -16,13 +15,20 @@ import rails.game.Stop.RunTo;
 import rails.game.Stop.Score;
 import rails.game.Stop.Type;
 import rails.game.action.LayTile;
-import rails.game.model.AbstractModel;
+import rails.game.model.CashModel;
+import rails.game.model.Model;
+import rails.game.model.Observer;
+import rails.game.model.Owner;
+import rails.game.model.Portfolio;
+import rails.game.model.SingleOwner;
 
 import rails.game.state.ArrayListState;
 import rails.game.state.BooleanState;
-import rails.game.state.Moveable;
 import rails.game.state.TileMove;
 import rails.util.*;
+
+// TODO: Rewrite the mechanisms for tokens
+// TODO: Rewrite the mechanisms as model
 
 /**
  * Represents a Hex on the Map from the Model side.
@@ -46,8 +52,8 @@ import rails.util.*;
  * </code> <p> For {@code EW}-oriented
  * tiles the above picture should be rotated 30 degrees clockwise.
  */
-public class MapHex extends AbstractModel<String> implements ConfigurableComponentI,
-StationHolder, TokenHolder {
+public class MapHex extends SingleOwner<Token> implements Model<String>, ConfigurableComponentI,
+StationHolder {
 
     private static final String[] ewOrNames =
     { "SW", "W", "NW", "NE", "E", "SE" };
@@ -110,11 +116,11 @@ StationHolder, TokenHolder {
      */
     private BooleanState isBlockedForTokenLays = null;
 
-    protected Map<PublicCompanyI, Stop> homes;
-    protected List<PublicCompanyI> destinations;
+    protected Map<PublicCompany, Stop> homes;
+    protected List<PublicCompany> destinations;
 
     /** Tokens that are not bound to a Station (City), such as Bonus tokens */
-    protected ArrayListState<TokenI> offStationTokens;
+    protected ArrayListState<Token> offStationTokens;
 
     /** Storage of revenueBonus that are bound to the hex */
     protected List<RevenueBonusTemplate> revenueBonuses = null;
@@ -165,9 +171,10 @@ StationHolder, TokenHolder {
     protected static Logger log =
         Logger.getLogger(MapHex.class.getPackage().getName());
 
-    // TODO: MapHex as model has no id
+    // TODO: MapHex as model has no id and parent so far
     public MapHex(MapManager mapManager) {
-        super(mapManager, null);
+        // needed to inform the SingleOwner that we have tokens
+        super(Token.class);
         this.mapManager = mapManager;
     }
 
@@ -328,7 +335,7 @@ StationHolder, TokenHolder {
 
     }
 
-    public void finishConfiguration (GameManagerI gameManager) {
+    public void finishConfiguration (GameManager gameManager) {
         if(gameManager == null) {
             throw new IllegalArgumentException("gameManager must not be null");
         }
@@ -785,18 +792,18 @@ StationHolder, TokenHolder {
             }
 
             // Move the tokens
-            Map<TokenI, TokenHolder> tokenDestinations =
-                new HashMap<TokenI, TokenHolder>();
+            Map<Token, Owner> tokenDestinations =
+                new HashMap<Token, Owner>();
 
             for (Stop oldCity : stops) {
                 newCity = oldToNewCities.get(oldCity);
                 if (newCity != null) {
-                    oldtoken: for (TokenI token : oldCity.getTokens()) {
+                    oldtoken: for (Token token : oldCity.getTokens()) {
                         if (token instanceof BaseToken) {
                             // Check if the new city already has such a token
-                            PublicCompanyI company =
+                            PublicCompany company =
                                 ((BaseToken) token).getCompany();
-                            for (TokenI token2 : newCity.getTokens()) {
+                            for (Token token2 : newCity.getTokens()) {
                                 if (token2 instanceof BaseToken
                                         && company == ((BaseToken) token2).getCompany()) {
                                     // No duplicate tokens in one city!
@@ -820,7 +827,7 @@ StationHolder, TokenHolder {
                                 + newCity.getId());
                     }
                 if (!tokenDestinations.isEmpty()) {
-                    for (TokenI token : tokenDestinations.keySet()) {
+                    for (Token token : tokenDestinations.keySet()) {
                         token.moveTo(tokenDestinations.get(token));
                     }
                 }
@@ -883,12 +890,12 @@ StationHolder, TokenHolder {
             }
         }
         /* TODO: Further consequences to be processed here, e.g. new routes etc. */
-
-        notifyModel(); // To notify ViewObject (Observer)
+        // TODO: is this still required?
+        // update(); // To notfiy ViewObject (Observer)
 
     }
 
-    public boolean layBaseToken(PublicCompanyI company, int station) {
+    public boolean layBaseToken(PublicCompany company, int station) {
         if (stops == null || stops.isEmpty()) {
             log.error("Tile " + getId()
                     + " has no station for home token of company "
@@ -903,7 +910,8 @@ StationHolder, TokenHolder {
             return false;
         } else {
             token.moveTo(city);
-            notifyModel();
+            // TODO: is this still required?
+            // update();
 
             if (isHomeFor(company)
                     && isBlockedForTokenLays != null
@@ -935,16 +943,18 @@ StationHolder, TokenHolder {
         }
     }
 
-    public boolean addToken(TokenI token, int position) {
+    
+    // TODO: This is not called anymore
+    public boolean addToken(Token token, int position) {
 
         if (offStationTokens == null)
-            offStationTokens = new ArrayListState<TokenI>(this, "offStationTokens");
+            offStationTokens = new ArrayListState<Token>(this, "offStationTokens");
         if (offStationTokens.contains(token)) {
             return false;
         }
 
         offStationTokens.add(position, token);
-        token.setHolder(this);
+        // token.setHolder(this);
         return true;
     }
 
@@ -952,7 +962,7 @@ StationHolder, TokenHolder {
         if (stops == null || stops.isEmpty()) return null;
         List<BaseToken> tokens = new ArrayList<BaseToken>();
         for (Stop city : stops) {
-            for (TokenI token : city.getTokens()) {
+            for (Token token : city.getTokens()) {
                 if (token instanceof BaseToken) {
                     tokens.add((BaseToken)token);
                 }
@@ -961,7 +971,7 @@ StationHolder, TokenHolder {
         return tokens;
     }
 
-    public ArrayListState<TokenI> getTokens() {
+    public ArrayListState<Token> getTokens() {
         return offStationTokens;
     }
 
@@ -969,37 +979,23 @@ StationHolder, TokenHolder {
         return offStationTokens.size() > 0;
     }
 
-    public void removeToken(TokenI token) {
+    public void removeToken(Token token) {
         offStationTokens.remove(token);
     }
 
     // TODO: Rewrite this
-    public boolean addObject(Moveable object, int position) {
-        if (object instanceof TokenI) {
-            addToken((TokenI) object, position == null ? -1 : position[0]);
-            return true;
-        } else {
-            return false;
-        }
+    public boolean addObject(Token object, int position) {
+        return addToken(object, position);
     }
 
-    public boolean removeObject(Moveable object) {
-        if (object instanceof TokenI) {
-            removeToken((TokenI) object);
-            return true;
-        } else {
-            return false;
-        }
+    public boolean removeObject(Token object) {
+        removeToken(object);
+        return true;
     }
 
-    public int[] getListIndex (Moveable object) {
-        if (object instanceof TokenI) {
-            return new int[] {offStationTokens.indexOf(object)};
-        } else {
-            return Moveable.AT_END;
-        }
+    public int getListIndex (Token object) {
+        return offStationTokens.indexOf(object);
     }
-
 
 
     public boolean hasTokenSlotsLeft(int station) {
@@ -1022,7 +1018,7 @@ StationHolder, TokenHolder {
     }
 
     /** Check if the tile already has a token of a company in any station */
-    public boolean hasTokenOfCompany(PublicCompanyI company) {
+    public boolean hasTokenOfCompany(PublicCompany company) {
 
         for (Stop city : stops) {
             if (city.hasTokenOf(company)) return true;
@@ -1030,11 +1026,11 @@ StationHolder, TokenHolder {
         return false;
     }
 
-    public List<TokenI> getTokens(int cityNumber) {
+    public List<Token> getTokens(int cityNumber) {
         if (stops.size() > 0 && mStops.get(cityNumber) != null) {
             return (mStops.get(cityNumber)).getTokens().view();
         } else {
-            return new ArrayList<TokenI>();
+            return new ArrayList<Token>();
         }
     }
 
@@ -1045,10 +1041,10 @@ StationHolder, TokenHolder {
      * @param company
      * @return
      */
-    public int getCityOfBaseToken(PublicCompanyI company) {
+    public int getCityOfBaseToken(PublicCompany company) {
         if (stops == null || stops.isEmpty()) return 0;
         for (Stop city : stops) {
-            for (TokenI token : city.getTokens()) {
+            for (Token token : city.getTokens()) {
                 if (token instanceof BaseToken
                         && ((BaseToken) token).getCompany() == company) {
                     return city.getNumber();
@@ -1076,8 +1072,8 @@ StationHolder, TokenHolder {
         return foundStop;
     }
 
-    public void addHome(PublicCompanyI company, int stopNumber) throws ConfigurationException {
-        if (homes == null) homes = new HashMap<PublicCompanyI, Stop>();
+    public void addHome(PublicCompany company, int stopNumber) throws ConfigurationException {
+        if (homes == null) homes = new HashMap<PublicCompany, Stop>();
         if (stops.isEmpty()) {
             log.error("No cities for home station on hex " + name);
         } else {
@@ -1096,26 +1092,26 @@ StationHolder, TokenHolder {
         }
     }
 
-    public Map<PublicCompanyI, Stop> getHomes() {
+    public Map<PublicCompany, Stop> getHomes() {
         return homes;
     }
 
-    public boolean isHomeFor(PublicCompanyI company) {
+    public boolean isHomeFor(PublicCompany company) {
         boolean result = homes != null && homes.containsKey(company);
         return result;
     }
 
-    public void addDestination(PublicCompanyI company) {
+    public void addDestination(PublicCompany company) {
         if (destinations == null)
-            destinations = new ArrayList<PublicCompanyI>();
+            destinations = new ArrayList<PublicCompany>();
         destinations.add(company);
     }
 
-    public List<PublicCompanyI> getDestinations() {
+    public List<PublicCompany> getDestinations() {
         return destinations;
     }
 
-    public boolean isDestination(PublicCompanyI company) {
+    public boolean isDestination(PublicCompany company) {
         return destinations != null && destinations.contains(company);
     }
 
@@ -1157,7 +1153,7 @@ StationHolder, TokenHolder {
         return false;
     }
 
-    public boolean isUpgradeableNow(PhaseI currentPhase) {
+    public boolean isUpgradeableNow(Phase currentPhase) {
         return (isUpgradeableNow() & !this.getCurrentTile().getValidUpgrades(this,
                 currentPhase).isEmpty());
     }
@@ -1190,7 +1186,7 @@ StationHolder, TokenHolder {
      * until the (home) company laid their token
      *
      */
-    public boolean isBlockedForTokenLays(PublicCompanyI company, int cityNumber) {
+    public boolean isBlockedForTokenLays(PublicCompany company, int cityNumber) {
 
         if (isHomeFor(company)) {
             // Company can always lay a home base
@@ -1207,7 +1203,7 @@ StationHolder, TokenHolder {
             int allBlockCompanies = 0;
             int anyBlockCompanies = 0;
             int cityBlockCompanies = 0;
-            for (PublicCompanyI comp : homes.keySet()) {
+            for (PublicCompany comp : homes.keySet()) {
                 if (comp.hasLaidHomeBaseTokens() || comp.isClosed()) continue;
                 // home base not laid yet
                 Stop homeCity = homes.get(comp);
@@ -1259,7 +1255,7 @@ StationHolder, TokenHolder {
         return valuesPerPhase;
     }
 
-    public int getCurrentValueForPhase(PhaseI phase) {
+    public int getCurrentValueForPhase(Phase phase) {
         if (hasValuesPerPhase() && phase != null) {
             return valuesPerPhase[Math.min(
                     valuesPerPhase.length,
@@ -1382,5 +1378,38 @@ StationHolder, TokenHolder {
 
     public Score getScoreType() {
         return scoreType;
+    }
+
+    // Owner interface
+    
+    public boolean hasPortfolio() {
+        return false;
+    }
+
+    public Portfolio getPortfolio() {
+        return null;
+    }
+
+    public boolean hasCash() {
+        return false;
+    }
+
+    public CashModel getCash() {
+        return null;
+    }
+
+    public void update() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public void addObserver(Observer observer) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public void removeObserver(Observer observer) {
+        // TODO Auto-generated method stub
+        
     }
 }

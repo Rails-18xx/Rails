@@ -19,19 +19,19 @@ public interface StockMarketI extends ConfigurableComponentI {
 
     public StockSpaceI getStockSpace(String name);
 
-    public void start(PublicCompanyI company, StockSpaceI price);
+    public void start(PublicCompany company, StockSpaceI price);
 
-    public void payOut(PublicCompanyI company);
+    public void payOut(PublicCompany company);
 
-    public void withhold(PublicCompanyI company);
+    public void withhold(PublicCompany company);
 
-    public void sell(PublicCompanyI company, int numberOfShares);
+    public void sell(PublicCompany company, int numberOfShares);
 
-    public void soldOut(PublicCompanyI company);
+    public void soldOut(PublicCompany company);
 
-    public void moveUp(PublicCompanyI company);
+    public void moveUp(PublicCompany company);
     
-    public void close (PublicCompanyI company);
+    public void close (PublicCompany company);
 
     public int getNumberOfColumns();
 
@@ -43,9 +43,9 @@ public interface StockMarketI extends ConfigurableComponentI {
 
     public StockSpaceI getStartSpace(int price);
 
-    public void processMove(PublicCompanyI company, StockSpaceI from,
+    public void processMove(PublicCompany company, StockSpaceI from,
             StockSpaceI to);
 
-    public void processMoveToStackPosition(PublicCompanyI company, StockSpaceI from,
+    public void processMoveToStackPosition(PublicCompany company, StockSpaceI from,
             StockSpaceI to, int toStackPosition);
 }

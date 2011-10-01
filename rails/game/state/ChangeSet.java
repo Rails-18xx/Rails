@@ -94,14 +94,6 @@ final class ChangeSet {
         return owner.equals(player);
     }
     
-    void updateStates() {
-        if (!closed) throw new IllegalStateException("ChangeSet is still open");
-        
-        for (State state:states) {
-            state.notifyModel();
-        }
-    }
-    
     ImmutableSet<State> getStates() {
         return states;
     }

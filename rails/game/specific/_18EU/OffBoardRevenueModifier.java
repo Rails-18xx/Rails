@@ -10,7 +10,7 @@ import rails.algorithms.RevenueAdapter;
 import rails.algorithms.RevenueBonus;
 import rails.algorithms.RevenueStaticModifier;
 import rails.algorithms.RevenueAdapter.VertexVisit;
-import rails.game.PhaseI;
+import rails.game.Phase;
 import rails.game.Station;
 import rails.game.Tile;
 
@@ -23,7 +23,7 @@ public class OffBoardRevenueModifier implements RevenueStaticModifier {
     public boolean modifyCalculator(RevenueAdapter revenueAdapter) {
         
         // 1. define value
-        PhaseI phase = revenueAdapter.getPhase();
+        Phase phase = revenueAdapter.getPhase();
         int bonusValue;
         if (phase.isTileColourAllowed(Tile.GREY_COLOUR_NAME)) {
             bonusValue = 30;

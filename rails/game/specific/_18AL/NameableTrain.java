@@ -2,8 +2,6 @@ package rails.game.specific._18AL;
 
 import rails.game.*;
 import rails.game.state.GenericState;
-import rails.game.state.MoveUtils;
-import rails.game.state.Holder;
 
 public class NameableTrain extends Train {
 
@@ -27,14 +25,6 @@ public class NameableTrain extends Train {
         return (NamedTrainToken) nameToken.get();
     }
 
-    public void moveTo(Holder to) {
-        if (holder != to) {
-            if (getNameToken() != null) {
-                setNameToken(null);
-            }
-            MoveUtils.objectMove(this, holder.getTrainList(), to.getTrainList());
-        }
-    }
 
     @Override
     public String toDisplay() {

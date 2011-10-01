@@ -10,20 +10,20 @@ import rails.game.action.DiscardTrain;
 import rails.game.action.PossibleAction;
 import rails.game.special.ExchangeForShare;
 import rails.game.special.SpecialPropertyI;
-import rails.game.state.MoveUtils;
+import rails.game.model.Owners;
 
 public class PrussianFormationRound extends StockRound {
 
-    private PublicCompanyI prussian;
-    private PublicCompanyI m2;
-    private PhaseI phase;
+    private PublicCompany prussian;
+    private PublicCompany m2;
+    private Phase phase;
 
 	private boolean startPr;
 	private boolean forcedStart;
 	private boolean mergePr;
 	private boolean forcedMerge;
 
-    private List<CompanyI> foldablePrePrussians;
+    private List<Company> foldablePrePrussians;
 
     private enum Step {
         START,
@@ -36,7 +36,7 @@ public class PrussianFormationRound extends StockRound {
 	private static String PR_ID = GameManager_1835.PR_ID;
     private static String M2_ID = GameManager_1835.M2_ID;
 
-    public PrussianFormationRound (GameManagerI gameManager) {
+    public PrussianFormationRound (GameManager gameManager) {
         super (gameManager);
 
         guiHints.setVisibilityHint(GuiDef.Panel.MAP, true);
@@ -78,14 +78,14 @@ public class PrussianFormationRound extends StockRound {
             if (forcedMerge) {
                 List<SpecialPropertyI> sps;
                 setFoldablePrePrussians();
-                List<CompanyI> foldables = new ArrayList<CompanyI> ();
-                for (PrivateCompanyI company : gameManager.getAllPrivateCompanies()) {
+                List<Company> foldables = new ArrayList<Company> ();
+                for (PrivateCompany company : gameManager.getAllPrivateCompanies()) {
                     sps = company.getSpecialProperties();
                     if (sps != null && !sps.isEmpty() && sps.get(0) instanceof ExchangeForShare) {
                         foldables.add(company);
                     }
                 }
-                for (PublicCompanyI company : gameManager.getAllPublicCompanies()) {
+                for (PublicCompany company : gameManager.getAllPublicCompanies()) {
                     if (company.isClosed()) continue;
                     sps = company.getSpecialProperties();
                     if (sps != null && !sps.isEmpty() && sps.get(0) instanceof ExchangeForShare) {
@@ -129,17 +129,17 @@ public class PrussianFormationRound extends StockRound {
 
     private void setFoldablePrePrussians () {
 
-        foldablePrePrussians = new ArrayList<CompanyI> ();
+        foldablePrePrussians = new ArrayList<Company> ();
         SpecialPropertyI sp;
-        for (PrivateCompanyI company : currentPlayer.getPortfolio().getPrivateCompanies()) {
+        for (PrivateCompany company : currentPlayer.getPortfolio().getPrivateCompanies()) {
             sp = company.getSpecialProperties().get(0);
             if (sp instanceof ExchangeForShare) {
                 foldablePrePrussians.add(company);
             }
         }
-        PublicCompanyI company;
+        PublicCompany company;
         List<SpecialPropertyI> sps;
-        for (PublicCertificateI cert : currentPlayer.getPortfolio().getCertificates()) {
+        for (PublicCertificate cert : currentPlayer.getPortfolio().getCertificates()) {
             if (!cert.isPresidentShare()) continue;
             company = cert.getCompany();
             sps = company.getSpecialProperties();
@@ -209,7 +209,7 @@ public class PrussianFormationRound extends StockRound {
         // Validate
         String errMsg = null;
 
-        List<CompanyI> folded = action.getFoldedCompanies();
+        List<Company> folded = action.getFoldedCompanies();
         boolean folding = folded != null && !folded.isEmpty();
 
         while (folding) {
@@ -255,7 +255,7 @@ public class PrussianFormationRound extends StockRound {
         int cash = capFactor * prussian.getIPOPrice();
 
         if (cash > 0) {
-            MoveUtils.cashMove(bank, prussian, cash);
+            Owners.cashMove(bank, prussian, cash);
             ReportBuffer.add(LocalText.getText("FloatsWithCash",
                 prussian.getId(),
                 Bank.format(cash) ));
@@ -264,7 +264,7 @@ public class PrussianFormationRound extends StockRound {
                     prussian.getId()));
         }
         
-        executeExchange (Arrays.asList(new CompanyI[]{m2}), true, false);
+        executeExchange (Arrays.asList(new Company[]{m2}), true, false);
         prussian.setFloated();
     }
 
@@ -273,7 +273,7 @@ public class PrussianFormationRound extends StockRound {
         // Validate
         // String errMsg = null;
 
-        List<CompanyI> folded = action.getFoldedCompanies();
+        List<Company> folded = action.getFoldedCompanies();
         boolean folding = folded != null && !folded.isEmpty();
 
         while (folding) {
@@ -304,18 +304,18 @@ public class PrussianFormationRound extends StockRound {
         return folding;
     }
 
-    private void executeExchange (List<CompanyI> companies, boolean president,
+    private void executeExchange (List<Company> companies, boolean president,
          boolean display) {
 
         ExchangeForShare efs;
-        PublicCertificateI cert;
+        PublicCertificate cert;
         Player player;
-        for (CompanyI company : companies) {
+        for (Company company : companies) {
             log.debug("Merging company "+company.getId());
-            if (company instanceof PrivateCompanyI) {
-                player = (Player)((PrivateCompanyI)company).getPortfolio().getOwner();
+            if (company instanceof PrivateCompany) {
+                player = (Player)((PrivateCompany)company).getPortfolio().getOwner();
             } else {
-                player = ((PublicCompanyI)company).getPresident();
+                player = ((PublicCompany)company).getPresident();
             }
             // Shortcut, sp should be checked
             efs = (ExchangeForShare) company.getSpecialProperties().get(0);
@@ -327,10 +327,10 @@ public class PrussianFormationRound extends StockRound {
                     player.getId(),
                     company.getId(),
                     PR_ID,
-                    company instanceof PrivateCompanyI ? "no"
-                            : Bank.format(((PublicCompanyI)company).getCash()),
-                    company instanceof PrivateCompanyI ? "no"
-                            : ((PublicCompanyI)company).getPortfolio().getTrainList().size());
+                    company instanceof PrivateCompany ? "no"
+                            : Bank.format(((PublicCompany)company).getCash()),
+                    company instanceof PrivateCompany ? "no"
+                            : ((PublicCompany)company).getPortfolio().getTrainList().size());
             ReportBuffer.add(message);
             if (display) DisplayBuffer.add (message);
             message = LocalText.getText("GetShareForMinor",
@@ -342,13 +342,13 @@ public class PrussianFormationRound extends StockRound {
             ReportBuffer.add(message);
             if (display) DisplayBuffer.add (message);
 
-            if (company instanceof PublicCompanyI) {
+            if (company instanceof PublicCompany) {
 
-                PublicCompanyI minor = (PublicCompanyI) company;
+                PublicCompany minor = (PublicCompany) company;
 
                 // Replace the home token
                 BaseToken token = (BaseToken) minor.getTokens().get(0);
-                Stop city = (Stop) token.getHolder();
+                Stop city = (Stop) token.getOwner();
                 MapHex hex = city.getHolder();
                 token.moveTo(minor);
                 if (!hex.hasTokenOfCompany(prussian) && hex.layBaseToken(prussian, city.getNumber())) {
@@ -364,12 +364,13 @@ public class PrussianFormationRound extends StockRound {
 
                 // Move any cash
                 if (minor.getCash() > 0) {
-                    MoveUtils.cashMove (minor, prussian, minor.getCash());
+                    Owners.cashMove (minor, prussian, minor.getCash());
                 }
 
                 // Move any trains
-                List<TrainI> trains = new ArrayList<TrainI> (minor.getPortfolio().getTrainList().view());
-                for (TrainI train : trains) {
+                // TODO: Simplify code due to trainlist being immutable anyway
+                List<Train> trains = new ArrayList<Train> (minor.getPortfolio().getTrainList());
+                for (Train train : trains) {
                     train.moveTo(prussian.getPortfolio());
                 }
             }
@@ -382,8 +383,8 @@ public class PrussianFormationRound extends StockRound {
 
     public boolean discardTrain(DiscardTrain action) {
 
-        TrainI train = action.getDiscardedTrain();
-        PublicCompanyI company = action.getCompany();
+        Train train = action.getDiscardedTrain();
+        PublicCompany company = action.getCompany();
 
         String errMsg = null;
 
@@ -425,7 +426,7 @@ public class PrussianFormationRound extends StockRound {
         //
         if (action.isForced()) changeStack.linkToPreviousMoveSet();
 
-        pool.buyTrain(train, 0);
+        train.moveTo(pool);
         ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
                 company.getId(),
                 train.getId() ));
@@ -454,9 +455,9 @@ public class PrussianFormationRound extends StockRound {
         gameManager.nextRound(this);
     }
 
-    public static boolean prussianIsComplete(GameManagerI gameManager) {
+    public static boolean prussianIsComplete(GameManager gameManager) {
 
-        for (PublicCompanyI company : gameManager.getAllPublicCompanies()) {
+        for (PublicCompany company : gameManager.getAllPublicCompanies()) {
             if (!company.getTypeName().equalsIgnoreCase("Minor")) continue;
             if (!company.isClosed()) return false;
         }

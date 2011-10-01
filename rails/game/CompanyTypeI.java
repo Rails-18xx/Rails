@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyTypeI.java,v 1.6 2010/02/04 21:27:58 evos Exp $ */
 package rails.game;
 
 import java.util.List;
@@ -30,7 +29,7 @@ public interface CompanyTypeI extends ConfigurableComponentI {
 
     // public void configureFromXML(Element el) throws ConfigurationException;
 
-    public CompanyI createCompany(String name, Tag typeTag, Tag tag)
+    public Company createCompany(String name, Tag typeTag, Tag tag)
             throws ConfigurationException;
 
     /**
@@ -43,7 +42,7 @@ public interface CompanyTypeI extends ConfigurableComponentI {
      */
     public String getClassName();
 
-    public List<CompanyI> getCompanies();
+    public List<Company> getCompanies();
 
     public void setCapitalisation(int mode);
 

@@ -18,11 +18,11 @@ import org.jgrapht.Graphs;
 import org.jgrapht.graph.SimpleGraph;
 
 import rails.common.LocalText;
-import rails.game.GameManagerI;
+import rails.game.GameManager;
 import rails.game.MapHex;
-import rails.game.PhaseI;
-import rails.game.PublicCompanyI;
-import rails.game.TrainI;
+import rails.game.Phase;
+import rails.game.PublicCompany;
+import rails.game.Train;
 import rails.game.TrainType;
 import rails.ui.swing.hexmap.HexMap;
 
@@ -59,12 +59,12 @@ public final class RevenueAdapter implements Runnable {
     }
     
     // basic links, to be defined at creation
-    private final GameManagerI gameManager;
+    private final GameManager gameManager;
     private final RevenueManager revenueManager;
     private final NetworkGraphBuilder graphBuilder;
     private final NetworkCompanyGraph companyGraph;
-    private final PublicCompanyI company;
-    private final PhaseI phase;
+    private final PublicCompany company;
+    private final Phase phase;
 
     // basic components, defined empty at creation
     private SimpleGraph<NetworkVertex, NetworkEdge> graph;
@@ -88,8 +88,8 @@ public final class RevenueAdapter implements Runnable {
     // revenue listener to communicate results
     private RevenueListener revenueListener;
     
-    public RevenueAdapter(GameManagerI gameManager, NetworkGraphBuilder graphBuilder, NetworkCompanyGraph companyGraph, 
-            PublicCompanyI company, PhaseI phase){
+    public RevenueAdapter(GameManager gameManager, NetworkGraphBuilder graphBuilder, NetworkCompanyGraph companyGraph, 
+            PublicCompany company, Phase phase){
         this.gameManager = gameManager;
         this.revenueManager = gameManager.getRevenueManager();
         this.graphBuilder = graphBuilder;
@@ -106,7 +106,7 @@ public final class RevenueAdapter implements Runnable {
         this.protectedVertices = new HashSet<NetworkVertex>();
     }
     
-    public static RevenueAdapter createRevenueAdapter(GameManagerI gm, PublicCompanyI company, PhaseI phase) {
+    public static RevenueAdapter createRevenueAdapter(GameManager gm, PublicCompany company, Phase phase) {
         NetworkGraphBuilder nwGraph = NetworkGraphBuilder.create(gm);
         NetworkCompanyGraph companyGraph = NetworkCompanyGraph.create(nwGraph, company);
         RevenueAdapter ra = new RevenueAdapter(gm, nwGraph, companyGraph, company, phase);
@@ -115,11 +115,11 @@ public final class RevenueAdapter implements Runnable {
     }
     
     
-    public PublicCompanyI getCompany() {
+    public PublicCompany getCompany() {
         return company;
     }
     
-    public PhaseI getPhase() {
+    public Phase getPhase() {
         return phase;
     }
     
@@ -161,7 +161,7 @@ public final class RevenueAdapter implements Runnable {
         return trains;
     }
     
-    public boolean addTrain(TrainI railsTrain){
+    public boolean addTrain(Train railsTrain){
         NetworkTrain train = NetworkTrain.createFromRailsTrain(railsTrain);
         if (train == null) {
             return false;
@@ -183,7 +183,7 @@ public final class RevenueAdapter implements Runnable {
         TrainType trainType = gameManager.getTrainManager().getTypeByName(trainString.trim());
         if (trainType != null) { // string defines available trainType
             log.info("RA: found trainType" + trainType);
-            TrainI railsTrain = gameManager.getTrainManager().cloneTrain(trainType.getCertificateType());
+            Train railsTrain = gameManager.getTrainManager().cloneTrain(trainType.getCertificateType());
             return addTrain(railsTrain);
         } else { // otherwise interpret the train
             NetworkTrain train = NetworkTrain.createFromString(trainString);
@@ -229,7 +229,7 @@ public final class RevenueAdapter implements Runnable {
         
         // define Trains
         company.getPortfolio().getTrainList();
-        for (TrainI train:company.getPortfolio().getTrainList()) {
+        for (Train train:company.getPortfolio().getTrainList()) {
             addTrain(train);
         }
 
@@ -529,7 +529,7 @@ public final class RevenueAdapter implements Runnable {
         rc.setDynamicModifiers(hasDynamicModifiers);
     }
 
-    public int getVertexValue(NetworkVertex vertex, NetworkTrain train, PhaseI phase) {
+    public int getVertexValue(NetworkVertex vertex, NetworkTrain train, Phase phase) {
         
         // base value
         int value = vertex.getValueByTrain(train);
@@ -544,7 +544,7 @@ public final class RevenueAdapter implements Runnable {
         return value;
     }
     
-    public String getVertexValueAsString(NetworkVertex vertex, NetworkTrain train, PhaseI phase) {
+    public String getVertexValueAsString(NetworkVertex vertex, NetworkTrain train, Phase phase) {
         StringBuffer s = new StringBuffer();
         
         // base value

@@ -9,7 +9,7 @@ public class StartCompany extends BuyCertificate {
 
     public static final long serialVersionUID = 1L;
 
-    public StartCompany(PublicCompanyI company, int[] prices,
+    public StartCompany(PublicCompany company, int[] prices,
             int maximumNumber) {
         super(company, company.getPresidentsShare().getShare(),
                 GameManager.getInstance().getBank().getIpo(),
@@ -17,11 +17,11 @@ public class StartCompany extends BuyCertificate {
         this.startPrices = prices.clone();
     }
 
-    public StartCompany(PublicCompanyI company, int[] startPrice) {
+    public StartCompany(PublicCompany company, int[] startPrice) {
         this(company, startPrice, 1);
     }
 
-    public StartCompany(PublicCompanyI company, int price,
+    public StartCompany(PublicCompany company, int price,
             int maximumNumber) {
         super(company, company.getPresidentsShare().getShare(),
                 GameManager.getInstance().getBank().getIpo(),
@@ -29,7 +29,7 @@ public class StartCompany extends BuyCertificate {
         this.price = price;
     }
 
-    public StartCompany(PublicCompanyI company, int price) {
+    public StartCompany(PublicCompany company, int price) {
         this(company, price, 1);
     }
 

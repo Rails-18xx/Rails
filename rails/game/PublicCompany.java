@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PublicCompany.java,v 1.100 2010/06/17 21:35:54 evos Exp $ */
 package rails.game;
 
 import java.awt.Color;
@@ -22,7 +21,13 @@ import rails.util.*;
  * but this will still be the form in which ownership is expressed. <p> Company
  * shares may or may not have a price on the stock market.
  */
-public class PublicCompany extends Company implements PublicCompanyI {
+public class PublicCompany extends Company implements CashOwner {
+
+    public static final int CAPITALISE_FULL = 0;
+
+    public static final int CAPITALISE_INCREMENTAL = 1;
+
+    public static final int CAPITALISE_WHEN_BOUGHT = 2;
 
     protected static final int DEFAULT_SHARE_UNIT = 10;
 
@@ -75,11 +80,11 @@ public class PublicCompany extends Company implements PublicCompanyI {
     /** Sequence number in the array of public companies - may not be useful */
     protected int publicNumber = -1; // For internal use
 
-    protected ArrayListState<TokenI> allBaseTokens;
+    protected ArrayListState<Token> allBaseTokens;
 
-    protected ArrayListState<TokenI> freeBaseTokens;
+    protected ArrayListState<Token> freeBaseTokens;
 
-    protected ArrayListState<TokenI> laidBaseTokens;
+    protected ArrayListState<Token> laidBaseTokens;
 
     protected int numberOfBaseTokens = 0;
 
@@ -199,7 +204,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     protected boolean mustHaveOperatedToTradeShares = false;
 
     /** The certificates of this company (minimum 1) */
-    protected ArrayListState<PublicCertificateI> certificates;
+    protected ArrayListState<PublicCertificate> certificates;
     /** Are the certificates available from the first SR? */
     boolean certsAreInitiallyAvailable = true;
 
@@ -245,7 +250,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     /** Private to close if first train is bought */
     protected String privateToCloseOnFirstTrainName = null;
 
-    protected PrivateCompanyI privateToCloseOnFirstTrain = null;
+    protected PrivateCompany privateToCloseOnFirstTrain = null;
 
     /** Must the company own a train */
     protected boolean mustOwnATrain = true;
@@ -272,7 +277,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     protected BooleanState canSharePriceVary = null;
 
-    protected GameManagerI gameManager;
+    protected GameManager gameManager;
     protected Bank bank;
     protected StockMarketI stockMarket;
     protected MapManager mapManager;
@@ -500,8 +505,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
         if (certificateTags != null) {
             int shareTotal = 0;
             boolean gotPresident = false;
-            PublicCertificateI certificate;
-            certificates = new ArrayListState<PublicCertificateI>(this, "certificates"); // Throw away
+            PublicCertificate certificate;
+            certificates = new ArrayListState<PublicCertificate>(this, "certificates"); // Throw away
             // the per-type
             // specification
 
@@ -624,7 +629,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
         inGameState = new BooleanState(this, "InGame", true);
 
-        this.portfolio = new Portfolio(name, this);
+        this.portfolio = new Portfolio(this, name);
         treasury = new CashModel(this);
         lastRevenue = new MoneyModel(this, "lastRevenue");
         lastRevenue.setSuppressInitialZero(true);
@@ -636,9 +641,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
         hasOperated = new BooleanState(this, "hasOperated", false);
         buyable = new BooleanState(this, "isBuyable", false);
 
-        allBaseTokens = new ArrayListState<TokenI>(this, "allBaseTokens");
-        freeBaseTokens = new ArrayListState<TokenI>(this, "freeBaseTokens");
-        laidBaseTokens = new ArrayListState<TokenI>(this, "laidBaseTokens");
+        allBaseTokens = new ArrayListState<Token>(this, "allBaseTokens");
+        freeBaseTokens = new ArrayListState<Token>(this, "freeBaseTokens");
+        laidBaseTokens = new ArrayListState<Token>(this, "laidBaseTokens");
         baseTokensModel = new BaseTokensModel(this, allBaseTokens, freeBaseTokens);
 
         /* Spendings in the current operating turn */
@@ -670,7 +675,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     /**
      * Final initialisation, after all XML has been processed.
      */
-    public void finishConfiguration(GameManagerI gameManager)
+    public void finishConfiguration(GameManager gameManager)
     throws ConfigurationException {
 
         this.gameManager = gameManager;
@@ -709,7 +714,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         }
 
         // Give each certificate an unique Id
-        PublicCertificateI cert;
+        PublicCertificate cert;
         for (int i = 0; i < certificates.size(); i++) {
             cert = certificates.get(i);
             cert.setUniqueId(name, i);
@@ -898,7 +903,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     }
 
     /** Stub that allows exclusions such as that 1856 CGR may not buy a 4 */
-    public boolean mayBuyTrainType (TrainI train) {
+    public boolean mayBuyTrainType (Train train) {
         return true;
     }
 
@@ -942,10 +947,10 @@ public class PublicCompany extends Company implements PublicCompanyI {
         start (getStartSpace());
     }
 
-    public void transferAssetsFrom(PublicCompanyI otherCompany) {
+    public void transferAssetsFrom(PublicCompany otherCompany) {
 
         if (otherCompany.getCash() > 0) {
-            MoveUtils.cashMove(otherCompany, this, otherCompany.getCash());
+            Owners.cashMove(otherCompany, this, otherCompany.getCash());
         }
         portfolio.transferAssetsFrom(otherCompany.getPortfolio());
     }
@@ -978,7 +983,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
         if (hasOperated.booleanValue()) hasOperated.set(false);
 
         // Remove the "unfloated" indicator in GameStatus
-        getPresident().getPortfolio().getShareModel(this).notifyModel();
+        // TODO: Is this still required?
+        getPresident().getPortfolio().getShareModel(this).update();
 
         if (sharePriceUpOnFloating) {
             stockMarket.moveUp(this);
@@ -991,7 +997,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         if (initialTrainType != null) {
             TrainManager trainManager = gameManager.getTrainManager();
             TrainCertificateType type = trainManager.getCertTypeByName(initialTrainType);
-            TrainI train = bank.getIpo().getTrainOfType(type);
+            Train train = bank.getIpo().getTrainOfType(type);
             buyTrain(train, initialTrainCost);
             train.setTradeable(initialTrainTradeable);
             trainManager.checkTrainAvailability(train, bank.getIpo());
@@ -1039,28 +1045,28 @@ public class PublicCompany extends Company implements PublicCompanyI {
         }
 
         // Dispose of the certificates
-        for (PublicCertificateI cert : certificates.view()) {
-            if (cert.getHolder() != shareDestination) {
+        for (PublicCertificate cert : certificates.view()) {
+            if (cert.getPortfolio() != shareDestination) {
                 cert.moveTo(shareDestination);
             }
         }
 
         // Any trains go to the pool (from the 1856 rules)
-        MoveUtils.objectMoveAll(portfolio.getTrainList(), bank.getPool().getTrainList());
+        Owners.moveAll(this, bank.getPool(), Train.class);
 
         // Any cash goes to the bank (from the 1856 rules)
-        int cash = treasury.getCash();
+        int cash = treasury.value();
         if (cash > 0) {
             treasury.setSuppressZero(true);
-            treasury.addCash(-cash);
+            treasury.add(-cash);
             bank.addCash(cash);
         }
 
         lastRevenue.setSuppressZero(true);
         setLastRevenue(0);
 
-        // FIXME: This is plain wrong, as the viewList cannot be modified
-        Util.moveObjects(laidBaseTokens.view(), this);
+        // TODO: Check if this works correctly
+        Owners.move(laidBaseTokens.view(), this);
         stockMarket.close(this);
 
     }
@@ -1181,10 +1187,10 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
         Map<Player, Boolean> done = new HashMap<Player, Boolean>(8);
         Player owner;
-        for (PublicCertificateI cert : certificates.view()) {
-            if (cert.getHolder() instanceof Portfolio
-                    && ((Portfolio)cert.getHolder()).getOwner() instanceof Player) {
-                owner = (Player)((Portfolio)cert.getHolder()).getOwner();
+        for (PublicCertificate cert : certificates.view()) {
+            if (cert.getPortfolio() instanceof Portfolio // FIXME: What kind of condition is this, was cert.getHolder()
+                    && cert.getHolder().getOwner() instanceof Player) {
+                owner = (Player)cert.getHolder().getOwner();
                 if (!done.containsKey(owner)) {
                     owner.updateWorth();
                     done.put(owner, true);
@@ -1199,7 +1205,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
      * @param amount The amount to add (may be negative).
      */
     public void addCash(int amount) {
-        treasury.addCash(amount);
+        treasury.add(amount);
     }
 
     /**
@@ -1208,14 +1214,18 @@ public class PublicCompany extends Company implements PublicCompanyI {
      * @return The current cash amount.
      */
     public int getCash() {
-        return treasury.getCash();
+        return treasury.value();
+    }
+    
+    public CashModel getCashModel() {
+        return treasury;
     }
 
     public String getFormattedCash() {
         return treasury.getData();
     }
 
-    public Model<String> getCashModel() {
+    public Model<String> value() {
         return treasury;
     }
 
@@ -1232,7 +1242,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
      * @return ArrayList containing the certificates (item 0 is the President's
      * share).
      */
-    public List<PublicCertificateI> getCertificates() {
+    public List<PublicCertificate> getCertificates() {
         return certificates.view();
     }
 
@@ -1242,8 +1252,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
      *
      * @param list ArrayList containing the certificates.
      */
-    public void setCertificates(List<PublicCertificateI> list) {
-        certificates = new ArrayListState<PublicCertificateI>(this, "certificates", list);
+    public void setCertificates(List<PublicCertificate> list) {
+        certificates = new ArrayListState<PublicCertificate>(this, "certificates", list);
     }
 
     /**
@@ -1252,7 +1262,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
      *
      */
     public void nameCertificates () {
-        for (PublicCertificateI cert : certificates.view()) {
+        for (PublicCertificate cert : certificates.view()) {
             cert.setCompany(this);
         }
     }
@@ -1262,9 +1272,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
      *
      * @param certificate The certificate to add.
      */
-    public void addCertificate(PublicCertificateI certificate) {
+    public void addCertificate(PublicCertificate certificate) {
         if (certificates == null)
-            certificates = new ArrayListState<PublicCertificateI>(this, "certificates");
+            certificates = new ArrayListState<PublicCertificate>(this, "certificates");
         certificates.add(certificate);
     }
 
@@ -1283,7 +1293,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
      */
     public Player getPresident() {
         if (hasStarted()) {
-            CashHolder owner = certificates.get(0).getPortfolio().getOwner();
+            Owner owner = certificates.get(0).getPortfolio().getOwner();
             if (owner instanceof Player) return (Player) owner;
         }
         return null;
@@ -1293,7 +1303,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         return presidentModel;
     }
 
-    public PublicCertificateI getPresidentsShare () {
+    public PublicCertificate getPresidentsShare () {
         return certificates.get(0);
     }
 
@@ -1360,7 +1370,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     }
 
-    public boolean paysOutToTreasury (PublicCertificateI cert) {
+    public boolean paysOutToTreasury (PublicCertificate cert) {
 
         Portfolio holder = cert.getPortfolio();
         if (holder == bank.getIpo() && ipoPaysOut
@@ -1388,9 +1398,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
      * @return true if the share price can move up.
      */
     public boolean isSoldOut() {
-        CashHolder owner;
+        Owner owner;
 
-        for (PublicCertificateI cert : certificates.view()) {
+        for (PublicCertificate cert : certificates.view()) {
             owner = cert.getPortfolio().getOwner();
             if (owner instanceof Bank || owner == cert.getCompany()) {
                 return false;
@@ -1450,7 +1460,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     public int sharesOwnedByPlayers() {
         int shares = 0;
-        for (PublicCertificateI cert : certificates.view()) {
+        for (PublicCertificate cert : certificates.view()) {
             if (cert.getPortfolio().getOwner() instanceof Player) {
                 shares += cert.getShares();
             }
@@ -1508,7 +1518,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         int presIndex = seller.getIndex();
         Player player;
         int share;
-        GameManagerI gmgr = GameManager.getInstance();
+        GameManager gmgr = GameManager.getInstance();
 
         for (int i = presIndex + 1; i < presIndex
         + gmgr.getNumberOfPlayers(); i++) {
@@ -1532,7 +1542,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         int presIndex = president.getIndex();
         int presShare = president.getPortfolio().getShare(this);
 
-        GameManagerI gmgr = GameManager.getInstance();
+        GameManager gmgr = GameManager.getInstance();
         Player player;
         int share;
 
@@ -1596,12 +1606,25 @@ public class PublicCompany extends Company implements PublicCompanyI {
     /**
      * Must be called in stead of Portfolio.buyTrain if side-effects can occur.
      */
-    public void buyTrain(TrainI train, int price) {
-        if (train.getOwner() instanceof PublicCompanyI) {
-            ((MoneyModel)((PublicCompanyI)train.getOwner()).getTrainsSpentThisTurnModel()).add(-price);
+    public void buyTrain(Train train, int price) {
+        
+        // check first if it is bought from another company
+        if (train.getOwner() instanceof PublicCompany) {
+            PublicCompany previousOwner = (PublicCompany)train.getOwner();
+            //  adjust the money spent on trains field
+            ((MoneyModel)previousOwner.getTrainsSpentThisTurnModel()).add(-price);
+            // pay the money to the other company
+            Owners.cashMove(this, previousOwner, price);
+        } else { // TODO: make this a serious test, no assumption
+            // else it is from the bank
+            Owners.cashMoveToBank(this, price);
         }
-        portfolio.buyTrain(train, price);
+
+        // increase own train costs
         trainsCostThisTurn.add(price);
+        // move the train to here
+        train.moveTo(this);
+        // check if a private has to be closed on first train buy
         if (privateToCloseOnFirstTrain != null
                 && !privateToCloseOnFirstTrain.isClosed()) {
             privateToCloseOnFirstTrain.setClosed();
@@ -1612,7 +1635,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         return trainsCostThisTurn;
     }
 
-    public void buyPrivate(PrivateCompanyI privateCompany, Portfolio from,
+    public void buyPrivate(PrivateCompany privateCompany, Owner from,
             int price) {
 
         if (from != bank.getIpo()) {
@@ -1626,10 +1649,10 @@ public class PublicCompany extends Company implements PublicCompanyI {
         }
 
         // Move the private certificate
-        privateCompany.moveTo(portfolio);
+        privateCompany.moveTo(this);
 
         // Move the money
-        if (price > 0) MoveUtils.cashMove(this, from.owner, price);
+        if (price > 0) Owners.cashMove(this, (CashOwner)from, price); // TODO: Remove the cast
         privatesCostThisTurn.add(price);
 
         // Move any special abilities to the portfolio, if configured so
@@ -1702,7 +1725,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         if (cost > 0) tokensCostThisTurn.add(cost);
     }
 
-    public void layBaseTokenInNoMapMode(int cost) {
+    public void layBaseTokennNoMapMode(int cost) {
         if (cost > 0) tokensCostThisTurn.add(cost);
         tokensLaidThisTurn.appendWithDelimiter(Bank.format(cost), ",");
     }
@@ -1866,22 +1889,24 @@ public class PublicCompany extends Company implements PublicCompanyI {
      * as well. The token is removed from the company laid token list and added
      * to the free token list.
      */
-    // TODO: Replace the  whole method, undo is done differently now
-    @Deprecated
-    public boolean addToken(TokenI token, int position) {
+    // FIXME: Create a new Token model that distinguishs between laidBaseTokens and freeBaseTokens
+    // not by the holder
+    public boolean addToken(Token token, int position) {
         boolean result = false;
-        if (token instanceof BaseToken
+/*        if (token instanceof BaseToken
                 && laidBaseTokens.remove(token)
                 // FIXME: This is plain wrong as we cannot add the token to the view list
                 && Util.addToList(freeBaseTokens.view(), token, position)) {
             token.setHolder(this);
-            this.baseTokensModel.notifyModel();
+            // TODO: Is this still required?
+            this.baseTokensModel.update();
         }
+        */
         return result;
 
     }
 
-    public ArrayListState<TokenI> getTokens() {
+    public ArrayListState<Token> getTokens() {
         return allBaseTokens;
     }
 
@@ -1907,38 +1932,27 @@ public class PublicCompany extends Company implements PublicCompanyI {
      * free token list and added to the laid token list. In other words: lay a
      * base token
      */
-    public void removeToken(TokenI token) {
+    public void removeToken(Token token) {
 
         if (token instanceof BaseToken && freeBaseTokens.remove(token)) {
             laidBaseTokens.add(token);
-            this.baseTokensModel.notifyModel();
+            // TODO: Is this still required
+            this.baseTokensModel.update();
         }
 
     }
 
-    public boolean addObject(Moveable object, int position) {
-        if (object instanceof TokenI) {
-            return addToken((TokenI) object, position == null ? -1 : position[0]);
-        } else {
-            return false;
-        }
+    public boolean addObject(Token object, int position) {
+        return addToken(object, position);
     }
 
-    public boolean removeObject(Moveable object) {
-        if (object instanceof BaseToken) {
-            removeToken((TokenI) object);
-            return true;
-        } else {
-            return false;
-        }
+    public boolean removeObject(BaseToken object) {
+        removeToken(object);
+        return true;
     }
 
-    public int[] getListIndex (Moveable object) {
-        if (object instanceof BaseToken) {
-            return new int[] {freeBaseTokens.indexOf(object)};
-        } else {
-            return Moveable.AT_END;
-        }
+    public int getListIndex (BaseToken object) {
+        return freeBaseTokens.indexOf(object);
     }
 
     public int getNumberOfTileLays(String tileColour) {
@@ -1948,7 +1962,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         Map<String, Integer> phaseMap = extraTileLays.get(tileColour);
         if (phaseMap == null || phaseMap.isEmpty()) return 1;
 
-        PhaseI phase = gameManager.getPhaseManager().getCurrentPhase();
+        Phase phase = gameManager.getPhaseManager().getCurrentPhase();
         Integer ii = phaseMap.get(phase.getName());
         if (ii == null) return 1;
 
@@ -2051,12 +2065,16 @@ public class PublicCompany extends Company implements PublicCompanyI {
          * Add the certificates, if defined with the CompanyType and absent in
          * the Company specification
          */
-        if (certificates != null) {
-            ((PublicCompanyI) clone).setCertificates(certificates.view());
+
+        // FIXME: In the following the cloning has to be moved to the portfolio
+        
+/*        if (certificates != null) {
+            ((PublicCompany) clone).setCertificates(certificates.view());
         }
         if (specialProperties != null) {
-            ((PublicCompany) clone).specialProperties = new ArrayList<SpecialPropertyI>(specialProperties);
+            ((PublicCompany) clone).specialProperties = new HolderModel<SpecialPropertyI>(this, "specialProperties");
         }
+ */
 
         return clone;
     }
@@ -2073,4 +2091,5 @@ public class PublicCompany extends Company implements PublicCompanyI {
     public boolean hasRoute() {
         return true;
     }
+
 }

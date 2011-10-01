@@ -12,7 +12,7 @@ public class StartCompany_18EU extends StartCompany {
 
     // Server settings
     // Before phase 5: select a minor to merge
-    protected transient List<PublicCompanyI> minorsToMerge = null;
+    protected transient List<PublicCompany> minorsToMerge = null;
     protected String minorsToMergeNames = null;
     // From phase 5: select a Home station
     protected boolean requestStartSpaces = false;
@@ -21,7 +21,7 @@ public class StartCompany_18EU extends StartCompany {
 
     // Client settings
     // Before phase 5: selected minor to merge
-    protected transient PublicCompanyI chosenMinor = null;
+    protected transient PublicCompany chosenMinor = null;
     protected String chosenMinorName = null;
     // From phase 5: selected Home station
     protected transient Stop selectedHomeStation = null;
@@ -29,17 +29,17 @@ public class StartCompany_18EU extends StartCompany {
 
     public static final long serialVersionUID = 1L;
 
-    public StartCompany_18EU(PublicCompanyI company, int[] prices) {
+    public StartCompany_18EU(PublicCompany company, int[] prices) {
         super(company, prices, 1);
     }
 
-    public void setMinorsToMerge(List<PublicCompanyI> minors) {
+    public void setMinorsToMerge(List<PublicCompany> minors) {
 
         minorsToMerge = minors;
 
         if (minorsToMerge != null) {
             StringBuffer b = new StringBuffer();
-            for (PublicCompanyI minor : minorsToMerge) {
+            for (PublicCompany minor : minorsToMerge) {
                 if (b.length() > 0) b.append(",");
                 b.append(minor.getId());
             }
@@ -64,15 +64,15 @@ public class StartCompany_18EU extends StartCompany {
         return availableHomeStations;
     }
 
-    public List<PublicCompanyI> getMinorsToMerge() {
+    public List<PublicCompany> getMinorsToMerge() {
         return minorsToMerge;
     }
 
-    public PublicCompanyI getChosenMinor() {
+    public PublicCompany getChosenMinor() {
         return chosenMinor;
     }
 
-    public void setChosenMinor(PublicCompanyI chosenMinor) {
+    public void setChosenMinor(PublicCompany chosenMinor) {
         this.chosenMinor = chosenMinor;
         this.chosenMinorName = chosenMinor.getId();
     }
@@ -121,7 +121,7 @@ public class StartCompany_18EU extends StartCompany {
 
         CompanyManagerI cmgr = getCompanyManager();
         if (minorsToMergeNames != null) {
-            minorsToMerge = new ArrayList<PublicCompanyI>();
+            minorsToMerge = new ArrayList<PublicCompany>();
             for (String name : minorsToMergeNames.split(",")) {
                 minorsToMerge.add(cmgr.getPublicCompany(name));
             }

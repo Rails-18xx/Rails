@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rails.game.*;
+import rails.game.model.Owner;
+import rails.game.model.Portfolio;
+import rails.game.model.PortfolioOwner;
 import rails.game.special.SpecialProperty;
 import rails.game.special.SpecialTrainBuy;
 import rails.util.Util;
@@ -21,13 +24,13 @@ import rails.util.Util;
 public class BuyTrain extends PossibleORAction {
 
     // Initial settings
-    transient private TrainI train;
+    transient private Train train;
     private String trainUniqueId;
     transient private Portfolio from;
     private String fromName;
     private int fixedCost = 0;
     private boolean forcedBuyIfNoRoute = false; // TODO Can be disabled once route checking exists
-    transient private List<TrainI> trainsForExchange = null;
+    transient private List<Train> trainsForExchange = null;
     private String[] trainsForExchangeUniqueIds;
 
     /** Obsolete, but left in for backwards compatibility of saved files */
@@ -50,17 +53,17 @@ public class BuyTrain extends PossibleORAction {
     // User settings
     private int pricePaid = 0;
     private int addedCash = 0;
-    transient private TrainI exchangedTrain = null;
+    transient private Train exchangedTrain = null;
     private String exchangedTrainUniqueId;
 
     public static final long serialVersionUID = 2L;
 
-    public BuyTrain(TrainI train, Portfolio from, int fixedCost) {
+    public BuyTrain(Train train, Portfolio from, int fixedCost) {
 
         this (train, train.getType(), from, fixedCost);
     }
     
-    public BuyTrain(TrainI train, TrainType type, Portfolio from, int fixedCost) {
+    public BuyTrain(Train train, TrainType type, Portfolio from, int fixedCost) {
         this.train = train;
         this.trainUniqueId = train.getUniqueId();
         this.from = from;
@@ -70,7 +73,7 @@ public class BuyTrain extends PossibleORAction {
         this.typeName = type.getName();
     }
 
-    public BuyTrain setTrainsForExchange(List<TrainI> trains) {
+    public BuyTrain setTrainsForExchange(List<Train> trains) {
         trainsForExchange = trains;
         if (trains != null) {
             trainsForExchangeUniqueIds = new String[trains.size()];
@@ -133,7 +136,7 @@ public class BuyTrain extends PossibleORAction {
      * train is in this case only created after buying the first one).
      * @return
      */
-    public TrainI getTrain() {
+    public Train getTrain() {
         if (train == null) {
             train = GameManager.getInstance().getTrainManager().getTrainByUniqueId(trainUniqueId);
         }
@@ -156,7 +159,7 @@ public class BuyTrain extends PossibleORAction {
         return trainsForExchange != null && !trainsForExchange.isEmpty();
     }
 
-    public List<TrainI> getTrainsForExchange() {
+    public List<Train> getTrainsForExchange() {
         return trainsForExchange;
     }
 
@@ -176,11 +179,11 @@ public class BuyTrain extends PossibleORAction {
         return forcedBuyIfNoRoute;
     }
 
-    public Portfolio getHolder() {
-        return getTrain().getHolder();
+    public Portfolio getPortfolio() {
+        return getTrain().getPortfolio();
     }
 
-    public CashHolder getOwner() {
+    public Owner getOwner() {
         return getTrain().getOwner();
     }
 
@@ -200,11 +203,11 @@ public class BuyTrain extends PossibleORAction {
         this.pricePaid = pricePaid;
     }
 
-    public TrainI getExchangedTrain() {
+    public Train getExchangedTrain() {
         return exchangedTrain;
     }
 
-    public void setExchangedTrain(TrainI exchangedTrain) {
+    public void setExchangedTrain(Train exchangedTrain) {
         this.exchangedTrain = exchangedTrain;
         if (exchangedTrain != null)
             this.exchangedTrainUniqueId = exchangedTrain.getUniqueId();
@@ -288,7 +291,7 @@ public class BuyTrain extends PossibleORAction {
         exchangedTrainUniqueId = (String) fields.get("exchangedTrainUniqueId", exchangedTrainUniqueId);
         extraMessage = (String) fields.get("extraMessage", extraMessage);
 
-        GameManagerI gameManager = GameManager.getInstance();
+        GameManager gameManager = GameManager.getInstance();
         TrainManager trainManager = gameManager.getTrainManager();
         CompanyManagerI companyManager = gameManager.getCompanyManager();
 
@@ -316,7 +319,7 @@ public class BuyTrain extends PossibleORAction {
         from = gameManager.getPortfolioByName(fromName);
         if (trainsForExchangeUniqueIds != null
             && trainsForExchangeUniqueIds.length > 0) {
-            trainsForExchange = new ArrayList<TrainI>();
+            trainsForExchange = new ArrayList<Train>();
             for (int i = 0; i < trainsForExchangeUniqueIds.length; i++) {
                 trainsForExchange.add(trainManager.getTrainByUniqueId(trainsForExchangeUniqueIds[i]));
             }

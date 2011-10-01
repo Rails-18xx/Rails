@@ -9,8 +9,8 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import rails.common.parser.ConfigurationException;
-import rails.game.state.Moveable;
-import rails.game.state.Holder;
+import rails.game.model.Holder;
+import rails.game.model.Ownable;
 
 public final class Util {
 
@@ -91,31 +91,6 @@ public final class Util {
     }
 
 
-
-    /**
-     * Safely move a list of objects from one holder to another, avoiding
-     * ConcurrentModificationExceptions.
-     *
-     * @param from
-     * @param to
-     * @param objects
-     */
-    @Deprecated
-    public static <T extends Moveable> void moveObjects(List<T> objects,
-            Holder to) {
-
-        if (objects == null || objects.isEmpty()) return;
-
-        List<T> list = new ArrayList<T>();
-        for (T object : objects) {
-            list.add(object);
-        }
-        for (T object : list) {
-            object.moveTo(to);
-        }
-
-    }
-
     /** Safely add an object to a List at a given position
      * @param objects The List to add the object to.
      * @param object The object to be added.
@@ -127,7 +102,7 @@ public final class Util {
      * */
     
     @Deprecated
-    public static <T extends Moveable, U extends T> boolean addToList (List<T> objects,
+    public static <T extends Ownable, U extends T> boolean addToList (List<T> objects,
             U object, int position) {
         if (objects == null || object == null) {
             return false;

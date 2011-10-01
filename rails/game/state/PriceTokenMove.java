@@ -11,14 +11,15 @@ import rails.game.*;
  * @author Erik Vos
  */
 @Deprecated
-public class PriceTokenMove implements Move {
+//FIXME: Rewrite this mechanism
+public class PriceTokenMove {
 
-    private PublicCompanyI company;
+    private PublicCompany company;
     private StockSpaceI from, to;
     private int fromStackPosition;
     private StockMarketI stockMarket = null;
 
-    public PriceTokenMove(PublicCompanyI company, StockSpaceI from,
+    public PriceTokenMove(PublicCompany company, StockSpaceI from,
             StockSpaceI to, StockMarketI stockMarket) {
         this.company = company;
         this.from = from;

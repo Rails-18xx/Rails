@@ -27,15 +27,15 @@ import com.jgraph.layout.organic.JGraphFastOrganicLayout;
 
 import rails.game.BaseToken;
 import rails.game.Stop;
-import rails.game.GameManagerI;
+import rails.game.GameManager;
 import rails.game.MapHex;
 import rails.game.MapManager;
-import rails.game.PublicCompanyI;
+import rails.game.PublicCompany;
 import rails.game.Station;
 import rails.game.TileI;
-import rails.game.TokenHolder;
-import rails.game.TokenI;
+import rails.game.Token;
 import rails.game.Track;
+import rails.game.model.Owner;
 
 public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
 
@@ -53,7 +53,7 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
         mapVertexes = new HashMap<String, NetworkVertex> ();
     }
     
-    public static NetworkGraphBuilder create(GameManagerI gameManager) {
+    public static NetworkGraphBuilder create(GameManager gameManager) {
         NetworkGraphBuilder graphBuilder = new NetworkGraphBuilder();
         graphBuilder.generateGraph(gameManager.getMapManager(), gameManager.getRevenueManager());
         return graphBuilder;
@@ -175,11 +175,11 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
         return mapVertexes.get(identVertex);
     }
     
-    public NetworkVertex getVertex(TokenI token) {
+    public NetworkVertex getVertex(Token token) {
         if (!(token instanceof BaseToken)) return null;
-        TokenHolder holder = token.getHolder();
-        if (!(holder instanceof Stop)) return null;
-        Stop city = (Stop)holder;
+        Owner owner = token.getOwner();
+        if (!(owner instanceof Stop)) return null;
+        Stop city = (Stop)owner;
         MapHex hex = city.getHolder();
         Station station = city.getRelatedStation();
         return getVertex(hex, station);
@@ -212,7 +212,7 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
     }
     
     public static List<MapHex> getTokenableStationHexes(Graph<NetworkVertex, NetworkEdge> graph,
-                                PublicCompanyI company){
+                                PublicCompany company){
         List<MapHex> hexes = new ArrayList<MapHex>();
         for(NetworkVertex vertex:graph.vertexSet()) {
             Stop city = vertex.getCity();

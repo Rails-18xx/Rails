@@ -12,7 +12,7 @@ public class StartRound_1825 extends StartRound {
     /**
      * Constructor, only to be used in dynamic instantiation.
      */
-    public StartRound_1825(GameManagerI gameManager) {
+    public StartRound_1825(GameManager gameManager) {
         super(gameManager);
         hasBidding = false;
     }

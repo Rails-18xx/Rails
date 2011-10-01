@@ -259,7 +259,7 @@ public final class ReportBuffer {
     /** Creates a new report item */
     public static void createNewReportItem(int index) {
         // check availablity
-        GameManagerI gm = GameManager.getInstance();
+        GameManager gm = GameManager.getInstance();
         ReportBuffer instance = null;
         if (gm != null) {
             instance = gm.getReportBuffer();
@@ -356,7 +356,7 @@ public final class ReportBuffer {
     
     /** Add a message to the log buffer (and display it on the console) */
     public static void add(String message) {
-        GameManagerI gm = GameManager.getInstance();
+        GameManager gm = GameManager.getInstance();
         ReportBuffer instance = null;
         if (gm != null) {
             instance = gm.getReportBuffer();
@@ -377,7 +377,7 @@ public final class ReportBuffer {
     
    /** Add a user comment to the report window */
    public static void addComment(String comment) {
-       GameManagerI gm = GameManager.getInstance();
+       GameManager gm = GameManager.getInstance();
        ReportBuffer instance = null;
        if (gm != null) {
            instance = gm.getReportBuffer();
@@ -391,7 +391,7 @@ public final class ReportBuffer {
    
    /** Retrieves the current user comment */
    public static String getComment() {
-       GameManagerI gm = GameManager.getInstance();
+       GameManager gm = GameManager.getInstance();
        ReportBuffer instance = null;
        if (gm != null) {
            instance = gm.getReportBuffer();
@@ -406,7 +406,7 @@ public final class ReportBuffer {
    
    /** Retrieves all user comments */
    public static SortedMap<Integer, String> getCommentItems() {
-       GameManagerI gm = GameManager.getInstance();
+       GameManager gm = GameManager.getInstance();
        ReportBuffer instance = null;
        if (gm != null) {
            instance = gm.getReportBuffer();
@@ -421,7 +421,7 @@ public final class ReportBuffer {
    
    /** sets user comments */
    public static void setCommentItems(SortedMap<Integer, String> commentItems) {
-       GameManagerI gm = GameManager.getInstance();
+       GameManager gm = GameManager.getInstance();
        ReportBuffer instance = null;
        if (gm != null) {
            instance = gm.getReportBuffer();

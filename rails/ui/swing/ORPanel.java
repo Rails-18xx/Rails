@@ -112,7 +112,7 @@ implements ActionListener, KeyListener, RevenueListener {
     private int playerIndex = -1;
     private int orCompIndex = -1;
 
-    private PublicCompanyI orComp = null;
+    private PublicCompany orComp = null;
     
     private RevenueAdapter revenueAdapter = null;
     private Thread revenueThread = null;
@@ -149,7 +149,7 @@ implements ActionListener, KeyListener, RevenueListener {
         players = gameUIManager.getPlayers().toArray(new Player[0]);
 
         if (round instanceof OperatingRound) {
-            companies = ((OperatingRound) round).getOperatingCompanies().toArray(new PublicCompanyI[0]);
+            companies = ((OperatingRound) round).getOperatingCompanies().toArray(new PublicCompany[0]);
             nc = companies.length;
         }
 
@@ -170,7 +170,7 @@ implements ActionListener, KeyListener, RevenueListener {
         infoMenu.add(remainingTilesMenuItem);
         menuBar.add(infoMenu);
 
-        addCompanyInfo();
+        addCompanynfo();
         addTrainsInfo();
         addPhasesInfo();
         addNetworkInfo();
@@ -222,7 +222,7 @@ implements ActionListener, KeyListener, RevenueListener {
     public void recreate(OperatingRound or) {
         log.debug("ORPanel.recreate() called");
 
-        companies = or.getOperatingCompanies().toArray(new PublicCompanyI[0]);
+        companies = or.getOperatingCompanies().toArray(new PublicCompany[0]);
         nc = companies.length;
 
         // Remove old fields. Don't forget to deregister the Observers
@@ -506,7 +506,7 @@ implements ActionListener, KeyListener, RevenueListener {
 
     }
 
-    protected void addCompanyInfo() {
+    protected void addCompanynfo() {
 
     	CompanyManagerI cm = orUIManager.getGameUIManager().getGameManager().getCompanyManager();
     	List<CompanyTypeI> comps = cm.getCompanyTypes();
@@ -521,7 +521,7 @@ implements ActionListener, KeyListener, RevenueListener {
     		menu.setEnabled(true);
             compMenu.add(menu);
 
-    		for (CompanyI comp : type.getCompanies()) {
+    		for (Company comp : type.getCompanies()) {
     			item = new JMenu(comp.getId());
     			item.setEnabled(true);
     			item.add(new JMenuItem(comp.getInfoText()));
@@ -604,7 +604,7 @@ implements ActionListener, KeyListener, RevenueListener {
         
         if (revenue_suggest) {
             CompanyManagerI cm = orUIManager.getGameUIManager().getGameManager().getCompanyManager();
-            for (PublicCompanyI comp : cm.getAllPublicCompanies()) {
+            for (PublicCompany comp : cm.getAllPublicCompanies()) {
                 if (!comp.hasFloated() || comp.isClosed()) continue;
                 JMenuItem item = new JMenuItem(comp.getId());
                 item.addActionListener(this);
@@ -615,7 +615,7 @@ implements ActionListener, KeyListener, RevenueListener {
     }
     
     protected void executeNetworkInfo(String companyName) {
-        GameManagerI gm = orUIManager.getGameUIManager().getGameManager();
+        GameManager gm = orUIManager.getGameUIManager().getGameManager();
         
         if (companyName.equals("Network")) {
             NetworkGraphBuilder nwGraph = NetworkGraphBuilder.create(gm);
@@ -626,7 +626,7 @@ implements ActionListener, KeyListener, RevenueListener {
             NetworkGraphBuilder.visualize(mapGraph, "Optimized Map Network");
         } else {
             CompanyManagerI cm = gm.getCompanyManager();
-            PublicCompanyI company = cm.getPublicCompany(companyName);
+            PublicCompany company = cm.getPublicCompany(companyName);
 //
 //            NetworkGraphBuilder nwGraph = NetworkGraphBuilder.create(gm);
 //            NetworkCompanyGraph companyGraph = NetworkCompanyGraph.create(nwGraph, company);
@@ -778,7 +778,7 @@ implements ActionListener, KeyListener, RevenueListener {
     }
     
     
-    public void initORCompanyTurn(PublicCompanyI orComp, int orCompIndex) {
+    public void initORCompanyTurn(PublicCompany orComp, int orCompIndex) {
 
         this.orComp = orComp;
         this.orCompIndex = orCompIndex;
@@ -831,8 +831,8 @@ implements ActionListener, KeyListener, RevenueListener {
         }
     }
 
-    private RevenueAdapter initRevenueCalculation(PublicCompanyI company){
-        GameManagerI gm = orUIManager.getGameUIManager().getGameManager();
+    private RevenueAdapter initRevenueCalculation(PublicCompany company){
+        GameManager gm = orUIManager.getGameUIManager().getGameManager();
         RevenueAdapter ra = RevenueAdapter.createRevenueAdapter(gm, company, gm.getCurrentPhase());
         ra.initRevenueCalculator(true);
         ra.addRevenueListener(this);
@@ -1014,7 +1014,7 @@ implements ActionListener, KeyListener, RevenueListener {
     }
 
     // TEMPORARY
-    public PublicCompanyI getORComp() {
+    public PublicCompany getORComp() {
         return orComp;
     }
 
@@ -1030,7 +1030,7 @@ implements ActionListener, KeyListener, RevenueListener {
         s.setVisible(active);
     }
 
-    public PublicCompanyI[] getOperatingCompanies() {
+    public PublicCompany[] getOperatingCompanies() {
         return companies;
     }
 

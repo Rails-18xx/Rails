@@ -1,13 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Stop.java,v 1.12 2010/04/18 15:08:57 evos Exp $ */
 package rails.game;
-
-import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 
-import rails.game.state.AbstractItem;
+import rails.game.model.SingleOwner;
 import rails.game.state.ArrayListState;
-import rails.game.state.Moveable;
 import rails.game.state.GenericState;
 import rails.util.Util;
 
@@ -27,13 +23,13 @@ import rails.util.Util;
  *
  * @author Erik Vos
  */
-public class Stop extends AbstractItem implements TokenHolder {
+public class Stop extends SingleOwner<Token> {
     private int number;
     private String uniqueId;
     //private Station relatedStation;
     private GenericState<Station> relatedStation;
     private int slots;
-    private ArrayListState<TokenI> tokens;
+    private ArrayListState<Token> tokens;
     private MapHex mapHex;
     private String trackEdges;
 
@@ -99,6 +95,10 @@ public class Stop extends AbstractItem implements TokenHolder {
     }
 
     public Stop(MapHex mapHex, int number, Station station) {
+        
+        // the third parameter indicates that it owns tokens
+        super(mapHex, Integer.toString(number), Token.class);
+        
         this.mapHex = mapHex;
         this.number = number;
 
@@ -106,7 +106,7 @@ public class Stop extends AbstractItem implements TokenHolder {
         relatedStation = new GenericState<Station>(this, "City_"+uniqueId+"_station", station);
         setRelatedStation(station);
 
-        tokens = new ArrayListState<TokenI>(this, "tokens");
+        tokens = new ArrayListState<Token>(this, "tokens");
 
         initStopProperties();
     }
@@ -217,32 +217,7 @@ public class Stop extends AbstractItem implements TokenHolder {
         return uniqueId;
     }
 
-    public boolean addToken(TokenI token, int position) {
-
-        if (tokens.contains(token)) return false;
-        tokens.add(position, token);
-        token.setHolder(this);
-        return true;
-    }
-
-    public boolean addObject(Moveable object, int position) {
-        if (object instanceof TokenI) {
-            return addToken((TokenI) object, position == null ? -1 : position[0]);
-        } else {
-            return false;
-        }
-    }
-
-    public boolean removeObject(Moveable object) {
-        if (object instanceof TokenI) {
-            removeToken((TokenI) object);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public ArrayListState<TokenI> getTokens() {
+    public ArrayListState<Token> getTokens() {
         return tokens;
     }
 
@@ -262,7 +237,7 @@ public class Stop extends AbstractItem implements TokenHolder {
         return slots - tokens.size();
     }
 
-    public void removeToken(TokenI token) {
+    public void removeToken(Token token) {
         tokens.remove(token);
     }
 
@@ -271,14 +246,14 @@ public class Stop extends AbstractItem implements TokenHolder {
      * @return true if this Stop already contains an instance of the specified
      * company's token. Do this by calling the hasTokenOf with Company Name.
      * Using a tokens.contains(company) fails since the tokens are a ArrayList
-     * of TokenI not a ArrayList of PublicCompanyI.
+     * of Token not a ArrayList of PublicCompany.
      */
-    public boolean hasTokenOf(PublicCompanyI company) {
+    public boolean hasTokenOf(PublicCompany company) {
         return hasTokenOf (company.getId());
     }
 
     public boolean hasTokenOf (String companyName) {
-        for (TokenI token : tokens) {
+        for (Token token : tokens) {
             if (token instanceof BaseToken
                     && ((BaseToken)token).getCompany().getId().equals(companyName)) {
                 return true;
@@ -287,12 +262,8 @@ public class Stop extends AbstractItem implements TokenHolder {
         return false;
     }
 
-    public int[] getListIndex (Moveable object) {
-        if (object instanceof BaseToken) {
-            return new int[] {tokens.indexOf(object)};
-        } else {
-            return Moveable.AT_END;
-        }
+    public int getListIndex (BaseToken object) {
+           return tokens.indexOf(object);
     }
 
     public String getTrackEdges() {
@@ -323,7 +294,7 @@ public class Stop extends AbstractItem implements TokenHolder {
         return loopAllowed;
     }
 
-    public boolean isRunToAllowedFor (PublicCompanyI company) {
+    public boolean isRunToAllowedFor (PublicCompany company) {
         switch (runToAllowed) {
         case YES:
             return true;
@@ -337,7 +308,7 @@ public class Stop extends AbstractItem implements TokenHolder {
         }
     }
 
-    public boolean isRunThroughAllowedFor (PublicCompanyI company) {
+    public boolean isRunThroughAllowedFor (PublicCompany company) {
         switch (runThroughAllowed) {
         case YES: // either it has no tokens at all, or it has a company tokens or empty token slots
             return !hasTokens() || hasTokenOf (company) || hasTokenSlotsLeft() ;
@@ -351,7 +322,7 @@ public class Stop extends AbstractItem implements TokenHolder {
         }
     }
 
-    public int getValueForPhase (PhaseI phase) {
+    public int getValueForPhase (Phase phase) {
         if (mapHex.hasValuesPerPhase()) {
             return mapHex.getCurrentValueForPhase(phase);
         } else {
@@ -374,4 +345,5 @@ public class Stop extends AbstractItem implements TokenHolder {
         b.append(")");
         return b.toString();
     }
+
 }

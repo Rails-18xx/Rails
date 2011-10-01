@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PhaseManager.java,v 1.20 2010/01/31 22:22:28 macfreek Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -8,6 +7,7 @@ import org.apache.log4j.Logger;
 import rails.common.parser.ConfigurableComponentI;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
+import rails.game.model.Owner;
 import rails.game.state.AbstractItem;
 import rails.game.state.GenericState;
 import rails.game.state.State;
@@ -18,10 +18,10 @@ public class PhaseManager extends AbstractItem implements ConfigurableComponentI
     protected HashMap<String, Phase> phaseMap;
 
     protected int numberOfPhases = 0;
-    protected GenericState<PhaseI> currentPhase = new GenericState<PhaseI>(this, "CurrentPhase");
+    protected GenericState<Phase> currentPhase = new GenericState<Phase>(this, "CurrentPhase");
 
     // Can be removed once setPhase() has been redone.
-    protected GameManagerI gameManager;
+    protected GameManager gameManager;
 
     protected static Logger log =
         Logger.getLogger(PhaseManager.class.getPackage().getName());
@@ -52,7 +52,7 @@ public class PhaseManager extends AbstractItem implements ConfigurableComponentI
         }
     }
 
-    public void finishConfiguration (GameManagerI gameManager) 
+    public void finishConfiguration (GameManager gameManager) 
     throws ConfigurationException {
         this.gameManager = gameManager;
         
@@ -60,27 +60,27 @@ public class PhaseManager extends AbstractItem implements ConfigurableComponentI
             phase.finishConfiguration(gameManager);
         }
         
-        PhaseI initialPhase = phaseList.get(0);
+        Phase initialPhase = phaseList.get(0);
         setPhase(initialPhase, null);
     }
 
-    public PhaseI getCurrentPhase() {
-        return (PhaseI) currentPhase.get();
+    public Phase getCurrentPhase() {
+        return (Phase) currentPhase.get();
     }
     
     public State getCurrentPhaseModel() {
         return currentPhase;
     }
 
-    public int getCurrentPhaseIndex() {
+    public int getCurrentPhasendex() {
         return getCurrentPhase().getIndex();
     }
 
-    public void setPhase(String name, Portfolio lastTrainBuyer) {
+    public void setPhase(String name, Owner lastTrainBuyer) {
         setPhase(phaseMap.get(name), lastTrainBuyer);
     }
 
-    protected void setPhase(PhaseI phase, Portfolio lastTrainBuyer) {
+    protected void setPhase(Phase phase, Owner lastTrainBuyer) {
         if (phase != null) {
             phase.setLastTrainBuyer (lastTrainBuyer);
             currentPhase.set(phase);
@@ -92,7 +92,7 @@ public class PhaseManager extends AbstractItem implements ConfigurableComponentI
         }
     }
 
-    public PhaseI getPhaseByName(String name) {
+    public Phase getPhaseByName(String name) {
         return phaseMap.get(name);
     }
 

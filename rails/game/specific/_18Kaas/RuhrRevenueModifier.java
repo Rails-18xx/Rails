@@ -12,7 +12,7 @@ import rails.algorithms.RevenueStaticModifier;
 import rails.common.parser.ConfigurableComponentI;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
-import rails.game.GameManagerI;
+import rails.game.GameManager;
 
 public class RuhrRevenueModifier implements RevenueStaticModifier, ConfigurableComponentI {
 
@@ -25,7 +25,7 @@ public class RuhrRevenueModifier implements RevenueStaticModifier, ConfigurableC
         // does nothing
     }
 
-    public void finishConfiguration(GameManagerI parent)
+    public void finishConfiguration(GameManager parent)
             throws ConfigurationException {
         doublesOnlyMajors = parent.getGameOption("18KaasRuhrgebiedDoublesOnlyMajors").equalsIgnoreCase("yes");
         log.debug("Finish configuration of RuhrRevenueModifier, doublesOnlyMajors = " + doublesOnlyMajors);

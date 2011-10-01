@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import org.apache.log4j.Logger;
 
 import rails.game.GameManager;
-import rails.game.GameManagerI;
+import rails.game.GameManager;
 import rails.game.Player;
 import rails.game.ReportBuffer;
 
@@ -86,7 +86,7 @@ public final class ChangeStack {
             log.warn("Action to finish is empty and will be discarded");
         } else {
             changeSet.close();
-            changeSet.updateStates();
+            StateManager.getInstance().updateObservers();
         }
     }
 
@@ -99,8 +99,9 @@ public final class ChangeStack {
 
         // un-execute, update and remove
         changeSet.unexecute();
-        changeSet.updateStates();
+        
         stack.removeLast();
+        StateManager.getInstance().updateObservers();
     }
 
     /**
@@ -173,7 +174,7 @@ public final class ChangeStack {
     }
 
     private static ChangeStack getChangeStack() {
-        GameManagerI gameManager = GameManager.getInstance();
+        GameManager gameManager = GameManager.getInstance();
         if (gameManager != null) {
             return gameManager.getChangeStack();
         } else {

@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialProperty.java,v 1.27 2010/03/23 18:45:23 stefanfrey Exp $ */
 package rails.game.special;
 
 import org.apache.log4j.Logger;
@@ -7,16 +6,17 @@ import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.*;
+import rails.game.model.Owner;
 import rails.game.state.AbstractItem;
 import rails.game.state.BooleanState;
-import rails.game.state.Holder;
-import rails.game.state.ObjectMove;
+import rails.game.model.Owners;
 import rails.util.*;
 
+// TODO: Check if we could extend AbstractOwnable
 public abstract class SpecialProperty extends AbstractItem implements SpecialPropertyI {
 
-    protected CompanyI originalCompany;
-    protected Holder holder = null;
+    protected Company originalCompany;
+    protected Owner owner = null;
     protected int closingValue = 0;
     protected BooleanState exercised;
     
@@ -53,7 +53,7 @@ public abstract class SpecialProperty extends AbstractItem implements SpecialPro
     protected static final String STORAGE_NAME = "SpecialProperty";
 
     /** To give subclasses access to the various 'managers' */
-    protected GameManagerI gameManager;
+    protected GameManager gameManager;
 
     protected static Logger log =
         Logger.getLogger(SpecialProperty.class.getPackage().getName());
@@ -101,7 +101,7 @@ public abstract class SpecialProperty extends AbstractItem implements SpecialPro
         
     }
 
-    public void finishConfiguration (GameManagerI gameManager)
+    public void finishConfiguration (GameManager gameManager)
     throws ConfigurationException {
 
     }
@@ -117,24 +117,24 @@ public abstract class SpecialProperty extends AbstractItem implements SpecialPro
         return (SpecialPropertyI)GameManager.getInstance().retrieveObject(STORAGE_NAME, id);
     }
 
-    public void setCompany(CompanyI company) {
+    public void setCompany(Company company) {
         originalCompany = company;
-        holder = company;
+        owner = company;
         exercised =
                 new BooleanState(this, company.getId() + "_SP_" + uniqueId
                                  + "_Exercised", false);
     }
 
-    public CompanyI getOriginalCompany() {
+    public Company getOriginalCompany() {
         return originalCompany;
     }
 
-    public void setHolder(Holder holder) {
-        this.holder = holder;
+    public void setOwner(Owner owner) {
+        this.owner = owner;
     }
 
-    public Holder getHolder() {
-        return holder;
+    public Owner getOwner() {
+        return owner;
     }
 
     /**
@@ -215,8 +215,8 @@ public abstract class SpecialProperty extends AbstractItem implements SpecialPro
     public void setExercised (boolean value) {
         if (permanent) return; // sfy 1889 
         exercised.set(value);
-        if (value && originalCompany instanceof PrivateCompanyI) {
-            ((PrivateCompanyI)originalCompany).checkClosingIfExercised(false);
+        if (value && originalCompany instanceof PrivateCompany) {
+            ((PrivateCompany)originalCompany).checkClosingIfExercised(false);
         }
     }
 
@@ -252,11 +252,9 @@ public abstract class SpecialProperty extends AbstractItem implements SpecialPro
      * Move the special property to another holder.
      * Only to be used for special properties that have the "transfer" attribute.
      */
-    public void moveTo(Holder newHolder) {
+    public void moveTo(Owner newOwner) {
         if (transferText.equals("")) return;
-        //if (newHolder instanceof Portfolio) {
-            new ObjectMove(this, holder, newHolder);
-        //}
+        Owners.move(this, newOwner);
     }
 
     @Override

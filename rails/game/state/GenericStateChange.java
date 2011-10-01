@@ -3,12 +3,12 @@ package rails.game.state;
 /**
  * @author Erik Vos, freystef
  */
-final class StateChange<E> implements Change {
+final class GenericStateChange<E> implements Change {
 
     final private GenericState<E> state;
     final private E previous, next;
 
-    public StateChange(final GenericState<E> state, E object) {
+    public GenericStateChange(final GenericState<E> state, E object) {
         this.state = state;
         previous = state.get();
         next = object;

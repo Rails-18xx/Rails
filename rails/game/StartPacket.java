@@ -25,7 +25,7 @@ public class StartPacket {
     //        new HashMap<String, StartPacket>();
 
     /**
-     * The start packet name. Usually the default name "Ïnitial" is used.
+     * The start packet name. Usually the default name "ï¿½nitial" is used.
      */
     @SuppressWarnings("unused")
     private String name; // For identification if there is more than one.
@@ -129,7 +129,7 @@ public class StartPacket {
      * set the relationships between all start packets and the start items that
      * each one contains.
      */
-    protected void init(GameManagerI gameManager) {
+    protected void init(GameManager gameManager) {
         for (StartItem item : items) {
             item.init(gameManager);
         }

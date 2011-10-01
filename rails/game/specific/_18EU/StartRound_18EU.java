@@ -33,7 +33,7 @@ public class StartRound_18EU extends StartRound {
     /**
      * Constructor, only to be used in dynamic instantiation.
      */
-    public StartRound_18EU(GameManagerI gameManager) {
+    public StartRound_18EU(GameManager gameManager) {
         super(gameManager);
         hasBidding = true;
         hasBasePrices = false;
@@ -148,7 +148,7 @@ public class StartRound_18EU extends StartRound {
         changeStack.start(false);
 
         assignItem(player, item, price, 0);
-        ((PublicCertificateI) item.getPrimary()).getCompany().start();
+        ((PublicCertificate) item.getPrimary()).getCompany().start();
         setNextSelectingPlayer();
         setStep(SELECT_STEP);
 

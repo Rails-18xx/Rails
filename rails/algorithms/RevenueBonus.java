@@ -8,8 +8,8 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import rails.game.PhaseI;
-import rails.game.TrainI;
+import rails.game.Phase;
+import rails.game.Train;
 import rails.game.TrainType;
 
 public final class RevenueBonus {
@@ -26,8 +26,8 @@ public final class RevenueBonus {
     // internal attributes
     private List<NetworkVertex> vertices;
     private List<TrainType> trainTypes;
-    private List<TrainI> trains;
-    private List<PhaseI> phases;
+    private List<Train> trains;
+    private List<Phase> phases;
     
     public RevenueBonus(int value, String name) {
         this.value = value;
@@ -35,8 +35,8 @@ public final class RevenueBonus {
      
         vertices = new ArrayList<NetworkVertex>();
         trainTypes = new ArrayList<TrainType>();
-        trains = new ArrayList<TrainI>();
-        phases = new ArrayList<PhaseI>();
+        trains = new ArrayList<Train>();
+        phases = new ArrayList<Phase>();
     }
     
     public void addVertex(NetworkVertex vertex) {
@@ -51,11 +51,11 @@ public final class RevenueBonus {
         trainTypes.add(trainType);
     }
     
-    public void addTrain(TrainI train) {
+    public void addTrain(Train train) {
         trains.add(train);
     }
     
-    public void addPhase(PhaseI phase) {
+    public void addPhase(Phase phase) {
         phases.add(phase);
     }
     
@@ -75,11 +75,11 @@ public final class RevenueBonus {
         return trainTypes;
     }
 
-    public List<TrainI> getTrains() {
+    public List<Train> getTrains() {
         return trains;
     }
     
-    public List<PhaseI> getPhases() {
+    public List<Phase> getPhases() {
         return phases;
     }
     
@@ -87,7 +87,7 @@ public final class RevenueBonus {
         return (vertices.size() == 1);
     }
     
-    public boolean addToRevenueCalculator(RevenueCalculator rc, int bonusId, List<NetworkVertex> allVertices, List<NetworkTrain> trains, PhaseI phase) {
+    public boolean addToRevenueCalculator(RevenueCalculator rc, int bonusId, List<NetworkVertex> allVertices, List<NetworkTrain> trains, Phase phase) {
         if (isSimpleBonus() || !phases.isEmpty() && !phases.contains(phase)) return false;
         // only non-simple bonuses and checks phase condition
         
@@ -109,11 +109,11 @@ public final class RevenueBonus {
         return true;
     }
     
-    public boolean checkSimpleBonus(NetworkVertex vertex, TrainI train, PhaseI phase) {
+    public boolean checkSimpleBonus(NetworkVertex vertex, Train train, Phase phase) {
         return (isSimpleBonus() && vertices.contains(vertex) && checkConditions(train, phase));
     }
     
-    public boolean checkComplexBonus(List<NetworkVertex> visitVertices, TrainI train, PhaseI phase) {
+    public boolean checkComplexBonus(List<NetworkVertex> visitVertices, Train train, Phase phase) {
         boolean result = !isSimpleBonus() && checkConditions(train, phase);
         if (result) {
             for (NetworkVertex vertex:vertices) {
@@ -126,7 +126,7 @@ public final class RevenueBonus {
         return result;
     }
     
-    public boolean checkConditions(TrainI train, PhaseI phase) {
+    public boolean checkConditions(Train train, Phase phase) {
         boolean result = true;
 
         // check train

@@ -23,7 +23,7 @@ public abstract class PossibleAction implements Serializable {
 
     protected String playerName;
     protected int playerIndex;
-    transient protected GameManagerI gameManager;
+    transient protected GameManager gameManager;
 
     protected boolean acted = false;
 
@@ -101,7 +101,7 @@ public abstract class PossibleAction implements Serializable {
      */
     public abstract boolean equalsAsAction (PossibleAction pa);
 
-    protected GameManagerI getGameManager() {
+    protected GameManager getGameManager() {
         return GameManager.getInstance();
     }
 

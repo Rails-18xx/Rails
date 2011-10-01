@@ -22,7 +22,7 @@ import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
 import rails.game.Game;
 import rails.game.GameManager;
-import rails.game.GameManagerI;
+import rails.game.GameManager;
 import rails.game.ReportBuffer;
 import rails.game.action.PossibleAction;
 
@@ -228,7 +228,7 @@ public class GameFileIO {
             throw new ConfigurationException("No game was loaded/initialized");
         }
 
-      GameManagerI gameManager = loadedGame.getGameManager();
+      GameManager gameManager = loadedGame.getGameManager();
       log.debug("Starting to execute loaded actions");
       gameManager.setReloading(true);
         

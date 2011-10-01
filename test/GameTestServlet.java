@@ -91,8 +91,8 @@
  * protected void doWork(HttpServletRequest request, HttpServletResponse
  * response) throws ServletException, IOException {
  * 
- * int row, col; StockSpaceI square; CompanyI comp; PublicCompanyI company;
- * String companyName; PublicCertificateI cert; int companyNumber; Iterator
+ * int row, col; StockSpaceI square; Company comp; PublicCompany company;
+ * String companyName; PublicCertificate cert; int companyNumber; Iterator
  * iterator, iterator2; int i; List startSpaces; int price;
  * 
  * Portfolio ipo = Bank.getIpo(); Portfolio pool = Bank.getPool();
@@ -324,7 +324,7 @@
  * 
  * if (step == StartRoundI.SET_PRICE) {
  * 
- * PublicCompanyI currCo = startRound.getCompanyNeedingPrice(); Player player =
+ * PublicCompany currCo = startRound.getCompanyNeedingPrice(); Player player =
  * startRound.getCurrentPlayer(); out.append("<h4>").append(player.getName()).append( ":
  * set par price for company ").append( currCo.getName()).append("</h4><p>");
  * out.append("<form method=\"POST\" action=\"" + servletPrefix + servletName +
@@ -400,7 +400,7 @@
  * out.append("<tr><td align=right><input type=submit name=Start
  * value=\"Start Company\"></td>") .append("<td><select
  * name=StartCompany>\n"); for (int j = 0; j < companies.size(); j++) { company =
- * (PublicCompanyI) companies.get(j); if
+ * (PublicCompany) companies.get(j); if
  * (stockRound.isCompanyStartable(company.getName())) { out.append("<option
  * value=\"") .append(company.getName()) .append("\">")
  * .append(company.getName()); if (company.getParPrice() != null) { out.append("
@@ -416,7 +416,7 @@
  * 
  * out.append("<tr><td align=right><input type=submit name=BuyIPO value=\"Buy
  * from IPO\"></td>") .append("<td><select name=BuyIPOCompany>\n"); for (int
- * j = 0; j < companies.size(); j++) { company = (PublicCompanyI)
+ * j = 0; j < companies.size(); j++) { company = (PublicCompany)
  * companies.get(j); if (stockRound.isCompanyBuyable(company.getName(), ipo)) {
  * out.append("<option value=\"") .append(company.getName()) .append("\">")
  * .append(company.getName()) .append("\n"); } } out.append("</select></td></tr>\n");
@@ -424,7 +424,7 @@
  * out.append("</td><td align=right><input type=submit name=BuyPool
  * value=\"Buy from Pool\"></td>") .append("<td><select
  * name=BuyPoolCompany>\n"); for (int j = 0; j < companies.size(); j++) {
- * company = (PublicCompanyI) companies.get(j); if (stockRound
+ * company = (PublicCompany) companies.get(j); if (stockRound
  * .isCompanyBuyable(company.getName(), pool)) { out.append("<option value=\"")
  * .append(company.getName()) .append("\">") .append(company.getName())
  * .append("\n"); } } out.append("</select></td></tr>\n");
@@ -436,7 +436,7 @@
  * name=Number>\n"); for (int k = 1; k <= 5; k++) out.append("<option value=" +
  * k + ">" + k + "\n"); out.append("</select></td>\n").append( "<td><select
  * name=SellCompany>\n"); for (int j = 0; j < companies.size(); j++) { company =
- * (PublicCompanyI) companies.get(j); if
+ * (PublicCompany) companies.get(j); if
  * (stockRound.isCompanySellable(company.getName())) { out.append("<option
  * value=\"").append( company.getName()).append("\">").append(
  * company.getName()).append("\n"); } } out.append("</select></td></tr>\n");
@@ -449,7 +449,7 @@
  * 
  * operatingRound = (OperatingRound) currentRound;
  * 
- * PublicCompanyI currCo = operatingRound.getOperatingCompany(); Player player =
+ * PublicCompany currCo = operatingRound.getOperatingCompany(); Player player =
  * currCo.getPresident(); out.append("<h4>Operating Round ").append(
  * operatingRound.getCompositeORNumber()).append(" - ")
  * .append(currCo.getName()).append(" turn, ").append(
@@ -481,7 +481,7 @@
  * 
  * out.append("<tr><td align=right>Private <select name=Private>\n");
  * Iterator it = Game.getCompanyManager().getAllPrivateCompanies() .iterator();
- * while (it.hasNext()) { PrivateCompanyI priv = (PrivateCompanyI) it.next(); if
+ * while (it.hasNext()) { PrivateCompany priv = (PrivateCompany) it.next(); if
  * (priv.getPortfolio().getOwner() instanceof Player) { out.append("<option
  * value=\"" + priv.getName() + "\">" + priv.getName() + "\n"); } } out.append("</select></td><td>
  * for <input type=text size=6 name=Price>") .append(" <input type=submit
@@ -507,7 +507,7 @@
  * .append("<th>Privates</th><th>IPO</th><th>Pool</th></tr>\n");
  * CompanyManagerI compMgr = Game.getCompanyManager(); iterator =
  * compMgr.getAllPublicCompanies().iterator(); while (iterator.hasNext()) {
- * company = (PublicCompanyI) iterator.next(); companyName = company.getName();
+ * company = (PublicCompany) iterator.next(); companyName = company.getName();
  * companyNumber = company.getCompanyNumber(); out.append("<tr><td>" +
  * companyName + "</td>");
  * 
@@ -524,7 +524,7 @@
  * company.getFormattedCash() + "</td><td>" +
  * Bank.format(company.getLastRevenue()) + "</td><td>&nbsp;"); Iterator it =
  * company.getPortfolio() .getPrivateCompanies().iterator(); while
- * (it.hasNext()) { out.append(((PrivateCompanyI) it.next()) .getName() + " "); } }
+ * (it.hasNext()) { out.append(((PrivateCompany) it.next()) .getName() + " "); } }
  * else { out.append("<td colspan=3>Not floated"); } out.append("</td><td>" +
  * Bank.getIpo().ownsShare(company)); out.append("%</td><td>" +
  * Bank.getPool().ownsShare(company)); out.append("%</td>\n"); } out.append("</tr>\n"); }
@@ -540,7 +540,7 @@
  * NOTE: The below code has hardcoded behaviour for company type // "Minor". if
  * (includeMinors) out.append("<th>Minors</th>"); List allCompanies =
  * Game.getCompanyManager() .getAllPublicCompanies(); Iterator it =
- * allCompanies.iterator(); while (it.hasNext()) { company = (PublicCompanyI)
+ * allCompanies.iterator(); while (it.hasNext()) { company = (PublicCompany)
  * it.next(); if (!company.getType().getName().equals("Minor")) out.append("<th>" +
  * company.getName() + "</th>"); } out.append("<th>Worth</th></tr>\n");
  * for (int j = 0; j < (players != null ? players.length : -1); j++) { Player
@@ -551,7 +551,7 @@
  * Bank.format(player.getUnblockedCash())).append(")"); } out.append("</td><td>"); //
  * Private companies it =
  * player.getPortfolio().getPrivateCompanies().iterator(); while (it.hasNext()) {
- * out.append(" " + ((PrivateCompanyI) it.next()).getName()); } // Bids if
+ * out.append(" " + ((PrivateCompany) it.next()).getName()); } // Bids if
  * (currentRound instanceof StartRoundI) { startRound = (StartRoundI)
  * currentRound; it = startRound.getStartPacket().getItems().iterator();
  * StartItem item; StartItem.Bid bid; while (it.hasNext()) { item = (StartItem)
@@ -564,12 +564,12 @@
  * company = ((PublicCertificate) it.next()).getCompany(); if
  * (company.getType().getName().equals("Minor")) out.append(" " +
  * company.getName()); } out.append("&nbsp;</td>"); } // Public companies it =
- * allCompanies.iterator(); while (it.hasNext()) { company = (PublicCompanyI)
+ * allCompanies.iterator(); while (it.hasNext()) { company = (PublicCompany)
  * it.next(); if (company.getType().getName().equals("Minor")) continue; String
  * compName = company.getName(); List certs; int share = 0; boolean president =
  * false; if ((certs = player.getPortfolio()
  * .getCertificatesPerCompany(compName)) != null) { Iterator it2 =
- * certs.iterator(); while (it2.hasNext()) { cert = (PublicCertificateI)
+ * certs.iterator(); while (it2.hasNext()) { cert = (PublicCertificate)
  * it2.next(); share += cert.getShare(); if (cert.isPresidentShare()) president =
  * true; } } out.append("<td>" + (president ? "P" : "") + share + "%</td>"); }
  * out.append("<td>").append(player.getFormattedWorth()).append( "</td></tr>"); }

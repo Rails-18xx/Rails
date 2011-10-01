@@ -9,22 +9,23 @@ import java.util.List;
 
 import rails.game.*;
 import rails.game.action.SellShares;
+import rails.game.model.Portfolio;
 
 public class StockRound_1825 extends StockRound {
     
     protected int[] priceBands = {100,90,82,76,71,67};
-    private List<PublicCompanyI> lPublicCompanies = companyManager.getAllPublicCompanies();
+    private List<PublicCompany> lPublicCompanies = companyManager.getAllPublicCompanies();
     /**
      * Constructor with the GameManager, will call super class (StockRound's) Constructor to initialize
      *
      * @param aGameManager The GameManager Object needed to initialize the Stock Round
      * 
      */
-    public StockRound_1825 (GameManagerI aGameManager) {
+    public StockRound_1825 (GameManager aGameManager) {
         super (aGameManager);
     }
     
-    protected void adjustSharePrice (PublicCompanyI company, int numberSold, boolean soldBefore) {
+    protected void adjustSharePrice (PublicCompany company, int numberSold, boolean soldBefore) {
         // Sales do not affect share price, do nothing
     }
     
@@ -37,7 +38,7 @@ public class StockRound_1825 extends StockRound {
      * @param company The company of which a share has been traded.
      */
     @Override
-    protected void gameSpecificChecks (Portfolio boughtFrom, PublicCompanyI company) {
+    protected void gameSpecificChecks (Portfolio boughtFrom, PublicCompany company) {
         if (boughtFrom != ipo) return;
 
         int sharesInIPO = ipo.getShare(company);
@@ -56,7 +57,7 @@ public class StockRound_1825 extends StockRound {
                     //We had better break out now if it was the last price band or the next loop
                     //will run infinitely
                     if (priceBands[i] == priceBands[priceBands.length - 1]) return;
-                    List<PublicCompanyI> lCompaniesToRelease = new ArrayList<PublicCompanyI>();
+                    List<PublicCompany> lCompaniesToRelease = new ArrayList<PublicCompany>();
                     while (lCompaniesToRelease.isEmpty()) {
                         //while loop needed in case we have no corps at the next valid price band
                         for (int k = 0; k < companyManager.getAllPublicCompanies().size(); k++){
@@ -94,7 +95,7 @@ public class StockRound_1825 extends StockRound {
          * First check of which companies the player owns stock, and what
          * maximum percentage he is allowed to sell.
          */
-        for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
+        for (PublicCompany company : companyManager.getAllPublicCompanies()) {
 
             // Check if shares of this company can be sold at all
             if (!mayPlayerSellShareOfCompany(company)) continue;
@@ -118,7 +119,7 @@ public class StockRound_1825 extends StockRound {
             // Take care for max. 4 share units per share
             int[] shareCountPerUnit = new int[5];
             compName = company.getId();
-            for (PublicCertificateI c : playerPortfolio.getCertificatesPerCompany(compName)) {
+            for (PublicCertificate c : playerPortfolio.getCertificates(company)) {
                 if (c.isPresidentShare()) {
                     shareCountPerUnit[1] += c.getShares();
                 } else {

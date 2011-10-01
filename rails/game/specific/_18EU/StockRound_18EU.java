@@ -2,14 +2,18 @@ package rails.game.specific._18EU;
 
 import java.util.*;
 
+import com.google.common.collect.ImmutableList;
+
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;
+import rails.game.model.Owner;
+import rails.game.model.Portfolio;
 import rails.game.state.ArrayListState;
 import rails.game.state.BooleanState;
 import rails.game.state.IntegerState;
-import rails.game.state.MoveUtils;
+import rails.game.model.Owners;
 import rails.util.Util;
 
 /**
@@ -19,10 +23,10 @@ import rails.util.Util;
  * the Priority Deal).
  */
 public class StockRound_18EU extends StockRound {
-    protected ArrayListState<PublicCompanyI> compWithExcessTrains =
-            new ArrayListState<PublicCompanyI>(this, "compWithExcessTrains");
-    protected PublicCompanyI[] discardingCompanies;
-    protected IntegerState discardingCompanyIndex;
+    protected ArrayListState<PublicCompany> compWithExcessTrains =
+            new ArrayListState<PublicCompany>(this, "compWithExcessTrains");
+    protected PublicCompany[] discardingCompanies;
+    protected IntegerState discardingCompanyndex;
     protected BooleanState discardingTrains =
             new BooleanState(this, "DiscardingTrains", false);
     protected boolean phase5Reached = false;
@@ -33,7 +37,7 @@ public class StockRound_18EU extends StockRound {
      * @param aGameManager The GameManager Object needed to initialize the Stock Round
      *
      */
-    public StockRound_18EU (GameManagerI aGameManager) {
+    public StockRound_18EU (GameManager aGameManager) {
         super (aGameManager);
     }
 
@@ -67,9 +71,9 @@ public class StockRound_18EU extends StockRound {
     public void setBuyableCerts() {
         if (!mayCurrentPlayerBuyAnything()) return;
 
-        List<PublicCertificateI> certs;
-        PublicCertificateI cert;
-        PublicCompanyI comp;
+        List<PublicCertificate> certs;
+        PublicCertificate cert;
+        PublicCompany comp;
         StockSpaceI stockSpace;
         Portfolio from;
         int price;
@@ -77,11 +81,11 @@ public class StockRound_18EU extends StockRound {
         // 18EU special: until phase 5, we can only
         // start a company by trading in a Minor
         boolean mustMergeMinor = !phase5Reached;
-        List<PublicCompanyI> minors = null;
+        List<PublicCompany> minors = null;
         List<Stop> freeStations = null;
         if (mustMergeMinor) {
-            minors = new ArrayList<PublicCompanyI>();
-            for (PublicCertificateI c : getCurrentPlayer().getPortfolio().getCertificates()) {
+            minors = new ArrayList<PublicCompany>();
+            for (PublicCertificate c : getCurrentPlayer().getPortfolio().getCertificates()) {
                 if (c.getCompany().getTypeName().equalsIgnoreCase("Minor")) {
                     minors.add(c.getCompany());
                 }
@@ -96,15 +100,15 @@ public class StockRound_18EU extends StockRound {
             }
         }
 
-        int playerCash = currentPlayer.getCash();
+        int playerCash = currentPlayer.getCashValue();
 
         /* Get the next available IPO certificates */
         // Never buy more than one from the IPO
-        PublicCompanyI companyBoughtThisTurn =
-                (PublicCompanyI) companyBoughtThisTurnWrapper.get();
+        PublicCompany companyBoughtThisTurn =
+                (PublicCompany) companyBoughtThisTurnWrapper.get();
         if (companyBoughtThisTurn == null) {
             from = ipo;
-            Map<String, List<PublicCertificateI>> map =
+            Map<String, List<PublicCertificate>> map =
                     from.getCertsPerCompanyMap();
             int shares;
 
@@ -116,7 +120,7 @@ public class StockRound_18EU extends StockRound {
                 int lowestIndex = 99;
                 cert = null;
                 int index;
-                for (PublicCertificateI c : certs) {
+                for (PublicCertificate c : certs) {
                     index = c.getIndexInCompany();
                     if (index < lowestIndex) {
                         lowestIndex = index;
@@ -169,7 +173,7 @@ public class StockRound_18EU extends StockRound {
 
         /* Get the unique Pool certificates and check which ones can be bought */
         from = pool;
-        Map<String, List<PublicCertificateI>> map =
+        Map<String, List<PublicCertificate>> map =
                 from.getCertsPerCompanyMap();
 
         for (String compName : map.keySet()) {
@@ -195,10 +199,11 @@ public class StockRound_18EU extends StockRound {
         // Get any shares in company treasuries that can be bought
         if (gameManager.canAnyCompanyHoldShares()) {
 
-            for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
-                certs =
-                        company.getPortfolio().getCertificatesPerCompany(
-                                company.getId());
+            for (PublicCompany company : companyManager.getAllPublicCompanies()) {
+                // TODO: Rewrite
+                certs = ImmutableList.copyOf(
+                        company.getPortfolio().getCertificates(
+                                company));
                 if (certs == null || certs.isEmpty()) continue;
                 cert = certs.get(0);
                 if (isSaleRecorded(currentPlayer, company)) continue;
@@ -225,13 +230,13 @@ public class StockRound_18EU extends StockRound {
     protected void setGameSpecificActions() {
         if (!mayCurrentPlayerBuyAnything()) return;
 
-        List<PublicCompanyI> comps =
+        List<PublicCompany> comps =
                 companyManager.getAllPublicCompanies();
-        List<PublicCompanyI> minors = new ArrayList<PublicCompanyI>();
-        List<PublicCompanyI> targetCompanies = new ArrayList<PublicCompanyI>();
+        List<PublicCompany> minors = new ArrayList<PublicCompany>();
+        List<PublicCompany> targetCompanies = new ArrayList<PublicCompany>();
         String type;
 
-        for (PublicCompanyI comp : comps) {
+        for (PublicCompany comp : comps) {
             type = comp.getTypeName();
             if (type.equals("Major") && comp.hasStarted()
                 && !comp.hasOperated()) {
@@ -243,15 +248,15 @@ public class StockRound_18EU extends StockRound {
         }
         if (minors.isEmpty() || targetCompanies.isEmpty()) return;
 
-        for (PublicCompanyI minor : minors) {
+        for (PublicCompany minor : minors) {
             possibleActions.add(new MergeCompanies(minor, targetCompanies));
         }
     }
 
     protected boolean setTrainDiscardActions() {
 
-        PublicCompanyI discardingCompany =
-                discardingCompanies[discardingCompanyIndex.intValue()];
+        PublicCompany discardingCompany =
+                discardingCompanies[discardingCompanyndex.intValue()];
         log.debug("Company " + discardingCompany.getId()
                   + " to discard a train");
         possibleActions.add(new DiscardTrain(discardingCompany,
@@ -273,16 +278,16 @@ public class StockRound_18EU extends StockRound {
      */
     @Override
     public boolean startCompany(String playerName, StartCompany action) {
-        PublicCompanyI company = action.getCompany();
+        PublicCompany company = action.getCompany();
         int price = action.getPrice();
         int shares = action.getNumberBought();
 
         String errMsg = null;
         StockSpaceI startSpace = null;
         int numberOfCertsToBuy = 0;
-        PublicCertificateI cert = null;
+        PublicCertificate cert = null;
         String companyName = company.getId();
-        PublicCompanyI minor = null;
+        PublicCompany minor = null;
         StartCompany_18EU startAction = null;
         Stop selectedHomeCity = null;
 
@@ -339,7 +344,7 @@ public class StockRound_18EU extends StockRound {
             }
 
             // Check if the Player has the money.
-            if (currentPlayer.getCash() < shares * price) {
+            if (currentPlayer.getCashValue() < shares * price) {
                 errMsg = LocalText.getText("NoMoney");
                 break;
             }
@@ -348,8 +353,8 @@ public class StockRound_18EU extends StockRound {
                 // Check if the player owns the merged minor
                 minor = startAction.getChosenMinor();
                 if (minor != null
-                    && currentPlayer.getPortfolio().getCertificatesPerCompany(
-                            minor.getId()) == null) {
+                    && currentPlayer.getPortfolio().getCertificates(
+                            minor) == null) {
                     errMsg =
                             LocalText.getText("PlayerDoesNotOwn",
                                     currentPlayer.getId(),
@@ -410,11 +415,11 @@ public class StockRound_18EU extends StockRound {
         // Transfer the President's certificate
         cert.moveTo(currentPlayer.getPortfolio());
 
-        MoveUtils.cashMove(currentPlayer, company, shares * price);
+        Owners.cashMove(currentPlayer, company, shares * price);
 
         if (minor != null) {
             // Get the extra certificate for the minor, for free
-            PublicCertificateI cert2 = ipo.findCertificate(company, false);
+            PublicCertificate cert2 = ipo.findCertificate(company, false);
             cert2.moveTo(currentPlayer.getPortfolio());
             // Transfer the minor assets into the started company
             int minorCash = minor.getCash();
@@ -440,8 +445,8 @@ public class StockRound_18EU extends StockRound {
         }
 
         // Move the remaining certificates to the company treasury
-        Util.moveObjects(ipo.getCertificatesPerCompany(company.getId()),
-                company.getPortfolio());
+        // FIXME: This has to be only those certificates that relate to that public company 
+        // Owners.moveAll(ipo, company, PublicCertficate.class);
 
         ReportBuffer.add(LocalText.getText("SharesPutInTreasury",
                 company.getPortfolio().getShare(company),
@@ -449,7 +454,7 @@ public class StockRound_18EU extends StockRound {
 
         // TODO must get this amount from XML
         int tokensCost = 100;
-        MoveUtils.cashMove(company, bank, tokensCost);
+        Owners.cashMove(company, bank, tokensCost);
         ReportBuffer.add(LocalText.getText("PaysForTokens",
                 company.getId(),
                 Bank.format(100),
@@ -492,11 +497,11 @@ public class StockRound_18EU extends StockRound {
      */
     protected boolean mergeCompanies(MergeCompanies action) {
 
-        PublicCompanyI minor = action.getMergingCompany();
-        PublicCompanyI major = action.getSelectedTargetCompany();
-        PublicCertificateI cert = null;
-        CashHolder cashDestination = null; // Bank
-        TrainI pullmannToDiscard = null;
+        PublicCompany minor = action.getMergingCompany();
+        PublicCompany major = action.getSelectedTargetCompany();
+        PublicCertificate cert = null;
+        Owner cashDestination = null; // Bank
+        Train pullmannToDiscard = null;
 
         // TODO Validation to be added?
 
@@ -518,7 +523,7 @@ public class StockRound_18EU extends StockRound {
         int minorTrains = minor.getPortfolio().getTrainList().size();
         if (cashDestination == null) {
             // Assets go to the bank
-            if (minorCash > 0) MoveUtils.cashMove(minor, bank, minorCash);
+            if (minorCash > 0) Owners.cashMove(minor, bank, minorCash);
             pool.transferAssetsFrom(minor.getPortfolio());
         } else {
             // Assets go to the major company
@@ -526,7 +531,7 @@ public class StockRound_18EU extends StockRound {
 
             // Check for multiple Pullmanns
             boolean hasPullmann = false;
-            for (TrainI train : major.getPortfolio().getTrainList()) {
+            for (Train train : major.getPortfolio().getTrainList()) {
                 if (train.getId().equalsIgnoreCase("P")) {
                     if (!hasPullmann) {
                         hasPullmann = true;
@@ -617,7 +622,7 @@ public class StockRound_18EU extends StockRound {
     }
 
     @Override
-    protected void floatCompany(PublicCompanyI company) {
+    protected void floatCompany(PublicCompany company) {
 
         company.setFloated();
         ReportBuffer.add(LocalText.getText("Floats", company.getId()));
@@ -628,10 +633,10 @@ public class StockRound_18EU extends StockRound {
             // Put the remaining 5 shares in the pool,
             // getting cash in return
             // Move the remaining certificates to the company treasury
-            Util.moveObjects(company.getPortfolio().getCertificatesPerCompany(
-                    company.getId()), pool);
+            Owners.move(company.getPortfolio().getCertificates(
+                    company), pool);
             int cash = 5 * company.getMarketPrice();
-            MoveUtils.cashMove(bank, company, cash);
+            Owners.cashMove(bank, company, cash);
             ReportBuffer.add(LocalText.getText("MonetiseTreasuryShares",
                     company.getId(),
                     Bank.format(cash) ));
@@ -641,8 +646,8 @@ public class StockRound_18EU extends StockRound {
 
     public boolean discardTrain(DiscardTrain action) {
 
-        TrainI train = action.getDiscardedTrain();
-        PublicCompanyI company = action.getCompany();
+        Train train = action.getDiscardedTrain();
+        PublicCompany company = action.getCompany();
         String companyName = company.getId();
 
         String errMsg = null;
@@ -686,7 +691,7 @@ public class StockRound_18EU extends StockRound {
         //
         if (action.isForced()) changeStack.linkToPreviousMoveSet();
 
-        pool.buyTrain(train, 0);
+        train.moveTo(pool);
         ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
                 companyName,
                 train.getId() ));
@@ -702,18 +707,18 @@ public class StockRound_18EU extends StockRound {
         if (!discardingTrains.booleanValue()) {
             super.finishTurn();
         } else {
-            PublicCompanyI comp =
-                    discardingCompanies[discardingCompanyIndex.intValue()];
+            PublicCompany comp =
+                    discardingCompanies[discardingCompanyndex.intValue()];
             if (comp.getNumberOfTrains() <= comp.getCurrentTrainLimit()) {
-                discardingCompanyIndex.add(1);
-                if (discardingCompanyIndex.intValue() >= discardingCompanies.length) {
+                discardingCompanyndex.add(1);
+                if (discardingCompanyndex.intValue() >= discardingCompanies.length) {
                     // All excess trains have been discarded
                     finishRound();
                     return;
                 }
             }
-            PublicCompanyI discardingCompany =
-                    discardingCompanies[discardingCompanyIndex.intValue()];
+            PublicCompany discardingCompany =
+                    discardingCompanies[discardingCompanyndex.intValue()];
             setCurrentPlayer(discardingCompany.getPresident());
         }
     }
@@ -730,23 +735,23 @@ public class StockRound_18EU extends StockRound {
             discardingTrains.set(true);
 
             // Make up a list of train discarding companies in operating sequence.
-            PublicCompanyI[] operatingCompanies = setOperatingCompanies().toArray(new PublicCompanyI[0]);
+            PublicCompany[] operatingCompanies = setOperatingCompanies().toArray(new PublicCompany[0]);
             discardingCompanies =
-                    new PublicCompanyI[compWithExcessTrains.size()];
+                    new PublicCompany[compWithExcessTrains.size()];
             for (int i = 0, j = 0; i < operatingCompanies.length; i++) {
                 if (compWithExcessTrains.contains(operatingCompanies[i])) {
                     discardingCompanies[j++] = operatingCompanies[i];
                 }
             }
 
-            if (discardingCompanyIndex == null) {
-                discardingCompanyIndex =
-                        new IntegerState(this, "DiscardingCompanyIndex", 0);
+            if (discardingCompanyndex == null) {
+                discardingCompanyndex =
+                        new IntegerState(this, "DiscardingCompanyndex", 0);
             } else {
-                discardingCompanyIndex.set(0);
+                discardingCompanyndex.set(0);
             }
-            PublicCompanyI discardingCompany =
-                    discardingCompanies[discardingCompanyIndex.intValue()];
+            PublicCompany discardingCompany =
+                    discardingCompanies[discardingCompanyndex.intValue()];
             setCurrentPlayer(discardingCompany.getPresident());
 
         } else {

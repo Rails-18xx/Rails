@@ -51,7 +51,7 @@
  * protected void doWork(HttpServletRequest request, HttpServletResponse
  * response) throws ServletException, IOException {
  * 
- * int row, col; StockSpaceI square; CompanyI comp; PublicCompanyI company;
+ * int row, col; StockSpaceI square; Company comp; PublicCompany company;
  * String companyName; int companyNumber; Iterator iterator, iterator2; int i;
  * List startSpaces; int price;
  * 
@@ -70,9 +70,9 @@
 /*
  * CompanyManagerI compMgr = Game.getCompanyManager(); iterator =
  * compMgr.getAllPublicNames().iterator(); while (iterator.hasNext()) {
- * //company = (CompanyI) iterator.next(); comp = (CompanyI)
+ * //company = (Company) iterator.next(); comp = (Company)
  * compMgr.getPublicCompany((String) iterator.next()); if (!(comp instanceof
- * PublicCompanyI)) continue; company = (PublicCompanyI) comp; companyName =
+ * PublicCompany)) continue; company = (PublicCompany) comp; companyName =
  * company.getName(); companyNumber = company.getPublicNumber();
  * 
  * if (hasValue(request.getParameter("Sell_" + companyNumber))) { int number =
@@ -162,7 +162,7 @@
  * cellspacing=\"0\" cellpadding=\"0\">\n"); CompanyManagerI compMgr =
  * Game.getCompanyManager(); iterator =
  * compMgr.getAllPublicCompanies().iterator(); while (iterator.hasNext()) {
- * company = (PublicCompanyI) iterator.next(); companyName = company.getName();
+ * company = (PublicCompany) iterator.next(); companyName = company.getName();
  * companyNumber = company.getPublicNumber(); out.append("<tr><td>" +
  * companyName + ":&nbsp;&nbsp;</td><td>");
  * 

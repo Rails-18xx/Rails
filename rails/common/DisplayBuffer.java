@@ -7,7 +7,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import rails.game.GameManager;
-import rails.game.GameManagerI;
+import rails.game.GameManager;
 import rails.util.Util;
 
 /**
@@ -51,7 +51,7 @@ public final class DisplayBuffer {
     }
 
     public static void add(String message, boolean autoDisplay) {
-        GameManagerI gm = GameManager.getInstance();
+        GameManager gm = GameManager.getInstance();
         DisplayBuffer instance = null;
         if (gm != null) instance = gm.getDisplayBuffer();
         if (gm == null || instance == null) {
@@ -75,7 +75,7 @@ public final class DisplayBuffer {
     }
 
     private static DisplayBuffer getInstance() {
-        GameManagerI gm = GameManager.getInstance();
+        GameManager gm = GameManager.getInstance();
         if (gm == null) {
             return null;
         } else {

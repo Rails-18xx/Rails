@@ -41,14 +41,14 @@ public abstract class StartRound extends Round {
     protected boolean hasBasePrices = true;
 
     /** A company in need for a par price. */
-    PublicCompanyI companyNeedingPrice = null;
+    PublicCompany companyNeedingPrice = null;
 
     /*----- Initialisation -----*/
     /**
      * Will be created dynamically.
      *
      */
-    public StartRound(GameManagerI gameManager) {
+    public StartRound(GameManager gameManager) {
 
         super (gameManager);
         this.startPacket = gameManager.getStartPacket();
@@ -282,9 +282,9 @@ public abstract class StartRound extends Round {
     }
 
     protected void checksOnBuying(Certificate cert, int sharePrice) {
-        if (cert instanceof PublicCertificateI) {
-            PublicCertificateI pubCert = (PublicCertificateI) cert;
-            PublicCompanyI comp = pubCert.getCompany();
+        if (cert instanceof PublicCertificate) {
+            PublicCertificate pubCert = (PublicCertificate) cert;
+            PublicCompany comp = pubCert.getCompany();
             // Start the company, look for a fixed start price
             if (!comp.hasStarted()) {
                 if (!comp.hasStockPrice()) {

@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/GameManager.java,v 1.107 2010/06/17 21:35:54 evos Exp $ */
 package rails.game;
 
 import java.io.*;
@@ -13,7 +12,13 @@ import rails.common.*;
 import rails.common.parser.*;
 import rails.game.action.*;
 import rails.game.correct.*;
+import rails.game.model.CashModel;
+import rails.game.model.Holder;
+import rails.game.model.HolderModel;
 import rails.game.model.Model;
+import rails.game.model.Owner;
+import rails.game.model.Portfolio;
+import rails.game.model.SingleOwner;
 import rails.game.special.SpecialPropertyI;
 import rails.game.special.SpecialTokenLay;
 import rails.game.state.*;
@@ -24,7 +29,7 @@ import rails.util.Util;
  * This class manages the playing rounds by supervising all implementations of
  * Round. Currently everything is hardcoded &agrave; la 1830.
  */
-public class GameManager extends AbstractItem implements ConfigurableComponentI, GameManagerI {
+public class GameManager extends SingleOwner<SpecialPropertyI> implements ConfigurableComponentI {
     /** Version ID of the Save file header, as written in save() */
     private static final long saveFileHeaderVersionID = 3L;
     /**
@@ -152,8 +157,8 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI,
      * <p>
      * For now, the key is a fixed string, but that may change in the future.
      */
-    protected static Map<String, GameManagerI> gameManagerMap
-    = new HashMap<String, GameManagerI>();
+    protected static Map<String, GameManager> gameManagerMap
+    = new HashMap<String, GameManager>();
 
     /**
      * The temporary fixed key to the currently single GameManager instance
@@ -195,7 +200,8 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI,
     /** Special properties that can be used by other players or companies
      * than just the owner (such as buyable bonus tokens as in 1856).
      */
-    protected List<SpecialPropertyI> commonSpecialProperties = null;
+    protected HolderModel<SpecialPropertyI> commonSpecialProperties = null;
+    
 
     /** A List of available game options */
     protected List<GameOption> availableGameOptions =
@@ -226,6 +232,9 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI,
         Logger.getLogger(GameManager.class.getPackage().getName());
 
     public GameManager() {
+        // needed to initialize the SingleOwner
+        super(SpecialPropertyI.class);
+        
         gmName = GM_NAME;
         gmKey = GM_KEY;
         NDC.clear();
@@ -493,7 +502,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI,
         }
     }
 
-    public void finishConfiguration (GameManagerI gameManager) {}
+    public void finishConfiguration (GameManager gameManager) {}
 
     /** Check if a classname can be instantiated.
      * Throws a ConfiguratioNException if not.
@@ -512,7 +521,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI,
     }
 
     /* (non-Javadoc)
-     * @see rails.game.GameManagerI#startGame(rails.game.PlayerManager, rails.game.CompanyManagerI, rails.game.PhaseManager)
+     * @see rails.game.GameManager#startGame(rails.game.PlayerManager, rails.game.CompanyManagerI, rails.game.PhaseManager)
      */
     public void init(String gameName,
             PlayerManager playerManager,
@@ -567,14 +576,14 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI,
 
     private void setGuiParameters () {
 
-        for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
+        for (PublicCompany company : companyManager.getAllPublicCompanies()) {
             if (company.hasParPrice()) guiParameters.put(GuiDef.Parm.HAS_ANY_PAR_PRICE, true);
             if (company.canBuyPrivates()) guiParameters.put(GuiDef.Parm.CAN_ANY_COMPANY_BUY_PRIVATES, true);
             if (company.canHoldOwnShares()) guiParameters.put(GuiDef.Parm.CAN_ANY_COMPANY_HOLD_OWN_SHARES, true);
             if (company.getMaxNumberOfLoans() != 0) guiParameters.put(GuiDef.Parm.HAS_ANY_COMPANY_LOANS, true);
         }
 
-        loop:   for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) {
+        loop:   for (PrivateCompany company : companyManager.getAllPrivateCompanies()) {
             for (SpecialPropertyI sp : company.getSpecialProperties()) {
                 if (sp instanceof SpecialTokenLay
                         && ((SpecialTokenLay)sp).getToken() instanceof BonusToken) {
@@ -611,33 +620,33 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI,
     /**
      * @return instance of GameManager
      */
-    public static GameManagerI getInstance () {
+    public static GameManager getInstance () {
         return gameManagerMap.get(NDC.peek());
     }
 
     /* (non-Javadoc)
-     * @see rails.game.GameManagerI#getCompanyManager()
+     * @see rails.game.GameManager#getCompanyManager()
      */
     public CompanyManagerI getCompanyManager() {
         return companyManager;
     }
 
     /* (non-Javadoc)
-     * @see rails.game.GameManagerI#setRound(rails.game.RoundI)
+     * @see rails.game.GameManager#setRound(rails.game.RoundI)
      */
     protected void setRound(RoundI round) {
         currentRound.set(round);
     }
 
     /* (non-Javadoc)
-     * @see rails.game.GameManagerI#nextRound(rails.game.RoundI)
+     * @see rails.game.GameManager#nextRound(rails.game.RoundI)
      */
     public void nextRound(RoundI round) {
         if (round instanceof StartRound) {
             if (startPacket != null && !startPacket.areAllSold()) {
                 startOperatingRound(false);
             } else if (skipFirstStockRound) {
-                PhaseI currentPhase =
+                Phase currentPhase =
                     phaseManager.getCurrentPhase();
                 if (currentPhase.getNumberOfOperatingRounds() != numOfORs.intValue()) {
                     numOfORs.set(currentPhase.getNumberOfOperatingRounds());
@@ -653,7 +662,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI,
                 startStockRound();
             }
         } else if (round instanceof StockRound) {
-            PhaseI currentPhase = getCurrentPhase();
+            Phase currentPhase = getCurrentPhase();
             if (currentPhase == null) log.error ("Current Phase is null??", new Exception (""));
             numOfORs.set(currentPhase.getNumberOfOperatingRounds());
             log.info("Phase=" + currentPhase.getName() + " ORs=" + numOfORs);
@@ -716,7 +725,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI,
 
         T round = null;
         try {
-            Constructor<T> cons = roundClass.getConstructor(GameManagerI.class);
+            Constructor<T> cons = roundClass.getConstructor(GameManager.class);
             round = cons.newInstance(this);
         } catch (Exception e) {
             log.fatal("Cannot instantiate class "
@@ -736,7 +745,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI,
 
         T round = null;
         try {
-            Constructor<T> cons = roundClass.getConstructor(GameManagerI.class, RoundI.class);
+            Constructor<T> cons = roundClass.getConstructor(GameManager.class, RoundI.class);
             round = cons.newInstance(this, parentRound);
         } catch (Exception e) {
             log.fatal("Cannot instantiate class "
@@ -765,7 +774,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI,
     }
 
     /* (non-Javadoc)
-     * @see rails.game.GameManagerI#getCompositeORNumber()
+     * @see rails.game.GameManager#getCompositeORNumber()
      */
     public String getCompositeORNumber() {
         return srNumber.intValue() + "." + relativeORNumber.intValue();
@@ -780,17 +789,17 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI,
     }
 
     /* (non-Javadoc)
-     * @see rails.game.GameManagerI#getSRNumber()
+     * @see rails.game.GameManager#getSRNumber()
      */
     public int getSRNumber () {
         return srNumber.intValue();
     }
 
     /* (non-Javadoc)
-     * @see rails.game.GameManagerI#startShareSellingRound(rails.game.OperatingRound, rails.game.PublicCompanyI, int)
+     * @see rails.game.GameManager#startShareSellingRound(rails.game.OperatingRound, rails.game.PublicCompany, int)
      */
     public void startShareSellingRound(Player player, int cashToRaise,
-            PublicCompanyI cashNeedingCompany, boolean problemDumpOtherCompanies) {
+            PublicCompany cashNeedingCompany, boolean problemDumpOtherCompanies) {
 
         interruptedRound = getCurrentRound();
 
@@ -803,7 +812,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI,
     }
 
     /* (non-Javadoc)
-     * @see rails.game.GameManagerI#startTreasuryShareTradingRound(rails.game.OperatingRound, rails.game.PublicCompanyI)
+     * @see rails.game.GameManager#startTreasuryShareTradingRound(rails.game.OperatingRound, rails.game.PublicCompany)
      */
     public void startTreasuryShareTradingRound() {
 
@@ -812,7 +821,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI,
     }
 
     /* (non-Javadoc)
-     * @see rails.game.GameManagerI#process(rails.game.action.PossibleAction)
+     * @see rails.game.GameManager#process(rails.game.action.PossibleAction)
      */
     public boolean process(PossibleAction action) {
 
@@ -992,7 +1001,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI,
     }
 
     /* (non-Javadoc)
-     * @see rails.game.GameManagerI#processOnReload(java.util.List)
+     * @see rails.game.GameManager#processOnReload(java.util.List)
      */
     public boolean processOnReload(PossibleAction action) throws Exception {
 
@@ -1249,7 +1258,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI,
 
 
     /* (non-Javadoc)
-     * @see rails.game.GameManagerI#finishShareSellingRound()
+     * @see rails.game.GameManager#finishShareSellingRound()
      */
     public void finishShareSellingRound() {
         setRound(interruptedRound);
@@ -1260,7 +1269,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI,
     }
 
     /* (non-Javadoc)
-     * @see rails.game.GameManagerI#finishTreasuryShareRound()
+     * @see rails.game.GameManager#finishTreasuryShareRound()
      */
     public void finishTreasuryShareRound() {
         setRound(interruptedRound);
@@ -1271,7 +1280,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI,
     }
 
     /* (non-Javadoc)
-     * @see rails.game.GameManagerI#registerBankruptcy()
+     * @see rails.game.GameManager#registerBankruptcy()
      */
     public void registerBankruptcy() {
         endedByBankruptcy.set(true);
@@ -1305,7 +1314,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI,
         addToNextPlayerMessages(msg, true);
     }
 
-    public void registerMaxedSharePrice(PublicCompanyI company, StockSpaceI space){
+    public void registerMaxedSharePrice(PublicCompany company, StockSpaceI space){
         gameOverPending.set(true);
         ReportBuffer.add(LocalText.getText("MaxedSharePriceReportText",
                 company.getId(),
@@ -1348,7 +1357,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI,
     }
 
     /* (non-Javadoc)
-     * @see rails.game.GameManagerI#isGameOver()
+     * @see rails.game.GameManager#isGameOver()
      */
     public boolean isGameOver() {
         return gameOver.booleanValue();
@@ -1363,7 +1372,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI,
     }
 
     /* (non-Javadoc)
-     * @see rails.game.GameManagerI#getGameReport()
+     * @see rails.game.GameManager#getGameReport()
      */
     public List<String> getGameReport() {
 
@@ -1392,21 +1401,21 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI,
     }
 
     /* (non-Javadoc)
-     * @see rails.game.GameManagerI#getCurrentRound()
+     * @see rails.game.GameManager#getCurrentRound()
      */
     public RoundI getCurrentRound() {
         return (RoundI) currentRound.get();
     }
 
     /* (non-Javadoc)
-     * @see rails.game.GameManagerI#getCurrentPlayerIndex()
+     * @see rails.game.GameManager#getCurrentPlayerIndex()
      */
     public int getCurrentPlayerIndex() {
         return getCurrentPlayer().getIndex();
     }
 
     /* (non-Javadoc)
-     * @see rails.game.GameManagerI#setCurrentPlayerIndex(int)
+     * @see rails.game.GameManager#setCurrentPlayerIndex(int)
      */
     public void setCurrentPlayerIndex(int currentPlayerIndex) {
         currentPlayerIndex = currentPlayerIndex % numberOfPlayers;
@@ -1416,7 +1425,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI,
     }
 
     /* (non-Javadoc)
-     * @see rails.game.GameManagerI#setCurrentPlayer(rails.game.Player)
+     * @see rails.game.GameManager#setCurrentPlayer(rails.game.Player)
      */
     public void setCurrentPlayer(Player player) {
         // transfer messages for the next player to the display buffer
@@ -1431,7 +1440,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI,
     }
 
     /* (non-Javadoc)
-     * @see rails.game.GameManagerI#setPriorityPlayer()
+     * @see rails.game.GameManager#setPriorityPlayer()
      */
     public void setPriorityPlayer() {
         int priorityPlayerIndex =
@@ -1441,7 +1450,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI,
     }
 
     /* (non-Javadoc)
-     * @see rails.game.GameManagerI#setPriorityPlayer(rails.game.Player)
+     * @see rails.game.GameManager#setPriorityPlayer(rails.game.Player)
      */
     public void setPriorityPlayer(Player player) {
         priorityPlayer.set(player);
@@ -1450,35 +1459,35 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI,
     }
 
     /* (non-Javadoc)
-     * @see rails.game.GameManagerI#getPriorityPlayer()
+     * @see rails.game.GameManager#getPriorityPlayer()
      */
     public Player getPriorityPlayer() {
         return (Player) priorityPlayer.get();
     }
 
     /* (non-Javadoc)
-     * @see rails.game.GameManagerI#getCurrentPlayer()
+     * @see rails.game.GameManager#getCurrentPlayer()
      */
     public Player getCurrentPlayer() {
         return (Player) currentPlayer.get();
     }
 
     /* (non-Javadoc)
-     * @see rails.game.GameManagerI#getPlayers()
+     * @see rails.game.GameManager#getPlayers()
      */
     public List<Player> getPlayers() {
         return players;
     }
 
     /* (non-Javadoc)
-     * @see rails.game.GameManagerI#getNumberOfPlayers()
+     * @see rails.game.GameManager#getNumberOfPlayers()
      */
     public int getNumberOfPlayers() {
         return numberOfPlayers;
     }
 
     /* (non-Javadoc)
-     * @see rails.game.GameManagerI#getPlayerNames()
+     * @see rails.game.GameManager#getPlayerNames()
      */
     public List<String> getPlayerNames() {
         return playerNames;
@@ -1497,28 +1506,28 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI,
     }
 
     /* (non-Javadoc)
-     * @see rails.game.GameManagerI#getAllPublicCompanies()
+     * @see rails.game.GameManager#getAllPublicCompanies()
      */
-    public List<PublicCompanyI> getAllPublicCompanies() {
+    public List<PublicCompany> getAllPublicCompanies() {
         return companyManager.getAllPublicCompanies();
     }
 
     /* (non-Javadoc)
-     * @see rails.game.GameManagerI#getAllPrivateCompanies()
+     * @see rails.game.GameManager#getAllPrivateCompanies()
      */
-    public List<PrivateCompanyI> getAllPrivateCompanies() {
+    public List<PrivateCompany> getAllPrivateCompanies() {
         return companyManager.getAllPrivateCompanies();
     }
 
     /* (non-Javadoc)
-     * @see rails.game.GameManagerI#getPlayerByIndex(int)
+     * @see rails.game.GameManager#getPlayerByIndex(int)
      */
     public Player getPlayerByIndex(int index) {
         return players.get(index % numberOfPlayers);
     }
 
     /* (non-Javadoc)
-     * @see rails.game.GameManagerI#setNextPlayer()
+     * @see rails.game.GameManager#setNextPlayer()
      */
     public void setNextPlayer() {
         int currentPlayerIndex = getCurrentPlayerIndex();
@@ -1543,13 +1552,13 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI,
     }
 
     /* (non-Javadoc)
-     * @see rails.game.GameManagerI#getStartPacket()
+     * @see rails.game.GameManager#getStartPacket()
      */
     public StartPacket getStartPacket() {
         return startPacket;
     }
 
-    public PhaseI getCurrentPhase() {
+    public Phase getCurrentPhase() {
         return phaseManager.getCurrentPhase();
     }
 
@@ -1607,7 +1616,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI,
     }
 
     // TODO Should be removed
-    public void initialiseNewPhase(PhaseI phase) {
+    public void initialiseNewPhase(Phase phase) {
         ReportBuffer.add(LocalText.getText("StartOfPhase", phase.getName()));
 
         phase.activate();
@@ -1619,21 +1628,21 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI,
     }
 
     /* (non-Javadoc)
-     * @see rails.game.GameManagerI#getHelp()
+     * @see rails.game.GameManager#getHelp()
      */
     public String getHelp() {
         return getCurrentRound().getHelp();
     }
 
     /* (non-Javadoc)
-     * @see rails.game.GameManagerI#canAnyCompanyHoldShares()
+     * @see rails.game.GameManager#canAnyCompanyHoldShares()
      */
     public boolean canAnyCompanyHoldShares() {
         return (Boolean) getGuiParameter(GuiDef.Parm.CAN_ANY_COMPANY_HOLD_OWN_SHARES);
     }
 
     /* (non-Javadoc)
-     * @see rails.game.GameManagerI#getClassName(rails.common.Defs.ClassName)
+     * @see rails.game.GameManager#getClassName(rails.common.Defs.ClassName)
      */
     public String getClassName (GuiDef.ClassName key) {
 
@@ -1657,7 +1666,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI,
     }
 
     /* (non-Javadoc)
-     * @see rails.game.GameManagerI#getCommonParameter(rails.common.Defs.Parm)
+     * @see rails.game.GameManager#getCommonParameter(rails.common.Defs.Parm)
      */
     public Object getGuiParameter (GuiDef.Parm key) {
         if (guiParameters.containsKey(key)) {
@@ -1687,52 +1696,16 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI,
         return interruptedRound;
     }
 
-    /**
-     * Add an object.
-     *
-     * @param object The object to add.
-     * @return True if successful.
-     */
-    public boolean addObject(Moveable object, int position) {
-        if (object instanceof SpecialPropertyI) {
-            SpecialPropertyI sp = (SpecialPropertyI) object;
-            sp.setHolder(null);
-            return addSpecialProperty(sp, position == null ? -1 : position[0]);
-        } else {
-            return false;
-        }
-    }
-
-    public int[] getListIndex (Moveable object) {
-        if (object instanceof SpecialPropertyI) {
-            return new int[] {commonSpecialProperties.indexOf(object)};
-        } else {
-            return Moveable.AT_END;
-        }
-    }
-
-    /**
-     * Remove an object.
-     *
-     * @param object The object to remove.
-     * @return True if successful.
-     */
-    public boolean removeObject(Moveable object) {
-        if (object instanceof SpecialPropertyI) {
-            return removeSpecialProperty((SpecialPropertyI) object);
-        } else {
-            return false;
-        }
-    }
-
     public boolean addSpecialProperty(SpecialPropertyI property, int position) {
 
         if (commonSpecialProperties == null) {
-            commonSpecialProperties = new ArrayList<SpecialPropertyI>(2);
+            commonSpecialProperties = HolderModel.create(this, SpecialPropertyI.class);
         }
-        return Util.addToList(commonSpecialProperties, property, position);
+        return commonSpecialProperties.addObject(property, position);
     }
 
+    // TODO: Write new SpecialPropertiesModel
+    
     /**
      * Remove a special property.
      *
@@ -1742,7 +1715,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI,
     public boolean removeSpecialProperty(SpecialPropertyI property) {
 
         if (commonSpecialProperties != null) {
-            return commonSpecialProperties.remove(property);
+            return commonSpecialProperties.removeObject(property);
         }
 
         return false;
@@ -1750,6 +1723,10 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI,
 
     public List<SpecialPropertyI> getCommonSpecialProperties () {
         return getSpecialProperties (null, false);
+    }
+    
+    public Holder<SpecialPropertyI> getCommonSpecialPropertiesHolder() {
+        return commonSpecialProperties;
     }
 
     @SuppressWarnings("unchecked")
@@ -1822,14 +1799,14 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI,
      * share price at the end of an SR un sucn a way, that the token order gets preserved.
      * @return
      */
-    public List<PublicCompanyI> getCompaniesInRunningOrder () {
+    public List<PublicCompany> getCompaniesInRunningOrder () {
 
-        Map<Integer, PublicCompanyI> operatingCompanies =
-            new TreeMap<Integer, PublicCompanyI>();
+        Map<Integer, PublicCompany> operatingCompanies =
+            new TreeMap<Integer, PublicCompany>();
         StockSpaceI space;
         int key;
         int minorNo = 0;
-        for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
+        for (PublicCompany company : companyManager.getAllPublicCompanies()) {
 
             // Key must put companies in reverse operating order, because sort
             // is ascending.
@@ -1846,7 +1823,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI,
             operatingCompanies.put(new Integer(key), company);
         }
 
-        return new ArrayList<PublicCompanyI>(operatingCompanies.values());
+        return new ArrayList<PublicCompany>(operatingCompanies.values());
     }
 
     public boolean isReloading() {
@@ -1872,7 +1849,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI,
         final boolean _ascending = ascending;
         Collections.sort (players, new Comparator<Player>() {
             public int compare (Player p1, Player p2) {
-                return _ascending ? p1.getCash() - p2.getCash() : p2.getCash() - p1.getCash();
+                return _ascending ? p1.getCashModel().value() - p2.getCashModel().value() : p2.getCashModel().value() - p1.getCashModel().value();
             }
         });
 
@@ -1881,17 +1858,28 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI,
             player = players.get(i);
             player.setIndex (i);
             playerNames.set (i, player.getId());
-            log.debug("New player "+i+" is "+player.getId() +" (cash="+Bank.format(player.getCash())+")");
+            log.debug("New player "+i+" is "+player.getId() +" (cash="+Bank.format(player.getCashModel().value())+")");
         }
 
         return players.get(0);
     }
-
+    /**
+     * reset the storage for other elements like tokens, special property
+     * that a referred by unique ids
+     * TODO: Move to a better place
+     */
     public void resetStorage() {
         objectStorage = new HashMap<String, Object>();
         storageIds = new HashMap<String, Integer>();
     }
 
+    /**
+     * store element in storage
+     * @param name to identify the type of the object to retrieve
+     * @param object to store
+     * @return unique id of the object in the storage 
+     * TODO move to a better place
+     */
     public int storeObject(String typeName, Object object) {
         Integer id = storageIds.get(typeName);
         if (id == null) id = 0;
@@ -1900,6 +1888,13 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI,
         return id;
     }
 
+    /**
+     * ask storage for object
+     * @param name to identify the type of the object to retrieve
+     * @param identifier in storage
+     * @return object stored under the id (null if none is stored)
+     * TODO move to a better place
+     */
     public Object retrieveObject(String typeName, int id) {
         return objectStorage.get(typeName + id);
     }
@@ -1907,6 +1902,23 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI,
     /** Process an action triggered by a phase change. */
     public void processPhaseAction (String name, String value) {
         getCurrentRound().processPhaseAction(name, value);
+    }
+
+    // Owner interface
+    public boolean hasPortfolio() {
+        return false;
+    }
+
+    public Portfolio getPortfolio() {
+        return null;
+    }
+
+    public boolean hasCash() {
+        return false;
+    }
+
+    public CashModel getCash() {
+        return null;
     }
 
 }

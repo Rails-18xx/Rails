@@ -11,7 +11,7 @@ import rails.common.LocalText;
 import rails.common.parser.ConfigurableComponentI;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
-import rails.game.GameManagerI;
+import rails.game.GameManager;
 import rails.game.state.AbstractItem;
 import rails.game.state.ArrayListState;
 
@@ -100,7 +100,7 @@ public final class RevenueManager extends AbstractItem implements ConfigurableCo
 
     }
 
-    public void finishConfiguration(GameManagerI parent)
+    public void finishConfiguration(GameManager parent)
             throws ConfigurationException {
         for (ConfigurableComponentI modifier:configurableModifiers) {
                 modifier.finishConfiguration(parent);

@@ -44,7 +44,7 @@ public class LocatedBonus extends SpecialProperty {
     }
 
     @Override
-    public void finishConfiguration (GameManagerI gameManager) 
+    public void finishConfiguration (GameManager gameManager) 
     throws ConfigurationException {
         locations = gameManager.getMapManager().parseLocations(locationCodes);
     }

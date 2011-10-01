@@ -53,11 +53,11 @@ public interface TileI extends Model<String> {
 
     public boolean allowsMultipleBasesOfOneCompany();
 
-    public List<TileI> getUpgrades(MapHex hex, PhaseI phase);
+    public List<TileI> getUpgrades(MapHex hex, Phase phase);
 
     public List<TileI> getAllUpgrades(MapHex hex);
 
-    public List<TileI> getValidUpgrades(MapHex hex, PhaseI phase);
+    public List<TileI> getValidUpgrades(MapHex hex, Phase phase);
 
     public String getUpgradesString(MapHex hex);
 

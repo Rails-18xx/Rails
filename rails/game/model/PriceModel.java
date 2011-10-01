@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/PriceModel.java,v 1.9 2010/01/31 22:22:29 macfreek Exp $*/
 package rails.game.model;
 
 import rails.game.*;
@@ -9,10 +8,10 @@ import rails.game.state.PriceMove;
 public class PriceModel extends AbstractModel<String> {
 
     private StockSpaceI stockPrice = null;
-    private PublicCompanyI company = null;
+    private PublicCompany company = null;
     private String name = null;
 
-    public PriceModel(PublicCompanyI company, String name) {
+    public PriceModel(PublicCompany company, String name) {
         super(company, name);
         this.company = company;
         this.name = name;
@@ -26,7 +25,7 @@ public class PriceModel extends AbstractModel<String> {
         return stockPrice;
     }
 
-    public PublicCompanyI getCompany() {
+    public PublicCompany getCompany() {
         return company;
     }
 
@@ -56,10 +55,10 @@ public class PriceModel extends AbstractModel<String> {
     public void setState(Object object) {
         if (object == null) {
             stockPrice = null;
-            notifyModel();
+            update();
         } else if (object instanceof StockSpaceI) {
             stockPrice = (StockSpaceI) object;
-            notifyModel();
+            update();
         } else {
             new Exception("Incompatible object type "
                           + object.getClass().getName()

@@ -1,39 +1,40 @@
 package rails.game.state;
 
 import java.security.InvalidParameterException;
-import java.util.ArrayList;
-import java.util.List;
 
-import rails.game.model.View;
+import rails.game.model.Observer;
 
 abstract class AbstractState implements State {
     
     private final String id;
     private final GameContext root;
     
-    private final List<View<String>> views = new ArrayList<View<String>>();
-    private final Formatter formatter;
+    private final Formatter<AbstractState> formatter;
+
+    // cached version of the String data (similar to Abstract Model
+    private String cached = null;
+    private boolean calculated = false;
     
-    public AbstractState(Item owner, String id) {
-        this(owner, id, null);
+    public AbstractState(Item parent, String id) {
+        this(parent, id, null);
     }
     
-    public AbstractState(Item owner, String id, Formatter formatter) {
+    public AbstractState(Item parent, String id, Formatter<AbstractState> formatter) {
         
-        if (owner.getId() != null) {
-           this.id = owner.getId() + "." + id;
+        if (parent.getId() != null) {
+           this.id = parent.getId() + "." + id;
         } else {
            this.id = id;
         }
         
-        // define formatter
+        // define formatter 
         this.formatter = formatter;
 
         // pass along the root
-        if (owner.getRoot() instanceof GameContext) {
-            this.root = (GameContext) owner.getRoot();
+        if (parent.getRoot() instanceof GameContext) {
+            this.root = (GameContext) parent.getRoot();
         } else {
-            throw new InvalidParameterException("Invalid owner: States can only be created inside a GameContext hierachy");
+            throw new InvalidParameterException("Invalid parent: States can only be created inside a GameContext hierachy");
         }
         
         // add to StateManager
@@ -49,39 +50,39 @@ abstract class AbstractState implements State {
         return root;
     }
     
-    
-    // methods for model
-    public void addView(View<String> view) {
-        views.add(view);
-    }
-    
-    public void removeView(View<String> view) {
-        views.remove(view);
-    }
-    
-    public void notifyModel() {
-        String data = getData();
-        for (View<String> view:views) {
-            view.update(data);
-        }
-    }
-    
     public String getData() {
         if (formatter == null) {
             return toString();
         } else {
-            return formatter.formatData(this);
+            if (!calculated) {
+                cached =  formatter.formatData(this);
+                calculated = true;
+            }
+            return cached;
         }
     }
     
-    
-    // methods for state
-    public void addModel(Notifiable model) {
-        root.getStateManager().registerModel(this, model);
+    public void getLazyData() {
+        throw new AssertionError("You have to overwrite either getData() or getLazyData() for classes that extend AbstractState.");
     }
     
+    // methods for observer
+    public void update() {
+        calculated = false;
+    }
+    
+    // methods for observable
+    public void addObserver(Observer observer) {
+        root.getStateManager().registerObserver(observer, this);
+    }
+    
+    public void removeObserver(Observer observer) {
+        
+    }
+    
+    // methods for state
     public void addReceiver(Triggerable receiver) {
-        root.getStateManager().registerReceiver(this, receiver);
+        root.getStateManager().registerReceiver(receiver, this);
     }
     
 }

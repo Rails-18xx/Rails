@@ -6,7 +6,7 @@ import java.util.*;
 
 import rails.game.model.Model;
 
-public interface StockSpaceI extends Model<String> // extends TokenHolderI
+public interface StockSpaceI extends Model<String> // extends HolderModel<Token>I
 {
 
     /*--- Constants ---*/
@@ -116,11 +116,11 @@ public interface StockSpaceI extends Model<String> // extends TokenHolderI
      * @return Stock position: 0 = top, increasing towards the bottom. -1 if not
      * found.
      */
-    public int getStackPosition(PublicCompanyI company);
+    public int getStackPosition(PublicCompany company);
 
-    public void addFixedStartPrice(PublicCompanyI company);
+    public void addFixedStartPrice(PublicCompany company);
 
-    public List<PublicCompanyI> getFixedStartPrices();
+    public List<PublicCompany> getFixedStartPrices();
 
     /**
      * @return
@@ -147,14 +147,14 @@ public interface StockSpaceI extends Model<String> // extends TokenHolderI
      */
     public boolean isNoHoldLimit();
 
-    public boolean addToken(PublicCompanyI company);
+    public boolean addToken(PublicCompany company);
 
-    public boolean addTokenAtStackPosition(PublicCompanyI company, int stackPosition);
+    public boolean addTokenAtStackPosition(PublicCompany company, int stackPosition);
     
-    public boolean removeToken(PublicCompanyI company);
+    public boolean removeToken(PublicCompany company);
 
     public boolean hasTokens();
 
-    public List<PublicCompanyI> getTokens();
+    public List<PublicCompany> getTokens();
 
 }

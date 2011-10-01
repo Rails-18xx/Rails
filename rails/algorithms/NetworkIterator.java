@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 import org.jgrapht.*;
 import org.jgrapht.traverse.*;
 
-import rails.game.PublicCompanyI;
+import rails.game.PublicCompany;
 
 public class NetworkIterator extends 
     AbstractGraphIterator<NetworkVertex, NetworkEdge> {
@@ -48,7 +48,7 @@ public class NetworkIterator extends
      * Returns NetworkIterator for specific company
      */
     public NetworkIterator(Graph<NetworkVertex, NetworkEdge> graph, NetworkVertex startVertex,
-            PublicCompanyI company) {
+            PublicCompany company) {
         super();
         
         if (graph == null)

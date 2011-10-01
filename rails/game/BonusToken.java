@@ -8,8 +8,6 @@ package rails.game;
 import rails.common.parser.ConfigurableComponentI;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
-import rails.game.state.MoveUtils;
-import rails.game.state.ObjectMove;
 import rails.util.Util;
 
 /**
@@ -26,14 +24,15 @@ public class BonusToken extends Token implements Closeable, ConfigurableComponen
     String name;
     String removingObjectDesc = null;
     Object removingObject = null;
-    PublicCompanyI user = null;
+    PublicCompany user = null;
 
     /**
      * Create a BonusToken.
      */
+    // TODO: Check if moveTo null is possible
     public BonusToken() {
         super();
-        setHolder(null);
+        this.moveTo(null);
     }
 
     public void configureFromXML(Tag tag) throws ConfigurationException {
@@ -56,7 +55,7 @@ public class BonusToken extends Token implements Closeable, ConfigurableComponen
         removingObjectDesc = bonusTokenTag.getAttributeAsString("removed");
     }
 
-    public void finishConfiguration(GameManagerI gameManager) {
+    public void finishConfiguration(GameManager gameManager) {
         prepareForRemoval (gameManager.getPhaseManager());
     }
 
@@ -66,7 +65,7 @@ public class BonusToken extends Token implements Closeable, ConfigurableComponen
      * See prepareForRemovel().
      */
     public void close() {
-        MoveUtils.objectMove(this, holder.getTokens(), GameManager.getInstance().getBank().getScrapHeap().tokens);
+        this.moveTo(GameManager.getInstance().getBank().getScrapHeap());
         if (user != null) {
             user.removeBonus(name);
         }
@@ -94,12 +93,12 @@ public class BonusToken extends Token implements Closeable, ConfigurableComponen
         }
     }
 
-    public void setUser(PublicCompanyI user) {
+    public void setUser(PublicCompany user) {
         this.user = user;
     }
 
     public boolean isPlaced() {
-        return (holder instanceof MapHex);
+        return (getOwner() instanceof MapHex);
     }
 
     public String getId() {

@@ -8,7 +8,7 @@ package rails.game.action;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-import rails.game.PrivateCompanyI;
+import rails.game.PrivateCompany;
 
 /**
  * @author Erik Vos
@@ -16,7 +16,7 @@ import rails.game.PrivateCompanyI;
 public class BuyPrivate extends PossibleORAction {
 
     // Initial attributes
-    transient private PrivateCompanyI privateCompany;
+    transient private PrivateCompany privateCompany;
     private String privateCompanyName;
     private int minimumPrice;
     private int maximumPrice;
@@ -29,7 +29,7 @@ public class BuyPrivate extends PossibleORAction {
     /**
      *
      */
-    public BuyPrivate(PrivateCompanyI privateCompany, int minimumPrice,
+    public BuyPrivate(PrivateCompany privateCompany, int minimumPrice,
             int maximumPrice) {
 
         this.privateCompany = privateCompany;
@@ -55,7 +55,7 @@ public class BuyPrivate extends PossibleORAction {
     /**
      * @return Returns the privateCompany.
      */
-    public PrivateCompanyI getPrivateCompany() {
+    public PrivateCompany getPrivateCompany() {
         return privateCompany;
     }
 

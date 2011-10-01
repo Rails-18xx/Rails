@@ -14,10 +14,10 @@ import rails.game.state.*;
  */
 public class OperatingRound_1889 extends OperatingRound {
 
-    private PrivateCompanyI privB;
+    private PrivateCompany privB;
     private BooleanState activeSpPrivB;
     
-    private PrivateCompanyI privC;
+    private PrivateCompany privC;
     private BooleanState activeSpPrivC;
     private GameDef.OrStep storeActiveStep;
     private String previousOwnerName; 
@@ -29,7 +29,7 @@ public class OperatingRound_1889 extends OperatingRound {
      * 
      * @param gameManager the game manager
      */
-    public OperatingRound_1889 (GameManagerI gameManager) {
+    public OperatingRound_1889 (GameManager gameManager) {
         super (gameManager);
         
         privB = companyManager.getPrivateCompany("B");

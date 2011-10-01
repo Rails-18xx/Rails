@@ -13,9 +13,9 @@ import rails.algorithms.RevenueTrainRun;
 import rails.common.parser.ConfigurableComponentI;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
-import rails.game.GameManagerI;
+import rails.game.GameManager;
 import rails.game.MapHex;
-import rails.game.TrainI;
+import rails.game.Train;
 
 public class NamedTrainRevenueModifier implements RevenueStaticModifier, RevenueDynamicModifier, ConfigurableComponentI {
 
@@ -27,7 +27,7 @@ public class NamedTrainRevenueModifier implements RevenueStaticModifier, Revenue
         // do nothing
     }
 
-    public void finishConfiguration(GameManagerI parent)
+    public void finishConfiguration(GameManager parent)
             throws ConfigurationException {
         dynamic = parent.getGameOption("18ALOptimizeNamedTrains").equalsIgnoreCase("yes");
     }
@@ -63,7 +63,7 @@ public class NamedTrainRevenueModifier implements RevenueStaticModifier, Revenue
         
         // 1. check all Trains for name Tokens
         for (NetworkTrain networkTrain:revenueAdapter.getTrains()) {
-            TrainI train = networkTrain.getRailsTrain();
+            Train train = networkTrain.getRailsTrain();
             if (!(train instanceof NameableTrain)) continue;
             NamedTrainToken token = ((NameableTrain)train).getNameToken();
             if (token == null) continue;

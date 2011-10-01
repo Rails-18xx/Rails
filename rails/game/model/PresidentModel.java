@@ -1,18 +1,18 @@
 package rails.game.model;
 
 import rails.game.Player;
-import rails.game.PublicCompanyI;
+import rails.game.PublicCompany;
 
 /**
  * model object for the current company president
  * gets registered by the ShareModels
  */
 
-public class PresidentModel extends AbstractModel<String> implements View<String> {
+public class PresidentModel extends AbstractModel<String> implements Observer {
 
-    PublicCompanyI company;
+    PublicCompany company;
     
-    public PresidentModel(PublicCompanyI company) {
+    public PresidentModel(PublicCompany company) {
         super(company, "PresidentModel");
         this.company = company;
     }
@@ -21,11 +21,6 @@ public class PresidentModel extends AbstractModel<String> implements View<String
         Player president = company.getPresident();
         if (president == null ) return "";
         else return company.getPresident().getNameAndPriority();
-    }
-
-    public void update(String data) {
-        // pass along the update as a viewer
-        notifyModel();
     }
 
 }

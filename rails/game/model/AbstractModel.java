@@ -1,10 +1,8 @@
 package rails.game.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import rails.game.state.AbstractItem;
 import rails.game.state.Item;
+import rails.game.state.StateManager;
 
 /**
  * A generic superclass for all Model values that need be displayed in some form
@@ -16,27 +14,37 @@ import rails.game.state.Item;
  */
 public abstract class AbstractModel<E> extends AbstractItem implements Model<E> {
 
-    private final List<View<E>> views;
+    // cached version of E
+    private E cached = null;
+    private boolean calculated = false;
     
     public AbstractModel(Item owner, String id) {
         super(owner, id);
-        views = new ArrayList<View<E>>();
     }
     
-    public void addView(View<E> view) {
-        views.add(view);
-    }
-    
-    public void removeView(View<E> view) {
-        views.remove(view);
-    }
-    
-    public void notifyModel() {
-        // update data
-        E data = this.getData();
-        // and inform views
-        for (View<E> view:views) {
-            view.update(data);
+    public E getData() {
+        if (!calculated) {
+            cached = getLazyData();
+            calculated = true;
         }
+        return cached;
     }
+    
+    protected E getLazyData() {
+        throw new AssertionError("You have to overwrite either getData() or getLazyData() for classes that extend AbstractModel.");
+    }
+
+    
+    public final void update() {
+        calculated = false;
+    }
+
+    public final void addObserver(Observer observer) {
+        StateManager.getInstance().registerObserver(observer, this);
+    }
+    
+    public final void removeObserver(Observer observer) {
+        StateManager.getInstance().deRegisterObserver(observer, this);
+    }
+    
 }

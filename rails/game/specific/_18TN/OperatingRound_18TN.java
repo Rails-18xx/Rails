@@ -11,7 +11,7 @@ public class OperatingRound_18TN extends OperatingRound {
 
     private ArrayListState<Player> playersSoldInOR1;
 
-    public OperatingRound_18TN (GameManagerI gameManager) {
+    public OperatingRound_18TN (GameManager gameManager) {
         super (gameManager);
     }
 
@@ -24,7 +24,7 @@ public class OperatingRound_18TN extends OperatingRound {
     }
 
     @Override
-    protected int getPrivateMinimumPrice (PrivateCompanyI privComp) {
+    protected int getPrivateMinimumPrice (PrivateCompany privComp) {
         if (gameManager.getAbsoluteORNumber() == 1
                 && !getCurrentPhase().isPrivateSellingAllowed()) {
             // 18TN special
@@ -35,7 +35,7 @@ public class OperatingRound_18TN extends OperatingRound {
     }
 
     @Override
-    protected int getPrivateMaximumPrice (PrivateCompanyI privComp) {
+    protected int getPrivateMaximumPrice (PrivateCompany privComp) {
         if (gameManager.getAbsoluteORNumber() == 1
                 && !getCurrentPhase().isPrivateSellingAllowed()) {
             // 18TN special
@@ -45,8 +45,8 @@ public class OperatingRound_18TN extends OperatingRound {
         }
     }
 
-    private boolean ownsPrivate (PublicCompanyI company) {
-        List<PrivateCompanyI> privates = company.getPortfolio().getPrivateCompanies();
+    private boolean ownsPrivate (PublicCompany company) {
+        List<PrivateCompany> privates = company.getPortfolio().getPrivateCompanies();
         return privates != null && !privates.isEmpty();
     }
 
@@ -66,7 +66,7 @@ public class OperatingRound_18TN extends OperatingRound {
         Player sellingPlayer = null;
 
         if (gameManager.getAbsoluteORNumber() == 1) {
-            sellingPlayer = (Player)((Portfolio)action.getPrivateCompany().getHolder()).getOwner();
+            sellingPlayer = (Player)action.getPrivateCompany().getPortfolio().getOwner();
         }
 
         boolean result = super.buyPrivate(action);
@@ -84,7 +84,7 @@ public class OperatingRound_18TN extends OperatingRound {
     @Override
     public void processPhaseAction (String name, String value) {
         if (name.equalsIgnoreCase("CivilWar")) {
-            for (PublicCompanyI company : getOperatingCompanies()) {
+            for (PublicCompany company : getOperatingCompanies()) {
                 if (company.hasFloated() && company.getPortfolio().getNumberOfTrains() > 0
                         && company.hasRoute()) {
                     ((PublicCompany_18TN)company).setCivilWar(true);

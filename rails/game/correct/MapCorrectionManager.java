@@ -150,7 +150,7 @@ public class MapCorrectionManager extends CorrectionManager {
                 // define tokens for relays
                 List<BaseToken> tokens = new ArrayList<BaseToken>();
                 for (Stop oldStop:hex.getStops()) {
-                    for (TokenI token:oldStop.getTokens()) {
+                    for (Token token:oldStop.getTokens()) {
                         if (token instanceof BaseToken) {
                             tokens.add((BaseToken)token);
                         }

@@ -16,7 +16,7 @@ import rails.ui.swing.elements.ConfirmationDialog;
 
 public class StatusWindow_1835 extends StatusWindow {
 
-    PublicCompanyI prussian;
+    PublicCompany prussian;
 
     private static final long serialVersionUID = 1L;
 
@@ -63,7 +63,7 @@ public class StatusWindow_1835 extends StatusWindow {
     // Code partly copied from ORUIManager
     protected void fold (FoldIntoPrussian action) {
 
-        List<CompanyI> foldables = action.getFoldableCompanies();
+        List<Company> foldables = action.getFoldableCompanies();
         JDialog currentDialog;
 
         if (foldables.get(0).getId().equals("M2")) {
@@ -78,7 +78,7 @@ public class StatusWindow_1835 extends StatusWindow {
         } else {
             // Ask if any other prePrussians should be folded
             String[] options = new String[foldables.size()];
-            CompanyI company;
+            Company company;
             for (int i=0; i<options.length; i++) {
             	company = foldables.get(i);
             	options[i] = LocalText.getText("MergeOption",

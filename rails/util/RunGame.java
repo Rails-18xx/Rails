@@ -3,7 +3,7 @@ package rails.util;
 import rails.common.GuiDef;
 import rails.common.parser.Config;
 import rails.game.Game;
-import rails.game.GameManagerI;
+import rails.game.GameManager;
 import rails.ui.swing.GameSetupWindow;
 import rails.ui.swing.GameUIManager;
 
@@ -63,7 +63,7 @@ public class RunGame {
             return;
         }
 
-        GameManagerI gameManager = game.getGameManager();
+        GameManager gameManager = game.getGameManager();
         GameUIManager gameUIManager;
         String gameUIManagerClassName = gameManager.getClassName(GuiDef.ClassName.GAME_UI_MANAGER);
         try {

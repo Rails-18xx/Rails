@@ -15,7 +15,7 @@ public class BonusModel extends AbstractModel<String> {
     
     public void setBonuses(ArrayListState<Bonus> bonuses) {
         this.bonuses = bonuses;
-        bonuses.addModel(this);
+        bonuses.addObserver(this);
     }
 
     public String getData() {

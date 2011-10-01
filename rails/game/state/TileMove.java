@@ -15,8 +15,10 @@ import rails.game.*;
  * should be replaced with stateful variables
  * @author Erik Vos
  */
+
+// FIXME: Rewrite this mechanism
 @Deprecated
-public class TileMove implements Move {
+public class TileMove {
 
     protected static Logger log =
         Logger.getLogger(TileMove.class.getPackage().getName());

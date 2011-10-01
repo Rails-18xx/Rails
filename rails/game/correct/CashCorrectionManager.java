@@ -3,7 +3,10 @@ package rails.game.correct;
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.game.*;
-import rails.game.state.MoveUtils;
+import rails.game.model.CashOwner;
+import rails.game.model.Owner;
+import rails.game.model.Owners;
+import rails.game.model.Owners;
 
 import java.util.*;
 
@@ -23,8 +26,8 @@ public final class CashCorrectionManager extends CorrectionManager {
                 actions.add(new CashCorrectionAction(pl));
             }
 
-            List<PublicCompanyI> publicCompanies = gameManager.getAllPublicCompanies();
-            for(PublicCompanyI pc:publicCompanies){
+            List<PublicCompany> publicCompanies = gameManager.getAllPublicCompanies();
+            for(PublicCompany pc:publicCompanies){
                 if (pc.hasFloated() && !pc.isClosed())
                     actions.add(new CashCorrectionAction(pc));
             }
@@ -45,7 +48,7 @@ public final class CashCorrectionManager extends CorrectionManager {
 
         boolean result = false;
 
-        CashHolder ch = cashAction.getCashHolder();
+        CashOwner ch = cashAction.getCashHolder();
         int amount = cashAction.getAmount();
 
         String errMsg = null;
@@ -56,11 +59,11 @@ public final class CashCorrectionManager extends CorrectionManager {
                     LocalText.getText("CorrectCashZero");
                 break;
             }
-            if ((amount + ch.getCash()) < 0) {
+            if ((amount + ch.getCashModel().value()) < 0) {
                 errMsg =
                     LocalText.getText("NotEnoughMoney", 
                             ch.getId(),
-                            Bank.format(ch.getCash()),
+                            Bank.format(ch.getCashModel().value()),
                             Bank.format(-amount) 
                     );
                 break;
@@ -82,14 +85,14 @@ public final class CashCorrectionManager extends CorrectionManager {
             String msg;
             if (amount < 0) {
                 // negative amounts: remove cash from cashholder
-                MoveUtils.cashMove(ch, bank , -amount);
+                Owners.cashMove(ch, bank , -amount);
 
                 msg = LocalText.getText("CorrectCashSubstractMoney",
                         ch.getId(),
                         Bank.format(-amount) );
             } else {
                 // positive amounts: add cash to cashholder
-                MoveUtils.cashMove(bank, ch, amount);
+                Owners.cashMove(bank, ch, amount);
                 msg = LocalText.getText("CorrectCashAddMoney",
                         ch.getId(),
                         Bank.format(amount));

@@ -56,7 +56,7 @@ public class NamedTrainToken extends Token implements ConfigurableComponentI /*,
                 longName + " [" + hexesString + "] +" + Bank.format(value);
     }
 
-    public void finishConfiguration (GameManagerI gameManager)
+    public void finishConfiguration (GameManager gameManager)
     throws ConfigurationException {
 
         if (hexesString != null) {

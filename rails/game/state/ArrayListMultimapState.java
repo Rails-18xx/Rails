@@ -44,7 +44,17 @@ public class ArrayListMultimapState<K,V> extends AbstractState implements Multim
         return map.containsEntry(key, value);
     }
     
-    public void change(K key, V value, boolean addToMap) {
-        
+    @Override
+    public String toString() {
+        return map.toString();
     }
+
+    public void change(K key, V value, boolean addToMap) {
+        if (addToMap) {
+            map.put(key, value);
+        } else {
+            map.remove(key, value);
+        }
+    }
+    
 }

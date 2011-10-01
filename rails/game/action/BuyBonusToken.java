@@ -1,15 +1,10 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyBonusToken.java,v 1.5 2010/02/28 21:38:06 evos Exp $
- *
- * Created on 17-Sep-2006
- * Change Log:
- */
 package rails.game.action;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-import rails.game.CashHolder;
-import rails.game.PrivateCompanyI;
+import rails.game.PrivateCompany;
+import rails.game.model.Owner;
 import rails.game.special.SellBonusToken;
 import rails.game.special.SpecialProperty;
 
@@ -19,9 +14,9 @@ import rails.game.special.SpecialProperty;
 public class BuyBonusToken extends PossibleORAction {
 
     // Initial attributes
-    transient private PrivateCompanyI privateCompany;
+    transient private PrivateCompany privateCompany;
     private String privateCompanyName;
-    transient private CashHolder seller = null;
+    transient private Owner seller = null;
     private String sellerName = null;
     transient protected SellBonusToken specialProperty = null;
     protected int specialPropertyId;
@@ -40,7 +35,7 @@ public class BuyBonusToken extends PossibleORAction {
 
         this.specialProperty = specialProperty;
         this.specialPropertyId = specialProperty.getUniqueId();
-        this.privateCompany = (PrivateCompanyI) specialProperty.getOriginalCompany();
+        this.privateCompany = (PrivateCompany) specialProperty.getOriginalCompany();
         this.privateCompanyName = privateCompany.getId();
         this.seller = specialProperty.getSeller();
         if (seller != null) this.sellerName = seller.getId();
@@ -53,7 +48,7 @@ public class BuyBonusToken extends PossibleORAction {
     /**
      * @return Returns the privateCompany.
      */
-    public PrivateCompanyI getPrivateCompany() {
+    public PrivateCompany getPrivateCompany() {
         return privateCompany;
     }
 
@@ -61,7 +56,7 @@ public class BuyBonusToken extends PossibleORAction {
         return privateCompanyName;
     }
 
-    public CashHolder getSeller() {
+    public Owner getSeller() {
         return seller;
     }
 
@@ -122,7 +117,8 @@ public class BuyBonusToken extends PossibleORAction {
         privateCompany =
                 getCompanyManager().getPrivateCompany(privateCompanyName);
         if (sellerName.equalsIgnoreCase("Bank")) {
-            seller = gameManager.getBank();
+            // TODO: Assume that it is the pool, not the ipo
+            seller = gameManager.getBank().getPool();
         } else if (sellerName != null) {
             seller =
                 getCompanyManager().getPublicCompany(sellerName);

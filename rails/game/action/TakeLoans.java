@@ -8,7 +8,7 @@ package rails.game.action;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-import rails.game.PublicCompanyI;
+import rails.game.PublicCompany;
 
 /**
  * @author Erik Vos
@@ -16,7 +16,7 @@ import rails.game.PublicCompanyI;
 public class TakeLoans extends PossibleORAction {
 
     // Initial attributes
-    transient private PublicCompanyI company;
+    transient private PublicCompany company;
     private String companyName;
     private int maxNumber;
     private int price;
@@ -29,7 +29,7 @@ public class TakeLoans extends PossibleORAction {
     /**
      *
      */
-    public TakeLoans(PublicCompanyI company, int maxNumber,
+    public TakeLoans(PublicCompany company, int maxNumber,
             int price) {
 
         this.company = company;
@@ -49,7 +49,7 @@ public class TakeLoans extends PossibleORAction {
      * @return Returns the company.
      */
     @Override
-    public PublicCompanyI getCompany() {
+    public PublicCompany getCompany() {
         return company;
     }
 

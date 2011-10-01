@@ -7,11 +7,11 @@ import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.LayBaseToken;
 import rails.game.action.PossibleAction;
-import rails.game.state.MoveUtils;
+import rails.game.model.Owners;
 
 public class OperatingRound_18AL extends OperatingRound {
 
-    public OperatingRound_18AL (GameManagerI gameManager) {
+    public OperatingRound_18AL (GameManager gameManager) {
         super (gameManager);
     }
 
@@ -21,8 +21,8 @@ public class OperatingRound_18AL extends OperatingRound {
         if (getGameOption("18ALOptimizeNamedTrains").equalsIgnoreCase("yes")) return;
         
         for (NameTrains stl : getSpecialProperties(NameTrains.class)) {
-            List<TrainI> trains =
-                    operatingCompany.get().getPortfolio().getTrainList().view();
+            List<Train> trains =
+                    operatingCompany.get().getPortfolio().getTrainList();
             if (trains != null && !trains.isEmpty()) {
                 possibleActions.add(new AssignNamedTrains(stl, trains));
             }
@@ -85,7 +85,7 @@ public class OperatingRound_18AL extends OperatingRound {
             MapHex hex = action.getChosenHex();
             if (hex == operatingCompany.get().getDestinationHex()) {
                 int payout = 100;
-                MoveUtils.cashMove(bank, operatingCompany.get(), payout);
+                Owners.cashMove(bank, operatingCompany.get(), payout);
                 ReportBuffer.add(LocalText.getText("DestinationReachedByToken",
                         operatingCompany.get().getId(),
                         Bank.format(payout),

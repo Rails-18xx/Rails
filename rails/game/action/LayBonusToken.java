@@ -35,7 +35,7 @@ public class LayBonusToken extends LayToken {
         this.tokenId = token.getUniqueId();
     }
 
-    public void finishConfiguration (GameManagerI gameManager)
+    public void finishConfiguration (GameManager gameManager)
     throws ConfigurationException {
         token.prepareForRemoval(gameManager.getPhaseManager());
     }

@@ -1,8 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Round.java,v 1.42 2010/05/25 20:27:17 evos Exp $
- *
- * Created on 17-Sep-2006
- * Change Log:
- */
 package rails.game;
 
 import java.util.*;
@@ -11,13 +6,16 @@ import org.apache.log4j.Logger;
 
 import rails.common.*;
 import rails.game.action.*;
+import rails.game.model.CashOwner;
+import rails.game.model.Owner;
+import rails.game.model.Portfolio;
 import rails.game.special.SpecialPropertyI;
 import rails.game.state.AbstractItem;
 import rails.game.state.ArrayListState;
 import rails.game.state.BooleanState;
 import rails.game.state.ChangeStack;
 import rails.game.state.Item;
-import rails.game.state.MoveUtils;
+import rails.game.model.Owners;
 
 /**
  * @author Erik Vos
@@ -30,7 +28,7 @@ public abstract class Round extends AbstractItem implements RoundI {
     protected static Logger log =
         Logger.getLogger(Round.class.getPackage().getName());
 
-    protected GameManagerI gameManager = null;
+    protected GameManager gameManager = null;
     protected CompanyManagerI companyManager = null;
     protected PlayerManager playerManager = null;
     protected Bank bank = null;
@@ -58,7 +56,7 @@ public abstract class Round extends AbstractItem implements RoundI {
      * @param aGameManager The GameManager Object needed to initialize the Round Class
      *
      */
-    public Round (GameManagerI aGameManager) {
+    public Round (GameManager aGameManager) {
 
         this.gameManager = aGameManager;
 
@@ -125,7 +123,7 @@ public abstract class Round extends AbstractItem implements RoundI {
         return number;
     }
 
-    public PhaseI getCurrentPhase() {
+    public Phase getCurrentPhase() {
         return gameManager.getCurrentPhase();
     }
 
@@ -210,7 +208,7 @@ public abstract class Round extends AbstractItem implements RoundI {
             String cityName, hexName;
             int cityNumber;
             String[] ct;
-            PublicCompanyI comp = action.getCompany();
+            PublicCompany comp = action.getCompany();
 
             ReportBuffer.add("");
 
@@ -262,36 +260,36 @@ public abstract class Round extends AbstractItem implements RoundI {
     }
 
     /** Set the operating companies in their current acting order */
-    public List<PublicCompanyI> setOperatingCompanies() {
+    public List<PublicCompany> setOperatingCompanies() {
         return setOperatingCompanies (null, null);
     }
 
-    public List<PublicCompanyI> setOperatingCompanies(List<PublicCompanyI> oldOperatingCompanies,
-            PublicCompanyI lastOperatingCompany) {
+    public List<PublicCompany> setOperatingCompanies(List<PublicCompany> oldOperatingCompanies,
+            PublicCompany lastOperatingCompany) {
 
-        Map<Integer, PublicCompanyI> operatingCompanies =
-            new TreeMap<Integer, PublicCompanyI>();
-        List<PublicCompanyI> newOperatingCompanies;
+        Map<Integer, PublicCompany> operatingCompanies =
+            new TreeMap<Integer, PublicCompany>();
+        List<PublicCompany> newOperatingCompanies;
         StockSpaceI space;
         int key;
         int minorNo = 0;
         boolean reorder = gameManager.isDynamicOperatingOrder()
         && oldOperatingCompanies != null && lastOperatingCompany != null;
 
-        int lastOperatingCompanyIndex;
+        int lastOperatingCompanyndex;
         if (reorder) {
             newOperatingCompanies = oldOperatingCompanies;
-            lastOperatingCompanyIndex = oldOperatingCompanies.indexOf(lastOperatingCompany);
+            lastOperatingCompanyndex = oldOperatingCompanies.indexOf(lastOperatingCompany);
         } else {
             newOperatingCompanies = companyManager.getAllPublicCompanies();
-            lastOperatingCompanyIndex = -1;
+            lastOperatingCompanyndex = -1;
         }
 
-        for (PublicCompanyI company : newOperatingCompanies) {
+        for (PublicCompany company : newOperatingCompanies) {
             if (!reorder && !canCompanyOperateThisRound(company)) continue;
 
             if (reorder
-                    && oldOperatingCompanies.indexOf(company) <= lastOperatingCompanyIndex) {
+                    && oldOperatingCompanies.indexOf(company) <= lastOperatingCompanyndex) {
                 // Companies that have operated this round get lowest keys
                 key = oldOperatingCompanies.indexOf(company);
             } else if (company.hasStockPrice()) {
@@ -308,11 +306,11 @@ public abstract class Round extends AbstractItem implements RoundI {
             operatingCompanies.put(new Integer(key), company);
         }
 
-        return new ArrayList<PublicCompanyI>(operatingCompanies.values());
+        return new ArrayList<PublicCompany>(operatingCompanies.values());
     }
 
     /** Can a public company operate? (Default version) */
-    protected boolean canCompanyOperateThisRound (PublicCompanyI company) {
+    protected boolean canCompanyOperateThisRound (PublicCompany company) {
         return company.hasFloated() && !company.isClosed();
     }
 
@@ -322,7 +320,7 @@ public abstract class Round extends AbstractItem implements RoundI {
      *
      * @param company
      */
-    protected void checkFlotation(PublicCompanyI company) {
+    protected void checkFlotation(PublicCompany company) {
 
         if (!company.hasStarted() || company.hasFloated()) return;
 
@@ -333,10 +331,10 @@ public abstract class Round extends AbstractItem implements RoundI {
     }
 
     /** Determine sold percentage for floating purposes */
-    protected int getSoldPercentage (PublicCompanyI company) {
+    protected int getSoldPercentage (PublicCompany company) {
 
         int soldPercentage = 0;
-        for (PublicCertificateI cert : company.getCertificates()) {
+        for (PublicCertificate cert : company.getCertificates()) {
             if (certCountsAsSold(cert)) {
                 soldPercentage += cert.getShare();
             }
@@ -345,9 +343,9 @@ public abstract class Round extends AbstractItem implements RoundI {
     }
 
     /** Can be subclassed for games with special rules */
-    protected boolean certCountsAsSold (PublicCertificateI cert) {
+    protected boolean certCountsAsSold (PublicCertificate cert) {
         Portfolio holder = cert.getPortfolio();
-        CashHolder owner = holder.getOwner();
+        Owner owner = holder.getOwner();
         return owner instanceof Player
         || holder == pool;
     }
@@ -359,7 +357,7 @@ public abstract class Round extends AbstractItem implements RoundI {
      * to process the consequences of company flotation must be handled in
      * game-specific subclasses.
      */
-    protected void floatCompany(PublicCompanyI company) {
+    protected void floatCompany(PublicCompany company) {
 
         // Move cash and shares where required
         int soldPercentage = getSoldPercentage(company);
@@ -368,13 +366,13 @@ public abstract class Round extends AbstractItem implements RoundI {
         if (company.hasStockPrice()) {
             int capFactor = 0;
             int shareUnit = company.getShareUnit();
-            if (capitalisationMode == PublicCompanyI.CAPITALISE_FULL) {
+            if (capitalisationMode == PublicCompany.CAPITALISE_FULL) {
                 // Full capitalisation as in 1830
                 capFactor = 100 / shareUnit;
-            } else if (capitalisationMode == PublicCompanyI.CAPITALISE_INCREMENTAL) {
+            } else if (capitalisationMode == PublicCompany.CAPITALISE_INCREMENTAL) {
                 // Incremental capitalisation as in 1851
                 capFactor = soldPercentage / shareUnit;
-            } else if (capitalisationMode == PublicCompanyI.CAPITALISE_WHEN_BOUGHT) {
+            } else if (capitalisationMode == PublicCompany.CAPITALISE_WHEN_BOUGHT) {
                 // Cash goes directly to treasury at each buy (as in 1856 before phase 6)
                 capFactor = 0;
             }
@@ -391,7 +389,7 @@ public abstract class Round extends AbstractItem implements RoundI {
         // up)
 
         if (cash > 0) {
-            MoveUtils.cashMove(bank, company, cash);
+            Owners.cashMove(bank, company, cash);
             ReportBuffer.add(LocalText.getText("FloatsWithCash",
                     company.getId(),
                     Bank.format(cash) ));
@@ -400,23 +398,17 @@ public abstract class Round extends AbstractItem implements RoundI {
                     company.getId()));
         }
 
-        if (capitalisationMode == PublicCompanyI.CAPITALISE_INCREMENTAL
+        if (capitalisationMode == PublicCompany.CAPITALISE_INCREMENTAL
                 && company.canHoldOwnShares()) {
-            List<Certificate> moving = new ArrayList<Certificate>();
-            for (Certificate ipoCert : ipo.getCertificatesPerCompany(
-                    company.getId())) {
-                moving.add(ipoCert);
-            }
-            for (Certificate ipoCert : moving) {
-                ipoCert.moveTo(company.getPortfolio());
-            }
+            // move all shares from ipo to the company portfolio
+            Owners.moveAll(ipo, company, PublicCertificate.class);
         }
     }
 
     protected void finishRound() {
         // Report financials
         ReportBuffer.add("");
-        for (PublicCompanyI c : companyManager.getAllPublicCompanies()) {
+        for (PublicCompany c : companyManager.getAllPublicCompanies()) {
             if (c.hasFloated() && !c.isClosed()) {
                 ReportBuffer.add(LocalText.getText("Has", c.getId(),
                         Bank.format(c.getCash())));
@@ -424,7 +416,7 @@ public abstract class Round extends AbstractItem implements RoundI {
         }
         for (Player p : playerManager.getPlayers()) {
             ReportBuffer.add(LocalText.getText("Has", p.getId(),
-                    Bank.format(p.getCash())));
+                    Bank.format(p.getCashValue())));
         }
         // Inform GameManager
         gameManager.nextRound(this);
@@ -447,9 +439,9 @@ public abstract class Round extends AbstractItem implements RoundI {
         return getClass().getName().replaceAll(".*\\.", "");
     }
 
-    protected void transferCertificate(Certificate cert, Portfolio newHolder) {
+    protected void transferCertificate(Certificate cert, Owner newOwner) {
 
-        cert.moveTo(newHolder);
+        cert.moveTo(newOwner);
     }
 
     // Note: all transferred shares must come from the same old shareholder.
@@ -463,19 +455,13 @@ public abstract class Round extends AbstractItem implements RoundI {
         }
     }
 
-    protected void pay (CashHolder from, CashHolder to, int amount) {
+    protected void pay (CashOwner from, CashOwner to, int amount) {
         if (to != null && amount != 0) {
-            MoveUtils.cashMove (from, to, amount);
+            Owners.cashMove (from, to, amount);
         }
     }
 
-    protected void pay (Portfolio from, Portfolio to, int amount) {
-        if (to != null && amount != 0) {
-            MoveUtils.cashMove (from.getOwner(), to.getOwner(), amount);
-        }
-    }
-
-    public GameManagerI getGameManager() {
+    public GameManager getGameManager() {
         return gameManager;
     }
 

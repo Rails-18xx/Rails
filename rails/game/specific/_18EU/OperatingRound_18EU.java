@@ -6,6 +6,7 @@ import java.util.*;
 import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.BuyTrain;
+import rails.game.model.Portfolio;
 import rails.game.state.BooleanState;
 
 /**
@@ -20,7 +21,7 @@ public class OperatingRound_18EU extends OperatingRound {
     protected BooleanState hasPullmannAtStart =
             new BooleanState(this, "ORCompanyHasPullmannAtStart", false);
 
-    public OperatingRound_18EU (GameManagerI gameManager) {
+    public OperatingRound_18EU (GameManager gameManager) {
         super (gameManager);
         pullmannType = trainManager.getCertTypeByName("P");
     }
@@ -43,7 +44,7 @@ public class OperatingRound_18EU extends OperatingRound {
         int cash = operatingCompany.get().getCash();
 
         int cost;
-        List<TrainI> trains;
+        List<Train> trains;
         BuyTrain bt;
 
         boolean hasTrains =
@@ -56,7 +57,7 @@ public class OperatingRound_18EU extends OperatingRound {
         if (!canBuyTrainNow) return;
 
         boolean presidentMayHelp = operatingCompany.get().mustOwnATrain();
-        TrainI cheapestTrain = null;
+        Train cheapestTrain = null;
         int costOfCheapestTrain = 0;
         TrainManager trainMgr = gameManager.getTrainManager();
 
@@ -70,7 +71,7 @@ public class OperatingRound_18EU extends OperatingRound {
         }
          /* New trains */
         trains = trainMgr.getAvailableNewTrains();
-        for (TrainI train : trains) {
+        for (Train train : trains) {
             cost = train.getCost();
             if (cost <= cash) {
                 if (canBuyTrainNow) {
@@ -87,7 +88,7 @@ public class OperatingRound_18EU extends OperatingRound {
 
         /* Used trains */
         trains = pool.getUniqueTrains();
-        for (TrainI train : trains) {
+        for (Train train : trains) {
             // May not buy Pullmann if one is already owned,
             // or if no train is owned at all
             if (train.getType().getName().equals("P")
@@ -108,7 +109,7 @@ public class OperatingRound_18EU extends OperatingRound {
         if (!hasTrains && presidentMayHelp
                 && possibleActions.getType(BuyTrain.class).isEmpty()
                 && cheapestTrain != null) {
-            bt = new BuyTrain(cheapestTrain, cheapestTrain.getHolder(), costOfCheapestTrain);
+            bt = new BuyTrain(cheapestTrain, cheapestTrain.getPortfolio(), costOfCheapestTrain);
             bt.setPresidentMustAddCash(costOfCheapestTrain - cash);
             if (mustExchangePullmann) bt.setExtraMessage(extraMessage);
             possibleActions.add(bt);
@@ -122,13 +123,13 @@ public class OperatingRound_18EU extends OperatingRound {
             int numberOfPlayers = getNumberOfPlayers();
 
             // Set up a list per player of presided companies
-            List<List<PublicCompanyI>> companiesPerPlayer =
-                    new ArrayList<List<PublicCompanyI>>(numberOfPlayers);
+            List<List<PublicCompany>> companiesPerPlayer =
+                    new ArrayList<List<PublicCompany>>(numberOfPlayers);
             for (int i = 0; i < numberOfPlayers; i++)
-                companiesPerPlayer.add(new ArrayList<PublicCompanyI>(4));
-            List<PublicCompanyI> companies;
+                companiesPerPlayer.add(new ArrayList<PublicCompany>(4));
+            List<PublicCompany> companies;
             // Sort out which players preside over wich companies.
-            for (PublicCompanyI c : operatingCompanies.view()) {
+            for (PublicCompany c : operatingCompanies.view()) {
                 if (c == operatingCompany.get() || c.isClosed()) continue;
                 p = c.getPresident();
                 index = p.getIndex();
@@ -140,11 +141,11 @@ public class OperatingRound_18EU extends OperatingRound {
             for (int i = currentPlayerIndex; i < currentPlayerIndex
                                                  + numberOfPlayers; i++) {
                 companies = companiesPerPlayer.get(i % numberOfPlayers);
-                for (PublicCompanyI company : companies) {
+                for (PublicCompany company : companies) {
                     pf = company.getPortfolio();
                     trains = pf.getUniqueTrains();
 
-                    for (TrainI train : trains) {
+                    for (Train train : trains) {
                         if (train.getType().getName().equals("P")) continue;
                         bt = new BuyTrain(train, pf, 0);
                         if (mustExchangePullmann) bt.setExtraMessage(extraMessage);
@@ -172,7 +173,7 @@ public class OperatingRound_18EU extends OperatingRound {
 
         // If we are at train limit and have a Pullmann, discard it
         if (mustDiscardPullmann) {
-            TrainI pullmann = operatingCompany.get().getPortfolio().getTrainOfType(pullmannType);
+            Train pullmann = operatingCompany.get().getPortfolio().getTrainOfType(pullmannType);
             if (pullmann != null) {  // must be non-null
                 pullmann.moveTo(pool);
                 ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
@@ -184,12 +185,12 @@ public class OperatingRound_18EU extends OperatingRound {
 
         // If train was bought from another company, check for a lone Pullmann
         Portfolio seller = action.getFromPortfolio();
-        if (seller.getOwner() instanceof PublicCompanyI
+        if (seller.getOwner() instanceof PublicCompany
                 && !action.getTrain().getId().equalsIgnoreCase("P")) {
             boolean hasPullmann = false;
             boolean hasNonPullmann = false;
-            TrainI pullmann = null;
-            for (TrainI sellerTrain : seller.getTrainList()) {
+            Train pullmann = null;
+            for (Train sellerTrain : seller.getTrainList()) {
                 if ("P".equalsIgnoreCase(sellerTrain.getId())) {
                     hasPullmann = true;
                     pullmann = sellerTrain;
@@ -223,13 +224,13 @@ public class OperatingRound_18EU extends OperatingRound {
     @Override
     public boolean checkForExcessTrains() {
 
-        excessTrainCompanies = new HashMap<Player, List<PublicCompanyI>>();
+        excessTrainCompanies = new HashMap<Player, List<PublicCompany>>();
         Player player;
-        TrainI pullmann;
+        Train pullmann;
         Portfolio portfolio;
         int numberOfTrains;
 
-        for (PublicCompanyI comp : operatingCompanies.view()) {
+        for (PublicCompany comp : operatingCompanies.view()) {
             portfolio = comp.getPortfolio();
             numberOfTrains = portfolio.getNumberOfTrains();
 
@@ -250,7 +251,7 @@ public class OperatingRound_18EU extends OperatingRound {
                 player = comp.getPresident();
                 if (!excessTrainCompanies.containsKey(player)) {
                     excessTrainCompanies.put(player,
-                            new ArrayList<PublicCompanyI>(2));
+                            new ArrayList<PublicCompany>(2));
                 }
                 excessTrainCompanies.get(player).add(comp);
             }

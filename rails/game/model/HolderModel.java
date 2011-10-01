@@ -1,48 +1,86 @@
 package rails.game.model;
 
+import java.util.Iterator;
+
 import com.google.common.collect.ImmutableList;
 
 import rails.game.state.ArrayListState;
-import rails.game.state.Holder;
-import rails.game.state.Item;
-import rails.game.state.Moveable;
 
 /**
- * The HolderModel holds a list of Moveable objects
+ * GenericHolder is an implementation that allows to store Ownable objects
  * @author freystef
  *
- * @param <E> The type of objects to store inside the HolderModel
+ * @param <T> The type of objects to store inside the HolderModel
  */
 
-public class HolderModel<E extends Moveable> extends AbstractModel<String> implements Holder<E> {
+public class HolderModel<T extends Ownable> extends AbstractModel<String> implements Holder<T> {
 
-    private final ArrayListState<E> holdObjects;
+    private final ArrayListState<T> holdObjects;
+    private final Owner owner;
     
-    public HolderModel(Item owner, String id) {
-        super(owner, id);
-        holdObjects = new ArrayListState<E>(owner, id);
-        holdObjects.addModel(this);
+    public static <T extends Ownable> HolderModel<T> create(Owner owner, Class<T> clazz) {
+        HolderModel<T> holderModel = new HolderModel<T>(owner, clazz);
+        owner.addHolder(holderModel, clazz);
+        return holderModel;
     }
-
+    
+    protected HolderModel(Owner owner, Class<T> clazz) {
+        this(owner, clazz, "");
+    }
+    
+    protected HolderModel(Owner owner, Class<T> clazz, String postfix_id) {
+        super(owner, clazz.getName() + postfix_id);
+        this.owner = owner;
+        
+        // create the state variable
+        holdObjects = new ArrayListState<T>(owner, clazz.getName());
+        holdObjects.addObserver(this);
+    }
+        
     public String getData() {
         return holdObjects.getData();
     }
 
-    public boolean addObject(E object, int position) {
+    public final boolean addObject(T object){
+        holdObjects.add(object);
+        return true;
+    }
+    
+    public final boolean addObject(T object, int position) {
         holdObjects.add(position, object);
         return true;
     }
 
-    public boolean removeObject(E object) {
+    public final boolean removeObject(T object) {
         return holdObjects.remove(object);
     }
+    
+    public final Owner getOwner() {
+        return owner;
+    }
 
-    public int getListIndex(E object) {
+    public final T get(int index) {
+        return holdObjects.get(index);
+    }
+    
+    public final int getListIndex(T object) {
         return holdObjects.indexOf(object);
     }
     
-    public ImmutableList<E> viewList() {
+    public final int size() {
+        return holdObjects.size();
+    }
+
+    public final boolean isEmpty() {
+        return holdObjects.isEmpty();
+    }
+
+    public ImmutableList<T> view() {
         return holdObjects.view();
     }
     
+    public final Iterator<T> iterator() {
+        return holdObjects.iterator();
+    }
+
 }

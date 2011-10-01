@@ -8,7 +8,7 @@ package rails.game;
  */
 public abstract class SwitchableUIRound extends Round {
 
-    public SwitchableUIRound (GameManagerI gameManager) {
+    public SwitchableUIRound (GameManager gameManager) {
         super (gameManager);
     }
 

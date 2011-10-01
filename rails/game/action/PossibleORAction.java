@@ -21,7 +21,7 @@ import rails.util.Util;
 /* Or should this be an interface? We will see. */
 public abstract class PossibleORAction extends PossibleAction {
 
-    transient protected PublicCompanyI company;
+    transient protected PublicCompany company;
     protected String companyName;
 
     /**
@@ -37,7 +37,7 @@ public abstract class PossibleORAction extends PossibleAction {
         }
     }
 
-    public PublicCompanyI getCompany() {
+    public PublicCompany getCompany() {
         return company;
     }
 
@@ -46,7 +46,7 @@ public abstract class PossibleORAction extends PossibleAction {
     }
 
     /** To be used in the client (to enable safety check in the server) */
-    public void setCompany(PublicCompanyI company) {
+    public void setCompany(PublicCompany company) {
         this.company = company;
         this.companyName = company.getId();
     }

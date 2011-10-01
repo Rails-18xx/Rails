@@ -13,36 +13,36 @@ import rails.util.Util;
 public class FoldIntoPrussian extends PossibleAction {
 
     // Server settings
-    protected transient List<CompanyI> foldableCompanies = null;
+    protected transient List<Company> foldableCompanies = null;
     protected String foldableCompanyNames = null;
 
     // Client settings
-    protected transient List<CompanyI> foldedCompanies = null;
+    protected transient List<Company> foldedCompanies = null;
     protected String foldedCompanyNames = null;
 
     public static final long serialVersionUID = 1L;
 
-    public FoldIntoPrussian(List<CompanyI> companies) {
+    public FoldIntoPrussian(List<Company> companies) {
         this.foldableCompanies = companies;
         foldableCompanyNames = Company.joinNamesWithDelimiter (foldableCompanies, ",");
     }
 
-    public FoldIntoPrussian(CompanyI company) {
-        this (Arrays.asList(new CompanyI[] {company}));
+    public FoldIntoPrussian(Company company) {
+        this (Arrays.asList(new Company[] {company}));
     }
 
-    public List<CompanyI> getFoldedCompanies() {
+    public List<Company> getFoldedCompanies() {
         return foldedCompanies;
     }
 
 
-    public void setFoldedCompanies(List<CompanyI> foldedCompanies) {
+    public void setFoldedCompanies(List<Company> foldedCompanies) {
         this.foldedCompanies = foldedCompanies;
         foldedCompanyNames = Company.joinNamesWithDelimiter (foldedCompanies, ",");
     }
 
 
-    public List<CompanyI> getFoldableCompanies() {
+    public List<Company> getFoldableCompanies() {
         return foldableCompanies;
     }
 
@@ -87,19 +87,19 @@ public class FoldIntoPrussian extends PossibleAction {
     private void readObject(ObjectInputStream in) throws IOException,
             ClassNotFoundException {
         
-        CompanyI company;
+        Company company;
 
         in.defaultReadObject();
 
         CompanyManagerI cmgr = getCompanyManager();
         if (foldableCompanyNames != null) {
-            foldableCompanies = new ArrayList<CompanyI>();
+            foldableCompanies = new ArrayList<Company>();
             for (String name : foldableCompanyNames.split(",")) {
                 foldableCompanies.add(cmgr.getPublicCompany(name));
             }
         }
         if (Util.hasValue(foldedCompanyNames)) {
-            foldedCompanies = new ArrayList<CompanyI>();
+            foldedCompanies = new ArrayList<Company>();
             for (String name : foldedCompanyNames.split(",")) {
                 company = cmgr.getPublicCompany(name);
                 if (company == null) company = cmgr.getPrivateCompany(name);

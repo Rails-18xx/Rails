@@ -27,7 +27,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
     private ORUIManager orUIManager;
     private List<ActionLabel> tokenLabels;
     private List<CorrectionTokenLabel> correctionTokenLabels;
-    private int selectedTokenIndex;
+    private int selectedTokenndex;
     private List<LayToken> possibleTokenLays = new ArrayList<LayToken>(3);
 
     static private Color defaultLabelBgColour = new JLabel("").getBackground();
@@ -81,7 +81,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         add(scrollPane);
     }
 
-    public void populate(PhaseI currentPhase) {
+    public void populate(Phase currentPhase) {
         if (hexMap == null) hexMap = orUIManager.getMapPanel().getMap();
 
         GUIHex uiHex = hexMap.getSelectedHex();
@@ -127,12 +127,12 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
             Color bgColour = null;
             String text = null;
             String description = null;
-            TokenIcon icon;
+            Tokencon icon;
             ActionLabel tokenLabel;
             tokenLabels = new ArrayList<ActionLabel>();
             for (LayToken action : possibleTokenLays) {
                 if (action instanceof LayBaseToken) {
-                    PublicCompanyI comp = ((LayBaseToken) action).getCompany();
+                    PublicCompany comp = ((LayBaseToken) action).getCompany();
                     fgColour = comp.getFgColour();
                     bgColour = comp.getBgColour();
                     description = text = comp.getId();
@@ -147,7 +147,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
                     description = token.getId();
                     text = "+" + token.getValue();
                 }
-                icon = new TokenIcon(25, fgColour, bgColour, text);
+                icon = new Tokencon(25, fgColour, bgColour, text);
                 tokenLabel = new ActionLabel(icon);
                 tokenLabel.setName(description);
                 tokenLabel.setText(description);
@@ -256,7 +256,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         // activate upgrade panel
         upgradePanel.removeAll();
         GridLayout panelLayout = (GridLayout)upgradePanel.getLayout();
-        List<? extends TokenI> tokens = orUIManager.tokenLays;
+        List<? extends Token> tokens = orUIManager.tokenLays;
 
         if (tokens == null || tokens.size() == 0) {
             // reset to the number of elements
@@ -268,17 +268,17 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
             Color bgColour = null;
             String text = null;
             String description = null;
-            TokenIcon icon;
+            Tokencon icon;
             CorrectionTokenLabel tokenLabel;
             correctionTokenLabels = new ArrayList<CorrectionTokenLabel>();
-            for (TokenI token:tokens) {
+            for (Token token:tokens) {
                 if (token instanceof BaseToken) {
-                    PublicCompanyI comp = ((BaseToken)token).getCompany();
+                    PublicCompany comp = ((BaseToken)token).getCompany();
                     fgColour = comp.getFgColour();
                     bgColour = comp.getBgColour();
                     description = text = comp.getId();
                 }
-                icon = new TokenIcon(25, fgColour, bgColour, text);
+                icon = new Tokencon(25, fgColour, bgColour, text);
                 tokenLabel = new CorrectionTokenLabel(icon, token);
                 tokenLabel.setName(description);
                 tokenLabel.setText(description);
@@ -308,17 +308,17 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         upgradePanel.repaint();
     }
 
-    public void setSelectedTokenIndex(int index) {
-        log.debug("Selected token index from " + selectedTokenIndex + " to "
+    public void setSelectedTokenndex(int index) {
+        log.debug("Selected token index from " + selectedTokenndex + " to "
                 + index);
-        selectedTokenIndex = index;
+        selectedTokenndex = index;
     }
 
     public void setSelectedToken() {
         if (tokenLabels == null || tokenLabels.isEmpty()) return;
         int index = -1;
         for (ActionLabel tokenLabel : tokenLabels) {
-            tokenLabel.setBackground(++index == selectedTokenIndex
+            tokenLabel.setBackground(++index == selectedTokenndex
                     ? selectedLabelBgColour : defaultLabelBgColour);
         }
     }
@@ -328,7 +328,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         if (correctionTokenLabels == null || correctionTokenLabels.isEmpty()) return;
         int index = -1;
         for (CorrectionTokenLabel tokenLabel : correctionTokenLabels) {
-            tokenLabel.setBackground(++index == selectedTokenIndex
+            tokenLabel.setBackground(++index == selectedTokenndex
                     ? selectedLabelBgColour : defaultLabelBgColour);
         }
     }
@@ -363,12 +363,12 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         this.tokenMode = tokenMode;
         setTileUpgrades(null);
         possibleTokenLays.clear();
-        selectedTokenIndex = -1;
+        selectedTokenndex = -1;
     }
 
     public <T extends LayToken> void setPossibleTokenLays(List<T> actions) {
         possibleTokenLays.clear();
-        selectedTokenIndex = -1;
+        selectedTokenndex = -1;
         if (actions != null) possibleTokenLays.addAll(actions);
     }
 
@@ -415,8 +415,8 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
             setSelectedToken();
         } else if (correctionTokenMode) {
             int id = correctionTokenLabels.indexOf(source);
-            selectedTokenIndex = id;
-            log.info("Correction Token index = " + selectedTokenIndex + " selected");
+            selectedTokenndex = id;
+            log.info("Correction Token index = " + selectedTokenndex + " selected");
         } else {
 
             int id = ((HexLabel) e.getSource()).getInternalId();
@@ -466,9 +466,9 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
 
         private static final long serialVersionUID = 1L;
 
-        private TokenI token;
+        private Token token;
 
-        CorrectionTokenLabel(Icon tokenIcon, TokenI token) {
+        CorrectionTokenLabel(Icon tokenIcon, Token token) {
             super(tokenIcon);
             this.token = token;
         }

@@ -7,6 +7,8 @@ import rails.algorithms.RevenueAdapter;
 import rails.algorithms.RevenueStaticModifier;
 import rails.common.parser.ConfigurationException;
 import rails.game.*;
+import rails.game.model.Holder;
+import rails.game.model.Owner;
 import rails.game.state.*;
 
 public class PublicCompany_CGR extends PublicCompany implements RevenueStaticModifier {
@@ -35,7 +37,7 @@ public class PublicCompany_CGR extends PublicCompany implements RevenueStaticMod
     }
     
     @Override
-    public void finishConfiguration(GameManagerI gameManager) throws ConfigurationException {
+    public void finishConfiguration(GameManager gameManager) throws ConfigurationException {
         super.finishConfiguration(gameManager);
 
         // add revenue modifier for the case that there is no train
@@ -63,7 +65,7 @@ public class PublicCompany_CGR extends PublicCompany implements RevenueStaticMod
         }
     }
     
-    public boolean mayBuyTrainType (TrainI train) {
+    public boolean mayBuyTrainType (Train train) {
         return !"4".equals(train.getId());
     }
 
@@ -108,7 +110,7 @@ public class PublicCompany_CGR extends PublicCompany implements RevenueStaticMod
     }
 
     @Override
-    public void buyTrain(TrainI train, int price) {
+    public void buyTrain(Train train, int price) {
         super.buyTrain (train, price);
         if (train.isPermanent()) setHadPermanentTrain(true);
     }
@@ -119,10 +121,10 @@ public class PublicCompany_CGR extends PublicCompany implements RevenueStaticMod
                 && percentage == 10) {
             shareUnit.set(percentage);
             // Drop the last 10 shares
-            List<PublicCertificateI>certs = new ArrayList<PublicCertificateI>(certificates.view());
+            List<PublicCertificate>certs = new ArrayList<PublicCertificate>(certificates.view());
             int share = 0;
-            Holder scrapHeap = bank.getScrapHeap();
-            for (PublicCertificateI cert : certs) {
+            Owner scrapHeap = bank.getScrapHeap();
+            for (PublicCertificate cert : certs) {
                 if (share >= 100) {
                     cert.moveTo(scrapHeap);
                     certificates.remove(cert);
@@ -134,15 +136,17 @@ public class PublicCompany_CGR extends PublicCompany implements RevenueStaticMod
 
             // Update all owner ShareModels (once)
             // to have the UI get the correct percentage
-            List<Portfolio> done = new ArrayList<Portfolio>();
+            // FIXME: Do we still neeed this
+/*            List<Portfolio> done = new ArrayList<Portfolio>();
             Portfolio portfolio;
-            for (PublicCertificateI cert : certificates.view()) {
+            for (PublicCertificate cert : certificates.view()) {
                 portfolio = (Portfolio)cert.getHolder();
                 if (!done.contains(portfolio)) {
                     portfolio.getShareModel(this).setShare();
                     done.add(portfolio);
                 }
             }
+*/
         }
 
     }

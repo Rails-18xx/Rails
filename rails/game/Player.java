@@ -1,8 +1,6 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Player.java,v 1.26 2010/05/18 22:07:18 evos Exp $ */
 package rails.game;
 
 import rails.game.model.*;
-import rails.game.state.AbstractItem;
 import rails.game.state.BooleanState;
 import rails.game.state.IntegerState;
 
@@ -10,7 +8,7 @@ import rails.game.state.IntegerState;
  * Player class holds all player-specific data
  */
 
-public class Player extends AbstractItem implements CashHolder, Comparable<Player> {
+public class Player extends PortfolioCashOwner implements Comparable<Player> {
 
     public static int MAX_PLAYERS = 8;
 
@@ -20,9 +18,7 @@ public class Player extends AbstractItem implements CashHolder, Comparable<Playe
 
     private int index = 0;
 
-    private CashModel wallet = new CashModel(this);
-
-    private CertificateCountModel certCount = new CertificateCountModel(this);
+    private CertificateCountModel certCount;
 
     private MoneyModel blockedCash;
     private CalculatedMoneyModel freeCash;
@@ -33,29 +29,24 @@ public class Player extends AbstractItem implements CashHolder, Comparable<Playe
 
     private boolean hasBoughtStockThisTurn = false;
 
-    private Portfolio portfolio = null;
-
-     public Player(String name, int index) {
+    public Player(PlayerManager parent, String name, int index) {
+        super(parent, name); // intializes the PortfolioCashOwner
+        
         this.name = name;
         this.index = index;
-        portfolio = new Portfolio(name, this);
         freeCash = new CalculatedMoneyModel(this, "getFreeCash");
-        wallet.addView(freeCash);
         blockedCash = new MoneyModel(this, "blockedCash");
         blockedCash.setSuppressZero(true);
         worth = new CalculatedMoneyModel(this, "getWorth");
-        wallet.addView(worth);
         bankrupt = new BooleanState (this, "isBankrupt", false);
         lastORWorthIncrease = new MoneyModel (this, "lastORIncome");
         lastORWorthIncrease.setAllowNegative(true);
         worthAtORStart = new IntegerState (this, "worthAtORStart");
-    }
 
-    /**
-     * @return Returns the player's portfolio.
-     */
-    public Portfolio getPortfolio() {
-        return portfolio;
+        certCount = new CertificateCountModel(getPortfolio());
+
+        getCashModel().addObserver(freeCash);
+        getCashModel().addObserver(worth);
     }
 
     /**
@@ -69,20 +60,6 @@ public class Player extends AbstractItem implements CashHolder, Comparable<Playe
         return name + (GameManager.getInstance().getPriorityPlayer() == this ? " PD" : "");
     }
 
-    /**
-     * @return Returns the player's wallet.
-     */
-    public int getCash() {
-        return wallet.getCash();
-    }
-
-    public Model<String> getCashModel() {
-        return wallet;
-    }
-
-    public void addCash(int amount) {
-        wallet.addCash(amount);
-    }
 
     /**
      * Get the player's total worth.
@@ -96,13 +73,13 @@ public class Player extends AbstractItem implements CashHolder, Comparable<Playe
         if (bankrupt.booleanValue()) {
             worth = 0;
         } else {
-            worth = wallet.getCash();
+            worth = this.getCashModel().value();
         }
 
-        for (PublicCertificateI cert : portfolio.getCertificates()) {
+        for (PublicCertificate cert : getPortfolio().getCertificates()) {
             worth += cert.getCompany().getGameEndPrice() * cert.getShares();
         }
-        for (PrivateCompanyI priv : portfolio.getPrivateCompanies()) {
+        for (PrivateCompany priv : getPortfolio().getPrivateCompanies()) {
             worth += priv.getBasePrice();
         }
         return worth;
@@ -124,8 +101,13 @@ public class Player extends AbstractItem implements CashHolder, Comparable<Playe
         lastORWorthIncrease.set(getWorth() - worthAtORStart.intValue());
     }
 
+    public int getCashValue() {
+        return getCashModel().value();
+    }
+    
     public void updateWorth () {
-        worth.notifyModel();
+        // TODO: Is this method still required
+        worth.update();
     }
 
     public CertificateCountModel getCertCountModel() {
@@ -159,11 +141,12 @@ public class Player extends AbstractItem implements CashHolder, Comparable<Playe
      * @return false if the amount was not available.
      */
     public boolean blockCash(int amount) {
-        if (amount > wallet.getCash() - blockedCash.intValue()) {
+        if (amount > getCashModel().value() - blockedCash.intValue()) {
             return false;
         } else {
             blockedCash.add(amount);
-            freeCash.notifyModel();
+            // TODO: is this still required?
+            freeCash.update();
             return true;
         }
     }
@@ -179,7 +162,8 @@ public class Player extends AbstractItem implements CashHolder, Comparable<Playe
             return false;
         } else {
             blockedCash.add(-amount);
-            freeCash.notifyModel();
+            // TODO: is this still required?
+            freeCash.update();
             return true;
         }
     }
@@ -190,7 +174,7 @@ public class Player extends AbstractItem implements CashHolder, Comparable<Playe
      * @return
      */
     public int getFreeCash() {
-        return wallet.getCash() - blockedCash.intValue();
+        return getCashModel().value() - blockedCash.intValue();
     }
 
     public int getBlockedCash() {
@@ -226,4 +210,5 @@ public class Player extends AbstractItem implements CashHolder, Comparable<Playe
             result = getId().compareTo(p.getId());
         return result;
     }
+
 }

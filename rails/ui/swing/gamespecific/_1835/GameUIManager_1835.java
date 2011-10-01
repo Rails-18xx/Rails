@@ -3,7 +3,7 @@ package rails.ui.swing.gamespecific._1835;
 import java.util.ArrayList;
 import java.util.List;
 
-import rails.game.CompanyI;
+import rails.game.Company;
 import rails.game.specific._1835.FoldIntoPrussian;
 import rails.ui.swing.GameUIManager;
 import rails.ui.swing.elements.CheckBoxDialog;
@@ -32,7 +32,7 @@ public class GameUIManager_1835 extends GameUIManager {
             boolean[] exchanged = dialog.getSelectedOptions();
             String[] options = dialog.getOptions();
             
-            List<CompanyI> foldedCompanies = new ArrayList<CompanyI>();
+            List<Company> foldedCompanies = new ArrayList<Company>();
             for (int index=0; index < options.length; index++) {
                 if (exchanged[index]) {
                     foldedCompanies.add(action.getFoldableCompanies().get(index));

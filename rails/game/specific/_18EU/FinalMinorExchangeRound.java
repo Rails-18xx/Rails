@@ -18,7 +18,7 @@ import rails.game.action.NullAction;
  */
 public class FinalMinorExchangeRound extends StockRound_18EU {
 
-    public FinalMinorExchangeRound(GameManagerI aGameManager) {
+    public FinalMinorExchangeRound(GameManager aGameManager) {
         super (aGameManager);
 
         guiHints.setVisibilityHint(GuiDef.Panel.MAP, true);
@@ -55,13 +55,13 @@ public class FinalMinorExchangeRound extends StockRound_18EU {
             return true;
         }
 
-        List<PublicCompanyI> comps =
+        List<PublicCompany> comps =
                 companyManager.getAllPublicCompanies();
-        List<PublicCompanyI> minors = new ArrayList<PublicCompanyI>();
-        List<PublicCompanyI> targetCompanies = new ArrayList<PublicCompanyI>();
+        List<PublicCompany> minors = new ArrayList<PublicCompany>();
+        List<PublicCompany> targetCompanies = new ArrayList<PublicCompany>();
         String type;
 
-        for (PublicCompanyI comp : comps) {
+        for (PublicCompany comp : comps) {
             type = comp.getTypeName();
             if (type.equals("Major") && comp.hasStarted() && !comp.isClosed()) {
                 targetCompanies.add(comp);
@@ -75,7 +75,7 @@ public class FinalMinorExchangeRound extends StockRound_18EU {
 
         while (minors.isEmpty()) {
             setNextPlayer();
-            for (PublicCompanyI comp : comps) {
+            for (PublicCompany comp : comps) {
                 type = comp.getTypeName();
                 if (type.equals("Minor")) {
                     if (comp.isClosed()) continue;
@@ -88,7 +88,7 @@ public class FinalMinorExchangeRound extends StockRound_18EU {
         // Use null target to indicate minor closing is an option
         targetCompanies.add(null);
 
-        for (PublicCompanyI minor : minors) {
+        for (PublicCompany minor : minors) {
             possibleActions.add(new MergeCompanies(minor, targetCompanies));
         }
 
@@ -101,7 +101,7 @@ public class FinalMinorExchangeRound extends StockRound_18EU {
 
         changeStack.start(false);
 
-        for (PublicCompanyI comp : companyManager.getAllPublicCompanies()) {
+        for (PublicCompany comp : companyManager.getAllPublicCompanies()) {
             if (comp.getTypeName().equals("Minor")) {
                 if (!comp.isClosed()) {
                     finishTurn();

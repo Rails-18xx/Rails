@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/Field.java,v 1.11 2010/01/31 22:22:34 macfreek Exp $*/
 package rails.ui.swing.elements;
 
 import java.awt.Color;
@@ -9,11 +8,10 @@ import javax.swing.*;
 import javax.swing.border.Border;
 
 import rails.game.model.Model;
-import rails.game.model.View;
 import rails.game.model.ViewUpdate;
-import rails.util.Util;
 
-public class Field extends JLabel implements ViewObject, View<String> {
+// TODO: Replace ViewObject with Observer mechanisms
+public class Field extends JLabel implements ViewObject {
 
     private static final long serialVersionUID = 1L;
 
@@ -49,7 +47,7 @@ public class Field extends JLabel implements ViewObject, View<String> {
     public Field(Model<String> modelObject) {
         this("");
         this.modelObject = modelObject;
-        modelObject.addView(this);
+        modelObject.addObserver(this);
     }
 
     public Field(Model<String> modelObject, boolean pull) {
@@ -68,9 +66,9 @@ public class Field extends JLabel implements ViewObject, View<String> {
     }
 
     public void setModel(Model<String> m) {
-        modelObject.removeView(this);
+        modelObject.removeObserver(this);
         modelObject = m;
-        modelObject.addView(this);
+        modelObject.addObserver(this);
         update(null, null);
     }
 
@@ -89,6 +87,8 @@ public class Field extends JLabel implements ViewObject, View<String> {
     }
 
     /** Needed to satisfy the Observer interface. */
+    // FIXME: ViewUpdate has to be rewritten in the new structure
+    @Deprecated
     public void update(Observable o1, Object o2) {
         if (o2 instanceof String) {
             setText((String) o2);
@@ -99,8 +99,10 @@ public class Field extends JLabel implements ViewObject, View<String> {
         }
     }
 
+    // FIXME: ViewUpdate has to be rewritten in the new structure
+    @Deprecated
     protected void updateDetails (ViewUpdate vu) {
-        for (String key : vu.getKeys()) {
+/*        for (String key : vu.getKeys()) {
             if (ViewUpdate.TEXT.equalsIgnoreCase(key)) {
                 setText (vu.getText());
             } else if (ViewUpdate.BGCOLOUR.equalsIgnoreCase(key)) {
@@ -109,11 +111,12 @@ public class Field extends JLabel implements ViewObject, View<String> {
                    setForeground (Util.isDark(normalBgColour) ? Color.WHITE : Color.BLACK);
             }
         }
+        */
     }
 
     /** Needed to satisfy the ViewObject interface. Currently not used. */
     public void deRegister() {
-        if (modelObject != null) modelObject.removeView(this);
+        if (modelObject != null) modelObject.removeObserver(this);
         dependents = null;
     }
 
@@ -127,6 +130,11 @@ public class Field extends JLabel implements ViewObject, View<String> {
     }
 
     public void update(String data) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public void update() {
         // TODO Auto-generated method stub
         
     }

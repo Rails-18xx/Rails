@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PlayerManager.java,v 1.12 2009/10/31 17:08:26 evos Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -7,8 +6,10 @@ import rails.common.LocalText;
 import rails.common.parser.ConfigurableComponentI;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
+import rails.game.model.Owners;
+import rails.game.state.AbstractItem;
 
-public class PlayerManager implements ConfigurableComponentI {
+public class PlayerManager extends AbstractItem implements ConfigurableComponentI {
 
     private int numberOfPlayers;
     private List<Player> players;
@@ -46,7 +47,7 @@ public class PlayerManager implements ConfigurableComponentI {
         }
     }
 
-    public void finishConfiguration (GameManagerI gameManager) {}
+    public void finishConfiguration (GameManager gameManager) {}
     
     public void setPlayers (List<String> playerNames, Bank bank) {
 
@@ -61,18 +62,17 @@ public class PlayerManager implements ConfigurableComponentI {
         int playerIndex = 0;
         int startCash = getStartCash();
         for (String playerName : playerNames) {
-            player = new Player(playerName, playerIndex++);
+            player = new Player(this, playerName, playerIndex++);
             players.add(player);
             playerMap.put(playerName, player);
-            player.addCash(startCash);
-            bank.addCash(-startCash);
+            Owners.cashMove(bank, player, startCash);
             ReportBuffer.add(LocalText.getText("PlayerIs",
                     playerIndex,
                     player.getId() ));
         }
         ReportBuffer.add(LocalText.getText("PlayerCash", Bank.format(startCash)));
         ReportBuffer.add(LocalText.getText("BankHas",
-                Bank.format(bank.getCash())));
+                Bank.format(bank.getCashValue())));
     }
 
     /**

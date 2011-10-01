@@ -1,19 +1,14 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialPropertyI.java,v 1.12 2010/03/16 21:21:59 evos Exp $ */
 package rails.game.special;
 
 import rails.common.parser.ConfigurableComponentI;
 import rails.game.*;
-import rails.game.state.Moveable;
-import rails.game.state.Holder;
+import rails.game.model.Ownable;
 
-public interface SpecialPropertyI extends ConfigurableComponentI, Moveable {
+public interface SpecialPropertyI extends ConfigurableComponentI, Ownable {
+    
+    public void setCompany(Company company);
 
-    public void setCompany(CompanyI company);
-
-    public CompanyI getOriginalCompany();
-
-    public void setHolder(Holder holder);
-    public Holder getHolder();
+    public Company getOriginalCompany();
     
     public boolean isExecutionable();
 
@@ -70,7 +65,5 @@ public interface SpecialPropertyI extends ConfigurableComponentI, Moveable {
     public String getId();
 
     public String getInfo();
-
-    public void moveTo(Holder newHolder);
 
 }

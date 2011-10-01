@@ -25,7 +25,7 @@ public class StockMarket extends AbstractItem implements StockMarketI, Configura
     protected int[] startPrices;
     protected StockSpaceTypeI defaultType;
     
-    GameManagerI gameManager;
+    GameManager gameManager;
 
     /* Game-specific flags */
     protected boolean upOrDownRight = false; /*
@@ -157,11 +157,11 @@ public class StockMarket extends AbstractItem implements StockMarketI, Configura
      * Final initialisations, to be called after all XML processing is complete.
      * The purpose is to register fixed company start prices.
      */
-    public void finishConfiguration (GameManagerI gameManager) {
+    public void finishConfiguration (GameManager gameManager) {
 
         this.gameManager = gameManager;
         
-        for (PublicCompanyI comp : gameManager.getCompanyManager().getAllPublicCompanies()) {
+        for (PublicCompany comp : gameManager.getCompanyManager().getAllPublicCompanies()) {
             if (!comp.hasStarted() && comp.getStartSpace() != null) {
                 comp.getStartSpace().addFixedStartPrice(comp);
             }
@@ -190,27 +190,27 @@ public class StockMarket extends AbstractItem implements StockMarketI, Configura
 
     /*--- Actions ---*/
 
-    public void start(PublicCompanyI company, StockSpaceI price) {
+    public void start(PublicCompany company, StockSpaceI price) {
         prepareMove(company, null, price);
     }
 
-    public void payOut(PublicCompanyI company) {
+    public void payOut(PublicCompany company) {
         moveRightOrUp(company);
     }
 
-    public void withhold(PublicCompanyI company) {
+    public void withhold(PublicCompany company) {
         moveLeftOrDown(company);
     }
 
-    public void sell(PublicCompanyI company, int numberOfSpaces) {
+    public void sell(PublicCompany company, int numberOfSpaces) {
         moveDown(company, numberOfSpaces);
     }
 
-    public void soldOut(PublicCompanyI company) {
+    public void soldOut(PublicCompany company) {
         moveUp(company);
     }
 
-    public void moveUp(PublicCompanyI company) {
+    public void moveUp(PublicCompany company) {
         StockSpaceI oldsquare = company.getCurrentSpace();
         StockSpaceI newsquare = oldsquare;
         int row = oldsquare.getRow();
@@ -223,11 +223,11 @@ public class StockMarket extends AbstractItem implements StockMarketI, Configura
         if (newsquare != null) prepareMove(company, oldsquare, newsquare);
     }
 
-    public void close (PublicCompanyI company) {
+    public void close (PublicCompany company) {
         prepareMove(company, company.getCurrentSpace(), null);
     }
 
-    protected void moveDown(PublicCompanyI company, int numberOfSpaces) {
+    protected void moveDown(PublicCompany company, int numberOfSpaces) {
         StockSpaceI oldsquare = company.getCurrentSpace();
         StockSpaceI newsquare = oldsquare;
         int row = oldsquare.getRow();
@@ -259,7 +259,7 @@ public class StockMarket extends AbstractItem implements StockMarketI, Configura
         }
     }
 
-    protected void moveRightOrUp(PublicCompanyI company) {
+    protected void moveRightOrUp(PublicCompany company) {
         /* Ignore the amount for now */
         StockSpaceI oldsquare = company.getCurrentSpace();
         StockSpaceI newsquare = oldsquare;
@@ -272,7 +272,7 @@ public class StockMarket extends AbstractItem implements StockMarketI, Configura
         prepareMove(company, oldsquare, newsquare);
     }
 
-    protected void moveLeftOrDown(PublicCompanyI company) {
+    protected void moveLeftOrDown(PublicCompany company) {
         StockSpaceI oldsquare = company.getCurrentSpace();
         StockSpaceI newsquare = oldsquare;
         int row = oldsquare.getRow();
@@ -286,7 +286,7 @@ public class StockMarket extends AbstractItem implements StockMarketI, Configura
         prepareMove(company, oldsquare, newsquare);
     }
 
-    protected void prepareMove(PublicCompanyI company, StockSpaceI from,
+    protected void prepareMove(PublicCompany company, StockSpaceI from,
             StockSpaceI to) {
         // To be written to a log file in the future.
         if (from != null && from == to) {
@@ -316,14 +316,14 @@ public class StockMarket extends AbstractItem implements StockMarketI, Configura
         new PriceTokenMove(company, from, to, this);
     }
 
-    public void processMove(PublicCompanyI company, StockSpaceI from,
+    public void processMove(PublicCompany company, StockSpaceI from,
             StockSpaceI to) {
         if (from != null) from.removeToken(company);
         if (to != null) to.addToken(company);
         company.updatePlayersWorth();
     }
 
-    public void processMoveToStackPosition(PublicCompanyI company, StockSpaceI from,
+    public void processMoveToStackPosition(PublicCompany company, StockSpaceI from,
             StockSpaceI to, int toStackPosition) {
         if (from != null) from.removeToken(company);
         if (to != null) to.addTokenAtStackPosition(company, toStackPosition);

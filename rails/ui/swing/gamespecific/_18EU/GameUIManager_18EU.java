@@ -6,7 +6,7 @@ import javax.swing.JOptionPane;
 
 import rails.common.LocalText;
 import rails.game.Stop;
-import rails.game.PublicCompanyI;
+import rails.game.PublicCompany;
 import rails.game.action.MergeCompanies;
 import rails.game.specific._18EU.StartCompany_18EU;
 import rails.ui.swing.GameUIManager;
@@ -22,14 +22,14 @@ public class GameUIManager_18EU extends GameUIManager {
 
             RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
             MergeCompanies action = (MergeCompanies) currentDialogAction;
-            PublicCompanyI minor = action.getMergingCompany();
+            PublicCompany minor = action.getMergingCompany();
 
             if (action.getSelectedTargetCompany() == null) {
                 // Step 1: selection of the major company to merge into
                 int choice = dialog.getSelectedOption();
                 if (choice < 0) return;
 
-                PublicCompanyI major = action.getTargetCompanies().get(choice);
+                PublicCompany major = action.getTargetCompanies().get(choice);
                 action.setSelectedTargetCompany(major);
 
                 if (major != null && action.canReplaceToken(choice)) {
@@ -61,13 +61,13 @@ public class GameUIManager_18EU extends GameUIManager {
                    action.setStartPrice(action.getStartPrices()[index]);
 
                    // Set up another dialog for the next step
-                   List<PublicCompanyI> minors = action.getMinorsToMerge();
+                   List<PublicCompany> minors = action.getMinorsToMerge();
 
                    if (minors != null && !minors.isEmpty()) {
                        // Up to phase 6, a minor must be exchanged
                        String[] options = new String[minors.size()];
                        int i = 0;
-                       for (PublicCompanyI minor : minors) {
+                       for (PublicCompany minor : minors) {
                            options[i++] =
                                    "Minor " + minor.getId() + " "
                                            + minor.getLongName();

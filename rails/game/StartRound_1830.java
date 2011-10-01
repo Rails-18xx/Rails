@@ -15,7 +15,7 @@ public class StartRound_1830 extends StartRound {
     /**
      * Constructor, only to be used in dynamic instantiation.
      */
-    public StartRound_1830(GameManagerI gameManager) {
+    public StartRound_1830(GameManager gameManager) {
         super(gameManager);
         hasBidding = true;
         bidIncrement = startPacket.getModulus();
@@ -97,7 +97,7 @@ public class StartRound_1830 extends StartRound {
                     if (item.getBidders() == 1) {
                         // Bid upon by one player.
                         // If we need a share price, ask for it.
-                        PublicCompanyI comp = item.needsPriceSetting();
+                        PublicCompany comp = item.needsPriceSetting();
                         if (comp != null) {
                             setPlayer(item.getBidder());
                             item.setStatus(StartItem.NEEDS_SHARE_PRICE);

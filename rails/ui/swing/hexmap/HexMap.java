@@ -529,10 +529,10 @@ public abstract class HexMap extends JComponent implements MouseListener,
      *
      * @return The current Phase object.
      */
-    public PhaseI getPhase () {
+    public Phase getPhase () {
         if (orUIManager != null) {
             GameUIManager u = orUIManager.getGameUIManager();
-            GameManagerI g = u.getGameManager();
+            GameManager g = u.getGameManager();
             PhaseManager p = g.getPhaseManager();
             return p.getCurrentPhase();
         }

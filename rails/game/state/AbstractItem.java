@@ -10,19 +10,19 @@ public class AbstractItem implements Item {
         root = null;
     }
     
-    public AbstractItem(Item owner) {
-        this(owner, null);
+    public AbstractItem(Item parent) {
+        this(parent, null);
     }
     
-    public AbstractItem(Item owner, String id) {
-        if (owner == null) {
+    public AbstractItem(Item parent, String id) {
+        if (parent == null) {
             throw new NullPointerException("owner");
         }
         
         this.id = id;
 
         // pass along the root reference
-        this.root = owner.getRoot();
+        this.root = parent.getRoot();
     }
     
     public String getId() {

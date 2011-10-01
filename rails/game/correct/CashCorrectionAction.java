@@ -2,6 +2,8 @@ package rails.game.correct;
 
 import rails.game.*;
 import rails.game.action.PossibleAction;
+import rails.game.model.CashOwner;
+import rails.game.model.Owner;
 import rails.util.Util;
 
 import java.io.IOException;
@@ -20,7 +22,7 @@ public class CashCorrectionAction extends CorrectionAction {
     /* Preconditions */
    
     /** cash holder */
-    transient private CashHolder correctCashHolder; 
+    transient private CashOwner correctCashHolder; 
 
     /** converted to name */
     private String cashHolderName; 
@@ -43,7 +45,7 @@ public class CashCorrectionAction extends CorrectionAction {
        correctCashHolder = pl;
        cashHolderName = pl.getId();
        cashHolderType = "Player";
-       maximumNegative = pl.getCash();
+       maximumNegative = pl.getCashValue();
        setCorrectionType(CorrectionType.CORRECT_CASH);
    }
    /**
@@ -51,7 +53,7 @@ public class CashCorrectionAction extends CorrectionAction {
     * 
     * @param pc Public Company
     */
-   public CashCorrectionAction(PublicCompanyI pc) {
+   public CashCorrectionAction(PublicCompany pc) {
        correctCashHolder = pc;
        cashHolderName = pc.getId();
        cashHolderType = "PublicCompany";
@@ -60,7 +62,7 @@ public class CashCorrectionAction extends CorrectionAction {
    }
    
    
-   public CashHolder getCashHolder() {
+   public CashOwner getCashHolder() {
        return correctCashHolder;
    }
 

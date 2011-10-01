@@ -7,8 +7,8 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import rails.common.LocalText;
-import rails.game.PublicCompanyI;
-import rails.game.TrainI;
+import rails.game.PublicCompany;
+import rails.game.Train;
 import rails.game.action.DiscardTrain;
 import rails.game.action.PossibleAction;
 import rails.game.specific._18EU.FinalMinorExchangeRound;
@@ -52,9 +52,9 @@ public class StatusWindow_18EU extends StatusWindow {
                 DiscardTrain dt = (DiscardTrain) nextAction;
 
                 // Following code largely copied from ORUIManager
-                PublicCompanyI c = dt.getCompany();
+                PublicCompany c = dt.getCompany();
                 String playerName = dt.getPlayerName();
-                List<TrainI> trains = dt.getOwnedTrains();
+                List<Train> trains = dt.getOwnedTrains();
                 List<String> trainOptions =
                         new ArrayList<String>(trains.size());
                 String[] options = new String[trains.size()];
@@ -76,7 +76,7 @@ public class StatusWindow_18EU extends StatusWindow {
                                 JOptionPane.QUESTION_MESSAGE, null, options,
                                 options[0]);
                 if (discardedTrainName != null) {
-                    TrainI discardedTrain =
+                    Train discardedTrain =
                             trains.get(trainOptions.indexOf(discardedTrainName));
 
                     dt.setDiscardedTrain(discardedTrain);

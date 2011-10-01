@@ -472,7 +472,7 @@ public class Tile extends AbstractModel<String> implements TileI, StationHolder,
      * @param hex The MapHex to be upgraded.
      * @return A List of valid upgrade TileI objects.
      */
-    public List<TileI> getUpgrades(MapHex hex, PhaseI phase) {
+    public List<TileI> getUpgrades(MapHex hex, Phase phase) {
         List<TileI> upgr = new ArrayList<TileI>();
         TileI tile;
         for (Upgrade upgrade : upgrades) {
@@ -514,7 +514,7 @@ public class Tile extends AbstractModel<String> implements TileI, StationHolder,
         return b.toString();
     }
 
-    public List<TileI> getValidUpgrades(MapHex hex, PhaseI phase) {
+    public List<TileI> getValidUpgrades(MapHex hex, Phase phase) {
         List<TileI> valid = new ArrayList<TileI>();
         TileI tile;
 
@@ -561,7 +561,8 @@ public class Tile extends AbstractModel<String> implements TileI, StationHolder,
      * This method may only be called via the TileMove execute() and undo() methods. */
     public boolean add(MapHex hex) {
         tilesLaid.add(hex);
-        notifyModel();
+        // TODO: is this still required?
+        update();
         return true;
     }
 
@@ -569,7 +570,8 @@ public class Tile extends AbstractModel<String> implements TileI, StationHolder,
      * This method may only be called via the TileMove execute() and undo() methods. */
     public boolean remove(MapHex hex) {
         tilesLaid.remove(hex);
-        notifyModel();
+        // TODO: is this still required?
+        update();
         return true;
     }
 

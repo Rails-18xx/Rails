@@ -1,34 +1,43 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/TrainsModel.java,v 1.8 2010/01/31 22:22:29 macfreek Exp $*/
 package rails.game.model;
-
-import java.util.List;
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multiset;
 
-import rails.game.Portfolio;
 import rails.game.TrainCertificateType;
-import rails.game.TrainI;
+import rails.game.Train;
+/**
+ * A holder model that stores train objects
+ * 
+ * Currently it can only be created inside a portfolio, due 
+ * to restrictions in the BuyTrain actions.
+ * @author freystef
+ */
 
-public class TrainsModel extends HolderModel<TrainI> {
+public class TrainsModel extends HolderModel<Train> {
 
-    public boolean abbrList = false;
+    private boolean abbrList = false;
+
+    public static TrainsModel create(Owner owner) {
+        TrainsModel trainsModel = new TrainsModel(owner);
+        owner.addHolder(trainsModel, Train.class);
+        return trainsModel;
+    }
     
-    public TrainsModel(Portfolio portfolio) {
-        super(portfolio, "TrainsModel");
+    private TrainsModel(Owner owner) {
+        super(owner, Train.class);
     }
 
     public void setAbbrList(boolean abbrList) {
         this.abbrList = abbrList;
     }
     
-    public ImmutableList<TrainI> getTrains() {
-        return this.viewList();
+    public ImmutableList<Train> getTrains() {
+        return this.view();
     }
     
-    public TrainI getTrainOfType(TrainCertificateType type) {
-        for (TrainI train:this.viewList()) {
+    public Train getTrainOfType(TrainCertificateType type) {
+        for (Train train:this) {
             if (train.getCertType() == type) return train;
         }
         return null;
@@ -39,13 +48,12 @@ public class TrainsModel extends HolderModel<TrainI> {
      * describing train possessions, except the IPO.
      */
     private String makeListOfTrains() {
-        List<TrainI> trains = this.viewList();
-        if (trains == null || trains.isEmpty()) return "";
+        if (this.isEmpty()) return "";
 
         StringBuilder b = new StringBuilder();
 
         // FIXME: trains has to be sorted by traintype
-        for (TrainI train :trains) {
+        for (Train train:this) {
             if (b.length() > 0) b.append(" ");
             if (train.isObsolete()) b.append("[");
             b.append(train.getId());
@@ -60,12 +68,11 @@ public class TrainsModel extends HolderModel<TrainI> {
      * IPO.
      */
     public String makeListOfTrainCertificates() {
-        List<TrainI> trains = this.viewList();
-        if (trains == null || trains.isEmpty()) return "";
+        if (this.isEmpty()) return "";
 
         // create a bag with train types
         Multiset<TrainCertificateType> trainCertTypes = HashMultiset.create();
-        for (TrainI train:trains) {
+        for (Train train:this) {
             trainCertTypes.add(train.getCertType()); 
         }
         

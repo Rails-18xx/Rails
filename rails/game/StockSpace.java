@@ -28,10 +28,10 @@ public class StockSpace extends AbstractModel<String> implements StockSpaceI {
     protected boolean endsGame = false; // For 1841 and other games
     protected boolean start = false; // Company may start here
     protected StockSpaceTypeI type = null;
-    protected ArrayList<PublicCompanyI> tokens =
-            new ArrayList<PublicCompanyI>();
-    protected ArrayList<PublicCompanyI> fixedStartPrices =
-            new ArrayList<PublicCompanyI>();
+    protected ArrayList<PublicCompany> tokens =
+            new ArrayList<PublicCompany>();
+    protected ArrayList<PublicCompany> fixedStartPrices =
+            new ArrayList<PublicCompany>();
 
     protected static Logger log =
             Logger.getLogger(StockSpace.class.getPackage().getName());
@@ -60,17 +60,19 @@ public class StockSpace extends AbstractModel<String> implements StockSpaceI {
      *
      * @param company The company object to add.
      */
-    public boolean addToken(PublicCompanyI company) {
+    public boolean addToken(PublicCompany company) {
         log.debug(company.getId() + " price token added to " + name);
         tokens.add(company);
-        notifyModel();
+        // TODO: is this still required?
+        update();
         return true;
     }
 
-    public boolean addTokenAtStackPosition(PublicCompanyI company, int stackPosition) {
+    public boolean addTokenAtStackPosition(PublicCompany company, int stackPosition) {
         log.debug(company.getId() + " price token added to " + name + "  at stack position "+stackPosition);
         tokens.add(stackPosition, company);
-        notifyModel();
+        // TODO: is this still required?
+        update();
         return true;
     }
 
@@ -80,12 +82,13 @@ public class StockSpace extends AbstractModel<String> implements StockSpaceI {
      * @param company The company object to remove.
      * @return False if the token was not found.
      */
-    public boolean removeToken(PublicCompanyI company) {
+    public boolean removeToken(PublicCompany company) {
         log.debug(company.getId() + " price token removed from " + name);
         int index = tokens.indexOf(company);
         if (index >= 0) {
             tokens.remove(index);
-            notifyModel();
+            // TODO: is this still required?
+            update();
             return true;
         } else {
             return false;
@@ -95,7 +98,7 @@ public class StockSpace extends AbstractModel<String> implements StockSpaceI {
     /**
      * @return
      */
-    public List<PublicCompanyI> getTokens() {
+    public List<PublicCompany> getTokens() {
         return tokens;
     }
 
@@ -105,16 +108,16 @@ public class StockSpace extends AbstractModel<String> implements StockSpaceI {
      * @return Stock position: 0 = top, increasing towards the bottom. -1 if not
      * found.
      */
-    public int getStackPosition(PublicCompanyI company) {
+    public int getStackPosition(PublicCompany company) {
         return tokens.indexOf(company);
     }
 
     /*----- Fixed start prices (e.g. 1835, to show in small print) -----*/
-    public void addFixedStartPrice(PublicCompanyI company) {
+    public void addFixedStartPrice(PublicCompany company) {
         fixedStartPrices.add(company);
     }
 
-    public List<PublicCompanyI> getFixedStartPrices() {
+    public List<PublicCompany> getFixedStartPrices() {
         return fixedStartPrices;
     }
 

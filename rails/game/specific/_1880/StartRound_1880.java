@@ -38,13 +38,13 @@ public class StartRound_1880 extends StartRound {
         new IntegerState(this, "InvestorChosen",0);
     
     /** A company in need for a par price. */
-    PublicCompanyI companyNeedingPrice = null;
+    PublicCompany companyNeedingPrice = null;
     
     
     /**
      * @param gameManager
      */
-    public StartRound_1880(GameManagerI gameManager) {
+    public StartRound_1880(GameManager gameManager) {
         super(gameManager);
         hasBasePrices=true;
         hasBidding=true;

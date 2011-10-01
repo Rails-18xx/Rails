@@ -16,8 +16,8 @@ import org.jgrapht.graph.SimpleGraph;
 import org.jgrapht.graph.Subgraph;
 
 import rails.algorithms.RevenueAdapter.EdgeTravel;
-import rails.game.PublicCompanyI;
-import rails.game.TokenI;
+import rails.game.PublicCompany;
+import rails.game.Token;
 
 /**
  * This class stores and creates the various graphs
@@ -29,7 +29,7 @@ public class NetworkCompanyGraph {
         Logger.getLogger(NetworkCompanyGraph.class.getPackage().getName());
 
     private final NetworkGraphBuilder graphBuilder;
-    private final PublicCompanyI company;
+    private final PublicCompany company;
     
     private SimpleGraph<NetworkVertex, NetworkEdge> routeGraph;
     private SimpleGraph<NetworkVertex, NetworkEdge> revenueGraph;
@@ -40,7 +40,7 @@ public class NetworkCompanyGraph {
     
     private Collection<NetworkVertex> protectedVertices;
     
-    private NetworkCompanyGraph(NetworkGraphBuilder graphBuilder, PublicCompanyI company) {
+    private NetworkCompanyGraph(NetworkGraphBuilder graphBuilder, PublicCompany company) {
         this.graphBuilder = graphBuilder;
         this.company = company;
         this.routeGraph = null;
@@ -48,7 +48,7 @@ public class NetworkCompanyGraph {
         this.phase2Graph = null;
     }
     
-    public static NetworkCompanyGraph create(NetworkGraphBuilder graphBuilder, PublicCompanyI company) {
+    public static NetworkCompanyGraph create(NetworkGraphBuilder graphBuilder, PublicCompany company) {
        return new NetworkCompanyGraph(graphBuilder, company);
     }
     
@@ -112,9 +112,9 @@ public class NetworkCompanyGraph {
         return graph;
     }
     
-    public List<NetworkVertex> getCompanyBaseTokenVertexes(PublicCompanyI company) {
+    public List<NetworkVertex> getCompanyBaseTokenVertexes(PublicCompany company) {
         List<NetworkVertex> vertexes = new ArrayList<NetworkVertex>();
-        for (TokenI token:company.getTokens()){
+        for (Token token:company.getTokens()){
             NetworkVertex vertex = graphBuilder.getVertex(token);
             if (vertex == null) continue;
             vertexes.add(vertex);

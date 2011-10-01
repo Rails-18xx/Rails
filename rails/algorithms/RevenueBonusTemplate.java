@@ -8,9 +8,9 @@ import org.apache.log4j.Logger;
 import rails.common.parser.ConfigurableComponentI;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
-import rails.game.GameManagerI;
+import rails.game.GameManager;
 import rails.game.MapHex;
-import rails.game.PhaseI;
+import rails.game.Phase;
 import rails.game.PhaseManager;
 import rails.game.TrainManager;
 import rails.game.TrainType;
@@ -85,12 +85,12 @@ public final class RevenueBonusTemplate implements ConfigurableComponentI {
     /**
      * is not used, use toRevenueBonus instead
      */
-    public void finishConfiguration(GameManagerI parent)
+    public void finishConfiguration(GameManager parent)
             throws ConfigurationException {
         throw new ConfigurationException("Use toRevenueBonus");
     }
     
-    public RevenueBonus toRevenueBonus(MapHex hex, GameManagerI gm, NetworkGraphBuilder ngb) {
+    public RevenueBonus toRevenueBonus(MapHex hex, GameManager gm, NetworkGraphBuilder ngb) {
         log.info("Convert " + this);
         RevenueBonus bonus = new RevenueBonus(value, name);
         if (!convertVertices(bonus, ngb, hex)) {
@@ -126,7 +126,7 @@ public final class RevenueBonusTemplate implements ConfigurableComponentI {
     
     private void convertPhases(RevenueBonus bonus, PhaseManager pm) {
         for (String identPhase:identPhases) {
-            PhaseI phase = pm.getPhaseByName(identPhase);
+            Phase phase = pm.getPhaseByName(identPhase);
             if (phase != null) {
                 bonus.addPhase(phase);
             }

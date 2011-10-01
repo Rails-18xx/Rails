@@ -90,13 +90,13 @@ public final class ArrayListState<E> extends AbstractState implements Iterable<E
         return list.get(index);
     }
     
+    public Iterator<E> iterator() {
+        return list.iterator();
+    }
+
     @Override
     public String toString() {
         return list.toString();
-    }
-    
-    public Iterator<E> iterator() {
-        return list.iterator();
     }
 
     void change(E object, int index, boolean addToList) {

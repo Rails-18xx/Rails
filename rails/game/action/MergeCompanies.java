@@ -20,14 +20,14 @@ import rails.game.action.PossibleAction;
 public class MergeCompanies extends PossibleAction {
 
     // Server-side settings
-    transient protected PublicCompanyI mergingCompany;
+    transient protected PublicCompany mergingCompany;
     protected String mergingCompanyName;
-    transient protected List<PublicCompanyI> targetCompanies;
+    transient protected List<PublicCompany> targetCompanies;
     protected String targetCompanyNames;
     protected List<Boolean> canReplaceToken;
 
     // Client-side settings
-    transient protected PublicCompanyI selectedTargetCompany = null;
+    transient protected PublicCompany selectedTargetCompany = null;
     protected String selectedTargetCompanyName = null;
     protected boolean replaceToken = false;
 
@@ -36,14 +36,14 @@ public class MergeCompanies extends PossibleAction {
     /**
      * Common constructor.
      */
-    public MergeCompanies(PublicCompanyI mergingCompany,
-            List<PublicCompanyI> targetCompanies) {
+    public MergeCompanies(PublicCompany mergingCompany,
+            List<PublicCompany> targetCompanies) {
         this.mergingCompany = mergingCompany;
         this.mergingCompanyName = mergingCompany.getId();
         this.targetCompanies = targetCompanies;
         StringBuffer b = new StringBuffer();
         canReplaceToken = new ArrayList<Boolean>(targetCompanies.size());
-        for (PublicCompanyI target : targetCompanies) {
+        for (PublicCompany target : targetCompanies) {
             if (b.length() > 0) b.append(",");
             if (target == null) {
                 b.append("null");
@@ -61,19 +61,19 @@ public class MergeCompanies extends PossibleAction {
         targetCompanyNames = b.toString();
     }
     
-    public MergeCompanies(PublicCompanyI mergingCompany,
-            PublicCompanyI targetCompany) {
-        this (mergingCompany, Arrays.asList(new PublicCompanyI[] {targetCompany}));
+    public MergeCompanies(PublicCompany mergingCompany,
+            PublicCompany targetCompany) {
+        this (mergingCompany, Arrays.asList(new PublicCompany[] {targetCompany}));
     }
 
     /** Required for deserialization */
     public MergeCompanies() {}
 
-    public PublicCompanyI getMergingCompany() {
+    public PublicCompany getMergingCompany() {
         return mergingCompany;
     }
 
-    public List<PublicCompanyI> getTargetCompanies() {
+    public List<PublicCompany> getTargetCompanies() {
         return targetCompanies;
     }
 
@@ -81,11 +81,11 @@ public class MergeCompanies extends PossibleAction {
         return canReplaceToken.get(index);
     }
 
-    public PublicCompanyI getSelectedTargetCompany() {
+    public PublicCompany getSelectedTargetCompany() {
         return selectedTargetCompany;
     }
 
-    public void setSelectedTargetCompany(PublicCompanyI selectedTargetCompany) {
+    public void setSelectedTargetCompany(PublicCompany selectedTargetCompany) {
         this.selectedTargetCompany = selectedTargetCompany;
         if (selectedTargetCompany != null)
             selectedTargetCompanyName = selectedTargetCompany.getId();
@@ -145,7 +145,7 @@ public class MergeCompanies extends PossibleAction {
 
         mergingCompany = cmgr.getPublicCompany(mergingCompanyName);
 
-        targetCompanies = new ArrayList<PublicCompanyI>();
+        targetCompanies = new ArrayList<PublicCompany>();
         for (String name : targetCompanyNames.split(",")) {
             if (name.equals("null")) {
                 targetCompanies.add(null);

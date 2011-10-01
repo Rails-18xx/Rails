@@ -25,7 +25,7 @@ public class MoneyModel extends AbstractModel<String> {
     public MoneyModel(Item owner, String id, int value) {
         super(owner, id);
         this.value = new IntegerState(this, "value", value);
-        this.value.addModel(this);
+        this.value.addObserver(this);
     }
     
     public void setSuppressZero(boolean suppressZero) {
@@ -83,7 +83,8 @@ public class MoneyModel extends AbstractModel<String> {
         } else {
             fixedText.set(text);
         }
-        notifyModel();
+        // TODO: Still required?
+        update();
     }
     
     public int intValue() {

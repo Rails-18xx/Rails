@@ -13,7 +13,7 @@ import rails.common.LocalText;
 
 public class EndOfGameRound extends Round {
 
-    public EndOfGameRound(GameManagerI gameManager) {
+    public EndOfGameRound(GameManager gameManager) {
         super(gameManager);
         guiHints.setVisibilityHint(GuiDef.Panel.MAP, true);
         guiHints.setActivePanel(GuiDef.Panel.STATUS);

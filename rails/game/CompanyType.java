@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/CompanyType.java,v 1.11 2010/02/04 21:27:58 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -23,9 +22,9 @@ public class CompanyType implements CompanyTypeI {
     /*--- Instance attributes ---*/
     protected String name;
     protected String className;
-    protected int capitalisation = PublicCompanyI.CAPITALISE_FULL;
+    protected int capitalisation = PublicCompany.CAPITALISE_FULL;
 
-    protected List<CompanyI> companies = new ArrayList<CompanyI>();
+    protected List<Company> companies = new ArrayList<Company>();
 
     /**
      * The constructor.
@@ -48,13 +47,13 @@ public class CompanyType implements CompanyTypeI {
         //No longer needed.
     }
 
-    public void finishConfiguration (GameManagerI gameManager) {
+    public void finishConfiguration (GameManager gameManager) {
 
     }
 
-    public CompanyI createCompany(String name, Tag typeTag, Tag tag)
+    public Company createCompany(String name, Tag typeTag, Tag tag)
     throws ConfigurationException {
-        CompanyI newCompany = null;
+        Company newCompany = null;
         try {
             newCompany = (Company) Class.forName(className).newInstance();
         } catch (Exception e) {
@@ -87,7 +86,7 @@ public class CompanyType implements CompanyTypeI {
         return className;
     }
 
-    public List<CompanyI> getCompanies() {
+    public List<Company> getCompanies() {
 		return companies;
 	}
 
@@ -97,9 +96,9 @@ public class CompanyType implements CompanyTypeI {
 
     public void setCapitalisation(String mode) {
         if (mode.equalsIgnoreCase("full")) {
-            this.capitalisation = PublicCompanyI.CAPITALISE_FULL;
+            this.capitalisation = PublicCompany.CAPITALISE_FULL;
         } else if (mode.equalsIgnoreCase("incremental")) {
-            this.capitalisation = PublicCompanyI.CAPITALISE_INCREMENTAL;
+            this.capitalisation = PublicCompany.CAPITALISE_INCREMENTAL;
         }
     }
 

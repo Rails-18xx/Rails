@@ -11,7 +11,7 @@ import rails.game.action.*;
 import rails.game.special.SellBonusToken;
 import rails.game.special.SpecialPropertyI;
 import rails.game.state.BooleanState;
-import rails.game.state.MoveUtils;
+import rails.game.model.Owners;
 
 public class OperatingRound_1856 extends OperatingRound {
 
@@ -36,7 +36,7 @@ public class OperatingRound_1856 extends OperatingRound {
         };
    }
 
-    public OperatingRound_1856 (GameManagerI gameManager) {
+    public OperatingRound_1856 (GameManager gameManager) {
         super (gameManager);
 
     }
@@ -69,7 +69,7 @@ public class OperatingRound_1856 extends OperatingRound {
             if (!operatingCompany.get().hasOperated()) {
                 int soldPercentage = getSoldPercentage (operatingCompany.get());
 
-                TrainI nextAvailableTrain = gameManager.getTrainManager().getAvailableNewTrains().get(0);
+                Train nextAvailableTrain = gameManager.getTrainManager().getAvailableNewTrains().get(0);
                 int trainNumber;
                 try {
                     trainNumber = Integer.parseInt(nextAvailableTrain.getId());
@@ -129,6 +129,7 @@ public class OperatingRound_1856 extends OperatingRound {
                     int loanValue = operatingCompany.get().getLoanValueModel().intValue();
                     if (loanValue > 0) {
                         int interest = loanValue * operatingCompany.get().getLoanInterestPct() / 100;
+                        // TODO: Hard coded magic number
                         int compCash = (operatingCompany.get().getCash() / 10) * 10;
                         requiredCash = Math.max(interest - compCash, 0);
                     }
@@ -163,6 +164,7 @@ public class OperatingRound_1856 extends OperatingRound {
                 Bank.format(due))));
 
         // Can it be paid from company treasury?
+        // TODO: Hard code 10% payment
         int payment = Math.min(due, (operatingCompany.get().getCash() / 10) * 10);
         if (payment > 0) {
             remainder -= payment;
@@ -211,9 +213,10 @@ public class OperatingRound_1856 extends OperatingRound {
         int remainder = due;
 
         // Pay from company treasury
+        // TODO: Hard-coded 10% payment
         int payment = Math.min(due, (operatingCompany.get().getCash() / 10) * 10);
         if (payment > 0) {
-            MoveUtils.cashMove (operatingCompany.get(), bank, payment);
+            Owners.cashMove (operatingCompany.get(), bank, payment);
             if (payment == due) {
                 ReportBuffer.add (LocalText.getText("InterestPaidFromTreasury",
                         operatingCompany.get().getId(),
@@ -255,7 +258,7 @@ public class OperatingRound_1856 extends OperatingRound {
         } else {
 
             payment = remainder;
-            MoveUtils.cashMove (president, bank, payment);
+            Owners.cashMove (president, bank, payment);
             ReportBuffer.add (LocalText.getText("InterestPaidFromPresidentCash",
                     operatingCompany.get().getId(),
                     Bank.format(payment),
@@ -269,8 +272,8 @@ public class OperatingRound_1856 extends OperatingRound {
      @Override
     protected void setDestinationActions() {
 
-        List<PublicCompanyI> possibleDestinations = new ArrayList<PublicCompanyI>();
-        for (PublicCompanyI comp : operatingCompanies.view()) {
+        List<PublicCompany> possibleDestinations = new ArrayList<PublicCompany>();
+        for (PublicCompany comp : operatingCompanies.view()) {
             if (comp.hasDestination()
                     && ((PublicCompany_1856)comp).getTrainNumberAvailableAtStart() < 5
                     && !comp.hasReachedDestination()) {
@@ -283,12 +286,12 @@ public class OperatingRound_1856 extends OperatingRound {
     }
 
     @Override
-    protected void reachDestination (PublicCompanyI company) {
+    protected void reachDestination (PublicCompany company) {
 
         PublicCompany_1856 comp = (PublicCompany_1856) company;
         int cashInEscrow = comp.getMoneyInEscrow();
         if (cashInEscrow > 0) {
-            MoveUtils.cashMove (bank, company, cashInEscrow);
+            Owners.cashMove (bank, company, cashInEscrow);
             ReportBuffer.add(LocalText.getText("ReleasedFromEscrow",
                     company.getId(),
                     Bank.format(cashInEscrow)
@@ -354,11 +357,11 @@ public class OperatingRound_1856 extends OperatingRound {
     @Override
     public boolean buyTrain(BuyTrain action) {
 
-        PhaseI prePhase = getCurrentPhase();
+        Phase prePhase = getCurrentPhase();
 
         boolean result = super.buyTrain(action);
 
-        PhaseI postPhase = getCurrentPhase();
+        Phase postPhase = getCurrentPhase();
 
         if (postPhase != prePhase) {
             if (postPhase.getName().equals("6")) {
@@ -370,7 +373,9 @@ public class OperatingRound_1856 extends OperatingRound {
                 for (SpecialPropertyI sp : gameManager.getCommonSpecialProperties()) {
                     if (sp instanceof SellBonusToken) {
                         SellBonusToken sbt = (SellBonusToken)sp;
-                        sbt.setSeller(bank);
+                        // FIXME: Is it ipo or pool portfolio?
+                        // Assume it is pool
+                        sbt.setSeller(bank.getPool());
                         log.debug("SP "+sp.getId()+" is now buyable from the Bank");
                     }
                 }
@@ -457,7 +462,7 @@ public class OperatingRound_1856 extends OperatingRound {
         return true;
     }
 
-    public void resume (List<PublicCompanyI> mergingCompanies) {
+    public void resume (List<PublicCompany> mergingCompanies) {
 
         // End of CGRFormationRound
         finalLoanRepaymentPending.set(false);
@@ -473,13 +478,13 @@ public class OperatingRound_1856 extends OperatingRound {
         wasInterrupted.set(true);
     }
 
-    private boolean resetOperatingCompanies(List<PublicCompanyI> mergingCompanies) {
+    private boolean resetOperatingCompanies(List<PublicCompany> mergingCompanies) {
 
-        PublicCompanyI cgr = companyManager.getPublicCompany(PublicCompany_CGR.NAME);
+        PublicCompany cgr = companyManager.getPublicCompany(PublicCompany_CGR.NAME);
         boolean cgrCanOperate = cgr.hasStarted();
         boolean roundFinished = false;
 
-        for (PublicCompanyI company : mergingCompanies) {
+        for (PublicCompany company : mergingCompanies) {
                if (companiesOperatedThisRound.contains(company)) cgrCanOperate = false;
         }
 
@@ -490,7 +495,7 @@ public class OperatingRound_1856 extends OperatingRound {
 
         // Remove closed companies from the operating company list
         // (PLEASE leave this code in case we need it; it works)
-        //for (Iterator<PublicCompanyI> it = companies.iterator();
+        //for (Iterator<PublicCompany> it = companies.iterator();
         //        it.hasNext(); ) {
         //    if ((it.next()).isClosed()) {
         //        it.remove();
@@ -498,10 +503,10 @@ public class OperatingRound_1856 extends OperatingRound {
         //}
 
         //if (operatingCompany.getObject() != null) {
-        //    operatingCompanyIndex = companies.indexOf(operatingCompany.getObject());
+        //    operatingCompanyndex = companies.indexOf(operatingCompany.getObject());
         //}
 
-        for (PublicCompanyI c : operatingCompanies.view()) {
+        for (PublicCompany c : operatingCompanies.view()) {
             if (c.isClosed()) {
                 log.info(c.getId()+" is closed");
             } else {
@@ -510,11 +515,11 @@ public class OperatingRound_1856 extends OperatingRound {
         }
 
         String message;
-        int operatingCompanyIndex = getOperatingCompanyIndex();
+        int operatingCompanyndex = getOperatingCompanyndex();
         if (cgr.hasStarted()) {
             if (cgrCanOperate) {
-                operatingCompanyIndex = Math.max (0, operatingCompanyIndex);
-                operatingCompanies.add(operatingCompanyIndex+1, cgr);
+                operatingCompanyndex = Math.max (0, operatingCompanyndex);
+                operatingCompanies.add(operatingCompanyndex+1, cgr);
                 setOperatingCompany(cgr);
                 message = LocalText.getText("CanOperate", cgr.getId());
             } else {

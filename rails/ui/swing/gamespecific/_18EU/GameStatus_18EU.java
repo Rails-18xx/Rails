@@ -4,7 +4,7 @@ import java.awt.event.ActionEvent;
 import java.util.List;
 
 import rails.common.LocalText;
-import rails.game.PublicCompanyI;
+import rails.game.PublicCompany;
 import rails.game.action.MergeCompanies;
 import rails.game.action.PossibleAction;
 import rails.ui.swing.GameStatus;
@@ -21,7 +21,7 @@ public class GameStatus_18EU extends GameStatus {
     @Override
     protected void initGameSpecificActions() {
 
-        PublicCompanyI mergingCompany;
+        PublicCompany mergingCompany;
         int index;
 
         List<MergeCompanies> mergers =
@@ -49,8 +49,8 @@ public class GameStatus_18EU extends GameStatus {
             log.debug("Merge action: " + chosenAction.toString());
 
             MergeCompanies action = (MergeCompanies) chosenAction;
-            PublicCompanyI minor = action.getMergingCompany();
-            List<PublicCompanyI> targets = action.getTargetCompanies();
+            PublicCompany minor = action.getMergingCompany();
+            List<PublicCompany> targets = action.getTargetCompanies();
 
             if (minor == null || targets == null || targets.isEmpty()) {
                 log.error("Bad " + action.toString());
@@ -59,7 +59,7 @@ public class GameStatus_18EU extends GameStatus {
 
             String[] options = new String[targets.size()];
             int i = 0;
-            for (PublicCompanyI target : targets) {
+            for (PublicCompany target : targets) {
                 if (target != null) {
                     options[i++] =
                             target.getId() + " " + target.getLongName();

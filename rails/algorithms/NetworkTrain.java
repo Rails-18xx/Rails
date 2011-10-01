@@ -3,7 +3,7 @@ package rails.algorithms;
 
 import org.apache.log4j.Logger;
 
-import rails.game.TrainI;
+import rails.game.Train;
 import rails.game.TrainType;
 
 public final class NetworkTrain implements Comparable<NetworkTrain>{
@@ -18,11 +18,11 @@ public final class NetworkTrain implements Comparable<NetworkTrain>{
     private final int multiplyMinors;
     private final boolean isHTrain;
     private String trainName;
-    private final TrainI railsTrain;
+    private final Train railsTrain;
     
     
     private NetworkTrain(int majors, int minors, boolean ignoreMinors,
-            int multiplyMajors, int multiplyMinors, boolean isHTrain, String trainName, TrainI train) {
+            int multiplyMajors, int multiplyMinors, boolean isHTrain, String trainName, Train train) {
         this.majors = majors;
         this.minors = minors;
         this.ignoreMinors = ignoreMinors;
@@ -34,7 +34,7 @@ public final class NetworkTrain implements Comparable<NetworkTrain>{
         log.info("Created NetworkTrain " + this.toString() + " / " + this.attributes());
     }
 
-    static NetworkTrain createFromRailsTrain(TrainI railsTrain){
+    static NetworkTrain createFromRailsTrain(Train railsTrain){
         int majors = railsTrain.getMajorStops();
         int minors = railsTrain.getMinorStops();
         if (railsTrain.getTownCountIndicator() == 0) {
@@ -139,7 +139,7 @@ public final class NetworkTrain implements Comparable<NetworkTrain>{
         return trainName;
     }
     
-    public TrainI getRailsTrain() {
+    public Train getRailsTrain() {
         return railsTrain;
     }
     

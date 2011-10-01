@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/MapManager.java,v 1.23 2010/06/24 21:48:08 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -233,7 +232,7 @@ public class MapManager extends AbstractItem implements ConfigurableComponentI {
         }
     }
 
-    public void finishConfiguration (GameManagerI gameManager) throws ConfigurationException {
+    public void finishConfiguration (GameManager gameManager) throws ConfigurationException {
 
         MapHex hex;
         int i, j, k;
@@ -280,7 +279,7 @@ public class MapManager extends AbstractItem implements ConfigurableComponentI {
         }
 
         List<MapHex> homeHexes;
-        for (PublicCompanyI company : gameManager.getCompanyManager().getAllPublicCompanies()) {
+        for (PublicCompany company : gameManager.getCompanyManager().getAllPublicCompanies()) {
             if ((homeHexes = company.getHomeHexes()) != null) {
                 for (MapHex homeHex : homeHexes) {
                     homeHex.addHome(company, company.getHomeCityNumber());

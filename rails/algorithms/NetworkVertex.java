@@ -77,7 +77,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
     }
 
     /**  constructor for public company hq */
-    public NetworkVertex(PublicCompanyI company) {
+    public NetworkVertex(PublicCompany company) {
         this(VertexType.HQ, "HQ");
     }
 
@@ -219,7 +219,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
      * Initialize for rails vertexes
      * @return true = can stay inside the network, false = has to be removed
      */
-    public boolean initRailsVertex(PublicCompanyI company) {
+    public boolean initRailsVertex(PublicCompany company) {
         // side vertices use the defaults, virtuals cannot use this function
         if (virtual || type == VertexType.SIDE) return true;
 
@@ -264,7 +264,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
 
     }
 
-    public void setRailsVertexValue(PhaseI phase) {
+    public void setRailsVertexValue(Phase phase) {
         // side vertices and  virtuals cannot use this function
         if (virtual || type == VertexType.SIDE) return;
 
@@ -310,7 +310,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
      * @param phase the current phase (with regard to values)
      */
     public static void initAllRailsVertices(Graph<NetworkVertex, NetworkEdge> graph,
-            PublicCompanyI company,  PhaseI phase) {
+            PublicCompany company,  Phase phase) {
 
         // store vertices for removal
         List<NetworkVertex> verticesToRemove = new ArrayList<NetworkVertex>();

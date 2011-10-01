@@ -16,7 +16,7 @@ public class SpecialTokenLay extends SpecialProperty {
     boolean free = false;
     boolean connected = false;
     Class<? extends Token> tokenClass;
-    TokenI token = null;
+    Token token = null;
     int numberAvailable = 1;
     int numberUsed = 0;
 
@@ -70,12 +70,12 @@ public class SpecialTokenLay extends SpecialProperty {
         }
 
         if (tokenClass == BaseToken.class) {
-            description = LocalText.getText("LayBaseTokenInfo",
+            description = LocalText.getText("LayBaseTokennfo",
                     locationCodes,
                     (extra ? LocalText.getText("extra"):LocalText.getText("notExtra")),
                     (free ? LocalText.getText("noCost") : LocalText.getText("normalCost")));
         } else if (tokenClass == BonusToken.class) {
-            description = LocalText.getText("LayBonusTokenInfo",
+            description = LocalText.getText("LayBonusTokennfo",
                     tokenName,
                     Bank.format(tokenValue),
                     locationCodes);
@@ -83,7 +83,7 @@ public class SpecialTokenLay extends SpecialProperty {
     }
 
     @Override
-    public void finishConfiguration (GameManagerI gameManager)
+    public void finishConfiguration (GameManager gameManager)
     throws ConfigurationException {
 
         locations = gameManager.getMapManager().parseLocations(locationCodes);
@@ -121,7 +121,7 @@ public class SpecialTokenLay extends SpecialProperty {
         return tokenClass;
     }
 
-    public TokenI getToken() {
+    public Token getToken() {
         return token;
     }
 

@@ -24,14 +24,16 @@ import rails.algorithms.RevenueStaticModifier;
  */
 public class Bonus implements Closeable, RevenueStaticModifier {
 
-    private PublicCompanyI owner;
+    private PublicCompany owner;
     private List<MapHex> locations = null;
     private String name;
     private int value;
-    private String removingObjectDesc = null;
+    // TODO: What was the intention of those?
+/*    private String removingObjectDesc = null;
     private Object removingObject = null;
-
-    public Bonus (PublicCompanyI owner,
+*/
+    
+    public Bonus (PublicCompany owner,
             String name, int value, List<MapHex> locations) {
         this.owner = owner;
         this.name = name;
@@ -46,7 +48,7 @@ public class Bonus implements Closeable, RevenueStaticModifier {
         return false;
     }
 
-    public PublicCompanyI getOwner() {
+    public PublicCompany getOwner() {
         return owner;
     }
 

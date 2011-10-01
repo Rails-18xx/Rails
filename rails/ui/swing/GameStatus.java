@@ -15,6 +15,9 @@ import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.correct.CashCorrectionAction;
+import rails.game.model.CashOwner;
+import rails.game.model.Owner;
+import rails.game.model.Portfolio;
 import rails.ui.swing.elements.*;
 
 /**
@@ -112,8 +115,8 @@ public class GameStatus extends GridPanel implements ActionListener {
     protected ButtonGroup buySellGroup = new ButtonGroup();
     protected ClickField dummyButton; // To be selected if none else is.
 
-    protected Map<PublicCompanyI, Integer> companyIndex =
-        new HashMap<PublicCompanyI, Integer>();
+    protected Map<PublicCompany, Integer> companyIndex =
+        new HashMap<PublicCompany, Integer>();
     protected Map<Player, Integer> playerIndex = new HashMap<Player, Integer>();
 
     protected static Logger log =
@@ -144,7 +147,7 @@ public class GameStatus extends GridPanel implements ActionListener {
 
         players = gameUIManager.getPlayers().toArray(new Player[0]);
         np = gameUIManager.getNumberOfPlayers();
-        companies = gameUIManager.getAllPublicCompanies().toArray(new PublicCompanyI[0]);
+        companies = gameUIManager.getAllPublicCompanies().toArray(new PublicCompany[0]);
         nc = companies.length;
 
         hasParPrices = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_ANY_PAR_PRICE);
@@ -627,7 +630,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                     new ArrayList<BuyCertificate>();
                 List<Integer> buyAmounts = new ArrayList<Integer>();
                 BuyCertificate buy;
-                PublicCertificateI cert;
+                PublicCertificate cert;
                 String companyName = "";
                 String playerName = "";
                 int sharePerCert;
@@ -638,7 +641,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                     buy = (BuyCertificate) action;
                     //cert = buy.getCertificate();
                     playerName = buy.getPlayerName ();
-                    PublicCompanyI company = buy.getCompany();
+                    PublicCompany company = buy.getCompany();
                     companyName = company.getId();
                     sharePerCert = buy.getSharePerCertificate();
                     shareUnit = company.getShareUnit();
@@ -812,10 +815,10 @@ public class GameStatus extends GridPanel implements ActionListener {
 
             if (myTurn) {
 
-                PublicCompanyI company;
+                PublicCompany company;
                 Portfolio holder;
                 int index;
-                CashHolder owner;
+                Owner owner;
 
                 List<BuyCertificate> buyableCerts =
                     possibleActions.getType(BuyCertificate.class);
@@ -831,7 +834,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                             setPoolCertButton(index, true, bCert);
                         } else if (owner instanceof Player) {
                             setPlayerCertButton(index, ((Player)owner).getIndex(), true, bCert);
-                        } else if (owner instanceof PublicCompanyI && compCanHoldOwnShares) {
+                        } else if (owner instanceof PublicCompany && compCanHoldOwnShares) {
                             setTreasuryCertButton(index, true, bCert);
                         }
                     }
@@ -889,9 +892,9 @@ public class GameStatus extends GridPanel implements ActionListener {
 
         if (actions != null) {
             for (CashCorrectionAction a : actions) {
-                CashHolder ch = a.getCashHolder();
-                if (ch instanceof PublicCompanyI) {
-                    PublicCompanyI pc = (PublicCompanyI)ch;
+                CashOwner ch = a.getCashHolder();
+                if (ch instanceof PublicCompany) {
+                    PublicCompany pc = (PublicCompany)ch;
                     int i = pc.getPublicNumber();
                     setCompanyCashButton(i, true, a);
                 }

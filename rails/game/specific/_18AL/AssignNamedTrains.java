@@ -15,15 +15,15 @@ public class AssignNamedTrains extends UseSpecialProperty {
     int numberOfTokens;
 
     transient private List<NameableTrain> preTrainPerToken;
-    private String[] preTrainIds;
+    private String[] preTrainds;
 
     transient private List<NameableTrain> postTrainPerToken;
-    private String[] postTrainIds;
+    private String[] postTrainds;
 
     public static final long serialVersionUID = 1L;
 
     public AssignNamedTrains(NameTrains namedTrainsSpecialProperty,
-            List<TrainI> trains) {
+            List<Train> trains) {
         super(namedTrainsSpecialProperty);
 
         numberOfTrains = trains.size();
@@ -31,15 +31,15 @@ public class AssignNamedTrains extends UseSpecialProperty {
         numberOfTokens = tokens.size();
 
         nameableTrains = new ArrayList<NameableTrain>(numberOfTrains);
-        for (TrainI train : trains) {
+        for (Train train : trains) {
             nameableTrains.add((NameableTrain) train);
         }
         preTrainPerToken = new ArrayList<NameableTrain>(numberOfTokens);
         postTrainPerToken = new ArrayList<NameableTrain>(numberOfTokens);
 
         trainIds = new String[numberOfTrains];
-        preTrainIds = new String[numberOfTokens];
-        postTrainIds = new String[numberOfTokens];
+        preTrainds = new String[numberOfTokens];
+        postTrainds = new String[numberOfTokens];
 
         for (int i = 0; i < numberOfTokens; i++) {
             preTrainPerToken.add(null);
@@ -54,7 +54,7 @@ public class AssignNamedTrains extends UseSpecialProperty {
                 if (token != null) {
                     preTrainPerToken.set(tokens.indexOf(token), train);
                     tokenIndex = tokens.indexOf(token);
-                    preTrainIds[tokenIndex] = train.getUniqueId();
+                    preTrainds[tokenIndex] = train.getUniqueId();
                 }
                 trainIndex++;
             }
@@ -64,7 +64,7 @@ public class AssignNamedTrains extends UseSpecialProperty {
     public boolean equalsAsAction (PossibleAction action) {
         if (!(action instanceof AssignNamedTrains)) return false;
         AssignNamedTrains a = (AssignNamedTrains) action;
-        return Arrays.equals(a.postTrainIds, postTrainIds);
+        return Arrays.equals(a.postTrainds, postTrainds);
     }
 
     @Override
@@ -100,13 +100,13 @@ public class AssignNamedTrains extends UseSpecialProperty {
 
     public void setPostTrainPerToken(List<NameableTrain> postTokensPerTrain) {
         this.postTrainPerToken = postTokensPerTrain;
-        // convert to postTrainIds
+        // convert to postTrainds
         if (postTokensPerTrain != null) {
             for (NameableTrain train : postTokensPerTrain) {
                 if (train == null) {
-                    postTrainIds[postTokensPerTrain.indexOf(train)] = null;
+                    postTrainds[postTokensPerTrain.indexOf(train)] = null;
                 } else {
-                    postTrainIds[postTokensPerTrain.indexOf(train)] = train.getUniqueId();
+                    postTrainds[postTokensPerTrain.indexOf(train)] = train.getUniqueId();
                 }
             }
         }
@@ -128,8 +128,8 @@ public class AssignNamedTrains extends UseSpecialProperty {
         }
 
         preTrainPerToken = new ArrayList<NameableTrain>(numberOfTrains);
-        if (preTrainIds != null) {
-            for (String trainId : preTrainIds) {
+        if (preTrainds != null) {
+            for (String trainId : preTrainds) {
                 if (trainId != null && trainId.length() > 0) {
 //                    preTrainPerToken.add((NameableTrain) Token.getByUniqueId(trainId));
                   preTrainPerToken.add((NameableTrain) trainManager.getTrainByUniqueId(trainId));
@@ -140,8 +140,8 @@ public class AssignNamedTrains extends UseSpecialProperty {
         }
 
         postTrainPerToken = new ArrayList<NameableTrain>(numberOfTrains);
-        if (postTrainIds != null) {
-            for (String trainId : postTrainIds) {
+        if (postTrainds != null) {
+            for (String trainId : postTrainds) {
                 if (trainId != null && trainId.length() > 0) {
 //                    postTrainPerToken.add((NameableTrain) Token.getByUniqueId(trainId));
                     postTrainPerToken.add((NameableTrain) trainManager.getTrainByUniqueId(trainId));

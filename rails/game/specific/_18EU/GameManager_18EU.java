@@ -6,8 +6,10 @@ import java.util.List;
 
 import rails.common.LocalText;
 import rails.game.*;
+import rails.game.model.Owners;
+import rails.game.model.Portfolio;
 import rails.game.state.GenericState;
-import rails.game.state.MoveUtils;
+import rails.game.model.Owners;
 import rails.util.Util;
 
 /**
@@ -55,13 +57,13 @@ public class GameManager_18EU extends GameManager {
 
         // Assume default case as in 18EU: all assets to Bank/Pool
         Player bankrupter = getCurrentPlayer();
-        MoveUtils.cashMove (bankrupter, bank, bankrupter.getCash());
+        Owners.cashMove(bankrupter, bank, bankrupter.getCashValue());
         Portfolio bpf = bankrupter.getPortfolio();
-        List<PublicCompanyI> presidencies = new ArrayList<PublicCompanyI>();
-        for (PublicCertificateI cert : bpf.getCertificates()) {
+        List<PublicCompany> presidencies = new ArrayList<PublicCompany>();
+        for (PublicCertificate cert : bpf.getCertificates()) {
             if (cert.isPresidentShare()) presidencies.add(cert.getCompany());
         }
-        for (PublicCompanyI company : presidencies) {
+        for (PublicCompany company : presidencies) {
             // Check if the presidency is dumped on someone
             newPresident = null;
             maxShare = 0;
@@ -85,7 +87,7 @@ public class GameManager_18EU extends GameManager {
         }
         
         // Dump all shares
-        MoveUtils.objectMoveAll(bankrupter.getPortfolio().getCertificates(), bank.getPool().getCertificates());
+        Owners.moveAll(bankrupter, bank.getPool(), PublicCertificate.class);
 
         bankrupter.setBankrupt();
 

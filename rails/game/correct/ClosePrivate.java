@@ -18,19 +18,19 @@ public class ClosePrivate extends PossibleAction {
     /* Preconditions */
     
     /** private company to close */
-    private PrivateCompanyI privateCompany;
+    private PrivateCompany privateCompany;
     
     /** converted to name */
     private String privateCompanyName; 
 
     /* Postconditions: None */
     
-    public ClosePrivate(PrivateCompanyI priv) {
+    public ClosePrivate(PrivateCompany priv) {
         privateCompany = priv;
         privateCompanyName = priv.getId();
     }
     
-    public PrivateCompanyI getPrivateCompany() {
+    public PrivateCompany getPrivateCompany() {
         return privateCompany;
     }
     public String getPrivateCompanyName () {

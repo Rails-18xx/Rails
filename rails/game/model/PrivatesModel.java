@@ -1,14 +1,13 @@
 package rails.game.model;
 
-import rails.game.Portfolio;
-import rails.game.PrivateCompanyI;
+import rails.game.PrivateCompany;
 
-public final class PrivatesModel extends HolderModel<PrivateCompanyI> {
+public final class PrivatesModel extends HolderModel<PrivateCompany> {
 
     private boolean addLineBreak = false;
 
     public PrivatesModel(Portfolio owner) {
-        super(owner, "PrivatesModel");
+        super(owner, PrivateCompany.class);
     }
     
     public void setLineBreak(boolean lineBreak) {
@@ -18,7 +17,7 @@ public final class PrivatesModel extends HolderModel<PrivateCompanyI> {
     public String getData() {
 
         StringBuffer buf = new StringBuffer("<html>");
-        for (PrivateCompanyI priv : this.viewList()) {
+        for (PrivateCompany priv : this) {
             if (buf.length() > 6)
                 buf.append(addLineBreak ? "<br>" : "&nbsp;");
             buf.append(priv.getId());

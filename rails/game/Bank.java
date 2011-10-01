@@ -10,14 +10,20 @@ import rails.common.parser.ConfigurableComponentI;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.model.CashModel;
-import rails.game.model.AbstractModel;
-import rails.game.model.Model;
+import rails.game.model.CashOwner;
+import rails.game.model.Portfolio;
 import rails.game.state.AbstractItem;
 import rails.game.state.BooleanState;
 import rails.util.*;
 
-public class Bank extends AbstractItem implements CashHolder, ConfigurableComponentI {
+public class Bank extends AbstractItem implements CashOwner, ConfigurableComponentI {
 
+    /** Specific portfolio names */
+    public static final String IPO_NAME = "IPO";
+    public static final String POOL_NAME = "Pool";
+    public static final String SCRAPHEAP_NAME = "ScrapHeap";
+    public static final String UNAVAILABLE_NAME = "Unavailable";
+    
     /** Default limit of shares in the bank pool */
     private static final int DEFAULT_BANK_AMOUNT = 12000;
     private static final String DEFAULT_MONEY_FORMAT = "$@";
@@ -54,10 +60,10 @@ public class Bank extends AbstractItem implements CashHolder, ConfigurableCompon
 
         money = new CashModel(this);
         // Create the IPO and the Bank Pool.
-        ipo = new Portfolio(Portfolio.IPO_NAME, this);
-        pool = new Portfolio(Portfolio.POOL_NAME, this);
-        unavailable = new Portfolio(Portfolio.UNAVAILABLE_NAME, this);
-        scrapHeap = new Portfolio(Portfolio.SCRAPHEAP_NAME, this);
+        ipo = new Portfolio(ipo, IPO_NAME);
+        pool = new Portfolio(pool, POOL_NAME);
+        unavailable = new Portfolio(unavailable, UNAVAILABLE_NAME);
+        scrapHeap = new Portfolio(scrapHeap, SCRAPHEAP_NAME);
 
         String configFormat = Config.get("money_format");
         if (Util.hasValue(configFormat) && configFormat.matches(".*@.*")) {
@@ -88,33 +94,33 @@ public class Bank extends AbstractItem implements CashHolder, ConfigurableCompon
 
         Tag bankTag = tag.getChild("Bank");
         if (bankTag != null) {
-            money.setCash(bankTag.getAttributeAsInteger("amount",
+            money.set(bankTag.getAttributeAsInteger("amount",
                     DEFAULT_BANK_AMOUNT));
         }
 
     }
 
-    public void finishConfiguration (GameManagerI gameManager) {
+    public void finishConfiguration (GameManager gameManager) {
 
         ReportBuffer.add(LocalText.getText("BankSizeIs",
-                format(money.getCash())));
+                format(money.value())));
 
         // Add privates
-        List<PrivateCompanyI> privates =
+        List<PrivateCompany> privates =
             gameManager.getCompanyManager().getAllPrivateCompanies();
-        for (PrivateCompanyI priv : privates) {
+        for (PrivateCompany priv : privates) {
             ipo.addPrivate(priv, -1);
         }
 
         // Add public companies
-        List<PublicCompanyI> companies =
+        List<PublicCompany> companies =
             gameManager.getCompanyManager().getAllPublicCompanies();
-        for (PublicCompanyI comp : companies) {
-            for (PublicCertificateI cert : comp.getCertificates()) {
+        for (PublicCompany comp : companies) {
+            for (PublicCertificate cert : comp.getCertificates()) {
                 if (cert.isInitiallyAvailable()) {
-                    ipo.addCertificate(cert);
+                    cert.moveTo(ipo);
                 } else {
-                    unavailable.addCertificate(cert);
+                    cert.moveTo(unavailable);
                 }
             }
         }
@@ -134,8 +140,8 @@ public class Bank extends AbstractItem implements CashHolder, ConfigurableCompon
     /**
      * @return Bank's current cash level
      */
-    public int getCash() {
-        return money.getCash();
+    public int getCashValue() {
+        return money.value();
     }
 
     /**
@@ -143,13 +149,13 @@ public class Bank extends AbstractItem implements CashHolder, ConfigurableCompon
      */
     public void addCash(int amount) {
 
-        money.addCash(amount);
+        money.add(amount);
 
         /*
          * Check if the bank has broken. In some games <0 could apply, so this
          * will become configurable.
          */
-        if (money.getCash() <= 0 && !broken.booleanValue()) {
+        if (money.value() <= 0 && !broken.booleanValue()) {
             broken.set(true);
             money.setText(LocalText.getText("BROKEN"));
             GameManager.getInstance().registerBrokenBank();
@@ -174,7 +180,7 @@ public class Bank extends AbstractItem implements CashHolder, ConfigurableCompon
      * @param Set Bank's cash.
      */
     public void setCash(int i) {
-        money.setCash(i);
+        money.set(i);
     }
 
     public String getId() {
@@ -183,10 +189,6 @@ public class Bank extends AbstractItem implements CashHolder, ConfigurableCompon
 
     public String getFormattedCash() {
         return money.getData();
-    }
-
-    public Model<String> getCashModel() {
-        return money;
     }
 
     public static String format(int amount) {
@@ -206,4 +208,13 @@ public class Bank extends AbstractItem implements CashHolder, ConfigurableCompon
         return result.toString();
     }
     // end sfy 1889
+    
+    public int getCash() {
+        return money.value();
+    }
+
+    public CashModel getCashModel() {
+        return money;
+    }
+    
 }

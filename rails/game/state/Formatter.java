@@ -1,10 +1,9 @@
 package rails.game.state;
 
 /**
- * An interface defining the formatting inside a presenter
+ * An interface defining a formatter for a state variable
  * @author freystef
  */
-
-public interface Formatter {
-    public String formatData(State state);
+public interface Formatter<E extends State> {
+    public String formatData(E state);
 }

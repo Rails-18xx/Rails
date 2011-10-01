@@ -104,7 +104,7 @@ public class TrainCertificateType extends AbstractItem {
 
     }
 
-    public void finishConfiguration (GameManagerI gameManager) 
+    public void finishConfiguration (GameManager gameManager) 
     throws ConfigurationException {
 
         trainManager = gameManager.getTrainManager();
@@ -124,9 +124,9 @@ public class TrainCertificateType extends AbstractItem {
         return newPhaseNames;
     }
 
-    public TrainI createTrain () throws ConfigurationException {
+    public Train createTrain () throws ConfigurationException {
 
-        TrainI train;
+        Train train;
         try {
             train = trainClass.newInstance();
         } catch (InstantiationException e) {
@@ -223,7 +223,7 @@ public class TrainCertificateType extends AbstractItem {
 
     public String getInfo() {
         StringBuilder b = new StringBuilder ("<html>");
-        b.append(LocalText.getText("TrainInfo", name, Bank.format(cost), quantity));
+        b.append(LocalText.getText("Trainnfo", name, Bank.format(cost), quantity));
         if (b.length() == 6) b.append(LocalText.getText("None"));
 
         return b.toString();

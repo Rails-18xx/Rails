@@ -18,7 +18,7 @@ public class SellShares extends PossibleAction {
 
     // Server-side settings
     private String companyName;
-    transient private PublicCompanyI company;
+    transient private PublicCompany company;
     private int shareUnit;
     private int shareUnits;
     private int share;
@@ -66,7 +66,7 @@ public class SellShares extends PossibleAction {
         return companyName;
     }
 
-    public PublicCompanyI getCompany() {
+    public PublicCompany getCompany() {
         return getCompanyManager().getPublicCompany(companyName);
     }
 

@@ -17,7 +17,7 @@ public class PublicCompany_1856 extends PublicCompany {
 
         super.start(startSpace);
 
-        TrainI nextAvailableTrain
+        Train nextAvailableTrain
             = gameManager.getTrainManager().getAvailableNewTrains().get(0);
         int trainNumber;
         try {
@@ -58,7 +58,7 @@ public class PublicCompany_1856 extends PublicCompany {
     }
 
     @Override
-    public void buyTrain(TrainI train, int price) {
+    public void buyTrain(Train train, int price) {
         super.buyTrain (train, price);
         if (train.isPermanent()) hadPermanentTrain = true;
     }

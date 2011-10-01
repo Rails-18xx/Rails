@@ -46,7 +46,7 @@ public class SpecialRight extends SpecialProperty implements RevenueStaticModifi
     }
 
     @Override
-    public void finishConfiguration (GameManagerI gameManager) throws ConfigurationException {
+    public void finishConfiguration (GameManager gameManager) throws ConfigurationException {
         super.finishConfiguration(gameManager);
         
         // add them to the call list of the RevenueManager
