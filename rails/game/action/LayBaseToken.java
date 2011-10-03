@@ -40,22 +40,43 @@ public class LayBaseToken extends LayToken {
     public static final long serialVersionUID = 1L;
 
     /**
-     * Allow laying a base token on a given location.
+     * Lay a base token on one of a given list of locations.
+     * <p>This constructor is only intended to be used for normal lays of non-home tokens
+     * in the operating company LAY_TOKEN OR step.
+     * 
+     * @param locations A list of valid locations (hexes) where the acting company can lay a base token.<br>
+     * <i>Note:</i> Currently, the game engine cannot yet provide such a list, as all knowledge about routes
+     * is contained in the user interface code. As a consequence, this constructor is only called
+     * with the value <b>null</b>, which allows laying a base token on <i>any</i> empty city slot.
+     * In fact, the UI will now apply the restriction to valid locations only.
+     * Over time, applying this restriction should be moved to the game engine.
      */
     public LayBaseToken(List<MapHex> locations) {
         super(locations);
         type = LOCATION_SPECIFIC;
     }
 
+    /** Lay a base token as allowed via a Special Property.
+     * <p>The valid locations (hexes) of such a token should be defined inside the special property.
+     * Typically, such locations do not need to be connected to the existing network of a company.
+     * 
+     * @param specialProperty The special property that allows laying an extra or unconnected base token.
+     */
     public LayBaseToken(SpecialTokenLay specialProperty) {
         super(specialProperty);
         type = SPECIAL_PROPERTY;
     }
 
+    /** Lay a base token on a given location.
+     * <p> This constructor is specifically intended to allow the player to select a city for its <b>home</b> token
+     * on a multi-city hex or tile (e.g. an OO tile, such as the Erie in 1830 or the THB in 1856).
+     * 
+     * @param hex The hex on which a city must be selected to lay a home token on.
+     */
     public LayBaseToken (MapHex hex) {
-    	super (hex);
-    	setChosenHex (hex);
-    	type = HOME_CITY;
+        super (hex);
+        setChosenHex (hex);
+        type = HOME_CITY;
     }
 
     public int getChosenStation() {
@@ -75,9 +96,9 @@ public class LayBaseToken extends LayToken {
         if (!(action instanceof LayBaseToken)) return false;
         LayBaseToken a = (LayBaseToken) action;
         return (a.locationNames == null && locationNames == null || a.locationNames.equals(locationNames))
-               && a.type == type
-               && a.company == company
-               && a.specialProperty == specialProperty;
+        && a.type == type
+        && a.company == company
+        && a.specialProperty == specialProperty;
     }
 
     @Override
@@ -85,10 +106,10 @@ public class LayBaseToken extends LayToken {
         if (!(action instanceof LayBaseToken)) return false;
         LayBaseToken a = (LayBaseToken) action;
         return a.chosenHex == chosenHex
-               && a.chosenStation == chosenStation
-               && a.type == type
-               && a.company == company
-               && a.specialProperty == specialProperty;
+        && a.chosenStation == chosenStation
+        && a.type == type
+        && a.company == company
+        && a.specialProperty == specialProperty;
     }
 
     @Override
@@ -106,7 +127,7 @@ public class LayBaseToken extends LayToken {
 
     /** Deserialize */
     private void readObject(ObjectInputStream in) throws IOException,
-            ClassNotFoundException {
+    ClassNotFoundException {
 
         in.defaultReadObject();
 
@@ -120,7 +141,7 @@ public class LayBaseToken extends LayToken {
 
         if (specialPropertyId > 0) {
             specialProperty =
-                    (SpecialTokenLay) SpecialProperty.getByUniqueId(specialPropertyId);
+                (SpecialTokenLay) SpecialProperty.getByUniqueId(specialPropertyId);
         }
         if (chosenHexName != null && chosenHexName.length() > 0) {
             chosenHex = mmgr.getHex(chosenHexName);
