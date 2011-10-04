@@ -16,16 +16,13 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Iterables;
 
-import rails.common.DisplayBuffer;
-import rails.common.GuiDef;
-import rails.common.GuiHints;
-import rails.common.LocalText;
+import rails.common.*;
 import rails.common.parser.Config;
 import rails.game.*;
 import rails.game.Currency;
 import rails.game.action.*;
 import rails.ui.swing.elements.*;
-import rails.util.*;
+import rails.util.Util;
 
 /**
  * This class is called by main() and loads all of the UI components
@@ -73,7 +70,7 @@ public class GameUIManager implements DialogOwner {
     protected String providedName = null;
     protected SimpleDateFormat saveDateTimeFormat;
     protected File lastFile, lastDirectory;
-    
+
     protected boolean autoSaveLoadInitialized = false;
     protected int autoSaveLoadStatus = 0;
     protected int autoSaveLoadPollingInterval = 30;
@@ -82,7 +79,7 @@ public class GameUIManager implements DialogOwner {
     protected String lastSavedFilenameFilepath;
     protected String lastSavedFilename = "";
     protected String localPlayerName = "";
-    
+
     protected boolean gameWasLoaded = false;
 
     protected WindowSettings windowSettings;
@@ -205,11 +202,11 @@ public class GameUIManager implements DialogOwner {
                 Class.forName(statusWindowClassName).asSubclass(StatusWindow.class);
             statusWindow = statusWindowClass.newInstance();
 
-//            GraphicsEnvironment ge = GraphicsEnvironment.
-//            getLocalGraphicsEnvironment();
-//            GraphicsDevice[] gs = ge.getScreenDevices();
-//            log.debug("ScreenDevices = " + Arrays.toString(gs));
-//            statusWindow = statusWindowClass.getConstructor(GraphicsConfiguration.class).newInstance(gs[1].getDefaultConfiguration());
+            //            GraphicsEnvironment ge = GraphicsEnvironment.
+            //            getLocalGraphicsEnvironment();
+            //            GraphicsDevice[] gs = ge.getScreenDevices();
+            //            log.debug("ScreenDevices = " + Arrays.toString(gs));
+            //            statusWindow = statusWindowClass.getConstructor(GraphicsConfiguration.class).newInstance(gs[1].getDefaultConfiguration());
 
             statusWindow.init(this);
         } catch (Exception e) {
@@ -249,7 +246,7 @@ public class GameUIManager implements DialogOwner {
             result = previousResult;
 
         } else {
-            
+
             Player oldPlayer = getCurrentPlayer();
             boolean wasMyTurn = oldPlayer.getId().equals(localPlayerName);
 
@@ -272,7 +269,7 @@ public class GameUIManager implements DialogOwner {
                                 (JFrame) activeWindow,
                                 LocalText.getText("Message"),
                                 LocalText.getText("YourTurn", localPlayerName)),
-                            null);
+                                null);
                         log.info ("Resuming turn as "+localPlayerName);
                     } else {
                         log.info(newPlayer.getId()+" now has the turn");
@@ -307,13 +304,13 @@ public class GameUIManager implements DialogOwner {
 
         if (!result) return false;
 
-           return activeWindow.processImmediateAction();
+        return activeWindow.processImmediateAction();
     }
 
     protected boolean processOnServer (PossibleAction action) {
-        
+
         boolean result;
-        
+
         action.setActed();
         action.setPlayerName(getCurrentPlayer().getId());
 
@@ -333,7 +330,7 @@ public class GameUIManager implements DialogOwner {
 
         return result;
     }
-    
+
     public boolean displayServerMessage() {
         String[] message = DisplayBuffer.get();
         if (message != null) {
@@ -341,7 +338,7 @@ public class GameUIManager implements DialogOwner {
                     (JFrame) activeWindow,
                     LocalText.getText("Message"),
                     "<html>" + Util.joinWithDelimiter(message, "<br>")),
-                null);
+                    null);
             return true;
         }
         return false;
@@ -358,7 +355,7 @@ public class GameUIManager implements DialogOwner {
         currentRoundName = currentRound.toString();
 
         log.debug("Current round=" + currentRoundName + ", previous round="
-                  + previousRoundName);
+                + previousRoundName);
 
         currentRoundType = uiHints.getCurrentRoundType();
 
@@ -398,7 +395,18 @@ public class GameUIManager implements DialogOwner {
                 log.debug("UI entering Start Round "+currentRoundName);
                 startRound = (StartRound) currentRound;
                 if (startRoundWindow == null) {
-                    startRoundWindow = new StartRoundWindow(startRound, this);
+                    //startRoundWindow = new StartRoundWindow(startRound, this);
+                    String startRoundWindowClassName = getClassName(GuiDef.ClassName.START_ROUND_WINDOW);
+                    try {
+                        Class<? extends StartRoundWindow> startRoundWindowClass =
+                            Class.forName(startRoundWindowClassName).asSubclass(StartRoundWindow.class);
+                        startRoundWindow = startRoundWindowClass.newInstance();
+                        startRoundWindow.init(startRound, this);
+                    } catch (Exception e) {
+                        log.fatal("Cannot instantiate class " + startRoundWindowClassName, e);
+                        System.exit(1);
+
+                    }
                 }
 
             } else if (StockRound.class.isAssignableFrom(currentRoundType)) {
@@ -431,13 +439,13 @@ public class GameUIManager implements DialogOwner {
             switch (hint.getType()) {
             case STOCK_MARKET:
                 boolean stockChartVisibilityHint = hint.getVisibility()
-                        || configuredStockChartVisibility;
+                || configuredStockChartVisibility;
                 if (stockChartVisibilityHint != previousStockChartVisibilityHint) {
                     stockChart.setVisible(stockChartVisibilityHint);
                     previousStockChartVisibilityHint = stockChartVisibilityHint;
                 }
                 if (hint.getVisibility()) stockChart.toFront();
-               break;
+                break;
             case STATUS:
                 boolean statusWindowVisibilityHint = hint.getVisibility();
                 if (statusWindowVisibilityHint != previousStatusWindowVisibilityHint) {
@@ -500,7 +508,7 @@ public class GameUIManager implements DialogOwner {
             startRoundWindow.setSRPlayerTurn(startRound.getCurrentPlayerIndex());
 
         } else if (StatusWindow.class.isAssignableFrom(activeWindow.getClass())) {
-//        } else {
+            //        } else {
 
             log.debug("Updating Stock (status) round window");
             statusWindow.updateStatus(myTurn);
@@ -527,7 +535,7 @@ public class GameUIManager implements DialogOwner {
         Set<Train> trains = dt.getOwnedTrains();
         int size = trains.size() + (dt.isForced() ? 0 : 1);
         List<String> trainOptions =
-                new ArrayList<String>(size);
+            new ArrayList<String>(size);
         String[] options = new String[size];
         String prompt = null;
 
@@ -552,11 +560,11 @@ public class GameUIManager implements DialogOwner {
                 c.getId() );
 
         String discardedTrainName =
-                (String) JOptionPane.showInputDialog(orWindow,
-                        prompt,
-                        LocalText.getText("WhichTrainToDiscard"),
-                        JOptionPane.QUESTION_MESSAGE, null,
-                        options, options[0]);
+            (String) JOptionPane.showInputDialog(orWindow,
+                    prompt,
+                    LocalText.getText("WhichTrainToDiscard"),
+                    JOptionPane.QUESTION_MESSAGE, null,
+                    options, options[0]);
         if (discardedTrainName != null) {
             int index = trainOptions.indexOf(discardedTrainName);
             // FIXME: Does this work with the new Set defined?
@@ -618,7 +626,7 @@ public class GameUIManager implements DialogOwner {
             orWindow.toFront();
 
             CheckBoxDialog dialog = new CheckBoxDialog(this,
-                    orWindow, 
+                    orWindow,
                     LocalText.getText("ExchangeTokens"),
                     prompt,
                     options.toArray(new String[0]));
@@ -687,22 +695,22 @@ public class GameUIManager implements DialogOwner {
                 for (int index=0; index < options.length; index++) {
                     if (exchanged[index]) {
                         action.getTokensToExchange().get(index).setSelected(true);
-                   }
+                    }
                 }
             } else if (currentDialog instanceof RadioButtonDialog
-                        && currentDialogAction instanceof RepayLoans) {
+                    && currentDialogAction instanceof RepayLoans) {
 
-                    RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
-                    RepayLoans action = (RepayLoans) currentDialogAction;
-                    int selected = dialog.getSelectedOption();
-                    action.setNumberTaken(action.getMinNumber() + selected);
-                    
+                RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
+                RepayLoans action = (RepayLoans) currentDialogAction;
+                int selected = dialog.getSelectedOption();
+                action.setNumberTaken(action.getMinNumber() + selected);
+
             } else if (currentDialog instanceof MessageDialog) {
                 // Nothing to do
                 currentDialogAction = null; // Should already be null
-                
+
             } else if (currentDialog instanceof AutoSaveLoadDialog) {
-                
+
                 autoSaveLoadGame2 ((AutoSaveLoadDialog)currentDialog);
 
             } else {
@@ -713,22 +721,22 @@ public class GameUIManager implements DialogOwner {
         /*if (currentDialogAction != null)*/ processAction(currentDialogAction);
 
     }
-    
+
     protected void autoSave (String newPlayer) {
         lastSavedFilename = savePrefix + "_"
-                    + saveDateTimeFormat.format(new Date()) + "_"
-                    + newPlayer + "."
-                    + saveExtension;
+        + saveDateTimeFormat.format(new Date()) + "_"
+        + newPlayer + "."
+        + saveExtension;
         GameAction saveAction = new GameAction(GameAction.SAVE);
         saveAction.setFilepath(saveDirectory + "/" + lastSavedFilename);
         log.debug("Autosaving to "+lastSavedFilename);
         processOnServer (saveAction);
-        
+
         saveAutoSavedFilename (lastSavedFilename);
     }
-    
+
     protected void saveAutoSavedFilename (String lastSavedFilename) {
-        
+
         try {
             File f = new File (lastSavedFilenameFilepath);
             PrintWriter out = new PrintWriter (new FileWriter (f));
@@ -737,9 +745,9 @@ public class GameUIManager implements DialogOwner {
         } catch (IOException e) {
             log.error ("Exception whilst autosaving file '"+lastSavedFilenameFilepath+"'", e);
         }
-        
+
     }
-    
+
     protected boolean pollingIsOn () {
         return autoLoadPoller != null && autoLoadPoller.getStatus() == AutoLoadPoller.ON;
     }
@@ -838,10 +846,10 @@ public class GameUIManager implements DialogOwner {
                 currentSuffix = saveSuffix;
             }
             filename =
-                    saveDirectory + "/" + savePrefix + "_"
-                            + saveDateTimeFormat.format(new Date()) + "_"
-                            + currentSuffix + "."
-                            + saveExtension;
+                saveDirectory + "/" + savePrefix + "_"
+                + saveDateTimeFormat.format(new Date()) + "_"
+                + currentSuffix + "."
+                + saveExtension;
         }
 
         File proposedFile = new File(filename);
@@ -863,7 +871,7 @@ public class GameUIManager implements DialogOwner {
                         && proposedParts[1].equals(selectedParts[1])) {
                     savePrefix = selectedParts[0];
                 } else {
-                // Otherwise, remember and keep using the whole filename.
+                    // Otherwise, remember and keep using the whole filename.
                     providedName = filepath;
                 }
             }
@@ -888,9 +896,9 @@ public class GameUIManager implements DialogOwner {
         }
 
     }
-    
+
     public void autoSaveLoadGame () {
-        
+
         localPlayerName = System.getProperty("local.player.name");
         if (!Util.hasValue(localPlayerName)) {
             localPlayerName = Config.get("local.player.name");
@@ -900,21 +908,21 @@ public class GameUIManager implements DialogOwner {
             return;
         }
         log.debug("Polling local player name: "+localPlayerName);
-        
+
         AutoSaveLoadDialog dialog = new AutoSaveLoadDialog (this,
-                        autoSaveLoadStatus,
-                        autoSaveLoadPollingInterval);
+                autoSaveLoadStatus,
+                autoSaveLoadPollingInterval);
         setCurrentDialog(dialog, null);
     }
-    
+
     public void autoSaveLoadGame2 (AutoSaveLoadDialog dialog) {
-        
+
         autoSaveLoadStatus = dialog.getStatus();
         autoSaveLoadPollingInterval = dialog.getInterval();
-        
+
         if (autoLoadPoller == null && autoSaveLoadStatus > 0) {
-            
-            autoLoadPoller = new AutoLoadPoller (this, saveDirectory, savePrefix, 
+
+            autoLoadPoller = new AutoLoadPoller (this, saveDirectory, savePrefix,
                     localPlayerName, autoSaveLoadStatus, autoSaveLoadPollingInterval);
             autoLoadPoller.start();
         } else if (autoLoadPoller != null) {
@@ -923,26 +931,26 @@ public class GameUIManager implements DialogOwner {
         }
         log.debug("AutoSaveLoad parameters: status="+autoSaveLoadStatus
                 +" interval="+autoSaveLoadPollingInterval);
-        
+
         if (gameWasLoaded) {
             autoSaveLoadInitialized = true;
             lastSavedFilenameFilepath = saveDirectory + "/" + savePrefix + ".last_rails";
             saveAutoSavedFilename (lastSavedFilename);
         }
-        
+
         if (autoLoadPoller != null && autoSaveLoadStatus != AutoLoadPoller.OFF
                 && !autoSaveLoadInitialized && !gameWasLoaded) {
-                
+
             /* The first time (only) we use the normal save process,
              * so the player can select a directory, and change
-             * the prefix if so desired. 
+             * the prefix if so desired.
              */
             GameAction saveAction = new GameAction(GameAction.SAVE);
             saveSuffix = localPlayerName;
             saveGame (saveAction);
             File lastSavedFile = new File (saveAction.getFilepath());
             saveDirectory = lastSavedFile.getParentFile().getPath();
-            
+
             /* Now also save the "last saved file" file */
             String lastSavedFilename = lastSavedFile.getName();
             lastSavedFilenameFilepath = saveDirectory + "/" + savePrefix + ".last_rails";
@@ -953,13 +961,13 @@ public class GameUIManager implements DialogOwner {
                 out.close();
                 autoSaveLoadInitialized = true;
             } catch (IOException e) {
-                log.error ("Exception whilst creating .last_rails file '" 
+                log.error ("Exception whilst creating .last_rails file '"
                         + lastSavedFilenameFilepath + "'", e);
             }
         }
-            
+
         myTurn = getCurrentPlayer().getId().equals(localPlayerName);
-        
+
         if (!myTurn) {
             // Start autoload polling
             autoLoadPoller.setActive(autoSaveLoadStatus == AutoLoadPoller.ON && !myTurn);
@@ -972,7 +980,7 @@ public class GameUIManager implements DialogOwner {
         }
 
     }
-    
+
     /*
     public boolean isMyTurn() {
         return myTurn;
@@ -981,7 +989,7 @@ public class GameUIManager implements DialogOwner {
     public void setMyTurn(boolean myTurn) {
         this.myTurn = myTurn;
     }
-    */
+     */
 
     public void setSaveDirectory(String saveDirectory) {
         this.saveDirectory = saveDirectory;

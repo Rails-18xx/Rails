@@ -9,7 +9,8 @@ public class GuiDef {
         OR_UI_MANAGER ("rails.ui.swing.ORUIManager"),
         STATUS_WINDOW ("rails.ui.swing.StatusWindow"),
         GAME_STATUS ("rails.ui.swing.GameStatus"),
-        OR_WINDOW ("rails.ui.swing.ORWindow");
+        OR_WINDOW ("rails.ui.swing.ORWindow"),
+        START_ROUND_WINDOW ("rails.ui.swing.StartRoundWindow");
 
         private String defaultClassName;
 
@@ -54,5 +55,5 @@ public class GuiDef {
         MAP,
         STOCK_MARKET
     }
-    
- }
+
+}
