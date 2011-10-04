@@ -2,13 +2,11 @@ package rails.game;
 
 import java.util.*;
 
+import rails.common.*;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Iterables;
 
-import rails.common.DisplayBuffer;
-import rails.common.GuiDef;
-import rails.common.LocalText;
 import rails.common.parser.GameOption;
 import rails.game.action.*;
 import rails.game.model.PortfolioModel;
@@ -114,7 +112,7 @@ public class StockRound extends Round {
             DisplayBuffer.add(LocalText.getText("ExceedCertificateLimit"
                     , currentPlayer.getId()
                     , isPlayerOverLimitsDetail(currentPlayer)
-                    )
+            )
             );
             return true;
         }
@@ -261,7 +259,7 @@ public class StockRound extends Round {
             price = stockSpace.getPrice() / unitsForPrice;
             shareUnit = comp.getShareUnit();
             maxNumberOfSharesToBuy
-                    = maxAllowedNumberOfSharesToBuy(currentPlayer, comp, shareUnit);
+            = maxAllowedNumberOfSharesToBuy(currentPlayer, comp, shareUnit);
 
             /* Checks if the player can buy any shares of this company */
             if (maxNumberOfSharesToBuy < 1) continue;
@@ -428,9 +426,6 @@ public class StockRound extends Round {
             for (int i = 1; i <= 4; i++) {
                 number = shareCountPerUnit[i];
                 if (number == 0) continue;
-                number =
-                    Math.min(number, maxShareToSell
-                            / (i * company.getShareUnit()));
 
                 /* In some games (1856), a just bought share may not be sold */
                 // This code ignores the possibility of different share units
@@ -440,7 +435,12 @@ public class StockRound extends Round {
                 }
                 if (number <= 0) continue;
 
-                possibleActions.add(new SellShares(company.getId(), i, number, price));
+                // Check against the share% already in the pool
+                number =
+                    Math.min(number, maxShareToSell
+                            / (i * company.getShareUnit()));
+                if (number <= 0) continue;
+
 
             }
         }
@@ -953,8 +953,8 @@ public class StockRound extends Round {
 
             // May player sell this company
             if (!mayPlayerSellShareOfCompany(company)) {
-            	errMsg = LocalText.getText("SaleNotAllowed", companyName);
-            	break;
+                errMsg = LocalText.getText("SaleNotAllowed", companyName);
+                break;
             }
 
             // The player must have the share(s)
@@ -1072,8 +1072,8 @@ public class StockRound extends Round {
 
         if (!company.isClosed()) {
 
-        	executeShareTransfer (company, certsToSell,
-        			dumpedPlayer, presSharesToSell);
+            executeShareTransfer (company, certsToSell,
+                    dumpedPlayer, presSharesToSell);
         }
 
         // Remember that the player has sold this company this round.
@@ -1089,7 +1089,7 @@ public class StockRound extends Round {
 
     protected void executeShareTransfer (PublicCompany company,
     		List<PublicCertificate> certsToSell,
-    		Player dumpedPlayer, int presSharesToSell) {
+            Player dumpedPlayer, int presSharesToSell) {
 
         PortfolioModel portfolio = currentPlayer.getPortfolioModel();
 
@@ -1358,13 +1358,13 @@ public class StockRound extends Round {
         setNextPlayer();
         sellPrices.clear();
         if (hasAutopassed(currentPlayer)) {
-        	if (isPlayerOverLimits(currentPlayer)) {
-        		// Being over a share/certificate limit undoes an Autopass setting
-        		setAutopass (currentPlayer, false);
-        	} else {
-        		// Process a pass for a player that has set Autopass
+            if (isPlayerOverLimits(currentPlayer)) {
+                // Being over a share/certificate limit undoes an Autopass setting
+                setAutopass (currentPlayer, false);
+            } else {
+                // Process a pass for a player that has set Autopass
         		done (null, currentPlayer.getId(), true);
-        	}
+            }
         }
     }
 
@@ -1436,7 +1436,7 @@ public class StockRound extends Round {
         if (noSaleIfNotOperated()
                 && !company.hasOperated()) return false;
 
-    	return true;
+        return true;
     }
 
 
@@ -1568,15 +1568,15 @@ public class StockRound extends Round {
     }
 
 	public boolean isSellObligationLifted(PublicCompany company) {
-		return sellObligationLifted != null
-				&& sellObligationLifted.contains(company);
-	}
+        return sellObligationLifted != null
+        && sellObligationLifted.contains(company);
+    }
 
 	public void setSellObligationLifted (PublicCompany company) {
-		if (sellObligationLifted == null) {
+        if (sellObligationLifted == null) {
 			sellObligationLifted = HashSetState.create(this, "sellObligationLifted");
-		}
-		sellObligationLifted.add(company);
-	}
+        }
+        sellObligationLifted.add(company);
+    }
 
 }
