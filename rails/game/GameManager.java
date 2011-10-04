@@ -46,6 +46,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     protected String gameStatusClassName = GuiDef.getDefaultClassName(GuiDef.ClassName.GAME_STATUS);
     protected String statusWindowClassName = GuiDef.getDefaultClassName(GuiDef.ClassName.STATUS_WINDOW);
     protected String orWindowClassName = GuiDef.getDefaultClassName(GuiDef.ClassName.OR_WINDOW);
+    protected String startRoundWindowClassName = GuiDef.getDefaultClassName(GuiDef.ClassName.START_ROUND_WINDOW);
 
     protected PlayerManager playerManager;
     protected CompanyManagerI companyManager;
@@ -488,6 +489,16 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
                             orWindowClassName);
                 // Check instantiatability (not sure if this belongs here)
                 canClassBeInstantiated (orWindowClassName);
+            }
+
+            // StartRoundWindow class
+            Tag startRoundWindowTag = guiClassesTag.getChild("StartRoundWindow");
+            if (startRoundWindowTag != null) {
+                startRoundWindowClassName =
+                    startRoundWindowTag.getAttributeAsString("class",
+                            startRoundWindowClassName);
+                // Check instantiatability (not sure if this belongs here)
+                canClassBeInstantiated (startRoundWindowClassName);
             }
         }
     }
@@ -1639,6 +1650,9 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
         case STATUS_WINDOW:
             return statusWindowClassName;
+
+        case START_ROUND_WINDOW:
+            return startRoundWindowClassName;
 
         case GAME_STATUS:
             return gameStatusClassName;

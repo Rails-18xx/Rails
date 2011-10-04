@@ -20,7 +20,7 @@ import rails.ui.swing.elements.*;
  * This displays the Auction Window
  */
 public class StartRoundWindow extends JFrame implements ActionListener,
-        KeyListener, ActionPerformer {
+KeyListener, ActionPerformer {
     private static final long serialVersionUID = 1L;
 
     // Gap sizes between screen cells, in pixels
@@ -36,10 +36,10 @@ public class StartRoundWindow extends JFrame implements ActionListener,
     private static final Color soldColour = new Color (128, 128, 128);
     private static final Color defaultColour = Color.BLACK;
 
-    private final JPanel statusPanel;
-    private final JPanel buttonPanel;
+    private JPanel statusPanel;
+    private JPanel buttonPanel;
 
-    private final GridBagLayout gb;
+    private GridBagLayout gb;
     private GridBagConstraints gbc;
 
     // Grid elements per function
@@ -64,22 +64,22 @@ public class StartRoundWindow extends JFrame implements ActionListener,
     private Caption[] lowerPlayerCaption;
 
     private ActionButton bidButton;
-    private final ActionButton buyButton;
+    private ActionButton buyButton;
     private JSpinner bidAmount;
     private SpinnerNumberModel spinnerModel;
-    private final ActionButton passButton;
+    private ActionButton passButton;
 
     private ImageIcon infoIcon = null;
 
-    private final int np; // Number of players
-    private final int ni; // Number of start items
-    private final Player[] players;
-    private final StartItem[] items;
-    private final StartItemAction[] actionableItems;
-    private final StartPacket packet;
-    private final int[] crossIndex;
-    private final StartRound round;
-    private final GameUIManager gameUIManager;
+    private int np; // Number of players
+    private int ni; // Number of start items
+    private Player[] players;
+    private StartItem[] items;
+    private StartItemAction[] actionableItems;
+    private StartPacket packet;
+    private int[] crossIndex;
+    private StartRound round;
+    private GameUIManager gameUIManager;
 
     private StartItem si;
     private JComponent f;
@@ -87,29 +87,29 @@ public class StartRoundWindow extends JFrame implements ActionListener,
     /** @see StartItem.statusName */
     public static final String[] itemStatusTextKeys =
         new String[] { "Status_Unavailable", "Status_Biddable", "Status_Buyable",
-                "Status_Selectable", "Status_Auctioned",
-                "Status_NeedingSharePrice", "Status_Sold" };
+        "Status_Selectable", "Status_Auctioned",
+        "Status_NeedingSharePrice", "Status_Sold" };
 
     // Current state
     private int playerIndex = -1;
 
     private final PossibleActions possibleActions =
-            PossibleActions.getInstance();
+        PossibleActions.getInstance();
     private PossibleAction immediateAction = null;
 
     private final ButtonGroup itemGroup = new ButtonGroup();
     private ClickField dummyButton; // To be selected if none else is.
 
-    private final boolean includeBidding;
-    private final boolean showBasePrices;
+    private boolean includeBidding;
+    private boolean showBasePrices;
 
-//    private boolean repacked = false;
+    //    private boolean repacked = false;
 
     protected static Logger log =
-            Logger.getLogger(StartRoundWindow.class.getPackage().getName());
+        Logger.getLogger(StartRoundWindow.class.getPackage().getName());
 
-    public StartRoundWindow(StartRound round, GameUIManager parent) {
-        super();
+    public void init(StartRound round, GameUIManager parent) {
+        //super();
         this.round = round;
         includeBidding = round.hasBidding();
         showBasePrices = round.hasBasePrices();
@@ -139,8 +139,8 @@ public class StartRoundWindow extends JFrame implements ActionListener,
             buttonPanel.add(bidButton);
 
             spinnerModel =
-                    new SpinnerNumberModel(new Integer(999), new Integer(0),
-                            null, new Integer(1));
+                new SpinnerNumberModel(new Integer(999), new Integer(0),
+                        null, new Integer(1));
             bidAmount = new JSpinner(spinnerModel);
             bidAmount.setPreferredSize(new Dimension(50, 28));
             bidAmount.setEnabled(false);
@@ -284,9 +284,9 @@ public class StartRoundWindow extends JFrame implements ActionListener,
             f = itemName[i] = new Caption(si.getName());
             addField(f, itemNameXOffset, itemNameYOffset + i, 1, 1, WIDE_RIGHT);
             f =
-                    itemNameButton[i] =
-                            new ClickField(si.getName(), "", "", this,
-                                    itemGroup);
+                itemNameButton[i] =
+                    new ClickField(si.getName(), "", "", this,
+                            itemGroup);
             addField(f, itemNameXOffset, itemNameYOffset + i, 1, 1, WIDE_RIGHT);
             // Prevent row height resizing after every buy action
             itemName[i].setPreferredSize(itemNameButton[i].getPreferredSize());
@@ -335,9 +335,9 @@ public class StartRoundWindow extends JFrame implements ActionListener,
                 WIDE_RIGHT + (firstBelowTable ? WIDE_TOP : 0));
         for (int i = 0; i < np; i++) {
             f =
-                    playerFree[i] =
-                            new Field(includeBidding
-                                    ? round.getFreeCashModel(i)
+                playerFree[i] =
+                    new Field(includeBidding
+                            ? round.getFreeCashModel(i)
                                     : players[i].getCashModel());
             addField(f, playerFreeCashXOffset + i, playerFreeCashYOffset, 1, 1,
                     firstBelowTable ? WIDE_TOP : 0);
@@ -366,11 +366,11 @@ public class StartRoundWindow extends JFrame implements ActionListener,
         padTop = (wideGapPositions & WIDE_TOP) > 0 ? WIDE_GAP : NARROW_GAP;
         padLeft = (wideGapPositions & WIDE_LEFT) > 0 ? WIDE_GAP : NARROW_GAP;
         padBottom =
-                (wideGapPositions & WIDE_BOTTOM) > 0 ? WIDE_GAP : NARROW_GAP;
-        padRight = (wideGapPositions & WIDE_RIGHT) > 0 ? WIDE_GAP : NARROW_GAP;
-        gbc.insets = new Insets(padTop, padLeft, padBottom, padRight);
+            (wideGapPositions & WIDE_BOTTOM) > 0 ? WIDE_GAP : NARROW_GAP;
+            padRight = (wideGapPositions & WIDE_RIGHT) > 0 ? WIDE_GAP : NARROW_GAP;
+            gbc.insets = new Insets(padTop, padLeft, padBottom, padRight);
 
-        statusPanel.add(comp, gbc);
+            statusPanel.add(comp, gbc);
 
     }
 
@@ -384,7 +384,7 @@ public class StartRoundWindow extends JFrame implements ActionListener,
         }
         // Unselect the selected private
         dummyButton.setSelected(true);
-        
+
         if (!myTurn) return;
 
         // For debugging
@@ -393,7 +393,7 @@ public class StartRoundWindow extends JFrame implements ActionListener,
         }
 
         List<StartItemAction> actions =
-                possibleActions.getType(StartItemAction.class);
+            possibleActions.getType(StartItemAction.class);
 
         if (actions == null || actions.isEmpty()) {
             close();
@@ -401,7 +401,7 @@ public class StartRoundWindow extends JFrame implements ActionListener,
         }
 
         int nextPlayerIndex =
-                ((PossibleAction) actions.get(0)).getPlayerIndex();
+            ((PossibleAction) actions.get(0)).getPlayerIndex();
         setSRPlayerTurn(nextPlayerIndex);
 
         boolean passAllowed = false;
@@ -440,7 +440,7 @@ public class StartRoundWindow extends JFrame implements ActionListener,
                 } else {
                     PossibleAction lastAction = gameUIManager.getLastAction();
                     if (lastAction instanceof GameAction
-                        && (((GameAction) lastAction).getMode() == GameAction.UNDO || ((GameAction) lastAction).getMode() == GameAction.FORCED_UNDO)) {
+                            && (((GameAction) lastAction).getMode() == GameAction.UNDO || ((GameAction) lastAction).getMode() == GameAction.FORCED_UNDO)) {
                         // If we come here via an Undo, we should not start
                         // with a modal dialog, as that would prevent further
                         // Undos.
@@ -482,7 +482,7 @@ public class StartRoundWindow extends JFrame implements ActionListener,
         passAllowed = false;
 
         List<NullAction> inactiveItems =
-                possibleActions.getType(NullAction.class);
+            possibleActions.getType(NullAction.class);
         if (inactiveItems != null && !inactiveItems.isEmpty()) {
             // only one NullAction is allowed
             NullAction na = inactiveItems.get(0);
@@ -534,8 +534,8 @@ public class StartRoundWindow extends JFrame implements ActionListener,
         if (source instanceof ClickField) {
             gbc = gb.getConstraints(source);
             StartItemAction currentActiveItem =
-                    (StartItemAction) ((ClickField) source).getPossibleActions().get(
-                            0);
+                (StartItemAction) ((ClickField) source).getPossibleActions().get(
+                        0);
 
             if (currentActiveItem instanceof BuyStartItem) {
                 buyButton.setEnabled(true);
@@ -554,10 +554,10 @@ public class StartRoundWindow extends JFrame implements ActionListener,
                     passButton.setEnabled(true);
                     passButton.setText(LocalText.getText("SelectNoBid"));
                     passButton.setVisible(true);
-//                    if (!repacked) {
-                        pack();
-//                        repacked = true;
-//                    }
+                    //                    if (!repacked) {
+                    pack();
+                    //                        repacked = true;
+                    //                    }
 
                 }
                 if (includeBidding) {
@@ -572,11 +572,11 @@ public class StartRoundWindow extends JFrame implements ActionListener,
             }
         } else if (source instanceof ActionButton) {
             PossibleAction activeItem =
-                    ((ActionButton) source).getPossibleActions().get(0);
+                ((ActionButton) source).getPossibleActions().get(0);
 
             if (source == buyButton) {
                 if (activeItem instanceof BuyStartItem
-                    && ((BuyStartItem) activeItem).hasSharePriceToSet()) {
+                        && ((BuyStartItem) activeItem).hasSharePriceToSet()) {
                     if (requestStartPrice((BuyStartItem) activeItem))
                         process(activeItem);
                 } else {
@@ -590,7 +590,7 @@ public class StartRoundWindow extends JFrame implements ActionListener,
             } else if (source == passButton) {
 
                 if (activeItem != null && activeItem instanceof BidStartItem
-                    && ((BidStartItem) activeItem).isSelectForAuction()) {
+                        && ((BidStartItem) activeItem).isSelectForAuction()) {
                     ((BidStartItem) activeItem).setActualBid(-1);
                 }
                 process(activeItem);
@@ -610,7 +610,7 @@ public class StartRoundWindow extends JFrame implements ActionListener,
             // TODO: should be included in BuyStartItem
             List<StockSpaceI> startSpaces = stockMarket.getStartSpaces();
             Map<Integer, StockSpaceI> spacePerPrice =
-                    new HashMap<Integer, StockSpaceI>();
+                new HashMap<Integer, StockSpaceI>();
             int[] prices = new int[startSpaces.size()];
             StockSpaceI[] options = new StockSpaceI[startSpaces.size()];
             for (int i = 0; i < startSpaces.size(); i++) {
@@ -623,13 +623,13 @@ public class StartRoundWindow extends JFrame implements ActionListener,
             }
 
             StockSpace sp =
-                    (StockSpace) JOptionPane.showInputDialog(this,
-                            LocalText.getText("WHICH_START_PRICE",
-                                    activeItem.getPlayerName(),
-                                    compName),
-                            LocalText.getText("WHICH_PRICE"),
-                            JOptionPane.QUESTION_MESSAGE, null, options,
-                            options[0]);
+                (StockSpace) JOptionPane.showInputDialog(this,
+                        LocalText.getText("WHICH_START_PRICE",
+                                activeItem.getPlayerName(),
+                                compName),
+                                LocalText.getText("WHICH_PRICE"),
+                                JOptionPane.QUESTION_MESSAGE, null, options,
+                                options[0]);
             if (sp == null) {
                 return false;
             }
@@ -681,43 +681,43 @@ public class StartRoundWindow extends JFrame implements ActionListener,
                 status == StartItem.BUYABLE ? buyableColour : defaultColour);
     }
 
-   private String getStartItemDescription (StartItem item) {
-            StringBuffer b = new StringBuffer("<html>");
-            b.append (item.getPrimary().toString());
-            if (item.getPrimary() instanceof PrivateCompany) {
-                PrivateCompany priv = (PrivateCompany) item.getPrimary();
-                b.append ("<br>Revenue: ").append(Bank.formatIntegerArray(priv.getRevenue()));
-                List<MapHex> blockedHexes = priv.getBlockedHexes();
-                if (blockedHexes == null) {
-                } else if (blockedHexes.size() == 1) {
-                    b.append("<br>Blocked hex: ").append(blockedHexes.get(0).getName());
-                } else if (blockedHexes.size() > 1) {
-                    b.append("<br>Blocked hexes:");
-                    for (MapHex hex : blockedHexes) {
-                        b.append(" ").append(hex.getName());
-                    }
+    private String getStartItemDescription (StartItem item) {
+        StringBuffer b = new StringBuffer("<html>");
+        b.append (item.getPrimary().toString());
+        if (item.getPrimary() instanceof PrivateCompany) {
+            PrivateCompany priv = (PrivateCompany) item.getPrimary();
+            b.append ("<br>Revenue: ").append(Bank.formatIntegerArray(priv.getRevenue()));
+            List<MapHex> blockedHexes = priv.getBlockedHexes();
+            if (blockedHexes == null) {
+            } else if (blockedHexes.size() == 1) {
+                b.append("<br>Blocked hex: ").append(blockedHexes.get(0).getName());
+            } else if (blockedHexes.size() > 1) {
+                b.append("<br>Blocked hexes:");
+                for (MapHex hex : blockedHexes) {
+                    b.append(" ").append(hex.getName());
                 }
-                if (priv.hasSpecialProperties()) {
-                    b.append("<br><b>Special properties:</b>");
-                    for (SpecialPropertyI sp : priv.getSpecialProperties()) {
-                        b.append("<br>").append(sp.toString());
-                   }
+            }
+            if (priv.hasSpecialProperties()) {
+                b.append("<br><b>Special properties:</b>");
+                for (SpecialPropertyI sp : priv.getSpecialProperties()) {
+                    b.append("<br>").append(sp.toString());
                 }
-                // sfy 1889
-                List<String> preventClosingConditions = priv.getPreventClosingConditions();
-                if (!preventClosingConditions.isEmpty()) {
-                    b.append("<br><b>Prevent closing conditions:</b>");
-                    for (String condition : preventClosingConditions) {
-                        b.append("<br>").append(condition);
-                   }
+            }
+            // sfy 1889
+            List<String> preventClosingConditions = priv.getPreventClosingConditions();
+            if (!preventClosingConditions.isEmpty()) {
+                b.append("<br><b>Prevent closing conditions:</b>");
+                for (String condition : preventClosingConditions) {
+                    b.append("<br>").append(condition);
                 }
+            }
 
-            }
-            if (item.getSecondary() != null) {
-                b.append("<br><b>Also contains:</b><br>");
-                b.append(item.getSecondary().toString());
-            }
-            return b.toString();
+        }
+        if (item.getSecondary() != null) {
+            b.append("<br><b>Also contains:</b><br>");
+            b.append(item.getSecondary().toString());
+        }
+        return b.toString();
     }
 
     private ImageIcon createInfoIcon() {
