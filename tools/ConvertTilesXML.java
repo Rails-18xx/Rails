@@ -1,19 +1,21 @@
 package tools;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.*;
-import java.util.regex.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import javax.xml.parsers.*;
-import javax.xml.transform.*;
-import javax.xml.transform.dom.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.*;
 
 import rails.common.parser.ConfigurationException;
 import rails.util.Util;
-import tools.XmlUtils;
 
 /**
  * Convert an XML tile dictionary, as created by Marco Rocci's Tile Designer, to
@@ -82,41 +84,41 @@ public class ConvertTilesXML {
         cityMap = new HashMap<String, String>();
         cityMap.put("tpCenter", "0");
         cityMap.put("tp1SideA", "001");
-        cityMap.put("tp1CornerA", "051");
+        cityMap.put("tp1CornerB", "051");
         cityMap.put("tp1SideB", "101");
-        cityMap.put("tp1CornerB", "151");
+        cityMap.put("tp1CornerC", "151");
         cityMap.put("tp1SideC", "201");
-        cityMap.put("tp1CornerC", "251");
+        cityMap.put("tp1CornerD", "251");
         cityMap.put("tp1SideD", "301");
-        cityMap.put("tp1CornerD", "351");
+        cityMap.put("tp1CornerE", "351");
         cityMap.put("tp1SideE", "401");
-        cityMap.put("tp1CornerE", "451");
+        cityMap.put("tp1CornerF", "451");
         cityMap.put("tp1SideF", "501");
-        cityMap.put("tp1CornerF", "551");
+        cityMap.put("tp1CornerA", "551");
         cityMap.put("tp2SideA", "002");
-        cityMap.put("tp2CornerA", "052");
+        cityMap.put("tp2CornerB", "052");
         cityMap.put("tp2SideB", "102");
-        cityMap.put("tp2CornerB", "152");
+        cityMap.put("tp2CornerC", "152");
         cityMap.put("tp2SideC", "202");
-        cityMap.put("tp2CornerC", "252");
+        cityMap.put("tp2CornerD", "252");
         cityMap.put("tp2SideD", "302");
-        cityMap.put("tp2CornerD", "352");
+        cityMap.put("tp2CornerE", "352");
         cityMap.put("tp2SideE", "402");
-        cityMap.put("tp2CornerE", "452");
+        cityMap.put("tp2CornerF", "452");
         cityMap.put("tp2SideF", "502");
-        cityMap.put("tp2CornerF", "552");
+        cityMap.put("tp2CornerA", "552");
         cityMap.put("tp3SideA", "003");
-        cityMap.put("tp3CornerA", "053");
+        cityMap.put("tp3CornerB", "053");
         cityMap.put("tp3SideB", "103");
-        cityMap.put("tp3CornerB", "153");
+        cityMap.put("tp3CornerC", "153");
         cityMap.put("tp3SideC", "203");
-        cityMap.put("tp3CornerC", "253");
+        cityMap.put("tp3CornerD", "253");
         cityMap.put("tp3SideD", "303");
-        cityMap.put("tp3CornerD", "353");
+        cityMap.put("tp3CornerE", "353");
         cityMap.put("tp3SideE", "403");
-        cityMap.put("tp3CornerE", "453");
+        cityMap.put("tp3CornerF", "453");
         cityMap.put("tp3SideF", "503");
-        cityMap.put("tp3CornerF", "553");
+        cityMap.put("tp3CornerA", "553");
         cityMap.put("tpCurve1RightA", "006");
         cityMap.put("tpCurve2RightA", "007");
         cityMap.put("tpCurve2LeftA", "008");
@@ -164,11 +166,11 @@ public class ConvertTilesXML {
         System.out.println("Input file path: "+(new File(inputFilePath).getAbsolutePath()));
         System.out.println("Output file path: "+(new File(outputFilePath).getAbsolutePath()));
         Element inputTopElement =
-                XmlUtils.findElementInFile(inputFilePath, "tiles");
+            XmlUtils.findElementInFile(inputFilePath, "tiles");
 
         try {
             DocumentBuilderFactory factory =
-                    DocumentBuilderFactory.newInstance();
+                DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             DOMImplementation impl = builder.getDOMImplementation();
             outputDoc = impl.createDocument(null, "Tiles", null);
@@ -187,7 +189,7 @@ public class ConvertTilesXML {
     }
 
     private void convertXML(Element inputElement, Document outputDoc)
-            throws ConfigurationException {
+    throws ConfigurationException {
 
         NodeList children = inputElement.getElementsByTagName("tile");
         for (int i = 0; i < children.getLength(); i++) {
@@ -200,10 +202,10 @@ public class ConvertTilesXML {
     }
 
     private void convertTile(Element inputTile, Element outputTile)
-            throws ConfigurationException {
+    throws ConfigurationException {
 
         String id =
-                inputTile.getElementsByTagName("ID").item(0).getFirstChild().getNodeValue();
+            inputTile.getElementsByTagName("ID").item(0).getFirstChild().getNodeValue();
         System.out.println(id);
         tileNo = id;
         outputTile.setAttribute("id", id);
@@ -215,7 +217,7 @@ public class ConvertTilesXML {
         }
 
         String level =
-                inputTile.getElementsByTagName("level").item(0).getFirstChild().getNodeValue();
+            inputTile.getElementsByTagName("level").item(0).getFirstChild().getNodeValue();
         colour = colourMap.get(level);
         if (colour == null) {
             throw new ConfigurationException("Unknown level: " + level);
@@ -224,7 +226,7 @@ public class ConvertTilesXML {
         }
 
         String name =
-                inputTile.getElementsByTagName("name").item(0).getFirstChild().getNodeValue();
+            inputTile.getElementsByTagName("name").item(0).getFirstChild().getNodeValue();
         Matcher m = namePattern.matcher(name);
         if (m.matches()) {
             outputTile.setAttribute("name", m.group(1));
@@ -244,7 +246,7 @@ public class ConvertTilesXML {
         outputJunction = null;
 
         Element junctions =
-                (Element) inputTile.getElementsByTagName("junctions").item(0);
+            (Element) inputTile.getElementsByTagName("junctions").item(0);
         NodeList children = junctions.getElementsByTagName("junction");
         for (int i = 0; i < children.getLength(); i++) {
             Element inputJunction = (Element) children.item(i);
@@ -258,7 +260,7 @@ public class ConvertTilesXML {
         resolvedTrack = new HashMap<Element, String>();
 
         Element connections =
-                (Element) inputTile.getElementsByTagName("connections").item(0);
+            (Element) inputTile.getElementsByTagName("connections").item(0);
         children = connections.getElementsByTagName("connection");
         for (int i = 0; i < children.getLength(); i++) {
             Element inputConnection = (Element) children.item(i);
@@ -274,19 +276,19 @@ public class ConvertTilesXML {
             Element[] ends = list.toArray(new Element[0]);
             if (ends.length <= 1) {
                 throw new ConfigurationException("Loose end " + ends[0]
-                                                 + " in tile " + tileNo);
+                                                                     + " in tile " + tileNo);
             }
             for (int i = 1; i < ends.length; i++) {
                 end1 = resolvedTrack.get(ends[i]);
                 if (end1 == null) {
                     throw new ConfigurationException("Loose end " + ends[i]
-                                                     + " in tile " + tileNo);
+                                                                         + " in tile " + tileNo);
                 }
                 for (int j = 0; j < i; j++) {
                     end2 = resolvedTrack.get(ends[j]);
                     if (end2 == null) {
                         throw new ConfigurationException("Loose end " + ends[j]
-                                                         + " in tile " + tileNo);
+                                                                             + " in tile " + tileNo);
                     }
                     Element outputConnection = outputDoc.createElement("Track");
                     outputConnection.setAttribute("gauge",
@@ -307,7 +309,7 @@ public class ConvertTilesXML {
         outputJunction.setAttribute("id", cityId);
 
         String type =
-                inputJunction.getElementsByTagName("junType").item(0).getFirstChild().getNodeValue();
+            inputJunction.getElementsByTagName("junType").item(0).getFirstChild().getNodeValue();
 
         String[] station = stationMap.get(type);
         if (station == null) {
@@ -333,16 +335,16 @@ public class ConvertTilesXML {
 
         // Junction revenue
         Element revenue =
-                (Element) inputJunction.getElementsByTagName("revenue").item(0);
+            (Element) inputJunction.getElementsByTagName("revenue").item(0);
         if (revenue != null) {
             String value =
-                    revenue.getElementsByTagName("value").item(0).getFirstChild().getNodeValue();
+                revenue.getElementsByTagName("value").item(0).getFirstChild().getNodeValue();
             outputJunction.setAttribute("value", value);
         }
 
         // Junction position
         String junctionPos =
-                inputJunction.getElementsByTagName("position").item(0).getFirstChild().getNodeValue();
+            inputJunction.getElementsByTagName("position").item(0).getFirstChild().getNodeValue();
         junctionPosition.put(junctionPos, cityId);
         String jName = cityMap.get(junctionPos);
         if (Util.hasValue(jName)) {
@@ -353,10 +355,10 @@ public class ConvertTilesXML {
     }
 
     private void convertConnection(Element inputConnection, Element outputTile)
-            throws ConfigurationException {
+    throws ConfigurationException {
 
         String type =
-                inputConnection.getElementsByTagName("conType").item(0).getFirstChild().getNodeValue();
+            inputConnection.getElementsByTagName("conType").item(0).getFirstChild().getNodeValue();
         String gauge = gaugeMap.get(type);
         Element outputConnection;
         if (gauge == null) {
@@ -371,11 +373,11 @@ public class ConvertTilesXML {
             outputJunction.setAttribute("type", "pass");
 
         boolean fromOK =
-                convertTrackEnd(inputConnection, outputConnection, "position1",
-                        "from");
+            convertTrackEnd(inputConnection, outputConnection, "position1",
+            "from");
         boolean toOK =
-                convertTrackEnd(inputConnection, outputConnection, "position2",
-                        "to");
+            convertTrackEnd(inputConnection, outputConnection, "position2",
+            "to");
 
         if (fromOK && toOK) outputTile.appendChild(outputConnection);
 
@@ -383,10 +385,10 @@ public class ConvertTilesXML {
 
     private boolean convertTrackEnd(Element inputConnection,
             Element outputConnection, String inputName, String outputName)
-            throws ConfigurationException {
+    throws ConfigurationException {
 
         String position =
-                inputConnection.getElementsByTagName(inputName).item(0).getFirstChild().getNodeValue();
+            inputConnection.getElementsByTagName(inputName).item(0).getFirstChild().getNodeValue();
 
         String end = sidesMap.get(position);
         if (end == null) end = junctionPosition.get(position);
