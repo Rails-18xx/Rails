@@ -25,7 +25,10 @@
 	<Hex name="D8" tile="0"/>
 	<Hex name="D10" tile="-3008" city="Augusta"/>
 	
-	<Hex name="E1" tile="-1143" orientation="1" value="30,40" city="Montgomery"/>
+	<Hex name="E1" tile="-1143" orientation="1" value="30,40" city="Montgomery">
+			<Access score="major"/> 
+	</Hex>
+	
 	<IfOption name="Variant" value="Basegame">
 		<Hex name="E3" tile="0" cost="40"/>
 	</IfOption>
@@ -123,7 +126,9 @@
 	</Hex>
 	<Hex name="I11" tile="-3008" city="Brunswick"/>
 	
-	<Hex name="J4" tile="-1143" value="20,50" city="Tallahassee"/>
+	<Hex name="J4" tile="-1143" value="20,50" city="Tallahassee">
+		<Access score="major"/>		
+	</Hex>
 	<Hex name="J6" tile="0"/>
 	<Hex name="J8" tile="0"/>
 	<Hex name="J10" tile="0">
