@@ -403,7 +403,7 @@ public class GameUIManager implements DialogOwner {
                         startRoundWindow = startRoundWindowClass.newInstance();
                         startRoundWindow.init(startRound, this);
                     } catch (Exception e) {
-                        log.fatal("Cannot instantiate class " + startRoundWindowClassName, e);
+                        log.error("Cannot instantiate class " + startRoundWindowClassName, e);
                         System.exit(1);
 
                     }

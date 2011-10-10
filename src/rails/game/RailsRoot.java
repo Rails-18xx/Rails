@@ -16,7 +16,7 @@ import rails.game.state.Root;
 import rails.util.GameFileIO;
 
 public class RailsRoot extends Root implements RailsItem {
-    public static final String version = "1.5";
+    public static final String version = "1.5.1+";
 
     /** The component Manager */
     protected GameManager gameManager;
