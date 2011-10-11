@@ -17,9 +17,9 @@
 		</BaseTokens>
 		<Payout split="allowed" mustExceedPriceToMove="yes"/>
 		<!--NumberOfTileLays colour="yellow" phase="3,4,5,6,8" number="2"/-->
-		<TileLays>
+		<!--TileLays>
 			<Number colour="yellow" phase="3,4,5,6,8" number="2"/>
-		</TileLays>
+		</TileLays-->
 		<TradeShares mustHaveOperated="yes"/>
 	</CompanyType>
 	<Company name="L&amp;O" type="Private" basePrice="200" revenue="5" longname="Lexington &amp; Ohio Railroad">

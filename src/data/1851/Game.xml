@@ -91,7 +91,9 @@
 			<Trains tradingAllowed="yes"/>
 		</Phase>
 		<Phase name="3">
-			<Tiles colour="yellow,green"/>
+			<Tiles colour="yellow,green">
+				<Lays companyType="Public" colour="yellow" number="2"/>
+			</Tiles>
 			<OperatingRounds number="2"/>
 		</Phase>
 		<Phase name="4">

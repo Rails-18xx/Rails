@@ -292,4 +292,23 @@ public class CompanyManager extends RailsManager implements Configurable {
     public StartPacket getStartPacket (String name) {
         return startPacketMap.get(name);
     }
+    
+    /** Pass number of turns for which a certain company type can lay extra tiles of a certain colour. */
+    // NOTE: Called by phase.finishConfiguration().
+    // This implies, that the CompanyManager configuration must finished be BEFORE PhaseManager.
+    // (We shouldn't have such dependencies...)
+    // TODO: Resolve the issues mentioned above
+    public void addExtraTileLayTurnsInfo (Map<String, Integer> extraTileTurns) {
+        for (String typeAndColour : extraTileTurns.keySet()) {
+            String[] keys = typeAndColour.split("~");
+            Map<String, Company> companies = mCompaniesByTypeAndName.get(keys[0]);
+            if (companies != null) {
+                for (Company company : companies.values()) {
+                    ((PublicCompany)company).addExtraTileLayTurnsInfo(keys[1], extraTileTurns.get(typeAndColour));
+                }
+            }
+        }
+    }
+
+    
 }

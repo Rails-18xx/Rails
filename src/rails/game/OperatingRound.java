@@ -368,7 +368,7 @@ public class OperatingRound extends Round implements Observer {
             if (!operatingCompany.value().hasLaidHomeBaseTokens()) {
                 // This can occur if the home hex has two cities and track,
                 // such as the green OO tile #59
-                                
+
                 // BR: as this is a home token, need to call LayBaseToken with a MapHex, not a list
                 // to avoid the LayBaseToken action from being a regular token lay
                 // I am not sure that this will work with multiple home hexes.
@@ -1646,8 +1646,8 @@ public class OperatingRound extends Round implements Observer {
     protected void initNormalTileLays() {
 
         // duplicate the phase colours
-        Map<String, Integer> newTileColours = new HashMap<String, Integer>(getCurrentPhase().getTileColours());
-        for (String colour : newTileColours.keySet()) {
+        Map<String, Integer> newTileColours = new HashMap<String, Integer>();
+        for (String colour : getCurrentPhase().getTileColours()) {
             int allowedNumber = operatingCompany.value().getNumberOfTileLays(colour);
             // Replace the null map value with the allowed number of lays
             newTileColours.put(colour, new Integer(allowedNumber));

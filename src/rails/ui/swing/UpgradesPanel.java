@@ -89,7 +89,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         MapHex hex = uiHex.getHexModel();
         orUIManager.tileUpgrades = new ArrayList<Tile>();
         List<Tile> tiles;
-        Set<String> allowedColours = currentPhase.getTileColours().keySet();
+        Set<String> allowedColours = new HashSet<String> (currentPhase.getTileColours());
 
         for (LayTile layTile : hexMap.getTileAllowancesForHex(hex)) {
             tiles = layTile.getTiles();
@@ -99,7 +99,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
                     // Skip if not allowed in LayTile
                     //if (!layTile.isTileColourAllowed(tile.getColourName())) continue;
 
-                    if (!orUIManager.tileUpgrades.contains(tile))
+                    if (!orUIManager.tileUpgrades.contains(tile) && layTile.isTileColourAllowed(tile.getColourName()))
                         orUIManager.tileUpgrades.add(tile);
                 }
             } else {

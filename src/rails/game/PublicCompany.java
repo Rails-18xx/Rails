@@ -17,7 +17,7 @@ import rails.game.action.SetDividend;
 import rails.game.model.*;
 import rails.game.special.*;
 import rails.game.state.*;
-import rails.util.*;
+import rails.util.Util;
 
 /**
  * This class provides an implementation of a (perhaps only basic) public
@@ -72,7 +72,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
     /** Hexadecimal representation (RRGGBB) of the background colour. */
     protected String bgHexColour = "000000";
 
-    /** Home hex & city * 
+    /** Home hex & city *
      * Two home hexes is supported, but only if:<br>
      * 1. The locations are fixed (i.e. configured by XML), and<br>
      * 2. Any station (city) numbers are equal for the two home stations.
@@ -293,7 +293,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
     protected Bank bank;
     protected StockMarket stockMarket;
     protected MapManager mapManager;
-    
+
     /** Rights */
     protected HashMapState<String, String> rights = null;
     // created in finishConfiguration
@@ -446,13 +446,13 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
             mustOwnATrain =
                 trainsTag.getAttributeAsBoolean("mandatory", mustOwnATrain);
         }
-        
+
         Tag initialTrainTag = tag.getChild("InitialTrain");
         if (initialTrainTag != null) {
             initialTrainType = initialTrainTag.getAttributeAsString("type");
             initialTrainCost = initialTrainTag.getAttributeAsInteger("cost",
                     initialTrainCost);
-            initialTrainTradeable = initialTrainTag.getAttributeAsBoolean("tradeable", 
+            initialTrainTradeable = initialTrainTag.getAttributeAsBoolean("tradeable",
                     initialTrainTradeable);
         }
 
@@ -611,7 +611,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
             ("mustTradeTrainsAtFixedPrice", mustTradeTrainsAtFixedPrice);
             canClose = optionsTag.getAttributeAsBoolean("canClose", canClose);
         }
-        
+
     }
     
 
@@ -641,7 +641,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
         }
          */
 
-       if (maxNumberOfLoans != 0) {
+        if (maxNumberOfLoans != 0) {
             currentNumberOfLoans = IntegerState.create(this, "currentNumberOfLoans");
             currentLoanValue = CountingMoneyModel.create(this, "currentLoanValue", false);
             currentLoanValue.setSuppressZero(true);
@@ -753,14 +753,14 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
 
         infoText += parentInfoText;
         parentInfoText = "";
-        
+
         // Can companies acquire special rights (such as in 1830 Coalfields)?
         // TODO: Can this be simplified?
         if (portfolio.hasSpecialProperties()) {
             for (SpecialProperty sp : portfolio.getPersistentSpecialProperties()) {
                 if (sp instanceof SpecialRight) {
                     gameManager.setGuiParameter (GuiDef.Parm.HAS_ANY_RIGHTS, true);
-                    // Initialize rights here to prevent overhead if not used, 
+                    // Initialize rights here to prevent overhead if not used,
                     // but if rights are used, the GUI needs it from the start.
                     if (rights == null) {
                         rights = HashMapState.create(this, "rights");
@@ -773,6 +773,16 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
         
         // finish Configuration of portfolio
         portfolio.finishConfiguration();
+    }
+
+    /** Used in finalizing configuration */
+    public void addExtraTileLayTurnsInfo(String colour, int turns) {
+        if (turnsWithExtraTileLays == null) {
+            turnsWithExtraTileLays = new HashMap<String, IntegerState>();
+        }
+        IntegerState tileLays = IntegerState.create
+                (this, "" + colour + "_ExtraTileTurns", turns);
+        turnsWithExtraTileLays.put(colour, tileLays);
     }
 
     /** Reset turn objects */
@@ -834,7 +844,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
 
     /**
      * Set a non-fixed company home hex.
-     * Only covers setting <i>one</i> home hex. 
+     * Only covers setting <i>one</i> home hex.
      * Having <i>two</i> home hexes is currently only supported if the locations are preconfigured.
      * @param homeHex The homeHex to set.
      */
@@ -1494,9 +1504,9 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
         return 100 / shareUnit.value();
     }
 
-    /** Get the current maximum number of trains got a given limit index. 
+    /** Get the current maximum number of trains got a given limit index.
      * @parm index The index of the train limit step as defined for the current phase. Values start at 0.
-     * <p>N.B. the new style limit steps per phase start at 1, 
+     * <p>N.B. the new style limit steps per phase start at 1,
      * so one must be subtracted before calling this method.
      */
     protected int getTrainLimit(int index) {
@@ -1772,7 +1782,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
                         // Just one spot: lay the home base there.
                         homeCityNumber = openStops.get(0).getNumber();
                     } else {
-                        // ??  
+                        // ??
                         // TODO Will player be asked??
                         return false;
                     }
@@ -1818,28 +1828,28 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
 
     public int getNumberOfTileLays(String tileColour) {
 
-        if (extraTileLays == null) return 1;
-
-        Map<String, Integer> phaseMap = extraTileLays.get(tileColour);
-        if (phaseMap == null || phaseMap.isEmpty()) return 1;
-
         Phase phase = gameManager.getPhaseManager().getCurrentPhase();
-        Integer ii = phaseMap.get(phase.getName());
-        if (ii == null) return 1;
 
-        int i = ii;
-        if (i > 1) {
-            if (extraTiles == null && turnsWithExtraTileLays != null) {
-                extraTiles = turnsWithExtraTileLays.get(tileColour);
-            }
-            if (extraTiles != null) {
+        // New style
+        int tileLays = phase.getTileLaysPerColour(getType().getId(), tileColour);
+        if (tileLays <= 1) {
+            extraTileLays = null;
+            return tileLays;
+        }
+
+        // More than one tile lay allowed.
+        // Check if there is a limitation on the number of turns that this is valid.
+        if (turnsWithExtraTileLays != null) {
+            extraTiles = turnsWithExtraTileLays.get(tileColour);
+        }
+        if (extraTiles != null) {
                 if (extraTiles.value() == 0) {
-                    extraTiles = null;
+                extraTiles.set(-1);
                     return 1;
                 }
             }
-        }
-        return i;
+
+        return tileLays;
     }
 
     public boolean mustOwnATrain() {
@@ -1886,7 +1896,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
     public MoneyModel getLoanValueModel () {
         return currentLoanValue;
     }
-    
+
     public State getRightsModel () {
         return rights;
     }
@@ -1894,22 +1904,22 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
     public boolean canClose() {
         return canClose;
     }
-    
+
     public void setRight (String nameOfRight, String value) {
         if (rights == null) {
             rights = HashMapState.create(this, "rights");
         }
         rights.put(nameOfRight, value);
     }
-    
+
     public boolean hasRight (String nameOfRight) {
         return rights != null && rights.containsKey(nameOfRight);
     }
-    
+
     public String getRight (String nameOfRight) {
         return rights != null ? rights.get(nameOfRight) : null;
     }
-    
+
     @Override
     public Object clone() {
 
@@ -1944,7 +1954,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
     public String getExtraShareMarks () {
         return "";
     }
-    
+
     /** Does the company has a route?
      * Currently this is a stub that always returns true.
      */

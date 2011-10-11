@@ -24,9 +24,14 @@ public class Phase implements Configurable {
 
     protected String realName;
 
-    protected String colourList = "";
-
-    protected HashMap<String, Integer> tileColours;
+    protected List <String> tileColours;
+    protected String tileColoursString;
+    protected Map<String, Integer> tileLaysPerColour;
+    /** For how many turns can extra tiles be laid (per company type and colour)?
+     * Default: infinite.
+     * <p>This attribute is only used during configuration. It is finally passed to CompanyType.
+     * NOT CLONED from previous phase.*/
+    protected Map<String, Integer> tileLaysPerColourTurns;
 
     protected boolean privateSellingAllowed = false;
 
@@ -95,7 +100,8 @@ public class Phase implements Configurable {
 
     public void configureFromXML(Tag tag) throws ConfigurationException {
         if (defaults != null) {
-            colourList = defaults.colourList;
+            tileColours = defaults.tileColours;
+            tileLaysPerColour = defaults.tileLaysPerColour;
             privateSellingAllowed = defaults.privateSellingAllowed;
             numberOfOperatingRounds = defaults.numberOfOperatingRounds;
             offBoardRevenueStep = defaults.offBoardRevenueStep;
@@ -116,18 +122,61 @@ public class Phase implements Configurable {
         // Real name (as in the printed game)
         realName = tag.getAttributeAsString("realName", null);
 
-        // String colourList;
-        String[] colourArray = new String[0];
-        tileColours = new HashMap<String, Integer>();
-
         // Allowed tile colours
         Tag tilesTag = tag.getChild("Tiles");
         if (tilesTag != null) {
-            colourList = tilesTag.getAttributeAsString("colour", colourList);
-        }
-        if (colourList != null) colourArray = colourList.split(",");
-        for (int i = 0; i < colourArray.length; i++) {
-            tileColours.put(colourArray[i], null);
+            String colourList = tilesTag.getAttributeAsString("colour", null);
+            if (Util.hasValue(colourList)) {
+                tileColoursString = colourList;
+                tileColours = new ArrayList<String>();
+                String[] colourArray = colourList.split(",");
+                for (int i = 0; i < colourArray.length; i++) {
+                    tileColours.add(colourArray[i]);
+                }
+            }
+
+            List<Tag> laysTag = tilesTag.getChildren("Lays");
+            if (laysTag != null && !laysTag.isEmpty()) {
+                // First create a copy of the previous map, if it exists, otherwise create the map.
+                if (tileLaysPerColour == null) {
+                    tileLaysPerColour = new HashMap<String, Integer>(4);
+                } else if (!tileLaysPerColour.isEmpty()) {
+                    // Wish there was a one-liner to deep-clone a map.  Does Guava have one?
+                    Map <String, Integer> newTileLaysPerColour = new HashMap <String, Integer>(4);
+                    for (String key : tileLaysPerColour.keySet()) {
+                        newTileLaysPerColour.put (key, tileLaysPerColour.get(key));
+                    }
+                    tileLaysPerColour = newTileLaysPerColour;
+                }
+
+                for (Tag layTag : laysTag) {
+                    String colourString = layTag.getAttributeAsString("colour");
+                    if (!Util.hasValue(colourString))
+                        throw new ConfigurationException(
+                        "No colour entry for number of tile lays");
+                    String typeString = layTag.getAttributeAsString("companyType");
+                    if (!Util.hasValue(typeString))
+                        throw new ConfigurationException(
+                        "No company type entry for number of tile lays");
+                    int number = layTag.getAttributeAsInteger("number", 1);
+                    int validForTurns =
+                        layTag.getAttributeAsInteger("occurrences", 0);
+
+                    String key = typeString + "~" + colourString;
+                    if (number == 1) {
+                        tileLaysPerColour.remove(key);
+                    } else {
+                        tileLaysPerColour.put(key, number);
+                    }
+
+                    if (validForTurns != 0) {
+                        if (tileLaysPerColourTurns == null) {
+                            tileLaysPerColourTurns = new HashMap<String, Integer>(4);
+                        }
+                        tileLaysPerColourTurns.put(key, validForTurns);
+                    }
+                }
+            }
         }
 
         // Private-related properties
@@ -237,6 +286,13 @@ public class Phase implements Configurable {
                 releasedTrains.add(type);
             }
         }
+
+        // Push any extra tile lay turns to the appropriate company type.
+        if (tileLaysPerColourTurns != null) {
+            CompanyManager companyManager = gameManager.getCompanyManager();
+            companyManager.addExtraTileLayTurnsInfo (tileLaysPerColourTurns);
+        }
+        tileLaysPerColourTurns = null;  // We no longer need it.
     }
 
     /** Called when a phase gets activated */
@@ -279,15 +335,27 @@ public class Phase implements Configurable {
     }
 
     public boolean isTileColourAllowed(String tileColour) {
-        return tileColours.containsKey(tileColour);
+        return tileColours.contains(tileColour);
     }
 
-    public Map<String, Integer> getTileColours() {
+    public List<String> getTileColours() {
         return tileColours;
     }
 
     public String getTileColoursString() {
-        return colourList;
+        return tileColoursString;
+    }
+
+    public int getTileLaysPerColour (String companyTypeName, String colourName) {
+
+        if (tileLaysPerColour == null) return 1;
+
+        String key = companyTypeName + "~" + colourName;
+        if (tileLaysPerColour.containsKey(key)) {
+            return tileLaysPerColour.get(key);
+        } else {
+            return 1;
+        }
     }
 
     public int getTrainLimitStep() {
