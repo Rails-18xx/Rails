@@ -28,10 +28,10 @@
 	<CompanyType name="Major" class="rails.game.PublicCompany"
 		capitalisation="incremental">
 		<Capitalisation Type="incremental"/>
-		<TileLays>
+		<!--TileLays>
 			<Number colour="yellow" phase="2+2,3,3+3,4,4+4,6,6e,8,8e,10"
 				number="2"/>
-		</TileLays>
+		</TileLays-->
 		<Float percentage="60"/>
 		<StockPrice par="yes"/>
 		<ShareUnit percentage="10"/>

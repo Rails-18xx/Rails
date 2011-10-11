@@ -13,7 +13,7 @@ import rails.game.model.*;
 import rails.game.move.*;
 import rails.game.special.*;
 import rails.game.state.*;
-import rails.util.*;
+import rails.util.Util;
 
 /**
  * This class provides an implementation of a (perhaps only basic) public
@@ -58,7 +58,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     /** Hexadecimal representation (RRGGBB) of the background colour. */
     protected String bgHexColour = "000000";
 
-    /** Home hex & city * 
+    /** Home hex & city *
      * Two home hexes is supported, but only if:<br>
      * 1. The locations are fixed (i.e. configured by XML), and<br>
      * 2. Any station (city) numbers are equal for the two home stations.
@@ -277,11 +277,11 @@ public class PublicCompany extends Company implements PublicCompanyI {
     protected Bank bank;
     protected StockMarketI stockMarket;
     protected MapManager mapManager;
-    
+
     /** Rights */
     protected HashMapState<String, String> rights = null;
     //protected RightsModel rightsModel = new RightsModel();
-  
+
 
     /**
      * The constructor. The way this class is instantiated does not allow
@@ -410,13 +410,13 @@ public class PublicCompany extends Company implements PublicCompanyI {
             mustOwnATrain =
                 trainsTag.getAttributeAsBoolean("mandatory", mustOwnATrain);
         }
-        
+
         Tag initialTrainTag = tag.getChild("InitialTrain");
         if (initialTrainTag != null) {
             initialTrainType = initialTrainTag.getAttributeAsString("type");
             initialTrainCost = initialTrainTag.getAttributeAsInteger("cost",
                     initialTrainCost);
-            initialTrainTradeable = initialTrainTag.getAttributeAsBoolean("tradeable", 
+            initialTrainTradeable = initialTrainTag.getAttributeAsBoolean("tradeable",
                     initialTrainTradeable);
         }
 
@@ -615,7 +615,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
             ("mustTradeTrainsAtFixedPrice", mustTradeTrainsAtFixedPrice);
             canClose = optionsTag.getAttributeAsBoolean("canClose", canClose);
         }
-        
+
     }
 
     /** Initialisation, to be called directly after instantiation (cloning) */
@@ -661,7 +661,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
             canSharePriceVary = new BooleanState (name+"_CanSharePriceVary", true);
         }
 
-   }
+    }
 
     public void setIndex (int index) {
         publicNumber = index;
@@ -687,7 +687,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
             }
         }
 
-       if (maxNumberOfLoans != 0) {
+        if (maxNumberOfLoans != 0) {
             currentNumberOfLoans = new IntegerState (name+"_Loans", 0);
             currentLoanValue = new MoneyModel (name+"_LoanValue", 0);
             currentLoanValue.setOption(MoneyModel.SUPPRESS_ZERO);
@@ -759,13 +759,13 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
         infoText += parentInfoText;
         parentInfoText = "";
-        
+
         // Can companies acquire special rights (such as in 1830 Coalfields)?
         if (specialProperties != null) {
             for (SpecialPropertyI sp : specialProperties) {
                 if (sp instanceof SpecialRight) {
                     gameManager.setGuiParameter (GuiDef.Parm.HAS_ANY_RIGHTS, true);
-                    // Initialize rights here to prevent overhead if not used, 
+                    // Initialize rights here to prevent overhead if not used,
                     // but if rights are used, the GUI needs it from the start.
                     if (rights == null) rights = new HashMapState<String, String>(name+"_Rights");
                     // TODO: This is only a workaround for the missing finishConfiguration of special properties (SFY)
@@ -773,6 +773,15 @@ public class PublicCompany extends Company implements PublicCompanyI {
                 }
             }
         }
+    }
+
+    /** Used in finalizing configuration */
+    public void addExtraTileLayTurnsInfo(String colour, int turns) {
+        if (turnsWithExtraTileLays == null) {
+            turnsWithExtraTileLays = new HashMap<String, IntegerState>();
+        }
+        turnsWithExtraTileLays.put(colour, new IntegerState(
+                name + "_" + colour + "_ExtraTileTurns", turns));
     }
 
     /** Reset turn objects */
@@ -834,7 +843,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     /**
      * Set a non-fixed company home hex.
-     * Only covers setting <i>one</i> home hex. 
+     * Only covers setting <i>one</i> home hex.
      * Having <i>two</i> home hexes is currently only supported if the locations are preconfigured.
      * @param homeHex The homeHex to set.
      */
@@ -1572,9 +1581,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
         return 100 / shareUnit.intValue();
     }
 
-    /** Get the current maximum number of trains got a given limit index. 
+    /** Get the current maximum number of trains got a given limit index.
      * @parm index The index of the train limit step as defined for the current phase. Values start at 0.
-     * <p>N.B. the new style limit steps per phase start at 1, 
+     * <p>N.B. the new style limit steps per phase start at 1,
      * so one must be subtracted before calling this method.
      */
     protected int getTrainLimit(int index) {
@@ -1837,7 +1846,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
                         // Just one spot: lay the home base there.
                         homeCityNumber = openStops.get(0).getNumber();
                     } else {
-                        // ??  
+                        // ??
                         // TODO Will player be asked??
                         return false;
                     }
@@ -1942,28 +1951,28 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     public int getNumberOfTileLays(String tileColour) {
 
-        if (extraTileLays == null) return 1;
-
-        Map<String, Integer> phaseMap = extraTileLays.get(tileColour);
-        if (phaseMap == null || phaseMap.isEmpty()) return 1;
-
         PhaseI phase = gameManager.getPhaseManager().getCurrentPhase();
-        Integer ii = phaseMap.get(phase.getName());
-        if (ii == null) return 1;
 
-        int i = ii;
-        if (i > 1) {
-            if (extraTiles == null && turnsWithExtraTileLays != null) {
-                extraTiles = turnsWithExtraTileLays.get(tileColour);
-            }
-            if (extraTiles != null) {
-                if (extraTiles.intValue() == 0) {
-                    extraTiles = null;
-                    return 1;
-                }
+        // New style
+        int tileLays = phase.getTileLaysPerColour(getTypeName(), tileColour);
+        if (tileLays <= 1) {
+            extraTileLays = null;
+            return tileLays;
+        }
+
+        // More than one tile lay allowed.
+        // Check if there is a limitation on the number of turns that this is valid.
+        if (turnsWithExtraTileLays != null) {
+            extraTiles = turnsWithExtraTileLays.get(tileColour);
+        }
+        if (extraTiles != null) {
+            if (extraTiles.intValue() == 0) {
+                extraTiles = null;
+                return 1;
             }
         }
-        return i;
+
+        return tileLays;
     }
 
     public boolean mustOwnATrain() {
@@ -2010,7 +2019,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     public MoneyModel getLoanValueModel () {
         return currentLoanValue;
     }
-    
+
     public ModelObject getRightsModel () {
         //return rightsModel;
         return rights;
@@ -2019,7 +2028,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     public boolean canClose() {
         return canClose;
     }
-    
+
     public void setRight (String nameOfRight, String value) {
         if (rights == null) {
             rights = new HashMapState<String, String>(name+"_Rights");
@@ -2028,15 +2037,15 @@ public class PublicCompany extends Company implements PublicCompanyI {
         rights.put(nameOfRight, value);
         //rightsModel.update();
     }
-    
+
     public boolean hasRight (String nameOfRight) {
         return rights != null && rights.hasKey(nameOfRight);
     }
-    
+
     public String getRight (String nameOfRight) {
         return rights != null ? rights.get(nameOfRight) : null;
     }
-    
+
     @Override
     public Object clone() {
 
@@ -2067,7 +2076,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     public String getExtraShareMarks () {
         return "";
     }
-    
+
     /** Does the company has a route?
      * Currently this is a stub that always returns true.
      */

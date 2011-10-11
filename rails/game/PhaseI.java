@@ -1,7 +1,8 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/PhaseI.java,v 1.9 2010/03/21 17:43:50 evos Exp $ */
 package rails.game;
 
-import java.util.Map;
+
+import java.util.List;
 
 import rails.common.parser.ConfigurableComponentI;
 
@@ -11,7 +12,7 @@ public interface PhaseI extends ConfigurableComponentI {
     /** Called when a phase gets activated */
     public void activate();
 
-    public Map<String, Integer> getTileColours();
+    public List<String> getTileColours();
 
     public int getIndex();
 
@@ -22,8 +23,10 @@ public interface PhaseI extends ConfigurableComponentI {
     public String getInfo();
 
     public boolean isPrivateSellingAllowed();
-    
+
     public int getPrivatesRevenueStep(); // sfy 1889
+
+    public int getTileLaysPerColour (String companyTypeName, String colourName);
 
     public boolean isTrainTradingAllowed();
     public int getTrainLimitStep();
@@ -33,7 +36,7 @@ public interface PhaseI extends ConfigurableComponentI {
     public boolean canBuyMoreTrainsPerTypePerTurn();
 
     public boolean isLoanTakingAllowed();
-    
+
     public int getNumberOfOperatingRounds();
 
     public int getOffBoardRevenueStep();

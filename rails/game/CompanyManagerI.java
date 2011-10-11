@@ -2,6 +2,7 @@
 package rails.game;
 
 import java.util.List;
+import java.util.Map;
 
 import rails.common.parser.ConfigurableComponentI;
 
@@ -67,5 +68,7 @@ public interface CompanyManagerI extends ConfigurableComponentI {
 
     public StartPacket getStartPacket (int index);
     public StartPacket getStartPacket (String name);
+
+    public void addExtraTileLayTurnsInfo (Map<String, Integer> extraTileTurns);
 
 }

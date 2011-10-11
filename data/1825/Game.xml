@@ -73,7 +73,9 @@
 			but could as well be moved here. To be sorted out when we do 18US. -->
 		<!-- Each Phase's defaults are the previous one's values -->
 		<Phase name="1" >
-			<Tiles colour="yellow"/>
+			<Tiles colour="yellow">
+				<Lays companyType="Public" colour="yellow" number="2"/>
+			</Tiles>
 			<Privates sellingAllowed="no"/>
 			<OperatingRounds number="1"/>
 			<Trains tradingAllowed="yes"/>

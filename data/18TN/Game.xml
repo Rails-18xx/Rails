@@ -90,7 +90,9 @@
 	<Component name="PhaseManager" class="rails.game.PhaseManager">
 		<!-- Each Phase's defaults are the previous one's values -->
 		<Phase name="2" >
-			<Tiles colour="yellow"/>
+			<Tiles colour="yellow">
+				<Lays companyType="Public" colour="yellow" number="2"/>
+			</Tiles>
 			<Privates sellingAllowed="no"/>
 			<OperatingRounds number="1"/>
 			<Trains onePerTurn="yes" tradingAllowed="yes"/>
