@@ -17555,7 +17555,7 @@
 				<junType>jtCity</junType>
 				<position>tp2SideF</position>
 				<revenue>
-					<value>20</value>
+					<value>40</value>
 					<position>tpCenter</position>
 				</revenue>
 			</junction>
