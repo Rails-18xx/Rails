@@ -52,6 +52,7 @@ implements ActionListener, KeyListener, RevenueListener {
     private JMenuItem remainingTilesMenuItem;
     private JMenu trainsInfoMenu;
     private JMenu phasesInfoMenu;
+    private JMenu networkInfoMenu;
     private JMenu specialMenu;
     private JMenu loansMenu;
     private JMenu zoomMenu;
@@ -231,6 +232,11 @@ implements ActionListener, KeyListener, RevenueListener {
 
         // Create new fields
         initFields();
+        
+        // update the networkInfo menu
+        // TODO: This relies on a recreate as soon as companies have changed
+        addNetworkInfo();
+        
         repaint();
     }
 
@@ -586,15 +592,21 @@ implements ActionListener, KeyListener, RevenueListener {
     }
 
     protected void addNetworkInfo() {
+        if (networkInfoMenu != null) infoMenu.remove(networkInfoMenu);
+        networkInfoMenu = createNetworkInfo();
+        if (networkInfoMenu == null) return;
+        networkInfoMenu.setEnabled(true);
+        infoMenu.add(networkInfoMenu);
+    }
+    
+    protected JMenu createNetworkInfo() {
 
         boolean route_highlight = orUIManager.gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.ROUTE_HIGHLIGHT);
         boolean revenue_suggest = orUIManager.gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.REVENUE_SUGGEST); 
         
-        if (!route_highlight && !revenue_suggest) return; 
+        if (!route_highlight && !revenue_suggest) return null; 
         
         JMenu networkMenu = new JMenu(LocalText.getText("NetworkInfo"));
-        networkMenu.setEnabled(true);
-        infoMenu.add(networkMenu);
         
         if (route_highlight) {
             JMenuItem item = new JMenuItem("Network");
@@ -613,6 +625,8 @@ implements ActionListener, KeyListener, RevenueListener {
                 networkMenu.add(item);
             }
         }
+        
+        return networkMenu;
     }
     
     protected void executeNetworkInfo(String companyName) {
