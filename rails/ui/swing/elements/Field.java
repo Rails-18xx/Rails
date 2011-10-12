@@ -29,6 +29,8 @@ public class Field extends JLabel implements ViewObject {
 
     private boolean pull = false;
 
+    private boolean html = false;
+
     public Field(String text) {
         super(text.equals("0%") ? "" : text);
         this.setBackground(NORMAL_BG_COLOUR);
@@ -46,18 +48,16 @@ public class Field extends JLabel implements ViewObject {
     }
 
     public Field(ModelObject modelObject) {
-        this("");
-        //this(modelObject.getText());
+        this(modelObject, false, false);
         this.modelObject = modelObject;
-        //Object mu = modelObject.getUpdate();
-        //if (mu instanceof ViewUpdate) {
-        //	updateDetails ((ViewUpdate) mu);
-        //}
         modelObject.addObserver(this);
     }
 
-    public Field(ModelObject modelObject, boolean pull) {
-        this(modelObject);
+    public Field(ModelObject modelObject, boolean html, boolean pull) {
+        this("");
+        this.modelObject = modelObject;
+        this.html = html;
+        this.modelObject.addObserver(this);
         this.pull = pull;
     }
 
@@ -103,14 +103,23 @@ public class Field extends JLabel implements ViewObject {
         }
     }
 
+    @Override
+    public void setText (String text) {
+        if (html) {
+            super.setText("<html>" + text + "</html>");
+        } else {
+            super.setText(text);
+        }
+    }
+
     protected void updateDetails (ViewUpdate vu) {
         for (String key : vu.getKeys()) {
             if (ViewUpdate.TEXT.equalsIgnoreCase(key)) {
                 setText (vu.getText());
             } else if (ViewUpdate.BGCOLOUR.equalsIgnoreCase(key)) {
                 setBackground((Color)vu.getValue(key));
-                   normalBgColour = getBackground();
-                   setForeground (Util.isDark(normalBgColour) ? Color.WHITE : Color.BLACK);
+                normalBgColour = getBackground();
+                setForeground (Util.isDark(normalBgColour) ? Color.WHITE : Color.BLACK);
             }
         }
     }
@@ -130,5 +139,7 @@ public class Field extends JLabel implements ViewObject {
         return dependents;
     }
 
-
+    public void setHtml() {
+        html = true;
+    }
 }
