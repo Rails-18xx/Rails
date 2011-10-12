@@ -1,10 +1,10 @@
 package rails.ui.swing;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
+import java.util.List;
 
 import javax.swing.*;
 
@@ -494,7 +494,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         for (int i = 0; i < np; i++) {
             f =
                 playerCertCount[i] =
-                    new Field(players[i].getCertCountModel(), true);
+                    new Field(players[i].getCertCountModel(), false, true);
             addField(f, playerCertCountXOffset + i, playerCertCountYOffset, 1,
                     1, WIDE_TOP, true);
         }
@@ -546,14 +546,16 @@ public class GameStatus extends GridPanel implements ActionListener {
         // Future trains
         addField(new Caption(LocalText.getText("Future")), futureTrainsXOffset,
                 futureTrainsYOffset - 1, futureTrainsWidth, 1, WIDE_TOP, true);
-        futureTrains = new Field(bank.getUnavailable().getTrainsModel());
+        futureTrains = new Field(bank.getUnavailable().getTrainsModel(), true, false);
+        futureTrains.setPreferredSize(new Dimension (1,1)); // To enable auto word wrap
         addField(futureTrains, futureTrainsXOffset, futureTrainsYOffset,
                 futureTrainsWidth, 1, 0, true);
 
         // Train cost overview
         String text = gameUIManager.getGameManager().getTrainManager().getTrainCostOverview();
-        addField (new Caption(text), poolTrainsXOffset, newTrainsYOffset + 1,
-                futureTrainsWidth + 2, 1, 0, true);
+        addField (f = new Caption("<html>" + text + "</html>"), poolTrainsXOffset, newTrainsYOffset + 1,
+                futureTrainsWidth + 2, 2, 0, true);
+        f.setPreferredSize(new Dimension (1,1));// To enable auto word wrap
 
         dummyButton = new ClickField("", "", "", this, buySellGroup);
     }
