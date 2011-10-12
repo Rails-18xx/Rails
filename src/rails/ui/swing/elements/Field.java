@@ -36,6 +36,8 @@ public class Field extends JLabel implements Observer {
 
     private boolean pull = false;
 
+    private boolean html = false;
+
     public Field(String text) {
         super(text.equals("0%") ? "" : text);
         this.setBackground(NORMAL_BG_COLOUR);
@@ -53,14 +55,15 @@ public class Field extends JLabel implements Observer {
     }
 
     public Field(Observable modelObject) {
-        this("");
+        this(modelObject, false, false);
         this.observable = modelObject;
-        modelObject.addObserver(this);
-        setText(modelObject.toText());
     }
 
-    public Field(Observable modelObject, boolean pull) {
-        this(modelObject);
+    public Field(Observable modelObject, boolean html, boolean pull) {
+        this("");
+        this.modelObject = modelObject;
+        this.html = html;
+        this.modelObject.addObserver(this);
         this.pull = pull;
     }
 
@@ -91,13 +94,22 @@ public class Field extends JLabel implements Observer {
 
     // FIXME: ViewUpdate has to be rewritten in the new structure
 /*    protected void updateDetails (ViewUpdate vu) {
+    @Override
+    public void setText (String text) {
+        if (html) {
+            super.setText("<html>" + text + "</html>");
+        } else {
+            super.setText(text);
+        }
+    }
+
         for (String key : vu.getKeys()) {
             if (ViewUpdate.TEXT.equalsIgnoreCase(key)) {
                 setText (vu.getText());
             } else if (ViewUpdate.BGCOLOUR.equalsIgnoreCase(key)) {
                 setBackground((Color)vu.getValue(key));
-                   normalBgColour = getBackground();
-                   setForeground (Util.isDark(normalBgColour) ? Color.WHITE : Color.BLACK);
+                normalBgColour = getBackground();
+                setForeground (Util.isDark(normalBgColour) ? Color.WHITE : Color.BLACK);
             }   
         }
     }
@@ -116,10 +128,13 @@ public class Field extends JLabel implements Observer {
     public void update(String text) {
         setText(text);
     }
+
+    public void setHtml() {
+        html = true;
+    }
     
     @Override
     public String toString() {
         return Objects.toStringHelper(this).add("observable", observable.getId()).toString();
     }
-
 }
