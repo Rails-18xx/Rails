@@ -68,7 +68,7 @@
 		<Track from="side3" gauge="normal" to="side4"/>
 	</Tile>
 	<Tile colour="green" id="-803" name="Hamburg">
-		<Station id="city1" position="502" slots="1" type="City" value="20"/>
+		<Station id="city1" position="502" slots="1" type="City" value="40"/>
 		<Station id="city2" position="052" slots="1" type="City" value="40"/>
 		<Station id="city3" position="302" slots="1" type="City" value="40"/>
 		<Track from="city1" gauge="normal" to="side5"/>
