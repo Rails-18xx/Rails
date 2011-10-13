@@ -144,7 +144,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
      * A map per tile colour, holding the number of turns that the tile lay
      * number applies. The default number is always 1.
      */
-    protected Map<String, Integer> turnsWithExtraTileLaysInit = null;
+    //protected Map<String, Integer> turnsWithExtraTileLaysInit = null;
     /** Copy of turnsWithExtraTileLaysInit, per company */
     protected Map<String, IntegerState> turnsWithExtraTileLays = null;
     /**
@@ -449,7 +449,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
             }
         }
 
-        Tag tileLaysTag = tag.getChild("TileLays");
+        /*Tag tileLaysTag = tag.getChild("TileLays");
         if (tileLaysTag != null) {
 
             for (Tag numberTag : tileLaysTag.getChildren("Number")) {
@@ -471,9 +471,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
                 String[] colours = colourString.split(",");
                 HashMap<String, Integer> phaseMap;
                 /**
-                 * TODO: should not be necessary to specify all phases
-                 * separately
-                 */
+         * TODO: should not be necessary to specify all phases
+         * separately
+         *//*
                 String[] phases = phaseString.split(",");
                 for (int i = 0; i < colours.length; i++) {
                     if (extraTileLays == null)
@@ -494,7 +494,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
                     }
                 }
             }
-        }
+        }*/
 
         int certIndex = 0;
         List<Tag> certificateTags = tag.getChildren("Certificate");
@@ -678,6 +678,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         stockMarket = gameManager.getStockMarket();
         mapManager = gameManager.getMapManager();
 
+        /*
         if (turnsWithExtraTileLaysInit != null) {
             turnsWithExtraTileLays = new HashMap<String, IntegerState>();
             for (String colour : turnsWithExtraTileLaysInit.keySet()) {
@@ -686,6 +687,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
                         turnsWithExtraTileLaysInit.get(colour)));
             }
         }
+         */
 
         if (maxNumberOfLoans != 0) {
             currentNumberOfLoans = new IntegerState (name+"_Loans", 0);

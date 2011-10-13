@@ -171,9 +171,9 @@ public class Stop implements TokenHolder {
         if (scoreType == null) scoreType = tileManager.getScoreTypeDefault(type);
         if (scoreType == null) scoreType = type.getDefaultScoreType();
 
-        log.debug("+++ Hex="+mapHex.getName()+" tile="+tile.getId()+" city="+number
-                +": stopType="+type+" runTo="+runToAllowed+" runThrough="+runThroughAllowed
-                +" loop="+loopAllowed+" scoreType="+scoreType);
+        //log.debug("+++ Hex="+mapHex.getName()+" tile="+tile.getId()+" city="+number
+        //        +": stopType="+type+" runTo="+runToAllowed+" runThrough="+runThroughAllowed
+        //        +" loop="+loopAllowed+" scoreType="+scoreType);
     }
 
     public String getName() {
