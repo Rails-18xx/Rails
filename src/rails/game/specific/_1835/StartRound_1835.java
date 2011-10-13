@@ -126,7 +126,7 @@ public class StartRound_1835 extends StartRound {
                     LocalText.getText("CannotBuyAnything",
                             currentPlayer.getId());
                 ReportBuffer.add(message);
-                DisplayBuffer.add(message);
+                //DisplayBuffer.add(message);
                 numPasses.add(1);
                 if (numPasses.value() >= numPlayers) {
                     /*
