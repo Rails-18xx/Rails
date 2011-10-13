@@ -1,10 +1,11 @@
-package rails.game;
+package rails.game.specific._1835;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
+import rails.game.*;
 import rails.game.action.*;
 import rails.game.state.ChangeStack;
 import rails.game.state.IntegerState;
@@ -13,24 +14,23 @@ import rails.game.state.IntegerState;
  * Implements an 1835-style startpacket sale.
  */
 public class StartRound_1835 extends StartRound {
+
+    /* To control the player sequence in the Clemens and Snake variants */
+    private final IntegerState turn = IntegerState.create(this, "TurnNumber", 0);
+    private final IntegerState startRoundNumber = IntegerState.create(this, "StartRoundNumber", 0);
+
     /* Additional variants */
     public static final String CLEMENS_VARIANT = "Clemens";
     public static final String SNAKE_VARIANT = "Snake";
 
-    // FIXME: Check if the move from static to object fields works
-    // Otherwise move them to the gameManager_1835
-    /* To control the player sequence in the Clemens and Snake variants */
-    private final IntegerState turn = IntegerState.create(this, "turn");
-    private final IntegerState startRoundNumber = IntegerState.create(this, "startRoundNumber");
-
     /**
-     * Constructed via Configure
+     * Constructor, only to be used in dynamic instantiation.
      */
-    public StartRound_1835(GameManager parent, String id) {
-        super(parent, id);
+    public StartRound_1835(GameManager gameManager, String id) {
+        super(gameManager, id);
         hasBidding = false;
     }
-    
+
     /**
      * Start the 1835-style start round.
      *
@@ -124,7 +124,7 @@ public class StartRound_1835 extends StartRound {
             if (possibleActions.isEmpty()) {
                 String message =
                     LocalText.getText("CannotBuyAnything",
-                                currentPlayer.getId());
+                            currentPlayer.getId());
                 ReportBuffer.add(message);
                 DisplayBuffer.add(message);
                 numPasses.add(1);
@@ -201,7 +201,7 @@ public class StartRound_1835 extends StartRound {
             setCurrentPlayerIndex(newIndex);
             Player newPlayer = getCurrentPlayer();
             log.debug("Game turn has moved from " + oldPlayer.getId()
-                      + " to " + newPlayer.getId() + " [startRound="
+                    + " to " + newPlayer.getId() + " [startRound="
                     + startRoundNumber + " cycle=" + cycleNumber + " turn="
                     + turnNumber + " newIndex=" + newIndex + "]");
 
@@ -212,7 +212,7 @@ public class StartRound_1835 extends StartRound {
             super.setNextPlayer();
             Player newPlayer = getCurrentPlayer();
             log.debug("Game turn has moved from " + oldPlayer.getId()
-                      + " to " + newPlayer.getId());
+                    + " to " + newPlayer.getId());
         }
 
         return;
@@ -220,6 +220,7 @@ public class StartRound_1835 extends StartRound {
 
     /**
      * Process a player's pass.
+     *
      * @param playerName The name of the current player (for checking purposes).
      */
     @Override

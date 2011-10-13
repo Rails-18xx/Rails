@@ -4,6 +4,9 @@ import java.util.*;
 
 import com.google.common.collect.Iterables;
 
+import rails.common.DisplayBuffer;
+import rails.common.LocalText;
+import rails.common.GuiDef;
 import rails.game.*;
 import rails.game.Currency;
 import rails.game.action.DiscardTrain;
