@@ -214,7 +214,7 @@
 	    <Trains limit="4,4,3"/>
 	</Company>
 	
-	<StartPacket roundClass="rails.game.StartRound_1835" variant="Snake">
+	<StartPacket roundClass="rails.game.specific._1835.StartRound_1835" variant="Snake">
 		<Item name="NF"		type="Private" basePrice="100" row="1">
 			<SubItem name="Bay" type="Major"/>
 		</Item>

@@ -1,11 +1,12 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1835.java,v 1.26 2010/03/30 21:59:03 evos Exp $ */
-package rails.game;
+package rails.game.specific._1835;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
+import rails.game.*;
 import rails.game.action.*;
 import rails.game.state.IntegerState;
 
