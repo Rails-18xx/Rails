@@ -893,9 +893,11 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         getCurrentRound().setPossibleActions();
 
         // only pass available => execute automatically
+        /*
         if (!isGameOver() && possibleActions.containsOnlyPass()) {
             result = process(possibleActions.getList().get(0));
         }
+         */
 
         // moveStack closing is done here to allow state changes to occur
         // when setting possible actions

@@ -27,7 +27,7 @@ public class PossibleActions {
     private List<PossibleAction> possibleActions;
 
     protected static Logger log =
-            Logger.getLogger(PossibleActions.class.getPackage().getName());
+        Logger.getLogger(PossibleActions.class.getPackage().getName());
 
     /**
      * This class can only be instantiated locally.
@@ -82,7 +82,8 @@ public class PossibleActions {
     public boolean isEmpty() {
         return possibleActions.isEmpty();
     }
-    
+
+    /* OBSOLETE
     public boolean containsOnlyPass() {
         if (possibleActions.size() != 1) return false;
         PossibleAction action = possibleActions.get(0);
@@ -91,7 +92,7 @@ public class PossibleActions {
         } else {
             return false;
         }
-    }
+    }*/
 
     /** Check if a given action exists in the current list of possible actions */
     public boolean validate(PossibleAction checkedAction) {
@@ -99,8 +100,8 @@ public class PossibleActions {
         // Some actions are always allowed
         if (checkedAction instanceof GameAction
                 && (((GameAction)checkedAction).getMode() == GameAction.SAVE
-                    || ((GameAction)checkedAction).getMode() == GameAction.RELOAD
-                    || ((GameAction)checkedAction).getMode() == GameAction.EXPORT)) {
+                        || ((GameAction)checkedAction).getMode() == GameAction.RELOAD
+                        || ((GameAction)checkedAction).getMode() == GameAction.EXPORT)) {
             return true;
         }
 
