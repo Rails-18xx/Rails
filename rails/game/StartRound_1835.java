@@ -18,7 +18,7 @@ public class StartRound_1835 extends StartRound {
     private static IntegerState turn = new IntegerState("TurnNumber", 0);
 
     private static IntegerState startRoundNumber =
-            new IntegerState("StartRoundNumber", 0);
+        new IntegerState("StartRoundNumber", 0);
 
     /* Additional variants */
     public static final String CLEMENS_VARIANT = "Clemens";
@@ -46,7 +46,7 @@ public class StartRound_1835 extends StartRound {
             setCurrentPlayerIndex (numPlayers-1);
         }
 
-            
+
         if (!setPossibleActions()) {
             /*
              * If nobody can do anything, keep executing Operating and Start
@@ -124,8 +124,8 @@ public class StartRound_1835 extends StartRound {
 
             if (possibleActions.isEmpty()) {
                 String message =
-                        LocalText.getText("CannotBuyAnything",
-                                currentPlayer.getName());
+                    LocalText.getText("CannotBuyAnything",
+                            currentPlayer.getName());
                 ReportBuffer.add(message);
                 DisplayBuffer.add(message);
                 numPasses.add(1);
@@ -134,12 +134,13 @@ public class StartRound_1835 extends StartRound {
                      * No-one has enough cash left to buy anything, so close the
                      * Start Round.
                      */
-                	numPasses.set(0);
-                	finishRound();
+                    numPasses.set(0);
+                    finishRound();
+                    gameManager.getCurrentRound().setPossibleActions();
 
-                	// This code may be called recursively.
-                	// Jump out as soon as we have something to do
-                	if (!possibleActions.isEmpty()) break;
+                    // This code may be called recursively.
+                    // Jump out as soon as we have something to do
+                    if (!possibleActions.isEmpty()) break;
 
                     return false;
                 }
@@ -187,13 +188,13 @@ public class StartRound_1835 extends StartRound {
             if (variant.equalsIgnoreCase(CLEMENS_VARIANT)) {
                 /* Reverse order in the first cycle only */
                 newIndex =
-                        cycleNumber == 0 ? numPlayers - 1 - turnIndex
-                                : turnIndex;
+                    cycleNumber == 0 ? numPlayers - 1 - turnIndex
+                            : turnIndex;
             } else if (variant.equalsIgnoreCase(SNAKE_VARIANT)) {
                 /* Reverse order in the second cycle only */
                 newIndex =
-                        cycleNumber == 1 ? numPlayers - 1 - turnIndex
-                                : turnIndex;
+                    cycleNumber == 1 ? numPlayers - 1 - turnIndex
+                            : turnIndex;
             } else {
                 newIndex = turnIndex;
             }
@@ -201,9 +202,9 @@ public class StartRound_1835 extends StartRound {
             setCurrentPlayerIndex(newIndex);
             Player newPlayer = getCurrentPlayer();
             log.debug("Game turn has moved from " + oldPlayer.getName()
-                      + " to " + newPlayer.getName() + " [startRound="
-                      + startRoundNumber + " cycle=" + cycleNumber + " turn="
-                      + turnNumber + " newIndex=" + newIndex + "]");
+                    + " to " + newPlayer.getName() + " [startRound="
+                    + startRoundNumber + " cycle=" + cycleNumber + " turn="
+                    + turnNumber + " newIndex=" + newIndex + "]");
 
         } else {
 
@@ -212,7 +213,7 @@ public class StartRound_1835 extends StartRound {
             super.setNextPlayer();
             Player newPlayer = getCurrentPlayer();
             log.debug("Game turn has moved from " + oldPlayer.getName()
-                      + " to " + newPlayer.getName());
+                    + " to " + newPlayer.getName());
         }
 
         return;

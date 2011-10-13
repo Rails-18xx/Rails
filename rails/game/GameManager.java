@@ -633,7 +633,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     public void nextRound(RoundI round) {
         if (round instanceof StartRound) {
             if (startPacket != null && !startPacket.areAllSold()) {
-                startOperatingRound(false);
+                startOperatingRound(runIfStartPacketIsNotCompletelySold());
             } else if (skipFirstStockRound) {
                 PhaseI currentPhase =
                     phaseManager.getCurrentPhase();
@@ -680,6 +680,14 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
                 }
             }
         }
+    }
+
+    /** Stub, to be overridden if companies can run before the Start Packet has been completely sold
+     * (as in 1835).
+     * @return true if companies can run regardless. Default false.
+     */
+    protected boolean runIfStartPacketIsNotCompletelySold() {
+        return false;
     }
 
     protected void startStartRound() {
