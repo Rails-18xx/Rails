@@ -204,10 +204,8 @@ Three variants have been implemented:
 	- Snake
 
 Known bugs:
-    - Game hangs in OR if Start Packet has not been sold and minors run. 
-      Workaround: save the game.
-    - OBB and PfB do not always close when required. 
-      Workaround: close minor via the Special menu.
+	- OBB and PfB do not always close when required. 
+	Workaround: close minor via the Special menu.
 		</Description>
 		<Option name="Variant" values="Standard,Clemens,Snake"/>
 		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
