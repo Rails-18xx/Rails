@@ -156,7 +156,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
      * A map per tile colour, holding the number of turns that the tile lay
      * number applies. The default number is always 1.
      */
-    protected Map<String, Integer> turnsWithExtraTileLaysInit = null;
+    //protected Map<String, Integer> turnsWithExtraTileLaysInit = null;
     /** Copy of turnsWithExtraTileLaysInit, per company */
     protected Map<String, IntegerState> turnsWithExtraTileLays = null; 
     // init during finishConfig
@@ -485,7 +485,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
             }
         }
 
-        Tag tileLaysTag = tag.getChild("TileLays");
+        /*Tag tileLaysTag = tag.getChild("TileLays");
         if (tileLaysTag != null) {
 
             for (Tag numberTag : tileLaysTag.getChildren("Number")) {
@@ -507,9 +507,9 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
                 String[] colours = colourString.split(",");
                 HashMap<String, Integer> phaseMap;
                 /**
-                 * TODO: should not be necessary to specify all phases
-                 * separately
-                 */
+         * TODO: should not be necessary to specify all phases
+         * separately
+         *//*
                 String[] phases = phaseString.split(",");
                 for (int i = 0; i < colours.length; i++) {
                     if (extraTileLays == null)
@@ -530,7 +530,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
                     }
                 }
             }
-        }
+        }*/
 
         // TODO: Check if this still works correctly
         // The certificate init was moved to the finishConfig phase
@@ -630,6 +630,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
         stockMarket = gameManager.getStockMarket();
         mapManager = gameManager.getMapManager();
 
+        /*
         if (turnsWithExtraTileLaysInit != null) {
             turnsWithExtraTileLays = new HashMap<String, IntegerState>();
             for (String colour : turnsWithExtraTileLaysInit.keySet()) {
@@ -638,6 +639,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
                 turnsWithExtraTileLays.put(colour, tileLays);
             }
         }
+         */
 
        if (maxNumberOfLoans != 0) {
             currentNumberOfLoans = IntegerState.create(this, "currentNumberOfLoans");

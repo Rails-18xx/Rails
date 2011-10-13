@@ -54,16 +54,16 @@ public class Field extends JLabel implements Observer {
         this.setOpaque(true);
     }
 
-    public Field(Observable modelObject) {
-        this(modelObject, false, false);
-        this.observable = modelObject;
+    public Field(Observable observable) {
+        this(observable, false, false);
     }
 
-    public Field(Observable modelObject, boolean html, boolean pull) {
-        this("");
-        this.modelObject = modelObject;
+    // TODO: Remove the pull option
+    public Field(Observable observable, boolean html, boolean pull) {
+        this(""); // create empty field first
+        this.observable = observable;
         this.html = html;
-        this.modelObject.addObserver(this);
+        this.observable.addObserver(this);
         this.pull = pull;
     }
 
@@ -92,6 +92,15 @@ public class Field extends JLabel implements Observer {
         super.paintComponent(g);
     }
 
+    @Override
+    public void setText (String text) {
+        if (html) {
+            super.setText("<html>" + text + "</html>");
+        } else {
+            super.setText(text);
+        }
+    }
+    
     // FIXME: ViewUpdate has to be rewritten in the new structure
 /*    protected void updateDetails (ViewUpdate vu) {
     @Override
