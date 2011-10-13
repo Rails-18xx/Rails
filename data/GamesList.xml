@@ -205,9 +205,9 @@ Three variants have been implemented:
 
 Known bugs:
     - Game hangs in OR if Start Packet has not been sold and minors run. 
-      Workaround: select option "Minors don't run if BY has not floated".
+      Workaround: save the game.
     - OBB and PfB do not always close when required. 
-      Workaround: use Correction mode.
+      Workaround: close minor via the Special menu.
 		</Description>
 		<Option name="Variant" values="Standard,Clemens,Snake"/>
 		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
