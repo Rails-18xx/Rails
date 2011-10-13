@@ -136,8 +136,8 @@ public class OperatingRound_1835 extends OperatingRound {
         return sharesPerRecipient;
     }
 
-     /**
-      * Register black minors as having operated
+    /**
+     * Register black minors as having operated
      * for the purpose of denying income after conversion to a PR share
      */
     @Override
@@ -176,7 +176,7 @@ public class OperatingRound_1835 extends OperatingRound {
                         && !company.isClosed()
                         && company != operatingCompany.value()
                         && company.getCurrentSpace().getPrice()
-                            < prussian.getCurrentSpace().getPrice()) {
+                        < prussian.getCurrentSpace().getPrice()) {
                     log.debug("PR will operate before "+company.getId());
                     break;
                 }
@@ -205,11 +205,11 @@ public class OperatingRound_1835 extends OperatingRound {
         if (operatingCompany.value().canUseSpecialProperties()) {
 
             for (SpecialTileLay stl : getSpecialProperties(SpecialTileLay.class)) {
-                if (stl.isExtra() 
-                          // If the special tile lay is not extra, it is only allowed if
-                          // normal tile lays are also (still) allowed
-                      || stl.getTile() != null 
-                          && getCurrentPhase().isTileColourAllowed(stl.getTile().getColourName())) {
+                if (stl.isExtra()
+                        // If the special tile lay is not extra, it is only allowed if
+                        // normal tile lays are also (still) allowed
+                        || stl.getTile() != null
+                        && getCurrentPhase().isTileColourAllowed(stl.getTile().getColourName())) {
 
                     // Exclude the second OBB free tile if the first was laid in this round
                     if (stl.getLocationNameString().matches("M1(7|9)")
@@ -230,14 +230,14 @@ public class OperatingRound_1835 extends OperatingRound {
                 }
             }
         }
-        
+
         return currentSpecialTileLays;
     }
     @Override
     public boolean layTile(LayTile action) {
-        
+
         boolean hasJustLaidExtraOBBTile = action.getSpecialProperty() != null
-                && action.getSpecialProperty().getLocationNameString().matches("M1(5|7)");
+        && action.getSpecialProperty().getLocationNameString().matches("M1(5|7)");
 
         // The extra OBB tiles may not both be laid in the same round
         if (hasJustLaidExtraOBBTile) {
@@ -252,7 +252,7 @@ public class OperatingRound_1835 extends OperatingRound {
                 return false;
             } else {
                 ChangeStack.start(this, action); // Duplicate, but we have to
-                hasLaidExtraOBBTile.set(true); 
+                hasLaidExtraOBBTile.set(true);
                 // Done here to make getSpecialTileLays() return the correct value.
                 // It's provisional, on the assumption that other validations are OK.
                 // TODO To get it really right, we should separate validation and execution.
@@ -272,11 +272,11 @@ public class OperatingRound_1835 extends OperatingRound {
     @Override
     protected void newPhaseChecks() {
         Phase phase = getCurrentPhase();
-        if (phase.getName().equals("4") 
-                || phase.getName().equals("4+4") 
-                    && !companyManager.getPublicCompany(GameManager_1835.PR_ID).hasStarted()
+        if (phase.getName().equals("4")
+                || phase.getName().equals("4+4")
+                && !companyManager.getPublicCompany(GameManager_1835.PR_ID).hasStarted()
                 || phase.getName().equals("5")
-                    && !PrussianFormationRound.prussianIsComplete(gameManager)) {
+                && !PrussianFormationRound.prussianIsComplete(gameManager)) {
             if (getStep() == GameDef.OrStep.DISCARD_TRAINS) {
                 // Postpone until trains are discarded
                 needPrussianFormationCall.set(true);

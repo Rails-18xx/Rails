@@ -1,6 +1,7 @@
 package rails.game.specific._1835;
 
 import rails.game.GameManager;
+import rails.common.parser.GameOption;
 import rails.game.Phase;
 import rails.game.Player;
 import rails.game.PublicCompany;
@@ -11,7 +12,7 @@ import rails.game.Round;
 public class GameManager_1835 extends GameManager {
 
 	private Round previousRound = null;
-	private Player prFormStartingPlayer = null;
+    private Player prFormStartingPlayer = null;
 
     public final static String M2_ID = "M2";
     public final static String PR_ID = "PR";
@@ -27,6 +28,20 @@ public class GameManager_1835 extends GameManager {
         super(parent, id);
     }
     
+    /** In standard 1835, minors can run even if the start packet has not been completely sold,
+     * unless the "MinorsRequireFloatedBY" option is in effect and the Bayerische
+     * has not yet floated.
+     * @return true only if minors can run.
+     */
+    @Override
+    protected boolean runIfStartPacketIsNotCompletelySold() {
+        if (getGameOption(GameOption.VARIANT).equalsIgnoreCase("Clemens")
+                || getGameOption("MinorsRequireFloatedBY").equalsIgnoreCase("yes")) {
+            return companyManager.getPublicCompany(GameManager_1835.BY_ID).hasFloated();
+        }
+        return true;
+    }
+
     @Override
     public void nextRound(Round round) {
 
@@ -41,14 +56,14 @@ public class GameManager_1835 extends GameManager {
             }
         } else {
         	Phase phase = getCurrentPhase();
-        	if ((phase.getName().equals("4") || phase.getName().equals("4+4")
-        	                || phase.getName().equals("5"))
-        	            && !PrussianFormationRound.prussianIsComplete(this)) {
-    			previousRound = round;
-    			startPrussianFormationRound (null);
-        	} else {
-        		super.nextRound(round);
-        	}
+            if ((phase.getName().equals("4") || phase.getName().equals("4+4")
+                    || phase.getName().equals("5"))
+                    && !PrussianFormationRound.prussianIsComplete(this)) {
+                previousRound = round;
+                startPrussianFormationRound (null);
+            } else {
+                super.nextRound(round);
+            }
         }
 
     }
@@ -66,11 +81,11 @@ public class GameManager_1835 extends GameManager {
     }
 
     public void setPrussianFormationStartingPlayer(Player prFormStartingPlayer) {
-		this.prFormStartingPlayer = prFormStartingPlayer;
-	}
+        this.prFormStartingPlayer = prFormStartingPlayer;
+    }
 
-	public Player getPrussianFormationStartingPlayer() {
-    	return prFormStartingPlayer;
+    public Player getPrussianFormationStartingPlayer() {
+        return prFormStartingPlayer;
     }
 
     @Override
