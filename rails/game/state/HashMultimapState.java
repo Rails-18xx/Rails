@@ -1,6 +1,7 @@
 package rails.game.state;
 
 import java.util.Iterator;
+import java.util.Set;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
@@ -45,6 +46,10 @@ public final class HashMultimapState<K,V> extends AbstractState implements Multi
         if (!map.containsEntry(key, value)) return false;
         new MultimapChange<K,V>(this, key, value, false);
         return true;
+    }
+    
+    public Set<V> removeAll(K key) {
+        return map.removeAll(key);
     }
     
     public boolean containsEntry(K key, V value) {

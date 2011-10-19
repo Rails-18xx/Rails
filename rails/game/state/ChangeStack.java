@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import org.apache.log4j.Logger;
 
 import rails.game.GameManager;
-import rails.game.GameManager;
 import rails.game.Player;
 import rails.game.ReportBuffer;
 
@@ -70,11 +69,16 @@ public final class ChangeStack {
         return changeSet;
     }
     
+    // TODO: Write that implementation
+    private void updateObservers() {
+        
+//        StateManager.getInstance().updateObservers();
+        
+    }
     
     /**
      * Finish and closes current ChangeSet
      */
-    
     public void finish() {
         // retrieve closed changeSet
         ChangeSet changeSet = getCurrentChangeSet(false);
@@ -86,7 +90,7 @@ public final class ChangeStack {
             log.warn("Action to finish is empty and will be discarded");
         } else {
             changeSet.close();
-            StateManager.getInstance().updateObservers();
+            updateObservers();
         }
     }
 
@@ -101,7 +105,8 @@ public final class ChangeStack {
         changeSet.unexecute();
         
         stack.removeLast();
-        StateManager.getInstance().updateObservers();
+        // TODO: Check if this is really needed
+        // updateObservers
     }
 
     /**

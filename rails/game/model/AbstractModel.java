@@ -44,7 +44,7 @@ public abstract class AbstractModel<E> extends AbstractItem implements Model<E> 
     }
     
     public final void removeObserver(Observer observer) {
-        StateManager.getInstance().deRegisterObserver(observer, this);
+        StateManager.getInstance().deRegisterObserver(observer);
     }
     
 }
