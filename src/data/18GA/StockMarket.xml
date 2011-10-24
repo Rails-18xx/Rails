@@ -90,7 +90,7 @@
 
 	<StockSpace name="M1" price="230" />
 	<StockSpace name="M2" price="210" />
-	<StockSpace name="M3" price="100" />
+	<StockSpace name="M3" price="190" />
 
 	<StockSpace name="N1" price="250" />
 	<StockSpace name="N2" price="230" />
