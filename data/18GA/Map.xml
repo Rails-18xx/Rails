@@ -131,7 +131,7 @@
 	</Hex>
 	<Hex name="J6" tile="0"/>
 	<Hex name="J8" tile="0"/>
-	<Hex name="J10" tile="0">
+	<Hex name="J10" tile="0" cost="40">
 	</Hex>
 	<Hex name="J12" tile="-912" orientation="3" value="30,60" city="Jacksonville"/>
 </Map>
