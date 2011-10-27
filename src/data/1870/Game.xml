@@ -4,7 +4,7 @@
 		<Game name="1870"/>
 		<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Deactivate" />
 		<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Deactivate" />
-		<GameOption name="UnlimitedTiles" type="toggle" default="no"/>
+		<GameOption name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
 		<GameOption name="LeaveAuctionOnPass" type="toggle" default="no"/>
 		<GameParameters>
 			<PlayerShareLimit percentage="60">

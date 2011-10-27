@@ -4,8 +4,8 @@
 		<Game name="1851"/>
 		<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Deactivate" />
 		<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Deactivate" />
+		<GameOption name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="Yellow Plain"/>
 		<GameOption name="NoMapMode" type="toggle" default="no" />
-		<GameOption name="UnlimitedTiles" type="toggle" default="no"/>
 		<GameOption name="UnlimitedTopTrains" parm="8" type="toggle" default="no"/>
         <GameOption name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
 		<GameParameters>
