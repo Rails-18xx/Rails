@@ -31,10 +31,10 @@ Limitations:
 		<Option name="Variant" values="Basegame,Pere Marquette,Coalfields,Reading,Coalfields&amp;Reading,Simple,Wabash" default="Basegame" />
 		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
 		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
+		<Option name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
 		<Option name="NoMapMode" type="toggle" default="no" />
 		<Option name="WithOptional6Train" type="toggle" default="no"/>
 		<Option name="UnlimitedTopTrains" parm="D" type="toggle" default="no"/>
-		<Option name="UnlimitedTiles" type="toggle" default="no"/>
 		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
 		<Option name="TwoPlayersCertLimit70Percent" type="toggle" default="no"/>
 		<Option name="C&amp;ACertificate(ReadingOnly)" values="PRR,RDG" default="PRR" ></Option>
@@ -52,8 +52,8 @@ Limitation:
 		</Description>
 		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
 		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
+		<Option name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="Yellow Plain"/>
 		<Option name="NoMapMode" type="toggle" default="no" />
-		<Option name="UnlimitedTiles" type="toggle" default="no"/>
 		<Option name="UnlimitedTopTrains" parm="8" type="toggle" default="no"/>
         <Option name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
 		<Players minimum="3" maximum="5"/>
@@ -70,9 +70,9 @@ Limitation:
 		</Description>
 		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
 		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
+		<Option name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
 		<!--		<Option name="NoMapMode" type="toggle" default="no" /> -->
 		<Option name="UnlimitedBonusTokens" type="toggle" default="no"/>
-		<Option name="UnlimitedTiles" type="toggle" default="no"/>
 		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
         <Option name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
         <Option name="1856THBHomeBlocked" type="toggle" default="no" />
@@ -91,6 +91,7 @@ Limitation:
 		<Players minimum="2" maximum="6"/>
 		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
 		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
+		<Option name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
 		<Option name="NoMapMode" type="toggle" default="no" />
         <Option name="BeginnerGame" type="toggle" default="no" />
 		<Option name="UnlimitedTopTrains" parm="D" type="toggle" default="yes"/>
@@ -111,11 +112,11 @@ Limitation:
 		</Description>
 		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
 		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
+		<Option name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
 		<Option name="NoMapMode" type="toggle" default="no" />
 		<Option name ="18ALOptimizeNamedTrains"  type="toggle" default="yes"/>
 		<Option name="UnlimitedTopTrains" parm="4D" type="toggle" default="no"/>
 		<Option name="Obsolete4Trains" type="toggle" default="yes"/>
-		<Option name="UnlimitedTiles" type="toggle" default="no"/>
 		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
         <Option name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
 		<Players minimum="3" maximum="5"/>
@@ -134,8 +135,8 @@ Not yet implemented:
 		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
 		<Option name="Extra3Trains" values="0,1,2" default="0"/>
 		<Option name="Extra4Trains" values="0,1" default="0"/>
+		<Option name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
 		<Option name="NoMapMode" type="toggle" default="no" />
-		<Option name="UnlimitedTiles" type="toggle" default="no"/>
 		<Players minimum="2" maximum="6"/>
 	</Game>
 
@@ -146,9 +147,9 @@ Not yet implemented:
 		<Option name="Variant" values="Basegame,Cotton Port" default="Basegame" />
 		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
 		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
+		<Option name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
 		<Option name="NoMapMode" type="toggle" default="no" />
 		<Option name="UnlimitedTopTrains" parm="8" type="toggle" default="no"/>
-		<Option name="UnlimitedTiles" type="toggle" default="no"/>
 		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
 		<Option name="TwoPlayersCertLimit70Percent" type="toggle" default="no"/>
         <Players minimum="2" maximum="5"/>
@@ -165,11 +166,11 @@ Should work, but has not been extensively tested. Limitations as with 1830.
         <!-- Note: a parameter in braces {...} will be localised for display-->
 		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
 		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
+		<Option name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
 		<Option name="18KaasRuhrgebiedDoublesOnlyMajors" type="toggle" default="yes" />
 		<Option name="NoMapMode" type="toggle" default="no" />
 		<Option name="WithOptional6Train" type="toggle" default="no"/>
 		<Option name="UnlimitedTopTrains" parm="D" type="toggle" default="no"/>
-		<Option name="UnlimitedTiles" type="toggle" default="no"/>
 		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
         <Option name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
 		<Players minimum="3" maximum="6"/>
@@ -184,8 +185,8 @@ Should work, but has not been extensively tested. Limitations as with 1830.
         </Description>
 		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
 		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
+		<Option name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
 		<Option name="NoMapMode" type="toggle" default="no" />
-		<Option name="UnlimitedTiles" type="toggle" default="no"/>
 		<Option name="UnlimitedTopTrains" parm="8" type="toggle" default="no"/>
 		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
 		<Option name="TwoPlayersCertLimit70Percent" type="toggle" default="no"/>
@@ -210,8 +211,8 @@ Known bugs:
 		<Option name="Variant" values="Standard,Clemens,Snake"/>
 		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
 		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
+		<Option name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
 		<Option name="NoMapMode" type="toggle" default="no" />
-		<Option name="UnlimitedTiles" type="toggle" default="no"/>
 		<Option name="BYFloatsAt" values="50%,20%" default="50%"/>
 		<Option name="LDIncome" values="20M,30M" default="20M"/>
 		<Option name="MinorsRequireFloatedBY" type="toggle" default="no"/>
@@ -228,7 +229,7 @@ All aspects not present in 1830 have not been implemented yet.
 		</Description>
 		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
 		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
-		<Option name="UnlimitedTiles" type="toggle" default="no"/>
+		<Option name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
 		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
 		<Players minimum="2" maximum="6"/>
 	</Game>
@@ -274,13 +275,21 @@ Known Issues:
         <Option name="Include" parm="R3" type="toggle" default="no"/>
 		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
 		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
-        <Option name="UnlimitedTiles" type="toggle" default="no"/>
-        <Option name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
+		<Option name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
+		<Option name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
   </Game>
    <Game name="1826">
     <Note>Prototype</Note>
     <Description>1826 - Railroading in France and Belgium from 1826</Description>
     <Players minimum="2" maximum="6" />
+        <Option name="Variant" values="Basegame" default="Basegame" />
+        <Option name="NoMapMode" type="toggle" default="no" />
+        <Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
+        <Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
+        <Option name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="Yellow Plain"/>
+        <Option name="UnlimitedTopTrains" parm="8" type="toggle" default="no"/>
+        <Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
+        <Option name="TwoPlayersCertLimit70Percent" type="toggle" default="yes"/>
   </Game> 
   <Game name="18JR">
     <Note>Prototype</Note>
@@ -290,10 +299,10 @@ Known Issues:
 	<Option name="NoMapMode" type="toggle" default="no" />
 	<Option name="RouteAwareness" values="Highlight,Deactivate" default="Deactivate" />
 	<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Deactivate" />
+	<Option name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
 	<Option name="BeginnerGame" type="toggle" default="no" />
 	<Option name="WithOptional6Train" type="toggle" default="no"/>
 	<Option name="UnlimitedTopTrains" parm="D" type="toggle" default="no"/>
-	<Option name="UnlimitedTiles" type="toggle" default="no"/>
 	<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
 	<Option name="TwoPlayersCertLimit70Percent" type="toggle" default="yes"/>
 	<Option name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>

@@ -234,8 +234,11 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
         /* Quantity */
         quantity = setTag.getAttributeAsInteger("quantity", 0);
         /* Value '99' and '-1' mean 'unlimited' */
+        /* BR: added option for unlimited plain tiles: tiles with one track and no stations */
         unlimited = (quantity == 99 || quantity == UNLIMITED_TILES
-                || "yes".equalsIgnoreCase(setTag.getGameOptions().get("UnlimitedTiles")));
+                || "yes".equalsIgnoreCase(setTag.getGameOptions().get("UnlimitedTiles"))
+                || ("yellow plain".equalsIgnoreCase(setTag.getGameOptions().get("UnlimitedTiles"))
+                        && tracks.size() == 1 && stations.isEmpty()));
         if (unlimited) {
             quantity = UNLIMITED_TILES;
         } else {
