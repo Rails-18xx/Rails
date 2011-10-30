@@ -1353,21 +1353,35 @@ public class OperatingRound extends Round implements Observer {
     protected boolean buyRight (UseSpecialProperty action) {
 
         String errMsg = null;
+        String rightName = "";
+        String rightValue = "";
+        int cost = 0;
 
         SpecialPropertyI sp = action.getSpecialProperty();
-        if (!(sp instanceof SpecialRight)) {
-            errMsg = "Wrong right property class: "+sp.toString();
-        }
 
-        SpecialRight right = (SpecialRight) sp;
-        String rightName = right.getName();
-        String rightValue = right.getValue();
+        while (true) {
+            if (!(sp instanceof SpecialRight)) {
+                errMsg = "Wrong right property class: "+sp.toString();
+                break;
+            }
+
+            SpecialRight right = (SpecialRight) sp;
+            rightName = right.getName();
+            rightValue = right.getValue();
+            cost = right.getCost();
+
+            if (cost > 0 && cost > operatingCompany.get().getCash()) {
+                errMsg = LocalText.getText("NoMoney");
+                break;
+            }
+            break;
+        }
 
         if (errMsg != null) {
             DisplayBuffer.add(LocalText.getText("CannotBuyRight",
                     action.getCompanyName(),
                     rightName,
-                    Bank.format(right.getCost()),
+                    Bank.format(cost),
                     errMsg));
 
             return false;
@@ -1376,12 +1390,12 @@ public class OperatingRound extends Round implements Observer {
         moveStack.start(true);
 
         operatingCompany.get().setRight(rightName, rightValue);
-        new CashMove (operatingCompany.get(), bank, right.getCost());
+        if (cost > 0) new CashMove (operatingCompany.get(), bank, cost);
 
         ReportBuffer.add(LocalText.getText("BuysRight",
                 operatingCompany.get().getName(),
                 rightName,
-                Bank.format(right.getCost())));
+                Bank.format(cost)));
 
         sp.setExercised();
 
