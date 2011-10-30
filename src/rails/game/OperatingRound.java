@@ -1363,21 +1363,35 @@ public class OperatingRound extends Round implements Observer {
     protected boolean buyRight (UseSpecialProperty action) {
 
         String errMsg = null;
+        String rightName = "";
+        String rightValue = "";
+        int cost = 0;
 
         SpecialProperty sp = action.getSpecialProperty();
-        if (!(sp instanceof SpecialRight)) {
-            errMsg = "Wrong right property class: "+sp.toString();
-        }
 
-        SpecialRight right = (SpecialRight) sp;
-        String rightName = right.getId();
-        String rightValue = right.getValue();
+        while (true) {
+            if (!(sp instanceof SpecialRight)) {
+                errMsg = "Wrong right property class: "+sp.toString();
+                break;
+            }
+
+            SpecialRight right = (SpecialRight) sp;
+            rightName = right.getId();
+            rightValue = right.getValue();
+            cost = right.getCost();
+
+            if (cost > 0 && cost > operatingCompany.value().getCash()) {
+                errMsg = LocalText.getText("NoMoney");
+                break;
+            }
+            break;
+        }
 
         if (errMsg != null) {
             DisplayBuffer.add(LocalText.getText("CannotBuyRight",
                     action.getCompanyName(),
                     rightName,
-                    bank.getCurrency().format(right.getCost()), // TODO: Do this nicer
+                    bank.getCurrency().format(cost), // TODO: Do this nicer
                     errMsg));
 
             return false;
@@ -1386,7 +1400,8 @@ public class OperatingRound extends Round implements Observer {
         ChangeStack.start(this, action);
 
         operatingCompany.value().setRight(rightName, rightValue);
-        String costText = Currency.toBank(operatingCompany.value(), right.getCost());
+        // TODO: Creates a zero cost transfer if cost == 0
+        String costText = Currency.toBank(operatingCompany.value(), cost);
 
         ReportBuffer.add(LocalText.getText("BuysRight",
                 operatingCompany.value().getId(),
@@ -2086,7 +2101,8 @@ public class OperatingRound extends Round implements Observer {
         /* End of validation, start of execution */
         ChangeStack.start(this, action);
 
-        String costText = Currency.wire(operatingCompany.value(), cost, seller);
+        // TODO: Is text of cost used below?
+        Currency.wire(operatingCompany.value(), cost, seller);
         
         operatingCompany.value().addBonus(new Bonus(operatingCompany.value(),
                 sbt.getId(),
