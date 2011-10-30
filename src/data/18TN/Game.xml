@@ -120,6 +120,7 @@
 			<Trains rusted="4"/>
         </Phase>
 		<Phase name="8">
+			<Tiles colour="yellow,green,brown,grey"/>
 		</Phase>
 		</Component>
 	<Component name="RevenueManager" class="rails.algorithms.RevenueManager">

@@ -140,7 +140,7 @@
 	<Tile id="146" quantity="2" />
 	<Tile id="147" quantity="2" />
 
-	<Tile id="170" quantity="170" >
+	<Tile id="170" quantity="2" >
 		<Upgrade id="600" />
 	</Tile>
 
