@@ -681,6 +681,12 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
                         privateToCloseOnFirstTrainName);
         }
 
+        if (trainLimit != null) {
+            infoText += "<br>" + LocalText.getText("CompInfoMaxTrains",
+                    Util.joinWithDelimiter(trainLimit, ", "));
+
+        }
+
         infoText += parentInfoText;
         parentInfoText = "";
 

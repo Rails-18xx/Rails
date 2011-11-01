@@ -565,6 +565,7 @@ implements ActionListener, KeyListener, RevenueListener {
             appendInfoText(b, LocalText.getText("PhaseTileColours", phase.getTileColoursString()));
             appendInfoText(b, LocalText.getText("PhaseNumberOfORs", phase.getNumberOfOperatingRounds()));
             appendInfoText(b, LocalText.getText("PhaseOffBoardStep", phase.getOffBoardRevenueStep()));
+            appendInfoText(b, LocalText.getText("PhaseTrainLimitStep", phase.getTrainLimitStep()));
             if (phase.doPrivatesClose()) {
                 appendInfoText(b, LocalText.getText("PhaseClosesAllPrivates"));
             }
