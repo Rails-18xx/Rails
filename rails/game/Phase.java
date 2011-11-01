@@ -337,7 +337,12 @@ public class Phase implements PhaseI {
     }
 
     public String getTileColoursString() {
-        return tileColoursString;
+        StringBuilder b = new StringBuilder();
+        for (String colour : tileColours) {
+            if (b.length() > 0) b.append(",");
+            b.append (colour);
+        }
+        return b.toString();
     }
 
     public int getTileLaysPerColour (String companyTypeName, String colourName) {
