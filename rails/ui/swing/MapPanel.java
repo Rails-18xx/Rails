@@ -24,6 +24,7 @@ public class MapPanel extends JPanel {
     private HexMap map;
     private HexMapImage mapImage;
     private JScrollPane scrollPane;
+   
     private GameUIManager gameUIManager;
     
     private JLayeredPane layeredPane;
@@ -115,13 +116,14 @@ public class MapPanel extends JPanel {
     public void zoom (boolean in) {
         map.zoom(in);
         currentMapSize = map.getCurrentSize();
-        map.setPreferredSize(currentMapSize);
+        log.debug("Map.size = " +currentMapSize);
+        layeredPane.setPreferredSize(currentMapSize);
         map.setBounds(0, 0, currentMapSize.width, currentMapSize.height);
         if (mapImage != null) {
-            //mapImage.zoom(in);
-            //mapImage.setPreferredSize(currentMapSize);
-            // FIXME setBounds() seems to be sufficient to resize a JSVGCanvas, but it doesn't always work...
             mapImage.setBounds(0, 0, currentMapSize.width, currentMapSize.height);
+            mapImage.setPreferredSize(currentMapSize);
+            mapImage.zoom(in);
+            // FIXME setBounds() seems to be sufficient to resize a JSVGCanvas, but it doesn't always work...
         }
         layeredPane.revalidate();
     }
