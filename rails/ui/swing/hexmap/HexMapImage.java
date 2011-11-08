@@ -24,51 +24,31 @@ import rails.util.Util;
  * Class to display a full map image. This class has been split off from HexMap to allow
  * it to be displayed in a lower layer of a LayeredPane.
  */
-public class HexMapImage extends JSVGCanvas  {
+public final class HexMapImage extends JSVGCanvas  {
 
     protected static Logger log =
             Logger.getLogger(HexMapImage.class.getPackage().getName());
 
-    protected MapManager mapManager;
-
-    protected int scale;
-    protected int zoomStep = 10; // can be overwritten in config
-    protected double zoomFactor = 1;  // defined dynamically if zoomStep changed
-
-    protected String mapImageFilepath = null;
-    protected int mapXOffset;
-    protected int mapYOffset;
-    protected double mapScale;
-    protected boolean displayMap = false;
-    
+    private MapManager mapManager;
+    private AffineTransform initialTransform; 
+    private double zoomFactor = 1;  // defined dynamically if zoomStep changed
+    private int zoomStep = 10; // default value, can be overwritten in config
     private boolean initialized = false;
 
     public void init(MapManager mapManager) {
 
        this.mapManager = mapManager;
-        
-        if (mapManager.isMapImageUsed()) {
-            mapImageFilepath = mapManager.getMapImageFilepath();
-            displayMap = true;
-            mapXOffset = mapManager.getMapXOffset();
-            mapYOffset = mapManager.getMapYOffset();
-            mapScale = mapManager.getMapScale();
-            log.debug("ImageFile="+mapImageFilepath+" X="+mapXOffset+" Y="+mapYOffset+" scale="+mapScale);
-        }
+       
+       this.setRecenterOnResize(false);
 
-
-        setScale();
-
-        initializeSettings();
-        
-        loadMap();
+       initializeSettings();
+       loadMap();
     }
 
     /**
      * defines settings from the config files
      */
     private void initializeSettings() {
-
         // define zoomStep from config
         String zoomStepSetting = Config.getGameSpecific("map.zoomstep");
         if (Util.hasValue(zoomStepSetting)) {
@@ -82,48 +62,47 @@ public class HexMapImage extends JSVGCanvas  {
                 // otherwise keep default defined above
             }
         }
-        
     }
     
     private void loadMap() {
         
         try {
-             File imageFile = new File (mapImageFilepath);
-             setURI (imageFile.toURL().toString());
+             File imageFile = new File (mapManager.getMapImageFilepath());
+             setURI(imageFile.toURI().toString());
+             log.debug("ImageFile="+ imageFile.getName());
         } catch (Exception e) {
-            log.error ("Cannot load map image file "+mapImageFilepath, e);
-            
+            log.error ("Cannot load map image file " + mapManager.getMapImageFilepath(), e);
         }
         
         addGVTTreeRendererListener (new GVTTreeRendererAdapter() {
             public void gvtRenderingCompleted(GVTTreeRendererEvent e) {
                 if (!initialized) {
-                    initScaleMap();
+                    // store the rendering Transform
+                    initialTransform = getRenderingTransform();
+                    scaleMap();
                     initialized = true;
                 }
+                addGVTTreeRendererListener(null);
             }
         });
         
     }
     
-    private void initScaleMap () {
-        
-        AffineTransform at1 = getRenderingTransform();
-        AffineTransform at2 = new AffineTransform();
-        double currentScale = mapScale * zoomFactor;
-        at2.scale (currentScale, currentScale);
-        at2.translate(mapXOffset, mapYOffset);
-        at2.concatenate(at1);
-        setRenderingTransform (at2);
-    }
-
     private void scaleMap () {
+        AffineTransform at = new AffineTransform();
+
+        log.debug("MapImage zoomFactor" + zoomFactor);
+        at.scale (zoomFactor, zoomFactor);
         
-        AffineTransform at = getRenderingTransform();
-        double currentScale = mapScale * zoomFactor;
-        at.scale (currentScale/at.getScaleX(), currentScale/at.getScaleY());
-        at.translate(mapXOffset * zoomFactor * 0.7 - at.getTranslateX(), mapYOffset * zoomFactor * 0.7 - at.getTranslateY());
-        setRenderingTransform (at);
+        log.debug("MapImage XOffset = " + mapManager.getMapXOffset() + ", YOffset = " + mapManager.getMapYOffset());
+        at.translate(mapManager.getMapXOffset(), mapManager.getMapYOffset());
+
+        double mapScale = mapManager.getMapScale();
+        log.debug("MapImage MapScale = " + mapManager.getMapScale());
+        at.scale(mapScale, mapScale);
+
+        log.debug("MapImage Affine Transform " + at);
+        setRenderingTransform (at, true);
     }
 
     public void zoom (boolean in) {
@@ -133,11 +112,9 @@ public class HexMapImage extends JSVGCanvas  {
     
     private void zoom() {
         zoomFactor = GameUIManager.getImageLoader().getZoomFactor(zoomStep);
+        log.debug("ImageMap zoomStep = " + zoomStep);
+        log.debug("ImageMap zoomFactor = " + zoomFactor);
         scaleMap();
-    }
-
-    protected void setScale() {
-        scale = (int)(Scale.get() * zoomFactor);
     }
 
     public int getZoomStep () {

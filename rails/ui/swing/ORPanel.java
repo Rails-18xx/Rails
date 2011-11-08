@@ -56,7 +56,7 @@ implements ActionListener, KeyListener, RevenueListener {
     private JMenu specialMenu;
     private JMenu loansMenu;
     private JMenu zoomMenu;
-    private JMenuItem zoomIn, zoomOut;
+    private JMenuItem zoomIn, zoomOut, calibrateMap;
     private ActionMenuItem takeLoans;
     private ActionMenuItem repayLoans;
 
@@ -211,6 +211,10 @@ implements ActionListener, KeyListener, RevenueListener {
         zoomOut.addActionListener(this);
         zoomOut.setEnabled(true);
         zoomMenu.add(zoomOut);
+        calibrateMap = new JMenuItem("CalibrateMap");
+        calibrateMap.addActionListener(this);
+        calibrateMap.setEnabled(true);
+        zoomMenu.add(calibrateMap);
         menuBar.add(zoomMenu);
 
         add(menuBar, BorderLayout.NORTH);
@@ -740,6 +744,22 @@ implements ActionListener, KeyListener, RevenueListener {
                 revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
                 orUIManager.getMap().repaint();
             }
+        } else if (source == calibrateMap) {
+            MapManager mapManager = orUIManager.getMap().getMapManager();
+            String offsetX = JOptionPane.showInputDialog(this, "Change translation in X-dimension", mapManager.getMapXOffset());
+            try {
+                mapManager.setMapXOffset(Integer.parseInt(offsetX));
+            } catch (NumberFormatException e) {} // do nothing
+            String offsetY = JOptionPane.showInputDialog(this, "Change translation in Y-dimension", mapManager.getMapYOffset());
+            try {
+                mapManager.setMapYOffset(Integer.parseInt(offsetY));
+            } catch (NumberFormatException e) {} // do nothing
+            String scale = JOptionPane.showInputDialog(this, "Change scale", mapManager.getMapScale());
+            try {
+                mapManager.setMapScale(Float.parseFloat(scale));
+            } catch (NumberFormatException e) {} // do nothing
+            orWindow.getMapPanel().zoom(true);
+            orWindow.getMapPanel().zoom(false);
         } else if (command == NETWORK_INFO_CMD) {
             JMenuItem item = (JMenuItem)actor.getSource();
             executeNetworkInfo(item.getText());
