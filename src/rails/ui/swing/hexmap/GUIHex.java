@@ -119,7 +119,7 @@ public class GUIHex implements Observer {
     protected static Logger log =
             LoggerFactory.getLogger(GUIHex.class);
 
-    public GUIHex(HexMap hexMap, double cx, double cy, int scale,
+    public GUIHex(HexMap hexMap, double cx, double cy, double scale,
             int xCoord, int yCoord) {
         this.hexMap = hexMap;
         this.x = xCoord;
@@ -129,7 +129,7 @@ public class GUIHex implements Observer {
 
     }
 
-    public void scaleHex (double cx, double cy, int scale, double zoomFactor) {
+    public void scaleHex (double cx, double cy, double scale, double zoomFactor) {
 
         this.zoomFactor = zoomFactor;
         tokenDiameter = (int)Math.round(NORMAL_TOKEN_SIZE * zoomFactor);

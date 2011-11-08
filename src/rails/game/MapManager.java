@@ -496,13 +496,25 @@ public class MapManager extends RailsManager implements Configurable {
     public int getMapXOffset() {
         return mapXOffset;
     }
-
+    
     public int getMapYOffset() {
         return mapYOffset;
     }
 
     public float getMapScale() {
         return mapScale;
+    }
+
+    public void setMapXOffset(int mapXOffset) {
+        this.mapXOffset = mapXOffset;
+    }
+
+    public void setMapYOffset(int mapYOffset) {
+        this.mapYOffset = mapYOffset;
+    }
+
+    public void setMapScale(float mapScale) {
+        this.mapScale = mapScale;
     }
 
     public boolean isMapImageUsed() {

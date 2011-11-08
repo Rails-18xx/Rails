@@ -62,7 +62,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
     protected MapHex[][] hexArray;
     protected Map<String, GUIHex> hexesByName = new HashMap<String, GUIHex>();
     protected ArrayList<GUIHex> hexes;
-    protected int scale;
+    protected double scale;
     protected int zoomStep = 10; // can be overwritten in config
     protected double zoomFactor = 1;  // defined dynamically if zoomStep changed
     protected double peakMargin = 1.0;
@@ -148,7 +148,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
         setScale();
         setupHexes();
         setOriginalSize();
-        currentSize = originalSize;
+        currentSize = (Dimension)originalSize.clone();
         setPreferredSize (originalSize);
 
         initializeSettings();
@@ -370,6 +370,8 @@ public abstract class HexMap extends JComponent implements MouseListener,
     
     private void zoom() {
         zoomFactor = GameUIManager.getImageLoader().getZoomFactor(zoomStep);
+        log.debug("HexMap: zoomStep = "+ zoomStep);
+        log.debug("HexMap: zoomFactor = " + zoomFactor);
         setScale();
         scaleHexesGUI();
         currentSize.width = (int)(originalSize.width * zoomFactor);
@@ -378,7 +380,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
     }
 
     protected void setScale() {
-        scale = (int)(Scale.get() * zoomFactor);
+        scale = (Scale.get() * zoomFactor);
     }
 
     public int getZoomStep () {
