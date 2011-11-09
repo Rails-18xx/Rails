@@ -36,6 +36,8 @@
     <Tile id="-25014"/>
     <Tile id="-25015"/>
     <Tile id="-25016"/>
+    <Tile id="-25017"/>
+    <Tile id="-25018"/>
 	<!-- Yellow tiles -->
 	<Tile id="1" quantity="1" >
 		<Upgrade id="14"></Upgrade></Tile>
