@@ -67,7 +67,7 @@
 	<Company name="10" longname="Strade Ferrate Alta Italia" type="Minor">
 		<Home hex="R5"/>
 	</Company>
-	<Company name="11" longname="S&#252;dbahn" type="Minor">
+	<Company name="11" longname="Südbahn" type="Minor">
 		<Home hex="N11" city="2"/>
 	</Company>
 	<Company name="12" longname="Hollandsche Maatschappij" type="Minor">
@@ -95,7 +95,7 @@
 	<Company name="KPEV" longname="Königlich-Preussische Eisenbahn-Verwaltung"
 		type="Major" tokens="5" fgColour="000000" bgColour="2255FF">
 	</Company>
-	<Company name="KK&#214;B"
+	<Company name="KKÖB"
 		longname="Kaiserlich-Königliche Österreichische Staatsbahn" type="Major"
 		tokens="5" fgColour="000000" bgColour="FFFF00">
 	</Company>
