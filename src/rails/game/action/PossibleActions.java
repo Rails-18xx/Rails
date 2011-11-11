@@ -84,7 +84,6 @@ public class PossibleActions {
         return possibleActions.isEmpty();
     }
 
-    /* OBSOLETE
     public boolean containsOnlyPass() {
         if (possibleActions.size() != 1) return false;
         PossibleAction action = possibleActions.get(0);
@@ -93,7 +92,7 @@ public class PossibleActions {
         } else {
             return false;
         }
-    }*/
+    }
 
     /** Check if a given action exists in the current list of possible actions */
     public boolean validate(PossibleAction checkedAction) {

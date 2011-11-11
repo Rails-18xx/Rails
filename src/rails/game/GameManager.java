@@ -874,11 +874,9 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         getCurrentRound().setPossibleActions();
 
         // only pass available => execute automatically
-        /*
         if (!isGameOver() && possibleActions.containsOnlyPass()) {
             result = process(possibleActions.getList().get(0));
         }
-         */
 
         // TODO: Check if this still works as it moved above the close of the ChangeStack 
         // to have a ChangeSet open to initialize the CorrectionManagers
