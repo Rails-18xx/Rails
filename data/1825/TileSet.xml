@@ -20,6 +20,7 @@
 	<Tile id="-7"><!--Preprinted tight bend--></Tile>
 	<Tile id="-41"/>
 	<Tile id="-104"><!--Harwich--></Tile>
+    <Tile id="-25000"/>
 	<Tile id="-25001"><!--London--><Upgrade id="32" relayBaseTokens="yes"></Upgrade></Tile>
 	<Tile id="-25002"><!--Birmingham--><Upgrade id="34" relayBaseTokens="yes"></Upgrade></Tile>
     <Tile id="-25003"><!--Bristol--><Upgrade id="38" relayBaseTokens="yes"/></Tile>

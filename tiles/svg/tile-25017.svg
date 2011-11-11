@@ -1,6 +1,18 @@
 <?xml version="1.0"?>
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg">
+
+	<defs>
+		<pattern id="hatch" patternUnits="userSpaceOnUse" x="0" y="0" width="25" height="25">
+			<g style="fill:none; stroke:black; stroke-width:1">
+				<path d="M0,0 l25,25"/>
+				<path d="M25,0 l-25,25"/>
+			</g>
+		</pattern>
+	</defs>
+
 	<path d=" M 98,0 L 196,0 L 196,340 L 98,340 L 0,170 Z" 
 		fill="#C0DCC0" stroke="black" stroke-width="1" 
 		stroke-linejoin="round"/>
+	<path d=" M 98,0 L 196,0 L 196,340 L 98,340 L 0,170 Z" 
+		fill="url(#hatch)" />
 </svg>

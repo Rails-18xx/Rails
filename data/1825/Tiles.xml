@@ -32,6 +32,7 @@
 		<Station id="city1" position="0" slots="1" type="City" value="20"/>
 		<Track from="city1" gauge="normal" to="side2"/>
 	</Tile>
+	<Tile colour="white" id="-25000" name="empty tile, unlayable"/>
 	<Tile colour="green" id="-25001" name="London">
 		<Station id="city1" position="403" slots="1" type="City" value="50"/>
 		<Station id="city2" position="503" slots="1" type="City" value="50"/>
@@ -143,8 +144,8 @@
 		<Track from="city1" gauge="normal" to="side1"/>
 		<Track from="city1" gauge="normal" to="side2"/>
 	</Tile>
-    <Tile colour="white" id="-25017" name="empty half-tile (W)"/>
-    <Tile colour="white" id="-25018" name="empty half-tile (N)"/>
+	<Tile colour="white" id="-25017" name="empty half-tile (W)"/>
+	<Tile colour="white" id="-25018" name="empty half-tile (N)"/>
 	<Tile colour="yellow" id="1" name="1">
 		<Station id="city1" position="408" type="Town" value="10"/>
 		<Station id="city2" position="108" type="Town" value="10"/>
