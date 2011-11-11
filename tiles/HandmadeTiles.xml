@@ -51,6 +51,9 @@
         <Track from="city2" gauge="normal" to="side3"/>
         <Track from="city2" gauge="normal" to="side2"/>
     </Tile>
+    <Tile colour="fixed" id="-4000" name="water"/>
+    <Tile colour="fixed" id="-4004" name="water half-tile (W)"/>
+    <Tile colour="fixed" id="-4005" name="water half-tile (N)"/>
     <Tile colour="white" id="-25000" name="empty tile, unlayable"/>
     <Tile colour="white" id="-25017" name="empty half-tile (W)"/>
     <Tile colour="white" id="-25018" name="empty half-tile (N)"/>

@@ -146,6 +146,9 @@
 	</Tile>
 	<Tile colour="white" id="-25017" name="empty half-tile (W)"/>
 	<Tile colour="white" id="-25018" name="empty half-tile (N)"/>
+	<Tile colour="fixed" id="-4000" name="water"/>
+	<Tile colour="fixed" id="-4004" name="water half-tile (W)"/>
+	<Tile colour="fixed" id="-4005" name="water half-tile (N)"/>
 	<Tile colour="yellow" id="1" name="1">
 		<Station id="city1" position="408" type="Town" value="10"/>
 		<Station id="city2" position="108" type="Town" value="10"/>
