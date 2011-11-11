@@ -2,6 +2,9 @@
 	
 	<!-- UNIT 3 -->
 	<IfOption name="Include" parm="Unit3" value="yes">
+		<Hex name="C1" tile="-25017" orientation="4"/>
+		<Hex name="C3" tile="-25017" orientation="4"/>
+		<Hex name="C5" tile="-25017" orientation="4"/>
 		<Hex name="B8" tile="-5" orientation="1" city="Inverness"/>
 		<Hex name="B12" tile="-25011" city="Aberdeen"/>
 		<Hex name="C7" tile="-1" cost="100" city="Pitlochry" open="1,2"/>
@@ -52,12 +55,12 @@
 		<Hex name="K11" tile="0" cost="100"/>
 		<Hex name="K13" tile="-1" city="Durham"/>
 		<Hex name="K15" tile="-2" city="Stockton, Middlesbro"/>
-		<IfOption name="Include" parm="Unit2" value="yes">
-			<Hex name="L8" tile="-25017" orientation="4"/>
-			<Hex name="L10" tile="-25017" orientation="4"/>
-			<Hex name="L12" tile="-25017" orientation="4"/>
-			<Hex name="L14" tile="-25017" orientation="4"/>
-			<Hex name="L16" tile="-25017" orientation="4"/>
+		<IfOption name="Include" parm="Unit2" value="no">
+			<Hex name="L8" tile="-25017" orientation="1"/>
+			<Hex name="L10" tile="-25017" orientation="1"/>
+			<Hex name="L12" tile="-25017" orientation="1"/>
+			<Hex name="L14" tile="-25017" orientation="1"/>
+			<Hex name="L16" tile="-25017" orientation="1"/>
 		</IfOption>
 	</IfOption>
 	

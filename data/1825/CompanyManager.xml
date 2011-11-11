@@ -20,6 +20,21 @@
 			<Number colour="yellow" number="2" phase="1,2,3,4"></Number></TileLays-->
 	</CompanyType>
 	
+	<CompanyType name="Minor" class="rails.game.specific._1825.PublicCompany_1825">
+		<Float percentage="40"/>
+		<StockPrice par="no"/>
+		<ShareUnit percentage="20"/>
+		<BaseTokens>
+			<!-- HomeBase lay options: "whenStarted", "whenFloated", "firstOR" (default) -->
+			<HomeBase lay="firstOR"/>
+			<LayCost method="sequence" cost="0"/>
+		</BaseTokens>
+		<Certificate type="President" shares="2"/>
+		<Certificate shares="1" number="3"/>
+		<Trains limit="4,3"/>
+		<!--TileLays>
+			<Number colour="yellow" number="2" phase="1,2,3,4"></Number></TileLays-->
+	</CompanyType>
 	<IfOption name="Include" parm="Unit1" value="yes">
 
 		<!-- Private companies -->
@@ -129,7 +144,57 @@
 		
 	</IfOption>
 	
+	<!-- UNIT 3 COMPANIES -->
+	<IfOption name="Include" parm="Unit3" value="yes">
+
+		<!-- Private companies -->
+		<Company name="A&amp;F" type="Private" basePrice="30" revenue="5" longname="Arbroath&amp;Forfar">
+		</Company>
+		<Company name="TWW" type="Private" basePrice="60" revenue="10"
+			longname="Tanfield Wagon Way">
+		</Company>
+		<IfOption name="Include" parm="Unit2" value="no">
+			<Company name="S&amp;D" type="Private" basePrice="160" revenue="25"
+				longname="Stockton&amp;Darlington Railway">
+			</Company>
+		</IfOption>
+
+		<!-- Public companies -->
+		<Company name="CR" type="Public" tokens="5" fgColour="FFFFFF"
+			bgColour="000088" longname="Caledonian Railway" available="no"
+			startspace="M1">
+			<Home hex="G5" city="3"/>
+		</Company>
+		<Company name="NBR" type="Public" tokens="5" fgColour="FFFFFF"
+			bgColour="CC8800" longname="North British Railway"
+			available="no" startspace="M1">
+			<Home hex="G5" city="2"/>
+		</Company>
+		<Company name="GSWR" type="Public" tokens="4" fgColour="FFFFFF"
+			bgColour="004400" longname="Glasgow&amp;South Western Railway" available="no"
+			startspace="K1">
+			<Home hex="G5" city="1"/>
+		</Company>
+		<Company name="GNSR" type="Minor" tokens="1" fgColour="00CC00"
+			bgColour="FFFFFF" longname="Great North of Scotland Railway"
+			available="no">
+			<Home hex="B12"/>
+		</Company>
+		<Company name="HR" type="Minor" tokens="1" fgColour="000000"
+			bgColour="FFFF00"
+			longname="Highland Railway" available="no">
+			<Home hex="B8"/>
+		</Company>
+		<Company name="M&amp;C" type="Minor" tokens="1" fgColour="000000"
+			bgColour="CCCCFF"
+			longname="Maryport&amp;Carlisle Railway" available="no">
+			<Home hex="K7"/>
+		</Company>
+		
+	</IfOption>
+	
 	<StartPacket roundClass="rails.game.specific._1825.StartRound_1825">
+		<!-- Unit 1 -->
 		<IfOption name="Include" parm="Unit1" value="yes">
 			<Item name="S&amp;M" type="Private" basePrice="30"/>
 			<Item name="CHP" type="Private" basePrice="75"/>
@@ -141,6 +206,7 @@
 				</Item>
 			</IfOption>
 		</IfOption>
+		<!-- Unit 2 -->
 		<IfOption name="Include" parm="Unit2" value="yes">
 			<Item name="Lds&amp;M" type="Private" basePrice="30"/>
 			<IfOption name="Include" parm="Unit1" value="no">
@@ -154,6 +220,14 @@
 						basePrice="200">
 					</Item>
 				</IfOption>
+			</IfOption>
+		</IfOption>
+		<!-- Unit 3 -->
+		<IfOption name="Include" parm="Unit3" value="yes">
+			<Item name="A&amp;F" type="Private" basePrice="30"/>
+			<Item name="TWW" type="Private" basePrice="60"/>
+			<IfOption name="Include" parm="Unit2" value="no">
+				<Item name="S&amp;D" type="Private" basePrice="160"/>
 			</IfOption>
 		</IfOption>
 	</StartPacket>
