@@ -42,6 +42,32 @@ Limitations:
 		<Players minimum="2" maximum="6"/>
 	</Game>
 
+	<Game name="1835">
+		<Note>Fully playable</Note>
+		<Description>1835 (Germany)
+Designed by Michael Meier-Bachl
+Published 1990 by Hans im Glück Verlag
+
+Three variants have been implemented:
+	- Standard
+	- Clemens
+	- Snake
+
+Known limitations:
+	- OBB and PfB do not always close when required. 
+	  Workaround: close minor via the Special menu.
+		</Description>
+		<Option name="Variant" values="Standard,Clemens,Snake"/>
+		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
+		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
+		<Option name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
+		<Option name="NoMapMode" type="toggle" default="no" />
+		<Option name="BYFloatsAt" values="50%,20%" default="50%"/>
+		<Option name="LDIncome" values="20M,30M" default="20M"/>
+		<Option name="MinorsRequireFloatedBY" type="toggle" default="no"/>
+		<Players minimum="3" maximum="7"/>
+	</Game>
+
 	<Game name="1851">
 		<Note>Fully playable</Note>
 		<Description>1851 - The Railroads come to Kentucky &amp; Tennessee
@@ -192,32 +218,6 @@ Should work, but has not been extensively tested. Limitations as with 1830.
 		<Option name="TwoPlayersCertLimit70Percent" type="toggle" default="no"/>
         <Players minimum="2" maximum="5"/>
     </Game>
-	
-	<Game name="1835">
-		<Note>Almost playable</Note>
-		<Description>1835 (Germany)
-Designed by Michael Meier-Bachl
-Published 1990 by Hans im Glück Verlag
-
-Three variants have been implemented:
-	- Standard
-	- Clemens
-	- Snake
-
-Known bugs:
-	- OBB and PfB do not always close when required. 
-	Workaround: close minor via the Special menu.
-		</Description>
-		<Option name="Variant" values="Standard,Clemens,Snake"/>
-		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
-		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
-		<Option name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
-		<Option name="NoMapMode" type="toggle" default="no" />
-		<Option name="BYFloatsAt" values="50%,20%" default="50%"/>
-		<Option name="LDIncome" values="20M,30M" default="20M"/>
-		<Option name="MinorsRequireFloatedBY" type="toggle" default="no"/>
-		<Players minimum="3" maximum="7"/>
-	</Game>
 
 	<Game name="1870">
 		<Note>Not yet playable</Note>
