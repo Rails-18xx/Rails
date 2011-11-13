@@ -2749,7 +2749,9 @@ public class OperatingRound extends Round implements Observer {
 
         }
         if (oldHolder.getOwner() instanceof Bank) {
-            trainsBoughtThisTurn.add(train.getCertType());
+            //trainsBoughtThisTurn.add(train.getCertType());
+            new AddToList<TrainCertificateType>(trainsBoughtThisTurn, train.getCertType(),
+                    operatingCompany.get().getName()+"_TrainsBoughtThisTurn");
         }
 
         if (stb != null) {
