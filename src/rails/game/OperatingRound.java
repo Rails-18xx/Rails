@@ -61,8 +61,8 @@ public class OperatingRound extends Round implements Observer {
     /** A List per player with owned companies that have excess trains */
     protected Map<Player, List<PublicCompany>> excessTrainCompanies = null;
 
-    protected final List<TrainCertificateType> trainsBoughtThisTurn =
-        new ArrayList<TrainCertificateType>(4);
+    protected final ArrayListState<TrainCertificateType> trainsBoughtThisTurn =
+        ArrayListState.create(this, "trainsBoughtThisTurn");
 
     protected HashMapState<PublicCompany, Integer> loansThisRound = null;
 
