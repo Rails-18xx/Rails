@@ -1,4 +1,5 @@
 <Map tileOrientation="NS" letterOrientation="vertical" even="A">
+	<Image file="18AL/18AL_Map_gamekit.svg" x="-2" y="-24" scale="0.384"/>
 	<Hex name="A2" tile="0"/>
 	<Hex name="A4" tile="-912" orientation="2" value="40,50" city="Nashville"/>
 	<Hex name="B1" tile="-901" value="40,30" city="Corinth"/>
