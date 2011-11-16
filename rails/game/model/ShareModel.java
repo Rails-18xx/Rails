@@ -1,6 +1,8 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/ShareModel.java,v 1.8 2009/10/06 18:34:04 evos Exp $*/
 package rails.game.model;
 
+import java.util.*;
+
 import rails.game.*;
 
 public class ShareModel extends ModelObject {
@@ -8,6 +10,8 @@ public class ShareModel extends ModelObject {
     private int share;
     private Portfolio portfolio;
     private PublicCompanyI company;
+
+    public static final String SHARES = "SHARES";
 
     public ShareModel(Portfolio portfolio, PublicCompanyI company) {
         this.portfolio = portfolio;
@@ -32,12 +36,37 @@ public class ShareModel extends ModelObject {
     }
 
     @Override
+    public Object getUpdate() {
+        ViewUpdate u = new ViewUpdate (getText());
+        List<PublicCertificateI> certs = portfolio.getCertificatesPerCompany(company.getName());
+        if (certs != null) {
+            Map<String, Integer> numberPerCertType = new HashMap<String, Integer>();
+            String certType;
+            for (PublicCertificateI cert : certs) {
+                certType = cert.getTypeId();
+                if (!numberPerCertType.containsKey(certType)) {
+                    numberPerCertType.put(certType, 1);
+                } else {
+                    numberPerCertType.put(certType, numberPerCertType.get(certType)+1);
+                }
+            }
+            StringBuilder b = new StringBuilder();
+            for (String type : numberPerCertType.keySet()) {
+                if (b.length() > 0) b.append(",");
+                b.append(type).append(":").append(numberPerCertType.get(type));
+            }
+            u.addObject(SHARES, b.toString());
+        }
+        return u;
+    }
+
+    @Override
     public String getText() {
         if (share == 0) return "";
-        StringBuffer b = new StringBuffer();
+        StringBuilder b = new StringBuilder();
         b.append(share).append("%");
         if (portfolio.getOwner() instanceof Player
-            && company.getPresident() == portfolio.getOwner()) {
+                && company.getPresident() == portfolio.getOwner()) {
             b.append("P");
             if (!company.hasFloated()) b.append("U");
             b.append(company.getExtraShareMarks());
