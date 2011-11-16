@@ -8,8 +8,7 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.border.Border;
 
-import rails.game.model.ModelObject;
-import rails.game.model.ViewUpdate;
+import rails.game.model.*;
 import rails.util.Util;
 
 public class Field extends JLabel implements ViewObject {
@@ -30,6 +29,9 @@ public class Field extends JLabel implements ViewObject {
     private boolean pull = false;
 
     private boolean html = false;
+
+    /** Intended for (possibly varying) tooltip text that must be held across player actions */
+    private String baseToolTipInfo = null;
 
     public Field(String text) {
         super(text.equals("0%") ? "" : text);
@@ -120,6 +122,23 @@ public class Field extends JLabel implements ViewObject {
                 setBackground((Color)vu.getValue(key));
                 normalBgColour = getBackground();
                 setForeground (Util.isDark(normalBgColour) ? Color.WHITE : Color.BLACK);
+            } else if (ShareModel.SHARES.equalsIgnoreCase(key)) {
+                int count;
+                String type;
+                String[] items;
+                StringBuilder b = new StringBuilder();
+                for (String typeAndCount : ((String)vu.getValue(key)).split(",")) {
+                    Util.getLogger().debug(">>> "+typeAndCount+" <<<");
+                    if (!Util.hasValue(typeAndCount)) continue;
+                    items = typeAndCount.split(":");
+                    count = Integer.parseInt(items[1]);
+                    items = items[0].split("_");
+                    type = items[1] + (items.length > 2 && items[2].contains("P") ? "P" : "");
+                    if (b.length() > 0) b.append("<br>");
+                    b.append(count).append(" x ").append(type);
+                }
+                baseToolTipInfo = b.toString();
+                setToolTipText ("<html>" + baseToolTipInfo);
             }
         }
     }
@@ -142,4 +161,10 @@ public class Field extends JLabel implements ViewObject {
     public void setHtml() {
         html = true;
     }
+
+    public String getBaseToolTipInfo() {
+        return baseToolTipInfo;
+    }
+
+
 }
