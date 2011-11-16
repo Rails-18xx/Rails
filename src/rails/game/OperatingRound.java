@@ -3178,4 +3178,9 @@ public class OperatingRound extends Round implements Observer {
         return toString();
     }
 
+    // Observer methods
+    public Observable getObservable() {
+        return stepObject;
+    }
+
 }

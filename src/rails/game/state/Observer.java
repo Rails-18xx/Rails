@@ -5,6 +5,8 @@ package rails.game.state;
  */
 public interface Observer{
 
-    void update(String text);
+    public void update(String text);
+    
+    public Observable getObservable();
     
 }

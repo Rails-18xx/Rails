@@ -2,12 +2,9 @@ package rails.ui.swing.elements;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
@@ -17,7 +14,6 @@ import com.google.common.base.Objects;
 import rails.game.state.Observable;
 import rails.game.state.Observer;
 
-// TODO: Replace ViewObject with Observer mechanisms
 // TODO: Make the color and font options work again
 public class Field extends JLabel implements Observer {
 
@@ -26,16 +22,13 @@ public class Field extends JLabel implements Observer {
     private Border labelBorder = BorderFactory.createEmptyBorder(1, 2, 1, 2);
 
     private static final Color NORMAL_BG_COLOUR = Color.WHITE;
-
     private static final Color HIGHLIGHT_BG_COLOUR = new Color(255, 255, 80);
 
     private Observable observable;
+    private Observer toolTipObserver;
     private Color normalBgColour = NORMAL_BG_COLOUR;
 
-    private List<JComponent> dependents = null;
-
     private boolean pull = false;
-
     private boolean html = false;
 
     public Field(String text) {
@@ -54,10 +47,6 @@ public class Field extends JLabel implements Observer {
         this.setOpaque(true);
     }
 
-    public Field(Observable observable) {
-        this(observable, false, false);
-    }
-
     // TODO: Remove the pull option
     public Field(Observable observable, boolean html, boolean pull) {
         this(""); // create empty field first
@@ -65,25 +54,41 @@ public class Field extends JLabel implements Observer {
         this.html = html;
         this.observable.addObserver(this);
         this.pull = pull;
+        // initialize text
+        this.setText(observable.toText());
     }
 
-    public Field(Observable modelObject, ImageIcon icon, int position) {
-        this(modelObject);
+    public Field(Observable observable) {
+        this(observable, false, false);
+    }
+
+    public Field(Observable observable, ImageIcon icon, int position) {
+        this(observable);
         setIcon(icon);
         setHorizontalAlignment(position);
     }
 
-    public Observable getModel() {
-        return observable;
+    public void setToolTipModel(Observable toolTipModel){
+        final Observable storeModel = toolTipModel; 
+        toolTipObserver = new Observer() {
+            public void update(String text) {
+               setToolTipText(text);
+            }
+            public Observable getObservable() {
+                return storeModel;
+            }
+        };
+        toolTipModel.addObserver(toolTipObserver);
+        // initialize toolTip
+        setToolTipText(toolTipModel.toText());
     }
-
+    
 
     public void setHighlight(boolean highlight) {
         setBackground(highlight ? HIGHLIGHT_BG_COLOUR : normalBgColour);
     }
 
     /** This method is mainly needed when NOT using the Observer pattern. */
-
     @Override
     public void paintComponent(Graphics g) {
         if (observable != null && pull) {
@@ -93,12 +98,16 @@ public class Field extends JLabel implements Observer {
     }
 
     @Override
-    public void setText (String text) {
+    public void setText(String text) {
         if (html) {
             super.setText("<html>" + text + "</html>");
         } else {
             super.setText(text);
         }
+    }
+
+    public void setHtml() {
+        html = true;
     }
     
     // FIXME: ViewUpdate has to be rewritten in the new structure
@@ -119,31 +128,40 @@ public class Field extends JLabel implements Observer {
                 setBackground((Color)vu.getValue(key));
                 normalBgColour = getBackground();
                 setForeground (Util.isDark(normalBgColour) ? Color.WHITE : Color.BLACK);
+            } else if (ShareModel.SHARES.equalsIgnoreCase(key)) {
+                int count;
+                String type;
+                String[] items;
+                StringBuilder b = new StringBuilder();
+                for (String typeAndCount : ((String)vu.getValue(key)).split(",")) {
+                    Util.getLogger().debug(">>> "+typeAndCount+" <<<");
+                    if (!Util.hasValue(typeAndCount)) continue;
+                    items = typeAndCount.split(":");
+                    count = Integer.parseInt(items[1]);
+                    items = items[0].split("_");
+                    type = items[1] + (items.length > 2 && items[2].contains("P") ? "P" : "");
+                    if (b.length() > 0) b.append("<br>");
+                    b.append(count).append(" x ").append(type);
+                }
+                baseToolTipInfo = b.toString();
+                setToolTipText ("<html>" + baseToolTipInfo);
             }   
         }
     }
         */
 
-    public void addDependent (JComponent dependent) {
-        if (dependents == null) dependents = new ArrayList<JComponent>(2);
-        dependents.add(dependent);
-    }
-
-    public List<JComponent> getDependents () {
-        return dependents;
-    }
-
-    /** Needed to satisfy the Observer interface. */
+    // Observer methods
     public void update(String text) {
         setText(text);
     }
 
-    public void setHtml() {
-        html = true;
+    public Observable getObservable() {
+        return observable;
     }
-    
+
     @Override
     public String toString() {
         return Objects.toStringHelper(this).add("observable", observable.getId()).toString();
     }
+
 }

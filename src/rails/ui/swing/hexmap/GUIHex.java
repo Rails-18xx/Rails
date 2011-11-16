@@ -38,6 +38,7 @@ import rails.game.Station;
 import rails.game.Stop;
 import rails.game.Tile;
 import rails.game.TileOrientation;
+import rails.game.state.Observable;
 import rails.game.state.Observer;
 import rails.ui.swing.GUIToken;
 import rails.util.Util;
@@ -919,5 +920,12 @@ public class GUIHex implements Observer {
     
     public String toString () {
         return getName() + " (" + currentTile.getId() + ")";
+    }
+
+    // Observer methods
+    
+    
+    public Observable getObservable() {
+        return model;
     }
 }

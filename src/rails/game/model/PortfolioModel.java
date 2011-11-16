@@ -164,6 +164,10 @@ public class PortfolioModel extends Model {
         return certificates.getShareModel(company);
     }
 
+    public ShareDetailsModel getShareDetailsModel(PublicCompany company) {
+        return certificates.getShareDetailsModel(company);
+    }
+
     public ImmutableSet<PrivateCompany> getPrivateCompanies() {
         return privates.getPortfolio().items();
     }
@@ -188,7 +192,7 @@ public class PortfolioModel extends Model {
 
     public ImmutableSortedSet<PublicCertificate> getCertificates(
             PublicCompany company) {
-        return certificates.getPortfolio().items(company);
+        return certificates.getCertificates(company);
     }
 
     /**

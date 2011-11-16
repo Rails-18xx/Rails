@@ -24,8 +24,8 @@ import rails.game.Player;
 import rails.game.PublicCompany;
 import rails.game.Round;
 import rails.game.state.BooleanState;
+import rails.game.state.Observable;
 import rails.game.state.Observer;
-import rails.ui.swing.elements.Field;
 
 public abstract class GridPanel extends JPanel
 implements ActionListener, KeyListener {
@@ -73,11 +73,10 @@ implements ActionListener, KeyListener {
         revalidate();
     }
 
-    // FIXME: This has to be replaced
     protected void deRegisterObservers() {
         log.debug("Deregistering observers");
-        for (Observer vo : observers) {
-//            vo.deRegister();
+        for (Observer o : observers) {
+            o.getObservable().removeObserver(o);
         }
     }
 
@@ -105,11 +104,9 @@ implements ActionListener, KeyListener {
 
         gridPanel.add(comp, gbc);
 
-        // FIXME: This has to be replaced
-//        if (comp instanceof Observer
-//            && ((Observer) comp).getObservable() != null) {
-//            observers.add((Observer) comp);
-//        }
+        if (comp instanceof Observer) {
+            observers.add((Observer) comp);
+        }
 
         if (fields != null && fields[x][y] == null) fields[x][y] = comp;
         comp.setVisible(visible);
@@ -128,17 +125,18 @@ implements ActionListener, KeyListener {
 
     public void setRowVisibility (int rowIndex, boolean value) {
 
-        List<JComponent> dependents;
 
         for (int j=0; j < fields.length; j++) {
             if (fields[j][rowIndex] != null) {
                 fields[j][rowIndex].setVisible(value);
-                if (fields[j][rowIndex] instanceof Field
-                        && (dependents = ((Field)fields[j][rowIndex]).getDependents()) != null) {
-                    for (JComponent dependent : dependents) {
-                        dependent.setVisible(value);
-                    }
-                }
+                // TODO: Check if this does not cause any issues
+                //List<JComponent> dependents;
+//                if (fields[j][rowIndex] instanceof Field
+//                        && (dependents = ((Field)fields[j][rowIndex]).getDependents()) != null) {
+//                    for (JComponent dependent : dependents) {
+//                        dependent.setVisible(value);
+//                    }
+//                }
             }
         }
     }
@@ -171,6 +169,10 @@ implements ActionListener, KeyListener {
 
         public void update(String text) {
             parent.setRowVisibility(rowIndex, lastValue());
+        }
+        
+        public Observable getObservable() {
+            return observable;
         }
 
     }

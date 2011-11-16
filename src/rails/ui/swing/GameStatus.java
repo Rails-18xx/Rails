@@ -18,6 +18,7 @@ import rails.game.action.*;
 import rails.game.correct.CashCorrectionAction;
 import rails.game.model.PortfolioModel;
 import rails.ui.swing.elements.*;
+import rails.util.Util;
 
 /**
  * This class is incorporated into StatusWindow and displays the bulk of
@@ -337,6 +338,8 @@ public class GameStatus extends GridPanel implements ActionListener {
                                         c));
                 addField(f, certPerPlayerXOffset + j, certPerPlayerYOffset + i,
                         1, 1, 0, visible);
+                // TODO: Simplify the assignment (using f as correct local variable)
+                certPerPlayer[i][j].setToolTipModel(players[j].getPortfolioModel().getShareDetailsModel(c));
                 f =
                     certPerPlayerButton[i][j] =
                         new ClickField("", SELL_CMD,
@@ -346,6 +349,8 @@ public class GameStatus extends GridPanel implements ActionListener {
                         1, 1, 0, false);
             }
             f = certInIPO[i] = new Field(ipo.getShareModel(c));
+            // TODO: Simplify the assignment (using f as correct local variable)
+            certInIPO[i].setToolTipModel(ipo.getShareDetailsModel(c));
             addField(f, certInIPOXOffset, certInIPOYOffset + i, 1, 1, WIDE_LEFT, visible);
             f =
                 certInIPOButton[i] =
@@ -358,6 +363,8 @@ public class GameStatus extends GridPanel implements ActionListener {
             certInIPO[i].setPreferredSize(certInIPOButton[i].getPreferredSize());
 
             f = certInPool[i] = new Field(pool.getShareModel(c));
+            // TODO: Simplify the assignment (using f as correct local variable)
+            certInPool[i].setToolTipModel(pool.getShareDetailsModel(c));
             addField(f, certInPoolXOffset, certInPoolYOffset + i, 1, 1,
                     WIDE_RIGHT, visible);
             f =
@@ -375,6 +382,8 @@ public class GameStatus extends GridPanel implements ActionListener {
                 f =
                     certInTreasury[i] =
                         new Field(c.getPortfolioModel().getShareModel(c));
+                // TODO: Simplify the assignment (using f as correct local variable)
+                certInTreasury[i].setToolTipModel(c.getPortfolioModel().getShareDetailsModel(c));
                 addField(f, certInTreasuryXOffset, certInTreasuryYOffset + i,
                         1, 1, WIDE_RIGHT, visible);
                 f =
@@ -942,13 +951,14 @@ public class GameStatus extends GridPanel implements ActionListener {
 
         if (j < 0) return;
         setPlayerCertButton(i, j, clickable);
+        if (clickable) syncToolTipText (certPerPlayer[i][j], certPerPlayerButton[i][j]);
         if (clickable && o != null) {
             if (o instanceof PossibleAction) {
                 certPerPlayerButton[i][j].addPossibleAction((PossibleAction) o);
                 if (o instanceof SellShares) {
-                    certPerPlayerButton[i][j].setToolTipText(LocalText.getText("ClickForSell"));
+                    addToolTipText (certPerPlayerButton[i][j], LocalText.getText("ClickForSell"));
                 } else if (o instanceof BuyCertificate) {
-                    certPerPlayerButton[i][j].setToolTipText(LocalText.getText("ClickToSelectForBuying"));
+                    addToolTipText (certPerPlayerButton[i][j], LocalText.getText("ClickToSelectForBuying"));
                 }
             }
         }
@@ -960,6 +970,7 @@ public class GameStatus extends GridPanel implements ActionListener {
 
         if (clickable) {
             certPerPlayerButton[i][j].setText(certPerPlayer[i][j].getText());
+            syncToolTipText (certPerPlayer[i][j], certPerPlayerButton[i][j]);
         } else {
             certPerPlayerButton[i][j].clearPossibleActions();
         }
@@ -970,6 +981,7 @@ public class GameStatus extends GridPanel implements ActionListener {
     protected void setIPOCertButton(int i, boolean clickable, Object o) {
 
         setIPOCertButton(i, clickable);
+        if (clickable) syncToolTipText (certInIPO[i], certInIPOButton[i]);
         if (clickable && o != null) {
             if (o instanceof PossibleAction)
                 certInIPOButton[i].addPossibleAction((PossibleAction) o);
@@ -980,6 +992,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         boolean visible = rowVisibilityObservers[i].lastValue();
         if (clickable) {
             certInIPOButton[i].setText(certInIPO[i].getText());
+            syncToolTipText (certInIPO[i], certInIPOButton[i]);
         } else {
             certInIPOButton[i].clearPossibleActions();
         }
@@ -990,6 +1003,7 @@ public class GameStatus extends GridPanel implements ActionListener {
     protected void setPoolCertButton(int i, boolean clickable, Object o) {
 
         setPoolCertButton(i, clickable);
+        if (clickable) syncToolTipText (certInPool[i], certInPoolButton[i]);
         if (clickable && o != null) {
             if (o instanceof PossibleAction)
                 certInPoolButton[i].addPossibleAction((PossibleAction) o);
@@ -1000,6 +1014,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         boolean visible = rowVisibilityObservers[i].lastValue();
         if (clickable) {
             certInPoolButton[i].setText(certInPool[i].getText());
+            syncToolTipText (certInIPO[i], certInIPOButton[i]);
         } else {
             certInPoolButton[i].clearPossibleActions();
         }
@@ -1011,6 +1026,7 @@ public class GameStatus extends GridPanel implements ActionListener {
 
         setTreasuryCertButton(i, clickable);
         if (clickable && o != null) {
+            if (clickable) syncToolTipText (certInTreasury[i], certInTreasuryButton[i]);
             if (o instanceof PossibleAction)
                 certInTreasuryButton[i].addPossibleAction((PossibleAction) o);
         }
@@ -1020,6 +1036,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         boolean visible = rowVisibilityObservers[i].lastValue();
         if (clickable) {
             certInTreasuryButton[i].setText(certInTreasury[i].getText());
+            syncToolTipText (certInTreasury[i], certInTreasuryButton[i]);
         } else {
             certInTreasuryButton[i].clearPossibleActions();
         }
@@ -1054,4 +1071,16 @@ public class GameStatus extends GridPanel implements ActionListener {
         if (action != null)
             playerCashButton[i].addPossibleAction(action);
     }
+
+    protected void syncToolTipText (Field field, ClickField clickField) {
+        String baseText = field.getToolTipText();
+        clickField.setToolTipText(Util.hasValue(baseText) ? baseText : "");
+    }
+
+    protected void addToolTipText (ClickField clickField, String addText) {
+        if (!Util.hasValue(addText)) return;
+        String baseText = clickField.getToolTipText();
+        clickField.setToolTipText(Util.hasValue(baseText) ? baseText+"<br>"+addText : addText);
+    }
+
 }
