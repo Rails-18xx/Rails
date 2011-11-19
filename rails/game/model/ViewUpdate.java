@@ -9,7 +9,6 @@ import java.util.*;
  * <p> The current version has text, background colour and foreground colour.
  * Receiving view objects must be prepared to handle extensions.
  * @author VosE
- *
  */
 
 public class ViewUpdate implements Serializable {
@@ -18,6 +17,7 @@ public class ViewUpdate implements Serializable {
 
     public static final String TEXT = "TEXT";
     public static final String BGCOLOUR = "BGCOLOUR";
+    public static final String SHARES = "SHARES";
 
     public static final long serialVersionUID = 1L;
 
