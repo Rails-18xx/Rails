@@ -4,14 +4,12 @@
  */
 package rails.game.specific._1835;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.BuyCertificate;
 import rails.game.model.PortfolioModel;
-import rails.game.state.Owner;
 
 public class StockRound_1835 extends StockRound {
 
@@ -21,46 +19,71 @@ public class StockRound_1835 extends StockRound {
     public StockRound_1835 (GameManager parent, String id) {
         super(parent, id);
     }
-    
+
     /** Add nationalisations */
     @Override
-    protected void setGameSpecificActions() {
-        if (!mayCurrentPlayerBuyAnything()) return;
+    public void setBuyableCerts() {
+
+        super.setBuyableCerts();
         if (companyBoughtThisTurnWrapper.value() != null) return;
 
-        List<Player> otherPlayers = new ArrayList<Player>();
-        Owner owner;
-        Player otherPlayer;
         int price;
-        int cash = currentPlayer.getCashValue();
+        int cash = currentPlayer.getCash();
+        Set<PublicCertificate> certs;
+        StockSpace stockSpace;
+        PortfolioModel from;
+        int unitsForPrice;
 
-        // Nationalization
+        // Nationalisation
         for (PublicCompany company : companyManager.getAllPublicCompanies()) {
             if (!company.getType().getId().equalsIgnoreCase("Major")) continue;
             if (!company.hasFloated()) continue;
             if (company.getPresident() != currentPlayer) continue;
-            if (currentPlayer.getPortfolioModel().getShare(company) >= 55) {
-                otherPlayers.clear();
-                for (PublicCertificate cert : company.getCertificates()) {
-                    owner = cert.getOwner(); 
+            if (currentPlayer.getPortfolioModel().getShare(company) < 55) continue;
+            if (isSaleRecorded(currentPlayer, company)) continue;
+
+            for (Player otherPlayer : this.getPlayers()) {
+                if (otherPlayer == currentPlayer) continue;
+
+                /* Get the unique player certificates and check which ones can be bought */
+                from = otherPlayer.getPortfolioModel();
+                certs = from.getCertificates(company);
+                if (certs == null || certs.isEmpty()) continue;
+
+                /* Allow for multiple share unit certificates (e.g. 1835) */
+                PublicCertificate[] uniqueCerts;
+                int shares;
+
+                stockSpace = company.getCurrentSpace();
+                unitsForPrice = company.getShareUnitsForSharePrice();
+                price = (int)(1.5 * stockSpace.getPrice() / unitsForPrice);
+
+                /* Check what share multiples are available
+                 * Normally only 1, but 1 and 2 in 1835. Allow up to 4.
+                 */
+                uniqueCerts = new PublicCertificate[5];
+                for (PublicCertificate cert2 : certs) {
+                    shares = cert2.getShares();
+                    if (uniqueCerts[shares] != null) continue;
+                    uniqueCerts[shares] = cert2;
+                }
+
+                /* Create a BuyCertificate action per share size */
+                for (shares = 1; shares < 5; shares++) {
+                    if (uniqueCerts[shares] == null) continue;
+
                     /* Would the player exceed the total certificate limit? */
-                    StockSpace stockSpace = company.getCurrentSpace();
-                    if ((stockSpace == null || !stockSpace.isNoCertLimit()) && !mayPlayerBuyCertificate(
-                            currentPlayer, company, cert.getCertificateCount())) continue;
-                    // only nationalize other players
-                    if (owner instanceof Player && owner != currentPlayer) {
-                        otherPlayer = (Player) owner;
-                        if (!otherPlayers.contains(otherPlayer)) {
-                            price = (int)(1.5 * company.getCurrentPriceModel().getPrice().getPrice());
-                            if (price <= cash) {
-                                possibleActions.add(new BuyCertificate (company, cert.getShare(),
-                                        otherPlayer,
-                                    (int)(1.5 * company.getCurrentPriceModel().getPrice().getPrice()),
-                                    1));
-                            }
-                            otherPlayers.add(otherPlayer);
-                        }
-                    }
+                    if (!stockSpace.isNoCertLimit()
+                            && !mayPlayerBuyCertificate(currentPlayer, company,
+                                    uniqueCerts[shares].getCertificateCount()))
+                        continue;
+
+                    // Does the player have enough cash?
+                    if (cash < price * shares) continue;
+
+                    possibleActions.add(new BuyCertificate(company,
+                            uniqueCerts[shares].getShare(),
+                            from.getParent(), price, 1));
                 }
             }
         }
@@ -84,17 +107,15 @@ public class StockRound_1835 extends StockRound {
     // The sell-in-same-turn-at-decreasing-price option does not apply here
     protected int getCurrentSellPrice (PublicCompany company) {
 
-        String companyName = company.getId();
         int price;
-
-        if (sellPrices.containsKey(companyName)) {
-            price = (sellPrices.get(companyName)).getPrice();
+        if (sellPrices.containsKey(company)) {
+            price = (sellPrices.get(company)).getPrice();
         } else {
             price = company.getCurrentSpace().getPrice();
         }
         // stored price is the previous unadjusted price
         price = price / company.getShareUnitsForSharePrice();
-    return price;
+        return price;
     }
 
 
@@ -130,9 +151,9 @@ public class StockRound_1835 extends StockRound {
         // Check for group releases
         if (sharesInIPO == 0) {
             if (name.equals(GameManager_1835.SX_ID) &&
-                ipo.getShare(companyManager.getPublicCompany(GameManager_1835.BY_ID)) == 0
-            || name.equals(GameManager_1835.BY_ID) &&
-                ipo.getShare(companyManager.getPublicCompany(GameManager_1835.SX_ID)) == 0) {
+                    ipo.getShare(companyManager.getPublicCompany(GameManager_1835.BY_ID)) == 0
+                    || name.equals(GameManager_1835.BY_ID) &&
+                    ipo.getShare(companyManager.getPublicCompany(GameManager_1835.SX_ID)) == 0) {
                 // Group 1 sold out: release Badische
                 releaseCompanyShares (companyManager.getPublicCompany(GameManager_1835.BA_ID));
                 ReportBuffer.add (LocalText.getText("SharesReleased",
@@ -160,7 +181,7 @@ public class StockRound_1835 extends StockRound {
                         "All", GameManager_1835.WT_ID));
             } else if (sharesInIPO == 80) {
                 // President sold: release four 10% Prussian shares
-            	gameManager.getCompanyManager().getPublicCompany(GameManager_1835.PR_ID).setBuyable(true);
+                gameManager.getCompanyManager().getPublicCompany(GameManager_1835.PR_ID).setBuyable(true);
                 for (int i=0; i<4; i++) {
                     unavailable.getAnyCertOfType(GameManager_1835.PR_ID+"_10%").moveTo(ipo.getParent());
                 }
