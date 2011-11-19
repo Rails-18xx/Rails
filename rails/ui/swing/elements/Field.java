@@ -8,7 +8,8 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.border.Border;
 
-import rails.game.model.*;
+import rails.game.model.ModelObject;
+import rails.game.model.ViewUpdate;
 import rails.util.Util;
 
 public class Field extends JLabel implements ViewObject {
@@ -122,13 +123,13 @@ public class Field extends JLabel implements ViewObject {
                 setBackground((Color)vu.getValue(key));
                 normalBgColour = getBackground();
                 setForeground (Util.isDark(normalBgColour) ? Color.WHITE : Color.BLACK);
-            } else if (ShareModel.SHARES.equalsIgnoreCase(key)) {
+            } else if (ViewUpdate.SHARES.equalsIgnoreCase(key)) {
                 int count;
                 String type;
                 String[] items;
                 StringBuilder b = new StringBuilder();
                 for (String typeAndCount : ((String)vu.getValue(key)).split(",")) {
-                    Util.getLogger().debug(">>> "+typeAndCount+" <<<");
+                    //Util.getLogger().debug(">>> "+typeAndCount+" <<<");
                     if (!Util.hasValue(typeAndCount)) continue;
                     items = typeAndCount.split(":");
                     count = Integer.parseInt(items[1]);
@@ -138,7 +139,7 @@ public class Field extends JLabel implements ViewObject {
                     b.append(count).append(" x ").append(type);
                 }
                 baseToolTipInfo = b.toString();
-                setToolTipText ("<html>" + baseToolTipInfo);
+                setToolTipText (b.length()>0 ? "<html>" + baseToolTipInfo : null);
             }
         }
     }

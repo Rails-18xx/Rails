@@ -11,8 +11,6 @@ public class ShareModel extends ModelObject {
     private Portfolio portfolio;
     private PublicCompanyI company;
 
-    public static final String SHARES = "SHARES";
-
     public ShareModel(Portfolio portfolio, PublicCompanyI company) {
         this.portfolio = portfolio;
         this.company = company;
@@ -55,7 +53,7 @@ public class ShareModel extends ModelObject {
                 if (b.length() > 0) b.append(",");
                 b.append(type).append(":").append(numberPerCertType.get(type));
             }
-            u.addObject(SHARES, b.toString());
+            u.addObject(ViewUpdate.SHARES, b.toString());
         }
         return u;
     }
