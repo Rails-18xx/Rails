@@ -1066,7 +1066,7 @@ public class GameStatus extends GridPanel implements ActionListener {
 
     protected void syncToolTipText (Field field, ClickField clickField) {
         String baseText = field.getToolTipText();
-        clickField.setToolTipText(Util.hasValue(baseText) ? baseText : "");
+        clickField.setToolTipText(Util.hasValue(baseText) ? baseText : null);
     }
 
     protected void addToolTipText (ClickField clickField, String addText) {
