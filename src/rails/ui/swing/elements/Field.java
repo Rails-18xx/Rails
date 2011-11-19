@@ -10,6 +10,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 
 import com.google.common.base.Objects;
+import rails.game.model.ViewUpdate;
 
 import rails.game.state.Observable;
 import rails.game.state.Observer;
@@ -128,13 +129,13 @@ public class Field extends JLabel implements Observer {
                 setBackground((Color)vu.getValue(key));
                 normalBgColour = getBackground();
                 setForeground (Util.isDark(normalBgColour) ? Color.WHITE : Color.BLACK);
-            } else if (ShareModel.SHARES.equalsIgnoreCase(key)) {
+            } else if (ViewUpdate.SHARES.equalsIgnoreCase(key)) {
                 int count;
                 String type;
                 String[] items;
                 StringBuilder b = new StringBuilder();
                 for (String typeAndCount : ((String)vu.getValue(key)).split(",")) {
-                    Util.getLogger().debug(">>> "+typeAndCount+" <<<");
+                    //Util.getLogger().debug(">>> "+typeAndCount+" <<<");
                     if (!Util.hasValue(typeAndCount)) continue;
                     items = typeAndCount.split(":");
                     count = Integer.parseInt(items[1]);
@@ -144,7 +145,7 @@ public class Field extends JLabel implements Observer {
                     b.append(count).append(" x ").append(type);
                 }
                 baseToolTipInfo = b.toString();
-                setToolTipText ("<html>" + baseToolTipInfo);
+                setToolTipText (b.length()>0 ? "<html>" + baseToolTipInfo : null);
             }   
         }
     }
