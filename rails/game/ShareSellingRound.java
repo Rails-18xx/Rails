@@ -7,9 +7,7 @@ package rails.game;
 
 import java.util.*;
 
-import rails.common.DisplayBuffer;
-import rails.common.GuiDef;
-import rails.common.LocalText;
+import rails.common.*;
 import rails.common.parser.GameOption;
 import rails.game.action.PossibleAction;
 import rails.game.action.SellShares;
@@ -120,9 +118,9 @@ public class ShareSellingRound extends StockRound {
 
             /* May not sell more than the Pool can accept */
             maxShareToSell =
-                    Math.min(maxShareToSell,
-                            getGameParameterAsInt(GameDef.Parm.POOL_SHARE_LIMIT)
-                                             - pool.getShare(company));
+                Math.min(maxShareToSell,
+                        getGameParameterAsInt(GameDef.Parm.POOL_SHARE_LIMIT)
+                        - pool.getShare(company));
             if (maxShareToSell == 0) continue;
 
             /*
@@ -212,22 +210,23 @@ public class ShareSellingRound extends StockRound {
                 price = company.getMarketPrice();
             }
 
-            for (int i = 1; i <= 4; i++) {
-                number = shareCountPerUnit[i];
+            for (int shareSize = 1; shareSize <= 4; shareSize++) {
+                number = shareCountPerUnit[shareSize];
                 if (number == 0) continue;
                 number =
-                        Math.min(number, maxShareToSell
-                                         / (i * company.getShareUnit()));
+                    Math.min(number, maxShareToSell
+                            / (shareSize * company.getShareUnit()));
                 if (number == 0) continue;
 
                 // May not sell more than is needed to buy the train
                 while (number > 0
-                       && ((number - 1) * price) > cashToRaise.intValue())
+                        && ((number - 1) * price) > cashToRaise.intValue())
                     number--;
 
                 if (number > 0) {
-                    sellableShares.add(new SellShares(compName, i, number,
-                            price));
+                    for (int i=1; i<=number; i++) {
+                        sellableShares.add(new SellShares(compName, shareSize, i, price));
+                    }
                 }
             }
         }
@@ -241,14 +240,14 @@ public class ShareSellingRound extends StockRound {
         String errMsg = null;
         String companyName = action.getCompanyName();
         PublicCompanyI company =
-                companyManager.getPublicCompany(action.getCompanyName());
+            companyManager.getPublicCompany(action.getCompanyName());
         PublicCertificateI cert = null;
         PublicCertificateI presCert = null;
         List<PublicCertificateI> certsToSell =
-                new ArrayList<PublicCertificateI>();
+            new ArrayList<PublicCertificateI>();
         Player dumpedPlayer = null;
         int presSharesToSell = 0;
-        int numberToSell = action.getNumberSold();
+        int numberToSell = action.getNumber();
         int shareUnits = action.getShareUnits();
         int currentIndex = getCurrentPlayerIndex();
 
@@ -269,8 +268,8 @@ public class ShareSellingRound extends StockRound {
 
             // May player sell this company
             if (!mayPlayerSellShareOfCompany(company)) {
-            	errMsg = LocalText.getText("SaleNotAllowed", companyName);
-            	break;
+                errMsg = LocalText.getText("SaleNotAllowed", companyName);
+                break;
             }
 
             // The player must have the share(s)
@@ -288,7 +287,7 @@ public class ShareSellingRound extends StockRound {
 
             // Find the certificates to sell
             Iterator<PublicCertificateI> it =
-                    portfolio.getCertificatesPerCompany(companyName).iterator();
+                portfolio.getCertificatesPerCompany(companyName).iterator();
             while (numberToSell > 0 && it.hasNext()) {
                 cert = it.next();
                 if (cert.isPresidentShare()) {
@@ -306,23 +305,23 @@ public class ShareSellingRound extends StockRound {
             if (numberToSell == 0) presCert = null;
 
             if (numberToSell > 0 && presCert != null
-                && numberToSell <= presCert.getShares()) {
+                    && numberToSell <= presCert.getShares()) {
                 // Not allowed to dump the company that needs the train
                 if (company == cashNeedingCompany || !dumpOtherCompaniesAllowed) {
                     errMsg =
-                            LocalText.getText("CannotDumpTrainBuyingPresidency");
+                        LocalText.getText("CannotDumpTrainBuyingPresidency");
                     break;
                 }
                 // More to sell and we are President: see if we can dump it.
                 Player otherPlayer;
                 for (int i = currentIndex + 1; i < currentIndex
-                                                   + numberOfPlayers; i++) {
+                + numberOfPlayers; i++) {
                     otherPlayer = gameManager.getPlayerByIndex(i);
                     if (otherPlayer.getPortfolio().getShare(company) >= presCert.getShare()) {
                         // Check if he has the right kind of share
                         if (numberToSell > 1
-                            || otherPlayer.getPortfolio().ownsCertificates(
-                                    company, 1, false) >= 1) {
+                                || otherPlayer.getPortfolio().ownsCertificates(
+                                        company, 1, false) >= 1) {
                             // The poor sod.
                             dumpedPlayer = otherPlayer;
                             presSharesToSell = numberToSell;
@@ -345,7 +344,7 @@ public class ShareSellingRound extends StockRound {
             break;
         }
 
-        int numberSold = action.getNumberSold();
+        int numberSold = action.getNumber();
         if (errMsg != null) {
             DisplayBuffer.add(LocalText.getText("CantSell",
                     playerName,
@@ -388,7 +387,7 @@ public class ShareSellingRound extends StockRound {
         if (!company.isClosed()) {
 
             executeShareTransfer (company, certsToSell,
-                    dumpedPlayer, presSharesToSell);
+                    dumpedPlayer, presSharesToSell, action.getPresidentExchange());
         }
 
         cashToRaise.add(-numberSold * price);

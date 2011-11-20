@@ -75,7 +75,7 @@ public class Portfolio implements TokenHolder, MoveableHolder {
     protected String name;
     /** Unique name (including owner class name) */
     protected String uniqueName;
-    
+
     GameManagerI gameManager;
 
     /** Specific portfolio names */
@@ -199,8 +199,8 @@ public class Portfolio implements TokenHolder, MoveableHolder {
             ((Player)owner).updateWorth();
         }
     }
-    
-   public ShareModel getShareModel(PublicCompanyI company) {
+
+    public ShareModel getShareModel(PublicCompanyI company) {
 
         if (!shareModelPerCompany.containsKey(company)) {
             shareModelPerCompany.put(company, new ShareModel(this, company));
@@ -244,6 +244,26 @@ public class Portfolio implements TokenHolder, MoveableHolder {
             // or possibly throw a config error.
             return new ArrayList<PublicCertificateI>();
         }
+    }
+
+    /** Return an array of length 5 that contains:<br>
+     * - in element [0]: 1 if there is a presidency, 0 if not (but see below);<br>
+     * - in element [1]: number of non-president certificates of size 1 (number of share units);<br>
+     * - in element [2]: number of non-president certificates of size 2;<br>
+     * - etc.
+     * @param compName Company name
+     * @param includePresident True if the president certificate must also be included in the other counts.
+     * @return integer array
+     */
+    public int[] getCertificateTypeCountsPerCompany (String compName, boolean includePresident) {
+        int[] uniqueCertCounts = new int[5];
+        for (PublicCertificateI cert : getCertificatesPerCompany(compName)) {
+            if (!cert.isPresidentShare() || includePresident) {
+                ++uniqueCertCounts[cert.getShares()];
+            }
+            if (cert.isPresidentShare()) uniqueCertCounts[0] = 1;
+        }
+        return uniqueCertCounts;
     }
 
     /**
@@ -371,17 +391,27 @@ public class Portfolio implements TokenHolder, MoveableHolder {
      */
     public List<PublicCertificateI> swapPresidentCertificate(
             PublicCompanyI company, Portfolio other) {
+        return swapPresidentCertificate (company, other, 0);
+    }
+
+    public List<PublicCertificateI> swapPresidentCertificate(
+            PublicCompanyI company, Portfolio other, int swapShareSize) {
 
         List<PublicCertificateI> swapped = new ArrayList<PublicCertificateI>();
         PublicCertificateI swapCert;
 
         // Find the President's certificate
-        PublicCertificateI cert = this.findCertificate(company, true);
-        if (cert == null) return null;
-        int shares = cert.getShares();
+        PublicCertificateI presCert = this.findCertificate(company, true);
+        if (presCert == null) return null;
+        int shares = presCert.getShares();
 
-        // Check if counterparty has enough single certificates
-        if (other.ownsCertificates(company, 1, false) >= shares) {
+        // If a double cert is requested, try that first
+        if (swapShareSize > 1 && other.ownsCertificates(company, swapShareSize, false)*swapShareSize >= shares) {
+            swapCert = other.findCertificate(company, swapShareSize, false);
+            swapCert.moveTo(this);
+            swapped.add(swapCert);
+        } else if (other.ownsCertificates(company, 1, false) >= shares) {
+            // Check if counterparty has enough single certificates
             for (int i = 0; i < shares; i++) {
                 swapCert = other.findCertificate(company, 1, false);
                 swapCert.moveTo(this);
@@ -395,7 +425,7 @@ public class Portfolio implements TokenHolder, MoveableHolder {
         } else {
             return null;
         }
-        cert.moveTo(other);
+        presCert.moveTo(other);
 
         // Make sure the old President is no longer marked as such
         getShareModel(company).setShare();
@@ -412,19 +442,19 @@ public class Portfolio implements TokenHolder, MoveableHolder {
     private void addTrain(TrainI train, int[] position) {
 
         Util.addToList(trains, train, position[0]);
-        
+
         TrainType type = train.getType();
         if (!trainsPerType.containsKey(type)) {
             trainsPerType.put(type, new ArrayList<TrainI>());
         }
         Util.addToList(trainsPerType.get(type), train, position[1]);
-        
+
         TrainCertificateType certType = train.getCertType();
         if (!trainsPerCertType.containsKey(certType)) {
             trainsPerCertType.put(certType, new ArrayList<TrainI>());
         }
         Util.addToList(trainsPerCertType.get(certType), train, position[2]);
-        
+
         train.setHolder(this);
         trainsModel.update();
     }
@@ -674,9 +704,9 @@ public class Portfolio implements TokenHolder, MoveableHolder {
         if (object instanceof PublicCertificateI) {
             PublicCertificateI cert = (PublicCertificateI) object;
             return new int[] {
-                   certificates.indexOf(object),
-                   certPerCompany.get(cert.getCompany().getName()).indexOf(cert),
-                   certsPerType.get(cert.getTypeId()).indexOf(cert)
+                    certificates.indexOf(object),
+                    certPerCompany.get(cert.getCompany().getName()).indexOf(cert),
+                    certsPerType.get(cert.getTypeId()).indexOf(cert)
             };
         } else if (object instanceof PrivateCompanyI) {
             return new int[] {privateCompanies.indexOf(object)};
@@ -685,7 +715,7 @@ public class Portfolio implements TokenHolder, MoveableHolder {
             return new int[] {
                     trains.indexOf(train),
                     train.getPreviousType() != null ? trainsPerType.get(train.getPreviousType()).indexOf(train) : -1,
-                    trainsPerCertType.get(train.getCertType()).indexOf(train)
+                            trainsPerCertType.get(train.getCertType()).indexOf(train)
             };
         } else if (object instanceof SpecialPropertyI) {
             return new int[] {specialProperties.indexOf(object)};
