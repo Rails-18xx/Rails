@@ -350,9 +350,10 @@ public class StockRound extends Round {
 
         int price;
         int number;
-        int share, maxShareToSell;
-        boolean dumpAllowed;
+        int share, shareUnit, maxShareToSell;
+        int dumpThreshold = 0;
         PortfolioModel playerPortfolio = currentPlayer.getPortfolioModel();
+        boolean choiceOfPresidentExchangeCerts = false;
 
         /*
          * First check of which companies the player owns stock, and what
@@ -364,6 +365,7 @@ public class StockRound extends Round {
             if (!mayPlayerSellShareOfCompany(company)) continue;
 
             share = maxShareToSell = playerPortfolio.getShare(company);
+            shareUnit = company.getShareUnit();
             if (maxShareToSell == 0) continue;
 
             /* May not sell more than the Pool can accept */
@@ -375,23 +377,46 @@ public class StockRound extends Round {
 
             /*
              * If the current Player is president, check if he can dump the
-             * presidency onto someone else
+             * presidency onto someone else.
              */
             if (company.getPresident() == currentPlayer) {
                 int presidentShare =
                     company.getCertificates().get(0).getShare();
                 if (maxShareToSell > share - presidentShare) {
-                    dumpAllowed = false;
                     int playerShare;
-                    for (Player player : gameManager.getPlayers()) {
-                        if (player == currentPlayer) continue;
+                    // Check in correct player sequence, because we must also check
+                    // whether we must offer a choice for the Pres.cert exchange
+                    // (as may occur in 1835).
+                    int currentPlayerIndex = getCurrentPlayerIndex();
+                    int playerIndex = currentPlayerIndex;
+                    List<Player> players = gameManager.getPlayers();
+                    Player player;
+                    int dumpedPlayerShare = 0;
+                    dumpThreshold = 0;
+
+                    for (playerIndex = (currentPlayerIndex+1)%numberOfPlayers;
+                    playerIndex != currentPlayerIndex;
+                    playerIndex = (playerIndex+1)%numberOfPlayers) {
+                        player = players.get(playerIndex);
                         playerShare = player.getPortfolioModel().getShare(company);
-                        if (playerShare >= presidentShare) {
-                            dumpAllowed = true;
-                            break;
-                        }
+                        if (playerShare <= dumpedPlayerShare) continue;
+
+                        if (playerShare < presidentShare) continue; // Cannot dump on him
+
+                        dumpedPlayerShare = playerShare;
+                        // From what share sold are we dumping?
+                        dumpThreshold = share - playerShare + shareUnit;
+                        // Check if the potential dumpee has a choice of return certs
+                        int[] uniqueCertsCount =
+                            player.getPortfolioModel().getCertificateTypeCounts(company, false);
+                        // Let's keep it simple and only check for single
+                        // and double shares for now.
+                        choiceOfPresidentExchangeCerts =
+                            uniqueCertsCount[1] > 1 && uniqueCertsCount[2] > 0;
+
                     }
-                    if (!dumpAllowed) maxShareToSell = share - presidentShare;
+                    // What number of shares can we sell if we cannot dump?
+                    if (dumpThreshold == 0) maxShareToSell = share - presidentShare;
                 }
             }
 
@@ -402,29 +427,13 @@ public class StockRound extends Round {
              * of the smallest ordinary share unit type.
              */
             // Take care for max. 4 share units per share
-            int[] shareCountPerUnit = new int[5];
-            for (PublicCertificate c : playerPortfolio.getCertificates(company)) {
-                if (c.isPresidentShare()) {
-                    shareCountPerUnit[1] += c.getShares();
-                } else {
-                    ++shareCountPerUnit[c.getShares()];
-                }
-            }
-            // TODO The above ignores that a dumped player must be
-            // able to exchange the president's share.
-
-            /*
-             * Check the price. If a cert was sold before this turn, the
-             * original price is still valid
-             */
+            int[] shareCountPerUnit = playerPortfolio.getCertificateTypeCounts(company, true);
+            // Check the price. If a cert was sold before this turn, the original price is still valid.
             price = getCurrentSellPrice(company);
 
-            // removed as this is done in getCurrentSellPrice
-            // price /= company.getShareUnitsForSharePrice();
-
             /* Allow for different share units (as in 1835) */
-            for (int i = 1; i <= 4; i++) {
-                number = shareCountPerUnit[i];
+            for (int shareSize = 1; shareSize <= 4; shareSize++) {
+                number = shareCountPerUnit[shareSize];
                 if (number == 0) continue;
 
                 /* In some games (1856), a just bought share may not be sold */
@@ -438,10 +447,19 @@ public class StockRound extends Round {
                 // Check against the share% already in the pool
                 number =
                     Math.min(number, maxShareToSell
-                            / (i * company.getShareUnit()));
+                            / (shareSize * company.getShareUnit()));
                 if (number <= 0) continue;
 
-                possibleActions.add(new SellShares(company.getId(), i, number, price));
+                for (int i=1; i<=number; i++) {
+                    if (dumpThreshold > 0 && i*shareSize*shareUnit >= dumpThreshold
+                            && choiceOfPresidentExchangeCerts) {
+                        // Also offer the alternative president exchange for a double share
+                        possibleActions.add(new SellShares(company, shareSize, i, price, 1));
+                        possibleActions.add(new SellShares(company, shareSize, i, price, 2));
+                    } else {
+                        possibleActions.add(new SellShares(company, shareSize, i, price, 0));
+                    }
+                }
             }
         }
     }
@@ -922,7 +940,7 @@ public class StockRound extends Round {
             new ArrayList<PublicCertificate>();
         Player dumpedPlayer = null;
         int presSharesToSell = 0;
-        int numberToSell = action.getNumberSold();
+        int numberToSell = action.getNumber();
         int shareUnits = action.getShareUnits();
         int currentIndex = getCurrentPlayerIndex();
 
@@ -1027,7 +1045,7 @@ public class StockRound extends Round {
             break;
         }
 
-        int numberSold = action.getNumberSold();
+        int numberSold = action.getNumber();
         if (errMsg != null) {
             DisplayBuffer.add(LocalText.getText("CantSell",
                     playerName,
@@ -1073,7 +1091,7 @@ public class StockRound extends Round {
         if (!company.isClosed()) {
 
             executeShareTransfer (company, certsToSell,
-                    dumpedPlayer, presSharesToSell);
+                    dumpedPlayer, presSharesToSell, action.getPresidentExchange());
         }
 
         // Remember that the player has sold this company this round.
@@ -1089,7 +1107,7 @@ public class StockRound extends Round {
 
     protected void executeShareTransfer (PublicCompany company,
     		List<PublicCertificate> certsToSell,
-            Player dumpedPlayer, int presSharesToSell) {
+            Player dumpedPlayer, int presSharesToSell, int swapShareSize) {
 
         PortfolioModel portfolio = currentPlayer.getPortfolioModel();
 
@@ -1101,7 +1119,7 @@ public class StockRound extends Round {
             // First swap the certificates
             PortfolioModel dumpedPortfolio = dumpedPlayer.getPortfolioModel();
             List<PublicCertificate> swapped =
-                portfolio.swapPresidentCertificate(company, dumpedPortfolio);
+                portfolio.swapPresidentCertificate(company, dumpedPortfolio, swapShareSize);
             for (int i = 0; i < presSharesToSell; i++) {
                 certsToSell.add(swapped.get(i));
             }
@@ -1117,7 +1135,7 @@ public class StockRound extends Round {
                 otherPlayer = gameManager.getPlayerByIndex(i);
                 if (otherPlayer.getPortfolioModel().getShare(company) > portfolio.getShare(company)) {
                     portfolio.swapPresidentCertificate(company,
-                            otherPlayer.getPortfolioModel());
+                            otherPlayer.getPortfolioModel(), swapShareSize);
                     ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
                             otherPlayer.getId(),
                             company.getId() ));

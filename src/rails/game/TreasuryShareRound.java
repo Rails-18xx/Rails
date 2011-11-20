@@ -7,8 +7,8 @@ import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Iterables;
 
 import rails.common.DisplayBuffer;
-import rails.common.GuiDef;
 import rails.common.LocalText;
+import rails.common.GuiDef;
 import rails.game.action.*;
 import rails.game.model.PortfolioModel;
 import rails.game.state.BooleanState;
@@ -91,7 +91,7 @@ public class TreasuryShareRound extends StockRound {
         /* Get the unique Pool certificates and check which ones can be bought */
         from = pool;
         ImmutableSetMultimap<PublicCompany, PublicCertificate> map =
-                from.getCertsPerCompanyMap();
+            from.getCertsPerCompanyMap();
 
         for (PublicCompany comp: map.keySet()) {
             certs = map.get(comp);
@@ -110,7 +110,7 @@ public class TreasuryShareRound extends StockRound {
             int maxShare = getGameParameterAsInt(GameDef.Parm.TREASURY_SHARE_LIMIT);
             // Max number of shares to add
             int maxBuyable =
-                    (maxShare - ownedShare) / operatingCompany.getShareUnit();
+                (maxShare - ownedShare) / operatingCompany.getShareUnit();
             // Max number of shares to buy
             number = Math.min(certs.size(), maxBuyable);
             if (number == 0) continue;
@@ -159,12 +159,12 @@ public class TreasuryShareRound extends StockRound {
 
             /* May not sell more than the Pool can accept */
             maxShareToSell =
-                    Math.min(maxShareToSell,
-                            getGameParameterAsInt(GameDef.Parm.POOL_SHARE_LIMIT)
-                                             - pool.getShare(company));
+                Math.min(maxShareToSell,
+                        getGameParameterAsInt(GameDef.Parm.POOL_SHARE_LIMIT)
+                        - pool.getShare(company));
             if (maxShareToSell == 0) continue;
 
-             /*
+            /*
              * Check what share units the player actually owns. In some games
              * (e.g. 1835) companies may have different ordinary shares: 5% and
              * 10%, or 10% and 20%. The president's share counts as a multiple
@@ -193,17 +193,16 @@ public class TreasuryShareRound extends StockRound {
                 price = company.getMarketPrice();
             }
 
-            for (int i = 1; i <= 4; i++) {
-                number = shareCountPerUnit[i];
+            for (int shareSize = 1; shareSize <= 4; shareSize++) {
+                number = shareCountPerUnit[shareSize];
                 if (number == 0) continue;
                 number =
-                        Math.min(number, maxShareToSell
-                                         / (i * company.getShareUnit()));
+                    Math.min(number, maxShareToSell
+                            / (shareSize * company.getShareUnit()));
                 if (number == 0) continue;
 
-                if (number > 0) {
-                    possibleActions.add(new SellShares(compName, i, number,
-                            price));
+                for (int i=1; i<=number; i++) {
+                    possibleActions.add(new SellShares(company, shareSize, i, price));
                 }
             }
         }
@@ -255,8 +254,8 @@ public class TreasuryShareRound extends StockRound {
             }
             if (company != operatingCompany) {
                 errMsg =
-                        LocalText.getText("WrongCompany",
-                                companyName,
+                    LocalText.getText("WrongCompany",
+                            companyName,
                                 operatingCompany.getId() );
 
             }
@@ -267,7 +266,7 @@ public class TreasuryShareRound extends StockRound {
                 break;
             }
             if (company.mustHaveOperatedToTradeShares()
-                && !company.hasOperated()) {
+                    && !company.hasOperated()) {
                 errMsg = LocalText.getText("NotYetOperated", companyName);
                 break;
             }
@@ -281,8 +280,8 @@ public class TreasuryShareRound extends StockRound {
             // Check if that many shares are available
             if (share > from.getShare(company)) {
                 errMsg =
-                        LocalText.getText("NotAvailable",
-                                companyName,
+                    LocalText.getText("NotAvailable",
+                            companyName,
                                 from.getId() );
                 break;
             }
@@ -293,8 +292,8 @@ public class TreasuryShareRound extends StockRound {
             int treasuryShareLimit = getGameParameterAsInt(GameDef.Parm.TREASURY_SHARE_LIMIT);
             if (portfolio.getShare(company) + share > treasuryShareLimit) {
                 errMsg =
-                        LocalText.getText("TreasuryOverHoldLimit",
-                                String.valueOf(treasuryShareLimit));
+                    LocalText.getText("TreasuryOverHoldLimit",
+                            String.valueOf(treasuryShareLimit));
                 break;
             }
 
@@ -363,7 +362,7 @@ public class TreasuryShareRound extends StockRound {
         PublicCertificate cert = null;
         List<PublicCertificate> certsToSell =
                 new ArrayList<PublicCertificate>();
-        int numberToSell = action.getNumberSold();
+        int numberToSell = action.getNumber();
         int shareUnits = action.getShareUnits();
 
         // Dummy loop to allow a quick jump out
@@ -382,8 +381,8 @@ public class TreasuryShareRound extends StockRound {
             }
             if (company != operatingCompany) {
                 errMsg =
-                        LocalText.getText("WrongCompany",
-                                companyName,
+                    LocalText.getText("WrongCompany",
+                            companyName,
                                 operatingCompany.getId() );
                 break;
             }
@@ -394,7 +393,7 @@ public class TreasuryShareRound extends StockRound {
                 break;
             }
             if (company.mustHaveOperatedToTradeShares()
-                && !company.hasOperated()) {
+                    && !company.hasOperated()) {
                 errMsg = LocalText.getText("NotYetOperated", companyName);
                 break;
             }
@@ -441,7 +440,7 @@ public class TreasuryShareRound extends StockRound {
             break;
         }
 
-        int numberSold = action.getNumberSold();
+        int numberSold = action.getNumber();
         if (errMsg != null) {
             DisplayBuffer.add(LocalText.getText("CantSell",
                     companyName,
@@ -484,7 +483,7 @@ public class TreasuryShareRound extends StockRound {
                  transferCertificate (cert2, pool, cert2.getShares() * price);
             }
         }
-        */
+         */
         stockMarket.sell(company, numberSold);
 
         hasSold.set(true);

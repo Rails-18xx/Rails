@@ -94,6 +94,26 @@ public class CertificatesModel extends Model implements Iterable<PublicCertifica
         return certs.build();
     }
     
+    /** Return an array of length 5 that contains:<br>
+     * - in element [0]: 1 if there is a presidency, 0 if not (but see below);<br>
+     * - in element [1]: number of non-president certificates of size 1 (number of share units);<br>
+     * - in element [2]: number of non-president certificates of size 2;<br>
+     * - etc.
+     * @param compName Company name
+     * @param includePresident True if the president certificate must also be included in the other counts.
+     * @return integer array
+     */
+    int[] getCertificateTypeCounts(PublicCompany company, boolean includePresident) {
+        int[] uniqueCertCounts = new int[5];
+        for (PublicCertificate cert : getCertificates(company)) {
+            if (!cert.isPresidentShare() || includePresident) {
+                ++uniqueCertCounts[cert.getShares()];
+            }
+            if (cert.isPresidentShare()) uniqueCertCounts[0] = 1;
+        }
+        return uniqueCertCounts;
+    }
+    
     PortfolioMap<PublicCompany, PublicCertificate> getPortfolio() {
         return certificates;
     }

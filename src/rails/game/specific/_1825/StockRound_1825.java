@@ -152,7 +152,7 @@ public class StockRound_1825 extends StockRound {
                 }
                 if (number <= 0) continue;
 
-                possibleActions.add(new SellShares(compName, i, number, price));
+                possibleActions.add(new SellShares(company, i, number, price));
 
             }
         }

@@ -236,6 +236,10 @@ public class PortfolioModel extends Model {
         return list.build();
     }
 
+    public int[] getCertificateTypeCounts(PublicCompany company, boolean includePresident) {
+        return certificates.getCertificateTypeCounts(company, includePresident);
+    }
+
     public PublicCertificate getAnyCertOfType(String certTypeId) {
         for (PublicCertificate cert : certificates) {
             if (cert.getTypeId().equals(certTypeId)) {
@@ -275,44 +279,54 @@ public class PortfolioModel extends Model {
     /**
      * Swap this Portfolio's President certificate for common shares in another
      * Portfolio.
-     * 
+     *
      * @param company The company whose Presidency is handed over.
      * @param other The new President's portfolio.
      * @return The common certificates returned.
-     * 
-     * TODO: Rewrite the method replacing PortfolioModel with Owner
      */
     public List<PublicCertificate> swapPresidentCertificate(
             PublicCompany company, PortfolioModel other) {
+        return swapPresidentCertificate (company, other, 0);
+    }
 
-        // FIXME: Rewrite this parrt
+    public List<PublicCertificate> swapPresidentCertificate(
+            PublicCompany company, PortfolioModel other, int swapShareSize) {
+
         List<PublicCertificate> swapped = new ArrayList<PublicCertificate>();
         PublicCertificate swapCert;
 
         // Find the President's certificate
-        PublicCertificate cert = this.findCertificate(company, true);
-        if (cert == null) return null;
-        int shares = cert.getShares();
+        PublicCertificate presCert = this.findCertificate(company, true);
+        if (presCert == null) return null;
+        int shares = presCert.getShares();
 
-        // Check if counterparty has enough single certificates
-        if (other.ownsCertificates(company, 1, false) >= shares) {
+        // If a double cert is requested, try that first
+        if (swapShareSize > 1 && other.ownsCertificates(company, swapShareSize, false)*swapShareSize >= shares) {
+            swapCert = other.findCertificate(company, swapShareSize, false);
+            swapCert.moveTo(this.getParent());
+            swapped.add(swapCert);
+        } else if (other.ownsCertificates(company, 1, false) >= shares) {
+            // Check if counterparty has enough single certificates
             for (int i = 0; i < shares; i++) {
                 swapCert = other.findCertificate(company, 1, false);
-                swapCert.moveTo(getParent());
+                swapCert.moveTo(this.getParent());
                 swapped.add(swapCert);
+
             }
         } else if (other.ownsCertificates(company, shares, false) >= 1) {
             swapCert = other.findCertificate(company, 2, false);
-            swapCert.moveTo(getParent());
+            swapCert.moveTo(this.getParent());
             swapped.add(swapCert);
         } else {
             return null;
         }
-        cert.moveTo(other.getParent());
+        presCert.moveTo(other.getParent());
 
         return swapped;
     }
 
+    
+    
     public void discardTrain(Train train) {
         // FIXME: This is a horrible list of method calls
         GameManager.getInstance().getBank().getPool().getPortfolioModel().getTrainsModel().getPortfolio().moveInto(

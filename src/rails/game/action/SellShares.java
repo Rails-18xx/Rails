@@ -23,24 +23,31 @@ public class SellShares extends PossibleAction {
     private int shareUnits;
     private int share;
     private int price;
-    private int maximumNumber;
-
-    // Client-side settings
-    private int numberSold = 0;
+    private int number;
+    /** Dump flag, indicates to which type of certificates the president's share must be exchanged.<br>
+     * 0 = no dump, or dump that does not require any choice of exchange certificates;<br>
+     * 1 = exchange against 1-share certificates (usually 10%);<br>
+     * 2 = exchange against a 2-share certificate (as can occur in 1835);<br>
+     * etc.
+     */
+    private int presidentExchange = 0;
 
     public static final long serialVersionUID = 1L;
 
-    /**
-     *
-     */
-    public SellShares(String companyName, int shareUnits, int maximumNumber,
+    public SellShares(PublicCompany company, int shareUnits, int number,
             int price) {
-        this.companyName = companyName;
+        this (company, shareUnits, number, price, 0);
+    }
+
+    public SellShares(PublicCompany company, int shareUnits, int number,
+            int price, int presidentExchange) {
+        this.company = company;
         this.shareUnits = shareUnits;
         this.price = price;
-        this.maximumNumber = maximumNumber;
+        this.number = number;
+        this.presidentExchange = presidentExchange;
 
-        company = getCompanyManager().getPublicCompany(companyName);
+        companyName = company.getId();
         shareUnit = company.getShareUnit();
         share = shareUnits * shareUnit;
     }
@@ -48,8 +55,8 @@ public class SellShares extends PossibleAction {
     /**
      * @return Returns the maximumNumber.
      */
-    public int getMaximumNumber() {
-        return maximumNumber;
+    public int getNumber() {
+        return number;
     }
 
     /**
@@ -82,12 +89,8 @@ public class SellShares extends PossibleAction {
         return share;
     }
 
-    public int getNumberSold() {
-        return numberSold;
-    }
-
-    public void setNumberSold(int numberSold) {
-        this.numberSold = numberSold;
+    public int getPresidentExchange() {
+        return presidentExchange;
     }
 
     @Override
@@ -95,9 +98,9 @@ public class SellShares extends PossibleAction {
         if (!(action instanceof SellShares)) return false;
         SellShares a = (SellShares) action;
         return a.getCompanyName().equals(companyName)
-               && a.getShareUnits() == shareUnits
-               && a.getMaximumNumber() == maximumNumber
-               && a.getPrice() == price;
+        && a.getShareUnits() == shareUnits
+        && a.getNumber() == number
+        && a.getPrice() == price;
     }
 
     @Override
@@ -105,28 +108,39 @@ public class SellShares extends PossibleAction {
         if (!(action instanceof SellShares)) return false;
         SellShares a = (SellShares) action;
         return a.companyName.equals(companyName)
-               && a.shareUnits == shareUnits
-               && a.numberSold == numberSold
-               && a.price == price;
+        && a.shareUnits == shareUnits
+        && a.number == number
+        && a.price == price;
     }
 
     @Override
     public String toString() {
         return "SellShares: "
-               + (numberSold > 0 ? numberSold : "max " + maximumNumber)
-               + " of " + share + "% " + companyName + " at "
-               + Currency.format(company, shareUnits * price) + " apiece";
+        + number + " of " + share + "% " + companyName
+        + " at " + Currency.format(company, shareUnits * price) + " apiece"
+        + (presidentExchange > 0 ? " (pres.exch. for "+presidentExchange*shareUnit+"% share(s))" : "");
     }
 
     /** Deserialize */
     private void readObject(ObjectInputStream in) throws IOException,
-            ClassNotFoundException {
+    ClassNotFoundException {
 
-        in.defaultReadObject();
+        //in.defaultReadObject();
+        // Custom reading for backwards compatibility
+        ObjectInputStream.GetField fields = in.readFields();
+
+        companyName = (String) fields.get("companyName", null);
+        shareUnit = fields.get("shareUnit", shareUnit);
+        shareUnits = fields.get("shareUnits", shareUnits);
+        share = fields.get("share", share);
+        price = fields.get("price", price);
+        int numberSold = fields.get("numberSold", 0); // For backwards compatibility
+        number = fields.get("number", numberSold);
+        presidentExchange = fields.get("presidentExchange", 0);
 
         CompanyManager companyManager = getCompanyManager();
         if (Util.hasValue(companyName))
             companyName = companyManager.checkAlias(companyName);
-            company = companyManager.getPublicCompany(companyName);
+        company = companyManager.getPublicCompany(companyName);
     }
 }

@@ -598,7 +598,9 @@ public class GameStatus extends GridPanel implements ActionListener {
                 for (PossibleAction action : actions) {
                     sale = (SellShares) action;
 
-                    for (int i = 1; i <= sale.getMaximumNumber(); i++) {
+                    //for (int i = 1; i <= sale.getMaximumNumber(); i++) {
+                    int i = sale.getNumber();
+                    if (sale.getPresidentExchange() == 0) {
                         options.add(LocalText.getText("SellShares",
                                 i,
                                 sale.getShare(),
@@ -606,9 +608,19 @@ public class GameStatus extends GridPanel implements ActionListener {
                                 sale.getCompanyName(),
                                 gameUIManager.format( i * sale.getShareUnits()
                                         * sale.getPrice()) ));
-                        sellActions.add(sale);
-                        sellAmounts.add(i);
+                    } else {
+                        options.add(LocalText.getText("SellSharesWithSwap",
+                                i,
+                                sale.getShare(),
+                                i * sale.getShare(),
+                                sale.getCompanyName(),
+                                gameUIManager.format(i * sale.getShareUnits() * sale.getPrice()),
+                                // disregard other than double pres.certs. This is for 1835 only.
+                                3 - sale.getPresidentExchange(),
+                                sale.getPresidentExchange() * sale.getShareUnit()));
                     }
+                    sellActions.add(sale);
+                    sellAmounts.add(i);
                 }
                 int index = 0;
                 if (options.size() > 1) {
@@ -631,7 +643,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                     // cancelled
                 } else {
                     chosenAction = sellActions.get(index);
-                    ((SellShares) chosenAction).setNumberSold(sellAmounts.get(index));
+                    //((SellShares) chosenAction).setNumberSold(sellAmounts.get(index));
                 }
             } else if (actions.get(0) instanceof BuyCertificate) {
                 boolean startCompany = false;

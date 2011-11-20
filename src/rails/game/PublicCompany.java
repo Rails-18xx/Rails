@@ -1358,7 +1358,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
         int buyerShare = buyer.getPortfolioModel().getShare(this);
         if (buyerShare > presShare) {
             pres.getPortfolioModel().swapPresidentCertificate(this,
-                    buyer.getPortfolioModel());
+                    buyer.getPortfolioModel(), 0);
             ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
                     buyer.getId(),
                     getId() ));
@@ -1385,7 +1385,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
             if (share > presShare) {
                 // Presidency must be transferred
                 seller.getPortfolioModel().swapPresidentCertificate(this,
-                        player.getPortfolioModel());
+                        player.getPortfolioModel(), 0);
                 ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
                         player.getId(),
                         getId() ));
@@ -1411,7 +1411,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
             if (share > presShare) {
                 // Hand presidency to the first player with a higher share
                 president.getPortfolioModel().swapPresidentCertificate(this,
-                        player.getPortfolioModel());
+                        player.getPortfolioModel(), 0);
                 ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
                         player.getId(),
                         getId() ));
