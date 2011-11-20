@@ -1507,7 +1507,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
         int buyerShare = buyer.getPortfolio().getShare(this);
         if (buyerShare > presShare) {
             pres.getPortfolio().swapPresidentCertificate(this,
-                    buyer.getPortfolio());
+                    buyer.getPortfolio(), 0);
             ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
                     buyer.getName(),
                     name ));
@@ -1534,7 +1534,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
             if (share > presShare) {
                 // Presidency must be transferred
                 seller.getPortfolio().swapPresidentCertificate(this,
-                        player.getPortfolio());
+                        player.getPortfolio(), 0);
                 ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
                         player.getName(),
                         name ));
@@ -1560,7 +1560,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
             if (share > presShare) {
                 // Hand presidency to the first player with a higher share
                 president.getPortfolio().swapPresidentCertificate(this,
-                        player.getPortfolio());
+                        player.getPortfolio(), 0);
                 ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
                         player.getName(),
                         name ));

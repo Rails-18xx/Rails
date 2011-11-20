@@ -2,9 +2,7 @@ package rails.game.specific._1856;
 
 import java.util.*;
 
-import rails.common.DisplayBuffer;
-import rails.common.GuiDef;
-import rails.common.LocalText;
+import rails.common.*;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.move.CashMove;
@@ -18,7 +16,7 @@ public class CGRFormationRound extends SwitchableUIRound {
     private Player startingPlayer;
     private int maxLoansToRepayByPresident = 0;
     private Map<Player, List<PublicCompanyI>> companiesToRepayLoans = null;
-    
+
     private PublicCompanyI currentCompany = null;
     private List<PublicCompanyI> mergingCompanies = new ArrayList<PublicCompanyI>();
 
@@ -27,9 +25,9 @@ public class CGRFormationRound extends SwitchableUIRound {
      */
     private String cgrName = PublicCompany_CGR.NAME;
     private PublicCompany_CGR cgr
-        = (PublicCompany_CGR)gameManager.getCompanyManager().getPublicCompany(cgrName);
-    
-    /* 
+    = (PublicCompany_CGR)gameManager.getCompanyManager().getPublicCompany(cgrName);
+
+    /*
      * effects from the merger, processed at the end
      * thus no need for state variables
      */
@@ -86,7 +84,7 @@ public class CGRFormationRound extends SwitchableUIRound {
             if (company.getCurrentNumberOfLoans() > 0) {
                 if (companiesToRepayLoans == null) {
                     companiesToRepayLoans
-                        = new HashMap<Player, List<PublicCompanyI>>();
+                    = new HashMap<Player, List<PublicCompanyI>>();
                 }
                 president = company.getPresident();
                 if (!companiesToRepayLoans.containsKey(president)) {
@@ -192,22 +190,22 @@ public class CGRFormationRound extends SwitchableUIRound {
                             player.getName(),
                             maxNumber,
                             currentCompany.getName()),
-                        false);
+                            false);
                 } else {
                     DisplayBuffer.add(LocalText.getText("YouCannotRepayAllLoans",
                             player.getName(),
                             maxNumber,
                             numberOfLoans,
                             currentCompany.getName()),
-                        false);
-//                    currentCompany.getLoanValueModel().setText(LocalText.getText("MERGE"));
+                            false);
+                    //                    currentCompany.getLoanValueModel().setText(LocalText.getText("MERGE"));
                 }
                 maxLoansToRepayByPresident = maxNumber;
                 break;
             } else {
                 // President cannot help, this company will merge into CGR anyway
                 mergingCompanies.add(currentCompany);
-//                currentCompany.getLoanValueModel().setText(LocalText.getText("MERGE"));
+                //                currentCompany.getLoanValueModel().setText(LocalText.getText("MERGE"));
                 message = LocalText.getText("WillMergeInto",
                         currentCompany.getName(),
                         PublicCompany_CGR.NAME);
@@ -241,7 +239,7 @@ public class CGRFormationRound extends SwitchableUIRound {
                     trainsToDiscardFrom, forcedTrainDiscard);
             possibleActions.add(action);
             guiHints.setActivePanel(GuiDef.Panel.STATUS);
-       }
+        }
         return true;
 
     }
@@ -266,10 +264,10 @@ public class CGRFormationRound extends SwitchableUIRound {
                 new CashMove (company, bank, repaymentByCompany);
                 ReportBuffer.add (LocalText.getText("CompanyRepaysLoans",
                         company.getName(),
-                    Bank.format(repaymentByCompany),
-                    Bank.format(repayment),
-                    numberRepaid,
-                    Bank.format(company.getValuePerLoan())));
+                        Bank.format(repaymentByCompany),
+                        Bank.format(repayment),
+                        numberRepaid,
+                        Bank.format(company.getValuePerLoan())));
             }
             if (repaymentByPresident > 0) {
                 Player president = company.getPresident();
@@ -282,11 +280,11 @@ public class CGRFormationRound extends SwitchableUIRound {
                         Bank.format(company.getValuePerLoan()),
                         president.getName()));
             }
-         }
+        }
 
-         if (action.getCompany().getCurrentNumberOfLoans() > 0) {
+        if (action.getCompany().getCurrentNumberOfLoans() > 0) {
             mergingCompanies.add(currentCompany);
-//            currentCompany.getLoanValueModel().setText(LocalText.getText("MERGE"));
+            //            currentCompany.getLoanValueModel().setText(LocalText.getText("MERGE"));
             String message = LocalText.getText("WillMergeInto",
                     currentCompany.getName(),
                     PublicCompany_CGR.NAME);
@@ -438,7 +436,7 @@ public class CGRFormationRound extends SwitchableUIRound {
         // Move the remaining CGR shares to the ipo.
         // Clone the shares list first
         certs = new ArrayList<PublicCertificateI>
-                (unavailable.getCertificatesPerCompany(PublicCompany_CGR.NAME));
+        (unavailable.getCertificatesPerCompany(PublicCompany_CGR.NAME));
         for (PublicCertificateI cert : certs) {
             cert.moveTo(ipo);
         }
@@ -452,8 +450,8 @@ public class CGRFormationRound extends SwitchableUIRound {
         } else if (temporaryPresident != null && temporaryPresident != newPresident) {
             log.debug("Moving pres.share from "+temporaryPresident.getName()
                     +" to "+newPresident.getName());
-                temporaryPresident.getPortfolio().swapPresidentCertificate(cgr,
-                        newPresident.getPortfolio());
+            temporaryPresident.getPortfolio().swapPresidentCertificate(cgr,
+                    newPresident.getPortfolio(), 1);
         }
 
         newPresident.getPortfolio().getShareModel(cgr).setShare();
@@ -522,7 +520,7 @@ public class CGRFormationRound extends SwitchableUIRound {
         DisplayBuffer.add(message);
         ReportBuffer.add(message);
 
-         // Collect the old token spots, and move cash and trains
+        // Collect the old token spots, and move cash and trains
         List<BaseToken> homeTokens = new ArrayList<BaseToken>();
         nonHomeTokens = new ArrayList<BaseToken>();
         BaseToken bt;
@@ -561,7 +559,7 @@ public class CGRFormationRound extends SwitchableUIRound {
             // Move any still valid bonuses
             if (comp.getBonuses() != null) {
                 List<Bonus> bonuses = new ArrayList<Bonus> (comp.getBonuses());
-bonuses:        for (Bonus bonus : bonuses) {
+                bonuses:        for (Bonus bonus : bonuses) {
                     comp.removeBonus(bonus);
                     // Only add if the CGR does not already have the same bonus
                     if (cgr.getBonuses() != null) {
@@ -645,7 +643,7 @@ bonuses:        for (Bonus bonus : bonuses) {
             // Then create list of exchange spots. Sort it on hexname/city number
             tokensToExchangeFrom = new ArrayList<ExchangeableToken>();
             for (String key : new TreeSet<String> (oldTokens.keySet())) {
-                 tokensToExchangeFrom.add(new ExchangeableToken(
+                tokensToExchangeFrom.add(new ExchangeableToken(
                         key, oldTokens.get(key)));
             }
         } else {
@@ -658,7 +656,7 @@ bonuses:        for (Bonus bonus : bonuses) {
         }
 
         // Check the trains, autodiscard any excess non-permanent trains
-//        int trainLimit = cgr.getTrainLimit(gameManager.getCurrentPlayerIndex());
+        //        int trainLimit = cgr.getTrainLimit(gameManager.getCurrentPlayerIndex());
         int trainLimit = cgr.getCurrentTrainLimit();
         List<TrainI> trains = cgr.getPortfolio().getTrainList();
         if (cgr.getNumberOfTrains() > trainLimit) {
@@ -680,7 +678,7 @@ bonuses:        for (Bonus bonus : bonuses) {
 
     }
 
-   private void executeExchangeTokens (List<BaseToken> exchangedTokens) {
+    private void executeExchangeTokens (List<BaseToken> exchangedTokens) {
         Stop city;
         MapHex hex;
         ReportBuffer.add("");
@@ -765,7 +763,7 @@ bonuses:        for (Bonus bonus : bonuses) {
             for (TrainI train : cgr.getPortfolio().getTrainList()) {
                 if (!train.isPermanent()) {
                     trainsToDiscardFrom.add(train);
-               }
+                }
             }
             if (!trainsToDiscardFrom.isEmpty()) {
                 if (getStep() != STEP_DISCARD_TRAINS) {
@@ -811,9 +809,9 @@ bonuses:        for (Bonus bonus : bonuses) {
 
             if (train != null && !company.getPortfolio().getTrainList().contains(train)) {
                 errMsg =
-                        LocalText.getText("CompanyDoesNotOwnTrain",
-                                company.getName(),
-                                train.getName() );
+                    LocalText.getText("CompanyDoesNotOwnTrain",
+                            company.getName(),
+                            train.getName() );
                 break;
             }
 
@@ -833,7 +831,7 @@ bonuses:        for (Bonus bonus : bonuses) {
 
         if (train != null) {
 
-//            if (action.isForced()) moveStack.linkToPreviousMoveSet();
+            //            if (action.isForced()) moveStack.linkToPreviousMoveSet();
             train.moveTo(pool);
             ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
                     companyName,
