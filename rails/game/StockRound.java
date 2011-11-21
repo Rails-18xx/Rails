@@ -353,8 +353,9 @@ public class StockRound extends Round {
         String compName;
         int price;
         int number;
-        int share, shareUnit, maxShareToSell;
+        int ownedShare, shareUnit, maxShareToSell;
         int dumpThreshold = 0;
+        int extraSingleShares = 0;
         boolean choiceOfPresidentExchangeCerts = false;
         Portfolio playerPortfolio = currentPlayer.getPortfolio();
 
@@ -367,7 +368,7 @@ public class StockRound extends Round {
             // Check if shares of this company can be sold at all
             if (!mayPlayerSellShareOfCompany(company)) continue;
 
-            share = maxShareToSell = playerPortfolio.getShare(company);
+            ownedShare = maxShareToSell = playerPortfolio.getShare(company);
             shareUnit = company.getShareUnit();
             if (maxShareToSell == 0) continue;
 
@@ -385,7 +386,7 @@ public class StockRound extends Round {
             if (company.getPresident() == currentPlayer) {
                 int presidentShare =
                     company.getCertificates().get(0).getShare();
-                if (maxShareToSell > share - presidentShare) {
+                if (maxShareToSell > ownedShare - presidentShare) {
                     int playerShare;
                     // Check in correct player sequence, because we must also check
                     // whether we must offer a choice for the Pres.cert exchange
@@ -408,7 +409,7 @@ public class StockRound extends Round {
 
                         dumpedPlayerShare = playerShare;
                         // From what share sold are we dumping?
-                        dumpThreshold = share - playerShare + shareUnit;
+                        dumpThreshold = ownedShare - playerShare + shareUnit;
                         // Check if the potential dumpee has a choice of return certs
                         int[] uniqueCertsCount =
                             player.getPortfolio().getCertificateTypeCountsPerCompany(company.getName(), false);
@@ -416,10 +417,15 @@ public class StockRound extends Round {
                         // and double shares for now.
                         choiceOfPresidentExchangeCerts =
                             uniqueCertsCount[1] > 1 && uniqueCertsCount[2] > 0;
+                        // If a presidency dump is possible, extra (single) share(s) may be sold
+                        // that aren't even owned
+                        extraSingleShares = Math.min(
+                                presidentShare/shareUnit,
+                                (maxShareToSell-dumpThreshold)/shareUnit+1);
 
                     }
                     // What number of shares can we sell if we cannot dump?
-                    if (dumpThreshold == 0) maxShareToSell = share - presidentShare;
+                    if (dumpThreshold == 0) maxShareToSell = ownedShare - presidentShare;
                 }
             }
 
@@ -431,7 +437,7 @@ public class StockRound extends Round {
              */
             // Take care for max. 4 share units per share
             compName = company.getName();
-            int[] shareCountPerUnit = playerPortfolio.getCertificateTypeCountsPerCompany(compName, true);
+            int[] shareCountPerUnit = playerPortfolio.getCertificateTypeCountsPerCompany(compName, false);
             // Check the price. If a cert was sold before this turn, the original price is still valid.
             price = getCurrentSellPrice(company);
 
@@ -439,6 +445,9 @@ public class StockRound extends Round {
             for (int shareSize = 1; shareSize <= 4; shareSize++) {
                 number = shareCountPerUnit[shareSize];
                 if (number == 0) continue;
+
+                // If you can dump a presidency, you may sell additional single shares that you don't own
+                if (shareSize == 1) number += extraSingleShares;
 
                 /* In some games (1856), a just bought share may not be sold */
                 // This code ignores the possibility of different share units
@@ -448,18 +457,19 @@ public class StockRound extends Round {
                 }
                 if (number <= 0) continue;
 
-                // Check against the share% already in the pool
-                number =
-                    Math.min(number, maxShareToSell
-                            / (shareSize * company.getShareUnit()));
+                // Check against the maximum share that can be sold
+                number = Math.min(number, maxShareToSell / (shareSize * shareUnit));
                 if (number <= 0) continue;
 
                 for (int i=1; i<=number; i++) {
                     if (dumpThreshold > 0 && i*shareSize*shareUnit >= dumpThreshold
                             && choiceOfPresidentExchangeCerts) {
-                        // Also offer the alternative president exchange for a double share
                         possibleActions.add(new SellShares(compName, shareSize, i, price, 1));
-                        possibleActions.add(new SellShares(compName, shareSize, i, price, 2));
+                        // Also offer the alternative president exchange for a double share,
+                        // unless the remaining share would be less than a double share
+                        if (ownedShare/shareUnit - i*shareSize >= 2) {
+                            possibleActions.add(new SellShares(compName, shareSize, i, price, 2));
+                        }
                     } else {
                         possibleActions.add(new SellShares(compName, shareSize, i, price, 0));
                     }
