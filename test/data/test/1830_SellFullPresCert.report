@@ -1,0 +1,10 @@
+GameIs,1830
+PlayerIs,1,Alice
+PlayerIs,2,Bob
+PlayerIs,3,Charlie
+PlayerCash,800
+BankHas,9600
+StartOfPhase,2
+BankSizeIs,9600
+StartOfInitialRound
+HasPriority,Alice
