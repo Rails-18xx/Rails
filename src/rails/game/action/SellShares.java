@@ -32,6 +32,9 @@ public class SellShares extends PossibleAction {
      */
     private int presidentExchange = 0;
 
+    // For backwards compatibility only
+    private int numberSold = 0;
+
     public static final long serialVersionUID = 1L;
 
     public SellShares(PublicCompany company, int shareUnits, int number,
@@ -134,7 +137,7 @@ public class SellShares extends PossibleAction {
         shareUnits = fields.get("shareUnits", shareUnits);
         share = fields.get("share", share);
         price = fields.get("price", price);
-        int numberSold = fields.get("numberSold", 0); // For backwards compatibility
+        numberSold = fields.get("numberSold", 0); // For backwards compatibility
         number = fields.get("number", numberSold);
         presidentExchange = fields.get("presidentExchange", 0);
 
