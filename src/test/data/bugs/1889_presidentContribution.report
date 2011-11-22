@@ -956,8 +956,8 @@ Payout,Breno,33,1,10
 Payout,Chris,33,1,10
 Payout,Mark,33,1,10
 Payout,Peter,132,4,10
-Payout,KO,99,3,10
 BankIsBrokenReportText
+Payout,KO,99,3,10
 PRICE_MOVES_LOG,KO,80,G6,90,G5
  
 CompanyOperates,KU,Peter
