@@ -1740,7 +1740,7 @@ Payout,Arne,23,1,10
 Payout,Joakim,115,5,10
 Payout,Ed,46,2,10
 PRICE_MOVES_LOG,KKÖB,165,I2,180,J2
-BuysTrain,KKÖB,P,SNCF,100
+BuysTrain,KKÖB,P,Pool,100
  
 CompanyOperates,SNCF,Arne
 LaysTileAt,SNCF,513,I6,S
@@ -1790,7 +1790,7 @@ SNCB receives 110
 Payout,Arne,11,1,10
 Payout,Joakim,55,5,10
 PRICE_MOVES_LOG,SNCB,70,D6,75,E6
-BuysTrain,SNCB,P,KKÖB,100
+BuysTrain,SNCB,P,Pool,100
  
 CompanyOperates,FS,Chris
 LaysTileAt,FS,582,S8,NE
@@ -1812,9 +1812,9 @@ Has,SNCB,48
 Has,NS,47
 Has,KBS,8
 Has,KPEV,670
-Has,KKÖB,221
+Has,KKÖB,121
 Has,FS,2
-Has,SNCF,174
+Has,SNCF,74
 Has,DR,18
 Has,Chris,476
 Has,Joakim,556
@@ -1870,9 +1870,9 @@ Has,SNCB,48
 Has,NS,47
 Has,KBS,8
 Has,KPEV,670
-Has,KKÖB,221
+Has,KKÖB,121
 Has,FS,2
-Has,SNCF,174
+Has,SNCF,74
 Has,DR,18
 Has,Chris,431
 Has,Joakim,556
@@ -1931,6 +1931,7 @@ Payout,Arne,24,1,10
 Payout,Joshua,144,6,10
 PRICE_MOVES_LOG,KPEV,122,G3,135,H3
 BuysTrain,KPEV,8,IPO,800
+CompanyDiscardsTrain,KPEV,P
  
 CompanyOperates,DR,Chris
 LaysTileAt,DR,513,G4,S
@@ -1973,9 +1974,9 @@ Has,SNCB,48
 Has,NS,47
 Has,KBS,8
 Has,KPEV,50
-Has,KKÖB,221
+Has,KKÖB,121
 Has,FS,2
-Has,SNCF,174
+Has,SNCF,74
 Has,DR,18
 Has,Chris,1053
 Has,Joakim,1179
@@ -2061,9 +2062,9 @@ LAYS_FREE_TOKEN_ON,FS,S8
 CompanyRevenue,FS,350
 CompanyPaysOutFull,FS,350
 Payout,Arne,35,1,10
-BankIsBrokenReportText
 Payout,Ed,70,2,10
 Payout,Chris,140,4,10
+BankIsBrokenReportText
 PRICE_MOVES_LOG,FS,70,D6,75,E6
  
 EndOfOperatingRound,5.2
@@ -2077,9 +2078,9 @@ Has,SNCB,48
 Has,NS,47
 Has,KBS,8
 Has,KPEV,50
-Has,KKÖB,221
+Has,KKÖB,121
 Has,FS,2
-Has,SNCF,174
+Has,SNCF,74
 Has,DR,18
 Has,Chris,1713
 Has,Joakim,1911

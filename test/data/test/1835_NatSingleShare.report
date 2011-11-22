@@ -1,0 +1,10 @@
+GameIs,1835
+PlayerIs,1,T1
+PlayerIs,2,T2
+PlayerIs,3,T3
+PlayerCash,600
+BankHas,10200
+StartOfPhase,2
+BankSizeIs,10200
+StartOfInitialRound
+HasPriority,T1
