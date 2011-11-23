@@ -92,7 +92,13 @@ public class PrussianFormationRound extends StockRound {
                     }
                 }
                 executeExchange (foldables, false, true);
-                finishRound();
+
+                // Check if the PR must discard any trains
+                if (prussian.getNumberOfTrains() > prussian.getCurrentTrainLimit()) {
+                    step = Step.DISCARD_TRAINS;
+                } else {
+                    finishRound();
+                }
             } else {
                 findNextMergingPlayer(false);
             }
@@ -118,6 +124,7 @@ public class PrussianFormationRound extends StockRound {
         } else if (step == Step.DISCARD_TRAINS) {
 
             if (prussian.getNumberOfTrains() > prussian.getCurrentTrainLimit()) {
+                log.debug("+++ PR has "+prussian.getNumberOfTrains()+", limit is "+prussian.getCurrentTrainLimit());
                 possibleActions.add(new DiscardTrain(prussian,
                         prussian.getPortfolio().getUniqueTrains(), true));
             }
@@ -425,8 +432,13 @@ public class PrussianFormationRound extends StockRound {
                 company.getName(),
                 train.getName() ));
 
-        // This always finished this type of round
-        finishRound();
+        // We still might have another excess train
+        // TODO: would be better to have DiscardTrain discard multiple trains
+        if (prussian.getNumberOfTrains() > prussian.getCurrentTrainLimit()) {
+            step = Step.DISCARD_TRAINS;
+        } else {
+            finishRound();
+        }
 
         return true;
     }
