@@ -10,7 +10,6 @@ import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 
 import com.google.common.base.Objects;
-import rails.game.model.ViewUpdate;
 
 import rails.game.state.Observable;
 import rails.game.state.Observer;
