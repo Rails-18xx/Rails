@@ -1940,22 +1940,35 @@ public class OperatingRound extends Round implements Observer {
         /* Special-property tile lays */
         currentSpecialTokenLays.clear();
 
-        if (!operatingCompany.get().canUseSpecialProperties()) return;
+        PublicCompanyI company = operatingCompany.get();
+        if (!company.canUseSpecialProperties()) return;
+        // Check if the company still has tokens
+        if (company.getNumberOfFreeBaseTokens() == 0) return;
 
         /*
          * In 1835, this only applies to major companies. TODO: For now,
          * hardcode this, but it must become configurable later.
          */
-        if (operatingCompany.get().getType().getName().equals("Minor")) return;
+        // Removed EV 24-11-2011 - entirely redundant; why did I ever do this??
+        //if (operatingCompany.get().getType().getName().equals("Minor")) return;
 
         for (SpecialTokenLay stl : getSpecialProperties(SpecialTokenLay.class)) {
-            log.debug("Spec.prop:" + stl);
+            // If the special tile lay is not extra, it is only allowed if
+            // normal tile lays are also (still) allowed
             if (stl.getTokenClass().equals(BaseToken.class)
                     && (stl.isExtra() || !currentNormalTokenLays.isEmpty())) {
-                /*
-                 * If the special tile lay is not extra, it is only allowed if
-                 * normal tile lays are also (still) allowed
-                 */
+
+                // If this STL is location specific, check if there
+                // isn't already a token of this company or if it is blocked
+                List<MapHex> locations = stl.getLocations();
+                if (locations != null && !locations.isEmpty()) {
+                    boolean canLay = false;
+                    for (MapHex location : locations) {
+                        if (!location.hasTokenOfCompany(company)
+                                && !location.isBlockedForTokenLays(company, 0)) canLay = true;
+                    }
+                    if (!canLay) continue;
+                }
                 currentSpecialTokenLays.add(new LayBaseToken(stl));
             }
         }

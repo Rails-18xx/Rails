@@ -1194,7 +1194,7 @@ StationHolder, TokenHolder {
             return isBlockedForTokenLays.booleanValue();
         } else if (homes != null && !homes.isEmpty()) {
             Stop cityToLay = this.getStop(cityNumber);
-            if (cityToLay == null) { // city does not exist, this does not block itself
+            if (cityNumber > 0 && cityToLay == null) { // city does not exist, this does not block itself
                 return false;
             }
             // check if the city is potential home for other companies
