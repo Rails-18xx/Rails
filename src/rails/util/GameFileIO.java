@@ -1,19 +1,8 @@
 package rails.util;
 
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +10,8 @@ import org.slf4j.LoggerFactory;
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
-import rails.game.RailsRoot;
 import rails.game.GameManager;
+import rails.game.RailsRoot;
 import rails.game.ReportBuffer;
 import rails.game.action.PossibleAction;
 
@@ -36,7 +25,7 @@ public class GameFileIO {
 
     protected static Logger log =
         LoggerFactory.getLogger(RailsRoot.class);
-    
+
     private GameData gameData = new GameData();
 
     // fields for data load
@@ -44,26 +33,26 @@ public class GameFileIO {
     private RailsRoot loadedGame = null;
     private boolean dataLoadDone = false;
     private boolean initialized = false;
-    
+
     // fields for data save
     private boolean initSave = false;
 
     public String getGameDataAsText() {
         return gameData.metaDataAsText() + gameData.gameOptionsAsText() + gameData.playerNamesAsText();
     }
- 
+
     public RailsRoot getGame() {
         return loadedGame;
     }
-    
+
     public List<PossibleAction> getActions() {
         return gameData.actions;
     }
-    
+
     public void setActions(List<PossibleAction> actions) {
         gameData.actions = actions;
     }
-    
+
     public SortedMap<Integer, String> getComments() {
         return gameData.userComments;
     }
@@ -71,12 +60,12 @@ public class GameFileIO {
     public void setComments(SortedMap<Integer, String> comments) {
         gameData.userComments = comments;
     }
-    
+
     @SuppressWarnings("unchecked")
     public void loadGameData(String filepath) {
 
         dataLoadDone = true;
-        
+
         log.info("Loading game from file " + filepath);
         String filename = filepath.replaceAll(".*[/\\\\]", "");
 
@@ -93,7 +82,7 @@ public class GameFileIO {
                 // Allow for older saved file versions.
                 gameData.meta.version = "pre-1.0.7";
             }
-            
+
             log.info("Reading Rails " + gameData.meta.version  +" saved file "+filename);
 
             if (object instanceof String) {
@@ -106,30 +95,30 @@ public class GameFileIO {
             gameData.meta.fileVersionID = (Long) object;
             log.debug("Saved versionID="+gameData.meta.fileVersionID+" (object="+object+")");
             long GMsaveFileVersionID = GameManager.saveFileVersionID;
-            
+
             if (gameData.meta.fileVersionID != GMsaveFileVersionID) {
                 throw new Exception("Save version " + gameData.meta.fileVersionID
-                                    + " is incompatible with current version "
-                                    + GMsaveFileVersionID);
+                        + " is incompatible with current version "
+                        + GMsaveFileVersionID);
             }
 
             // read name of saved game
             gameData.meta.gameName = (String) ois.readObject();
             log.debug("Saved game="+ gameData.meta.gameName);
-           
+
             // read selected game options and player names
             gameData.gameOptions = (Map<String, String>) ois.readObject();
             log.debug("Selected game options = " + gameData.gameOptions);
             gameData.playerNames = (List<String>) ois.readObject();
             log.debug("Player names = " + gameData.playerNames);
-            
+
         } catch (Exception e) {
             dataLoadDone = false;
             log.error("Load failed", e);
             DisplayBuffer.add(LocalText.getText("LoadFailed", e.getMessage()));
         }
     }
-    
+
     public RailsRoot initGame() throws ConfigurationException {
 
         // check if initial load was done
@@ -152,108 +141,111 @@ public class GameFileIO {
 
         return loadedGame;
     }
-    
-    
+
+
     @SuppressWarnings("unchecked")
     public boolean loadActionsAndComments() throws ConfigurationException  {
         if (!dataLoadDone) {
             throw new ConfigurationException("No game was loaded");
         }
-      // Read game actions into gameData.listOfActions
-      try {
-          // read next object in stream
-          Object actionObject = null;
-          while (true) { // Single-pass loop.
-              try {
-                  actionObject = ois.readObject();
-              } catch (EOFException e) {
-                  // Allow saved file at start of game (with no actions).
-                  break;       
+        // Read game actions into gameData.listOfActions
+        try {
+            // read next object in stream
+            Object actionObject = null;
+            while (true) { // Single-pass loop.
+                try {
+                    actionObject = ois.readObject();
+                } catch (EOFException e) {
+                    // Allow saved file at start of game (with no actions).
+                    break;
 
-              }
-              if (actionObject instanceof List) {
-                  // Until Rails 1.3: one List of PossibleAction
-                  gameData.actions = (List<PossibleAction>) actionObject;
-              } else if (actionObject instanceof PossibleAction) {
-                  gameData.actions = new ArrayList<PossibleAction>();
-                  // Since Rails 1.3.1: separate PossibleActionsObjects
-                  while (actionObject instanceof PossibleAction) {
-                      gameData.actions.add((PossibleAction)actionObject);
-                      try {
-                          actionObject = ois.readObject();
-                      } catch (EOFException e) {
-                          break;
-                      }
-                  }
-              }
-              break;
-          }
-          /**
+                }
+                if (actionObject instanceof List) {
+                    // Until Rails 1.3: one List of PossibleAction
+                    gameData.actions = (List<PossibleAction>) actionObject;
+                } else if (actionObject instanceof PossibleAction) {
+                    gameData.actions = new ArrayList<PossibleAction>();
+                    // Since Rails 1.3.1: separate PossibleActionsObjects
+                    while (actionObject instanceof PossibleAction) {
+                        gameData.actions.add((PossibleAction)actionObject);
+                        try {
+                            actionObject = ois.readObject();
+                        } catch (EOFException e) {
+                            break;
+                        }
+                    }
+                }
+                break;
+            }
+            /**
           todo: the code below is far from perfect, but robust
-          */
-          
-          // init user comments to have a defined object in any case
-          gameData.userComments = new TreeMap<Integer,String>();
-          
-          // at the end of file user comments are added as SortedMap
-          if (actionObject instanceof SortedMap) {
-              gameData.userComments = (SortedMap<Integer, String>) actionObject;
-              log.debug("file load: found user comments");
-          } else {
-              try {
-                  Object object = ois.readObject();
-                  if (object instanceof SortedMap) {
-                      gameData.userComments = (SortedMap<Integer, String>) actionObject;
-                      log.debug("file load: found user comments");
-                  }
-              } catch (IOException e) {
-                  // continue without comments, if any IOException occurs
-                  // sometimes not only the EOF Exception is raised
-                  // but also the java.io.StreamCorruptedException: invalid type code
-              }
-          }
-          ois.close();
-          ois = null;
-          initialized = true;
-      } catch (Exception e) {
+             */
+
+            // init user comments to have a defined object in any case
+            gameData.userComments = new TreeMap<Integer,String>();
+
+            // at the end of file user comments are added as SortedMap
+            if (actionObject instanceof SortedMap) {
+                gameData.userComments = (SortedMap<Integer, String>) actionObject;
+                log.debug("file load: found user comments");
+            } else {
+                try {
+                    Object object = ois.readObject();
+                    if (object instanceof SortedMap) {
+                        gameData.userComments = (SortedMap<Integer, String>) actionObject;
+                        log.debug("file load: found user comments");
+                    }
+                } catch (IOException e) {
+                    // continue without comments, if any IOException occurs
+                    // sometimes not only the EOF Exception is raised
+                    // but also the java.io.StreamCorruptedException: invalid type code
+                }
+            }
+            ois.close();
+            ois = null;
+            initialized = true;
+        } catch (Exception e) {
           log.error("Load failed", e);
-          DisplayBuffer.add(LocalText.getText("LoadFailed", e.getMessage()));
-          initialized = false;
-      }
-      return initialized;  
+            DisplayBuffer.add(LocalText.getText("LoadFailed", e.getMessage()));
+            initialized = false;
+        }
+        return initialized;
     }
-    
+
     public void replayGame() throws Exception {
         if (!initialized) {
             throw new ConfigurationException("No game was loaded/initialized");
         }
 
       GameManager gameManager = loadedGame.getGameManager();
-      log.debug("Starting to execute loaded actions");
-      gameManager.setReloading(true);
-        
+        log.debug("Starting to execute loaded actions");
+        gameManager.setReloading(true);
+
+        int count = -1;
       // set possible actions for first action
       gameManager.getCurrentRound().setPossibleActions();
       
-      for (PossibleAction action : gameData.actions) {
-              if (!gameManager.processOnReload(action)) {
-                  log.error ("Load interrupted");
-                  DisplayBuffer.add(LocalText.getText("LoadInterrupted"));
-                  break;
-              }
-      }
-      
-      gameManager.setReloading(false);
-      ReportBuffer.setCommentItems(gameData.userComments);
+        for (PossibleAction action : gameData.actions) {
+            count++;
+            if (!gameManager.processOnReload(action)) {
+                log.error ("Load interrupted");
+                DisplayBuffer.add(LocalText.getText("LoadInterrupted", count));
+                ReportBuffer.add(LocalText.getText("LoadInterrupted", count));
+                break;
+            }
+        }
 
-      // callback to GameManager
-      gameManager.finishLoading();
+        gameManager.setReloading(false);
+        ReportBuffer.setCommentItems(gameData.userComments);
+
+        // callback to GameManager
+        gameManager.finishLoading();
     }
-  
+
     /**
      * sets the meta data required for a game save
      */
-    public void initSave(Long saveFileVersionID, String gameName, Map<String, String> gameOptions, List<String> playerNames) { 
+    public void initSave(Long saveFileVersionID, String gameName, Map<String, String> gameOptions, List<String> playerNames) {
         gameData.meta.version = RailsRoot.version+" "+BuildInfo.buildDate;
         gameData.meta.date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         gameData.meta.fileVersionID = saveFileVersionID;
@@ -262,7 +254,7 @@ public class GameFileIO {
         gameData.playerNames = playerNames;
         initSave = true;
     }
-    
+
     /**
      * Stores the game to a file
      * requires initSave and setting actions and comments
@@ -299,5 +291,5 @@ public class GameFileIO {
         }
         return result;
     }
-    
+
 }

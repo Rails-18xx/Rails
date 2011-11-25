@@ -413,3 +413,4 @@ LaysTileAt,ACL,15,I9,E
 CompanyRevenue,ACL,140
 CompanyWithholds,ACL,140
 PRICE_MOVES_LOG,ACL,45,D7,40,C7
+LoadInterrupted,218
