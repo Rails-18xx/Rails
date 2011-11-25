@@ -66,9 +66,10 @@ public final class HexMapImage extends JSVGCanvas  {
     private void loadMap() {
         
         try {
-             File imageFile = new File (mapManager.getMapImageFilepath());
-             setURI(imageFile.toURI().toString());
-             log.debug("ImageFile="+ imageFile.getName());
+//             File imageFile = new File (mapManager.getMapImageFilepath());
+//             setURI(imageFile.toURI().toString());
+//             log.debug("ImageFile="+ imageFile.getName());
+            setURI(getClass().getResource(mapManager.getMapImageFilepath()).toString());
         } catch (Exception e) {
             log.error ("Cannot load map image file " + mapManager.getMapImageFilepath(), e);
         }

@@ -241,6 +241,7 @@ public class MapManager extends RailsManager implements Configurable {
         int i, j, k;
         MapHex nb;
 
+        // FIXME: This configuration of a mapImage does not work anymore
         mapImageUsed = rails.util.Util.hasValue(mapImageFilename)
         && "yes".equalsIgnoreCase(Config.get("map.image.display"));
         if (mapImageUsed) {
@@ -248,7 +249,7 @@ public class MapManager extends RailsManager implements Configurable {
             if (!rails.util.Util.hasValue(rootDirectory)) {
                 rootDirectory = "data";
             }
-            mapImageFilepath = rootDirectory + "/" + mapImageFilename;
+            mapImageFilepath = "/" + rootDirectory + "/" + mapImageFilename;
         }
 
         for (String hexName : mHexes.keySet()) {
