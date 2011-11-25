@@ -245,7 +245,7 @@ public class MapManager implements ConfigurableComponentI {
             if (!rails.util.Util.hasValue(rootDirectory)) {
                 rootDirectory = "data";
             }
-            mapImageFilepath = rootDirectory + "/" + mapImageFilename;
+            mapImageFilepath = "/" + rootDirectory + "/" + mapImageFilename;
         }
 
         for (String hexName : mHexes.keySet()) {
