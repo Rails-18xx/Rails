@@ -74,3 +74,4 @@ Has,T2,66
 Has,T3,15
 StartStockRound,1
 HasPriority,T1
+LoadInterrupted,13
