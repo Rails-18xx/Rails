@@ -16,7 +16,10 @@ import rails.game.state.Root;
 import rails.util.GameFileIO;
 
 public class RailsRoot extends Root implements RailsItem {
-    public static final String version = "@VERSION@";
+    // the correct version number is set during initialLoad in Config class
+    public static String version = "unknown";
+    
+    public static String develop = "@DEVELOP@";
 
     /** The component Manager */
     protected GameManager gameManager;

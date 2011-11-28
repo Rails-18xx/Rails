@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import rails.game.GameManager;
+import rails.game.RailsRoot;
 import rails.util.Util;
 
 /**
@@ -452,6 +453,19 @@ public final class Config {
         if (!propertiesLoaded) {
             loadProfile(selectedProfile);
             propertiesLoaded = true;
+        }
+        
+        /* Load version number as resource */
+        Properties versionNumber = new Properties();
+        loadPropertyFile(versionNumber, "version.number", true);
+        String version = versionNumber.getProperty("version");
+        String develop = versionNumber.getProperty("develop");
+        if (Util.hasValue("version")) {
+            if (Util.hasValue(develop)) {
+                RailsRoot.version = version + "+";
+            } else {
+                RailsRoot.version = version;
+            }
         }
     }
 
