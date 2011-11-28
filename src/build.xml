@@ -1,180 +1,112 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- WARNING: Eclipse auto-generated file.
-			  Any modifications will be overwritten.
-			  To include a user specific buildfile here, simply create one in the same
-			  directory with the processing instruction <?eclipse.ant.import?>
-			  as the first entry and export the buildfile again. -->
-<project basedir="." default="build" name="18xx">
-	<property environment="env"/>
-	<property name="debuglevel" value="source,lines,vars"/>
-	<property name="target" value="1.5"/>
-	<property name="source" value="1.5"/>
-	<property name="version" value="1.5.3"/>
-	<taskdef name="jarbundler" 
-		classpath="tools/lib/jarbundler-2.1.0.jar"
-		classname="net.sourceforge.jarbundler.JarBundler" />
-	<path id="18xx.classpath">
-		<pathelement location="classes"/>
-		<pathelement location="lib/log4j-1.2/log4j-1.2.14.jar"/>
-		<pathelement location="lib/batik-1.7/batik.jar"/>
-		<pathelement location="lib/batik-1.7/lib/batik-dom.jar"/>
-		<pathelement location="lib/batik-1.7/lib/batik-bridge.jar"/>
-		<pathelement location="lib/batik-1.7/lib/batik-util.jar"/>
-		<pathelement location="lib/batik-1.7/lib/batik-gvt.jar"/>
-		<pathelement location="lib/batik-1.7/lib/batik-ext.jar"/>
-		<pathelement location="lib/jgraph5/jgraph.jar"/>
-		<pathelement location="lib/jgrapht-0.7.3/jgrapht-jdk1.5.jar"/>
-		<pathelement location="lib/junit-4.8.2/junit.jar"/>
-	</path>
-	<target depends="clean" name="init">
-		<mkdir dir="classes"/>
-		<copy includeemptydirs="false" todir="classes">
-			<fileset dir=".">
-				<exclude name="**/*.launch"/>
-				<exclude name="**/*.java"/>
-				<exclude name="tools/**"/>
-				<exclude name="images/**"/>
-			</fileset>
-		</copy>
-	</target>
-	<target name="clean">
-		<delete dir="classes"/>
-		<delete dir="jar"/>
-	</target>
-	<target depends="clean" name="cleanall">
-		<delete dir="rails-${version}"/>
-		<delete dir="rails-mac-${version}"/>
-		<delete file="18xx.log"/>
-	</target>
-	<target depends="build-subprojects,build-project,build-release" name="build"/>
-	<target name="build-subprojects"/>
-	<target depends="init" name="build-project">
-		<echo message="${ant.project.name}: ${ant.file}"/>
-		<javac debug="true" debuglevel="${debuglevel}" destdir="classes" source="${source}" target="${target}">
-			<src path="."/>
-			<classpath refid="18xx.classpath"/>
-		</javac>
-	</target>
-	<target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
-	<target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
-		<copy todir="${ant.library.dir}">
-			<fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
-		</copy>
-		<unzip dest="${ant.library.dir}">
-			<patternset includes="jdtCompilerAdapter.jar"/>
-			<fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
-		</unzip>
-	</target>
-	<target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
-		<property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
-		<antcall target="build"/>
-	</target>
-	<target name="build-release">
-		<mkdir dir="jar"/>
-		<copy includeemptydirs="false" todir="jar">
-			<fileset dir="classes">
-				<exclude name="**/*.launch"/>
-				<exclude name="**/*.java"/>
-				<exclude name="rails/test/*"/>
-				<exclude name="test/**"/>
-				<exclude name="tiles/*.*"/>
-				<exclude name="18xx.log"/>
-				<exclude name="build.xml"/>
-				<exclude name="buildinfo.xml"/>
-				<exclude name="user.profiles"/>
-				<exclude name="manifest"/>
-				<exclude name="doc/*"/>
-				<exclude name="html/*"/>
-				<exclude name="lib/**"/>
-				<exclude name="rails-${version}/**"/>
-				<exclude name="rails-*-${version}/**"/>
-				<exclude name="rails.bat"/>
-				<exclude name="rails.sh"/>
-				<exclude name=".project"/>
-				<exclude name=".classpath"/>
-				<exclude name=".git/**"/>
-				<exclude name=".gitignore"/>
-				<exclude name="Rails-format.xml"/>
-				<exclude name="**/CVS/*"/>
-				<exclude name="**/.settings/*"/>
-				<exclude name="**/rails-${version}.jar"/>
-			</fileset>
-		</copy>
-		<mkdir dir="rails-${version}"/>
-		<copy includeemptydirs="false" todir="rails-${version}">
-			<fileset dir=".">
-				<include name="LICENSE"/>
-				<include name="README"/>
-				<include name="AUTHORS"/>
-				<include name="rails.bat"/>
-				<include name="rails.sh"/>
-				<include name="my.properties"/>
-				<include name="LocalisedText.properties"/>
-				<include name="games.properties"/>
-				<include name="lib/**"/>
-			</fileset>
-		</copy>
-		<jar destfile="rails-${version}/rails-${version}.jar" basedir="jar" duplicate="preserve">		
-			<manifest>
-				<attribute name="Main-Class" value="rails.util.RunGame" />
-				<attribute name="Class-Path" value="./my.properties 
-					./LocalisedText.properties 
-					./lib/log4j-1.2/log4j-1.2.14.jar 
-					./lib/batik-1.7/batik.jar 
-					./lib/batik-1.7/lib/batik-util.jar 
-					./lib/batik-1.7/lib/batik-dom.jar 
-					./lib/batik-1.7/lib/batik-bridge.jar 
-					./lib/batik-1.7/lib/batik-ext.jar 
-					./lib/batik-1.7/lib/batik-gvt.jar 
-					./lib/jgraph5/jgraph.jar 
-					./lib/jgrapht-0.7.3/jgrapht-jdk1.5.jar" />
-			</manifest>
-		</jar>
-	</target>
-	<target name="build-mac">
-		<mkdir dir="rails-mac-${version}" />
-		<copy includeemptydirs="false" todir="rails-mac-${version}">
-			<fileset dir=".">
-				<include name="LICENSE"/>
-				<include name="README"/>
-				<include name="AUTHORS"/>
-				<include name="my.properties"/>
-			</fileset>
-		</copy>
-		<jarbundler dir="rails-mac-${version}"
-			name="Rails"
-			mainclass="rails.util.RunGame" 
-			icon="images/icon/rails.icns"
-			version="${version}">
-			<jarfileset dir="rails-${version}">
-				<include name="rails-${version}.jar"/>
-				<include name="lib/**"/>
-			</jarfileset>
-			<javaproperty name="apple.laf.useScreenMenuBar" value="true"/>
-		</jarbundler>
-	</target>
-	<target name="RunGame">
-		<java classname="rails.util.RunGame" failonerror="true" fork="yes">
-			<classpath refid="18xx.classpath"/>
-		</java>
-	</target>
-	<target name="TestGames">
-		<property name="test.xml.dir" value="test/xml"/>
-		<property name="test.report.dir" value="test/report"/>
-		<mkdir dir="${test.xml.dir}"/>
-		<mkdir dir="${test.report.dir}"/>
-		<junit>
-				<classpath refid="18xx.classpath"/>
-				<formatter type="brief" usefile="false" />
-				<formatter type="xml" />
-				<test name ="test.TestGameBuilder" todir="${test.xml.dir}"/>
-		</junit>
-		<junitreport todir="${test.xml.dir}">
-			<fileset dir="${test.xml.dir}">
-				<include name="TEST-*.xml"/>
-			</fileset>
-			<report format="noframes" todir="${test.report.dir}"/>	
-			</junitreport>
-	</target>	
-	
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. -->
+<project basedir="." default="build" name="Rails">
+    <property environment="env"/>
+    <property name="junit.output.dir" value="junit"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.5"/>
+    <property name="source" value="1.5"/>
+    <import file="buildRails.xml"/>
+    <path id="Rails.classpath">
+        <pathelement location="classes"/>
+        <pathelement location="lib/log4j-1.2/log4j-1.2.14.jar"/>
+        <pathelement location="lib/jgrapht-0.7.3/jgrapht-jdk1.5.jar"/>
+        <pathelement location="lib/jgraph5/jgraph.jar"/>
+        <pathelement location="lib/batik-1.7/batik.jar"/>
+        <pathelement location="lib/batik-1.7/lib/batik-bridge.jar"/>
+        <pathelement location="lib/batik-1.7/lib/batik-dom.jar"/>
+        <pathelement location="lib/batik-1.7/lib/batik-ext.jar"/>
+        <pathelement location="lib/batik-1.7/lib/batik-gvt.jar"/>
+        <pathelement location="lib/batik-1.7/lib/batik-util.jar"/>
+        <pathelement location="lib/junit-4.8.2/junit.jar"/>
+    </path>
+    <target name="init">
+        <mkdir dir="classes"/>
+        <copy includeemptydirs="false" todir="classes">
+            <fileset dir=".">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+                <exclude name="lib/batik-1.7/"/>
+                <exclude name="lib/batik-1.7/"/>
+                <exclude name="lib/batik-1.7/lib/"/>
+                <exclude name="lib/batik-1.7/lib/"/>
+                <exclude name="lib/jgraph5/"/>
+                <exclude name="lib/jgraph5/"/>
+                <exclude name="lib/jgrapht-0.7.3/"/>
+                <exclude name="lib/jgrapht-0.7.3/"/>
+                <exclude name="lib/junit-4.8.2"/>
+                <exclude name="lib/log4j-1.2/"/>
+                <exclude name="lib/log4j-1.2/"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="clean">
+        <delete dir="classes"/>
+    </target>
+    <target depends="clean" name="cleanall"/>
+    <target depends="build-subprojects,build-project" name="build"/>
+    <target name="build-subprojects"/>
+    <target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="classes" includeantruntime="false" source="${source}" target="${target}">
+            <src path="."/>
+            <exclude name="lib/batik-1.7/"/>
+            <exclude name="lib/batik-1.7/"/>
+            <exclude name="lib/batik-1.7/lib/"/>
+            <exclude name="lib/batik-1.7/lib/"/>
+            <exclude name="lib/jgraph5/"/>
+            <exclude name="lib/jgraph5/"/>
+            <exclude name="lib/jgrapht-0.7.3/"/>
+            <exclude name="lib/jgrapht-0.7.3/"/>
+            <exclude name="lib/junit-4.8.2"/>
+            <exclude name="lib/log4j-1.2/"/>
+            <exclude name="lib/log4j-1.2/"/>
+            <classpath refid="Rails.classpath"/>
+        </javac>
+    </target>
+    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
+    <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
+        <copy todir="${ant.library.dir}">
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </copy>
+        <unzip dest="${ant.library.dir}">
+            <patternset includes="jdtCompilerAdapter.jar"/>
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </unzip>
+    </target>
+    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
+        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+        <antcall target="build"/>
+    </target>
+    <target name="TestGameBuilder (1)">
+        <java classname="test.TestGameBuilder" failonerror="true" fork="yes">
+            <classpath refid="Rails.classpath"/>
+        </java>
+    </target>
+    <target name="RunGame">
+        <java classname="rails.util.RunGame" failonerror="true" fork="yes">
+            <jvmarg line="-DRevenueCalculation=suggest -Dswing.defaultlaf=com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel"/>
+            <classpath refid="Rails.classpath"/>
+        </java>
+    </target>
+    <target name="TestGameBuilder">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="test.TestGameBuilder" todir="${junit.output.dir}"/>
+            <classpath refid="Rails.classpath"/>
+        </junit>
+    </target>
+    <target name="junitreport">
+        <junitreport todir="${junit.output.dir}">
+            <fileset dir="${junit.output.dir}">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="frames" todir="${junit.output.dir}"/>
+        </junitreport>
+    </target>
 </project>
