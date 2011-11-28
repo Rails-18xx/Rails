@@ -16,17 +16,32 @@
         <pathelement location="lib/log4j-1.2/log4j-1.2.14.jar"/>
         <pathelement location="lib/jgrapht-0.7.3/jgrapht-jdk1.5.jar"/>
         <pathelement location="lib/jgraph5/jgraph.jar"/>
-        <pathelement location="lib/batik-1.7/batik.jar"/>
-        <pathelement location="lib/batik-1.7/lib/batik-bridge.jar"/>
-        <pathelement location="lib/batik-1.7/lib/batik-dom.jar"/>
-        <pathelement location="lib/batik-1.7/lib/batik-ext.jar"/>
-        <pathelement location="lib/batik-1.7/lib/batik-gvt.jar"/>
-        <pathelement location="lib/batik-1.7/lib/batik-util.jar"/>
         <pathelement location="lib/junit-4.8.2/junit.jar"/>
+        <pathelement location="lib/batik-1.7/lib/batik-transcoder.jar"/>
+        <pathelement location="lib/batik-1.7/lib/batik-dom.jar"/>
+        <pathelement location="lib/batik-1.7/lib/batik-swing.jar"/>
+        <pathelement location="lib/batik-1.7/lib/batik-bridge.jar"/>
+        <pathelement location="lib/batik-1.7/lib/xml-apis.jar"/>
+        <pathelement location="lib/batik-1.7/lib/batik-ext.jar"/>
+        <pathelement location="lib/batik-1.7/lib/batik-gui-util.jar"/>
+        <pathelement location="lib/batik-1.7/lib/batik-util.jar"/>
+        <pathelement location="lib/batik-1.7/lib/batik-awt-util.jar"/>
+        <pathelement location="lib/batik-1.7/lib/batik-css.jar"/>
+        <pathelement location="lib/batik-1.7/lib/batik-gvt.jar"/>
+        <pathelement location="lib/batik-1.7/lib/batik-parser.jar"/>
+        <pathelement location="lib/batik-1.7/lib/batik-script.jar"/>
+        <pathelement location="lib/batik-1.7/lib/batik-svg-dom.jar"/>
+        <pathelement location="lib/batik-1.7/lib/batik-xml.jar"/>
+        <pathelement location="lib/batik-1.7/lib/js.jar"/>
+        <pathelement location="lib/batik-1.7/lib/xerces_2_5_0.jar"/>
+        <pathelement location="lib/batik-1.7/lib/xml-apis-ext.jar"/>
+        <pathelement location="lib/batik-1.7/lib/batik-anim.jar"/>
     </path>
     <target name="init">
         <mkdir dir="classes"/>
+    	<!-- this is added -->
         <copy includeemptydirs="false" todir="classes">
+			<filterset refid="developFilter"/>
             <fileset dir=".">
                 <exclude name="**/*.launch"/>
                 <exclude name="**/*.java"/>

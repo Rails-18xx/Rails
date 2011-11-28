@@ -14,7 +14,10 @@ import rails.game.action.PossibleAction;
 import rails.util.GameFileIO;
 
 public class Game {
-    public static final String version = "@VERSION@";
+    // the correct version number is set during initialLoad in Config class
+    public static String version = "unknown";
+    
+    public static String develop = "@DEVELOP@";
 
     /** The component Manager */
     protected GameManager gameManager;
