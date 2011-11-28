@@ -1,0 +1,89 @@
+<?eclipse.ant.import ?>
+	<!-- Extensions to the automatic ant file created by eclipse -->
+<project basedir="." default="build" name="Rails">
+
+		<!-- Define a property for the version number -->
+		<property file="version.number"/>
+		
+		<!-- Define a filter to substitute version number -->
+		<filterset id="versionFilter">
+				<filter token="VERSION" value="${version}"/> 
+		</filterset> 
+				
+		<!-- Clean the current release -->
+		<target name="clean-release">
+		<delete>
+				<fileset dir="jar"/>
+				<fileset dir="rails-${version}"/> 
+		</delete>
+		</target>
+		
+		<!-- Target that creates the release jar
+			this is legacy code -->
+		<target name="build-release" depends="clean-release,clean,build">
+		<mkdir dir="jar"/>
+		<copy includeemptydirs="false" todir="jar">
+				<filterset refid="versionFilter"/>
+				<fileset dir="classes">
+				<exclude name="**/*.launch"/>
+				<exclude name="**/*.java"/>
+				<exclude name="rails/test/*"/>
+				<exclude name="test/**"/>
+				<exclude name="tiles/*.*"/>
+				<exclude name="18xx.log"/>
+				<exclude name="build.xml"/>
+				<exclude name="buildinfo.xml"/>
+				<exclude name="user.profiles"/>
+				<exclude name="manifest"/>
+				<exclude name="doc/*"/>
+				<exclude name="html/*"/>
+				<exclude name="lib/**"/>
+				<exclude name="rails-${version}/**"/>
+				<exclude name="rails-*-${version}/**"/>
+				<exclude name="rails.bat"/>
+				<exclude name="rails.sh"/>
+				<exclude name="version.number"/>
+				<exclude name=".project"/>
+				<exclude name=".classpath"/>
+				<exclude name=".git/**"/>
+				<exclude name=".gitignore"/>
+				<exclude name="Rails-format.xml"/>
+				<exclude name="**/CVS/*"/>
+				<exclude name="**/.settings/*"/>
+				<exclude name="**/rails-${version}.jar"/>
+			</fileset>
+		</copy>
+		<mkdir dir="rails-${version}"/>
+		<copy includeemptydirs="false" todir="rails-${version}">
+				<filterset refid="versionFilter"/>
+				<fileset dir=".">
+				<include name="LICENSE"/>
+				<include name="README"/>
+				<include name="AUTHORS"/>
+				<include name="rails.bat"/>
+				<include name="rails.sh"/>
+				<include name="my.properties"/>
+				<include name="LocalisedText.properties"/>
+				<include name="games.properties"/>
+				<include name="lib/**"/>
+			</fileset>
+		</copy>
+		<jar destfile="rails-${version}/rails-${version}.jar" basedir="jar" duplicate="preserve">		
+			<manifest>
+				<attribute name="Main-Class" value="rails.util.RunGame" />
+				<attribute name="Class-Path" value="./my.properties 
+					./LocalisedText.properties 
+					./lib/log4j-1.2/log4j-1.2.14.jar 
+					./lib/batik-1.7/batik.jar 
+					./lib/batik-1.7/lib/batik-util.jar 
+					./lib/batik-1.7/lib/batik-dom.jar 
+					./lib/batik-1.7/lib/batik-bridge.jar 
+					./lib/batik-1.7/lib/batik-ext.jar 
+					./lib/batik-1.7/lib/batik-gvt.jar 
+					./lib/jgraph5/jgraph.jar 
+					./lib/jgrapht-0.7.3/jgrapht-jdk1.5.jar" />
+			</manifest>
+		</jar>
+	</target>
+		
+</project>
