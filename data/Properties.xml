@@ -4,7 +4,7 @@
 <Properties>
 	<Section name="General">
 		<Property name="locale" type="LIST" values="en_US,te_ST"
-			initClass="rails.util.LocalText" initMethod="setLocale"
+			initClass="rails.common.LocalText" initMethod="setLocale"
 			initParameter="yes" />
 		<Property name="default_game" type="STRING" />
 		<Property name="default_players" type="STRING" />
