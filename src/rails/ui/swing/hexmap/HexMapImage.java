@@ -2,7 +2,6 @@ package rails.ui.swing.hexmap;
 
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
-import java.io.File;
 
 import org.apache.batik.swing.JSVGCanvas;
 import org.apache.batik.swing.gvt.GVTTreeRendererAdapter;
@@ -13,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import rails.common.parser.Config;
 import rails.game.MapManager;
 import rails.ui.swing.GameUIManager;
-import rails.ui.swing.Scale;
 import rails.util.Util;
 
 /**
