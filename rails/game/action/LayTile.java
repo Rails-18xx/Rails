@@ -103,7 +103,7 @@ public class LayTile extends PossibleORAction {
             }
         }
 
-        
+
     }
 
     /**
@@ -194,8 +194,8 @@ public class LayTile extends PossibleORAction {
 
     public boolean isTileColourAllowed(String tileColour) {
         return tileColours != null
-            && tileColours.containsKey(tileColour)
-            && tileColours.get(tileColour) > 0;
+        && tileColours.containsKey(tileColour)
+        && tileColours.get(tileColour) > 0;
     }
 
     public void setTileColours(Map<String, Integer> map) {
@@ -226,7 +226,7 @@ public class LayTile extends PossibleORAction {
         relaidBaseTokens.put(companyName, cityNumber);
         relaidBaseTokensString = Util.appendWithDelimiter(relaidBaseTokensString,
                 Util.appendWithDelimiter(companyName, String.valueOf(cityNumber), ":"),
-                ",");
+        ",");
     }
 
     public Map<String, Integer> getRelaidBaseTokens() {
@@ -238,10 +238,10 @@ public class LayTile extends PossibleORAction {
         if (!(action instanceof LayTile)) return false;
         LayTile a = (LayTile) action;
         return (a.locationNames == null && locationNames == null || a.locationNames.equals(locationNames))
-               && a.type == type
-               && a.tileColours == tileColours
-               && a.tiles == tiles 
-               && a.specialProperty == specialProperty;
+        && a.type == type
+        && a.tileColours == tileColours
+        && a.tiles == tiles
+        && a.specialProperty == specialProperty;
     }
 
     @Override
@@ -249,15 +249,15 @@ public class LayTile extends PossibleORAction {
         if (!(action instanceof LayTile)) return false;
         LayTile a = (LayTile) action;
         return (a.laidTileId == laidTileId
-               && a.chosenHexName.equals(chosenHexName)
-               && a.orientation == orientation
-               && (a.relaidBaseTokensString == null && relaidBaseTokensString == null
-                       || a.relaidBaseTokensString.equals(relaidBaseTokensString)));
+                && a.chosenHexName.equals(chosenHexName)
+                && a.orientation == orientation
+                && (a.relaidBaseTokensString == null && relaidBaseTokensString == null
+                        || a.relaidBaseTokensString.equals(relaidBaseTokensString)));
     }
 
     @Override
     public String toString() {
-        StringBuffer b = new StringBuffer("LayTile");
+        StringBuilder b = new StringBuilder("LayTile");
         if (laidTile == null) {
             b.append(" type=").append(type);
             if (locations != null)
@@ -274,7 +274,7 @@ public class LayTile extends PossibleORAction {
         } else {
             b.append(" tile=").append(laidTile.getId()).append(" hex=").append(
                     chosenHex.getName()).append(" orientation=").append(
-                    orientation).append(" tokens=").append(relaidBaseTokensString);
+                            orientation).append(" tokens=").append(relaidBaseTokensString);
         }
         return b.toString();
     }
@@ -282,7 +282,7 @@ public class LayTile extends PossibleORAction {
     /** Deserialize */
     @SuppressWarnings("unchecked")
     private void readObject(ObjectInputStream in) throws IOException,
-            ClassNotFoundException {
+    ClassNotFoundException {
 
         //in.defaultReadObject();
         // Custom reading for backwards compatibility
@@ -315,7 +315,7 @@ public class LayTile extends PossibleORAction {
         }
         if (specialPropertyId > 0) {
             specialProperty =
-                    (SpecialTileLay) SpecialProperty.getByUniqueId(specialPropertyId);
+                (SpecialTileLay) SpecialProperty.getByUniqueId(specialPropertyId);
         }
         if (laidTileId != 0) {
             laidTile = tmgr.getTile(laidTileId);

@@ -485,7 +485,7 @@ public class OperatingRound extends Round implements Observer {
                                 if (getStep() != GameDef.OrStep.LAY_TOKEN) {
                                     possibleActions.add(new LayBaseToken((SpecialTokenLay)sp));
                                 }
-                            } else {
+                            } else if (!(sp instanceof SpecialTileLay)){
                                 possibleActions.add(new UseSpecialProperty(sp));
                             }
                         }
@@ -1688,21 +1688,55 @@ public class OperatingRound extends Round implements Observer {
 
         if (operatingCompany.get().canUseSpecialProperties()) {
 
+            // What colours can be laid in the current phase?
+            List<String> phaseColours = getCurrentPhase().getTileColours();
+
             for (SpecialTileLay stl : getSpecialProperties(SpecialTileLay.class)) {
                 if (stl.isExtra()
                         // If the special tile lay is not extra, it is only allowed if
                         // normal tile lays are also (still) allowed
                         || checkNormalTileLay(stl.getTile(), false)) {
                     LayTile lt = new LayTile(stl);
+                    TileI tile = stl.getTile();
+
+                    // Which tile colour(s) are specified explicitly...
                     String[] stlc = stl.getTileColours();
-                    if (stlc != null) {
-                        Map<String, Integer> tc = new HashMap<String, Integer>();
-                        for (String c : stlc) {
-                            tc.put(c, 1);
-                        }
-                        lt.setTileColours(tc);
+                    if ((stlc == null || stlc.length == 0) && tile != null) {
+                        // ... or implicitly
+                        stlc = new String[] {tile.getColourName()};
                     }
-                    currentSpecialTileLays.add(lt);
+
+                    // Which of the specified tile colours can really be laid now?
+                    List<String> layableColours;
+                    if (stlc == null) {
+                        layableColours = phaseColours;
+                    } else {
+                        layableColours = new ArrayList<String>();
+                        for (String colour : stlc) {
+                            if (phaseColours.contains(colour)) layableColours.add(colour);
+                        }
+                    }
+
+                    // If any locations are specified, check if tile or colour(s) can be laid there.
+                    Map<String, Integer> tc = new HashMap<String, Integer>();
+                    List<MapHex> hexes = stl.getLocations();
+                    for (String colour : layableColours) {
+                        if (hexes != null) {
+                            for (MapHex hex : hexes) {
+                                // At least one hex does not have that colour yet
+                                if (hex.getCurrentTile().getColourNumber() + 1
+                                        == Tile.getColourNumberForName(colour)) {
+                                    tc.put(colour, 1);
+                                    continue;
+                                }
+                            }
+                        } else {
+                            tc.put(colour, 1);
+                        }
+                    }
+
+                    if (!tc.isEmpty()) lt.setTileColours(tc);
+                    if (!tc.isEmpty() || hexes == null) currentSpecialTileLays.add(lt);
                 }
             }
         }

@@ -406,6 +406,21 @@ public class Tile extends ModelObject implements TileI, StationHolder, Comparabl
         return colourNumber;
     }
 
+    public static int getColourNumberForName(String name) {
+        if (name.equalsIgnoreCase(WHITE_COLOUR_NAME)) {
+            return WHITE_COLOUR_NUMBER;
+        } else if (name.equalsIgnoreCase(YELLOW_COLOUR_NAME)) {
+            return YELLOW_COLOUR_NUMBER;
+        } else if (name.equalsIgnoreCase(GREEN_COLOUR_NAME)) {
+            return GREEN_COLOUR_NUMBER;
+        } else if (name.equalsIgnoreCase(BROWN_COLOUR_NAME)) {
+            return BROWN_COLOUR_NUMBER;
+        } else if (name.equalsIgnoreCase(GREY_COLOUR_NAME)) {
+            return GREY_COLOUR_NUMBER;
+        } else {
+            return -1;
+        }
+    }
     /**
      * @return Returns the id.
      */
