@@ -5,12 +5,25 @@
 	<classpathentry exported="true" kind="lib" path="lib/log4j-1.2/log4j-1.2.14.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jgrapht-0.7.3/jgrapht-jdk1.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jgraph5/jgraph.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/batik-1.7/batik.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/batik-1.7/lib/batik-bridge.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/batik-1.7/lib/batik-dom.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/batik-1.7/lib/batik-ext.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/batik-1.7/lib/batik-gvt.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/batik-1.7/lib/batik-util.jar"/>
 	<classpathentry kind="lib" path="lib/junit-4.8.2/junit.jar"/>
+	<classpathentry kind="lib" path="lib/batik-1.7/lib/batik-transcoder.jar"/>
+	<classpathentry kind="lib" path="lib/batik-1.7/lib/batik-dom.jar"/>
+	<classpathentry kind="lib" path="lib/batik-1.7/lib/batik-swing.jar"/>
+	<classpathentry kind="lib" path="lib/batik-1.7/lib/batik-bridge.jar"/>
+	<classpathentry kind="lib" path="lib/batik-1.7/lib/xml-apis.jar"/>
+	<classpathentry kind="lib" path="lib/batik-1.7/lib/batik-ext.jar"/>
+	<classpathentry kind="lib" path="lib/batik-1.7/lib/batik-gui-util.jar"/>
+	<classpathentry kind="lib" path="lib/batik-1.7/lib/batik-util.jar"/>
+	<classpathentry kind="lib" path="lib/batik-1.7/lib/batik-awt-util.jar"/>
+	<classpathentry kind="lib" path="lib/batik-1.7/lib/batik-css.jar"/>
+	<classpathentry kind="lib" path="lib/batik-1.7/lib/batik-gvt.jar"/>
+	<classpathentry kind="lib" path="lib/batik-1.7/lib/batik-parser.jar"/>
+	<classpathentry kind="lib" path="lib/batik-1.7/lib/batik-script.jar"/>
+	<classpathentry kind="lib" path="lib/batik-1.7/lib/batik-svg-dom.jar"/>
+	<classpathentry kind="lib" path="lib/batik-1.7/lib/batik-xml.jar"/>
+	<classpathentry kind="lib" path="lib/batik-1.7/lib/js.jar"/>
+	<classpathentry kind="lib" path="lib/batik-1.7/lib/xerces_2_5_0.jar"/>
+	<classpathentry kind="lib" path="lib/batik-1.7/lib/xml-apis-ext.jar"/>
+	<classpathentry kind="lib" path="lib/batik-1.7/lib/batik-anim.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

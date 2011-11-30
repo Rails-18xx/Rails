@@ -14,8 +14,37 @@ import rails.game.action.PossibleAction;
 import rails.util.GameFileIO;
 
 public class Game {
-    public static final String version = "1.5.3+";
+    // the correct version number and develop status 
+    // is set during initialLoad in Config class
+    private static String version = "unknown";
+    private static boolean develop = false;
 
+    public static void setVersion(String version) {
+        Game.version = version;
+    }
+    
+    public static String getVersion() {
+        return version;
+    }
+    
+    public static String getFullVersion() {
+        if (develop) {
+            return version + "+";
+        } else {
+            return version;
+        }
+    }
+    
+    public static void setDevelop(boolean develop) {
+        Game.develop = develop;
+    }
+    
+    public static boolean getDevelop() {
+        return develop;
+    }
+    
+    // in the following the Game objects are defined
+    
     /** The component Manager */
     protected GameManager gameManager;
     protected CompanyManagerI companyManager;

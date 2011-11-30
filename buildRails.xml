@@ -1,0 +1,159 @@
+<?eclipse.ant.import ?>
+	<!-- Extensions to the automatic ant file created by eclipse -->
+<project basedir="." default="build" name="Rails">
+	
+		<!-- Sourceforge properties -->
+		<property name="sf.uri" value="frs.sourceforge.net:/home/frs/project/r/ra/rails/"/>
+		<property name="sf.filedir" value="Rails/"/>
+		<property name="sf.user" value="stefanfrey"/>
+		<!-- Password is asked for -->
+		
+		<!-- Define a property for the version number -->
+		<property file="version.number"/>
+		
+		<!-- Define a filter to substitute version number -->
+		<filterset id="versionFilter">
+				<filter token="VERSION" value="${version}"/> 
+		</filterset> 
+		<!-- Define a filter to substitute develop tag to version number -->
+		<filterset id="developFilter">
+				<filter token="DEVELOP" value=""/> 
+		</filterset> 
+						
+		<!-- Clean the current release -->
+		<target name="clean-release">
+		<delete dir="rails-${version}"/>
+		</target>
+		
+		<!-- Target that creates the release jar
+			this is legacy code -->
+		<target name="build-release" depends="clean-release,clean,build">
+		<mkdir dir="jar"/>
+		<copy includeemptydirs="false" todir="jar">
+				<fileset dir="classes">
+				<exclude name="**/*.launch"/>
+				<exclude name="**/*.java"/>
+				<exclude name="rails/test/*"/>
+				<exclude name="test/**"/>
+				<exclude name="tiles/*.*"/>
+				<exclude name="18xx.log"/>
+				<exclude name="build.xml"/>
+				<exclude name="buildinfo.xml"/>
+				<exclude name="manifest"/>
+				<exclude name="doc/*"/>
+				<exclude name="html/*"/>
+				<exclude name="lib/**"/>
+				<exclude name="rails-${version}/**"/>
+				<exclude name="rails-*-${version}/**"/>
+				<exclude name="rails.bat"/>
+				<exclude name="rails.sh"/>
+				<exclude name=".project"/>
+				<exclude name=".classpath"/>
+				<exclude name=".git/**"/>
+				<exclude name=".gitignore"/>
+				<exclude name="Rails-format.xml"/>
+				<exclude name="**/CVS/*"/>
+				<exclude name="**/.settings/*"/>
+				<exclude name="**/rails-${version}.jar"/>
+			</fileset>
+		</copy>
+		<mkdir dir="rails-${version}"/>
+		<copy includeemptydirs="false" todir="rails-${version}/lib">
+			<fileset dir="./lib">
+		        <include name="log4j-1.2/log4j-1.2.14.jar" />
+		        <include name="jgrapht-0.7.3/jgrapht-jdk1.5.jar" />
+		        <include name="jgraph5/jgraph.jar" />
+		        <include name="junit-4.8.2/junit.jar" />
+		        <include name="batik-1.7/lib/batik-transcoder.jar" />
+		        <include name="batik-1.7/lib/batik-dom.jar" />
+		        <include name="batik-1.7/lib/batik-swing.jar" />
+		        <include name="batik-1.7/lib/batik-bridge.jar" />
+		        <include name="batik-1.7/lib/xml-apis.jar" />
+		        <include name="batik-1.7/lib/batik-ext.jar" />
+		        <include name="batik-1.7/lib/batik-gui-util.jar" />
+		        <include name="batik-1.7/lib/batik-util.jar" />
+		        <include name="batik-1.7/lib/batik-awt-util.jar" />
+		        <include name="batik-1.7/lib/batik-css.jar" />
+		        <include name="batik-1.7/lib/batik-gvt.jar" />
+		        <include name="batik-1.7/lib/batik-parser.jar" />
+		        <include name="batik-1.7/lib/batik-script.jar" />
+		        <include name="batik-1.7/lib/batik-svg-dom.jar" />
+		        <include name="batik-1.7/lib/batik-xml.jar" />
+		        <include name="batik-1.7/lib/js.jar" />
+		        <include name="batik-1.7/lib/xerces_2_5_0.jar" />
+		        <include name="batik-1.7/lib/xml-apis-ext.jar" />
+		        <include name="batik-1.7/lib/batik-anim.jar" />
+			</fileset>
+		</copy>
+		<copy includeemptydirs="false" todir="rails-${version}">
+			<filterset refid="versionFilter"/>
+			<fileset dir=".">
+				<include name="LICENSE"/>
+				<include name="README"/>
+				<include name="AUTHORS"/>
+				<include name="rails.bat"/>
+				<include name="rails.sh"/>
+			</fileset>
+		</copy>
+		<!-- adds executable flags to rails.sh -->
+		<chmod file="rails-${version}/rails.sh" perm="ugo+rx"/>
+		
+		<jar destfile="rails-${version}/rails-${version}.jar" basedir="jar" duplicate="preserve">		
+			<manifest>
+				<attribute name="Main-Class" value="rails.util.RunGame" />
+				<attribute name="Class-Path" value=" 
+					./LocalisedText.properties 
+					./log4j.properties
+			        ./lib/log4j-1.2/log4j-1.2.14.jar
+			        ./lib/jgrapht-0.7.3/jgrapht-jdk1.5.jar
+			        ./lib/jgraph5/jgraph.jar
+			        ./lib/junit-4.8.2/junit.jar
+			        ./lib/batik-1.7/lib/batik-transcoder.jar
+			        ./lib/batik-1.7/lib/batik-dom.jar
+			        ./lib/batik-1.7/lib/batik-swing.jar
+			        ./lib/batik-1.7/lib/batik-bridge.jar
+			        ./lib/batik-1.7/lib/xml-apis.jar
+			        ./lib/batik-1.7/lib/batik-ext.jar
+			        ./lib/batik-1.7/lib/batik-gui-util.jar
+			        ./lib/batik-1.7/lib/batik-util.jar
+			        ./lib/batik-1.7/lib/batik-awt-util.jar
+			        ./lib/batik-1.7/lib/batik-css.jar
+			        ./lib/batik-1.7/lib/batik-gvt.jar
+			        ./lib/batik-1.7/lib/batik-parser.jar
+			        ./lib/batik-1.7/lib/batik-script.jar
+			        ./lib/batik-1.7/lib/batik-svg-dom.jar
+			        ./lib/batik-1.7/lib/batik-xml.jar
+			        ./lib/batik-1.7/lib/js.jar
+			        ./lib/batik-1.7/lib/xerces_2_5_0.jar
+			        ./lib/batik-1.7/lib/xml-apis-ext.jar
+			        ./lib/batik-1.7/lib/batik-anim.jar"/>
+			</manifest>
+			</jar>
+			<delete dir="jar"/>
+			<tar destfile="../rails-${version}.tar.gz" compression="gzip">
+					<!-- adds executable flags to rails.sh, has to be done again for the tar (see above) -->
+				<tarfileset dir="." filemode="755">
+					<include name="rails-${version}/rails.sh"/>
+			  	</tarfileset>
+				<tarfileset dir=".">
+					<include name="rails-${version}/**"/>
+					<exclude name="rails-${version}/rails.sh"/>
+				</tarfileset>
+			  </tar>
+			<zip destfile="../rails-${version}.zip" basedir="." includes="rails-${version}/**"/>
+		</target>
+		<target name="publish-release">
+				<exec executable="rsync" dir=".." failonerror="true">
+					<arg value="-avP"/>
+					<arg value="-e"/>
+					<arg value="ssh"/>
+					<arg value="rails-${version}.zip"/>
+					<arg value="rails-${version}.tar.gz"/>
+					<arg value="${sf.user},rails@${sf.uri}${sf.filedir}${version}/"/>
+				</exec>
+				<exec executable="scp" dir="../rails-${version}" failonerror="true">
+					<arg value="Readme.txt"/>
+					<arg value="${sf.user},rails@${sf.uri}${sf.filedir}${version}/"/>
+				</exec>
+			</target>
+</project>

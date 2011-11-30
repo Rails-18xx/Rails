@@ -16,6 +16,7 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
+import rails.game.Game;
 import rails.game.GameManager;
 import rails.util.Util;
 
@@ -435,6 +436,20 @@ public final class Config {
         if (!propertiesLoaded) {
             loadProfile(selectedProfile);
             propertiesLoaded  = true;
+        }
+        
+        /* Load version number and develop flag */
+        Properties versionNumber = new Properties();
+        loadPropertyFile(versionNumber, "version.number", true);
+        
+        String version = versionNumber.getProperty("version");
+        if (Util.hasValue("version")) {
+            Game.setVersion(version);
+        }
+            
+        String develop = versionNumber.getProperty("develop");
+        if (Util.hasValue(develop)) {
+            Game.setDevelop(develop != "");
         }
     }
     
