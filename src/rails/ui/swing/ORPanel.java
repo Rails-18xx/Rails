@@ -214,7 +214,7 @@ implements ActionListener, KeyListener, RevenueListener {
         zoomMenu.add(zoomOut);
         calibrateMap = new JMenuItem("CalibrateMap");
         calibrateMap.addActionListener(this);
-        calibrateMap.setEnabled(true);
+        calibrateMap.setEnabled(RailsRoot.getDevelop());
         zoomMenu.add(calibrateMap);
         menuBar.add(zoomMenu);
 
@@ -600,7 +600,7 @@ implements ActionListener, KeyListener, RevenueListener {
         if (networkInfoMenu != null) infoMenu.remove(networkInfoMenu);
         networkInfoMenu = createNetworkInfo();
         if (networkInfoMenu == null) return;
-        networkInfoMenu.setEnabled(true);
+        networkInfoMenu.setEnabled(RailsRoot.getDevelop());
         infoMenu.add(networkInfoMenu);
     }
     

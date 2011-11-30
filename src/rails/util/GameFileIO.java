@@ -246,7 +246,7 @@ public class GameFileIO {
      * sets the meta data required for a game save
      */
     public void initSave(Long saveFileVersionID, String gameName, Map<String, String> gameOptions, List<String> playerNames) {
-        gameData.meta.version = RailsRoot.version+" "+BuildInfo.buildDate;
+        gameData.meta.version = RailsRoot.getFullVersion() +" "+BuildInfo.buildDate;
         gameData.meta.date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         gameData.meta.fileVersionID = saveFileVersionID;
         gameData.meta.gameName = gameName;
