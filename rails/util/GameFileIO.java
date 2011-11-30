@@ -240,7 +240,7 @@ public class GameFileIO {
      * sets the meta data required for a game save
      */
     public void initSave(Long saveFileVersionID, String gameName, Map<String, String> gameOptions, List<String> playerNames) {
-        gameData.meta.version = Game.version+" "+BuildInfo.buildDate;
+        gameData.meta.version = Game.getFullVersion() +" "+BuildInfo.buildDate;
         gameData.meta.date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         gameData.meta.fileVersionID = saveFileVersionID;
         gameData.meta.gameName = gameName;
