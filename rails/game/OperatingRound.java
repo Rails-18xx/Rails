@@ -1715,11 +1715,18 @@ public class OperatingRound extends Round implements Observer {
                         for (String colour : stlc) {
                             if (phaseColours.contains(colour)) layableColours.add(colour);
                         }
+                        if (layableColours.isEmpty()) continue;
                     }
 
                     // If any locations are specified, check if tile or colour(s) can be laid there.
                     Map<String, Integer> tc = new HashMap<String, Integer>();
                     List<MapHex> hexes = stl.getLocations();
+                    List<MapHex> remainingHexes = null;
+                    List<String> remainingColours = null;
+                    if (hexes != null) {
+                        remainingHexes = new ArrayList<MapHex> ();
+                        remainingColours = new ArrayList<String>();
+                    }
                     for (String colour : layableColours) {
                         if (hexes != null) {
                             for (MapHex hex : hexes) {
@@ -1727,6 +1734,8 @@ public class OperatingRound extends Round implements Observer {
                                 if (hex.getCurrentTile().getColourNumber() + 1
                                         == Tile.getColourNumberForName(colour)) {
                                     tc.put(colour, 1);
+                                    remainingColours.add(colour);
+                                    remainingHexes.add(hex);
                                     continue;
                                 }
                             }
@@ -1736,6 +1745,13 @@ public class OperatingRound extends Round implements Observer {
                     }
 
                     if (!tc.isEmpty()) lt.setTileColours(tc);
+                    if (hexes != null) {
+                        if (!remainingHexes.isEmpty()) {
+                            lt.setLocations(remainingHexes);
+                        } else {
+                            continue;
+                        }
+                    }
                     if (!tc.isEmpty() || hexes == null) currentSpecialTileLays.add(lt);
                 }
             }

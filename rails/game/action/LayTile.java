@@ -181,6 +181,11 @@ public class LayTile extends PossibleORAction {
         return locations;
     }
 
+    public void setLocations(List<MapHex> locations) {
+        this.locations = locations;
+        if (locations != null) buildLocationNameString();
+    }
+
     public int getType() {
         return type;
     }
