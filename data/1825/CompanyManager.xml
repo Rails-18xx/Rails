@@ -23,14 +23,14 @@
 	<CompanyType name="Minor" class="rails.game.specific._1825.PublicCompany_1825">
 		<Float percentage="40"/>
 		<StockPrice par="no"/>
-		<ShareUnit percentage="20"/>
+		<ShareUnit percentage="10"/>
 		<BaseTokens>
 			<!-- HomeBase lay options: "whenStarted", "whenFloated", "firstOR" (default) -->
 			<HomeBase lay="firstOR"/>
 			<LayCost method="sequence" cost="0"/>
 		</BaseTokens>
-		<Certificate type="President" shares="2"/>
-		<Certificate shares="1" number="3"/>
+		<Certificate type="President" shares="4"/>
+		<Certificate shares="2" number="3"/>
 		<Trains limit="4,3"/>
 		<!--TileLays>
 			<Number colour="yellow" number="2" phase="1,2,3,4"></Number></TileLays-->
