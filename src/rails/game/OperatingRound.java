@@ -1701,56 +1701,10 @@ public class OperatingRound extends Round implements Observer {
 
         if (operatingCompany.value().canUseSpecialProperties()) {
 
-            // What colours can be laid in the current phase?
-            List<String> phaseColours = getCurrentPhase().getTileColours();
-
             for (SpecialTileLay stl : getSpecialProperties(SpecialTileLay.class)) {
-                if (stl.isExtra()
-                        // If the special tile lay is not extra, it is only allowed if
-                        // normal tile lays are also (still) allowed
-                        || checkNormalTileLay(stl.getTile(), false)) {
-                    LayTile lt = new LayTile(stl);
-                    Tile tile = stl.getTile();
 
-                    // Which tile colour(s) are specified explicitly...
-                    String[] stlc = stl.getTileColours();
-                    if ((stlc == null || stlc.length == 0) && tile != null) {
-                        // ... or implicitly
-                        stlc = new String[] {tile.getColourName()};
-                    }
-
-                    // Which of the specified tile colours can really be laid now?
-                    List<String> layableColours;
-                    if (stlc == null) {
-                        layableColours = phaseColours;
-                    } else {
-                        layableColours = new ArrayList<String>();
-                        for (String colour : stlc) {
-                            if (phaseColours.contains(colour)) layableColours.add(colour);
-                        }
-                    }
-
-                    // If any locations are specified, check if tile or colour(s) can be laid there.
-                    Map<String, Integer> tc = new HashMap<String, Integer>();
-                    List<MapHex> hexes = stl.getLocations();
-                    for (String colour : layableColours) {
-                        if (hexes != null) {
-                            for (MapHex hex : hexes) {
-                                // At least one hex does not have that colour yet
-                                if (hex.getCurrentTile().getColourNumber() + 1
-                                        == Tile.getColourNumberForName(colour)) {
-                                    tc.put(colour, 1);
-                                    continue;
-                                }
-                            }
-                        } else {
-                            tc.put(colour, 1);
-                        }
-                    }
-
-                    if (!tc.isEmpty()) lt.setTileColours(tc);
-                    if (!tc.isEmpty() || hexes == null) currentSpecialTileLays.add(lt);
-                }
+                LayTile layTile = new LayTile(stl);
+                if (validateSpecialTileLay (layTile)) currentSpecialTileLays.add(layTile);
             }
         }
 
@@ -1766,6 +1720,94 @@ public class OperatingRound extends Round implements Observer {
         }
 
         return currentSpecialTileLays;
+    }
+
+    /** Prevalidate a special tile lay.
+     * <p>During prevalidation, the action may be updated (i.e. restricted).
+     * TODO <p>Note: The name of this method may suggest that it can also be used for postvalidation
+     * (i.e. to validate the action after the player has selected it). This is not yet the case,
+     * but it is conceivable that this method can be extended to cover postvalidation as well.
+     * Postvalidation is really a different process, which in this context has not yet been considered in detail.
+     * @param layTile A LayTile object embedding a SpecialTileLay property.
+     * Any other LayTile objects are rejected. The object may be changed by this method.
+     * @return TRUE if allowed.
+     */
+    protected boolean validateSpecialTileLay (LayTile layTile) {
+
+        if (layTile == null) return false;
+
+        SpecialProperty sp = layTile.getSpecialProperty();
+        if (sp == null || !(sp instanceof SpecialTileLay)) return false;
+
+        SpecialTileLay stl = (SpecialTileLay) sp;
+
+        if (!stl.isExtra()
+                // If the special tile lay is not extra, it is only allowed if
+                // normal tile lays are also (still) allowed
+                && !checkNormalTileLay(stl.getTile(), false)) return false;
+
+                    Tile tile = stl.getTile();
+
+        // What colours can be laid in the current phase?
+        List<String> phaseColours = getCurrentPhase().getTileColours();
+
+        // Which tile colour(s) are specified explicitly...
+        String[] stlc = stl.getTileColours();
+        if ((stlc == null || stlc.length == 0) && tile != null) {
+            // ... or implicitly
+            stlc = new String[] {tile.getColourName()};
+        }
+
+        // Which of the specified tile colours can really be laid now?
+        List<String> layableColours;
+        if (stlc == null) {
+            layableColours = phaseColours;
+        } else {
+            layableColours = new ArrayList<String>();
+            for (String colour : stlc) {
+                if (phaseColours.contains(colour)) layableColours.add(colour);
+            }
+            if (layableColours.isEmpty()) return false;
+        }
+
+        // If any locations are specified, check if tile or colour(s) can be laid there.
+        Map<String, Integer> tc = new HashMap<String, Integer>();
+        List<MapHex> hexes = stl.getLocations();
+        List<MapHex> remainingHexes = null;
+        List<String> remainingColours = null;
+        int cash = operatingCompany.value().getCash();
+
+        if (hexes != null) {
+            remainingHexes = new ArrayList<MapHex> ();
+            remainingColours = new ArrayList<String>();
+        }
+        for (String colour : layableColours) {
+            if (hexes != null) {
+                for (MapHex hex : hexes) {
+                    // Check if the company can pay any costs
+                    if (cash < hex.getTileCost()) continue;
+
+                    // At least one hex does not have that colour yet
+                    if (hex.getCurrentTile().getColourNumber() + 1
+                            == Tile.getColourNumberForName(colour)) {
+                        tc.put(colour, 1);
+                        remainingColours.add(colour);
+                        remainingHexes.add(hex);
+                        continue;
+                    }
+                }
+            } else {
+                tc.put(colour, 1);
+            }
+        }
+        if (!tc.isEmpty()) layTile.setTileColours(tc);
+
+        if (hexes != null) {
+            if (remainingHexes.isEmpty()) return false;
+            layTile.setLocations(remainingHexes);
+        }
+
+        return true;
     }
 
     protected boolean areTileLaysPossible() {

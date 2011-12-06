@@ -7,7 +7,7 @@ import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.*;
-import rails.util.*;
+import rails.util.Util;
 
 public class SpecialTileLay extends SpecialProperty {
 
@@ -31,9 +31,9 @@ public class SpecialTileLay extends SpecialProperty {
      * Default is same colours as is allowed in a a normal tile lay.
      * Don't use if specific tiles are specified! */
     protected String[] tileColours = null;
-    
+
     @Override
-	public void configureFromXML(Tag tag) throws ConfigurationException {
+    public void configureFromXML(Tag tag) throws ConfigurationException {
         super.configureFromXML(tag);
 
         Tag tileLayTag = tag.getChild("SpecialTileLay");
@@ -47,37 +47,37 @@ public class SpecialTileLay extends SpecialProperty {
 
         tileNumber = tileLayTag.getAttributeAsInteger("tile", 0);
 
-        String coloursString = tag.getAttributeAsString("colour");
+        String coloursString = tileLayTag.getAttributeAsString("colour");
         if (Util.hasValue(coloursString)) {
             tileColours = coloursString.split(",");
         }
-       
+
         name = tileLayTag.getAttributeAsString("name");
 
         extra = tileLayTag.getAttributeAsBoolean("extra", extra);
         free = tileLayTag.getAttributeAsBoolean("free", free);
         connected = tileLayTag.getAttributeAsBoolean("connected", connected); /* sfy 1889 extension */
         closingValue =
-                tileLayTag.getAttributeAsInteger("closingValue", closingValue);
+            tileLayTag.getAttributeAsInteger("closingValue", closingValue);
 
         if (tileNumber > 0) {
-	    	description = LocalText.getText("LayNamedTileInfo",
-	    			tileNumber,
-	    			name != null ? name : "",
-	    			locationCodes,
-	    			(extra ? LocalText.getText("extra"):LocalText.getText("notExtra")),
-	    			(free ? LocalText.getText("noCost") : LocalText.getText("normalCost")),
-                    (connected ? LocalText.getText("connected") : LocalText.getText("unconnected"))
-                    /* sfy 1889 extension */
-	    	        );
+            description = LocalText.getText("LayNamedTileInfo",
+                    tileNumber,
+                    name != null ? name : "",
+                            locationCodes,
+                            (extra ? LocalText.getText("extra"):LocalText.getText("notExtra")),
+                            (free ? LocalText.getText("noCost") : LocalText.getText("normalCost")),
+                            (connected ? LocalText.getText("connected") : LocalText.getText("unconnected"))
+                            /* sfy 1889 extension */
+            );
         } else {
-	    	description = LocalText.getText("LayTileInfo",
-	    			locationCodes,
-	    			(extra ? LocalText.getText("extra"):LocalText.getText("notExtra")),
-	    			(free ? LocalText.getText("noCost") : LocalText.getText("normalCost")),
+            description = LocalText.getText("LayTileInfo",
+                    locationCodes,
+                    (extra ? LocalText.getText("extra"):LocalText.getText("notExtra")),
+                    (free ? LocalText.getText("noCost") : LocalText.getText("normalCost")),
                     (connected ? LocalText.getText("connected") : LocalText.getText("unconnected"))
                     /* sfy 1889 extension */
-                    );
+            );
         }
 
     }
@@ -99,7 +99,7 @@ public class SpecialTileLay extends SpecialProperty {
             hex = mmgr.getHex(hexName);
             if (hex == null)
                 throw new ConfigurationException("Location " + hexName
-                                                 + " does not exist");
+                        + " does not exist");
             locations.add(hex);
         }
 
@@ -143,17 +143,19 @@ public class SpecialTileLay extends SpecialProperty {
 
     @Override
 	public String toText() {
-        return "SpecialTileLay comp=" + originalCompany.getId() + " hex="
-               + locationCodes + " extra=" + extra + " cost=" + free + " connected=" + connected;
+        return "SpecialTileLay comp=" + originalCompany.getId()
+        + " hex=" + locationCodes
+        + " colour="+tileColours
+        + " extra=" + extra + " cost=" + free + " connected=" + connected;
     }
 
     @Override
-	public String toMenu() {
-    	return description;
+    public String toMenu() {
+        return description;
     }
 
     @Override
-	public String getInfo() {
-    	return description;
+    public String getInfo() {
+        return description;
     }
 }
