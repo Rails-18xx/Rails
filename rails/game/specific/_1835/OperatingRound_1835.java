@@ -10,7 +10,8 @@ import rails.game.action.DiscardTrain;
 import rails.game.action.LayTile;
 import rails.game.move.CashMove;
 import rails.game.move.MapChange;
-import rails.game.special.*;
+import rails.game.special.ExchangeForShare;
+import rails.game.special.SpecialPropertyI;
 import rails.game.state.BooleanState;
 
 public class OperatingRound_1835 extends OperatingRound {
@@ -183,42 +184,17 @@ public class OperatingRound_1835 extends OperatingRound {
     }
 
     @Override
-    protected List<LayTile> getSpecialTileLays(boolean display) {
+    protected boolean validateSpecialTileLay (LayTile layTile) {
 
-        /* Special-property tile lays */
-        List<LayTile> currentSpecialTileLays = new ArrayList<LayTile>();
+        if (!super.validateSpecialTileLay(layTile)) return false;
 
-        if (operatingCompany.get().canUseSpecialProperties()) {
+        // Exclude the second OBB free tile if the first was laid in this round
+        if (layTile.getSpecialProperty().getLocationNameString().matches("M1(7|9)")
+                && hasLaidExtraOBBTile.booleanValue()) return false;
 
-            for (SpecialTileLay stl : getSpecialProperties(SpecialTileLay.class)) {
-                if (stl.isExtra()
-                        // If the special tile lay is not extra, it is only allowed if
-                        // normal tile lays are also (still) allowed
-                        || stl.getTile() != null
-                        && getCurrentPhase().isTileColourAllowed(stl.getTile().getColourName())) {
-
-                    // Exclude the second OBB free tile if the first was laid in this round
-                    if (stl.getLocationNameString().matches("M1(7|9)")
-                            && hasLaidExtraOBBTile.booleanValue()) continue;
-
-                    currentSpecialTileLays.add(new LayTile(stl));
-                }
-            }
-        }
-
-        if (display) {
-            int size = currentSpecialTileLays.size();
-            if (size == 0) {
-                log.debug("No special tile lays");
-            } else {
-                for (LayTile tileLay : currentSpecialTileLays) {
-                    log.debug("Special tile lay: " + tileLay.toString());
-                }
-            }
-        }
-
-        return currentSpecialTileLays;
+        return true;
     }
+
     @Override
     public boolean layTile(LayTile action) {
 
