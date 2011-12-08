@@ -222,17 +222,16 @@ public class LayTile extends PossibleORAction {
     }
 
     @Override
+    // TODO: This testing could be improved by strengthing the conditions
     public boolean equalsAsOption(PossibleAction action) {
         if (!(action.getClass() == LayTile.class)) return false;
         LayTile a = (LayTile) action;
-        return (Objects.equal(a.locationNames, locationNames)
-//              && a.type == type // type is not stored 
+        return ((locations == null || locations.isEmpty() || locations.contains(a.chosenHex))
+//              && a.type == type // type is not always stored 
                && ( Objects.equal(a.tiles, tiles) && specialProperty == null 
                || Objects.equal(a.specialProperty, specialProperty) && specialProperty != null));
-//              && a.tileColours == tileColours
-        // TODO: Replace this by testing if the tile is part of the map 
         // Remark: this test is invalid as sometimes zero values got stored
-        // This is a quick fix for Rails2.0 (see comment above)
+//              && a.tileColours == tileColours
     }
 
     @Override
