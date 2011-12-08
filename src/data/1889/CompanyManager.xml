@@ -63,7 +63,7 @@
 			<SpecialProperties>
 <!-- 			Timing of special property is done in OperatingRound_1889, coded against name "C" -->
 				<SpecialProperty condition="specific" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
-					<SpecialTileLay location="C4" extra="yes" free="yes"/>
+					<SpecialTileLay location="C4" colour="green" extra="yes" free="yes"/>
 				</SpecialProperty>
 			</SpecialProperties>
 		</Company>
