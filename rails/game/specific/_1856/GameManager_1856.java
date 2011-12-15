@@ -2,11 +2,16 @@
 package rails.game.specific._1856;
 
 import rails.game.*;
+import rails.game.state.GameContext;
 
 public class GameManager_1856 extends GameManager {
 
     private Player playerToStartCGRFRound = null;
 
+    public GameManager_1856(GameContext context) {
+        super(context);
+    }
+    
     public void startCGRFormationRound(OperatingRound_1856 or,
             Player playerToStartCGRFRound) {
 

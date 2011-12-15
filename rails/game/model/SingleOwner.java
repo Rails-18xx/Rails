@@ -1,36 +1,36 @@
 package rails.game.model;
 
 import rails.game.state.AbstractItem;
-import rails.game.state.Item;
 
-public abstract class SingleOwner<T extends Ownable> extends AbstractItem implements Owner {
+public class SingleOwner<T extends Ownable> extends AbstractItem implements Owner {
     
-    private final Holder<T> holder; 
+    private final Storage<T> holder; 
     private final Class<T> clazz;
     
+    @Deprecated
     public SingleOwner(Class<T> clazz){
         super();
-        holder = new HolderModel<T>(this, clazz); 
+        holder = new StorageModel<T>(this, clazz); 
         this.clazz = clazz;
     }
 
-    public SingleOwner(Item parent, String id, Class<T> clazz){
-        super(parent, id);
-        holder = new HolderModel<T>(this, clazz); 
+    public SingleOwner(String id, Class<T> clazz){
+        super(id);
+        holder = new StorageModel<T>(this, clazz); 
         this.clazz = clazz;
     }
     
-    public <E extends Ownable> void addHolder(Holder<E> newHolder,
+    public <E extends Ownable> void addStorage(Storage<E> newHolder,
             Class<E> clazz) {
         throw new RuntimeException("SingleOwner cannot add other Holders");
     }
   
-    public <E extends Ownable> Holder<E> getHolder(Class<E> clazz) {
+    public <E extends Ownable> Storage<E> getStorage(Class<E> clazz) {
         if (this.clazz != clazz) {
             throw new RuntimeException("SingleOwner connot hold objects of type" + clazz);
         }
         @SuppressWarnings("unchecked")
-        Holder<E> holder = (Holder<E>)this.holder;
+        Storage<E> holder = (Storage<E>)this.holder;
         return holder;
     }
 
@@ -39,7 +39,7 @@ public abstract class SingleOwner<T extends Ownable> extends AbstractItem implem
             throw new RuntimeException("SingleOwner connot hold objects of type" + clazz);
         }
         @SuppressWarnings("unchecked")
-        Holder<E> holder = (Holder<E>)this.holder;
+        Storage<E> holder = (Storage<E>)this.holder;
         holder.addObject(object);
     }
 
@@ -48,7 +48,7 @@ public abstract class SingleOwner<T extends Ownable> extends AbstractItem implem
             throw new RuntimeException("SingleOwner connot hold objects of type" + clazz);
         }
         @SuppressWarnings("unchecked")
-        Holder<E> holder = (Holder<E>)this.holder;
+        Storage<E> holder = (Storage<E>)this.holder;
         holder.removeObject(object);
     }
 

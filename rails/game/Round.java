@@ -199,8 +199,8 @@ public abstract class Round extends AbstractItem implements RoundI {
             return false;
         }
 
-        changeStack.start(getCurrentPlayer());
-        if (linkedMoveSet) changeStack.linkToPreviousMoveSet();
+        // TODO: changeStack.start(true);
+        // FIMXE: if (linkedMoveSet) changeStack.linkToPreviousMoveSet();
 
         if (exchanged > 0) {
             MapHex hex;

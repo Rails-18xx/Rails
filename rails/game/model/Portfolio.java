@@ -58,15 +58,15 @@ public final class Portfolio extends DirectOwner {
 
     /** Owned tokens */
     // TODO Currently only used to discard expired Bonus tokens.
-    private final HolderModel<Token> tokens = HolderModel.create(this, Token.class);
+    private final StorageModel<Token> tokens = StorageModel.create(this, Token.class);
     
     /**
      * Private-independent special properties. When moved here, a special
      * property no longer depends on the private company being alive. Example:
      * 18AL named train tokens.
      */
-    private final HolderModel<SpecialPropertyI> specialProperties = 
-        HolderModel.create(this, SpecialPropertyI.class);
+    private final StorageModel<SpecialPropertyI> specialProperties = 
+        StorageModel.create(this, SpecialPropertyI.class);
 
     private final GameManager gameManager;
 
@@ -522,7 +522,7 @@ public final class Portfolio extends DirectOwner {
         return specialProperties != null && !specialProperties.isEmpty();
     }
 
-    public Holder<SpecialPropertyI> getSpecialProperties() {
+    public Storage<SpecialPropertyI> getSpecialProperties() {
         return specialProperties;
     }
 
@@ -574,7 +574,7 @@ public final class Portfolio extends DirectOwner {
         return privates;
     }
 
-    public HolderModel<Token> getTokenHolder() {
+    public StorageModel<Token> getTokenHolder() {
         return tokens;
     }
     

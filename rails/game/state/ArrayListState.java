@@ -18,21 +18,19 @@ public final class ArrayListState<E> extends AbstractState implements Iterable<E
 
     /**
      * Creates an empty ArrayList state variable
-     * @param owner object containing state (usually this)
      * @param id id state variable
      */
-    public ArrayListState(Item owner, String id) {
-        super(owner, id);
+    public ArrayListState(String id) {
+        super(id);
         list = new ArrayList<E>();
     }
 
     /**
-     * @param owner object containing state (usually this)
      * @param id id state variable
      * @param collection elements are added to the list at initialization
      */
-    public ArrayListState(Item owner, String id, Collection<E> collection) {
-        super(owner, id);
+    public ArrayListState(String id, Collection<E> collection) {
+        super(id);
         list = new ArrayList<E>(collection);
     }
 

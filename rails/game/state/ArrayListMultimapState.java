@@ -10,11 +10,10 @@ public class ArrayListMultimapState<K,V> extends AbstractState implements Multim
 
     /**
      * Creates an empty ArrayListMultimap state variable
-     * @param owner object containing state (usually this)
      * @param id id state variable
      */
-    public ArrayListMultimapState(Item owner, String id) {
-        super(owner, id);
+    public ArrayListMultimapState(String id) {
+        super(id);
         map = ArrayListMultimap.create();
     }
     

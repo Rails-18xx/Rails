@@ -13,12 +13,15 @@ import rails.common.parser.*;
 import rails.game.action.*;
 import rails.game.correct.*;
 import rails.game.model.CashModel;
-import rails.game.model.Holder;
-import rails.game.model.HolderModel;
+import rails.game.model.DirectOwner;
+import rails.game.model.Ownable;
+import rails.game.model.Storage;
+import rails.game.model.StorageModel;
 import rails.game.model.Model;
 import rails.game.model.Owner;
 import rails.game.model.Portfolio;
 import rails.game.model.SingleOwner;
+import rails.game.special.SpecialProperty;
 import rails.game.special.SpecialPropertyI;
 import rails.game.special.SpecialTokenLay;
 import rails.game.state.*;
@@ -29,7 +32,7 @@ import rails.util.Util;
  * This class manages the playing rounds by supervising all implementations of
  * Round. Currently everything is hardcoded &agrave; la 1830.
  */
-public class GameManager extends SingleOwner<SpecialPropertyI> implements ConfigurableComponentI {
+public class GameManager extends AbstractItem implements Owner, ConfigurableComponentI {
     /** Version ID of the Save file header, as written in save() */
     private static final long saveFileHeaderVersionID = 3L;
     /**
@@ -200,7 +203,7 @@ public class GameManager extends SingleOwner<SpecialPropertyI> implements Config
     /** Special properties that can be used by other players or companies
      * than just the owner (such as buyable bonus tokens as in 1856).
      */
-    protected HolderModel<SpecialPropertyI> commonSpecialProperties = null;
+    protected StorageModel<SpecialPropertyI> commonSpecialProperties = null;
     
 
     /** A List of available game options */
@@ -228,13 +231,14 @@ public class GameManager extends SingleOwner<SpecialPropertyI> implements Config
     protected Map<String, Object> objectStorage = new HashMap<String, Object>();
     protected Map<String, Integer> storageIds = new HashMap<String, Integer>();
 
+    // composite owner
+    private final Owner compositeOwner = new SingleOwner<SpecialPropertyI>(this, "owner", SpecialPropertyI.class);
+    
     protected static Logger log =
         Logger.getLogger(GameManager.class.getPackage().getName());
 
     public GameManager() {
-        // needed to initialize the SingleOwner
-        super(SpecialPropertyI.class);
-        
+        super("GameManager");
         gmName = GM_NAME;
         gmKey = GM_KEY;
         NDC.clear();
@@ -542,7 +546,6 @@ public class GameManager extends SingleOwner<SpecialPropertyI> implements Config
         this.mapManager = mapManager;
         this.tileManager = tileManager;
         this.revenueManager = revenueManager;
-        this.stateManager = new StateManager(); // nothing to init so far
         this.bank = bank;
 
         players = playerManager.getPlayers();
@@ -1697,9 +1700,9 @@ public class GameManager extends SingleOwner<SpecialPropertyI> implements Config
     }
 
     public boolean addSpecialProperty(SpecialPropertyI property, int position) {
-
+        
         if (commonSpecialProperties == null) {
-            commonSpecialProperties = HolderModel.create(this, SpecialPropertyI.class);
+            commonSpecialProperties = StorageModel.create(compositeOwner, SpecialPropertyI.class);
         }
         return commonSpecialProperties.addObject(property, position);
     }
@@ -1725,7 +1728,7 @@ public class GameManager extends SingleOwner<SpecialPropertyI> implements Config
         return getSpecialProperties (null, false);
     }
     
-    public Holder<SpecialPropertyI> getCommonSpecialPropertiesHolder() {
+    public Storage<SpecialPropertyI> getCommonSpecialPropertiesHolder() {
         return commonSpecialProperties;
     }
 
@@ -1903,22 +1906,28 @@ public class GameManager extends SingleOwner<SpecialPropertyI> implements Config
     public void processPhaseAction (String name, String value) {
         getCurrentRound().processPhaseAction(name, value);
     }
-
-    // Owner interface
-    public boolean hasPortfolio() {
-        return false;
+    
+    // Implementation of owner Interface by forwarding to compositeOwner
+    
+    public <E extends Ownable> void addStorage(Storage<E> newHolder,
+            Class<E> clazz) {
+        // Forward to composite
+        compositeOwner.addStorage(newHolder, clazz);
     }
 
-    public Portfolio getPortfolio() {
-        return null;
+    public <E extends Ownable> Storage<E> getStorage(Class<E> clazz) {
+        // Forward to composite
+        return compositeOwner.getStorage(clazz);
     }
 
-    public boolean hasCash() {
-        return false;
+    public <E extends Ownable> void addObject(E object) {
+        // Forward to composite
+        compositeOwner.addObject(object);
     }
 
-    public CashModel getCash() {
-        return null;
+    public <E extends Ownable> void removeObject(E object) {
+        // Forward to composite
+        compositeOwner.removeObject(object);
     }
 
 }

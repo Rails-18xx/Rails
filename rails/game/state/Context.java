@@ -1,18 +1,19 @@
 package rails.game.state;
 
-
 /**
- * Contexts allow the storage of contextItems
+ * Contexts allow the storage and retrieval of items
  */
 public interface Context extends Item {
 
-    /**
-     * @return return context item specified by id
-     */
-    public Item localize(String id);
+    public static final char SEP = '.';
     
     /**
-     * adds context item 
+     * @return item specified by URI, if not found returns null
+     */
+    public Item localize(String uri);
+    
+    /**
+     * adds item to context 
      */
     public void addItem(Item item);
     

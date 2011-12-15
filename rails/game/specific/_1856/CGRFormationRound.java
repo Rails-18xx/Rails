@@ -250,8 +250,9 @@ public class CGRFormationRound extends SwitchableUIRound {
 
         // TODO Validation skipped for now...
 
-        changeStack.start(true);
-        changeStack.linkToPreviousMoveSet();
+        // TODO: changeStack.start(true);
+        // FIMXE: linked to previous moveset
+        // changeStack.linkToPreviousMoveSet();
 
         PublicCompany company = action.getCompany();
         int numberRepaid = action.getNumberRepaid();
@@ -827,8 +828,8 @@ bonuses:        for (Bonus bonus : bonuses) {
 
         /* End of validation, start of execution */
         // new: link always, see below commented
-        changeStack.start(true);
-        changeStack.linkToPreviousMoveSet();
+        // TODO: changeStack.start(true);
+        // FIXME:changeStack.linkToPreviousMoveSet();
 
         if (train != null) {
 

@@ -14,13 +14,13 @@ import rails.game.Train;
  * @author freystef
  */
 
-public class TrainsModel extends HolderModel<Train> {
+public class TrainsModel extends StorageModel<Train> {
 
     private boolean abbrList = false;
 
     public static TrainsModel create(Owner owner) {
         TrainsModel trainsModel = new TrainsModel(owner);
-        owner.addHolder(trainsModel, Train.class);
+        owner.addStorage(trainsModel, Train.class);
         return trainsModel;
     }
     

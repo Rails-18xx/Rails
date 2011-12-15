@@ -8,6 +8,7 @@ import rails.common.LocalText;
 import rails.game.*;
 import rails.game.model.Owners;
 import rails.game.model.Portfolio;
+import rails.game.state.GameContext;
 import rails.game.state.GenericState;
 import rails.game.model.Owners;
 import rails.util.Util;
@@ -21,6 +22,10 @@ public class GameManager_18EU extends GameManager {
     protected GenericState<Player> playerToStartFMERound =
         new GenericState<Player>(this, "playerToStartFMERound");
 
+    public GameManager_18EU(GameContext context) {
+        super(context);
+    }
+    
     @Override
     public void nextRound(RoundI round) {
         if (round instanceof OperatingRound_18EU) {

@@ -365,8 +365,8 @@ public class ShareSellingRound extends StockRound {
         }
         int cashAmount = numberSold * price * shareUnits;
 
-        changeStack.start(true);
-        changeStack.linkToPreviousMoveSet();
+        // TODO: changeStack.start(true);
+        // FIXME: changeStack.linkToPreviousMoveSet();
 
         ReportBuffer.add(LocalText.getText("SELL_SHARES_LOG",
                 playerName,

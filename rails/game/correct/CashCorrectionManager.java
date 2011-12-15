@@ -78,7 +78,7 @@ public final class CashCorrectionManager extends CorrectionManager {
             result = true;
         } else {
             // no error occured 
-            gameManager.getChangeStack().start(false);
+            // TODO: gameManager.getChangeStack().start(false);
 
             Bank bank = gameManager.getBank();
 

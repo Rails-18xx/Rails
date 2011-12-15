@@ -231,8 +231,8 @@ public class PrussianFormationRound extends StockRound {
         }
 
         // all actions linked during formation round to avoid serious undo problems
-        changeStack.start(false);
-        changeStack.linkToPreviousMoveSet();
+        // TODO: changeStack.start(false);
+        // FIXME: changeStack.linkToPreviousMoveSet();
 
         if (folding) executeStartPrussian(false);
 
@@ -293,8 +293,8 @@ public class PrussianFormationRound extends StockRound {
         */
 
         // all actions linked during formation round to avoid serious undo problems
-        changeStack.start(false);
-        changeStack.linkToPreviousMoveSet();
+        // TODO: changeStack.start(false);
+        // FIMXE: changeStack.linkToPreviousMoveSet();
 
         // Execute
         if (folding) executeExchange (folded, false, false);
@@ -422,9 +422,8 @@ public class PrussianFormationRound extends StockRound {
         }
 
         /* End of validation, start of execution */
-        changeStack.start(true);
-        //
-        if (action.isForced()) changeStack.linkToPreviousMoveSet();
+        // TODO: changeStack.start(true);
+        // FIXME: if (action.isForced()) changeStack.linkToPreviousMoveSet();
 
         train.moveTo(pool);
         ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",

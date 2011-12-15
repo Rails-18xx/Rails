@@ -5,7 +5,7 @@ import rails.game.state.Item;
 
 /**
  * The Owner interface is implemented by all classes that wish
- * to hold Rails Holdable objects
+ * to hold Rails Ownable objects
  * 
  * This can be done either
  * A) Directly by implementing the Holder interface
@@ -18,9 +18,9 @@ import rails.game.state.Item;
  */
 public interface Owner extends Item {
     
-    public <E extends Ownable> void addHolder(Holder<E> newHolder, Class<E> clazz);
+    public <E extends Ownable> void addStorage(Storage<E> newHolder, Class<E> clazz);
     
-    public <E extends Ownable> Holder<E> getHolder(Class<E> clazz);
+    public <E extends Ownable> Storage<E> getStorage(Class<E> clazz);
 
     public <E extends Ownable> void addObject(E object);
 

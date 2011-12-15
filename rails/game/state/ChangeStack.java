@@ -7,18 +7,17 @@ import org.apache.log4j.Logger;
 import rails.game.GameManager;
 import rails.game.Player;
 import rails.game.ReportBuffer;
+import rails.game.action.PossibleAction;
 
 public final class ChangeStack {
     protected static Logger log =
         Logger.getLogger(ChangeStack.class.getPackage().getName());
 
     private final LinkedList<ChangeSet> stack = new LinkedList<ChangeSet>();
-
     private boolean enabled = false;
 
-    public ChangeStack () {
-    }
-
+    // default constructor
+    
     /**
      * Start making moves undoable. Will be called once, after all
      * initialisations are complete.
@@ -27,40 +26,39 @@ public final class ChangeStack {
         enabled = true;
     }
 
+    public boolean isEnabled() {
+        return enabled;
+    }
+    
+    private void checkEnabled() {
+        if (!enabled) throw new IllegalStateException("ChangeStack is not enabled");
+    }
+
     /**
-     * returns active ChangeSet
-     * @param activePlayer
-     * @return new ChangeSet
+     * Returns a valid ChangeSet that is current for the ChangeStack
+     * If the ChangeStack is not enabled or empty a IllegalStateExcpetion is thrown
+     * @return the current changeSet
      */
-    
-    public ChangeSet start(Player activePlayer) {
-        
+    public ChangeSet getAvailableChangeSet() {
         // check preconditions
-        if (!enabled) throw new IllegalStateException("ChangeStack is not enabled");
-        if (stack.peekLast() != null && !stack.peekLast().isClosed()) throw new IllegalStateException("Current ChangeSet not closed yet");
+        checkEnabled();
+        if (stack.isEmpty()) throw new IllegalStateException("No ChangeSet on ChangeStack");
         
-        // create new ChangeSet
-        ChangeSet changeSet = new ChangeSet(activePlayer);
-        stack.offerLast(changeSet);
-        log.debug(">>> Start ChangeSet(index=" + stack.size() + ")");
-
-        // TODO: Check if this is the correct place to create the report Item
-        ReportBuffer.createNewReportItem(getCurrentIndex());
-        
-        return changeSet;
-    }
-
-    private ChangeSet getCurrentChangeSet() {
-        // check preconditions
-        if (!enabled) throw new IllegalStateException("ChangeStack is not enabled");
-        ChangeSet changeSet = stack.peekLast();
-        if (changeSet == null) throw new IllegalStateException("No ChangeSet on ChangeStack");
-        return changeSet;
+        // return the last on the 
+        return stack.peekLast();
     }
     
-    private ChangeSet getCurrentChangeSet(boolean expectOpen) {
-        // check preconditions
-        ChangeSet changeSet = getCurrentChangeSet();
+    /**
+     * Returns a valid ChangSset that is current for the ChangeStack
+     * If the ChangeStack is not enabled or empty a IllegalStateExcpetion is thrown
+     * If the ChangeSet does not meet the conditions of the expectOpen argument a IllegalStateException is thrown
+     * @param expectOpen if yes 
+     * @return the current changeSet
+     */
+    public ChangeSet getAvailableChangeSet(boolean expectOpen) {
+        // check preconditions by using the private 
+        ChangeSet changeSet = getAvailableChangeSet();
+
         if (expectOpen) {
             if (changeSet.isClosed()) throw new IllegalStateException("Current ChangeSet is closed already");
         } else {
@@ -68,6 +66,33 @@ public final class ChangeStack {
         }
         return changeSet;
     }
+    
+    /**
+     * Creates new ActionChangeSet 
+     * @param activePlayer
+     * @param executedAction
+     * @return the new current ChangeSet
+     */
+    public ActionChangeSet start(Player player, PossibleAction action) {
+        
+        // check preconditions
+        checkEnabled();
+       
+        if (stack.peekLast() != null && !stack.peekLast().isClosed()) 
+            throw new IllegalStateException("Current ChangeSet not closed yet");
+        
+        // create new ChangeSet
+        ActionChangeSet changeSet = new ActionChangeSet(player, action);
+        
+        stack.offerLast(changeSet);
+        log.debug(">>> Start ChangeSet " + changeSet + " at index=" + stack.size() + " <<<");
+
+        // TODO: Check if this is the correct place to create the report Item
+        ReportBuffer.createNewReportItem(getCurrentIndex());
+        
+        return changeSet;
+    }
+
     
     // TODO: Write that implementation
     private void updateObservers() {
@@ -81,13 +106,13 @@ public final class ChangeStack {
      */
     public void finish() {
         // retrieve closed changeSet
-        ChangeSet changeSet = getCurrentChangeSet(false);
+        ChangeSet changeSet = getAvailableChangeSet(false);
 
         // close ChangeSet
         if (changeSet.isEmpty()) {
             // discard empty set
-            stack.removeLast();
-            log.warn("Action to finish is empty and will be discarded");
+            stack.remove(changeSet);
+            log.warn("ChangeSet to finish is empty and will be discarded");
         } else {
             changeSet.close();
             updateObservers();
@@ -99,7 +124,7 @@ public final class ChangeStack {
     */
     public void cancel() {
         // retrieve open changeSet
-        ChangeSet changeSet = getCurrentChangeSet(true);
+        ChangeSet changeSet = getAvailableChangeSet(true);
 
         // un-execute, update and remove
         changeSet.unexecute();
@@ -114,12 +139,12 @@ public final class ChangeStack {
      */
     public void addChange (Change change) {
         // retrieve open changeSet and add change
-        getCurrentChangeSet(true).addChange(change);
+        getAvailableChangeSet(true).addChange(change);
     }
 
 
     public boolean isUndoableByPlayer(Player player) {
-        return isUndoableByManager() && getCurrentChangeSet().isUndoableByPlayer(player);
+        return isUndoableByManager() && getAvailableChangeSet().isUndoableByPlayer(player);
     }
 
     public boolean isUndoableByManager() {
@@ -127,7 +152,7 @@ public final class ChangeStack {
     }
 
     public boolean isOpen() {
-        return enabled && stack.size() != 0 && !getCurrentChangeSet().isClosed();
+        return enabled && stack.size() != 0 && !getAvailableChangeSet().isClosed();
     }
     
     // TODO: What is correct?
@@ -144,6 +169,7 @@ public final class ChangeStack {
      * the current index is the one of either the open moveset or
      * if none is open of the latest added
      */
+    @Deprecated
     public int getCurrentIndex() {
         if (isOpen()) {
             return getIndex() + 1;
@@ -156,6 +182,7 @@ public final class ChangeStack {
      * undo/redo to a given moveStack index
      * TODO: the redo-part has to be replaced by execution actions
      */
+    @Deprecated
     public boolean gotoIndex(int index) {
 /*        if (getIndex() == index) return true;
         else if (getIndex() > index) {
@@ -170,6 +197,33 @@ public final class ChangeStack {
         return true;
     }
 
+    // TODO: This has to be improved
+    private static ChangeStack getChangeStack() {
+        GameManager gameManager = GameManager.getInstance();
+        if (gameManager != null) {
+            return gameManager.getChangeStack();
+        } else {
+            return null;
+        }
+    }
+
+
+    public boolean isRedoable() {
+        // TODO : Write this method
+        return false;
+    }
+
+
+    public void redoMoveSet() {
+        // TODO: Write this method
+        
+    }
+
+    public void undo(boolean b) {
+        
+        
+    }
+
     /* Static methods to enable access from anywhere */
     static void add (Change change) {
         change.execute();
@@ -178,39 +232,5 @@ public final class ChangeStack {
         if (changeStack != null) changeStack.addChange(change);
     }
 
-    private static ChangeStack getChangeStack() {
-        GameManager gameManager = GameManager.getInstance();
-        if (gameManager != null) {
-            return gameManager.getChangeStack();
-        } else {
-            // No GM during game setup; no problem, as MoveSets are not yet enabled then.
-            return null;
-        }
-    }
-
-    public boolean isRedoable() {
-        // TODO : Write this method
-        return false;
-    }
-
-    public void linkToPreviousMoveSet() {
-        // TODO: Remove all calls to this method
-        
-    }
-
-    public void start(boolean b) {
-        // TODO: Remove all calls to this method
-        
-    }
-
-    public void redoMoveSet() {
-        // TODO: Write this method
-        
-    }
-
-    public void undo(boolean b) {
-        // TODO: Write this method
-        
-    }
-
+    
 }

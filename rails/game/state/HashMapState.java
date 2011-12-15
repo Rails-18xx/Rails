@@ -17,21 +17,19 @@ public final class HashMapState<K,V> extends AbstractState {
 
     /**
      * Creates an empty HashMap state variable
-     * @param owner object containing state (usually this)
      * @param id id state variable
      */
-    public HashMapState(Item owner, String id) {
-        super(owner, id);
+    public HashMapState(String id) {
+        super(id);
         map = new HashMap<K,V>();
     }
 
     /**
-     * @param owner object containing state (usually this)
      * @param id id state variable
      * @param map initial map 
      */
-    public HashMapState(Item owner, String id, Map<K,V> map) {
-        super(owner, id);
+    public HashMapState(String id, Map<K,V> map) {
+        super(id);
         this.map = new HashMap<K,V>(map);
     }
 

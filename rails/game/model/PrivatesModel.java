@@ -2,7 +2,7 @@ package rails.game.model;
 
 import rails.game.PrivateCompany;
 
-public final class PrivatesModel extends HolderModel<PrivateCompany> {
+public final class PrivatesModel extends StorageModel<PrivateCompany> {
 
     private boolean addLineBreak = false;
 

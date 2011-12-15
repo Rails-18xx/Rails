@@ -10,7 +10,7 @@ import rails.common.parser.ConfigurableComponentI;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.model.DirectOwner;
-import rails.game.model.HolderModel;
+import rails.game.model.StorageModel;
 import rails.game.model.Portfolio;
 import rails.game.special.SpecialPropertyI;
 import rails.game.state.BooleanState;
@@ -58,7 +58,7 @@ Cloneable, Comparable<Company> {
     protected BooleanState closedObject;
 
     // Moved here from PrivayeCOmpany on behalf of 1835
-    protected HolderModel<SpecialPropertyI> specialProperties = null;
+    protected StorageModel<SpecialPropertyI> specialProperties = null;
 
     protected static Logger log =
         Logger.getLogger(Company.class.getPackage().getName());
@@ -94,7 +94,7 @@ Cloneable, Comparable<Company> {
                     System.exit(-1);
                 }
                 if (specialProperties == null) {
-                    specialProperties = HolderModel.create(this, SpecialPropertyI.class);
+                    specialProperties = StorageModel.create(this, SpecialPropertyI.class);
                 }
                 sp.configureFromXML(spTag);
                 sp.moveTo(this);

@@ -11,20 +11,18 @@ public final class IntegerState extends AbstractState {
     
     /**
      * Integer state variable with default value zero
-     * @param owner object containing state (usually this)
      * @param id id state variable
      */
-    public IntegerState(Item owner, String id) {
-        this(owner, id, 0);
+    public IntegerState(String id) {
+        this(id, 0);
     }
 
     /**
-     * @param owner object containing state (usually this)
      * @param id id state variable
      * @param value initial value
      */
-    public IntegerState(Item owner, String id, int value) {
-        super(owner, id);
+    public IntegerState(String id, int value) {
+        super(id);
         this.value = value;
     }
 

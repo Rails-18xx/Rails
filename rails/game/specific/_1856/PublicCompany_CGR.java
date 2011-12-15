@@ -7,7 +7,7 @@ import rails.algorithms.RevenueAdapter;
 import rails.algorithms.RevenueStaticModifier;
 import rails.common.parser.ConfigurationException;
 import rails.game.*;
-import rails.game.model.Holder;
+import rails.game.model.Storage;
 import rails.game.model.Owner;
 import rails.game.state.*;
 

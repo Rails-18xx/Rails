@@ -84,7 +84,7 @@ public class OperatingRound_1889 extends OperatingRound {
         if (action instanceof UseSpecialProperty) {
             UseSpecialProperty spAction=(UseSpecialProperty)action;
             if (spAction.getSpecialProperty() == privB.getSpecialProperties().get(0)) {
-                changeStack.start(true);
+                // TODO: changeStack.start(true);
                 activeSpPrivB.set(true);
                 log.debug("1889 specific: Allows tile lay for B with player request");
                 return true;
@@ -131,7 +131,7 @@ public class OperatingRound_1889 extends OperatingRound {
     public void skip() {
         if (activeSpPrivC.booleanValue()) {
             log.debug("1889 specific: Tile lay for C skipped, return to previous step");
-            changeStack.start(true);
+            // TODO: changeStack.start(true);
             activeSpPrivC.set(false);
             stepObject.set(storeActiveStep);
         } else {

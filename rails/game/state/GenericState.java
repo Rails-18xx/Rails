@@ -10,13 +10,13 @@ public class GenericState<E> extends AbstractState {
 
     private E object;
 
-    public GenericState(Item owner, String id) {
-        super(owner, id);
+    public GenericState(String id) {
+        super(id);
         this.object = null;
     }
 
-    public GenericState(Item owner, String id, E object) {
-        super(owner, id);
+    public GenericState(String id, E object) {
+        super(id);
         this.object = object;
     }
 

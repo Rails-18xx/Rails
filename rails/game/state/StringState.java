@@ -11,20 +11,18 @@ public final class StringState extends AbstractState {
 
     /**
      * String state variable with default value of an empty string ""
-     * @param owner object containing state (usually this)
      * @param id id state variable
      */
-    public StringState(Item owner, String id) {
-        this(owner, id, "");
+    public StringState(String id) {
+        this(id, "");
     }
     
     /**
-     * @param owner object containing state (usually this)
      * @param id id state variable
      * @param value initial value
      */
-    public StringState(Item owner, String id, String value) {
-        super(owner, id);
+    public StringState(String id, String value) {
+        super(id);
         this.value = value;
     }
 

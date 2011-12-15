@@ -3,32 +3,63 @@ package rails.game.state;
 import java.util.HashMap;
 import java.util.Map;
 
-
 /**
  * provides a skeleton implementation of a context
  * @author freystef
  */
-public abstract class AbstractContext implements Context {
-        final String id;
-        final Map<String, Item> contextItems = new HashMap<String, Item>();
+public abstract class AbstractContext extends AbstractItem implements Context {
+        final Map<String, Item> items = new HashMap<String, Item> ();
         
+        /**
+         * Creates a AbstractContext
+         * @param id identifier (cannnot be null)
+        
+         * Remark: A top-level context does not need to be initialized
+         */
         public AbstractContext(String id) {
-            this.id = id;
+            super(id); // AbstractItem checks for not-null already
+        }
+
+        // Overwrite for context method to return itself 
+        @Override
+        public Context getContext() {
+            return this;
         }
         
-        public Item localize(String id) {
-            return contextItems.get(id);
+        // Context interface
+        public Item localize(String uri) {
+            if (items.containsKey(uri)) {
+                return items.get(uri);
+            } else if (getParent() != null) {
+                return getContext().localize(uri);
+            } else { 
+                return null;
+            }
         }
 
         public void addItem(Item item) {
-            // checks if no key duplication
-            assert(!contextItems.containsKey(item.getId()));
+            // first check if this context is the containing one
+            String uri;
+            if (item.getContext() == this) {
+                uri = item.getURI();
+            } else {
+                uri = item.getContext().getURI() + Context.SEP + item.getURI();
+            }
             
-            contextItems.put(item.getId(), item);
+            // check if it exists
+            if (items.containsKey(uri)) {
+                throw new RuntimeException("Context already contains item with identical URI = " + item.getURI());
+            }
+            
+            // otherwise put it to the items list
+            items.put(uri, item);
+            
+            // forward to parent context if that is defined
+            if (getContext() != null) {
+                getContext().addItem(item);
+            }
+            
         }
         
-       public String getId() {
-           return id;
-       }
     
 }

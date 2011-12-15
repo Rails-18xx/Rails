@@ -243,7 +243,7 @@ public class StartRound_1880 extends StartRound {
             return false;
         }
 
-        changeStack.start(false);
+        // TODO: changeStack.start(false);
 
         item.setBid(bidAmount, player);
         ReportBuffer.add(LocalText.getText("BID_ITEM_LOG",
@@ -284,7 +284,7 @@ public class StartRound_1880 extends StartRound {
 
         ReportBuffer.add(LocalText.getText("PASSES", playerName));
 
-        changeStack.start(false);
+        // TODO: changeStack.start(false);
 
         numPasses.add(1);
         

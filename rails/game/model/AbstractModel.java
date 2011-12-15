@@ -1,25 +1,26 @@
 package rails.game.model;
 
 import rails.game.state.AbstractItem;
-import rails.game.state.Item;
 import rails.game.state.StateManager;
 
 /**
  * A generic superclass for all Model values that need be displayed in some form
  * in the View (UI). 
- * It is an abstract (base) implementation for the Presenter interface.
+ * 
+ * It combines Item (via AbstractItem), Model<E> and Observer interfaces.
+ * 
  * It replaces the ModelObject class in Rails 1.0 
  * 
  * @author freystef
  */
-public abstract class AbstractModel<E> extends AbstractItem implements Model<E> {
+public abstract class AbstractModel<E> extends AbstractItem implements Model<E>, Observer {
 
     // cached version of E
     private E cached = null;
     private boolean calculated = false;
     
-    public AbstractModel(Item owner, String id) {
-        super(owner, id);
+    public AbstractModel(String id) {
+        super(id);
     }
     
     public E getData() {
@@ -39,6 +40,7 @@ public abstract class AbstractModel<E> extends AbstractItem implements Model<E> 
         calculated = false;
     }
 
+    // observable interface 
     public final void addObserver(Observer observer) {
         StateManager.getInstance().registerObserver(observer, this);
     }

@@ -9,7 +9,7 @@ import rails.game.*;
 import rails.game.action.DiscardTrain;
 import rails.game.action.LayTile;
 import rails.game.model.CashOwner;
-import rails.game.model.HolderModel;
+import rails.game.model.StorageModel;
 import rails.game.model.Owner;
 import rails.game.special.*;
 import rails.game.state.BooleanState;
@@ -240,7 +240,7 @@ public class OperatingRound_1835 extends OperatingRound {
                         errMsg ));
                 return false;
             } else {
-                changeStack.start(true); // Duplicate, but we have to
+                // TODO: changeStack.start(true); // Duplicate, but we have to
                 hasLaidExtraOBBTile.set(true); 
                 // Done here to make getSpecialTileLays() return the correct value.
                 // It's provisional, on the assumption that other validations are OK.

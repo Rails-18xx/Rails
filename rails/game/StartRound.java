@@ -235,7 +235,7 @@ public abstract class StartRound extends Round {
             return false;
         }
 
-        changeStack.start(false);
+        // TODO: changeStack.start(false);
 
         assignItem(player, item, price, sharePrice);
 

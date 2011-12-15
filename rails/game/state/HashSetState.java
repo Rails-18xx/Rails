@@ -10,22 +10,20 @@ public final class HashSetState<E> extends AbstractState {
     private final HashSet<E> set;
 
     /**
-     * Creates an empty HashSet state variable
      * @param owner object containing state (usually this)
      * @param id id state variable
      */
-    public HashSetState(Item owner, String id) {
-        super(owner, id);
+    public HashSetState(String id) {
+        super(id);
         set = new HashSet<E>();
     }
 
     /**
-     * @param owner object containing state (usually this)
      * @param id id state variable
      * @param collection elements contained in the set at initialization
      */
-    public HashSetState(Item owner, String id, Collection<E> collection) {
-        super(owner, id);
+    public HashSetState(String id, Collection<E> collection) {
+        super(id);
         set = new HashSet<E>(collection);
     }
 

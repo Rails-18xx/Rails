@@ -811,7 +811,7 @@ public class OperatingRound extends Round implements Observer {
     public void skip() {
         log.debug("Skip step " + stepObject.get());
         // TODO: Check if this is ok
-        changeStack.start(operatingCompany.get().getPresident());
+        // FIXME: changeStack.start(true);
         nextStep();
     }
 
@@ -837,7 +837,7 @@ public class OperatingRound extends Round implements Observer {
              */
         }
 
-        changeStack.start(false);
+        // TODO: changeStack.start(false);
 
         nextStep();
 
@@ -896,9 +896,9 @@ public class OperatingRound extends Round implements Observer {
         }
 
         /* End of validation, start of execution */
-        changeStack.start(true);
-        //
-        if (action.isForced()) changeStack.linkToPreviousMoveSet();
+        // TODO: changeStack.start(true);
+        
+        // FIXME: if (action.isForced()) changeStack.linkToPreviousMoveSet();
 
         // Reset type of dual trains
         if (train.getCertType().getPotentialTrainTypes().size() > 1) {
@@ -1047,7 +1047,7 @@ public class OperatingRound extends Round implements Observer {
             return false;
         }
 
-        changeStack.start(true);
+        // TODO: changeStack.start(true);
 
         operatingCompany.get().buyPrivate(privateCompany, player.getPortfolio(),
                 price);
@@ -1096,7 +1096,7 @@ public class OperatingRound extends Round implements Observer {
             return false;
         }
 
-        changeStack.start(true);
+        // TODO: changeStack.start(true);
 
         priv.setClosed();
 
@@ -1124,7 +1124,7 @@ public class OperatingRound extends Round implements Observer {
             for (PublicCompany company : destinedCompanies) {
                 if (company.hasDestination()
                         && !company.hasReachedDestination()) {
-                    if (!changeStack.isOpen()) changeStack.start(true);
+                    // TODO: if (!changeStack.isOpen()) changeStack.start(true);
                     company.setReachedDestination(true);
                     ReportBuffer.add(LocalText.getText("DestinationReached",
                             company.getId(),
@@ -1167,7 +1167,7 @@ public class OperatingRound extends Round implements Observer {
             return false;
         }
 
-        changeStack.start(true);
+        // TODO: changeStack.start(true);
 
         executeTakeLoans (action);
 
@@ -1276,14 +1276,14 @@ public class OperatingRound extends Round implements Observer {
                         + remainder + " loan repayment");
                 log.info("President has $"+presCash+", so $"+cashToBeRaisedByPresident+" must be added");
                 savedAction = action;
-                changeStack.start(true);
+                // TODO: changeStack.start(true);
                 gameManager.startShareSellingRound(operatingCompany.get().getPresident(),
                         cashToBeRaisedByPresident, operatingCompany.get(), false);
                 return true;
             }
         }
 
-        changeStack.start(true);
+        // TODO: changeStack.start(true);
 
         if (repayment > 0) executeRepayLoans (action);
 
@@ -1376,7 +1376,7 @@ public class OperatingRound extends Round implements Observer {
             return false;
         }
 
-        changeStack.start(true);
+        // TODO: changeStack.start(true);
 
         operatingCompany.get().setRight(rightName, rightValue);
         Owners.cashMove (operatingCompany.get(), bank, right.getCost());
@@ -1512,7 +1512,7 @@ public class OperatingRound extends Round implements Observer {
         }
 
         /* End of validation, start of execution */
-        changeStack.start(true);
+        // TODO: changeStack.start(true);
 
         if (tile != null) {
             if (cost > 0)
@@ -1825,7 +1825,7 @@ public class OperatingRound extends Round implements Observer {
         }
 
         /* End of validation, start of execution */
-        changeStack.start(true);
+        // TODO: changeStack.start(true);
 
         if (hex.layBaseToken(operatingCompany.get(), station)) {
             /* TODO: the false return value must be impossible. */
@@ -2002,7 +2002,7 @@ public class OperatingRound extends Round implements Observer {
         }
 
         /* End of validation, start of execution */
-        changeStack.start(true);
+        // TODO: changeStack.start(true);
 
         if (hex.layBonusToken(token, gameManager.getPhaseManager())) {
             /* TODO: the false return value must be impossible. */
@@ -2069,7 +2069,7 @@ public class OperatingRound extends Round implements Observer {
         }
 
         /* End of validation, start of execution */
-        changeStack.start(true);
+        // TODO: changeStack.start(true);
 
         Owners.cashMove(operatingCompany.get(), seller, cost);
         operatingCompany.get().addBonus(new Bonus(operatingCompany.get(),
@@ -2123,7 +2123,7 @@ public class OperatingRound extends Round implements Observer {
             return false;
         }
 
-        changeStack.start(true);
+        // TODO: changeStack.start(true);
 
         ReportBuffer.add(LocalText.getText("CompanyRevenue",
                 action.getCompanyName(),
@@ -2454,7 +2454,7 @@ public class OperatingRound extends Round implements Observer {
             return false;
         }
 
-        changeStack.start(true);
+        // TODO: changeStack.start(true);
 
         if (amount > 0) {
             // positive amounts: remove cash from cashholder
@@ -2679,7 +2679,7 @@ public class OperatingRound extends Round implements Observer {
         }
 
         /* End of validation, start of execution */
-        changeStack.start(true);
+        // TODO: changeStack.start(true);
         Phase previousPhase = getCurrentPhase();
 
         if (presidentMustSellShares) {

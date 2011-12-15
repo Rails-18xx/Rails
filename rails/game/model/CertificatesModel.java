@@ -16,7 +16,7 @@ import rails.game.state.HashMultimapState;
         // this.addObserver(company.getPresidentModel());
  * @author freystef
  */
-public final class CertificatesModel extends AbstractModel<String> implements Holder<PublicCertificate> {
+public final class CertificatesModel extends AbstractModel<String> implements Storage<PublicCertificate> {
 
     /** Owned public company certificates by company */
     private final HashMultimapState<PublicCompany, PublicCertificate> certificates;

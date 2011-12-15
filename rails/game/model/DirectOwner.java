@@ -5,41 +5,41 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 
 import rails.game.state.AbstractItem;
-import rails.game.state.Item;
 
-public abstract class DirectOwner extends AbstractItem implements Owner {
+public class DirectOwner extends AbstractItem implements Owner {
 
-    private final Map<Class<? extends Ownable>, Holder<? extends Ownable>> holders
+    private final Map<Class<? extends Ownable>, Storage<? extends Ownable>> storages
         = Maps.newHashMap();
     
+    @Deprecated
     public DirectOwner() {
         super();
     }
 
-    public DirectOwner(Item parent, String id) {
-        super(parent, id);
+    public DirectOwner(String id) {
+        super(id);
     }
     
-    public final <E extends Ownable> void addHolder(Holder<E> holder, Class<E> clazz){
-        holders.put(clazz, holder);
+    public final <E extends Ownable> void addStorage(Storage<E> storage, Class<E> clazz){
+        storages.put(clazz, storage);
     }
     
-    public final <E extends Ownable> Holder<E> getHolder(Class<E> clazz) {
+    public final <E extends Ownable> Storage<E> getStorage(Class<E> clazz) {
         @SuppressWarnings("unchecked")
-        Holder<E> holder = (Holder<E>) holders.get(clazz);
-        return holder;
+        Storage<E> storage = (Storage<E>) storages.get(clazz);
+        return storage;
     }
     
     public final <E extends Ownable> void addObject(E object) {
         @SuppressWarnings("unchecked")
-        Holder<E> holder = (Holder<E>) holders.get(object.getClass());
-        holder.addObject(object);
+        Storage<E> storage = (Storage<E>) storages.get(object.getClass());
+        storage.addObject(object);
     }
     
     public final <E extends Ownable> void removeObject(E object) {
         @SuppressWarnings("unchecked")
-        Holder<E> holder = (Holder<E>) holders.get(object.getClass());
-        holder.removeObject(object);
+        Storage<E> storage = (Storage<E>) storages.get(object.getClass());
+        storage.removeObject(object);
     }
     
 }

@@ -1,23 +1,22 @@
 package rails.game.model;
 
 import rails.game.state.AbstractItem;
-import rails.game.state.Item;
 
 public abstract class PortfolioOwner extends AbstractItem implements Owner {
     
     private final Portfolio portfolio;
     
-    public PortfolioOwner(Item parent, String id) {
-        super(parent, id);
+    public PortfolioOwner(String id) {
+        super(id);
         portfolio = new Portfolio(this, "Portfolio");
     }
     
-    public final <E extends Ownable> void addHolder(Holder<E> newHolder, Class<E> clazz) {
-        portfolio.addHolder(newHolder, clazz);
+    public final <E extends Ownable> void addStorage(Storage<E> newHolder, Class<E> clazz) {
+        portfolio.addStorage(newHolder, clazz);
     }
     
-    public final <E extends Ownable> Holder<E> getHolder(Class<E> clazz) {
-        return portfolio.getHolder(clazz);
+    public final <E extends Ownable> Storage<E> getStorage(Class<E> clazz) {
+        return portfolio.getStorage(clazz);
     }
 
     public final <E extends Ownable> void addObject(E object) {

@@ -250,7 +250,7 @@ public class StartRound_1835 extends StartRound {
 
         ReportBuffer.add(LocalText.getText("PASSES", playerName));
 
-        changeStack.start(false);
+        // TODO: changeStack.start(false);
 
         numPasses.add(1);
 

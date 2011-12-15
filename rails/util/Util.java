@@ -9,7 +9,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import rails.common.parser.ConfigurationException;
-import rails.game.model.Holder;
+import rails.game.model.Storage;
 import rails.game.model.Ownable;
 
 public final class Util {

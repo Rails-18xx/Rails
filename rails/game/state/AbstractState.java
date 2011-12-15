@@ -4,52 +4,86 @@ import java.security.InvalidParameterException;
 
 import rails.game.model.Observer;
 
-abstract class AbstractState implements State {
-    
-    private final String id;
-    private final GameContext root;
-    
-    private final Formatter<AbstractState> formatter;
+/**
+ * 
+ * @author freystef
+ *
+ */
 
-    // cached version of the String data (similar to Abstract Model
+abstract class AbstractState implements State, Item {
+    // set at construction
+    private final String id;
+    private Item parent;
+    
+    // set once at initialization
+    private GameContext context;
+
+    // can be added later
+    private final Formatter<AbstractState> formatter;
+    
+    // cached version of the String data (similar to AbstractModel)
     private String cached = null;
     private boolean calculated = false;
     
-    public AbstractState(Item parent, String id) {
-        this(parent, id, null);
+    /**
+     * Creates an AbstractState
+     * @param parent the parent of the state (cannot be null)
+     * @param id identifier for the item (cannot be null)
+     */
+    public AbstractState(Item parent, String id){
+        if (id == null) {
+            throw new NullPointerException("Missing id for a state object");
+        }
+        if (parent == null) {
+            throw new IllegalArgumentException("Missing parent for a state object");
+        }
+
+        this.id = id;
+        init(parent);
     }
     
-    public AbstractState(Item parent, String id, Formatter<AbstractState> formatter) {
-        
-        if (parent.getId() != null) {
-           this.id = parent.getId() + "." + id;
-        } else {
-           this.id = id;
-        }
-        
-        // define formatter 
+    
+    
+
+    public void setFormatter(Formatter<AbstractState> formatter) {
         this.formatter = formatter;
+        
+    
+    
 
         // pass along the root
-        if (parent.getRoot() instanceof GameContext) {
-            this.root = (GameContext) parent.getRoot();
+        if (parent.getContext() instanceof GameContext) {
+            this.context = (GameContext) parent.getContext();
         } else {
             throw new InvalidParameterException("Invalid parent: States can only be created inside a GameContext hierachy");
         }
         
         // add to StateManager
-        root.getStateManager().registerState(this);
+        context.getStateManager().registerState(this);
     }
     
-    // methods for item
+    // methods for item interface
     public String getId() {
         return id;
     }
+    
+    public String getURI() {
+        if (parent != null && parent.getId() != null ) {
+            return parent.getId() + id;
+        } else {
+            return id;
+        }
+    }
 
-    public Context getRoot() {
-        return root;
+    public Item getParent() {
+        return parent;
     }
     
+    public Context getContext() {
+        return context;
+    }
+    
+    // methods for model interface
     public String getData() {
         if (formatter == null) {
             return toString();
@@ -73,7 +107,7 @@ abstract class AbstractState implements State {
     
     // methods for observable
     public void addObserver(Observer observer) {
-        root.getStateManager().registerObserver(observer, this);
+        context.getStateManager().registerObserver(observer, this);
     }
     
     public void removeObserver(Observer observer) {
@@ -82,7 +116,7 @@ abstract class AbstractState implements State {
     
     // methods for state
     public void addReceiver(Triggerable receiver) {
-        root.getStateManager().registerReceiver(receiver, this);
+        context.getStateManager().registerReceiver(receiver, this);
     }
     
 }

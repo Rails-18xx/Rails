@@ -18,6 +18,7 @@ import rails.game.PlayerManager;
 import rails.game.StockMarketI;
 import rails.game.TileManager;
 import rails.game.TrainManager;
+import rails.game.state.GameContext;
 
 public class GameFileParser extends XMLParser {
     private static String GAME_XML_FILE = "Game.xml";
@@ -36,7 +37,7 @@ public class GameFileParser extends XMLParser {
     private RevenueManager revenueManager;
     private Bank bank;
     
-    public GameFileParser(String name, Map<String, String> gameOptions) {
+    public GameFileParser(GameContext context, String name, Map<String, String> gameOptions) {
         
         directories.add("data/" + name);
         
@@ -45,7 +46,7 @@ public class GameFileParser extends XMLParser {
             componentManagerTag.setGameOptions(gameOptions);
             
             //XXX: Ultimately calls everyone's configureFromXML() methods.
-            componentManager = new ComponentManager(name, componentManagerTag, gameOptions);
+            componentManager = new ComponentManager(context, name, componentManagerTag, gameOptions);
             
             playerManager = (PlayerManager) componentManager.findComponent("PlayerManager");
             bank = (Bank) componentManager.findComponent("Bank");

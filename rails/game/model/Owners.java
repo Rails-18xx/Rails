@@ -45,7 +45,7 @@ public class Owners {
     
     
     public static <E extends Ownable> void moveAll(Owner from, Owner to, Class<E> clazz) {
-        for (E element:ImmutableList.copyOf(from.getHolder(clazz))) {
+        for (E element:ImmutableList.copyOf(from.getStorage(clazz))) {
             from.removeObject(element);
             to.addObject(element);
         }

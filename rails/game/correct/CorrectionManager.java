@@ -58,7 +58,7 @@ public abstract class CorrectionManager extends AbstractItem implements Correcti
     
     private boolean execute(CorrectionModeAction action) {
         
-        gameManager.getChangeStack().start(false);
+        // TODO: gameManager.getChangeStack().start(false);
         if (!isActive()) {
             String text = LocalText.getText("CorrectionModeActivate",
                     gameManager.getCurrentPlayer().getId(),

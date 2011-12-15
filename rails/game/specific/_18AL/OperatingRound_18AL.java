@@ -57,7 +57,7 @@ public class OperatingRound_18AL extends OperatingRound {
                             tokens.get(i));
             }
 
-            changeStack.start(true);
+            // TODO: changeStack.start(true);
 
             for (int i = 0; i < trains.size(); i++) {
                 oldToken = trains.get(i).getNameToken();

@@ -1,11 +1,14 @@
 package rails.game.state;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
 
 import com.google.common.base.Functions;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSortedMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
@@ -44,16 +47,29 @@ public final class StateManager extends AbstractItem {
         
     }
     
-    private final ArrayListState<State> states;
-    private final HashMultimapState<State, Observer> stateToObservers;
-    private final HashMultimapState<Observer, State> observerToStates;
-    private final HashMapState<StateObserverKey, Integer> stateObserverPriority;
+    private final ArrayList<State> states;
+    private final HashMultimap<State, Observer> stateToObservers;
+    private final HashMultimap<Observer, State> observerToStates;
+    private final HashMap<StateObserverKey, Integer> stateObserverPriority;
 
-    public StateManager() {
-        states = new ArrayListState<State>(this, "states");
-        stateToObservers = new HashMultimapState<State, Observer>(this, "stateToObservers");
-        observerToStates = new HashMultimapState<Observer, State>(this, "observerToStates");
-        stateObserverPriority = new HashMapState<StateObserverKey, Integer>(this, "stateObserverPriority");
+    /**
+     * Creates a StateManager (only possible for a root GameContext)
+     * @param parent a root GameContext
+     */
+    StateManager(GameContext parent) {
+        super("StateManager");
+
+        if (parent.getId() != GameContext.ROOT) {
+            throw new IllegalArgumentException("StateManager can only be created for a root GameContext");
+        }
+        // immediate initialization
+        init(parent);
+
+        // and further variables
+        states = new ArrayList<State>();
+        stateToObservers = HashMultimap.create();
+        observerToStates = HashMultimap.create();
+        stateObserverPriority = new HashMap<StateObserverKey, Integer>();
     }
     
     void registerState(State state) {

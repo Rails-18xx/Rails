@@ -145,7 +145,7 @@ public class StartRound_18EU extends StartRound {
             return false;
         }
 
-        changeStack.start(false);
+        // TODO: changeStack.start(false);
 
         assignItem(player, item, price, 0);
         ((PublicCertificate) item.getPrimary()).getCompany().start();
@@ -229,7 +229,7 @@ public class StartRound_18EU extends StartRound {
             return false;
         }
 
-        changeStack.start(false);
+        // TODO: changeStack.start(false);
 
         if (getStep() == SELECT_STEP) {
 
@@ -295,7 +295,7 @@ public class StartRound_18EU extends StartRound {
 
         ReportBuffer.add(LocalText.getText("PASSES", playerName));
 
-        changeStack.start(false);
+        // TODO: changeStack.start(false);
 
         StartItem auctionedItem = (StartItem) currentAuctionItem.get();
 

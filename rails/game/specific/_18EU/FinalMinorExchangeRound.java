@@ -99,7 +99,7 @@ public class FinalMinorExchangeRound extends StockRound_18EU {
     // Autopassing does not apply here
     public boolean done(String playerName, boolean hasAutopassed) {
 
-        changeStack.start(false);
+        // TODO: changeStack.start(false);
 
         for (PublicCompany comp : companyManager.getAllPublicCompanies()) {
             if (comp.getTypeName().equals("Minor")) {

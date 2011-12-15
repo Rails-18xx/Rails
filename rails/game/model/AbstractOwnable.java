@@ -10,6 +10,16 @@ import rails.game.state.AbstractItem;
 public abstract class AbstractOwnable extends AbstractItem implements Ownable {
 
     private final OwnerState owner = new OwnerState(this);
+
+    @Deprecated
+    // TODO: Remove that default constructor here
+    public AbstractOwnable() {
+        super();
+    }
+    
+    public AbstractOwnable(String id){
+        super(id);
+    }
     
     // Ownable Interface methods
     public final void moveTo(Owner newOwner) {

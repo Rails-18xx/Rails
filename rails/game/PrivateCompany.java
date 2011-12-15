@@ -6,7 +6,7 @@ import java.util.List;
 import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
-import rails.game.model.HolderModel;
+import rails.game.model.StorageModel;
 import rails.game.model.Owner;
 import rails.game.model.OwnerState;
 import rails.game.model.Owners;
@@ -265,7 +265,7 @@ public class PrivateCompany extends Company implements Certificate, Closeable {
     public void init(String name, CompanyTypeI type) {
         super.init(name, type);
 
-        specialProperties = HolderModel.create(this, SpecialPropertyI.class);
+        specialProperties = StorageModel.create(this, SpecialPropertyI.class);
 
         /* start sfy 1889 */
         preventClosingConditions = new ArrayList<String>();

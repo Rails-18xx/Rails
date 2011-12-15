@@ -628,7 +628,7 @@ public class StockRound extends Round {
             return false;
         }
 
-        changeStack.start(true);
+        // TODO: changeStack.start(true);
 
         // All is OK, now start the company
         company.start(startSpace);
@@ -809,7 +809,7 @@ public class StockRound extends Round {
         }
 
         // All seems OK, now buy the shares.
-        changeStack.start(true);
+        // TODO: changeStack.start(true);
 
         CashOwner priceRecipient = getSharePriceRecipient (company, from, cost);
 
@@ -1063,7 +1063,7 @@ public class StockRound extends Round {
             sellPrices.put(company, company.getCurrentSpace());
         }
 
-        changeStack.start(true);
+        // TODO: changeStack.start(true);
 
         if (numberSold == 1) {
             ReportBuffer.add(LocalText.getText("SELL_SHARE_LOG",
@@ -1245,7 +1245,7 @@ public class StockRound extends Round {
             return false;
         }
 
-        changeStack.start(true);
+        // TODO: changeStack.start(true);
 
         Certificate cert =
             ipoHasShare ? ipo.findCertificate(publicCompany,
@@ -1281,7 +1281,7 @@ public class StockRound extends Round {
             return false;
         }
 
-        changeStack.start(false);
+        // TODO: changeStack.start(false);
 
         if (hasActed.booleanValue()) {
             numPasses.set(0);
@@ -1356,7 +1356,7 @@ public class StockRound extends Round {
             return false;
         }
 
-        changeStack.start(false);
+        // TODO: changeStack.start(false);
         if (hasAutopassed(requestingPlayer)) {
             setAutopass(requestingPlayer, false);
         } else {

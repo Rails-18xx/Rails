@@ -362,7 +362,7 @@ public class TreasuryShareRound extends StockRound {
                     Bank.format(cashAmount) ));
         }
 
-        changeStack.start(true);
+        // TODO: changeStack.start(true);
 
         pay (company, bank, cashAmount);
         PublicCertificate cert2;
@@ -486,7 +486,7 @@ public class TreasuryShareRound extends StockRound {
             sellPrices.put(company, sellPrice);
         }
 
-        changeStack.start(true);
+        // TODO: changeStack.start(true);
 
         int cashAmount = numberSold * price;
         ReportBuffer.add(LocalText.getText("SELL_SHARES_LOG",
@@ -531,7 +531,7 @@ public class TreasuryShareRound extends StockRound {
             return false;
         }
 
-        changeStack.start(false);
+        // TODO: changeStack.start(false);
 
         // Inform GameManager
         gameManager.finishTreasuryShareRound();

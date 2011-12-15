@@ -2,12 +2,12 @@ package rails.game.model;
 
 
 /**
- * Holder allows the storage of Ownable objects
+ * Storage keeps several Ownable objects
  * @author freystef
  *
  * @param <E> class of the objects to store
  */
-public interface Holder<E extends Ownable> extends Iterable<E>{
+public interface Storage<E extends Ownable> extends Iterable<E>{
 
     /** Add an object to a holder
      */
@@ -29,7 +29,7 @@ public interface Holder<E extends Ownable> extends Iterable<E>{
     
     /**
      * @return the owner of the holder
-     * TODO: Should be removed as the reference should be from the owner to the holder only
+     * TODO: Should be removed as the reference should be from the owner to the storage only
      */
     @Deprecated
     public Owner getOwner();

@@ -387,7 +387,7 @@ public class StockRound_18EU extends StockRound {
             return false;
         }
 
-        changeStack.start(true);
+        // TODO: changeStack.start(true);
 
         // All is OK, now start the company
         MapHex homeHex = null;
@@ -505,7 +505,7 @@ public class StockRound_18EU extends StockRound {
 
         // TODO Validation to be added?
 
-        changeStack.start(true);
+        // TODO: changeStack.start(true);
 
         if (major != null) {
             cert = major.getPortfolio().findCertificate(major, false);
@@ -687,9 +687,8 @@ public class StockRound_18EU extends StockRound {
         }
 
         /* End of validation, start of execution */
-        changeStack.start(false);
-        //
-        if (action.isForced()) changeStack.linkToPreviousMoveSet();
+        // TODO: changeStack.start(false);
+        // FIXME: if (action.isForced()) changeStack.linkToPreviousMoveSet();
 
         train.moveTo(pool);
         ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",

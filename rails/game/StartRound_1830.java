@@ -248,7 +248,7 @@ public class StartRound_1830 extends StartRound {
             return false;
         }
 
-        changeStack.start(false);
+        // TODO: changeStack.start(false);
 
         item.setBid(bidAmount, player);
         if (previousBid > 0) player.unblockCash(previousBid);
@@ -302,7 +302,7 @@ public class StartRound_1830 extends StartRound {
 
         ReportBuffer.add(LocalText.getText("PASSES", playerName));
 
-        changeStack.start(false);
+        // TODO: changeStack.start(false);
 
         numPasses.add(1);
         if (auctionItem != null) {

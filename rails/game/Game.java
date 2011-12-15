@@ -10,6 +10,7 @@ import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.common.parser.*;
 import rails.game.action.PossibleAction;
+import rails.game.state.GameContext;
 import rails.util.GameFileIO;
 
 public class Game {
@@ -74,7 +75,10 @@ public class Game {
     }
 
     public boolean setup() {
-        GameFileParser gfp = new GameFileParser(name, gameOptions);
+        // first define root GameContext to be able to define states
+        GameContext context = new GameContext(GameContext.ROOT);
+
+        GameFileParser gfp = new GameFileParser(context, name, gameOptions);
         playerManager = gfp.getPlayerManager();
         companyManager = gfp.getCompanyManager();
         trainManager = gfp.getTrainManager();

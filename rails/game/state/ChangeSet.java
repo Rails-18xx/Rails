@@ -5,37 +5,35 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import rails.game.Player;
+
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
-import rails.game.Player;
-
 /**
  * A ChangeSet object represents the collection of all changes
- * that belong to one joint action.
+ * that belong to the same action.
  * 
- *  ChangeSet objects are stored in the ChangeStack.
+ * This can be either a player action (ActionChangeSet) or a game induced automatic
+ * (AutoChangeSet) action. 
+ * 
+ * ChangeSet objects are stored in the ChangeStack.
  *  
  * @author freystef
  */
 
-final class ChangeSet {
+abstract class ChangeSet {
 
     protected static Logger log =
         Logger.getLogger(ChangeSet.class.getPackage().getName());
 
-    private final Player owner;
-
     private final List<Change> changes = new ArrayList<Change>();
     
-    private boolean closed; 
+    private boolean closed = false; 
     
-    private ImmutableSet<State> states;
+    private ImmutableSet<State> states = null;
 
-    ChangeSet(Player owner) {
-        this.owner = owner;
-        closed = false;
-    }
+    // uses default constructor
 
     /**
      * adds change to the ChangeSet and executes the change
@@ -90,11 +88,11 @@ final class ChangeSet {
         return changes.isEmpty();
     }
 
-    boolean isUndoableByPlayer (Player player) {
-        return owner.equals(player);
-    }
+    @Deprecated
+    abstract boolean isUndoableByPlayer(Player player);
     
     ImmutableSet<State> getStates() {
+        if (!closed) throw new IllegalStateException("ChangeSet is still open");
         return states;
     }
     

@@ -18,11 +18,10 @@ public final class HashMultimapState<K,V> extends AbstractState implements Multi
 
     /**
      * Creates an empty HashMultimap state variable
-     * @param owner object containing state (usually this)
      * @param id id state variable
      */
-    public HashMultimapState(Item owner, String id) {
-        super(owner, id);
+    public HashMultimapState(String id) {
+        super(id);
         map = HashMultimap.create();
     }
     /**

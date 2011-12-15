@@ -11,20 +11,18 @@ public final class BooleanState extends AbstractState {
     
     /**
      * Boolean state variable with default value false
-     * @param owner object containing state (usually this)
      * @param id id state variable
      */
-    public BooleanState(Item owner, String id) {
-        this(owner, id, false);
+    public BooleanState(String id) {
+        this(id, false);
     }
 
     /**
-     * @param owner object containing state (usually this)
      * @param id id state variable
      * @param value initial value
      */
-    public BooleanState(Item owner, String id, boolean value) {
-        super(owner, id);
+    public BooleanState(String id, boolean value) {
+        super(id);
         this.value = value;
     }
 
