@@ -8,6 +8,7 @@
 	<!--		<Option name="NoMapMode" type="toggle" default="no" /> -->
 		<GameOption name="UnlimitedBonusTokens" type="toggle" default="no"/>
 		<GameOption name="LeaveAuctionOnPass" type="toggle" default="no"/>
+		<GameOption name="TwoPlayersCertLimit70Percent" type="toggle" default="yes"/>
         <GameOption name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
         <GameOption name="1856THBHomeBlocked" type="toggle" default="no" />
 		<GameParameters>
@@ -20,7 +21,15 @@
                 <EmergencyTrainBuying mustBuyCheapestTrain="yes" mayBuyFromCompany="no"/>
 			</OperatingRound>
 			<ShareSellingRound class="rails.game.specific._1856.ShareSellingRound_1856"/>
-			<PlayerShareLimit percentage="60"/>
+			<PlayerShareLimit percentage="60">
+				<!-- Option "NumberOfPlayers" is automatically set 
+					by the game engine -->
+				<IfOption name="NumberOfPlayers" value="2">
+					<IfOption name="TwoPlayersCertLimit70Percent" value="yes">
+						<Attributes percentage="70"/>
+					</IfOption>
+				</IfOption>
+			</PlayerShareLimit>			
 			<BankPoolLimit percentage="50"/>
 		</GameParameters>
 		<GuiClasses>
@@ -33,6 +42,7 @@
 		</EndOfGame>
 	</Component>
 	<Component name="PlayerManager" class="rails.game.PlayerManager">
+		<Players number="2" cash="750" certLimit="28"/>
 		<Players number="3" cash="500" certLimit="20"/>
 		<Players number="4" cash="375" certLimit="16"/>
 		<Players number="5" cash="300" certLimit="13"/>
