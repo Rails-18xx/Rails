@@ -44,6 +44,7 @@ public class CGRFormationRound extends SwitchableUIRound {
     public static final int STEP_EXCHANGE_TOKENS = 3;
 
     private static int[][] certLimitsTable = {
+        {14, 19, 21, 26, 29, 31, 36, 40},
         {10, 13, 15, 18, 20, 22, 25, 28},
         {8, 10, 12, 14, 16, 18, 20, 22},
         {7, 8, 10, 11, 13, 15, 16, 18},
@@ -511,7 +512,7 @@ public class CGRFormationRound extends SwitchableUIRound {
         int numCompanies = Math.min(11, 12-mergingCompanies.size());
         int numPlayers = gameManager.getNumberOfPlayers();
         // Need some checks here...
-        int newCertLimit = certLimitsTable[numPlayers-3][numCompanies-4];
+        int newCertLimit = certLimitsTable[numPlayers-2][numCompanies-4];
         gameManager.setPlayerCertificateLimit(newCertLimit);
         message = LocalText.getText("CertificateLimit",
                 newCertLimit,
