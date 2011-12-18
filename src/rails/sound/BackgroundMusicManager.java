@@ -8,7 +8,9 @@ import java.io.FileInputStream;
 import java.util.*;
 
 import javazoom.jl.player.Player;
-import org.apache.log4j.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.common.parser.Config;
 
@@ -54,7 +56,8 @@ public class BackgroundMusicManager {
     private static String currentMusicFileName;
     private static Thread playingThread;
     private static Context context = new Context(ROUND_UNDEFINED,PHASENAME_DEFAULT);
-    private static Logger log = Logger.getLogger(BackgroundMusicManager.class.getPackage().getName());
+    private static Logger log =
+            LoggerFactory.getLogger(BackgroundMusicManager.class);
 
     private static void setContextToMusicFileMapping (String config,Context defaultContext) {
         if (config == null || config.equals("")) return;
@@ -149,7 +152,7 @@ public class BackgroundMusicManager {
                             }
                             catch (Exception e) { 
                                 //if anything goes wrong, don't play anything
-                                log.error(e);
+                                log.error(e.toString());
                             }
                         }
                         public void interrupt() {
