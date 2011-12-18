@@ -60,6 +60,7 @@ public class StockRound extends Round {
 
     /* Rules */
     protected int sequenceRule;
+    protected boolean raiseIfSoldOut;
 
     /**
      * Constructed via Configure
@@ -71,6 +72,8 @@ public class StockRound extends Round {
             numberOfPlayers = gameManager.getPlayers().size();
 
         sequenceRule = getGameParameterAsInt(GameDef.Parm.STOCK_ROUND_SEQUENCE);
+
+        raiseIfSoldOut = true;
 
         guiHints.setVisibilityHint(GuiDef.Panel.MAP, true);
         guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, true);
@@ -414,11 +417,11 @@ public class StockRound extends Round {
                         // and double shares for now.
                         choiceOfPresidentExchangeCerts =
                             uniqueCertsCount[1] > 1 && uniqueCertsCount[2] > 0;
-                        // If a presidency dump is possible, extra (single) share(s) may be sold
-                        // that aren't even owned
-                        extraSingleShares = Math.min(
-                                presidentShare/shareUnit,
-                                (maxShareToSell-dumpThreshold)/shareUnit+1);
+                            // If a presidency dump is possible, extra (single) share(s) may be sold
+                            // that aren't even owned
+                            extraSingleShares = Math.min(
+                                    presidentShare/shareUnit,
+                                    (maxShareToSell-dumpThreshold)/shareUnit+1);
 
                     }
                     // What number of shares can we sell if we cannot dump?
@@ -1334,24 +1337,26 @@ public class StockRound extends Round {
         ReportBuffer.add(LocalText.getText("END_SR",
                 String.valueOf(getStockRoundNumber())));
 
-        /* Check if any companies are sold out. */
+        if (raiseIfSoldOut) {
+            /* Check if any companies are sold out. */
         for (PublicCompany company : gameManager.getCompaniesInRunningOrder()) {
-            if (company.hasStockPrice() && company.isSoldOut()) {
+                if (company.hasStockPrice() && company.isSoldOut()) {
                 StockSpace oldSpace = company.getCurrentSpace();
-                stockMarket.soldOut(company);
+                    stockMarket.soldOut(company);
                 StockSpace newSpace = company.getCurrentSpace();
-                if (newSpace != oldSpace) {
-                    ReportBuffer.add(LocalText.getText("SoldOut",
+                    if (newSpace != oldSpace) {
+                        ReportBuffer.add(LocalText.getText("SoldOut",
                             company.getId(),
                             Currency.format(this, oldSpace.getPrice()),
                             oldSpace.getId(),
                             Currency.format(this, newSpace.getPrice()),
                             newSpace.getId()));
-                } else {
-                    ReportBuffer.add(LocalText.getText("SoldOutNoRaise",
+                    } else {
+                        ReportBuffer.add(LocalText.getText("SoldOutNoRaise",
                             company.getId(),
                             Currency.format(this, newSpace.getPrice()),
                             newSpace.getId()));
+                    }
                 }
             }
         }

@@ -23,6 +23,8 @@ public final class FinalMinorExchangeRound extends StockRound_18EU {
 
         guiHints.setVisibilityHint(GuiDef.Panel.MAP, true);
         guiHints.setActivePanel(GuiDef.Panel.STATUS);
+
+        raiseIfSoldOut = false;
     }
     
     public static FinalMinorExchangeRound create(GameManager parent, String id){
@@ -60,7 +62,7 @@ public final class FinalMinorExchangeRound extends StockRound_18EU {
         }
 
         List<PublicCompany> comps =
-                companyManager.getAllPublicCompanies();
+            companyManager.getAllPublicCompanies();
         List<PublicCompany> minors = new ArrayList<PublicCompany>();
         List<PublicCompany> targetCompanies = new ArrayList<PublicCompany>();
         String type;
