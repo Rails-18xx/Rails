@@ -47,7 +47,7 @@ public class BackgroundMusicManager {
     private static final int ROUND_STOCK = 0;
     private static final int ROUND_OPERATING = 1;
     private static final String PHASENAME_DEFAULT = "";
-    private static Map<Context,String> contextToMusicFileMapping = new HashMap<Context,String>();
+    private static Map<Context,String> contextToMusicFileMapping;
     private static boolean isDisabled = true;
     private static boolean isMute = false;
     private static boolean isPlaying = false;
@@ -77,6 +77,7 @@ public class BackgroundMusicManager {
         String enablement = Config.get("sound.backgroundMusic");
         if (enablement != null && enablement.equals("enabled")) {
             isDisabled = false;
+            contextToMusicFileMapping = new HashMap<Context,String>();
             setContextToMusicFileMapping(
                     Config.get("sound.backgroundMusic.stockRound"),
                     new Context(ROUND_STOCK,PHASENAME_DEFAULT)
@@ -87,6 +88,7 @@ public class BackgroundMusicManager {
             );
             playNewMusic();
         } else {
+            stopMusic();
             isDisabled = true;
         }
         
@@ -114,14 +116,12 @@ public class BackgroundMusicManager {
         stopMusic();
     }
     public static void unMute() {
-        if (!isDisabled) {
             isMute = false;
             playNewMusic();
-        }
     }
-    
+
     private static void playNewMusic() {
-        if (!isMute) {
+        if (!isMute && !isDisabled) {
             if (isPlaying) stopMusic();
             if (contextToMusicFileMapping != null) {
                 String newMusicFileName = (String)contextToMusicFileMapping.get(context);
@@ -135,14 +135,16 @@ public class BackgroundMusicManager {
                 // run music playing in new thread to play in background
                     playingThread = new Thread() {
                         Player player;
+                        boolean isKilled = false;
                         public void run() {
                             try {
-                                while (!Thread.interrupted()) {
+                                while (!isKilled) {
                                     FileInputStream fis = new FileInputStream(currentMusicFileName);
                                     BufferedInputStream bis = new BufferedInputStream(fis);
                                     player = new Player(bis);
                                     log.info("Now playing: "+currentMusicFileName);
                                     player.play();
+                                    player.close();
                                 }
                             }
                             catch (Exception e) { 
@@ -152,6 +154,7 @@ public class BackgroundMusicManager {
                         }
                         public void interrupt() {
                             super.interrupt();
+                            isKilled = true;
                             if (player!=null) player.close();
                         }
                     };
@@ -165,6 +168,7 @@ public class BackgroundMusicManager {
         if (isPlaying) {
             playingThread.interrupt();
             isPlaying = false;
+            currentMusicFileName = null;
         }
     }
 }
