@@ -17,6 +17,7 @@
         <pathelement location="lib/jgrapht-0.7.3/jgrapht-jdk1.5.jar"/>
         <pathelement location="lib/jgraph5/jgraph.jar"/>
         <pathelement location="lib/junit-4.8.2/junit.jar"/>
+        <pathelement location="lib/JLayer1.0.1/jl1.0.1.jar"/>
         <pathelement location="lib/batik-1.7/lib/batik-transcoder.jar"/>
         <pathelement location="lib/batik-1.7/lib/batik-dom.jar"/>
         <pathelement location="lib/batik-1.7/lib/batik-swing.jar"/>
@@ -48,6 +49,7 @@
                 <exclude name="lib/batik-1.7/"/>
                 <exclude name="lib/batik-1.7/lib/"/>
                 <exclude name="lib/batik-1.7/lib/"/>
+                <exclude name="lib/JLayer1.0.1"/>
                 <exclude name="lib/jgraph5/"/>
                 <exclude name="lib/jgraph5/"/>
                 <exclude name="lib/jgrapht-0.7.3/"/>
@@ -72,6 +74,7 @@
             <exclude name="lib/batik-1.7/"/>
             <exclude name="lib/batik-1.7/lib/"/>
             <exclude name="lib/batik-1.7/lib/"/>
+            <exclude name="lib/JLayer1.0.1"/>
             <exclude name="lib/jgraph5/"/>
             <exclude name="lib/jgraph5/"/>
             <exclude name="lib/jgrapht-0.7.3/"/>

@@ -14,6 +14,7 @@ import rails.common.parser.Configurable;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.state.Owner;
+import rails.sound.BackgroundMusicManager;
 import rails.util.Util;
 
 public class Phase implements Configurable {
@@ -319,11 +320,14 @@ public class Phase implements Configurable {
             }
         }
 
+        BackgroundMusicManager.setPhase(name);
+        
         if (actions != null && !actions.isEmpty()) {
             for (String actionName : actions.keySet()) {
                 gameManager.processPhaseAction (actionName, actions.get(actionName));
             }
         }
+        
     }
 
     public void setLastTrainBuyer(Owner lastTrainBuyer) {

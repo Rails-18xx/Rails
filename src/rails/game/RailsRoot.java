@@ -12,6 +12,7 @@ import rails.common.LocalText;
 import rails.common.parser.*;
 import rails.game.action.PossibleAction;
 import rails.game.state.ChangeStack;
+import rails.sound.BackgroundMusicManager;
 import rails.game.state.Root;
 import rails.util.GameFileIO;
 
@@ -91,6 +92,7 @@ public class RailsRoot extends Root implements RailsItem {
 
         this.players = players;
 
+        
     }
 
     public String start() {
@@ -102,6 +104,7 @@ public class RailsRoot extends Root implements RailsItem {
         }
 
         gameManager.startGame(gameOptions);
+
         return null;
     }
 
@@ -163,11 +166,15 @@ public class RailsRoot extends Root implements RailsItem {
             return false;
         }
 
+        BackgroundMusicManager.init();
+
         return true;
     }
 
 
     public static RailsRoot load(String filepath)  {
+
+        BackgroundMusicManager.mute();
 
         // use GameLoader object to load game
         GameFileIO gameLoader = new GameFileIO();
@@ -185,6 +192,8 @@ public class RailsRoot extends Root implements RailsItem {
             log.error("Replay failed", e);
             DisplayBuffer.add(LocalText.getText("LoadFailed", e.getMessage()));
         }
+
+        BackgroundMusicManager.unMute();
 
         return gameLoader.getGame();
     }

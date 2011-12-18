@@ -53,4 +53,12 @@
 		<Property name="report.filename.date_time_pattern" type="STRING" />
 		<Property name="report.filename.extension" type="STRING" />
 	</Section>
+	<Section name="Sound">
+		<Property name="sound.backgroundMusic" type="LIST" values="disabled,enabled"
+				initClass="rails.sound.BackgroundMusicManager" initMethod="init"/>
+		<Property name="sound.backgroundMusic.stockRound" type="STRING"
+				initClass="rails.sound.BackgroundMusicManager" initMethod="init"/>
+		<Property name="sound.backgroundMusic.operatingRound" type="STRING"
+				initClass="rails.sound.BackgroundMusicManager" initMethod="init"/>
+	</Section>
 </Properties>
