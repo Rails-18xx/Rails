@@ -56,6 +56,7 @@ public class StockRound extends Round {
 
     /* Rules */
     protected int sequenceRule;
+    protected boolean raiseIfSoldOut;
 
     /**
      * Constructor with the GameManager, will call super class (Round's) Constructor to initialize
@@ -70,6 +71,8 @@ public class StockRound extends Round {
             numberOfPlayers = gameManager.getPlayers().size();
 
         sequenceRule = getGameParameterAsInt(GameDef.Parm.STOCK_ROUND_SEQUENCE);
+
+        raiseIfSoldOut = true;
 
         guiHints.setVisibilityHint(GuiDef.Panel.MAP, true);
         guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, true);
@@ -417,11 +420,11 @@ public class StockRound extends Round {
                         // and double shares for now.
                         choiceOfPresidentExchangeCerts =
                             uniqueCertsCount[1] > 1 && uniqueCertsCount[2] > 0;
-                        // If a presidency dump is possible, extra (single) share(s) may be sold
-                        // that aren't even owned
-                        extraSingleShares = Math.min(
-                                presidentShare/shareUnit,
-                                (maxShareToSell-dumpThreshold)/shareUnit+1);
+                            // If a presidency dump is possible, extra (single) share(s) may be sold
+                            // that aren't even owned
+                            extraSingleShares = Math.min(
+                                    presidentShare/shareUnit,
+                                    (maxShareToSell-dumpThreshold)/shareUnit+1);
 
                     }
                     // What number of shares can we sell if we cannot dump?
@@ -1344,24 +1347,26 @@ public class StockRound extends Round {
         ReportBuffer.add(LocalText.getText("END_SR",
                 String.valueOf(getStockRoundNumber())));
 
-        /* Check if any companies are sold out. */
-        for (PublicCompanyI company : gameManager.getCompaniesInRunningOrder()) {
-            if (company.hasStockPrice() && company.isSoldOut()) {
-                StockSpaceI oldSpace = company.getCurrentSpace();
-                stockMarket.soldOut(company);
-                StockSpaceI newSpace = company.getCurrentSpace();
-                if (newSpace != oldSpace) {
-                    ReportBuffer.add(LocalText.getText("SoldOut",
-                            company.getName(),
-                            Bank.format(oldSpace.getPrice()),
-                            oldSpace.getName(),
-                            Bank.format(newSpace.getPrice()),
-                            newSpace.getName()));
-                } else {
-                    ReportBuffer.add(LocalText.getText("SoldOutNoRaise",
-                            company.getName(),
-                            Bank.format(newSpace.getPrice()),
-                            newSpace.getName()));
+        if (raiseIfSoldOut) {
+            /* Check if any companies are sold out. */
+            for (PublicCompanyI company : gameManager.getCompaniesInRunningOrder()) {
+                if (company.hasStockPrice() && company.isSoldOut()) {
+                    StockSpaceI oldSpace = company.getCurrentSpace();
+                    stockMarket.soldOut(company);
+                    StockSpaceI newSpace = company.getCurrentSpace();
+                    if (newSpace != oldSpace) {
+                        ReportBuffer.add(LocalText.getText("SoldOut",
+                                company.getName(),
+                                Bank.format(oldSpace.getPrice()),
+                                oldSpace.getName(),
+                                Bank.format(newSpace.getPrice()),
+                                newSpace.getName()));
+                    } else {
+                        ReportBuffer.add(LocalText.getText("SoldOutNoRaise",
+                                company.getName(),
+                                Bank.format(newSpace.getPrice()),
+                                newSpace.getName()));
+                    }
                 }
             }
         }
