@@ -11,6 +11,7 @@ import rails.game.correct.OperatingCost;
 import rails.game.move.*;
 import rails.game.special.*;
 import rails.game.state.*;
+import rails.sound.BackgroundMusicManager;
 import rails.util.SequenceUtil;
 
 /**
@@ -106,6 +107,8 @@ public class OperatingRound extends Round implements Observer {
 
         ReportBuffer.add(LocalText.getText("START_OR", thisOrNumber));
 
+        BackgroundMusicManager.notifyOfOperatingRoundStart();
+        
         for (Player player : gameManager.getPlayers()) {
             player.setWorthAtORStart();
         }

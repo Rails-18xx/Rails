@@ -17,6 +17,7 @@ import rails.game.move.*;
 import rails.game.special.SpecialPropertyI;
 import rails.game.special.SpecialTokenLay;
 import rails.game.state.*;
+import rails.sound.BackgroundMusicManager;
 import rails.util.GameFileIO;
 import rails.util.Util;
 

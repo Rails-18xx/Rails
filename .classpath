@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="lib/batik-1.7/|lib/batik-1.7/|lib/batik-1.7/lib/|lib/batik-1.7/lib/|lib/jgraph5/|lib/jgraph5/|lib/jgrapht-0.7.3/|lib/jgrapht-0.7.3/|lib/junit-4.8.2|lib/log4j-1.2/|lib/log4j-1.2/" kind="src" path=""/>
+	<classpathentry excluding="lib/JLayer1.0.1/|lib/batik-1.7/|lib/batik-1.7/|lib/batik-1.7/lib/|lib/batik-1.7/lib/|lib/jgraph5/|lib/jgraph5/|lib/jgrapht-0.7.3/|lib/jgrapht-0.7.3/|lib/junit-4.8.2|lib/log4j-1.2/|lib/log4j-1.2/" kind="src" path=""/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="lib/log4j-1.2/log4j-1.2.14.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jgrapht-0.7.3/jgrapht-jdk1.5.jar"/>
@@ -22,6 +22,7 @@
 	<classpathentry kind="lib" path="lib/batik-1.7/lib/batik-svg-dom.jar"/>
 	<classpathentry kind="lib" path="lib/batik-1.7/lib/batik-xml.jar"/>
 	<classpathentry kind="lib" path="lib/batik-1.7/lib/js.jar"/>
+	<classpathentry kind="lib" path="lib/JLayer1.0.1/jl1.0.1.jar"/>
 	<classpathentry kind="lib" path="lib/batik-1.7/lib/xerces_2_5_0.jar"/>
 	<classpathentry kind="lib" path="lib/batik-1.7/lib/xml-apis-ext.jar"/>
 	<classpathentry kind="lib" path="lib/batik-1.7/lib/batik-anim.jar"/>
