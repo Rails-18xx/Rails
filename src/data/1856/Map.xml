@@ -1,4 +1,5 @@
 <Map tileOrientation="NS" letterOrientation="horizontal" even="A">
+  <Image file="1856/MapImage.svg" x="10" y="3" scale="0.1632"/>
 	<Hex name="A20" tile="-902" value="30,50,60" city="Detroit/Windsor"/>
 	<Hex name="B13" tile="-902" orientation="1" value="30,50,50" city="Sarnia"/>
 	<Hex name="B15" tile="0"/>
