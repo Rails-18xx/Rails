@@ -36,12 +36,11 @@
         <pathelement location="lib/batik-1.7/lib/xerces_2_5_0.jar"/>
         <pathelement location="lib/batik-1.7/lib/xml-apis-ext.jar"/>
         <pathelement location="lib/batik-1.7/lib/batik-anim.jar"/>
+        <pathelement location="lib/batik-1.7/lib/batik-codec.jar"/>
     </path>
     <target name="init">
         <mkdir dir="classes"/>
-    	<!-- this is added -->
         <copy includeemptydirs="false" todir="classes">
-			<filterset refid="developFilter"/>
             <fileset dir=".">
                 <exclude name="**/*.launch"/>
                 <exclude name="**/*.java"/>
@@ -97,24 +96,29 @@
         <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
         <antcall target="build"/>
     </target>
-    <target name="TestGameBuilder (1)">
-        <java classname="test.TestGameBuilder" failonerror="true" fork="yes">
-            <classpath refid="Rails.classpath"/>
-        </java>
-    </target>
-    <target name="RunGame">
+    <target name="Start Rails (RunGame)">
         <java classname="rails.util.RunGame" failonerror="true" fork="yes">
             <jvmarg line="-DRevenueCalculation=suggest -Dswing.defaultlaf=com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel"/>
             <classpath refid="Rails.classpath"/>
         </java>
     </target>
-    <target name="TestGameBuilder">
+    <target name="Check Save File (ListAndFixSavedFiles)">
+        <java classname="tools.ListAndFixSavedFiles" failonerror="true" fork="yes">
+            <classpath refid="Rails.classpath"/>
+        </java>
+    </target>
+    <target name="Run Test Games (TestGameBuilder)">
         <mkdir dir="${junit.output.dir}"/>
         <junit fork="yes" printsummary="withOutAndErr">
             <formatter type="xml"/>
             <test name="test.TestGameBuilder" todir="${junit.output.dir}"/>
             <classpath refid="Rails.classpath"/>
         </junit>
+    </target>
+    <target name="Delete and Update Test Game Reports (TestGameBuilder)">
+        <java classname="test.TestGameBuilder" failonerror="true" fork="yes">
+            <classpath refid="Rails.classpath"/>
+        </java>
     </target>
     <target name="junitreport">
         <junitreport todir="${junit.output.dir}">
