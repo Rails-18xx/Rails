@@ -60,7 +60,7 @@ public class StockRound extends Round {
 
     /* Rules */
     protected int sequenceRule;
-    protected boolean raiseIfSoldOut;
+    protected boolean raiseIfSoldOut = false;
 
     /**
      * Constructed via Configure
@@ -73,13 +73,15 @@ public class StockRound extends Round {
 
         sequenceRule = getGameParameterAsInt(GameDef.Parm.STOCK_ROUND_SEQUENCE);
 
-        raiseIfSoldOut = true;
-
         guiHints.setVisibilityHint(GuiDef.Panel.MAP, true);
         guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, true);
         guiHints.setActivePanel(GuiDef.Panel.STATUS);
     }
     
+    /** Start the Stock Round. <p>
+     * Please note: subclasses that are NOT real stock rounds should NOT call this method
+     * (or set raiseIfSoldOut to false after calling this method).
+     */
     public void start() {
 
         ReportBuffer.add(LocalText.getText("StartStockRound",
@@ -91,6 +93,8 @@ public class StockRound extends Round {
                 startingPlayer.getId() ));
 
         initPlayer();
+
+        raiseIfSoldOut = true;
 
     }
 
