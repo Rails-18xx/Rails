@@ -130,7 +130,7 @@
 			</manifest>
 			</jar>
 			<delete dir="jar"/>
-			<tar destfile="../rails-${version}.tar.gz" compression="gzip">
+			<tar destfile="../../rails-${version}.tar.gz" compression="gzip">
 					<!-- adds executable flags to rails.sh, has to be done again for the tar (see above) -->
 				<tarfileset dir="." filemode="755">
 					<include name="rails-${version}/rails.sh"/>
@@ -140,10 +140,10 @@
 					<exclude name="rails-${version}/rails.sh"/>
 				</tarfileset>
 			  </tar>
-			<zip destfile="../rails-${version}.zip" basedir="." includes="rails-${version}/**"/>
+			<zip destfile="../../rails-${version}.zip" basedir="." includes="rails-${version}/**"/>
 		</target>
 		<target name="publish-release">
-				<exec executable="rsync" dir=".." failonerror="true">
+				<exec executable="rsync" dir="../.." failonerror="true">
 					<arg value="-avP"/>
 					<arg value="-e"/>
 					<arg value="ssh"/>
@@ -151,8 +151,8 @@
 					<arg value="rails-${version}.tar.gz"/>
 					<arg value="${sf.user},rails@${sf.uri}${sf.filedir}${version}/"/>
 				</exec>
-				<exec executable="scp" dir="../rails-${version}" failonerror="true">
-					<arg value="Readme.txt"/>
+				<exec executable="scp" dir="../../rails-${version}" failonerror="true">
+					<arg value="readme.txt"/>
 					<arg value="${sf.user},rails@${sf.uri}${sf.filedir}${version}/"/>
 				</exec>
 			</target>
