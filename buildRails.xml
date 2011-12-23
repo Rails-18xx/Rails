@@ -156,7 +156,7 @@
 					<arg value="rails-${version}.tar.gz"/>
 					<arg value="${sf.user},rails@${sf.uri}${sf.filedir}${version}/"/>
 				</exec>
-				<exec executable="scp" dir="." failonerror="true">
+				<exec executable="scp" dir="../../rails-${version}" failonerror="true">
 					<arg value="readme.txt"/>
 					<arg value="${sf.user},rails@${sf.uri}${sf.filedir}${version}/"/>
 				</exec>
