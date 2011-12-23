@@ -90,6 +90,7 @@
 			<fileset dir=".">
 				<include name="LICENSE"/>
 				<include name="README"/>
+				<include name="readme.txt"/>
 				<include name="AUTHORS"/>
 				<include name="rails.bat"/>
 				<include name="rails.sh"/>
