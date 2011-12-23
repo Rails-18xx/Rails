@@ -60,29 +60,30 @@
 		<mkdir dir="rails-${version}"/>
 		<copy includeemptydirs="false" todir="rails-${version}/lib">
 			<fileset dir="./lib">
-		        <include name="log4j-1.2/log4j-1.2.14.jar" />
-		        <include name="jgrapht-0.7.3/jgrapht-jdk1.5.jar" />
-		        <include name="jgraph5/jgraph.jar" />
-		        <include name="junit-4.8.2/junit.jar" />
-		        <include name="batik-1.7/lib/batik-transcoder.jar" />
-		        <include name="batik-1.7/lib/batik-dom.jar" />
-		        <include name="batik-1.7/lib/batik-swing.jar" />
+		        <include name="batik-1.7/lib/batik-anim.jar" />
+		        <include name="batik-1.7/lib/batik-awt-util.jar" />
 		        <include name="batik-1.7/lib/batik-bridge.jar" />
-		        <include name="batik-1.7/lib/xml-apis.jar" />
+		        <include name="batik-1.7/lib/batik-codec.jar" />
+		        <include name="batik-1.7/lib/batik-css.jar" />
+		        <include name="batik-1.7/lib/batik-dom.jar" />
 		        <include name="batik-1.7/lib/batik-ext.jar" />
 		        <include name="batik-1.7/lib/batik-gui-util.jar" />
-		        <include name="batik-1.7/lib/batik-util.jar" />
-		        <include name="batik-1.7/lib/batik-awt-util.jar" />
-		        <include name="batik-1.7/lib/batik-css.jar" />
 		        <include name="batik-1.7/lib/batik-gvt.jar" />
 		        <include name="batik-1.7/lib/batik-parser.jar" />
 		        <include name="batik-1.7/lib/batik-script.jar" />
 		        <include name="batik-1.7/lib/batik-svg-dom.jar" />
+		        <include name="batik-1.7/lib/batik-swing.jar" />
+		        <include name="batik-1.7/lib/batik-transcoder.jar" />
+		        <include name="batik-1.7/lib/batik-util.jar" />
 		        <include name="batik-1.7/lib/batik-xml.jar" />
+		        <include name="jgraph5/jgraph.jar" />
+		        <include name="jgrapht-0.7.3/jgrapht-jdk1.5.jar" />
 		        <include name="batik-1.7/lib/js.jar" />
+		        <include name="junit-4.8.2/junit.jar" />
+				<include name="log4j-1.2/log4j-1.2.14.jar" />
 		        <include name="batik-1.7/lib/xerces_2_5_0.jar" />
+		        <include name="batik-1.7/lib/xml-apis.jar" />
 		        <include name="batik-1.7/lib/xml-apis-ext.jar" />
-		        <include name="batik-1.7/lib/batik-anim.jar" />
 			</fileset>
 		</copy>
 		<copy includeemptydirs="false" todir="rails-${version}">
@@ -105,29 +106,32 @@
 				<attribute name="Class-Path" value=" 
 					./LocalisedText.properties 
 					./log4j.properties
-			        ./lib/log4j-1.2/log4j-1.2.14.jar
-			        ./lib/jgrapht-0.7.3/jgrapht-jdk1.5.jar
-			        ./lib/jgraph5/jgraph.jar
-			        ./lib/junit-4.8.2/junit.jar
-			        ./lib/batik-1.7/lib/batik-transcoder.jar
-			        ./lib/batik-1.7/lib/batik-dom.jar
-			        ./lib/batik-1.7/lib/batik-swing.jar
+			       
+					./lib/batik-1.7/lib/batik-anim.jar
+			        ./lib/batik-1.7/lib/batik-awt-util.jar
 			        ./lib/batik-1.7/lib/batik-bridge.jar
-			        ./lib/batik-1.7/lib/xml-apis.jar
+			        ./lib/batik-1.7/lib/batik-codec.jar
+			        ./lib/batik-1.7/lib/batik-css.jar
+			        ./lib/batik-1.7/lib/batik-dom.jar
 			        ./lib/batik-1.7/lib/batik-ext.jar
 			        ./lib/batik-1.7/lib/batik-gui-util.jar
-			        ./lib/batik-1.7/lib/batik-util.jar
-			        ./lib/batik-1.7/lib/batik-awt-util.jar
-			        ./lib/batik-1.7/lib/batik-css.jar
 			        ./lib/batik-1.7/lib/batik-gvt.jar
 			        ./lib/batik-1.7/lib/batik-parser.jar
 			        ./lib/batik-1.7/lib/batik-script.jar
 			        ./lib/batik-1.7/lib/batik-svg-dom.jar
+			        ./lib/batik-1.7/lib/batik-swing.jar
+			        ./lib/batik-1.7/lib/batik-transcoder.jar
+			        ./lib/batik-1.7/lib/batik-util.jar
 			        ./lib/batik-1.7/lib/batik-xml.jar
+			        ./lib/jgraph5/jgraph.jar
+			        ./lib/jgrapht-0.7.3/jgrapht-jdk1.5.jar
 			        ./lib/batik-1.7/lib/js.jar
+			        ./lib/junit-4.8.2/junit.jar
+					./lib/log4j-1.2/log4j-1.2.14.jar
 			        ./lib/batik-1.7/lib/xerces_2_5_0.jar
+			        ./lib/batik-1.7/lib/xml-apis.jar
 			        ./lib/batik-1.7/lib/xml-apis-ext.jar
-			        ./lib/batik-1.7/lib/batik-anim.jar"/>
+				"/>
 			</manifest>
 			</jar>
 			<delete dir="jar"/>
@@ -152,7 +156,7 @@
 					<arg value="rails-${version}.tar.gz"/>
 					<arg value="${sf.user},rails@${sf.uri}${sf.filedir}${version}/"/>
 				</exec>
-				<exec executable="scp" dir="../../rails-${version}" failonerror="true">
+				<exec executable="scp" dir="." failonerror="true">
 					<arg value="readme.txt"/>
 					<arg value="${sf.user},rails@${sf.uri}${sf.filedir}${version}/"/>
 				</exec>
