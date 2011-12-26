@@ -113,8 +113,7 @@ public class MapPanel extends JPanel {
         map.setAllowedTokenLays(allowedTokenLays);
     }
 
-    public void zoom (boolean in) {
-        map.zoom(in);
+    private void adjustToNewMapZoom () {
         currentMapSize = map.getCurrentSize();
         log.debug("Map.size = " +currentMapSize);
         layeredPane.setPreferredSize(currentMapSize);
@@ -122,12 +121,34 @@ public class MapPanel extends JPanel {
         if (mapImage != null) {
             mapImage.setBounds(0, 0, currentMapSize.width, currentMapSize.height);
             mapImage.setPreferredSize(currentMapSize);
-            mapImage.zoom(in);
+            mapImage.zoom(map.getZoomStep());
             // FIXME setBounds() seems to be sufficient to resize a JSVGCanvas, but it doesn't always work...
         }
         layeredPane.revalidate();
     }
-
+    
+    public void zoom (boolean in) {
+        map.zoom(in);
+        adjustToNewMapZoom();
+    }
+    
+    private void zoomFit (boolean fitWidth, boolean fitHeight) {
+        map.zoomFit (getSize(), fitWidth, fitHeight);
+        adjustToNewMapZoom();
+    }
+    
+    public void fitToWindow () {
+        zoomFit (true, true);
+    }
+    
+    public void fitToWidth () {
+        zoomFit (true, false);
+    }
+    
+    public void fitToHeight () {
+        zoomFit (false, true);
+    }
+    
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_F1) {
             HelpWindow.displayHelp(gameUIManager.getHelp());

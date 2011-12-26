@@ -56,7 +56,7 @@ implements ActionListener, KeyListener, RevenueListener {
     private JMenu specialMenu;
     private JMenu loansMenu;
     private JMenu zoomMenu;
-    private JMenuItem zoomIn, zoomOut, calibrateMap;
+    private JMenuItem zoomIn, zoomOut, fitToWindow, fitToWidth, fitToHeight, calibrateMap;
     private ActionMenuItem takeLoans;
     private ActionMenuItem repayLoans;
 
@@ -211,6 +211,18 @@ implements ActionListener, KeyListener, RevenueListener {
         zoomOut.addActionListener(this);
         zoomOut.setEnabled(true);
         zoomMenu.add(zoomOut);
+        fitToWindow = new JMenuItem("Fit to window");
+        fitToWindow.addActionListener(this);
+        fitToWindow.setEnabled(true);
+        zoomMenu.add(fitToWindow);
+        fitToWidth = new JMenuItem("Fit to width");
+        fitToWidth.addActionListener(this);
+        fitToWidth.setEnabled(true);
+        zoomMenu.add(fitToWidth);
+        fitToHeight = new JMenuItem("Fit to height");
+        fitToHeight.addActionListener(this);
+        fitToHeight.setEnabled(true);
+        zoomMenu.add(fitToHeight);
         calibrateMap = new JMenuItem("CalibrateMap");
         calibrateMap.addActionListener(this);
         calibrateMap.setEnabled(Game.getDevelop());
@@ -740,6 +752,24 @@ implements ActionListener, KeyListener, RevenueListener {
             }
         } else if (source == zoomOut) {
             orWindow.getMapPanel().zoom(false);
+            if (revenueAdapter != null) {
+                revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
+                orUIManager.getMap().repaint();
+            }
+        } else if (source == fitToWindow) {
+            orWindow.getMapPanel().fitToWindow();
+            if (revenueAdapter != null) {
+                revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
+                orUIManager.getMap().repaint();
+            }
+        } else if (source == fitToWidth) {
+            orWindow.getMapPanel().fitToWidth();
+            if (revenueAdapter != null) {
+                revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
+                orUIManager.getMap().repaint();
+            }
+        } else if (source == fitToHeight) {
+            orWindow.getMapPanel().fitToHeight();
             if (revenueAdapter != null) {
                 revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
                 orUIManager.getMap().repaint();

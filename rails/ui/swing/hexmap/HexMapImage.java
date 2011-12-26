@@ -111,6 +111,11 @@ public final class HexMapImage extends JSVGCanvas  {
         zoom();
     }
     
+    public void zoom (int zoomStep) {
+        this.zoomStep = zoomStep;
+        zoom();
+    }
+    
     private void zoom() {
         zoomFactor = GameUIManager.getImageLoader().getZoomFactor(zoomStep);
         log.debug("ImageMap zoomStep = " + zoomStep);
