@@ -200,11 +200,8 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
         ActionButton button = (ActionButton)e.getSource();
         GameAction action = (GameAction)button.getPossibleActions().get(0);
         if (action instanceof GameAction && (action.getMode() == GameAction.FORCED_UNDO)) {
-            if (!timeWarpMode) {
-                activateTimeWarp();
-            }
+            activateTimeWarp();
         }
-
 
         gameUIManager.processAction(action);
     }
@@ -215,9 +212,7 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
 //            String protocol = e.getURL().getProtocol();
             int index = url.getPort();
             gotoIndex(index + 1);
-            if (!timeWarpMode) {
-                activateTimeWarp();
-            }
+            activateTimeWarp();
         }
     }
 
@@ -240,12 +235,15 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
     }
 
     private void activateTimeWarp() {
-        message.setVisible(true);
-        playFromHereButton.setVisible(true);
-        returnButton.setVisible(true);
-        gameUIManager.setEnabledAllWindows(false, this);
-        timeWarpMode = true;
-        closeable = false;
+        if (!timeWarpMode) {
+            message.setVisible(true);
+            playFromHereButton.setVisible(true);
+            returnButton.setVisible(true);
+            gameUIManager.setEnabledAllWindows(false, this);
+            timeWarpMode = true;
+            closeable = false;
+        }
+        toFront();
     }
 
     private void deactivateTimeWarp() {
