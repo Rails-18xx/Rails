@@ -146,7 +146,8 @@ Limitation:
 		<Option name="Obsolete4Trains" type="toggle" default="yes"/>
 		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
         <Option name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
-		<Players minimum="3" maximum="5"/>
+		<Option name="TwoPlayersCertLimit70Percent" type="toggle" default="no"/>
+		<Players minimum="2" maximum="5"/>
 	</Game>
 
 	<Game name="18EU">
