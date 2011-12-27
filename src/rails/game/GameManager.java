@@ -1101,7 +1101,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
         // rename the temp file to the recover file
         File recoveryFile = null;
-        boolean result;
+        boolean result = false;
         try {
             log.debug("Created temporary recovery file, path = "  + tempFile.getPath());
             // check if previous save file exists
@@ -1110,11 +1110,12 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             if (recoveryFile.exists()) {
                 log.debug("Potential recovery filePath = "  + recoveryFile.getPath());
                 File backupFile = new File(filePath + ".bak");
-                if (recoveryFile.renameTo(backupFile)) {
-                    result = tempFile.renameTo(recoveryFile);
-                } else {
-                    result = backupFile.renameTo(recoveryFile);
-                }
+                //delete backup file if existing
+                if (backupFile.exists()) backupFile.delete();
+                //old recovery file becomes new backup file
+                recoveryFile.renameTo(backupFile);
+                //temp file becomes new recoveryFile
+                result = tempFile.renameTo(recoveryFile);
             } else {
                 log.debug("Tries to rename temporary file");
                 result = tempFile.renameTo(recoveryFile);
