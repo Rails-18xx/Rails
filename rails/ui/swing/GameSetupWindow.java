@@ -477,10 +477,11 @@ public class GameSetupWindow extends JDialog implements ActionListener {
                 log.info("Game option " + option.getName() + " set to " + value);
             }
         } else {
-            // No options selected: take the defaults
             GameOption option;
             String value;
 
+            // No options selected: take the defaults (from the games list!)
+            availableOptions = this.getSelectedGameInfo().getOptions();
             for (int i = 0; i < availableOptions.size(); i++) {
                 option = availableOptions.get(i);
                 value = option.getDefaultValue();
