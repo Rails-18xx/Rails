@@ -611,7 +611,7 @@ implements ActionListener, KeyListener, RevenueListener {
         if (networkInfoMenu != null) infoMenu.remove(networkInfoMenu);
         networkInfoMenu = createNetworkInfo();
         if (networkInfoMenu == null) return;
-        networkInfoMenu.setEnabled(Game.getDevelop());
+        networkInfoMenu.setEnabled(true);
         infoMenu.add(networkInfoMenu);
     }
     
@@ -624,7 +624,8 @@ implements ActionListener, KeyListener, RevenueListener {
         
         JMenu networkMenu = new JMenu(LocalText.getText("NetworkInfo"));
         
-        if (route_highlight) {
+        //network graphs only for developers
+        if (route_highlight && Game.getDevelop()) {
             JMenuItem item = new JMenuItem("Network");
             item.addActionListener(this);
             item.setActionCommand(NETWORK_INFO_CMD);
@@ -683,6 +684,17 @@ implements ActionListener, KeyListener, RevenueListener {
                 log.debug("Revenue Run:" + ra.getOptimalRunPrettyPrint(true));
                 ra.drawOptimalRunAsPath(orUIManager.getMap());
                 orUIManager.getMap().repaint();
+                
+                if (!Game.getDevelop()) {
+                    //parent component is ORPanel so that dialog won't hide the routes painted on the map
+                    JOptionPane.showMessageDialog(this, 
+                            LocalText.getText("NetworkInfoDialogMessage",company.getName(),Bank.format(revenueValue)) ,
+                            LocalText.getText("NetworkInfoDialogTitle",company.getName()),
+                            JOptionPane.INFORMATION_MESSAGE);
+                    //train simulation only for developers
+                    break;
+                }
+                
                 JOptionPane.showMessageDialog(orWindow, "RevenueValue = " + revenueValue +
                         "\nRevenueRun = \n" + ra.getOptimalRunPrettyPrint(true));
                 
@@ -697,7 +709,11 @@ implements ActionListener, KeyListener, RevenueListener {
                 }
 
             }
-            revenueAdapter = ra;
+            //clean up the paths on the map
+            orUIManager.getMap().setTrainPaths(null);
+            //but retain paths already existing before
+            if (revenueAdapter != null) revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
+            orUIManager.getMap().repaint();
         }
     }
     
@@ -842,6 +858,21 @@ implements ActionListener, KeyListener, RevenueListener {
         setSelect(revenue[orCompIndex], revenueSelect[orCompIndex], false);
     }
     
+    /**
+     * Sets the keyboard shortcut (CTRL+N) for displaying routes of the given company
+     */
+    private void setKeyboardShortcutForNetwork(PublicCompanyI orComp) {
+        if (networkInfoMenu == null) return;
+        for (int i=0 ; i<networkInfoMenu.getItemCount(); i++) {
+            JMenuItem item = networkInfoMenu.getItem(i);
+            if (item.getAccelerator() != null) item.setAccelerator(null);
+            if (item.getText().equals(orComp.getName())) {
+                item.setAccelerator(KeyStroke.getKeyStroke( 
+                        KeyEvent.VK_N , ActionEvent.CTRL_MASK ));
+            }
+        }
+
+    }
     
     public void initORCompanyTurn(PublicCompanyI orComp, int orCompIndex) {
 
@@ -858,6 +889,8 @@ implements ActionListener, KeyListener, RevenueListener {
         button1.setEnabled(false);
         button2.setEnabled(false);
         button3.setEnabled(false);
+        
+        setKeyboardShortcutForNetwork(orComp);
     }
 
     public void initTileLayingStep() {
