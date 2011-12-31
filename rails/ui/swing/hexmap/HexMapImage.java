@@ -76,7 +76,8 @@ public final class HexMapImage extends JSVGCanvas  {
         }
         
         addGVTTreeRendererListener (new GVTTreeRendererAdapter() {
-            public void gvtRenderingCompleted(GVTTreeRendererEvent e) {
+            //prepare: map scaling has to occur before displaying it for the first time
+            public void gvtRenderingPrepare(GVTTreeRendererEvent e) {
                 if (!initialized) {
                     // store the rendering Transform
                     initialTransform = getRenderingTransform();
