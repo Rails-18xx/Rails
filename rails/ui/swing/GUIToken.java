@@ -3,6 +3,7 @@ package rails.ui.swing;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
 
 import javax.swing.JPanel;
 
@@ -21,9 +22,12 @@ public class GUIToken extends JPanel {
     public static final int DEFAULT_X_COORD = 1;
     public static final int DEFAULT_Y_COORD = 1;
 
-    private static final Font smallTokenFont = new Font("Helvetica", Font.BOLD, 8);
-    private static final Font tokenFont = new Font("Helvetica", Font.BOLD, 10);
-    private static final Font largeTokenFont = new Font("Helvetica", Font.BOLD, 12);
+    private static final Font tokenFontTemplate = new Font("Helvetica", Font.BOLD, 10);
+    /**
+     * defined by the ratio of margin to diameter 
+     * (eg., 0.2 means that 20% of the diameter is used as margin) 
+     */
+    private static final double tokenTextMargin = 0.15;
 
     @Override
     public void paintComponent(Graphics g) {
@@ -35,24 +39,17 @@ public class GUIToken extends JPanel {
     }
 
     public void drawToken(Graphics2D g2d) {
-        Color oldColor = g2d.getColor();
-        Font oldFont = g2d.getFont();
-        double tokenScale = diameter / DEFAULT_DIAMETER;
 
+        Color oldColor = g2d.getColor();
         g2d.setColor(Color.BLACK);
         g2d.draw(circle);
         g2d.setColor(bgColor);
         g2d.fill(circle);
-
-        Font font = getTokenFont(name.length());
-        g2d.setFont(new Font("Helvetica", Font.BOLD,
-                (int) (font.getSize() * tokenScale)));
-        g2d.setColor(fgColor);
-        g2d.drawString(name, (int) (circle.x + (12 - 3*name.length()) * tokenScale),
-                (int) (circle.y + 14 * tokenScale));
-
         g2d.setColor(oldColor);
-        g2d.setFont(oldFont);
+
+        drawTokenText(name, g2d, fgColor, 
+                new Point((int)(circle.x + diameter/2),(int)(circle.y + diameter/2)), 
+                diameter);
     }
 
     protected void clear(Graphics g) {
@@ -110,13 +107,27 @@ public class GUIToken extends JPanel {
         return name;
     }
 
-    public static Font getTokenFont (int size) {
-        if (size <= 2) {
-            return largeTokenFont;
-        } else if (size <= 4) {
-            return tokenFont;
-        } else {
-            return smallTokenFont;
-        }
+    public static void drawTokenText (String text, Graphics g, Color c, Point tokenCenter, double tokenDiameter) {
+
+        //first calculate font size
+        double allowedTextDiameter = tokenDiameter * (1 - tokenTextMargin);
+        Rectangle2D textBoundsInTemplate = g.getFontMetrics(tokenFontTemplate).getStringBounds(text, g);
+        double fontScalingX = allowedTextDiameter / textBoundsInTemplate.getWidth();
+        double fontScalingY = allowedTextDiameter / textBoundsInTemplate.getHeight();
+        double fontScaling = (fontScalingX < fontScalingY) ? fontScalingX : fontScalingY;
+        int fontSize = (int) Math.floor(fontScaling * tokenFontTemplate.getSize());
+
+        //draw text
+        Color oldColor = g.getColor();
+        Font oldFont = g.getFont();
+        g.setColor(c);
+        g.setFont(tokenFontTemplate.deriveFont((float)fontSize)); //float needed to indicate size (not style)
+        Rectangle2D textBounds = g.getFontMetrics().getStringBounds(text, g);
+        g.drawString(text,
+                tokenCenter.x - (int)textBounds.getCenterX(),
+                tokenCenter.y - (int)textBounds.getCenterY());
+        g.setColor(oldColor);
+        g.setFont(oldFont);
+
     }
 }
