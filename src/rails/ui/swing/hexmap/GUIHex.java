@@ -603,25 +603,12 @@ public class GUIHex implements Observer {
                 diameter, diameter);
 
         token.drawToken(g2);
+
     }
 
     private void drawHome (Graphics2D g2, PublicCompany co, Point origin) {
 
-        Font oldFont = g2.getFont();
-        Color oldColor = g2.getColor();
-
-        double scale = 0.5 * zoomFactor;
-        String name = co.getId();
-
-        Font font = GUIToken.getTokenFont(name.length());
-        g2.setFont(new Font("Helvetica", Font.BOLD,
-                (int) (font.getSize() * zoomFactor * 0.75)));
-        g2.setColor(Color.BLACK);
-        g2.drawString(name, (int) (origin.x + (-4 - 3*name.length()) * scale),
-                (int) (origin.y + 4 * scale));
-
-        g2.setColor(oldColor);
-        g2.setFont(oldFont);
+        GUIToken.drawTokenText(co.getId(), g2, Color.BLACK, origin, tokenDiameter);
     }
 
     private void drawBonusToken(Graphics2D g2, BonusToken bt, Point origin) {

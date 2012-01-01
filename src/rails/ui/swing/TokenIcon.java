@@ -2,9 +2,9 @@ package rails.ui.swing;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.geom.Ellipse2D;
 
 import javax.swing.Icon;
@@ -33,23 +33,16 @@ class Tokencon implements Icon {
                 new Ellipse2D.Double(x, y, diameter, diameter);
         Graphics2D g2d = (Graphics2D) g;
         Color oldColour = g2d.getColor();
-        Font oldFont = g2d.getFont();
-        double tokenScale = diameter / DEFAULT_DIAMETER;
 
         g2d.setColor(bgColour);
         g2d.fill(circle);
         g2d.setColor(Color.BLACK);
         g2d.draw(circle);
 
-        g2d.setFont(new Font("Helvetica", Font.BOLD, (int) (8 * tokenScale)));
-        g2d.setColor(fgColour);
-        // g2d.drawString(name, 3, 14);
-        g2d.drawString(text, (int) (circle.x + 2 * tokenScale),
-                (int) (circle.y + 14 * tokenScale));
-
         g2d.setColor(oldColour);
-        g2d.setFont(oldFont);
-
+        GUIToken.drawTokenText(text, g, fgColour, 
+                new Point((int)(circle.x + diameter/2),(int)(circle.y + diameter/2)), 
+                diameter);
     }
 
     public int getIconWidth() {
