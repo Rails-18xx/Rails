@@ -323,7 +323,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 
                 if (g.hitClip(hexrect.x, hexrect.y, hexrect.width,
                         hexrect.height)) {
-                    hex.paint(g);
+                    hex.paintHexagon(g);
                 }
             }
 
@@ -337,17 +337,35 @@ public abstract class HexMap extends JComponent implements MouseListener,
                 }
             }
 
-            // paint train paths
             Graphics2D g2 = (Graphics2D) g;
-            Stroke trainStroke =
-                new BasicStroke((int)(strokeWidth * zoomFactor), strokeCap, strokeJoin);
-            g2.setStroke(trainStroke);
 
-            Color[] trainColors = new Color[]{colour1, colour2, colour3, colour4};
-            int color = 0;
-            for (GeneralPath path:trainPaths) {
-                g2.setColor(trainColors[color++ % trainColors.length]);
-                g2.draw(path);
+            // paint train paths
+            if (trainPaths != null) {
+                Stroke oldStroke = g2.getStroke();
+                Color oldColor = g2.getColor();
+                Stroke trainStroke =
+                    new BasicStroke((int)(strokeWidth * zoomFactor), strokeCap, strokeJoin);
+                g2.setStroke(trainStroke);
+    
+                Color[] trainColors = new Color[]{colour1, colour2, colour3, colour4};
+                int color = 0;
+                for (GeneralPath path:trainPaths) {
+                    g2.setColor(trainColors[color++ % trainColors.length]);
+                    g2.draw(path);
+                }
+                g2.setStroke(oldStroke);
+                g2.setColor(oldColor);
+            }
+
+            // Paint station tokens only after the train paths
+            // (so that the path strokes do not hide token information)
+            for (GUIHex hex : hexes) {
+                Rectangle hexrect = hex.getBounds();
+
+                if (g.hitClip(hexrect.x, hexrect.y, hexrect.width,
+                        hexrect.height)) {
+                    hex.paintTokensAndText(g2);
+                }
             }
 
         } catch (NullPointerException ex) {
