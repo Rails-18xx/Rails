@@ -332,7 +332,7 @@ public class GUIHex implements ViewObject {
         return polygon;
     }
 
-    public void paint(Graphics g) {
+    public void paintHexagon(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
 
         tilePainted = provisionalGUITile != null && hexMap.isTilePainted(provisionalGUITile.getTileId()) 
@@ -389,6 +389,11 @@ public class GUIHex implements ViewObject {
         }
 
         if (tilePainted) paintOverlay(g2);
+    }
+    
+    public void paintTokensAndText(Graphics g) {
+        Graphics2D g2 = (Graphics2D) g;
+
         paintStationTokens(g2);
         paintOffStationTokens(g2);
 
