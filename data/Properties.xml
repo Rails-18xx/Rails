@@ -27,10 +27,13 @@
 		<Property name="font.ui.style" type="LIST" values="plain,bold" 
 			initClass="rails.ui.swing.GameUIManager" initMethod="updateUILookAndFeel" initParameter="no" />
 	</Section>
-	<Section name="UI">
+	<Section name="Map">
 		<Property name="map.autoscroll" type="BOOLEAN" />
 		<Property name="map.zoomstep" type="INTEGER" />
 		<Property name="map.image.display" type="BOOLEAN" />
+		<Property name="map.displayCurrentRoutes" type="BOOLEAN" />
+	</Section>
+	<Section name="Windows">
 		<Property name="report.window.type" type="LIST" values="static,dynamic" />
 		<Property name="report.window.open" type="BOOLEAN" />
 		<Property name="report.window.editable" type="BOOLEAN" />
