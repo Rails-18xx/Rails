@@ -16,6 +16,7 @@ import org.jgrapht.graph.SimpleGraph;
 import rails.algorithms.*;
 import rails.common.GuiDef;
 import rails.common.LocalText;
+import rails.common.parser.Config;
 import rails.game.*;
 import rails.game.action.*;
 import rails.ui.swing.elements.*;
@@ -116,6 +117,10 @@ implements ActionListener, KeyListener, RevenueListener {
 
     private PublicCompany orComp = null;
     
+    //for displaying routes of the currently active company
+    private RevenueAdapter currentRoutesRevenueAdapter = null;
+    
+    //for displaying routes of the "set revenue" step
     private RevenueAdapter revenueAdapter = null;
     private Thread revenueThread = null;
 
@@ -715,6 +720,7 @@ implements ActionListener, KeyListener, RevenueListener {
             orUIManager.getMap().setTrainPaths(null);
             //but retain paths already existing before
             if (revenueAdapter != null) revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
+            if (currentRoutesRevenueAdapter != null) currentRoutesRevenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
             orUIManager.getMap().repaint();
         }
     }
@@ -734,8 +740,21 @@ implements ActionListener, KeyListener, RevenueListener {
         undoButton.setEnabled(false);
         redoButton.setEnabled(false);
 
+        removeCurrentRoutes();
     }
 
+    private void redrawRoutes() {
+        if (revenueAdapter != null && displayRevenueRoutes()) {
+            revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
+            orUIManager.getMap().repaint();
+        }
+        if (currentRoutesRevenueAdapter != null && displayCurrentRoutes()) {
+            currentRoutesRevenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
+            orUIManager.getMap().repaint();
+        }
+        
+    }
+    
     public void actionPerformed(ActionEvent actor) {
 
         // What kind action has been taken?
@@ -764,34 +783,19 @@ implements ActionListener, KeyListener, RevenueListener {
             orUIManager.processAction(command, executedActions);
         } else if (source == zoomIn) {
             orWindow.getMapPanel().zoom(true);
-            if (revenueAdapter != null) {
-                revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
-                orUIManager.getMap().repaint();
-            }
+            redrawRoutes();
         } else if (source == zoomOut) {
             orWindow.getMapPanel().zoom(false);
-            if (revenueAdapter != null) {
-                revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
-                orUIManager.getMap().repaint();
-            }
+            redrawRoutes();
         } else if (source == fitToWindow) {
             orWindow.getMapPanel().fitToWindow();
-            if (revenueAdapter != null) {
-                revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
-                orUIManager.getMap().repaint();
-            }
+            redrawRoutes();
         } else if (source == fitToWidth) {
             orWindow.getMapPanel().fitToWidth();
-            if (revenueAdapter != null) {
-                revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
-                orUIManager.getMap().repaint();
-            }
+            redrawRoutes();
         } else if (source == fitToHeight) {
             orWindow.getMapPanel().fitToHeight();
-            if (revenueAdapter != null) {
-                revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
-                orUIManager.getMap().repaint();
-            }
+            redrawRoutes();
         } else if (source == calibrateMap) {
             MapManager mapManager = orUIManager.getMap().getMapManager();
             String offsetX = JOptionPane.showInputDialog(this, "Change translation in X-dimension", mapManager.getMapXOffset());
@@ -862,19 +866,54 @@ implements ActionListener, KeyListener, RevenueListener {
     }
     
     /**
-     * Sets the keyboard shortcut (CTRL+N) for displaying routes of the given company
+     * 
+     * @return True if route calculation is active and if the routes of the currently
+     * active company are not displayed all the time (only if this is not the case,
+     * it makes sense to display routes for the set revenue step)
      */
-    private void setKeyboardShortcutForNetwork(PublicCompany orComp) {
-        if (networkInfoMenu == null) return;
-        for (int i=0 ; i<networkInfoMenu.getItemCount(); i++) {
-            JMenuItem item = networkInfoMenu.getItem(i);
-            if (item.getAccelerator() != null) item.setAccelerator(null);
-            if (item.getText().equals(orComp.getId())) {
-                item.setAccelerator(KeyStroke.getKeyStroke( 
-                        KeyEvent.VK_N , ActionEvent.CTRL_MASK ));
-            }
+    private boolean displayRevenueRoutes() {
+        return (orUIManager.gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.ROUTE_HIGHLIGHT)
+                && "no".equalsIgnoreCase(Config.get("map.displayCurrentRoutes")));
+    }
+    
+    /**
+     * 
+     * @return True if the routes of the currently active company should be displayed.
+     * As a prerequisite of this feature, route highlighting has to be enabled/supported.
+     */
+    private boolean displayCurrentRoutes() {
+        return (orUIManager.gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.ROUTE_HIGHLIGHT)
+                && "yes".equalsIgnoreCase(Config.get("map.displayCurrentRoutes")));
+    }
+    
+    /**
+     * routes of the current company are removed from the map
+     */
+    private void removeCurrentRoutes() {
+        if (currentRoutesRevenueAdapter != null) {
+            orUIManager.getMap().setTrainPaths(null);
+            currentRoutesRevenueAdapter = null;
+            orUIManager.getMap().repaint();
         }
+    }
+    
+    private void updateCurrentRoutes() {
+        
+        //remove current routes also if display option is not active
+        //(as it could have just been turned off)
+        removeCurrentRoutes();
 
+        //calculate routes for the current company
+        if (displayCurrentRoutes()) {
+            GameManager gm = orUIManager.getGameUIManager().getGameManager();
+            currentRoutesRevenueAdapter = RevenueAdapter.createRevenueAdapter(
+                    gm, orComp, gm.getCurrentPhase());
+            currentRoutesRevenueAdapter.initRevenueCalculator(true);
+            currentRoutesRevenueAdapter.calculateRevenue();
+            currentRoutesRevenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
+            orUIManager.getMap().repaint();
+        }
+        
     }
     
     public void initORCompanyTurn(PublicCompany orComp, int orCompIndex) {
@@ -893,7 +932,7 @@ implements ActionListener, KeyListener, RevenueListener {
         button2.setEnabled(false);
         button3.setEnabled(false);
         
-        setKeyboardShortcutForNetwork(orComp);
+        updateCurrentRoutes();
     }
 
     public void initTileLayingStep() {
@@ -943,8 +982,10 @@ implements ActionListener, KeyListener, RevenueListener {
     public void revenueUpdate(int bestRevenue, boolean finalResult) {
         revenueSelect[orCompIndex].setValue(bestRevenue);
         if (finalResult) {
-            revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
-            orUIManager.getMap().repaint();
+            if (displayRevenueRoutes()) {
+                revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
+                orUIManager.getMap().repaint();
+            }
             orUIManager.addInformation("Best Run Value = " + bestRevenue +
                     " with " + Util.convertToHtml(revenueAdapter.getOptimalRunPrettyPrint(false)));
             orUIManager.addDetail(Util.convertToHtml(revenueAdapter.getOptimalRunPrettyPrint(true)));
@@ -952,7 +993,7 @@ implements ActionListener, KeyListener, RevenueListener {
     }
     
     public void stopRevenueUpdate() {
-        orUIManager.getMap().setTrainPaths(null);
+        if (displayRevenueRoutes()) orUIManager.getMap().setTrainPaths(null);
         if (revenueThread != null) {
             revenueThread.interrupt();
             revenueThread = null;
