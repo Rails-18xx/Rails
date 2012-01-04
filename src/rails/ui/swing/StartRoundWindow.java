@@ -17,6 +17,7 @@ import rails.game.*;
 import rails.game.action.*;
 import rails.game.special.SpecialProperty;
 import rails.ui.swing.elements.*;
+import rails.ui.swing.hexmap.HexHighlightMouseListener;
 
 /**
  * This displays the Auction Window
@@ -289,12 +290,17 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
 
         for (int i = 0; i < ni; i++) {
             si = items[i];
+            HexHighlightMouseListener ml = new HexHighlightMouseListener(
+                    gameUIManager.getORUIManager(),
+                    si); 
             f = itemName[i] = new Caption(si.getName());
+            f.addMouseListener(ml);
             addField(f, itemNameXOffset, itemNameYOffset + i, 1, 1, WIDE_RIGHT);
             f =
                 itemNameButton[i] =
                     new ClickField(si.getName(), "", "", this,
                             itemGroup);
+            f.addMouseListener(ml);
             addField(f, itemNameXOffset, itemNameYOffset + i, 1, 1, WIDE_RIGHT);
             // Prevent row height resizing after every buy action
             itemName[i].setPreferredSize(itemNameButton[i].getPreferredSize());
@@ -317,6 +323,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
 
             f = info[i] = new Field (infoIcon);
             f.setToolTipText(getStartItemDescription(si));
+            f.addMouseListener(ml);
             addField (f, infoXOffset, infoYOffset + i, 1, 1, WIDE_LEFT);
 
             // Invisible field, only used to hold current item status.
