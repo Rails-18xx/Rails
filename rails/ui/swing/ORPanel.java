@@ -116,10 +116,7 @@ implements ActionListener, KeyListener, RevenueListener {
 
     private PublicCompanyI orComp = null;
     
-    //for displaying routes of the currently active company
-    private RevenueAdapter currentRoutesRevenueAdapter = null;
-    
-    //for displaying routes of the "set revenue" step
+    private boolean isRevenueValueToBeSet = false;
     private RevenueAdapter revenueAdapter = null;
     private Thread revenueThread = null;
 
@@ -718,7 +715,6 @@ implements ActionListener, KeyListener, RevenueListener {
             orUIManager.getMap().setTrainPaths(null);
             //but retain paths already existing before
             if (revenueAdapter != null) revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
-            if (currentRoutesRevenueAdapter != null) currentRoutesRevenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
             orUIManager.getMap().repaint();
         }
     }
@@ -738,19 +734,14 @@ implements ActionListener, KeyListener, RevenueListener {
         undoButton.setEnabled(false);
         redoButton.setEnabled(false);
 
-        removeCurrentRoutes();
+        disableRoutesDisplay();
     }
 
     private void redrawRoutes() {
-        if (revenueAdapter != null && displayRevenueRoutes()) {
+        if (revenueAdapter != null && isDisplayRoutes()) {
             revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
             orUIManager.getMap().repaint();
         }
-        if (currentRoutesRevenueAdapter != null && displayCurrentRoutes()) {
-            currentRoutesRevenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
-            orUIManager.getMap().repaint();
-        }
-        
     }
     
     public void actionPerformed(ActionEvent actor) {
@@ -864,13 +855,14 @@ implements ActionListener, KeyListener, RevenueListener {
     
     /**
      * 
-     * @return True if route calculation is active and if the routes of the currently
-     * active company are not displayed all the time (only if this is not the case,
-     * it makes sense to display routes for the set revenue step)
+     * @return True if route should be displayed (at least for the set revenue step)
      */
-    private boolean displayRevenueRoutes() {
-        return (orUIManager.gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.ROUTE_HIGHLIGHT)
-                && "no".equalsIgnoreCase(Config.get("map.displayCurrentRoutes")));
+    private boolean isDisplayRoutes() {
+        return (orUIManager.gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.ROUTE_HIGHLIGHT));
+    }
+    
+    private boolean isSuggestRevenue() {
+        return (orUIManager.gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.REVENUE_SUGGEST));
     }
     
     /**
@@ -878,39 +870,56 @@ implements ActionListener, KeyListener, RevenueListener {
      * @return True if the routes of the currently active company should be displayed.
      * As a prerequisite of this feature, route highlighting has to be enabled/supported.
      */
-    private boolean displayCurrentRoutes() {
-        return (orUIManager.gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.ROUTE_HIGHLIGHT)
+    private boolean isDisplayCurrentRoutes() {
+        return (isDisplayRoutes()
                 && "yes".equalsIgnoreCase(Config.get("map.displayCurrentRoutes")));
     }
     
     /**
-     * routes of the current company are removed from the map
+     * any routes currently displayed on the map are removed
+     * In addition, revenue adapter and its thread are interrupted / removed.
      */
-    private void removeCurrentRoutes() {
-        if (currentRoutesRevenueAdapter != null) {
-            orUIManager.getMap().setTrainPaths(null);
-            currentRoutesRevenueAdapter = null;
-            orUIManager.getMap().repaint();
+    private void disableRoutesDisplay() {
+        clearRevenueAdapter();
+        orUIManager.getMap().setTrainPaths(null);
+        orUIManager.getMap().repaint();
+    }
+    
+    private void clearRevenueAdapter() {
+        if (revenueThread != null) {
+            revenueThread.interrupt();
+            revenueThread = null;
+        }
+        if (revenueAdapter != null) {
+            revenueAdapter.removeRevenueListener();
+            revenueAdapter = null;
         }
     }
     
-    private void updateCurrentRoutes() {
+    private void updateCurrentRoutes(boolean isSetRevenueStep) {
         
-        //remove current routes also if display option is not active
-        //(as it could have just been turned off)
-        removeCurrentRoutes();
+        // initialize and start the revenue adapter if routes to be displayed
+        // or revenue to be suggested in the revenue step
+        if (isDisplayCurrentRoutes() || (isSuggestRevenue() && isSetRevenueStep)) {
 
-        //calculate routes for the current company
-        if (displayCurrentRoutes()) {
+            //only consider revenue quantification for the set revenue step and only
+            //if suggest option is on
+            isRevenueValueToBeSet = isSetRevenueStep ? isSuggestRevenue() : false;
+
             GameManagerI gm = orUIManager.getGameUIManager().getGameManager();
-            currentRoutesRevenueAdapter = RevenueAdapter.createRevenueAdapter(
-                    gm, orComp, gm.getCurrentPhase());
-            currentRoutesRevenueAdapter.initRevenueCalculator(true);
-            currentRoutesRevenueAdapter.calculateRevenue();
-            currentRoutesRevenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
-            orUIManager.getMap().repaint();
+            revenueAdapter = RevenueAdapter.createRevenueAdapter(gm, orComp, gm.getCurrentPhase());
+            revenueAdapter.initRevenueCalculator(true);
+            revenueAdapter.addRevenueListener(this);
+            revenueThread = new Thread(revenueAdapter);
+            revenueThread.start();
+        } else {
+
+            //remove current routes also if display option is not active
+            //(as it could have just been turned off)
+            clearRevenueAdapter();
+            disableRoutesDisplay();
         }
-        
+
     }
     
     public void initORCompanyTurn(PublicCompanyI orComp, int orCompIndex) {
@@ -929,13 +938,15 @@ implements ActionListener, KeyListener, RevenueListener {
         button2.setEnabled(false);
         button3.setEnabled(false);
         
-        updateCurrentRoutes();
+        updateCurrentRoutes(false);
+
     }
 
     public void initTileLayingStep() {
 
         tileCaption.setHighlight(true);
         button1.setVisible(false);
+        
     }
 
     public void initTokenLayingStep() {
@@ -944,6 +955,7 @@ implements ActionListener, KeyListener, RevenueListener {
         button1.setEnabled(false);
         button1.setVisible(false);
         button3.setEnabled(false);
+
     }
 
     public void initRevenueEntryStep(int orCompIndex, SetDividend action) {
@@ -959,46 +971,29 @@ implements ActionListener, KeyListener, RevenueListener {
         button1.setMnemonic(KeyEvent.VK_R);
         button1.setEnabled(true);
         button1.setVisible(true);
-
-        // initialize and start the revenue adapter
-        if (orUIManager.gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.REVENUE_SUGGEST)) {
-            revenueAdapter = initRevenueCalculation(orComp);
-            revenueThread = new Thread(revenueAdapter);
-            revenueThread.start();
-        }
+        
+        //indicate interest in setting revenue values (and not only displaying routes)
+        updateCurrentRoutes(true);
     }
 
-    private RevenueAdapter initRevenueCalculation(PublicCompanyI company){
-        GameManagerI gm = orUIManager.getGameUIManager().getGameManager();
-        RevenueAdapter ra = RevenueAdapter.createRevenueAdapter(gm, company, gm.getCurrentPhase());
-        ra.initRevenueCalculator(true);
-        ra.addRevenueListener(this);
-        return ra;
-    }
-    
     public void revenueUpdate(int bestRevenue, boolean finalResult) {
-        revenueSelect[orCompIndex].setValue(bestRevenue);
+        if (isRevenueValueToBeSet) {
+            revenueSelect[orCompIndex].setValue(bestRevenue);
+        }
         if (finalResult) {
-            if (displayRevenueRoutes()) {
-                revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
-                orUIManager.getMap().repaint();
+            orUIManager.getMap().setTrainPaths(null);
+            revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
+            orUIManager.getMap().repaint();
+            if (isRevenueValueToBeSet) {
+                orUIManager.addInformation("Best Run Value = " + bestRevenue +
+                        " with " + Util.convertToHtml(revenueAdapter.getOptimalRunPrettyPrint(false)));
+                orUIManager.addDetail(Util.convertToHtml(revenueAdapter.getOptimalRunPrettyPrint(true)));
             }
-            orUIManager.addInformation("Best Run Value = " + bestRevenue +
-                    " with " + Util.convertToHtml(revenueAdapter.getOptimalRunPrettyPrint(false)));
-            orUIManager.addDetail(Util.convertToHtml(revenueAdapter.getOptimalRunPrettyPrint(true)));
         }
     }
     
     public void stopRevenueUpdate() {
-        if (displayRevenueRoutes()) orUIManager.getMap().setTrainPaths(null);
-        if (revenueThread != null) {
-            revenueThread.interrupt();
-            revenueThread = null;
-        }
-        if (revenueAdapter != null) {
-            revenueAdapter.removeRevenueListener();
-            revenueAdapter = null;
-        }
+        isRevenueValueToBeSet = false;
     }
     
     
