@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 
 import rails.algorithms.RevenueBonusTemplate;
 import rails.game.*;
-import rails.game.model.AbstractModel;
+import rails.game.model.Model;
 import rails.game.model.Model;
 import rails.ui.swing.GUIToken;
 import rails.ui.swing.elements.ViewObject;

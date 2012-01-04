@@ -5,7 +5,7 @@ package rails.game.state;
  * 
  * @author Erik Vos, Stefan Frey (v2.0)
  */
-public final class StringState extends AbstractState {
+public final class StringState extends State {
 
     private String value;
 

@@ -1,22 +1,43 @@
 package rails.game.model;
 
 import rails.game.*;
+import rails.game.state.Item;
 import rails.game.state.PriceMove;
 
 // TODO: Requires a complete rewrite
 
-public class PriceModel extends AbstractModel<String> {
+public class PriceModel extends Model<String> {
 
     private StockSpaceI stockPrice = null;
     private PublicCompany company = null;
     private String name = null;
 
-    public PriceModel(PublicCompany company, String name) {
-        super(company, name);
-        this.company = company;
-        this.name = name;
+    /**
+     * PriceModel is initialized with default id "PriceModel"
+     */
+    public PriceModel() {
+        super("PriceModel");
     }
 
+    /**
+     * Initialization of a PriceModel only possible for a PublicCompany
+     * @param company
+     */
+    public void init(PublicCompany company) {
+        super.init(company);
+        this.company = company;
+    }
+    
+    /** 
+     * This method throws an IllegalArgumentException as  works only for PublicCompanies
+     */
+    @Override
+    public void init(Item parent){
+        throw new IllegalArgumentException("PriceModel init() only works for PublicCompanies");
+    }
+    
+
+    // TODO: This has to be changed
     public void setPrice(StockSpaceI price) {
         new PriceMove(this, stockPrice, price);
     }

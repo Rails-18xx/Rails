@@ -3,28 +3,35 @@ package rails.game.model;
 import rails.game.Bank;
 import rails.game.PublicCompany;
 import rails.game.state.IntegerState;
+import rails.game.state.Item;
 import rails.game.state.StringState;
 
-public final class CashModel extends AbstractModel<String> {
+public final class CashModel extends Model<String> {
 
+    // stores the cash amount
     private final IntegerState cash;
-    private final CashOwner owner;
 
-    /** Text to be displayed instead of the cash amount (if length > 0) */
+    // stores the fixed part of the displayed text
     private final StringState displayText;
 
     private boolean suppressZero;
 
-    public CashModel(CashOwner owner) {
-        super(owner, "CashModel");
-        this.owner = owner;
+    /**
+     * CashModel is initialized with a default id "CashModel"
+     */    
+    public CashModel() {
+        super("CashModel");
+        cash = new IntegerState("Cash");
+        displayText = new StringState("BankCashDisplayText");
         
+    }
+    
+    @Override
+    public void init(Item parent){
+        super.init(parent);
         suppressZero = false;
-
-        cash = new IntegerState(owner, "Cash");
-        cash.addObserver(this);
-        displayText = new StringState(owner, "BankCashDisplayText");
-        displayText.addObserver(this);
+        cash.init(this);
+        displayText.init(this);
     }
 
     public void setSuppressZero(boolean value) {
@@ -48,8 +55,8 @@ public final class CashModel extends AbstractModel<String> {
         if (!"".equals(fixedText)) {
             return fixedText;
         } else if (cash.intValue() == 0 && suppressZero
-            || owner instanceof PublicCompany
-            && !((PublicCompany) owner).hasStarted()) {
+            || getParent() instanceof PublicCompany
+            && !((PublicCompany) getParent()).hasStarted()) {
             return "";
         } else {
             return Bank.format(cash.intValue());

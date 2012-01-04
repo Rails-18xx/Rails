@@ -5,7 +5,7 @@ package rails.game.state;
  * 
  * @author Erik Vos, Stefan Frey (V2.0)
  */
-public final class IntegerState extends AbstractState {
+public final class IntegerState extends State {
 
     private int value;
     

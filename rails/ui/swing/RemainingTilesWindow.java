@@ -15,7 +15,7 @@ import org.apache.log4j.Logger;
 import rails.common.LocalText;
 import rails.game.TileI;
 import rails.game.TileManager;
-import rails.game.model.AbstractModel;
+import rails.game.model.Model;
 import rails.ui.swing.elements.Field;
 import rails.ui.swing.hexmap.GUIHex;
 

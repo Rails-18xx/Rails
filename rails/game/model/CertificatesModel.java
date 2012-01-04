@@ -8,6 +8,7 @@ import rails.game.Player;
 import rails.game.PublicCertificate;
 import rails.game.PublicCompany;
 import rails.game.state.HashMultimapState;
+import rails.game.state.Item;
 
 /**
  * Model that contains and manages the certificates
@@ -16,17 +17,37 @@ import rails.game.state.HashMultimapState;
         // this.addObserver(company.getPresidentModel());
  * @author freystef
  */
-public final class CertificatesModel extends AbstractModel<String> implements Storage<PublicCertificate> {
+public final class CertificatesModel extends Model<String> implements Storage<PublicCertificate> {
 
     /** Owned public company certificates by company */
     private final HashMultimapState<PublicCompany, PublicCertificate> certificates;
 
-    public CertificatesModel(Owner owner) {
-        super(owner, "CertificatesModel");
-        certificates = new HashMultimapState<PublicCompany, PublicCertificate>(owner, "Certificates");
-        certificates.addObserver(this);
+    /**
+     * Certificates is initialized with a default id "CertificatesModel"
+     */
+    public CertificatesModel() {
+        super("CertificatesModel");
+        certificates = new HashMultimapState<PublicCompany, PublicCertificate>("Certificates");
+    }
+    
+    /**
+     * Initialization of a CertficateCountModel only works for a Owner objects
+     * @param owner of the certificates
+     */
+    public void init(Owner owner) {
+        super.init(owner);
+        certificates.init(owner);
+        certificates.addModel(this);
     }
 
+    /** 
+     * This method throws an IllegalArgumentException as CertificatesModel works only for Owners
+     */
+    @Override
+    public void init(Item parent){
+        throw new IllegalArgumentException("CertificatesModel init() only works for Owners");
+    }
+    
     public int getShare(PublicCompany company) {
         int share = 0;
         for (PublicCertificate cert : certificates.get(company)) {

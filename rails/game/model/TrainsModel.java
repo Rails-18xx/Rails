@@ -19,13 +19,14 @@ public class TrainsModel extends StorageModel<Train> {
     private boolean abbrList = false;
 
     public static TrainsModel create(Owner owner) {
-        TrainsModel trainsModel = new TrainsModel(owner);
+        TrainsModel trainsModel = new TrainsModel();
+        trainsModel.init(owner);
         owner.addStorage(trainsModel, Train.class);
         return trainsModel;
     }
     
-    private TrainsModel(Owner owner) {
-        super(owner, Train.class);
+    private TrainsModel() {
+        super(Train.class);
     }
 
     public void setAbbrList(boolean abbrList) {

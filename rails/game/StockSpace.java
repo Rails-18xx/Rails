@@ -6,13 +6,13 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import rails.game.model.AbstractModel;
+import rails.game.model.Model;
 import rails.game.state.Item;
 
 /**
  * Objects of this class represent a square on the StockMarket.
  */
-public class StockSpace extends AbstractModel<String> implements StockSpaceI {
+public class StockSpace extends Model<String> implements StockSpaceI {
 
     /*--- Class attributes ---*/
 

@@ -11,7 +11,7 @@ import javax.swing.*;
 import org.apache.log4j.Logger;
 
 import rails.game.*;
-import rails.game.model.AbstractModel;
+import rails.game.model.Model;
 import rails.game.model.Model;
 import rails.game.model.Observer;
 import rails.game.state.BooleanState;

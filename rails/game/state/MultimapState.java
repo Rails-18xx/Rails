@@ -1,11 +1,22 @@
 package rails.game.state;
 
-interface MultimapState<K,V> extends State {
+/**
+ * Abstract class to define methods for the MultimapState classes
+ */
+abstract class MultimapState<K,V> extends State  {
+    
+    /**
+     * Creates a MultimapState
+     * @param id identifier for the item (cannot be null)
+     */
+    public MultimapState(String id){
+        super(id);
+    }
 
-    public boolean put(K key, V value);
+    public abstract boolean put(K key, V value);
     
-    public boolean remove(K key, V value);
+    public abstract boolean remove(K key, V value);
     
-    public void change(K key, V value, boolean addToMap);
+    public abstract void change(K key, V value, boolean addToMap);
     
 }

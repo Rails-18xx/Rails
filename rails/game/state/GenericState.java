@@ -6,7 +6,7 @@ package rails.game.state;
  * @param <E> class to wrap
  */
 
-public class GenericState<E> extends AbstractState {
+public class GenericState<E> extends State {
 
     private E object;
 

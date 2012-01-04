@@ -1,20 +1,35 @@
 package rails.game.state;
 
+import java.util.Set;
+
+import rails.game.model.Model;
 import rails.game.model.Observer;
 
 /**
  * An interface defining an observable object.
  * 
- * A very simple approach as the Observable only has to call 
- * the update() method of the observer
+ * Requirement:
+ * The observable object has to call each observer per update() if the object has changed.
  *
  * @author freystef
  *
  */
-public interface Observable {
+public interface Observable<E> {
 
-    public void addObserver(Observer observer);
+    public E getData(); 
 
-    public void removeObserver(Observer observer);
+    public void addObserver(Observer<E> o);
+
+    public boolean removeObserver(Observer<E> o);
+
+    public Set<Observer<E>> getObservers();
+    
+    public void addModel(Model<?> m);
+    
+    public boolean removeModel(Model<?> m);
+    
+    public Set<Model<?>> getModels();
+    
+    public void updateModels();
     
 }

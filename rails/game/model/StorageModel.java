@@ -5,6 +5,7 @@ import java.util.Iterator;
 import com.google.common.collect.ImmutableList;
 
 import rails.game.state.ArrayListState;
+import rails.game.state.Item;
 
 /**
  * StorageModel is an implementation that stores arbitrary ownable objects
@@ -13,28 +14,61 @@ import rails.game.state.ArrayListState;
  * @param <T> The type of objects to store
  */
 
-public class StorageModel<T extends Ownable> extends AbstractModel<String> implements Storage<T> {
+public class StorageModel<T extends Ownable> extends Model<String> implements Storage<T> {
 
     private final ArrayListState<T> storageList;
-    private final Owner owner;
+    private Owner owner;
     
+    /**
+     * Create a StorageModel 
+     * @param <T> type what to store
+     * @param owner
+     * @param clazz
+     * @return the created StorageModel
+     */
     public static <T extends Ownable> StorageModel<T> create(Owner owner, Class<T> clazz) {
-        StorageModel<T> holderModel = new StorageModel<T>(owner, clazz);
+        StorageModel<T> holderModel = new StorageModel<T>(clazz);
+        holderModel.init(owner);
         owner.addStorage(holderModel, clazz);
         return holderModel;
     }
     
-    protected StorageModel(Owner owner, Class<T> clazz) {
-        this(owner, clazz, "");
+    /**
+     * Defines a StorageModel with id that equals the clazz name
+     * @param clazz
+     */
+    
+    protected StorageModel(Class<T> clazz) {
+        this(clazz, "");
     }
     
-    protected StorageModel(Owner owner, Class<T> clazz, String postfix_id) {
-        super(owner, clazz.getName() + postfix_id);
-        this.owner = owner;
+    /**
+     * Defines a StorageModel with id that equals the class name extended by the postfix_id
+     * @param clazz
+     * @param postfix_id
+     */
+    protected StorageModel(Class<T> clazz, String postfix_id) {
+        super(clazz.getName() + postfix_id);
         
-        // create the state variable
-        storageList = new ArrayListState<T>(owner, clazz.getName());
-        storageList.addObserver(this);
+        storageList = new ArrayListState<T>(clazz.getName());
+    }
+    
+    /**
+     * Initialization of a StorageModel only works for an Owner
+     * @param owner 
+     */
+    public void init(Owner owner) {
+        super.init(owner);
+        this.owner = owner;
+        storageList.init(this);
+    }
+
+    /** 
+     * This method throws an IllegalArgumentException as StorageModel works only for Owners
+     */
+    @Override
+    public void init(Item parent){
+        throw new IllegalArgumentException("StorageModel init() only works for Owners");
     }
         
     public String getData() {

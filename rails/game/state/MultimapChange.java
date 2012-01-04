@@ -27,7 +27,7 @@ final class MultimapChange<K,V> implements Change {
         state.change(key, value, !addToMap);
     }
 
-    public State getState() {
+    public MultimapState<K,V> getState() {
         return state;
     }
 

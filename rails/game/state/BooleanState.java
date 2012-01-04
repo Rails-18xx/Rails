@@ -5,7 +5,7 @@ package rails.game.state;
  * 
  * @author Erik Vos, Stefan Frey (V2.0)
  */
-public final class BooleanState extends AbstractState {
+public final class BooleanState extends State {
 
     private boolean value;
     

@@ -12,7 +12,7 @@ import com.google.common.collect.ImmutableSet;
  * @author freystef
  */
 
-public final class HashMultimapState<K,V> extends AbstractState implements MultimapState<K,V>, Iterable<V> {
+public final class HashMultimapState<K,V> extends MultimapState<K,V> implements Iterable<V> {
     
     private final HashMultimap<K,V> map;
 

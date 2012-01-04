@@ -6,8 +6,8 @@ public final class PrivatesModel extends StorageModel<PrivateCompany> {
 
     private boolean addLineBreak = false;
 
-    public PrivatesModel(Portfolio owner) {
-        super(owner, PrivateCompany.class);
+    public PrivatesModel() {
+        super(PrivateCompany.class);
     }
     
     public void setLineBreak(boolean lineBreak) {

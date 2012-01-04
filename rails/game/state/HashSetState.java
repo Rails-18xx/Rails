@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * State class that wraps a HashSet
  */
-public final class HashSetState<E> extends AbstractState {
+public final class HashSetState<E> extends State {
 
     private final HashSet<E> set;
 

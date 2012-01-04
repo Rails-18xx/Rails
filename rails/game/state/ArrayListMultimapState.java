@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.google.common.collect.ArrayListMultimap;
 
-public class ArrayListMultimapState<K,V> extends AbstractState implements MultimapState<K,V> {
+public class ArrayListMultimapState<K,V> extends MultimapState<K,V> {
 
     private final ArrayListMultimap<K,V> map;
 

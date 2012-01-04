@@ -7,7 +7,7 @@ package rails.game.model;
  * 
  * @author freystef
  */
-public interface Observer{
+public interface Observer<E>{
 
     void update();
     

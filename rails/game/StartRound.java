@@ -8,7 +8,7 @@ import rails.common.GuiDef;
 import rails.common.LocalText;
 import rails.common.parser.GameOption;
 import rails.game.action.*;
-import rails.game.model.AbstractModel;
+import rails.game.model.Model;
 import rails.game.model.Model;
 import rails.game.model.MoneyModel;
 import rails.game.state.ArrayListState;

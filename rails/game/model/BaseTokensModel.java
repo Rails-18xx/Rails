@@ -1,22 +1,41 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/model/BaseTokensModel.java,v 1.4 2008/06/04 19:00:37 evos Exp $*/
 package rails.game.model;
 
 import rails.game.PublicCompany;
+import rails.game.state.Item;
 import rails.game.state.State;
 
 /**
  * A model presenting the number of tokens
  */
-
-public class BaseTokensModel extends AbstractModel<String> {
+public class BaseTokensModel extends Model<String> {
 
     private PublicCompany company;
 
-    public BaseTokensModel(PublicCompany company, State allTokenState, State freeTokenState) {
-        super(company, "baseTokensModel");
+    /**
+     * BaseTokenModel is initialized with a default id "BaseTokensModel"
+     */
+    public BaseTokensModel() {
+        super("BaseTokensModel");
+    }
+    /**
+     * Initialization of a BaseTokenModels requires the definition of the following parameters
+     * @param company 
+     * @param allTokenState
+     * @param freeTokenState
+     */
+    public void init(PublicCompany company, State allTokenState, State freeTokenState){
+        super.init(company);
         this.company = company;
-        allTokenState.addObserver(this);
-        freeTokenState.addObserver(this);
+        allTokenState.addModel(this);
+        freeTokenState.addModel(this);
+    }
+    
+    /** 
+     * This method throws an IllegalArgumentException as BaseTokenModels requires more attributes
+     */
+    @Override
+    public void init(Item parent){
+        throw new IllegalArgumentException("BaseTokenModel init() requires additional parameters");
     }
 
     public String getData() {

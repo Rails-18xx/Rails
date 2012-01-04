@@ -10,7 +10,7 @@ import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
 import rails.game.GameManager;
 import rails.game.PublicCompany;
-import rails.game.model.AbstractModel;
+import rails.game.model.Model;
 import rails.game.model.Model;
 import rails.game.state.BooleanState;
 

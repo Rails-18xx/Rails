@@ -4,14 +4,14 @@ import java.util.*;
 
 import com.google.common.collect.Sets;
 
-import rails.game.model.AbstractModel;
+import rails.game.model.Model;
 
 /**
  * A stateful version of a HashMap
  * 
  * @author Erik Vos, Stefan Frey (V2.0)
  */
-public final class HashMapState<K,V> extends AbstractState {
+public final class HashMapState<K,V> extends State {
 
     private final HashMap<K,V> map;
 

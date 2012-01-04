@@ -6,7 +6,10 @@ import rails.game.state.IntegerState;
 import rails.game.state.Item;
 import rails.game.state.StringState;
 
-public class MoneyModel extends AbstractModel<String> {
+/**
+ * A model presenting money values
+ */
+public class MoneyModel extends Model<String> {
     // Data
     private final IntegerState value;
     private BooleanState initialised;
@@ -18,16 +21,32 @@ public class MoneyModel extends AbstractModel<String> {
     private boolean addPlus;
     private boolean allowNegative;
     
-    public MoneyModel(Item owner, String id) {
-        this(owner, id, 0);
-    }
-
-    public MoneyModel(Item owner, String id, int value) {
-        super(owner, id);
-        this.value = new IntegerState(this, "value", value);
-        this.value.addObserver(this);
+    /**
+     * Creates a MoneyModel
+     * Value set to default 0
+     * @param id identifier
+     */
+    public MoneyModel(String id){
+        this(id, 0);
     }
     
+    /**
+     * Creates a MoneyModel
+     * @param id identifier
+     * @param value initial value
+     */
+    public MoneyModel(String id, int value){
+        super(id);
+        this.value = new IntegerState("MoneyValue",  value);
+    }
+    
+    
+    @Override
+    public void init(Item parent){
+        super.init(parent);
+        this.value.init(this);
+    }
+
     public void setSuppressZero(boolean suppressZero) {
         this.suppressZero = suppressZero;
     }
@@ -49,7 +68,8 @@ public class MoneyModel extends AbstractModel<String> {
 
         /* Set initialisation state only if it matters */
         if (suppressInitialZero && initialised == null) {
-            initialised = new BooleanState(this, "initialised", false);
+            initialised = new BooleanState("initialised", false);
+            initialised.init(this);
         }
         if (initialised != null && !initialised.booleanValue()) {
             initialised.set(true);
@@ -79,7 +99,8 @@ public class MoneyModel extends AbstractModel<String> {
      */
     public void setText (String text) {
         if (fixedText == null) {
-            fixedText = new StringState (this ,"fixedText", text);
+            fixedText = new StringState ("fixedText", text);
+            fixedText.init(this);
         } else {
             fixedText.set(text);
         }

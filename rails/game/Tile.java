@@ -14,7 +14,7 @@ import rails.game.Stop.RunThrough;
 import rails.game.Stop.RunTo;
 import rails.game.Stop.Score;
 import rails.game.Stop.Type;
-import rails.game.model.AbstractModel;
+import rails.game.model.Model;
 import rails.game.state.Item;
 import rails.util.Util;
 
@@ -24,7 +24,7 @@ import rails.util.Util;
  * @author Erik
  *
  */
-public class Tile extends AbstractModel<String> implements TileI, StationHolder, Comparable<TileI> {
+public class Tile extends Model<String> implements TileI, StationHolder, Comparable<TileI> {
 
     /** The 'internal id', identifying the tile in the XML files */
     private final int nb;

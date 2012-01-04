@@ -12,7 +12,7 @@ import com.google.common.collect.ImmutableList;
  * @author Erik Vos, Stefan Frey (V2.0)
  */
 
-public final class ArrayListState<E> extends AbstractState implements Iterable<E>  {
+public final class ArrayListState<E> extends State implements Iterable<E>  {
 
     private final ArrayList<E> list;
 

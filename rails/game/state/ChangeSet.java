@@ -2,10 +2,12 @@ package rails.game.state;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
 import rails.game.Player;
+import rails.game.model.Model;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -45,6 +47,7 @@ abstract class ChangeSet {
         changes.add(change);
         // immediate execution
         change.execute();
+        change.getState().updateModels();
         log.debug("Added change: " + change);
     }
 
@@ -67,6 +70,7 @@ abstract class ChangeSet {
         if (!closed) throw new IllegalStateException("ChangeSet is still open");
         for (Change change:changes) {            
             change.execute();
+            change.getState().updateModels();
             log.debug("Redo: " + change);
         }
     }
@@ -76,6 +80,7 @@ abstract class ChangeSet {
         // iterate reverse
         for (Change change:Lists.reverse(changes)) {
             change.undo();
+            change.getState().updateModels();
             log.debug("Undone: " + change);
         }
     }

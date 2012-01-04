@@ -16,22 +16,32 @@ import rails.game.state.Item;
  * @author Erik Vos
  * 
  */
-public class CalculatedMoneyModel extends AbstractModel<String> implements Observer {
+public class CalculatedMoneyModel extends Model<String> {
 
     protected static Logger log =
         Logger.getLogger(CalculatedMoneyModel.class.getPackage().getName());
 
-    private Item owner;
     private String methodName;
 
     public boolean suppressZero = false;
 
-    public CalculatedMoneyModel(Item owner, String methodName) {
-        super(owner, methodName);
-        this.owner = owner;
-        this.methodName = methodName;
+    /**
+     * The id can be defined independent of the methodName in init()
+     * However it makes sense to set it identical
+     */
+    public CalculatedMoneyModel(String id) {
+        super(id);
     }
 
+    /**
+     * Initialization of the CalculatedMoneyModel
+     * @param parent is the owner of model
+     * @param methodName defines a method defined inside the parent
+     */
+    public void init(Item parent, String methodName) {
+        super.init(parent);
+        this.methodName = methodName;
+    }
     
     public void setSuppressZero(boolean suppressZero) 
     {
@@ -40,11 +50,11 @@ public class CalculatedMoneyModel extends AbstractModel<String> implements Obser
     
     protected int calculate() {
 
-        Class<?> objectClass = owner.getClass();
+        Class<?> objectClass = getParent().getClass();
         Integer amount;
         try {
             Method method = objectClass.getMethod(methodName, (Class[]) null);
-            amount = (Integer) method.invoke(owner, (Object[]) null);
+            amount = (Integer) method.invoke(getParent(), (Object[]) null);
         } catch (Exception e) {
             log.error("ERROR while invoking method " + methodName
                       + " on class " + objectClass.getName(), e);
