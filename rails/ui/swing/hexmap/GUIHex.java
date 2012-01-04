@@ -34,16 +34,19 @@ public class GUIHex implements ViewObject {
     public static int BAR_WIDTH = 5;
 
     public static void setScale(double scale) {
-        NORMAL_SCALE = scale;
-        SELECTABLE_SCALE = 0.9 * scale;
-        SELECTED_SCALE = 0.8 * scale;
+        NORMAL_SCALE = NORMAL_SCALE * scale;
+        SELECTABLE_SCALE = SELECTABLE_SCALE * scale;
+        SELECTED_SCALE = SELECTED_SCALE * scale;
     }
 
     protected MapHex model;
     protected GeneralPath innerHexagonSelected;
     protected GeneralPath innerHexagonSelectable;
-    protected static final Color highlightColor = Color.red;
+    protected static final Color selectedColor = Color.red;
     protected static final Color selectableColor = Color.red;
+    protected static final Color highlightedFillColor = new Color(255,255,255,128);
+    protected static final Color highlightedBorderColor = Color.BLACK;
+    protected static final Stroke highlightedBorderStroke = new BasicStroke(3); 
     protected Point center;
     /** x and y coordinates on the map */
     protected int x, y;
@@ -86,6 +89,11 @@ public class GUIHex implements ViewObject {
     // Selection is in-between GUI and rails.game state.
     private boolean selected;
     private boolean selectable;
+    /**
+     * A counter instead of a boolean is used here in order to be able to correctly
+     * handle racing conditions for mouse events.
+     */
+    private int highlightCounter = 0;
     
     /** Is tile actually painted (if not, there should be an underlying map image) */
     protected boolean tilePainted = true;
@@ -166,8 +174,8 @@ public class GUIHex implements ViewObject {
                 new Point2D.Double((xVertex[2] + xVertex[5]) / 2.0,
                         (yVertex[0] + yVertex[3]) / 2.0);
 
-        innerHexagonSelected = defineInnerHexagon(0.8, center2D);
-        innerHexagonSelectable = defineInnerHexagon(0.9, center2D);
+        innerHexagonSelected = defineInnerHexagon(SELECTED_SCALE, center2D);
+        innerHexagonSelectable = defineInnerHexagon(SELECTABLE_SCALE, center2D);
     }
 
     private GeneralPath defineInnerHexagon(double innerScale, Point2D.Double center2D) {
@@ -297,6 +305,27 @@ public class GUIHex implements ViewObject {
         return selectable;
     }
 
+    /**
+     * Indicate that this hex should be highlighted
+     */
+    public void addHighlightRequest() {
+        highlightCounter++;
+    }
+    
+    /**
+     * Indicate that this hex does not need to be highlighted any more (from the
+     * caller's point of view).
+     * Note that the hex could still remain highlighted if another entity has requested
+     * highlighting.
+     */
+    public void removeHighlightRequest() {
+        highlightCounter--;
+    }
+    
+    public boolean isHighlighted() {
+        return (highlightCounter > 0);
+    }
+    
     static boolean getAntialias() {
         return antialias;
     }
@@ -347,9 +376,9 @@ public class GUIHex implements ViewObject {
         }
 
         Color terrainColor = Color.WHITE;
-        if (isSelected()) {
-            if (!hexMap.hasMapImage()) {
-                g2.setColor(highlightColor);
+        if (!hexMap.hasMapImage()) {
+            if (isSelected()) {
+                g2.setColor(selectedColor);
                 g2.fill(hexagon);
             
                 g2.setColor(terrainColor);
@@ -357,8 +386,20 @@ public class GUIHex implements ViewObject {
 
                 g2.setColor(Color.black);
                 g2.draw(innerHexagonSelected);
-            } else {
-                g2.setColor(highlightColor);                
+            } else if (isSelectable()) {
+                g2.setColor(selectableColor);
+                g2.fill(hexagon);
+
+                g2.setColor(terrainColor);
+                g2.fill(innerHexagonSelectable);
+
+                g2.setColor(Color.black);
+                g2.draw(innerHexagonSelectable);
+            }
+            
+        } else {
+            if (isSelected()) {
+                g2.setColor(selectedColor);                
                 g2.draw(hexagon);            
 
                 Stroke oldStroke = g2.getStroke();                
@@ -368,18 +409,7 @@ public class GUIHex implements ViewObject {
                 
                 g2.setStroke(oldStroke);                
                 g2.setColor(Color.black);
-            }
-        } else if (isSelectable()) {
-            if (!hexMap.hasMapImage()) {
-                g2.setColor(selectableColor);
-                g2.fill(hexagon);
-
-                g2.setColor(terrainColor);
-                g2.fill(innerHexagonSelectable);
-
-                g2.setColor(Color.black);
-                g2.draw(innerHexagonSelectable);
-            } else {
+            } else if (isSelectable()) {
                 g2.setColor(selectableColor);
                                               
                 g2.draw(hexagon);            
@@ -389,10 +419,22 @@ public class GUIHex implements ViewObject {
         }
 
         if (tilePainted) paintOverlay(g2);
+
     }
     
     public void paintTokensAndText(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
+
+        //highlight on top of tiles (all neighbor hexes have already been drawn)
+        if (isHighlighted()) {
+            g2.setColor(highlightedFillColor);
+            g2.fill(hexagon);
+            Stroke oldStroke = g2.getStroke();                
+            g2.setStroke(highlightedBorderStroke);
+            g2.setColor(highlightedBorderColor);
+            g2.draw(hexagon);
+            g2.setStroke(oldStroke);
+        }
 
         paintStationTokens(g2);
         paintOffStationTokens(g2);

@@ -19,6 +19,7 @@ import rails.common.parser.Config;
 import rails.game.*;
 import rails.game.action.*;
 import rails.ui.swing.elements.*;
+import rails.ui.swing.hexmap.HexHighlightMouseListener;
 import rails.util.Util;
 
 public class ORPanel extends GridPanel
@@ -458,6 +459,8 @@ implements ActionListener, KeyListener, RevenueListener {
                         privates[i] =
                                 new Field(
                                         c.getPortfolio().getPrivatesOwnedModel());
+                f.addMouseListener(new HexHighlightMouseListener(
+                        orUIManager,null,c.getPortfolio().getPrivateCompanies()));
                 addField(f, privatesXOffset, privatesYOffset + i, 1, 1,
                         WIDE_RIGHT, visible);
 
@@ -548,7 +551,14 @@ implements ActionListener, KeyListener, RevenueListener {
     		for (CompanyI comp : type.getCompanies()) {
     			item = new JMenu(comp.getName());
     			item.setEnabled(true);
-    			item.add(new JMenuItem(comp.getInfoText()));
+    			JMenuItem menuItem = new JMenuItem(comp.getInfoText());
+    			if (comp instanceof PrivateCompanyI) {
+                    HexHighlightMouseListener ml = new HexHighlightMouseListener(
+                            orUIManager,(PrivateCompanyI)comp);
+                    menuItem.addMouseListener(ml);
+                    item.addMouseListener(ml);
+    			}
+                item.add(menuItem);
     			menu.add(item);
     		}
     	}

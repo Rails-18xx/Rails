@@ -16,6 +16,7 @@ import rails.game.*;
 import rails.game.action.*;
 import rails.game.correct.CashCorrectionAction;
 import rails.ui.swing.elements.*;
+import rails.ui.swing.hexmap.HexHighlightMouseListener;
 import rails.util.Util;
 
 /**
@@ -422,6 +423,9 @@ public class GameStatus extends GridPanel implements ActionListener {
                     compPrivates[i] =
                         new Field(
                                 c.getPortfolio().getPrivatesOwnedModel());
+                f.addMouseListener(new HexHighlightMouseListener(
+                        gameUIManager.getORUIManager(),null,
+                        c.getPortfolio().getPrivateCompanies()));
                 addField(f, compPrivatesXOffset, compPrivatesYOffset + i, 1, 1,
                         0, visible);
             }
@@ -472,6 +476,9 @@ public class GameStatus extends GridPanel implements ActionListener {
                 playerPrivates[i] =
                     new Field(
                             players[i].getPortfolio().getPrivatesOwnedModel());
+            f.addMouseListener(new HexHighlightMouseListener(
+                    gameUIManager.getORUIManager(),null,
+                    players[i].getPortfolio().getPrivateCompanies()));
             addField(f, playerPrivatesXOffset + i, playerPrivatesYOffset, 1, 1,
                     0, true);
         }
