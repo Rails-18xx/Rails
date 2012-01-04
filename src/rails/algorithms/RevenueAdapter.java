@@ -653,7 +653,8 @@ public final class RevenueAdapter implements Runnable {
         EventQueue.invokeLater(
                 new Runnable() {
                     public void run() {
-                        revenueListener.revenueUpdate(revenue, finalResult);
+                        //listener could have deregistered himself in the meantime
+                        if (revenueListener != null) revenueListener.revenueUpdate(revenue, finalResult);
                     }
                 });
     }
