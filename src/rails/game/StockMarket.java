@@ -2,8 +2,11 @@ package rails.game;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.Lists;
 
 import rails.common.LocalText;
 import rails.common.parser.Configurable;
@@ -24,7 +27,7 @@ public class StockMarket extends RailsManager implements Configurable {
         new HashMap<String, StockSpaceType>();
     private final HashMap<String, StockSpace> stockChartSpaces =
         new HashMap<String, StockSpace>();
-    private final HashMap<Integer, StockSpace> startSpaces = new HashMap<Integer, StockSpace>();
+    private final SortedSet<StockSpace> startSpaces = new TreeSet<StockSpace>();
     
     private StockSpace stockChart[][];
     private int numRows = 0;
@@ -129,7 +132,7 @@ public class StockMarket extends RailsManager implements Configurable {
             // Loop through the stock space flags
             if (spaceTag.getChild(StockSpace.START_SPACE_TAG) != null) {
                 space.setStart(true);
-                startSpaces.put(space.getPrice(), space);
+                startSpaces.add(space);
             }
             space.setClosesCompany(spaceTag.getChild(StockSpace.CLOSES_COMPANY_TAG) != null);
             space.setEndsGame(spaceTag.getChild(StockSpace.GAME_OVER_TAG) != null);
@@ -316,18 +319,34 @@ public class StockMarket extends RailsManager implements Configurable {
         }
     }
     
-    // TODO: The StockSpace changes have to update the players worth
+    // FIXME: The StockSpace changes have to update the players worth
     // thus link the state of company space to the players worth
     
-    /**
-     * Return start prices as an sorted set
+    /** 
+     * Return start prices as list of prices
      */
-    public ImmutableSortedSet<Integer> getStartPrices() {
-        return ImmutableSortedSet.copyOf(startSpaces.keySet());
+    @Deprecated
+    public List<Integer> getStartPrices() {
+        List<Integer> prices = Lists.newArrayList();
+        for (StockSpace space:startSpaces) {
+            prices.add(space.getPrice());
+        }
+        return prices;
+    }
+    
+    /**
+     * Return start prices as an sorted set of stockspaces
+     */
+    public ImmutableSortedSet<StockSpace> getStartSpaces() {
+        return ImmutableSortedSet.copyOf(startSpaces);
     }
 
+    @Deprecated
     public StockSpace getStartSpace(int price) {
-        return startSpaces.get(price);
+        for (StockSpace space:startSpaces) {
+            if (space.getPrice() == price) return space; 
+        }
+        return null;
     }
 
     /**

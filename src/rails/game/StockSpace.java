@@ -5,6 +5,7 @@ import java.awt.Color;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.ImmutableList;
 
 import rails.game.state.ArrayListState;
@@ -13,7 +14,7 @@ import rails.game.state.Model;
 /**
  * Objects of this class represent a square on the StockMarket.
  */
-public class StockSpace extends Model {
+public class StockSpace extends Model implements Comparable<StockSpace> {
 
     /*--- Class attributes ---*/
     /*--- Constants ---*/
@@ -289,6 +290,16 @@ public class StockSpace extends Model {
     @Override
     public String toText() {
         return Currency.format(getParent(), price);
+    }
+
+    // Comparable method
+    // TODO: Check if this is correct (price > column > row)
+    public int compareTo(StockSpace other) {
+        return ComparisonChain.start()
+                .compare(price, other.price)
+                .compare(column, other.column)
+                .compare(row, other.row)
+                .result();
     }
 
 }
