@@ -19,8 +19,9 @@ import rails.ui.swing.elements.*;
 /**
  * This displays the Auction Window
  */
-public class StartRoundWindow extends JFrame implements ActionListener,
-KeyListener, ActionPerformer {
+public class StartRoundWindow extends JFrame
+implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
+
     private static final long serialVersionUID = 1L;
 
     // Gap sizes between screen cells, in pixels
@@ -80,6 +81,11 @@ KeyListener, ActionPerformer {
     private int[] crossIndex;
     private StartRound round;
     private GameUIManager gameUIManager;
+
+    // For the non-modal dialog to ask for a company starting share price.
+    protected JDialog currentDialog = null;
+    protected PossibleAction currentDialogAction = null;
+    protected int[] startPrices = null;
 
     private StartItem si;
     private JComponent f;
@@ -516,7 +522,7 @@ KeyListener, ActionPerformer {
                 StartItemAction action = (StartItemAction) nextAction;
                 if (action instanceof BuyStartItem) {
                     requestStartPrice((BuyStartItem) action);
-                    return process(action);
+                    return false;
                 }
             }
         }
@@ -577,8 +583,7 @@ KeyListener, ActionPerformer {
             if (source == buyButton) {
                 if (activeItem instanceof BuyStartItem
                         && ((BuyStartItem) activeItem).hasSharePriceToSet()) {
-                    if (requestStartPrice((BuyStartItem) activeItem))
-                        process(activeItem);
+                    if (requestStartPrice((BuyStartItem) activeItem)) return;
                 } else {
                     process(activeItem);
                 }
@@ -611,32 +616,68 @@ KeyListener, ActionPerformer {
             List<StockSpaceI> startSpaces = stockMarket.getStartSpaces();
             Map<Integer, StockSpaceI> spacePerPrice =
                 new HashMap<Integer, StockSpaceI>();
-            int[] prices = new int[startSpaces.size()];
-            StockSpaceI[] options = new StockSpaceI[startSpaces.size()];
+            startPrices = new int[startSpaces.size()];
+            String[] options = new String[startSpaces.size()];
             for (int i = 0; i < startSpaces.size(); i++) {
-                prices[i] = startSpaces.get(i).getPrice();
-                spacePerPrice.put(prices[i], startSpaces.get(i));
+                startPrices[i] = startSpaces.get(i).getPrice();
+                spacePerPrice.put(startPrices[i], startSpaces.get(i));
             }
-            Arrays.sort(prices);
+            Arrays.sort(startPrices);
             for (int i = 0; i < startSpaces.size(); i++) {
-                options[i] = spacePerPrice.get(prices[i]);
+                options[i] = Bank.format(spacePerPrice.get(startPrices[i]).getPrice());
             }
 
-            StockSpace sp =
-                (StockSpace) JOptionPane.showInputDialog(this,
-                        LocalText.getText("WHICH_START_PRICE",
-                                activeItem.getPlayerName(),
-                                compName),
-                                LocalText.getText("WHICH_PRICE"),
-                                JOptionPane.QUESTION_MESSAGE, null, options,
-                                options[0]);
-            if (sp == null) {
-                return false;
-            }
-            int price = sp.getPrice();
-            activeItem.setAssociatedSharePrice(price);
+            RadioButtonDialog dialog = new RadioButtonDialog(this,
+                    this,
+                    LocalText.getText("PleaseSelect"),
+                    LocalText.getText("WHICH_START_PRICE",
+                            getSRPlayer(),
+                            compName),
+                            options,
+                            -1);
+            setCurrentDialog (dialog, activeItem);
+
         }
         return true;
+    }
+
+    public JDialog getCurrentDialog() {
+        return currentDialog;
+    }
+
+    public PossibleAction getCurrentDialogAction () {
+        return currentDialogAction;
+    }
+
+    public void setCurrentDialog (JDialog dialog, PossibleAction action) {
+        if (currentDialog != null) {
+            currentDialog.dispose();
+        }
+        currentDialog = dialog;
+        currentDialogAction = action;
+    }
+
+    public void dialogActionPerformed () {
+
+        if (currentDialog instanceof RadioButtonDialog
+                && currentDialogAction instanceof BuyStartItem) {
+
+            RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
+            BuyStartItem action = (BuyStartItem) currentDialogAction;
+
+            int index = dialog.getSelectedOption();
+            if (index >= 0) {
+                int price = startPrices[index];
+                action.setAssociatedSharePrice(price);
+                process (action);
+            } else {
+                // No selection done - no action
+                return;
+            }
+
+        } else {
+            return;
+        }
     }
 
     public void close() {
