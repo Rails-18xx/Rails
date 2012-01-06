@@ -2,7 +2,7 @@ package tools;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.*;
+import java.io.File;
 import java.util.*;
 import java.util.List;
 
@@ -15,7 +15,7 @@ import rails.common.LocalText;
 import rails.common.parser.Config;
 import rails.common.parser.ConfigurationException;
 import rails.game.*;
-import rails.game.action.PossibleAction;
+import rails.game.action.*;
 import rails.ui.swing.elements.ActionMenuItem;
 import rails.util.GameFileIO;
 import rails.util.Util;
@@ -32,7 +32,10 @@ implements ActionListener, KeyListener {
     private JMenuBar menuBar;
     private JMenu fileMenu, editMenu;
     private JMenuItem saveItem, loadItem;
-    private JMenuItem trimItem, deleteItem;
+    private JMenuItem trimItem, deleteItem, correctItem;
+
+    private int correctedIndex;
+    private PossibleAction correctedAction;
 
     private StringBuffer headerText = new StringBuffer();
 
@@ -42,6 +45,7 @@ implements ActionListener, KeyListener {
 
     private static String saveDirectory;
     private String filepath;
+    private GameManagerI gameManager;
 
     protected static Logger log;
 
@@ -78,9 +82,9 @@ implements ActionListener, KeyListener {
 
         messagePanel = new JPanel(new GridBagLayout());
         messageScroller =
-                new JScrollPane(reportText,
-                        ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-                        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+            new JScrollPane(reportText,
+                    ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+                    ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         vbar = messageScroller.getVerticalScrollBar();
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = gbc.gridy = 0;
@@ -130,6 +134,15 @@ implements ActionListener, KeyListener {
         deleteItem.setEnabled(true);
         editMenu.add(deleteItem);
 
+        correctItem = new ActionMenuItem("Correct");
+        correctItem.setActionCommand("CORRECT");
+        correctItem.setMnemonic(KeyEvent.VK_C);
+        correctItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,
+                ActionEvent.ALT_MASK));
+        correctItem.addActionListener(this);
+        correctItem.setEnabled(true);
+        editMenu.add(correctItem);
+
         menuBar.add(fileMenu);
         menuBar.add(editMenu);
 
@@ -156,16 +169,16 @@ implements ActionListener, KeyListener {
 
         JFileChooser jfc = new JFileChooser();
         jfc.setCurrentDirectory(new File(saveDirectory));
-        
+
         if (jfc.showOpenDialog(getContentPane()) == JFileChooser.APPROVE_OPTION) {
 
             File selectedFile = jfc.getSelectedFile();
             filepath = selectedFile.getPath();
             saveDirectory = selectedFile.getParent();
-            
+
             // clear header text
             headerText = new StringBuffer();
-            
+
             // use GameLoader object to load game
             fileIO = new GameFileIO();
 
@@ -175,15 +188,17 @@ implements ActionListener, KeyListener {
                 fileIO.initGame();
                 fileIO.loadActionsAndComments();
                 setReportText(true);
-                
+
             } catch (ConfigurationException e)  {
                 log.fatal("Load failed", e);
                 DisplayBuffer.add(LocalText.getText("LoadFailed", e.getMessage()));
             }
+
+            gameManager = fileIO.getGame().getGameManager();
         }
 
     }
-    
+
     public void add (String text) {
         if (text.length() > 0) {
             headerText.append(text);
@@ -269,6 +284,16 @@ implements ActionListener, KeyListener {
                     log.error("Number format exception for '"+result+"'", e);
                 }
             }
+        } else if ("CORRECT".equalsIgnoreCase(command)) {
+            String result = JOptionPane.showInputDialog("Enter action number to be corrected");
+            if (Util.hasValue(result)) {
+                try {
+                    int index = Integer.parseInt(result);
+                    correct (index);
+                } catch (NumberFormatException e) {
+                    log.error("Number format exception for '"+result+"'", e);
+                }
+            }
         } else if ("SAVE".equalsIgnoreCase(command)) {
             save();
         } else if ("LOAD".equalsIgnoreCase(command)) {
@@ -291,6 +316,202 @@ implements ActionListener, KeyListener {
 
     }
 
+    private void correct (int index) {
+        correctedAction = fileIO.getActions().get(index);
+        correctedIndex = index;
+        if (correctedAction instanceof BuyTrain) {
+            new BuyTrainDialog ((BuyTrain)correctedAction);
+        } else if (correctedAction instanceof LayTile) {
+            new LayTileDialog ((LayTile)correctedAction);
+        } else {
+            JOptionPane.showMessageDialog(this, "Action type '" + correctedAction.getClass().getSimpleName()
+                    + "' cannot yet be edited");
+        }
+    }
+
+    protected void processCorrections (PossibleAction newAction) {
+        if (newAction != null && !newAction.equalsAsAction(correctedAction)) {
+            fileIO.getActions().set(correctedIndex, newAction);
+            setReportText(false);
+        }
+    }
+
+    private abstract class EditDialog extends JDialog implements ActionListener {
+
+        private static final long serialVersionUID = 1L;
+        List<Object> originalValues = new ArrayList<Object>();
+        List<JComponent> inputElements = new ArrayList<JComponent>();
+        GridBagConstraints gc = new GridBagConstraints();
+        int length = 0;
+        JButton okButton, cancelButton;
+
+        EditDialog (String title) {
+            super((Frame) null, title, false); // Non-modal
+            getContentPane().setLayout(new GridBagLayout());
+            setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        }
+
+        void finish() {
+
+            addField (this, okButton = new JButton("OK"), ++length, 0);
+            okButton.addActionListener(this);
+            addField (this, cancelButton = new JButton("Cancel"), length, 1);
+            cancelButton.addActionListener(this);
+            pack();
+
+            // Center on window
+            int x = (int) messageWindow.getLocationOnScreen().getX()
+            + (messageWindow.getWidth() - getWidth()) / 2;
+            int y = (int) messageWindow.getLocationOnScreen().getY()
+            + (messageWindow.getHeight() - getHeight()) / 2;
+            setLocation(x, y);
+
+            setVisible(true);
+            setAlwaysOnTop(true);
+        }
+
+        public void actionPerformed(ActionEvent arg0) {
+
+            if (arg0.getSource().equals(okButton)) {
+                PossibleAction newAction = processInput();
+                if (newAction != null) messageWindow.processCorrections(newAction);
+            } else if (arg0.getSource().equals(cancelButton)) {;
+
+            }
+            this.setVisible(false);
+            this.dispose();
+
+        }
+
+        abstract PossibleAction processInput();
+    }
+
+    private class BuyTrainDialog extends EditDialog {
+
+        private static final long serialVersionUID = 1L;
+        BuyTrain action;
+
+        BuyTrainDialog (BuyTrain action) {
+            super ("Edit BuyTrain");
+            this.action = action;
+            addLabel (this, "Train UID", null, action.getTrain().getUniqueId());  // 0
+            addLabel (this, "From Portfolio", null, action.getFromPortfolio().getName());  // 1
+            addTextField (this, "Price paid",
+                    new Integer(action.getPricePaid()),
+                    String.valueOf(action.getPricePaid()));  // 2
+            addTextField (this, "Added cash",
+                    new Integer(action.getAddedCash()),
+                    String.valueOf(action.getAddedCash()));  // 3
+            addTextField (this, "Exchange train UID",
+                    action.getExchangedTrain(),
+                    action.getExchangedTrain() != null ? action.getExchangedTrain().getUniqueId() : "");  // 4
+            finish();
+        }
+
+        @Override
+        PossibleAction processInput() {
+
+            log.debug("Action was "+action);
+            try {
+                int pricePaid = Integer.parseInt(((JTextField)inputElements.get(2)).getText());
+                action.setPricePaid(pricePaid);
+            } catch (NumberFormatException e) {
+            }
+            try {
+                int addedCash = Integer.parseInt(((JTextField)inputElements.get(3)).getText());
+                action.setAddedCash(addedCash);
+            } catch (NumberFormatException e) {
+            }
+            String exchangedTrainID = ((JTextField)inputElements.get(4)).getText();
+            TrainI exchangedTrain = gameManager.getTrainManager().getTrainByUniqueId(exchangedTrainID);
+            if (exchangedTrain != null) action.setExchangedTrain(exchangedTrain);
+
+            log.debug("Action is  "+action);
+            return action;
+
+        }
+    }
+
+    private class LayTileDialog extends EditDialog {
+
+        private static final long serialVersionUID = 1L;
+        LayTile action;
+
+        LayTileDialog (LayTile action) {
+            super ("Edit LayTile");
+            this.action = action;
+            addTextField (this, "Tile laid",
+                    action.getLaidTile(),
+                    action.getLaidTile().getName());  // 0
+            addTextField (this, "Hex laid",
+                    action.getChosenHex(),
+                    action.getChosenHex().getName());  // 1
+            addTextField (this, "Orientation",
+                    new Integer(action.getOrientation()),
+                    String.valueOf(action.getOrientation()));  // 2
+            finish();
+        }
+
+        @Override
+        PossibleAction processInput() {
+
+            log.debug("Action was "+action);
+            try {
+                int tileID = Integer.parseInt(((JTextField)inputElements.get(0)).getText());
+                TileI tile = gameManager.getTileManager().getTile(tileID);
+                if (tileID > 0 && tile != null) action.setLaidTile(tile);
+            } catch (NumberFormatException e) {
+            }
+            String hexID = ((JTextField)inputElements.get(1)).getText();
+            MapHex hex = gameManager.getMapManager().getHex(hexID);
+            if (hexID != null && hex != null) action.setChosenHex(hex);
+            try {
+                int orientation = Integer.parseInt(((JTextField)inputElements.get(2)).getText());
+                action.setOrientation(orientation);
+            } catch (NumberFormatException e) {
+            }
+
+            log.debug("Action is  "+action);
+            return action;
+
+        }
+    }
+
+    protected void addLabel (EditDialog owner, String caption, Object initialObject, String initialValue) {
+
+        JComponent element = new JLabel (initialValue);
+        int index = owner.length++;
+        addField (owner, new JLabel (caption), index, 0);
+        addField (owner, element, index, 1);
+        owner.originalValues.add(initialObject);
+        owner.inputElements.add(element);
+    }
+
+    protected void addTextField (EditDialog owner, String caption, Object initialObject, String initialValue) {
+
+        JComponent element = new JTextField (initialValue);
+        int index = owner.length++;
+        addField (owner, new JLabel (caption), index, 0);
+        addField (owner, element, index, 1);
+        owner.originalValues.add(initialObject);
+        owner.inputElements.add(element);
+    }
+
+    protected void addField(EditDialog owner, JComponent comp, int y, int x) {
+
+        GridBagConstraints gbc = owner.gc;
+        gbc.gridx = x;
+        gbc.gridy = y;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        gbc.weightx = gbc.weighty = 0.5;
+        gbc.fill = GridBagConstraints.BOTH;
+
+        owner.getContentPane().add(comp, gbc);
+
+        comp.setVisible(true);
+    }
+
     public void keyPressed(KeyEvent e) {
     }
 
@@ -298,4 +519,6 @@ implements ActionListener, KeyListener {
 
     public void keyTyped(KeyEvent e) {}
 
+
 }
+
