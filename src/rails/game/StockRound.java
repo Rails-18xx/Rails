@@ -63,6 +63,10 @@ public class StockRound extends Round {
     protected int sequenceRule;
     protected boolean raiseIfSoldOut = false;
 
+    /* Temporary variables */
+    protected boolean isOverLimits = false;
+    protected String overLimitsDetail = null;
+
     /**
      * Constructed via Configure
      */
@@ -89,7 +93,7 @@ public class StockRound extends Round {
                 getStockRoundNumber()));
 
         BackgroundMusicManager.notifyOfStockRoundStart();
-        
+
         setCurrentPlayerIndex(gameManager.getPriorityPlayer().getIndex());
         startingPlayer = getCurrentPlayer(); // For the Report
         ReportBuffer.add(LocalText.getText("HasPriority",
@@ -117,13 +121,9 @@ public class StockRound extends Round {
 
         setSellableShares();
 
-        // check certification limits and display warning
-        if (isPlayerOverLimits (currentPlayer)) {
-            DisplayBuffer.add(LocalText.getText("ExceedCertificateLimit"
-                    , currentPlayer.getId()
-                    , isPlayerOverLimitsDetail(currentPlayer)
-            )
-            );
+        // Certificate limits must be obeyed by selling excess shares
+        // before any other action is allowed.
+        if (isOverLimits) {
             return true;
         }
 
@@ -356,6 +356,7 @@ public class StockRound extends Round {
      * @return List of sellable certificates.
      */
     public void setSellableShares() {
+
         if (!mayCurrentPlayerSellAnything()) return;
 
         int price;
@@ -365,6 +366,9 @@ public class StockRound extends Round {
         int extraSingleShares = 0;
         PortfolioModel playerPortfolio = currentPlayer.getPortfolioModel();
         boolean choiceOfPresidentExchangeCerts = false;
+        isOverLimits = false;
+        overLimitsDetail = null;
+        StringBuilder violations = new StringBuilder();
 
         /*
          * First check of which companies the player owns stock, and what
@@ -385,6 +389,22 @@ public class StockRound extends Round {
                         getGameParameterAsInt(GameDef.Parm.POOL_SHARE_LIMIT)
                         - pool.getShare(company));
             if (maxShareToSell == 0) continue;
+
+            // Is player over the hold limit of this company?
+            if (!checkAgainstHoldLimit(currentPlayer, company, 0)) {
+                // The first time this happens, remove all non-over-limits sell options
+                if (!isOverLimits) possibleActions.clear();
+                isOverLimits = true;
+                violations.append(LocalText.getText("ExceedCertificateLimitCompany",
+                        company.getId(),
+                        playerPortfolio.getShare(company),
+                        getGameParameterAsInt(GameDef.Parm.PLAYER_SHARE_LIMIT)
+                ));
+
+            } else {
+                // If within limits, but an over-limits situation exists: correct that first.
+                if (isOverLimits) continue;
+            }
 
             /*
              * If the current Player is president, check if he can dump the
@@ -481,6 +501,23 @@ public class StockRound extends Round {
                     }
                 }
             }
+        }
+
+        // Is player over the total certificate hold limit?
+        float certificateCount = playerPortfolio.getCertificateCount();
+        int certificateLimit = gameManager.getPlayerCertificateLimit(currentPlayer);
+        if (certificateCount > certificateLimit) {
+            violations.append(LocalText.getText("ExceedCertificateLimitTotal",
+                    certificateCount,
+                    certificateLimit));
+            isOverLimits = true;
+        }
+
+        if (isOverLimits) {
+            DisplayBuffer.add(LocalText.getText("ExceedCertificateLimit"
+                    , currentPlayer.getId()
+                    , violations.toString()
+            ));
         }
     }
 
@@ -1424,7 +1461,6 @@ public class StockRound extends Round {
         hasSoldThisTurnBeforeBuying.set(false);
         hasActed.set(false);
         if (currentPlayer == startingPlayer) ReportBuffer.add("");
-
     }
 
     /**
@@ -1482,44 +1518,31 @@ public class StockRound extends Round {
 
     /**
      * Can the current player do any buying?
+     * <p>Note: requires sellable shares to be checked BEFORE buyable shares
      *
      * @return True if any buying is allowed.
      */
     public boolean mayCurrentPlayerBuyAnything() {
-        return !isPlayerOverLimits(currentPlayer)
-        && companyBoughtThisTurnWrapper.value() == null;
+        return !isOverLimits && companyBoughtThisTurnWrapper.value() == null;
     }
 
+    // Only used now to check if Autopass must be reset.
     protected boolean isPlayerOverLimits(Player player) {
-        return (isPlayerOverLimitsDetail(player) != null);
-    }
-
-    protected String isPlayerOverLimitsDetail(Player player) {
-        StringBuffer violations = new StringBuffer();
 
         // Over the total certificate hold Limit?
         if (player.getPortfolioModel().getCertificateCount() > gameManager.getPlayerCertificateLimit(player)) {
-            violations.append(LocalText.getText("ExceedCertificateLimitTotal",
-                    player.getPortfolioModel().getCertificateCount(),
-                    gameManager.getPlayerCertificateLimit(player)));
+            return true;
         }
 
         // Over the hold limit of any company?
         for (PublicCompany company : companyManager.getAllPublicCompanies()) {
             if (company.hasStarted() && company.hasStockPrice()
                     && !checkAgainstHoldLimit(player, company, 0)) {
-                violations.append(LocalText.getText("ExceedCertificateLimitCompany",
-                        company.getId(),
-                        player.getPortfolioModel().getShare(company),
-                        getGameParameterAsInt(GameDef.Parm.PLAYER_SHARE_LIMIT)
-                ));
+                return true;
             }
         }
-        if (violations.length() != 0) {
-            return violations.toString();
-        } else {
-            return null;
-        }
+
+        return false;
     }
 
     /**
