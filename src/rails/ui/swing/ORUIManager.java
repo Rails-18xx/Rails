@@ -1956,6 +1956,11 @@ public class ORUIManager implements DialogOwner {
         return map;
     }
 
+    // TEMPORARY
+    public ORPanel getORPanel() {
+        return orPanel;
+    }
+
     public GameUIManager getGameUIManager () {
         return gameUIManager;
     }

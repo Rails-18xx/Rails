@@ -62,7 +62,7 @@ implements ActionListener, KeyListener, RevenueListener {
     private JMenuItem zoomIn, zoomOut, fitToWindow, fitToWidth, fitToHeight, calibrateMap;
     private ActionMenuItem takeLoans;
     private ActionMenuItem repayLoans;
-
+    
     // Grid elements per function
     private Caption leftCompName[];
     private int leftCompNameXOffset, leftCompNameYOffset;
@@ -311,6 +311,21 @@ implements ActionListener, KeyListener, RevenueListener {
         buttonPanel.setOpaque(true);
     }
 
+    public MouseListener getCompanyCaptionMouseClickListener() {
+        return new MouseListener() {
+            public void mouseClicked(MouseEvent e) {
+                if (e.getComponent() instanceof Caption) {
+                    Caption c = (Caption)e.getComponent();
+                    executeNetworkInfo(c.getText());
+                }
+            }
+            public void mouseExited(MouseEvent e) {}
+            public void mouseEntered(MouseEvent e) {}
+            public void mousePressed(MouseEvent e) {}
+            public void mouseReleased(MouseEvent e) {}
+        };
+    }
+    
     private void initFields() {
         leftCompName = new Caption[nc];
         rightCompName = new Caption[nc];
@@ -337,6 +352,8 @@ implements ActionListener, KeyListener, RevenueListener {
         leftCompNameYOffset = 2;
         int currentXOffset = leftCompNameXOffset;
         int lastXWidth = 0;
+        
+        MouseListener companyCaptionMouseClickListener = getCompanyCaptionMouseClickListener();
 
         /* Top titles */
         addField(new Caption("Company"), 0, 0, lastXWidth = 1, 2,
@@ -441,6 +458,7 @@ implements ActionListener, KeyListener, RevenueListener {
             f.setForeground(c.getFgColour());
             HexHighlightMouseListener.addMouseListener(f,
                     orUIManager,(PublicCompany)c,false);
+            f.addMouseListener(companyCaptionMouseClickListener);
             addField(f, leftCompNameXOffset, leftCompNameYOffset + i, 1, 1,
                     WIDE_RIGHT, visible);
 
@@ -532,6 +550,7 @@ implements ActionListener, KeyListener, RevenueListener {
             f.setForeground(companies[i].getFgColour());
             HexHighlightMouseListener.addMouseListener(f,
                     orUIManager,(PublicCompany)c,false);
+            f.addMouseListener(companyCaptionMouseClickListener);
             addField(f, rightCompNameXOffset, rightCompNameYOffset + i, 1, 1, 0,  visible);
 
         }
@@ -684,6 +703,9 @@ implements ActionListener, KeyListener, RevenueListener {
         } else {
             CompanyManager cm = gm.getCompanyManager();
             PublicCompany company = cm.getPublicCompany(companyName);
+            //handle the case of invalid parameters
+            //could occur if the method is not invoked by the menu (but by the click listener) 
+            if (company == null) return;
 //
 //            NetworkGraphBuilder nwGraph = NetworkGraphBuilder.create(gm);
 //            NetworkCompanyGraph companyGraph = NetworkCompanyGraph.create(nwGraph, company);
