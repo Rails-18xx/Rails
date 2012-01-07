@@ -5,9 +5,6 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JComponent;
-
-import rails.game.Certificate;
 import rails.game.MapHex;
 import rails.game.PrivateCompanyI;
 import rails.game.StartItem;
@@ -126,7 +123,6 @@ public class HexHighlightMouseListener implements MouseListener {
             for (GUIHex guiHex : guiHexList) {
                 guiHex.addHighlightRequest();
             }
-            hexMap.repaint();
         }
     }
 
@@ -136,7 +132,6 @@ public class HexHighlightMouseListener implements MouseListener {
             for (GUIHex guiHex : guiHexList) {
                 guiHex.removeHighlightRequest();
             }
-            hexMap.repaint();
         }
     }
 
