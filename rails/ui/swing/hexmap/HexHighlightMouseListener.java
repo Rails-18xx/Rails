@@ -5,9 +5,15 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JComponent;
+
+import rails.common.parser.Config;
 import rails.game.MapHex;
+import rails.game.Portfolio;
 import rails.game.PrivateCompanyI;
+import rails.game.PublicCompanyI;
 import rails.game.StartItem;
+import rails.game.TokenI;
 import rails.game.special.LocatedBonus;
 import rails.game.special.SellBonusToken;
 import rails.game.special.SpecialPropertyI;
@@ -27,97 +33,159 @@ public class HexHighlightMouseListener implements MouseListener {
     List<GUIHex> guiHexList;
     HexMap hexMap;
     ORUIManager orUIManager;
+    Portfolio portfolio;
     
     /**
-     * lazy creation of the gui hex list for two reasons:
+     * lazy creation of the gui hex list for these reasons:
      * - save effort in case the mouse over never happens
      * - hexmap is now more likely to be available than during construction
+     * - portfolio is to be evaluated only at mouse over time
      */
     private void initGuiHexList() {
-        if (hexMap == null) {
-            hexMap = orUIManager.getMap();
-            if (hexMap != null) {
-                for (MapHex h : hexList) {
-                    guiHexList.add(hexMap.getHexByName(h.getName()));
-                }
+        //only create list if gui hexes are not yet available
+        if (!guiHexList.isEmpty()) return;
+        
+        //initially get hex map if not yet available
+        if (hexMap == null) hexMap = orUIManager.getMap();
+        
+        //create gui hex list based on hex list
+        if (hexMap != null) {
+            for (MapHex h : hexList) {
+                guiHexList.add(hexMap.getHexByName(h.getName()));
             }
         }
     }
-
+    
     /**
      * inefficient but probably ok due to very small size of lists
      */
-    private void addToHexListOmittingDuplicates(List<MapHex> hl) {
+    private void addToHexListDistinct(List<MapHex> hl) {
         if (hl == null) return;
         for (MapHex h : hl) {
-            if (!hexList.contains(h)) {
-                hexList.add(h);
-            }
+            addToHexListDistinct(h);
         }
+    }
+    private void addToHexListDistinct(MapHex h) {
+        if (h == null) return;
+        if (!hexList.contains(h)) hexList.add(h);
     }
     
     private void initPrivateCompanies(List<PrivateCompanyI> privList) {
         for (PrivateCompanyI p : privList) {
-            addToHexListOmittingDuplicates(p.getBlockedHexes());
+            addToHexListDistinct(p.getBlockedHexes());
             for (SpecialPropertyI sp : p.getSpecialProperties()) {
                 if (sp instanceof SpecialTileLay) {
-                    addToHexListOmittingDuplicates(((SpecialTileLay)sp).getLocations());
+                    addToHexListDistinct(((SpecialTileLay)sp).getLocations());
                 }
                 if (sp instanceof SpecialTokenLay) {
-                    addToHexListOmittingDuplicates(((SpecialTokenLay)sp).getLocations());
+                    addToHexListDistinct(((SpecialTokenLay)sp).getLocations());
                 }
                 if (sp instanceof SpecialRight) {
-                    addToHexListOmittingDuplicates(((SpecialRight)sp).getLocations());
+                    addToHexListDistinct(((SpecialRight)sp).getLocations());
                 }
                 if (sp instanceof LocatedBonus) {
-                    addToHexListOmittingDuplicates(((LocatedBonus)sp).getLocations());
+                    addToHexListDistinct(((LocatedBonus)sp).getLocations());
                 }
                 if (sp instanceof SellBonusToken) {
-                    addToHexListOmittingDuplicates(((SellBonusToken)sp).getLocations());
+                    addToHexListDistinct(((SellBonusToken)sp).getLocations());
                 }
             }
         }
     }
     
-    private HexHighlightMouseListener(ORUIManager orUIManager){
-        this.orUIManager = orUIManager;
-        hexList = new ArrayList<MapHex>();
-        guiHexList = new ArrayList<GUIHex>();
+    private void clearHexList () {
+        //remove hexes from the list 
+        //(as list will be built from the scratch during next mouse entered event)
+        hexList.clear();
+        guiHexList.clear();
+    }
+
+    private void initPortfolioHexList () {
+        //build the hex list for the contained private companies
+        initPrivateCompanies(portfolio.getPrivateCompanies());
     }
     
     /**
      * @param orUIManager The OR UI manager containing the map where the highlighting 
      * should occur
-     * @param hexList A list of hexes that are to be highlighted (in case of events)
-     * @param privList A list of private companies the hexes associated to which are
-     * to be highlighted (in case of events)
      */
-    public HexHighlightMouseListener(ORUIManager orUIManager,List<MapHex> hexList,List<PrivateCompanyI> privList) {
-        this(orUIManager);
-        addToHexListOmittingDuplicates(hexList);
-        initPrivateCompanies(privList);
+    private HexHighlightMouseListener(ORUIManager orUIManager){
+        this.orUIManager = orUIManager;
+        hexList = new ArrayList<MapHex>();
+        guiHexList = new ArrayList<GUIHex>();
+        portfolio = null;
     }
     
-    public HexHighlightMouseListener(ORUIManager orUIManager,PrivateCompanyI p) {
-        this(orUIManager);
-        List<PrivateCompanyI> privList = new ArrayList<PrivateCompanyI>();
-        privList.add(p);
-        initPrivateCompanies(privList);
+    /**
+     * @param pf Portfolio which is dynamically evaluated at mouse-even-time for
+     * any contained private companies
+     */
+    public static void addMouseListener(JComponent c,ORUIManager orUIManager,Portfolio pf) {
+        if (isEnabled(false)) {
+            HexHighlightMouseListener l = new HexHighlightMouseListener(orUIManager);
+            l.portfolio = pf;
+            c.addMouseListener(l);
+        }
     }
     
-    public HexHighlightMouseListener(ORUIManager orUIManager,StartItem si) {
-        this(orUIManager);
-        List<PrivateCompanyI> privList = new ArrayList<PrivateCompanyI>();
-        if (si.getPrimary() instanceof PrivateCompanyI) {
-            privList.add((PrivateCompanyI)si.getPrimary());
+    /**
+     * @param p Private company the hexes associated to which are
+     * to be highlighted (in case of events)
+     * @param enableIrrespectiveOfHighlightConfig If true, the mouse listener is
+     * enabled irrespective of the base configuration. Needed since some highlighting
+     * should not be disabled by configuration. 
+     */
+    public static void addMouseListener(JComponent c,ORUIManager orUIManager,PrivateCompanyI p,boolean enableIrrespectiveOfHighlightConfig) {
+        if (isEnabled(enableIrrespectiveOfHighlightConfig)) {
+            HexHighlightMouseListener l = new HexHighlightMouseListener(orUIManager);
+            List<PrivateCompanyI> privList = new ArrayList<PrivateCompanyI>();
+            privList.add(p);
+            l.initPrivateCompanies(privList);
+            c.addMouseListener(l);
         }
-        if (si.getSecondary() instanceof PrivateCompanyI) {
-            privList.add((PrivateCompanyI)si.getSecondary());
+    }
+    
+    /**
+     * @param p Public company the hexes associated to it (home, destination, ...) are
+     * to be highlighted (in case of events)
+     * @param enableIrrespectiveOfHighlightConfig If true, the mouse listener is
+     * enabled irrespective of the base configuration. Needed since some highlighting
+     * should not be disabled by configuration. 
+     */
+    public static void addMouseListener(JComponent c,ORUIManager orUIManager,PublicCompanyI p,boolean enableIrrespectiveOfHighlightConfig) {
+        if (isEnabled(enableIrrespectiveOfHighlightConfig)) {
+            HexHighlightMouseListener l = new HexHighlightMouseListener(orUIManager);
+            l.addToHexListDistinct(p.getHomeHexes());
+            l.addToHexListDistinct(p.getDestinationHex());
+            c.addMouseListener(l);
         }
-        initPrivateCompanies(privList);
+    }
+    
+    /**
+     * @param si Start Item which is evaluated for any contained private companies
+     */
+    public static void addMouseListener(JComponent c,ORUIManager orUIManager,StartItem si) {
+        if (isEnabled(false)) {
+            HexHighlightMouseListener l = new HexHighlightMouseListener(orUIManager);
+            List<PrivateCompanyI> privList = new ArrayList<PrivateCompanyI>();
+            if (si.getPrimary() instanceof PrivateCompanyI) {
+                privList.add((PrivateCompanyI)si.getPrimary());
+            }
+            if (si.getSecondary() instanceof PrivateCompanyI) {
+                privList.add((PrivateCompanyI)si.getSecondary());
+            }
+            l.initPrivateCompanies(privList);
+            c.addMouseListener(l);
+        }
+    }
+    
+    private static boolean isEnabled (boolean enableIrrespectiveOfHighlightConfig) {
+        return (enableIrrespectiveOfHighlightConfig 
+                || "yes".equals(Config.get("map.highlightHexes")));
     }
     
     public void mouseEntered(MouseEvent e) {
+        if (portfolio != null) initPortfolioHexList();
         initGuiHexList();
         if (hexMap != null && guiHexList.size() > 0) {
             for (GUIHex guiHex : guiHexList) {
@@ -127,12 +195,12 @@ public class HexHighlightMouseListener implements MouseListener {
     }
 
     public void mouseExited(MouseEvent e) {
-        initGuiHexList();
         if (hexMap != null && guiHexList.size() > 0) {
             for (GUIHex guiHex : guiHexList) {
                 guiHex.removeHighlightRequest();
             }
         }
+        if (portfolio != null) clearHexList();
     }
 
     public void mouseClicked(MouseEvent e) {

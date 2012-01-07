@@ -326,6 +326,8 @@ public class GameStatus extends GridPanel implements ActionListener {
             f = new Caption(c.getName());
             f.setForeground(c.getFgColour());
             f.setBackground(c.getBgColour());
+            HexHighlightMouseListener.addMouseListener(f,
+                    gameUIManager.getORUIManager(),(PublicCompanyI)c,false);
             addField(f, 0, certPerPlayerYOffset + i, 1, 1, WIDE_RIGHT, visible);
 
             for (int j = 0; j < np; j++) {
@@ -423,9 +425,9 @@ public class GameStatus extends GridPanel implements ActionListener {
                     compPrivates[i] =
                         new Field(
                                 c.getPortfolio().getPrivatesOwnedModel());
-                f.addMouseListener(new HexHighlightMouseListener(
-                        gameUIManager.getORUIManager(),null,
-                        c.getPortfolio().getPrivateCompanies()));
+                HexHighlightMouseListener.addMouseListener(f,
+                        gameUIManager.getORUIManager(),
+                        c.getPortfolio());
                 addField(f, compPrivatesXOffset, compPrivatesYOffset + i, 1, 1,
                         0, visible);
             }
@@ -447,6 +449,8 @@ public class GameStatus extends GridPanel implements ActionListener {
             f = new Caption(c.getName());
             f.setForeground(c.getFgColour());
             f.setBackground(c.getBgColour());
+            HexHighlightMouseListener.addMouseListener(f,
+                    gameUIManager.getORUIManager(),(PublicCompanyI)c,false);
             addField(f, rightCompCaptionXOffset, certPerPlayerYOffset + i, 1,
                     1, WIDE_LEFT, visible);
         }
@@ -476,9 +480,9 @@ public class GameStatus extends GridPanel implements ActionListener {
                 playerPrivates[i] =
                     new Field(
                             players[i].getPortfolio().getPrivatesOwnedModel());
-            f.addMouseListener(new HexHighlightMouseListener(
-                    gameUIManager.getORUIManager(),null,
-                    players[i].getPortfolio().getPrivateCompanies()));
+            HexHighlightMouseListener.addMouseListener(f,
+                    gameUIManager.getORUIManager(),
+                    players[i].getPortfolio());
             addField(f, playerPrivatesXOffset + i, playerPrivatesYOffset, 1, 1,
                     0, true);
         }

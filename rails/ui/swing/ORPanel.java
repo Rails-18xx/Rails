@@ -438,6 +438,8 @@ implements ActionListener, KeyListener, RevenueListener {
             f = leftCompName[i] = new Caption(c.getName());
             f.setBackground(c.getBgColour());
             f.setForeground(c.getFgColour());
+            HexHighlightMouseListener.addMouseListener(f,
+                    orUIManager,(PublicCompanyI)c,false);
             addField(f, leftCompNameXOffset, leftCompNameYOffset + i, 1, 1,
                     WIDE_RIGHT, visible);
 
@@ -459,8 +461,8 @@ implements ActionListener, KeyListener, RevenueListener {
                         privates[i] =
                                 new Field(
                                         c.getPortfolio().getPrivatesOwnedModel());
-                f.addMouseListener(new HexHighlightMouseListener(
-                        orUIManager,null,c.getPortfolio().getPrivateCompanies()));
+                HexHighlightMouseListener.addMouseListener(f,
+                        orUIManager,c.getPortfolio());
                 addField(f, privatesXOffset, privatesYOffset + i, 1, 1,
                         WIDE_RIGHT, visible);
 
@@ -527,6 +529,8 @@ implements ActionListener, KeyListener, RevenueListener {
             f = rightCompName[i] = new Caption(c.getName());
             f.setBackground(companies[i].getBgColour());
             f.setForeground(companies[i].getFgColour());
+            HexHighlightMouseListener.addMouseListener(f,
+                    orUIManager,(PublicCompanyI)c,false);
             addField(f, rightCompNameXOffset, rightCompNameYOffset + i, 1, 1, 0,  visible);
 
         }
@@ -553,11 +557,19 @@ implements ActionListener, KeyListener, RevenueListener {
     			item.setEnabled(true);
     			JMenuItem menuItem = new JMenuItem(comp.getInfoText());
     			if (comp instanceof PrivateCompanyI) {
-                    HexHighlightMouseListener ml = new HexHighlightMouseListener(
-                            orUIManager,(PrivateCompanyI)comp);
-                    menuItem.addMouseListener(ml);
-                    item.addMouseListener(ml);
+    			    //highlighting on menu items always enabled irrespective of config
+                    HexHighlightMouseListener.addMouseListener(menuItem,
+                            orUIManager,(PrivateCompanyI)comp,true);
+                    HexHighlightMouseListener.addMouseListener(item,
+                            orUIManager,(PrivateCompanyI)comp,true);
     			}
+                if (comp instanceof PublicCompanyI) {
+                    //highlighting on menu items always enabled irrespective of config
+                    HexHighlightMouseListener.addMouseListener(menuItem,
+                            orUIManager,(PublicCompanyI)comp,true);
+                    HexHighlightMouseListener.addMouseListener(item,
+                            orUIManager,(PublicCompanyI)comp,true);
+                }
                 item.add(menuItem);
     			menu.add(item);
     		}
