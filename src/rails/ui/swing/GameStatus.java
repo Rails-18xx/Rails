@@ -333,8 +333,9 @@ public class GameStatus extends GridPanel implements ActionListener {
             f.setForeground(c.getFgColour());
             f.setBackground(c.getBgColour());
             HexHighlightMouseListener.addMouseListener(f,
-                    gameUIManager.getORUIManager(),(PublicCompany)c,false);
+                    gameUIManager.getORUIManager(),c,false);
             f.addMouseListener(companyCaptionMouseClickListener);
+            f.setToolTipText(LocalText.getText("NetworkInfoDialogTitle",c.getId()));
             addField(f, 0, certPerPlayerYOffset + i, 1, 1, WIDE_RIGHT, visible);
 
             for (int j = 0; j < np; j++) {
@@ -465,8 +466,9 @@ public class GameStatus extends GridPanel implements ActionListener {
             f.setForeground(c.getFgColour());
             f.setBackground(c.getBgColour());
             HexHighlightMouseListener.addMouseListener(f,
-                    gameUIManager.getORUIManager(),(PublicCompany)c,false);
+                    gameUIManager.getORUIManager(),c,false);
             f.addMouseListener(companyCaptionMouseClickListener);
+            f.setToolTipText(LocalText.getText("NetworkInfoDialogTitle",c.getId()));
             addField(f, rightCompCaptionXOffset, certPerPlayerYOffset + i, 1,
                     1, WIDE_LEFT, visible);
         }

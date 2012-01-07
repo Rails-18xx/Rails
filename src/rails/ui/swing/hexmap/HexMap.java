@@ -289,11 +289,19 @@ public abstract class HexMap implements MouseListener,
         }
     }
     
+    /**
+     * The only "real" (=swing managed) layer that is used for tool tips
+     */
+    private class ToolTipsLayer extends JComponent {
+        private static final long serialVersionUID = 1L;
+    }
+    
     private TilesLayer tilesLayer;
     private RoutesLayer routesLayer;
     private MarksLayer marksLayer;
-    private TokensTextsLayer tokensTextsLayer; 
-    private List<HexLayer> hexLayers;
+    private TokensTextsLayer tokensTextsLayer;
+    private ToolTipsLayer toolTipsLayer;
+    private List<JComponent> layers;
     
     protected static Logger log =
             LoggerFactory.getLogger(HexMap.class);
@@ -320,6 +328,11 @@ public abstract class HexMap implements MouseListener,
     protected int minX, minY, maxX, maxY;
     protected int minCol, maxCol, minRow, maxRow;
 
+    /**
+     * The hex over which the mouse pointer is currently situated
+     */
+    private GUIHex hexAtMousePosition = null;
+    
     /** A list of all allowed tile lays */
     /* (may be redundant) */
     protected List<LayTile> allowedTileLays = null;
@@ -392,15 +405,17 @@ public abstract class HexMap implements MouseListener,
 
         //the following order of instantiation and list-adding defines the layering
         //from the top to the bottom
-        hexLayers = new ArrayList<HexLayer>();
+        layers = new ArrayList<JComponent>();
+        toolTipsLayer = new ToolTipsLayer();
+        layers.add(toolTipsLayer);
         tokensTextsLayer = new TokensTextsLayer();
-        hexLayers.add(tokensTextsLayer);
+        layers.add(tokensTextsLayer);
         marksLayer = new MarksLayer();
-        hexLayers.add(marksLayer);
+        layers.add(marksLayer);
         routesLayer = new RoutesLayer();
-        hexLayers.add(routesLayer);
+        layers.add(routesLayer);
         tilesLayer = new TilesLayer();
-        hexLayers.add(tilesLayer);
+        layers.add(tilesLayer);
         
         setScale();
         setupHexes();
@@ -435,7 +450,7 @@ public abstract class HexMap implements MouseListener,
 
     public void addLayers (JLayeredPane p, int startingZOffset) {
         int z = startingZOffset;
-        for (HexLayer l : hexLayers ) {
+        for (JComponent l : layers ) {
             p.add(l, z++);
         }
     }
@@ -799,8 +814,19 @@ public abstract class HexMap implements MouseListener,
 
     public void mouseMoved(MouseEvent arg0) {
         Point point = arg0.getPoint();
-        GUIHex hex = getHexContainingPoint(point);
-        setToolTipText(hex != null ? hex.getToolTip() : "");
+        GUIHex newHex = getHexContainingPoint(point);
+        
+        //ignore if mouse has not entered a new hex
+        if (hexAtMousePosition == newHex) return;
+        
+        //provide for hex highlighting
+        if (hexAtMousePosition != null) hexAtMousePosition.removeHighlightRequest();
+        if (newHex != null) newHex.addHighlightRequest();
+        
+        //display tool tip
+        setToolTipText(newHex != null ? newHex.getToolTip() : "");
+        
+        hexAtMousePosition = newHex;
     }
 
     public void mouseEntered(MouseEvent arg0) {}
@@ -837,7 +863,7 @@ public abstract class HexMap implements MouseListener,
      * Do only call this method if you are sure that a complete repaint is needed!
      */
     public void repaintAll (Rectangle r) {
-        for (HexLayer l : hexLayers ) {
+        for (JComponent l : layers ) {
             l.repaint(r);
         }
     }
@@ -847,35 +873,34 @@ public abstract class HexMap implements MouseListener,
      */
 
     public void setBounds (int x, int y, int width, int height) {
-        for (HexLayer l : hexLayers) {
+        for (JComponent l : layers) {
             l.setBounds(x, y, width, height);
         }
     }
     
     private void setPreferredSize (Dimension size) {
-        for (HexLayer l : hexLayers) {
+        for (JComponent l : layers) {
             l.setPreferredSize(size);
         }
     }
     
     private void setToolTipText (String text) {
-        //set tool tip on top-most layer (so that it is always visible)
-        hexLayers.get(hexLayers.size()-1).setToolTipText(text);
+        toolTipsLayer.setToolTipText(text);
     }
 
     public Dimension getSize () {
         //get size from top-most layer (all layers have the same size anyways)
-        return hexLayers.get(hexLayers.size()-1).getSize();
+        return layers.get(layers.size()-1).getSize();
     }
     
     private void addMouseListener (MouseListener ml) {
-        for (HexLayer l : hexLayers) {
+        for (JComponent l : layers) {
             l.addMouseListener(ml);
         }
     }
 
     private void addMouseMotionListener (MouseMotionListener ml) {
-        for (HexLayer l : hexLayers) {
+        for (JComponent l : layers) {
             l.addMouseMotionListener(ml);
         }
     }

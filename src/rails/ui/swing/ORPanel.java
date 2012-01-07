@@ -459,6 +459,7 @@ implements ActionListener, KeyListener, RevenueListener {
             HexHighlightMouseListener.addMouseListener(f,
                     orUIManager,(PublicCompany)c,false);
             f.addMouseListener(companyCaptionMouseClickListener);
+            f.setToolTipText(LocalText.getText("NetworkInfoDialogTitle",c.getId()));
             addField(f, leftCompNameXOffset, leftCompNameYOffset + i, 1, 1,
                     WIDE_RIGHT, visible);
 
@@ -551,6 +552,7 @@ implements ActionListener, KeyListener, RevenueListener {
             HexHighlightMouseListener.addMouseListener(f,
                     orUIManager,(PublicCompany)c,false);
             f.addMouseListener(companyCaptionMouseClickListener);
+            f.setToolTipText(LocalText.getText("NetworkInfoDialogTitle",c.getId()));
             addField(f, rightCompNameXOffset, rightCompNameYOffset + i, 1, 1, 0,  visible);
 
         }
