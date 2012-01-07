@@ -46,7 +46,10 @@ import rails.util.Util;
  * Base class that stores common info for HexMap independant of Hex
  * orientations.
  * The hex map manages several layers. Content is seperated in layers in order to ensure
- * good performance in case of only some aspects of the map need to be redrawn. 
+ * good performance in case of only some aspects of the map need to be redrawn.
+ * 
+ * In order to avert race conditions during layer drawing, the critical code is
+ * synchronized on the hex map instance as monitor object.
  */
 public abstract class HexMap implements MouseListener,
         MouseMotionListener {
@@ -67,51 +70,53 @@ public abstract class HexMap implements MouseListener,
         final public void paintComponent(Graphics g) {
             super.paintComponents(g);
 
-            // Abort if called too early.
-            Rectangle rectClip = g.getClipBounds();
-            if (rectClip == null) {
-                return;
-            }
-            
-            //ensure that image buffer of this layer is valid
-            if (bufferedImage == null 
-                    || bufferedImage.getWidth() != getWidth()
-                    || bufferedImage.getHeight() != getHeight() ) {
-                //create new buffer image
-                bufferedImage = new BufferedImage(getWidth(), getHeight(),BufferedImage.TYPE_INT_ARGB);
-                isBufferDirty = true;
-                
-                //since the buffered image is empty, it has to be completely redrawn
-                rectClip = new Rectangle (0, 0, getWidth(), getHeight());
-            }
-            
-            if (isBufferDirty) {
-                //buffer redraw is necessary
-                Graphics2D imageGraphics = (Graphics2D)bufferedImage.getGraphics();
-                
-                //apply the clip of the component's repaint to its image buffer
-                imageGraphics.setClip(rectClip.x, rectClip.y, rectClip.width, rectClip.height);
-                
-                //set the background to transparent so that only drawn parts of the
-                //buffer will be taken over
-                imageGraphics.setBackground(new Color(0,0,0,0));
-                imageGraphics.setColor(Color.BLACK);
-                
-                //clear the clip (for a non-virtual graphic, this would have been
-                //done by super.paintComponent)
-                imageGraphics.clearRect(rectClip.x, rectClip.y, rectClip.width, rectClip.height);
-                
-                //paint within the buffer
-                paintImage(imageGraphics);
-                
-                imageGraphics.dispose();
-                isBufferDirty = false;
-            }
+            //avoid that paintComponent is processed concurrently
+            synchronized (HexLayer.this) {
 
-            //buffer is valid and can be used
-            BufferedImage bufferedRect = bufferedImage.getSubimage(
-                    rectClip.x, rectClip.y, rectClip.width, rectClip.height);
-            g.drawImage(bufferedRect, rectClip.x, rectClip.y, null);
+                // Abort if called too early or if bounds are invalid.
+                Rectangle rectClip = g.getClipBounds();
+                if (rectClip == null) return;
+                
+                //ensure that image buffer of this layer is valid
+                if (bufferedImage == null 
+                        || bufferedImage.getWidth() != getWidth()
+                        || bufferedImage.getHeight() != getHeight() ) {
+                    //create new buffer image
+                    bufferedImage = new BufferedImage(getWidth(), getHeight(),BufferedImage.TYPE_INT_ARGB);
+                    isBufferDirty = true;
+                    
+                    //since the buffered image is empty, it has to be completely redrawn
+                    rectClip = new Rectangle (0, 0, getWidth(), getHeight());
+                }
+                
+                if (isBufferDirty) {
+                    //buffer redraw is necessary
+                    Graphics2D imageGraphics = (Graphics2D)bufferedImage.getGraphics();
+                    
+                    //apply the clip of the component's repaint to its image buffer
+                    imageGraphics.setClip(rectClip.x, rectClip.y, rectClip.width, rectClip.height);
+                    
+                    //set the background to transparent so that only drawn parts of the
+                    //buffer will be taken over
+                    imageGraphics.setBackground(new Color(0,0,0,0));
+                    imageGraphics.setColor(Color.BLACK);
+                    
+                    //clear the clip (for a non-virtual graphic, this would have been
+                    //done by super.paintComponent)
+                    imageGraphics.clearRect(rectClip.x, rectClip.y, rectClip.width, rectClip.height);
+                    
+                    //paint within the buffer
+                    paintImage(imageGraphics);
+                    
+                    imageGraphics.dispose();
+                    isBufferDirty = false;
+                }
+    
+                //buffer is valid and can be used
+                BufferedImage bufferedRect = bufferedImage.getSubimage(
+                        rectClip.x, rectClip.y, rectClip.width, rectClip.height);
+                g.drawImage(bufferedRect, rectClip.x, rectClip.y, null);
+            }
         }
     }
     
@@ -835,7 +840,7 @@ public abstract class HexMap implements MouseListener,
      * Mouse Listener methods (hexMap offers listener for all layers)
      */
     
-	public void mouseClicked(MouseEvent arg0) {
+	public synchronized void mouseClicked(MouseEvent arg0) {
         Point point = arg0.getPoint();
         GUIHex clickedHex = getHexContainingPoint(point);
 
@@ -844,7 +849,7 @@ public abstract class HexMap implements MouseListener,
 
     public void mouseDragged(MouseEvent arg0) {}
 
-    public void mouseMoved(MouseEvent arg0) {
+    public synchronized void mouseMoved(MouseEvent arg0) {
         Point point = arg0.getPoint();
         GUIHex newHex = getHexContainingPoint(point);
         
@@ -863,7 +868,13 @@ public abstract class HexMap implements MouseListener,
 
     public void mouseEntered(MouseEvent arg0) {}
 
-    public void mouseExited(MouseEvent arg0) {}
+    public synchronized void mouseExited(MouseEvent arg0) {
+        //provide for hex highlighting
+        if (hexAtMousePosition != null) {
+            hexAtMousePosition.removeHighlightRequest();
+            hexAtMousePosition = null;
+        }
+    }
 
     public void mousePressed(MouseEvent arg0) {}
 
@@ -875,26 +886,26 @@ public abstract class HexMap implements MouseListener,
      * - only apply for a specified area
      */
 
-    public void repaintTiles (Rectangle r) {
+    public synchronized void repaintTiles (Rectangle r) {
         tilesLayer.repaint(r);
     }
 
-    private void repaintRoutes (Rectangle r) {
+    private synchronized void repaintRoutes (Rectangle r) {
         routesLayer.repaint(r);
     }
     
-    public void repaintMarks (Rectangle r) {
+    public synchronized void repaintMarks (Rectangle r) {
         marksLayer.repaint(r);
     }
     
-    public void repaintTokens (Rectangle r) {
+    public synchronized void repaintTokens (Rectangle r) {
         tokensTextsLayer.repaint(r);
     }
     
     /**
      * Do only call this method if you are sure that a complete repaint is needed!
      */
-    public void repaintAll (Rectangle r) {
+    public synchronized void repaintAll (Rectangle r) {
         for (JComponent l : layers ) {
             l.repaint(r);
         }

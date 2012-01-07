@@ -1,6 +1,6 @@
 package rails.ui.swing.hexmap;
 
-import java.awt.event.MouseEvent;
+import java.awt.Graphics;
 import java.awt.geom.AffineTransform;
 
 import org.apache.batik.swing.JSVGCanvas;
@@ -27,14 +27,15 @@ public final class HexMapImage extends JSVGCanvas  {
             LoggerFactory.getLogger(HexMapImage.class);
 
     private MapManager mapManager;
-    private AffineTransform initialTransform; 
+    private HexMap hexMap;
     private double zoomFactor = 1;  // defined dynamically if zoomStep changed
     private int zoomStep = 10; // default value, can be overwritten in config
     private boolean initialized = false;
 
-    public void init(MapManager mapManager) {
+    public void init(MapManager mapManager,HexMap hexMap) {
 
        this.mapManager = mapManager;
+       this.hexMap = hexMap;
        
        this.setRecenterOnResize(false);
 
@@ -124,35 +125,17 @@ public final class HexMapImage extends JSVGCanvas  {
     public int getZoomStep () {
         return zoomStep;
     }
-
-    // TODO: Has no function at all
-	public void mouseClicked(MouseEvent arg0) {
-//        Point point = arg0.getPoint();
-        //GUIHex clickedHex = getHexContainingPoint(point);
-
-        //orUIManager.hexClicked(clickedHex, selectedHex);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent)
+    
+    /**
+     * paint component synchronized with hex map in order to ensure that
+     * - painting background image is not affected by concurrent changes in the hexmap
+     *   (such glitches were observed in the past)
      */
-    public void mouseDragged(MouseEvent arg0) {}
-
-    // TODO: Has no function at all
-    public void mouseMoved(MouseEvent arg0) {
-//        Point point = arg0.getPoint();
-        //GUIHex hex = getHexContainingPoint(point);
-        //setToolTipText(hex != null ? hex.getToolTip() : "");
+    @Override
+    public void paintComponent(Graphics g) {
+        synchronized (hexMap) {
+            super.paintComponent(g);
+        }
     }
-
-    public void mouseEntered(MouseEvent arg0) {}
-
-    public void mouseExited(MouseEvent arg0) {}
-
-    public void mousePressed(MouseEvent arg0) {}
-
-    public void mouseReleased(MouseEvent arg0) {}
-
+    
 }
