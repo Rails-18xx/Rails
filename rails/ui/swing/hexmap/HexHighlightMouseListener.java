@@ -13,7 +13,6 @@ import rails.game.Portfolio;
 import rails.game.PrivateCompanyI;
 import rails.game.PublicCompanyI;
 import rails.game.StartItem;
-import rails.game.TokenI;
 import rails.game.special.LocatedBonus;
 import rails.game.special.SellBonusToken;
 import rails.game.special.SpecialPropertyI;
