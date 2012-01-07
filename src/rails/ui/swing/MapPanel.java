@@ -59,7 +59,7 @@ public class MapPanel extends JPanel {
         layeredPane.setLayout(null);
         layeredPane.setPreferredSize(originalMapSize);
         map.setBounds(0, 0, originalMapSize.width, originalMapSize.height);
-        layeredPane.add(map, 0);
+        map.addLayers(layeredPane, 1);
         
         if (mmgr.isMapImageUsed()) {
             mapImage = new HexMapImage ();

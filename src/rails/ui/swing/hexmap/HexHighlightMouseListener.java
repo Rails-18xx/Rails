@@ -126,7 +126,6 @@ public class HexHighlightMouseListener implements MouseListener {
             for (GUIHex guiHex : guiHexList) {
                 guiHex.addHighlightRequest();
             }
-            hexMap.repaint();
         }
     }
 
@@ -136,7 +135,6 @@ public class HexHighlightMouseListener implements MouseListener {
             for (GUIHex guiHex : guiHexList) {
                 guiHex.removeHighlightRequest();
             }
-            hexMap.repaint();
         }
     }
 

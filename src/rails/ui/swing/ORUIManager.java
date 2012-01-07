@@ -162,14 +162,12 @@ public class ORUIManager implements DialogOwner {
             if (selectedHex != null) {
                 selectedHex.removeTile();
                 selectedHex.setSelected(false);
-                mapPanel.getMap().repaint(selectedHex.getBounds());
                 selectedHex = null;
             }
             // remove selectable indications
             for (MapHex hex:hexUpgrades) {
                 GUIHex guiHex = map.getHexByName(hex.getId());
                 guiHex.setSelectable(false);
-                mapPanel.getMap().repaint(guiHex.getBounds());
             }
             hexUpgrades = null;
         }
@@ -179,14 +177,12 @@ public class ORUIManager implements DialogOwner {
             if (selectedHex != null) {
                 selectedHex.removeToken();
                 selectedHex.setSelected(false);
-                mapPanel.getMap().repaint(selectedHex.getBounds());
                 selectedHex = null;
             }
             // remove selectable indications
             for (MapHex hex:hexUpgrades) {
                 GUIHex guiHex = map.getHexByName(hex.getId());
                 guiHex.setSelectable(false);
-                mapPanel.getMap().repaint(guiHex.getBounds());
             }
             hexUpgrades = null;
         }
@@ -619,7 +615,6 @@ public class ORUIManager implements DialogOwner {
             case SELECT_ORIENTATION:
                 if (clickedHex == selectedHex) {
                     selectedHex.forcedRotateTile();
-                    map.repaint(selectedHex.getBounds());
                 } else
                     checkClickedHex = true;
                 break;
@@ -647,7 +642,7 @@ public class ORUIManager implements DialogOwner {
                 map.selectHex(clickedHex);
                 setLocalStep(SELECT_TOKEN);
             } else {
-                JOptionPane.showMessageDialog(map, LocalText.getText(
+                JOptionPane.showMessageDialog(mapPanel, LocalText.getText(
                         "NoTokenPossible", clickedHex.getName()));
                 setLocalStep(ORUIManager.SELECT_HEX_FOR_TOKEN);
             }
@@ -656,7 +651,6 @@ public class ORUIManager implements DialogOwner {
             if (localStep == ROTATE_OR_CONFIRM_TILE
                 && clickedHex == selectedHex) {
                 selectedHex.rotateTile();
-                map.repaint(selectedHex.getBounds());
                 return;
 
             } else {
@@ -678,7 +672,7 @@ public class ORUIManager implements DialogOwner {
                         map.selectHex(clickedHex);
                         setLocalStep(SELECT_TILE);
                     } else {
-                        JOptionPane.showMessageDialog(map,
+                        JOptionPane.showMessageDialog(mapPanel,
                                 "This hex cannot be upgraded now");
                     }
                 }
@@ -697,7 +691,6 @@ public class ORUIManager implements DialogOwner {
         if (mapCorrectionEnabled) {
             // paint tile
             hex.forcedDropTile(tileId, 0);
-            map.repaint(hex.getBounds());
             // inform map correction manager
             mapCorrectionAction.selectTile(tile);
             orWindow.process(mapCorrectionAction);
@@ -714,11 +707,10 @@ public class ORUIManager implements DialogOwner {
 
         if (hex.dropTile(tileId, mustConnect)) {
             /* Lay tile */
-            map.repaint(hex.getBounds());
             setLocalStep(ORUIManager.ROTATE_OR_CONFIRM_TILE);
         } else {
             /* Tile cannot be laid in a valid orientation: refuse it */
-            JOptionPane.showMessageDialog(map,
+            JOptionPane.showMessageDialog(mapPanel,
                     "This tile cannot be laid in a valid orientation.");
             tileUpgrades.remove(tile);
             setLocalStep(ORUIManager.SELECT_TILE);

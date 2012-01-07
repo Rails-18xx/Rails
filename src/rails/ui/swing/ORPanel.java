@@ -696,7 +696,6 @@ implements ActionListener, KeyListener, RevenueListener {
                 log.debug("Revenue Value:" + revenueValue);
                 log.debug("Revenue Run:" + ra.getOptimalRunPrettyPrint(true));
                 ra.drawOptimalRunAsPath(orUIManager.getMap());
-                orUIManager.getMap().repaint();
                 
                 if (!RailsRoot.getDevelop()) {
                     //parent component is ORPanel so that dialog won't hide the routes painted on the map
@@ -727,7 +726,6 @@ implements ActionListener, KeyListener, RevenueListener {
             orUIManager.getMap().setTrainPaths(null);
             //but retain paths already existing before
             if (revenueAdapter != null) revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
-            orUIManager.getMap().repaint();
         }
     }
     
@@ -752,7 +750,6 @@ implements ActionListener, KeyListener, RevenueListener {
     private void redrawRoutes() {
         if (revenueAdapter != null && isDisplayRoutes()) {
             revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
-            orUIManager.getMap().repaint();
         }
     }
     
@@ -895,7 +892,6 @@ implements ActionListener, KeyListener, RevenueListener {
     private void disableRoutesDisplay() {
         clearRevenueAdapter();
         orUIManager.getMap().setTrainPaths(null);
-        orUIManager.getMap().repaint();
     }
     
     private void clearRevenueAdapter() {
@@ -996,7 +992,6 @@ implements ActionListener, KeyListener, RevenueListener {
         if (finalResult) {
             orUIManager.getMap().setTrainPaths(null);
             revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
-            orUIManager.getMap().repaint();
             if (isRevenueValueToBeSet) {
                 orUIManager.addInformation("Best Run Value = " + bestRevenue +
                         " with " + Util.convertToHtml(revenueAdapter.getOptimalRunPrettyPrint(false)));

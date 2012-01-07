@@ -13,12 +13,14 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.GeneralPath;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.swing.JComponent;
+import javax.swing.JLayeredPane;
 
 
 import org.slf4j.Logger;
@@ -43,13 +45,256 @@ import rails.util.Util;
 /**
  * Base class that stores common info for HexMap independant of Hex
  * orientations.
+ * The hex map manages several layers. Content is seperated in layers in order to ensure
+ * good performance in case of only some aspects of the map need to be redrawn. 
  */
-public abstract class HexMap extends JComponent implements MouseListener,
+public abstract class HexMap implements MouseListener,
         MouseMotionListener {
 
-    // TODO: Is this still compatible
-    private static final long serialVersionUID = 1L;
+    private abstract class HexLayer extends JComponent {
+        private static final long serialVersionUID = 1L;
+        private BufferedImage bufferedImage;
+        private boolean isBufferDirty = false;
+        protected abstract void paintImage(Graphics g);
+        public void repaint() {
+            isBufferDirty = true;
+            super.repaint();
+        }
+        public void repaint(Rectangle r) {
+            isBufferDirty = true;
+            super.repaint(r);
+        }
+        final public void paintComponent(Graphics g) {
+            super.paintComponents(g);
 
+            // Abort if called too early.
+            Rectangle rectClip = g.getClipBounds();
+            if (rectClip == null) {
+                return;
+            }
+            
+            //ensure that image buffer of this layer is valid
+            if (bufferedImage == null 
+                    || bufferedImage.getWidth() != getWidth()
+                    || bufferedImage.getHeight() != getHeight() ) {
+                //create new buffer image
+                bufferedImage = new BufferedImage(getWidth(), getHeight(),BufferedImage.TYPE_INT_ARGB);
+                isBufferDirty = true;
+                
+                //since the buffered image is empty, it has to be completely redrawn
+                rectClip = new Rectangle (0, 0, getWidth(), getHeight());
+            }
+            
+            if (isBufferDirty) {
+                //buffer redraw is necessary
+                Graphics2D imageGraphics = (Graphics2D)bufferedImage.getGraphics();
+                
+                //apply the clip of the component's repaint to its image buffer
+                imageGraphics.setClip(rectClip.x, rectClip.y, rectClip.width, rectClip.height);
+                
+                //set the background to transparent so that only drawn parts of the
+                //buffer will be taken over
+                imageGraphics.setBackground(new Color(0,0,0,0));
+                imageGraphics.setColor(Color.BLACK);
+                
+                //clear the clip (for a non-virtual graphic, this would have been
+                //done by super.paintComponent)
+                imageGraphics.clearRect(rectClip.x, rectClip.y, rectClip.width, rectClip.height);
+                
+                //paint within the buffer
+                paintImage(imageGraphics);
+                
+                imageGraphics.dispose();
+                isBufferDirty = false;
+            }
+
+            //buffer is valid and can be used
+            BufferedImage bufferedRect = bufferedImage.getSubimage(
+                    rectClip.x, rectClip.y, rectClip.width, rectClip.height);
+            g.drawImage(bufferedRect, rectClip.x, rectClip.y, null);
+        }
+    }
+    
+    /**
+     * Layer containing tiles
+     */
+    private class TilesLayer extends HexLayer {
+        private static final long serialVersionUID = 1L;
+        @Override
+        public void paintImage(Graphics g) {
+            try {
+                // Paint tiles
+                for (GUIHex hex : hexes) {
+                    Rectangle hexrect = hex.getBounds();
+
+                    if (g.hitClip(hexrect.x, hexrect.y, hexrect.width,
+                            hexrect.height)) {
+                        hex.paintTile(g);
+                    }
+                }
+
+                // Paint the impassability bars
+                for (GUIHex hex : hexes) {
+                    Rectangle hexrect = hex.getBounds();
+
+                    if (g.hitClip(hexrect.x, hexrect.y, hexrect.width,
+                            hexrect.height)) {
+                        hex.paintBars(g);
+                    }
+                }
+                
+            } catch (NullPointerException ex) {
+                // If we try to paint before something is loaded, just retry later.
+            }
+        }
+    }
+    
+    /**
+     * Layer containing visualization of train routes
+     */
+    private class RoutesLayer extends HexLayer {
+        private static final long serialVersionUID = 1L;
+        @Override
+        public void paintImage(Graphics g) {
+            try {
+                // Abort if called too early.
+                Rectangle rectClip = g.getClipBounds();
+                if (rectClip == null) {
+                    return;
+                }
+
+                // paint train paths
+                if (trainPaths != null) {
+                    Graphics2D g2 = (Graphics2D) g;
+                    Stroke oldStroke = g2.getStroke();
+                    Color oldColor = g2.getColor();
+                    Stroke trainStroke =
+                        new BasicStroke((int)(strokeWidth * zoomFactor), strokeCap, strokeJoin);
+                    g2.setStroke(trainStroke);
+        
+                    Color[] trainColors = new Color[]{colour1, colour2, colour3, colour4};
+                    int color = 0;
+                    for (GeneralPath path:trainPaths) {
+                        g2.setColor(trainColors[color++ % trainColors.length]);
+                        g2.draw(path);
+                    }
+                    g2.setStroke(oldStroke);
+                    g2.setColor(oldColor);
+                }
+            } catch (NullPointerException ex) {
+                // If we try to paint before something is loaded, just retry later.
+            }
+        }
+    }
+    
+    /**
+     * Layer containing marks on hexes (selected, selectable, highlighted).
+     * Content may change very fast (due to mouse overs)
+     */
+    private class MarksLayer extends HexLayer {
+        private static final long serialVersionUID = 1L;
+        @Override
+        public void paintImage(Graphics g) {
+            try {
+                // Abort if called too early.
+                Rectangle rectClip = g.getClipBounds();
+                if (rectClip == null) {
+                    return;
+                }
+
+                // Paint tiles
+                for (GUIHex hex : hexes) {
+                    Rectangle hexrect = hex.getBounds();
+
+                    if (g.hitClip(hexrect.x, hexrect.y, hexrect.width,
+                            hexrect.height)) {
+                        hex.paintMarks(g);
+                    }
+                }
+
+            } catch (NullPointerException ex) {
+                // If we try to paint before something is loaded, just retry later.
+            }
+        }
+    }
+    
+    /**
+     * Layer containing tokens and (if no background map is used) text annotations 
+     */
+    private class TokensTextsLayer extends HexLayer {
+        private static final long serialVersionUID = 1L;
+        private void drawLabel(Graphics2D g2, int index, int xCoordinate, int yCoordinate, boolean letter) {
+            String label = letter ? getLetterLabel (index) : getNumberLabel (index);
+
+            xCoordinate -= 4.0*label.length();
+            yCoordinate += 4.0;
+            g2.drawString(label,
+                    xCoordinate,
+                    yCoordinate);
+
+//            log.debug("Draw Label " + label + " for " + index + " at x = " + xCoordinate + ", y = " + yCoordinate);
+        }
+
+        private String getLetterLabel (int index) {
+            if (index > 26) {
+                return "A" + String.valueOf((char)('@'+(index-26)));  // For 1825U1 row "AA"
+            } else {
+                return String.valueOf((char)('@'+index));
+            }
+        }
+
+        @Override
+        public void paintImage(Graphics g) {
+            try {
+                // Abort if called too early.
+                Rectangle rectClip = g.getClipBounds();
+                if (rectClip == null) {
+                    return;
+                }
+                Graphics2D g2 = (Graphics2D) g;
+
+                // Paint station tokens and texts
+                for (GUIHex hex : hexes) {
+                    Rectangle hexrect = hex.getBounds();
+
+                    if (g.hitClip(hexrect.x, hexrect.y, hexrect.width,
+                            hexrect.height)) {
+                        hex.paintTokensAndText(g);
+                    }
+                }
+                
+                //paint coordinates
+                boolean lettersGoHorizontal = mapManager.lettersGoHorizontal();
+                int xLeft = (int)calcXCoordinates(minCol, - coordinateXMargin);
+                int xRight = (int)calcXCoordinates(maxCol, coordinateXMargin);
+
+                int yTop = (int)calcYCoordinates(minRow, - coordinateYMargin);
+                int yBottom = (int)calcYCoordinates(maxRow,  coordinateYMargin);
+
+                for (int iCol = minCol; iCol <= maxCol; iCol++) {
+                    int xCoordinate = (int)(calcXCoordinates(iCol, 0));
+                    drawLabel(g2, iCol, xCoordinate, yTop, lettersGoHorizontal);
+                    drawLabel(g2, iCol, xCoordinate, yBottom, lettersGoHorizontal);
+                }
+
+                for (int iRow = minRow; iRow <= maxRow; iRow++) {
+                    int yCoordinate = (int)(calcYCoordinates(iRow, 0));
+                    drawLabel(g2, iRow, xLeft, yCoordinate, !lettersGoHorizontal);
+                    drawLabel(g2, iRow, xRight, yCoordinate, !lettersGoHorizontal);
+                }
+
+            } catch (NullPointerException ex) {
+                // If we try to paint before something is loaded, just retry later.
+            }
+        }
+    }
+    
+    private TilesLayer tilesLayer;
+    private RoutesLayer routesLayer;
+    private MarksLayer marksLayer;
+    private TokensTextsLayer tokensTextsLayer; 
+    private List<HexLayer> hexLayers;
+    
     protected static Logger log =
             LoggerFactory.getLogger(HexMap.class);
 
@@ -145,6 +390,18 @@ public abstract class HexMap extends JComponent implements MouseListener,
         log.debug("HexMap init: minX="+ minX + ",minY=" + minY + ",maxX=" +maxX + ",maxY=" + maxY);
         log.debug("HexMap init: minCol="+ minCol + ",minRow=" + minRow + ",maxCol=" +maxCol + ",maxRow=" + maxRow);
 
+        //the following order of instantiation and list-adding defines the layering
+        //from the top to the bottom
+        hexLayers = new ArrayList<HexLayer>();
+        tokensTextsLayer = new TokensTextsLayer();
+        hexLayers.add(tokensTextsLayer);
+        marksLayer = new MarksLayer();
+        hexLayers.add(marksLayer);
+        routesLayer = new RoutesLayer();
+        hexLayers.add(routesLayer);
+        tilesLayer = new TilesLayer();
+        hexLayers.add(tilesLayer);
+        
         setScale();
         setupHexes();
         setOriginalSize();
@@ -176,7 +433,12 @@ public abstract class HexMap extends JComponent implements MouseListener,
         }
     }
 
-
+    public void addLayers (JLayeredPane p, int startingZOffset) {
+        int z = startingZOffset;
+        for (HexLayer l : hexLayers ) {
+            p.add(l, z++);
+        }
+    }
 
 
     protected void setupHexesGUI() {
@@ -220,58 +482,12 @@ public abstract class HexMap extends JComponent implements MouseListener,
         
     }
 
-    protected void drawLabel(Graphics2D g2, int index, int xCoordinate, int yCoordinate, boolean letter) {
-        String label = letter ? getLetterLabel (index) : getNumberLabel (index);
-
-        xCoordinate -= 4.0*label.length();
-        yCoordinate += 4.0;
-        g2.drawString(label,
-                xCoordinate,
-                yCoordinate);
-
-//        log.debug("Draw Label " + label + " for " + index + " at x = " + xCoordinate + ", y = " + yCoordinate);
-    }
-
-    private String getLetterLabel (int index) {
-    	if (index > 26) {
-    		return "A" + String.valueOf((char)('@'+(index-26)));  // For 1825U1 row "AA"
-    	} else {
-    		return String.valueOf((char)('@'+index));
-    	}
-    }
-
     private String getNumberLabel (int index) {
     	if (index < 0) {
     		return String.valueOf(100 + index); // For 1825U1 column "99"
     	} else {
     		return String.valueOf(index);
     	}
-    }
-
-    @Override
-    public void paint(Graphics g) {
-
-        super.paint(g);
-        Graphics2D g2 = (Graphics2D) g;
-
-        boolean lettersGoHorizontal = mapManager.lettersGoHorizontal();
-        int xLeft = (int)calcXCoordinates(minCol, - coordinateXMargin);
-        int xRight = (int)calcXCoordinates(maxCol, coordinateXMargin);
-
-        int yTop = (int)calcYCoordinates(minRow, - coordinateYMargin);
-        int yBottom = (int)calcYCoordinates(maxRow,  coordinateYMargin);
-
-        for (int iCol = minCol; iCol <= maxCol; iCol++) {
-            int xCoordinate = (int)(calcXCoordinates(iCol, 0));
-            drawLabel(g2, iCol, xCoordinate, yTop, lettersGoHorizontal);
-            drawLabel(g2, iCol, xCoordinate, yBottom, lettersGoHorizontal);
-        }
-
-        for (int iRow = minRow; iRow <= maxRow; iRow++) {
-            int yCoordinate = (int)(calcYCoordinates(iRow, 0));
-            drawLabel(g2, iRow, xLeft, yCoordinate, !lettersGoHorizontal);
-            drawLabel(g2, iRow, xRight, yCoordinate, !lettersGoHorizontal);
-        }
     }
 
     public void setupHexes() {
@@ -307,72 +523,6 @@ public abstract class HexMap extends JComponent implements MouseListener,
         return hexesByName.get (hexName);
     }
 
-    @Override
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-
-        try {
-            // Abort if called too early.
-            Rectangle rectClip = g.getClipBounds();
-            if (rectClip == null) {
-                return;
-            }
-
-            for (GUIHex hex : hexes) {
-                Rectangle hexrect = hex.getBounds();
-
-                if (g.hitClip(hexrect.x, hexrect.y, hexrect.width,
-                        hexrect.height)) {
-                    hex.paintHexagon(g);
-                }
-            }
-
-            // Paint the impassability bars latest
-            for (GUIHex hex : hexes) {
-                Rectangle hexrect = hex.getBounds();
-
-                if (g.hitClip(hexrect.x, hexrect.y, hexrect.width,
-                        hexrect.height)) {
-                    hex.paintBars(g);
-                }
-            }
-
-            Graphics2D g2 = (Graphics2D) g;
-
-            // paint train paths
-            if (trainPaths != null) {
-                Stroke oldStroke = g2.getStroke();
-                Color oldColor = g2.getColor();
-                Stroke trainStroke =
-                    new BasicStroke((int)(strokeWidth * zoomFactor), strokeCap, strokeJoin);
-                g2.setStroke(trainStroke);
-    
-                Color[] trainColors = new Color[]{colour1, colour2, colour3, colour4};
-                int color = 0;
-                for (GeneralPath path:trainPaths) {
-                    g2.setColor(trainColors[color++ % trainColors.length]);
-                    g2.draw(path);
-                }
-                g2.setStroke(oldStroke);
-                g2.setColor(oldColor);
-            }
-
-            // Paint station tokens only after the train paths
-            // (so that the path strokes do not hide token information)
-            for (GUIHex hex : hexes) {
-                Rectangle hexrect = hex.getBounds();
-
-                if (g.hitClip(hexrect.x, hexrect.y, hexrect.width,
-                        hexrect.height)) {
-                    hex.paintTokensAndText(g2);
-                }
-            }
-
-        } catch (NullPointerException ex) {
-            // If we try to paint before something is loaded, just retry later.
-        }
-    }
-    
     public boolean hasMapImage() {
         return displayMapImage;
     }
@@ -458,14 +608,12 @@ public abstract class HexMap extends JComponent implements MouseListener,
         if (selectedHex == clickedHex) return;
         if (selectedHex != null) {
             selectedHex.setSelected(false);
-            repaint(selectedHex.getBounds());
             log.debug("Hex " + selectedHex.getName()
                       + " deselected and repainted");
         }
 
         if (clickedHex != null) {
             clickedHex.setSelected(true);
-            repaint(clickedHex.getBounds());
             log.debug("Hex " + clickedHex.getName() + " selected and repainted");
         }
         selectedHex = clickedHex;
@@ -601,6 +749,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
 
     public void setTrainPaths(List<GeneralPath> trainPaths) {
         this.trainPaths = trainPaths;
+        repaintRoutes();
     }
 
     /**
@@ -625,6 +774,20 @@ public abstract class HexMap extends JComponent implements MouseListener,
     public ORUIManager getOrUIManager() {
 		return orUIManager;
 	}
+    
+    public void updateOffBoardToolTips() {
+//      for (GUIHex hex : hexes) {
+//          if (hex.getHexModel().hasOffBoardValues()) {
+//              hex.setToolTip();
+//          }
+//      }
+      // do nothing as tooltip update before display
+  }
+  
+    /**
+     * Mouse Listener methods (hexMap offers listener for all layers)
+     */
+    
 	public void mouseClicked(MouseEvent arg0) {
         Point point = arg0.getPoint();
         GUIHex clickedHex = getHexContainingPoint(point);
@@ -632,18 +795,8 @@ public abstract class HexMap extends JComponent implements MouseListener,
         orUIManager.hexClicked(clickedHex, selectedHex);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent)
-     */
     public void mouseDragged(MouseEvent arg0) {}
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
-     */
     public void mouseMoved(MouseEvent arg0) {
         Point point = arg0.getPoint();
         GUIHex hex = getHexContainingPoint(point);
@@ -658,12 +811,73 @@ public abstract class HexMap extends JComponent implements MouseListener,
 
     public void mouseReleased(MouseEvent arg0) {}
 
-    public void updateOffBoardToolTips() {
-//        for (GUIHex hex : hexes) {
-//            if (hex.getHexModel().hasOffBoardValues()) {
-//                hex.setToolTip();
-//            }
-//        }
-        // do nothing as tooltip update before display
+    /**
+     * Triggers for asynchronous repaint of specific layers 
+     * If possible, these triggers:
+     * - only apply for a specified area
+     */
+
+    public void repaintTiles (Rectangle r) {
+        tilesLayer.repaint(r);
     }
+
+    public void repaintRoutes () {
+        routesLayer.repaint();
+    }
+    
+    public void repaintMarks (Rectangle r) {
+        marksLayer.repaint(r);
+    }
+    
+    public void repaintTokens (Rectangle r) {
+        tokensTextsLayer.repaint(r);
+    }
+    
+    /**
+     * Do only call this method if you are sure that a complete repaint is needed!
+     */
+    public void repaintAll (Rectangle r) {
+        for (HexLayer l : hexLayers ) {
+            l.repaint(r);
+        }
+    }
+    
+    /**
+     * JComponent methods delegating to the hexmap layers
+     */
+
+    public void setBounds (int x, int y, int width, int height) {
+        for (HexLayer l : hexLayers) {
+            l.setBounds(x, y, width, height);
+        }
+    }
+    
+    private void setPreferredSize (Dimension size) {
+        for (HexLayer l : hexLayers) {
+            l.setPreferredSize(size);
+        }
+    }
+    
+    private void setToolTipText (String text) {
+        //set tool tip on top-most layer (so that it is always visible)
+        hexLayers.get(hexLayers.size()-1).setToolTipText(text);
+    }
+
+    public Dimension getSize () {
+        //get size from top-most layer (all layers have the same size anyways)
+        return hexLayers.get(hexLayers.size()-1).getSize();
+    }
+    
+    private void addMouseListener (MouseListener ml) {
+        for (HexLayer l : hexLayers) {
+            l.addMouseListener(ml);
+        }
+    }
+
+    private void addMouseMotionListener (MouseMotionListener ml) {
+        for (HexLayer l : hexLayers) {
+            l.addMouseMotionListener(ml);
+        }
+    }
+
 }
