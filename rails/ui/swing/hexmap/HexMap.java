@@ -33,7 +33,7 @@ public abstract class HexMap implements MouseListener,
         private BufferedImage bufferedImage;
         private boolean isBufferDirty = false;
         protected abstract void paintImage(Graphics g);
-        public void repaint() {
+        final public void repaint() {
             isBufferDirty = true;
             super.repaint();
         }
@@ -131,6 +131,35 @@ public abstract class HexMap implements MouseListener,
      */
     private class RoutesLayer extends HexLayer {
         private static final long serialVersionUID = 1L;
+
+        public Rectangle getRoutesBounds(List<GeneralPath> p1,List<GeneralPath> p2) {
+            int margin = (int)Math.ceil(strokeWidth * zoomFactor);
+
+            List<Rectangle> pathRects = new ArrayList<Rectangle>();
+            if (p1 != null) {
+                for (GeneralPath p : p1 ) pathRects.add(p.getBounds());
+            }
+            if (p2 != null) {
+                for (GeneralPath p : p2 ) pathRects.add(p.getBounds());
+            }
+
+            Rectangle r = null;
+            for (Rectangle pathRect : pathRects ) {
+                //enlarge path rectangle with margin
+                Rectangle pathMarginRect = new Rectangle(
+                        pathRect.x - margin,
+                        pathRect.y - margin,
+                        pathRect.width + margin * 2,
+                        pathRect.y + margin * 2);
+                if (r == null) {
+                    r = pathMarginRect;
+                } else {
+                    r.add(pathMarginRect);
+                }
+            }
+            return r;  
+        };
+
         @Override
         public void paintImage(Graphics g) {
             try {
@@ -740,8 +769,11 @@ public abstract class HexMap implements MouseListener,
     }
 
     public void setTrainPaths(List<GeneralPath> trainPaths) {
+        Rectangle dirtyRect = routesLayer.getRoutesBounds(this.trainPaths, trainPaths);
         this.trainPaths = trainPaths;
-        repaintRoutes();
+        
+        //only repaint if routes existed before or exist now
+        if (dirtyRect != null) repaintRoutes(dirtyRect);
     }
 
     /**
@@ -824,8 +856,8 @@ public abstract class HexMap implements MouseListener,
         tilesLayer.repaint(r);
     }
 
-    public void repaintRoutes () {
-        routesLayer.repaint();
+    private void repaintRoutes (Rectangle r) {
+        routesLayer.repaint(r);
     }
     
     public void repaintMarks (Rectangle r) {
