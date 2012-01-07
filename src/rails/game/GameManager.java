@@ -15,7 +15,6 @@ import rails.game.model.PortfolioModel;
 import rails.game.special.SpecialProperty;
 import rails.game.special.SpecialTokenLay;
 import rails.game.state.*;
-import rails.sound.BackgroundMusicManager;
 import rails.util.GameFileIO;
 import rails.util.Util;
 

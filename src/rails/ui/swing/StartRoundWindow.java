@@ -290,17 +290,18 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
 
         for (int i = 0; i < ni; i++) {
             si = items[i];
-            HexHighlightMouseListener ml = new HexHighlightMouseListener(
+            f = itemName[i] = new Caption(si.getName());
+            HexHighlightMouseListener.addMouseListener(f, 
                     gameUIManager.getORUIManager(),
                     si); 
-            f = itemName[i] = new Caption(si.getName());
-            f.addMouseListener(ml);
             addField(f, itemNameXOffset, itemNameYOffset + i, 1, 1, WIDE_RIGHT);
             f =
                 itemNameButton[i] =
                     new ClickField(si.getName(), "", "", this,
                             itemGroup);
-            f.addMouseListener(ml);
+            HexHighlightMouseListener.addMouseListener(f, 
+                    gameUIManager.getORUIManager(),
+                    si); 
             addField(f, itemNameXOffset, itemNameYOffset + i, 1, 1, WIDE_RIGHT);
             // Prevent row height resizing after every buy action
             itemName[i].setPreferredSize(itemNameButton[i].getPreferredSize());
@@ -323,7 +324,9 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
 
             f = info[i] = new Field (infoIcon);
             f.setToolTipText(getStartItemDescription(si));
-            f.addMouseListener(ml);
+            HexHighlightMouseListener.addMouseListener(f, 
+                    gameUIManager.getORUIManager(),
+                    si); 
             addField (f, infoXOffset, infoYOffset + i, 1, 1, WIDE_LEFT);
 
             // Invisible field, only used to hold current item status.
