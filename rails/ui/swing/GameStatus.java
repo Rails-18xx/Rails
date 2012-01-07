@@ -3,6 +3,7 @@ package rails.ui.swing;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseListener;
 import java.util.*;
 import java.util.List;
 
@@ -188,6 +189,8 @@ public class GameStatus extends GridPanel implements ActionListener {
         upperPlayerCaption = new Caption[np];
         lowerPlayerCaption = new Caption[np];
 
+        MouseListener companyCaptionMouseClickListener = gameUIManager.getORUIManager().getORPanel().getCompanyCaptionMouseClickListener();
+
         int lastX = 0;
         int lastY = 1;
         certPerPlayerXOffset = ++lastX;
@@ -328,6 +331,7 @@ public class GameStatus extends GridPanel implements ActionListener {
             f.setBackground(c.getBgColour());
             HexHighlightMouseListener.addMouseListener(f,
                     gameUIManager.getORUIManager(),(PublicCompanyI)c,false);
+            f.addMouseListener(companyCaptionMouseClickListener);
             addField(f, 0, certPerPlayerYOffset + i, 1, 1, WIDE_RIGHT, visible);
 
             for (int j = 0; j < np; j++) {
@@ -451,6 +455,7 @@ public class GameStatus extends GridPanel implements ActionListener {
             f.setBackground(c.getBgColour());
             HexHighlightMouseListener.addMouseListener(f,
                     gameUIManager.getORUIManager(),(PublicCompanyI)c,false);
+            f.addMouseListener(companyCaptionMouseClickListener);
             addField(f, rightCompCaptionXOffset, certPerPlayerYOffset + i, 1,
                     1, WIDE_LEFT, visible);
         }
