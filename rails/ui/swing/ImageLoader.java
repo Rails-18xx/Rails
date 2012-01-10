@@ -27,6 +27,9 @@ public class ImageLoader {
 
     private static Map<Integer, Document> svgMap;
     private static double[] zoomFactors = new double[21];
+    //defines adjustment of zoom factor (should be close to 1) 
+    //(used for perfect-fit sizing that requires arbitrary zoom)
+    private static double zoomAdjustmentFactor = 1;
 
     private static double svgWidth = 75;
     private static double svgHeight = svgWidth * 0.5 * Math.sqrt(3.0);
@@ -129,10 +132,27 @@ public class ImageLoader {
         if (zoomStep < 0) zoomStep = 0;
         else if (zoomStep > 20) zoomStep = 20;
         if (zoomFactors[zoomStep] == 0.0) {
-            zoomFactors[zoomStep] = 1.0 * Math.pow(2.0, 0.25*(zoomStep-10));
+            zoomFactors[zoomStep] = zoomAdjustmentFactor * Math.pow(2.0, 0.25*(zoomStep-10));
         }
         return zoomFactors[zoomStep];
 
+    }
+    
+    /**
+     * @param zoomAdjustmentFactor Additional factor applied to zoom factor. Used
+     * for precisely adjusting zoom-step based zoom factors for perfect fit requirements.  
+     */
+    public void setZoomAdjustmentFactor (double zoomAdjustmentFactor) {
+        ImageLoader.zoomAdjustmentFactor = zoomAdjustmentFactor;
+        
+        //invalidate buffered zoom step zoom factors
+        for (int i = 0 ; i < zoomFactors.length ; i++) {
+            zoomFactors[i] = 0;
+        }
+    }
+    
+    public void resetAdjustmentFactor() {
+        setZoomAdjustmentFactor(1);
     }
 
     public ImageLoader() {

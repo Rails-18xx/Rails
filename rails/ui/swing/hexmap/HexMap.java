@@ -562,43 +562,15 @@ public abstract class HexMap implements MouseListener,
         zoom();
     }
     
-/**
- * Zoom-to-fit functionality is based on the discrete zoom steps.
- * This means that no pixel precision is to be expected 
- */
-    public void zoomFit (Dimension availableSize, boolean fitToWidth, boolean fitToHeight) {
-        double idealFactorWidth = availableSize.getWidth() / originalSize.width;
-        double idealFactorHeight = availableSize.getHeight() / originalSize.height;
-        //increase zoomFactor until constraints do not hold
-        //OR zoom cannot be increased any more
-        while
-            (
-                    (
-                            (!fitToWidth || idealFactorWidth > GameUIManager.getImageLoader().getZoomFactor(zoomStep))
-                            &&
-                            (!fitToHeight || idealFactorHeight > GameUIManager.getImageLoader().getZoomFactor(zoomStep))
-                    )
-                    &&
-                    GameUIManager.getImageLoader().getZoomFactor(zoomStep+1) != GameUIManager.getImageLoader().getZoomFactor(zoomStep)
-            )
-            zoomStep++;
-        //decrease zoomFactor until constraints do hold
-        //OR zoom cannot be decreased any more
-        while
-            (
-                    (
-                            (fitToWidth && idealFactorWidth < GameUIManager.getImageLoader().getZoomFactor(zoomStep))
-                            ||
-                            (fitToHeight && idealFactorHeight < GameUIManager.getImageLoader().getZoomFactor(zoomStep))
-                    )
-                    &&
-                    GameUIManager.getImageLoader().getZoomFactor(zoomStep-1) != GameUIManager.getImageLoader().getZoomFactor(zoomStep)
-            )
-            zoomStep--;
-        //trigger zoom execution
+    public void setZoomStep (int zoomStep) {
+        this.zoomStep = zoomStep;
         zoom();
     }
     
+    public int getZoomStep () {
+        return zoomStep;
+    }
+
     private void zoom() {
         zoomFactor = GameUIManager.getImageLoader().getZoomFactor(zoomStep);
         log.debug("HexMap: zoomStep = "+ zoomStep);
@@ -612,10 +584,6 @@ public abstract class HexMap implements MouseListener,
 
     protected void setScale() {
         scale = (Scale.get() * zoomFactor);
-    }
-
-    public int getZoomStep () {
-        return zoomStep;
     }
 
     public Dimension getOriginalSize() {
