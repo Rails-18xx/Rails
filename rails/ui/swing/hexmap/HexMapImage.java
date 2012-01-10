@@ -34,6 +34,8 @@ public final class HexMapImage extends JSVGCanvas  {
     private double zoomFactor = 1;  // defined dynamically if zoomStep changed
     private int zoomStep = 10; // default value, can be overwritten in config
     private boolean initialized = false;
+    private Dimension initialMapSize = null;
+    private int initialZoomStep = 0;
 
     public void init(MapManager mapManager,HexMap hexMap) {
 
@@ -82,8 +84,10 @@ public final class HexMapImage extends JSVGCanvas  {
                 if (!initialized) {
                     // store the rendering Transform
                     initialTransform = getRenderingTransform();
-                    scaleMap();
                     initialized = true;
+                    
+                    //catch up on setting the bounds (if bounds setting were called before rendering prepare)
+                    if (initialMapSize != null) setBoundsAndResize(initialMapSize,initialZoomStep);
                 }
                 addGVTTreeRendererListener(null);
             }
@@ -108,6 +112,16 @@ public final class HexMapImage extends JSVGCanvas  {
         setRenderingTransform (at, true);
     }
 
+    public void setBoundsAndResize (Dimension currentMapSize,int zoomStep) {
+        if (initialized) {
+            setBounds(0, 0, currentMapSize.width, currentMapSize.height);
+            setPreferredSize(currentMapSize);
+            zoom(zoomStep);
+        } else {
+            initialMapSize = currentMapSize;
+            initialZoomStep = zoomStep;
+        }
+    }
     public void zoom (boolean in) {
         if (in) zoomStep++; else zoomStep--;
         zoom();

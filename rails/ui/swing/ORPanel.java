@@ -214,17 +214,14 @@ implements ActionListener, KeyListener, RevenueListener {
         zoomOut.addActionListener(this);
         zoomOut.setEnabled(true);
         zoomMenu.add(zoomOut);
-        fitToWindow = new JMenuItem("Fit to window");
-        fitToWindow.addActionListener(this);
-        fitToWindow.setEnabled(true);
+        fitToWindow = createFitToMenuItem("Fit to window");
+        if (fitToWindow.isSelected()) orWindow.getMapPanel().fitToWindow();
         zoomMenu.add(fitToWindow);
-        fitToWidth = new JMenuItem("Fit to width");
-        fitToWidth.addActionListener(this);
-        fitToWidth.setEnabled(true);
+        fitToWidth = createFitToMenuItem("Fit to width");
+        if (fitToWidth.isSelected()) orWindow.getMapPanel().fitToWidth();
         zoomMenu.add(fitToWidth);
-        fitToHeight = new JMenuItem("Fit to height");
-        fitToHeight.addActionListener(this);
-        fitToHeight.setEnabled(true);
+        fitToHeight = createFitToMenuItem("Fit to height");
+        if (fitToHeight.isSelected()) orWindow.getMapPanel().fitToHeight();
         zoomMenu.add(fitToHeight);
         calibrateMap = new JMenuItem("CalibrateMap");
         calibrateMap.addActionListener(this);
@@ -239,6 +236,18 @@ implements ActionListener, KeyListener, RevenueListener {
         addKeyListener(this);
     }
 
+    private JCheckBoxMenuItem createFitToMenuItem(String name) {
+        JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem(name);
+        menuItem.addActionListener(this);
+        menuItem.setEnabled(true);
+        
+        //check whether this is the default fit to option
+        if (name.equalsIgnoreCase(Config.get("map.defaultZoomFitOption"))) {
+            menuItem.setSelected(true);
+        }
+        return menuItem;
+    }
+    
     public void recreate(OperatingRound or) {
         log.debug("ORPanel.recreate() called");
 
@@ -814,20 +823,44 @@ implements ActionListener, KeyListener, RevenueListener {
 
             orUIManager.processAction(command, executedActions);
         } else if (source == zoomIn) {
+            fitToWindow.setSelected(false);
+            fitToWidth.setSelected(false);
+            fitToHeight.setSelected(false);
             orWindow.getMapPanel().zoom(true);
             redrawRoutes();
         } else if (source == zoomOut) {
+            fitToWindow.setSelected(false);
+            fitToWidth.setSelected(false);
+            fitToHeight.setSelected(false);
             orWindow.getMapPanel().zoom(false);
             redrawRoutes();
         } else if (source == fitToWindow) {
-            orWindow.getMapPanel().fitToWindow();
-            redrawRoutes();
+            if (fitToWindow.isSelected()) {
+                fitToWidth.setSelected(false);
+                fitToHeight.setSelected(false);
+                orWindow.getMapPanel().fitToWindow();
+                redrawRoutes();
+            } else {
+                orWindow.getMapPanel().removeFitToOption();
+            }
         } else if (source == fitToWidth) {
-            orWindow.getMapPanel().fitToWidth();
-            redrawRoutes();
+            if (fitToWidth.isSelected()) {
+                fitToWindow.setSelected(false);
+                fitToHeight.setSelected(false);
+                orWindow.getMapPanel().fitToWidth();
+                redrawRoutes();
+            } else {
+                orWindow.getMapPanel().removeFitToOption();
+            }
         } else if (source == fitToHeight) {
-            orWindow.getMapPanel().fitToHeight();
-            redrawRoutes();
+            if (fitToHeight.isSelected()) {
+                fitToWindow.setSelected(false);
+                fitToWidth.setSelected(false);
+                orWindow.getMapPanel().fitToHeight();
+                redrawRoutes();
+            } else {
+                orWindow.getMapPanel().removeFitToOption();
+            }
         } else if (source == calibrateMap) {
             MapManager mapManager = orUIManager.getMap().getMapManager();
             String offsetX = JOptionPane.showInputDialog(this, "Change translation in X-dimension", mapManager.getMapXOffset());

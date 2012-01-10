@@ -30,6 +30,7 @@
 	<Section name="Map">
 		<Property name="map.autoscroll" type="BOOLEAN" />
 		<Property name="map.zoomstep" type="INTEGER" />
+		<Property name="map.defaultZoomFitOption" type="LIST" values="none,fit to window,fit to width,fit to height" />
 		<Property name="map.image.display" type="BOOLEAN" />
 		<Property name="map.displayCurrentRoutes" type="BOOLEAN" />
 		<Property name="map.highlightHexes" type="BOOLEAN" />

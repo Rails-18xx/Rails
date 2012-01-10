@@ -2,6 +2,8 @@
 package rails.ui.swing;
 
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.util.List;
 
@@ -33,6 +35,10 @@ public class MapPanel extends JPanel {
     private JLayeredPane layeredPane;
     private Dimension originalMapSize;
     private Dimension currentMapSize;
+    
+    //active fit-to zoom options
+    private boolean fitToWidth = false;
+    private boolean fitToHeight = false;
 
     protected static Logger log =
             Logger.getLogger(MapPanel.class.getPackage().getName());
@@ -78,6 +84,14 @@ public class MapPanel extends JPanel {
         setSize(originalMapSize);
         setLocation(25, 25);
         
+        //add listener for auto fit upon resize events
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                super.componentResized(e);
+                zoomFit (fitToWidth, fitToHeight);
+            }
+        });
     }
 
     
@@ -122,15 +136,13 @@ public class MapPanel extends JPanel {
         layeredPane.setPreferredSize(currentMapSize);
         map.setBounds(0, 0, currentMapSize.width, currentMapSize.height);
         if (mapImage != null) {
-            mapImage.setBounds(0, 0, currentMapSize.width, currentMapSize.height);
-            mapImage.setPreferredSize(currentMapSize);
-            mapImage.zoom(map.getZoomStep());
-            // FIXME setBounds() seems to be sufficient to resize a JSVGCanvas, but it doesn't always work...
+            mapImage.setBoundsAndResize(currentMapSize,map.getZoomStep());
         }
         layeredPane.revalidate();
     }
     
     public void zoom (boolean in) {
+        removeFitToOption();
         map.zoom(in);
         adjustToNewMapZoom();
     }
@@ -141,6 +153,8 @@ public class MapPanel extends JPanel {
      * determined on top of that. 
      */
     private void zoomFit (boolean fitToWidth, boolean fitToHeight) {
+        if (!fitToWidth && !fitToHeight) return;
+        
         ImageLoader imageLoader = GameUIManager.getImageLoader();
         int zoomStep = map.getZoomStep();
 
@@ -212,16 +226,30 @@ public class MapPanel extends JPanel {
         adjustToNewMapZoom();
     }
     
+    private void fitToOption (boolean fitToWidth, boolean fitToHeight) {
+        //ignore if nothing has changed
+        if (this.fitToWidth == fitToWidth && this.fitToHeight == fitToHeight ) return;
+        
+        this.fitToWidth = fitToWidth;
+        this.fitToHeight = fitToHeight;
+        zoomFit(fitToWidth, fitToHeight);
+    }
+    
     public void fitToWindow () {
-        zoomFit (true, true);
+        fitToOption (true, true);
     }
     
     public void fitToWidth () {
-        zoomFit (true, false);
+        fitToOption (true, false);
     }
     
     public void fitToHeight () {
-        zoomFit (false, true);
+        fitToOption (false, true);
+    }
+    
+    public void removeFitToOption () {
+        fitToWidth = false;
+        fitToHeight = false;
     }
     
     public void keyPressed(KeyEvent e) {
