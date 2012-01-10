@@ -139,6 +139,9 @@ public class MapPanel extends JPanel {
         if (mapImage != null) {
             mapImage.setBoundsAndResize(currentMapSize,map.getZoomStep());
         }
+        //access from map panel to or panel not nice but currently necessary for route drawing
+        if (gameUIManager.getORUIManager() != null && gameUIManager.getORUIManager().getORPanel() != null)
+            gameUIManager.getORUIManager().getORPanel().redrawRoutes();
         layeredPane.revalidate();
     }
     

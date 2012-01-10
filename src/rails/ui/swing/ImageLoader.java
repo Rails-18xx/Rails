@@ -150,6 +150,9 @@ public class ImageLoader {
         for (int i = 0 ; i < zoomFactors.length ; i++) {
             zoomFactors[i] = 0;
         }
+        
+        //invalidate buffered tile scalings
+        if (tileMap != null) tileMap.clear();
     }
     
     public void resetAdjustmentFactor() {

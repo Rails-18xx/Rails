@@ -792,7 +792,7 @@ implements ActionListener, KeyListener, RevenueListener {
         disableRoutesDisplay();
     }
 
-    private void redrawRoutes() {
+    public void redrawRoutes() {
         if (revenueAdapter != null && isDisplayRoutes()) {
             revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
         }
@@ -829,19 +829,16 @@ implements ActionListener, KeyListener, RevenueListener {
             fitToWidth.setSelected(false);
             fitToHeight.setSelected(false);
             orWindow.getMapPanel().zoom(true);
-            redrawRoutes();
         } else if (source == zoomOut) {
             fitToWindow.setSelected(false);
             fitToWidth.setSelected(false);
             fitToHeight.setSelected(false);
             orWindow.getMapPanel().zoom(false);
-            redrawRoutes();
         } else if (source == fitToWindow) {
             if (fitToWindow.isSelected()) {
                 fitToWidth.setSelected(false);
                 fitToHeight.setSelected(false);
                 orWindow.getMapPanel().fitToWindow();
-                redrawRoutes();
             } else {
                 orWindow.getMapPanel().removeFitToOption();
             }
@@ -850,7 +847,6 @@ implements ActionListener, KeyListener, RevenueListener {
                 fitToWindow.setSelected(false);
                 fitToHeight.setSelected(false);
                 orWindow.getMapPanel().fitToWidth();
-                redrawRoutes();
             } else {
                 orWindow.getMapPanel().removeFitToOption();
             }
@@ -859,7 +855,6 @@ implements ActionListener, KeyListener, RevenueListener {
                 fitToWindow.setSelected(false);
                 fitToWidth.setSelected(false);
                 orWindow.getMapPanel().fitToHeight();
-                redrawRoutes();
             } else {
                 orWindow.getMapPanel().removeFitToOption();
             }
