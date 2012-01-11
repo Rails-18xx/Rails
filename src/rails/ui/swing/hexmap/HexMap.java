@@ -178,7 +178,7 @@ public abstract class HexMap implements MouseListener,
                         pathRect.x - margin,
                         pathRect.y - margin,
                         pathRect.width + margin * 2,
-                        pathRect.y + margin * 2);
+                        pathRect.height + margin * 2);
                 if (r == null) {
                     r = pathMarginRect;
                 } else {
