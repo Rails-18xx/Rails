@@ -8,9 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
 public class MessagePanel extends JPanel {
     private static final long serialVersionUID = 1L;
+    
+    //the height of this panel (fixed because scroll bar is used)
+    public static final int fixedHeight = 45;
+    public static final int scrollUnit = 8;
 
     private JLabel message;
     
@@ -25,14 +30,14 @@ public class MessagePanel extends JPanel {
         super();
 
         setBackground(background);
-        setLines(1);
-        setBorder(BorderFactory.createLoweredBevelBorder());
-
+        setBorder(new EmptyBorder(0,0,0,0));
+        
         message = new JLabel("");
         message.setBackground(background);
         message.setVerticalAlignment(SwingConstants.CENTER);
         message.setHorizontalAlignment(SwingConstants.CENTER);
         message.setOpaque(true);
+        
         add(message);
         message.setVisible(true);
         setVisible(true);
@@ -99,10 +104,6 @@ public class MessagePanel extends JPanel {
     public void addDetail(String detailText) {
         currentDetails.add("<BR>" + detailText);
         updateMessageText();
-    }
-
-    public void setLines(int numberOfLines) {
-        setSize(1000, numberOfLines * 12);
     }
 
 }
