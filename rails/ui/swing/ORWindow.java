@@ -2,13 +2,17 @@
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.border.EmptyBorder;
 
 import org.apache.log4j.Logger;
 
@@ -61,7 +65,12 @@ public class ORWindow extends JFrame implements ActionPerformer {
         getContentPane().setLayout(new BorderLayout());
 
         messagePanel = new MessagePanel();
-        getContentPane().add(messagePanel, BorderLayout.NORTH);
+        JScrollPane slider = new JScrollPane(messagePanel);
+        slider.setBorder(BorderFactory.createLoweredBevelBorder());
+        slider.getVerticalScrollBar().setUnitIncrement(MessagePanel.scrollUnit);
+        slider.setPreferredSize(new Dimension(100,MessagePanel.fixedHeight));
+
+        getContentPane().add(slider, BorderLayout.NORTH);
 
         mapPanel = new MapPanel(gameUIManager);
         getContentPane().add(mapPanel, BorderLayout.CENTER);
