@@ -9,7 +9,6 @@ import java.util.List;
 import javax.swing.*;
 
 import org.apache.log4j.Logger;
-
 import org.jgrapht.graph.SimpleGraph;
 
 import rails.algorithms.*;
@@ -61,7 +60,7 @@ implements ActionListener, KeyListener, RevenueListener {
     private JMenuItem zoomIn, zoomOut, fitToWindow, fitToWidth, fitToHeight, calibrateMap;
     private ActionMenuItem takeLoans;
     private ActionMenuItem repayLoans;
-    
+
     // Grid elements per function
     private Caption leftCompName[];
     private int leftCompNameXOffset, leftCompNameYOffset;
@@ -102,7 +101,7 @@ implements ActionListener, KeyListener, RevenueListener {
     private boolean hasRights;
 
     private Caption tileCaption, tokenCaption, revenueCaption, trainCaption,
-            privatesCaption, loansCaption;
+    privatesCaption, loansCaption;
 
     private ActionButton buttonOC; // sfy: button for operating costs
     private ActionButton button1;
@@ -116,13 +115,13 @@ implements ActionListener, KeyListener, RevenueListener {
     private int orCompIndex = -1;
 
     private PublicCompanyI orComp = null;
-    
+
     private boolean isRevenueValueToBeSet = false;
     private RevenueAdapter revenueAdapter = null;
     private Thread revenueThread = null;
 
     protected static Logger log =
-            Logger.getLogger(ORPanel.class.getPackage().getName());
+        Logger.getLogger(ORPanel.class.getPackage().getName());
 
     public ORPanel(ORWindow parent, ORUIManager orUIManager) {
         super();
@@ -141,7 +140,7 @@ implements ActionListener, KeyListener, RevenueListener {
         parentFrame = parent;
 
         round = gameUIManager.getCurrentRound();
-//        noMapMode = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.NO_MAP_MODE);
+        //        noMapMode = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.NO_MAP_MODE);
         privatesCanBeBought = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.CAN_ANY_COMPANY_BUY_PRIVATES);
         bonusTokensExist = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.DO_BONUS_TOKENS_EXIST);
         hasCompanyLoans = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_ANY_COMPANY_LOANS);
@@ -168,7 +167,7 @@ implements ActionListener, KeyListener, RevenueListener {
         infoMenu = new JMenu(LocalText.getText("Info"));
         infoMenu.setEnabled(true);
         remainingTilesMenuItem =
-                new JMenuItem(LocalText.getText("RemainingTiles"));
+            new JMenuItem(LocalText.getText("RemainingTiles"));
         remainingTilesMenuItem.addActionListener(this);
         remainingTilesMenuItem.setActionCommand(REM_TILES_CMD);
         infoMenu.add(remainingTilesMenuItem);
@@ -240,14 +239,14 @@ implements ActionListener, KeyListener, RevenueListener {
         JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem(name);
         menuItem.addActionListener(this);
         menuItem.setEnabled(true);
-        
+
         //check whether this is the default fit to option
         if (name.equalsIgnoreCase(Config.get("map.defaultZoomFitOption"))) {
             menuItem.setSelected(true);
         }
         return menuItem;
     }
-    
+
     public void recreate(OperatingRound or) {
         log.debug("ORPanel.recreate() called");
 
@@ -260,11 +259,11 @@ implements ActionListener, KeyListener, RevenueListener {
 
         // Create new fields
         initFields();
-        
+
         // update the networkInfo menu
         // TODO: This relies on a recreate as soon as companies have changed
         addNetworkInfo();
-        
+
         repaint();
     }
 
@@ -333,7 +332,7 @@ implements ActionListener, KeyListener, RevenueListener {
             public void mouseReleased(MouseEvent e) {}
         };
     }
-    
+
     private void initFields() {
         leftCompName = new Caption[nc];
         rightCompName = new Caption[nc];
@@ -360,7 +359,7 @@ implements ActionListener, KeyListener, RevenueListener {
         leftCompNameYOffset = 2;
         int currentXOffset = leftCompNameXOffset;
         int lastXWidth = 0;
-        
+
         MouseListener companyCaptionMouseClickListener = getCompanyCaptionMouseClickListener();
 
         /* Top titles */
@@ -399,7 +398,7 @@ implements ActionListener, KeyListener, RevenueListener {
             addField (loansCaption = new Caption(LocalText.getText("LOANS")),
                     loansXOffset, 0, lastXWidth = 1, 2, WIDE_RIGHT);
         }
-        
+
         if (hasRights) {
             rightsXOffset = currentXOffset += lastXWidth;
             rightsYOffset = leftCompNameYOffset;
@@ -413,7 +412,7 @@ implements ActionListener, KeyListener, RevenueListener {
                 lastXWidth = 2, 1, WIDE_RIGHT);
         addField(new Caption("laid"), tilesXOffset, 1, 1, 1, WIDE_BOTTOM);
         addField(new Caption("cost"), tilesXOffset + 1, 1, 1, 1, WIDE_BOTTOM
-                                                                 + WIDE_RIGHT);
+                + WIDE_RIGHT);
 
         tokensXOffset = currentXOffset += lastXWidth;
         tokensYOffset = leftCompNameYOffset;
@@ -435,7 +434,7 @@ implements ActionListener, KeyListener, RevenueListener {
                 lastXWidth = 2, 1, WIDE_RIGHT);
         addField(new Caption("earned"), revXOffset, 1, 1, 1, WIDE_BOTTOM);
         addField(new Caption("payout"), revXOffset + 1, 1, 1, 1, WIDE_BOTTOM
-                                                                 + WIDE_RIGHT);
+                + WIDE_RIGHT);
 
         trainsXOffset = currentXOffset += lastXWidth;
         trainsYOffset = leftCompNameYOffset;
@@ -443,7 +442,7 @@ implements ActionListener, KeyListener, RevenueListener {
                 lastXWidth = 2, 1, WIDE_RIGHT);
         addField(new Caption("owned"), trainsXOffset, 1, 1, 1, WIDE_BOTTOM);
         addField(new Caption("cost"), trainsXOffset + 1, 1, 1, 1, WIDE_BOTTOM
-                                                                  + WIDE_RIGHT);
+                + WIDE_RIGHT);
 
         rightCompNameXOffset = currentXOffset += lastXWidth;
         rightCompNameYOffset = leftCompNameYOffset;
@@ -456,7 +455,7 @@ implements ActionListener, KeyListener, RevenueListener {
         for (int i = 0; i < nc; i++) {
             c = companies[i];
             rowVisibilityObservers[i]
-                    = new RowVisibility (this, leftCompNameYOffset + i, c.getInGameModel(), true);
+                                   = new RowVisibility (this, leftCompNameYOffset + i, c.getInGameModel(), true);
             observers.add(rowVisibilityObservers[i]);
 
             boolean visible = !c.isClosed();
@@ -465,17 +464,17 @@ implements ActionListener, KeyListener, RevenueListener {
             f.setBackground(c.getBgColour());
             f.setForeground(c.getFgColour());
             HexHighlightMouseListener.addMouseListener(f,
-                    orUIManager,(PublicCompanyI)c,false);
+                    orUIManager,c,false);
             f.addMouseListener(companyCaptionMouseClickListener);
             f.setToolTipText(LocalText.getText("NetworkInfoDialogTitle",c.getName()));
             addField(f, leftCompNameXOffset, leftCompNameYOffset + i, 1, 1,
                     WIDE_RIGHT, visible);
 
             f =
-                    president[i] =
-//                            new Field(c.hasStarted() && !c.isClosed()
-//                                    ? c.getPresident().getNameAndPriority() : "");
-                        new Field(c.getPresidentModel());
+                president[i] =
+                    //                            new Field(c.hasStarted() && !c.isClosed()
+                    //                                    ? c.getPresident().getNameAndPriority() : "");
+                    new Field(c.getPresidentModel());
             addField(f, presidentXOffset, presidentYOffset + i, 1, 1, 0, visible);
 
             f = sharePrice[i] = new Field(c.getCurrentPriceModel());
@@ -486,17 +485,17 @@ implements ActionListener, KeyListener, RevenueListener {
 
             if (privatesCanBeBought) {
                 f =
-                        privates[i] =
-                                new Field(
-                                        c.getPortfolio().getPrivatesOwnedModel());
+                    privates[i] =
+                        new Field(
+                                c.getPortfolio().getPrivatesOwnedModel());
                 HexHighlightMouseListener.addMouseListener(f,
                         orUIManager,c.getPortfolio());
                 addField(f, privatesXOffset, privatesYOffset + i, 1, 1,
                         WIDE_RIGHT, visible);
 
                 f =
-                        newPrivatesCost[i] =
-                                new Field(c.getPrivatesSpentThisTurnModel());
+                    newPrivatesCost[i] =
+                        new Field(c.getPrivatesSpentThisTurnModel());
                 addField(f, privatesXOffset + 1, privatesYOffset + i, 1, 1,
                         WIDE_RIGHT, visible);
             }
@@ -510,7 +509,7 @@ implements ActionListener, KeyListener, RevenueListener {
                 }
                 addField (f, loansXOffset, loansYOffset + i, 1, 1, WIDE_RIGHT, visible);
             }
-            
+
             if (hasRights) {
                 f = rights[i] = new Field (c.getRightsModel());
                 addField (f, rightsXOffset, rightsYOffset + i, 1, 1, WIDE_RIGHT, visible);
@@ -560,7 +559,7 @@ implements ActionListener, KeyListener, RevenueListener {
             f.setBackground(companies[i].getBgColour());
             f.setForeground(companies[i].getFgColour());
             HexHighlightMouseListener.addMouseListener(f,
-                    orUIManager,(PublicCompanyI)c,false);
+                    orUIManager,c,false);
             f.addMouseListener(companyCaptionMouseClickListener);
             f.setToolTipText(LocalText.getText("NetworkInfoDialogTitle",c.getName()));
             addField(f, rightCompNameXOffset, rightCompNameYOffset + i, 1, 1, 0,  visible);
@@ -571,30 +570,30 @@ implements ActionListener, KeyListener, RevenueListener {
 
     protected void addCompanyInfo() {
 
-    	CompanyManagerI cm = orUIManager.getGameUIManager().getGameManager().getCompanyManager();
-    	List<CompanyTypeI> comps = cm.getCompanyTypes();
-    	JMenu compMenu, menu, item;
+        CompanyManagerI cm = orUIManager.getGameUIManager().getGameManager().getCompanyManager();
+        List<CompanyTypeI> comps = cm.getCompanyTypes();
+        JMenu compMenu, menu, item;
 
         compMenu = new JMenu(LocalText.getText("Companies"));
         compMenu.setEnabled(true);
         infoMenu.add(compMenu);
 
-    	for (CompanyTypeI type : comps) {
-    		menu = new JMenu (LocalText.getText(type.getName()));
-    		menu.setEnabled(true);
+        for (CompanyTypeI type : comps) {
+            menu = new JMenu (LocalText.getText(type.getName()));
+            menu.setEnabled(true);
             compMenu.add(menu);
 
-    		for (CompanyI comp : type.getCompanies()) {
-    			item = new JMenu(comp.getName());
-    			item.setEnabled(true);
-    			JMenuItem menuItem = new JMenuItem(comp.getInfoText());
-    			if (comp instanceof PrivateCompanyI) {
-    			    //highlighting on menu items always enabled irrespective of config
+            for (CompanyI comp : type.getCompanies()) {
+                item = new JMenu(comp.getName());
+                item.setEnabled(true);
+                JMenuItem menuItem = new JMenuItem(comp.getInfoText());
+                if (comp instanceof PrivateCompanyI) {
+                    //highlighting on menu items always enabled irrespective of config
                     HexHighlightMouseListener.addMouseListener(menuItem,
                             orUIManager,(PrivateCompanyI)comp,true);
                     HexHighlightMouseListener.addMouseListener(item,
                             orUIManager,(PrivateCompanyI)comp,true);
-    			}
+                }
                 if (comp instanceof PublicCompanyI) {
                     //highlighting on menu items always enabled irrespective of config
                     HexHighlightMouseListener.addMouseListener(menuItem,
@@ -603,9 +602,9 @@ implements ActionListener, KeyListener, RevenueListener {
                             orUIManager,(PublicCompanyI)comp,true);
                 }
                 item.add(menuItem);
-    			menu.add(item);
-    		}
-    	}
+                menu.add(item);
+            }
+        }
     }
 
     protected void addTrainsInfo() {
@@ -670,16 +669,16 @@ implements ActionListener, KeyListener, RevenueListener {
         networkInfoMenu.setEnabled(true);
         infoMenu.add(networkInfoMenu);
     }
-    
+
     protected JMenu createNetworkInfo() {
 
         boolean route_highlight = orUIManager.gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.ROUTE_HIGHLIGHT);
-        boolean revenue_suggest = orUIManager.gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.REVENUE_SUGGEST); 
-        
-        if (!route_highlight && !revenue_suggest) return null; 
-        
+        boolean revenue_suggest = orUIManager.gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.REVENUE_SUGGEST);
+
+        if (!route_highlight && !revenue_suggest) return null;
+
         JMenu networkMenu = new JMenu(LocalText.getText("NetworkInfo"));
-        
+
         //network graphs only for developers
         if (route_highlight && Game.getDevelop()) {
             JMenuItem item = new JMenuItem("Network");
@@ -687,7 +686,7 @@ implements ActionListener, KeyListener, RevenueListener {
             item.setActionCommand(NETWORK_INFO_CMD);
             networkMenu.add(item);
         }
-        
+
         if (revenue_suggest) {
             CompanyManagerI cm = orUIManager.getGameUIManager().getGameManager().getCompanyManager();
             for (PublicCompanyI comp : cm.getAllPublicCompanies()) {
@@ -698,35 +697,35 @@ implements ActionListener, KeyListener, RevenueListener {
                 networkMenu.add(item);
             }
         }
-        
+
         return networkMenu;
     }
-    
+
     protected void executeNetworkInfo(String companyName) {
         GameManagerI gm = orUIManager.getGameUIManager().getGameManager();
-        
+
         if (companyName.equals("Network")) {
             NetworkGraphBuilder nwGraph = NetworkGraphBuilder.create(gm);
             SimpleGraph<NetworkVertex, NetworkEdge> mapGraph = nwGraph.getMapGraph();
-            
-//            NetworkGraphBuilder.visualize(mapGraph, "Map Network");
+
+            //            NetworkGraphBuilder.visualize(mapGraph, "Map Network");
             mapGraph = NetworkGraphBuilder.optimizeGraph(mapGraph);
             NetworkGraphBuilder.visualize(mapGraph, "Optimized Map Network");
         } else {
             CompanyManagerI cm = gm.getCompanyManager();
             PublicCompanyI company = cm.getPublicCompany(companyName);
             //handle the case of invalid parameters
-            //could occur if the method is not invoked by the menu (but by the click listener) 
+            //could occur if the method is not invoked by the menu (but by the click listener)
             if (company == null) return;
-//
-//            NetworkGraphBuilder nwGraph = NetworkGraphBuilder.create(gm);
-//            NetworkCompanyGraph companyGraph = NetworkCompanyGraph.create(nwGraph, company);
-//            companyGraph.createRouteGraph(false);
-//            companyGraph.createRevenueGraph(new ArrayList<NetworkVertex>());
-//            Multigraph<NetworkVertex, NetworkEdge> graph= companyGraph.createPhaseTwoGraph();
-//            NetworkGraphBuilder.visualize(graph, "Phase Two Company Network");
-//            JOptionPane.showMessageDialog(orWindow, 
-//                    "Vertices = " + graph.vertexSet().size() + ", Edges = " + graph.edgeSet().size());
+            //
+            //            NetworkGraphBuilder nwGraph = NetworkGraphBuilder.create(gm);
+            //            NetworkCompanyGraph companyGraph = NetworkCompanyGraph.create(nwGraph, company);
+            //            companyGraph.createRouteGraph(false);
+            //            companyGraph.createRevenueGraph(new ArrayList<NetworkVertex>());
+            //            Multigraph<NetworkVertex, NetworkEdge> graph= companyGraph.createPhaseTwoGraph();
+            //            NetworkGraphBuilder.visualize(graph, "Phase Two Company Network");
+            //            JOptionPane.showMessageDialog(orWindow,
+            //                    "Vertices = " + graph.vertexSet().size() + ", Edges = " + graph.edgeSet().size());
             List<String> addTrainList = new ArrayList<String>();
             boolean anotherTrain = true;
             RevenueAdapter ra = null;
@@ -742,24 +741,24 @@ implements ActionListener, KeyListener, RevenueListener {
                 log.debug("Revenue Value:" + revenueValue);
                 log.debug("Revenue Run:" + ra.getOptimalRunPrettyPrint(true));
                 ra.drawOptimalRunAsPath(orUIManager.getMap());
-                
+
                 if (!Game.getDevelop()) {
                     //parent component is ORPanel so that dialog won't hide the routes painted on the map
-                    JOptionPane.showMessageDialog(this, 
+                    JOptionPane.showMessageDialog(this,
                             LocalText.getText("NetworkInfoDialogMessage",company.getName(),Bank.format(revenueValue)) ,
                             LocalText.getText("NetworkInfoDialogTitle",company.getName()),
                             JOptionPane.INFORMATION_MESSAGE);
                     //train simulation only for developers
                     break;
                 }
-                
+
                 JOptionPane.showMessageDialog(orWindow, "RevenueValue = " + revenueValue +
                         "\nRevenueRun = \n" + ra.getOptimalRunPrettyPrint(true));
-                
+
                 String trainString =
                     JOptionPane.showInputDialog(null, "Enter train string (Examples: 5, 3+3, 4D, 6E, D)",
-                    "Add another train to run?",
-                    JOptionPane.QUESTION_MESSAGE);
+                            "Add another train to run?",
+                            JOptionPane.QUESTION_MESSAGE);
                 if (trainString == null || trainString.equals("")) {
                     anotherTrain = false;
                 } else {
@@ -773,7 +772,7 @@ implements ActionListener, KeyListener, RevenueListener {
             if (revenueAdapter != null) revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
         }
     }
-    
+
     private void appendInfoText (StringBuffer b, String text) {
         if (text == null || text.length() == 0) return;
         if (b.length() > 6) b.append("<br>");
@@ -797,7 +796,7 @@ implements ActionListener, KeyListener, RevenueListener {
             revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
         }
     }
-    
+
     public void actionPerformed(ActionEvent actor) {
 
         // What kind action has been taken?
@@ -904,7 +903,7 @@ implements ActionListener, KeyListener, RevenueListener {
         if (hasCompanyLoans) {
             loansCaption.setHighlight(false);
         }
-        
+
         for (JMenuItem item : menuItemsToReset) {
             item.setEnabled(false);
             if (item instanceof ActionMenuItem) {
@@ -912,7 +911,7 @@ implements ActionListener, KeyListener, RevenueListener {
             }
         }
         undoButton.setEnabled(false);
-        
+
     }
 
     public void resetORCompanyTurn(int orCompIndex) {
@@ -925,7 +924,7 @@ implements ActionListener, KeyListener, RevenueListener {
     public void resetCurrentRevenueDisplay() {
         setSelect(revenue[orCompIndex], revenueSelect[orCompIndex], false);
     }
-    
+
     /**
      * 
      * @return True if route should be displayed (at least for the set revenue step)
@@ -933,11 +932,11 @@ implements ActionListener, KeyListener, RevenueListener {
     private boolean isDisplayRoutes() {
         return (orUIManager.gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.ROUTE_HIGHLIGHT));
     }
-    
+
     private boolean isSuggestRevenue() {
         return (orUIManager.gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.REVENUE_SUGGEST));
     }
-    
+
     /**
      * 
      * @return True if the routes of the currently active company should be displayed.
@@ -947,7 +946,7 @@ implements ActionListener, KeyListener, RevenueListener {
         return (isDisplayRoutes()
                 && "yes".equalsIgnoreCase(Config.get("map.displayCurrentRoutes")));
     }
-    
+
     /**
      * any routes currently displayed on the map are removed
      * In addition, revenue adapter and its thread are interrupted / removed.
@@ -956,7 +955,7 @@ implements ActionListener, KeyListener, RevenueListener {
         clearRevenueAdapter();
         orUIManager.getMap().setTrainPaths(null);
     }
-    
+
     private void clearRevenueAdapter() {
         if (revenueThread != null) {
             revenueThread.interrupt();
@@ -967,9 +966,9 @@ implements ActionListener, KeyListener, RevenueListener {
             revenueAdapter = null;
         }
     }
-    
+
     private void updateCurrentRoutes(boolean isSetRevenueStep) {
-        
+
         // initialize and start the revenue adapter if routes to be displayed
         // or revenue to be suggested in the revenue step
         if (isDisplayCurrentRoutes() || (isSuggestRevenue() && isSetRevenueStep)) {
@@ -993,7 +992,7 @@ implements ActionListener, KeyListener, RevenueListener {
         }
 
     }
-    
+
     public void initORCompanyTurn(PublicCompanyI orComp, int orCompIndex) {
 
         this.orComp = orComp;
@@ -1009,7 +1008,7 @@ implements ActionListener, KeyListener, RevenueListener {
         button1.setEnabled(false);
         button2.setEnabled(false);
         button3.setEnabled(false);
-        
+
         updateCurrentRoutes(false);
 
     }
@@ -1018,7 +1017,7 @@ implements ActionListener, KeyListener, RevenueListener {
 
         tileCaption.setHighlight(true);
         button1.setVisible(false);
-        
+
     }
 
     public void initTokenLayingStep() {
@@ -1034,7 +1033,7 @@ implements ActionListener, KeyListener, RevenueListener {
 
         revenueCaption.setHighlight(true);
         revenueSelect[orCompIndex].setValue(action.getPresetRevenue());
-        
+
         setSelect(revenue[orCompIndex], revenueSelect[orCompIndex], true);
 
         button1.setText(LocalText.getText("SET_REVENUE"));
@@ -1043,7 +1042,7 @@ implements ActionListener, KeyListener, RevenueListener {
         button1.setMnemonic(KeyEvent.VK_R);
         button1.setEnabled(true);
         button1.setVisible(true);
-        
+
         //indicate interest in setting revenue values (and not only displaying routes)
         updateCurrentRoutes(true);
     }
@@ -1062,12 +1061,12 @@ implements ActionListener, KeyListener, RevenueListener {
             }
         }
     }
-    
+
     public void stopRevenueUpdate() {
         isRevenueValueToBeSet = false;
     }
-    
-    
+
+
     public void initPayoutStep(int orCompIndex, SetDividend action,
             boolean withhold, boolean split, boolean payout) {
 
@@ -1205,6 +1204,14 @@ implements ActionListener, KeyListener, RevenueListener {
         button1.setMnemonic(KeyEvent.VK_R);
         button1.setEnabled(true);
         button1.setVisible(true);
+    }
+
+    public void disableButtons () {
+        button1.setEnabled(false);
+        button2.setEnabled(false);
+        button3.setEnabled(false);
+        undoButton.setEnabled(false);
+        redoButton.setEnabled(false);
     }
 
     public void finishORCompanyTurn(int orCompIndex) {

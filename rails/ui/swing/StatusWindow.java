@@ -23,7 +23,7 @@ import rails.ui.swing.elements.*;
  * This is also from where the ORWindow and StartRoundWindow are triggered.
  */
 public class StatusWindow extends JFrame implements ActionListener,
-        KeyListener, ActionPerformer {
+KeyListener, ActionPerformer {
     private static final long serialVersionUID = 1L;
 
     protected static final String QUIT_CMD = "Quit";
@@ -31,7 +31,7 @@ public class StatusWindow extends JFrame implements ActionListener,
     protected static final String SAVE_CMD = "Save";
 
     protected static final String RELOAD_CMD = "Reload";
-    
+
     protected static final String AUTOSAVELOAD_CMD = "AutoSaveLoad";
 
     protected static final String EXPORT_CMD = "Export";
@@ -78,7 +78,7 @@ public class StatusWindow extends JFrame implements ActionListener,
     private JMenuBar menuBar;
 
     private static JMenu fileMenu, optMenu, moveMenu, moderatorMenu,
-            specialMenu, correctionMenu;
+    specialMenu, correctionMenu;
 
     private JMenuItem menuItem;
 
@@ -87,14 +87,14 @@ public class StatusWindow extends JFrame implements ActionListener,
     private ActionMenuItem undoItem, forcedUndoItem, redoItem, redoItem2;
 
     protected static Logger log =
-            Logger.getLogger(StatusWindow.class.getPackage().getName());
+        Logger.getLogger(StatusWindow.class.getPackage().getName());
 
-//    GraphicsConfiguration graphicsConfiguration;
+    //    GraphicsConfiguration graphicsConfiguration;
 
-//    public StatusWindow(GraphicsConfiguration gc) {
-//        super(gc);
-//        this.graphicsConfiguration = gc;
-//    }
+    //    public StatusWindow(GraphicsConfiguration gc) {
+    //        super(gc);
+    //        this.graphicsConfiguration = gc;
+    //    }
 
     public void initMenu() {
         menuBar = new JMenuBar();
@@ -139,14 +139,14 @@ public class StatusWindow extends JFrame implements ActionListener,
         menuItem.setEnabled(true);
         fileMenu.add(menuItem);
 
-       // export menu item
-//        exportItem = new ActionMenuItem(LocalText.getText("EXPORT"));
-//        exportItem.setActionCommand(EXPORT_CMD);
-//        exportItem.addActionListener(this);
-//        exportItem.setEnabled(true);
-//        exportItem.setPossibleAction(new GameAction(GameAction.EXPORT));
-//        fileMenu.add(exportItem);
-//        fileMenu.addSeparator();
+        // export menu item
+        //        exportItem = new ActionMenuItem(LocalText.getText("EXPORT"));
+        //        exportItem.setActionCommand(EXPORT_CMD);
+        //        exportItem.addActionListener(this);
+        //        exportItem.setEnabled(true);
+        //        exportItem.setPossibleAction(new GameAction(GameAction.EXPORT));
+        //        fileMenu.add(exportItem);
+        //        fileMenu.addSeparator();
 
         menuItem = new JMenuItem(LocalText.getText("QUIT"));
         menuItem.setActionCommand(QUIT_CMD);
@@ -260,7 +260,7 @@ public class StatusWindow extends JFrame implements ActionListener,
         if ("yes".equalsIgnoreCase(Config.get("report.window.open"))) {
             enableCheckBoxMenuItem(REPORT_CMD);
         }
-}
+    }
 
     public StatusWindow() {
 
@@ -359,10 +359,10 @@ public class StatusWindow extends JFrame implements ActionListener,
         redoItem2.setEnabled(false);
         // SAVE, RELOAD, AUTOSAVELOAD are always enabled
     }
-        
-    public void setGameActions() {       
+
+    public void setGameActions() {
         List<GameAction> gameActions =
-                possibleActions.getType(GameAction.class);
+            possibleActions.getType(GameAction.class);
         if (gameActions != null) {
             for (GameAction na : gameActions) {
                 switch (na.getMode()) {
@@ -393,7 +393,7 @@ public class StatusWindow extends JFrame implements ActionListener,
 
         // currently only shows CorrectionModeActions
         List<CorrectionModeAction> corrections =
-                possibleActions.getType(CorrectionModeAction.class);
+            possibleActions.getType(CorrectionModeAction.class);
 
 
         if (corrections != null && !corrections.isEmpty()) {
@@ -435,15 +435,12 @@ public class StatusWindow extends JFrame implements ActionListener,
         if (!(currentRound instanceof StockRound || currentRound instanceof EndOfGameRound))
             return;
 
-        passButton.setEnabled(false);
-        autopassButton.setEnabled(false);
-
         log.debug ("MyTurn="+myTurn);
         if (!myTurn) {
             gameStatus.initTurn(getCurrentPlayer().getIndex(), false);
             return;
         }
-        
+
         // Moved here from StatusWindow_1856. It's getting generic...
         if (possibleActions.contains(DiscardTrain.class)) {
             immediateAction = possibleActions.getType(DiscardTrain.class).get(0);
@@ -457,7 +454,6 @@ public class StatusWindow extends JFrame implements ActionListener,
                     "TRADE_TREASURY_SHARES_TITLE",
                     ((TreasuryShareRound) currentRound).getOperatingCompany().getName()));
             gameStatus.initTurn(-1, true);
-            passButton.setEnabled(true);
 
         } else if ((currentRound instanceof ShareSellingRound)) {
             setTitle(LocalText.getText(
@@ -466,27 +462,26 @@ public class StatusWindow extends JFrame implements ActionListener,
             gameStatus.initTurn(getCurrentPlayer().getIndex(), true);
             gameStatus.setPriorityPlayer(gameUIManager.getPriorityPlayer().getIndex());
 
-            passButton.setEnabled(false);
             int cash =
-                    ((ShareSellingRound) currentRound).getRemainingCashToRaise();
+                ((ShareSellingRound) currentRound).getRemainingCashToRaise();
             if (!possibleActions.contains(SellShares.class)) {
-// should not occur anymore
-//                JOptionPane.showMessageDialog(this, LocalText.getText(
-//                        "YouMustRaiseCashButCannot", Bank.format(cash)), "",
-//                        JOptionPane.OK_OPTION);
+                // should not occur anymore
+                //                JOptionPane.showMessageDialog(this, LocalText.getText(
+                //                        "YouMustRaiseCashButCannot", Bank.format(cash)), "",
+                //                        JOptionPane.OK_OPTION);
                 /*
                  * For now assume that this ends the game (not true in all
                  * games)
                  * sfy: changed now
                  */
-//                JOptionPane.showMessageDialog(this,
-//                        gameUIManager.getGameManager().getGameReport(), "", JOptionPane.OK_OPTION);
+                //                JOptionPane.showMessageDialog(this,
+                //                        gameUIManager.getGameManager().getGameReport(), "", JOptionPane.OK_OPTION);
                 /*
                  * All other wrapping up has already been done when calling
                  * getSellableCertificates, so we can just finish now.
                  */
-//                finish();
-//                return;
+                //                finish();
+                //                return;
             } else {
                 JOptionPane.showMessageDialog(this, LocalText.getText(
                         "YouMustRaiseCash", Bank.format(cash)), "",
@@ -499,8 +494,6 @@ public class StatusWindow extends JFrame implements ActionListener,
                     String.valueOf(((StockRound) currentRound).getStockRoundNumber())));
             gameStatus.initTurn(getCurrentPlayer().getIndex(), true);
             gameStatus.setPriorityPlayer(gameUIManager.getPriorityPlayer().getIndex());
-
-            passButton.setEnabled(true);
         }
 
         // New special action handling
@@ -509,7 +502,7 @@ public class StatusWindow extends JFrame implements ActionListener,
 
         // Special properties
         List<UseSpecialProperty> sps =
-                possibleActions.getType(UseSpecialProperty.class);
+            possibleActions.getType(UseSpecialProperty.class);
         for (ActionMenuItem item : specialActionItems) {
             item.removeActionListener(this);
         }
@@ -548,7 +541,7 @@ public class StatusWindow extends JFrame implements ActionListener,
         autopassButton.setEnabled(false);
 
         List<NullAction> inactiveItems =
-                possibleActions.getType(NullAction.class);
+            possibleActions.getType(NullAction.class);
         if (inactiveItems != null) {
 
             for (NullAction na : inactiveItems) {
@@ -580,6 +573,11 @@ public class StatusWindow extends JFrame implements ActionListener,
         pack();
 
         toFront();
+    }
+
+    public void disableButtons () {
+        passButton.setEnabled(false);
+        autopassButton.setEnabled(false);
     }
 
     /** Stub, may be overridden in game-specific subclasses */
@@ -744,9 +742,9 @@ public class StatusWindow extends JFrame implements ActionListener,
      * End of Game processing
      */
     public void endOfGame() {
-//        setVisible(true);
-//        gameUIManager.reportWindow.setVisible(true);
-//        gameUIManager.stockChart.setVisible(true);
+        //        setVisible(true);
+        //        gameUIManager.reportWindow.setVisible(true);
+        //        gameUIManager.stockChart.setVisible(true);
 
         setTitle(LocalText.getText("EoGTitle"));
 

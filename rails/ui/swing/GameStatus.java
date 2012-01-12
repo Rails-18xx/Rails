@@ -746,6 +746,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                                         companyName),
                                         options.toArray(new String[0]), -1);
                         gameUIManager.setCurrentDialog(dialog, actions.get(0));
+                        parent.disableButtons();
                         return;
                     } else {
                         String sp =

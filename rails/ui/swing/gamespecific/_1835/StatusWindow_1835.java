@@ -25,7 +25,7 @@ public class StatusWindow_1835 extends StatusWindow {
     }
 
     @Override
-	public void init (GameUIManager gameUIManager) {
+    public void init (GameUIManager gameUIManager) {
         super.init(gameUIManager);
         prussian = gameUIManager.getGameManager().getCompanyManager().getPublicCompany(GameManager_1835.PR_ID);
     }
@@ -73,30 +73,31 @@ public class StatusWindow_1835 extends StatusWindow {
                     LocalText.getText("MergeMinorConfirm",
                             getCurrentPlayer().getName(),
                             GameManager_1835.M2_ID, GameManager_1835.PR_ID),
-                    "Yes",
-                    "No");
+                            "Yes",
+            "No");
         } else {
             // Ask if any other prePrussians should be folded
             String[] options = new String[foldables.size()];
             CompanyI company;
             for (int i=0; i<options.length; i++) {
-            	company = foldables.get(i);
-            	options[i] = LocalText.getText("MergeOption",
-            			company.getName(),
-            			company.getLongName(),
-            			prussian.getName(),
-            			((ExchangeForShare)(company.getSpecialProperties().get(0))).getShare()
-            			);
+                company = foldables.get(i);
+                options[i] = LocalText.getText("MergeOption",
+                        company.getName(),
+                        company.getLongName(),
+                        prussian.getName(),
+                        ((ExchangeForShare)(company.getSpecialProperties().get(0))).getShare()
+                );
             }
             currentDialog = new CheckBoxDialog (gameUIManager,
                     this,
                     LocalText.getText("Select"),
-                    LocalText.getText("SelectCompaniesToFold", 
+                    LocalText.getText("SelectCompaniesToFold",
                             getCurrentPlayer().getName(),
                             prussian.getLongName()),
-                    options);
+                            options);
         }
         gameUIManager.setCurrentDialog (currentDialog, action);
+        disableButtons();
     }
 
 }

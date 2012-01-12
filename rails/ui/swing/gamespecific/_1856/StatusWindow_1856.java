@@ -4,7 +4,8 @@ import javax.swing.WindowConstants;
 
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
-import rails.game.*;
+import rails.game.Bank;
+import rails.game.RoundI;
 import rails.game.action.*;
 import rails.game.specific._1856.CGRFormationRound;
 import rails.ui.swing.StatusWindow;
@@ -28,7 +29,7 @@ public class StatusWindow_1856 extends StatusWindow {
             //RepayLoans action = possibleActions.getType(RepayLoans.class).get(0);
             //repayLoans (action);
             immediateAction = possibleActions.getType(RepayLoans.class).get(0);
-        // Moved up
+            // Moved up
         } else if (possibleActions.contains(DiscardTrain.class)) {
             immediateAction = possibleActions.getType(DiscardTrain.class).get(0);
         } else if (possibleActions.contains(ExchangeTokens.class)) {
@@ -49,7 +50,7 @@ public class StatusWindow_1856 extends StatusWindow {
             immediateAction = null;
             repayLoans (nextAction);
             return true;
-           
+
             /* Moved up
         } else if (immediateAction instanceof DiscardTrain) {
             // Make a local copy and discard the original,
@@ -58,7 +59,7 @@ public class StatusWindow_1856 extends StatusWindow {
             immediateAction = null;
             gameUIManager.discardTrains (nextAction);
             return true;
-            */
+             */
         } else if (immediateAction instanceof ExchangeTokens) {
             // Make a local copy and discard the original,
             // so that it's not going to loop.
@@ -95,17 +96,18 @@ public class StatusWindow_1856 extends StatusWindow {
         String[] waitingMessages = DisplayBuffer.get();
         if (waitingMessages != null) {
             message = "<html>" + Util.joinWithDelimiter(waitingMessages, "<br>")
-                + "<br>" + message;
+            + "<br>" + message;
         }
 
-       RadioButtonDialog currentDialog = new RadioButtonDialog (gameUIManager,
+        RadioButtonDialog currentDialog = new RadioButtonDialog (gameUIManager,
                 this,
                 LocalText.getText("1856MergerDialog", action.getCompanyName()),
                 message,
                 options,
                 0);
-       currentDialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-       gameUIManager.setCurrentDialog (currentDialog, action);
+        currentDialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        gameUIManager.setCurrentDialog (currentDialog, action);
+        disableButtons();
     }
 
 }

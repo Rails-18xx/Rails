@@ -25,7 +25,7 @@ public class GameStatus_18EU extends GameStatus {
         int index;
 
         List<MergeCompanies> mergers =
-                possibleActions.getType(MergeCompanies.class);
+            possibleActions.getType(MergeCompanies.class);
         if (mergers != null) {
             for (MergeCompanies merger : mergers) {
                 mergingCompany = merger.getMergingCompany();
@@ -62,10 +62,10 @@ public class GameStatus_18EU extends GameStatus {
             for (PublicCompanyI target : targets) {
                 if (target != null) {
                     options[i++] =
-                            target.getName() + " " + target.getLongName();
+                        target.getName() + " " + target.getLongName();
                 } else {
                     options[i++] =
-                            LocalText.getText("CloseMinor", minor.getName());
+                        LocalText.getText("CloseMinor", minor.getName());
                 }
             }
 
@@ -76,6 +76,8 @@ public class GameStatus_18EU extends GameStatus {
                             minor.getName()),
                             options, -1);
             gameUIManager.setCurrentDialog(dialog, action);
+            parent.disableButtons();
+
         }
         return null;
     }
