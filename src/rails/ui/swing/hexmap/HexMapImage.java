@@ -85,7 +85,7 @@ public final class HexMapImage extends JSVGCanvas  {
                     initialized = true;
                     
                     //catch up on setting the bounds (if bounds setting were called before rendering prepare)
-                    if (initialMapSize != null) setBoundsAndResize(initialMapSize,initialZoomStep);
+                    setBoundsAndResize(hexMap.getCurrentSize(),hexMap.getZoomStep());
                 }
                 addGVTTreeRendererListener(null);
             }
