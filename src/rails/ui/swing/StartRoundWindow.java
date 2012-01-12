@@ -660,6 +660,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
         }
         currentDialog = dialog;
         currentDialogAction = action;
+        disableButtons();
     }
 
     public void dialogActionPerformed () {
@@ -683,6 +684,12 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
         } else {
             return;
         }
+    }
+
+    protected void disableButtons() {
+        bidButton.setEnabled(false);
+        buyButton.setEnabled(false);
+        passButton.setEnabled(false);
     }
 
     public void close() {

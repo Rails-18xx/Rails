@@ -24,7 +24,7 @@ import rails.game.state.Owner;
 import rails.ui.swing.elements.*;
 import rails.ui.swing.hexmap.GUIHex;
 import rails.ui.swing.hexmap.HexMap;
-import rails.util.*;
+import rails.util.Util;
 
 public class ORUIManager implements DialogOwner {
 
@@ -50,7 +50,7 @@ public class ORUIManager implements DialogOwner {
     protected PossibleActions possibleActions = PossibleActions.getInstance();
     private boolean privatesCanBeBoughtNow;
     public List<PossibleAction> mapRelatedActions =
-            new ArrayList<PossibleAction>();
+        new ArrayList<PossibleAction>();
 
     private boolean tileLayingEnabled = false;
     public List<LayTile> allowedTileLays = new ArrayList<LayTile>();
@@ -88,10 +88,10 @@ public class ORUIManager implements DialogOwner {
 
     /* Message key per substep */
     protected static final String[] messageKey =
-            new String[] { "Inactive", "SelectAHexForTile", "SelectATile",
-                    "RotateTile", "SelectAHexForToken", "SelectAToken",
-                    "ConfirmToken", "SetRevenue", "SelectPayout",
-                    "CorrectMap" };
+        new String[] { "Inactive", "SelectAHexForTile", "SelectATile",
+        "RotateTile", "SelectAHexForToken", "SelectAToken",
+        "ConfirmToken", "SetRevenue", "SelectPayout",
+    "CorrectMap" };
 
     protected static Logger log =
             LoggerFactory.getLogger(ORUIManager.class);
@@ -300,9 +300,9 @@ public class ORUIManager implements DialogOwner {
         // For now, this only has an effect during tile and token laying.
         // Perhaps we need to centralise message updating here in a later stage.
         log.debug("Calling updateMessage, subStep=" + localStep/*
-                                                                 * , new
-                                                                 * Exception("TRACE")
-                                                                 */);
+         * , new
+         * Exception("TRACE")
+         */);
         if (localStep == ORUIManager.INACTIVE) return;
 
         String message = LocalText.getText(ORUIManager.messageKey[localStep]);
@@ -353,9 +353,9 @@ public class ORUIManager implements DialogOwner {
             }
             if (normalTileMessage.length() > 1) {
                 message +=
-                        " "
-                                + LocalText.getText("TileColours",
-                                        normalTileMessage);
+                    " "
+                    + LocalText.getText("TileColours",
+                            normalTileMessage);
             }
 
         } else if (localStep == ORUIManager.SELECT_HEX_FOR_TOKEN) {
@@ -365,7 +365,7 @@ public class ORUIManager implements DialogOwner {
             StringBuffer normalTokenMessage = new StringBuffer(" ");
 
             List<LayBaseToken> tokenLays =
-                    possibleActions.getType(LayBaseToken.class);
+                possibleActions.getType(LayBaseToken.class);
             log.debug("There are " + tokenLays.size() + " TokenLay objects");
             int ii = 0;
             for (LayBaseToken tokenLay : tokenLays) {
@@ -384,7 +384,7 @@ public class ORUIManager implements DialogOwner {
             }
             if (normalTokenMessage.length() > 1) {
                 message += " " + LocalText.getText("NormalToken",
-                                        normalTokenMessage);
+                        normalTokenMessage);
             }
         }
         if (extraMessage.length() > 0) {
@@ -404,10 +404,10 @@ public class ORUIManager implements DialogOwner {
     public void processAction(String command, List<PossibleAction> actions) {
 
         if (actions != null && actions.size() > 0
-            && !processGameSpecificActions(actions)) {
+                && !processGameSpecificActions(actions)) {
 
             Class<? extends PossibleAction> actionType =
-                    actions.get(0).getClass();
+                actions.get(0).getClass();
 
             if (actionType == SetDividend.class) {
 
@@ -430,7 +430,7 @@ public class ORUIManager implements DialogOwner {
                 buyBonusToken ((BuyBonusToken)actions.get(0));
 
             } else if (actionType == NullAction.class
-                       || actionType == GameAction.class ) {
+                    || actionType == GameAction.class ) {
 
                 orWindow.process(actions.get(0));
 
@@ -499,7 +499,7 @@ public class ORUIManager implements DialogOwner {
             action.setActualRevenue(amount);
             if (amount == 0 || action.getRevenueAllocation() != SetDividend.UNKNOWN) {
                 log.debug("Allocation is known: "
-                          + action.getRevenueAllocation());
+                        + action.getRevenueAllocation());
                 orWindow.process(action);
             } else {
                 log.debug("Allocation is unknown, asking for it");
@@ -601,6 +601,7 @@ public class ORUIManager implements DialogOwner {
 
     public void setCurrentDialog (JDialog dialog, PossibleAction action) {
         gameUIManager.setCurrentDialog(dialog, action);
+        if (!(dialog instanceof MessageDialog)) orPanel.disableButtons();
     }
 
     public void hexClicked(GUIHex clickedHex, GUIHex selectedHex) {
@@ -632,10 +633,10 @@ public class ORUIManager implements DialogOwner {
                 return;
             }
             List<LayToken> allowances =
-                    map.getTokenAllowanceForHex(clickedHex.getHexModel());
+                map.getTokenAllowanceForHex(clickedHex.getHexModel());
             if (allowances.size() > 0) {
                 log.debug("Hex " + clickedHex.getName()
-                          + " clicked, allowances:");
+                        + " clicked, allowances:");
                 for (LayToken allowance : allowances) {
                     log.debug(allowance.toString());
                 }
@@ -649,7 +650,7 @@ public class ORUIManager implements DialogOwner {
 
         } else if (tileLayingEnabled) {
             if (localStep == ROTATE_OR_CONFIRM_TILE
-                && clickedHex == selectedHex) {
+                    && clickedHex == selectedHex) {
                 selectedHex.rotateTile();
                 return;
 
@@ -664,16 +665,16 @@ public class ORUIManager implements DialogOwner {
                     setLocalStep(SELECT_HEX_FOR_TILE);
                 } else {
                     if (clickedHex.getHexModel().isUpgradeableNow())
-                    /*
-                     * Direct call to Model to be replaced later by use of
-                     * allowedTilesPerHex. Would not work yet.
-                     */
+                        /*
+                         * Direct call to Model to be replaced later by use of
+                         * allowedTilesPerHex. Would not work yet.
+                         */
                     {
                         map.selectHex(clickedHex);
                         setLocalStep(SELECT_TILE);
                     } else {
                         JOptionPane.showMessageDialog(mapPanel,
-                                "This hex cannot be upgraded now");
+                        "This hex cannot be upgraded now");
                     }
                 }
             }
@@ -699,11 +700,11 @@ public class ORUIManager implements DialogOwner {
 
         // Check if the new tile must be connected to some other track
         boolean mustConnect =
-                tile.getColourName().equalsIgnoreCase(Tile.YELLOW_COLOUR_NAME)
-                // Does not apply to the current company's home hex(es)
-                        && !hex.getHexModel().isHomeFor(orComp)
-                        // Does not apply to special tile lays
-                        && !isUnconnectedTileLayTarget(hex);
+            tile.getColourName().equalsIgnoreCase(Tile.YELLOW_COLOUR_NAME)
+            // Does not apply to the current company's home hex(es)
+            && !hex.getHexModel().isHomeFor(orComp)
+            // Does not apply to special tile lays
+            && !isUnconnectedTileLayTarget(hex);
 
         if (hex.dropTile(tileId, mustConnect)) {
             /* Lay tile */
@@ -711,7 +712,7 @@ public class ORUIManager implements DialogOwner {
         } else {
             /* Tile cannot be laid in a valid orientation: refuse it */
             JOptionPane.showMessageDialog(mapPanel,
-                    "This tile cannot be laid in a valid orientation.");
+            "This tile cannot be laid in a valid orientation.");
             tileUpgrades.remove(tile);
             setLocalStep(ORUIManager.SELECT_TILE);
             upgradePanel.showUpgrades();
@@ -723,7 +724,7 @@ public class ORUIManager implements DialogOwner {
         MapHex mapHex = hex.getHexModel();
         for (LayTile action : possibleActions.getType(LayTile.class)) {
             if (action.getType() == LayTile.SPECIAL_PROPERTY
-                && action.getSpecialProperty().getLocations().contains(mapHex)) {
+                    && action.getSpecialProperty().getLocations().contains(mapHex)) {
                 // log.debug(hex.getName()+" is a special property target");
                 return true;
             }
@@ -750,7 +751,7 @@ public class ORUIManager implements DialogOwner {
 
         if (selectedHex != null && selectedHex.canFixTile()) {
             List<LayTile> allowances =
-                    map.getTileAllowancesForHex(selectedHex.getHexModel());
+                map.getTileAllowancesForHex(selectedHex.getHexModel());
             LayTile allowance = null;
             Tile tile = selectedHex.getProvisionalTile();
             if (allowances.size() == 1) {
@@ -773,7 +774,7 @@ public class ORUIManager implements DialogOwner {
                                 && !sp_tiles.contains(tile)) continue;
                         // 2. SP refers to specified hexes, (one of) which is chosen:
                         // (example: 1830 hex B20)
-                        if ((sp_hexes = lt.getLocations()) != null 
+                        if ((sp_hexes = lt.getLocations()) != null
                                 && !sp_hexes.contains(selectedHex.getModel())) continue;
                         spec_lt = lt;
                     } else {
@@ -781,12 +782,12 @@ public class ORUIManager implements DialogOwner {
                         gen_lt = lt;
                     }
                 }
-                
+
                 allowance = spec_lt == null ? gen_lt :
-                            gen_lt == null ? spec_lt :
-                            spec_lt.getSpecialProperty().getPriority() 
+                    gen_lt == null ? spec_lt :
+                        spec_lt.getSpecialProperty().getPriority()
                                 == SpecialProperty.Priority.FIRST ? spec_lt : gen_lt;
-                
+
             }
             allowance.setChosenHex(selectedHex.getHexModel());
             allowance.setOrientation(selectedHex.getProvisionalTileRotation());
@@ -839,11 +840,11 @@ public class ORUIManager implements DialogOwner {
                     if (city.hasTokenSlotsLeft()) {
                         prompt = LocalText.getText(
                                 "SelectStationForTokenOption",
-                                        city.getNumber(),
+                                city.getNumber(),
                                          selectedHex.getModel().getConnectionString(
-                                        		selectedHex.getCurrentTile(),
-                                        		selectedHex.getModel().getCurrentTileRotation(),
-                                        		city.getRelatedStation().getNumber())) ;
+                                        selectedHex.getCurrentTile(),
+                                        		((MapHex) selectedHex.getModel()).getCurrentTileRotation(),
+                                        city.getRelatedStation().getNumber())) ;
                         prompts.add(prompt);
                         promptToCityMap.put(prompt, city);
                     }
@@ -851,17 +852,17 @@ public class ORUIManager implements DialogOwner {
                 if (prompts.isEmpty()) {
                     return;
                 }
-                    // If more than one City to choose from, ask the player. Otherwise use Element zero (first) for the station.
+                // If more than one City to choose from, ask the player. Otherwise use Element zero (first) for the station.
                 if (prompts.size() > 1) {
                     String selected =
-                       (String) JOptionPane.showInputDialog(orWindow,
-                                 LocalText.getText("SelectStationForToken",
-                                		 action.getPlayerName(),
-                                		 selectedHex.getName(),
-                                		 action.getCompanyName()),
-                                 LocalText.getText("WhichStation"),
-                                 JOptionPane.PLAIN_MESSAGE, null,
-                                 prompts.toArray(), prompts.get(0));
+                        (String) JOptionPane.showInputDialog(orWindow,
+                                LocalText.getText("SelectStationForToken",
+                                        action.getPlayerName(),
+                                        selectedHex.getName(),
+                                        action.getCompanyName()),
+                                        LocalText.getText("WhichStation"),
+                                        JOptionPane.PLAIN_MESSAGE, null,
+                                        prompts.toArray(), prompts.get(0));
                     if (selected == null) return;
                     station = promptToCityMap.get(selected).getNumber();
                 } else {
@@ -895,7 +896,7 @@ public class ORUIManager implements DialogOwner {
         MapHex hex = action.getChosenHex();
         Tile newTile = action.getLaidTile();
         Tile oldTile = hex.getCurrentTile();
-         if (!action.isRelayBaseTokens()
+        if (!action.isRelayBaseTokens()
                 && !oldTile.relayBaseTokensOnUpgrade()) return;
         for (Stop oldStop : hex.getStops()) {
             if (oldStop.hasTokens()) {
@@ -911,9 +912,9 @@ public class ORUIManager implements DialogOwner {
                         prompt = LocalText.getText("SelectStationForTokenOption",
                                 newStation.getNumber(),
                                 hex.getConnectionString(
-                                    newTile,
-                                    action.getOrientation(),
-                                    newStation.getNumber()) );
+                                        newTile,
+                                        action.getOrientation(),
+                                        newStation.getNumber()) );
                         prompts.add(prompt);
                         promptToCityMap.put(prompt, newStation.getNumber());
                     }
@@ -923,21 +924,21 @@ public class ORUIManager implements DialogOwner {
                 }
                 if (prompts.size () > 1) {
                     String selected =
-                    (String) JOptionPane.showInputDialog(orWindow,
-                            							 LocalText.getText("SelectStationForToken",
-                            							         action.getPlayerName(),
+                        (String) JOptionPane.showInputDialog(orWindow,
+                                LocalText.getText("SelectStationForToken",
+                                        action.getPlayerName(),
                             							         hex.getId(),
                             							         company.getId()
-                            							 ),
-                            							 LocalText.getText("WhichStation"),
-                            							 JOptionPane.PLAIN_MESSAGE, null,
-                            							 prompts.toArray(), prompts.get(0));
+                                ),
+                                LocalText.getText("WhichStation"),
+                                JOptionPane.PLAIN_MESSAGE, null,
+                                prompts.toArray(), prompts.get(0));
                     if (selected == null) return;
                     action.addRelayBaseToken(company.getId(), promptToCityMap.get(selected));
                 } else {
                     action.addRelayBaseToken(company.getId(), promptToCityMap.get(prompts.toArray() [0]));
                 }
-           }
+            }
         }
     }
 
@@ -950,15 +951,15 @@ public class ORUIManager implements DialogOwner {
         Map<String, Station> promptToStationMap = new HashMap<String, Station>();
         String prompt;
         for (Station station:possibleStations) {
-                prompt = LocalText.getText(
-                        "SelectStationForTokenOption",
-                                station.getNumber(),
+            prompt = LocalText.getText(
+                    "SelectStationForTokenOption",
+                    station.getNumber(),
                                 selectedHex.getModel().getConnectionString(
-                                        selectedHex.getProvisionalTile(),
-                                        selectedHex.getProvisionalTileRotation(),
-                                        station.getNumber())) ;
-                prompts.add(prompt);
-                promptToStationMap.put(prompt, station);
+                            selectedHex.getProvisionalTile(),
+                            selectedHex.getProvisionalTileRotation(),
+                            station.getNumber())) ;
+            prompts.add(prompt);
+            promptToStationMap.put(prompt, station);
         }
         String selected =
             (String) JOptionPane.showInputDialog(orWindow,
@@ -1017,11 +1018,11 @@ public class ORUIManager implements DialogOwner {
             OperatingCost.OCType t = ac.getOCType();
             if (t == OperatingCost.OCType.LAY_TILE)
                 textOC.add(LocalText.getText("OCLayTile",
-                    suggestedCostText ));
+                        suggestedCostText ));
 
             if (t == OperatingCost.OCType.LAY_BASE_TOKEN)
                 textOC.add(LocalText.getText("OCLayBaseToken",
-                    suggestedCostText ));
+                        suggestedCostText ));
         }
 
         if (!textOC.isEmpty()) {
@@ -1061,7 +1062,7 @@ public class ORUIManager implements DialogOwner {
 
         List<String> prompts = new ArrayList<String>();
         Map<String, PossibleAction> promptToTrain =
-                new HashMap<String, PossibleAction>();
+            new HashMap<String, PossibleAction>();
         Train train;
         String usingPrivates = "";
 
@@ -1087,7 +1088,7 @@ public class ORUIManager implements DialogOwner {
                     from.getId() ));
             if (bTrain.isForExchange()) {
                 b.append(" (").append(LocalText.getText("EXCHANGED")).append(
-                        ")");
+                ")");
             }
             if (cost > 0) {
                 b.append(" ").append(
@@ -1124,7 +1125,7 @@ public class ORUIManager implements DialogOwner {
         }
 
         StringBuffer msgbuf =
-                new StringBuffer(LocalText.getText("SelectTrain"));
+            new StringBuffer(LocalText.getText("SelectTrain"));
         if (usingPrivates.length() > 0) {
             msgbuf.append("<br><font color=\"red\">");
             msgbuf.append(LocalText.getText("SelectCheapTrain",
@@ -1134,11 +1135,11 @@ public class ORUIManager implements DialogOwner {
         setMessage(msgbuf.toString());
 
         String selectedActionText =
-                (String) JOptionPane.showInputDialog(orWindow,
-                        LocalText.getText("BUY_WHICH_TRAIN"),
-                        LocalText.getText("WHICH_TRAIN"),
-                        JOptionPane.QUESTION_MESSAGE, null, prompts.toArray(),
-                        prompts.get(0));
+            (String) JOptionPane.showInputDialog(orWindow,
+                    LocalText.getText("BUY_WHICH_TRAIN"),
+                    LocalText.getText("WHICH_TRAIN"),
+                    JOptionPane.QUESTION_MESSAGE, null, prompts.toArray(),
+                    prompts.get(0));
         if (!Util.hasValue(selectedActionText)) return;
 
         selectedAction = promptToTrain.get(selectedActionText);
@@ -1151,15 +1152,15 @@ public class ORUIManager implements DialogOwner {
 
         if (price == 0 && seller instanceof PublicCompany) {
             prompt = LocalText.getText("WHICH_TRAIN_PRICE",
-                            orComp.getId(),
-                            train.toText(),
-                            seller.getId() );
+                    orComp.getId(),
+                    train.toText(),
+                    seller.getId() );
             String response;
             for (;;) {
                 response =
-                        JOptionPane.showInputDialog(orWindow, prompt,
-                                LocalText.getText("WHICH_PRICE"),
-                                JOptionPane.QUESTION_MESSAGE);
+                    JOptionPane.showInputDialog(orWindow, prompt,
+                            LocalText.getText("WHICH_PRICE"),
+                            JOptionPane.QUESTION_MESSAGE);
                 if (response == null) return; // Cancel
                 try {
                     price = Integer.parseInt(response);
@@ -1170,8 +1171,8 @@ public class ORUIManager implements DialogOwner {
 
                 if (!prompt.startsWith("Please")) {
                     prompt =
-                            LocalText.getText("ENTER_PRICE_OR_CANCEL") + "\n"
-                                    + prompt;
+                        LocalText.getText("ENTER_PRICE_OR_CANCEL") + "\n"
+                        + prompt;
                 }
             }
         }
@@ -1183,7 +1184,7 @@ public class ORUIManager implements DialogOwner {
                 exchangedTrain = Iterables.get(oldTrains,0);
             } else {
                 List<String> oldTrainOptions =
-                        new ArrayList<String>(oldTrains.size());
+                    new ArrayList<String>(oldTrains.size());
                 String[] options = new String[oldTrains.size()];
                 int jj = 0;
                 for (int j = 0; j < oldTrains.size(); j++) {
@@ -1192,12 +1193,12 @@ public class ORUIManager implements DialogOwner {
                     oldTrainOptions.add(options[jj + j]);
                 }
                 String exchangedTrainName =
-                        (String) JOptionPane.showInputDialog(orWindow,
-                                LocalText.getText("WHICH_TRAIN_EXCHANGE_FOR",
+                    (String) JOptionPane.showInputDialog(orWindow,
+                            LocalText.getText("WHICH_TRAIN_EXCHANGE_FOR",
                                         gameUIManager.format(price)),
-                                LocalText.getText("WHICH_TRAIN_TO_EXCHANGE"),
-                                JOptionPane.QUESTION_MESSAGE, null, options,
-                                options[0]);
+                                    LocalText.getText("WHICH_TRAIN_TO_EXCHANGE"),
+                                    JOptionPane.QUESTION_MESSAGE, null, options,
+                                    options[0]);
                 if (exchangedTrainName != null) {
                     int index = oldTrainOptions.indexOf(exchangedTrainName);
                     if (index >= 0) {
@@ -1214,7 +1215,7 @@ public class ORUIManager implements DialogOwner {
         if (train != null) {
             // Remember the old off-board revenue step
             int oldOffBoardRevenueStep =
-                    gameUIManager.getCurrentPhase().getOffBoardRevenueStep();
+                gameUIManager.getCurrentPhase().getOffBoardRevenueStep();
 
             buyAction.setPricePaid(price);
             buyAction.setExchangedTrain(exchangedTrain);
@@ -1236,11 +1237,11 @@ public class ORUIManager implements DialogOwner {
 
                     gameUIManager.discardTrains(dt);
                 }
-                */
+                 */
             }
 
             int newOffBoardRevenueStep =
-                    gameUIManager.getCurrentPhase().getOffBoardRevenueStep();
+                gameUIManager.getCurrentPhase().getOffBoardRevenueStep();
             if (newOffBoardRevenueStep != oldOffBoardRevenueStep) {
                 map.updateOffBoardToolTips();
             }
@@ -1268,7 +1269,7 @@ public class ORUIManager implements DialogOwner {
             } else {
                 priceRange = gameUIManager.format(maxPrice);
             }
-            
+
             privatesForSale.add(LocalText.getText("BuyPrivatePrompt",
                     action.getPrivateCompany().getId(),
                     action.getPrivateCompany().getOwner().getId(),
@@ -1277,11 +1278,11 @@ public class ORUIManager implements DialogOwner {
 
         if (privatesForSale.size() > 0) {
             chosenOption =
-                    (String) JOptionPane.showInputDialog(orWindow,
-                            LocalText.getText("BUY_WHICH_PRIVATE"),
-                            LocalText.getText("WHICH_PRIVATE"),
-                            JOptionPane.QUESTION_MESSAGE, null,
-                            privatesForSale.toArray(), privatesForSale.get(0));
+                (String) JOptionPane.showInputDialog(orWindow,
+                        LocalText.getText("BUY_WHICH_PRIVATE"),
+                        LocalText.getText("WHICH_PRIVATE"),
+                        JOptionPane.QUESTION_MESSAGE, null,
+                        privatesForSale.toArray(), privatesForSale.get(0));
             if (chosenOption != null) {
                 index = privatesForSale.indexOf(chosenOption);
                 chosenAction = privates.get(index);
@@ -1289,13 +1290,13 @@ public class ORUIManager implements DialogOwner {
                 maxPrice = chosenAction.getMaximumPrice();
                 if (minPrice < maxPrice) {
                     String price =
-                            JOptionPane.showInputDialog(orWindow,
-                                    LocalText.getText("WHICH_PRIVATE_PRICE",
-                                            chosenOption,
+                        JOptionPane.showInputDialog(orWindow,
+                                LocalText.getText("WHICH_PRIVATE_PRICE",
+                                        chosenOption,
                                             gameUIManager.format(minPrice),
                                             gameUIManager.format(maxPrice) ),
-                                    LocalText.getText("WHICH_PRICE"),
-                                    JOptionPane.QUESTION_MESSAGE);
+                                        LocalText.getText("WHICH_PRICE"),
+                                        JOptionPane.QUESTION_MESSAGE);
                     try {
                         amount = Integer.parseInt(price);
                     } catch (NumberFormatException e) {
@@ -1392,8 +1393,8 @@ public class ORUIManager implements DialogOwner {
                     action.getCompanyName(),
                     gameUIManager.format(action.getPrice()));
             if (JOptionPane.showConfirmDialog(orWindow, prompt,
-                            message, JOptionPane.OK_CANCEL_OPTION,
-                            JOptionPane.QUESTION_MESSAGE)
+                    message, JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.QUESTION_MESSAGE)
                     == JOptionPane.OK_OPTION) {
                 action.setNumberTaken(1);
                 orWindow.process(action);
@@ -1439,9 +1440,9 @@ public class ORUIManager implements DialogOwner {
                     orWindow,
                     LocalText.getText("Select"),
                     LocalText.getText("SelectLoansToRepay", action.getCompanyName()),
-                                       options,
+                    options,
                     0);
-            gameUIManager.setCurrentDialog (currentDialog, action);
+            setCurrentDialog (currentDialog, action);
         }
     }
 
@@ -1496,7 +1497,7 @@ public class ORUIManager implements DialogOwner {
         orPanel.initORCompanyTurn(orComp, orCompIndex);
 
         if (!myTurn) return;
-        
+
         privatesCanBeBoughtNow = possibleActions.contains(BuyPrivate.class);
         orPanel.initPrivateBuying(privatesCanBeBoughtNow);
 
@@ -1532,14 +1533,14 @@ public class ORUIManager implements DialogOwner {
             log.debug("Tiles can be laid");
             mapRelatedActions.addAll(possibleActions.getType(LayTile.class));
 
-        //} else if (possibleActions.contains(LayBaseToken.class)) {
+            //} else if (possibleActions.contains(LayBaseToken.class)) {
         } else if (orStep == GameDef.OrStep.LAY_TOKEN) {
 
             orWindow.requestFocus();
 
             // Include bonus tokens
             List<LayToken> possibleTokenLays =
-                    possibleActions.getType(LayToken.class);
+                possibleActions.getType(LayToken.class);
             mapRelatedActions.addAll(possibleTokenLays);
             allowedTokenLays = possibleTokenLays;
 
@@ -1548,7 +1549,7 @@ public class ORUIManager implements DialogOwner {
             log.debug("BaseTokens can be laid");
 
         } else if (possibleActions.contains(SetDividend.class)
-                   && localStep == SELECT_PAYOUT) {
+                && localStep == SELECT_PAYOUT) {
 
             SetDividend action;
             if (actionToComplete != null) {
@@ -1569,7 +1570,7 @@ public class ORUIManager implements DialogOwner {
         } else if (possibleActions.contains(SetDividend.class)) {
 
             SetDividend action =
-                    possibleActions.getType(SetDividend.class).get(0);
+                possibleActions.getType(SetDividend.class).get(0);
 
             orPanel.initRevenueEntryStep(orCompIndex, action);
 
@@ -1578,13 +1579,13 @@ public class ORUIManager implements DialogOwner {
                 message += "<br><font color=\"red\">"
                     + LocalText.getText("WarningNeedCash",
                             gameUIManager.format(action.getRequiredCash()))
-                    + "</font>";
+                            + "</font>";
             }
             setMessage(message);
 
         } else if (orStep == GameDef.OrStep.BUY_TRAIN) {
 
-        	boolean canBuyTrain = possibleActions.contains(BuyTrain.class);
+            boolean canBuyTrain = possibleActions.contains(BuyTrain.class);
             orPanel.initTrainBuying(canBuyTrain);
 
             StringBuffer b = new StringBuffer(LocalText.getText("BuyTrain"));
@@ -1627,7 +1628,7 @@ public class ORUIManager implements DialogOwner {
         if (possibleActions.contains(NullAction.class)) {
 
             List<NullAction> actions =
-                    possibleActions.getType(NullAction.class);
+                possibleActions.getType(NullAction.class);
             for (NullAction action : actions) {
                 switch (action.getMode()) {
                 case NullAction.DONE:
@@ -1640,7 +1641,7 @@ public class ORUIManager implements DialogOwner {
         if (possibleActions.contains(GameAction.class)) {
 
             List<GameAction> actions =
-                    possibleActions.getType(GameAction.class);
+                possibleActions.getType(GameAction.class);
             for (GameAction action : actions) {
                 switch (action.getMode()) {
                 case GameAction.UNDO:
@@ -1663,7 +1664,7 @@ public class ORUIManager implements DialogOwner {
                 && orStep != GameDef.OrStep.LAY_TOKEN) {
 
             List<LayToken> tokenActions =
-                    possibleActions.getType(LayToken.class);
+                possibleActions.getType(LayToken.class);
             for (LayToken tAction : tokenActions) {
 
                 if (tAction instanceof LayBaseToken
@@ -1684,13 +1685,13 @@ public class ORUIManager implements DialogOwner {
         if (possibleActions.contains(BuyBonusToken.class)) {
 
             List<BuyBonusToken> bonusTokenActions =
-                    possibleActions.getType(BuyBonusToken.class);
+                possibleActions.getType(BuyBonusToken.class);
             for (BuyBonusToken bbt : bonusTokenActions) {
                 String text =
-                        LocalText.getText("BuyBonusToken",
-                                bbt.getName(),
+                    LocalText.getText("BuyBonusToken",
+                            bbt.getName(),
                                 gameUIManager.format(bbt.getValue()),
-                                bbt.getSellerName(),
+                            bbt.getSellerName(),
                                 gameUIManager.format(bbt.getPrice()) );
                 orPanel.addSpecialAction(bbt, text);
             }
@@ -1753,7 +1754,7 @@ public class ORUIManager implements DialogOwner {
 
     public void setLocalStep(int localStep) {
         log.debug("Setting upgrade step to " + localStep + " "
-                  + ORUIManager.messageKey[localStep]);
+                + ORUIManager.messageKey[localStep]);
         this.localStep = localStep;
 
         updateMessage();
@@ -1764,7 +1765,7 @@ public class ORUIManager implements DialogOwner {
 
         if (upgradePanel != null) {
             log.debug("Initial localStep is " + localStep + " "
-                      + ORUIManager.messageKey[localStep]);
+                    + ORUIManager.messageKey[localStep]);
             switch (localStep) {
             case INACTIVE:
                 upgradePanel.setTileUpgrades(null);
@@ -1795,10 +1796,10 @@ public class ORUIManager implements DialogOwner {
                 break;
             case SELECT_TOKEN:
                 List<LayToken> allowances =
-                        map.getTokenAllowanceForHex(mapPanel.getMap().getSelectedHex().getHexModel());
+                    map.getTokenAllowanceForHex(mapPanel.getMap().getSelectedHex().getHexModel());
                 log.debug("Allowed tokens for hex "
-                          + mapPanel.getMap().getSelectedHex().getName()
-                          + " are:");
+                        + mapPanel.getMap().getSelectedHex().getName()
+                        + " are:");
                 for (LayToken allowance : allowances) {
                     log.debug("  " + allowance.toString());
                 }
@@ -1823,7 +1824,7 @@ public class ORUIManager implements DialogOwner {
             }
         }
         log.debug("Final localStep is " + localStep + " "
-                  + messageKey[localStep]);
+                + messageKey[localStep]);
         upgradePanel.showUpgrades(); // ??
 
     }
@@ -1868,18 +1869,18 @@ public class ORUIManager implements DialogOwner {
             upgradePanel.setCancelText("Cancel");
             upgradePanel.setCancelEnabled(true);
             // next step already set to finished => preprinted tile with fixed orientation
-//            if (action.getNextStep() == MapCorrectionManager.ActionStep.FINISHED) {
-//                selectedHex.setTileOrientation(action.getOrientation());
-//                map.repaint(selectedHex.getBounds());
-//                if (orWindow.process(mapCorrectionAction)) {
-//                    selectedHex.fixTile();
-//                } else {
-//                    selectedHex.removeTile();
-//                }
-//                map.selectHex(null);
-//                return;            }
+            //            if (action.getNextStep() == MapCorrectionManager.ActionStep.FINISHED) {
+            //                selectedHex.setTileOrientation(action.getOrientation());
+            //                map.repaint(selectedHex.getBounds());
+            //                if (orWindow.process(mapCorrectionAction)) {
+            //                    selectedHex.fixTile();
+            //                } else {
+            //                    selectedHex.removeTile();
+            //                }
+            //                map.selectHex(null);
+            //                return;            }
 
-//            }
+            //            }
             showTilesInUpgrade = true;
             break;
         case RELAY_BASETOKENS:
@@ -1966,10 +1967,10 @@ public class ORUIManager implements DialogOwner {
     }
 
     public TileManager getTileManager() {
-		return tileManager;
-	}
+        return tileManager;
+    }
 
-	private void displayRemainingTiles() {
+    private void displayRemainingTiles() {
 
         if (remainingTiles == null) {
             remainingTiles = new RemainingTilesWindow(orWindow);
