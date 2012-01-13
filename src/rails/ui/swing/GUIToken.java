@@ -2,8 +2,11 @@
 package rails.ui.swing;
 
 import java.awt.*;
+import java.awt.font.TextAttribute;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JPanel;
 
@@ -109,19 +112,41 @@ public class GUIToken extends JPanel {
 
     public static void drawTokenText (String text, Graphics g, Color c, Point tokenCenter, double tokenDiameter) {
 
+        //recursion if text contains more than 3 characters
+        //not perfect (heuristic!) but good enough for this exceptional case
+        if (text.length() > 3) {
+            drawTokenText( text.substring(0, text.length() / 2), g, c, 
+                    new Point (tokenCenter.x, (int)((double)tokenCenter.y - tokenDiameter / 4 / 1.3)), 
+                    tokenDiameter / 2 / (1 - tokenTextMargin) * 1.2);
+            drawTokenText( text.substring(text.length() / 2, text.length()), g, c, 
+                    new Point (tokenCenter.x, (int)((double)tokenCenter.y + tokenDiameter / 4 * 1.1)), 
+                    tokenDiameter / 2 / (1 - tokenTextMargin) * 1.2);
+            return;
+        }
+        
+        //create condensed font if more than 2 chars in a line
+        Font fontTemplate;
+        if (text.length() > 2) {
+            Map<TextAttribute, Object> attributes = new HashMap<TextAttribute, Object>();
+            attributes.put(TextAttribute.WIDTH, TextAttribute.WIDTH_CONDENSED);
+            fontTemplate = tokenFontTemplate.deriveFont(attributes);
+        } else {
+            fontTemplate = tokenFontTemplate;
+        }
+        
         //first calculate font size
         double allowedTextDiameter = tokenDiameter * (1 - tokenTextMargin);
-        Rectangle2D textBoundsInTemplate = g.getFontMetrics(tokenFontTemplate).getStringBounds(text, g);
+        Rectangle2D textBoundsInTemplate = g.getFontMetrics(fontTemplate).getStringBounds(text, g);
         double fontScalingX = allowedTextDiameter / textBoundsInTemplate.getWidth();
         double fontScalingY = allowedTextDiameter / textBoundsInTemplate.getHeight();
         double fontScaling = (fontScalingX < fontScalingY) ? fontScalingX : fontScalingY;
-        int fontSize = (int) Math.floor(fontScaling * tokenFontTemplate.getSize());
+        int fontSize = (int) Math.floor(fontScaling * fontTemplate.getSize());
 
         //draw text
         Color oldColor = g.getColor();
         Font oldFont = g.getFont();
         g.setColor(c);
-        g.setFont(tokenFontTemplate.deriveFont((float)fontSize)); //float needed to indicate size (not style)
+        g.setFont(fontTemplate.deriveFont((float)fontSize)); //float needed to indicate size (not style)
         Rectangle2D textBounds = g.getFontMetrics().getStringBounds(text, g);
         g.drawString(text,
                 tokenCenter.x - (int)textBounds.getCenterX(),
