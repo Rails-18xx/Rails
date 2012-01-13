@@ -1940,12 +1940,12 @@ public class ORUIManager implements DialogOwner {
         messagePanel.setMessage(message);
     }
 
-    public void addInformation(String infoText) {
-        messagePanel.addInformation(infoText);
+    public void setInformation(String infoText) {
+        messagePanel.setInformation(infoText);
     }
 
-    public void addDetail(String detailText) {
-        messagePanel.addDetail(detailText);
+    public void setDetail(String detailText) {
+        messagePanel.setDetail(detailText);
     }
 
     public void setLocalAction(boolean value) {

@@ -2,13 +2,11 @@
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -66,9 +64,7 @@ public class ORWindow extends JFrame implements ActionPerformer {
 
         messagePanel = new MessagePanel();
         JScrollPane slider = new JScrollPane(messagePanel);
-        slider.setBorder(BorderFactory.createLoweredBevelBorder());
-        slider.getVerticalScrollBar().setUnitIncrement(MessagePanel.scrollUnit);
-        slider.setPreferredSize(new Dimension(100,MessagePanel.fixedHeight));
+        messagePanel.setParentSlider(slider);
 
         getContentPane().add(slider, BorderLayout.NORTH);
 
