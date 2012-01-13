@@ -1055,9 +1055,9 @@ implements ActionListener, KeyListener, RevenueListener {
             orUIManager.getMap().setTrainPaths(null);
             revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
             if (isRevenueValueToBeSet) {
-                orUIManager.addInformation("Best Run Value = " + bestRevenue +
+                orUIManager.setInformation("Best Run Value = " + bestRevenue +
                         " with " + Util.convertToHtml(revenueAdapter.getOptimalRunPrettyPrint(false)));
-                orUIManager.addDetail(Util.convertToHtml(revenueAdapter.getOptimalRunPrettyPrint(true)));
+                orUIManager.setDetail(Util.convertToHtml(revenueAdapter.getOptimalRunPrettyPrint(true)));
             }
         }
     }

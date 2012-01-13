@@ -2,10 +2,9 @@
 package rails.ui.swing;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -14,14 +13,20 @@ public class MessagePanel extends JPanel {
     private static final long serialVersionUID = 1L;
     
     //the height of this panel (fixed because scroll bar is used)
-    public static final int fixedHeight = 45;
+    public static final int defaultHeight = 45;
+
+    //the height of this panel if details are open
+    public static final int fullHeight = 90;
+    public static final int minWidth = 100;
     public static final int scrollUnit = 8;
+    public static final int minMarginForFullHeight = 8;
 
     private JLabel message;
+    private JScrollPane parentSlider;
     
     private String currentMessage;
     private StringBuffer currentInformation;
-    private List<String> currentDetails = new ArrayList<String>();
+    private String currentDetails;
     private boolean showDetails;
 
     Color background = new Color(225, 225, 225);
@@ -44,8 +49,7 @@ public class MessagePanel extends JPanel {
         
         this.addMouseListener(new MouseListener() {
             public void mouseClicked(MouseEvent arg0) {
-                showDetails = !showDetails;
-                updateMessageText();
+                toggleDetailsEnablement();
             }
 
             public void mouseEntered(MouseEvent arg0) {}
@@ -56,6 +60,41 @@ public class MessagePanel extends JPanel {
         
     }
 
+    /**
+     * @param parentSlider Component between OR window and the panel
+     */
+    public void setParentSlider(JScrollPane parentSlider) {
+        this.parentSlider = parentSlider;
+        parentSlider.setBorder(BorderFactory.createLoweredBevelBorder());
+        parentSlider.getVerticalScrollBar().setUnitIncrement(scrollUnit);
+        parentSlider.setPreferredSize(new Dimension(minWidth,defaultHeight));
+    }
+    
+    private void disableDetails() {
+        if (showDetails) {
+            showDetails = false;
+            parentSlider.setPreferredSize(new Dimension(minWidth,defaultHeight));
+            parentSlider.getParent().revalidate();
+        }
+    }
+    
+    private void enableDetails() {
+        if (!showDetails && currentDetails != null) {
+            showDetails = true;
+            parentSlider.setPreferredSize(new Dimension(minWidth,fullHeight));
+            parentSlider.getParent().revalidate();
+        }
+    }
+    
+    private void toggleDetailsEnablement() {
+        if (showDetails) {
+            disableDetails();
+        } else {
+            enableDetails();
+        }
+        updateMessageText();
+    }
+    
     private void updateMessageText() {
         StringBuffer messageText = new StringBuffer() ;
         if (currentMessage != null) {
@@ -68,19 +107,15 @@ public class MessagePanel extends JPanel {
         }
         if (showDetails) {
             messageText.append("<span style='color:blue; font-size:80%'>");
-            for (String detail:currentDetails) {
-                messageText.append(detail);
-            }
+            messageText.append(currentDetails);
             messageText.append("</span>");
-        } else if (currentDetails.size() != 0) {
+        } else if (currentDetails != null) {
             messageText.append("<span style='color:blue; font-size:80%'>");
-            messageText.append("<BR> Click for more details");
+            messageText.append("&nbsp; Click for more details");
             messageText.append("</span>");
         }
         // display
         String text = messageText.toString();
-        //int lines = text.split("<[Bb][Rr]>").length + 1;
-//        setLines(lines);
         message.setText("<html><center>" + text + "</center></html>");
         
     }
@@ -88,21 +123,19 @@ public class MessagePanel extends JPanel {
     public void setMessage(String messageText) {
         currentMessage = messageText;
         currentInformation = null;
-        currentDetails.clear();
-        showDetails = false;
+        currentDetails = null;
+        disableDetails();
         updateMessageText();
     }
     
-    public void addInformation(String infoText) {
-        if (currentInformation == null) {
-            currentInformation = new StringBuffer();
-        }
+    public void setInformation(String infoText) {
+        currentInformation = new StringBuffer();
         currentInformation.append("<BR>" + infoText);
         updateMessageText();
     }
     
-    public void addDetail(String detailText) {
-        currentDetails.add("<BR>" + detailText);
+    public void setDetail(String detailText) {
+        currentDetails = "<BR>" + detailText;
         updateMessageText();
     }
 
