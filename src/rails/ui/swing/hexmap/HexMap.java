@@ -21,6 +21,7 @@ import java.util.Map;
 
 import javax.swing.JComponent;
 import javax.swing.JLayeredPane;
+import javax.swing.ToolTipManager;
 
 
 import org.slf4j.Logger;
@@ -803,7 +804,7 @@ public abstract class HexMap implements MouseListener,
 //      }
       // do nothing as tooltip update before display
   }
-  
+    
     /**
      * Mouse Listener methods (hexMap offers listener for all layers)
      */
@@ -812,7 +813,34 @@ public abstract class HexMap implements MouseListener,
         Point point = arg0.getPoint();
         GUIHex clickedHex = getHexContainingPoint(point);
 
-        orUIManager.hexClicked(clickedHex, selectedHex);
+        //if no action/correction was expected on the map panel
+        if (!orUIManager.hexClicked(clickedHex, selectedHex)) {
+
+            // force the tool tip popup to appear immediately
+            ToolTipManager ttm = ToolTipManager.sharedInstance();
+            MouseEvent phantomME = new MouseEvent(
+                    toolTipsLayer,
+                    MouseEvent.MOUSE_MOVED,
+                    System.currentTimeMillis(),
+                    0,
+                    arg0.getX(),
+                    arg0.getY(),
+                    0,
+                    false);
+    
+            int priorToolTipDelay = ttm.getInitialDelay(); 
+            ttm.setInitialDelay(0);
+            ttm.mouseMoved(phantomME);
+            ttm.setInitialDelay(priorToolTipDelay);
+
+//        int priorToolTipDelay = ttm.getInitialDelay(); 
+//        ttm.mouseEntered(new MouseAdapter());
+//        ToolTipManager.sharedInstance().setInitialDelay(0);
+//        try {
+//            this.wait(1);
+//        } catch (InterruptedException e) {}
+//        map = map;
+        }
     }
 
     public void mouseDragged(MouseEvent arg0) {}
@@ -829,7 +857,7 @@ public abstract class HexMap implements MouseListener,
         if (newHex != null) newHex.addHighlightRequest();
         
         //display tool tip
-        setToolTipText(newHex != null ? newHex.getToolTip() : "");
+        setToolTipText(newHex != null ? newHex.getToolTip() : null);
         
         hexAtMousePosition = newHex;
     }

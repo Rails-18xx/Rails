@@ -62,7 +62,8 @@ public class MapPanel extends JPanel {
             return;
         }
 
-        ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
+        //lightwight tooltip possible since tool tip has its own layer in hex map
+        ToolTipManager.sharedInstance().setLightWeightPopupEnabled(true);
 
         layeredPane = new JLayeredPane();
         layeredPane.setLayout(null);

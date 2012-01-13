@@ -604,9 +604,15 @@ public class ORUIManager implements DialogOwner {
         if (!(dialog instanceof MessageDialog)) orPanel.disableButtons();
     }
 
-    public void hexClicked(GUIHex clickedHex, GUIHex selectedHex) {
+    /**
+     * @return True if the map panel expected hex clicks for actions / corrections
+     */
+    public boolean hexClicked(GUIHex clickedHex, GUIHex selectedHex) {
 
+        boolean triggerORPanelRepaint = false;
+        
         if (mapCorrectionEnabled) {
+            triggerORPanelRepaint = true;
             boolean checkClickedHex = false;
             switch (mapCorrectionAction.getStep()) {
             case SELECT_HEX:
@@ -626,11 +632,12 @@ public class ORUIManager implements DialogOwner {
                 orWindow.process(mapCorrectionAction);
             }
         } else if (tokenLayingEnabled) {
+            triggerORPanelRepaint = true;
             // if clickedHex == null, then go back to select hex step
             if (clickedHex == null) {
                 upgradePanel.setPossibleTokenLays(null);
                 setLocalStep(SELECT_HEX_FOR_TOKEN);
-                return;
+                return true;
             }
             List<LayToken> allowances =
                 map.getTokenAllowanceForHex(clickedHex.getHexModel());
@@ -649,10 +656,11 @@ public class ORUIManager implements DialogOwner {
             }
 
         } else if (tileLayingEnabled) {
+            triggerORPanelRepaint = true;
             if (localStep == ROTATE_OR_CONFIRM_TILE
                     && clickedHex == selectedHex) {
                 selectedHex.rotateTile();
-                return;
+                return true;
 
             } else {
                 if (selectedHex != null && clickedHex != selectedHex) {
@@ -680,7 +688,9 @@ public class ORUIManager implements DialogOwner {
             }
         }
 
-        orWindow.repaintORPanel();
+        if (triggerORPanelRepaint) orWindow.repaintORPanel();
+        
+        return triggerORPanelRepaint;
     }
 
     public void tileSelected(int tileId) {
