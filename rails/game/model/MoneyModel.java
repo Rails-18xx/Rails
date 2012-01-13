@@ -9,7 +9,7 @@ import rails.game.state.StringState;
 /**
  * A model presenting money values
  */
-public class MoneyModel extends Model<String> {
+public class MoneyModel extends Model {
     // Data
     private final IntegerState value;
     private BooleanState initialised;
@@ -111,9 +111,9 @@ public class MoneyModel extends Model<String> {
     public int intValue() {
         return value.intValue();
     }
-    
-    
-    public String getData() {
+
+    @Override
+    protected String getText() {
         if (fixedText != null && !"".equals(fixedText.stringValue())) {
             return fixedText.stringValue();
         }

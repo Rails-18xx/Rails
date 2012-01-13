@@ -44,44 +44,53 @@ public final class Portfolio extends DirectOwner {
         Logger.getLogger(Portfolio.class.getPackage().getName());
 
     /** Owner */
-    private final Owner owner;
-    private final String ownerName; // TODO: Is this still required?
+    private Owner owner;
+    private String ownerName; // TODO: Is this still required?
     
     /** Owned certificates */
-    private final CertificatesModel certificates = new CertificatesModel(this);
+    private final CertificatesModel certificates = new CertificatesModel();
     
     /** Owned private companies */
-    private final PrivatesModel privates = new PrivatesModel(this);
+    private final PrivatesModel privates = new PrivatesModel();
 
     /** Owned trains */
-    private final TrainsModel trains = TrainsModel.create(this);
+    private TrainsModel trains;
 
     /** Owned tokens */
     // TODO Currently only used to discard expired Bonus tokens.
-    private final StorageModel<Token> tokens = StorageModel.create(this, Token.class);
+    private StorageModel<Token> tokens;
     
     /**
      * Private-independent special properties. When moved here, a special
      * property no longer depends on the private company being alive. Example:
      * 18AL named train tokens.
      */
-    private final StorageModel<SpecialPropertyI> specialProperties = 
-        StorageModel.create(this, SpecialPropertyI.class);
+    private StorageModel<SpecialPropertyI> specialProperties;
 
     private final GameManager gameManager;
 
-    public Portfolio(Owner owner) {
-        this(owner, "Portfolio");
-    }
-    
-    public Portfolio(Owner owner, String id) {
-        super(owner, id);
-        this.owner = owner;
-        this.ownerName = owner.getId(); // FIXME
+    /**
+     * Portfolio is initialized with a default id "Portfolio"
+     */
+    public Portfolio() {
+        super("Portfolio");
 
+        // TODO: Replace this with a better mechanism
         gameManager = GameManager.getInstance();
         gameManager.addPortfolio(this);
-
+    }
+     
+    public void init(Owner owner) {
+        this.owner = owner;
+        this.ownerName = owner.getId(); // FIXME
+        
+        // init models
+        certificates.init(owner);
+        privates.init(owner);
+        trains = TrainsModel.create(owner);
+        tokens = StorageModel.create(owner, Token.class);
+        specialProperties = StorageModel.create(owner, SpecialPropertyI.class);
+        
         // change display style dependent on owner
         if (owner instanceof PublicCompany) {
             trains.setAbbrList(false);
@@ -92,6 +101,15 @@ public final class Portfolio extends DirectOwner {
             privates.setLineBreak(true);
         }
     }
+    
+    /**
+     * 
+     */
+    
+    public void init() {
+        
+    }
+    
 
     public void transferAssetsFrom(Portfolio otherPortfolio) {
 

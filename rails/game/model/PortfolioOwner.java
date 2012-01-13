@@ -1,6 +1,7 @@
 package rails.game.model;
 
 import rails.game.state.AbstractItem;
+import rails.game.state.Item;
 
 public abstract class PortfolioOwner extends AbstractItem implements Owner {
     
@@ -8,7 +9,13 @@ public abstract class PortfolioOwner extends AbstractItem implements Owner {
     
     public PortfolioOwner(String id) {
         super(id);
-        portfolio = new Portfolio(this, "Portfolio");
+        portfolio = new Portfolio();
+    }
+    
+    @Override
+    public void init(Item parent){
+        super.init(parent);
+        portfolio.init(this);
     }
     
     public final <E extends Ownable> void addStorage(Storage<E> newHolder, Class<E> clazz) {

@@ -17,7 +17,7 @@ import rails.game.state.Item;
         // this.addObserver(company.getPresidentModel());
  * @author freystef
  */
-public final class CertificatesModel extends Model<String> implements Storage<PublicCertificate> {
+public final class CertificatesModel extends Model implements Storage<PublicCertificate> {
 
     /** Owned public company certificates by company */
     private final HashMultimapState<PublicCompany, PublicCertificate> certificates;
@@ -56,7 +56,7 @@ public final class CertificatesModel extends Model<String> implements Storage<Pu
         return share;
     }
 
-    public String getData(PublicCompany company) {
+    public String getText(PublicCompany company) {
         int share = this.getShare(company);
         
         if (share == 0) return "";
@@ -70,6 +70,11 @@ public final class CertificatesModel extends Model<String> implements Storage<Pu
             b.append(company.getExtraShareMarks());
         }
         return b.toString();
+    }
+    
+    @Override
+    protected String getText() {
+        return certificates.toString();
     }
     
     public ImmutableSet<PublicCertificate> getCertificates() {

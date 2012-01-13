@@ -1852,7 +1852,7 @@ public class GameManager extends AbstractItem implements Owner, ConfigurableComp
         final boolean _ascending = ascending;
         Collections.sort (players, new Comparator<Player>() {
             public int compare (Player p1, Player p2) {
-                return _ascending ? p1.getCashModel().value() - p2.getCashModel().value() : p2.getCashModel().value() - p1.getCashModel().value();
+                return _ascending ? p1.getCashModel().getText() - p2.getCashModel().getText() : p2.getCashModel().getText() - p1.getCashModel().getText();
             }
         });
 
@@ -1861,7 +1861,7 @@ public class GameManager extends AbstractItem implements Owner, ConfigurableComp
             player = players.get(i);
             player.setIndex (i);
             playerNames.set (i, player.getId());
-            log.debug("New player "+i+" is "+player.getId() +" (cash="+Bank.format(player.getCashModel().value())+")");
+            log.debug("New player "+i+" is "+player.getId() +" (cash="+Bank.format(player.getCashModel().getText())+")");
         }
 
         return players.get(0);

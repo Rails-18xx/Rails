@@ -1055,7 +1055,7 @@ public class PublicCompany extends Company implements CashOwner {
         Owners.moveAll(this, bank.getPool(), Train.class);
 
         // Any cash goes to the bank (from the 1856 rules)
-        int cash = treasury.value();
+        int cash = treasury.getText();
         if (cash > 0) {
             treasury.setSuppressZero(true);
             treasury.add(-cash);
@@ -1214,7 +1214,7 @@ public class PublicCompany extends Company implements CashOwner {
      * @return The current cash amount.
      */
     public int getCash() {
-        return treasury.value();
+        return treasury.getText();
     }
     
     public CashModel getCashModel() {
@@ -1225,7 +1225,7 @@ public class PublicCompany extends Company implements CashOwner {
         return treasury.getData();
     }
 
-    public Model<String> value() {
+    public Model<String> getText() {
         return treasury;
     }
 

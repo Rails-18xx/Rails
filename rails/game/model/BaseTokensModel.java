@@ -7,7 +7,7 @@ import rails.game.state.State;
 /**
  * A model presenting the number of tokens
  */
-public class BaseTokensModel extends Model<String> {
+public class BaseTokensModel extends Model {
 
     private PublicCompany company;
 
@@ -38,7 +38,8 @@ public class BaseTokensModel extends Model<String> {
         throw new IllegalArgumentException("BaseTokenModel init() requires additional parameters");
     }
 
-    public String getData() {
+    @Override 
+    protected String getText() {
         int allTokens = company.getNumberOfBaseTokens();
         int freeTokens = company.getNumberOfFreeBaseTokens();
         if (allTokens == 0) {

@@ -103,7 +103,7 @@ public class Bank extends AbstractItem implements CashOwner, ConfigurableCompone
     public void finishConfiguration (GameManager gameManager) {
 
         ReportBuffer.add(LocalText.getText("BankSizeIs",
-                format(money.value())));
+                format(money.getText())));
 
         // Add privates
         List<PrivateCompany> privates =
@@ -141,7 +141,7 @@ public class Bank extends AbstractItem implements CashOwner, ConfigurableCompone
      * @return Bank's current cash level
      */
     public int getCashValue() {
-        return money.value();
+        return money.getText();
     }
 
     /**
@@ -155,7 +155,7 @@ public class Bank extends AbstractItem implements CashOwner, ConfigurableCompone
          * Check if the bank has broken. In some games <0 could apply, so this
          * will become configurable.
          */
-        if (money.value() <= 0 && !broken.booleanValue()) {
+        if (money.getText() <= 0 && !broken.booleanValue()) {
             broken.set(true);
             money.setText(LocalText.getText("BROKEN"));
             GameManager.getInstance().registerBrokenBank();
@@ -210,7 +210,7 @@ public class Bank extends AbstractItem implements CashOwner, ConfigurableCompone
     // end sfy 1889
     
     public int getCash() {
-        return money.value();
+        return money.getText();
     }
 
     public CashModel getCashModel() {

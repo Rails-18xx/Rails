@@ -4,7 +4,7 @@ import rails.game.state.Item;
 
 public abstract class PortfolioCashOwner extends PortfolioOwner implements CashOwner {
 
-    private final CashModel cashModel = new CashModel(this);
+    private final CashModel cashModel = new CashModel();
     
     public PortfolioCashOwner(Item parent, String id) {
         super(parent, id);

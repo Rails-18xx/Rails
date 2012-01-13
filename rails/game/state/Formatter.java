@@ -5,5 +5,5 @@ package rails.game.state;
  * @author freystef
  */
 public interface Formatter<E extends State> {
-    public String formatData(E state);
+    public String formatValue(E state);
 }

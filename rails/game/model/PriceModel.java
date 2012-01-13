@@ -6,7 +6,7 @@ import rails.game.state.PriceMove;
 
 // TODO: Requires a complete rewrite
 
-public class PriceModel extends Model<String> {
+public class PriceModel extends Model {
 
     private StockSpaceI stockPrice = null;
     private PublicCompany company = null;
@@ -53,14 +53,15 @@ public class PriceModel extends Model<String> {
     // FIXME: This is a reference to the usage of ViewUpdate
     public Object getUpdate() {
         if (stockPrice != null) {
-            return new ViewUpdate(getData())
+            return new ViewUpdate(getText())
                     .addObject(ViewUpdate.BGCOLOUR, stockPrice.getColour());
         } else {
-            return getData();
+            return getText();
         }
     }
 
-    public String getData() {
+    @Override
+    protected String getText() {
         if (stockPrice != null) {
             return Bank.format(stockPrice.getPrice()) + " ("
                    + stockPrice.getName() + ")";

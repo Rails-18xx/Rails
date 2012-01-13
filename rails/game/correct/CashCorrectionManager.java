@@ -59,11 +59,11 @@ public final class CashCorrectionManager extends CorrectionManager {
                     LocalText.getText("CorrectCashZero");
                 break;
             }
-            if ((amount + ch.getCashModel().value()) < 0) {
+            if ((amount + ch.getCashModel().getText()) < 0) {
                 errMsg =
                     LocalText.getText("NotEnoughMoney", 
                             ch.getId(),
-                            Bank.format(ch.getCashModel().value()),
+                            Bank.format(ch.getCashModel().getText()),
                             Bank.format(-amount) 
                     );
                 break;

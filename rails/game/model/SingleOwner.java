@@ -1,23 +1,30 @@
 package rails.game.model;
 
 import rails.game.state.AbstractItem;
+import rails.game.state.Item;
 
 public class SingleOwner<T extends Ownable> extends AbstractItem implements Owner {
     
-    private final Storage<T> holder; 
+    private final StorageModel<T> holder; 
     private final Class<T> clazz;
     
     @Deprecated
     public SingleOwner(Class<T> clazz){
         super();
-        holder = new StorageModel<T>(this, clazz); 
+        holder = new StorageModel<T>(clazz); 
         this.clazz = clazz;
     }
 
     public SingleOwner(String id, Class<T> clazz){
         super(id);
-        holder = new StorageModel<T>(this, clazz); 
+        holder = new StorageModel<T>(clazz); 
         this.clazz = clazz;
+    }
+    
+    @Override
+    public void init(Item parent) {
+        super.init(parent);
+        holder.init(this);
     }
     
     public <E extends Ownable> void addStorage(Storage<E> newHolder,

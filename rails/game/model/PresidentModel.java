@@ -9,7 +9,7 @@ import rails.game.state.Item;
  * gets registered by the ShareModels
  */
 
-public class PresidentModel extends Model<String> implements Observer {
+public class PresidentModel extends Model implements Observer {
 
     PublicCompany company;
     
@@ -37,9 +37,10 @@ public class PresidentModel extends Model<String> implements Observer {
         throw new IllegalArgumentException("PresidentModel init() only works for PublicCompanies");
     }
 
-    public String getData() {
+    @Override
+    public String getText() {
         Player president = company.getPresident();
-        if (president == null ) return "";
+        if (president == null) return "";
         else return company.getPresident().getNameAndPriority();
     }
 

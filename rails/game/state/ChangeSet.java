@@ -2,12 +2,10 @@ package rails.game.state;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 
 import rails.game.Player;
-import rails.game.model.Model;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;

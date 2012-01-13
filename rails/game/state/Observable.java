@@ -1,35 +1,59 @@
 package rails.game.state;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import rails.game.model.Model;
 import rails.game.model.Observer;
 
 /**
- * An interface defining an observable object.
- * 
  * Requirement:
  * The observable object has to call each observer per update() if the object has changed.
  *
  * @author freystef
  *
  */
-public interface Observable<E> {
+public abstract class Observable extends AbstractItem {
 
-    public E getData(); 
+    // stores observers and models
+    private Set<Observer> observers = null; // lazy initialization
+    private Set<Model> models = null; // lazy initialization
+    
+    public Observable(String id){
+        super(id);
+    }
+    
+    public void addObserver(Observer o) {
+        observers.add(o);
+    }
+    
+    public boolean removeObserver(Observer o) {
+        return observers.remove(o);
+    }
+    
+    public Set<Observer> getObservers() {
+        return observers;
+    }
 
-    public void addObserver(Observer<E> o);
-
-    public boolean removeObserver(Observer<E> o);
-
-    public Set<Observer<E>> getObservers();
+    public void addModel(Model m) {
+        if (models == null) {
+            models = new HashSet<Model>();
+        }
+        models.add(m);
+    }
     
-    public void addModel(Model<?> m);
+    public boolean removeModel(Model m) {
+        return models.remove(m);
+    }
     
-    public boolean removeModel(Model<?> m);
+    public Set<Model> getModels() {
+        return models;
+    }
     
-    public Set<Model<?>> getModels();
-    
-    public void updateModels();
+    public void updateModels() {
+        for (Model m:models) {
+            m.update();
+        }
+    }
     
 }

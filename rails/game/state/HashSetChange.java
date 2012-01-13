@@ -1,7 +1,5 @@
 package rails.game.state;
 
-import java.util.Set;
-
 /**
  * Change associated with HashSetState
  * 

@@ -14,7 +14,7 @@ import rails.game.state.Item;
  * @param <T> The type of objects to store
  */
 
-public class StorageModel<T extends Ownable> extends Model<String> implements Storage<T> {
+public class StorageModel<T extends Ownable> extends Model implements Storage<T> {
 
     private final ArrayListState<T> storageList;
     private Owner owner;
@@ -70,9 +70,10 @@ public class StorageModel<T extends Ownable> extends Model<String> implements St
     public void init(Item parent){
         throw new IllegalArgumentException("StorageModel init() only works for Owners");
     }
-        
-    public String getData() {
-        return storageList.getData();
+    
+    @Override
+    protected String getText() {
+        return storageList.toString();
     }
 
     public final boolean addObject(T object){

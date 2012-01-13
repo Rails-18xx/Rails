@@ -4,7 +4,7 @@ import rails.game.state.Item;
 
 
 // TODO: Check what is required to get the update correctly
-public final class CertificateCountModel extends Model<String> {
+public final class CertificateCountModel extends Model {
 
     private Portfolio owner;
     
@@ -32,7 +32,8 @@ public final class CertificateCountModel extends Model<String> {
         throw new IllegalArgumentException("CertificateCountModel init() only works for Portfolios");
     }
 
-    public String getData() {
+    @Override
+    protected String getText() {
         return ("" + owner.getCertificateCount()).replaceFirst("\\.0", "").replaceFirst("\\.5", "\u00bd");
     }
 

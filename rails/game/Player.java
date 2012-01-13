@@ -73,7 +73,7 @@ public class Player extends PortfolioCashOwner implements Comparable<Player> {
         if (bankrupt.booleanValue()) {
             worth = 0;
         } else {
-            worth = this.getCashModel().value();
+            worth = this.getCashModel().getText();
         }
 
         for (PublicCertificate cert : getPortfolio().getCertificates()) {
@@ -102,7 +102,7 @@ public class Player extends PortfolioCashOwner implements Comparable<Player> {
     }
 
     public int getCashValue() {
-        return getCashModel().value();
+        return getCashModel().getText();
     }
     
     public void updateWorth () {
@@ -141,7 +141,7 @@ public class Player extends PortfolioCashOwner implements Comparable<Player> {
      * @return false if the amount was not available.
      */
     public boolean blockCash(int amount) {
-        if (amount > getCashModel().value() - blockedCash.intValue()) {
+        if (amount > getCashModel().getText() - blockedCash.intValue()) {
             return false;
         } else {
             blockedCash.add(amount);
@@ -174,7 +174,7 @@ public class Player extends PortfolioCashOwner implements Comparable<Player> {
      * @return
      */
     public int getFreeCash() {
-        return getCashModel().value() - blockedCash.intValue();
+        return getCashModel().getText() - blockedCash.intValue();
     }
 
     public int getBlockedCash() {

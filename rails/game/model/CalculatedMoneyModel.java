@@ -12,11 +12,8 @@ import rails.game.state.Item;
  * reflection. The value to be calculated is obtained by calling a method
  * specified by name. This method must return an Integer and may not have any
  * parameters.
- * 
- * @author Erik Vos
- * 
  */
-public class CalculatedMoneyModel extends Model<String> {
+public class CalculatedMoneyModel extends Model {
 
     protected static Logger log =
         Logger.getLogger(CalculatedMoneyModel.class.getPackage().getName());
@@ -63,7 +60,8 @@ public class CalculatedMoneyModel extends Model<String> {
         return amount.intValue();
     }
 
-    public String getData() {
+    @Override
+    protected String getText() {
         int amount = calculate();
         if (amount == 0 && suppressZero)
             return "";

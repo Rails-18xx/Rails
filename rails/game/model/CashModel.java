@@ -6,7 +6,7 @@ import rails.game.state.IntegerState;
 import rails.game.state.Item;
 import rails.game.state.StringState;
 
-public final class CashModel extends Model<String> {
+public final class CashModel extends Model {
 
     // stores the cash amount
     private final IntegerState cash;
@@ -50,7 +50,12 @@ public final class CashModel extends Model<String> {
         return cash.intValue();
     }
 
-    public String getData() {
+    public void setText (String text) {
+        displayText.set (text);
+    }
+
+    @Override
+    protected String getText() {
         String fixedText = displayText.stringValue();
         if (!"".equals(fixedText)) {
             return fixedText;
@@ -63,7 +68,4 @@ public final class CashModel extends Model<String> {
         }
     }
 
-    public void setText (String text) {
-        displayText.set (text);
-    }
 }

@@ -4,7 +4,7 @@ import rails.game.Bank;
 import rails.game.Bonus;
 import rails.game.state.ArrayListState;
 
-public class BonusModel extends Model<String> {
+public class BonusModel extends Model {
     
     private ArrayListState<Bonus> bonuses;
     
@@ -20,8 +20,8 @@ public class BonusModel extends Model<String> {
         bonuses.addModel(this);
     }
 
-    public String getData() {
-
+    @Override
+    protected String getText() {
         if (bonuses == null || bonuses.isEmpty()) return "";
 
         StringBuffer b = new StringBuffer("<html><center>");
@@ -35,5 +35,4 @@ public class BonusModel extends Model<String> {
 
         return b.toString();
     }
-
 }

@@ -54,39 +54,39 @@ public final class StateManager extends AbstractItem {
      * @param states Set of states
      * @return sorted list of all observables (states and models)
      */
-    List<Observable<?>> getSortedObservables(Set<State> states) {
+    List<Observable> getSortedObservables(Set<State> states) {
 
         // 1: define all models
-        Set<Model<?>> models = getModels(states);
+        Set<Model> models = getModels(states);
         
         // 2: define graph
-        Multimap<Model<?>, Observable<?>> edges = HashMultimap.create(); 
+        Multimap<Model, Observable> edges = HashMultimap.create(); 
         
         // 2a: add edges that start from states
         for (State s:states) {
-            for (Model<?> m:s.getModels()) {
+            for (Model m:s.getModels()) {
                 edges.put(m, s);
             }
         }
         
         // 2b: add edges that start from models
-        for (Model<?> m1:models) {
-            for (Model<?> m2:m1.getModels()) {
+        for (Model m1:models) {
+            for (Model m2:m1.getModels()) {
                 edges.put(m2, m1);
             }
         }
 
         // 3: run topological sort
-        List<Observable<?>> sortedList = Lists.newArrayList();
-        List<Observable<?>> startNodes = Lists.newArrayList();
+        List<Observable> sortedList = Lists.newArrayList();
+        List<Observable> startNodes = Lists.newArrayList();
         startNodes.addAll(states);
         
         while (!startNodes.isEmpty()) {
             // remove node n
-            Observable<?> n = startNodes.remove(0);
+            Observable n = startNodes.remove(0);
             // insert node into sortedList 
             sortedList.add(n);
-            for (Model<?> m:n.getModels()) {
+            for (Model m:n.getModels()) {
                 edges.remove(m, n);
                 // check if m is now a start node
                 if (!edges.containsKey(m)) {
@@ -109,9 +109,9 @@ public final class StateManager extends AbstractItem {
      * @param states Set of states
      * @return all observers to be updated from states (either directly or via Models)
      */
-    Set<Observer<?>> getObservers(Set<State> states){
+    Set<Observer> getObservers(Set<State> states){
         
-        Set<Observer<?>> observers = Sets.newHashSet();
+        Set<Observer> observers = Sets.newHashSet();
         
         // all direct observers
         for (State s:states){
@@ -119,7 +119,7 @@ public final class StateManager extends AbstractItem {
         }
         
         // all indirect observers
-        for (Model<?> m:getModels(states)){
+        for (Model m:getModels(states)){
             observers.addAll(m.getObservers());
         }
         
@@ -130,9 +130,9 @@ public final class StateManager extends AbstractItem {
      * @param states Set of states
      * @return all models to be updated from states
      */
-    Set<Model<?>> getModels(Set<State> states) {
+    Set<Model> getModels(Set<State> states) {
         
-        Set<Model<?>> allModels = Sets.newHashSet();
+        Set<Model> allModels = Sets.newHashSet();
         
         // add all models updated from states directly
         for (State s:states) {
@@ -140,11 +140,11 @@ public final class StateManager extends AbstractItem {
         }
         
         // then add models called indirectly
-        ImmutableSet<Model<?>> checkModels = ImmutableSet.copyOf(allModels);
-        Set<Model<?>> newModels = Sets.newHashSet();
+        ImmutableSet<Model> checkModels = ImmutableSet.copyOf(allModels);
+        Set<Model> newModels = Sets.newHashSet();
         while (!checkModels.isEmpty()) {
-            for (Model<?> m1:checkModels) {
-                for (Model<?> m2:m1.getModels()) {
+            for (Model m1:checkModels) {
+                for (Model m2:m1.getModels()) {
                     if (!allModels.contains(m2)) {
                         allModels.add(m2);
                         newModels.add(m2);
