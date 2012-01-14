@@ -904,21 +904,24 @@ public class GUIHex implements Observer {
     public boolean dropTile(int tileId, boolean upgradeMustConnect) {
         this.upgradeMustConnect = upgradeMustConnect;
 
-        provisionalGUITile = new GUITile(tileId, this);
-        /* Check if we can find a valid orientation of this tile */
-        if (provisionalGUITile.rotate(0, currentGUITile, upgradeMustConnect)) {
-            /* If so, accept it */
+        provisionalGUITile = createUpgradeTileIfValid (tileId, upgradeMustConnect);
+        if (provisionalGUITile != null) {
             provisionalGUITile.setScale(SELECTED_SCALE);
             toolTip = "Click to rotate";
             hexMap.repaintMarks(getBounds());
             hexMap.repaintTiles(getBounds()); // provisional tile resides in tile layer
-            return true;
-        } else {
-            /* If not, refuse it */
-            provisionalGUITile = null;
-            return false;
         }
-
+        return (provisionalGUITile != null);
+    }
+    
+    private GUITile createUpgradeTileIfValid (int tileId, boolean upgradeMustConnect) {
+        GUITile t = new GUITile(tileId, this);
+        /* Check if we can find a valid orientation of this tile */
+        return ( t.rotate(0, currentGUITile, upgradeMustConnect) ? t : null);
+    }
+    
+    public boolean isTileUpgradeValid (int tileId, boolean upgradeMustConnect) {
+        return ( createUpgradeTileIfValid(tileId, upgradeMustConnect) != null );
     }
 
     /** forces the tile to drop */
