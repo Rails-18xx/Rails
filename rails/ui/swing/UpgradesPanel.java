@@ -98,16 +98,14 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
                     // Skip if not allowed in LayTile
                     //if (!layTile.isTileColourAllowed(tile.getColourName())) continue;
 
-                    if (!orUIManager.tileUpgrades.contains(tile) && layTile.isTileColourAllowed(tile.getColourName()))
-                        orUIManager.tileUpgrades.add(tile);
+                    if (layTile.isTileColourAllowed(tile.getColourName()))
+                        orUIManager.addTileUpgradeIfValid(uiHex,tile);
                 }
             } else {
                 for (TileI tile : tiles) {
                     // Skip if colour is not allowed yet
                     if (!allowedColours.contains(tile.getColourName())) continue;
-
-                    if (!orUIManager.tileUpgrades.contains(tile))
-                        orUIManager.tileUpgrades.add(tile);
+                    orUIManager.addTileUpgradeIfValid(uiHex,tile);
                 }
             }
         }

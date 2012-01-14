@@ -705,12 +705,7 @@ public class ORUIManager implements DialogOwner {
         }
 
         // Check if the new tile must be connected to some other track
-        boolean mustConnect =
-            tile.getColourName().equalsIgnoreCase(Tile.YELLOW_COLOUR_NAME)
-            // Does not apply to the current company's home hex(es)
-            && !hex.getHexModel().isHomeFor(orComp)
-            // Does not apply to special tile lays
-            && !isUnconnectedTileLayTarget(hex);
+        boolean mustConnect = getMustConnectRequirement(hex,tile);
 
         if (hex.dropTile(tileId, mustConnect)) {
             /* Lay tile */
@@ -724,13 +719,38 @@ public class ORUIManager implements DialogOwner {
             upgradePanel.showUpgrades();
         }
     }
+    
+    private boolean getMustConnectRequirement (GUIHex hex,TileI tile) {
+        if (tile == null || hex == null) return false;
+        return tile.getColourName().equalsIgnoreCase(Tile.YELLOW_COLOUR_NAME)
+                // Does not apply to the current company's home hex(es)
+                && !hex.getHexModel().isHomeFor(orComp)
+                // Does not apply to special tile lays
+                && !isUnconnectedTileLayTarget(hex.getHexModel());
+    }
+    
+    public void addTileUpgradeIfValid(GUIHex hex, int tileId) {
+        addTileUpgradeIfValid (hex,
+                gameUIManager.getGameManager().getTileManager().getTile(tileId));
+    }
+    
+    public void addTileUpgradeIfValid(GUIHex hex, TileI tile) {
+        if (!tileUpgrades.contains(tile) && isTileUpgradeValid(hex,tile)) {
+            tileUpgrades.add(tile);
+        }
+    }
+    
+    private boolean isTileUpgradeValid(GUIHex hex, TileI tile) {
+        // Check if the new tile must be connected to some other track
+        return hex.isTileUpgradeValid(tile.getId(), 
+                getMustConnectRequirement(hex,tile));
+    }
 
-    protected boolean isUnconnectedTileLayTarget(GUIHex hex) {
+    protected boolean isUnconnectedTileLayTarget(MapHex hex) {
 
-        MapHex mapHex = hex.getHexModel();
         for (LayTile action : possibleActions.getType(LayTile.class)) {
             if (action.getType() == LayTile.SPECIAL_PROPERTY
-                    && action.getSpecialProperty().getLocations().contains(mapHex)) {
+                    && action.getSpecialProperty().getLocations().contains(hex)) {
                 // log.debug(hex.getName()+" is a special property target");
                 return true;
             }
