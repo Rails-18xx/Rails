@@ -1027,6 +1027,8 @@ public class ORUIManager implements DialogOwner {
             if (orWindow.process(executedAction)) {
                 upgradePanel.clear();
                 map.selectHex(null);
+                //ensure painting the token (model update currently does not arrive at UI)
+                map.repaintTokens(selectedHex.getBounds());
                 selectedHex = null;
             }
         }
