@@ -31,17 +31,118 @@ import rails.util.Util;
 public abstract class HexMap implements MouseListener,
         MouseMotionListener {
 
+    /**
+     * class for managing sets of rectangles. Apart from several convenience methods,
+     * this class aims at keeping the set as minimal as possible.
+     */
+    private class RectangleSet {
+        private List<Rectangle> rs = new LinkedList<Rectangle>();
+        /**
+         * @param rOp Rectangle to be added to the set. Only added if not contained in
+         * a rectangle of the set. If added, all of the set's rectangles which are a
+         * sub-area of this rectangle are dropped (in order to keep the rectangle list
+         * as small as possible).
+         */
+        public void add(Rectangle rOp) {
+            // exit if rectangle already contained in set of rectangles
+            for (Rectangle r : rs) {
+                if (r.contains(rOp)) return;
+            }
+            
+            // build new set (do not include rectangles contained by new rectangle)
+            List<Rectangle> newRs = new LinkedList<Rectangle>();
+            for (Rectangle r : rs) {
+                if (!rOp.contains(r)) newRs.add(r);
+            }
+            newRs.add(rOp);
+            rs = newRs;
+        }
+        
+        /**
+         * As a side-effect, the area defined by the given rectangle is removed from the
+         * area defined by the set of rectangles. This might lead to splitting the set's
+         * rectangles if only parts of their areas become removed.
+         * @return The intersection between the given rectangle and the set of rectangles.
+         * Returns null if the intersection is empty.
+         */
+        public Rectangle getIntersectionAndRemoveFromSet(Rectangle rOp) {
+            Rectangle intersection = null;
+            RectangleSet newRs = new RectangleSet();
+            for (Rectangle r : rs) {
+                Rectangle intersectionPart = null;
+
+                //check for the most common case: set's rectangle is a sub-area
+                //of the given rectangle (common because repaint creates unions)
+                //avoid further (complex) processing for this case
+                if (rOp.contains(r)) {
+                    intersectionPart = r;
+                } else if (r.intersects(rOp)) {
+                    //update intersection region
+                    intersectionPart = r.intersection(rOp);
+                    
+                    //adjust rectangle: potentially split into 4 sub-rectangles
+                    // ***************************
+                    // *      |     3     |      *
+                    // *      *************      *
+                    // *   1  *    rOp    *   2  *
+                    // *      *************      *
+                    // *      |     4     |      *
+                    // ***************************
+                    
+                    //region 1
+                    if (r.x < rOp.x && (r.x + r.width) > rOp.x) {
+                        newRs.add(new Rectangle(r.x,r.y,(rOp.x-r.x),r.height));
+                    }
+                    //region 2
+                    if ((r.x + r.width) > (rOp.x + rOp.width) && r.x < (rOp.x + rOp.width)) {
+                        newRs.add(new Rectangle((rOp.x+rOp.width),r.y,
+                                (r.x+r.width-rOp.x-rOp.width),r.height));
+                    }
+                    //region 3
+                    if (r.y < rOp.y) {
+                        int x1 = Math.max(r.x, rOp.x);
+                        int x2 = Math.min(r.x+r.width, rOp.x+rOp.width);
+                        if (x1 < x2) newRs.add(new Rectangle(x1,r.y,x2-x1,rOp.y-r.y));
+                    }
+                    //region 4
+                    if ((r.y + r.height) > (rOp.y + rOp.height)) {
+                        int x1 = Math.max(r.x, rOp.x);
+                        int x2 = Math.min(r.x+r.width, rOp.x+rOp.width);
+                        if (x1 < x2) newRs.add(new Rectangle(x1,(rOp.y+rOp.height),
+                                x2-x1,(r.y+r.height-rOp.y-rOp.height)));
+                    }
+                }
+                
+                if (intersectionPart == null) {
+                    //if no intersection part, this rectangle remains unchanged in the set
+                    newRs.add(r);
+                } else {
+                    //expand the intersection region if intersection part found
+                    if (intersection == null) {
+                        intersection = (Rectangle)intersectionPart.clone();
+                    } else {
+                        intersection.add(intersectionPart);
+                    }
+                }
+            }
+            rs = newRs.rs;
+            return intersection;
+        }
+    }
     private abstract class HexLayer extends JComponent {
         private static final long serialVersionUID = 1L;
         private BufferedImage bufferedImage;
-        private boolean isBufferDirty = false;
+        /*
+         * list of regions for which the layer's image buffer is dirty
+         */
+        private RectangleSet bufferDirtyRegions = new RectangleSet();;
         protected abstract void paintImage(Graphics g);
         final public void repaint() {
-            isBufferDirty = true;
+            bufferDirtyRegions.add( new Rectangle(0,0,getWidth(),getHeight()) );
             super.repaint();
         }
         public void repaint(Rectangle r) {
-            isBufferDirty = true;
+            bufferDirtyRegions.add( r );
             super.repaint(r);
         }
         final public void paintComponent(Graphics g) {
@@ -60,18 +161,26 @@ public abstract class HexMap implements MouseListener,
                         || bufferedImage.getHeight() != getHeight() ) {
                     //create new buffer image
                     bufferedImage = new BufferedImage(getWidth(), getHeight(),BufferedImage.TYPE_INT_ARGB);
-                    isBufferDirty = true;
+                    
+                    //clear information of the image buffer's dirty regions
+                    bufferDirtyRegions = new RectangleSet();;
+                    bufferDirtyRegions.add( new Rectangle(0,0,getWidth(),getHeight()) );
                     
                     //since the buffered image is empty, it has to be completely redrawn
                     rectClip = new Rectangle (0, 0, getWidth(), getHeight());
                 }
                 
-                if (isBufferDirty) {
+                //determine which parts of the clip are dirty and have to be redrawn
+                Rectangle dirtyClipArea = bufferDirtyRegions.getIntersectionAndRemoveFromSet(rectClip);
+                if (dirtyClipArea != null) {
                     //buffer redraw is necessary
                     Graphics2D imageGraphics = (Graphics2D)bufferedImage.getGraphics();
                     
                     //apply the clip of the component's repaint to its image buffer
-                    imageGraphics.setClip(rectClip.x, rectClip.y, rectClip.width, rectClip.height);
+                    imageGraphics.setClip(dirtyClipArea.x,
+                            dirtyClipArea.y, 
+                            dirtyClipArea.width, 
+                            dirtyClipArea.height);
                     
                     //set the background to transparent so that only drawn parts of the
                     //buffer will be taken over
@@ -80,16 +189,18 @@ public abstract class HexMap implements MouseListener,
                     
                     //clear the clip (for a non-virtual graphic, this would have been
                     //done by super.paintComponent)
-                    imageGraphics.clearRect(rectClip.x, rectClip.y, rectClip.width, rectClip.height);
+                    imageGraphics.clearRect(dirtyClipArea.x,
+                            dirtyClipArea.y, 
+                            dirtyClipArea.width, 
+                            dirtyClipArea.height);
                     
                     //paint within the buffer
                     paintImage(imageGraphics);
                     
                     imageGraphics.dispose();
-                    isBufferDirty = false;
                 }
     
-                //buffer is valid and can be used
+                //now buffer is valid and can be used
                 BufferedImage bufferedRect = bufferedImage.getSubimage(
                         rectClip.x, rectClip.y, rectClip.width, rectClip.height);
                 g.drawImage(bufferedRect, rectClip.x, rectClip.y, null);

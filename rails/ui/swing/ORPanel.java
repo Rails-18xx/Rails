@@ -1223,6 +1223,8 @@ implements ActionListener, KeyListener, RevenueListener {
         button1.setEnabled(false);
 
         orCompIndex = -1;
+        
+        orUIManager.getMap().setTrainPaths(null);
     }
 
     // TEMPORARY
