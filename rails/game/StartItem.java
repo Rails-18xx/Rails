@@ -7,7 +7,7 @@ import org.apache.log4j.Logger;
 import rails.game.model.Model;
 import rails.game.model.MoneyModel;
 import rails.game.model.Portfolio;
-import rails.game.state.AbstractItem;
+import rails.game.state.GameItem;
 import rails.game.state.IntegerState;
 
 /**
@@ -17,7 +17,7 @@ import rails.game.state.IntegerState;
  * other attributes are saved. The certificate objects are linked to in the
  * later initialisation step.
  */
-public class StartItem extends AbstractItem {
+public class StartItem extends GameItem {
 
     // Fixed properties
     protected String name = null;

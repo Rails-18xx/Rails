@@ -1,9 +1,9 @@
 package rails.game.model;
 
-import rails.game.state.AbstractItem;
+import rails.game.state.GameItem;
 import rails.game.state.Item;
 
-public class SingleOwner<T extends Ownable> extends AbstractItem implements Owner {
+public class SingleOwner<T extends Ownable> extends GameItem implements Owner {
     
     private final StorageModel<T> holder; 
     private final Class<T> clazz;
@@ -22,9 +22,10 @@ public class SingleOwner<T extends Ownable> extends AbstractItem implements Owne
     }
     
     @Override
-    public void init(Item parent) {
+    public SingleOwner<T> init(Item parent) {
         super.init(parent);
         holder.init(this);
+        return this;
     }
     
     public <E extends Ownable> void addStorage(Storage<E> newHolder,

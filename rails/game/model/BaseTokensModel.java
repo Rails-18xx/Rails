@@ -17,25 +17,46 @@ public class BaseTokensModel extends Model {
     public BaseTokensModel() {
         super("BaseTokensModel");
     }
+
     /**
-     * Initialization of a BaseTokenModels requires the definition of the following parameters
-     * @param company 
-     * @param allTokenState
-     * @param freeTokenState
+     * Creates an initialized BaseTokenModel
      */
-    public void init(PublicCompany company, State allTokenState, State freeTokenState){
-        super.init(company);
-        this.company = company;
-        allTokenState.addModel(this);
-        freeTokenState.addModel(this);
+    public static BaseTokensModel create(PublicCompany company){
+        return new BaseTokensModel().init(company);
     }
     
     /** 
-     * This method throws an IllegalArgumentException as BaseTokenModels requires more attributes
+     * @param parent restricted to PublicCompany
      */
     @Override
-    public void init(Item parent){
-        throw new IllegalArgumentException("BaseTokenModel init() requires additional parameters");
+    public BaseTokensModel init(Item parent){
+        super.init(parent);
+        if (parent instanceof PublicCompany) {
+            this.company = (PublicCompany)parent;
+        } else {
+            throw new IllegalArgumentException("BaseTokenModel init() only works for PublicCompanies");
+        }
+        return this;
+    }
+    
+    /**
+     * @return restricted to PublicCompany
+     */
+    @Override
+    public PublicCompany getParent() {
+        return (PublicCompany)super.getParent();
+    }
+    
+    /**
+     * Sets the states related to the model
+     * @param allTokenState
+     * @param freeTokenState
+     * TODO: Replace with a model that contains the states
+     */
+    public void setStates(State allTokenState, State freeTokenState){
+        super.init(company);
+        allTokenState.addModel(this);
+        freeTokenState.addModel(this);
     }
 
     @Override 

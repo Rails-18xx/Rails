@@ -1,6 +1,5 @@
 package rails.game.model;
 
-import rails.game.state.Item;
 import rails.game.state.GenericState;
 
 /**
@@ -9,8 +8,11 @@ import rails.game.state.GenericState;
  */
 public class OwnerState extends GenericState<Owner> {
 
-    public OwnerState(Item parent) {
-        super(parent, "owner");
+    /**
+     * OwnerState uses specific id "owner"
+     */
+    public OwnerState() {
+        super("owner");
     }
     
 }

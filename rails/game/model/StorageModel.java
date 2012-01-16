@@ -20,32 +20,14 @@ public class StorageModel<T extends Ownable> extends Model implements Storage<T>
     private Owner owner;
     
     /**
-     * Create a StorageModel 
-     * @param <T> type what to store
-     * @param owner
-     * @param clazz
-     * @return the created StorageModel
-     */
-    public static <T extends Ownable> StorageModel<T> create(Owner owner, Class<T> clazz) {
-        StorageModel<T> holderModel = new StorageModel<T>(clazz);
-        holderModel.init(owner);
-        owner.addStorage(holderModel, clazz);
-        return holderModel;
-    }
-    
-    /**
      * Defines a StorageModel with id that equals the clazz name
-     * @param clazz
      */
-    
     protected StorageModel(Class<T> clazz) {
         this(clazz, "");
     }
     
     /**
      * Defines a StorageModel with id that equals the class name extended by the postfix_id
-     * @param clazz
-     * @param postfix_id
      */
     protected StorageModel(Class<T> clazz, String postfix_id) {
         super(clazz.getName() + postfix_id);
@@ -54,21 +36,27 @@ public class StorageModel<T extends Ownable> extends Model implements Storage<T>
     }
     
     /**
-     * Initialization of a StorageModel only works for an Owner
-     * @param owner 
+     * Creates an initialized StorageModel 
      */
-    public void init(Owner owner) {
-        super.init(owner);
-        this.owner = owner;
-        storageList.init(this);
+    public static <T extends Ownable> StorageModel<T> create(Owner owner, Class<T> clazz) {
+        StorageModel<T> holderModel = new StorageModel<T>(clazz).init(owner);
+        owner.addStorage(holderModel, clazz);
+        return holderModel;
     }
-
+    
     /** 
-     * This method throws an IllegalArgumentException as StorageModel works only for Owners
+     * @param parent restricted to Owners
      */
     @Override
-    public void init(Item parent){
-        throw new IllegalArgumentException("StorageModel init() only works for Owners");
+    public StorageModel<T> init(Item parent){
+        super.init(parent);
+        if (parent instanceof Owner) {
+            this.owner = (Owner)parent;
+            storageList.init(this);
+        } else {
+            throw new IllegalArgumentException("StorageModel init() only works for Owners");
+        }
+        return this;
     }
     
     @Override

@@ -3,6 +3,7 @@ package rails.game.model;
 import rails.game.Player;
 import rails.game.PublicCompany;
 import rails.game.state.Item;
+import rails.game.state.Observer;
 
 /**
  * model object for the current company president
@@ -20,21 +21,33 @@ public class PresidentModel extends Model implements Observer {
         super("PresidentModel");
     }
 
-    /**
-     * Initialization of the PresidentModel
-     * @param company
-     */
-    public void init(PublicCompany company) {
-        super.init(company);
-        this.company = company;
-    }
-
     /** 
-     * This method throws an IllegalArgumentException as PresidentModel works only for PublicCompanies
+     * Creates an initialized PresidentModel
+     */
+    public PresidentModel create(PublicCompany parent){
+        return new PresidentModel().init(parent);
+    }
+    
+    /** 
+     * @param parent restricted to PublicCompany
      */
     @Override
-    public void init(Item parent){
-        throw new IllegalArgumentException("PresidentModel init() only works for PublicCompanies");
+    public PresidentModel init(Item parent){
+        super.init(parent);
+        if (parent instanceof PublicCompany) {
+            this.company = (PublicCompany)parent;
+        } else {
+            throw new IllegalArgumentException("PresidentModel init() only works for PublicCompanies");
+        }
+        return this;
+    }
+    
+    /**
+     * @return restricted to PublicCompany
+     */
+    @Override
+    public PublicCompany getParent() {
+        return (PublicCompany)super.getParent();
     }
 
     @Override

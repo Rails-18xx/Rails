@@ -25,13 +25,21 @@ public final class CashModel extends Model {
         displayText = new StringState("BankCashDisplayText");
         
     }
+
+    /**
+     * Creates an initialized CashModel
+     */
+    public static CashModel create(Item parent){
+        return new CashModel().init(parent);
+    }
     
     @Override
-    public void init(Item parent){
+    public CashModel init(Item parent){
         super.init(parent);
         suppressZero = false;
         cash.init(this);
         displayText.init(this);
+        return this;
     }
 
     public void setSuppressZero(boolean value) {

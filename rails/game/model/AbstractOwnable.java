@@ -1,15 +1,16 @@
 package rails.game.model;
 
-import rails.game.state.AbstractItem;
+import rails.game.state.GameItem;
+import rails.game.state.Item;
 
 /**
  * A simple implementation of an ownable object
  * 
  * @author freystef
  */
-public abstract class AbstractOwnable extends AbstractItem implements Ownable {
+public abstract class AbstractOwnable extends GameItem implements Ownable {
 
-    private final OwnerState owner = new OwnerState(this);
+    private final OwnerState owner = new OwnerState();
 
     @Deprecated
     // TODO: Remove that default constructor here
@@ -19,6 +20,13 @@ public abstract class AbstractOwnable extends AbstractItem implements Ownable {
     
     public AbstractOwnable(String id){
         super(id);
+    }
+    
+    @Override
+    public GameItem init(Item parent){
+        super.init(parent);
+        owner.init(this);
+        return this;
     }
     
     // Ownable Interface methods

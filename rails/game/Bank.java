@@ -12,11 +12,11 @@ import rails.common.parser.Tag;
 import rails.game.model.CashModel;
 import rails.game.model.CashOwner;
 import rails.game.model.Portfolio;
-import rails.game.state.AbstractItem;
+import rails.game.state.GameItem;
 import rails.game.state.BooleanState;
 import rails.util.*;
 
-public class Bank extends AbstractItem implements CashOwner, ConfigurableComponentI {
+public class Bank extends GameItem implements CashOwner, ConfigurableComponentI {
 
     /** Specific portfolio names */
     public static final String IPO_NAME = "IPO";

@@ -26,18 +26,19 @@ public abstract class State extends Observable {
     public State(String id){
         super(id);
     }
+    
     /**
      * Remark: If the parent of the state is a model, the model is registered automatically
      */
     @Override
-    public void init(Item parent) {
+    public State init(Item parent) {
         // set parent using AbstractItem.init() method
         super.init(parent);
         
         // check if the parent's context is a GameContext
-        if (parent.getContext() instanceof GameContext) {
+        if (parent.getContext() instanceof Context) {
             // register state
-            ((GameContext)parent.getContext()).getStateManager().registerState(this); 
+            ((Context)parent.getContext()).getStateManager().registerState(this); 
         } else {
             throw new InvalidParameterException("Invalid parent: States can only be created inside a GameContext hierachy");
         }
@@ -46,14 +47,16 @@ public abstract class State extends Observable {
         if (parent instanceof Model) {
             addModel((Model)parent);
         }
+        
+        return this;
     }
 
     /*
     * Replaces the standard getContext() method:
      * @return GameContext object where the State object exists in
      */
-    public GameContext getContext() {
-        return (GameContext)super.getContext();
+    public Context getContext() {
+        return (Context)super.getContext();
     }
 
     /**

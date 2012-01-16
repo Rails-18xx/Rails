@@ -13,8 +13,8 @@ import org.apache.log4j.Logger;
 import rails.game.*;
 import rails.game.model.Model;
 import rails.game.model.Model;
-import rails.game.model.Observer;
 import rails.game.state.BooleanState;
+import rails.game.state.Observer;
 import rails.ui.swing.elements.Field;
 import rails.ui.swing.elements.ViewObject;
 

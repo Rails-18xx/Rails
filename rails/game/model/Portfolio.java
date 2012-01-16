@@ -26,6 +26,7 @@ import rails.game.TrainCertificateType;
 import rails.game.TrainType;
 import rails.game.special.LocatedBonus;
 import rails.game.special.SpecialPropertyI;
+import rails.game.state.Item;
 
 // FIXME: Solve id, name and uniquename clashes
 
@@ -80,10 +81,16 @@ public final class Portfolio extends DirectOwner {
         gameManager.addPortfolio(this);
     }
      
-    public void init(Owner owner) {
-        this.owner = owner;
-        this.ownerName = owner.getId(); // FIXME
-        
+    public Portfolio init(Item parent) {
+        super.init(parent);
+        if (parent instanceof Owner) {
+            this.owner = (Owner)parent;
+            this.ownerName = owner.getId(); // FIXME
+            
+        } else {
+            throw new IllegalArgumentException("Portfolio init() only works for Owner(s)");
+        }
+
         // init models
         certificates.init(owner);
         privates.init(owner);
@@ -100,14 +107,7 @@ public final class Portfolio extends DirectOwner {
         } else if (owner instanceof Player) {
             privates.setLineBreak(true);
         }
-    }
-    
-    /**
-     * 
-     */
-    
-    public void init() {
-        
+        return this;
     }
     
 

@@ -10,13 +10,13 @@ import rails.game.Stop.RunThrough;
 import rails.game.Stop.RunTo;
 import rails.game.Stop.Score;
 import rails.game.Stop.Type;
-import rails.game.state.AbstractItem;
+import rails.game.state.GameItem;
 import rails.util.Util;
 
 /**
  * MapManager configures the map layout from XML
  */
-public class MapManager extends AbstractItem implements ConfigurableComponentI {
+public class MapManager extends GameItem implements ConfigurableComponentI {
 
     private String mapUIClassName = null;
 

@@ -2,7 +2,6 @@ package rails.game.model;
 
 import rails.game.state.Item;
 
-
 /**
  * The Owner interface is implemented by all classes that wish
  * to hold Rails Ownable objects

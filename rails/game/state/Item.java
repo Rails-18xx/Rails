@@ -19,7 +19,7 @@ package rails.game.state;
 public interface Item {
 
     /** throws an runtime error if either item is initialized already or parent is null */
-    public void init(Item parent);
+    public Item init(Item parent);
     
     public String getId();
 

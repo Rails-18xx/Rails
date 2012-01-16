@@ -7,11 +7,11 @@ import rails.common.LocalText;
 import rails.common.parser.ConfigurableComponentI;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
-import rails.game.state.AbstractItem;
+import rails.game.state.GameItem;
 import rails.game.state.BooleanState;
 import rails.game.state.PriceTokenMove;
 
-public class StockMarket extends AbstractItem implements StockMarketI, ConfigurableComponentI {
+public class StockMarket extends GameItem implements StockMarketI, ConfigurableComponentI {
 
     protected HashMap<String, StockSpaceTypeI> stockSpaceTypes =
         new HashMap<String, StockSpaceTypeI>();

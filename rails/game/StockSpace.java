@@ -7,7 +7,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import rails.game.model.Model;
-import rails.game.state.Item;
+import rails.game.state.GameItem;
 
 /**
  * Objects of this class represent a square on the StockMarket.
@@ -37,7 +37,7 @@ public class StockSpace extends Model<String> implements StockSpaceI {
             Logger.getLogger(StockSpace.class.getPackage().getName());
 
     /*--- Contructors ---*/
-    public StockSpace(Item owner, String name, int price, StockSpaceTypeI type) {
+    public StockSpace(GameItem owner, String name, int price, StockSpaceTypeI type) {
         super(owner, name);
         this.name = name;
         this.price = price;
@@ -46,7 +46,7 @@ public class StockSpace extends Model<String> implements StockSpaceI {
         this.column = (name.toUpperCase().charAt(0) - '@') - 1;
     }
 
-    public StockSpace(Item owner, String name, int price) {
+    public StockSpace(GameItem owner, String name, int price) {
         this(owner, name, price, null);
     }
 

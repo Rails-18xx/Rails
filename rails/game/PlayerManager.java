@@ -7,9 +7,9 @@ import rails.common.parser.ConfigurableComponentI;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.model.Owners;
-import rails.game.state.AbstractItem;
+import rails.game.state.GameItem;
 
-public class PlayerManager extends AbstractItem implements ConfigurableComponentI {
+public class PlayerManager extends GameItem implements ConfigurableComponentI {
 
     private int numberOfPlayers;
     private List<Player> players;

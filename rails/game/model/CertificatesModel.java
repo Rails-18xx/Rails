@@ -29,24 +29,38 @@ public final class CertificatesModel extends Model implements Storage<PublicCert
         super("CertificatesModel");
         certificates = new HashMultimapState<PublicCompany, PublicCertificate>("Certificates");
     }
-    
+   
     /**
-     * Initialization of a CertficateCountModel only works for a Owner objects
-     * @param owner of the certificates
+     * Creates an initialized CertificatesModel
      */
-    public void init(Owner owner) {
-        super.init(owner);
-        certificates.init(owner);
-        certificates.addModel(this);
+    public static CertificatesModel create(Owner parent) {
+        return new CertificatesModel().init(parent);
     }
-
+    
     /** 
-     * This method throws an IllegalArgumentException as CertificatesModel works only for Owners
+     * @param parent restricted to Owners
      */
     @Override
-    public void init(Item parent){
-        throw new IllegalArgumentException("CertificatesModel init() only works for Owners");
+    public CertificatesModel init(Item parent){
+        super.init(parent);
+        if (parent instanceof Owner) {
+            Owner owner = (Owner)parent;
+            certificates.init(owner);
+            certificates.addModel(this);
+        } else {
+            throw new IllegalArgumentException("CertificatesModel init() only works for Owners");
+        }
+        return this;
     }
+    
+    /**
+     * @return restricted to Owner
+     */
+    @Override
+    public Owner getParent() {
+        return (Owner)super.getParent();
+    }
+
     
     public int getShare(PublicCompany company) {
         int share = 0;

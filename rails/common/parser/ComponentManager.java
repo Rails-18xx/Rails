@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 
 import rails.common.LocalText;
 import rails.common.parser.XMLTags;
-import rails.game.state.GameContext;
+import rails.game.state.Context;
 
 /**
  * ComponentManage - an implementation of ComponentManagerI, which handles the
@@ -27,7 +27,7 @@ public class ComponentManager {
     private Map<String, ConfigurableComponentI> mComponentMap =
             new HashMap<String, ConfigurableComponentI>();
     
-    public ComponentManager(GameContext context, String gameName, Tag tag, Map<String, String> gameOptions)
+    public ComponentManager(Context context, String gameName, Tag tag, Map<String, String> gameOptions)
             throws ConfigurationException {
         this.gameName = gameName;
 
@@ -40,7 +40,7 @@ public class ComponentManager {
         }
     }
 
-    private void configureComponent(GameContext context, Tag componentTag)
+    private void configureComponent(Context context, Tag componentTag)
             throws ConfigurationException {
 
         // Extract the attributes of the Component

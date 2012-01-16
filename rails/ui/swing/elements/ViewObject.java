@@ -1,7 +1,7 @@
 package rails.ui.swing.elements;
 
 import rails.game.model.Model;
-import rails.game.model.Observer;
+import rails.game.state.Observer;
 
 // FIXME: This has to be rewritten based on the new objects
 @Deprecated

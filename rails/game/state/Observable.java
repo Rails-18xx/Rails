@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import rails.game.model.Model;
-import rails.game.model.Observer;
 
 /**
  * Requirement:
@@ -13,7 +12,7 @@ import rails.game.model.Observer;
  * @author freystef
  *
  */
-public abstract class Observable extends AbstractItem {
+public abstract class Observable extends GameItem {
 
     // stores observers and models
     private Set<Observer> observers = null; // lazy initialization

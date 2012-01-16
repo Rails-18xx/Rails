@@ -1,4 +1,4 @@
-package rails.game.model;
+package rails.game.state;
 
 /**
  * An interface defining an observer for states and models

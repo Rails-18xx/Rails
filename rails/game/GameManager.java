@@ -32,7 +32,7 @@ import rails.util.Util;
  * This class manages the playing rounds by supervising all implementations of
  * Round. Currently everything is hardcoded &agrave; la 1830.
  */
-public class GameManager extends AbstractItem implements Owner, ConfigurableComponentI {
+public class GameManager extends GameItem implements Owner, ConfigurableComponentI {
     /** Version ID of the Save file header, as written in save() */
     private static final long saveFileHeaderVersionID = 3L;
     /**

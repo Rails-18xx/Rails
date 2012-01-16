@@ -10,17 +10,17 @@ import rails.game.model.CashOwner;
 import rails.game.model.Owner;
 import rails.game.model.Portfolio;
 import rails.game.special.SpecialPropertyI;
-import rails.game.state.AbstractItem;
+import rails.game.state.GameItem;
 import rails.game.state.ArrayListState;
 import rails.game.state.BooleanState;
 import rails.game.state.ChangeStack;
-import rails.game.state.Item;
+import rails.game.state.GameItem;
 import rails.game.model.Owners;
 
 /**
  * @author Erik Vos
  */
-public abstract class Round extends AbstractItem implements RoundI {
+public abstract class Round extends GameItem implements RoundI {
 
     protected PossibleActions possibleActions = PossibleActions.getInstance();
     protected GuiHints guiHints = null;

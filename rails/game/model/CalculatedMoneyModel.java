@@ -31,13 +31,23 @@ public class CalculatedMoneyModel extends Model {
     }
 
     /**
-     * Initialization of the CalculatedMoneyModel
-     * @param parent is the owner of model
-     * @param methodName defines a method defined inside the parent
+     * Creates a fully specified and initialized CalculatedMoneyModel
      */
-    public void init(Item parent, String methodName) {
+    public static CalculatedMoneyModel create(Item parent, String id, String methodName) {
+        return new CalculatedMoneyModel(id).init(parent).initMethod(methodName);
+    }
+    
+    public CalculatedMoneyModel init(Item parent) {
         super.init(parent);
+        return this;
+    }
+
+    /**
+    * @param methodName defines a method defined inside the parent
+    */
+    public CalculatedMoneyModel initMethod(String methodName) {
         this.methodName = methodName;
+        return this;
     }
     
     public void setSuppressZero(boolean suppressZero) 

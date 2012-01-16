@@ -8,7 +8,6 @@ import rails.game.action.*;
 import rails.game.correct.ClosePrivate;
 import rails.game.correct.OperatingCost;
 import rails.game.model.CashOwner;
-import rails.game.model.Observer;
 import rails.game.model.Owner;
 import rails.game.model.Owners;
 import rails.game.model.Portfolio;

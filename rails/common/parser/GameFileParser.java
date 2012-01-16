@@ -18,7 +18,7 @@ import rails.game.PlayerManager;
 import rails.game.StockMarketI;
 import rails.game.TileManager;
 import rails.game.TrainManager;
-import rails.game.state.GameContext;
+import rails.game.state.Context;
 
 public class GameFileParser extends XMLParser {
     private static String GAME_XML_FILE = "Game.xml";
@@ -37,7 +37,7 @@ public class GameFileParser extends XMLParser {
     private RevenueManager revenueManager;
     private Bank bank;
     
-    public GameFileParser(GameContext context, String name, Map<String, String> gameOptions) {
+    public GameFileParser(Context context, String name, Map<String, String> gameOptions) {
         
         directories.add("data/" + name);
         

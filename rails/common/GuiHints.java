@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rails.game.RoundI;
-import rails.game.state.AbstractItem;
+import rails.game.state.GameItem;
 import rails.game.state.GenericState;
 
 /**
@@ -16,7 +16,7 @@ import rails.game.state.GenericState;
  * @author VosE
  *
  */
-public class GuiHints extends AbstractItem implements Serializable{
+public class GuiHints extends GameItem implements Serializable{
 
     public static final long serialVersionUID = 1L;
 

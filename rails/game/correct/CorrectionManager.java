@@ -9,10 +9,10 @@ import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.game.GameManager;
 import rails.game.ReportBuffer;
-import rails.game.state.AbstractItem;
+import rails.game.state.GameItem;
 import rails.game.state.BooleanState;
 
-public abstract class CorrectionManager extends AbstractItem implements CorrectionManagerI {
+public abstract class CorrectionManager extends GameItem implements CorrectionManagerI {
     
     protected GameManager gameManager;
     

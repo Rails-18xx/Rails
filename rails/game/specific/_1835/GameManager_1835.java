@@ -2,7 +2,7 @@
 package rails.game.specific._1835;
 
 import rails.game.*;
-import rails.game.state.GameContext;
+import rails.game.state.Context;
 
 public class GameManager_1835 extends GameManager {
 
@@ -19,7 +19,7 @@ public class GameManager_1835 extends GameManager {
     public static String SX_ID = "SX";
     public static String BY_ID = "BY";
 
-    public GameManager_1835(GameContext context) {
+    public GameManager_1835(Context context) {
         super(context);
     }
 

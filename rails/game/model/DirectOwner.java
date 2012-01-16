@@ -4,9 +4,9 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
-import rails.game.state.AbstractItem;
+import rails.game.state.GameItem;
 
-public class DirectOwner extends AbstractItem implements Owner {
+public class DirectOwner extends GameItem implements Owner {
 
     private final Map<Class<? extends Ownable>, Storage<? extends Ownable>> storages
         = Maps.newHashMap();

@@ -16,20 +16,32 @@ public final class CertificateCountModel extends Model {
     }
   
     /**
-     * Initialization of a CertficateCountModel only works for a Portfolio
-     * @param owner the portfolio for which certificates are counted
+     * Creates a fully initialized CertificateCountModel
      */
-    public void init(Portfolio owner) {
-        super.init(owner);
-        this.owner = owner;
+    public static CertificateCountModel create(Portfolio parent){
+        return new CertificateCountModel().init(parent);
     }
 
     /** 
-     * This method throws an IllegalArgumentException as CertificateCountModel works only for Portfolios
+     * @param parent restricted to Portfolio
      */
     @Override
-    public void init(Item parent){
-        throw new IllegalArgumentException("CertificateCountModel init() only works for Portfolios");
+    public CertificateCountModel init(Item parent){
+        super.init(parent);
+        if (parent instanceof Portfolio) {
+            this.owner = (Portfolio)parent;
+        } else {
+            throw new IllegalArgumentException("CertificateCountModel init() only works for Portfolios");
+        }
+        return this;
+    }
+
+    /**
+     * @return restricted to Portfolios
+     */
+    @Override
+    public Portfolio getParent() {
+        return (Portfolio)super.getParent();
     }
 
     @Override

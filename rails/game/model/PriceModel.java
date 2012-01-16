@@ -1,6 +1,8 @@
 package rails.game.model;
 
-import rails.game.*;
+import rails.game.Bank;
+import rails.game.PublicCompany;
+import rails.game.StockSpaceI;
 import rails.game.state.Item;
 import rails.game.state.PriceMove;
 
@@ -19,21 +21,25 @@ public class PriceModel extends Model {
         super("PriceModel");
     }
 
-    /**
-     * Initialization of a PriceModel only possible for a PublicCompany
-     * @param company
+    /** 
+     * Creates an initialized PriceModel
      */
-    public void init(PublicCompany company) {
-        super.init(company);
-        this.company = company;
+    public PriceModel create(PublicCompany parent){
+        return new PriceModel().init(parent);
     }
     
     /** 
-     * This method throws an IllegalArgumentException as  works only for PublicCompanies
+     * @param parent restricted to PublicCompany
      */
     @Override
-    public void init(Item parent){
-        throw new IllegalArgumentException("PriceModel init() only works for PublicCompanies");
+    public PriceModel init(Item parent){
+        super.init(parent);
+        if (parent instanceof PublicCompany) {
+            this.company = (PublicCompany)parent;
+        } else {
+            throw new IllegalArgumentException("PriceModel init() only works for PublicCompanies");
+        }
+        return this;
     }
     
 

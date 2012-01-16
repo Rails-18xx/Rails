@@ -14,9 +14,8 @@ import com.google.common.collect.Sets;
 
 import rails.game.GameManager;
 import rails.game.model.Model;
-import rails.game.model.Observer;
 
-public final class StateManager extends AbstractItem {
+public final class StateManager extends GameItem {
 
     protected static Logger log =
         Logger.getLogger(StateManager.class.getPackage().getName());
@@ -27,10 +26,10 @@ public final class StateManager extends AbstractItem {
      * Creates a StateManager (only possible for a root GameContext)
      * @param parent a root GameContext
      */
-    StateManager(GameContext parent) {
+    StateManager(Context parent) {
         super("StateManager");
 
-        if (parent.getId() != GameContext.ROOT) {
+        if (parent.getId() != Context.ROOT) {
             throw new IllegalArgumentException("StateManager can only be created for a root GameContext");
         }
         // immediate initialization

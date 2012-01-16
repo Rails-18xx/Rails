@@ -40,11 +40,25 @@ public class MoneyModel extends Model {
         this.value = new IntegerState("MoneyValue",  value);
     }
     
+    /** 
+     * Creates an initialized MoneyModel with default value of zero
+     */
+    public static MoneyModel create(Item parent, String id){
+        return new MoneyModel(id).init(parent);
+    }
+
+    /** 
+     * Creates an initialized MoneyModel with predefined value
+     */
+    public static MoneyModel create(Item parent, String id, int value){
+        return new MoneyModel(id, value).init(parent);
+    }
     
     @Override
-    public void init(Item parent){
+    public MoneyModel init(Item parent){
         super.init(parent);
         this.value.init(this);
+        return this;
     }
 
     public void setSuppressZero(boolean suppressZero) {

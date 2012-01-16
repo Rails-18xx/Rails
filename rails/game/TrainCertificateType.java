@@ -7,12 +7,12 @@ import org.apache.log4j.Logger;
 import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
-import rails.game.state.AbstractItem;
+import rails.game.state.GameItem;
 import rails.game.state.BooleanState;
 import rails.game.state.IntegerState;
 import rails.util.*;
 
-public class TrainCertificateType extends AbstractItem {
+public class TrainCertificateType extends GameItem {
 
     protected String name;
     protected int quantity = 0;

@@ -6,8 +6,15 @@ public abstract class PortfolioCashOwner extends PortfolioOwner implements CashO
 
     private final CashModel cashModel = new CashModel();
     
-    public PortfolioCashOwner(Item parent, String id) {
-        super(parent, id);
+    public PortfolioCashOwner(String id) {
+        super(id);
+    }
+    
+    @Override
+    public PortfolioCashOwner init(Item parent){
+        super.init(parent);
+        cashModel.init(this);
+        return this;
     }
     
     public final CashModel getCashModel() {

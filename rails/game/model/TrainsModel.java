@@ -6,6 +6,7 @@ import com.google.common.collect.Multiset;
 
 import rails.game.TrainCertificateType;
 import rails.game.Train;
+import rails.game.state.Item;
 /**
  * A holder model that stores train objects
  * 
@@ -18,17 +19,21 @@ public class TrainsModel extends StorageModel<Train> {
 
     private boolean abbrList = false;
 
-    public static TrainsModel create(Owner owner) {
-        TrainsModel trainsModel = new TrainsModel();
-        trainsModel.init(owner);
-        owner.addStorage(trainsModel, Train.class);
-        return trainsModel;
-    }
-    
     private TrainsModel() {
         super(Train.class);
     }
 
+    public static TrainsModel create(Owner owner) {
+        TrainsModel trainsModel = new TrainsModel().init(owner);
+        owner.addStorage(trainsModel, Train.class);
+        return trainsModel;
+    }
+    
+    public TrainsModel init(Item parent) {
+        super.init(parent);
+        return this;
+    }
+    
     public void setAbbrList(boolean abbrList) {
         this.abbrList = abbrList;
     }

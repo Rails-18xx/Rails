@@ -20,9 +20,10 @@ public abstract class DirectCashOwner extends DirectOwner implements CashOwner {
     }
     
     @Override
-    public void init(Item parent){
+    public DirectCashOwner init(Item parent){
         super.init(parent);
         cashModel.init(this);
+        return this;
     }
 
     public final int getCash() {
