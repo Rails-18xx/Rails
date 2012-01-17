@@ -838,7 +838,7 @@ public class GameStatus extends GridPanel implements ActionListener {
 
         this.actorIndex = actorIndex;
 
-        highlightCurrentPlayer(playerIndex.get(gameUIManager.getCurrentPlayer()));
+        highlightCurrentPlayer(this.actorIndex);
         if (treasurySharesCaption != null) treasurySharesCaption.setHighlight(actorIndex == -1);
 
         // Set new highlights

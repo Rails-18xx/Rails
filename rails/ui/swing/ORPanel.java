@@ -789,6 +789,10 @@ implements ActionListener, KeyListener, RevenueListener {
         redoButton.setEnabled(false);
 
         disableRoutesDisplay();
+        
+        //clear all highlighting (president column and beyond)
+        resetActions();
+
     }
 
     public void redrawRoutes() {
@@ -1216,9 +1220,8 @@ implements ActionListener, KeyListener, RevenueListener {
 
     public void finishORCompanyTurn(int orCompIndex) {
 
-        for (Field field : president) {
-            field.setHighlight(false);
-        }
+        //clear all highlighting (president column and beyond)
+        resetActions();
 
         button1.setEnabled(false);
 
