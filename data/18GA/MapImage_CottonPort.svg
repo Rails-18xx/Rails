@@ -39,14 +39,14 @@
    guidetolerance="10"
    inkscape:pageopacity="0"
    inkscape:pageshadow="2"
-   inkscape:window-width="1737"
+   inkscape:window-width="1745"
    inkscape:window-height="1047"
    id="namedview8508"
    showgrid="false"
    inkscape:zoom="1"
-   inkscape:cx="432"
+   inkscape:cx="431.69887"
    inkscape:cy="465.61951"
-   inkscape:window-x="172"
+   inkscape:window-x="1444"
    inkscape:window-y="-11"
    inkscape:window-maximized="1"
    inkscape:current-layer="svg2" />
@@ -16538,11 +16538,13 @@
 
 
 
+
 		<text
    transform="translate(238.5708,369.5615)"
    font-size="11"
    id="text7036"
    style="font-size:11px;fill:#ffffff;font-family:Baskerville-Bold">W&amp;A</text>
+
 
 
 
@@ -16567,6 +16569,7 @@
 
 
 
+
 		<text
    transform="translate(690.0059,987.5615)"
    font-size="12"
@@ -16575,11 +16578,13 @@
 
 
 
+
 		<text
    transform="translate(235.9185,789.5625)"
    font-size="12"
    id="text7046"
    style="font-size:12px;font-family:Baskerville-Bold">G&amp;F</text>
+
 
 
 
@@ -16601,6 +16606,7 @@
    font-size="12"
    id="text7052"
    style="font-size:12px;font-family:Baskerville-Bold">SAL</text>
+
 
 
 
@@ -16680,6 +16686,7 @@
 
 
 
+
 		<ellipse
    transform="matrix(1,0.0034,-0.0034,1,2.8315,-2.0274)"
    cx="592.79498"
@@ -16742,6 +16749,7 @@
      rotate="4.4679999"
      id="tspan7096"
      style="font-size:11px;font-family:Baskerville-Italic">t</tspan></text>
+
 
 
 
@@ -16810,6 +16818,7 @@
 
 
 
+
 		<ellipse
    transform="matrix(1,0.0034,-0.0034,1,2.5226,-1.8223)"
    cx="532.79498"
@@ -16872,6 +16881,7 @@
      rotate="4.4679999"
      id="tspan7136"
      style="font-size:11px;font-family:Baskerville-Italic">t</tspan></text>
+
 
 
 
@@ -16940,6 +16950,7 @@
 
 
 
+
 		<ellipse
    transform="matrix(1,0.0034,-0.0034,1,2.1814,-0.467)"
    cx="137.295"
@@ -16961,6 +16972,7 @@
      id="tspan7162"
      style="font-size:11px;font-family:Baskerville-Italic"
      rotate="0 0 1.705 2.3150001 2.79 3.3710001 3.9660001 4.4679999">$20 cost</tspan></text>
+
 
 
 
@@ -16988,6 +17000,7 @@
 
 
 
+
 		<ellipse
    transform="matrix(1,0.0034,-0.0034,1,2.8774,-0.4714)"
    cx="138.96201"
@@ -17012,6 +17025,7 @@
 
 
 
+
 		<path
    d="m 244.072,929.84 c -0.018,5.109 -20.308,9.16 -53.031,9.049 -32.723,-0.113 -59.236,-4.344 -59.219,-9.455 0.018,-5.107 26.559,-9.156 59.281,-9.045 32.722,0.111 52.987,4.343 52.969,9.451 z"
    id="path7218"
@@ -17026,6 +17040,7 @@
      id="tspan7222"
      style="font-size:11px;font-family:Baskerville-Italic"
      rotate="0 0 1.732 2.4820001 2.8280001 3.4419999 4.0910001 4.6589999">$20 cost</tspan></text>
+
 
 
 
@@ -17053,6 +17068,7 @@
 
 
 
+
 		
 			<ellipse
    transform="matrix(0.8795,0.4759,-0.4759,0.8795,198.6645,-89.6501)"
@@ -17074,11 +17090,13 @@
 
 
 
+
 		<text
    transform="matrix(0.8888,0.4583,-0.4583,0.8888,271.6406,334.4824)"
    font-size="11"
    id="text7262"
    style="font-size:11px;font-family:Baskerville-Italic">2</text>
+
 
 
 
@@ -17090,11 +17108,13 @@
 
 
 
+
 		<text
    transform="matrix(0.877,0.4806,-0.4806,0.877,281.3745,339.5996)"
    font-size="11"
    id="text7266"
    style="font-size:11px;font-family:Baskerville-Italic"> </text>
+
 
 
 
@@ -17106,11 +17126,13 @@
 
 
 
+
 		<text
    transform="matrix(0.868,0.4966,-0.4966,0.868,286.8823,342.6475)"
    font-size="11"
    id="text7270"
    style="font-size:11px;font-family:Baskerville-Italic">o</text>
+
 
 
 
@@ -17122,11 +17144,13 @@
 
 
 
+
 		<text
    transform="matrix(0.8583,0.5131,-0.5131,0.8583,293.3291,346.3799)"
    font-size="11"
    id="text7274"
    style="font-size:11px;font-family:Baskerville-Italic">t</text>
+
 
 
 
@@ -17195,6 +17219,7 @@
 
 
 
+
 		
 			<ellipse
    transform="matrix(0.9993,-0.0367,0.0367,0.9993,-9.116,13.8394)"
@@ -17216,11 +17241,13 @@
 
 
 
+
 		<text
    transform="matrix(0.9984,-0.0566,0.0566,0.9984,361.832,246.584)"
    font-size="11"
    id="text7300"
    style="font-size:11px;font-family:Baskerville-Italic">6</text>
+
 
 
 
@@ -17232,11 +17259,13 @@
 
 
 
+
 		<text
    transform="matrix(0.9995,-0.0314,0.0314,0.9995,372.8174,246.0503)"
    font-size="11"
    id="text7304"
    style="font-size:11px;font-family:Baskerville-Italic"> </text>
+
 
 
 
@@ -17248,11 +17277,13 @@
 
 
 
+
 		<text
    transform="matrix(0.9999,-0.013,0.013,0.9999,379.1089,245.8779)"
    font-size="11"
    id="text7308"
    style="font-size:11px;font-family:Baskerville-Italic">o</text>
+
 
 
 
@@ -17264,11 +17295,13 @@
 
 
 
+
 		<text
    transform="matrix(1,0.0062,-0.0062,1,386.5591,245.8193)"
    font-size="11"
    id="text7312"
    style="font-size:11px;font-family:Baskerville-Italic">t</text>
+
 
 
 
@@ -17337,6 +17370,7 @@
 
 
 
+
 		<ellipse
    transform="matrix(1,0.0034,-0.0034,1,1.212,-0.272)"
    cx="79.947998"
@@ -17399,6 +17433,7 @@
      rotate="4.4679999"
      id="tspan7352"
      style="font-size:11px;font-family:Baskerville-Italic">t</tspan></text>
+
 
 
 
@@ -17467,6 +17502,7 @@
 
 
 
+
 		<ellipse
    transform="matrix(1,0.0034,-0.0034,1,1.8963,-1.4422)"
    cx="421.62799"
@@ -17529,6 +17565,7 @@
      rotate="4.9099998"
      id="tspan7392"
      style="font-size:12px;font-family:Baskerville-Italic">t</tspan></text>
+
 
 
 
@@ -17600,6 +17637,7 @@
 
 
 
+
 		
 			<ellipse
    transform="matrix(0.9995,-0.0311,0.0311,0.9995,-25.5865,8.511)"
@@ -17651,6 +17689,7 @@
      rotate="4.329"
      id="tspan7429"
      style="font-size:14px;font-family:Baskerville-Italic">y</tspan></text>
+
 
 
 
@@ -17720,6 +17759,7 @@
 
 
 
+
 		
 			<ellipse
    transform="matrix(0.9995,-0.0311,0.0311,0.9995,-28.7966,17.1317)"
@@ -17783,6 +17823,7 @@
      rotate="6"
      id="tspan7469"
      style="font-size:14px;font-family:Baskerville-Italic">s</tspan></text>
+
 
 
 
@@ -17881,6 +17922,7 @@
 
 
 
+
 		<ellipse
    transform="matrix(1,0.0081,-0.0081,1,5.2,-2.9606)"
    cx="366.94"
@@ -17901,11 +17943,13 @@
 
 
 
+
 		<text
    transform="matrix(1,0.0024,-0.0024,1,361.8525,629.2285)"
    font-size="14"
    id="text7505"
    style="font-size:14px;font-family:Baskerville-Italic">a</text>
+
 
 
 
@@ -17917,6 +17961,7 @@
 
 
 
+
 		<text
    transform="matrix(0.9996,0.0285,-0.0285,0.9996,372.1895,629.3164)"
    font-size="14"
@@ -17925,11 +17970,13 @@
 
 
 
+
 		<text
    transform="matrix(0.999,0.0438,-0.0438,0.999,377.2896,629.459)"
    font-size="14"
    id="text7511"
    style="font-size:14px;font-family:Baskerville-Italic">n</text>
+
 
 
 
@@ -17989,6 +18036,7 @@
      rotate="4.9250002"
      id="tspan7529"
      style="font-size:14px;font-family:Baskerville-Italic">a</tspan></text>
+
 
 
 
@@ -18066,6 +18114,7 @@
      rotate="6.7719998"
      id="tspan7553"
      style="font-size:14px;font-family:Baskerville-Italic">o</tspan></text>
+
 
 
 
@@ -18155,6 +18204,7 @@
 
 
 
+
 		<ellipse
    transform="matrix(1,0.0034,-0.0034,1,1.1804,-0.6632)"
    cx="194.04401"
@@ -18193,6 +18243,7 @@
      rotate="3.122"
      id="tspan7607"
      style="font-size:14px;font-family:Baskerville-Italic">e</tspan></text>
+
 
 
 
@@ -18461,12 +18512,14 @@
 
 
 
+
 		
 			<text
    transform="matrix(0.861,-0.5086,0.5086,0.861,674.4219,561.6182)"
    font-size="11"
    id="text7686"
    style="font-size:11px;fill:#600902;font-family:Baskerville-Italic">i</text>
+
 
 
 
@@ -18479,12 +18532,14 @@
 
 
 
+
 		
 			<text
    transform="matrix(0.8704,-0.4923,0.4923,0.8704,680.6631,557.9814)"
    font-size="11"
    id="text7690"
    style="font-size:11px;fill:#600902;font-family:Baskerville-Italic">l</text>
+
 
 
 
@@ -18497,6 +18552,7 @@
 
 
 
+
 		
 			<text
    transform="matrix(0.8811,-0.473,0.473,0.8811,686.9668,554.46)"
@@ -18506,12 +18562,14 @@
 
 
 
+
 		
 			<text
    transform="matrix(0.8872,-0.4613,0.4613,0.8872,691.1025,552.2383)"
    font-size="11"
    id="text7696"
    style="font-size:11px;fill:#600902;font-family:Baskerville-Italic">d</text>
+
 
 
 
@@ -18537,12 +18595,14 @@
 
 
 
+
 		
 			<text
    transform="matrix(0.8471,-0.5314,0.5314,0.8471,672.8418,576.1484)"
    font-size="11"
    id="text7702"
    style="font-size:11px;fill:#600902;font-family:Baskerville-Italic">a</text>
+
 
 
 
@@ -18555,12 +18615,14 @@
 
 
 
+
 		
 			<text
    transform="matrix(0.8563,-0.5165,0.5165,0.8563,678.9561,572.3525)"
    font-size="11"
    id="text7706"
    style="font-size:11px;fill:#600902;font-family:Baskerville-Italic">l</text>
+
 
 
 
@@ -18573,12 +18635,14 @@
 
 
 
+
 		
 			<text
    transform="matrix(0.8651,-0.5015,0.5015,0.8651,683.9961,569.3389)"
    font-size="11"
    id="text7710"
    style="font-size:11px;fill:#600902;font-family:Baskerville-Italic">o</text>
+
 
 
 
@@ -18591,12 +18655,14 @@
 
 
 
+
 		
 			<text
    transform="matrix(0.8765,-0.4814,0.4814,0.8765,691.4336,565.0811)"
    font-size="11"
    id="text7714"
    style="font-size:11px;fill:#600902;font-family:Baskerville-Italic">d</text>
+
 
 
 
@@ -18609,12 +18675,14 @@
 
 
 
+
 		
 			<text
    transform="matrix(0.8875,-0.4608,0.4608,0.8875,697.8652,561.5693)"
    font-size="11"
    id="text7718"
    style="font-size:11px;fill:#600902;font-family:Baskerville-Italic">C</text>
+
 
 
 
@@ -18627,12 +18695,14 @@
 
 
 
+
 		
 			<text
    transform="matrix(0.8998,-0.4364,0.4364,0.8998,707.3623,556.7295)"
    font-size="11"
    id="text7722"
    style="font-size:11px;fill:#600902;font-family:Baskerville-Italic">.</text>
+
 
 
 
@@ -18658,12 +18728,14 @@
 
 
 
+
 		
 			<text
    transform="matrix(0.8237,-0.5671,0.5671,0.8237,377.1455,677.7783)"
    font-size="11"
    id="text7728"
    style="font-size:11px;fill:#600902;font-family:Baskerville-Italic">c</text>
+
 
 
 
@@ -18676,12 +18748,14 @@
 
 
 
+
 		
 			<text
    transform="matrix(0.835,-0.5503,0.5503,0.835,382.2539,674.3008)"
    font-size="11"
    id="text7732"
    style="font-size:11px;fill:#600902;font-family:Baskerville-Italic">l</text>
+
 
 
 
@@ -18694,12 +18768,14 @@
 
 
 
+
 		
 			<text
    transform="matrix(0.8455,-0.534,0.534,0.8455,386.666,671.4141)"
    font-size="11"
    id="text7736"
    style="font-size:11px;fill:#600902;font-family:Baskerville-Italic">a</text>
+
 
 
 
@@ -18712,12 +18788,14 @@
 
 
 
+
 		
 			<text
    transform="matrix(0.8568,-0.5156,0.5156,0.8568,392.8936,667.5137)"
    font-size="11"
    id="text7740"
    style="font-size:11px;fill:#600902;font-family:Baskerville-Italic">S</text>
+
 
 
 
@@ -18730,12 +18808,14 @@
 
 
 
+
 		
 			<text
    transform="matrix(0.869,-0.4948,0.4948,0.869,400.7695,662.8301)"
    font-size="11"
    id="text7744"
    style="font-size:11px;fill:#600902;font-family:Baskerville-Italic">u</text>
+
 
 
 
@@ -18748,12 +18828,14 @@
 
 
 
+
 		
 			<text
    transform="matrix(0.878,-0.4786,0.4786,0.878,407.1484,659.2246)"
    font-size="11"
    id="text7748"
    style="font-size:11px;fill:#600902;font-family:Baskerville-Italic">h</text>
+
 
 
 
@@ -18766,12 +18848,14 @@
 
 
 
+
 		
 			<text
    transform="matrix(0.8875,-0.4607,0.4607,0.8875,414.1123,655.4727)"
    font-size="11"
    id="text7752"
    style="font-size:11px;fill:#600902;font-family:Baskerville-Italic">r</text>
+
 
 
 
@@ -18784,12 +18868,14 @@
 
 
 
+
 		
 			<text
    transform="matrix(0.8983,-0.4393,0.4393,0.8983,421.1572,651.8809)"
    font-size="11"
    id="text7756"
    style="font-size:11px;fill:#600902;font-family:Baskerville-Italic"> </text>
+
 
 
 
@@ -18802,12 +18888,14 @@
 
 
 
+
 		
 			<text
    transform="matrix(0.9177,-0.3972,0.3972,0.9177,429.8418,647.7402)"
    font-size="11"
    id="text7760"
    style="font-size:11px;fill:#600902;font-family:Baskerville-Italic">R</text>
+
 
 
 
@@ -18871,6 +18959,7 @@
 
 
 
+
 		
 			<ellipse
    transform="matrix(0.8677,-0.497,0.497,0.8677,-256.7026,196.8265)"
@@ -18893,12 +18982,14 @@
 
 
 
+
 		
 			<text
    transform="matrix(0.8329,-0.5533,0.5533,0.8329,215.9805,585.5352)"
    font-size="11"
    id="text7784"
    style="font-size:11px;fill:#600902;font-family:Baskerville-Italic">i</text>
+
 
 
 
@@ -18911,12 +19002,14 @@
 
 
 
+
 		
 			<text
    transform="matrix(0.8466,-0.5322,0.5322,0.8466,220.874,582.3018)"
    font-size="11"
    id="text7788"
    style="font-size:11px;fill:#600902;font-family:Baskerville-Italic">m</text>
+
 
 
 
@@ -18929,12 +19022,14 @@
 
 
 
+
 		
 			<text
    transform="matrix(0.8589,-0.5121,0.5121,0.8589,229.0273,577.2305)"
    font-size="11"
    id="text7792"
    style="font-size:11px;fill:#600902;font-family:Baskerville-Italic">n</text>
+
 
 
 
@@ -18947,12 +19042,14 @@
 
 
 
+
 		
 			<text
    transform="matrix(0.8701,-0.4928,0.4928,0.8701,236.4453,572.8604)"
    font-size="11"
    id="text7796"
    style="font-size:11px;fill:#600902;font-family:Baskerville-Italic">h</text>
+
 
 
 
@@ -18965,12 +19062,14 @@
 
 
 
+
 		
 			<text
    transform="matrix(0.8836,-0.4683,0.4683,0.8836,244.4463,568.3809)"
    font-size="11"
    id="text7800"
    style="font-size:11px;fill:#600902;font-family:Baskerville-Italic">m</text>
+
 
 
 
@@ -18983,6 +19082,7 @@
 
 
 
+
 		
 			<text
    transform="matrix(0.8969,-0.4422,0.4422,0.8969,253.0566,563.8594)"
@@ -18992,12 +19092,14 @@
 
 
 
+
 		
 			<text
    transform="matrix(0.9075,-0.4201,0.4201,0.9075,259.2227,560.8174)"
    font-size="11"
    id="text7806"
    style="font-size:11px;fill:#600902;font-family:Baskerville-Italic">R</text>
+
 
 
 
@@ -19023,12 +19125,14 @@
 
 
 
+
 		
 			<text
    transform="matrix(0.8577,-0.5141,0.5141,0.8577,500.3037,855.2539)"
    font-size="11"
    id="text7812"
    style="font-size:11px;fill:#600902;font-family:Baskerville-Italic">a</text>
+
 
 
 
@@ -19041,12 +19145,14 @@
 
 
 
+
 		
 			<text
    transform="matrix(0.869,-0.4948,0.4948,0.869,507.6943,850.8789)"
    font-size="11"
    id="text7816"
    style="font-size:11px;fill:#600902;font-family:Baskerville-Italic">c</text>
+
 
 
 
@@ -19059,12 +19165,14 @@
 
 
 
+
 		
 			<text
    transform="matrix(0.8773,-0.4799,0.4799,0.8773,513.5645,847.5596)"
    font-size="11"
    id="text7820"
    style="font-size:11px;fill:#600902;font-family:Baskerville-Italic">o</text>
+
 
 
 
@@ -19077,12 +19185,14 @@
 
 
 
+
 		
 			<text
    transform="matrix(0.8868,-0.4622,0.4622,0.8868,520.1309,844.0098)"
    font-size="11"
    id="text7824"
    style="font-size:11px;fill:#600902;font-family:Baskerville-Italic">s</text>
+
 
 
 
@@ -19095,6 +19205,7 @@
 
 
 
+
 		
 			<text
    transform="matrix(0.8997,-0.4365,0.4365,0.8997,525.5986,841.1523)"
@@ -19104,12 +19215,14 @@
 
 
 
+
 		
 			<text
    transform="matrix(0.9093,-0.416,0.416,0.9093,534.082,837.0752)"
    font-size="11"
    id="text7830"
    style="font-size:11px;fill:#600902;font-family:Baskerville-Italic"> </text>
+
 
 
 
@@ -19135,12 +19248,14 @@
 
 
 
+
 		
 			<text
    transform="matrix(0.8442,-0.536,0.536,0.8442,500.2051,867.9854)"
    font-size="11"
    id="text7836"
    style="font-size:11px;fill:#600902;font-family:Baskerville-Italic">o</text>
+
 
 
 
@@ -19153,12 +19268,14 @@
 
 
 
+
 		
 			<text
    transform="matrix(0.8562,-0.5166,0.5166,0.8562,507.582,863.376)"
    font-size="11"
    id="text7840"
    style="font-size:11px;fill:#600902;font-family:Baskerville-Italic">t</text>
+
 
 
 
@@ -19171,12 +19288,14 @@
 
 
 
+
 		
 			<text
    transform="matrix(0.8663,-0.4994,0.4994,0.8663,513.7812,859.6855)"
    font-size="11"
    id="text7844"
    style="font-size:11px;fill:#600902;font-family:Baskerville-Italic">e</text>
+
 
 
 
@@ -19189,12 +19308,14 @@
 
 
 
+
 		
 			<text
    transform="matrix(0.8756,-0.483,0.483,0.8756,519.458,856.4404)"
    font-size="11"
    id="text7848"
    style="font-size:11px;fill:#600902;font-family:Baskerville-Italic">n</text>
+
 
 
 
@@ -19207,6 +19328,7 @@
 
 
 
+
 		
 			<text
    transform="matrix(0.8869,-0.462,0.462,0.8869,525.998,852.8525)"
@@ -19216,12 +19338,14 @@
 
 
 
+
 		
 			<text
    transform="matrix(0.8964,-0.4432,0.4432,0.8964,532.0898,849.6787)"
    font-size="11"
    id="text7854"
    style="font-size:11px;fill:#600902;font-family:Baskerville-Italic">R</text>
+
 
 
 
@@ -19335,6 +19459,7 @@
 
 
 
+
 		<ellipse
    transform="matrix(1,0.0034,-0.0034,1,0.7079,-2.0216)"
    cx="590.04401"
@@ -19397,6 +19522,7 @@
      rotate="6.7459998"
      id="tspan7909"
      style="font-size:14px;font-family:Baskerville-Italic">0</tspan></text>
+
 
 
 
@@ -19507,6 +19633,7 @@
 
 
 
+
 		<ellipse
    transform="matrix(1,0.0034,-0.0034,1,0.3879,-0.6654)"
    cx="194.29401"
@@ -19572,6 +19699,7 @@
 
 
 
+
 		<ellipse
    transform="matrix(1,-0.0021,0.0021,1,-0.9603,0.5699)"
    cx="266"
@@ -19628,6 +19756,7 @@
      rotate="7.2740002"
      id="tspan7981"
      style="font-size:16px;font-family:Baskerville-SemiBoldItalic">a</tspan></text>
+
 
 
 
@@ -19744,6 +19873,7 @@
 
 
 
+
 		<ellipse
    transform="matrix(1,0.0034,-0.0034,1,3.5686,-2.4055)"
    cx="703.461"
@@ -19806,6 +19936,7 @@
      rotate="6.7490001"
      id="tspan8037"
      style="font-size:14px;font-family:Baskerville-Italic">0</tspan></text>
+
 
 
 
@@ -19911,6 +20042,7 @@
 
 
 
+
 		
 			<ellipse
    transform="matrix(0.9995,-0.0311,0.0311,0.9995,-32.2134,8.4741)"
@@ -19936,6 +20068,7 @@
 
 
 
+
 		
 			<ellipse
    transform="matrix(0.8574,-0.5146,0.5146,0.8574,-236.3294,99.6702)"
@@ -19957,11 +20090,13 @@
 
 
 
+
 		<text
    transform="matrix(0.8312,-0.556,0.556,0.8312,39.9404,479.3311)"
    font-size="13"
    id="text8095"
    style="font-size:13px;font-family:Baskerville-Italic">o</text>
+
 
 
 
@@ -19973,11 +20108,13 @@
 
 
 
+
 		<text
    transform="matrix(0.8459,-0.5334,0.5334,0.8459,48.5293,473.6904)"
    font-size="13"
    id="text8099"
    style="font-size:13px;font-family:Baskerville-Italic">t</text>
+
 
 
 
@@ -19989,11 +20126,13 @@
 
 
 
+
 		<text
    transform="matrix(0.8588,-0.5124,0.5124,0.8588,55.0928,469.5977)"
    font-size="13"
    id="text8103"
    style="font-size:13px;font-family:Baskerville-Italic">o</text>
+
 
 
 
@@ -20005,11 +20144,13 @@
 
 
 
+
 		<text
    transform="matrix(0.8746,-0.4849,0.4849,0.8746,66.3115,463.0439)"
    font-size="13"
    id="text8107"
    style="font-size:13px;font-family:Baskerville-Italic">e</text>
+
 
 
 
@@ -20021,11 +20162,13 @@
 
 
 
+
 		<text
    transform="matrix(0.8862,-0.4634,0.4634,0.8862,73.0918,459.3291)"
    font-size="13"
    id="text8111"
    style="font-size:13px;font-family:Baskerville-Italic">y</text>
+
 
 
 
@@ -20037,11 +20180,13 @@
 
 
 
+
 		<text
    transform="matrix(0.8974,-0.4412,0.4412,0.8974,80.0684,455.7334)"
    font-size="13"
    id="text8115"
    style="font-size:13px;font-family:Baskerville-Italic"> </text>
+
 
 
 
@@ -20053,11 +20198,13 @@
 
 
 
+
 		<text
    transform="matrix(0.9228,-0.3852,0.3852,0.9228,89.7256,451.1367)"
    font-size="13"
    id="text8119"
    style="font-size:13px;font-family:Baskerville-Italic">L</text>
+
 
 
 
@@ -20082,11 +20229,13 @@
 
 
 
+
 		<text
    transform="matrix(0.8483,-0.5295,0.5295,0.8483,55,488.0664)"
    font-size="13"
    id="text8125"
    style="font-size:13px;font-family:Baskerville-Italic">3</text>
+
 
 
 
@@ -20098,11 +20247,13 @@
 
 
 
+
 		<text
    transform="matrix(0.8636,-0.5042,0.5042,0.8636,66.0996,481.2817)"
    font-size="13"
    id="text8129"
    style="font-size:13px;font-family:Baskerville-Italic">,</text>
+
 
 
 
@@ -20114,11 +20265,13 @@
 
 
 
+
 		<text
    transform="matrix(0.8745,-0.4851,0.4851,0.8745,71.6055,478.0869)"
    font-size="13"
    id="text8133"
    style="font-size:13px;font-family:Baskerville-Italic">$</text>
+
 
 
 
@@ -20130,11 +20283,13 @@
 
 
 
+
 		<text
    transform="matrix(0.8936,-0.4488,0.4488,0.8936,83.0342,471.8867)"
    font-size="13"
    id="text8137"
    style="font-size:13px;font-family:Baskerville-Italic">0</text>
+
 
 
 
@@ -20202,6 +20357,7 @@
    style="font-size:13px;fill:#ffffff;font-family:Baskerville-Bold"
    x="861.79529"
    y="497.92188">GA</text>
+
 <g
    id="g9128"
    transform="matrix(0.28726254,-0.16540582,0.16575504,0.28632533,425.92965,616.56351)"><path
@@ -20308,13 +20464,15 @@
      sodipodi:rx="16.200001"
      sodipodi:ry="16.200001"
      style="fill:#fede58;stroke:#000000;stroke-linecap:round;stroke-linejoin:round"
-     d="m 777.06102,691.97198 c 0,8.94702 -7.25298,16.20001 -16.2,16.20001 -8.94701,0 -16.2,-7.25299 -16.2,-16.20001 0,-8.94701 7.25299,-16.2 16.2,-16.2 8.94702,0 16.2,7.25299 16.2,16.2 z" /></g><text
+     d="m 777.06102,691.97198 c 0,8.94702 -7.25298,16.20001 -16.2,16.20001 -8.94701,0 -16.2,-7.25299 -16.2,-16.20001 0,-8.94701 7.25299,-16.2 16.2,-16.2 8.94702,0 16.2,7.25299 16.2,16.2 z"
+     transform="translate(-28,16)" /></g><text
    transform="matrix(0.99997688,0.00679984,-0.00679984,0.99997688,0,0)"
    font-size="12"
    id="text7052-4"
    style="font-size:12.00027752px;font-family:Baskerville-Bold"
-   x="767.2597"
-   y="683.37854">SAL</text>
+   x="739.36945"
+   y="699.5686">SAL</text>
+
 </g>
 <g
    id="player_info"
@@ -20466,6 +20624,7 @@
 
 
 
+
 	</g>
 	<g
    id="Layer_40">
@@ -20551,6 +20710,7 @@
      rotate="-11.097"
      id="tspan8218"
      style="font-size:14.89410019px;font-family:Baskerville"> </tspan></text>
+
 
 
 
@@ -20640,6 +20800,7 @@
      rotate="-19.337"
      id="tspan8246"
      style="font-size:20.31019974px;font-family:Baskerville">k</tspan></text>
+
 
 
 
@@ -20995,6 +21156,7 @@
 
 
 
+
 		<ellipse
    cx="758.375"
    cy="380.44299"
@@ -21057,6 +21219,7 @@
      rotate="8.941"
      id="tspan8421"
      style="font-size:14.89410019px;font-family:Baskerville"> </tspan></text>
+
 
 
 
@@ -21155,6 +21318,7 @@
 
 
 
+
 	</g>
 	<g
    id="_x31_8GA">
@@ -21235,6 +21399,7 @@
 
 
 
+
 		<ellipse
    cx="749.85901"
    cy="274.20599"
@@ -21296,6 +21461,7 @@
 
 
 
+
 		<ellipse
    cx="756.77502"
    cy="336.56"
@@ -21343,6 +21509,7 @@
 
 
 
+
 	</g>
 </g>
 <text
@@ -21357,6 +21524,7 @@
      id="tspan7162-7"
      style="font-size:11.00002861px;font-family:Baskerville-Italic"
      rotate="0 0 1.705 2.3150001 2.79 3.3710001 3.9660001 4.4679999">$20 cost</tspan></text>
+
 <text
    style="font-size:12.00003052px"
    y="760.13715"
@@ -21368,6 +21536,7 @@
      font-size="11"
      id="tspan7162-7-0"
      style="font-size:13px;font-family:Baskerville-Italic">$30, $60</tspan></text>
+
 <text
    style="font-size:12.00003052px"
    y="559.35315"
@@ -21379,6 +21548,7 @@
      font-size="11"
      id="tspan7162-7-0-4"
      style="font-size:13px;font-family:Baskerville-Italic">$30, $60</tspan></text>
+
 <text
    style="font-size:12.00003052px"
    y="745.6438"
@@ -21390,6 +21560,7 @@
      font-size="11"
      id="tspan7162-7-0-4-8"
      style="font-size:13px;font-family:Baskerville-Italic">Savannah</tspan></text>
+
 <text
    style="font-size:12.00003052px"
    y="493.79361"
@@ -21401,4 +21572,5 @@
      font-size="11"
      id="tspan7162-7-0-4-8-4"
      style="font-size:16px;font-family:Baskerville-Italic">Charleston</tspan></text>
+
 </svg>
