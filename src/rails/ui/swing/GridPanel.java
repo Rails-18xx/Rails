@@ -78,7 +78,7 @@ implements ActionListener, KeyListener {
     protected static Logger log =
         LoggerFactory.getLogger(GridPanel.class);
 
-    private JComponent highlightedComp = null;
+    private List<JComponent> highlightedComps = new ArrayList<JComponent>();
     protected Color tableBorderColor;
     protected Color cellOutlineColor;
     protected Color highlightedBorderColor;
@@ -157,31 +157,33 @@ implements ActionListener, KeyListener {
     
     /**
      * highlights given component by altering its border's attributes
-     * If another component had been highlighted before, it's highlighting is first
-     * undone before highlighting the new given component.
      */
     protected void setHighlight(JComponent comp,boolean isToBeHighlighted) {
         //quit if nothing is to be done
-        if (isToBeHighlighted && comp == highlightedComp) return;
-        removeHighlight();
-        if (isToBeHighlighted) {
-            if (comp.getBorder() instanceof FieldBorder) {
-                FieldBorder fb = (FieldBorder)comp.getBorder();
-                fb.setHighlight(isToBeHighlighted);
-                comp.repaint();
+        if (isToBeHighlighted && highlightedComps.contains(comp)) return;
+        if (!isToBeHighlighted && !highlightedComps.contains(comp)) return;
+        
+        if (comp.getBorder() instanceof FieldBorder) {
+            FieldBorder fb = (FieldBorder)comp.getBorder();
+            fb.setHighlight(isToBeHighlighted);
+            comp.repaint();
+            if (isToBeHighlighted) {
+                highlightedComps.add(comp);
+            } else {
+                highlightedComps.remove(comp);
             }
-            highlightedComp = comp;
         }
     }
     
-    protected void removeHighlight() {
-        if (highlightedComp == null) return;
-        if (highlightedComp.getBorder() instanceof FieldBorder) {
-            FieldBorder fb = (FieldBorder)highlightedComp.getBorder();
-            fb.setHighlight(false);
-            highlightedComp.repaint();
+    protected void removeAllHighlights() {
+        for (JComponent c : highlightedComps) {
+            if (c.getBorder() instanceof FieldBorder) {
+                FieldBorder fb = (FieldBorder)c.getBorder();
+                fb.setHighlight(false);
+                c.repaint();
+            }
         }
-        highlightedComp = null;
+        highlightedComps.clear();
     }
     
     public void keyPressed(KeyEvent e) {
