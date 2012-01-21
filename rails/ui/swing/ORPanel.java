@@ -491,7 +491,7 @@ implements ActionListener, KeyListener, RevenueListener {
                 HexHighlightMouseListener.addMouseListener(f,
                         orUIManager,c.getPortfolio());
                 addField(f, privatesXOffset, privatesYOffset + i, 1, 1,
-                        WIDE_RIGHT, visible);
+                        0, visible);
 
                 f =
                     newPrivatesCost[i] =
@@ -792,6 +792,7 @@ implements ActionListener, KeyListener, RevenueListener {
         
         //clear all highlighting (president column and beyond)
         resetActions();
+        removeHighlight();
 
     }
 
@@ -1002,7 +1003,9 @@ implements ActionListener, KeyListener, RevenueListener {
         this.orComp = orComp;
         this.orCompIndex = orCompIndex;
         president[orCompIndex].setHighlight(true);
-
+        
+        removeHighlight();
+        
         buttonOC.clearPossibleActions();
         button1.clearPossibleActions();
         button2.clearPossibleActions();
@@ -1016,10 +1019,11 @@ implements ActionListener, KeyListener, RevenueListener {
         updateCurrentRoutes(false);
 
     }
-
+    
     public void initTileLayingStep() {
 
         tileCaption.setHighlight(true);
+        setHighlight(tiles[orCompIndex],true);
         button1.setVisible(false);
 
     }
@@ -1027,6 +1031,7 @@ implements ActionListener, KeyListener, RevenueListener {
     public void initTokenLayingStep() {
 
         tokenCaption.setHighlight(true);
+        setHighlight(tokens[orCompIndex],true);
         button1.setEnabled(false);
         button1.setVisible(false);
         button3.setEnabled(false);
@@ -1036,6 +1041,7 @@ implements ActionListener, KeyListener, RevenueListener {
     public void initRevenueEntryStep(int orCompIndex, SetDividend action) {
 
         revenueCaption.setHighlight(true);
+        setHighlight(revenueSelect[orCompIndex],true);
         revenueSelect[orCompIndex].setValue(action.getPresetRevenue());
 
         setSelect(revenue[orCompIndex], revenueSelect[orCompIndex], true);
@@ -1073,6 +1079,8 @@ implements ActionListener, KeyListener, RevenueListener {
 
     public void initPayoutStep(int orCompIndex, SetDividend action,
             boolean withhold, boolean split, boolean payout) {
+
+        setHighlight(revenue[orCompIndex],true);
 
         SetDividend clonedAction;
 
@@ -1120,6 +1128,7 @@ implements ActionListener, KeyListener, RevenueListener {
     public void initTrainBuying(boolean enabled) {
 
         trainCaption.setHighlight(true);
+        setHighlight(trains[orCompIndex],true);
 
         button1.setText(LocalText.getText("BUY_TRAIN"));
         button1.setActionCommand(BUY_TRAIN_CMD);
@@ -1149,6 +1158,7 @@ implements ActionListener, KeyListener, RevenueListener {
             button2.setEnabled(enabled);
             button2.setVisible(enabled);
             privatesCaption.setHighlight(enabled);
+            setHighlight(privates[orCompIndex],enabled);
         } else {
             button2.setVisible(false);
         }
@@ -1201,6 +1211,7 @@ implements ActionListener, KeyListener, RevenueListener {
         repayLoans.setEnabled(true);
 
         loansCaption.setHighlight(true);
+        setHighlight(compLoans[orCompIndex],true);
 
         button1.setText(LocalText.getText("RepayLoans"));
         button1.setActionCommand(REPAY_LOANS_CMD);
@@ -1222,6 +1233,7 @@ implements ActionListener, KeyListener, RevenueListener {
 
         //clear all highlighting (president column and beyond)
         resetActions();
+        removeHighlight();
 
         button1.setEnabled(false);
 
