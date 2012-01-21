@@ -74,7 +74,7 @@ public class MessagePanel extends JPanel {
         if (showDetails) {
             showDetails = false;
             parentSlider.setPreferredSize(new Dimension(minWidth,defaultHeight));
-            parentSlider.getParent().revalidate();
+            ((JComponent)parentSlider.getParent()).revalidate();
         }
     }
     
@@ -82,7 +82,7 @@ public class MessagePanel extends JPanel {
         if (!showDetails && currentDetails != null) {
             showDetails = true;
             parentSlider.setPreferredSize(new Dimension(minWidth,fullHeight));
-            parentSlider.getParent().revalidate();
+            ((JComponent)parentSlider.getParent()).revalidate();
         }
     }
     
