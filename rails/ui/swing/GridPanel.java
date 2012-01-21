@@ -13,6 +13,7 @@ import javax.swing.border.CompoundBorder;
 
 import org.apache.log4j.Logger;
 
+import rails.common.parser.Config;
 import rails.game.*;
 import rails.game.model.ModelObject;
 import rails.game.state.BooleanState;
@@ -62,12 +63,21 @@ implements ActionListener, KeyListener {
         Logger.getLogger(GridPanel.class.getPackage().getName());
 
     private JComponent highlightedComp = null;
-    protected Color tableBorderColor = Color.DARK_GRAY;
-    protected Color cellOutlineColor = Color.GRAY;
-    protected Color highlightedBorderColor = Color.RED;
+    protected Color tableBorderColor;
+    protected Color cellOutlineColor;
+    protected Color highlightedBorderColor;
     
     public GridPanel() {
-        
+        //initialize border colors according to the configuration
+        if ("enabled".equals(Config.get("gridPanel.tableBorders"))) {
+            tableBorderColor = Color.DARK_GRAY;
+            cellOutlineColor = Color.GRAY;
+            highlightedBorderColor = Color.RED;
+        } else {
+            tableBorderColor = getBackground();
+            cellOutlineColor = getBackground();
+            highlightedBorderColor = Color.RED;
+        }
     }
 
     public void redisplay() {

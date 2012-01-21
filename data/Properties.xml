@@ -44,6 +44,9 @@
 	<Section name="Format">
 		<Property name="money_format" type="STRING" />
 		<Property name="or.number_format" type="LIST" values="simple,composite" />
+    </Section>
+    <Section name="Appearance">
+		<Property name="gridPanel.tableBorders" type="LIST" values="disabled,enabled"/>
 		<Property name="route.colour.1" type="COLOR" 
 		initClass="rails.ui.swing.hexmap.HexMap" initMethod="setRouteColours" />
 		<Property name="route.colour.2" type="COLOR" 
