@@ -27,6 +27,7 @@ import javax.swing.border.CompoundBorder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import rails.common.parser.Config;
 import rails.game.GameManager;
 import rails.game.Player;
 import rails.game.PublicCompany;
@@ -78,12 +79,21 @@ implements ActionListener, KeyListener {
         LoggerFactory.getLogger(GridPanel.class);
 
     private JComponent highlightedComp = null;
-    protected Color tableBorderColor = Color.DARK_GRAY;
-    protected Color cellOutlineColor = Color.GRAY;
-    protected Color highlightedBorderColor = Color.RED;
+    protected Color tableBorderColor;
+    protected Color cellOutlineColor;
+    protected Color highlightedBorderColor;
     
     public GridPanel() {
-        
+        //initialize border colors according to the configuration
+        if ("enabled".equals(Config.get("gridPanel.tableBorders"))) {
+            tableBorderColor = Color.DARK_GRAY;
+            cellOutlineColor = Color.GRAY;
+            highlightedBorderColor = Color.RED;
+        } else {
+            tableBorderColor = getBackground();
+            cellOutlineColor = getBackground();
+            highlightedBorderColor = Color.RED;
+        }
     }
 
     public void redisplay() {
