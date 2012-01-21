@@ -1040,7 +1040,7 @@ implements ActionListener, KeyListener, RevenueListener {
         setHighlight(tokens[orCompIndex],true);
         setHighlight(tokenCost[orCompIndex],true);
         setHighlight(tokensLeft[orCompIndex],true);
-        setHighlight(tokenBonus[orCompIndex],true);
+        if (tokenBonus != null) setHighlight(tokenBonus[orCompIndex],true);
         button1.setEnabled(false);
         button1.setVisible(false);
         button3.setEnabled(false);
