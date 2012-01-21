@@ -794,7 +794,6 @@ implements ActionListener, KeyListener, RevenueListener {
         
         //clear all highlighting (president column and beyond)
         resetActions();
-        removeHighlight();
 
     }
 
@@ -919,6 +918,8 @@ implements ActionListener, KeyListener, RevenueListener {
             }
         }
         undoButton.setEnabled(false);
+
+        removeHighlight();
 
     }
 
@@ -1236,7 +1237,6 @@ implements ActionListener, KeyListener, RevenueListener {
 
         //clear all highlighting (president column and beyond)
         resetActions();
-        removeHighlight();
 
         button1.setEnabled(false);
 

@@ -145,7 +145,12 @@ implements ActionListener, KeyListener {
         comp.setVisible(visible);
     }
     
-    public void setHighlight(JComponent comp,boolean isToBeHighlighted) {
+    /**
+     * highlights given component by altering its border's attributes
+     * If another component had been highlighted before, it's highlighting is first
+     * undone before highlighting the new given component.
+     */
+    protected void setHighlight(JComponent comp,boolean isToBeHighlighted) {
         //quit if nothing is to be done
         if (isToBeHighlighted && comp == highlightedComp) return;
         removeHighlight();
@@ -159,7 +164,7 @@ implements ActionListener, KeyListener {
         }
     }
     
-    public void removeHighlight() {
+    protected void removeHighlight() {
         if (highlightedComp == null) return;
         if (highlightedComp.getBorder() instanceof FieldBorder) {
             FieldBorder fb = (FieldBorder)highlightedComp.getBorder();
@@ -168,7 +173,7 @@ implements ActionListener, KeyListener {
         }
         highlightedComp = null;
     }
-
+    
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_F1) {
             HelpWindow.displayHelp(GameManager.getInstance().getHelp());
@@ -286,13 +291,13 @@ implements ActionListener, KeyListener {
         
         public void paintBorder(Component c,Graphics g, int x, int y, int width,int height) {
             Graphics2D g2d = (Graphics2D)g;
+            Stroke oldStroke = g2d.getStroke();
+            g2d.setStroke(new BasicStroke(thickness));
             if (isHighlighted) {
                 g2d.setColor(highlightedBorderColor);
             } else {
                 g2d.setColor(borderColor);
             }
-            Stroke oldStroke = g2d.getStroke();
-            g2d.setStroke(new BasicStroke(thickness));
             g2d.drawRect(x, y, width-1, height-1);
             g2d.setStroke(oldStroke);
         }

@@ -262,18 +262,20 @@ public class GameStatus extends GridPanel implements ActionListener {
         rowVisibilityObservers = new RowVisibility[nc];
 
         addField(new Caption(LocalText.getText("COMPANY")), 0, 0, 1, 2,
-                WIDE_RIGHT + WIDE_BOTTOM, true);
+                WIDE_BOTTOM, true);
         addField(new Caption(LocalText.getText("PLAYERS")),
-                certPerPlayerXOffset, 0, np, 1, 0, true);
+                certPerPlayerXOffset, 0, np, 1, WIDE_LEFT + WIDE_RIGHT, true);
         for (int i = 0; i < np; i++) {
             playerIndex.put(players[i], new Integer(i));
             f = upperPlayerCaption[i] = new Caption(players[i].getNameAndPriority());
-            addField(f, certPerPlayerXOffset + i, 1, 1, 1, WIDE_BOTTOM, true);
+            int wideGapPosition = WIDE_BOTTOM + 
+                    ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
+            addField(f, certPerPlayerXOffset + i, 1, 1, 1, wideGapPosition, true);
         }
         addField(new Caption(LocalText.getText("BANK_SHARES")),
-                certInIPOXOffset, 0, 2, 1, WIDE_LEFT + WIDE_RIGHT, true);
+                certInIPOXOffset, 0, 2, 1, WIDE_RIGHT, true);
         addField(new Caption(LocalText.getText("IPO")), certInIPOXOffset, 1, 1,
-                1, WIDE_LEFT + WIDE_BOTTOM, true);
+                1, WIDE_BOTTOM, true);
         addField(new Caption(LocalText.getText("POOL")), certInPoolXOffset, 1,
                 1, 1, WIDE_RIGHT + WIDE_BOTTOM, true);
 
@@ -336,7 +338,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                     gameUIManager.getORUIManager(),c,false);
             f.addMouseListener(companyCaptionMouseClickListener);
             f.setToolTipText(LocalText.getText("NetworkInfoDialogTitle",c.getId()));
-            addField(f, 0, certPerPlayerYOffset + i, 1, 1, WIDE_RIGHT, visible);
+            addField(f, 0, certPerPlayerYOffset + i, 1, 1, 0, visible);
 
             for (int j = 0; j < np; j++) {
                 f =
@@ -344,8 +346,9 @@ public class GameStatus extends GridPanel implements ActionListener {
                         new Field(
                                 players[j].getPortfolioModel().getShareModel(
                                         c));
+                int wideGapPosition = ((j==0)? WIDE_LEFT : 0) + ((j==np-1)? WIDE_RIGHT : 0);
                 addField(f, certPerPlayerXOffset + j, certPerPlayerYOffset + i,
-                        1, 1, 0, visible);
+                        1, 1, wideGapPosition, visible);
                 // TODO: Simplify the assignment (using f as correct local variable)
                 certPerPlayer[i][j].setToolTipModel(players[j].getPortfolioModel().getShareDetailsModel(c));
                 f =
@@ -354,12 +357,12 @@ public class GameStatus extends GridPanel implements ActionListener {
                                 LocalText.getText("ClickForSell"),
                                 this, buySellGroup);
                 addField(f, certPerPlayerXOffset + j, certPerPlayerYOffset + i,
-                        1, 1, 0, false);
+                        1, 1, wideGapPosition, false);
             }
             f = certInIPO[i] = new Field(ipo.getShareModel(c));
+            addField(f, certInIPOXOffset, certInIPOYOffset + i, 1, 1, 0, visible);
             // TODO: Simplify the assignment (using f as correct local variable)
             certInIPO[i].setToolTipModel(ipo.getShareDetailsModel(c));
-            addField(f, certInIPOXOffset, certInIPOYOffset + i, 1, 1, WIDE_LEFT, visible);
             f =
                 certInIPOButton[i] =
                     new ClickField(
@@ -367,8 +370,10 @@ public class GameStatus extends GridPanel implements ActionListener {
                             BUY_FROM_IPO_CMD,
                             LocalText.getText("ClickToSelectForBuying"),
                             this, buySellGroup);
-            addField(f, certInIPOXOffset, certInIPOYOffset + i, 1, 1, WIDE_LEFT, false);
-            certInIPO[i].setPreferredSize(certInIPOButton[i].getPreferredSize());
+            addField(f, certInIPOXOffset, certInIPOYOffset + i, 1, 1, 0, false);
+            
+            //no size alignment as button size could also be smaller than the field's one
+            //certInIPO[i].setPreferredSize(certInIPOButton[i].getPreferredSize());
 
             f = certInPool[i] = new Field(pool.getShareModel(c));
             // TODO: Simplify the assignment (using f as correct local variable)
@@ -384,7 +389,8 @@ public class GameStatus extends GridPanel implements ActionListener {
                             this, buySellGroup);
             addField(f, certInPoolXOffset, certInPoolYOffset + i, 1, 1,
                     WIDE_RIGHT, false);
-            certInPool[i].setPreferredSize(certInIPOButton[i].getPreferredSize());/* sic */
+            //no size alignment as button size could also be smaller than the field's one
+            //certInPool[i].setPreferredSize(certInIPOButton[i].getPreferredSize());/* sic */
 
             if (compCanHoldOwnShares) {
                 f =
@@ -461,7 +467,6 @@ public class GameStatus extends GridPanel implements ActionListener {
                 addField (f, rightsXOffset, rightsYOffset + i, 1, 1, 0, visible);
             }
 
-
             f = new Caption(c.getId());
             f.setForeground(c.getFgColour());
             f.setBackground(c.getBgColour());
@@ -475,11 +480,13 @@ public class GameStatus extends GridPanel implements ActionListener {
 
         // Player possessions
         addField(new Caption(LocalText.getText("CASH")), 0, playerCashYOffset,
-                1, 1, WIDE_TOP + WIDE_RIGHT, true);
+                1, 1, WIDE_TOP , true);
         for (int i = 0; i < np; i++) {
             f = playerCash[i] = new Field(players[i].getWallet());
+            int wideGapPosition = WIDE_TOP + 
+                    ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
             addField(f, playerCashXOffset + i, playerCashYOffset, 1, 1,
-                    WIDE_TOP, true);
+                    wideGapPosition, true);
             f =
                 playerCashButton[i] =
                     new ClickField(
@@ -488,11 +495,11 @@ public class GameStatus extends GridPanel implements ActionListener {
                             LocalText.getText("CorrectCashToolTip"),
                             this, buySellGroup);
             addField(f, playerCashXOffset + i, playerCashYOffset, 1, 1,
-                    WIDE_TOP, false);
+                    wideGapPosition, false);
         }
 
-        addField(new Caption("Privates"), 0, playerPrivatesYOffset, 1, 1,
-                WIDE_RIGHT, false);
+        addField(new Caption(LocalText.getText("PRIVATES")), 0, playerPrivatesYOffset, 1, 1,
+                0, true);
         for (int i = 0; i < np; i++) {
             f =
                 playerPrivates[i] =
@@ -501,65 +508,71 @@ public class GameStatus extends GridPanel implements ActionListener {
             HexHighlightMouseListener.addMouseListener(f,
                     gameUIManager.getORUIManager(),
                     players[i].getPortfolioModel());
+            int wideGapPosition = ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
             addField(f, playerPrivatesXOffset + i, playerPrivatesYOffset, 1, 1,
-                    0, true);
+                    wideGapPosition, true);
         }
 
         addField(new Caption(LocalText.getText("WORTH")), 0,
-                playerWorthYOffset, 1, 1, WIDE_RIGHT, true);
+                playerWorthYOffset, 1, 1, 0, true);
         for (int i = 0; i < np; i++) {
             f = playerWorth[i] = new Field(players[i].getWorthModel());
-            addField(f, playerWorthXOffset + i, playerWorthYOffset, 1, 1, 0, true);
+            int wideGapPosition = ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
+            addField(f, playerWorthXOffset + i, playerWorthYOffset, 1, 1, wideGapPosition, true);
         }
 
         addField(new Caption(LocalText.getText("ORWORTHINCR")), 0,
-                playerORWorthIncreaseYOffset, 1, 1, WIDE_RIGHT, true);
+                playerORWorthIncreaseYOffset, 1, 1, 0, true);
         for (int i = 0; i < np; i++) {
             f = playerORWorthIncrease[i] = new Field(players[i].getLastORWorthIncrease());
-            addField(f, playerORWorthIncreaseXOffset + i, playerORWorthIncreaseYOffset, 1, 1, 0, true);
+            int wideGapPosition = ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
+            addField(f, playerORWorthIncreaseXOffset + i, playerORWorthIncreaseYOffset, 1, 1, wideGapPosition, true);
         }
 
         addField(new Caption("Certs"), 0, playerCertCountYOffset, 1, 1,
-                WIDE_RIGHT + WIDE_TOP, true);
+                WIDE_TOP, true);
         for (int i = 0; i < np; i++) {
             f =
                 playerCertCount[i] =
                     new Field(players[i].getCertCountModel(), false, true);
+            int wideGapPosition = WIDE_TOP + 
+                    ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
             addField(f, playerCertCountXOffset + i, playerCertCountYOffset, 1,
-                    1, WIDE_TOP, true);
+                    1, wideGapPosition, true);
         }
-
+        
         for (int i = 0; i < np; i++) {
             f = lowerPlayerCaption[i] = new Caption(players[i].getId());
-            addField(f, i + 1, playerCertCountYOffset + 1, 1, 1, WIDE_TOP, true);
+            int wideGapPosition = WIDE_TOP + 
+                    ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
+            addField(f, i + 1, playerCertCountYOffset + 1, 1, 1, wideGapPosition, true);
         }
 
         // Certificate Limit
         addField(new Caption(LocalText.getText("LIMIT")), certLimitXOffset - 1,
-                certLimitYOffset, 1, 1, WIDE_TOP + WIDE_LEFT, true);
+                certLimitYOffset, 1, 1, WIDE_TOP, true);
         addField(new Field(gameUIManager.getGameManager().getPlayerCertificateLimitModel()),
                 certLimitXOffset,
-                certLimitYOffset, 1, 1, WIDE_TOP, true);
+                certLimitYOffset, 1, 1, WIDE_TOP + WIDE_RIGHT, true);
 
         // Phase
         addField(new Caption(LocalText.getText("PHASE")), phaseXOffset - 1,
-                phaseYOffset, 1, 1, WIDE_TOP + WIDE_LEFT, true);
+                phaseYOffset, 1, 1, WIDE_TOP, true);
         addField(new Field(gameUIManager.getGameManager().getPhaseManager().getCurrentPhaseModel()),
                 phaseXOffset,
                 phaseYOffset, 1, 1, WIDE_TOP, true);
 
         // Bank
         addField(new Caption(LocalText.getText("BANK")), bankCashXOffset - 1,
-                bankCashYOffset - 1, 1, 2, WIDE_TOP + WIDE_LEFT, true);
+                bankCashYOffset - 1, 1, 2, WIDE_TOP, true);
         addField(new Caption(LocalText.getText("CASH")), bankCashXOffset,
-                bankCashYOffset - 1, 1, 1, WIDE_TOP, true);
+                bankCashYOffset - 1, 1, 1, WIDE_TOP + WIDE_RIGHT, true);
         bankCash = new Field(bank.getWallet());
-        addField(bankCash, bankCashXOffset, bankCashYOffset, 1, 1, 0, true);
+        addField(bankCash, bankCashXOffset, bankCashYOffset, 1, 1, WIDE_RIGHT, true);
 
         // Trains
         addField(new Caption(LocalText.getText("TRAINS")),
-                poolTrainsXOffset - 1, poolTrainsYOffset - 1, 1, 2, WIDE_TOP
-                + WIDE_LEFT, true);
+                poolTrainsXOffset - 1, poolTrainsYOffset - 1, 1, 2, WIDE_TOP, true);
         addField(new Caption(LocalText.getText("USED")), poolTrainsXOffset,
                 poolTrainsYOffset - 1, 1, 1, WIDE_TOP, true);
         poolTrains = new Field(pool.getTrainsModel());
@@ -580,6 +593,10 @@ public class GameStatus extends GridPanel implements ActionListener {
         futureTrains.setPreferredSize(new Dimension (1,1)); // To enable auto word wrap
         addField(futureTrains, futureTrainsXOffset, futureTrainsYOffset,
                 futureTrainsWidth, 1, 0, true);
+
+        // dummy field for nice rendering of table borders
+        addField (new Caption(""), certInIPOXOffset, newTrainsYOffset + 1,
+                poolTrainsXOffset - certInIPOXOffset, 2, 0, true);
 
         // Train cost overview
         String text = gameUIManager.getGameManager().getTrainManager().getTrainCostOverview();
