@@ -396,7 +396,7 @@ implements ActionListener, KeyListener, RevenueListener {
             loansXOffset = currentXOffset += lastXWidth;
             loansYOffset = leftCompNameYOffset;
             addField (loansCaption = new Caption(LocalText.getText("LOANS")),
-                    loansXOffset, 0, lastXWidth = 1, 2, WIDE_RIGHT);
+                    loansXOffset, 0, lastXWidth = 1, 2, WIDE_BOTTOM + WIDE_RIGHT);
         }
 
         if (hasRights) {
@@ -541,7 +541,8 @@ implements ActionListener, KeyListener, RevenueListener {
             addField(f, revXOffset, revYOffset + i, 1, 1, 0, visible);
             f = revenueSelect[i] = new Spinner(0, 0, 0, 10);
             //zero-border so that size matches revenue field (thus, averting or panel resize)
-            f.setBorder(new javax.swing.border.EmptyBorder(0,0,0,0));
+            f.setPreferredSize(revenue[i].getPreferredSize());
+            //f.setBorder(new javax.swing.border.EmptyBorder(0,0,0,0));
             addField(f, revXOffset, revYOffset + i, 1, 1, 0,  false);
             // deactived below, as this caused problems by gridpanel rowvisibility function -- sfy
             //            revenue[i].addDependent(revenueSelect[i]);
@@ -916,7 +917,7 @@ implements ActionListener, KeyListener, RevenueListener {
         }
         undoButton.setEnabled(false);
 
-        removeHighlight();
+        removeAllHighlights();
 
     }
 
@@ -1005,7 +1006,7 @@ implements ActionListener, KeyListener, RevenueListener {
         this.orCompIndex = orCompIndex;
         president[orCompIndex].setHighlight(true);
         
-        removeHighlight();
+        removeAllHighlights();
         
         buttonOC.clearPossibleActions();
         button1.clearPossibleActions();
@@ -1025,6 +1026,7 @@ implements ActionListener, KeyListener, RevenueListener {
 
         tileCaption.setHighlight(true);
         setHighlight(tiles[orCompIndex],true);
+        setHighlight(tileCost[orCompIndex],true);
         button1.setVisible(false);
 
     }
@@ -1033,6 +1035,9 @@ implements ActionListener, KeyListener, RevenueListener {
 
         tokenCaption.setHighlight(true);
         setHighlight(tokens[orCompIndex],true);
+        setHighlight(tokenCost[orCompIndex],true);
+        setHighlight(tokensLeft[orCompIndex],true);
+        setHighlight(tokenBonus[orCompIndex],true);
         button1.setEnabled(false);
         button1.setVisible(false);
         button3.setEnabled(false);
@@ -1081,7 +1086,7 @@ implements ActionListener, KeyListener, RevenueListener {
     public void initPayoutStep(int orCompIndex, SetDividend action,
             boolean withhold, boolean split, boolean payout) {
 
-        setHighlight(revenue[orCompIndex],true);
+        setHighlight(decision[orCompIndex],true);
 
         SetDividend clonedAction;
 
@@ -1130,6 +1135,7 @@ implements ActionListener, KeyListener, RevenueListener {
 
         trainCaption.setHighlight(true);
         setHighlight(trains[orCompIndex],true);
+        setHighlight(newTrainCost[orCompIndex],true);
 
         button1.setText(LocalText.getText("BUY_TRAIN"));
         button1.setActionCommand(BUY_TRAIN_CMD);
