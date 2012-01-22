@@ -19,6 +19,7 @@ import rails.game.action.*;
 import rails.game.correct.MapCorrectionAction;
 import rails.ui.swing.elements.ActionLabel;
 import rails.ui.swing.hexmap.GUIHex;
+import rails.ui.swing.hexmap.HexHighlightMouseListener;
 import rails.ui.swing.hexmap.HexMap;
 
 public class UpgradesPanel extends Box implements MouseListener, ActionListener {
@@ -201,6 +202,11 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
                             LocalText.getText(invalidTileUpgrades.get(tile)));
                     hexLabel.setEnabled(false);
                     hexLabel.setToolTipText(hexLabel.getToolTip());
+                    //highlight where tiles of this ID have been laid if no tiles left
+                    if (invalidTileUpgrades.get(tile).equals(invalidUpgradeNoTilesLeft)) {
+                        HexHighlightMouseListener.addMouseListener(hexLabel, 
+                            orUIManager, tile.getId(), true);
+                    }
                     upgradePanel.add(hexLabel);
                 }
             }

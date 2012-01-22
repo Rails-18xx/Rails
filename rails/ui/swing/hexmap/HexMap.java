@@ -737,6 +737,17 @@ public abstract class HexMap implements MouseListener,
     {
         return selectedHex != null;
     }
+    
+    public List<GUIHex> getHexesByCurrentTileId (int tileId) {
+        List<GUIHex> hs = new ArrayList<GUIHex>();
+        for (GUIHex h : hexes) {
+            TileI tile = h.getCurrentTile();
+            if (tile != null && tile.getId() == tileId) {
+                hs.add(h);
+            }
+        }
+        return hs;
+    }
 
     public void setAllowedTileLays(List<LayTile> allowedTileLays) {
 
