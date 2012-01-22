@@ -26,9 +26,8 @@ import rails.ui.swing.ORUIManager;
 /**
  * Takes care of highlighting certain hexes in case of mouseover events.
  * @author Frederick Weld
- * 
- * TODO: The approach to direct calls should be replaced with an appropriate model
  */
+// TODO: The approach to direct calls should be replaced with an appropriate model
 public class HexHighlightMouseListener implements MouseListener {
 
     List<MapHex> hexList;
@@ -36,6 +35,7 @@ public class HexHighlightMouseListener implements MouseListener {
     HexMap hexMap;
     ORUIManager orUIManager;
     PortfolioModel portfolio;
+    int tileId;
     
     /**
      * lazy creation of the gui hex list for these reasons:
@@ -107,6 +107,16 @@ public class HexHighlightMouseListener implements MouseListener {
         initPrivateCompanies(portfolio.getPrivateCompanies());
     }
     
+    private void initTileIdHexList () {
+        //initially get hex map if not yet available
+        if (hexMap == null) hexMap = orUIManager.getMap();
+
+        //build the list of hexes the current tiles of which have the given tile ID
+        if (hexMap != null) {
+            guiHexList = hexMap.getHexesByCurrentTileId(tileId);
+        }
+    }
+    
     /**
      * @param orUIManager The OR UI manager containing the map where the highlighting 
      * should occur
@@ -126,6 +136,21 @@ public class HexHighlightMouseListener implements MouseListener {
         if (isEnabled(false)) {
             HexHighlightMouseListener l = new HexHighlightMouseListener(orUIManager);
             l.portfolio = pf;
+            c.addMouseListener(l);
+        }
+    }
+    
+    /**
+     * @param tileId ID of the tile the occurrences of which should be highlighted on
+     * the map
+     * @param enableIrrespectiveOfHighlightConfig If true, the mouse listener is
+     * enabled irrespective of the base configuration. Needed since some highlighting
+     * should not be disabled by configuration. 
+     */
+    public static void addMouseListener(JComponent c,ORUIManager orUIManager,int tileId,boolean enableIrrespectiveOfHighlightConfig) {
+        if (isEnabled(enableIrrespectiveOfHighlightConfig)) {
+            HexHighlightMouseListener l = new HexHighlightMouseListener(orUIManager);
+            l.tileId = tileId;
             c.addMouseListener(l);
         }
     }
@@ -188,6 +213,7 @@ public class HexHighlightMouseListener implements MouseListener {
     
     public void mouseEntered(MouseEvent e) {
         if (portfolio != null) initPortfolioHexList();
+        if (tileId != 0) initTileIdHexList();
         initGuiHexList();
         if (hexMap != null && guiHexList.size() > 0) {
             for (GUIHex guiHex : guiHexList) {
@@ -202,7 +228,7 @@ public class HexHighlightMouseListener implements MouseListener {
                 guiHex.removeHighlightRequest();
             }
         }
-        if (portfolio != null) clearHexList();
+        if (portfolio != null || tileId != 0) clearHexList();
     }
 
     public void mouseClicked(MouseEvent e) {

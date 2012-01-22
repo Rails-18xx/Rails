@@ -35,6 +35,7 @@ import rails.game.MapHex;
 import rails.game.MapManager;
 import rails.game.Phase;
 import rails.game.PhaseManager;
+import rails.game.Tile;
 import rails.game.action.LayBaseToken;
 import rails.game.action.LayBonusToken;
 import rails.game.action.LayTile;
@@ -761,6 +762,17 @@ public abstract class HexMap implements MouseListener,
     public boolean isAHexSelected() // Not used
     {
         return selectedHex != null;
+    }
+    
+    public List<GUIHex> getHexesByCurrentTileId (int tileId) {
+        List<GUIHex> hs = new ArrayList<GUIHex>();
+        for (GUIHex h : hexes) {
+            Tile tile = h.getCurrentTile();
+            if (tile != null && tile.getNb() == tileId) {
+                hs.add(h);
+            }
+        }
+        return hs;
     }
 
     public void setAllowedTileLays(List<LayTile> allowedTileLays) {
