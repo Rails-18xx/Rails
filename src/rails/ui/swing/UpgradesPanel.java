@@ -47,6 +47,11 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         new JButton(LocalText.getText(INIT_CANCEL_TEXT));
     private JButton doneButton = new JButton(LocalText.getText(INIT_DONE_TEXT));
     private HexMap hexMap;
+    
+    //list of tiles with an attached reason why it would represent an invalid upgrade
+    private Map<Tile, String> invalidTileUpgrades = null;
+    private static final String invalidUpgradeNoTilesLeft = "NoTilesLeft";
+    private static final String invalidUpgradeNoValidOrientation = "NoValidOrientation";
 
     protected static Logger log =
         LoggerFactory.getLogger(UpgradesPanel.class);
@@ -110,6 +115,22 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
                 }
             }
         }
+        
+        //determine invalid upgrades
+        //duplicates game engine logic to some degree
+        //but this is indispensable since the game engine's services not sufficient here
+        invalidTileUpgrades = new HashMap<Tile, String>();
+        for (Tile tile : uiHex.getCurrentTile().getUpgrades(hex, currentPhase)) {
+            if (!orUIManager.tileUpgrades.contains(tile)) {
+                if (!currentPhase.isTileColourAllowed(tile.getColourName())) {
+                    //current design decision: don't display tiles for invalid phases
+                } else if (!orUIManager.isTileUpgradeValid(uiHex, tile)) {
+                    invalidTileUpgrades.put(tile, invalidUpgradeNoValidOrientation);
+                } else if (tile.countFreeTiles() == 0) {
+                    invalidTileUpgrades.put(tile, invalidUpgradeNoTilesLeft);
+                }
+            }
+        }
     }
 
     public void showUpgrades() {
@@ -165,36 +186,52 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
 
         } else if (orUIManager.tileUpgrades == null) {
             ;
-        } else if (orUIManager.tileUpgrades.size() == 0) {
-            orUIManager.setMessage(LocalText.getText("NoTiles"));
-        } else {
+        } else { 
+            if (orUIManager.tileUpgrades.size() == 0) {
+                orUIManager.setMessage(LocalText.getText("NoTiles"));
+            } else {
             for (Tile tile : orUIManager.tileUpgrades) {
-                BufferedImage hexImage = getHexImage(tile.getPictureId());
-                ImageIcon hexIcon = new ImageIcon(hexImage);
-
-                // Cheap n' Easy rescaling.
-                hexIcon.setImage(hexIcon.getImage().getScaledInstance(
-                        (int) (hexIcon.getIconWidth() * GUIHex.NORMAL_SCALE * 0.8),
-                        (int) (hexIcon.getIconHeight() * GUIHex.NORMAL_SCALE * 0.8),
-                        Image.SCALE_SMOOTH));
-
-                HexLabel hexLabel = new HexLabel(hexIcon, tile.getNb());
-                hexLabel.setName(tile.getId());
-                hexLabel.setTextFromTile(tile);
-                hexLabel.setOpaque(true);
-                hexLabel.setVisible(true);
-                hexLabel.setBorder(border);
-                hexLabel.addMouseListener(this);
-
-                upgradePanel.add(hexLabel);
+                    HexLabel hexLabel = createHexLabel(tile, null);
+                    hexLabel.addMouseListener(this);
+                    upgradePanel.add(hexLabel);
+                }
+            }
+            if (invalidTileUpgrades != null) {
+                for (Tile tile : invalidTileUpgrades.keySet()) {
+                    HexLabel hexLabel = createHexLabel(tile, 
+                            LocalText.getText(invalidTileUpgrades.get(tile)));
+                    hexLabel.setEnabled(false);
+                    hexLabel.setToolTipText(hexLabel.getToolTip());
+                    upgradePanel.add(hexLabel);
+                }
             }
         }
-
+        
         upgradePanel.add(doneButton);
         upgradePanel.add(cancelButton);
 
         //repaint();
         revalidate();
+    }
+    
+    private HexLabel createHexLabel(Tile tile,String toolTipHeaderLine) {
+        BufferedImage hexImage = getHexImage(tile.getPictureId());
+        ImageIcon hexIcon = new ImageIcon(hexImage);
+
+        // Cheap n' Easy rescaling.
+        hexIcon.setImage(hexIcon.getImage().getScaledInstance(
+                (int) (hexIcon.getIconWidth() * GUIHex.NORMAL_SCALE * 0.8),
+                (int) (hexIcon.getIconHeight() * GUIHex.NORMAL_SCALE * 0.8),
+                Image.SCALE_SMOOTH));
+
+        HexLabel hexLabel = new HexLabel(hexIcon, tile.getNb(),toolTipHeaderLine);
+                hexLabel.setName(tile.getId());
+        hexLabel.setTextFromTile(tile);
+        hexLabel.setOpaque(true);
+        hexLabel.setVisible(true);
+        hexLabel.setBorder(border);
+
+        return hexLabel;
     }
 
     // populate version for corrections
@@ -485,11 +522,15 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         int internalId;
 
         HexLabel(ImageIcon hexIcon, int internalId) {
+            this(hexIcon,internalId,null);
+        }
+        
+        HexLabel(ImageIcon hexIcon, int internalId, String toolTipHeaderLine) {
             super(hexIcon);
             this.internalId = internalId;
-            this.setToolTip();
+            this.setToolTip(toolTipHeaderLine);
         }
-
+        
         int getInternalId() {
             return internalId;
         }
@@ -510,11 +551,13 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
             this.setText(text.toString());
         }
 
-        protected void setToolTip() {
+        protected void setToolTip (String headerLine) {
             Tile currentTile = orUIManager.getGameUIManager().getGameManager().getTileManager().getTile(internalId);
             StringBuffer tt = new StringBuffer("<html>");
-            tt.append("<b>Tile</b>: ").append(currentTile.getId()); // or
-            // getId()
+            if (headerLine != null && !headerLine.equals("")) {
+                tt.append("<b><u>"+headerLine+"</u></b><br>");
+            }
+            tt.append("<b>Tile</b>: ").append(currentTile.getId());
             if (currentTile.hasStations()) {
                 // for (Station st : currentTile.getStations())
                 int cityNumber = 0;
