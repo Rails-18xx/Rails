@@ -740,7 +740,7 @@ public class ORUIManager implements DialogOwner {
         }
     }
     
-    private boolean isTileUpgradeValid(GUIHex hex, TileI tile) {
+    public boolean isTileUpgradeValid(GUIHex hex, TileI tile) {
         // Check if the new tile must be connected to some other track
         return hex.isTileUpgradeValid(tile.getId(), 
                 getMustConnectRequirement(hex,tile));
