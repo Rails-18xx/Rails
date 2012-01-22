@@ -126,8 +126,8 @@ implements ActionListener, KeyListener {
         //- outer border: grid table lines (in wide_gap - narrow_gap thickness)
         
         comp.setBorder(new FieldBorder(comp.getBorder(),
-                new DynamicSymmetricBorder(cellOutlineColor,NARROW_GAP),
-                new DynamicAsymmetricBorder(tableBorderColor,padTop,padLeft,padBottom,padRight)));
+                new DynamicBorder(cellOutlineColor,NARROW_GAP),
+                new DynamicBorder(tableBorderColor,padTop,padLeft,padBottom,padRight)));
 
         gridPanel.add(comp, gbc);
 
@@ -249,15 +249,15 @@ implements ActionListener, KeyListener {
     private class FieldBorder extends CompoundBorder {
         private static final long serialVersionUID = 1L;
         Border nativeInnerBorder;
-        DynamicAsymmetricBorder highlightedInnerBorder;
-        DynamicSymmetricBorder outlineBorder;
-        DynamicAsymmetricBorder outerBorder;
-        public FieldBorder(Border innerBorder,DynamicSymmetricBorder outlineBorder,DynamicAsymmetricBorder outerBorder) {
+        DynamicBorder highlightedInnerBorder;
+        DynamicBorder outlineBorder;
+        DynamicBorder outerBorder;
+        public FieldBorder(Border innerBorder,DynamicBorder outlineBorder,DynamicBorder outerBorder) {
             super(new CompoundBorder(outerBorder,outlineBorder),innerBorder);
             this.nativeInnerBorder = innerBorder;
             this.outlineBorder = outlineBorder;
             this.outerBorder = outerBorder;
-            this.highlightedInnerBorder = new DynamicAsymmetricBorder(
+            this.highlightedInnerBorder = new DynamicBorder(
                     highlightedBorderColor,
                     nativeInnerBorder.getBorderInsets(null).top,
                     nativeInnerBorder.getBorderInsets(null).left,
@@ -272,65 +272,45 @@ implements ActionListener, KeyListener {
     }
 
     /**
-     * A line border providing methods for changing the look 
+     * A potentially asymmetric line border providing methods for changing the look 
      * @author Frederick Weld
      *
      */
-    private class DynamicSymmetricBorder extends AbstractBorder {
-        private static final long serialVersionUID = 1L;
-        private int thickness;
-        private Color borderColor;
-        private boolean isHighlighted = false;
-        public DynamicSymmetricBorder (Color borderColor,int thickness) {
-            this.thickness = thickness;
-            this.borderColor = borderColor;
-        }
-        public void setHighlight(boolean isToBeHighlighted) {
-            if (isHighlighted != isToBeHighlighted) {
-                isHighlighted = isToBeHighlighted;
-            }
-        }
-        
-        public void paintBorder(Component c,Graphics g, int x, int y, int width,int height) {
-            Graphics2D g2d = (Graphics2D)g;
-            Stroke oldStroke = g2d.getStroke();
-            g2d.setStroke(new BasicStroke(thickness));
-            if (isHighlighted) {
-                g2d.setColor(highlightedBorderColor);
-            } else {
-                g2d.setColor(borderColor);
-            }
-            g2d.drawRect(x, y, width-1, height-1);
-            g2d.setStroke(oldStroke);
-        }
-
-        public Insets getBorderInsets (Component c) {
-            return new Insets(thickness,thickness,thickness,thickness);
-        }
-
-        public boolean isBorderOpaque() { 
-            return true; 
-        }
-    }
-    /**
-     * An asymmetric line border providing methods for changing the look 
-     * @author Frederick Weld
-     *
-     */
-    private class DynamicAsymmetricBorder extends AbstractBorder {
+    private class DynamicBorder extends AbstractBorder {
         private static final long serialVersionUID = 1L;
         private int padTop, padLeft, padBottom, padRight;
         private Color borderColor;
-        public DynamicAsymmetricBorder (Color borderColor,int padTop, int padLeft, int padBottom, int padRight) {
+        private boolean isHighlighted = false;
+
+        public DynamicBorder (Color borderColor,int symmetricPad) {
+            this.padTop = symmetricPad;
+            this.padLeft = symmetricPad;
+            this.padBottom = symmetricPad;
+            this.padRight = symmetricPad;
+            this.borderColor = borderColor;
+        }
+        
+        public DynamicBorder (Color borderColor,int padTop, int padLeft, int padBottom, int padRight) {
             this.padTop = padTop;
             this.padLeft = padLeft;
             this.padBottom = padBottom;
             this.padRight = padRight;
             this.borderColor = borderColor;
         }
+        
+        public void setHighlight(boolean isToBeHighlighted) {
+            if (isHighlighted != isToBeHighlighted) {
+                isHighlighted = isToBeHighlighted;
+            }
+        }
+
         public void paintBorder(Component c,Graphics g, int x, int y, int width,int height) {
             Graphics2D g2d = (Graphics2D)g;
-            g2d.setColor(borderColor);
+            if (isHighlighted) {
+                g2d.setColor(highlightedBorderColor);
+            } else {
+                g2d.setColor(borderColor);
+            }
             Stroke oldStroke = g2d.getStroke();
             if (padTop > 0) {
                 g2d.setStroke(new BasicStroke(padTop));
