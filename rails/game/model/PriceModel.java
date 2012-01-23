@@ -14,18 +14,15 @@ public class PriceModel extends Model {
     private PublicCompany company = null;
     private String name = null;
 
-    /**
-     * PriceModel is initialized with default id "PriceModel"
-     */
-    public PriceModel() {
-        super("PriceModel");
+    private PriceModel(String id) {
+        super(id);
     }
 
     /** 
-     * Creates an initialized PriceModel
+     * Creates an owned PriceModel
      */
-    public PriceModel create(PublicCompany parent){
-        return new PriceModel().init(parent);
+    public static PriceModel create(PublicCompany parent, String id){
+        return new PriceModel(id).init(parent);
     }
     
     /** 
@@ -67,7 +64,7 @@ public class PriceModel extends Model {
     }
 
     @Override
-    protected String getText() {
+    public String toString() {
         if (stockPrice != null) {
             return Bank.format(stockPrice.getPrice()) + " ("
                    + stockPrice.getName() + ")";

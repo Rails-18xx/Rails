@@ -1,9 +1,8 @@
 package rails.game.round;
 
-import rails.game.state.AbstractContext;
 import rails.game.state.Context;
 
-class RoundContext extends AbstractContext  {
+class RoundContext extends Context  {
 
     public RoundContext(String id) {
         super(id);

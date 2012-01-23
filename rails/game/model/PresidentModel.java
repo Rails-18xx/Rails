@@ -3,28 +3,30 @@ package rails.game.model;
 import rails.game.Player;
 import rails.game.PublicCompany;
 import rails.game.state.Item;
+import rails.game.state.Observable;
 import rails.game.state.Observer;
 
 /**
  * model object for the current company president
  * gets registered by the ShareModels
+ * 
+ * TODO: Check if this is all done correctly, where is the observable stored?
  */
 
 public class PresidentModel extends Model implements Observer {
 
+    public static final String ID = "PresidentModel";  
+    
     PublicCompany company;
     
-    /**
-     * PresidentModel is initialized with default id "PresidentModel"
-     */
-    public PresidentModel() {
-        super("PresidentModel");
+    private PresidentModel() {
+        super(ID);
     }
 
     /** 
-     * Creates an initialized PresidentModel
+     * Creates an owned PresidentModel with ID "PresidentModel"
      */
-    public PresidentModel create(PublicCompany parent){
+    public static PresidentModel create(PublicCompany parent){
         return new PresidentModel().init(parent);
     }
     
@@ -51,10 +53,20 @@ public class PresidentModel extends Model implements Observer {
     }
 
     @Override
-    public String getText() {
+    public String toString() {
         Player president = company.getPresident();
         if (president == null) return "";
         else return company.getPresident().getNameAndPriority();
+    }
+
+    public Observable getObservable() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public boolean deRegister() {
+        // TODO Auto-generated method stub
+        return false;
     }
 
 }

@@ -22,21 +22,28 @@ public class CalculatedMoneyModel extends Model {
 
     public boolean suppressZero = false;
 
-    /**
-     * The id can be defined independent of the methodName in init()
-     * However it makes sense to set it identical
-     */
-    public CalculatedMoneyModel(String id) {
+    private CalculatedMoneyModel(String id) {
         super(id);
     }
 
     /**
-     * Creates a fully specified and initialized CalculatedMoneyModel
+     * Creates an owned CalculatedMoneyModel
+     * It sets the id identical to the methodName
      */
-    public static CalculatedMoneyModel create(Item parent, String id, String methodName) {
-        return new CalculatedMoneyModel(id).init(parent).initMethod(methodName);
+    public static CalculatedMoneyModel create(Item parent, String methodName) {
+        return new CalculatedMoneyModel(methodName).init(parent).initMethod(methodName);
+    }
+
+    /**
+    * The id can be defined independent of the methodName in init()
+    * However it makes sense to set it identical
+    * Remark: Still requires a call to the init-method
+    */
+    public static CalculatedMoneyModel create(String id){
+        return new CalculatedMoneyModel(id);
     }
     
+    @Override
     public CalculatedMoneyModel init(Item parent) {
         super.init(parent);
         return this;
@@ -71,7 +78,7 @@ public class CalculatedMoneyModel extends Model {
     }
 
     @Override
-    protected String getText() {
+    public String toString() {
         int amount = calculate();
         if (amount == 0 && suppressZero)
             return "";

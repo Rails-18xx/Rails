@@ -22,25 +22,24 @@ public abstract class Model extends Observable {
     public Model(String id) {
         super(id);
     }
+   
     /**
-     * This method has to be used to calculate the model String
-     * @return the current text of the model
-     */
-    protected abstract String getText();
-
-    /**
-     * Indicates that the model is updated
-     * As soon as toString() it is updated via getText()
+     * Indicates that the model is updated, so the getText() cache
+     * is flushed
      */
     public void update() {
         updated = false;
     }
     
+    /**
+     * For a model the text shown to observer is derived from toString()
+     * The value is cached until the model is updated
+     */
     @Override
-    public String toString() {
+    public final String getText() {
         if (!updated){
             updated = true;
-            cache = getText();
+            cache = toString();
         }
         return cache;
     }

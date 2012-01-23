@@ -16,14 +16,32 @@ public final class HashMultimapState<K,V> extends MultimapState<K,V> implements 
     
     private final HashMultimap<K,V> map;
 
-    /**
-     * Creates an empty HashMultimap state variable
-     * @param id id state variable
-     */
-    public HashMultimapState(String id) {
+    private HashMultimapState(String id) {
         super(id);
         map = HashMultimap.create();
     }
+
+    /** 
+     * Creates an owned and empty HashMultimapState 
+     */
+    public static <K,V> HashMultimapState<K,V> create(Item parent, String id){
+        return new HashMultimapState<K,V>(id).init(parent);
+    }
+   
+    /**
+     * Creates an unowned and empty HashMultimapState
+     * Remark: Still requires a call to the init-method
+     */
+    public static <K,V> HashMultimapState<K,V> create(String id){
+        return new HashMultimapState<K,V>(id);
+    }
+
+    @Override
+    public HashMultimapState<K,V> init(Item parent){
+        super.init(parent);
+        return this;
+    }
+    
     /**
      * Stores a key-value pair in the multimap
      * @param key key to store

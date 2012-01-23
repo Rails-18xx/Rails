@@ -2,9 +2,6 @@ package rails.common.parser;
 
 import java.util.Map;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 import rails.algorithms.RevenueManager;
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;

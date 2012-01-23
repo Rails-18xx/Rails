@@ -27,7 +27,7 @@ public final class CertificatesModel extends Model implements Storage<PublicCert
      */
     public CertificatesModel() {
         super("CertificatesModel");
-        certificates = new HashMultimapState<PublicCompany, PublicCertificate>("Certificates");
+        certificates = HashMultimapState.create("Certificates");
     }
    
     /**
@@ -87,7 +87,7 @@ public final class CertificatesModel extends Model implements Storage<PublicCert
     }
     
     @Override
-    protected String getText() {
+    public String toString() {
         return certificates.toString();
     }
     

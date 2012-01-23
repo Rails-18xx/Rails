@@ -329,7 +329,7 @@ public class PublicCompany extends Company implements CashOwner {
 
         Tag shareUnitTag = tag.getChild("ShareUnit");
         if (shareUnitTag != null) {
-            shareUnit = new IntegerState (this, name+"_ShareUnit",
+            shareUnit = IntegerState.create(this, name+"_ShareUnit",
                     shareUnitTag.getAttributeAsInteger("percentage", DEFAULT_SHARE_UNIT));
             shareUnitsForSharePrice
             = shareUnitTag.getAttributeAsInteger("sharePriceUnits", shareUnitsForSharePrice);
@@ -506,7 +506,7 @@ public class PublicCompany extends Company implements CashOwner {
             int shareTotal = 0;
             boolean gotPresident = false;
             PublicCertificate certificate;
-            certificates = new ArrayListState<PublicCertificate>(this, "certificates"); // Throw away
+            certificates = ArrayListState.create(this, "certificates"); // Throw away
             // the per-type
             // specification
 
@@ -627,43 +627,43 @@ public class PublicCompany extends Company implements CashOwner {
     public void init(String name, CompanyTypeI type) {
         super.init(name, type);
 
-        inGameState = new BooleanState(this, "InGame", true);
+        inGameState = BooleanState.create(this, "InGame", true);
 
         this.portfolio = new Portfolio(this, name);
-        treasury = new CashModel(this);
-        lastRevenue = new MoneyModel(this, "lastRevenue");
+        treasury = CashModel.create(this);
+        lastRevenue = MoneyModel.create(this, "lastRevenue");
         lastRevenue.setSuppressInitialZero(true);
-        lastRevenueAllocation = new StringState(this, "lastAllocation");
-        presidentModel = new PresidentModel(this);
+        lastRevenueAllocation = StringState.create(this, "lastAllocation");
+        presidentModel = PresidentModel.create(this);
 
-        hasStarted = new BooleanState(this, "hasStarted", false);
-        hasFloated = new BooleanState(this, "hasFloated", false);
-        hasOperated = new BooleanState(this, "hasOperated", false);
-        buyable = new BooleanState(this, "isBuyable", false);
+        hasStarted = BooleanState.create(this, "hasStarted", false);
+        hasFloated = BooleanState.create(this, "hasFloated", false);
+        hasOperated = BooleanState.create(this, "hasOperated", false);
+        buyable = BooleanState.create(this, "isBuyable", false);
 
-        allBaseTokens = new ArrayListState<Token>(this, "allBaseTokens");
-        freeBaseTokens = new ArrayListState<Token>(this, "freeBaseTokens");
-        laidBaseTokens = new ArrayListState<Token>(this, "laidBaseTokens");
-        baseTokensModel = new BaseTokensModel(this, allBaseTokens, freeBaseTokens);
+        allBaseTokens = ArrayListState.create(this, "allBaseTokens");
+        freeBaseTokens = ArrayListState.create(this, "freeBaseTokens");
+        laidBaseTokens = ArrayListState.create(this, "laidBaseTokens");
+        baseTokensModel = BaseTokensModel.create(this).setStates(allBaseTokens, freeBaseTokens);
 
         /* Spendings in the current operating turn */
-        privatesCostThisTurn = new MoneyModel(this, "spentOnPrivates");
+        privatesCostThisTurn = MoneyModel.create(this, "spentOnPrivates");
         privatesCostThisTurn.setSuppressZero(true);
-        tilesLaidThisTurn = new StringState(this, "tilesLaid");
-        tilesCostThisTurn = new MoneyModel(this, "spentOnTiles");
+        tilesLaidThisTurn = StringState.create(this, "tilesLaid");
+        tilesCostThisTurn = MoneyModel.create(this, "spentOnTiles");
         tilesCostThisTurn.setSuppressZero(true);
-        tokensLaidThisTurn = new StringState(this, "tokensLaid");
-        tokensCostThisTurn = new MoneyModel(this, "spentOnTokens");
+        tokensLaidThisTurn = StringState.create(this, "tokensLaid");
+        tokensCostThisTurn = MoneyModel.create(this, "spentOnTokens");
         tokensCostThisTurn.setSuppressZero(true);
-        trainsCostThisTurn = new MoneyModel(this, "spentOnTrains");
+        trainsCostThisTurn = MoneyModel.create(this, "spentOnTrains");
         trainsCostThisTurn.setSuppressZero(true);
         trainsCostThisTurn.setAllowNegative(true);
-        bonusValue = new BonusModel(this);
+        bonusValue = BonusModel.create(this);
 
         if (hasStockPrice) {
-            parPrice = new PriceModel(this, "ParPrice");
-            currentPrice = new PriceModel(this, "CurrentPrice");
-            canSharePriceVary = new BooleanState (this, name+"_CanSharePriceVary", true);
+            parPrice = PriceModel.create(this, "ParPrice");
+            currentPrice = PriceModel.create(this, "CurrentPrice");
+            canSharePriceVary = BooleanState.create(this, name+"_CanSharePriceVary", true);
         }
 
    }
@@ -686,15 +686,15 @@ public class PublicCompany extends Company implements CashOwner {
         if (turnsWithExtraTileLaysInit != null) {
             turnsWithExtraTileLays = new HashMap<String, IntegerState>();
             for (String colour : turnsWithExtraTileLaysInit.keySet()) {
-                turnsWithExtraTileLays.put(colour, new IntegerState(this, 
+                turnsWithExtraTileLays.put(colour, IntegerState.create(this, 
                         "" + colour + "_ExtraTileTurns",
                         turnsWithExtraTileLaysInit.get(colour)));
             }
         }
 
        if (maxNumberOfLoans != 0) {
-            currentNumberOfLoans = new IntegerState (this, "Loans", 0);
-            currentLoanValue = new MoneyModel (this, "LoanValue", 0);
+            currentNumberOfLoans = IntegerState.create (this, "Loans", 0);
+            currentLoanValue = MoneyModel.create(this, "LoanValue", 0);
             currentLoanValue.setSuppressZero(true);
         }
 
@@ -710,7 +710,7 @@ public class PublicCompany extends Company implements CashOwner {
         }
 
         if (shareUnit == null) {
-            shareUnit = new IntegerState (this, name+"_ShareUnit", DEFAULT_SHARE_UNIT);
+            shareUnit = IntegerState.create (this, name+"_ShareUnit", DEFAULT_SHARE_UNIT);
         }
 
         // Give each certificate an unique Id
@@ -747,7 +747,7 @@ public class PublicCompany extends Company implements CashOwner {
         if (destinationHexName != null) {
             destinationHex = mapManager.getHex(destinationHexName);
             if (destinationHex != null) {
-                hasReachedDestination = new BooleanState (this, name+"_reachedDestination", false);
+                hasReachedDestination = BooleanState.create(this, name+"_reachedDestination", false);
             } else {
                 throw new ConfigurationException("Invalid destination hex "
                         + destinationHexName
@@ -772,7 +772,7 @@ public class PublicCompany extends Company implements CashOwner {
                     gameManager.setGuiParameter (GuiDef.Parm.HAS_ANY_RIGHTS, true);
                     // Initialize rights here to prevent overhead if not used, 
                     // but if rights are used, the GUI needs it from the start.
-                    if (rights == null) rights = new HashMapState<String, String>(this, name+"_Rights");
+                    if (rights == null) rights = HashMapState.create(this, name+"_Rights");
                     // TODO: This is only a workaround for the missing finishConfiguration of special properties (SFY)
                     sp.finishConfiguration(gameManager);
                 }
@@ -1055,7 +1055,7 @@ public class PublicCompany extends Company implements CashOwner {
         Owners.moveAll(this, bank.getPool(), Train.class);
 
         // Any cash goes to the bank (from the 1856 rules)
-        int cash = treasury.getText();
+        int cash = treasury.value();
         if (cash > 0) {
             treasury.setSuppressZero(true);
             treasury.add(-cash);
@@ -1084,11 +1084,11 @@ public class PublicCompany extends Company implements CashOwner {
         if (currentPrice != null) currentPrice.setPrice(null);
     }
 
-    public Model<String> getInGameModel () {
+    public BooleanState getInGameModel () {
         return inGameState;
     }
 
-    public Model<String> getIsClosedModel () {
+    public BooleanState getIsClosedModel () {
         return closedObject;
     }
 
@@ -1214,7 +1214,7 @@ public class PublicCompany extends Company implements CashOwner {
      * @return The current cash amount.
      */
     public int getCash() {
-        return treasury.getText();
+        return treasury.value();
     }
     
     public CashModel getCashModel() {
@@ -1222,10 +1222,10 @@ public class PublicCompany extends Company implements CashOwner {
     }
 
     public String getFormattedCash() {
-        return treasury.getData();
+        return treasury.getText();
     }
 
-    public Model<String> getText() {
+    public Model getText() {
         return treasury;
     }
 
@@ -1253,7 +1253,7 @@ public class PublicCompany extends Company implements CashOwner {
      * @param list ArrayList containing the certificates.
      */
     public void setCertificates(List<PublicCertificate> list) {
-        certificates = new ArrayListState<PublicCertificate>(this, "certificates", list);
+        certificates = ArrayListState.create(this, "certificates", list);
     }
 
     /**
@@ -1274,7 +1274,7 @@ public class PublicCompany extends Company implements CashOwner {
      */
     public void addCertificate(PublicCertificate certificate) {
         if (certificates == null)
-            certificates = new ArrayListState<PublicCertificate>(this, "certificates");
+            certificates = ArrayListState.create(this, "certificates");
         certificates.add(certificate);
     }
 
@@ -1331,7 +1331,7 @@ public class PublicCompany extends Company implements CashOwner {
         return lastRevenue.intValue();
     }
 
-    public Model<String> getLastRevenueModel() {
+    public Model getLastRevenueModel() {
         return lastRevenue;
     }
 
@@ -1348,7 +1348,7 @@ public class PublicCompany extends Company implements CashOwner {
         return lastRevenueAllocation.stringValue();
     }
 
-    public Model<String> getLastRevenueAllocationModel() {
+    public StringState getLastRevenueAllocationModel() {
         return lastRevenueAllocation;
     }
 
@@ -1631,7 +1631,7 @@ public class PublicCompany extends Company implements CashOwner {
         }
     }
 
-    public Model<String> getTrainsSpentThisTurnModel() {
+    public Model getTrainsSpentThisTurnModel() {
         return trainsCostThisTurn;
     }
 
@@ -1687,7 +1687,7 @@ public class PublicCompany extends Company implements CashOwner {
 
     }
 
-    public Model<String> getPrivatesSpentThisTurnModel() {
+    public Model getPrivatesSpentThisTurnModel() {
         return privatesCostThisTurn;
     }
 
@@ -1710,11 +1710,11 @@ public class PublicCompany extends Company implements CashOwner {
         tilesLaidThisTurn.appendWithDelimiter(Bank.format(cost), ",");
     }
 
-    public Model<String> getTilesLaidThisTurnModel() {
+    public StringState getTilesLaidThisTurnModel() {
         return tilesLaidThisTurn;
     }
 
-    public Model<String> getTilesCostThisTurnModel() {
+    public Model getTilesCostThisTurnModel() {
         return tilesCostThisTurn;
     }
 
@@ -1784,11 +1784,11 @@ public class PublicCompany extends Company implements CashOwner {
 
     }
 
-    public Model<String> getTokensLaidThisTurnModel() {
+    public StringState getTokensLaidThisTurnModel() {
         return tokensLaidThisTurn;
     }
 
-    public Model<String> getTokensCostThisTurnModel() {
+    public MoneyModel getTokensCostThisTurnModel() {
         return tokensCostThisTurn;
     }
 
@@ -1798,7 +1798,7 @@ public class PublicCompany extends Company implements CashOwner {
 
     public boolean addBonus(Bonus bonus) {
         if (bonuses == null) {
-            bonuses = new ArrayListState<Bonus>(this, "Bonuses");
+            bonuses = ArrayListState.create(this, "Bonuses");
             bonusValue.setBonuses(bonuses);
         }
         bonuses.add(bonus);
@@ -2026,8 +2026,7 @@ public class PublicCompany extends Company implements CashOwner {
         return currentLoanValue;
     }
     
-    public Model<String> getRightsModel () {
-        //return rightsModel;
+    public State getRightsModel () {
         return rights;
     }
 
@@ -2037,7 +2036,7 @@ public class PublicCompany extends Company implements CashOwner {
     
     public void setRight (String nameOfRight, String value) {
         if (rights == null) {
-            rights = new HashMapState<String, String>(this, "Rights");
+            rights = HashMapState.create(this, "Rights");
         }
         rights.put(nameOfRight, value);
     }

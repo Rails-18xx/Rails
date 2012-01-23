@@ -1,22 +1,33 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GridPanel.java,v 1.8 2010/05/24 11:42:35 evos Exp $*/
 package rails.ui.swing;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+
 
 import org.apache.log4j.Logger;
 
-import rails.game.*;
-import rails.game.model.Model;
+import rails.game.GameManager;
+import rails.game.Player;
+import rails.game.PublicCompany;
+import rails.game.RoundI;
 import rails.game.model.Model;
 import rails.game.state.BooleanState;
+import rails.game.state.Observable;
 import rails.game.state.Observer;
 import rails.ui.swing.elements.Field;
-import rails.ui.swing.elements.ViewObject;
 
 public abstract class GridPanel extends JPanel
 implements ActionListener, KeyListener {
@@ -44,7 +55,7 @@ implements ActionListener, KeyListener {
     protected PublicCompany c;
     protected JComponent f;
 
-    protected List<ViewObject> observers = new ArrayList<ViewObject>();
+    protected List<Observer> observers = new ArrayList<Observer>();
 
     /** 2D-array of fields to enable show/hide per row or column */
     protected JComponent[][] fields;
@@ -63,7 +74,7 @@ implements ActionListener, KeyListener {
 
     protected void deRegisterObservers() {
         log.debug("Deregistering observers");
-        for (ViewObject vo : observers) {
+        for (Observer vo : observers) {
             vo.deRegister();
         }
     }
@@ -92,9 +103,9 @@ implements ActionListener, KeyListener {
 
         gridPanel.add(comp, gbc);
 
-        if (comp instanceof ViewObject
-            && ((ViewObject) comp).getModel() != null) {
-            observers.add((ViewObject) comp);
+        if (comp instanceof Observer
+            && ((Observer) comp).getObservable() != null) {
+            observers.add((Observer) comp);
         }
 
         if (fields != null && fields[x][y] == null) fields[x][y] = comp;
@@ -129,22 +140,21 @@ implements ActionListener, KeyListener {
         }
     }
 
-    // FIXME: Has to be rewritten to work properly again
-    public class RowVisibility implements ViewObject {
+    public class RowVisibility implements Observer {
 
         private GridPanel parent;
-        private Model<String> modelObject;
+        private Observable observable;
         private int rowIndex;
         private boolean lastValue;
         private boolean reverseValue;
 
-        public RowVisibility (GridPanel parent, int rowIndex, Model<String> model, boolean reverseValue) {
+        public RowVisibility (GridPanel parent, int rowIndex, Model model, boolean reverseValue) {
             this.parent = parent;
-            this.modelObject = model;
+            this.observable = model;
             this.rowIndex = rowIndex;
             this.reverseValue = reverseValue;
-            modelObject.addObserver(this);
-            lastValue = ((BooleanState)modelObject).booleanValue() != reverseValue;
+            observable.addObserver(this);
+            lastValue = ((BooleanState)observable).booleanValue() != reverseValue;
         }
 
         public boolean lastValue () {
@@ -153,32 +163,30 @@ implements ActionListener, KeyListener {
 
         /** Needed to satisfy the Observer interface.
          * The closedObject model will send true if the company is closed. */
-        public void update(Observable o1, Object o2) {
+        
+/*  
+       public void update(Observable o1, Object o2) {
             if (o2 instanceof Boolean) {
                 lastValue = (Boolean)o2;
                 parent.setRowVisibility(rowIndex, lastValue);
             }
         }
-
-        public void update(String data) {
-            // TODO Auto-generated method stub
-            
-        }
-
-        public Model<String> getModel() {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        public void deRegister() {
-            // TODO Auto-generated method stub
-            
-        }
+*/
 
         public void update() {
-            // TODO Auto-generated method stub
-            
+            // FIXME: There was a Boolean object submitted if the company is closed
+            // TODO: Make this functionality available again
+            // see above the old update method
         }
+
+        public Observable getObservable() {
+            return observable;
+        }
+
+        public boolean deRegister() {
+            return observable.removeObserver(this);
+        }
+
 
     }
 

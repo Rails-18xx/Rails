@@ -1,6 +1,9 @@
 package rails.game;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 
@@ -14,7 +17,6 @@ import rails.game.state.GameItem;
 import rails.game.state.ArrayListState;
 import rails.game.state.BooleanState;
 import rails.game.state.ChangeStack;
-import rails.game.state.GameItem;
 import rails.game.model.Owners;
 
 /**
@@ -40,7 +42,7 @@ public abstract class Round extends GameItem implements RoundI {
     protected MapManager mapManager = null;
 
     //protected Class<? extends RoundI> roundTypeForUI = null;
-    protected BooleanState wasInterrupted = new BooleanState  (this, "RoundInterrupted", false);
+    protected BooleanState wasInterrupted = BooleanState.create(this, "RoundInterrupted", false);
 
     protected ChangeStack changeStack = null;
 
@@ -491,7 +493,7 @@ public abstract class Round extends GameItem implements RoundI {
 
     public boolean requestTurn (Player player) {
         if (canRequestTurn (player)) {
-            if (hasRequestedTurn == null) hasRequestedTurn = new ArrayListState<Player>(this, "hasRequestedTurn");
+            if (hasRequestedTurn == null) hasRequestedTurn = ArrayListState.create(this, "hasRequestedTurn");
             if (!hasRequestedTurn.contains(player)) hasRequestedTurn.add(player);
             return true;
         }
@@ -503,7 +505,7 @@ public abstract class Round extends GameItem implements RoundI {
     }
 
     public void setCanRequestTurn (Player player, boolean value) {
-        if (canRequestTurn == null) canRequestTurn = new ArrayListState<Player>(this, "canRequestTurn");
+        if (canRequestTurn == null) canRequestTurn = ArrayListState.create(this, "canRequestTurn");
         if (value && !canRequestTurn.contains(player)) {
             canRequestTurn.add(player);
         } else if (!value && canRequestTurn.contains(player)) {
@@ -512,7 +514,7 @@ public abstract class Round extends GameItem implements RoundI {
     }
 
     public void setAutopass (Player player, boolean value) {
-        if (autopasses == null) autopasses = new ArrayListState<Player>(this, "autopasses");
+        if (autopasses == null) autopasses = ArrayListState.create(this, "autopasses");
         if (value && !autopasses.contains(player)) {
             autopasses.add(player);
         } else if (!value && autopasses.contains(player)) {

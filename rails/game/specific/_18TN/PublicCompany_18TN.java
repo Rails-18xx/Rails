@@ -10,15 +10,13 @@ import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
 import rails.game.GameManager;
 import rails.game.PublicCompany;
-import rails.game.model.Model;
-import rails.game.model.Model;
 import rails.game.state.BooleanState;
 
 public class PublicCompany_18TN extends PublicCompany implements RevenueStaticModifier {
 
     private BooleanState civilWar;
 
-    public Model<String> getCivilWar() {
+    public BooleanState getCivilWar() {
         return civilWar;
     }
 
@@ -28,7 +26,7 @@ public class PublicCompany_18TN extends PublicCompany implements RevenueStaticMo
         
         super.finishConfiguration(gameManager);
 
-        civilWar = new BooleanState (this, name+"_CivilWar", false);
+        civilWar = BooleanState.create(this, name+"_CivilWar", false);
         
         gameManager.getRevenueManager().addStaticModifier(this);
     }

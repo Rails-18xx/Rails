@@ -1,7 +1,6 @@
 package rails.game.specific._1825;
 
 import rails.game.PublicCompany;
-import rails.game.PublicCompany;
 import rails.game.StockSpaceI;
 import rails.game.state.IntegerState;
 
@@ -12,7 +11,7 @@ public class PublicCompany_1825 extends PublicCompany {
     public void start(StockSpaceI startSpace) {
         super.start(startSpace);
         //PD: used to track flotation order
-        formationOrderIndex = new IntegerState(this, name+"_formationOrderIndex");
+        formationOrderIndex = IntegerState.create(this, name+"_formationOrderIndex");
     }
 
     public int getFormationOrderIndex() {

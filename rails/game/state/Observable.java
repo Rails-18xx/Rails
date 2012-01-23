@@ -23,10 +23,15 @@ public abstract class Observable extends GameItem {
     }
     
     public void addObserver(Observer o) {
+        if (observers == null) {
+            observers = new HashSet<Observer>();
+        }
         observers.add(o);
     }
     
     public boolean removeObserver(Observer o) {
+        if (observers == null) return false;
+        
         return observers.remove(o);
     }
     
@@ -38,10 +43,13 @@ public abstract class Observable extends GameItem {
         if (models == null) {
             models = new HashSet<Model>();
         }
+        
         models.add(m);
     }
     
     public boolean removeModel(Model m) {
+        if (models == null) return false;
+        
         return models.remove(m);
     }
     
@@ -50,9 +58,16 @@ public abstract class Observable extends GameItem {
     }
     
     public void updateModels() {
+        if (models == null) return;
+        
         for (Model m:models) {
             m.update();
         }
     }
+    
+    /**
+     * @return text to be read by observers
+     */
+    public abstract String getText();
     
 }

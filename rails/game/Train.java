@@ -34,10 +34,10 @@ public class Train extends AbstractOwnable {
 
         this.certificateType = certType;
         this.uniqueId = uniqueId;
-        this.type = new GenericState<TrainType>(this, certType.getName()+"_CurrentType", type);
+        this.type = GenericState.create(this, certType.getName()+"_CurrentType", type);
         this.previousType = type;
 
-        obsolete = new BooleanState(this, uniqueId, false);
+        obsolete = BooleanState.create(this, uniqueId, false);
     }
     
     public void setType (TrainType type) {

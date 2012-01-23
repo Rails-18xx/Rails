@@ -24,8 +24,8 @@ public class StockRound_1856 extends StockRound {
     public StockRound_1856 (GameManager aGameManager) {
         super (aGameManager);
 
-        sharesSoldSoFar = new IntegerState(this, "CGR_SharesSoldSoFar", 0);
-        squaresDownSoFar = new IntegerState(this, "CGR_SquaresDownSoFar", 0);
+        sharesSoldSoFar = IntegerState.create(this, "CGR_SharesSoldSoFar", 0);
+        squaresDownSoFar = IntegerState.create(this, "CGR_SquaresDownSoFar", 0);
 }
 
     /**

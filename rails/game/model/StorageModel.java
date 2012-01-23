@@ -32,7 +32,7 @@ public class StorageModel<T extends Ownable> extends Model implements Storage<T>
     protected StorageModel(Class<T> clazz, String postfix_id) {
         super(clazz.getName() + postfix_id);
         
-        storageList = new ArrayListState<T>(clazz.getName());
+        storageList = ArrayListState.create(clazz.getName());
     }
     
     /**
@@ -60,7 +60,7 @@ public class StorageModel<T extends Ownable> extends Model implements Storage<T>
     }
     
     @Override
-    protected String getText() {
+    public String toString() {
         return storageList.toString();
     }
 

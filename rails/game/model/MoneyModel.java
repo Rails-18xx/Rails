@@ -10,6 +10,8 @@ import rails.game.state.StringState;
  * A model presenting money values
  */
 public class MoneyModel extends Model {
+    public static final int DEFAULT = 0;
+    
     // Data
     private final IntegerState value;
     private BooleanState initialised;
@@ -20,38 +22,31 @@ public class MoneyModel extends Model {
     private boolean suppressInitialZero;
     private boolean addPlus;
     private boolean allowNegative;
-    
-    /**
-     * Creates a MoneyModel
-     * Value set to default 0
-     * @param id identifier
-     */
-    public MoneyModel(String id){
-        this(id, 0);
-    }
-    
-    /**
-     * Creates a MoneyModel
-     * @param id identifier
-     * @param value initial value
-     */
-    public MoneyModel(String id, int value){
+ 
+    private MoneyModel(String id, int value){
         super(id);
-        this.value = new IntegerState("MoneyValue",  value);
+        this.value = IntegerState.create("MoneyValue",  value);
     }
     
     /** 
-     * Creates an initialized MoneyModel with default value of zero
+     * Creates an owned MoneyModel with default value of zero
      */
     public static MoneyModel create(Item parent, String id){
-        return new MoneyModel(id).init(parent);
+        return new MoneyModel(id, DEFAULT).init(parent);
     }
 
     /** 
-     * Creates an initialized MoneyModel with predefined value
+     * Creates an owned MoneyModel with predefined value
      */
     public static MoneyModel create(Item parent, String id, int value){
         return new MoneyModel(id, value).init(parent);
+    }
+    
+    /**
+     * Creates an unowned MoneyModel with default with zero value
+     */
+    public static MoneyModel create(String id) {
+        return new MoneyModel(id, DEFAULT);
     }
     
     @Override
@@ -82,8 +77,7 @@ public class MoneyModel extends Model {
 
         /* Set initialisation state only if it matters */
         if (suppressInitialZero && initialised == null) {
-            initialised = new BooleanState("initialised", false);
-            initialised.init(this);
+            initialised = BooleanState.create(this, "initialised", false);
         }
         if (initialised != null && !initialised.booleanValue()) {
             initialised.set(true);
@@ -113,7 +107,7 @@ public class MoneyModel extends Model {
      */
     public void setText (String text) {
         if (fixedText == null) {
-            fixedText = new StringState ("fixedText", text);
+            fixedText = StringState.create(this, "fixedText", text);
             fixedText.init(this);
         } else {
             fixedText.set(text);
@@ -127,7 +121,7 @@ public class MoneyModel extends Model {
     }
 
     @Override
-    protected String getText() {
+    public String toString() {
         if (fixedText != null && !"".equals(fixedText.stringValue())) {
             return fixedText.stringValue();
         }

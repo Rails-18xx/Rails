@@ -35,7 +35,7 @@ public class GuiHints extends GameItem implements Serializable{
 
     public void setCurrentRoundType(Class<? extends RoundI> currentRoundType) {
         if (this.currentRoundType == null) {
-            this.currentRoundType = new GenericState<Class<? extends RoundI>>
+            this.currentRoundType = GenericState.<Class<? extends RoundI>>create
                         (this, "CurrentRoundType",  currentRoundType);
         } else {
             this.currentRoundType.set(currentRoundType);
@@ -67,7 +67,7 @@ public class GuiHints extends GameItem implements Serializable{
 
     public void setActivePanel(GuiDef.Panel activePanel) {
         if (this.activePanel == null) {
-            this.activePanel = new GenericState<GuiDef.Panel>(this, "ActivePanel", activePanel);
+            this.activePanel = GenericState.create(this, "ActivePanel", activePanel);
         } else {
             this.activePanel.set(activePanel);
         }

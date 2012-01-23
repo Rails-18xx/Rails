@@ -19,11 +19,7 @@ public abstract class State extends Observable {
     // optional formatter
     private Formatter<State> formatter = null;
 
-    /**
-     * Creates a State object
-     * @param id identifier for the item (cannot be null)
-     */
-    public State(String id){
+    protected State(String id){
         super(id);
     }
     
@@ -68,9 +64,11 @@ public abstract class State extends Observable {
     }
     
     /**
-     * @return formatted value, if no formatter defined identical to toString()
+     * For a state getText() it is identical to toString()
+     * If this does not work use a formatter
      */
-    public String getFormattedValue() {
+    @Override
+    public final String getText() {
         if (formatter == null) {
             return toString();
         } else {

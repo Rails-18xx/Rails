@@ -1,12 +1,30 @@
 package tools;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.util.*;
-import java.util.List;
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.io.File;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.KeyStroke;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 
 import org.apache.log4j.Logger;
 
@@ -14,7 +32,6 @@ import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.common.parser.Config;
 import rails.common.parser.ConfigurationException;
-import rails.game.*;
 import rails.game.action.PossibleAction;
 import rails.ui.swing.elements.ActionMenuItem;
 import rails.util.GameFileIO;

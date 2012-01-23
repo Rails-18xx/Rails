@@ -1,24 +1,42 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/HexMap.java,v 1.27 2010/06/24 21:48:08 stefanfrey Exp $*/
 package rails.ui.swing.hexmap;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.geom.AffineTransform;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Stroke;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.geom.GeneralPath;
-import java.awt.image.AffineTransformOp;
-import java.awt.image.BufferedImage;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import javax.swing.*;
+import javax.swing.JComponent;
+
 
 import org.apache.log4j.Logger;
 
 import rails.common.parser.Config;
 import rails.common.parser.ConfigurationException;
-import rails.game.*;
-import rails.game.action.*;
-import rails.ui.swing.*;
+import rails.game.GameManager;
+import rails.game.MapHex;
+import rails.game.MapManager;
+import rails.game.Phase;
+import rails.game.PhaseManager;
+import rails.game.action.LayBaseToken;
+import rails.game.action.LayBonusToken;
+import rails.game.action.LayTile;
+import rails.game.action.LayToken;
+import rails.ui.swing.GameUIManager;
+import rails.ui.swing.ORUIManager;
+import rails.ui.swing.Scale;
 import rails.util.Util;
 
 /**

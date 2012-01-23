@@ -9,7 +9,6 @@ import rails.algorithms.RevenueAdapter;
 import rails.algorithms.RevenueDynamicModifier;
 import rails.algorithms.RevenueTrainRun;
 import rails.common.LocalText;
-import rails.game.TrainManager;
 /**
  * Double heading modifier
  * Allows two trains to run as a longer train (double heading)

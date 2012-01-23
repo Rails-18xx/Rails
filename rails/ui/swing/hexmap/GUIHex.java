@@ -1,26 +1,51 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.45 2010/06/24 21:48:08 stefanfrey Exp $*/
 package rails.ui.swing.hexmap;
 
-import java.awt.*;
-import java.awt.geom.*;
-import java.util.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.Stroke;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
 import rails.algorithms.RevenueBonusTemplate;
-import rails.game.*;
+import rails.game.Bank;
+import rails.game.BaseToken;
+import rails.game.BonusToken;
+import rails.game.MapHex;
+import rails.game.PrivateCompany;
+import rails.game.PublicCompany;
+import rails.game.Station;
+import rails.game.Stop;
+import rails.game.TileI;
+import rails.game.TileOrientation;
+import rails.game.Token;
 import rails.game.model.Model;
-import rails.game.model.Model;
+import rails.game.state.Observer;
 import rails.ui.swing.GUIToken;
-import rails.ui.swing.elements.ViewObject;
 import rails.util.Util;
 
 /**
  * Base class that holds common components for GUIHexes of all orientations.
  */
 
-public class GUIHex implements ViewObject {
+public class GUIHex implements Observer {
 
     public static final double SQRT3 = Math.sqrt(3.0);
     public static double NORMAL_SCALE = 1.0;
@@ -866,12 +891,13 @@ public class GUIHex implements ViewObject {
     }
 
     /** Needed to satisfy the ViewObject interface. Currently not used. */
-    public void deRegister() {
-        if (model != null)
-            model.removeObserver(this);
+    public boolean deRegister() {
+        if (model == null) return false;
+        return model.removeObserver(this);
     }
 
-    public Model<String> getModel() {
+    // FIXME: Why is this called getModel instead of getMapHex?
+    public MapHex getModel() {
         return model;
     }
 

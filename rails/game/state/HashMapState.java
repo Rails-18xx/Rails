@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 
@@ -20,22 +21,42 @@ public final class HashMapState<K,V> extends State {
 
     private final HashMap<K,V> map;
 
-    /**
-     * Creates an empty HashMap state variable
-     * @param id id state variable
-     */
-    public HashMapState(String id) {
+    private HashMapState(String id) {
         super(id);
-        map = new HashMap<K,V>();
+        map = Maps.newHashMap();
     }
 
-    /**
-     * @param id id state variable
-     * @param map initial map 
-     */
-    public HashMapState(String id, Map<K,V> map) {
+    private HashMapState(String id, Map<K,V> map) {
         super(id);
-        this.map = new HashMap<K,V>(map);
+        this.map = Maps.newHashMap(map);
+    }
+    
+    /** 
+     * Creates an owned and empty HashMapState 
+     */
+    public static <K,V> HashMapState<K,V> create(Item parent, String id){
+        return new HashMapState<K,V>(id).init(parent);
+    }
+    
+    /**
+     * Creates an owned and prefilled HashMapState
+     */
+    public static <K,V> HashMapState<K,V> create(Item parent, String id, Map<K,V> map){
+        return new HashMapState<K,V>(id,map).init(parent);
+    }
+    
+    /**
+     * Creates an unowned and empty HashMapState
+     * Remark: Still requires a call to the init-method
+     */
+    public static <K,V> HashMapState<K,V> create(String id){
+        return new HashMapState<K,V>(id);
+    }
+    
+    @Override
+   public HashMapState<K,V> init(Item parent){
+        super.init(parent);
+        return this;
     }
 
     public void put(K key, V value) {

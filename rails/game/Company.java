@@ -69,7 +69,7 @@ Cloneable, Comparable<Company> {
     public void init(String name, CompanyTypeI type) {
         this.name = name;
         this.type = type;
-        closedObject = new BooleanState(this, name + "_Closed", false);
+        closedObject = BooleanState.create(this, name + "_Closed", false);
     }
 
     /** Only to be called from subclasses */

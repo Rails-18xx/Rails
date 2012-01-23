@@ -51,7 +51,7 @@ public class GUITile {
     public GUITile(int tileId, GUIHex guiHex) {
         this.guiHex = guiHex;
         this.tileId = tileId;
-        this.hex = (MapHex)guiHex.getModel();
+        this.hex = guiHex.getModel();
         TileManager tileManager = guiHex.getHexMap().orUIManager.getTileManager();
         tile = tileManager.getTile(tileId);
         picId = tile.getPictureId();

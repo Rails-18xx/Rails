@@ -22,7 +22,6 @@ import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
 import rails.game.Game;
 import rails.game.GameManager;
-import rails.game.GameManager;
 import rails.game.ReportBuffer;
 import rails.game.action.PossibleAction;
 

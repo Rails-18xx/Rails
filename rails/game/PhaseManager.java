@@ -18,7 +18,7 @@ public class PhaseManager extends GameItem implements ConfigurableComponentI {
     protected HashMap<String, Phase> phaseMap;
 
     protected int numberOfPhases = 0;
-    protected GenericState<Phase> currentPhase = new GenericState<Phase>(this, "CurrentPhase");
+    protected GenericState<Phase> currentPhase = GenericState.create(this, "CurrentPhase");
 
     // Can be removed once setPhase() has been redone.
     protected GameManager gameManager;

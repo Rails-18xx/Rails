@@ -1,6 +1,15 @@
 package rails.game;
 
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import rails.common.*;
 import rails.common.parser.GameOption;
@@ -42,7 +51,7 @@ public class OperatingRound extends Round implements Observer {
     protected List<SpecialPropertyI> currentSpecialProperties = null;
 
     protected HashMapState<String, Integer> tileLaysPerColour =
-        new HashMapState<String, Integer>(this, "tileLaysPerColour");
+        HashMapState.create(this, "tileLaysPerColour");
 
     protected List<LayBaseToken> currentNormalTokenLays =
         new ArrayList<LayBaseToken>();
@@ -92,7 +101,7 @@ public class OperatingRound extends Round implements Observer {
     public OperatingRound(GameManager gameManager) {
         super (gameManager);
 
-        operatingCompanies = new ArrayListState<PublicCompany>(this, "operatingCompanies", setOperatingCompanies());
+        operatingCompanies = ArrayListState.create(this, "operatingCompanies", setOperatingCompanies());
 
         // sfy NoMapMode
         noMapMode = GameOption.convertValueToBoolean(getGameOption("NoMapMode"));
@@ -124,7 +133,7 @@ public class OperatingRound extends Round implements Observer {
             log.info("Initial operating sequence is "+msg.toString());
 
             if (stepObject == null) {
-                stepObject = new GenericState<GameDef.OrStep>(this, "ORStep",  GameDef.OrStep.INITIAL);
+                stepObject = GenericState.create(this, "ORStep",  GameDef.OrStep.INITIAL);
                 stepObject.addObserver(this);
             }
 
@@ -628,7 +637,7 @@ public class OperatingRound extends Round implements Observer {
     protected void setOperatingCompany (PublicCompany company) {
         if (operatingCompany == null) {
             operatingCompany =
-                new GenericState<PublicCompany>(this, "OperatingCompany", company);
+                GenericState.create(this, "OperatingCompany", company);
         } else {
             operatingCompany.set(company);
         }
@@ -1239,7 +1248,7 @@ public class OperatingRound extends Round implements Observer {
         if (operatingCompany.get().getMaxLoansPerRound() > 0) {
             int oldLoansThisRound = 0;
             if (loansThisRound == null) {
-                loansThisRound = new HashMapState<PublicCompany, Integer>(this, "loansThisRound");
+                loansThisRound = HashMapState.create(this, "loansThisRound");
             } else if (loansThisRound.containsKey(operatingCompany.get())){
                 oldLoansThisRound = loansThisRound.get(operatingCompany.get());
             }
@@ -3138,6 +3147,16 @@ public class OperatingRound extends Round implements Observer {
     @Override
     public String getRoundName() {
         return toString();
+    }
+
+    // Observer Interface
+    public Observable getObservable() {
+        return stepObject;
+    }
+
+    public boolean deRegister() {
+        if (stepObject == null) return false;
+        return stepObject.removeObserver(this);
     }
 
 }

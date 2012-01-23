@@ -11,4 +11,8 @@ public interface Observer{
 
     void update();
     
+    Observable getObservable();
+    
+    boolean deRegister();
+    
 }

@@ -1,6 +1,7 @@
 package rails.game.model;
 
 import rails.game.state.GameItem;
+import rails.game.state.GenericState;
 import rails.game.state.Item;
 
 /**
@@ -10,7 +11,7 @@ import rails.game.state.Item;
  */
 public abstract class AbstractOwnable extends GameItem implements Ownable {
 
-    private final OwnerState owner = new OwnerState();
+    private final GenericState<Owner> owner = GenericState.create(this, "Owner");
 
     @Deprecated
     // TODO: Remove that default constructor here

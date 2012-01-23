@@ -7,7 +7,6 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import rails.game.GameManager;
-import rails.game.GameManager;
 import rails.util.Util;
 
 /**

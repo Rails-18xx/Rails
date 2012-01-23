@@ -47,9 +47,9 @@ public class SellBonusToken extends SpecialProperty {
 
         maxNumberToSell = sellBonusTokenTag.getAttributeAsInteger("amount", 1);
 
-        seller = new GenericState<Owner> (this, "SellerOf_"+name+"_Bonus");
+        seller = GenericState.create(this, "SellerOf_"+name+"_Bonus");
         
-        numberSold = new IntegerState (this, "Bonus_"+name+"_sold", 0);
+        numberSold = IntegerState.create(this, "Bonus_"+name+"_sold", 0);
     }
 
     @Override

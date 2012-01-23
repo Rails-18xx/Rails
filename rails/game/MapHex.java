@@ -52,7 +52,7 @@ import rails.util.*;
  * </code> <p> For {@code EW}-oriented
  * tiles the above picture should be rotated 30 degrees clockwise.
  */
-public class MapHex extends SingleOwner<Token> implements Model<String>, ConfigurableComponentI,
+public class MapHex extends SingleOwner<Token> implements Model, ConfigurableComponentI,
 StationHolder {
 
     private static final String[] ewOrNames =
@@ -948,7 +948,7 @@ StationHolder {
     public boolean addToken(Token token, int position) {
 
         if (offStationTokens == null)
-            offStationTokens = new ArrayListState<Token>(this, "offStationTokens");
+            offStationTokens = ArrayListState.create(this, "offStationTokens");
         if (offStationTokens.contains(token)) {
             return false;
         }
@@ -1130,7 +1130,7 @@ StationHolder {
      */
     public void setBlockedForTileLays(boolean isBlocked) {
         if (isBlockedForTileLays == null)
-            isBlockedForTileLays = new BooleanState(this, name+"_IsBlockedForTileLays", isBlocked);
+            isBlockedForTileLays = BooleanState.create(this, name+"_IsBlockedForTileLays", isBlocked);
         else
             isBlockedForTileLays.set(isBlocked);
     }
@@ -1242,7 +1242,7 @@ StationHolder {
      */
     public void setBlockedForTokenLays(boolean isBlocked) {
         if (isBlockedForTokenLays == null)
-            isBlockedForTokenLays = new BooleanState(this, name+"_IsBlockedForTokenLays", isBlocked);
+            isBlockedForTokenLays = BooleanState.create(this, name+"_IsBlockedForTokenLays", isBlocked);
         else
             isBlockedForTokenLays.set(isBlocked);
     }

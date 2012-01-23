@@ -8,11 +8,11 @@ import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.model.StorageModel;
 import rails.game.model.Owner;
-import rails.game.model.OwnerState;
 import rails.game.model.Owners;
 import rails.game.model.Portfolio;
 import rails.game.special.SellBonusToken;
 import rails.game.special.SpecialPropertyI;
+import rails.game.state.GenericState;
 import rails.util.*;
 
 public class PrivateCompany extends Company implements Certificate, Closeable {
@@ -67,7 +67,7 @@ public class PrivateCompany extends Company implements Certificate, Closeable {
     protected boolean tradeableToCompany = true;
     protected boolean tradeableToPlayer = false;
     
-    private final OwnerState owner = new OwnerState(this);
+    private final GenericState<Owner> owner = GenericState.create(this, "Owner");
         
     public PrivateCompany() {
         super();

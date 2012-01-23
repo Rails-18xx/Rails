@@ -9,8 +9,6 @@ import rails.game.*;
 import rails.game.action.*;
 import rails.game.state.GenericState;
 import rails.game.state.IntegerState;
-import rails.game.state.ArrayListState;
-
 
 
 /**
@@ -20,22 +18,22 @@ import rails.game.state.ArrayListState;
 public class StartRound_1880 extends StartRound {
    
     private final GenericState<Player> startingPlayer =
-        new GenericState<Player>(this, "StartingPlayer");
+        GenericState.create(this, "StartingPlayer");
     
     private final IntegerState currentBuyPrice =
-        new IntegerState(this, "CurrentBuyPrice", 0);
+        IntegerState.create(this, "CurrentBuyPrice", 0);
     
     private final IntegerState initialItemRound = 
-        new IntegerState(this, "InitialItemRound",0); 
+        IntegerState.create(this, "InitialItemRound",0); 
     
     private final GenericState<StartItem> currentItem = 
-        new GenericState<StartItem>(this, "CurrentItem");
+        GenericState.create(this, "CurrentItem");
     
     private final IntegerState currentStartRoundPhase = 
-        new IntegerState(this, "CurrentStartRoundPhase",0); 
+        IntegerState.create(this, "CurrentStartRoundPhase",0); 
     
    private final IntegerState investorChosen = 
-        new IntegerState(this, "InvestorChosen",0);
+        IntegerState.create(this, "InvestorChosen",0);
     
     /** A company in need for a par price. */
     PublicCompany companyNeedingPrice = null;

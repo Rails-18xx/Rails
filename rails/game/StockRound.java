@@ -30,14 +30,14 @@ public class StockRound extends Round {
     protected Player startingPlayer;
 
     protected GenericState<PublicCompany> companyBoughtThisTurnWrapper =
-        new GenericState<PublicCompany>(this, "CompanyBoughtThisTurn");
+        GenericState.create(this, "CompanyBoughtThisTurn");
 
     protected BooleanState hasSoldThisTurnBeforeBuying =
-        new BooleanState(this, "HoldSoldBeforeBuyingThisTurn", false);
+        BooleanState.create(this, "HoldSoldBeforeBuyingThisTurn", false);
 
-    protected BooleanState hasActed = new BooleanState(this, "HasActed", false);
+    protected BooleanState hasActed = BooleanState.create(this, "HasActed", false);
 
-    protected IntegerState numPasses = new IntegerState(this, "StockRoundPasses");
+    protected IntegerState numPasses = IntegerState.create(this, "StockRoundPasses");
 
     protected Map<PublicCompany, StockSpaceI> sellPrices =
         new HashMap<PublicCompany, StockSpaceI>();
@@ -50,7 +50,7 @@ public class StockRound extends Round {
     /* Transient data needed for rule enforcing */
     /** HashMap per player containing a HashMap per company */
     protected HashMultimapState<Player, PublicCompany> playersThatSoldThisRound =
-        new HashMultimapState<Player, PublicCompany>(this, "playersThatSoldThisRound");
+        HashMultimapState.create(this, "playersThatSoldThisRound");
 
     /* Rule constants */
     static protected final int SELL_BUY_SELL = 0;
@@ -1592,7 +1592,7 @@ public class StockRound extends Round {
 
 	public void setSellObligationLifted (PublicCompany company) {
 		if (sellObligationLifted == null) {
-			sellObligationLifted = new HashSetState<PublicCompany>(this, "SellObligationLifted");
+			sellObligationLifted = HashSetState.create(this, "SellObligationLifted");
 		}
 		sellObligationLifted.add(company);
 	}

@@ -39,8 +39,8 @@ public class CGRFormationRound extends SwitchableUIRound {
     private List<ExchangeableToken> tokensToExchangeFrom = null;
     private List<BaseToken> nonHomeTokens = null;
 
-    private IntegerState stepObject = new IntegerState (this, "CGRFormStep", 0);
-    private BooleanState cgrHasDiscardedTrains = new BooleanState (this, "CGRDiscardedTrains", false);
+    private IntegerState stepObject = IntegerState.create(this, "CGRFormStep", 0);
+    private BooleanState cgrHasDiscardedTrains = BooleanState.create(this, "CGRDiscardedTrains", false);
 
     public static final int STEP_REPAY_LOANS = 1;
     public static final int STEP_DISCARD_TRAINS = 2;

@@ -1,20 +1,29 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/GUIStockSpace.java,v 1.10 2010/01/31 22:22:34 macfreek Exp $*/
 package rails.ui.swing.elements;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Point;
 import java.util.List;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
+import javax.swing.SwingConstants;
 
 import org.apache.log4j.Logger;
 
 import rails.game.PublicCompany;
 import rails.game.StockSpaceI;
 import rails.game.model.Model;
+import rails.game.state.Observable;
+import rails.game.state.Observer;
 import rails.ui.swing.GUIToken;
 import rails.util.Util;
 
-public class GUIStockSpace extends JLayeredPane implements ViewObject {
+// TODO: Check if there is something missing after replacing the ViewObject by the Observer interface 
+
+public class GUIStockSpace extends JLayeredPane implements Observer {
 
     private static final long serialVersionUID = 1L;
     StockSpaceI model;
@@ -118,8 +127,8 @@ public class GUIStockSpace extends JLayeredPane implements ViewObject {
      *
      * @see rails.ui.swing.elements.ViewObject#getModel()
      */
-    public Model<String> getModel() {
-        return (Model<String>) model;
+    public Model getModel() {
+        return (Model) model;
     }
 
     /*
@@ -127,10 +136,9 @@ public class GUIStockSpace extends JLayeredPane implements ViewObject {
      *
      * @see rails.ui.swing.elements.ViewObject#deRegister()
      */
-    public void deRegister() {
-        if (model != null)
-            model.removeObserver(this);
-
+    public boolean deRegister() {
+        if (model == null) return false;
+        return model.removeObserver(this);
     }
 
     /*
@@ -146,6 +154,11 @@ public class GUIStockSpace extends JLayeredPane implements ViewObject {
     public void update() {
         // TODO Auto-generated method stub
         
+    }
+
+    public Observable getObservable() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 

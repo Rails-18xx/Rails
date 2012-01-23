@@ -5,12 +5,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rails.common.LocalText;
-import rails.game.*;
+import rails.game.GameManager;
+import rails.game.Player;
+import rails.game.PublicCertificate;
+import rails.game.PublicCompany;
+import rails.game.ReportBuffer;
+import rails.game.RoundI;
+import rails.game.ShareSellingRound;
 import rails.game.model.Owners;
 import rails.game.model.Portfolio;
 import rails.game.state.Context;
 import rails.game.state.GenericState;
-import rails.game.model.Owners;
 import rails.util.Util;
 
 /**
@@ -20,7 +25,7 @@ import rails.util.Util;
 public class GameManager_18EU extends GameManager {
 
     protected GenericState<Player> playerToStartFMERound =
-        new GenericState<Player>(this, "playerToStartFMERound");
+       GenericState.create(this, "playerToStartFMERound");
 
     public GameManager_18EU(Context context) {
         super(context);

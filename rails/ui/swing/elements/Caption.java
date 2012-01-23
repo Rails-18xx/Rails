@@ -2,7 +2,6 @@
 package rails.ui.swing.elements;
 
 import java.awt.Color;
-import java.awt.Font;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;

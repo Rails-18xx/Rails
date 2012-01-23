@@ -1,14 +1,10 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/HexMapImage2/HexMapImage2.java,v 1.27 2010/06/24 21:48:08 stefanfrey Exp $*/
 package rails.ui.swing.hexmap;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
-import java.awt.image.BufferedImage;
 import java.io.File;
-
-import javax.swing.*;
 
 import org.apache.batik.swing.JSVGCanvas;
 import org.apache.batik.swing.gvt.GVTTreeRendererAdapter;
@@ -16,8 +12,9 @@ import org.apache.batik.swing.gvt.GVTTreeRendererEvent;
 import org.apache.log4j.Logger;
 
 import rails.common.parser.Config;
-import rails.game.*;
-import rails.ui.swing.*;
+import rails.game.MapManager;
+import rails.ui.swing.GameUIManager;
+import rails.ui.swing.Scale;
 import rails.util.Util;
 
 /**

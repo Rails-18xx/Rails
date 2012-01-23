@@ -35,7 +35,7 @@ public class StockMarket extends GameItem implements StockMarketI, ConfigurableC
 
     /* States */
     /** GameOver becomes true if a stock market square is reached that is marked as such */ 
-    protected BooleanState gameOver = new BooleanState (this, "GameOver", false);
+    protected BooleanState gameOver = BooleanState.create(this, "GameOver", false);
 
     ArrayList<PublicCertificate> ipoPile;
 

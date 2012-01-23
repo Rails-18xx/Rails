@@ -16,7 +16,7 @@ import rails.game.model.Owners;
 public class OperatingRound_1856 extends OperatingRound {
 
     private BooleanState finalLoanRepaymentPending
-        = new BooleanState (this, "LoanRepaymentPending", false);
+        = BooleanState.create(this, "LoanRepaymentPending");
 
     private Player playerToStartLoanRepayment = null;
 

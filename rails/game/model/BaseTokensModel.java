@@ -9,22 +9,31 @@ import rails.game.state.State;
  */
 public class BaseTokensModel extends Model {
 
+    public static final String ID = "BaseTokensModel";
+
     private PublicCompany company;
 
     /**
      * BaseTokenModel is initialized with a default id "BaseTokensModel"
      */
-    public BaseTokensModel() {
-        super("BaseTokensModel");
+    private BaseTokensModel() {
+        super(ID);
     }
 
     /**
-     * Creates an initialized BaseTokenModel
+     * Creates an owned BaseTokenModel
      */
     public static BaseTokensModel create(PublicCompany company){
         return new BaseTokensModel().init(company);
     }
     
+    /**
+     * Creates an unowned BaseTokenModel
+     */
+    public static BaseTokensModel create(){
+        return new BaseTokensModel();
+    }
+
     /** 
      * @param parent restricted to PublicCompany
      */
@@ -53,14 +62,14 @@ public class BaseTokensModel extends Model {
      * @param freeTokenState
      * TODO: Replace with a model that contains the states
      */
-    public void setStates(State allTokenState, State freeTokenState){
-        super.init(company);
+    public BaseTokensModel setStates(State allTokenState, State freeTokenState){
         allTokenState.addModel(this);
         freeTokenState.addModel(this);
+        return this;
     }
 
     @Override 
-    protected String getText() {
+    public String toString() {
         int allTokens = company.getNumberOfBaseTokens();
         int freeTokens = company.getNumberOfFreeBaseTokens();
         if (allTokens == 0) {

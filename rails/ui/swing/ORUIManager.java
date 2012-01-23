@@ -845,9 +845,9 @@ public class ORUIManager implements DialogOwner {
                         prompt = LocalText.getText(
                                 "SelectStationForTokenOption",
                                         city.getNumber(),
-                                        ((MapHex) selectedHex.getModel()).getConnectionString(
+                                         selectedHex.getModel().getConnectionString(
                                         		selectedHex.getCurrentTile(),
-                                        		((MapHex) selectedHex.getModel()).getCurrentTileRotation(),
+                                        		selectedHex.getModel().getCurrentTileRotation(),
                                         		city.getRelatedStation().getNumber())) ;
                         prompts.add(prompt);
                         promptToCityMap.put(prompt, city);
@@ -957,7 +957,7 @@ public class ORUIManager implements DialogOwner {
                 prompt = LocalText.getText(
                         "SelectStationForTokenOption",
                                 station.getNumber(),
-                                ((MapHex) selectedHex.getModel()).getConnectionString(
+                                selectedHex.getModel().getConnectionString(
                                         selectedHex.getProvisionalTile(),
                                         selectedHex.getProvisionalTileRotation(),
                                         station.getNumber())) ;

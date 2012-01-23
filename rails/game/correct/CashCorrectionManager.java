@@ -1,14 +1,18 @@
 package rails.game.correct;
 
+
+import java.util.List;
+
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
-import rails.game.*;
+import rails.game.Bank;
+import rails.game.GameManager;
+import rails.game.Player;
+import rails.game.PublicCompany;
+import rails.game.ReportBuffer;
 import rails.game.model.CashOwner;
-import rails.game.model.Owner;
-import rails.game.model.Owners;
 import rails.game.model.Owners;
 
-import java.util.*;
 
 public final class CashCorrectionManager extends CorrectionManager {
     
@@ -59,11 +63,11 @@ public final class CashCorrectionManager extends CorrectionManager {
                     LocalText.getText("CorrectCashZero");
                 break;
             }
-            if ((amount + ch.getCashModel().getText()) < 0) {
+            if ((amount + ch.getCashModel().value()) < 0) {
                 errMsg =
                     LocalText.getText("NotEnoughMoney", 
                             ch.getId(),
-                            Bank.format(ch.getCashModel().getText()),
+                            Bank.format(ch.getCashModel().value()),
                             Bank.format(-amount) 
                     );
                 break;

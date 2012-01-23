@@ -10,10 +10,14 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import rails.game.*;
+import rails.game.Bank;
+import rails.game.CompanyManagerI;
+import rails.game.GameManager;
+import rails.game.Train;
+import rails.game.TrainManager;
+import rails.game.TrainType;
 import rails.game.model.Owner;
 import rails.game.model.Portfolio;
-import rails.game.model.PortfolioOwner;
 import rails.game.special.SpecialProperty;
 import rails.game.special.SpecialTrainBuy;
 import rails.util.Util;

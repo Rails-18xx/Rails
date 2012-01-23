@@ -1,6 +1,5 @@
 package rails.game;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import rails.common.DisplayBuffer;
@@ -9,8 +8,6 @@ import rails.common.LocalText;
 import rails.common.parser.GameOption;
 import rails.game.action.*;
 import rails.game.model.Model;
-import rails.game.model.Model;
-import rails.game.model.MoneyModel;
 import rails.game.state.ArrayListState;
 import rails.game.state.GenericState;
 import rails.game.state.IntegerState;
@@ -21,8 +18,8 @@ public abstract class StartRound extends Round {
     protected int[] itemIndex;
     protected ArrayListState<StartItem> itemsToSell = null;
     protected GenericState<StartItem> auctionItemState =
-            new GenericState<StartItem>(this, "AuctionItem");
-    protected IntegerState numPasses = new IntegerState(this, "StartRoundPasses");
+            GenericState.create(this, "AuctionItem");
+    protected IntegerState numPasses = IntegerState.create(this, "StartRoundPasses");
     protected int numPlayers;
     protected String variant;
     protected Player currentPlayer;
@@ -70,7 +67,7 @@ public abstract class StartRound extends Round {
         if (variant == null) variant = "";
         numPlayers = gameManager.getNumberOfPlayers();
 
-        itemsToSell = new ArrayListState<StartItem>(this, "itemsToSell");
+        itemsToSell = ArrayListState.create(this, "itemsToSell");
         itemIndex = new int[startPacket.getItems().size()];
         int index = 0;
 
@@ -378,19 +375,21 @@ public abstract class StartRound extends Round {
         return hasBasePrices;
     }
 
-    public Model<String> getBidModel(int privateIndex, int playerIndex) {
+    public Model getBidModel(int privateIndex, int playerIndex) {
         return (itemsToSell.get(privateIndex)).getBidForPlayerModel(playerIndex);
     }
 
-    public Model<String> getMinimumBidModel(int privateIndex) {
+    public Model getMinimumBidModel(int privateIndex) {
         return (itemsToSell.get(privateIndex)).getMinimumBidModel();
     }
 
-    public Model<String> getFreeCashModel(int playerIndex) {
+    // TODO: Maybe this should be a subclass of a readableCashModel
+    public Model getFreeCashModel(int playerIndex) {
         return gameManager.getPlayerByIndex(playerIndex).getFreeCashModel();
     }
 
-    public Model<String> getBlockedCashModel(int playerIndex) {
+    // TODO: Maybe this should be a subclass of a readableCashModel
+    public Model getBlockedCashModel(int playerIndex) {
         return gameManager.getPlayerByIndex(playerIndex).getBlockedCashModel();
     }
 

@@ -5,13 +5,22 @@ import java.util.*;
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.common.parser.GameOption;
-import rails.game.*;
+import rails.game.Bank;
+import rails.game.GameDef;
+import rails.game.GameManager;
+import rails.game.OperatingRound;
+import rails.game.Phase;
+import rails.game.Player;
+import rails.game.PrivateCompany;
+import rails.game.PublicCompany;
+import rails.game.ReportBuffer;
 import rails.game.action.DiscardTrain;
 import rails.game.action.LayTile;
 import rails.game.model.CashOwner;
-import rails.game.model.StorageModel;
 import rails.game.model.Owner;
-import rails.game.special.*;
+import rails.game.special.ExchangeForShare;
+import rails.game.special.SpecialPropertyI;
+import rails.game.special.SpecialTileLay;
 import rails.game.state.BooleanState;
 import rails.game.state.HashMapState;
 import rails.game.model.Owners;
@@ -19,9 +28,9 @@ import rails.game.model.Owners;
 public class OperatingRound_1835 extends OperatingRound {
 
     private BooleanState needPrussianFormationCall
-            = new BooleanState (this, "NeedPrussianFormationCall", false);
+            = BooleanState.create(this, "NeedPrussianFormationCall", false);
     private BooleanState hasLaidExtraOBBTile
-            = new BooleanState (this, "HasLaidExtraOBBTile", false);
+            = BooleanState.create(this, "HasLaidExtraOBBTile", false);
 
     /**
      * Registry of percentage of PR revenue to be denied per player
@@ -31,7 +40,7 @@ public class OperatingRound_1835 extends OperatingRound {
 
     public OperatingRound_1835 (GameManager gameManager) {
         super (gameManager);
-        deniedIncomeShare = new HashMapState<Player, Integer> (this, "deniedIncomeShare");
+        deniedIncomeShare = HashMapState.create(this, "deniedIncomeShare");
     }
 
     /** Can a public company operate? (1835 special version) */

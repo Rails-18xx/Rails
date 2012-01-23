@@ -17,10 +17,10 @@ public class StartRound_1835 extends StartRound {
     // FIXME: State variables cannot stay as static members
     
     /* To control the player sequence in the Clemens and Snake variants */
-    private static IntegerState turn = new IntegerState(GameManager.getInstance(), "TurnNumber", 0);
+    private static IntegerState turn = IntegerState.create(GameManager.getInstance(), "TurnNumber", 0);
 
     private static IntegerState startRoundNumber =
-            new IntegerState(GameManager.getInstance(), "StartRoundNumber", 0);
+            IntegerState.create(GameManager.getInstance(), "StartRoundNumber", 0);
 
     /* Additional variants */
     public static final String CLEMENS_VARIANT = "Clemens";

@@ -76,8 +76,8 @@ public class GameManager extends GameItem implements Owner, ConfigurableComponen
     protected List<Player> players;
     protected List<String> playerNames;
     protected int numberOfPlayers;
-    protected GenericState<Player> currentPlayer = new GenericState<Player>(this, "CurrentPlayer");
-    protected GenericState<Player> priorityPlayer = new GenericState<Player>(this, "PriorityPlayer");
+    protected GenericState<Player> currentPlayer = GenericState.create(this, "CurrentPlayer");
+    protected GenericState<Player> priorityPlayer = GenericState.create(this, "PriorityPlayer");
 
     /** Map relating portfolio names and objects, to enable deserialization.
      * OBSOLETE since Rails 1.3.1, but still required to enable reading old saved files */
@@ -88,7 +88,7 @@ public class GameManager extends GameItem implements Owner, ConfigurableComponen
         new HashMap<String, Portfolio> ();
 
     protected IntegerState playerCertificateLimit
-    = new IntegerState (this, "PlayerCertificateLimit", 0);
+    = IntegerState.create(this, "PlayerCertificateLimit", 0);
     protected int currentNumberOfOperatingRounds = 1;
     protected boolean skipFirstStockRound = false;
     protected boolean showCompositeORNumber = true;
@@ -113,23 +113,23 @@ public class GameManager extends GameItem implements Owner, ConfigurableComponen
      * been sold, it finishes by starting an Operating Round, which handles the
      * privates payout and then immediately starts a new Start Round.
      */
-    protected GenericState<RoundI> currentRound = new GenericState<RoundI>(this, "CurrentRound");
+    protected GenericState<RoundI> currentRound = GenericState.create(this, "CurrentRound");
     protected RoundI interruptedRound = null;
 
-    protected IntegerState srNumber = new IntegerState (this, "SRNumber");
+    protected IntegerState srNumber = IntegerState.create (this, "SRNumber");
 
     protected IntegerState absoluteORNumber =
-        new IntegerState(this, "AbsoluteORNUmber");
+        IntegerState.create(this, "AbsoluteORNUmber");
     protected IntegerState relativeORNumber =
-        new IntegerState(this, "RelativeORNumber");
-    protected IntegerState numOfORs = new IntegerState(this, "numOfORs");
+        IntegerState.create(this, "RelativeORNumber");
+    protected IntegerState numOfORs = IntegerState.create(this, "numOfORs");
 
     /** GameOver pending, a last OR or set of ORs must still be completed */
-    protected BooleanState gameOverPending = new BooleanState (this, "GameOverPending", false);
+    protected BooleanState gameOverPending = BooleanState.create(this, "GameOverPending", false);
     /** GameOver is executed, no more moves */
-    protected BooleanState gameOver = new BooleanState(this, "GameOver" ,false);
+    protected BooleanState gameOver = BooleanState.create(this, "GameOver" ,false);
     protected Boolean gameOverReportedUI = false;
-    protected BooleanState endedByBankruptcy = new BooleanState(this, "EndedByBankruptcy", false);
+    protected BooleanState endedByBankruptcy = BooleanState.create(this, "EndedByBankruptcy", false);
 
     /** UI display hints */
     protected GuiHints guiHints;
@@ -184,7 +184,7 @@ public class GameManager extends GameItem implements Owner, ConfigurableComponen
     /**
      * nextPlayerMessages collects all messages to be displayed to the next player
      */
-    protected ArrayListState<String> nextPlayerMessages = new ArrayListState<String>(this, "nextPlayerMessages");
+    protected ArrayListState<String> nextPlayerMessages = ArrayListState.create(this, "nextPlayerMessages");
 
     /**
      * The ReportBuffer collects messages to be shown in the Game Report.
@@ -198,7 +198,7 @@ public class GameManager extends GameItem implements Owner, ConfigurableComponen
 
     protected PossibleActions possibleActions = PossibleActions.getInstance();
 
-    protected ArrayListState<PossibleAction> executedActions = new ArrayListState<PossibleAction>(this, "executedActions");
+    protected ArrayListState<PossibleAction> executedActions = ArrayListState.create(this, "executedActions");
 
     /** Special properties that can be used by other players or companies
      * than just the owner (such as buyable bonus tokens as in 1856).
@@ -788,7 +788,7 @@ public class GameManager extends GameItem implements Owner, ConfigurableComponen
     }
 
     public String getNumOfORs () {
-        return numOfORs.getData();
+        return numOfORs.getText();
     }
 
     /* (non-Javadoc)
@@ -1504,7 +1504,7 @@ public class GameManager extends GameItem implements Owner, ConfigurableComponen
         playerCertificateLimit.set (newLimit);
     }
 
-    public Model<String> getPlayerCertificateLimitModel () {
+    public IntegerState getPlayerCertificateLimitModel () {
         return playerCertificateLimit;
     }
 
@@ -1852,7 +1852,7 @@ public class GameManager extends GameItem implements Owner, ConfigurableComponen
         final boolean _ascending = ascending;
         Collections.sort (players, new Comparator<Player>() {
             public int compare (Player p1, Player p2) {
-                return _ascending ? p1.getCashModel().getText() - p2.getCashModel().getText() : p2.getCashModel().getText() - p1.getCashModel().getText();
+                return _ascending ? p1.getCashModel().value() - p2.getCashModel().value() : p2.getCashModel().value() - p1.getCashModel().value();
             }
         });
 
@@ -1861,7 +1861,7 @@ public class GameManager extends GameItem implements Owner, ConfigurableComponen
             player = players.get(i);
             player.setIndex (i);
             playerNames.set (i, player.getId());
-            log.debug("New player "+i+" is "+player.getId() +" (cash="+Bank.format(player.getCashModel().getText())+")");
+            log.debug("New player "+i+" is "+player.getId() +" (cash="+Bank.format(player.getCashModel().value())+")");
         }
 
         return players.get(0);

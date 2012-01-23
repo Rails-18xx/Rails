@@ -6,10 +6,16 @@ import java.util.List;
 import rails.algorithms.RevenueAdapter;
 import rails.algorithms.RevenueStaticModifier;
 import rails.common.parser.ConfigurationException;
-import rails.game.*;
-import rails.game.model.Storage;
+import rails.game.CompanyTypeI;
+import rails.game.GameManager;
+import rails.game.Player;
+import rails.game.PublicCertificate;
+import rails.game.PublicCompany;
+import rails.game.Train;
 import rails.game.model.Owner;
-import rails.game.state.*;
+import rails.game.state.BooleanState;
+import rails.game.state.GenericState;
+import rails.game.state.IntegerState;
 
 public class PublicCompany_CGR extends PublicCompany implements RevenueStaticModifier {
 
@@ -29,7 +35,7 @@ public class PublicCompany_CGR extends PublicCompany implements RevenueStaticMod
     @Override
     public void init(String name, CompanyTypeI type) {
         super.init(name, type);
-        hadPermanentTrain = new BooleanState (this, name+"_HadPermanentTrain", false);
+        hadPermanentTrain = BooleanState.create(this, name+"_HadPermanentTrain", false);
 
         // Share price is initially fixed
         canSharePriceVary.set(false);
@@ -80,7 +86,7 @@ public class PublicCompany_CGR extends PublicCompany implements RevenueStaticMod
 
     public void setTemporaryPresident(Player temporaryPresident) {
         if (this.temporaryPresident == null) {
-            this.temporaryPresident = new GenericState<Player> (this, "CGR_TempPres");
+            this.temporaryPresident = GenericState.create(this, "CGR_TempPres");
         }
         this.temporaryPresident.set(temporaryPresident);
     }

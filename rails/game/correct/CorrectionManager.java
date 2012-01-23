@@ -27,7 +27,7 @@ public abstract class CorrectionManager extends GameItem implements CorrectionMa
     protected CorrectionManager(GameManager gm, CorrectionType ct) {
         gameManager = gm;
         correctionType = ct; 
-        active = new BooleanState(this, ct.name(),false); 
+        active = BooleanState.create(this, ct.name(),false); 
     }
     
     public CorrectionType getCorrectionType() {

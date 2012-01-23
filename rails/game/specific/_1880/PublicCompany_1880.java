@@ -3,8 +3,8 @@
  */
 package rails.game.specific._1880;
 
-import rails.game.*;
-import rails.game.state.IntegerState;
+import rails.game.PublicCompany;
+
 
 /**
  * @author Martin

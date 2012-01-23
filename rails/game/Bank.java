@@ -43,7 +43,7 @@ public class Bank extends GameItem implements CashOwner, ConfigurableComponentI 
     private static Bank instance = null;
 
     /** Is the bank broken (remains true once set) */
-    private BooleanState broken = new BooleanState(this, "Bank.broken", false);
+    private BooleanState broken = BooleanState.create(this, "Bank.broken", false);
 
     /**
      * The money format template. '@' is replaced by the numeric amount, the
@@ -58,7 +58,7 @@ public class Bank extends GameItem implements CashOwner, ConfigurableComponentI 
 
         instance = this;
 
-        money = new CashModel(this);
+        money = CashModel.create(this);
         // Create the IPO and the Bank Pool.
         ipo = new Portfolio(ipo, IPO_NAME);
         pool = new Portfolio(pool, POOL_NAME);
@@ -103,7 +103,7 @@ public class Bank extends GameItem implements CashOwner, ConfigurableComponentI 
     public void finishConfiguration (GameManager gameManager) {
 
         ReportBuffer.add(LocalText.getText("BankSizeIs",
-                format(money.getText())));
+                format(money.value())));
 
         // Add privates
         List<PrivateCompany> privates =
@@ -141,7 +141,7 @@ public class Bank extends GameItem implements CashOwner, ConfigurableComponentI 
      * @return Bank's current cash level
      */
     public int getCashValue() {
-        return money.getText();
+        return money.value();
     }
 
     /**
@@ -155,7 +155,7 @@ public class Bank extends GameItem implements CashOwner, ConfigurableComponentI 
          * Check if the bank has broken. In some games <0 could apply, so this
          * will become configurable.
          */
-        if (money.getText() <= 0 && !broken.booleanValue()) {
+        if (money.value() <= 0 && !broken.booleanValue()) {
             broken.set(true);
             money.setText(LocalText.getText("BROKEN"));
             GameManager.getInstance().registerBrokenBank();
@@ -188,7 +188,7 @@ public class Bank extends GameItem implements CashOwner, ConfigurableComponentI 
     }
 
     public String getFormattedCash() {
-        return money.getData();
+        return money.getText();
     }
 
     public static String format(int amount) {
@@ -210,7 +210,7 @@ public class Bank extends GameItem implements CashOwner, ConfigurableComponentI 
     // end sfy 1889
     
     public int getCash() {
-        return money.getText();
+        return money.value();
     }
 
     public CashModel getCashModel() {

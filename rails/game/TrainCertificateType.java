@@ -98,9 +98,9 @@ public class TrainCertificateType extends GameItem {
         obsoleting = tag.getAttributeAsBoolean("obsoleting");
 
         // Final initialisations
-        numberBoughtFromIPO = new IntegerState(this, name + "-trains_Bought", 0);
-        available = new BooleanState(this, name + "-trains_Available", false);
-        rusted = new BooleanState(this, name + "-trains_Rusted", false);
+        numberBoughtFromIPO = IntegerState.create(this, name + "-trains_Bought", 0);
+        available = BooleanState.create(this, name + "-trains_Available", false);
+        rusted = BooleanState.create(this, name + "-trains_Rusted", false);
 
     }
 

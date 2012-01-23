@@ -19,16 +19,16 @@ public class StartRound_18EU extends StartRound {
     public final static int BID_STEP = 3;
 
     private final IntegerState currentStep =
-            new IntegerState(this, "CurrentStep", SELECT_STEP);
+            IntegerState.create(this, "CurrentStep", SELECT_STEP);
 
     private final GenericState<Player> selectingPlayer =
-            new GenericState<Player>(this, "SelectingPlayer");
+            GenericState.create(this, "SelectingPlayer");
 
     private final IntegerState currentBuyPrice =
-            new IntegerState(this, "CurrentBuyPrice", 0);
+            IntegerState.create(this, "CurrentBuyPrice", 0);
 
     private final GenericState<StartItem> currentAuctionItem =
-            new GenericState<StartItem>(this, "CurrentAuctionItem");
+            GenericState.create(this, "CurrentAuctionItem");
 
     /**
      * Constructor, only to be used in dynamic instantiation.

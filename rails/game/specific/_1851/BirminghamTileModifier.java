@@ -10,7 +10,6 @@ import rails.algorithms.NetworkGraphBuilder;
 import rails.algorithms.NetworkGraphModifier;
 import rails.algorithms.NetworkVertex;
 import rails.game.GameManager;
-import rails.game.GameManager;
 import rails.game.MapHex;
 
 public class BirminghamTileModifier implements NetworkGraphModifier {

@@ -26,7 +26,7 @@ public class PublicCompany_1856 extends PublicCompany {
             trainNumber = 6; // Diesel!
         }
         trainNumberAvailableAtStart
-                = new IntegerState (this, name+"_trainAtStart");
+                = IntegerState.create (this, name+"_trainAtStart");
         trainNumberAvailableAtStart.set(trainNumber);
 
         if (trainNumber == 6) {
@@ -34,7 +34,7 @@ public class PublicCompany_1856 extends PublicCompany {
         }
 
         moneyInEscrow
-                = new IntegerState (this, name+"_moneyInEscrow", 0);
+                = IntegerState.create (this, name+"_moneyInEscrow", 0);
     }
 
     public int getTrainNumberAvailableAtStart () {

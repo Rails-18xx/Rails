@@ -40,10 +40,10 @@ public class TreasuryShareRound extends StockRound {
         sellingPlayer = operatingCompany.getPresident();
         log.debug("Creating TreasuryShareRound");
         hasBought =
-                new BooleanState(this, operatingCompany.getId() + "_boughtShares",
+                BooleanState.create(this, operatingCompany.getId() + "_boughtShares",
                         false);
         hasSold =
-                new BooleanState(this, operatingCompany.getId() + "_soldShares",
+                BooleanState.create(this, operatingCompany.getId() + "_soldShares",
                         false);
 
         setCurrentPlayerIndex(sellingPlayer.getIndex());

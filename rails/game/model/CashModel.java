@@ -8,29 +8,35 @@ import rails.game.state.StringState;
 
 public final class CashModel extends Model {
 
+    public static final String ID = "CashModel";
+
     // stores the cash amount
-    private final IntegerState cash;
+    private final IntegerState cash = IntegerState.create("Cash");
 
     // stores the fixed part of the displayed text
-    private final StringState displayText;
+    private final StringState displayText = StringState.create("BankCashDisplayText");
 
     private boolean suppressZero;
 
-    /**
-     * CashModel is initialized with a default id "CashModel"
-     */    
-    public CashModel() {
-        super("CashModel");
-        cash = new IntegerState("Cash");
-        displayText = new StringState("BankCashDisplayText");
-        
+    private CashModel() {
+        super(ID);
     }
 
     /**
-     * Creates an initialized CashModel
+     * Creates an owned CashModel
+     * CashModel is initialized with a default id "CashModel"
      */
     public static CashModel create(Item parent){
         return new CashModel().init(parent);
+    }
+
+    /**
+     * Creates an unowned CashModel
+     * CashModel is initialized with a default id "CashModel"
+     * Remark: Still requires a call to the init-method
+     */
+    public static CashModel create(){
+        return new CashModel();
     }
     
     @Override
@@ -63,7 +69,7 @@ public final class CashModel extends Model {
     }
 
     @Override
-    protected String getText() {
+    public String toString() {
         String fixedText = displayText.stringValue();
         if (!"".equals(fixedText)) {
             return fixedText;

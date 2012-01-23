@@ -8,13 +8,30 @@ public class ArrayListMultimapState<K,V> extends MultimapState<K,V> {
 
     private final ArrayListMultimap<K,V> map;
 
-    /**
-     * Creates an empty ArrayListMultimap state variable
-     * @param id id state variable
-     */
-    public ArrayListMultimapState(String id) {
+    private ArrayListMultimapState(String id) {
         super(id);
         map = ArrayListMultimap.create();
+    }
+    
+    /** 
+     * Creates an owned and empty ArrayListMultimapState 
+     */
+    public static <K,V> ArrayListMultimapState<K,V> create(Item parent, String id){
+        return new ArrayListMultimapState<K,V>(id).init(parent);
+    }
+   
+    /**
+     * Creates an unowned and empty ArrayListMultimapState
+     * Remark: Still requires a call to the init-method
+     */
+    public static <K,V> ArrayListMultimapState<K,V> create(String id){
+        return new ArrayListMultimapState<K,V>(id);
+    }
+    
+    @Override
+    public ArrayListMultimapState<K,V> init(Item parent){
+        super.init(parent);
+        return this;
     }
     
     /**

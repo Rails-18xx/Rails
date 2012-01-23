@@ -30,8 +30,8 @@ public abstract class GameItem implements Item {
         }
 
         /**
-         * Initializing of AbstractItem
-         * @param parent has to be of type AbstractItem otherwise an Exception is raised
+         * Initializing of GameItem
+         * @param parent has to be of type GameItem otherwise an Exception is raised
          */
         public GameItem init(Item parent){
             if (this.parent != null) {

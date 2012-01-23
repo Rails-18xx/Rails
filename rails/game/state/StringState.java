@@ -6,24 +6,43 @@ package rails.game.state;
  * @author Erik Vos, Stefan Frey (v2.0)
  */
 public final class StringState extends State {
+    
+    public static final String DEFAULT = "";
 
     private String value;
 
-    /**
-     * String state variable with default value of an empty string ""
-     * @param id id state variable
+    private StringState(String id, String value) {
+        super(id);
+        this.value = value;
+    }
+
+    /** 
+     * Creates an owned StringState with default value of an empty string
      */
-    public StringState(String id) {
-        this(id, "");
+    public static StringState create(Item parent, String id){
+        return new StringState(id, DEFAULT).init(parent);
     }
     
     /**
-     * @param id id state variable
+     * Creates an owned StringState
      * @param value initial value
      */
-    public StringState(String id, String value) {
-        super(id);
-        this.value = value;
+    public static StringState create(Item parent, String id, String value){
+        return new StringState(id, value).init(parent);
+    }
+    
+    /**
+     * Creates an unowned StringState with default value of an empty string
+     * Remark: Still requires a call to the init-method
+     */
+    public static StringState create(String id){
+        return new StringState(id, DEFAULT);
+    }
+    
+    @Override
+    public StringState init(Item parent){
+        super.init(parent);
+        return this;
     }
 
     public void set(String value) {

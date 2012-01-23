@@ -12,9 +12,8 @@ import rails.game.Stop.RunThrough;
 import rails.game.Stop.RunTo;
 import rails.game.Stop.Score;
 import rails.game.Stop.Type;
-import rails.game.model.Model;
 
-public interface TileI extends Model<String> {
+public interface TileI {
 
     public void configureFromXML(Tag se, Tag te) throws ConfigurationException;
 

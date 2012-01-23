@@ -14,7 +14,6 @@ import rails.game.state.ArrayListState;
 import rails.game.state.BooleanState;
 import rails.game.state.IntegerState;
 import rails.game.model.Owners;
-import rails.util.Util;
 
 /**
  * Implements a basic Stock Round. <p> A new instance must be created for each
@@ -24,11 +23,11 @@ import rails.util.Util;
  */
 public class StockRound_18EU extends StockRound {
     protected ArrayListState<PublicCompany> compWithExcessTrains =
-            new ArrayListState<PublicCompany>(this, "compWithExcessTrains");
+            ArrayListState.create(this, "compWithExcessTrains");
     protected PublicCompany[] discardingCompanies;
     protected IntegerState discardingCompanyndex;
     protected BooleanState discardingTrains =
-            new BooleanState(this, "DiscardingTrains", false);
+            BooleanState.create(this, "DiscardingTrains", false);
     protected boolean phase5Reached = false;
 
     /**
@@ -745,7 +744,7 @@ public class StockRound_18EU extends StockRound {
 
             if (discardingCompanyndex == null) {
                 discardingCompanyndex =
-                        new IntegerState(this, "DiscardingCompanyndex", 0);
+                        IntegerState.create(this, "DiscardingCompanyndex", 0);
             } else {
                 discardingCompanyndex.set(0);
             }

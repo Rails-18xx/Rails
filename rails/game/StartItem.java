@@ -93,14 +93,14 @@ public class StartItem extends GameItem {
     public StartItem(String name, String type, int basePrice, int index, boolean president) {
         this.name = name;
         this.type = type;
-        this.basePrice = new MoneyModel(this, "basePrice");
+        this.basePrice = MoneyModel.create(this, "basePrice");
         this.basePrice.set(basePrice);
         this.index = index;
         this.president = president;
-        status = new IntegerState(this, "status");
-        minimumBid = new MoneyModel(this, "minimumBid");
+        status = IntegerState.create(this, "status");
+        minimumBid = MoneyModel.create(this, "minimumBid");
         minimumBid.setSuppressZero(true);
-        lastBidderIndex = new IntegerState(this, "highestBidder", -1);
+        lastBidderIndex = IntegerState.create(this, "highestBidder", -1);
 
         if (startItemMap == null)
             startItemMap = new HashMap<String, StartItem>();
@@ -132,7 +132,7 @@ public class StartItem extends GameItem {
         bids = new MoneyModel[numberOfPlayers];
         for (int i = 0; i < numberOfPlayers; i++) {
             bids[i] =
-                    new MoneyModel(this, "bidBy_" + players.get(i).getId());
+                    MoneyModel.create(this, "bidBy_" + players.get(i).getId());
             bids[i].setSuppressZero(true);
 
         }
@@ -458,7 +458,7 @@ public class StartItem extends GameItem {
         return status.intValue();
     }
 
-    public Model<String> getStatusModel () {
+    public IntegerState getStatusModel () {
         return status;
     }
 
@@ -470,15 +470,15 @@ public class StartItem extends GameItem {
         this.status.set(status);
     }
 
-    public Model<String> getBasePriceModel() {
+    public Model getBasePriceModel() {
         return basePrice;
     }
 
-    public Model<String> getBidForPlayerModel(int index) {
+    public Model getBidForPlayerModel(int index) {
         return bids[index];
     }
 
-    public Model<String> getMinimumBidModel() {
+    public Model getMinimumBidModel() {
         return minimumBid;
     }
 

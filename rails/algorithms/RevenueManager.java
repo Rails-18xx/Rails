@@ -41,9 +41,9 @@ public final class RevenueManager extends GameItem implements ConfigurableCompon
     private RevenueDynamicModifier activeCalculator;
 
     public RevenueManager() {
-        graphModifiers = new ArrayListState<NetworkGraphModifier>(this, "NetworkGraphModifiers"); 
-        staticModifiers = new ArrayListState<RevenueStaticModifier>(this, "RevenueStaticModifiers"); 
-        dynamicModifiers = new ArrayListState<RevenueDynamicModifier>(this, "RevenueDynamicModifiers");
+        graphModifiers = ArrayListState.create(this, "NetworkGraphModifiers"); 
+        staticModifiers = ArrayListState.create(this, "RevenueStaticModifiers"); 
+        dynamicModifiers = ArrayListState.create(this, "RevenueDynamicModifiers");
         configurableModifiers = new HashSet<ConfigurableComponentI>();
         
         activeStaticModifiers = new ArrayList<RevenueStaticModifier>();

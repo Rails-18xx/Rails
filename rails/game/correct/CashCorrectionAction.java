@@ -3,7 +3,6 @@ package rails.game.correct;
 import rails.game.*;
 import rails.game.action.PossibleAction;
 import rails.game.model.CashOwner;
-import rails.game.model.Owner;
 import rails.util.Util;
 
 import java.io.IOException;

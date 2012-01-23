@@ -33,10 +33,10 @@ public class OperatingRound_1889 extends OperatingRound {
         super (gameManager);
         
         privB = companyManager.getPrivateCompany("B");
-        activeSpPrivB = new BooleanState(this, "ActiveSpPrivB", false);
+        activeSpPrivB = BooleanState.create(this, "ActiveSpPrivB", false);
         
         privC = companyManager.getPrivateCompany("C");
-        activeSpPrivC = new BooleanState(this, "ActiveSpPrivC", false);
+        activeSpPrivC = BooleanState.create(this, "ActiveSpPrivC", false);
     
         beginnerGame = GameOption.convertValueToBoolean(getGameOption("BeginnerGame"));
     }

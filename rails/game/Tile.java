@@ -24,7 +24,7 @@ import rails.util.Util;
  * @author Erik
  *
  */
-public class Tile extends Model<String> implements TileI, StationHolder, Comparable<TileI> {
+public class Tile extends Model implements TileI, StationHolder, Comparable<TileI> {
 
     /** The 'internal id', identifying the tile in the XML files */
     private final int nb;

@@ -7,22 +7,32 @@ import rails.game.state.Item;
 
 public class BonusModel extends Model {
     
+    public static final String ID = "BonusModel";
+    
     private ArrayListState<Bonus> bonuses;
     
-    /**
-     * BonusModel is initialized with default id "BonusModel"
-     */
-    public BonusModel() {
-        super("BonusModel");
+    private BonusModel() {
+        super(ID);
     }
     
     /** 
-     * Creates an initialized BonusModel
-     */
-    public BonusModel create(Item parent){
+     * Creates an owned BonusModel
+     * BonusModel is initialized with a default id "BonusModel"
+    */
+    public static BonusModel create(Item parent){
         return new BonusModel().init(parent);
     }
     
+    /** 
+     * Creates an unowned BonusModel
+     * BonusModel is initialized with a default id "BonusModel"
+     * Remark: Still requires a call to the init-method
+     */
+    public static BonusModel create(){
+        return new BonusModel();
+    }
+
+    @Override
     public BonusModel init(Item parent) {
         super.init(parent);
         return this;
@@ -34,7 +44,7 @@ public class BonusModel extends Model {
     }
 
     @Override
-    protected String getText() {
+    public String toString() {
         if (bonuses == null || bonuses.isEmpty()) return "";
 
         StringBuffer b = new StringBuffer("<html><center>");

@@ -12,7 +12,7 @@ import rails.game.state.GameItem;
 /**
  * Objects of this class represent a square on the StockMarket.
  */
-public class StockSpace extends Model<String> implements StockSpaceI {
+public class StockSpace extends Model implements StockSpaceI {
 
     /*--- Class attributes ---*/
 
@@ -49,6 +49,7 @@ public class StockSpace extends Model<String> implements StockSpaceI {
     public StockSpace(GameItem owner, String name, int price) {
         this(owner, name, price, null);
     }
+    
 
     // No constructors for the booleans. Use the setters.
 

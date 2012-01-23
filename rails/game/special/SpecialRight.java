@@ -5,7 +5,6 @@ import java.util.*;
 
 import rails.algorithms.NetworkVertex;
 import rails.algorithms.RevenueAdapter;
-import rails.algorithms.RevenueBonus;
 import rails.algorithms.RevenueStaticModifier;
 import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;

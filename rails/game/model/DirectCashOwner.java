@@ -4,7 +4,7 @@ import rails.game.state.Item;
 
 public abstract class DirectCashOwner extends DirectOwner implements CashOwner {
 
-    private final CashModel cashModel = new CashModel();
+    private final CashModel cashModel = CashModel.create();
     
     @Deprecated
     public DirectCashOwner() {

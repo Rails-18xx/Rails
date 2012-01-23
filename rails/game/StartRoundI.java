@@ -18,11 +18,11 @@ public interface StartRoundI extends RoundI {
 
     public boolean process(PossibleAction action);
 
-    public Model<String> getBidModel(int privateIndex, int playerIndex);
+    public Model getBidModel(int privateIndex, int playerIndex);
 
-    public Model<String> getMinimumBidModel(int privateIndex);
+    public Model getMinimumBidModel(int privateIndex);
 
-    public Model<String> getFreeCashModel(int playerIndex);
+    public Model getFreeCashModel(int playerIndex);
 
-    public Model<String> getBlockedCashModel(int playerIndex);
+    public Model getBlockedCashModel(int playerIndex);
 }

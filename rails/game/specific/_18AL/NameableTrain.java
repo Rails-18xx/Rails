@@ -11,7 +11,7 @@ public class NameableTrain extends Train {
     public void init(TrainCertificateType certType, TrainType type, String uniqueId) {
 
         super.init(certType, type, uniqueId);
-        nameToken = new GenericState<NamedTrainToken>(this, uniqueId + "_nameToken");
+        nameToken = GenericState.create(this, uniqueId + "_nameToken");
     }
 
     public void setNameToken(NamedTrainToken nameToken) {

@@ -52,7 +52,7 @@ public class ShareSellingRound extends StockRound {
                 Bank.format(cashToRaise)));
         currentPlayer = this.sellingPlayer = sellingPlayer;
         this.cashNeedingCompany = cashNeedingCompany;
-        this.cashToRaise = new IntegerState(this, "CashToRaise", cashToRaise);
+        this.cashToRaise = IntegerState.create(this, "CashToRaise", cashToRaise);
         this.dumpOtherCompaniesAllowed = dumpOtherCompaniesAllowed;
         log.debug("Forced selling, dumpOtherCompaniesAllowed = " + dumpOtherCompaniesAllowed);
         setCurrentPlayerIndex(sellingPlayer.getIndex());

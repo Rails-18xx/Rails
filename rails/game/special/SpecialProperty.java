@@ -121,7 +121,7 @@ public abstract class SpecialProperty extends GameItem implements SpecialPropert
         originalCompany = company;
         owner = company;
         exercised =
-                new BooleanState(this, company.getId() + "_SP_" + uniqueId
+                BooleanState.create(this, company.getId() + "_SP_" + uniqueId
                                  + "_Exercised", false);
     }
 

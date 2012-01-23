@@ -9,22 +9,41 @@ public final class HashSetState<E> extends State {
 
     private final HashSet<E> set;
 
-    /**
-     * @param owner object containing state (usually this)
-     * @param id id state variable
-     */
-    public HashSetState(String id) {
+    private HashSetState(String id) {
         super(id);
         set = new HashSet<E>();
     }
-
-    /**
-     * @param id id state variable
-     * @param collection elements contained in the set at initialization
-     */
-    public HashSetState(String id, Collection<E> collection) {
+    private HashSetState(String id, Collection<E> collection) {
         super(id);
         set = new HashSet<E>(collection);
+    }
+    
+    /** 
+     * Creates an owned and empty HashSetState 
+     */
+    public static <E> HashSetState<E> create(Item parent, String id){
+        return new HashSetState<E>(id).init(parent);
+    }
+    
+    /**
+     * Creates an owned and prefilled HashSetState
+     */
+    public static <E> HashSetState<E> create(Item parent, String id, Collection<E> collection){
+        return new HashSetState<E>(id, collection).init(parent);
+    }
+    
+    /**
+     * Creates an unowned and empty HashSetState
+     * Remark: Still requires a call to the init-method
+     */
+    public static <E> HashSetState<E> create(String id){
+        return new HashSetState<E>(id);
+    }
+    
+    @Override
+    public HashSetState<E> init(Item parent){
+        super.init(parent);
+        return this;
     }
 
     /**

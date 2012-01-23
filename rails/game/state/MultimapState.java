@@ -5,11 +5,7 @@ package rails.game.state;
  */
 abstract class MultimapState<K,V> extends State  {
     
-    /**
-     * Creates a MultimapState
-     * @param id identifier for the item (cannot be null)
-     */
-    public MultimapState(String id){
+    protected MultimapState(String id){
         super(id);
     }
 

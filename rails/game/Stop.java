@@ -103,10 +103,10 @@ public class Stop extends SingleOwner<Token> {
         this.number = number;
 
         uniqueId = mapHex.getId() + "_" + number;
-        relatedStation = new GenericState<Station>(this, "City_"+uniqueId+"_station", station);
+        relatedStation = GenericState.create(this, "City_"+uniqueId+"_station", station);
         setRelatedStation(station);
 
-        tokens = new ArrayListState<Token>(this, "tokens");
+        tokens = ArrayListState.create(this, "tokens");
 
         initStopProperties();
     }

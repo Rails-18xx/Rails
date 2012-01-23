@@ -19,7 +19,7 @@ public class OperatingRound_18EU extends OperatingRound {
     protected TrainCertificateType pullmannType;
 
     protected BooleanState hasPullmannAtStart =
-            new BooleanState(this, "ORCompanyHasPullmannAtStart", false);
+            BooleanState.create(this, "ORCompanyHasPullmannAtStart", false);
 
     public OperatingRound_18EU (GameManager gameManager) {
         super (gameManager);
