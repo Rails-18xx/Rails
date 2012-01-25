@@ -9,6 +9,7 @@ import rails.game.Round;
 import rails.game.action.*;
 import rails.game.specific._1856.CGRFormationRound;
 import rails.ui.swing.StatusWindow;
+import rails.ui.swing.elements.NonModalDialog;
 import rails.ui.swing.elements.RadioButtonDialog;
 import rails.util.Util;
 
@@ -99,7 +100,8 @@ public class StatusWindow_1856 extends StatusWindow {
             + "<br>" + message;
         }
 
-        RadioButtonDialog currentDialog = new RadioButtonDialog (gameUIManager,
+        RadioButtonDialog currentDialog = new RadioButtonDialog (NonModalDialog.Usage.REPAY_LOANS,
+                gameUIManager,
                 this,
                 LocalText.getText("1856MergerDialog", action.getCompanyName()),
                 message,

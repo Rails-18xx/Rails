@@ -765,6 +765,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                 if (options.size() > 1) {
                     if (startCompany) {
                         RadioButtonDialog dialog = new RadioButtonDialog (
+                                NonModalDialog.Usage.COMPANY_START_PRICE,
                                 gameUIManager,
                                 parent,
                                 LocalText.getText("PleaseSelect"),
