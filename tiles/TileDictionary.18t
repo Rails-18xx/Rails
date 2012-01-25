@@ -17417,5 +17417,30 @@ object TTilesWrapper
           JunType = jtCity
           Revenue = 40
         end>
+    end
+    item
+      Code = 235
+      LongName = 'OO'
+      Category = 'OO'
+      CategoryPosition = tp2CornerC
+      Level = tlMapUpgradableToGreen
+      Connections = <
+        item
+          Position1 = tp2SideF
+          Position2 = tp4SideF
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Position = tp2SideD
+          Revenue = 30
+          RevenuePosition = tp3CornerB
+        end
+        item
+          JunType = jtCity
+          Position = tp2SideF
+          Revenue = 30
+          RevenuePosition = tp3CornerB
+        end>
     end>
 end
