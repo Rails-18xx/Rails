@@ -648,7 +648,9 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
                 options[i] = Bank.format(spacePerPrice.get(startPrices[i]).getPrice());
             }
 
-            RadioButtonDialog dialog = new RadioButtonDialog(this,
+            RadioButtonDialog dialog = new RadioButtonDialog(
+                    NonModalDialog.Usage.COMPANY_START_PRICE,
+                    this,
                     this,
                     LocalText.getText("PleaseSelect"),
                     LocalText.getText("WHICH_START_PRICE",

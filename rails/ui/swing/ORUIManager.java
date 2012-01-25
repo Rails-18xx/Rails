@@ -547,7 +547,8 @@ public class ORUIManager implements DialogOwner {
             orWindow.setVisible(true);
             orWindow.toFront();
 
-            CheckBoxDialog dialog = new CheckBoxDialog(this,
+            CheckBoxDialog dialog = new CheckBoxDialog(NonModalDialog.Usage.SELECT_DESTINATION_COMPANIES,
+                    this,
                     orWindow,
                     LocalText.getText("DestinationsReached"),
                     LocalText.getText("DestinationsReachedPrompt"),
@@ -1462,7 +1463,8 @@ public class ORUIManager implements DialogOwner {
                             Bank.format(i * loanAmount));
                 }
             }
-            RadioButtonDialog currentDialog = new RadioButtonDialog (gameUIManager,
+            RadioButtonDialog currentDialog = new RadioButtonDialog (NonModalDialog.Usage.REPAY_LOANS,
+                    gameUIManager,
                     orWindow,
                     LocalText.getText("Select"),
                     LocalText.getText("SelectLoansToRepay", action.getCompanyName()),

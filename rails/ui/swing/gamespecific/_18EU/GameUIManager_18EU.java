@@ -10,6 +10,7 @@ import rails.game.Stop;
 import rails.game.action.MergeCompanies;
 import rails.game.specific._18EU.StartCompany_18EU;
 import rails.ui.swing.GameUIManager;
+import rails.ui.swing.elements.NonModalDialog;
 import rails.ui.swing.elements.RadioButtonDialog;
 
 public class GameUIManager_18EU extends GameUIManager {
@@ -72,7 +73,8 @@ public class GameUIManager_18EU extends GameUIManager {
                             "Minor " + minor.getName() + " "
                             + minor.getLongName();
                     }
-                    dialog = new RadioButtonDialog (this,
+                    dialog = new RadioButtonDialog (NonModalDialog.Usage.SELECT_FOLDING_COMPANIES,
+                            this,
                             statusWindow,
                             LocalText.getText("PleaseSelect"),
                             LocalText.getText(
@@ -91,7 +93,8 @@ public class GameUIManager_18EU extends GameUIManager {
                         for (int i = 0; i < options.length; i++) {
                             options[i] = cities.get(i).toString();
                         }
-                        dialog = new RadioButtonDialog (this,
+                        dialog = new RadioButtonDialog (NonModalDialog.Usage.SELECT_HOME_STATION,
+                                this,
                                 statusWindow,
                                 LocalText.getText("PleaseSelect"),
                                 LocalText.getText(

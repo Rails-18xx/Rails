@@ -620,7 +620,8 @@ public class GameUIManager implements DialogOwner {
             orWindow.setVisible(true);
             orWindow.toFront();
 
-            CheckBoxDialog dialog = new CheckBoxDialog(this,
+            CheckBoxDialog dialog = new CheckBoxDialog(NonModalDialog.Usage.EXCHANGE_TOKENS,
+                    this,
                     orWindow,
                     LocalText.getText("ExchangeTokens"),
                     prompt,

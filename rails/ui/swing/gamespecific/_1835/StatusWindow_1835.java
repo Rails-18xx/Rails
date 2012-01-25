@@ -11,8 +11,7 @@ import rails.game.special.ExchangeForShare;
 import rails.game.specific._1835.*;
 import rails.ui.swing.GameUIManager;
 import rails.ui.swing.StatusWindow;
-import rails.ui.swing.elements.CheckBoxDialog;
-import rails.ui.swing.elements.ConfirmationDialog;
+import rails.ui.swing.elements.*;
 
 public class StatusWindow_1835 extends StatusWindow {
 
@@ -88,7 +87,8 @@ public class StatusWindow_1835 extends StatusWindow {
                         ((ExchangeForShare)(company.getSpecialProperties().get(0))).getShare()
                 );
             }
-            currentDialog = new CheckBoxDialog (gameUIManager,
+            currentDialog = new CheckBoxDialog (NonModalDialog.Usage.SELECT_FOLDING_COMPANIES,
+                    gameUIManager,
                     this,
                     LocalText.getText("Select"),
                     LocalText.getText("SelectCompaniesToFold",
