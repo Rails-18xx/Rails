@@ -130,6 +130,7 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
             if (spaceTag.getChild(StockSpaceI.START_SPACE_TAG) != null) {
                 space.setStart(true);
                 startSpaces.add(space);
+                
             }
             space.setClosesCompany(spaceTag.getChild(StockSpaceI.CLOSES_COMPANY_TAG) != null);
             space.setEndsGame(spaceTag.getChild(StockSpaceI.GAME_OVER_TAG) != null);
@@ -344,14 +345,14 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
     public int[] getStartPrices() {
         return startPrices;
     }
-
+    
     public StockSpaceI getStartSpace(int price) {
         for (StockSpaceI square : startSpaces) {
             if (square.getPrice() == price) return square;
         }
         return null;
     }
-
+    
     public PublicCertificate removeShareFromPile(PublicCertificate stock) {
         if (ipoPile.contains(stock)) {
             int index = ipoPile.lastIndexOf(stock);
@@ -378,4 +379,12 @@ public class StockMarket implements StockMarketI, ConfigurableComponentI {
         return numRows;
     }
 
+    public int getNumberOfStartPrices() {
+        int result = 0;
+        for(int i=0; i< startPrices.length; i++) {
+            if (startPrices[i]!= 0) result++;
+        }
+        return result;
+    }
+    
 }

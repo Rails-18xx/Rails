@@ -13,6 +13,7 @@ import rails.common.*;
 import rails.game.action.*;
 import rails.game.move.*;
 import rails.game.special.SpecialPropertyI;
+import rails.game.specific._1880.PublicCompany_1880;
 import rails.game.state.BooleanState;
 
 /**
@@ -373,7 +374,7 @@ public abstract class Round implements RoundI {
             } else if (capitalisationMode == PublicCompanyI.CAPITALISE_WHEN_BOUGHT) {
                 // Cash goes directly to treasury at each buy (as in 1856 before phase 6)
                 capFactor = 0;
-            }
+            } 
             int price = company.getIPOPrice();
             cash = capFactor * price;
         } else {

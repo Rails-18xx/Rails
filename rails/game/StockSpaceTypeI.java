@@ -41,8 +41,8 @@ public interface StockSpaceTypeI {
      * The name of the XML tag for the "NoBuyLimit" property. (1830: brown area)
      */
     public static final String NO_BUY_LIMIT_TAG = "NoBuyLimit";
-
-    /**
+    
+     /**
      * @return Color
      */
     public abstract Color getColour();
@@ -67,6 +67,11 @@ public interface StockSpaceTypeI {
      * @return if space triggers Stock not counting toward certificate limit
      */
     public boolean isNoHoldLimit();
+    
+    /**
+     * @return returns the additional revenue per 10% share
+     */
+    public int hasAddRevenue();
 
     /**
      * @param b
@@ -82,5 +87,10 @@ public interface StockSpaceTypeI {
      * @param b
      */
     public void setNoHoldLimit(boolean b);
-
+    
+  /**  
+   *  @param revenue additional Revenue for a company listed at this space
+   */ 
+    public void setAddRevenue(int revenue);
+    
 }

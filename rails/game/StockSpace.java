@@ -247,7 +247,7 @@ public class StockSpace extends ModelObject implements StockSpaceI {
     public void setStart(boolean b) {
         start = b;
     }
-
+    
     /**
      * @param set if token is left of ledge
      */

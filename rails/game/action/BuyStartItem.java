@@ -5,6 +5,8 @@
  */
 package rails.game.action;
 
+import java.util.BitSet;
+
 import rails.game.PublicCompanyI;
 import rails.game.StartItem;
 
@@ -16,12 +18,13 @@ public class BuyStartItem extends StartItemAction {
     /* Server-provided fields */
     private int price;
     private boolean selected;
-    private boolean sharePriceToSet = false;
-    private String companyNeedingSharePrice = null;
-    private boolean setSharePriceOnly = false;
+    protected boolean sharePriceToSet = false;
+    protected String companyNeedingSharePrice = null;
+    protected boolean setSharePriceOnly = false;
 
     // Client-provided fields
     private int associatedSharePrice;
+    private BitSet associatedBuildingRight;
 
     public static final long serialVersionUID = 1L;
 
@@ -38,7 +41,7 @@ public class BuyStartItem extends StartItemAction {
 
         PublicCompanyI company;
         if ((company = startItem.needsPriceSetting()) != null) {
-            sharePriceToSet = true;
+            sharePriceToSet=true;
             companyNeedingSharePrice = company.getName();
         }
     }
@@ -102,4 +105,5 @@ public class BuyStartItem extends StartItemAction {
         return b.toString();
     }
 
+ 
 }

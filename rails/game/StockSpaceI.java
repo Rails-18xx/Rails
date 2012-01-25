@@ -29,6 +29,9 @@ public interface StockSpaceI // extends TokenHolderI
      */
     public static final String START_SPACE_TAG = "StartSpace";
 
+    /** The name of the XML tag for the number of Parslots per Startprice */
+    public static final String START_SPACE_SLOTS_TAG ="ParSlots";
+    
     /** The name of the XML tag for the "below ledge" property. */
     public static final String BELOW_LEDGE_TAG = "BelowLedge";
 
@@ -38,7 +41,7 @@ public interface StockSpaceI // extends TokenHolderI
     /** The name of the XML tag for the "closes company" property. */
     public static final String CLOSES_COMPANY_TAG = "ClosesCompany";
 
-    /** The name of the XML tag for the "gamn over" property. */
+    /** The name of the XML tag for the "game over" property. */
     public static final String GAME_OVER_TAG = "GameOver";
 
     // No constructors (yet) for the booleans, which are rarely needed. Use the

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ComponentManager>
-	<Component name="GameManager" class="rails.game.GameManager">
+	<Component name="GameManager" class="rails.game.specific._1880.GameManager_1880">
 		<Game name="1880"/>
 		<GameOption name="RouteAwareness" values="Highlight,Deactivate"
 			default="Deactivate"/>
@@ -23,7 +23,7 @@
 			<StatusWindow class="rails.ui.swing.StatusWindow"/>
 			<StartRoundWindow
 				class="rails.ui.swing.gamespecific._1880.StartRoundWindow_1880"/>
-		</GuiClasses>
+ 		</GuiClasses>
 		<EndOfGame/>
 		
 		<!--  need to implement the 3 OR set limit after purchase of first 8 TrainType -->
@@ -92,7 +92,8 @@
 	<Component name="PhaseManager" class="rails.game.PhaseManager">
 		<Phase name="2" realName="A1">
 			<Tiles colour="yellow">
-				<Lays companyType="Major" colour="yellow" number="2"/>
+				<Lays companyType="Major" colour="yellow" number="1"/>
+				<Lays companyType="Minor" colour="yellow" number="1"/>
 			</Tiles>
 			<OperatingRounds number="-1"/>
 			<Float percentage="20"/>
@@ -103,28 +104,37 @@
 		</Phase>
 		<Phase name="3" realName="B1">
 			<Tiles colour="yellow,green"/>
+				<Lays companyType="Major" colour="yellow" number="2"/>
+				<Lays companyType="Minor" colour="yellow" number="1"/>
+				<Lays companyType="Major" colour="green" number="1"/>
+				<Lays companyType="Minor" colour="green" number="1"/>
+				
 			<Float percentage="30"/>
 			<Stocks avail="10"/>
 			<OffBoardRevenue step="2"/>
+			<Action name="RaisingCertAvailability"/>
 		</Phase>
 		<Phase name="3+3" realName="B2">
 			<OffBoardRevenue step="2"/>
 		</Phase>
 		<Phase name="4" realName="B3">
+			<Action name="CommunistTakeOver"/>
 			<OffBoardRevenue step="2"/>
 			<Privates close="yes"/>
 			<Investors active="no"/>
-			<Communists active="yes"/>
 			<Float percentage="40"/>
 			<Trains limitStep="2" rusted="2"/>
 		</Phase>
 		<Phase name="4+4" realName="C1">
 			<Tiles colour="yellow,green,brown"/>
+				<Lays companyType="Major" colour="yellow" number="2"/>
+				<Lays companyType="Major" colour="green" number="1"/>
+				<Lays companyType="Major" colour="brown" number="1"/>
 			<OffBoardRevenue step="3"/>
 			<Trains rusted="2+2"/>
 		</Phase>
 		<Phase name="6" realName="C2">
-			<Communists active="no"/>
+			<Action name="ShanghaiExchangeOpen"/>
 			<Float percentage="60"/>
 			<OffBoardRevenue step="3"/>
 			<Trains limitStep="3" rusted="3"/>
@@ -135,6 +145,10 @@
 		</Phase>
 		<Phase name="8" realName="D1">
 			<Tiles colour="yellow,green,brown,grey"/>
+				<Lays companyType="Major" colour="yellow" number="2"/>
+				<Lays companyType="Major" colour="green" number="1"/>
+				<Lays companyType="Major" colour="brown" number="1"/>
+				<Lays companyType="Major" colour="grey" number="1"/>
 			<OffBoardRevenue step="4"/>
 			<Trains limitStep="3" rusted="4"/>
 		</Phase>
@@ -150,8 +164,5 @@
 				class="rails.game.specific._1880.ExpressTrainRevenueModifier"/>
 		</Component>
 	</Component>
-	<Component name="RevenueManager" class="rails.algorithms.RevenueManager">
-		<Modifier class="rails.game.specific._1826.TGVModifier"/>
-	</Component>
-	
+		
 </ComponentManager>

@@ -226,6 +226,10 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     protected static Logger log =
         Logger.getLogger(GameManager.class.getPackage().getName());
 
+    //State variable to be able to determine a changed playerorder after a Startround Sub Phase
+    //Currently use in 1880 (1853, 1844, 1837, or any other game that reorders players after result of startinground)
+    public BooleanState playerOrderHasChanged = new BooleanState("PlayerOrderHasChange", false);
+
     public GameManager() {
         gmName = GM_NAME;
         gmKey = GM_KEY;
@@ -1341,7 +1345,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         addToNextPlayerMessages(msg, true);
     }
 
-    private void finishGame() {
+    protected void finishGame() {
         gameOver.set(true);
 
         String message = LocalText.getText("GameOver");
@@ -1885,21 +1889,21 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     public Player reorderPlayersByCash (boolean ascending) {
 
         final boolean _ascending = ascending;
-        Collections.sort (players, new Comparator<Player>() {
+        Collections.sort (this.players, new Comparator<Player>() {
             public int compare (Player p1, Player p2) {
                 return _ascending ? p1.getCash() - p2.getCash() : p2.getCash() - p1.getCash();
             }
         });
 
         Player player;
-        for (int i=0; i<players.size(); i++) {
-            player = players.get(i);
+        for (int i=0; i<this.players.size(); i++) {
+            player = this.players.get(i);
             player.setIndex (i);
-            playerNames.set (i, player.getName());
+            this.playerNames.set (i, player.getName());
             log.debug("New player "+i+" is "+player.getName() +" (cash="+Bank.format(player.getCash())+")");
         }
 
-        return players.get(0);
+        return this.players.get(0);
     }
 
     public void resetStorage() {

@@ -102,7 +102,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
 
     private final PossibleActions possibleActions =
         PossibleActions.getInstance();
-    private PossibleAction immediateAction = null;
+    protected PossibleAction immediateAction = null;
 
     private final ButtonGroup itemGroup = new ButtonGroup();
     private ClickField dummyButton; // To be selected if none else is.
@@ -120,7 +120,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
         this.round = round;
         includeBidding = round.hasBidding();
         showBasePrices = round.hasBasePrices();
-        gameUIManager = parent;
+        setGameUIManager(parent);
         setTitle(LocalText.getText("START_ROUND_TITLE"));
         getContentPane().setLayout(new BorderLayout());
 
@@ -164,8 +164,8 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
 
         gbc = new GridBagConstraints();
 
-        players = gameUIManager.getGameManager().getPlayers().toArray(new Player[0]);
-        np = gameUIManager.getGameManager().getNumberOfPlayers();
+        players = getGameUIManager().getGameManager().getPlayers().toArray(new Player[0]);
+        np = getGameUIManager().getGameManager().getNumberOfPlayers();
         packet = round.getStartPacket();
         crossIndex = new int[packet.getNumberOfItems()];
 
@@ -196,7 +196,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
         // set closing behavior and listener
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE );
         final JFrame thisFrame = this;
-        final GameUIManager guiMgr = gameUIManager;
+        final GameUIManager guiMgr = getGameUIManager();
         addWindowListener(new WindowAdapter () {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -220,7 +220,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
 
         pack();
 
-        WindowSettings ws = gameUIManager.getWindowSettings();
+        WindowSettings ws = getGameUIManager().getWindowSettings();
         Rectangle bounds = ws.getBounds(this);
         if (bounds.x != -1 && bounds.y != -1) setLocation(bounds.getLocation());
         if (bounds.width != -1 && bounds.height != -1) setSize(bounds.getSize());
@@ -454,7 +454,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
                     buyAllowed = selected;
 
                 } else {
-                    PossibleAction lastAction = gameUIManager.getLastAction();
+                    PossibleAction lastAction = getGameUIManager().getLastAction();
                     if (lastAction instanceof GameAction
                             && (((GameAction) lastAction).getMode() == GameAction.UNDO || ((GameAction) lastAction).getMode() == GameAction.FORCED_UNDO)) {
                         // If we come here via an Undo, we should not start
@@ -615,11 +615,11 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
 
     }
 
-    private boolean requestStartPrice(BuyStartItem activeItem) {
+    protected boolean requestStartPrice(BuyStartItem activeItem) {
 
         if (activeItem.hasSharePriceToSet()) {
             String compName = activeItem.getCompanyToSetPriceFor();
-            StockMarketI stockMarket = gameUIManager.getGameManager().getStockMarket();
+            StockMarketI stockMarket = getGameUIManager().getGameManager().getStockMarket();
 
             // Get a sorted prices List
             // TODO: should be included in BuyStartItem
@@ -702,16 +702,14 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
     }
 
     public void setSRPlayerTurn(int selectedPlayerIndex) {
-        int j;
+ 
+        highlightCurrentPlayer(selectedPlayerIndex);
+    }
 
-        if ((j = this.playerIndex) >= 0) {
-            upperPlayerCaption[j].setHighlight(false);
-            lowerPlayerCaption[j].setHighlight(false);
-        }
-        this.playerIndex = selectedPlayerIndex;
-        if ((j = this.playerIndex) >= 0) {
-            upperPlayerCaption[j].setHighlight(true);
-            lowerPlayerCaption[j].setHighlight(true);
+    public void highlightCurrentPlayer (int index) {
+        for (int j = 0; j < np; j++) {
+            upperPlayerCaption[j].setHighlight(j == index);
+            lowerPlayerCaption[j].setHighlight(j == index);
         }
     }
 
@@ -784,7 +782,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
 
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_F1) {
-            HelpWindow.displayHelp(gameUIManager.getHelp());
+            HelpWindow.displayHelp(getGameUIManager().getHelp());
             e.consume();
         }
     }
@@ -794,6 +792,14 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
     public void keyTyped(KeyEvent e) {}
 
     public boolean process(PossibleAction action) {
-        return gameUIManager.processAction(action);
+        return getGameUIManager().processAction(action);
+    }
+
+    public void setGameUIManager(GameUIManager gameUIManager) {
+        this.gameUIManager = gameUIManager;
+    }
+
+    public GameUIManager getGameUIManager() {
+        return gameUIManager;
     }
 }

@@ -7,6 +7,7 @@ import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;
+import rails.game.move.CashMove;
 import rails.game.state.IntegerState;
 import rails.game.state.State;
 import rails.game.state.ArrayListState;
@@ -96,18 +97,18 @@ public class StartRound_1880 extends StartRound {
                 if (item.getStatus() == StartItem.NEEDS_SHARE_PRICE) {  //still necessary ??
                     /* This status is set in buy() if a share price is missing */
                     setPlayer(item.getBidder());
-                    possibleActions.add(new BuyStartItem(item, item.getBid(), false, true));
+                    possibleActions.add(new BuyStartItem_1880(item, item.getBid(), false, true));
                     return true;
                     // No more actions
                 }
                 if ((item.getBidder() == currentPlayer) && (numPasses.intValue() == getNumberOfPlayers()-1)){ // Current Player is highest Bidder & all others have passed
                     if (item.needsPriceSetting() != null ){
-                        BuyStartItem possibleAction = new BuyStartItem(item,item.getBid(), true, true);
+                        BuyStartItem_1880 possibleAction = new BuyStartItem_1880(item,item.getBid(), true, true);
                         possibleActions.add(possibleAction);
                        return true;
                          // No more actions// no further Actions possible
                     }else{
-                        BuyStartItem possibleAction = new BuyStartItem(item,item.getBid(),true);
+                        BuyStartItem_1880 possibleAction = new BuyStartItem_1880(item,item.getBid(),true);
                         possibleActions.add(possibleAction);
                         return true;
                          // No more actions// no further Actions possible
@@ -148,21 +149,11 @@ public class StartRound_1880 extends StartRound {
                      startingPlayer.set(currentPlayer);
                      gameManager.setPriorityPlayer((Player) startingPlayer.get()); // Method doesn't exist in Startround ???
             }
-           if (investorChosen.intValue() == getNumberOfPlayers()) {
-               for ( StartItem item1 : itemsToSell) {
-                   if (!item1.isSold()){
-                       item1.setStatus(StartItem.UNAVAILABLE);
-                       item1.setStatus(StartItem.SOLD);
-                      
-                   }
-               }
-               finishRound();
-               return false;
-           } else {
-               for ( StartItem item1 : itemsToSell) {
+           
+            for ( StartItem item1 : itemsToSell) {
                        if (!item1.isSold()){
                            item1.setStatus(StartItem.BUYABLE);
-                           BuyStartItem possibleAction = new BuyStartItem(item1, 0, false);
+                           BuyStartItem_1880 possibleAction = new BuyStartItem_1880(item1, 0, false);
                            possibleActions.add(possibleAction);
                        }
                    }   
@@ -170,8 +161,7 @@ public class StartRound_1880 extends StartRound {
                 return true;
               }
                
-       }
-    }
+     }
    
     /* (non-Javadoc)
      * @see rails.game.StartRound#bid(java.lang.String, rails.game.action.BidStartItem)
@@ -381,5 +371,49 @@ public class StartRound_1880 extends StartRound {
         startingPlayer.set(gameManager.getPlayerByIndex(i+1));
         setCurrentPlayerIndex(i+1 % getNumberOfPlayers());
     }
+    /* (non-Javadoc)
+     * @see rails.game.StartRound#startPacketChecks()
+     */
+    @Override
+    protected void startPacketChecks() {
+        // TODO Auto-generated method stub
+        super.startPacketChecks();
+        if (investorChosen.intValue() == getNumberOfPlayers()) {
+            for ( StartItem item1 : itemsToSell) {
+                if (!item1.isSold()){
+                    item1.setStatus(StartItem.UNAVAILABLE);
+                    item1.setStatus(StartItem.SOLD);
+                   
+                }
+            }
+        }
 
+    }
+    /**
+     * Float a company, including a default implementation of moving cash and
+     * shares as a result of flotation. <p>Fifty Percent capitalisation is implemented
+     * as in 1880. 
+     */
+    @Override
+    protected void floatCompany(PublicCompanyI company) {
+        // Move cash and shares where required
+        int cash = 0;
+        int price = company.getIPOPrice();
+     
+        cash = 5 * price;
+             
+        company.setFloated(); 
+
+        if (cash > 0) {
+            new CashMove(bank, company, cash);
+            ReportBuffer.add(LocalText.getText("FloatsWithCash",
+                    company.getName(),
+                    Bank.format(cash) ));
+        } else {
+            ReportBuffer.add(LocalText.getText("Floats",
+                    company.getName()));
+        }
+
+    }
+    
 }

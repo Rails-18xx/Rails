@@ -16,7 +16,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolder {
     public static final int CAPITALISE_INCREMENTAL = 1;
 
     public static final int CAPITALISE_WHEN_BOUGHT = 2;
-
+    
     public void setIndex (int index);
 
 

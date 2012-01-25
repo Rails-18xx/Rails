@@ -12,7 +12,7 @@
 		<Payout split="no"/>
 	</CompanyType>
 	
-	<CompanyType name="Minor" class="rails.game.PublicCompany">
+	<CompanyType name="Minor" class="rails.game.specific._1880.PublicCompany_1880">
 		<ShareUnit percentage="100"/>
 		<Certificate type="President" shares="1"/>
 		<StockPrice market="no"/>
@@ -21,18 +21,18 @@
 		</BaseTokens>
 		<Payout split="no"/>
 		<Trains limit="1" mandatory="no"/>
+		<CanUseSpecialProperties/>
+			<!-- Specialproperties -->
+				<!-- Specialproperty condition="ifNotConnected" when="orTurn"
+					class="rails.game.special.TrainLoan" -->
+				<!-- /Specialproperty--> 
+			<!--  /Specialproperties-->	
 	</CompanyType>
 	
 	<CompanyType name="Private" class="rails.game.PrivateCompany"/>
 	
-	<CompanyType name="Major" class="rails.game.PublicCompany"
-		capitalisation="incremental">
-		<Capitalisation Type="incremental"/>
-		<!--TileLays>
-			<Number colour="yellow" phase="2+2,3,3+3,4,4+4,6,6e,8,8e,10"
-				number="2"/>
-		</TileLays-->
-		<Float percentage="60"/>
+	<CompanyType name="Major" class="rails.game.specific._1880.PublicCompany_1880">
+		<Float percentage="20"/>
 		<StockPrice par="yes"/>
 		<ShareUnit percentage="10"/>
 		<Certificate type="President" shares="2"/>
@@ -40,9 +40,9 @@
 		<BaseTokens>
 			<LayCost method="sequence" cost="0,40,100"/>
 		</BaseTokens>
-		<Capitalisation type="incremental"/>
 		<Trains limit="4,3,2"/>
 		<CanUseSpecialProperties/>
+		
 	</CompanyType>
 	
 	<Company name="WR" longname="Woosong Railway" type="Private" basePrice="5"
@@ -60,28 +60,40 @@
 			<Phase>4</Phase>
 		</ClosingConditions>
 	</Company>
-	<Company name="YC" longname="Yanda Ferry 
-			Company" type="Private"
+	<Company name="YC" longname="Yanda Ferry Company" type="Private"
 		basePrice="25" revenue="10">
-		<!-- SpecialProperty condition="ifOwnedByPlayer" when="revenuecalcStep" revenue="10" -->
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByPlayer" when="revenueStep" 
+				class="rails.game.special.LocatedBonus" transfer="toCompany">
+				<LocatedBonus name="Ferry" location="F12,F14,I15" value="10"/>
+			</SpecialProperty>
+		</SpecialProperties>
 	</Company>
 	<Company name="TL" longname="Taiwan Western Line" type="Private" basePrice="45"
 		revenue="15">
-		<!-- SpecialProperty condition="ifOwnedByPlayer" when="revenuecalcStep" revenue="20" -->
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByPlayer" when="revenueStep" 
+					class="rails.game.special.LocatedBonus" transfer="toCompany">
+				<LocatedBonus name="Taiwan" location="N16" value="20"/>
+			</SpecialProperty>
+		</SpecialProperties>
 	</Company>
-	<Company name="CC" longname="Chinese Rivers Ferry 
-			Company" type="Private"
+	<Company name="CC" longname="Chinese Rivers Ferry Company" type="Private"
 		basePrice="70" revenue="20">
+		<SpecialProperties>
 		<SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep"
 			class="rails.game.special.SpecialTileLay">
 			<SpecialTileLay location="M15" extra="no" free="yes"/>
 		</SpecialProperty>
+		</SpecialProperties>
 	</Company>
 	<Company name="JO" longname="Jeme Tien Yow Engineer Office" type="Private"
 		basePrice="70" revenue="20">
-		<SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep"
-			class="rails.game.specific._1880.BuildingPermit">
-		</SpecialProperty>
+		<!-- SpecialProperties-->
+		<!-- SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep"
+			class="rails.game.specific._1880.BuildingPermit"-->
+		<!-- /SpecialProperty-->
+		<!--  -->/SpecialProperties-->
 	</Company>
 	<Company name="IG" longname="Imperial Qing Government" type="Private"
 		basePrice="160" revenue="20">
@@ -89,17 +101,18 @@
 	</Company>
 	<Company name="RC" longname="Rocket Company" type="Private" basePrice="70"
 		revenue="0">
-		<SpecialProperty condition="ifOwnedByPlayer" when="trainBuyingStep"
-			class="rails.game.special.SpecialTrainBuy"/>
+		<!-- SpecialProperties-->
+		<!--  SpecialProperty condition="ifOwnedByPlayer" when="trainBuyingStep"
+			class="rails.game.special.SpecialTrainBuy"/-->
 		<!--  Kostenfreie Lok bei Phasenwechsel durch Lokkauf -->
 		<!-- Can exchange Certificate for actual train in one phase 2,2+3,3,3+3,4 
 		as soon as train has been bought -->
 		<!-- The train can be moved upon purchase into one company owned by the 
 		owner of the certificate --> <!-- Company must have space for the new train, but can hand back an older 
 		train to bank (2+2,3,3+3) -->
+		<!-- /SpecialProperties-->
 		<ClosingConditions>
 			<Phase>5</Phase>
-			<SpecialProperties condition="ifExercised"/>
 		</ClosingConditions>
 	</Company>
 	<Company name="BCR" longname="Baocheng Railway" type="Major" tokens="3"

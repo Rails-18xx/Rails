@@ -48,4 +48,5 @@ public interface StockMarketI extends ConfigurableComponentI {
 
     public void processMoveToStackPosition(PublicCompanyI company, StockSpaceI from,
             StockSpaceI to, int toStackPosition);
+    
 }

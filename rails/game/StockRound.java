@@ -1657,4 +1657,8 @@ public class StockRound extends Round {
         sellObligationLifted.add(company);
     }
 
+    /* (non-Javadoc)
+     * @see rails.game.Round#floatCompany(rails.game.PublicCompanyI)
+     */
+ 
 }

@@ -46,7 +46,7 @@ Cloneable, Comparable<Company> {
     /** Closed state */
     protected BooleanState closedObject;
 
-    // Moved here from PrivayeCOmpany on behalf of 1835
+    // Moved here from PrivateCompany on behalf of 1835
     protected List<SpecialPropertyI> specialProperties = null;
 
     protected static Logger log =

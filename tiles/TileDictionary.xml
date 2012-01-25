@@ -21385,10 +21385,6 @@
 			<junction>
 				<junType>jtCity</junType>
 				<position>tp2CornerD</position>
-				<revenue>
-					<value>20</value>
-					<position>tp3CornerA</position>
-				</revenue>
 			</junction>
 		</junctions>
 		<connections>

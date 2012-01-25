@@ -42,19 +42,19 @@
 	<StockSpace name="C9" price="60" />
 	<StockSpace name="D1" price="105" />
 	<StockSpace name="D2" price="100" >
-	<StartSpace parslots="4"/>
+	<StartSpace/>
 	</StockSpace>
 	<StockSpace name="D3" price="95" />
 	<StockSpace name="D4" price="90" >
-	<StartSpace parslots="4"/>
+	<StartSpace/>
 	</StockSpace>
 	<StockSpace name="D5" price="85" />
 	<StockSpace name="D6" price="80" >
-	<StartSpace parslots="4"/>
+	<StartSpace/>
 	</StockSpace>
 	<StockSpace name="D7" price="75" />
 	<StockSpace name="D8" price="70" >
-	<StartSpace parslots="4"/>
+	<StartSpace/>
 	</StockSpace>
 	<StockSpace name="D9" price="65" />
 	<StockSpace name="E1" price="110" />
