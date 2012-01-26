@@ -149,7 +149,7 @@ public class GameUIManager implements DialogOwner {
         if (Util.hasValue(saveSuffixSpec) && !saveSuffixSpec.equals(NEXT_PLAYER_SUFFIX)) {
             saveSuffix = saveSuffixSpec;
         } else {
-            saveSuffix = getPlayerNames().get(0);
+            saveSuffix = getPlayers().get(0).getName();
         }
         log.debug("Initial save suffix: "+saveSuffix);
     }
@@ -1030,9 +1030,9 @@ public class GameUIManager implements DialogOwner {
         return gameManager.getPlayers();
     }
 
-    public List<String> getPlayerNames() {
-        return gameManager.getPlayerNames();
-    }
+    //public List<String> getPlayerNames() {
+    //    return gameManager.getPlayerNames();
+    //}
 
     public Player getCurrentPlayer() {
         return gameManager.getCurrentPlayer();

@@ -17,7 +17,6 @@ import rails.game.move.*;
 import rails.game.special.SpecialPropertyI;
 import rails.game.special.SpecialTokenLay;
 import rails.game.state.*;
-import rails.sound.BackgroundMusicManager;
 import rails.util.GameFileIO;
 import rails.util.Util;
 
@@ -67,7 +66,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     protected Map<String, String> gameOptions;
 
     protected List<Player> players;
-    protected List<String> playerNames;
+    protected List<String> originalPlayerNamesList;
     protected int numberOfPlayers;
     protected State currentPlayer = new State("CurrentPlayer", Player.class);
     protected State priorityPlayer = new State("PriorityPlayer", Player.class);
@@ -551,7 +550,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         this.bank = bank;
 
         players = playerManager.getPlayers();
-        playerNames = playerManager.getPlayerNames();
+        originalPlayerNamesList = playerManager.getPlayerNames();
         numberOfPlayers = players.size();
         priorityPlayer.setState(players.get(0));
         setPlayerCertificateLimit (playerManager.getInitialPlayerCertificateLimit());
@@ -1152,7 +1151,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
     protected boolean save(File file, boolean displayErrorMessage, String errorMessageKey) {
         GameFileIO gameSaver = new GameFileIO();
-        gameSaver.initSave(saveFileVersionID, gameName, gameOptions, playerNames);
+        gameSaver.initSave(saveFileVersionID, gameName, gameOptions, originalPlayerNamesList);
         gameSaver.setActions(executedActions);
         gameSaver.setComments(ReportBuffer.getCommentItems());
         return gameSaver.saveGame(file, displayErrorMessage, errorMessageKey);
@@ -1502,9 +1501,9 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     /* (non-Javadoc)
      * @see rails.game.GameManagerI#getPlayerNames()
      */
-    public List<String> getPlayerNames() {
-        return playerNames;
-    }
+    //public List<String> getPlayerNames() {
+    //    return originalPlayerNamesList;
+    //}
 
     public int getPlayerCertificateLimit(Player player) {
         return playerCertificateLimit.intValue();
@@ -1899,7 +1898,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         for (int i=0; i<this.players.size(); i++) {
             player = this.players.get(i);
             player.setIndex (i);
-            this.playerNames.set (i, player.getName());
+            //this.originalPlayerNamesList.set (i, player.getName());
             log.debug("New player "+i+" is "+player.getName() +" (cash="+Bank.format(player.getCash())+")");
         }
 

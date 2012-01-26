@@ -4,9 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import rails.algorithms.RevenueManager;
-import rails.common.DisplayBuffer;
-import rails.common.GuiDef;
-import rails.common.GuiHints;
+import rails.common.*;
 import rails.common.parser.ConfigurableComponentI;
 import rails.game.action.PossibleAction;
 import rails.game.correct.CorrectionManagerI;
@@ -71,7 +69,7 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
 
     public abstract void registerBrokenBank();
     public void registerMaxedSharePrice(PublicCompanyI company, StockSpaceI space);
-    
+
     public boolean isDynamicOperatingOrder();
 
     /**
@@ -136,7 +134,7 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
 
     public abstract int getNumberOfPlayers();
 
-    public abstract List<String> getPlayerNames();
+    //public abstract List<String> getPlayerNames();
 
     public abstract List<PublicCompanyI> getAllPublicCompanies();
 
@@ -210,28 +208,28 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
 
     public CorrectionManagerI getCorrectionManager(CorrectionType ct);
     public List<PublicCompanyI> getCompaniesInRunningOrder ();
-	public boolean isReloading();
-	public void setReloading(boolean reloading);
-	public void setSkipDone (GameDef.OrStep step);
-	
-	public Player reorderPlayersByCash(boolean high);
+    public boolean isReloading();
+    public void setReloading(boolean reloading);
+    public void setSkipDone (GameDef.OrStep step);
+
+    public Player reorderPlayersByCash(boolean high);
 
     /**
      * reset the storage for other elements like tokens, special property
      * that a referred by unique ids
      * TODO
      */
-	public void resetStorage();
-    
+    public void resetStorage();
+
     /**
      * store element in storage
      * @param name to identify the type of the object to retrieve
      * @param object to store
-     * @return unique id of the object in the storage 
+     * @return unique id of the object in the storage
      * TODO move to a better place
      */
     public int storeObject(String typeName, Object object);
-    
+
     /**
      * ask storage for object
      * @param name to identify the type of the object to retrieve
