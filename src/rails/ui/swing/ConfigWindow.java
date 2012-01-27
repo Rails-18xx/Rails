@@ -37,6 +37,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.SpinnerNumberModel;
@@ -196,7 +197,8 @@ class ConfigWindow extends JFrame {
                 JLabel emptyLabel = new JLabel("");
                 newPanel.add(emptyLabel, gbc);
             }
-            configPane.addTab(LocalText.getText("Config.section." + sectionName), newPanel);
+            JScrollPane slider = new JScrollPane(newPanel);
+            configPane.addTab(LocalText.getText("Config.section." + sectionName), slider);
         }
     }
     
