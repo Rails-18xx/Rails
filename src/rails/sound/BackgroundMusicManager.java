@@ -26,6 +26,8 @@ import rails.common.parser.Config;
  * in the background. 
  */
 public class BackgroundMusicManager {
+    //TODO Kill old music manager
+
     private static class Context {
         public int round;
         public String phaseName;

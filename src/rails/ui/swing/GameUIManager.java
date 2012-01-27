@@ -21,6 +21,7 @@ import rails.common.parser.Config;
 import rails.game.*;
 import rails.game.Currency;
 import rails.game.action.*;
+import rails.sound.SoundManager;
 import rails.ui.swing.elements.*;
 import rails.util.Util;
 
@@ -281,6 +282,10 @@ public class GameUIManager implements DialogOwner {
             }
         }
 
+        // Inform the Sound Manager about this action, as it could lead to
+        // playing sfx or music
+        SoundManager.notifyOfActionProcessing(gameManager, action);
+        
         // Check in which round we are now,
         // and make sure that the right window is active.
         updateUI();

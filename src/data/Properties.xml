@@ -61,12 +61,31 @@
 		<Property name="report.filename.date_time_pattern" type="STRING" />
 		<Property name="report.filename.extension" type="STRING" />
 	</Section>
-	<Section name="Sound">
+	<Section name="Music">
 		<Property name="sound.backgroundMusic" type="LIST" values="disabled,enabled"
-				initClass="rails.sound.BackgroundMusicManager" initMethod="init"/>
-		<Property name="sound.backgroundMusic.stockRound" type="STRING"
-				initClass="rails.sound.BackgroundMusicManager" initMethod="init"/>
-		<Property name="sound.backgroundMusic.operatingRound" type="STRING"
-				initClass="rails.sound.BackgroundMusicManager" initMethod="init"/>
+				initClass="rails.sound.SoundManager" initMethod="init"/>
+		<Property name="sound.backgroundMusic.gameSetup" type="FILE" />
+		<Property name="sound.backgroundMusic.startRound" type="FILE" />
+		<Property name="sound.backgroundMusic.stockRound" type="STRING" />
+		<Property name="sound.backgroundMusic.operatingRound" type="STRING" />
+		<Property name="sound.backgroundMusic.endOfGameRound" type="FILE" />
+	</Section>
+	<Section name="SFX">
+		<Property name="sound.sfx" type="LIST" values="disabled,enabled" />
+		<Property name="sound.sfx.sr.openingBell" type="FILE" />
+		<Property name="sound.sfx.sr.newPresident" type="FILE" />
+		<Property name="sound.sfx.sr.buyShare.president" type="FILE" />
+		<Property name="sound.sfx.sr.buyShare.nonPresident" type="FILE" />
+		<Property name="sound.sfx.sr.sellShare.president" type="FILE" />
+		<Property name="sound.sfx.sr.sellShare.nonPresident" type="FILE" />
+		<Property name="sound.sfx.sr.companyFloats" type="FILE" />
+		<Property name="sound.sfx.or.layTile" type="FILE" />
+		<Property name="sound.sfx.or.layToken" type="FILE" />
+		<Property name="sound.sfx.or.setRevenue" type="FILE" />
+		<Property name="sound.sfx.or.decision.payout" type="FILE" />
+		<Property name="sound.sfx.or.decision.split" type="FILE" />
+		<Property name="sound.sfx.or.decision.withhold" type="FILE" />
+		<Property name="sound.sfx.or.buyTrain" type="STRING" />
+		<Property name="sound.sfx.or.buyPrivate" type="FILE" />
 	</Section>
 </Properties>
