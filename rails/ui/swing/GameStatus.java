@@ -1,9 +1,7 @@
 package rails.ui.swing;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.util.*;
 import java.util.List;
 
@@ -89,8 +87,8 @@ public class GameStatus extends GridPanel implements ActionListener {
     protected int futureTrainsXOffset, futureTrainsYOffset, futureTrainsWidth;
     protected int rightCompCaptionXOffset;
 
-    protected Caption[] upperPlayerCaption;
-    protected Caption[] lowerPlayerCaption;
+    protected Cell[] upperPlayerCaption;
+    protected Cell[] lowerPlayerCaption;
     protected Caption treasurySharesCaption;
 
     protected Portfolio ipo, pool;
@@ -117,7 +115,6 @@ public class GameStatus extends GridPanel implements ActionListener {
 
     protected Map<PublicCompanyI, Integer> companyIndex =
         new HashMap<PublicCompanyI, Integer>();
-    protected Map<Player, Integer> playerIndex = new HashMap<Player, Integer>();
 
     protected static Logger log =
         Logger.getLogger(GameStatus.class.getPackage().getName());
@@ -145,7 +142,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         setBorder(BorderFactory.createEtchedBorder());
         setOpaque(false);
 
-        players = gameUIManager.getPlayers().toArray(new Player[0]);
+        players = gameUIManager.getPlayers();
         np = gameUIManager.getNumberOfPlayers();
         companies = gameUIManager.getAllPublicCompanies().toArray(new PublicCompanyI[0]);
         nc = companies.length;
@@ -186,8 +183,8 @@ public class GameStatus extends GridPanel implements ActionListener {
         playerWorth = new Field[np];
         playerORWorthIncrease = new Field[np];
         playerCertCount = new Field[np];
-        upperPlayerCaption = new Caption[np];
-        lowerPlayerCaption = new Caption[np];
+        upperPlayerCaption = new Cell[np];
+        lowerPlayerCaption = new Cell[np];
 
         MouseListener companyCaptionMouseClickListener = gameUIManager.getORUIManager().getORPanel().getCompanyCaptionMouseClickListener();
 
@@ -258,15 +255,21 @@ public class GameStatus extends GridPanel implements ActionListener {
         fields = new JComponent[1+lastX][2+lastY];
         rowVisibilityObservers = new RowVisibility[nc];
 
+        // Top captions
         addField(new Caption(LocalText.getText("COMPANY")), 0, 0, 1, 2,
                 WIDE_BOTTOM, true);
         addField(new Caption(LocalText.getText("PLAYERS")),
                 certPerPlayerXOffset, 0, np, 1, WIDE_LEFT + WIDE_RIGHT, true);
+        boolean playerOrderCanVary = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.PLAYER_ORDER_VARIES);
         for (int i = 0; i < np; i++) {
-            playerIndex.put(players[i], new Integer(i));
-            f = upperPlayerCaption[i] = new Caption(players[i].getNameAndPriority());
-            int wideGapPosition = WIDE_BOTTOM + 
-                    ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
+            if (playerOrderCanVary) {
+                f = upperPlayerCaption[i] = new Field(gameUIManager.getGameManager().getPlayerNameModel(i));
+                upperPlayerCaption[i].setNormalBgColour(Cell.NORMAL_CAPTION_BG_COLOUR);
+            } else {
+                f = upperPlayerCaption[i] = new Caption(players.get(i).getNameAndPriority());
+            }
+            int wideGapPosition = WIDE_BOTTOM +
+            ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
             addField(f, certPerPlayerXOffset + i, 1, 1, 1, wideGapPosition, true);
         }
         addField(new Caption(LocalText.getText("BANK_SHARES")),
@@ -341,7 +344,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                 f =
                     certPerPlayer[i][j] =
                         new Field(
-                                players[j].getPortfolio().getShareModel(
+                                players.get(j).getPortfolio().getShareModel(
                                         c));
                 int wideGapPosition = ((j==0)? WIDE_LEFT : 0) + ((j==np-1)? WIDE_RIGHT : 0);
                 addField(f, certPerPlayerXOffset + j, certPerPlayerYOffset + i,
@@ -364,7 +367,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                             LocalText.getText("ClickToSelectForBuying"),
                             this, buySellGroup);
             addField(f, certInIPOXOffset, certInIPOYOffset + i, 1, 1, 0, false);
-            
+
             //no size alignment as button size could also be smaller than the field's one
             //certInIPO[i].setPreferredSize(certInIPOButton[i].getPreferredSize());
 
@@ -471,9 +474,9 @@ public class GameStatus extends GridPanel implements ActionListener {
         addField(new Caption(LocalText.getText("CASH")), 0, playerCashYOffset,
                 1, 1, WIDE_TOP , true);
         for (int i = 0; i < np; i++) {
-            f = playerCash[i] = new Field(players[i].getCashModel());
-            int wideGapPosition = WIDE_TOP + 
-                    ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
+            f = playerCash[i] = new Field(players.get(i).getCashModel());
+            int wideGapPosition = WIDE_TOP +
+            ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
             addField(f, playerCashXOffset + i, playerCashYOffset, 1, 1,
                     wideGapPosition, true);
             f =
@@ -493,10 +496,10 @@ public class GameStatus extends GridPanel implements ActionListener {
             f =
                 playerPrivates[i] =
                     new Field(
-                            players[i].getPortfolio().getPrivatesOwnedModel());
+                            players.get(i).getPortfolio().getPrivatesOwnedModel());
             HexHighlightMouseListener.addMouseListener(f,
                     gameUIManager.getORUIManager(),
-                    players[i].getPortfolio());
+                    players.get(i).getPortfolio());
             int wideGapPosition = ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
             addField(f, playerPrivatesXOffset + i, playerPrivatesYOffset, 1, 1,
                     wideGapPosition, true);
@@ -505,7 +508,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         addField(new Caption(LocalText.getText("WORTH")), 0,
                 playerWorthYOffset, 1, 1, 0, true);
         for (int i = 0; i < np; i++) {
-            f = playerWorth[i] = new Field(players[i].getWorthModel());
+            f = playerWorth[i] = new Field(players.get(i).getWorthModel());
             int wideGapPosition = ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
             addField(f, playerWorthXOffset + i, playerWorthYOffset, 1, 1, wideGapPosition, true);
         }
@@ -513,7 +516,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         addField(new Caption(LocalText.getText("ORWORTHINCR")), 0,
                 playerORWorthIncreaseYOffset, 1, 1, 0, true);
         for (int i = 0; i < np; i++) {
-            f = playerORWorthIncrease[i] = new Field(players[i].getLastORWorthIncrease());
+            f = playerORWorthIncrease[i] = new Field(players.get(i).getLastORWorthIncrease());
             int wideGapPosition = ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
             addField(f, playerORWorthIncreaseXOffset + i, playerORWorthIncreaseYOffset, 1, 1, wideGapPosition, true);
         }
@@ -523,17 +526,23 @@ public class GameStatus extends GridPanel implements ActionListener {
         for (int i = 0; i < np; i++) {
             f =
                 playerCertCount[i] =
-                    new Field(players[i].getCertCountModel(), false, true);
-            int wideGapPosition = WIDE_TOP + 
-                    ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
+                    new Field(players.get(i).getCertCountModel(), false, true);
+            int wideGapPosition = WIDE_TOP +
+            ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
             addField(f, playerCertCountXOffset + i, playerCertCountYOffset, 1,
                     1, wideGapPosition, true);
         }
-        
+
+        // Bottom player captions
         for (int i = 0; i < np; i++) {
-            f = lowerPlayerCaption[i] = new Caption(players[i].getName());
-            int wideGapPosition = WIDE_TOP + 
-                    ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
+            if (playerOrderCanVary) {
+                f = lowerPlayerCaption[i] = new Field(gameUIManager.getGameManager().getPlayerNameModel(i));
+                lowerPlayerCaption[i].setNormalBgColour(Cell.NORMAL_CAPTION_BG_COLOUR);
+            } else {
+                f = lowerPlayerCaption[i] = new Caption(players.get(i).getNameAndPriority());
+            }
+            int wideGapPosition = WIDE_TOP +
+            ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
             addField(f, i + 1, playerCertCountYOffset + 1, 1, 1, wideGapPosition, true);
         }
 
@@ -948,7 +957,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                 }
                 if (ch instanceof Player) {
                     Player p = (Player)ch;
-                    int i = playerIndex.get(p);
+                    int i = players.indexOf(p);
                     setPlayerCashButton(i, true, a);
                 }
             }
@@ -961,7 +970,7 @@ public class GameStatus extends GridPanel implements ActionListener {
     public void setPriorityPlayer(int index) {
 
         for (int j = 0; j < np; j++) {
-            upperPlayerCaption[j].setText(players[j].getName()
+            upperPlayerCaption[j].setText(players.get(j).getName()
                     + (j == index ? " PD" : ""));
         }
     }
@@ -982,7 +991,7 @@ public class GameStatus extends GridPanel implements ActionListener {
 
     public String getSRPlayer() {
         if (actorIndex >= 0)
-            return players[actorIndex].getName();
+            return players.get(actorIndex).getName();
         else
             return "";
     }

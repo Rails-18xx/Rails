@@ -13,6 +13,7 @@ import rails.game.model.ModelObject;
 import rails.game.move.MoveStack;
 import rails.game.move.MoveableHolder;
 import rails.game.special.SpecialPropertyI;
+import rails.game.state.StringState;
 
 public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
 
@@ -213,6 +214,7 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
     public void setSkipDone (GameDef.OrStep step);
 
     public Player reorderPlayersByCash(boolean high);
+    public StringState getPlayerNameModel(int index) ;
 
     /**
      * reset the storage for other elements like tokens, special property

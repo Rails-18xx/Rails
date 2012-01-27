@@ -58,13 +58,14 @@ public class ArrayListState<E>  {
     public void move (E element, int toIndex) {
         if (remove (element)) add (toIndex, element);
     }
-    
+
     public boolean contains (E element) {
         return list.contains(element);
     }
 
     public void clear() {
-        for (E element:list) {
+        List<E> copy = new ArrayList<E> (list);
+        for (E element:copy) {
             remove(element);
         }
     }

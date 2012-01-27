@@ -5,25 +5,18 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.util.*;
 
-import javax.swing.*;
-import javax.swing.border.Border;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 
 import rails.game.model.ModelObject;
 import rails.game.model.ViewUpdate;
 import rails.util.Util;
 
-public class Field extends JLabel implements ViewObject {
+public class Field extends Cell implements ViewObject {
 
     private static final long serialVersionUID = 1L;
 
-    private Border labelBorder = BorderFactory.createEmptyBorder(1, 2, 1, 2);
-
-    private static final Color NORMAL_BG_COLOUR = Color.WHITE;
-
-    private static final Color HIGHLIGHT_BG_COLOUR = new Color(255, 255, 80);
-
     private ModelObject modelObject;
-    private Color normalBgColour = NORMAL_BG_COLOUR;
 
     private List<JComponent> dependents = null;
 
@@ -35,19 +28,11 @@ public class Field extends JLabel implements ViewObject {
     private String baseToolTipInfo = null;
 
     public Field(String text) {
-        super(text.equals("0%") ? "" : text);
-        this.setBackground(NORMAL_BG_COLOUR);
-        this.setHorizontalAlignment(SwingConstants.CENTER);
-        this.setBorder(labelBorder);
-        this.setOpaque(true);
+        super(text.equals("0%") ? "" : text, false);
     }
 
     public Field(ImageIcon info) {
-        super(info);
-        this.setBackground(NORMAL_BG_COLOUR);
-        this.setHorizontalAlignment(SwingConstants.CENTER);
-        this.setBorder(labelBorder);
-        this.setOpaque(true);
+        super(info, false);
     }
 
     public Field(ModelObject modelObject) {
@@ -79,10 +64,6 @@ public class Field extends JLabel implements ViewObject {
         modelObject = m;
         modelObject.addObserver(this);
         update(null, null);
-    }
-
-    public void setHighlight(boolean highlight) {
-        setBackground(highlight ? HIGHLIGHT_BG_COLOUR : normalBgColour);
     }
 
     /** This method is mainly needed when NOT using the Observer pattern. */

@@ -65,11 +65,12 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     protected String gameName;
     protected Map<String, String> gameOptions;
 
-    protected List<Player> players;
+    protected ArrayListState<Player> players;
     protected List<String> originalPlayerNamesList;
     protected int numberOfPlayers;
     protected State currentPlayer = new State("CurrentPlayer", Player.class);
     protected State priorityPlayer = new State("PriorityPlayer", Player.class);
+    protected StringState[] playerNameModels;
 
     /** Map relating portfolio names and objects, to enable deserialization.
      * OBSOLETE since Rails 1.3.1, but still required to enable reading old saved files */
@@ -549,11 +550,15 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         this.revenueManager = revenueManager;
         this.bank = bank;
 
-        players = playerManager.getPlayers();
+        players = new ArrayListState<Player> ("Players", playerManager.getPlayers());
         originalPlayerNamesList = playerManager.getPlayerNames();
         numberOfPlayers = players.size();
         priorityPlayer.setState(players.get(0));
         setPlayerCertificateLimit (playerManager.getInitialPlayerCertificateLimit());
+        playerNameModels = new StringState[numberOfPlayers];
+        for (int i=0; i<numberOfPlayers; i++) {
+            playerNameModels[i] = new StringState ("Player_"+(i+1), players.get(i).getName());
+        }
 
         showCompositeORNumber =  !"simple".equalsIgnoreCase(Config.get("or.number_format"));
     }
@@ -578,7 +583,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         moveStack.enable();
     }
 
-    private void setGuiParameters () {
+    protected void setGuiParameters () {
 
         for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
             if (company.hasParPrice()) guiParameters.put(GuiDef.Parm.HAS_ANY_PAR_PRICE, true);
@@ -595,7 +600,6 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
                     break loop;
                 }
             }
-
         }
 
         // define guiParameters from gameOptions
@@ -1392,7 +1396,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
         /* Sort players by total worth */
         List<Player> rankedPlayers = new ArrayList<Player>();
-        for (Player player : players) {
+        for (Player player : getPlayers()) {
             rankedPlayers.add(player);
         }
         Collections.sort(rankedPlayers);
@@ -1488,7 +1492,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
      * @see rails.game.GameManagerI#getPlayers()
      */
     public List<Player> getPlayers() {
-        return players;
+        return players.viewList();
     }
 
     /* (non-Javadoc)
@@ -1888,21 +1892,29 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     public Player reorderPlayersByCash (boolean ascending) {
 
         final boolean _ascending = ascending;
-        Collections.sort (this.players, new Comparator<Player>() {
+        List<Player> reorderedPlayers = new ArrayList<Player>(players.viewList());
+        Collections.sort(reorderedPlayers, new Comparator<Player>() {
             public int compare (Player p1, Player p2) {
                 return _ascending ? p1.getCash() - p2.getCash() : p2.getCash() - p1.getCash();
             }
         });
 
+        players.clear();
+
         Player player;
-        for (int i=0; i<this.players.size(); i++) {
-            player = this.players.get(i);
+        for (int i=0; i<reorderedPlayers.size(); i++) {
+            player = reorderedPlayers.get(i);
+            players.add(player);
             player.setIndex (i);
-            //this.originalPlayerNamesList.set (i, player.getName());
+            playerNameModels[i].set(player.getName());
             log.debug("New player "+i+" is "+player.getName() +" (cash="+Bank.format(player.getCash())+")");
         }
 
         return this.players.get(0);
+    }
+
+    public StringState getPlayerNameModel(int index) {
+        return playerNameModels[index];
     }
 
     public void resetStorage() {

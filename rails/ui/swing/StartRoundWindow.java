@@ -10,6 +10,7 @@ import javax.swing.*;
 
 import org.apache.log4j.Logger;
 
+import rails.common.GuiDef;
 import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;
@@ -62,8 +63,8 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
     private int infoXOffset, infoYOffset;
     private Field itemStatus[]; // Remains invisible, only used for status tooltip
 
-    private Caption[] upperPlayerCaption;
-    private Caption[] lowerPlayerCaption;
+    private Cell[] upperPlayerCaption;
+    private Cell[] lowerPlayerCaption;
 
     private ActionButton bidButton;
     private ActionButton buyButton;
@@ -110,13 +111,10 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
     private boolean includeBidding;
     private boolean showBasePrices;
 
-    //    private boolean repacked = false;
-
     protected static Logger log =
         Logger.getLogger(StartRoundWindow.class.getPackage().getName());
 
     public void init(StartRound round, GameUIManager parent) {
-        //super();
         this.round = round;
         includeBidding = round.hasBidding();
         showBasePrices = round.hasBasePrices();
@@ -238,8 +236,8 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
         bidPerPlayer = new Field[ni][np];
         info = new Field[ni];
         itemStatus = new Field[ni];
-        upperPlayerCaption = new Caption[np];
-        lowerPlayerCaption = new Caption[np];
+        upperPlayerCaption = new Cell[np];
+        lowerPlayerCaption = new Cell[np];
         playerBids = new Field[np];
         playerFree = new Field[np];
 
@@ -279,27 +277,35 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
             addField(new Caption(LocalText.getText("MINIMUM_BID")),
                     minBidXOffset, 0, 1, 2, WIDE_BOTTOM + WIDE_RIGHT);
         }
+
+        // Top player captions
         addField(new Caption(LocalText.getText("PLAYERS")),
                 bidPerPlayerXOffset, 0, np, 1, 0);
+        boolean playerOrderCanVary = getGameUIManager().getGameParameterAsBoolean(GuiDef.Parm.PLAYER_ORDER_VARIES);
         for (int i = 0; i < np; i++) {
-            f = upperPlayerCaption[i] = new Caption(players[i].getName());
+            if (playerOrderCanVary) {
+                f = upperPlayerCaption[i] = new Field(getGameUIManager().getGameManager().getPlayerNameModel(i));
+                upperPlayerCaption[i].setNormalBgColour(Cell.NORMAL_CAPTION_BG_COLOUR);
+            } else {
+                f = upperPlayerCaption[i] = new Caption(players[i].getName());
+            }
             addField(f, bidPerPlayerXOffset + i, 1, 1, 1, WIDE_BOTTOM);
         }
 
         for (int i = 0; i < ni; i++) {
             si = items[i];
             f = itemName[i] = new Caption(si.getName());
-            HexHighlightMouseListener.addMouseListener(f, 
+            HexHighlightMouseListener.addMouseListener(f,
                     gameUIManager.getORUIManager(),
-                    si); 
+                    si);
             addField(f, itemNameXOffset, itemNameYOffset + i, 1, 1, WIDE_RIGHT);
             f =
                 itemNameButton[i] =
                     new ClickField(si.getName(), "", "", this,
                             itemGroup);
-            HexHighlightMouseListener.addMouseListener(f, 
+            HexHighlightMouseListener.addMouseListener(f,
                     gameUIManager.getORUIManager(),
-                    si); 
+                    si);
             addField(f, itemNameXOffset, itemNameYOffset + i, 1, 1, WIDE_RIGHT);
             // Prevent row height resizing after every buy action
             itemName[i].setPreferredSize(itemNameButton[i].getPreferredSize());
@@ -322,9 +328,9 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
 
             f = info[i] = new Field (infoIcon);
             f.setToolTipText(getStartItemDescription(si));
-            HexHighlightMouseListener.addMouseListener(f, 
+            HexHighlightMouseListener.addMouseListener(f,
                     gameUIManager.getORUIManager(),
-                    si); 
+                    si);
             addField (f, infoXOffset, infoYOffset + i, 1, 1, WIDE_LEFT);
 
             // Invisible field, only used to hold current item status.
@@ -360,7 +366,12 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
         }
 
         for (int i = 0; i < np; i++) {
-            f = lowerPlayerCaption[i] = new Caption(players[i].getName());
+            if (playerOrderCanVary) {
+                f = lowerPlayerCaption[i] = new Field(getGameUIManager().getGameManager().getPlayerNameModel(i));
+                lowerPlayerCaption[i].setNormalBgColour(Cell.NORMAL_CAPTION_BG_COLOUR);
+            } else {
+                f = lowerPlayerCaption[i] = new Caption(players[i].getName());
+            }
             addField(f, playerFreeCashXOffset + i, playerFreeCashYOffset + 1,
                     1, 1, WIDE_TOP);
         }
@@ -702,7 +713,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
     }
 
     public void setSRPlayerTurn(int selectedPlayerIndex) {
- 
+
         highlightCurrentPlayer(selectedPlayerIndex);
     }
 

@@ -149,7 +149,7 @@ implements ActionListener, KeyListener, RevenueListener {
         initButtonPanel();
         gbc = new GridBagConstraints();
 
-        players = gameUIManager.getPlayers().toArray(new Player[0]);
+        players = gameUIManager.getPlayers();
 
         if (round instanceof OperatingRound) {
             companies = ((OperatingRound) round).getOperatingCompanies().toArray(new PublicCompanyI[0]);
@@ -790,7 +790,7 @@ implements ActionListener, KeyListener, RevenueListener {
         redoButton.setEnabled(false);
 
         disableRoutesDisplay();
-        
+
         //clear all highlighting (president column and beyond)
         resetActions();
 
@@ -1005,9 +1005,9 @@ implements ActionListener, KeyListener, RevenueListener {
         this.orComp = orComp;
         this.orCompIndex = orCompIndex;
         president[orCompIndex].setHighlight(true);
-        
+
         removeAllHighlights();
-        
+
         buttonOC.clearPossibleActions();
         button1.clearPossibleActions();
         button2.clearPossibleActions();
@@ -1021,7 +1021,7 @@ implements ActionListener, KeyListener, RevenueListener {
         updateCurrentRoutes(false);
 
     }
-    
+
     public void initTileLayingStep() {
 
         tileCaption.setHighlight(true);
@@ -1244,7 +1244,7 @@ implements ActionListener, KeyListener, RevenueListener {
         button1.setEnabled(false);
 
         orCompIndex = -1;
-        
+
         orUIManager.getMap().setTrainPaths(null);
     }
 
@@ -1255,7 +1255,7 @@ implements ActionListener, KeyListener, RevenueListener {
 
     public String getORPlayer() {
         if (playerIndex >= 0)
-            return players[playerIndex].getName();
+            return players.get(playerIndex).getName();
         else
             return "";
     }

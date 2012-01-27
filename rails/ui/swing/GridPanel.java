@@ -7,9 +7,7 @@ import java.util.*;
 import java.util.List;
 
 import javax.swing.*;
-import javax.swing.border.AbstractBorder;
-import javax.swing.border.Border;
-import javax.swing.border.CompoundBorder;
+import javax.swing.border.*;
 
 import org.apache.log4j.Logger;
 
@@ -17,10 +15,7 @@ import rails.common.parser.Config;
 import rails.game.*;
 import rails.game.model.ModelObject;
 import rails.game.state.BooleanState;
-import rails.ui.swing.elements.Caption;
-import rails.ui.swing.elements.ClickField;
-import rails.ui.swing.elements.Field;
-import rails.ui.swing.elements.ViewObject;
+import rails.ui.swing.elements.*;
 
 public abstract class GridPanel extends JPanel
 implements ActionListener, KeyListener {
@@ -43,7 +38,7 @@ implements ActionListener, KeyListener {
     protected static Color buttonHighlight = new Color(255, 160, 80);
 
     protected int np;
-    protected Player[] players;
+    protected List<Player> players;
     protected int nc;
     protected PublicCompanyI[] companies;
     protected RoundI round;
@@ -66,7 +61,7 @@ implements ActionListener, KeyListener {
     protected Color tableBorderColor;
     protected Color cellOutlineColor;
     protected Color highlightedBorderColor;
-    
+
     public GridPanel() {
         //initialize border colors according to the configuration
         if ("enabled".equals(Config.get("gridPanel.tableBorders"))) {
@@ -117,29 +112,29 @@ implements ActionListener, KeyListener {
         padTop = (wideGapPositions & WIDE_TOP) > 0 ? WIDE_GAP - NARROW_GAP : 0;
         padLeft = (wideGapPositions & WIDE_LEFT) > 0 ? WIDE_GAP - NARROW_GAP : 0;
         padBottom =
-                (wideGapPositions & WIDE_BOTTOM) > 0 ? WIDE_GAP - NARROW_GAP : 0;
-        padRight = (wideGapPositions & WIDE_RIGHT) > 0 ? WIDE_GAP - NARROW_GAP : 0;
+            (wideGapPositions & WIDE_BOTTOM) > 0 ? WIDE_GAP - NARROW_GAP : 0;
+            padRight = (wideGapPositions & WIDE_RIGHT) > 0 ? WIDE_GAP - NARROW_GAP : 0;
 
-        //set field borders
-        //- inner border: the field's native border
-        //- outline border: the field's outline (in narrow_gap thickness)
-        //- outer border: grid table lines (in wide_gap - narrow_gap thickness)
-        
-        comp.setBorder(new FieldBorder(comp.getBorder(),
-                new DynamicBorder(cellOutlineColor,NARROW_GAP),
-                new DynamicBorder(tableBorderColor,padTop,padLeft,padBottom,padRight)));
+            //set field borders
+            //- inner border: the field's native border
+            //- outline border: the field's outline (in narrow_gap thickness)
+            //- outer border: grid table lines (in wide_gap - narrow_gap thickness)
 
-        gridPanel.add(comp, gbc);
+            comp.setBorder(new FieldBorder(comp.getBorder(),
+                    new DynamicBorder(cellOutlineColor,NARROW_GAP),
+                    new DynamicBorder(tableBorderColor,padTop,padLeft,padBottom,padRight)));
 
-        if (comp instanceof ViewObject
-            && ((ViewObject) comp).getModel() != null) {
-            observers.add((ViewObject) comp);
-        }
+            gridPanel.add(comp, gbc);
 
-        if (fields != null && fields[x][y] == null) fields[x][y] = comp;
-        comp.setVisible(visible);
+            if (comp instanceof ViewObject
+                    && ((ViewObject) comp).getModel() != null) {
+                observers.add((ViewObject) comp);
+            }
+
+            if (fields != null && fields[x][y] == null) fields[x][y] = comp;
+            comp.setVisible(visible);
     }
-    
+
     /**
      * highlights given component by altering its border's attributes
      */
@@ -147,7 +142,7 @@ implements ActionListener, KeyListener {
         //quit if nothing is to be done
         if (isToBeHighlighted && highlightedComps.contains(comp)) return;
         if (!isToBeHighlighted && !highlightedComps.contains(comp)) return;
-        
+
         if (comp.getBorder() instanceof FieldBorder) {
             FieldBorder fb = (FieldBorder)comp.getBorder();
             fb.setHighlight(isToBeHighlighted);
@@ -159,7 +154,7 @@ implements ActionListener, KeyListener {
             }
         }
     }
-    
+
     protected void removeAllHighlights() {
         for (JComponent c : highlightedComps) {
             if (c.getBorder() instanceof FieldBorder) {
@@ -170,7 +165,7 @@ implements ActionListener, KeyListener {
         }
         highlightedComps.clear();
     }
-    
+
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_F1) {
             HelpWindow.displayHelp(GameManager.getInstance().getHelp());
@@ -242,7 +237,7 @@ implements ActionListener, KeyListener {
     }
 
     /**
-     * Wrapper for three level compound borders and directly accessing border constituents 
+     * Wrapper for three level compound borders and directly accessing border constituents
      * @author Frederick Weld
      *
      */
@@ -266,13 +261,13 @@ implements ActionListener, KeyListener {
         }
         public void setHighlight(boolean isToBeHighlighted) {
             outlineBorder.setHighlight(isToBeHighlighted);
-            this.insideBorder = isToBeHighlighted ? 
+            this.insideBorder = isToBeHighlighted ?
                     highlightedInnerBorder : nativeInnerBorder;
         }
     }
 
     /**
-     * A potentially asymmetric line border providing methods for changing the look 
+     * A potentially asymmetric line border providing methods for changing the look
      * @author Frederick Weld
      *
      */
@@ -289,7 +284,7 @@ implements ActionListener, KeyListener {
             this.padRight = symmetricPad;
             this.borderColor = borderColor;
         }
-        
+
         public DynamicBorder (Color borderColor,int padTop, int padLeft, int padBottom, int padRight) {
             this.padTop = padTop;
             this.padLeft = padLeft;
@@ -297,13 +292,14 @@ implements ActionListener, KeyListener {
             this.padRight = padRight;
             this.borderColor = borderColor;
         }
-        
+
         public void setHighlight(boolean isToBeHighlighted) {
             if (isHighlighted != isToBeHighlighted) {
                 isHighlighted = isToBeHighlighted;
             }
         }
 
+        @Override
         public void paintBorder(Component c,Graphics g, int x, int y, int width,int height) {
             Graphics2D g2d = (Graphics2D)g;
             if (isHighlighted) {
@@ -331,12 +327,14 @@ implements ActionListener, KeyListener {
             g2d.setStroke(oldStroke);
         }
 
+        @Override
         public Insets getBorderInsets (Component c) {
             return new Insets(padTop,padLeft,padBottom,padRight);
         }
 
-        public boolean isBorderOpaque() { 
-            return true; 
+        @Override
+        public boolean isBorderOpaque() {
+            return true;
         }
     }
 }
