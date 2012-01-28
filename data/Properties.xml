@@ -72,6 +72,8 @@
 	</Section>
 	<Section name="SFX">
 		<Property name="sound.sfx" type="LIST" values="disabled,enabled" />
+		<Property name="sound.sfx.str.bidStartItem" type="FILE" />
+		<Property name="sound.sfx.str.buyStartItem" type="FILE" />
 		<Property name="sound.sfx.sr.openingBell" type="FILE" />
 		<Property name="sound.sfx.sr.newPresident" type="FILE" />
 		<Property name="sound.sfx.sr.buyShare.president" type="FILE" />

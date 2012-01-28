@@ -14,34 +14,24 @@ import rails.common.parser.Config;
  */
 public class SoundConfig {
     public static final String KEY_BGM_Enabled = "sound.backgroundMusic";
-    //TODO GameSetup
     public static final String KEY_BGM_GameSetup = "sound.backgroundMusic.gameSetup";
-    //TODO StartRound
     public static final String KEY_BGM_StartRound = "sound.backgroundMusic.startRound";
-    //TODO StockRound
     public static final String KEY_BGM_StockRound = "sound.backgroundMusic.stockRound";
-    //TODO OperatingRound
     public static final String KEY_BGM_OperatingRound = "sound.backgroundMusic.operatingRound";
-    //TODO EndOfGame Round
     public static final String KEY_BGM_EndOfGameRound = "sound.backgroundMusic.endOfGameRound";
     public static final String KEY_SFX_Enabled = "sound.sfx";
+    public static final String KEY_SFX_STR_BidStartItem = "sound.sfx.str.bidStartItem";
+    public static final String KEY_SFX_STR_BuyStartItem = "sound.sfx.str.buyStartItem";
     //TODO Opening Bell
     public static final String KEY_SFX_SR_OpeningBell = "sound.sfx.sr.openingBell";
-    //TODO New president
     public static final String KEY_SFX_SR_NewPresident = "sound.sfx.sr.newPresident";
-    //TODO Buy Share Pres
     public static final String KEY_SFX_SR_BuyShare_President = "sound.sfx.sr.buyShare.president";
-    //TODO Buy Share non Pres
     public static final String KEY_SFX_SR_BuyShare_NonPresident = "sound.sfx.sr.buyShare.nonPresident";
-    //TODO Sell Share Pres
     public static final String KEY_SFX_SR_SellShare_President = "sound.sfx.sr.sellShare.president";
-    //TODO Sell Share non Pres
     public static final String KEY_SFX_SR_SellShare_NonPresident = "sound.sfx.sr.sellShare.nonPresident";
-    //TODO Company Floats
     public static final String KEY_SFX_SR_CompanyFloats = "sound.sfx.sr.companyFloats";
     public static final String KEY_SFX_OR_LayTile = "sound.sfx.or.layTile";
     public static final String KEY_SFX_OR_LayToken = "sound.sfx.or.layToken";
-    //TODO Set Revenue
     public static final String KEY_SFX_OR_SetRevenue = "sound.sfx.or.setRevenue";
     public static final String KEY_SFX_OR_Decision_Payout = "sound.sfx.or.decision.payout";
     public static final String KEY_SFX_OR_Decision_Split = "sound.sfx.or.decision.split";
@@ -75,13 +65,14 @@ public class SoundConfig {
         if (resultValue == null) resultValue = "";
         return resultValue;
     }
-    public static boolean isMusicEnabled() {
+    public static boolean isBGMEnabled() {
         return isEnabled(KEY_BGM_Enabled);
     }
     public static boolean isSFXEnabled() {
         return isEnabled(KEY_SFX_Enabled);
     }
     private static boolean isEnabled(String key) {
+        //TODO add consideration for load replays (temporary disabled)
         return "enabled".equals(get(key));
     }
 }

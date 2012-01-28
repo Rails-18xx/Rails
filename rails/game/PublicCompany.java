@@ -1024,6 +1024,10 @@ public class PublicCompany extends Company implements PublicCompanyI {
     public boolean hasFloated() {
         return hasFloated.booleanValue();
     }
+    
+    public ModelObject getFloatedModel() {
+        return hasFloated;
+    }
 
     /**
      * Has the company already operated?

@@ -221,6 +221,9 @@ public class GameUIManager implements DialogOwner {
         // define configWindow
         configWindow = new ConfigWindow(true);
         configWindow.init();
+        
+        // notify sound manager of game initialization
+        SoundManager.notifyOfGameInit(gameManager);
     }
 
     public void startLoadedGame() {

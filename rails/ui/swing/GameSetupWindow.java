@@ -20,6 +20,7 @@ import rails.common.parser.Config;
 import rails.common.parser.GameOption;
 import rails.common.parser.GameInfo;
 import rails.game.*;
+import rails.sound.SoundManager;
 import rails.util.*;
 
 /**
@@ -147,6 +148,9 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 
         // This needs to happen after we have a valid gameName.
         fillPlayersPane();
+        
+        // Notify the sound manager about having started the setup menu
+        SoundManager.notifyOfGameSetup();
     }
 
     private void populateGridBag() {
