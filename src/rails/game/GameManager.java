@@ -1,7 +1,15 @@
 package rails.game;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1413,6 +1421,10 @@ public class GameManager extends RailsManager implements Configurable, Owner {
      */
     public Round getCurrentRound() {
         return (Round) currentRound.value();
+    }
+
+    public GenericState<Round> getCurrentRoundModel() {
+        return currentRound;
     }
 
     /* (non-Javadoc)

@@ -21,6 +21,7 @@ import rails.game.correct.*;
 import rails.game.correct.MapCorrectionManager.ActionStep;
 import rails.game.special.*;
 import rails.game.state.Owner;
+import rails.sound.SoundManager;
 import rails.ui.swing.elements.*;
 import rails.ui.swing.hexmap.GUIHex;
 import rails.ui.swing.hexmap.HexMap;
@@ -497,6 +498,12 @@ public class ORUIManager implements DialogOwner {
             orPanel.stopRevenueUpdate();
             log.debug("Set revenue amount is " + amount);
             action.setActualRevenue(amount);
+            
+            // notify sound manager of set revenue amount as soon as
+            // set revenue is pressed (not waiting for the completion
+            // of the set dividend action)
+            SoundManager.notifyOfSetRevenue(amount);
+
             if (amount == 0 || action.getRevenueAllocation() != SetDividend.UNKNOWN) {
                 log.debug("Allocation is known: "
                         + action.getRevenueAllocation());

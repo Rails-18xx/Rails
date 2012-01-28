@@ -953,6 +953,10 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
     public boolean hasFloated() {
         return hasFloated.value();
     }
+    
+    public BooleanState getFloatedModel() {
+        return hasFloated;
+    }
 
     /**
      * Has the company already operated?
