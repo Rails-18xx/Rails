@@ -149,6 +149,17 @@ public class SoundPlayer {
             if (player!=null) player.close();
         }
     }
+    private class PlayerThreadWithFollowupBGM extends PlayerThread {
+        private String bgmFileName;
+        public PlayerThreadWithFollowupBGM(String fileName, String bgmFileName) {
+            super(fileName);
+            this.bgmFileName = bgmFileName;
+        }    
+        public void play() {
+            super.play();
+            playBGM(bgmFileName);
+        }
+    }
     
     private PlayerThread lastSFXThread = null;
     
@@ -202,6 +213,19 @@ public class SoundPlayer {
      */
     public void playSFXByConfigKey(String configKey, double playSoundProportion) {
         playSFX(SoundConfig.get(configKey), playSoundProportion);
+    }
+    
+    public void playSFXWithFollowupBGM(String sfxFileName,String bgmFileName) {
+        playSFX(new PlayerThreadWithFollowupBGM (sfxFileName,bgmFileName));
+    }
+    
+    /**
+     * Plays the specified SFX and, after completing SFX play, the specified BGM
+     * is launched.
+     */
+    public void playSFXWithFollowupBGMByConfigKey(String sfxConfigKey, String bgmConfigKey) {
+        playSFXWithFollowupBGM(
+                SoundConfig.get(sfxConfigKey),SoundConfig.get(bgmConfigKey));
     }
 
     public void playBGM(String backgroundMusicFileName) {
