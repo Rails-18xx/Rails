@@ -69,9 +69,14 @@ public class SoundContext {
                 + averageRevenue * (1 - slidingAverageAdjustmentFactor);
     }
 
-    private void playBackgroundMusic() {
+    /**
+     * @return true if new background music is played
+     */
+    private boolean playBackgroundMusic() {
+        boolean isNewMusicPlayed = false;
+        
         //do nothing if music is not enabled
-        if (!SoundConfig.isBGMEnabled()) return;
+        if (!SoundConfig.isBGMEnabled()) return false;
         
         String currentRoundConfigKey = null;
         if (currentRound instanceof StartRound) {
@@ -91,9 +96,19 @@ public class SoundContext {
                     currentRoundConfigKey, currentPhaseName);
             if (!newBackgroundMusicFileName.equals(currentBackgroundMusicFileName)) {
                 currentBackgroundMusicFileName = newBackgroundMusicFileName;
-                player.playBGM(newBackgroundMusicFileName);
+                isNewMusicPlayed = true;
+                
+                //additionally play stock market opening bell if appropriate
+                if (SoundConfig.isSFXEnabled() && currentRound instanceof StockRound) {
+                    player.playSFXWithFollowupBGM(
+                            SoundConfig.get(SoundConfig.KEY_SFX_SR_OpeningBell),
+                            newBackgroundMusicFileName);
+                } else {
+                    player.playBGM(newBackgroundMusicFileName);
+                }
             }
         }
+        return isNewMusicPlayed;
     }
     public void notifyOfPhase(PhaseI newPhase) {
         if (!newPhase.equals(currentPhase)) {
@@ -105,7 +120,14 @@ public class SoundContext {
     public void notifyOfRound(RoundI newRound) {
         if (!newRound.equals(currentRound)) {
             currentRound = newRound;
-            playBackgroundMusic();
+            boolean isNewMusicPlayed = playBackgroundMusic();
+            
+            //play stock market opening bell for stock rounds without new background music
+            //(e.g., if music is disabled but sfx is enabled)
+            if (!isNewMusicPlayed && SoundConfig.isSFXEnabled() 
+                    && currentRound instanceof StockRound) {
+                player.playSFXByConfigKey(SoundConfig.KEY_SFX_SR_OpeningBell);
+            }
         }
     }
     public void notifyOfGameSetup() {

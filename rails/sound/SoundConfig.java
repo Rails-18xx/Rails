@@ -22,7 +22,6 @@ public class SoundConfig {
     public static final String KEY_SFX_Enabled = "sound.sfx";
     public static final String KEY_SFX_STR_BidStartItem = "sound.sfx.str.bidStartItem";
     public static final String KEY_SFX_STR_BuyStartItem = "sound.sfx.str.buyStartItem";
-    //TODO Opening Bell
     public static final String KEY_SFX_SR_OpeningBell = "sound.sfx.sr.openingBell";
     public static final String KEY_SFX_SR_NewPresident = "sound.sfx.sr.newPresident";
     public static final String KEY_SFX_SR_BuyShare_President = "sound.sfx.sr.buyShare.president";
