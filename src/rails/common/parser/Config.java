@@ -153,7 +153,7 @@ public final class Config {
                     continue;
                 }
                 userProperties.setProperty(item.name, item.getNewValue());
-                if (applyInitMethods) item.callInitMethod();
+                item.callInitMethod(applyInitMethods);
                 log.debug("Changed property name = " + item.name
                           + " to value = " + item.getNewValue());
                 item.setNewValue(null);

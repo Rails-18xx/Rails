@@ -39,6 +39,9 @@ public class SoundConfig {
     public static final String KEY_SFX_OR_BuyTrain = "sound.sfx.or.buyTrain";
     public static final String KEY_SFX_OR_BuyPrivate = "sound.sfx.or.buyPrivate";
     
+    //if set to true, sfx is reported not to be enabled irrespective of the configuration 
+    private static boolean isSFXDisabled = false;
+    
     public static String get(String configKey) {
         return get(configKey,null);
     }
@@ -69,10 +72,12 @@ public class SoundConfig {
         return isEnabled(KEY_BGM_Enabled);
     }
     public static boolean isSFXEnabled() {
-        return isEnabled(KEY_SFX_Enabled);
+        return isEnabled(KEY_SFX_Enabled) && !isSFXDisabled;
     }
     private static boolean isEnabled(String key) {
-        //TODO add consideration for load replays (temporary disabled)
         return "enabled".equals(get(key));
+    }
+    public static void setSFXDisabled(boolean timeWarpMode) {
+        isSFXDisabled = timeWarpMode;
     }
 }

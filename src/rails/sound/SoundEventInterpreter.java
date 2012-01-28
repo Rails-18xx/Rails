@@ -7,6 +7,10 @@ import rails.game.state.*;
 
 /**
  * Converts processed actions and model updates to triggers for playing sounds.
+ * 
+ * Model observers get their own inner classes since their constructors are parameterized
+ * (needed to initialize member variables among others - especially important if game is
+ * loaded).
  *  
  * @author Frederick Weld
  *
@@ -22,6 +26,7 @@ public class SoundEventInterpreter {
         
         private PresidentModelObserver(PublicCompany pc) {
             model = pc.getPresidentModel();
+            formerPresident = model.toText();
         }
         public void update(String text) {
             if (formerPresident != text) {
@@ -37,11 +42,11 @@ public class SoundEventInterpreter {
         }
     }
 
-    private class FloatedModelObserver implements Observer {
+    private class CompanyFloatedObserver implements Observer {
         private final BooleanState model;
         private Boolean hasFloated = false;
         
-        private FloatedModelObserver(PublicCompany pc) {
+        private CompanyFloatedObserver(PublicCompany pc) {
             model = pc.getFloatedModel();
             hasFloated = pc.getFloatedModel().value();
         }
@@ -50,8 +55,7 @@ public class SoundEventInterpreter {
             if (model.value() != hasFloated) {
                 hasFloated = model.value();
                 if (SoundConfig.isSFXEnabled()) {
-                    player.playSFXByConfigKey (
-                            SoundConfig.KEY_SFX_SR_CompanyFloats);
+                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_SR_CompanyFloats);
                 }
             }
         }
@@ -177,13 +181,12 @@ public class SoundEventInterpreter {
             for (PublicCompany c : gameManager.getCompanyManager().getAllPublicCompanies() ) {
                 //presidency changes
                 c.getPresidentModel().addObserver(new PresidentModelObserver(c));
-                
                 //company floats
-                c.getFloatedModel().addObserver(new FloatedModelObserver(c));
+                c.getFloatedModel().addObserver(new CompanyFloatedObserver(c));
             }
         }
     }
-    public void notifyOfGameSetup() {
-        if (SoundConfig.isBGMEnabled()) player.playBGMByConfigKey(SoundConfig.KEY_BGM_GameSetup);
+    public void notifyOfTimeWarp(boolean timeWarpMode) {
+        SoundConfig.setSFXDisabled(timeWarpMode);
     }
 }

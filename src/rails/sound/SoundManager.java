@@ -2,7 +2,6 @@ package rails.sound;
 
 import rails.game.GameManager;
 import rails.game.action.PossibleAction;
-import rails.game.action.SetDividend;
 
 /**
  * This is a singleton class as there should never be two
@@ -54,6 +53,9 @@ public class SoundManager {
      * Called when game setup window initially opens
      */
     public static void notifyOfGameSetup() {
-        getInstance().eventInterpreter.notifyOfGameSetup();
+        getInstance().context.notifyOfGameSetup();
+    }
+    public static void notifyOfTimeWarp(boolean timeWarpMode) {
+        getInstance().eventInterpreter.notifyOfTimeWarp(timeWarpMode);
     }
 }
