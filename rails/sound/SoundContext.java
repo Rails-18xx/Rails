@@ -33,8 +33,23 @@ public class SoundContext {
     }
     
     public void notifyOfMusicEnablement(boolean musicEnabled) {
-        // TODO notifyOfMusicEnablement
-        
+        if (!musicEnabled && player.isBGMPlaying()) {
+            player.stopBGM();
+        }
+        if (musicEnabled && !player.isBGMPlaying()) {
+            String musicFileNamePriorToDisable = currentBackgroundMusicFileName;
+            
+            //try to start BGM based on rounds / phases
+            currentBackgroundMusicFileName = null;
+            playBackgroundMusic();
+            
+            //if no BGM could be started, replay the music that was active before disabling
+            //BGM music
+            if (currentBackgroundMusicFileName == null) {
+                currentBackgroundMusicFileName = musicFileNamePriorToDisable;
+                player.playBGM(musicFileNamePriorToDisable);
+            }
+        }
     }
 
     public void notifyOfSetRevenue(int actualRevenue) {
@@ -93,5 +108,8 @@ public class SoundContext {
             playBackgroundMusic();
         }
     }
-
+    public void notifyOfGameSetup() {
+        currentBackgroundMusicFileName = SoundConfig.get(SoundConfig.KEY_BGM_GameSetup);
+        if (SoundConfig.isBGMEnabled()) player.playBGM(currentBackgroundMusicFileName);
+    }
 }

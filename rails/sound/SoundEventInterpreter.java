@@ -9,6 +9,10 @@ import rails.game.state.*;
 
 /**
  * Converts processed actions and model updates to triggers for playing sounds.
+ * 
+ * Model observers get their own inner classes since their constructors are parameterized
+ * (needed to initialize member variables among others - especially important if game is
+ * loaded).
  *  
  * @author Frederick Weld
  *
@@ -20,12 +24,30 @@ public class SoundEventInterpreter {
         private Player formerPresident = null;
         public PresidentModelObserver(PublicCompanyI pc) {
             this.pc = pc;
+            if (pc != null) formerPresident = pc.getPresident();
         }
         public void update(Observable o, Object arg) {
             if (formerPresident != pc.getPresident()) {
                 formerPresident = pc.getPresident();
                 if (SoundConfig.isSFXEnabled()) {
                     player.playSFXByConfigKey (SoundConfig.KEY_SFX_SR_NewPresident);
+                }
+            }
+        }
+    }
+
+    private class CompanyFloatsModelObserver implements Observer {
+        private PublicCompanyI pc;
+        Boolean hasFloated = false;
+        public CompanyFloatsModelObserver(PublicCompanyI pc) {
+            this.pc = pc;
+            if (pc != null) hasFloated = pc.hasFloated();
+        }
+        public void update(Observable o, Object arg) {
+            if (hasFloated != pc.hasFloated()) {
+                hasFloated = pc.hasFloated();
+                if (SoundConfig.isSFXEnabled()) {
+                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_SR_CompanyFloats);
                 }
             }
         }
@@ -147,26 +169,12 @@ public class SoundEventInterpreter {
             for (PublicCompanyI c : gameManager.getCompanyManager().getAllPublicCompanies() ) {
                 //presidency changes
                 c.getPresidentModel().addObserver(new PresidentModelObserver(c));
-                
                 //company floats
-                c.getFloatedModel().addObserver(new Observer() {
-                    Boolean hasFloated = false;
-                    public void update(Observable o, Object arg) {
-                        if (arg instanceof Boolean && arg != null) {
-                            if (!((Boolean)arg).booleanValue() == hasFloated) {
-                                hasFloated = ((Boolean)arg).booleanValue();
-                                if (SoundConfig.isSFXEnabled()) {
-                                    player.playSFXByConfigKey (
-                                            SoundConfig.KEY_SFX_SR_CompanyFloats);
-                                }
-                            }
-                        }
-                    }
-                });
+                c.getFloatedModel().addObserver(new CompanyFloatsModelObserver(c));
             }
         }
     }
-    public void notifyOfGameSetup() {
-        if (SoundConfig.isBGMEnabled()) player.playBGMByConfigKey(SoundConfig.KEY_BGM_GameSetup);
+    public void notifyOfTimeWarp(boolean timeWarpMode) {
+        SoundConfig.setSFXDisabled(timeWarpMode);
     }
 }

@@ -214,4 +214,13 @@ public class SoundPlayer {
     public void playBGMByConfigKey(String configKey) {
         playBGM(SoundConfig.get(configKey));
     }
+
+    public void stopBGM() {
+        LoopPlayerThread oldPlayerThread = adjustLastBGMThread(null);
+        if (oldPlayerThread != null) oldPlayerThread.interrupt();
+    }
+
+    public boolean isBGMPlaying() {
+        return (lastBGMThread != null);
+    }
 }

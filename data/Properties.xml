@@ -63,7 +63,8 @@
 	</Section>
 	<Section name="Music">
 		<Property name="sound.backgroundMusic" type="LIST" values="disabled,enabled"
-				initClass="rails.sound.SoundManager" initMethod="init"/>
+				initClass="rails.sound.SoundManager" initMethod="init"
+				alwaysCallInit="true"/>
 		<Property name="sound.backgroundMusic.gameSetup" type="FILE" />
 		<Property name="sound.backgroundMusic.startRound" type="FILE" />
 		<Property name="sound.backgroundMusic.stockRound" type="STRING" />
