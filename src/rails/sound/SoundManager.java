@@ -58,4 +58,7 @@ public class SoundManager {
     public static void notifyOfTimeWarp(boolean timeWarpMode) {
         getInstance().eventInterpreter.notifyOfTimeWarp(timeWarpMode);
     }
+    public static void notifyOfRotateTile() {
+        getInstance().eventInterpreter.notifyOfRotateTile();
+    }
 }

@@ -668,6 +668,11 @@ public class ORUIManager implements DialogOwner {
             if (localStep == ROTATE_OR_CONFIRM_TILE
                     && clickedHex == selectedHex) {
                 selectedHex.rotateTile();
+                //directly inform sound framework of "rotate tile" as this is
+                //neither an action nor a model change
+                //call not put to GUIHex so that sound notification calls are
+                //centrally done by UIManagers (Game, OR)
+                SoundManager.notifyOfRotateTile();
                 return true;
 
             } else {

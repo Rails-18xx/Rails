@@ -81,9 +81,18 @@ public class SoundEventInterpreter {
         
         if (SoundConfig.isSFXEnabled()) {
             
+            //General actions
+            
+            if (action instanceof NullAction) {
+                if (((NullAction)action).getMode() == NullAction.PASS) {
+                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_GEN_Pass);
+                }
+                
+            }
+            
             //OR actions
             
-            if (action instanceof LayTile) {
+            else if (action instanceof LayTile) {
                 player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_LayTile);
                 
             } else if (action instanceof LayToken) {
@@ -188,5 +197,12 @@ public class SoundEventInterpreter {
     }
     public void notifyOfTimeWarp(boolean timeWarpMode) {
         SoundConfig.setSFXDisabled(timeWarpMode);
+    }
+    public void notifyOfRotateTile() {
+        if (SoundConfig.isSFXEnabled()) {
+            //don't wait for prior SFX playing end, otherwise quickly repeated
+            //rotations would lead to a long queue of sequentially played sfx
+            player.playSFXByConfigKey(SoundConfig.KEY_SFX_OR_RotateTile,false);
+        }
     }
 }
