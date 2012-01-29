@@ -435,6 +435,9 @@ implements ActionListener, KeyListener {
             addTextField (this, "Exchange train UID",
                     action.getExchangedTrain(),
                     action.getExchangedTrain() != null ? action.getExchangedTrain().getId() : "");  // 4
+            addTextField (this, "Fixed Price",
+                    new Integer(action.getFixedCost()),
+                    String.valueOf(action.getFixedCost()));  // 5
             finish();
         }
 
@@ -455,6 +458,11 @@ implements ActionListener, KeyListener {
             String exchangedTrainID = ((JTextField)inputElements.get(4)).getText();
             Train exchangedTrain = gameManager.getTrainManager().getTrainByUniqueId(exchangedTrainID);
             if (exchangedTrain != null) action.setExchangedTrain(exchangedTrain);
+            try {
+                int fixedCost = Integer.parseInt(((JTextField)inputElements.get(5)).getText());
+                action.setFixedCost(fixedCost);
+            } catch (NumberFormatException e) {
+            }
 
             log.debug("Action is  "+action);
             return action;

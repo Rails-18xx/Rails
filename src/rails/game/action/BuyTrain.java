@@ -153,6 +153,11 @@ public class BuyTrain extends PossibleORAction {
     public int getFixedCost() {
         return fixedCost;
     }
+    
+    // for correction
+    public void setFixedCost(int fixedCost) {
+        this.fixedCost = fixedCost;
+    }
 
     public boolean isForExchange() {
         return trainsForExchange != null && !trainsForExchange.isEmpty();
@@ -251,7 +256,7 @@ public class BuyTrain extends PossibleORAction {
         BuyTrain a = (BuyTrain) action;
         return a.getTrain().getType() == getTrain().getType() // only types have to be equal
                 && a.from == from 
-                && a.fixedCost == fixedCost
+                && (a.fixedCost == 0 || a.pricePaid == fixedCost)
                 && Objects.equal(a.trainsForExchange, trainsForExchange);
     }
 
