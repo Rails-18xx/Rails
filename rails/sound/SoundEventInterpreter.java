@@ -199,9 +199,7 @@ public class SoundEventInterpreter {
         if (SoundConfig.isSFXEnabled()) {
             //play rotate sound if tile has been rotated or is now ready for rotations
             if (currentStep == ORUIManager.ROTATE_OR_CONFIRM_TILE) {
-                //don't wait for prior SFX playing end, otherwise quickly repeated
-                //rotations would lead to a long queue of sequentially played sfx
-                player.playSFXByConfigKey(SoundConfig.KEY_SFX_OR_RotateTile,false);
+                player.playSFXByConfigKey(SoundConfig.KEY_SFX_OR_RotateTile);
             }
             
             //play hex selection sound if the follow-up step (select tile/token) is active
@@ -209,9 +207,7 @@ public class SoundEventInterpreter {
             // can also be selected during selectTile/Token)
             else if ( currentStep == ORUIManager.SELECT_TILE 
                     || currentStep == ORUIManager.SELECT_TOKEN ) {
-                //don't wait for prior SFX playing end, otherwise quickly repeated
-                //hex selections would lead to a long queue of sequentially played sfx
-                player.playSFXByConfigKey(SoundConfig.KEY_SFX_GEN_Select,false);
+                player.playSFXByConfigKey(SoundConfig.KEY_SFX_GEN_Select);
                 
             }
         }
@@ -224,9 +220,7 @@ public class SoundEventInterpreter {
         if (SoundConfig.isSFXEnabled()) {
             if (clickFieldAction instanceof BidStartItem
                     || clickFieldAction instanceof BuyStartItem) {
-                //don't wait for prior SFX playing end, otherwise quickly repeated
-                //selections would lead to a long queue of sequentially played sfx
-                player.playSFXByConfigKey(SoundConfig.KEY_SFX_GEN_Select,false);
+                player.playSFXByConfigKey(SoundConfig.KEY_SFX_GEN_Select);
             }
         }
     }
