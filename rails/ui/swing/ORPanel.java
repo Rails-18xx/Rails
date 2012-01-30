@@ -741,7 +741,11 @@ implements ActionListener, KeyListener, RevenueListener {
                 int revenueValue = ra.calculateRevenue();
                 log.debug("Revenue Value:" + revenueValue);
                 log.debug("Revenue Run:" + ra.getOptimalRunPrettyPrint(true));
-                ra.drawOptimalRunAsPath(orUIManager.getMap());
+
+                //try-catch clause temporary workaround as revenue adapter's 
+                //convertRcRun might erroneously raise exceptions
+                try {revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());}
+                catch (Exception e) {}
 
                 if (!Game.getDevelop()) {
                     //parent component is ORPanel so that dialog won't hide the routes painted on the map
@@ -770,7 +774,12 @@ implements ActionListener, KeyListener, RevenueListener {
             //clean up the paths on the map
             orUIManager.getMap().setTrainPaths(null);
             //but retain paths already existing before
-            if (revenueAdapter != null) revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
+            if (revenueAdapter != null) {
+                //try-catch clause temporary workaround as revenue adapter's 
+                //convertRcRun might erroneously raise exceptions
+                try {revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());}
+                catch (Exception e) {}
+            }
         }
     }
 
@@ -798,7 +807,10 @@ implements ActionListener, KeyListener, RevenueListener {
 
     public void redrawRoutes() {
         if (revenueAdapter != null && isDisplayRoutes()) {
-            revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
+            //try-catch clause temporary workaround as revenue adapter's 
+            //convertRcRun might erroneously raise exceptions
+            try {revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());}
+            catch (Exception e) {}
         }
     }
 
@@ -1069,12 +1081,20 @@ implements ActionListener, KeyListener, RevenueListener {
         }
         if (finalResult) {
             orUIManager.getMap().setTrainPaths(null);
-            revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
-            if (isRevenueValueToBeSet) {
-                orUIManager.setInformation("Best Run Value = " + bestRevenue +
-                        " with " + Util.convertToHtml(revenueAdapter.getOptimalRunPrettyPrint(false)));
-                orUIManager.setDetail(Util.convertToHtml(revenueAdapter.getOptimalRunPrettyPrint(true)));
+            //try-catch clause temporary workaround as revenue adapter's 
+            //convertRcRun might erroneously raise exceptions
+            //leaving on exception is admissible as exception only occur
+            //if revenue would be 0.
+            try {
+                revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
+            
+                if (isRevenueValueToBeSet) {
+                    orUIManager.setInformation("Best Run Value = " + bestRevenue +
+                            " with " + Util.convertToHtml(revenueAdapter.getOptimalRunPrettyPrint(false)));
+                    orUIManager.setDetail(Util.convertToHtml(revenueAdapter.getOptimalRunPrettyPrint(true)));
+                }
             }
+            catch (Exception e) {}
         }
     }
 
