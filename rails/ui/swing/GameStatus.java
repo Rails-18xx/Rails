@@ -14,6 +14,7 @@ import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.correct.CashCorrectionAction;
+import rails.sound.SoundManager;
 import rails.ui.swing.elements.*;
 import rails.ui.swing.hexmap.HexHighlightMouseListener;
 import rails.util.Util;
@@ -613,6 +614,9 @@ public class GameStatus extends GridPanel implements ActionListener {
         if (source instanceof ClickField) {
             gbc = gb.getConstraints(source);
             actions = ((ClickField) source).getPossibleActions();
+
+            //notify sound manager that click field has been selected
+            SoundManager.notifyOfClickFieldSelection(actions.get(0));
 
             // Assume that we will have either sell or buy actions
             // under one ClickField, not both. This seems guaranteed.

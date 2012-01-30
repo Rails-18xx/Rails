@@ -219,7 +219,9 @@ public class SoundEventInterpreter {
     public void notifyOfClickFieldSelection(PossibleAction clickFieldAction) {
         if (SoundConfig.isSFXEnabled()) {
             if (clickFieldAction instanceof BidStartItem
-                    || clickFieldAction instanceof BuyStartItem) {
+                    || clickFieldAction instanceof BuyStartItem
+                    || clickFieldAction instanceof BuyCertificate
+                    || clickFieldAction instanceof SellShares) {
                 player.playSFXByConfigKey(SoundConfig.KEY_SFX_GEN_Select);
             }
         }

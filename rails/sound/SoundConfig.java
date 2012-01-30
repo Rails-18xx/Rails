@@ -53,7 +53,7 @@ public class SoundConfig {
         (Arrays.asList( new String[] {
             KEY_SFX_GEN_Pass,
             KEY_SFX_GEN_Select,
-            KEY_SFX_OR_RotateTile,
+            KEY_SFX_OR_RotateTile
         }));
     
     //if set to true, sfx is reported not to be enabled irrespective of the configuration 
