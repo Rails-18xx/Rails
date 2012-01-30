@@ -35,7 +35,7 @@ public class RadioButtonDialog extends NonModalDialog {
     }
 
     @Override
-    protected void initializeContent() {
+    protected void initializeInput() {
 
         choiceButtons = new JRadioButton[numOptions];
         group = new ButtonGroup();

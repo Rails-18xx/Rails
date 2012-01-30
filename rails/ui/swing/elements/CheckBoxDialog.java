@@ -46,7 +46,7 @@ public class CheckBoxDialog extends NonModalDialog {
     }
 
     @Override
-    protected void initializeContent() {
+    protected void initializeInput() {
 
         checkBoxes = new JCheckBox[numOptions];
 

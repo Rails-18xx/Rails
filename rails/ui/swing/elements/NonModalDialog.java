@@ -39,7 +39,8 @@ public abstract class NonModalDialog extends JDialog implements ActionListener {
     public static enum Type {
         CHECKBOX,
         RADIO,
-        MESSAGE
+        MESSAGE,
+        MIXED
     }
 
     protected static Logger log =
@@ -83,7 +84,7 @@ public abstract class NonModalDialog extends JDialog implements ActionListener {
         optionsPane.setLayout(new GridBagLayout());
         optionsPane.add(new JLabel(message), constraints(0, 0, 10, 10, 10, 10));
 
-        initializeContent();
+        initializeInput();
 
         getContentPane().add(optionsPane, constraints(0, 0, 0, 0, 0, 0));
         getContentPane().add(buttonPane, constraints(0, 1, 0, 0, 0, 0));
@@ -101,7 +102,8 @@ public abstract class NonModalDialog extends JDialog implements ActionListener {
         setAlwaysOnTop(true);
     }
 
-    protected abstract void initializeContent();
+    protected void initializeInput() {
+    }
 
     protected GridBagConstraints constraints(int gridx, int gridy, int leftinset,
             int topinset, int rightinset, int bottominset) {
@@ -129,7 +131,7 @@ public abstract class NonModalDialog extends JDialog implements ActionListener {
         owner.dialogActionPerformed ();
     }
 
-    protected abstract void processOK (ActionEvent actionEvent);
+    protected void processOK (ActionEvent actionEvent) {};
 
-    protected abstract void processCancel (ActionEvent actionEvent);
+    protected void processCancel (ActionEvent actionEvent) {};
 }
