@@ -1,17 +1,18 @@
-Rails release 1.6.0:
+Rails release 1.6.1:
 
-This release celebrates that 1835 is declared fully playable.
+A maintenance release for the 1.6.x branch.
 
-Warning this release might not work with existing save files (see below).
-
-Contributors: Martin Brumm, Stefan Frey, Erik Vos, Frederick Weld
+Contributors: Frederick Weld, Erik Vos
+Bugs reported by Bill Probst.
 
 List of bugs fixed and further changes:
-- 18EU: Fixed that share price could raise at the end of the merger round
-- 1825: Update to Minors
-- Background map: Fixed glitches at 18GA display
-- All games: Fixes to make entering special tile lays more efficient
-WARNING: The last fix might make existing save files unloadable.
+- Enforced that the DynamicReportWindow stays on top during time warp
+- Added background map for 1889 (courtesy of Frederick Weld)
+- Fixed autosave functionality (handling of 18xx_autosave.xxx files)
+- Fixed retrieval of default game options (if options pane was not opened)
+- Fixed 1856 background map's mini-map (Windsor area)
+- Enforce selling over-limit shares first
+- Fixed wrong price of 6 train (630 => 600) in 18TN
 
 Note: To show a background map, the option has to be switched on in Configuration => Map/Report => Display background map.
-Background maps are only available for 1856, 18EU, 18GA (incl. Cotton Port) and 18AL so far.
+Background maps are only available for 1856, 1889, 18EU, 18GA (incl. Cotton Port) and 18AL so far.
