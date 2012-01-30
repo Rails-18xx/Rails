@@ -69,14 +69,9 @@ public class SoundContext {
                 + averageRevenue * (1 - slidingAverageAdjustmentFactor);
     }
 
-    /**
-     * @return true if new background music is played
-     */
-    private boolean playBackgroundMusic() {
-        boolean isNewMusicPlayed = false;
-        
+    private void playBackgroundMusic() {
         //do nothing if music is not enabled
-        if (!SoundConfig.isBGMEnabled()) return false;
+        if (!SoundConfig.isBGMEnabled()) return;
         
         String currentRoundConfigKey = null;
         if (currentRound instanceof StartRound) {
@@ -96,19 +91,9 @@ public class SoundContext {
                     currentRoundConfigKey, currentPhaseName);
             if (!newBackgroundMusicFileName.equals(currentBackgroundMusicFileName)) {
                 currentBackgroundMusicFileName = newBackgroundMusicFileName;
-                isNewMusicPlayed = true;
-                
-                //additionally play stock market opening bell if appropriate
-                if (SoundConfig.isSFXEnabled() && currentRound instanceof StockRound) {
-                    player.playSFXByConfigKeyWithFollowupBGM(
-                            SoundConfig.KEY_SFX_SR_OpeningBell,
-                            newBackgroundMusicFileName);
-                } else {
-                    player.playBGM(newBackgroundMusicFileName);
-                }
+                player.playBGM(newBackgroundMusicFileName);
             }
         }
-        return isNewMusicPlayed;
     }
     public void notifyOfPhase(Phase newPhase) {
         if (!newPhase.equals(currentPhase)) {
@@ -119,15 +104,18 @@ public class SoundContext {
 
     public void notifyOfRound(Round newRound) {
         if (!newRound.equals(currentRound)) {
-            currentRound = newRound;
-            boolean isNewMusicPlayed = playBackgroundMusic();
-            
-            //play stock market opening bell for stock rounds without new background music
-            //(e.g., if music is disabled but sfx is enabled)
-            if (!isNewMusicPlayed && SoundConfig.isSFXEnabled() 
-                    && currentRound instanceof StockRound) {
+
+            //play stock market opening bell if stock round became current round
+            //and the round before was not
+            if (SoundConfig.isSFXEnabled() 
+                    && !(currentRound instanceof StockRound)
+                    && newRound instanceof StockRound) {
                 player.playSFXByConfigKey(SoundConfig.KEY_SFX_SR_OpeningBell);
             }
+            
+            currentRound = newRound;
+
+            playBackgroundMusic();
         }
     }
     public void notifyOfGameSetup() {

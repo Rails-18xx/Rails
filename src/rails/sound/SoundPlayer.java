@@ -50,7 +50,7 @@ public class SoundPlayer {
             
             //wake the subsequent thread if there is one waiting
             synchronized (this) {
-                notify();
+                notifyAll();
                 playingDone = true;
             }
         }
@@ -125,11 +125,17 @@ public class SoundPlayer {
     private class LoopPlayerThread extends PlayerThread {
         boolean isStopped = false;
         Player player = null;
+        LoopPlayerThread previousLoopPlayerThread = null;
         public LoopPlayerThread(String fileName) {
             super(fileName);
         }
         public void play() {
             try {
+                //stop prior BGM music
+                if (previousLoopPlayerThread != null) {
+                    previousLoopPlayerThread.interrupt();
+                }
+
                 while (!isStopped) {
                     FileInputStream fis = new FileInputStream(fileName);
                     BufferedInputStream bis = new BufferedInputStream(fis);
@@ -148,16 +154,8 @@ public class SoundPlayer {
             isStopped = true;
             if (player!=null) player.close();
         }
-    }
-    private class PlayerThreadWithFollowupBGM extends PlayerThread {
-        private String bgmFileName;
-        public PlayerThreadWithFollowupBGM(String fileName, String bgmFileName) {
-            super(fileName);
-            this.bgmFileName = bgmFileName;
-        }    
-        public void play() {
-            super.play();
-            playBGM(bgmFileName);
+        public void setPreviousLoopPlayer(LoopPlayerThread previousLoopPlayerThread) {
+            this.previousLoopPlayerThread = previousLoopPlayerThread;
         }
     }
     
@@ -226,19 +224,19 @@ public class SoundPlayer {
     }
     
     /**
-     * Plays the specified SFX and, after completing SFX play, the specified BGM
-     * is launched.
+     * Plays new background music and stops old BGM only after all currently playing 
+     * sfx are finished.
      */
-    public void playSFXByConfigKeyWithFollowupBGM(String sfxConfigKey,String bgmFileName) {
-        playSFX(new PlayerThreadWithFollowupBGM (
-                    SoundConfig.get(sfxConfigKey),bgmFileName),
-                SoundConfig.KEYS_SFX_IMMEDIATE_PLAYING.contains(sfxConfigKey));
-    }
-    
     public void playBGM(String backgroundMusicFileName) {
         LoopPlayerThread newPlayerThread = new LoopPlayerThread(backgroundMusicFileName);
         LoopPlayerThread oldPlayerThread = adjustLastBGMThread(newPlayerThread);
-        if (oldPlayerThread != null) oldPlayerThread.interrupt();
+        
+        //interrupt old bgm when starting the new bgm
+        newPlayerThread.setPreviousLoopPlayer(oldPlayerThread);
+        
+        //wait for playing new bgm until all sfx have finished playing
+        newPlayerThread.setPriorThread(lastSFXThread);
+        
         newPlayerThread.start();
     }
     
