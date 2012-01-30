@@ -15,6 +15,7 @@ import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.special.SpecialPropertyI;
+import rails.sound.SoundManager;
 import rails.ui.swing.elements.*;
 import rails.ui.swing.hexmap.HexHighlightMouseListener;
 
@@ -563,6 +564,9 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
             StartItemAction currentActiveItem =
                 (StartItemAction) ((ClickField) source).getPossibleActions().get(
                         0);
+            
+            //notify sound manager that click field has been selected
+            SoundManager.notifyOfClickFieldSelection(currentActiveItem);
 
             if (currentActiveItem instanceof BuyStartItem) {
                 buyButton.setEnabled(true);
