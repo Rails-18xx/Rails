@@ -17,6 +17,7 @@ import rails.game.action.*;
 import rails.game.correct.*;
 import rails.game.correct.MapCorrectionManager.ActionStep;
 import rails.game.special.*;
+import rails.sound.SoundManager;
 import rails.ui.swing.elements.*;
 import rails.ui.swing.hexmap.GUIHex;
 import rails.ui.swing.hexmap.HexMap;
@@ -493,6 +494,12 @@ public class ORUIManager implements DialogOwner {
             orPanel.stopRevenueUpdate();
             log.debug("Set revenue amount is " + amount);
             action.setActualRevenue(amount);
+            
+            // notify sound manager of set revenue amount as soon as
+            // set revenue is pressed (not waiting for the completion
+            // of the set dividend action)
+            SoundManager.notifyOfSetRevenue(amount);
+
             if (amount == 0 || action.getRevenueAllocation() != SetDividend.UNKNOWN) {
                 log.debug("Allocation is known: "
                         + action.getRevenueAllocation());
@@ -657,6 +664,11 @@ public class ORUIManager implements DialogOwner {
             if (localStep == ROTATE_OR_CONFIRM_TILE
                     && clickedHex == selectedHex) {
                 selectedHex.rotateTile();
+                //directly inform sound framework of "rotate tile" as this is
+                //neither an action nor a model change
+                //call not put to GUIHex so that sound notification calls are
+                //centrally done by UIManagers (Game, OR)
+                SoundManager.notifyOfRotateTile();
                 return true;
 
             } else {

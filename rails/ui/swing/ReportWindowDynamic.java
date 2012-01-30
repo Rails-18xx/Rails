@@ -20,6 +20,7 @@ import rails.game.ReportBuffer;
 import rails.game.action.GameAction;
 import rails.game.action.PossibleActions;
 import rails.game.move.MoveStack;
+import rails.sound.SoundManager;
 import rails.ui.swing.elements.ActionButton;
 
 /**
@@ -208,11 +209,12 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
 
     public void hyperlinkUpdate(HyperlinkEvent e) {
         if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+            activateTimeWarp();
             URL url = e.getURL();
-//            String protocol = e.getURL().getProtocol();
+//          String protocol = e.getURL().getProtocol();
             int index = url.getPort();
             gotoIndex(index + 1);
-            activateTimeWarp();
+            toFront();
         }
     }
 
@@ -242,8 +244,8 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
             gameUIManager.setEnabledAllWindows(false, this);
             timeWarpMode = true;
             closeable = false;
+            SoundManager.notifyOfTimeWarp(timeWarpMode);
         }
-        toFront();
     }
 
     private void deactivateTimeWarp() {
@@ -252,6 +254,7 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
         playFromHereButton.setVisible(false);
         returnButton.setVisible(false);
         timeWarpMode = false;
+        SoundManager.notifyOfTimeWarp(timeWarpMode);
         closeable = true;
     }
 }

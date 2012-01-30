@@ -8,7 +8,6 @@ import org.apache.log4j.Logger;
 import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
-import rails.sound.BackgroundMusicManager;
 import rails.util.Util;
 
 public class Phase implements PhaseI {
@@ -314,8 +313,6 @@ public class Phase implements PhaseI {
             }
         }
 
-        BackgroundMusicManager.setPhase(name);
-        
         if (actions != null && !actions.isEmpty()) {
             for (String actionName : actions.keySet()) {
                 gameManager.processPhaseAction (actionName, actions.get(actionName));

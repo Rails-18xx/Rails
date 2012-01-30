@@ -96,6 +96,8 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolder {
      */
 
     public boolean hasFloated();
+    
+    public ModelObject getFloatedModel();
 
     /**
      * Has the company already operated?

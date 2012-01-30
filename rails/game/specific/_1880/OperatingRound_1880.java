@@ -48,7 +48,6 @@ import rails.game.special.SpecialTrainBuy;
 import rails.game.specific._1880.PublicCompany_1880;
 import rails.game.specific._1880.GameManager_1880;
 import rails.game.state.EnumState;
-import rails.sound.BackgroundMusicManager;
 
 /**
  * @author Martin
@@ -169,8 +168,6 @@ public class OperatingRound_1880 extends OperatingRound {
 
         ReportBuffer.add(LocalText.getText("START_OR", thisOrNumber));
 
-        BackgroundMusicManager.notifyOfOperatingRoundStart();
-        
         for (Player player : gameManager.getPlayers()) {
             player.setWorthAtORStart();
         }

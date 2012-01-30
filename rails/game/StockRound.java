@@ -8,7 +8,6 @@ import rails.game.action.*;
 import rails.game.move.*;
 import rails.game.special.*;
 import rails.game.state.*;
-import rails.sound.BackgroundMusicManager;
 
 /**
  * Implements a basic Stock Round. <p> A new instance must be created for each
@@ -90,8 +89,6 @@ public class StockRound extends Round {
 
         ReportBuffer.add(LocalText.getText("StartStockRound",
                 getStockRoundNumber()));
-
-        BackgroundMusicManager.notifyOfStockRoundStart();
 
         setCurrentPlayerIndex(gameManager.getPriorityPlayer().getIndex());
         startingPlayer = getCurrentPlayer(); // For the Report

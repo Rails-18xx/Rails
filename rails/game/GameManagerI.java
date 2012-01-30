@@ -98,6 +98,8 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
      */
     public abstract RoundI getCurrentRound();
 
+    public abstract ModelObject getCurrentRoundModel();
+    
     /**
      * @return Returns the currentPlayerIndex.
      */

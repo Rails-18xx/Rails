@@ -1,6 +1,7 @@
 package rails.ui.swing;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
@@ -37,6 +38,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.SpinnerNumberModel;
@@ -58,6 +60,10 @@ class ConfigWindow extends JFrame {
     private static final String CONFIG_EXTENSION = ".rails_config";
     private static final String LEGACY_EXTENSION = ".properties";
     private static final String CONFIG_DESCRIPTION = "Rails configuration files ( *.rails_config, *.properties)";
+
+    //restrict field width as there may be extremely long texts
+    //(e.g. specifying file names >2000px)
+    private static final int MAX_FIELD_WIDTH = 200;
     
     private JPanel profilePanel;
     private JTabbedPane configPane;
@@ -196,7 +202,8 @@ class ConfigWindow extends JFrame {
                 JLabel emptyLabel = new JLabel("");
                 newPanel.add(emptyLabel, gbc);
             }
-            configPane.addTab(LocalText.getText("Config.section." + sectionName), newPanel);
+            JScrollPane slider = new JScrollPane(newPanel);
+            configPane.addTab(LocalText.getText("Config.section." + sectionName), slider);
         }
     }
     
@@ -318,9 +325,12 @@ class ConfigWindow extends JFrame {
             break;
         case DIRECTORY:
         case FILE:
-            final JLabel dirLabel = new JLabel(configValue);
+            final JLabel dirLabel = new JLabel(configValue + " "); //add whitespace for non-zero preferred size
             dirLabel.setHorizontalAlignment(SwingConstants.CENTER);
             dirLabel.setToolTipText(toolTip);
+            dirLabel.setPreferredSize(new Dimension(
+                    MAX_FIELD_WIDTH,
+                    dirLabel.getPreferredSize().height));
             gbc.fill = GridBagConstraints.HORIZONTAL;
             addToGridBag(panel, dirLabel, gbc);
             JButton dirButton = new JButton("Choose...");
@@ -399,6 +409,9 @@ class ConfigWindow extends JFrame {
                 }
             }
             );
+            textField.setPreferredSize(new Dimension(
+                    Math.min(MAX_FIELD_WIDTH,textField.getPreferredSize().width),
+                    textField.getPreferredSize().height));
             gbc.fill = GridBagConstraints.HORIZONTAL;
             addToGridBag(panel, textField, gbc);
             addEmptyLabel(panel, gbc);

@@ -13,6 +13,7 @@ import rails.common.*;
 import rails.common.parser.*;
 import rails.game.action.*;
 import rails.game.correct.*;
+import rails.game.model.ModelObject;
 import rails.game.move.*;
 import rails.game.special.SpecialPropertyI;
 import rails.game.special.SpecialTokenLay;
@@ -1421,6 +1422,10 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
      */
     public RoundI getCurrentRound() {
         return (RoundI) currentRound.get();
+    }
+
+    public ModelObject getCurrentRoundModel() {
+        return currentRound;
     }
 
     /* (non-Javadoc)

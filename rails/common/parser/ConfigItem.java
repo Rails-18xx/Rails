@@ -33,6 +33,7 @@ public final class ConfigItem {
     // method call attributes
     private final String initClass;
     private final String initMethod;
+    private final boolean alwaysCallInit;
     private final boolean initParameter;
     
     
@@ -75,6 +76,7 @@ public final class ConfigItem {
         // optional: init method attributes
         initClass = tag.getAttributeAsString("initClass");
         initMethod = tag.getAttributeAsString("initMethod");
+        alwaysCallInit = tag.getAttributeAsBoolean("alwaysCallInit",false);
         initParameter = tag.getAttributeAsBoolean("initParameter", false);
         
         // initialize newValue
@@ -107,7 +109,12 @@ public final class ConfigItem {
         return Config.get(this.name);
     }
     
-    void callInitMethod() {
+    /**
+     * @param applyInitMethod Specifies whether init should be called. Can be overruled
+     * by an additional tag alwaysCallInit
+     */
+    void callInitMethod(boolean applyInitMethod) {
+        if (!applyInitMethod && !alwaysCallInit) return;
         if (initClass == null || initMethod == null) return;
         
         // call without parameter
