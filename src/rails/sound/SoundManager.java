@@ -2,6 +2,7 @@ package rails.sound;
 
 import rails.game.GameManager;
 import rails.game.action.PossibleAction;
+import rails.game.action.StartItemAction;
 
 /**
  * This is a singleton class as there should never be two
@@ -58,7 +59,10 @@ public class SoundManager {
     public static void notifyOfTimeWarp(boolean timeWarpMode) {
         getInstance().eventInterpreter.notifyOfTimeWarp(timeWarpMode);
     }
-    public static void notifyOfRotateTile() {
-        getInstance().eventInterpreter.notifyOfRotateTile();
+    public static void notifyOfORLocalStep(int currentStep) {
+        getInstance().eventInterpreter.notifyOfORLocalStep(currentStep);
+    }
+    public static void notifyOfClickFieldSelection(PossibleAction clickFieldAction) {
+        getInstance().eventInterpreter.notifyOfClickFieldSelection(clickFieldAction);
     }
 }

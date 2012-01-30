@@ -74,6 +74,7 @@
 	<Section name="SFX">
 		<Property name="sound.sfx" type="LIST" values="disabled,enabled" />
 		<Property name="sound.sfx.gen.pass" type="FILE" />
+		<Property name="sound.sfx.gen.select" type="FILE" />
 		<Property name="sound.sfx.str.bidStartItem" type="FILE" />
 		<Property name="sound.sfx.str.buyStartItem" type="FILE" />
 		<Property name="sound.sfx.sr.openingBell" type="FILE" />

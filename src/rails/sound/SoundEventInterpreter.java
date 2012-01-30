@@ -4,6 +4,7 @@ import rails.game.*;
 import rails.game.action.*;
 import rails.game.model.PresidentModel;
 import rails.game.state.*;
+import rails.ui.swing.ORUIManager;
 
 /**
  * Converts processed actions and model updates to triggers for playing sounds.
@@ -84,7 +85,8 @@ public class SoundEventInterpreter {
             //General actions
             
             if (action instanceof NullAction) {
-                if (((NullAction)action).getMode() == NullAction.PASS) {
+                if (((NullAction)action).getMode() == NullAction.PASS
+                        || ((NullAction)action).getMode() == NullAction.AUTOPASS) {
                     player.playSFXByConfigKey (SoundConfig.KEY_SFX_GEN_Pass);
                 }
                 
@@ -198,11 +200,46 @@ public class SoundEventInterpreter {
     public void notifyOfTimeWarp(boolean timeWarpMode) {
         SoundConfig.setSFXDisabled(timeWarpMode);
     }
-    public void notifyOfRotateTile() {
+    /**
+     * Interprets changes/status of OR local steps in order to trigger sfx that
+     * are related to neither model changes nor game engine actions.
+     * Is triggered whenever some step changes (but priorStep is allowed to be
+     * equal to currentStep)
+     * @param currentStep Step as defined as constant in ORUIManager
+     */
+    public void notifyOfORLocalStep(int currentStep) {
         if (SoundConfig.isSFXEnabled()) {
-            //don't wait for prior SFX playing end, otherwise quickly repeated
-            //rotations would lead to a long queue of sequentially played sfx
-            player.playSFXByConfigKey(SoundConfig.KEY_SFX_OR_RotateTile,false);
+            //play rotate sound if tile has been rotated or is now ready for rotations
+            if (currentStep == ORUIManager.ROTATE_OR_CONFIRM_TILE) {
+                //don't wait for prior SFX playing end, otherwise quickly repeated
+                //rotations would lead to a long queue of sequentially played sfx
+                player.playSFXByConfigKey(SoundConfig.KEY_SFX_OR_RotateTile,false);
+            }
+            
+            //play hex selection sound if the follow-up step (select tile/token) is active
+            //(don't consider whether prior step was "select hex..." because hexes
+            // can also be selected during selectTile/Token)
+            else if ( currentStep == ORUIManager.SELECT_TILE 
+                    || currentStep == ORUIManager.SELECT_TOKEN ) {
+                //don't wait for prior SFX playing end, otherwise quickly repeated
+                //hex selections would lead to a long queue of sequentially played sfx
+                player.playSFXByConfigKey(SoundConfig.KEY_SFX_GEN_Select,false);
+                
+            }
+        }
+    }
+    /**
+     * Interprets selections of ClickFields
+     * @param clickFieldAction The action associated with the click field
+     */
+    public void notifyOfClickFieldSelection(PossibleAction clickFieldAction) {
+        if (SoundConfig.isSFXEnabled()) {
+            if (clickFieldAction instanceof BidStartItem
+                    || clickFieldAction instanceof BuyStartItem) {
+                //don't wait for prior SFX playing end, otherwise quickly repeated
+                //selections would lead to a long queue of sequentially played sfx
+                player.playSFXByConfigKey(SoundConfig.KEY_SFX_GEN_Select,false);
+            }
         }
     }
 }
