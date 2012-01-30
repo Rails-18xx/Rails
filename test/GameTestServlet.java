@@ -33,7 +33,7 @@
  * 
  * private static final String servletName = "test.GameTestServlet";
  * 
- * private StockMarketI stockMarket = null;
+ * private StockMarket stockMarket = null;
  * 
  * private Game game = null;
  * 
@@ -91,7 +91,7 @@
  * protected void doWork(HttpServletRequest request, HttpServletResponse
  * response) throws ServletException, IOException {
  * 
- * int row, col; StockSpaceI square; Company comp; PublicCompany company;
+ * int row, col; StockSpace square; Company comp; PublicCompany company;
  * String companyName; PublicCertificate cert; int companyNumber; Iterator
  * iterator, iterator2; int i; List startSpaces; int price;
  * 
@@ -333,7 +333,7 @@
  * out.append("<input type=hidden name=Company value=\"")
  * .append(currCo.getName()).append("\">\n"); out.append("<select
  * name=StartPrice>\n"); Iterator it = Game.getStockMarket().getStartSpaces()
- * .iterator(); while (it.hasNext()) { price = ((StockSpaceI)
+ * .iterator(); while (it.hasNext()) { price = ((StockSpace)
  * it.next()).getPrice(); out.append("<option value=" + price + ">" + price +
  * "\n"); } out.append("</select> <input type=submit name=SetPrice value=Set></form>\n"); }
  * else {
@@ -408,7 +408,7 @@
  * false; } out.append("\n"); } } out.append("</select>\n</td>"); if
  * (askStartPrice) { out.append("<td> at <select name=StartPrice>\n"); Iterator
  * it = Game.getStockMarket().getStartSpaces() .iterator(); while (it.hasNext()) {
- * price = ((StockSpaceI) it.next()).getPrice(); out.append("<option value=" +
+ * price = ((StockSpace) it.next()).getPrice(); out.append("<option value=" +
  * price + ">" + price + "\n"); } out.append("</select></td>"); }
  * out.append("</tr>\n");
  * 

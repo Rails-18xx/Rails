@@ -47,7 +47,7 @@ public class StockRound_1835 extends StockRound {
                 for (PublicCertificate cert : company.getCertificates()) {
                     owner = cert.getHolder().getOwner(); 
                     /* Would the player exceed the total certificate limit? */
-                    StockSpaceI stockSpace = company.getCurrentSpace();
+                    StockSpace stockSpace = company.getCurrentSpace();
                     if ((stockSpace == null || !stockSpace.isNoCertLimit()) && !mayPlayerBuyCertificate(
                             currentPlayer, company, cert.getCertificateCount())) continue;
                     // only nationalize other players
@@ -75,7 +75,7 @@ public class StockRound_1835 extends StockRound {
     }
 
     @Override
-    protected int getBuyPrice (BuyCertificate action, StockSpaceI currentSpace) {
+    protected int getBuyPrice (BuyCertificate action, StockSpace currentSpace) {
         int price = currentSpace.getPrice();
         if (action.getFromPortfolio().getOwner() instanceof Player) {
             price *= 1.5;

@@ -484,7 +484,7 @@ public class CGRFormationRound extends SwitchableUIRound {
         } else {
             int prevColPrice = 100;
             int colPrice;
-            StockSpaceI startSpace;
+            StockSpace startSpace;
             for (int col=6; col <= stockMarket.getNumberOfColumns(); col++) {
                 colPrice = stockMarket.getStockSpace(1, col).getPrice();
                 if (cgrPrice > colPrice) continue;

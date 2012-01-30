@@ -25,8 +25,8 @@
  * public class StockTest {
  * 
  * public static void StockChartTest() { int row, col, price; Game game =
- * Game.getInstance(); Game.initialise("1830"); StockMarketI chart =
- * Game.getStockMarket(); StockSpaceI square;
+ * Game.getInstance(); Game.initialise("1830"); StockMarket chart =
+ * Game.getStockMarket(); StockSpace square;
  * 
  * System.out.print(" "); for (col = 0; col < chart.getNumberOfColumns(); col++) {
  * System.out.print(" " + Character.toString((char) ('A' + col))); }

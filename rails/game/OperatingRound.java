@@ -2375,7 +2375,7 @@ public class OperatingRound extends Round implements Observer {
         if (!company.hasStockPrice()) return;
 
         // Check if company has entered a closing area
-        StockSpaceI newSpace = company.getCurrentSpace();
+        StockSpace newSpace = company.getCurrentSpace();
         if (newSpace.closesCompany() && company.canClose()) {
             company.setClosed();
             ReportBuffer.add(LocalText.getText("CompanyClosesAt",

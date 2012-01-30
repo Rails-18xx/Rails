@@ -59,7 +59,7 @@ public class GameManager extends GameItem implements Owner, ConfigurableComponen
     protected CompanyManagerI companyManager;
     protected PhaseManager phaseManager;
     protected TrainManager trainManager;
-    protected StockMarketI stockMarket;
+    protected StockMarket stockMarket;
     protected MapManager mapManager;
     protected TileManager tileManager;
     protected RevenueManager revenueManager;
@@ -532,7 +532,7 @@ public class GameManager extends GameItem implements Owner, ConfigurableComponen
             CompanyManagerI companyManager,
             PhaseManager phaseManager,
             TrainManager trainManager,
-            StockMarketI stockMarket,
+            StockMarket stockMarket,
             MapManager mapManager,
             TileManager tileManager,
             RevenueManager revenueManager,
@@ -1317,7 +1317,7 @@ public class GameManager extends GameItem implements Owner, ConfigurableComponen
         addToNextPlayerMessages(msg, true);
     }
 
-    public void registerMaxedSharePrice(PublicCompany company, StockSpaceI space){
+    public void registerMaxedSharePrice(PublicCompany company, StockSpace space){
         gameOverPending.set(true);
         ReportBuffer.add(LocalText.getText("MaxedSharePriceReportText",
                 company.getId(),
@@ -1581,7 +1581,7 @@ public class GameManager extends GameItem implements Owner, ConfigurableComponen
         return trainManager;
     }
 
-    public StockMarketI getStockMarket() {
+    public StockMarket getStockMarket() {
         return stockMarket;
     }
 
@@ -1806,7 +1806,7 @@ public class GameManager extends GameItem implements Owner, ConfigurableComponen
 
         Map<Integer, PublicCompany> operatingCompanies =
             new TreeMap<Integer, PublicCompany>();
-        StockSpaceI space;
+        StockSpace space;
         int key;
         int minorNo = 0;
         for (PublicCompany company : companyManager.getAllPublicCompanies()) {

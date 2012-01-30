@@ -2,18 +2,19 @@ package rails.game.model;
 
 import rails.game.Bank;
 import rails.game.PublicCompany;
-import rails.game.StockSpaceI;
+import rails.game.StockSpace;
+import rails.game.state.GenericState;
 import rails.game.state.Item;
-import rails.game.state.PriceMove;
-
-// TODO: Requires a complete rewrite
 
 public class PriceModel extends Model {
 
-    private StockSpaceI stockPrice = null;
+    // fields 
     private PublicCompany company = null;
-    private String name = null;
 
+    // states
+    private final GenericState<StockSpace> stockPrice = GenericState.create("stockPrice");
+
+    
     private PriceModel(String id) {
         super(id);
     }
@@ -36,17 +37,16 @@ public class PriceModel extends Model {
         } else {
             throw new IllegalArgumentException("PriceModel init() only works for PublicCompanies");
         }
+        stockPrice.init(this);
         return this;
     }
     
-
-    // TODO: This has to be changed
-    public void setPrice(StockSpaceI price) {
-        new PriceMove(this, stockPrice, price);
+    public void setPrice(StockSpace price) {
+        stockPrice.set(price);
     }
 
-    public StockSpaceI getPrice() {
-        return stockPrice;
+    public StockSpace getPrice() {
+        return stockPrice.get();
     }
 
     public PublicCompany getCompany() {
@@ -54,45 +54,23 @@ public class PriceModel extends Model {
     }
 
     // FIXME: This is a reference to the usage of ViewUpdate
-    public Object getUpdate() {
-        if (stockPrice != null) {
-            return new ViewUpdate(getText())
-                    .addObject(ViewUpdate.BGCOLOUR, stockPrice.getColour());
-        } else {
-            return getText();
-        }
-    }
+    // TODO: The color reference has to be taken care of, remove view update
+//    public Object getUpdate() {
+//        if (stockPrice != null) {
+//            return new ViewUpdate(getText())
+//                    .addObject(ViewUpdate.BGCOLOUR, stockPrice.getColour());
+//        } else {
+//            return getText();
+//        }
+//    }
 
     @Override
     public String toString() {
         if (stockPrice != null) {
-            return Bank.format(stockPrice.getPrice()) + " ("
-                   + stockPrice.getName() + ")";
+            return Bank.format(stockPrice.get().getPrice()) + " ("
+                   + stockPrice.get().getName() + ")";
         }
         return "";
-    }
-
-    // StateI required methods
-    public Object get() {
-        return stockPrice;
-    }
-
-    public void setState(Object object) {
-        if (object == null) {
-            stockPrice = null;
-            update();
-        } else if (object instanceof StockSpaceI) {
-            stockPrice = (StockSpaceI) object;
-            update();
-        } else {
-            new Exception("Incompatible object type "
-                          + object.getClass().getName()
-                          + "passed to PriceModel " + name).printStackTrace();
-        }
-    }
-
-    public String getName() {
-        return name;
     }
 
 }

@@ -38,7 +38,7 @@ public abstract class Round extends GameItem implements RoundI {
     protected Portfolio pool = null;
     protected Portfolio unavailable = null;
     protected Portfolio scrapHeap = null;
-    protected StockMarketI stockMarket = null;
+    protected StockMarket stockMarket = null;
     protected MapManager mapManager = null;
 
     //protected Class<? extends RoundI> roundTypeForUI = null;
@@ -272,7 +272,7 @@ public abstract class Round extends GameItem implements RoundI {
         Map<Integer, PublicCompany> operatingCompanies =
             new TreeMap<Integer, PublicCompany>();
         List<PublicCompany> newOperatingCompanies;
-        StockSpaceI space;
+        StockSpace space;
         int key;
         int minorNo = 0;
         boolean reorder = gameManager.isDynamicOperatingOrder()

@@ -1,7 +1,8 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StockMarket.java,v 1.27 2010/03/10 17:26:45 stefanfrey Exp $ */
 package rails.game;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import rails.common.LocalText;
 import rails.common.parser.ConfigurableComponentI;
@@ -9,21 +10,28 @@ import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.state.GameItem;
 import rails.game.state.BooleanState;
-import rails.game.state.PriceTokenMove;
 
-public class StockMarket extends GameItem implements StockMarketI, ConfigurableComponentI {
+public class StockMarket extends GameItem implements ConfigurableComponentI {
 
-    protected HashMap<String, StockSpaceTypeI> stockSpaceTypes =
-        new HashMap<String, StockSpaceTypeI>();
-    protected HashMap<String, StockSpaceI> stockChartSpaces =
-        new HashMap<String, StockSpaceI>();
-    protected StockSpaceI stockChart[][];
-    protected StockSpaceI currentSquare;
+     /**
+     *  This is the name by which the CompanyManager should be registered with
+     * the ComponentManager.
+     */
+    public static final String COMPONENT_NAME = "StockMarket";
+    
+    
+    protected HashMap<String, StockSpaceType> stockSpaceTypes =
+        new HashMap<String, StockSpaceType>();
+    protected HashMap<String, StockSpace> stockChartSpaces =
+        new HashMap<String, StockSpace>();
+    
+    protected StockSpace stockChart[][];
+    protected StockSpace currentSquare;
     protected int numRows = 0;
     protected int numCols = 0;
-    protected ArrayList<StockSpaceI> startSpaces = new ArrayList<StockSpaceI>();
+    protected ArrayList<StockSpace> startSpaces = new ArrayList<StockSpace>();
     protected int[] startPrices;
-    protected StockSpaceTypeI defaultType;
+    protected StockSpaceType defaultType;
     
     GameManager gameManager;
 
@@ -55,19 +63,19 @@ public class StockMarket extends GameItem implements StockMarketI, ConfigurableC
         stockSpaceTypes.put (DEFAULT, defaultType);
 
         /* Read and configure the stock market space types */
-        List<Tag> typeTags = tag.getChildren(StockSpaceTypeI.ELEMENT_ID);
+        List<Tag> typeTags = tag.getChildren(StockSpaceType.ELEMENT_ID);
 
         if (typeTags != null) {
             for (Tag typeTag : typeTags) {
                 /* Extract the attributes of the Stock space type */
                 String name =
-                    typeTag.getAttributeAsString(StockSpaceTypeI.NAME_TAG);
+                    typeTag.getAttributeAsString(StockSpaceType.NAME_TAG);
                 if (name == null) {
                     throw new ConfigurationException(
                             LocalText.getText("UnnamedStockSpaceType"));
                 }
                 String colour =
-                    typeTag.getAttributeAsString(StockSpaceTypeI.COLOUR_TAG);
+                    typeTag.getAttributeAsString(StockSpaceType.COLOUR_TAG);
 
                 /* Check for duplicates */
                 if (stockSpaceTypes.get(name) != null) {
@@ -76,36 +84,36 @@ public class StockMarket extends GameItem implements StockMarketI, ConfigurableC
                 }
 
                 /* Create the type */
-                StockSpaceTypeI type = new StockSpaceType(name, colour);
+                StockSpaceType type = new StockSpaceType(name, colour);
                 stockSpaceTypes.put(name, type);
 
                 // Check the stock space type flags
-                type.setNoBuyLimit(typeTag.getChild(StockSpaceTypeI.NO_BUY_LIMIT_TAG) != null);
-                type.setNoCertLimit(typeTag.getChild(StockSpaceTypeI.NO_CERT_LIMIT_TAG) != null);
-                type.setNoHoldLimit(typeTag.getChild(StockSpaceTypeI.NO_HOLD_LIMIT_TAG) != null);
+                type.setNoBuyLimit(typeTag.getChild(StockSpaceType.NO_BUY_LIMIT_TAG) != null);
+                type.setNoCertLimit(typeTag.getChild(StockSpaceType.NO_CERT_LIMIT_TAG) != null);
+                type.setNoHoldLimit(typeTag.getChild(StockSpaceType.NO_HOLD_LIMIT_TAG) != null);
             }
         }
 
         /* Read and configure the stock market spaces */
-        List<Tag> spaceTags = tag.getChildren(StockSpaceI.ELEMENT_ID);
-        StockSpaceTypeI type;
+        List<Tag> spaceTags = tag.getChildren(StockSpace.ELEMENT_ID);
+        StockSpaceType type;
         int row, col;
         for (Tag spaceTag : spaceTags) {
             type = null;
 
             // Extract the attributes of the Stock space
-            String name = spaceTag.getAttributeAsString(StockSpaceI.NAME_TAG);
+            String name = spaceTag.getAttributeAsString(StockSpace.NAME_TAG);
             if (name == null) {
                 throw new ConfigurationException(
                         LocalText.getText("UnnamedStockSpace"));
             }
-            String price = spaceTag.getAttributeAsString(StockSpaceI.PRICE_TAG);
+            String price = spaceTag.getAttributeAsString(StockSpace.PRICE_TAG);
             if (price == null) {
                 throw new ConfigurationException(LocalText.getText(
                         "StockSpaceHasNoPrice", name));
             }
             String typeName =
-                spaceTag.getAttributeAsString(StockSpaceI.TYPE_TAG);
+                spaceTag.getAttributeAsString(StockSpace.TYPE_TAG);
             if (typeName != null
                     && (type = stockSpaceTypes.get(typeName)) == null) {
                 throw new ConfigurationException(LocalText.getText(
@@ -115,11 +123,10 @@ public class StockMarket extends GameItem implements StockMarketI, ConfigurableC
 
             if (stockChartSpaces.get(name) != null) {
                 throw new ConfigurationException(LocalText.getText(
-                        "StockSpaceIsConfiguredTwice", name));
+                        "StockSpacesConfiguredTwice", name));
             }
 
-            StockSpaceI space =
-                new StockSpace(this, name, Integer.parseInt(price), type);
+            StockSpace space = StockSpace.create(this, name, Integer.parseInt(price), type);
             stockChartSpaces.put(name, space);
 
             row = Integer.parseInt(name.substring(1));
@@ -128,14 +135,14 @@ public class StockMarket extends GameItem implements StockMarketI, ConfigurableC
             if (col > numCols) numCols = col;
 
             // Loop through the stock space flags
-            if (spaceTag.getChild(StockSpaceI.START_SPACE_TAG) != null) {
+            if (spaceTag.getChild(StockSpace.START_SPACE_TAG) != null) {
                 space.setStart(true);
                 startSpaces.add(space);
             }
-            space.setClosesCompany(spaceTag.getChild(StockSpaceI.CLOSES_COMPANY_TAG) != null);
-            space.setEndsGame(spaceTag.getChild(StockSpaceI.GAME_OVER_TAG) != null);
-            space.setBelowLedge(spaceTag.getChild(StockSpaceI.BELOW_LEDGE_TAG) != null);
-            space.setLeftOfLedge(spaceTag.getChild(StockSpaceI.LEFT_OF_LEDGE_TAG) != null);
+            space.setClosesCompany(spaceTag.getChild(StockSpace.CLOSES_COMPANY_TAG) != null);
+            space.setEndsGame(spaceTag.getChild(StockSpace.GAME_OVER_TAG) != null);
+            space.setBelowLedge(spaceTag.getChild(StockSpace.BELOW_LEDGE_TAG) != null);
+            space.setLeftOfLedge(spaceTag.getChild(StockSpace.LEFT_OF_LEDGE_TAG) != null);
 
         }
 
@@ -144,8 +151,8 @@ public class StockMarket extends GameItem implements StockMarketI, ConfigurableC
             startPrices[i] = (startSpaces.get(i)).getPrice();
         }
 
-        stockChart = new StockSpaceI[numRows][numCols];
-        for (StockSpaceI space : stockChartSpaces.values()) {
+        stockChart = new StockSpace[numRows][numCols];
+        for (StockSpace space : stockChartSpaces.values()) {
             stockChart[space.getRow()][space.getColumn()] = space;
         }
 
@@ -172,11 +179,11 @@ public class StockMarket extends GameItem implements StockMarketI, ConfigurableC
     /**
      * @return
      */
-    public StockSpaceI[][] getStockChart() {
+    public StockSpace[][] getStockChart() {
         return stockChart;
     }
 
-    public StockSpaceI getStockSpace(int row, int col) {
+    public StockSpace getStockSpace(int row, int col) {
         if (row >= 0 && row < numRows && col >= 0 && col < numCols) {
             return stockChart[row][col];
         } else {
@@ -190,7 +197,7 @@ public class StockMarket extends GameItem implements StockMarketI, ConfigurableC
 
     /*--- Actions ---*/
 
-    public void start(PublicCompany company, StockSpaceI price) {
+    public void start(PublicCompany company, StockSpace price) {
         prepareMove(company, null, price);
     }
 
@@ -211,8 +218,8 @@ public class StockMarket extends GameItem implements StockMarketI, ConfigurableC
     }
 
     public void moveUp(PublicCompany company) {
-        StockSpaceI oldsquare = company.getCurrentSpace();
-        StockSpaceI newsquare = oldsquare;
+        StockSpace oldsquare = company.getCurrentSpace();
+        StockSpace newsquare = oldsquare;
         int row = oldsquare.getRow();
         int col = oldsquare.getColumn();
         if (row > 0) {
@@ -228,8 +235,8 @@ public class StockMarket extends GameItem implements StockMarketI, ConfigurableC
     }
 
     protected void moveDown(PublicCompany company, int numberOfSpaces) {
-        StockSpaceI oldsquare = company.getCurrentSpace();
-        StockSpaceI newsquare = oldsquare;
+        StockSpace oldsquare = company.getCurrentSpace();
+        StockSpace newsquare = oldsquare;
         int row = oldsquare.getRow();
         int col = oldsquare.getColumn();
 
@@ -261,8 +268,8 @@ public class StockMarket extends GameItem implements StockMarketI, ConfigurableC
 
     protected void moveRightOrUp(PublicCompany company) {
         /* Ignore the amount for now */
-        StockSpaceI oldsquare = company.getCurrentSpace();
-        StockSpaceI newsquare = oldsquare;
+        StockSpace oldsquare = company.getCurrentSpace();
+        StockSpace newsquare = oldsquare;
         int row = oldsquare.getRow();
         int col = oldsquare.getColumn();
         if (col < numCols - 1 && !oldsquare.isLeftOfLedge()
@@ -273,8 +280,8 @@ public class StockMarket extends GameItem implements StockMarketI, ConfigurableC
     }
 
     protected void moveLeftOrDown(PublicCompany company) {
-        StockSpaceI oldsquare = company.getCurrentSpace();
-        StockSpaceI newsquare = oldsquare;
+        StockSpace oldsquare = company.getCurrentSpace();
+        StockSpace newsquare = oldsquare;
         int row = oldsquare.getRow();
         int col = oldsquare.getColumn();
         if (col > 0 && (newsquare = getStockSpace(row, col - 1)) != null) {}
@@ -286,8 +293,8 @@ public class StockMarket extends GameItem implements StockMarketI, ConfigurableC
         prepareMove(company, oldsquare, newsquare);
     }
 
-    protected void prepareMove(PublicCompany company, StockSpaceI from,
-            StockSpaceI to) {
+    protected void prepareMove(PublicCompany company, StockSpace from,
+            StockSpace to) {
         // To be written to a log file in the future.
         if (from != null && from == to) {
             ReportBuffer.add(LocalText.getText("PRICE_STAYS_LOG",
@@ -313,27 +320,31 @@ public class StockMarket extends GameItem implements StockMarketI, ConfigurableC
 
         }
         company.setCurrentSpace(to);
-        new PriceTokenMove(company, from, to, this);
+        
+        // the following 2 commands replaced: new PriceTokenMove(company, from, to, this);
+        to.addToken(company);
+        from.removeToken(company);
     }
-
-    public void processMove(PublicCompany company, StockSpaceI from,
-            StockSpaceI to) {
-        if (from != null) from.removeToken(company);
-        if (to != null) to.addToken(company);
-        company.updatePlayersWorth();
-    }
-
-    public void processMoveToStackPosition(PublicCompany company, StockSpaceI from,
-            StockSpaceI to, int toStackPosition) {
-        if (from != null) from.removeToken(company);
-        if (to != null) to.addTokenAtStackPosition(company, toStackPosition);
-        company.updatePlayersWorth();
-    }
+    
+    // TODO: Check what states effect players worth and link those
+//    public void processMove(PublicCompany company, StockSpace from,
+//            StockSpace to) {
+//        if (from != null) from.removeToken(company);
+//        if (to != null) to.addToken(company);
+//        company.updatePlayersWorth();
+//    }
+//
+//    public void processMoveToStackPosition(PublicCompany company, StockSpace from,
+//            StockSpace to, int toStackPosition) {
+//        if (from != null) from.removeToken(company);
+//        if (to != null) to.addTokenAtStackPosition(company, toStackPosition);
+//        company.updatePlayersWorth();
+//    }
 
     /**
      * @return
      */
-    public List<StockSpaceI> getStartSpaces() {
+    public List<StockSpace> getStartSpaces() {
         return startSpaces;
     }
 
@@ -346,8 +357,8 @@ public class StockMarket extends GameItem implements StockMarketI, ConfigurableC
         return startPrices;
     }
 
-    public StockSpaceI getStartSpace(int price) {
-        for (StockSpaceI square : startSpaces) {
+    public StockSpace getStartSpace(int price) {
+        for (StockSpace square : startSpaces) {
             if (square.getPrice() == price) return square;
         }
         return null;

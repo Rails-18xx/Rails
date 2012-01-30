@@ -279,7 +279,7 @@ public class PublicCompany extends Company implements CashOwner {
 
     protected GameManager gameManager;
     protected Bank bank;
-    protected StockMarketI stockMarket;
+    protected StockMarket stockMarket;
     protected MapManager mapManager;
     
     /** Rights */
@@ -911,7 +911,7 @@ public class PublicCompany extends Company implements CashOwner {
         return mustHaveOperatedToTradeShares;
     }
 
-    public void start(StockSpaceI startSpace) {
+    public void start(StockSpace startSpace) {
 
         hasStarted.set(true);
         if (hasStockPrice) buyable.set(true);
@@ -932,7 +932,7 @@ public class PublicCompany extends Company implements CashOwner {
     }
 
     public void start(int price) {
-        StockSpaceI startSpace = stockMarket.getStartSpace(price);
+        StockSpace startSpace = stockMarket.getStartSpace(price);
         if (startSpace == null) {
             log.error("Invalid start price " + Bank.format(price));
         } else {
@@ -1099,7 +1099,7 @@ public class PublicCompany extends Company implements CashOwner {
      *
      * @param spaceI
      */
-    public void setParSpace(StockSpaceI space) {
+    public void setParSpace(StockSpace space) {
         if (hasStockPrice) {
             if (space != null) {
                 parPrice.setPrice(space);
@@ -1113,7 +1113,7 @@ public class PublicCompany extends Company implements CashOwner {
      * @return StockSpace object, which defines the company start position on
      * the stock chart.
      */
-    public StockSpaceI getStartSpace() {
+    public StockSpace getStartSpace() {
         if (hasParPrice) {
             return parPrice != null ? parPrice.getPrice() : null;
         } else {
@@ -1156,7 +1156,7 @@ public class PublicCompany extends Company implements CashOwner {
      * @param price The StockSpace object that defines the new location on the
      * stock market.
      */
-    public void setCurrentSpace(StockSpaceI price) {
+    public void setCurrentSpace(StockSpace price) {
         if (price != null) {
             currentPrice.setPrice(price);
         }
@@ -1179,7 +1179,7 @@ public class PublicCompany extends Company implements CashOwner {
      * @return The StockSpace object that defines the current location on the
      * stock market.
      */
-    public StockSpaceI getCurrentSpace() {
+    public StockSpace getCurrentSpace() {
         return currentPrice != null ? currentPrice.getPrice() : null;
     }
 

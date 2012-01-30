@@ -6,7 +6,7 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
-import rails.game.StockSpaceI;
+import rails.game.StockSpace;
 import rails.ui.swing.elements.GUIStockSpace;
 
 /**
@@ -20,7 +20,7 @@ public class StockChart extends JFrame implements KeyListener {
 
     private GridLayout stockGrid;
     private GridBagConstraints gc;
-    private StockSpaceI[][] market;
+    private StockSpace[][] market;
     private GameUIManager gameUIManager;
 
     public StockChart(GameUIManager gameUIManager) {

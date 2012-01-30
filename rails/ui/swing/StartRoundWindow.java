@@ -604,15 +604,15 @@ public class StartRoundWindow extends JFrame implements ActionListener,
 
         if (activeItem.hasSharePriceToSet()) {
             String compName = activeItem.getCompanyToSetPriceFor();
-            StockMarketI stockMarket = gameUIManager.getGameManager().getStockMarket();
+            StockMarket stockMarket = gameUIManager.getGameManager().getStockMarket();
 
             // Get a sorted prices List
             // TODO: should be included in BuyStartItem
-            List<StockSpaceI> startSpaces = stockMarket.getStartSpaces();
-            Map<Integer, StockSpaceI> spacePerPrice =
-                    new HashMap<Integer, StockSpaceI>();
+            List<StockSpace> startSpaces = stockMarket.getStartSpaces();
+            Map<Integer, StockSpace> spacePerPrice =
+                    new HashMap<Integer, StockSpace>();
             int[] prices = new int[startSpaces.size()];
-            StockSpaceI[] options = new StockSpaceI[startSpaces.size()];
+            StockSpace[] options = new StockSpace[startSpaces.size()];
             for (int i = 0; i < startSpaces.size(); i++) {
                 prices[i] = startSpaces.get(i).getPrice();
                 spacePerPrice.put(prices[i], startSpaces.get(i));

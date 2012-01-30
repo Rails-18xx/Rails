@@ -22,7 +22,7 @@ public class Game {
     protected PlayerManager playerManager;
     protected PhaseManager phaseManager;
     protected TrainManager trainManager;
-    protected StockMarketI stockMarket;
+    protected StockMarket stockMarket;
     protected MapManager mapManager;
     protected TileManager tileManager;
     protected RevenueManager revenueManager;

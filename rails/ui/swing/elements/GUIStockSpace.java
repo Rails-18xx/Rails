@@ -14,7 +14,7 @@ import javax.swing.SwingConstants;
 import org.apache.log4j.Logger;
 
 import rails.game.PublicCompany;
-import rails.game.StockSpaceI;
+import rails.game.StockSpace;
 import rails.game.model.Model;
 import rails.game.state.Observable;
 import rails.game.state.Observer;
@@ -26,7 +26,7 @@ import rails.util.Util;
 public class GUIStockSpace extends JLayeredPane implements Observer {
 
     private static final long serialVersionUID = 1L;
-    StockSpaceI model;
+    StockSpace model;
     JLabel priceLabel;
 
     int depth = 0;
@@ -43,7 +43,7 @@ public class GUIStockSpace extends JLayeredPane implements Observer {
     protected static Logger log =
             Logger.getLogger(GUIStockSpace.class.getPackage().getName());
 
-    public GUIStockSpace(int x, int y, StockSpaceI model) {
+    public GUIStockSpace(int x, int y, StockSpace model) {
 
         this.model = model;
 

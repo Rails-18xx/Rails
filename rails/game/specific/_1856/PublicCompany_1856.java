@@ -13,7 +13,7 @@ public class PublicCompany_1856 extends PublicCompany {
     private boolean hadPermanentTrain = false;
 
     @Override
-    public void start(StockSpaceI startSpace) {
+    public void start(StockSpace startSpace) {
 
         super.start(startSpace);
 

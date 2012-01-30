@@ -21,7 +21,7 @@
 /*
  * public class StockMarketTestServlet extends HttpServlet {
  * 
- * private StockMarketI stockMarket = null; private Game game = null;
+ * private StockMarket stockMarket = null; private Game game = null;
  * 
  * public void init(ServletConfig config) throws ServletException {
  * super.init(config); }
@@ -51,7 +51,7 @@
  * protected void doWork(HttpServletRequest request, HttpServletResponse
  * response) throws ServletException, IOException {
  * 
- * int row, col; StockSpaceI square; Company comp; PublicCompany company;
+ * int row, col; StockSpace square; Company comp; PublicCompany company;
  * String companyName; int companyNumber; Iterator iterator, iterator2; int i;
  * List startSpaces; int price;
  * 
@@ -187,7 +187,7 @@
  * value=\"Start\"> at "); out.append("<select name=\"StartPrice_" +
  * companyNumber + "\">\n"); iterator2 =
  * stockMarket.getStartSpaces().iterator(); while (iterator2.hasNext()) { price =
- * ((StockSpaceI) iterator2.next()).getPrice(); out.append("<option value=\"" +
+ * ((StockSpace) iterator2.next()).getPrice(); out.append("<option value=\"" +
  * price + "\">" + price + "\n"); } out.append("</select>\n"); } out.append("</td></tr>\n"); }
  * out.append("</table>");
  * 

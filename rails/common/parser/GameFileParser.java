@@ -12,7 +12,7 @@ import rails.game.GameManager;
 import rails.game.MapManager;
 import rails.game.PhaseManager;
 import rails.game.PlayerManager;
-import rails.game.StockMarketI;
+import rails.game.StockMarket;
 import rails.game.TileManager;
 import rails.game.TrainManager;
 import rails.game.state.Context;
@@ -28,7 +28,7 @@ public class GameFileParser extends XMLParser {
     private PlayerManager playerManager;
     private PhaseManager phaseManager;
     private TrainManager trainManager;
-    private StockMarketI stockMarket;
+    private StockMarket stockMarket;
     private MapManager mapManager;
     private TileManager tileManager;
     private RevenueManager revenueManager;
@@ -48,7 +48,7 @@ public class GameFileParser extends XMLParser {
             playerManager = (PlayerManager) componentManager.findComponent("PlayerManager");
             bank = (Bank) componentManager.findComponent("Bank");
             companyManager = (CompanyManagerI) componentManager.findComponent(CompanyManagerI.COMPONENT_NAME);
-            stockMarket = (StockMarketI) componentManager.findComponent(StockMarketI.COMPONENT_NAME);
+            stockMarket = (StockMarket) componentManager.findComponent(StockMarket.COMPONENT_NAME);
             gameManager = (GameManager) componentManager.findComponent("GameManager");
             phaseManager = (PhaseManager) componentManager.findComponent("PhaseManager");
             trainManager = (TrainManager) componentManager.findComponent("TrainManager");
@@ -110,7 +110,7 @@ public class GameFileParser extends XMLParser {
     /**
      * @return the stockMarket
      */
-    public StockMarketI getStockMarket() {
+    public StockMarket getStockMarket() {
         return stockMarket;
     }
 

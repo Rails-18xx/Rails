@@ -39,8 +39,8 @@ public class StockRound extends Round {
 
     protected IntegerState numPasses = IntegerState.create(this, "StockRoundPasses");
 
-    protected Map<PublicCompany, StockSpaceI> sellPrices =
-        new HashMap<PublicCompany, StockSpaceI>();
+    protected Map<PublicCompany, StockSpace> sellPrices =
+        new HashMap<PublicCompany, StockSpace>();
 
     /** Records lifted share selling obligations in the current round<p>
      * Example: >60% ownership allowed after a merger in 18EU.
@@ -166,7 +166,7 @@ public class StockRound extends Round {
         List<PublicCertificate> certs;
         PublicCertificate cert;
         PublicCompany comp;
-        StockSpaceI stockSpace;
+        StockSpace stockSpace;
         Portfolio from;
         int price;
         int number;
@@ -544,7 +544,7 @@ public class StockRound extends Round {
         int shares = action.getNumberBought();
 
         String errMsg = null;
-        StockSpaceI startSpace = null;
+        StockSpace startSpace = null;
         int numberOfCertsToBuy = 0;
         PublicCertificate cert = null;
         String companyName = company.getId();
@@ -748,7 +748,7 @@ public class StockRound extends Round {
                 break;
             }
 
-            StockSpaceI currentSpace;
+            StockSpace currentSpace;
             if (from == ipo && company.hasParPrice()) {
                 currentSpace = company.getStartSpace();
             } else {
@@ -873,7 +873,7 @@ public class StockRound extends Round {
     }
 
     /** Allow different price setting in subclasses (i.e. 1835 Nationalisation) */
-    protected int getBuyPrice (BuyCertificate action, StockSpaceI currentSpace) {
+    protected int getBuyPrice (BuyCertificate action, StockSpace currentSpace) {
         return currentSpace.getPrice();
     }
 
@@ -1163,7 +1163,7 @@ public class StockRound extends Round {
 
         stockMarket.sell(company, numberSold);
 
-        StockSpaceI newSpace = company.getCurrentSpace();
+        StockSpace newSpace = company.getCurrentSpace();
 
         if (newSpace.closesCompany() && company.canClose()) {
             company.setClosed();
@@ -1322,9 +1322,9 @@ public class StockRound extends Round {
         /* Check if any companies are sold out. */
         for (PublicCompany company : gameManager.getCompaniesInRunningOrder()) {
             if (company.hasStockPrice() && company.isSoldOut()) {
-                StockSpaceI oldSpace = company.getCurrentSpace();
+                StockSpace oldSpace = company.getCurrentSpace();
                 stockMarket.soldOut(company);
-                StockSpaceI newSpace = company.getCurrentSpace();
+                StockSpace newSpace = company.getCurrentSpace();
                 if (newSpace != oldSpace) {
                     ReportBuffer.add(LocalText.getText("SoldOut",
                             company.getId(),

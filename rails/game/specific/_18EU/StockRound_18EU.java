@@ -73,7 +73,7 @@ public class StockRound_18EU extends StockRound {
         List<PublicCertificate> certs;
         PublicCertificate cert;
         PublicCompany comp;
-        StockSpaceI stockSpace;
+        StockSpace stockSpace;
         Portfolio from;
         int price;
 
@@ -282,7 +282,7 @@ public class StockRound_18EU extends StockRound {
         int shares = action.getNumberBought();
 
         String errMsg = null;
-        StockSpaceI startSpace = null;
+        StockSpace startSpace = null;
         int numberOfCertsToBuy = 0;
         PublicCertificate cert = null;
         String companyName = company.getId();

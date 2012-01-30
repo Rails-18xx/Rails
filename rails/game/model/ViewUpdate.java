@@ -9,6 +9,8 @@ import java.util.*;
  * <p> The current version has text, background colour and foreground colour.
  * Receiving view objects must be prepared to handle extensions.
  * @author VosE
+ * 
+ * TODO: Replace all previous use cases for this class
  *
  */
 @Deprecated

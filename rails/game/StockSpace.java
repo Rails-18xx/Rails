@@ -1,20 +1,54 @@
 package rails.game;
 
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import com.google.common.collect.ImmutableList;
+
 import rails.game.model.Model;
-import rails.game.state.GameItem;
+import rails.game.state.ArrayListState;
+import rails.game.state.Item;
 
 /**
  * Objects of this class represent a square on the StockMarket.
  */
-public class StockSpace extends Model implements StockSpaceI {
+public class StockSpace extends Model {
 
     /*--- Class attributes ---*/
+    /*--- Constants ---*/
+    /** The name of the XML tag used to configure a stock space. */
+    public static final String ELEMENT_ID = "StockSpace";
+
+    /**
+     * The name of the XML attribute for the stock price's name (like "A1" -
+     * naming is like spreadsheet cells.
+     */
+    public static final String NAME_TAG = "name";
+
+    /** The name of the XML attribute for the stock price. */
+    public static final String PRICE_TAG = "price";
+
+    /** The name of the XML attribute for the stock price type (optional). */
+    public static final String TYPE_TAG = "type";
+
+    /**
+     * The name of the XML tag for the "startSpace" property. (indicating an
+     * allowed PAR price)
+     */
+    public static final String START_SPACE_TAG = "StartSpace";
+
+    /** The name of the XML tag for the "below ledge" property. */
+    public static final String BELOW_LEDGE_TAG = "BelowLedge";
+
+    /** The name of the XML tag for the "left of ledge" property. */
+    public static final String LEFT_OF_LEDGE_TAG = "LeftOfLedge";
+
+    /** The name of the XML tag for the "closes company" property. */
+    public static final String CLOSES_COMPANY_TAG = "ClosesCompany";
+
+    /** The name of the XML tag for the "gamn over" property. */
+    public static final String GAME_OVER_TAG = "GameOver";
 
     /*--- Instance attributes ---*/
     protected String name;
@@ -27,27 +61,46 @@ public class StockSpace extends Model implements StockSpaceI {
     protected boolean closesCompany = false;// For 1856 and other games
     protected boolean endsGame = false; // For 1841 and other games
     protected boolean start = false; // Company may start here
-    protected StockSpaceTypeI type = null;
-    protected ArrayList<PublicCompany> tokens =
-            new ArrayList<PublicCompany>();
-    protected ArrayList<PublicCompany> fixedStartPrices =
-            new ArrayList<PublicCompany>();
+    protected StockSpaceType type = null;
+    
+    
+    /*--- State fields */
+    protected final ArrayListState<PublicCompany> tokens = ArrayListState.create("tokens");
+    protected final ArrayListState<PublicCompany> fixedStartPrices = ArrayListState.create("fixedStartPrices");
 
     protected static Logger log =
             Logger.getLogger(StockSpace.class.getPackage().getName());
 
     /*--- Contructors ---*/
-    public StockSpace(GameItem owner, String name, int price, StockSpaceTypeI type) {
-        super(owner, name);
-        this.name = name;
+    private StockSpace(String id, int price, StockSpaceType type) {
+        super(id);
+        this.name = id;
         this.price = price;
         this.type = type;
-        this.row = Integer.parseInt(name.substring(1)) - 1;
-        this.column = (name.toUpperCase().charAt(0) - '@') - 1;
+        this.row = Integer.parseInt(id.substring(1)) - 1;
+        this.column = (id.toUpperCase().charAt(0) - '@') - 1;
     }
 
-    public StockSpace(GameItem owner, String name, int price) {
-        this(owner, name, price, null);
+    /**
+     * Factory method for initialized StockSpace
+     */
+    public static StockSpace create(Item parent, String id, int price, StockSpaceType type) {
+        return new StockSpace(id, price, type).init(parent);
+    }
+    
+    /**
+     * Factory method for initialized StockSpace with default StockSpaceType
+     */
+    public static StockSpace create (Item parent, String id, int price) {
+        return create(parent, id, price, null);
+    }
+    
+    @Override
+    public StockSpace init(Item parent){
+        super.init(parent);
+        tokens.init(this);
+        fixedStartPrices.init(this);
+        return this;
     }
     
 
@@ -64,16 +117,12 @@ public class StockSpace extends Model implements StockSpaceI {
     public boolean addToken(PublicCompany company) {
         log.debug(company.getId() + " price token added to " + name);
         tokens.add(company);
-        // TODO: is this still required?
-        update();
         return true;
     }
 
     public boolean addTokenAtStackPosition(PublicCompany company, int stackPosition) {
         log.debug(company.getId() + " price token added to " + name + "  at stack position "+stackPosition);
         tokens.add(stackPosition, company);
-        // TODO: is this still required?
-        update();
         return true;
     }
 
@@ -85,22 +134,11 @@ public class StockSpace extends Model implements StockSpaceI {
      */
     public boolean removeToken(PublicCompany company) {
         log.debug(company.getId() + " price token removed from " + name);
-        int index = tokens.indexOf(company);
-        if (index >= 0) {
-            tokens.remove(index);
-            // TODO: is this still required?
-            update();
-            return true;
-        } else {
-            return false;
-        }
+        return tokens.remove(company);
     }
 
-    /**
-     * @return
-     */
-    public List<PublicCompany> getTokens() {
-        return tokens;
+    public ImmutableList<PublicCompany> getTokens() {
+        return tokens.view();
     }
 
     /**
@@ -118,8 +156,8 @@ public class StockSpace extends Model implements StockSpaceI {
         fixedStartPrices.add(company);
     }
 
-    public List<PublicCompany> getFixedStartPrices() {
-        return fixedStartPrices;
+    public ImmutableList<PublicCompany> getFixedStartPrices() {
+        return fixedStartPrices.view();
     }
 
     /*--- Getters ---*/
@@ -179,7 +217,7 @@ public class StockSpace extends Model implements StockSpaceI {
     /**
      * @return
      */
-    public StockSpaceTypeI getType() {
+    public StockSpaceType getType() {
         return type;
     }
 

@@ -351,7 +351,7 @@ public class ShareSellingRound extends StockRound {
         }
 
         // All seems OK, now do the selling.
-        StockSpaceI sellPrice;
+        StockSpace sellPrice;
         int price;
 
         // Get the sell price (does not change within a turn)
