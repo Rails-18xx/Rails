@@ -100,8 +100,8 @@ public class SoundContext {
                 
                 //additionally play stock market opening bell if appropriate
                 if (SoundConfig.isSFXEnabled() && currentRound instanceof StockRound) {
-                    player.playSFXWithFollowupBGM(
-                            SoundConfig.get(SoundConfig.KEY_SFX_SR_OpeningBell),
+                    player.playSFXByConfigKeyWithFollowupBGM(
+                            SoundConfig.KEY_SFX_SR_OpeningBell,
                             newBackgroundMusicFileName);
                 } else {
                     player.playBGM(newBackgroundMusicFileName);

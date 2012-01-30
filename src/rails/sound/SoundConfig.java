@@ -1,5 +1,9 @@
 package rails.sound;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import rails.common.parser.Config;
 
 /**
@@ -40,6 +44,16 @@ public class SoundConfig {
     public static final String KEY_SFX_OR_Decision_Withhold = "sound.sfx.or.decision.withhold";
     public static final String KEY_SFX_OR_BuyTrain = "sound.sfx.or.buyTrain";
     public static final String KEY_SFX_OR_BuyPrivate = "sound.sfx.or.buyPrivate";
+    
+    /**
+     * list of sfx which are to be played immediately (without waiting for completion of
+     * prior sfx threads)
+     */
+    public static final Set<String> KEYS_SFX_IMMEDIATE_PLAYING = new HashSet<String>
+        (Arrays.asList( new String[] {
+            KEY_SFX_GEN_Select,
+            KEY_SFX_OR_RotateTile
+        }));
     
     //if set to true, sfx is reported not to be enabled irrespective of the configuration 
     private static boolean isSFXDisabled = false;
