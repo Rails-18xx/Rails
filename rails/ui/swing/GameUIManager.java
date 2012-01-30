@@ -250,6 +250,13 @@ public class GameUIManager implements DialogOwner {
             Player oldPlayer = getCurrentPlayer();
             boolean wasMyTurn = oldPlayer.getName().equals(localPlayerName);
 
+            // Notify the Sound Manager about this action, as it could lead to
+            // playing sfx or music.
+            // Notification has to be done before action processing so that
+            // resulting sfx are played in the correct order (first the action
+            // related sfx and then model-change related sfx)
+            SoundManager.notifyOfActionProcessing(gameManager, action);
+            
             // Process the action on the server
             result = previousResult = processOnServer (action);
 
@@ -281,10 +288,6 @@ public class GameUIManager implements DialogOwner {
             }
         }
 
-        // Inform the Sound Manager about this action, as it could lead to
-        // playing sfx or music
-        SoundManager.notifyOfActionProcessing(gameManager, action);
-        
         // Check in which round we are now,
         // and make sure that the right window is active.
         updateUI();
