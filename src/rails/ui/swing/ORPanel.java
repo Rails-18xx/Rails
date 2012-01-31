@@ -742,6 +742,10 @@ implements ActionListener, KeyListener, RevenueListener {
                 int revenueValue = ra.calculateRevenue();
                 log.debug("Revenue Value:" + revenueValue);
                 log.debug("Revenue Run:" + ra.getOptimalRunPrettyPrint(true));
+                //try-catch clause temporary workaround as revenue adapter's 
+                //convertRcRun might erroneously raise exceptions
+                try {revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());}
+                catch (Exception e) {}
 
                 //try-catch clause temporary workaround as revenue adapter's 
                 //convertRcRun might erroneously raise exceptions

@@ -620,6 +620,9 @@ public class GameStatus extends GridPanel implements ActionListener {
             //notify sound manager that click field has been selected
             SoundManager.notifyOfClickFieldSelection(actions.get(0));
 
+            //notify sound manager that click field has been selected
+            SoundManager.notifyOfClickFieldSelection(actions.get(0));
+
             // Assume that we will have either sell or buy actions
             // under one ClickField, not both. This seems guaranteed.
             log.debug("Action is " + actions.get(0).toString());

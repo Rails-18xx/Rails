@@ -558,6 +558,9 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
             
             //notify sound manager that click field has been selected
             SoundManager.notifyOfClickFieldSelection(currentActiveItem);
+            
+            //notify sound manager that click field has been selected
+            SoundManager.notifyOfClickFieldSelection(currentActiveItem);
 
             if (currentActiveItem instanceof BuyStartItem) {
                 buyButton.setEnabled(true);
