@@ -1427,6 +1427,10 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         return currentRound;
     }
 
+    public GenericState<Player> getCurrentPlayerModel() {
+        return currentPlayer;
+    }
+
     /* (non-Javadoc)
      * @see rails.game.GameManager#getCurrentPlayerIndex()
      */
