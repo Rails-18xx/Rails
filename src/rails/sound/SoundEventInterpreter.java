@@ -9,9 +9,9 @@ import rails.ui.swing.ORUIManager;
 /**
  * Converts processed actions and model updates to triggers for playing sounds.
  * 
- * Model observers get their own inner classes since their constructors are parameterized
+ * Some model observers get their own inner classes since their constructors are parameterized
  * (needed to initialize member variables among others - especially important if game is
- * loaded).
+ * loaded since game status will not be initial upon initialization of the sound framework).
  *  
  * @author Frederick Weld
  *
@@ -20,6 +20,28 @@ import rails.ui.swing.ORUIManager;
 // FIXME: The observer approach has been changed to be compatible with Rails 2.0
 // However it is untested so far, and relays on the issue of toText() methods
 public class SoundEventInterpreter {
+
+    private class CurrentPlayerModelObserver implements Observer {
+        private Player formerCurrentPlayer = null;
+        private GameManager gm;
+        public CurrentPlayerModelObserver(GameManager gm) {
+            this.gm = gm;
+            if (gm != null) formerCurrentPlayer = gm.getCurrentPlayer();
+        }
+        public void update(String text) {
+            if (formerCurrentPlayer != gm.getCurrentPlayer()) {
+                formerCurrentPlayer = gm.getCurrentPlayer();
+                if (SoundConfig.isSFXEnabled()) {
+                    player.playSFXByConfigKey (
+                            SoundConfig.KEY_SFX_GEN_NewCurrentPlayer,
+                            gm.getCurrentPlayer().getId());
+                }
+            }
+        }
+        public Observable getObservable() {
+            return gm.getCurrentPlayerModel();
+        }
+    }
 
     private class PresidentModelObserver implements Observer {
         private final PresidentModel model;
@@ -161,6 +183,12 @@ public class SoundEventInterpreter {
         }
     }
     public void notifyOfGameInit(final GameManager gameManager) {
+        //subscribe to current player changes
+        if (gameManager.getCurrentPlayerModel() != null) {
+            gameManager.getCurrentPlayerModel().addObserver(
+                    new CurrentPlayerModelObserver(gameManager));
+        }
+
         //subscribe to round changes
         if (gameManager.getCurrentRoundModel() != null) {
             gameManager.getCurrentRoundModel().addObserver(

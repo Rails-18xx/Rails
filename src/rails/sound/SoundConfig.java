@@ -26,6 +26,7 @@ public class SoundConfig {
     public static final String KEY_SFX_Enabled = "sound.sfx";
     public static final String KEY_SFX_GEN_Pass = "sound.sfx.gen.pass";
     public static final String KEY_SFX_GEN_Select = "sound.sfx.gen.select";
+    public static final String KEY_SFX_GEN_NewCurrentPlayer = "sound.sfx.gen.newCurrentPlayer";
     public static final String KEY_SFX_STR_BidStartItem = "sound.sfx.str.bidStartItem";
     public static final String KEY_SFX_STR_BuyStartItem = "sound.sfx.str.buyStartItem";
     public static final String KEY_SFX_SR_OpeningBell = "sound.sfx.sr.openingBell";
