@@ -50,7 +50,7 @@ public class SoundPlayer {
             
             //wake the subsequent thread if there is one waiting
             synchronized (this) {
-                notify();
+                notifyAll();
                 playingDone = true;
             }
         }
@@ -125,11 +125,17 @@ public class SoundPlayer {
     private class LoopPlayerThread extends PlayerThread {
         boolean isStopped = false;
         Player player = null;
+        LoopPlayerThread previousLoopPlayerThread = null;
         public LoopPlayerThread(String fileName) {
             super(fileName);
         }
         public void play() {
             try {
+                //stop prior BGM music
+                if (previousLoopPlayerThread != null) {
+                    previousLoopPlayerThread.interrupt();
+                }
+
                 while (!isStopped) {
                     FileInputStream fis = new FileInputStream(fileName);
                     BufferedInputStream bis = new BufferedInputStream(fis);
@@ -148,16 +154,8 @@ public class SoundPlayer {
             isStopped = true;
             if (player!=null) player.close();
         }
-    }
-    private class PlayerThreadWithFollowupBGM extends PlayerThread {
-        private String bgmFileName;
-        public PlayerThreadWithFollowupBGM(String fileName, String bgmFileName) {
-            super(fileName);
-            this.bgmFileName = bgmFileName;
-        }    
-        public void play() {
-            super.play();
-            playBGM(bgmFileName);
+        public void setPreviousLoopPlayer(LoopPlayerThread previousLoopPlayerThread) {
+            this.previousLoopPlayerThread = previousLoopPlayerThread;
         }
     }
     
@@ -187,65 +185,58 @@ public class SoundPlayer {
         return pt;
     }
     
-    private void playSFX(PlayerThread newPlayerThread,boolean waitForEndOfPriorSFX) {
+    private void playSFX(PlayerThread newPlayerThread,boolean playImmediately) {
         PlayerThread oldPlayerThread = adjustLastSFXThread(newPlayerThread);
-        if (waitForEndOfPriorSFX) {
+        if (!playImmediately) {
             newPlayerThread.setPriorThread(oldPlayerThread);
         }
         newPlayerThread.start();
     }
     
-    /**
-     * SFX played after prior SFX playing has been completed  
-     */
-    public void playSFX(String fileName) {
-        playSFX(fileName,true);
+    private void playSFX(String fileName, boolean playImmediately) {
+        playSFX(new PlayerThread (fileName),playImmediately);
     }
-    public void playSFX(String fileName, boolean waitForEndOfPriorSFX) {
-        playSFX(new PlayerThread (fileName),waitForEndOfPriorSFX);
+
+    private void playSFX(String fileName, double playSoundProportion, boolean playImmediately) {
+        playSFX(new PortionPlayerThread (fileName, 1 - playSoundProportion, 1)
+                ,playImmediately);
     }
+
     /**
      * SFX played after prior SFX playing has been completed  
      */
     public void playSFXByConfigKey(String configKey) {
-        playSFXByConfigKey(configKey, true);
-    }
-    public void playSFXByConfigKey(String configKey, boolean waitForEndOfPriorSFX) {
-        playSFX(SoundConfig.get(configKey), waitForEndOfPriorSFX);
+        playSFX(SoundConfig.get(configKey),
+                SoundConfig.KEYS_SFX_IMMEDIATE_PLAYING.contains(configKey));
     }
     public void playSFXByConfigKey(String configKey,String parameter) {
-        playSFX(SoundConfig.get(configKey,parameter));
+        playSFX(SoundConfig.get(configKey,parameter),
+                SoundConfig.KEYS_SFX_IMMEDIATE_PLAYING.contains(configKey));
     }
 
-    public void playSFX(String fileName, double playSoundProportion) {
-        playSFX(new PortionPlayerThread (fileName, 1 - playSoundProportion, 1),true);
-    }
-    
     /**
      * The latter part of the sfx is played.
      * @param playSoundProportion The length of this part relatively to the overall sound duration.
      */
     public void playSFXByConfigKey(String configKey, double playSoundProportion) {
-        playSFX(SoundConfig.get(configKey), playSoundProportion);
-    }
-    
-    public void playSFXWithFollowupBGM(String sfxFileName,String bgmFileName) {
-        playSFX(new PlayerThreadWithFollowupBGM (sfxFileName,bgmFileName),true);
+        playSFX(SoundConfig.get(configKey), playSoundProportion,
+                SoundConfig.KEYS_SFX_IMMEDIATE_PLAYING.contains(configKey));
     }
     
     /**
-     * Plays the specified SFX and, after completing SFX play, the specified BGM
-     * is launched.
+     * Plays new background music and stops old BGM only after all currently playing 
+     * sfx are finished.
      */
-    public void playSFXWithFollowupBGMByConfigKey(String sfxConfigKey, String bgmConfigKey) {
-        playSFXWithFollowupBGM(
-                SoundConfig.get(sfxConfigKey),SoundConfig.get(bgmConfigKey));
-    }
-    
     public void playBGM(String backgroundMusicFileName) {
         LoopPlayerThread newPlayerThread = new LoopPlayerThread(backgroundMusicFileName);
         LoopPlayerThread oldPlayerThread = adjustLastBGMThread(newPlayerThread);
-        if (oldPlayerThread != null) oldPlayerThread.interrupt();
+        
+        //interrupt old bgm when starting the new bgm
+        newPlayerThread.setPreviousLoopPlayer(oldPlayerThread);
+        
+        //wait for playing new bgm until all sfx have finished playing
+        newPlayerThread.setPriorThread(lastSFXThread);
+        
         newPlayerThread.start();
     }
     

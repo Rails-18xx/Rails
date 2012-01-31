@@ -6,18 +6,38 @@ import java.util.Observer;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.state.*;
+import rails.ui.swing.ORUIManager;
 
 /**
  * Converts processed actions and model updates to triggers for playing sounds.
  * 
- * Model observers get their own inner classes since their constructors are parameterized
+ * Some model observers get their own inner classes since their constructors are parameterized
  * (needed to initialize member variables among others - especially important if game is
- * loaded).
+ * loaded since game status will not be initial upon initialization of the sound framework).
  *  
  * @author Frederick Weld
  *
  */
 public class SoundEventInterpreter {
+
+    private class CurrentPlayerModelObserver implements Observer {
+        private Player formerCurrentPlayer = null;
+        private GameManagerI gm;
+        public CurrentPlayerModelObserver(GameManagerI gm) {
+            this.gm = gm;
+            if (gm != null) formerCurrentPlayer = gm.getCurrentPlayer();
+        }
+        public void update(Observable o, Object arg) {
+            if (formerCurrentPlayer != gm.getCurrentPlayer()) {
+                formerCurrentPlayer = gm.getCurrentPlayer();
+                if (SoundConfig.isSFXEnabled()) {
+                    player.playSFXByConfigKey (
+                            SoundConfig.KEY_SFX_GEN_NewCurrentPlayer,
+                            gm.getCurrentPlayer().getName());
+                }
+            }
+        }
+    }
 
     private class PresidentModelObserver implements Observer {
         private PublicCompanyI pc;
@@ -72,7 +92,8 @@ public class SoundEventInterpreter {
             //General actions
             
             if (action instanceof NullAction) {
-                if (((NullAction)action).getMode() == NullAction.PASS) {
+                if (((NullAction)action).getMode() == NullAction.PASS
+                        || ((NullAction)action).getMode() == NullAction.AUTOPASS) {
                     player.playSFXByConfigKey (SoundConfig.KEY_SFX_GEN_Pass);
                 }
                 
@@ -147,6 +168,12 @@ public class SoundEventInterpreter {
         }
     }
     public void notifyOfGameInit(GameManagerI gameManager) {
+        //subscribe to current player changes
+        if (gameManager.getCurrentPlayerModel() != null) {
+            gameManager.getCurrentPlayerModel().addObserver(
+                    new CurrentPlayerModelObserver(gameManager));
+        }
+
         //subscribe to round changes
         if (gameManager.getCurrentRoundModel() != null) {
             gameManager.getCurrentRoundModel().addObserver(
@@ -186,11 +213,42 @@ public class SoundEventInterpreter {
     public void notifyOfTimeWarp(boolean timeWarpMode) {
         SoundConfig.setSFXDisabled(timeWarpMode);
     }
-    public void notifyOfRotateTile() {
+    /**
+     * Interprets changes/status of OR local steps in order to trigger sfx that
+     * are related to neither model changes nor game engine actions.
+     * Is triggered whenever some step changes (but priorStep is allowed to be
+     * equal to currentStep)
+     * @param currentStep Step as defined as constant in ORUIManager
+     */
+    public void notifyOfORLocalStep(int currentStep) {
         if (SoundConfig.isSFXEnabled()) {
-            //don't wait for prior SFX playing end, otherwise quickly repeated
-            //rotations would lead to a long queue of sequentially played sfx
-            player.playSFXByConfigKey(SoundConfig.KEY_SFX_OR_RotateTile,false);
+            //play rotate sound if tile has been rotated or is now ready for rotations
+            if (currentStep == ORUIManager.ROTATE_OR_CONFIRM_TILE) {
+                player.playSFXByConfigKey(SoundConfig.KEY_SFX_OR_RotateTile);
+            }
+            
+            //play hex selection sound if the follow-up step (select tile/token) is active
+            //(don't consider whether prior step was "select hex..." because hexes
+            // can also be selected during selectTile/Token)
+            else if ( currentStep == ORUIManager.SELECT_TILE 
+                    || currentStep == ORUIManager.SELECT_TOKEN ) {
+                player.playSFXByConfigKey(SoundConfig.KEY_SFX_GEN_Select);
+                
+            }
+        }
+    }
+    /**
+     * Interprets selections of ClickFields
+     * @param clickFieldAction The action associated with the click field
+     */
+    public void notifyOfClickFieldSelection(PossibleAction clickFieldAction) {
+        if (SoundConfig.isSFXEnabled()) {
+            if (clickFieldAction instanceof BidStartItem
+                    || clickFieldAction instanceof BuyStartItem
+                    || clickFieldAction instanceof BuyCertificate
+                    || clickFieldAction instanceof SellShares) {
+                player.playSFXByConfigKey(SoundConfig.KEY_SFX_GEN_Select);
+            }
         }
     }
 }

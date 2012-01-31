@@ -1,5 +1,9 @@
 package rails.sound;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import rails.common.parser.Config;
 
 /**
@@ -21,6 +25,8 @@ public class SoundConfig {
     public static final String KEY_BGM_EndOfGameRound = "sound.backgroundMusic.endOfGameRound";
     public static final String KEY_SFX_Enabled = "sound.sfx";
     public static final String KEY_SFX_GEN_Pass = "sound.sfx.gen.pass";
+    public static final String KEY_SFX_GEN_Select = "sound.sfx.gen.select";
+    public static final String KEY_SFX_GEN_NewCurrentPlayer = "sound.sfx.gen.newCurrentPlayer";
     public static final String KEY_SFX_STR_BidStartItem = "sound.sfx.str.bidStartItem";
     public static final String KEY_SFX_STR_BuyStartItem = "sound.sfx.str.buyStartItem";
     public static final String KEY_SFX_SR_OpeningBell = "sound.sfx.sr.openingBell";
@@ -39,6 +45,17 @@ public class SoundConfig {
     public static final String KEY_SFX_OR_Decision_Withhold = "sound.sfx.or.decision.withhold";
     public static final String KEY_SFX_OR_BuyTrain = "sound.sfx.or.buyTrain";
     public static final String KEY_SFX_OR_BuyPrivate = "sound.sfx.or.buyPrivate";
+    
+    /**
+     * list of sfx which are to be played immediately (without waiting for completion of
+     * prior sfx threads)
+     */
+    public static final Set<String> KEYS_SFX_IMMEDIATE_PLAYING = new HashSet<String>
+        (Arrays.asList( new String[] {
+            KEY_SFX_GEN_Pass,
+            KEY_SFX_GEN_Select,
+            KEY_SFX_OR_RotateTile
+        }));
     
     //if set to true, sfx is reported not to be enabled irrespective of the configuration 
     private static boolean isSFXDisabled = false;

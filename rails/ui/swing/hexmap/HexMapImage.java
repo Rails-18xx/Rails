@@ -2,13 +2,7 @@
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
-import java.awt.event.*;
 import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
-import java.awt.image.BufferedImage;
-import java.io.File;
-
-import javax.swing.*;
 
 import org.apache.batik.swing.JSVGCanvas;
 import org.apache.batik.swing.gvt.GVTTreeRendererAdapter;
@@ -25,6 +19,8 @@ import rails.util.Util;
  * it to be displayed in a lower layer of a LayeredPane.
  */
 public final class HexMapImage extends JSVGCanvas  {
+
+    private static final long serialVersionUID = 1L;
 
     protected static Logger log =
             Logger.getLogger(HexMapImage.class.getPackage().getName());

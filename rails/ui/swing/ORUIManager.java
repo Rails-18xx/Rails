@@ -664,11 +664,9 @@ public class ORUIManager implements DialogOwner {
             if (localStep == ROTATE_OR_CONFIRM_TILE
                     && clickedHex == selectedHex) {
                 selectedHex.rotateTile();
-                //directly inform sound framework of "rotate tile" as this is
-                //neither an action nor a model change
-                //call not put to GUIHex so that sound notification calls are
-                //centrally done by UIManagers (Game, OR)
-                SoundManager.notifyOfRotateTile();
+                //directly inform sound framework of "rotate tile" local step
+                //as notification via "set local step" does not occur
+                SoundManager.notifyOfORLocalStep(localStep);
                 return true;
 
             } else {
@@ -1795,6 +1793,9 @@ public class ORUIManager implements DialogOwner {
     public void setLocalStep(int localStep) {
         log.debug("Setting upgrade step to " + localStep + " "
                 + ORUIManager.messageKey[localStep]);
+
+        SoundManager.notifyOfORLocalStep(localStep);
+
         this.localStep = localStep;
 
         updateMessage();

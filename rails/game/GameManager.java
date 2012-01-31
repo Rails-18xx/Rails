@@ -1428,6 +1428,10 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         return currentRound;
     }
 
+    public ModelObject getCurrentPlayerModel() {
+        return currentPlayer;
+    }
+
     /* (non-Javadoc)
      * @see rails.game.GameManagerI#getCurrentPlayerIndex()
      */
