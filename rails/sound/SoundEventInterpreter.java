@@ -11,14 +11,33 @@ import rails.ui.swing.ORUIManager;
 /**
  * Converts processed actions and model updates to triggers for playing sounds.
  * 
- * Model observers get their own inner classes since their constructors are parameterized
+ * Some model observers get their own inner classes since their constructors are parameterized
  * (needed to initialize member variables among others - especially important if game is
- * loaded).
+ * loaded since game status will not be initial upon initialization of the sound framework).
  *  
  * @author Frederick Weld
  *
  */
 public class SoundEventInterpreter {
+
+    private class CurrentPlayerModelObserver implements Observer {
+        private Player formerCurrentPlayer = null;
+        private GameManagerI gm;
+        public CurrentPlayerModelObserver(GameManagerI gm) {
+            this.gm = gm;
+            if (gm != null) formerCurrentPlayer = gm.getCurrentPlayer();
+        }
+        public void update(Observable o, Object arg) {
+            if (formerCurrentPlayer != gm.getCurrentPlayer()) {
+                formerCurrentPlayer = gm.getCurrentPlayer();
+                if (SoundConfig.isSFXEnabled()) {
+                    player.playSFXByConfigKey (
+                            SoundConfig.KEY_SFX_GEN_NewCurrentPlayer,
+                            gm.getCurrentPlayer().getName());
+                }
+            }
+        }
+    }
 
     private class PresidentModelObserver implements Observer {
         private PublicCompanyI pc;
@@ -149,6 +168,12 @@ public class SoundEventInterpreter {
         }
     }
     public void notifyOfGameInit(GameManagerI gameManager) {
+        //subscribe to current player changes
+        if (gameManager.getCurrentPlayerModel() != null) {
+            gameManager.getCurrentPlayerModel().addObserver(
+                    new CurrentPlayerModelObserver(gameManager));
+        }
+
         //subscribe to round changes
         if (gameManager.getCurrentRoundModel() != null) {
             gameManager.getCurrentRoundModel().addObserver(
