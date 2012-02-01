@@ -735,7 +735,11 @@ public class ORUIManager implements DialogOwner {
         }
     }
     
-    private boolean getMustConnectRequirement (GUIHex hex,Tile tile) {
+    /**
+     * @return True if the indicated tile must be connected to some other track if
+     * placed on indicated hex.
+     */
+    public boolean getMustConnectRequirement (GUIHex hex,Tile tile) {
         if (tile == null || hex == null) return false;
         return tile.getColourName().equalsIgnoreCase(Tile.YELLOW_COLOUR_NAME)
                 // Does not apply to the current company's home hex(es)

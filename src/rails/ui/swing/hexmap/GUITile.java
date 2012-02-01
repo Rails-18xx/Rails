@@ -26,7 +26,6 @@ public class GUITile {
     protected String tileType = null;
 
     protected int picId;
-    protected BufferedImage tileImage = null;
 
     protected int rotation = 0;
 
@@ -39,7 +38,7 @@ public class GUITile {
 
     protected static ImageLoader imageLoader = GameUIManager.getImageLoader();
 
-    protected AffineTransform af = new AffineTransform();
+    protected RenderingHints renderingHints = null;
 
     public static final double DEG60 = Math.PI / 3;
 
@@ -249,11 +248,32 @@ public class GUITile {
         tileScale = scale;
     }
 
+    private RenderingHints getTileRenderingHints() {
+        if (renderingHints == null) {
+            renderingHints = new RenderingHints(null);
+            renderingHints.put(RenderingHints.KEY_ALPHA_INTERPOLATION,
+                    RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+            renderingHints.put(RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
+            renderingHints.put(RenderingHints.KEY_COLOR_RENDERING,
+                    RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+            renderingHints.put(RenderingHints.KEY_DITHERING,
+                    RenderingHints.VALUE_DITHER_DISABLE);
+            renderingHints.put(RenderingHints.KEY_INTERPOLATION,
+                    RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+            renderingHints.put(RenderingHints.KEY_RENDERING,
+                    RenderingHints.VALUE_RENDER_QUALITY);
+            renderingHints.put(RenderingHints.KEY_TEXT_ANTIALIASING,
+                    RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        }
+        return renderingHints;
+    }
+
     public void paintTile(Graphics2D g2, int x, int y) {
 
         int zoomStep = guiHex.getHexMap().getZoomStep();
 
-        tileImage = imageLoader.getTile(picId, zoomStep);
+        BufferedImage tileImage = imageLoader.getTile(picId, zoomStep);
 
         if (tileImage != null) {
 
@@ -263,33 +283,89 @@ public class GUITile {
             int yCenter = (int) Math.round(tileImage.getHeight()
                     * SVG_Y_CENTER_LOC * tileScale);
 
-            af = AffineTransform.getRotateInstance(radians, xCenter, yCenter);
+            AffineTransform af = AffineTransform.getRotateInstance(radians, xCenter, yCenter);
             af.scale(tileScale, tileScale);
 
-            RenderingHints rh = new RenderingHints(null);
-            rh.put(RenderingHints.KEY_ALPHA_INTERPOLATION,
-                    RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
-            rh.put(RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON);
-            rh.put(RenderingHints.KEY_COLOR_RENDERING,
-                    RenderingHints.VALUE_COLOR_RENDER_QUALITY);
-            rh.put(RenderingHints.KEY_DITHERING,
-                    RenderingHints.VALUE_DITHER_DISABLE);
-            rh.put(RenderingHints.KEY_INTERPOLATION,
-                    RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-            rh.put(RenderingHints.KEY_RENDERING,
-                    RenderingHints.VALUE_RENDER_QUALITY);
-            rh.put(RenderingHints.KEY_TEXT_ANTIALIASING,
-                    RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-
-            AffineTransformOp aop = new AffineTransformOp(af, rh);
+            AffineTransformOp aop = new AffineTransformOp(af, 
+                    getTileRenderingHints());
 
             g2.drawImage(tileImage, aop, x - xCenter, y - yCenter);
+
         } else {
-        	log.error("No image for tile "+tileId+" on hex "+guiHex.getName());
+            log.error("No image for tile "+tileId+" on hex "+guiHex.getName());
         }
     }
+    
+    /**
+     * Provides the image of the tile based on the zoomStep.
+     * tileScale is not considered for producing this image.
+     */
+    public BufferedImage getTileImage(int zoomStep) {
 
+        // STEP 1: GET IMAGE FROM SVG
+        // image not centered as there will be a bottom border to assign square bounds to the image
+
+        BufferedImage uncenteredTileImage = imageLoader.getTile(picId, zoomStep);
+        if (uncenteredTileImage == null) return null;
+
+        //svg always in NS orientation, hence wide diagonal can be directly taken from image size
+        int wideDiagonal = uncenteredTileImage.getWidth();
+
+        //narrow diagonal cannot be taken from image height due to the bottom border
+        int narrowDiagonal = (int)Math.round( wideDiagonal * 0.5 * Math.sqrt(3) );
+
+        int border = wideDiagonal - narrowDiagonal;
+        
+        // STEP 2: CENTER TILE IN IMAGE
+        // apply the bottom border also the left / top / right 
+
+        //center tile by translation
+        AffineTransform centeringAT = AffineTransform.getTranslateInstance( border, border );
+        AffineTransformOp centeringATOp = new AffineTransformOp(centeringAT, null);
+        
+        //centered tile image create manually since it also needs a border on the right
+        BufferedImage centeredTileImage = new BufferedImage( 
+                uncenteredTileImage.getWidth() + border * 2,
+                uncenteredTileImage.getHeight() + border,
+                uncenteredTileImage.getType());
+
+        centeringATOp.filter(uncenteredTileImage, centeredTileImage);
+        
+        // STEP 3: ROTATE TILE IMAGE
+        // feasible only now since there are enough margins to ensure tile won't exceed bounds
+
+        double radians = baseRotation + rotation * DEG60;
+        int xCenter = (int) Math.round(centeredTileImage.getWidth() / 2 );
+        int yCenter = (int) Math.round(centeredTileImage.getHeight() / 2 );
+
+        AffineTransform af = AffineTransform.getRotateInstance(radians, xCenter, yCenter);
+        AffineTransformOp aop = new AffineTransformOp(af, getTileRenderingHints());
+        
+        BufferedImage rotatedTileImage = aop.filter(centeredTileImage, null);
+
+        // STEP 4: CROP ROTATED TILE IMAGE
+        // rotation result will have additional borders on the right/bottom as a result of the AOP
+
+        int croppedWidth, croppedHeight;
+        if (baseRotation == 0) {
+            //tile in NS orientation after rotation
+            croppedWidth = wideDiagonal;
+            croppedHeight = narrowDiagonal;
+        } else {
+            //tile in EW orientation after rotation
+            croppedWidth = narrowDiagonal;
+            croppedHeight = wideDiagonal;
+        }
+
+        BufferedImage croppedTileImage = rotatedTileImage.getSubimage(
+                xCenter - croppedWidth / 2, 
+                yCenter - croppedHeight / 2, 
+                croppedWidth,
+                croppedHeight );
+        
+        return croppedTileImage;
+    }
+    
     public Tile getTile() {
         return tile;
     }
