@@ -19,11 +19,14 @@ import rails.game.action.*;
 import rails.game.correct.MapCorrectionAction;
 import rails.ui.swing.elements.ActionLabel;
 import rails.ui.swing.hexmap.GUIHex;
+import rails.ui.swing.hexmap.GUITile;
 import rails.ui.swing.hexmap.HexHighlightMouseListener;
 import rails.ui.swing.hexmap.HexMap;
 
 public class UpgradesPanel extends Box implements MouseListener, ActionListener {
     private static final long serialVersionUID = 1L;
+    
+    private static final int UPGRADE_TILE_ZOOM_STEP = 10;
 
     private ORUIManager orUIManager;
     private List<ActionLabel> tokenLabels;
@@ -61,7 +64,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
 
         this.orUIManager = orUIManager;
 
-        preferredSize = new Dimension((int)Math.round(100 * (2 +  Scale.getFontScale())/3), 200);
+        preferredSize = new Dimension((int)Math.round(110 * (2 +  Scale.getFontScale())/3), 200);
         setSize(preferredSize);
         setVisible(true);
 
@@ -220,7 +223,28 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
     }
     
     private HexLabel createHexLabel(TileI tile,String toolTipHeaderLine) {
-        BufferedImage hexImage = getHexImage(tile.getPictureId());
+        BufferedImage hexImage = null;
+
+        //get a buffered image of the tile in the first valid orientation
+        GUIHex selectedGUIHex = hexMap.getSelectedHex();
+        if (selectedGUIHex != null) {
+            GUITile tempGUITile = selectedGUIHex.createUpgradeTileIfValid (
+                    tile.getId(), 
+                    orUIManager.getMustConnectRequirement(selectedGUIHex, tile));
+            
+            if (tempGUITile != null) {
+                //tile has been rotated to valid orientation
+                //get unscaled image for this orientation 
+                hexImage = tempGUITile.getTileImage(UPGRADE_TILE_ZOOM_STEP);
+            }
+        }
+
+        //fallback if no valid orientation exists: 
+        //get the image in the standard orientation
+        if (hexImage == null) {
+            hexImage = getHexImage(tile.getPictureId());
+        }
+        
         ImageIcon hexIcon = new ImageIcon(hexImage);
 
         // Cheap n' Easy rescaling.
@@ -375,7 +399,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
     }
 
     private BufferedImage getHexImage(int tileId) {
-        return GameUIManager.getImageLoader().getTile(tileId, 10);
+        return GameUIManager.getImageLoader().getTile(tileId, UPGRADE_TILE_ZOOM_STEP);
     }
 
     @Override

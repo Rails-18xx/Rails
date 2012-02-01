@@ -889,7 +889,12 @@ public class GUIHex implements ViewObject {
         return (provisionalGUITile != null);
     }
     
-    private GUITile createUpgradeTileIfValid (int tileId, boolean upgradeMustConnect) {
+    /**
+     * Creates an upgrade tile onto this hex without dropping it on the hex.
+     * This means that this hex won't consider the returned tile being part of it
+     * (even not on a temporary base). 
+     */
+    public GUITile createUpgradeTileIfValid (int tileId, boolean upgradeMustConnect) {
         GUITile t = new GUITile(tileId, this);
         /* Check if we can find a valid orientation of this tile */
         return ( t.rotate(0, currentGUITile, upgradeMustConnect) ? t : null);
