@@ -65,6 +65,8 @@
 		        <include name="jgraph5/jgraph.jar" />
 		        <include name="junit-4.8.2/junit.jar" />
 		        <include name="JLayer1.0.1/jl1.0.1.jar"/>
+		    	<include name="lib/df_1.1.0/dockingFramesCommon.jar"/>
+		    	<include name="lib/df_1.1.0/dockingFramesCore.jar"/>
 		        <include name="batik-1.7/lib/batik-transcoder.jar" />
 		        <include name="batik-1.7/lib/batik-dom.jar" />
 		        <include name="batik-1.7/lib/batik-swing.jar" />
@@ -110,6 +112,8 @@
 			        ./lib/jgraph5/jgraph.jar
 			        ./lib/junit-4.8.2/junit.jar
 			        ./lib/JLayer1.0.1/jl1.0.1.jar
+			    	./lib/df_1.1.0/dockingFramesCommon.jar
+			    	./lib/df_1.1.0/dockingFramesCore.jar
 			        ./lib/batik-1.7/lib/batik-transcoder.jar
 			        ./lib/batik-1.7/lib/batik-dom.jar
 			        ./lib/batik-1.7/lib/batik-swing.jar
