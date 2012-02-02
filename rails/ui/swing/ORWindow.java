@@ -13,6 +13,11 @@ import javax.swing.JScrollPane;
 
 import org.apache.log4j.Logger;
 
+import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.CGrid;
+import bibliothek.gui.dock.common.DefaultSingleCDockable;
+import bibliothek.gui.dock.common.theme.ThemeMap;
+
 import rails.common.GuiDef;
 import rails.common.LocalText;
 import rails.game.GameManager;
@@ -59,24 +64,52 @@ public class ORWindow extends JFrame implements ActionPerformer {
         gameUIManager.setORUIManager(orUIManager);
         orUIManager.setGameUIManager(gameUIManager);
 
-        getContentPane().setLayout(new BorderLayout());
-
         messagePanel = new MessagePanel();
         JScrollPane slider = new JScrollPane(messagePanel);
         messagePanel.setParentSlider(slider);
 
-        getContentPane().add(slider, BorderLayout.NORTH);
-
-        mapPanel = new MapPanel(gameUIManager);
-        getContentPane().add(mapPanel, BorderLayout.CENTER);
-
-
         upgradePanel = new UpgradesPanel(orUIManager);
-        getContentPane().add(upgradePanel, BorderLayout.WEST);
         addMouseListener(upgradePanel);
 
+        mapPanel = new MapPanel(gameUIManager);
+
         orPanel = new ORPanel(this, orUIManager);
-        getContentPane().add(orPanel, BorderLayout.SOUTH);
+        
+        //build the docking layout
+        CControl orWindowControl = new CControl( this );
+        orWindowControl.setTheme( ThemeMap.KEY_SMOOTH_THEME );
+        add( orWindowControl.getContentArea() );
+        CGrid orWindowLayout = new CGrid( orWindowControl );
+        
+        //add message panel
+        DefaultSingleCDockable singleDockable = new DefaultSingleCDockable( 
+                "MessagePanel", "MessagePanel" );
+        singleDockable.add( slider, BorderLayout.CENTER );
+        singleDockable.setCloseable( false );
+        orWindowLayout.add( 0, 0, 100, 10, singleDockable );
+        
+        //add upgrade panel
+        singleDockable = new DefaultSingleCDockable( 
+                "UpgradePanel", "UpgradePanel" );
+        singleDockable.add( upgradePanel, BorderLayout.CENTER );
+        singleDockable.setCloseable( false );
+        orWindowLayout.add( 0, 10, 20, 70, singleDockable );
+
+        //add map panel
+        singleDockable = new DefaultSingleCDockable( 
+                "MapPanel", "MapPanel" );
+        singleDockable.add( mapPanel, BorderLayout.CENTER );
+        singleDockable.setCloseable( false );
+        orWindowLayout.add( 20, 10, 80, 70, singleDockable );
+
+        //add or panel
+        singleDockable = new DefaultSingleCDockable( 
+                "ORPanel", "ORPanel" );
+        singleDockable.add( orPanel, BorderLayout.CENTER );
+        singleDockable.setCloseable( false );
+        orWindowLayout.add( 0, 80, 100, 20, singleDockable );
+
+        orWindowControl.getContentArea().deploy( orWindowLayout );
 
         orUIManager.init(this);
 
@@ -115,7 +148,7 @@ public class ORWindow extends JFrame implements ActionPerformer {
             }
         });
 
-        pack();
+        //pack();
 
         WindowSettings ws = gameUIManager.getWindowSettings();
         Rectangle bounds = ws.getBounds(this);
@@ -174,7 +207,7 @@ public class ORWindow extends JFrame implements ActionPerformer {
     }
 
     public void repaintORPanel() {
-        orPanel.revalidate();
+        //orPanel.revalidate();
     }
 
     public void activate(OperatingRound or) {
@@ -186,12 +219,14 @@ public class ORWindow extends JFrame implements ActionPerformer {
                 gameManager.getORId(),
                 String.valueOf(gameManager.getRelativeORNumber()),
                 numORs ));
+        /*
         pack();
         if (lastBounds != null) {
             Rectangle newBounds = getBounds();
             lastBounds.width = newBounds.width;
             setBounds (lastBounds);
         }
+        */
         setVisible(true);
         requestFocus();
     }
