@@ -20,5 +20,7 @@
 	<classpathentry kind="lib" path="junit/lib/fest-2.0M6/fest-assert-core-2.0M6.jar"/>
 	<classpathentry kind="lib" path="junit/lib/fest-2.0M6/fest-util-1.2.1.jar"/>
 	<classpathentry kind="lib" path="src/lib/JLayer1.0.1/jl1.0.1jar"/>
+	<classpathentry kind="lib" path="src/lib/df_1.1.0/dockingFramesCommon.jar"/>
+	<classpathentry kind="lib" path="src/lib/df_1.1.0/dockingFramesCore.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
