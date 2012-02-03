@@ -15,123 +15,138 @@ import rails.ui.swing.elements.RadioButtonDialog;
 
 public class GameUIManager_18EU extends GameUIManager {
 
+    // Keys of dialogs owned by this class.
+    public static final String SELECT_CONVERTING_MINOR = "SelectConvertingMinor";
+    public static final String SELECT_MERGING_MAJOR = "SelectMergingMajor";
+    public static final String SELECT_HOME_STATION_DIALOG = "SelectHomeStation";
+
     @Override
     public void dialogActionPerformed () {
 
-        if (currentDialog instanceof RadioButtonDialog
-                && currentDialogAction instanceof MergeCompanies) {
+        String key = "";
+        if (currentDialog instanceof NonModalDialog) key = ((NonModalDialog)currentDialog).getKey();
 
+        // Check for the dialogs that are postprocessed in this class.
+        if (SELECT_MERGING_MAJOR.equals(key)) {
+
+            // A major company has been selected (or not) to merge a minor into.
             RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
             MergeCompanies action = (MergeCompanies) currentDialogAction;
             PublicCompany minor = action.getMergingCompany();
 
-            if (action.getSelectedTargetCompany() == null) {
-                // Step 1: selection of the major company to merge into
-                int choice = dialog.getSelectedOption();
-                if (choice < 0) return;
+            int choice = dialog.getSelectedOption();
+            if (choice < 0) return;
 
-                PublicCompany major = action.getTargetCompanies().get(choice);
-                action.setSelectedTargetCompany(major);
+            PublicCompany major = action.getTargetCompanies().get(choice);
+            action.setSelectedTargetCompany(major);
 
-                if (major != null && action.canReplaceToken(choice)) {
+            if (major != null && action.canReplaceToken(choice)) {
 
-                    boolean replaceToken =
-                        JOptionPane.showConfirmDialog(statusWindow, LocalText.getText(
-                                "WantToReplaceToken",
+                boolean replaceToken =
+                    JOptionPane.showConfirmDialog(statusWindow, LocalText.getText(
+                            "WantToReplaceToken",
                                 minor.getId(),
                                 major.getId() ),
-                                LocalText.getText("PleaseSelect"),
-                                JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
-                    action.setReplaceToken(replaceToken);
-                }
-            } else {
-                // To be added later when ReplaceToken dialog is modeless
+                            LocalText.getText("PleaseSelect"),
+                            JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
+                action.setReplaceToken(replaceToken);
             }
 
-        } else if (currentDialog instanceof RadioButtonDialog
+        } else if (SELECT_CONVERTING_MINOR.equals(key)) {
+
+            // A minor has been selected (or not) to merge into a starting company before phase 6.
+            RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
+            StartCompany_18EU action = (StartCompany_18EU) currentDialogAction;
+            int choice = dialog.getSelectedOption();
+            if (choice < 0) {
+                currentDialogAction = null;
+            } else {
+                PublicCompany minor = action.getMinorsToMerge().get(choice);
+                action.setChosenMinor(minor);
+            }
+
+        } else if (COMPANY_START_PRICE_DIALOG.equals(key)
                 && currentDialogAction instanceof StartCompany_18EU) {
 
+            // A start price has been selected (or not) for a stating major company.
             RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
             StartCompany_18EU action = (StartCompany_18EU) currentDialogAction;
 
-            if (action.getPrice() == 0) {
+            int index = dialog.getSelectedOption();
+            if (index < 0) {
+                currentDialogAction = null;
+                return;
+            }
+            action.setStartPrice(action.getStartPrices()[index]);
 
-                // The price will be set first
-                int index = dialog.getSelectedOption();
-                if (index < 0) return;
-                action.setStartPrice(action.getStartPrices()[index]);
+            // Set up another dialog for the next step
+            List<PublicCompany> minors = action.getMinorsToMerge();
 
-                // Set up another dialog for the next step
-                   List<PublicCompany> minors = action.getMinorsToMerge();
+            if (minors != null && !minors.isEmpty()) {
+                // Up to phase 6, a minor must be exchanged
+                String[] options = new String[minors.size()];
+                int i = 0;
+                    for (PublicCompany minor : minors) {
+                    options[i++] =
+                        "Minor " + minor.getId() + " "
+                        + minor.getLongName();
+                }
+                dialog = new RadioButtonDialog (SELECT_CONVERTING_MINOR,
+                        this,
+                        statusWindow,
+                        LocalText.getText("PleaseSelect"),
+                        LocalText.getText(
+                                "SelectMinorToMerge",
+                                action.getCompanyName()),
+                                options, -1);
+                setCurrentDialog(dialog, action);
+                statusWindow.disableButtons();
+                return;
+            } else {
 
-                if (minors != null && !minors.isEmpty()) {
-                    // Up to phase 6, a minor must be exchanged
-                    String[] options = new String[minors.size()];
-                    int i = 0;
-                       for (PublicCompany minor : minors) {
-                        options[i++] =
-                                   "Minor " + minor.getId() + " "
-                            + minor.getLongName();
+                // From phase 6, no minors are involved, but a home station must be chosen
+                List<Stop> cities = action.getAvailableHomeStations();
+                if (cities != null && !cities.isEmpty()) {
+                    String[] options = new String[cities.size()];
+                    for (int i = 0; i < options.length; i++) {
+                        options[i] = cities.get(i).toString();
                     }
-                    dialog = new RadioButtonDialog (NonModalDialog.Usage.SELECT_FOLDING_COMPANIES,
+                    dialog = new RadioButtonDialog (SELECT_HOME_STATION_DIALOG,
                             this,
                             statusWindow,
                             LocalText.getText("PleaseSelect"),
                             LocalText.getText(
-                                    "SelectMinorToMerge",
+                                    "SelectHomeStation",
                                     action.getCompanyName()),
                                     options, -1);
                     setCurrentDialog(dialog, action);
                     statusWindow.disableButtons();
                     return;
-                } else {
-
-                    // From phase 6, no minors are involved, but a home station must be chosen
-                    List<Stop> cities = action.getAvailableHomeStations();
-                    if (cities != null && !cities.isEmpty()) {
-                        String[] options = new String[cities.size()];
-                        for (int i = 0; i < options.length; i++) {
-                            options[i] = cities.get(i).toString();
-                        }
-                        dialog = new RadioButtonDialog (NonModalDialog.Usage.SELECT_HOME_STATION,
-                                this,
-                                statusWindow,
-                                LocalText.getText("PleaseSelect"),
-                                LocalText.getText(
-                                        "SelectHomeStation",
-                                        action.getCompanyName()),
-                                        options, -1);
-                        setCurrentDialog(dialog, action);
-                        statusWindow.disableButtons();
-                        return;
-
-                    }
                 }
-            } else if (action.getMinorsToMerge() != null) {
-                // Up to phase 5: a minor to merge has been selected (or not)
-                int choice = dialog.getSelectedOption();
-                if (choice < 0) {
-                    // Also reset price
-                    action.setStartPrice(0);
-                    return;
-                }
-                action.setChosenMinor(action.getMinorsToMerge().get(choice));
+            }
 
-            } else if (action.getAvailableHomeStations() != null) {
+        } else if (SELECT_HOME_STATION_DIALOG.equals(key)) {
+
+            RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
+            StartCompany_18EU action = (StartCompany_18EU) currentDialogAction;
+
+            if (action.getAvailableHomeStations() != null) {
                 // From phase 6: a home station has been selected (or not)
 
                 int index = dialog.getSelectedOption();
                 if (index < 0) {
-                    // Also reset price
-                    action.setStartPrice(0);
+                    currentDialogAction = null;
                     return;
                 }
                 action.setHomeStation(action.getAvailableHomeStations().get(index));
             }
         } else {
+            // Current dialog not found yet, try the superclass.
             super.dialogActionPerformed(false);
+            return;
         }
 
+        // Dialog action found and processed, let the superclass initiate processing.
         super.dialogActionPerformed(true);
     }
 

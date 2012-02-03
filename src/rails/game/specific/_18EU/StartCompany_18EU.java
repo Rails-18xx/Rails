@@ -89,7 +89,7 @@ public class StartCompany_18EU extends StartCompany {
             MapHex hex = mapManager.getHex(parts[0]);
             selectedHomeStation = hex.getStop(Integer.parseInt(parts[1]));
         }
-        
+
         return selectedHomeStation;
     }
 
@@ -107,25 +107,23 @@ public class StartCompany_18EU extends StartCompany {
     
     @Override
     public String toString() {
-        StringBuffer text = new StringBuffer(super.toString());
-        if (minorsToMergeNames != null) {
+        StringBuilder text = new StringBuilder(super.toString());
+        if (chosenMinorName != null) {
+            text.append(" minor=" + chosenMinorName);
+        } else if (minorsToMergeNames != null) {
             text.append(" minors=").append(minorsToMergeNames);
         }
-        if (chosenMinorName != null) {
-            text.append(" merged minor=" + chosenMinorName);
-        }
-        if (availableHomeStationNames != null) {
-            text.append(" stations=" + availableHomeStationNames);
-        }
         if (selectedHomeStationName != null) {
-            text.append(" home station=" + selectedHomeStationName);
+            text.append(" home=" + selectedHomeStationName);
+        } else if (availableHomeStationNames != null) {
+            text.append(" homes=" + availableHomeStationNames);
         }
         return text.toString();
     }
 
     /** Deserialize */
     private void readObject(ObjectInputStream in) throws IOException,
-            ClassNotFoundException {
+    ClassNotFoundException {
 
         in.defaultReadObject();
 

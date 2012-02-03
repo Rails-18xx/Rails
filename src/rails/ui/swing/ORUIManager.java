@@ -94,6 +94,10 @@ public class ORUIManager implements DialogOwner {
         "ConfirmToken", "SetRevenue", "SelectPayout",
     "CorrectMap" };
 
+    /* Keys of dialogs owned by this class */
+    public static final String SELECT_DESTINATION_COMPANIES_DIALOG = "SelectDestinationCompanies";
+    public static final String REPAY_LOANS_DIALOG = "RepayLoans";
+
     protected static Logger log =
             LoggerFactory.getLogger(ORUIManager.class);
 
@@ -498,7 +502,7 @@ public class ORUIManager implements DialogOwner {
             orPanel.stopRevenueUpdate();
             log.debug("Set revenue amount is " + amount);
             action.setActualRevenue(amount);
-            
+
             // notify sound manager of set revenue amount as soon as
             // set revenue is pressed (not waiting for the completion
             // of the set dividend action)
@@ -558,7 +562,7 @@ public class ORUIManager implements DialogOwner {
             orWindow.setVisible(true);
             orWindow.toFront();
 
-            CheckBoxDialog dialog = new CheckBoxDialog(NonModalDialog.Usage.SELECT_DESTINATION_COMPANIES,
+            CheckBoxDialog dialog = new CheckBoxDialog(SELECT_DESTINATION_COMPANIES_DIALOG,
                     this,
                     orWindow,
                     LocalText.getText("DestinationsReached"),
@@ -618,7 +622,7 @@ public class ORUIManager implements DialogOwner {
     public boolean hexClicked(GUIHex clickedHex, GUIHex selectedHex) {
 
         boolean triggerORPanelRepaint = false;
-        
+
         if (mapCorrectionEnabled) {
             triggerORPanelRepaint = true;
             boolean checkClickedHex = false;
@@ -700,7 +704,7 @@ public class ORUIManager implements DialogOwner {
         }
 
         if (triggerORPanelRepaint) orWindow.repaintORPanel();
-        
+
         return triggerORPanelRepaint;
     }
 
@@ -734,7 +738,7 @@ public class ORUIManager implements DialogOwner {
             upgradePanel.showUpgrades();
         }
     }
-    
+
     /**
      * @return True if the indicated tile must be connected to some other track if
      * placed on indicated hex.
@@ -742,23 +746,23 @@ public class ORUIManager implements DialogOwner {
     public boolean getMustConnectRequirement (GUIHex hex,Tile tile) {
         if (tile == null || hex == null) return false;
         return tile.getColourName().equalsIgnoreCase(Tile.YELLOW_COLOUR_NAME)
-                // Does not apply to the current company's home hex(es)
-                && !hex.getHexModel().isHomeFor(orComp)
-                // Does not apply to special tile lays
-                && !isUnconnectedTileLayTarget(hex.getHexModel());
+        // Does not apply to the current company's home hex(es)
+        && !hex.getHexModel().isHomeFor(orComp)
+        // Does not apply to special tile lays
+        && !isUnconnectedTileLayTarget(hex.getHexModel());
     }
-    
+
     public void addTileUpgradeIfValid(GUIHex hex, int tileId) {
         addTileUpgradeIfValid (hex,
                 gameUIManager.getGameManager().getTileManager().getTile(tileId));
     }
-    
+
     public void addTileUpgradeIfValid(GUIHex hex, Tile tile) {
         if (!tileUpgrades.contains(tile) && isTileUpgradeValid(hex,tile)) {
             tileUpgrades.add(tile);
         }
     }
-    
+
     public boolean isTileUpgradeValid(GUIHex hex, Tile tile) {
         // Check if the new tile must be connected to some other track
         return hex.isTileUpgradeValid(tile.getNb(), 
@@ -1483,7 +1487,7 @@ public class ORUIManager implements DialogOwner {
                             gameUIManager.format(i * loanAmount));
                 }
             }
-            RadioButtonDialog currentDialog = new RadioButtonDialog (NonModalDialog.Usage.REPAY_LOANS,
+            RadioButtonDialog currentDialog = new RadioButtonDialog (REPAY_LOANS_DIALOG,
                     gameUIManager,
                     orWindow,
                     LocalText.getText("Select"),

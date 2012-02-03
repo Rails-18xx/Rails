@@ -93,6 +93,12 @@ public class GameUIManager implements DialogOwner {
 
     protected boolean previousResult;
 
+    /* Keys of dialogs owned by this class */
+    public static final String COMPANY_START_PRICE_DIALOG = "CompanyStartPrice";
+    public static final String SELECT_COMPANY_DIALOG = "SelectCompany";
+    public static final String REPAY_LOANS_DIALOG = "RepayLoans";
+    public static final String EXCHANGE_TOKENS_DIALOG = "ExchangeTokens";
+
     protected static Logger log =
             LoggerFactory.getLogger(GameUIManager.class);
 
@@ -225,7 +231,7 @@ public class GameUIManager implements DialogOwner {
         // define configWindow
         configWindow = new ConfigWindow(true);
         configWindow.init();
-        
+
         // notify sound manager of game initialization
         SoundManager.notifyOfGameInit(gameManager);
     }
@@ -260,7 +266,7 @@ public class GameUIManager implements DialogOwner {
             // resulting sfx are played in the correct order (first the action
             // related sfx and then model-change related sfx)
             SoundManager.notifyOfActionProcessing(gameManager, action);
-            
+
             // Process the action on the server
             result = previousResult = processOnServer (action);
 
@@ -276,7 +282,7 @@ public class GameUIManager implements DialogOwner {
                         log.info ("Relinquishing turn to "+newPlayer.getId());
                     } else if (!wasMyTurn && isMyTurn) {
                         autoLoadPoller.setActive(false);
-                        setCurrentDialog(new MessageDialog(this,
+                        setCurrentDialog(new MessageDialog(null, this,
                                 (JFrame) activeWindow,
                                 LocalText.getText("Message"),
                                 LocalText.getText("YourTurn", localPlayerName)),
@@ -345,7 +351,7 @@ public class GameUIManager implements DialogOwner {
     public boolean displayServerMessage() {
         String[] message = DisplayBuffer.get();
         if (message != null) {
-            setCurrentDialog(new MessageDialog(this,
+            setCurrentDialog(new MessageDialog(null, this,
                     (JFrame) activeWindow,
                     LocalText.getText("Message"),
                     "<html>" + Util.joinWithDelimiter(message, "<br>")),
@@ -636,7 +642,7 @@ public class GameUIManager implements DialogOwner {
             orWindow.setVisible(true);
             orWindow.toFront();
 
-            CheckBoxDialog dialog = new CheckBoxDialog(NonModalDialog.Usage.EXCHANGE_TOKENS,
+            CheckBoxDialog dialog = new CheckBoxDialog(EXCHANGE_TOKENS_DIALOG,
                     this,
                     orWindow,
                     LocalText.getText("ExchangeTokens"),
@@ -655,10 +661,27 @@ public class GameUIManager implements DialogOwner {
 
         if (!ready) {
 
-            if (checkGameSpecificDialogAction()) {
-                ;
-            } else if (currentDialog instanceof RadioButtonDialog
-                    && currentDialogAction instanceof StartCompany) {
+            String key = "";
+            if (currentDialog instanceof NonModalDialog) key = ((NonModalDialog)currentDialog).getKey();
+
+            if (currentDialog instanceof AutoSaveLoadDialog) {
+                // Not yet a NonModalDialog subclass
+                autoSaveLoadGame2 ((AutoSaveLoadDialog)currentDialog);
+
+            } else if (!(currentDialog instanceof NonModalDialog)) {
+
+                log.warn("Unknown dialog action: dialog=["+currentDialog+"] action=["+currentDialogAction+"]");
+                currentDialogAction = null;
+
+            } else if (currentDialog instanceof MessageDialog) {
+                // Nothing to do.
+                currentDialogAction = null;
+                // This cancels the currently incomplete user action.
+                // WARNING: always do this if dialog processing terminates in a context
+                // where an action is aborted and the UI must return to its previous state.
+                // This will normally be the case after a CANCEL (but not after a NO).
+
+            } else if (COMPANY_START_PRICE_DIALOG.equals(key)) {
 
                 RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
                 StartCompany action = (StartCompany) currentDialogAction;
@@ -670,12 +693,10 @@ public class GameUIManager implements DialogOwner {
                     action.setNumberBought(action.getSharesPerCertificate());
                 } else {
                     // No selection done - no action
-                    return;
+                    currentDialogAction = null;
                 }
 
-
-            } else if (currentDialog instanceof CheckBoxDialog
-                    && currentDialogAction instanceof ExchangeTokens) {
+            } else if (EXCHANGE_TOKENS_DIALOG.equals(key)) {
 
                 CheckBoxDialog dialog = (CheckBoxDialog) currentDialog;
                 ExchangeTokens action = (ExchangeTokens) currentDialogAction;
@@ -709,28 +730,20 @@ public class GameUIManager implements DialogOwner {
                         action.getTokensToExchange().get(index).setSelected(true);
                     }
                 }
-            } else if (currentDialog instanceof RadioButtonDialog
-                    && currentDialogAction instanceof RepayLoans) {
+            } else if (REPAY_LOANS_DIALOG.equals(key)) {
 
                 RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
                 RepayLoans action = (RepayLoans) currentDialogAction;
                 int selected = dialog.getSelectedOption();
                 action.setNumberTaken(action.getMinNumber() + selected);
 
-            } else if (currentDialog instanceof MessageDialog) {
-                // Nothing to do
-                currentDialogAction = null; // Should already be null
-
-            } else if (currentDialog instanceof AutoSaveLoadDialog) {
-
-                autoSaveLoadGame2 ((AutoSaveLoadDialog)currentDialog);
-
             } else {
-                return;
+                log.warn("Unknown NonModal dialog action: dialog=["+currentDialog+"] action=["+currentDialogAction+"]");
+                currentDialogAction = null;
             }
         }
 
-        /*if (currentDialogAction != null)*/ processAction(currentDialogAction);
+        processAction(currentDialogAction);
 
     }
 
@@ -993,16 +1006,6 @@ public class GameUIManager implements DialogOwner {
 
     }
 
-    /*
-    public boolean isMyTurn() {
-        return myTurn;
-    }
-
-    public void setMyTurn(boolean myTurn) {
-        this.myTurn = myTurn;
-    }
-     */
-
     public void setSaveDirectory(String saveDirectory) {
         this.saveDirectory = saveDirectory;
     }
@@ -1046,7 +1049,7 @@ public class GameUIManager implements DialogOwner {
     public List<Player> getPlayers() {
         return gameManager.getPlayers();
     }
-
+    
     public List<String> getPlayerNames() {
         return gameManager.getPlayerNames();
     }
