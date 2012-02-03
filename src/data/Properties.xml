@@ -40,6 +40,7 @@
 		<Property name="report.window.open" type="BOOLEAN" />
 		<Property name="report.window.editable" type="BOOLEAN" />
 		<Property name="stockchart.window.open" type="BOOLEAN" />
+		<Property name="or.window.dockablePanels" type="BOOLEAN" />
 	</Section>
 	<Section name="Format">
 		<Property name="money_format" type="STRING" />
