@@ -6,6 +6,7 @@ import java.awt.Rectangle;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -20,6 +21,7 @@ import bibliothek.gui.dock.common.theme.ThemeMap;
 
 import rails.common.GuiDef;
 import rails.common.LocalText;
+import rails.common.parser.Config;
 import rails.game.GameManager;
 import rails.game.OperatingRound;
 import rails.game.action.*;
@@ -75,41 +77,63 @@ public class ORWindow extends JFrame implements ActionPerformer {
 
         orPanel = new ORPanel(this, orUIManager);
         
-        //build the docking layout
-        CControl orWindowControl = new CControl( this );
-        orWindowControl.setTheme( ThemeMap.KEY_SMOOTH_THEME );
-        add( orWindowControl.getContentArea() );
-        CGrid orWindowLayout = new CGrid( orWindowControl );
-        
-        //add message panel
-        DefaultSingleCDockable singleDockable = new DefaultSingleCDockable( 
-                "MessagePanel", "MessagePanel" );
-        singleDockable.add( slider, BorderLayout.CENTER );
-        singleDockable.setCloseable( false );
-        orWindowLayout.add( 0, 0, 100, 10, singleDockable );
-        
-        //add upgrade panel
-        singleDockable = new DefaultSingleCDockable( 
-                "UpgradePanel", "UpgradePanel" );
-        singleDockable.add( upgradePanel, BorderLayout.CENTER );
-        singleDockable.setCloseable( false );
-        orWindowLayout.add( 0, 10, 20, 70, singleDockable );
+        //create docking / conventional layout depending config
+        if (isDockablePanelsEnabled()) {
+            //DOCKABLE LAYOUT
 
-        //add map panel
-        singleDockable = new DefaultSingleCDockable( 
-                "MapPanel", "MapPanel" );
-        singleDockable.add( mapPanel, BorderLayout.CENTER );
-        singleDockable.setCloseable( false );
-        orWindowLayout.add( 20, 10, 80, 70, singleDockable );
+            //build the docking layout
+            CControl orWindowControl = new CControl( this );
+            orWindowControl.setTheme( ThemeMap.KEY_SMOOTH_THEME );
+            add( orWindowControl.getContentArea() );
+            CGrid orWindowLayout = new CGrid( orWindowControl );
 
-        //add or panel
-        singleDockable = new DefaultSingleCDockable( 
-                "ORPanel", "ORPanel" );
-        singleDockable.add( orPanel, BorderLayout.CENTER );
-        singleDockable.setCloseable( false );
-        orWindowLayout.add( 0, 80, 100, 20, singleDockable );
+            //set docks tooltip language
+            if ("en_us".equalsIgnoreCase(Config.get("locale"))) {
+                //hard setting to default in case of US as this is DockingFrames default language
+                //don't use Locale constant as it is en_US (case sensitive)
+                orWindowControl.setLanguage(new Locale(""));
+            }
 
-        orWindowControl.getContentArea().deploy( orWindowLayout );
+            //add message panel
+            DefaultSingleCDockable singleDockable = new DefaultSingleCDockable( 
+                    "MessagePanel", "MessagePanel" );
+            singleDockable.add( slider, BorderLayout.CENTER );
+            singleDockable.setCloseable( false );
+            orWindowLayout.add( 0, 0, 100, 10, singleDockable );
+            
+            //add upgrade panel
+            singleDockable = new DefaultSingleCDockable( 
+                    "UpgradePanel", "UpgradePanel" );
+            singleDockable.add( upgradePanel, BorderLayout.CENTER );
+            singleDockable.setCloseable( false );
+            orWindowLayout.add( 0, 10, 20, 70, singleDockable );
+    
+            //add map panel
+            singleDockable = new DefaultSingleCDockable( 
+                    "MapPanel", "MapPanel" );
+            singleDockable.add( mapPanel, BorderLayout.CENTER );
+            singleDockable.setCloseable( false );
+            orWindowLayout.add( 20, 10, 80, 70, singleDockable );
+    
+            //add or panel
+            singleDockable = new DefaultSingleCDockable( 
+                    "ORPanel", "ORPanel" );
+            singleDockable.add( orPanel, BorderLayout.CENTER );
+            singleDockable.setCloseable( false );
+            orWindowLayout.add( 0, 80, 100, 20, singleDockable );
+    
+            orWindowControl.getContentArea().deploy( orWindowLayout );
+            
+        } else {
+            // CONVENTIONAL LAYOUT
+            
+            getContentPane().setLayout(new BorderLayout());
+            getContentPane().add(slider, BorderLayout.NORTH);
+            getContentPane().add(mapPanel, BorderLayout.CENTER);
+            getContentPane().add(upgradePanel, BorderLayout.WEST);
+            getContentPane().add(orPanel, BorderLayout.SOUTH);
+            
+        }
 
         orUIManager.init(this);
 
@@ -148,7 +172,10 @@ public class ORWindow extends JFrame implements ActionPerformer {
             }
         });
 
-        //pack();
+        //rearrange layout only if no docking framework active
+        if (!isDockablePanelsEnabled()) {
+            pack();
+        }
 
         WindowSettings ws = gameUIManager.getWindowSettings();
         Rectangle bounds = ws.getBounds(this);
@@ -207,7 +234,10 @@ public class ORWindow extends JFrame implements ActionPerformer {
     }
 
     public void repaintORPanel() {
-        //orPanel.revalidate();
+        //rearrange layout only if no docking framework active
+        if (!isDockablePanelsEnabled()) {
+            orPanel.revalidate();
+        }
     }
 
     public void activate(OperatingRound or) {
@@ -219,14 +249,17 @@ public class ORWindow extends JFrame implements ActionPerformer {
                 gameManager.getORId(),
                 String.valueOf(gameManager.getRelativeORNumber()),
                 numORs ));
-        /*
-        pack();
-        if (lastBounds != null) {
-            Rectangle newBounds = getBounds();
-            lastBounds.width = newBounds.width;
-            setBounds (lastBounds);
+        
+        //rearrange layout only if no docking framework active
+        if (!isDockablePanelsEnabled()) {
+            pack();
+            if (lastBounds != null) {
+                Rectangle newBounds = getBounds();
+                lastBounds.width = newBounds.width;
+                setBounds (lastBounds);
+            }
         }
-        */
+        
         setVisible(true);
         requestFocus();
     }
@@ -250,5 +283,9 @@ public class ORWindow extends JFrame implements ActionPerformer {
         upgradePanel.finish();
         messagePanel.setMessage("");
         setTitle(LocalText.getText("MapWindowTitle"));
+    }
+    
+    public boolean isDockablePanelsEnabled() {
+        return "yes".equals(Config.get("or.window.dockablePanels"));
     }
 }
