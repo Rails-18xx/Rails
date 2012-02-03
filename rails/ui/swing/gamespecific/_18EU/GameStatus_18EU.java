@@ -8,7 +8,6 @@ import rails.game.PublicCompanyI;
 import rails.game.action.MergeCompanies;
 import rails.game.action.PossibleAction;
 import rails.ui.swing.GameStatus;
-import rails.ui.swing.elements.NonModalDialog;
 import rails.ui.swing.elements.RadioButtonDialog;
 
 /**
@@ -71,7 +70,7 @@ public class GameStatus_18EU extends GameStatus {
             }
 
             RadioButtonDialog dialog = new RadioButtonDialog (
-                    NonModalDialog.Usage.SELECT_COMPANY,
+                    GameUIManager_18EU.SELECT_MERGING_MAJOR,
                     gameUIManager,
                     parent,
                     LocalText.getText("PleaseSelect"),

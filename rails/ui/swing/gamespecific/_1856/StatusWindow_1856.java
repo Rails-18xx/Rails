@@ -8,8 +8,8 @@ import rails.game.Bank;
 import rails.game.RoundI;
 import rails.game.action.*;
 import rails.game.specific._1856.CGRFormationRound;
+import rails.ui.swing.GameUIManager;
 import rails.ui.swing.StatusWindow;
-import rails.ui.swing.elements.NonModalDialog;
 import rails.ui.swing.elements.RadioButtonDialog;
 import rails.util.Util;
 
@@ -52,15 +52,6 @@ public class StatusWindow_1856 extends StatusWindow {
             repayLoans (nextAction);
             return true;
 
-            /* Moved up
-        } else if (immediateAction instanceof DiscardTrain) {
-            // Make a local copy and discard the original,
-            // so that it's not going to loop.
-            DiscardTrain nextAction = (DiscardTrain) immediateAction;
-            immediateAction = null;
-            gameUIManager.discardTrains (nextAction);
-            return true;
-             */
         } else if (immediateAction instanceof ExchangeTokens) {
             // Make a local copy and discard the original,
             // so that it's not going to loop.
@@ -100,7 +91,7 @@ public class StatusWindow_1856 extends StatusWindow {
             + "<br>" + message;
         }
 
-        RadioButtonDialog currentDialog = new RadioButtonDialog (NonModalDialog.Usage.REPAY_LOANS,
+        RadioButtonDialog currentDialog = new RadioButtonDialog (GameUIManager.REPAY_LOANS_DIALOG,
                 gameUIManager,
                 this,
                 LocalText.getText("1856MergerDialog", action.getCompanyName()),

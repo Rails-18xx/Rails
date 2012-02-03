@@ -22,16 +22,16 @@ public class RadioButtonDialog extends NonModalDialog {
     int selectedOption;
     int chosenOption = -1;
 
-    public RadioButtonDialog(Usage usage, DialogOwner owner, JFrame window, String title, String message,
+    public RadioButtonDialog(String key, DialogOwner owner, JFrame window, String title, String message,
             String[] options, int selectedOption) {
 
-        super (Type.RADIO, usage, owner, window, title, message, selectedOption < 0);
+        super (key, owner, window, title, message);
 
         this.options = options;
         this.numOptions = options.length;
         this.selectedOption = selectedOption;
 
-        initialize();
+        initialize(selectedOption < 0);
     }
 
     @Override

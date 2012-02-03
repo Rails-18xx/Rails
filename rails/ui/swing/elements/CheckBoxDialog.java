@@ -24,15 +24,16 @@ public class CheckBoxDialog extends NonModalDialog {
     int chosenOption = -1;
     boolean hasCancelButton = false;
 
-    public CheckBoxDialog(Usage usage, DialogOwner owner, JFrame window, String title, String message,
+    public CheckBoxDialog(String key, DialogOwner owner, JFrame window, String title, String message,
             String[] options) {
-        this (usage, owner, window, title, message, options, null, false);
+        this (key, owner, window, title, message, options, null, false);
     }
 
-    public CheckBoxDialog(Usage usage, DialogOwner owner, JFrame window, String title, String message,
+    public CheckBoxDialog(String key, DialogOwner owner, JFrame window, String title, String message,
             String[] options, boolean[] selectedOptions, boolean addCancelButton) {
 
-        super (Type.CHECKBOX, usage, owner, window, title, message, addCancelButton);
+        super (key, owner, window, title, message);
+        this.hasCancelButton = addCancelButton;
 
         this.options = options;
         this.numOptions = options.length;
@@ -42,7 +43,7 @@ public class CheckBoxDialog extends NonModalDialog {
             this.selectedOptions = new boolean[numOptions];
         }
 
-        initialize();
+        initialize(hasCancelButton);
     }
 
     @Override

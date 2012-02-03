@@ -10,11 +10,11 @@ public class MessageDialog extends NonModalDialog {
 
     private static final long serialVersionUID = 1L;
 
-    public MessageDialog(DialogOwner owner, JFrame window, String title, String message) {
+    public MessageDialog(String key, DialogOwner owner, JFrame window, String title, String message) {
 
-        super (Type.MESSAGE, null, owner, window, title, message, false);
+        super (key, owner, window, title, message);
 
-        initialize();
+        initialize(false);
 
     }
 

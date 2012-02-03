@@ -2,8 +2,6 @@ package rails.ui.swing.gamespecific._1835;
 
 import java.util.List;
 
-import javax.swing.JDialog;
-
 import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.DiscardTrain;
@@ -63,17 +61,19 @@ public class StatusWindow_1835 extends StatusWindow {
     protected void fold (FoldIntoPrussian action) {
 
         List<CompanyI> foldables = action.getFoldableCompanies();
-        JDialog currentDialog;
+        NonModalDialog currentDialog;
 
         if (foldables.get(0).getName().equals("M2")) {
             // Ask if the Prussian should be started
-            currentDialog = new ConfirmationDialog (gameUIManager,
+            currentDialog = new ConfirmationDialog (GameUIManager_1835.START_PRUSSIAN_DIALOG,
+                    gameUIManager, this,
                     LocalText.getText("Select"),
                     LocalText.getText("MergeMinorConfirm",
                             getCurrentPlayer().getName(),
                             GameManager_1835.M2_ID, GameManager_1835.PR_ID),
                             "Yes",
-            "No");
+                            "No"
+            );
         } else {
             // Ask if any other prePrussians should be folded
             String[] options = new String[foldables.size()];
@@ -87,7 +87,7 @@ public class StatusWindow_1835 extends StatusWindow {
                         ((ExchangeForShare)(company.getSpecialProperties().get(0))).getShare()
                 );
             }
-            currentDialog = new CheckBoxDialog (NonModalDialog.Usage.SELECT_FOLDING_COMPANIES,
+            currentDialog = new CheckBoxDialog (GameUIManager_1835.MERGE_INTO_PRUSSIAN_DIALOG,
                     gameUIManager,
                     this,
                     LocalText.getText("Select"),

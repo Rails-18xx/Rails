@@ -112,6 +112,9 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
     private boolean includeBidding;
     private boolean showBasePrices;
 
+    /* Keys of dialogs owned by this class */
+    public static final String COMPANY_START_PRICE_DIALOG = "CompanyStartPrice";
+
     protected static Logger log =
         Logger.getLogger(StartRoundWindow.class.getPackage().getName());
 
@@ -653,7 +656,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
             }
 
             RadioButtonDialog dialog = new RadioButtonDialog(
-                    NonModalDialog.Usage.COMPANY_START_PRICE,
+                    COMPANY_START_PRICE_DIALOG,
                     this,
                     this,
                     LocalText.getText("PleaseSelect"),

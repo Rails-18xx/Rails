@@ -6,45 +6,51 @@ import java.util.List;
 import rails.game.CompanyI;
 import rails.game.specific._1835.FoldIntoPrussian;
 import rails.ui.swing.GameUIManager;
-import rails.ui.swing.elements.CheckBoxDialog;
-import rails.ui.swing.elements.ConfirmationDialog;
+import rails.ui.swing.elements.*;
 
 public class GameUIManager_1835 extends GameUIManager {
 
-    protected boolean checkGameSpecificDialogAction() {
-        
-        if (currentDialog instanceof ConfirmationDialog
-                && currentDialogAction instanceof FoldIntoPrussian) {
-            
+    // Keys of dialogs owned by this class.
+    public static final String START_PRUSSIAN_DIALOG = "StartPrussian";
+    public static final String MERGE_INTO_PRUSSIAN_DIALOG = "MergeIntoPrussian";
+
+    @Override
+    public void dialogActionPerformed() {
+
+        String key = "";
+        if (currentDialog instanceof NonModalDialog) key = ((NonModalDialog)currentDialog).getKey();
+
+        // Check for the dialogs that are postprocessed in this class.
+        if (START_PRUSSIAN_DIALOG.equals(key)) {
+
             ConfirmationDialog dialog = (ConfirmationDialog) currentDialog;
             FoldIntoPrussian action = (FoldIntoPrussian) currentDialogAction;
             if (dialog.getAnswer()) {
                 action.setFoldedCompanies(action.getFoldableCompanies());
             }
-            
-            return true;
-            
-        } else if (currentDialog instanceof CheckBoxDialog
-                && currentDialogAction instanceof FoldIntoPrussian) {
-            
+
+        } else if (MERGE_INTO_PRUSSIAN_DIALOG.equals(key)) {
+
             CheckBoxDialog dialog = (CheckBoxDialog) currentDialog;
             FoldIntoPrussian action = (FoldIntoPrussian) currentDialogAction;
             boolean[] exchanged = dialog.getSelectedOptions();
             String[] options = dialog.getOptions();
-            
+
             List<CompanyI> foldedCompanies = new ArrayList<CompanyI>();
             for (int index=0; index < options.length; index++) {
                 if (exchanged[index]) {
                     foldedCompanies.add(action.getFoldableCompanies().get(index));
-               }
+                }
             }
             action.setFoldedCompanies(foldedCompanies);
-            
-            return true;
-            
-        } else {
-            return false;
-        }
-    }
 
+        } else {
+            // Current dialog not found yet, try the superclass.
+            super.dialogActionPerformed(false);
+            return;
+        }
+
+        // Dialog action found and processed, let the superclass initiate processing.
+        super.dialogActionPerformed(true);
+    }
 }
