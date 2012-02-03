@@ -236,7 +236,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
             if (tempGUITile != null) {
                 //tile has been rotated to valid orientation
                 //get unscaled image for this orientation 
-                hexImage = tempGUITile.getTileImage(UPGRADE_TILE_ZOOM_STEP);
+                hexImage = tempGUITile.getTileImage(getZoomStep());
             }
         }
 
@@ -401,7 +401,21 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
 //    }
 
     private BufferedImage getHexImage(int tileId) {
-        return GameUIManager.getImageLoader().getTile(tileId, UPGRADE_TILE_ZOOM_STEP);
+        return GameUIManager.getImageLoader().getTile(tileId, getZoomStep());
+    }
+    
+    /**
+     * @return Default zoom step for conventional panes or, for dockable panes,
+     * the zoom step used in the map.
+     * Map zoom step can only be used for dockable panes as user-based pane sizing
+     * could be necessary when displaying tiles of an arbitrary size 
+     */
+    private int getZoomStep() {
+        if (orUIManager.getORWindow().isDockablePanelsEnabled()) {
+            return hexMap.getZoomStep();
+        } else {
+            return UPGRADE_TILE_ZOOM_STEP;
+        }
     }
 
     @Override
