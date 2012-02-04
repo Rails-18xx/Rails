@@ -126,6 +126,7 @@ public class GameUIManager implements DialogOwner {
 
     public void terminate () {
         getWindowSettings ().save();
+        if (orWindow != null) orWindow.saveDockableLayout();
         System.exit(0);
     }
 
