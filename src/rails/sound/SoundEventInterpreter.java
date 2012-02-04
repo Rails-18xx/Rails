@@ -117,7 +117,14 @@ public class SoundEventInterpreter {
             //OR actions
             
             else if (action instanceof LayTile) {
-                player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_LayTile);
+                LayTile lt = (LayTile)action;
+                if (lt.getLaidTile().getNumStations() == 0) {
+                    //track upgrade
+                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_LayTile_track);
+                } else {
+                    //city upgrade
+                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_LayTile_city);
+                }
                 
             } else if (action instanceof LayToken) {
                 player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_LayToken);

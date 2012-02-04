@@ -87,7 +87,8 @@
 		<Property name="sound.sfx.sr.sellShare.nonPresident" type="FILE" />
 		<Property name="sound.sfx.sr.companyFloats" type="FILE" />
 		<Property name="sound.sfx.or.rotateTile" type="FILE" />
-		<Property name="sound.sfx.or.layTile" type="FILE" />
+		<Property name="sound.sfx.or.layTile.track" type="FILE" />
+		<Property name="sound.sfx.or.layTile.city" type="FILE" />
 		<Property name="sound.sfx.or.layToken" type="FILE" />
 		<Property name="sound.sfx.or.setRevenue" type="FILE" />
 		<Property name="sound.sfx.or.decision.payout" type="FILE" />

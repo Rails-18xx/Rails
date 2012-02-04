@@ -37,7 +37,8 @@ public class SoundConfig {
     public static final String KEY_SFX_SR_SellShare_NonPresident = "sound.sfx.sr.sellShare.nonPresident";
     public static final String KEY_SFX_SR_CompanyFloats = "sound.sfx.sr.companyFloats";
     public static final String KEY_SFX_OR_RotateTile = "sound.sfx.or.rotateTile";
-    public static final String KEY_SFX_OR_LayTile = "sound.sfx.or.layTile";
+    public static final String KEY_SFX_OR_LayTile_track = "sound.sfx.or.layTile.track";
+    public static final String KEY_SFX_OR_LayTile_city = "sound.sfx.or.layTile.city";
     public static final String KEY_SFX_OR_LayToken = "sound.sfx.or.layToken";
     public static final String KEY_SFX_OR_SetRevenue = "sound.sfx.or.setRevenue";
     public static final String KEY_SFX_OR_Decision_Payout = "sound.sfx.or.decision.payout";
