@@ -4,6 +4,7 @@ package rails.ui.swing;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.*;
@@ -160,7 +161,11 @@ implements ActionListener, KeyListener, RevenueListener {
 
         setLayout(new BorderLayout());
         add(statusPanel, BorderLayout.CENTER);
-        add(buttonPanel, BorderLayout.SOUTH);
+        
+        //only add button panel directly for conventional layout
+        if (!parent.isDockablePanelsEnabled()) {
+            add(buttonPanel, BorderLayout.SOUTH);
+        }
 
         menuBar = new JMenuBar();
 
@@ -268,8 +273,7 @@ implements ActionListener, KeyListener, RevenueListener {
     }
 
     private void initButtonPanel() {
-        buttonPanel = new JPanel();
-
+        
         // sfy: operatingcosts button
         buttonOC = new ActionButton(LocalText.getText("OCButtonLabel"));
         buttonOC.setActionCommand(OPERATING_COST_CMD);
@@ -277,14 +281,12 @@ implements ActionListener, KeyListener, RevenueListener {
         buttonOC.addActionListener(this);
         buttonOC.setEnabled(false);
         buttonOC.setVisible(false);
-        buttonPanel.add(buttonOC);
 
         button1 = new ActionButton(LocalText.getText("LayTile"));
         button1.setActionCommand(LAY_TILE_CMD);
         button1.setMnemonic(KeyEvent.VK_T);
         button1.addActionListener(this);
-        button1.setEnabled(true);
-        buttonPanel.add(button1);
+        button1.setEnabled(false);
 
         button2 = new ActionButton(LocalText.getText("BUY_PRIVATE"));
         button2.setActionCommand(BUY_PRIVATE_CMD);
@@ -292,30 +294,88 @@ implements ActionListener, KeyListener, RevenueListener {
         button2.addActionListener(this);
         button2.setEnabled(false);
         button2.setVisible(false);
-        buttonPanel.add(button2);
 
         button3 = new ActionButton(LocalText.getText("Done"));
         button3.setActionCommand(DONE_CMD);
         button3.setMnemonic(KeyEvent.VK_D);
         button3.addActionListener(this);
-        button3.setEnabled(true);
-        buttonPanel.add(button3);
+        button3.setEnabled(false);
 
         undoButton = new ActionButton(LocalText.getText("UNDO"));
         undoButton.setActionCommand(UNDO_CMD);
         undoButton.setMnemonic(KeyEvent.VK_U);
         undoButton.addActionListener(this);
         undoButton.setEnabled(false);
-        buttonPanel.add(undoButton);
 
         redoButton = new ActionButton(LocalText.getText("REDO"));
         redoButton.setActionCommand(REDO_CMD);
         redoButton.setMnemonic(KeyEvent.VK_R);
         redoButton.addActionListener(this);
         redoButton.setEnabled(false);
+
+        //choose button panel layout depending on whether panel becomes a dockable
+        if (orWindow.isDockablePanelsEnabled()) {
+            
+            //customized panel for dockable layout
+            //the minimal size is defined by the size of one button
+            //(aim here: user can choose whether buttons are laid out
+            //           vertically or horizontally or in a grid, since
+            //           the minimal size's restriction is minimal indeed.)
+            buttonPanel = new JPanel() {
+                private static final long serialVersionUID = 1L;
+                @Override
+                public Dimension getMinimumSize() {
+                    int width = 0;
+                    int height = 0;
+                    if (getComponents().length != 0) {
+                        //getting the first component is sufficient as their
+                        //size is all the same
+                        width = getComponents()[0].getPreferredSize().width;
+                        height = getComponents()[0].getPreferredSize().height;
+                    }
+                    //add a margin
+                    width += 10;
+                    height += 10;
+                    return new Dimension(width,height);
+                }
+                public Dimension getPreferredSize() {
+                    return getMinimumSize();
+                }
+            };
+            
+        } else {
+            //plain panel for conventional layout
+            buttonPanel = new JPanel();
+        }
+
+        buttonPanel.add(buttonOC);
+        buttonPanel.add(button1);
+        buttonPanel.add(button2);
+        buttonPanel.add(button3);
+        buttonPanel.add(undoButton);
         buttonPanel.add(redoButton);
 
+        //for dockable button panel, ensure that all buttons have the same size
+        //(necessary, otherwise vertical/box layout will look ugly)
+        if (orWindow.isDockablePanelsEnabled()) {
+            
+            //get maximum size
+            Dimension maxSize = new Dimension();
+            for (Component c : Arrays.asList( buttonPanel.getComponents() )) {
+                if (c.getPreferredSize().width > maxSize.width) 
+                    maxSize.width = c.getPreferredSize().width;
+                if (c.getPreferredSize().height > maxSize.height) 
+                    maxSize.height = c.getPreferredSize().height;
+            }
+            //apply maximum size to all buttons
+            for (Component c : Arrays.asList( buttonPanel.getComponents() )) {
+                c.setPreferredSize(maxSize);
+            }
+
+        }
+        
         buttonPanel.setOpaque(true);
+        
     }
 
     public MouseListener getCompanyCaptionMouseClickListener() {
@@ -1288,6 +1348,9 @@ implements ActionListener, KeyListener, RevenueListener {
     public PublicCompanyI[] getOperatingCompanies() {
         return companies;
     }
-
+    
+    public JPanel getButtonPanel() {
+        return buttonPanel;
+    }
 
 }
