@@ -4,6 +4,7 @@ package rails.ui.swing;
 import java.awt.BorderLayout;
 import java.awt.Rectangle;
 import java.awt.event.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -47,6 +48,11 @@ public class ORWindow extends JFrame implements ActionPerformer {
     List<LayTile> allowedTileLays = new ArrayList<LayTile>();
     List<LayToken> allowedTokenLays = new ArrayList<LayToken>();
 
+    CControl orWindowControl = null;
+
+    private static final String layoutFolderName = "DockableLayout";
+    private static final String layoutFileSuffix = "_layout.rails_ini";
+    
     protected static Logger log =
             LoggerFactory.getLogger(ORWindow.class);
 
@@ -83,7 +89,7 @@ public class ORWindow extends JFrame implements ActionPerformer {
             //DOCKABLE LAYOUT
 
             //build the docking layout
-            CControl orWindowControl = new CControl( this );
+            orWindowControl = new CControl( this );
             orWindowControl.setTheme( ThemeMap.KEY_SMOOTH_THEME );
             add( orWindowControl.getContentArea() );
             CGrid orWindowLayout = new CGrid( orWindowControl );
@@ -165,6 +171,7 @@ public class ORWindow extends JFrame implements ActionPerformer {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
+                saveDockableLayout();
                 StatusWindow.uncheckMenuItemBox(StatusWindow.MAP_CMD);
                 frame.dispose();
             }
@@ -192,6 +199,9 @@ public class ORWindow extends JFrame implements ActionPerformer {
         ws.set(frame);
 
         gameUIManager.reportWindow.updateLog();
+        
+        //dockable panes: restore former layout (depending on game variant)
+        loadDockableLayout();
     }
 
     public ORUIManager getORUIManager() {
@@ -296,4 +306,51 @@ public class ORWindow extends JFrame implements ActionPerformer {
     public boolean isDockablePanelsEnabled() {
         return "yes".equals(Config.get("or.window.dockablePanels"));
     }
+    
+    
+    private String getLayoutName() {
+        return getClass().getSimpleName() + "_" 
+                + gameUIManager.getGameManager().getGameName() ;
+    }
+    
+    private File getLayoutFile() {
+        try {
+            //get layout folder (and ensure that it is available)
+            File layoutFolder = new File(Config.get("save.directory"),layoutFolderName);
+            if (!layoutFolder.isDirectory()) {
+                layoutFolder.mkdirs();
+            }
+            File layoutFile = new File(layoutFolder, 
+                    getLayoutName() + layoutFileSuffix );
+            return layoutFile;
+        } catch (Exception e) {
+            //return no valid file if anything goes wrong
+            return null;
+        }
+    }
+
+    public void saveDockableLayout() {
+        if (!isDockablePanelsEnabled()) return;
+
+        File layoutFile = getLayoutFile();
+        if (layoutFile != null) {
+            try {
+                orWindowControl.save(getLayoutName());
+                orWindowControl.writeXML(layoutFile);
+            } catch (Exception e) {} //skip in case of issue
+        }
+    }
+    
+    private void loadDockableLayout() {
+        if (!isDockablePanelsEnabled()) return;
+        
+        File layoutFile = getLayoutFile();
+        if (layoutFile != null) {
+            try {
+                orWindowControl.readXML(layoutFile);
+                orWindowControl.load(getLayoutName());
+            } catch (Exception e) {} //skip if layout not found
+        }
+    }
+    
 }
