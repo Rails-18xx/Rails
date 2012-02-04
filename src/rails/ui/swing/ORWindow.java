@@ -96,33 +96,40 @@ public class ORWindow extends JFrame implements ActionPerformer {
             }
 
             //add message panel
-            DefaultSingleCDockable singleDockable = new DefaultSingleCDockable( 
-                    "MessagePanel", "MessagePanel" );
+            String dockableName = LocalText.getText("DockableTitle.orWindow.messagePanel");
+            DefaultSingleCDockable singleDockable = new DefaultSingleCDockable( dockableName, dockableName );
             singleDockable.add( slider, BorderLayout.CENTER );
             singleDockable.setCloseable( false );
             orWindowLayout.add( 0, 0, 100, 10, singleDockable );
             
             //add upgrade panel
-            singleDockable = new DefaultSingleCDockable( 
-                    "UpgradePanel", "UpgradePanel" );
+            dockableName = LocalText.getText("DockableTitle.orWindow.upgradePanel");
+            singleDockable = new DefaultSingleCDockable( dockableName, dockableName );
             singleDockable.add( upgradePanel, BorderLayout.CENTER );
             singleDockable.setCloseable( false );
             orWindowLayout.add( 0, 10, 20, 70, singleDockable );
     
             //add map panel
-            singleDockable = new DefaultSingleCDockable( 
-                    "MapPanel", "MapPanel" );
+            dockableName = LocalText.getText("DockableTitle.orWindow.mapPanel");
+            singleDockable = new DefaultSingleCDockable( dockableName, dockableName );
             singleDockable.add( mapPanel, BorderLayout.CENTER );
             singleDockable.setCloseable( false );
             orWindowLayout.add( 20, 10, 80, 70, singleDockable );
     
             //add or panel
-            singleDockable = new DefaultSingleCDockable( 
-                    "ORPanel", "ORPanel" );
+            dockableName = LocalText.getText("DockableTitle.orWindow.orPanel");
+            singleDockable = new DefaultSingleCDockable( dockableName, dockableName );
             singleDockable.add( orPanel, BorderLayout.CENTER );
             singleDockable.setCloseable( false );
-            orWindowLayout.add( 0, 80, 100, 20, singleDockable );
+            orWindowLayout.add( 0, 80, 100, 15, singleDockable );
     
+            //add button panel of or panel
+            dockableName = LocalText.getText("DockableTitle.orWindow.buttonPanel");
+            singleDockable = new DefaultSingleCDockable( dockableName, dockableName );
+            singleDockable.add( orPanel.getButtonPanel(), BorderLayout.CENTER );
+            singleDockable.setCloseable( false );
+            orWindowLayout.add( 0, 95, 100, 5, singleDockable );
+            
             orWindowControl.getContentArea().deploy( orWindowLayout );
             
         } else {
