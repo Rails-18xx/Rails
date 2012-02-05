@@ -1380,6 +1380,10 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         return gameOver.booleanValue();
     }
 
+    public ModelObject getGameOverPendingModel() {
+        return gameOverPending;
+    }
+
     public void setGameOverReportedUI(boolean b){
         gameOverReportedUI = b;
     }

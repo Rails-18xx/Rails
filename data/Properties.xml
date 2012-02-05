@@ -77,6 +77,7 @@
 		<Property name="sound.sfx.gen.pass" type="FILE" />
 		<Property name="sound.sfx.gen.select" type="FILE" />
 		<Property name="sound.sfx.gen.newCurrentPlayer" type="STRING" />
+		<Property name="sound.sfx.gen.gameOverPending" type="FILE" />
 		<Property name="sound.sfx.str.bidStartItem" type="FILE" />
 		<Property name="sound.sfx.str.buyStartItem" type="FILE" />
 		<Property name="sound.sfx.sr.openingBell" type="FILE" />
@@ -89,6 +90,7 @@
 		<Property name="sound.sfx.or.rotateTile" type="FILE" />
 		<Property name="sound.sfx.or.layTile.track" type="FILE" />
 		<Property name="sound.sfx.or.layTile.city" type="FILE" />
+		<Property name="sound.sfx.or.layTile.lastTileLaid" type="FILE" />
 		<Property name="sound.sfx.or.layToken" type="FILE" />
 		<Property name="sound.sfx.or.setRevenue" type="FILE" />
 		<Property name="sound.sfx.or.decision.payout" type="FILE" />

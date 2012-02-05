@@ -105,10 +105,14 @@ public class SoundEventInterpreter {
                 LayTile lt = (LayTile)action;
                 if (lt.getLaidTile().getNumStations() == 0) {
                     //track upgrade
-                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_LayTile_track);
+                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_LayTile_Track);
                 } else {
                     //city upgrade
-                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_LayTile_city);
+                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_LayTile_City);
+                }
+                if (lt.getLaidTile().countFreeTiles() == 1) {
+                    //last available tile is about to be laid
+                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_LayTile_LastTileLaid);
                 }
                 
             } else if (action instanceof LayToken) {
@@ -189,6 +193,26 @@ public class SoundEventInterpreter {
                             if (o instanceof State) {
                                 State s = (State)o;
                                 context.notifyOfRound((RoundI)s.get());
+                            }
+                        }
+                    });
+        }
+
+        //subscribe to changes to game over pending
+        if (gameManager.getGameOverPendingModel() != null) {
+            gameManager.getGameOverPendingModel().addObserver(
+                    new Observer() {
+                        private boolean gameOverPending = false;
+                        public void update(Observable o, Object arg) {
+                            if (o instanceof BooleanState) {
+                                BooleanState s = (BooleanState)o;
+                                if (!gameOverPending && s.booleanValue()) {
+                                    if (SoundConfig.isSFXEnabled()) {
+                                        player.playSFXByConfigKey (
+                                                SoundConfig.KEY_SFX_GEN_GameOverPending);
+                                    }
+                                }
+                                gameOverPending = s.booleanValue();
                             }
                         }
                     });
