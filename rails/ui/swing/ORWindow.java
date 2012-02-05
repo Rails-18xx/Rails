@@ -12,13 +12,28 @@ import java.util.Locale;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 
 import org.apache.log4j.Logger;
 
+import bibliothek.gui.DockController;
+import bibliothek.gui.Dockable;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.dock.ScreenDockStation;
+import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CGrid;
+import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.DefaultSingleCDockable;
+import bibliothek.gui.dock.common.action.predefined.CBlank;
+import bibliothek.gui.dock.common.event.CDockableStateListener;
+import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.common.intern.DefaultCDockable;
+import bibliothek.gui.dock.common.intern.ui.CSingleParentRemover;
+import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.common.theme.ThemeMap;
+import bibliothek.gui.dock.event.DockStationAdapter;
+import bibliothek.gui.dock.station.LayoutLocked;
 
 import rails.common.GuiDef;
 import rails.common.LocalText;
@@ -92,7 +107,11 @@ public class ORWindow extends JFrame implements ActionPerformer {
             orWindowControl.setTheme( ThemeMap.KEY_SMOOTH_THEME );
             add( orWindowControl.getContentArea() );
             CGrid orWindowLayout = new CGrid( orWindowControl );
-
+            
+            //ensure that externalized dockables get a split station as parent
+            //necessary, otherwise externalized dockables cannot be docked together
+            alwaysAddStationsToExternalizedDockables(orWindowControl);
+            
             //set docks tooltip language
             if ("en_us".equalsIgnoreCase(Config.get("locale"))) {
                 //hard setting to default in case of US as this is DockingFrames default language
@@ -350,6 +369,111 @@ public class ORWindow extends JFrame implements ActionPerformer {
                 orWindowControl.load(getLayoutName());
             } catch (Exception e) {} //skip if layout not found
         }
+        
+        //ensure that all dockables that are externalized according to layout
+        //information don't have the deault maximize button (as it won't work
+        //for the adjusted externalization setup)
+        for (int i = 0 ; i < orWindowControl.getCDockableCount() ; i++ ) {
+            CDockable d = orWindowControl.getCDockable(i);
+            if (d instanceof DefaultCDockable) {
+                DefaultCDockable dd = (DefaultCDockable)d;
+                if (ExtendedMode.EXTERNALIZED.equals(d.getExtendedMode())) {
+                    dd.putAction( CDockable.ACTION_KEY_MAXIMIZE, CBlank.BLANK );
+                }
+            }
+        }
+    }
+
+    /**
+     * The behavior of the specified CControl is altered by the following:
+     * If a dockable is detached / externalized, it would normally put directly
+     * under the ScreenDockStation - thus inhibiting any docking to/from this
+     * dockable. This is changed such that a split station (that would allow for
+     * that) is put in between the ScreenDockStation and the Dockable. 
+     */
+    private void alwaysAddStationsToExternalizedDockables(CControl cc) {
+
+        // access the DockStation which shows our detached (externalized) items
+        CStation<?> screen = (CStation<?>) 
+                cc.getStation( CControl.EXTERNALIZED_STATION_ID );
+        
+        // remove the standard maximize action when externalizing
+        // and adds it back when unexternalizing
+        // (as maximize won't work for the adjusted externalization setup)
+        cc.addStateListener( new CDockableStateListener() {
+            public void visibilityChanged( CDockable cd ){
+                // ignore
+            }
+     
+            public void extendedModeChanged( CDockable cd, ExtendedMode mode ){
+                if( cd instanceof DefaultCDockable ) {
+                    DefaultCDockable dockable = (DefaultCDockable) cd;
+                    if( mode.equals( ExtendedMode.EXTERNALIZED ) ) {
+                        dockable.putAction( CDockable.ACTION_KEY_MAXIMIZE, CBlank.BLANK );
+                    }
+                    else {
+                        dockable.putAction( CDockable.ACTION_KEY_MAXIMIZE, null );
+                    }
+                }
+            }
+        });
+        
+        // if a Dockable is added to that station...
+        screen.getStation().addDockStationListener( new ScreenDockStationListener());
+ 
+        // make sure a SplitDockStation with one child and a parent 
+        // that is a ScreenDockStation does not get removed
+        cc.intern().getController().setSingleParentRemover( 
+                new CSingleParentRemover( cc ){
+            @Override
+            protected boolean shouldTest( DockStation station ){
+                if( station instanceof SplitDockStation ) {
+                    SplitDockStation split = (SplitDockStation) station;
+                    if( split.getDockParent() instanceof ScreenDockStation ) {
+                        // but we want to remove the station if it does 
+                        // not have any children at all
+                        return split.getDockableCount() == 0;
+                    }
+                }
+                return super.shouldTest( station );
+            }
+        } );
     }
     
+    @LayoutLocked(locked = false)
+    private class ScreenDockStationListener extends DockStationAdapter {
+        public void dockableAdded( DockStation station, final Dockable dockable ){
+            // ... and the new child is not a SplitDockStation ...
+            if( !(dockable instanceof SplitDockStation) ) {
+                SwingUtilities.invokeLater( new Runnable(){
+                    public void run(){
+                        checkAndReplace( dockable );
+                    }
+                } );
+            }
+        }
+        private void checkAndReplace( Dockable dockable ){
+            DockStation station = dockable.getDockParent();
+            if( !(station instanceof ScreenDockStation) ) {
+                // cancel
+                return;
+            }
+     
+            // .. then we just insert a SplitDockStation
+            SplitDockStation split = new SplitDockStation();
+            DockController controller = station.getController();
+     
+            try {
+                // disable events while rearranging our layout
+                controller.freezeLayout();
+     
+                station.replace( dockable, split );
+                split.drop( dockable );
+            }
+            finally {
+                // and enable events after we finished
+                controller.meltLayout();
+            }
+        }
+    }
 }
