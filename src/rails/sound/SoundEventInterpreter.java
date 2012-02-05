@@ -120,10 +120,14 @@ public class SoundEventInterpreter {
                 LayTile lt = (LayTile)action;
                 if (lt.getLaidTile().getNumStations() == 0) {
                     //track upgrade
-                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_LayTile_track);
+                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_LayTile_Track);
                 } else {
                     //city upgrade
-                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_LayTile_city);
+                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_LayTile_City);
+                }
+                if (lt.getLaidTile().countFreeTiles() == 1) {
+                    //last available tile is about to be laid
+                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_LayTile_LastTileLaid);
                 }
                 
             } else if (action instanceof LayToken) {
@@ -206,6 +210,27 @@ public class SoundEventInterpreter {
                        public Observable getObservable() {
                            return gameManager.getCurrentRoundModel();
                        }
+                    });
+        }
+
+        //subscribe to changes to game over pending
+        final BooleanState gameOverModel = gameManager.getGameOverPendingModel(); 
+        if (gameOverModel != null) {
+            gameOverModel.addObserver(
+                    new Observer() {
+                        private boolean gameOverPending = false;
+                        public void update(String text) {
+                            if (!gameOverPending && gameOverModel.value()) {
+                                if (SoundConfig.isSFXEnabled()) {
+                                    player.playSFXByConfigKey (
+                                            SoundConfig.KEY_SFX_GEN_GameOverPending);
+                                }
+                            }
+                            gameOverPending = gameOverModel.value();
+                        }
+                        public Observable getObservable() {
+                            return gameOverModel;
+                        }
                     });
         }
 

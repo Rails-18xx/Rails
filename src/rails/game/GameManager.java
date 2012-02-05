@@ -1379,6 +1379,10 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         return gameOver.value();
     }
 
+    public BooleanState getGameOverPendingModel() {
+        return gameOverPending;
+    }
+
     public void setGameOverReportedUI(boolean b){
         gameOverReportedUI = b;
     }
