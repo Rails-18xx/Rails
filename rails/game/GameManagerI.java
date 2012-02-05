@@ -80,6 +80,8 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
      */
     public abstract boolean isGameOver();
 
+    public ModelObject getGameOverPendingModel();
+
     public void setGameOverReportedUI(boolean b);
 
     public boolean getGameOverReportedUI();
