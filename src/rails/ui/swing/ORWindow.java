@@ -2,6 +2,7 @@
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
+import java.awt.MenuItem;
 import java.awt.Rectangle;
 import java.awt.event.*;
 import java.io.File;
@@ -10,6 +11,9 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
@@ -31,9 +35,15 @@ import bibliothek.gui.dock.common.event.CDockableStateListener;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.DefaultCDockable;
 import bibliothek.gui.dock.common.intern.ui.CSingleParentRemover;
+import bibliothek.gui.dock.common.menu.CLayoutChoiceMenuPiece;
+import bibliothek.gui.dock.common.menu.CLookAndFeelMenuPiece;
+import bibliothek.gui.dock.common.menu.CPreferenceMenuPiece;
+import bibliothek.gui.dock.common.menu.CThemeMenuPiece;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.common.theme.ThemeMap;
 import bibliothek.gui.dock.event.DockStationAdapter;
+import bibliothek.gui.dock.facile.menu.RootMenuPiece;
+import bibliothek.gui.dock.facile.menu.SubmenuPiece;
 import bibliothek.gui.dock.station.LayoutLocked;
 
 import rails.common.GuiDef;
@@ -67,6 +77,7 @@ public class ORWindow extends JFrame implements ActionPerformer {
 
     private static final String layoutFolderName = "DockableLayout";
     private static final String layoutFileSuffix = "_layout.rails_ini";
+    private static final String initialLayoutName = "InitialDockableLayout";
     
     protected static Logger log =
             LoggerFactory.getLogger(ORWindow.class);
@@ -105,7 +116,6 @@ public class ORWindow extends JFrame implements ActionPerformer {
 
             //build the docking layout
             orWindowControl = new CControl( this );
-            orWindowControl.setTheme( ThemeMap.KEY_SMOOTH_THEME );
             add( orWindowControl.getContentArea() );
             CGrid orWindowLayout = new CGrid( orWindowControl );
             
@@ -121,41 +131,72 @@ public class ORWindow extends JFrame implements ActionPerformer {
             }
 
             //add message panel
-            String dockableName = LocalText.getText("DockableTitle.orWindow.messagePanel");
+            String dockableName = LocalText.getText("Dockable.orWindow.messagePanel");
             DefaultSingleCDockable singleDockable = new DefaultSingleCDockable( dockableName, dockableName );
             singleDockable.add( slider, BorderLayout.CENTER );
             singleDockable.setCloseable( false );
             orWindowLayout.add( 0, 0, 100, 10, singleDockable );
             
             //add upgrade panel
-            dockableName = LocalText.getText("DockableTitle.orWindow.upgradePanel");
+            dockableName = LocalText.getText("Dockable.orWindow.upgradePanel");
             singleDockable = new DefaultSingleCDockable( dockableName, dockableName );
             singleDockable.add( upgradePanel, BorderLayout.CENTER );
             singleDockable.setCloseable( false );
             orWindowLayout.add( 0, 10, 20, 70, singleDockable );
     
             //add map panel
-            dockableName = LocalText.getText("DockableTitle.orWindow.mapPanel");
+            dockableName = LocalText.getText("Dockable.orWindow.mapPanel");
             singleDockable = new DefaultSingleCDockable( dockableName, dockableName );
             singleDockable.add( mapPanel, BorderLayout.CENTER );
             singleDockable.setCloseable( false );
             orWindowLayout.add( 20, 10, 80, 70, singleDockable );
     
             //add or panel
-            dockableName = LocalText.getText("DockableTitle.orWindow.orPanel");
+            dockableName = LocalText.getText("Dockable.orWindow.orPanel");
             singleDockable = new DefaultSingleCDockable( dockableName, dockableName );
             singleDockable.add( orPanel, BorderLayout.CENTER );
             singleDockable.setCloseable( false );
             orWindowLayout.add( 0, 80, 100, 15, singleDockable );
     
             //add button panel of or panel
-            dockableName = LocalText.getText("DockableTitle.orWindow.buttonPanel");
+            dockableName = LocalText.getText("Dockable.orWindow.buttonPanel");
             singleDockable = new DefaultSingleCDockable( dockableName, dockableName );
             singleDockable.add( orPanel.getButtonPanel(), BorderLayout.CENTER );
             singleDockable.setCloseable( false );
             orWindowLayout.add( 0, 95, 100, 5, singleDockable );
             
+            //deploy layout to control's content area
             orWindowControl.getContentArea().deploy( orWindowLayout );
+            
+            //create the frame menu
+            JMenuBar menubar = new JMenuBar();
+            RootMenuPiece appearanceMenu = new RootMenuPiece(
+                    LocalText.getText("Dockable.orWindow.menu.appearance"), 
+                    false);
+            appearanceMenu.add( new SubmenuPiece( 
+                    LocalText.getText("Dockable.orWindow.menu.appearance.lookAndFeel"), 
+                    false, 
+                    new CLookAndFeelMenuPiece( orWindowControl )
+            ));
+            appearanceMenu.add( new SubmenuPiece( 
+                    LocalText.getText("Dockable.orWindow.menu.appearance.theme"), 
+                    false, 
+                    new CThemeMenuPiece( orWindowControl )
+            ));
+            appearanceMenu.add( CPreferenceMenuPiece.setup( orWindowControl ));
+            appearanceMenu.getMenu().addSeparator();
+            JMenuItem resetLayoutMenuItem = new JMenuItem (
+                    LocalText.getText("Dockable.orWindow.menu.appearance.resetLayout"));
+            resetLayoutMenuItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    orWindowControl.load(initialLayoutName);
+                }
+            });
+            appearanceMenu.getMenu().add(resetLayoutMenuItem);
+
+            //deploy menu
+            menubar.add( appearanceMenu.getMenu() );
+            setJMenuBar( menubar );
             
         } else {
             // CONVENTIONAL LAYOUT
@@ -223,8 +264,11 @@ public class ORWindow extends JFrame implements ActionPerformer {
 
         gameUIManager.reportWindow.updateLog();
         
-        //dockable panes: restore former layout (depending on game variant)
-        loadDockableLayout();
+        //dockable panes: save initial layout and restore former layout
+        if (isDockablePanelsEnabled()) {
+            orWindowControl.save(initialLayoutName);
+            loadDockableLayout();
+        }
     }
 
     public ORUIManager getORUIManager() {
