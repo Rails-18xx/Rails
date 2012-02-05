@@ -24,6 +24,7 @@ public class SoundConfig {
     public static final String KEY_BGM_OperatingRound = "sound.backgroundMusic.operatingRound";
     public static final String KEY_BGM_EndOfGameRound = "sound.backgroundMusic.endOfGameRound";
     public static final String KEY_SFX_Enabled = "sound.sfx";
+    public static final String KEY_SFX_GEN_GameOverPending = "sound.sfx.gen.gameOverPending";
     public static final String KEY_SFX_GEN_Pass = "sound.sfx.gen.pass";
     public static final String KEY_SFX_GEN_Select = "sound.sfx.gen.select";
     public static final String KEY_SFX_GEN_NewCurrentPlayer = "sound.sfx.gen.newCurrentPlayer";
@@ -37,8 +38,9 @@ public class SoundConfig {
     public static final String KEY_SFX_SR_SellShare_NonPresident = "sound.sfx.sr.sellShare.nonPresident";
     public static final String KEY_SFX_SR_CompanyFloats = "sound.sfx.sr.companyFloats";
     public static final String KEY_SFX_OR_RotateTile = "sound.sfx.or.rotateTile";
-    public static final String KEY_SFX_OR_LayTile_track = "sound.sfx.or.layTile.track";
-    public static final String KEY_SFX_OR_LayTile_city = "sound.sfx.or.layTile.city";
+    public static final String KEY_SFX_OR_LayTile_Track = "sound.sfx.or.layTile.track";
+    public static final String KEY_SFX_OR_LayTile_City = "sound.sfx.or.layTile.city";
+    public static final String KEY_SFX_OR_LayTile_LastTileLaid = "sound.sfx.or.layTile.lastTileLaid";
     public static final String KEY_SFX_OR_LayToken = "sound.sfx.or.layToken";
     public static final String KEY_SFX_OR_SetRevenue = "sound.sfx.or.setRevenue";
     public static final String KEY_SFX_OR_Decision_Payout = "sound.sfx.or.decision.payout";
