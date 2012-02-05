@@ -192,7 +192,11 @@ public class ORWindow extends JFrame implements ActionPerformer {
             public void windowClosing(WindowEvent e) {
                 saveDockableLayout();
                 StatusWindow.uncheckMenuItemBox(StatusWindow.MAP_CMD);
-                frame.dispose();
+                if (!isDockablePanelsEnabled()) {
+                    frame.dispose();
+                } else {
+                    setVisible(false);
+                }
             }
         });
         addComponentListener(new ComponentAdapter() {
