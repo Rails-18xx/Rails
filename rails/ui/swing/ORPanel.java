@@ -163,7 +163,7 @@ implements ActionListener, KeyListener, RevenueListener {
         add(statusPanel, BorderLayout.CENTER);
         
         //only add button panel directly for conventional layout
-        if (!parent.isDockablePanelsEnabled()) {
+        if (!parent.isDockingFrameworkEnabled()) {
             add(buttonPanel, BorderLayout.SOUTH);
         }
 
@@ -314,7 +314,7 @@ implements ActionListener, KeyListener, RevenueListener {
         redoButton.setEnabled(false);
 
         //choose button panel layout depending on whether panel becomes a dockable
-        if (orWindow.isDockablePanelsEnabled()) {
+        if (orWindow.isDockingFrameworkEnabled()) {
             
             //customized panel for dockable layout
             //the minimal size is defined by the size of one button
@@ -357,7 +357,7 @@ implements ActionListener, KeyListener, RevenueListener {
 
         //for dockable button panel, ensure that all buttons have the same size
         //(necessary, otherwise vertical/box layout will look ugly)
-        if (orWindow.isDockablePanelsEnabled()) {
+        if (orWindow.isDockingFrameworkEnabled()) {
             
             //get maximum size
             Dimension maxSize = new Dimension();

@@ -409,7 +409,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
      * could be necessary when displaying tiles of an arbitrary size 
      */
     private int getZoomStep() {
-        if (orUIManager.getORWindow().isDockablePanelsEnabled()) {
+        if (orUIManager.getORWindow().isDockingFrameworkEnabled()) {
             return hexMap.getZoomStep();
         } else {
             return UPGRADE_TILE_ZOOM_STEP;
