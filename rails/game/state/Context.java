@@ -68,7 +68,7 @@ public class Context extends GameItem {
     
     private Context initRoot() {
         super.init(this); // sets parent identical to ROOT
-        stateManager = new StateManager(this);
+        stateManager = StateManager.create();
         return this;
     }
 

@@ -42,7 +42,7 @@ public class ArrayListMultimapState<K,V> extends MultimapState<K,V> {
      */
 
     public boolean put(K key, V value) {
-        new MultimapChange<K,V>(this, key, value, true );
+        new MultimapChange<K,V>(this, key, value, true);
         return true;
     }
     
@@ -65,7 +65,7 @@ public class ArrayListMultimapState<K,V> extends MultimapState<K,V> {
         return map.toString();
     }
 
-    public void change(K key, V value, boolean addToMap) {
+    void change(K key, V value, boolean addToMap) {
         if (addToMap) {
             map.put(key, value);
         } else {

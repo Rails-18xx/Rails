@@ -106,7 +106,7 @@ public final class HashMultimapState<K,V> extends MultimapState<K,V> implements 
         return map.toString();
     }
 
-    public void change(K key, V value, boolean addToMap) {
+    void change(K key, V value, boolean addToMap) {
         if (addToMap) {
             map.put(key, value);
         } else {

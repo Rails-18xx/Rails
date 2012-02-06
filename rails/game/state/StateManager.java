@@ -15,33 +15,72 @@ import com.google.common.collect.Sets;
 import rails.game.GameManager;
 import rails.game.model.Model;
 
+// TODO: Change it to a Context subclass
+
 public final class StateManager extends GameItem {
 
+    public static final String ID = "States";
+    
     protected static Logger log =
         Logger.getLogger(StateManager.class.getPackage().getName());
     
     private final Set<State> allStates = new HashSet<State>();
+    
+    private final PortfolioManager portfolioManager = PortfolioManager.create();
+    private final WalletManager walletManager = WalletManager.create();
+
+    private StateManager() {
+        super(ID);
+    }
 
     /**
-     * Creates a StateManager (only possible for a root GameContext)
-     * @param parent a root GameContext
+     * Creates an (unowned) StateManager
+     * Remark: Still requires a call to the init-method
      */
-    StateManager(Context parent) {
-        super("StateManager");
-
-        if (parent.getId() != Context.ROOT) {
+    public static StateManager create(){
+        return new StateManager();
+    }
+    
+    /**
+     * @exception IllegalArgumentException if parent is not the Context with an id equal to Context.ROOT 
+     */
+    @Override
+    public StateManager init(Item parent) {
+        if (!(parent instanceof Context && parent.getId() != Context.ROOT)) {
             throw new IllegalArgumentException("StateManager can only be created for a root GameContext");
         }
-        // immediate initialization
-        init(parent);
+        super.init(parent);
+        portfolioManager.init(parent);
+        walletManager.init(parent);
+        return this;
     }
     
-    void registerState(State state) {
-        allStates.add(state);
+    /**
+     * Register states 
+     * Remark: Portfolios and Wallets get added from their respective managers automatically
+     */
+    boolean registerState(State state) {
+        if (!allStates.add(state)) return false;
+        if (state instanceof PortfolioNG) {
+            return portfolioManager.addPortfolio((PortfolioNG<?>) state);
+        } else if (state instanceof Wallet) {
+            return walletManager.addWallet((Wallet<?>) state);
+        }
+        return true;
     }
     
+    /**
+     * De-Register states 
+     * Remark: Portfolios and Wallets are removed from their respective managers automatically
+     */
     boolean deRegisterState(State state) {
-        return allStates.remove(state);
+        if (!allStates.remove(state)) return false;
+        if (state instanceof PortfolioNG) {
+            return portfolioManager.removePortfolio((PortfolioNG<?>) state);
+        } else if (state instanceof Wallet) {
+            return walletManager.removeWallet((Wallet<?>) state);
+        }
+        return true;
     }
 
     /**

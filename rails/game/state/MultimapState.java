@@ -13,6 +13,6 @@ abstract class MultimapState<K,V> extends State  {
     
     public abstract boolean remove(K key, V value);
     
-    public abstract void change(K key, V value, boolean addToMap);
+    abstract void change(K key, V value, boolean addToMap);
     
 }
