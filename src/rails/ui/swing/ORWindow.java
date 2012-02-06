@@ -2,49 +2,18 @@
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
-import java.awt.MenuItem;
 import java.awt.Rectangle;
 import java.awt.event.*;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import javax.swing.JFrame;
-import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import bibliothek.gui.DockController;
-import bibliothek.gui.Dockable;
-import bibliothek.gui.DockStation;
-import bibliothek.gui.dock.ScreenDockStation;
-import bibliothek.gui.dock.SplitDockStation;
-import bibliothek.gui.dock.common.CControl;
-import bibliothek.gui.dock.common.CGrid;
-import bibliothek.gui.dock.common.CStation;
-import bibliothek.gui.dock.common.DefaultSingleCDockable;
-import bibliothek.gui.dock.common.action.predefined.CBlank;
-import bibliothek.gui.dock.common.event.CDockableStateListener;
-import bibliothek.gui.dock.common.intern.CDockable;
-import bibliothek.gui.dock.common.intern.DefaultCDockable;
-import bibliothek.gui.dock.common.intern.ui.CSingleParentRemover;
-import bibliothek.gui.dock.common.menu.CLayoutChoiceMenuPiece;
-import bibliothek.gui.dock.common.menu.CLookAndFeelMenuPiece;
-import bibliothek.gui.dock.common.menu.CPreferenceMenuPiece;
-import bibliothek.gui.dock.common.menu.CThemeMenuPiece;
-import bibliothek.gui.dock.common.mode.ExtendedMode;
-import bibliothek.gui.dock.common.theme.ThemeMap;
-import bibliothek.gui.dock.event.DockStationAdapter;
-import bibliothek.gui.dock.facile.menu.RootMenuPiece;
-import bibliothek.gui.dock.facile.menu.SubmenuPiece;
-import bibliothek.gui.dock.station.LayoutLocked;
 
 import rails.common.GuiDef;
 import rails.common.LocalText;
@@ -52,12 +21,13 @@ import rails.common.parser.Config;
 import rails.game.GameManager;
 import rails.game.OperatingRound;
 import rails.game.action.*;
+import rails.ui.swing.elements.DockingFrame;
 
 /**
  * This Window displays the available operations that may be performed during an
  * Operating Round. This window also contains the Game Map.
  */
-public class ORWindow extends JFrame implements ActionPerformer {
+public class ORWindow extends DockingFrame implements ActionPerformer {
     private static final long serialVersionUID = 1L;
     protected GameUIManager gameUIManager;
     protected ORUIManager orUIManager;
@@ -73,17 +43,11 @@ public class ORWindow extends JFrame implements ActionPerformer {
     List<LayTile> allowedTileLays = new ArrayList<LayTile>();
     List<LayToken> allowedTokenLays = new ArrayList<LayToken>();
 
-    CControl orWindowControl = null;
-
-    private static final String layoutFolderName = "DockableLayout";
-    private static final String layoutFileSuffix = "_layout.rails_ini";
-    private static final String initialLayoutName = "InitialDockableLayout";
-    
     protected static Logger log =
             LoggerFactory.getLogger(ORWindow.class);
 
     public ORWindow(GameUIManager gameUIManager) {
-        super();
+        super( "yes".equals(Config.get("or.window.dockablePanels")) );
         this.gameUIManager = gameUIManager;
 
         String orUIManagerClassName = gameUIManager.getClassName(GuiDef.ClassName.OR_UI_MANAGER);
@@ -110,93 +74,27 @@ public class ORWindow extends JFrame implements ActionPerformer {
 
         orPanel = new ORPanel(this, orUIManager);
         
-        //create docking / conventional layout depending config
-        if (isDockablePanelsEnabled()) {
-            //DOCKABLE LAYOUT
-
-            //build the docking layout
-            orWindowControl = new CControl( this );
-            add( orWindowControl.getContentArea() );
-            CGrid orWindowLayout = new CGrid( orWindowControl );
+        //create docking / conventional layout
+        if (isDockingFrameworkEnabled()) {
             
-            //ensure that externalized dockables get a split station as parent
-            //necessary, otherwise externalized dockables cannot be docked together
-            alwaysAddStationsToExternalizedDockables(orWindowControl);
-            
-            //set docks tooltip language
-            if ("en_us".equalsIgnoreCase(Config.get("locale"))) {
-                //hard setting to default in case of US as this is DockingFrames default language
-                //don't use Locale constant as it is en_US (case sensitive)
-                orWindowControl.setLanguage(new Locale(""));
-            }
-
-            //add message panel
-            String dockableName = LocalText.getText("Dockable.orWindow.messagePanel");
-            DefaultSingleCDockable singleDockable = new DefaultSingleCDockable( dockableName, dockableName );
-            singleDockable.add( slider, BorderLayout.CENTER );
-            singleDockable.setCloseable( false );
-            orWindowLayout.add( 0, 0, 100, 10, singleDockable );
-            
-            //add upgrade panel
-            dockableName = LocalText.getText("Dockable.orWindow.upgradePanel");
-            singleDockable = new DefaultSingleCDockable( dockableName, dockableName );
-            singleDockable.add( upgradePanel, BorderLayout.CENTER );
-            singleDockable.setCloseable( false );
-            orWindowLayout.add( 0, 10, 20, 70, singleDockable );
-    
-            //add map panel
-            dockableName = LocalText.getText("Dockable.orWindow.mapPanel");
-            singleDockable = new DefaultSingleCDockable( dockableName, dockableName );
-            singleDockable.add( mapPanel, BorderLayout.CENTER );
-            singleDockable.setCloseable( false );
-            orWindowLayout.add( 20, 10, 80, 70, singleDockable );
-    
-            //add or panel
-            dockableName = LocalText.getText("Dockable.orWindow.orPanel");
-            singleDockable = new DefaultSingleCDockable( dockableName, dockableName );
-            singleDockable.add( orPanel, BorderLayout.CENTER );
-            singleDockable.setCloseable( false );
-            orWindowLayout.add( 0, 80, 100, 15, singleDockable );
-    
-            //add button panel of or panel
-            dockableName = LocalText.getText("Dockable.orWindow.buttonPanel");
-            singleDockable = new DefaultSingleCDockable( dockableName, dockableName );
-            singleDockable.add( orPanel.getButtonPanel(), BorderLayout.CENTER );
-            singleDockable.setCloseable( false );
-            orWindowLayout.add( 0, 95, 100, 5, singleDockable );
-            
-            //deploy layout to control's content area
-            orWindowControl.getContentArea().deploy( orWindowLayout );
+            //generate layout
+            addDockable ( slider, LocalText.getText("Dockable.orWindow.messagePanel"),
+                    0, 0, 100, 10);
+            addDockable ( upgradePanel, LocalText.getText("Dockable.orWindow.upgradePanel"),
+                    0, 10, 20, 70);
+            addDockable ( mapPanel, LocalText.getText("Dockable.orWindow.mapPanel"),
+                    20, 10, 80, 70);
+            addDockable ( orPanel, LocalText.getText("Dockable.orWindow.orPanel"),
+                    0, 80, 100, 15);
+            addDockable ( orPanel.getButtonPanel(), 
+                    LocalText.getText("Dockable.orWindow.buttonPanel"),
+                    0, 95, 100, 5);
+            deployDockables();
             
             //create the frame menu
-            JMenuBar menubar = new JMenuBar();
-            RootMenuPiece appearanceMenu = new RootMenuPiece(
-                    LocalText.getText("Dockable.orWindow.menu.appearance"), 
-                    false);
-            appearanceMenu.add( new SubmenuPiece( 
-                    LocalText.getText("Dockable.orWindow.menu.appearance.lookAndFeel"), 
-                    false, 
-                    new CLookAndFeelMenuPiece( orWindowControl )
-            ));
-            appearanceMenu.add( new SubmenuPiece( 
-                    LocalText.getText("Dockable.orWindow.menu.appearance.theme"), 
-                    false, 
-                    new CThemeMenuPiece( orWindowControl )
-            ));
-            appearanceMenu.add( CPreferenceMenuPiece.setup( orWindowControl ));
-            appearanceMenu.getMenu().addSeparator();
-            JMenuItem resetLayoutMenuItem = new JMenuItem (
-                    LocalText.getText("Dockable.orWindow.menu.appearance.resetLayout"));
-            resetLayoutMenuItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    orWindowControl.load(initialLayoutName);
-                }
-            });
-            appearanceMenu.getMenu().add(resetLayoutMenuItem);
-
-            //deploy menu
-            menubar.add( appearanceMenu.getMenu() );
-            setJMenuBar( menubar );
+            JMenuBar menuBar = new JMenuBar();
+            addDockingFrameMenu(menuBar);
+            setJMenuBar( menuBar );
             
         } else {
             // CONVENTIONAL LAYOUT
@@ -231,9 +129,9 @@ public class ORWindow extends JFrame implements ActionPerformer {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                saveDockableLayout();
+                saveLayout();
                 StatusWindow.uncheckMenuItemBox(StatusWindow.MAP_CMD);
-                if (!isDockablePanelsEnabled()) {
+                if (!isDockingFrameworkEnabled()) {
                     frame.dispose();
                 } else {
                     setVisible(false);
@@ -252,7 +150,7 @@ public class ORWindow extends JFrame implements ActionPerformer {
         });
 
         //rearrange layout only if no docking framework active
-        if (!isDockablePanelsEnabled()) {
+        if (!isDockingFrameworkEnabled()) {
             pack();
         }
 
@@ -264,11 +162,7 @@ public class ORWindow extends JFrame implements ActionPerformer {
 
         gameUIManager.reportWindow.updateLog();
         
-        //dockable panes: save initial layout and restore former layout
-        if (isDockablePanelsEnabled()) {
-            orWindowControl.save(initialLayoutName);
-            loadDockableLayout();
-        }
+        if (isDockingFrameworkEnabled()) initLayout();
     }
 
     public ORUIManager getORUIManager() {
@@ -320,7 +214,7 @@ public class ORWindow extends JFrame implements ActionPerformer {
 
     public void repaintORPanel() {
         //rearrange layout only if no docking framework active
-        if (!isDockablePanelsEnabled()) {
+        if (!isDockingFrameworkEnabled()) {
             orPanel.revalidate();
         }
     }
@@ -336,7 +230,7 @@ public class ORWindow extends JFrame implements ActionPerformer {
                 numORs ));
         
         //rearrange layout only if no docking framework active
-        if (!isDockablePanelsEnabled()) {
+        if (!isDockingFrameworkEnabled()) {
             pack();
             if (lastBounds != null) {
                 Rectangle newBounds = getBounds();
@@ -369,160 +263,10 @@ public class ORWindow extends JFrame implements ActionPerformer {
         messagePanel.setMessage("");
         setTitle(LocalText.getText("MapWindowTitle"));
     }
-    
-    public boolean isDockablePanelsEnabled() {
-        return "yes".equals(Config.get("or.window.dockablePanels"));
-    }
-    
-    
-    private String getLayoutName() {
+
+    protected String getLayoutFileName() {
         return getClass().getSimpleName() + "_" 
                 + gameUIManager.getGameManager().getGameName() ;
     }
-    
-    private File getLayoutFile() {
-        try {
-            //get layout folder (and ensure that it is available)
-            File layoutFolder = new File(Config.get("save.directory"),layoutFolderName);
-            if (!layoutFolder.isDirectory()) {
-                layoutFolder.mkdirs();
-            }
-            File layoutFile = new File(layoutFolder, 
-                    getLayoutName() + layoutFileSuffix );
-            return layoutFile;
-        } catch (Exception e) {
-            //return no valid file if anything goes wrong
-            return null;
-        }
-    }
 
-    public void saveDockableLayout() {
-        if (!isDockablePanelsEnabled()) return;
-
-        File layoutFile = getLayoutFile();
-        if (layoutFile != null) {
-            try {
-                orWindowControl.save(getLayoutName());
-                orWindowControl.writeXML(layoutFile);
-            } catch (Exception e) {} //skip in case of issue
-        }
-    }
-    
-    private void loadDockableLayout() {
-        if (!isDockablePanelsEnabled()) return;
-        
-        File layoutFile = getLayoutFile();
-        if (layoutFile != null) {
-            try {
-                orWindowControl.readXML(layoutFile);
-                orWindowControl.load(getLayoutName());
-            } catch (Exception e) {} //skip if layout not found
-        }
-        
-        //ensure that all dockables that are externalized according to layout
-        //information don't have the deault maximize button (as it won't work
-        //for the adjusted externalization setup)
-        for (int i = 0 ; i < orWindowControl.getCDockableCount() ; i++ ) {
-            CDockable d = orWindowControl.getCDockable(i);
-            if (d instanceof DefaultCDockable) {
-                DefaultCDockable dd = (DefaultCDockable)d;
-                if (ExtendedMode.EXTERNALIZED.equals(d.getExtendedMode())) {
-                    dd.putAction( CDockable.ACTION_KEY_MAXIMIZE, CBlank.BLANK );
-                }
-            }
-        }
-    }
-
-    /**
-     * The behavior of the specified CControl is altered by the following:
-     * If a dockable is detached / externalized, it would normally put directly
-     * under the ScreenDockStation - thus inhibiting any docking to/from this
-     * dockable. This is changed such that a split station (that would allow for
-     * that) is put in between the ScreenDockStation and the Dockable. 
-     */
-    private void alwaysAddStationsToExternalizedDockables(CControl cc) {
-
-        // access the DockStation which shows our detached (externalized) items
-        CStation<?> screen = (CStation<?>) 
-                cc.getStation( CControl.EXTERNALIZED_STATION_ID );
-        
-        // remove the standard maximize action when externalizing
-        // and adds it back when unexternalizing
-        // (as maximize won't work for the adjusted externalization setup)
-        cc.addStateListener( new CDockableStateListener() {
-            public void visibilityChanged( CDockable cd ){
-                // ignore
-            }
-     
-            public void extendedModeChanged( CDockable cd, ExtendedMode mode ){
-                if( cd instanceof DefaultCDockable ) {
-                    DefaultCDockable dockable = (DefaultCDockable) cd;
-                    if( mode.equals( ExtendedMode.EXTERNALIZED ) ) {
-                        dockable.putAction( CDockable.ACTION_KEY_MAXIMIZE, CBlank.BLANK );
-                    }
-                    else {
-                        dockable.putAction( CDockable.ACTION_KEY_MAXIMIZE, null );
-                    }
-                }
-            }
-        });
-        
-        // if a Dockable is added to that station...
-        screen.getStation().addDockStationListener( new ScreenDockStationListener());
- 
-        // make sure a SplitDockStation with one child and a parent 
-        // that is a ScreenDockStation does not get removed
-        cc.intern().getController().setSingleParentRemover( 
-                new CSingleParentRemover( cc ){
-            @Override
-            protected boolean shouldTest( DockStation station ){
-                if( station instanceof SplitDockStation ) {
-                    SplitDockStation split = (SplitDockStation) station;
-                    if( split.getDockParent() instanceof ScreenDockStation ) {
-                        // but we want to remove the station if it does 
-                        // not have any children at all
-                        return split.getDockableCount() == 0;
-                    }
-                }
-                return super.shouldTest( station );
-            }
-        } );
-    }
-    
-    @LayoutLocked(locked = false)
-    private class ScreenDockStationListener extends DockStationAdapter {
-        public void dockableAdded( DockStation station, final Dockable dockable ){
-            // ... and the new child is not a SplitDockStation ...
-            if( !(dockable instanceof SplitDockStation) ) {
-                SwingUtilities.invokeLater( new Runnable(){
-                    public void run(){
-                        checkAndReplace( dockable );
-                    }
-                } );
-            }
-        }
-        private void checkAndReplace( Dockable dockable ){
-            DockStation station = dockable.getDockParent();
-            if( !(station instanceof ScreenDockStation) ) {
-                // cancel
-                return;
-            }
-     
-            // .. then we just insert a SplitDockStation
-            SplitDockStation split = new SplitDockStation();
-            DockController controller = station.getController();
-     
-            try {
-                // disable events while rearranging our layout
-                controller.freezeLayout();
-     
-                station.replace( dockable, split );
-                split.drop( dockable );
-            }
-            finally {
-                // and enable events after we finished
-                controller.meltLayout();
-            }
-        }
-    }
 }
