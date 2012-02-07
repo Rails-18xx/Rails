@@ -2,9 +2,7 @@ package rails.game;
 
 import java.util.List;
 
-import rails.common.DisplayBuffer;
-import rails.common.GuiDef;
-import rails.common.LocalText;
+import rails.common.*;
 import rails.common.parser.GameOption;
 import rails.game.action.*;
 import rails.game.state.ArrayListState;
@@ -118,7 +116,7 @@ public abstract class StartRound extends Round {
 
                 BuyStartItem buyAction = (BuyStartItem) startItemAction;
                 if (buyAction.hasSharePriceToSet()
-                    && buyAction.getAssociatedSharePrice() == 0) {
+                        && buyAction.getAssociatedSharePrice() == 0) {
                     // We still need a share price for this item
                     startItemAction.getStartItem().setStatus(
                             StartItem.NEEDS_SHARE_PRICE);
@@ -136,7 +134,7 @@ public abstract class StartRound extends Round {
             DisplayBuffer.add(LocalText.getText("UnexpectedAction",
                     action.toString()));
         }
-        
+
         startPacketChecks();
 
         if (startPacket.areAllSold()) {
@@ -208,14 +206,14 @@ public abstract class StartRound extends Round {
                 sharePrice = boughtItem.getAssociatedSharePrice();
                 if (sharePrice == 0) {
                     errMsg =
-                            LocalText.getText("NoSharePriceSet", shareCompName);
+                        LocalText.getText("NoSharePriceSet", shareCompName);
                     break;
                 }
                 if ((stockMarket.getStartSpace(sharePrice)) == null) {
                     errMsg =
-                            LocalText.getText("InvalidStartPrice",
+                        LocalText.getText("InvalidStartPrice",
                                     Currency.format(this, sharePrice),
-                                    shareCompName );
+                                shareCompName );
                     break;
                 }
             }
@@ -300,7 +298,7 @@ public abstract class StartRound extends Round {
             if (comp.hasStarted() && !comp.hasFloated()) {
                 checkFlotation(comp);
             }
-
+            if (comp.hasStarted()) comp.checkPresidency();  // Needed for 1835 BY
         }
     }
 
@@ -316,9 +314,9 @@ public abstract class StartRound extends Round {
         super.finishRound();
     }
 
-        /*----- Setting up the UI for the next action -----*/
+    /*----- Setting up the UI for the next action -----*/
 
-   /**
+    /**
      * Get the currentPlayer index in the player list (starting at 0).
      *
      * @return The index of the current Player.
