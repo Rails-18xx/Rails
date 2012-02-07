@@ -252,12 +252,16 @@ implements ActionListener, KeyListener {
             this.nativeInnerBorder = innerBorder;
             this.outlineBorder = outlineBorder;
             this.outerBorder = outerBorder;
+            Insets nativeInnerBorderInsets = nativeInnerBorder.getBorderInsets(null);
+            if (nativeInnerBorderInsets == null) {
+                nativeInnerBorderInsets = new Insets(0,0,0,0);
+            }
             this.highlightedInnerBorder = new DynamicBorder(
                     highlightedBorderColor,
-                    nativeInnerBorder.getBorderInsets(null).top,
-                    nativeInnerBorder.getBorderInsets(null).left,
-                    nativeInnerBorder.getBorderInsets(null).bottom,
-                    nativeInnerBorder.getBorderInsets(null).right);
+                    nativeInnerBorderInsets.top,
+                    nativeInnerBorderInsets.left,
+                    nativeInnerBorderInsets.bottom,
+                    nativeInnerBorderInsets.right);
         }
         public void setHighlight(boolean isToBeHighlighted) {
             outlineBorder.setHighlight(isToBeHighlighted);
