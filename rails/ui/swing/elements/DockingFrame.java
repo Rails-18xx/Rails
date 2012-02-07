@@ -158,7 +158,7 @@ public abstract class DockingFrame extends JFrame {
      */
     protected void initLayout() {
         control.save(layoutName_initial);
-        loadLayout();
+        loadLayout(getLayoutFile(),true);
     }
 
     /**
@@ -199,17 +199,16 @@ public abstract class DockingFrame extends JFrame {
             control.writeXML(layoutFile);
             log.info("Layout saved to " + layoutFile.getName());
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this,
-                        "Unable to save layout to " + layoutFile.getName());
+            log.error("Layout could not be saved to " + layoutFile.getName());
             return;
         }
     }
     
-    private void loadLayout() {
-        loadLayout(getLayoutFile());
-    }
-
-    private void loadLayout(File layoutFile) {
+    /**
+     * @param isTentative If true, then method only tries to load specified layout
+     * but would not produce any error popup.
+     */
+    private void loadLayout(File layoutFile, boolean isTentative) {
         if (!isDockingFrameworkEnabled) return;
         
         try {
@@ -217,8 +216,11 @@ public abstract class DockingFrame extends JFrame {
             control.load(layoutName_current);
             log.info("Layout loaded from " + layoutFile.getName());
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this,
-                        "Unable to load layout from " + layoutFile.getName());
+            if (!isTentative) {
+                JOptionPane.showMessageDialog(this,
+                            "Unable to load layout from " + layoutFile.getName());
+            }
+            log.error("Layout could not be loaded from " + layoutFile.getName());
             return;
         }
         
@@ -245,7 +247,7 @@ public abstract class DockingFrame extends JFrame {
         JFileChooser jfc = new JFileChooser();
         jfc.setCurrentDirectory(getLayoutDirectory());
         if (jfc.showOpenDialog(getContentPane()) != JFileChooser.APPROVE_OPTION) return; // cancel pressed
-        loadLayout(jfc.getSelectedFile());
+        loadLayout(jfc.getSelectedFile(),false);
     }
 
     /**
