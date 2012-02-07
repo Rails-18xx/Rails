@@ -233,7 +233,11 @@ implements ActionListener, KeyListener, RevenueListener {
         zoomMenu.add(calibrateMap);
         menuBar.add(zoomMenu);
 
-        add(menuBar, BorderLayout.NORTH);
+        // only add menu bar for conventional layout
+        // (otherwise part of DockingFrame)
+        if (!parent.isDockingFrameworkEnabled()) {
+            add(menuBar, BorderLayout.NORTH);
+        }
 
         setVisible(true);
 
@@ -1353,4 +1357,7 @@ implements ActionListener, KeyListener, RevenueListener {
         return buttonPanel;
     }
 
+    public JMenuBar getMenuBar() {
+        return menuBar;
+    }
 }

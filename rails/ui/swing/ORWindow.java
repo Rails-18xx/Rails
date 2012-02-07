@@ -90,8 +90,8 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
                     0, 95, 100, 5);
             deployDockables();
             
-            //create the frame menu
-            JMenuBar menuBar = new JMenuBar();
+            //take over or panel's menu bar as the frame menu bar
+            JMenuBar menuBar = orPanel.getMenuBar();
             addDockingFrameMenu(menuBar);
             setJMenuBar( menuBar );
             
