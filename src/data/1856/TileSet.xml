@@ -28,16 +28,16 @@
 		
 	<!-- Yellow tiles -->
 	<Tile id="1" quantity="1">
-		<Upgrade id="14" phase="5,6"/>
+		<Upgrade id="14" phase="6,D"/>
 	</Tile>
 	<Tile id="2" quantity="1">
-		<Upgrade id="15" phase="5,6"/>
+		<Upgrade id="15" phase="6,D"/>
 	</Tile>
 	<Tile id="3" quantity="3">
-		<Upgrade id="5,7" phase="5,6"/>
+		<Upgrade id="5,7" phase="6,D"/>
 	</Tile>
 	<Tile id="4" quantity="3">
-		<Upgrade id="57,9" phase="5,6"/>
+		<Upgrade id="57,9" phase="6,D"/>
 	</Tile>
 	<Tile id="5" quantity="2">
 		<Upgrade id="14,15" />
@@ -55,16 +55,16 @@
 		<Upgrade id="18,19,20,23,24,26,27" />
 	</Tile>
 	<Tile id="55" quantity="1">
-		<Upgrade id="14" phase="5,6"/>
+		<Upgrade id="14" phase="6,D"/>
 	</Tile>
 	<Tile id="56" quantity="1">
-		<Upgrade id="15" phase="5,6"/>
+		<Upgrade id="15" phase="6,D"/>
 	</Tile>
 	<Tile id="57" quantity="4">
 		<Upgrade id="14,15" />
 	</Tile>
 	<Tile id="58" quantity="3">
-		<Upgrade id="6,8" phase="5,6"/>
+		<Upgrade id="6,8" phase="6,D"/>
 	</Tile>
 	<Tile id="69" quantity="1" />
 	
