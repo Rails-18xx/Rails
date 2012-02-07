@@ -1,9 +1,9 @@
-Rails release 1.6.2:
+Rails release 1.6.3:
 
 A bug-fix release for the 1.6.x branch.
 
-Contributor: Erik Vos
-Bug reported by Bill Probst.
+Contributor: Bill Rosgen
+Bug reported by Aliza Panitz
 
 Single bug fixed:
-A sole presidency share could not be dumped.
+1856: Errors with late-game dit upgrade/downgrade - ID: 3485172
