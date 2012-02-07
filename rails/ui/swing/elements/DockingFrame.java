@@ -1,6 +1,3 @@
-/**
- * 
- */
 package rails.ui.swing.elements;
 
 import java.awt.BorderLayout;
@@ -10,9 +7,11 @@ import java.io.File;
 import java.util.Locale;
 
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import rails.common.LocalText;
@@ -40,6 +39,8 @@ import bibliothek.gui.dock.facile.menu.RootMenuPiece;
 import bibliothek.gui.dock.facile.menu.SubmenuPiece;
 import bibliothek.gui.dock.station.LayoutLocked;
 
+import org.apache.log4j.Logger;
+
 /**
  * Superclass for all application frames that want to use the docking
  * framework for managing its panels.
@@ -53,12 +54,13 @@ import bibliothek.gui.dock.station.LayoutLocked;
  */
 public abstract class DockingFrame extends JFrame {
     private static final long serialVersionUID = 1L;
-    private static final String layoutFolderName = "DockableLayout";
+    private static final String layoutDirectoryName = "DockableLayout";
     private static final String layoutFileSuffix = "_layout.rails_ini";
     private static final String layoutName_initial = "InitialLayout";
     private static final String layoutName_current = "CurrentLayout";
     private static final String defaultTheme = ThemeMap.KEY_BASIC_THEME;
-    
+    private static Logger log = Logger.getLogger(DockingFrame.class.getPackage().getName());
+
     private boolean isDockingFrameworkEnabled;
     private CControl control = null;
     private CGrid gridLayout = null;
@@ -140,7 +142,7 @@ public abstract class DockingFrame extends JFrame {
                 LocalText.getText("DockingFrame.menu.layout.applyFrom"));
         applyFromMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                //TODO: apply from
+                loadLayoutUserDefined();
             }
         });
         layoutMenu.getMenu().add(applyFromMenuItem);
@@ -165,31 +167,41 @@ public abstract class DockingFrame extends JFrame {
      */
     abstract protected String getLayoutFileName();
     
-    private File getLayoutFile() {
+    /**
+     * get layout directory (and ensure that it is available)
+     */
+    private File getLayoutDirectory() {
         try {
-            //get layout folder (and ensure that it is available)
-            File layoutFolder = new File(Config.get("save.directory"),layoutFolderName);
-            if (!layoutFolder.isDirectory()) {
-                layoutFolder.mkdirs();
+            File layoutDirectory = new File(Config.get("save.directory"),layoutDirectoryName);
+            if (!layoutDirectory.isDirectory()) {
+                layoutDirectory.mkdirs();
             }
-            File layoutFile = new File(layoutFolder, 
-                    getLayoutFileName() + layoutFileSuffix );
-            return layoutFile;
-        } catch (Exception e) {
+            return layoutDirectory;
+        }
+        catch (Exception e) {
             //return no valid file if anything goes wrong
             return null;
         }
+    }
+
+    private File getLayoutFile() {
+        File layoutFile = new File(getLayoutDirectory(), 
+               getLayoutFileName() + layoutFileSuffix );
+        return layoutFile;
     }
 
     public void saveLayout() {
         if (!isDockingFrameworkEnabled) return;
 
         File layoutFile = getLayoutFile();
-        if (layoutFile != null) {
-            try {
-                control.save(layoutName_current);
-                control.writeXML(layoutFile);
-            } catch (Exception e) {} //skip in case of issue
+        try {
+            control.save(layoutName_current);
+            control.writeXML(layoutFile);
+            log.info("Layout saved to " + layoutFile.getName());
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                        "Unable to save layout to " + layoutFile.getName());
+            return;
         }
     }
     
@@ -200,11 +212,14 @@ public abstract class DockingFrame extends JFrame {
     private void loadLayout(File layoutFile) {
         if (!isDockingFrameworkEnabled) return;
         
-        if (layoutFile != null) {
-            try {
-                control.readXML(layoutFile);
-                control.load(layoutName_current);
-            } catch (Exception e) {} //skip if layout not found
+        try {
+            control.readXML(layoutFile);
+            control.load(layoutName_current);
+            log.info("Layout loaded from " + layoutFile.getName());
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                        "Unable to load layout from " + layoutFile.getName());
+            return;
         }
         
         //ensure that all dockables that are externalized according to layout
@@ -221,6 +236,16 @@ public abstract class DockingFrame extends JFrame {
                 }
             }
         }
+    }
+
+    /**
+     * Lets user choose a layout in a file chooser popup and then loads/applies it
+     */
+    private void loadLayoutUserDefined() {
+        JFileChooser jfc = new JFileChooser();
+        jfc.setCurrentDirectory(getLayoutDirectory());
+        if (jfc.showOpenDialog(getContentPane()) != JFileChooser.APPROVE_OPTION) return; // cancel pressed
+        loadLayout(jfc.getSelectedFile());
     }
 
     /**
