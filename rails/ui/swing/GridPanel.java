@@ -244,24 +244,30 @@ implements ActionListener, KeyListener {
     private class FieldBorder extends CompoundBorder {
         private static final long serialVersionUID = 1L;
         Border nativeInnerBorder;
-        DynamicBorder highlightedInnerBorder;
+        /**
+         * remains null if nativeInnerBorder is null or broken
+         */
+        DynamicBorder highlightedInnerBorder = null;
         DynamicBorder outlineBorder;
         DynamicBorder outerBorder;
         public FieldBorder(Border innerBorder,DynamicBorder outlineBorder,DynamicBorder outerBorder) {
             super(new CompoundBorder(outerBorder,outlineBorder),innerBorder);
-            this.nativeInnerBorder = innerBorder;
+            nativeInnerBorder = innerBorder;
             this.outlineBorder = outlineBorder;
             this.outerBorder = outerBorder;
-            Insets nativeInnerBorderInsets = nativeInnerBorder.getBorderInsets(null);
-            if (nativeInnerBorderInsets == null) {
-                nativeInnerBorderInsets = new Insets(0,0,0,0);
+
+            //prepare highlighted inner border
+            if (nativeInnerBorder != null) {
+                Insets nativeInnerBorderInsets = nativeInnerBorder.getBorderInsets(null);
+                if (nativeInnerBorderInsets != null) {
+                    highlightedInnerBorder = new DynamicBorder(
+                            highlightedBorderColor,
+                            nativeInnerBorderInsets.top,
+                            nativeInnerBorderInsets.left,
+                            nativeInnerBorderInsets.bottom,
+                            nativeInnerBorderInsets.right);
+                }
             }
-            this.highlightedInnerBorder = new DynamicBorder(
-                    highlightedBorderColor,
-                    nativeInnerBorderInsets.top,
-                    nativeInnerBorderInsets.left,
-                    nativeInnerBorderInsets.bottom,
-                    nativeInnerBorderInsets.right);
         }
         public void setHighlight(boolean isToBeHighlighted) {
             outlineBorder.setHighlight(isToBeHighlighted);
