@@ -3,6 +3,7 @@ package rails.ui.swing;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -36,6 +37,10 @@ public class MessagePanel extends JPanel {
 
         setBackground(background);
         setBorder(new EmptyBorder(0,0,0,0));
+        
+        //add layout manager
+        //necessary for auto word-wrap when diminishing width
+        setLayout(new GridLayout(1,1));
         
         message = new JLabel("");
         message.setBackground(background);
@@ -138,5 +143,15 @@ public class MessagePanel extends JPanel {
         currentDetails = "<BR>" + detailText;
         updateMessageText();
     }
-
+    
+    @Override
+    public Dimension getPreferredSize() {
+        Dimension nativeSize = super.getPreferredSize();
+        if (parentSlider == null) return nativeSize;
+        int width = parentSlider.getSize().width
+                - parentSlider.getVerticalScrollBar().getWidth()
+                - 5;
+        if (width <= 0) width = 1;
+        return new Dimension (width , nativeSize.height);
+    }
 }
