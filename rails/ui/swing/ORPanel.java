@@ -604,9 +604,9 @@ implements ActionListener, KeyListener, RevenueListener {
             f = revenue[i] = new Field(c.getLastRevenueModel());
             addField(f, revXOffset, revYOffset + i, 1, 1, 0, visible);
             f = revenueSelect[i] = new Spinner(0, 0, 0, 10);
-            //zero-border so that size matches revenue field (thus, averting or panel resize)
+            //align spinner size with field size 
+            //(so that changes to visibility don't affect panel sizing)
             f.setPreferredSize(revenue[i].getPreferredSize());
-            //f.setBorder(new javax.swing.border.EmptyBorder(0,0,0,0));
             addField(f, revXOffset, revYOffset + i, 1, 1, 0,  false);
             // deactived below, as this caused problems by gridpanel rowvisibility function -- sfy
             //            revenue[i].addDependent(revenueSelect[i]);
