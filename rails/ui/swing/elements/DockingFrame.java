@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import javax.swing.JComponent;
@@ -30,14 +32,17 @@ import bibliothek.gui.dock.common.action.predefined.CBlank;
 import bibliothek.gui.dock.common.event.CDockableStateListener;
 import bibliothek.gui.dock.common.intern.CDockable;
 import bibliothek.gui.dock.common.intern.DefaultCDockable;
+import bibliothek.gui.dock.common.intern.DefaultCommonDockable;
 import bibliothek.gui.dock.common.intern.ui.CSingleParentRemover;
 import bibliothek.gui.dock.common.menu.CThemeMenuPiece;
+import bibliothek.gui.dock.common.menu.SingleCDockableListMenuPiece;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.common.theme.ThemeMap;
 import bibliothek.gui.dock.event.DockStationAdapter;
 import bibliothek.gui.dock.facile.menu.RootMenuPiece;
 import bibliothek.gui.dock.facile.menu.SubmenuPiece;
 import bibliothek.gui.dock.station.LayoutLocked;
+import bibliothek.gui.dock.support.menu.SeparatingMenuPiece;
 
 import org.apache.log4j.Logger;
 
@@ -53,6 +58,7 @@ import org.apache.log4j.Logger;
  *
  */
 public abstract class DockingFrame extends JFrame {
+    public static enum DockableProperty { standard, closeable, initially_hidden };
     private static final long serialVersionUID = 1L;
     private static final String layoutDirectoryName = "DockableLayout";
     private static final String layoutFileSuffix = "_layout.rails_ini";
@@ -64,7 +70,13 @@ public abstract class DockingFrame extends JFrame {
     private boolean isDockingFrameworkEnabled;
     private CControl control = null;
     private CGrid gridLayout = null;
-    
+
+    /**
+     * All dockables under the control (currently only single dockables)
+     */
+    List<DefaultSingleCDockable> dockables = new ArrayList<DefaultSingleCDockable>();
+    List<DefaultSingleCDockable> dockables_initiallyHidden = new ArrayList<DefaultSingleCDockable>();
+
     /**
      * Decision whether docking framework should be activated for a frame
      * has to be done at the beginning as later switching is not supported
@@ -101,19 +113,34 @@ public abstract class DockingFrame extends JFrame {
      * Registers a component that is to become a dockable.
      * The dockable is only deployed to the frame if deployDockables is called.
      */
-    protected void addDockable(JComponent c, String dockableTitle, int x, int y, int width, int height) {
+    protected void addDockable(JComponent c, 
+            String dockableTitle, 
+            int x, int y, int width, int height, 
+            DockableProperty dockableProperty) {
         DefaultSingleCDockable d = new DefaultSingleCDockable( 
                 dockableTitle, dockableTitle );
         d.add( c, BorderLayout.CENTER );
-        d.setCloseable( false );
+        d.setTitleIcon(null);
+        d.setCloseable( 
+                (  dockableProperty == DockableProperty.closeable
+                || dockableProperty == DockableProperty.initially_hidden )
+        );
         gridLayout.add( x, y, width, height, d );
+        dockables.add(d);
+        if (dockableProperty == DockableProperty.initially_hidden) {
+            dockables_initiallyHidden.add(d);
+        }
     }
     
     /**
-     * Deploys to the frame all dockables that have been added before
+     * Deploys to the frame all dockables that have been added before.
+     * Dockables are initially set to invisible if this is as specified
      */
     protected void deployDockables() {
         control.getContentArea().deploy( gridLayout );
+        for (CDockable d : dockables_initiallyHidden) {
+            if (d.isCloseable()) d.setVisible(false);
+        }
     }
 
     /**
@@ -123,12 +150,26 @@ public abstract class DockingFrame extends JFrame {
         RootMenuPiece layoutMenu = new RootMenuPiece(
                 LocalText.getText("DockingFrame.menu.layout"), 
                 false);
+        
         layoutMenu.add( new SubmenuPiece( 
                 LocalText.getText("DockingFrame.menu.layout.theme"), 
                 false, 
                 new CThemeMenuPiece( control )
         ));
-        layoutMenu.getMenu().addSeparator();
+        
+        SingleCDockableListMenuPiece closeableDockableMenuPiece = 
+                new SingleCDockableListMenuPiece(control) {
+            @Override
+            protected void show(Dockable dockable) {
+                super.show(dockable);
+                //ensure that, if the dockable is externalized, the max button is disabled
+                if (dockable instanceof DefaultCommonDockable) {
+                    adjustExternalizedActions((DefaultCommonDockable)dockable);
+                }
+            }
+        };
+        layoutMenu.add(new SeparatingMenuPiece(closeableDockableMenuPiece,true,true,true));
+        
         JMenuItem resetMenuItem = new JMenuItem (
                 LocalText.getText("DockingFrame.menu.layout.reset"));
         resetMenuItem.addActionListener(new ActionListener() {
@@ -224,19 +265,39 @@ public abstract class DockingFrame extends JFrame {
             return;
         }
         
-        //ensure that all dockables that are externalized according to layout
-        //information don't have the default maximize button (as it won't work
-        //for the adjusted externalization setup)
-        for (int i = 0 ; i < control.getCDockableCount() ; i++ ) {
-            CDockable d = control.getCDockable(i);
-            if (d instanceof DefaultCDockable) {
-                DefaultCDockable dd = (DefaultCDockable)d;
-                if (ExtendedMode.EXTERNALIZED.equals(d.getExtendedMode())) {
-                    dd.putAction( CDockable.ACTION_KEY_MAXIMIZE, CBlank.BLANK );
-                } else {
-                    dd.putAction( CDockable.ACTION_KEY_MAXIMIZE, null );
-                }
+        adjustExternalizedActions();
+    }
+
+    /**
+     * Ensures for all dockables that, if they are externalized, they do not have 
+     * the default maximize button
+     * (as it won't work for the adjusted externalization setup).
+     */
+    private void adjustExternalizedActions() {
+        for (CDockable d : dockables) {
+            adjustExternalizedActions(d);
+        }
+    }
+    
+    /**
+     * Ensure that externalized dockable does not have default maximize button
+     * (as it won't work for the adjusted externalization setup).
+     * @param d Dockable for which the actions are to be adjusted
+     */
+    private void adjustExternalizedActions(CDockable d) {
+        if (d instanceof DefaultSingleCDockable) {
+            DefaultSingleCDockable sd = (DefaultSingleCDockable)d;
+            if (ExtendedMode.EXTERNALIZED.equals(sd.getExtendedMode())) {
+                sd.putAction( CDockable.ACTION_KEY_MAXIMIZE, CBlank.BLANK );
+            } else {
+                sd.putAction( CDockable.ACTION_KEY_MAXIMIZE, null );
             }
+        }
+    }
+
+    private void adjustExternalizedActions(Dockable d) {
+        if (d instanceof DefaultCommonDockable) {
+            adjustExternalizedActions(((DefaultCommonDockable)d).getDockable());
         }
     }
 
@@ -340,6 +401,9 @@ public abstract class DockingFrame extends JFrame {
                 // and enable events after we finished
                 controller.meltLayout();
             }
+            
+            //ensure the correct availability of the maximize button
+            adjustExternalizedActions(dockable);
         }
     }
 
