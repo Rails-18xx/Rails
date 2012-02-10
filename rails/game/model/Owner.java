@@ -15,6 +15,8 @@ import rails.game.state.Item;
  * @author freystef
  *
  */
+
+@Deprecated
 public interface Owner extends Item {
     
     public <E extends Ownable> void addStorage(Storage<E> newHolder, Class<E> clazz);

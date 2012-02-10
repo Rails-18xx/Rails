@@ -9,6 +9,7 @@ import rails.game.state.Item;
  * 
  * @author freystef
  */
+@Deprecated
 public abstract class AbstractOwnable extends GameItem implements Ownable {
 
     private final GenericState<Owner> owner = GenericState.create(this, "Owner");

@@ -17,7 +17,7 @@ import rails.game.Train;
 import rails.game.TrainManager;
 import rails.game.TrainType;
 import rails.game.model.Owner;
-import rails.game.model.Portfolio;
+import rails.game.model.PortfolioModel;
 import rails.game.special.SpecialProperty;
 import rails.game.special.SpecialTrainBuy;
 import rails.util.Util;
@@ -30,7 +30,7 @@ public class BuyTrain extends PossibleORAction {
     // Initial settings
     transient private Train train;
     private String trainUniqueId;
-    transient private Portfolio from;
+    transient private PortfolioModel from;
     private String fromName;
     private int fixedCost = 0;
     private boolean forcedBuyIfNoRoute = false; // TODO Can be disabled once route checking exists
@@ -62,12 +62,12 @@ public class BuyTrain extends PossibleORAction {
 
     public static final long serialVersionUID = 2L;
 
-    public BuyTrain(Train train, Portfolio from, int fixedCost) {
+    public BuyTrain(Train train, PortfolioModel from, int fixedCost) {
 
         this (train, train.getType(), from, fixedCost);
     }
     
-    public BuyTrain(Train train, TrainType type, Portfolio from, int fixedCost) {
+    public BuyTrain(Train train, TrainType type, PortfolioModel from, int fixedCost) {
         this.train = train;
         this.trainUniqueId = train.getUniqueId();
         this.from = from;
@@ -151,7 +151,7 @@ public class BuyTrain extends PossibleORAction {
         return type;
     }
 
-    public Portfolio getFromPortfolio() {
+    public PortfolioModel getFromPortfolio() {
         return from;
     }
 
@@ -183,7 +183,7 @@ public class BuyTrain extends PossibleORAction {
         return forcedBuyIfNoRoute;
     }
 
-    public Portfolio getPortfolio() {
+    public PortfolioModel getPortfolio() {
         return getTrain().getPortfolio();
     }
 

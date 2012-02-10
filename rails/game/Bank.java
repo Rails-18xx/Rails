@@ -11,7 +11,7 @@ import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.model.CashModel;
 import rails.game.model.CashOwner;
-import rails.game.model.Portfolio;
+import rails.game.model.PortfolioModel;
 import rails.game.state.GameItem;
 import rails.game.state.BooleanState;
 import rails.util.*;
@@ -32,13 +32,13 @@ public class Bank extends GameItem implements CashOwner, ConfigurableComponentI 
     private CashModel money;
 
     /** The IPO */
-    private Portfolio ipo = null;
+    private PortfolioModel ipo = null;
     /** The Bank Pool */
-    private Portfolio pool = null;
+    private PortfolioModel pool = null;
     /** Collection of items that will (may) become available in the future */
-    private Portfolio unavailable = null;
+    private PortfolioModel unavailable = null;
     /** Collection of items that have been discarded (but are kept to allow Undo) */
-    private Portfolio scrapHeap = null;
+    private PortfolioModel scrapHeap = null;
 
     private static Bank instance = null;
 
@@ -60,10 +60,10 @@ public class Bank extends GameItem implements CashOwner, ConfigurableComponentI 
 
         money = CashModel.create(this);
         // Create the IPO and the Bank Pool.
-        ipo = new Portfolio(ipo, IPO_NAME);
-        pool = new Portfolio(pool, POOL_NAME);
-        unavailable = new Portfolio(unavailable, UNAVAILABLE_NAME);
-        scrapHeap = new Portfolio(scrapHeap, SCRAPHEAP_NAME);
+        ipo = new PortfolioModel(ipo, IPO_NAME);
+        pool = new PortfolioModel(pool, POOL_NAME);
+        unavailable = new PortfolioModel(unavailable, UNAVAILABLE_NAME);
+        scrapHeap = new PortfolioModel(scrapHeap, SCRAPHEAP_NAME);
 
         String configFormat = Config.get("money_format");
         if (Util.hasValue(configFormat) && configFormat.matches(".*@.*")) {
@@ -129,11 +129,11 @@ public class Bank extends GameItem implements CashOwner, ConfigurableComponentI 
     /**
      * @return IPO Portfolio
      */
-    public Portfolio getIpo() {
+    public PortfolioModel getIpo() {
         return ipo;
     }
 
-    public Portfolio getScrapHeap() {
+    public PortfolioModel getScrapHeap() {
         return scrapHeap;
     }
 
@@ -165,14 +165,14 @@ public class Bank extends GameItem implements CashOwner, ConfigurableComponentI 
     /**
      * @return Portfolio of stock in Bank Pool
      */
-    public Portfolio getPool() {
+    public PortfolioModel getPool() {
         return pool;
     }
 
     /**
      * @return Portfolio of unavailable shares
      */
-    public Portfolio getUnavailable() {
+    public PortfolioModel getUnavailable() {
         return unavailable;
     }
 

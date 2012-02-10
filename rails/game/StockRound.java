@@ -12,7 +12,7 @@ import rails.game.action.*;
 import rails.game.model.CashOwner;
 import rails.game.model.Owner;
 import rails.game.model.Owners;
-import rails.game.model.Portfolio;
+import rails.game.model.PortfolioModel;
 import rails.game.special.*;
 import rails.game.state.*;
 
@@ -167,7 +167,7 @@ public class StockRound extends Round {
         PublicCertificate cert;
         PublicCompany comp;
         StockSpace stockSpace;
-        Portfolio from;
+        PortfolioModel from;
         int price;
         int number;
         int unitsForPrice;
@@ -363,7 +363,7 @@ public class StockRound extends Round {
         int number;
         int share, maxShareToSell;
         boolean dumpAllowed;
-        Portfolio playerPortfolio = currentPlayer.getPortfolio();
+        PortfolioModel playerPortfolio = currentPlayer.getPortfolio();
 
         /*
          * First check of which companies the player owns stock, and what
@@ -684,7 +684,7 @@ public class StockRound extends Round {
     public boolean buyShares(String playerName, BuyCertificate action) {
 
         PublicCompany company = action.getCompany();
-        Portfolio from = action.getFromPortfolio();
+        PortfolioModel from = action.getFromPortfolio();
         String companyName = company.getId();
         int number = action.getNumberBought();
         int shareUnit = company.getShareUnit();
@@ -867,7 +867,7 @@ public class StockRound extends Round {
     }
 
     /** Stub, may be overridden in subclasses */
-    protected void gameSpecificChecks(Portfolio boughtFrom,
+    protected void gameSpecificChecks(PortfolioModel boughtFrom,
             PublicCompany company) {
 
     }
@@ -924,7 +924,7 @@ public class StockRound extends Round {
     // NOTE: Don't forget to keep ShareSellingRound.sellShares() in sync
     {
 
-        Portfolio portfolio = currentPlayer.getPortfolio();
+        PortfolioModel portfolio = currentPlayer.getPortfolio();
         String playerName = currentPlayer.getId();
         String errMsg = null;
         String companyName = action.getCompanyName();
@@ -1105,7 +1105,7 @@ public class StockRound extends Round {
     		List<PublicCertificate> certsToSell,
     		Player dumpedPlayer, int presSharesToSell) {
 
-        Portfolio portfolio = currentPlayer.getPortfolio();
+        PortfolioModel portfolio = currentPlayer.getPortfolio();
 
         // Check if the presidency has changed
         if (dumpedPlayer != null && presSharesToSell > 0) {
@@ -1113,7 +1113,7 @@ public class StockRound extends Round {
                     dumpedPlayer.getId(),
                     company.getId() ));
             // First swap the certificates
-            Portfolio dumpedPortfolio = dumpedPlayer.getPortfolio();
+            PortfolioModel dumpedPortfolio = dumpedPlayer.getPortfolio();
             List<PublicCertificate> swapped =
                 portfolio.swapPresidentCertificate(company, dumpedPortfolio);
             for (int i = 0; i < presSharesToSell; i++) {
@@ -1199,7 +1199,7 @@ public class StockRound extends Round {
         PublicCompany publicCompany =
             companyManager.getPublicCompany(sp.getPublicCompanyName());
         Company privateCompany = sp.getOriginalCompany();
-        Portfolio portfolio = privateCompany.getPortfolio();
+        PortfolioModel portfolio = privateCompany.getPortfolio();
         Player player = null;
         String errMsg = null;
         boolean ipoHasShare = ipo.getShare(publicCompany) >= sp.getShare();

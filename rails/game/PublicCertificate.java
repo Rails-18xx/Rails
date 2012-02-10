@@ -6,11 +6,13 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import rails.common.LocalText;
-import rails.game.model.AbstractOwnable;
 import rails.game.model.CertificatesModel;
-import rails.game.model.Portfolio;
+import rails.game.model.PortfolioModel;
+import rails.game.state.GameItem;
+import rails.game.state.OwnableItem;
+import rails.game.state.Portfolio;
 
-public class PublicCertificate extends AbstractOwnable implements Certificate, Cloneable {
+public class PublicCertificate extends GameItem implements OwnableItem<PublicCertificate>, Certificate, Cloneable {
 
     /** From which public company is this a certificate */
     protected PublicCompany company;
@@ -25,8 +27,6 @@ public class PublicCertificate extends AbstractOwnable implements Certificate, C
     
     /** Availability at the start of the game */
     protected boolean initiallyAvailable;
-    /** Current holder of the certificate */
-    protected Portfolio portfolio;
 
     /** A key identifying the certificate's unique type */
     protected String certTypeId;
@@ -41,6 +41,9 @@ public class PublicCertificate extends AbstractOwnable implements Certificate, C
     protected static Map<String, PublicCertificate> certMap =
             new HashMap<String, PublicCertificate>();
 
+    
+    private Portfolio<PublicCertificate> portfolio;
+    
     protected static Logger log =
             Logger.getLogger(PublicCertificate.class.getPackage().getName());
 
@@ -80,13 +83,7 @@ public class PublicCertificate extends AbstractOwnable implements Certificate, C
         return certMap.get(certId);
     }
 
-    /**
-     * @return Portfolio this certificate belongs to.
-     */
-    public Portfolio getPortfolio() {
-        return portfolio;
-    }
-
+    
     public CertificatesModel getHolder() {
         return portfolio.getShareModel(company);
     }
@@ -159,13 +156,6 @@ public class PublicCertificate extends AbstractOwnable implements Certificate, C
     }
 
     /**
-     * @param portfolio
-     */
-    public void setPortfolio(Portfolio portfolio) {
-        this.portfolio = portfolio;
-    }
-
-    /**
      * @param b
      */
     public void setPresident(boolean b) {
@@ -222,5 +212,16 @@ public class PublicCertificate extends AbstractOwnable implements Certificate, C
     public String toString() {
         return "PublicCertificate: " + getId();
     }
+
+    // OwnableItem interface
+    
+    public Portfolio<PublicCertificate> getPortfolio() {
+        return portfolio;
+    }
+
+    public void setPortfolio(Portfolio<PublicCertificate> p) {
+        portfolio = p;
+    }
+
 
 }

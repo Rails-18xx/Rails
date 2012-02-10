@@ -11,7 +11,7 @@ import rails.common.DisplayBuffer;
 import rails.common.GuiDef;
 import rails.common.LocalText;
 import rails.game.action.*;
-import rails.game.model.Portfolio;
+import rails.game.model.PortfolioModel;
 import rails.game.state.BooleanState;
 
 /**
@@ -103,7 +103,7 @@ public class TreasuryShareRound extends StockRound {
         List<PublicCertificate> certs;
         PublicCertificate cert;
         PublicCompany comp;
-        Portfolio from;
+        PortfolioModel from;
         int price;
         int number;
 
@@ -165,7 +165,7 @@ public class TreasuryShareRound extends StockRound {
         int number;
         int maxShareToSell;
 
-        Portfolio companyPortfolio = operatingCompany.getPortfolio();
+        PortfolioModel companyPortfolio = operatingCompany.getPortfolio();
 
         /*
          * First check of which companies the player owns stock, and what
@@ -244,7 +244,7 @@ public class TreasuryShareRound extends StockRound {
     public boolean buyShares(String playerName, BuyCertificate action) {
 
         PublicCompany company = action.getCompany();
-        Portfolio from = action.getFromPortfolio();
+        PortfolioModel from = action.getFromPortfolio();
         String companyName = company.getId();
         int number = action.getNumberBought();
         int shareUnit = company.getShareUnit();
@@ -255,7 +255,7 @@ public class TreasuryShareRound extends StockRound {
         String errMsg = null;
         int price = 0;
         // TODO: Might not be needed anymore, replaced by company
-        Portfolio portfolio = null;
+        PortfolioModel portfolio = null;
         
         currentPlayer = getCurrentPlayer();
 
@@ -378,7 +378,7 @@ public class TreasuryShareRound extends StockRound {
 
     @Override
     public boolean sellShares(SellShares action) {
-        Portfolio portfolio = operatingCompany.getPortfolio();
+        PortfolioModel portfolio = operatingCompany.getPortfolio();
         String errMsg = null;
         String companyName = action.getCompanyName();
         PublicCompany company = companyManager.getPublicCompany(companyName);

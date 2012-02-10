@@ -3,8 +3,9 @@ package rails.game.special;
 import rails.common.parser.ConfigurableComponentI;
 import rails.game.*;
 import rails.game.model.Ownable;
+import rails.game.state.OwnableItem;
 
-public interface SpecialPropertyI extends ConfigurableComponentI, Ownable {
+public interface SpecialPropertyI extends ConfigurableComponentI, OwnableItem<SpecialPropertyI> {
     
     public void setCompany(Company company);
 

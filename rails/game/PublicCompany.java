@@ -629,7 +629,7 @@ public class PublicCompany extends Company implements CashOwner {
 
         inGameState = BooleanState.create(this, "InGame", true);
 
-        this.portfolio = new Portfolio(this, name);
+        this.portfolio = new PortfolioModel(this, name);
         treasury = CashModel.create(this);
         lastRevenue = MoneyModel.create(this, "lastRevenue");
         lastRevenue.setSuppressInitialZero(true);
@@ -1030,7 +1030,7 @@ public class PublicCompany extends Company implements CashOwner {
     public void setClosed() {
         super.setClosed();
 
-        Portfolio shareDestination;
+        PortfolioModel shareDestination;
         // If applicable, prepare for a restart
         if (canBeRestarted) {
             if (certsAreInitiallyAvailable) {
@@ -1188,7 +1188,7 @@ public class PublicCompany extends Company implements CashOwner {
         Map<Player, Boolean> done = new HashMap<Player, Boolean>(8);
         Player owner;
         for (PublicCertificate cert : certificates.view()) {
-            if (cert.getPortfolio() instanceof Portfolio // FIXME: What kind of condition is this, was cert.getHolder()
+            if (cert.getPortfolio() instanceof PortfolioModel // FIXME: What kind of condition is this, was cert.getHolder()
                     && cert.getHolder().getOwner() instanceof Player) {
                 owner = (Player)cert.getHolder().getOwner();
                 if (!done.containsKey(owner)) {
@@ -1308,7 +1308,7 @@ public class PublicCompany extends Company implements CashOwner {
     }
 
     public boolean isAvailable() {
-        Portfolio presLoc = certificates.get(0).getPortfolio();
+        PortfolioModel presLoc = certificates.get(0).getPortfolio();
         return presLoc != bank.getUnavailable()
         && presLoc != bank.getScrapHeap();
     }
@@ -1372,7 +1372,7 @@ public class PublicCompany extends Company implements CashOwner {
 
     public boolean paysOutToTreasury (PublicCertificate cert) {
 
-        Portfolio holder = cert.getPortfolio();
+        PortfolioModel holder = cert.getPortfolio();
         if (holder == bank.getIpo() && ipoPaysOut
                 || holder == bank.getPool() && poolPaysOut) {
             return true;

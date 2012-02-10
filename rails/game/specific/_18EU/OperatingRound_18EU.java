@@ -6,7 +6,7 @@ import java.util.*;
 import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.BuyTrain;
-import rails.game.model.Portfolio;
+import rails.game.model.PortfolioModel;
 import rails.game.state.BooleanState;
 
 /**
@@ -118,7 +118,7 @@ public class OperatingRound_18EU extends OperatingRound {
         /* Other company trains, sorted by president (current player first) */
         if (getCurrentPhase().isTrainTradingAllowed()) {
             Player p;
-            Portfolio pf;
+            PortfolioModel pf;
             int index;
             int numberOfPlayers = getNumberOfPlayers();
 
@@ -184,7 +184,7 @@ public class OperatingRound_18EU extends OperatingRound {
         }
 
         // If train was bought from another company, check for a lone Pullmann
-        Portfolio seller = action.getFromPortfolio();
+        PortfolioModel seller = action.getFromPortfolio();
         if (seller.getOwner() instanceof PublicCompany
                 && !action.getTrain().getId().equalsIgnoreCase("P")) {
             boolean hasPullmann = false;
@@ -227,7 +227,7 @@ public class OperatingRound_18EU extends OperatingRound {
         excessTrainCompanies = new HashMap<Player, List<PublicCompany>>();
         Player player;
         Train pullmann;
-        Portfolio portfolio;
+        PortfolioModel portfolio;
         int numberOfTrains;
 
         for (PublicCompany comp : operatingCompanies.view()) {

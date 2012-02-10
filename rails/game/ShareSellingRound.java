@@ -8,7 +8,7 @@ import rails.common.LocalText;
 import rails.common.parser.GameOption;
 import rails.game.action.PossibleAction;
 import rails.game.action.SellShares;
-import rails.game.model.Portfolio;
+import rails.game.model.PortfolioModel;
 import rails.game.state.IntegerState;
 
 /**
@@ -100,7 +100,7 @@ public class ShareSellingRound extends StockRound {
         int price;
         int number;
         int share, maxShareToSell;
-        Portfolio playerPortfolio = currentPlayer.getPortfolio();
+        PortfolioModel playerPortfolio = currentPlayer.getPortfolio();
 
         /*
          * First check of which companies the player owns stock, and what
@@ -231,7 +231,7 @@ public class ShareSellingRound extends StockRound {
 
     @Override
     public boolean sellShares(SellShares action) {
-        Portfolio portfolio = currentPlayer.getPortfolio();
+        PortfolioModel portfolio = currentPlayer.getPortfolio();
         String playerName = currentPlayer.getId();
         String errMsg = null;
         String companyName = action.getCompanyName();

@@ -17,7 +17,7 @@ import rails.game.action.*;
 import rails.game.correct.CashCorrectionAction;
 import rails.game.model.CashOwner;
 import rails.game.model.Owner;
-import rails.game.model.Portfolio;
+import rails.game.model.PortfolioModel;
 import rails.ui.swing.elements.*;
 
 /**
@@ -93,7 +93,7 @@ public class GameStatus extends GridPanel implements ActionListener {
     protected Caption[] lowerPlayerCaption;
     protected Caption treasurySharesCaption;
 
-    protected Portfolio ipo, pool;
+    protected PortfolioModel ipo, pool;
 
     protected GameUIManager gameUIManager;
     protected Bank bank;
@@ -816,7 +816,7 @@ public class GameStatus extends GridPanel implements ActionListener {
             if (myTurn) {
 
                 PublicCompany company;
-                Portfolio holder;
+                PortfolioModel holder;
                 int index;
                 Owner owner;
 

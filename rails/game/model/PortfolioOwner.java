@@ -3,13 +3,14 @@ package rails.game.model;
 import rails.game.state.GameItem;
 import rails.game.state.Item;
 
+@Deprecated
 public abstract class PortfolioOwner extends GameItem implements Owner {
     
-    private final Portfolio portfolio;
+    private final PortfolioModel portfolio;
     
     public PortfolioOwner(String id) {
         super(id);
-        portfolio = new Portfolio();
+        portfolio = new PortfolioModel();
     }
     
     @Override
@@ -35,7 +36,7 @@ public abstract class PortfolioOwner extends GameItem implements Owner {
         portfolio.removeObject(object);
     }
     
-    public final Portfolio getPortfolio() {
+    public final PortfolioModel getPortfolio() {
         return portfolio;
     }
     

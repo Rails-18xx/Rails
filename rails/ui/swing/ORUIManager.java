@@ -16,7 +16,7 @@ import rails.game.*;
 import rails.game.action.*;
 import rails.game.correct.*;
 import rails.game.correct.MapCorrectionManager.ActionStep;
-import rails.game.model.Portfolio;
+import rails.game.model.PortfolioModel;
 import rails.game.special.*;
 import rails.ui.swing.elements.*;
 import rails.ui.swing.hexmap.GUIHex;
@@ -1075,7 +1075,7 @@ public class ORUIManager implements DialogOwner {
         String prompt;
         StringBuffer b;
         int cost;
-        Portfolio from;
+        PortfolioModel from;
 
         List<BuyTrain> buyableTrains = possibleActions.getType(BuyTrain.class);
         for (BuyTrain bTrain : buyableTrains) {
@@ -1150,7 +1150,7 @@ public class ORUIManager implements DialogOwner {
 
         buyAction = (BuyTrain) selectedAction;
         train = buyAction.getTrain();
-        Portfolio seller = buyAction.getFromPortfolio();
+        PortfolioModel seller = buyAction.getFromPortfolio();
         int price = buyAction.getFixedCost();
 
         if (price == 0 && seller.getOwner() instanceof PublicCompany) {

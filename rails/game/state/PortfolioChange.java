@@ -2,11 +2,11 @@ package rails.game.state;
 
 final class PortfolioChange<T extends OwnableItem<T>> implements Change {
 
-    private final PortfolioNG<T> in;
-    private final PortfolioNG<T> out; // can be null
+    private final Portfolio<T> in;
+    private final Portfolio<T> out; // can be null
     private final T item;
 
-    PortfolioChange(PortfolioNG<T> in, PortfolioNG<T> out, T item) {
+    PortfolioChange(Portfolio<T> in, Portfolio<T> out, T item) {
         this.in = in;
         this.out = out;
         this.item = item;
@@ -28,7 +28,7 @@ final class PortfolioChange<T extends OwnableItem<T>> implements Change {
         }
     }
 
-    public PortfolioNG<T> getState() {
+    public Portfolio<? super T> getState() {
         return in;
     }
     

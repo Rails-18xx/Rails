@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 
 import rails.game.*;
-import rails.game.model.Portfolio;
+import rails.game.model.PortfolioModel;
 
 /**
  * @author Erik Vos
@@ -31,7 +31,7 @@ public class BuyCertificate extends PossibleAction {
     protected String companyName;
     protected int sharePerCert; // Share % per buyable certificate.
 
-    transient protected Portfolio from;
+    transient protected PortfolioModel from;
     protected String fromName; // Old: portfolio name. New: portfolio unique name.
     protected int price;
     protected int maximumNumber;
@@ -42,7 +42,7 @@ public class BuyCertificate extends PossibleAction {
     public static final long serialVersionUID = 1L;
 
     public BuyCertificate(PublicCompany company, int sharePerCert,
-            Portfolio from,
+            PortfolioModel from,
             int price, int maximumNumber) {
         this.company = company;
         this.sharePerCert = sharePerCert;
@@ -56,7 +56,7 @@ public class BuyCertificate extends PossibleAction {
 
     /** Buy a certificate from some portfolio at a given price */
     public BuyCertificate(PublicCompany company, int sharePerCert,
-            Portfolio from,
+            PortfolioModel from,
             int price) {
         this(company, sharePerCert, from, price, 1);
     }
@@ -64,7 +64,7 @@ public class BuyCertificate extends PossibleAction {
     /** Required for deserialization */
     public BuyCertificate() {}
 
-    public Portfolio getFromPortfolio() {
+    public PortfolioModel getFromPortfolio() {
         return from;
     }
 

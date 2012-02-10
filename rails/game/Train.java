@@ -2,14 +2,15 @@ package rails.game;
 
 import org.apache.log4j.Logger;
 
-import rails.game.model.AbstractOwnable;
-import rails.game.model.Owner;
-import rails.game.model.Portfolio;
-import rails.game.model.PortfolioOwner;
 import rails.game.state.BooleanState;
+import rails.game.state.Context;
+import rails.game.state.GameItem;
 import rails.game.state.GenericState;
+import rails.game.state.Item;
+import rails.game.state.OwnableItem;
+import rails.game.state.Portfolio;
 
-public class Train extends AbstractOwnable {
+public class Train extends GameItem implements OwnableItem<Train> {
 
     protected TrainCertificateType certificateType;
     
@@ -24,6 +25,8 @@ public class Train extends AbstractOwnable {
     protected String uniqueId;
 
     protected BooleanState obsolete;
+    
+    private Portfolio<Train> portfolio;
 
     protected static Logger log =
             Logger.getLogger(Train.class.getPackage().getName());
@@ -153,16 +156,6 @@ public class Train extends AbstractOwnable {
     public void setTradeable(boolean tradeable) {
         this.tradeable = tradeable;
     }
-    
-    @Deprecated
-    public Portfolio getPortfolio() {
-        Owner owner = getOwner();
-        if (owner instanceof PortfolioOwner) {
-            return ((PortfolioOwner)owner).getPortfolio();
-        } else {
-            return null;
-        }
-    }
 
     public String toString() {
         StringBuilder b = new StringBuilder(uniqueId);
@@ -170,4 +163,16 @@ public class Train extends AbstractOwnable {
         b.append(" type=").append(getType());
         return b.toString();
     }
+
+    // OwnableItem interface
+    
+    public void setPortfolio(Portfolio<Train> p) {
+        portfolio = p;
+    }
+
+    public Portfolio<Train> getPortfolio() {
+        return portfolio;
+    }
+
+
 }

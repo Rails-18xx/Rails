@@ -7,6 +7,7 @@ package rails.game.model;
  *
  * @param <E> class of the objects to store
  */
+@Deprecated
 public interface Storage<E extends Ownable> extends Iterable<E>{
 
     /** Add an object to a holder

@@ -2,6 +2,7 @@ package rails.game.model;
 
 import rails.game.state.Item;
 
+@Deprecated
 public abstract class PortfolioCashOwner extends PortfolioOwner implements CashOwner {
 
     private final CashModel cashModel = CashModel.create();

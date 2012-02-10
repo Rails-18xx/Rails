@@ -9,13 +9,15 @@ import rails.common.parser.Tag;
 import rails.game.model.StorageModel;
 import rails.game.model.Owner;
 import rails.game.model.Owners;
-import rails.game.model.Portfolio;
+import rails.game.model.PortfolioModel;
 import rails.game.special.SellBonusToken;
 import rails.game.special.SpecialPropertyI;
 import rails.game.state.GenericState;
+import rails.game.state.OwnableItem;
+import rails.game.state.Portfolio;
 import rails.util.*;
 
-public class PrivateCompany extends Company implements Certificate, Closeable {
+public class PrivateCompany extends Company implements OwnableItem<PrivateCompany>, Certificate, Closeable {
 
     public static final String TYPE_TAG = "Private";
     public static final String REVENUE = "revenue";
@@ -68,7 +70,10 @@ public class PrivateCompany extends Company implements Certificate, Closeable {
     protected boolean tradeableToPlayer = false;
     
     private final GenericState<Owner> owner = GenericState.create(this, "Owner");
-        
+
+    private Portfolio<PrivateCompany> portfolio;
+    
+    
     public PrivateCompany() {
         super();
         this.privateNumber = numberOfPrivateCompanies++;
@@ -312,14 +317,6 @@ public class PrivateCompany extends Company implements Certificate, Closeable {
     }
 
     /**
-     * @return Portfolio (holder) of this Private
-     */
-    @Override
-    public Portfolio getPortfolio() {
-        return portfolio;
-    }
-
-    /**
      * @param b
      */
     @Override
@@ -382,7 +379,7 @@ public class PrivateCompany extends Company implements Certificate, Closeable {
      * FIXME: setHolder changes a non-state variable, has to be a state variable
      * @param portfolio
      */
-    public void setHolder(Portfolio portfolio) {
+    public void setHolder(PortfolioModel portfolio) {
         this.portfolio = portfolio;
 
         /*
@@ -543,4 +540,16 @@ public class PrivateCompany extends Company implements Certificate, Closeable {
         return owner.get();
     }
 
+    // Portfolio interface
+    
+    public void setPortfolio(Portfolio<PrivateCompany> p) {
+        portfolio = p;
+    }
+
+    public Portfolio<PrivateCompany> getPortfolio() {
+        return portfolio;
+    }
+
+
+    
 }

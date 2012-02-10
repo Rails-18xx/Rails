@@ -13,7 +13,7 @@ import rails.game.state.Item;
  *
  * @param <T> The type of objects to store
  */
-
+@Deprecated
 public class StorageModel<T extends Ownable> extends Model implements Storage<T> {
 
     private final ArrayListState<T> storageList;

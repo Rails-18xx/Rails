@@ -1,5 +1,6 @@
 package rails.game.model;
 
+@Deprecated
 public interface Ownable {
     
     /**

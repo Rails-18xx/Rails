@@ -11,7 +11,7 @@ import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.BuyCertificate;
 import rails.game.model.Owner;
-import rails.game.model.Portfolio;
+import rails.game.model.PortfolioModel;
 
 public class StockRound_1835 extends StockRound {
 
@@ -122,7 +122,7 @@ public class StockRound_1835 extends StockRound {
      * @param company The company of which a share has been traded.
      */
     @Override
-    protected void gameSpecificChecks (Portfolio boughtFrom,
+    protected void gameSpecificChecks (PortfolioModel boughtFrom,
             PublicCompany company) {
 
         if (boughtFrom != ipo) return;

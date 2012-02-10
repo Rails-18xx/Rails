@@ -14,7 +14,7 @@ public abstract class GameItem implements Item {
         
         @Deprecated
         // TODO: Remove that default constructor here
-        public GameItem() {
+        protected GameItem() {
             this.id = null;
         }
 
@@ -22,7 +22,7 @@ public abstract class GameItem implements Item {
          * Creates an Item
          * @param id identifier for the item (cannot be null)
          */
-        public GameItem(String id){
+        protected GameItem(String id){
             if (id == null) {
                 throw new IllegalArgumentException("Missing id for a GameItem in hierarchy");
             }

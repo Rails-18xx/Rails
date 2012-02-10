@@ -11,12 +11,14 @@ import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.model.DirectOwner;
 import rails.game.model.StorageModel;
-import rails.game.model.Portfolio;
+import rails.game.model.PortfolioModel;
 import rails.game.special.SpecialPropertyI;
 import rails.game.state.BooleanState;
+import rails.game.state.GameItem;
+import rails.game.state.OwnableItem;
 import rails.util.Util;
 
-public abstract class Company extends DirectOwner implements ConfigurableComponentI,
+public abstract class Company extends GameItem implements ConfigurableComponentI,
 Cloneable, Comparable<Company> {
 
     /** The name of the XML tag used to configure a company. */
@@ -33,12 +35,6 @@ Cloneable, Comparable<Company> {
     protected String alias = null; // To allow reloading files with old names after name changes
     protected CompanyTypeI type;
     protected int companyNumber; // For internal use
-
-    /* Note: portfolio is used in two ways:
-     * In private companies, it is primarily the portfolio that holds this private.
-     * In public companies, it is the portfolio of this company.
-     * This contradictory use needs to be disentangled. */
-    protected Portfolio portfolio = null;
 
     protected String infoText = "";
     protected String parentInfoText = "";
@@ -122,18 +118,10 @@ Cloneable, Comparable<Company> {
     public boolean hasPortfolio() {
         return true;
     }
+
     
     /**
-     * Get the Portfolio of this company, containing all privates and
-     * certificates owned..
-     *
-     * @return The Portfolio of this company.
-     */
-    public Portfolio getPortfolio() {
-        return portfolio;
-    }
-
-    /**
+     * 
      * @return This company's number
      */
     public int getNumber() {

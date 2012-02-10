@@ -8,7 +8,7 @@ import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.model.Owners;
-import rails.game.model.Portfolio;
+import rails.game.model.PortfolioModel;
 import rails.game.special.SellBonusToken;
 import rails.game.state.BooleanState;
 import rails.game.state.IntegerState;
@@ -304,7 +304,7 @@ public class CGRFormationRound extends SwitchableUIRound {
     private void formCGR () {
 
         Player player;
-        Portfolio portfolio;
+        PortfolioModel portfolio;
         int count, cgrSharesUsed, oldShares, newShares;
         PublicCertificate cgrCert, poolCert;
         List<PublicCertificate> certs = new ArrayList<PublicCertificate>();

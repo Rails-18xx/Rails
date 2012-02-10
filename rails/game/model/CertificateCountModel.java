@@ -6,7 +6,7 @@ import rails.game.state.Item;
 // TODO: Check what is required to get the update correctly
 public final class CertificateCountModel extends Model {
 
-    private Portfolio owner;
+    private PortfolioModel owner;
     
     /**
      * CertificateCountModel is initialized with a default id "CertificateCountModel"
@@ -18,7 +18,7 @@ public final class CertificateCountModel extends Model {
     /**
      * Creates a fully initialized CertificateCountModel
      */
-    public static CertificateCountModel create(Portfolio parent){
+    public static CertificateCountModel create(PortfolioModel parent){
         return new CertificateCountModel().init(parent);
     }
 
@@ -28,8 +28,8 @@ public final class CertificateCountModel extends Model {
     @Override
     public CertificateCountModel init(Item parent){
         super.init(parent);
-        if (parent instanceof Portfolio) {
-            this.owner = (Portfolio)parent;
+        if (parent instanceof PortfolioModel) {
+            this.owner = (PortfolioModel)parent;
         } else {
             throw new IllegalArgumentException("CertificateCountModel init() only works for Portfolios");
         }
@@ -40,8 +40,8 @@ public final class CertificateCountModel extends Model {
      * @return restricted to Portfolios
      */
     @Override
-    public Portfolio getParent() {
-        return (Portfolio)super.getParent();
+    public PortfolioModel getParent() {
+        return (PortfolioModel)super.getParent();
     }
 
     @Override

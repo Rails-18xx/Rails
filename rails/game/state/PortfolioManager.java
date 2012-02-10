@@ -11,7 +11,7 @@ public class PortfolioManager extends Context {
 
     public static final String ID = "Portfolios";
     
-    private final HashMultimap<Item, PortfolioNG<?>> portfolios = HashMultimap.create();
+    private final HashMultimap<Item, PortfolioMap<?>> portfolios = HashMultimap.create();
     
     private PortfolioManager() {
         super(ID);
@@ -27,11 +27,11 @@ public class PortfolioManager extends Context {
         return this;
     }
     
-    boolean addPortfolio(PortfolioNG<?> p){
+    boolean addPortfolio(PortfolioMap<?> p){
         return portfolios.put(p.getParent(), p);
     }
     
-    boolean removePortfolio(PortfolioNG<?> p){
+    boolean removePortfolio(PortfolioMap<?> p){
         return portfolios.remove(p.getParent(), p);
     }
     

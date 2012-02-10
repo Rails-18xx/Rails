@@ -2,13 +2,14 @@ package rails.game.model;
 
 import java.util.Iterator;
 
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableList;
 
 import rails.game.Player;
 import rails.game.PublicCertificate;
 import rails.game.PublicCompany;
-import rails.game.state.HashMultimapState;
 import rails.game.state.Item;
+import rails.game.state.Portfolio;
+import rails.game.state.PortfolioMap;
 
 /**
  * Model that contains and manages the certificates
@@ -17,54 +18,38 @@ import rails.game.state.Item;
         // this.addObserver(company.getPresidentModel());
  * @author freystef
  */
-public final class CertificatesModel extends Model implements Storage<PublicCertificate> {
+public final class CertificatesModel extends Model {
 
-    /** Owned public company certificates by company */
-    private final HashMultimapState<PublicCompany, PublicCertificate> certificates;
+    // Certificates portfolio
+    private final PortfolioMap<PublicCertificate> certificates;
 
-    /**
-     * Certificates is initialized with a default id "CertificatesModel"
-     */
-    public CertificatesModel() {
-        super("CertificatesModel");
-        certificates = HashMultimapState.create("Certificates");
+    private CertificatesModel() {
+        super(CertificatesModel.class.getSimpleName());
+        certificates = Portfolio.createMap("Certificates");
     }
    
     /**
      * Creates an initialized CertificatesModel
+     * id is identical to class name "CertificatesModel"
      */
-    public static CertificatesModel create(Owner parent) {
+    public static CertificatesModel create(Item parent) {
         return new CertificatesModel().init(parent);
     }
     
-    /** 
-     * @param parent restricted to Owners
-     */
     @Override
     public CertificatesModel init(Item parent){
         super.init(parent);
-        if (parent instanceof Owner) {
-            Owner owner = (Owner)parent;
-            certificates.init(owner);
-            certificates.addModel(this);
-        } else {
-            throw new IllegalArgumentException("CertificatesModel init() only works for Owners");
-        }
+        certificates.init(this);
         return this;
     }
     
-    /**
-     * @return restricted to Owner
-     */
-    @Override
-    public Owner getParent() {
-        return (Owner)super.getParent();
+    public PortfolioMap<PublicCertificate> getPortfolio() {
+        return certificates;
     }
-
     
     public int getShare(PublicCompany company) {
         int share = 0;
-        for (PublicCertificate cert : certificates.get(company)) {
+        for (PublicCertificate cert : certificates.getItems(company)) {
             share += cert.getShare();
         }
         return share;
@@ -77,8 +62,8 @@ public final class CertificatesModel extends Model implements Storage<PublicCert
         StringBuffer b = new StringBuffer();
         b.append(share).append("%");
         
-        if (getOwner() instanceof Player
-            && company.getPresident() == getOwner()) {
+        if (getParent() instanceof Player
+            && company.getPresident() == getParent()) {
             b.append("P");
             if (!company.hasFloated()) b.append("U");
             b.append(company.getExtraShareMarks());
@@ -91,12 +76,12 @@ public final class CertificatesModel extends Model implements Storage<PublicCert
         return certificates.toString();
     }
     
-    public ImmutableSet<PublicCertificate> getCertificates() {
-        return certificates.values();
+    public ImmutableList<PublicCertificate> getCertificates() {
+        return certificates.items();
     }
     
-    public ImmutableSet<PublicCertificate> getCertificates(PublicCompany company) {
-        return certificates.get(company);
+    public ImmutableList<PublicCertificate> getCertificates(PublicCompany company) {
+        return certificates.getItems(company);
     }
     
     public float getCertificateCount() {
@@ -112,25 +97,19 @@ public final class CertificatesModel extends Model implements Storage<PublicCert
     }
     
     public boolean contains(PublicCertificate certificate) {
-        // should be quicker than containsValue ?
-        return certificates.containsEntry(certificate.getCompany(), certificate);
+        return certificates.containsItem(certificate);
     }
     
     public boolean contains(PublicCompany company) {
         return certificates.containsKey(company);
     }
     
-    // methods from Holder interface
     public Iterator<PublicCertificate> iterator() {
         return certificates.iterator();
     }
 
-    public boolean addObject(PublicCertificate object) {
-        return certificates.put(object.getCompany(), object);
-    }
-
-    public boolean removeObject(PublicCertificate object) {
-        return certificates.remove(object.getCompany(), object);
+    public boolean addObject(PublicCertificate c) {
+        return certificates.moveInto(c);
     }
 
     public int size() {
@@ -139,10 +118,6 @@ public final class CertificatesModel extends Model implements Storage<PublicCert
 
     public boolean isEmpty() {
         return certificates.isEmpty();
-    }
-
-    public Owner getOwner() {
-        return getOwner();
     }
 
 }

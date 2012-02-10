@@ -6,7 +6,7 @@ import org.apache.log4j.Logger;
 
 import rails.game.model.Model;
 import rails.game.model.MoneyModel;
-import rails.game.model.Portfolio;
+import rails.game.model.PortfolioModel;
 import rails.game.state.GameItem;
 import rails.game.state.IntegerState;
 
@@ -140,8 +140,8 @@ public class StartItem extends GameItem {
         // in the game-specific StartRound class
         minimumBid.set(basePrice.intValue() + 5);
 
-        Portfolio ipo = gameManager.getBank().getIpo();
-        Portfolio unavailable = gameManager.getBank().getUnavailable();
+        PortfolioModel ipo = gameManager.getBank().getIpo();
+        PortfolioModel unavailable = gameManager.getBank().getUnavailable();
 
         CompanyManagerI compMgr = gameManager.getCompanyManager();
 

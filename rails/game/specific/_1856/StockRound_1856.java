@@ -6,7 +6,7 @@ import rails.game.*;
 import rails.game.action.BuyCertificate;
 import rails.game.model.CashOwner;
 import rails.game.model.Owner;
-import rails.game.model.Portfolio;
+import rails.game.model.PortfolioModel;
 import rails.game.state.IntegerState;
 
 public class StockRound_1856 extends StockRound {
@@ -129,7 +129,7 @@ public class StockRound_1856 extends StockRound {
      * has just bought his second share.
      */
     @Override
-    protected void gameSpecificChecks (Portfolio boughtFrom,
+    protected void gameSpecificChecks (PortfolioModel boughtFrom,
             PublicCompany company) {
 
         if (company.getId().equalsIgnoreCase(PublicCompany_CGR.NAME)

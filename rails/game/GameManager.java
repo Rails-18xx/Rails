@@ -19,7 +19,7 @@ import rails.game.model.Storage;
 import rails.game.model.StorageModel;
 import rails.game.model.Model;
 import rails.game.model.Owner;
-import rails.game.model.Portfolio;
+import rails.game.model.PortfolioModel;
 import rails.game.model.SingleOwner;
 import rails.game.special.SpecialProperty;
 import rails.game.special.SpecialPropertyI;
@@ -81,11 +81,11 @@ public class GameManager extends GameItem implements Owner, ConfigurableComponen
 
     /** Map relating portfolio names and objects, to enable deserialization.
      * OBSOLETE since Rails 1.3.1, but still required to enable reading old saved files */
-    protected Map<String, Portfolio> portfolioMap =
-        new HashMap<String, Portfolio> ();
+    protected Map<String, PortfolioModel> portfolioMap =
+        new HashMap<String, PortfolioModel> ();
     /** Map relating portfolio unique names and objects, to enable deserialization */
-    protected Map<String, Portfolio> portfolioUniqueNameMap =
-        new HashMap<String, Portfolio> ();
+    protected Map<String, PortfolioModel> portfolioUniqueNameMap =
+        new HashMap<String, PortfolioModel> ();
 
     protected IntegerState playerCertificateLimit
     = IntegerState.create(this, "PlayerCertificateLimit", 0);
@@ -1540,17 +1540,17 @@ public class GameManager extends GameItem implements Owner, ConfigurableComponen
         setCurrentPlayerIndex(currentPlayerIndex);
     }
 
-    public void addPortfolio (Portfolio portfolio) {
+    public void addPortfolio (PortfolioModel portfolio) {
         portfolioMap.put(portfolio.getId(), portfolio);
         portfolioUniqueNameMap.put(portfolio.getUniqueName(), portfolio);
     }
 
     /*  since Rails 1.3.1, but still required to enable loading old saved files */
-    public Portfolio getPortfolioByName (String name) {
+    public PortfolioModel getPortfolioByName (String name) {
         return portfolioMap.get(name);
     }
 
-    public Portfolio getPortfolioByUniqueName (String name) {
+    public PortfolioModel getPortfolioByUniqueName (String name) {
         return portfolioUniqueNameMap.get(name);
     }
 

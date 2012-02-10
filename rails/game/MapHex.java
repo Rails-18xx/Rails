@@ -18,7 +18,7 @@ import rails.game.action.LayTile;
 import rails.game.model.CashModel;
 import rails.game.model.Model;
 import rails.game.model.Owner;
-import rails.game.model.Portfolio;
+import rails.game.model.PortfolioModel;
 import rails.game.model.SingleOwner;
 
 import rails.game.state.ArrayListState;
@@ -1386,7 +1386,7 @@ StationHolder {
         return false;
     }
 
-    public Portfolio getPortfolio() {
+    public PortfolioModel getPortfolio() {
         return null;
     }
 

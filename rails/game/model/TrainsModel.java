@@ -7,31 +7,37 @@ import com.google.common.collect.Multiset;
 import rails.game.TrainCertificateType;
 import rails.game.Train;
 import rails.game.state.Item;
-/**
- * A holder model that stores train objects
- * 
- * Currently it can only be created inside a portfolio, due 
- * to restrictions in the BuyTrain actions.
- * @author freystef
- */
+import rails.game.state.Portfolio;
+import rails.game.state.PortfolioMap;
 
-public class TrainsModel extends StorageModel<Train> {
+public class TrainsModel extends Model {
 
+    private final PortfolioMap<Train> trains;
+    
     private boolean abbrList = false;
 
     private TrainsModel() {
-        super(Train.class);
-    }
-
-    public static TrainsModel create(Owner owner) {
-        TrainsModel trainsModel = new TrainsModel().init(owner);
-        owner.addStorage(trainsModel, Train.class);
-        return trainsModel;
+        super(TrainsModel.class.getSimpleName());
+        trains = Portfolio.createMap("Trains");
     }
     
-    public TrainsModel init(Item parent) {
+    /**
+     * Creates an initialized TrainsModel
+     * id is identical to class name "TrainsModel"
+     */
+    public static TrainsModel create(Item parent) {
+        return new TrainsModel().init(parent);
+    }
+    
+    @Override
+    public TrainsModel init(Item parent){
         super.init(parent);
+        trains.init(this);
         return this;
+    }
+    
+    public Portfolio<Train> getPortfolio() {
+        return trains;
     }
     
     public void setAbbrList(boolean abbrList) {
@@ -39,11 +45,11 @@ public class TrainsModel extends StorageModel<Train> {
     }
     
     public ImmutableList<Train> getTrains() {
-        return this.view();
+        return trains.items();
     }
     
     public Train getTrainOfType(TrainCertificateType type) {
-        for (Train train:this) {
+        for (Train train:trains) {
             if (train.getCertType() == type) return train;
         }
         return null;
@@ -54,12 +60,12 @@ public class TrainsModel extends StorageModel<Train> {
      * describing train possessions, except the IPO.
      */
     private String makeListOfTrains() {
-        if (this.isEmpty()) return "";
+        if (trains.isEmpty()) return "";
 
         StringBuilder b = new StringBuilder();
 
         // FIXME: trains has to be sorted by traintype
-        for (Train train:this) {
+        for (Train train:trains) {
             if (b.length() > 0) b.append(" ");
             if (train.isObsolete()) b.append("[");
             b.append(train.getId());
@@ -74,11 +80,11 @@ public class TrainsModel extends StorageModel<Train> {
      * IPO.
      */
     public String makeListOfTrainCertificates() {
-        if (this.isEmpty()) return "";
+        if (trains.isEmpty()) return "";
 
         // create a bag with train types
         Multiset<TrainCertificateType> trainCertTypes = HashMultiset.create();
-        for (Train train:this) {
+        for (Train train:trains) {
             trainCertTypes.add(train.getCertType()); 
         }
         

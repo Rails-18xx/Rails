@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableList;
  *
  */
 
+@Deprecated
 public class Owners {
     
     /**

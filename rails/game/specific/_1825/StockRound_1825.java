@@ -9,7 +9,7 @@ import java.util.List;
 
 import rails.game.*;
 import rails.game.action.SellShares;
-import rails.game.model.Portfolio;
+import rails.game.model.PortfolioModel;
 
 public class StockRound_1825 extends StockRound {
     
@@ -38,7 +38,7 @@ public class StockRound_1825 extends StockRound {
      * @param company The company of which a share has been traded.
      */
     @Override
-    protected void gameSpecificChecks (Portfolio boughtFrom, PublicCompany company) {
+    protected void gameSpecificChecks (PortfolioModel boughtFrom, PublicCompany company) {
         if (boughtFrom != ipo) return;
 
         int sharesInIPO = ipo.getShare(company);
@@ -89,7 +89,7 @@ public class StockRound_1825 extends StockRound {
         int price;
         int number;
         int maxShareToSell;
-        Portfolio playerPortfolio = currentPlayer.getPortfolio();
+        PortfolioModel playerPortfolio = currentPlayer.getPortfolio();
 
         /*
          * First check of which companies the player owns stock, and what

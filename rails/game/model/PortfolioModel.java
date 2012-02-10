@@ -8,7 +8,6 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 
 import rails.common.LocalText;
 import rails.game.Bank;
@@ -27,53 +26,46 @@ import rails.game.TrainType;
 import rails.game.special.LocatedBonus;
 import rails.game.special.SpecialPropertyI;
 import rails.game.state.Item;
+import rails.game.state.Portfolio;
 
 // FIXME: Solve id, name and uniquename clashes
 
 /**
- * A Portfolio(Model) stores several HolderModels
- * 
- * For the important MoveAble objects own methods are implemented
- * 
- * All other HolderModels can be added by the general methods
+ * A Portfolio(Model) stores several portfolios
  * 
  * @author evos, freystef (2.0)
  */
-public final class Portfolio extends DirectOwner {
+public final class PortfolioModel extends Model {
 
     protected static Logger log =
-        Logger.getLogger(Portfolio.class.getPackage().getName());
-
-    /** Owner */
-    private Owner owner;
-    private String ownerName; // TODO: Is this still required?
+        Logger.getLogger(PortfolioModel.class.getPackage().getName());
     
     /** Owned certificates */
-    private final CertificatesModel certificates = new CertificatesModel();
+    private CertificatesModel certificates;
     
     /** Owned private companies */
-    private final PrivatesModel privates = new PrivatesModel();
+    private PrivatesModel privates;
 
     /** Owned trains */
     private TrainsModel trains;
 
     /** Owned tokens */
     // TODO Currently only used to discard expired Bonus tokens.
-    private StorageModel<Token> tokens;
+    private Portfolio<Token> tokens;
     
     /**
      * Private-independent special properties. When moved here, a special
      * property no longer depends on the private company being alive. Example:
      * 18AL named train tokens.
      */
-    private StorageModel<SpecialPropertyI> specialProperties;
+    private Portfolio<SpecialPropertyI> specialProperties;
 
     private final GameManager gameManager;
 
     /**
      * Portfolio is initialized with a default id "Portfolio"
      */
-    public Portfolio() {
+    public PortfolioModel() {
         super("Portfolio");
 
         // TODO: Replace this with a better mechanism
@@ -81,56 +73,45 @@ public final class Portfolio extends DirectOwner {
         gameManager.addPortfolio(this);
     }
      
-    public Portfolio init(Item parent) {
-        super.init(parent);
-        if (parent instanceof Owner) {
-            this.owner = (Owner)parent;
-            this.ownerName = owner.getId(); // FIXME
-            
-        } else {
-            throw new IllegalArgumentException("Portfolio init() only works for Owner(s)");
-        }
+    public PortfolioModel init(Item parent) {
 
-        // init models
-        certificates.init(owner);
-        privates.init(owner);
-        trains = TrainsModel.create(owner);
-        tokens = StorageModel.create(owner, Token.class);
-        specialProperties = StorageModel.create(owner, SpecialPropertyI.class);
+        // create models
+        certificates = CertificatesModel.create(parent);
+        privates = PrivatesModel.create(parent);
+        trains = TrainsModel.create(parent);
+        
+        // create portfolios
+        tokens = Portfolio.createList(parent, "Tokens");
+        specialProperties = Portfolio.createList(parent, "SpecialProperties");
         
         // change display style dependent on owner
-        if (owner instanceof PublicCompany) {
+        if (parent instanceof PublicCompany) {
             trains.setAbbrList(false);
             privates.setLineBreak(false);
-        } else if (owner instanceof Bank) {
+        } else if (parent instanceof Bank) {
             trains.setAbbrList(true);
-        } else if (owner instanceof Player) {
+        } else if (parent instanceof Player) {
             privates.setLineBreak(true);
         }
         return this;
     }
     
 
-    public void transferAssetsFrom(Portfolio otherPortfolio) {
+    public void transferAssetsFrom(PortfolioModel otherPortfolio) {
 
         // Move trains
-        Owners.moveAll(otherPortfolio, this, Train.class);
+        Portfolio.moveAll(otherPortfolio.getTrainsModel().getPortfolio(), trains.getPortfolio());
 
         // Move treasury certificates
-        Owners.moveAll(otherPortfolio, this, PublicCertificate.class);
+        Portfolio.moveAll(otherPortfolio.getCertificatesModel().getPortfolio(), certificates.getPortfolio());
     }
 
     /** Low-level method, only to be called by the local addObject() method and by initialisation code. */
+    // TODO: Ignores position now, is this necessary?
     public void addPrivate(PrivateCompany privateCompany, int position) {
 
         // add to private Model
-        privates.addObject(privateCompany, position);
-        
-        // change the holder inside the private Company
-        privateCompany.setHolder(this);
-        
-        log.debug("Adding " + privateCompany.getId() + " to portfolio of "
-                + owner.getId());
+        privates.moveInto(privateCompany);
         
         if (privateCompany.getSpecialProperties() != null) {
             log.debug(privateCompany.getId() + " has special properties!");
@@ -138,35 +119,39 @@ public final class Portfolio extends DirectOwner {
             log.debug(privateCompany.getId() + " has no special properties");
         }
 
-        // TODO: This should not be necessary as soon as a PlayerModel
+        // TODO: This should not be necessary as soon as a PlayerModel works correctly
         updatePlayerWorth ();
     }
 
     // FIXME: Solve the presidentShare problem, should not be identified at position zero
     
     protected void updatePlayerWorth () {
-        if (owner instanceof Player) {
-            ((Player)owner).updateWorth();
+        if (getParent() instanceof Player) {
+            ((Player)getParent()).updateWorth();
         }
     }
    
+   public CertificatesModel getCertificatesModel() {
+       return certificates;
+   }
+    
    public CertificatesModel getShareModel(PublicCompany company) {
        // FIXME: This has to rewritten
        return null;
     }
 
     public ImmutableList<PrivateCompany> getPrivateCompanies() {
-        return privates.view();
+        return privates.getPortfolio().items();
     }
 
-    public ImmutableSet<PublicCertificate> getCertificates() {
-        return certificates.getCertificates();
+    public ImmutableList<PublicCertificate> getCertificates() {
+        return certificates.getPortfolio().items();
     }
 
     /** Get the number of certificates that count against the certificate limit */
     public float getCertificateCount() {
 
-        float number = privates.size(); // TODO: May not hold for all games, for example 1880
+        float number = privates.getPortfolio().size(); // TODO: May not hold for all games, for example 1880
 
         return number + certificates.getCertificateCount();
     }
@@ -177,8 +162,8 @@ public final class Portfolio extends DirectOwner {
     }
 */
 
-    public ImmutableSet<PublicCertificate> getCertificates(PublicCompany company) {
-        return certificates.getCertificates(company);
+    public ImmutableList<PublicCertificate> getCertificates(PublicCompany company) {
+        return certificates.getPortfolio().getItems(company);
     }
 
     /**
@@ -239,11 +224,6 @@ public final class Portfolio extends DirectOwner {
     }
 */
     
-    public Owner getOwner() {
-        return owner;
-    }
-
-
     // TODO: Check if this is needed and should be supported (owner should be final?)
 /*
     public void setOwner(CashHolder owner) {
@@ -302,7 +282,7 @@ public final class Portfolio extends DirectOwner {
      * @return The common certificates returned.
      */
     public List<PublicCertificate> swapPresidentCertificate(
-            PublicCompany company, Portfolio other) {
+            PublicCompany company, PortfolioModel other) {
 
         List<PublicCertificate> swapped = new ArrayList<PublicCertificate>();
         PublicCertificate swapCert;
@@ -316,18 +296,18 @@ public final class Portfolio extends DirectOwner {
         if (other.ownsCertificates(company, 1, false) >= shares) {
             for (int i = 0; i < shares; i++) {
                 swapCert = other.findCertificate(company, 1, false);
-                swapCert.moveTo(this);
+                certificates.getPortfolio().moveInto(swapCert);
                 swapped.add(swapCert);
 
             }
         } else if (other.ownsCertificates(company, shares, false) >= 1) {
             swapCert = other.findCertificate(company, 2, false);
-            swapCert.moveTo(this);
+            certificates.getPortfolio().moveInto(swapCert);
             swapped.add(swapCert);
         } else {
             return null;
         }
-        cert.moveTo(other);
+        certificates.getPortfolio().moveInto(cert);
 
         // Make sure the old President is no longer marked as such
         // getShareModel(company).setShare();
@@ -337,9 +317,12 @@ public final class Portfolio extends DirectOwner {
     }
 
     public void discardTrain(Train train) {
-        train.moveTo(GameManager.getInstance().getBank().getPool());
+        // FIXME: This is a horrible list of method calls
+        GameManager.getInstance().getBank().getPool().getTrainsModel().getPortfolio().moveInto(train);
+        
+        
         ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
-                ownerName, train.getId() ));
+                getParent().getId(), train.getId() ));
     }
 
     // TODO: Is this still needed?
@@ -348,17 +331,17 @@ public final class Portfolio extends DirectOwner {
     }
 
     public int getNumberOfTrains() {
-        return trains.size();
+        return trains.getPortfolio().size();
     }
 
     public ImmutableList<Train> getTrainList() {
-        return trains.view();
+        return trains.getPortfolio().items();
     }
 
     public Train[] getTrainsPerType(TrainType type) {
 
         List<Train> trainsFound = new ArrayList<Train>();
-        for (Train train : trains) {
+        for (Train train : trains.getPortfolio()) {
             if (train.getType() == type) trainsFound.add(train);
         }
 
@@ -375,7 +358,7 @@ public final class Portfolio extends DirectOwner {
         List<Train> trainsFound = new ArrayList<Train>();
         Map<TrainType, Object> trainTypesFound =
             new HashMap<TrainType, Object>();
-        for (Train train : trains) {
+        for (Train train : trains.getPortfolio()) {
             if (!trainTypesFound.containsKey(train.getType())) {
                 trainsFound.add(train);
                 trainTypesFound.put(train.getType(), null);
@@ -410,14 +393,14 @@ public final class Portfolio extends DirectOwner {
         // Special case for bonuses with predefined locations
         // TODO Does this belong here?
         // FIXME: This does not belong here as this method is not called anymore from anywhere
-        if (owner instanceof PublicCompany && property instanceof LocatedBonus) {
-            PublicCompany company = (PublicCompany)owner;
+        if (getParent() instanceof PublicCompany && property instanceof LocatedBonus) {
+            PublicCompany company = (PublicCompany)getParent();
             LocatedBonus locBonus = (LocatedBonus)property;
             Bonus bonus = new Bonus(company, locBonus.getId(), locBonus.getValue(),
                     locBonus.getLocations());
             company.addBonus(bonus);
             ReportBuffer.add(LocalText.getText("AcquiresBonus",
-                    owner.getId(),
+                    getParent().getId(),
                     locBonus.getId(),
                     Bank.format(locBonus.getValue()),
                     locBonus.getLocationNameString()));
@@ -517,13 +500,13 @@ public final class Portfolio extends DirectOwner {
      * @return ArrayList of all special properties we have.
      */
     public ImmutableList<SpecialPropertyI> getPersistentSpecialProperties() {
-        return specialProperties.view();
+        return specialProperties.items();
     }
 
     public ImmutableList<SpecialPropertyI> getAllSpecialProperties() {
         ImmutableList.Builder<SpecialPropertyI> sps = new ImmutableList.Builder<SpecialPropertyI>();
         if (specialProperties != null) sps.addAll(specialProperties);
-        for (PrivateCompany priv : privates) {
+        for (PrivateCompany priv : privates.getPortfolio()) {
             if (priv.getSpecialProperties() != null) {
                 sps.addAll(priv.getSpecialProperties());
             }
@@ -540,19 +523,21 @@ public final class Portfolio extends DirectOwner {
         return specialProperties != null && !specialProperties.isEmpty();
     }
 
-    public Storage<SpecialPropertyI> getSpecialProperties() {
+    public Portfolio<SpecialPropertyI> getSpecialProperties() {
         return specialProperties;
     }
 
+    
+    // TODO: Check if this code can be simplified
     @SuppressWarnings("unchecked")
     public <T extends SpecialPropertyI> List<T> getSpecialProperties(
             Class<T> clazz, boolean includeExercised) {
         List<T> result = new ArrayList<T>();
         List<SpecialPropertyI> sps;
 
-        if (owner instanceof Player || owner instanceof PublicCompany) {
+        if (getParent() instanceof Player || getParent() instanceof PublicCompany) {
 
-            for (PrivateCompany priv : privates) {
+            for (PrivateCompany priv : privates.getPortfolio()) {
 
                 sps = priv.getSpecialProperties();
                 if (sps == null) continue;
@@ -561,9 +546,9 @@ public final class Portfolio extends DirectOwner {
                     if ((clazz == null || clazz.isAssignableFrom(sp.getClass()))
                             && sp.isExecutionable()
                             && (!sp.isExercised() || includeExercised)
-                            && (owner instanceof Company && sp.isUsableIfOwnedByCompany()
-                                    || owner instanceof Player && sp.isUsableIfOwnedByPlayer())) {
-                        log.debug("Portfolio "+ownerName+" has SP " + sp);
+                            && (getParent() instanceof Company && sp.isUsableIfOwnedByCompany()
+                                    || getParent()instanceof Player && sp.isUsableIfOwnedByPlayer())) {
+                        log.debug("Portfolio "+getParent().getId()+" has SP " + sp);
                         result.add((T) sp);
                     }
                 }
@@ -575,9 +560,9 @@ public final class Portfolio extends DirectOwner {
                     if ((clazz == null || clazz.isAssignableFrom(sp.getClass()))
                             && sp.isExecutionable()
                             && (!sp.isExercised() || includeExercised)
-                            && (owner instanceof Company && sp.isUsableIfOwnedByCompany()
-                                    || owner instanceof Player && sp.isUsableIfOwnedByPlayer())) {
-                        log.debug("Portfolio "+ownerName+" has persistent SP " + sp);
+                            && (getParent() instanceof Company && sp.isUsableIfOwnedByCompany()
+                                    || getParent() instanceof Player && sp.isUsableIfOwnedByPlayer())) {
+                        log.debug("Portfolio "+getParent().getId()+" has persistent SP " + sp);
                         result.add((T) sp);
                     }
                 }
@@ -592,29 +577,14 @@ public final class Portfolio extends DirectOwner {
         return privates;
     }
 
-    public StorageModel<Token> getTokenHolder() {
+    public Portfolio<Token> getTokenHolder() {
         return tokens;
     }
     
-    /** Low-level method, only to be called by the local addObject() method. */
-    public boolean addToken(Token token, int position) {
-        tokens.addObject(token, position);
-        return true;
-    }
-
-    /** Low-level method, only to be called by the local addObject() method. */
-    public boolean removeToken(Token token) {
-        return tokens.removeObject(token);
-    }
-
-    public boolean hasTokens() {
-        return tokens != null && !tokens.isEmpty();
-    }
-
     public void rustObsoleteTrains() {
 
         List<Train> trainsToRust = new ArrayList<Train>();
-        for (Train train : trains) {
+        for (Train train : trains.getPortfolio()) {
             if (train.isObsolete()) {
                 trainsToRust.add(train);
             }
@@ -623,9 +593,9 @@ public final class Portfolio extends DirectOwner {
         // otherwise we get a ConcurrentModificationException on trains.
         for (Train train : trainsToRust) {
             ReportBuffer.add(LocalText.getText("TrainsObsoleteRusted",
-                    train.getId(), ownerName));
+                    train.getId(), getParent().getId()));
             log.debug("Obsolete train " + train.getUniqueId() + " (owned by "
-                    + ownerName + ") rusted");
+                    + getParent().getId() + ") rusted");
             train.setRusted();
         }
         // TODO: Still required?

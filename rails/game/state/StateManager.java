@@ -61,8 +61,8 @@ public final class StateManager extends GameItem {
      */
     boolean registerState(State state) {
         if (!allStates.add(state)) return false;
-        if (state instanceof PortfolioNG) {
-            return portfolioManager.addPortfolio((PortfolioNG<?>) state);
+        if (state instanceof PortfolioMap) {
+            return portfolioManager.addPortfolio((PortfolioMap<?>) state);
         } else if (state instanceof Wallet) {
             return walletManager.addWallet((Wallet<?>) state);
         }
@@ -75,8 +75,8 @@ public final class StateManager extends GameItem {
      */
     boolean deRegisterState(State state) {
         if (!allStates.remove(state)) return false;
-        if (state instanceof PortfolioNG) {
-            return portfolioManager.removePortfolio((PortfolioNG<?>) state);
+        if (state instanceof PortfolioMap) {
+            return portfolioManager.removePortfolio((PortfolioMap<?>) state);
         } else if (state instanceof Wallet) {
             return walletManager.removeWallet((Wallet<?>) state);
         }

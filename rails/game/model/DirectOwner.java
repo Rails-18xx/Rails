@@ -6,6 +6,7 @@ import com.google.common.collect.Maps;
 
 import rails.game.state.GameItem;
 
+@Deprecated
 public class DirectOwner extends GameItem implements Owner {
 
     private final Map<Class<? extends Ownable>, Storage<? extends Ownable>> storages

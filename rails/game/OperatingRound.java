@@ -19,7 +19,7 @@ import rails.game.correct.OperatingCost;
 import rails.game.model.CashOwner;
 import rails.game.model.Owner;
 import rails.game.model.Owners;
-import rails.game.model.Portfolio;
+import rails.game.model.PortfolioModel;
 import rails.game.special.*;
 import rails.game.state.*;
 import rails.util.SequenceUtil;
@@ -2708,7 +2708,7 @@ public class OperatingRound extends Round implements Observer {
         }
 
         Owner oldOwner = train.getOwner();
-        Portfolio oldPortfolio = train.getPortfolio();
+        PortfolioModel oldPortfolio = train.getPortfolio();
 
         if (exchangedTrain != null) {
             Train oldTrain =
@@ -2960,7 +2960,7 @@ public class OperatingRound extends Round implements Observer {
             if (getCurrentPhase().isTrainTradingAllowed()) {
                 BuyTrain bt;
                 Player p;
-                Portfolio pf;
+                PortfolioModel pf;
                 int index;
                 int numberOfPlayers = getNumberOfPlayers();
                 int presidentCash = operatingCompany.get().getPresident().getCashValue();

@@ -11,7 +11,7 @@ import rails.common.*;
 import rails.game.action.*;
 import rails.game.model.CashOwner;
 import rails.game.model.Owner;
-import rails.game.model.Portfolio;
+import rails.game.model.PortfolioModel;
 import rails.game.special.SpecialPropertyI;
 import rails.game.state.GameItem;
 import rails.game.state.ArrayListState;
@@ -34,10 +34,10 @@ public abstract class Round extends GameItem implements RoundI {
     protected CompanyManagerI companyManager = null;
     protected PlayerManager playerManager = null;
     protected Bank bank = null;
-    protected Portfolio ipo = null;
-    protected Portfolio pool = null;
-    protected Portfolio unavailable = null;
-    protected Portfolio scrapHeap = null;
+    protected PortfolioModel ipo = null;
+    protected PortfolioModel pool = null;
+    protected PortfolioModel unavailable = null;
+    protected PortfolioModel scrapHeap = null;
     protected StockMarket stockMarket = null;
     protected MapManager mapManager = null;
 
@@ -346,7 +346,7 @@ public abstract class Round extends GameItem implements RoundI {
 
     /** Can be subclassed for games with special rules */
     protected boolean certCountsAsSold (PublicCertificate cert) {
-        Portfolio holder = cert.getPortfolio();
+        PortfolioModel holder = cert.getPortfolio();
         Owner owner = holder.getOwner();
         return owner instanceof Player
         || holder == pool;
@@ -448,7 +448,7 @@ public abstract class Round extends GameItem implements RoundI {
 
     // Note: all transferred shares must come from the same old shareholder.
     protected void transferCertificates(List<? extends Certificate> certs,
-            Portfolio newHolder) {
+            PortfolioModel newHolder) {
 
         for (Certificate cert : certs) {
             if (cert != null) {

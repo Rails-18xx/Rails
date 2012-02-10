@@ -9,7 +9,7 @@ import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.model.Owner;
-import rails.game.model.Portfolio;
+import rails.game.model.PortfolioModel;
 import rails.game.state.ArrayListState;
 import rails.game.state.BooleanState;
 import rails.game.state.IntegerState;
@@ -74,7 +74,7 @@ public class StockRound_18EU extends StockRound {
         PublicCertificate cert;
         PublicCompany comp;
         StockSpace stockSpace;
-        Portfolio from;
+        PortfolioModel from;
         int price;
 
         // 18EU special: until phase 5, we can only
