@@ -44,6 +44,7 @@ public class RemainingTilesWindow extends JFrame implements WindowListener,
         tilePanel = new AlignedWidthPanel();
         slider = new JScrollPane(tilePanel);
         slider.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        slider.setPreferredSize(new Dimension(200,200));
         tilePanel.setParentSlider(slider);
 
         //use flow layout as it provides for necessary line breaks
@@ -53,7 +54,7 @@ public class RemainingTilesWindow extends JFrame implements WindowListener,
 
         //setup the JFrame and assign the contents (slider containing tilePane)
         //only for conventional layout as this is a dockable pane for the docking layout
-        if (true || !orWindow.isDockingFrameworkEnabled()) {
+        if (!orWindow.isDockingFrameworkEnabled()) {
             setTitle("Rails: Remaining Tiles");
             setVisible(false);
             setContentPane(slider);

@@ -172,11 +172,17 @@ implements ActionListener, KeyListener, RevenueListener {
 
         infoMenu = new JMenu(LocalText.getText("Info"));
         infoMenu.setEnabled(true);
-        remainingTilesMenuItem =
-            new JMenuItem(LocalText.getText("RemainingTiles"));
-        remainingTilesMenuItem.addActionListener(this);
-        remainingTilesMenuItem.setActionCommand(REM_TILES_CMD);
-        infoMenu.add(remainingTilesMenuItem);
+
+        //only add remaining tiles display option for conventional layout
+        //as this is always included as a dockable panel in the docking frame layout
+        if (!parent.isDockingFrameworkEnabled()) {
+            remainingTilesMenuItem =
+                new JMenuItem(LocalText.getText("RemainingTiles"));
+            remainingTilesMenuItem.addActionListener(this);
+            remainingTilesMenuItem.setActionCommand(REM_TILES_CMD);
+            infoMenu.add(remainingTilesMenuItem);
+        }
+
         menuBar.add(infoMenu);
 
         addCompanyInfo();

@@ -64,8 +64,8 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
         orUIManager.setGameUIManager(gameUIManager);
 
         messagePanel = new MessagePanel();
-        JScrollPane slider = new JScrollPane(messagePanel);
-        messagePanel.setParentSlider(slider);
+        JScrollPane messagePanelSlider = new JScrollPane(messagePanel);
+        messagePanel.setParentSlider(messagePanelSlider);
 
         upgradePanel = new UpgradesPanel(orUIManager);
         addMouseListener(upgradePanel);
@@ -73,22 +73,33 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
         mapPanel = new MapPanel(gameUIManager);
 
         orPanel = new ORPanel(this, orUIManager);
-        
+
         //create docking / conventional layout
         if (isDockingFrameworkEnabled()) {
+
+            //initialize remaining tile panel as it is no optional part in the docking layout
+            JScrollPane remainingTilesPanelSlider = 
+                    new RemainingTilesWindow(this).getScrollPane();
             
             //generate layout
-            addDockable ( slider, LocalText.getText("Dockable.orWindow.messagePanel"),
-                    0, 0, 100, 10);
-            addDockable ( upgradePanel, LocalText.getText("Dockable.orWindow.upgradePanel"),
-                    0, 10, 20, 70);
-            addDockable ( mapPanel, LocalText.getText("Dockable.orWindow.mapPanel"),
-                    20, 10, 80, 70);
-            addDockable ( orPanel, LocalText.getText("Dockable.orWindow.orPanel"),
-                    0, 80, 100, 15);
+            addDockable ( messagePanelSlider, 
+                    LocalText.getText("Dockable.orWindow.messagePanel"),
+                    0, 0, 100, 10, DockableProperty.closeable);
+            addDockable ( upgradePanel, 
+                    LocalText.getText("Dockable.orWindow.upgradePanel"),
+                    0, 10, 20, 70, DockableProperty.standard);
+            addDockable ( mapPanel, 
+                    LocalText.getText("Dockable.orWindow.mapPanel"),
+                    20, 10, 80, 70, DockableProperty.standard);
+            addDockable ( remainingTilesPanelSlider, 
+                    LocalText.getText("Dockable.orWindow.remainingTilesPanel"),
+                    100, 0, 120, 100, DockableProperty.initially_hidden);
+            addDockable ( orPanel, 
+                    LocalText.getText("Dockable.orWindow.orPanel"),
+                    0, 80, 100, 15, DockableProperty.standard);
             addDockable ( orPanel.getButtonPanel(), 
                     LocalText.getText("Dockable.orWindow.buttonPanel"),
-                    0, 95, 100, 5);
+                    0, 95, 100, 5, DockableProperty.standard);
             deployDockables();
             
             //take over or panel's menu bar as the frame menu bar
@@ -100,7 +111,7 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
             // CONVENTIONAL LAYOUT
             
             getContentPane().setLayout(new BorderLayout());
-            getContentPane().add(slider, BorderLayout.NORTH);
+            getContentPane().add(messagePanelSlider, BorderLayout.NORTH);
             getContentPane().add(mapPanel, BorderLayout.CENTER);
             getContentPane().add(upgradePanel, BorderLayout.WEST);
             getContentPane().add(orPanel, BorderLayout.SOUTH);
