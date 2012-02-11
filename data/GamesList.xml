@@ -315,33 +315,38 @@ Known Issues:
   </Game>
 
    	
-	<Credits>Rails is a computer implementation of a number of board games. 
-	These games all have a railroad theme. They are collectively known as "18xx" 
-	games due to the naming scheme used by many games in the genre. 
-
-Contributors: 
-	Erik Vos
-	Stefan Frey
-	Freek Dijkstra
-	Scott Peterson
-	Adam Badura
-	Phil Davies
-	Bill Rosgen
-	Martin Brumm
-	Chris Shaffer 
-	Brett Lentz
-
-All rights reserved by the respective owners of the original games 
-(see the Game Notes per game for specific acknowledgements).
-
-No challenge to the original author's or publisher's rights, licensing, or status is intended.
-
-Rails is intended as a play aid for owners of each respective boardgame.
-
-The Rails application and source code are distributed under 
-version 2 of the GNU Public License (GPL).
-
-A copy of the GPL should have been shipped with the game files and is also available here: 
-	http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
-	</Credits>
+	<Credits>&lt;html&gt;Rails is a computer implementation of a number of board games.&lt;br&gt; 
+	These games all have a railroad theme. They are collectively known as "18xx" &lt;br&gt;
+	games due to the naming scheme used by many games in the genre. &lt;br&gt;
+	&lt;br&gt;
+Contributors: &lt;br&gt;
+	Erik Vos&lt;br&gt;
+	Stefan Frey&lt;br&gt;
+	Freek Dijkstra&lt;br&gt;
+	Scott Peterson&lt;br&gt;
+	Adam Badura&lt;br&gt;
+	Phil Davies&lt;br&gt;
+	Bill Rosgen&lt;br&gt;
+	Martin Brumm&lt;br&gt;
+	Chris Shaffer &lt;br&gt;
+	Brett Lentz&lt;br&gt;
+&lt;br&gt;
+All rights reserved by the respective owners of the original games&lt;br&gt; 
+(see the Game Notes per game for specific acknowledgements).&lt;br&gt;
+&lt;br&gt;
+No challenge to the original author's or publisher's rights, licensing, or status is intended.&lt;br&gt;
+&lt;br&gt;
+Rails is intended as a play aid for owners of each respective boardgame.&lt;br&gt;
+&lt;br&gt;
+The Rails application and source code are distributed under&lt;br&gt; 
+version 2 of the GNU Public License (GPL).&lt;br&gt;
+&lt;br&gt;
+A copy of the GPL should have been shipped with the game files and is also available here:&lt;br&gt; 
+	&lt;a href="http://www.gnu.org/licenses/old-licenses/gpl-2.0.html"&gt;http://www.gnu.org/licenses/old-licenses/gpl-2.0.html&lt;/a&gt;&lt;br&gt;
+&lt;br&gt;
+Icon sets are taken from the following sites:&lt;ul&gt; 
+	&lt;li&gt;&lt;a href="http://www.fatcow.com/"&gt;http://www.fatcow.com/&lt;/a&gt;&lt;br&gt;
+	 under a Creative Commons Attribution 3.0 License (&lt;a href="http://creativecommons.org/licenses/by/3.0/us/"&gt;http://creativecommons.org/licenses/by/3.0/us/&lt;/a&gt;)
+	&lt;/ul&gt;
+	&lt;/html&gt;</Credits>
 </GamesList>
