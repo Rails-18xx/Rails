@@ -286,13 +286,13 @@ KeyListener, ActionPerformer {
 
         buttonPanel = new JPanel();
 
-        passButton = new ActionButton(LocalText.getText("PASS"));
+        passButton = new ActionButton(RailsIcon.PASS);
         passButton.setMnemonic(KeyEvent.VK_P);
         buttonPanel.add(passButton);
         passButton.setActionCommand(DONE_CMD);
         passButton.addActionListener(this);
 
-        autopassButton = new ActionButton(LocalText.getText("Autopass"));
+        autopassButton = new ActionButton(RailsIcon.AUTOPASS);
         autopassButton.setMnemonic(KeyEvent.VK_A);
         buttonPanel.add(autopassButton);
         autopassButton.setActionCommand(AUTOPASS_CMD);
@@ -548,14 +548,14 @@ KeyListener, ActionPerformer {
             for (NullAction na : inactiveItems) {
                 switch (na.getMode()) {
                 case NullAction.PASS:
-                    passButton.setText(LocalText.getText("PASS"));
+                    passButton.setRailsIcon(RailsIcon.PASS);
                     passButton.setEnabled(true);
                     passButton.setActionCommand(PASS_CMD);
                     passButton.setMnemonic(KeyEvent.VK_P);
                     passButton.setPossibleAction(na);
                     break;
                 case NullAction.DONE:
-                    passButton.setText(LocalText.getText("Done"));
+                    passButton.setRailsIcon(RailsIcon.DONE);
                     passButton.setEnabled(true);
                     passButton.setActionCommand(DONE_CMD);
                     passButton.setMnemonic(KeyEvent.VK_D);
@@ -699,9 +699,9 @@ KeyListener, ActionPerformer {
         if (action != null) {
             int mode = action.getMode();
             if (mode == NullAction.PASS) {
-                passButton.setText(LocalText.getText("PASS"));
+                passButton.setRailsIcon(RailsIcon.PASS);
             } else if (mode == NullAction.DONE) {
-                passButton.setText(LocalText.getText("Done"));
+                passButton.setRailsIcon(RailsIcon.DONE);
             }
             passButton.setEnabled(true);
             passButton.setVisible(true);
@@ -751,7 +751,7 @@ KeyListener, ActionPerformer {
 
         // Enable Passbutton
         passButton.setEnabled(true);
-        passButton.setText(LocalText.getText("END_OF_GAME_CLOSE_ALL_WINDOWS"));
+        passButton.setRailsIcon(RailsIcon.END_OF_GAME_CLOSE_ALL_WINDOWS);
 
         gameUIManager.orWindow.finish();
     }

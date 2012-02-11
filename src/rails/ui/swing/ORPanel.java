@@ -286,39 +286,39 @@ implements ActionListener, KeyListener, RevenueListener {
     private void initButtonPanel() {
         
         // sfy: operatingcosts button
-        buttonOC = new ActionButton(LocalText.getText("OCButtonLabel"));
+        buttonOC = new ActionButton(RailsIcon.OPERATING_COST);
         buttonOC.setActionCommand(OPERATING_COST_CMD);
         buttonOC.setMnemonic(KeyEvent.VK_O);
         buttonOC.addActionListener(this);
         buttonOC.setEnabled(false);
         buttonOC.setVisible(false);
 
-        button1 = new ActionButton(LocalText.getText("LayTile"));
+        button1 = new ActionButton(RailsIcon.LAY_TILE);
         button1.setActionCommand(LAY_TILE_CMD);
         button1.setMnemonic(KeyEvent.VK_T);
         button1.addActionListener(this);
         button1.setEnabled(false);
 
-        button2 = new ActionButton(LocalText.getText("BUY_PRIVATE"));
+        button2 = new ActionButton(RailsIcon.BUY_PRIVATE);
         button2.setActionCommand(BUY_PRIVATE_CMD);
         button2.setMnemonic(KeyEvent.VK_V);
         button2.addActionListener(this);
         button2.setEnabled(false);
         button2.setVisible(false);
 
-        button3 = new ActionButton(LocalText.getText("Done"));
+        button3 = new ActionButton(RailsIcon.DONE);
         button3.setActionCommand(DONE_CMD);
         button3.setMnemonic(KeyEvent.VK_D);
         button3.addActionListener(this);
         button3.setEnabled(false);
 
-        undoButton = new ActionButton(LocalText.getText("UNDO"));
+        undoButton = new ActionButton(RailsIcon.UNDO);
         undoButton.setActionCommand(UNDO_CMD);
         undoButton.setMnemonic(KeyEvent.VK_U);
         undoButton.addActionListener(this);
         undoButton.setEnabled(false);
 
-        redoButton = new ActionButton(LocalText.getText("REDO"));
+        redoButton = new ActionButton(RailsIcon.REDO);
         redoButton.setActionCommand(REDO_CMD);
         redoButton.setMnemonic(KeyEvent.VK_R);
         redoButton.addActionListener(this);
@@ -1141,7 +1141,7 @@ implements ActionListener, KeyListener, RevenueListener {
 
         setSelect(revenue[orCompIndex], revenueSelect[orCompIndex], true);
 
-        button1.setText(LocalText.getText("SET_REVENUE"));
+        button1.setRailsIcon(RailsIcon.SET_REVENUE);
         button1.setActionCommand(SET_REVENUE_CMD);
         button1.setPossibleAction(action);
         button1.setMnemonic(KeyEvent.VK_R);
@@ -1190,7 +1190,7 @@ implements ActionListener, KeyListener, RevenueListener {
         setSelect(revenue[orCompIndex], revenueSelect[orCompIndex], false);
 
         if (withhold) {
-            button1.setText(LocalText.getText("WITHHOLD"));
+            button1.setRailsIcon(RailsIcon.WITHOLD);
             button1.setActionCommand(WITHHOLD_CMD);
             clonedAction = (SetDividend) action.clone();
             clonedAction.setRevenueAllocation(SetDividend.WITHHOLD);
@@ -1203,7 +1203,7 @@ implements ActionListener, KeyListener, RevenueListener {
         }
 
         if (split) {
-            button2.setText(LocalText.getText("SPLIT"));
+            button2.setRailsIcon(RailsIcon.SPLIT);
             button2.setActionCommand(SPLIT_CMD);
             clonedAction = (SetDividend) action.clone();
             clonedAction.setRevenueAllocation(SetDividend.SPLIT);
@@ -1216,7 +1216,7 @@ implements ActionListener, KeyListener, RevenueListener {
         }
 
         if (payout) {
-            button3.setText(LocalText.getText("PAYOUT"));
+            button3.setRailsIcon(RailsIcon.PAYOUT);
             button3.setActionCommand(PAYOUT_CMD);
             clonedAction = (SetDividend) action.clone();
             clonedAction.setRevenueAllocation(SetDividend.PAYOUT);
@@ -1234,7 +1234,7 @@ implements ActionListener, KeyListener, RevenueListener {
         setHighlight(trains[orCompIndex],true);
         setHighlight(newTrainCost[orCompIndex],true);
 
-        button1.setText(LocalText.getText("BUY_TRAIN"));
+        button1.setRailsIcon(RailsIcon.BUY_TRAIN);
         button1.setActionCommand(BUY_TRAIN_CMD);
         button1.setMnemonic(KeyEvent.VK_T);
         button1.setEnabled(enabled);
@@ -1255,7 +1255,7 @@ implements ActionListener, KeyListener, RevenueListener {
 
         if (privatesCanBeBought) {
             if (enabled) {
-                button2.setText(LocalText.getText("BUY_PRIVATE"));
+                button2.setRailsIcon(RailsIcon.BUY_PRIVATE);
                 button2.setActionCommand(BUY_PRIVATE_CMD);
                 button2.setMnemonic(KeyEvent.VK_V);
             }
@@ -1287,7 +1287,7 @@ implements ActionListener, KeyListener, RevenueListener {
 
     public void enableDone(NullAction action) {
 
-        button3.setText(LocalText.getText("Done"));
+        button3.setRailsIcon(RailsIcon.DONE);
         button3.setActionCommand(DONE_CMD);
         button3.setMnemonic(KeyEvent.VK_D);
         button3.setPossibleAction(action);
@@ -1317,7 +1317,7 @@ implements ActionListener, KeyListener, RevenueListener {
         loansCaption.setHighlight(true);
         setHighlight(compLoans[orCompIndex],true);
 
-        button1.setText(LocalText.getText("RepayLoans"));
+        button1.setRailsIcon(RailsIcon.REPAY_LOANS);
         button1.setActionCommand(REPAY_LOANS_CMD);
         button1.setPossibleAction(action);
         button1.setMnemonic(KeyEvent.VK_R);

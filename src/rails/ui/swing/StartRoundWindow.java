@@ -136,14 +136,14 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
 
         buttonPanel = new JPanel();
 
-        buyButton = new ActionButton(LocalText.getText("BUY"));
+        buyButton = new ActionButton(RailsIcon.BUY);
         buyButton.setMnemonic(KeyEvent.VK_B);
         buyButton.addActionListener(this);
         buyButton.setEnabled(false);
         buttonPanel.add(buyButton);
 
         if (includeBidding) {
-            bidButton = new ActionButton(LocalText.getText("BID") + ":");
+            bidButton = new ActionButton(RailsIcon.BID);
             bidButton.setMnemonic(KeyEvent.VK_D);
             bidButton.addActionListener(this);
             bidButton.setEnabled(false);
@@ -158,7 +158,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
             buttonPanel.add(bidAmount);
         }
 
-        passButton = new ActionButton(LocalText.getText("PASS"));
+        passButton = new ActionButton(RailsIcon.PASS);
         passButton.setMnemonic(KeyEvent.VK_P);
         passButton.addActionListener(this);
         passButton.setEnabled(false);
@@ -507,7 +507,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
             // only one NullAction is allowed
             NullAction na = inactiveItems.get(0);
             // nullActions differ in text to display
-            passButton.setText(LocalText.getText(na.toString()));
+            passButton.setRailsIcon(RailsIcon.getByConfigKey(na.toString()));
             passAllowed = true;
             passButton.setPossibleAction(na);
             passButton.setMnemonic(KeyEvent.VK_P);
@@ -578,7 +578,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
                     // In this case, "Pass" becomes "Select, don't buy"
                     passButton.setPossibleAction(currentActiveItem);
                     passButton.setEnabled(true);
-                    passButton.setText(LocalText.getText("SelectNoBid"));
+                    passButton.setRailsIcon(RailsIcon.SELECT_NO_BID);
                     passButton.setVisible(true);
                     //                    if (!repacked) {
                     pack();
@@ -784,7 +784,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
     }
 
     private ImageIcon createInfoIcon() {
-        return RailsIcon.INFO.icon;
+        return RailsIcon.INFO.largeIcon;
     }
 
     public void keyPressed(KeyEvent e) {
