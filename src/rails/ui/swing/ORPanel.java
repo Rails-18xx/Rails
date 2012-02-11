@@ -1190,7 +1190,7 @@ implements ActionListener, KeyListener, RevenueListener {
         setSelect(revenue[orCompIndex], revenueSelect[orCompIndex], false);
 
         if (withhold) {
-            button1.setRailsIcon(RailsIcon.WITHOLD);
+            button1.setRailsIcon(RailsIcon.WITHHOLD);
             button1.setActionCommand(WITHHOLD_CMD);
             clonedAction = (SetDividend) action.clone();
             clonedAction.setRevenueAllocation(SetDividend.WITHHOLD);

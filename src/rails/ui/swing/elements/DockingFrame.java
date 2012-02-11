@@ -117,13 +117,14 @@ public abstract class DockingFrame extends JFrame {
      * The dockable is only deployed to the frame if deployDockables is called.
      */
     protected void addDockable(JComponent c, 
-            String dockableTitle, 
+            String dockableConfigKey, 
             int x, int y, int width, int height, 
             DockableProperty dockableProperty) {
+        String dockableTitle = LocalText.getText(dockableConfigKey);
         DefaultSingleCDockable d = new DefaultSingleCDockable( 
                 dockableTitle, dockableTitle );
         d.add( c, BorderLayout.CENTER );
-        d.setTitleIcon(null);
+        d.setTitleIcon(RailsIcon.getByConfigKey(dockableConfigKey).smallIcon);
         d.setCloseable( 
                 (  dockableProperty == DockableProperty.closeable
                 || dockableProperty == DockableProperty.initially_hidden )

@@ -331,7 +331,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
             System.exit(0);
         } else if (arg0.getSource().equals(creditsButton)) {
             JOptionPane.showMessageDialog(this, 
-                    credits,
+                    new JLabel(credits), //enable html rendering
                     LocalText.getText("CREDITS"),
                     JOptionPane.INFORMATION_MESSAGE);
         } else if (arg0.getSource().equals(gameNameBox)) {

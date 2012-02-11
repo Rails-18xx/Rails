@@ -113,7 +113,8 @@ public class ActionButton extends JButton implements ActionTaker {
     }
     
     private boolean isIconSizeSmall() {
-        return "small".equals(Config.get("actionButton.iconSize"));
+        //small is default
+        return !"large".equals(Config.get("actionButton.iconSize"));
     }
 
     /**

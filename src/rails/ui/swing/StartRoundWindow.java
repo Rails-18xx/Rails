@@ -784,7 +784,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
     }
 
     private ImageIcon createInfoIcon() {
-        return RailsIcon.INFO.largeIcon;
+        return RailsIcon.INFO.smallIcon;
     }
 
     public void keyPressed(KeyEvent e) {
