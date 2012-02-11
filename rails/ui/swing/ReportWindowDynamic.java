@@ -22,6 +22,7 @@ import rails.game.action.PossibleActions;
 import rails.game.move.MoveStack;
 import rails.sound.SoundManager;
 import rails.ui.swing.elements.ActionButton;
+import rails.ui.swing.elements.RailsIcon;
 
 /**
  * Dynamic Report window that acts as linked game history
@@ -109,11 +110,11 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
         buttonPanel = new JPanel();
         add(buttonPanel, "South");
 
-        backwardButton = new ActionButton(LocalText.getText("REPORT_MOVE_BACKWARD"));
+        backwardButton = new ActionButton(RailsIcon.REPORT_MOVE_BACKWARD);
         backwardButton.addActionListener(this);
         buttonPanel.add(backwardButton);
 
-        forwardButton = new ActionButton(LocalText.getText("REPORT_MOVE_FORWARD"));
+        forwardButton = new ActionButton(RailsIcon.REPORT_MOVE_FORWARD);
         forwardButton.addActionListener(this);
         buttonPanel.add(forwardButton);
 

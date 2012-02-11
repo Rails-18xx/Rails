@@ -419,7 +419,7 @@ class ConfigWindow extends JFrame {
         }
         // add info icon for infoText 
         if (infoText != null) {
-            JLabel infoIcon = new JLabel(RailsIcon.INFO.icon);
+            JLabel infoIcon = new JLabel(RailsIcon.INFO.largeIcon);
             infoIcon.addMouseListener(new MouseListener() {
                 public void mousePressed(MouseEvent e) {
                     final JDialog dialog = new JDialog(ConfigWindow.this, false);

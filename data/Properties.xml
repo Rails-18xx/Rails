@@ -48,6 +48,10 @@
     </Section>
     <Section name="Appearance">
 		<Property name="gridPanel.tableBorders" type="LIST" values="disabled,enabled"/>
+		<Property name="actionButton.iconText" type="LIST" values="text and icon,only text,only icon"
+		initClass="rails.ui.swing.elements.ActionButton" initMethod="resetRailsIcons" initParameter="no" />
+		<Property name="actionButton.iconSize" type="LIST" values="small,large"
+		initClass="rails.ui.swing.elements.ActionButton" initMethod="resetRailsIcons" initParameter="no" />
 		<Property name="route.colour.1" type="COLOR" 
 		initClass="rails.ui.swing.hexmap.HexMap" initMethod="setRouteColours" />
 		<Property name="route.colour.2" type="COLOR" 
