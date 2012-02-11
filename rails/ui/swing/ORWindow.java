@@ -82,22 +82,22 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
             
             //generate layout
             addDockable ( messagePanelSlider, 
-                    LocalText.getText("Dockable.orWindow.messagePanel"),
+                    "Dockable.orWindow.messagePanel",
                     0, 0, 100, 10, DockableProperty.closeable);
             addDockable ( upgradePanel, 
-                    LocalText.getText("Dockable.orWindow.upgradePanel"),
+                    "Dockable.orWindow.upgradePanel",
                     0, 10, 20, 70, DockableProperty.standard);
             addDockable ( mapPanel, 
-                    LocalText.getText("Dockable.orWindow.mapPanel"),
+                    "Dockable.orWindow.mapPanel",
                     20, 10, 80, 70, DockableProperty.standard);
             addDockable ( remainingTilesPanelSlider, 
-                    LocalText.getText("Dockable.orWindow.remainingTilesPanel"),
+                    "Dockable.orWindow.remainingTilesPanel",
                     100, 0, 120, 100, DockableProperty.initially_hidden);
             addDockable ( orPanel, 
-                    LocalText.getText("Dockable.orWindow.orPanel"),
+                    "Dockable.orWindow.orPanel",
                     0, 80, 100, 15, DockableProperty.standard);
             addDockable ( orPanel.getButtonPanel(), 
-                    LocalText.getText("Dockable.orWindow.buttonPanel"),
+                    "Dockable.orWindow.buttonPanel",
                     0, 95, 100, 5, DockableProperty.standard);
             deployDockables();
             
