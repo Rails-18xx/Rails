@@ -136,7 +136,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
 
         buttonPanel = new JPanel();
 
-        buyButton = new ActionButton(RailsIcon.BUY);
+        buyButton = new ActionButton(RailsIcon.AUCTION_BUY);
         buyButton.setMnemonic(KeyEvent.VK_B);
         buyButton.addActionListener(this);
         buyButton.setEnabled(false);
