@@ -18,6 +18,8 @@ import rails.game.*;
 import rails.game.action.*;
 import rails.game.correct.MapCorrectionAction;
 import rails.ui.swing.elements.ActionLabel;
+import rails.ui.swing.elements.RailsIcon;
+import rails.ui.swing.elements.RailsIconButton;
 import rails.ui.swing.hexmap.GUIHex;
 import rails.ui.swing.hexmap.GUITile;
 import rails.ui.swing.hexmap.HexHighlightMouseListener;
@@ -42,13 +44,10 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
     private JScrollPane scrollPane;
     private Dimension preferredSize;
     private Border border = new EtchedBorder();
-    private final String INIT_CANCEL_TEXT = "NoTile";
-    private final String INIT_DONE_TEXT = "LayTile";
     private boolean tokenMode = false;
     private boolean correctionTokenMode = false;
-    private JButton cancelButton =
-        new JButton(LocalText.getText(INIT_CANCEL_TEXT));
-    private JButton doneButton = new JButton(LocalText.getText(INIT_DONE_TEXT));
+    private RailsIconButton cancelButton = new RailsIconButton(RailsIcon.NO_TILE);
+    private RailsIconButton doneButton = new RailsIconButton(RailsIcon.LAY_TILE);
     private HexMap hexMap;
     
     //list of tiles with an attached reason why it would represent an invalid upgrade
@@ -452,11 +451,11 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
     }
 
     public void setCancelText(String text) {
-        cancelButton.setText(LocalText.getText(text));
+        cancelButton.setRailsIcon(RailsIcon.getByConfigKey(text));
     }
 
     public void setDoneText(String text) {
-        doneButton.setText(LocalText.getText(text));
+        doneButton.setRailsIcon(RailsIcon.getByConfigKey(text));
     }
 
     public void setDoneEnabled(boolean enabled) {
