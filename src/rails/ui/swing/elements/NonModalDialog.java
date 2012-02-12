@@ -5,7 +5,6 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
-import rails.common.LocalText;
 import rails.util.Util;
 
 public abstract class NonModalDialog extends JDialog implements ActionListener {
@@ -20,7 +19,7 @@ public abstract class NonModalDialog extends JDialog implements ActionListener {
 
     GridBagConstraints gc;
     JPanel optionsPane, buttonPane;
-    JButton okButton, cancelButton;
+    RailsIconButton okButton, cancelButton;
     String okTextKey = "OK";
     String cancelTextKey = "Cancel";
 
@@ -53,13 +52,13 @@ public abstract class NonModalDialog extends JDialog implements ActionListener {
         optionsPane = new JPanel();
         buttonPane = new JPanel();
 
-        okButton = new JButton(LocalText.getText(okTextKey));
+        okButton = new RailsIconButton(RailsIcon.getByConfigKey(okTextKey));
         okButton.setMnemonic(okTextKey.startsWith("Y") ? KeyEvent.VK_Y : KeyEvent.VK_O);
         okButton.addActionListener(this);
         buttonPane.add(okButton);
 
         if (hasCancelButton) {
-            cancelButton = new JButton(LocalText.getText(cancelTextKey));
+            cancelButton = new RailsIconButton(RailsIcon.getByConfigKey(cancelTextKey));
             cancelButton.setMnemonic(cancelTextKey.startsWith("N") ? KeyEvent.VK_N : KeyEvent.VK_C);
             cancelButton.addActionListener(this);
             buttonPane.add(cancelButton);
