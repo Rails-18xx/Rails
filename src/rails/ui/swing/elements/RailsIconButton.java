@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.swing.JButton;
+import javax.swing.SwingConstants;
 
 import rails.common.parser.Config;
 
@@ -65,11 +66,23 @@ public class RailsIconButton extends JButton {
      */
     private void showRailsIcon() {
         if (railsIcon != null) {
+            //set icon/text positioning
+            if (isIconAboveText()) {
+                setVerticalTextPosition(SwingConstants.BOTTOM);
+                setHorizontalTextPosition(SwingConstants.CENTER);
+            } else {
+                setVerticalTextPosition(SwingConstants.CENTER);
+                setHorizontalTextPosition(SwingConstants.TRAILING);
+            }
+            
+            //set text
             if (isTextEnabled() || railsIcon.largeIcon == null) {
                 super.setText(railsIcon.description);
             } else {
                 super.setText(null);
             }
+            
+            //set icon and tool tip text
             if (isIconEnabled() || railsIcon.description == null) {
                 if (isIconSizeSmall()) {
                     super.setIcon(railsIcon.smallIcon);
@@ -96,6 +109,11 @@ public class RailsIconButton extends JButton {
     private boolean isIconSizeSmall() {
         //small is default
         return !"large".equals(Config.get("button.iconSize"));
+    }
+    
+    private boolean isIconAboveText() {
+        //left of text is default
+        return "above".equals(Config.get("button.iconPosition"));
     }
 
     /**
