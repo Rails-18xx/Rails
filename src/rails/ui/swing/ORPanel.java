@@ -1373,4 +1373,24 @@ implements ActionListener, KeyListener, RevenueListener {
     public JMenuBar getMenuBar() {
         return menuBar;
     }
+
+    /**
+     * Adds buttons to the button panel (adjusting their size to the standard size)
+     * @param index The position where to add the buttons
+     */
+    public void addToButtonPanel(RailsIconButton[] buttons, int index) {
+        //get standard size
+        Dimension standardSize = null;
+        Component[] existingButtons = buttonPanel.getComponents();
+        if (existingButtons != null && existingButtons.length > 0) {
+            standardSize = existingButtons[0].getPreferredSize();
+        }
+
+        //apply sizing to new buttons
+        //add buttons to the panel
+        for (int i=buttons.length-1 ; i >= 0 ; i--) {
+            buttons[i].setPreferredSize(standardSize);
+            buttonPanel.add(buttons[i],index);
+        }
+    }
 }
