@@ -52,6 +52,8 @@
 		initClass="rails.ui.swing.elements.RailsIconButton" initMethod="resetRailsIcons" initParameter="no" />
 		<Property name="button.iconSize" type="LIST" values="small,large"
 		initClass="rails.ui.swing.elements.RailsIconButton" initMethod="resetRailsIcons" initParameter="no" />
+		<Property name="button.iconPosition" type="LIST" values="left,above"
+		initClass="rails.ui.swing.elements.RailsIconButton" initMethod="resetRailsIcons" initParameter="no" />
 		<Property name="route.colour.1" type="COLOR" 
 		initClass="rails.ui.swing.hexmap.HexMap" initMethod="setRouteColours" />
 		<Property name="route.colour.2" type="COLOR" 
