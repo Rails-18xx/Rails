@@ -50,6 +50,13 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
     private RailsIconButton doneButton = new RailsIconButton(RailsIcon.LAY_TILE);
     private HexMap hexMap;
     
+    /**
+     * If set, done/cancel buttons are not added to the pane. Instead, the
+     * visibility property of these buttons are handled such that they are set to
+     * visible if they normally would be added to the pane.
+     */
+    private boolean omitButtons;
+    
     //list of tiles with an attached reason why it would represent an invalid upgrade
     private Map<TileI,String> invalidTileUpgrades = null;
     private static final String invalidUpgradeNoTilesLeft = "NoTilesLeft";
@@ -58,10 +65,11 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
     protected static Logger log =
         Logger.getLogger(UpgradesPanel.class.getPackage().getName());
 
-    public UpgradesPanel(ORUIManager orUIManager) {
+    public UpgradesPanel(ORUIManager orUIManager,boolean omitButtons) {
         super(BoxLayout.Y_AXIS);
 
         this.orUIManager = orUIManager;
+        this.omitButtons = omitButtons;
 
         preferredSize = new Dimension((int)Math.round(110 * (2 +  Scale.getFontScale())/3), 200);
         setSize(preferredSize);
@@ -85,6 +93,11 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         cancelButton.setActionCommand("Cancel");
         cancelButton.setMnemonic(KeyEvent.VK_C);
         cancelButton.addActionListener(this);
+        
+        if (omitButtons) {
+            doneButton.setVisible(false);
+            cancelButton.setVisible(false);
+        }
 
         add(scrollPane);
     }
@@ -136,7 +149,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
     }
 
     public void showUpgrades() {
-        upgradePanel.removeAll();
+        clearPanel();
 
         // reset to the number of elements
         GridLayout panelLayout = (GridLayout)upgradePanel.getLayout();
@@ -214,9 +227,8 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
             }
         }
         
-        upgradePanel.add(doneButton);
-        upgradePanel.add(cancelButton);
-
+        addButtons();
+        
         //repaint();
         revalidate();
     }
@@ -269,7 +281,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         tokenMode = false;
 
         // activate upgrade panel
-        upgradePanel.removeAll();
+        clearPanel();
         GridLayout panelLayout = (GridLayout)upgradePanel.getLayout();
         List<TileI> tiles = orUIManager.tileUpgrades;
 
@@ -304,8 +316,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
             }
         }
 
-        upgradePanel.add(doneButton);
-        upgradePanel.add(cancelButton);
+        addButtons();
 
         //      repaint();
         revalidate();
@@ -318,7 +329,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         tokenMode = false;
 
         // activate upgrade panel
-        upgradePanel.removeAll();
+        clearPanel();
         GridLayout panelLayout = (GridLayout)upgradePanel.getLayout();
         List<? extends TokenI> tokens = orUIManager.tokenLays;
 
@@ -357,8 +368,8 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
             }
 
         }
-        upgradePanel.add(doneButton);
-        upgradePanel.add(cancelButton);
+        
+        addButtons();
 
         //      repaint();
         revalidate();
@@ -366,9 +377,8 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
     }
 
     public void clear() {
-        upgradePanel.removeAll();
-        upgradePanel.add(doneButton);
-        upgradePanel.add(cancelButton);
+        clearPanel();
+        addButtons();
         upgradePanel.repaint();
     }
 
@@ -537,7 +547,31 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         setDoneEnabled(false);
         setCancelEnabled(false);
     }
-
+    
+    private void clearPanel() {
+        upgradePanel.removeAll();
+        if (omitButtons) {
+            doneButton.setVisible(false);
+            cancelButton.setVisible(false);
+        }
+    }
+    
+    private void addButtons() {
+        if (omitButtons) {
+            //only set externally managed buttons to visible if at least
+            //one of them is enabled
+            boolean isVisible = doneButton.isEnabled() || cancelButton.isEnabled();
+            doneButton.setVisible(isVisible);
+            cancelButton.setVisible(isVisible);
+        } else {
+            upgradePanel.add(doneButton);
+            upgradePanel.add(cancelButton);
+        }
+    }
+    
+    public RailsIconButton[] getButtons() {
+        return new RailsIconButton[] {doneButton, cancelButton};
+    }
 
     /** ActionLabel extension that allows to attach the token */
     private class CorrectionTokenLabel extends ActionLabel {

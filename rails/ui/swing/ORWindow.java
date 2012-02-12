@@ -66,7 +66,7 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
         JScrollPane messagePanelSlider = new JScrollPane(messagePanel);
         messagePanel.setParentSlider(messagePanelSlider);
 
-        upgradePanel = new UpgradesPanel(orUIManager);
+        upgradePanel = new UpgradesPanel(orUIManager,isDockingFrameworkEnabled());
         addMouseListener(upgradePanel);
 
         mapPanel = new MapPanel(gameUIManager);
@@ -76,6 +76,10 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
         //create docking / conventional layout
         if (isDockingFrameworkEnabled()) {
 
+            //set up the button panel (which is separated from its OR panel parent)
+            //adding upgrade panel buttons on top
+            orPanel.addToButtonPanel(upgradePanel.getButtons(),0);
+            
             //initialize remaining tile panel as it is no optional part in the docking layout
             JScrollPane remainingTilesPanelSlider = 
                     new RemainingTilesWindow(this).getScrollPane();
