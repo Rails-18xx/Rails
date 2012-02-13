@@ -58,7 +58,7 @@ public class OperatingRound_1889 extends OperatingRound {
                         possibleActions.add(new UseSpecialProperty(spPrivB));
                     else {
                         possibleActions.add(new LayTile((SpecialTileLay)spPrivB));
-                        DisplayBuffer.add(LocalText.getText("1889PrivateBactive", privB.getPortfolio().getOwner()));
+                        DisplayBuffer.change(LocalText.getText("1889PrivateBactive", privB.getPortfolio().getOwner()));
                     }
                 }
             }

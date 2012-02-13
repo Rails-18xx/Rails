@@ -1,9 +1,7 @@
 package rails.game.state;
 
-import java.util.HashSet;
-import java.util.Set;
+import com.google.common.collect.ImmutableSet;
 
-import rails.game.model.Model;
 
 /**
  * Requirement:
@@ -12,19 +10,15 @@ import rails.game.model.Model;
  * @author freystef
  *
  */
-public abstract class Observable extends GameItem {
+public abstract class Observable extends AbstractItem {
 
     // stores observers and models
-    private Set<Observer> observers = null; // lazy initialization
-    private Set<Model> models = null; // lazy initialization
-    
-    public Observable(String id){
-        super(id);
-    }
+    private HashSetState<Observer> observers = null; // lazy initialization
+    private HashSetState<Model> models = null; // lazy initialization
     
     public void addObserver(Observer o) {
         if (observers == null) {
-            observers = new HashSet<Observer>();
+            observers = HashSetState.create();
         }
         observers.add(o);
     }
@@ -35,13 +29,13 @@ public abstract class Observable extends GameItem {
         return observers.remove(o);
     }
     
-    public Set<Observer> getObservers() {
-        return observers;
+    public ImmutableSet<Observer> getObservers() {
+        return observers.view();
     }
 
     public void addModel(Model m) {
         if (models == null) {
-            models = new HashSet<Model>();
+            models = HashSetState.create();
         }
         
         models.add(m);
@@ -53,8 +47,8 @@ public abstract class Observable extends GameItem {
         return models.remove(m);
     }
     
-    public Set<Model> getModels() {
-        return models;
+    public ImmutableSet<Model> getModels() {
+        return models.view();
     }
     
     public void updateModels() {

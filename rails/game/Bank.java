@@ -9,14 +9,18 @@ import rails.common.parser.Config;
 import rails.common.parser.ConfigurableComponentI;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
-import rails.game.model.CashModel;
+import rails.game.model.CashMoneyModel;
 import rails.game.model.CashOwner;
+import rails.game.model.MoneyModel;
 import rails.game.model.PortfolioModel;
-import rails.game.state.GameItem;
+import rails.game.state.AbstractItem;
 import rails.game.state.BooleanState;
+import rails.game.state.Item;
 import rails.util.*;
 
-public class Bank extends GameItem implements CashOwner, ConfigurableComponentI {
+public class Bank extends AbstractItem implements CashOwner, ConfigurableComponentI {
+
+    private static Bank instance = null;
 
     /** Specific portfolio names */
     public static final String IPO_NAME = "IPO";
@@ -29,21 +33,19 @@ public class Bank extends GameItem implements CashOwner, ConfigurableComponentI 
     private static final String DEFAULT_MONEY_FORMAT = "$@";
 
     /** The Bank's amount of cash */
-    private CashModel money;
+    private final CashMoneyModel cash;
 
     /** The IPO */
-    private PortfolioModel ipo = null;
+    private final PortfolioModel ipo;
     /** The Bank Pool */
-    private PortfolioModel pool = null;
+    private final PortfolioModel pool;
     /** Collection of items that will (may) become available in the future */
-    private PortfolioModel unavailable = null;
+    private final PortfolioModel unavailable;
     /** Collection of items that have been discarded (but are kept to allow Undo) */
-    private PortfolioModel scrapHeap = null;
+    private final PortfolioModel scrapHeap;
 
-    private static Bank instance = null;
-
-    /** Is the bank broken (remains true once set) */
-    private BooleanState broken = BooleanState.create(this, "Bank.broken", false);
+    /** Is the bank broken */
+    private final BooleanState broken;
 
     /**
      * The money format template. '@' is replaced by the numeric amount, the
@@ -55,22 +57,40 @@ public class Bank extends GameItem implements CashOwner, ConfigurableComponentI 
         Logger.getLogger(Bank.class.getPackage().getName());
 
     public Bank() {
+        super(Bank.class.getSimpleName());
 
         instance = this;
 
-        money = CashModel.create(this);
-        // Create the IPO and the Bank Pool.
-        ipo = new PortfolioModel(ipo, IPO_NAME);
-        pool = new PortfolioModel(pool, POOL_NAME);
-        unavailable = new PortfolioModel(unavailable, UNAVAILABLE_NAME);
-        scrapHeap = new PortfolioModel(scrapHeap, SCRAPHEAP_NAME);
+        cash = MoneyModel.createCash("cash");
 
+        // Create the IPO and the Bank Pool.
+        ipo = PortfolioModel.create(IPO_NAME);
+        pool = PortfolioModel.create(POOL_NAME);
+        unavailable = PortfolioModel.create(UNAVAILABLE_NAME);
+        scrapHeap = PortfolioModel.create(SCRAPHEAP_NAME);
+
+        broken = BooleanState.create("broken");
+        
         String configFormat = Config.get("money_format");
         if (Util.hasValue(configFormat) && configFormat.matches(".*@.*")) {
             moneyFormat = configFormat;
         }
     }
 
+    @Override
+    public Bank init(Item parent) {
+        super.init(parent);
+        
+        cash.init(this);
+        ipo.init(this);
+        pool.init(this);
+        unavailable.init(this);
+        scrapHeap.init(this);
+        broken.init(this);
+        
+        return this;
+    }
+    
     /**
      * @see rails.common.parser.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
      */
@@ -94,7 +114,7 @@ public class Bank extends GameItem implements CashOwner, ConfigurableComponentI 
 
         Tag bankTag = tag.getChild("Bank");
         if (bankTag != null) {
-            money.set(bankTag.getAttributeAsInteger("amount",
+            cash.set(bankTag.getAttributeAsInteger("amount",
                     DEFAULT_BANK_AMOUNT));
         }
 
@@ -103,7 +123,7 @@ public class Bank extends GameItem implements CashOwner, ConfigurableComponentI 
     public void finishConfiguration (GameManager gameManager) {
 
         ReportBuffer.add(LocalText.getText("BankSizeIs",
-                format(money.value())));
+                format(cash.value())));
 
         // Add privates
         List<PrivateCompany> privates =
@@ -118,9 +138,9 @@ public class Bank extends GameItem implements CashOwner, ConfigurableComponentI 
         for (PublicCompany comp : companies) {
             for (PublicCertificate cert : comp.getCertificates()) {
                 if (cert.isInitiallyAvailable()) {
-                    cert.moveTo(ipo);
+                    ipo.moveInto(cert);
                 } else {
-                    cert.moveTo(unavailable);
+                    unavailable.moveInto(cert);
                 }
             }
         }
@@ -137,30 +157,15 @@ public class Bank extends GameItem implements CashOwner, ConfigurableComponentI 
         return scrapHeap;
     }
 
-    /**
-     * @return Bank's current cash level
-     */
-    public int getCashValue() {
-        return money.value();
-    }
-
-    /**
-     * Adds cash back to the bank
-     */
-    public void addCash(int amount) {
-
-        money.add(amount);
-
-        /*
+    /* FIXME: Add broken check somewhere
          * Check if the bank has broken. In some games <0 could apply, so this
          * will become configurable.
-         */
-        if (money.value() <= 0 && !broken.booleanValue()) {
+        if (cash.value() <= 0 && !broken.booleanValue()) {
             broken.set(true);
-            money.setText(LocalText.getText("BROKEN"));
+            cash.setText(LocalText.getText("BROKEN"));
             GameManager.getInstance().registerBrokenBank();
         }
-    }
+        */
 
     /**
      * @return Portfolio of stock in Bank Pool
@@ -176,19 +181,13 @@ public class Bank extends GameItem implements CashOwner, ConfigurableComponentI 
         return unavailable;
     }
 
-    /**
-     * @param Set Bank's cash.
-     */
-    public void setCash(int i) {
-        money.set(i);
-    }
-
     public String getId() {
         return LocalText.getText("BANK");
     }
 
-    public String getFormattedCash() {
-        return money.getText();
+    // CashOwner interface
+    public CashMoneyModel getCash() {
+        return cash;
     }
 
     public static String format(int amount) {
@@ -198,7 +197,7 @@ public class Bank extends GameItem implements CashOwner, ConfigurableComponentI 
         if (amount < 0) result = result.replaceFirst("(.+)-", "-$1");
         return result;
     }
-    // start sfy 1889 for integerarrays
+
     public static String formatIntegerArray(int[] amountList) {
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < amountList.length;++i) {
@@ -206,15 +205,6 @@ public class Bank extends GameItem implements CashOwner, ConfigurableComponentI 
             result.append(format(amountList[i]));
         }
         return result.toString();
-    }
-    // end sfy 1889
-    
-    public int getCash() {
-        return money.value();
-    }
-
-    public CashModel getCashModel() {
-        return money;
     }
     
 }

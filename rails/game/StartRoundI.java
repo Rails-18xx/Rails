@@ -4,7 +4,7 @@ package rails.game;
 import java.util.List;
 
 import rails.game.action.PossibleAction;
-import rails.game.model.Model;
+import rails.game.state.Model;
 
 public interface StartRoundI extends RoundI {
 

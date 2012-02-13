@@ -8,16 +8,17 @@ import com.google.common.collect.Lists;
 
 public final class PortfolioList<T extends OwnableItem<T>> extends Portfolio<T> {
 
-    private ArrayList<T> portfolio;
+    private ArrayList<T> portfolio = Lists.newArrayList();
     
-    PortfolioList(String id) {
-        super(id);
-        portfolio = Lists.newArrayList();
+    private PortfolioList() {};
+    
+    public static <T extends OwnableItem<T>> PortfolioList<T> create() {
+        return new PortfolioList<T>();
     }
     
     @Override
-    public PortfolioList<T> init(Item parent) {
-        super.init(parent);
+    public PortfolioList<T> init(Item parent, String id) {
+        super.init(parent, id);
         return this;
     }
 

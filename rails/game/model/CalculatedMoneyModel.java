@@ -1,89 +1,49 @@
 package rails.game.model;
 
-import java.lang.reflect.Method;
-
-import org.apache.log4j.Logger;
-
-import rails.game.Bank;
 import rails.game.state.Item;
 
 /**
- * This class allows calculated values to be used as model objects by using
- * reflection. The value to be calculated is obtained by calling a method
- * specified by name. This method must return an Integer and may not have any
- * parameters.
+ * This is MoneyModel that derives it value from a calculation method.
+ * TODO: Rewrite all methods implementing the interface
  */
-public class CalculatedMoneyModel extends Model {
+public final class CalculatedMoneyModel extends MoneyModel {
 
-    protected static Logger log =
-        Logger.getLogger(CalculatedMoneyModel.class.getPackage().getName());
-
-    private String methodName;
-
-    public boolean suppressZero = false;
-
-    private CalculatedMoneyModel(String id) {
-        super(id);
+    public interface CalculationMethod {
+        public int calculate();
+        public boolean initialised();
     }
+    
+    private CalculationMethod method;
 
-    /**
-     * Creates an owned CalculatedMoneyModel
-     * It sets the id identical to the methodName
-     */
-    public static CalculatedMoneyModel create(Item parent, String methodName) {
-        return new CalculatedMoneyModel(methodName).init(parent).initMethod(methodName);
-    }
+    private CalculatedMoneyModel() {}
 
-    /**
-    * The id can be defined independent of the methodName in init()
-    * However it makes sense to set it identical
-    * Remark: Still requires a call to the init-method
-    */
-    public static CalculatedMoneyModel create(String id){
-        return new CalculatedMoneyModel(id);
+    public CalculatedMoneyModel create() {
+        return new CalculatedMoneyModel();
     }
     
     @Override
-    public CalculatedMoneyModel init(Item parent) {
-        super.init(parent);
+    public CalculatedMoneyModel init(Item parent, String id) {
+        super.init(parent, id);
         return this;
     }
 
     /**
-    * @param methodName defines a method defined inside the parent
+    * @param method the method is defined inside the CalculationMethod interface
+    * This is not a state variable, so do not change after the MoneyModel is used
     */
-    public CalculatedMoneyModel initMethod(String methodName) {
-        this.methodName = methodName;
+    public CalculatedMoneyModel initMethod(CalculationMethod method) {
+        this.method = method;
         return this;
     }
     
-    public void setSuppressZero(boolean suppressZero) 
-    {
-        this.suppressZero = suppressZero;
-    }
-    
-    protected int calculate() {
-
-        Class<?> objectClass = getParent().getClass();
-        Integer amount;
-        try {
-            Method method = objectClass.getMethod(methodName, (Class[]) null);
-            amount = (Integer) method.invoke(getParent(), (Object[]) null);
-        } catch (Exception e) {
-            log.error("ERROR while invoking method " + methodName
-                      + " on class " + objectClass.getName(), e);
-            return -1;
-        }
-        return amount.intValue();
-    }
-
     @Override
-    public String toString() {
-        int amount = calculate();
-        if (amount == 0 && suppressZero)
-            return "";
-        else
-            return Bank.format(amount);
+    public int value() {
+        return method.calculate();
+    }
+   
+    @Override
+    public boolean initialised() {
+        return method.initialised();
     }
 
 }

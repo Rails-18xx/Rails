@@ -8,10 +8,10 @@ import rails.common.LocalText;
 import rails.common.parser.ConfigurableComponentI;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
-import rails.game.state.GameItem;
+import rails.game.state.AbstractItem;
 import rails.game.state.BooleanState;
 
-public class StockMarket extends GameItem implements ConfigurableComponentI {
+public class StockMarket extends AbstractItem implements ConfigurableComponentI {
 
      /**
      *  This is the name by which the CompanyManager should be registered with

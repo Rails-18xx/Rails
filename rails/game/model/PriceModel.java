@@ -5,6 +5,7 @@ import rails.game.PublicCompany;
 import rails.game.StockSpace;
 import rails.game.state.GenericState;
 import rails.game.state.Item;
+import rails.game.state.Model;
 
 public class PriceModel extends Model {
 
@@ -12,32 +13,30 @@ public class PriceModel extends Model {
     private PublicCompany company = null;
 
     // states
-    private final GenericState<StockSpace> stockPrice = GenericState.create("stockPrice");
+    private final GenericState<StockSpace> stockPrice = GenericState.create();
 
     
-    private PriceModel(String id) {
-        super(id);
-    }
+    private PriceModel() {}
 
     /** 
      * Creates an owned PriceModel
      */
     public static PriceModel create(PublicCompany parent, String id){
-        return new PriceModel(id).init(parent);
+        return new PriceModel().init(parent, id);
     }
     
     /** 
      * @param parent restricted to PublicCompany
      */
     @Override
-    public PriceModel init(Item parent){
-        super.init(parent);
+    public PriceModel init(Item parent, String id){
+        super.init(parent, id);
         if (parent instanceof PublicCompany) {
             this.company = (PublicCompany)parent;
         } else {
             throw new IllegalArgumentException("PriceModel init() only works for PublicCompanies");
         }
-        stockPrice.init(this);
+        stockPrice.init(this, "stockPrice");
         return this;
     }
     

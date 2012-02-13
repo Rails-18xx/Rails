@@ -6,42 +6,30 @@ package rails.game.state;
  * @author Erik Vos, Stefan Frey (V2.0)
  */
 public final class BooleanState extends State {
-
-    public static final boolean DEFAULT = false; 
     
     private boolean value;
     
-    private BooleanState(String id, boolean value) {
-        super(id);
+    private BooleanState(boolean value) {
         this.value = value;
     }
     
     /** 
-     * Creates an owned BooleanState with default value false
+     * Creates a BooleanState with default value false
      */
-    public static BooleanState create(Item parent, String id){
-        return new BooleanState(id, DEFAULT).init(parent);
+    public static BooleanState create(){
+        return new BooleanState(false);
     }
     
     /**
-     * Creates an owned BooleanState
      * @param value initial value
      */
-    public static BooleanState create(Item parent, String id, Boolean value){
-        return new BooleanState(id, value).init(parent);
-    }
-    
-    /**
-     * Creates an unowned BooleanState with default value false
-     * Remark: Still requires a call to the init-method
-     */
-    public static BooleanState create(String id){
-        return new BooleanState(id, DEFAULT);
+    public static BooleanState create(Boolean value){
+        return new BooleanState(value);
     }
     
     @Override
-    public BooleanState init(Item parent){
-        super.init(parent);
+    public BooleanState init(Item parent, String id){
+        super.init(parent, id);
         return this;
     }
 

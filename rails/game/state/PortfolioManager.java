@@ -1,29 +1,23 @@
 package rails.game.state;
 
-import com.google.common.collect.HashMultimap;
-
 /**
  * PortfolioManager stores links to all existing portfolios
  * @author freystef
  */
 
-public class PortfolioManager extends Context {
+public final class PortfolioManager extends AbstractItem {
 
-    public static final String ID = "Portfolios";
+    private final HashMultimapState<Item, PortfolioMap<?>> portfolios = HashMultimapState.create();
     
-    private final HashMultimap<Item, PortfolioMap<?>> portfolios = HashMultimap.create();
+    private PortfolioManager() {};
     
-    private PortfolioManager() {
-        super(ID);
-    }
-
     static PortfolioManager create() {
         return new PortfolioManager();
     }
     
     @Override
-    public PortfolioManager init(Item parent) {
-        super.init(parent);
+    public PortfolioManager init(Item parent, String id) {
+        super.init(parent, id);
         return this;
     }
     

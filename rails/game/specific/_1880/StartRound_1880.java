@@ -244,7 +244,7 @@ public class StartRound_1880 extends StartRound {
         // TODO: changeStack.start(false);
 
         item.setBid(bidAmount, player);
-        ReportBuffer.add(LocalText.getText("BID_ITEM_LOG",
+        ReportBuffer.change(LocalText.getText("BID_ITEM_LOG",
                 playerName,
                 Bank.format(bidAmount),
                 item.getName(),

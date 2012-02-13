@@ -7,10 +7,10 @@ import rails.common.GuiDef;
 import rails.common.LocalText;
 import rails.common.parser.GameOption;
 import rails.game.action.*;
-import rails.game.model.Model;
 import rails.game.state.ArrayListState;
 import rails.game.state.GenericState;
 import rails.game.state.IntegerState;
+import rails.game.state.Model;
 
 public abstract class StartRound extends Round {
 
@@ -260,7 +260,7 @@ public abstract class StartRound extends Round {
     protected void assignItem(Player player, StartItem item, int price,
             int sharePrice) {
         Certificate primary = item.getPrimary();
-        ReportBuffer.add(LocalText.getText("BuysItemFor",
+        ReportBuffer.change(LocalText.getText("BuysItemFor",
                 player.getId(),
                 primary.getId(),
                 Bank.format(price) ));
@@ -269,7 +269,7 @@ public abstract class StartRound extends Round {
         checksOnBuying(primary, sharePrice);
         if (item.hasSecondary()) {
             Certificate extra = item.getSecondary();
-            ReportBuffer.add(LocalText.getText("ALSO_GETS",
+            ReportBuffer.change(LocalText.getText("ALSO_GETS",
                     player.getId(),
                     extra.getId() ));
             transferCertificate (extra, player.getPortfolio());

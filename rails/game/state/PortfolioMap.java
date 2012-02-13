@@ -10,16 +10,17 @@ import com.google.common.collect.ImmutableMap;
 
 public final class PortfolioMap<T extends OwnableItem< T>> extends Portfolio<T> {
 
-    private ArrayListMultimap<Item, T> portfolio;
+    private ArrayListMultimap<Item, T> portfolio = ArrayListMultimap.create();
+
+    // default constructor
     
-    PortfolioMap(String id) {
-        super(id);
-        portfolio = ArrayListMultimap.create();
+    public static <T extends OwnableItem<T>> PortfolioMap<T> create() {
+        return new PortfolioMap<T>();
     }
-    
+
     @Override
-    public PortfolioMap<T> init(Item parent) {
-        super.init(parent);
+    public PortfolioMap<T> init(Item parent, String id) {
+        super.init(parent, id);
         return this;
     }
 

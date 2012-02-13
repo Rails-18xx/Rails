@@ -1,118 +1,130 @@
 package rails.game.state;
 
-import java.util.HashMap;
-import java.util.Map;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 /**
- * Contexts allows the location of items
- * Contexts take care of the registration of the state variables
- * 
- * All contexts have to be part of the hierachy with the root context at the top
- * @author freystef
+ * Contexts allow location of other items
  */
-public class Context extends GameItem {
-    public static final String ROOT = "game"; 
-    public static final char SEP = '.';
-    
-    final Map<String, GameItem> items = new HashMap<String, GameItem> ();
-    private StateManager stateManager;
-    
-    /** 
-     * Creates a game context
-     */
-    public Context(String id) {
-        super(id);
-        if (id.equals(ROOT)) {
-            throw new IllegalArgumentException("Context id cannot equal ROOT id");
-        }
-    }
+public class Context implements Item {
 
-    private Context() {
-        super(ROOT);
-    }
+    // standard item fields
+    private String id;
+    private Item parent;
+    // reference to the root
+    private Root root;
+
+    // storage of items
+    private HashMapState<String, Item> items;
+
+    private boolean initialized = false;
+
+    protected Context() {}
     
     /**
-     * Creates an initialized Context
+     * Creates a default context
      */
-    public static Context create(Item parent, String id) {
-        return new Context(id).init(parent);
+    public static Context create() {
+        return new Context();
     }
     
-    /**
-     * Creates the top-level Context named with Context.ROOT
-     */
-    public static Context createRootContext() {
-        return new Context().initRoot();
-    }
-    
-    /**
-     * Intializes the game context
-     * The parent has to be in a hierarchy with the root GameContext
-     **/
-    @Override
-    public Context init(Item parent) {
-        super.init(parent);
+    // Item interface
+    public Context init(Item parent, String id) {
+        checkNotNull(parent, "Parent cannot be null");
+        checkNotNull(id, "Id cannot be null");
+        checkArgument(id != Root.id, "Id cannot equal " + Root.id);
         
-        // defines stateManager for root
-        if (getId().equals(ROOT)) {
-        } else {
-            if (getContext() instanceof Context) {
-                this.stateManager = ((Context)getContext()).getStateManager();
-            } else {
-                throw new IllegalArgumentException("GameContext can only be created in a hierachy with GameContexts at the top");
-            }
-        }
+        // standard fields
+        this.parent = parent;
+        this.id = id;
+
+        // add context to root
+        root.addItemToRoot(this);
+        
+        // create item store
+        items = HashMapState.create();
+        
+        // init finished
+        initialized = true;
         
         return this;
     }
     
-    private Context initRoot() {
-        super.init(this); // sets parent identical to ROOT
-        stateManager = StateManager.create();
-        return this;
+    public boolean isInitialized() {
+        return initialized;
+    }
+    
+   public String getId() {
+        checkState(initialized, "Item not yet initialized");
+        return id;
     }
 
-    @Override
+    public Item getParent() {
+        checkState(initialized, "Item not yet initialized");
+        return parent;
+    }
+    
     public Context getContext() {
+        checkState(initialized, "Item not yet initialized");
         return this;
     }
     
-    public GameItem localize(String uri) {
+    public String getURI() {
+        checkState(initialized, "Item not yet initialized");
+        if (parent instanceof Context) {
+            return id;
+        } else {
+            // recursive definition
+            return parent.getURI() + Item.SEP + id;
+        }
+    }
+
+    public String getFullURI() {
+        checkState(initialized, "Item not yet initialized");
+        // recursive definition
+        return parent.getFullURI() + Item.SEP + id;
+    }
+    
+    // Context methods
+    public Item localize(String uri) {
+        checkState(initialized, "Context not yet initialized");
+        // either item can be found in the map
         if (items.containsKey(uri)) {
             return items.get(uri);
-        } else if (getParent() != null) {
-            return getContext().localize(uri);
-        } else { 
-            return null;
-        }
-    }
-
-    public void addItem(GameItem item) {
-        // first check if this context is the containing one
-        String uri;
-        if (item.getContext() == this) {
-            uri = item.getURI();
         } else {
-            uri = item.getContext().getURI() + Context.SEP + item.getURI();
+            // otherwise search in root
+            return root.localize(uri);
         }
-        
-        // check if it exists
-        if (items.containsKey(uri)) {
-            throw new RuntimeException("Context already contains item with identical URI = " + item.getURI());
-        }
-        
-        // otherwise put it to the items list
-        items.put(uri, item);
-        
-        // forward to parent context if that is defined
-        if (getContext() != null) {
-            getContext().addItem(item);
-        }
-        
     }
 
-    public StateManager getStateManager() {
-        return stateManager;
+   void addItem(AbstractItem item) {
+        checkState(initialized, "Context not yet initialized");
+        // check if this context is the containing one
+        checkArgument(item.getContext() == this, "Context is not the container of the item to add");
+        // check if it already exists
+        checkArgument(items.containsKey(item.getURI()), "Context already contains item with identical URI");
+        
+        // all preconditions ok => add item
+        items.put(item.getURI(), item);
+        
+        // add item to root
+        root.addItemToRoot(item);
+    }
+   
+    
+    public Root getRoot() {
+        return root;
+    }
+    
+
+    @Override
+    public String toString() {
+        if (initialized) {
+            return id;
+        } else {
+            return parent.toString();
+        }
     }
 
     

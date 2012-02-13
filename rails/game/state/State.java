@@ -1,7 +1,7 @@
 package rails.game.state;
 
-import java.security.InvalidParameterException;
-import rails.game.model.Model;
+import static com.google.common.base.Preconditions.*;
+
 
 /**
  * State is an abstract generic class
@@ -11,50 +11,55 @@ import rails.game.model.Model;
  * 
  * It allows to add a Formatter to change the String output dynamically.
  * 
- * @author freystef
- *
+ * 
+ * States get register with the StateManager after initialization
  */
 public abstract class State extends Observable {
+    
+    // reference to StateManager
+    private StateManager stateManager;
     
     // optional formatter
     private Formatter<State> formatter = null;
 
-    protected State(String id){
-        super(id);
-    }
+    // default constructor
     
-    /**
-     * Remark: If the parent of the state is a model, the model is registered automatically
-     */
+    // Item methods
     @Override
-    public State init(Item parent) {
-        // set parent using AbstractItem.init() method
-        super.init(parent);
+    public State init(Item parent, String id) {
+        super.init(parent, id);
         
-        // check if the parent's context is a GameContext
-        if (parent.getContext() instanceof Context) {
-            // register state
-            ((Context)parent.getContext()).getStateManager().registerState(this); 
-        } else {
-            throw new InvalidParameterException("Invalid parent: States can only be created inside a GameContext hierachy");
-        }
-        
-        // check if parent is a model
+        // check if parent is a model and add as dependent model
         if (parent instanceof Model) {
             addModel((Model)parent);
         }
         
+        // check if there is a StateManager available
+        checkState(getContext().getRoot().getStateManager() == null, "Root of state has no StateManager attached");
+        // if so => register state there
+        stateManager = getContext().getRoot().getStateManager();
+        stateManager.registerState(this);
+
         return this;
     }
-
-    /*
-    * Replaces the standard getContext() method:
-     * @return GameContext object where the State object exists in
+    
+    // Observable methods
+    /**
+     * For a state getText() it is identical to toString()
+     * If this does not work use a formatter
      */
-    public Context getContext() {
-        return (Context)super.getContext();
+    @Override
+    public final String getText() {
+        checkState(isInitialized(), "State not yet initialized");
+        if (formatter == null) {
+            return toString();
+        } else {
+            return formatter.formatValue(this);
+        }
     }
 
+    // State methods
+    
     /**
      * Adds a Formatter 
      * @param formatter
@@ -62,18 +67,10 @@ public abstract class State extends Observable {
     public void setFormatter(Formatter<State> formatter) {
         this.formatter = formatter;
     }
-    
-    /**
-     * For a state getText() it is identical to toString()
-     * If this does not work use a formatter
-     */
-    @Override
-    public final String getText() {
-        if (formatter == null) {
-            return toString();
-        } else {
-            return formatter.formatValue(this);
-        }
+
+    StateManager getStateManager() {
+        return stateManager;
     }
+    
     
 }

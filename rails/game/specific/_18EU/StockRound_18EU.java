@@ -8,7 +8,7 @@ import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;
-import rails.game.model.Owner;
+import rails.game.model.MoneyModel;
 import rails.game.model.PortfolioModel;
 import rails.game.state.ArrayListState;
 import rails.game.state.BooleanState;
@@ -414,7 +414,7 @@ public class StockRound_18EU extends StockRound {
         // Transfer the President's certificate
         cert.moveTo(currentPlayer.getPortfolio());
 
-        Owners.cashMove(currentPlayer, company, shares * price);
+        MoneyModel.cashMove(currentPlayer, company, shares * price);
 
         if (minor != null) {
             // Get the extra certificate for the minor, for free
@@ -447,13 +447,13 @@ public class StockRound_18EU extends StockRound {
         // FIXME: This has to be only those certificates that relate to that public company 
         // Owners.moveAll(ipo, company, PublicCertficate.class);
 
-        ReportBuffer.add(LocalText.getText("SharesPutInTreasury",
+        ReportBuffer.change(LocalText.getText("SharesPutInTreasury",
                 company.getPortfolio().getShare(company),
                 company.getId() ));
 
         // TODO must get this amount from XML
         int tokensCost = 100;
-        Owners.cashMove(company, bank, tokensCost);
+        MoneyModel.cashMove(company, bank, tokensCost);
         ReportBuffer.add(LocalText.getText("PaysForTokens",
                 company.getId(),
                 Bank.format(100),
@@ -522,7 +522,7 @@ public class StockRound_18EU extends StockRound {
         int minorTrains = minor.getPortfolio().getTrainList().size();
         if (cashDestination == null) {
             // Assets go to the bank
-            if (minorCash > 0) Owners.cashMove(minor, bank, minorCash);
+            if (minorCash > 0) MoneyModel.cashMove(minor, bank, minorCash);
             pool.transferAssetsFrom(minor.getPortfolio());
         } else {
             // Assets go to the major company
@@ -635,7 +635,7 @@ public class StockRound_18EU extends StockRound {
             Owners.move(company.getPortfolio().getCertificates(
                     company), pool);
             int cash = 5 * company.getMarketPrice();
-            Owners.cashMove(bank, company, cash);
+            MoneyModel.cashMove(bank, company, cash);
             ReportBuffer.add(LocalText.getText("MonetiseTreasuryShares",
                     company.getId(),
                     Bank.format(cash) ));

@@ -6,31 +6,20 @@ import com.google.common.collect.ArrayListMultimap;
 
 public class ArrayListMultimapState<K,V> extends MultimapState<K,V> {
 
-    private final ArrayListMultimap<K,V> map;
+    private final ArrayListMultimap<K,V> map = ArrayListMultimap.create(); ;
 
-    private ArrayListMultimapState(String id) {
-        super(id);
-        map = ArrayListMultimap.create();
-    }
+    private ArrayListMultimapState() {};
     
     /** 
-     * Creates an owned and empty ArrayListMultimapState 
+     * Creates an empty ArrayListMultimapState 
      */
-    public static <K,V> ArrayListMultimapState<K,V> create(Item parent, String id){
-        return new ArrayListMultimapState<K,V>(id).init(parent);
+    public static <K,V> ArrayListMultimapState<K,V> create(){
+        return new ArrayListMultimapState<K,V>();
     }
    
-    /**
-     * Creates an unowned and empty ArrayListMultimapState
-     * Remark: Still requires a call to the init-method
-     */
-    public static <K,V> ArrayListMultimapState<K,V> create(String id){
-        return new ArrayListMultimapState<K,V>(id);
-    }
-    
     @Override
-    public ArrayListMultimapState<K,V> init(Item parent){
-        super.init(parent);
+    public ArrayListMultimapState<K,V> init(Item parent, String id){
+        super.init(parent, id);
         return this;
     }
     

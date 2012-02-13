@@ -1,5 +1,7 @@
 package rails.game.state;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -12,30 +14,26 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
-import rails.game.GameManager;
-import rails.game.model.Model;
+public final class StateManager extends AbstractItem {
 
-// TODO: Change it to a Context subclass
-
-public final class StateManager extends GameItem {
-
-    public static final String ID = "States";
     
     protected static Logger log =
         Logger.getLogger(StateManager.class.getPackage().getName());
     
-    private final Set<State> allStates = new HashSet<State>();
+    private final ChangeStack changeStack = ChangeStack.create();
     
+    // FIXME: Move the following three to a stateful implementation
+    // and only initialize them in init()
     private final PortfolioManager portfolioManager = PortfolioManager.create();
     private final WalletManager walletManager = WalletManager.create();
+    
+    private final Set<State> allStates = new HashSet<State>();
+    
 
-    private StateManager() {
-        super(ID);
-    }
-
+    private StateManager() {};
+    
     /**
-     * Creates an (unowned) StateManager
-     * Remark: Still requires a call to the init-method
+     * Creates a StateManager
      */
     public static StateManager create(){
         return new StateManager();
@@ -45,13 +43,11 @@ public final class StateManager extends GameItem {
      * @exception IllegalArgumentException if parent is not the Context with an id equal to Context.ROOT 
      */
     @Override
-    public StateManager init(Item parent) {
-        if (!(parent instanceof Context && parent.getId() != Context.ROOT)) {
-            throw new IllegalArgumentException("StateManager can only be created for a root GameContext");
-        }
-        super.init(parent);
-        portfolioManager.init(parent);
-        walletManager.init(parent);
+    public StateManager init(Item parent, String id) {
+        checkArgument(parent instanceof Root, "Parent must be a Root object");
+        super.init(parent, id);
+        portfolioManager.init(parent, "PortfolioManager");
+        walletManager.init(parent, "WalletManager");
         return this;
     }
     
@@ -199,9 +195,10 @@ public final class StateManager extends GameItem {
 //    void registerReceiver(Triggerable receiver, State toState) {
 //    }
 
-    
-    public static StateManager getInstance() {
-        return GameManager.getInstance().getStateManager();
+    ChangeStack getChangeStack() {
+        return changeStack;
     }
+    
+    
     
 }

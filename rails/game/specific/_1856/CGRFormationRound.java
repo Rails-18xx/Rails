@@ -7,6 +7,7 @@ import rails.common.GuiDef;
 import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;
+import rails.game.model.MoneyModel;
 import rails.game.model.Owners;
 import rails.game.model.PortfolioModel;
 import rails.game.special.SellBonusToken;
@@ -163,7 +164,7 @@ public class CGRFormationRound extends SwitchableUIRound {
                     compCash / valuePerLoan);
             if (numberToRepay > 0) {
                 payment = numberToRepay * valuePerLoan;
-                Owners.cashMove(currentCompany, bank, payment);
+                MoneyModel.cashMove(currentCompany, bank, payment);
                 currentCompany.addLoans(-numberToRepay);
 
                 message = LocalText.getText("CompanyRepaysLoans",
@@ -265,7 +266,7 @@ public class CGRFormationRound extends SwitchableUIRound {
 
             company.addLoans(-numberRepaid);
             if (repaymentByCompany > 0) {
-                Owners.cashMove (company, bank, repaymentByCompany);
+                MoneyModel.cashMove (company, bank, repaymentByCompany);
                 ReportBuffer.add (LocalText.getText("CompanyRepaysLoans",
                         company.getId(),
                     Bank.format(repaymentByCompany),
@@ -275,7 +276,7 @@ public class CGRFormationRound extends SwitchableUIRound {
             }
             if (repaymentByPresident > 0) {
                 Player president = company.getPresident();
-                Owners.cashMove (president, bank, repaymentByPresident);
+                MoneyModel.cashMove (president, bank, repaymentByPresident);
                 ReportBuffer.add (LocalText.getText("CompanyRepaysLoansWithPresCash",
                         company.getId(),
                         Bank.format(repaymentByPresident),
@@ -547,7 +548,7 @@ public class CGRFormationRound extends SwitchableUIRound {
 
             // Move any remaining cash
             if (comp.getCash() > 0) {
-                Owners.cashMove (comp, cgr, comp.getCash());
+                MoneyModel.cashMove (comp, cgr, comp.getCash());
             }
 
             // Move any remaining trains

@@ -14,31 +14,19 @@ import com.google.common.collect.ImmutableSet;
 
 public final class HashMultimapState<K,V> extends MultimapState<K,V> implements Iterable<V> {
     
-    private final HashMultimap<K,V> map;
+    private final HashMultimap<K,V> map = HashMultimap.create();
 
-    private HashMultimapState(String id) {
-        super(id);
-        map = HashMultimap.create();
-    }
-
+    private HashMultimapState() {}
+    
     /** 
-     * Creates an owned and empty HashMultimapState 
+     * Creates an empty HashMultimapState 
      */
-    public static <K,V> HashMultimapState<K,V> create(Item parent, String id){
-        return new HashMultimapState<K,V>(id).init(parent);
+    public static <K,V> HashMultimapState<K,V> create(){
+        return new HashMultimapState<K,V>();
     }
-   
-    /**
-     * Creates an unowned and empty HashMultimapState
-     * Remark: Still requires a call to the init-method
-     */
-    public static <K,V> HashMultimapState<K,V> create(String id){
-        return new HashMultimapState<K,V>(id);
-    }
-
     @Override
-    public HashMultimapState<K,V> init(Item parent){
-        super.init(parent);
+    public HashMultimapState<K,V> init(Item parent, String id){
+        super.init(parent, id);
         return this;
     }
     

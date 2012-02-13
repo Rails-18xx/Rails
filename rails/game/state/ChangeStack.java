@@ -4,7 +4,6 @@ import java.util.LinkedList;
 
 import org.apache.log4j.Logger;
 
-import rails.game.GameManager;
 import rails.game.Player;
 import rails.game.ReportBuffer;
 import rails.game.action.PossibleAction;
@@ -16,7 +15,11 @@ public final class ChangeStack {
     private final LinkedList<ChangeSet> stack = new LinkedList<ChangeSet>();
     private boolean enabled = false;
 
-    // default constructor
+    private ChangeStack() {}
+    
+    static ChangeStack create() {
+        return new ChangeStack();
+    }
     
     /**
      * Start making moves undoable. Will be called once, after all
@@ -197,17 +200,6 @@ public final class ChangeStack {
         return true;
     }
 
-    // TODO: This has to be improved
-    private static ChangeStack getChangeStack() {
-        GameManager gameManager = GameManager.getInstance();
-        if (gameManager != null) {
-            return gameManager.getChangeStack();
-        } else {
-            return null;
-        }
-    }
-
-
     public boolean isRedoable() {
         // TODO : Write this method
         return false;
@@ -228,8 +220,8 @@ public final class ChangeStack {
     static void add (Change change) {
         change.execute();
         
-        ChangeStack changeStack = getChangeStack();
-        if (changeStack != null) changeStack.addChange(change);
+        // get changeStack via StateManager
+        change.getState().getStateManager().getChangeStack().addChange(change);
     }
 
     

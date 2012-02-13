@@ -15,7 +15,7 @@ import org.apache.log4j.Logger;
 
 import rails.game.PublicCompany;
 import rails.game.StockSpace;
-import rails.game.model.Model;
+import rails.game.state.Model;
 import rails.game.state.Observable;
 import rails.game.state.Observer;
 import rails.ui.swing.GUIToken;

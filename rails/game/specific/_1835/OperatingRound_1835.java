@@ -17,13 +17,13 @@ import rails.game.ReportBuffer;
 import rails.game.action.DiscardTrain;
 import rails.game.action.LayTile;
 import rails.game.model.CashOwner;
+import rails.game.model.MoneyModel;
 import rails.game.model.Owner;
 import rails.game.special.ExchangeForShare;
 import rails.game.special.SpecialPropertyI;
 import rails.game.special.SpecialTileLay;
 import rails.game.state.BooleanState;
 import rails.game.state.HashMapState;
-import rails.game.model.Owners;
 
 public class OperatingRound_1835 extends OperatingRound {
 
@@ -70,11 +70,11 @@ public class OperatingRound_1835 extends OperatingRound {
                     Owner recipient = priv.getOwner();
                     int revenue = priv.getRevenueByPhase(getCurrentPhase()); // sfy 1889: revenue by phase
                     if (count++ == 0) ReportBuffer.add("");
-                    ReportBuffer.add(LocalText.getText("ReceivesFor",
+                    ReportBuffer.change(LocalText.getText("ReceivesFor",
                             recipient.getId(),
                             Bank.format(revenue),
                             priv.getId()));
-                    Owners.cashMove(bank, (CashOwner)recipient, revenue);
+                    MoneyModel.cashMove(bank, (CashOwner)recipient, revenue);
 
                     /* Register black private equivalent PR share value
                      * so it can be subtracted if PR operates */

@@ -104,7 +104,7 @@ public class PublicCompany extends Company implements CashOwner {
     protected PriceModel currentPrice = null;
 
     /** Company treasury, holding cash */
-    protected CashModel treasury = null;
+    protected CashMoneyModel treasury = null;
 
     /** PresidentModel */
     protected PresidentModel presidentModel = null;
@@ -630,7 +630,7 @@ public class PublicCompany extends Company implements CashOwner {
         inGameState = BooleanState.create(this, "InGame", true);
 
         this.portfolio = new PortfolioModel(this, name);
-        treasury = CashModel.create(this);
+        treasury = CashMoneyModel.create(this);
         lastRevenue = MoneyModel.create(this, "lastRevenue");
         lastRevenue.setSuppressInitialZero(true);
         lastRevenueAllocation = StringState.create(this, "lastAllocation");
@@ -950,7 +950,7 @@ public class PublicCompany extends Company implements CashOwner {
     public void transferAssetsFrom(PublicCompany otherCompany) {
 
         if (otherCompany.getCash() > 0) {
-            Owners.cashMove(otherCompany, this, otherCompany.getCash());
+            MoneyModel.cashMove(otherCompany, this, otherCompany.getCash());
         }
         portfolio.transferAssetsFrom(otherCompany.getPortfolio());
     }
@@ -1058,8 +1058,7 @@ public class PublicCompany extends Company implements CashOwner {
         int cash = treasury.value();
         if (cash > 0) {
             treasury.setSuppressZero(true);
-            treasury.add(-cash);
-            bank.addCash(cash);
+            MoneyModel.cashMoveToBank(this, cash);
         }
 
         lastRevenue.setSuppressZero(true);
@@ -1217,7 +1216,7 @@ public class PublicCompany extends Company implements CashOwner {
         return treasury.value();
     }
     
-    public CashModel getCashModel() {
+    public CashMoneyModel getCashModel() {
         return treasury;
     }
 
@@ -1612,16 +1611,16 @@ public class PublicCompany extends Company implements CashOwner {
         if (train.getOwner() instanceof PublicCompany) {
             PublicCompany previousOwner = (PublicCompany)train.getOwner();
             //  adjust the money spent on trains field
-            ((MoneyModel)previousOwner.getTrainsSpentThisTurnModel()).add(-price);
+            ((MoneyModel)previousOwner.getTrainsSpentThisTurnModel()).change(-price);
             // pay the money to the other company
-            Owners.cashMove(this, previousOwner, price);
+            MoneyModel.cashMove(this, previousOwner, price);
         } else { // TODO: make this a serious test, no assumption
             // else it is from the bank
-            Owners.cashMoveToBank(this, price);
+            MoneyModel.cashMoveToBank(this, price);
         }
 
         // increase own train costs
-        trainsCostThisTurn.add(price);
+        trainsCostThisTurn.change(price);
         // move the train to here
         train.moveTo(this);
         // check if a private has to be closed on first train buy
@@ -1641,7 +1640,7 @@ public class PublicCompany extends Company implements CashOwner {
         if (from != bank.getIpo()) {
             // The initial buy is reported from StartRound. This message should also
             // move to elsewhere.
-            ReportBuffer.add(LocalText.getText("BuysPrivateFromFor",
+            ReportBuffer.change(LocalText.getText("BuysPrivateFromFor",
                     name,
                     privateCompany.getId(),
                     from.getId(),
@@ -1652,8 +1651,8 @@ public class PublicCompany extends Company implements CashOwner {
         privateCompany.moveTo(this);
 
         // Move the money
-        if (price > 0) Owners.cashMove(this, (CashOwner)from, price); // TODO: Remove the cast
-        privatesCostThisTurn.add(price);
+        if (price > 0) MoneyModel.cashMove(this, (CashOwner)from, price); // TODO: Remove the cast
+        privatesCostThisTurn.change(price);
 
         // Move any special abilities to the portfolio, if configured so
         List<SpecialPropertyI> sps = privateCompany.getSpecialProperties();
@@ -1698,7 +1697,7 @@ public class PublicCompany extends Company implements CashOwner {
             + hex.getOrientationName(orientation);
         tilesLaidThisTurn.appendWithDelimiter(tileLaid, ", ");
 
-        if (cost > 0) tilesCostThisTurn.add(cost);
+        if (cost > 0) tilesCostThisTurn.change(cost);
 
         if (extraTiles != null && extraTiles.intValue() > 0) {
             extraTiles.add(-1);
@@ -1706,7 +1705,7 @@ public class PublicCompany extends Company implements CashOwner {
     }
 
     public void layTileInNoMapMode(int cost) {
-        if (cost > 0) tilesCostThisTurn.add(cost);
+        if (cost > 0) tilesCostThisTurn.change(cost);
         tilesLaidThisTurn.appendWithDelimiter(Bank.format(cost), ",");
     }
 
@@ -1722,11 +1721,11 @@ public class PublicCompany extends Company implements CashOwner {
 
         String tokenLaid = hex.getId();
         tokensLaidThisTurn.appendWithDelimiter(tokenLaid, ", ");
-        if (cost > 0) tokensCostThisTurn.add(cost);
+        if (cost > 0) tokensCostThisTurn.change(cost);
     }
 
     public void layBaseTokennNoMapMode(int cost) {
-        if (cost > 0) tokensCostThisTurn.add(cost);
+        if (cost > 0) tokensCostThisTurn.change(cost);
         tokensLaidThisTurn.appendWithDelimiter(Bank.format(cost), ",");
     }
 
@@ -1999,7 +1998,7 @@ public class PublicCompany extends Company implements CashOwner {
 
     public void addLoans(int number) {
         currentNumberOfLoans.add(number);
-        currentLoanValue.add(number * getValuePerLoan());
+        currentLoanValue.change(number * getValuePerLoan());
     }
 
     public int getLoanInterestPct() {

@@ -8,11 +8,11 @@ import rails.common.parser.ConfigurableComponentI;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.model.Owner;
-import rails.game.state.GameItem;
+import rails.game.state.AbstractItem;
 import rails.game.state.GenericState;
 import rails.game.state.State;
 
-public class PhaseManager extends GameItem implements ConfigurableComponentI {
+public class PhaseManager extends AbstractItem implements ConfigurableComponentI {
 
     protected ArrayList<Phase> phaseList;
     protected HashMap<String, Phase> phaseMap;

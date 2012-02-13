@@ -1,38 +1,34 @@
 package rails.game.model;
 
 import rails.game.state.Item;
+import rails.game.state.Model;
 
-
-// TODO: Check what is required to get the update correctly
 public final class CertificateCountModel extends Model {
 
     private PortfolioModel owner;
     
-    /**
-     * CertificateCountModel is initialized with a default id "CertificateCountModel"
-     */
-    public CertificateCountModel() {
-        super("CertificateCountModel");
-    }
+    private CertificateCountModel() {}
   
     /**
      * Creates a fully initialized CertificateCountModel
      */
     public static CertificateCountModel create(PortfolioModel parent){
-        return new CertificateCountModel().init(parent);
+        return new CertificateCountModel().init(parent, "CertificateCountModel");
     }
 
     /** 
      * @param parent restricted to Portfolio
      */
     @Override
-    public CertificateCountModel init(Item parent){
-        super.init(parent);
-        if (parent instanceof PortfolioModel) {
-            this.owner = (PortfolioModel)parent;
-        } else {
+    public CertificateCountModel init(Item parent, String id){
+        if ((parent instanceof PortfolioModel)) {
             throw new IllegalArgumentException("CertificateCountModel init() only works for Portfolios");
         }
+        super.init(parent, id);
+        this.owner = (PortfolioModel)parent;
+        // lets certificate count model update on portfolio changes
+        owner.addModel(this);
+        
         return this;
     }
 

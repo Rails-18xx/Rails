@@ -1,6 +1,5 @@
-package rails.game.model;
+package rails.game.state;
 
-import rails.game.state.Observable;
 
 /**
  * Model is an abstract generic class
@@ -19,10 +18,6 @@ public abstract class Model extends Observable {
     private boolean updated = false;
     private String cache = null;
     
-    public Model(String id) {
-        super(id);
-    }
-   
     /**
      * Indicates that the model is updated, so the getText() cache
      * is flushed

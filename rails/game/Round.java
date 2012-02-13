@@ -10,19 +10,18 @@ import org.apache.log4j.Logger;
 import rails.common.*;
 import rails.game.action.*;
 import rails.game.model.CashOwner;
-import rails.game.model.Owner;
 import rails.game.model.PortfolioModel;
 import rails.game.special.SpecialPropertyI;
-import rails.game.state.GameItem;
+import rails.game.state.AbstractItem;
 import rails.game.state.ArrayListState;
 import rails.game.state.BooleanState;
 import rails.game.state.ChangeStack;
-import rails.game.model.Owners;
+import rails.game.state.Portfolio;
 
 /**
  * @author Erik Vos
  */
-public abstract class Round extends GameItem implements RoundI {
+public abstract class Round extends AbstractItem implements RoundI {
 
     protected PossibleActions possibleActions = PossibleActions.getInstance();
     protected GuiHints guiHints = null;
@@ -346,10 +345,8 @@ public abstract class Round extends GameItem implements RoundI {
 
     /** Can be subclassed for games with special rules */
     protected boolean certCountsAsSold (PublicCertificate cert) {
-        PortfolioModel holder = cert.getPortfolio();
-        Owner owner = holder.getOwner();
-        return owner instanceof Player
-        || holder == pool;
+        Portfolio<PublicCertificate> portfolio = cert.getPortfolio();
+        return portfolio.getParent() instanceof Player || portfolio.getParent() == pool;
     }
 
     /**
@@ -441,7 +438,8 @@ public abstract class Round extends GameItem implements RoundI {
         return getClass().getName().replaceAll(".*\\.", "");
     }
 
-    protected void transferCertificate(Certificate cert, Owner newOwner) {
+    // FIXME: Rewrite this method using portfolio methods
+    protected void transferCertificate(Certificate cert) {
 
         cert.moveTo(newOwner);
     }

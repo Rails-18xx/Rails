@@ -10,8 +10,8 @@ import rails.common.LocalText;
 import rails.common.parser.GameOption;
 import rails.game.action.*;
 import rails.game.model.CashOwner;
+import rails.game.model.MoneyModel;
 import rails.game.model.Owner;
-import rails.game.model.Owners;
 import rails.game.model.PortfolioModel;
 import rails.game.special.*;
 import rails.game.state.*;
@@ -647,9 +647,9 @@ public class StockRound extends Round {
         }
 
         // Pay for these shares
-        Owners.cashMove (currentPlayer, priceRecipient, cost);
+        MoneyModel.cashMove (currentPlayer, priceRecipient, cost);
 
-        ReportBuffer.add(LocalText.getText("START_COMPANY_LOG",
+        ReportBuffer.change(LocalText.getText("START_COMPANY_LOG",
                 playerName,
                 companyName,
                 Bank.format(price),
@@ -841,10 +841,10 @@ public class StockRound extends Round {
             }
             cert2.moveTo(currentPlayer.getPortfolio());
         }
-        Owners.cashMove (currentPlayer, priceRecipient, cost);
+        MoneyModel.cashMove (currentPlayer, priceRecipient, cost);
 
         if (priceRecipient != from.getOwner()) {
-            ReportBuffer.add(LocalText.getText("PriceIsPaidTo",
+            ReportBuffer.change(LocalText.getText("PriceIsPaidTo",
                     Bank.format(cost),
                     priceRecipient.getId() ));
         }

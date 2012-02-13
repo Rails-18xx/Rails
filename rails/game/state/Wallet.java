@@ -14,33 +14,20 @@ import com.google.common.collect.ImmutableMultiset;
 
 public final class Wallet<T extends CountableItem> extends State {
 
-    
-    private final HashMultiset<T> wallet;
-    
-    
-    private Wallet(String id) {
-        super(id);
-        wallet = HashMultiset.create();
-    }
+    private final HashMultiset<T> wallet = HashMultiset.create();
 
+    private Wallet() {}
+    
     /**
-     * Creates an owned and empty Wallet
+     * Creates an empty Wallet
      */
-    public static <T extends CountableItem> Wallet<T> create(Item parent, String id){
-        return new Wallet<T>(id).init(parent);
-    }
-
-    /**
-     * Creates an unowned and empty Wallet
-     * Remark: Still requires a call to the init-method
-     */
-    public static <T extends CountableItem> Wallet<T> create( String id){
-        return new Wallet<T>(id);
+    public static <T extends CountableItem> Wallet<T> create(String id){
+        return new Wallet<T>();
     }
 
     @Override
-    public Wallet<T> init(Item parent){
-        super.init(parent);
+    public Wallet<T> init(Item parent, String id){
+        super.init(parent, id);
         return this;
     }
     

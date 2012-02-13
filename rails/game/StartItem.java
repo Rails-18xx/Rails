@@ -4,11 +4,11 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
-import rails.game.model.Model;
 import rails.game.model.MoneyModel;
 import rails.game.model.PortfolioModel;
-import rails.game.state.GameItem;
+import rails.game.state.AbstractItem;
 import rails.game.state.IntegerState;
+import rails.game.state.Model;
 
 /**
  * Each object of this class represents a "start packet item", which consist of
@@ -17,7 +17,7 @@ import rails.game.state.IntegerState;
  * other attributes are saved. The certificate objects are linked to in the
  * later initialisation step.
  */
-public class StartItem extends GameItem {
+public class StartItem extends AbstractItem {
 
     // Fixed properties
     protected String name = null;
@@ -258,7 +258,7 @@ public class StartItem extends GameItem {
     }
 
     public void reduceBasePriceBy(int amount) {
-        basePrice.add(-amount);
+        basePrice.change(-amount);
     }
 
     /**

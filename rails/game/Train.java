@@ -4,13 +4,13 @@ import org.apache.log4j.Logger;
 
 import rails.game.state.BooleanState;
 import rails.game.state.Context;
-import rails.game.state.GameItem;
+import rails.game.state.AbstractItem;
 import rails.game.state.GenericState;
 import rails.game.state.Item;
 import rails.game.state.OwnableItem;
 import rails.game.state.Portfolio;
 
-public class Train extends GameItem implements OwnableItem<Train> {
+public class Train extends AbstractItem implements OwnableItem<Train> {
 
     protected TrainCertificateType certificateType;
     

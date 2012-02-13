@@ -13,23 +13,28 @@ package rails.game.state;
  * The definition of the parent is delayed until the initialization of the item,
  * however the contract of an item implies that it cannot be changed after the initialization.
  *  
- * @author freystef
  */
-
 public interface Item {
 
-    /** throws an runtime error if either item is initialized already or parent is null */
-    public Item init(Item parent);
-    
-    public String getId();
+    static final char SEP = '.';
 
-    public Item getParent();
+    Item init(Item parent, String id);
     
-    public Context getContext();
+    boolean isInitialized();
+    
+    String getId();
+
+    Item getParent();
+    
+    Context getContext();
 
     /** 
-     * It is composed of the parent URI (relative to the context) and the id 
-     * @return a string which allows to identify the item in the given context
+     * @return a string which allows to identify the item in the Context
      */
-    public String getURI();
+    String getURI();
+    
+    /**
+     * @return a string which allows to locate the item from the Root
+     */
+    String getFullURI();
 }

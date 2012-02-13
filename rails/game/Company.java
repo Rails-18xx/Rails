@@ -14,11 +14,11 @@ import rails.game.model.StorageModel;
 import rails.game.model.PortfolioModel;
 import rails.game.special.SpecialPropertyI;
 import rails.game.state.BooleanState;
-import rails.game.state.GameItem;
+import rails.game.state.AbstractItem;
 import rails.game.state.OwnableItem;
 import rails.util.Util;
 
-public abstract class Company extends GameItem implements ConfigurableComponentI,
+public abstract class Company extends AbstractItem implements ConfigurableComponentI,
 Cloneable, Comparable<Company> {
 
     /** The name of the XML tag used to configure a company. */

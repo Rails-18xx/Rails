@@ -6,10 +6,10 @@ import rails.common.LocalText;
 import rails.common.parser.ConfigurableComponentI;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
-import rails.game.model.Owners;
-import rails.game.state.GameItem;
+import rails.game.model.MoneyModel;
+import rails.game.state.AbstractItem;
 
-public class PlayerManager extends GameItem implements ConfigurableComponentI {
+public class PlayerManager extends AbstractItem implements ConfigurableComponentI {
 
     private int numberOfPlayers;
     private List<Player> players;
@@ -24,8 +24,9 @@ public class PlayerManager extends GameItem implements ConfigurableComponentI {
 
     private int[] playerCertificateLimits = new int[Player.MAX_PLAYERS];
 
+    // Uses className as id
     public PlayerManager() {
-
+        super(PlayerManager.class.getSimpleName());
     }
 
     public void configureFromXML(Tag tag) throws ConfigurationException {
@@ -65,14 +66,14 @@ public class PlayerManager extends GameItem implements ConfigurableComponentI {
             player = new Player(this, playerName, playerIndex++);
             players.add(player);
             playerMap.put(playerName, player);
-            Owners.cashMove(bank, player, startCash);
+            MoneyModel.cashMove(bank, player, startCash);
             ReportBuffer.add(LocalText.getText("PlayerIs",
                     playerIndex,
                     player.getId() ));
         }
         ReportBuffer.add(LocalText.getText("PlayerCash", Bank.format(startCash)));
         ReportBuffer.add(LocalText.getText("BankHas",
-                Bank.format(bank.getCashValue())));
+                Bank.format(bank.getCash().value())));
     }
 
     /**

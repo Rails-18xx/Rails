@@ -10,37 +10,26 @@ public class GenericState<E> extends State {
 
     private E object;
 
-    private GenericState(String id, E object) {
-        super(id);
+    private GenericState(E object) {
         this.object = object;
     }
 
     /** 
-     * Creates an owned and empty GenericState
+     * Creates an empty GenericState
      */
-    public static <E> GenericState<E> create(Item parent, String id){
-        return new GenericState<E>(id, null).init(parent);
+    public static <E> GenericState<E> create(){
+        return new GenericState<E>(null);
     }
     
     /**
-     * Creates an owned GenericState
-     * @param value initial value
+     * @param object initial object contained
      */
-    public static <E> GenericState<E> create(Item parent, String id, E object){
-        return new GenericState<E>(id, object).init(parent);
+    public static <E> GenericState<E> create(E object){
+        return new GenericState<E>(object);
     }
-    
-    /**
-     * Creates an unowned and empty GenericState
-     * Remark: Still requires a call to the init-method
-     */
-    public static <E> GenericState<E> create(String id){
-        return new GenericState<E>(id, null);
-    }
-  
     @Override
-    public GenericState<E> init(Item parent){
-        super.init(parent);
+    public GenericState<E> init(Item parent, String id){
+        super.init(parent, id);
         return this;
     }
  

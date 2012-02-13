@@ -2,15 +2,14 @@ package rails.game;
 
 import org.apache.log4j.Logger;
 
-import rails.game.model.AbstractOwnable;
-import rails.game.state.GameItem;
+import rails.game.state.AbstractItem;
 import rails.game.state.OwnableItem;
 import rails.game.state.Portfolio;
 
 /**
  * @author Erik Vos
  */
-public abstract class Token extends GameItem implements OwnableItem<Token>  {
+public abstract class Token extends AbstractItem implements OwnableItem<Token>  {
 
     protected String description = "";
     protected String uniqueId;
@@ -23,9 +22,12 @@ public abstract class Token extends GameItem implements OwnableItem<Token>  {
     protected static Logger log =
         Logger.getLogger(Token.class.getPackage().getName());
 
-    public Token() {
+    protected Token(String id) {
+        super(id);
         uniqueId = STORAGE_NAME + "_" + GameManager.getInstance().storeObject(STORAGE_NAME, this);
     }
+    
+    
 
     public String getUniqueId() {
         return uniqueId;
@@ -40,6 +42,7 @@ public abstract class Token extends GameItem implements OwnableItem<Token>  {
         return (Token)GameManager.getInstance().retrieveObject(STORAGE_NAME, i);
     }
     
+    // OwnableItem methods
     public Portfolio<Token> getPortfolio() {
         return portfolio;
     }

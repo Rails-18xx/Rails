@@ -8,11 +8,11 @@ import org.apache.log4j.Logger;
 import rails.common.LocalText;
 import rails.game.model.CertificatesModel;
 import rails.game.model.PortfolioModel;
-import rails.game.state.GameItem;
+import rails.game.state.AbstractItem;
 import rails.game.state.OwnableItem;
 import rails.game.state.Portfolio;
 
-public class PublicCertificate extends GameItem implements OwnableItem<PublicCertificate>, Certificate, Cloneable {
+public class PublicCertificate extends AbstractItem implements OwnableItem<PublicCertificate>, Certificate, Cloneable {
 
     /** From which public company is this a certificate */
     protected PublicCompany company;

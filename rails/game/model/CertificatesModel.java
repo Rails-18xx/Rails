@@ -8,7 +8,7 @@ import rails.game.Player;
 import rails.game.PublicCertificate;
 import rails.game.PublicCompany;
 import rails.game.state.Item;
-import rails.game.state.Portfolio;
+import rails.game.state.Model;
 import rails.game.state.PortfolioMap;
 
 /**
@@ -20,26 +20,25 @@ import rails.game.state.PortfolioMap;
  */
 public final class CertificatesModel extends Model {
 
+    public static final String id = "CertificatesModel";
+    
     // Certificates portfolio
-    private final PortfolioMap<PublicCertificate> certificates;
+    private final PortfolioMap<PublicCertificate> certificates = PortfolioMap.create();
 
-    private CertificatesModel() {
-        super(CertificatesModel.class.getSimpleName());
-        certificates = Portfolio.createMap("Certificates");
-    }
+    private CertificatesModel() {}
    
     /**
      * Creates an initialized CertificatesModel
      * id is identical to class name "CertificatesModel"
      */
     public static CertificatesModel create(Item parent) {
-        return new CertificatesModel().init(parent);
+        return new CertificatesModel().init(parent, id);
     }
     
     @Override
-    public CertificatesModel init(Item parent){
-        super.init(parent);
-        certificates.init(this);
+    public CertificatesModel init(Item parent, String id){
+        super.init(parent, id);
+        certificates.init(this, "Certificates");
         return this;
     }
     
@@ -108,7 +107,7 @@ public final class CertificatesModel extends Model {
         return certificates.iterator();
     }
 
-    public boolean addObject(PublicCertificate c) {
+    public boolean moveInto(PublicCertificate c) {
         return certificates.moveInto(c);
     }
 

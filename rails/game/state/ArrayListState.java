@@ -16,41 +16,31 @@ public final class ArrayListState<E> extends State implements Iterable<E>  {
 
     private final ArrayList<E> list;
 
-    private ArrayListState(String id) {
-        super(id);
+    private ArrayListState() {
         list = new ArrayList<E>();
     }
 
-    private ArrayListState(String id, Collection<E> collection) {
-        super(id);
+    private ArrayListState(Collection<E> collection) {
         list = new ArrayList<E>(collection);
     }
 
     /** 
-     * Creates an owned and empty ArrayListState 
+     * Creates empty ArrayListState 
      */
-    public static <E> ArrayListState<E> create(Item parent, String id){
-        return new ArrayListState<E>(id).init(parent);
+    public static <E> ArrayListState<E> create(){
+        return new ArrayListState<E>();
     }
     
     /**
-     * Creates an owned and prefilled ArrayListState
+     * Creates a prefilled ArrayListState
      */
-    public static <E> ArrayListState<E> create(Item parent, String id, Collection<E> collection){
-        return new ArrayListState<E>(id, collection).init(parent);
+    public static <E> ArrayListState<E> create(Collection<E> collection){
+        return new ArrayListState<E>(collection);
     }
     
-    /**
-     * Creates an unowned and empty ArrayListState
-     * Remark: Still requires a call to the init-method
-     */
-    public static <E> ArrayListState<E> create(String id){
-        return new ArrayListState<E>(id);
-    }
-
     @Override
-    public ArrayListState<E> init(Item parent){
-        super.init(parent);
+    public ArrayListState<E> init(Item parent, String id){
+        super.init(parent, id);
         return this;
     }
 

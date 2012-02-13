@@ -12,7 +12,7 @@ import rails.common.parser.ConfigurableComponentI;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.GameManager;
-import rails.game.state.GameItem;
+import rails.game.state.AbstractItem;
 import rails.game.state.ArrayListState;
 
 /**
@@ -25,7 +25,7 @@ import rails.game.state.ArrayListState;
  *
  */
 
-public final class RevenueManager extends GameItem implements ConfigurableComponentI {
+public final class RevenueManager extends AbstractItem implements ConfigurableComponentI {
 
     protected static Logger log =
         Logger.getLogger(RevenueManager.class.getPackage().getName());

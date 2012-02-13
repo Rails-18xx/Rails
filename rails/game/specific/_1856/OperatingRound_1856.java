@@ -11,7 +11,7 @@ import rails.game.action.*;
 import rails.game.special.SellBonusToken;
 import rails.game.special.SpecialPropertyI;
 import rails.game.state.BooleanState;
-import rails.game.model.Owners;
+import rails.game.model.MoneyModel;
 
 public class OperatingRound_1856 extends OperatingRound {
 
@@ -216,7 +216,7 @@ public class OperatingRound_1856 extends OperatingRound {
         // TODO: Hard-coded 10% payment
         int payment = Math.min(due, (operatingCompany.get().getCash() / 10) * 10);
         if (payment > 0) {
-            Owners.cashMove (operatingCompany.get(), bank, payment);
+            MoneyModel.cashMove (operatingCompany.get(), bank, payment);
             if (payment == due) {
                 ReportBuffer.add (LocalText.getText("InterestPaidFromTreasury",
                         operatingCompany.get().getId(),
@@ -258,7 +258,7 @@ public class OperatingRound_1856 extends OperatingRound {
         } else {
 
             payment = remainder;
-            Owners.cashMove (president, bank, payment);
+            MoneyModel.cashMove (president, bank, payment);
             ReportBuffer.add (LocalText.getText("InterestPaidFromPresidentCash",
                     operatingCompany.get().getId(),
                     Bank.format(payment),
@@ -291,7 +291,7 @@ public class OperatingRound_1856 extends OperatingRound {
         PublicCompany_1856 comp = (PublicCompany_1856) company;
         int cashInEscrow = comp.getMoneyInEscrow();
         if (cashInEscrow > 0) {
-            Owners.cashMove (bank, company, cashInEscrow);
+            MoneyModel.cashMove (bank, company, cashInEscrow);
             ReportBuffer.add(LocalText.getText("ReleasedFromEscrow",
                     company.getId(),
                     Bank.format(cashInEscrow)

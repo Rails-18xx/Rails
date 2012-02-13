@@ -10,7 +10,7 @@ import rails.game.action.DiscardTrain;
 import rails.game.action.PossibleAction;
 import rails.game.special.ExchangeForShare;
 import rails.game.special.SpecialPropertyI;
-import rails.game.model.Owners;
+import rails.game.model.MoneyModel;
 
 public class PrussianFormationRound extends StockRound {
 
@@ -255,7 +255,7 @@ public class PrussianFormationRound extends StockRound {
         int cash = capFactor * prussian.getIPOPrice();
 
         if (cash > 0) {
-            Owners.cashMove(bank, prussian, cash);
+            MoneyModel.cashMove(bank, prussian, cash);
             ReportBuffer.add(LocalText.getText("FloatsWithCash",
                 prussian.getId(),
                 Bank.format(cash) ));
@@ -364,7 +364,7 @@ public class PrussianFormationRound extends StockRound {
 
                 // Move any cash
                 if (minor.getCash() > 0) {
-                    Owners.cashMove (minor, prussian, minor.getCash());
+                    MoneyModel.cashMove (minor, prussian, minor.getCash());
                 }
 
                 // Move any trains

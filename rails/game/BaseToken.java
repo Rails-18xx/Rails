@@ -24,6 +24,7 @@ public class BaseToken extends Token {
         this.company = company;
 
         /* Initially. a BaseToken is always owned by a company. */
+        company.getBaseTokensModel().
         this.moveTo(company);
     }
 

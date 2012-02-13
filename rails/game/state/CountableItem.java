@@ -8,4 +8,10 @@ package rails.game.state;
 
 public interface CountableItem extends Item {
 
+    public int value();
+    
+    public void change(int amount);
+    
+    public void set(int amount);
+    
 }

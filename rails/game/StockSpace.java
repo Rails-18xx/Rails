@@ -6,9 +6,9 @@ import org.apache.log4j.Logger;
 
 import com.google.common.collect.ImmutableList;
 
-import rails.game.model.Model;
 import rails.game.state.ArrayListState;
 import rails.game.state.Item;
+import rails.game.state.Model;
 
 /**
  * Objects of this class represent a square on the StockMarket.

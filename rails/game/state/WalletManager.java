@@ -1,29 +1,22 @@
 package rails.game.state;
 
-import com.google.common.collect.HashMultimap;
-
 /**
  * WalletManager stores links to all existing wallets
  * @author freystef
  */
 
-public class WalletManager extends Context {
+public final class WalletManager extends AbstractItem {
 
-    public static final String ID = "Wallets";
-
-    private final HashMultimap<Item, Wallet<?>> wallets = HashMultimap.create();
+    private final HashMultimapState<Item, Wallet<?>> wallets = HashMultimapState.create();
     
-    private WalletManager() {
-        super(ID);
-    }
 
     static WalletManager create() {
         return new WalletManager();
     }
     
     @Override
-    public WalletManager init(Item parent) {
-        super.init(parent);
+    public WalletManager init(Item parent, String id) {
+        super.init(parent, id);
         return this;
     }
     

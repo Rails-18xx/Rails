@@ -3,32 +3,33 @@ package rails.game.model;
 import rails.game.Company;
 import rails.game.PrivateCompany;
 import rails.game.state.Item;
+import rails.game.state.Model;
 import rails.game.state.Portfolio;
+import rails.game.state.PortfolioList;
 
 
 public final class PrivatesModel extends Model {
 
-    private final Portfolio<PrivateCompany> privates;
+    public static final String id = "PrivatesModel";
+    
+    private final Portfolio<PrivateCompany> privates = PortfolioList.create();
     
     private boolean addLineBreak = false;
 
-    private PrivatesModel() {
-        super(PrivatesModel.class.getSimpleName());
-        privates = Portfolio.createList("Privates");
-    }
+    private PrivatesModel() {}
     
     /**
      * Creates an initialized PrivatesModel
      * id is identical to class name "PrivatesModel"
      */
     public static PrivatesModel create(Item parent) {
-        return new PrivatesModel().init(parent);
+        return new PrivatesModel().init(parent, id);
     }
     
     @Override
-    public PrivatesModel init(Item parent){
-        super.init(parent);
-        privates.init(this);
+    public PrivatesModel init(Item parent, String id){
+        super.init(parent, id);
+        privates.init(this, "Privates");
         return this;
     }
     

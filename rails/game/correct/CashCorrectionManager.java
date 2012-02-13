@@ -11,7 +11,7 @@ import rails.game.Player;
 import rails.game.PublicCompany;
 import rails.game.ReportBuffer;
 import rails.game.model.CashOwner;
-import rails.game.model.Owners;
+import rails.game.model.MoneyModel;
 
 
 public final class CashCorrectionManager extends CorrectionManager {
@@ -76,7 +76,7 @@ public final class CashCorrectionManager extends CorrectionManager {
         }
 
         if (errMsg != null) {
-            DisplayBuffer.add(LocalText.getText("CorrectCashError",
+            DisplayBuffer.change(LocalText.getText("CorrectCashError",
                     ch.getId(),
                     errMsg));
             result = true;
@@ -89,14 +89,14 @@ public final class CashCorrectionManager extends CorrectionManager {
             String msg;
             if (amount < 0) {
                 // negative amounts: remove cash from cashholder
-                Owners.cashMove(ch, bank , -amount);
+                MoneyModel.cashMove(ch, bank , -amount);
 
                 msg = LocalText.getText("CorrectCashSubstractMoney",
                         ch.getId(),
                         Bank.format(-amount) );
             } else {
                 // positive amounts: add cash to cashholder
-                Owners.cashMove(bank, ch, amount);
+                MoneyModel.cashMove(bank, ch, amount);
                 msg = LocalText.getText("CorrectCashAddMoney",
                         ch.getId(),
                         Bank.format(amount));

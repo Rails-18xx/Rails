@@ -21,41 +21,31 @@ public final class HashMapState<K,V> extends State {
 
     private final HashMap<K,V> map;
 
-    private HashMapState(String id) {
-        super(id);
+    private HashMapState() {
         map = Maps.newHashMap();
     }
 
-    private HashMapState(String id, Map<K,V> map) {
-        super(id);
+    private HashMapState( Map<K,V> map) {
         this.map = Maps.newHashMap(map);
     }
-    
-    /** 
-     * Creates an owned and empty HashMapState 
-     */
-    public static <K,V> HashMapState<K,V> create(Item parent, String id){
-        return new HashMapState<K,V>(id).init(parent);
-    }
-    
+
     /**
-     * Creates an owned and prefilled HashMapState
+     * @return empty HashMapState
      */
-    public static <K,V> HashMapState<K,V> create(Item parent, String id, Map<K,V> map){
-        return new HashMapState<K,V>(id,map).init(parent);
+    public static <K,V> HashMapState<K,V> create(){
+        return new HashMapState<K,V>();
     }
-    
+
     /**
-     * Creates an unowned and empty HashMapState
-     * Remark: Still requires a call to the init-method
+     * @return prefilled HashMapState
      */
-    public static <K,V> HashMapState<K,V> create(String id){
-        return new HashMapState<K,V>(id);
+    public static <K,V> HashMapState<K,V> create(Map<K,V> map){
+        return new HashMapState<K,V>(map);
     }
-    
+
     @Override
-   public HashMapState<K,V> init(Item parent){
-        super.init(parent);
+    public HashMapState<K,V> init(Item parent, String id){
+        super.init(parent, id);
         return this;
     }
 

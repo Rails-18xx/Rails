@@ -36,7 +36,7 @@ import rails.game.Stop;
 import rails.game.TileI;
 import rails.game.TileOrientation;
 import rails.game.Token;
-import rails.game.model.Model;
+import rails.game.state.Model;
 import rails.game.state.Observer;
 import rails.ui.swing.GUIToken;
 import rails.util.Util;

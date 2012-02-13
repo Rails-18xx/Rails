@@ -17,8 +17,8 @@ import rails.game.action.*;
 import rails.game.correct.ClosePrivate;
 import rails.game.correct.OperatingCost;
 import rails.game.model.CashOwner;
+import rails.game.model.MoneyModel;
 import rails.game.model.Owner;
-import rails.game.model.Owners;
 import rails.game.model.PortfolioModel;
 import rails.game.special.*;
 import rails.game.state.*;
@@ -159,11 +159,11 @@ public class OperatingRound extends Round implements Observer {
                     Owner recipient = priv.getOwner();
                     int revenue = priv.getRevenueByPhase(getCurrentPhase()); // sfy 1889: revenue by phase
                     if (count++ == 0) ReportBuffer.add("");
-                    ReportBuffer.add(LocalText.getText("ReceivesFor",
+                    ReportBuffer.change(LocalText.getText("ReceivesFor",
                             recipient.getId(),
                             Bank.format(revenue),
                             priv.getId()));
-                    Owners.cashMove(bank, (CashOwner)recipient, revenue);
+                    MoneyModel.cashMove(bank, (CashOwner)recipient, revenue);
                 }
 
             }
@@ -1039,7 +1039,7 @@ public class OperatingRound extends Round implements Observer {
         }
         if (errMsg != null) {
             if (owner != null) {
-                DisplayBuffer.add(LocalText.getText("CannotBuyPrivateFromFor",
+                DisplayBuffer.change(LocalText.getText("CannotBuyPrivateFromFor",
                         publicCompanyName,
                         privateCompanyName,
                         owner.getId(),
@@ -1229,7 +1229,7 @@ public class OperatingRound extends Round implements Observer {
         int number = action.getNumberTaken();
         int amount = calculateLoanAmount (number);
         operatingCompany.get().addLoans(number);
-        Owners.cashMove (bank, operatingCompany.get(), amount);
+        MoneyModel.cashMove (bank, operatingCompany.get(), amount);
         if (number == 1) {
             ReportBuffer.add(LocalText.getText("CompanyTakesLoan",
                     operatingCompany.get().getId(),
@@ -1316,7 +1316,7 @@ public class OperatingRound extends Round implements Observer {
         payment = Math.min(amount, operatingCompany.get().getCash());
         remainder = amount - payment;
         if (payment > 0) {
-            Owners.cashMove (operatingCompany.get(), bank, payment);
+            MoneyModel.cashMove (operatingCompany.get(), bank, payment);
             ReportBuffer.add (LocalText.getText("CompanyRepaysLoans",
                     operatingCompany.get().getId(),
                     Bank.format(payment),
@@ -1328,7 +1328,7 @@ public class OperatingRound extends Round implements Observer {
             Player president = operatingCompany.get().getPresident();
             if (president.getCashValue() >= remainder) {
                 payment = remainder;
-                Owners.cashMove (president, bank, payment);
+                MoneyModel.cashMove (president, bank, payment);
                 ReportBuffer.add (LocalText.getText("CompanyRepaysLoansWithPresCash",
                         operatingCompany.get().getId(),
                         Bank.format(payment),
@@ -1348,7 +1348,7 @@ public class OperatingRound extends Round implements Observer {
     public void payLoanInterest () {
         int amount = operatingCompany.get().getCurrentLoanValue()
         * operatingCompany.get().getLoanInterestPct() / 100;
-        Owners.cashMove (operatingCompany.get(), bank, amount);
+        MoneyModel.cashMove (operatingCompany.get(), bank, amount);
         DisplayBuffer.add(LocalText.getText("CompanyPaysLoanInterest",
                 operatingCompany.get().getId(),
                 Bank.format(amount),
@@ -1387,7 +1387,7 @@ public class OperatingRound extends Round implements Observer {
         // TODO: changeStack.start(true);
 
         operatingCompany.get().setRight(rightName, rightValue);
-        Owners.cashMove (operatingCompany.get(), bank, right.getCost());
+        MoneyModel.cashMove (operatingCompany.get(), bank, right.getCost());
 
         ReportBuffer.add(LocalText.getText("BuysRight",
                 operatingCompany.get().getId(),
@@ -1524,7 +1524,7 @@ public class OperatingRound extends Round implements Observer {
 
         if (tile != null) {
             if (cost > 0)
-                Owners.cashMove(operatingCompany.get(), bank, cost);
+                MoneyModel.cashMove(operatingCompany.get(), bank, cost);
             operatingCompany.get().layTile(hex, tile, orientation, cost);
 
             if (cost == 0) {
@@ -1846,7 +1846,7 @@ public class OperatingRound extends Round implements Observer {
             }
 
             if (cost > 0) {
-                Owners.cashMove(operatingCompany.get(), bank, cost);
+                MoneyModel.cashMove(operatingCompany.get(), bank, cost);
                 ReportBuffer.add(LocalText.getText("LAYS_TOKEN_ON",
                         companyName,
                         hex.getId(),
@@ -2067,7 +2067,7 @@ public class OperatingRound extends Round implements Observer {
             break;
         }
         if (errMsg != null) {
-            DisplayBuffer.add(LocalText.getText("CannotBuyBonusToken",
+            DisplayBuffer.change(LocalText.getText("CannotBuyBonusToken",
                     operatingCompany.get().getId(),
                     sbt.getId(),
                     seller.getId(),
@@ -2079,13 +2079,13 @@ public class OperatingRound extends Round implements Observer {
         /* End of validation, start of execution */
         // TODO: changeStack.start(true);
 
-        Owners.cashMove(operatingCompany.get(), seller, cost);
+        MoneyModel.cashMove(operatingCompany.get(), seller, cost);
         operatingCompany.get().addBonus(new Bonus(operatingCompany.get(),
                 sbt.getId(),
                 sbt.getValue(),
                 sbt.getLocations()));
 
-        ReportBuffer.add(LocalText.getText("BuysBonusTokenFrom",
+        ReportBuffer.change(LocalText.getText("BuysBonusTokenFrom",
                 operatingCompany.get().getId(),
                 sbt.getId(),
                 Bank.format(sbt.getValue()),
@@ -2308,7 +2308,7 @@ public class OperatingRound extends Round implements Observer {
             shares = (sharesPerRecipient.get(recipient));
             if (shares == 0) continue;
             part = (int) Math.ceil(amount * shares * operatingCompany.get().getShareUnit() / 100.0);
-            ReportBuffer.add(LocalText.getText("Payout",
+            ReportBuffer.change(LocalText.getText("Payout",
                     recipient.getId(),
                     Bank.format(part),
                     shares,
@@ -2466,10 +2466,10 @@ public class OperatingRound extends Round implements Observer {
 
         if (amount > 0) {
             // positive amounts: remove cash from cashholder
-            Owners.cashMove(operatingCompany.get(), bank, amount);
+            MoneyModel.cashMove(operatingCompany.get(), bank, amount);
         } else if (amount > 0) {
             // negative amounts: add cash to cashholder
-            Owners.cashMove(bank, operatingCompany.get(), -amount);
+            MoneyModel.cashMove(bank, operatingCompany.get(), -amount);
         }
 
         if (typeOC == OperatingCost.OCType.LAY_TILE) {
@@ -2700,7 +2700,7 @@ public class OperatingRound extends Round implements Observer {
         }
 
         if (actualPresidentCash > 0) {
-            Owners.cashMove(currentPlayer, operatingCompany.get(), presidentCash);
+            MoneyModel.cashMove(currentPlayer, operatingCompany.get(), presidentCash);
             ReportBuffer.add(LocalText.getText("PresidentAddsCash",
                     operatingCompany.get().getId(),
                     currentPlayer.getId(),
@@ -2715,20 +2715,20 @@ public class OperatingRound extends Round implements Observer {
                 operatingCompany.get().getPortfolio().getTrainOfType(
                         exchangedTrain.getCertType());
             oldTrain.moveTo(train.isObsolete() ? scrapHeap : pool);
-            ReportBuffer.add(LocalText.getText("ExchangesTrain",
+            ReportBuffer.change(LocalText.getText("ExchangesTrain",
                     companyName,
                     exchangedTrain.getId(),
                     train.getId(),
                     oldOwner.getId(),
                     Bank.format(price) ));
         } else if (stb == null) {
-            ReportBuffer.add(LocalText.getText("BuysTrain",
+            ReportBuffer.change(LocalText.getText("BuysTrain",
                     companyName,
                     train.getId(),
                     oldOwner.getId(),
                     Bank.format(price) ));
         } else {
-            ReportBuffer.add(LocalText.getText("BuysTrainUsingSP",
+            ReportBuffer.change(LocalText.getText("BuysTrainUsingSP",
                     companyName,
                     train.getId(),
                     oldOwner.getId(),

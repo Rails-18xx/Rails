@@ -14,8 +14,8 @@ import rails.game.Stop.RunThrough;
 import rails.game.Stop.RunTo;
 import rails.game.Stop.Score;
 import rails.game.Stop.Type;
-import rails.game.model.Model;
-import rails.game.state.GameItem;
+import rails.game.state.AbstractItem;
+import rails.game.state.Model;
 import rails.util.Util;
 
 /** Represents a certain tile <i>type</i>, identified by its id (tile number).
@@ -115,7 +115,7 @@ public class Tile extends Model implements TileI, StationHolder, Comparable<Tile
     /** Storage of revenueBonus that are bound to the tile */
     protected List<RevenueBonusTemplate> revenueBonuses = null;
 
-    public Tile(GameItem owner, Integer id) {
+    public Tile(AbstractItem owner, Integer id) {
         super(owner, Integer.toString(id));
         this.nb = id;
         pictureId = id;

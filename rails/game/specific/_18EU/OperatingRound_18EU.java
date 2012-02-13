@@ -200,7 +200,7 @@ public class OperatingRound_18EU extends OperatingRound {
             }
             if (hasPullmann && !hasNonPullmann) {
                 pullmann.moveTo (pool);
-                ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
+                ReportBuffer.change(LocalText.getText("CompanyDiscardsTrain",
                         seller.getOwner().getId(),
                         pullmann.getId() ));
             }

@@ -2,47 +2,40 @@ package rails.game.state;
 
 import java.util.*;
 
+import com.google.common.collect.ImmutableSet;
+
 /**
  * State class that wraps a HashSet
  */
-public final class HashSetState<E> extends State {
+public final class HashSetState<E> extends State implements Iterable<E> {
 
     private final HashSet<E> set;
 
-    private HashSetState(String id) {
-        super(id);
+    private HashSetState() {
         set = new HashSet<E>();
     }
-    private HashSetState(String id, Collection<E> collection) {
-        super(id);
+    
+    private HashSetState(Collection<E> collection) {
         set = new HashSet<E>(collection);
     }
-    
-    /** 
-     * Creates an owned and empty HashSetState 
+
+    /**
+     * @return empty HashSetState
      */
-    public static <E> HashSetState<E> create(Item parent, String id){
-        return new HashSetState<E>(id).init(parent);
+    public static <E> HashSetState<E> create(){
+        return new HashSetState<E>();
     }
     
     /**
-     * Creates an owned and prefilled HashSetState
+     * @return prefilled HashSetState
      */
-    public static <E> HashSetState<E> create(Item parent, String id, Collection<E> collection){
-        return new HashSetState<E>(id, collection).init(parent);
-    }
-    
-    /**
-     * Creates an unowned and empty HashSetState
-     * Remark: Still requires a call to the init-method
-     */
-    public static <E> HashSetState<E> create(String id){
-        return new HashSetState<E>(id);
+    public static <E> HashSetState<E> create(Collection<E> collection){
+        return new HashSetState<E>(collection);
     }
     
     @Override
-    public HashSetState<E> init(Item parent){
-        super.init(parent);
+    public HashSetState<E> init(Item parent, String id){
+        super.init(parent, id);
         return this;
     }
 
@@ -87,10 +80,10 @@ public final class HashSetState<E> extends State {
     }
 
     /**
-     * @return non-stateful unmodifiable view of set
+     * @return immutable view of set
      */
-    public Set<E> viewSet() {
-        return Collections.unmodifiableSet(set);
+    public ImmutableSet<E> view() {
+        return ImmutableSet.copyOf(set);
     }
 
     /**
@@ -105,6 +98,10 @@ public final class HashSetState<E> extends State {
      */
     public boolean isEmpty() {
         return set.isEmpty();
+    }
+    
+    public Iterator<E> iterator() {
+        return set.iterator();
     }
     
     @Override

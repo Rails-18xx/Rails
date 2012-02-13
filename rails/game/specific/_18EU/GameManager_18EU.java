@@ -12,6 +12,7 @@ import rails.game.PublicCompany;
 import rails.game.ReportBuffer;
 import rails.game.RoundI;
 import rails.game.ShareSellingRound;
+import rails.game.model.MoneyModel;
 import rails.game.model.Owners;
 import rails.game.model.PortfolioModel;
 import rails.game.state.Context;
@@ -67,7 +68,7 @@ public class GameManager_18EU extends GameManager {
 
         // Assume default case as in 18EU: all assets to Bank/Pool
         Player bankrupter = getCurrentPlayer();
-        Owners.cashMove(bankrupter, bank, bankrupter.getCashValue());
+        MoneyModel.cashMove(bankrupter, bank, bankrupter.getCashValue());
         PortfolioModel bpf = bankrupter.getPortfolio();
         List<PublicCompany> presidencies = new ArrayList<PublicCompany>();
         for (PublicCertificate cert : bpf.getCertificates()) {

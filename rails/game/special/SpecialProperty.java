@@ -7,13 +7,13 @@ import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.*;
 import rails.game.model.Owner;
-import rails.game.state.GameItem;
+import rails.game.state.AbstractItem;
 import rails.game.state.BooleanState;
 import rails.game.model.Owners;
 import rails.util.*;
 
 // TODO: Check if we could extend AbstractOwnable
-public abstract class SpecialProperty extends GameItem implements SpecialPropertyI {
+public abstract class SpecialProperty extends AbstractItem implements SpecialPropertyI {
 
     protected Company originalCompany;
     protected Owner owner = null;

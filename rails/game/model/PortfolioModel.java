@@ -26,7 +26,9 @@ import rails.game.TrainType;
 import rails.game.special.LocatedBonus;
 import rails.game.special.SpecialPropertyI;
 import rails.game.state.Item;
+import rails.game.state.Model;
 import rails.game.state.Portfolio;
+import rails.game.state.PortfolioList;
 
 // FIXME: Solve id, name and uniquename clashes
 
@@ -37,6 +39,8 @@ import rails.game.state.Portfolio;
  */
 public final class PortfolioModel extends Model {
 
+    public static final String id = "PortfolioModel";
+    
     protected static Logger log =
         Logger.getLogger(PortfolioModel.class.getPackage().getName());
     
@@ -51,29 +55,29 @@ public final class PortfolioModel extends Model {
 
     /** Owned tokens */
     // TODO Currently only used to discard expired Bonus tokens.
-    private Portfolio<Token> tokens;
+    private final Portfolio<Token> tokens = PortfolioList.create();
     
     /**
      * Private-independent special properties. When moved here, a special
      * property no longer depends on the private company being alive. Example:
      * 18AL named train tokens.
      */
-    private Portfolio<SpecialPropertyI> specialProperties;
+    private Portfolio<SpecialPropertyI> specialProperties = PortfolioList.create(); 
 
     private final GameManager gameManager;
 
-    /**
-     * Portfolio is initialized with a default id "Portfolio"
-     */
-    public PortfolioModel() {
-        super("Portfolio");
-
+    private PortfolioModel() {
         // TODO: Replace this with a better mechanism
         gameManager = GameManager.getInstance();
-        gameManager.addPortfolio(this);
     }
-     
-    public PortfolioModel init(Item parent) {
+    
+    
+    public static PortfolioModel create(Item parent) {
+        return new PortfolioModel().init(parent, id);
+    }
+    
+    @Override 
+    public PortfolioModel init(Item parent, String id) {
 
         // create models
         certificates = CertificatesModel.create(parent);
@@ -81,8 +85,8 @@ public final class PortfolioModel extends Model {
         trains = TrainsModel.create(parent);
         
         // create portfolios
-        tokens = Portfolio.createList(parent, "Tokens");
-        specialProperties = Portfolio.createList(parent, "SpecialProperties");
+        tokens.init(parent, "Tokens");
+        specialProperties.init(parent, "SpecialProperties");
         
         // change display style dependent on owner
         if (parent instanceof PublicCompany) {
@@ -93,6 +97,9 @@ public final class PortfolioModel extends Model {
         } else if (parent instanceof Player) {
             privates.setLineBreak(true);
         }
+
+        gameManager.addPortfolio(this);
+
         return this;
     }
     
@@ -139,7 +146,7 @@ public final class PortfolioModel extends Model {
        // FIXME: This has to rewritten
        return null;
     }
-
+   
     public ImmutableList<PrivateCompany> getPrivateCompanies() {
         return privates.getPortfolio().items();
     }
@@ -148,6 +155,10 @@ public final class PortfolioModel extends Model {
         return certificates.getPortfolio().items();
     }
 
+    public boolean moveInto(PublicCertificate c) {
+        return certificates.moveInto(c);
+    }
+    
     /** Get the number of certificates that count against the certificate limit */
     public float getCertificateCount() {
 
@@ -609,10 +620,10 @@ public final class PortfolioModel extends Model {
     }
 
     // FIXME: This mechanism has to be rewritten
-    public AbstractOwnable getCertOfType(String string) {
+/*    public AbstractOwnable getCertOfType(String string) {
         // TODO Auto-generated method stub
         return null;
     }
-
+*/
 
 }

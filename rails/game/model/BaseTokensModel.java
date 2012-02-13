@@ -1,7 +1,9 @@
 package rails.game.model;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import rails.game.PublicCompany;
 import rails.game.state.Item;
+import rails.game.state.Model;
 import rails.game.state.State;
 
 /**
@@ -9,27 +11,10 @@ import rails.game.state.State;
  */
 public class BaseTokensModel extends Model {
 
-    public static final String ID = "BaseTokensModel";
-
     private PublicCompany company;
 
-    /**
-     * BaseTokenModel is initialized with a default id "BaseTokensModel"
-     */
-    private BaseTokensModel() {
-        super(ID);
-    }
+    private BaseTokensModel() {}
 
-    /**
-     * Creates an owned BaseTokenModel
-     */
-    public static BaseTokensModel create(PublicCompany company){
-        return new BaseTokensModel().init(company);
-    }
-    
-    /**
-     * Creates an unowned BaseTokenModel
-     */
     public static BaseTokensModel create(){
         return new BaseTokensModel();
     }
@@ -38,13 +23,9 @@ public class BaseTokensModel extends Model {
      * @param parent restricted to PublicCompany
      */
     @Override
-    public BaseTokensModel init(Item parent){
-        super.init(parent);
-        if (parent instanceof PublicCompany) {
-            this.company = (PublicCompany)parent;
-        } else {
-            throw new IllegalArgumentException("BaseTokenModel init() only works for PublicCompanies");
-        }
+    public BaseTokensModel init(Item parent, String id){
+        checkArgument(parent instanceof PublicCompany, "BaseTokenModel init() only works for PublicCompanies");
+        super.init(parent, id);
         return this;
     }
     

@@ -15,14 +15,14 @@ import rails.game.Stop.RunTo;
 import rails.game.Stop.Score;
 import rails.game.Stop.Type;
 import rails.game.action.LayTile;
-import rails.game.model.CashModel;
-import rails.game.model.Model;
+import rails.game.model.CashMoneyModel;
 import rails.game.model.Owner;
 import rails.game.model.PortfolioModel;
 import rails.game.model.SingleOwner;
 
 import rails.game.state.ArrayListState;
 import rails.game.state.BooleanState;
+import rails.game.state.Model;
 import rails.game.state.Observer;
 import rails.game.state.TileMove;
 import rails.util.*;
@@ -1394,7 +1394,7 @@ StationHolder {
         return false;
     }
 
-    public CashModel getCash() {
+    public CashMoneyModel getCash() {
         return null;
     }
 

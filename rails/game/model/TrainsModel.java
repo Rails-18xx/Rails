@@ -7,32 +7,28 @@ import com.google.common.collect.Multiset;
 import rails.game.TrainCertificateType;
 import rails.game.Train;
 import rails.game.state.Item;
+import rails.game.state.Model;
 import rails.game.state.Portfolio;
 import rails.game.state.PortfolioMap;
 
 public class TrainsModel extends Model {
 
-    private final PortfolioMap<Train> trains;
+    public static final String id = "TrainsModel";
+    
+    private final PortfolioMap<Train> trains = PortfolioMap.create();
     
     private boolean abbrList = false;
 
-    private TrainsModel() {
-        super(TrainsModel.class.getSimpleName());
-        trains = Portfolio.createMap("Trains");
-    }
+    private TrainsModel() {}
     
-    /**
-     * Creates an initialized TrainsModel
-     * id is identical to class name "TrainsModel"
-     */
     public static TrainsModel create(Item parent) {
-        return new TrainsModel().init(parent);
+        return new TrainsModel().init(parent, id);
     }
     
     @Override
-    public TrainsModel init(Item parent){
-        super.init(parent);
-        trains.init(this);
+    public TrainsModel init(Item parent, String id){
+        super.init(parent, id);
+        trains.init(this, "Trains");
         return this;
     }
     

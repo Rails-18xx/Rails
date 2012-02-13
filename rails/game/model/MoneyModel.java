@@ -1,137 +1,100 @@
 package rails.game.model;
 
 import rails.game.Bank;
-import rails.game.state.BooleanState;
-import rails.game.state.IntegerState;
+import rails.game.GameManager;
 import rails.game.state.Item;
+import rails.game.state.Model;
 import rails.game.state.StringState;
 
 /**
- * A model presenting money values
+ * The base model for money
+ * FIXME: Removed "" equivalence for null in setText
+ * FIXME: PublicCompany money is shown as "" as long as it has not started, this
+ * was coded inside the toString() method
  */
-public class MoneyModel extends Model {
-    public static final int DEFAULT = 0;
+public abstract class MoneyModel extends Model {
+    
+    public static final int CASH_DEFAULT = 0;
     
     // Data
-    private final IntegerState value;
-    private BooleanState initialised;
-    private StringState fixedText = null;
+    private final StringState fixedText = StringState.create();
     
-    // Options
-    private boolean suppressZero;
-    private boolean suppressInitialZero;
-    private boolean addPlus;
-    private boolean allowNegative;
+    // Format Options (with defaults)
+    private boolean suppressZero = false;
+    private boolean suppressInitialZero = false;
+    private boolean addPlus = false;
+    private boolean displayNegative = false;
  
-    private MoneyModel(String id, int value){
-        super(id);
-        this.value = IntegerState.create("MoneyValue",  value);
-    }
-    
-    /** 
-     * Creates an owned MoneyModel with default value of zero
-     */
-    public static MoneyModel create(Item parent, String id){
-        return new MoneyModel(id, DEFAULT).init(parent);
-    }
-
-    /** 
-     * Creates an owned MoneyModel with predefined value
-     */
-    public static MoneyModel create(Item parent, String id, int value){
-        return new MoneyModel(id, value).init(parent);
+    @Override
+    public MoneyModel init(Item parent, String id){
+        super.init(parent, id);
+        fixedText.init(this, "fixedText");
+        return this;
     }
     
     /**
-     * Creates an unowned MoneyModel with default with zero value
+     * @param suppressZero true: displays an empty string instead of a zero value
+     * This is not a state variable, so do not change after the MoneyModel is used
      */
-    public static MoneyModel create(String id) {
-        return new MoneyModel(id, DEFAULT);
-    }
-    
-    @Override
-    public MoneyModel init(Item parent){
-        super.init(parent);
-        this.value.init(this);
-        return this;
-    }
-
     public void setSuppressZero(boolean suppressZero) {
         this.suppressZero = suppressZero;
     }
 
+    /**
+     * @param suppressInitialZero true: displays an empty string for the initial zero value
+     * This is not a state variable, so do not change after the MoneyModel is used
+     */
     public void setSuppressInitialZero(boolean suppressInitialZero) {
         this.suppressInitialZero = suppressInitialZero;
     }
 
+    /**
+     * @param addPlus true: adds a plus sign for positive values
+     * This is not a state variable, so do not change after the MoneyModel is used
+     */
     public void setAddPlus(boolean addPlus) {
         this.addPlus = addPlus;
     }
-
-    public void setAllowNegative(boolean allowNegative) {
-        this.allowNegative = allowNegative;
-    }
-
-    public void set(int value) {
-        boolean forced = false;
-
-        /* Set initialisation state only if it matters */
-        if (suppressInitialZero && initialised == null) {
-            initialised = BooleanState.create(this, "initialised", false);
-        }
-        if (initialised != null && !initialised.booleanValue()) {
-            initialised.set(true);
-            forced = true;
-        }
-
-        /*
-         * At the end, as update() is called from here. Used setForced() to
-         * ensure clients are updated even at an initial zero revenue.
-         * TODO: Check if the missing forced handling matters
-         */
-        if (forced) {
-            this.value.set(value);
-        } else {
-            this.value.set(value);
-        }
-    }
     
-    public void add(int value) {
-        this.value.add(value);
+    /**
+     * @param displayNegative true: does not display negative values
+     * This is not a state variable, so do not change after the MoneyModel is used
+     */
+    public void setDisplayNegative(boolean displayNegative){
+        this.displayNegative = displayNegative;
     }
-    
 
-    /** Set a fixed text, which will override the money value
-     * as long as it is not null and not "".
-     * @param text
+    /** 
+     * @param text fixed text to be displayed instead of money value
+     * using null removes text and displays value again
+     * Remark: Setting the text triggers an update of the model
      */
     public void setText (String text) {
-        if (fixedText == null) {
-            fixedText = StringState.create(this, "fixedText", text);
-            fixedText.init(this);
-        } else {
-            fixedText.set(text);
-        }
-        // TODO: Still required?
-        update();
+        fixedText.set(text); // this triggers the update of the model
     }
     
-    public int intValue() {
-        return value.intValue();
-    }
+    /**
+     * @return current value of the MoneyModel
+     */
+    public abstract int value();
+    
+    /**
+     * @return true if MoneyValue has a value set already
+     */
+    public abstract boolean initialised();
 
     @Override
     public String toString() {
-        if (fixedText != null && !"".equals(fixedText.stringValue())) {
+        if (fixedText.stringValue() != null) {
             return fixedText.stringValue();
         }
-        int amount = value.intValue();
+        int amount = this.value();
         if (amount == 0
             && (suppressZero 
                     || suppressInitialZero
-                        && (initialised == null || !initialised.booleanValue()))) {
+                        && !initialised())) {
             return "";
-        } else if (amount < 0 && !allowNegative) {
+        } else if (amount < 0 && !displayNegative) {
             return "";
         } else if (addPlus) {
             return "+" + Bank.format(amount);
@@ -139,5 +102,28 @@ public class MoneyModel extends Model {
             return Bank.format(amount);
         }
     }
+
+    public static void cashMoveFromBank(CashOwner to, int amount) {
+        // TODO: get this from the GameContext
+        Bank bank = GameManager.getInstance().getBank();
+        cashMove(bank, to, amount);
+    }
+
+    public static void cashMoveToBank(CashOwner from, int amount) {
+        // TODO: get this from the GameContext
+        Bank bank = GameManager.getInstance().getBank();
+        cashMove(from, bank, amount);
+    }
+
+    /**
+     * Facilitates a move of cash. In this specific case either from or to may
+     * be null, in which case the Bank is implied.
+     */
+    public static void cashMove(CashOwner from, CashOwner to, int amount) {
+        to.getCash().change(amount);
+        from.getCash().change(-amount);
+    }
+
+
 
 }
