@@ -1,0 +1,54 @@
+GameIs,1835
+PlayerIs,1,Klaus-Jürgen
+PlayerIs,2,Jupp
+PlayerIs,3,Sven K.
+PlayerIs,4,Volker S.
+PlayerCash,475
+BankHas,10100
+StartOfPhase,2
+BankSizeIs,10100
+StartOfInitialRound
+HasPriority,Klaus-Jürgen
+BuysItemFor,Volker S.,M3,80
+FloatsWithCash,M3,80
+BuysItemFor,Sven K.,M2,170
+FloatsWithCash,M2,170
+BuysItemFor,Jupp,M5,80
+FloatsWithCash,M5,80
+BuysItemFor,Klaus-Jürgen,M1,80
+FloatsWithCash,M1,80
+BuysItemFor,Klaus-Jürgen,M6,80
+FloatsWithCash,M6,80
+BuysItemFor,Jupp,LD,190
+ALSO_GETS,Jupp,PRES_CERT_NAME,SX,20
+BuysItemFor,Sven K.,M4,160
+FloatsWithCash,M4,160
+BuysItemFor,Volker S.,NF,100
+ALSO_GETS,Volker S.,CERT_NAME,BY,10
+BuysItemFor,Klaus-Jürgen,BB,130
+BuysItemFor,Jupp,HB,160
+PASSES,Sven K.
+BuysItemFor,Volker S.,OBB,120
+ALSO_GETS,Volker S.,CERT_NAME,BY,10
+BuysItemFor,Klaus-Jürgen,PRES_CERT_NAME,BY,20,184
+CannotBuyAnything,Jupp
+CannotBuyAnything,Sven K.
+BuysItemFor,Volker S.,PfB,150
+ALSO_GETS,Volker S.,CERT_NAME,BY,10
+FloatsWithCash,BY,460
+IS_NOW_PRES_OF,Volker S.,BY
+Has,M1,80
+Has,M2,170
+Has,M3,80
+Has,M4,160
+Has,M5,80
+Has,M6,80
+Has,BY,460
+Has,Klaus-Jürgen,1
+Has,Jupp,45
+Has,Sven K.,145
+Has,Volker S.,25
+StartStockRound,1
+HasPriority,Klaus-Jürgen
+PASSES,Klaus-Jürgen
+PASSES,Jupp
