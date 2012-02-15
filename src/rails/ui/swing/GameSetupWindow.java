@@ -230,32 +230,33 @@ public class GameSetupWindow extends JDialog implements ActionListener {
      * loads and start the game given a filename
      */
     private void loadAndStartGame(String filePath, String saveDirectory) {
+        prepareGameUIInit();
+        SplashWindow splashWindow = new SplashWindow();
+        splashWindow.notifyOfStep(SplashWindow.STEP_LOAD_GAME);
         if ((game = RailsRoot.load(filePath)) == null) {
-            JOptionPane.showMessageDialog(this,
+          JOptionPane.showMessageDialog(this,
                     DisplayBuffer.get(), "", JOptionPane.ERROR_MESSAGE);
             return;
         } else if (DisplayBuffer.getSize() > 0) {
             JOptionPane.showMessageDialog(this,
                     DisplayBuffer.get(), "", JOptionPane.ERROR_MESSAGE);
         }
-        startGameUIManager(game, true);
+        startGameUIManager(game, true, splashWindow);
         if (saveDirectory != null) {
             gameUIManager.setSaveDirectory (saveDirectory);
         }
         gameUIManager.startLoadedGame();
-        setVisible(false);
-        killConfigWindow();
-    }
-
-    private void killConfigWindow() {
-        if (configWindow == null) return;
-        configWindow.dispose();
-        configWindow = null;
+        completeGameUIInit(splashWindow);
     }
 
     public void actionPerformed(ActionEvent arg0) {
         if (arg0.getSource().equals(newButton)) {
-            startNewGame();
+            //start in new thread so that swing thread is not used for game setup
+            new Thread() {
+                public void run() {
+                    startNewGame();
+                }
+            }.start();
         } else if (arg0.getSource().equals(optionButton)) {
             toggleOptions();
             this.pack();
@@ -274,8 +275,13 @@ public class GameSetupWindow extends JDialog implements ActionListener {
             jfc.setCurrentDirectory(new File(saveDirectory));
 
             if (jfc.showOpenDialog(getContentPane()) == JFileChooser.APPROVE_OPTION) {
-                File selectedFile = jfc.getSelectedFile();
-                loadAndStartGame(selectedFile.getPath(), selectedFile.getParent());
+                final File selectedFile = jfc.getSelectedFile();
+                //start in new thread so that swing thread is not used for game setup
+                new Thread() {
+                    public void run() {
+                        loadAndStartGame(selectedFile.getPath(), selectedFile.getParent());
+                    }
+                }.start();
             } else { // cancel pressed
                 return;
             }
@@ -517,22 +523,39 @@ public class GameSetupWindow extends JDialog implements ActionListener {
                         JOptionPane.ERROR_MESSAGE);
                 System.exit(-1);
             }
-            startGameUIManager (game, false);
+            prepareGameUIInit();
+            SplashWindow splashWindow = new SplashWindow();
+            startGameUIManager (game, false, splashWindow);
             gameUIManager.gameUIInit(true); // true indicates new game
+            completeGameUIInit(splashWindow);
         }
 
-        this.setVisible(false);
-        killConfigWindow();
+    }
+    
+    private void prepareGameUIInit() {
+        setVisible(false);
+        if (configWindow != null) configWindow.setVisible(false);
+    }
+    
+    private void completeGameUIInit(SplashWindow splashWindow) {
+        if (configWindow != null) {
+            configWindow.dispose();
+            configWindow = null;
+        }
+
+        splashWindow.finalizeGameInit();
+        splashWindow.dispose();
+        splashWindow = null;
     }
 
-    private void startGameUIManager(RailsRoot game, boolean wasLoaded) {
+    private void startGameUIManager(RailsRoot game, boolean wasLoaded, SplashWindow splashWindow) {
         GameManager gameManager = game.getGameManager();
         String gameUIManagerClassName = gameManager.getClassName(GuiDef.ClassName.GAME_UI_MANAGER);
         try {
             Class<? extends GameUIManager> gameUIManagerClass =
                 Class.forName(gameUIManagerClassName).asSubclass(GameUIManager.class);
             gameUIManager = gameUIManagerClass.newInstance();
-            gameUIManager.init(gameManager, wasLoaded);
+            gameUIManager.init(gameManager, wasLoaded, splashWindow);
         } catch (Exception e) {
             log.error("Cannot instantiate class " + gameUIManagerClassName, e);
             System.exit(1);
