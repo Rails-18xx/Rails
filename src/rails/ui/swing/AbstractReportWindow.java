@@ -47,13 +47,10 @@ public abstract class AbstractReportWindow extends JFrame {
             }
         });
 
-        WindowSettings ws = gameUIManager.getWindowSettings();
-        Rectangle bounds = ws.getBounds(this);
-        if (bounds.x != -1 && bounds.y != -1) setLocation(bounds.getLocation());
-        if (bounds.width != -1 && bounds.height != -1) setSize(bounds.getSize());
-        ws.set(frame);
+        gameUIManager.packAndApplySizing(this);
 
-        setVisible("yes".equalsIgnoreCase(Config.get("report.window.open")));
+        gameUIManager.setMeVisible(this,
+                "yes".equalsIgnoreCase(Config.get("report.window.open")));
     }
 
     public abstract void updateLog();

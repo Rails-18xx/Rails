@@ -2,6 +2,7 @@
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -164,20 +166,30 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
             }
         });
 
-        //rearrange layout only if no docking framework active
-        if (!isDockingFrameworkEnabled()) {
-            pack();
-        }
+        getGameUIManager().reportWindow.updateLog();
 
-        WindowSettings ws = gameUIManager.getWindowSettings();
-        Rectangle bounds = ws.getBounds(this);
-        if (bounds.x != -1 && bounds.y != -1) setLocation(bounds.getLocation());
-        if (bounds.width != -1 && bounds.height != -1) setSize(bounds.getSize());
-        ws.set(frame);
+        //call pack and size init within the swing EDT
+        //(as this frame is not inited within the EDT)
+        //no standard call to gameUIManager's packAndApplySizing possible (due to docking switch)
+        SwingUtilities.invokeLater(new Thread() {
+            public void run() {
+                //rearrange layout only if no docking framework active
+                if (!isDockingFrameworkEnabled()) {
+                    pack();
+                } else {
+                    setSize(new Dimension(600,500));
+                }
 
-        gameUIManager.reportWindow.updateLog();
-        
-        if (isDockingFrameworkEnabled()) initLayout();
+                WindowSettings ws = getGameUIManager().getWindowSettings();
+                Rectangle bounds = ws.getBounds(ORWindow.this);
+                if (bounds.x != -1 && bounds.y != -1) setLocation(bounds.getLocation());
+                if (bounds.width != -1 && bounds.height != -1) setSize(bounds.getSize());
+                ws.set(frame);
+
+                if (isDockingFrameworkEnabled()) initLayout();
+            }            
+        });
+
     }
 
     public ORUIManager getORUIManager() {

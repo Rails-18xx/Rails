@@ -52,14 +52,8 @@ public class StockChart extends JFrame implements KeyListener {
             }
         });
         addKeyListener(this);
-        pack();
 
-        WindowSettings ws = gameUIManager.getWindowSettings();
-        Rectangle bounds = ws.getBounds(this);
-        if (bounds.x != -1 && bounds.y != -1) setLocation(bounds.getLocation());
-        if (bounds.width != -1 && bounds.height != -1
-                && !ws.isDefaultUsed()) setSize(bounds.getSize());
-        ws.set(frame);
+        gameUIManager.packAndApplySizing(this);
     }
 
     private void initialize() {

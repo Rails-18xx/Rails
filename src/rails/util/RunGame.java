@@ -6,6 +6,7 @@ import rails.game.RailsRoot;
 import rails.game.GameManager;
 import rails.ui.swing.GameSetupWindow;
 import rails.ui.swing.GameUIManager;
+import rails.ui.swing.SplashWindow;
 
 public class RunGame {
 
@@ -55,6 +56,9 @@ public class RunGame {
 
     static void loadGame (String[] args) {
 
+        SplashWindow splashWindow = new SplashWindow();
+        splashWindow.notifyOfStep(SplashWindow.STEP_LOAD_GAME);
+
         RailsRoot game = null;
         String filepath = args[0];
         System.out.println("Starting game from saved file "+filepath);
@@ -70,7 +74,7 @@ public class RunGame {
             Class<? extends GameUIManager> gameUIManagerClass =
                 Class.forName(gameUIManagerClassName).asSubclass(GameUIManager.class);
             gameUIManager = gameUIManagerClass.newInstance();
-            gameUIManager.init(gameManager, true);
+            gameUIManager.init(gameManager, true, splashWindow);
 
             String directory = new java.io.File(filepath).getParent();
             if(directory != null) {
@@ -78,6 +82,9 @@ public class RunGame {
             }
 
             gameUIManager.startLoadedGame();
+            gameUIManager.notifyOfSplashFinalization();
+            splashWindow.finalizeGameInit();
+            splashWindow = null;
 
         } catch (Exception e) {
             System.err.println("Cannot instantiate class " + gameUIManagerClassName + ": "+e.getMessage());

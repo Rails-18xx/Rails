@@ -310,7 +310,7 @@ KeyListener, ActionPerformer {
         pane.add(buttonPanel, BorderLayout.SOUTH);
         pane.setOpaque(true);
         setContentPane(pane);
-        setVisible(true);
+        gameUIManager.setMeVisible(this, true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         gameStatus.addKeyListener(this);
@@ -341,13 +341,7 @@ KeyListener, ActionPerformer {
             }
         });
 
-        pack();
-
-        WindowSettings ws = gameUIManager.getWindowSettings();
-        Rectangle bounds = ws.getBounds(this);
-        if (bounds.x != -1 && bounds.y != -1) setLocation(bounds.getLocation());
-        if (bounds.width != -1 && bounds.height != -1) setSize(bounds.getSize());
-        ws.set(frame);
+        gameUIManager.packAndApplySizing(this);
     }
 
     public void initGameActions() {

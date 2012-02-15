@@ -192,7 +192,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
         setTitle("Rails: Start Round");
         setLocation(300, 150);
         setSize(275, 325);
-        setVisible(true);
+        gameUIManager.setMeVisible(this, true);
         requestFocus();
 
         addKeyListener(this);
@@ -222,13 +222,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
             }
         });
 
-        pack();
-
-        WindowSettings ws = gameUIManager.getWindowSettings();
-        Rectangle bounds = ws.getBounds(this);
-        if (bounds.x != -1 && bounds.y != -1) setLocation(bounds.getLocation());
-        if (bounds.width != -1 && bounds.height != -1) setSize(bounds.getSize());
-        ws.set(thisFrame);
+        gameUIManager.packAndApplySizing(this);
     }
 
     private void init() {
