@@ -13,23 +13,35 @@ save.filename.extension=rails
 save.recovery.active=no
 save.recovery.filepath=18xx_autosave.rails
 
-### Panel UI
-report.window.type=dynamic
-report.window.open=yes
-report.window.editable=no
-stockchart.window.open=yes
+### Panel Font
 font.ui.scale=1
 font.ui.name=
 font.ui.style=bold
 
 ### Panel Map
 map.autoscroll=yes
+map.defaultZoomFitOption=none
+map.displayCurrentRoutes=yes
+map.highlightHexes=yes
 map.image.display=no
 map.zoomstep=10
+
+### Panel Windows
+or.window.dockablePanels=no
+report.window.type=dynamic
+report.window.open=yes
+report.window.editable=no
+stockchart.window.open=yes
 
 ### Panel Format
 money_format=
 or.number_format=composite
+
+### Panel Appearance
+button.iconText=text and icon
+button.iconSize=small
+button.iconPosition=left
+gridPanel.tableBorders=enabled
 route.colour.1=00ffff 
 route.colour.2=ffc0cb
 route.colour.3=ffa500
@@ -39,3 +51,9 @@ route.colour.4=808080
 #report.directory=log
 #report.filename.date_time_pattern=yyyyMMdd
 #report.filename.extension=log
+
+### Panel Music
+sound.backgroundMusic=disabled
+
+### Panel SFX
+sound.sfx=disabled
