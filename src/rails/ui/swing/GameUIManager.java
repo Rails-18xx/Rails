@@ -212,8 +212,7 @@ public class GameUIManager implements DialogOwner {
             reportWindow = new ReportWindowDynamic(this);
         }
         
-        splashWindow.notifyOfStep(SplashWindow.STEP_OR_WINDOW);
-        orWindow = new ORWindow(this);
+        orWindow = new ORWindow(this, splashWindow);
         orUIManager = orWindow.getORUIManager();
 
         splashWindow.notifyOfStep(SplashWindow.STEP_STATUS_WINDOW);

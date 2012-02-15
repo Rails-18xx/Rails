@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import rails.common.LocalText;
 import rails.common.parser.Config;
+import rails.ui.swing.SplashWindow;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -84,9 +85,12 @@ public abstract class DockingFrame extends JFrame {
      * Decision whether docking framework should be activated for a frame
      * has to be done at the beginning as later switching is not supported
      */
-    protected DockingFrame(boolean isDockingFrameworkEnabled) {
+    protected DockingFrame(boolean isDockingFrameworkEnabled, SplashWindow splashWindow) {
+
         this.isDockingFrameworkEnabled = isDockingFrameworkEnabled;
         if (!isDockingFrameworkEnabled) return;
+
+        splashWindow.notifyOfStep(SplashWindow.STEP_OR_INIT_DOCKING_FRAME);
         
         //init the ccontrol
         control = new CControl( this );
