@@ -1,6 +1,7 @@
 package rails.ui.swing;
 
 import java.awt.Font;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -98,12 +99,17 @@ public class GameUIManager implements DialogOwner {
     protected static Logger log =
         Logger.getLogger(GameUIManager.class.getPackage().getName());
 
+    private SplashWindow splashWindow = null;
+    
     public GameUIManager() {
 
     }
 
-    public void init (GameManagerI gameManager, boolean wasLoaded) {
+    public void init (GameManagerI gameManager, boolean wasLoaded, SplashWindow splashWindow) {
 
+        this.splashWindow = splashWindow;
+        splashWindow.notifyOfStep(SplashWindow.STEP_INIT_UI);
+        
         instance = this;
         this.gameManager = gameManager;
         uiHints = gameManager.getUIHints();
@@ -191,15 +197,22 @@ public class GameUIManager implements DialogOwner {
     public void gameUIInit(boolean newGame) {
 
         imageLoader = new ImageLoader();
+
+        splashWindow.notifyOfStep(SplashWindow.STEP_STOCK_CHART);
         stockChart = new StockChart(this);
+
+        splashWindow.notifyOfStep(SplashWindow.STEP_REPORT_WINDOW);
         if (Config.get("report.window.type").equalsIgnoreCase("static")) {
             reportWindow = new ReportWindow(this);
         } else {
             reportWindow = new ReportWindowDynamic(this);
         }
+        
+        splashWindow.notifyOfStep(SplashWindow.STEP_OR_WINDOW);
         orWindow = new ORWindow(this);
         orUIManager = orWindow.getORUIManager();
 
+        splashWindow.notifyOfStep(SplashWindow.STEP_STATUS_WINDOW);
         String statusWindowClassName = getClassName(GuiDef.ClassName.STATUS_WINDOW);
         try {
             Class<? extends StatusWindow> statusWindowClass =
@@ -220,21 +233,26 @@ public class GameUIManager implements DialogOwner {
 
         // removed for reloaded games to avoid double revenue calculation
         if (newGame) {
+            splashWindow.notifyOfStep(SplashWindow.STEP_INIT_NEW_GAME);
             updateUI();
         }
 
         reportWindow.scrollDown();
 
         // define configWindow
+        splashWindow.notifyOfStep(SplashWindow.STEP_CONFIG_WINDOW);
         configWindow = new ConfigWindow(true);
         configWindow.init();
 
         // notify sound manager of game initialization
+        splashWindow.notifyOfStep(SplashWindow.STEP_INIT_SOUND);
         SoundManager.notifyOfGameInit(gameManager);
     }
 
     public void startLoadedGame() {
         gameUIInit(false); // false indicates reload
+        
+        splashWindow.notifyOfStep(SplashWindow.STEP_INIT_LOADED_GAME);
         processAction(new NullAction(NullAction.START_GAME));
         statusWindow.setGameActions();
     }
@@ -455,7 +473,7 @@ public class GameUIManager implements DialogOwner {
                 boolean stockChartVisibilityHint = hint.getVisibility()
                 || configuredStockChartVisibility;
                 if (stockChartVisibilityHint != previousStockChartVisibilityHint) {
-                    stockChart.setVisible(stockChartVisibilityHint);
+                    setMeVisible(stockChart,stockChartVisibilityHint);
                     previousStockChartVisibilityHint = stockChartVisibilityHint;
                 }
                 if (hint.getVisibility()) stockChart.toFront();
@@ -463,7 +481,7 @@ public class GameUIManager implements DialogOwner {
             case STATUS:
                 boolean statusWindowVisibilityHint = hint.getVisibility();
                 if (statusWindowVisibilityHint != previousStatusWindowVisibilityHint) {
-                    statusWindow.setVisible(statusWindowVisibilityHint);
+                    setMeVisible(statusWindow,statusWindowVisibilityHint);
                     previousStatusWindowVisibilityHint = statusWindowVisibilityHint;
                 }
                 if (statusWindowVisibilityHint) statusWindow.toFront();
@@ -471,7 +489,7 @@ public class GameUIManager implements DialogOwner {
             case MAP:
                 boolean orWindowVisibilityHint = hint.getVisibility();
                 if (orWindowVisibilityHint != previousORWindowVisibilityHint) {
-                    orWindow.setVisible(orWindowVisibilityHint);
+                    setMeVisible(orWindow,orWindowVisibilityHint);
                     previousORWindowVisibilityHint = orWindowVisibilityHint;
                 }
                 if (orWindowVisibilityHint) orWindow.toFront();
@@ -493,7 +511,7 @@ public class GameUIManager implements DialogOwner {
         if (uiHints.getActivePanel() == GuiDef.Panel.START_ROUND) {
             log.debug("Entering Start Round UI type");
             activeWindow = startRoundWindow;
-            startRoundWindow.setVisible(true);
+            setMeVisible(startRoundWindow,true);
             startRoundWindow.toFront();
 
         } else if (uiHints.getActivePanel() == GuiDef.Panel.STATUS || correctionOverride) {
@@ -501,14 +519,14 @@ public class GameUIManager implements DialogOwner {
             log.debug("Entering Stock Round UI type");
             activeWindow = statusWindow;
             stockChart.setVisible(true);
-            statusWindow.setVisible(true);
+            setMeVisible(statusWindow,true);
             statusWindow.toFront();
 
         } else if (uiHints.getActivePanel() == GuiDef.Panel.MAP  && !correctionOverride) {
 
             log.debug("Entering Operating Round UI type ");
             activeWindow = orWindow;
-            orWindow.setVisible(true);
+            setMeVisible(orWindow,true);
             orWindow.toFront();
         }
 
@@ -1113,5 +1131,46 @@ public class GameUIManager implements DialogOwner {
         Scale.initFromConfiguration();
         instance.initFontSettings();
         instance.updateWindowsLookAndFeel();
+    }
+    
+    /**
+     * Only set frame directly to visible if the splash phase is already over.
+     * Otherwise, the splash framework remembers this visibility request and
+     * postpones the setVisible to the point in time where the splash is completed.
+     */
+    public void setMeVisible(JFrame frame, boolean setToVisible) {
+        if (splashWindow == null) {
+            frame.setVisible(setToVisible);
+        } else {
+            splashWindow.registerFrameForDeferredVisibility(frame,setToVisible);
+        }
+    }
+
+    /**
+     * called when the splash process is completed 
+     * (and visibility changes are not to be deferred any more)
+     */
+    public void notifyOfSplashFinalization() {
+        splashWindow = null;
+    }
+
+    /**
+     * Packs specified frame and tries to apply user defined size afterwards.
+     * These actions are performed within the EDT as the caller is assumed to
+     * be run by a non-EDT thread.
+     */
+    public void packAndApplySizing(JFrame frame) {
+        final JFrame finalFrame = frame;
+        SwingUtilities.invokeLater(new Thread() {
+            public void run() {
+                finalFrame.pack();
+        
+                WindowSettings ws = getWindowSettings();
+                Rectangle bounds = ws.getBounds(finalFrame);
+                if (bounds.x != -1 && bounds.y != -1) finalFrame.setLocation(bounds.getLocation());
+                if (bounds.width != -1 && bounds.height != -1) finalFrame.setSize(bounds.getSize());
+                ws.set(finalFrame);
+            }
+        });
     }
 }

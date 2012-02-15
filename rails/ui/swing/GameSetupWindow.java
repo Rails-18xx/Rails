@@ -536,8 +536,8 @@ public class GameSetupWindow extends JDialog implements ActionListener {
             configWindow = null;
         }
 
+        gameUIManager.notifyOfSplashFinalization();
         splashWindow.finalizeGameInit();
-        splashWindow.dispose();
         splashWindow = null;
     }
 
