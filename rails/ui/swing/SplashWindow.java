@@ -3,9 +3,7 @@
  */
 package rails.ui.swing;
 
-import java.awt.Container;
 import java.awt.Rectangle;
-import java.awt.Window;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,38 +25,42 @@ public class SplashWindow {
     public static String STEP_INIT_UI = "2";
     public static String STEP_STOCK_CHART = "3";
     public static String STEP_REPORT_WINDOW = "4";
-    public static String STEP_OR_WINDOW = "5";
+    public static String STEP_OR_INIT_DOCKING_FRAME = "5A";
+    public static String STEP_OR_INIT_PANELS = "5B";
+    public static String STEP_OR_INIT_TILES = "5C";
     public static String STEP_STATUS_WINDOW = "6";
     public static String STEP_INIT_NEW_GAME = "7";
     public static String STEP_CONFIG_WINDOW = "8";
     public static String STEP_INIT_SOUND = "9";
     public static String STEP_INIT_LOADED_GAME = "10";
 
-    private static class StepWeight {
-        int weight;
+    private static class StepDuration {
+        int expDurationInMillis;
         String labelConfigKey;
-        StepWeight(int weight,String labelConfigKey) {
-            this.weight = weight;
+        StepDuration(int expDurationInMillis,String labelConfigKey) {
+            this.expDurationInMillis = expDurationInMillis;
             this.labelConfigKey = labelConfigKey;
         }
     }
-    private static StepWeight[] stepWeights = {
-            new StepWeight ( 0, "Start"), // used to facilitate array border handling
-            new StepWeight ( 2, STEP_LOAD_GAME ),
-            new StepWeight ( 1, STEP_INIT_UI ),
-            new StepWeight ( 1, STEP_STOCK_CHART ),
-            new StepWeight ( 1, STEP_REPORT_WINDOW ),
-            new StepWeight ( 4, STEP_OR_WINDOW ),
-            new StepWeight ( 2, STEP_STATUS_WINDOW ),
-            new StepWeight ( 1, STEP_INIT_NEW_GAME ),
-            new StepWeight ( 2, STEP_CONFIG_WINDOW ),
-            new StepWeight ( 1, STEP_INIT_SOUND ),
-            new StepWeight ( 1, STEP_INIT_LOADED_GAME ),
-            new StepWeight ( 0, "End"), // used to facilitate array border handling
+    private static StepDuration[] stepDuration = {
+            new StepDuration ( 0, "Start"), // used to facilitate array border handling
+            new StepDuration ( 6000, STEP_LOAD_GAME ),
+            new StepDuration ( 500, STEP_INIT_UI ),
+            new StepDuration ( 230, STEP_STOCK_CHART ),
+            new StepDuration ( 850, STEP_REPORT_WINDOW ),
+            new StepDuration ( 2600, STEP_OR_INIT_DOCKING_FRAME ),
+            new StepDuration ( 1650, STEP_OR_INIT_PANELS ),
+            new StepDuration ( 7000, STEP_OR_INIT_TILES ),
+            new StepDuration ( 400, STEP_STATUS_WINDOW ),
+            new StepDuration ( 300, STEP_INIT_NEW_GAME ),
+            new StepDuration ( 1200, STEP_CONFIG_WINDOW ),
+            new StepDuration ( 200, STEP_INIT_SOUND ),
+            new StepDuration ( 1000, STEP_INIT_LOADED_GAME ),
+            new StepDuration ( 0, "End"), // used to facilitate array border handling
     };
 
-    private int totalWeight = 0;
-    private int[] cumulativeWeight;
+    private int totalDuration = 0;
+    private int[] cumulativeDuration;
     
     private Set<JFrame> framesRegisteredAsVisible = new HashSet<JFrame>();
     
@@ -66,7 +68,7 @@ public class SplashWindow {
 
     //TODO remove temp label
     private JLabel tempL;
-    
+
     public SplashWindow() {
         myWin = new JWindow();
         myWin.setBounds(new Rectangle(200,200,400,200));
@@ -78,17 +80,17 @@ public class SplashWindow {
         //TODO set up frame (incl. title, icons, bar, status text)
         myWin.setVisible(true);
         
-        cumulativeWeight = new int[stepWeights.length];
-        for (int i = 0 ; i < stepWeights.length ; i++) {
-            totalWeight += stepWeights[i].weight;
-            cumulativeWeight[i] = totalWeight;
+        cumulativeDuration = new int[stepDuration.length];
+        for (int i = 0 ; i < stepDuration.length ; i++) {
+            totalDuration += stepDuration[i].expDurationInMillis;
+            cumulativeDuration[i] = totalDuration;
         }
     }
     
     public void notifyOfStep(String stepLabelConfigKey) {
         myWin.toFront();
-        for (int i = 0 ; i < stepWeights.length ; i++) {
-            if (stepWeights[i].labelConfigKey.equals(stepLabelConfigKey)) {
+        for (int i = 0 ; i < stepDuration.length ; i++) {
+            if (stepDuration[i].labelConfigKey.equals(stepLabelConfigKey)) {
                 setCurrentStep(i);
             }
         }
@@ -96,8 +98,8 @@ public class SplashWindow {
 
     private void setCurrentStep(int currentStep) {
         //everything until i-1 is done, as i has now begun
-        double percentage = 100.0 * cumulativeWeight[currentStep-1] / totalWeight;
-        tempL.setText("<html>" + percentage + "<br>" + stepWeights[currentStep].labelConfigKey + "</html>");
+        double percentage = 100.0 * cumulativeDuration[currentStep-1] / totalDuration;
+        tempL.setText("<html>" + percentage + "<br>" + stepDuration[currentStep].labelConfigKey + "</html>");
         //TODO update bar
     }
     /**
@@ -112,7 +114,7 @@ public class SplashWindow {
     }
     
     public void finalizeGameInit() {
-        setCurrentStep(stepWeights.length - 1);
+        setCurrentStep(stepDuration.length - 1);
         
         //finally restore visibility of registered frames
         //only after EDT is ready (as window built-up could still be pending)

@@ -47,10 +47,12 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
     protected static Logger log =
             Logger.getLogger(ORWindow.class.getPackage().getName());
 
-    public ORWindow(GameUIManager gameUIManager) {
-        super( "yes".equals(Config.get("or.window.dockablePanels")) );
+    public ORWindow(GameUIManager gameUIManager,SplashWindow splashWindow) {
+        super( "yes".equals(Config.get("or.window.dockablePanels")) , splashWindow );
         this.gameUIManager = gameUIManager;
 
+        splashWindow.notifyOfStep(SplashWindow.STEP_OR_INIT_PANELS);
+        
         String orUIManagerClassName = gameUIManager.getClassName(GuiDef.ClassName.OR_UI_MANAGER);
         try {
             Class<? extends ORUIManager> orUIManagerClass =
@@ -82,6 +84,8 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
             //adding upgrade panel buttons on top
             orPanel.addToButtonPanel(upgradePanel.getButtons(),0);
             
+            splashWindow.notifyOfStep(SplashWindow.STEP_OR_INIT_TILES);
+
             //initialize remaining tile panel as it is no optional part in the docking layout
             JScrollPane remainingTilesPanelSlider = 
                     new RemainingTilesWindow(this).getScrollPane();
@@ -106,7 +110,7 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
                     "Dockable.orWindow.buttonPanel",
                     0, 95, 100, 5, DockableProperty.standard);
             deployDockables();
-            
+
             //take over or panel's menu bar as the frame menu bar
             JMenuBar menuBar = orPanel.getMenuBar();
             addDockingFrameMenu(menuBar);
