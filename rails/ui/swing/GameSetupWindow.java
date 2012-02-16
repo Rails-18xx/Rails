@@ -228,7 +228,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
      */
     private void loadAndStartGame(String filePath, String saveDirectory) {
         prepareGameUIInit();
-        SplashWindow splashWindow = new SplashWindow();
+        SplashWindow splashWindow = new SplashWindow(true);
         splashWindow.notifyOfStep(SplashWindow.STEP_LOAD_GAME);
         if ((game = Game.load(filePath)) == null) {
             JOptionPane.showMessageDialog(this,
@@ -517,7 +517,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
                 System.exit(-1);
             }
             prepareGameUIInit();
-            SplashWindow splashWindow = new SplashWindow();
+            SplashWindow splashWindow = new SplashWindow(false);
             startGameUIManager (game, false, splashWindow);
             gameUIManager.gameUIInit(true); // true indicates new game
             completeGameUIInit(splashWindow);

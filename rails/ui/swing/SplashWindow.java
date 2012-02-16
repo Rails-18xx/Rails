@@ -2,6 +2,7 @@ package rails.ui.swing;
 
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -10,6 +11,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
+
+import rails.common.parser.Config;
 
 /**
  * Splash window shown during setup of game UI components and game loading.
@@ -43,6 +46,17 @@ public class SplashWindow {
     public static String STEP_INIT_SOUND = "9";
     public static String STEP_INIT_LOADED_GAME = "10";
     public static String STEP_FINALIZE = "11";
+    
+    private static List<String> STEP_GROUP_LOAD = Arrays.asList(new String[] {
+            STEP_LOAD_GAME,
+            STEP_INIT_LOADED_GAME
+    });
+
+    private static List<String> STEP_GROUP_DOCKING_LAYOUT = Arrays.asList(new String[] {
+            STEP_OR_INIT_DOCKING_FRAME,
+            STEP_OR_INIT_TILES,
+            STEP_OR_APPLY_DOCKING_FRAME,
+    });
 
     private static class StepDuration {
         long expectedDurationInMillis;
@@ -62,7 +76,7 @@ public class SplashWindow {
             new StepDuration ( 2600, STEP_OR_INIT_DOCKING_FRAME ),
             new StepDuration ( 1650, STEP_OR_INIT_PANELS ),
             new StepDuration ( 5000, STEP_OR_INIT_TILES ),
-            new StepDuration ( 3000, STEP_OR_APPLY_DOCKING_FRAME ),
+            new StepDuration ( 1000, STEP_OR_APPLY_DOCKING_FRAME ),
             new StepDuration ( 400, STEP_STATUS_WINDOW ),
             new StepDuration ( 300, STEP_INIT_NEW_GAME ),
             new StepDuration ( 1200, STEP_CONFIG_WINDOW ),
@@ -86,20 +100,27 @@ public class SplashWindow {
 
     private int currentStep = 1; //the start step
 
-    public SplashWindow() {
+    public SplashWindow(boolean isLoad) {
         myWin = new JWindow();
         myWin.setBounds(new Rectangle(200,200,400,200));
         
         //TODO remove temp
-        tempL = new JLabel("sghsghsghsfghws");
+        tempL = new JLabel("");
         myWin.getContentPane().add(tempL);
         tempL.setVisible(true);
         //TODO set up frame (incl. title, icons, bar, status text)
         myWin.setVisible(true);
         
+        //calculate estimated duration for the respective steps
         cumulativeDuration = new long[stepDuration.length];
+        boolean isDockingLayout = "yes".equals(Config.get("or.window.dockablePanels"));
         for (int i = 0 ; i < stepDuration.length ; i++) {
-            totalDuration += stepDuration[i].expectedDurationInMillis;
+            //only consider step if relevant for this setup
+            if ( (isLoad || !STEP_GROUP_LOAD.contains(stepDuration[i].labelConfigKey))
+                    &&
+                 (isDockingLayout || !STEP_GROUP_DOCKING_LAYOUT.contains(stepDuration[i].labelConfigKey)) ) {
+                totalDuration += stepDuration[i].expectedDurationInMillis;
+            }
             cumulativeDuration[i] = totalDuration;
         }
 

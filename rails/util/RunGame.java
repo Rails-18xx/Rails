@@ -49,7 +49,7 @@ public class RunGame {
 
     static void loadGame (String[] args) {
 
-        SplashWindow splashWindow = new SplashWindow();
+        SplashWindow splashWindow = new SplashWindow(true);
         splashWindow.notifyOfStep(SplashWindow.STEP_LOAD_GAME);
 
         Game game = null;
