@@ -1,7 +1,9 @@
 package rails.ui.swing;
 
 import java.awt.Rectangle;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.swing.JFrame;
@@ -40,6 +42,7 @@ public class SplashWindow {
     public static String STEP_CONFIG_WINDOW = "8";
     public static String STEP_INIT_SOUND = "9";
     public static String STEP_INIT_LOADED_GAME = "10";
+    public static String STEP_FINALIZE = "11";
 
     private static class StepDuration {
         long expectedDurationInMillis;
@@ -59,12 +62,13 @@ public class SplashWindow {
             new StepDuration ( 2600, STEP_OR_INIT_DOCKING_FRAME ),
             new StepDuration ( 1650, STEP_OR_INIT_PANELS ),
             new StepDuration ( 5000, STEP_OR_INIT_TILES ),
-            new StepDuration ( 2000, STEP_OR_APPLY_DOCKING_FRAME ),
+            new StepDuration ( 3000, STEP_OR_APPLY_DOCKING_FRAME ),
             new StepDuration ( 400, STEP_STATUS_WINDOW ),
             new StepDuration ( 300, STEP_INIT_NEW_GAME ),
             new StepDuration ( 1200, STEP_CONFIG_WINDOW ),
             new StepDuration ( 200, STEP_INIT_SOUND ),
             new StepDuration ( 1000, STEP_INIT_LOADED_GAME ),
+            new StepDuration ( 1000, STEP_FINALIZE),
             new StepDuration ( 0, DUMMY_STEP_END), // used to facilitate array border handling
     };
 
@@ -72,6 +76,7 @@ public class SplashWindow {
     private long[] cumulativeDuration;
     
     private Set<JFrame> framesRegisteredAsVisible = new HashSet<JFrame>();
+    private List<JFrame> framesRegisteredToFront = new ArrayList<JFrame>();
     
     private JWindow myWin;
     private ProgressVisualizer progressVisualizer;
@@ -119,7 +124,8 @@ public class SplashWindow {
         //update current step (including description)
         if (currentStep != this.currentStep) {
             this.currentStep = currentStep;
-            if (currentStep != 0 && currentStep != stepDuration.length - 1) {
+            //only display step description for non-dummy steps
+            if (stepDuration[currentStep].expectedDurationInMillis > 0) {
                 //TODO
             }
         }
@@ -143,19 +149,38 @@ public class SplashWindow {
         }
     }
     
+    /**
+     * Remembers that this frame is to be put to front at the end of the splash process
+     * Handles the list of to front requests in order to
+     *  - apply all requests in a FIFO manner
+     *  - ensure that each frame is only sent to the front once (at the latest registered time) 
+     */
+    public void registerFrameForDeferredToFront(JFrame frame) {
+        framesRegisteredToFront.remove(frame);
+        framesRegisteredToFront.add(frame);
+    }
+    
     public void finalizeGameInit() {
-        progressVisualizer.setCurrentStep(stepDuration.length - 1);
+        notifyOfStep(STEP_FINALIZE);
         
-        //finally restore visibility of registered frames
+        //finally restore visibility / toFront of registered frames
         //only after EDT is ready (as window built-up could still be pending)
-        SwingUtilities.invokeLater(new Thread() {
-            @Override
-            public void run() {
-                for (JFrame frame : framesRegisteredAsVisible) {
-                    frame.setVisible(true);
+        //block any frame disposal to the point in time when this is through
+        try {
+            SwingUtilities.invokeAndWait(new Thread() {
+                @Override
+                public void run() {
+                    //visibility
+                    for (JFrame frame : framesRegisteredAsVisible) {
+                        frame.setVisible(true);
+                    }
+                    //to front
+                    for (JFrame frame : framesRegisteredToFront) {
+                        frame.toFront();
+                    }
                 }
-            }
-        });
+            });
+        } catch (Exception e) {}
         
         progressVisualizer.interrupt();
 
@@ -164,24 +189,24 @@ public class SplashWindow {
     }
 
     private class ProgressVisualizer extends Thread {
-        private long elapsedDuration = 0;
+        private long elapsedTime = 0;
         private int currentStep = 0;
         @Override
         public void run() {
             try {
                 while (!isInterrupted()) {
-                    visualizeProgress(elapsedDuration, currentStep);
+                    visualizeProgress(elapsedTime, currentStep);
     
                     sleep(PROGRESS_UPDATE_INTERVAL);
     
                     //adjusted elapsed duration
                     synchronized (this) {
-                        elapsedDuration += PROGRESS_UPDATE_INTERVAL;
+                        elapsedTime += PROGRESS_UPDATE_INTERVAL;
                         //elapsed duration must remain within the bounds of the estimated cumulative duration
                         //between the end of last step and the end of the current step
-                        elapsedDuration = Math.max ( 
+                        elapsedTime = Math.max ( 
                             cumulativeDuration[currentStep-1],
-                            Math.min( elapsedDuration, cumulativeDuration[currentStep] )
+                            Math.min( elapsedTime, cumulativeDuration[currentStep] )
                         );
                     }
                 }
@@ -190,6 +215,7 @@ public class SplashWindow {
 
         synchronized private void setCurrentStep(int currentStep) {
             this.currentStep = currentStep;
+            //System.out.println("Time: "+elapsedTime + " (Step: "+stepDuration[currentStep].labelConfigKey+")");
         }
     }
 }
