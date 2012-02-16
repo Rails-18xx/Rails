@@ -41,6 +41,8 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
     public int getRelativeORNumber();
     public int getAbsoluteORNumber ();
 
+    public int getStartRoundNumber ();
+
     public abstract int getSRNumber();
 
     public abstract void startShareSellingRound(Player player, int cashToRaise,
@@ -101,7 +103,7 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
     public abstract RoundI getCurrentRound();
 
     public abstract ModelObject getCurrentRoundModel();
-    
+
     public abstract ModelObject getCurrentPlayerModel();
 
     /**

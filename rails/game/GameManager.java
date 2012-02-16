@@ -110,6 +110,9 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     protected State currentRound = new State("CurrentRound", Round.class);
     protected RoundI interruptedRound = null;
 
+    /** Number of the current start round.  Currently only used in some 1835 variants. */
+    protected IntegerState startRoundNumber = new IntegerState ("StartRoundNumber", 0);
+
     protected IntegerState srNumber = new IntegerState ("SRNumber");
 
     protected IntegerState absoluteORNumber =
@@ -721,6 +724,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             System.exit(1);
         }
         StartRound startRound = createRound (startRoundClass);
+        startRoundNumber.add(1);
         startRound.start ();
     }
 
@@ -805,6 +809,9 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         return numOfORs.getText();
     }
 
+    public int getStartRoundNumber () {
+        return startRoundNumber.intValue();
+    }
     /* (non-Javadoc)
      * @see rails.game.GameManagerI#getSRNumber()
      */

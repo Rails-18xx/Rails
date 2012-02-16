@@ -16,10 +16,7 @@ import rails.game.state.IntegerState;
 public class StartRound_1835 extends StartRound {
 
     /* To control the player sequence in the Clemens and Snake variants */
-    private static IntegerState turn = new IntegerState("TurnNumber", 0);
-
-    private static IntegerState startRoundNumber =
-        new IntegerState("StartRoundNumber", 0);
+    private IntegerState turn = new IntegerState("TurnNumber", 0);
 
     /* Additional variants */
     public static final String CLEMENS_VARIANT = "Clemens";
@@ -41,7 +38,6 @@ public class StartRound_1835 extends StartRound {
     @Override
     public void start() {
         super.start();
-        startRoundNumber.add(1);
 
         if (variant.equalsIgnoreCase(CLEMENS_VARIANT)) {
             setCurrentPlayerIndex (numPlayers-1);
@@ -173,7 +169,7 @@ public class StartRound_1835 extends StartRound {
 
         /* Select the player that has the turn. */
 
-        if (startRoundNumber.intValue() == 1) {
+        if (gameManager.getStartRoundNumber() == 1) {
             /*
              * Some variants have a reversed player order in the first or second
              * cycle of the first round (a cycle spans one turn of all players).
@@ -203,9 +199,11 @@ public class StartRound_1835 extends StartRound {
             setCurrentPlayerIndex(newIndex);
             Player newPlayer = getCurrentPlayer();
             log.debug("Game turn has moved from " + oldPlayer.getName()
-                    + " to " + newPlayer.getName() + " [startRound="
-                    + startRoundNumber + " cycle=" + cycleNumber + " turn="
-                    + turnNumber + " newIndex=" + newIndex + "]");
+                    + " to " + newPlayer.getName()
+                    + " [startRound=" + gameManager.getStartRoundNumber()
+                    + " cycle=" + cycleNumber
+                    + " turn=" + turnNumber
+                    + " newIndex=" + newIndex + "]");
 
         } else {
 
