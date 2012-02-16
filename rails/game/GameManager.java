@@ -136,6 +136,12 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         new EnumMap<GuiDef.Parm, Boolean>(GuiDef.Parm.class);
 
     /**
+     * Update:
+     * NDC concept has been replaced by the origin singleton one.
+     * Target design to be decided when distributed rails is being conceived
+     * and developed.
+     * 
+     * Former design:
      * Map of GameManager instances.
      * Currently there can be only one instance, but in a possible
      * future multi-game server there may be several instances
@@ -237,8 +243,8 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     public GameManager() {
         gmName = GM_NAME;
         gmKey = GM_KEY;
-        NDC.clear();
-        NDC.push (GM_KEY);
+        //NDC.clear();
+        //NDC.push (GM_KEY);
         gameManagerMap.put(GM_KEY, this);
         displayBuffer = new DisplayBuffer();
         reportBuffer = new ReportBuffer();
@@ -633,7 +639,8 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
      * @return instance of GameManager
      */
     public static GameManagerI getInstance () {
-        return gameManagerMap.get(NDC.peek());
+//        return gameManagerMap.get(NDC.peek());
+        return gameManagerMap.get(GM_KEY);
     }
 
     /* (non-Javadoc)
