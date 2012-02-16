@@ -138,6 +138,12 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         new EnumMap<GuiDef.Parm, Boolean>(GuiDef.Parm.class);
 
     /**
+     * Update:
+     * NDC concept has been replaced by the origin singleton one.
+     * Target design to be decided when distributed rails is being conceived
+     * and developed.
+     * 
+     * Former design:
      * Map of GameManager instances.
      * Currently there can be only one instance, but in a possible
      * future multi-game server there may be several instances
