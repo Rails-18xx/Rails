@@ -1,6 +1,3 @@
-/**
- * 
- */
 package rails.ui.swing;
 
 import java.awt.Rectangle;
@@ -21,6 +18,15 @@ import javax.swing.SwingUtilities;
  */
 public class SplashWindow {
 
+    /**
+     * in millisecs
+     */
+    private static long PROGRESS_UPDATE_INTERVAL = 100;
+
+    private static String DUMMY_STEP_BEFORE_START = "-1";
+    private static String DUMMY_STEP_START = "0";
+    private static String DUMMY_STEP_END = "inf";
+
     public static String STEP_LOAD_GAME = "1";
     public static String STEP_INIT_UI = "2";
     public static String STEP_STOCK_CHART = "3";
@@ -36,15 +42,16 @@ public class SplashWindow {
     public static String STEP_INIT_LOADED_GAME = "10";
 
     private static class StepDuration {
-        int expectedDurationInMillis;
+        long expectedDurationInMillis;
         String labelConfigKey;
-        StepDuration(int expDurationInMillis,String labelConfigKey) {
-            this.expectedDurationInMillis = expDurationInMillis;
+        StepDuration(int expectedDurationInMillis,String labelConfigKey) {
+            this.expectedDurationInMillis = expectedDurationInMillis;
             this.labelConfigKey = labelConfigKey;
         }
     }
     private static StepDuration[] stepDuration = {
-            new StepDuration ( 0, "Start"), // used to facilitate array border handling
+            new StepDuration ( 0, DUMMY_STEP_BEFORE_START), // used to facilitate array border handling
+            new StepDuration ( 0, DUMMY_STEP_START), // used to facilitate array border handling
             new StepDuration ( 6000, STEP_LOAD_GAME ),
             new StepDuration ( 500, STEP_INIT_UI ),
             new StepDuration ( 230, STEP_STOCK_CHART ),
@@ -58,18 +65,21 @@ public class SplashWindow {
             new StepDuration ( 1200, STEP_CONFIG_WINDOW ),
             new StepDuration ( 200, STEP_INIT_SOUND ),
             new StepDuration ( 1000, STEP_INIT_LOADED_GAME ),
-            new StepDuration ( 0, "End"), // used to facilitate array border handling
+            new StepDuration ( 0, DUMMY_STEP_END), // used to facilitate array border handling
     };
 
-    private int totalDuration = 0;
-    private int[] cumulativeDuration;
+    private long totalDuration = 0;
+    private long[] cumulativeDuration;
     
     private Set<JFrame> framesRegisteredAsVisible = new HashSet<JFrame>();
     
     private JWindow myWin;
+    private ProgressVisualizer progressVisualizer;
 
     //TODO remove temp label
     private JLabel tempL;
+
+    private int currentStep = 1; //the start step
 
     public SplashWindow() {
         myWin = new JWindow();
@@ -82,28 +92,44 @@ public class SplashWindow {
         //TODO set up frame (incl. title, icons, bar, status text)
         myWin.setVisible(true);
         
-        cumulativeDuration = new int[stepDuration.length];
+        cumulativeDuration = new long[stepDuration.length];
         for (int i = 0 ; i < stepDuration.length ; i++) {
             totalDuration += stepDuration[i].expectedDurationInMillis;
             cumulativeDuration[i] = totalDuration;
         }
+
+        progressVisualizer = new ProgressVisualizer();
+        progressVisualizer.setCurrentStep(currentStep);
+        progressVisualizer.start();
     }
     
     public void notifyOfStep(String stepLabelConfigKey) {
         myWin.toFront();
         for (int i = 0 ; i < stepDuration.length ; i++) {
             if (stepDuration[i].labelConfigKey.equals(stepLabelConfigKey)) {
-                setCurrentStep(i);
+                progressVisualizer.setCurrentStep(i);
             }
         }
     }
 
-    private void setCurrentStep(int currentStep) {
-        //everything until i-1 is done, as i has now begun
-        double percentage = 100.0 * cumulativeDuration[currentStep-1] / totalDuration;
+    /**
+     * @param elapsedDuration Refers to a duration normalized based on the expected durations 
+     * of the process steps.
+     */
+    synchronized private void visualizeProgress(long elapsedDuration, int currentStep) {
+        //update current step (including description)
+        if (currentStep != this.currentStep) {
+            this.currentStep = currentStep;
+            if (currentStep != 0 && currentStep != stepDuration.length - 1) {
+                //TODO
+            }
+        }
+
+        //show progress
+        double percentage = 100.0 * elapsedDuration / totalDuration;
         tempL.setText("<html>" + percentage + "<br>" + stepDuration[currentStep].labelConfigKey + "</html>");
-        //TODO update bar
     }
+
     /**
      * Remembers that this frame is to be put to visible at the end of the splash process 
      */
@@ -116,7 +142,7 @@ public class SplashWindow {
     }
     
     public void finalizeGameInit() {
-        setCurrentStep(stepDuration.length - 1);
+        progressVisualizer.setCurrentStep(stepDuration.length - 1);
         
         //finally restore visibility of registered frames
         //only after EDT is ready (as window built-up could still be pending)
@@ -129,8 +155,39 @@ public class SplashWindow {
             }
         });
         
+        progressVisualizer.interrupt();
+
         myWin.dispose();
         
     }
 
+    private class ProgressVisualizer extends Thread {
+        private long elapsedDuration = 0;
+        private int currentStep = 0;
+        @Override
+        public void run() {
+            try {
+                while (!isInterrupted()) {
+                    visualizeProgress(elapsedDuration, currentStep);
+    
+                    sleep(PROGRESS_UPDATE_INTERVAL);
+    
+                    //adjusted elapsed duration
+                    synchronized (this) {
+                        elapsedDuration += PROGRESS_UPDATE_INTERVAL;
+                        //elapsed duration must remain within the bounds of the estimated cumulative duration
+                        //between the end of last step and the end of the current step
+                        elapsedDuration = Math.max ( 
+                            cumulativeDuration[currentStep-1],
+                            Math.min( elapsedDuration, cumulativeDuration[currentStep] )
+                        );
+                    }
+                }
+            } catch (InterruptedException e) {}
+        }
+
+        synchronized private void setCurrentStep(int currentStep) {
+            this.currentStep = currentStep;
+        }
+    }
 }
