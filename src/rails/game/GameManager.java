@@ -118,6 +118,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     protected final IntegerState startRoundNumber = IntegerState.create(this, "startRoundNumber");
     protected final IntegerState srNumber = IntegerState.create(this, "srNumber");
 
+
     protected final IntegerState absoluteORNumber = IntegerState.create(this, "absoluteORNUmber");
     protected final IntegerState relativeORNumber = IntegerState.create(this, "relativeORNumber");
     protected final IntegerState numOfORs = IntegerState.create(this, "numOfORs");
@@ -787,6 +788,9 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         return numOfORs.toText();
     }
 
+    public int getStartRoundNumber () {
+        return startRoundNumber.value();
+    }
     /* (non-Javadoc)
      * @see rails.game.GameManager#getSRNumber()
      */
