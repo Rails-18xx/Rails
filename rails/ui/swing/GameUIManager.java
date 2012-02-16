@@ -475,7 +475,7 @@ public class GameUIManager implements DialogOwner {
                     setMeVisible(stockChart,stockChartVisibilityHint);
                     previousStockChartVisibilityHint = stockChartVisibilityHint;
                 }
-                if (hint.getVisibility()) stockChart.toFront();
+                if (hint.getVisibility()) setMeToFront(stockChart);
                 break;
             case STATUS:
                 boolean statusWindowVisibilityHint = hint.getVisibility();
@@ -483,7 +483,7 @@ public class GameUIManager implements DialogOwner {
                     setMeVisible(statusWindow,statusWindowVisibilityHint);
                     previousStatusWindowVisibilityHint = statusWindowVisibilityHint;
                 }
-                if (statusWindowVisibilityHint) statusWindow.toFront();
+                if (statusWindowVisibilityHint) setMeToFront(statusWindow);
                 break;
             case MAP:
                 boolean orWindowVisibilityHint = hint.getVisibility();
@@ -491,7 +491,7 @@ public class GameUIManager implements DialogOwner {
                     setMeVisible(orWindow,orWindowVisibilityHint);
                     previousORWindowVisibilityHint = orWindowVisibilityHint;
                 }
-                if (orWindowVisibilityHint) orWindow.toFront();
+                if (orWindowVisibilityHint) setMeToFront(orWindow);
                 break;
             case START_ROUND:
                 // Handled elsewhere
@@ -511,7 +511,7 @@ public class GameUIManager implements DialogOwner {
             log.debug("Entering Start Round UI type");
             activeWindow = startRoundWindow;
             setMeVisible(startRoundWindow,true);
-            startRoundWindow.toFront();
+            setMeToFront(startRoundWindow);
 
         } else if (uiHints.getActivePanel() == GuiDef.Panel.STATUS || correctionOverride) {
 
@@ -519,14 +519,14 @@ public class GameUIManager implements DialogOwner {
             activeWindow = statusWindow;
             stockChart.setVisible(true);
             setMeVisible(statusWindow,true);
-            statusWindow.toFront();
+            setMeToFront(statusWindow);
 
         } else if (uiHints.getActivePanel() == GuiDef.Panel.MAP  && !correctionOverride) {
 
             log.debug("Entering Operating Round UI type ");
             activeWindow = orWindow;
             setMeVisible(orWindow,true);
-            orWindow.toFront();
+            setMeToFront(orWindow);
         }
 
 
@@ -1142,6 +1142,19 @@ public class GameUIManager implements DialogOwner {
             frame.setVisible(setToVisible);
         } else {
             splashWindow.registerFrameForDeferredVisibility(frame,setToVisible);
+        }
+    }
+
+    /**
+     * Only set frame directly to front if the splash phase is already over.
+     * Otherwise, the splash framework remembers this toFront request and
+     * postpones the toFront to the point in time where the splash is completed.
+     */
+    public void setMeToFront(JFrame frame) {
+        if (splashWindow == null) {
+            frame.toFront();
+        } else {
+            splashWindow.registerFrameForDeferredToFront(frame);
         }
     }
 
