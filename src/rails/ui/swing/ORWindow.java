@@ -190,7 +190,13 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
                 if (bounds.width != -1 && bounds.height != -1) setSize(bounds.getSize());
                 ws.set(frame);
 
-                if (isDockingFrameworkEnabled()) initLayout();
+                if (isDockingFrameworkEnabled()) {
+                    initLayout();
+                    
+                    //trigger early painting in order to parallelize OR window setup
+                    //with other setup activities
+                    repaint();
+                }
             }            
         });
 

@@ -39,14 +39,7 @@ public class RunGame {
     static void loadGameOnEventQueue(final String[] args)
     {
         try {
-            java.awt.EventQueue.invokeAndWait(
-                new Runnable()
-                {
-                    public void run() {
-                        loadGame(args);
-                    }
-                }
-            );
+            loadGame(args);
         } catch (Exception e) {
             System.err.println("Cannot load game: "+e.getMessage());
             e.printStackTrace(System.err);
