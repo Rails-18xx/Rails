@@ -104,7 +104,6 @@ public class SplashWindow {
     }
     
     public void notifyOfStep(String stepLabelConfigKey) {
-        myWin.toFront();
         for (int i = 0 ; i < stepDuration.length ; i++) {
             if (stepDuration[i].labelConfigKey.equals(stepLabelConfigKey)) {
                 progressVisualizer.setCurrentStep(i);
@@ -128,6 +127,9 @@ public class SplashWindow {
         //show progress
         double percentage = 100.0 * elapsedDuration / totalDuration;
         tempL.setText("<html>" + percentage + "<br>" + stepDuration[currentStep].labelConfigKey + "</html>");
+        
+        //ensure visibility of window
+        myWin.toFront();
     }
 
     /**
