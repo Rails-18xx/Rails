@@ -85,13 +85,13 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
             //adding upgrade panel buttons on top
             orPanel.addToButtonPanel(upgradePanel.getButtons(),0);
             
-            splashWindow.notifyOfStep(SplashWindow.STEP_OR_INIT_TILES);
-
             //initialize remaining tile panel as it is no optional part in the docking layout
+            splashWindow.notifyOfStep(SplashWindow.STEP_OR_INIT_TILES);
             JScrollPane remainingTilesPanelSlider = 
                     new RemainingTilesWindow(this).getScrollPane();
             
             //generate layout
+            splashWindow.notifyOfStep(SplashWindow.STEP_OR_APPLY_DOCKING_FRAME);
             addDockable ( messagePanelSlider, 
                     "Dockable.orWindow.messagePanel",
                     0, 0, 100, 10, DockableProperty.closeable);
