@@ -23,7 +23,7 @@ public class SplashWindow {
     /**
      * in millisecs
      */
-    private static long PROGRESS_UPDATE_INTERVAL = 100;
+    private static long PROGRESS_UPDATE_INTERVAL = 200;
 
     private static String DUMMY_STEP_BEFORE_START = "-1";
     private static String DUMMY_STEP_START = "0";
@@ -133,6 +133,11 @@ public class SplashWindow {
         //show progress
         double percentage = 100.0 * elapsedDuration / totalDuration;
         tempL.setText("<html>" + percentage + "<br>" + stepDuration[currentStep].labelConfigKey + "</html>");
+
+        //ensure that progress is updated even if EDT is very busy
+        //CAUTION: paintImmediately is called outside of EDT
+        //         works but not guideline-conform
+        tempL.paintImmediately(tempL.getBounds());
         
         //ensure visibility of window
         myWin.toFront();
