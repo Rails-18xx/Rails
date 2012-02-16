@@ -28,6 +28,7 @@ public class SplashWindow {
     public static String STEP_OR_INIT_DOCKING_FRAME = "5A";
     public static String STEP_OR_INIT_PANELS = "5B";
     public static String STEP_OR_INIT_TILES = "5C";
+    public static String STEP_OR_APPLY_DOCKING_FRAME = "5D";
     public static String STEP_STATUS_WINDOW = "6";
     public static String STEP_INIT_NEW_GAME = "7";
     public static String STEP_CONFIG_WINDOW = "8";
@@ -35,10 +36,10 @@ public class SplashWindow {
     public static String STEP_INIT_LOADED_GAME = "10";
 
     private static class StepDuration {
-        int expDurationInMillis;
+        int expectedDurationInMillis;
         String labelConfigKey;
         StepDuration(int expDurationInMillis,String labelConfigKey) {
-            this.expDurationInMillis = expDurationInMillis;
+            this.expectedDurationInMillis = expDurationInMillis;
             this.labelConfigKey = labelConfigKey;
         }
     }
@@ -50,7 +51,8 @@ public class SplashWindow {
             new StepDuration ( 850, STEP_REPORT_WINDOW ),
             new StepDuration ( 2600, STEP_OR_INIT_DOCKING_FRAME ),
             new StepDuration ( 1650, STEP_OR_INIT_PANELS ),
-            new StepDuration ( 7000, STEP_OR_INIT_TILES ),
+            new StepDuration ( 5000, STEP_OR_INIT_TILES ),
+            new StepDuration ( 2000, STEP_OR_APPLY_DOCKING_FRAME ),
             new StepDuration ( 400, STEP_STATUS_WINDOW ),
             new StepDuration ( 300, STEP_INIT_NEW_GAME ),
             new StepDuration ( 1200, STEP_CONFIG_WINDOW ),
@@ -82,7 +84,7 @@ public class SplashWindow {
         
         cumulativeDuration = new int[stepDuration.length];
         for (int i = 0 ; i < stepDuration.length ; i++) {
-            totalDuration += stepDuration[i].expDurationInMillis;
+            totalDuration += stepDuration[i].expectedDurationInMillis;
             cumulativeDuration[i] = totalDuration;
         }
     }
