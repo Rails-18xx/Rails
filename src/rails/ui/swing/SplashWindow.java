@@ -88,7 +88,7 @@ public class SplashWindow {
             new StepDuration ( 2600, STEP_OR_INIT_DOCKING_FRAME ),
             new StepDuration ( 1650, STEP_OR_INIT_PANELS ),
             new StepDuration ( 5000, STEP_OR_INIT_TILES ),
-            new StepDuration ( 1000, STEP_OR_APPLY_DOCKING_FRAME ),
+            new StepDuration ( 3000, STEP_OR_APPLY_DOCKING_FRAME ),
             new StepDuration ( 400, STEP_STATUS_WINDOW ),
             new StepDuration ( 300, STEP_INIT_NEW_GAME ),
             new StepDuration ( 1200, STEP_CONFIG_WINDOW ),
@@ -214,6 +214,7 @@ public class SplashWindow {
                 progressVisualizer.setCurrentStep(i);
             }
         }
+        
     }
 
     /**
@@ -226,26 +227,16 @@ public class SplashWindow {
             this.currentStep = currentStep;
             //only display step description for non-dummy steps
             if (stepDuration[currentStep].expectedDurationInMillis > 0) {
-                stepLabel.setText(stepDuration[currentStep].labelConfigKey);
-                enforeGUIUpdate(stepLabel);
+                stepLabel.setText(LocalText.getText(
+                        stepDuration[currentStep].labelConfigKey));
             }
         }
 
         //show progress
         progressBar.setValue((int)elapsedDuration);
-        enforeGUIUpdate(progressBar);
 
         //ensure visibility of window
         myWin.toFront();
-    }
-
-    /**
-     * ensure that progress is updated even if EDT is very busy
-     * CAUTION: paintImmediately is called outside of EDT
-     *          works but not guideline-conform
-     */
-    private void enforeGUIUpdate(JComponent c) {
-        c.paintImmediately(c.getBounds());
     }
 
     /**
