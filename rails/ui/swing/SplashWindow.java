@@ -2,6 +2,7 @@ package rails.ui.swing;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,6 +22,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
+import rails.common.LocalText;
 import rails.common.parser.Config;
 import rails.game.Game;
 
@@ -114,7 +116,7 @@ public class SplashWindow {
 
     private int currentStep = 1; //the start step
 
-    public SplashWindow(boolean isLoad) {
+    public SplashWindow(boolean isLoad, String initDetailsText) {
         //quit directly when no visualization required
         //all visualization related attributes remain null then
         if ("no".equals(Config.get("splash.window.open"))) return;
@@ -155,7 +157,10 @@ public class SplashWindow {
                 (float)2.0 * railsLabel.getFont().getSize()));
         railsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel commandLabel = new JLabel("Setting up new game / loading game");
+        String commandTextKey = isLoad ? "Splash.command.loadGame" : "Splash.command.newGame";
+        JLabel commandLabel = new JLabel(
+                LocalText.getText(commandTextKey,initDetailsText));
+        commandLabel.setFont(commandLabel.getFont().deriveFont(Font.ITALIC));
         commandLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         
         //plug elements together and set up layout
