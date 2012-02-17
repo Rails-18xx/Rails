@@ -87,20 +87,24 @@ public class SplashWindow {
     };
 
     private long totalDuration = 0;
-    private long[] cumulativeDuration;
+    private long[] cumulativeDuration = null;
     
     private Set<JFrame> framesRegisteredAsVisible = new HashSet<JFrame>();
     private List<JFrame> framesRegisteredToFront = new ArrayList<JFrame>();
     
-    private JWindow myWin;
-    private ProgressVisualizer progressVisualizer;
+    private JWindow myWin = null;
+    private ProgressVisualizer progressVisualizer = null;
 
     //TODO remove temp label
-    private JLabel tempL;
+    private JLabel tempL = null;
 
     private int currentStep = 1; //the start step
 
     public SplashWindow(boolean isLoad) {
+        //quit directly when no visualization required
+        //all visualization related attributes remain null then
+        if ("no".equals(Config.get("splash.window.open"))) return;
+        
         myWin = new JWindow();
         myWin.setBounds(new Rectangle(200,200,400,200));
         
@@ -130,6 +134,9 @@ public class SplashWindow {
     }
     
     public void notifyOfStep(String stepLabelConfigKey) {
+        //ignore if no visualization requested
+        if (myWin == null) return;
+        
         for (int i = 0 ; i < stepDuration.length ; i++) {
             if (stepDuration[i].labelConfigKey.equals(stepLabelConfigKey)) {
                 progressVisualizer.setCurrentStep(i);
@@ -208,10 +215,11 @@ public class SplashWindow {
             });
         } catch (Exception e) {}
         
-        progressVisualizer.interrupt();
-
-        myWin.dispose();
-        
+        //clean up visualization only if it was requested
+        if (myWin != null) {
+            progressVisualizer.interrupt();
+            myWin.dispose();
+        }
     }
 
     private class ProgressVisualizer extends Thread {
