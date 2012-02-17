@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -38,33 +39,33 @@ public class SplashWindow {
     /**
      * in millisecs
      */
-    private static long PROGRESS_UPDATE_INTERVAL = 200;
+    private final static long PROGRESS_UPDATE_INTERVAL = 200;
 
-    private static String DUMMY_STEP_BEFORE_START = "-1";
-    private static String DUMMY_STEP_START = "0";
-    private static String DUMMY_STEP_END = "inf";
+    private final static String DUMMY_STEP_BEFORE_START = "-1";
+    private final static String DUMMY_STEP_START = "0";
+    private final static String DUMMY_STEP_END = "inf";
 
-    public static String STEP_LOAD_GAME = "Splash.step.loadGame";
-    public static String STEP_INIT_UI = "Splash.step.initUI";
-    public static String STEP_STOCK_CHART = "Splash.step.stockChart";
-    public static String STEP_REPORT_WINDOW = "Splash.step.reportWindow";
-    public static String STEP_OR_INIT_DOCKING_FRAME = "Splash.step.or.initDockingFrame";
-    public static String STEP_OR_INIT_PANELS = "Splash.step.or.initPanels";
-    public static String STEP_OR_INIT_TILES = "Splash.step.or.initTiles";
-    public static String STEP_OR_APPLY_DOCKING_FRAME = "Splash.step.or.applyDockingFrame";
-    public static String STEP_STATUS_WINDOW = "Splash.step.statusWindow";
-    public static String STEP_INIT_NEW_GAME = "Splash.step.initNewGame";
-    public static String STEP_CONFIG_WINDOW = "Splash.step.configWindow";
-    public static String STEP_INIT_SOUND = "Splash.step.initSound";
-    public static String STEP_INIT_LOADED_GAME = "Splash.step.initLoadedGame";
-    public static String STEP_FINALIZE = "Splash.step.finalize";
+    public final static String STEP_LOAD_GAME = "Splash.step.loadGame";
+    public final static String STEP_INIT_UI = "Splash.step.initUI";
+    public final static String STEP_STOCK_CHART = "Splash.step.stockChart";
+    public final static String STEP_REPORT_WINDOW = "Splash.step.reportWindow";
+    public final static String STEP_OR_INIT_DOCKING_FRAME = "Splash.step.or.initDockingFrame";
+    public final static String STEP_OR_INIT_PANELS = "Splash.step.or.initPanels";
+    public final static String STEP_OR_INIT_TILES = "Splash.step.or.initTiles";
+    public final static String STEP_OR_APPLY_DOCKING_FRAME = "Splash.step.or.applyDockingFrame";
+    public final static String STEP_STATUS_WINDOW = "Splash.step.statusWindow";
+    public final static String STEP_INIT_NEW_GAME = "Splash.step.initNewGame";
+    public final static String STEP_CONFIG_WINDOW = "Splash.step.configWindow";
+    public final static String STEP_INIT_SOUND = "Splash.step.initSound";
+    public final static String STEP_INIT_LOADED_GAME = "Splash.step.initLoadedGame";
+    public final static String STEP_FINALIZE = "Splash.step.finalize";
     
-    private static List<String> STEP_GROUP_LOAD = Arrays.asList(new String[] {
+    private final static List<String> STEP_GROUP_LOAD = Arrays.asList(new String[] {
             STEP_LOAD_GAME,
             STEP_INIT_LOADED_GAME
     });
 
-    private static List<String> STEP_GROUP_DOCKING_LAYOUT = Arrays.asList(new String[] {
+    private final static List<String> STEP_GROUP_DOCKING_LAYOUT = Arrays.asList(new String[] {
             STEP_OR_INIT_DOCKING_FRAME,
             STEP_OR_INIT_TILES,
             STEP_OR_APPLY_DOCKING_FRAME,
@@ -78,7 +79,7 @@ public class SplashWindow {
             this.labelConfigKey = labelConfigKey;
         }
     }
-    private static StepDuration[] stepDuration = {
+    private final static StepDuration[] stepDuration = {
             new StepDuration ( 0, DUMMY_STEP_BEFORE_START), // used to facilitate array border handling
             new StepDuration ( 0, DUMMY_STEP_START), // used to facilitate array border handling
             new StepDuration ( 6000, STEP_LOAD_GAME ),
@@ -97,15 +98,22 @@ public class SplashWindow {
             new StepDuration ( 1000, STEP_FINALIZE),
             new StepDuration ( 0, DUMMY_STEP_END), // used to facilitate array border handling
     };
-
+    
     private long totalDuration = 0;
     private long[] cumulativeDuration = null;
     
     private Set<JFrame> framesRegisteredAsVisible = new HashSet<JFrame>();
     private List<JFrame> framesRegisteredToFront = new ArrayList<JFrame>();
     
-    private static Dimension iconSize = new Dimension(90,78);
-  
+    private final static String iconPath = "/images/icon/";
+    
+    private final static String[][] icons = new String[][] {
+        { "yellow_track.png" , "yellow_station.png" },
+        { "green_track.png" , "green_station.png" },
+        { "russet_track.png" , "russet_station.png" },
+        { "grey_track.png" , "grey_station.png" }
+    };
+
     private JWindow myWin = null;
     private JLabel leftIcon = null;
     private JLabel rightIcon = null;
@@ -114,7 +122,8 @@ public class SplashWindow {
 
     private ProgressVisualizer progressVisualizer = null;
 
-    private int currentStep = 1; //the start step
+    private int currentStep = 0;
+    private int currentIconIndex = 0;
 
     public SplashWindow(boolean isLoad, String initDetailsText) {
         //quit directly when no visualization required
@@ -139,16 +148,19 @@ public class SplashWindow {
         myWin = new JWindow();
 
         leftIcon = new JLabel();
-        leftIcon.setPreferredSize(iconSize);
+        setIcon(leftIcon,icons[currentIconIndex][0]);
+        leftIcon.setBorder(new CompoundBorder(new EmptyBorder(5,5,5,5),new EtchedBorder()));
         rightIcon = new JLabel();
-        rightIcon.setPreferredSize(iconSize);
+        setIcon(rightIcon,icons[currentIconIndex][1]);
+        rightIcon.setBorder(new CompoundBorder(new EmptyBorder(5,5,5,5),new EtchedBorder()));
 
         progressBar = new JProgressBar(0,(int)totalDuration);
         progressBar.setStringPainted(true);
         progressBar.setMinimum(0);
 
-        stepLabel = new JLabel();
+        stepLabel = new JLabel(" "); // needed in order to allocate vertical space
         stepLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        stepLabel.setBorder(new EmptyBorder(5,5,5,5));
 
         //set up static elements
 
@@ -160,7 +172,7 @@ public class SplashWindow {
         String commandTextKey = isLoad ? "Splash.command.loadGame" : "Splash.command.newGame";
         JLabel commandLabel = new JLabel(
                 LocalText.getText(commandTextKey,initDetailsText));
-        commandLabel.setFont(commandLabel.getFont().deriveFont(Font.ITALIC));
+        commandLabel.setFont(commandLabel.getFont().deriveFont(Font.BOLD));
         commandLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         
         //plug elements together and set up layout
@@ -169,12 +181,14 @@ public class SplashWindow {
         railsCommandPanel.setLayout(new BoxLayout(railsCommandPanel, BoxLayout.Y_AXIS));
         railsCommandPanel.add(railsLabel);
         railsCommandPanel.add(commandLabel);
+        railsCommandPanel.setBorder(new EmptyBorder(3,3,3,3));
         
         JPanel idPanel = new JPanel();
         idPanel.setLayout(new BoxLayout(idPanel, BoxLayout.X_AXIS));
         idPanel.add(leftIcon);
         idPanel.add(railsCommandPanel);
         idPanel.add(rightIcon);
+        idPanel.setBorder(new EmptyBorder(3,3,3,3));
         
         JComponent contentPane = (JComponent)myWin.getContentPane();
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
@@ -201,7 +215,7 @@ public class SplashWindow {
         } catch (Exception e) {}
 
         progressVisualizer = new ProgressVisualizer();
-        progressVisualizer.setCurrentStep(currentStep);
+        notifyOfStep(DUMMY_STEP_START);
         progressVisualizer.start();
     }
     
@@ -218,10 +232,10 @@ public class SplashWindow {
     }
 
     /**
-     * @param elapsedDuration Refers to a duration normalized based on the expected durations 
+     * @param elapsedTime Refers to a duration normalized based on the expected durations 
      * of the process steps.
      */
-    synchronized private void visualizeProgress(long elapsedDuration, int currentStep) {
+    synchronized private void visualizeProgress(long elapsedTime, int currentStep) {
         //update current step (including description)
         if (currentStep != this.currentStep) {
             this.currentStep = currentStep;
@@ -232,11 +246,30 @@ public class SplashWindow {
             }
         }
 
+        //update icon
+        int newIconIndex = (int)(icons.length * elapsedTime / totalDuration);
+        newIconIndex = Math.max( Math.min(icons.length-1 , newIconIndex) , 0);
+        if (newIconIndex != currentIconIndex) {
+            currentIconIndex = newIconIndex;
+            setIcon(leftIcon,icons[newIconIndex][0]);
+            setIcon(rightIcon,icons[newIconIndex][1]);
+        }
+        
         //show progress
-        progressBar.setValue((int)elapsedDuration);
+        progressBar.setValue((int)elapsedTime);
 
         //ensure visibility of window
         myWin.toFront();
+    }
+
+    private void setIcon(JLabel iconLabel, String iconFileName) {
+        String path = iconPath + iconFileName;
+        java.net.URL imgURL = getClass().getResource(path);
+        if (imgURL != null) {
+            iconLabel.setIcon(new ImageIcon(imgURL));
+        } else {
+            System.err.println("Couldn't find file: " + path);
+        }
     }
 
     /**
