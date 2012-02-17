@@ -191,10 +191,6 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
 
                 if (isDockingFrameworkEnabled()) {
                     initLayout();
-                    
-                    //trigger early painting in order to parallelize OR window setup
-                    //with other setup activities
-                    repaint();
                 }
             }            
         });
