@@ -1,18 +1,28 @@
 package rails.ui.swing;
 
-import java.awt.Rectangle;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.BoxLayout;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.EtchedBorder;
 
 import rails.common.parser.Config;
+import rails.game.RailsRoot;
 
 /**
  * Splash window shown during setup of game UI components and game loading.
@@ -32,20 +42,20 @@ public class SplashWindow {
     private static String DUMMY_STEP_START = "0";
     private static String DUMMY_STEP_END = "inf";
 
-    public static String STEP_LOAD_GAME = "1";
-    public static String STEP_INIT_UI = "2";
-    public static String STEP_STOCK_CHART = "3";
-    public static String STEP_REPORT_WINDOW = "4";
-    public static String STEP_OR_INIT_DOCKING_FRAME = "5A";
-    public static String STEP_OR_INIT_PANELS = "5B";
-    public static String STEP_OR_INIT_TILES = "5C";
-    public static String STEP_OR_APPLY_DOCKING_FRAME = "5D";
-    public static String STEP_STATUS_WINDOW = "6";
-    public static String STEP_INIT_NEW_GAME = "7";
-    public static String STEP_CONFIG_WINDOW = "8";
-    public static String STEP_INIT_SOUND = "9";
-    public static String STEP_INIT_LOADED_GAME = "10";
-    public static String STEP_FINALIZE = "11";
+    public static String STEP_LOAD_GAME = "Splash.step.loadGame";
+    public static String STEP_INIT_UI = "Splash.step.initUI";
+    public static String STEP_STOCK_CHART = "Splash.step.stockChart";
+    public static String STEP_REPORT_WINDOW = "Splash.step.reportWindow";
+    public static String STEP_OR_INIT_DOCKING_FRAME = "Splash.step.or.initDockingFrame";
+    public static String STEP_OR_INIT_PANELS = "Splash.step.or.initPanels";
+    public static String STEP_OR_INIT_TILES = "Splash.step.or.initTiles";
+    public static String STEP_OR_APPLY_DOCKING_FRAME = "Splash.step.or.applyDockingFrame";
+    public static String STEP_STATUS_WINDOW = "Splash.step.statusWindow";
+    public static String STEP_INIT_NEW_GAME = "Splash.step.initNewGame";
+    public static String STEP_CONFIG_WINDOW = "Splash.step.configWindow";
+    public static String STEP_INIT_SOUND = "Splash.step.initSound";
+    public static String STEP_INIT_LOADED_GAME = "Splash.step.initLoadedGame";
+    public static String STEP_FINALIZE = "Splash.step.finalize";
     
     private static List<String> STEP_GROUP_LOAD = Arrays.asList(new String[] {
             STEP_LOAD_GAME,
@@ -92,11 +102,15 @@ public class SplashWindow {
     private Set<JFrame> framesRegisteredAsVisible = new HashSet<JFrame>();
     private List<JFrame> framesRegisteredToFront = new ArrayList<JFrame>();
     
+    private static Dimension iconSize = new Dimension(90,78);
+  
     private JWindow myWin = null;
-    private ProgressVisualizer progressVisualizer = null;
+    private JLabel leftIcon = null;
+    private JLabel rightIcon = null;
+    private JProgressBar progressBar = null;
+    private JLabel stepLabel = null;
 
-    //TODO remove temp label
-    private JLabel tempL = null;
+    private ProgressVisualizer progressVisualizer = null;
 
     private int currentStep = 1; //the start step
 
@@ -104,17 +118,7 @@ public class SplashWindow {
         //quit directly when no visualization required
         //all visualization related attributes remain null then
         if ("no".equals(Config.get("splash.window.open"))) return;
-        
-        myWin = new JWindow();
-        myWin.setBounds(new Rectangle(200,200,400,200));
-        
-        //TODO remove temp
-        tempL = new JLabel("");
-        myWin.getContentPane().add(tempL);
-        tempL.setVisible(true);
-        //TODO set up frame (incl. title, icons, bar, status text)
-        myWin.setVisible(true);
-        
+
         //calculate estimated duration for the respective steps
         cumulativeDuration = new long[stepDuration.length];
         boolean isDockingLayout = "yes".equals(Config.get("or.window.dockablePanels"));
@@ -127,6 +131,69 @@ public class SplashWindow {
             }
             cumulativeDuration[i] = totalDuration;
         }
+
+        //set up dynamic elements
+
+        myWin = new JWindow();
+
+        leftIcon = new JLabel();
+        leftIcon.setPreferredSize(iconSize);
+        rightIcon = new JLabel();
+        rightIcon.setPreferredSize(iconSize);
+
+        progressBar = new JProgressBar(0,(int)totalDuration);
+        progressBar.setStringPainted(true);
+        progressBar.setMinimum(0);
+
+        stepLabel = new JLabel();
+        stepLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        //set up static elements
+
+        JLabel railsLabel = new JLabel("Rails " + RailsRoot.getFullVersion());
+        railsLabel.setFont(railsLabel.getFont().deriveFont( 
+                (float)2.0 * railsLabel.getFont().getSize()));
+        railsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel commandLabel = new JLabel("Setting up new game / loading game");
+        commandLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        //plug elements together and set up layout
+
+        JPanel railsCommandPanel = new JPanel();
+        railsCommandPanel.setLayout(new BoxLayout(railsCommandPanel, BoxLayout.Y_AXIS));
+        railsCommandPanel.add(railsLabel);
+        railsCommandPanel.add(commandLabel);
+        
+        JPanel idPanel = new JPanel();
+        idPanel.setLayout(new BoxLayout(idPanel, BoxLayout.X_AXIS));
+        idPanel.add(leftIcon);
+        idPanel.add(railsCommandPanel);
+        idPanel.add(rightIcon);
+        
+        JComponent contentPane = (JComponent)myWin.getContentPane();
+        contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
+        contentPane.add(idPanel);
+        contentPane.add(progressBar);
+        contentPane.add(stepLabel);
+        contentPane.setBorder(new CompoundBorder(new EtchedBorder(),new EmptyBorder(5,5,5,5)));
+        
+        //perform layout within the EDT
+        //blocking call as further initialization requires the layout to be frozen
+        try {
+            SwingUtilities.invokeAndWait(new Thread() {
+                @Override
+                public void run() {
+                    myWin.pack();
+                    Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+                    myWin.setLocation(
+                          (dim.width - myWin.getSize().width) / 2,
+                          (dim.height - myWin.getSize().height) / 2
+                    );
+                    myWin.setVisible(true);
+                }
+            });
+        } catch (Exception e) {}
 
         progressVisualizer = new ProgressVisualizer();
         progressVisualizer.setCurrentStep(currentStep);
@@ -154,21 +221,26 @@ public class SplashWindow {
             this.currentStep = currentStep;
             //only display step description for non-dummy steps
             if (stepDuration[currentStep].expectedDurationInMillis > 0) {
-                //TODO
+                stepLabel.setText(stepDuration[currentStep].labelConfigKey);
+                enforeGUIUpdate(stepLabel);
             }
         }
 
         //show progress
-        double percentage = 100.0 * elapsedDuration / totalDuration;
-        tempL.setText("<html>" + percentage + "<br>" + stepDuration[currentStep].labelConfigKey + "</html>");
+        progressBar.setValue((int)elapsedDuration);
+        enforeGUIUpdate(progressBar);
 
-        //ensure that progress is updated even if EDT is very busy
-        //CAUTION: paintImmediately is called outside of EDT
-        //         works but not guideline-conform
-        tempL.paintImmediately(tempL.getBounds());
-        
         //ensure visibility of window
         myWin.toFront();
+    }
+
+    /**
+     * ensure that progress is updated even if EDT is very busy
+     * CAUTION: paintImmediately is called outside of EDT
+     *          works but not guideline-conform
+     */
+    private void enforeGUIUpdate(JComponent c) {
+        c.paintImmediately(c.getBounds());
     }
 
     /**
