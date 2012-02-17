@@ -49,11 +49,12 @@ public class RunGame {
 
     static void loadGame (String[] args) {
 
-        SplashWindow splashWindow = new SplashWindow(true);
-        splashWindow.notifyOfStep(SplashWindow.STEP_LOAD_GAME);
-
         RailsRoot game = null;
         String filepath = args[0];
+
+        SplashWindow splashWindow = new SplashWindow(true,filepath);
+        splashWindow.notifyOfStep(SplashWindow.STEP_LOAD_GAME);
+
         System.out.println("Starting game from saved file "+filepath);
         if ((game = RailsRoot.load(filepath)) == null) {
             System.err.println("Loading file "+filepath+" was unsuccessful");
