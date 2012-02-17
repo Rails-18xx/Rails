@@ -34,6 +34,7 @@ or.window.dockablePanels=no
 report.window.type=dynamic
 report.window.open=yes
 report.window.editable=no
+splash.window.open=yes
 stockchart.window.open=yes
 
 ### Panel Format
