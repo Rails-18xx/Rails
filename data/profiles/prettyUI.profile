@@ -1,0 +1,9 @@
+### prettyUI profile
+### activates the new UI options of Frederick
+button.iconPosition=left
+button.iconText=text and icon
+button.iconSize=small
+gridPanel.tableBorders=enabled
+map.image.display=yes
+map.displayCurrentRoutes=yes
+map.highlightHexes=yes
