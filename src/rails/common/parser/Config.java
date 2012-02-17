@@ -57,12 +57,8 @@ public final class Config {
     private static Properties userProfiles = new Properties();
     private static boolean profilesLoaded = false;
     private static String DEFAULT_PROFILE_SELECTION = "default"; // can be
-                                                                 // overwritten
-    private static final String TEST_PROFILE_SELECTION = ".test"; // used as
-                                                                  // default
-                                                                  // profile for
-                                                                  // integration
-                                                                  // tests
+    private static final String ROOT_PROFILE_SELECTION = ".root"; // used for the 3-tier structure: ROOT-DEFAULT-USER
+    private static final String TEST_PROFILE_SELECTION = ".test"; // used as default profile for integration tests
     private static final String STANDARD_PROFILE_SELECTION = "user";
     private static final String DEFAULTPROFILE_PROPERTY = "default.profile";
     private static final String PROFILENAME_PROPERTY = "profile.name";
@@ -72,7 +68,8 @@ public final class Config {
     private static boolean legacyConfigFile;
 
     /** properties storage. */
-    private static Properties defaultProperties = new Properties();
+    private static Properties rootProperties = null;
+    private static Properties defaultProperties = null;
     private static Properties userProperties = new Properties();
     private static boolean propertiesLoaded = false;
 
@@ -198,10 +195,9 @@ public final class Config {
         if (defaultProperties.isEmpty() || !propertiesLoaded) {
             initialLoad();
         }
-        if (userProperties.containsKey(key))
-            return userProperties.getProperty(key).trim();
-        if (defaultProperties.containsKey(key))
-            return defaultProperties.getProperty(key).trim();
+        if (userProperties.containsKey(key)) return userProperties.getProperty(key).trim();
+        if (defaultProperties.containsKey(key)) return defaultProperties.getProperty(key).trim();
+        if (rootProperties.containsKey(key)) return rootProperties.getProperty(key).trim();
 
         return defaultValue;
     }
@@ -511,9 +507,8 @@ public final class Config {
      * profile
      */
     private static void loadProfile(String userProfile) {
-        // reset properties
+        // reset user properties
         userProperties = new Properties();
-        defaultProperties = new Properties();
 
         String userConfigFile = null;
         if (Util.hasValue(userProfile)) {
@@ -539,7 +534,7 @@ public final class Config {
 
     /**
      * loads the associated default profile if none is defined, uses standard
-     * default profile
+     *  the default profile is defined as delta to the root profile
      */
     private static void loadDefaultProfile() {
         String defaultConfigFile = null;
@@ -554,6 +549,11 @@ public final class Config {
             userProperties.setProperty(DEFAULTPROFILE_PROPERTY,
                     DEFAULT_PROFILE_SELECTION);
         }
+        if (rootProperties == null) {
+            rootProperties = new Properties();
+            loadPropertyFile(rootProperties, defaultProfiles.getProperty(ROOT_PROFILE_SELECTION), true);
+        }
+        defaultProperties = new Properties();
         loadPropertyFile(defaultProperties, defaultConfigFile, true);
     }
 

@@ -1,2 +1,7 @@
-default=data/profiles/default.profile
+### This is the list of (predefined) profiles and their file locations
+### A dot (".") before the profilename prevents displaying those to the user selection
+.root=data/profiles/root.profile
 .test=data/profiles/test.profile
+default=data/profiles/default.profile
+prettyUI=data/profiles/prettyUI.profile
+ORDocking=data/profiles/ORDocking.profile
