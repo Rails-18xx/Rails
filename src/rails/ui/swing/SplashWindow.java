@@ -108,6 +108,7 @@ public class SplashWindow {
     private final static String iconPath = "/images/icon/";
     
     private final static String[][] icons = new String[][] {
+        { "notile_2towns.png" , "notile_station.png" },
         { "yellow_track.png" , "yellow_station.png" },
         { "green_track.png" , "green_station.png" },
         { "russet_track.png" , "russet_station.png" },
