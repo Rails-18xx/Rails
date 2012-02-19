@@ -70,8 +70,10 @@ public class SoundContext {
     }
 
     private void playBackgroundMusic() {
-        //do nothing if music is not enabled
-        if (!SoundConfig.isBGMEnabled()) return;
+        //do nothing if
+        // - music is not enabled
+        // - phase is not initialized
+        if (!SoundConfig.isBGMEnabled() || currentPhase == null) return;
         
         String currentRoundConfigKey = null;
         if (currentRound instanceof StartRound) {
@@ -83,7 +85,9 @@ public class SoundContext {
         } else if (currentRound instanceof EndOfGameRound) {
             currentRoundConfigKey = SoundConfig.KEY_BGM_EndOfGameRound;
         }
-        //only play anything if round is recognized and new music is to be played
+        //only play anything if
+        // - round is recognized
+        // - new music is to be played
         if (currentRoundConfigKey != null) {
             String currentPhaseName = "";
             if (currentPhase != null) currentPhaseName = currentPhase.getName();
@@ -95,15 +99,15 @@ public class SoundContext {
             }
         }
     }
-    public void notifyOfPhase(Phase newPhase) {
-        if (!newPhase.equals(currentPhase)) {
+    synchronized public void notifyOfPhase(Phase newPhase) {
+        if (newPhase != null && !newPhase.equals(currentPhase)) {
             currentPhase = newPhase;
             playBackgroundMusic();
         }
     }
 
-    public void notifyOfRound(Round newRound) {
-        if (!newRound.equals(currentRound)) {
+    synchronized public void notifyOfRound(Round newRound) {
+        if (newRound != null && !newRound.equals(currentRound)) {
 
             //play stock market opening bell if stock round became current round
             //and the round before was not
