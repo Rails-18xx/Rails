@@ -4,7 +4,11 @@
 package rails.sound;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileInputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
@@ -21,6 +25,23 @@ import javazoom.jl.player.advanced.AdvancedPlayer;
  */
 public class SoundPlayer {
 
+    private class SoundFileBuffer {
+        private Map<String,byte[]> fileBuffer = new HashMap<String,byte[]>(); 
+        synchronized public BufferedInputStream getFileInputStream(String fileName) {
+            if (!fileBuffer.containsKey(fileName)) {
+                try {
+                long length = new File(fileName).length();
+                FileInputStream fis = new FileInputStream(fileName);
+                byte[] fileContent = new byte[(int)length];
+                fis.read(fileContent);
+                fileBuffer.put(fileName, fileContent);
+                } catch (Exception e) {return null;}
+            }
+            return new BufferedInputStream(
+                    new ByteArrayInputStream(fileBuffer.get(fileName)));
+        }
+    }
+    
     private class PlayerThread extends Thread {
         String fileName;
         PlayerThread priorThread;
@@ -56,9 +77,7 @@ public class SoundPlayer {
         }
         public void play() {
             try {
-                FileInputStream fis = new FileInputStream(fileName);
-                BufferedInputStream bis = new BufferedInputStream(fis);
-                Player player = new Player(bis);
+                Player player = new Player(soundFileBuffer.getFileInputStream(fileName));
                 player.play();
                 player.close();
             }
@@ -82,9 +101,8 @@ public class SoundPlayer {
         @Override
         public void play() {
             try {
-                FileInputStream fis = new FileInputStream(fileName);
-                BufferedInputStream bis = new BufferedInputStream(fis);
-                PortionPlayer player = new PortionPlayer(bis);
+                PortionPlayer player = new PortionPlayer(
+                        soundFileBuffer.getFileInputStream(fileName));
                 player.play(startPos, endPos);
                 player.close();
             }
@@ -137,9 +155,7 @@ public class SoundPlayer {
                 }
 
                 while (!isStopped) {
-                    FileInputStream fis = new FileInputStream(fileName);
-                    BufferedInputStream bis = new BufferedInputStream(fis);
-                    player = new Player(bis);
+                    player = new Player(soundFileBuffer.getFileInputStream(fileName));
                     player.play();
                     player.close();
                 }
@@ -162,6 +178,8 @@ public class SoundPlayer {
     private PlayerThread lastSFXThread = null;
     
     private LoopPlayerThread lastBGMThread = null;
+    
+    private SoundFileBuffer soundFileBuffer = new SoundFileBuffer();
     
     /**
      * atomic switching of the pointer to the last thread which played an sfx.
