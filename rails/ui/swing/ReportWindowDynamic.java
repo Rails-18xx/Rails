@@ -55,8 +55,6 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
 
     @Override
     public void init() {
-        super.init();
-
         setLayout(new BorderLayout());
 
         JPanel messagePanel = new JPanel();
@@ -141,6 +139,8 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
                 }
         );
         buttonPanel.add(commentButton);
+
+        super.init();
 
     }
 
