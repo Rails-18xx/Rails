@@ -1,7 +1,7 @@
 package rails.util;
 
 import rails.common.GuiDef;
-import rails.common.parser.Config;
+import rails.common.ConfigManager;
 import rails.game.RailsRoot;
 import rails.game.GameManager;
 import rails.ui.swing.GameSetupWindow;
@@ -13,7 +13,7 @@ public class RunGame {
     public static void main(String[] args) {
 
         // Initialize configuration
-        Config.setConfigSelection();
+        ConfigManager.initConfiguration(false);
         
         int nargs = 0;
         if (args != null && args.length > 0) {

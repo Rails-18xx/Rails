@@ -1,11 +1,12 @@
-package rails.common.parser;
+package rails.common;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
+import rails.common.parser.ConfigurationException;
+import rails.common.parser.Tag;
 import rails.util.Util;
 
 /**
@@ -16,7 +17,7 @@ import rails.util.Util;
 public final class ConfigItem {
 
     protected static Logger log =
-        LoggerFactory.getLogger(ConfigItem.class);
+        Logger.getLogger(ConfigItem.class.getPackage().getName());
 
     /**
      * Defines possible types (Java classes used as types in ConfigItem below
@@ -37,9 +38,9 @@ public final class ConfigItem {
     private final boolean alwaysCallInit;
     private final boolean initParameter;
     
-    
     // dynamic attributes
     private String newValue;
+    private String currentValue;
     
     ConfigItem(Tag tag) throws ConfigurationException {
         // check name and type (required)
@@ -80,34 +81,59 @@ public final class ConfigItem {
         alwaysCallInit = tag.getAttributeAsBoolean("alwaysCallInit",false);
         initParameter = tag.getAttributeAsBoolean("initParameter", false);
         
-        // initialize newValue
+        // intialize values
+        currentValue = null;
         newValue = null;
     }
     
+    
+    public boolean hasChanged() {
+        if (newValue == null) return false;
+        return !getCurrentValue().equals(newValue);
+    }
+    
+    public String getValue() {
+        if (hasChanged()) {
+            return getNewValue();
+        } else {
+            return getCurrentValue();
+        }
+    }
+    
+    public String getCurrentValue() {
+        if (currentValue == null) return "";
+        return currentValue;
+    }
+    
+    public void setCurrentValue(String value) {
+        currentValue = value;
+        newValue = null;
+    }
+    
+    @Deprecated
     public boolean hasNewValue() {
         return (newValue != null);
     }
     
     public String getNewValue() {
+        if (newValue == null) return "";
         return newValue;
     }
     
-    public void setNewValue(String newValue) {
-        if (newValue == null || newValue.equals(getConfigValue())) {
-            this.newValue = null;
+    public void setNewValue(String value) {
+        if (value == null || value.equals("") || value.equals(currentValue)) {
+            newValue = null;
         } else {
-            this.newValue = newValue;
+            newValue = value;
         }
-        log.debug("ConfigItem " + name + " set to new value " + this.newValue);
+        log.debug("ConfigItem " + name + " set to new value " + newValue);
     }
     
-    public String getCurrentValue() {
-        if (newValue != null) return newValue;
-        return getConfigValue();
-    }
-    
-    public String getConfigValue() {
-        return Config.get(this.name);
+    public void resetValue() {
+        if (hasChanged()) {
+            currentValue = newValue;
+            newValue = null;
+        }
     }
     
     /**
@@ -137,8 +163,8 @@ public final class ConfigItem {
     public String toString() {
         StringBuffer s = new StringBuffer();
         s.append("Configuration Item: name = " + name + ", type = " + type);
-        s.append(", config value = " + getConfigValue());
-        s.append(", current value = " + getCurrentValue());
+        s.append(", current value = " + getCurrentValue()) ;
+        s.append(", new value = " + getNewValue());
         if (allowedValues != null) {
             s.append(", allowedValues = " + allowedValues);
         }
@@ -148,5 +174,7 @@ public final class ConfigItem {
         
         return s.toString();
     }
+    
+    
     
 }

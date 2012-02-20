@@ -6,6 +6,7 @@
               as the first entry and export the buildfile again. -->
 <project basedir="." default="build" name="Rails">
     <property environment="env"/>
+    <property name="ECLIPSE_HOME" value="../../../installed/eclipse"/>
     <property name="junit.output.dir" value="junit"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.5"/>
@@ -17,9 +18,6 @@
         <pathelement location="lib/jgrapht-0.7.3/jgrapht-jdk1.5.jar"/>
         <pathelement location="lib/jgraph5/jgraph.jar"/>
         <pathelement location="lib/junit-4.8.2/junit.jar"/>
-        <pathelement location="lib/JLayer1.0.1/jl1.0.1.jar"/>
-    	<pathelement location="lib/df_1.1.0/dockingFramesCommon.jar"/>
-    	<pathelement location="lib/df_1.1.0/dockingFramesCore.jar"/>
         <pathelement location="lib/batik-1.7/lib/batik-transcoder.jar"/>
         <pathelement location="lib/batik-1.7/lib/batik-dom.jar"/>
         <pathelement location="lib/batik-1.7/lib/batik-swing.jar"/>
@@ -36,23 +34,50 @@
         <pathelement location="lib/batik-1.7/lib/batik-svg-dom.jar"/>
         <pathelement location="lib/batik-1.7/lib/batik-xml.jar"/>
         <pathelement location="lib/batik-1.7/lib/js.jar"/>
+        <pathelement location="lib/JLayer1.0.1/jl1.0.1.jar"/>
         <pathelement location="lib/batik-1.7/lib/xerces_2_5_0.jar"/>
         <pathelement location="lib/batik-1.7/lib/xml-apis-ext.jar"/>
         <pathelement location="lib/batik-1.7/lib/batik-anim.jar"/>
         <pathelement location="lib/batik-1.7/lib/batik-codec.jar"/>
+        <pathelement location="lib/df_1.1.0/dockingFramesCommon.jar"/>
+        <pathelement location="lib/df_1.1.0/dockingFramesCore.jar"/>
+        <pathelement location="lib/commons-io-2.1/commons-io-2.1.jar"/>
     </path>
     <target name="init">
         <mkdir dir="classes"/>
         <copy includeemptydirs="false" todir="classes">
             <fileset dir=".">
-                <exclude name="**/*.launch"/>
+                <exclude name="**/*.ucls"/>
+                <exclude name="**/*.uad"/>
+                <exclude name="**/*.ucd"/>
+                <exclude name="**/*.uld"/>
+                <exclude name="**/*.upd"/>
+                <exclude name="**/*.udd"/>
+                <exclude name="**/*.uod"/>
+                <exclude name="**/*.usd"/>
+                <exclude name="**/*.utd"/>
+                <exclude name="**/*.uud"/>
+                <exclude name="**/*.odd"/>
+                <exclude name="**/*.ead"/>
+                <exclude name="**/*.ecd"/>
+                <exclude name="**/*.eld"/>
+                <exclude name="**/*.epd"/>
+                <exclude name="**/*.edd"/>
+                <exclude name="**/*.eod"/>
+                <exclude name="**/*.esd"/>
+                <exclude name="**/*.etd"/>
+                <exclude name="**/*.eud"/>
+                <exclude name="**/*.urd"/>
+                <exclude name="**/*.uml"/>
+                <exclude name="**/*.ecore"/>
                 <exclude name="**/*.java"/>
+                <exclude name="lib/JLayer1.0.1/"/>
                 <exclude name="lib/batik-1.7/"/>
                 <exclude name="lib/batik-1.7/"/>
                 <exclude name="lib/batik-1.7/lib/"/>
                 <exclude name="lib/batik-1.7/lib/"/>
-                <exclude name="lib/JLayer1.0.1"/>
-            	<exclude name="lib/df_1.1.0"/>
+                <exclude name="lib/commons-io-2.1/"/>
+                <exclude name="lib/df_1.1.0/"/>
                 <exclude name="lib/jgraph5/"/>
                 <exclude name="lib/jgraph5/"/>
                 <exclude name="lib/jgrapht-0.7.3/"/>
@@ -71,14 +96,15 @@
     <target name="build-subprojects"/>
     <target depends="init" name="build-project">
         <echo message="${ant.project.name}: ${ant.file}"/>
-        <javac debug="true" debuglevel="${debuglevel}" destdir="classes" includeantruntime="false" source="${source}" target="${target}">
+        <javac debug="true" debuglevel="${debuglevel}" destdir="classes" source="${source}" target="${target}">
             <src path="."/>
+            <exclude name="lib/JLayer1.0.1/"/>
             <exclude name="lib/batik-1.7/"/>
             <exclude name="lib/batik-1.7/"/>
             <exclude name="lib/batik-1.7/lib/"/>
             <exclude name="lib/batik-1.7/lib/"/>
-            <exclude name="lib/JLayer1.0.1"/>
-        	<exclude name="lib/df_1.1.0"/>
+            <exclude name="lib/commons-io-2.1/"/>
+            <exclude name="lib/df_1.1.0/"/>
             <exclude name="lib/jgraph5/"/>
             <exclude name="lib/jgraph5/"/>
             <exclude name="lib/jgrapht-0.7.3/"/>
@@ -103,14 +129,31 @@
         <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
         <antcall target="build"/>
     </target>
-    <target name="Start Rails (RunGame)">
-        <java classname="rails.util.RunGame" failonerror="true" fork="yes">
-            <jvmarg line="-DRevenueCalculation=suggest -Dswing.defaultlaf=com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel"/>
+    <target name="Check Save File (ListAndFixSavedFiles)">
+        <java classname="tools.ListAndFixSavedFiles" failonerror="true" fork="yes">
             <classpath refid="Rails.classpath"/>
         </java>
     </target>
-    <target name="Check Save File (ListAndFixSavedFiles)">
-        <java classname="tools.ListAndFixSavedFiles" failonerror="true" fork="yes">
+    <target name="Start Rails (RunGame)">
+        <java classname="rails.util.RunGame" failonerror="true" fork="yes">
+            <jvmarg line="-DRevenueCalculation=suggest -Dawt.useSystemAAFontSettings=on"/>
+            <classpath refid="Rails.classpath"/>
+        </java>
+    </target>
+    <target name="Start Rails (RunGame) (Profiled)">
+        <java classname="rails.util.RunGame" failonerror="true" fork="yes">
+            <jvmarg line="-DRevenueCalculation=suggest -Dawt.useSystemAAFontSettings=on"/>
+            <classpath refid="Rails.classpath"/>
+        </java>
+    </target>
+    <target name="Delete and Update Test Game Reports (TestGameBuilder)">
+        <java classname="test.TestGameBuilder" failonerror="true" fork="yes">
+            <classpath refid="Rails.classpath"/>
+        </java>
+    </target>
+    <target name="Start Rails (RunGame) Nimbus LAF">
+        <java classname="rails.util.RunGame" failonerror="true" fork="yes">
+            <jvmarg line="-DRevenueCalculation=suggest -Dswing.defaultlaf=com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel"/>
             <classpath refid="Rails.classpath"/>
         </java>
     </target>
@@ -121,11 +164,6 @@
             <test name="test.TestGameBuilder" todir="${junit.output.dir}"/>
             <classpath refid="Rails.classpath"/>
         </junit>
-    </target>
-    <target name="Delete and Update Test Game Reports (TestGameBuilder)">
-        <java classname="test.TestGameBuilder" failonerror="true" fork="yes">
-            <classpath refid="Rails.classpath"/>
-        </java>
     </target>
     <target name="junitreport">
         <junitreport todir="${junit.output.dir}">

@@ -19,8 +19,10 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 
-import rails.common.parser.Config;
+import rails.common.Config;
+import rails.common.ConfigManager;
 import rails.game.RailsRoot;
+
 import rails.game.ReportBuffer;
 
 @RunWith(AllTests.class)
@@ -159,7 +161,7 @@ public final class TestGameBuilder extends TestCase {
     
     public static Test suite() {
         
-        Config.setConfigTest();
+        ConfigManager.initConfiguration(true);
         
         // Main test directory 
         File testDir = new File(Config.get("save.directory"));
@@ -183,7 +185,7 @@ public final class TestGameBuilder extends TestCase {
      */
     public static void main(String[] args) {
 
-        Config.setConfigTest();
+        ConfigManager.initConfiguration(true);
     
         // Main test directory 
         String rootPath = Config.get("save.directory");

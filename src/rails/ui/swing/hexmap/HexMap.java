@@ -28,7 +28,7 @@ import javax.swing.ToolTipManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rails.common.parser.Config;
+import rails.common.Config;
 import rails.common.parser.ConfigurationException;
 import rails.game.GameManager;
 import rails.game.MapHex;

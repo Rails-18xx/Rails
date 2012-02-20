@@ -9,7 +9,7 @@ import java.util.Scanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rails.common.parser.Config;
+import rails.common.Config;
 import rails.game.RailsRoot;
 import rails.game.ReportBuffer;
 

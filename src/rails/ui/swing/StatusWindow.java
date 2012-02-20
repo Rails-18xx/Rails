@@ -11,9 +11,9 @@ import javax.swing.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import rails.common.Config;
 import rails.common.GuiDef;
 import rails.common.LocalText;
-import rails.common.parser.Config;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.correct.CorrectionModeAction;
@@ -205,15 +205,12 @@ KeyListener, ActionPerformer {
         menuItem.addActionListener(this);
         optMenu.add(menuItem);
 
-        // new config menu only for non legacy configfiles
-        if (!Config.isLegacyConfigFile()) {
-            menuItem = new JCheckBoxMenuItem(LocalText.getText("CONFIG"));
-            menuItem.setName(CONFIG_CMD);
-            menuItem.setActionCommand(CONFIG_CMD);
-            menuItem.setMnemonic(KeyEvent.VK_C);
-            menuItem.addActionListener(this);
-            optMenu.add(menuItem);
-        }
+        menuItem = new JCheckBoxMenuItem(LocalText.getText("CONFIG"));
+        menuItem.setName(CONFIG_CMD);
+        menuItem.setActionCommand(CONFIG_CMD);
+        menuItem.setMnemonic(KeyEvent.VK_C);
+        menuItem.addActionListener(this);
+        optMenu.add(menuItem);
 
         menuBar.add(optMenu);
 

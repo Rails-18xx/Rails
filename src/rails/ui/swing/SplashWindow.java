@@ -23,8 +23,8 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
+import rails.common.Config;
 import rails.common.LocalText;
-import rails.common.parser.Config;
 import rails.game.RailsRoot;
 
 /**

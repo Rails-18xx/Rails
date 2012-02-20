@@ -10,7 +10,7 @@ import org.apache.batik.swing.gvt.GVTTreeRendererEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rails.common.parser.Config;
+import rails.common.Config;
 import rails.game.MapManager;
 import rails.ui.swing.GameUIManager;
 import rails.util.Util;

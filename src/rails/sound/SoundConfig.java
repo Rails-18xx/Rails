@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import rails.common.parser.Config;
+import rails.common.Config;
 
 /**
  * A wrapper to the standard config providing additional services for

@@ -11,7 +11,7 @@ import java.util.Set;
 import javax.swing.JButton;
 import javax.swing.SwingConstants;
 
-import rails.common.parser.Config;
+import rails.common.Config;
 
 /**
  * A JButton which is able to hold/manage a RailsIcon (specifying what

@@ -16,10 +16,11 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ComparisonChain;
 
+import rails.common.Config;
 import rails.common.DisplayBuffer;
 import rails.common.GuiDef;
 import rails.common.LocalText;
-import rails.common.parser.Config;
+import rails.common.ConfigManager;
 import rails.common.parser.GameOption;
 import rails.common.parser.GameInfo;
 import rails.game.*;
@@ -37,6 +38,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
     JPanel gameListPane, playersPane, buttonPane, optionsPane;
     JButton newButton, loadButton, recentButton, recoveryButton, quitButton, optionButton, infoButton,
         creditsButton, randomizeButton, configureButton;
+    JComboBox configureBox;
     JComboBox gameNameBox = new JComboBox();
     JComboBox[] playerBoxes = new JComboBox[Player.MAX_PLAYERS];
     JTextField[] playerNameFields = new JTextField[Player.MAX_PLAYERS];
@@ -114,11 +116,20 @@ public class GameSetupWindow extends JDialog implements ActionListener {
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         populateGameList(gameInfoList, gameNameBox);
+        
+        final ConfigManager cm = ConfigManager.getInstance();
+        configureBox = new JComboBox(cm.getProfiles().toArray());
+        configureBox.setSelectedItem(cm.getActiveProfile());
+        configureBox.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent arg0) {
+                cm.changeProfile((String)configureBox.getSelectedItem());
+            }
+        }
+        );
 
         gameListPane.add(new JLabel("Available Games:"));
         gameListPane.add(gameNameBox);
-        gameListPane.add(optionButton);
-        gameListPane.add(configureButton); // empty slot
+        gameListPane.add(optionButton); // empty slot
         gameListPane.setLayout(new GridLayout(2, 2));
         gameListPane.setBorder(BorderFactory.createLoweredBevelBorder());
 
@@ -133,6 +144,8 @@ public class GameSetupWindow extends JDialog implements ActionListener {
         gameNameBox.addActionListener(this);
         configureButton.addActionListener(this);
 
+        buttonPane.add(configureButton);
+        buttonPane.add(configureBox);
         buttonPane.add(newButton);
         buttonPane.add(loadButton);
         buttonPane.add(recentButton);
@@ -264,7 +277,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
             // start configureWindow
             if (configWindow == null) {
                 configWindow = new ConfigWindow(false);
-                configWindow.init();
+                configWindow.init(true);
                 configWindow.setVisible(true);
             } else {
                 configWindow.setVisible(true);

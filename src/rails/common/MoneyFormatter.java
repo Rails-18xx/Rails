@@ -1,7 +1,6 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Format.java,v 1.3 2008/06/04 19:00:39 evos Exp $*/
 package rails.common;
 
-import rails.common.parser.Config;
 import rails.util.Util;
 
 public class MoneyFormatter {

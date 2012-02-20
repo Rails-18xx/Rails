@@ -10,7 +10,6 @@ import java.util.ResourceBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rails.common.parser.Config;
 import rails.util.Util;
 
 public class LocalText extends ResourceBundle {

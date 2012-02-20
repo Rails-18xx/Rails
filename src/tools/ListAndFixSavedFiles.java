@@ -37,9 +37,10 @@ import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import rails.common.Config;
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
-import rails.common.parser.Config;
+import rails.common.ConfigManager;
 import rails.common.parser.ConfigurationException;
 import rails.game.GameManager;
 import rails.game.MapHex;
@@ -85,7 +86,7 @@ implements ActionListener, KeyListener {
     public static void main(String[] args) {
 
         // intialize configuration
-        Config.setConfigSelection();
+        ConfigManager.initConfiguration(false);
 
         // delayed setting of logger
         log = LoggerFactory.getLogger(ListAndFixSavedFiles.class);

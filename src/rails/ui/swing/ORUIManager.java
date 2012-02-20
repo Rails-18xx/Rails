@@ -12,9 +12,9 @@ import org.jgrapht.graph.SimpleGraph;
 import com.google.common.collect.Iterables;
 
 import rails.algorithms.*;
+import rails.common.Config;
 import rails.common.GuiDef;
 import rails.common.LocalText;
-import rails.common.parser.Config;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.correct.*;

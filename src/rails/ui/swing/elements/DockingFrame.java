@@ -19,8 +19,8 @@ import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import rails.common.Config;
 import rails.common.LocalText;
-import rails.common.parser.Config;
 import rails.ui.swing.SplashWindow;
 
 import bibliothek.gui.DockController;

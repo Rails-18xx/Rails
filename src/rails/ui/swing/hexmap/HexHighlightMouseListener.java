@@ -9,7 +9,7 @@ import java.util.Set;
 
 import javax.swing.JComponent;
 
-import rails.common.parser.Config;
+import rails.common.Config;
 import rails.game.MapHex;
 import rails.game.PrivateCompany;
 import rails.game.PublicCompany;

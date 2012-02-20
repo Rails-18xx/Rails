@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Iterables;
 
 import rails.common.*;
-import rails.common.parser.Config;
 import rails.game.*;
 import rails.game.Currency;
 import rails.game.action.*;
@@ -244,7 +243,7 @@ public class GameUIManager implements DialogOwner {
         // define configWindow
         splashWindow.notifyOfStep(SplashWindow.STEP_CONFIG_WINDOW);
         configWindow = new ConfigWindow(true);
-        configWindow.init();
+        configWindow.init(true);
 
         // notify sound manager of game initialization
         splashWindow.notifyOfStep(SplashWindow.STEP_INIT_SOUND);

@@ -1,3 +1,5 @@
 ### ORDocking profile
 ### activates the docking framework
 or.window.dockablePanels=yes
+### cannot be derived
+profile.final=yes

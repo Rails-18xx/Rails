@@ -9,8 +9,8 @@ import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import rails.common.Config;
 import rails.common.LocalText;
-import rails.common.parser.Config;
 import rails.util.Util;
 
 /**
