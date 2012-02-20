@@ -9,9 +9,9 @@ import org.apache.log4j.Logger;
 import org.jgrapht.graph.SimpleGraph;
 
 import rails.algorithms.*;
+import rails.common.Config;
 import rails.common.GuiDef;
 import rails.common.LocalText;
-import rails.common.parser.Config;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.correct.*;

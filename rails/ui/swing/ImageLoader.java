@@ -12,8 +12,8 @@ import org.apache.batik.transcoder.image.ImageTranscoder;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 
+import rails.common.Config;
 import rails.common.ResourceLoader;
-import rails.common.parser.Config;
 import rails.ui.swing.hexmap.GUIHex;
 import rails.util.*;
 

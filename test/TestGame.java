@@ -9,7 +9,7 @@ import java.util.Scanner;
 import org.apache.log4j.Logger;
 import org.apache.log4j.NDC;
 
-import rails.common.parser.Config;
+import rails.common.Config;
 import rails.game.Game;
 import rails.game.ReportBuffer;
 

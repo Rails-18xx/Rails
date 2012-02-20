@@ -9,8 +9,8 @@ import javax.swing.*;
 
 import org.apache.log4j.Logger;
 
+import rails.common.Config;
 import rails.common.LocalText;
-import rails.common.parser.Config;
 import rails.game.GameManagerI;
 import rails.game.ReportBuffer;
 import rails.ui.swing.elements.ActionMenuItem;

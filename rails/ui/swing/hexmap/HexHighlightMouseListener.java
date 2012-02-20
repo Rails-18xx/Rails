@@ -7,7 +7,7 @@ import java.util.List;
 
 import javax.swing.JComponent;
 
-import rails.common.parser.Config;
+import rails.common.Config;
 import rails.game.MapHex;
 import rails.game.Portfolio;
 import rails.game.PrivateCompanyI;

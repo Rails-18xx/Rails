@@ -10,9 +10,10 @@ import javax.swing.*;
 
 import org.apache.log4j.Logger;
 
+import rails.common.Config;
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
-import rails.common.parser.Config;
+import rails.common.ConfigManager;
 import rails.common.parser.ConfigurationException;
 import rails.game.*;
 import rails.game.action.*;
@@ -55,7 +56,7 @@ implements ActionListener, KeyListener {
     public static void main(String[] args) {
 
         // intialize configuration
-        Config.setConfigSelection();
+        ConfigManager.initConfiguration(false);
 
         // delayed setting of logger
         log = Logger.getLogger(ListAndFixSavedFiles.class.getPackage().getName());

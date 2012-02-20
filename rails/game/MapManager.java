@@ -5,6 +5,7 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
+import rails.common.Config;
 import rails.common.parser.*;
 import rails.game.Stop.Loop;
 import rails.game.Stop.RunThrough;

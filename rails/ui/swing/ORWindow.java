@@ -16,9 +16,9 @@ import javax.swing.SwingUtilities;
 
 import org.apache.log4j.Logger;
 
+import rails.common.Config;
 import rails.common.GuiDef;
 import rails.common.LocalText;
-import rails.common.parser.Config;
 import rails.game.GameManager;
 import rails.game.OperatingRound;
 import rails.game.action.*;
