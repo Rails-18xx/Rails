@@ -975,9 +975,18 @@ public class ORUIManager implements DialogOwner {
                     String selected =
                         (String) JOptionPane.showInputDialog(orWindow,
                                 LocalText.getText("SelectStationForToken",
-                                        action.getPlayerName(),
-                            							         hex.getId(),
-                            							         company.getId()
+                                        //action.getPlayerName(),
+                                        /* In some cases, it's not the acting player that must take this action,
+                                         * but it's always the president.
+                                         * TODO WARNING: THE NEXT LINE BREAKS THE CLIENT/SERVER SEPARATION
+                                         * so this is a provisional fix only.
+                                         * It is for 1835, and intends to address the BA president if the BA home token
+                                         * must be laid in case another company, having the turn, lays a green tile in L6
+                                         * using the PfB when the BA has started but not yet operated.
+                                         */
+                                        company.getPresident().getId(),
+                                        hex.getId(),
+                                        company.getId()
                                 ),
                                 LocalText.getText("WhichStation"),
                                 JOptionPane.PLAIN_MESSAGE, null,

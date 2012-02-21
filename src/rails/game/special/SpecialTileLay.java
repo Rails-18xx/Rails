@@ -145,7 +145,7 @@ public class SpecialTileLay extends SpecialProperty {
 	public String toText() {
         return "SpecialTileLay comp=" + originalCompany.getId()
         + " hex=" + locationCodes
-        + " colour="+tileColours
+        + " colour="+Util.joinWithDelimiter(tileColours, ",")
         + " extra=" + extra + " cost=" + free + " connected=" + connected;
     }
 
