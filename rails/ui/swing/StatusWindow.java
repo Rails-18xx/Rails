@@ -1,10 +1,10 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.46 2010/06/15 20:16:54 evos Exp $*/
 package rails.ui.swing;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.event.*;
 import java.util.*;
-import java.util.List;
 
 import javax.swing.*;
 
@@ -33,6 +33,8 @@ KeyListener, ActionPerformer {
     protected static final String RELOAD_CMD = "Reload";
 
     protected static final String AUTOSAVELOAD_CMD = "AutoSaveLoad";
+
+    protected static final String SAVESTATUS_CMD = "SaveGameStatus";
 
     protected static final String EXPORT_CMD = "Export";
 
@@ -139,6 +141,15 @@ KeyListener, ActionPerformer {
         menuItem.setEnabled(true);
         fileMenu.add(menuItem);
 
+        menuItem = new JMenuItem(LocalText.getText("SaveGameStatus"));
+        menuItem.setActionCommand(SAVESTATUS_CMD);
+        menuItem.setMnemonic(KeyEvent.VK_G);
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G,
+                ActionEvent.ALT_MASK));
+        menuItem.addActionListener(this);
+        menuItem.setEnabled(true);
+        fileMenu.add(menuItem);
+
         // export menu item
         //        exportItem = new ActionMenuItem(LocalText.getText("EXPORT"));
         //        exportItem.setActionCommand(EXPORT_CMD);
@@ -147,6 +158,7 @@ KeyListener, ActionPerformer {
         //        exportItem.setPossibleAction(new GameAction(GameAction.EXPORT));
         //        fileMenu.add(exportItem);
         //        fileMenu.addSeparator();
+
 
         menuItem = new JMenuItem(LocalText.getText("QUIT"));
         menuItem.setActionCommand(QUIT_CMD);
@@ -643,6 +655,8 @@ KeyListener, ActionPerformer {
             gameUIManager.configWindow.setVisible(((JMenuItem) actor.getSource()).isSelected());
         } else if (command.equals(AUTOSAVELOAD_CMD)) {
             gameUIManager.autoSaveLoadGame();
+        } else if (command.equals(SAVESTATUS_CMD)) {
+            gameUIManager.saveGameStatus();
         } else if (executedAction == null) {
             ;
         } else if (executedAction instanceof GameAction) {
