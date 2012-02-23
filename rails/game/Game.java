@@ -14,7 +14,7 @@ import rails.game.action.PossibleAction;
 import rails.util.GameFileIO;
 
 public class Game {
-    // the correct version number and develop status 
+    // the correct version number and develop status
     // is set during initialLoad in Config class
     private static String version = "unknown";
     private static boolean develop = false;
@@ -22,11 +22,11 @@ public class Game {
     public static void setVersion(String version) {
         Game.version = version;
     }
-    
+
     public static String getVersion() {
         return version;
     }
-    
+
     public static String getFullVersion() {
         if (develop) {
             return version + "+";
@@ -34,17 +34,17 @@ public class Game {
             return version;
         }
     }
-    
+
     public static void setDevelop(boolean develop) {
         Game.develop = develop;
     }
-    
+
     public static boolean getDevelop() {
         return develop;
     }
-    
+
     // in the following the Game objects are defined
-    
+
     /** The component Manager */
     protected GameManager gameManager;
     protected CompanyManagerI companyManager;
@@ -85,11 +85,6 @@ public class Game {
 
 
         this.players = players;
-
-        log.info("========== Start of rails.game " + name + " ==========");
-        log.info("Rails version "+version);
-        ReportBuffer.add(LocalText.getText("GameIs", name));
-        
     }
 
     public String start() {
@@ -117,6 +112,10 @@ public class Game {
         revenueManager = gfp.getRevenueManager();
         bank = gfp.getBank();
         gameManager = gfp.getGameManager();
+
+        log.info("========== Start of rails.game " + name + " ==========");
+        log.info("Rails version "+version);
+        ReportBuffer.add(LocalText.getText("GameIs", name));
 
         /*
          * Initializations that involve relations between components can

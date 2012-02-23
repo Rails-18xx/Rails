@@ -35,9 +35,10 @@ public final class Util {
     }
 
     public static String joinWithDelimiter (String[] sa, String delimiter) {
+        if (sa == null || sa.length == 0) return "";
         StringBuilder b = new StringBuilder();
         for (String s : sa) {
-            if (b.length() > 0) b.append(delimiter);
+            if (Util.hasValue(delimiter) && b.length() > 0) b.append(delimiter);
             b.append(s);
         }
         return b.toString();
