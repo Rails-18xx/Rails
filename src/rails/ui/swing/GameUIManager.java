@@ -1,13 +1,12 @@
 package rails.ui.swing;
 
-import java.awt.Font;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
 
 import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
@@ -104,7 +103,7 @@ public class GameUIManager implements DialogOwner {
             LoggerFactory.getLogger(GameUIManager.class);
 
     private SplashWindow splashWindow = null;
-    
+
     public GameUIManager() {
 
     }
@@ -113,7 +112,7 @@ public class GameUIManager implements DialogOwner {
 
         this.splashWindow = splashWindow;
         splashWindow.notifyOfStep(SplashWindow.STEP_INIT_UI);
-        
+
         instance = this;
         this.gameManager = gameManager;
         uiHints = gameManager.getUIHints();
@@ -211,7 +210,7 @@ public class GameUIManager implements DialogOwner {
         } else {
             reportWindow = new ReportWindowDynamic(this);
         }
-        
+
         orWindow = new ORWindow(this, splashWindow);
         orUIManager = orWindow.getORUIManager();
 
@@ -254,7 +253,7 @@ public class GameUIManager implements DialogOwner {
 
     public void startLoadedGame() {
         gameUIInit(false); // false indicates reload
-        
+
         splashWindow.notifyOfStep(SplashWindow.STEP_INIT_LOADED_GAME);
         processAction(new NullAction(NullAction.START_GAME));
         statusWindow.setGameActions();
@@ -1024,6 +1023,34 @@ public class GameUIManager implements DialogOwner {
 
     }
 
+    public void saveGameStatus() {
+
+        List<String> status = statusWindow.getGameStatus().getTextContents();
+
+        JFileChooser jfc = new JFileChooser();
+        String filename = saveDirectory + "/" + savePrefix + "_"
+        + saveDateTimeFormat.format(new Date())+ ".status";
+
+        File proposedFile = new File(filename);
+        jfc.setSelectedFile(proposedFile);
+
+        if (jfc.showSaveDialog(statusWindow) == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = jfc.getSelectedFile();
+        }
+
+        try {
+            PrintWriter pw = new PrintWriter(filename);
+
+            for (String line : status) pw.println(line) ;
+
+            pw.close();
+
+        } catch (IOException e) {
+            log.error("Save failed", e);
+            DisplayBuffer.add(LocalText.getText("SaveFailed", e.getMessage()));
+        }
+    }
+
     public void setSaveDirectory(String saveDirectory) {
         this.saveDirectory = saveDirectory;
     }
@@ -1145,7 +1172,7 @@ public class GameUIManager implements DialogOwner {
         instance.initFontSettings();
         instance.updateWindowsLookAndFeel();
     }
-    
+
     /**
      * Only set frame directly to visible if the splash phase is already over.
      * Otherwise, the splash framework remembers this visibility request and
@@ -1173,7 +1200,7 @@ public class GameUIManager implements DialogOwner {
     }
 
     /**
-     * called when the splash process is completed 
+     * called when the splash process is completed
      * (and visibility changes are not to be deferred any more)
      */
     public void notifyOfSplashFinalization() {
@@ -1188,9 +1215,10 @@ public class GameUIManager implements DialogOwner {
     public void packAndApplySizing(JFrame frame) {
         final JFrame finalFrame = frame;
         SwingUtilities.invokeLater(new Thread() {
+            @Override
             public void run() {
                 finalFrame.pack();
-        
+
                 WindowSettings ws = getWindowSettings();
                 Rectangle bounds = ws.getBounds(finalFrame);
                 if (bounds.x != -1 && bounds.y != -1) finalFrame.setLocation(bounds.getLocation());

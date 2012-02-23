@@ -18,6 +18,7 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.border.AbstractBorder;
@@ -35,7 +36,9 @@ import rails.game.Round;
 import rails.game.state.BooleanState;
 import rails.game.state.Observable;
 import rails.game.state.Observer;
+import rails.util.Util;
 import rails.ui.swing.elements.ClickField;
+import rails.ui.swing.elements.Field;
 
 public abstract class GridPanel extends JPanel
 implements ActionListener, KeyListener {
@@ -184,6 +187,37 @@ implements ActionListener, KeyListener {
             }
         }
         highlightedComps.clear();
+    }
+
+    /** Returns a string array, each element of which contains the text contents
+     * of one row, separated by semicolons.
+     */
+    public List<String> getTextContents () {
+
+        List<String> result = new ArrayList<String>(32);
+        StringBuilder b;
+        String text, tip;
+        if (fields == null || fields.length == 0) return result;
+
+        for (int i=0; i<fields.length; i++) {
+            b = new StringBuilder();
+            for (int j=0; j<fields[i].length; j++) {
+                if (j > 0) b.append(";");
+                if (fields[i][j] instanceof JLabel) {
+                    text = ((JLabel)fields[i][j]).getText();
+                    b.append (text == null ? "" : text);
+                    if (fields[i][j] instanceof Field) {
+                        tip = fields[i][j].getToolTipText();
+                        if (Util.hasValue(tip)) {
+                            b.append("{").append(tip).append("}");
+                        }
+                    }
+                }
+            }
+            result.add(b.toString().replaceAll("</?html>", "").replaceAll("<br>",",").replaceAll(" x ", "x"));
+        }
+
+        return result;
     }
     
     public void keyPressed(KeyEvent e) {
