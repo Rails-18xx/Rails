@@ -134,7 +134,8 @@ public final class ConfigProfile {
     }
     
     boolean isFinal() {
-        if (!loaded) return true;
+        if (!loaded && type == Type.USER) return true;
+        
         if (Util.hasValue(properties.getProperty(FINAL_KEY))) {
             return Util.parseBoolean(properties.getProperty(FINAL_KEY));
         }
