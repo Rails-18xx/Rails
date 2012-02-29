@@ -42,7 +42,12 @@ public final class ConfigProfile {
     // predefined default profiles
     private static final String ROOT_PROFILE = "root";
     private static final String TEST_PROFILE = "test";
+    
+    // the profile selected at the start ...
     private static final String STANDARD_PROFILE = "pbem";
+    // ... unless a cli option has been set
+    private static final String STANDARD_CLI_OPTION ="profile";
+    
     
     // file that stores the list of predefined profiles
     private static final String LIST_OF_PROFILES = "LIST_OF_PROFILES";
@@ -103,6 +108,10 @@ public final class ConfigProfile {
     }
     
     static ConfigProfile getDefault() {
+        String profile = System.getProperty(STANDARD_CLI_OPTION);
+        if (Util.hasValue(profile) && profiles.containsKey(profile)) {
+            return profiles.get(profile);
+        } 
         return profiles.get(STANDARD_PROFILE);
     }
     
