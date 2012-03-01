@@ -8,21 +8,13 @@ import java.util.List;
 
 import javax.swing.*;
 
-import rails.common.parser.ConfigurationException;
-import rails.common.parser.GameInfoParser;
-
 import org.apache.log4j.Logger;
 
-import rails.common.Config;
-import rails.common.DisplayBuffer;
-import rails.common.GuiDef;
-import rails.common.LocalText;
-import rails.common.ConfigManager;
-import rails.common.parser.GameOption;
-import rails.common.parser.GameInfo;
+import rails.common.*;
+import rails.common.parser.*;
 import rails.game.*;
 import rails.sound.SoundManager;
-import rails.util.*;
+import rails.util.Util;
 
 /**
  * The Game Setup Window displays the first window presented to the user. This
@@ -34,7 +26,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
     GridBagConstraints gc;
     JPanel gameListPane, playersPane, buttonPane, optionsPane;
     JButton newButton, loadButton, recentButton, recoveryButton, quitButton, optionButton, infoButton,
-        creditsButton, randomizeButton, configureButton;
+    creditsButton, randomizeButton, configureButton;
     JComboBox configureBox;
     JComboBox gameNameBox = new JComboBox();
     JComboBox[] playerBoxes = new JComboBox[Player.MAX_PLAYERS];
@@ -62,11 +54,11 @@ public class GameSetupWindow extends JDialog implements ActionListener {
     static final int AI_PLAYER = 2;
 
     protected static Logger log =
-            Logger.getLogger(GameSetupWindow.class.getPackage().getName());
+        Logger.getLogger(GameSetupWindow.class.getPackage().getName());
 
     public GameSetupWindow() {
         super();
-        
+
         GameInfoParser gip = new GameInfoParser();
         try {
             gameInfoList = gip.processGameList();
@@ -113,7 +105,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         populateGameList(gameInfoList, gameNameBox);
-        
+
         final ConfigManager cm = ConfigManager.getInstance();
         configureBox = new JComboBox(cm.getProfiles().toArray());
         configureBox.setSelectedItem(cm.getActiveProfile());
@@ -161,7 +153,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 
         // This needs to happen after we have a valid gameName.
         fillPlayersPane();
-        
+
         // Notify the sound manager about having started the setup menu
         SoundManager.notifyOfGameSetup();
     }
@@ -263,6 +255,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
         if (arg0.getSource().equals(newButton)) {
             //start in new thread so that swing thread is not used for game setup
             new Thread() {
+                @Override
                 public void run() {
                     startNewGame();
                 }
@@ -288,6 +281,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
                 final File selectedFile = jfc.getSelectedFile();
                 //start in new thread so that swing thread is not used for game setup
                 new Thread() {
+                    @Override
                     public void run() {
                         loadAndStartGame(selectedFile.getPath(), selectedFile.getParent());
                     }
@@ -297,7 +291,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
             }
         } else if (arg0.getSource().equals(recentButton)) {
             File saveDirectory = new File(Config.get("save.directory"));
-            
+
             recentFiles = new TreeSet<File>(new Comparator<File> (){
                 public int compare (File a, File b) {
                     return Math.round(b.lastModified() - a.lastModified());
@@ -321,12 +315,17 @@ public class GameSetupWindow extends JDialog implements ActionListener {
             }
             String text = LocalText.getText("Select");
             String result = (String) JOptionPane.showInputDialog(this, text, text,
-                    JOptionPane.OK_CANCEL_OPTION,  
+                    JOptionPane.OK_CANCEL_OPTION,
                     null, options, options[0]);
             if (result == null) return;
-            File selectedFile = files[Arrays.asList(options).indexOf(result)];
+            final File selectedFile = files[Arrays.asList(options).indexOf(result)];
             if (selectedFile != null) {
-                loadAndStartGame(selectedFile.getPath(), selectedFile.getParent());
+                new Thread() {
+                    @Override
+                    public void run() {
+                        loadAndStartGame(selectedFile.getPath(), selectedFile.getParent());
+                    }
+                }.start();
             } else { // cancel pressed
                 return;
             }
@@ -335,14 +334,14 @@ public class GameSetupWindow extends JDialog implements ActionListener {
             loadAndStartGame(filePath, null);
         } else if (arg0.getSource().equals(infoButton)) {
             GameInfo gameInfo = this.getSelectedGameInfo();
-            JOptionPane.showMessageDialog(this, 
-                    gameInfo.getDescription(), 
+            JOptionPane.showMessageDialog(this,
+                    gameInfo.getDescription(),
                     "Information about " + gameInfo.getName(),
                     JOptionPane.INFORMATION_MESSAGE);
         } else if (arg0.getSource().equals(quitButton)) {
             System.exit(0);
         } else if (arg0.getSource().equals(creditsButton)) {
-            JOptionPane.showMessageDialog(this, 
+            JOptionPane.showMessageDialog(this,
                     new JLabel(credits), //enable html rendering
                     LocalText.getText("CREDITS"),
                     JOptionPane.INFORMATION_MESSAGE);
@@ -381,9 +380,9 @@ public class GameSetupWindow extends JDialog implements ActionListener {
                 List<String> playerList = new ArrayList<String>();
                 for (int i = 0; i < playerNameFields.length; i++) {
                     if (playerNameFields[i] != null
-                        && playerNameFields[i].getText().length() > 0) {
-                            playerList.add(playerNameFields[i].getText());
-                            playerNameFields[i].setText("");
+                            && playerNameFields[i].getText().length() > 0) {
+                        playerList.add(playerNameFields[i].getText());
+                        playerNameFields[i].setText("");
                     }
                 }
                 Collections.shuffle(playerList);
@@ -394,7 +393,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
             }
         }
     }
-    
+
     private void getRecentFiles (File dir) {
         if (!dir.exists() || !dir.isDirectory()) return;
         for (File entry : dir.listFiles()) {
@@ -422,7 +421,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
                 for (GameOption option : availableOptions) {
                     if (option.isBoolean()) {
                         JCheckBox checkbox =
-                                new JCheckBox(option.getLocalisedName());
+                            new JCheckBox(option.getLocalisedName());
                         if (option.getDefaultValue().equalsIgnoreCase("yes")) {
                             checkbox.setSelected(true);
                         }
@@ -460,14 +459,14 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 
             for (int i = 0; i < playerBoxes.length; i++) {
                 if (playerBoxes[i] != null
-                    && playerBoxes[i].getSelectedIndex() == HUMAN_PLAYER
-                    && !playerNameFields[i].getText().equals("")) {
+                        && playerBoxes[i].getSelectedIndex() == HUMAN_PLAYER
+                        && !playerNameFields[i].getText().equals("")) {
                     playerNames.add(playerNameFields[i].getText());
                 }
             }
 
             if (playerNames.size() < Player.MIN_PLAYERS
-                || playerNames.size() > Player.MAX_PLAYERS) {
+                    || playerNames.size() > Player.MAX_PLAYERS) {
                 if (JOptionPane.showConfirmDialog(this,
                         "Not enough players. Continue Anyway?",
                         "Are you sure?", JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
@@ -477,7 +476,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
         } catch (NullPointerException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this,
-                    "Unable to load selected rails.game. Exiting...");
+            "Unable to load selected rails.game. Exiting...");
             System.exit(-1);
         }
 
@@ -514,9 +513,9 @@ public class GameSetupWindow extends JDialog implements ActionListener {
         }
 
         String gameName = getSelectedGameInfo().getName();
-        
+
         SplashWindow splashWindow = new SplashWindow(false,gameName);
-        
+
         game = new Game(gameName, playerNames, selectedOptions);
 
         if (!game.setup()) {
@@ -541,12 +540,12 @@ public class GameSetupWindow extends JDialog implements ActionListener {
         }
 
     }
-    
+
     private void prepareGameUIInit() {
         setVisible(false);
         if (configWindow != null) configWindow.setVisible(false);
     }
-    
+
     private void completeGameUIInit(SplashWindow splashWindow) {
         if (configWindow != null) {
             configWindow.dispose();
@@ -584,7 +583,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
         // Remember names that have already been filled-in...
         for (int i = 0; i < playerNameFields.length; i++) {
             if (playerNameFields[i] != null
-                && playerNameFields[i].getText().length() > 0) {
+                    && playerNameFields[i].getText().length() > 0) {
                 playerList[i] = playerNameFields[i].getText();
             } else if (i < testPlayers.length && testPlayers[i].length() > 0) {
                 playerList[i] = testPlayers[i];
