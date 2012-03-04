@@ -6,10 +6,10 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOCase;
@@ -25,18 +25,23 @@ import rails.util.Util;
  * A profile storing configuration settings
  */
 
-public final class ConfigProfile {
+public final class ConfigProfile implements Comparable<ConfigProfile> {
     private static final Logger log =
             LoggerFactory.getLogger(ConfigItem.class);
     
     // available profile types
-    public enum Type {SYSTEM, PREDEFINED, USER};
+    public enum Type {SYSTEM(0), PREDEFINED(1), USER(2);
+        private Integer sort; Type(int sort) {this.sort = sort;}
+    };
     
     // Filename extension of profiles
     public static final String PROFILE_EXTENSION = ".rails_profile";
     private static final String PREDEFINED_EXTENSION = ".predefined";
 
-    // Location of predefined profiles
+    // Locations
+    // user inside configuration folder
+    private static final String PROFILE_FOLDER = "profiles/";
+    // predefined inside jar
     private static final String PREDEFINED_FOLDER = "data/profiles/";
     
     // predefined default profiles
@@ -46,7 +51,7 @@ public final class ConfigProfile {
     // the profile selected at the start ...
     private static final String STANDARD_PROFILE = "pbem";
     // ... unless a cli option has been set
-    private static final String STANDARD_CLI_OPTION ="profile";
+    private static final String CLI_AND_RECENT_OPTION ="profile";
     
     
     // file that stores the list of predefined profiles
@@ -99,7 +104,7 @@ public final class ConfigProfile {
     }
     
     static void readUser() {
-        File userFolder = SystemOS.get().getConfigurationFolder(false);
+        File userFolder = SystemOS.get().getConfigurationFolder(PROFILE_FOLDER, false);
         if (userFolder == null) return;
         FilenameFilter filter = new SuffixFileFilter(PROFILE_EXTENSION, IOCase.SYSTEM);
         for (String fileName:userFolder.list(filter)) {
@@ -107,11 +112,18 @@ public final class ConfigProfile {
         }
     }
     
-    static ConfigProfile getDefault() {
-        String profile = System.getProperty(STANDARD_CLI_OPTION);
+    static ConfigProfile getStartProfile() {
+        // first checks cli
+        String profile = System.getProperty(CLI_AND_RECENT_OPTION);
         if (Util.hasValue(profile) && profiles.containsKey(profile)) {
             return profiles.get(profile);
         } 
+        // second check recent
+        profile = Config.getRecent(CLI_AND_RECENT_OPTION);
+        if (Util.hasValue(profile) && profiles.containsKey(profile)) {
+            return profiles.get(profile);
+        } 
+        // third return standard profile
         return profiles.get(STANDARD_PROFILE);
     }
     
@@ -119,8 +131,8 @@ public final class ConfigProfile {
         return profiles.get(name);
     }
     
-    static Set<String> getListofProfiles() {
-        return profiles.keySet();
+    static Collection<ConfigProfile>  getProfiles() {
+        return profiles.values();
     }
     
     private ConfigProfile(Type type, String name) {
@@ -180,6 +192,16 @@ public final class ConfigProfile {
         } else {
             properties.remove(key);
         }
+    }
+    
+    
+    void makeActive(){
+        // check if is already loaded
+        if (!isLoaded()) {
+            load();
+        }
+        // and store it to recent
+        Config.storeRecent(CLI_AND_RECENT_OPTION, getName());
     }
 
     ConfigProfile deriveUserProfile(String name) {
@@ -243,7 +265,7 @@ public final class ConfigProfile {
     }
     
     private boolean loadUser() {
-        File folder = SystemOS.get().getConfigurationFolder(false);
+        File folder = SystemOS.get().getConfigurationFolder(PROFILE_FOLDER, false);
         if (folder == null) {
             return false;
         } else {
@@ -268,7 +290,7 @@ public final class ConfigProfile {
     boolean store() {
         if (type != Type.USER) return false;
         loaded = true;
-        File folder = SystemOS.get().getConfigurationFolder(true);
+        File folder = SystemOS.get().getConfigurationFolder(PROFILE_FOLDER, true);
         if (folder == null) {
             return false; 
         } else {
@@ -307,8 +329,21 @@ public final class ConfigProfile {
         }
         return result;
     }
-    
-    
+
+    private int compare(ConfigProfile a, ConfigProfile b) {
+        if (a.type.sort != b.type.sort) { 
+            return a.type.sort.compareTo(b.type.sort);
+        } else {
+            return a.getName().compareTo(b.getName());
+        }
+    }
+
+    /**
+     * Compares first on Type.sort than on name
+     */
+    public int compareTo(ConfigProfile other) {
+        return compare(this, other);
+    }
 }
 
 

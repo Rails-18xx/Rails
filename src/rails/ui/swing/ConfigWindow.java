@@ -10,7 +10,6 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.Map;
 import java.util.List;
-import java.util.Set;
 
 import rails.common.ConfigItem;
 import rails.common.LocalText;
@@ -464,7 +463,7 @@ class ConfigWindow extends JFrame {
 
     private boolean saveAsConfig() {
         // get Names
-        Set<String> allProfileNames = cm.getProfiles();
+        List<String> allProfileNames = cm.getProfiles();
         String newProfile = null;
         do {
             newProfile = JOptionPane.showInputDialog(ConfigWindow.this, LocalText.getText("CONFIG_NEW_MESSAGE"),

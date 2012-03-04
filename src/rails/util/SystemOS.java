@@ -41,6 +41,8 @@ public enum SystemOS {
     }
     
     /**
+     * Returns the folder that contains all rails specific user data
+     * Returns null if the operations fails 
      * @param create set to true creates the folder if it does not exist 
      * @return rails specific configuration folder     */
     public File getConfigurationFolder(boolean create) {
@@ -63,14 +65,35 @@ public enum SystemOS {
         }
         
         // locate railsFolder
-        File railsFolder = new File(folder, appName);
+        return locateFolder(folder, appName, create);
+    }
+    
+    /**
+     * Returns a sub-folder inside the Rails configuration folder
+     * Returns null if the operations fails 
+     * @param subFolder the folder inside
+     * @param create set to true creates the subFolder and/or
+     * configFolder if it does not exist 
+     * @return rails specific configuration folder 
+     */
+    public File getConfigurationFolder(String subFolder, boolean create) {
+        File railsFolder = getConfigurationFolder(create);
         
-        if (!railsFolder.exists() && create) {
-            createFolder(railsFolder);
+        if (railsFolder == null) return null;
+        
+        // locate subFolder
+        return locateFolder(railsFolder, subFolder, create);
+    }
+
+    private File locateFolder(File folder, String sub, boolean create) {
+        File subFolder = new File(folder, sub);
+        
+        if (!subFolder.exists() && create) {
+            createFolder(subFolder);
         }
         
-        if (railsFolder.exists() && railsFolder.isDirectory()) {
-            return railsFolder;
+        if (subFolder.exists() && subFolder.isDirectory()) {
+            return subFolder;
         } else {
             return null;
         }

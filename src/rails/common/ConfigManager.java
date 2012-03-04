@@ -1,11 +1,12 @@
 package rails.common;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,7 @@ import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.RailsRoot;
 import rails.game.GameManager;
+import rails.util.SystemOS;
 import rails.util.Util;
 
 /**
@@ -43,6 +45,9 @@ public class ConfigManager implements Configurable {
     private static final String SECTION_TAG = "Section";
     private static final String ITEM_TAG = "Property";
     
+    // Recent property file
+    private static final String RECENT_FILE = "rails.recent";
+    
     // singleton configuration for ConfigManager
     private static final ConfigManager instance = new ConfigManager();
     
@@ -51,6 +56,9 @@ public class ConfigManager implements Configurable {
     // configuration items: replace with Multimap in Rails 2.0
     private final Map<String, List<ConfigItem>> configSections = new HashMap<String, List<ConfigItem>>();
 
+    // recent data
+    private final Properties recentData = new Properties();
+    
     // profile storage
     private ConfigProfile activeProfile;
     
@@ -141,13 +149,19 @@ public class ConfigManager implements Configurable {
     
     private void init() {
   
+        // load recent data
+        File recentFile = new File(SystemOS.get().getConfigurationFolder(false), RECENT_FILE);
+        ConfigProfile.loadProperties(recentData, recentFile.getAbsolutePath(), false);
+        
         // define profiles
         ConfigProfile.readPredefined();
         ConfigProfile.readUser();
         
-        // load root and default profile
+        // load root profile
         ConfigProfile.loadRoot();
-        changeProfile(ConfigProfile.getDefault());
+        
+        // change to start profile (cli, recent or default)
+        changeProfile(ConfigProfile.getStartProfile());
 
         initVersion();
     }
@@ -194,8 +208,15 @@ public class ConfigManager implements Configurable {
         return activeProfile.getType() == ConfigProfile.Type.USER;
     }
 
-    public Set<String> getProfiles() {
-        return ConfigProfile.getListofProfiles();
+    public List<String> getProfiles() {
+        // sort and convert to names
+        List<ConfigProfile> profiles = new ArrayList<ConfigProfile>(ConfigProfile.getProfiles());
+        Collections.sort(profiles);
+        List<String> profileNames = new ArrayList<String>();
+        for (ConfigProfile profile:profiles){
+            profileNames.add(profile.getName());
+        }
+        return profileNames;
     }
     
     public Map<String, List<ConfigItem>> getConfigSections() {
@@ -212,12 +233,9 @@ public class ConfigManager implements Configurable {
     }
 
     private void changeProfile(ConfigProfile profile) {
-        // check if profiles have been loaded
-        if (!profile.isLoaded()) {
-            profile.load();
-        }
         activeProfile = profile;
-        
+        activeProfile.makeActive();
+
         // define configItems
         for (List<ConfigItem> items:configSections.values()) {
             for (ConfigItem item:items) {
@@ -253,6 +271,30 @@ public class ConfigManager implements Configurable {
         return saveProfile(applyInitMethods);
     }
     
-
-
+    String getRecent(String key) {
+        // get value from active profile (this escalates)
+        String value = recentData.getProperty(key);
+        if (Util.hasValue(value)) {
+            return value.trim();
+        } else {
+            return null;
+        }
+    }
+    
+    boolean storeRecent(String key, String value) {
+        // check conditions
+        if (key == null) return false;
+        if (getRecent(key) == null || !getRecent(key).equals(value) ) {
+            if (value == null) {
+                recentData.remove(key);
+            } else {
+                recentData.setProperty(key, value);
+            }
+            File recentFile = new File(SystemOS.get().getConfigurationFolder(true), RECENT_FILE);
+            return ConfigProfile.storeProperties(recentData, recentFile);
+        }
+        // nothing has changed
+        return true;
+    }
+    
 }
