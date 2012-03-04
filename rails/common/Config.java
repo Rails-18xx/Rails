@@ -4,7 +4,7 @@ import rails.game.GameManager;
 import rails.util.Util;
 
 /**
- * Proxy class to the ConfigManager 
+ * Proxy class to the ConfigManager
  */
 
 public class Config {
@@ -42,6 +42,14 @@ public class Config {
         return getSpecific(key, GameManager.getInstance().getGameName());
     }
 
+    public static String getRecent(String key) {
+        return ConfigManager.getInstance().getRecent(key);
+    }
     
+    public static boolean storeRecent(String key, String value) {
+        return ConfigManager.getInstance().storeRecent(key, value);
+    }
     
 }
+
+
