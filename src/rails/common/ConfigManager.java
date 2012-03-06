@@ -151,7 +151,7 @@ public class ConfigManager implements Configurable {
   
         // load recent data
         File recentFile = new File(SystemOS.get().getConfigurationFolder(false), RECENT_FILE);
-        ConfigProfile.loadProperties(recentData, recentFile.getAbsolutePath(), false);
+        Util.loadProperties(recentData, recentFile);
         
         // define profiles
         ConfigProfile.readPredefined();
@@ -176,7 +176,7 @@ public class ConfigManager implements Configurable {
         // TODO: Check if this is the right place for this
         /* Load version number and develop flag */
         Properties versionNumber = new Properties();
-        ConfigProfile.loadProperties(versionNumber, "version.number", true);
+        Util.loadPropertiesFromResource(versionNumber, "version.number");
 
         String version = versionNumber.getProperty("version");
         if (Util.hasValue("version")) {
@@ -291,7 +291,7 @@ public class ConfigManager implements Configurable {
                 recentData.setProperty(key, value);
             }
             File recentFile = new File(SystemOS.get().getConfigurationFolder(true), RECENT_FILE);
-            return ConfigProfile.storeProperties(recentData, recentFile);
+            return Util.storeProperties(recentData, recentFile);
         }
         // nothing has changed
         return true;

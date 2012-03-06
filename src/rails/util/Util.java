@@ -2,10 +2,12 @@ package rails.util;
 
 import java.awt.Color;
 import java.io.*;
+import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import rails.common.ConfigProfile;
 import rails.common.parser.ConfigurationException;
 import rails.game.state.Item;
 
@@ -186,5 +188,45 @@ public final class Util {
         } else {
             return null;
         }
+    }
+
+    public static boolean loadProperties(Properties properties, File file) {
+        try {
+            log.info("Loading properties from file " + file);
+            InputStream inFile = new FileInputStream(file);
+            properties.load(inFile);
+        } catch (Exception e) {
+            log.error(e + " whilst loading properties file "
+                               + file, e);
+            return false;
+        }
+        return true;
+    }
+    
+    public static boolean loadPropertiesFromResource(Properties properties, String resourcePath) {
+        try {
+            log.info("Loading properties from resource " + resourcePath);
+            InputStream inFile;
+                inFile = ConfigProfile.class.getClassLoader().getResourceAsStream(resourcePath);  
+            properties.load(inFile);
+        } catch (Exception e) {
+            log.error(e + " whilst loading properties file from resource at "
+                               + resourcePath, e);
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean storeProperties(Properties properties, File file) {
+        boolean result = true;
+        try { 
+            properties.store(new FileOutputStream(file), "Automatically generated, do not edit");
+            log.info("Storing properties to file " + file.getAbsolutePath());
+        } catch (IOException e) {
+            log.error(e + " whilst storing properties file "
+                    + file.getAbsolutePath());
+            result = false;
+        }
+        return result;
     }
 }

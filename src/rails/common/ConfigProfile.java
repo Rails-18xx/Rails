@@ -1,11 +1,7 @@
 package rails.common;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -97,7 +93,7 @@ public final class ConfigProfile implements Comparable<ConfigProfile> {
     static void readPredefined() {
         Properties list = new Properties();
         String filePath = PREDEFINED_FOLDER + LIST_OF_PROFILES;
-        loadProperties(list, filePath, true);
+        Util.loadPropertiesFromResource(list, filePath);
         for (String name:list.stringPropertyNames()) {
             new ConfigProfile(Type.PREDEFINED, name);
         }
@@ -270,7 +266,7 @@ public final class ConfigProfile implements Comparable<ConfigProfile> {
             return false;
         } else {
             File profile = new File(folder, name + PROFILE_EXTENSION);
-            return loadProperties(properties, profile.getAbsolutePath(), false);
+            return Util.loadProperties(properties, profile);
         }   
     }
     
@@ -284,7 +280,7 @@ public final class ConfigProfile implements Comparable<ConfigProfile> {
             filePath = PREDEFINED_FOLDER + name + PREDEFINED_EXTENSION ;
             break;
         }
-        return loadProperties(properties, filePath, true);
+        return Util.loadPropertiesFromResource(properties, filePath);
     }
     
     boolean store() {
@@ -295,39 +291,8 @@ public final class ConfigProfile implements Comparable<ConfigProfile> {
             return false; 
         } else {
             File profile = new File(folder, name + PROFILE_EXTENSION);
-            return storeProperties(properties, profile);
+            return Util.storeProperties(properties, profile);
         }
-    }
-
-    static boolean loadProperties(Properties properties, String filePath, boolean resource) {
-        try {
-            log.info("Loading properties from file " + filePath);
-            InputStream inFile;
-            if (resource) {
-                inFile = ConfigProfile.class.getClassLoader().getResourceAsStream(filePath);  
-            } else {
-                inFile = new FileInputStream(filePath);
-            }
-            properties.load(inFile);
-        } catch (Exception e) {
-            log.error(e + " whilst loading properties file "
-                               + filePath, e);
-            return false;
-        }
-        return true;
-    }
-    
-    static boolean storeProperties(Properties properties, File file) {
-        boolean result = true;
-        try { 
-            properties.store(new FileOutputStream(file), "Automatically generated, do not edit");
-            log.info("Storing properties to file " + file.getAbsolutePath());
-        } catch (IOException e) {
-            log.error(e + " whilst storing properties file "
-                    + file.getAbsolutePath());
-            result = false;
-        }
-        return result;
     }
 
     private int compare(ConfigProfile a, ConfigProfile b) {

@@ -13,11 +13,8 @@
 		
 		<!-- Define a filter to substitute version number -->
 		<filterset id="versionFilter">
-				<filter token="VERSION" value="${version}"/> 
-		</filterset> 
-		<!-- Define a filter to substitute develop tag to version number -->
-		<filterset id="developFilter">
-				<filter token="DEVELOP" value=""/> 
+			<filter token="VERSION" value="${version}"/> 
+			<filter token="DEVELOP" value=""/> 
 		</filterset> 
 						
 		<!-- Clean the current release -->
@@ -47,6 +44,7 @@
 				<exclude name="rails-*-${version}/**"/>
 				<exclude name="rails.bat"/>
 				<exclude name="rails.sh"/>
+				<exclude name="version.number" />
 				<exclude name=".project"/>
 				<exclude name=".classpath"/>
 				<exclude name=".git/**"/>
@@ -55,6 +53,12 @@
 				<exclude name="**/CVS/*"/>
 				<exclude name="**/.settings/*"/>
 				<exclude name="**/rails-${version}.jar"/>
+			</fileset>
+		</copy>
+		<copy todir="jar">
+			<filterset refid="versionFilter"/>
+			<fileset dir=".">
+				<include name="version.number" />
 			</fileset>
 		</copy>
 		<mkdir dir="rails-${version}"/>
