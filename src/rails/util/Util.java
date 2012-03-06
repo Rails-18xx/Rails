@@ -13,7 +13,7 @@ import rails.game.state.Item;
 
 public final class Util {
 
-    protected static Logger log;
+    protected static Logger log = Logger.getLogger(Util.class.getPackage().getName());;
 
     /**
      * No-args private constructor, to prevent (meaningless) construction of one
