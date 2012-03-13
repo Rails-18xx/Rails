@@ -17,6 +17,7 @@ public interface PhaseI extends ConfigurableComponentI {
     public int getIndex();
 
     public String getName();
+    public String getRealName();
 
     public boolean doPrivatesClose();
     public void addObjectToClose(Closeable object);

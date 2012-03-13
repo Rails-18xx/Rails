@@ -58,7 +58,7 @@ public class BuyStartItem_1880 extends BuyStartItem {
     public BuyStartItem_1880(StartItem startItem, int price, boolean selected) {
         super(startItem, price, selected);
         // TODO Auto-generated constructor stub
-        this.buildingRights = new BitSet(4);
+        this.buildingRights = new BitSet(5);
     }
     
     public boolean equalsAsOption(PossibleAction action) {
@@ -111,18 +111,25 @@ public class BuyStartItem_1880 extends BuyStartItem {
          } else  if (buildingRightString == "D") {
              buildingRight.set(3);
          } else  if (buildingRightString == "A+B") {
-             buildingRight.set(0,1);
+             buildingRight.set(0);
+             buildingRight.set(1);
          } else  if (buildingRightString == "A+B+C") {
-             buildingRight.set(0,2);
+             buildingRight.set(0);
+             buildingRight.set(1);
+             buildingRight.set(2);
         } else  if (buildingRightString == "B+C") {
-             buildingRight.set(1,2);
+             buildingRight.set(1);
+             buildingRight.set(2);
          } else  if (buildingRightString == "B+C+D") {
-             buildingRight.set(1,3);
-        } else  if (buildingRightString == "C+D") {
-            buildingRight.set(2,3);
+             buildingRight.set(1);
+             buildingRight.set(2);
+             buildingRight.set(3);
+         } else  if (buildingRightString == "C+D") {
+            buildingRight.set(2);
+            buildingRight.set(3);
          }
          
-        this.associatedBuildingRight = buildingRight;
+        associatedBuildingRight = buildingRight;
      }
    
      public String buildingRightToString (BitSet buildingRight){

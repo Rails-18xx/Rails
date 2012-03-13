@@ -4,7 +4,15 @@
 package rails.game.specific._1880;
 
 import rails.common.GuiDef;
-import rails.game.*;
+import rails.game.GameManager;
+import rails.game.OperatingRound;
+import rails.game.PhaseI;
+import rails.game.Player;
+import rails.game.PublicCompanyI;
+import rails.game.RoundI;
+import rails.game.ShareSellingRound;
+import rails.game.StartRound;
+import rails.game.StockRound;
 import rails.game.state.IntegerState;
 
 /**
@@ -12,9 +20,14 @@ import rails.game.state.IntegerState;
  * @date 21.1.2012
  * 
  */
+
+
+
 public class GameManager_1880 extends GameManager {
 
-    private RoundI previousRound = null;
+    protected Class<? extends ShareSellingRound> shareSellingRoundClass
+    = ShareSellingRound_1880.class;
+    
     public IntegerState numOfORs = new IntegerState("numOfORs");
     //Keeps track of the company that purchased the last train
     private PublicCompany_1880 lastTrainBuyingCompany;
@@ -100,6 +113,34 @@ public class GameManager_1880 extends GameManager {
         super.startStockRound();
     }
 
+    /* (non-Javadoc)
+     * @see rails.game.GameManager#startShareSellingRound(rails.game.Player, int, rails.game.PublicCompanyI, boolean)
+     */
+    @Override
+    public void startShareSellingRound(Player player, int cashToRaise,
+            PublicCompanyI cashNeedingCompany, boolean problemDumpOtherCompanies) {
+        
+    
+        interruptedRound = getCurrentRound();
 
+        // check if other companies can be dumped
+        createRound (shareSellingRoundClass, interruptedRound)
+        .start(player, cashToRaise, cashNeedingCompany,
+                !problemDumpOtherCompanies || forcedSellingCompanyDump);
+        // the last parameter indicates if the dump of other companies is allowed, either this is explicit or
+        // the action does not require that check
+
+    }
+
+    /* (non-Javadoc)
+     * @see rails.game.GameManager#finishShareSellingRound()
+     */
+    @Override
+    public void finishShareSellingRound() {
+
+        possibleActions.clear(); //Do we need this here ? 
+        
+        super.finishShareSellingRound();
+    }
 
 }

@@ -1,10 +1,7 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/RemainingTilesWindow.java,v 1.8 2009/12/15 18:56:11 evos Exp $*/
 package rails.ui.swing;
 
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Image;
+import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -25,7 +22,7 @@ import rails.ui.swing.hexmap.GUIHex;
  * This Window displays the availability of tiles.
  */
 public class RemainingTilesWindow extends JFrame implements WindowListener,
-        ActionListener {
+ActionListener {
     private static final long serialVersionUID = 1L;
     private GameUIManager gameUIManager;
     private ORUIManager orUIManager;
@@ -36,7 +33,7 @@ public class RemainingTilesWindow extends JFrame implements WindowListener,
     private List<TileI> shownTiles = new ArrayList<TileI>();
 
     protected static Logger log =
-            Logger.getLogger(RemainingTilesWindow.class.getPackage().getName());
+        Logger.getLogger(RemainingTilesWindow.class.getPackage().getName());
 
     public RemainingTilesWindow(ORWindow orWindow) {
         super();
@@ -154,7 +151,7 @@ public class RemainingTilesWindow extends JFrame implements WindowListener,
     public JScrollPane getScrollPane() {
         return slider;
     }
-    
+
     /**
      * custom content pane that will align its width with the parent scroll pane
      * needed to ensure only vertical scroll bar is used
@@ -166,16 +163,16 @@ public class RemainingTilesWindow extends JFrame implements WindowListener,
         public Dimension getPreferredSize() {
             //width based on parent slider
             int width = parentSlider.getSize().width
-                    - parentSlider.getVerticalScrollBar().getWidth()
-                    - 5;
+            - parentSlider.getVerticalScrollBar().getWidth()
+            - 5;
             if (width <= 0) width = 1;
-            
+
             //height based on contained components
             //(no need to take into account width discrepancies since
             // method is invoked several times)
             int height = 1; //minimum height
             for (Component c : this.getComponents()) {
-                height = Math.max(height, c.getY() + c.getHeight()); 
+                height = Math.max(height, c.getY() + c.getHeight());
             }
             return new Dimension (width , height);
         }

@@ -77,7 +77,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
 
     private int np; // Number of players
     private int ni; // Number of start items
-    private Player[] players;
+    private List<Player> players;
     private StartItem[] items;
     private StartItemAction[] actionableItems;
     private StartPacket packet;
@@ -166,7 +166,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
 
         gbc = new GridBagConstraints();
 
-        players = getGameUIManager().getGameManager().getPlayers().toArray(new Player[0]);
+        players = gameUIManager.getPlayers();
         np = getGameUIManager().getGameManager().getNumberOfPlayers();
         packet = round.getStartPacket();
         crossIndex = new int[packet.getNumberOfItems()];
@@ -285,7 +285,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
                 f = upperPlayerCaption[i] = new Field(getGameUIManager().getGameManager().getPlayerNameModel(i));
                 upperPlayerCaption[i].setNormalBgColour(Cell.NORMAL_CAPTION_BG_COLOUR);
             } else {
-                f = upperPlayerCaption[i] = new Caption(players[i].getName());
+                f = upperPlayerCaption[i] = new Caption(players.get(i).getNameAndPriority());
             }
             addField(f, bidPerPlayerXOffset + i, 1, 1, 1, WIDE_BOTTOM);
         }
@@ -358,7 +358,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
                 playerFree[i] =
                     new Field(includeBidding
                             ? round.getFreeCashModel(i)
-                                    : players[i].getCashModel());
+                                    : players.get(i).getCashModel());
             addField(f, playerFreeCashXOffset + i, playerFreeCashYOffset, 1, 1,
                     firstBelowTable ? WIDE_TOP : 0);
         }
@@ -368,7 +368,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
                 f = lowerPlayerCaption[i] = new Field(getGameUIManager().getGameManager().getPlayerNameModel(i));
                 lowerPlayerCaption[i].setNormalBgColour(Cell.NORMAL_CAPTION_BG_COLOUR);
             } else {
-                f = lowerPlayerCaption[i] = new Caption(players[i].getName());
+                f = lowerPlayerCaption[i] = new Caption(players.get(i).getNameAndPriority());
             }
             addField(f, playerFreeCashXOffset + i, playerFreeCashYOffset + 1,
                     1, 1, WIDE_TOP);
@@ -729,7 +729,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
 
     public String getSRPlayer() {
         if (playerIndex >= 0)
-            return players[playerIndex].getName();
+            return players.get(playerIndex).getName();
         else
             return "";
     }

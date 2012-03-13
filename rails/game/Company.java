@@ -260,4 +260,11 @@ Cloneable, Comparable<Company> {
         }
         return b.toString();
     }
+
+    /**
+     * @param infoText the infoText to set
+     */
+    public void setInfoText(String infoText) {
+        this.infoText = infoText;
+    }
 }

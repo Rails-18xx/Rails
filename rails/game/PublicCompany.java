@@ -2100,4 +2100,11 @@ public class PublicCompany extends Company implements PublicCompanyI {
         return true;
     }
 
+    /**
+     * @param destinationHex the destinationHex to set
+     */
+    public void setDestinationHex(MapHex destinationHex) {
+        this.destinationHex = destinationHex;
+    }
+
 }

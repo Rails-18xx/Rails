@@ -8,21 +8,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.JOptionPane;
-
-import rails.game.StartRound;
+import javax.swing.JDialog;
+import rails.game.Bank;
 import rails.game.StockMarketI;
-import rails.game.StockSpace;
 import rails.game.StockSpaceI;
-import rails.ui.swing.*;
-import rails.ui.swing.GameUIManager;
 import rails.ui.swing.StartRoundWindow;
 import rails.common.LocalText;
-import rails.game.GameManager;
-import rails.game.action.BuyStartItem;
 import rails.game.action.PossibleAction;
 import rails.game.action.StartItemAction;
 import rails.game.specific._1880.BuyStartItem_1880;
+import rails.ui.swing.elements.*;
+import rails.game.specific._1880.*;
 
 
 /**
@@ -31,6 +27,17 @@ import rails.game.specific._1880.BuyStartItem_1880;
  */
 public class StartRoundWindow_1880 extends StartRoundWindow {
 
+    
+    /* Keys of dialogues owned by this class */
+    public static final String COMPANY_START_PRICE_DIALOG = "CompanyStartPrice";
+    public static final String COMPANY_BUILDING_RIGHT_DIALOG = "CompanyBuildingRight";
+    public static final String COMPANY_PRESIDENCY_PERCENTAGE_DIALOG = "CompanyPresidentPercentage";
+    
+    protected JDialog currentDialog = null;
+    protected PossibleAction currentDialogAction = null;
+    protected int[] startPrices = null;
+    String[] bRights = {"A","B","C","D","A+B","A+B+C","B+C","B+C+D","C+D"};
+    
     private static final long serialVersionUID = 1L;
     /**
      * @param round
@@ -42,7 +49,6 @@ public class StartRoundWindow_1880 extends StartRoundWindow {
   
    @Override
    public boolean processImmediateAction() {
-           BuyStartItem_1880 action2;
            
        log.debug("ImmediateAction=" + immediateAction);
        if (immediateAction != null) {
@@ -54,8 +60,7 @@ public class StartRoundWindow_1880 extends StartRoundWindow {
                StartItemAction action = (StartItemAction) nextAction;
                if (action instanceof BuyStartItem_1880) {
                    requestStartPrice((BuyStartItem_1880) action);
-                   requestBuildingRight((BuyStartItem_1880) action);
-                  return process(action);
+                  return false;
                }
            }
        }
@@ -75,54 +80,105 @@ public class StartRoundWindow_1880 extends StartRoundWindow {
            List<StockSpaceI> startSpaces = stockMarket.getStartSpaces();
            Map<Integer, StockSpaceI> spacePerPrice =
                    new HashMap<Integer, StockSpaceI>();
-           int[] prices = new int[startSpaces.size()];
-           StockSpaceI[] options = new StockSpaceI[startSpaces.size()];
+           startPrices = new int[startSpaces.size()];
+           String[] options = new String[startSpaces.size()];
            for (int i = 0; i < startSpaces.size(); i++) {
-               prices[i] = startSpaces.get(i).getPrice();
-               spacePerPrice.put(prices[i], startSpaces.get(i));
+               if (((StockMarket_1880) stockMarket).getParSlot(startSpaces.get(i).getPrice())) { //Make sure we got a Parslot left over
+               startPrices[i] = startSpaces.get(i).getPrice();
+               spacePerPrice.put(startPrices[i], startSpaces.get(i));
+               }
            }
-           Arrays.sort(prices);
+           Arrays.sort(startPrices);
            for (int i = 0; i < startSpaces.size(); i++) {
-               options[i] = spacePerPrice.get(prices[i]);
+               options[i] = Bank.format(spacePerPrice.get(startPrices[i]).getPrice());
            }
 
-           StockSpace sp =
-                   (StockSpace) JOptionPane.showInputDialog(this,
+           RadioButtonDialog dialog = new RadioButtonDialog(
+                   COMPANY_START_PRICE_DIALOG,
+                   this,
+                   this,
+                   LocalText.getText("PleaseSelect"),
                            LocalText.getText("WHICH_START_PRICE",
                                    activeItem.getPlayerName(),
                                    compName),
-                           LocalText.getText("WHICH_PRICE"),
-                           JOptionPane.QUESTION_MESSAGE, null, options,
-                           options[0]);
-           if (sp == null) {
-               return false;
+                           options,
+                           -1);
+           setCurrentDialog (dialog, activeItem);
            }
-           int price = sp.getPrice();
-           activeItem.setAssociatedSharePrice(price);
-       }
        return true;
    }
   
   protected boolean requestBuildingRight(BuyStartItem_1880 activeItem) {
        
-      String[] bRights = {"A","B","C","D","A+B","A+B+C","B+C","B+C+D","C+D"};
+      
       
        String compName = activeItem.getCompanyToSetPriceFor();
       
-      String initialBuildingRight = null;
-                initialBuildingRight=(String) JOptionPane.showInputDialog(this,
-                      LocalText.getText("WHICH_BUILDING_RIGHT",
+       
+       RadioButtonDialog dialog = new RadioButtonDialog(
+               COMPANY_BUILDING_RIGHT_DIALOG,
+               this,
+               this,
+               LocalText.getText("PleaseSelect"),       
+                       LocalText.getText("WhichBuildingRight",
                               activeItem.getPlayerName(),
                               compName),
-                       LocalText.getText("WHICH_RIGHT"),
-                       JOptionPane.QUESTION_MESSAGE, null, bRights,
-                       bRights[0]);
-       if (initialBuildingRight.isEmpty()){
-          return false;
-       }
-       activeItem.setAssociatedBuildingRight(initialBuildingRight);
+                       bRights,
+                       0);
+       setCurrentDialog (dialog, activeItem);
        return true;
    }   
- 
+
+  public void dialogActionPerformed () {
+      
+      String key="";
+      StockMarketI stockMarket = getGameUIManager().getGameManager().getStockMarket();
+      
+      if (currentDialog instanceof NonModalDialog) key = ((NonModalDialog) currentDialog).getKey();
+      
+      if (COMPANY_START_PRICE_DIALOG.equals(key)) {
+      
+          RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
+          BuyStartItem_1880 action = (BuyStartItem_1880) currentDialogAction;
+
+          int index = dialog.getSelectedOption();
+          if (index >= 0) {
+              int price = startPrices[index];
+              action.setAssociatedSharePrice(price);
+              ((StockMarket_1880) stockMarket).setParSlot(price);
+              
+              requestBuildingRight((BuyStartItem_1880) action);
+              } else {
+              // No selection done - no action
+              return;
+          }
+
+      } else if (COMPANY_BUILDING_RIGHT_DIALOG.equals(key)) {
+        
+          RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
+          BuyStartItem_1880 action = (BuyStartItem_1880) currentDialogAction;
+
+          int index = dialog.getSelectedOption();
+          if (index >= 0) {
+            String buildingRight=bRights[index];
+            action.setAssociatedBuildingRight(buildingRight);
+            process (action);
+          } else {
+           // No selection done - no action
+              return; 
+          }
+          
+      }
+      return;
+  }
+  
+  public void setCurrentDialog (JDialog dialog, PossibleAction action) {
+      if (currentDialog != null) {
+          currentDialog.dispose();
+      }
+      currentDialog = dialog;
+      currentDialogAction = action;
+      disableButtons();
+  }
 }
    

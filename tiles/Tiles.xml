@@ -3805,7 +3805,7 @@
 		<Track from="side3" gauge="normal" to="city1"/>
 		<Track from="city1" gauge="normal" to="side0"/>
 	</Tile>
-	<Tile colour="green" id="8886" name="8886">
+	<Tile colour="green" id="8886" name="Beijing">
 		<Station id="city1" position="303" slots="1" type="City" value="40"/>
 		<Station id="city2" position="203" slots="1" type="City" value="40"/>
 		<Station id="city3" position="103" slots="1" type="City" value="40"/>
@@ -3959,7 +3959,7 @@
 		<Track from="city1" gauge="normal" to="side4"/>
 		<Track from="city1" gauge="normal" to="side5"/>
 	</Tile>
-	<Tile colour="gray" id="455" name="495">
+	<Tile colour="gray" id="455" name="455">
 		<Station id="city1" position="0" slots="3" type="City" value="50"/>
 		<Track from="city1" gauge="normal" to="side3"/>
 		<Track from="city1" gauge="normal" to="side4"/>
