@@ -113,7 +113,7 @@
 	    <Hex name="H12" tile="-101" city="Altoona" runThrough="tokenOnly"/>
     </IfOption>
     <IfOption name="Variant" value="Coalfields,Reading,Coalfields&amp;Reading">
-        <Hex name="H12" tile="-30003" pic="-30002" city="Altoona">
+        <Hex name="H12" tile="-30003" city="Altoona">
 			<Access runThrough="tokenOnly"/>
 		</Hex>
     </IfOption>
@@ -121,7 +121,7 @@
 		<Hex name="H14" tile="0"/>
     </IfOption>
     <IfOption name="Variant" value="Reading,Coalfields&amp;Reading">
-        <Hex name="H14" tile="-30007" pic="-30006" city="Reading">
+        <Hex name="H14" tile="-30007" city="Reading">
 			<Access runThrough="tokenOnly"/>
 		</Hex>
     </IfOption>

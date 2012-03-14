@@ -64,6 +64,7 @@ StationHolder, TokenHolder {
     protected int number;
     protected String tileFileName;
     protected int preprintedTileId;
+    protected int preprintedPictureId = 0;
     protected TileI currentTile;
     protected int currentTileRotation;
     protected int preprintedTileRotation;
@@ -229,6 +230,7 @@ StationHolder, TokenHolder {
         }
 
         preprintedTileId = tag.getAttributeAsInteger("tile", -999);
+        preprintedPictureId = tag.getAttributeAsInteger("pic", 0);
 
         preprintedTileRotation = tag.getAttributeAsInteger("orientation", 0);
         currentTileRotation  = preprintedTileRotation;
@@ -464,6 +466,20 @@ StationHolder, TokenHolder {
 
     public int getPreprintedTileRotation() {
         return preprintedTileRotation;
+    }
+
+    /** Return the current picture ID (i.e. the tile ID to be displayed, rather than used for route determination).
+     * <p> Usually, the picture ID is equal to the tile ID. Different values may be defined per hex or per tile.
+     * @return The current picture ID
+     */
+    public int getPictureId () {
+        if (currentTile.getId() == preprintedTileId && preprintedPictureId != 0) {
+            return preprintedPictureId;
+        } else if (currentTile.getPictureId() != 0) {
+            return currentTile.getPictureId();
+        } else {
+            return currentTile.getId();
+        }
     }
 
     /**
