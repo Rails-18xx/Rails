@@ -45,7 +45,7 @@ public class GUITile {
     public static final double SVG_Y_CENTER_LOC = 0.426;
 
     protected static Logger log =
-            Logger.getLogger(GUITile.class.getPackage().getName());
+        Logger.getLogger(GUITile.class.getPackage().getName());
 
     public GUITile(int tileId, GUIHex guiHex) {
         this.guiHex = guiHex;
@@ -53,7 +53,7 @@ public class GUITile {
         this.hex = (MapHex)guiHex.getModel();
         TileManager tileManager = guiHex.getHexMap().orUIManager.getTileManager();
         tile = tileManager.getTile(tileId);
-        picId = tile.getPictureId();
+        picId = hex.getPictureId();
 
         if (hex.getTileOrientation() == TileOrientation.EW) {
             baseRotation = 0.5 * DEG60;
@@ -122,7 +122,7 @@ public class GUITile {
                     // these must all be preserved.
                     if (prevTile.hasTracks(prevTileSide)) {
                         List<Track> newTracks =
-                                tile.getTracksPerSide(tempTileSide);
+                            tile.getTracksPerSide(tempTileSide);
                         old: for (Track oldTrack : prevTile.getTracksPerSide(prevTileSide)) {
                             if (oldTrack.getEndPoint(prevTileSide) >= 0) {
                                 // Old track ending in another side
@@ -143,7 +143,7 @@ public class GUITile {
                                     //log.debug("[" + i + "," + j + "] Found "
                                     //     + oldTrack.getEndPoint(prevTileSide));
                                     oldCities.put(prevTileSide,
-                                        oldTrack.getEndPoint(prevTileSide));
+                                            oldTrack.getEndPoint(prevTileSide));
                                 } else {
                                     // Downgraded
                                     // Assume there are only two exits
@@ -153,7 +153,7 @@ public class GUITile {
                                     int otherNewEndPoint = newTracks.get(0).getEndPoint(tempTileSide);
                                     // Calculate the corresponding old tile side number
                                     int otherOldEndPoint = (otherNewEndPoint + tempRot - prevTileRotation + 6) % 6;
-                                               // That old tile side must have track too
+                                    // That old tile side must have track too
                                     if (prevTile.getTracksPerSide(otherOldEndPoint) == null
                                             || prevTile.getTracksPerSide(otherOldEndPoint).isEmpty()) {
                                         continue rot;
@@ -203,7 +203,7 @@ public class GUITile {
                         //log.debug("Check " + newCities.get(kkk) + " & "
                         //          + newCities.get(ll));
                         if (newCities.get(kk) == null
-                            || newCities.get(ll) == null) continue rot;
+                                || newCities.get(ll) == null) continue rot;
                         // If connected cities do not correspond, skip
                         // (this is the "OO brown upgrade get-right" feature)
                         // Only apply this check if the number of cities has not decreased
@@ -285,7 +285,7 @@ public class GUITile {
             AffineTransform af = AffineTransform.getRotateInstance(radians, xCenter, yCenter);
             af.scale(tileScale, tileScale);
 
-            AffineTransformOp aop = new AffineTransformOp(af, 
+            AffineTransformOp aop = new AffineTransformOp(af,
                     getTileRenderingHints());
 
             g2.drawImage(tileImage, aop, x - xCenter, y - yCenter);
@@ -294,7 +294,7 @@ public class GUITile {
             log.error("No image for tile "+tileId+" on hex "+guiHex.getName());
         }
     }
-    
+
     /**
      * Provides the image of the tile based on the zoomStep.
      * tileScale is not considered for producing this image.
@@ -314,32 +314,32 @@ public class GUITile {
         int narrowDiagonal = (int)Math.round( wideDiagonal * 0.5 * Math.sqrt(3) );
 
         int border = wideDiagonal - narrowDiagonal;
-        
+
         // STEP 2: CENTER TILE IN IMAGE
-        // apply the bottom border also the left / top / right 
+        // apply the bottom border also the left / top / right
 
         //center tile by translation
         AffineTransform centeringAT = AffineTransform.getTranslateInstance( border, border );
         AffineTransformOp centeringATOp = new AffineTransformOp(centeringAT, null);
-        
+
         //centered tile image create manually since it also needs a border on the right
-        BufferedImage centeredTileImage = new BufferedImage( 
+        BufferedImage centeredTileImage = new BufferedImage(
                 uncenteredTileImage.getWidth() + border * 2,
                 uncenteredTileImage.getHeight() + border,
                 uncenteredTileImage.getType());
 
         centeringATOp.filter(uncenteredTileImage, centeredTileImage);
-        
+
         // STEP 3: ROTATE TILE IMAGE
         // feasible only now since there are enough margins to ensure tile won't exceed bounds
 
         double radians = baseRotation + rotation * DEG60;
-        int xCenter = (int) Math.round(centeredTileImage.getWidth() / 2 );
-        int yCenter = (int) Math.round(centeredTileImage.getHeight() / 2 );
+        int xCenter = Math.round(centeredTileImage.getWidth() / 2 );
+        int yCenter = Math.round(centeredTileImage.getHeight() / 2 );
 
         AffineTransform af = AffineTransform.getRotateInstance(radians, xCenter, yCenter);
         AffineTransformOp aop = new AffineTransformOp(af, getTileRenderingHints());
-        
+
         BufferedImage rotatedTileImage = aop.filter(centeredTileImage, null);
 
         // STEP 4: CROP ROTATED TILE IMAGE
@@ -357,14 +357,14 @@ public class GUITile {
         }
 
         BufferedImage croppedTileImage = rotatedTileImage.getSubimage(
-                xCenter - croppedWidth / 2, 
-                yCenter - croppedHeight / 2, 
+                xCenter - croppedWidth / 2,
+                yCenter - croppedHeight / 2,
                 croppedWidth,
                 croppedHeight );
-        
+
         return croppedTileImage;
     }
-    
+
     public TileI getTile() {
         return tile;
     }
