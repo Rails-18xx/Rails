@@ -80,6 +80,7 @@ public class MapHex extends Model implements RailsItem, Owner, Configurable {
     protected int number;
     protected String tileFileName;
     protected int preprintedTileId;
+    protected int preprintedPictureId = 0;
     protected int preprintedTileRotation;
     protected int[] tileCost;
     protected String cityName;
@@ -266,6 +267,7 @@ public class MapHex extends Model implements RailsItem, Owner, Configurable {
         }
 
         preprintedTileId = tag.getAttributeAsInteger("tile", -999);
+        preprintedPictureId = tag.getAttributeAsInteger("pic", 0);
 
         preprintedTileRotation = tag.getAttributeAsInteger("orientation", 0);
         currentTileRotation.set(preprintedTileRotation);
@@ -511,6 +513,20 @@ public class MapHex extends Model implements RailsItem, Owner, Configurable {
 
     public int getPreprintedTileRotation() {
         return preprintedTileRotation;
+    }
+
+    /** Return the current picture ID (i.e. the tile ID to be displayed, rather than used for route determination).
+     * <p> Usually, the picture ID is equal to the tile ID. Different values may be defined per hex or per tile.
+     * @return The current picture ID
+     */
+    public int getPictureId () {
+        if (currentTile.value().getNb() == preprintedTileId && preprintedPictureId != 0) {
+            return preprintedPictureId;
+        } else if (currentTile.value().getPictureId() != 0) {
+            return currentTile.value().getPictureId();
+        } else {
+            return currentTile.value().getNb();
+        }
     }
 
     /**
