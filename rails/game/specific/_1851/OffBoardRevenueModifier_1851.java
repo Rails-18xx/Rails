@@ -9,7 +9,7 @@ import rails.algorithms.RevenueBonus;
 import rails.algorithms.RevenueStaticModifier;
 import rails.game.Station;
 
-public class OffBoardRevenueModifier implements RevenueStaticModifier {
+public class OffBoardRevenueModifier_1851 implements RevenueStaticModifier {
 
     private static final int BONUS_VALUE = 10;
     

@@ -18,11 +18,11 @@ import rails.game.Station;
  * @author Martin
  *
  */
-public class OffBoardRevenueModifier implements RevenueStaticModifier {
+public class OffBoardRevenueModifier_1880 implements RevenueStaticModifier {
 
     
     protected static Logger log =
-            Logger.getLogger(OffBoardRevenueModifier.class.getPackage().getName());
+            Logger.getLogger(OffBoardRevenueModifier_1880.class.getPackage().getName());
         
     public boolean modifyCalculator(RevenueAdapter revenueAdapter) {
        

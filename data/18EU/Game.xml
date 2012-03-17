@@ -131,7 +131,7 @@
 		</Phase>
 	</Component>
 	<Component name="RevenueManager" class="rails.algorithms.RevenueManager">
-		<Modifier class="rails.game.specific._18EU.OffBoardRevenueModifier"/>
+		<Modifier class="rails.game.specific._18EU.OffBoardRevenueModifier_18EU"/>
 		<Modifier class="rails.game.specific._18EU.PullmanRevenueModifier"/>
 	</Component>
 </ComponentManager>

@@ -220,19 +220,21 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
     }
     
     public boolean modifyCalculator(RevenueAdapter revenueAdapter) {
-        // check if the running company is a minor
-        if (revenueAdapter.getCompany().getTypeName().equals("Minor")) {
-         
-        // add the current Available train from the IPO and not the last train in Use
-        TrainManager trainManager=gameManager.getTrainManager();
-        revenueAdapter.addTrainByString(trainManager.getAvailableNewTrains().get(0).getName());
+        // check if running company is this company, otherwise quit
+        if (revenueAdapter.getCompany() != this) return false; 
+        
+        // check if company is a minor
+        if (this.getTypeName().equals("Minor")) {
+            // add the current Available train from the IPO and not the last train in Use
+            TrainManager trainManager=gameManager.getTrainManager();
+            revenueAdapter.addTrainByString(trainManager.getAvailableNewTrains().get(0).getName());
         } else {
             int additionalStockRevenue = revenueAdapter.getCompany().getCurrentSpace().getType().hasAddRevenue()*10;
             RevenueBonus bonus = new RevenueBonus(additionalStockRevenue, "StockPosition");
             revenueAdapter.addRevenueBonus(bonus);
         }
+        // no text needed
         return false;
-        
     }
 
     /* (non-Javadoc)

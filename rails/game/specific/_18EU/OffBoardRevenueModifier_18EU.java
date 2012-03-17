@@ -14,10 +14,10 @@ import rails.game.PhaseI;
 import rails.game.Station;
 import rails.game.Tile;
 
-public class OffBoardRevenueModifier implements RevenueStaticModifier {
+public class OffBoardRevenueModifier_18EU implements RevenueStaticModifier {
 
     protected static Logger log =
-        Logger.getLogger(OffBoardRevenueModifier.class.getPackage().getName());
+        Logger.getLogger(OffBoardRevenueModifier_18EU.class.getPackage().getName());
     
 
     public boolean modifyCalculator(RevenueAdapter revenueAdapter) {
