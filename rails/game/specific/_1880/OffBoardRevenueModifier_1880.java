@@ -29,7 +29,7 @@ public class OffBoardRevenueModifier_1880 implements RevenueStaticModifier {
         // 1. get the two off-board type stations (Russia and Wladiwostok) 
         Set<NetworkVertex> offBoard = new HashSet<NetworkVertex>();
         for (NetworkVertex vertex:revenueAdapter.getVertices()) { // We just need the two offboard Cities
-            if (vertex.isStation() && ((vertex.getStation().getName().equals("Russia") ||(vertex.getStation().getName().equals("Wladiwostok"))))) {
+            if (vertex.isStation() && ((vertex.getStation().getName().equals("Russia") ||(vertex.getStation().getName().equals("Vladivostok"))))) {
                 offBoard.add(vertex);
             }
         }

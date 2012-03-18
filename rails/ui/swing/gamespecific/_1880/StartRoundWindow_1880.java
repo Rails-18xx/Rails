@@ -77,22 +77,22 @@ public class StartRoundWindow_1880 extends StartRoundWindow {
 
            // Get a sorted prices List
            // TODO: should be included in BuyStartItem
-           List<StockSpaceI> startSpaces = stockMarket.getStartSpaces();
-           Map<Integer, StockSpaceI> spacePerPrice =
-                   new HashMap<Integer, StockSpaceI>();
-           startPrices = new int[startSpaces.size()];
-           String[] options = new String[startSpaces.size()];
-           for (int i = 0; i < startSpaces.size(); i++) {
-               if (((StockMarket_1880) stockMarket).getParSlot(startSpaces.get(i).getPrice())) { //Make sure we got a Parslot left over
-               startPrices[i] = startSpaces.get(i).getPrice();
-               spacePerPrice.put(startPrices[i], startSpaces.get(i));
-               }
-           }
-           Arrays.sort(startPrices);
-           for (int i = 0; i < startSpaces.size(); i++) {
-               options[i] = Bank.format(spacePerPrice.get(startPrices[i]).getPrice());
-           }
-
+//           List<StockSpaceI> startSpaces = stockMarket.getStartSpaces();
+//           Map<Integer, StockSpaceI> spacePerPrice =
+//                   new HashMap<Integer, StockSpaceI>();
+//           startPrices = new int[startSpaces.size()];
+           String[] options = {""};
+//           for (int i = 0; i < startSpaces.size(); i++) {
+//               if (((StockMarket_1880) stockMarket).getParSlot(startSpaces.get(i).getPrice())) { //Make sure we got a Parslot left over
+//               startPrices[i] = startSpaces.get(i).getPrice();
+//               spacePerPrice.put(startPrices[i], startSpaces.get(i));
+//               }
+//           }
+//           Arrays.sort(startPrices);
+//           for (int i = 0; i < startSpaces.size(); i++) {
+//               options[i] = Bank.format(spacePerPrice.get(startPrices[i]).getPrice());
+//           }
+           options[0] = "100";
            RadioButtonDialog dialog = new RadioButtonDialog(
                    COMPANY_START_PRICE_DIALOG,
                    this,
@@ -102,7 +102,7 @@ public class StartRoundWindow_1880 extends StartRoundWindow {
                                    activeItem.getPlayerName(),
                                    compName),
                            options,
-                           -1);
+                           0);
            setCurrentDialog (dialog, activeItem);
            }
        return true;
@@ -143,7 +143,7 @@ public class StartRoundWindow_1880 extends StartRoundWindow {
 
           int index = dialog.getSelectedOption();
           if (index >= 0) {
-              int price = startPrices[index];
+              int price = 100;
               action.setAssociatedSharePrice(price);
               ((StockMarket_1880) stockMarket).setParSlot(price);
               

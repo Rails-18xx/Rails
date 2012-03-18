@@ -240,8 +240,25 @@ public class StartRound_1880 extends StartRound {
                 Bank.format(bidAmount),
                 item.getName(),
                 Bank.format(player.getCash()) ));
+        if ((item.getBidders() >0) && (numPasses.intValue()== getNumberOfPlayers()-1)) {
+            // All but the highest bidder have passed.
+            int price = item.getBid();
+
+            log.debug("Highest bidder is "
+                      + item.getBidder().getName());
+            if (item.needsPriceSetting() != null) {
+                item.setStatus(StartItem.NEEDS_SHARE_PRICE);
+            } else {
+                assignItem(item.getBidder(), item, price, 0);
+            }
+            auctionItemState.set(null);
+            numPasses.set(0);
+           setNextStartingPlayer();
+           return true;
+        } else {
          setNextBiddingPlayer(item);
          return true;
+        }
 
     }
 
@@ -294,17 +311,15 @@ public class StartRound_1880 extends StartRound {
                     assignItem((Player)startingPlayer.get(),
                             auctionItem, 0, 0);
                     setNextStartingPlayer();
-                    // startPacket.getFirstItem().getName());
                     return true;
                 }
             } else {
                 numPasses.set(0);
-                //gameManager.nextRound(this);
                 finishRound();
 
             }
         }
-       // if ((numPasses.intValue() >= auctionItem.getBidders() - 1) && 
+
         if ((auctionItem.getBidders() >0) && (numPasses.intValue()== getNumberOfPlayers()-1)) {
             // All but the highest bidder have passed.
             int price = auctionItem.getBid();
