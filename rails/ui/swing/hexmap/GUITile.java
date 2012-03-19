@@ -54,7 +54,7 @@ public class GUITile {
         TileManager tileManager = guiHex.getHexMap().orUIManager.getTileManager();
         tile = tileManager.getTile(tileId);
 
-        if (tile.getId() > 0) {
+        if (tile.getPictureId() > 0) {
             // Layable tiles can have a different picture ID, defined per tile only.
             picId = tile.getPictureId();
         } else {
