@@ -54,7 +54,14 @@ public class GUITile {
         this.hex = guiHex.getModel();
         TileManager tileManager = guiHex.getHexMap().orUIManager.getTileManager();
         tile = tileManager.getTile(tileId);
-        picId = hex.getPictureId();
+
+        if (tile.getNb() > 0) {
+            // Layable tiles can have a different picture ID, defined per tile only.
+            picId = tile.getPictureId();
+        } else {
+            // Preprinted tiles can have a different picture ID, defined per hex or per tile.
+            picId = hex.getPictureId();
+        }
 
         if (hex.getTileOrientation() == TileOrientation.EW) {
             baseRotation = 0.5 * DEG60;
