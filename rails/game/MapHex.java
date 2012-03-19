@@ -470,6 +470,7 @@ StationHolder, TokenHolder {
 
     /** Return the current picture ID (i.e. the tile ID to be displayed, rather than used for route determination).
      * <p> Usually, the picture ID is equal to the tile ID. Different values may be defined per hex or per tile.
+     * Restriction: definitions per hex can apply to preprinted tiles only.
      * @return The current picture ID
      */
     public int getPictureId () {
