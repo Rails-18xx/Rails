@@ -18,6 +18,7 @@ import rails.game.BaseToken;
 import rails.game.Bonus;
 import rails.game.CashHolder;
 import rails.game.GameDef;
+import rails.game.GameManager;
 import rails.game.GameManagerI;
 import rails.game.MapHex;
 import rails.game.OperatingRound;
@@ -46,6 +47,7 @@ import rails.game.special.SpecialTrainBuy;
 import rails.game.specific._1880.PublicCompany_1880;
 import rails.game.specific._1880.GameManager_1880;
 import rails.game.state.EnumState;
+import rails.ui.swing.GameUIManager;
 import rails.util.SequenceUtil;
 
 /**
@@ -737,10 +739,25 @@ public class OperatingRound_1880 extends OperatingRound {
     }
 
     private void askForPrivateRocket(PhaseI newPhase) {
-        TrainType actualTrainForRocket= gameManager.getTrainManager().getTypeByName(newPhase.getName()); 
-        //ToDo: Make a Window Popup that is asking the operating Player on Behalf of the Rocket Paper Owner 
-        //to Act, we might have to follow the path of 1835 there.
-        
+         
+    }
+
+    /* (non-Javadoc)
+     * @see rails.game.OperatingRound#processGameSpecificAction(rails.game.action.PossibleAction)
+     */
+    @Override
+    public boolean processGameSpecificAction(PossibleAction action) {
+        // TODO Auto-generated method stub
+        return super.processGameSpecificAction(action);
+    }
+
+    /* (non-Javadoc)
+     * @see rails.game.OperatingRound#setGameSpecificPossibleActions()
+     */
+    @Override
+    protected void setGameSpecificPossibleActions() {
+        // TODO Auto-generated method stub
+        super.setGameSpecificPossibleActions();
     }
 
 }
