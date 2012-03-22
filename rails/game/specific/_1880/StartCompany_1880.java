@@ -3,8 +3,11 @@
  */
 package rails.game.specific._1880;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.BitSet;
 
+import rails.game.CompanyManagerI;
 import rails.game.PublicCompanyI;
 import rails.game.StockSpace;
 import rails.game.StockSpaceI;
@@ -126,4 +129,13 @@ public class StartCompany_1880 extends StartCompany {
         ((StockMarket_1880) gameManager.getStockMarket()).setParSlot(startPrice);
     }
     
+    /** Deserialize */
+    private void readObject(ObjectInputStream in) throws IOException,
+    ClassNotFoundException {
+
+        in.defaultReadObject();
+
+        CompanyManagerI cmgr = getCompanyManager();
+        
+    }
 }
