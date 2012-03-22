@@ -24,7 +24,9 @@ public class StartCompany_1880 extends StartCompany {
      */
     private static final long serialVersionUID = 1L;
 
-
+    BitSet buildingRight = new BitSet(4);
+    BitSet savedBuildingRight = new BitSet(4);
+    
     /**
      * @param company
      * @param prices
@@ -70,7 +72,7 @@ public class StartCompany_1880 extends StartCompany {
 
     
     public void setBuildingRight(PublicCompany_1880 company, String buildingRightString ) {
-        BitSet buildingRight = new BitSet(5);
+      
         
        if (buildingRightString == "A") {
             buildingRight.set(0);
@@ -135,7 +137,45 @@ public class StartCompany_1880 extends StartCompany {
 
         in.defaultReadObject();
 
-        CompanyManagerI cmgr = getCompanyManager();
+        if (!buildingRight.isEmpty()) {
+            savedBuildingRight = (BitSet) buildingRight.clone();
+        }
         
+    }
+
+    public String buildingRightToString(BitSet buildingRight2) {
+        String buildingRightString = null;
+        
+        if (! buildingRight.isEmpty()){
+           if (buildingRight.get(0)== true) {
+                buildingRightString = "A";
+                 if (buildingRight.get(1) == true) {
+                      buildingRightString = "A+B";
+                      if (buildingRight.get(2) == true) {
+                          buildingRightString = "A+B+C";
+                      }
+                  }
+              }
+              else if (buildingRight.get(1) == true) {
+                      buildingRightString = "B";
+                      if (buildingRight.get(2) == true) {
+                          buildingRightString = "B+C";
+                        if (buildingRight.get(3) == true){
+                             buildingRightString = "B+C+D";
+                        }
+                     }
+              }
+             else if (buildingRight.get(2) == true){
+                buildingRightString = "C";
+                  if (buildingRight.get(3) == true){
+                      buildingRightString = "C+D";
+                  }
+              }
+              else if (buildingRight.get(3) == true){
+                 buildingRightString= "D";
+             }
+         return buildingRightString;
+         }
+         return "None";
     }
 }

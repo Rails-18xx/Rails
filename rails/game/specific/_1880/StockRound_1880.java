@@ -397,10 +397,15 @@ public class StockRound_1880 extends StockRound {
     /* (non-Javadoc)
      * @see rails.game.StockRound#startCompany(java.lang.String, rails.game.action.StartCompany)
      */
-    @Override
-    public boolean startCompany(String playerName, StartCompany action) {
+    public boolean startCompany(String playerName, StartCompany_1880 action) {
         // TODO Auto-generated method stub
-        return super.startCompany(playerName, action);
+        if (super.startCompany(playerName, action)){
+            action.setBuildingRight((PublicCompany_1880) action.getCompany(), action.buildingRightToString(action.buildingRight));
+             action.setStartPrice(action.getPrice());
+            return true;
+        } else {
+        return false;
+        }
     }
 
     /* (non-Javadoc)
