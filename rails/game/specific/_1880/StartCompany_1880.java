@@ -3,11 +3,8 @@
  */
 package rails.game.specific._1880;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.BitSet;
 
-import rails.game.CompanyManagerI;
 import rails.game.PublicCompanyI;
 import rails.game.StockSpace;
 import rails.game.StockSpaceI;
@@ -24,9 +21,7 @@ public class StartCompany_1880 extends StartCompany {
      */
     private static final long serialVersionUID = 1L;
 
-    BitSet buildingRight = new BitSet(4);
-    BitSet savedBuildingRight = new BitSet(4);
-    
+
     /**
      * @param company
      * @param prices
@@ -72,7 +67,7 @@ public class StartCompany_1880 extends StartCompany {
 
     
     public void setBuildingRight(PublicCompany_1880 company, String buildingRightString ) {
-      
+        BitSet buildingRight = new BitSet(5);
         
        if (buildingRightString == "A") {
             buildingRight.set(0);
@@ -131,50 +126,4 @@ public class StartCompany_1880 extends StartCompany {
         ((StockMarket_1880) gameManager.getStockMarket()).setParSlot(startPrice);
     }
     
-    /** Deserialize */
-    private void readObject(ObjectInputStream in) throws IOException,
-    ClassNotFoundException {
-
-        in.defaultReadObject();
-
-        if (!buildingRight.isEmpty()) {
-            savedBuildingRight = (BitSet) buildingRight.clone();
-        }
-        
-    }
-    public String buildingRightToString (BitSet buildingRight){
-        String buildingRightString = null;
-        
-      if (! buildingRight.isEmpty()){
-         if (buildingRight.get(0)== true) {
-              buildingRightString = "A";
-               if (buildingRight.get(1) == true) {
-                    buildingRightString = "A+B";
-                    if (buildingRight.get(2) == true) {
-                        buildingRightString = "A+B+C";
-                    }
-                }
-            }
-            else if (buildingRight.get(1) == true) {
-                    buildingRightString = "B";
-                    if (buildingRight.get(2) == true) {
-                        buildingRightString = "B+C";
-                      if (buildingRight.get(3) == true){
-                           buildingRightString = "B+C+D";
-                      }
-                   }
-            }
-           else if (buildingRight.get(2) == true){
-              buildingRightString = "C";
-                if (buildingRight.get(3) == true){
-                    buildingRightString = "C+D";
-                }
-            }
-            else if (buildingRight.get(3) == true){
-               buildingRightString= "D";
-           }
-       return buildingRightString;
-       }
-       return "None";
-   }
 }
