@@ -9,13 +9,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.BuyCertificate;
 import rails.game.action.PossibleAction;
 import rails.game.action.SellShares;
 import rails.game.action.StartCompany;
+import rails.game.action.UseSpecialProperty;
 import rails.game.move.CashMove;
+import rails.game.special.SpecialPropertyI;
 import rails.game.specific._1880.PublicCompany_1880;
 
 
@@ -394,10 +397,15 @@ public class StockRound_1880 extends StockRound {
     /* (non-Javadoc)
      * @see rails.game.StockRound#startCompany(java.lang.String, rails.game.action.StartCompany)
      */
-    @Override
-    public boolean startCompany(String playerName, StartCompany action) {
+       public boolean startCompany(String playerName, StartCompany_1880 action) {
         // TODO Auto-generated method stub
-        return super.startCompany(playerName, action);
+        if (super.startCompany(playerName, action)){
+            action.setBuildingRight((PublicCompany_1880) action.getCompany(), action.buildingRightToString(action.buildingRight));
+             action.setStartPrice(action.getPrice());
+            return true;
+        } else {
+        return false;
+        }
     }
 
     /* (non-Javadoc)
@@ -475,5 +483,84 @@ public class StockRound_1880 extends StockRound {
         }
     }
 
+    /* (non-Javadoc)
+     * @see rails.game.StockRound#useSpecialProperty(rails.game.action.UseSpecialProperty)
+     */
+    @Override
+    public boolean useSpecialProperty(UseSpecialProperty action) {
+        SpecialPropertyI sp = action.getSpecialProperty();
+
+        // TODO This should work for all subclasses, but not all have execute()
+        // yet.
+        if (sp instanceof ExchangeForCash_1880) {
+
+            boolean result = executeExchangeForCash((ExchangeForCash_1880) sp);
+            if (result) hasActed.set(true);
+            return result;
+
+        } else {
+            return super.useSpecialProperty(action);
+        }
+     
+    }
+
+    private boolean executeExchangeForCash(ExchangeForCash_1880 sp) {
+        CompanyI privateCompany = sp.getOriginalCompany();
+        Portfolio portfolio = privateCompany.getPortfolio();
+        
+        Player player = null;
+        String errMsg = null;
+        
+        while (true) {
+
+            /* Check if the private is owned by a player */
+            if (!(portfolio.getOwner() instanceof Player)) {
+                errMsg =
+                    LocalText.getText("PrivateIsNotOwnedByAPlayer",
+                            privateCompany.getName());
+                break;
+            }
+            player = (Player) portfolio.getOwner();
+            break;
+        }
+        if (errMsg != null) {
+            DisplayBuffer.add(LocalText.getText(
+                    "CannotSwapPrivateForCash",
+                    player.getName(),
+                    privateCompany.getName(),
+                    errMsg ));
+            return false;
+        }
+        
+        moveStack.start(true);
+        int amount = sp.getPhaseAmount();
+        if (amount >0 ) {
+        player.addCash(amount);
+        sp.setExercised();
+        privateCompany.setClosed();
+        return true;
+        }
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see rails.game.StockRound#process(rails.game.action.PossibleAction)
+     */
+    @Override
+    public boolean process(PossibleAction action) {
+    boolean result;
+    String playerName = action.getPlayerName();
+    
+        if (action instanceof StartCompany) {
+
+            StartCompany_1880 startCompanyAction = (StartCompany_1880) action;
+
+            result = startCompany(playerName, startCompanyAction);
+            
+            return result;
+        } else {
+        return super.process(action);
+        }
+    }
 
 }
