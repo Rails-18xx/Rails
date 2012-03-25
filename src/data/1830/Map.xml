@@ -63,7 +63,9 @@
 		<Hex name="F2" tile="-903" orientation="5" value="40,70" city="Chicago"/>
 	</IfOption>
 	<IfOption name="Variant" value="Coalfields,Coalfields&amp;Reading">
-		<Hex name="F2" tile="-939" orientation="5" value="40,70" city="Chicago"/>
+		<Hex name="F2" tile="-903" pic="-939" orientation="5" value="40,70" city="Chicago">
+			<Access runThrough="yes"/>
+		</Hex>
 	</IfOption>
     <IfOption name="Variant" value="Wabash">
         <Hex name="F2" tile="0"/>
@@ -181,7 +183,9 @@
 		<Hex name="K11" tile="0" cost="120"/>
 		<Hex name="K13" tile="-10" city="Richmond"/>
 		<Hex name="K15" tile="0" cost="40"/>
-		<Hex name="L2" tile="-939" orientation="4" value="30,60" city="Gulf"/>
+		<Hex name="L2" tile="-903" pic="-939" orientation="4" value="30,60" city="Gulf">
+			<Access runThrough="yes"/>
+		</Hex>
 		<Hex name="L4" tile="0"/>
 		<Hex name="L6" tile="0" cost="120"/>
 		<Hex name="L8" tile="0" cost="120"/>
