@@ -18,7 +18,7 @@
 	<Hex name="E14" tile="0"/>
 	<Hex name="E16" tile="0"/>
 	<Hex name="E18" tile="-2" port="yes"/>
-	<Hex name="F9" tile="-939" port="yes" value="30,50,40" city="Goderich">
+	<Hex name="F9" tile="-903" pic="-939" port="yes" value="30,50,40" city="Goderich">
 		<Access runThrough="yes"/>
 	</Hex>
 	<Hex name="F11" tile="0"/>
