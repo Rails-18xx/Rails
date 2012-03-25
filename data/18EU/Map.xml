@@ -2,7 +2,7 @@
 	<Image file="18EU/MapImage.svg" x="16" y="15" scale="0.955"/>
 	<!-- Hex name="" tile="" orientation="" value="" impassable="" label="" cost="" value="" port="yes/no" -->
 	<Hex name="A4" port="yes" value="10" tile="-800" orientation="0"/>
-	<Hex name="B7" value="30,50" tile="-939" orientation="1" city="Hamburg">
+	<Hex name="B7" value="30,50" tile="-903" pic="-939" orientation="1" city="Hamburg">
 		<Access runThrough="yes"/>
 	</Hex>
 	<Hex name="C4" label="Y" tile="-3007" city="Amsterdam"/>
