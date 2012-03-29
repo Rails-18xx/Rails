@@ -393,8 +393,7 @@ public class StockRound_1880 extends StockRound {
                 }
             }
         }
-        }
-
+     }
 
     /* (non-Javadoc)
      * @see rails.game.StockRound#finishRound()
@@ -479,7 +478,6 @@ public class StockRound_1880 extends StockRound {
     }
 
     /* (non-Javadoc)
-
      * @see rails.game.StockRound#useSpecialProperty(rails.game.action.UseSpecialProperty)
      */
     @Override
@@ -726,5 +724,4 @@ public class StockRound_1880 extends StockRound {
         action.setStartPrice(action.getPrice());
         return true;
     }
-
 }
