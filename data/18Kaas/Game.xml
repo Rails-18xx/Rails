@@ -11,6 +11,7 @@
 		<GameOption name="WithOptional6Train" type="toggle" default="no"/>
 		<GameOption name="LeaveAuctionOnPass" type="toggle" default="no"/>
         <GameOption name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
+		<GameOption name="UnlimitedTopTrains" parm="D" type="toggle" default="no"/>
 		<GameParameters>
 			<PlayerShareLimit percentage="60"/>
 			<BankPoolLimit percentage="50"/>
@@ -66,8 +67,11 @@
 			</IfOption>
 		</TrainType>
 		<TrainType name="D" majorStops="99" cost="1100" quantity="6">
-            <NewPhase phaseName="D"/>
+			<NewPhase phaseName="D"/>
  			<Exchange cost="800"/>
+			<IfOption name="UnlimitedTopTrains" value="yes">
+				<Attributes quantity="-1"/>
+			</IfOption>
 		</TrainType>
 	</Component>
 	<Component name="PhaseManager" class="rails.game.PhaseManager">
