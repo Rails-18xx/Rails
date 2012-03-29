@@ -16,7 +16,9 @@ import rails.game.action.BuyCertificate;
 import rails.game.action.PossibleAction;
 import rails.game.action.SellShares;
 import rails.game.action.StartCompany;
+import rails.game.action.UseSpecialProperty;
 import rails.game.move.CashMove;
+import rails.game.special.SpecialPropertyI;
 import rails.game.specific._1880.PublicCompany_1880;
 
 
@@ -393,11 +395,204 @@ public class StockRound_1880 extends StockRound {
         }
         }
 
+
     /* (non-Javadoc)
-     * @see rails.game.StockRound#startCompany(java.lang.String, rails.game.action.StartCompany)
+     * @see rails.game.StockRound#finishRound()
      */
     @Override
-    public boolean startCompany(String playerName, StartCompany action) {
+    protected void finishRound() {
+        ReportBuffer.add(" ");
+        ReportBuffer.add(LocalText.getText("END_SR",
+                String.valueOf(getStockRoundNumber())));
+
+        if (raiseIfSoldOut) {
+            /* Check if any companies are sold out. */
+            for (PublicCompanyI company : gameManager.getCompaniesInRunningOrder()) {
+                if (company.hasStockPrice() && company.isSoldOut() && (!((PublicCompany_1880) company).isCommunistPhase())) {
+                    StockSpaceI oldSpace = company.getCurrentSpace();
+                    stockMarket.soldOut(company);
+                    StockSpaceI newSpace = company.getCurrentSpace();
+                    if (newSpace != oldSpace) {
+                        ReportBuffer.add(LocalText.getText("SoldOut",
+                                company.getName(),
+                                Bank.format(oldSpace.getPrice()),
+                                oldSpace.getName(),
+                                Bank.format(newSpace.getPrice()),
+                                newSpace.getName()));
+                    } else {
+                        ReportBuffer.add(LocalText.getText("SoldOutNoRaise",
+                                company.getName(),
+                                Bank.format(newSpace.getPrice()),
+                                newSpace.getName()));
+                    }
+                }
+            }
+        }
+        
+        for (PublicCompanyI c : companyManager.getAllPublicCompanies()) {
+            if (c.hasStarted() && !c.hasFloated()) {
+                checkFlotation(c);
+            }
+        }
+        
+        /** At the end of each Stockround the current amount of negative cash is subject to a fine of 50 percent
+         * 
+         */
+        for (Player p : playerManager.getPlayers()) {
+            if (p.getCash() <0 ) {
+                int fine = p.getCash()/2;
+                p.addCash(-fine);
+            }
+        }
+        
+        // Report financials
+        ReportBuffer.add("");
+        for (PublicCompanyI c : companyManager.getAllPublicCompanies()) {
+            if (c.hasFloated() && !c.isClosed()) {
+                ReportBuffer.add(LocalText.getText("Has", c.getName(),
+                        Bank.format(c.getCash())));
+            }
+        }
+        for (Player p : playerManager.getPlayers()) {
+            ReportBuffer.add(LocalText.getText("Has", p.getName(),
+                    Bank.format(p.getCash())));
+        }
+        // Inform GameManager
+        gameManager.nextRound(this);
+    }
+
+    /* (non-Javadoc)
+     * @see rails.game.StockRound#sellShares(rails.game.action.SellShares)
+     */
+    @Override
+    public boolean sellShares(SellShares action) {
+        // TODO Auto-generated method stub
+        if(super.sellShares(action)) {
+            int numberSold=action.getNumber();
+            gameManager.getCurrentPlayer().addCash(-5*numberSold); //Deduct the Money for selling those Shares !
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    /* (non-Javadoc)
+
+     * @see rails.game.StockRound#useSpecialProperty(rails.game.action.UseSpecialProperty)
+     */
+    @Override
+    public boolean useSpecialProperty(UseSpecialProperty action) {
+        SpecialPropertyI sp = action.getSpecialProperty();
+
+        // TODO This should work for all subclasses, but not all have execute()
+        // yet.
+        if (sp instanceof ExchangeForCash_1880) {
+
+            boolean result = executeExchangeForCash((ExchangeForCash_1880) sp);
+            if (result) hasActed.set(true);
+            return result;
+
+        } else {
+            return super.useSpecialProperty(action);
+        }
+     
+    }
+
+    private boolean executeExchangeForCash(ExchangeForCash_1880 sp) {
+        CompanyI privateCompany = sp.getOriginalCompany();
+        Portfolio portfolio = privateCompany.getPortfolio();
+        
+        Player player = null;
+        String errMsg = null;
+        
+        while (true) {
+
+            /* Check if the private is owned by a player */
+            if (!(portfolio.getOwner() instanceof Player)) {
+                errMsg =
+                    LocalText.getText("PrivateIsNotOwnedByAPlayer",
+                            privateCompany.getName());
+                break;
+            }
+            player = (Player) portfolio.getOwner();
+            break;
+        }
+        if (errMsg != null) {
+            DisplayBuffer.add(LocalText.getText(
+                    "CannotSwapPrivateForCash",
+                    player.getName(),
+                    privateCompany.getName(),
+                    errMsg ));
+            return false;
+        }
+        
+        moveStack.start(true);
+        int amount = sp.getPhaseAmount();
+        if (amount >0 ) {
+        player.addCash(amount);
+        sp.setExercised();
+        privateCompany.setClosed();
+        return true;
+        }
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see rails.game.StockRound#process(rails.game.action.PossibleAction)
+     */
+    @Override
+    public boolean process(PossibleAction action) {
+    boolean result;
+    String playerName = action.getPlayerName();
+    
+        if (action instanceof StartCompany) {
+
+            StartCompany_1880 startCompanyAction = (StartCompany_1880) action;
+
+            result = startCompany(playerName, startCompanyAction);
+            
+            return result;
+        } else {
+        return super.process(action);
+        }
+    }
+   
+    /*
+    * @see rails.game.Round#checkFlotation(rails.game.PublicCompanyI)
+    */
+   @Override
+   protected void checkFlotation(PublicCompanyI company) {
+       if (!company.hasStarted() || company.hasFloated()) return;
+        if (getOwnedPercentageByDirector(company) >= company.getFloatPercentage()) {
+            // Company floats
+            floatCompany(company);
+        }
+    
+    }
+
+    /** Determine sold percentage for floating purposes */
+    protected int getOwnedPercentageByDirector (PublicCompanyI company) {
+
+        int soldPercentage = 0;
+        Player director = company.getPresident();
+        for (PublicCertificateI cert : company.getCertificates()) {
+            if (certCountsAsSold(cert, director)) {
+                soldPercentage += cert.getShare();
+            }
+        }
+        return soldPercentage;
+    }
+
+    private boolean certCountsAsSold(PublicCertificateI cert, Player director) {
+        Portfolio holder = cert.getPortfolio();
+        CashHolder owner = holder.getOwner();
+        return owner.equals(director);
+    }
+    
+    public boolean startCompany(String playerName, StartCompany_1880 action) {
+
         PublicCompanyI company = action.getCompany();
         int price = action.getPrice();
         int shares = action.getNumberBought();
@@ -527,122 +722,9 @@ public class StockRound_1880 extends StockRound {
         // Check for any game-specific consequences
         // (such as making another company available in the IPO)
         gameSpecificChecks(ipo, company);
-
+        action.setBuildingRight((PublicCompany_1880) action.getCompany(), action.buildingRightToString(action.buildingRight));
+        action.setStartPrice(action.getPrice());
         return true;
     }
 
-    /* (non-Javadoc)
-     * @see rails.game.StockRound#finishRound()
-     */
-    @Override
-    protected void finishRound() {
-        ReportBuffer.add(" ");
-        ReportBuffer.add(LocalText.getText("END_SR",
-                String.valueOf(getStockRoundNumber())));
-
-        if (raiseIfSoldOut) {
-            /* Check if any companies are sold out. */
-            for (PublicCompanyI company : gameManager.getCompaniesInRunningOrder()) {
-                if (company.hasStockPrice() && company.isSoldOut() && (!((PublicCompany_1880) company).isCommunistPhase())) {
-                    StockSpaceI oldSpace = company.getCurrentSpace();
-                    stockMarket.soldOut(company);
-                    StockSpaceI newSpace = company.getCurrentSpace();
-                    if (newSpace != oldSpace) {
-                        ReportBuffer.add(LocalText.getText("SoldOut",
-                                company.getName(),
-                                Bank.format(oldSpace.getPrice()),
-                                oldSpace.getName(),
-                                Bank.format(newSpace.getPrice()),
-                                newSpace.getName()));
-                    } else {
-                        ReportBuffer.add(LocalText.getText("SoldOutNoRaise",
-                                company.getName(),
-                                Bank.format(newSpace.getPrice()),
-                                newSpace.getName()));
-                    }
-                }
-            }
-        }
-        
-        for (PublicCompanyI c : companyManager.getAllPublicCompanies()) {
-            if (c.hasStarted() && !c.hasFloated()) {
-                checkFlotation(c);
-            }
-        }
-        
-        /** At the end of each Stockround the current amount of negative cash is subject to a fine of 50 percent
-         * 
-         */
-        for (Player p : playerManager.getPlayers()) {
-            if (p.getCash() <0 ) {
-                int fine = p.getCash()/2;
-                p.addCash(-fine);
-            }
-        }
-        
-        // Report financials
-        ReportBuffer.add("");
-        for (PublicCompanyI c : companyManager.getAllPublicCompanies()) {
-            if (c.hasFloated() && !c.isClosed()) {
-                ReportBuffer.add(LocalText.getText("Has", c.getName(),
-                        Bank.format(c.getCash())));
-            }
-        }
-        for (Player p : playerManager.getPlayers()) {
-            ReportBuffer.add(LocalText.getText("Has", p.getName(),
-                    Bank.format(p.getCash())));
-        }
-        // Inform GameManager
-        gameManager.nextRound(this);
-    }
-
-    /* (non-Javadoc)
-     * @see rails.game.StockRound#sellShares(rails.game.action.SellShares)
-     */
-    @Override
-    public boolean sellShares(SellShares action) {
-        // TODO Auto-generated method stub
-        if(super.sellShares(action)) {
-            int numberSold=action.getNumber();
-            gameManager.getCurrentPlayer().addCash(-5*numberSold); //Deduct the Money for selling those Shares !
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see rails.game.Round#checkFlotation(rails.game.PublicCompanyI)
-     */
-    @Override
-    protected void checkFlotation(PublicCompanyI company) {
-        if (!company.hasStarted() || company.hasFloated()) return;
-
-        if (getOwnedPercentageByDirector(company) >= company.getFloatPercentage()) {
-            // Company floats
-            floatCompany(company);
-        }
-    
-    }
-
-    /** Determine sold percentage for floating purposes */
-    protected int getOwnedPercentageByDirector (PublicCompanyI company) {
-
-        int soldPercentage = 0;
-        Player director = company.getPresident();
-        for (PublicCertificateI cert : company.getCertificates()) {
-            if (certCountsAsSold(cert, director)) {
-                soldPercentage += cert.getShare();
-            }
-        }
-        return soldPercentage;
-    }
-
-    private boolean certCountsAsSold(PublicCertificateI cert, Player director) {
-        Portfolio holder = cert.getPortfolio();
-        CashHolder owner = holder.getOwner();
-        return owner.equals(director);
-    }
 }
