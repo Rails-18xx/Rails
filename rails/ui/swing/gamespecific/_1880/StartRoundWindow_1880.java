@@ -3,15 +3,10 @@
  */
 package rails.ui.swing.gamespecific._1880;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
 
 import javax.swing.JDialog;
-import rails.game.Bank;
 import rails.game.StockMarketI;
-import rails.game.StockSpaceI;
 import rails.ui.swing.StartRoundWindow;
 import rails.common.LocalText;
 import rails.game.action.PossibleAction;
@@ -36,7 +31,7 @@ public class StartRoundWindow_1880 extends StartRoundWindow {
     protected JDialog currentDialog = null;
     protected PossibleAction currentDialogAction = null;
     protected int[] startPrices = null;
-    String[] bRights = {"A","B","C","D","A+B","A+B+C","B+C","B+C+D","C+D"};
+    String[] bRights = {"A+B+C", "B+C+D"};
     
     private static final long serialVersionUID = 1L;
     /**
@@ -73,7 +68,6 @@ public class StartRoundWindow_1880 extends StartRoundWindow {
 
        if (activeItem.hasSharePriceToSet()) {
            String compName = activeItem.getCompanyToSetPriceFor();
-           StockMarketI stockMarket = getGameUIManager().getGameManager().getStockMarket();
 
            // Get a sorted prices List
            // TODO: should be included in BuyStartItem
