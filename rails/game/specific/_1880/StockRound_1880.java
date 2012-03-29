@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.BuyCertificate;
@@ -138,7 +139,8 @@ public class StockRound_1880 extends StockRound {
                              ((PublicCompany_1880) privComp).setDestinationHex(company.getHomeHexes().get(0));
                              privComp.setInfoText(privComp.getInfoText() + "<br>Destination: "+privComp.getDestinationHex().getInfo());
                              // Check if the company has floated
-                             if (!company.hasFloated()) checkFlotation(company);
+                            // if (!company.hasFloated()) checkFlotation(company);
+                             // moved to finishRound
                              return;
                      } else {
                          return;
@@ -396,8 +398,137 @@ public class StockRound_1880 extends StockRound {
      */
     @Override
     public boolean startCompany(String playerName, StartCompany action) {
-        // TODO Auto-generated method stub
-        return super.startCompany(playerName, action);
+        PublicCompanyI company = action.getCompany();
+        int price = action.getPrice();
+        int shares = action.getNumberBought();
+
+        String errMsg = null;
+        StockSpaceI startSpace = null;
+        int numberOfCertsToBuy = 0;
+        PublicCertificateI cert = null;
+        String companyName = company.getName();
+        int cost = 0;
+
+        currentPlayer = getCurrentPlayer();
+
+        // Dummy loop to allow a quick jump out
+        while (true) {
+
+            // Check everything
+            // Only the player that has the turn may buy
+            if (!playerName.equals(currentPlayer.getName())) {
+                errMsg = LocalText.getText("WrongPlayer", playerName, currentPlayer.getName());
+                break;
+            }
+
+            // The player may not have bought this turn.
+            if (companyBoughtThisTurnWrapper.get() != null) {
+                errMsg = LocalText.getText("AlreadyBought", playerName);
+                break;
+            }
+
+            // Check company
+            if (company == null) {
+                errMsg = LocalText.getText("CompanyDoesNotExist", companyName);
+                break;
+            }
+            // The company may not have started yet.
+            if (company.hasStarted()) {
+                errMsg =
+                    LocalText.getText("CompanyAlreadyStarted", companyName);
+                break;
+            }
+
+            // Find the President's certificate
+            cert = ipo.findCertificate(company, true);
+            // Make sure that we buy at least one!
+            if (shares < cert.getShares()) shares = cert.getShares();
+
+            // Determine the number of Certificates to buy
+            // (shortcut: assume that any additional certs are one share each)
+            numberOfCertsToBuy = shares - (cert.getShares() - 1);
+            // Check if the player may buy that many certificates.
+            if (!mayPlayerBuyCertificate(currentPlayer, company, numberOfCertsToBuy)) {
+                errMsg = LocalText.getText("CantBuyMoreCerts");
+                break;
+            }
+
+            // Check if the company has a fixed par price (1835).
+            startSpace = company.getStartSpace();
+            if (startSpace != null) {
+                // If so, it overrides whatever is given.
+                price = startSpace.getPrice();
+            } else {
+                // Else the given price must be a valid start price
+                if ((startSpace = stockMarket.getStartSpace(price)) == null) {
+                    errMsg = LocalText.getText("InvalidStartPrice",
+                            Bank.format(price),
+                            company.getName() );
+                    break;
+                }
+            }
+
+            // Check if the Player has the money.
+            cost = shares * price;
+            if (currentPlayer.getCash() < cost) {
+                errMsg = LocalText.getText("NoMoney");
+                break;
+            }
+
+            break;
+        }
+
+        if (errMsg != null) {
+            DisplayBuffer.add(LocalText.getText("CantStart",
+                    playerName,
+                    companyName,
+                    Bank.format(price),
+                    errMsg ));
+            return false;
+        }
+
+        moveStack.start(true);
+
+        // All is OK, now start the company
+        company.start(startSpace);
+
+        CashHolder priceRecipient = getSharePriceRecipient (company, ipo, price);
+
+        // Transfer the President's certificate
+        cert.moveTo(currentPlayer.getPortfolio());
+
+
+        // If more than one certificate is bought at the same time, transfer
+        // these too.
+        for (int i = 1; i < numberOfCertsToBuy; i++) {
+            cert = ipo.findCertificate(company, false);
+            cert.moveTo(currentPlayer.getPortfolio());
+        }
+
+        // Pay for these shares
+        new CashMove (currentPlayer, priceRecipient, cost);
+
+        ReportBuffer.add(LocalText.getText("START_COMPANY_LOG",
+                playerName,
+                companyName,
+                Bank.format(price),
+                Bank.format(cost),
+                shares,
+                cert.getShare(),
+                priceRecipient.getName() ));
+        ReportBuffer.getAllWaiting();
+
+        //checkFlotation(company); We need to check in finishRound 
+
+        companyBoughtThisTurnWrapper.set(company);
+        hasActed.set(true);
+        setPriority();
+
+        // Check for any game-specific consequences
+        // (such as making another company available in the IPO)
+        gameSpecificChecks(ipo, company);
+
+        return true;
     }
 
     /* (non-Javadoc)
@@ -432,6 +563,13 @@ public class StockRound_1880 extends StockRound {
                 }
             }
         }
+        
+        for (PublicCompanyI c : companyManager.getAllPublicCompanies()) {
+            if (c.hasStarted() && !c.hasFloated()) {
+                checkFlotation(c);
+            }
+        }
+        
         /** At the end of each Stockround the current amount of negative cash is subject to a fine of 50 percent
          * 
          */
@@ -475,5 +613,36 @@ public class StockRound_1880 extends StockRound {
         }
     }
 
+    /* (non-Javadoc)
+     * @see rails.game.Round#checkFlotation(rails.game.PublicCompanyI)
+     */
+    @Override
+    protected void checkFlotation(PublicCompanyI company) {
+        if (!company.hasStarted() || company.hasFloated()) return;
 
+        if (getOwnedPercentageByDirector(company) >= company.getFloatPercentage()) {
+            // Company floats
+            floatCompany(company);
+        }
+    
+    }
+
+    /** Determine sold percentage for floating purposes */
+    protected int getOwnedPercentageByDirector (PublicCompanyI company) {
+
+        int soldPercentage = 0;
+        Player director = company.getPresident();
+        for (PublicCertificateI cert : company.getCertificates()) {
+            if (certCountsAsSold(cert, director)) {
+                soldPercentage += cert.getShare();
+            }
+        }
+        return soldPercentage;
+    }
+
+    private boolean certCountsAsSold(PublicCertificateI cert, Player director) {
+        Portfolio holder = cert.getPortfolio();
+        CashHolder owner = holder.getOwner();
+        return owner.equals(director);
+    }
 }
