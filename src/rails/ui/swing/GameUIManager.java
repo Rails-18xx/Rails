@@ -242,7 +242,7 @@ public class GameUIManager implements DialogOwner {
 
         // define configWindow
         splashWindow.notifyOfStep(SplashWindow.STEP_CONFIG_WINDOW);
-        configWindow = new ConfigWindow(true);
+        configWindow = new ConfigWindow(statusWindow);
         configWindow.init(true);
 
         // notify sound manager of game initialization
