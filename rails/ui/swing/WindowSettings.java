@@ -9,6 +9,7 @@ import javax.swing.JFrame;
 import org.apache.log4j.Logger;
 
 import rails.common.Config;
+import rails.util.SystemOS;
 
 public class WindowSettings {
 
@@ -18,13 +19,13 @@ public class WindowSettings {
     private boolean defaultUsed = false;
 
     private static final String settingsfilename = "settings_xxxx.rails_ini";
+    private static final String settingsFolder = "windowSettings";
 
     protected static Logger log =
         Logger.getLogger(WindowSettings.class.getPackage().getName());
 
     public WindowSettings (String gameName) {
-        String directory = System.getProperty("settings.directory");
-        if (directory == null) directory = Config.get("save.directory");
+        File directory = SystemOS.get().getConfigurationFolder(settingsFolder, true);
         defaultpath = directory + File.separator + settingsfilename;
         filepath = defaultpath.replace("xxxx", gameName);
     }
