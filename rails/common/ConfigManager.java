@@ -205,6 +205,10 @@ public class ConfigManager implements ConfigurableComponentI {
         return activeProfile.getName();
     }
     
+    public String getActiveParent() {
+        return activeProfile.getParent().getName();
+    }
+    
     public boolean IsActiveUserProfile() {
         return activeProfile.getType() == ConfigProfile.Type.USER;
     }
@@ -270,6 +274,15 @@ public class ConfigManager implements ConfigurableComponentI {
     public boolean saveNewProfile(String name, boolean applyInitMethods) {
         activeProfile = activeProfile.deriveUserProfile(name);
         return saveProfile(applyInitMethods);
+    }
+    
+    public boolean deleteActiveProfile() {
+        if (activeProfile.delete()) {
+            activeProfile = activeProfile.getParent();
+            return true;
+        } else {
+            return false;
+        }
     }
     
     String getRecent(String key) {

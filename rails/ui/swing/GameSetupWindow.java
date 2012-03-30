@@ -112,6 +112,9 @@ public class GameSetupWindow extends JDialog implements ActionListener {
         configureBox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent arg0) {
                 cm.changeProfile((String)configureBox.getSelectedItem());
+                if (configWindow != null) {
+                    configWindow.init(false);
+                }
             }
         }
         );
@@ -266,7 +269,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
         } else if (arg0.getSource().equals(configureButton)) {
             // start configureWindow
             if (configWindow == null) {
-                configWindow = new ConfigWindow(false);
+                configWindow = new ConfigWindow(this);
                 configWindow.init(true);
                 configWindow.setVisible(true);
             } else {

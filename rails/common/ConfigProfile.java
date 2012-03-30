@@ -2,8 +2,10 @@ package rails.common;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -151,7 +153,7 @@ public final class ConfigProfile implements Comparable<ConfigProfile> {
     }
     
     boolean isFinal() {
-        if (!loaded && type == Type.USER) return true;
+        ensureLoad();
         
         if (Util.hasValue(properties.getProperty(FINAL_KEY))) {
             return Util.parseBoolean(properties.getProperty(FINAL_KEY));
@@ -160,6 +162,7 @@ public final class ConfigProfile implements Comparable<ConfigProfile> {
     }
     
     ConfigProfile setParent(ConfigProfile parent) {
+        ensureLoad();
         this.parent = parent;
         properties.setProperty(PARENT_KEY, parent.getName());
         return this;
@@ -170,10 +173,12 @@ public final class ConfigProfile implements Comparable<ConfigProfile> {
     }
 
     ConfigProfile getParent() {
+        ensureLoad();
         return parent;
     }
     
     String getProperty(String key) {
+        ensureLoad();
         if (this == root || properties.containsKey(key)) {
             return properties.getProperty(key);
         } else {
@@ -182,6 +187,7 @@ public final class ConfigProfile implements Comparable<ConfigProfile> {
     }
     
     void setProperty(String key, String value) {
+        ensureLoad();
         if (!parent.getProperty(key).equals(value)) {
             properties.setProperty(key, value);
         } else {
@@ -191,15 +197,14 @@ public final class ConfigProfile implements Comparable<ConfigProfile> {
     
     
     void makeActive(){
-        // check if is already loaded
-        if (!isLoaded()) {
-            load();
-        }
+        ensureLoad();
         // and store it to recent
         Config.storeRecent(CLI_AND_RECENT_OPTION, getName());
     }
 
     ConfigProfile deriveUserProfile(String name) {
+        ensureLoad();
+
         ConfigProfile newProfile = new ConfigProfile(Type.USER, name);
         
         ConfigProfile reference;
@@ -220,6 +225,12 @@ public final class ConfigProfile implements Comparable<ConfigProfile> {
         }
         
         return newProfile;
+    }
+
+    private void ensureLoad() {
+        if (loaded == false) {
+            load();
+        }
     }
     
     boolean load() {
@@ -282,16 +293,71 @@ public final class ConfigProfile implements Comparable<ConfigProfile> {
         return Util.loadPropertiesFromResource(properties, filePath);
     }
     
-    boolean store() {
-        if (type != Type.USER) return false;
-        loaded = true;
+    private File getFile() {
         File folder = SystemOS.get().getConfigurationFolder(PROFILE_FOLDER, true);
         if (folder == null) {
-            return false; 
+            return null; 
         } else {
-            File profile = new File(folder, name + PROFILE_EXTENSION);
-            return Util.storeProperties(properties, profile);
+            return new File(folder, name + PROFILE_EXTENSION);
         }
+    }
+    
+    /**
+     * stores profile
+     * @return true if save was successful
+     */
+    boolean store() {
+        if (type != Type.USER) return false;
+
+        File file = getFile();
+        if (file != null) {    
+            return Util.storeProperties(properties, file);
+        } else {
+            return false;
+        }
+    }
+    
+    private List<ConfigProfile> getChildren() {
+        List<ConfigProfile> children = new ArrayList<ConfigProfile>();
+        for (ConfigProfile profile:profiles.values()) {
+            if (profile.getParent() == this) {
+                children.add(profile);
+            }
+        }
+        return children;
+    }
+    
+    /**
+     * delete profile (including deleting the saved file and removing from the map of profiles)
+     * @return true if deletion was successful
+     */
+    boolean delete() {
+        // cannot delete parents
+        if (type != Type.USER) return false;
+        
+        // delete profile file
+        boolean result;
+        File file = getFile();
+        if (file != null) {
+            if (file.delete()) {
+                profiles.remove(this.name);
+                result = true;
+            } else {
+                result = false;
+            }
+        } else {
+            result = false;
+        }
+        
+        if (result) {
+            // and reassign and save children
+            for (ConfigProfile profile:getChildren()) {
+                profile.setParent(parent);
+                profile.store();
+            }
+        }
+        return result;
+        
     }
 
     private int compare(ConfigProfile a, ConfigProfile b) {
