@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import rails.common.Config;
 import rails.common.LocalText;
 import rails.ui.swing.SplashWindow;
+import rails.util.SystemOS;
 
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
@@ -220,17 +221,7 @@ public abstract class DockingFrame extends JFrame {
      * get layout directory (and ensure that it is available)
      */
     private File getLayoutDirectory() {
-        try {
-            File layoutDirectory = new File(Config.get("save.directory"),layoutDirectoryName);
-            if (!layoutDirectory.isDirectory()) {
-                layoutDirectory.mkdirs();
-            }
-            return layoutDirectory;
-        }
-        catch (Exception e) {
-            //return no valid file if anything goes wrong
-            return null;
-        }
+        return SystemOS.get().getConfigurationFolder(layoutDirectoryName, true);
     }
 
     private File getLayoutFile() {
