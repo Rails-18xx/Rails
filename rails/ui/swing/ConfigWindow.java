@@ -441,7 +441,13 @@ class ConfigWindow extends JFrame {
             deleteButton.addActionListener( 
                     new ActionListener() {
                         public void actionPerformed(ActionEvent arg0) {
+                            // store active Profile for deletion (see below)
+                            String activeProfile = cm.getActiveProfile();
                             if (cm.deleteActiveProfile()) {
+                                // delete item from selection in GameSetupWindow
+                                if (parent instanceof GameSetupWindow) {
+                                    ((GameSetupWindow) parent).configureBox.removeItem(activeProfile);
+                                }
                                 changeProfile(cm.getActiveProfile());
                             }
                         }
@@ -520,6 +526,10 @@ class ConfigWindow extends JFrame {
             result = saveProfile(newProfile);
             // only change if save was possible
             if (result) {
+                // add new item to selection in GameSetupWindow
+                if (parent instanceof GameSetupWindow) {
+                    ((GameSetupWindow) parent).configureBox.addItem(newProfile);
+                }
                 changeProfile(newProfile);
             }
         }
