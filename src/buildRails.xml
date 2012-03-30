@@ -137,7 +137,7 @@
 			        ./lib/batik-1.7/lib/batik-anim.jar
 			    	./lib/df_1.1.0/dockingFramesCommon.jar
 			    	./lib/df_1.1.0/dockingFramesCore.jar
-				    -/lib/commons-io-2.1/commons-io-2.1.jar"/>
+				    ./lib/commons-io-2.1/commons-io-2.1.jar"/>
 			</manifest>
 			</jar>
 			<delete dir="jar"/>
