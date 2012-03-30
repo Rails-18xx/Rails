@@ -36,6 +36,11 @@ public class GameFileIO {
 
     // fields for data save
     private boolean initSave = false;
+    
+    // static data for autosave
+    public static final String autosaveFolder = "autosave";
+    public static final String autosaveFile = "18xx_autosave.rails";
+    
 
     public String getGameDataAsText() {
         return gameData.metaDataAsText() + gameData.gameOptionsAsText() + gameData.playerNamesAsText();

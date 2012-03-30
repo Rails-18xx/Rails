@@ -17,6 +17,8 @@ import rails.common.*;
 import rails.common.parser.*;
 import rails.game.*;
 import rails.sound.SoundManager;
+import rails.util.GameFileIO;
+import rails.util.SystemOS;
 import rails.util.Util;
 
 /**
@@ -340,8 +342,14 @@ public class GameSetupWindow extends JDialog implements ActionListener {
                 return;
             }
         } else if (arg0.getSource().equals(recoveryButton)) {
-            String filePath = Config.get("save.recovery.filepath", "18xx_autosave.rails");
-            loadAndStartGame(filePath, null);
+            new Thread() {
+                @Override
+                public void run() {
+                    String filePath = SystemOS.get().getConfigurationFolder(GameFileIO.autosaveFolder, true).getAbsolutePath() 
+                            + File.separator + GameFileIO.autosaveFile;
+                    loadAndStartGame(filePath, null);
+                }
+            }.start();
         } else if (arg0.getSource().equals(infoButton)) {
             GameInfo gameInfo = this.getSelectedGameInfo();
             JOptionPane.showMessageDialog(this,

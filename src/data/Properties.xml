@@ -17,7 +17,6 @@
 		<Property name="save.filename.suffix" type="STRING" />
 		<Property name="save.filename.extension" type="STRING" />
 		<Property name="save.recovery.active" type="BOOLEAN" />
-		<Property name="save.recovery.filepath" type="FILE" />
 	</Section>
 	<Section name="Font">
 		<Property name="font.ui.scale" type="PERCENT" 
