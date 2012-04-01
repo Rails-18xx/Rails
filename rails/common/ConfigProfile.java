@@ -351,9 +351,13 @@ public final class ConfigProfile implements Comparable<ConfigProfile> {
         
         if (result) {
             // and reassign and save children
-            for (ConfigProfile profile:getChildren()) {
-                profile.setParent(parent);
-                profile.store();
+            for (ConfigProfile child:getChildren()) {
+                child.setParent(parent);
+                // and transfer (directly stored) properties
+                for (Object key:properties.keySet()) {
+                    child.setProperty((String)key, (String)properties.get(key));
+                }
+                child.store();
             }
         }
         return result;
