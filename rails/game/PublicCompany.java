@@ -792,7 +792,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
                 name + "_" + colour + "_ExtraTileTurns", turns));
     }
 
-    
+
     /** Reset turn objects */
     public void initTurn() {
 
@@ -1024,7 +1024,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
     public boolean hasFloated() {
         return hasFloated.booleanValue();
     }
-    
+
     public ModelObject getFloatedModel() {
         return hasFloated;
     }
@@ -1160,7 +1160,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
      * @return
      */
     public int getGameEndPrice() {
-        return getMarketPrice();
+        return getMarketPrice()/getShareUnitsForSharePrice();
     }
 
     /**
@@ -1968,7 +1968,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
         // New style
         int tileLays = phase.getTileLaysPerColour(getTypeName(), tileColour);
-        
+
         if (tileLays <= 1) {
             extraTileLays = null;
             return tileLays;
@@ -1979,8 +1979,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
         if (turnsWithExtraTileLays != null) {
             extraTiles = turnsWithExtraTileLays.get(tileColour);
         }
-        
-        
+
+
         if (extraTiles != null) {
             if (extraTiles.intValue() == 0) {
                 extraTiles = null;
