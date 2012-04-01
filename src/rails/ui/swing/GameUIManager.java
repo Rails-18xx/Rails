@@ -60,6 +60,7 @@ public class GameUIManager implements DialogOwner {
     protected static final String DEFAULT_SAVE_PATTERN = "yyyyMMdd_HHmm";
     public static final String DEFAULT_SAVE_EXTENSION = "rails";
     protected static final String NEXT_PLAYER_SUFFIX = "NEXT_PLAYER";
+    protected static final String CURRENT_ROUND_SUFFIX = "CURRENT_ROUND";
 
     protected String saveDirectory;
     protected String savePattern;
@@ -102,6 +103,7 @@ public class GameUIManager implements DialogOwner {
             LoggerFactory.getLogger(GameUIManager.class);
 
     private SplashWindow splashWindow = null;
+
 
     public GameUIManager() {
 
@@ -162,10 +164,16 @@ public class GameUIManager implements DialogOwner {
             saveDateTimeFormat.setTimeZone(TimeZone.getTimeZone(timezone));
         }
         saveSuffixSpec = Config.get("save.filename.suffix");
-        if (Util.hasValue(saveSuffixSpec) && !saveSuffixSpec.equals(NEXT_PLAYER_SUFFIX)) {
-            saveSuffix = saveSuffixSpec;
-        } else {
+        if (!Util.hasValue(saveSuffixSpec) || saveSuffixSpec.equals(NEXT_PLAYER_SUFFIX)) {
             saveSuffix = getPlayerNames().get(0);
+        } else if (saveSuffixSpec.equals(CURRENT_ROUND_SUFFIX))  {
+            if (currentRound != null) {
+                saveSuffix = currentRound.getRoundName();
+            } else {
+                saveSuffix = "";
+            }
+        } else { // otherwise use specified suffix
+            saveSuffix = saveSuffixSpec;
         }
         log.debug("Initial save suffix: "+saveSuffix);
     }
@@ -883,6 +891,12 @@ public class GameUIManager implements DialogOwner {
             String currentSuffix;
             if (NEXT_PLAYER_SUFFIX.equals(saveSuffixSpec)) {
                 currentSuffix = getCurrentPlayer().getId().replaceAll("[^-\\w\\.]", "_");
+            } else if (CURRENT_ROUND_SUFFIX.equals(saveSuffixSpec)) {
+                if (currentRound != null) {
+                    currentSuffix = currentRound.getRoundName();
+                } else {
+                    currentSuffix = "";
+                }
             } else {
                 currentSuffix = saveSuffix;
             }
