@@ -1,3 +1,4 @@
 ### pbem profile
 ### optimized for pbem play
+save.filename.suffix=NEXT_PLAYER
 save.recovery.active=no
