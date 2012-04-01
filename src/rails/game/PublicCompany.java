@@ -953,7 +953,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
     public boolean hasFloated() {
         return hasFloated.value();
     }
-    
+
     public BooleanState getFloatedModel() {
         return hasFloated;
     }
@@ -1047,7 +1047,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
      * @return
      */
     public int getGameEndPrice() {
-        return getMarketPrice();
+        return getMarketPrice()/getShareUnitsForSharePrice();
     }
 
     /**
@@ -1778,7 +1778,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
         if (turnsWithExtraTileLays != null) {
             extraTiles.set(turnsWithExtraTileLays.get(tileColour));
         }
-        
+
         // check if extraTiles is defined
         if (extraTiles.value() != null) {
             // the value is zero already, thus no extra tiles
