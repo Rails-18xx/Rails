@@ -1038,7 +1038,7 @@ CompanyWithholds,WT,280
 PRICE_MOVES_LOG,WT,72,A5,64,A6
  
 EndOfOperatingRound,7.1
-ORWorthIncrease,Alice,7.1,741
+ORWorthIncrease,Alice,7.1,587
 ORWorthIncrease,Bob,7.1,442
 ORWorthIncrease,Charlie,7.1,516
 Has,M1,1
