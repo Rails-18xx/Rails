@@ -1,2 +1,3 @@
-### Default profile currently is identical to root.profile
-### so no change here
+### pbem profile
+### optimized for pbem play
+save.recovery.active=no
