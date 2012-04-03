@@ -180,7 +180,7 @@ public final class ConfigProfile implements Comparable<ConfigProfile> {
     
     String getProperty(String key) {
         ensureLoad();
-        if (this == root || properties.containsKey(key)) {
+        if (this == parent || properties.containsKey(key)) {
             return properties.getProperty(key);
         } else {
             return parent.getProperty(key);
@@ -255,6 +255,7 @@ public final class ConfigProfile implements Comparable<ConfigProfile> {
         if (Util.hasValue(properties.getProperty(PARENT_KEY))) {
             setParent(properties.getProperty(PARENT_KEY));
         }
+        
         if (parent == null) {
             setParent(root);
         }
