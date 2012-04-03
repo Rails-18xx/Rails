@@ -9,9 +9,7 @@ import org.apache.log4j.Logger;
 import org.jgrapht.graph.SimpleGraph;
 
 import rails.algorithms.*;
-import rails.common.Config;
-import rails.common.GuiDef;
-import rails.common.LocalText;
+import rails.common.*;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.correct.*;
@@ -590,12 +588,13 @@ public class ORUIManager implements DialogOwner {
 
             // Prevent that a null action gets processed
             if (action.getReachedCompanies() == null
-                    || action.getReachedCompanies().isEmpty()) return;
+                    || action.getReachedCompanies().isEmpty()) currentDialogAction = null;
 
         } else {
-            return;
+            currentDialogAction = null;
         }
 
+        // Required even if no action is executed, to update the UI, re-enable buttons etc.
         gameUIManager.processAction(currentDialogAction);
     }
 
