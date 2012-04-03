@@ -1,5 +1,7 @@
 package rails.game.specific._1835;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -29,12 +31,15 @@ public class ElsasModifier implements NetworkGraphModifier {
         GameManagerI gm = GameManager.getInstance();
         SimpleGraph<NetworkVertex, NetworkEdge> graph = graphBuilder.getMapGraph();
 
-        // Check if elsasHex has zero value ...
-        MapHex elsasHex = gm.getMapManager().getHex("M5");
-        if (elsasHex.getCurrentValueForPhase(gm.getCurrentPhase()) == 0) {
-            // .. then remove 
-            Set<NetworkVertex> elsasVertices = NetworkVertex.getVerticesByHex(graph.vertexSet(), elsasHex);
-            graph.removeAllVertices(elsasVertices);
+        // Check if (one of the  elsasHex has zero value ...
+        MapHex hex = gm.getMapManager().getHex("M5");
+        if (hex.getCurrentValueForPhase(gm.getCurrentPhase()) == 0) {
+            // .. then remove both
+            Set<NetworkVertex> vertices = NetworkVertex.getVerticesByHex(graph.vertexSet(), hex);
+            graph.removeAllVertices(vertices);
+            hex = gm.getMapManager().getHex("N4");
+            vertices = NetworkVertex.getVerticesByHex(graph.vertexSet(), hex);
+            graph.removeAllVertices(vertices);
             log.debug("Elsas is inactive");
         }
     }
