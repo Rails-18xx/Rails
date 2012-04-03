@@ -207,6 +207,7 @@ public final class ConfigProfile implements Comparable<ConfigProfile> {
         ensureLoad();
 
         ConfigProfile newProfile = new ConfigProfile(Type.USER, name);
+        newProfile.loaded = true; // the new profile is assumed to be loaded
         
         ConfigProfile reference;
         if (isFinal()) {
