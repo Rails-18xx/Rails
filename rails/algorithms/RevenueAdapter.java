@@ -228,8 +228,8 @@ public final class RevenueAdapter implements Runnable {
         defineRevenueBonuses();
         
         // define Trains
-        company.getPortfolio().getTrainList();
-        for (Train train:company.getPortfolio().getTrainList()) {
+        company.getPortfolioModel().getTrainList();
+        for (Train train:company.getPortfolioModel().getTrainList()) {
             addTrain(train);
         }
 

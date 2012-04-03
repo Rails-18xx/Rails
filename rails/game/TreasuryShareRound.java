@@ -127,7 +127,7 @@ public class TreasuryShareRound extends StockRound {
 
             // Shares already owned
             int ownedShare =
-                    operatingCompany.getPortfolio().getShare(operatingCompany);
+                    operatingCompany.getPortfolioModel().getShare(operatingCompany);
             // Max share that may be owned
             int maxShare = getGameParameterAsInt(GameDef.Parm.TREASURY_SHARE_LIMIT);
             // Max number of shares to add
@@ -165,7 +165,7 @@ public class TreasuryShareRound extends StockRound {
         int number;
         int maxShareToSell;
 
-        PortfolioModel companyPortfolio = operatingCompany.getPortfolio();
+        PortfolioModel companyPortfolio = operatingCompany.getPortfolioModel();
 
         /*
          * First check of which companies the player owns stock, and what
@@ -309,7 +309,7 @@ public class TreasuryShareRound extends StockRound {
                 break;
             }
 
-            portfolio = operatingCompany.getPortfolio();
+            portfolio = operatingCompany.getPortfolioModel();
 
             // Check if company would exceed the per-company share limit
             int treasuryShareLimit = getGameParameterAsInt(GameDef.Parm.TREASURY_SHARE_LIMIT);
@@ -378,7 +378,7 @@ public class TreasuryShareRound extends StockRound {
 
     @Override
     public boolean sellShares(SellShares action) {
-        PortfolioModel portfolio = operatingCompany.getPortfolio();
+        PortfolioModel portfolio = operatingCompany.getPortfolioModel();
         String errMsg = null;
         String companyName = action.getCompanyName();
         PublicCompany company = companyManager.getPublicCompany(companyName);

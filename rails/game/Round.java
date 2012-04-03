@@ -11,7 +11,7 @@ import rails.common.*;
 import rails.game.action.*;
 import rails.game.model.CashOwner;
 import rails.game.model.PortfolioModel;
-import rails.game.special.SpecialPropertyI;
+import rails.game.special.SpecialProperty;
 import rails.game.state.AbstractItem;
 import rails.game.state.ArrayListState;
 import rails.game.state.BooleanState;
@@ -160,7 +160,7 @@ public abstract class Round extends AbstractItem implements RoundI {
      *
      * @see rails.game.RoundI#getSpecialProperties()
      */
-    public List<SpecialPropertyI> getSpecialProperties() {
+    public List<SpecialProperty> getSpecialProperties() {
         // TODO Auto-generated method stub
         return null;
     }

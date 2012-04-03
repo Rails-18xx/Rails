@@ -82,7 +82,7 @@ public class NamedTrainRevenueModifier implements RevenueStaticModifier, Revenue
         if (!dynamic) return false;
         
         // 1. check if name trains special properties is available
-        List<NameTrains> sp = revenueAdapter.getCompany().getPortfolio().getSpecialProperties(NameTrains.class, false);
+        List<NameTrains> sp = revenueAdapter.getCompany().getPortfolioModel().getSpecialProperties(NameTrains.class, false);
         if (sp.isEmpty()) return false;
         
         // 2. prepare by defining the vertices

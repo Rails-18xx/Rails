@@ -9,13 +9,10 @@ import com.google.common.collect.ImmutableList;
 import rails.common.parser.ConfigurableComponentI;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
-import rails.game.model.DirectOwner;
-import rails.game.model.StorageModel;
-import rails.game.model.PortfolioModel;
-import rails.game.special.SpecialPropertyI;
+import rails.game.special.SpecialProperty;
 import rails.game.state.BooleanState;
 import rails.game.state.AbstractItem;
-import rails.game.state.OwnableItem;
+import rails.game.state.PortfolioList;
 import rails.util.Util;
 
 public abstract class Company extends AbstractItem implements ConfigurableComponentI,
@@ -51,10 +48,10 @@ Cloneable, Comparable<Company> {
     protected int certLimitCount = 2;
 
     /** Closed state */
-    protected BooleanState closedObject;
+    protected final BooleanState closedObject = BooleanState.create(false);
 
     // Moved here from PrivayeCOmpany on behalf of 1835
-    protected StorageModel<SpecialPropertyI> specialProperties = null;
+    protected final PortfolioList<SpecialProperty> specialProperties = PortfolioList.create();
 
     protected static Logger log =
         Logger.getLogger(Company.class.getPackage().getName());
@@ -65,7 +62,8 @@ Cloneable, Comparable<Company> {
     public void init(String name, CompanyTypeI type) {
         this.name = name;
         this.type = type;
-        closedObject = BooleanState.create(this, name + "_Closed", false);
+        closedObject.init(this, "closed");
+        specialProperties.init(this, "specialProperties");
     }
 
     /** Only to be called from subclasses */
@@ -82,18 +80,15 @@ Cloneable, Comparable<Company> {
                 if (!Util.hasValue(className))
                     throw new ConfigurationException(
                     "Missing class in private special property");
-                SpecialPropertyI sp = null;
+                SpecialProperty sp = null;
                 try {
-                    sp = (SpecialPropertyI) Class.forName(className).newInstance();
+                    sp = (SpecialProperty) Class.forName(className).newInstance();
                 } catch (Exception e) {
                     log.fatal ("Cannot instantiate "+className, e);
                     System.exit(-1);
                 }
-                if (specialProperties == null) {
-                    specialProperties = StorageModel.create(this, SpecialPropertyI.class);
-                }
                 sp.configureFromXML(spTag);
-                sp.moveTo(this);
+                specialProperties.moveInto(sp);
                 parentInfoText += "<br>" + sp.getInfo();
             }
         }
@@ -102,8 +97,8 @@ Cloneable, Comparable<Company> {
     /**
      * @return ArrayList of all special properties we have.
      */
-    public ImmutableList<SpecialPropertyI> getSpecialProperties() {
-        return specialProperties.view();
+    public ImmutableList<SpecialProperty> getSpecialProperties() {
+        return specialProperties.items();
     }
 
     /**

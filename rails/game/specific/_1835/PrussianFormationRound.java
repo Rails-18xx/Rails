@@ -9,7 +9,7 @@ import rails.game.*;
 import rails.game.action.DiscardTrain;
 import rails.game.action.PossibleAction;
 import rails.game.special.ExchangeForShare;
-import rails.game.special.SpecialPropertyI;
+import rails.game.special.SpecialProperty;
 import rails.game.model.MoneyModel;
 
 public class PrussianFormationRound extends StockRound {
@@ -76,7 +76,7 @@ public class PrussianFormationRound extends StockRound {
             log.debug("Original Prussian starting player was "+startingPlayer.getId());
             setCurrentPlayer(startingPlayer);
             if (forcedMerge) {
-                List<SpecialPropertyI> sps;
+                List<SpecialProperty> sps;
                 setFoldablePrePrussians();
                 List<Company> foldables = new ArrayList<Company> ();
                 for (PrivateCompany company : gameManager.getAllPrivateCompanies()) {
@@ -120,7 +120,7 @@ public class PrussianFormationRound extends StockRound {
 
             if (prussian.getNumberOfTrains() > prussian.getCurrentTrainLimit()) {
                 possibleActions.add(new DiscardTrain(prussian,
-                        prussian.getPortfolio().getUniqueTrains(), true));
+                        prussian.getPortfolioModel().getUniqueTrains(), true));
             }
         }
         return true;
@@ -130,16 +130,16 @@ public class PrussianFormationRound extends StockRound {
     private void setFoldablePrePrussians () {
 
         foldablePrePrussians = new ArrayList<Company> ();
-        SpecialPropertyI sp;
-        for (PrivateCompany company : currentPlayer.getPortfolio().getPrivateCompanies()) {
+        SpecialProperty sp;
+        for (PrivateCompany company : currentPlayer.getPortfolioModel().getPrivateCompanies()) {
             sp = company.getSpecialProperties().get(0);
             if (sp instanceof ExchangeForShare) {
                 foldablePrePrussians.add(company);
             }
         }
         PublicCompany company;
-        List<SpecialPropertyI> sps;
-        for (PublicCertificate cert : currentPlayer.getPortfolio().getCertificates()) {
+        List<SpecialProperty> sps;
+        for (PublicCertificate cert : currentPlayer.getPortfolioModel().getCertificates()) {
             if (!cert.isPresidentShare()) continue;
             company = cert.getCompany();
             sps = company.getSpecialProperties();
@@ -321,7 +321,7 @@ public class PrussianFormationRound extends StockRound {
             efs = (ExchangeForShare) company.getSpecialProperties().get(0);
             cert = unavailable.findCertificate(prussian, efs.getShare()/prussian.getShareUnit(),
             		president);
-            cert.moveTo(player.getPortfolio());
+            cert.moveTo(player.getPortfolioModel());
             //company.setClosed();
             String message = LocalText.getText("MERGE_MINOR_LOG",
                     player.getId(),
@@ -330,7 +330,7 @@ public class PrussianFormationRound extends StockRound {
                     company instanceof PrivateCompany ? "no"
                             : Bank.format(((PublicCompany)company).getCash()),
                     company instanceof PrivateCompany ? "no"
-                            : ((PublicCompany)company).getPortfolio().getTrainList().size());
+                            : ((PublicCompany)company).getPortfolioModel().getTrainList().size());
             ReportBuffer.add(message);
             if (display) DisplayBuffer.add (message);
             message = LocalText.getText("GetShareForMinor",
@@ -347,7 +347,7 @@ public class PrussianFormationRound extends StockRound {
                 PublicCompany minor = (PublicCompany) company;
 
                 // Replace the home token
-                BaseToken token = (BaseToken) minor.getTokens().get(0);
+                BaseToken token = (BaseToken) minor.getAllBaseTokens().get(0);
                 Stop city = (Stop) token.getOwner();
                 MapHex hex = city.getHolder();
                 token.moveTo(minor);
@@ -369,9 +369,9 @@ public class PrussianFormationRound extends StockRound {
 
                 // Move any trains
                 // TODO: Simplify code due to trainlist being immutable anyway
-                List<Train> trains = new ArrayList<Train> (minor.getPortfolio().getTrainList());
+                List<Train> trains = new ArrayList<Train> (minor.getPortfolioModel().getTrainList());
                 for (Train train : trains) {
-                    train.moveTo(prussian.getPortfolio());
+                    train.moveTo(prussian.getPortfolioModel());
                 }
             }
 
@@ -403,7 +403,7 @@ public class PrussianFormationRound extends StockRound {
             }
 
             // Does the company own such a train?
-            if (!company.getPortfolio().getTrainList().contains(train)) {
+            if (!company.getPortfolioModel().getTrainList().contains(train)) {
                 errMsg =
                         LocalText.getText("CompanyDoesNotOwnTrain",
                                 company.getId(),

@@ -13,7 +13,6 @@ import rails.game.ReportBuffer;
 import rails.game.RoundI;
 import rails.game.ShareSellingRound;
 import rails.game.model.MoneyModel;
-import rails.game.model.Owners;
 import rails.game.model.PortfolioModel;
 import rails.game.state.Context;
 import rails.game.state.GenericState;
@@ -69,7 +68,7 @@ public class GameManager_18EU extends GameManager {
         // Assume default case as in 18EU: all assets to Bank/Pool
         Player bankrupter = getCurrentPlayer();
         MoneyModel.cashMove(bankrupter, bank, bankrupter.getCashValue());
-        PortfolioModel bpf = bankrupter.getPortfolio();
+        PortfolioModel bpf = bankrupter.getPortfolioModel();
         List<PublicCompany> presidencies = new ArrayList<PublicCompany>();
         for (PublicCertificate cert : bpf.getCertificates()) {
             if (cert.isPresidentShare()) presidencies.add(cert.getCompany());
@@ -81,7 +80,7 @@ public class GameManager_18EU extends GameManager {
             for (int index=getCurrentPlayerIndex()+1;
             index<getCurrentPlayerIndex()+numberOfPlayers; index++) {
                 player = getPlayerByIndex(index%numberOfPlayers);
-                share = player.getPortfolio().getShare(company);
+                share = player.getPortfolioModel().getShare(company);
                 if (share >= company.getPresidentsShare().getShare()
                         && (share > maxShare)) {
                     maxShare = share;
@@ -89,8 +88,8 @@ public class GameManager_18EU extends GameManager {
                 }
             }
             if (newPresident != null) {
-                bankrupter.getPortfolio().swapPresidentCertificate(company,
-                        newPresident.getPortfolio());
+                bankrupter.getPortfolioModel().swapPresidentCertificate(company,
+                        newPresident.getPortfolioModel());
             } else {
                 company.setClosed();  // This also makes majors restartable
                 ReportBuffer.add(LocalText.getText("CompanyCloses", company.getId()));
@@ -98,8 +97,7 @@ public class GameManager_18EU extends GameManager {
         }
         
         // Dump all shares
-        Owners.moveAll(bankrupter, bank.getPool(), PublicCertificate.class);
-
+        bankrupter.getPortfolioModel().getCertificatesModel().moveAll(bank.getPool().getCertificatesModel());
         bankrupter.setBankrupt();
 
         // Finish the share selling round

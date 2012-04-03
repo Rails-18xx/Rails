@@ -29,7 +29,7 @@ public class OperatingRound_18EU extends OperatingRound {
     @Override
     protected void initTurn() {
         super.initTurn();
-        hasPullmannAtStart.set(operatingCompany.get().getPortfolio()
+        hasPullmannAtStart.set(operatingCompany.get().getPortfolioModel()
                 .getTrainOfType(pullmannType) != null);
     }
 
@@ -48,7 +48,7 @@ public class OperatingRound_18EU extends OperatingRound {
         BuyTrain bt;
 
         boolean hasTrains =
-                operatingCompany.get().getPortfolio().getNumberOfTrains() > 0;
+                operatingCompany.get().getPortfolioModel().getNumberOfTrains() > 0;
 
         // Cannot buy a train without any cash, unless you have to
         if (cash == 0 && hasTrains) return;
@@ -92,7 +92,7 @@ public class OperatingRound_18EU extends OperatingRound {
             // May not buy Pullmann if one is already owned,
             // or if no train is owned at all
             if (train.getType().getName().equals("P")
-                    &&(operatingCompany.get().getPortfolio().getTrainOfType(pullmannType) != null
+                    &&(operatingCompany.get().getPortfolioModel().getTrainOfType(pullmannType) != null
                             || !hasTrains)) {
                 continue;
             }
@@ -142,7 +142,7 @@ public class OperatingRound_18EU extends OperatingRound {
                                                  + numberOfPlayers; i++) {
                 companies = companiesPerPlayer.get(i % numberOfPlayers);
                 for (PublicCompany company : companies) {
-                    pf = company.getPortfolio();
+                    pf = company.getPortfolioModel();
                     trains = pf.getUniqueTrains();
 
                     for (Train train : trains) {
@@ -173,7 +173,7 @@ public class OperatingRound_18EU extends OperatingRound {
 
         // If we are at train limit and have a Pullmann, discard it
         if (mustDiscardPullmann) {
-            Train pullmann = operatingCompany.get().getPortfolio().getTrainOfType(pullmannType);
+            Train pullmann = operatingCompany.get().getPortfolioModel().getTrainOfType(pullmannType);
             if (pullmann != null) {  // must be non-null
                 pullmann.moveTo(pool);
                 ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
@@ -231,7 +231,7 @@ public class OperatingRound_18EU extends OperatingRound {
         int numberOfTrains;
 
         for (PublicCompany comp : operatingCompanies.view()) {
-            portfolio = comp.getPortfolio();
+            portfolio = comp.getPortfolioModel();
             numberOfTrains = portfolio.getNumberOfTrains();
 
             // Check if the company has a Pullmann
@@ -260,7 +260,7 @@ public class OperatingRound_18EU extends OperatingRound {
     }
 
     private boolean hasPullmann () {
-        return operatingCompany.get().getPortfolio().getTrainOfType(pullmannType) != null;
+        return operatingCompany.get().getPortfolioModel().getTrainOfType(pullmannType) != null;
     }
 
     @Override

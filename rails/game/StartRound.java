@@ -265,14 +265,14 @@ public abstract class StartRound extends Round {
                 primary.getId(),
                 Bank.format(price) ));
         pay (player, bank, price);
-        transferCertificate (primary, player.getPortfolio());
+        transferCertificate (primary, player.getPortfolioModel());
         checksOnBuying(primary, sharePrice);
         if (item.hasSecondary()) {
             Certificate extra = item.getSecondary();
             ReportBuffer.change(LocalText.getText("ALSO_GETS",
                     player.getId(),
                     extra.getId() ));
-            transferCertificate (extra, player.getPortfolio());
+            transferCertificate (extra, player.getPortfolioModel());
             checksOnBuying(extra, sharePrice);
         }
         item.setSold(player, price);

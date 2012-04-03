@@ -18,7 +18,6 @@ import rails.game.correct.ClosePrivate;
 import rails.game.correct.OperatingCost;
 import rails.game.model.CashOwner;
 import rails.game.model.MoneyModel;
-import rails.game.model.Owner;
 import rails.game.model.PortfolioModel;
 import rails.game.special.*;
 import rails.game.state.*;
@@ -48,7 +47,7 @@ public class OperatingRound extends Round implements Observer {
     // do not use a operatingCompany.getObject() as reference
 
     // Non-persistent lists (are recreated after each user action)
-    protected List<SpecialPropertyI> currentSpecialProperties = null;
+    protected List<SpecialProperty> currentSpecialProperties = null;
 
     protected HashMapState<String, Integer> tileLaysPerColour =
         HashMapState.create(this, "tileLaysPerColour");
@@ -446,7 +445,7 @@ public class OperatingRound extends Round implements Observer {
                 + numberOfPlayers; i++) {
                     player = players.get(i % numberOfPlayers);
                     if (!maySellPrivate(player)) continue;
-                    for (PrivateCompany privComp : player.getPortfolio().getPrivateCompanies()) {
+                    for (PrivateCompany privComp : player.getPortfolioModel().getPrivateCompanies()) {
 
                         // check to see if the private can be sold to a company
                         if (!privComp.tradeableToCompany()) {
@@ -467,10 +466,10 @@ public class OperatingRound extends Round implements Observer {
 
                 // Are there any "common" special properties,
                 // i.e. properties that are available to everyone?
-                List<SpecialPropertyI> commonSP = gameManager.getCommonSpecialProperties();
+                List<SpecialProperty> commonSP = gameManager.getCommonSpecialProperties();
                 if (commonSP != null) {
                     SellBonusToken sbt;
-                    loop:   for (SpecialPropertyI sp : commonSP) {
+                    loop:   for (SpecialProperty sp : commonSP) {
                         if (sp instanceof SellBonusToken) {
                             sbt = (SellBonusToken) sp;
                             // Can't buy if already owned
@@ -485,14 +484,14 @@ public class OperatingRound extends Round implements Observer {
                 }
 
                 // Are there other step-independent special properties owned by the company?
-                List<SpecialPropertyI> orsps = operatingCompany.get().getPortfolio().getAllSpecialProperties();
+                List<SpecialProperty> orsps = operatingCompany.get().getPortfolioModel().getAllSpecialProperties();
         
                 // TODO: Do we still need this directly from the operating company?
-//                List<SpecialPropertyI> compsps = operatingCompany.get().getSpecialProperties();
+//                List<SpecialProperty> compsps = operatingCompany.get().getSpecialProperties();
 //                if (compsps != null) orsps.addAll(compsps);
 
                 if (orsps != null) {
-                    for (SpecialPropertyI sp : orsps) {
+                    for (SpecialProperty sp : orsps) {
                         if (!sp.isExercised() && sp.isUsableIfOwnedByCompany()
                                 && sp.isUsableDuringOR(step)) {
                             if (sp instanceof SpecialTokenLay) {
@@ -506,9 +505,9 @@ public class OperatingRound extends Round implements Observer {
                     }
                 }
                 // Are there other step-independent special properties owned by the president?
-                orsps = getCurrentPlayer().getPortfolio().getAllSpecialProperties();
+                orsps = getCurrentPlayer().getPortfolioModel().getAllSpecialProperties();
                 if (orsps != null) {
-                    for (SpecialPropertyI sp : orsps) {
+                    for (SpecialProperty sp : orsps) {
                         if (!sp.isExercised() && sp.isUsableIfOwnedByPlayer()
                                 && sp.isUsableDuringOR(step)) {
                             if (sp instanceof SpecialTokenLay) {
@@ -576,7 +575,7 @@ public class OperatingRound extends Round implements Observer {
             operatingCompany.get().setOperated();
             companiesOperatedThisRound.add(operatingCompany.get());
 
-            for (PrivateCompany priv : operatingCompany.get().getPortfolio().getPrivateCompanies()) {
+            for (PrivateCompany priv : operatingCompany.get().getPortfolioModel().getPrivateCompanies()) {
                 priv.checkClosingIfExercised(true);
             }
         }
@@ -747,7 +746,7 @@ public class OperatingRound extends Round implements Observer {
                  * (but register a Done action for BACKWARDS COMPATIBILITY only)
                  */
                 // Preload some expensive results
-                int ownShare = company.getPortfolio().getShare(company);
+                int ownShare = company.getPortfolioModel().getShare(company);
                 int poolShare = pool.getShare(company); // Expensive, do it once
                 // Can it buy?
                 boolean canBuy =
@@ -756,7 +755,7 @@ public class OperatingRound extends Round implements Observer {
                     && poolShare > 0;
                     // Can it sell?
                     boolean canSell =
-                        company.getPortfolio().getShare(company) > 0
+                        company.getPortfolioModel().getShare(company) > 0
                         && poolShare < getGameParameterAsInt (GameDef.Parm.POOL_SHARE_LIMIT);
                         // Above we ignore the possible existence of double shares (as in 1835).
 
@@ -831,7 +830,7 @@ public class OperatingRound extends Round implements Observer {
      */
     public boolean done() {
 
-        if (operatingCompany.get().getPortfolio().getNumberOfTrains() == 0
+        if (operatingCompany.get().getPortfolioModel().getNumberOfTrains() == 0
                 && operatingCompany.get().mustOwnATrain()) {
             // FIXME: Need to check for valid route before throwing an
             // error.
@@ -885,7 +884,7 @@ public class OperatingRound extends Round implements Observer {
 
             // Does the company own such a train?
 
-            if (!company.getPortfolio().getTrainList().contains(train)) {
+            if (!company.getPortfolioModel().getTrainList().contains(train)) {
                 errMsg =
                     LocalText.getText("CompanyDoesNotOwnTrain",
                             company.getId(),
@@ -945,7 +944,7 @@ public class OperatingRound extends Round implements Observer {
                 list = excessTrainCompanies.get(player);
                 for (PublicCompany comp : list) {
                     possibleActions.add(new DiscardTrain(comp,
-                            comp.getPortfolio().getUniqueTrains(), true));
+                            comp.getPortfolioModel().getUniqueTrains(), true));
                     // We handle one company at at time.
                     // We come back here until all excess trains have been
                     // discarded.
@@ -1057,7 +1056,7 @@ public class OperatingRound extends Round implements Observer {
 
         // TODO: changeStack.start(true);
 
-        operatingCompany.get().buyPrivate(privateCompany, player.getPortfolio(),
+        operatingCompany.get().buyPrivate(privateCompany, player.getPortfolioModel(),
                 price);
 
         return true;
@@ -1365,7 +1364,7 @@ public class OperatingRound extends Round implements Observer {
 
         String errMsg = null;
 
-        SpecialPropertyI sp = action.getSpecialProperty();
+        SpecialProperty sp = action.getSpecialProperty();
         if (!(sp instanceof SpecialRight)) {
             errMsg = "Wrong right property class: "+sp.toString();
         }
@@ -2279,7 +2278,7 @@ public class OperatingRound extends Round implements Observer {
         }
 
         // Rust any obsolete trains
-        operatingCompany.get().getPortfolio().rustObsoleteTrains();
+        operatingCompany.get().getPortfolioModel().rustObsoleteTrains();
 
         // We have done the payout step, so continue from there
         nextStep(GameDef.OrStep.PAYOUT);
@@ -2663,7 +2662,7 @@ public class OperatingRound extends Round implements Observer {
                     //exchangedTrain = operatingCompany.getObject().getPortfolio().getTrainList().get(0);
                     //action.setExchangedTrain(exchangedTrain);
                     break;
-                } else if (operatingCompany.get().getPortfolio().getTrainOfType(exchangedTrain.getCertType()) == null) {
+                } else if (operatingCompany.get().getPortfolioModel().getTrainOfType(exchangedTrain.getCertType()) == null) {
                     errMsg = LocalText.getText("CompanyDoesNotOwnTrain",
                             operatingCompany.get().getId(),
                             exchangedTrain.getId());
@@ -2712,7 +2711,7 @@ public class OperatingRound extends Round implements Observer {
 
         if (exchangedTrain != null) {
             Train oldTrain =
-                operatingCompany.get().getPortfolio().getTrainOfType(
+                operatingCompany.get().getPortfolioModel().getTrainOfType(
                         exchangedTrain.getCertType());
             oldTrain.moveTo(train.isObsolete() ? scrapHeap : pool);
             ReportBuffer.change(LocalText.getText("ExchangesTrain",
@@ -2787,7 +2786,7 @@ public class OperatingRound extends Round implements Observer {
         excessTrainCompanies = new HashMap<Player, List<PublicCompany>>();
         Player player;
         for (PublicCompany comp : operatingCompanies.view()) {
-            if (comp.getPortfolio().getNumberOfTrains() > comp.getCurrentTrainLimit()) {
+            if (comp.getPortfolioModel().getNumberOfTrains() > comp.getCurrentTrainLimit()) {
                 player = comp.getPresident();
                 if (!excessTrainCompanies.containsKey(player)) {
                     excessTrainCompanies.put(player,
@@ -2819,7 +2818,7 @@ public class OperatingRound extends Round implements Observer {
         List<Train> trains;
 
         boolean hasTrains =
-            operatingCompany.get().getPortfolio().getNumberOfTrains() > 0;
+            operatingCompany.get().getPortfolioModel().getNumberOfTrains() > 0;
 
             // Cannot buy a train without any cash, unless you have to
             if (cash == 0 && hasTrains) return;
@@ -2868,7 +2867,7 @@ public class OperatingRound extends Round implements Observer {
                         cost = train.getCertType().getExchangeCost();
                         if (cost <= cash) {
                             List<Train> exchangeableTrains =
-                                operatingCompany.get().getPortfolio().getUniqueTrains();
+                                operatingCompany.get().getPortfolioModel().getUniqueTrains();
                             BuyTrain action = new BuyTrain(train, ipo, cost);
                             action.setTrainsForExchange(exchangeableTrains);
                             //if (atTrainLimit) action.setForcedExchange(true);
@@ -2985,7 +2984,7 @@ public class OperatingRound extends Round implements Observer {
                 + numberOfPlayers; i++) {
                     companies = companiesPerPlayer.get(i % numberOfPlayers);
                     for (PublicCompany company : companies) {
-                        pf = company.getPortfolio();
+                        pf = company.getPortfolioModel();
                         trains = pf.getUniqueTrains();
 
                         for (Train train : trains) {
@@ -3019,7 +3018,7 @@ public class OperatingRound extends Round implements Observer {
             }
 
             if (!operatingCompany.get().mustOwnATrain()
-                    || operatingCompany.get().getPortfolio().getNumberOfTrains() > 0) {
+                    || operatingCompany.get().getPortfolioModel().getNumberOfTrains() > 0) {
                 doneAllowed = true;
             }
     }
@@ -3048,21 +3047,21 @@ public class OperatingRound extends Round implements Observer {
      *  8.   VARIOUS UTILITIES
      *=======================================*/
 
-    protected <T extends SpecialPropertyI> List<T> getSpecialProperties(
+    protected <T extends SpecialProperty> List<T> getSpecialProperties(
             Class<T> clazz) {
         List<T> specialProperties = new ArrayList<T>();
         if (!operatingCompany.get().isClosed()) {
             // OC may have closed itself (e.g. in 1835 when M2 buys 1st 4T and starts PR)
-            specialProperties.addAll(operatingCompany.get().getPortfolio().getSpecialProperties(
+            specialProperties.addAll(operatingCompany.get().getPortfolioModel().getSpecialProperties(
                     clazz, false));
-            specialProperties.addAll(operatingCompany.get().getPresident().getPortfolio().getSpecialProperties(
+            specialProperties.addAll(operatingCompany.get().getPresident().getPortfolioModel().getSpecialProperties(
                     clazz, false));
         }
         return specialProperties;
     }
 
     @Override
-    public List<SpecialPropertyI> getSpecialProperties() {
+    public List<SpecialProperty> getSpecialProperties() {
         return currentSpecialProperties;
     }
 

@@ -16,10 +16,11 @@ import rails.game.GameManager;
 import rails.game.Train;
 import rails.game.TrainManager;
 import rails.game.TrainType;
-import rails.game.model.Owner;
 import rails.game.model.PortfolioModel;
 import rails.game.special.SpecialProperty;
 import rails.game.special.SpecialTrainBuy;
+import rails.game.state.Owner;
+import rails.game.state.Portfolio;
 import rails.util.Util;
 
 /**
@@ -66,12 +67,16 @@ public class BuyTrain extends PossibleORAction {
 
         this (train, train.getType(), from, fixedCost);
     }
-    
+    /**
+    * TODO: Check if from works as before (has to have the same fromName
+    * this was identified by from.getId()
+    * it is replaced that by from.getParent().getId()
+    */
     public BuyTrain(Train train, TrainType type, PortfolioModel from, int fixedCost) {
         this.train = train;
-        this.trainUniqueId = train.getUniqueId();
+        this.trainUniqueId = train.getId();
         this.from = from;
-        this.fromName = from.getId();
+        this.fromName = from.getParent().getId();
         this.fixedCost = fixedCost;
         this.type = type;
         this.typeName = type.getName();
@@ -82,7 +87,7 @@ public class BuyTrain extends PossibleORAction {
         if (trains != null) {
             trainsForExchangeUniqueIds = new String[trains.size()];
             for (int i = 0; i < trains.size(); i++) {
-                trainsForExchangeUniqueIds[i] = trains.get(i).getUniqueId();
+                trainsForExchangeUniqueIds[i] = trains.get(i).getId();
                 // Must be replaced by unique Ids - why was this a todo?
             }
         }
@@ -183,12 +188,14 @@ public class BuyTrain extends PossibleORAction {
         return forcedBuyIfNoRoute;
     }
 
-    public PortfolioModel getPortfolio() {
+    // TODO: Check if this is still required, now this points to Portfolio<Train> 
+    // instead of PortfolioModel
+    public Portfolio<Train> getPortfolio() {
         return getTrain().getPortfolio();
     }
 
     public Owner getOwner() {
-        return getTrain().getOwner();
+        return getTrain().getPortfolio().getParent();
     }
 
     public int getAddedCash() {
@@ -214,7 +221,7 @@ public class BuyTrain extends PossibleORAction {
     public void setExchangedTrain(Train exchangedTrain) {
         this.exchangedTrain = exchangedTrain;
         if (exchangedTrain != null)
-            this.exchangedTrainUniqueId = exchangedTrain.getUniqueId();
+            this.exchangedTrainUniqueId = exchangedTrain.getId();
     }
 
     @Override

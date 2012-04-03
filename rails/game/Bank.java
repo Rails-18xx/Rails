@@ -11,7 +11,6 @@ import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.model.CashMoneyModel;
 import rails.game.model.CashOwner;
-import rails.game.model.MoneyModel;
 import rails.game.model.PortfolioModel;
 import rails.game.state.AbstractItem;
 import rails.game.state.BooleanState;
@@ -33,19 +32,19 @@ public class Bank extends AbstractItem implements CashOwner, ConfigurableCompone
     private static final String DEFAULT_MONEY_FORMAT = "$@";
 
     /** The Bank's amount of cash */
-    private final CashMoneyModel cash;
+    private final CashMoneyModel cash = CashMoneyModel.create();
 
     /** The IPO */
-    private final PortfolioModel ipo;
+    private final PortfolioModel ipo = PortfolioModel.create();
     /** The Bank Pool */
-    private final PortfolioModel pool;
+    private final PortfolioModel pool = PortfolioModel.create();
     /** Collection of items that will (may) become available in the future */
-    private final PortfolioModel unavailable;
+    private final PortfolioModel unavailable = PortfolioModel.create();
     /** Collection of items that have been discarded (but are kept to allow Undo) */
-    private final PortfolioModel scrapHeap;
+    private final PortfolioModel scrapHeap = PortfolioModel.create();
 
     /** Is the bank broken */
-    private final BooleanState broken;
+    private final BooleanState broken = BooleanState.create();
 
     /**
      * The money format template. '@' is replaced by the numeric amount, the
@@ -57,20 +56,9 @@ public class Bank extends AbstractItem implements CashOwner, ConfigurableCompone
         Logger.getLogger(Bank.class.getPackage().getName());
 
     public Bank() {
-        super(Bank.class.getSimpleName());
-
+        super();
         instance = this;
 
-        cash = MoneyModel.createCash("cash");
-
-        // Create the IPO and the Bank Pool.
-        ipo = PortfolioModel.create(IPO_NAME);
-        pool = PortfolioModel.create(POOL_NAME);
-        unavailable = PortfolioModel.create(UNAVAILABLE_NAME);
-        scrapHeap = PortfolioModel.create(SCRAPHEAP_NAME);
-
-        broken = BooleanState.create("broken");
-        
         String configFormat = Config.get("money_format");
         if (Util.hasValue(configFormat) && configFormat.matches(".*@.*")) {
             moneyFormat = configFormat;
@@ -78,15 +66,17 @@ public class Bank extends AbstractItem implements CashOwner, ConfigurableCompone
     }
 
     @Override
-    public Bank init(Item parent) {
-        super.init(parent);
+    public Bank init(Item parent, String id) {
+        super.init(parent,  id);
         
-        cash.init(this);
-        ipo.init(this);
-        pool.init(this);
-        unavailable.init(this);
-        scrapHeap.init(this);
-        broken.init(this);
+        cash.init(this, "cash");
+        broken.init(this, "broken");
+        
+        // Init the IPO and the Bank Pool.
+        ipo.init(this, IPO_NAME);
+        pool.init(this, POOL_NAME);
+        unavailable.init(this, UNAVAILABLE_NAME);
+        scrapHeap.init(this, SCRAPHEAP_NAME);
         
         return this;
     }

@@ -7,13 +7,13 @@ import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.model.StorageModel;
-import rails.game.model.Owner;
-import rails.game.model.Owners;
 import rails.game.model.PortfolioModel;
 import rails.game.special.SellBonusToken;
-import rails.game.special.SpecialPropertyI;
+import rails.game.special.SpecialProperty;
 import rails.game.state.GenericState;
 import rails.game.state.OwnableItem;
+import rails.game.state.Owner;
+import rails.game.state.Owners;
 import rails.game.state.Portfolio;
 import rails.util.*;
 
@@ -218,7 +218,7 @@ public class PrivateCompany extends Company implements OwnableItem<PrivateCompan
     public void finishConfiguration (GameManager gameManager)
     throws ConfigurationException {
 
-        for (SpecialPropertyI sp : specialProperties) {
+        for (SpecialProperty sp : specialProperties) {
             sp.finishConfiguration(gameManager);
         }
 
@@ -270,7 +270,7 @@ public class PrivateCompany extends Company implements OwnableItem<PrivateCompan
     public void init(String name, CompanyTypeI type) {
         super.init(name, type);
 
-        specialProperties = StorageModel.create(this, SpecialPropertyI.class);
+        specialProperties = StorageModel.create(this, SpecialProperty.class);
 
         /* start sfy 1889 */
         preventClosingConditions = new ArrayList<String>();
@@ -335,7 +335,7 @@ public class PrivateCompany extends Company implements OwnableItem<PrivateCompan
         // (Note: all such tokens will be made buyable from the Bank too,
         // this is done in OperatingRound_1856).
         List<SellBonusToken> moveToGM = new ArrayList<SellBonusToken>(4);
-        for (SpecialPropertyI sp : specialProperties) {
+        for (SpecialProperty sp : specialProperties) {
             if (sp instanceof SellBonusToken) {
                 moveToGM.add((SellBonusToken)sp);
             }
@@ -425,11 +425,11 @@ public class PrivateCompany extends Company implements OwnableItem<PrivateCompan
      * @param token The special property object to remove.
      * @return True if successful.
      */
-    public boolean removeObject(SpecialPropertyI object) {
+    public boolean removeObject(SpecialProperty object) {
         return specialProperties.removeObject(object);
     }
 
-    public int getListIndex (SpecialPropertyI object) {
+    public int getListIndex (SpecialProperty object) {
         return specialProperties.getListIndex(object);
     }
 
@@ -458,14 +458,14 @@ public class PrivateCompany extends Company implements OwnableItem<PrivateCompan
         if (isClosed() || endOfTurn != closeAtEndOfTurn) return;
 
         if (closeIfAllExercised) {
-            for (SpecialPropertyI sp : specialProperties) {
+            for (SpecialProperty sp : specialProperties) {
                 if (!sp.isExercised()) return;
             }
             log.debug("CloseIfAll: closing "+name);
             setClosed();
 
         } else if (closeIfAnyExercised) {
-            for (SpecialPropertyI sp : specialProperties) {
+            for (SpecialProperty sp : specialProperties) {
                 if (sp.isExercised()) {
                     log.debug("CloseIfAny: closing "+name);
                     setClosed();

@@ -52,7 +52,7 @@ public class OperatingRound_1889 extends OperatingRound {
             if (!privB.isClosed() && 
                     privB.getPortfolio().getOwner() instanceof Player && 
                     privB.getPortfolio().getOwner() != operatingCompany.get().getPresident()) {
-                SpecialPropertyI spPrivB = privB.getSpecialProperties().get(0);
+                SpecialProperty spPrivB = privB.getSpecialProperties().get(0);
                 if (spPrivB != null && !spPrivB.isExercised()) {
                     if (!activeSpPrivB.booleanValue()) 
                         possibleActions.add(new UseSpecialProperty(spPrivB));

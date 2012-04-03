@@ -46,7 +46,7 @@ public class OperatingRound_18TN extends OperatingRound {
     }
 
     private boolean ownsPrivate (PublicCompany company) {
-        List<PrivateCompany> privates = company.getPortfolio().getPrivateCompanies();
+        List<PrivateCompany> privates = company.getPortfolioModel().getPrivateCompanies();
         return privates != null && !privates.isEmpty();
     }
 
@@ -85,7 +85,7 @@ public class OperatingRound_18TN extends OperatingRound {
     public void processPhaseAction (String name, String value) {
         if (name.equalsIgnoreCase("CivilWar")) {
             for (PublicCompany company : getOperatingCompanies()) {
-                if (company.hasFloated() && company.getPortfolio().getNumberOfTrains() > 0
+                if (company.hasFloated() && company.getPortfolioModel().getNumberOfTrains() > 0
                         && company.hasRoute()) {
                     ((PublicCompany_18TN)company).setCivilWar(true);
                 }

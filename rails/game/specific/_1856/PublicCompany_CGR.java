@@ -12,10 +12,10 @@ import rails.game.Player;
 import rails.game.PublicCertificate;
 import rails.game.PublicCompany;
 import rails.game.Train;
-import rails.game.model.Owner;
 import rails.game.state.BooleanState;
 import rails.game.state.GenericState;
 import rails.game.state.IntegerState;
+import rails.game.state.Owner;
 
 public class PublicCompany_CGR extends PublicCompany implements RevenueStaticModifier {
 

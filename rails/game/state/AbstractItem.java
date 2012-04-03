@@ -1,6 +1,7 @@
 package rails.game.state;
 
 import static com.google.common.base.Preconditions.*;
+import rails.game.PublicCompany;
 
 /**
  * An AbstractItem is a default implementation of Item
@@ -12,6 +13,9 @@ public abstract class AbstractItem implements Item {
     private Item parent;
 
     private boolean initialized = false;
+    
+    // no public noarg constructor
+    protected AbstractItem () {}
 
     // Item interface
     public AbstractItem init(Item parent, String id){
@@ -30,6 +34,11 @@ public abstract class AbstractItem implements Item {
         initialized = true;
         
         return this;
+    }
+    
+    protected void checkedInit(Item parent, String id, Class<? extends Item> clazz) {
+        checkArgument(clazz.isInstance(parent), "Parent in init() is restricted to " + clazz);
+        init(parent, id);
     }
 
     public boolean isInitialized() {
@@ -71,6 +80,5 @@ public abstract class AbstractItem implements Item {
         // recursive definition
         return parent.getFullURI() + Item.SEP + id;
     }
-    
     
 }

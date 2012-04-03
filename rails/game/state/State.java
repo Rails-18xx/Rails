@@ -2,7 +2,6 @@ package rails.game.state;
 
 import static com.google.common.base.Preconditions.*;
 
-
 /**
  * State is an abstract generic class
  * that defines the base layer of objects that contain game state.

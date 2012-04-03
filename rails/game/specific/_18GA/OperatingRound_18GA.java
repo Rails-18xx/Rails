@@ -31,7 +31,7 @@ public class OperatingRound_18GA extends OperatingRound {
                         company.getId(),
                         OS_EXTRA_TRAIN_TYPE));
                 // TODO: is this still required?
-                company.getPortfolio().getTrainsModel().update();
+                company.getPortfolioModel().getTrainsModel().update();
             }
         }
         

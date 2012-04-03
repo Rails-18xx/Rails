@@ -69,7 +69,7 @@ public class GameManager_1835 extends GameManager {
         for (PublicCompany company : companyManager.getAllPublicCompanies()) {
             if (company.getTypeName().equalsIgnoreCase("Major")
                     && company.getPresident() == player
-                    && player.getPortfolio().getShare(company) >= 80) limit++;
+                    && player.getPortfolioModel().getShare(company) >= 80) limit++;
         }
         return limit;
     }

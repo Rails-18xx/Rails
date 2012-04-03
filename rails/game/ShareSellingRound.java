@@ -100,7 +100,7 @@ public class ShareSellingRound extends StockRound {
         int price;
         int number;
         int share, maxShareToSell;
-        PortfolioModel playerPortfolio = currentPlayer.getPortfolio();
+        PortfolioModel playerPortfolio = currentPlayer.getPortfolioModel();
 
         /*
          * First check of which companies the player owns stock, and what
@@ -151,7 +151,7 @@ public class ShareSellingRound extends StockRound {
                     int maxOtherShares = 0;
                     for (Player player : gameManager.getPlayers()) {
                         if (player == currentPlayer) continue;
-                        maxOtherShares = Math.max(maxOtherShares, player.getPortfolio().getShare(company));
+                        maxOtherShares = Math.max(maxOtherShares, player.getPortfolioModel().getShare(company));
                     }
                     // limit shares to sell to difference between president and second largest ownership
                     maxShareToSell = Math.min(maxShareToSell, share - maxOtherShares);
@@ -164,7 +164,7 @@ public class ShareSellingRound extends StockRound {
                         for (Player player : gameManager.getPlayers()) {
                             if (player == currentPlayer) continue;
                             // there is a player with holding exceeding the president share
-                            if (player.getPortfolio().getShare(company) >= presidentShare) {
+                            if (player.getPortfolioModel().getShare(company) >= presidentShare) {
                                 dumpPossible = true;
                                 break;
                             }
@@ -231,7 +231,7 @@ public class ShareSellingRound extends StockRound {
 
     @Override
     public boolean sellShares(SellShares action) {
-        PortfolioModel portfolio = currentPlayer.getPortfolio();
+        PortfolioModel portfolio = currentPlayer.getPortfolioModel();
         String playerName = currentPlayer.getId();
         String errMsg = null;
         String companyName = action.getCompanyName();
@@ -313,10 +313,10 @@ public class ShareSellingRound extends StockRound {
                 for (int i = currentIndex + 1; i < currentIndex
                                                    + numberOfPlayers; i++) {
                     otherPlayer = gameManager.getPlayerByIndex(i);
-                    if (otherPlayer.getPortfolio().getShare(company) >= presCert.getShare()) {
+                    if (otherPlayer.getPortfolioModel().getShare(company) >= presCert.getShare()) {
                         // Check if he has the right kind of share
                         if (numberToSell > 1
-                            || otherPlayer.getPortfolio().ownsCertificates(
+                            || otherPlayer.getPortfolioModel().ownsCertificates(
                                     company, 1, false) >= 1) {
                             // The poor sod.
                             dumpedPlayer = otherPlayer;

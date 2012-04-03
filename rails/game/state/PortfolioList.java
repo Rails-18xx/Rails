@@ -15,12 +15,6 @@ public final class PortfolioList<T extends OwnableItem<T>> extends Portfolio<T> 
     public static <T extends OwnableItem<T>> PortfolioList<T> create() {
         return new PortfolioList<T>();
     }
-    
-    @Override
-    public PortfolioList<T> init(Item parent, String id) {
-        super.init(parent, id);
-        return this;
-    }
 
     public boolean initialAdd(T item) {
         if (portfolio.contains(item)) return false;

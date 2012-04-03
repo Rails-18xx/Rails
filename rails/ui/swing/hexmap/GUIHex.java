@@ -543,7 +543,7 @@ public class GUIHex implements Observer {
         List<Token> tokens = getHexModel().getTokens(1);
 
         for (int i = 0; i < tokens.size(); i++) {
-            PublicCompany co = ((BaseToken) tokens.get(i)).getCompany();
+            PublicCompany co = ((BaseToken) tokens.get(i)).getParent();
             Point center = getTokenCenter(numTokens, i, 1, 0);
             drawBaseToken(g2, co, center, tokenDiameter);
         }
@@ -562,7 +562,7 @@ public class GUIHex implements Observer {
 
             for (int j = 0; j < tokens.size(); j++) {
                 origin = getTokenCenter(numTokens, j, numStations, i);
-                co = ((BaseToken) tokens.get(j)).getCompany();
+                co = ((BaseToken) tokens.get(j)).getParent();
                 drawBaseToken(g2, co, origin, tokenDiameter);
             }
         }
@@ -583,7 +583,7 @@ public class GUIHex implements Observer {
                             center.y + offStationTokenY[i]);
             if (token instanceof BaseToken) {
 
-                PublicCompany co = ((BaseToken) token).getCompany();
+                PublicCompany co = ((BaseToken) token).getParent();
                 drawBaseToken(g2, co, origin, tokenDiameter);
 
             } else if (token instanceof BonusToken) {

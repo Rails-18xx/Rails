@@ -10,8 +10,8 @@ import java.util.List;
 import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.BuyCertificate;
-import rails.game.model.Owner;
 import rails.game.model.PortfolioModel;
+import rails.game.state.Owner;
 
 public class StockRound_1835 extends StockRound {
 
@@ -42,7 +42,7 @@ public class StockRound_1835 extends StockRound {
             if (!company.getTypeName().equalsIgnoreCase("Major")) continue;
             if (!company.hasFloated()) continue;
             if (company.getPresident() != currentPlayer) continue;
-            if (currentPlayer.getPortfolio().getShare(company) >= 55) {
+            if (currentPlayer.getPortfolioModel().getShare(company) >= 55) {
                 otherPlayers.clear();
                 for (PublicCertificate cert : company.getCertificates()) {
                     owner = cert.getHolder().getOwner(); 

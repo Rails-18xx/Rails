@@ -89,7 +89,7 @@ public class StockRound_1825 extends StockRound {
         int price;
         int number;
         int maxShareToSell;
-        PortfolioModel playerPortfolio = currentPlayer.getPortfolio();
+        PortfolioModel playerPortfolio = currentPlayer.getPortfolioModel();
 
         /*
          * First check of which companies the player owns stock, and what

@@ -36,7 +36,7 @@ public class DiscardTrain extends PossibleORAction {
         this.ownedTrains = trains;
         this.ownedTrainsUniqueIds = new String[trains.size()];
         for (int i = 0; i < trains.size(); i++) {
-            ownedTrainsUniqueIds[i] = trains.get(i).getUniqueId();
+            ownedTrainsUniqueIds[i] = trains.get(i).getId();
         }
         this.company = company;
         this.companyName = company.getId();
@@ -54,7 +54,7 @@ public class DiscardTrain extends PossibleORAction {
 
     public void setDiscardedTrain(Train train) {
         discardedTrain = train;
-        discardedTrainUniqueId = train.getUniqueId();
+        discardedTrainUniqueId = train.getId();
     }
 
     public Train getDiscardedTrain() {

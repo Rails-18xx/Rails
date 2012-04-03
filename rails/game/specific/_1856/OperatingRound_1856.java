@@ -9,7 +9,7 @@ import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.special.SellBonusToken;
-import rails.game.special.SpecialPropertyI;
+import rails.game.special.SpecialProperty;
 import rails.game.state.BooleanState;
 import rails.game.model.MoneyModel;
 
@@ -370,7 +370,7 @@ public class OperatingRound_1856 extends OperatingRound {
                     = gameManager.getPlayerByIndex(action.getPlayerIndex());
             } else if (postPhase.getName().equals("5")) {
                 // Make Bridge and Tunnel tokens buyable from the Bank.
-                for (SpecialPropertyI sp : gameManager.getCommonSpecialProperties()) {
+                for (SpecialProperty sp : gameManager.getCommonSpecialProperties()) {
                     if (sp instanceof SellBonusToken) {
                         SellBonusToken sbt = (SellBonusToken)sp;
                         // FIXME: Is it ipo or pool portfolio?

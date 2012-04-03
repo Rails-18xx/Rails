@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 
 import rails.game.special.SpecialProperty;
-import rails.game.special.SpecialPropertyI;
+import rails.game.special.SpecialProperty;
 
 /**
  * This class can only be used to offer a Special Property to the UI that does
@@ -21,12 +21,12 @@ public class UseSpecialProperty extends PossibleORAction {
     /*--- Preconditions ---*/
 
     /** The special property that could be used */
-    transient protected SpecialPropertyI specialProperty = null;
+    transient protected SpecialProperty specialProperty = null;
     private int specialPropertyId;
 
     /*--- Postconditions ---*/
 
-    public UseSpecialProperty(SpecialPropertyI specialProperty) {
+    public UseSpecialProperty(SpecialProperty specialProperty) {
         super();
         this.specialProperty = specialProperty;
         if (specialProperty != null)
@@ -38,7 +38,7 @@ public class UseSpecialProperty extends PossibleORAction {
     /**
      * @return Returns the specialProperty.
      */
-    public SpecialPropertyI getSpecialProperty() {
+    public SpecialProperty getSpecialProperty() {
         return specialProperty;
     }
 

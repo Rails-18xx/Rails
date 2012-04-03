@@ -3,7 +3,6 @@ package rails.game;
 import org.apache.log4j.Logger;
 
 import rails.game.state.BooleanState;
-import rails.game.state.Context;
 import rails.game.state.AbstractItem;
 import rails.game.state.GenericState;
 import rails.game.state.Item;
@@ -14,17 +13,12 @@ public class Train extends AbstractItem implements OwnableItem<Train> {
 
     protected TrainCertificateType certificateType;
     
-    protected GenericState<TrainType> type;
+    protected GenericState<TrainType> type = GenericState.create();
     
-    /** Temporary variable, only used during moves. */
-    protected TrainType previousType = null;
-
     /** Some specific trains cannot be traded between companies */
     protected boolean tradeable = true;
 
-    protected String uniqueId;
-
-    protected BooleanState obsolete;
+    protected BooleanState obsolete = BooleanState.create(false);
     
     private Portfolio<Train> portfolio;
 
@@ -32,19 +26,27 @@ public class Train extends AbstractItem implements OwnableItem<Train> {
             Logger.getLogger(Train.class.getPackage().getName());
 
     public Train() {}
+    
+    public static Train create(Item parent, String id, TrainCertificateType certType, TrainType type) {
+        Train train = new Train().init(parent, id);
+        train.setCertificateType(certType);
+        train.setType(type);
+        return train;
+    }
 
-    public void init(TrainCertificateType certType, TrainType type, String uniqueId) {
-
-        this.certificateType = certType;
-        this.uniqueId = uniqueId;
-        this.type = GenericState.create(this, certType.getName()+"_CurrentType", type);
-        this.previousType = type;
-
-        obsolete = BooleanState.create(this, uniqueId, false);
+    @Override
+    public Train init(Item parent, String id) {
+        super.init(parent,id);
+        type.init(this, "currentType");
+        obsolete.init(this, "obsolete");
+        return this;
+    }
+    
+    public void setCertificateType(TrainCertificateType type) {
+        this.certificateType = type;
     }
     
     public void setType (TrainType type) {
-        previousType = this.type.get();
         this.type.set(type);
     }
 
@@ -57,14 +59,6 @@ public class Train extends AbstractItem implements OwnableItem<Train> {
     
     public TrainType getType() {
         return isAssigned() ? type.get() : null;
-    }
-
-    public TrainType getPreviousType() {
-        return previousType;
-    }
-
-    public String getUniqueId() {
-        return uniqueId;
     }
 
     /**
@@ -134,7 +128,7 @@ public class Train extends AbstractItem implements OwnableItem<Train> {
     }
 
     public void setRusted() {
-        moveTo(GameManager.getInstance().getBank().getScrapHeap());
+        GameManager.getInstance().getBank().getScrapHeap().getTrainsModel().getPortfolio().moveInto(this);
     }
 
     public void setObsolete() {
@@ -158,14 +152,13 @@ public class Train extends AbstractItem implements OwnableItem<Train> {
     }
 
     public String toString() {
-        StringBuilder b = new StringBuilder(uniqueId);
+        StringBuilder b = new StringBuilder(getId());
         b.append(" certType=").append(getCertType());
         b.append(" type=").append(getType());
         return b.toString();
     }
 
     // OwnableItem interface
-    
     public void setPortfolio(Portfolio<Train> p) {
         portfolio = p;
     }
@@ -173,6 +166,5 @@ public class Train extends AbstractItem implements OwnableItem<Train> {
     public Portfolio<Train> getPortfolio() {
         return portfolio;
     }
-
 
 }

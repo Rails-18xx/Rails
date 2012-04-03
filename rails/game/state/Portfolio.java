@@ -4,6 +4,29 @@ import com.google.common.collect.ImmutableList;
 
 public abstract class Portfolio<T extends OwnableItem<T>> extends State implements Iterable<T> {
 
+
+    /**
+     * The parent of a Portfolio is restricted to Owner
+     * Otherwise an IllegalArgumentException is raised
+     */
+    @Override
+    public Portfolio<T> init(Item parent, String id) {
+        if (!(parent instanceof Owner)) {
+            throw new IllegalArgumentException("Portfolio init() only works for Owner");
+        }
+        super.init(parent, id);
+        return this;
+    }
+
+    
+    /**
+     * The parent of a portfolio is always an Owner
+     */
+    @Override
+    public Owner getParent() {
+        return (Owner)super.getParent();
+    }
+    
     /**
      * Adds an item to the portfolio 
      * @param item to add
@@ -17,6 +40,7 @@ public abstract class Portfolio<T extends OwnableItem<T>> extends State implemen
      * @param item to move
      * @return false if the portfolio already contains the item, otherwise true
      */
+    // FIXME: Rename that to add
     public abstract boolean moveInto(T item);
 
     /**

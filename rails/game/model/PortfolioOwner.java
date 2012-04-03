@@ -1,7 +1,13 @@
 package rails.game.model;
 
-public interface PortfolioOwner {
+import rails.game.state.Owner;
 
-    public PortfolioModel getPortfolio();
+/**
+ * PortfolioOwner does not hold Portfolios directly, but indirect via PortfolioModel
+ * @author freystef
+ */
+public interface PortfolioOwner extends Owner {
+
+    public PortfolioModel getPortfolioModel();
     
 }

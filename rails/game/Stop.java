@@ -255,7 +255,7 @@ public class Stop extends SingleOwner<Token> {
     public boolean hasTokenOf (String companyName) {
         for (Token token : tokens) {
             if (token instanceof BaseToken
-                    && ((BaseToken)token).getCompany().getId().equals(companyName)) {
+                    && ((BaseToken)token).getParent().getId().equals(companyName)) {
                 return true;
             }
         }

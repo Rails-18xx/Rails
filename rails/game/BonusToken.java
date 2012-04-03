@@ -1,13 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/BonusToken.java,v 1.17 2010/03/21 17:43:50 evos Exp $
- *
- * Created on Jan 1, 2007
- * Change Log:
- */
 package rails.game;
 
 import rails.common.parser.ConfigurableComponentI;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
+import rails.game.state.Item;
 import rails.util.Util;
 
 /**
@@ -18,23 +14,27 @@ import rails.util.Util;
  *
  * @author Erik Vos
  */
-public class BonusToken extends Token implements Closeable, ConfigurableComponentI  {
 
-    int value;
-    String name;
-    String removingObjectDesc = null;
-    Object removingObject = null;
-    PublicCompany user = null;
+public final class BonusToken extends Token implements Closeable, ConfigurableComponentI  {
 
+    private int value;
+    private String name;
+    private String removingObjectDesc = null;
+    private Object removingObject = null;
+    private PublicCompany user = null;
+    
     /**
-     * Create a BonusToken.
+     * Creates a non-initialized BonusToken
      */
-    // TODO: Check if moveTo null is possible
-    public BonusToken() {
-        super();
-        this.moveTo(null);
+    public BonusToken() {};
+    
+    // FIXME: Who is the parent of BonusToken?
+    @Override
+    public BonusToken init(Item parent) {
+        super.checkedInit(parent, null, Item.class);
+        return this;
     }
-
+    
     public void configureFromXML(Tag tag) throws ConfigurationException {
         Tag bonusTokenTag = tag.getChild("BonusToken");
         if (bonusTokenTag == null) {
@@ -65,7 +65,8 @@ public class BonusToken extends Token implements Closeable, ConfigurableComponen
      * See prepareForRemovel().
      */
     public void close() {
-        this.moveTo(GameManager.getInstance().getBank().getScrapHeap());
+        // TODO: Can this be done better (use TokenManager as parent?)
+        GameManager.getInstance().getBank().getScrapHeap().getTokenHolder().moveInto(this);
         if (user != null) {
             user.removeBonus(name);
         }
@@ -98,7 +99,7 @@ public class BonusToken extends Token implements Closeable, ConfigurableComponen
     }
 
     public boolean isPlaced() {
-        return (getOwner() instanceof MapHex);
+        return (getPortfolio().getParent() instanceof MapHex);
     }
 
     public String getId() {
@@ -109,12 +110,13 @@ public class BonusToken extends Token implements Closeable, ConfigurableComponen
         return value;
     }
 
-    @Override
-    public String toString() {
+    public String getClosingInfo () {
         return description;
     }
 
-    public String getClosingInfo () {
+    
+    @Override
+    public String toString() {
         return description;
     }
 

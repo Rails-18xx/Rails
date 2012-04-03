@@ -6,9 +6,9 @@ import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.GameManager;
 import rails.game.MapHex;
-import rails.game.model.Owner;
 import rails.game.state.GenericState;
 import rails.game.state.IntegerState;
+import rails.game.state.Owner;
 import rails.util.Util;
 
 public class SellBonusToken extends SpecialProperty {

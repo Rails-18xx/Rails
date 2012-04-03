@@ -16,7 +16,7 @@ public final class IntegerState extends State {
     /** 
      * Creates an IntegerState with default value of Zero
      */
-    public static IntegerState create(Item parent, String id){
+    public static IntegerState create(){
         return new IntegerState(0);
     }
     

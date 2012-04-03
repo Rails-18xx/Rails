@@ -22,8 +22,8 @@ public class PresidentModel extends Model implements Observer {
     
     private PresidentModel() {}
 
-    public static PresidentModel create(PublicCompany parent){
-        return new PresidentModel().init(parent, id);
+    public static PresidentModel create(){
+        return new PresidentModel();
     }
     
     /** 

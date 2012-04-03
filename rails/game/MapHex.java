@@ -1,5 +1,7 @@
 package rails.game;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,14 +18,16 @@ import rails.game.Stop.Score;
 import rails.game.Stop.Type;
 import rails.game.action.LayTile;
 import rails.game.model.CashMoneyModel;
-import rails.game.model.Owner;
 import rails.game.model.PortfolioModel;
-import rails.game.model.SingleOwner;
 
 import rails.game.state.ArrayListState;
 import rails.game.state.BooleanState;
+import rails.game.state.Item;
 import rails.game.state.Model;
 import rails.game.state.Observer;
+import rails.game.state.Owner;
+import rails.game.state.PortfolioList;
+import rails.game.state.AbstractItem;
 import rails.game.state.TileMove;
 import rails.util.*;
 
@@ -52,7 +56,9 @@ import rails.util.*;
  * </code> <p> For {@code EW}-oriented
  * tiles the above picture should be rotated 30 degrees clockwise.
  */
-public class MapHex extends SingleOwner<Token> implements Model, ConfigurableComponentI,
+
+// FIXME: MapHex was previous a model
+public class MapHex extends AbstractItem implements Owner, ConfigurableComponentI,
 StationHolder {
 
     private static final String[] ewOrNames =
@@ -103,7 +109,7 @@ StationHolder {
      * changed to state variable to fix undo bug #2954645
      * null as default implies false - see isBlocked()
      */
-    private BooleanState isBlockedForTileLays = null;
+    private final BooleanState isBlockedForTileLays = BooleanState.create();
 
     /**
      * Is the hex initially blocked for token lays (e.g. when a home base
@@ -114,13 +120,13 @@ StationHolder {
      * the absence of a PR token does not block the third slot
      * when the green tile is laid.
      */
-    private BooleanState isBlockedForTokenLays = null;
+    private final BooleanState isBlockedForTokenLays = BooleanState.create();
 
     protected Map<PublicCompany, Stop> homes;
     protected List<PublicCompany> destinations;
 
     /** Tokens that are not bound to a Station (City), such as Bonus tokens */
-    protected ArrayListState<Token> offStationTokens;
+    protected final PortfolioList<Token> offStationTokens = PortfolioList.create();
 
     /** Storage of revenueBonus that are bound to the hex */
     protected List<RevenueBonusTemplate> revenueBonuses = null;
@@ -171,11 +177,20 @@ StationHolder {
     protected static Logger log =
         Logger.getLogger(MapHex.class.getPackage().getName());
 
-    // TODO: MapHex as model has no id and parent so far
+    // 
     public MapHex(MapManager mapManager) {
         // needed to inform the SingleOwner that we have tokens
         super(Token.class);
         this.mapManager = mapManager;
+    }
+    
+    /**
+     * MapHex only accepts MapManagers as parent
+     */
+    @Override
+    public MapHex init(Item parent, String id) {
+        
+        checkArgument(parent instanceof MapManager, "MapHex parent restricted to MapManager");
     }
 
     /**
@@ -802,7 +817,7 @@ StationHolder {
                         if (token instanceof BaseToken) {
                             // Check if the new city already has such a token
                             PublicCompany company =
-                                ((BaseToken) token).getCompany();
+                                ((BaseToken) token).getParent();
                             for (Token token2 : newCity.getTokens()) {
                                 if (token2 instanceof BaseToken
                                         && company == ((BaseToken) token2).getCompany()) {
@@ -1046,7 +1061,7 @@ StationHolder {
         for (Stop city : stops) {
             for (Token token : city.getTokens()) {
                 if (token instanceof BaseToken
-                        && ((BaseToken) token).getCompany() == company) {
+                        && ((BaseToken) token).getParent() == company) {
                     return city.getNumber();
                 }
             }
@@ -1386,7 +1401,7 @@ StationHolder {
         return false;
     }
 
-    public PortfolioModel getPortfolio() {
+    public PortfolioModel getPortfolioModel() {
         return null;
     }
 

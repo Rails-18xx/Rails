@@ -9,6 +9,7 @@ import rails.game.PublicCertificate;
 import rails.game.PublicCompany;
 import rails.game.state.Item;
 import rails.game.state.Model;
+import rails.game.state.Portfolio;
 import rails.game.state.PortfolioMap;
 
 /**
@@ -44,6 +45,10 @@ public final class CertificatesModel extends Model {
     
     public PortfolioMap<PublicCertificate> getPortfolio() {
         return certificates;
+    }
+    
+    public void moveAll(CertificatesModel to) {
+        Portfolio.moveAll(certificates, to.getPortfolio());
     }
     
     public int getShare(PublicCompany company) {

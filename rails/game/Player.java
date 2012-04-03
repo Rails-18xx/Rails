@@ -89,10 +89,10 @@ public class Player extends AbstractItem implements CashOwner, PortfolioOwner, C
                             worth = cash.value();
                         }
 
-                        for (PublicCertificate cert : getPortfolio().getCertificates()) {
+                        for (PublicCertificate cert : getPortfolioModel().getCertificates()) {
                             worth += cert.getCompany().getGameEndPrice() * cert.getShares();
                         }
-                        for (PrivateCompany priv : getPortfolio().getPrivateCompanies()) {
+                        for (PrivateCompany priv : getPortfolioModel().getPrivateCompanies()) {
                             worth += priv.getBasePrice();
                         }
                         return worth;
@@ -231,7 +231,7 @@ public class Player extends AbstractItem implements CashOwner, PortfolioOwner, C
     }
 
     // PortfolioOwner interface
-    public PortfolioModel getPortfolio() {
+    public PortfolioModel getPortfolioModel() {
         return portfolio;
     }
     

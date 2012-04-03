@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 
 import rails.game.PrivateCompany;
-import rails.game.model.Owner;
 import rails.game.special.SellBonusToken;
 import rails.game.special.SpecialProperty;
+import rails.game.state.Owner;
 
 /**
  * @author Erik Vos

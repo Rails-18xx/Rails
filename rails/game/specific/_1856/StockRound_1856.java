@@ -5,9 +5,9 @@ import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.BuyCertificate;
 import rails.game.model.CashOwner;
-import rails.game.model.Owner;
 import rails.game.model.PortfolioModel;
 import rails.game.state.IntegerState;
+import rails.game.state.Owner;
 
 public class StockRound_1856 extends StockRound {
 
@@ -136,14 +136,14 @@ public class StockRound_1856 extends StockRound {
                 && ((PublicCompany_CGR)company).hasTemporaryPresident()) {
             log.debug("Resetting temp. president");
             ipo.swapPresidentCertificate(company,
-                    currentPlayer.getPortfolio());
+                    currentPlayer.getPortfolioModel());
             Player oldPresident = company.getPresident();
             ((PublicCompany_CGR)company).setTemporaryPresident(null);
             // TODO: is this still required?
-            company.getPresident().getPortfolio().getShareModel(company).update();
+            company.getPresident().getPortfolioModel().getShareModel(company).update();
             if (currentPlayer != oldPresident) {
                 // TODO: is this still required?
-                oldPresident.getPortfolio().getShareModel(company).update();
+                oldPresident.getPortfolioModel().getShareModel(company).update();
             }
         }
     }

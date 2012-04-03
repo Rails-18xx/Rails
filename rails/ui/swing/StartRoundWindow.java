@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
 import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;
-import rails.game.special.SpecialPropertyI;
+import rails.game.special.SpecialProperty;
 import rails.ui.swing.elements.*;
 
 /**
@@ -699,7 +699,7 @@ public class StartRoundWindow extends JFrame implements ActionListener,
                 }
                 if (priv.hasSpecialProperties()) {
                     b.append("<br><b>Special properties:</b>");
-                    for (SpecialPropertyI sp : priv.getSpecialProperties()) {
+                    for (SpecialProperty sp : priv.getSpecialProperties()) {
                         b.append("<br>").append(sp.toString());
                    }
                 }

@@ -433,7 +433,7 @@ implements ActionListener, KeyListener, RevenueListener {
                 f =
                         privates[i] =
                                 new Field(
-                                        c.getPortfolio().getPrivatesOwnedModel());
+                                        c.getPortfolioModel().getPrivatesOwnedModel());
                 addField(f, privatesXOffset, privatesYOffset + i, 1, 1,
                         WIDE_RIGHT, visible);
 
@@ -491,7 +491,7 @@ implements ActionListener, KeyListener, RevenueListener {
             f = decision[i] = new Field(c.getLastRevenueAllocationModel());
             addField(f, revXOffset + 1, revYOffset + i, 1, 1, WIDE_RIGHT,  visible);
 
-            f = trains[i] = new Field(c.getPortfolio().getTrainsModel());
+            f = trains[i] = new Field(c.getPortfolioModel().getTrainsModel());
             addField(f, trainsXOffset, trainsYOffset + i, 1, 1, 0,  visible);
 
             f = newTrainCost[i] = new Field(c.getTrainsSpentThisTurnModel());

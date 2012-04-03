@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableList;
 import rails.common.LocalText;
 import rails.game.Bank;
 import rails.game.Bonus;
+import rails.game.BonusToken;
 import rails.game.Company;
 import rails.game.GameManager;
 import rails.game.Player;
@@ -19,12 +20,11 @@ import rails.game.PrivateCompany;
 import rails.game.PublicCertificate;
 import rails.game.PublicCompany;
 import rails.game.ReportBuffer;
-import rails.game.Token;
 import rails.game.Train;
 import rails.game.TrainCertificateType;
 import rails.game.TrainType;
 import rails.game.special.LocatedBonus;
-import rails.game.special.SpecialPropertyI;
+import rails.game.special.SpecialProperty;
 import rails.game.state.Item;
 import rails.game.state.Model;
 import rails.game.state.Portfolio;
@@ -55,14 +55,14 @@ public final class PortfolioModel extends Model {
 
     /** Owned tokens */
     // TODO Currently only used to discard expired Bonus tokens.
-    private final Portfolio<Token> tokens = PortfolioList.create();
+    private final Portfolio<BonusToken> bonusTokens = PortfolioList.create();
     
     /**
      * Private-independent special properties. When moved here, a special
      * property no longer depends on the private company being alive. Example:
      * 18AL named train tokens.
      */
-    private Portfolio<SpecialPropertyI> specialProperties = PortfolioList.create(); 
+    private Portfolio<SpecialProperty> specialProperties = PortfolioList.create(); 
 
     private final GameManager gameManager;
 
@@ -71,9 +71,8 @@ public final class PortfolioModel extends Model {
         gameManager = GameManager.getInstance();
     }
     
-    
-    public static PortfolioModel create(Item parent) {
-        return new PortfolioModel().init(parent, id);
+    public static PortfolioModel create() {
+        return new PortfolioModel();
     }
     
     @Override 
@@ -85,7 +84,7 @@ public final class PortfolioModel extends Model {
         trains = TrainsModel.create(parent);
         
         // create portfolios
-        tokens.init(parent, "Tokens");
+        bonusTokens.init(parent, "BonusTokens");
         specialProperties.init(parent, "SpecialProperties");
         
         // change display style dependent on owner
@@ -393,7 +392,7 @@ public final class PortfolioModel extends Model {
      * @return True if successful.
      */
     @Deprecated
-    public boolean addSpecialProperty(SpecialPropertyI property, int position) {
+    public boolean addSpecialProperty(SpecialProperty property, int position) {
 
         /*
         boolean result = specialProperties.addObject(property, position);
@@ -440,8 +439,8 @@ public final class PortfolioModel extends Model {
             if (position == null) position = new int[] {-1, -1, -1};
             addTrain((Train) object, position);
             return true;
-        } else if (object instanceof SpecialPropertyI) {
-            return addSpecialProperty((SpecialPropertyI) object, position == null ? -1 : position[0]);
+        } else if (object instanceof SpecialProperty) {
+            return addSpecialProperty((SpecialProperty) object, position == null ? -1 : position[0]);
         } else if (object instanceof Token) {
             return addToken((Token) object, position == null ? -1 : position[0]);
         } else {
@@ -469,8 +468,8 @@ public final class PortfolioModel extends Model {
         } else if (object instanceof Train) {
             removeTrain((Train) object);
             return true;
-        } else if (object instanceof SpecialPropertyI) {
-            return removeSpecialProperty((SpecialPropertyI) object);
+        } else if (object instanceof SpecialProperty) {
+            return removeSpecialProperty((SpecialProperty) object);
         } else if (object instanceof Token) {
             return removeToken((Token) object);
         } else {
@@ -497,7 +496,7 @@ public final class PortfolioModel extends Model {
                     train.getPreviousType() != null ? trainsPerType.get(train.getPreviousType()).indexOf(train) : -1,
                     trainsPerCertType.get(train.getCertType()).indexOf(train)
             };
-        } else if (object instanceof SpecialPropertyI) {
+        } else if (object instanceof SpecialProperty) {
             return new int[] {specialProperties.indexOf(object)};
         } else if (object instanceof Token) {
             return new int[] {tokens.indexOf(object)};
@@ -510,12 +509,12 @@ public final class PortfolioModel extends Model {
     /**
      * @return ArrayList of all special properties we have.
      */
-    public ImmutableList<SpecialPropertyI> getPersistentSpecialProperties() {
+    public ImmutableList<SpecialProperty> getPersistentSpecialProperties() {
         return specialProperties.items();
     }
 
-    public ImmutableList<SpecialPropertyI> getAllSpecialProperties() {
-        ImmutableList.Builder<SpecialPropertyI> sps = new ImmutableList.Builder<SpecialPropertyI>();
+    public ImmutableList<SpecialProperty> getAllSpecialProperties() {
+        ImmutableList.Builder<SpecialProperty> sps = new ImmutableList.Builder<SpecialProperty>();
         if (specialProperties != null) sps.addAll(specialProperties);
         for (PrivateCompany priv : privates.getPortfolio()) {
             if (priv.getSpecialProperties() != null) {
@@ -534,17 +533,17 @@ public final class PortfolioModel extends Model {
         return specialProperties != null && !specialProperties.isEmpty();
     }
 
-    public Portfolio<SpecialPropertyI> getSpecialProperties() {
+    public Portfolio<SpecialProperty> getSpecialProperties() {
         return specialProperties;
     }
 
     
     // TODO: Check if this code can be simplified
     @SuppressWarnings("unchecked")
-    public <T extends SpecialPropertyI> List<T> getSpecialProperties(
+    public <T extends SpecialProperty> List<T> getSpecialProperties(
             Class<T> clazz, boolean includeExercised) {
         List<T> result = new ArrayList<T>();
-        List<SpecialPropertyI> sps;
+        List<SpecialProperty> sps;
 
         if (getParent() instanceof Player || getParent() instanceof PublicCompany) {
 
@@ -553,7 +552,7 @@ public final class PortfolioModel extends Model {
                 sps = priv.getSpecialProperties();
                 if (sps == null) continue;
 
-                for (SpecialPropertyI sp : sps) {
+                for (SpecialProperty sp : sps) {
                     if ((clazz == null || clazz.isAssignableFrom(sp.getClass()))
                             && sp.isExecutionable()
                             && (!sp.isExercised() || includeExercised)
@@ -567,7 +566,7 @@ public final class PortfolioModel extends Model {
 
             // Private-independent special properties
             if (specialProperties != null) {
-                for (SpecialPropertyI sp : specialProperties) {
+                for (SpecialProperty sp : specialProperties) {
                     if ((clazz == null || clazz.isAssignableFrom(sp.getClass()))
                             && sp.isExecutionable()
                             && (!sp.isExercised() || includeExercised)
@@ -588,8 +587,8 @@ public final class PortfolioModel extends Model {
         return privates;
     }
 
-    public Portfolio<Token> getTokenHolder() {
-        return tokens;
+    public Portfolio<BonusToken> getTokenHolder() {
+        return bonusTokens;
     }
     
     public void rustObsoleteTrains() {
@@ -605,7 +604,7 @@ public final class PortfolioModel extends Model {
         for (Train train : trainsToRust) {
             ReportBuffer.add(LocalText.getText("TrainsObsoleteRusted",
                     train.getId(), getParent().getId()));
-            log.debug("Obsolete train " + train.getUniqueId() + " (owned by "
+            log.debug("Obsolete train " + train.getId() + " (owned by "
                     + getParent().getId() + ") rusted");
             train.setRusted();
         }

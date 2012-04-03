@@ -12,7 +12,7 @@ import rails.game.state.AbstractItem;
 import rails.game.state.OwnableItem;
 import rails.game.state.Portfolio;
 
-public class PublicCertificate extends AbstractItem implements OwnableItem<PublicCertificate>, Certificate, Cloneable {
+public class PublicCertificate extends OwnableItem<PublicCertificate> implements Certificate, Cloneable {
 
     /** From which public company is this a certificate */
     protected PublicCompany company;
@@ -41,8 +41,6 @@ public class PublicCertificate extends AbstractItem implements OwnableItem<Publi
     protected static Map<String, PublicCertificate> certMap =
             new HashMap<String, PublicCertificate>();
 
-    
-    private Portfolio<PublicCertificate> portfolio;
     
     protected static Logger log =
             Logger.getLogger(PublicCertificate.class.getPackage().getName());
@@ -85,7 +83,7 @@ public class PublicCertificate extends AbstractItem implements OwnableItem<Publi
 
     
     public CertificatesModel getHolder() {
-        return portfolio.getShareModel(company);
+        return getPortfolio().getParent().getShareModel(company);
     }
 
     /**
@@ -211,16 +209,6 @@ public class PublicCertificate extends AbstractItem implements OwnableItem<Publi
     @Override
     public String toString() {
         return "PublicCertificate: " + getId();
-    }
-
-    // OwnableItem interface
-    
-    public Portfolio<PublicCertificate> getPortfolio() {
-        return portfolio;
-    }
-
-    public void setPortfolio(Portfolio<PublicCertificate> p) {
-        portfolio = p;
     }
 
 

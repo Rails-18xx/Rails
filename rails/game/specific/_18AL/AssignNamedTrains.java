@@ -49,12 +49,12 @@ public class AssignNamedTrains extends UseSpecialProperty {
             int trainIndex = 0;
             int tokenIndex;
             for (NameableTrain train : nameableTrains) {
-                trainIds[trainIndex] = train.getUniqueId();
+                trainIds[trainIndex] = train.getId();
                 NamedTrainToken token = train.getNameToken();
                 if (token != null) {
                     preTrainPerToken.set(tokens.indexOf(token), train);
                     tokenIndex = tokens.indexOf(token);
-                    preTrainds[tokenIndex] = train.getUniqueId();
+                    preTrainds[tokenIndex] = train.getId();
                 }
                 trainIndex++;
             }
@@ -106,7 +106,7 @@ public class AssignNamedTrains extends UseSpecialProperty {
                 if (train == null) {
                     postTrainds[postTokensPerTrain.indexOf(train)] = null;
                 } else {
-                    postTrainds[postTokensPerTrain.indexOf(train)] = train.getUniqueId();
+                    postTrainds[postTokensPerTrain.indexOf(train)] = train.getId();
                 }
             }
         }

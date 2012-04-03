@@ -18,12 +18,12 @@ import rails.game.action.DiscardTrain;
 import rails.game.action.LayTile;
 import rails.game.model.CashOwner;
 import rails.game.model.MoneyModel;
-import rails.game.model.Owner;
 import rails.game.special.ExchangeForShare;
-import rails.game.special.SpecialPropertyI;
+import rails.game.special.SpecialProperty;
 import rails.game.special.SpecialTileLay;
 import rails.game.state.BooleanState;
 import rails.game.state.HashMapState;
+import rails.game.state.Owner;
 
 public class OperatingRound_1835 extends OperatingRound {
 
@@ -80,7 +80,7 @@ public class OperatingRound_1835 extends OperatingRound {
                      * so it can be subtracted if PR operates */
                     if (recipient instanceof Player && priv.getSpecialProperties() != null
                             && priv.getSpecialProperties().size() > 0) {
-                        SpecialPropertyI sp = priv.getSpecialProperties().get(0);
+                        SpecialProperty sp = priv.getSpecialProperties().get(0);
                         if (sp instanceof ExchangeForShare) {
                             ExchangeForShare efs = (ExchangeForShare) sp;
                             if (efs.getPublicCompanyName().equalsIgnoreCase(GameManager_1835.PR_ID)) {
@@ -143,7 +143,7 @@ public class OperatingRound_1835 extends OperatingRound {
 
         super.initTurn();
 
-        List<SpecialPropertyI> sps = operatingCompany.get().getSpecialProperties();
+        List<SpecialProperty> sps = operatingCompany.get().getSpecialProperties();
         if (sps != null && !sps.isEmpty()) {
             ExchangeForShare efs = (ExchangeForShare) sps.get(0);
             addIncomeDenialShare (operatingCompany.get().getPresident(), efs.getShare());

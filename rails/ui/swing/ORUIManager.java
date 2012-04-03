@@ -210,7 +210,7 @@ public class ORUIManager implements DialogOwner {
                         mapHexes = true;
                     break;
                     case (LayTile.SPECIAL_PROPERTY):
-                        SpecialPropertyI sp = layTile.getSpecialProperty();
+                        SpecialProperty sp = layTile.getSpecialProperty();
                     if (sp == null || !(sp instanceof SpecialTileLay) ||
                             ((SpecialTileLay)sp).requiresConnection())
                         break;
@@ -268,7 +268,7 @@ public class ORUIManager implements DialogOwner {
             if (gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.ROUTE_HIGHLIGHT)) {
 
                 for (LayToken layToken:allowedTokenLays) {
-                    SpecialPropertyI sp = layToken.getSpecialProperty();
+                    SpecialProperty sp = layToken.getSpecialProperty();
                     if (sp == null) {
                         mapHexes = true;
                     } else if (layToken.getLocations() != null)
@@ -790,7 +790,7 @@ public class ORUIManager implements DialogOwner {
                 allowance = spec_lt == null ? gen_lt :
                             gen_lt == null ? spec_lt :
                             spec_lt.getSpecialProperty().getPriority() 
-                                == SpecialPropertyI.Priority.FIRST ? spec_lt : gen_lt;
+                                == SpecialProperty.Priority.FIRST ? spec_lt : gen_lt;
                 
             }
             allowance.setChosenHex(selectedHex.getHexModel());
@@ -905,7 +905,7 @@ public class ORUIManager implements DialogOwner {
         for (Stop oldStop : hex.getStops()) {
             if (oldStop.hasTokens()) {
                 // Assume only 1 token (no exceptions known)
-                PublicCompany company = ((BaseToken)oldStop.getTokens().get(0)).getCompany();
+                PublicCompany company = ((BaseToken)oldStop.getTokens().get(0)).getParent();
 
                 List<String> prompts = new ArrayList<String>();
                 Map<String, Integer> promptToCityMap = new HashMap<String, Integer>();
@@ -948,7 +948,7 @@ public class ORUIManager implements DialogOwner {
     private Station correctionRelayBaseToken(BaseToken token, List<Station> possibleStations){
         GUIHex selectedHex = map.getSelectedHex();
 
-        PublicCompany company = token.getCompany();
+        PublicCompany company = token.getParent();
         List<String> prompts = new ArrayList<String>();
 
         Map<String, Station> promptToStationMap = new HashMap<String, Station>();
@@ -1708,7 +1708,7 @@ public class ORUIManager implements DialogOwner {
         // Example: 18AL AssignNamedTrains
         if (possibleActions.contains(UseSpecialProperty.class)) {
             for (UseSpecialProperty usp : possibleActions.getType(UseSpecialProperty.class)) {
-                SpecialPropertyI sp = usp.getSpecialProperty();
+                SpecialProperty sp = usp.getSpecialProperty();
                 orPanel.addSpecialAction(usp, sp.toMenu());
             }
         }

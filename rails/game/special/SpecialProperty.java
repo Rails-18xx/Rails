@@ -6,15 +6,24 @@ import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.*;
-import rails.game.model.Owner;
 import rails.game.state.AbstractItem;
 import rails.game.state.BooleanState;
-import rails.game.model.Owners;
+import rails.game.state.OwnableItem;
+import rails.game.state.Owner;
 import rails.util.*;
 
-// TODO: Check if we could extend AbstractOwnable
-public abstract class SpecialProperty extends AbstractItem implements SpecialPropertyI {
+public abstract class SpecialProperty extends OwnableItem<SpecialProperty> {
 
+    // copied from SpecialProperty
+    public enum Priority {
+        LAST,
+        ASKUSER,
+        FIRST;
+    };
+    
+    public static final Priority DEFAULT_PRIORITY = Priority.FIRST;
+
+    
     protected Company originalCompany;
     protected Owner owner = null;
     protected int closingValue = 0;
@@ -110,11 +119,11 @@ public abstract class SpecialProperty extends AbstractItem implements SpecialPro
         return uniqueId;
     }
 
-    public static SpecialPropertyI getByUniqueId(int id) {
+    public static SpecialProperty getByUniqueId(int id) {
         id -= 1;
         // decrease retrieval id to allow loading old save files (which increase by 1)
         // TODO: remove that legacy issue
-        return (SpecialPropertyI)GameManager.getInstance().retrieveObject(STORAGE_NAME, id);
+        return (SpecialProperty)GameManager.getInstance().retrieveObject(STORAGE_NAME, id);
     }
 
     public void setCompany(Company company) {

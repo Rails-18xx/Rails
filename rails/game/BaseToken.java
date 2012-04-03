@@ -1,5 +1,7 @@
 package rails.game;
 
+import rails.game.state.Item;
+
 /**
  * A BaseToken object represents a token that a operating public company can
  * place on the map to act as a rail building and train running starting point.
@@ -10,36 +12,38 @@ package rails.game;
  * 
  * @author Erik Vos
  */
-public class BaseToken extends Token {
+public final class BaseToken extends Token {
 
-    PublicCompany company;
-
-    /**
-     * Create a BaseToken.
+    /** 
+     * Creates a non-initialized BaseToken
      */
+    public BaseToken() {};
     
-    // TODO: Seems that company is a duplicated reference to owner
-    public BaseToken(PublicCompany company) {
-        super();
-        this.company = company;
+    @Override
+    public BaseToken init(Item parent) {
+        super.checkedInit(parent, null, PublicCompany.class);
 
-        /* Initially. a BaseToken is always owned by a company. */
-        company.getBaseTokensModel().
-        this.moveTo(company);
+        // add token to the free tokens, this also intializes the portfolio
+        getParent().getBaseTokensModel().addFreeToken(this);
+        
+        return this;
     }
-
+    
+    @Override
+    public PublicCompany getParent() {
+        return (PublicCompany)super.getParent();
+    }
+    
     public boolean isPlaced() {
-        return (getOwner() instanceof Stop);
+        return getParent().getBaseTokensModel().tokenIsLaid(this);
     }
 
+    // TODO: Check if this is correct? Should this really return the company id?
     public String getId() {
-        return company.getId();
+        return getParent().getId();
     }
 
-    public PublicCompany getCompany() {
-        return company;
-    }
-
+    
     @Override
     public String toString() {
         return getId();

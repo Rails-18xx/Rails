@@ -13,7 +13,7 @@ import rails.game.model.PortfolioModel;
 import rails.game.state.ArrayListState;
 import rails.game.state.BooleanState;
 import rails.game.state.IntegerState;
-import rails.game.model.Owners;
+import rails.game.state.Owners;
 
 /**
  * Implements a basic Stock Round. <p> A new instance must be created for each
@@ -84,7 +84,7 @@ public class StockRound_18EU extends StockRound {
         List<Stop> freeStations = null;
         if (mustMergeMinor) {
             minors = new ArrayList<PublicCompany>();
-            for (PublicCertificate c : getCurrentPlayer().getPortfolio().getCertificates()) {
+            for (PublicCertificate c : getCurrentPlayer().getPortfolioModel().getCertificates()) {
                 if (c.getCompany().getTypeName().equalsIgnoreCase("Minor")) {
                     minors.add(c.getCompany());
                 }
@@ -201,7 +201,7 @@ public class StockRound_18EU extends StockRound {
             for (PublicCompany company : companyManager.getAllPublicCompanies()) {
                 // TODO: Rewrite
                 certs = ImmutableList.copyOf(
-                        company.getPortfolio().getCertificates(
+                        company.getPortfolioModel().getCertificates(
                                 company));
                 if (certs == null || certs.isEmpty()) continue;
                 cert = certs.get(0);
@@ -214,7 +214,7 @@ public class StockRound_18EU extends StockRound {
                     && !mayPlayerBuyCertificate(currentPlayer, company, 1)) continue;
                 if (company.getMarketPrice() <= playerCash) {
                     possibleActions.add(new BuyCertificate(company, cert.getShare(),
-                            company.getPortfolio(),
+                            company.getPortfolioModel(),
                             company.getMarketPrice()));
                 }
             }
@@ -259,7 +259,7 @@ public class StockRound_18EU extends StockRound {
         log.debug("Company " + discardingCompany.getId()
                   + " to discard a train");
         possibleActions.add(new DiscardTrain(discardingCompany,
-                discardingCompany.getPortfolio().getUniqueTrains()));
+                discardingCompany.getPortfolioModel().getUniqueTrains()));
         // We handle one train at at time.
         // We come back here until all excess trains have been discarded.
         return true;
@@ -352,7 +352,7 @@ public class StockRound_18EU extends StockRound {
                 // Check if the player owns the merged minor
                 minor = startAction.getChosenMinor();
                 if (minor != null
-                    && currentPlayer.getPortfolio().getCertificates(
+                    && currentPlayer.getPortfolioModel().getCertificates(
                             minor) == null) {
                     errMsg =
                             LocalText.getText("PlayerDoesNotOwn",
@@ -412,17 +412,17 @@ public class StockRound_18EU extends StockRound {
                 company.getId() ));
 
         // Transfer the President's certificate
-        cert.moveTo(currentPlayer.getPortfolio());
+        cert.moveTo(currentPlayer.getPortfolioModel());
 
         MoneyModel.cashMove(currentPlayer, company, shares * price);
 
         if (minor != null) {
             // Get the extra certificate for the minor, for free
             PublicCertificate cert2 = ipo.findCertificate(company, false);
-            cert2.moveTo(currentPlayer.getPortfolio());
+            cert2.moveTo(currentPlayer.getPortfolioModel());
             // Transfer the minor assets into the started company
             int minorCash = minor.getCash();
-            int minorTrains = minor.getPortfolio().getTrainList().size();
+            int minorTrains = minor.getPortfolioModel().getTrainList().size();
             company.transferAssetsFrom(minor);
             minor.setClosed();
             ReportBuffer.add(LocalText.getText("MERGE_MINOR_LOG",
@@ -448,7 +448,7 @@ public class StockRound_18EU extends StockRound {
         // Owners.moveAll(ipo, company, PublicCertficate.class);
 
         ReportBuffer.change(LocalText.getText("SharesPutInTreasury",
-                company.getPortfolio().getShare(company),
+                company.getPortfolioModel().getShare(company),
                 company.getId() ));
 
         // TODO must get this amount from XML
@@ -507,7 +507,7 @@ public class StockRound_18EU extends StockRound {
         // TODO: changeStack.start(true);
 
         if (major != null) {
-            cert = major.getPortfolio().findCertificate(major, false);
+            cert = major.getPortfolioModel().findCertificate(major, false);
             if (cert != null) {
                 // Assets go to the major company.
                 cashDestination = major;
@@ -519,18 +519,18 @@ public class StockRound_18EU extends StockRound {
 
         // Transfer the minor assets
         int minorCash = minor.getCash();
-        int minorTrains = minor.getPortfolio().getTrainList().size();
+        int minorTrains = minor.getPortfolioModel().getTrainList().size();
         if (cashDestination == null) {
             // Assets go to the bank
             if (minorCash > 0) MoneyModel.cashMove(minor, bank, minorCash);
-            pool.transferAssetsFrom(minor.getPortfolio());
+            pool.transferAssetsFrom(minor.getPortfolioModel());
         } else {
             // Assets go to the major company
             major.transferAssetsFrom(minor);
 
             // Check for multiple Pullmanns
             boolean hasPullmann = false;
-            for (Train train : major.getPortfolio().getTrainList()) {
+            for (Train train : major.getPortfolioModel().getTrainList()) {
                 if (train.getId().equalsIgnoreCase("P")) {
                     if (!hasPullmann) {
                         hasPullmann = true;
@@ -585,7 +585,7 @@ public class StockRound_18EU extends StockRound {
                             homeHex.getId()));
                 }
             }
-            cert.moveTo(currentPlayer.getPortfolio());
+            cert.moveTo(currentPlayer.getPortfolioModel());
             ReportBuffer.add(LocalText.getText("MinorCloses", minor.getId()));
             checkFlotation(major);
 
@@ -609,7 +609,7 @@ public class StockRound_18EU extends StockRound {
             companyBoughtThisTurnWrapper.set(major);
 
             // If >60% shares owned, lift sell obligation this round.
-            if (currentPlayer.getPortfolio().getShare(major)
+            if (currentPlayer.getPortfolioModel().getShare(major)
             		> getGameParameterAsInt(GameDef.Parm.PLAYER_SHARE_LIMIT)) {
             	setSellObligationLifted (major);
             }
@@ -632,7 +632,7 @@ public class StockRound_18EU extends StockRound {
             // Put the remaining 5 shares in the pool,
             // getting cash in return
             // Move the remaining certificates to the company treasury
-            Owners.move(company.getPortfolio().getCertificates(
+            Owners.move(company.getPortfolioModel().getCertificates(
                     company), pool);
             int cash = 5 * company.getMarketPrice();
             MoneyModel.cashMove(bank, company, cash);
@@ -667,7 +667,7 @@ public class StockRound_18EU extends StockRound {
 
             // Does the company own such a train?
 
-            if (!company.getPortfolio().getTrainList().contains(train)) {
+            if (!company.getPortfolioModel().getTrainList().contains(train)) {
                 errMsg =
                         LocalText.getText("CompanyDoesNotOwnTrain",
                                 company.getId(),

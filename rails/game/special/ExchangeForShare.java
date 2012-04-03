@@ -34,7 +34,7 @@ public class ExchangeForShare extends SpecialProperty {
 
     public boolean isExecutionable() {
 
-        return originalCompany.getPortfolio().getOwner() instanceof Player;
+        return originalCompany.getPortfolioModel().getOwner() instanceof Player;
     }
 
     /**

@@ -18,11 +18,8 @@ public class PriceModel extends Model {
     
     private PriceModel() {}
 
-    /** 
-     * Creates an owned PriceModel
-     */
-    public static PriceModel create(PublicCompany parent, String id){
-        return new PriceModel().init(parent, id);
+    public static PriceModel create(){
+        return new PriceModel();
     }
     
     /** 

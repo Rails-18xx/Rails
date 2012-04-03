@@ -22,7 +22,7 @@ public class OperatingRound_18AL extends OperatingRound {
         
         for (NameTrains stl : getSpecialProperties(NameTrains.class)) {
             List<Train> trains =
-                    operatingCompany.get().getPortfolio().getTrainList();
+                    operatingCompany.get().getPortfolioModel().getTrainList();
             if (trains != null && !trains.isEmpty()) {
                 possibleActions.add(new AssignNamedTrains(stl, trains));
             }

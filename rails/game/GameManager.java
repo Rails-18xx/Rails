@@ -15,7 +15,7 @@ import rails.game.correct.*;
 import rails.game.model.CashMoneyModel;
 import rails.game.model.PortfolioModel;
 import rails.game.special.SpecialProperty;
-import rails.game.special.SpecialPropertyI;
+import rails.game.special.SpecialProperty;
 import rails.game.special.SpecialTokenLay;
 import rails.game.state.*;
 import rails.util.GameFileIO;
@@ -196,7 +196,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI 
     /** Special properties that can be used by other players or companies
      * than just the owner (such as buyable bonus tokens as in 1856).
      */
-    protected Portfolio<SpecialPropertyI> commonSpecialProperties = null;
+    protected Portfolio<SpecialProperty> commonSpecialProperties = null;
     
 
     /** A List of available game options */
@@ -577,7 +577,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI 
         }
 
         loop:   for (PrivateCompany company : companyManager.getAllPrivateCompanies()) {
-            for (SpecialPropertyI sp : company.getSpecialProperties()) {
+            for (SpecialProperty sp : company.getSpecialProperties()) {
                 if (sp instanceof SpecialTokenLay
                         && ((SpecialTokenLay)sp).getToken() instanceof BonusToken) {
                     guiParameters.put(GuiDef.Parm.DO_BONUS_TOKENS_EXIST, true);
@@ -1690,7 +1690,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI 
     }
 
     // FIXME: Is position required?
-    public boolean addSpecialProperty(SpecialPropertyI property, int position) {
+    public boolean addSpecialProperty(SpecialProperty property, int position) {
         
         if (commonSpecialProperties == null) {
             commonSpecialProperties = Portfolio.createList(this, "CommonSpecialProperties");
@@ -1707,7 +1707,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI 
      * @return True if successful.
      * TODO: This is removed
      */
-/*    public boolean removeSpecialProperty(SpecialPropertyI property) {
+/*    public boolean removeSpecialProperty(SpecialProperty property) {
 
         if (commonSpecialProperties != null) {
             return commonSpecialProperties.removeObject(property);
@@ -1716,22 +1716,22 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI 
         return false;
     } */
 
-    public List<SpecialPropertyI> getCommonSpecialProperties () {
+    public List<SpecialProperty> getCommonSpecialProperties () {
         return getSpecialProperties (null, false);
     }
     
-    public Portfolio<SpecialPropertyI> getCommonSpecialPropertiesPortfolio() {
+    public Portfolio<SpecialProperty> getCommonSpecialPropertiesPortfolio() {
         return commonSpecialProperties;
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends SpecialPropertyI> List<T> getSpecialProperties(
+    public <T extends SpecialProperty> List<T> getSpecialProperties(
             Class<T> clazz, boolean includeExercised) {
 
         List<T> result = new ArrayList<T>();
 
         if (commonSpecialProperties != null) {
-            for (SpecialPropertyI sp : commonSpecialProperties) {
+            for (SpecialProperty sp : commonSpecialProperties) {
                 if ((clazz == null || clazz.isAssignableFrom(sp.getClass()))
                         && sp.isExecutionable()
                         && (!sp.isExercised() || includeExercised)) {

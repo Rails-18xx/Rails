@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Bonus.java,v 1.11 2010/05/20 23:13:21 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.List;

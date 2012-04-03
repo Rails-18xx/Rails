@@ -322,12 +322,12 @@ public class CGRFormationRound extends SwitchableUIRound {
 
         do {
             player = getCurrentPlayer();
-            portfolio = player.getPortfolio();
+            portfolio = player.getPortfolioModel();
             oldShares = newShares = 0;
             certs.clear();
             poolCert = null;
 
-            for (PublicCertificate cert : player.getPortfolio().getCertificates()) {
+            for (PublicCertificate cert : player.getPortfolioModel().getCertificates()) {
                 if (mergingCompanies.contains(cert.getCompany())) {
                     certs.add((cert));
                     oldShares++;
@@ -443,7 +443,7 @@ public class CGRFormationRound extends SwitchableUIRound {
         Owners.moveAll(cgr, ipo, PublicCertificate.class);
 
         // Assign the new president
-        if (newPresident.getPortfolio().getShare(cgr) == cgr.getShareUnit()) {
+        if (newPresident.getPortfolioModel().getShare(cgr) == cgr.getShareUnit()) {
             // Nobody has 2 shares, then takes the first player who has got one share
             log.debug("Nobody has two shares, creating a temp.pres.: "+firstCGRowner.getId());
             cgr.setTemporaryPresident(firstCGRowner);
@@ -451,8 +451,8 @@ public class CGRFormationRound extends SwitchableUIRound {
         } else if (temporaryPresident != null && temporaryPresident != newPresident) {
             log.debug("Moving pres.share from "+temporaryPresident.getId()
                     +" to "+newPresident.getId());
-                temporaryPresident.getPortfolio().swapPresidentCertificate(cgr,
-                        newPresident.getPortfolio());
+                temporaryPresident.getPortfolioModel().swapPresidentCertificate(cgr,
+                        newPresident.getPortfolioModel());
         }
 
         // TODO: What does the following command do? I assume only trigger an update, so I uncommented
@@ -532,7 +532,7 @@ public class CGRFormationRound extends SwitchableUIRound {
 
             // Exchange home tokens and collect non-home tokens
             List<MapHex> homeHexes = comp.getHomeHexes();
-            for (Token token :comp.getTokens()) {
+            for (Token token :comp.getAllBaseTokens()) {
                 if (token instanceof BaseToken) {
                     bt = (BaseToken) token;
                     if (!bt.isPlaced()) continue;
@@ -552,9 +552,9 @@ public class CGRFormationRound extends SwitchableUIRound {
             }
 
             // Move any remaining trains
-            List<Train> trains = comp.getPortfolio().getTrainList();
+            List<Train> trains = comp.getPortfolioModel().getTrainList();
             for (Train train : trains) {
-                train.moveTo(cgr.getPortfolio());
+                train.moveTo(cgr.getPortfolioModel());
                 if (train.isPermanent()) cgr.setHadPermanentTrain(true);
             }
 
@@ -595,7 +595,7 @@ bonuses:        for (Bonus bonus : bonuses) {
         for (BaseToken token : homeTokens) {
             city = (Stop) token.getOwner();
             hex = city.getHolder();
-            token.moveTo(token.getCompany());
+            token.moveTo(token.getParent());
             if (hex.layBaseToken(cgr, city.getNumber())) {
                 /* TODO: the false return value must be impossible. */
                 ReportBuffer.add(LocalText.getText("ExchangesBaseToken",
@@ -660,7 +660,7 @@ bonuses:        for (Bonus bonus : bonuses) {
         // Check the trains, autodiscard any excess non-permanent trains
 //        int trainLimit = cgr.getTrainLimit(gameManager.getCurrentPlayerIndex());
         int trainLimit = cgr.getCurrentTrainLimit();
-        List<Train> trains = cgr.getPortfolio().getTrainList();
+        List<Train> trains = cgr.getPortfolioModel().getTrainList();
         if (cgr.getNumberOfTrains() > trainLimit) {
             ReportBuffer.add("");
             int numberToDiscard = cgr.getNumberOfTrains() - trainLimit;
@@ -688,7 +688,7 @@ bonuses:        for (Bonus bonus : bonuses) {
             // Remove old token
             city = (Stop) token.getOwner();
             hex = city.getHolder();
-            token.moveTo(token.getCompany());
+            token.moveTo(token.getParent());
             // Replace it with a CGR token
             if (hex.layBaseToken(cgr, city.getNumber())) {
                 cgr.layBaseToken(hex, 0);
@@ -755,14 +755,14 @@ bonuses:        for (Bonus bonus : bonuses) {
             if (getStep() != STEP_DISCARD_TRAINS) {
                 setStep(STEP_DISCARD_TRAINS);
             }
-            trainsToDiscardFrom = cgr.getPortfolio().getTrainList();
+            trainsToDiscardFrom = cgr.getPortfolioModel().getTrainList();
             forcedTrainDiscard = true;
             return true;
         } else if (!this.cgrHasDiscardedTrains.booleanValue()) {
             // Check if CGR still has non-permanent trains
             // these may be discarded voluntarily
             trainsToDiscardFrom = new ArrayList<Train>();
-            for (Train train : cgr.getPortfolio().getTrainList()) {
+            for (Train train : cgr.getPortfolioModel().getTrainList()) {
                 if (!train.isPermanent()) {
                     trainsToDiscardFrom.add(train);
                }
@@ -809,7 +809,7 @@ bonuses:        for (Bonus bonus : bonuses) {
 
             // Does the company own such a train?
 
-            if (train != null && !company.getPortfolio().getTrainList().contains(train)) {
+            if (train != null && !company.getPortfolioModel().getTrainList().contains(train)) {
                 errMsg =
                         LocalText.getText("CompanyDoesNotOwnTrain",
                                 company.getId(),

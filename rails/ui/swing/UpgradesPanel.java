@@ -273,7 +273,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
             correctionTokenLabels = new ArrayList<CorrectionTokenLabel>();
             for (Token token:tokens) {
                 if (token instanceof BaseToken) {
-                    PublicCompany comp = ((BaseToken)token).getCompany();
+                    PublicCompany comp = ((BaseToken)token).getParent();
                     fgColour = comp.getFgColour();
                     bgColour = comp.getBgColour();
                     description = text = comp.getId();

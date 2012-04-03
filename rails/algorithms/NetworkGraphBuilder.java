@@ -35,7 +35,7 @@ import rails.game.Station;
 import rails.game.TileI;
 import rails.game.Token;
 import rails.game.Track;
-import rails.game.model.Owner;
+import rails.game.state.Owner;
 
 public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
 

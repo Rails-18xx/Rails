@@ -16,8 +16,8 @@ import rails.game.*;
 import rails.game.action.*;
 import rails.game.correct.CashCorrectionAction;
 import rails.game.model.CashOwner;
-import rails.game.model.Owner;
 import rails.game.model.PortfolioModel;
+import rails.game.state.Owner;
 import rails.ui.swing.elements.*;
 
 /**
@@ -333,7 +333,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                 f =
                     certPerPlayer[i][j] =
                         new Field(
-                                players[j].getPortfolio().getShareModel(
+                                players[j].getPortfolioModel().getShareModel(
                                         c));
                 addField(f, certPerPlayerXOffset + j, certPerPlayerYOffset + i,
                         1, 1, 0, visible);
@@ -374,7 +374,7 @@ public class GameStatus extends GridPanel implements ActionListener {
             if (compCanHoldOwnShares) {
                 f =
                     certInTreasury[i] =
-                        new Field(c.getPortfolio().getShareModel(c));
+                        new Field(c.getPortfolioModel().getShareModel(c));
                 addField(f, certInTreasuryXOffset, certInTreasuryYOffset + i,
                         1, 1, WIDE_RIGHT, visible);
                 f =
@@ -413,7 +413,7 @@ public class GameStatus extends GridPanel implements ActionListener {
             f = compRevenue[i] = new Field(c.getLastRevenueModel());
             addField(f, compRevenueXOffset, compRevenueYOffset + i, 1, 1, 0, visible);
 
-            f = compTrains[i] = new Field(c.getPortfolio().getTrainsModel());
+            f = compTrains[i] = new Field(c.getPortfolioModel().getTrainsModel());
             addField(f, compTrainsXOffset, compTrainsYOffset + i, 1, 1, 0, visible);
 
             f = compTokens[i] = new Field(c.getBaseTokensModel());
@@ -423,7 +423,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                 f =
                     compPrivates[i] =
                         new Field(
-                                c.getPortfolio().getPrivatesOwnedModel());
+                                c.getPortfolioModel().getPrivatesOwnedModel());
                 addField(f, compPrivatesXOffset, compPrivatesYOffset + i, 1, 1,
                         0, visible);
             }
@@ -473,7 +473,7 @@ public class GameStatus extends GridPanel implements ActionListener {
             f =
                 playerPrivates[i] =
                     new Field(
-                            players[i].getPortfolio().getPrivatesOwnedModel());
+                            players[i].getPortfolioModel().getPrivatesOwnedModel());
             addField(f, playerPrivatesXOffset + i, playerPrivatesYOffset, 1, 1,
                     0, true);
         }

@@ -11,7 +11,6 @@ import rails.common.parser.GameOption;
 import rails.game.action.*;
 import rails.game.model.CashOwner;
 import rails.game.model.MoneyModel;
-import rails.game.model.Owner;
 import rails.game.model.PortfolioModel;
 import rails.game.special.*;
 import rails.game.state.*;
@@ -330,7 +329,7 @@ public class StockRound extends Round {
             for (PublicCompany company : companyManager.getAllPublicCompanies()) {
                 // TODO: Has to be rewritten (director)
                 certs = ImmutableList.copyOf(
-                    company.getPortfolio().getCertificates(
+                    company.getPortfolioModel().getCertificates(
                             company));
                 if (certs == null || certs.isEmpty()) continue;
                 cert = certs.get(0);
@@ -343,7 +342,7 @@ public class StockRound extends Round {
                         && !mayPlayerBuyCertificate(currentPlayer, company, 1)) continue;
                 if (company.getMarketPrice() <= playerCash) {
                     possibleActions.add(new BuyCertificate(company, cert.getShare(),
-                            company.getPortfolio(), company.getMarketPrice()));
+                            company.getPortfolioModel(), company.getMarketPrice()));
                 }
             }
         }
@@ -363,7 +362,7 @@ public class StockRound extends Round {
         int number;
         int share, maxShareToSell;
         boolean dumpAllowed;
-        PortfolioModel playerPortfolio = currentPlayer.getPortfolio();
+        PortfolioModel playerPortfolio = currentPlayer.getPortfolioModel();
 
         /*
          * First check of which companies the player owns stock, and what
@@ -396,7 +395,7 @@ public class StockRound extends Round {
                     int playerShare;
                     for (Player player : gameManager.getPlayers()) {
                         if (player == currentPlayer) continue;
-                        playerShare = player.getPortfolio().getShare(company);
+                        playerShare = player.getPortfolioModel().getShare(company);
                         if (playerShare >= presidentShare) {
                             dumpAllowed = true;
                             break;
@@ -458,9 +457,9 @@ public class StockRound extends Round {
     protected void setSpecialActions() {
 
         List<SpecialProperty> sps =
-            currentPlayer.getPortfolio().getSpecialProperties(
+            currentPlayer.getPortfolioModel().getSpecialProperties(
                     SpecialProperty.class, false);
-        for (SpecialPropertyI sp : sps) {
+        for (SpecialProperty sp : sps) {
             if (sp.isUsableDuringSR()) {
                 possibleActions.add(new UseSpecialProperty(sp));
             }
@@ -636,14 +635,14 @@ public class StockRound extends Round {
         CashOwner priceRecipient = getSharePriceRecipient (company, ipo, price);
 
         // Transfer the President's certificate
-        cert.moveTo(currentPlayer.getPortfolio());
+        cert.moveTo(currentPlayer.getPortfolioModel());
 
 
         // If more than one certificate is bought at the same time, transfer
         // these too.
         for (int i = 1; i < numberOfCertsToBuy; i++) {
             cert = ipo.findCertificate(company, false);
-            cert.moveTo(currentPlayer.getPortfolio());
+            cert.moveTo(currentPlayer.getPortfolioModel());
         }
 
         // Pay for these shares
@@ -839,7 +838,7 @@ public class StockRound extends Round {
                 log.error("Cannot find " + companyName + " " + shareUnit*sharePerCert
                         + "% share in " + from.getId());
             }
-            cert2.moveTo(currentPlayer.getPortfolio());
+            cert2.moveTo(currentPlayer.getPortfolioModel());
         }
         MoneyModel.cashMove (currentPlayer, priceRecipient, cost);
 
@@ -924,7 +923,7 @@ public class StockRound extends Round {
     // NOTE: Don't forget to keep ShareSellingRound.sellShares() in sync
     {
 
-        PortfolioModel portfolio = currentPlayer.getPortfolio();
+        PortfolioModel portfolio = currentPlayer.getPortfolioModel();
         String playerName = currentPlayer.getId();
         String errMsg = null;
         String companyName = action.getCompanyName();
@@ -1012,11 +1011,11 @@ public class StockRound extends Round {
                 for (int i = currentIndex + 1; i < currentIndex
                 + numberOfPlayers; i++) {
                     Player otherPlayer = gameManager.getPlayerByIndex(i);
-                    int otherPlayerShares = otherPlayer.getPortfolio().getShare(company);
+                    int otherPlayerShares = otherPlayer.getPortfolioModel().getShare(company);
                     if (otherPlayerShares >= requiredShares) {
                         // Check if he has the right kind of share
                         if (numberToSell > 1
-                                || otherPlayer.getPortfolio().ownsCertificates(
+                                || otherPlayer.getPortfolioModel().ownsCertificates(
                                         company, 1, false) >= 1) {
                             potentialDirector = otherPlayer;
                             requiredShares = otherPlayerShares + 1;
@@ -1105,7 +1104,7 @@ public class StockRound extends Round {
     		List<PublicCertificate> certsToSell,
     		Player dumpedPlayer, int presSharesToSell) {
 
-        PortfolioModel portfolio = currentPlayer.getPortfolio();
+        PortfolioModel portfolio = currentPlayer.getPortfolioModel();
 
         // Check if the presidency has changed
         if (dumpedPlayer != null && presSharesToSell > 0) {
@@ -1113,7 +1112,7 @@ public class StockRound extends Round {
                     dumpedPlayer.getId(),
                     company.getId() ));
             // First swap the certificates
-            PortfolioModel dumpedPortfolio = dumpedPlayer.getPortfolio();
+            PortfolioModel dumpedPortfolio = dumpedPlayer.getPortfolioModel();
             List<PublicCertificate> swapped =
                 portfolio.swapPresidentCertificate(company, dumpedPortfolio);
             for (int i = 0; i < presSharesToSell; i++) {
@@ -1129,9 +1128,9 @@ public class StockRound extends Round {
             int currentIndex = getCurrentPlayerIndex();
             for (int i = currentIndex + 1; i < currentIndex + numberOfPlayers; i++) {
                 otherPlayer = gameManager.getPlayerByIndex(i);
-                if (otherPlayer.getPortfolio().getShare(company) > portfolio.getShare(company)) {
+                if (otherPlayer.getPortfolioModel().getShare(company) > portfolio.getShare(company)) {
                     portfolio.swapPresidentCertificate(company,
-                            otherPlayer.getPortfolio());
+                            otherPlayer.getPortfolioModel());
                     ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
                             otherPlayer.getId(),
                             company.getId() ));
@@ -1179,7 +1178,7 @@ public class StockRound extends Round {
 
     public boolean useSpecialProperty(UseSpecialProperty action) {
 
-        SpecialPropertyI sp = action.getSpecialProperty();
+        SpecialProperty sp = action.getSpecialProperty();
 
         // TODO This should work for all subclasses, but not all have execute()
         // yet.
@@ -1199,7 +1198,7 @@ public class StockRound extends Round {
         PublicCompany publicCompany =
             companyManager.getPublicCompany(sp.getPublicCompanyName());
         Company privateCompany = sp.getOriginalCompany();
-        PortfolioModel portfolio = privateCompany.getPortfolio();
+        PortfolioModel portfolio = privateCompany.getPortfolioModel();
         Player player = null;
         String errMsg = null;
         boolean ipoHasShare = ipo.getShare(publicCompany) >= sp.getShare();
@@ -1251,7 +1250,7 @@ public class StockRound extends Round {
             ipoHasShare ? ipo.findCertificate(publicCompany,
                     false) : pool.findCertificate(publicCompany,
                             false);
-            cert.moveTo(player.getPortfolio());
+            cert.moveTo(player.getPortfolioModel());
             ReportBuffer.add(LocalText.getText("SwapsPrivateForCertificate",
                     player.getId(),
                     privateCompany.getId(),
@@ -1471,9 +1470,9 @@ public class StockRound extends Round {
         StringBuffer violations = new StringBuffer();
 
         // Over the total certificate hold Limit?
-        if (player.getPortfolio().getCertificateCount() > gameManager.getPlayerCertificateLimit(player)) {
+        if (player.getPortfolioModel().getCertificateCount() > gameManager.getPlayerCertificateLimit(player)) {
             violations.append(LocalText.getText("ExceedCertificateLimitTotal",
-                    player.getPortfolio().getCertificateCount(),
+                    player.getPortfolioModel().getCertificateCount(),
                     gameManager.getPlayerCertificateLimit(player)));
         }
 
@@ -1483,7 +1482,7 @@ public class StockRound extends Round {
                     && !checkAgainstHoldLimit(player, company, 0)) {
                 violations.append(LocalText.getText("ExceedCertificateLimitCompany",
                         company.getId(),
-                        player.getPortfolio().getShare(company),
+                        player.getPortfolioModel().getShare(company),
                         getGameParameterAsInt(GameDef.Parm.PLAYER_SHARE_LIMIT)
                 ));
             }
@@ -1505,7 +1504,7 @@ public class StockRound extends Round {
     public boolean mayPlayerBuyCertificate(Player player, PublicCompany comp, float number) {
         if (comp.hasFloated() && comp.getCurrentSpace().isNoCertLimit())
             return true;
-        if (player.getPortfolio().getCertificateCount() + number > gameManager.getPlayerCertificateLimit(player))
+        if (player.getPortfolioModel().getCertificateCount() + number > gameManager.getPlayerCertificateLimit(player))
             return false;
         return true;
     }
@@ -1523,7 +1522,7 @@ public class StockRound extends Round {
     public boolean checkAgainstHoldLimit(Player player, PublicCompany company,
             int number) {
         // Check for per-company share limit
-        if (player.getPortfolio().getShare(company)
+        if (player.getPortfolioModel().getShare(company)
                 + number * company.getShareUnit()
                 > getGameParameterAsInt(GameDef.Parm.PLAYER_SHARE_LIMIT)
                 && !company.getCurrentSpace().isNoHoldLimit()
@@ -1556,7 +1555,7 @@ public class StockRound extends Round {
                 company.getCurrentSpace().isNoHoldLimit() ? 100
                         : playerShareLimit;
         }
-        int maxAllowed = (limit - player.getPortfolio().getShare(company)) / shareSize;
+        int maxAllowed = (limit - player.getPortfolioModel().getShare(company)) / shareSize;
         //        log.debug("MaxAllowedNumberOfSharesToBuy = " + maxAllowed + " for company =  " + company + " shareSize " + shareSize);
         return maxAllowed;
     }
