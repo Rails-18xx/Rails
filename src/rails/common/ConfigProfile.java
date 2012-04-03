@@ -189,10 +189,10 @@ public final class ConfigProfile implements Comparable<ConfigProfile> {
     
     void setProperty(String key, String value) {
         ensureLoad();
-        if (!parent.getProperty(key).equals(value)) {
-            properties.setProperty(key, value);
-        } else {
+        if (parent.getProperty(key) != null && parent.getProperty(key).equals(value)) {
             properties.remove(key);
+        } else {
+            properties.setProperty(key, value);
         }
     }
     
@@ -220,7 +220,8 @@ public final class ConfigProfile implements Comparable<ConfigProfile> {
         newProfile.setParent(reference);
 
         // copy properties
-        for (String key:properties.stringPropertyNames()){
+        for (Object k:properties.keySet()){
+            String key = (String)k;
             if (!key.equals(PARENT_KEY) && !key.equals(FINAL_KEY)) {
                 newProfile.setProperty(key, properties.getProperty(key));
             }
@@ -351,6 +352,7 @@ public final class ConfigProfile implements Comparable<ConfigProfile> {
             result = false;
         }
         
+        
         if (result) {
             // and reassign and save children
             for (ConfigProfile child:getChildren()) {
@@ -381,5 +383,6 @@ public final class ConfigProfile implements Comparable<ConfigProfile> {
         return compare(this, other);
     }
 }
+
 
 
