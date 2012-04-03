@@ -114,4 +114,7 @@
             <Trains rusted="3+3"/>
         </Phase>
 	</Component>
+	<Component name="RevenueManager" class="rails.algorithms.RevenueManager">
+		<Modifier class="rails.game.specific._1835.ElsasModifier" />
+	</Component>
 </ComponentManager>
