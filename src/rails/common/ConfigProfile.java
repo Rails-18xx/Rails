@@ -112,20 +112,27 @@ public final class ConfigProfile implements Comparable<ConfigProfile> {
     
     static ConfigProfile getStartProfile() {
         // first checks cli
-        String profile = System.getProperty(CLI_AND_RECENT_OPTION);
-        if (Util.hasValue(profile) && profiles.containsKey(profile)) {
-            return profiles.get(profile);
+        ConfigProfile profile = getProfile(System.getProperty(CLI_AND_RECENT_OPTION));
+        if (profile != null) {
+            return profile;
         } 
         // second check recent
-        profile = Config.getRecent(CLI_AND_RECENT_OPTION);
-        if (Util.hasValue(profile) && profiles.containsKey(profile)) {
-            return profiles.get(profile);
+        profile = getProfile(Config.getRecent(CLI_AND_RECENT_OPTION));
+        if (profile != null) {
+            return profile;
         } 
         // third return standard profile
-        return profiles.get(STANDARD_PROFILE);
+        profile = getProfile(STANDARD_PROFILE);
+        if (profile != null) {
+            return profile;
+        }
+        // last return root
+        return root;
     }
     
     static ConfigProfile getProfile(String name) {
+        if (name == null) return null;
+        if (name.equals(ROOT_PROFILE)) return root;
         return profiles.get(name);
     }
     
@@ -170,7 +177,7 @@ public final class ConfigProfile implements Comparable<ConfigProfile> {
     }
     
     private ConfigProfile setParent(String name) {
-        return setParent(profiles.get(name));
+        return setParent(getProfile(name));
     }
 
     ConfigProfile getParent() {
