@@ -3,7 +3,7 @@
 <project basedir="." default="build" name="Rails">
 	
 		<!-- Sourceforge properties -->
-		<property name="sf.uri" value="frs.sourceforge.net:/home/frs/project/r/ra/rails/"/>
+		<property name="sf.uri" value="frs.sourceforge.net:/home/frs/project/rails/"/>
 		<property name="sf.filedir" value="Rails/"/>
 		<property name="sf.user" value="stefanfrey"/>
 		<!-- Password is asked for -->
@@ -160,11 +160,11 @@
 					<arg value="ssh"/>
 					<arg value="rails-${version}.zip"/>
 					<arg value="rails-${version}.tar.gz"/>
-					<arg value="${sf.user},rails@${sf.uri}${sf.filedir}${version}/"/>
+					<arg value="${sf.user}@${sf.uri}${sf.filedir}${version}/"/>
 				</exec>
 				<exec executable="scp" dir="./" failonerror="true">
 					<arg value="readme.txt"/>
-					<arg value="${sf.user},rails@${sf.uri}${sf.filedir}${version}/"/>
+					<arg value="${sf.user}@${sf.uri}${sf.filedir}${version}/"/>
 				</exec>
 			</target>
 </project>
