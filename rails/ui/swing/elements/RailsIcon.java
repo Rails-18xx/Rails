@@ -21,6 +21,7 @@ public enum RailsIcon {
     BUY_PRIVATE ("money_bag.png","BUY_PRIVATE"),
     BUY_TRAIN ("train.png","BUY_TRAIN"),
     CANCEL ("cancel.png","CANCEL"),
+    DECLINE_TO_BID ("control_play_blue.png","DeclineToBid"),
     DONE ("accept.png","Done"),
     INFO ("information.png","Info"),
     LAY_TILE ("add.png","LayTile"),
