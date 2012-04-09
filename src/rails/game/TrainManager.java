@@ -19,6 +19,7 @@ import rails.game.model.PortfolioModel;
 import rails.game.state.BooleanState;
 import rails.game.state.IntegerState;
 import rails.game.state.Owner;
+import rails.util.Util;
 
 public class TrainManager extends RailsManager implements Configurable {
     // Static attributes
@@ -42,7 +43,10 @@ public class TrainManager extends RailsManager implements Configurable {
     protected TrainType defaultType = null; // Only required locally and in ChoiceType
     
     private boolean removeTrain = false;
-    
+
+    // defines obsolescence
+    public enum ObsoleteTrainForType {ALL, EXCEPT_TRIGGERING}
+    protected ObsoleteTrainForType obsoleteTrainFor = ObsoleteTrainForType.EXCEPT_TRIGGERING; // default is ALL
 
     // Dynamic attributes
     // TODO: There are lots of dynamic attributes which are not State variables yet
@@ -134,6 +138,16 @@ public class TrainManager extends RailsManager implements Configurable {
         if (rulesTag != null) {
             // A 1851 special
             trainPriceAtFaceValueIfDifferentPresidents = rulesTag.getChild("FaceValueIfDifferentPresidents") != null;
+        }
+
+        // Train obsolescence
+        String obsoleteAttribute = tag.getAttributeAsString("ObsoleteTrainFor");
+        if (Util.hasValue(obsoleteAttribute)) {
+            try {
+                obsoleteTrainFor= ObsoleteTrainForType.valueOf(obsoleteAttribute);
+            } catch (Exception e) {
+                throw new ConfigurationException(e);
+            }
         }
 
         // Are trains sold to foreigners?
@@ -310,12 +324,26 @@ public class TrainManager extends RailsManager implements Configurable {
         }
     }
 
+    // checks train obsolete condition
+    private boolean isTrainObsolete(Train train, Owner lastBuyingCompany) {
+        // check fist if train can obsolete at all
+        if (!train.getCertType().isObsoleting()) return false;
+        
+        // then check if obsolete type
+        if (obsoleteTrainFor == ObsoleteTrainForType.ALL) {
+            return true;
+        } else  { // otherwise it is AllExceptTriggering
+            Owner owner = train.getOwner();
+            return (owner instanceof PublicCompany && owner != lastBuyingCompany);
+        }
+    }
+
     protected void rustTrainType (TrainCertificateType type, Owner lastBuyingCompany) {
         type.setRusted();
         for (Train train : trainsPerCertType.get(type)) {
             Owner owner = train.getOwner();
-            if (type.isObsoleting() && owner instanceof PublicCompany
-                    && (PublicCompany)owner != lastBuyingCompany) {
+            // check condition for train rusting
+            if (isTrainObsolete(train, lastBuyingCompany)) {
                 log.debug("Train " + train.getId() + " (owned by "
                         + owner.getId() + ") obsoleted");
                 train.setObsolete();
@@ -327,7 +355,12 @@ public class TrainManager extends RailsManager implements Configurable {
                 train.setRusted();
             }
         }
-
+        // report about event
+        if (type.isObsoleting()) {
+            ReportBuffer.add(LocalText.getText("TrainsObsolete." + obsoleteTrainFor, type.getId()));
+        } else {
+            ReportBuffer.add(LocalText.getText("TrainsRusted",type.getId()));
+        }
     }
     
     public Set<Train> getAvailableNewTrains() {
