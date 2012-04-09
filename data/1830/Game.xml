@@ -118,6 +118,10 @@
 	<Component name="StockMarket" class="rails.game.StockMarket" 
 		file="StockMarket.xml"/>
 	<Component name="TrainManager" class="rails.game.TrainManager">
+		<IfOption name="Variant"
+				value="Coalfields,Reading,Coalfields&amp;Reading">
+			<Attributes ObsoleteTrainFor="ALL" />
+		</IfOption>
 		<Defaults>
 			<Reach base="stops" countTowns="yes"/>
 			<!-- Alternative values: 
