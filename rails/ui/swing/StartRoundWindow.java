@@ -10,7 +10,6 @@ import javax.swing.*;
 
 import org.apache.log4j.Logger;
 
-import rails.common.GuiDef;
 import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;
@@ -18,6 +17,7 @@ import rails.game.special.SpecialPropertyI;
 import rails.sound.SoundManager;
 import rails.ui.swing.elements.*;
 import rails.ui.swing.hexmap.HexHighlightMouseListener;
+import rails.util.Util;
 
 /**
  * This displays the Auction Window
@@ -64,8 +64,10 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
     private int infoXOffset, infoYOffset;
     private Field itemStatus[]; // Remains invisible, only used for status tooltip
 
+    private int playerCaptionXOffset, upperPlayerCaptionYOffset, lowerPlayerCaptionYOffset;
     private Cell[] upperPlayerCaption;
     private Cell[] lowerPlayerCaption;
+    private JComponent[][] fields;
 
     private ActionButton bidButton;
     private ActionButton buyButton;
@@ -183,7 +185,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
 
         infoIcon = createInfoIcon();
 
-        init();
+        initCells();
 
         getContentPane().add(statusPanel, BorderLayout.NORTH);
         getContentPane().add(buttonPanel, BorderLayout.SOUTH);
@@ -223,9 +225,9 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
         gameUIManager.packAndApplySizing(this);
     }
 
-    private void init() {
+    private void initCells() {
         int lastX = -1;
-        int lastY = 1;
+        int lastY = 0;
 
         itemName = new Caption[ni];
         itemNameButton = new ClickField[ni];
@@ -239,6 +241,8 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
         playerBids = new Field[np];
         playerFree = new Field[np];
 
+        upperPlayerCaptionYOffset = ++lastY;
+
         itemNameXOffset = ++lastX;
         itemNameYOffset = ++lastY;
         if (showBasePrices) {
@@ -249,7 +253,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
             minBidXOffset = ++lastX;
             minBidYOffset = lastY;
         }
-        bidPerPlayerXOffset = ++lastX;
+        bidPerPlayerXOffset = playerCaptionXOffset = ++lastX;
         bidPerPlayerYOffset = lastY;
 
         infoXOffset = bidPerPlayerXOffset + np;
@@ -263,6 +267,10 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
         }
         playerFreeCashXOffset = bidPerPlayerXOffset;
         playerFreeCashYOffset = ++lastY;
+
+        lowerPlayerCaptionYOffset = ++lastY;
+
+        fields = new JComponent[1+infoXOffset][2+lastY];
 
         addField(new Caption(LocalText.getText("ITEM")), 0, 0, 1, 2,
                 WIDE_RIGHT + WIDE_BOTTOM);
@@ -278,16 +286,16 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
 
         // Top player captions
         addField(new Caption(LocalText.getText("PLAYERS")),
-                bidPerPlayerXOffset, 0, np, 1, 0);
-        boolean playerOrderCanVary = getGameUIManager().getGameParameterAsBoolean(GuiDef.Parm.PLAYER_ORDER_VARIES);
+                playerCaptionXOffset, 0, np, 1, 0);
+        //boolean playerOrderCanVary = getGameUIManager().getGameParameterAsBoolean(GuiDef.Parm.PLAYER_ORDER_VARIES);
         for (int i = 0; i < np; i++) {
-            if (playerOrderCanVary) {
-                f = upperPlayerCaption[i] = new Field(getGameUIManager().getGameManager().getPlayerNameModel(i));
-                upperPlayerCaption[i].setNormalBgColour(Cell.NORMAL_CAPTION_BG_COLOUR);
-            } else {
-                f = upperPlayerCaption[i] = new Caption(players.get(i).getNameAndPriority());
-            }
-            addField(f, bidPerPlayerXOffset + i, 1, 1, 1, WIDE_BOTTOM);
+            //if (playerOrderCanVary) {
+            //    f = upperPlayerCaption[i] = new Field(getGameUIManager().getGameManager().getPlayerNameModel(i));
+            //    upperPlayerCaption[i].setNormalBgColour(Cell.NORMAL_CAPTION_BG_COLOUR);
+            //} else {
+            f = upperPlayerCaption[i] = new Caption(players.get(i).getNameAndPriority());
+            //}
+            addField(f, playerCaptionXOffset + i, upperPlayerCaptionYOffset, 1, 1, WIDE_BOTTOM);
         }
 
         for (int i = 0; i < ni; i++) {
@@ -364,13 +372,13 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
         }
 
         for (int i = 0; i < np; i++) {
-            if (playerOrderCanVary) {
-                f = lowerPlayerCaption[i] = new Field(getGameUIManager().getGameManager().getPlayerNameModel(i));
-                lowerPlayerCaption[i].setNormalBgColour(Cell.NORMAL_CAPTION_BG_COLOUR);
-            } else {
-                f = lowerPlayerCaption[i] = new Caption(players.get(i).getNameAndPriority());
-            }
-            addField(f, playerFreeCashXOffset + i, playerFreeCashYOffset + 1,
+            //if (playerOrderCanVary) {
+            //    f = lowerPlayerCaption[i] = new Field(getGameUIManager().getGameManager().getPlayerNameModel(i));
+            //    lowerPlayerCaption[i].setNormalBgColour(Cell.NORMAL_CAPTION_BG_COLOUR);
+            //} else {
+            f = lowerPlayerCaption[i] = new Caption(players.get(i).getNameAndPriority());
+            //}
+            addField(f, playerCaptionXOffset + i, lowerPlayerCaptionYOffset,
                     1, 1, WIDE_TOP);
         }
 
@@ -390,13 +398,12 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
         gbc.fill = GridBagConstraints.BOTH;
         padTop = (wideGapPositions & WIDE_TOP) > 0 ? WIDE_GAP : NARROW_GAP;
         padLeft = (wideGapPositions & WIDE_LEFT) > 0 ? WIDE_GAP : NARROW_GAP;
-        padBottom =
-            (wideGapPositions & WIDE_BOTTOM) > 0 ? WIDE_GAP : NARROW_GAP;
-            padRight = (wideGapPositions & WIDE_RIGHT) > 0 ? WIDE_GAP : NARROW_GAP;
-            gbc.insets = new Insets(padTop, padLeft, padBottom, padRight);
+        padBottom = (wideGapPositions & WIDE_BOTTOM) > 0 ? WIDE_GAP : NARROW_GAP;
+        padRight = (wideGapPositions & WIDE_RIGHT) > 0 ? WIDE_GAP : NARROW_GAP;
+        gbc.insets = new Insets(padTop, padLeft, padBottom, padRight);
 
-            statusPanel.add(comp, gbc);
-
+        statusPanel.add(comp, gbc);
+        fields[x][y] = comp;
     }
 
     public void updateStatus(boolean myTurn) {
@@ -548,11 +555,45 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
         return true;
     }
 
+    public void updatePlayerOrder (List<String> newPlayerNames) {
+
+        int[] xref = new int[np];
+        List<String> oldPlayerNames = gameUIManager.getCurrentGuiPlayerNames();
+        for (int i=0; i<np; i++) {
+            xref[i] = oldPlayerNames.indexOf(newPlayerNames.get(i));
+        }
+        log.debug("SRW: old player list: "+Util.joinWithDelimiter(oldPlayerNames.toArray(new String[0]), ","));
+        log.debug("SRW: new player list: "+Util.joinWithDelimiter(newPlayerNames.toArray(new String[0]), ","));
+        //log.debug("SRW: xref="+Util.joinWithDelimiter(xref, ","));
+
+        JComponent[] cells = new Cell[np];
+        GridBagConstraints[] constraints = new GridBagConstraints[np];
+        JComponent f;
+        for (int y=upperPlayerCaptionYOffset; y<=lowerPlayerCaptionYOffset; y++) {
+            for (int i=0, x=playerCaptionXOffset; i<np; i++, x++) {
+                cells[i] = fields[x][y];
+                constraints[i] = gb.getConstraints(cells[i]);
+                statusPanel.remove(cells[i]);
+            }
+            for (int i=0, x=playerCaptionXOffset; i<np; i++, x++) {
+                f = fields[x][y] = cells[xref[i]];
+                statusPanel.add (f, constraints[i]);
+            }
+        }
+        for (int i=0, x=playerCaptionXOffset; i<np; i++, x++) {
+            upperPlayerCaption[i] = (Cell) fields[x][upperPlayerCaptionYOffset];
+            lowerPlayerCaption[i] = (Cell) fields[x][lowerPlayerCaptionYOffset];
+        }
+
+        gameUIManager.packAndApplySizing(this);
+    }
+
     /*
      * (non-Javadoc)
      *
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
+
     public void actionPerformed(ActionEvent actor) {
         JComponent source = (JComponent) actor.getSource();
 
@@ -561,7 +602,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
             StartItemAction currentActiveItem =
                 (StartItemAction) ((ClickField) source).getPossibleActions().get(
                         0);
-            
+
             //notify sound manager that click field has been selected
             SoundManager.notifyOfClickFieldSelection(currentActiveItem);
 

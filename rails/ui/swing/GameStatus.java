@@ -112,7 +112,8 @@ public class GameStatus extends GridPanel implements ActionListener {
     protected int actorIndex = -2;
 
     protected ButtonGroup buySellGroup = new ButtonGroup();
-    protected ClickField dummyButton; // To be selected if none else is.
+    /** Invisible default radio button option */
+    protected ClickField dummyButton = new ClickField("", "", "", this, buySellGroup);
 
     protected Map<PublicCompanyI, Integer> companyIndex =
         new HashMap<PublicCompanyI, Integer>();
@@ -187,8 +188,6 @@ public class GameStatus extends GridPanel implements ActionListener {
         upperPlayerCaption = new Cell[np];
         lowerPlayerCaption = new Cell[np];
 
-        MouseListener companyCaptionMouseClickListener = gameUIManager.getORUIManager().getORPanel().getCompanyCaptionMouseClickListener();
-
         int lastX = 0;
         int lastY = 1;
         certPerPlayerXOffset = ++lastX;
@@ -256,19 +255,27 @@ public class GameStatus extends GridPanel implements ActionListener {
         fields = new JComponent[1+lastX][2+lastY];
         rowVisibilityObservers = new RowVisibility[nc];
 
+        initFields();
+
+    }
+
+    protected void initFields () {
+
+        MouseListener companyCaptionMouseClickListener = gameUIManager.getORUIManager().getORPanel().getCompanyCaptionMouseClickListener();
+
         // Top captions
         addField(new Caption(LocalText.getText("COMPANY")), 0, 0, 1, 2,
                 WIDE_BOTTOM, true);
         addField(new Caption(LocalText.getText("PLAYERS")),
                 certPerPlayerXOffset, 0, np, 1, WIDE_LEFT + WIDE_RIGHT, true);
-        boolean playerOrderCanVary = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.PLAYER_ORDER_VARIES);
         for (int i = 0; i < np; i++) {
-            if (playerOrderCanVary) {
-                f = upperPlayerCaption[i] = new Field(gameUIManager.getGameManager().getPlayerNameModel(i));
-                upperPlayerCaption[i].setNormalBgColour(Cell.NORMAL_CAPTION_BG_COLOUR);
-            } else {
-                f = upperPlayerCaption[i] = new Caption(players.get(i).getNameAndPriority());
-            }
+            //if (playerOrderCanVary) {
+            //    f = upperPlayerCaption[i] = new Field(gameUIManager.getGameManager().getPlayerNameModel(i));
+            //    upperPlayerCaption[i].setNormalBgColour(Cell.NORMAL_CAPTION_BG_COLOUR);
+            //} else {
+            f = upperPlayerCaption[i] = new Caption(players.get(i).getNameAndPriority());
+            log.debug(" GS: new player "+i+" is "+players.get(i).getName());
+            //}
             int wideGapPosition = WIDE_BOTTOM +
             ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
             addField(f, certPerPlayerXOffset + i, 1, 1, 1, wideGapPosition, true);
@@ -536,12 +543,12 @@ public class GameStatus extends GridPanel implements ActionListener {
 
         // Bottom player captions
         for (int i = 0; i < np; i++) {
-            if (playerOrderCanVary) {
-                f = lowerPlayerCaption[i] = new Field(gameUIManager.getGameManager().getPlayerNameModel(i));
-                lowerPlayerCaption[i].setNormalBgColour(Cell.NORMAL_CAPTION_BG_COLOUR);
-            } else {
-                f = lowerPlayerCaption[i] = new Caption(players.get(i).getNameAndPriority());
-            }
+            //if (playerOrderCanVary) {
+            //    f = lowerPlayerCaption[i] = new Field(gameUIManager.getGameManager().getPlayerNameModel(i));
+            //    lowerPlayerCaption[i].setNormalBgColour(Cell.NORMAL_CAPTION_BG_COLOUR);
+            //} else {
+            f = lowerPlayerCaption[i] = new Caption(players.get(i).getNameAndPriority());
+            //}
             int wideGapPosition = WIDE_TOP +
             ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
             addField(f, i + 1, playerCertCountYOffset + 1, 1, 1, wideGapPosition, true);
@@ -583,8 +590,6 @@ public class GameStatus extends GridPanel implements ActionListener {
         newTrains = new Field(ipo.getTrainsModel());
         addField(newTrains, newTrainsXOffset, newTrainsYOffset, 1, 1, 0, true);
 
-        dummyButton = new ClickField("", "", "", this, buySellGroup);
-
         // Future trains
         addField(new Caption(LocalText.getText("Future")), futureTrainsXOffset,
                 futureTrainsYOffset - 1, futureTrainsWidth, 1, WIDE_TOP, true);
@@ -602,8 +607,39 @@ public class GameStatus extends GridPanel implements ActionListener {
         addField (f = new Caption("<html>" + text + "</html>"), poolTrainsXOffset, newTrainsYOffset + 1,
                 futureTrainsWidth + 2, 2, 0, true);
         f.setPreferredSize(new Dimension (1,1));// To enable auto word wrap
+    }
 
-        dummyButton = new ClickField("", "", "", this, buySellGroup);
+    public void recreate() {
+        log.debug("GameStatus.recreate() called");
+
+        // Remove old fields. Don't forget to deregister the Observers
+        deRegisterObservers();
+        removeAll();
+
+        // Create new fields
+        initFields();
+
+        //repaint();
+    }
+
+    public void updatePlayerOrder (List<String> newPlayerNames) {
+
+        List<String> oldPlayerNames = gameUIManager.getCurrentGuiPlayerNames();
+        log.debug("GS: old player list: "+Util.joinWithDelimiter(oldPlayerNames.toArray(new String[0]), ","));
+        log.debug("GS: new player list: "+Util.joinWithDelimiter(newPlayerNames.toArray(new String[0]), ","));
+
+        /* Currently, the passed new player order is ignored.
+         * A call to this method only serves as a signal to rebuild the player columns in the proper order
+         * (in fact, the shortcut is taken to rebuild the whole GameStatus panel).
+         * For simplicity reasons, the existing reference to the (updated)
+         * players list in GameManager is used.
+         * 
+         * In the future (e.g. when implementing a client/server split),
+         * newPlayerNames may actually become to be used to reorder the
+         * (then internal) UI player list.
+         */
+        recreate();
+        gameUIManager.packAndApplySizing(parent);
     }
 
     public void actionPerformed(ActionEvent actor) {
