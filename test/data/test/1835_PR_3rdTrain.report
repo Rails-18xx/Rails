@@ -1061,9 +1061,9 @@ PrivateCloses,PfB
 CompanyDiscardsTrain,SX,3
  
 EndOfOperatingRound,7.1
-ORWorthIncrease,Alice,7.1,549
-ORWorthIncrease,Bob,7.1,824
-ORWorthIncrease,Charlie,7.1,946
+ORWorthIncrease,Alice,7.1,395
+ORWorthIncrease,Bob,7.1,439
+ORWorthIncrease,Charlie,7.1,561
 Has,BY,250
 Has,SX,175
 Has,BA,24
