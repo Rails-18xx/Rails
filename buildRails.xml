@@ -98,6 +98,7 @@
 				<include name="LICENSE"/>
 				<include name="README"/>
 				<include name="AUTHORS"/>
+				<include name="readme.txt"/>
 				<include name="rails.bat"/>
 				<include name="rails.sh"/>
 			</fileset>
