@@ -2,16 +2,12 @@ package rails.common;
 
 import java.io.File;
 import java.io.FilenameFilter;
-<<<<<<< HEAD
-import java.util.*;
-=======
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
->>>>>>> refs/remotes/origin/rails1.7.x
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOCase;
