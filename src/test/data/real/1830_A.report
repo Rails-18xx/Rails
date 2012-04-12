@@ -426,6 +426,7 @@ All 3-trains are sold out, 4-trains now available
 BuysTrain,C&O,4,IPO,300
 FirstTrainBought,4
 StartOfPhase,4
+TrainsObsolete.ALL,2
 CompanyDiscardsTrain,NYC,2
  
 CompanyOperates,N&W,Chris
@@ -897,6 +898,7 @@ PRICE_MOVES_LOG,CPR,82,G3,76,F3
 BuysTrain,CPR,6,IPO,630
 FirstTrainBought,6
 StartOfPhase,6
+TrainsObsolete.ALL,3
  
 CompanyOperates,N&W,Chris
 LaysTileAt,N&W,7,G9,SE
@@ -997,6 +999,7 @@ PRICE_MOVES_LOG,B&O,82,F2,76,E2
 ExchangesTrain,B&O,5,D,IPO,750
 FirstTrainBought,D
 StartOfPhase,D
+TrainsObsolete.ALL,4
  
 CompanyOperates,PRR,Chris
 LaysTileAt,PRR,9,H8,W

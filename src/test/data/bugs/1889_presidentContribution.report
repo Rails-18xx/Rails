@@ -304,6 +304,7 @@ All 3-trains are sold out, 4-trains now available
 BuysTrain,TR,4,IPO,300
 FirstTrainBought,4
 StartOfPhase,4
+TrainsRusted,2
 BuysPrivateFromFor,TR,B,Breno,60
  
 CompanyOperates,IR,Mark
@@ -968,6 +969,7 @@ BuysTrain,KU,3,KO,290
 BuysTrain,KU,6,IPO,630
 FirstTrainBought,6
 StartOfPhase,6
+TrainsRusted,3
  
 CompanyOperates,UR,Chris
 LaysTileAt,UR,23,C8,SE
@@ -1041,5 +1043,6 @@ PresidentAddsCash,KO,Peter,93
 BuysTrain,KO,D,IPO,1100
 FirstTrainBought,D
 StartOfPhase,D
+TrainsRusted,4
  
 CompanyOperates,UR,Chris

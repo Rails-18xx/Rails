@@ -213,6 +213,7 @@ PRICE_MOVES_LOG,PRR,100,G1,112,H1
 BuysTrain,PRR,4,IPO,300
 FirstTrainBought,4
 StartOfPhase,4
+TrainsRusted,2
  
 CompanyOperates,NYNH,Alice
 LaysTileAtFor,NYNH,54,G19,SW,80

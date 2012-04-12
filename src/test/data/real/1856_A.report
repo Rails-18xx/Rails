@@ -409,6 +409,7 @@ CompanyTakesLoan,CPR,100,90
 BuysTrain,CPR,4,IPO,350
 FirstTrainBought,4
 StartOfPhase,4
+TrainsRusted,2
  
 CompanyOperates,GT,Aliza
 LaysTileAt,GT,58,N9,S
@@ -1119,6 +1120,7 @@ PRICE_MOVES_LOG,CV,75,D3,80,E3
 BuysTrain,CV,6,IPO,700
 FirstTrainBought,6
 StartOfPhase,6
+TrainsRusted,3
 StartFormationRound,CGR
 StartingPlayer,Joakim
  
@@ -1214,6 +1216,7 @@ PRICE_MOVES_LOG,CGR,100,E1,90,D1
 ExchangesTrain,CGR,4,D,IPO,750
 FirstTrainBought,D
 StartOfPhase,D
+TrainsRusted,4
  
 CompanyOperates,CV,Joakim
 LaysTileAt,CV,8,N9,S

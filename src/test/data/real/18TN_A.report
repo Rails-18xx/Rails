@@ -398,6 +398,7 @@ PRICE_MOVES_LOG,SOU,65,E6,70,E5
 BuysTrain,SOU,4,IPO,300
 FirstTrainBought,4
 StartOfPhase,4
+TrainsRusted,2
  
 EndOfOperatingRound,4.2
 ORWorthIncrease,Bob,4.2,216
@@ -548,6 +549,7 @@ PRICE_MOVES_LOG,IC,55,D6,45,C6
 BuysTrain,IC,6,IPO,600
 FirstTrainBought,6
 StartOfPhase,6
+TrainsRusted,3
  
 EndOfOperatingRound,5.1
 ORWorthIncrease,Bob,5.1,110
@@ -590,6 +592,7 @@ PresidentAddsCash,GMO,Joshua,350
 BuysTrain,GMO,6,IPO,600
 All 6-trains are sold out, 8-trains now available
 StartOfPhase,6½
+TrainsObsolete.EXCEPT_TRIGGERING,4
  
 CompanyOperates,L&N,Rob
 LaysTileAt,L&N,8,D9,SE

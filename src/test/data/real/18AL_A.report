@@ -373,6 +373,7 @@ BuysTrain,M&O,2,ATN,300
 BuysTrain,M&O,4,IPO,300
 FirstTrainBought,4
 StartOfPhase,4
+TrainsRusted,2
  
 CompanyOperates,TAG,Steve
 LaysTileAt,TAG,15,E6,SW
