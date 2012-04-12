@@ -1,5 +1,7 @@
 ### ORDocking profile
 ### activates the docking framework
 or.window.dockablePanels=yes
+### parent
+profile.parent=pbem
 ### cannot be derived
 profile.final=yes

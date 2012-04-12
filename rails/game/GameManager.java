@@ -19,6 +19,7 @@ import rails.game.special.SpecialPropertyI;
 import rails.game.special.SpecialTokenLay;
 import rails.game.state.*;
 import rails.util.GameFileIO;
+import rails.util.SystemOS;
 import rails.util.Util;
 
 /**
@@ -1111,10 +1112,13 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     protected void recoverySave() {
         if (Config.get("save.recovery.active", "yes").equalsIgnoreCase("no")) return;
 
-        String filePath = Config.get("save.recovery.filepath", "18xx_autosave.rails");
+        // TODO: Fix those static strings defined here
+        File directory = SystemOS.get().getConfigurationFolder(GameFileIO.autosaveFolder, true);
+        String fileName = GameFileIO.autosaveFile;
+        
         // create temporary new save file
         File tempFile = null;
-        tempFile = new File(filePath + ".tmp");
+        tempFile = new File(directory, fileName + ".tmp");
         if (!save(tempFile, recoverySaveWarning, "RecoverySaveFailed")) {
             recoverySaveWarning = false;
             return;
@@ -1126,11 +1130,11 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         try {
             log.debug("Created temporary recovery file, path = "  + tempFile.getPath());
             // check if previous save file exists
-            recoveryFile = new File(filePath);
+            recoveryFile = new File(directory, fileName);
             log.debug("Potential recovery filePath = "  + recoveryFile.getPath());
             if (recoveryFile.exists()) {
                 log.debug("Potential recovery filePath = "  + recoveryFile.getPath());
-                File backupFile = new File(filePath + ".bak");
+                File backupFile = new File(directory, fileName + ".bak");
                 //delete backup file if existing
                 if (backupFile.exists()) backupFile.delete();
                 //old recovery file becomes new backup file

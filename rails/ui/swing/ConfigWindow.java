@@ -25,19 +25,19 @@ class ConfigWindow extends JFrame {
     //(e.g. specifying file names >2000px)
     private static final int MAX_FIELD_WIDTH = 200;
     
+    private Window parent;
+
     private JPanel profilePanel;
     private JTabbedPane configPane;
     private JPanel buttonPanel;
     
-    private boolean fromStatusWindow;
-    
     private ConfigManager cm;
     
-    ConfigWindow(boolean fromStatusWindow) {
+    ConfigWindow(Window parent) {
         cm = ConfigManager.getInstance();
         
-        // store for handling of close
-        this.fromStatusWindow = fromStatusWindow;
+        // store for various handling issues
+        this.parent = parent;
 
         // JFrame properties
         setTitle(LocalText.getText("CONFIG_WINDOW_TITLE"));
@@ -60,6 +60,8 @@ class ConfigWindow extends JFrame {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
+                JOptionPane.showMessageDialog(ConfigWindow.this, LocalText.getText("CONFIG_CLOSE_MESSAGE"), LocalText.getText("CONFIG_CLOSE_TITLE")
+                        , JOptionPane.INFORMATION_MESSAGE);
                 closeConfig(false);
             }
         });
@@ -86,7 +88,7 @@ class ConfigWindow extends JFrame {
         String activeProfile = cm.getActiveProfile();
         String profileText;
         if (cm.IsActiveUserProfile()) {
-            profileText =  LocalText.getText("CONFIG_USER_PROFILE", activeProfile);
+            profileText =  LocalText.getText("CONFIG_USER_PROFILE", activeProfile, cm.getActiveParent());
         } else {
             profileText =  LocalText.getText("CONFIG_PREDEFINED_PROFILE", activeProfile);
         }
@@ -399,44 +401,68 @@ class ConfigWindow extends JFrame {
     private void setupButtonPanel() {
         buttonPanel.removeAll();
         
-        // apply button
+        // save button for user profiles
         if (cm.IsActiveUserProfile()) {
-            JButton applyButton = new JButton(LocalText.getText("APPLY"));
-            applyButton.addActionListener(
+            JButton saveButton = new JButton(LocalText.getText("SAVE"));
+            saveButton.addActionListener(
                     new ActionListener() {
                         public void actionPerformed(ActionEvent arg0) {
                             ConfigWindow.this.saveConfig();
                         }
                     }
                     );
-            buttonPanel.add(applyButton);
+            buttonPanel.add(saveButton);
         }
 
         // save (as) button
-        JButton saveButton = new JButton(LocalText.getText("SAVE_AND_APPLY"));
-        saveButton.addActionListener(
+        JButton saveAsButton = new JButton(LocalText.getText("SAVEAS"));
+        saveAsButton.addActionListener(
                 new ActionListener() {
                     public void actionPerformed(ActionEvent arg0) {
                         ConfigWindow.this.saveAsConfig();
                     }
                 }
         );
-        buttonPanel.add(saveButton);
+        buttonPanel.add(saveAsButton);
 
-        JButton cancelButton = new JButton(LocalText.getText("CANCEL"));
-        cancelButton.addActionListener(
+        JButton resetButton = new JButton(LocalText.getText("RESET"));
+        resetButton.addActionListener(
                 new ActionListener() {
                     public void actionPerformed(ActionEvent arg0) {
-                        ConfigWindow.this.closeConfig(true);
+                        // reset button: revert to activeProfile
+                        changeProfile(cm.getActiveProfile());
                     }
                 }
         );
-        buttonPanel.add(cancelButton);
+        buttonPanel.add(resetButton);
+        
+        if (cm.IsActiveUserProfile()) {
+            JButton deleteButton = new JButton(LocalText.getText("DELETE"));
+            deleteButton.addActionListener( 
+                    new ActionListener() {
+                        public void actionPerformed(ActionEvent arg0) {
+                            // store active Profile for deletion (see below)
+                            String activeProfile = cm.getActiveProfile();
+                            if (cm.deleteActiveProfile()) {
+                                // delete item from selection in GameSetupWindow
+                                if (parent instanceof GameSetupWindow) {
+                                    ((GameSetupWindow) parent).configureBox.removeItem(activeProfile);
+                                }
+                                changeProfile(cm.getActiveProfile());
+                            }
+                        }
+                    }
+                    );
+            buttonPanel.add(deleteButton);
+        }
         
     }
     
     private void changeProfile(String profileName) {
         cm.changeProfile(profileName);
+        if (parent instanceof GameSetupWindow) {
+            ((GameSetupWindow) parent).configureBox.setSelectedItem(profileName);
+        }
         repaintLater();
     }
     
@@ -449,48 +475,77 @@ class ConfigWindow extends JFrame {
         });
     }
     
-    private boolean saveConfig() {
-        if (cm.saveProfile(fromStatusWindow)) {
+    private boolean saveProfile(String newProfile) {
+
+        // check for parent if initMethods have to be called
+        boolean initMethods;
+        if (parent instanceof StatusWindow) {
+            initMethods = true;
+        } else {
+            initMethods = false;
+        }
+        
+        // save depending (either as newProfile or as existing)
+        boolean result;
+        if (newProfile == null) {
+            result = cm.saveProfile(initMethods);
+        } else {
+            result = cm.saveNewProfile(newProfile, initMethods);
+        }
+        
+        if (result) {
             JOptionPane.showMessageDialog(ConfigWindow.this, LocalText.getText("CONFIG_SAVE_CONFIRM_MESSAGE", cm.getActiveProfile()),
-                LocalText.getText("CONFIG_SAVE_TITLE"), JOptionPane.INFORMATION_MESSAGE);
-            return true;
+                    LocalText.getText("CONFIG_SAVE_TITLE"), JOptionPane.INFORMATION_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(ConfigWindow.this, LocalText.getText("CONFIG_SAVE_ERROR_MESSAGE", cm.getActiveProfile()),
                     LocalText.getText("CONFIG_SAVE_TITLE"), JOptionPane.ERROR_MESSAGE);
-            return false;
         }
+        
+        return result;
+    }
+    
+    private boolean saveConfig() {
+        return saveProfile(null);
     }
 
     private boolean saveAsConfig() {
-        // get Names
+        // get all profile Names
         List<String> allProfileNames = cm.getProfiles();
+        
+        // select profile name
         String newProfile = null;
         do {
             newProfile = JOptionPane.showInputDialog(ConfigWindow.this, LocalText.getText("CONFIG_NEW_MESSAGE"),
                 LocalText.getText("CONFIG_NEW_TITLE"), JOptionPane.QUESTION_MESSAGE);
-        } while (allProfileNames.contains(newProfile));
+        } while (newProfile != null && allProfileNames.contains(newProfile));
         
-        boolean result = false;
-        if (newProfile != null) {
-            if (cm.saveNewProfile(newProfile, fromStatusWindow)) {
-                JOptionPane.showMessageDialog(ConfigWindow.this, LocalText.getText("CONFIG_SAVE_CONFIRM_MESSAGE", cm.getActiveProfile()),
-                        LocalText.getText("CONFIG_SAVE_TITLE"), JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(ConfigWindow.this, LocalText.getText("CONFIG_SAVE_ERROR_MESSAGE", cm.getActiveProfile()),
-                        LocalText.getText("CONFIG_SAVE_TITLE"), JOptionPane.ERROR_MESSAGE);
-                result = false;
+        boolean result;
+        if (newProfile == null || newProfile.equals("")) {
+            result = false;
+        } else {
+            result = saveProfile(newProfile);
+            // only change if save was possible
+            if (result) {
+                // add new item to selection in GameSetupWindow
+                if (parent instanceof GameSetupWindow) {
+                    ((GameSetupWindow) parent).configureBox.addItem(newProfile);
+                }
+                changeProfile(newProfile);
             }
-            changeProfile(newProfile);
-        } 
+        }
         return result;
     }
     
     private void closeConfig(boolean cancel) {
-        if (cancel) cm.changeProfile(cm.getActiveProfile());
-        this.setVisible(false);
-        if (fromStatusWindow) {
-            StatusWindow.uncheckMenuItemBox(StatusWindow.CONFIG_CMD);
+        if (cancel) {
+            cm.changeProfile(cm.getActiveProfile());
+            init(false);
         }
+        this.setVisible(false);
+        
+        if (parent instanceof StatusWindow) {
+            StatusWindow.uncheckMenuItemBox(StatusWindow.CONFIG_CMD);
+        } 
     }
 
 }

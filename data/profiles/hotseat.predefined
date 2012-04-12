@@ -1,0 +1,4 @@
+### ftf profile
+### optimized for face-to-face play
+save.filename.suffix=CURRENT_ROUND
+save.recovery.active=yes

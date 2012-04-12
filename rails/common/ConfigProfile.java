@@ -2,7 +2,16 @@ package rails.common;
 
 import java.io.File;
 import java.io.FilenameFilter;
+<<<<<<< HEAD
 import java.util.*;
+=======
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+>>>>>>> refs/remotes/origin/rails1.7.x
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOCase;
@@ -106,20 +115,28 @@ public final class ConfigProfile implements Comparable<ConfigProfile> {
 
     static ConfigProfile getStartProfile() {
         // first checks cli
-        String profile = System.getProperty(CLI_AND_RECENT_OPTION);
-        if (Util.hasValue(profile) && profiles.containsKey(profile)) {
-            return profiles.get(profile);
-        }
+
+        ConfigProfile profile = getProfile(System.getProperty(CLI_AND_RECENT_OPTION));
+        if (profile != null) {
+            return profile;
+        } 
         // second check recent
-        profile = Config.getRecent(CLI_AND_RECENT_OPTION);
-        if (Util.hasValue(profile) && profiles.containsKey(profile)) {
-            return profiles.get(profile);
-        }
+        profile = getProfile(Config.getRecent(CLI_AND_RECENT_OPTION));
+        if (profile != null) {
+            return profile;
+        } 
         // third return standard profile
-        return profiles.get(STANDARD_PROFILE);
+        profile = getProfile(STANDARD_PROFILE);
+        if (profile != null) {
+            return profile;
+        }
+        // last return root
+        return root;
     }
 
     static ConfigProfile getProfile(String name) {
+        if (name == null) return null;
+        if (name.equals(ROOT_PROFILE)) return root;
         return profiles.get(name);
     }
 
@@ -148,8 +165,8 @@ public final class ConfigProfile implements Comparable<ConfigProfile> {
     }
 
     boolean isFinal() {
-        if (!loaded && type == Type.USER) return true;
-
+        ensureLoad();
+        
         if (Util.hasValue(properties.getProperty(FINAL_KEY))) {
             return Util.parseBoolean(properties.getProperty(FINAL_KEY));
         }
@@ -157,23 +174,24 @@ public final class ConfigProfile implements Comparable<ConfigProfile> {
     }
 
     ConfigProfile setParent(ConfigProfile parent) {
-        if (parent != null) {
-            this.parent = parent;
-            properties.setProperty(PARENT_KEY, parent.getName());
-        }
+        ensureLoad();
+        this.parent = parent;
+        properties.setProperty(PARENT_KEY, parent.getName());
         return this;
     }
 
     private ConfigProfile setParent(String name) {
-        return setParent(profiles.get(name));
+        return setParent(getProfile(name));
     }
 
     ConfigProfile getParent() {
+        ensureLoad();
         return parent;
     }
 
     String getProperty(String key) {
-        if (this == root || properties.containsKey(key)) {
+        ensureLoad();
+        if (this == parent || properties.containsKey(key)) {
             return properties.getProperty(key);
         } else {
             return parent.getProperty(key);
@@ -181,26 +199,27 @@ public final class ConfigProfile implements Comparable<ConfigProfile> {
     }
 
     void setProperty(String key, String value) {
-        if (!parent.getProperty(key).equals(value)) {
-            properties.setProperty(key, value);
-        } else {
+        ensureLoad();
+        if (parent.getProperty(key) != null && parent.getProperty(key).equals(value)) {
             properties.remove(key);
+        } else {
+            properties.setProperty(key, value);
         }
     }
 
 
     void makeActive(){
-        // check if is already loaded
-        if (!isLoaded()) {
-            load();
-        }
+        ensureLoad();
         // and store it to recent
         Config.storeRecent(CLI_AND_RECENT_OPTION, getName());
     }
 
     ConfigProfile deriveUserProfile(String name) {
-        ConfigProfile newProfile = new ConfigProfile(Type.USER, name);
+        ensureLoad();
 
+        ConfigProfile newProfile = new ConfigProfile(Type.USER, name);
+        newProfile.loaded = true; // the new profile is assumed to be loaded
+        
         ConfigProfile reference;
         if (isFinal()) {
             // set reference for final to the own parent
@@ -212,13 +231,20 @@ public final class ConfigProfile implements Comparable<ConfigProfile> {
         newProfile.setParent(reference);
 
         // copy properties
-        for (String key:properties.stringPropertyNames()){
+        for (Object k:properties.keySet()){
+            String key = (String)k;
             if (!key.equals(PARENT_KEY) && !key.equals(FINAL_KEY)) {
                 newProfile.setProperty(key, properties.getProperty(key));
             }
         }
 
         return newProfile;
+    }
+
+    private void ensureLoad() {
+        if (loaded == false) {
+            load();
+        }
     }
 
     boolean load() {
@@ -240,6 +266,7 @@ public final class ConfigProfile implements Comparable<ConfigProfile> {
         if (Util.hasValue(properties.getProperty(PARENT_KEY))) {
             setParent(properties.getProperty(PARENT_KEY));
         }
+        
         if (parent == null) {
             setParent(root);
         }
@@ -281,16 +308,78 @@ public final class ConfigProfile implements Comparable<ConfigProfile> {
         return Util.loadPropertiesFromResource(properties, filePath);
     }
 
-    boolean store() {
-        if (type != Type.USER) return false;
-        loaded = true;
+    
+    private File getFile() {
+
         File folder = SystemOS.get().getConfigurationFolder(PROFILE_FOLDER, true);
         if (folder == null) {
-            return false;
+            return null; 
         } else {
-            File profile = new File(folder, name + PROFILE_EXTENSION);
-            return Util.storeProperties(properties, profile);
+            return new File(folder, name + PROFILE_EXTENSION);
         }
+    }
+    
+    /**
+     * stores profile
+     * @return true if save was successful
+     */
+    boolean store() {
+        if (type != Type.USER) return false;
+
+        File file = getFile();
+        if (file != null) {    
+            return Util.storeProperties(properties, file);
+        } else {
+            return false;
+        }
+    }
+    
+    private List<ConfigProfile> getChildren() {
+        List<ConfigProfile> children = new ArrayList<ConfigProfile>();
+        for (ConfigProfile profile:profiles.values()) {
+            if (profile.getParent() == this) {
+                children.add(profile);
+            }
+        }
+        return children;
+    }
+    
+    /**
+     * delete profile (including deleting the saved file and removing from the map of profiles)
+     * @return true if deletion was successful
+     */
+    boolean delete() {
+        // cannot delete parents
+        if (type != Type.USER) return false;
+        
+        // delete profile file
+        boolean result;
+        File file = getFile();
+        if (file != null) {
+            if (file.delete()) {
+                profiles.remove(this.name);
+                result = true;
+            } else {
+                result = false;
+            }
+        } else {
+            result = false;
+        }
+        
+        
+        if (result) {
+            // and reassign and save children
+            for (ConfigProfile child:getChildren()) {
+                child.setParent(parent);
+                // and transfer (directly stored) properties
+                for (Object key:properties.keySet()) {
+                    child.setProperty((String)key, (String)properties.get(key));
+                }
+                child.store();
+            }
+        }
+        return result;
+        
     }
 
     private int compare(ConfigProfile a, ConfigProfile b) {
@@ -308,5 +397,6 @@ public final class ConfigProfile implements Comparable<ConfigProfile> {
         return compare(this, other);
     }
 }
+
 
 

@@ -4,6 +4,7 @@ import java.util.*;
 
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
+import rails.common.parser.ConfigurationException;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.move.AddToList;
@@ -393,6 +394,13 @@ public class StockRound_18EU extends StockRound {
         } else if (selectedHomeCity != null) {
             homeHex = selectedHomeCity.getHolder();
             homeCityNumber = selectedHomeCity.getNumber();
+            //Bugfix for Error reported by John Galt- Mar 31 2012 ; Martin Brumm
+            //The maphex needs to have the homes map set with the company value.
+            try {
+                homeHex.addHome(company, homeCityNumber);
+            } catch (ConfigurationException e) {
+               log.error(e.getStackTrace());
+            }
         }
         company.setHomeHex(homeHex);
         company.setHomeCityNumber(homeCityNumber);

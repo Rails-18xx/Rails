@@ -58,6 +58,7 @@
 	<Component name="StockMarket" class="rails.game.StockMarket" 
 		file="StockMarket.xml"/>
 	<Component name="TrainManager" class="rails.game.TrainManager">
+		<Attributes ObsoleteTrainFor="EXCEPT_TRIGGERING" />
 		<Defaults class="rails.game.specific._18AL.NameableTrain">
 			<Reach base="stops" countTowns="no"/>
 			<Score towns="yes"/>
