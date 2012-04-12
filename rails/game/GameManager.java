@@ -71,7 +71,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     protected int numberOfPlayers;
     protected State currentPlayer = new State("CurrentPlayer", Player.class);
     protected State priorityPlayer = new State("PriorityPlayer", Player.class);
-    protected StringState[] playerNameModels;
+    protected PlayerOrderState playerNamesModel;
 
     /** Map relating portfolio names and objects, to enable deserialization.
      * OBSOLETE since Rails 1.3.1, but still required to enable reading old saved files */
@@ -565,10 +565,8 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         numberOfPlayers = players.size();
         priorityPlayer.setState(players.get(0));
         setPlayerCertificateLimit (playerManager.getInitialPlayerCertificateLimit());
-        playerNameModels = new StringState[numberOfPlayers];
-        for (int i=0; i<numberOfPlayers; i++) {
-            playerNameModels[i] = new StringState ("Player_"+(i+1), players.get(i).getName());
-        }
+
+        playerNamesModel = new PlayerOrderState ("PlayerOrder", new ArrayList<String>(originalPlayerNamesList));
 
         showCompositeORNumber =  !"simple".equalsIgnoreCase(Config.get("or.number_format"));
     }
@@ -639,7 +637,7 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
      * @return instance of GameManager
      */
     public static GameManagerI getInstance () {
-//        return gameManagerMap.get(NDC.peek());
+        //        return gameManagerMap.get(NDC.peek());
         return gameManagerMap.get(GM_KEY);
     }
 
@@ -1929,19 +1927,21 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         players.clear();
 
         Player player;
+        List<String> reorderedPlayerNames = new ArrayList<String>(players.size());
         for (int i=0; i<reorderedPlayers.size(); i++) {
             player = reorderedPlayers.get(i);
             players.add(player);
             player.setIndex (i);
-            playerNameModels[i].set(player.getName());
+            reorderedPlayerNames.add(player.getName());
             log.debug("New player "+i+" is "+player.getName() +" (cash="+Bank.format(player.getCash())+")");
         }
+        playerNamesModel.set(reorderedPlayerNames);
 
         return this.players.get(0);
     }
 
-    public StringState getPlayerNameModel(int index) {
-        return playerNameModels[index];
+    public PlayerOrderState getPlayerNamesModel() {
+        return playerNamesModel;
     }
 
     public void resetStorage() {
@@ -1964,6 +1964,28 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     /** Process an action triggered by a phase change. */
     public void processPhaseAction (String name, String value) {
         getCurrentRound().processPhaseAction(name, value);
+    }
+
+    public class PlayerOrderState extends State {
+
+        protected PlayerOrderState (String name, List<String> playerNames) {
+            super (name, playerNames);
+        }
+
+        protected void set (List<String> playerNames) {
+            super.set (playerNames);
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public List<String> get() {
+            return (List<String>) super.get();
+        }
+
+        @Override
+        public String getText () {
+            return Util.joinWithDelimiter(get().toArray(new String[0]), ";");
+        }
     }
 }
 

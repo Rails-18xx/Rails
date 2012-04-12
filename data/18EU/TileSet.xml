@@ -17,7 +17,6 @@
 	<Tile id="-901"/>
 	<Tile id="-902"/>
 	<Tile id="-903"/>
-	<Tile id="-939"/>
 	<Tile id="-3005"><!--Berlin/Vienna-->
 		<Upgrade id="581"/>
 		<AllowsMultipleBasesOfOneCompany/>

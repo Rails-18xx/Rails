@@ -112,28 +112,27 @@ implements ActionListener, KeyListener {
         int padTop, padLeft, padBottom, padRight;
         padTop = (wideGapPositions & WIDE_TOP) > 0 ? WIDE_GAP - NARROW_GAP : 0;
         padLeft = (wideGapPositions & WIDE_LEFT) > 0 ? WIDE_GAP - NARROW_GAP : 0;
-        padBottom =
-            (wideGapPositions & WIDE_BOTTOM) > 0 ? WIDE_GAP - NARROW_GAP : 0;
-            padRight = (wideGapPositions & WIDE_RIGHT) > 0 ? WIDE_GAP - NARROW_GAP : 0;
+        padBottom = (wideGapPositions & WIDE_BOTTOM) > 0 ? WIDE_GAP - NARROW_GAP : 0;
+        padRight = (wideGapPositions & WIDE_RIGHT) > 0 ? WIDE_GAP - NARROW_GAP : 0;
 
-            //set field borders
-            //- inner border: the field's native border
-            //- outline border: the field's outline (in narrow_gap thickness)
-            //- outer border: grid table lines (in wide_gap - narrow_gap thickness)
+        //set field borders
+        //- inner border: the field's native border
+        //- outline border: the field's outline (in narrow_gap thickness)
+        //- outer border: grid table lines (in wide_gap - narrow_gap thickness)
 
-            comp.setBorder(new FieldBorder(comp.getBorder(),
-                    new DynamicBorder(cellOutlineColor,NARROW_GAP),
-                    new DynamicBorder(tableBorderColor,padTop,padLeft,padBottom,padRight)));
+        comp.setBorder(new FieldBorder(comp.getBorder(),
+                new DynamicBorder(cellOutlineColor,NARROW_GAP),
+                new DynamicBorder(tableBorderColor,padTop,padLeft,padBottom,padRight)));
 
-            gridPanel.add(comp, gbc);
+        gridPanel.add(comp, gbc);
 
-            if (comp instanceof ViewObject
-                    && ((ViewObject) comp).getModel() != null) {
-                observers.add((ViewObject) comp);
-            }
+        if (comp instanceof ViewObject
+                && ((ViewObject) comp).getModel() != null) {
+            observers.add((ViewObject) comp);
+        }
 
-            if (fields != null && fields[x][y] == null) fields[x][y] = comp;
-            comp.setVisible(visible);
+        if (fields != null && fields[x][y] == null) fields[x][y] = comp;
+        comp.setVisible(visible);
     }
 
     /**

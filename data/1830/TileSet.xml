@@ -42,7 +42,6 @@
 	<Tile id="-902"/>
 	<Tile id="-903"/>
     <Tile id="-908"/><!-- Coalfields: K1 -->
-    <Tile id="-939"/><!-- Coalfields: Chicago -->
 	<Tile id="-25007"/><!-- Wabash: D20-->
     <Tile id="-30001"/><!-- Coalfields: N of Boston -->
     <Tile id="-30003" pic="-30002"/><!-- Coalfields: Altoona -->

@@ -41,12 +41,6 @@
         <Track from="city1" gauge="normal" to="side2"/>
         <Track from="city1" gauge="normal" to="side1"/>
     </Tile>
-    <Tile colour="red" id="-939" name="Goderich">
-        <Station id="city1" position="0" slots="0" type="City" value="-1"/>
-        <Track from="side1" gauge="normal" to="city1"/>
-        <Track from="side2" gauge="normal" to="city1"/>
-        <Track from="side3" gauge="normal" to="city1"/>
-    </Tile>
     <Tile colour="yellow" id="1" name="1">
         <Station id="city1" position="408" type="Town" value="10"/>
         <Station id="city2" position="108" type="Town" value="10"/>

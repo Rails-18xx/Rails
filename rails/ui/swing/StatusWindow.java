@@ -10,9 +10,7 @@ import javax.swing.*;
 
 import org.apache.log4j.Logger;
 
-import rails.common.Config;
-import rails.common.GuiDef;
-import rails.common.LocalText;
+import rails.common.*;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.correct.CorrectionModeAction;
@@ -576,6 +574,10 @@ KeyListener, ActionPerformer {
         pack();
 
         toFront();
+    }
+
+    public void updatePlayerOrder (List<String> newPlayerNames) {
+        gameStatus.updatePlayerOrder (newPlayerNames);
     }
 
     public void disableButtons () {
