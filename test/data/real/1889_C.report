@@ -462,6 +462,7 @@ BuysTrain,SR,2,IR,600
 BuysTrain,SR,4,IPO,300
 FirstTrainBought,4
 StartOfPhase,4
+TrainsRusted,2
  
 CompanyOperates,AR,Henning
 LaysTileAt,AR,6,K8,SE
@@ -542,6 +543,7 @@ PRICE_MOVES_LOG,TR,100,F3,110,G3
 BuysTrain,TR,6,IPO,630
 FirstTrainBought,6
 StartOfPhase,6
+TrainsRusted,3
 BuysTrain,TR,4,KU,1
  
 CompanyOperates,SR,Klaus
@@ -842,6 +844,7 @@ BuysTrain,IR,4,SR,15
 ExchangesTrain,IR,4,D,IPO,800
 FirstTrainBought,D
 StartOfPhase,D
+TrainsRusted,4
  
 CompanyOperates,KU,Henning
 LaysTileAt,KU,58,B11,NW

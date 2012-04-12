@@ -213,6 +213,7 @@ PRICE_MOVES_LOG,PRR,100,G1,112,H1
 BuysTrain,PRR,4,IPO,300
 FirstTrainBought,4
 StartOfPhase,4
+TrainsRusted,2
  
 CompanyOperates,NYNH,Alice
 LaysTileAtFor,NYNH,54,G19,SW,80
@@ -344,6 +345,7 @@ PRICE_MOVES_LOG,C&O,54,E7,45,D7
 BuysTrain,C&O,6,IPO,630
 FirstTrainBought,6
 StartOfPhase,6
+TrainsRusted,3
  
 EndOfOperatingRound,3.1
 ORWorthIncrease,Alice,3.1,-115
@@ -409,6 +411,7 @@ PRICE_MOVES_LOG,C&O,45,D7,36,C7
 BuysTrain,C&O,D,IPO,1100
 FirstTrainBought,D
 StartOfPhase,D
+TrainsRusted,4
  
 EndOfOperatingRound,3.2
 ORWorthIncrease,Alice,3.2,249

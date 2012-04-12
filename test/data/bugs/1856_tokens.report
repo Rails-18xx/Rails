@@ -492,6 +492,7 @@ CompanyTakesLoan,CPR,100,90
 BuysTrain,CPR,4,IPO,350
 FirstTrainBought,4
 StartOfPhase,4
+TrainsRusted,2
  
 CompanyOperates,LPS,Bill
 LaysTileAt,LPS,8,E14,SE

@@ -283,6 +283,7 @@ PRICE_MOVES_LOG,GM&O,75,C4,70,B4
 BuysTrain,GM&O,4,IPO,300
 FirstTrainBought,4
 StartOfPhase,4
+TrainsRusted,2
  
 EndOfOperatingRound,3.2
 ORWorthIncrease,Alice,3.2,156
@@ -524,6 +525,7 @@ PRICE_MOVES_LOG,GM&O,65,D7,70,D6
 BuysTrain,GM&O,6,IPO,600
 FirstTrainBought,6
 StartOfPhase,6
+TrainsRusted,3
  
 EndOfOperatingRound,5.1
 ORWorthIncrease,Alice,5.1,-317

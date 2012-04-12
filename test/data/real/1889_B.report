@@ -307,6 +307,7 @@ All 3-trains are sold out, 4-trains now available
 BuysTrain,TR,4,IPO,300
 FirstTrainBought,4
 StartOfPhase,4
+TrainsRusted,2
  
 CompanyOperates,KU,bernd
 LaysTileAt,KU,5,C10,SE
@@ -907,6 +908,7 @@ PRICE_MOVES_LOG,AR,60,B5,55,A5
 BuysTrain,AR,6,IPO,630
 FirstTrainBought,6
 StartOfPhase,6
+TrainsRusted,3
 BuysTrain,AR,5,TR,670
  
 EndOfOperatingRound,6.3
@@ -1009,6 +1011,7 @@ PRICE_MOVES_LOG,TR,125,G2,110,F2
 ExchangesTrain,TR,4,D,IPO,800
 FirstTrainBought,D
 StartOfPhase,D
+TrainsRusted,4
  
 CompanyOperates,KU,bernd
 CompanyDoesNotPayDividend,KU
