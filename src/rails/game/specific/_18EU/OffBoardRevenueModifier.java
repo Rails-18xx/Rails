@@ -53,6 +53,8 @@ public class OffBoardRevenueModifier implements RevenueStaticModifier {
             NetworkVertex hamburgTerminal = NetworkVertex.duplicateVertex(revenueAdapter.getGraph(), hamburgCity, "B7", true);
             hamburgTerminal.setSink(true);
             offBoard.add(hamburgTerminal);
+            // following statement was missing, it removes bug reported by James Romano (2012/01/05)
+            offBoard.remove(hamburgCity);
             
             // vertexVisitSet for the two Hamburgs
             VertexVisit hamburgSet = revenueAdapter.new VertexVisit();
