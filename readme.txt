@@ -1,16 +1,14 @@
-Rails release 1.7.3:
+Rails release 1.7.4:
 
 A new maintenance release for Rails 1.x series
 
 This release fixes several recent bugs.
 
-Contributors: Erik Vos, Martin Brumm, Stefan Frey
+Contributors: Erik Vos, Stefan Frey
 
-Bugs reported by Arne Osterlund, John David Galt, Volker Schnell
+Bugs reported by James Romano, Mike Bourke, Volker Schnell
 
 List of bugs fixed:
-- Fixed UI bug in 18EU: Missing text on DeclineToBid button 
-- Fixed bug with picture id (which prevented displaying Goderich -939 tile)
-- Fixed wrong behavior of train obsoleting in 1830 Variants (Coalfield and Reading)
-- Added text in report window about train rusting and obsoleting
-
+- 18EU Hamburg red-to-red bonus calculation incorrect
+- Fixed exception in Map panel scrolling
+- In 1835 Companies with a fixed start price postpone laying the current price token until floating time.
