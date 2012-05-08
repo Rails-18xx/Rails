@@ -2,9 +2,7 @@
 package rails.ui.swing;
 
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.util.List;
 
 import javax.swing.*;
@@ -14,7 +12,8 @@ import org.apache.log4j.Logger;
 import rails.game.MapManager;
 import rails.game.action.LayTile;
 import rails.game.action.LayToken;
-import rails.ui.swing.hexmap.*;
+import rails.ui.swing.hexmap.HexMap;
+import rails.ui.swing.hexmap.HexMapImage;
 
 /**
  * MapWindow class displays the Map Window. It's shocking, I know.
@@ -23,31 +22,31 @@ public class MapPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
     //defines how many pixels should be left as safety margin when calculating fit zooms
-    private static final int zoomFitSafetyMargin = 4; 
-            
+    private static final int zoomFitSafetyMargin = 4;
+
     private MapManager mmgr;
     private HexMap map;
     private HexMapImage mapImage;
     private JScrollPane scrollPane;
-    
+
     private GameUIManager gameUIManager;
-    
+
     private JLayeredPane layeredPane;
     private Dimension originalMapSize;
     private Dimension currentMapSize;
-    
+
     //active fit-to zoom options
     private boolean fitToWidth = false;
     private boolean fitToHeight = false;
 
     protected static Logger log =
-            Logger.getLogger(MapPanel.class.getPackage().getName());
+        Logger.getLogger(MapPanel.class.getPackage().getName());
 
     public MapPanel(GameUIManager gameUIManager) {
         this.gameUIManager = gameUIManager;
         //Scale.set(15);
         Scale.set(16);
-        
+
         setLayout(new BorderLayout());
 
         mmgr = gameUIManager.getGameManager().getMapManager();
@@ -72,7 +71,7 @@ public class MapPanel extends JPanel {
         layeredPane.setPreferredSize(originalMapSize);
         map.setBounds(0, 0, originalMapSize.width, originalMapSize.height);
         map.addLayers(layeredPane, 1);
-        
+
         if (mmgr.isMapImageUsed()) {
             mapImage = new HexMapImage ();
             mapImage.init(mmgr,map);
@@ -80,14 +79,14 @@ public class MapPanel extends JPanel {
             mapImage.setBounds(0, 0, originalMapSize.width, originalMapSize.height);
             layeredPane.add(mapImage, -1);
         }
-        
+
         scrollPane = new JScrollPane(layeredPane);
         scrollPane.setSize(originalMapSize);
         add(scrollPane, BorderLayout.CENTER);
-        
+
         setSize(originalMapSize);
         setLocation(25, 25);
-        
+
         //add listener for auto fit upon resize events
         addComponentListener(new ComponentAdapter() {
             @Override
@@ -98,9 +97,11 @@ public class MapPanel extends JPanel {
         });
     }
 
-    
+
     public void scrollPaneShowRectangle(Rectangle rectangle) {
-        
+
+        if (rectangle == null) return;
+
         JViewport viewport = scrollPane.getViewport();
         log.debug("ScrollPane viewPort =" + viewport);
 
@@ -108,23 +109,23 @@ public class MapPanel extends JPanel {
         log.debug("Map size =" + map.getSize());
         log.debug("ScrollPane visibleRect =" + scrollPane.getVisibleRect());
         log.debug("viewport size =" + viewport.getSize());
-        
+
         double setX, setY;
         setX = Math.max(0, (rectangle.getCenterX() - viewport.getWidth() / 2));
         setY = Math.max(0, (rectangle.getCenterY() - viewport.getHeight() / 2));
-        
+
         setX = Math.min(setX, Math.max(0, map.getSize().getWidth() -  viewport.getWidth()));
         setY = Math.min(setY, Math.max(0, map.getSize().getHeight() - viewport.getHeight()));
-        
+
         final Point viewPosition = new Point((int)setX, (int)setY);
         log.debug("ViewPosition for ScrollPane = " + viewPosition);
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-            scrollPane.getViewport().setViewPosition(viewPosition);
+                scrollPane.getViewport().setViewPosition(viewPosition);
             }
         });
     }
-    
+
     public void setAllowedTileLays(List<LayTile> allowedTileLays) {
         map.setAllowedTileLays(allowedTileLays);
     }
@@ -147,21 +148,21 @@ public class MapPanel extends JPanel {
             gameUIManager.getORUIManager().getORPanel().redrawRoutes();
         layeredPane.revalidate();
     }
-    
+
     public void zoom (boolean in) {
         removeFitToOption();
         map.zoom(in);
         adjustToNewMapZoom();
     }
-    
+
     /**
      * Zoom-to-fit functionality is based on the discrete zoom steps.
      * In order to achieve correctly fitting zoom, continuous adjustment factors are
-     * determined on top of that. 
+     * determined on top of that.
      */
     private void zoomFit (boolean fitToWidth, boolean fitToHeight) {
         if (!fitToWidth && !fitToHeight) return;
-        
+
         ImageLoader imageLoader = GameUIManager.getImageLoader();
         int zoomStep = map.getZoomStep();
 
@@ -179,7 +180,7 @@ public class MapPanel extends JPanel {
         //determine which dimension will be the critical one for the resize
         boolean isWidthCritical = ( !fitToHeight
                 || (fitToWidth && idealFactorWidth < idealFactorHeight));
-        
+
         //check whether scrollbar will appear in the fit-to dimension and
         //reduce available size accordingly (not relevant for fit-to-window)
         if (isWidthCritical && idealFactorWidth > idealFactorHeight) {
@@ -190,7 +191,7 @@ public class MapPanel extends JPanel {
             height -= scrollPane.getHorizontalScrollBar().getPreferredSize().height;
             idealFactorHeight = height / originalMapSize.height;
         }
-        
+
         //abort resize if no space available
         if (width < 0 || height < 0) return;
 
@@ -207,7 +208,7 @@ public class MapPanel extends JPanel {
                     imageLoader.getZoomFactor(zoomStep+1) != imageLoader.getZoomFactor(zoomStep)
             )
             zoomStep++;
-        
+
         //decrease zoomFactor until constraints do hold
         //OR zoom cannot be decreased any more
         while
@@ -221,44 +222,44 @@ public class MapPanel extends JPanel {
                     imageLoader.getZoomFactor(zoomStep-1) != imageLoader.getZoomFactor(zoomStep)
             )
             zoomStep--;
-        
+
         //Determine and apply adjustment factor for precise fit
         double idealFactor = isWidthCritical ? idealFactorWidth : idealFactorHeight;
         imageLoader.setZoomAdjustmentFactor (
-            idealFactor / imageLoader.getZoomFactor(zoomStep));
-        
+                idealFactor / imageLoader.getZoomFactor(zoomStep));
+
         //trigger zoom execution
         map.setZoomStep(zoomStep);
 
         adjustToNewMapZoom();
     }
-    
+
     private void fitToOption (boolean fitToWidth, boolean fitToHeight) {
         //ignore if nothing has changed
         if (this.fitToWidth == fitToWidth && this.fitToHeight == fitToHeight ) return;
-        
+
         this.fitToWidth = fitToWidth;
         this.fitToHeight = fitToHeight;
         zoomFit(fitToWidth, fitToHeight);
     }
-    
+
     public void fitToWindow () {
         fitToOption (true, true);
     }
-    
+
     public void fitToWidth () {
         fitToOption (true, false);
     }
-    
+
     public void fitToHeight () {
         fitToOption (false, true);
     }
-    
+
     public void removeFitToOption () {
         fitToWidth = false;
         fitToHeight = false;
     }
-    
+
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_F1) {
             HelpWindow.displayHelp(gameUIManager.getHelp());
