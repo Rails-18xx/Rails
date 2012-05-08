@@ -410,6 +410,7 @@ public class StockRound extends Round {
              * If the current Player is president, check if he can dump the
              * presidency onto someone else.
              */
+            dumpThreshold = 0;
             if (company.getPresident() == currentPlayer) {
                 int presidentShare =
                     company.getCertificates().get(0).getShare();
@@ -423,7 +424,6 @@ public class StockRound extends Round {
                     List<Player> players = gameManager.getPlayers();
                     Player player;
                     int dumpedPlayerShare = 0;
-                    dumpThreshold = 0;
 
                     for (playerIndex = (currentPlayerIndex+1)%numberOfPlayers;
                     playerIndex != currentPlayerIndex;
