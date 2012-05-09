@@ -473,7 +473,7 @@ public class StockRound extends Round {
                 number = shareCountPerUnit[shareSize];
 
                 // If you can dump a presidency, you may sell additional single shares that you don't own
-                if (shareSize == 1) number += extraSingleShares;
+                if (dumpThreshold > 0 && shareSize == 1) number += extraSingleShares;
                 if (number == 0) continue;
 
                 /* In some games (1856), a just bought share may not be sold */
