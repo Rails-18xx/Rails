@@ -84,7 +84,7 @@ public class GUIHex implements ViewObject {
     // GUI variables
     double[] xVertex = new double[6];
     double[] yVertex = new double[6];
-//    double len;
+    //    double len;
     GeneralPath hexagon;
     Rectangle rectBound;
     /**
@@ -105,9 +105,9 @@ public class GUIHex implements ViewObject {
      * handle racing conditions for mouse events.
      */
     private int highlightCounter = 0;
-    
+
     protected static Logger log =
-            Logger.getLogger(GUIHex.class.getPackage().getName());
+        Logger.getLogger(GUIHex.class.getPackage().getName());
 
     public GUIHex(HexMap hexMap, double cx, double cy, double scale,
             int xCoord, int yCoord) {
@@ -176,43 +176,43 @@ public class GUIHex implements ViewObject {
         setBounds(hexagon.getBounds());
 
         center =
-                new Point((int) ((xVertex[2] + xVertex[5]) / 2),
-                        (int) ((yVertex[0] + yVertex[3]) / 2));
+            new Point((int) ((xVertex[2] + xVertex[5]) / 2),
+                    (int) ((yVertex[0] + yVertex[3]) / 2));
         Point2D.Double center2D =
-                new Point2D.Double((xVertex[2] + xVertex[5]) / 2.0,
-                        (yVertex[0] + yVertex[3]) / 2.0);
-        
+            new Point2D.Double((xVertex[2] + xVertex[5]) / 2.0,
+                    (yVertex[0] + yVertex[3]) / 2.0);
+
         //inner hexagons are drawn outlined (not filled)
-        //for this draw, the stroke width is half the scale reduction 
+        //for this draw, the stroke width is half the scale reduction
         //the scale factor is multiplied by the average of hex width / height in order
         //to get a good estimate for which for stroke width the hex borders are touched
         //by the stroke
-        double hexDrawScale = 1 - (1 - SELECTED_SCALE) / 2; 
+        double hexDrawScale = 1 - (1 - SELECTED_SCALE) / 2;
         innerHexagonSelected = defineInnerHexagon(hexDrawScale, center2D);
         selectedStrokeWidth = (float) ( 1 - hexDrawScale ) *
-                ( hexagon.getBounds().width + hexagon.getBounds().height ) / 2;
-        hexDrawScale = 1 - (1 - SELECTABLE_SCALE) / 2; 
+        ( hexagon.getBounds().width + hexagon.getBounds().height ) / 2;
+        hexDrawScale = 1 - (1 - SELECTABLE_SCALE) / 2;
         innerHexagonSelectable = defineInnerHexagon(hexDrawScale, center2D);
         selectableStrokeWidth = (float) ( 1 - hexDrawScale ) *
-                ( hexagon.getBounds().width + hexagon.getBounds().height ) / 2;
+        ( hexagon.getBounds().width + hexagon.getBounds().height ) / 2;
     }
 
     private GeneralPath defineInnerHexagon(double innerScale, Point2D.Double center2D) {
 
         AffineTransform at =
-                AffineTransform.getScaleInstance(innerScale, innerScale);
+            AffineTransform.getScaleInstance(innerScale, innerScale);
         GeneralPath innerHexagon = (GeneralPath) hexagon.createTransformedShape(at);
 
         // Translate innerHexagon to make it concentric.
         Rectangle2D innerBounds = innerHexagon.getBounds2D();
         Point2D.Double innerCenter =
-                new Point2D.Double(innerBounds.getX() + innerBounds.getWidth()
-                                   / 2.0, innerBounds.getY()
-                                          + innerBounds.getHeight() / 2.0);
+            new Point2D.Double(innerBounds.getX() + innerBounds.getWidth()
+                    / 2.0, innerBounds.getY()
+                    + innerBounds.getHeight() / 2.0);
         at =
-                AffineTransform.getTranslateInstance(center2D.getX()
-                                                     - innerCenter.getX(),
-                        center2D.getY() - innerCenter.getY());
+            AffineTransform.getTranslateInstance(center2D.getX()
+                    - innerCenter.getX(),
+                    center2D.getY() - innerCenter.getY());
         innerHexagon.transform(at);
 
         return innerHexagon;
@@ -244,7 +244,7 @@ public class GUIHex implements ViewObject {
 
     public Point2D getSidePoint2D(int side){
         return new Point2D.Double((xVertex[side] + xVertex[(side+1)%6])/2,
-                    (yVertex[side] + yVertex[(side+1)%6])/2);
+                (yVertex[side] + yVertex[(side+1)%6])/2);
     }
 
     public Point2D getCenterPoint2D() {
@@ -279,7 +279,7 @@ public class GUIHex implements ViewObject {
     public Rectangle getBounds() {
         return rectBound;
     }
-    
+
     public Rectangle getMarksDirtyBounds() {
         return marksDirtyRectBound;
     }
@@ -291,7 +291,7 @@ public class GUIHex implements ViewObject {
                 rectBound.y - marksDirtyMargin,
                 rectBound.width + marksDirtyMargin * 2,
                 rectBound.height + marksDirtyMargin * 2
-                );
+        );
     }
 
     public boolean contains(Point2D.Double point) {
@@ -355,7 +355,7 @@ public class GUIHex implements ViewObject {
 
         highlightCounter++;
     }
-    
+
     /**
      * Indicate that this hex does not need to be highlighted any more (from the
      * caller's point of view).
@@ -367,11 +367,11 @@ public class GUIHex implements ViewObject {
         //trigger hexmap marks repaint if hex becomes not highlighted
         if (highlightCounter == 0) hexMap.repaintMarks(getMarksDirtyBounds());
     }
-    
+
     public boolean isHighlighted() {
         return (highlightCounter > 0);
     }
-    
+
     static boolean getAntialias() {
         return antialias;
     }
@@ -408,10 +408,10 @@ public class GUIHex implements ViewObject {
     }
 
     private boolean isTilePainted() {
-        return provisionalGUITile != null && hexMap.isTilePainted(provisionalGUITile.getTileId()) 
-                || currentGUITile != null && hexMap.isTilePainted(currentGUITile.getTileId());
+        return provisionalGUITile != null && hexMap.isTilePainted(provisionalGUITile.getTileId())
+        || currentGUITile != null && hexMap.isTilePainted(currentGUITile.getTileId());
     }
-    
+
     public void paintTile(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
 
@@ -426,7 +426,7 @@ public class GUIHex implements ViewObject {
             paintOverlay(g2);
         }
     }
-    
+
     /**
      * Marks are selected / selectable / highlighted
      * @param g
@@ -443,24 +443,24 @@ public class GUIHex implements ViewObject {
         }
 
         if (isSelected()) {
-            Stroke oldStroke = g2.getStroke();                
+            Stroke oldStroke = g2.getStroke();
             g2.setStroke(new BasicStroke(selectedStrokeWidth));
-            g2.setColor(selectedColor);                
-            g2.draw(innerHexagonSelected);            
-            g2.setStroke(oldStroke);                
+            g2.setColor(selectedColor);
+            g2.draw(innerHexagonSelected);
+            g2.setStroke(oldStroke);
         } else if (isSelectable()) {
-            Stroke oldStroke = g2.getStroke();                
+            Stroke oldStroke = g2.getStroke();
             g2.setStroke(new BasicStroke(selectableStrokeWidth));
             g2.setColor(selectableColor);
-            g2.draw(innerHexagonSelectable);            
-            g2.setStroke(oldStroke);                
+            g2.draw(innerHexagonSelectable);
+            g2.setStroke(oldStroke);
         }
 
         //highlight on top of tiles
         if (isHighlighted()) {
             g2.setColor(highlightedFillColor);
             g2.fill(hexagon);
-            Stroke oldStroke = g2.getStroke();                
+            Stroke oldStroke = g2.getStroke();
             g2.setStroke(highlightedBorderStroke);
             g2.setColor(highlightedBorderColor);
             g2.draw(hexagon);
@@ -468,7 +468,7 @@ public class GUIHex implements ViewObject {
         }
 
     }
-    
+
     public void paintTokensAndText(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
 
@@ -476,16 +476,16 @@ public class GUIHex implements ViewObject {
         paintOffStationTokens(g2);
 
         if (!isTilePainted()) return;
-        
+
         FontMetrics fontMetrics = g2.getFontMetrics();
         if (getHexModel().getTileCost() > 0 ) {
             g2.drawString(
                     Bank.format(getHexModel().getTileCost()),
                     rectBound.x
-                            + (rectBound.width - fontMetrics.stringWidth(Integer.toString(getHexModel().getTileCost())))
-                            * 3 / 5,
+                    + (rectBound.width - fontMetrics.stringWidth(Integer.toString(getHexModel().getTileCost())))
+                    * 3 / 5,
                     rectBound.y
-                            + ((fontMetrics.getHeight() + rectBound.height) * 9 / 15));
+                    + ((fontMetrics.getHeight() + rectBound.height) * 9 / 15));
         }
 
         Map<PublicCompanyI, Stop> homes = getHexModel().getHomes();
@@ -499,6 +499,8 @@ public class GUIHex implements ViewObject {
                 // Only draw the company name if there isn't yet a token of that company
                 if (model.hasTokenOfCompany(company)) continue;
                 homeCity = homes.get(company);
+                // Don't draw if suppressed
+                if (!company.isHomeMapDisplay()) continue;
                 if (homeCity == null) { // not yet decided where the token will be
                     // find a free slot
                     List<Stop> stops = getHexModel().getStops();
@@ -518,22 +520,22 @@ public class GUIHex implements ViewObject {
 
         if (getHexModel().isBlockedForTileLays()) {
             List<PrivateCompanyI> privates =
-                    //GameManager.getInstance().getCompanyManager().getAllPrivateCompanies();
-            		hexMap.getOrUIManager().getGameUIManager().getGameManager()
-            			.getCompanyManager().getAllPrivateCompanies();
+                //GameManager.getInstance().getCompanyManager().getAllPrivateCompanies();
+                hexMap.getOrUIManager().getGameUIManager().getGameManager()
+                .getCompanyManager().getAllPrivateCompanies();
             for (PrivateCompanyI p : privates) {
                 List<MapHex> blocked = p.getBlockedHexes();
                 if (blocked != null) {
                     for (MapHex hex : blocked) {
                         if (getHexModel().equals(hex)) {
-                        	String text = "(" + p.getName() + ")";
+                            String text = "(" + p.getName() + ")";
                             g2.drawString(
-                                  text,
-                                  rectBound.x
-                                  + (rectBound.width - fontMetrics.stringWidth(text))
-                                  * 1 / 2,
-                                  rectBound.y
-                                  + ((fontMetrics.getHeight() + rectBound.height) * 5 / 15));
+                                    text,
+                                    rectBound.x
+                                    + (rectBound.width - fontMetrics.stringWidth(text))
+                                    * 1 / 2,
+                                    rectBound.y
+                                    + ((fontMetrics.getHeight() + rectBound.height) * 5 / 15));
                         }
                     }
                 }
@@ -541,15 +543,15 @@ public class GUIHex implements ViewObject {
         }
 
         if (model.isReservedForCompany()
-        		&& currentTileId == model.getPreprintedTileId() ) {
-        	String text = "[" + model.getReservedForCompany() + "]";
+                && currentTileId == model.getPreprintedTileId() ) {
+            String text = "[" + model.getReservedForCompany() + "]";
             g2.drawString(
-                  text,
-                  rectBound.x
-                  + (rectBound.width - fontMetrics.stringWidth(text))
-                  * 1 / 2,
-                  rectBound.y
-                  + ((fontMetrics.getHeight() + rectBound.height) * 5 / 25));
+                    text,
+                    rectBound.x
+                    + (rectBound.width - fontMetrics.stringWidth(text))
+                    * 1 / 2,
+                    rectBound.y
+                    + ((fontMetrics.getHeight() + rectBound.height) * 5 / 25));
         }
 
     }
@@ -637,8 +639,8 @@ public class GUIHex implements ViewObject {
         for (TokenI token : tokens) {
 
             Point origin =
-                    new Point(center.x + offStationTokenX[i],
-                            center.y + offStationTokenY[i]);
+                new Point(center.x + offStationTokenX[i],
+                        center.y + offStationTokenY[i]);
             if (token instanceof BaseToken) {
 
                 PublicCompanyI co = ((BaseToken) token).getCompany();
@@ -655,8 +657,8 @@ public class GUIHex implements ViewObject {
     private void drawBaseToken(Graphics2D g2, PublicCompanyI co, Point center, int diameter) {
 
         GUIToken token =
-                new GUIToken(co.getFgColour(), co.getBgColour(), co.getName(),
-                        center.x, center.y, diameter);
+            new GUIToken(co.getFgColour(), co.getBgColour(), co.getName(),
+                    center.x, center.y, diameter);
         token.setBounds(center.x-(int)(0.5*diameter), center.y-(int)(0.5*diameter),
                 diameter, diameter);
 
@@ -673,8 +675,8 @@ public class GUIHex implements ViewObject {
         Dimension size = new Dimension(40, 40);
 
         GUIToken token =
-                new GUIToken(Color.BLACK, Color.WHITE, "+" + bt.getValue(),
-                        origin.x, origin.y, 15);
+            new GUIToken(Color.BLACK, Color.WHITE, "+" + bt.getValue(),
+                    origin.x, origin.y, 15);
         token.setBounds(origin.x, origin.y, size.width, size.height);
 
         token.drawToken(g2);
@@ -806,9 +808,9 @@ public class GUIHex implements ViewObject {
         }
         // For debugging: display x,y-coordinates
         //tt.append("<small> x=" + x + " y="+y+"</small>");
-        
+
         tt.append("<br><b>Tile</b>: ").append(currentTile.getId());
-        
+
         // For debugging: display rotation
         //tt.append("<small> rot=" + currentTileOrientation + "</small>");
 
@@ -828,8 +830,8 @@ public class GUIHex implements ViewObject {
                 stopNumber = stop.getNumber();
                 st = stop.getRelatedStation();
                 tt.append("<br>  ").append(st.getType()).append(" ").append(stopNumber)
-                    .append(" (").append(model.getConnectionString(stopNumber))
-                    .append("): value ");
+                .append(" (").append(model.getConnectionString(stopNumber))
+                .append("): value ");
                 tt.append(st.getValue());
                 if (st.getBaseSlots() > 0) {
                     tt.append(", ").append(st.getBaseSlots()).append(" slots");
@@ -860,7 +862,7 @@ public class GUIHex implements ViewObject {
             tt.append("<br><b>Upgrades</b>: ").append(upgrades);
             if (model.getTileCost() > 0)
                 tt.append("<br>Upgrade cost: "
-                          + Bank.format(model.getTileCost()));
+                        + Bank.format(model.getTileCost()));
         }
 
         if (getHexModel().getDestinations() != null) {
@@ -888,18 +890,18 @@ public class GUIHex implements ViewObject {
         }
         return (provisionalGUITile != null);
     }
-    
+
     /**
      * Creates an upgrade tile onto this hex without dropping it on the hex.
      * This means that this hex won't consider the returned tile being part of it
-     * (even not on a temporary base). 
+     * (even not on a temporary base).
      */
     public GUITile createUpgradeTileIfValid (int tileId, boolean upgradeMustConnect) {
         GUITile t = new GUITile(tileId, this);
         /* Check if we can find a valid orientation of this tile */
         return ( t.rotate(0, currentGUITile, upgradeMustConnect) ? t : null);
     }
-    
+
     public boolean isTileUpgradeValid (int tileId, boolean upgradeMustConnect) {
         return ( createUpgradeTileIfValid(tileId, upgradeMustConnect) != null );
     }
@@ -988,7 +990,8 @@ public class GUIHex implements ViewObject {
             hexMap.repaintAll(getBounds());
         }
     }
-    
+
+    @Override
     public String toString () {
         return getName() + " (" + currentTile.getName() + ")";
     }

@@ -67,6 +67,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
     protected List<MapHex> homeHexes = null;
     protected int homeCityNumber = 1;
     protected boolean homeAllCitiesBlocked = false;
+    protected boolean homeMapDisplay = true;
+
 
     /** Destination hex * */
     protected String destinationHexName = null;
@@ -343,6 +345,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
             homeHexNames = homeBaseTag.getAttributeAsString("hex");
             homeCityNumber = homeBaseTag.getAttributeAsInteger("city", 1);
             homeAllCitiesBlocked = homeBaseTag.getAttributeAsBoolean("allCitiesBlocked", false);
+            homeMapDisplay = homeBaseTag.getAttributeAsBoolean("mapDisplay", true);
         }
 
         Tag destinationTag = tag.getChild("Destination");
@@ -890,6 +893,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
         return homeAllCitiesBlocked;
     }
 
+    public boolean isHomeMapDisplay() {
+        return homeMapDisplay;
+    }
 
     /**
      * @return Returns the destinationHex.

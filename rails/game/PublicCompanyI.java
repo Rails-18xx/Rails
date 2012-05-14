@@ -320,6 +320,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolder {
 
     public void setHomeCityNumber(int homeCityNumber);
     public boolean isHomeBlockedForAllCities();
+    public boolean isHomeMapDisplay();
 
     public MapHex getDestinationHex();
     public boolean hasDestination ();
