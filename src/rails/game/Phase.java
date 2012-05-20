@@ -298,6 +298,12 @@ public class Phase implements Configurable {
     /** Called when a phase gets activated */
     public void activate() {
         log.debug("Phase " + name + " activated");
+
+        // Report any extra info
+        if (Util.hasValue(extraInfo)) {
+            ReportBuffer.add(extraInfo.replaceFirst("^<[Bb][Rr]>", "").replaceAll("<[Bb][Rr]>", "\n"));
+        }
+
         if (closedObjects != null && !closedObjects.isEmpty()) {
             for (Closeable object : closedObjects) {
                 log.debug("Closing object " + object.toString());
@@ -324,7 +330,7 @@ public class Phase implements Configurable {
                 gameManager.processPhaseAction (actionName, actions.get(actionName));
             }
         }
-        
+
     }
 
     public void setLastTrainBuyer(Owner lastTrainBuyer) {
