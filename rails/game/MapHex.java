@@ -188,9 +188,8 @@ StationHolder {
      * MapHex only accepts MapManagers as parent
      */
     @Override
-    public MapHex init(Item parent, String id) {
-        
-        checkArgument(parent instanceof MapManager, "MapHex parent restricted to MapManager");
+    public void init(Item parent, String id) {
+        super.checkedInit(parent, id, MapManager.class);
     }
 
     /**

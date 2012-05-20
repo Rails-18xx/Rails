@@ -43,12 +43,10 @@ public final class StateManager extends AbstractItem {
      * @exception IllegalArgumentException if parent is not the Context with an id equal to Context.ROOT 
      */
     @Override
-    public StateManager init(Item parent, String id) {
-        checkArgument(parent instanceof Root, "Parent must be a Root object");
-        super.init(parent, id);
+    public void init(Item parent, String id) {
+        super.checkedInit(parent, id, Root.class);
         portfolioManager.init(parent, "PortfolioManager");
         walletManager.init(parent, "WalletManager");
-        return this;
     }
     
     /**

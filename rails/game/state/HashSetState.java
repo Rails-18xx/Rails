@@ -33,12 +33,6 @@ public final class HashSetState<E> extends State implements Iterable<E> {
         return new HashSetState<E>(collection);
     }
     
-    @Override
-    public HashSetState<E> init(Item parent, String id){
-        super.init(parent, id);
-        return this;
-    }
-
     /**
      * add element
      * @param element

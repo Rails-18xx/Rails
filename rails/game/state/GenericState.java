@@ -27,13 +27,7 @@ public class GenericState<E> extends State {
     public static <E> GenericState<E> create(E object){
         return new GenericState<E>(object);
     }
-    @Override
-    public GenericState<E> init(Item parent, String id){
-        super.init(parent, id);
-        return this;
-    }
- 
-    
+
     private void set(E object, boolean forced) {
         if (object == null) {
             if (this.object != null) {

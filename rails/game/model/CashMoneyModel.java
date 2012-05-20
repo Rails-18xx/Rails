@@ -27,11 +27,10 @@ public final class CashMoneyModel extends MoneyModel implements CountableItem {
     }
     
     @Override
-    public CashMoneyModel init(Item parent, String id){
+    public void init(Item parent, String id){
         super.init(parent, id);
         value.init(this, "value");
         initialised.init(this, "initialised");
-        return this;
     }
 
     /**

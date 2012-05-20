@@ -24,11 +24,6 @@ public final class HashMultimapState<K,V> extends MultimapState<K,V> implements 
     public static <K,V> HashMultimapState<K,V> create(){
         return new HashMultimapState<K,V>();
     }
-    @Override
-    public HashMultimapState<K,V> init(Item parent, String id){
-        super.init(parent, id);
-        return this;
-    }
     
     /**
      * Stores a key-value pair in the multimap

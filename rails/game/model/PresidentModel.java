@@ -30,14 +30,8 @@ public class PresidentModel extends Model implements Observer {
      * @param parent restricted to PublicCompany
      */
     @Override
-    public PresidentModel init(Item parent, String id){
-        if (parent instanceof PublicCompany) {
-            this.company = (PublicCompany)parent;
-        } else {
-            throw new IllegalArgumentException("PresidentModel init() only works for PublicCompanies");
-        }
-        super.init(parent, id);
-        return this;
+    public void init(Item parent, String id){
+        super.checkedInit(parent, id, PublicCompany.class);
     }
     
     /**

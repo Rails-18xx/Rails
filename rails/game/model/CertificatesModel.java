@@ -33,14 +33,15 @@ public final class CertificatesModel extends Model {
      * id is identical to class name "CertificatesModel"
      */
     public static CertificatesModel create(Item parent) {
-        return new CertificatesModel().init(parent, id);
+        CertificatesModel model = new CertificatesModel();
+        model.init(parent, id);
+        return model;
     }
     
     @Override
-    public CertificatesModel init(Item parent, String id){
+    public void init(Item parent, String id){
         super.init(parent, id);
         certificates.init(this, "Certificates");
-        return this;
     }
     
     public PortfolioMap<PublicCertificate> getPortfolio() {

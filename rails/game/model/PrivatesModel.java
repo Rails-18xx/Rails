@@ -23,14 +23,15 @@ public final class PrivatesModel extends Model {
      * id is identical to class name "PrivatesModel"
      */
     public static PrivatesModel create(Item parent) {
-        return new PrivatesModel().init(parent, id);
+        PrivatesModel model = new PrivatesModel();
+        model.init(parent, id);
+        return model;
     }
     
     @Override
-    public PrivatesModel init(Item parent, String id){
+    public void init(Item parent, String id){
         super.init(parent, id);
         privates.init(this, "Privates");
-        return this;
     }
     
     public Portfolio<PrivateCompany> getPortfolio() {

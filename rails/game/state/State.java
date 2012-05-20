@@ -25,7 +25,7 @@ public abstract class State extends Observable {
     
     // Item methods
     @Override
-    public State init(Item parent, String id) {
+    public void init(Item parent, String id) {
         super.init(parent, id);
         
         // check if parent is a model and add as dependent model
@@ -38,8 +38,6 @@ public abstract class State extends Observable {
         // if so => register state there
         stateManager = getContext().getRoot().getStateManager();
         stateManager.registerState(this);
-
-        return this;
     }
     
     // Observable methods

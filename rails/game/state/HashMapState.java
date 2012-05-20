@@ -43,12 +43,6 @@ public final class HashMapState<K,V> extends State {
         return new HashMapState<K,V>(map);
     }
 
-    @Override
-    public HashMapState<K,V> init(Item parent, String id){
-        super.init(parent, id);
-        return this;
-    }
-
     public void put(K key, V value) {
         // check if element already has the specified value
         if (map.containsKey(key) && map.get(key).equals(value)) return;

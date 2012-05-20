@@ -27,12 +27,6 @@ public final class BooleanState extends State {
         return new BooleanState(value);
     }
     
-    @Override
-    public BooleanState init(Item parent, String id){
-        super.init(parent, id);
-        return this;
-    }
-
     public void set(boolean value) {
         new BooleanChange(this, value);
     }

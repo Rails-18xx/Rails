@@ -15,12 +15,6 @@ public final class PortfolioManager extends AbstractItem {
         return new PortfolioManager();
     }
     
-    @Override
-    public PortfolioManager init(Item parent, String id) {
-        super.init(parent, id);
-        return this;
-    }
-    
     boolean addPortfolio(PortfolioMap<?> p){
         return portfolios.put(p.getParent(), p);
     }

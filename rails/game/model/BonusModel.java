@@ -16,12 +16,6 @@ public class BonusModel extends Model {
         return new BonusModel();
     }
 
-    @Override
-    public BonusModel init(Item parent, String id) {
-        super.init(parent, id);
-        return this;
-    }
-    
     public void setBonuses(ArrayListState<Bonus> bonuses) {
         this.bonuses = bonuses;
         bonuses.addModel(this);

@@ -28,18 +28,18 @@ public class Train extends AbstractItem implements OwnableItem<Train> {
     public Train() {}
     
     public static Train create(Item parent, String id, TrainCertificateType certType, TrainType type) {
-        Train train = new Train().init(parent, id);
+        Train train = new Train();
+        train.init(parent, id);
         train.setCertificateType(certType);
         train.setType(type);
         return train;
     }
 
     @Override
-    public Train init(Item parent, String id) {
+    public void init(Item parent, String id) {
         super.init(parent,id);
         type.init(this, "currentType");
         obsolete.init(this, "obsolete");
-        return this;
     }
     
     public void setCertificateType(TrainCertificateType type) {

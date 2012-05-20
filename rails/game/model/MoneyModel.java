@@ -26,10 +26,9 @@ public abstract class MoneyModel extends Model {
     private boolean displayNegative = false;
  
     @Override
-    public MoneyModel init(Item parent, String id){
+    public void init(Item parent, String id){
         super.init(parent, id);
         fixedText.init(this, "fixedText");
-        return this;
     }
     
     /**

@@ -21,15 +21,20 @@ public class TrainsModel extends Model {
 
     private TrainsModel() {}
     
+    /** 
+     * @param parent
+     * @return fully initialized TrainsModel
+     */
     public static TrainsModel create(Item parent) {
-        return new TrainsModel().init(parent, id);
+        TrainsModel model = new TrainsModel();
+        model.init(parent, id);
+        return model;
     }
     
     @Override
-    public TrainsModel init(Item parent, String id){
+    public void init(Item parent, String id){
         super.init(parent, id);
         trains.init(this, "Trains");
-        return this;
     }
     
     public Portfolio<Train> getPortfolio() {

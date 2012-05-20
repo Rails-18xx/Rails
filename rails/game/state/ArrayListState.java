@@ -38,12 +38,6 @@ public final class ArrayListState<E> extends State implements Iterable<E>  {
         return new ArrayListState<E>(collection);
     }
     
-    @Override
-    public ArrayListState<E> init(Item parent, String id){
-        super.init(parent, id);
-        return this;
-    }
-
     public void add(E element) {
         new ArrayListChange<E>(this, element);
     }

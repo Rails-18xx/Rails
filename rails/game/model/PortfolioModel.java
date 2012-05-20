@@ -20,6 +20,7 @@ import rails.game.PrivateCompany;
 import rails.game.PublicCertificate;
 import rails.game.PublicCompany;
 import rails.game.ReportBuffer;
+import rails.game.Token;
 import rails.game.Train;
 import rails.game.TrainCertificateType;
 import rails.game.TrainType;
@@ -55,7 +56,7 @@ public final class PortfolioModel extends Model {
 
     /** Owned tokens */
     // TODO Currently only used to discard expired Bonus tokens.
-    private final Portfolio<BonusToken> bonusTokens = PortfolioList.create();
+    private final Portfolio<Token> bonusTokens = PortfolioList.create();
     
     /**
      * Private-independent special properties. When moved here, a special
@@ -76,7 +77,7 @@ public final class PortfolioModel extends Model {
     }
     
     @Override 
-    public PortfolioModel init(Item parent, String id) {
+    public void init(Item parent, String id) {
 
         // create models
         certificates = CertificatesModel.create(parent);
@@ -98,8 +99,6 @@ public final class PortfolioModel extends Model {
         }
 
         gameManager.addPortfolio(this);
-
-        return this;
     }
     
 

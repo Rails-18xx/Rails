@@ -27,7 +27,7 @@ public abstract class Token extends OwnableItem<Token>  {
      * @throws IllegalArgumentException always, use init(Item parent) instead
      */
     @Override
-    public Token init(Item parent, String id) {
+    public void init(Item parent, String id) {
         throw new IllegalArgumentException("Token cannot be intialized with id, use init(Item parent) instead");
     }
     

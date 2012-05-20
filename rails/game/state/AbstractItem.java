@@ -1,7 +1,6 @@
 package rails.game.state;
 
 import static com.google.common.base.Preconditions.*;
-import rails.game.PublicCompany;
 
 /**
  * An AbstractItem is a default implementation of Item
@@ -18,7 +17,7 @@ public abstract class AbstractItem implements Item {
     protected AbstractItem () {}
 
     // Item interface
-    public AbstractItem init(Item parent, String id){
+    public void init(Item parent, String id){
         checkNotNull(parent, "Parent cannot be null");
         checkNotNull(id, "Id cannot be null");
         checkArgument(id != Root.id, "Id cannot equal " + Root.id);
@@ -32,8 +31,6 @@ public abstract class AbstractItem implements Item {
         
         // init finished
         initialized = true;
-        
-        return this;
     }
     
     protected void checkedInit(Item parent, String id, Class<? extends Item> clazz) {

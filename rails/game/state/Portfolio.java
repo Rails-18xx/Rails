@@ -10,12 +10,8 @@ public abstract class Portfolio<T extends OwnableItem<T>> extends State implemen
      * Otherwise an IllegalArgumentException is raised
      */
     @Override
-    public Portfolio<T> init(Item parent, String id) {
-        if (!(parent instanceof Owner)) {
-            throw new IllegalArgumentException("Portfolio init() only works for Owner");
-        }
-        super.init(parent, id);
-        return this;
+    public void init(Item parent, String id) {
+        super.checkedInit(parent, id, Owner.class);
     }
 
     

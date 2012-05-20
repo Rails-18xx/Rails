@@ -17,12 +17,6 @@ public class ArrayListMultimapState<K,V> extends MultimapState<K,V> {
         return new ArrayListMultimapState<K,V>();
     }
    
-    @Override
-    public ArrayListMultimapState<K,V> init(Item parent, String id){
-        super.init(parent, id);
-        return this;
-    }
-    
     /**
      * Stores a key-value pair in the multimap
      * @param key key to store

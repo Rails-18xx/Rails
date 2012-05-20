@@ -27,12 +27,6 @@ public final class StringState extends State {
         return new StringState(text);
     }
     
-    @Override
-    public StringState init(Item parent, String id){
-        super.init(parent, id);
-        return this;
-    }
-
     public void set(String value) {
         new StringChange(this, value);
     }

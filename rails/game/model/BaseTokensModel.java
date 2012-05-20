@@ -1,7 +1,5 @@
 package rails.game.model;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import rails.game.BaseToken;
 import rails.game.PublicCompany;
 import rails.game.Token;
@@ -27,16 +25,14 @@ public class BaseTokensModel extends Model {
      * @param parent restricted to PublicCompany
      */
     @Override
-    public BaseTokensModel init(Item parent, String id){
+    public void init(Item parent, String id){
         // init parent
-        checkArgument(parent instanceof PublicCompany, "BaseTokenModel init() only works for PublicCompanies");
-        super.init(parent, id);
+       super.checkedInit(parent, id, PublicCompany.class);
+       super.init(parent, id);
         
         // Init states
         freeBaseTokens.init(parent, "freeBaseTokens");
         laidBaseTokens.init(parent, "laidBaseTokens");
-        
-        return this;
     }
     
     /**

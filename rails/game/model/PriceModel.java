@@ -26,15 +26,9 @@ public class PriceModel extends Model {
      * @param parent restricted to PublicCompany
      */
     @Override
-    public PriceModel init(Item parent, String id){
-        super.init(parent, id);
-        if (parent instanceof PublicCompany) {
-            this.company = (PublicCompany)parent;
-        } else {
-            throw new IllegalArgumentException("PriceModel init() only works for PublicCompanies");
-        }
+    public void init(Item parent, String id){
+        super.checkedInit(parent, id, PublicCompany.class);
         stockPrice.init(this, "stockPrice");
-        return this;
     }
     
     public void setPrice(StockSpace price) {

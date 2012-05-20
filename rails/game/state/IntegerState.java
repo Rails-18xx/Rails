@@ -27,12 +27,6 @@ public final class IntegerState extends State {
         return new IntegerState(value);
     }
 
-    @Override
-    public IntegerState init(Item parent, String id){
-        super.init(parent, id);
-        return this;
-    }
-
     public void set(int value) {
         new IntegerChange(this, value);
     }

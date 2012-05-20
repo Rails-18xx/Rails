@@ -25,12 +25,6 @@ public final class Wallet<T extends CountableItem> extends State {
         return new Wallet<T>();
     }
 
-    @Override
-    public Wallet<T> init(Item parent, String id){
-        super.init(parent, id);
-        return this;
-    }
-    
     /**
      * Sets an item to the wallet to the amount given (only if there is no amount defined yet) 
      * @param item to set

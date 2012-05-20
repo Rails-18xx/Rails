@@ -32,13 +32,11 @@ public final class Root extends Context {
    
    // Item interface
    @Override
-   public Root init(Item parent, String id) {
+   public void init(Item parent, String id) {
        checkArgument(parent == null, "Parent must be null");
        checkArgument(id != Root.id, "Id must equal " + Root.id);
-       
 
        HashMapState.create();
-       return this;
    }
    
    public String getId() {

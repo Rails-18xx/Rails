@@ -14,12 +14,6 @@ public final class WalletManager extends AbstractItem {
         return new WalletManager();
     }
     
-    @Override
-    public WalletManager init(Item parent, String id) {
-        super.init(parent, id);
-        return this;
-    }
-    
     boolean addWallet(Wallet<?> w){
         return wallets.put(w.getParent(), w);
     }

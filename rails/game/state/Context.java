@@ -30,7 +30,7 @@ public class Context implements Item {
     }
     
     // Item interface
-    public Context init(Item parent, String id) {
+    public void init(Item parent, String id) {
         checkNotNull(parent, "Parent cannot be null");
         checkNotNull(id, "Id cannot be null");
         checkArgument(id != Root.id, "Id cannot equal " + Root.id);
@@ -47,8 +47,6 @@ public class Context implements Item {
         
         // init finished
         initialized = true;
-        
-        return this;
     }
     
     public boolean isInitialized() {

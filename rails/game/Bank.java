@@ -66,7 +66,7 @@ public class Bank extends AbstractItem implements CashOwner, ConfigurableCompone
     }
 
     @Override
-    public Bank init(Item parent, String id) {
+    public void init(Item parent, String id) {
         super.init(parent,  id);
         
         cash.init(this, "cash");
@@ -77,8 +77,6 @@ public class Bank extends AbstractItem implements CashOwner, ConfigurableCompone
         pool.init(this, POOL_NAME);
         unavailable.init(this, UNAVAILABLE_NAME);
         scrapHeap.init(this, SCRAPHEAP_NAME);
-        
-        return this;
     }
     
     /**

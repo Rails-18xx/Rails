@@ -21,12 +21,6 @@ public final class CalculatedMoneyModel extends MoneyModel {
         return new CalculatedMoneyModel();
     }
     
-    @Override
-    public CalculatedMoneyModel init(Item parent, String id) {
-        super.init(parent, id);
-        return this;
-    }
-
     /**
     * @param method the method is defined inside the CalculationMethod interface
     * This is not a state variable, so do not change after the MoneyModel is used

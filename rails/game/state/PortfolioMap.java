@@ -18,12 +18,6 @@ public final class PortfolioMap<T extends OwnableItem< T>> extends Portfolio<T> 
         return new PortfolioMap<T>();
     }
 
-    @Override
-    public PortfolioMap<T> init(Item parent, String id) {
-        super.init(parent, id);
-        return this;
-    }
-
     public boolean initialAdd(T item) {
         if (portfolio.containsValue(item)) return false;
         new PortfolioChange<T>(this, null, item);
