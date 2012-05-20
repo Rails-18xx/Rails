@@ -79,6 +79,10 @@ public class SpecialRight extends SpecialProperty implements RevenueStaticModifi
         return ((PrivateCompany)originalCompany).getOwner() instanceof Player;
     }
  
+    public String getName() {
+        return rightName;
+    }
+    
     public String getDefaultValue() {
         return rightDefaultValue;
     }

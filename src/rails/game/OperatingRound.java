@@ -1376,7 +1376,7 @@ public class OperatingRound extends Round implements Observer {
             }
 
             SpecialRight right = (SpecialRight) sp;
-            rightName = right.getId();
+            rightName = right.getName();
             rightValue = right.getValue();
             cost = right.getCost();
 
