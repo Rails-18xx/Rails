@@ -7,6 +7,7 @@ import rails.game.*;
 import rails.game.action.*;
 import rails.game.state.IntegerState;
 import rails.game.state.GenericState;
+import rails.game.state.Item;
 
 /**
  * Implements an 1835-style startpacket sale.
@@ -18,17 +19,10 @@ public class StartRound_18EU extends StartRound {
     public final static int BUY_STEP = 2;
     public final static int BID_STEP = 3;
 
-    private final IntegerState currentStep =
-            IntegerState.create(this, "CurrentStep", SELECT_STEP);
-
-    private final GenericState<Player> selectingPlayer =
-            GenericState.create(this, "SelectingPlayer");
-
-    private final IntegerState currentBuyPrice =
-            IntegerState.create(this, "CurrentBuyPrice", 0);
-
-    private final GenericState<StartItem> currentAuctionItem =
-            GenericState.create(this, "CurrentAuctionItem");
+    private final IntegerState currentStep = IntegerState.create(SELECT_STEP);
+    private final GenericState<Player> selectingPlayer = GenericState.create();
+    private final IntegerState currentBuyPrice = IntegerState.create();
+    private final GenericState<StartItem> currentAuctionItem = GenericState.create();
 
     /**
      * Constructor, only to be used in dynamic instantiation.
@@ -38,6 +32,16 @@ public class StartRound_18EU extends StartRound {
         hasBidding = true;
         hasBasePrices = false;
     }
+    
+    @Override
+    public void init(Item parent, String id){
+        super.init(parent, id);
+        currentStep.init(this, "CurrentStep");
+        selectingPlayer.init(this, "SelectingPlayer");
+        currentBuyPrice.init(this, "CurrentBuyPrice");
+        currentAuctionItem.init(this, "CurrentAuctionItem");
+    }
+    
 
     /**
      * Start the 18EU-style start round.
@@ -83,10 +87,10 @@ public class StartRound_18EU extends StartRound {
             break;
         case BUY_STEP:
             // only offer buy if enough money
-            if (currentBuyPrice.intValue() <= currentPlayer.getFreeCash()) {
+            if (currentBuyPrice.value() <= currentPlayer.getFreeCash()) {
                 possibleActions.add(new BuyStartItem(
                         (StartItem) currentAuctionItem.get(),
-                        currentBuyPrice.intValue(), true));
+                        currentBuyPrice.value(), true));
             }
             possibleActions.add(new NullAction(NullAction.PASS));
             break;
@@ -122,8 +126,8 @@ public class StartRound_18EU extends StartRound {
         while (true) {
 
             // Is the item buyable?
-            if (status == StartItem.AUCTIONED && currentStep.intValue() == BUY_STEP) {
-                price = currentBuyPrice.intValue();
+            if (status == StartItem.AUCTIONED && currentStep.value() == BUY_STEP) {
+                price = currentBuyPrice.value();
             } else {
                 errMsg = LocalText.getText("NotForSale");
                 break;
@@ -269,7 +273,7 @@ public class StartRound_18EU extends StartRound {
                 // All have passed, now lower the buy price
                 currentBuyPrice.add(-10);
                 setStep(BUY_STEP);
-                if (currentBuyPrice.intValue() == 0) {
+                if (currentBuyPrice.value() == 0) {
                     // Forced buy
                     assignItem(currentPlayer, item, 0, 0);
                 }
@@ -306,13 +310,13 @@ public class StartRound_18EU extends StartRound {
             if (currentPlayer == selectingPlayer.get()) {
                 // All have passed, now lower the buy price
                 currentBuyPrice.add(-10);
-                auctionedItem.setMinimumBid(currentBuyPrice.intValue());
+                auctionedItem.setMinimumBid(currentBuyPrice.value());
                 ReportBuffer.add(LocalText.getText("ITEM_PRICE_REDUCED",
                         auctionedItem.getName(),
-                        Bank.format(currentBuyPrice.intValue()) ));
+                        Bank.format(currentBuyPrice.value()) ));
                 setStep(BUY_STEP);
 
-                if (currentBuyPrice.intValue() == 0) {
+                if (currentBuyPrice.value() == 0) {
                     // Forced buy
                     // Trick to make the zero buy price visible
                     auctionedItem.setBid(0, currentPlayer);
@@ -356,11 +360,11 @@ public class StartRound_18EU extends StartRound {
     }
 
     public int getStep() {
-        return currentStep.intValue();
+        return currentStep.value();
     }
 
     public void setStep(int step) {
-        if (step != currentStep.intValue()) {
+        if (step != currentStep.value()) {
             currentStep.set(step);
         }
     }

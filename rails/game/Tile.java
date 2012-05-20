@@ -14,7 +14,7 @@ import rails.game.Stop.RunThrough;
 import rails.game.Stop.RunTo;
 import rails.game.Stop.Score;
 import rails.game.Stop.Type;
-import rails.game.state.AbstractItem;
+import rails.game.state.Item;
 import rails.game.state.Model;
 import rails.util.Util;
 
@@ -23,8 +23,11 @@ import rails.util.Util;
  * The list <b>tilesLaid</b> records in which hexes a certain tile number has been laid.
  * @author Erik
  *
+ *
+ * FIXME: A lot to be done 
+ * Why is the Model, why do we need StationHolder? etc.
  */
-public class Tile extends Model implements TileI, StationHolder, Comparable<TileI> {
+public class Tile extends Model implements StationHolder, Comparable<Tile> {
 
     /** The 'internal id', identifying the tile in the XML files */
     private final int nb;
@@ -115,8 +118,9 @@ public class Tile extends Model implements TileI, StationHolder, Comparable<Tile
     /** Storage of revenueBonus that are bound to the tile */
     protected List<RevenueBonusTemplate> revenueBonuses = null;
 
-    public Tile(AbstractItem owner, Integer id) {
-        super(owner, Integer.toString(id));
+    // TODO: Rewrite this to use the 2-stage approach with init()
+    public Tile(Item owner, Integer id) {
+        super.init(owner, Integer.toString(id));
         this.nb = id;
         pictureId = id;
         externalId = String.valueOf(id);
@@ -125,7 +129,7 @@ public class Tile extends Model implements TileI, StationHolder, Comparable<Tile
         for (int i = 0; i < 6; i++)
             tracksPerSide[i] = new ArrayList<Track>();
     }
-
+    
     /**
      * @param se &lt;Tile&gt; element from TileSet.xml
      * @param te &lt;Tile&gt; element from Tiles.xml
@@ -385,12 +389,12 @@ public class Tile extends Model implements TileI, StationHolder, Comparable<Tile
 
         for (Upgrade upgrade : upgrades) {
 
-            TileI tile = tileManager.getTile(upgrade.getTileId());
+            Tile tile = tileManager.getTile(upgrade.getTiled());
             if (tile != null) {
                 upgrade.setTile(tile);
             } else {
                 throw new ConfigurationException ("Cannot find upgrade tile #"
-                        +upgrade.getTileId()+" for tile #"+nb);
+                        +upgrade.getTiled()+" for tile #"+nb);
             }
         }
     }
@@ -470,11 +474,11 @@ public class Tile extends Model implements TileI, StationHolder, Comparable<Tile
      * hex have not yet been implemented).
      *
      * @param hex The MapHex to be upgraded.
-     * @return A List of valid upgrade TileI objects.
+     * @return A List of valid upgrade Tile objects.
      */
-    public List<TileI> getUpgrades(MapHex hex, Phase phase) {
-        List<TileI> upgr = new ArrayList<TileI>();
-        TileI tile;
+    public List<Tile> getUpgrades(MapHex hex, Phase phase) {
+        List<Tile> upgr = new ArrayList<Tile>();
+        Tile tile;
         for (Upgrade upgrade : upgrades) {
             tile = upgrade.getTile();
             if (hex == null || upgrade.isAllowedForHex(hex, phase.getName())) upgr.add(tile);
@@ -485,13 +489,13 @@ public class Tile extends Model implements TileI, StationHolder, Comparable<Tile
     /**
      * Get all possible upgrades for a specific tile on a certain hex
      *
-     * @return A List of valid upgrade TileI objects.
+     * @return A List of valid upgrade Tile objects.
      */
 
-    public List<TileI> getAllUpgrades(MapHex hex) {
-        List<TileI> upgr = new ArrayList<TileI>();
+    public List<Tile> getAllUpgrades(MapHex hex) {
+        List<Tile> upgr = new ArrayList<Tile>();
         for (Upgrade upgrade : upgrades) {
-            TileI tile = upgrade.getTile();
+            Tile tile = upgrade.getTile();
             if (upgrade.isAllowedForHex(hex)) {
                 upgr.add(tile);
             }
@@ -502,7 +506,7 @@ public class Tile extends Model implements TileI, StationHolder, Comparable<Tile
     /** Get a delimited list of all possible upgrades, regardless current phase */
     public String getUpgradesString(MapHex hex) {
         StringBuffer b = new StringBuffer();
-        TileI tile;
+        Tile tile;
         for (Upgrade upgrade : upgrades) {
             tile = upgrade.getTile();
             if (upgrade.isAllowedForHex(hex)) {
@@ -514,9 +518,9 @@ public class Tile extends Model implements TileI, StationHolder, Comparable<Tile
         return b.toString();
     }
 
-    public List<TileI> getValidUpgrades(MapHex hex, Phase phase) {
-        List<TileI> valid = new ArrayList<TileI>();
-        TileI tile;
+    public List<Tile> getValidUpgrades(MapHex hex, Phase phase) {
+        List<Tile> valid = new ArrayList<Tile>();
+        Tile tile;
 
         for (Upgrade upgrade : upgrades) {
             tile = upgrade.getTile();
@@ -609,7 +613,7 @@ public class Tile extends Model implements TileI, StationHolder, Comparable<Tile
     }
 
     /** ordering of tiles based first on colour, then on external id */
-    public int compareTo(TileI anotherTile) {
+    public int compareTo(Tile anotherTile) {
         Integer colour = this.getColourNumber();
         int result = colour.compareTo(anotherTile.getColourNumber());
         if (result == 0) {
@@ -651,7 +655,7 @@ public class Tile extends Model implements TileI, StationHolder, Comparable<Tile
         int tileId;
 
         /** The upgrade tile */
-        TileI tile;
+        Tile tile;
 
         /** Hexes where the upgrade can be executed */
         List<MapHex> allowedHexes = null;
@@ -685,7 +689,7 @@ public class Tile extends Model implements TileI, StationHolder, Comparable<Tile
                 return false;
             }
 
-            if (hexes != null) convertHexString(hex.getMapManager());
+            if (hexes != null) convertHexString(hex.getParent());
 
             if (allowedHexes != null) {
                 return allowedHexes.contains(hex);
@@ -698,7 +702,7 @@ public class Tile extends Model implements TileI, StationHolder, Comparable<Tile
 
         protected boolean isAllowedForHex(MapHex hex) {
 
-            if (hexes != null) convertHexString(hex.getMapManager());
+            if (hexes != null) convertHexString(hex.getParent());
 
             if (allowedHexes != null) {
                 return allowedHexes.contains(hex);
@@ -709,15 +713,15 @@ public class Tile extends Model implements TileI, StationHolder, Comparable<Tile
             }
         }
 
-        public void setTile(TileI tile) {
+        public void setTile(Tile tile) {
             this.tile = tile;
         }
 
-        protected TileI getTile() {
+        protected Tile getTile() {
             return tile;
         }
 
-        public int getTileId() {
+        public int getTiled() {
             return tileId;
         }
 

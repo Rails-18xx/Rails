@@ -2,11 +2,10 @@
 package rails.game.specific._1835;
 
 import rails.game.*;
-import rails.game.state.Context;
 
 public class GameManager_1835 extends GameManager {
 
-	private RoundI previousRound = null;
+	private Round previousRound = null;
 	private Player prFormStartingPlayer = null;
 
     public static String M2_ID = "M2";
@@ -18,13 +17,9 @@ public class GameManager_1835 extends GameManager {
     public static String BA_ID = "BA";
     public static String SX_ID = "SX";
     public static String BY_ID = "BY";
-
-    public GameManager_1835(Context context) {
-        super(context);
-    }
-
+    
     @Override
-    public void nextRound(RoundI round) {
+    public void nextRound(Round round) {
 
         if (round instanceof PrussianFormationRound) {
             if (interruptedRound != null) {
@@ -65,7 +60,7 @@ public class GameManager_1835 extends GameManager {
 
     @Override
     public int getPlayerCertificateLimit(Player player) {
-        int limit = playerCertificateLimit.intValue();
+        int limit = playerCertificateLimit.value();
         for (PublicCompany company : companyManager.getAllPublicCompanies()) {
             if (company.getTypeName().equalsIgnoreCase("Major")
                     && company.getPresident() == player

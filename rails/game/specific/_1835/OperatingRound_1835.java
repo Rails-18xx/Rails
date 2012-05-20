@@ -23,25 +23,32 @@ import rails.game.special.SpecialProperty;
 import rails.game.special.SpecialTileLay;
 import rails.game.state.BooleanState;
 import rails.game.state.HashMapState;
+import rails.game.state.Item;
 import rails.game.state.Owner;
 
 public class OperatingRound_1835 extends OperatingRound {
 
-    private BooleanState needPrussianFormationCall
-            = BooleanState.create(this, "NeedPrussianFormationCall", false);
-    private BooleanState hasLaidExtraOBBTile
-            = BooleanState.create(this, "HasLaidExtraOBBTile", false);
+    private final BooleanState needPrussianFormationCall = BooleanState.create();
+    private final BooleanState hasLaidExtraOBBTile = BooleanState.create();
 
     /**
      * Registry of percentage of PR revenue to be denied per player
      * because of having produced revenue in the same OR.
      */
-    private HashMapState<Player, Integer> deniedIncomeShare;
+    private final HashMapState<Player, Integer> deniedIncomeShare = HashMapState.create();
 
     public OperatingRound_1835 (GameManager gameManager) {
         super (gameManager);
-        deniedIncomeShare = HashMapState.create(this, "deniedIncomeShare");
     }
+    
+    @Override
+    public void init(Item parent, String id) {
+        super.init(parent, id);
+        needPrussianFormationCall.init(this, "NeedPrussianFormationCall");
+        hasLaidExtraOBBTile.init(this, "HasLaidExtraOBBTile");
+        deniedIncomeShare.init(this, "deniedIncomeShare");
+    }
+    
 
     /** Can a public company operate? (1835 special version) */
     @Override
@@ -70,7 +77,7 @@ public class OperatingRound_1835 extends OperatingRound {
                     Owner recipient = priv.getOwner();
                     int revenue = priv.getRevenueByPhase(getCurrentPhase()); // sfy 1889: revenue by phase
                     if (count++ == 0) ReportBuffer.add("");
-                    ReportBuffer.change(LocalText.getText("ReceivesFor",
+                    ReportBuffer.add(LocalText.getText("ReceivesFor",
                             recipient.getId(),
                             Bank.format(revenue),
                             priv.getId()));

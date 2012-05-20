@@ -33,10 +33,10 @@ import rails.game.PrivateCompany;
 import rails.game.PublicCompany;
 import rails.game.Station;
 import rails.game.Stop;
-import rails.game.TileI;
+import rails.game.Tile;
 import rails.game.TileOrientation;
 import rails.game.Token;
-import rails.game.state.Model;
+import rails.game.state.Observable;
 import rails.game.state.Observer;
 import rails.ui.swing.GUIToken;
 import rails.util.Util;
@@ -78,11 +78,11 @@ public class GUIHex implements Observer {
 
     protected HexMap hexMap; // Containing this hex
     protected String hexName;
-    protected int currentTileId;
-    protected int originalTileId;
+    protected int currentTiled;
+    protected int originalTiled;
     protected int currentTileOrientation;
     protected String tileFilename;
-    protected TileI currentTile;
+    protected Tile currentTile;
 
     protected GUITile currentGUITile = null;
     protected GUITile provisionalGUITile = null;
@@ -254,9 +254,9 @@ public class GUIHex implements Observer {
         this.model = model;
         currentTile = model.getCurrentTile();
         hexName = model.getId();
-        currentTileId = model.getCurrentTile().getNb();
+        currentTiled = model.getCurrentTile().getNb();
         currentTileOrientation = model.getCurrentTileRotation();
-        currentGUITile = new GUITile(currentTileId, this);
+        currentGUITile = new GUITile(currentTiled, this);
         currentGUITile.setRotation(currentTileOrientation);
         toolTip = null;
 
@@ -360,8 +360,8 @@ public class GUIHex implements Observer {
     public void paint(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
 
-        tilePainted = provisionalGUITile != null && hexMap.isTilePainted(provisionalGUITile.getTileId()) 
-                || currentGUITile != null && hexMap.isTilePainted(currentGUITile.getTileId());
+        tilePainted = provisionalGUITile != null && hexMap.isTilePainted(provisionalGUITile.getTiled()) 
+                || currentGUITile != null && hexMap.isTilePainted(currentGUITile.getTiled());
         
         if (getAntialias()) {
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -483,7 +483,7 @@ public class GUIHex implements Observer {
         }
 
         if (model.isReservedForCompany()
-        		&& currentTileId == model.getPreprintedTileId() ) {
+        		&& currentTiled == model.getPreprintedTiled() ) {
         	String text = "[" + model.getReservedForCompany() + "]";
             g2.drawString(
                   text,
@@ -498,11 +498,11 @@ public class GUIHex implements Observer {
 
     private void paintOverlay(Graphics2D g2) {
         if (provisionalGUITile != null) {
-            if (hexMap.isTilePainted(provisionalGUITile.getTileId())) {
+            if (hexMap.isTilePainted(provisionalGUITile.getTiled())) {
                 provisionalGUITile.paintTile(g2, center.x, center.y);
             }
         } else {
-            if (hexMap.isTilePainted(currentGUITile.getTileId())) {
+            if (hexMap.isTilePainted(currentGUITile.getTiled())) {
                 currentGUITile.paintTile(g2, center.x, center.y);
             }
         }
@@ -572,7 +572,7 @@ public class GUIHex implements Observer {
     private static int[] offStationTokenY = new int[] { -19, 0 };
 
     private void paintOffStationTokens(Graphics2D g2) {
-        List<Token> tokens = getHexModel().getTokens().view();
+        List<Token> tokens = getHexModel().getTokens().items();
         if (tokens == null) return;
 
         int i = 0;
@@ -714,7 +714,7 @@ public class GUIHex implements Observer {
     /**
      * @return Returns the currentTile.
      */
-    public TileI getCurrentTile() {
+    public Tile getCurrentTile() {
         return currentTile;
     }
 
@@ -865,7 +865,7 @@ public class GUIHex implements Observer {
         return provisionalGUITile != null;
     }
 
-    public TileI getProvisionalTile() {
+    public Tile getProvisionalTile() {
         return provisionalGUITile.getTile();
     }
 
@@ -893,7 +893,8 @@ public class GUIHex implements Observer {
     /** Needed to satisfy the ViewObject interface. Currently not used. */
     public boolean deRegister() {
         if (model == null) return false;
-        return model.removeObserver(this);
+        model.removeObserver(this);
+        return true;
     }
 
     // FIXME: Why is this called getModel instead of getMapHex?
@@ -906,9 +907,9 @@ public class GUIHex implements Observer {
             // The below code so far only deals with tile lay undo/redo.
             // Tokens still to do
             String[] elements = notification.split("/");
-            currentTileId = Integer.parseInt(elements[0]);
+            currentTiled = Integer.parseInt(elements[0]);
             currentTileOrientation = Integer.parseInt(elements[1]);
-            currentGUITile = new GUITile(currentTileId, this);
+            currentGUITile = new GUITile(currentTiled, this);
             currentGUITile.setRotation(currentTileOrientation);
             currentTile = currentGUITile.getTile();
 
@@ -917,7 +918,7 @@ public class GUIHex implements Observer {
             provisionalGUITile = null;
 
             //log.debug("GUIHex " + model.getName() + " updated: new tile "
-            //          + currentTileId + "/" + currentTileOrientation);
+            //          + currentTiled + "/" + currentTileOrientation);
 
             //if (GameUIManager.instance != null && GameUIManager.instance.orWindow != null) {
             //	GameUIManager.instance.orWindow.updateStatus();
@@ -928,9 +929,15 @@ public class GUIHex implements Observer {
         return getName() + " (" + currentTile.getId() + ")";
     }
 
+    // FIMXE: Add the code here
     public void update() {
         // TODO Auto-generated method stub
         
+    }
+
+    public Observable getObservable() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 

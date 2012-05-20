@@ -32,7 +32,7 @@ import rails.game.MapHex;
 import rails.game.MapManager;
 import rails.game.PublicCompany;
 import rails.game.Station;
-import rails.game.TileI;
+import rails.game.Tile;
 import rails.game.Token;
 import rails.game.Track;
 import rails.game.state.Owner;
@@ -64,7 +64,7 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
         
         for (MapHex hex:mapManager.getHexesAsList()) {
             // get Tile
-            TileI tile = hex.getCurrentTile();
+            Tile tile = hex.getCurrentTile();
             
             // then get stations
             List<Station> stations = tile.getStations(); 
@@ -89,7 +89,7 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
         // loop over all maps and add tracks
         for (MapHex hex:mapManager.getHexesAsList()) {
             // get Tile
-            TileI tile = hex.getCurrentTile();
+            Tile tile = hex.getCurrentTile();
             // get Tracks
             List<Track> tracks = tile.getTracks();
 
@@ -178,6 +178,7 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
     public NetworkVertex getVertex(Token token) {
         if (!(token instanceof BaseToken)) return null;
         Owner owner = token.getOwner();
+        // TODO: Check if this still works
         if (!(owner instanceof Stop)) return null;
         Stop city = (Stop)owner;
         MapHex hex = city.getHolder();

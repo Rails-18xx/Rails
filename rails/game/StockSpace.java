@@ -17,41 +17,40 @@ public class StockSpace extends Model {
 
     /*--- Class attributes ---*/
     /*--- Constants ---*/
-    /** The name of the XML tag used to configure a stock space. */
+    /** The getId() of the XML tag used to configure a stock space. */
     public static final String ELEMENT_ID = "StockSpace";
 
     /**
-     * The name of the XML attribute for the stock price's name (like "A1" -
+     * The getId() of the XML attribute for the stock price's getId() (like "A1" -
      * naming is like spreadsheet cells.
      */
-    public static final String NAME_TAG = "name";
+    public static final String NAME_TAG = "getId()";
 
-    /** The name of the XML attribute for the stock price. */
+    /** The getId() of the XML attribute for the stock price. */
     public static final String PRICE_TAG = "price";
 
-    /** The name of the XML attribute for the stock price type (optional). */
+    /** The getId() of the XML attribute for the stock price type (optional). */
     public static final String TYPE_TAG = "type";
 
     /**
-     * The name of the XML tag for the "startSpace" property. (indicating an
+     * The getId() of the XML tag for the "startSpace" property. (indicating an
      * allowed PAR price)
      */
     public static final String START_SPACE_TAG = "StartSpace";
 
-    /** The name of the XML tag for the "below ledge" property. */
+    /** The getId() of the XML tag for the "below ledge" property. */
     public static final String BELOW_LEDGE_TAG = "BelowLedge";
 
-    /** The name of the XML tag for the "left of ledge" property. */
+    /** The getId() of the XML tag for the "left of ledge" property. */
     public static final String LEFT_OF_LEDGE_TAG = "LeftOfLedge";
 
-    /** The name of the XML tag for the "closes company" property. */
+    /** The getId() of the XML tag for the "closes company" property. */
     public static final String CLOSES_COMPANY_TAG = "ClosesCompany";
 
-    /** The name of the XML tag for the "gamn over" property. */
+    /** The getId() of the XML tag for the "gamn over" property. */
     public static final String GAME_OVER_TAG = "GameOver";
 
     /*--- Instance attributes ---*/
-    protected String name;
     protected int row;
     protected int column;
     protected int price;
@@ -65,27 +64,25 @@ public class StockSpace extends Model {
     
     
     /*--- State fields */
-    protected final ArrayListState<PublicCompany> tokens = ArrayListState.create("tokens");
-    protected final ArrayListState<PublicCompany> fixedStartPrices = ArrayListState.create("fixedStartPrices");
+    protected final ArrayListState<PublicCompany> tokens = ArrayListState.create();
+    protected final ArrayListState<PublicCompany> fixedStartPrices = ArrayListState.create();
 
     protected static Logger log =
             Logger.getLogger(StockSpace.class.getPackage().getName());
 
     /*--- Contructors ---*/
-    private StockSpace(String id, int price, StockSpaceType type) {
-        super(id);
-        this.name = id;
+    private StockSpace(int price, StockSpaceType type) {
         this.price = price;
         this.type = type;
-        this.row = Integer.parseInt(id.substring(1)) - 1;
-        this.column = (id.toUpperCase().charAt(0) - '@') - 1;
     }
 
     /**
-     * Factory method for initialized StockSpace
+     * @return fully initialized StockSpace
      */
     public static StockSpace create(Item parent, String id, int price, StockSpaceType type) {
-        return new StockSpace(id, price, type).init(parent);
+        StockSpace space = new StockSpace(price, type);
+        space.init(parent, id);
+        return space;
     }
     
     /**
@@ -94,13 +91,14 @@ public class StockSpace extends Model {
     public static StockSpace create (Item parent, String id, int price) {
         return create(parent, id, price, null);
     }
-    
+
     @Override
-    public StockSpace init(Item parent){
-        super.init(parent);
-        tokens.init(this);
-        fixedStartPrices.init(this);
-        return this;
+    public void init(Item parent, String id){
+        super.init(parent, id);
+        tokens.init(this, "tokens");
+        fixedStartPrices.init(this, "fixedStartPrices");
+        this.row = Integer.parseInt(id.substring(1)) - 1;
+        this.column = (id.toUpperCase().charAt(0) - '@') - 1;
     }
     
 
@@ -115,13 +113,13 @@ public class StockSpace extends Model {
      * @param company The company object to add.
      */
     public boolean addToken(PublicCompany company) {
-        log.debug(company.getId() + " price token added to " + name);
+        log.debug(company.getId() + " price token added to " + getId());
         tokens.add(company);
         return true;
     }
 
     public boolean addTokenAtStackPosition(PublicCompany company, int stackPosition) {
-        log.debug(company.getId() + " price token added to " + name + "  at stack position "+stackPosition);
+        log.debug(company.getId() + " price token added to " + getId() + "  at stack position "+stackPosition);
         tokens.add(stackPosition, company);
         return true;
     }
@@ -133,7 +131,7 @@ public class StockSpace extends Model {
      * @return False if the token was not found.
      */
     public boolean removeToken(PublicCompany company) {
-        log.debug(company.getId() + " price token removed from " + name);
+        log.debug(company.getId() + " price token removed from " + getId());
         return tokens.remove(company);
     }
 
@@ -205,13 +203,6 @@ public class StockSpace extends Model {
      */
     public int getColumn() {
         return column;
-    }
-
-    /**
-     * @return
-     */
-    public String getName() {
-        return name;
     }
 
     /**

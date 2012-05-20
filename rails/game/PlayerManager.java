@@ -25,9 +25,7 @@ public class PlayerManager extends AbstractItem implements ConfigurableComponent
     private int[] playerCertificateLimits = new int[Player.MAX_PLAYERS];
 
     // Uses className as id
-    public PlayerManager() {
-        super(PlayerManager.class.getSimpleName());
-    }
+    public PlayerManager() { }
 
     public void configureFromXML(Tag tag) throws ConfigurationException {
 
@@ -63,7 +61,8 @@ public class PlayerManager extends AbstractItem implements ConfigurableComponent
         int playerIndex = 0;
         int startCash = getStartCash();
         for (String playerName : playerNames) {
-            player = new Player(this, playerName, playerIndex++);
+            player = new Player( playerIndex++);
+            player.init(this, playerName);
             players.add(player);
             playerMap.put(playerName, player);
             MoneyModel.cashMove(bank, player, startCash);
@@ -73,7 +72,7 @@ public class PlayerManager extends AbstractItem implements ConfigurableComponent
         }
         ReportBuffer.add(LocalText.getText("PlayerCash", Bank.format(startCash)));
         ReportBuffer.add(LocalText.getText("BankHas",
-                Bank.format(bank.getCash().value())));
+                Bank.format(bank.getCash())));
     }
 
     /**

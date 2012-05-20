@@ -1,17 +1,14 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_1856/GameManager_1856.java,v 1.2 2009/09/02 21:47:47 evos Exp $ */
 package rails.game.specific._1856;
 
-import rails.game.*;
-import rails.game.state.Context;
+import rails.game.GameManager;
+import rails.game.Player;
+import rails.game.Round;
+
 
 public class GameManager_1856 extends GameManager {
 
     private Player playerToStartCGRFRound = null;
 
-    public GameManager_1856(Context context) {
-        super(context);
-    }
-    
     public void startCGRFormationRound(OperatingRound_1856 or,
             Player playerToStartCGRFRound) {
 
@@ -25,7 +22,7 @@ public class GameManager_1856 extends GameManager {
     }
 
     @Override
-    public void nextRound(RoundI round) {
+    public void nextRound(Round round) {
         if (round instanceof CGRFormationRound) {
             setRound(interruptedRound);
             ((OperatingRound_1856)interruptedRound).resume(((CGRFormationRound)round).getMergingCompanies());

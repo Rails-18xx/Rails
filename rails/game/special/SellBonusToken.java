@@ -8,6 +8,7 @@ import rails.game.GameManager;
 import rails.game.MapHex;
 import rails.game.state.GenericState;
 import rails.game.state.IntegerState;
+import rails.game.state.Item;
 import rails.game.state.Owner;
 import rails.util.Util;
 
@@ -15,12 +16,12 @@ public class SellBonusToken extends SpecialProperty {
 
     private String locationCodes = null;
     private List<MapHex> locations = null;
-    private GenericState<Owner> seller = null;
+    private final GenericState<Owner> seller = GenericState.create();
     private String name;
     private int price;
     private int value;
     private int maxNumberToSell;
-    private IntegerState numberSold;
+    private final IntegerState numberSold = IntegerState.create();
 
     @Override
     public void configureFromXML(Tag tag) throws ConfigurationException {
@@ -47,9 +48,13 @@ public class SellBonusToken extends SpecialProperty {
 
         maxNumberToSell = sellBonusTokenTag.getAttributeAsInteger("amount", 1);
 
-        seller = GenericState.create(this, "SellerOf_"+name+"_Bonus");
-        
-        numberSold = IntegerState.create(this, "Bonus_"+name+"_sold", 0);
+    }
+    
+    @Override
+    public void init(Item parent, String id){
+        super.init(parent, id);
+        seller.init(this, "SellerOf_"+name+"_Bonus");
+        numberSold.init(this, "Bonus_"+name+"_sold");
     }
 
     @Override
@@ -57,11 +62,9 @@ public class SellBonusToken extends SpecialProperty {
     throws ConfigurationException {
         
         locations = gameManager.getMapManager().parseLocations(locationCodes);
-        
-        
     }
 
-     @Override
+    @Override
     public void setExercised () {
         numberSold.add(1);
     }
@@ -72,7 +75,7 @@ public class SellBonusToken extends SpecialProperty {
     
     @Override
     public boolean isExercised () {
-        return maxNumberToSell >= 0 && numberSold.intValue() >= maxNumberToSell;
+        return maxNumberToSell >= 0 && numberSold.value() >= maxNumberToSell;
     }
     
     public boolean isExecutionable() {
@@ -111,7 +114,7 @@ public class SellBonusToken extends SpecialProperty {
     public String toString() {
         return "SellBonusToken comp=" + originalCompany.getId() + " hex="
                + locationCodes + " value=" + value + " price=" + price
-               + " max="+maxNumberToSell+" sold="+numberSold.intValue();
+               + " max="+maxNumberToSell+" sold="+numberSold.value();
     }
 
 }

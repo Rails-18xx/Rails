@@ -1,6 +1,8 @@
 package rails.game;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import rails.common.DisplayBuffer;
 import rails.common.GuiDef;
@@ -10,17 +12,18 @@ import rails.game.action.PossibleAction;
 import rails.game.action.SellShares;
 import rails.game.model.PortfolioModel;
 import rails.game.state.IntegerState;
+import rails.game.state.Item;
 
 /**
  * @author Erik Vos
  */
 public class ShareSellingRound extends StockRound {
 
-    RoundI parentRound;
-    Player sellingPlayer;
-    IntegerState cashToRaise;
-    PublicCompany cashNeedingCompany;
-    boolean dumpOtherCompaniesAllowed;
+    protected Round parentRound;
+    protected Player sellingPlayer;
+    private IntegerState cashToRaise = null; // intialized later
+    private PublicCompany cashNeedingCompany;
+    private boolean dumpOtherCompaniesAllowed;
 
     private List<SellShares> sellableShares;
 
@@ -35,7 +38,7 @@ public class ShareSellingRound extends StockRound {
      *
      */
     public ShareSellingRound(GameManager gameManager,
-            RoundI parentRound) {
+            Round parentRound) {
 
         super (gameManager);
         this.parentRound = parentRound;
@@ -43,6 +46,11 @@ public class ShareSellingRound extends StockRound {
         guiHints.setActivePanel(GuiDef.Panel.STATUS);
     }
 
+    @Override
+    public void init(Item parent, String id) {
+        super.init(parent, id);
+    }
+    
     public void start(Player sellingPlayer, int cashToRaise,
             PublicCompany cashNeedingCompany, boolean dumpOtherCompaniesAllowed) {
         log.info("Share selling round started, player="
@@ -52,7 +60,9 @@ public class ShareSellingRound extends StockRound {
                 Bank.format(cashToRaise)));
         currentPlayer = this.sellingPlayer = sellingPlayer;
         this.cashNeedingCompany = cashNeedingCompany;
-        this.cashToRaise = IntegerState.create(this, "CashToRaise", cashToRaise);
+        this.cashToRaise = IntegerState.create(cashToRaise);
+        this.cashToRaise.init(this, "CashToRaise");
+        
         this.dumpOtherCompaniesAllowed = dumpOtherCompaniesAllowed;
         log.debug("Forced selling, dumpOtherCompaniesAllowed = " + dumpOtherCompaniesAllowed);
         setCurrentPlayerIndex(sellingPlayer.getIndex());
@@ -96,7 +106,6 @@ public class ShareSellingRound extends StockRound {
 
         sellableShares = new ArrayList<SellShares> ();
 
-        String compName;
         int price;
         int number;
         int share, maxShareToSell;
@@ -217,7 +226,7 @@ public class ShareSellingRound extends StockRound {
 
                 // May not sell more than is needed to buy the train
                 while (number > 0
-                       && ((number - 1) * price) > cashToRaise.intValue())
+                       && ((number - 1) * price) > cashToRaise.value())
                     number--;
 
                 if (number > 0) {
@@ -389,11 +398,11 @@ public class ShareSellingRound extends StockRound {
 
         cashToRaise.add(-numberSold * price);
 
-        if (cashToRaise.intValue() <= 0) {
+        if (cashToRaise.value() <= 0) {
             gameManager.finishShareSellingRound();
         } else if (getSellableShares().isEmpty()) {
             DisplayBuffer.add(LocalText.getText("YouMustRaiseCashButCannot",
-                    Bank.format(cashToRaise.intValue())));
+                    Bank.format(cashToRaise.value())));
             currentPlayer.setBankrupt();
             gameManager.registerBankruptcy();
         }
@@ -402,7 +411,7 @@ public class ShareSellingRound extends StockRound {
     }
 
     public int getRemainingCashToRaise() {
-        return cashToRaise.intValue();
+        return cashToRaise.value();
     }
 
     public PublicCompany getCompanyNeedingCash() {

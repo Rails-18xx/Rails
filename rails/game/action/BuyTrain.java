@@ -16,10 +16,10 @@ import rails.game.GameManager;
 import rails.game.Train;
 import rails.game.TrainManager;
 import rails.game.TrainType;
-import rails.game.model.PortfolioModel;
 import rails.game.special.SpecialProperty;
 import rails.game.special.SpecialTrainBuy;
 import rails.game.state.Owner;
+import rails.game.state.PortfolioHolder;
 import rails.game.state.Portfolio;
 import rails.util.Util;
 
@@ -31,7 +31,7 @@ public class BuyTrain extends PossibleORAction {
     // Initial settings
     transient private Train train;
     private String trainUniqueId;
-    transient private PortfolioModel from;
+    transient private Owner from;
     private String fromName;
     private int fixedCost = 0;
     private boolean forcedBuyIfNoRoute = false; // TODO Can be disabled once route checking exists
@@ -63,20 +63,18 @@ public class BuyTrain extends PossibleORAction {
 
     public static final long serialVersionUID = 2L;
 
-    public BuyTrain(Train train, PortfolioModel from, int fixedCost) {
+    public BuyTrain(Train train, Owner from, int fixedCost) {
 
         this (train, train.getType(), from, fixedCost);
     }
     /**
-    * TODO: Check if from works as before (has to have the same fromName
-    * this was identified by from.getId()
-    * it is replaced that by from.getParent().getId()
+    * TODO: Check if from works as before
     */
-    public BuyTrain(Train train, TrainType type, PortfolioModel from, int fixedCost) {
+    public BuyTrain(Train train, TrainType type, Owner from, int fixedCost) {
         this.train = train;
         this.trainUniqueId = train.getId();
         this.from = from;
-        this.fromName = from.getParent().getId();
+        this.fromName = from.getId();
         this.fixedCost = fixedCost;
         this.type = type;
         this.typeName = type.getName();
@@ -156,7 +154,7 @@ public class BuyTrain extends PossibleORAction {
         return type;
     }
 
-    public PortfolioModel getFromPortfolio() {
+    public Owner getFromOwner() {
         return from;
     }
 
@@ -194,7 +192,7 @@ public class BuyTrain extends PossibleORAction {
         return getTrain().getPortfolio();
     }
 
-    public Owner getOwner() {
+    public PortfolioHolder getOwner() {
         return getTrain().getPortfolio().getParent();
     }
 
@@ -311,9 +309,6 @@ public class BuyTrain extends PossibleORAction {
         train = trainManager.getTrainByUniqueId(trainUniqueId);
         // Note: the 2nd etc. copy of an unlimited quantity train will become null this way.
         // Set getTrain() for how this is fixed.
-        if (train == null) {
-            int i = 1;
-        }
         if (typeName == null) {
             if (train == null) {
                 // Kludge to cover not yet cloned unlimited trains
@@ -327,7 +322,8 @@ public class BuyTrain extends PossibleORAction {
             type = trainManager.getTypeByName(typeName);
         }
 
-        from = gameManager.getPortfolioByName(fromName);
+        // FIXME: This has to be replaced by a new mechanism
+        // from = gameManager.getPortfolioByName(fromName);
         if (trainsForExchangeUniqueIds != null
             && trainsForExchangeUniqueIds.length > 0) {
             trainsForExchange = new ArrayList<Train>();

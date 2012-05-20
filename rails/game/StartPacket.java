@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
+import rails.game.state.AbstractItem;
 import rails.util.Util;
 
 /**
@@ -15,7 +16,7 @@ import rails.util.Util;
  * must be completely sold out before normal share buying can start (but there
  * are exceptions to this rule).
  */
-public class StartPacket {
+public class StartPacket extends AbstractItem {
 
     /**
      * A Map holding all start packets of a rails.game (yes, there can be more
@@ -92,8 +93,7 @@ public class StartPacket {
                     Util.hasValue(itemTag.getAttributeAsString("president", ""));
 
             int basePrice = itemTag.getAttributeAsInteger("basePrice", 0);
-            StartItem item =
-                    (new StartItem(itemName, itemType, basePrice, index++, president));
+            StartItem item = StartItem.create(this, itemName, itemType, basePrice, index++, president);
             items.add(item);
 
             // Optional attributes

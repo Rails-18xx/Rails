@@ -4,10 +4,11 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
-import rails.game.model.MoneyModel;
+import rails.game.model.CashMoneyModel;
 import rails.game.model.PortfolioModel;
 import rails.game.state.AbstractItem;
 import rails.game.state.IntegerState;
+import rails.game.state.Item;
 import rails.game.state.Model;
 
 /**
@@ -23,17 +24,17 @@ public class StartItem extends AbstractItem {
     protected String name = null;
     protected Certificate primary = null;
     protected Certificate secondary = null;
-    protected MoneyModel basePrice;
+    protected final CashMoneyModel basePrice = CashMoneyModel.create();
     protected int row = 0;
     protected int column = 0;
     protected int index;
 
     // Bids
-    protected IntegerState lastBidderIndex;
+    protected final IntegerState lastBidderIndex = IntegerState.create(-1);
     protected List<Player> players;
     protected int numberOfPlayers;
-    protected MoneyModel[] bids;
-    protected MoneyModel minimumBid;
+    protected CashMoneyModel[] bids;
+    protected final CashMoneyModel minimumBid = CashMoneyModel.create();
 
     // Status info for the UI ==> MOVED TO BuyOrBidStartItem
     // TODO REDUNDANT??
@@ -42,7 +43,7 @@ public class StartItem extends AbstractItem {
      * current player has the amount of (unblocked) cash to buy it or to bid on
      * it.
      */
-    protected IntegerState status;
+    protected final IntegerState status = IntegerState.create();
 
     public static final int UNAVAILABLE = 0;
     public static final int BIDDABLE = 1;
@@ -82,31 +83,47 @@ public class StartItem extends AbstractItem {
      * certificate. The parameters are only stored, real initialisation is done
      * by the init() method.
      *
-     * @param name The Company name of the primary certificate. This name will
-     * also become the name of the start item itself.
-     * @param type The CompanyType name of the primary certificate.
-     * @param basePrice The start item base selling price, i.e. the price for
-     * which the item can be bought or where bidding starts.
-     * @param president True if the primary certificate is the president's
-     * share.
      */
-    public StartItem(String name, String type, int basePrice, int index, boolean president) {
+    private StartItem(String name, String type, int index, boolean president) {
         this.name = name;
         this.type = type;
-        this.basePrice = MoneyModel.create(this, "basePrice");
-        this.basePrice.set(basePrice);
         this.index = index;
         this.president = president;
-        status = IntegerState.create(this, "status");
-        minimumBid = MoneyModel.create(this, "minimumBid");
-        minimumBid.setSuppressZero(true);
-        lastBidderIndex = IntegerState.create(this, "highestBidder", -1);
 
         if (startItemMap == null)
             startItemMap = new HashMap<String, StartItem>();
         startItemMap.put(name, this);
     }
 
+    /** 
+     * @param name The Company name of the primary certificate. This name will
+     * also become the name of the start item itself.
+     * @param type The CompanyType name of the primary certificate.
+     * @param president True if the primary certificate is the president's
+     * share.
+     * @return a fully intialized StartItem 
+     */
+    public static StartItem create(Item parent, String name, String type, int price, int index, boolean president){
+        StartItem item = new StartItem(name, type, index, president);
+        item.init(parent, name);
+        item.initBasePrice(price);
+        return item;
+    }
+    
+    public void init(Item parent, String id) {
+        super.init(parent, id);
+        
+        basePrice.init(this, "basePrice");
+        status.init(this, "status");
+        minimumBid.init(this, "minimumBid");
+        minimumBid.setSuppressZero(true);
+        lastBidderIndex.init(this, "highestBidder");
+    }
+    
+    private void initBasePrice(int basePrice) {
+        this.basePrice.set(basePrice);
+    }
+    
     /**
      * Add a secondary certificate, that "comes with" the primary certificate.
      *
@@ -129,16 +146,16 @@ public class StartItem extends AbstractItem {
 
         this.players = gameManager.getPlayers();
         numberOfPlayers = players.size();
-        bids = new MoneyModel[numberOfPlayers];
+        bids = new CashMoneyModel[numberOfPlayers];
         for (int i = 0; i < numberOfPlayers; i++) {
-            bids[i] =
-                    MoneyModel.create(this, "bidBy_" + players.get(i).getId());
+            bids[i] = CashMoneyModel.create();
+            bids[i].init(this, "bidBy_" + players.get(i).getId());
             bids[i].setSuppressZero(true);
 
         }
         // TODO Leave this for now, but it should be done
         // in the game-specific StartRound class
-        minimumBid.set(basePrice.intValue() + 5);
+        minimumBid.set(basePrice.value() + 5);
 
         PortfolioModel ipo = gameManager.getBank().getIpo();
         PortfolioModel unavailable = gameManager.getBank().getUnavailable();
@@ -152,10 +169,10 @@ public class StartItem extends AbstractItem {
             primary = ipo.findCertificate((PublicCompany) company, president);
             // Move the certificate to the "unavailable" pool.
             PublicCertificate pubcert = (PublicCertificate) primary;
-
-            if (pubcert.getPortfolio() == null
-                || pubcert.getPortfolio() != unavailable)
-                pubcert.moveTo(unavailable);
+            if (pubcert.getPortfolio().getOwner()== null
+                || pubcert.getPortfolio().getParent() != unavailable) {
+                unavailable.getCertificatesModel().getPortfolio().moveInto(pubcert);
+            }
         }
 
         // Check if there is another certificate
@@ -169,9 +186,11 @@ public class StartItem extends AbstractItem {
                         ipo.findCertificate((PublicCompany) company2,
                                 president2);
                 // Move the certificate to the "unavailable" pool.
+                // FIXME: This is still an issue to resolve 
                 PublicCertificate pubcert2 = (PublicCertificate) secondary;
-                if (pubcert2.getPortfolio() != unavailable)
-                    pubcert2.moveTo(unavailable);
+                if (pubcert2.getPortfolio().getParent() != unavailable) {
+                    unavailable.getCertificatesModel().getPortfolio().moveInto(pubcert2);
+                }
             }
         }
 
@@ -254,7 +273,7 @@ public class StartItem extends AbstractItem {
      * @return The base price.
      */
     public int getBasePrice() {
-        return basePrice.intValue();
+        return basePrice.value();
     }
 
     public void reduceBasePriceBy(int amount) {
@@ -305,11 +324,11 @@ public class StartItem extends AbstractItem {
      * @return The bid amount (0 if there have been no bids yet).
      */
     public int getBid() {
-        int index = lastBidderIndex.intValue();
+        int index = lastBidderIndex.value();
         if (index < 0) {
             return 0;
         } else {
-            return bids[index].intValue();
+            return bids[index].value();
         }
     }
 
@@ -321,7 +340,7 @@ public class StartItem extends AbstractItem {
      */
     public int getBid(Player player) {
         int index = player.getIndex();
-        return bids[index].intValue();
+        return bids[index].value();
     }
 
     /**
@@ -333,7 +352,7 @@ public class StartItem extends AbstractItem {
     public int getBidders() {
         int bidders = 0;
         for (int i = 0; i < numberOfPlayers; i++) {
-            if (bids[i].intValue() > 0) bidders++;
+            if (bids[i].value() > 0) bidders++;
         }
         return bidders;
     }
@@ -344,11 +363,11 @@ public class StartItem extends AbstractItem {
      * @return The player object that did the highest bid.
      */
     public Player getBidder() {
-        int index = lastBidderIndex.intValue();
+        int index = lastBidderIndex.value();
         if (index < 0) {
             return null;
         } else {
-            return players.get(lastBidderIndex.intValue());
+            return players.get(lastBidderIndex.value());
         }
     }
 
@@ -358,7 +377,7 @@ public class StartItem extends AbstractItem {
      * @return Minimum bid
      */
     public int getMinimumBid() {
-        return minimumBid.intValue();
+        return minimumBid.value();
     }
 
     public void setMinimumBid(int value) {
@@ -373,7 +392,7 @@ public class StartItem extends AbstractItem {
      */
     public boolean hasBid(Player player) {
         int index = player.getIndex();
-        return bids[index].intValue() > 0;
+        return bids[index].value() > 0;
     }
 
     /**
@@ -382,7 +401,7 @@ public class StartItem extends AbstractItem {
      * @return True if this item has been sold.
      */
     public boolean isSold() {
-        return status.intValue() == SOLD;
+        return status.value() == SOLD;
     }
 
     /**
@@ -399,8 +418,8 @@ public class StartItem extends AbstractItem {
         // For display purposes, set all lower bids to zero
         for (int i = 0; i < numberOfPlayers; i++) {
             // Unblock any bid money
-            if (bids[i].intValue() > 0) {
-                players.get(i).unblockCash(bids[i].intValue());
+            if (bids[i].value() > 0) {
+                players.get(i).unblockCash(bids[i].value());
                 if (index != i) bids[i].set(0);
             }
         }
@@ -455,7 +474,7 @@ public class StartItem extends AbstractItem {
     }
 
     public int getStatus() {
-        return status.intValue();
+        return status.value();
     }
 
     public IntegerState getStatusModel () {
@@ -463,7 +482,7 @@ public class StartItem extends AbstractItem {
     }
 
     public String getStatusName() {
-        return statusName[status.intValue()];
+        return statusName[status.value()];
     }
 
     public void setStatus(int status) {
@@ -499,7 +518,7 @@ public class StartItem extends AbstractItem {
 
     @Override
     public String toString() {
-        return ("StartItem "+name+" status="+statusName[status.intValue()]);
+        return ("StartItem "+name+" status="+statusName[status.value()]);
     }
 
     public String getText () {

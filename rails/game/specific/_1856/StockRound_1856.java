@@ -2,31 +2,36 @@ package rails.game.specific._1856;
 
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
-import rails.game.*;
+import rails.game.Bank;
+import rails.game.GameManager;
+import rails.game.Player;
+import rails.game.PublicCertificate;
+import rails.game.PublicCompany;
+import rails.game.ReportBuffer;
+import rails.game.StockRound;
 import rails.game.action.BuyCertificate;
 import rails.game.model.CashOwner;
 import rails.game.model.PortfolioModel;
 import rails.game.state.IntegerState;
-import rails.game.state.Owner;
+import rails.game.state.Item;
+import rails.game.state.PortfolioHolder;
 
 public class StockRound_1856 extends StockRound {
 
     /* Cope with multiple 5% share sales in one turn */
-    private IntegerState sharesSoldSoFar;
-    private IntegerState squaresDownSoFar;
+    private final IntegerState sharesSoldSoFar = IntegerState.create();
+    private final IntegerState squaresDownSoFar = IntegerState.create();
 
-    /**
-     * Constructor with the GameManager, will call super class (StockRound's) Constructor to initialize
-     *
-     * @param aGameManager The GameManager Object needed to initialize the Stock Round
-     *
-     */
     public StockRound_1856 (GameManager aGameManager) {
         super (aGameManager);
+    }
 
-        sharesSoldSoFar = IntegerState.create(this, "CGR_SharesSoldSoFar", 0);
-        squaresDownSoFar = IntegerState.create(this, "CGR_SquaresDownSoFar", 0);
-}
+    @Override
+    public void init(Item parent, String id){
+        super.init(parent, id);
+        sharesSoldSoFar.init(this, "CGR_SharesSoldSoFar");
+        squaresDownSoFar.init(this, "CGR_SquaresDownSoFar");
+    }
 
     /**
      * Special 1856 code to check for company flotation.
@@ -75,8 +80,8 @@ public class StockRound_1856 extends StockRound {
             if (company.getShareUnit() == 5) {
                 // Take care for selling 5% shares in multiple blocks per turn
                 numberOfSpaces
-                    = (sharesSoldSoFar.intValue() + numberSold)/2
-                    - squaresDownSoFar.intValue();
+                    = (sharesSoldSoFar.value() + numberSold)/2
+                    - squaresDownSoFar.value();
                 sharesSoldSoFar.add(numberSold);
                 squaresDownSoFar.add(numberOfSpaces);
             }
@@ -86,7 +91,7 @@ public class StockRound_1856 extends StockRound {
     }
 
     @Override
-    protected CashOwner getSharePriceRecipient(PublicCompany company, Owner from, int price) {
+    protected CashOwner getSharePriceRecipient(PublicCompany company, PortfolioHolder from, int price) {
 
         CashOwner recipient;
 

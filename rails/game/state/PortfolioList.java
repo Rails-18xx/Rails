@@ -6,13 +6,13 @@ import java.util.Iterator;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
-public final class PortfolioList<T extends OwnableItem<T>> extends Portfolio<T> {
+public final class PortfolioList<T extends Ownable<T>> extends Portfolio<T> {
 
     private ArrayList<T> portfolio = Lists.newArrayList();
     
     private PortfolioList() {};
     
-    public static <T extends OwnableItem<T>> PortfolioList<T> create() {
+    public static <T extends Ownable<T>> PortfolioList<T> create() {
         return new PortfolioList<T>();
     }
 

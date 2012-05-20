@@ -1,7 +1,11 @@
 package rails.game.model;
 
-public interface CashOwner {
+import rails.game.state.Item;
 
-    public CashMoneyModel getCash();
+public interface CashOwner extends Item {
+
+    public int getCash();
+    
+    public CashMoneyModel getCashModel();
     
 }

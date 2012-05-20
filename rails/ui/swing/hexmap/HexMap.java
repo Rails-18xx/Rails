@@ -46,6 +46,9 @@ import rails.util.Util;
 public abstract class HexMap extends JComponent implements MouseListener,
         MouseMotionListener {
 
+    // TODO: Is this still compatible
+    private static final long serialVersionUID = 1L;
+
     protected static Logger log =
             Logger.getLogger(HexMap.class.getPackage().getName());
 
@@ -191,7 +194,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
                             calcYCoordinates(mh.getRow(), tileYOffset),
                             scale, i-minX+1, j-minY+1);
                     hex.setHexModel(mh);
-                    hex.originalTileId = hex.currentTileId;
+                    hex.originalTiled = hex.currentTiled;
                     hexesByName.put(mh.getId(), hex);
                     h[i][j] = hex;
                     hexes.add(hex);

@@ -120,8 +120,9 @@ public class MapManager extends AbstractItem implements ConfigurableComponentI {
         maxX = maxY = maxCol = maxRow = Integer.MIN_VALUE;
         possibleTileCosts = new TreeSet<Integer>();
         for (Tag hexTag : hexTags) {
-            hex = new MapHex(this);
+            hex = new MapHex();
             hex.configureFromXML(hexTag);
+            hex.init(this, hex.getName());
             mHexes.put(hex.getId(), hex);
             minX = Math.min(minX, hex.getX());
             minY = Math.min(minY, hex.getY());

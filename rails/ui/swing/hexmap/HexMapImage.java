@@ -1,7 +1,5 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/HexMapImage2/HexMapImage2.java,v 1.27 2010/06/24 21:48:08 stefanfrey Exp $*/
 package rails.ui.swing.hexmap;
 
-import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.io.File;
@@ -22,6 +20,9 @@ import rails.util.Util;
  * it to be displayed in a lower layer of a LayeredPane.
  */
 public class HexMapImage extends JSVGCanvas  {
+
+    // TODO: Is this still compatible
+    private static final long serialVersionUID = 1L;
 
     protected static Logger log =
             Logger.getLogger(HexMapImage.class.getPackage().getName());
@@ -141,8 +142,9 @@ public class HexMapImage extends JSVGCanvas  {
         return zoomStep;
     }
 
+    // TODO: Has no function at all
 	public void mouseClicked(MouseEvent arg0) {
-        Point point = arg0.getPoint();
+//        Point point = arg0.getPoint();
         //GUIHex clickedHex = getHexContainingPoint(point);
 
         //orUIManager.hexClicked(clickedHex, selectedHex);
@@ -155,13 +157,9 @@ public class HexMapImage extends JSVGCanvas  {
      */
     public void mouseDragged(MouseEvent arg0) {}
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
-     */
+    // TODO: Has no function at all
     public void mouseMoved(MouseEvent arg0) {
-        Point point = arg0.getPoint();
+//        Point point = arg0.getPoint();
         //GUIHex hex = getHexContainingPoint(point);
         //setToolTipText(hex != null ? hex.getToolTip() : "");
     }

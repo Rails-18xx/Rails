@@ -37,7 +37,7 @@ public final class IntegerState extends State {
         return newValue;
     }
 
-    public int intValue() {
+    public int value() {
         return value;
     }
 

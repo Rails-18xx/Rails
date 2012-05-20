@@ -11,23 +11,22 @@ import rails.common.parser.ConfigurationException;
 import rails.game.GameManager;
 import rails.game.PublicCompany;
 import rails.game.state.BooleanState;
+import rails.game.state.Item;
 
 public class PublicCompany_18TN extends PublicCompany implements RevenueStaticModifier {
 
-    private BooleanState civilWar;
+    private final BooleanState civilWar = BooleanState.create();
 
-    public BooleanState getCivilWar() {
-        return civilWar;
+    @Override
+    public void init(Item parent, String id){
+        super.init(parent, id);
+        civilWar.init(this, id + "_CivilWar");
     }
-
+    
     @Override
     public void finishConfiguration(GameManager gameManager)
     throws ConfigurationException {
-        
         super.finishConfiguration(gameManager);
-
-        civilWar = BooleanState.create(this, name+"_CivilWar", false);
-        
         gameManager.getRevenueManager().addStaticModifier(this);
     }
 

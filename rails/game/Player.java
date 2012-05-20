@@ -13,8 +13,7 @@ import rails.game.state.Item;
 
 public class Player extends AbstractItem implements CashOwner, PortfolioOwner, Comparable<Player> {
 
-    
-    // TODO: Are those still needed
+    // TODO: Are those still needed?
     public static int MAX_PLAYERS = 8;
     public static int MIN_PLAYERS = 2;
     
@@ -24,45 +23,44 @@ public class Player extends AbstractItem implements CashOwner, PortfolioOwner, C
     private int index = 0;
     
     // dynamic data (states and models)
-    private final PortfolioModel portfolio;
-    private final CertificateCountModel certCount;
+    private final PortfolioModel portfolio = PortfolioModel.create();
+    private final CertificateCountModel certCount = CertificateCountModel.create();
 
-    private final CashMoneyModel cash;
-    private final CalculatedMoneyModel freeCash;
-    private final CashMoneyModel blockedCash;
-    private final CalculatedMoneyModel worth;
-    private final CashMoneyModel lastORWorthIncrease;
+    private final CashMoneyModel cash = CashMoneyModel.create();
+    private final CalculatedMoneyModel freeCash = CalculatedMoneyModel.create();
+    private final CashMoneyModel blockedCash = CashMoneyModel.create();
+    private final CalculatedMoneyModel worth = CalculatedMoneyModel.create();
+    private final CashMoneyModel lastORWorthIncrease = CashMoneyModel.create();
 
-    private final BooleanState bankrupt;
-    private final IntegerState worthAtORStart;
+    private final BooleanState bankrupt = BooleanState.create();
+    private final IntegerState worthAtORStart = IntegerState.create();
 
-    // TODO: Move to init model (two stage init)
     // TODO: Write internal methods for the calculation methods
-    public Player(PlayerManager parent, String name, int index) {
-        super(name);
-        init(parent);
-        
-        this.name = name;
+    public Player(int index) {
         this.index = index;
     
-        portfolio = PortfolioModel.create(this);
-        certCount = CertificateCountModel.create(portfolio);
+    }
+    
+    /**
+     *  @param parent restricted to PlayerManager
+     */
+    @Override
+    public void init(Item parent, String id) {
+        super.checkedInit(parent, id, PlayerManager.class);
+        
+        portfolio.init(this, PortfolioModel.id);
+        certCount.init(portfolio, CertificateCountModel.ID);
 
-        cash = MoneyModel.createCash(this, "cash");
-        freeCash = MoneyModel.createCalculated(this, "freeCash");
-        blockedCash = MoneyModel.createCash(this, "blockedCash");
+        cash.init(this, "cash");
+        freeCash.init(this, "freeCash");
+        blockedCash.init(this, "blockedCash");
         blockedCash.setSuppressZero(true);
-        worth = MoneyModel.createCalculated(this, "getWorth");
-        lastORWorthIncrease = MoneyModel.createCash(this, "lastORIncome");
+        worth.init(this, "getWorth");
+        lastORWorthIncrease.init(this, "lastORIncome");
         lastORWorthIncrease.setDisplayNegative(true);
         
-        bankrupt = BooleanState.create(this, "isBankrupt");
-        worthAtORStart = IntegerState.create(this, "worthAtORStart");
-    }
-
-    
-    @Override
-    public Player init(Item parent) {
+        bankrupt.init(this, "isBankrupt");
+        worthAtORStart.init(this, "worthAtORStart");
         // define definitions of freeCash
         freeCash.initMethod(
                 new CalculationMethod(){ 
@@ -103,8 +101,6 @@ public class Player extends AbstractItem implements CashOwner, PortfolioOwner, C
                 });       
         portfolio.addModel(worth);
         cash.addModel(worth);
-        
-        return this;
     }
     
     /**
@@ -140,7 +136,7 @@ public class Player extends AbstractItem implements CashOwner, PortfolioOwner, C
     }
 
     public void setLastORWorthIncrease () {
-        lastORWorthIncrease.set(getWorth() - worthAtORStart.intValue());
+        lastORWorthIncrease.set(getWorth() - worthAtORStart.value());
     }
 
     public int getCashValue() {
@@ -226,8 +222,8 @@ public class Player extends AbstractItem implements CashOwner, PortfolioOwner, C
     }
 
     // CashOwner interface
-    public CashMoneyModel getCash() {
-        return cash;
+    public int getCash() {
+        return cash.value();
     }
 
     // PortfolioOwner interface
@@ -252,6 +248,11 @@ public class Player extends AbstractItem implements CashOwner, PortfolioOwner, C
     @Override
     public String toString() {
         return name;
+    }
+
+    public CashMoneyModel getCashModel() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

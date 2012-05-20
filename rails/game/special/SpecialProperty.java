@@ -6,10 +6,9 @@ import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.*;
-import rails.game.state.AbstractItem;
 import rails.game.state.BooleanState;
 import rails.game.state.OwnableItem;
-import rails.game.state.Owner;
+import rails.game.state.PortfolioHolder;
 import rails.util.*;
 
 public abstract class SpecialProperty extends OwnableItem<SpecialProperty> {
@@ -25,7 +24,7 @@ public abstract class SpecialProperty extends OwnableItem<SpecialProperty> {
 
     
     protected Company originalCompany;
-    protected Owner owner = null;
+    protected PortfolioHolder owner = null;
     protected int closingValue = 0;
     protected BooleanState exercised;
     
@@ -126,24 +125,18 @@ public abstract class SpecialProperty extends OwnableItem<SpecialProperty> {
         return (SpecialProperty)GameManager.getInstance().retrieveObject(STORAGE_NAME, id);
     }
 
+    // FIXME: Due to setCompany this has the side effect that the special property gets executed
+    // this has to be done somewhere
     public void setCompany(Company company) {
-        originalCompany = company;
-        owner = company;
-        exercised =
-                BooleanState.create(this, company.getId() + "_SP_" + uniqueId
-                                 + "_Exercised", false);
+//        originalCompany = company;
+//        owner = company;
+//        exercised =
+//                BooleanState.create(this, company.getId() + "_SP_" + uniqueId
+//                                 + "_Exercised", false);
     }
 
     public Company getOriginalCompany() {
         return originalCompany;
-    }
-
-    public void setOwner(Owner owner) {
-        this.owner = owner;
-    }
-
-    public Owner getOwner() {
-        return owner;
     }
 
     /**
@@ -232,6 +225,9 @@ public abstract class SpecialProperty extends OwnableItem<SpecialProperty> {
     public boolean isExercised() {
         return exercised.booleanValue();
     }
+    
+    public abstract boolean isExecutionable(); 
+    
 
     public int getClosingValue() {
         return closingValue;
@@ -261,9 +257,10 @@ public abstract class SpecialProperty extends OwnableItem<SpecialProperty> {
      * Move the special property to another holder.
      * Only to be used for special properties that have the "transfer" attribute.
      */
-    public void moveTo(Owner newOwner) {
-        if (transferText.equals("")) return;
-        Owners.move(this, newOwner);
+    // FIXME: This is not used anymore, however we have to check for transfer attribute somewhere
+    public void moveTo(PortfolioHolder newOwner) {
+//        if (transferText.equals("")) return;
+//        Owners.move(this, newOwner);
     }
 
     @Override

@@ -55,7 +55,7 @@ public final class CashMoneyModel extends MoneyModel implements CountableItem {
     // MoneyModel abstracts
     @Override
     public int value() {
-        return value.intValue();
+        return value.value();
     }
 
     @Override

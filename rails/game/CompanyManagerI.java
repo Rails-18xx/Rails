@@ -58,7 +58,7 @@ public interface CompanyManagerI extends ConfigurableComponentI {
     public String checkAlias (String alias);
     public String checkAliasInCertId (String certId);
 
-    public List<CompanyTypeI> getCompanyTypes();
+    public List<CompanyType> getCompanyTypes();
 
     public void closeAllPrivates();
 

@@ -630,7 +630,6 @@ public class GameStatus extends GridPanel implements ActionListener {
                     new ArrayList<BuyCertificate>();
                 List<Integer> buyAmounts = new ArrayList<Integer>();
                 BuyCertificate buy;
-                PublicCertificate cert;
                 String companyName = "";
                 String playerName = "";
                 int sharePerCert;
@@ -816,7 +815,6 @@ public class GameStatus extends GridPanel implements ActionListener {
             if (myTurn) {
 
                 PublicCompany company;
-                PortfolioModel holder;
                 int index;
                 Owner owner;
 
@@ -826,11 +824,10 @@ public class GameStatus extends GridPanel implements ActionListener {
                     for (BuyCertificate bCert : buyableCerts) {
                         company = bCert.getCompany();
                         index = company.getPublicNumber();
-                        holder = bCert.getFromPortfolio();
-                        owner = holder.getOwner();
-                        if (holder == ipo) {
+                        owner = bCert.getFromPortfolio().getParent();
+                        if (owner == ipo.getParent()) {
                             setIPOCertButton(index, true, bCert);
-                        } else if (holder == pool) {
+                        } else if (owner == pool.getParent()) {
                             setPoolCertButton(index, true, bCert);
                         } else if (owner instanceof Player) {
                             setPlayerCertButton(index, ((Player)owner).getIndex(), true, bCert);

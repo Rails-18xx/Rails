@@ -25,7 +25,7 @@ public class OperatingRound_18GA extends OperatingRound {
             TrainCertificateType certType = trainManager.getCertTypeByName(OS_EXTRA_TRAIN_TYPE);
             if (!certType.hasRusted()) {  // I.e. before phase "4"
                 Train train = trainManager.cloneTrain(certType);
-                train.moveTo(company);
+                company.getPortfolioModel().addTrain(train);
                 train.setTradeable(false);
                 ReportBuffer.add(LocalText.getText("GetsExtraTrain",
                         company.getId(),

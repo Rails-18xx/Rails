@@ -9,7 +9,7 @@ import rails.game.BaseToken;
 import rails.game.Station;
 import rails.game.MapHex;
 import rails.game.MapManager;
-import rails.game.TileI;
+import rails.game.Tile;
 import rails.game.TileManager;
 import rails.game.action.PossibleAction;
 import rails.util.Util;
@@ -33,7 +33,7 @@ public class MapCorrectionAction extends CorrectionAction {
     private String locationCoordinates;
     
     /** Tiles: which tile(s) to lay */
-    transient private List<TileI> tiles = null;
+    transient private List<Tile> tiles = null;
     private int[] tileIds;
     
     /** Orientation: how to lay the tile */
@@ -41,11 +41,11 @@ public class MapCorrectionAction extends CorrectionAction {
     
     /** RelayBaseTokens: how to relay the base tokens */
     transient private List<BaseToken> tokensToRelay;
-    private String[]tokensToRelayOwner;
+    //private String[]tokensToRelayOwner;
     transient private List<Station> stationsForRelay;
-    private int[] stationForRelayId;
+    //private int[] stationForRelayId;
     transient private List<Station> possibleStations;
-    private int[] possibleStationsId;
+    //private int[] possibleStationsId;
                 
     /**
      * Instantiates a new map tile correction action.
@@ -66,18 +66,18 @@ public class MapCorrectionAction extends CorrectionAction {
         locationCoordinates = location.getId(); 
     }
     
-    public List<TileI> getTiles() {
+    public List<Tile> getTiles() {
         return tiles;
     }
     
-    public TileI getChosenTile() {
+    public Tile getChosenTile() {
         if (nextStep.ordinal() > ActionStep.SELECT_TILE.ordinal())
             return tiles.get(0);
         else
             return null;
     }
     
-    void setTiles(List<TileI> tiles) {
+    void setTiles(List<Tile> tiles) {
         this.tiles = tiles;
         this.tileIds = new int[tiles.size()];
         for (int i = 0; i < tiles.size(); i++)
@@ -142,8 +142,8 @@ public class MapCorrectionAction extends CorrectionAction {
         setNextStep(ActionStep.SELECT_TILE);
     }
     
-    public void selectTile(TileI chosenTile) {
-        List<TileI> tiles = new ArrayList<TileI>();
+    public void selectTile(Tile chosenTile) {
+        List<Tile> tiles = new ArrayList<Tile>();
         tiles.add(chosenTile);
         setTiles(tiles);
         setNextStep(ActionStep.SELECT_ORIENTATION);
@@ -245,7 +245,7 @@ public class MapCorrectionAction extends CorrectionAction {
 
         TileManager tmgr = gameManager.getTileManager();
         if (tileIds != null && tileIds.length > 0) {
-            tiles = new ArrayList<TileI>();
+            tiles = new ArrayList<Tile>();
             for (int i = 0; i < tileIds.length; i++) {
                 tiles.add(tmgr.getTile(tileIds[i]));
             }

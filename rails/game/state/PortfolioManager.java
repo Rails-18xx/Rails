@@ -7,7 +7,7 @@ package rails.game.state;
 
 public final class PortfolioManager extends AbstractItem {
 
-    private final HashMultimapState<Item, PortfolioMap<?>> portfolios = HashMultimapState.create();
+    private final HashMultimapState<Owner, PortfolioMap<?>> portfolios = HashMultimapState.create();
     
     private PortfolioManager() {};
     
@@ -16,11 +16,11 @@ public final class PortfolioManager extends AbstractItem {
     }
     
     boolean addPortfolio(PortfolioMap<?> p){
-        return portfolios.put(p.getParent(), p);
+        return portfolios.put(p.getOwner(), p);
     }
     
     boolean removePortfolio(PortfolioMap<?> p){
-        return portfolios.remove(p.getParent(), p);
+        return portfolios.remove(p.getOwner(), p);
     }
     
 }

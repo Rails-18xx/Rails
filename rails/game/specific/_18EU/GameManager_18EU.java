@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/GameManager_18EU.java,v 1.5 2010/01/18 22:51:47 evos Exp $ */
 package rails.game.specific._18EU;
 
 import java.util.ArrayList;
@@ -10,13 +9,12 @@ import rails.game.Player;
 import rails.game.PublicCertificate;
 import rails.game.PublicCompany;
 import rails.game.ReportBuffer;
-import rails.game.RoundI;
+import rails.game.Round;
 import rails.game.ShareSellingRound;
 import rails.game.model.MoneyModel;
 import rails.game.model.PortfolioModel;
-import rails.game.state.Context;
 import rails.game.state.GenericState;
-import rails.util.Util;
+import rails.game.state.Item;
 
 /**
  * This class manages the playing rounds by supervising all implementations of
@@ -24,18 +22,20 @@ import rails.util.Util;
  */
 public class GameManager_18EU extends GameManager {
 
-    protected GenericState<Player> playerToStartFMERound =
-       GenericState.create(this, "playerToStartFMERound");
+    protected final GenericState<Player> playerToStartFMERound =
+       GenericState.create();
 
-    public GameManager_18EU(Context context) {
-        super(context);
+    @Override
+    public void init(Item parent, String id){
+        super.init(parent, id);
+        playerToStartFMERound.init(this, "playerToStartFMERound");
     }
     
     @Override
-    public void nextRound(RoundI round) {
+    public void nextRound(Round round) {
         if (round instanceof OperatingRound_18EU) {
             if (playerToStartFMERound.get() != null
-                    && relativeORNumber.intValue() == numOfORs.intValue()) {
+                    && relativeORNumber.value() == numOfORs.value()) {
                 createRound (FinalMinorExchangeRound.class).start
                         ((Player)playerToStartFMERound.get());
                 playerToStartFMERound.set(null);

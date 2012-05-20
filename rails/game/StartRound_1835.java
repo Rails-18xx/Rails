@@ -8,23 +8,20 @@ import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.game.action.*;
 import rails.game.state.IntegerState;
+import rails.game.state.Item;
 
 /**
  * Implements an 1835-style startpacket sale.
  */
 public class StartRound_1835 extends StartRound {
-
-    // FIXME: State variables cannot stay as static members
-    
-    /* To control the player sequence in the Clemens and Snake variants */
-    private static IntegerState turn = IntegerState.create(GameManager.getInstance(), "TurnNumber", 0);
-
-    private static IntegerState startRoundNumber =
-            IntegerState.create(GameManager.getInstance(), "StartRoundNumber", 0);
-
     /* Additional variants */
     public static final String CLEMENS_VARIANT = "Clemens";
     public static final String SNAKE_VARIANT = "Snake";
+
+    // TODO: Check if the move from static to object fields works
+    /* To control the player sequence in the Clemens and Snake variants */
+    private final IntegerState turn = IntegerState.create();
+    private final IntegerState startRoundNumber = IntegerState.create();
 
     /**
      * Constructor, only to be used in dynamic instantiation.
@@ -34,6 +31,13 @@ public class StartRound_1835 extends StartRound {
         hasBidding = false;
     }
 
+    @Override
+    public void init(Item parent, String id) {
+        super.init(parent, id);
+        turn.init(GameManager.getInstance(), "TurnNumber");
+        startRoundNumber.init(GameManager.getInstance(), "StartRoundNumber");
+    }
+    
     /**
      * Start the 1835-style start round.
      *
@@ -131,7 +135,7 @@ public class StartRound_1835 extends StartRound {
                 ReportBuffer.add(message);
                 DisplayBuffer.add(message);
                 numPasses.add(1);
-                if (numPasses.intValue() >= numPlayers) {
+                if (numPasses.value() >= numPlayers) {
                     /*
                      * No-one has enough cash left to buy anything, so close the
                      * Start Round.
@@ -173,7 +177,7 @@ public class StartRound_1835 extends StartRound {
 
         /* Select the player that has the turn. */
 
-        if (startRoundNumber.intValue() == 1) {
+        if (startRoundNumber.value() == 1) {
             /*
              * Some variants have a reversed player order in the first or second
              * cycle of the first round (a cycle spans one turn of all players).
@@ -181,7 +185,7 @@ public class StartRound_1835 extends StartRound {
              * turns.
              */
             turn.add(1);
-            int turnNumber = turn.intValue();
+            int turnNumber = turn.value();
             int cycleNumber = turnNumber / numPlayers;
             int turnIndex = turnNumber % numPlayers;
             int newIndex;
@@ -254,7 +258,7 @@ public class StartRound_1835 extends StartRound {
 
         numPasses.add(1);
 
-        if (numPasses.intValue() >= numPlayers) {
+        if (numPasses.value() >= numPlayers) {
             // All players have passed.
             ReportBuffer.add(LocalText.getText("ALL_PASSED"));
             numPasses.set(0);

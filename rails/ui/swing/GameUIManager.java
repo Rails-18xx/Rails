@@ -47,10 +47,10 @@ public class GameUIManager implements DialogOwner {
     protected ActionPerformer activeWindow = null;
     protected StartRound startRound;
 
-    protected RoundI currentRound;
-    protected RoundI previousRound;
-    protected Class<? extends RoundI> previousRoundType = null;
-    protected Class<? extends RoundI> currentRoundType = null;
+    protected Round currentRound;
+    protected Round previousRound;
+    protected Class<? extends Round> previousRoundType = null;
+    protected Class<? extends Round> currentRoundType = null;
     protected GuiHints uiHints= null;
     protected String previousRoundName;
     protected String currentRoundName;
@@ -1002,7 +1002,7 @@ public class GameUIManager implements DialogOwner {
         return orUIManager;
     }
 
-    public RoundI getCurrentRound() {
+    public Round getCurrentRound() {
         return gameManager.getCurrentRound();
     }
 

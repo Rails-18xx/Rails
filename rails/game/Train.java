@@ -2,14 +2,14 @@ package rails.game;
 
 import org.apache.log4j.Logger;
 
+import rails.common.parser.ConfigurationException;
 import rails.game.state.BooleanState;
-import rails.game.state.AbstractItem;
 import rails.game.state.GenericState;
 import rails.game.state.Item;
 import rails.game.state.OwnableItem;
 import rails.game.state.Portfolio;
 
-public class Train extends AbstractItem implements OwnableItem<Train> {
+public class Train extends OwnableItem<Train> {
 
     protected TrainCertificateType certificateType;
     
@@ -26,9 +26,11 @@ public class Train extends AbstractItem implements OwnableItem<Train> {
             Logger.getLogger(Train.class.getPackage().getName());
 
     public Train() {}
+    // TODO: Train creation is shared by three classes, simplify that
     
-    public static Train create(Item parent, String id, TrainCertificateType certType, TrainType type) {
-        Train train = new Train();
+    public static Train create(Item parent, String id, TrainCertificateType certType, TrainType type)
+            throws ConfigurationException {
+        Train train = certType.createTrain();
         train.init(parent, id);
         train.setCertificateType(certType);
         train.setType(type);
@@ -61,7 +63,8 @@ public class Train extends AbstractItem implements OwnableItem<Train> {
         return isAssigned() ? type.get() : null;
     }
 
-    /**
+    /**import rails.game.state.AbstractItem;
+
      * @return Returns the cityScoreFactor.
      */
     public int getCityScoreFactor() {

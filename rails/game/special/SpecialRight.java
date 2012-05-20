@@ -66,8 +66,10 @@ public class SpecialRight extends SpecialProperty implements RevenueStaticModifi
     }
     
     public boolean isExecutionable() {
-
-        return originalCompany.getPortfolioModel().getOwner() instanceof Player;
+        // FIXME: Check if this works correctly
+        // IT is better to rewrite this check
+        // see ExchangeForShare
+        return ((PrivateCompany)originalCompany).getPortfolio().getOwner() instanceof Player;
     }
 
  

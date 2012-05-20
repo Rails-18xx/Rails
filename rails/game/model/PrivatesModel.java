@@ -12,7 +12,7 @@ public final class PrivatesModel extends Model {
 
     public static final String id = "PrivatesModel";
     
-    private final Portfolio<PrivateCompany> privates = PortfolioList.create();
+    private final PortfolioList<PrivateCompany> privates = PortfolioList.create();
     
     private boolean addLineBreak = false;
 

@@ -8,13 +8,13 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
 
-public final class PortfolioMap<T extends OwnableItem< T>> extends Portfolio<T> {
+public final class PortfolioMap<T extends Ownable<T>> extends Portfolio<T> {
 
     private ArrayListMultimap<Item, T> portfolio = ArrayListMultimap.create();
 
     // default constructor
     
-    public static <T extends OwnableItem<T>> PortfolioMap<T> create() {
+    public static <T extends Ownable<T>> PortfolioMap<T> create() {
         return new PortfolioMap<T>();
     }
 

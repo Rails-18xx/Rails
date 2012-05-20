@@ -1,6 +1,6 @@
 package rails.game.state;
 
-final class PortfolioChange<T extends OwnableItem<T>> implements Change {
+final class PortfolioChange<T extends Ownable<T>> implements Change {
 
     private final Portfolio<T> in;
     private final Portfolio<T> out; // can be null

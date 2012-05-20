@@ -23,7 +23,7 @@ import rails.util.*;
  * but this will still be the form in which ownership is expressed. <p> Company
  * shares may or may not have a price on the stock market.
  */
-public class PublicCompany extends Company implements CashOwner {
+public class PublicCompany extends Company implements CashOwner, PortfolioOwner {
 
     public static final int CAPITALISE_FULL = 0;
 
@@ -77,7 +77,7 @@ public class PublicCompany extends Company implements CashOwner {
     /** Destination hex * */
     protected String destinationHexName = null;
     protected MapHex destinationHex = null;
-    protected BooleanState hasReachedDestination = null;
+    protected final BooleanState hasReachedDestination = BooleanState.create();
 
     /** Sequence number in the array of public companies - may not be useful */
     protected int publicNumber = -1; // For internal use
@@ -89,52 +89,53 @@ public class PublicCompany extends Company implements CashOwner {
     protected int[] baseTokenLayCost;
     protected String baseTokenLayCostMethod = "sequential";
 
-    protected BaseTokensModel baseTokens = BaseTokensModel.create(); // Create after cloning
-    protected PortfolioModel portfolio = PortfolioModel.create();
+    protected final BaseTokensModel baseTokens = BaseTokensModel.create(); // Create after cloning ?
+    protected final PortfolioModel portfolio = PortfolioModel.create();
     
     
     /**
      * Initial (par) share price, represented by a stock market location object
      */
-    protected PriceModel parPrice = PriceModel.create();
+    protected final PriceModel parPrice = PriceModel.create();
 
     /** Current share price, represented by a stock market location object */
-    protected PriceModel currentPrice = PriceModel.create();
+    protected final PriceModel currentPrice = PriceModel.create();
 
     /** Company treasury, holding cash */
-    protected CashMoneyModel treasury = CashMoneyModel.create();
+    protected final CashMoneyModel treasury = CashMoneyModel.create();
 
     /** PresidentModel */
-    protected PresidentModel presidentModel = PresidentModel.create();
+    protected final PresidentModel presidentModel = PresidentModel.create();
 
     /** Has the company started? */
-    protected BooleanState hasStarted = BooleanState.create(false);
+    protected final BooleanState hasStarted = BooleanState.create(false);
 
     /** Total bonus tokens amount */
-    protected BonusModel bonusValue = BonusModel.create();
+    protected final BonusModel bonusValue = BonusModel.create();
 
     /** Acquires Bonus objects */
-    protected ArrayListState<Bonus> bonuses = ArrayListState.create();
+    protected final ArrayListState<Bonus> bonuses = ArrayListState.create();
 
     /** Most recent revenue earned. */
-    protected MoneyModel lastRevenue = CashMoneyModel.create();
+    protected final CashMoneyModel lastRevenue = CashMoneyModel.create();
 
     /** Most recent payout decision. */
-    protected StringState lastRevenueAllocation = StringState.create();
+    protected final StringState lastRevenueAllocation = StringState.create();
 
     /** Is the company operational ("has it floated")? */
-    protected BooleanState hasFloated = BooleanState.create();
+    protected final BooleanState hasFloated = BooleanState.create();
 
     /** Has the company already operated? */
-    protected BooleanState hasOperated = BooleanState.create();
+    protected final BooleanState hasOperated = BooleanState.create();
 
     /** Are company shares buyable (i.e. before started)? */
-    protected BooleanState buyable = BooleanState.create();
+    protected final BooleanState buyable = BooleanState.create();
 
     /** In-game state.
      * <p> Will only be set false if the company is closed and cannot ever be reopened.
      * By default it will be set false if a company is closed. */
-    protected BooleanState inGameState = null; // created in init()
+    // TODO: Check if there was some assumption to be null at some place
+    protected final BooleanState inGameState = BooleanState.create(true);
 
     /**
      * A map per tile colour. Each entry contains a map per phase, of which each
@@ -148,25 +149,29 @@ public class PublicCompany extends Company implements CashOwner {
      */
     protected Map<String, Integer> turnsWithExtraTileLaysInit = null;
     /** Copy of turnsWithExtraTileLaysInit, per company */
-    protected Map<String, IntegerState> turnsWithExtraTileLays = null;
+    protected Map<String, IntegerState> turnsWithExtraTileLays = null; 
+    // init during finishConfig
+    
     /**
      * Number of tiles laid. Only used where more tiles can be laid in the
      * company's first OR turn.
+     * It is set to -1 as this flags a special state 
+     * TODO: Check if this works
      */
-    protected IntegerState extraTiles = IntegerState.create();
+    protected final IntegerState extraTiles = IntegerState.create(-1);
 
     /* Spendings in the current operating turn */
-    protected MoneyModel privatesCostThisTurn = CashMoneyModel.create();
+    protected final CashMoneyModel privatesCostThisTurn = CashMoneyModel.create();
 
-    protected StringState tilesLaidThisTurn = StringState.create();
+    protected final StringState tilesLaidThisTurn = StringState.create();
 
-    protected MoneyModel tilesCostThisTurn = CashMoneyModel.create(); 
+    protected final CashMoneyModel tilesCostThisTurn = CashMoneyModel.create(); 
 
-    protected StringState tokensLaidThisTurn = StringState.create();
+    protected final StringState tokensLaidThisTurn = StringState.create();
 
-    protected MoneyModel tokensCostThisTurn = CashMoneyModel.create();
+    protected final CashMoneyModel tokensCostThisTurn = CashMoneyModel.create();
 
-    protected MoneyModel trainsCostThisTurn = CashMoneyModel.create();
+    protected final CashMoneyModel trainsCostThisTurn = CashMoneyModel.create();
 
     protected boolean canBuyStock = false;
 
@@ -202,7 +207,7 @@ public class PublicCompany extends Company implements CashOwner {
     protected boolean mustHaveOperatedToTradeShares = false;
 
     /** The certificates of this company (minimum 1) */
-    protected ArrayListState<PublicCertificate> certificates = ArrayListState.create();
+    protected final ArrayListState<PublicCertificate> certificates = ArrayListState.create();
     /** Are the certificates available from the first SR? */
     boolean certsAreInitiallyAvailable = true;
 
@@ -268,12 +273,12 @@ public class PublicCompany extends Company implements CashOwner {
     /* Loans */
     protected int maxNumberOfLoans = 0;
     protected int valuePerLoan = 0;
-    protected IntegerState currentNumberOfLoans = IntegerState.create();
+    protected IntegerState currentNumberOfLoans = null; // init during finishConfig
     protected int loanInterestPct = 0;
     protected int maxLoansPerRound = 0;
-    protected MoneyModel currentLoanValue = CashMoneyModel.create();
+    protected CashMoneyModel currentLoanValue = null; // init during finishConfig
 
-    protected BooleanState canSharePriceVary = BooleanState.create();
+    protected final BooleanState canSharePriceVary = BooleanState.create(true);
 
     protected GameManager gameManager;
     protected Bank bank;
@@ -281,9 +286,8 @@ public class PublicCompany extends Company implements CashOwner {
     protected MapManager mapManager;
     
     /** Rights */
-    protected HashMapState<String, String> rights = HashMapState.create();
-    //protected RightsModel rightsModel = new RightsModel();
-  
+    protected HashMapState<String, String> rights = null;
+    // created in finishConfiguration
 
     /**
      * The constructor. The way this class is instantiated does not allow
@@ -292,7 +296,6 @@ public class PublicCompany extends Company implements CashOwner {
     public PublicCompany() {
         super();
     }
-
     
     
     /**
@@ -302,7 +305,7 @@ public class PublicCompany extends Company implements CashOwner {
     @Override
     public void configureFromXML(Tag tag) throws ConfigurationException {
 
-        longName = tag.getAttributeAsString("longname", name);
+        longName = tag.getAttributeAsString("longname", getId());
         infoText = "<html>"+longName;
 
         alias = tag.getAttributeAsString("alias", alias);
@@ -329,8 +332,7 @@ public class PublicCompany extends Company implements CashOwner {
 
         Tag shareUnitTag = tag.getChild("ShareUnit");
         if (shareUnitTag != null) {
-            shareUnit = IntegerState.create(shareUnitTag.getAttributeAsInteger("percentage", DEFAULT_SHARE_UNIT))
-                    .init(this, name+"_ShareUnit");
+            shareUnit = IntegerState.create(shareUnitTag.getAttributeAsInteger("percentage", DEFAULT_SHARE_UNIT));
             shareUnitsForSharePrice
             = shareUnitTag.getAttributeAsInteger("sharePriceUnits", shareUnitsForSharePrice);
         }
@@ -428,7 +430,7 @@ public class PublicCompany extends Company implements CashOwner {
                 firstTrainTag.getAttributeAsString("type", "Private");
             if (typeName.equalsIgnoreCase("Private")) {
                 privateToCloseOnFirstTrainName =
-                    firstTrainTag.getAttributeAsString("name");
+                    firstTrainTag.getAttributeAsString("getId()");
             } else {
                 throw new ConfigurationException(
                 "Only Privates can be closed on first train buy");
@@ -498,6 +500,9 @@ public class PublicCompany extends Company implements CashOwner {
             }
         }
 
+        // FIXME: The certificates mechanism has to be adopted
+        // to the new structure of init etc.
+        // So this is not going to work as it is now
         int certIndex = 0;
         List<Tag> certificateTags = tag.getChildren("Certificate");
         if (certificateTags != null) {
@@ -526,7 +531,7 @@ public class PublicCompany extends Company implements CashOwner {
                     if (number > 1 || gotPresident)
                         throw new ConfigurationException(
                                 "Company type "
-                                + name
+                                + getId()
                                 + " cannot have multiple President shares");
                     gotPresident = true;
                 }
@@ -534,12 +539,12 @@ public class PublicCompany extends Company implements CashOwner {
                 for (int k = 0; k < number; k++) {
                     certificate = new PublicCertificate(shares, president,
                             certIsInitiallyAvailable, certificateCount, certIndex++);
-                    addCertificate(certificate);
-                    shareTotal += shares * shareUnit.intValue();
+                    certificates.add(certificate);
+                    shareTotal += shares * shareUnit.value();
                 }
             }
             if (shareTotal != 100)
-                throw new ConfigurationException("Company type " + name
+                throw new ConfigurationException("Company type " + getId()
                         + " total shares is not 100%");
         }
         nameCertificates();
@@ -619,47 +624,57 @@ public class PublicCompany extends Company implements CashOwner {
         }
         
     }
-
+    
     /** Initialisation, to be called directly after instantiation (cloning) */
     @Override
-    public void init(String name, CompanyTypeI type) {
-        super.init(name, type);
+    public void init(Item parent, String id) {
+        super.init(parent, id);
 
-        inGameState = BooleanState.create(true).init(this, "InGame");
+        
+        inGameState.init(this, "InGame");
+        hasReachedDestination.init(this, getId()+"_reachedDestination");
 
-        portfolio.init(this, name);
-        treasury.init(this, name + "_treasury");
-        lastRevenue.init(this, name + "_lastRevenue").setSuppressInitialZero(true);
-        lastRevenueAllocation.init(this, name + "_lastAllocation");
-        presidentModel.init(this, name);
+        portfolio.init(this, id);
+        treasury.init(this, id + "_treasury");
+        lastRevenue.init(this, id + "_lastRevenue");
+        lastRevenue.setSuppressInitialZero(true);
+        lastRevenueAllocation.init(this, id + "_lastAllocation");
+        presidentModel.init(this, id);
 
-        hasStarted.init(this, id)this, "hasStarted", false);
-        hasFloated = BooleanState.create(this, "hasFloated", false);
-        hasOperated = BooleanState.create(this, "hasOperated", false);
-        buyable = BooleanState.create(this, "isBuyable", false);
+        hasStarted.init(this, id);
+        hasFloated.init(this, "hasFloated");
+        hasOperated.init(this, "hasOperated");
+        buyable.init(this, "isBuyable");
 
         baseTokens.init(this, "baseTokensModel");
 
         /* Spendings in the current operating turn */
-        privatesCostThisTurn = MoneyModel.create(this, "spentOnPrivates");
+        privatesCostThisTurn.init(this, "spentOnPrivates");
         privatesCostThisTurn.setSuppressZero(true);
-        tilesLaidThisTurn = StringState.create(this, "tilesLaid");
-        tilesCostThisTurn = MoneyModel.create(this, "spentOnTiles");
+        tilesLaidThisTurn.init(this, "tilesLaid");
+        tilesCostThisTurn.init(this, "spentOnTiles");
         tilesCostThisTurn.setSuppressZero(true);
-        tokensLaidThisTurn = StringState.create(this, "tokensLaid");
-        tokensCostThisTurn = MoneyModel.create(this, "spentOnTokens");
+        tokensLaidThisTurn.init(this, "tokensLaid");
+        tokensCostThisTurn.init(this, "spentOnTokens");
         tokensCostThisTurn.setSuppressZero(true);
-        trainsCostThisTurn = MoneyModel.create(this, "spentOnTrains");
+        trainsCostThisTurn.init(this, "spentOnTrains");
         trainsCostThisTurn.setSuppressZero(true);
-        trainsCostThisTurn.setAllowNegative(true);
-        bonusValue = BonusModel.create(this);
+        trainsCostThisTurn.setDisplayNegative(true);
+        
+        // Bonuses
+        bonuses.init(this, "Bonuses");
+        bonusValue.init(this, "bonusValue");
+        bonusValue.setBonuses(bonuses);
 
         if (hasStockPrice) {
-            parPrice = PriceModel.create(this, "ParPrice");
-            currentPrice = PriceModel.create(this, "CurrentPrice");
-            canSharePriceVary = BooleanState.create(this, name+"_CanSharePriceVary", true);
+            parPrice.init(this, "ParPrice");
+            currentPrice.init(this, "CurrentPrice");
+            canSharePriceVary.init(this, id+"_CanSharePriceVary");
         }
-
+        // shareUnit is only created if required
+        if (shareUnit != null) {
+            shareUnit.init(this, getId()+"_ShareUnit");
+        }
    }
 
     public void setIndex (int index) {
@@ -680,15 +695,17 @@ public class PublicCompany extends Company implements CashOwner {
         if (turnsWithExtraTileLaysInit != null) {
             turnsWithExtraTileLays = new HashMap<String, IntegerState>();
             for (String colour : turnsWithExtraTileLaysInit.keySet()) {
-                turnsWithExtraTileLays.put(colour, IntegerState.create(this, 
-                        "" + colour + "_ExtraTileTurns",
-                        turnsWithExtraTileLaysInit.get(colour)));
+                IntegerState tileLays = IntegerState.create(turnsWithExtraTileLaysInit.get(colour));
+                tileLays.init(this, "" + colour + "_ExtraTileTurns");
+                turnsWithExtraTileLays.put(colour, tileLays);
             }
         }
 
        if (maxNumberOfLoans != 0) {
-            currentNumberOfLoans = IntegerState.create (this, "Loans", 0);
-            currentLoanValue = MoneyModel.create(this, "LoanValue", 0);
+            currentNumberOfLoans = IntegerState.create(0);
+            currentNumberOfLoans.init(this, "Loans");
+            currentLoanValue = CashMoneyModel.create();
+            currentLoanValue.init(this, "LoanValue");
             currentLoanValue.setSuppressZero(true);
         }
 
@@ -698,29 +715,29 @@ public class PublicCompany extends Company implements CashOwner {
             if (parPrice.getPrice() == null)
                 throw new ConfigurationException("Invalid start space "
                         + startSpace + " for company "
-                        + name);
+                        + getId());
             currentPrice.setPrice(parPrice.getPrice());
 
         }
 
         if (shareUnit == null) {
-            shareUnit = IntegerState.create (this, name+"_ShareUnit", DEFAULT_SHARE_UNIT);
+            shareUnit = IntegerState.create(DEFAULT_SHARE_UNIT);
+            shareUnit.init(this, getId()+"_ShareUnit");
         }
 
         // Give each certificate an unique Id
         PublicCertificate cert;
         for (int i = 0; i < certificates.size(); i++) {
             cert = certificates.get(i);
-            cert.setUniqueId(name, i);
+            cert.setUniqueId(getId(), i);
             cert.setInitiallyAvailable(cert.isInitiallyAvailable()
                     && this.certsAreInitiallyAvailable);
         }
 
-        BaseToken token;
         for (int i = 0; i < numberOfBaseTokens; i++) {
-            token = BaseToken.create().init(this);
+            BaseToken token =  BaseToken.create(this);
+            baseTokens.addFreeToken(token);
         }
-
         if (homeHexNames != null) {
             homeHexes = new ArrayList<MapHex>(2);
             MapHex homeHex;
@@ -729,7 +746,7 @@ public class PublicCompany extends Company implements CashOwner {
                 if (homeHex == null) {
                     throw new ConfigurationException("Invalid home hex "
                             + homeHexName
-                            + " for company " + name);
+                            + " for company " + getId());
                 }
                 homeHexes.add (homeHex);
                 infoText += "<br>Home: " + homeHex.getInfo();
@@ -738,12 +755,10 @@ public class PublicCompany extends Company implements CashOwner {
 
         if (destinationHexName != null) {
             destinationHex = mapManager.getHex(destinationHexName);
-            if (destinationHex != null) {
-                hasReachedDestination = BooleanState.create(this, name+"_reachedDestination", false);
-            } else {
+            if (destinationHex == null) {
                 throw new ConfigurationException("Invalid destination hex "
                         + destinationHexName
-                        + " for company " + name);
+                        + " for company " + getId());
             }
             infoText += "<br>Destination: "+destinationHex.getInfo();
         }
@@ -764,7 +779,10 @@ public class PublicCompany extends Company implements CashOwner {
                     gameManager.setGuiParameter (GuiDef.Parm.HAS_ANY_RIGHTS, true);
                     // Initialize rights here to prevent overhead if not used, 
                     // but if rights are used, the GUI needs it from the start.
-                    if (rights == null) rights = HashMapState.create(this, name+"_Rights");
+                    if (rights == null) {
+                        rights = HashMapState.create();
+                        rights.init(this, getId()+"_Rights");
+                    }
                     // TODO: This is only a workaround for the missing finishConfiguration of special properties (SFY)
                     sp.finishConfiguration(gameManager);
                 }
@@ -992,7 +1010,7 @@ public class PublicCompany extends Company implements CashOwner {
             Train train = bank.getIpo().getTrainOfType(type);
             buyTrain(train, initialTrainCost);
             train.setTradeable(initialTrainTradeable);
-            trainManager.checkTrainAvailability(train, bank.getIpo());
+            trainManager.checkTrainAvailability(train, bank.getIpo().getParent());
         }
     }
 
@@ -1038,13 +1056,16 @@ public class PublicCompany extends Company implements CashOwner {
 
         // Dispose of the certificates
         for (PublicCertificate cert : certificates.view()) {
-            if (cert.getPortfolio() != shareDestination) {
-                cert.moveTo(shareDestination);
+            // TODO: Check if this is the correct condition, portfolioModel parent change Type?
+            if (cert.getPortfolio().getParent() != shareDestination.getParent()) {
+                // TODO: Could this be shortened?
+                shareDestination.getCertificatesModel().getPortfolio().moveInto(cert);
             }
         }
 
         // Any trains go to the pool (from the 1856 rules)
-        Owners.moveAll(this, bank.getPool(), Train.class);
+        // TODO: Can this be simplified?
+        Portfolio.moveAll(portfolio.getTrainsModel().getPortfolio(), bank.getPool().getTrainsModel().getPortfolio());
 
         // Any cash goes to the bank (from the 1856 rules)
         int cash = treasury.value();
@@ -1177,36 +1198,23 @@ public class PublicCompany extends Company implements CashOwner {
         return currentPrice != null ? currentPrice.getPrice() : null;
     }
 
-    public void updatePlayersWorth() {
+    // TODO: Compare StockMarket processMove methods and check what can replace the code below
+//    public void updatePlayersWorth() {
+//
+//        Map<Player, Boolean> done = new HashMap<Player, Boolean>(8);
+//        Player owner;
+//        for (PublicCertificate cert : certificates.view()) {
+//            if (cert.getPortfolio() instanceof PortfolioModel // FIXME: What kind of condition is this, was cert.getHolder()
+//                    && cert.getHolder().getOwner() instanceof Player) {
+//                owner = (Player)cert.getHolder().getOwner();
+//                if (!done.containsKey(owner)) {
+//                    owner.updateWorth();
+//                    done.put(owner, true);
+//                }
+//            }
+//        }
+//    }
 
-        Map<Player, Boolean> done = new HashMap<Player, Boolean>(8);
-        Player owner;
-        for (PublicCertificate cert : certificates.view()) {
-            if (cert.getPortfolio() instanceof PortfolioModel // FIXME: What kind of condition is this, was cert.getHolder()
-                    && cert.getHolder().getOwner() instanceof Player) {
-                owner = (Player)cert.getHolder().getOwner();
-                if (!done.containsKey(owner)) {
-                    owner.updateWorth();
-                    done.put(owner, true);
-                }
-            }
-        }
-    }
-
-    /**
-     * Add a given amount to the company treasury.
-     *
-     * @param amount The amount to add (may be negative).
-     */
-    public void addCash(int amount) {
-        treasury.add(amount);
-    }
-
-    /**
-     * Get the current company treasury.
-     *
-     * @return The current cash amount.
-     */
     public int getCash() {
         return treasury.value();
     }
@@ -1241,35 +1249,14 @@ public class PublicCompany extends Company implements CashOwner {
     }
 
     /**
-     * Assign a predefined list of certificates to this company. The list is
-     * deep cloned.
-     *
-     * @param list ArrayList containing the certificates.
-     */
-    public void setCertificates(List<PublicCertificate> list) {
-        certificates = ArrayListState.create(this, "certificates", list);
-    }
-
-    /**
      * Backlink the certificates to this company,
-     * and give each one a type name.
+     * and give each one a type getId().
      *
      */
     public void nameCertificates () {
         for (PublicCertificate cert : certificates.view()) {
             cert.setCompany(this);
         }
-    }
-
-    /**
-     * Add a certificate to the end of this company's list of certificates.
-     *
-     * @param certificate The certificate to add.
-     */
-    public void addCertificate(PublicCertificate certificate) {
-        if (certificates == null)
-            certificates = ArrayListState.create(this, "certificates");
-        certificates.add(certificate);
     }
 
     /**
@@ -1285,6 +1272,8 @@ public class PublicCompany extends Company implements CashOwner {
      * Get the company President.
      *
      */
+    // FIXME: This has to be redesigned
+    // Relying on the ordering is not a good thing
     public Player getPresident() {
         if (hasStarted()) {
             Owner owner = certificates.get(0).getPortfolio().getOwner();
@@ -1299,12 +1288,6 @@ public class PublicCompany extends Company implements CashOwner {
 
     public PublicCertificate getPresidentsShare () {
         return certificates.get(0);
-    }
-
-    public boolean isAvailable() {
-        PortfolioModel presLoc = certificates.get(0).getPortfolio();
-        return presLoc != bank.getUnavailable()
-        && presLoc != bank.getScrapHeap();
     }
 
     /**
@@ -1322,7 +1305,7 @@ public class PublicCompany extends Company implements CashOwner {
      * @return The last revenue amount.
      */
     public int getLastRevenue() {
-        return lastRevenue.intValue();
+        return lastRevenue.value();
     }
 
     public Model getLastRevenueModel() {
@@ -1366,7 +1349,7 @@ public class PublicCompany extends Company implements CashOwner {
 
     public boolean paysOutToTreasury (PublicCertificate cert) {
 
-        PortfolioModel holder = cert.getPortfolio();
+        PortfolioHolder holder = cert.getPortfolio().getParent();
         if (holder == bank.getIpo() && ipoPaysOut
                 || holder == bank.getPool() && poolPaysOut) {
             return true;
@@ -1392,10 +1375,10 @@ public class PublicCompany extends Company implements CashOwner {
      * @return true if the share price can move up.
      */
     public boolean isSoldOut() {
-        Owner owner;
+        PortfolioHolder owner;
 
         for (PublicCertificate cert : certificates.view()) {
-            owner = cert.getPortfolio().getOwner();
+            owner = cert.getPortfolio().getParent();
             if (owner instanceof Bank || owner == cert.getCompany()) {
                 return false;
             }
@@ -1420,7 +1403,7 @@ public class PublicCompany extends Company implements CashOwner {
      * @return The percentage of ownership that is called "one share".
      */
     public int getShareUnit() {
-        return shareUnit.intValue();
+        return shareUnit.value();
     }
 
     public int getShareUnitsForSharePrice() {
@@ -1429,7 +1412,7 @@ public class PublicCompany extends Company implements CashOwner {
 
     @Override
     public String toString() {
-        return name;
+        return getId();
     }
 
     public boolean hasStockPrice() {
@@ -1455,7 +1438,9 @@ public class PublicCompany extends Company implements CashOwner {
     public int sharesOwnedByPlayers() {
         int shares = 0;
         for (PublicCertificate cert : certificates.view()) {
-            if (cert.getPortfolio().getOwner() instanceof Player) {
+            // TODO: Check if this is correct, it can be
+            // that this links to a PortfolioModel
+            if (cert.getPortfolio().getParent() instanceof Player) {
                 shares += cert.getShares();
             }
         }
@@ -1497,7 +1482,7 @@ public class PublicCompany extends Company implements CashOwner {
                     buyer.getPortfolioModel());
             ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
                     buyer.getId(),
-                    name ));
+                    getId() ));
         }
     }
 
@@ -1524,7 +1509,7 @@ public class PublicCompany extends Company implements CashOwner {
                         player.getPortfolioModel());
                 ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
                         player.getId(),
-                        name ));
+                        getId() ));
             }
         }
     }
@@ -1550,7 +1535,7 @@ public class PublicCompany extends Company implements CashOwner {
                         player.getPortfolioModel());
                 ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
                         player.getId(),
-                        name ));
+                        getId() ));
                 return;
             }
         }
@@ -1573,7 +1558,7 @@ public class PublicCompany extends Company implements CashOwner {
     }
 
     public int getNumberOfShares() {
-        return 100 / shareUnit.intValue();
+        return 100 / shareUnit.value();
     }
 
     /** Get the current maximum number of trains got a given limit index. 
@@ -1603,10 +1588,11 @@ public class PublicCompany extends Company implements CashOwner {
     public void buyTrain(Train train, int price) {
         
         // check first if it is bought from another company
-        if (train.getOwner() instanceof PublicCompany) {
-            PublicCompany previousOwner = (PublicCompany)train.getOwner();
+        // FIXME: The type of owner can be tainted as it can link to portfolioModel
+        if (train.getPortfolio().getOwner() instanceof PublicCompany) {
+            PublicCompany previousOwner = (PublicCompany)train.getPortfolio().getOwner();
             //  adjust the money spent on trains field
-            ((MoneyModel)previousOwner.getTrainsSpentThisTurnModel()).change(-price);
+            ((CashMoneyModel)previousOwner.getTrainsSpentThisTurnModel()).change(-price);
             // pay the money to the other company
             MoneyModel.cashMove(this, previousOwner, price);
         } else { // TODO: make this a serious test, no assumption
@@ -1617,7 +1603,7 @@ public class PublicCompany extends Company implements CashOwner {
         // increase own train costs
         trainsCostThisTurn.change(price);
         // move the train to here
-        train.moveTo(this);
+        portfolio.getTrainsModel().getPortfolio().moveInto(train);
         // check if a private has to be closed on first train buy
         if (privateToCloseOnFirstTrain != null
                 && !privateToCloseOnFirstTrain.isClosed()) {
@@ -1629,21 +1615,21 @@ public class PublicCompany extends Company implements CashOwner {
         return trainsCostThisTurn;
     }
 
-    public void buyPrivate(PrivateCompany privateCompany, Owner from,
+    public void buyPrivate(PrivateCompany privateCompany, PortfolioHolder from,
             int price) {
 
         if (from != bank.getIpo()) {
             // The initial buy is reported from StartRound. This message should also
             // move to elsewhere.
-            ReportBuffer.change(LocalText.getText("BuysPrivateFromFor",
-                    name,
+            ReportBuffer.add(LocalText.getText("BuysPrivateFromFor",
+                    getId(),
                     privateCompany.getId(),
                     from.getId(),
                     Bank.format(price) ));
         }
 
         // Move the private certificate
-        privateCompany.moveTo(this);
+        portfolio.getPrivatesOwnedModel().getPortfolio().moveInto(privateCompany);
 
         // Move the money
         if (price > 0) MoneyModel.cashMove(this, (CashOwner)from, price); // TODO: Remove the cast
@@ -1663,6 +1649,7 @@ public class PublicCompany extends Company implements CashOwner {
                 } else if (sp.getTransferText().equalsIgnoreCase("toGameManager")) {
                     // This must be SellBonusToken - remember the owner!
                     if (sp instanceof SellBonusToken) {
+                        // TODO: Check if this works correctly
                         ((SellBonusToken)sp).setSeller(this);
                         // Also note 1 has been used
                         ((SellBonusToken)sp).setExercised();
@@ -1674,7 +1661,7 @@ public class PublicCompany extends Company implements CashOwner {
                 sp.moveTo(portfolio);
             }
             for (SpecialProperty sp : spsToMoveToGM) {
-                sp.moveTo(gameManager);
+                gameManager.addSpecialProperty(sp);
                 log.debug("SP "+sp.getId()+" is now a common property");
             }
         }
@@ -1685,7 +1672,7 @@ public class PublicCompany extends Company implements CashOwner {
         return privatesCostThisTurn;
     }
 
-    public void layTile(MapHex hex, TileI tile, int orientation, int cost) {
+    public void layTile(MapHex hex, Tile tile, int orientation, int cost) {
 
         String tileLaid =
             "#" + tile.getExternalId() + "/" + hex.getId() + "/"
@@ -1694,12 +1681,12 @@ public class PublicCompany extends Company implements CashOwner {
 
         if (cost > 0) tilesCostThisTurn.change(cost);
 
-        if (extraTiles != null && extraTiles.intValue() > 0) {
+        if (extraTiles != null && extraTiles.value() > 0) {
             extraTiles.add(-1);
         }
     }
 
-    public void layTileInNoMapMode(int cost) {
+    public void layTilenNoMapMode(int cost) {
         if (cost > 0) tilesCostThisTurn.change(cost);
         tilesLaidThisTurn.appendWithDelimiter(Bank.format(cost), ",");
     }
@@ -1791,10 +1778,6 @@ public class PublicCompany extends Company implements CashOwner {
     }
 
     public boolean addBonus(Bonus bonus) {
-        if (bonuses == null) {
-            bonuses = ArrayListState.create(this, "Bonuses");
-            bonusValue.setBonuses(bonuses);
-        }
         bonuses.add(bonus);
         return true;
     }
@@ -1861,7 +1844,7 @@ public class PublicCompany extends Company implements CashOwner {
                     }
                 }
             }
-            log.debug(name + " lays home base on " + homeHex.getId() + " city "
+            log.debug(getId() + " lays home base on " + homeHex.getId() + " city "
                     + homeCityNumber);
             homeHex.layBaseToken(this, homeCityNumber);
         }
@@ -1870,7 +1853,7 @@ public class PublicCompany extends Company implements CashOwner {
 
     public BaseToken getFreeToken() {
         if (baseTokens.getFreeTokens().size() > 0) {
-            return baseTokens.getFreeTokens().items().get(0);
+            return (BaseToken)baseTokens.getFreeTokens().items().get(0);
         } else {
             return null;
         }
@@ -1885,7 +1868,7 @@ public class PublicCompany extends Company implements CashOwner {
      */
     // FIXME: Create a new Token model that distinguishs between laidBaseTokens and freeBaseTokens
     // not by the holder
-    public boolean addToken(Token token, int position) {
+    public boolean addToken(Token token) {
         boolean result = false;
 /*        if (token instanceof BaseToken
                 && laidBaseTokens.remove(token)
@@ -1900,13 +1883,13 @@ public class PublicCompany extends Company implements CashOwner {
 
     }
 
-    public ImmutableList<BaseToken> getAllBaseTokens() {
-        ImmutableList<BaseToken> list = ImmutableList.copyOf(baseTokens.getFreeTokens());
+    public ImmutableList<Token> getAllBaseTokens() {
+        ImmutableList<Token> list = ImmutableList.copyOf(baseTokens.getFreeTokens());
         list.addAll(baseTokens.getLaidTokens().items());
         return list;
     }
     
-    public ImmutableList<BaseToken> getLaidBaseTokens() {
+    public ImmutableList<Token> getLaidBaseTokens() {
         return baseTokens.getLaidTokens().items();
     }
 
@@ -1926,6 +1909,7 @@ public class PublicCompany extends Company implements CashOwner {
         return (baseTokens.nbAllTokens() > 0);
     }
 
+    // TODO: Check if the rewritten part below really works
     public int getNumberOfTileLays(String tileColour) {
 
         if (extraTileLays == null) return 1;
@@ -1939,14 +1923,24 @@ public class PublicCompany extends Company implements CashOwner {
 
         int i = ii;
         if (i > 1) {
-            if (extraTiles == null && turnsWithExtraTileLays != null) {
-                extraTiles = turnsWithExtraTileLays.get(tileColour);
+//            if (extraTiles == null && turnsWithExtraTileLays != null) {
+//                extraTiles = turnsWithExtraTileLays.get(tileColour);
+//            }
+//            if (extraTiles != null) {
+//                if (extraTiles.value() == 0) {
+//                    extraTiles = null;
+//                    return 1;
+//                }
+//            }
+// the above is replaced by
+            // FIXME: Check if the rewritten part below really works
+            // There is some flagging going on with setting extraTiles to null
+            if (turnsWithExtraTileLays != null && extraTiles.value() == -1) {
+                extraTiles.set(turnsWithExtraTileLays.get(tileColour).value());
             }
-            if (extraTiles != null) {
-                if (extraTiles.intValue() == 0) {
-                    extraTiles = null;
-                    return 1;
-                }
+            if (extraTiles.value() == 0) {
+                extraTiles.set(-1);
+                return 1;
             }
         }
         return i;
@@ -1961,7 +1955,7 @@ public class PublicCompany extends Company implements CashOwner {
     }
 
     public int getCurrentNumberOfLoans() {
-        return currentNumberOfLoans.intValue();
+        return currentNumberOfLoans.value();
     }
 
     public int getCurrentLoanValue () {
@@ -2007,7 +2001,8 @@ public class PublicCompany extends Company implements CashOwner {
     
     public void setRight (String nameOfRight, String value) {
         if (rights == null) {
-            rights = HashMapState.create(this, "Rights");
+            rights = HashMapState.create();
+            rights.init(this, "Rights");
         }
         rights.put(nameOfRight, value);
     }
@@ -2027,7 +2022,7 @@ public class PublicCompany extends Company implements CashOwner {
         try {
             clone = super.clone();
         } catch (CloneNotSupportedException e) {
-            log.fatal("Cannot clone company " + name);
+            log.fatal("Cannot clone company " + getId());
             return null;
         }
 
@@ -2060,6 +2055,11 @@ public class PublicCompany extends Company implements CashOwner {
      */
     public boolean hasRoute() {
         return true;
+    }
+
+    // PortfolioOwner method
+    public PortfolioModel getPortfolioModel() {
+        return portfolio;
     }
 
 }

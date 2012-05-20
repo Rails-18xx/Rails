@@ -119,8 +119,8 @@ public abstract class MoneyModel extends Model {
      * be null, in which case the Bank is implied.
      */
     public static void cashMove(CashOwner from, CashOwner to, int amount) {
-        to.getCash().change(amount);
-        from.getCash().change(-amount);
+        to.getCashModel().change(amount);
+        from.getCashModel().change(-amount);
     }
 
 

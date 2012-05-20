@@ -9,6 +9,7 @@ import rails.game.*;
 import rails.game.action.*;
 import rails.game.state.GenericState;
 import rails.game.state.IntegerState;
+import rails.game.state.Item;
 
 
 /**
@@ -18,25 +19,25 @@ import rails.game.state.IntegerState;
 public class StartRound_1880 extends StartRound {
    
     private final GenericState<Player> startingPlayer =
-        GenericState.create(this, "StartingPlayer");
+        GenericState.create();
     
     private final IntegerState currentBuyPrice =
-        IntegerState.create(this, "CurrentBuyPrice", 0);
+        IntegerState.create();
     
     private final IntegerState initialItemRound = 
-        IntegerState.create(this, "InitialItemRound",0); 
+        IntegerState.create(); 
     
     private final GenericState<StartItem> currentItem = 
-        GenericState.create(this, "CurrentItem");
+        GenericState.create();
     
     private final IntegerState currentStartRoundPhase = 
-        IntegerState.create(this, "CurrentStartRoundPhase",0); 
+        IntegerState.create(); 
     
-   private final IntegerState investorChosen = 
-        IntegerState.create(this, "InvestorChosen",0);
+    private final IntegerState investorChosen = 
+        IntegerState.create();
     
     /** A company in need for a par price. */
-    PublicCompany companyNeedingPrice = null;
+//    private PublicCompany companyNeedingPrice = null;
     
     
     /**
@@ -46,8 +47,20 @@ public class StartRound_1880 extends StartRound {
         super(gameManager);
         hasBasePrices=true;
         hasBidding=true;
-
     }
+    
+    @Override
+    public void init(Item parent, String id) {
+        super.init(parent, id);
+        startingPlayer.init(this, "StartingPlayer");
+        currentBuyPrice.init(this, "CurrentBuyPrice");
+        initialItemRound.init(this, "InitialItemRound"); 
+        currentItem.init(this, "CurrentItem");
+        currentStartRoundPhase.init(this, "CurrentStartRoundPhase"); 
+        investorChosen.init(this, "InvestorChosen");
+    }
+    
+    
     @Override
     public void start() {
         super.start();
@@ -98,7 +111,7 @@ public class StartRound_1880 extends StartRound {
                     return true;
                     // No more actions
                 }
-                if ((item.getBidder() == currentPlayer) && (numPasses.intValue() == getNumberOfPlayers()-1)){ // Current Player is highest Bidder & all others have passed
+                if ((item.getBidder() == currentPlayer) && (numPasses.value() == getNumberOfPlayers()-1)){ // Current Player is highest Bidder & all others have passed
                     if (item.needsPriceSetting() != null ){
                         BuyStartItem possibleAction = new BuyStartItem(item,item.getBid(), true, true);
                         possibleActions.add(possibleAction);
@@ -136,7 +149,7 @@ public class StartRound_1880 extends StartRound {
                 }
         } else { // Item is not a private ! should be a major or minor in 1880 special rules apply.
             //Check if all players own a minor/investor already then declare Startinground over...
-            if (currentStartRoundPhase.intValue() == 0) { //first time a non Private gets called up; initialize the rest of items to BUYABLE
+            if (currentStartRoundPhase.value() == 0) { //first time a non Private gets called up; initialize the rest of items to BUYABLE
                       // Priority Deal goes to the player with the smallest wallet...
                      gameManager.setCurrentPlayer(gameManager.reorderPlayersByCash(true));
                      //setCurrentPlayerIndex(0); //lowest or highest Player is always at the start of the player list after reordering !
@@ -146,7 +159,7 @@ public class StartRound_1880 extends StartRound {
                      startingPlayer.set(currentPlayer);
                      gameManager.setPriorityPlayer((Player) startingPlayer.get()); // Method doesn't exist in Startround ???
             }
-           if (investorChosen.intValue() == getNumberOfPlayers()) {
+           if (investorChosen.value() == getNumberOfPlayers()) {
                for ( StartItem item1 : itemsToSell.view()) {
                    if (!item1.isSold()){
                        item1.setStatus(StartItem.UNAVAILABLE);
@@ -244,7 +257,7 @@ public class StartRound_1880 extends StartRound {
         // TODO: changeStack.start(false);
 
         item.setBid(bidAmount, player);
-        ReportBuffer.change(LocalText.getText("BID_ITEM_LOG",
+        ReportBuffer.add(LocalText.getText("BID_ITEM_LOG",
                 playerName,
                 Bank.format(bidAmount),
                 item.getName(),
@@ -286,7 +299,7 @@ public class StartRound_1880 extends StartRound {
 
         numPasses.add(1);
         
-        if (numPasses.intValue() >= numPlayers) {
+        if (numPasses.value() >= numPlayers) {
             // All players have passed.
             ReportBuffer.add(LocalText.getText("ALL_PASSED"));
             // It the first item has not been sold yet, reduce its price by
@@ -314,7 +327,7 @@ public class StartRound_1880 extends StartRound {
             }
         }
        // if ((numPasses.intValue() >= auctionItem.getBidders() - 1) && 
-        if ((auctionItem.getBidders() >0) && (numPasses.intValue()== getNumberOfPlayers()-1)) {
+        if ((auctionItem.getBidders() >0) && (numPasses.value()== getNumberOfPlayers()-1)) {
             // All but the highest bidder have passed.
             int price = auctionItem.getBid();
 

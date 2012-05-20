@@ -12,6 +12,7 @@ import rails.common.parser.Tag;
 import rails.game.special.SpecialProperty;
 import rails.game.state.BooleanState;
 import rails.game.state.AbstractItem;
+import rails.game.state.Item;
 import rails.game.state.PortfolioList;
 import rails.util.Util;
 
@@ -27,10 +28,9 @@ Cloneable, Comparable<Company> {
     /** The name of the XML attribute for the company's type. */
     public static final String COMPANY_TYPE_TAG = "type";
     
-    protected String name;
     protected String longName;
     protected String alias = null; // To allow reloading files with old names after name changes
-    protected CompanyTypeI type;
+    protected CompanyType type;
     protected int companyNumber; // For internal use
 
     protected String infoText = "";
@@ -56,14 +56,15 @@ Cloneable, Comparable<Company> {
     protected static Logger log =
         Logger.getLogger(Company.class.getPackage().getName());
 
-    public Company() {
-    }
-
-    public void init(String name, CompanyTypeI type) {
-        this.name = name;
-        this.type = type;
+    @Override
+    public void init(Item parent, String id) {
+        super.init(parent, id);
         closedObject.init(this, "closed");
         specialProperties.init(this, "specialProperties");
+    }
+    
+    public void initType(CompanyType type) {
+        this.type = type;
     }
 
     /** Only to be called from subclasses */
@@ -140,7 +141,7 @@ Cloneable, Comparable<Company> {
     /**
      * @return Type of company (Public/Private)
      */
-    public CompanyTypeI getType() {
+    public CompanyType getType() {
         return type;
     }
 
@@ -148,14 +149,7 @@ Cloneable, Comparable<Company> {
      * @return String for type of company (Public/Private)
      */
     public String getTypeName() {
-        return type.getName();
-    }
-
-    /**
-     * @return Name of company
-     */
-    public String getId() {
-        return name;
+        return type.getId();
     }
 
     public String getLongName() {
@@ -234,7 +228,7 @@ Cloneable, Comparable<Company> {
 
     public boolean equals(Company company) {
         if (this.companyNumber == company.getCompanyNumber()
-                && this.name.equals(company.getId())
+                && this.getId().equals(company.getId())
                 && this.type.equals(company.getType())) return true;
 
         return false;

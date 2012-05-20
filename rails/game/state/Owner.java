@@ -1,9 +1,13 @@
 package rails.game.state;
 
+
 /**
- * This is currently a marker for all objects that contain
- * ownable items
+ * A marker for all classes that are the owners of Ownables
+ * This can be either direct (being a PortfolioHolder themselves)
+ * or indirect via the PortfolioModel (then specialized as PortfolioOwner)
+ *
  */
 public interface Owner extends Item {
+    
     
 }

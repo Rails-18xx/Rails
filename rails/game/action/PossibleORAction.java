@@ -1,8 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleORAction.java,v 1.4 2009/10/29 19:41:29 evos Exp $
- *
- * Created on 14-Sep-2006
- * Change Log:
- */
 package rails.game.action;
 
 import java.io.IOException;
@@ -21,6 +16,9 @@ import rails.util.Util;
 /* Or should this be an interface? We will see. */
 public abstract class PossibleORAction extends PossibleAction {
 
+    // FIXME: Does this still work?, added to avoid warning
+    private static final long serialVersionUID = 1L;
+
     transient protected PublicCompany company;
     protected String companyName;
 
@@ -30,7 +28,7 @@ public abstract class PossibleORAction extends PossibleAction {
     public PossibleORAction() {
 
         super();
-        RoundI round = GameManager.getInstance().getCurrentRound();
+        Round round = GameManager.getInstance().getCurrentRound();
         if (round instanceof OperatingRound) {
             company = ((OperatingRound) round).getOperatingCompany();
             companyName = company.getId();

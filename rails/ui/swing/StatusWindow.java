@@ -68,7 +68,7 @@ public class StatusWindow extends JFrame implements ActionListener,
 
     protected GameUIManager gameUIManager;
 
-    protected RoundI currentRound;
+    protected Round currentRound;
 
     protected PossibleActions possibleActions = PossibleActions.getInstance();
     protected PossibleAction immediateAction = null;
@@ -410,7 +410,7 @@ public class StatusWindow extends JFrame implements ActionListener,
         }
     }
 
-    public boolean setupFor(RoundI round) {
+    public boolean setupFor(Round round) {
 
         currentRound = round;
 

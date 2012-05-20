@@ -28,7 +28,7 @@ public class Station {
     private int number;
     private int value;
     private int baseSlots;
-    private TileI tile;
+    private Tile tile;
     private int position;
     private String cityName;
     private int x;
@@ -54,7 +54,7 @@ public class Station {
         return validTypes.contains(type);
     }
 
-    public Station(TileI tile, int number, String id, String type, int value,
+    public Station(Tile tile, int number, String id, String type, int value,
             int slots, int position, String cityName) {
         this.tile = tile;
         this.number = number;
@@ -80,7 +80,7 @@ public class Station {
     /**
      * @return Returns the holder.
      */
-    public TileI getTile() {
+    public Tile getTile() {
         return tile;
     }
 

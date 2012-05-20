@@ -6,40 +6,35 @@ import java.util.List;
 import rails.algorithms.RevenueAdapter;
 import rails.algorithms.RevenueStaticModifier;
 import rails.common.parser.ConfigurationException;
-import rails.game.CompanyTypeI;
 import rails.game.GameManager;
 import rails.game.Player;
 import rails.game.PublicCertificate;
 import rails.game.PublicCompany;
 import rails.game.Train;
+import rails.game.model.PortfolioModel;
 import rails.game.state.BooleanState;
 import rails.game.state.GenericState;
-import rails.game.state.IntegerState;
-import rails.game.state.Owner;
+import rails.game.state.Item;
 
 public class PublicCompany_CGR extends PublicCompany implements RevenueStaticModifier {
 
     public static final String NAME = "CGR";
 
     /** Special rules apply before CGR has got its first permanent train */
-    private BooleanState hadPermanentTrain;
+    private final BooleanState hadPermanentTrain = BooleanState.create();
 
     /** If no player has 2 shares, we need a separate attribute to mark the president. */
-    private GenericState<Player> temporaryPresident = null;
-
-    /* Cope with multiple 5% share sales in one turn */
-    private IntegerState sharesSoldSoFar;
-    private IntegerState squaresDownSoFar;
+    private final GenericState<Player> temporaryPresident = GenericState.create();
 
     /** Initialisation, to be called directly after instantiation (cloning) */
     @Override
-    public void init(String name, CompanyTypeI type) {
-        super.init(name, type);
-        hadPermanentTrain = BooleanState.create(this, name+"_HadPermanentTrain", false);
+    public void init(Item parent, String id) {
+        super.init(parent, id);
+        hadPermanentTrain.init(this, id + "_HadPermanentTrain");
+        temporaryPresident.init(this, "CGR_TempPres");
 
         // Share price is initially fixed
         canSharePriceVary.set(false);
-        
     }
     
     @Override
@@ -86,7 +81,6 @@ public class PublicCompany_CGR extends PublicCompany implements RevenueStaticMod
 
     public void setTemporaryPresident(Player temporaryPresident) {
         if (this.temporaryPresident == null) {
-            this.temporaryPresident = GenericState.create(this, "CGR_TempPres");
         }
         this.temporaryPresident.set(temporaryPresident);
     }
@@ -123,16 +117,16 @@ public class PublicCompany_CGR extends PublicCompany implements RevenueStaticMod
 
     public void setShareUnit (int percentage) {
         // Only allowed for CGR, the value must be 10
-        if (shareUnit.intValue() == 5
+        if (shareUnit.value() == 5
                 && percentage == 10) {
             shareUnit.set(percentage);
             // Drop the last 10 shares
             List<PublicCertificate>certs = new ArrayList<PublicCertificate>(certificates.view());
             int share = 0;
-            Owner scrapHeap = bank.getScrapHeap();
+            PortfolioModel scrapHeap = bank.getScrapHeap();
             for (PublicCertificate cert : certs) {
                 if (share >= 100) {
-                    cert.moveTo(scrapHeap);
+                    scrapHeap.addPublicCertificate(cert);
                     certificates.remove(cert);
                 } else {
                     cert.setCertificateCount(1.0f);

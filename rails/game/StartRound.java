@@ -10,16 +10,16 @@ import rails.game.action.*;
 import rails.game.state.ArrayListState;
 import rails.game.state.GenericState;
 import rails.game.state.IntegerState;
+import rails.game.state.Item;
 import rails.game.state.Model;
 
-public abstract class StartRound extends Round {
+public abstract class StartRound extends AbstractRound {
 
     protected StartPacket startPacket = null;
     protected int[] itemIndex;
-    protected ArrayListState<StartItem> itemsToSell = null;
-    protected GenericState<StartItem> auctionItemState =
-            GenericState.create(this, "AuctionItem");
-    protected IntegerState numPasses = IntegerState.create(this, "StartRoundPasses");
+    protected final ArrayListState<StartItem> itemsToSell = ArrayListState.create();
+    protected final GenericState<StartItem> auctionItemState = GenericState.create();
+    protected final IntegerState numPasses = IntegerState.create();
     protected int numPlayers;
     protected String variant;
     protected Player currentPlayer;
@@ -55,7 +55,15 @@ public abstract class StartRound extends Round {
         guiHints.setVisibilityHint(GuiDef.Panel.MAP, true);
         guiHints.setActivePanel(GuiDef.Panel.START_ROUND);
     }
-
+    
+    @Override
+    public void init(Item parent, String id) {
+        super.init(parent, id);
+        itemsToSell.init(this, "itemsToSell");
+        auctionItemState.init(this, "AuctionItem");
+        numPasses.init(this, "StartRoundPasses");
+    }
+    
     /**
      * Start the start round.
      *
@@ -67,7 +75,6 @@ public abstract class StartRound extends Round {
         if (variant == null) variant = "";
         numPlayers = gameManager.getNumberOfPlayers();
 
-        itemsToSell = ArrayListState.create(this, "itemsToSell");
         itemIndex = new int[startPacket.getItems().size()];
         int index = 0;
 
@@ -260,7 +267,7 @@ public abstract class StartRound extends Round {
     protected void assignItem(Player player, StartItem item, int price,
             int sharePrice) {
         Certificate primary = item.getPrimary();
-        ReportBuffer.change(LocalText.getText("BuysItemFor",
+        ReportBuffer.add(LocalText.getText("BuysItemFor",
                 player.getId(),
                 primary.getId(),
                 Bank.format(price) ));
@@ -269,7 +276,7 @@ public abstract class StartRound extends Round {
         checksOnBuying(primary, sharePrice);
         if (item.hasSecondary()) {
             Certificate extra = item.getSecondary();
-            ReportBuffer.change(LocalText.getText("ALSO_GETS",
+            ReportBuffer.add(LocalText.getText("ALSO_GETS",
                     player.getId(),
                     extra.getId() ));
             transferCertificate (extra, player.getPortfolioModel());

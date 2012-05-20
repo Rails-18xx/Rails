@@ -9,6 +9,7 @@ import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.state.AbstractItem;
 import rails.game.state.GenericState;
+import rails.game.state.Item;
 import rails.game.state.Owner;
 import rails.game.state.State;
 
@@ -18,7 +19,7 @@ public class PhaseManager extends AbstractItem implements ConfigurableComponentI
     protected HashMap<String, Phase> phaseMap;
 
     protected int numberOfPhases = 0;
-    protected GenericState<Phase> currentPhase = GenericState.create(this, "CurrentPhase");
+    protected final GenericState<Phase> currentPhase = GenericState.create();
 
     // Can be removed once setPhase() has been redone.
     protected GameManager gameManager;
@@ -50,6 +51,12 @@ public class PhaseManager extends AbstractItem implements ConfigurableComponentI
             phase.configureFromXML(phaseTag);
             previousPhase = phase;
         }
+    }
+    
+    @Override
+    public void init(Item parent, String id) {
+        super.init(parent, id);
+        currentPhase.init(this, "CurrentPhase");
     }
 
     public void finishConfiguration (GameManager gameManager) 

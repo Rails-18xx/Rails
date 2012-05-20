@@ -12,9 +12,7 @@ import rails.common.*;
 import rails.common.parser.*;
 import rails.game.action.*;
 import rails.game.correct.*;
-import rails.game.model.CashMoneyModel;
 import rails.game.model.PortfolioModel;
-import rails.game.special.SpecialProperty;
 import rails.game.special.SpecialProperty;
 import rails.game.special.SpecialTokenLay;
 import rails.game.state.*;
@@ -60,7 +58,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI 
     protected Bank bank;
 
     // map of correctionManagers
-    protected Map<CorrectionType, CorrectionManagerI> correctionManagers =
+    protected final Map<CorrectionType, CorrectionManagerI> correctionManagers =
         new HashMap<CorrectionType, CorrectionManagerI>();
 
     protected String gameName;
@@ -69,19 +67,18 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI 
     protected List<Player> players;
     protected List<String> playerNames;
     protected int numberOfPlayers;
-    protected GenericState<Player> currentPlayer = GenericState.create(this, "CurrentPlayer");
-    protected GenericState<Player> priorityPlayer = GenericState.create(this, "PriorityPlayer");
+    protected final GenericState<Player> currentPlayer = GenericState.create();
+    protected final GenericState<Player> priorityPlayer = GenericState.create();
 
     /** Map relating portfolio names and objects, to enable deserialization.
      * OBSOLETE since Rails 1.3.1, but still required to enable reading old saved files */
-    protected Map<String, PortfolioModel> portfolioMap =
+    protected final Map<String, PortfolioModel> portfolioMap =
         new HashMap<String, PortfolioModel> ();
     /** Map relating portfolio unique names and objects, to enable deserialization */
-    protected Map<String, PortfolioModel> portfolioUniqueNameMap =
+    protected final Map<String, PortfolioModel> portfolioUniqueNameMap =
         new HashMap<String, PortfolioModel> ();
 
-    protected IntegerState playerCertificateLimit
-    = IntegerState.create(this, "PlayerCertificateLimit", 0);
+    protected final IntegerState playerCertificateLimit = IntegerState.create();
     protected int currentNumberOfOperatingRounds = 1;
     protected boolean skipFirstStockRound = false;
     protected boolean showCompositeORNumber = true;
@@ -96,7 +93,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI 
     /** Will only be set during game reload */
     protected boolean reloading = false;
 
-    protected EnumMap<GameDef.Parm, Object> gameParameters
+    protected final EnumMap<GameDef.Parm, Object> gameParameters
     = new EnumMap<GameDef.Parm, Object>(GameDef.Parm.class);
 
     /**
@@ -106,29 +103,27 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI 
      * been sold, it finishes by starting an Operating Round, which handles the
      * privates payout and then immediately starts a new Start Round.
      */
-    protected GenericState<RoundI> currentRound = GenericState.create(this, "CurrentRound");
-    protected RoundI interruptedRound = null;
+    protected final GenericState<Round> currentRound = GenericState.create();
+    protected Round interruptedRound = null;
 
-    protected IntegerState srNumber = IntegerState.create (this, "SRNumber");
+    protected final IntegerState srNumber = IntegerState.create();
 
-    protected IntegerState absoluteORNumber =
-        IntegerState.create(this, "AbsoluteORNUmber");
-    protected IntegerState relativeORNumber =
-        IntegerState.create(this, "RelativeORNumber");
-    protected IntegerState numOfORs = IntegerState.create(this, "numOfORs");
+    protected final IntegerState absoluteORNumber = IntegerState.create();
+    protected final IntegerState relativeORNumber = IntegerState.create();
+    protected final IntegerState numOfORs = IntegerState.create();
 
     /** GameOver pending, a last OR or set of ORs must still be completed */
-    protected BooleanState gameOverPending = BooleanState.create(this, "GameOverPending", false);
+    protected final BooleanState gameOverPending = BooleanState.create();
     /** GameOver is executed, no more moves */
-    protected BooleanState gameOver = BooleanState.create(this, "GameOver" ,false);
+    protected final BooleanState gameOver = BooleanState.create();
     protected Boolean gameOverReportedUI = false;
-    protected BooleanState endedByBankruptcy = BooleanState.create(this, "EndedByBankruptcy", false);
+    protected final BooleanState endedByBankruptcy = BooleanState.create();
 
     /** UI display hints */
     protected GuiHints guiHints;
 
     /** Flags to be passed to the UI, aiding the layout definition */
-    protected EnumMap<GuiDef.Parm, Boolean> guiParameters =
+    protected final EnumMap<GuiDef.Parm, Boolean> guiParameters =
         new EnumMap<GuiDef.Parm, Boolean>(GuiDef.Parm.class);
 
     /**
@@ -153,7 +148,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI 
      * <p>
      * For now, the key is a fixed string, but that may change in the future.
      */
-    protected static Map<String, GameManager> gameManagerMap
+    protected static final Map<String, GameManager> gameManagerMap
     = new HashMap<String, GameManager>();
 
     /**
@@ -168,7 +163,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI 
     /**
      * The MoveSet stack is maintained to enable Undo and Redo throughout the game.
      */
-    protected ChangeStack changeStack = new ChangeStack();
+    protected final ChangeStack changeStack = ChangeStack.create();
 
     /**
      * The DisplayBuffer instance collects messages to be displayed in the UI.
@@ -177,7 +172,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI 
     /**
      * nextPlayerMessages collects all messages to be displayed to the next player
      */
-    protected ArrayListState<String> nextPlayerMessages = ArrayListState.create(this, "nextPlayerMessages");
+    protected final ArrayListState<String> nextPlayerMessages = ArrayListState.create();
 
     /**
      * The ReportBuffer collects messages to be shown in the Game Report.
@@ -191,7 +186,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI 
 
     protected PossibleActions possibleActions = PossibleActions.getInstance();
 
-    protected ArrayListState<PossibleAction> executedActions = ArrayListState.create(this, "executedActions");
+    protected final ArrayListState<PossibleAction> executedActions = ArrayListState.create();
 
     /** Special properties that can be used by other players or companies
      * than just the owner (such as buyable bonus tokens as in 1856).
@@ -228,7 +223,6 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI 
         Logger.getLogger(GameManager.class.getPackage().getName());
 
     public GameManager() {
-        super("GameManager");
         gmName = GM_NAME;
         gmKey = GM_KEY;
         NDC.clear();
@@ -496,6 +490,24 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI 
         }
     }
 
+    @Override
+    public void init(Item parent, String id){
+        super.init(parent, id);
+        currentPlayer.init(this, "CurrentPlayer");
+        priorityPlayer.init(this, "PriorityPlayer");
+        playerCertificateLimit.init(this, "PlayerCertificateLimit");
+        currentRound.init(this, "CurrentRound");
+        srNumber.init(this, "SRNumber");
+        absoluteORNumber.init(this, "AbsoluteORNUmber");
+        relativeORNumber.init(this, "RelativeORNumber");
+        numOfORs.init(this, "numOfORs");
+        gameOverPending.init(this, "GameOverPending");
+        gameOver.init(this, "GameOver");
+        endedByBankruptcy.init(this, "EndedByBankruptcy");     
+        nextPlayerMessages.init(this, "nextPlayerMessages");
+        executedActions.init(this, "executedActions");
+    }
+    
     public void finishConfiguration (GameManager gameManager) {}
 
     /** Check if a classname can be instantiated.
@@ -627,21 +639,21 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI 
     /* (non-Javadoc)
      * @see rails.game.GameManager#setRound(rails.game.RoundI)
      */
-    protected void setRound(RoundI round) {
+    protected void setRound(Round round) {
         currentRound.set(round);
     }
 
     /* (non-Javadoc)
      * @see rails.game.GameManager#nextRound(rails.game.RoundI)
      */
-    public void nextRound(RoundI round) {
+    public void nextRound(Round round) {
         if (round instanceof StartRound) {
             if (startPacket != null && !startPacket.areAllSold()) {
                 startOperatingRound(false);
             } else if (skipFirstStockRound) {
                 Phase currentPhase =
                     phaseManager.getCurrentPhase();
-                if (currentPhase.getNumberOfOperatingRounds() != numOfORs.intValue()) {
+                if (currentPhase.getNumberOfOperatingRounds() != numOfORs.value()) {
                     numOfORs.set(currentPhase.getNumberOfOperatingRounds());
                 }
                 log.info("Phase=" + currentPhase.getName() + " ORs=" + numOfORs);
@@ -670,7 +682,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI 
 
                 finishGame();
 
-            } else if (relativeORNumber.add(1) <= numOfORs.intValue()) {
+            } else if (relativeORNumber.add(1) <= numOfORs.value()) {
                 // There will be another OR
                 startOperatingRound(true);
             } else if (startPacket != null && !startPacket.areAllSold()) {
@@ -714,7 +726,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI 
         or.start();
     }
 
-    protected <T extends RoundI> T createRound (Class<T> roundClass) {
+    protected <T extends Round> T createRound (Class<T> roundClass) {
 
         T round = null;
         try {
@@ -729,7 +741,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI 
         return round;
     }
 
-    protected <T extends RoundI, U extends RoundI>
+    protected <T extends Round, U extends Round>
     T createRound (Class<T> roundClass, U parentRound) {
 
         if (parentRound == null) {
@@ -738,7 +750,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI 
 
         T round = null;
         try {
-            Constructor<T> cons = roundClass.getConstructor(GameManager.class, RoundI.class);
+            Constructor<T> cons = roundClass.getConstructor(GameManager.class, Round.class);
             round = cons.newInstance(this, parentRound);
         } catch (Exception e) {
             log.fatal("Cannot instantiate class "
@@ -750,7 +762,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI 
     }
 
     /** Stub, can be overridden in subclasses with actual actions */
-    public void newPhaseChecks (RoundI round) {
+    public void newPhaseChecks (Round round) {
 
     }
 
@@ -758,23 +770,23 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI 
         if (showCompositeORNumber) {
             return getCompositeORNumber();
         } else {
-            return String.valueOf(absoluteORNumber.intValue());
+            return String.valueOf(absoluteORNumber.value());
         }
     }
 
     public int getAbsoluteORNumber () {
-        return absoluteORNumber.intValue();
+        return absoluteORNumber.value();
     }
 
     /* (non-Javadoc)
      * @see rails.game.GameManager#getCompositeORNumber()
      */
     public String getCompositeORNumber() {
-        return srNumber.intValue() + "." + relativeORNumber.intValue();
+        return srNumber.value() + "." + relativeORNumber.value();
     }
 
     public int getRelativeORNumber() {
-        return relativeORNumber.intValue();
+        return relativeORNumber.value();
     }
 
     public String getNumOfORs () {
@@ -785,7 +797,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI 
      * @see rails.game.GameManager#getSRNumber()
      */
     public int getSRNumber () {
-        return srNumber.intValue();
+        return srNumber.value();
     }
 
     /* (non-Javadoc)
@@ -1396,8 +1408,8 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI 
     /* (non-Javadoc)
      * @see rails.game.GameManager#getCurrentRound()
      */
-    public RoundI getCurrentRound() {
-        return (RoundI) currentRound.get();
+    public Round getCurrentRound() {
+        return (Round) currentRound.get();
     }
 
     /* (non-Javadoc)
@@ -1487,7 +1499,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI 
     }
 
     public int getPlayerCertificateLimit(Player player) {
-        return playerCertificateLimit.intValue();
+        return playerCertificateLimit.value();
     }
 
     public void setPlayerCertificateLimit(int newLimit) {
@@ -1685,15 +1697,16 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI 
         }
     }
 
-    public RoundI getInterruptedRound() {
+    public Round getInterruptedRound() {
         return interruptedRound;
     }
 
-    // FIXME: Is position required?
-    public boolean addSpecialProperty(SpecialProperty property, int position) {
+    // TODO: Was the int position argument required?
+    public boolean addSpecialProperty(SpecialProperty property) {
         
         if (commonSpecialProperties == null) {
-            commonSpecialProperties = Portfolio.createList(this, "CommonSpecialProperties");
+            commonSpecialProperties = PortfolioList.create();
+            commonSpecialProperties.init(this, "CommonSpecialProperties");
         }
         return commonSpecialProperties.moveInto(property);
     }
@@ -1844,7 +1857,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI 
         final boolean _ascending = ascending;
         Collections.sort (players, new Comparator<Player>() {
             public int compare (Player p1, Player p2) {
-                return _ascending ? p1.getCashModel().value() - p2.getCashModel().value() : p2.getCashModel().value() - p1.getCashModel().value();
+                return _ascending ? p1.getCash() - p2.getCash() : p2.getCash() - p1.getCash();
             }
         });
 
@@ -1853,7 +1866,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI 
             player = players.get(i);
             player.setIndex (i);
             playerNames.set (i, player.getId());
-            log.debug("New player "+i+" is "+player.getId() +" (cash="+Bank.format(player.getCashModel().value())+")");
+            log.debug("New player "+i+" is "+player.getId() +" (cash="+Bank.format(player.getCash())+")");
         }
 
         return players.get(0);

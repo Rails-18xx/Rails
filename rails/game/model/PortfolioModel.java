@@ -8,6 +8,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
 
 import rails.common.LocalText;
 import rails.game.Bank;
@@ -28,6 +29,7 @@ import rails.game.special.LocatedBonus;
 import rails.game.special.SpecialProperty;
 import rails.game.state.Item;
 import rails.game.state.Model;
+import rails.game.state.PortfolioHolder;
 import rails.game.state.Portfolio;
 import rails.game.state.PortfolioList;
 
@@ -38,7 +40,9 @@ import rails.game.state.PortfolioList;
  * 
  * @author evos, freystef (2.0)
  */
-public final class PortfolioModel extends Model {
+
+// TODO: Check if it is correct to assume the PortfolioModel being the owner
+public final class PortfolioModel extends Model implements PortfolioHolder {
 
     public static final String id = "PortfolioModel";
     
@@ -76,9 +80,14 @@ public final class PortfolioModel extends Model {
         return new PortfolioModel();
     }
     
+    /**
+     * Parent is restricted to PortfolioOwner
+     */
     @Override 
     public void init(Item parent, String id) {
 
+        super.checkedInit(parent, id, PortfolioOwner.class);
+        
         // create models
         certificates = CertificatesModel.create(parent);
         privates = PrivatesModel.create(parent);
@@ -100,8 +109,12 @@ public final class PortfolioModel extends Model {
 
         gameManager.addPortfolio(this);
     }
-    
 
+    @Override
+    public PortfolioOwner getParent() {
+        return (PortfolioOwner)super.getParent();
+    }
+    
     public void transferAssetsFrom(PortfolioModel otherPortfolio) {
 
         // Move trains
@@ -113,15 +126,15 @@ public final class PortfolioModel extends Model {
 
     /** Low-level method, only to be called by the local addObject() method and by initialisation code. */
     // TODO: Ignores position now, is this necessary?
-    public void addPrivate(PrivateCompany privateCompany, int position) {
+    public void addPrivateCompany(PrivateCompany company) {
 
         // add to private Model
-        privates.moveInto(privateCompany);
+        privates.moveInto(company);
         
-        if (privateCompany.getSpecialProperties() != null) {
-            log.debug(privateCompany.getId() + " has special properties!");
+        if (company.getSpecialProperties() != null) {
+            log.debug(company.getId() + " has special properties!");
         } else {
-            log.debug(privateCompany.getId() + " has no special properties");
+            log.debug(company.getId() + " has no special properties");
         }
 
         // TODO: This should not be necessary as soon as a PlayerModel works correctly
@@ -153,7 +166,7 @@ public final class PortfolioModel extends Model {
         return certificates.getPortfolio().items();
     }
 
-    public boolean moveInto(PublicCertificate c) {
+    public boolean addPublicCertificate(PublicCertificate c) {
         return certificates.moveInto(c);
     }
     
@@ -212,26 +225,24 @@ public final class PortfolioModel extends Model {
         return certsPerType;
     }
 */
-    // FIXME: Rewrite using a better structure
-/*    public List<PublicCertificate> getCertsOfType(String certTypeId) {
-        for (PublicCertificate  )
-        if (getCertificates.containsKey(certTypeId)) {
-            return certsPerType.get(certTypeId);
-        } else {
-            return null;
+    public ImmutableList<PublicCertificate> getCertsOfType(String certTypeId) {
+        Builder<PublicCertificate> list = ImmutableList.builder();
+        for (PublicCertificate cert : certificates.getCertificates()) {
+            if (cert.getTypeId().equals(certTypeId)) {
+                list.add(cert);
+            }
         }
+        return list.build();
     }
-*/
     
-    // FIXME: Write using a better structure
-/*    public PublicCertificate getCertOfType(String certTypeId) {
-        if (certsPerType.containsKey(certTypeId)) {
-            return certsPerType.get(certTypeId).get(0);
-        } else {
-            return null;
-        }
+   public PublicCertificate getAnyCertOfType(String certTypeId) {
+       for (PublicCertificate cert : certificates.getCertificates()) {
+           if (cert.getTypeId().equals(certTypeId)) {
+               return cert;
+           }
+       }
+       return null;
     }
-*/
     
     // TODO: Check if this is needed and should be supported (owner should be final?)
 /*
@@ -379,6 +390,13 @@ public final class PortfolioModel extends Model {
 
     public Train getTrainOfType(TrainCertificateType type) {
         return trains.getTrainOfType(type);
+    }
+    
+    /**
+     * Add a train to the train portfolio
+     */
+    public boolean addTrain(Train train) {
+        return trains.getPortfolio().moveInto(train);
     }
 
 
@@ -586,7 +604,12 @@ public final class PortfolioModel extends Model {
         return privates;
     }
 
-    public Portfolio<BonusToken> getTokenHolder() {
+    public boolean addBonusToken(BonusToken token){
+        return bonusTokens.moveInto(token);
+    }
+    
+    // TODO: Check as this should return only BonusToken, however the tokenholder is only restricted to Tokens
+    public Portfolio<Token> getTokenHolder() {
         return bonusTokens;
     }
     

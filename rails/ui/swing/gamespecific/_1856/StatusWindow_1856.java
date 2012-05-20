@@ -21,7 +21,7 @@ public class StatusWindow_1856 extends StatusWindow {
 
     @Override
     public void updateStatus(boolean myTurn) {
-        RoundI currentRound = gameUIManager.getCurrentRound();
+        Round currentRound = gameUIManager.getCurrentRound();
         if (!(currentRound instanceof CGRFormationRound)) {
             super.updateStatus(myTurn);
         } else if (possibleActions.contains(RepayLoans.class)) {

@@ -1,14 +1,8 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/UseSpecialProperty.java,v 1.6 2010/02/06 23:45:04 evos Exp $
- * 
- * Created on 14-Sep-2006
- * Change Log:
- */
 package rails.game.action;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-import rails.game.special.SpecialProperty;
 import rails.game.special.SpecialProperty;
 
 /**

@@ -21,22 +21,20 @@ import rails.game.state.*;
  * discarded. <p> Permanent memory is formed by static attributes (like who has
  * the Priority Deal).
  */
-public class StockRound extends Round {
+public class StockRound extends AbstractRound {
 
     /* Transient memory (per round only) */
     protected int numberOfPlayers;
     protected Player currentPlayer;
     protected Player startingPlayer;
 
-    protected GenericState<PublicCompany> companyBoughtThisTurnWrapper =
-        GenericState.create(this, "CompanyBoughtThisTurn");
+    protected final GenericState<PublicCompany> companyBoughtThisTurnWrapper = GenericState.create();
 
-    protected BooleanState hasSoldThisTurnBeforeBuying =
-        BooleanState.create(this, "HoldSoldBeforeBuyingThisTurn", false);
+    protected final BooleanState hasSoldThisTurnBeforeBuying = BooleanState.create();
 
-    protected BooleanState hasActed = BooleanState.create(this, "HasActed", false);
+    protected final BooleanState hasActed = BooleanState.create();
 
-    protected IntegerState numPasses = IntegerState.create(this, "StockRoundPasses");
+    protected final IntegerState numPasses = IntegerState.create();
 
     protected Map<PublicCompany, StockSpace> sellPrices =
         new HashMap<PublicCompany, StockSpace>();
@@ -48,8 +46,7 @@ public class StockRound extends Round {
 
     /* Transient data needed for rule enforcing */
     /** HashMap per player containing a HashMap per company */
-    protected HashMultimapState<Player, PublicCompany> playersThatSoldThisRound =
-        HashMultimapState.create(this, "playersThatSoldThisRound");
+    protected HashMultimapState<Player, PublicCompany> playersThatSoldThisRound = HashMultimapState.create();
 
     /* Rule constants */
     static protected final int SELL_BUY_SELL = 0;
@@ -80,6 +77,17 @@ public class StockRound extends Round {
         guiHints.setVisibilityHint(GuiDef.Panel.MAP, true);
         guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, true);
         guiHints.setActivePanel(GuiDef.Panel.STATUS);
+    }
+    
+    @Override
+    public void init(Item parent, String id) {
+        super.init(parent, id);
+
+        companyBoughtThisTurnWrapper.init(this, "CompanyBoughtThisTurn");
+        hasSoldThisTurnBeforeBuying.init(this, "HoldSoldBeforeBuyingThisTurn");
+        hasActed.init(this, "HasActed");
+        numPasses.init(this, "StockRoundPasses");
+        playersThatSoldThisRound.init(this, "playersThatSoldThisRound");
     }
 
     public void start() {
@@ -357,7 +365,6 @@ public class StockRound extends Round {
     public void setSellableShares() {
         if (!mayCurrentPlayerSellAnything()) return;
 
-        String compName;
         int price;
         int number;
         int share, maxShareToSell;
@@ -635,20 +642,20 @@ public class StockRound extends Round {
         CashOwner priceRecipient = getSharePriceRecipient (company, ipo, price);
 
         // Transfer the President's certificate
-        cert.moveTo(currentPlayer.getPortfolioModel());
+        currentPlayer.getPortfolioModel().addPublicCertificate(cert);
 
 
         // If more than one certificate is bought at the same time, transfer
         // these too.
         for (int i = 1; i < numberOfCertsToBuy; i++) {
             cert = ipo.findCertificate(company, false);
-            cert.moveTo(currentPlayer.getPortfolioModel());
+            currentPlayer.getPortfolioModel().addPublicCertificate(cert);
         }
 
         // Pay for these shares
         MoneyModel.cashMove (currentPlayer, priceRecipient, cost);
 
-        ReportBuffer.change(LocalText.getText("START_COMPANY_LOG",
+        ReportBuffer.add(LocalText.getText("START_COMPANY_LOG",
                 playerName,
                 companyName,
                 Bank.format(price),
@@ -838,12 +845,12 @@ public class StockRound extends Round {
                 log.error("Cannot find " + companyName + " " + shareUnit*sharePerCert
                         + "% share in " + from.getId());
             }
-            cert2.moveTo(currentPlayer.getPortfolioModel());
+            currentPlayer.getPortfolioModel().addPublicCertificate(cert2);
         }
         MoneyModel.cashMove (currentPlayer, priceRecipient, cost);
 
-        if (priceRecipient != from.getOwner()) {
-            ReportBuffer.change(LocalText.getText("PriceIsPaidTo",
+        if (priceRecipient != from.getParent()) {
+            ReportBuffer.add(LocalText.getText("PriceIsPaidTo",
                     Bank.format(cost),
                     priceRecipient.getId() ));
         }
@@ -884,7 +891,7 @@ public class StockRound extends Round {
      * @return
      */
     protected CashOwner getSharePriceRecipient (PublicCompany comp,
-            Owner from, int price) {
+            PortfolioHolder from, int price) {
 
         CashOwner recipient;
         if (comp.hasFloated()
@@ -906,7 +913,7 @@ public class StockRound extends Round {
 
         for (PublicCertificate cert : company.getCertificates()) {
             if (cert.getHolder().equals(unavailable)) {
-                cert.moveTo(ipo);
+                ipo.addPublicCertificate(cert);
             }
         }
     }
@@ -1142,7 +1149,6 @@ public class StockRound extends Round {
 
     protected int getCurrentSellPrice (PublicCompany company) {
 
-        String companyName = company.getId();
         int price;
 
         if (sellPrices.containsKey(company)
@@ -1168,7 +1174,7 @@ public class StockRound extends Round {
             company.setClosed();
             ReportBuffer.add(LocalText.getText("CompanyClosesAt",
                     company.getId(),
-                    newSpace.getName()));
+                    newSpace.getId()));
             return;
         }
 
@@ -1193,12 +1199,13 @@ public class StockRound extends Round {
         }
     }
 
+    // TODO: Check if this still does work, there is a cast involved now
     public boolean executeExchangeForShare (ExchangeForShare sp) {
 
         PublicCompany publicCompany =
             companyManager.getPublicCompany(sp.getPublicCompanyName());
-        Company privateCompany = sp.getOriginalCompany();
-        PortfolioModel portfolio = privateCompany.getPortfolioModel();
+        PrivateCompany privateCompany = (PrivateCompany)sp.getOriginalCompany();
+        Portfolio<PrivateCompany> portfolio = privateCompany.getPortfolio();
         Player player = null;
         String errMsg = null;
         boolean ipoHasShare = ipo.getShare(publicCompany) >= sp.getShare();
@@ -1207,14 +1214,14 @@ public class StockRound extends Round {
         while (true) {
 
             /* Check if the private is owned by a player */
-            if (!(portfolio.getOwner() instanceof Player)) {
+            if (!(portfolio.getParent() instanceof Player)) {
                 errMsg =
                     LocalText.getText("PrivateIsNotOwnedByAPlayer",
                             privateCompany.getId());
                 break;
             }
 
-            player = (Player) portfolio.getOwner();
+            player = (Player) portfolio.getParent();
 
             /* Check if a share is available */
             if (!ipoHasShare && !poolHasShare) {
@@ -1250,7 +1257,7 @@ public class StockRound extends Round {
             ipoHasShare ? ipo.findCertificate(publicCompany,
                     false) : pool.findCertificate(publicCompany,
                             false);
-            cert.moveTo(player.getPortfolioModel());
+            transferCertificate(cert, player.getPortfolioModel());
             ReportBuffer.add(LocalText.getText("SwapsPrivateForCertificate",
                     player.getId(),
                     privateCompany.getId(),
@@ -1299,7 +1306,7 @@ public class StockRound extends Round {
             }
         }
 
-        if (numPasses.intValue() >= getNumberOfActivePlayers()) {
+        if (numPasses.value() >= getNumberOfActivePlayers()) {
 
             finishRound();
 
@@ -1328,14 +1335,14 @@ public class StockRound extends Round {
                     ReportBuffer.add(LocalText.getText("SoldOut",
                             company.getId(),
                             Bank.format(oldSpace.getPrice()),
-                            oldSpace.getName(),
+                            oldSpace.getId(),
                             Bank.format(newSpace.getPrice()),
-                            newSpace.getName()));
+                            newSpace.getId()));
                 } else {
                     ReportBuffer.add(LocalText.getText("SoldOutNoRaise",
                             company.getId(),
                             Bank.format(newSpace.getPrice()),
-                            newSpace.getName()));
+                            newSpace.getId()));
                 }
             }
         }
@@ -1591,7 +1598,8 @@ public class StockRound extends Round {
 
 	public void setSellObligationLifted (PublicCompany company) {
 		if (sellObligationLifted == null) {
-			sellObligationLifted = HashSetState.create(this, "SellObligationLifted");
+			sellObligationLifted = HashSetState.create();
+			sellObligationLifted.init(this, "SellObligationLifted");
 		}
 		sellObligationLifted.add(company);
 	}

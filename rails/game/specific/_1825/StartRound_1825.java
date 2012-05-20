@@ -116,7 +116,7 @@ public class StartRound_1825 extends StartRound {
     public boolean pass(String playerName) {
         ReportBuffer.add(LocalText.getText("PASSES", playerName));
         numPasses.add(1);
-        if (numPasses.intValue() >= numPlayers) {
+        if (numPasses.value() >= numPlayers) {
             //Everyone has passed
             ReportBuffer.add(LocalText.getText("ALL_PASSED"));
             numPasses.set(0);

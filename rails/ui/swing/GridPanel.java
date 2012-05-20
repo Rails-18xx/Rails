@@ -22,9 +22,8 @@ import org.apache.log4j.Logger;
 import rails.game.GameManager;
 import rails.game.Player;
 import rails.game.PublicCompany;
-import rails.game.RoundI;
+import rails.game.Round;
 import rails.game.state.BooleanState;
-import rails.game.state.Model;
 import rails.game.state.Observable;
 import rails.game.state.Observer;
 import rails.ui.swing.elements.Field;
@@ -32,6 +31,9 @@ import rails.ui.swing.elements.Field;
 public abstract class GridPanel extends JPanel
 implements ActionListener, KeyListener {
 
+    // TODO: Check if adding the field is compatible
+    private static final long serialVersionUID = 1L;
+    
     protected static final int NARROW_GAP = 1;
     protected static final int WIDE_GAP = 3;
     protected static final int WIDE_LEFT = 1;
@@ -51,7 +53,7 @@ implements ActionListener, KeyListener {
     protected Player[] players;
     protected int nc;
     protected PublicCompany[] companies;
-    protected RoundI round;
+    protected Round round;
     protected PublicCompany c;
     protected JComponent f;
 
@@ -142,18 +144,20 @@ implements ActionListener, KeyListener {
 
     public class RowVisibility implements Observer {
 
-        private GridPanel parent;
         private Observable observable;
-        private int rowIndex;
         private boolean lastValue;
-        private boolean reverseValue;
 
-        public RowVisibility (GridPanel parent, int rowIndex, Model model, boolean reverseValue) {
-            this.parent = parent;
-            this.observable = model;
-            this.rowIndex = rowIndex;
-            this.reverseValue = reverseValue;
-            observable.addObserver(this);
+        // TODO: Fields below there never used!
+//        private GridPanel parent;
+//        private int rowIndex;
+//        private boolean reverseValue;
+
+        public RowVisibility (GridPanel parent, int rowIndex, Observable observable, boolean reverseValue) {
+//            this.parent = parent;
+            this.observable = observable;
+//            this.rowIndex = rowIndex;
+//            this.reverseValue = reverseValue;
+            this.observable.addObserver(this);
             lastValue = ((BooleanState)observable).booleanValue() != reverseValue;
         }
 

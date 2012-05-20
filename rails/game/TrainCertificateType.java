@@ -10,6 +10,7 @@ import rails.common.parser.Tag;
 import rails.game.state.AbstractItem;
 import rails.game.state.BooleanState;
 import rails.game.state.IntegerState;
+import rails.game.state.Item;
 import rails.util.*;
 
 public class TrainCertificateType extends AbstractItem {
@@ -33,9 +34,9 @@ public class TrainCertificateType extends AbstractItem {
     protected Class<? extends Train> trainClass;
 
     // State variables
-    protected IntegerState numberBoughtFromIPO;
-    protected BooleanState available;
-    protected BooleanState rusted;
+    protected final IntegerState numberBoughtFromIPO = IntegerState.create(0);
+    protected final BooleanState available = BooleanState.create(false);
+    protected final BooleanState rusted = BooleanState.create(false);
 
     // References
     protected TrainManager trainManager;
@@ -97,12 +98,18 @@ public class TrainCertificateType extends AbstractItem {
         // Can run as obsolete train
         obsoleting = tag.getAttributeAsBoolean("obsoleting");
 
-        // Final initialisations
-        numberBoughtFromIPO = IntegerState.create(this, name + "-trains_Bought", 0);
-        available = BooleanState.create(this, name + "-trains_Available", false);
-        rusted = BooleanState.create(this, name + "-trains_Rusted", false);
-
     }
+    
+    @Override
+    public void init(Item parent, String id){
+        super.init(parent, id);
+        
+        // State inits
+        numberBoughtFromIPO .init(this, name + "-trains_Bought");
+        available.init(this, name + "-trains_Available");
+        rusted.init(this, name + "-trains_Rusted");
+    }
+    
 
     public void finishConfiguration (GameManager gameManager) 
     throws ConfigurationException {
@@ -206,7 +213,7 @@ public class TrainCertificateType extends AbstractItem {
     }
 
     public int getNumberBoughtFromIPO() {
-        return numberBoughtFromIPO.intValue();
+        return numberBoughtFromIPO.value();
     }
 
     public int getCost() {
@@ -229,11 +236,12 @@ public class TrainCertificateType extends AbstractItem {
         return b.toString();
     }
 
-    private void appendInfoText (StringBuilder b, String text) {
-        if (text == null || text.length() == 0) return;
-        if (b.length() > 6) b.append("<br>");
-        b.append(text);
-    }
+    // TODO: Is this still required, was never used!
+//    private void appendInfoText (StringBuilder b, String text) {
+//        if (text == null || text.length() == 0) return;
+//        if (b.length() > 6) b.append("<br>");
+//        b.append(text);
+//    }
 
     public String toString() {
         return name;

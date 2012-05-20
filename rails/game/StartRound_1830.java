@@ -307,7 +307,7 @@ public class StartRound_1830 extends StartRound {
         numPasses.add(1);
         if (auctionItem != null) {
 
-            if (numPasses.intValue() >= auctionItem.getBidders() - 1) {
+            if (numPasses.value() >= auctionItem.getBidders() - 1) {
                 // All but the highest bidder have passed.
                 int price = auctionItem.getBid();
 
@@ -337,7 +337,7 @@ public class StartRound_1830 extends StartRound {
 
         } else {
 
-            if (numPasses.intValue() >= numPlayers) {
+            if (numPasses.value() >= numPlayers) {
                 // All players have passed.
                 ReportBuffer.add(LocalText.getText("ALL_PASSED"));
                 // It the first item has not been sold yet, reduce its price by
@@ -365,9 +365,9 @@ public class StartRound_1830 extends StartRound {
                     finishRound();
 
                 }
-            } else if (auctionItem != null) {
+//            } else if (auctionItem != null) {
                 // TODO  Now dead code - should it be reactivated?
-                setNextBiddingPlayer(auctionItem);
+//                setNextBiddingPlayer(auctionItem);
             } else {
                 setNextPlayer();
             }

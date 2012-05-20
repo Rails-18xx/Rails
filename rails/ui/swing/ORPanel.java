@@ -509,15 +509,15 @@ implements ActionListener, KeyListener, RevenueListener {
     protected void addCompanynfo() {
 
     	CompanyManagerI cm = orUIManager.getGameUIManager().getGameManager().getCompanyManager();
-    	List<CompanyTypeI> comps = cm.getCompanyTypes();
+    	List<CompanyType> comps = cm.getCompanyTypes();
     	JMenu compMenu, menu, item;
 
         compMenu = new JMenu(LocalText.getText("Companies"));
         compMenu.setEnabled(true);
         infoMenu.add(compMenu);
 
-    	for (CompanyTypeI type : comps) {
-    		menu = new JMenu (LocalText.getText(type.getName()));
+    	for (CompanyType type : comps) {
+    		menu = new JMenu (LocalText.getText(type.getId()));
     		menu.setEnabled(true);
             compMenu.add(menu);
 

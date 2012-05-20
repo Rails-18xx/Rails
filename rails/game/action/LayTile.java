@@ -38,7 +38,7 @@ public class LayTile extends PossibleORAction {
     private Map<String, Integer> tileColours = null;
 
     /** Allowed tiles on a specific location (empty means unspecified) */
-    transient private List<TileI> tiles = null;
+    transient private List<Tile> tiles = null;
     private int[] tileIds;
 
     /**
@@ -56,8 +56,8 @@ public class LayTile extends PossibleORAction {
     /*--- Postconditions ---*/
 
     /** The tile actually laid */
-    transient private TileI laidTile = null;
-    private int laidTileId;
+    transient private Tile laidTile = null;
+    private int laidTiled;
 
     /** The map hex on which the tile is laid */
     transient private MapHex chosenHex = null;
@@ -76,7 +76,7 @@ public class LayTile extends PossibleORAction {
      * Allow laying a tile on a given location.
      */
     // NOTE: NOT YET USED
-    public LayTile(List<MapHex> locations, List<TileI> tiles) {
+    public LayTile(List<MapHex> locations, List<Tile> tiles) {
         type = LOCATION_SPECIFIC;
         this.locations = locations;
         if (locations != null) buildLocationNameString();
@@ -96,9 +96,9 @@ public class LayTile extends PossibleORAction {
         this.specialProperty = specialProperty;
         if (specialProperty != null) {
             this.specialPropertyId = specialProperty.getUniqueId();
-            TileI tile = specialProperty.getTile();
+            Tile tile = specialProperty.getTile();
             if (tile != null) {
-                tiles = new ArrayList<TileI>();
+                tiles = new ArrayList<Tile>();
                 tiles.add(tile);
             }
         }
@@ -132,16 +132,16 @@ public class LayTile extends PossibleORAction {
     /**
      * @return Returns the laidTile.
      */
-    public TileI getLaidTile() {
+    public Tile getLaidTile() {
         return laidTile;
     }
 
     /**
      * @param laidTile The laidTile to set.
      */
-    public void setLaidTile(TileI laidTile) {
+    public void setLaidTile(Tile laidTile) {
         this.laidTile = laidTile;
-        this.laidTileId = laidTile.getNb();
+        this.laidTiled = laidTile.getNb();
     }
 
     /**
@@ -162,14 +162,14 @@ public class LayTile extends PossibleORAction {
     /**
      * @return Returns the tiles.
      */
-    public List<TileI> getTiles() {
+    public List<Tile> getTiles() {
         return tiles;
     }
 
     /**
      * @param tiles The tiles to set.
      */
-    public void setTiles(List<TileI> tiles) {
+    public void setTiles(List<Tile> tiles) {
         this.tiles = tiles;
         this.tileIds = new int[tiles.size()];
         for (int i = 0; i < tiles.size(); i++) {
@@ -248,7 +248,7 @@ public class LayTile extends PossibleORAction {
     public boolean equalsAsAction (PossibleAction action) {
         if (!(action instanceof LayTile)) return false;
         LayTile a = (LayTile) action;
-        return (a.laidTileId == laidTileId
+        return (a.laidTiled == laidTiled
                && a.chosenHexName.equals(chosenHexName)
                && a.orientation == orientation
                && (a.relaidBaseTokensString == null && relaidBaseTokensString == null
@@ -291,7 +291,7 @@ public class LayTile extends PossibleORAction {
         tileColours = (Map<String, Integer>) fields.get("tileColours", tileColours);
         tileIds = (int[]) fields.get("tileIds", tileIds);
         specialPropertyId = fields.get("specialPropertyId", specialPropertyId);
-        laidTileId = fields.get("laidTileId", laidTileId);
+        laidTiled = fields.get("laidTiled", laidTiled);
         chosenHexName = (String) fields.get("chosenHexName", chosenHexName);
         orientation = fields.get("orientation", orientation);
         relayBaseTokens = fields.get("relayBaseTokens", relayBaseTokens);
@@ -308,7 +308,7 @@ public class LayTile extends PossibleORAction {
         }
 
         if (tileIds != null && tileIds.length > 0) {
-            tiles = new ArrayList<TileI>();
+            tiles = new ArrayList<Tile>();
             for (int i = 0; i < tileIds.length; i++) {
                 tiles.add(tmgr.getTile(tileIds[i]));
             }
@@ -317,8 +317,8 @@ public class LayTile extends PossibleORAction {
             specialProperty =
                     (SpecialTileLay) SpecialProperty.getByUniqueId(specialPropertyId);
         }
-        if (laidTileId != 0) {
-            laidTile = tmgr.getTile(laidTileId);
+        if (laidTiled != 0) {
+            laidTile = tmgr.getTile(laidTiled);
         }
         if (chosenHexName != null && chosenHexName.length() > 0) {
             chosenHex = mmgr.getHex(chosenHexName);

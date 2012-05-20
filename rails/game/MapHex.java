@@ -1,12 +1,12 @@
 package rails.game;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
+
+import com.google.common.collect.ImmutableList;
 
 import rails.algorithms.RevenueBonusTemplate;
 import rails.common.LocalText;
@@ -20,19 +20,19 @@ import rails.game.action.LayTile;
 import rails.game.model.CashMoneyModel;
 import rails.game.model.PortfolioModel;
 
-import rails.game.state.ArrayListState;
 import rails.game.state.BooleanState;
 import rails.game.state.Item;
-import rails.game.state.Model;
 import rails.game.state.Observer;
-import rails.game.state.Owner;
+import rails.game.state.Portfolio;
+import rails.game.state.PortfolioHolder;
 import rails.game.state.PortfolioList;
 import rails.game.state.AbstractItem;
-import rails.game.state.TileMove;
 import rails.util.*;
 
 // TODO: Rewrite the mechanisms for tokens
 // TODO: Rewrite the mechanisms as model
+// FIXME: There is a lot to be done here
+
 
 /**
  * Represents a Hex on the Map from the Model side.
@@ -58,7 +58,7 @@ import rails.util.*;
  */
 
 // FIXME: MapHex was previous a model
-public class MapHex extends AbstractItem implements Owner, ConfigurableComponentI,
+public class MapHex extends AbstractItem implements PortfolioHolder, ConfigurableComponentI,
 StationHolder {
 
     private static final String[] ewOrNames =
@@ -77,8 +77,8 @@ StationHolder {
     protected int letter;
     protected int number;
     protected String tileFileName;
-    protected int preprintedTileId;
-    protected TileI currentTile;
+    protected int preprintedTiled;
+    protected Tile currentTile;
     protected int currentTileRotation;
     protected int preprintedTileRotation;
     protected int[] tileCost;
@@ -172,26 +172,25 @@ StationHolder {
      */
     protected Score scoreType = null;
 
-    protected MapManager mapManager = null;
-
     protected static Logger log =
         Logger.getLogger(MapHex.class.getPackage().getName());
 
-    // 
-    public MapHex(MapManager mapManager) {
-        // needed to inform the SingleOwner that we have tokens
-        super(Token.class);
-        this.mapManager = mapManager;
-    }
+    // TODO: Rewrite the creation process of MapHex
     
+    // public constructor
+    public MapHex() {}
+
     /**
      * MapHex only accepts MapManagers as parent
      */
     @Override
     public void init(Item parent, String id) {
         super.checkedInit(parent, id, MapManager.class);
+        
+        isBlockedForTileLays.init(this, name+"_IsBlockedForTileLays");
+        isBlockedForTokenLays.init(this, name+"_IsBlockedForTokenLays");
     }
-
+    
     /**
      * @see rails.common.parser.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
      */
@@ -253,7 +252,7 @@ StationHolder {
             }
         }
 
-        preprintedTileId = tag.getAttributeAsInteger("tile", -999);
+        preprintedTiled = tag.getAttributeAsInteger("tile", -999);
 
         preprintedTileRotation = tag.getAttributeAsInteger("orientation", 0);
         currentTileRotation  = preprintedTileRotation;
@@ -354,14 +353,14 @@ StationHolder {
             throw new IllegalArgumentException("gameManager must not be null");
         }
 
-        currentTile = gameManager.getTileManager().getTile(preprintedTileId);
+        currentTile = gameManager.getTileManager().getTile(preprintedTiled);
         // We need completely new objects, not just references to the Tile's
         // stations.
         stops = new ArrayList<Stop>(4);
         mStops = new HashMap<Integer, Stop>(4);
         for (Station s : currentTile.getStations()) {
             // sid, type, value, slots
-            Stop c = new Stop(this, s.getNumber(), s);
+            Stop c = Stop.create(this, s.getNumber(), s);
             stops.add(c);
             mStops.put(c.getNumber(), c);
         }
@@ -402,7 +401,7 @@ StationHolder {
          * 2. The preprinted tile on this hex is offmap or fixed and has no
          * track to this side.
          */
-        TileI tile = neighbour.getCurrentTile();
+        Tile tile = neighbour.getCurrentTile();
         if (!tile.isUpgradeable()
                 && !tile.hasTracks(3 + direction
                         - neighbour.getCurrentTileRotation()))
@@ -416,21 +415,21 @@ StationHolder {
     }
 
     public TileOrientation getTileOrientation() {
-        return mapManager.getTileOrientation();
+        return getParent().getTileOrientation();
     }
 
     /**
      * @return Returns the letterAHasEvenNumbers.
      */
     public boolean letterAHasEvenNumbers() {
-        return mapManager.letterAHasEvenNumbers();
+        return getParent().letterAHasEvenNumbers();
     }
 
     /**
      * @return Returns the lettersGoHorizontal.
      */
     public boolean lettersGoHorizontal() {
-        return mapManager.lettersGoHorizontal();
+        return getParent().lettersGoHorizontal();
     }
 
     public String getOrientationName(int orientation) {
@@ -458,7 +457,10 @@ StationHolder {
         return row;
     }
 
-    public String getId() {
+    
+    // TODO: Name and Id are a duplication in MapHex
+    // However this has to be removed at the rewrite of creation of MapHex
+    public String getName() {
         return name;
     }
 
@@ -481,10 +483,10 @@ StationHolder {
     }
 
     /**
-     * @return Returns the preprintedTileId.
+     * @return Returns the preprintedTiled.
      */
-    public int getPreprintedTileId() {
-        return preprintedTileId;
+    public int getPreprintedTiled() {
+        return preprintedTiled;
     }
 
     public int getPreprintedTileRotation() {
@@ -519,7 +521,7 @@ StationHolder {
         return neighbours[orientation % 6] != null;
     }
 
-    public TileI getCurrentTile() {
+    public Tile getCurrentTile() {
         return currentTile;
     }
 
@@ -528,7 +530,7 @@ StationHolder {
     }
 
     public int getTileCost() {
-        if (currentTile.getNb() == preprintedTileId) {
+        if (currentTile.getNb() == preprintedTiled) {
             return getTileCost(0);
         } else {
             return getTileCost(currentTile.getColourNumber());
@@ -553,7 +555,7 @@ StationHolder {
      * @param action executed LayTile action
      */
     public void upgrade(LayTile action) {
-        TileI newTile = action.getLaidTile();
+        Tile newTile = action.getLaidTile();
         int newRotation = action.getOrientation();
         Map<String, Integer> relaidTokens = action.getRelaidBaseTokens();
 
@@ -564,7 +566,7 @@ StationHolder {
      * Prepare a tile upgrade. The actual tile replacement is done in
      * replaceTile(), via a TileMove object.
      */
-    public void upgrade(TileI newTile, int newRotation, Map<String, Integer> relaidTokens) {
+    public void upgrade(Tile newTile, int newRotation, Map<String, Integer> relaidTokens) {
 
         Stop newCity;
         String newTracks;
@@ -691,9 +693,7 @@ StationHolder {
                             if (oldTrackEnds[i] == newTrackEnds[j]) {
                                 // Match found!
                                 if (!newStationsToCities.containsKey(newStation)) {
-                                    newCity =
-                                        new Stop(this, ++newCityNumber,
-                                                newStation);
+                                    newCity = Stop.create(this, ++newCityNumber, newStation);
                                     newCities.add(newCity);
                                     mNewCities.put(cityNumber, newCity);
                                     newStationsToCities.put(newStation, newCity);
@@ -791,7 +791,7 @@ StationHolder {
                 int cityNumber;
                 for (cityNumber = 1; mNewCities.containsKey(cityNumber); cityNumber++)
                     ;
-                newCity = new Stop(this, ++newCityNumber, newStation);
+                newCity = Stop.create(this, ++newCityNumber, newStation);
                 newCities.add(newCity);
                 mNewCities.put(cityNumber, newCity);
                 newStationsToCities.put(newStation, newCity);
@@ -806,8 +806,8 @@ StationHolder {
             }
 
             // Move the tokens
-            Map<Token, Owner> tokenDestinations =
-                new HashMap<Token, Owner>();
+            Map<Token, Portfolio<Token>> tokenDestinations =
+                new HashMap<Token, Portfolio<Token>>();
 
             for (Stop oldCity : stops) {
                 newCity = oldToNewCities.get(oldCity);
@@ -819,9 +819,9 @@ StationHolder {
                                 ((BaseToken) token).getParent();
                             for (Token token2 : newCity.getTokens()) {
                                 if (token2 instanceof BaseToken
-                                        && company == ((BaseToken) token2).getCompany()) {
-                                    // No duplicate tokens in one city!
-                                    tokenDestinations.put(token, company);
+                                        && company == ((BaseToken) token2).getPortfolio().getOwner()) {
+                                    // No duplicate tokens in one city, so move to free tokens
+                                    tokenDestinations.put(token, company.getBaseTokensModel().getFreeTokens());
                                     log.debug("Duplicate token "
                                             + token.getUniqueId()
                                             + " moved from "
@@ -835,14 +835,14 @@ StationHolder {
                                 }
                             }
                         }
-                        tokenDestinations.put(token, newCity);
+                        tokenDestinations.put(token, newCity.getTokens());
                         log.debug("Token " + token.getUniqueId()
                                 + " moved from " + oldCity.getId() + " to "
                                 + newCity.getId());
                     }
                 if (!tokenDestinations.isEmpty()) {
                     for (Token token : tokenDestinations.keySet()) {
-                        token.moveTo(tokenDestinations.get(token));
+                        tokenDestinations.get(token).moveInto(token);
                     }
                 }
                 } else {
@@ -853,9 +853,10 @@ StationHolder {
 
         }
 
+        // TODO: Check as the code below was not reachable
         // Replace the tile
-        new TileMove(this, currentTile, currentTileRotation, stops,
-                newTile, newRotation, newCities);
+//        new TileMove(this, currentTile, currentTileRotation, stops,
+//                newTile, newRotation, newCities);
 
         /* TODO Further consequences to be processed here, e.g. new routes etc. */
     }
@@ -868,7 +869,7 @@ StationHolder {
      * @param newTile The new tile to be laid on this hex.
      * @param newTileOrientation The orientation of the new tile (0-5).
      */
-    public void replaceTile(TileI oldTile, TileI newTile,
+    public void replaceTile(Tile oldTile, Tile newTile,
             int newTileOrientation, List<Stop> newCities) {
 
         if (oldTile != currentTile) {
@@ -923,7 +924,7 @@ StationHolder {
             log.error("Company " + company.getId() + " has no free token");
             return false;
         } else {
-            token.moveTo(city);
+            city.getTokens().moveInto(token);
             // TODO: is this still required?
             // update();
 
@@ -951,7 +952,7 @@ StationHolder {
             log.error("No token specified");
             return false;
         } else {
-            token.moveTo(this);
+            offStationTokens.moveInto(token);
             token.prepareForRemoval (phaseManager);
             return true;
         }
@@ -961,14 +962,11 @@ StationHolder {
     // TODO: This is not called anymore
     public boolean addToken(Token token, int position) {
 
-        if (offStationTokens == null)
-            offStationTokens = ArrayListState.create(this, "offStationTokens");
-        if (offStationTokens.contains(token)) {
+        if (offStationTokens.containsItem(token)) {
             return false;
-        }
+        } 
 
-        offStationTokens.add(position, token);
-        // token.setHolder(this);
+        offStationTokens.moveInto(token);
         return true;
     }
 
@@ -985,32 +983,13 @@ StationHolder {
         return tokens;
     }
 
-    public ArrayListState<Token> getTokens() {
+    public PortfolioList<Token> getTokens() {
         return offStationTokens;
     }
 
     public boolean hasTokens() {
         return offStationTokens.size() > 0;
     }
-
-    public void removeToken(Token token) {
-        offStationTokens.remove(token);
-    }
-
-    // TODO: Rewrite this
-    public boolean addObject(Token object, int position) {
-        return addToken(object, position);
-    }
-
-    public boolean removeObject(Token object) {
-        removeToken(object);
-        return true;
-    }
-
-    public int getListIndex (Token object) {
-        return offStationTokens.indexOf(object);
-    }
-
 
     public boolean hasTokenSlotsLeft(int station) {
         if (station == 0) station = 1; // Temp. fix for old save files
@@ -1040,11 +1019,11 @@ StationHolder {
         return false;
     }
 
-    public List<Token> getTokens(int cityNumber) {
+    public ImmutableList<Token> getTokens(int cityNumber) {
         if (stops.size() > 0 && mStops.get(cityNumber) != null) {
-            return (mStops.get(cityNumber)).getTokens().view();
+            return (mStops.get(cityNumber)).getTokens().items();
         } else {
-            return new ArrayList<Token>();
+            return ImmutableList.of(); // empty List
         }
     }
 
@@ -1143,10 +1122,7 @@ StationHolder {
      * @param isBlocked The isBlocked to set (state variable)
      */
     public void setBlockedForTileLays(boolean isBlocked) {
-        if (isBlockedForTileLays == null)
-            isBlockedForTileLays = BooleanState.create(this, name+"_IsBlockedForTileLays", isBlocked);
-        else
-            isBlockedForTileLays.set(isBlocked);
+        isBlockedForTileLays.set(isBlocked);
     }
 
     public boolean isUpgradeableNow() {
@@ -1198,6 +1174,10 @@ StationHolder {
      * Previously there was only the variable isBlockedForTokenLays
      * which is set to yes to block the whole hex for the token lays
      * until the (home) company laid their token
+     * 
+     * 
+     * FIXME: There is now the issue that isBlockedForTokenLays is initialised all the time, so null
+     * is not a valid condition anymore.
      *
      */
     public boolean isBlockedForTokenLays(PublicCompany company, int cityNumber) {
@@ -1255,10 +1235,7 @@ StationHolder {
      * @param isBlocked The isBlocked to set (state variable)
      */
     public void setBlockedForTokenLays(boolean isBlocked) {
-        if (isBlockedForTokenLays == null)
-            isBlockedForTokenLays = BooleanState.create(this, name+"_IsBlockedForTokenLays", isBlocked);
-        else
-            isBlockedForTokenLays.set(isBlocked);
+        isBlockedForTokenLays.set(isBlocked);
     }
 
     public boolean hasValuesPerPhase() {
@@ -1305,8 +1282,8 @@ StationHolder {
         return false;
     }
 
-    public MapManager getMapManager() {
-        return mapManager;
+    public MapManager getParent() {
+        return (MapManager)getParent();
     }
 
     @Override
@@ -1330,7 +1307,7 @@ StationHolder {
      *
      * @return
      */
-    public String getConnectionString(TileI tile, int rotation,
+    public String getConnectionString(Tile tile, int rotation,
             int stationNumber) {
         StringBuffer b = new StringBuffer("");
         if (stops != null && stops.size() > 0) {
@@ -1355,7 +1332,7 @@ StationHolder {
                 stationNumber);
     }
 
-    public int[] getTrackEndPoints(TileI tile, int rotation, Station station) {
+    public int[] getTrackEndPoints(Tile tile, int rotation, Station station) {
         List<Track> tracks = tile.getTracksPerStation(station.getNumber());
         if (tracks == null) {
             return new int[0];

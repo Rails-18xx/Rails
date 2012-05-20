@@ -10,6 +10,7 @@ import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.state.AbstractItem;
 import rails.game.state.BooleanState;
+import rails.game.state.Item;
 
 public class StockMarket extends AbstractItem implements ConfigurableComponentI {
 
@@ -43,8 +44,9 @@ public class StockMarket extends AbstractItem implements ConfigurableComponentI 
 
     /* States */
     /** GameOver becomes true if a stock market square is reached that is marked as such */ 
-    protected BooleanState gameOver = BooleanState.create(this, "GameOver", false);
+    protected final BooleanState gameOver = BooleanState.create(false);
 
+    // TODO: Check if this should not be a state?
     ArrayList<PublicCertificate> ipoPile;
 
     public static final String DEFAULT = "default";
@@ -52,6 +54,12 @@ public class StockMarket extends AbstractItem implements ConfigurableComponentI 
     public StockMarket() {
 
     }
+    
+    public void init(Item parent, String id) {
+        super.init(parent, id);
+        gameOver.init(this, "GameOver");
+    }
+    
 
     /**
      * @see rails.common.parser.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
@@ -300,7 +308,7 @@ public class StockMarket extends AbstractItem implements ConfigurableComponentI 
             ReportBuffer.add(LocalText.getText("PRICE_STAYS_LOG",
                     company.getId(),
                     Bank.format(from.getPrice()),
-                    from.getName() ));
+                    from.getId() ));
             return;
         } else if (from == null && to != null) {
             ;
@@ -308,9 +316,9 @@ public class StockMarket extends AbstractItem implements ConfigurableComponentI 
             ReportBuffer.add(LocalText.getText("PRICE_MOVES_LOG",
                     company.getId(),
                     Bank.format(from.getPrice()),
-                    from.getName(),
+                    from.getId(),
                     Bank.format(to.getPrice()),
-                    to.getName() ));
+                    to.getId() ));
 
             /* Check for rails.game closure */
             if (to.endsGame()) {

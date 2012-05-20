@@ -29,7 +29,7 @@ public final class ReportBuffer {
         private List<String> messages = new ArrayList<String>();
         private int index = -1;
         private Player player = null;
-        private RoundI round = null;
+        private Round round = null;
       
         private void addMessage(String message) {
             messages.add(message);
@@ -248,7 +248,7 @@ public final class ReportBuffer {
         }
     }
     
-    private void addReportItem(int index, Player player, RoundI round) {
+    private void addReportItem(int index, Player player, Round round) {
         ReportItem newItem = new ReportItem();
         newItem.index = index;
         newItem.player = player;
@@ -269,7 +269,7 @@ public final class ReportBuffer {
         }
         // all there, add new report item
         Player player = gm.getCurrentPlayer();
-        RoundI round = gm.getCurrentRound();
+        Round round = gm.getCurrentRound();
         instance.addReportItem(index, player, round);
         instance.clearFutureItems(index);
     }

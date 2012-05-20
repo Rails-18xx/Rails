@@ -3,12 +3,10 @@ package rails.util;
 
 import java.awt.Color;
 import java.io.*;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 
 import rails.common.parser.ConfigurationException;
-import rails.game.model.Ownable;
 
 public final class Util {
 
@@ -86,32 +84,6 @@ public final class Util {
      */
     public static String convertToHtml(String javaString) {
         return javaString.replace("\n", "<br>");
-    }
-
-
-    /** Safely add an object to a List at a given position
-     * @param objects The List to add the object to.
-     * @param object The object to be added.
-     * @param position The position at which the object must be added.
-     * <br>If between 0 and the current list size (inclusive), the object is inserted at
-     * the given position.<br>If -1, the object is inserted at the end.
-     * <br>If any other value, nothing is done.
-     * @return True if the insertion was successful.
-     * */
-    
-    @Deprecated
-    public static <T extends Ownable, U extends T> boolean addToList (List<T> objects,
-            U object, int position) {
-        if (objects == null || object == null) {
-            return false;
-        }
-        if (position == -1) {
-            return objects.add(object);
-        } else if (position >= 0 && position <= objects.size()){
-            objects.add(position, object);
-            return true;
-        }
-        return false;
     }
 
     /**

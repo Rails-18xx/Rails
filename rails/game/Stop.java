@@ -2,9 +2,11 @@ package rails.game;
 
 import org.apache.log4j.Logger;
 
-import rails.game.model.SingleOwner;
-import rails.game.state.ArrayListState;
+import rails.game.state.AbstractItem;
 import rails.game.state.GenericState;
+import rails.game.state.Item;
+import rails.game.state.PortfolioHolder;
+import rails.game.state.PortfolioList;
 import rails.util.Util;
 
 /**
@@ -23,14 +25,13 @@ import rails.util.Util;
  *
  * @author Erik Vos
  */
-public class Stop extends SingleOwner<Token> {
-    private int number;
+public class Stop extends AbstractItem implements PortfolioHolder {
+    private final int number;
     private String uniqueId;
     //private Station relatedStation;
-    private GenericState<Station> relatedStation;
+    private GenericState<Station> relatedStation = GenericState.create();
     private int slots;
-    private ArrayListState<Token> tokens;
-    private MapHex mapHex;
+    private PortfolioList<Token> tokens = PortfolioList.create();
     private String trackEdges;
 
 
@@ -94,32 +95,55 @@ public class Stop extends SingleOwner<Token> {
         MINOR
     }
 
-    public Stop(MapHex mapHex, int number, Station station) {
-        
-        // the third parameter indicates that it owns tokens
-        super(mapHex, Integer.toString(number), Token.class);
-        
-        this.mapHex = mapHex;
+    private Stop(int number) {
         this.number = number;
+    }
 
-        uniqueId = mapHex.getId() + "_" + number;
-        relatedStation = GenericState.create(this, "City_"+uniqueId+"_station", station);
+    // TODO: Can this all be simplified, maybe stop <=> station relationship is enough
+    /**
+     * returns initialized Stop
+     */
+    public static Stop create(MapHex hex, int number, Station station){
+        Stop stop = new Stop(number);
+        stop.init(hex, String.valueOf(number));
+        stop.initStation(station);
+        return stop;
+    }
+
+    /**
+     * @param parent restricted to MapHex
+     * @param id (should equal the number)
+     */
+    @Override
+    public void init(Item parent, String id) {
+        super.checkedInit(parent, id, MapHex.class);
+        uniqueId = getParent().getId() + "_" + number;
+        tokens.init(this, "tokens");
+        relatedStation.init(this, "City_"+uniqueId+"_station");
+    }
+    
+    /**
+     * @param station that the stop refers to
+     */
+    public void initStation(Station station) {
         setRelatedStation(station);
-
-        tokens = ArrayListState.create(this, "tokens");
-
         initStopProperties();
+    }
+    
+    @Override
+    public MapHex getParent() {
+        return (MapHex)super.getParent();
     }
 
     private void initStopProperties () {
 
         Station station = relatedStation.get();
-        TileI tile = station.getTile();
-        MapManager mapManager = mapHex.getMapManager();
+        Tile tile = station.getTile();
+        MapManager mapManager = getParent().getParent();
         TileManager tileManager = tile.getTileManager();
 
         // Stop type
-        type = mapHex.getStopType();
+        type = getParent().getStopType();
         if (type == null) type = tile.getStopType();
         if (type == null) {
             String stationType = relatedStation.get().getType();
@@ -139,7 +163,7 @@ public class Stop extends SingleOwner<Token> {
         }
 
         // RunTo
-        runToAllowed = mapHex.isRunToAllowed();
+        runToAllowed = getParent().isRunToAllowed();
         if (runToAllowed == null) runToAllowed = tile.isRunToAllowed();
         if (runToAllowed == null) runToAllowed = mapManager.getRunToDefault(type);
         if (runToAllowed == null) runToAllowed = tileManager.getRunToDefault(type);
@@ -148,7 +172,7 @@ public class Stop extends SingleOwner<Token> {
         if (runToAllowed == null) runToAllowed = type.getDefaultRunTo();
 
         // RunThrough
-        runThroughAllowed = mapHex.isRunThroughAllowed();
+        runThroughAllowed = getParent().isRunThroughAllowed();
         if (runThroughAllowed == null) runThroughAllowed = tile.isRunThroughAllowed();
         if (runThroughAllowed == null) runThroughAllowed = mapManager.getRunThroughDefault(type);
         if (runThroughAllowed == null) runThroughAllowed = tileManager.getRunThroughDefault(type);
@@ -157,7 +181,7 @@ public class Stop extends SingleOwner<Token> {
         if (runThroughAllowed == null) runThroughAllowed = type.getDefaultRunThrough();
 
         // Loop
-        loopAllowed = mapHex.isLoopAllowed();
+        loopAllowed = getParent().isLoopAllowed();
         if (loopAllowed == null) loopAllowed = tile.isLoopAllowed();
         if (loopAllowed == null) loopAllowed = mapManager.getLoopDefault(type);
         if (loopAllowed == null) loopAllowed = tileManager.getLoopDefault(type);
@@ -166,19 +190,19 @@ public class Stop extends SingleOwner<Token> {
         if (loopAllowed == null) loopAllowed = type.getDefaultLoop();
 
         // Score type
-        scoreType = mapHex.getScoreType();
+        scoreType = getParent().getScoreType();
         if (scoreType == null) scoreType = tile.getScoreType();
         if (scoreType == null) scoreType = mapManager.getScoreTypeDefault(type);
         if (scoreType == null) scoreType = tileManager.getScoreTypeDefault(type);
         if (scoreType == null) scoreType = type.getDefaultScoreType();
 
-        log.debug("+++ Hex="+mapHex.getId()+" tile="+tile.getNb()+" city="+number
+        log.debug("+++ Hex="+getParent().getId()+" tile="+tile.getNb()+" city="+number
                 +": stopType="+type+" runTo="+runToAllowed+" runThrough="+runThroughAllowed
                 +" loop="+loopAllowed+" scoreType="+scoreType);
     }
 
     public String getId() {
-        return mapHex.getId() + "/" + number;
+        return getParent().getId() + "/" + number;
 
     }
 
@@ -186,7 +210,7 @@ public class Stop extends SingleOwner<Token> {
      * @return Returns the holder.
      */
     public MapHex getHolder() {
-        return mapHex;
+        return getParent();
     }
 
     public int getNumber() {
@@ -201,8 +225,8 @@ public class Stop extends SingleOwner<Token> {
         this.relatedStation.set(relatedStation);
         slots = relatedStation.getBaseSlots();
         trackEdges =
-            mapHex.getConnectionString(mapHex.getCurrentTile(),
-                    mapHex.getCurrentTileRotation(),
+            getParent().getConnectionString(getParent().getCurrentTile(),
+                    getParent().getCurrentTileRotation(),
                     relatedStation.getNumber());
     }
 
@@ -217,7 +241,7 @@ public class Stop extends SingleOwner<Token> {
         return uniqueId;
     }
 
-    public ArrayListState<Token> getTokens() {
+    public PortfolioList<Token> getTokens() {
         return tokens;
     }
 
@@ -235,10 +259,6 @@ public class Stop extends SingleOwner<Token> {
 
     public int getTokenSlotsLeft () {
         return slots - tokens.size();
-    }
-
-    public void removeToken(Token token) {
-        tokens.remove(token);
     }
 
     /**
@@ -260,10 +280,6 @@ public class Stop extends SingleOwner<Token> {
             }
         }
         return false;
-    }
-
-    public int getListIndex (BaseToken object) {
-           return tokens.indexOf(object);
     }
 
     public String getTrackEdges() {
@@ -323,8 +339,8 @@ public class Stop extends SingleOwner<Token> {
     }
 
     public int getValueForPhase (Phase phase) {
-        if (mapHex.hasValuesPerPhase()) {
-            return mapHex.getCurrentValueForPhase(phase);
+        if (getParent().hasValuesPerPhase()) {
+            return getParent().getCurrentValueForPhase(phase);
         } else {
             return relatedStation.get().getValue();
         }
@@ -333,13 +349,13 @@ public class Stop extends SingleOwner<Token> {
     @Override
     public String toString() {
         StringBuffer b = new StringBuffer();
-        b.append("Hex ").append(mapHex.getId());
-        String cityName = mapHex.getCityName();
+        b.append("Hex ").append(getParent().getId());
+        String cityName = getParent().getCityName();
         b.append(" (");
         if (Util.hasValue(cityName)) {
             b.append(cityName);
         }
-        if (mapHex.getStops().size() > 1) {
+        if (getParent().getStops().size() > 1) {
             b.append(" ").append(trackEdges);
         }
         b.append(")");

@@ -13,6 +13,7 @@ import rails.common.parser.ConfigurableComponentI;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.*;
+import rails.game.state.Item;
 import rails.util.Util;
 
 public class NamedTrainToken extends Token implements ConfigurableComponentI /*, RevenueStaticModifier */ {
@@ -56,6 +57,11 @@ public class NamedTrainToken extends Token implements ConfigurableComponentI /*,
                 longName + " [" + hexesString + "] +" + Bank.format(value);
     }
 
+    @Override
+    public void init(Item parent) {
+        super.checkedInit(parent, name, NameTrains.class);
+    }
+    
     public void finishConfiguration (GameManager gameManager)
     throws ConfigurationException {
 
@@ -88,6 +94,7 @@ public class NamedTrainToken extends Token implements ConfigurableComponentI /*,
     public List<MapHex> getHexesToPass() {
         return hexes;
     }
+
 
 //    public void modifyCalculator(RevenueAdapter revenueAdapter) {
 //

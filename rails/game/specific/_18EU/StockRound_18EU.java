@@ -8,12 +8,13 @@ import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;
+import rails.game.model.CashOwner;
 import rails.game.model.MoneyModel;
 import rails.game.model.PortfolioModel;
 import rails.game.state.ArrayListState;
 import rails.game.state.BooleanState;
 import rails.game.state.IntegerState;
-import rails.game.state.Owners;
+import rails.game.state.Item;
 
 /**
  * Implements a basic Stock Round. <p> A new instance must be created for each
@@ -22,13 +23,13 @@ import rails.game.state.Owners;
  * the Priority Deal).
  */
 public class StockRound_18EU extends StockRound {
-    protected ArrayListState<PublicCompany> compWithExcessTrains =
-            ArrayListState.create(this, "compWithExcessTrains");
-    protected PublicCompany[] discardingCompanies;
-    protected IntegerState discardingCompanyndex;
-    protected BooleanState discardingTrains =
-            BooleanState.create(this, "DiscardingTrains", false);
+    protected final ArrayListState<PublicCompany> compWithExcessTrains =
+            ArrayListState.create();
+    protected final IntegerState discardingCompanyIndex = IntegerState.create();
+    protected final BooleanState discardingTrains = BooleanState.create();
+
     protected boolean phase5Reached = false;
+    protected PublicCompany[] discardingCompanies;
 
     /**
      * Constructor with the GameManager, will call super class (StockRound's) Constructor to initialize
@@ -39,7 +40,15 @@ public class StockRound_18EU extends StockRound {
     public StockRound_18EU (GameManager aGameManager) {
         super (aGameManager);
     }
-
+    
+    @Override
+    public void init(Item parent, String id){
+        super.init(parent, id);
+        compWithExcessTrains.init(this, "compWithExcessTrains");
+        discardingTrains.init(this, "DiscardingTrains");
+        discardingCompanyIndex.init(this, "DiscardingCompanyIndex");
+    }
+    
     @Override
     public void start() {
         super.start();
@@ -108,7 +117,7 @@ public class StockRound_18EU extends StockRound {
         if (companyBoughtThisTurn == null) {
             from = ipo;
             Map<String, List<PublicCertificate>> map =
-                    from.getCertsPerCompanyMap();
+                    ipo.getCertsPerCompanyMap();
             int shares;
 
             for (String compName : map.keySet()) {
@@ -173,7 +182,7 @@ public class StockRound_18EU extends StockRound {
         /* Get the unique Pool certificates and check which ones can be bought */
         from = pool;
         Map<String, List<PublicCertificate>> map =
-                from.getCertsPerCompanyMap();
+                pool.getCertsPerCompanyMap();
 
         for (String compName : map.keySet()) {
             certs = map.get(compName);
@@ -255,7 +264,7 @@ public class StockRound_18EU extends StockRound {
     protected boolean setTrainDiscardActions() {
 
         PublicCompany discardingCompany =
-                discardingCompanies[discardingCompanyndex.intValue()];
+                discardingCompanies[discardingCompanyIndex.value()];
         log.debug("Company " + discardingCompany.getId()
                   + " to discard a train");
         possibleActions.add(new DiscardTrain(discardingCompany,
@@ -412,14 +421,14 @@ public class StockRound_18EU extends StockRound {
                 company.getId() ));
 
         // Transfer the President's certificate
-        cert.moveTo(currentPlayer.getPortfolioModel());
+        currentPlayer.getPortfolioModel().addPublicCertificate(cert);
 
         MoneyModel.cashMove(currentPlayer, company, shares * price);
 
         if (minor != null) {
             // Get the extra certificate for the minor, for free
             PublicCertificate cert2 = ipo.findCertificate(company, false);
-            cert2.moveTo(currentPlayer.getPortfolioModel());
+            currentPlayer.getPortfolioModel().addPublicCertificate(cert2);
             // Transfer the minor assets into the started company
             int minorCash = minor.getCash();
             int minorTrains = minor.getPortfolioModel().getTrainList().size();
@@ -447,7 +456,7 @@ public class StockRound_18EU extends StockRound {
         // FIXME: This has to be only those certificates that relate to that public company 
         // Owners.moveAll(ipo, company, PublicCertficate.class);
 
-        ReportBuffer.change(LocalText.getText("SharesPutInTreasury",
+        ReportBuffer.add(LocalText.getText("SharesPutInTreasury",
                 company.getPortfolioModel().getShare(company),
                 company.getId() ));
 
@@ -499,7 +508,7 @@ public class StockRound_18EU extends StockRound {
         PublicCompany minor = action.getMergingCompany();
         PublicCompany major = action.getSelectedTargetCompany();
         PublicCertificate cert = null;
-        Owner cashDestination = null; // Bank
+        CashOwner cashDestination = null; // Bank
         Train pullmannToDiscard = null;
 
         // TODO Validation to be added?
@@ -585,12 +594,12 @@ public class StockRound_18EU extends StockRound {
                             homeHex.getId()));
                 }
             }
-            cert.moveTo(currentPlayer.getPortfolioModel());
+            currentPlayer.getPortfolioModel().addPublicCertificate(cert);
             ReportBuffer.add(LocalText.getText("MinorCloses", minor.getId()));
             checkFlotation(major);
 
             if (pullmannToDiscard != null) {
-                pullmannToDiscard.moveTo(pool);
+                pool.addTrain(pullmannToDiscard);
                 ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
                         major.getId(),
                         pullmannToDiscard.getId() ));
@@ -632,8 +641,9 @@ public class StockRound_18EU extends StockRound {
             // Put the remaining 5 shares in the pool,
             // getting cash in return
             // Move the remaining certificates to the company treasury
-            Owners.move(company.getPortfolioModel().getCertificates(
-                    company), pool);
+            for (PublicCertificate cert: company.getPortfolioModel().getCertificates(company)) {
+                pool.addPublicCertificate(cert);
+            }
             int cash = 5 * company.getMarketPrice();
             MoneyModel.cashMove(bank, company, cash);
             ReportBuffer.add(LocalText.getText("MonetiseTreasuryShares",
@@ -688,8 +698,7 @@ public class StockRound_18EU extends StockRound {
         /* End of validation, start of execution */
         // TODO: changeStack.start(false);
         // FIXME: if (action.isForced()) changeStack.linkToPreviousMoveSet();
-
-        train.moveTo(pool);
+        pool.addTrain(train);
         ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
                 companyName,
                 train.getId() ));
@@ -706,17 +715,17 @@ public class StockRound_18EU extends StockRound {
             super.finishTurn();
         } else {
             PublicCompany comp =
-                    discardingCompanies[discardingCompanyndex.intValue()];
+                    discardingCompanies[discardingCompanyIndex.value()];
             if (comp.getNumberOfTrains() <= comp.getCurrentTrainLimit()) {
-                discardingCompanyndex.add(1);
-                if (discardingCompanyndex.intValue() >= discardingCompanies.length) {
+                discardingCompanyIndex.add(1);
+                if (discardingCompanyIndex.value() >= discardingCompanies.length) {
                     // All excess trains have been discarded
                     finishRound();
                     return;
                 }
             }
             PublicCompany discardingCompany =
-                    discardingCompanies[discardingCompanyndex.intValue()];
+                    discardingCompanies[discardingCompanyIndex.value()];
             setCurrentPlayer(discardingCompany.getPresident());
         }
     }
@@ -742,14 +751,9 @@ public class StockRound_18EU extends StockRound {
                 }
             }
 
-            if (discardingCompanyndex == null) {
-                discardingCompanyndex =
-                        IntegerState.create(this, "DiscardingCompanyndex", 0);
-            } else {
-                discardingCompanyndex.set(0);
-            }
+            discardingCompanyIndex.set(0);
             PublicCompany discardingCompany =
-                    discardingCompanies[discardingCompanyndex.intValue()];
+                    discardingCompanies[discardingCompanyIndex.value()];
             setCurrentPlayer(discardingCompany.getPresident());
 
         } else {

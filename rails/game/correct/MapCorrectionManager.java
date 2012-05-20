@@ -52,9 +52,9 @@ public class MapCorrectionManager extends CorrectionManager {
 
         MapHex hex = action.getLocation();
 
-        TileI chosenTile = action.getChosenTile();
+        Tile chosenTile = action.getChosenTile();
         TileManager tmgr = gameManager.getTileManager();
-        TileI preprintedTile = tmgr.getTile(hex.getPreprintedTileId());
+        Tile preprintedTile = tmgr.getTile(hex.getPreprintedTiled());
 
         // check conditions
         String errMsg = null;
@@ -122,7 +122,7 @@ public class MapCorrectionManager extends CorrectionManager {
         switch (nextStep) {
         case SELECT_TILE:
             // create list of possible up and downgrades
-            List<TileI> possibleTiles = tmgr.getAllUpgrades(preprintedTile, hex);
+            List<Tile> possibleTiles = tmgr.getAllUpgrades(preprintedTile, hex);
             if (preprintedTile == hex.getCurrentTile())
                 possibleTiles.remove(hex.getCurrentTile()); // remove preprinted tile if still laid
             action.setTiles(possibleTiles);

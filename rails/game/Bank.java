@@ -33,15 +33,15 @@ public class Bank extends AbstractItem implements CashOwner, ConfigurableCompone
 
     /** The Bank's amount of cash */
     private final CashMoneyModel cash = CashMoneyModel.create();
-
+   
     /** The IPO */
-    private final PortfolioModel ipo = PortfolioModel.create();
+    private final BankPortfolio ipo = BankPortfolio.create();
     /** The Bank Pool */
-    private final PortfolioModel pool = PortfolioModel.create();
+    private final BankPortfolio pool = BankPortfolio.create();
     /** Collection of items that will (may) become available in the future */
-    private final PortfolioModel unavailable = PortfolioModel.create();
+    private final BankPortfolio unavailable = BankPortfolio.create();
     /** Collection of items that have been discarded (but are kept to allow Undo) */
-    private final PortfolioModel scrapHeap = PortfolioModel.create();
+    private final BankPortfolio scrapHeap = BankPortfolio.create();
 
     /** Is the bank broken */
     private final BooleanState broken = BooleanState.create();
@@ -117,7 +117,7 @@ public class Bank extends AbstractItem implements CashOwner, ConfigurableCompone
         List<PrivateCompany> privates =
             gameManager.getCompanyManager().getAllPrivateCompanies();
         for (PrivateCompany priv : privates) {
-            ipo.addPrivate(priv, -1);
+            ipo.getPortfolioModel().addPrivateCompany(priv);
         }
 
         // Add public companies
@@ -126,9 +126,10 @@ public class Bank extends AbstractItem implements CashOwner, ConfigurableCompone
         for (PublicCompany comp : companies) {
             for (PublicCertificate cert : comp.getCertificates()) {
                 if (cert.isInitiallyAvailable()) {
-                    ipo.moveInto(cert);
+                    // TODO: Make this shorter
+                    ipo.getPortfolioModel().getShareModel(comp).getPortfolio().moveInto(cert);
                 } else {
-                    unavailable.moveInto(cert);
+                    unavailable.getPortfolioModel().getShareModel(comp).getPortfolio().moveInto(cert);
                 }
             }
         }
@@ -138,11 +139,11 @@ public class Bank extends AbstractItem implements CashOwner, ConfigurableCompone
      * @return IPO Portfolio
      */
     public PortfolioModel getIpo() {
-        return ipo;
+        return ipo.getPortfolioModel();
     }
 
     public PortfolioModel getScrapHeap() {
-        return scrapHeap;
+        return scrapHeap.getPortfolioModel();
     }
 
     /* FIXME: Add broken check somewhere
@@ -159,14 +160,14 @@ public class Bank extends AbstractItem implements CashOwner, ConfigurableCompone
      * @return Portfolio of stock in Bank Pool
      */
     public PortfolioModel getPool() {
-        return pool;
+        return pool.getPortfolioModel();
     }
 
     /**
      * @return Portfolio of unavailable shares
      */
     public PortfolioModel getUnavailable() {
-        return unavailable;
+        return unavailable.getPortfolioModel();
     }
 
     public String getId() {
@@ -174,8 +175,8 @@ public class Bank extends AbstractItem implements CashOwner, ConfigurableCompone
     }
 
     // CashOwner interface
-    public CashMoneyModel getCash() {
-        return cash;
+    public int getCash() {
+        return cash.value();
     }
 
     public static String format(int amount) {
@@ -193,6 +194,11 @@ public class Bank extends AbstractItem implements CashOwner, ConfigurableCompone
             result.append(format(amountList[i]));
         }
         return result.toString();
+    }
+
+    public CashMoneyModel getCashModel() {
+        // TODO Auto-generated method stub
+        return null;
     }
     
 }

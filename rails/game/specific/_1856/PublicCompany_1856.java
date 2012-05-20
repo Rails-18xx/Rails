@@ -2,16 +2,24 @@ package rails.game.specific._1856;
 
 import rails.game.*;
 import rails.game.state.IntegerState;
+import rails.game.state.Item;
 
 public class PublicCompany_1856 extends PublicCompany {
 
-    private IntegerState trainNumberAvailableAtStart;
-
-    private IntegerState moneyInEscrow;
+    private final IntegerState trainNumberAvailableAtStart = IntegerState.create();
+    private final IntegerState moneyInEscrow = IntegerState.create();
 
     /** Used for CGR */
+    // TODO: Is this still used, as CGR has it owns class
     private boolean hadPermanentTrain = false;
-
+    
+    @Override
+    public void init(Item parent, String id){
+        super.init(parent, id);
+        trainNumberAvailableAtStart.init(this, id + "_trainAtStart");
+        moneyInEscrow.init(this, id + "_moneyInEscrow");
+    }
+    
     @Override
     public void start(StockSpace startSpace) {
 
@@ -25,20 +33,16 @@ public class PublicCompany_1856 extends PublicCompany {
         } catch (NumberFormatException e) {
             trainNumber = 6; // Diesel!
         }
-        trainNumberAvailableAtStart
-                = IntegerState.create (this, name+"_trainAtStart");
         trainNumberAvailableAtStart.set(trainNumber);
 
         if (trainNumber == 6) {
             this.capitalisation = CAPITALISE_FULL;
         }
 
-        moneyInEscrow
-                = IntegerState.create (this, name+"_moneyInEscrow", 0);
     }
 
     public int getTrainNumberAvailableAtStart () {
-        return trainNumberAvailableAtStart.intValue();
+        return trainNumberAvailableAtStart.value();
     }
 
     public void setMoneyInEscrow (int amount) {
@@ -50,7 +54,7 @@ public class PublicCompany_1856 extends PublicCompany {
     }
 
     public int getMoneyInEscrow () {
-       return moneyInEscrow.intValue();
+       return moneyInEscrow.value();
     }
 
     public boolean hadPermanentTrain() {

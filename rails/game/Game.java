@@ -11,7 +11,6 @@ import rails.common.LocalText;
 import rails.common.parser.*;
 import rails.game.action.PossibleAction;
 import rails.game.state.Context;
-import rails.game.state.Item;
 import rails.util.GameFileIO;
 
 public class Game {
@@ -77,7 +76,7 @@ public class Game {
 
     public boolean setup() {
         // first define root GameContext to be able to define states
-        Context context = new Context(Item.ROOT);
+        Context context = Context.create();
 
         GameFileParser gfp = new GameFileParser(context, name, gameOptions);
         playerManager = gfp.getPlayerManager();

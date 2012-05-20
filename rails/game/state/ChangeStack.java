@@ -17,7 +17,7 @@ public final class ChangeStack {
 
     private ChangeStack() {}
     
-    static ChangeStack create() {
+    public static ChangeStack create() {
         return new ChangeStack();
     }
     

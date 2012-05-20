@@ -58,7 +58,7 @@ public class PriceModel extends Model {
     public String toString() {
         if (stockPrice != null) {
             return Bank.format(stockPrice.get().getPrice()) + " ("
-                   + stockPrice.get().getName() + ")";
+                   + stockPrice.get().getId() + ")";
         }
         return "";
     }

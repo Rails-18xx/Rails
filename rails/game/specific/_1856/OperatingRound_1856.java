@@ -11,17 +11,16 @@ import rails.game.action.*;
 import rails.game.special.SellBonusToken;
 import rails.game.special.SpecialProperty;
 import rails.game.state.BooleanState;
+import rails.game.state.Item;
 import rails.game.model.MoneyModel;
 
 public class OperatingRound_1856 extends OperatingRound {
 
-    private BooleanState finalLoanRepaymentPending
-        = BooleanState.create(this, "LoanRepaymentPending");
-
+    private final BooleanState finalLoanRepaymentPending = BooleanState.create();
     private Player playerToStartLoanRepayment = null;
 
-//    static
-    {
+    public OperatingRound_1856 (GameManager gameManager) {
+        super (gameManager);
 
         steps = new GameDef.OrStep[] {
                 GameDef.OrStep.INITIAL,
@@ -34,11 +33,12 @@ public class OperatingRound_1856 extends OperatingRound {
                 GameDef.OrStep.REPAY_LOANS,
                 GameDef.OrStep.FINAL
         };
-   }
-
-    public OperatingRound_1856 (GameManager gameManager) {
-        super (gameManager);
-
+    }
+    
+    @Override
+    public void init(Item parent, String id){
+        super.init(parent, id);
+        finalLoanRepaymentPending.init(this, "LoanRepaymentPending");
     }
 
     /**
@@ -126,7 +126,7 @@ public class OperatingRound_1856 extends OperatingRound {
 
                 // Check if any loan interest can be paid
                 if (operatingCompany.get().canLoan()) {
-                    int loanValue = operatingCompany.get().getLoanValueModel().intValue();
+                    int loanValue = operatingCompany.get().getLoanValueModel().value();
                     if (loanValue > 0) {
                         int interest = loanValue * operatingCompany.get().getLoanInterestPct() / 100;
                         // TODO: Hard coded magic number
@@ -375,7 +375,7 @@ public class OperatingRound_1856 extends OperatingRound {
                         SellBonusToken sbt = (SellBonusToken)sp;
                         // FIXME: Is it ipo or pool portfolio?
                         // Assume it is pool
-                        sbt.setSeller(bank.getPool());
+                        sbt.setSeller(bank.getPool().getParent());
                         log.debug("SP "+sp.getId()+" is now buyable from the Bank");
                     }
                 }

@@ -14,7 +14,7 @@ final class IntegerChange implements Change {
     IntegerChange(IntegerState state, int newValue) {
         this.state = state;
         this.newValue = newValue;
-        this.oldValue = state.intValue();
+        this.oldValue = state.value();
         ChangeStack.add(this);
     }
     

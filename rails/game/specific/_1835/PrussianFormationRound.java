@@ -321,7 +321,7 @@ public class PrussianFormationRound extends StockRound {
             efs = (ExchangeForShare) company.getSpecialProperties().get(0);
             cert = unavailable.findCertificate(prussian, efs.getShare()/prussian.getShareUnit(),
             		president);
-            cert.moveTo(player.getPortfolioModel());
+            player.getPortfolioModel().addPublicCertificate(cert);
             //company.setClosed();
             String message = LocalText.getText("MERGE_MINOR_LOG",
                     player.getId(),
@@ -350,7 +350,7 @@ public class PrussianFormationRound extends StockRound {
                 BaseToken token = (BaseToken) minor.getAllBaseTokens().get(0);
                 Stop city = (Stop) token.getOwner();
                 MapHex hex = city.getHolder();
-                token.moveTo(minor);
+                minor.addToken(token);
                 if (!hex.hasTokenOfCompany(prussian) && hex.layBaseToken(prussian, city.getNumber())) {
                     /* TODO: the false return value must be impossible. */
                     message = LocalText.getText("ExchangesBaseToken",
@@ -371,7 +371,7 @@ public class PrussianFormationRound extends StockRound {
                 // TODO: Simplify code due to trainlist being immutable anyway
                 List<Train> trains = new ArrayList<Train> (minor.getPortfolioModel().getTrainList());
                 for (Train train : trains) {
-                    train.moveTo(prussian.getPortfolioModel());
+                    prussian.getPortfolioModel().addTrain(train);
                 }
             }
 
@@ -425,7 +425,7 @@ public class PrussianFormationRound extends StockRound {
         // TODO: changeStack.start(true);
         // FIXME: if (action.isForced()) changeStack.linkToPreviousMoveSet();
 
-        train.moveTo(pool);
+        pool.addTrain(train);
         ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
                 company.getId(),
                 train.getId() ));
@@ -438,7 +438,7 @@ public class PrussianFormationRound extends StockRound {
 
     @Override
     protected void finishRound() {
-        RoundI interruptedRound = gameManager.getInterruptedRound();
+        Round interruptedRound = gameManager.getInterruptedRound();
         ReportBuffer.add(" ");
         if (interruptedRound != null) {  
             ReportBuffer.add(LocalText.getText("EndOfFormationRound", PR_ID, 

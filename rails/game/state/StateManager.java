@@ -1,7 +1,5 @@
 package rails.game.state;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;

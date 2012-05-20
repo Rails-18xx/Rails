@@ -1,17 +1,17 @@
 package rails.game.specific._18AL;
 
-import rails.game.*;
+import rails.game.Train;
 import rails.game.state.GenericState;
+import rails.game.state.Item;
 
 public class NameableTrain extends Train {
 
-    private GenericState<NamedTrainToken> nameToken;
+    private final GenericState<NamedTrainToken> nameToken = GenericState.create();
 
     @Override
-    public void init(TrainCertificateType certType, TrainType type, String uniqueId) {
-
-        super.init(certType, type, uniqueId);
-        nameToken = GenericState.create(this, uniqueId + "_nameToken");
+    public void init(Item parent, String id) {
+        super.init(parent, id);
+        nameToken.init(this, id + "_nameToken");
     }
 
     public void setNameToken(NamedTrainToken nameToken) {

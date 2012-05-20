@@ -13,9 +13,8 @@ import javax.swing.*;
 import org.apache.log4j.Logger;
 
 import rails.common.LocalText;
-import rails.game.TileI;
+import rails.game.Tile;
 import rails.game.TileManager;
-import rails.game.state.Model;
 import rails.ui.swing.elements.Field;
 import rails.ui.swing.hexmap.GUIHex;
 
@@ -30,7 +29,7 @@ public class RemainingTilesWindow extends JFrame implements WindowListener,
     private ORUIManager orUIManager;
 
     private List<Field> labels = new ArrayList<Field>();
-    private List<TileI> shownTiles = new ArrayList<TileI>();
+    private List<Tile> shownTiles = new ArrayList<Tile>();
 
     private final static int COLUMNS = 10;
 
@@ -58,7 +57,7 @@ public class RemainingTilesWindow extends JFrame implements WindowListener,
     private void init(GameUIManager gameUIManager) {
 
         TileManager tmgr = gameUIManager.getGameManager().getTileManager();
-        TileI tile;
+        Tile tile;
         Field label;
         BufferedImage hexImage;
         ImageIcon hexIcon;
@@ -66,7 +65,7 @@ public class RemainingTilesWindow extends JFrame implements WindowListener,
 
         // Build the grid with tiles in the sequence as
         // these have been defined in Tiles.xml
-        List<Integer> tileIds = tmgr.getTileIds();
+        List<Integer> tileIds = tmgr.getTileds();
         log.debug("There are " + tileIds.size() + " tiles known in this game");
 
         for (int tileId : tileIds) {

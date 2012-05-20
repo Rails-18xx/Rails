@@ -16,8 +16,8 @@ import rails.game.*;
 import rails.game.action.*;
 import rails.game.correct.*;
 import rails.game.correct.MapCorrectionManager.ActionStep;
-import rails.game.model.PortfolioModel;
 import rails.game.special.*;
+import rails.game.state.Owner;
 import rails.ui.swing.elements.*;
 import rails.ui.swing.hexmap.GUIHex;
 import rails.ui.swing.hexmap.HexMap;
@@ -51,7 +51,7 @@ public class ORUIManager implements DialogOwner {
 
     private boolean tileLayingEnabled = false;
     public List<LayTile> allowedTileLays = new ArrayList<LayTile>();
-    public List<TileI> tileUpgrades;
+    public List<Tile> tileUpgrades;
     private List<MapHex> hexUpgrades;
 
     private boolean tokenLayingEnabled = false;
@@ -687,7 +687,7 @@ public class ORUIManager implements DialogOwner {
 
     public void tileSelected(int tileId) {
 
-        TileI tile = gameUIManager.getGameManager().getTileManager().getTile(tileId);
+        Tile tile = gameUIManager.getGameManager().getTileManager().getTile(tileId);
         GUIHex hex = map.getSelectedHex();
 
         // map correction override
@@ -757,7 +757,7 @@ public class ORUIManager implements DialogOwner {
             List<LayTile> allowances =
                     map.getTileAllowancesForHex(selectedHex.getHexModel());
             LayTile allowance = null;
-            TileI tile = selectedHex.getProvisionalTile();
+            Tile tile = selectedHex.getProvisionalTile();
             if (allowances.size() == 1) {
                 allowance = allowances.get(0);
             } else {
@@ -765,7 +765,7 @@ public class ORUIManager implements DialogOwner {
                 // We'll restrict to cases where we have both a special property
                 // and a normal 'blanket' allowance.
                 // First check which is which.
-                List<TileI> sp_tiles;
+                List<Tile> sp_tiles;
                 List<MapHex> sp_hexes;
                 LayTile gen_lt = null;
                 LayTile spec_lt = null;
@@ -898,14 +898,14 @@ public class ORUIManager implements DialogOwner {
     protected void relayBaseTokens (LayTile action) {
 
         MapHex hex = action.getChosenHex();
-        TileI newTile = action.getLaidTile();
-        TileI oldTile = hex.getCurrentTile();
+        Tile newTile = action.getLaidTile();
+        Tile oldTile = hex.getCurrentTile();
          if (!action.isRelayBaseTokens()
                 && !oldTile.relayBaseTokensOnUpgrade()) return;
         for (Stop oldStop : hex.getStops()) {
             if (oldStop.hasTokens()) {
                 // Assume only 1 token (no exceptions known)
-                PublicCompany company = ((BaseToken)oldStop.getTokens().get(0)).getParent();
+                PublicCompany company = ((BaseToken)oldStop.getTokens().items().get(0)).getParent();
 
                 List<String> prompts = new ArrayList<String>();
                 Map<String, Integer> promptToCityMap = new HashMap<String, Integer>();
@@ -1075,13 +1075,13 @@ public class ORUIManager implements DialogOwner {
         String prompt;
         StringBuffer b;
         int cost;
-        PortfolioModel from;
+        Owner from;
 
         List<BuyTrain> buyableTrains = possibleActions.getType(BuyTrain.class);
         for (BuyTrain bTrain : buyableTrains) {
             train = bTrain.getTrain();
             cost = bTrain.getFixedCost();
-            from = bTrain.getFromPortfolio();
+            from = bTrain.getFromOwner();
 
             /* Create a prompt per buying option */
             b = new StringBuffer();
@@ -1150,10 +1150,10 @@ public class ORUIManager implements DialogOwner {
 
         buyAction = (BuyTrain) selectedAction;
         train = buyAction.getTrain();
-        PortfolioModel seller = buyAction.getFromPortfolio();
+        Owner seller = buyAction.getFromOwner();
         int price = buyAction.getFixedCost();
 
-        if (price == 0 && seller.getOwner() instanceof PublicCompany) {
+        if (price == 0 && seller instanceof PublicCompany) {
             prompt = LocalText.getText("WHICH_TRAIN_PRICE",
                             orComp.getId(),
                             train.getId(),
@@ -1843,7 +1843,7 @@ public class ORUIManager implements DialogOwner {
             upgradePanel.setDoneEnabled(false);
             upgradePanel.setCancelText("Cancel");
             upgradePanel.setCancelEnabled(false);
-            tileUpgrades = new ArrayList<TileI>();
+            tileUpgrades = new ArrayList<Tile>();
             showTilesInUpgrade = true;
             // checks if there is still a hex selected (due to errors)
             if (selectedHex != null) {

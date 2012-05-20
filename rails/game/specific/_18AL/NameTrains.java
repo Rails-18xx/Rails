@@ -8,10 +8,9 @@ import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.Bank;
 import rails.game.GameManager;
-import rails.game.model.Ownable;
 import rails.game.special.SpecialProperty;
 
-public class NameTrains extends SpecialProperty implements Ownable {
+public class NameTrains extends SpecialProperty {
 
     private String tokenClassName;
     private Class<?> tokenClass;

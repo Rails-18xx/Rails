@@ -15,7 +15,7 @@ public class SpecialTileLay extends SpecialProperty {
     String locationCodes = null;
     List<MapHex> locations = null;
     int tileNumber;
-    TileI tile = null;
+    Tile tile = null;
     String name;
     boolean extra = false;
     boolean free = false;
@@ -55,7 +55,7 @@ public class SpecialTileLay extends SpecialProperty {
                 tileLayTag.getAttributeAsInteger("closingValue", closingValue);
 
         if (tileNumber > 0) {
-	    	description = LocalText.getText("LayNamedTileInfo",
+	    	description = LocalText.getText("LayNamedTilenfo",
 	    			tileNumber,
 	    			name != null ? name : "",
 	    			locationCodes,
@@ -65,7 +65,7 @@ public class SpecialTileLay extends SpecialProperty {
                     /* sfy 1889 extension */
 	    	        );
         } else {
-	    	description = LocalText.getText("LayTileInfo",
+	    	description = LocalText.getText("LayTilenfo",
 	    			locationCodes,
 	    			(extra ? LocalText.getText("extra"):LocalText.getText("notExtra")),
 	    			(free ? LocalText.getText("noCost") : LocalText.getText("normalCost")),
@@ -127,7 +127,7 @@ public class SpecialTileLay extends SpecialProperty {
         return tileNumber;
     }
 
-    public TileI getTile() {
+    public Tile getTile() {
         return tile;
     }
 

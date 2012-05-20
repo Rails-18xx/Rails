@@ -35,9 +35,8 @@ public abstract class Token extends OwnableItem<Token>  {
      * Token initialize without id
      * is generated automatically 
      * @param parent of the token
-     * @return the token initialized
      */
-    public abstract Token init(Item parent); 
+    public abstract void init(Item parent); 
     
     @Override
     protected void checkedInit(Item parent, String id, Class<? extends Item> clazz) {

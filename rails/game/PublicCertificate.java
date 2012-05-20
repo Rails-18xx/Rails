@@ -7,10 +7,7 @@ import org.apache.log4j.Logger;
 
 import rails.common.LocalText;
 import rails.game.model.CertificatesModel;
-import rails.game.model.PortfolioModel;
-import rails.game.state.AbstractItem;
 import rails.game.state.OwnableItem;
-import rails.game.state.Portfolio;
 
 public class PublicCertificate extends OwnableItem<PublicCertificate> implements Certificate, Cloneable {
 
@@ -82,8 +79,11 @@ public class PublicCertificate extends OwnableItem<PublicCertificate> implements
     }
 
     
+    // FIXME: There is no guarantee that the parent of a certificate portfolio is a portfolioModel
+    // Replace that by something that works
     public CertificatesModel getHolder() {
-        return getPortfolio().getParent().getShareModel(company);
+        //return getPortfolio().getParent().getShareModel(company);
+        return null;
     }
 
     /**

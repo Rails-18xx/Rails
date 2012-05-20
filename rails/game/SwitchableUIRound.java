@@ -6,7 +6,7 @@ package rails.game;
  * @author Erik Vos
  *
  */
-public abstract class SwitchableUIRound extends Round {
+public abstract class SwitchableUIRound extends AbstractRound {
 
     public SwitchableUIRound (GameManager gameManager) {
         super (gameManager);

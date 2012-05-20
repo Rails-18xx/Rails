@@ -24,15 +24,15 @@ public class TileMove {
         Logger.getLogger(TileMove.class.getPackage().getName());
 
     MapHex hex;
-    TileI oldTile;
+    Tile oldTile;
     int oldTileOrientation;
     List<Stop> oldStations;
-    TileI newTile;
+    Tile newTile;
     int newTileOrientation;
     List<Stop> newStations;
 
-    public TileMove(MapHex hex, TileI oldTile, int oldTileOrientation,
-            List<Stop> oldStations, TileI newTile, int newTileOrientation,
+    public TileMove(MapHex hex, Tile oldTile, int oldTileOrientation,
+            List<Stop> oldStations, Tile newTile, int newTileOrientation,
             List<Stop> newStations) {
 
         this.hex = hex;

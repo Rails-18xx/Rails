@@ -45,7 +45,7 @@ public class StockRound_1835 extends StockRound {
             if (currentPlayer.getPortfolioModel().getShare(company) >= 55) {
                 otherPlayers.clear();
                 for (PublicCertificate cert : company.getCertificates()) {
-                    owner = cert.getHolder().getOwner(); 
+                    owner = cert.getOwner(); 
                     /* Would the player exceed the total certificate limit? */
                     StockSpace stockSpace = company.getCurrentSpace();
                     if ((stockSpace == null || !stockSpace.isNoCertLimit()) && !mayPlayerBuyCertificate(
@@ -57,7 +57,7 @@ public class StockRound_1835 extends StockRound {
                             price = (int)(1.5 * company.getCurrentPriceModel().getPrice().getPrice());
                             if (price <= cash) {
                                 possibleActions.add(new BuyCertificate (company, cert.getShare(),
-                                        cert.getPortfolio(),
+                                        otherPlayer.getPortfolioModel(),
                                     (int)(1.5 * company.getCurrentPriceModel().getPrice().getPrice()),
                                     1));
                             }
@@ -77,7 +77,7 @@ public class StockRound_1835 extends StockRound {
     @Override
     protected int getBuyPrice (BuyCertificate action, StockSpace currentSpace) {
         int price = currentSpace.getPrice();
-        if (action.getFromPortfolio().getOwner() instanceof Player) {
+        if (action.getFromPortfolio().getParent() instanceof Player) {
             price *= 1.5;
         }
         return price;
@@ -165,7 +165,7 @@ public class StockRound_1835 extends StockRound {
                 // President sold: release four 10% Prussian shares
             	gameManager.getCompanyManager().getPublicCompany(GameManager_1835.PR_ID).setBuyable(true);
                 for (int i=0; i<4; i++) {
-                    unavailable.getCertOfType(GameManager_1835.PR_ID+"_10%").moveTo(ipo);
+                    ipo.addPublicCertificate(unavailable.getAnyCertOfType(GameManager_1835.PR_ID+"_10%"));
                 }
                 ReportBuffer.add (LocalText.getText("SharesReleased",
                         "4 10%", GameManager_1835.PR_ID));

@@ -6,6 +6,8 @@ import java.util.List;
 import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
+import rails.game.state.AbstractItem;
+import rails.game.state.Item;
 
 /**
  * Objects of this class represent a particular type of company, of which
@@ -15,12 +17,27 @@ import rails.common.parser.Tag;
  * reducing the need to repeatedly specify common properties with different
  * companies.
  */
-public class CompanyType implements CompanyTypeI {
-
+public class CompanyType extends AbstractItem {
+    
     /*--- Class attributes ---*/
 
+    /*--- Constants ---*/
+    /** The name of the XML tag used to configure a company type. */
+    public static final String ELEMENT_ID = "CompanyType";
+
+    /** The name of the XML attribute for the company type's name. */
+    public static final String NAME_TAG = "name";
+
+    /** The name of the XML attribute for the company type's class name. */
+    public static final String CLASS_TAG = "class";
+
+    /** The name of the XML tag for the "NoCertLimit" property. */
+    public static final String AUCTION_TAG = "Auction";
+
+    /** The name of the XML tag for the "AllClose" tag. */
+    public static final String ALL_CLOSE_TAG = "AllClose";
+
     /*--- Instance attributes ---*/
-    protected String name;
     protected String className;
     protected int capitalisation = PublicCompany.CAPITALISE_FULL;
 
@@ -29,15 +46,20 @@ public class CompanyType implements CompanyTypeI {
     /**
      * The constructor.
      *
-     * @param name Company type name ("Private", "Public", "Minor" etc.).
-     * @param className Name of the class that will instantiate this type of
-     * company.
-     * @param element The &lt;CompanyType&gt; DOM element, used to define this
-     * company type.
      */
-    public CompanyType(String name, String className) {
-        this.name = name;
+    private CompanyType(String className) {
         this.className = className;
+    }
+
+    /**
+    * @param name Company type name ("Private", "Public", "Minor" etc.).
+    * @param className Name of the class that will instantiate this type of
+    * company.
+    */
+    public static CompanyType create(Item parent, String id, String className) {
+        CompanyType type = new CompanyType(className);
+        type.init(parent, id);
+        return type;
     }
 
     /**
@@ -60,7 +82,7 @@ public class CompanyType implements CompanyTypeI {
             throw new ConfigurationException(LocalText.getText(
                     "ClassCannotBeInstantiated", className), e);
         }
-        newCompany.init(name, this);
+        newCompany.init(this, name);
         newCompany.configureFromXML(typeTag);
         newCompany.configureFromXML(tag);
         companies.add(newCompany);
@@ -68,15 +90,6 @@ public class CompanyType implements CompanyTypeI {
     }
 
     /*--- Getters and setters ---*/
-    /**
-     * Get the company type name
-     *
-     * @return The name of this company type.
-     */
-    public String getName() {
-        return name;
-    }
-
     /**
      * Get the name of the class that will implement this type of company.
      *

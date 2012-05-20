@@ -23,16 +23,17 @@ public final class BonusToken extends Token implements Closeable, ConfigurableCo
     private Object removingObject = null;
     private PublicCompany user = null;
     
-    /**
-     * Creates a non-initialized BonusToken
-     */
-    public BonusToken() {};
+    private BonusToken() {};
     
-    // FIXME: Who is the parent of BonusToken?
+    public static BonusToken create(PublicCompany company) {
+        BonusToken token = new BonusToken();
+        token.init(company);
+        return token;
+    }
+    
     @Override
-    public BonusToken init(Item parent) {
-        super.checkedInit(parent, null, Item.class);
-        return this;
+    public void init(Item parent) {
+        super.checkedInit(parent, null, PublicCompany.class);
     }
     
     public void configureFromXML(Tag tag) throws ConfigurationException {

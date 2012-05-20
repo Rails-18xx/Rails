@@ -14,19 +14,18 @@ import rails.game.state.Item;
  */
 public final class BaseToken extends Token {
 
-    /** 
-     * Creates a non-initialized BaseToken
-     */
-    public BaseToken() {};
+    private BaseToken() {};
+    
+    public static BaseToken create(PublicCompany company) {
+        BaseToken token = new BaseToken();
+        token.init(company);
+        return token;
+    }
     
     @Override
-    public BaseToken init(Item parent) {
+    public void init(Item parent) {
         super.checkedInit(parent, null, PublicCompany.class);
 
-        // add token to the free tokens, this also intializes the portfolio
-        getParent().getBaseTokensModel().addFreeToken(this);
-        
-        return this;
     }
     
     @Override

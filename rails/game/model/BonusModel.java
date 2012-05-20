@@ -3,7 +3,6 @@ package rails.game.model;
 import rails.game.Bank;
 import rails.game.Bonus;
 import rails.game.state.ArrayListState;
-import rails.game.state.Item;
 import rails.game.state.Model;
 
 public class BonusModel extends Model {

@@ -6,18 +6,19 @@ import java.util.List;
 import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
-import rails.game.model.StorageModel;
-import rails.game.model.PortfolioModel;
 import rails.game.special.SellBonusToken;
 import rails.game.special.SpecialProperty;
 import rails.game.state.GenericState;
-import rails.game.state.OwnableItem;
+import rails.game.state.Item;
+import rails.game.state.Ownable;
 import rails.game.state.Owner;
-import rails.game.state.Owners;
+import rails.game.state.PortfolioHolder;
 import rails.game.state.Portfolio;
 import rails.util.*;
 
-public class PrivateCompany extends Company implements OwnableItem<PrivateCompany>, Certificate, Closeable {
+// FIXME: Move static field numberOfPrivateCompanies to CompanyManager
+
+public class PrivateCompany extends Company implements Ownable<PrivateCompany>, Certificate, Closeable {
 
     public static final String TYPE_TAG = "Private";
     public static final String REVENUE = "revenue";
@@ -40,7 +41,7 @@ public class PrivateCompany extends Company implements OwnableItem<PrivateCompan
     protected boolean closeIfAnyExercised = false;
     protected boolean closeAtEndOfTurn = false; // E.g. 1856 W&SR
     // Prevent closing conditions sfy 1889
-    protected List<String> preventClosingConditions = null;
+    protected List<String> preventClosingConditions = new ArrayList<String>();
     // Close at start of phase
     protected String closeAtPhaseName = null;
     // Manual close possible
@@ -69,14 +70,26 @@ public class PrivateCompany extends Company implements OwnableItem<PrivateCompan
     protected boolean tradeableToCompany = true;
     protected boolean tradeableToPlayer = false;
     
-    private final GenericState<Owner> owner = GenericState.create(this, "Owner");
+    private final GenericState<PortfolioHolder> owner = GenericState.create();
 
     private Portfolio<PrivateCompany> portfolio;
     
-    
-    public PrivateCompany() {
-        super();
+    private PrivateCompany() {
         this.privateNumber = numberOfPrivateCompanies++;
+    }
+
+    public static PrivateCompany create(Item parent, String id, CompanyType type) {
+        PrivateCompany company = new PrivateCompany();
+        company.init(parent, id);
+        company.initType(type);
+        return company;
+    }
+    
+    /** Initialisation, to be called directly after instantiation (cloning) */
+    @Override
+    public void init(Item parent, String id) {
+        super.init(parent, id);
+        owner.init(this, "owner");
     }
 
     /**
@@ -87,7 +100,7 @@ public class PrivateCompany extends Company implements OwnableItem<PrivateCompan
         /* Configure private company features */
         try {
 
-            longName= tag.getAttributeAsString("longname", name);
+            longName= tag.getAttributeAsString("longname", getId());
             infoText = "<html>"+longName;
             basePrice = tag.getAttributeAsInteger("basePrice", 0);
 
@@ -210,7 +223,7 @@ public class PrivateCompany extends Company implements OwnableItem<PrivateCompan
 
         } catch (Exception e) {
             throw new ConfigurationException("Configuration error for Private "
-                    + name, e);
+                    + getId(), e);
         }
 
     }
@@ -248,7 +261,7 @@ public class PrivateCompany extends Company implements OwnableItem<PrivateCompan
             
             if (basePrice==0) {
                 throw new ConfigurationException("Configuration error for Private "
-                        + name + ": upperPriceFactor needs basePrice to be set");
+                        + getId() + ": upperPriceFactor needs basePrice to be set");
             }
                              
             upperPrice = (int)(basePrice * upperPriceFactor + 0.5f);
@@ -257,7 +270,7 @@ public class PrivateCompany extends Company implements OwnableItem<PrivateCompan
 
             if (basePrice==0) {
                 throw new ConfigurationException("Configuration error for Private "
-                        + name + ": lowerPriceFactor needs basePrice to be set");
+                        + getId() + ": lowerPriceFactor needs basePrice to be set");
             }
 
             lowerPrice = (int)(basePrice * lowerPriceFactor + 0.5f);
@@ -265,16 +278,6 @@ public class PrivateCompany extends Company implements OwnableItem<PrivateCompan
         // end: br
     }
 
-    /** Initialisation, to be called directly after instantiation (cloning) */
-    @Override
-    public void init(String name, CompanyTypeI type) {
-        super.init(name, type);
-
-        specialProperties = StorageModel.create(this, SpecialProperty.class);
-
-        /* start sfy 1889 */
-        preventClosingConditions = new ArrayList<String>();
-    }
 
     /**
      * @return Private Company Number
@@ -316,9 +319,6 @@ public class PrivateCompany extends Company implements OwnableItem<PrivateCompan
         return closingPhase;
     }
 
-    /**
-     * @param b
-     */
     @Override
     public void setClosed() {
 
@@ -327,8 +327,9 @@ public class PrivateCompany extends Company implements OwnableItem<PrivateCompan
 
         super.setClosed();
         unblockHexes();
-        moveTo(GameManager.getInstance().getBank().getScrapHeap());
-        ReportBuffer.add(LocalText.getText("PrivateCloses", name));
+        // FIXME: This is too long sequence of calls that must be possible to be done easier
+        GameManager.getInstance().getBank().getScrapHeap().getPrivatesOwnedModel().getPortfolio().moveInto(this);
+        ReportBuffer.add(LocalText.getText("PrivateCloses", getId()));
 
         // For 1856: buyable tokens still owned by the private will now
         // become commonly buyable, i.e. owned by GameManager.
@@ -341,7 +342,7 @@ public class PrivateCompany extends Company implements OwnableItem<PrivateCompan
             }
         }
         for (SellBonusToken sbt : moveToGM) {
-            sbt.moveTo(GameManager.getInstance());
+            GameManager.getInstance().getCommonSpecialPropertiesPortfolio().moveInto(sbt);
             log.debug("SP "+sbt.getId()+" is now a common property");
         }
     }
@@ -356,7 +357,7 @@ public class PrivateCompany extends Company implements OwnableItem<PrivateCompan
             return false;
         }
         if (preventClosingConditions.contains("ifOwnedByPlayer")
-                && portfolio.getOwner() instanceof Player) {
+                && portfolio.getParent() instanceof Player) {
             log.debug("Private Company "+getId()+" does not close, as it is owned by a player.");
             return false;
         }
@@ -376,20 +377,19 @@ public class PrivateCompany extends Company implements OwnableItem<PrivateCompan
     }
 
     /**
-     * FIXME: setHolder changes a non-state variable, has to be a state variable
-     * @param portfolio
+     * FIXME: We have a side effect as soon as private company moves to a public company, this has to be considered somewhere else
      */
-    public void setHolder(PortfolioModel portfolio) {
-        this.portfolio = portfolio;
-
-        /*
-         * If this private is blocking map hexes, unblock these hexes as soon as
-         * it is bought by a company.
-         */
-        if (portfolio.getOwner() instanceof Company) {
-            unblockHexes();
-        }
-    }
+//    public void setHolder(PortfolioModel portfolio) {
+//        this.portfolio = portfolio;
+//
+//        /*
+//         * If this private is blocking map hexes, unblock these hexes as soon as
+//         * it is bought by a company.
+//         */
+//        if (portfolio.getOwner() instanceof Company) {
+//            unblockHexes();
+//        }
+//    }
 
     protected void unblockHexes() {
         if (blockedHexes != null) {
@@ -401,7 +401,7 @@ public class PrivateCompany extends Company implements OwnableItem<PrivateCompan
 
     @Override
     public String toString() {
-        return "Private: " + name;
+        return "Private: " + getId();
     }
 
     @Override
@@ -411,26 +411,11 @@ public class PrivateCompany extends Company implements OwnableItem<PrivateCompan
         try {
             clone = super.clone();
         } catch (CloneNotSupportedException e) {
-            log.fatal("Cannot clone company " + name);
+            log.fatal("Cannot clone company " + getId());
             return null;
         }
 
         return clone;
-    }
-
-    /**
-     * Remove a special property. Only used to transfer a persistent special
-     * property to a Portfolio, where it becomes independent of the private.
-     *
-     * @param token The special property object to remove.
-     * @return True if successful.
-     */
-    public boolean removeObject(SpecialProperty object) {
-        return specialProperties.removeObject(object);
-    }
-
-    public int getListIndex (SpecialProperty object) {
-        return specialProperties.getListIndex(object);
     }
 
     public List<MapHex> getBlockedHexes() {
@@ -461,13 +446,13 @@ public class PrivateCompany extends Company implements OwnableItem<PrivateCompan
             for (SpecialProperty sp : specialProperties) {
                 if (!sp.isExercised()) return;
             }
-            log.debug("CloseIfAll: closing "+name);
+            log.debug("CloseIfAll: closing "+getId());
             setClosed();
 
         } else if (closeIfAnyExercised) {
             for (SpecialProperty sp : specialProperties) {
                 if (sp.isExercised()) {
-                    log.debug("CloseIfAny: closing "+name);
+                    log.debug("CloseIfAny: closing "+getId());
                     setClosed();
                     return;
                 }
@@ -527,29 +512,17 @@ public class PrivateCompany extends Company implements OwnableItem<PrivateCompan
         return tradeableToPlayer;
     }
 
-    // Ownable Interface methods
-    public void moveTo(Owner newOwner) {
-        Owners.move(this, newOwner);
-    }
-    
-    public void setOwner(Owner newOwner) {
-        owner.set(newOwner);
+    // Ownable interface
+    public void setPortfolio(Portfolio<PrivateCompany> p) {
+        portfolio = p;
     }
     
     public Owner getOwner() {
-        return owner.get();
-    }
-
-    // Portfolio interface
-    
-    public void setPortfolio(Portfolio<PrivateCompany> p) {
-        portfolio = p;
+        return portfolio.getOwner();
     }
 
     public Portfolio<PrivateCompany> getPortfolio() {
         return portfolio;
     }
-
-
     
 }

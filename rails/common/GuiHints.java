@@ -4,9 +4,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import rails.game.RoundI;
+import rails.game.Round;
 import rails.game.state.AbstractItem;
 import rails.game.state.GenericState;
+import rails.game.state.Item;
 
 /**
  * This class contains hints from the server (game engine) to the client (GUI)
@@ -21,25 +22,27 @@ public class GuiHints extends AbstractItem implements Serializable{
     public static final long serialVersionUID = 1L;
 
     /** What round type is currently active in the engine? */
-    private GenericState<Class<? extends RoundI>> currentRoundType = null;
+    private GenericState<Class<? extends Round>> currentRoundType = GenericState.create();
 
     /** Which windows should be visible? */
     private List<VisibilityHint> visibilityHints;
 
     /** Which window type is active and should be on top? */
-    private GenericState<GuiDef.Panel> activePanel = null;
+    private GenericState<GuiDef.Panel> activePanel = GenericState.create();
 
-    public Class<? extends RoundI> getCurrentRoundType() {
+    @Override
+    public void init(Item parent, String id){
+        super.init(parent, id);
+        currentRoundType.init(this, "CurrentRoundType");
+        activePanel.init(this, "ActivePanel");
+    }
+    
+    public Class<? extends Round> getCurrentRoundType() {
         return currentRoundType.get();
     }
 
-    public void setCurrentRoundType(Class<? extends RoundI> currentRoundType) {
-        if (this.currentRoundType == null) {
-            this.currentRoundType = GenericState.<Class<? extends RoundI>>create
-                        (this, "CurrentRoundType",  currentRoundType);
-        } else {
-            this.currentRoundType.set(currentRoundType);
-        }
+    public void setCurrentRoundType(Class<? extends Round> currentRoundType) {
+        this.currentRoundType.set(currentRoundType);
     }
 
     public List<VisibilityHint> getVisibilityHints() {
@@ -66,11 +69,7 @@ public class GuiHints extends AbstractItem implements Serializable{
     }
 
     public void setActivePanel(GuiDef.Panel activePanel) {
-        if (this.activePanel == null) {
-            this.activePanel = GenericState.create(this, "ActivePanel", activePanel);
-        } else {
-            this.activePanel.set(activePanel);
-        }
+        this.activePanel.set(activePanel);
     }
 
     public class VisibilityHint {

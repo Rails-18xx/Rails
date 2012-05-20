@@ -1,7 +1,5 @@
 package rails.game.model;
 
-import rails.game.state.Item;
-
 /**
  * This is MoneyModel that derives it value from a calculation method.
  * TODO: Rewrite all methods implementing the interface
@@ -17,7 +15,7 @@ public final class CalculatedMoneyModel extends MoneyModel {
 
     private CalculatedMoneyModel() {}
 
-    public CalculatedMoneyModel create() {
+    public static CalculatedMoneyModel create() {
         return new CalculatedMoneyModel();
     }
     

@@ -21,7 +21,7 @@ public class GUITile {
 
     protected int tileId;
 
-    protected TileI tile = null;
+    protected Tile tile = null;
     protected String tileType = null;
 
     protected int picId;
@@ -78,7 +78,7 @@ public class GUITile {
     public boolean rotate(int initial, GUITile previousGUITile,
             boolean mustConnect) {
         int i, j, k, l, tempRot, tempTileSide, prevTileSide;
-        TileI prevTile = previousGUITile.getTile();
+        Tile prevTile = previousGUITile.getTile();
         int prevTileRotation = previousGUITile.getRotation();
         MapHex nHex;
 
@@ -289,11 +289,11 @@ public class GUITile {
         }
     }
 
-    public TileI getTile() {
+    public Tile getTile() {
         return tile;
     }
 
-    public int getTileId() {
+    public int getTiled() {
         return tileId;
     }
 

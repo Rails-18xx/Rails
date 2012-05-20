@@ -1,8 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyCertificate.java,v 1.12 2009/11/04 20:33:22 evos Exp $
- *
- * Created on 17-Sep-2006
- * Change Log:
- */
 package rails.game.action;
 
 import java.io.IOException;
@@ -47,7 +42,8 @@ public class BuyCertificate extends PossibleAction {
         this.company = company;
         this.sharePerCert = sharePerCert;
         this.from = from;
-        this.fromName = from.getUniqueName();
+        // FIXME: From used to be a Portfolio(model) with unique name to identify
+        // this.fromName = from.getUniqueName();
         this.price = price;
         this.maximumNumber = maximumNumber;
 
@@ -160,14 +156,16 @@ public class BuyCertificate extends PossibleAction {
             // Old style
             certUniqueId = companyManager.checkAliasInCertId(certUniqueId);
             certificate = PublicCertificate.getByUniqueId(certUniqueId);
-            from = gameManager.getPortfolioByName(fromName);
+            // FIXME: This function needs a compatible replacement 
+            //from = gameManager.getPortfolioByName(fromName);
             company = certificate.getCompany();
             companyName = company.getId();
             sharePerCert = certificate.getShare();
         } else if (companyName != null) {
             // New style (since Rails.1.3.1)
             company = gameManager.getCompanyManager().getPublicCompany(companyName);
-            from = gameManager.getPortfolioByUniqueName(fromName);
+            // FIXME: This function needs a compatible replacement 
+            //from = gameManager.getPortfolioByUniqueName(fromName);
             // We don't need the certificate anymore.
         }
 

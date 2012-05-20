@@ -1,13 +1,16 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/OperatingRound_18EU.java,v 1.16 2010/05/23 08:18:24 evos Exp $ */
 package rails.game.specific._18EU;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.BuyTrain;
 import rails.game.model.PortfolioModel;
 import rails.game.state.BooleanState;
+import rails.game.state.Item;
+import rails.game.state.Owner;
 
 /**
  * Implements a basic Operating Round. <p> A new instance must be created for
@@ -16,16 +19,21 @@ import rails.game.state.BooleanState;
  */
 public class OperatingRound_18EU extends OperatingRound {
 
-    protected TrainCertificateType pullmannType;
+    protected final TrainCertificateType pullmannType;
 
-    protected BooleanState hasPullmannAtStart =
-            BooleanState.create(this, "ORCompanyHasPullmannAtStart", false);
+    protected final BooleanState hasPullmannAtStart = BooleanState.create();
 
     public OperatingRound_18EU (GameManager gameManager) {
         super (gameManager);
         pullmannType = trainManager.getCertTypeByName("P");
     }
 
+    @Override
+    public void init (Item parent, String id){
+        super.init(parent, id);
+        hasPullmannAtStart.init(this, "ORCompanyHasPullmannAtStart");
+    }
+    
     @Override
     protected void initTurn() {
         super.initTurn();
@@ -75,7 +83,7 @@ public class OperatingRound_18EU extends OperatingRound {
             cost = train.getCost();
             if (cost <= cash) {
                 if (canBuyTrainNow) {
-                    bt = new BuyTrain(train, ipo, cost);
+                    bt = new BuyTrain(train, ipo.getParent(), cost);
                     if (mustExchangePullmann) bt.setExtraMessage(extraMessage);
                     possibleActions.add(bt);
                 }
@@ -98,7 +106,7 @@ public class OperatingRound_18EU extends OperatingRound {
             }
             cost = train.getCost();
             if (cost <= cash) {
-                bt = new BuyTrain(train, pool, cost);
+                bt = new BuyTrain(train, pool.getParent(), cost);
                 if (mustExchangePullmann) bt.setExtraMessage(extraMessage);
                 possibleActions.add(bt);
             } else if (costOfCheapestTrain == 0 || cost < costOfCheapestTrain) {
@@ -109,7 +117,7 @@ public class OperatingRound_18EU extends OperatingRound {
         if (!hasTrains && presidentMayHelp
                 && possibleActions.getType(BuyTrain.class).isEmpty()
                 && cheapestTrain != null) {
-            bt = new BuyTrain(cheapestTrain, cheapestTrain.getPortfolio(), costOfCheapestTrain);
+            bt = new BuyTrain(cheapestTrain, cheapestTrain.getOwner(), costOfCheapestTrain);
             bt.setPresidentMustAddCash(costOfCheapestTrain - cash);
             if (mustExchangePullmann) bt.setExtraMessage(extraMessage);
             possibleActions.add(bt);
@@ -147,7 +155,7 @@ public class OperatingRound_18EU extends OperatingRound {
 
                     for (Train train : trains) {
                         if (train.getType().getName().equals("P")) continue;
-                        bt = new BuyTrain(train, pf, 0);
+                        bt = new BuyTrain(train, pf.getParent(), 0);
                         if (mustExchangePullmann) bt.setExtraMessage(extraMessage);
                         possibleActions.add(bt);
                     }
@@ -175,7 +183,7 @@ public class OperatingRound_18EU extends OperatingRound {
         if (mustDiscardPullmann) {
             Train pullmann = operatingCompany.get().getPortfolioModel().getTrainOfType(pullmannType);
             if (pullmann != null) {  // must be non-null
-                pullmann.moveTo(pool);
+                pool.addTrain(pullmann);
                 ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
                         operatingCompany.get().getId(),
                         pullmann.getId() ));
@@ -184,13 +192,13 @@ public class OperatingRound_18EU extends OperatingRound {
         }
 
         // If train was bought from another company, check for a lone Pullmann
-        PortfolioModel seller = action.getFromPortfolio();
-        if (seller.getOwner() instanceof PublicCompany
+        Owner seller = action.getFromOwner();
+        if (seller instanceof PublicCompany
                 && !action.getTrain().getId().equalsIgnoreCase("P")) {
             boolean hasPullmann = false;
             boolean hasNonPullmann = false;
             Train pullmann = null;
-            for (Train sellerTrain : seller.getTrainList()) {
+            for (Train sellerTrain : ((PublicCompany)seller).getPortfolioModel().getTrainList()) {
                 if ("P".equalsIgnoreCase(sellerTrain.getId())) {
                     hasPullmann = true;
                     pullmann = sellerTrain;
@@ -199,9 +207,9 @@ public class OperatingRound_18EU extends OperatingRound {
                 }
             }
             if (hasPullmann && !hasNonPullmann) {
-                pullmann.moveTo (pool);
-                ReportBuffer.change(LocalText.getText("CompanyDiscardsTrain",
-                        seller.getOwner().getId(),
+                pool.addTrain(pullmann);
+                ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
+                        seller.getId(),
                         pullmann.getId() ));
             }
         }
@@ -241,7 +249,7 @@ public class OperatingRound_18EU extends OperatingRound {
             // If the last train is a Pullmann, discard it.
             if ((numberOfTrains > comp.getCurrentTrainLimit() || numberOfTrains == 1)
                 && pullmann != null) {
-                pullmann.moveTo(pool);
+                pool.addTrain(pullmann);
                 numberOfTrains--;
             }
 

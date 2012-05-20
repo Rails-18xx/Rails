@@ -86,14 +86,14 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
 
         GUIHex uiHex = hexMap.getSelectedHex();
         MapHex hex = uiHex.getHexModel();
-        orUIManager.tileUpgrades = new ArrayList<TileI>();
-        List<TileI> tiles;
+        orUIManager.tileUpgrades = new ArrayList<Tile>();
+        List<Tile> tiles;
         Set<String> allowedColours = currentPhase.getTileColours().keySet();
 
         for (LayTile layTile : hexMap.getTileAllowancesForHex(hex)) {
             tiles = layTile.getTiles();
             if (tiles == null) {
-                for (TileI tile : uiHex.getCurrentTile().getValidUpgrades(hex,
+                for (Tile tile : uiHex.getCurrentTile().getValidUpgrades(hex,
                         orUIManager.gameUIManager.getCurrentPhase())) {
                     // Skip if not allowed in LayTile
                     //if (!layTile.isTileColourAllowed(tile.getColourName())) continue;
@@ -102,7 +102,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
                         orUIManager.tileUpgrades.add(tile);
                 }
             } else {
-                for (TileI tile : tiles) {
+                for (Tile tile : tiles) {
                     // Skip if colour is not allowed yet
                     if (!allowedColours.contains(tile.getColourName())) continue;
 
@@ -169,7 +169,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         } else if (orUIManager.tileUpgrades.size() == 0) {
             orUIManager.setMessage(LocalText.getText("NoTiles"));
         } else {
-            for (TileI tile : orUIManager.tileUpgrades) {
+            for (Tile tile : orUIManager.tileUpgrades) {
                 BufferedImage hexImage = getHexImage(tile.getPictureId());
                 ImageIcon hexIcon = new ImageIcon(hexImage);
 
@@ -207,7 +207,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         // activate upgrade panel
         upgradePanel.removeAll();
         GridLayout panelLayout = (GridLayout)upgradePanel.getLayout();
-        List<TileI> tiles = orUIManager.tileUpgrades;
+        List<Tile> tiles = orUIManager.tileUpgrades;
 
         if (tiles == null || tiles.size() == 0) {
             // reset to the number of elements
@@ -217,7 +217,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         } else {
             // set to the max of available or the default number of elements
             panelLayout.setRows(Math.max(tiles.size() + 2, defaultNbPanelElements));
-            for (TileI tile : tiles) {
+            for (Tile tile : tiles) {
 
                 BufferedImage hexImage = getHexImage(tile.getNb());
                 ImageIcon hexIcon = new ImageIcon(hexImage);
@@ -324,14 +324,15 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
     }
 
     // NOTE: NOT USED
-    private void setSelectedCorrectionToken() {
-        if (correctionTokenLabels == null || correctionTokenLabels.isEmpty()) return;
-        int index = -1;
-        for (CorrectionTokenLabel tokenLabel : correctionTokenLabels) {
-            tokenLabel.setBackground(++index == selectedTokenndex
-                    ? selectedLabelBgColour : defaultLabelBgColour);
-        }
-    }
+    // TODO: Check is this still required
+//    private void setSelectedCorrectionToken() {
+//        if (correctionTokenLabels == null || correctionTokenLabels.isEmpty()) return;
+//        int index = -1;
+//        for (CorrectionTokenLabel tokenLabel : correctionTokenLabels) {
+//            tokenLabel.setBackground(++index == selectedTokenndex
+//                    ? selectedLabelBgColour : defaultLabelBgColour);
+//        }
+//    }
 
     private BufferedImage getHexImage(int tileId) {
         return GameUIManager.getImageLoader().getTile(tileId, 10);
@@ -347,11 +348,11 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         this.preferredSize = preferredSize;
     }
 
-    public void setTileUpgrades(List<TileI> upgrades) {
+    public void setTileUpgrades(List<Tile> upgrades) {
         this.orUIManager.tileUpgrades = upgrades;
     }
 
-    public void addUpgrades(List<TileI> upgrades) {
+    public void addUpgrades(List<Tile> upgrades) {
         this.orUIManager.tileUpgrades.addAll(upgrades);
     }
 
@@ -466,11 +467,12 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
 
         private static final long serialVersionUID = 1L;
 
-        private Token token;
+        // TODO: Was never used
+//        private Token token;
 
         CorrectionTokenLabel(Icon tokenIcon, Token token) {
             super(tokenIcon);
-            this.token = token;
+//            this.token = token;
         }
 
     }
@@ -497,7 +499,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
             return toolTip;
         }
 
-        void setTextFromTile(TileI tile) {
+        void setTextFromTile(Tile tile) {
             StringBuffer text = new StringBuffer();
             if (rails.util.Util.hasValue(tile.getExternalId())) {
                 text.append("<HTML><BODY>" + tile.getExternalId());
@@ -510,14 +512,14 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         }
 
         protected void setToolTip() {
-            TileI currentTile = orUIManager.getGameUIManager().getGameManager().getTileManager().getTile(internalId);
+            Tile currentTile = orUIManager.getGameUIManager().getGameManager().getTileManager().getTile(internalId);
             StringBuffer tt = new StringBuffer("<html>");
             tt.append("<b>Tile</b>: ").append(currentTile.getId()); // or
             // getId()
             if (currentTile.hasStations()) {
                 // for (Station st : currentTile.getStations())
                 int cityNumber = 0;
-                // TileI has stations, but
+                // Tile has stations, but
                 for (Station st : currentTile.getStations()) {
                     cityNumber++; // = city.getNumber();
                     tt.append("<br>  ").append(st.getType()).append(" ").append(

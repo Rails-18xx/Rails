@@ -14,6 +14,7 @@ import rails.common.parser.Tag;
 import rails.game.GameManager;
 import rails.game.state.AbstractItem;
 import rails.game.state.ArrayListState;
+import rails.game.state.Item;
 
 /**
  * Coordinates and stores all elements related to revenue calulcation,
@@ -30,25 +31,17 @@ public final class RevenueManager extends AbstractItem implements ConfigurableCo
     protected static Logger log =
         Logger.getLogger(RevenueManager.class.getPackage().getName());
 
-    private final HashSet<ConfigurableComponentI> configurableModifiers;
+    private final HashSet<ConfigurableComponentI> configurableModifiers = new HashSet<ConfigurableComponentI>();
     
-    private final ArrayListState<NetworkGraphModifier> graphModifiers;
-    private final ArrayListState<RevenueStaticModifier> staticModifiers;
-    private final ArrayListState<RevenueDynamicModifier> dynamicModifiers;
+    private final ArrayListState<NetworkGraphModifier> graphModifiers = ArrayListState.create(); 
+    private final ArrayListState<RevenueStaticModifier> staticModifiers = ArrayListState.create();
+    private final ArrayListState<RevenueDynamicModifier> dynamicModifiers = ArrayListState.create();
     
-    private final ArrayList<RevenueStaticModifier> activeStaticModifiers;
-    private final ArrayList<RevenueDynamicModifier> activeDynamicModifiers;
+    private final ArrayList<RevenueStaticModifier> activeStaticModifiers = new ArrayList<RevenueStaticModifier>();
+    private final ArrayList<RevenueDynamicModifier> activeDynamicModifiers = new ArrayList<RevenueDynamicModifier>();
     private RevenueDynamicModifier activeCalculator;
 
-    public RevenueManager() {
-        graphModifiers = ArrayListState.create(this, "NetworkGraphModifiers"); 
-        staticModifiers = ArrayListState.create(this, "RevenueStaticModifiers"); 
-        dynamicModifiers = ArrayListState.create(this, "RevenueDynamicModifiers");
-        configurableModifiers = new HashSet<ConfigurableComponentI>();
-        
-        activeStaticModifiers = new ArrayList<RevenueStaticModifier>();
-        activeDynamicModifiers = new ArrayList<RevenueDynamicModifier>();
-    }
+    public RevenueManager() {}
     
     public void configureFromXML(Tag tag) throws ConfigurationException {
         
@@ -98,6 +91,14 @@ public final class RevenueManager extends AbstractItem implements ConfigurableCo
             }
         }
 
+    }
+
+    @Override
+    public void init(Item parent, String id) {
+        super.init(parent, id);
+        graphModifiers.init(this, "NetworkGraphModifiers"); 
+        staticModifiers.init(this, "RevenueStaticModifiers"); 
+        dynamicModifiers.init(this, "RevenueDynamicModifiers");
     }
 
     public void finishConfiguration(GameManager parent)

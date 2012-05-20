@@ -13,16 +13,17 @@ import rails.common.LocalText;
 import rails.game.action.*;
 import rails.game.model.PortfolioModel;
 import rails.game.state.BooleanState;
+import rails.game.state.Item;
 
 /**
  * @author Erik Vos
  */
 public class TreasuryShareRound extends StockRound {
 
-    Player sellingPlayer;
-    PublicCompany operatingCompany;
-    private final BooleanState hasBought;
-    private final BooleanState hasSold;
+    protected Player sellingPlayer;
+    protected PublicCompany operatingCompany;
+    private final BooleanState hasBought = BooleanState.create() ;
+    private final BooleanState hasSold = BooleanState.create();
 
     /**
      * Constructor with the GameManager, will call super class (StockRound's) Constructor to initialize, and
@@ -33,25 +34,25 @@ public class TreasuryShareRound extends StockRound {
      *
      */
     public TreasuryShareRound(GameManager aGameManager,
-                             RoundI parentRound) {
+                             Round parentRound) {
         super (aGameManager);
 
         operatingCompany = ((OperatingRound)parentRound).getOperatingCompany();
         sellingPlayer = operatingCompany.getPresident();
         log.debug("Creating TreasuryShareRound");
-        hasBought =
-                BooleanState.create(this, operatingCompany.getId() + "_boughtShares",
-                        false);
-        hasSold =
-                BooleanState.create(this, operatingCompany.getId() + "_soldShares",
-                        false);
-
         setCurrentPlayerIndex(sellingPlayer.getIndex());
 
         guiHints.setActivePanel(GuiDef.Panel.STATUS);
 
     }
 
+    @Override
+    public void init(Item parent, String id){
+        super.init(parent, id);
+        hasBought.init(this, operatingCompany.getId() + "_boughtShares");
+        hasSold.init(this, operatingCompany.getId() + "_soldShares");
+    }
+    
     @Override
     public void start() {
         log.info("Treasury share trading round started");
@@ -368,7 +369,8 @@ public class TreasuryShareRound extends StockRound {
         PublicCertificate cert2;
         for (int i = 0; i < number; i++) {
             cert2 = from.findCertificate(company, sharePerCert/shareUnit, false);
-            transferCertificate(cert2, company);
+            // TODO: Check if this still works
+            transferCertificate(cert2, company.getPortfolioModel());
         }
 
         hasBought.set(true);

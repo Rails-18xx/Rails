@@ -1,44 +1,55 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_1889/OperatingRound_1889.java,v 1.1 2010/02/23 22:21:40 stefanfrey Exp $ */
 package rails.game.specific._1889;
 
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.common.parser.GameOption;
-import rails.game.*;
-import rails.game.action.*;
-import rails.game.special.*;
-import rails.game.state.*;
+import rails.game.GameDef;
+import rails.game.GameManager;
+import rails.game.OperatingRound;
+import rails.game.Player;
+import rails.game.PrivateCompany;
+import rails.game.action.BuyPrivate;
+import rails.game.action.LayTile;
+import rails.game.action.NullAction;
+import rails.game.action.PossibleAction;
+import rails.game.action.UseSpecialProperty;
+import rails.game.special.SpecialProperty;
+import rails.game.special.SpecialTileLay;
+import rails.game.state.BooleanState;
+import rails.game.state.Item;
 
 /**
  * Adds specific code for 1889 to allow the special timing of the special tile laying private companies
  */
 public class OperatingRound_1889 extends OperatingRound {
 
-    private PrivateCompany privB;
-    private BooleanState activeSpPrivB;
+    private final PrivateCompany privB;
+    private final BooleanState activeSpPrivB = BooleanState.create();
     
-    private PrivateCompany privC;
-    private BooleanState activeSpPrivC;
+    private final PrivateCompany privC;
+    private final BooleanState activeSpPrivC = BooleanState.create();
+    
+    private final boolean beginnerGame;
+
     private GameDef.OrStep storeActiveStep;
     private String previousOwnerName; 
     
-    private boolean beginnerGame;
-    
     /**
      * Instantiates a new operating round_1889.
-     * 
      * @param gameManager the game manager
      */
     public OperatingRound_1889 (GameManager gameManager) {
         super (gameManager);
-        
         privB = companyManager.getPrivateCompany("B");
-        activeSpPrivB = BooleanState.create(this, "ActiveSpPrivB", false);
-        
         privC = companyManager.getPrivateCompany("C");
-        activeSpPrivC = BooleanState.create(this, "ActiveSpPrivC", false);
-    
         beginnerGame = GameOption.convertValueToBoolean(getGameOption("BeginnerGame"));
+    }
+    
+    @Override
+    public void init(Item parent, String id){
+        super.init(parent, id);
+        activeSpPrivB.init(this, "ActiveSpPrivB");
+        activeSpPrivC.init(this, "ActiveSpPrivC");
     }
     
     @Override
@@ -58,7 +69,7 @@ public class OperatingRound_1889 extends OperatingRound {
                         possibleActions.add(new UseSpecialProperty(spPrivB));
                     else {
                         possibleActions.add(new LayTile((SpecialTileLay)spPrivB));
-                        DisplayBuffer.change(LocalText.getText("1889PrivateBactive", privB.getPortfolio().getOwner()));
+                        DisplayBuffer.add(LocalText.getText("1889PrivateBactive", privB.getPortfolio().getOwner()));
                     }
                 }
             }
@@ -140,6 +151,3 @@ public class OperatingRound_1889 extends OperatingRound {
     }
     
 }
-
-
-

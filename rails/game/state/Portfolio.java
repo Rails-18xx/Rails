@@ -1,26 +1,38 @@
 package rails.game.state;
 
+import rails.game.model.PortfolioModel;
+
 import com.google.common.collect.ImmutableList;
 
-public abstract class Portfolio<T extends OwnableItem<T>> extends State implements Iterable<T> {
+public abstract class Portfolio<T extends Ownable<T>> extends State implements Iterable<T> {
 
 
     /**
-     * The parent of a Portfolio is restricted to Owner
+     * The parent of a Portfolio is restricted to a PortfolioHolder
      * Otherwise an IllegalArgumentException is raised
      */
     @Override
     public void init(Item parent, String id) {
-        super.checkedInit(parent, id, Owner.class);
+        super.checkedInit(parent, id, PortfolioHolder.class);
     }
-
     
     /**
-     * The parent of a portfolio is always an Owner
+     * The parent of a portfolio is always a PortfolioHolder
      */
     @Override
-    public Owner getParent() {
-        return (Owner)super.getParent();
+    public PortfolioHolder getParent() {
+        return (PortfolioHolder)super.getParent();
+    }
+    
+    /**
+     * The owner of a portfolio is either an Owner 
+     */
+    public Owner getOwner() {
+        if (getParent() instanceof PortfolioModel) {
+            return ((PortfolioModel)getParent()).getParent();
+        } else {
+            return (Owner)getParent();
+        }
     }
     
     /**
@@ -65,7 +77,7 @@ public abstract class Portfolio<T extends OwnableItem<T>> extends State implemen
     /**
      * Moves all items from one portfolio to the other
      */
-    public static <T extends OwnableItem<T>> void moveAll(Portfolio<T> from, Portfolio<T> to) {
+    public static <T extends Ownable<T>> void moveAll(Portfolio<T> from, Portfolio<T> to) {
         for (T item: from.items()) {
             to.moveInto(item);
         }

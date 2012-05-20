@@ -41,10 +41,6 @@ public final class ResourceLoader {
             super(parent);
         }
 
-        RailsClassLoader() {
-            super();
-        }
-
         @Override
         public Class<?> findClass(String className)
                 throws ClassNotFoundException {
