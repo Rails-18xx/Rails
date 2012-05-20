@@ -104,6 +104,7 @@
 		</Phase>
         <Phase name="3½">
 			<Action name="CivilWar"/><!-- No value needed -->
+            <Info key="CivilWarBegins"/>
         </Phase>
 		<Phase name="4">
 			<Trains rusted="2" limitStep="2" onePerTurn="no"/>

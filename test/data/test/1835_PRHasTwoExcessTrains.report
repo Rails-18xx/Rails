@@ -1109,6 +1109,7 @@ PRICE_MOVES_LOG,PR,154,I4,138,H4
 BuysTrain,PR,5,IPO,500
 FirstTrainBought,5
 StartOfPhase,5
+PhaseClosesAllPrivates,
 PrivateCloses,OBB
 PrivateCloses,PfB
 StartFormationRound,PR
