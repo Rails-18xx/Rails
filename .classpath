@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="lib/" kind="src" path=""/>
+	<classpathentry kind="src" path="junit"/>
+	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="lib/log4j-1.2/log4j-1.2.14.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jgrapht-0.7.3/jgrapht-jdk1.5.jar"/>
