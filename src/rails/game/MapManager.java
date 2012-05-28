@@ -329,6 +329,40 @@ public class MapManager extends RailsManager implements Configurable {
         }
     }
 
+    /** Return the hex adjacent to a given hex in a particular direction.
+     * Return null if that hex does not exist.
+     * @param hex The hex object for which an adjacent one is searched.
+     * @param orientation The direction where to look (values 0-5);
+     * @return The found MapHex object, or null.
+     */
+    public MapHex getAdjacentHex (MapHex hex, int orientation) {
+
+        int x = hex.getX();
+        int y = hex.getY();
+        int xx = getAdjacentX (x, y, orientation);
+        int yy = getAdjacentY (x, y, orientation);
+
+        if (xx >= minX && xx <= maxX && yy >= minY && yy <= maxY) {
+            return hexes[xx][yy]; //  null if undefined
+        }
+        return null;  //outside the map border
+    }
+
+    /** Return a List of all hexes adjacent to a given hex.
+     * @param hex The hex object for which all adjacent hexes are searched.
+     * @return The found list of MapHex objects.  Can be empty, not null.
+     */
+    public List<MapHex> getAdjacentHexes (MapHex hex) {
+
+        List<MapHex> adjacentHexes = new ArrayList<MapHex> ();
+        MapHex adjacentHex;
+
+        for (int i=0; i<6; i++) {
+            if ((adjacentHex = getAdjacentHex (hex, i)) != null) adjacentHexes.add(adjacentHex);
+        }
+        return adjacentHexes;
+    }
+
     /**
      * @return Returns the currentTileOrientation.
      */
@@ -447,7 +481,7 @@ public class MapManager extends RailsManager implements Configurable {
             distances.get(hex1).put(hex2, depth);
         }
 
-        for (MapHex hex3 : hex2.getNeighbors()) {
+        for (MapHex hex3 : getAdjacentHexes(hex2)) {
             if (hex3 == null) continue;
             if (distances.get(hex1).get(hex3) == null) {
                 calculateHexDistances (hex1, hex3, depth+1);
@@ -498,7 +532,7 @@ public class MapManager extends RailsManager implements Configurable {
     public int getMapXOffset() {
         return mapXOffset;
     }
-    
+
     public int getMapYOffset() {
         return mapYOffset;
     }
