@@ -93,6 +93,7 @@ Designed by Bill Dixon
 
 Limitation:
 - The restriction that shares cannot be sold in the same round that these are bought is not enforced.
+- The alternate destinations for VA amd TGB are not shown correctly (only one hex)
 		</Description>
 		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
 		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
@@ -103,7 +104,9 @@ Limitation:
         <Option name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
         <Option name="1856THBHomeBlocked" type="toggle" default="no" />
 		<Option name="TwoPlayersCertLimit70Percent" type="toggle" default="no"/>
-		<Players minimum="2" maximum="6"/>
+        <Option name="1856AlternateTrains" type="toggle" default="no" />
+        <Option name="1856AlternateDestinations" type="toggle" default="no" />
+       	<Players minimum="2" maximum="6"/>
 	</Game>
 
 	<Game name="1889">
