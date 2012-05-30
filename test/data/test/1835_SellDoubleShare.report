@@ -1162,6 +1162,7 @@ PRICE_MOVES_LOG,SX,132,E1,120,E2
 BuysTrain,SX,4,IPO,360
 FirstTrainBought,4
 StartOfPhase,4
+TrainsRusted,2
 StartFormationRound,PR
 StartingPlayer,m3
 START_MERGED_COMPANY,PR,154,154
@@ -1257,6 +1258,7 @@ BuysTrain,BY,4+4,IPO,440
 All 4+4-trains are sold out, 5-trains now available
 FirstTrainBought,4+4
 StartOfPhase,4+4
+TrainsRusted,2+2
  
 CompanyOperates,PR,m3
 LaysTileAt,PR,8,I11,W
@@ -1425,6 +1427,7 @@ PRICE_MOVES_LOG,MS,80,B5,72,A5
 BuysTrain,MS,6,IPO,600
 FirstTrainBought,6
 StartOfPhase,6
+TrainsRusted,3
  
 CompanyOperates,WT,m2
 LaysTileAt,WT,27,I5,E
@@ -1552,6 +1555,7 @@ PRICE_MOVES_LOG,PR,190,J3,212,K3
 BuysTrain,PR,6+6,IPO,720
 FirstTrainBought,6+6
 StartOfPhase,6+6
+TrainsRusted,3+3
 BuysTrain,PR,6+6,IPO,720
  
 CompanyOperates,BY,m4
