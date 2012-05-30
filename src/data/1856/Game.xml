@@ -11,6 +11,8 @@
 		<GameOption name="TwoPlayersCertLimit70Percent" type="toggle" default="yes"/>
         <GameOption name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
         <GameOption name="1856THBHomeBlocked" type="toggle" default="no" />
+        <GameOption name="1856AlternateTrains" type="toggle" default="no" />
+        <GameOption name="1856AlternateDestinations" type="toggle" default="no" />
 		<GameParameters>
 			<StockRound class="rails.game.specific._1856.StockRound_1856" 
 				sequence="SellBuyOrBuySell">
@@ -76,10 +78,18 @@
 		<TrainType name="6" majorStops="6" cost="700" quantity="2">
             <NewPhase phaseName="6"/>
         </TrainType>
-		<TrainType name="D" majorStops="99" cost="1100" quantity="-1">
-            <NewPhase phaseName="D"/>
-			<Exchange cost="750"/>
-		</TrainType>
+		<IfOption name="1856AlternateTrains" value="no">
+			<TrainType name="D" majorStops="99" cost="1100" quantity="-1">
+				<NewPhase phaseName="D" />
+				<Exchange cost="750" />
+			</TrainType>
+		</IfOption>
+		<IfOption name="1856AlternateTrains" value="yes">
+			<TrainType name="8" majorStops="8" cost="1000" quantity="-1">
+				<NewPhase phaseName="D" />
+				<Exchange cost="650" />
+			</TrainType>
+		</IfOption>
 	</Component>
 	<Component name="PhaseManager" class="rails.game.PhaseManager">
 		<Phase name="2" realName="1">
@@ -105,7 +115,12 @@
 		</Phase>
 		<Phase name="6" realName="5">
 			<Tiles colour="yellow,green,brown,grey"/>
-			<Trains rusted="3" released="D"/>
+			<IfOption name="1856AlternateTrains" value="no">
+				<Trains rusted="3" released="D"/>
+			</IfOption>
+			<IfOption name="1856AlternateTrains" value="yes">
+				<Trains rusted="3" released="8"/>
+			</IfOption>
 			<Loans allowed="no"/>
 		</Phase>
 		<Phase name="D" realName="6">
