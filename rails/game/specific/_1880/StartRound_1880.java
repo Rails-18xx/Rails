@@ -360,7 +360,7 @@ public class StartRound_1880 extends StartRound {
     private void setNextBiddingPlayer(StartItem item, int currentIndex) {
         for (int i = currentIndex + 1; i < currentIndex
                                            + gameManager.getNumberOfPlayers(); i++) {
-            if (item.getBid(gameManager.getPlayerByIndex(i)) >=0) {
+            if (item.getBid(gameManager.getPlayerByIndex(i)) >0) {
                 setCurrentPlayerIndex(i);
                 break;
             }
