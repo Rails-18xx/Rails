@@ -4,7 +4,8 @@ package rails.common.parser;
 import java.lang.reflect.Constructor;
 import java.util.*;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.common.LocalText;
 import rails.common.parser.XMLTags;
@@ -21,7 +22,7 @@ public class ComponentManager {
 
     private List<Tag> componentTags;
 
-    protected Logger log = Logger.getLogger(ComponentManager.class.getPackage().getName());
+    protected Logger log = LoggerFactory.getLogger(ComponentManager.class.getPackage().getName());
     protected List<String> directories = new ArrayList<String>();
     
     private Map<String, ConfigurableComponentI> mComponentMap =

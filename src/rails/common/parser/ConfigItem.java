@@ -3,7 +3,8 @@ package rails.common.parser;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.util.Util;
 
@@ -15,7 +16,7 @@ import rails.util.Util;
 public final class ConfigItem {
 
     protected static Logger log =
-        Logger.getLogger(ConfigItem.class.getPackage().getName());
+        LoggerFactory.getLogger(ConfigItem.class.getPackage().getName());
 
     /**
      * Defines possible types (Java classes used as types in ConfigItem below

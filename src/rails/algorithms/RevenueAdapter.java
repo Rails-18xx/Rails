@@ -12,7 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.SimpleGraph;
@@ -36,7 +37,7 @@ import rails.ui.swing.hexmap.HexMap;
 public final class RevenueAdapter implements Runnable {
 
     protected static Logger log =
-        Logger.getLogger(RevenueAdapter.class.getPackage().getName());
+        LoggerFactory.getLogger(RevenueAdapter.class.getPackage().getName());
     
     // define VertexVisitSet
     public class VertexVisit {

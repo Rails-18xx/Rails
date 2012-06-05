@@ -1,6 +1,7 @@
 package rails.game;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.game.state.AbstractItem;
 import rails.game.state.GenericState;
@@ -42,7 +43,7 @@ public class Stop extends AbstractItem implements PortfolioHolder {
     private Score scoreType = null;
 
     protected static Logger log =
-        Logger.getLogger(Stop.class.getPackage().getName());
+        LoggerFactory.getLogger(Stop.class.getPackage().getName());
 
     public enum RunTo {
         YES,

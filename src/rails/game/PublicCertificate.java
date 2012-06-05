@@ -3,7 +3,8 @@ package rails.game;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.common.LocalText;
 import rails.game.model.CertificatesModel;
@@ -40,7 +41,7 @@ public class PublicCertificate extends OwnableItem<PublicCertificate> implements
 
     
     protected static Logger log =
-            Logger.getLogger(PublicCertificate.class.getPackage().getName());
+            LoggerFactory.getLogger(PublicCertificate.class.getPackage().getName());
 
     public PublicCertificate(int shares, boolean president, 
             boolean available, float certificateCount, int index) {
@@ -185,7 +186,7 @@ public class PublicCertificate extends OwnableItem<PublicCertificate> implements
         try {
             return super.clone();
         } catch (CloneNotSupportedException e) {
-            log.fatal("Cannot clone certificate:", e);
+            log.error("Cannot clone certificate:", e);
             return null;
         }
     }

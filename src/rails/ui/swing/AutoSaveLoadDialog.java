@@ -6,7 +6,8 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.common.LocalText;
 import rails.ui.swing.elements.DialogOwner;
@@ -33,7 +34,7 @@ public class AutoSaveLoadDialog extends JDialog implements ActionListener {
     private static final int NUM_OPTIONS = 3;
 
     protected static Logger log =
-            Logger.getLogger(AutoSaveLoadDialog.class.getPackage().getName());
+            LoggerFactory.getLogger(AutoSaveLoadDialog.class.getPackage().getName());
 
     public AutoSaveLoadDialog(DialogOwner owner, int oldStatus, int oldInterval) {
         super((Frame) null, "AutoSaveLoad settings", false); // Non-modal

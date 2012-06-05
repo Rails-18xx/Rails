@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.NDC;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.common.parser.Config;
 import rails.game.Game;
@@ -26,7 +26,7 @@ public class TestGame extends TestCase {
     private boolean passed = false;
     
     protected static Logger log =
-        Logger.getLogger(TestGame.class.getPackage().getName());
+        LoggerFactory.getLogger(TestGame.class.getPackage().getName());
 
     public TestGame(String gameName, String gamePath) {
         super(gameName);
@@ -100,7 +100,7 @@ public class TestGame extends TestCase {
             Game testGame = Game.load(gameFilename);
             if (testGame != null) {
                 testReport = ReportBuffer.getAsList();
-                NDC.clear(); // remove reference to GameManager
+//                NDC.clear(); // remove reference to GameManager
             }
         } else {
             log.error("Did not find gamefile at " + gameFilename);

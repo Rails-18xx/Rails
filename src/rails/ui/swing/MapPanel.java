@@ -7,7 +7,8 @@ import java.util.List;
 
 import javax.swing.*;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.game.MapManager;
 import rails.game.action.LayTile;
@@ -31,7 +32,7 @@ public class MapPanel extends JPanel {
     private Dimension currentMapSize;
 
     protected static Logger log =
-            Logger.getLogger(MapPanel.class.getPackage().getName());
+            LoggerFactory.getLogger(MapPanel.class.getPackage().getName());
 
     public MapPanel(GameUIManager gameUIManager) {
         this.gameUIManager = gameUIManager;
@@ -46,7 +47,7 @@ public class MapPanel extends JPanel {
             map.init(gameUIManager.getORUIManager(), mmgr);
             originalMapSize = map.getOriginalSize();
         } catch (Exception e) {
-            log.fatal("Map class instantiation error:", e);
+            log.error("Map class instantiation error:", e);
             e.printStackTrace();
             return;
         }

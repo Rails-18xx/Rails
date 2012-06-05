@@ -14,7 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.game.GameManager;
 import rails.util.Util;
@@ -347,7 +348,7 @@ public final class Config {
         System.out.println("log4j.configuration =  " + log4jSelection);
 
         // delayed setting of logger
-        log = Logger.getLogger(Config.class.getPackage().getName());
+        log = LoggerFactory.getLogger(Config.class.getPackage().getName());
 
         // define settings for testing 
         legacyConfigFile = false;
@@ -374,7 +375,7 @@ public final class Config {
         System.out.println("log4j.configuration =  " + log4jSelection);
 
         // delayed setting of logger
-        log = Logger.getLogger(Config.class.getPackage().getName());
+        log = LoggerFactory.getLogger(Config.class.getPackage().getName());
         
         /*
          * Check if the profile has been set from the command line

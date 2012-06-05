@@ -9,7 +9,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.batik.transcoder.*;
 import org.apache.batik.transcoder.image.ImageTranscoder;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import rails.common.ResourceLoader;
@@ -39,7 +40,7 @@ public class ImageLoader {
     }
 
     private static Logger log =
-            Logger.getLogger(ImageLoader.class.getPackage().getName());
+            LoggerFactory.getLogger(ImageLoader.class.getPackage().getName());
 
     static {
         if (Util.hasValue(tileRootDir) && !tileRootDir.endsWith("/")) {

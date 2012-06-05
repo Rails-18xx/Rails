@@ -7,7 +7,8 @@ import java.io.File;
 import org.apache.batik.swing.JSVGCanvas;
 import org.apache.batik.swing.gvt.GVTTreeRendererAdapter;
 import org.apache.batik.swing.gvt.GVTTreeRendererEvent;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.common.parser.Config;
 import rails.game.MapManager;
@@ -25,7 +26,7 @@ public class HexMapImage extends JSVGCanvas  {
     private static final long serialVersionUID = 1L;
 
     protected static Logger log =
-            Logger.getLogger(HexMapImage.class.getPackage().getName());
+            LoggerFactory.getLogger(HexMapImage.class.getPackage().getName());
 
     protected MapManager mapManager;
 

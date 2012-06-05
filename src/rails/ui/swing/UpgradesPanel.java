@@ -11,7 +11,8 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.common.LocalText;
 import rails.game.*;
@@ -48,7 +49,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
     private HexMap hexMap;
 
     protected static Logger log =
-        Logger.getLogger(UpgradesPanel.class.getPackage().getName());
+        LoggerFactory.getLogger(UpgradesPanel.class.getPackage().getName());
 
     public UpgradesPanel(ORUIManager orUIManager) {
         super(BoxLayout.Y_AXIS);

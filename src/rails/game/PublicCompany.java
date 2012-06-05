@@ -2022,7 +2022,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
         try {
             clone = super.clone();
         } catch (CloneNotSupportedException e) {
-            log.fatal("Cannot clone company " + getId());
+            log.error("Cannot clone company " + getId());
             return null;
         }
 

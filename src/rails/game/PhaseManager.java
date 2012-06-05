@@ -2,7 +2,8 @@ package rails.game;
 
 import java.util.*;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.common.parser.ConfigurableComponentI;
 import rails.common.parser.ConfigurationException;
@@ -25,7 +26,7 @@ public class PhaseManager extends AbstractItem implements ConfigurableComponentI
     protected GameManager gameManager;
 
     protected static Logger log =
-        Logger.getLogger(PhaseManager.class.getPackage().getName());
+        LoggerFactory.getLogger(PhaseManager.class.getPackage().getName());
 
     public PhaseManager() {}
 

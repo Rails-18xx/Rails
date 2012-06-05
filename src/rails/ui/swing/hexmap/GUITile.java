@@ -8,7 +8,8 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.util.*;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.game.*;
 import rails.ui.swing.GameUIManager;
@@ -46,7 +47,7 @@ public class GUITile {
     public static final double SVG_Y_CENTER_LOC = 0.426;
 
     protected static Logger log =
-            Logger.getLogger(GUITile.class.getPackage().getName());
+            LoggerFactory.getLogger(GUITile.class.getPackage().getName());
 
     public GUITile(int tileId, GUIHex guiHex) {
         this.guiHex = guiHex;

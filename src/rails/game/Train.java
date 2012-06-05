@@ -1,6 +1,7 @@
 package rails.game;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.common.parser.ConfigurationException;
 import rails.game.state.BooleanState;
@@ -23,7 +24,7 @@ public class Train extends OwnableItem<Train> {
     private Portfolio<Train> portfolio;
 
     protected static Logger log =
-            Logger.getLogger(Train.class.getPackage().getName());
+            LoggerFactory.getLogger(Train.class.getPackage().getName());
 
     public Train() {}
     // TODO: Train creation is shared by three classes, simplify that

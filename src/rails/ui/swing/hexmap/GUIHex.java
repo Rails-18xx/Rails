@@ -22,7 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.algorithms.RevenueBonusTemplate;
 import rails.game.Bank;
@@ -117,7 +118,7 @@ public class GUIHex implements Observer {
     protected boolean tilePainted = true;
 
     protected static Logger log =
-            Logger.getLogger(GUIHex.class.getPackage().getName());
+            LoggerFactory.getLogger(GUIHex.class.getPackage().getName());
 
     public GUIHex(HexMap hexMap, double cx, double cy, int scale,
             int xCoord, int yCoord) {

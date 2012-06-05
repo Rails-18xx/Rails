@@ -2,7 +2,8 @@ package rails.game.specific._1851;
 
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jgrapht.graph.SimpleGraph;
 
 import rails.algorithms.NetworkEdge;
@@ -15,7 +16,7 @@ import rails.game.MapHex;
 public class BirminghamTileModifier implements NetworkGraphModifier {
 
     protected static Logger log =
-        Logger.getLogger(BirminghamTileModifier.class.getPackage().getName());
+        LoggerFactory.getLogger(BirminghamTileModifier.class.getPackage().getName());
 
     public void modifyGraph(NetworkGraphBuilder graphBuilder) {
         

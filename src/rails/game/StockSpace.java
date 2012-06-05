@@ -2,7 +2,8 @@ package rails.game;
 
 import java.awt.Color;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 
@@ -68,7 +69,7 @@ public class StockSpace extends Model {
     protected final ArrayListState<PublicCompany> fixedStartPrices = ArrayListState.create();
 
     protected static Logger log =
-            Logger.getLogger(StockSpace.class.getPackage().getName());
+            LoggerFactory.getLogger(StockSpace.class.getPackage().getName());
 
     /*--- Contructors ---*/
     private StockSpace(int price, StockSpaceType type) {

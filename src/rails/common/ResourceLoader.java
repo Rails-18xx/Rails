@@ -11,7 +11,8 @@ import javax.swing.text.*;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class ResourceLoader is an utility class to load a resource from a filename
@@ -35,7 +36,7 @@ public final class ResourceLoader {
         List<String> directories = null;
 
         protected static Logger log =
-                Logger.getLogger(RailsClassLoader.class.getPackage().getName());
+                LoggerFactory.getLogger(RailsClassLoader.class.getPackage().getName());
 
         RailsClassLoader(ClassLoader parent) {
             super(parent);
@@ -94,7 +95,7 @@ public final class ResourceLoader {
     private final static String sep = "~";
 
     protected static Logger log =
-            Logger.getLogger(ResourceLoader.class.getPackage().getName());
+            LoggerFactory.getLogger(ResourceLoader.class.getPackage().getName());
 
     private static String server = null;
     private static int serverPort = 0;

@@ -411,7 +411,7 @@ public class PrivateCompany extends Company implements Ownable<PrivateCompany>, 
         try {
             clone = super.clone();
         } catch (CloneNotSupportedException e) {
-            log.fatal("Cannot clone company " + getId());
+            log.error("Cannot clone company " + getId());
             return null;
         }
 

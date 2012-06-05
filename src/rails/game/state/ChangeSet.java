@@ -3,7 +3,8 @@ package rails.game.state;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.game.Player;
 
@@ -25,7 +26,7 @@ import com.google.common.collect.Lists;
 abstract class ChangeSet {
 
     protected static Logger log =
-        Logger.getLogger(ChangeSet.class.getPackage().getName());
+        LoggerFactory.getLogger(ChangeSet.class.getPackage().getName());
 
     private final List<Change> changes = new ArrayList<Change>();
     

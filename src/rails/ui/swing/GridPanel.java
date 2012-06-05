@@ -17,7 +17,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.game.GameManager;
 import rails.game.Player;
@@ -67,7 +68,7 @@ implements ActionListener, KeyListener {
     protected List<JMenuItem> menuItemsToReset = new ArrayList<JMenuItem>();
 
     protected static Logger log =
-        Logger.getLogger(GridPanel.class.getPackage().getName());
+        LoggerFactory.getLogger(GridPanel.class.getPackage().getName());
 
 
     public void redisplay() {

@@ -2,7 +2,8 @@ package rails.game.state;
 
 import java.util.LinkedList;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.game.Player;
 import rails.game.ReportBuffer;
@@ -10,7 +11,7 @@ import rails.game.action.PossibleAction;
 
 public final class ChangeStack {
     protected static Logger log =
-        Logger.getLogger(ChangeStack.class.getPackage().getName());
+        LoggerFactory.getLogger(ChangeStack.class.getPackage().getName());
 
     private final LinkedList<ChangeSet> stack = new LinkedList<ChangeSet>();
     private boolean enabled = false;

@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jgrapht.*;
 import org.jgrapht.traverse.*;
 
@@ -36,7 +37,7 @@ public class NetworkIterator extends
     private final Graph<NetworkVertex, NetworkEdge> graph;
 
     protected static Logger log =
-        Logger.getLogger(NetworkIterator.class.getPackage().getName());
+        LoggerFactory.getLogger(NetworkIterator.class.getPackage().getName());
 
     
     public NetworkIterator(Graph<NetworkVertex, NetworkEdge> graph,

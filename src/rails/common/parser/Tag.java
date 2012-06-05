@@ -5,7 +5,8 @@ import java.util.*;
 
 import javax.xml.parsers.*;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
@@ -34,7 +35,7 @@ public class Tag {
     private Map<String, String> gameOptions = null;
 
     protected static Logger log =
-            Logger.getLogger(Tag.class.getPackage().getName());
+            LoggerFactory.getLogger(Tag.class.getPackage().getName());
 
     public Tag(Element element) {
         this.element = element;

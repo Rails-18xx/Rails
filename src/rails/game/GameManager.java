@@ -4,8 +4,8 @@ import java.io.*;
 import java.lang.reflect.Constructor;
 import java.util.*;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.NDC;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.algorithms.RevenueManager;
 import rails.common.*;
@@ -18,6 +18,10 @@ import rails.game.special.SpecialTokenLay;
 import rails.game.state.*;
 import rails.util.GameFileIO;
 import rails.util.Util;
+
+/*
+ * FIXME: Removed NDC mechanism
+ */
 
 /**
  * This class manages the playing rounds by supervising all implementations of
@@ -220,13 +224,13 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI 
     protected Map<String, Integer> storageIds = new HashMap<String, Integer>();
     
     protected static Logger log =
-        Logger.getLogger(GameManager.class.getPackage().getName());
+        LoggerFactory.getLogger(GameManager.class.getPackage().getName());
 
     public GameManager() {
         gmName = GM_NAME;
         gmKey = GM_KEY;
-        NDC.clear();
-        NDC.push (GM_KEY);
+//        NDC.clear();
+//        NDC.push (GM_KEY);
         gameManagerMap.put(GM_KEY, this);
         displayBuffer = new DisplayBuffer();
         reportBuffer = new ReportBuffer();
@@ -626,7 +630,8 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI 
      * @return instance of GameManager
      */
     public static GameManager getInstance () {
-        return gameManagerMap.get(NDC.peek());
+//        return gameManagerMap.get(NDC.peek());
+        return null;
     }
 
     /* (non-Javadoc)
@@ -704,7 +709,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI 
         try {
             startRoundClass = Class.forName (startRoundClassName).asSubclass(StartRound.class);
         } catch (Exception e) {
-            log.fatal("Cannot find class "
+            log.error("Cannot find class "
                     + startRoundClassName, e);
             System.exit(1);
         }
@@ -733,7 +738,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI 
             Constructor<T> cons = roundClass.getConstructor(GameManager.class);
             round = cons.newInstance(this);
         } catch (Exception e) {
-            log.fatal("Cannot instantiate class "
+            log.error("Cannot instantiate class "
                     + roundClass.getName(), e);
             System.exit(1);
         }
@@ -753,7 +758,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI 
             Constructor<T> cons = roundClass.getConstructor(GameManager.class, Round.class);
             round = cons.newInstance(this, parentRound);
         } catch (Exception e) {
-            log.fatal("Cannot instantiate class "
+            log.error("Cannot instantiate class "
                     + roundClass.getName(), e);
             System.exit(1);
         }
@@ -830,8 +835,8 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI 
      */
     public boolean process(PossibleAction action) {
 
-        NDC.clear();
-        NDC.push (GM_KEY);
+//        NDC.clear();
+//        NDC.push (GM_KEY);
 
         boolean result = true;
 
@@ -1165,7 +1170,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI 
         try{
             gameLoader.loadActionsAndComments();
         } catch (ConfigurationException e)  {
-            log.fatal("Load failed", e);
+            log.error("Load failed", e);
             DisplayBuffer.add(LocalText.getText("LoadFailed", e.getMessage()));
         }
 

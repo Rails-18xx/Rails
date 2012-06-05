@@ -6,7 +6,8 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.common.LocalText;
 
@@ -33,7 +34,7 @@ public class CheckBoxDialog extends JDialog implements ActionListener {
     boolean hasCancelButton = false;
 
     protected static Logger log =
-            Logger.getLogger(CheckBoxDialog.class.getPackage().getName());
+            LoggerFactory.getLogger(CheckBoxDialog.class.getPackage().getName());
 
     public CheckBoxDialog(DialogOwner owner, JFrame window, String title, String message,
             String[] options) {

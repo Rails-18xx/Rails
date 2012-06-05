@@ -9,7 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.Multigraph;
 import org.jgrapht.graph.SimpleGraph;
@@ -26,7 +27,7 @@ import rails.game.Token;
  */
 public class NetworkCompanyGraph {
     protected static Logger log =
-        Logger.getLogger(NetworkCompanyGraph.class.getPackage().getName());
+        LoggerFactory.getLogger(NetworkCompanyGraph.class.getPackage().getName());
 
     private final NetworkGraphBuilder graphBuilder;
     private final PublicCompany company;

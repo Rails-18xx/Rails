@@ -3,16 +3,18 @@
 	<classpathentry kind="src" path="junit"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry exported="true" kind="lib" path="lib/log4j-1.2/log4j-1.2.14.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jgrapht-0.7.3/jgrapht-jdk1.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jgraph5/jgraph.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/batik-1.7/batik.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/batik-1.7/lib/batik-bridge.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/batik-1.7/lib/batik-dom.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/batik-1.7/lib/batik-ext.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/batik-1.7/lib/batik-gvt.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/batik-1.7/lib/batik-util.jar"/>
-	<classpathentry kind="lib" path="lib/junit-4.8.2/junit.jar"/>
-	<classpathentry kind="lib" path="lib/guava-r09/guava-r09.jar"/>
+	<classpathentry kind="lib" path="src/lib/batik-1.7/lib/batik-bridge.jar"/>
+	<classpathentry kind="lib" path="src/lib/batik-1.7/lib/batik-dom.jar"/>
+	<classpathentry kind="lib" path="src/lib/batik-1.7/lib/batik-ext.jar"/>
+	<classpathentry kind="lib" path="src/lib/batik-1.7/lib/batik-gvt.jar"/>
+	<classpathentry kind="lib" path="src/lib/batik-1.7/lib/batik-util.jar"/>
+	<classpathentry kind="lib" path="src/lib/batik-1.7/batik.jar"/>
+	<classpathentry kind="lib" path="src/lib/guava-r09/guava-r09.jar"/>
+	<classpathentry kind="lib" path="src/lib/jgraph5/jgraph.jar"/>
+	<classpathentry kind="lib" path="src/lib/jgrapht-0.7.3/jgrapht-jdk1.5.jar"/>
+	<classpathentry kind="lib" path="src/lib/junit-4.8.2/junit.jar"/>
+	<classpathentry kind="lib" path="src/lib/logback-1.0.4/logback-classic-1.0.4.jar"/>
+	<classpathentry kind="lib" path="src/lib/logback-1.0.4/logback-core-1.0.4.jar"/>
+	<classpathentry kind="lib" path="src/lib/sl4j-1.6.5/slf4j-api-1.6.5.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

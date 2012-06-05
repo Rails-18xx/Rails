@@ -2,7 +2,8 @@ package rails.game;
 
 import java.util.*;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.game.model.CashMoneyModel;
 import rails.game.model.PortfolioModel;
@@ -76,7 +77,7 @@ public class StartItem extends AbstractItem {
     protected static Map<String, StartItem> startItemMap;
 
     protected static Logger log =
-            Logger.getLogger(StartItem.class.getPackage().getName());
+            LoggerFactory.getLogger(StartItem.class.getPackage().getName());
 
     /**
      * The constructor, taking the properties of the "primary" (often teh only)

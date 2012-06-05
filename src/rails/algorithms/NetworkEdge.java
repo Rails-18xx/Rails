@@ -8,7 +8,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jgrapht.Graph;
 
 import rails.ui.swing.hexmap.HexMap;
@@ -16,7 +17,7 @@ import rails.ui.swing.hexmap.HexMap;
 public final class NetworkEdge implements Comparable<NetworkEdge> {
 
     protected static Logger log =
-        Logger.getLogger(NetworkEdge.class.getPackage().getName());
+        LoggerFactory.getLogger(NetworkEdge.class.getPackage().getName());
     
     private final NetworkVertex source;
 

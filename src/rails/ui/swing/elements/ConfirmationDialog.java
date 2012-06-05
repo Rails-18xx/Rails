@@ -6,7 +6,8 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.common.LocalText;
 
@@ -26,7 +27,7 @@ public class ConfirmationDialog extends JDialog implements ActionListener {
     boolean answer = false;
 
     protected static Logger log =
-            Logger.getLogger(ConfirmationDialog.class.getPackage().getName());
+            LoggerFactory.getLogger(ConfirmationDialog.class.getPackage().getName());
 
     public ConfirmationDialog(DialogOwner owner, String title, String message,
             String okText, String cancelText) {

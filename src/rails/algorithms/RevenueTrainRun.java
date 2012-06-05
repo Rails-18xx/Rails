@@ -8,7 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.algorithms.NetworkVertex.StationType;
 import rails.algorithms.NetworkVertex.VertexType;
@@ -26,7 +27,7 @@ public class RevenueTrainRun implements Comparable<RevenueTrainRun> {
     private static final int PRETTY_PRINT_INDENT = 10;
     
     protected static Logger log =
-        Logger.getLogger(RevenueTrainRun.class.getPackage().getName());
+        LoggerFactory.getLogger(RevenueTrainRun.class.getPackage().getName());
 
     // definitions
     private RevenueAdapter revenueAdapter;

@@ -3,7 +3,8 @@ package rails.game.specific._18Kaas;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.algorithms.NetworkVertex;
 import rails.algorithms.RevenueAdapter;
@@ -17,7 +18,7 @@ import rails.game.GameManager;
 public class RuhrRevenueModifier implements RevenueStaticModifier, ConfigurableComponentI {
 
     protected static Logger log =
-        Logger.getLogger(RuhrRevenueModifier.class.getPackage().getName());
+        LoggerFactory.getLogger(RuhrRevenueModifier.class.getPackage().getName());
 
     private boolean doublesOnlyMajors;
     

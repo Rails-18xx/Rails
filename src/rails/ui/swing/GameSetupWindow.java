@@ -11,7 +11,8 @@ import javax.swing.*;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.GameInfoParser;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.common.DisplayBuffer;
 import rails.common.GuiDef;
@@ -59,7 +60,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
     static final int AI_PLAYER = 2;
 
     protected static Logger log =
-            Logger.getLogger(GameSetupWindow.class.getPackage().getName());
+            LoggerFactory.getLogger(GameSetupWindow.class.getPackage().getName());
 
     public GameSetupWindow() {
         super();
@@ -69,7 +70,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
             gameInfoList = gip.processGameList();
             credits = gip.getCredits();
         } catch (ConfigurationException e) {
-            log.error(e);
+            log.error(e.getMessage());
         }
 
         initialize();
@@ -522,7 +523,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
             gameUIManager = gameUIManagerClass.newInstance();
             gameUIManager.init(gameManager, wasLoaded);
         } catch (Exception e) {
-            log.fatal("Cannot instantiate class " + gameUIManagerClassName, e);
+            log.error("Cannot instantiate class " + gameUIManagerClassName, e);
             System.exit(1);
         }
     }

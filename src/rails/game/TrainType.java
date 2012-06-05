@@ -1,7 +1,8 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainType.java,v 1.32 2010/05/11 21:47:21 stefanfrey Exp $ */
 package rails.game;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
@@ -43,7 +44,7 @@ public class TrainType implements Cloneable {
     protected String initialPortfolio = "IPO";
 
     protected static Logger log =
-        Logger.getLogger(TrainType.class.getPackage().getName());
+        LoggerFactory.getLogger(TrainType.class.getPackage().getName());
 
     /**
      * @param real False for the default type, else real. The default type does
@@ -187,7 +188,7 @@ public class TrainType implements Cloneable {
         try {
             clone = super.clone();
         } catch (CloneNotSupportedException e) {
-            log.fatal("Cannot clone traintype " + name, e);
+            log.error("Cannot clone traintype " + name, e);
             return null;
         }
 

@@ -14,7 +14,8 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jgraph.JGraph;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
@@ -40,7 +41,7 @@ import rails.game.state.Owner;
 public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
 
     protected static Logger log =
-        Logger.getLogger(NetworkGraphBuilder.class.getPackage().getName());
+        LoggerFactory.getLogger(NetworkGraphBuilder.class.getPackage().getName());
     
     private final SimpleGraph<NetworkVertex, NetworkEdge> mapGraph;
     

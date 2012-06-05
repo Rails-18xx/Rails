@@ -8,7 +8,8 @@ import java.util.List;
 
 import javax.swing.*;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.common.GuiDef;
 import rails.common.LocalText;
@@ -87,7 +88,7 @@ public class StatusWindow extends JFrame implements ActionListener,
     private ActionMenuItem undoItem, forcedUndoItem, redoItem, redoItem2;
 
     protected static Logger log =
-            Logger.getLogger(StatusWindow.class.getPackage().getName());
+            LoggerFactory.getLogger(StatusWindow.class.getPackage().getName());
 
 //    GraphicsConfiguration graphicsConfiguration;
 
@@ -275,7 +276,7 @@ public class StatusWindow extends JFrame implements ActionListener,
                 Class.forName(gameStatusClassName).asSubclass(GameStatus.class);
             gameStatus = gameStatusClass.newInstance();
         } catch (Exception e) {
-            log.fatal("Cannot instantiate class " + gameStatusClassName, e);
+            log.error("Cannot instantiate class " + gameStatusClassName, e);
             System.exit(1);
         }
 

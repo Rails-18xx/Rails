@@ -6,7 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.common.LocalText;
 import rails.common.parser.ConfigurableComponentI;
@@ -84,7 +85,7 @@ public class Phase implements ConfigurableComponentI {
     protected Map<String, String> parameters = null;
 
     protected static Logger log =
-        Logger.getLogger(Phase.class.getPackage().getName());
+        LoggerFactory.getLogger(Phase.class.getPackage().getName());
 
     public Phase(int index, String name, Phase previousPhase) {
         this.index = index;

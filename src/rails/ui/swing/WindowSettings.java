@@ -6,7 +6,8 @@ import java.util.*;
 
 import javax.swing.JFrame;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.common.parser.Config;
 
@@ -20,7 +21,7 @@ public class WindowSettings {
     private static final String settingsfilename = "settings_xxxx.rails_ini";
 
     protected static Logger log =
-        Logger.getLogger(WindowSettings.class.getPackage().getName());
+        LoggerFactory.getLogger(WindowSettings.class.getPackage().getName());
 
     public WindowSettings (String gameName) {
         String directory = System.getProperty("settings.directory");

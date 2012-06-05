@@ -3,7 +3,8 @@ package rails.game.specific._18EU;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.algorithms.NetworkVertex;
 import rails.algorithms.RevenueAdapter;
@@ -17,7 +18,7 @@ import rails.game.Tile;
 public class OffBoardRevenueModifier implements RevenueStaticModifier {
 
     protected static Logger log =
-        Logger.getLogger(OffBoardRevenueModifier.class.getPackage().getName());
+        LoggerFactory.getLogger(OffBoardRevenueModifier.class.getPackage().getName());
     
 
     public boolean modifyCalculator(RevenueAdapter revenueAdapter) {

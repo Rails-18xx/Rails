@@ -2,7 +2,8 @@ package rails.algorithms;
 
 import java.util.Arrays;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 abstract class RevenueCalculator {
     
@@ -98,7 +99,7 @@ abstract class RevenueCalculator {
     }
     
     protected static Logger log =
-        Logger.getLogger(RevenueCalculator.class.getPackage().getName());
+        LoggerFactory.getLogger(RevenueCalculator.class.getPackage().getName());
 
     
     public RevenueCalculator (RevenueAdapter revenueAdapter, int nbVertexes, int nbEdges, 

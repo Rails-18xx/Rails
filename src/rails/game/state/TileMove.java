@@ -7,7 +7,8 @@ package rails.game.state;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.game.*;
 
@@ -21,7 +22,7 @@ import rails.game.*;
 public class TileMove {
 
     protected static Logger log =
-        Logger.getLogger(TileMove.class.getPackage().getName());
+        LoggerFactory.getLogger(TileMove.class.getPackage().getName());
 
     MapHex hex;
     Tile oldTile;

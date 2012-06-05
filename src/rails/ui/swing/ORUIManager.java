@@ -5,7 +5,8 @@ import java.util.*;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jgrapht.graph.SimpleGraph;
 
 import rails.algorithms.*;
@@ -91,7 +92,7 @@ public class ORUIManager implements DialogOwner {
                     "CorrectMap" };
 
     protected static Logger log =
-            Logger.getLogger(ORUIManager.class.getPackage().getName());
+            LoggerFactory.getLogger(ORUIManager.class.getPackage().getName());
 
     public ORUIManager() {
 

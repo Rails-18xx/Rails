@@ -3,7 +3,8 @@ package rails.game.correct;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
@@ -20,7 +21,7 @@ public abstract class CorrectionManager extends AbstractItem implements Correcti
     private final BooleanState active = BooleanState.create();
     
     protected static Logger log =
-        Logger.getLogger(CorrectionManager.class.getPackage().getName());
+        LoggerFactory.getLogger(CorrectionManager.class.getPackage().getName());
 
     protected CorrectionManager(GameManager gm, CorrectionType ct) {
         gameManager = gm;

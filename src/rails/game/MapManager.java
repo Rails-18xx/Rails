@@ -2,7 +2,8 @@ package rails.game;
 
 import java.util.*;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.common.parser.*;
 import rails.game.Stop.Loop;
@@ -61,7 +62,7 @@ public class MapManager extends AbstractItem implements ConfigurableComponentI {
     protected Map<Type,Score> scoreTypeDefaults = new HashMap<Type, Score>();
 
     protected static Logger log =
-        Logger.getLogger(MapManager.class.getPackage().getName());
+        LoggerFactory.getLogger(MapManager.class.getPackage().getName());
 
     public MapManager() {
     }

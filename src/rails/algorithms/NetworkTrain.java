@@ -1,7 +1,8 @@
 package rails.algorithms;
 
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.game.Train;
 import rails.game.TrainType;
@@ -9,7 +10,7 @@ import rails.game.TrainType;
 public final class NetworkTrain implements Comparable<NetworkTrain>{
 
     protected static Logger log =
-        Logger.getLogger(NetworkTrain.class.getPackage().getName());
+        LoggerFactory.getLogger(NetworkTrain.class.getPackage().getName());
 
     private int majors;
     private int minors;

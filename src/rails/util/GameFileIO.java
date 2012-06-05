@@ -15,7 +15,8 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
@@ -34,7 +35,7 @@ import rails.game.action.PossibleAction;
 public class GameFileIO {
 
     protected static Logger log =
-        Logger.getLogger(Game.class.getPackage().getName());
+        LoggerFactory.getLogger(Game.class.getPackage().getName());
     
     private GameData gameData = new GameData();
 
@@ -124,7 +125,7 @@ public class GameFileIO {
             
         } catch (Exception e) {
             dataLoadDone = false;
-            log.fatal("Load failed", e);
+            log.error("Load failed", e);
             DisplayBuffer.add(LocalText.getText("LoadFailed", e.getMessage()));
         }
     }
@@ -215,7 +216,7 @@ public class GameFileIO {
           ois = null;
           initialized = true;
       } catch (Exception e) {
-          log.fatal("Load failed", e);
+          log.error("Load failed", e);
           DisplayBuffer.add(LocalText.getText("LoadFailed", e.getMessage()));
           initialized = false;
       }

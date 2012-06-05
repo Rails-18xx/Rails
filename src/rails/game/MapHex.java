@@ -4,7 +4,8 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 
@@ -173,7 +174,7 @@ StationHolder {
     protected Score scoreType = null;
 
     protected static Logger log =
-        Logger.getLogger(MapHex.class.getPackage().getName());
+        LoggerFactory.getLogger(MapHex.class.getPackage().getName());
 
     // TODO: Rewrite the creation process of MapHex
     

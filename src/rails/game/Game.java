@@ -3,7 +3,8 @@ package rails.game;
 import java.io.*;
 import java.util.*;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.algorithms.RevenueManager;
 import rails.common.DisplayBuffer;
@@ -35,7 +36,7 @@ public class Game {
     protected Map<String, String> gameOptions;
 
     protected static Logger log =
-        Logger.getLogger(Game.class.getPackage().getName());
+        LoggerFactory.getLogger(Game.class.getPackage().getName());
 
     // The new Game entry point
     public Game(String name, List<String> players, Map<String, String> options) {
@@ -111,7 +112,7 @@ public class Game {
             if (revenueManager != null)
                 revenueManager.finishConfiguration(gameManager);
         } catch (ConfigurationException e) {
-            log.fatal(e);
+            log.error(e.getMessage());
             System.out.println(e.getMessage());
             e.printStackTrace();
             DisplayBuffer.add(e.getMessage());
@@ -131,13 +132,13 @@ public class Game {
             gameLoader.initGame();
             gameLoader.loadActionsAndComments();
         } catch (ConfigurationException e)  {
-            log.fatal("Load failed", e);
+            log.error("Load failed", e);
             DisplayBuffer.add(LocalText.getText("LoadFailed", e.getMessage()));
         }
         try{
             gameLoader.replayGame();
         } catch (Exception e) {
-            log.fatal("Replay failed", e);
+            log.error("Replay failed", e);
             DisplayBuffer.add(LocalText.getText("LoadFailed", e.getMessage()));
         }
 
@@ -226,7 +227,7 @@ public class Game {
                                 break;
                             }
                         } catch (Exception e) {
-                            log.fatal("Action "+actionIndex+" '"+action+"' reload exception", e);
+                            log.error("Action "+actionIndex+" '"+action+"' reload exception", e);
                             throw new Exception ("Reload exception", e);
                         }
                     }
@@ -241,7 +242,7 @@ public class Game {
                                 break;
                             }
                         } catch (Exception e) {
-                            log.fatal("Action "+actionIndex+" '"+((PossibleAction)actionObject).toString()
+                            log.error("Action "+actionIndex+" '"+((PossibleAction)actionObject).toString()
                                     +"' reload exception", e);
                             throw new Exception ("Reload exception", e);
                         }
@@ -280,7 +281,7 @@ public class Game {
             return game;
 
         } catch (Exception e) {
-            log.fatal("Load failed", e);
+            log.error("Load failed", e);
             DisplayBuffer.add(LocalText.getText("LoadFailed", e.getMessage()));
         }
 

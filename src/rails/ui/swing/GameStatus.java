@@ -8,7 +8,8 @@ import java.util.*;
 
 import javax.swing.*;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.common.GuiDef;
 import rails.common.LocalText;
@@ -120,7 +121,7 @@ public class GameStatus extends GridPanel implements ActionListener {
     protected Map<Player, Integer> playerIndex = new HashMap<Player, Integer>();
 
     protected static Logger log =
-        Logger.getLogger(GameStatus.class.getPackage().getName());
+        LoggerFactory.getLogger(GameStatus.class.getPackage().getName());
 
     public GameStatus() {
         super();

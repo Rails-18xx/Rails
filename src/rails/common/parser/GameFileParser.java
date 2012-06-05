@@ -58,7 +58,7 @@ public class GameFileParser extends XMLParser {
         } catch (Exception e) {
             String message =
                     LocalText.getText("GameSetupFailed", GAME_XML_FILE);
-            log.fatal(message, e);
+            log.error(message, e);
             System.out.println(e.getMessage());
             e.printStackTrace();
             DisplayBuffer.add(message + ":\n " + e.getMessage());

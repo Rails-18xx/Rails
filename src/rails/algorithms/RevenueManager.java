@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 import rails.common.LocalText;
@@ -29,7 +30,7 @@ import rails.game.state.Item;
 public final class RevenueManager extends AbstractItem implements ConfigurableComponentI {
 
     protected static Logger log =
-        Logger.getLogger(RevenueManager.class.getPackage().getName());
+        LoggerFactory.getLogger(RevenueManager.class.getPackage().getName());
 
     private final HashSet<ConfigurableComponentI> configurableModifiers = new HashSet<ConfigurableComponentI>();
     

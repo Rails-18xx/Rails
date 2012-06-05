@@ -5,7 +5,8 @@ import java.util.Calendar;
 
 import javax.swing.SwingUtilities;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.game.action.GameAction;
 
@@ -28,7 +29,7 @@ public class AutoLoadPoller extends Thread {
     public static final int SUSPENDED = 2;
 
     protected static Logger log =
-        Logger.getLogger(AutoLoadPoller.class.getPackage().getName());
+        LoggerFactory.getLogger(AutoLoadPoller.class.getPackage().getName());
 
     public AutoLoadPoller (GameUIManager guiMgr, String saveDirectory, String savePrefix, String ownPostfix,
             int status, int pollingInterval) {

@@ -5,7 +5,8 @@ import java.util.*;
 
 import javax.xml.parsers.*;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
@@ -21,7 +22,7 @@ public class XMLParser {
 	protected static Logger log;
 
 	public XMLParser() {
-		log = Logger.getLogger(XMLParser.class);
+		log = LoggerFactory.getLogger(XMLParser.class);
 
 		directories.add("data");
 		directories.add("data/xml");

@@ -6,7 +6,8 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.common.LocalText;
 
@@ -26,7 +27,7 @@ public class MessageDialog extends JDialog implements ActionListener {
     String message;
 
     protected static Logger log =
-            Logger.getLogger(MessageDialog.class.getPackage().getName());
+            LoggerFactory.getLogger(MessageDialog.class.getPackage().getName());
 
     public MessageDialog(DialogOwner owner, JFrame window, String title, String message) {
 

@@ -21,7 +21,8 @@ import java.util.Map;
 import javax.swing.JComponent;
 
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.common.parser.Config;
 import rails.common.parser.ConfigurationException;
@@ -50,7 +51,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
     private static final long serialVersionUID = 1L;
 
     protected static Logger log =
-            Logger.getLogger(HexMap.class.getPackage().getName());
+            LoggerFactory.getLogger(HexMap.class.getPackage().getName());
 
     protected ORUIManager orUIManager;
     protected MapManager mapManager;

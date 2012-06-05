@@ -2,7 +2,8 @@ package rails.game;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.common.LocalText;
 import rails.common.parser.Config;
@@ -53,7 +54,7 @@ public class Bank extends AbstractItem implements CashOwner, ConfigurableCompone
     private String moneyFormat = null;
 
     protected static Logger log =
-        Logger.getLogger(Bank.class.getPackage().getName());
+        LoggerFactory.getLogger(Bank.class.getPackage().getName());
 
     public Bank() {
         super();

@@ -2,7 +2,8 @@ package rails.game;
 
 import java.util.*;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
@@ -45,7 +46,7 @@ public class TrainCertificateType extends AbstractItem {
     protected String initialPortfolio = "IPO";
 
     protected static Logger log =
-        Logger.getLogger(TrainCertificateType.class.getPackage().getName());
+        LoggerFactory.getLogger(TrainCertificateType.class.getPackage().getName());
     
     public TrainCertificateType () {
     }

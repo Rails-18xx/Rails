@@ -26,7 +26,8 @@ import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
@@ -71,7 +72,7 @@ implements ActionListener, KeyListener {
         Config.setConfigSelection();
 
         // delayed setting of logger
-        log = Logger.getLogger(ListAndFixSavedFiles.class.getPackage().getName());
+        log = LoggerFactory.getLogger(ListAndFixSavedFiles.class.getPackage().getName());
 
         saveDirectory = Config.get("save.directory");
         System.out.println("Save directory = " + saveDirectory);
@@ -194,7 +195,7 @@ implements ActionListener, KeyListener {
                 setReportText(true);
                 
             } catch (ConfigurationException e)  {
-                log.fatal("Load failed", e);
+                log.error("Load failed", e);
                 DisplayBuffer.add(LocalText.getText("LoadFailed", e.getMessage()));
             }
         }

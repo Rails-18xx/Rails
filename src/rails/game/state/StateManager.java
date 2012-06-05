@@ -4,7 +4,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
@@ -16,7 +17,7 @@ public final class StateManager extends AbstractItem {
 
     
     protected static Logger log =
-        Logger.getLogger(StateManager.class.getPackage().getName());
+        LoggerFactory.getLogger(StateManager.class.getPackage().getName());
     
     private final ChangeStack changeStack = ChangeStack.create();
     

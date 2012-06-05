@@ -11,7 +11,8 @@ import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.SwingConstants;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.game.PublicCompany;
 import rails.game.StockSpace;
@@ -41,7 +42,7 @@ public class GUIStockSpace extends JLayeredPane implements Observer {
     private static final int TOKEN_DIAMETER = 20;
 
     protected static Logger log =
-            Logger.getLogger(GUIStockSpace.class.getPackage().getName());
+            LoggerFactory.getLogger(GUIStockSpace.class.getPackage().getName());
 
     public GUIStockSpace(int x, int y, StockSpace model) {
 

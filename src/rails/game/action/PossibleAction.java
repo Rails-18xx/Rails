@@ -7,7 +7,8 @@ package rails.game.action;
 
 import java.io.*;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.game.*;
 
@@ -30,7 +31,7 @@ public abstract class PossibleAction implements Serializable {
     public static final long serialVersionUID = 3L;
 
     protected static Logger log =
-            Logger.getLogger(PossibleAction.class.getPackage().getName());
+            LoggerFactory.getLogger(PossibleAction.class.getPackage().getName());
 
     /**
      *

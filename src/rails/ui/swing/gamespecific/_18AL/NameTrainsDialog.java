@@ -5,7 +5,8 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.common.LocalText;
 import rails.game.*;
@@ -40,7 +41,7 @@ public class NameTrainsDialog extends JDialog implements ActionListener {
             new HashMap<NamedTrainToken, List<JRadioButton>>();
 
     protected static Logger log =
-            Logger.getLogger(NameTrainsDialog.class.getPackage().getName());
+            LoggerFactory.getLogger(NameTrainsDialog.class.getPackage().getName());
 
     public NameTrainsDialog(ORWindow orWindow, AssignNamedTrains action) {
 

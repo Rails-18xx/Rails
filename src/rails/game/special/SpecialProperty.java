@@ -1,6 +1,7 @@
 package rails.game.special;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
@@ -64,7 +65,7 @@ public abstract class SpecialProperty extends OwnableItem<SpecialProperty> {
     protected GameManager gameManager;
 
     protected static Logger log =
-        Logger.getLogger(SpecialProperty.class.getPackage().getName());
+        LoggerFactory.getLogger(SpecialProperty.class.getPackage().getName());
 
     public SpecialProperty() {
         gameManager = GameManager.getInstance();

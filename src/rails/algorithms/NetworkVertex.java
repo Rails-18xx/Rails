@@ -4,7 +4,8 @@ import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.util.*;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.SimpleGraph;
 
@@ -14,7 +15,7 @@ import rails.ui.swing.hexmap.*;
 public final class NetworkVertex implements Comparable<NetworkVertex> {
 
     protected static Logger log =
-        Logger.getLogger(NetworkVertex.class.getPackage().getName());
+        LoggerFactory.getLogger(NetworkVertex.class.getPackage().getName());
 
     public static enum VertexType {
         STATION,

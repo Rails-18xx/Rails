@@ -7,7 +7,8 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.common.parser.Config;
 import rails.util.Util;
@@ -27,7 +28,7 @@ public class LocalText extends ResourceBundle {
     protected static ResourceBundle localisedText;
 
     protected static Logger log =
-            Logger.getLogger(LocalText.class.getPackage().getName());
+            LoggerFactory.getLogger(LocalText.class.getPackage().getName());
 
     public static String getText(String key) {
         return getText(key, (Object[]) null);

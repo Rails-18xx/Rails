@@ -772,7 +772,7 @@ public class StockRound extends AbstractRound {
             // (shortcut: assume 1 cert == 1 certificate)
             PublicCertificate cert = from.findCertificate(company, sharePerCert/shareUnit, false);
             if (cert == null) {
-                log.fatal("Cannot find "+sharePerCert+"% of "+company.getId()+" in "+from.getId());
+                log.error("Cannot find "+sharePerCert+"% of "+company.getId()+" in "+from.getId());
             }
             if (!currentSpace.isNoCertLimit()
                     && !mayPlayerBuyCertificate(currentPlayer, company, number * cert.getCertificateCount())) {

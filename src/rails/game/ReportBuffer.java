@@ -6,7 +6,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.common.LocalText;
 import rails.common.parser.Config;
@@ -150,7 +151,7 @@ public final class ReportBuffer {
     }
 
     private static Logger log =
-        Logger.getLogger(ReportBuffer.class.getPackage().getName());
+        LoggerFactory.getLogger(ReportBuffer.class.getPackage().getName());
 
 
     public ReportBuffer() {

@@ -5,7 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
@@ -47,7 +48,7 @@ public final class PortfolioModel extends Model implements PortfolioHolder {
     public static final String id = "PortfolioModel";
     
     protected static Logger log =
-        Logger.getLogger(PortfolioModel.class.getPackage().getName());
+        LoggerFactory.getLogger(PortfolioModel.class.getPackage().getName());
     
     /** Owned certificates */
     private CertificatesModel certificates;

@@ -10,7 +10,8 @@ import java.util.List;
 
 import javax.swing.*;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.common.LocalText;
 import rails.game.Tile;
@@ -34,7 +35,7 @@ public class RemainingTilesWindow extends JFrame implements WindowListener,
     private final static int COLUMNS = 10;
 
     protected static Logger log =
-            Logger.getLogger(RemainingTilesWindow.class.getPackage().getName());
+            LoggerFactory.getLogger(RemainingTilesWindow.class.getPackage().getName());
 
     public RemainingTilesWindow(ORWindow orWindow) {
         super();

@@ -13,7 +13,8 @@ import javax.swing.event.HyperlinkListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.html.HTMLDocument;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.common.LocalText;
 import rails.game.ReportBuffer;
@@ -44,7 +45,7 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
     private boolean timeWarpMode;
 
     protected static Logger log =
-        Logger.getLogger(ReportWindowDynamic.class.getPackage().getName());
+        LoggerFactory.getLogger(ReportWindowDynamic.class.getPackage().getName());
 
     public ReportWindowDynamic(GameUIManager gameUIManager) {
         super(gameUIManager);

@@ -4,7 +4,8 @@ package rails.util;
 import java.awt.Color;
 import java.io.*;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.common.parser.ConfigurationException;
 
@@ -148,7 +149,7 @@ public final class Util {
     }
 
     public static Logger getLogger () {
-        if (log == null) log = Logger.getLogger(Util.class.getPackage().getName());
+        if (log == null) log = LoggerFactory.getLogger(Util.class.getPackage().getName());
         return log;
 
     }

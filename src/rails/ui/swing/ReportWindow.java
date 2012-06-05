@@ -7,7 +7,8 @@ import java.io.*;
 
 import javax.swing.*;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.common.LocalText;
 import rails.common.parser.Config;
@@ -49,7 +50,7 @@ public class ReportWindow extends AbstractReportWindow implements ActionListener
     protected static final String FIND_PREV_CMD = "FindPrev";
 
     protected static Logger log =
-        Logger.getLogger(ReportWindow.class.getPackage().getName());
+        LoggerFactory.getLogger(ReportWindow.class.getPackage().getName());
 
 
     public ReportWindow(GameUIManager gameUIManager) {

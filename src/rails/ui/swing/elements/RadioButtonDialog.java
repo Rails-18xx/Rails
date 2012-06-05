@@ -6,7 +6,8 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.common.LocalText;
 
@@ -31,7 +32,7 @@ public class RadioButtonDialog extends JDialog implements ActionListener {
     int chosenOption = -1;
 
     protected static Logger log =
-            Logger.getLogger(RadioButtonDialog.class.getPackage().getName());
+            LoggerFactory.getLogger(RadioButtonDialog.class.getPackage().getName());
 
     public RadioButtonDialog(DialogOwner owner, JFrame window, String title, String message,
             String[] options, int selectedOption) {

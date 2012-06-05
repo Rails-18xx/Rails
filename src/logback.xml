@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- For assistance related to logback-translator or configuration  -->
+<!-- files in general, please contact the logback user mailing list -->
+<!-- at http://www.qos.ch/mailman/listinfo/logback-user             -->
+<!--                                                                -->
+<!-- For professional support please see                            -->
+<!--    http://www.qos.ch/shop/products/professionalSupport         -->
+<!--                                                                -->
+<configuration>
+  <appender name="F" class="ch.qos.logback.core.FileAppender">
+    <File>18xx.log</File>
+    <append>false</append>
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %m%n</pattern>
+    </encoder>
+  </appender>
+  <logger name="rails.algorithms" level="INFO"/>
+  <root level="DEBUG">
+    <appender-ref ref="F"/>
+  </root>
+</configuration>

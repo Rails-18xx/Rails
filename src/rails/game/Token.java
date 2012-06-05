@@ -1,6 +1,7 @@
 package rails.game;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.game.state.Item;
 import rails.game.state.OwnableItem;
@@ -18,7 +19,7 @@ public abstract class Token extends OwnableItem<Token>  {
     protected static String STORAGE_NAME = "Token";
 
     protected static Logger log =
-        Logger.getLogger(Token.class.getPackage().getName());
+        LoggerFactory.getLogger(Token.class.getPackage().getName());
     
     // no public noarg constructor
     protected Token() {}

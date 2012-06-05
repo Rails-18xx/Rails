@@ -8,7 +8,8 @@ import java.util.List;
 
 import javax.swing.*;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.jgrapht.graph.SimpleGraph;
 
@@ -118,7 +119,7 @@ implements ActionListener, KeyListener, RevenueListener {
     private Thread revenueThread = null;
 
     protected static Logger log =
-            Logger.getLogger(ORPanel.class.getPackage().getName());
+            LoggerFactory.getLogger(ORPanel.class.getPackage().getName());
 
     public ORPanel(ORWindow parent, ORUIManager orUIManager) {
         super();

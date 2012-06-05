@@ -4,7 +4,8 @@ package rails.game;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
@@ -45,7 +46,7 @@ public class StartPacket extends AbstractItem {
     public static final String DEFAULT_NAME = "Initial";
 
     protected static Logger log =
-            Logger.getLogger(StartPacket.class.getPackage().getName());
+            LoggerFactory.getLogger(StartPacket.class.getPackage().getName());
 
     /**
      * Constructor. Only takes the packet and class named. Actual initialisation

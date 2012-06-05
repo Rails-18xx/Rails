@@ -4,7 +4,8 @@ package rails.game;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Station object represents any junction on a tile, where one, two or more
@@ -47,7 +48,7 @@ public class Station {
     private static final List<String> validTypes = Arrays.asList(types);
 
     protected static Logger log =
-        Logger.getLogger(Station.class.getPackage().getName());
+        LoggerFactory.getLogger(Station.class.getPackage().getName());
 
     /** Check validity of a Station type */
     public static boolean isTypeValid(String type) {

@@ -10,7 +10,8 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.common.GuiDef;
 import rails.common.LocalText;
@@ -39,7 +40,7 @@ public class ORWindow extends JFrame implements ActionPerformer {
     List<LayToken> allowedTokenLays = new ArrayList<LayToken>();
 
     protected static Logger log =
-            Logger.getLogger(ORWindow.class.getPackage().getName());
+            LoggerFactory.getLogger(ORWindow.class.getPackage().getName());
 
     public ORWindow(GameUIManager gameUIManager) {
         super();
@@ -52,7 +53,7 @@ public class ORWindow extends JFrame implements ActionPerformer {
             log.debug("Class is "+orUIManagerClass.getName());
             orUIManager = orUIManagerClass.newInstance();
         } catch (Exception e) {
-            log.fatal("Cannot instantiate class " + orUIManagerClassName, e);
+            log.error("Cannot instantiate class " + orUIManagerClassName, e);
             System.exit(1);
         }
         gameUIManager.setORUIManager(orUIManager);

@@ -2,7 +2,8 @@ package rails.game.specific._18AL;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 //import rails.algorithms.NetworkVertex;
 //import rails.algorithms.RevenueAdapter;
@@ -19,7 +20,7 @@ import rails.util.Util;
 public class NamedTrainToken extends Token implements ConfigurableComponentI /*, RevenueStaticModifier */ {
 
     protected static Logger log =
-        Logger.getLogger(NamedTrainToken.class.getPackage().getName());
+        LoggerFactory.getLogger(NamedTrainToken.class.getPackage().getName());
 
     private String name;
     private String longName;

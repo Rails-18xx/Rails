@@ -8,7 +8,8 @@ package rails.game.action;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class manages the actions that the current user can execute at any point
@@ -27,7 +28,7 @@ public class PossibleActions {
     private List<PossibleAction> possibleActions;
 
     protected static Logger log =
-            Logger.getLogger(PossibleActions.class.getPackage().getName());
+            LoggerFactory.getLogger(PossibleActions.class.getPackage().getName());
 
     /**
      * This class can only be instantiated locally.

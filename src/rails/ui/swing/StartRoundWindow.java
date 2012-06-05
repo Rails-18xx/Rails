@@ -8,7 +8,8 @@ import java.util.List;
 
 import javax.swing.*;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.common.LocalText;
 import rails.game.*;
@@ -106,7 +107,7 @@ public class StartRoundWindow extends JFrame implements ActionListener,
 //    private boolean repacked = false;
 
     protected static Logger log =
-            Logger.getLogger(StartRoundWindow.class.getPackage().getName());
+            LoggerFactory.getLogger(StartRoundWindow.class.getPackage().getName());
 
     public StartRoundWindow(StartRound round, GameUIManager parent) {
         super();

@@ -11,7 +11,8 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.common.DisplayBuffer;
 import rails.common.GuiDef;
@@ -92,7 +93,7 @@ public class GameUIManager implements DialogOwner {
     protected boolean previousResult;
 
     protected static Logger log =
-            Logger.getLogger(GameUIManager.class.getPackage().getName());
+            LoggerFactory.getLogger(GameUIManager.class.getPackage().getName());
 
     public GameUIManager() {
 
@@ -209,7 +210,7 @@ public class GameUIManager implements DialogOwner {
 
             statusWindow.init(this);
         } catch (Exception e) {
-            log.fatal("Cannot instantiate class " + statusWindowClassName, e);
+            log.error("Cannot instantiate class " + statusWindowClassName, e);
             System.exit(1);
         }
 

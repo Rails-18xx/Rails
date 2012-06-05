@@ -3,7 +3,8 @@ package rails.algorithms;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.common.parser.ConfigurableComponentI;
 import rails.common.parser.ConfigurationException;
@@ -23,7 +24,7 @@ import rails.game.TrainType;
 public final class RevenueBonusTemplate implements ConfigurableComponentI {
 
     protected static Logger log =
-        Logger.getLogger(RevenueBonusTemplate.class.getPackage().getName());
+        LoggerFactory.getLogger(RevenueBonusTemplate.class.getPackage().getName());
 
     // bonus value
     private int value;

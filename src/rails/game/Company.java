@@ -2,7 +2,8 @@ package rails.game;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 
@@ -54,7 +55,7 @@ Cloneable, Comparable<Company> {
     protected final PortfolioList<SpecialProperty> specialProperties = PortfolioList.create();
 
     protected static Logger log =
-        Logger.getLogger(Company.class.getPackage().getName());
+        LoggerFactory.getLogger(Company.class.getPackage().getName());
 
     @Override
     public void init(Item parent, String id) {
@@ -85,7 +86,7 @@ Cloneable, Comparable<Company> {
                 try {
                     sp = (SpecialProperty) Class.forName(className).newInstance();
                 } catch (Exception e) {
-                    log.fatal ("Cannot instantiate "+className, e);
+                    log.error ("Cannot instantiate "+className, e);
                     System.exit(-1);
                 }
                 sp.configureFromXML(spTag);
