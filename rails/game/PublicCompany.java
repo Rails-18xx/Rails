@@ -1761,21 +1761,25 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
         if (baseTokenLayCost == null) return 0;
 
-        if (baseTokenLayCostMethod.equals(BASE_COST_SEQUENCE)) {
-            int index = getNumberOfLaidBaseTokens();
+        /* Changed by JDG/EV: allow cost array for both calculation methods.
+         * In 1837, token lay cost per hex distance depends on
+         * the number of tokens laid before. */
+        int index = getNumberOfLaidBaseTokens();
 
-            if (index >= baseTokenLayCost.length) {
-                index = baseTokenLayCost.length - 1;
-            } else if (index < 0) {
-                index = 0;
-            }
+        if (index >= baseTokenLayCost.length) {
+            index = baseTokenLayCost.length - 1;
+        } else if (index < 0) {
+            index = 0;
+        }
+
+        if (baseTokenLayCostMethod.equals(BASE_COST_SEQUENCE)) {
             return baseTokenLayCost[index];
         } else if (baseTokenLayCostMethod.equals(BASE_COST_DISTANCE)) {
             if (hex == null) {
-                return baseTokenLayCost[0];
+                return baseTokenLayCost[index];
             } else {
                 // WARNING: no provision yet for multiple home hexes.
-                return mapManager.getHexDistance(homeHexes.get(0), hex) * baseTokenLayCost[0];
+                return mapManager.getHexDistance(homeHexes.get(0), hex) * baseTokenLayCost[index];
             }
         } else {
             return 0;
