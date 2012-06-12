@@ -70,6 +70,7 @@
 		<ClosingConditions>
             <Phase>5</Phase>
 			<SpecialProperties condition="ifAllExercised"/>
+			<CloseManually/> <!-- If tile is laid not via special property-->
 		</ClosingConditions>
 	</Company>
 	<Company name="LD" longname="Leipzig-Dresdner Bahn" type="Private" basePrice="190">
