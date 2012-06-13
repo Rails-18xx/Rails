@@ -141,7 +141,7 @@ public class MergeCompanies extends PossibleAction {
         selectedTargetCompanyName = (String) fields.get("selectedTargetCompanyName", selectedTargetCompanyName);
         replaceToken = fields.get("replaceToken", replaceToken);
 
-        CompanyManagerI cmgr = getCompanyManager();
+        CompanyManager cmgr = getCompanyManager();
 
         mergingCompany = cmgr.getPublicCompany(mergingCompanyName);
 

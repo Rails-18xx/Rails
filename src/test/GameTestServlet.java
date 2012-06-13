@@ -51,7 +51,7 @@
  * 
  * private PlayerManager playerManager = null;
  * 
- * private CompanyManagerI companyManager = null;
+ * private CompanyManager companyManager = null;
  * 
  * private Round currentRound = null;
  * 
@@ -505,7 +505,7 @@
  * out.append("<table class=bordertable cellspacing=0 cellpadding=0>\n");
  * out.append("<tr><th>Company</th><th>Par</th><th>Price</th><th>Cash</th><th>Revenue</th>")
  * .append("<th>Privates</th><th>IPO</th><th>Pool</th></tr>\n");
- * CompanyManagerI compMgr = Game.getCompanyManager(); iterator =
+ * CompanyManager compMgr = Game.getCompanyManager(); iterator =
  * compMgr.getAllPublicCompanies().iterator(); while (iterator.hasNext()) {
  * company = (PublicCompany) iterator.next(); companyName = company.getName();
  * companyNumber = company.getCompanyNumber(); out.append("<tr><td>" +

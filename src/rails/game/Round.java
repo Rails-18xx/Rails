@@ -33,7 +33,7 @@ public abstract class Round extends AbstractItem {
         LoggerFactory.getLogger(Round.class.getPackage().getName());
 
     protected GameManager gameManager = null;
-    protected CompanyManagerI companyManager = null;
+    protected CompanyManager companyManager = null;
     protected PlayerManager playerManager = null;
     protected Bank bank = null;
     protected PortfolioModel ipo = null;

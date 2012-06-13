@@ -71,7 +71,7 @@ public class StartItem extends AbstractItem {
     // Static properties
     //protected static Portfolio ipo;
     //protected static Portfolio unavailable;
-    //protected static CompanyManagerI compMgr;
+    //protected static CompanyManager compMgr;
     //protected static int nextIndex = 0;
 
     protected static Map<String, StartItem> startItemMap;
@@ -161,7 +161,7 @@ public class StartItem extends AbstractItem {
         PortfolioModel ipo = gameManager.getBank().getIpo();
         PortfolioModel unavailable = gameManager.getBank().getUnavailable();
 
-        CompanyManagerI compMgr = gameManager.getCompanyManager();
+        CompanyManager compMgr = gameManager.getCompanyManager();
 
         Company company = compMgr.getCompany(type, name);
         if (company instanceof PrivateCompany) {

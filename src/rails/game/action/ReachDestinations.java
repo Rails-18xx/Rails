@@ -5,7 +5,7 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import rails.game.CompanyManagerI;
+import rails.game.CompanyManager;
 import rails.game.PublicCompany;
 import rails.util.Util;
 
@@ -91,7 +91,7 @@ public class ReachDestinations extends PossibleORAction {
 
         in.defaultReadObject();
 
-        CompanyManagerI cmgr = getCompanyManager();
+        CompanyManager cmgr = getCompanyManager();
 
         possibleCompanies = new ArrayList<PublicCompany>();
         if (Util.hasValue(possibleCompanyNames)) {

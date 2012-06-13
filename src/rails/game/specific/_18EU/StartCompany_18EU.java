@@ -119,7 +119,7 @@ public class StartCompany_18EU extends StartCompany {
 
         in.defaultReadObject();
 
-        CompanyManagerI cmgr = getCompanyManager();
+        CompanyManager cmgr = getCompanyManager();
         if (minorsToMergeNames != null) {
             minorsToMerge = new ArrayList<PublicCompany>();
             for (String name : minorsToMergeNames.split(",")) {

@@ -124,7 +124,7 @@ public class SellShares extends PossibleAction {
 
         in.defaultReadObject();
 
-        CompanyManagerI companyManager = getCompanyManager();
+        CompanyManager companyManager = getCompanyManager();
         if (Util.hasValue(companyName))
             companyName = companyManager.checkAlias(companyName);
             company = companyManager.getPublicCompany(companyName);

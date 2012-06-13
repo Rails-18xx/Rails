@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rails.game.Bank;
-import rails.game.CompanyManagerI;
+import rails.game.CompanyManager;
 import rails.game.GameManager;
 import rails.game.Train;
 import rails.game.TrainManager;
@@ -302,7 +302,7 @@ public class BuyTrain extends PossibleORAction {
 
         GameManager gameManager = GameManager.getInstance();
         TrainManager trainManager = gameManager.getTrainManager();
-        CompanyManagerI companyManager = gameManager.getCompanyManager();
+        CompanyManager companyManager = gameManager.getCompanyManager();
 
         fromName = companyManager.checkAlias (fromName);
 

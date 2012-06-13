@@ -51,7 +51,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI 
     protected String orWindowClassName = GuiDef.getDefaultClassName(GuiDef.ClassName.OR_WINDOW);
 
     protected PlayerManager playerManager;
-    protected CompanyManagerI companyManager;
+    protected CompanyManager companyManager;
     protected PhaseManager phaseManager;
     protected TrainManager trainManager;
     protected StockMarket stockMarket;
@@ -531,11 +531,11 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI 
     }
 
     /* (non-Javadoc)
-     * @see rails.game.GameManager#startGame(rails.game.PlayerManager, rails.game.CompanyManagerI, rails.game.PhaseManager)
+     * @see rails.game.GameManager#startGame(rails.game.PlayerManager, rails.game.CompanyManager, rails.game.PhaseManager)
      */
     public void init(String gameName,
             PlayerManager playerManager,
-            CompanyManagerI companyManager,
+            CompanyManager companyManager,
             PhaseManager phaseManager,
             TrainManager trainManager,
             StockMarket stockMarket,
@@ -637,7 +637,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponentI 
     /* (non-Javadoc)
      * @see rails.game.GameManager#getCompanyManager()
      */
-    public CompanyManagerI getCompanyManager() {
+    public CompanyManager getCompanyManager() {
         return companyManager;
     }
 

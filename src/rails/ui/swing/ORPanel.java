@@ -509,7 +509,7 @@ implements ActionListener, KeyListener, RevenueListener {
 
     protected void addCompanynfo() {
 
-    	CompanyManagerI cm = orUIManager.getGameUIManager().getGameManager().getCompanyManager();
+    	CompanyManager cm = orUIManager.getGameUIManager().getGameManager().getCompanyManager();
     	List<CompanyType> comps = cm.getCompanyTypes();
     	JMenu compMenu, menu, item;
 
@@ -604,7 +604,7 @@ implements ActionListener, KeyListener, RevenueListener {
         }
         
         if (revenue_suggest) {
-            CompanyManagerI cm = orUIManager.getGameUIManager().getGameManager().getCompanyManager();
+            CompanyManager cm = orUIManager.getGameUIManager().getGameManager().getCompanyManager();
             for (PublicCompany comp : cm.getAllPublicCompanies()) {
                 if (!comp.hasFloated() || comp.isClosed()) continue;
                 JMenuItem item = new JMenuItem(comp.getId());
@@ -626,7 +626,7 @@ implements ActionListener, KeyListener, RevenueListener {
             mapGraph = NetworkGraphBuilder.optimizeGraph(mapGraph);
             NetworkGraphBuilder.visualize(mapGraph, "Optimized Map Network");
         } else {
-            CompanyManagerI cm = gm.getCompanyManager();
+            CompanyManager cm = gm.getCompanyManager();
             PublicCompany company = cm.getPublicCompany(companyName);
 //
 //            NetworkGraphBuilder nwGraph = NetworkGraphBuilder.create(gm);

@@ -91,7 +91,7 @@ public class FoldIntoPrussian extends PossibleAction {
 
         in.defaultReadObject();
 
-        CompanyManagerI cmgr = getCompanyManager();
+        CompanyManager cmgr = getCompanyManager();
         if (foldableCompanyNames != null) {
             foldableCompanies = new ArrayList<Company>();
             for (String name : foldableCompanyNames.split(",")) {

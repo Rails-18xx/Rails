@@ -14,7 +14,13 @@ import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.state.AbstractItem;
 
-public class CompanyManager extends AbstractItem implements CompanyManagerI, ConfigurableComponentI {
+public class CompanyManager extends AbstractItem implements ConfigurableComponentI {
+
+    /**
+     * This is the name by which the CompanyManager should be registered with
+     * the ComponentManager.
+     */
+    public static final String COMPONENT_NAME = "CompanyManager";
 
     /** A List with all private companies */
     private List<PrivateCompany> lPrivateCompanies =
@@ -223,7 +229,7 @@ public class CompanyManager extends AbstractItem implements CompanyManagerI, Con
         }
     }
     /**
-     * @see rails.game.CompanyManagerI#getCompany(java.lang.String)
+     * @see rails.game.CompanyManager#getCompany(java.lang.String)
      *
      */
     public PrivateCompany getPrivateCompany(String name) {

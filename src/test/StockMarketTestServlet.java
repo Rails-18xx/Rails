@@ -68,7 +68,7 @@
 /* Process the action performed. Note: companies not mentioned yet. */
 // iterator = game.getCompanyManager().getAllCompanies().iterator();
 /*
- * CompanyManagerI compMgr = Game.getCompanyManager(); iterator =
+ * CompanyManager compMgr = Game.getCompanyManager(); iterator =
  * compMgr.getAllPublicNames().iterator(); while (iterator.hasNext()) {
  * //company = (Company) iterator.next(); comp = (Company)
  * compMgr.getPublicCompany((String) iterator.next()); if (!(comp instanceof
@@ -159,7 +159,7 @@
  * action=\"http://localhost:8080/18xx/servlet/game.test.StockMarketTestServlet\">\n");
  * out.append( "<form method=\"POST\" action=\"" + servletPrefix +
  * "game.test.StockMarketTestServlet\">\n"); out.append("<table
- * cellspacing=\"0\" cellpadding=\"0\">\n"); CompanyManagerI compMgr =
+ * cellspacing=\"0\" cellpadding=\"0\">\n"); CompanyManager compMgr =
  * Game.getCompanyManager(); iterator =
  * compMgr.getAllPublicCompanies().iterator(); while (iterator.hasNext()) {
  * company = (PublicCompany) iterator.next(); companyName = company.getName();

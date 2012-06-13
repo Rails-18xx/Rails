@@ -43,8 +43,8 @@
  * //ComponentManager.configureInstance(elem);
  * 
  * ComponentManager componentMan = ComponentManager.getInstance();
- * CompanyManagerI companyManager = (CompanyManagerI) componentMan
- * .findComponent(CompanyManagerI.COMPONENT_NAME);
+ * CompanyManager companyManager = (CompanyManager) componentMan
+ * .findComponent(CompanyManager.COMPONENT_NAME);
  * 
  * List companies = companyManager.getAllCompanies();
  * System.out.println(companies.size() + " companies are registered"); for (int

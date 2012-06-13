@@ -106,7 +106,7 @@ public abstract class PossibleAction implements Serializable {
         return GameManager.getInstance();
     }
 
-    protected CompanyManagerI getCompanyManager () {
+    protected CompanyManager getCompanyManager () {
         return getGameManager().getCompanyManager();
     }
 

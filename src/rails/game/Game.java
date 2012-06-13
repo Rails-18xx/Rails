@@ -19,7 +19,7 @@ public class Game {
 
     /** The component Manager */
     protected GameManager gameManager;
-    protected CompanyManagerI companyManager;
+    protected CompanyManager companyManager;
     protected PlayerManager playerManager;
     protected PhaseManager phaseManager;
     protected TrainManager trainManager;
