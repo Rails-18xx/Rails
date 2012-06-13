@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 
 import rails.common.LocalText;
-import rails.common.parser.ConfigurableComponentI;
+import rails.common.parser.ConfigurableComponent;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.GameManager;
@@ -27,12 +27,12 @@ import rails.game.state.Item;
  *
  */
 
-public final class RevenueManager extends AbstractItem implements ConfigurableComponentI {
+public final class RevenueManager extends AbstractItem implements ConfigurableComponent {
 
     protected static Logger log =
         LoggerFactory.getLogger(RevenueManager.class.getPackage().getName());
 
-    private final HashSet<ConfigurableComponentI> configurableModifiers = new HashSet<ConfigurableComponentI>();
+    private final HashSet<ConfigurableComponent> configurableModifiers = new HashSet<ConfigurableComponent>();
     
     private final ArrayListState<NetworkGraphModifier> graphModifiers = ArrayListState.create(); 
     private final ArrayListState<RevenueStaticModifier> staticModifiers = ArrayListState.create();
@@ -86,8 +86,8 @@ public final class RevenueManager extends AbstractItem implements ConfigurableCo
                     throw new ConfigurationException(LocalText.getText(
                             "ClassIsNotAModifier", className));
                 }
-                if (isModifier && modifier instanceof ConfigurableComponentI) {
-                    configurableModifiers.add((ConfigurableComponentI)modifier);
+                if (isModifier && modifier instanceof ConfigurableComponent) {
+                    configurableModifiers.add((ConfigurableComponent)modifier);
                 }
             }
         }
@@ -104,7 +104,7 @@ public final class RevenueManager extends AbstractItem implements ConfigurableCo
 
     public void finishConfiguration(GameManager parent)
             throws ConfigurationException {
-        for (ConfigurableComponentI modifier:configurableModifiers) {
+        for (ConfigurableComponent modifier:configurableModifiers) {
                 modifier.finishConfiguration(parent);
         }
     }

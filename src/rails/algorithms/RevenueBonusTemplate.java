@@ -6,7 +6,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rails.common.parser.ConfigurableComponentI;
+import rails.common.parser.ConfigurableComponent;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.GameManager;
@@ -21,7 +21,7 @@ import rails.game.TrainType;
  * will be converted to a true RevenueBonus object during each revenue calculation
  * @author freystef
  */
-public final class RevenueBonusTemplate implements ConfigurableComponentI {
+public final class RevenueBonusTemplate implements ConfigurableComponent {
 
     protected static Logger log =
         LoggerFactory.getLogger(RevenueBonusTemplate.class.getPackage().getName());

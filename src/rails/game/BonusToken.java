@@ -1,6 +1,6 @@
 package rails.game;
 
-import rails.common.parser.ConfigurableComponentI;
+import rails.common.parser.ConfigurableComponent;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.state.Item;
@@ -15,7 +15,7 @@ import rails.util.Util;
  * @author Erik Vos
  */
 
-public final class BonusToken extends Token implements Closeable, ConfigurableComponentI  {
+public final class BonusToken extends Token implements Closeable, ConfigurableComponent  {
 
     private int value;
     private String name;

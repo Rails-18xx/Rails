@@ -63,7 +63,7 @@ public class CompanyType extends AbstractItem {
     }
 
     /**
-     * @see rails.common.parser.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
+     * @see rails.common.parser.ConfigurableComponent#configureFromXML(org.w3c.dom.Element)
      */
     public void configureFromXML(Tag tag) throws ConfigurationException {
         //No longer needed.

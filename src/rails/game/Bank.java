@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import rails.common.LocalText;
 import rails.common.parser.Config;
-import rails.common.parser.ConfigurableComponentI;
+import rails.common.parser.ConfigurableComponent;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.model.CashMoneyModel;
@@ -18,7 +18,7 @@ import rails.game.state.BooleanState;
 import rails.game.state.Item;
 import rails.util.*;
 
-public class Bank extends AbstractItem implements CashOwner, ConfigurableComponentI {
+public class Bank extends AbstractItem implements CashOwner, ConfigurableComponent {
 
     private static Bank instance = null;
 
@@ -81,7 +81,7 @@ public class Bank extends AbstractItem implements CashOwner, ConfigurableCompone
     }
     
     /**
-     * @see rails.common.parser.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
+     * @see rails.common.parser.ConfigurableComponent#configureFromXML(org.w3c.dom.Element)
      */
     public void configureFromXML(Tag tag) throws ConfigurationException {
 

@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 
-import rails.common.parser.ConfigurableComponentI;
+import rails.common.parser.ConfigurableComponent;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.special.SpecialProperty;
@@ -17,7 +17,7 @@ import rails.game.state.Item;
 import rails.game.state.PortfolioList;
 import rails.util.Util;
 
-public abstract class Company extends AbstractItem implements ConfigurableComponentI,
+public abstract class Company extends AbstractItem implements ConfigurableComponent,
 Cloneable, Comparable<Company> {
 
     /** The name of the XML tag used to configure a company. */

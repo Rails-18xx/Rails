@@ -25,8 +25,8 @@ public class ComponentManager {
     protected Logger log = LoggerFactory.getLogger(ComponentManager.class.getPackage().getName());
     protected List<String> directories = new ArrayList<String>();
     
-    private Map<String, ConfigurableComponentI> mComponentMap =
-            new HashMap<String, ConfigurableComponentI>();
+    private Map<String, ConfigurableComponent> mComponentMap =
+            new HashMap<String, ConfigurableComponent>();
     
     public ComponentManager(Context context, String gameName, Tag tag, Map<String, String> gameOptions)
             throws ConfigurationException {
@@ -64,13 +64,13 @@ public class ComponentManager {
         }
 
         // Now construct the component
-        ConfigurableComponentI component;
+        ConfigurableComponent component;
         try {
-            Class<? extends ConfigurableComponentI> compClass;
+            Class<? extends ConfigurableComponent> compClass;
             compClass =
                     Class.forName(clazz).asSubclass(
-                            ConfigurableComponentI.class);
-            Constructor<? extends ConfigurableComponentI> compCons =
+                            ConfigurableComponent.class);
+            Constructor<? extends ConfigurableComponent> compCons =
                 compClass.getConstructor(new Class[0]);
             component = compCons.newInstance(new Object[0]);
         } catch (Exception ex) {
@@ -110,8 +110,8 @@ public class ComponentManager {
      * @param componentName the of the component sought.
      * @return the component sought, or null if it has not been configured.
      */
-    public ConfigurableComponentI findComponent(String componentName) throws ConfigurationException {
-        ConfigurableComponentI comp = mComponentMap.get(componentName);
+    public ConfigurableComponent findComponent(String componentName) throws ConfigurationException {
+        ConfigurableComponent comp = mComponentMap.get(componentName);
         
         //FIXME: Revenue Manager is currently optional.
         if (comp == null && componentName != "RevenueManager") {

@@ -7,7 +7,7 @@ import rails.game.GameManager;
  * Interface for rails.game components which can be configured from an XML
  * element.
  */
-public interface ConfigurableComponentI {
+public interface ConfigurableComponent {
 
     /**
      * Instructs the component to configure itself from the provided XML

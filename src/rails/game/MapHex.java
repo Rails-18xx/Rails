@@ -59,7 +59,7 @@ import rails.util.*;
  */
 
 // FIXME: MapHex was previous a model
-public class MapHex extends AbstractItem implements PortfolioHolder, ConfigurableComponentI,
+public class MapHex extends AbstractItem implements PortfolioHolder, ConfigurableComponent,
 StationHolder {
 
     private static final String[] ewOrNames =
@@ -193,7 +193,7 @@ StationHolder {
     }
     
     /**
-     * @see rails.common.parser.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
+     * @see rails.common.parser.ConfigurableComponent#configureFromXML(org.w3c.dom.Element)
      */
     public void configureFromXML(Tag tag) throws ConfigurationException {
         Pattern namePattern = Pattern.compile("(\\D+?)(-?\\d+)");

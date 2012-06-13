@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import rails.common.LocalText;
-import rails.common.parser.ConfigurableComponentI;
+import rails.common.parser.ConfigurableComponent;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.model.PortfolioModel;
@@ -21,7 +21,7 @@ import rails.game.state.IntegerState;
 import rails.game.state.Item;
 import rails.game.state.Owner;
 
-public class TrainManager extends AbstractItem implements ConfigurableComponentI {
+public class TrainManager extends AbstractItem implements ConfigurableComponent {
     // Static attributes
     protected final List<TrainType> lTrainTypes = new ArrayList<TrainType>();
 
@@ -83,7 +83,7 @@ public class TrainManager extends AbstractItem implements ConfigurableComponentI
     public TrainManager() { }
 
     /**
-     * @see rails.common.parser.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
+     * @see rails.common.parser.ConfigurableComponent#configureFromXML(org.w3c.dom.Element)
      */
     public void configureFromXML(Tag tag) throws ConfigurationException {
         

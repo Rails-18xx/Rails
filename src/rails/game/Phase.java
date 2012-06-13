@@ -10,13 +10,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import rails.common.LocalText;
-import rails.common.parser.ConfigurableComponentI;
+import rails.common.parser.ConfigurableComponent;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.state.Owner;
 import rails.util.Util;
 
-public class Phase implements ConfigurableComponentI {
+public class Phase implements ConfigurableComponent {
 
     protected int index;
 

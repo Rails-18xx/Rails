@@ -17,7 +17,7 @@ import rails.util.Util;
 /**
  * MapManager configures the map layout from XML
  */
-public class MapManager extends AbstractItem implements ConfigurableComponentI {
+public class MapManager extends AbstractItem implements ConfigurableComponent {
 
     private String mapUIClassName = null;
 
@@ -68,7 +68,7 @@ public class MapManager extends AbstractItem implements ConfigurableComponentI {
     }
 
     /**
-     * @see rails.common.parser.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
+     * @see rails.common.parser.ConfigurableComponent#configureFromXML(org.w3c.dom.Element)
      */
     public void configureFromXML(Tag tag) throws ConfigurationException {
         String attr = tag.getAttributeAsString("tileOrientation");

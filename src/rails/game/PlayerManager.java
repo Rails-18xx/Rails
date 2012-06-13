@@ -3,13 +3,13 @@ package rails.game;
 import java.util.*;
 
 import rails.common.LocalText;
-import rails.common.parser.ConfigurableComponentI;
+import rails.common.parser.ConfigurableComponent;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.model.MoneyModel;
 import rails.game.state.AbstractItem;
 
-public class PlayerManager extends AbstractItem implements ConfigurableComponentI {
+public class PlayerManager extends AbstractItem implements ConfigurableComponent {
 
     private int numberOfPlayers;
     private List<Player> players;

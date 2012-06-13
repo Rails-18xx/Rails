@@ -5,14 +5,14 @@ import java.util.HashMap;
 import java.util.List;
 
 import rails.common.LocalText;
-import rails.common.parser.ConfigurableComponentI;
+import rails.common.parser.ConfigurableComponent;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.state.AbstractItem;
 import rails.game.state.BooleanState;
 import rails.game.state.Item;
 
-public class StockMarket extends AbstractItem implements ConfigurableComponentI {
+public class StockMarket extends AbstractItem implements ConfigurableComponent {
 
      /**
      *  This is the name by which the CompanyManager should be registered with
@@ -62,7 +62,7 @@ public class StockMarket extends AbstractItem implements ConfigurableComponentI 
     
 
     /**
-     * @see rails.common.parser.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
+     * @see rails.common.parser.ConfigurableComponent#configureFromXML(org.w3c.dom.Element)
      */
     public void configureFromXML(Tag tag) throws ConfigurationException {
 

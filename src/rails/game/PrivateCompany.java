@@ -93,7 +93,7 @@ public class PrivateCompany extends Company implements Ownable<PrivateCompany>, 
     }
 
     /**
-     * @see rails.common.parser.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
+     * @see rails.common.parser.ConfigurableComponent#configureFromXML(org.w3c.dom.Element)
      */
     @Override
     public void configureFromXML(Tag tag) throws ConfigurationException {

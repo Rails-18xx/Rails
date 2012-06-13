@@ -16,7 +16,7 @@ import rails.game.Stop.Type;
 import rails.game.state.AbstractItem;
 import rails.util.Util;
 
-public class TileManager extends AbstractItem implements ConfigurableComponentI {
+public class TileManager extends AbstractItem implements ConfigurableComponent {
 
     protected Map<Integer, Tile> tileMap = new HashMap<Integer, Tile>();
     protected List<Integer> tileIds = new ArrayList<Integer>();
@@ -40,7 +40,7 @@ public class TileManager extends AbstractItem implements ConfigurableComponentI 
     }
 
     /**
-     * @see rails.common.parser.ConfigurableComponentI#configureFromXML(org.w3c.dom.Element)
+     * @see rails.common.parser.ConfigurableComponent#configureFromXML(org.w3c.dom.Element)
      */
     public void configureFromXML(Tag tileSetTop) throws ConfigurationException {
         /*
