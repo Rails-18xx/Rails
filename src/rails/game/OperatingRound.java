@@ -27,7 +27,7 @@ import rails.util.SequenceUtil;
  * each new Operating Round. At the end of a round, the current instance should
  * be discarded.
  */
-public class OperatingRound extends AbstractRound implements Observer {
+public class OperatingRound extends Round implements Observer {
 
     /* Transient memory (per round only) */
     protected final GenericState<GameDef.OrStep> stepObject = GenericState.create(GameDef.OrStep.INITIAL);

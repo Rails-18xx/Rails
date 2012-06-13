@@ -13,7 +13,7 @@ import rails.game.state.IntegerState;
 import rails.game.state.Item;
 import rails.game.state.Model;
 
-public abstract class StartRound extends AbstractRound {
+public abstract class StartRound extends Round {
 
     protected StartPacket startPacket = null;
     protected int[] itemIndex;

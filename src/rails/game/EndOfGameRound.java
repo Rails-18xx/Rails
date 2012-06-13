@@ -11,7 +11,7 @@ import rails.common.LocalText;
  *
  *  */
 
-public class EndOfGameRound extends AbstractRound {
+public class EndOfGameRound extends Round {
 
     public EndOfGameRound(GameManager gameManager) {
         super(gameManager);

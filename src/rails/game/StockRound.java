@@ -21,7 +21,7 @@ import rails.game.state.*;
  * discarded. <p> Permanent memory is formed by static attributes (like who has
  * the Priority Deal).
  */
-public class StockRound extends AbstractRound {
+public class StockRound extends Round {
 
     /* Transient memory (per round only) */
     protected int numberOfPlayers;
