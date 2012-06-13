@@ -12,11 +12,6 @@ Coalfields variant by Alan R. Moon
 Limitations: 
 - The M&amp;H/NYC share swap can only be executed in the SR, in the owning player's turn.
 - Privates cannot be traded between players.
-- The Coalfields variant is playable with the following workarounds:
-    - Coalfield certificates cannot yet be bought. Execute a Cash Correction to mimic this action.
-    - Route and revenue calculation will always include the Coalfields, if reachable. 
-      If you have not bought a Coalfields certificate, you'll have to calculate the correct revenue 
-      yourself, and enter it manually.
 		</Description>
 		<!-- GAME OPTIONS must have:
 			- a name, which must also exist as an entry in LocalText.properties,
