@@ -963,12 +963,14 @@ public class ORUIManager implements DialogOwner {
         if (stopsToQuery.size() == 2) {
             Collections.sort(stopsToQuery, new Comparator<Stop>() {
                 public int compare (Stop s1, Stop s2) {
-                    // Home stops on this hex go first.
-                    boolean home1 = ((BaseToken)s1.getTokens().get(0)).getCompany().getHomeHexes().contains(hex);
-                    boolean home2 = ((BaseToken)s2.getTokens().get(0)).getCompany().getHomeHexes().contains(hex);
-                    if (home1 && !home2) {
+                    List<TokenI> tokens;
+                    boolean stop1IsHome = !((tokens = s1.getTokens()).isEmpty())
+                    && ((BaseToken)tokens.get(0)).getCompany().getHomeHexes().contains(hex);
+                    boolean stop2IsHome = !((tokens = s2.getTokens()).isEmpty())
+                    && ((BaseToken)tokens.get(0)).getCompany().getHomeHexes().contains(hex);
+                    if (stop1IsHome && !stop2IsHome) {
                         return -1;
-                    } else if (home2 && !home1) {
+                    } else if (stop2IsHome && !stop1IsHome) {
                         return 1;
                     } else {
                         return 0; // Doesn't matter
