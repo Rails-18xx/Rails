@@ -963,16 +963,20 @@ public class ORUIManager implements DialogOwner {
          * 2. Count down the number of free slots per new station, so that full stations are skipped,
          * It's already taken care for, that a choice-between-one is handled automatically.
          * [EV, jun2012]
+         * 
+         * TODO: (Rails2.0) Check if this still works
          */
         if (stopsToQuery.size() == 2) {
             Collections.sort(stopsToQuery, new Comparator<Stop>() {
                 public int compare (Stop s1, Stop s2) {
-                    // Home stops on this hex go first.
-                    boolean home1 = Iterables.get(s1.getBaseTokens(), 0).getParent().getHomeHexes().contains(hex);
-                    boolean home2 = Iterables.get(s2.getBaseTokens(), 0).getParent().getHomeHexes().contains(hex);
-                    if (home1 && !home2) {
+                    Set<BaseToken> tokens;
+                    boolean stop1IsHome = !((tokens = s1.getBaseTokens()).isEmpty())
+                    && Iterables.get(tokens, 0).getParent().getHomeHexes().contains(hex);
+                    boolean stop2IsHome = !((tokens = s2.getBaseTokens()).isEmpty())
+                    && Iterables.get(tokens, 0).getParent().getHomeHexes().contains(hex);
+                    if (stop1IsHome && !stop2IsHome) {
                         return -1;
-                    } else if (home2 && !home1) {
+                    } else if (stop2IsHome && !stop1IsHome) {
                         return 1;
                     } else {
                         return 0; // Doesn't matter
@@ -991,7 +995,7 @@ public class ORUIManager implements DialogOwner {
             if (oldStop.hasTokens()) {
                 // Assume only 1 token (no exceptions known)
                 // TODO: Rewrite this to make this code nicer
-                PublicCompany company = (Iterables.get(oldStop.getBaseTokens().items(), 0)).getParent();
+                PublicCompany company = (Iterables.get(oldStop.getBaseTokens(), 0)).getParent();
 
                 List<String> prompts = new ArrayList<String>();
                 Map<String, Integer> promptToCityMap = new HashMap<String, Integer>();

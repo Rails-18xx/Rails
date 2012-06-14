@@ -971,7 +971,7 @@ public class MapHex extends Model implements RailsItem, Owner, Configurable {
         if (mStops == null || mStops.isEmpty()) return null;
         ImmutableSet.Builder<BaseToken> tokens = ImmutableSet.builder();
         for (Stop city : mStops) {
-            tokens.addAll(city.getBaseTokens().items());
+            tokens.addAll(city.getBaseTokens());
         }
         return tokens.build();
     }
@@ -1019,7 +1019,7 @@ public class MapHex extends Model implements RailsItem, Owner, Configurable {
     public ImmutableSet<BaseToken> getTokens(int cityNumber) {
         // TODO: Is the test for null still required
         if (mStops.size() > 0 && mStops.get(cityNumber) != null) {
-            return (mStops.get(cityNumber)).getBaseTokens().items();
+            return (mStops.get(cityNumber)).getBaseTokens();
         } else {
             return ImmutableSet.of(); // empty set
         }

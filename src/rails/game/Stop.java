@@ -3,6 +3,8 @@ package rails.game;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableSet;
+
 import rails.game.state.GenericState;
 import rails.game.state.Owner;
 import rails.game.state.PortfolioSet;
@@ -213,8 +215,8 @@ public class Stop extends RailsAbstractItem implements Owner {
         initStopProperties();
     }
 
-    public PortfolioSet<BaseToken> getBaseTokens() {
-        return tokens;
+    public ImmutableSet<BaseToken> getBaseTokens() {
+        return tokens.items();
     }
 
     public boolean hasTokens() {
