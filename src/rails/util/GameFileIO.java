@@ -227,16 +227,17 @@ public class GameFileIO {
         gameManager.setReloading(true);
 
         int count = -1;
-      // set possible actions for first action
-      gameManager.getCurrentRound().setPossibleActions();
-      
-        for (PossibleAction action : gameData.actions) {
-            count++;
-            if (!gameManager.processOnReload(action)) {
-                log.error ("Load interrupted");
-                DisplayBuffer.add(LocalText.getText("LoadInterrupted", count));
-                ReportBuffer.add(LocalText.getText("LoadInterrupted", count));
-                break;
+        if (gameData != null && gameData.actions != null) {
+            // set possible actions for first action
+            gameManager.getCurrentRound().setPossibleActions();
+            for (PossibleAction action : gameData.actions) {
+                count++;
+                if (!gameManager.processOnReload(action)) {
+                    log.error ("Load interrupted");
+                    DisplayBuffer.add(LocalText.getText("LoadInterrupted", count));
+                    ReportBuffer.add(LocalText.getText("LoadInterrupted", count));
+                    break;
+                }
             }
         }
 
