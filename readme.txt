@@ -1,14 +1,18 @@
-Rails release 1.7.2:
+Rails release 1.7.7:
 
 A new maintenance release for Rails 1.x series
 
-This release fixes several recent bugs.
+This release fixes several bugs.
 
 Contributors: Erik Vos, Stefan Frey
 
-Bugs reported by John David Galt, Phil Davies
+Bug reported by Are-Harald Brenne, John David Galt
 
-List of bugs fixed:
-- Fixed error in creation of new profiles on Windows OS systems
-- Made configuration system more robust against corrupted/misconfigured profiles
-- Fixed missing options after "Destinations reached" dialogue without any selection
+New:
+- Added little fun variant 18Lummer
+
+Lists of bugs fixed:
+- Errors in UI after adding a comment at game start
+- Fixed failure on reloading a just started game
+- 1835: Manual close of Pfalzbahn is possible (to enable closing after token lay only)
+- 1835 (and others): Fixed UI issues with token relays on OO-tiles

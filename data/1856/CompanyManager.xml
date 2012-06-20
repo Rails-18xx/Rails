@@ -111,54 +111,105 @@
 	
 	<Company name="GT"	type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
 		<Home hex="P9"/>
-		<Destination hex="K8"/>
+        <IfOption name="1856AlternateDestinations" value="no">
+			<Destination hex="K8"/>
+        </IfOption>        
+		<IfOption name="1856AlternateDestinations" value="yes">
+			<Destination hex="L13"/> <!-- Burlington -->
+        </IfOption>        
 	</Company>
 	<Company name="THB" type="Public" tokens="2" fgColour="000000" bgColour="B0B040">
 		<IfOption name="1856THBHomeBlocked" value="yes">
-			<Home hex="L15" city="0" blockedForAllCities = "yes" />
+			<Home hex="L15" city="0" blockedForAllCities = "yes"/>
 		</IfOption>
 		<IfOption name="1856THBHomeBlocked" value="no">
 			<Home hex="L15" city="0" blockedForAllCities = "no" />
 		</IfOption>
-		<Destination hex="J11"/>
+        <IfOption name="1856AlternateDestinations" value="no">
+			<Destination hex="J11"/>
+        </IfOption>        
+		<IfOption name="1856AlternateDestinations" value="yes">
+			<Destination hex="H15"/> <!-- Woodstock -->
+        </IfOption>        
 	</Company>
 	<Company name="BBG" type="Public" tokens="3" fgColour="000000" bgColour="FF8080">
 		<Home hex="J15"/>
-		<Destination hex="N17"/>
+        <IfOption name="1856AlternateDestinations" value="no">
+			<Destination hex="N17"/>
+        </IfOption>        
+		<IfOption name="1856AlternateDestinations" value="yes">
+			<Destination hex="N11"/> <!-- Toronto-->
+        </IfOption>        
 	</Company>
 	<Company name="LPS" type="Public" tokens="2" fgColour="000000" bgColour="A0A0F0">
 		<Home hex="C14"/>
-		<Destination hex="F17"/>
+        <IfOption name="1856AlternateDestinations" value="no">
+			<Destination hex="F17"/>
+        </IfOption>        
+		<IfOption name="1856AlternateDestinations" value="yes">
+			<Destination hex="F15"/> <!-- London -->
+        </IfOption>        
 	</Company>
 	<Company name="WGB" type="Public" tokens="2" fgColour="FFFFFF" bgColour="0000FF">
 		<Home hex="J11"/>
-		<Destination hex="F9"/>
+        <IfOption name="1856AlternateDestinations" value="no">
+			<Destination hex="F9"/>
+        </IfOption>        
+		<IfOption name="1856AlternateDestinations" value="yes">
+			<Destination hex="H5"/> <!-- Lake Huron -->
+        </IfOption>        
 	</Company>
 	<Company name="WR"	type="Public" tokens="3" fgColour="FFFFFF" bgColour="808030">
 		<Home hex="O16"/>
 		<Destination hex="L15"/>
+		 <!-- Alternate: Hamilton, this is identical to the standard -->
 	</Company>
 	<Company name="CV"	type="Public" tokens="3" fgColour="FFFFFF" bgColour="800080">
 		<Home hex="N11" city="2"/>
-		<Destination hex="I14"/>
+        <IfOption name="1856AlternateDestinations" value="no">
+			<Destination hex="I14"/>
+        </IfOption>        
+		<IfOption name="1856AlternateDestinations" value="yes">
+			<Destination hex="M4"/> <!-- Barrie -->
+        </IfOption>        
 	</Company>
 	<Company name="CPR" type="Public" tokens="4" fgColour="000000" bgColour="ffa0ff">
 		<Home hex="M4"/>
-		<Destination hex="N11"/>
+        <IfOption name="1856AlternateDestinations" value="no">
+			<Destination hex="N11"/>
+        </IfOption>        
+		<IfOption name="1856AlternateDestinations" value="yes">
+			<Destination hex="P9"/> <!-- Oshawa -->
+        </IfOption>        
 	</Company>
 	<Company name="CA"	type="Public" tokens="3" fgColour="FFFFFF" bgColour="FF0000">
 		<Home hex="D17"/>
-		<Destination hex="H15"/>
+        <IfOption name="1856AlternateDestinations" value="no">
+			<Destination hex="H15"/>
+        </IfOption>        
+		<IfOption name="1856AlternateDestinations" value="yes">
+			<Destination hex="F15"/>  <!-- This is London, Detroit has to be added as the second end of the destination route -->
+		</IfOption>        
 	</Company>
 	<Company name="CGR" type="State" available="no" tokens="10" fgColour="FFFFFF" bgColour="000000">
 	</Company>
 	<Company name="TGB" type="Public" tokens="2" fgColour="FFFFFF" bgColour="FF8000">
 		<Home hex="K8"/>
-		<Destination hex="H5"/>
+        <IfOption name="1856AlternateDestinations" value="no">
+			<Destination hex="H5"/>
+        </IfOption>        
+		<IfOption name="1856AlternateDestinations" value="yes">
+			<Destination hex="N1"/> <!-- This is West Canada Offboard, the second hex (O2) has to be added  -->
+        </IfOption>        
 	</Company>
 	<Company name="GW"	type="Public" tokens="4" fgColour="000000" bgColour="b090b0">
 		<Home hex="F15"/>
-		<Destination hex="A20"/>
+        <IfOption name="1856AlternateDestinations" value="no">
+			<Destination hex="A20"/>
+        </IfOption>        
+		<IfOption name="1856AlternateDestinations" value="yes">
+			<Destination hex="J15"/> <!-- Brantford -->
+        </IfOption>        
 	</Company>
 
 	<StartPacket roundClass="rails.game.StartRound_1830">

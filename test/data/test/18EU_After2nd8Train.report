@@ -857,6 +857,7 @@ All 3-trains are sold out, 4-trains now available
 BuysTrain,KBS,4,IPO,300
 FirstTrainBought,4
 StartOfPhase,4
+TrainsRusted,2
  
 CompanyOperates,SNCF,Bob
 LaysTileAt,SNCF,141,K6,NW
@@ -1153,6 +1154,7 @@ PRICE_MOVES_LOG,FS,100,E3,90,D3
 BuysTrain,FS,6,IPO,600
 FirstTrainBought,6
 StartOfPhase,6
+TrainsRusted,3
  
 CompanyOperates,DR,Alice
 LaysTileAt,DR,83,K2,SW
@@ -1185,6 +1187,7 @@ PRICE_MOVES_LOG,KPEV,122,H4,110,G4
 BuysTrain,KPEV,8,IPO,800
 FirstTrainBought,8
 StartOfPhase,8
+TrainsRusted,4
  
 CompanyOperates,KBS,Alice
 CompanyDoesNotPayDividend,KBS

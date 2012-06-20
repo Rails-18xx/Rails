@@ -771,6 +771,7 @@ PRICE_MOVES_LOG,WT,84,B4,78,A4
 BuysTrain,WT,4,IPO,360
 FirstTrainBought,4
 StartOfPhase,4
+TrainsRusted,2
 CompanyDiscardsTrain,SX,2+2
 StartFormationRound,PR
 StartingPlayer,Alice
@@ -1012,6 +1013,7 @@ BuysTrain,BA,4+4,IPO,440
 All 4+4-trains are sold out, 5-trains now available
 FirstTrainBought,4+4
 StartOfPhase,4+4
+TrainsRusted,2+2
 StartFormationRound,PR
 START_MERGED_COMPANY,PR,154,154
 FloatsWithCash,PR,616
@@ -1138,5 +1140,4 @@ CompanyDiscardsTrain,PR,3
  
 EndOfFormationRound,PR,OperatingRound 7.2
 IS_NOW_PRES_OF,Bob,PR
- 
 CompanyOperates,BA,Bob

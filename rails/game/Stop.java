@@ -227,6 +227,7 @@ public class Stop implements TokenHolder {
 
     public boolean addObject(Moveable object, int[] position) {
         if (object instanceof TokenI) {
+            mapHex.update();
             return addToken((TokenI) object, position == null ? -1 : position[0]);
         } else {
             return false;
@@ -235,6 +236,7 @@ public class Stop implements TokenHolder {
 
     public boolean removeObject(Moveable object) {
         if (object instanceof TokenI) {
+            mapHex.update();
             return removeToken((TokenI) object);
         } else {
             return false;

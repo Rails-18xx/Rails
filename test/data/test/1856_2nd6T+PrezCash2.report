@@ -401,6 +401,7 @@ CompanyTakesLoan,GW,100,90
 BuysTrain,GW,4,IPO,350
 FirstTrainBought,4
 StartOfPhase,4
+TrainsRusted,2
  
 CompanyOperates,WGB,Bob
 LaysTileAt,WGB,5,J11,NW
@@ -879,6 +880,7 @@ PRICE_MOVES_LOG,GT,80,F4,75,E4
 BuysTrain,GT,6,IPO,700
 FirstTrainBought,6
 StartOfPhase,6
+TrainsRusted,3
 StartFormationRound,CGR
 StartingPlayer,Charlie
  
@@ -1009,6 +1011,7 @@ PRICE_MOVES_LOG,CGR,100,G3,90,F3
 ExchangesTrain,CGR,4,D,IPO,750
 FirstTrainBought,D
 StartOfPhase,D
+TrainsRusted,4
  
 CompanyOperates,CPR,Charlie
 LaysTileAtFor,CPR,57,N3,SW,40

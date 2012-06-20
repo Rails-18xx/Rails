@@ -771,6 +771,7 @@ PRICE_MOVES_LOG,WT,84,B4,78,A4
 BuysTrain,WT,4,IPO,360
 FirstTrainBought,4
 StartOfPhase,4
+TrainsRusted,2
 CompanyDiscardsTrain,SX,2+2
 StartFormationRound,PR
 StartingPlayer,Alice
@@ -1012,6 +1013,7 @@ BuysTrain,BA,4+4,IPO,440
 All 4+4-trains are sold out, 5-trains now available
 FirstTrainBought,4+4
 StartOfPhase,4+4
+TrainsRusted,2+2
 StartFormationRound,PR
 START_MERGED_COMPANY,PR,154,154
 FloatsWithCash,PR,616
@@ -1102,4 +1104,3 @@ Payout,Charlie,123,7,5
 PRICE_MOVES_LOG,PR,154,I4,172,J4
 BuysTrain,PR,5,IPO,500
 All 5-trains are sold out, 5+5-trains now available
-

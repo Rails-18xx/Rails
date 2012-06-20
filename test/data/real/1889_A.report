@@ -412,6 +412,7 @@ PRICE_MOVES_LOG,IR,80,D3,90,E3
 BuysTrain,IR,4,IPO,300
 FirstTrainBought,4
 StartOfPhase,4
+TrainsRusted,2
  
 CompanyOperates,SR,Simon
 LaysTileAt,SR,9,H3,SW
@@ -637,5 +638,6 @@ PRICE_MOVES_LOG,UR,125,F1,110,E1
 BuysTrain,UR,6,IPO,630
 FirstTrainBought,6
 StartOfPhase,6
+TrainsRusted,3
  
 CompanyOperates,SR,Simon

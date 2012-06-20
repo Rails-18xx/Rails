@@ -1067,6 +1067,7 @@ PRICE_MOVES_LOG,SNCF,135,H3,150,I3
 BuysTrain,SNCF,4,IPO,300
 FirstTrainBought,4
 StartOfPhase,4
+TrainsRusted,2
  
 CompanyOperates,SNCB,John
 LaysTileAt,SNCB,143,E4,SE

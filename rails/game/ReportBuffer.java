@@ -326,7 +326,12 @@ public final class ReportBuffer {
             // comments first
             if (comment != null) {
                 s.append("<span style='color:green;font-size:80%;font-style:italic;'>");
-                s.append(item.player.getName() + " says: ' ");
+                // at gamestart no player is defined, this is a bug-fix
+                if (item.player == null) {
+                    s.append("'");
+                } else {
+                    s.append(item.player.getName() + " says: '");
+                }
                 s.append(comment + "'"  + NEWLINE_STRING);
                 s.append("</span>");
             }
