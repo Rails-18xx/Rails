@@ -1,17 +1,19 @@
 package rails.game.state;
 /**
- * Is implemented by classes that change state objects
+ * Base Class for all Change Objects
  * 
  * Replaces previous move interface
  * 
  * @author freystef
  */
-interface Change {
+abstract class Change {
     
-       public void execute();
+    Change(State state){
+        state.getStateManager().addChangeToStack(this);
+    }
 
-       public void undo();
-    
-       public State getState();
-       
+    abstract void execute();
+    abstract void undo();  
+    abstract State getState();
+
 }

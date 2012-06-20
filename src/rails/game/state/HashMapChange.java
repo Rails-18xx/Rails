@@ -2,9 +2,8 @@ package rails.game.state;
 
 /**
  * Change associated with HashMapState
- * @author evos, freystef
  */
-final class HashMapChange<K,V> implements Change {
+final class HashMapChange<K,V> extends Change {
 
     final private HashMapState<K,V> state;
     final private K key;
@@ -17,39 +16,40 @@ final class HashMapChange<K,V> implements Change {
      * Put element into map
      */
     HashMapChange(HashMapState<K,V> state, K key, V value) {
+        super(state);
         this.state = state;
         this.key = key;
         newValue = value;
         remove = false;
         oldValue = state.get(key);
         existed = state.containsKey(key);
-
-        ChangeStack.add(this);
     }
 
     /**
      * Remove element from map
      */
     HashMapChange(HashMapState<K,V> state, K key) {
+        super(state);
         this.state = state;
         this.key = key;
         newValue = null;
         remove = true;
         oldValue = state.get(key);
         existed = true;
-
-        ChangeStack.add(this);
     }
 
+    @Override
     public void execute() {
         state.change(key, newValue, remove);
     }
 
+    @Override
     public void undo() {
         state.change(key, oldValue, !existed);
     }
 
-    public State getState() {
+    @Override
+    public HashMapState<K,V> getState() {
         return state;
     }
 

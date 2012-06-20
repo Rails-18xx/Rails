@@ -9,14 +9,13 @@ import rails.game.Player;
 import rails.game.ReportBuffer;
 import rails.game.action.PossibleAction;
 
-public final class ChangeStack {
+public final class ChangeStack extends AbstractItem {
     protected static Logger log =
         LoggerFactory.getLogger(ChangeStack.class.getPackage().getName());
 
     private final LinkedList<ChangeSet> stack = new LinkedList<ChangeSet>();
     private boolean enabled = false;
-
-    private ChangeStack() {}
+    
     
     public static ChangeStack create() {
         return new ChangeStack();
@@ -216,14 +215,4 @@ public final class ChangeStack {
         
         
     }
-
-    /* Static methods to enable access from anywhere */
-    static void add (Change change) {
-        change.execute();
-        
-        // get changeStack via StateManager
-        change.getState().getStateManager().getChangeStack().addChange(change);
-    }
-
-    
 }

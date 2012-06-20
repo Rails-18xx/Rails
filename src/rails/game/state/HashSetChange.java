@@ -2,10 +2,8 @@ package rails.game.state;
 
 /**
  * Change associated with HashSetState
- * 
- * @author Brett Lentz, freystef
  */
-final class HashSetChange<E> implements Change {
+final class HashSetChange<E> extends Change {
     final private HashSetState<E> state;
     final private E element;
     final private boolean addToSet;
@@ -13,24 +11,25 @@ final class HashSetChange<E> implements Change {
     /**
      * Add/Remove element to/from the set
      */
-    
     HashSetChange(HashSetState<E> state, E element, boolean addToSet){
+        super(state);
         this.state = state;
         this.element = element;
         this.addToSet = addToSet;
-        
-        ChangeStack.add(this);
     }
 
+    @Override
     public void execute() {
         state.change(element, addToSet);
     }
 
+    @Override
     public void undo() {
         state.change(element, !addToSet);
     }
     
-    public State getState() {
+    @Override
+    public HashSetState<E> getState() {
         return state;
     }
     

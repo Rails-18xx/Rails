@@ -5,28 +5,31 @@ package rails.game.state;
  * @author freystef
  */
 
-final class BooleanChange implements Change {
+final class BooleanChange extends Change {
 
     private final BooleanState state;
     private final boolean newValue;
     private final boolean oldValue;
     
     BooleanChange(BooleanState state,  boolean newValue) {
+        super(state);
         this.state = state;
         this.newValue = newValue;
         this.oldValue = state.booleanValue();
-        ChangeStack.add(this);
     }
-    
+
+    @Override
     public void execute() {
         state.change(newValue);
     }
 
+    @Override
     public void undo() {
         state.change(oldValue);
     }
 
-    public State getState() {
+    @Override
+    public BooleanState getState() {
         return state;
     }
 

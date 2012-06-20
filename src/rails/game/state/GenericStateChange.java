@@ -1,29 +1,29 @@
 package rails.game.state;
 
-/**
- * @author Erik Vos, freystef
- */
-final class GenericStateChange<E> implements Change {
+final class GenericStateChange<E> extends Change {
 
     final private GenericState<E> state;
     final private E previous, next;
 
-    public GenericStateChange(final GenericState<E> state, E object) {
+    public GenericStateChange(GenericState<E> state, E object) {
+        super(state);
         this.state = state;
         previous = state.get();
         next = object;
-        ChangeStack.add(this);
     }
 
+    @Override
     public void execute() {
         state.change(next);
     }
 
+    @Override
     public void undo() {
         state.change(previous);
     }
 
-    public State getState() {
+    @Override
+    public GenericState<E> getState() {
         return state;
     }
 

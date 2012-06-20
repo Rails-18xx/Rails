@@ -1,19 +1,19 @@
 package rails.game.state;
 
-final class PortfolioChange<T extends Ownable<T>> implements Change {
+final class PortfolioChange<T extends Ownable<T>> extends Change {
 
     private final Portfolio<T> in;
     private final Portfolio<T> out; // can be null
     private final T item;
 
     PortfolioChange(Portfolio<T> in, Portfolio<T> out, T item) {
+        super(in);
         this.in = in;
         this.out = out;
         this.item = item;
-        
-        ChangeStack.add(this);
     }
     
+    @Override
     public void execute() {
         in.change(item, true);
         if (out != null) {
@@ -21,6 +21,7 @@ final class PortfolioChange<T extends Ownable<T>> implements Change {
         }
     }
 
+    @Override
     public void undo() {
         in.change(item,  false);
         if (out != null) {
@@ -28,6 +29,7 @@ final class PortfolioChange<T extends Ownable<T>> implements Change {
         }
     }
 
+    @Override
     public Portfolio<? super T> getState() {
         return in;
     }

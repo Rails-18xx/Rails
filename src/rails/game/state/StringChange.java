@@ -5,28 +5,31 @@ package rails.game.state;
  * @author freystef
  */
 
-final class StringChange implements Change {
+final class StringChange extends Change {
 
     private final StringState state;
     private final String newValue;
     private final String oldValue;
     
     StringChange(StringState state, String newValue) {
+        super(state);
         this.state = state;
         this.newValue = newValue;
         this.oldValue = state.stringValue();
-        ChangeStack.add(this);
     }
     
+    @Override
     public void execute() {
         state.change(newValue);
     }
 
+    @Override
     public void undo() {
         state.change(oldValue);
     }
 
-    public State getState() {
+    @Override
+    public StringState getState() {
         return state;
     }
 

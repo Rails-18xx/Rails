@@ -192,6 +192,13 @@ public final class StateManager extends AbstractItem {
 //    void registerReceiver(Triggerable receiver, State toState) {
 //    }
 
+    /**
+     * @param change to be added to the ChangeStack
+     */
+    void addChangeToStack(Change change) {
+        changeStack.addChange(change);
+    }
+    
     ChangeStack getChangeStack() {
         return changeStack;
     }

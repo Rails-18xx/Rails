@@ -2,31 +2,32 @@ package rails.game.state;
 
 /**
  * Change associated with IntegerState
- * @author freystef
  */
-
-final class IntegerChange implements Change {
+final class IntegerChange extends Change {
 
     private final IntegerState state;
     private final int newValue;
     private final int oldValue;
     
     IntegerChange(IntegerState state, int newValue) {
+        super(state);
         this.state = state;
         this.newValue = newValue;
         this.oldValue = state.value();
-        ChangeStack.add(this);
     }
-    
+
+    @Override
     public void execute() {
         state.change(newValue);
     }
 
+    @Override
     public void undo() {
         state.change(oldValue);
     }
 
-    public State getState() {
+    @Override
+    public IntegerState getState() {
         return state;
     }
 

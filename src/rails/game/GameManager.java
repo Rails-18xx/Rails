@@ -167,6 +167,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponent {
     /**
      * The MoveSet stack is maintained to enable Undo and Redo throughout the game.
      */
+    @Deprecated
     protected final ChangeStack changeStack = ChangeStack.create();
 
     /**

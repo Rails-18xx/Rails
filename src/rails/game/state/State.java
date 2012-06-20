@@ -55,8 +55,6 @@ public abstract class State extends Observable {
         }
     }
 
-    // State methods
-    
     /**
      * Adds a Formatter 
      * @param formatter
@@ -68,6 +66,4 @@ public abstract class State extends Observable {
     StateManager getStateManager() {
         return stateManager;
     }
-    
-    
 }

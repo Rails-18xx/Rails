@@ -86,7 +86,6 @@ public final class PortfolioModel extends Model implements PortfolioHolder {
      */
     @Override 
     public void init(Item parent, String id) {
-
         super.checkedInit(parent, id, PortfolioOwner.class);
         
         // create models

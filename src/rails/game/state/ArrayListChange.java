@@ -4,7 +4,7 @@ package rails.game.state;
  * Change associated with ArrayListState
  * @author evos, freystef
  */
-final class ArrayListChange<E> implements Change {
+final class ArrayListChange<E> extends Change {
     final private ArrayListState<E> state;
     final private E object;
     final private int index;
@@ -21,32 +21,36 @@ final class ArrayListChange<E> implements Change {
      * Add object at the specified index
      */
     ArrayListChange(ArrayListState<E> state, E object, int index) {
+        super(state);
         this.state = state;
         this.object = object;
         this.index = index;
         this.addToList = true;
-        ChangeStack.add(this);
     }
 
     /**
      * Remove object at the specified index
      */
     ArrayListChange(ArrayListState<E> state, int index) {
+        super(state);
         this.state = state;
         this.object = state.get(index);
         this.index = index;
         this.addToList = false;
     }
-
+    
+    @Override
     public void execute() {
         state.change(object, index, addToList);
     }
 
+    @Override
     public void undo() {
         state.change(object, index, !addToList);
     }
 
-    public State getState() {
+    @Override
+    public ArrayListState<E> getState() {
         return state;
     }
     
