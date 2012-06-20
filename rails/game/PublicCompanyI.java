@@ -11,12 +11,11 @@ import rails.game.model.*;
  */
 public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolder {
 
+    /* Capitalisation options */
     public static final int CAPITALISE_FULL = 0;
-
     public static final int CAPITALISE_INCREMENTAL = 1;
-
     public static final int CAPITALISE_WHEN_BOUGHT = 2;
-    
+
     public void setIndex (int index);
 
 
@@ -96,7 +95,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolder {
      */
 
     public boolean hasFloated();
-    
+
     public ModelObject getFloatedModel();
 
     /**
@@ -321,6 +320,7 @@ public interface PublicCompanyI extends CompanyI, CashHolder, TokenHolder {
 
     public void setHomeCityNumber(int homeCityNumber);
     public boolean isHomeBlockedForAllCities();
+    public boolean isHomeMapDisplay();
 
     public MapHex getDestinationHex();
     public boolean hasDestination ();

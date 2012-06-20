@@ -328,6 +328,7 @@ Payout,Bob,48,6,10
 PRICE_MOVES_LOG,TC,70,D3,80,E3
 BuysTrain,TC,3,IPO,180
 StartOfPhase,3½
+CivilWarBegins,
  
 CompanyOperates,SOU,Chester
 LaysTileAt,SOU,619,G12,SW

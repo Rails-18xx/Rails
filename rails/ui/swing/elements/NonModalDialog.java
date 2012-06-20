@@ -83,6 +83,7 @@ public abstract class NonModalDialog extends JDialog implements ActionListener {
         pack();
 
         // Center on owner
+        window.setVisible(true);  // Window must be visible to find its location!
         int x = (int) window.getLocationOnScreen().getX()
         + (window.getWidth() - getWidth()) / 2;
         int y = (int) window.getLocationOnScreen().getY()

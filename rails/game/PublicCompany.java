@@ -29,10 +29,10 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
     protected static int numberOfPublicCompanies = 0;
 
-    // Home base token lay times
+    // Home base & price token lay times
     protected static final int WHEN_STARTED = 0;
     protected static final int WHEN_FLOATED = 1;
-    protected static final int START_OF_FIRST_OR = 2;
+    protected static final int START_OF_FIRST_OR = 2; // Only applies to home base tokens
 
     // Base token lay cost calculation methods
     public static final String BASE_COST_SEQUENCE = "sequence";
@@ -67,6 +67,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
     protected List<MapHex> homeHexes = null;
     protected int homeCityNumber = 1;
     protected boolean homeAllCitiesBlocked = false;
+    protected boolean homeMapDisplay = true;
+
 
     /** Destination hex * */
     protected String destinationHexName = null;
@@ -235,6 +237,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
     /*---- variables needed during initialisation -----*/
     protected String startSpace = null;
 
+    protected int dropPriceToken = WHEN_STARTED;
+
     protected int capitalisation = CAPITALISE_FULL;
 
     /** Fixed price (for a 1835-style minor) */
@@ -313,6 +317,11 @@ public class PublicCompany extends Company implements PublicCompanyI {
         floatPerc = tag.getAttributeAsInteger("floatPerc", floatPerc);
 
         startSpace = tag.getAttributeAsString("startspace");
+        // Set the default price token drop time.
+        // Currently, no exceptions exist, so this value isn't changed anywhere yet.
+        // Any (future) games with exceptions to these defaults will require a separate XML attribute.
+        // Known games to have exceptions: 1837.
+        dropPriceToken = startSpace != null ? WHEN_FLOATED : WHEN_STARTED;
 
         fixedPrice = tag.getAttributeAsInteger("price", 0);
 
@@ -336,6 +345,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
             homeHexNames = homeBaseTag.getAttributeAsString("hex");
             homeCityNumber = homeBaseTag.getAttributeAsInteger("city", 1);
             homeAllCitiesBlocked = homeBaseTag.getAttributeAsBoolean("allCitiesBlocked", false);
+            homeMapDisplay = homeBaseTag.getAttributeAsBoolean("mapDisplay", true);
         }
 
         Tag destinationTag = tag.getChild("Destination");
@@ -883,6 +893,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
         return homeAllCitiesBlocked;
     }
 
+    public boolean isHomeMapDisplay() {
+        return homeMapDisplay;
+    }
 
     /**
      * @return Returns the destinationHex.
@@ -934,8 +947,12 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
         if (startSpace != null) {
             setParSpace(startSpace);
-            //  The current price is set via the Stock Market
-            stockMarket.start(this, startSpace);
+            setCurrentSpace(startSpace);
+
+            // Drop the current price token, if allowed at this point
+            if (dropPriceToken == WHEN_STARTED) {
+                stockMarket.start(this, startSpace);
+            }
         }
 
 
@@ -1000,6 +1017,11 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
         if (sharePriceUpOnFloating) {
             stockMarket.moveUp(this);
+        }
+
+        // Drop the current price token, if allowed at this point
+        if (dropPriceToken == WHEN_FLOATED) {
+            stockMarket.start(this, getCurrentSpace());
         }
 
         if (homeBaseTokensLayTime == WHEN_FLOATED) {
@@ -1170,7 +1192,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
      * stock market.
      */
     public void setCurrentSpace(StockSpaceI price) {
-        if (price != null) {
+        if (price != null && price != getCurrentSpace()) {
             currentPrice.setPrice(price);
         }
     }
@@ -1739,21 +1761,25 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
         if (baseTokenLayCost == null) return 0;
 
-        if (baseTokenLayCostMethod.equals(BASE_COST_SEQUENCE)) {
-            int index = getNumberOfLaidBaseTokens();
+        /* Changed by JDG/EV: allow cost array for both calculation methods.
+         * In 1837, token lay cost per hex distance depends on
+         * the number of tokens laid before. */
+        int index = getNumberOfLaidBaseTokens();
 
-            if (index >= baseTokenLayCost.length) {
-                index = baseTokenLayCost.length - 1;
-            } else if (index < 0) {
-                index = 0;
-            }
+        if (index >= baseTokenLayCost.length) {
+            index = baseTokenLayCost.length - 1;
+        } else if (index < 0) {
+            index = 0;
+        }
+
+        if (baseTokenLayCostMethod.equals(BASE_COST_SEQUENCE)) {
             return baseTokenLayCost[index];
         } else if (baseTokenLayCostMethod.equals(BASE_COST_DISTANCE)) {
             if (hex == null) {
-                return baseTokenLayCost[0];
+                return baseTokenLayCost[index];
             } else {
                 // WARNING: no provision yet for multiple home hexes.
-                return mapManager.getHexDistance(homeHexes.get(0), hex) * baseTokenLayCost[0];
+                return mapManager.getHexDistance(homeHexes.get(0), hex) * baseTokenLayCost[index];
             }
         } else {
             return 0;

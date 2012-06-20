@@ -1056,6 +1056,7 @@ PRICE_MOVES_LOG,WT,72,A5,64,A6
 BuysTrain,WT,5,IPO,500
 FirstTrainBought,5
 StartOfPhase,5
+PhaseClosesAllPrivates,
 PrivateCloses,OBB
 PrivateCloses,PfB
 CompanyDiscardsTrain,SX,3

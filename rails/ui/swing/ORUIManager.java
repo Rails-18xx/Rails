@@ -937,12 +937,55 @@ public class ORUIManager implements DialogOwner {
      */
     protected void relayBaseTokens (LayTile action) {
 
-        MapHex hex = action.getChosenHex();
+        final MapHex hex = action.getChosenHex();
         TileI newTile = action.getLaidTile();
         TileI oldTile = hex.getCurrentTile();
         if (!action.isRelayBaseTokens()
                 && !oldTile.relayBaseTokensOnUpgrade()) return;
-        for (Stop oldStop : hex.getStops()) {
+
+        List<Stop> stopsToQuery = hex.getStops();
+
+        /* Check which tokens must be relaid, and in which sequence.
+         * Ideally, the game engine should instruct the UI what to do
+         * if there is more than one stop and more than one token.
+         * TODO LayTile does not yet allow that.
+         * 
+         * For now, the only case that needs special handling is the 1835 BA home hex L6,
+         * where it it possible to have two tokens laid before even one tile.
+         * Let's generalise this case to: two stops, both tokened.
+         * We consider single-slot stops only.
+         * In fact, all we need to do is
+         * 1. Sort the stops so that the home company gets queried first,
+         * 2. Count down the number of free slots per new station, so that full stations are skipped,
+         * It's already taken care for, that a choice-between-one is handled automatically.
+         * [EV, jun2012]
+         */
+        if (stopsToQuery.size() == 2) {
+            Collections.sort(stopsToQuery, new Comparator<Stop>() {
+                public int compare (Stop s1, Stop s2) {
+                    List<TokenI> tokens;
+                    boolean stop1IsHome = !((tokens = s1.getTokens()).isEmpty())
+                    && ((BaseToken)tokens.get(0)).getCompany().getHomeHexes().contains(hex);
+                    boolean stop2IsHome = !((tokens = s2.getTokens()).isEmpty())
+                    && ((BaseToken)tokens.get(0)).getCompany().getHomeHexes().contains(hex);
+                    if (stop1IsHome && !stop2IsHome) {
+                        return -1;
+                    } else if (stop2IsHome && !stop1IsHome) {
+                        return 1;
+                    } else {
+                        return 0; // Doesn't matter
+                    }
+                }
+            });
+        }
+
+        // Array to enable counting down the free token slots per new station
+        int[] freeSlots = new int[1 + newTile.getStations().size()];
+        for (Station newStation : newTile.getStations()) {
+            freeSlots[newStation.getNumber()] = newStation.getBaseSlots();
+        }
+
+        for (Stop oldStop : stopsToQuery) {
             if (oldStop.hasTokens()) {
                 // Assume only 1 token (no exceptions known)
                 PublicCompanyI company = ((BaseToken)oldStop.getTokens().get(0)).getCompany();
@@ -951,7 +994,7 @@ public class ORUIManager implements DialogOwner {
                 Map<String, Integer> promptToCityMap = new HashMap<String, Integer>();
                 String prompt;
                 for (Station newStation : newTile.getStations()) {
-                    if (newStation.getBaseSlots() > 0) {
+                    if (newStation.getBaseSlots() > 0 && freeSlots[newStation.getNumber()] > 0) {
                         prompt = LocalText.getText("SelectStationForTokenOption",
                                 newStation.getNumber(),
                                 hex.getConnectionString(
@@ -987,8 +1030,10 @@ public class ORUIManager implements DialogOwner {
                                 prompts.toArray(), prompts.get(0));
                     if (selected == null) return;
                     action.addRelayBaseToken(company.getName(), promptToCityMap.get(selected));
+                    --freeSlots[promptToCityMap.get(selected)];
                 } else {
-                    action.addRelayBaseToken(company.getName(), promptToCityMap.get(prompts.toArray() [0]));
+                    action.addRelayBaseToken(company.getName(), promptToCityMap.get(prompts.toArray()[0]));
+                    --freeSlots[promptToCityMap.get(prompts.toArray()[0])];
                 }
             }
         }

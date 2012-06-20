@@ -410,6 +410,7 @@ public class StockRound extends Round {
              * If the current Player is president, check if he can dump the
              * presidency onto someone else.
              */
+            dumpThreshold = 0;
             if (company.getPresident() == currentPlayer) {
                 int presidentShare =
                     company.getCertificates().get(0).getShare();
@@ -423,7 +424,6 @@ public class StockRound extends Round {
                     List<Player> players = gameManager.getPlayers();
                     Player player;
                     int dumpedPlayerShare = 0;
-                    dumpThreshold = 0;
 
                     for (playerIndex = (currentPlayerIndex+1)%numberOfPlayers;
                     playerIndex != currentPlayerIndex;
@@ -473,13 +473,21 @@ public class StockRound extends Round {
                 number = shareCountPerUnit[shareSize];
 
                 // If you can dump a presidency, you may sell additional single shares that you don't own
-                if (shareSize == 1) number += extraSingleShares;
+                if (dumpThreshold > 0 && shareSize == 1) number += extraSingleShares;
                 if (number == 0) continue;
 
                 /* In some games (1856), a just bought share may not be sold */
                 // This code ignores the possibility of different share units
                 if ((Boolean)gameManager.getGameParameter(GameDef.Parm.NO_SALE_OF_JUST_BOUGHT_CERT)
-                        && company.equals(companyBoughtThisTurnWrapper.get())) {
+                        && company.equals(companyBoughtThisTurnWrapper.get())
+                        /* An 1856 clarification by Steve Thomas (backed by Bill Dixon) states that
+                         * in this situation a half-presidency may be sold
+                         * (apparently even if a dump would otherwise not be allowed),
+                         * as long as the number of shares does not become zero.
+                         * So the rule "can't sell a just bought share" only means,
+                         * that the number of shares may not be sold down to zero.
+                         * Added 4jun2012 by EV */
+                        && number == ownedShare/shareUnit) {
                     number--;
                 }
                 if (number <= 0) continue;

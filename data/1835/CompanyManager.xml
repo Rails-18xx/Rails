@@ -55,7 +55,7 @@
 		<ClosingConditions>
             <Phase>5</Phase>
 			<SpecialProperties condition="ifAllExercised"/>
-			<CloseManually/> <!-- If second tile is laid not via special property -->
+			<CloseManually/> <!-- Workaround, may be needed if one of the tiles is not laid via this special property -->
 		</ClosingConditions>
 	</Company>
 	<Company name="PfB" longname="Pfalzbahnen" type="Private" basePrice="150" revenue="15">
@@ -70,6 +70,7 @@
 		<ClosingConditions>
             <Phase>5</Phase>
 			<SpecialProperties condition="ifAllExercised"/>
+			<CloseManually/> <!-- Workaround, may be needed if a tile or token is not laid via this special property -->
 		</ClosingConditions>
 	</Company>
 	<Company name="LD" longname="Leipzig-Dresdner Bahn" type="Private" basePrice="190">
@@ -204,7 +205,7 @@
 	</Company>
 	<Company name="PR" longname="Preu&#223;ische Eisenbahn" type="Major" startspace="I4" available="no" tokens="7" fgColour="FFFFFF" bgColour="000000"
 			alias="Pr">
-        <Home hex="E19"/>
+        <Home hex="E19" mapDisplay="no"/>
 		<ShareUnit percentage="5" sharePriceUnits="2"/>
 		<Float percentage="10"/>
 		<Certificate type="President" shares="2"/>
