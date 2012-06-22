@@ -17,7 +17,7 @@ public abstract class AbstractItem implements Item {
     protected AbstractItem () {}
 
     // Item interface
-    public void init(Item parent, String id){
+    public <P extends Item> void init(P parent, String id){
         checkNotNull(parent, "Parent cannot be null");
         checkNotNull(id, "Id cannot be null");
         checkArgument(id != Root.id, "Id cannot equal " + Root.id);

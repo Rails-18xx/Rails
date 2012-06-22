@@ -23,7 +23,7 @@ public final class StateManager extends AbstractItem {
     
     // FIXME: Move the following three to a stateful implementation
     // and only initialize them in init()
-    private final PortfolioManager portfolioManager = PortfolioManager.create();
+    private final OwnableManager portfolioManager = OwnableManager.create();
     private final WalletManager walletManager = WalletManager.create();
     
     private final Set<State> allStates = new HashSet<State>();

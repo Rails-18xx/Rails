@@ -5,14 +5,14 @@ package rails.game.state;
  * @author freystef
  */
 
-public final class PortfolioManager extends AbstractItem {
+public final class OwnableManager<T extends Ownable<T>> extends AbstractItem {
 
     private final HashMultimapState<Owner, PortfolioMap<?>> portfolios = HashMultimapState.create();
     
-    private PortfolioManager() {};
+    private OwnableManager() {};
     
-    static PortfolioManager create() {
-        return new PortfolioManager();
+    static <T extends Ownable<T>> OwnableManager<T> create() {
+        return new OwnableManager<T>();
     }
     
     boolean addPortfolio(PortfolioMap<?> p){

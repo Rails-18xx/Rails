@@ -18,7 +18,7 @@ public interface Item {
 
     static final char SEP = '.';
 
-    void init(Item parent, String id);
+    <P extends Item> void init(P parent, String id);
     
     boolean isInitialized();
     
