@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1835.java,v 1.26 2010/03/30 21:59:03 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -8,34 +7,28 @@ import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.game.action.*;
 import rails.game.state.IntegerState;
-import rails.game.state.Item;
 
 /**
  * Implements an 1835-style startpacket sale.
  */
-public class StartRound_1835 extends StartRound {
+public final class StartRound_1835 extends StartRound {
     /* Additional variants */
     public static final String CLEMENS_VARIANT = "Clemens";
     public static final String SNAKE_VARIANT = "Snake";
 
-    // TODO: Check if the move from static to object fields works
+    // FIXME: Check if the move from static to object fields works
+    // Otherwise move them to the gameManager_1835
     /* To control the player sequence in the Clemens and Snake variants */
-    private final IntegerState turn = IntegerState.create();
-    private final IntegerState startRoundNumber = IntegerState.create();
+    private final IntegerState turn = IntegerState.create(this, "turn");
+    private final IntegerState startRoundNumber = IntegerState.create(this, "startRoundNumber");
 
-    /**
-     * Constructor, only to be used in dynamic instantiation.
-     */
-    public StartRound_1835(GameManager gameManager) {
-        super(gameManager);
+    private StartRound_1835(GameManager parent, String id) {
+        super(parent, id);
         hasBidding = false;
     }
-
-    @Override
-    public void init(Item parent, String id) {
-        super.init(parent, id);
-        turn.init(GameManager.getInstance(), "TurnNumber");
-        startRoundNumber.init(GameManager.getInstance(), "StartRoundNumber");
+    
+    public static StartRound_1835 create(GameManager parent, String id){
+        return new StartRound_1835(parent, id);
     }
     
     /**

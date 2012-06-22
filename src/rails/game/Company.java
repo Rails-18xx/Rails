@@ -14,11 +14,12 @@ import rails.game.special.SpecialProperty;
 import rails.game.state.BooleanState;
 import rails.game.state.AbstractItem;
 import rails.game.state.Item;
+import rails.game.state.PortfolioHolder;
 import rails.game.state.PortfolioList;
 import rails.util.Util;
 
 public abstract class Company extends AbstractItem implements ConfigurableComponent,
-Cloneable, Comparable<Company> {
+Cloneable, Comparable<Company>, PortfolioHolder {
 
     /** The name of the XML tag used to configure a company. */
     public static final String COMPANY_ELEMENT_ID = "Company";
@@ -49,21 +50,17 @@ Cloneable, Comparable<Company> {
     protected int certLimitCount = 2;
 
     /** Closed state */
-    protected final BooleanState closedObject = BooleanState.create(false);
+    protected final BooleanState closedObject = BooleanState.create(this, "closed", false);
 
     // Moved here from PrivayeCOmpany on behalf of 1835
-    protected final PortfolioList<SpecialProperty> specialProperties = PortfolioList.create();
+    protected final PortfolioList<SpecialProperty> specialProperties = PortfolioList.create(this, "specialProperties");
 
     protected static Logger log =
         LoggerFactory.getLogger(Company.class.getPackage().getName());
 
-    @Override
-    public void init(Item parent, String id) {
-        super.init(parent, id);
-        closedObject.init(this, "closed");
-        specialProperties.init(this, "specialProperties");
+    protected Company(Item parent, String id) {
+        super(parent, id);
     }
-    
     public void initType(CompanyType type) {
         this.type = type;
     }

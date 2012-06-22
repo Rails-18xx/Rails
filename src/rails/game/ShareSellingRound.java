@@ -12,45 +12,29 @@ import rails.game.action.PossibleAction;
 import rails.game.action.SellShares;
 import rails.game.model.PortfolioModel;
 import rails.game.state.IntegerState;
-import rails.game.state.Item;
 
-/**
- * @author Erik Vos
- */
+// TODO: Check if un-initialized states cause undo problems
 public class ShareSellingRound extends StockRound {
 
     protected Round parentRound;
     protected Player sellingPlayer;
-    private IntegerState cashToRaise = null; // intialized later
+    private IntegerState cashToRaise; // intialized later
     private PublicCompany cashNeedingCompany;
     private boolean dumpOtherCompaniesAllowed;
 
     private List<SellShares> sellableShares;
 
-    /**
-     * Constructor with the GameManager, will call super class (StockRound's) Constructor to initialize, and
-     * and other parameters used by the Share Selling Round Class
-     *
-     * @param aGameManager The GameManager Object needed to initialize the StockRound Class
-     * @param compNeedingTraing The PublicCompany Object that needs to buy the train,
-     *        who is limited on selling shares of
-     * @param cashToRaise The amount of cash needed to be raised during the special sell-off
-     *
-     */
-    public ShareSellingRound(GameManager gameManager,
-            Round parentRound) {
-
-        super (gameManager);
+    protected ShareSellingRound(GameManager parent, String id, Round parentRound) {
+        super(parent, id);
         this.parentRound = parentRound;
 
         guiHints.setActivePanel(GuiDef.Panel.STATUS);
     }
-
-    @Override
-    public void init(Item parent, String id) {
-        super.init(parent, id);
-    }
     
+    public static ShareSellingRound create(GameManager parent, String id, Round parentRound) {
+        return new ShareSellingRound(parent, id, parentRound);
+    }
+
     public void start(Player sellingPlayer, int cashToRaise,
             PublicCompany cashNeedingCompany, boolean dumpOtherCompaniesAllowed) {
         log.info("Share selling round started, player="
@@ -60,8 +44,7 @@ public class ShareSellingRound extends StockRound {
                 Bank.format(cashToRaise)));
         currentPlayer = this.sellingPlayer = sellingPlayer;
         this.cashNeedingCompany = cashNeedingCompany;
-        this.cashToRaise = IntegerState.create(cashToRaise);
-        this.cashToRaise.init(this, "CashToRaise");
+        this.cashToRaise = IntegerState.create(this, "CashToRaise", cashToRaise);
         
         this.dumpOtherCompaniesAllowed = dumpOtherCompaniesAllowed;
         log.debug("Forced selling, dumpOtherCompaniesAllowed = " + dumpOtherCompaniesAllowed);

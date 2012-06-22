@@ -2,36 +2,30 @@ package rails.game.model;
 
 import rails.game.Company;
 import rails.game.PrivateCompany;
-import rails.game.state.Item;
 import rails.game.state.Model;
 import rails.game.state.Portfolio;
+import rails.game.state.PortfolioHolder;
 import rails.game.state.PortfolioList;
-
 
 public final class PrivatesModel extends Model {
 
-    public static final String id = "PrivatesModel";
+    public static final String ID = "PrivatesModel";
     
-    private final PortfolioList<PrivateCompany> privates = PortfolioList.create();
+    private final Portfolio<PrivateCompany> privates;
     
     private boolean addLineBreak = false;
 
-    private PrivatesModel() {}
+    private PrivatesModel(PortfolioHolder parent, String id) {
+        super(parent, id);
+        privates = PortfolioList.create(parent, "privates");
+    }
     
     /**
      * Creates an initialized PrivatesModel
      * id is identical to class name "PrivatesModel"
      */
-    public static PrivatesModel create(Item parent) {
-        PrivatesModel model = new PrivatesModel();
-        model.init(parent, id);
-        return model;
-    }
-    
-    @Override
-    public void init(Item parent, String id){
-        super.init(parent, id);
-        privates.init(this, "Privates");
+    public static PrivatesModel create(PortfolioHolder parent) {
+        return new PrivatesModel(parent, ID);
     }
     
     public Portfolio<PrivateCompany> getPortfolio() {

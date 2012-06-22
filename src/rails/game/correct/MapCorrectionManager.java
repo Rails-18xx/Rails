@@ -6,7 +6,7 @@ import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.game.*;
 
-public class MapCorrectionManager extends CorrectionManager {
+public final class MapCorrectionManager extends CorrectionManager {
 
     public static enum ActionStep {
         SELECT_HEX,SELECT_TILE,SELECT_ORIENTATION,CONFIRM,RELAY_BASETOKENS,FINISHED,CANCELLED;
@@ -14,10 +14,14 @@ public class MapCorrectionManager extends CorrectionManager {
 
     private MapCorrectionAction activeTileAction = null;
 
-    protected MapCorrectionManager(GameManager gm) {
-        super(gm, CorrectionType.CORRECT_MAP);
+    private MapCorrectionManager(GameManager parent) {
+        super(parent, CorrectionType.CORRECT_MAP);
     }
 
+    public static MapCorrectionManager create(GameManager parent) {
+        return new MapCorrectionManager(parent);
+    }
+    
     @Override
     public List<CorrectionAction> createCorrections() {
         List<CorrectionAction> actions = super.createCorrections();
@@ -53,7 +57,7 @@ public class MapCorrectionManager extends CorrectionManager {
         MapHex hex = action.getLocation();
 
         Tile chosenTile = action.getChosenTile();
-        TileManager tmgr = gameManager.getTileManager();
+        TileManager tmgr = getParent().getTileManager();
         Tile preprintedTile = tmgr.getTile(hex.getPreprintedTiled());
 
         // check conditions
@@ -175,7 +179,7 @@ public class MapCorrectionManager extends CorrectionManager {
             String msg = LocalText.getText("CorrectMapLaysTileAt",
                     chosenTile.getExternalId(), hex.getId(), hex.getOrientationName(orientation));
             ReportBuffer.add(msg);
-            gameManager.addToNextPlayerMessages(msg, true);
+            getParent().addToNextPlayerMessages(msg, true);
 
             // relays tokens
             //            if (action.getTokensToRelay() != null) {

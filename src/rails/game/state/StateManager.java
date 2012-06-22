@@ -14,38 +14,22 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
 public final class StateManager extends AbstractItem {
-
     
     protected static Logger log =
         LoggerFactory.getLogger(StateManager.class.getPackage().getName());
     
-    private final ChangeStack changeStack = ChangeStack.create();
-    
-    // FIXME: Move the following three to a stateful implementation
-    // and only initialize them in init()
-    private final OwnableManager portfolioManager = OwnableManager.create();
-    private final WalletManager walletManager = WalletManager.create();
+    private final ChangeStack changeStack = ChangeStack.create(this);
+    private final PortfolioManager portfolioManager = PortfolioManager.create(this, "portfolioManager");
+    private final WalletManager walletManager = WalletManager.create(this, "walletManager");
     
     private final Set<State> allStates = new HashSet<State>();
     
-
-    private StateManager() {};
-    
-    /**
-     * Creates a StateManager
-     */
-    public static StateManager create(){
-        return new StateManager();
+    private StateManager(Root parent, String id) {
+        super(parent, id);
     }
-    
-    /**
-     * @exception IllegalArgumentException if parent is not the Context with an id equal to Context.ROOT 
-     */
-    @Override
-    public void init(Item parent, String id) {
-        super.checkedInit(parent, id, Root.class);
-        portfolioManager.init(parent, "PortfolioManager");
-        walletManager.init(parent, "WalletManager");
+
+    public static StateManager create(Root parent, String id){
+        return new StateManager(parent, id);
     }
     
     /**
@@ -54,8 +38,8 @@ public final class StateManager extends AbstractItem {
      */
     boolean registerState(State state) {
         if (!allStates.add(state)) return false;
-        if (state instanceof PortfolioMap) {
-            return portfolioManager.addPortfolio((PortfolioMap<?>) state);
+        if (state instanceof Portfolio) {
+            return portfolioManager.addPortfolio((Portfolio<?>) state);
         } else if (state instanceof Wallet) {
             return walletManager.addWallet((Wallet<?>) state);
         }

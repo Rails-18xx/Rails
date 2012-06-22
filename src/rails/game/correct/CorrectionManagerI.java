@@ -5,10 +5,7 @@ import java.util.List;
 /**
  * CorrectionManagerI is the interface for the specific CorrectionManagers
  * Corrections use the (abstract) factory pattern.
- * @author freystef
- *
  */
-
 public interface CorrectionManagerI {
     
     public CorrectionType getCorrectionType();

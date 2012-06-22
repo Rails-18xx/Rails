@@ -8,11 +8,11 @@ import rails.game.GameManager;
 public enum CorrectionType {
     CORRECT_CASH {
         public CorrectionManagerI newCorrectionManager(GameManager gm)
-        {return new CashCorrectionManager(gm);}
+        {return CashCorrectionManager.create(gm);}
     },
     CORRECT_MAP {
         public CorrectionManagerI newCorrectionManager(GameManager gm)
-        {return new MapCorrectionManager(gm);}
+        {return MapCorrectionManager.create(gm);}
     }
     ;
     public abstract CorrectionManagerI newCorrectionManager(GameManager gm);

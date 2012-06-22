@@ -1,6 +1,5 @@
 package rails.game.correct;
 
-
 import java.util.List;
 
 import rails.common.DisplayBuffer;
@@ -16,8 +15,12 @@ import rails.game.model.MoneyModel;
 
 public final class CashCorrectionManager extends CorrectionManager {
     
-    protected CashCorrectionManager(GameManager gm) {
-        super(gm, CorrectionType.CORRECT_CASH);
+    private CashCorrectionManager(GameManager parent) {
+        super(parent, CorrectionType.CORRECT_CASH);
+    }
+    
+    public static CashCorrectionManager create(GameManager parent) {
+        return new CashCorrectionManager(parent);
     }
     
     @Override
@@ -25,12 +28,12 @@ public final class CashCorrectionManager extends CorrectionManager {
         List<CorrectionAction> actions = super.createCorrections();
         
         if (isActive()) {
-            List<Player> players = gameManager.getPlayers();
+            List<Player> players = getParent().getPlayers();
             for(Player pl:players){
                 actions.add(new CashCorrectionAction(pl));
             }
 
-            List<PublicCompany> publicCompanies = gameManager.getAllPublicCompanies();
+            List<PublicCompany> publicCompanies = getParent().getAllPublicCompanies();
             for(PublicCompany pc:publicCompanies){
                 if (pc.hasFloated() && !pc.isClosed())
                     actions.add(new CashCorrectionAction(pc));
@@ -84,7 +87,7 @@ public final class CashCorrectionManager extends CorrectionManager {
             // no error occured 
             // TODO: gameManager.getChangeStack().start(false);
 
-            Bank bank = gameManager.getBank();
+            Bank bank = getParent().getBank();
 
             String msg;
             if (amount < 0) {
@@ -102,7 +105,7 @@ public final class CashCorrectionManager extends CorrectionManager {
                         Bank.format(amount));
             }
             ReportBuffer.add(msg);
-            gameManager.addToNextPlayerMessages(msg, true);
+            getParent().addToNextPlayerMessages(msg, true);
             result = true;
         }
     

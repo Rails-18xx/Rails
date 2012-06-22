@@ -9,6 +9,7 @@ import rails.common.parser.Tag;
 import rails.game.Bank;
 import rails.game.GameManager;
 import rails.game.special.SpecialProperty;
+import rails.game.state.Item;
 
 public class NameTrains extends SpecialProperty {
 
@@ -17,6 +18,15 @@ public class NameTrains extends SpecialProperty {
     private List<NamedTrainToken> tokens = new ArrayList<NamedTrainToken>(2);
     private String name = "NameTrains";
 
+    private NameTrains(Item parent, String id) {
+        super(parent, id);
+    }
+
+    public static NameTrains create(Item parent) {
+        String uniqueId = SpecialProperty.createUniqueId();
+        return new NameTrains(parent, uniqueId);
+    }
+    
     @Override
     public void configureFromXML(Tag tag) throws ConfigurationException {
 

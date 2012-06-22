@@ -16,26 +16,24 @@ public final class ArrayListState<E> extends State implements Iterable<E>  {
 
     private final ArrayList<E> list;
 
-    private ArrayListState() {
-        list = new ArrayList<E>();
-    }
-
-    private ArrayListState(Collection<E> collection) {
-        list = new ArrayList<E>(collection);
+    private ArrayListState(Item parent, String id, Collection<E> collection) {
+        super(parent, id);
+        if (collection == null) list = new ArrayList<E>();
+        else list = new ArrayList<E>(collection);
     }
 
     /** 
      * Creates empty ArrayListState 
      */
-    public static <E> ArrayListState<E> create(){
-        return new ArrayListState<E>();
+    public static <E> ArrayListState<E> create(Item parent, String id){
+        return new ArrayListState<E>(parent, id, null);
     }
     
     /**
      * Creates a prefilled ArrayListState
      */
-    public static <E> ArrayListState<E> create(Collection<E> collection){
-        return new ArrayListState<E>(collection);
+    public static <E> ArrayListState<E> create(Item parent, String id, Collection<E> collection){
+        return new ArrayListState<E>(parent, id, collection);
     }
     
     public void add(E element) {

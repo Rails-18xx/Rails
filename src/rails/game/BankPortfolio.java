@@ -10,29 +10,28 @@ import rails.game.state.Item;
  */
 
 public class BankPortfolio extends AbstractItem implements PortfolioOwner {
-
-    private final PortfolioModel portfolio = PortfolioModel.create();
     
-    private BankPortfolio() {}
+    private final PortfolioModel portfolio = PortfolioModel.create(this);
     
-    public static BankPortfolio create() {
-        BankPortfolio bp = new BankPortfolio();
-        return bp;
+    protected BankPortfolio(Item parent, String id) {
+        super (parent, id);
     }
     
     /**
-     * parent is restricted to Bank
+     * @param parent restricted to bank
      */
+    public static BankPortfolio create(Bank parent, String id) {
+        return new BankPortfolio(parent, id);
+    }
+
     @Override
-    public void init(Item parent, String id) {
-        super.checkedInit(parent, id, Bank.class);
-        portfolio.init(this, "portfolio");
+    public Bank getParent() {
+        return (Bank)super.getParent();
     }
     
     // PortfolioOwner methods
     public PortfolioModel getPortfolioModel() {
         return portfolio;
     }
-    
 
 }

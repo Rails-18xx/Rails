@@ -12,10 +12,12 @@ public final class PortfolioMap<T extends Ownable<T>> extends Portfolio<T> {
 
     private ArrayListMultimap<Item, T> portfolio = ArrayListMultimap.create();
 
-    // default constructor
+    private PortfolioMap(PortfolioHolder parent, String id) {
+        super(parent, id);
+    }
     
-    public static <T extends Ownable<T>> PortfolioMap<T> create() {
-        return new PortfolioMap<T>();
+    public static <T extends Ownable<T>> PortfolioMap<T> create(PortfolioHolder parent, String id) {
+        return new PortfolioMap<T>(parent, id);
     }
 
     public boolean initialAdd(T item) {

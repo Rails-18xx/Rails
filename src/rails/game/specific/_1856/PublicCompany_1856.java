@@ -4,22 +4,19 @@ import rails.game.*;
 import rails.game.state.IntegerState;
 import rails.game.state.Item;
 
-public class PublicCompany_1856 extends PublicCompany {
+public final class PublicCompany_1856 extends PublicCompany {
 
-    private final IntegerState trainNumberAvailableAtStart = IntegerState.create();
-    private final IntegerState moneyInEscrow = IntegerState.create();
+    private final IntegerState trainNumberAvailableAtStart = IntegerState.create(this, "trainNumberAvailableAtStart");
+    private final IntegerState moneyInEscrow = IntegerState.create(this, "moneyInEscrow");
 
     /** Used for CGR */
     // TODO: Is this still used, as CGR has it owns class
     private boolean hadPermanentTrain = false;
-    
-    @Override
-    public void init(Item parent, String id){
-        super.init(parent, id);
-        trainNumberAvailableAtStart.init(this, id + "_trainAtStart");
-        moneyInEscrow.init(this, id + "_moneyInEscrow");
+
+    public PublicCompany_1856(Item parent, String id) {
+        super(parent, id);    
     }
-    
+
     @Override
     public void start(StockSpace startSpace) {
 

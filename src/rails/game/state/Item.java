@@ -1,27 +1,21 @@
 package rails.game.state;
 
 /**
- * An item is defined by three attributes:
+ * An item is defined by two (final) attributes:
  * 
  * Id: A string identifier, which should be unique inside the context used.
  * Parent: The parent of the item in the item hierarchy
- * Context: The nearest context in the item hierarchy
- *  
- * At creation time the id is defined as a final value.
- * A constructor of an item typically has a String argument to set the id.
  * 
- * The definition of the parent is delayed until the initialization of the item,
- * however the contract of an item implies that it cannot be changed after the initialization.
- *  
+ * 
+ * Implied attributes are
+ * Context: The nearest context in the item hierarchy
+ * URI: From the nearest context
+ * FullURI: From the root context
  */
 public interface Item {
 
     static final char SEP = '.';
 
-    <P extends Item> void init(P parent, String id);
-    
-    boolean isInitialized();
-    
     String getId();
 
     Item getParent();

@@ -70,28 +70,21 @@ public class PrivateCompany extends Company implements Ownable<PrivateCompany>, 
     protected boolean tradeableToCompany = true;
     protected boolean tradeableToPlayer = false;
     
-    private final GenericState<PortfolioHolder> owner = GenericState.create();
+    private final GenericState<PortfolioHolder> owner = GenericState.create(this, "owner");
 
     private Portfolio<PrivateCompany> portfolio;
     
-    private PrivateCompany() {
+    private PrivateCompany(Item parent, String id) {
+        super(parent, id);
         this.privateNumber = numberOfPrivateCompanies++;
     }
 
     public static PrivateCompany create(Item parent, String id, CompanyType type) {
-        PrivateCompany company = new PrivateCompany();
-        company.init(parent, id);
+        PrivateCompany company = new PrivateCompany(parent, id);
         company.initType(type);
         return company;
     }
     
-    /** Initialisation, to be called directly after instantiation (cloning) */
-    @Override
-    public void init(Item parent, String id) {
-        super.init(parent, id);
-        owner.init(this, "owner");
-    }
-
     /**
      * @see rails.common.parser.ConfigurableComponent#configureFromXML(org.w3c.dom.Element)
      */

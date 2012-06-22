@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialRight.java,v 1.19 2010/05/05 21:37:18 evos Exp $ */
 package rails.game.special;
 
 import java.util.*;
@@ -10,6 +9,7 @@ import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.*;
+import rails.game.state.Item;
 import rails.util.*;
 
 public class SpecialRight extends SpecialProperty implements RevenueStaticModifier {
@@ -21,6 +21,15 @@ public class SpecialRight extends SpecialProperty implements RevenueStaticModifi
     protected int cost = 0;
     protected String locationNames;
     protected List<MapHex> locations;
+
+    private SpecialRight(Item parent, String id) {
+        super(parent, id);
+    }
+
+    public static SpecialRight create(Item parent) {
+        String uniqueId = SpecialProperty.createUniqueId();
+        return new SpecialRight(parent, uniqueId);
+    }
 
     @Override
     public void configureFromXML(Tag tag) throws ConfigurationException {

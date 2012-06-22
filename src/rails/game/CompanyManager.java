@@ -13,6 +13,7 @@ import rails.common.parser.ConfigurableComponent;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.state.AbstractItem;
+import rails.game.state.Item;
 
 public class CompanyManager extends AbstractItem implements ConfigurableComponent {
 
@@ -62,13 +63,16 @@ public class CompanyManager extends AbstractItem implements ConfigurableComponen
 
     protected GameManager gameManager;
 
+    protected CompanyManager(Item parent, String id) {
+        super(parent, id);
+    }
+
     /*
      * NOTES: 1. we don't have a map over all companies, because some games have
      * duplicate names, e.g. B&O in 1830. 2. we have both a map and a list of
      * private/public companies to preserve configuration sequence while
      * allowing direct access.
      */
-    public CompanyManager() { }
 
     /**
      * @see rails.common.parser.ConfigurableComponent#configureFromXML(org.w3c.dom.Element)
@@ -174,7 +178,7 @@ public class CompanyManager extends AbstractItem implements ConfigurableComponen
         if (packetTags != null) {
             for (Tag packetTag : tag.getChildren("StartPacket")) {
                 // Extract the attributes of the Component
-                String name = packetTag.getAttributeAsString("name", StartPacket.DEFAULT_NAME);
+                String name = packetTag.getAttributeAsString("name", StartPacket.DEFAULT_ID);
                 String roundClass =
                         packetTag.getAttributeAsString("roundClass");
                 if (roundClass == null) {
@@ -182,7 +186,7 @@ public class CompanyManager extends AbstractItem implements ConfigurableComponen
                             "StartPacketHasNoClass", name));
                 }
 
-                StartPacket sp = new StartPacket(name, roundClass);
+                StartPacket sp = StartPacket.create(this, name, roundClass);
                 startPackets.add(sp);
                 startPacketMap.put(name, sp);
 

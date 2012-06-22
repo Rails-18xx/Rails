@@ -14,7 +14,6 @@ import rails.game.model.PortfolioModel;
 import rails.game.state.ArrayListState;
 import rails.game.state.BooleanState;
 import rails.game.state.IntegerState;
-import rails.game.state.Item;
 
 /**
  * Implements a basic Stock Round. <p> A new instance must be created for each
@@ -24,31 +23,22 @@ import rails.game.state.Item;
  */
 public class StockRound_18EU extends StockRound {
     protected final ArrayListState<PublicCompany> compWithExcessTrains =
-            ArrayListState.create();
-    protected final IntegerState discardingCompanyIndex = IntegerState.create();
-    protected final BooleanState discardingTrains = BooleanState.create();
+            ArrayListState.create(this, "compWithExcessTrains");
+    protected final IntegerState discardingCompanyIndex = IntegerState.create(this, "discardingCompanyIndex");
+    protected final BooleanState discardingTrains = BooleanState.create(this, "discardingTrains");
 
     protected boolean phase5Reached = false;
     protected PublicCompany[] discardingCompanies;
 
-    /**
-     * Constructor with the GameManager, will call super class (StockRound's) Constructor to initialize
-     *
-     * @param aGameManager The GameManager Object needed to initialize the Stock Round
-     *
-     */
-    public StockRound_18EU (GameManager aGameManager) {
-        super (aGameManager);
+    public StockRound_18EU (GameManager parent, String id) {
+        super(parent, id);
+    }
+
+    public static StockRound_18EU create(GameManager parent, String id){
+        return new StockRound_18EU(parent, id);
     }
     
-    @Override
-    public void init(Item parent, String id){
-        super.init(parent, id);
-        compWithExcessTrains.init(this, "compWithExcessTrains");
-        discardingTrains.init(this, "DiscardingTrains");
-        discardingCompanyIndex.init(this, "DiscardingCompanyIndex");
-    }
-    
+
     @Override
     public void start() {
         super.start();

@@ -64,7 +64,12 @@ public class MapManager extends AbstractItem implements ConfigurableComponent {
     protected static Logger log =
         LoggerFactory.getLogger(MapManager.class.getPackage().getName());
 
-    public MapManager() {
+    private MapManager(GameManager parent, String id) {
+        super(parent, id);
+    }
+    
+    public static MapManager create(GameManager parent, String id) {
+        return new MapManager(parent, id);
     }
 
     /**
@@ -121,9 +126,7 @@ public class MapManager extends AbstractItem implements ConfigurableComponent {
         maxX = maxY = maxCol = maxRow = Integer.MIN_VALUE;
         possibleTileCosts = new TreeSet<Integer>();
         for (Tag hexTag : hexTags) {
-            hex = new MapHex();
-            hex.configureFromXML(hexTag);
-            hex.init(this, hex.getName());
+            hex = MapHex.create(this, hexTag);
             mHexes.put(hex.getId(), hex);
             minX = Math.min(minX, hex.getX());
             minY = Math.min(minY, hex.getY());

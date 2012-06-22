@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTokenLay.java,v 1.14 2010/02/28 21:38:05 evos Exp $ */
 package rails.game.special;
 
 import java.util.List;
@@ -7,6 +6,7 @@ import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.*;
+import rails.game.state.Item;
 import rails.util.*;
 
 public class SpecialTokenLay extends SpecialProperty {
@@ -19,6 +19,15 @@ public class SpecialTokenLay extends SpecialProperty {
     Token token = null;
     int numberAvailable = 1;
     int numberUsed = 0;
+
+    private SpecialTokenLay(Item parent, String id) {
+        super(parent, id);
+    }
+
+    public static SpecialTokenLay create(Item parent) {
+        String uniqueId = SpecialProperty.createUniqueId();
+        return new SpecialTokenLay(parent, uniqueId);
+    }
 
     @Override
     public void configureFromXML(Tag tag) throws ConfigurationException {

@@ -14,37 +14,30 @@ public class Train extends OwnableItem<Train> {
 
     protected TrainCertificateType certificateType;
     
-    protected GenericState<TrainType> type = GenericState.create();
+    protected final GenericState<TrainType> type = GenericState.create(this, "type");
     
     /** Some specific trains cannot be traded between companies */
     protected boolean tradeable = true;
 
-    protected BooleanState obsolete = BooleanState.create(false);
+    protected final BooleanState obsolete = BooleanState.create(this, "obsolete");
     
     private Portfolio<Train> portfolio;
 
     protected static Logger log =
             LoggerFactory.getLogger(Train.class.getPackage().getName());
 
-    public Train() {}
+    protected Train(Item parent, String id) {
+        super(parent, id);
+    }
     // TODO: Train creation is shared by three classes, simplify that
-    
     public static Train create(Item parent, String id, TrainCertificateType certType, TrainType type)
             throws ConfigurationException {
         Train train = certType.createTrain();
-        train.init(parent, id);
         train.setCertificateType(certType);
         train.setType(type);
         return train;
     }
 
-    @Override
-    public void init(Item parent, String id) {
-        super.init(parent,id);
-        type.init(this, "currentType");
-        obsolete.init(this, "obsolete");
-    }
-    
     public void setCertificateType(TrainCertificateType type) {
         this.certificateType = type;
     }

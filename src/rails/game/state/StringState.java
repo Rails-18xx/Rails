@@ -2,29 +2,28 @@ package rails.game.state;
 
 /**
  * A stateful version of a String variable
- * 
- * @author Erik Vos, Stefan Frey (v2.0)
  */
 public final class StringState extends State {
     
     private String value;
 
-    private StringState(String value) {
+    private StringState(Item parent, String id, String value) {
+        super(parent, id);
         this.value = value;
     }
 
     /** 
      * Creates a StringState with default value of an empty string
      */
-    public static StringState create(){
-        return new StringState("");
+    public static StringState create(Item parent, String id){
+        return new StringState(parent, id, "");
     }
     
     /**
      * @param text initial String
      */
-    public static StringState create(String text){
-        return new StringState(text);
+    public static StringState create(Item parent, String id, String text){
+        return new StringState(parent, id, text);
     }
     
     public void set(String value) {

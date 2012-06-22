@@ -13,24 +13,20 @@ import rails.game.action.BuyCertificate;
 import rails.game.model.CashOwner;
 import rails.game.model.PortfolioModel;
 import rails.game.state.IntegerState;
-import rails.game.state.Item;
 import rails.game.state.PortfolioHolder;
 
-public class StockRound_1856 extends StockRound {
+public final class StockRound_1856 extends StockRound {
 
     /* Cope with multiple 5% share sales in one turn */
-    private final IntegerState sharesSoldSoFar = IntegerState.create();
-    private final IntegerState squaresDownSoFar = IntegerState.create();
+    private final IntegerState sharesSoldSoFar = IntegerState.create(this, "sharesSoldSoFar");
+    private final IntegerState squaresDownSoFar = IntegerState.create(this, "squaresDownSoFar");
 
-    public StockRound_1856 (GameManager aGameManager) {
-        super (aGameManager);
+    private StockRound_1856 (GameManager parent, String id) {
+        super(parent, id);
     }
 
-    @Override
-    public void init(Item parent, String id){
-        super.init(parent, id);
-        sharesSoldSoFar.init(this, "CGR_SharesSoldSoFar");
-        squaresDownSoFar.init(this, "CGR_SquaresDownSoFar");
+    public static StockRound_1856 create(GameManager parent, String id){
+        return new StockRound_1856(parent, id);
     }
 
     /**

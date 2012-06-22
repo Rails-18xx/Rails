@@ -33,19 +33,19 @@ public class Bank extends AbstractItem implements CashOwner, ConfigurableCompone
     private static final String DEFAULT_MONEY_FORMAT = "$@";
 
     /** The Bank's amount of cash */
-    private final CashMoneyModel cash = CashMoneyModel.create();
+    private final CashMoneyModel cash = CashMoneyModel.create(this, "cash", false);
    
     /** The IPO */
-    private final BankPortfolio ipo = BankPortfolio.create();
+    private final BankPortfolio ipo = BankPortfolio.create(this, IPO_NAME);
     /** The Bank Pool */
-    private final BankPortfolio pool = BankPortfolio.create();
+    private final BankPortfolio pool = BankPortfolio.create(this, POOL_NAME);
     /** Collection of items that will (may) become available in the future */
-    private final BankPortfolio unavailable = BankPortfolio.create();
+    private final BankPortfolio unavailable = BankPortfolio.create(this, UNAVAILABLE_NAME);
     /** Collection of items that have been discarded (but are kept to allow Undo) */
-    private final BankPortfolio scrapHeap = BankPortfolio.create();
+    private final BankPortfolio scrapHeap = BankPortfolio.create(this, SCRAPHEAP_NAME);
 
     /** Is the bank broken */
-    private final BooleanState broken = BooleanState.create();
+    private final BooleanState broken = BooleanState.create(this, "broken");
 
     /**
      * The money format template. '@' is replaced by the numeric amount, the
@@ -56,8 +56,8 @@ public class Bank extends AbstractItem implements CashOwner, ConfigurableCompone
     protected static Logger log =
         LoggerFactory.getLogger(Bank.class.getPackage().getName());
 
-    public Bank() {
-        super();
+    protected Bank(Item parent, String id) {
+        super(parent, id);
         instance = this;
 
         String configFormat = Config.get("money_format");
@@ -65,19 +65,9 @@ public class Bank extends AbstractItem implements CashOwner, ConfigurableCompone
             moneyFormat = configFormat;
         }
     }
-
-    @Override
-    public void init(Item parent, String id) {
-        super.init(parent,  id);
-        
-        cash.init(this, "cash");
-        broken.init(this, "broken");
-        
-        // Init the IPO and the Bank Pool.
-        ipo.init(this, IPO_NAME);
-        pool.init(this, POOL_NAME);
-        unavailable.init(this, UNAVAILABLE_NAME);
-        scrapHeap.init(this, SCRAPHEAP_NAME);
+    
+    public static Bank create(Item parent, String id) {
+        return new Bank(parent, id);
     }
     
     /**

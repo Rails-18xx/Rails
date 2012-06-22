@@ -9,10 +9,14 @@ import rails.game.action.LayBaseToken;
 import rails.game.action.PossibleAction;
 import rails.game.model.MoneyModel;
 
-public class OperatingRound_18AL extends OperatingRound {
+public final class OperatingRound_18AL extends OperatingRound {
 
-    public OperatingRound_18AL (GameManager gameManager) {
-        super (gameManager);
+    private OperatingRound_18AL (GameManager parent, String id) {
+        super (parent, id);
+    }
+
+    public static OperatingRound_18AL create(GameManager parent, String id) {
+        return new OperatingRound_18AL(parent, id);
     }
 
     @Override

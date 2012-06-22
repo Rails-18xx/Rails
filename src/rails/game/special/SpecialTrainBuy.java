@@ -1,17 +1,14 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTrainBuy.java,v 1.5 2010/03/02 21:14:16 evos Exp $ */
 package rails.game.special;
 
 import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
+import rails.game.state.Item;
 import rails.util.Util;
 
 /**
  * Special private ability involving deductions in train buying. The deduction
  * can be absolute (an amount) or relative (a percentage)
- * 
- * @author Erik Vos
- * 
  */
 public class SpecialTrainBuy extends SpecialProperty {
 
@@ -23,6 +20,15 @@ public class SpecialTrainBuy extends SpecialProperty {
     boolean absoluteDeduction = false;
     int deductionAmount; // Money or percentage
 
+    private SpecialTrainBuy(Item parent, String id) {
+        super(parent, id);
+    }
+
+    public static SpecialTrainBuy create(Item parent) {
+        String uniqueId = SpecialProperty.createUniqueId();
+        return new SpecialTrainBuy(parent, uniqueId);
+    }
+    
     public void configureFromXML(Tag tag) throws ConfigurationException {
         
         super.configureFromXML(tag);

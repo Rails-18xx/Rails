@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/LocatedBonus.java,v 1.5 2010/05/18 21:36:12 stefanfrey Exp $ */
 package rails.game.special;
 
 import java.util.List;
@@ -6,6 +5,7 @@ import java.util.List;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.*;
+import rails.game.state.Item;
 import rails.util.Util;
 
 /**
@@ -15,13 +15,22 @@ import rails.util.Util;
  * @author VosE
  *
  */
-public class LocatedBonus extends SpecialProperty {
+public final class LocatedBonus extends SpecialProperty {
 
     String locationCodes = null;
     List<MapHex> locations = null;
     String name;
     int value;
 
+    private LocatedBonus(Item parent, String id) {
+        super(parent, id);
+    }
+
+    public static LocatedBonus create(Item parent) {
+        String uniqueId = SpecialProperty.createUniqueId();
+        return new LocatedBonus(parent, uniqueId);
+    }
+    
     @Override
     public void configureFromXML(Tag tag) throws ConfigurationException {
 

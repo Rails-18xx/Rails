@@ -11,18 +11,17 @@ import rails.game.*;
 import rails.game.action.SellShares;
 import rails.game.model.PortfolioModel;
 
-public class StockRound_1825 extends StockRound {
+public final class StockRound_1825 extends StockRound {
     
     protected int[] priceBands = {100,90,82,76,71,67};
     private List<PublicCompany> lPublicCompanies = companyManager.getAllPublicCompanies();
-    /**
-     * Constructor with the GameManager, will call super class (StockRound's) Constructor to initialize
-     *
-     * @param aGameManager The GameManager Object needed to initialize the Stock Round
-     * 
-     */
-    public StockRound_1825 (GameManager aGameManager) {
-        super (aGameManager);
+
+    private StockRound_1825 (GameManager parent, String id) {
+        super(parent, id);
+    }
+    
+    public static StockRound_1825 create(GameManager parent, String id){
+        return new StockRound_1825(parent, id);
     }
     
     protected void adjustSharePrice (PublicCompany company, int numberSold, boolean soldBefore) {

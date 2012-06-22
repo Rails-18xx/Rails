@@ -5,6 +5,10 @@ package rails.game.state;
  */
 abstract class MultimapState<K,V> extends State  {
     
+    protected MultimapState(Item parent, String id) {
+        super(parent, id);
+    }
+
     public abstract boolean put(K key, V value);
     
     public abstract boolean remove(K key, V value);

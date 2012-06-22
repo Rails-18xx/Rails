@@ -4,27 +4,25 @@ import rails.game.Train;
 import rails.game.state.GenericState;
 import rails.game.state.Item;
 
-public class NameableTrain extends Train {
+// FIXME: Check train creation methods
 
-    private final GenericState<NamedTrainToken> nameToken = GenericState.create();
+public final class NameableTrain extends Train {
 
-    @Override
-    public void init(Item parent, String id) {
-        super.init(parent, id);
-        nameToken.init(this, id + "_nameToken");
+    private final GenericState<NamedTrainToken> nameToken = GenericState.create(this, "nameToken");
+    
+    private NameableTrain(Item parent, String id) {
+        super(parent, id);
     }
 
     public void setNameToken(NamedTrainToken nameToken) {
         // TODO: Add trainsmodel as dependency
         // new StateChange(this.nameToken, nameToken, holder.getTrainsModel());
         this.nameToken.set(nameToken);
-        
     }
 
     public NamedTrainToken getNameToken() {
         return (NamedTrainToken) nameToken.get();
     }
-
 
     @Override
     public String toDisplay() {

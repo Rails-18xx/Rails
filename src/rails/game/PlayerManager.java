@@ -8,6 +8,7 @@ import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.model.MoneyModel;
 import rails.game.state.AbstractItem;
+import rails.game.state.Item;
 
 public class PlayerManager extends AbstractItem implements ConfigurableComponent {
 
@@ -24,8 +25,13 @@ public class PlayerManager extends AbstractItem implements ConfigurableComponent
 
     private int[] playerCertificateLimits = new int[Player.MAX_PLAYERS];
 
-    // Uses className as id
-    public PlayerManager() { }
+    private PlayerManager(Item parent, String id) {
+        super(parent, id);
+    }
+    
+    public static PlayerManager create(Item parent, String id){
+        return new PlayerManager(parent, id);
+    }
 
     public void configureFromXML(Tag tag) throws ConfigurationException {
 
@@ -61,8 +67,7 @@ public class PlayerManager extends AbstractItem implements ConfigurableComponent
         int playerIndex = 0;
         int startCash = getStartCash();
         for (String playerName : playerNames) {
-            player = new Player( playerIndex++);
-            player.init(this, playerName);
+            player = Player.create(this, playerName, playerIndex++);
             players.add(player);
             playerMap.put(playerName, player);
             MoneyModel.cashMove(bank, player, startCash);

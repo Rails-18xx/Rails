@@ -7,9 +7,9 @@ import com.google.common.collect.ImmutableList;
 import rails.game.Player;
 import rails.game.PublicCertificate;
 import rails.game.PublicCompany;
-import rails.game.state.Item;
 import rails.game.state.Model;
 import rails.game.state.Portfolio;
+import rails.game.state.PortfolioHolder;
 import rails.game.state.PortfolioMap;
 
 /**
@@ -21,27 +21,22 @@ import rails.game.state.PortfolioMap;
  */
 public final class CertificatesModel extends Model {
 
-    public static final String id = "CertificatesModel";
+    public final static String ID = "CertificatesModel";
     
-    // Certificates portfolio
-    private final PortfolioMap<PublicCertificate> certificates = PortfolioMap.create();
+    private final PortfolioMap<PublicCertificate> certificates;
 
-    private CertificatesModel() {}
-   
-    /**
-     * Creates an initialized CertificatesModel
-     * id is identical to class name "CertificatesModel"
-     */
-    public static CertificatesModel create(Item parent) {
-        CertificatesModel model = new CertificatesModel();
-        model.init(parent, id);
-        return model;
+    private CertificatesModel(PortfolioHolder parent) {
+        super(parent, ID);
+        certificates = PortfolioMap.create(parent, "certificates");
+    }
+    
+    public static CertificatesModel create(PortfolioHolder parent) {
+        return new CertificatesModel(parent);
     }
     
     @Override
-    public void init(Item parent, String id){
-        super.init(parent, id);
-        certificates.init(this, "Certificates");
+    public PortfolioHolder getParent() {
+        return (PortfolioHolder)getParent();
     }
     
     public PortfolioMap<PublicCertificate> getPortfolio() {
@@ -67,6 +62,8 @@ public final class CertificatesModel extends Model {
         StringBuffer b = new StringBuffer();
         b.append(share).append("%");
         
+        // FIXME: Check if this still works correctly
+        // Required to add PortfolioHolder to Player
         if (getParent() instanceof Player
             && company.getPresident() == getParent()) {
             b.append("P");

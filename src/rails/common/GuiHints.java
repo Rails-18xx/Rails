@@ -17,24 +17,25 @@ import rails.game.state.Item;
  * @author VosE
  *
  */
-public class GuiHints extends AbstractItem implements Serializable{
+public final class GuiHints extends AbstractItem implements Serializable{
 
     public static final long serialVersionUID = 1L;
 
     /** What round type is currently active in the engine? */
-    private GenericState<Class<? extends Round>> currentRoundType = GenericState.create();
+    private GenericState<Class<? extends Round>> currentRoundType = GenericState.create(this, "currentRoundType");
 
     /** Which windows should be visible? */
     private List<VisibilityHint> visibilityHints;
 
     /** Which window type is active and should be on top? */
-    private GenericState<GuiDef.Panel> activePanel = GenericState.create();
+    private GenericState<GuiDef.Panel> activePanel = GenericState.create(this, "activePanel");
 
-    @Override
-    public void init(Item parent, String id){
-        super.init(parent, id);
-        currentRoundType.init(this, "CurrentRoundType");
-        activePanel.init(this, "ActivePanel");
+    private GuiHints(Item parent, String id) {
+        super(parent, id);
+    }
+    
+    public static GuiHints create(Item parent, String id){
+        return new GuiHints(parent, id);
     }
     
     public Class<? extends Round> getCurrentRoundType() {

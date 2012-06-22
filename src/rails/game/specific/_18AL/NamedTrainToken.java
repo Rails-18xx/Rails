@@ -17,7 +17,7 @@ import rails.game.*;
 import rails.game.state.Item;
 import rails.util.Util;
 
-public class NamedTrainToken extends Token implements ConfigurableComponent /*, RevenueStaticModifier */ {
+public final class NamedTrainToken extends Token implements ConfigurableComponent /*, RevenueStaticModifier */ {
 
     protected static Logger log =
         LoggerFactory.getLogger(NamedTrainToken.class.getPackage().getName());
@@ -29,8 +29,13 @@ public class NamedTrainToken extends Token implements ConfigurableComponent /*, 
     private List<MapHex> hexes;
     private String description;
 
-    public NamedTrainToken() {
-        super();
+    private NamedTrainToken(Item parent, String id) {
+        super(parent, id);
+    }
+    
+    public static NamedTrainToken create(NameTrains parent) {
+        String uniqueId = Token.createUniqueId();
+        return new NamedTrainToken(parent, uniqueId);
     }
 
     public void configureFromXML(Tag tag) throws ConfigurationException {
@@ -58,11 +63,6 @@ public class NamedTrainToken extends Token implements ConfigurableComponent /*, 
                 longName + " [" + hexesString + "] +" + Bank.format(value);
     }
 
-    @Override
-    public void init(Item parent) {
-        super.checkedInit(parent, name, NameTrains.class);
-    }
-    
     public void finishConfiguration (GameManager gameManager)
     throws ConfigurationException {
 

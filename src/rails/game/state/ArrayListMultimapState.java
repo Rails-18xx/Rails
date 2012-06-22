@@ -4,17 +4,19 @@ import java.util.List;
 
 import com.google.common.collect.ArrayListMultimap;
 
-public class ArrayListMultimapState<K,V> extends MultimapState<K,V> {
+public final class ArrayListMultimapState<K,V> extends MultimapState<K,V> {
 
     private final ArrayListMultimap<K,V> map = ArrayListMultimap.create(); ;
 
-    private ArrayListMultimapState() {};
+    private ArrayListMultimapState(Item parent, String id) {
+        super(parent, id);
+    }
     
     /** 
      * Creates an empty ArrayListMultimapState 
      */
-    public static <K,V> ArrayListMultimapState<K,V> create(){
-        return new ArrayListMultimapState<K,V>();
+    public static <K,V> ArrayListMultimapState<K,V> create(Item parent, String id){
+        return new ArrayListMultimapState<K,V>(parent, id);
     }
    
     /**

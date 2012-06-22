@@ -8,7 +8,7 @@ import rails.game.state.OwnableItem;
 
 /**
  * FIXME: Use other mechanism (TokenManager) to store token ids
- * @author Erik Vos, Stefan Frey
+ * FIXME: UniqueId and id are a double structure
  */
 public abstract class Token extends OwnableItem<Token>  {
 
@@ -21,28 +21,17 @@ public abstract class Token extends OwnableItem<Token>  {
     protected static Logger log =
         LoggerFactory.getLogger(Token.class.getPackage().getName());
     
-    // no public noarg constructor
-    protected Token() {}
-    
-    /**
-     * @throws IllegalArgumentException always, use init(Item parent) instead
-     */
-    @Override
-    public void init(Item parent, String id) {
-        throw new IllegalArgumentException("Token cannot be intialized with id, use init(Item parent) instead");
+    protected Token(Item parent, String id) {
+        super(parent, id);
+        uniqueId = id;
+        GameManager.getInstance().storeObject(STORAGE_NAME, this);
     }
     
     /** 
-     * Token initialize without id
-     * is generated automatically 
-     * @param parent of the token
+     * @return Token unique_id 
      */
-    public abstract void init(Item parent); 
-    
-    @Override
-    protected void checkedInit(Item parent, String id, Class<? extends Item> clazz) {
-        uniqueId = STORAGE_NAME + "_" + GameManager.getInstance().storeObject(STORAGE_NAME, this);
-        super.checkedInit(parent, id, clazz);
+    protected static String createUniqueId() {
+        return STORAGE_NAME + "_" + GameManager.getInstance().getStorageId(STORAGE_NAME);
     }
 
     public String getUniqueId() {
@@ -57,13 +46,4 @@ public abstract class Token extends OwnableItem<Token>  {
         int i = Integer.valueOf(id.replace(STORAGE_NAME + "_", ""));
         return (Token)GameManager.getInstance().retrieveObject(STORAGE_NAME, i);
     }
-    
-    // OwnableItem methods
-//    public Portfolio<Token> getPortfolio() {
-//        return portfolio;
-//    }
-//    
-//    public void setPortfolio(Portfolio<Token> p) {
-//        portfolio = p;
-//    }
 }

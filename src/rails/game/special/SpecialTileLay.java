@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/special/SpecialTileLay.java,v 1.12 2010/02/28 21:38:05 evos Exp $ */
 package rails.game.special;
 
 import java.util.ArrayList;
@@ -8,6 +7,7 @@ import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.*;
+import rails.game.state.Item;
 import rails.util.*;
 
 public class SpecialTileLay extends SpecialProperty {
@@ -19,8 +19,17 @@ public class SpecialTileLay extends SpecialProperty {
     String name;
     boolean extra = false;
     boolean free = false;
-    boolean connected = false; /* sfy 1889 extension */
+    boolean connected = false;
+    
+    private SpecialTileLay(Item parent, String id) {
+        super(parent, id);
+    }
 
+    public static SpecialTileLay create(Item parent) {
+        String uniqueId = SpecialProperty.createUniqueId();
+        return new SpecialTileLay(parent, uniqueId);
+    }
+    
     /** Tile colours that can be laid with this special property.
      * Default is same colours as is allowed in a a normal tile lay.
      * Don't use if specific tiles are specified! */

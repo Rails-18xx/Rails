@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_1851/StartRound_1851.java,v 1.9 2009/10/07 21:03:36 evos Exp $ */
 package rails.game.specific._1851;
 
 import java.util.List;
@@ -8,22 +7,18 @@ import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;
 
-/**
- * Implements an 1835-style startpacket sale.
- */
-public class StartRound_1851 extends StartRound {
+public final class StartRound_1851 extends StartRound {
 
-    /**
-     * Constructor, only to be used in dynamic instantiation.
-     */
-    public StartRound_1851(GameManager gameManager) {
-        super(gameManager);
+    public StartRound_1851(GameManager parent, String id) {
+        super(parent, id);
         hasBidding = false;
     }
 
+    public static StartRound_1851 create(GameManager parent, String id){
+        return new StartRound_1851(parent, id);
+    }
+
     /**
-     * Start the 1835-style start round.
-     *
      * @param startPacket The startpacket to be sold in this start round.
      */
     @Override

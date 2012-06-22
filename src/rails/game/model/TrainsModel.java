@@ -6,35 +6,29 @@ import com.google.common.collect.Multiset;
 
 import rails.game.TrainCertificateType;
 import rails.game.Train;
-import rails.game.state.Item;
 import rails.game.state.Model;
 import rails.game.state.Portfolio;
+import rails.game.state.PortfolioHolder;
 import rails.game.state.PortfolioMap;
 
 public class TrainsModel extends Model {
 
-    public static final String id = "TrainsModel";
+    public static final String ID = "TrainsModel";
     
-    private final PortfolioMap<Train> trains = PortfolioMap.create();
+    private final PortfolioMap<Train> trains;
     
     private boolean abbrList = false;
 
-    private TrainsModel() {}
-    
-    /** 
-     * @param parent
-     * @return fully initialized TrainsModel
-     */
-    public static TrainsModel create(Item parent) {
-        TrainsModel model = new TrainsModel();
-        model.init(parent, id);
-        return model;
+    private TrainsModel(PortfolioHolder parent, String id) {
+        super(parent, id);
+        trains = PortfolioMap.create(parent, "trains");
     }
     
-    @Override
-    public void init(Item parent, String id){
-        super.init(parent, id);
-        trains.init(this, "Trains");
+    /** 
+     * @return fully initialized TrainsModel
+     */
+    public static TrainsModel create(PortfolioHolder parent) {
+        return new TrainsModel(parent, ID);
     }
     
     public Portfolio<Train> getPortfolio() {

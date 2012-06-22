@@ -14,7 +14,6 @@ import rails.game.ShareSellingRound;
 import rails.game.model.MoneyModel;
 import rails.game.model.PortfolioModel;
 import rails.game.state.GenericState;
-import rails.game.state.Item;
 
 /**
  * This class manages the playing rounds by supervising all implementations of
@@ -23,13 +22,7 @@ import rails.game.state.Item;
 public class GameManager_18EU extends GameManager {
 
     protected final GenericState<Player> playerToStartFMERound =
-       GenericState.create();
-
-    @Override
-    public void init(Item parent, String id){
-        super.init(parent, id);
-        playerToStartFMERound.init(this, "playerToStartFMERound");
-    }
+       GenericState.create(this, "playerToStartFMERound");
     
     @Override
     public void nextRound(Round round) {

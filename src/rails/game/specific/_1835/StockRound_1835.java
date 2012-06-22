@@ -13,16 +13,14 @@ import rails.game.action.BuyCertificate;
 import rails.game.model.PortfolioModel;
 import rails.game.state.Owner;
 
-public class StockRound_1835 extends StockRound {
+public final class StockRound_1835 extends StockRound {
 
-    /**
-     * Constructor with the GameManager, will call super class (StockRound's) Constructor to initialize
-     *
-     * @param aGameManager The GameManager Object needed to initialize the Stock Round
-     *
-     */
-    public StockRound_1835 (GameManager aGameManager) {
-        super (aGameManager);
+    private StockRound_1835 (GameManager parent, String id) {
+        super(parent, id);
+    }
+    
+    public static StockRound_1835 create(GameManager parent, String id){
+        return new StockRound_1835(parent, id);
     }
 
     /** Add nationalisations */

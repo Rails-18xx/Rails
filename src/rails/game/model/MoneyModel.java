@@ -17,7 +17,7 @@ public abstract class MoneyModel extends Model {
     public static final int CASH_DEFAULT = 0;
     
     // Data
-    private final StringState fixedText = StringState.create();
+    private final StringState fixedText = StringState.create(this, "fixedText");
     
     // Format Options (with defaults)
     private boolean suppressZero = false;
@@ -25,12 +25,10 @@ public abstract class MoneyModel extends Model {
     private boolean addPlus = false;
     private boolean displayNegative = false;
  
-    @Override
-    public void init(Item parent, String id){
-        super.init(parent, id);
-        fixedText.init(this, "fixedText");
+    protected MoneyModel(Item parent, String id) {
+        super(parent, id);
     }
-    
+
     /**
      * @param suppressZero true: displays an empty string instead of a zero value
      * This is not a state variable, so do not change after the MoneyModel is used

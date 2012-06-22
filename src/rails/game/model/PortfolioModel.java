@@ -28,7 +28,6 @@ import rails.game.TrainCertificateType;
 import rails.game.TrainType;
 import rails.game.special.LocatedBonus;
 import rails.game.special.SpecialProperty;
-import rails.game.state.Item;
 import rails.game.state.Model;
 import rails.game.state.PortfolioHolder;
 import rails.game.state.Portfolio;
@@ -38,65 +37,43 @@ import rails.game.state.PortfolioList;
 
 /**
  * A Portfolio(Model) stores several portfolios
- * 
- * @author evos, freystef (2.0)
  */
 
 // TODO: Check if it is correct to assume the PortfolioModel being the owner
 public final class PortfolioModel extends Model implements PortfolioHolder {
-
-    public static final String id = "PortfolioModel";
+    public static final String ID = "PortfolioModel";
     
     protected static Logger log =
         LoggerFactory.getLogger(PortfolioModel.class.getPackage().getName());
     
     /** Owned certificates */
-    private CertificatesModel certificates;
+    private final CertificatesModel certificates = CertificatesModel.create(this);
     
     /** Owned private companies */
-    private PrivatesModel privates;
+    private final PrivatesModel privates = PrivatesModel.create(this);
 
     /** Owned trains */
-    private TrainsModel trains;
+    private final TrainsModel trains = TrainsModel.create(this);
 
     /** Owned tokens */
     // TODO Currently only used to discard expired Bonus tokens.
-    private final Portfolio<Token> bonusTokens = PortfolioList.create();
+    private final Portfolio<Token> bonusTokens = PortfolioList.create(this, "BonusTokens");
     
     /**
      * Private-independent special properties. When moved here, a special
      * property no longer depends on the private company being alive. Example:
      * 18AL named train tokens.
      */
-    private Portfolio<SpecialProperty> specialProperties = PortfolioList.create(); 
+    private final Portfolio<SpecialProperty> specialProperties = PortfolioList.create(this, "SpecialProperties"); 
 
     private final GameManager gameManager;
 
-    private PortfolioModel() {
+    private PortfolioModel(PortfolioOwner parent, String id) {
+        super(parent, id);
+
         // TODO: Replace this with a better mechanism
         gameManager = GameManager.getInstance();
-    }
-    
-    public static PortfolioModel create() {
-        return new PortfolioModel();
-    }
-    
-    /**
-     * Parent is restricted to PortfolioOwner
-     */
-    @Override 
-    public void init(Item parent, String id) {
-        super.checkedInit(parent, id, PortfolioOwner.class);
-        
-        // create models
-        certificates = CertificatesModel.create(parent);
-        privates = PrivatesModel.create(parent);
-        trains = TrainsModel.create(parent);
-        
-        // create portfolios
-        bonusTokens.init(parent, "BonusTokens");
-        specialProperties.init(parent, "SpecialProperties");
-        
+
         // change display style dependent on owner
         if (parent instanceof PublicCompany) {
             trains.setAbbrList(false);
@@ -108,6 +85,10 @@ public final class PortfolioModel extends Model implements PortfolioHolder {
         }
 
         gameManager.addPortfolio(this);
+    }
+    
+    public static PortfolioModel create(PortfolioOwner parent) {
+        return new PortfolioModel(parent, ID);
     }
 
     @Override

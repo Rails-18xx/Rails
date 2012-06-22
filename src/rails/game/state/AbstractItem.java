@@ -7,20 +7,13 @@ import static com.google.common.base.Preconditions.*;
  */
 public abstract class AbstractItem implements Item {
 
-    private String id;
-    // All nodes reference back to parent and context
-    private Item parent;
+    private final String id;
+    private final Item parent;
 
-    private boolean initialized = false;
-    
-    // no public noarg constructor
-    protected AbstractItem () {}
-
-    // Item interface
-    public <P extends Item> void init(P parent, String id){
+    protected AbstractItem(Item parent, String id){
         checkNotNull(parent, "Parent cannot be null");
         checkNotNull(id, "Id cannot be null");
-        checkArgument(id != Root.id, "Id cannot equal " + Root.id);
+        checkArgument(id != Root.ID, "Id cannot equal " + Root.ID);
 
         // defined standard fields
         this.parent = parent;
@@ -28,32 +21,17 @@ public abstract class AbstractItem implements Item {
 
         // add item to context
         parent.getContext().addItem(this);
-        
-        // init finished
-        initialized = true;
-    }
-    
-    protected void checkedInit(Item parent, String id, Class<? extends Item> clazz) {
-        checkArgument(clazz.isInstance(parent), "Parent in init() is restricted to " + clazz);
-        init(parent, id);
-    }
-
-    public boolean isInitialized() {
-        return initialized;
     }
     
     public String getId() {
-        checkState(initialized, "Item not yet initialized");
         return id;
     }
 
     public Item getParent() {
-        checkState(initialized, "Item not yet initialized");
         return parent;
     }
 
     public Context getContext() {
-        checkState(initialized, "Item not yet initialized");
         if (parent instanceof Context) {
             return (Context)parent;
         } else {
@@ -63,7 +41,6 @@ public abstract class AbstractItem implements Item {
     }
 
     public String getURI() {
-        checkState(initialized, "Item not yet initialized");
         if (parent instanceof Context) {
             return id;
         } else {
@@ -73,7 +50,6 @@ public abstract class AbstractItem implements Item {
     }
     
     public String getFullURI() {
-        checkState(initialized, "Item not yet initialized");
         // recursive definition
         return parent.getFullURI() + Item.SEP + id;
     }

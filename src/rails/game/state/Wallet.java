@@ -16,13 +16,15 @@ public final class Wallet<T extends CountableItem> extends State {
 
     private final HashMultiset<T> wallet = HashMultiset.create();
 
-    private Wallet() {}
+    private Wallet(Item parent, String id) {
+        super(parent, id);
+    }
     
     /**
      * Creates an empty Wallet
      */
-    public static <T extends CountableItem> Wallet<T> create(String id){
-        return new Wallet<T>();
+    public static <T extends CountableItem> Wallet<T> create(Item parent, String id){
+        return new Wallet<T>(parent, id);
     }
 
     /**

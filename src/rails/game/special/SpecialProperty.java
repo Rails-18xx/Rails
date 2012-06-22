@@ -8,6 +8,7 @@ import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.*;
 import rails.game.state.BooleanState;
+import rails.game.state.Item;
 import rails.game.state.OwnableItem;
 import rails.game.state.PortfolioHolder;
 import rails.util.*;
@@ -67,12 +68,22 @@ public abstract class SpecialProperty extends OwnableItem<SpecialProperty> {
     protected static Logger log =
         LoggerFactory.getLogger(SpecialProperty.class.getPackage().getName());
 
-    public SpecialProperty() {
+    public SpecialProperty(Item parent, String id) {
+        super(parent, id);
+        uniqueId = Integer.valueOf(id);
         gameManager = GameManager.getInstance();
-        uniqueId = gameManager.storeObject(STORAGE_NAME, this) + 1;
+        gameManager.storeObject(STORAGE_NAME, this);
+    }
+    
+    /** 
+     * @return Special Property unique_id 
+     */
+    protected static String createUniqueId() {
+        return STORAGE_NAME + "_" + GameManager.getInstance().getStorageId(STORAGE_NAME) + 1;
         // increase unique id to allow loading old save files (which increase by 1)
         // TODO: remove that legacy issue
     }
+
 
     public void configureFromXML(Tag tag) throws ConfigurationException {
 

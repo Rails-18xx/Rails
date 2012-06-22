@@ -4,31 +4,22 @@ import rails.game.Bank;
 import rails.game.PublicCompany;
 import rails.game.StockSpace;
 import rails.game.state.GenericState;
-import rails.game.state.Item;
 import rails.game.state.Model;
 
-public class PriceModel extends Model {
+public final class PriceModel extends Model {
 
-    // fields 
-    private PublicCompany company = null;
+    // FIXME: Remove duplication of company and parent
+    private final PublicCompany company;
 
-    // states
-    private final GenericState<StockSpace> stockPrice = GenericState.create();
-
+    private final GenericState<StockSpace> stockPrice = GenericState.create(this, "stockPrice");
     
-    private PriceModel() {}
-
-    public static PriceModel create(){
-        return new PriceModel();
+    private PriceModel(PublicCompany parent, String id) {
+        super(parent, id);
+        company = parent;
     }
-    
-    /** 
-     * @param parent restricted to PublicCompany
-     */
-    @Override
-    public void init(Item parent, String id){
-        super.checkedInit(parent, id, PublicCompany.class);
-        stockPrice.init(this, "stockPrice");
+
+    public static PriceModel create(PublicCompany parent, String id){
+        return new PriceModel(parent, id);
     }
     
     public void setPrice(StockSpace price) {

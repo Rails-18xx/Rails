@@ -27,7 +27,7 @@ import rails.util.Util;
  * FIXME: A lot to be done 
  * Why is the Model, why do we need StationHolder? etc.
  */
-public class Tile extends Model implements StationHolder, Comparable<Tile> {
+public final class Tile extends Model implements StationHolder, Comparable<Tile> {
 
     /** The 'internal id', identifying the tile in the XML files */
     private final int nb;
@@ -119,8 +119,8 @@ public class Tile extends Model implements StationHolder, Comparable<Tile> {
     protected List<RevenueBonusTemplate> revenueBonuses = null;
 
     // TODO: Rewrite this to use the 2-stage approach with init()
-    public Tile(Item owner, Integer id) {
-        super.init(owner, Integer.toString(id));
+    private Tile(Item owner, Integer id) {
+        super(owner, Integer.toString(id));
         this.nb = id;
         pictureId = id;
         externalId = String.valueOf(id);
@@ -128,6 +128,10 @@ public class Tile extends Model implements StationHolder, Comparable<Tile> {
 
         for (int i = 0; i < 6; i++)
             tracksPerSide[i] = new ArrayList<Track>();
+    }
+    
+    public static Tile create(TileManager parent, Integer id) {
+        return new Tile(parent, id);
     }
     
     /**

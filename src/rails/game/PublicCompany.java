@@ -22,8 +22,12 @@ import rails.util.*;
  * holding certificates. Some minor company types may have only one certificate,
  * but this will still be the form in which ownership is expressed. <p> Company
  * shares may or may not have a price on the stock market.
+ * 
+ * FIXME: This mechanism has to be rewritten!
+ * 
+ * FIXME: Check if uninitialized states may cause trouble on undo
  */
-public class PublicCompany extends Company implements CashOwner, PortfolioOwner {
+public class PublicCompany extends Company implements CashOwner, PortfolioOwner, PortfolioHolder {
 
     public static final int CAPITALISE_FULL = 0;
 
@@ -77,7 +81,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
     /** Destination hex * */
     protected String destinationHexName = null;
     protected MapHex destinationHex = null;
-    protected final BooleanState hasReachedDestination = BooleanState.create();
+    protected final BooleanState hasReachedDestination = BooleanState.create(this, "hasReachedDestinations");
 
     /** Sequence number in the array of public companies - may not be useful */
     protected int publicNumber = -1; // For internal use
@@ -89,53 +93,53 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
     protected int[] baseTokenLayCost;
     protected String baseTokenLayCostMethod = "sequential";
 
-    protected final BaseTokensModel baseTokens = BaseTokensModel.create(); // Create after cloning ?
-    protected final PortfolioModel portfolio = PortfolioModel.create();
+    protected final BaseTokensModel baseTokens = BaseTokensModel.create(this, "baseTokens"); // Create after cloning ?
+    protected final PortfolioModel portfolio = PortfolioModel.create(this);
     
     
     /**
      * Initial (par) share price, represented by a stock market location object
      */
-    protected final PriceModel parPrice = PriceModel.create();
+    protected PriceModel parPrice;
 
     /** Current share price, represented by a stock market location object */
-    protected final PriceModel currentPrice = PriceModel.create();
+    protected PriceModel currentPrice;
 
     /** Company treasury, holding cash */
-    protected final CashMoneyModel treasury = CashMoneyModel.create();
+    protected final CashMoneyModel treasury = CashMoneyModel.create(this, "treasury", false);
 
     /** PresidentModel */
-    protected final PresidentModel presidentModel = PresidentModel.create();
+    protected final PresidentModel presidentModel = PresidentModel.create(this);
 
     /** Has the company started? */
-    protected final BooleanState hasStarted = BooleanState.create(false);
+    protected final BooleanState hasStarted = BooleanState.create(this, "hasStarted");
 
     /** Total bonus tokens amount */
-    protected final BonusModel bonusValue = BonusModel.create();
+    protected final BonusModel bonusValue = BonusModel.create(this, "bonusValue");
 
     /** Acquires Bonus objects */
-    protected final ArrayListState<Bonus> bonuses = ArrayListState.create();
+    protected final ArrayListState<Bonus> bonuses = ArrayListState.create(this, "bonuses");
 
     /** Most recent revenue earned. */
-    protected final CashMoneyModel lastRevenue = CashMoneyModel.create();
+    protected final CashMoneyModel lastRevenue = CashMoneyModel.create(this, "lastRevenue", false);
 
     /** Most recent payout decision. */
-    protected final StringState lastRevenueAllocation = StringState.create();
+    protected final StringState lastRevenueAllocation = StringState.create(this, "lastRevenueAllocation");
 
     /** Is the company operational ("has it floated")? */
-    protected final BooleanState hasFloated = BooleanState.create();
+    protected final BooleanState hasFloated = BooleanState.create(this, "hasFloated");
 
     /** Has the company already operated? */
-    protected final BooleanState hasOperated = BooleanState.create();
+    protected final BooleanState hasOperated = BooleanState.create(this, "hasOperated");
 
     /** Are company shares buyable (i.e. before started)? */
-    protected final BooleanState buyable = BooleanState.create();
+    protected final BooleanState buyable = BooleanState.create(this, "buyable");
 
     /** In-game state.
      * <p> Will only be set false if the company is closed and cannot ever be reopened.
      * By default it will be set false if a company is closed. */
     // TODO: Check if there was some assumption to be null at some place
-    protected final BooleanState inGameState = BooleanState.create(true);
+    protected final BooleanState inGameState = BooleanState.create(this, "inGameState", true);
 
     /**
      * A map per tile colour. Each entry contains a map per phase, of which each
@@ -158,20 +162,20 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
      * It is set to -1 as this flags a special state 
      * TODO: Check if this works
      */
-    protected final IntegerState extraTiles = IntegerState.create(-1);
+    protected final IntegerState extraTiles = IntegerState.create(this, "extraTiles", -1);
 
     /* Spendings in the current operating turn */
-    protected final CashMoneyModel privatesCostThisTurn = CashMoneyModel.create();
+    protected final CashMoneyModel privatesCostThisTurn = CashMoneyModel.create(this, "privatesCostThisTurn", false);
 
-    protected final StringState tilesLaidThisTurn = StringState.create();
+    protected final StringState tilesLaidThisTurn = StringState.create(this, "tilesLaidThisTurn");
 
-    protected final CashMoneyModel tilesCostThisTurn = CashMoneyModel.create(); 
+    protected final CashMoneyModel tilesCostThisTurn = CashMoneyModel.create(this, "tilesCostThisTurn", false); 
 
-    protected final StringState tokensLaidThisTurn = StringState.create();
+    protected final StringState tokensLaidThisTurn = StringState.create(this, "tokenLaidThisTurn");
 
-    protected final CashMoneyModel tokensCostThisTurn = CashMoneyModel.create();
+    protected final CashMoneyModel tokensCostThisTurn = CashMoneyModel.create(this, "tokensCostThisTurn", false);
 
-    protected final CashMoneyModel trainsCostThisTurn = CashMoneyModel.create();
+    protected final CashMoneyModel trainsCostThisTurn = CashMoneyModel.create(this, "trainsCostThisTurn", false);
 
     protected boolean canBuyStock = false;
 
@@ -207,7 +211,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
     protected boolean mustHaveOperatedToTradeShares = false;
 
     /** The certificates of this company (minimum 1) */
-    protected final ArrayListState<PublicCertificate> certificates = ArrayListState.create();
+    protected final ArrayListState<PublicCertificate> certificates = ArrayListState.create(this, "certificates");
     /** Are the certificates available from the first SR? */
     boolean certsAreInitiallyAvailable = true;
 
@@ -278,7 +282,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
     protected int maxLoansPerRound = 0;
     protected CashMoneyModel currentLoanValue = null; // init during finishConfig
 
-    protected final BooleanState canSharePriceVary = BooleanState.create(true);
+    protected BooleanState canSharePriceVary;
 
     protected GameManager gameManager;
     protected Bank bank;
@@ -292,9 +296,27 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
     /**
      * The constructor. The way this class is instantiated does not allow
      * arguments.
+     * FIXME: This has to be rewritten
      */
-    public PublicCompany() {
-        super();
+    protected PublicCompany(Item parent, String id) {
+        super(parent, id);
+        lastRevenue.setSuppressInitialZero(true);
+
+        /* Spendings in the current operating turn */
+        privatesCostThisTurn.setSuppressZero(true);
+        tilesCostThisTurn.setSuppressZero(true);
+        tokensCostThisTurn.setSuppressZero(true);
+        trainsCostThisTurn.setSuppressZero(true);
+        trainsCostThisTurn.setDisplayNegative(true);
+            
+        // Bonuses
+        bonusValue.setBonuses(bonuses);
+
+        if (hasStockPrice) {
+            parPrice = PriceModel.create(this, "ParPrice");
+            currentPrice = PriceModel.create(this, "currentPrice");
+            canSharePriceVary = BooleanState.create(this, "canSharePriceVary", true);
+        }
     }
     
     
@@ -332,7 +354,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
 
         Tag shareUnitTag = tag.getChild("ShareUnit");
         if (shareUnitTag != null) {
-            shareUnit = IntegerState.create(shareUnitTag.getAttributeAsInteger("percentage", DEFAULT_SHARE_UNIT));
+            shareUnit = IntegerState.create(this, "shareUnit", shareUnitTag.getAttributeAsInteger("percentage", DEFAULT_SHARE_UNIT));
             shareUnitsForSharePrice
             = shareUnitTag.getAttributeAsInteger("sharePriceUnits", shareUnitsForSharePrice);
         }
@@ -509,7 +531,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
             int shareTotal = 0;
             boolean gotPresident = false;
             PublicCertificate certificate;
-            certificates.init(this, "certificates"); // Throw away
+            // Throw away
             // the per-type
             // specification
 
@@ -537,7 +559,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
                 }
 
                 for (int k = 0; k < number; k++) {
-                    certificate = new PublicCertificate(shares, president,
+                    certificate = new PublicCertificate(this, "certificate", shares, president,
                             certIsInitiallyAvailable, certificateCount, certIndex++);
                     certificates.add(certificate);
                     shareTotal += shares * shareUnit.value();
@@ -625,57 +647,6 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
         
     }
     
-    /** Initialisation, to be called directly after instantiation (cloning) */
-    @Override
-    public void init(Item parent, String id) {
-        super.init(parent, id);
-
-        
-        inGameState.init(this, "InGame");
-        hasReachedDestination.init(this, getId()+"_reachedDestination");
-
-        portfolio.init(this, id);
-        treasury.init(this, id + "_treasury");
-        lastRevenue.init(this, id + "_lastRevenue");
-        lastRevenue.setSuppressInitialZero(true);
-        lastRevenueAllocation.init(this, id + "_lastAllocation");
-        presidentModel.init(this, id);
-
-        hasStarted.init(this, id);
-        hasFloated.init(this, "hasFloated");
-        hasOperated.init(this, "hasOperated");
-        buyable.init(this, "isBuyable");
-
-        baseTokens.init(this, "baseTokensModel");
-
-        /* Spendings in the current operating turn */
-        privatesCostThisTurn.init(this, "spentOnPrivates");
-        privatesCostThisTurn.setSuppressZero(true);
-        tilesLaidThisTurn.init(this, "tilesLaid");
-        tilesCostThisTurn.init(this, "spentOnTiles");
-        tilesCostThisTurn.setSuppressZero(true);
-        tokensLaidThisTurn.init(this, "tokensLaid");
-        tokensCostThisTurn.init(this, "spentOnTokens");
-        tokensCostThisTurn.setSuppressZero(true);
-        trainsCostThisTurn.init(this, "spentOnTrains");
-        trainsCostThisTurn.setSuppressZero(true);
-        trainsCostThisTurn.setDisplayNegative(true);
-        
-        // Bonuses
-        bonuses.init(this, "Bonuses");
-        bonusValue.init(this, "bonusValue");
-        bonusValue.setBonuses(bonuses);
-
-        if (hasStockPrice) {
-            parPrice.init(this, "ParPrice");
-            currentPrice.init(this, "CurrentPrice");
-            canSharePriceVary.init(this, id+"_CanSharePriceVary");
-        }
-        // shareUnit is only created if required
-        if (shareUnit != null) {
-            shareUnit.init(this, getId()+"_ShareUnit");
-        }
-   }
 
     public void setIndex (int index) {
         publicNumber = index;
@@ -695,17 +666,15 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
         if (turnsWithExtraTileLaysInit != null) {
             turnsWithExtraTileLays = new HashMap<String, IntegerState>();
             for (String colour : turnsWithExtraTileLaysInit.keySet()) {
-                IntegerState tileLays = IntegerState.create(turnsWithExtraTileLaysInit.get(colour));
-                tileLays.init(this, "" + colour + "_ExtraTileTurns");
+                IntegerState tileLays = IntegerState.create
+                        (this, "" + colour + "_ExtraTileTurns", turnsWithExtraTileLaysInit.get(colour));
                 turnsWithExtraTileLays.put(colour, tileLays);
             }
         }
 
        if (maxNumberOfLoans != 0) {
-            currentNumberOfLoans = IntegerState.create(0);
-            currentNumberOfLoans.init(this, "Loans");
-            currentLoanValue = CashMoneyModel.create();
-            currentLoanValue.init(this, "LoanValue");
+            currentNumberOfLoans = IntegerState.create(this, "currentNumberOfLoans");
+            currentLoanValue = CashMoneyModel.create(this, "currentLoanValue", false);
             currentLoanValue.setSuppressZero(true);
         }
 
@@ -721,8 +690,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
         }
 
         if (shareUnit == null) {
-            shareUnit = IntegerState.create(DEFAULT_SHARE_UNIT);
-            shareUnit.init(this, getId()+"_ShareUnit");
+            shareUnit = IntegerState.create(this, "shareUnit", DEFAULT_SHARE_UNIT);
         }
 
         // Give each certificate an unique Id
@@ -780,8 +748,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
                     // Initialize rights here to prevent overhead if not used, 
                     // but if rights are used, the GUI needs it from the start.
                     if (rights == null) {
-                        rights = HashMapState.create();
-                        rights.init(this, getId()+"_Rights");
+                        rights = HashMapState.create(this, "rights");
                     }
                     // TODO: This is only a workaround for the missing finishConfiguration of special properties (SFY)
                     sp.finishConfiguration(gameManager);
@@ -2001,8 +1968,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
     
     public void setRight (String nameOfRight, String value) {
         if (rights == null) {
-            rights = HashMapState.create();
-            rights.init(this, "Rights");
+            rights = HashMapState.create(this, "rights");
         }
         rights.put(nameOfRight, value);
     }

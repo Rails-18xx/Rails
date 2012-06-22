@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import rails.game.state.AbstractItem;
 import rails.game.state.GenericState;
-import rails.game.state.Item;
 import rails.game.state.PortfolioHolder;
 import rails.game.state.PortfolioList;
 import rails.util.Util;
@@ -30,9 +29,9 @@ public class Stop extends AbstractItem implements PortfolioHolder {
     private final int number;
     private String uniqueId;
     //private Station relatedStation;
-    private GenericState<Station> relatedStation = GenericState.create();
+    private GenericState<Station> relatedStation;
     private int slots;
-    private PortfolioList<Token> tokens = PortfolioList.create();
+    private PortfolioList<Token> tokens;
     private String trackEdges;
 
 
@@ -96,8 +95,12 @@ public class Stop extends AbstractItem implements PortfolioHolder {
         MINOR
     }
 
-    private Stop(int number) {
+    private Stop(MapHex hex, int number) {
+        super(hex, String.valueOf(number));
         this.number = number;
+        uniqueId = getParent().getId() + "_" + number;
+        tokens = PortfolioList.create(this, "tokens");
+        relatedStation = GenericState.create(this, "City_"+uniqueId+"_station");
     }
 
     // TODO: Can this all be simplified, maybe stop <=> station relationship is enough
@@ -105,24 +108,11 @@ public class Stop extends AbstractItem implements PortfolioHolder {
      * returns initialized Stop
      */
     public static Stop create(MapHex hex, int number, Station station){
-        Stop stop = new Stop(number);
-        stop.init(hex, String.valueOf(number));
+        Stop stop = new Stop(hex, number);
         stop.initStation(station);
         return stop;
     }
 
-    /**
-     * @param parent restricted to MapHex
-     * @param id (should equal the number)
-     */
-    @Override
-    public void init(Item parent, String id) {
-        super.checkedInit(parent, id, MapHex.class);
-        uniqueId = getParent().getId() + "_" + number;
-        tokens.init(this, "tokens");
-        relatedStation.init(this, "City_"+uniqueId+"_station");
-    }
-    
     /**
      * @param station that the stop refers to
      */

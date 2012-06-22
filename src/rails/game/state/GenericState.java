@@ -6,26 +6,27 @@ package rails.game.state;
  * @param <E> class to wrap
  */
 
-public class GenericState<E> extends State {
+public final class GenericState<E> extends State {
 
     private E object;
 
-    private GenericState(E object) {
+    private GenericState(Item parent, String id, E object) {
+        super(parent, id);
         this.object = object;
     }
 
     /** 
      * Creates an empty GenericState
      */
-    public static <E> GenericState<E> create(){
-        return new GenericState<E>(null);
+    public static <E> GenericState<E> create(Item parent, String id){
+        return new GenericState<E>(parent, id, null);
     }
     
     /**
      * @param object initial object contained
      */
-    public static <E> GenericState<E> create(E object){
-        return new GenericState<E>(object);
+    public static <E> GenericState<E> create(Item parent, String id, E object){
+        return new GenericState<E>(parent, id, object);
     }
 
     private void set(E object, boolean forced) {

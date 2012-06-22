@@ -7,11 +7,14 @@ package rails.game.state;
 
 public final class WalletManager extends AbstractItem {
 
-    private final HashMultimapState<Item, Wallet<?>> wallets = HashMultimapState.create();
+    private final HashMultimapState<Item, Wallet<?>> wallets = HashMultimapState.create(this, "wallets");
     
-
-    static WalletManager create() {
-        return new WalletManager();
+    private WalletManager(Item parent, String id) {
+        super(parent, id);
+    }
+    
+    static WalletManager create(StateManager parent, String id) {
+        return new WalletManager(parent, id);
     }
     
     boolean addWallet(Wallet<?> w){

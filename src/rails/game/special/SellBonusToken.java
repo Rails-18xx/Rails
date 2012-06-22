@@ -16,13 +16,22 @@ public class SellBonusToken extends SpecialProperty {
 
     private String locationCodes = null;
     private List<MapHex> locations = null;
-    private final GenericState<Owner> seller = GenericState.create();
+    private final GenericState<Owner> seller = GenericState.create(this, "seller");
     private String name;
     private int price;
     private int value;
     private int maxNumberToSell;
-    private final IntegerState numberSold = IntegerState.create();
+    private final IntegerState numberSold = IntegerState.create(this, "numberSold");
 
+    private SellBonusToken(Item parent, String id) {
+        super(parent, id);
+    }
+
+    public static SellBonusToken create(Item parent) {
+        String uniqueId = SpecialProperty.createUniqueId();
+        return new SellBonusToken(parent, uniqueId);
+    }
+    
     @Override
     public void configureFromXML(Tag tag) throws ConfigurationException {
         super.configureFromXML(tag);
@@ -50,13 +59,6 @@ public class SellBonusToken extends SpecialProperty {
 
     }
     
-    @Override
-    public void init(Item parent, String id){
-        super.init(parent, id);
-        seller.init(this, "SellerOf_"+name+"_Bonus");
-        numberSold.init(this, "Bonus_"+name+"_sold");
-    }
-
     @Override
     public void finishConfiguration (GameManager gameManager) 
     throws ConfigurationException {

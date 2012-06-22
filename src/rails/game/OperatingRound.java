@@ -1,6 +1,5 @@
 package rails.game;
 
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,12 +29,13 @@ import rails.util.SequenceUtil;
 public class OperatingRound extends Round implements Observer {
 
     /* Transient memory (per round only) */
-    protected final GenericState<GameDef.OrStep> stepObject = GenericState.create(GameDef.OrStep.INITIAL);
+    protected final GenericState<GameDef.OrStep> stepObject = GenericState.create(
+            this, "ORStep", GameDef.OrStep.INITIAL);
 
     protected boolean actionPossible = true;
 
-    /* sfy: using rails without map support */
-    protected boolean noMapMode = false;
+    /* flag for using rails without map support */
+    protected final boolean noMapMode;
 
     // TODO: Check if this should not be turned into a State?
     protected final List<PublicCompany> companiesOperatedThisRound
@@ -43,14 +43,14 @@ public class OperatingRound extends Round implements Observer {
 
     protected ArrayListState<PublicCompany> operatingCompanies = null; // will be created below
 
-    protected final GenericState<PublicCompany> operatingCompany = GenericState.create() ;
+    protected final GenericState<PublicCompany> operatingCompany = GenericState.create(this, "operatingCompany") ;
     // do not use a operatingCompany.getObject() as reference
     // TODO: Question is this remark above still relevant?
 
     // Non-persistent lists (are recreated after each user action)
     protected List<SpecialProperty> currentSpecialProperties = null;
 
-    protected final HashMapState<String, Integer> tileLaysPerColour = HashMapState.create();
+    protected final HashMapState<String, Integer> tileLaysPerColour = HashMapState.create(this, "tileLaysPerColour");
 
     protected final List<LayBaseToken> currentNormalTokenLays =
         new ArrayList<LayBaseToken>();
@@ -97,29 +97,21 @@ public class OperatingRound extends Round implements Observer {
     /**
      * Constructor with no parameters, call the super Class (Round's) Constructor with no parameters
      */
-    public OperatingRound(GameManager gameManager) {
-        super (gameManager);
-        
-        operatingCompanies = ArrayListState.create(setOperatingCompanies());
+    protected OperatingRound(GameManager parent, String id) {
+        super (parent, id);
 
-        // sfy NoMapMode
+        operatingCompanies = ArrayListState.create(this, "operatingCompanies", setOperatingCompanies());
+        stepObject.addObserver(this);
+
         noMapMode = GameOption.convertValueToBoolean(getGameOption("NoMapMode"));
 
         guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, false);
         guiHints.setVisibilityHint(GuiDef.Panel.STATUS, true);
         guiHints.setActivePanel(GuiDef.Panel.MAP);
     }
-
-    @Override
-    public void init(Item parent, String id){
-        super.init(parent, id);
-        stepObject.init(
-                this, "ORStep");
-        stepObject.addObserver(this);
-        operatingCompanies.init(this, "operatingCompanies");
-        operatingCompany.init(this, "OperatingCompany");
-        tileLaysPerColour.init(this, "tileLaysPerColour");
-        
+    
+    public static OperatingRound create(GameManager parent, String id) {
+        return new OperatingRound(parent, id);
     }
     
     public void start() {
@@ -1252,8 +1244,7 @@ public class OperatingRound extends Round implements Observer {
         if (operatingCompany.get().getMaxLoansPerRound() > 0) {
             int oldLoansThisRound = 0;
             if (loansThisRound == null) {
-                loansThisRound = HashMapState.create();
-                loansThisRound.init(this, "loansThisRound");
+                loansThisRound = HashMapState.create(this, "loansThisRound");
             } else if (loansThisRound.containsKey(operatingCompany.get())){
                 oldLoansThisRound = loansThisRound.get(operatingCompany.get());
             }

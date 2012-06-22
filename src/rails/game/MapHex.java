@@ -22,7 +22,6 @@ import rails.game.model.CashMoneyModel;
 import rails.game.model.PortfolioModel;
 
 import rails.game.state.BooleanState;
-import rails.game.state.Item;
 import rails.game.state.Observer;
 import rails.game.state.Portfolio;
 import rails.game.state.PortfolioHolder;
@@ -110,7 +109,7 @@ StationHolder {
      * changed to state variable to fix undo bug #2954645
      * null as default implies false - see isBlocked()
      */
-    private final BooleanState isBlockedForTileLays = BooleanState.create();
+    private final BooleanState isBlockedForTileLays = BooleanState.create(this, "isBlockedForTileLays");
 
     /**
      * Is the hex initially blocked for token lays (e.g. when a home base
@@ -121,13 +120,13 @@ StationHolder {
      * the absence of a PR token does not block the third slot
      * when the green tile is laid.
      */
-    private final BooleanState isBlockedForTokenLays = BooleanState.create();
+    private final BooleanState isBlockedForTokenLays = BooleanState.create(this, "isBlockedForTokenLays");
 
     protected Map<PublicCompany, Stop> homes;
     protected List<PublicCompany> destinations;
 
     /** Tokens that are not bound to a Station (City), such as Bonus tokens */
-    protected final PortfolioList<Token> offStationTokens = PortfolioList.create();
+    protected final PortfolioList<Token> offStationTokens = PortfolioList.create(this, "offStationTokens");
 
     /** Storage of revenueBonus that are bound to the hex */
     protected List<RevenueBonusTemplate> revenueBonuses = null;
@@ -176,22 +175,17 @@ StationHolder {
     protected static Logger log =
         LoggerFactory.getLogger(MapHex.class.getPackage().getName());
 
-    // TODO: Rewrite the creation process of MapHex
-    
-    // public constructor
-    public MapHex() {}
-
-    /**
-     * MapHex only accepts MapManagers as parent
-     */
-    @Override
-    public void init(Item parent, String id) {
-        super.checkedInit(parent, id, MapManager.class);
-        
-        isBlockedForTileLays.init(this, name+"_IsBlockedForTileLays");
-        isBlockedForTokenLays.init(this, name+"_IsBlockedForTokenLays");
+    private MapHex(MapManager parent, String id) {
+        super(parent, id);
     }
-    
+
+    public static MapHex create(MapManager parent, Tag tag) throws ConfigurationException {
+        // TODO: Rewrite the creation process of MapHex
+        MapHex hex = new MapHex(parent, null);
+        hex.configureFromXML(tag);
+        return hex;
+    }
+
     /**
      * @see rails.common.parser.ConfigurableComponent#configureFromXML(org.w3c.dom.Element)
      */

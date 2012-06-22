@@ -12,28 +12,25 @@ import rails.game.GameManager;
 import rails.game.ReportBuffer;
 import rails.game.state.AbstractItem;
 import rails.game.state.BooleanState;
-import rails.game.state.Item;
 
 public abstract class CorrectionManager extends AbstractItem implements CorrectionManagerI {
     
-    protected final GameManager gameManager;
     private final CorrectionType correctionType;
-    private final BooleanState active = BooleanState.create();
+    private final BooleanState active = BooleanState.create(this, "active");
     
     protected static Logger log =
         LoggerFactory.getLogger(CorrectionManager.class.getPackage().getName());
 
-    protected CorrectionManager(GameManager gm, CorrectionType ct) {
-        gameManager = gm;
+    protected CorrectionManager(GameManager parent, CorrectionType ct) {
+        super(parent, ct.name());
         correctionType = ct; 
     }
-
-    @Override
-    public void init(Item parent, String id){
-        super.init(parent, id);
-        active.init(this, correctionType.name() + "_active"); 
-    }
     
+    @Override
+    public GameManager getParent() {
+        return (GameManager)super.getParent();
+    }
+
     public CorrectionType getCorrectionType() {
         return correctionType;
     }
@@ -65,7 +62,7 @@ public abstract class CorrectionManager extends AbstractItem implements Correcti
         // TODO: gameManager.getChangeStack().start(false);
         if (!isActive()) {
             String text = LocalText.getText("CorrectionModeActivate",
-                    gameManager.getCurrentPlayer().getId(),
+                    getParent().getCurrentPlayer().getId(),
                     LocalText.getText(getCorrectionType().name())
             );
             ReportBuffer.add(text);
@@ -73,7 +70,7 @@ public abstract class CorrectionManager extends AbstractItem implements Correcti
         }
         else {
             ReportBuffer.add(LocalText.getText("CorrectionModeDeactivate",
-                    gameManager.getCurrentPlayer().getId(),
+                    getParent().getCurrentPlayer().getId(),
                     LocalText.getText(getCorrectionType().name())
             ));
         }
@@ -90,7 +87,7 @@ public abstract class CorrectionManager extends AbstractItem implements Correcti
     
 
     public boolean equals(CorrectionManager cm) {
-        return (this.gameManager == cm.gameManager 
+        return (this.getParent() == cm.getParent() 
                 && this.correctionType == cm.correctionType);
     }
 }

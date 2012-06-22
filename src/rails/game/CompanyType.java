@@ -43,23 +43,18 @@ public class CompanyType extends AbstractItem {
 
     protected List<Company> companies = new ArrayList<Company>();
 
-    /**
-     * The constructor.
-     *
-     */
-    private CompanyType(String className) {
+    protected CompanyType(Item parent, String id, String className) {
+        super(parent, id);
         this.className = className;
     }
 
     /**
-    * @param name Company type name ("Private", "Public", "Minor" etc.).
+    * @param id Company type name ("Private", "Public", "Minor" etc.).
     * @param className Name of the class that will instantiate this type of
     * company.
     */
-    public static CompanyType create(Item parent, String id, String className) {
-        CompanyType type = new CompanyType(className);
-        type.init(parent, id);
-        return type;
+    public static CompanyType create(CompanyManager parent, String id, String className) {
+        return new CompanyType(parent, id, className);
     }
 
     /**
@@ -82,7 +77,7 @@ public class CompanyType extends AbstractItem {
             throw new ConfigurationException(LocalText.getText(
                     "ClassCannotBeInstantiated", className), e);
         }
-        newCompany.init(this, name);
+        // newCompany.init(this, name);
         newCompany.configureFromXML(typeTag);
         newCompany.configureFromXML(tag);
         companies.add(newCompany);

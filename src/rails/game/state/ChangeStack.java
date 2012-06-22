@@ -9,16 +9,24 @@ import rails.game.Player;
 import rails.game.ReportBuffer;
 import rails.game.action.PossibleAction;
 
-public final class ChangeStack extends AbstractItem {
+public class ChangeStack extends AbstractItem {
     protected static Logger log =
         LoggerFactory.getLogger(ChangeStack.class.getPackage().getName());
 
     private final LinkedList<ChangeSet> stack = new LinkedList<ChangeSet>();
+
     private boolean enabled = false;
     
+    protected ChangeStack(Item parent, String id){
+        super(parent, id);
+    }
     
-    public static ChangeStack create() {
-        return new ChangeStack();
+    /**
+     * @param parent restricted to StateManager
+     * ID set to class name
+     */
+    public static ChangeStack create(StateManager parent) {
+        return new ChangeStack(parent , ChangeStack.class.getSimpleName());
     }
     
     /**

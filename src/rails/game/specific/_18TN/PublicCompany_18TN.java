@@ -13,16 +13,14 @@ import rails.game.PublicCompany;
 import rails.game.state.BooleanState;
 import rails.game.state.Item;
 
-public class PublicCompany_18TN extends PublicCompany implements RevenueStaticModifier {
+public final class PublicCompany_18TN extends PublicCompany implements RevenueStaticModifier {
 
-    private final BooleanState civilWar = BooleanState.create();
+    private final BooleanState civilWar = BooleanState.create(this, "civilWar");
 
-    @Override
-    public void init(Item parent, String id){
-        super.init(parent, id);
-        civilWar.init(this, id + "_CivilWar");
+    public PublicCompany_18TN(Item parent, String id) {
+        super(parent, id);    
     }
-    
+
     @Override
     public void finishConfiguration(GameManager gameManager)
     throws ConfigurationException {

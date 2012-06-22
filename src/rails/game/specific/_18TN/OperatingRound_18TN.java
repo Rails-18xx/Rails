@@ -6,22 +6,19 @@ import rails.game.*;
 import rails.game.action.BuyPrivate;
 import rails.game.action.SetDividend;
 import rails.game.state.ArrayListState;
-import rails.game.state.Item;
 
 public class OperatingRound_18TN extends OperatingRound {
 
-    private ArrayListState<Player> playersSoldInOR1 = ArrayListState.create();
+    private ArrayListState<Player> playersSoldInOR1 = ArrayListState.create(this, "PlayersSoldPrivateInOR1");
 
-    public OperatingRound_18TN (GameManager gameManager) {
-        super (gameManager);
+    public OperatingRound_18TN (GameManager parent, String id) {
+        super(parent, id);
     }
 
-    @Override
-    public void init(Item parent, String id){
-        super.init(parent, id);
-        playersSoldInOR1.init(this, "PlayersSoldPrivateInOR1");
+    public static OperatingRound_18TN create(GameManager parent, String id) {
+        return new OperatingRound_18TN(parent, id);
     }
-    
+
     @Override
     protected boolean isPrivateSellingAllowed() {
         return super.isPrivateSellingAllowed()

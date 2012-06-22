@@ -12,7 +12,7 @@ import rails.game.special.ExchangeForShare;
 import rails.game.special.SpecialProperty;
 import rails.game.model.MoneyModel;
 
-public class PrussianFormationRound extends StockRound {
+public final class PrussianFormationRound extends StockRound {
 
     private PublicCompany prussian;
     private PublicCompany m2;
@@ -36,12 +36,15 @@ public class PrussianFormationRound extends StockRound {
 	private static String PR_ID = GameManager_1835.PR_ID;
     private static String M2_ID = GameManager_1835.M2_ID;
 
-    public PrussianFormationRound (GameManager gameManager) {
-        super (gameManager);
+    private PrussianFormationRound (GameManager parent, String id) {
+        super(parent, id);
 
         guiHints.setVisibilityHint(GuiDef.Panel.MAP, true);
         guiHints.setVisibilityHint(GuiDef.Panel.STATUS, true);
-
+    }
+    
+    public static PrussianFormationRound create(GameManager parent, String id){
+        return new PrussianFormationRound(parent, id);
     }
 
  	@Override

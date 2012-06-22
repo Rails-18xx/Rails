@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import rails.common.LocalText;
 import rails.game.model.CertificatesModel;
+import rails.game.state.Item;
 import rails.game.state.OwnableItem;
 
 public class PublicCertificate extends OwnableItem<PublicCertificate> implements Certificate, Cloneable {
@@ -36,6 +37,7 @@ public class PublicCertificate extends OwnableItem<PublicCertificate> implements
     protected int indexInCompany;
 
     /** A map allowing to find certificates by unique id */
+    // FIXME: Remove static map
     protected static Map<String, PublicCertificate> certMap =
             new HashMap<String, PublicCertificate>();
 
@@ -43,8 +45,11 @@ public class PublicCertificate extends OwnableItem<PublicCertificate> implements
     protected static Logger log =
             LoggerFactory.getLogger(PublicCertificate.class.getPackage().getName());
 
-    public PublicCertificate(int shares, boolean president, 
+    // TODO: Rewrite constructors
+    // TODO: Should every certificate have its own id and be registered with the parent?
+    public PublicCertificate(Item parent, String id, int shares, boolean president, 
             boolean available, float certificateCount, int index) {
+        super(parent, id);
         this.shares = shares;
         this.president = president;
         this.initiallyAvailable = available;
@@ -52,7 +57,9 @@ public class PublicCertificate extends OwnableItem<PublicCertificate> implements
         this.indexInCompany = index;
     }
 
+    // FIXME: Check if this does work, most likely not, as it duplicates IDs
     public PublicCertificate(PublicCertificate oldCert) {
+        super(oldCert.getParent(), oldCert.getId());
         this.shares = oldCert.getShares();
         this.president = oldCert.isPresidentShare();
         this.initiallyAvailable = oldCert.isInitiallyAvailable();

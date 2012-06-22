@@ -28,13 +28,15 @@ public class StockRound extends Round {
     protected Player currentPlayer;
     protected Player startingPlayer;
 
-    protected final GenericState<PublicCompany> companyBoughtThisTurnWrapper = GenericState.create();
+    protected final GenericState<PublicCompany> companyBoughtThisTurnWrapper = 
+            GenericState.create(this, "companyBoughtThisTurnWrapper");
 
-    protected final BooleanState hasSoldThisTurnBeforeBuying = BooleanState.create();
+    protected final BooleanState hasSoldThisTurnBeforeBuying = 
+            BooleanState.create(this, "hasSoldThisTurnBeforeBuying");
 
-    protected final BooleanState hasActed = BooleanState.create();
+    protected final BooleanState hasActed = BooleanState.create(this, "hasActed");
 
-    protected final IntegerState numPasses = IntegerState.create();
+    protected final IntegerState numPasses = IntegerState.create(this, "numPasses");
 
     protected Map<PublicCompany, StockSpace> sellPrices =
         new HashMap<PublicCompany, StockSpace>();
@@ -46,7 +48,8 @@ public class StockRound extends Round {
 
     /* Transient data needed for rule enforcing */
     /** HashMap per player containing a HashMap per company */
-    protected HashMultimapState<Player, PublicCompany> playersThatSoldThisRound = HashMultimapState.create();
+    protected HashMultimapState<Player, PublicCompany> playersThatSoldThisRound = 
+            HashMultimapState.create(this, "playersThatSoldThisRound");
 
     /* Rule constants */
     static protected final int SELL_BUY_SELL = 0;
@@ -60,14 +63,8 @@ public class StockRound extends Round {
     /* Rules */
     protected int sequenceRule;
 
-    /**
-     * Constructor with the GameManager, will call super class (Round's) Constructor to initialize
-     *
-     * @param aGameManager The GameManager Object needed to initialize the Round Class
-     *
-     */
-    public StockRound (GameManager aGameManager) {
-        super (aGameManager);
+    protected StockRound (GameManager parent, String id) {
+        super(parent, id);
 
         if (numberOfPlayers == 0)
             numberOfPlayers = gameManager.getPlayers().size();
@@ -79,17 +76,10 @@ public class StockRound extends Round {
         guiHints.setActivePanel(GuiDef.Panel.STATUS);
     }
     
-    @Override
-    public void init(Item parent, String id) {
-        super.init(parent, id);
-
-        companyBoughtThisTurnWrapper.init(this, "CompanyBoughtThisTurn");
-        hasSoldThisTurnBeforeBuying.init(this, "HoldSoldBeforeBuyingThisTurn");
-        hasActed.init(this, "HasActed");
-        numPasses.init(this, "StockRoundPasses");
-        playersThatSoldThisRound.init(this, "playersThatSoldThisRound");
+    public static StockRound create(GameManager parent, String id){
+        return new StockRound(parent, id);
     }
-
+    
     public void start() {
 
         ReportBuffer.add(LocalText.getText("StartStockRound",
@@ -1598,8 +1588,7 @@ public class StockRound extends Round {
 
 	public void setSellObligationLifted (PublicCompany company) {
 		if (sellObligationLifted == null) {
-			sellObligationLifted = HashSetState.create();
-			sellObligationLifted.init(this, "SellObligationLifted");
+			sellObligationLifted = HashSetState.create(this, "sellObligationLifted");
 		}
 		sellObligationLifted.add(company);
 	}

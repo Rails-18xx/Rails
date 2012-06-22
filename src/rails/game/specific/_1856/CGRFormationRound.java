@@ -12,11 +12,9 @@ import rails.game.model.PortfolioModel;
 import rails.game.special.SellBonusToken;
 import rails.game.state.BooleanState;
 import rails.game.state.IntegerState;
-import rails.game.state.Item;
 import rails.game.state.Portfolio;
 
-
-public class CGRFormationRound extends SwitchableUIRound {
+public final class CGRFormationRound extends SwitchableUIRound {
 
     private Player startingPlayer;
     private int maxLoansToRepayByPresident = 0;
@@ -41,8 +39,8 @@ public class CGRFormationRound extends SwitchableUIRound {
     private List<ExchangeableToken> tokensToExchangeFrom = null;
     private List<BaseToken> nonHomeTokens = null;
 
-    private final IntegerState stepObject = IntegerState.create();
-    private final BooleanState cgrHasDiscardedTrains = BooleanState.create();
+    private final IntegerState stepObject = IntegerState.create(this, "stepObject");
+    private final BooleanState cgrHasDiscardedTrains = BooleanState.create(this, "cgrHasDiscardedTrains");
 
     public static final int STEP_REPAY_LOANS = 1;
     public static final int STEP_DISCARD_TRAINS = 2;
@@ -55,11 +53,15 @@ public class CGRFormationRound extends SwitchableUIRound {
         {6, 7, 8, 10, 11, 12, 14, 15}
     };
 
-    public CGRFormationRound (GameManager gameManager) {
-        super (gameManager);
+    private CGRFormationRound(GameManager parent, String id) {
+        super(parent, id);
 
         guiHints.setVisibilityHint(GuiDef.Panel.MAP, true);
         guiHints.setVisibilityHint(GuiDef.Panel.STATUS, true);
+    }
+    
+    public static CGRFormationRound create(GameManager parent, String id) {
+        return new CGRFormationRound(parent, id);
     }
 
     @Override
@@ -70,13 +72,6 @@ public class CGRFormationRound extends SwitchableUIRound {
         return StockRound.class;
     }
 
-    @Override
-    public void init(Item parent, String id) {
-        super.init(parent, id);
-        stepObject.init(this, "CGRFormStep");
-        cgrHasDiscardedTrains.init(this, "CGRDiscardedTrains");
-    }
-    
     public void start (Player startingPlayer) {
 
         this.startingPlayer = startingPlayer;

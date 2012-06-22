@@ -3,16 +3,19 @@ package rails.game.model;
 import rails.game.Bank;
 import rails.game.Bonus;
 import rails.game.state.ArrayListState;
+import rails.game.state.Item;
 import rails.game.state.Model;
 
 public class BonusModel extends Model {
     
     private ArrayListState<Bonus> bonuses;
     
-    private BonusModel() {}
-    
-    public static BonusModel create(){
-        return new BonusModel();
+    protected BonusModel(Item parent, String id) {
+        super(parent, id);
+    }
+
+    public static BonusModel create(Item parent, String id){
+        return new BonusModel(parent, id);
     }
 
     public void setBonuses(ArrayListState<Bonus> bonuses) {

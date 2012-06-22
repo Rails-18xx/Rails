@@ -10,10 +10,12 @@ public final class PortfolioList<T extends Ownable<T>> extends Portfolio<T> {
 
     private ArrayList<T> portfolio = Lists.newArrayList();
     
-    private PortfolioList() {};
+    private PortfolioList(PortfolioHolder parent, String id) {
+        super(parent, id);
+    }
     
-    public static <T extends Ownable<T>> PortfolioList<T> create() {
-        return new PortfolioList<T>();
+    public static <T extends Ownable<T>> PortfolioList<T> create(PortfolioHolder parent, String id) {
+        return new PortfolioList<T>(parent, id);
     }
 
     public boolean initialAdd(T item) {

@@ -6,12 +6,10 @@ import rails.game.state.BooleanState;
 import rails.game.state.AbstractItem;
 import rails.game.state.IntegerState;
 import rails.game.state.Item;
+import rails.game.state.PortfolioHolder;
 
-/**
- * Player class holds all player-specific data
- */
-
-public class Player extends AbstractItem implements CashOwner, PortfolioOwner, Comparable<Player> {
+// TODO: PortfolioHolder is a fix for the TODO problem in CertificatesModel
+public final class Player extends AbstractItem implements CashOwner, PortfolioOwner, PortfolioHolder, Comparable<Player> {
 
     // TODO: Are those still needed?
     public static int MAX_PLAYERS = 8;
@@ -23,88 +21,74 @@ public class Player extends AbstractItem implements CashOwner, PortfolioOwner, C
     private int index = 0;
     
     // dynamic data (states and models)
-    private final PortfolioModel portfolio = PortfolioModel.create();
-    private final CertificateCountModel certCount = CertificateCountModel.create();
+    private final PortfolioModel portfolio = PortfolioModel.create(this);
+    private final CertificateCountModel certCount = CertificateCountModel.create(portfolio);
 
-    private final CashMoneyModel cash = CashMoneyModel.create();
-    private final CalculatedMoneyModel freeCash = CalculatedMoneyModel.create();
-    private final CashMoneyModel blockedCash = CashMoneyModel.create();
-    private final CalculatedMoneyModel worth = CalculatedMoneyModel.create();
-    private final CashMoneyModel lastORWorthIncrease = CashMoneyModel.create();
+    private final CashMoneyModel cash = CashMoneyModel.create(this, "cash", false);
+    private final CalculatedMoneyModel freeCash;
+    private final CashMoneyModel blockedCash = CashMoneyModel.create(this, "blockedCash", false);
+    private final CalculatedMoneyModel worth;
+    private final CashMoneyModel lastORWorthIncrease = CashMoneyModel.create(this, "lastORIncome", false);
 
-    private final BooleanState bankrupt = BooleanState.create();
-    private final IntegerState worthAtORStart = IntegerState.create();
+    private final BooleanState bankrupt = BooleanState.create(this, "isBankrupt");
+    private final IntegerState worthAtORStart = IntegerState.create(this, "worthAtORStart");
 
-    // TODO: Write internal methods for the calculation methods
-    public Player(int index) {
+    private Player(Item parent, String id, int index) {
+        super(parent, id);
         this.index = index;
-    
-    }
-    
-    /**
-     *  @param parent restricted to PlayerManager
-     */
-    @Override
-    public void init(Item parent, String id) {
-        super.checkedInit(parent, id, PlayerManager.class);
-        
-        portfolio.init(this, PortfolioModel.id);
-        certCount.init(portfolio, CertificateCountModel.ID);
 
-        cash.init(this, "cash");
-        freeCash.init(this, "freeCash");
-        blockedCash.init(this, "blockedCash");
         blockedCash.setSuppressZero(true);
-        worth.init(this, "getWorth");
-        lastORWorthIncrease.init(this, "lastORIncome");
         lastORWorthIncrease.setDisplayNegative(true);
         
-        bankrupt.init(this, "isBankrupt");
-        worthAtORStart.init(this, "worthAtORStart");
-        // define definitions of freeCash
-        freeCash.initMethod(
-                new CalculationMethod(){ 
-                    public int calculate() {
-                        return cash.value() - blockedCash.value();
-                    }
-                    public boolean initialised() {
-                        return cash.initialised() && blockedCash.initialised();
-                    }
-                });
+        // definitions of freeCash
+        CalculationMethod freeCashMethod = new CalculationMethod(){ 
+            public int calculate() {
+                return cash.value() - blockedCash.value();
+            }
+            public boolean initialised() {
+                return cash.initialised() && blockedCash.initialised();
+            }
+        };
+        freeCash = CalculatedMoneyModel.create(this, "freeCash", freeCashMethod);
         cash.addModel(freeCash);
         blockedCash.addModel(freeCash);
         
         // define definitions of worth
-        worth.initMethod(
-                new CalculationMethod(){
-                    public int calculate() {
-                        // if player is bankrupt cash is not counted
-                        // as this was generated during forced selling
-                        int worth;
-                        if (bankrupt.booleanValue()) {
-                            worth = 0;
-                        } else {
-                            worth = cash.value();
-                        }
+        CalculationMethod worthMethod = new CalculationMethod(){
+            public int calculate() {
+                // if player is bankrupt cash is not counted
+                // as this was generated during forced selling
+                int worth;
+                if (bankrupt.booleanValue()) {
+                    worth = 0;
+                } else {
+                    worth = cash.value();
+                }
 
-                        for (PublicCertificate cert : getPortfolioModel().getCertificates()) {
-                            worth += cert.getCompany().getGameEndPrice() * cert.getShares();
-                        }
-                        for (PrivateCompany priv : getPortfolioModel().getPrivateCompanies()) {
-                            worth += priv.getBasePrice();
-                        }
-                        return worth;
-                    }
-                    public boolean initialised() {
-                        return cash.initialised();
-                    }
-                });       
+                for (PublicCertificate cert : getPortfolioModel().getCertificates()) {
+                    worth += cert.getCompany().getGameEndPrice() * cert.getShares();
+                }
+                for (PrivateCompany priv : getPortfolioModel().getPrivateCompanies()) {
+                    worth += priv.getBasePrice();
+                }
+                return worth;
+            }
+            public boolean initialised() {
+                return cash.initialised();
+            }
+        };
+        worth = CalculatedMoneyModel.create(this, "worth", worthMethod);
         portfolio.addModel(worth);
         cash.addModel(worth);
     }
     
+    public static Player create(PlayerManager parent, String id, int index) {
+        return new Player(parent, id, index);
+    }
+   
     /**
      * @return Returns the player's name.
+     * TODO: Is this still needed?
      */
     public String getId() {
         return name;

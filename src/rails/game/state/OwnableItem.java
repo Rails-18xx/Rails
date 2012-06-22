@@ -4,8 +4,8 @@ public abstract class OwnableItem<T extends OwnableItem<T>> extends AbstractItem
     
     private Portfolio<T> portfolio;
     
-    public void init(OwnableManager<T> parent, String id){
-        super.init(parent, id);
+    protected OwnableItem(Item parent, String id) {
+        super(parent, id);
     }
     
     public Portfolio<T> getPortfolio() {

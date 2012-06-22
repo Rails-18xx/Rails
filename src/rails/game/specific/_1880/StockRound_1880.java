@@ -8,19 +8,15 @@ import rails.game.GameManager;
 import rails.game.PublicCompany;
 import rails.game.StockRound;
 
+public final class StockRound_1880 extends StockRound {
 
-public class StockRound_1880 extends StockRound {
-
-    /**
-     * Constructor with the GameManager, will call super class (StockRound's) Constructor to initialize
-     *
-     * @param aGameManager The GameManager Object needed to initialize the Stock Round
-     *
-     */
-    public StockRound_1880 (GameManager aGameManager) {
-        super (aGameManager);
+    private StockRound_1880 (GameManager parent, String id) {
+        super(parent, id);
     }
 
+    public static StockRound_1880 create(GameManager parent, String id){
+        return new StockRound_1880(parent, id);
+    }
     
     @Override
     // The sell-in-same-turn-at-decreasing-price option does not apply here

@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartPacket.java,v 1.13 2009/09/11 19:27:23 evos Exp $ */
 package rails.game;
 
 import java.util.ArrayList;
@@ -10,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.state.AbstractItem;
+import rails.game.state.Item;
 import rails.util.Util;
 
 /**
@@ -17,7 +17,7 @@ import rails.util.Util;
  * must be completely sold out before normal share buying can start (but there
  * are exceptions to this rule).
  */
-public class StartPacket extends AbstractItem {
+public final class StartPacket extends AbstractItem {
 
     /**
      * A Map holding all start packets of a rails.game (yes, there can be more
@@ -43,22 +43,23 @@ public class StartPacket extends AbstractItem {
     private int modulus = 5;
 
     /** Default name */
-    public static final String DEFAULT_NAME = "Initial";
+    public static final String DEFAULT_ID = "Initial";
 
     protected static Logger log =
             LoggerFactory.getLogger(StartPacket.class.getPackage().getName());
 
-    /**
-     * Constructor. Only takes the packet and class named. Actual initialisation
-     * is done in <b>configureFromXML()</b>.
-     *
-     * @param name The start packet name.
-     * @param roundClassName The StartRound class name.
-     */
-    StartPacket(String name, String roundClassName) {
-        this.name = Util.hasValue(name) ? name : DEFAULT_NAME;
+    private StartPacket(Item parent, String id, String roundClassName) {
+        super(parent, Util.hasValue(id) ? id : DEFAULT_ID);
         this.roundClassName = roundClassName;
         //packets.put(name, this);
+    }
+    
+    /**
+     * @param id The start packet name.
+     * @param roundClassName The StartRound class name.
+     */
+    public static StartPacket create(Item parent, String id, String roundClassName) {
+        return new StartPacket(parent, id, roundClassName);
     }
 
     /**

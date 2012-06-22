@@ -7,32 +7,27 @@ import rails.game.state.Item;
 
 /**
  * A MoneyModel that stores the money value inside
- * @author freystef
+ * FIXME: Check if initialised is done correctly
  */
 public final class CashMoneyModel extends MoneyModel implements CountableItem {
 
     private final IntegerState value;
-    private final BooleanState initialised = BooleanState.create();
+    private final BooleanState initialised;
 
-    private CashMoneyModel(int amount) {
-        value = IntegerState.create( amount);
+    private CashMoneyModel(Item parent, String id, int amount, boolean init) {
+        super(parent, id);
+        value = IntegerState.create(this, "value", amount);
+        initialised = BooleanState.create(this, "initialised", init);
     }
     
-    public static CashMoneyModel create(){
-        return new CashMoneyModel(0);
+    public static CashMoneyModel create(Item parent, String id, boolean init){
+        return new CashMoneyModel(parent, id, 0, init);
     }
     
-    public static CashMoneyModel create(int amount){
-        return new CashMoneyModel(amount);
+    public static CashMoneyModel create(Item parent, String id, int amount){
+        return new CashMoneyModel(parent, id, amount, true);
     }
     
-    @Override
-    public void init(Item parent, String id){
-        super.init(parent, id);
-        value.init(this, "value");
-        initialised.init(this, "initialised");
-    }
-
     /**
      * @param amount the new cash amount
      */

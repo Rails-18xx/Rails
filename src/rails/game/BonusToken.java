@@ -3,7 +3,6 @@ package rails.game;
 import rails.common.parser.ConfigurableComponent;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
-import rails.game.state.Item;
 import rails.util.Util;
 
 /**
@@ -11,10 +10,9 @@ import rails.util.Util;
  * place on the map to gain extra revenue or other privileges.
  * <p>Such tokens are usually not placed in city slots, 
  * which are intended for base tokens, but on some unoccupied part of a tile.  
- *
- * @author Erik Vos
  */
 
+//FIXME: Check if PublicCompany is the parent of a token
 public final class BonusToken extends Token implements Closeable, ConfigurableComponent  {
 
     private int value;
@@ -22,18 +20,15 @@ public final class BonusToken extends Token implements Closeable, ConfigurableCo
     private String removingObjectDesc = null;
     private Object removingObject = null;
     private PublicCompany user = null;
-    
-    private BonusToken() {};
-    
-    public static BonusToken create(PublicCompany company) {
-        BonusToken token = new BonusToken();
-        token.init(company);
-        return token;
+
+    private BonusToken(PublicCompany parent, String id) {
+        super(parent, id);
     }
     
-    @Override
-    public void init(Item parent) {
-        super.checkedInit(parent, null, PublicCompany.class);
+    public static BonusToken create(PublicCompany company) {
+        String uniqueId = Token.createUniqueId();
+        BonusToken token = new BonusToken(company, uniqueId);
+        return token;
     }
     
     public void configureFromXML(Tag tag) throws ConfigurationException {

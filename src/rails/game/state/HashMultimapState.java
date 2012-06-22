@@ -8,21 +8,21 @@ import com.google.common.collect.ImmutableSet;
 
 /**
  * A stateful version of a HashMultimap
- * 
- * @author freystef
  */
 
 public final class HashMultimapState<K,V> extends MultimapState<K,V> implements Iterable<V> {
     
     private final HashMultimap<K,V> map = HashMultimap.create();
 
-    private HashMultimapState() {}
+    private HashMultimapState(Item parent, String id) {
+        super(parent, id);
+    }
     
     /** 
      * Creates an empty HashMultimapState 
      */
-    public static <K,V> HashMultimapState<K,V> create(){
-        return new HashMultimapState<K,V>();
+    public static <K,V> HashMultimapState<K,V> create(Item parent, String id){
+        return new HashMultimapState<K,V>(parent ,id);
     }
     
     /**

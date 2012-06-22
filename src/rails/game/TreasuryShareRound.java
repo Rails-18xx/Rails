@@ -1,8 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TreasuryShareRound.java,v 1.21 2010/02/17 22:01:44 evos Exp $
- *
- * Created on 21-May-2006
- * Change Log:
- */
 package rails.game;
 
 import java.util.*;
@@ -13,17 +8,13 @@ import rails.common.LocalText;
 import rails.game.action.*;
 import rails.game.model.PortfolioModel;
 import rails.game.state.BooleanState;
-import rails.game.state.Item;
 
-/**
- * @author Erik Vos
- */
-public class TreasuryShareRound extends StockRound {
+public final class TreasuryShareRound extends StockRound {
 
     protected Player sellingPlayer;
     protected PublicCompany operatingCompany;
-    private final BooleanState hasBought = BooleanState.create() ;
-    private final BooleanState hasSold = BooleanState.create();
+    private final BooleanState hasBought = BooleanState.create(this, "hasBought") ;
+    private final BooleanState hasSold = BooleanState.create(this, "hasSold");
 
     /**
      * Constructor with the GameManager, will call super class (StockRound's) Constructor to initialize, and
@@ -31,11 +22,9 @@ public class TreasuryShareRound extends StockRound {
      *
      * @param aGameManager The GameManager Object needed to initialize the StockRound Class
      * @param operatingCompany The PublicCompany Object that is selling shares
-     *
      */
-    public TreasuryShareRound(GameManager aGameManager,
-                             Round parentRound) {
-        super (aGameManager);
+    public TreasuryShareRound(GameManager parent, String id, Round parentRound) {
+        super(parent, id);
 
         operatingCompany = ((OperatingRound)parentRound).getOperatingCompany();
         sellingPlayer = operatingCompany.getPresident();
@@ -43,16 +32,12 @@ public class TreasuryShareRound extends StockRound {
         setCurrentPlayerIndex(sellingPlayer.getIndex());
 
         guiHints.setActivePanel(GuiDef.Panel.STATUS);
-
-    }
-
-    @Override
-    public void init(Item parent, String id){
-        super.init(parent, id);
-        hasBought.init(this, operatingCompany.getId() + "_boughtShares");
-        hasSold.init(this, operatingCompany.getId() + "_soldShares");
     }
     
+    public static TreasuryShareRound create(GameManager parent, String id, Round parentRound) {
+        return new TreasuryShareRound(parent, id, parentRound);
+    }
+
     @Override
     public void start() {
         log.info("Treasury share trading round started");

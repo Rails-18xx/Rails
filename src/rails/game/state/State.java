@@ -21,13 +21,8 @@ public abstract class State extends Observable {
     // optional formatter
     private Formatter<State> formatter = null;
 
-    // default constructor
-    
-    // Item methods
-    @Override
-    public void init(Item parent, String id) {
-        super.init(parent, id);
-        
+    protected State(Item parent, String id) {
+        super(parent, id);
         // check if parent is a model and add as dependent model
         if (parent instanceof Model) {
             addModel((Model)parent);
@@ -47,7 +42,6 @@ public abstract class State extends Observable {
      */
     @Override
     public final String getText() {
-        checkState(isInitialized(), "State not yet initialized");
         if (formatter == null) {
             return toString();
         } else {

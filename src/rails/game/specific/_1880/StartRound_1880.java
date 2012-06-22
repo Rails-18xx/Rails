@@ -1,6 +1,3 @@
-/**
- * 
- */
 package rails.game.specific._1880;
 
 import rails.common.DisplayBuffer;
@@ -9,57 +6,39 @@ import rails.game.*;
 import rails.game.action.*;
 import rails.game.state.GenericState;
 import rails.game.state.IntegerState;
-import rails.game.state.Item;
 
-
-/**
- * @author Martin
- *
- */
-public class StartRound_1880 extends StartRound {
+public final class StartRound_1880 extends StartRound {
    
     private final GenericState<Player> startingPlayer =
-        GenericState.create();
+        GenericState.create(this, "startingPlayer");
     
     private final IntegerState currentBuyPrice =
-        IntegerState.create();
+        IntegerState.create(this, "currentBuyPrice");
     
     private final IntegerState initialItemRound = 
-        IntegerState.create(); 
+        IntegerState.create(this, "intialItemRound"); 
     
     private final GenericState<StartItem> currentItem = 
-        GenericState.create();
+        GenericState.create(this, "currentItem");
     
     private final IntegerState currentStartRoundPhase = 
-        IntegerState.create(); 
+        IntegerState.create(this, "currentStartRoundPhase"); 
     
     private final IntegerState investorChosen = 
-        IntegerState.create();
+        IntegerState.create(this, "investorChosen");
     
     /** A company in need for a par price. */
 //    private PublicCompany companyNeedingPrice = null;
     
-    
-    /**
-     * @param gameManager
-     */
-    public StartRound_1880(GameManager gameManager) {
-        super(gameManager);
+    private StartRound_1880(GameManager parent, String id) {
+        super(parent, id);
         hasBasePrices=true;
         hasBidding=true;
     }
     
-    @Override
-    public void init(Item parent, String id) {
-        super.init(parent, id);
-        startingPlayer.init(this, "StartingPlayer");
-        currentBuyPrice.init(this, "CurrentBuyPrice");
-        initialItemRound.init(this, "InitialItemRound"); 
-        currentItem.init(this, "CurrentItem");
-        currentStartRoundPhase.init(this, "CurrentStartRoundPhase"); 
-        investorChosen.init(this, "InvestorChosen");
+    public static StartRound_1880 create(GameManager parent, String id){
+        return new StartRound_1880(parent, id);
     }
-    
     
     @Override
     public void start() {

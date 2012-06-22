@@ -11,26 +11,24 @@ public final class HashSetState<E> extends State implements Iterable<E> {
 
     private final HashSet<E> set;
 
-    private HashSetState() {
-        set = new HashSet<E>();
-    }
-    
-    private HashSetState(Collection<E> collection) {
-        set = new HashSet<E>(collection);
+    private HashSetState(Item parent, String id, Collection<E> collection) {
+        super(parent, id);
+        if (collection == null) set = new HashSet<E>();
+        else set = new HashSet<E>(collection);
     }
 
     /**
      * @return empty HashSetState
      */
-    public static <E> HashSetState<E> create(){
-        return new HashSetState<E>();
+    public static <E> HashSetState<E> create(Item parent, String id){
+        return new HashSetState<E>(parent, id, null);
     }
     
     /**
      * @return prefilled HashSetState
      */
-    public static <E> HashSetState<E> create(Collection<E> collection){
-        return new HashSetState<E>(collection);
+    public static <E> HashSetState<E> create(Item parent, String id, Collection<E> collection){
+        return new HashSetState<E>(parent, id, collection);
     }
     
     /**

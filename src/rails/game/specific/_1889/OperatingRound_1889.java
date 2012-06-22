@@ -16,42 +16,34 @@ import rails.game.action.UseSpecialProperty;
 import rails.game.special.SpecialProperty;
 import rails.game.special.SpecialTileLay;
 import rails.game.state.BooleanState;
-import rails.game.state.Item;
 
 /**
  * Adds specific code for 1889 to allow the special timing of the special tile laying private companies
  */
-public class OperatingRound_1889 extends OperatingRound {
+public final class OperatingRound_1889 extends OperatingRound {
 
     private final PrivateCompany privB;
-    private final BooleanState activeSpPrivB = BooleanState.create();
+    private final BooleanState activeSpPrivB = BooleanState.create(this, "ActiveSpPrivB");
     
     private final PrivateCompany privC;
-    private final BooleanState activeSpPrivC = BooleanState.create();
+    private final BooleanState activeSpPrivC = BooleanState.create(this, "ActiveSpPrivC");
     
     private final boolean beginnerGame;
 
     private GameDef.OrStep storeActiveStep;
     private String previousOwnerName; 
     
-    /**
-     * Instantiates a new operating round_1889.
-     * @param gameManager the game manager
-     */
-    public OperatingRound_1889 (GameManager gameManager) {
-        super (gameManager);
+    private OperatingRound_1889(GameManager parent, String id) {
+        super(parent, id);
         privB = companyManager.getPrivateCompany("B");
         privC = companyManager.getPrivateCompany("C");
         beginnerGame = GameOption.convertValueToBoolean(getGameOption("BeginnerGame"));
     }
-    
-    @Override
-    public void init(Item parent, String id){
-        super.init(parent, id);
-        activeSpPrivB.init(this, "ActiveSpPrivB");
-        activeSpPrivC.init(this, "ActiveSpPrivC");
+
+    public static OperatingRound_1889 create(GameManager parent, String id) {
+        return new OperatingRound_1889(parent, id);
     }
-    
+
     @Override
     protected void setGameSpecificPossibleActions() {
         

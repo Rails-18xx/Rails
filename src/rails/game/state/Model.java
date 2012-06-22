@@ -18,6 +18,10 @@ public abstract class Model extends Observable {
     private boolean updated = false;
     private String cache = null;
     
+    protected Model(Item parent, String id) {
+        super(parent, id);
+    }
+
     /**
      * Indicates that the model is updated, so the getText() cache
      * is flushed

@@ -18,7 +18,6 @@ import rails.game.state.AbstractItem;
 import rails.game.state.ArrayListState;
 import rails.game.state.BooleanState;
 import rails.game.state.ChangeStack;
-import rails.game.state.Item;
 import rails.game.state.Portfolio;
 
 /**
@@ -43,7 +42,7 @@ public abstract class Round extends AbstractItem {
     protected StockMarket stockMarket = null;
     protected MapManager mapManager = null;
 
-    protected final BooleanState wasInterrupted = BooleanState.create(false);
+    protected final BooleanState wasInterrupted = BooleanState.create(this, "wasInterrupted");
 
     protected ChangeStack changeStack = null;
 
@@ -61,9 +60,10 @@ public abstract class Round extends AbstractItem {
      * @param aGameManager The GameManager Object needed to initialize the Round Class
      *
      */
-    public Round (GameManager aGameManager) {
+    protected Round (GameManager parent, String id) {
+        super(parent, id);
 
-        this.gameManager = aGameManager;
+        this.gameManager = parent;
 
         if (gameManager == null) {
             companyManager = null;
@@ -83,12 +83,6 @@ public abstract class Round extends AbstractItem {
 
         guiHints = gameManager.getUIHints();
         guiHints.setCurrentRoundType(getClass());
-    }
-
-    @Override
-    public void init(Item parent, String id) {
-        super.init(parent, id);
-        wasInterrupted.init(this, "RoundInterrupted");
     }
     
     public Player getCurrentPlayer() {
@@ -489,8 +483,7 @@ public abstract class Round extends AbstractItem {
     public boolean requestTurn (Player player) {
         if (canRequestTurn (player)) {
             if (hasRequestedTurn == null) {
-                hasRequestedTurn = ArrayListState.create();
-                hasRequestedTurn.init(this, "hasRequestedTurn");
+                hasRequestedTurn = ArrayListState.create(this, "hasRequestedTurn");
             }
             if (!hasRequestedTurn.contains(player)) hasRequestedTurn.add(player);
             return true;
@@ -504,8 +497,7 @@ public abstract class Round extends AbstractItem {
 
     public void setCanRequestTurn (Player player, boolean value) {
         if (canRequestTurn == null) {
-            canRequestTurn = ArrayListState.create();
-            canRequestTurn.init(this, "canRequestTurn");
+            canRequestTurn = ArrayListState.create(this, "canRequestTurn");
         }
         if (value && !canRequestTurn.contains(player)) {
             canRequestTurn.add(player);
@@ -516,8 +508,7 @@ public abstract class Round extends AbstractItem {
 
     public void setAutopass (Player player, boolean value) {
         if (autopasses == null) {
-            autopasses = ArrayListState.create();
-            autopasses.init(this, "autopasses");
+            autopasses = ArrayListState.create(this, "autopasses");
         }
         if (value && !autopasses.contains(player)) {
             autopasses.add(player);

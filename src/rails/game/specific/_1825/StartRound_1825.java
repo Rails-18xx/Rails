@@ -7,14 +7,15 @@ import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;
 
-public class StartRound_1825 extends StartRound {
+public final class StartRound_1825 extends StartRound {
 
-    /**
-     * Constructor, only to be used in dynamic instantiation.
-     */
-    public StartRound_1825(GameManager gameManager) {
-        super(gameManager);
+    public StartRound_1825(GameManager parent, String id) {
+        super(parent, id);
         hasBidding = false;
+    }
+
+    public static StartRound_1825 create(GameManager parent, String id){
+        return new StartRound_1825(parent, id);
     }
 
     /**

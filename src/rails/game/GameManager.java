@@ -27,7 +27,7 @@ import rails.util.Util;
  * This class manages the playing rounds by supervising all implementations of
  * Round. Currently everything is hardcoded &agrave; la 1830.
  */
-public class GameManager extends AbstractItem implements ConfigurableComponent {
+public class GameManager extends AbstractItem implements ConfigurableComponent, PortfolioHolder {
     /** Version ID of the Save file header, as written in save() */
     private static final long saveFileHeaderVersionID = 3L;
     /**
@@ -71,8 +71,9 @@ public class GameManager extends AbstractItem implements ConfigurableComponent {
     protected List<Player> players;
     protected List<String> playerNames;
     protected int numberOfPlayers;
-    protected final GenericState<Player> currentPlayer = GenericState.create();
-    protected final GenericState<Player> priorityPlayer = GenericState.create();
+    protected final GenericState<Player> currentPlayer = GenericState.create(this, "currentPlayer");
+    protected final GenericState<Player> priorityPlayer = GenericState.create(this, "priorityPlayer");
+
 
     /** Map relating portfolio names and objects, to enable deserialization.
      * OBSOLETE since Rails 1.3.1, but still required to enable reading old saved files */
@@ -82,7 +83,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponent {
     protected final Map<String, PortfolioModel> portfolioUniqueNameMap =
         new HashMap<String, PortfolioModel> ();
 
-    protected final IntegerState playerCertificateLimit = IntegerState.create();
+    protected final IntegerState playerCertificateLimit = IntegerState.create(this, "playerCertificateLimit");
     protected int currentNumberOfOperatingRounds = 1;
     protected boolean skipFirstStockRound = false;
     protected boolean showCompositeORNumber = true;
@@ -107,21 +108,21 @@ public class GameManager extends AbstractItem implements ConfigurableComponent {
      * been sold, it finishes by starting an Operating Round, which handles the
      * privates payout and then immediately starts a new Start Round.
      */
-    protected final GenericState<Round> currentRound = GenericState.create();
+    protected final GenericState<Round> currentRound = GenericState.create(this, "currentRound");
     protected Round interruptedRound = null;
 
-    protected final IntegerState srNumber = IntegerState.create();
+    protected final IntegerState srNumber = IntegerState.create(this, "srNumber");
 
-    protected final IntegerState absoluteORNumber = IntegerState.create();
-    protected final IntegerState relativeORNumber = IntegerState.create();
-    protected final IntegerState numOfORs = IntegerState.create();
+    protected final IntegerState absoluteORNumber = IntegerState.create(this, "absoluteORNUmber");
+    protected final IntegerState relativeORNumber = IntegerState.create(this, "relativeORNumber");
+    protected final IntegerState numOfORs = IntegerState.create(this, "numOfORs");
 
     /** GameOver pending, a last OR or set of ORs must still be completed */
-    protected final BooleanState gameOverPending = BooleanState.create();
+    protected final BooleanState gameOverPending = BooleanState.create(this, "gameOverPending");
     /** GameOver is executed, no more moves */
-    protected final BooleanState gameOver = BooleanState.create();
+    protected final BooleanState gameOver = BooleanState.create(this, "gameOver");
     protected Boolean gameOverReportedUI = false;
-    protected final BooleanState endedByBankruptcy = BooleanState.create();
+    protected final BooleanState endedByBankruptcy = BooleanState.create(this, "endedByBankruptcy");
 
     /** UI display hints */
     protected GuiHints guiHints;
@@ -166,9 +167,10 @@ public class GameManager extends AbstractItem implements ConfigurableComponent {
 
     /**
      * The MoveSet stack is maintained to enable Undo and Redo throughout the game.
+     * FIXME: ChangeStack moved to StateManager
      */
     @Deprecated
-    protected final ChangeStack changeStack = ChangeStack.create();
+    protected final ChangeStack changeStack = null;
 
     /**
      * The DisplayBuffer instance collects messages to be displayed in the UI.
@@ -177,7 +179,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponent {
     /**
      * nextPlayerMessages collects all messages to be displayed to the next player
      */
-    protected final ArrayListState<String> nextPlayerMessages = ArrayListState.create();
+    protected final ArrayListState<String> nextPlayerMessages = ArrayListState.create(this, "nextPlayerMessages");
 
     /**
      * The ReportBuffer collects messages to be shown in the Game Report.
@@ -191,7 +193,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponent {
 
     protected PossibleActions possibleActions = PossibleActions.getInstance();
 
-    protected final ArrayListState<PossibleAction> executedActions = ArrayListState.create();
+    protected final ArrayListState<PossibleAction> executedActions = ArrayListState.create(this, "executedActions");
 
     /** Special properties that can be used by other players or companies
      * than just the owner (such as buyable bonus tokens as in 1856).
@@ -227,7 +229,9 @@ public class GameManager extends AbstractItem implements ConfigurableComponent {
     protected static Logger log =
         LoggerFactory.getLogger(GameManager.class.getPackage().getName());
 
+    // FIXME: This has to be rewritten
     public GameManager() {
+        super(null, GM_NAME); // TODO: fix that 
         gmName = GM_NAME;
         gmKey = GM_KEY;
 //        NDC.clear();
@@ -235,7 +239,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponent {
         gameManagerMap.put(GM_KEY, this);
         displayBuffer = new DisplayBuffer();
         reportBuffer = new ReportBuffer();
-        guiHints = new GuiHints();
+        guiHints = GuiHints.create(this, "guiHints");
     }
 
     public void configureFromXML(Tag tag) throws ConfigurationException {
@@ -495,24 +499,6 @@ public class GameManager extends AbstractItem implements ConfigurableComponent {
         }
     }
 
-    @Override
-    public void init(Item parent, String id){
-        super.init(parent, id);
-        currentPlayer.init(this, "CurrentPlayer");
-        priorityPlayer.init(this, "PriorityPlayer");
-        playerCertificateLimit.init(this, "PlayerCertificateLimit");
-        currentRound.init(this, "CurrentRound");
-        srNumber.init(this, "SRNumber");
-        absoluteORNumber.init(this, "AbsoluteORNUmber");
-        relativeORNumber.init(this, "RelativeORNumber");
-        numOfORs.init(this, "numOfORs");
-        gameOverPending.init(this, "GameOverPending");
-        gameOver.init(this, "GameOver");
-        endedByBankruptcy.init(this, "EndedByBankruptcy");     
-        nextPlayerMessages.init(this, "nextPlayerMessages");
-        executedActions.init(this, "executedActions");
-    }
-    
     public void finishConfiguration (GameManager gameManager) {}
 
     /** Check if a classname can be instantiated.
@@ -570,7 +556,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponent {
         setGuiParameters();
 
         if (startPacket == null)
-            startPacket = companyManager.getStartPacket(StartPacket.DEFAULT_NAME);
+            startPacket = companyManager.getStartPacket(StartPacket.DEFAULT_ID);
         if (startPacket != null && !startPacket.areAllSold()) {
             startPacket.init(this);
 
@@ -1711,8 +1697,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponent {
     public boolean addSpecialProperty(SpecialProperty property) {
         
         if (commonSpecialProperties == null) {
-            commonSpecialProperties = PortfolioList.create();
-            commonSpecialProperties.init(this, "CommonSpecialProperties");
+            commonSpecialProperties = PortfolioList.create(this, "CommonSpecialProperties");
         }
         return commonSpecialProperties.moveInto(property);
     }
@@ -1885,6 +1870,16 @@ public class GameManager extends AbstractItem implements ConfigurableComponent {
     public void resetStorage() {
         objectStorage = new HashMap<String, Object>();
         storageIds = new HashMap<String, Integer>();
+    }
+    
+    /**
+     * get storage id
+     * @param name to identify the type of the object to retrieve
+     */
+    public int getStorageId(String typeName) {
+        Integer id = storageIds.get(typeName);
+        if (id == null) id = 0;
+        return id;
     }
 
     /**

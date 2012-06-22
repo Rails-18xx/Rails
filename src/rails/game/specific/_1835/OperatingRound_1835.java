@@ -23,33 +23,27 @@ import rails.game.special.SpecialProperty;
 import rails.game.special.SpecialTileLay;
 import rails.game.state.BooleanState;
 import rails.game.state.HashMapState;
-import rails.game.state.Item;
 import rails.game.state.Owner;
 
-public class OperatingRound_1835 extends OperatingRound {
+public final class OperatingRound_1835 extends OperatingRound {
 
-    private final BooleanState needPrussianFormationCall = BooleanState.create();
-    private final BooleanState hasLaidExtraOBBTile = BooleanState.create();
+    private final BooleanState needPrussianFormationCall = BooleanState.create(this, "NeedPrussianFormationCall");
+    private final BooleanState hasLaidExtraOBBTile = BooleanState.create(this, "HasLaidExtraOBBTile");
 
     /**
      * Registry of percentage of PR revenue to be denied per player
      * because of having produced revenue in the same OR.
      */
-    private final HashMapState<Player, Integer> deniedIncomeShare = HashMapState.create();
+    private final HashMapState<Player, Integer> deniedIncomeShare = HashMapState.create(this, "deniedIncomeShare");
 
-    public OperatingRound_1835 (GameManager gameManager) {
-        super (gameManager);
+    private OperatingRound_1835 (GameManager parent, String id) {
+        super (parent, id);
+    }
+
+    public static OperatingRound_1835 create(GameManager parent, String id) {
+        return new OperatingRound_1835(parent, id);
     }
     
-    @Override
-    public void init(Item parent, String id) {
-        super.init(parent, id);
-        needPrussianFormationCall.init(this, "NeedPrussianFormationCall");
-        hasLaidExtraOBBTile.init(this, "HasLaidExtraOBBTile");
-        deniedIncomeShare.init(this, "deniedIncomeShare");
-    }
-    
-
     /** Can a public company operate? (1835 special version) */
     @Override
     protected boolean canCompanyOperateThisRound (PublicCompany company) {

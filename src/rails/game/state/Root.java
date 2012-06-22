@@ -2,7 +2,6 @@ package rails.game.state;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-
 /**
  * Root is a context that serves as the top node
 
@@ -14,49 +13,37 @@ public final class Root extends Context {
    /**
     * The reserved id for a root
     */
-   public static final String id = "root";
+   public static final String ID = "root";
+  
+   private Root(StateManager parent) {
+       super(parent, ID);
+   }
 
-   // Remark: There is no individual id or parent defined for root
-
-   private final StateManager manager;
-   
-   // storage of items 
-   private HashMapState<String, Item> items;
-   
    /**
-    * @param the stateManager used for this hierarchy
+    * @param the game used for this hierarchy
     */
-   public Root(StateManager manager) {
-       this.manager = manager;
+   public static Root create(Game parent) {
+       return new Root(parent);
    }
    
-   // Item interface
    @Override
-   public void init(Item parent, String id) {
-       checkArgument(parent == null, "Parent must be null");
-       checkArgument(id != Root.id, "Id must equal " + Root.id);
-
-       HashMapState.create();
-   }
-   
-   public String getId() {
-       return Root.id;
-   }
-
-   public Item getParent() {
+   public StateManager getParent() {
        return null;
    }
    
+   @Override
    public Context getContext() {
        return null;
    }
    
+   @Override
    public String getURI() {
-       return Root.id;
+       return ID;
    }
 
+   @Override
    public String getFullURI() {
-       return Root.id;
+       return ID;
    }
    
    // Context methods
@@ -73,14 +60,10 @@ public final class Root extends Context {
        // all preconditions ok
        items.put(item.getFullURI(), item);
    }
-   
-   public StateManager getStateManager() {
-       return manager;
-   }
-   
+
    @Override
    public String toString() {
-       return Root.id;
+       return ID;
    }
     
 }

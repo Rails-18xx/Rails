@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/StartRound_1830.java,v 1.33 2010/06/21 22:57:53 stefanfrey Exp $ */
 package rails.game;
 
 import rails.common.DisplayBuffer;
@@ -9,16 +8,17 @@ import rails.game.action.*;
 /**
  * Implements an 1830-style initial auction.
  */
-public class StartRound_1830 extends StartRound {
+public final class StartRound_1830 extends StartRound {
     int bidIncrement;
 
-    /**
-     * Constructor, only to be used in dynamic instantiation.
-     */
-    public StartRound_1830(GameManager gameManager) {
-        super(gameManager);
+    private StartRound_1830(GameManager parent, String id) {
+        super(parent, id);
         hasBidding = true;
         bidIncrement = startPacket.getModulus();
+    }
+    
+    public static StartRound_1830 create(GameManager parent, String id){
+        return new StartRound_1830(parent, id);
     }
 
     /**

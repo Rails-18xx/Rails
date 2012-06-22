@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/specific/_18EU/StartRound_18EU.java,v 1.11 2010/06/21 22:57:52 stefanfrey Exp $ */
 package rails.game.specific._18EU;
 
 import rails.common.DisplayBuffer;
@@ -7,41 +6,28 @@ import rails.game.*;
 import rails.game.action.*;
 import rails.game.state.IntegerState;
 import rails.game.state.GenericState;
-import rails.game.state.Item;
 
-/**
- * Implements an 1835-style startpacket sale.
- */
-public class StartRound_18EU extends StartRound {
+public final class StartRound_18EU extends StartRound {
 
     public final static int SELECT_STEP = 0;
     public final static int OPEN_STEP = 1;
     public final static int BUY_STEP = 2;
     public final static int BID_STEP = 3;
 
-    private final IntegerState currentStep = IntegerState.create(SELECT_STEP);
-    private final GenericState<Player> selectingPlayer = GenericState.create();
-    private final IntegerState currentBuyPrice = IntegerState.create();
-    private final GenericState<StartItem> currentAuctionItem = GenericState.create();
+    private final IntegerState currentStep = IntegerState.create(this, "currentStep", SELECT_STEP);
+    private final GenericState<Player> selectingPlayer = GenericState.create(this, "selectingPlayer");
+    private final IntegerState currentBuyPrice = IntegerState.create(this, "currentBuyPrice");
+    private final GenericState<StartItem> currentAuctionItem = GenericState.create(this, "currentAuctionItem");
 
-    /**
-     * Constructor, only to be used in dynamic instantiation.
-     */
-    public StartRound_18EU(GameManager gameManager) {
-        super(gameManager);
+    private StartRound_18EU(GameManager parent, String id) {
+        super(parent, id);
         hasBidding = true;
         hasBasePrices = false;
     }
-    
-    @Override
-    public void init(Item parent, String id){
-        super.init(parent, id);
-        currentStep.init(this, "CurrentStep");
-        selectingPlayer.init(this, "SelectingPlayer");
-        currentBuyPrice.init(this, "CurrentBuyPrice");
-        currentAuctionItem.init(this, "CurrentAuctionItem");
+
+    public static StartRound_18EU create(GameManager parent, String id){
+        return new StartRound_18EU(parent, id);
     }
-    
 
     /**
      * Start the 18EU-style start round.

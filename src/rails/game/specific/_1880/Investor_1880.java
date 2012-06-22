@@ -1,15 +1,9 @@
-/**
- * 
- */
 package rails.game.specific._1880;
 
 import rails.game.PublicCompany;
+import rails.game.state.Item;
 
-/**
- * @author Martin 2011/04/11
- *
- */
-public class Investor_1880 extends PublicCompany {
+public final class Investor_1880 extends PublicCompany {
 /*
  * Investors in 1880 get chosen at start after the initial starting package is sold out. They get one share from a new company 
  * TODO: Make sure that dividends aren't accumulated on the investors
@@ -29,12 +23,8 @@ public class Investor_1880 extends PublicCompany {
     */
     protected boolean canBorrowTrain=true;
     
-      
-    /**
-     * 
-     */
-    public Investor_1880() {
-        super();    
+    public Investor_1880(Item parent, String id) {
+        super(parent, id);    
     }
     
     public boolean canOwnShare(){

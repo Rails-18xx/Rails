@@ -12,7 +12,7 @@ import rails.game.state.AbstractItem;
 import rails.game.state.BooleanState;
 import rails.game.state.Item;
 
-public class StockMarket extends AbstractItem implements ConfigurableComponent {
+public final class StockMarket extends AbstractItem implements ConfigurableComponent {
 
      /**
      *  This is the name by which the CompanyManager should be registered with
@@ -44,23 +44,21 @@ public class StockMarket extends AbstractItem implements ConfigurableComponent {
 
     /* States */
     /** GameOver becomes true if a stock market square is reached that is marked as such */ 
-    protected final BooleanState gameOver = BooleanState.create(false);
+    protected final BooleanState gameOver = BooleanState.create(this, "gameOver", false);
 
     // TODO: Check if this should not be a state?
     ArrayList<PublicCertificate> ipoPile;
 
     public static final String DEFAULT = "default";
 
-    public StockMarket() {
-
+    private StockMarket(Item parent, String id) {
+        super(parent, id);
     }
     
-    public void init(Item parent, String id) {
-        super.init(parent, id);
-        gameOver.init(this, "GameOver");
+    public static StockMarket create(Item parent, String id) {
+        return new StockMarket(parent, id);
     }
     
-
     /**
      * @see rails.common.parser.ConfigurableComponent#configureFromXML(org.w3c.dom.Element)
      */

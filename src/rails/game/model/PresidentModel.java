@@ -2,7 +2,6 @@ package rails.game.model;
 
 import rails.game.Player;
 import rails.game.PublicCompany;
-import rails.game.state.Item;
 import rails.game.state.Model;
 import rails.game.state.Observable;
 import rails.game.state.Observer;
@@ -11,27 +10,22 @@ import rails.game.state.Observer;
  * model object for the current company president
  * gets registered by the ShareModels
  * 
+ * FIXME: Finalize implementation
  * TODO: Check if this is all done correctly, where is the observable stored?
  */
 
-public class PresidentModel extends Model implements Observer {
+public final class PresidentModel extends Model implements Observer {
 
-    public static final String id = "PresidentModel";  
+    public static final String ID = "PresidentModel";  
     
     PublicCompany company;
     
-    private PresidentModel() {}
-
-    public static PresidentModel create(){
-        return new PresidentModel();
+    private PresidentModel(PublicCompany parent, String id) {
+        super(parent, id);
     }
-    
-    /** 
-     * @param parent restricted to PublicCompany
-     */
-    @Override
-    public void init(Item parent, String id){
-        super.checkedInit(parent, id, PublicCompany.class);
+
+    public static PresidentModel create(PublicCompany parent){
+        return new PresidentModel(parent, ID);
     }
     
     /**

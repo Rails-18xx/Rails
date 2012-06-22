@@ -16,9 +16,13 @@ public abstract class Observable extends AbstractItem {
     private HashSetState<Observer> observers = null; // lazy initialization
     private HashSetState<Model> models = null; // lazy initialization
     
+    protected Observable(Item parent, String id) {
+        super(parent, id);
+    }
+
     public void addObserver(Observer o) {
         if (observers == null) {
-            observers = HashSetState.create();
+            observers = HashSetState.create(this, "observers");
         }
         observers.add(o);
     }
@@ -35,7 +39,7 @@ public abstract class Observable extends AbstractItem {
 
     public void addModel(Model m) {
         if (models == null) {
-            models = HashSetState.create();
+            models = HashSetState.create(this, "models");
         }
         
         models.add(m);

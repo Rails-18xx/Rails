@@ -25,17 +25,17 @@ public class StartItem extends AbstractItem {
     protected String name = null;
     protected Certificate primary = null;
     protected Certificate secondary = null;
-    protected final CashMoneyModel basePrice = CashMoneyModel.create();
+    protected final CashMoneyModel basePrice = CashMoneyModel.create(this, "basePrice", false);
     protected int row = 0;
     protected int column = 0;
     protected int index;
 
     // Bids
-    protected final IntegerState lastBidderIndex = IntegerState.create(-1);
+    protected final IntegerState lastBidderIndex = IntegerState.create(this, "lastBidder", -1);
     protected List<Player> players;
     protected int numberOfPlayers;
     protected CashMoneyModel[] bids;
-    protected final CashMoneyModel minimumBid = CashMoneyModel.create();
+    protected final CashMoneyModel minimumBid = CashMoneyModel.create(this, "minimumBid", false);
 
     // Status info for the UI ==> MOVED TO BuyOrBidStartItem
     // TODO REDUNDANT??
@@ -44,7 +44,7 @@ public class StartItem extends AbstractItem {
      * current player has the amount of (unblocked) cash to buy it or to bid on
      * it.
      */
-    protected final IntegerState status = IntegerState.create();
+    protected final IntegerState status = IntegerState.create(this, "status");
 
     public static final int UNAVAILABLE = 0;
     public static final int BIDDABLE = 1;
@@ -83,9 +83,12 @@ public class StartItem extends AbstractItem {
      * The constructor, taking the properties of the "primary" (often teh only)
      * certificate. The parameters are only stored, real initialisation is done
      * by the init() method.
+     * 
+     * FIXME: Double usage for name and id
      *
      */
-    private StartItem(String name, String type, int index, boolean president) {
+    private StartItem(Item parent, String name, String type, int index, boolean president) {
+        super(parent, name);
         this.name = name;
         this.type = type;
         this.index = index;
@@ -94,6 +97,9 @@ public class StartItem extends AbstractItem {
         if (startItemMap == null)
             startItemMap = new HashMap<String, StartItem>();
         startItemMap.put(name, this);
+
+        minimumBid.setSuppressZero(true);
+
     }
 
     /** 
@@ -105,20 +111,9 @@ public class StartItem extends AbstractItem {
      * @return a fully intialized StartItem 
      */
     public static StartItem create(Item parent, String name, String type, int price, int index, boolean president){
-        StartItem item = new StartItem(name, type, index, president);
-        item.init(parent, name);
+        StartItem item = new StartItem(parent, name, type, index, president);
         item.initBasePrice(price);
         return item;
-    }
-    
-    public void init(Item parent, String id) {
-        super.init(parent, id);
-        
-        basePrice.init(this, "basePrice");
-        status.init(this, "status");
-        minimumBid.init(this, "minimumBid");
-        minimumBid.setSuppressZero(true);
-        lastBidderIndex.init(this, "highestBidder");
     }
     
     private void initBasePrice(int basePrice) {
@@ -149,8 +144,8 @@ public class StartItem extends AbstractItem {
         numberOfPlayers = players.size();
         bids = new CashMoneyModel[numberOfPlayers];
         for (int i = 0; i < numberOfPlayers; i++) {
-            bids[i] = CashMoneyModel.create();
-            bids[i].init(this, "bidBy_" + players.get(i).getId());
+            // TODO: Check if this is correct or that it should be initialized with zero
+            bids[i] = CashMoneyModel.create(this, "bidBy_" + players.get(i).getId(), false);
             bids[i].setSuppressZero(true);
 
         }

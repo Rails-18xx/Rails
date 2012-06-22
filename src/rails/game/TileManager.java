@@ -14,9 +14,10 @@ import rails.game.Stop.RunTo;
 import rails.game.Stop.Score;
 import rails.game.Stop.Type;
 import rails.game.state.AbstractItem;
+import rails.game.state.Item;
 import rails.util.Util;
 
-public class TileManager extends AbstractItem implements ConfigurableComponent {
+public final class TileManager extends AbstractItem implements ConfigurableComponent {
 
     protected Map<Integer, Tile> tileMap = new HashMap<Integer, Tile>();
     protected List<Integer> tileIds = new ArrayList<Integer>();
@@ -33,12 +34,14 @@ public class TileManager extends AbstractItem implements ConfigurableComponent {
     protected static Logger log =
         LoggerFactory.getLogger(TileManager.class.getPackage().getName());
 
-    /**
-     * No-args constructor.
-     */
-    public TileManager() {
+    private TileManager(Item parent, String id) {
+        super(parent, id);
     }
 
+    public static TileManager create(Item parent, String id) {
+        return new TileManager(parent, id);
+    }
+    
     /**
      * @see rails.common.parser.ConfigurableComponent#configureFromXML(org.w3c.dom.Element)
      */
@@ -110,7 +113,7 @@ public class TileManager extends AbstractItem implements ConfigurableComponent {
 
         // Create the Tile objects (must be done before further parsing)
         for (Integer id : tileSetMap.keySet()) {
-            tile = new Tile(this, id);
+            tile = Tile.create(this, id);
             tileMap.put(id, tile);
         }
 

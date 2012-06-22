@@ -4,10 +4,14 @@ import java.util.*;
 
 import rails.game.*;
 
-public class OperatingRound_1825 extends OperatingRound {
+public final class OperatingRound_1825 extends OperatingRound {
 
-    public OperatingRound_1825(GameManager gameManager) {
-        super(gameManager);
+    private OperatingRound_1825(GameManager parent, String id) {
+        super(parent, id);
+    }
+    
+    public static OperatingRound_1825 create(GameManager parent, String id) {
+        return new OperatingRound_1825(parent, id);
     }
 
     @Override

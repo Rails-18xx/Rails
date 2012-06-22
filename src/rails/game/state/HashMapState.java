@@ -11,36 +11,31 @@ import java.util.Set;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-
 /**
  * A stateful version of a HashMap
- * 
- * @author Erik Vos, Stefan Frey (V2.0)
  */
 public final class HashMapState<K,V> extends State {
 
     private final HashMap<K,V> map;
 
-    private HashMapState() {
-        map = Maps.newHashMap();
-    }
-
-    private HashMapState( Map<K,V> map) {
-        this.map = Maps.newHashMap(map);
+    private HashMapState(Item parent, String id, Map<K,V> map) {
+        super(parent, id);
+        if (map == null) this.map = Maps.newHashMap();
+        else this.map = Maps.newHashMap(map);
     }
 
     /**
      * @return empty HashMapState
      */
-    public static <K,V> HashMapState<K,V> create(){
-        return new HashMapState<K,V>();
+    public static <K,V> HashMapState<K,V> create(Item parent, String id){
+        return new HashMapState<K,V>(parent, id, null);
     }
 
     /**
      * @return prefilled HashMapState
      */
-    public static <K,V> HashMapState<K,V> create(Map<K,V> map){
-        return new HashMapState<K,V>(map);
+    public static <K,V> HashMapState<K,V> create(Item parent, String id, Map<K,V> map){
+        return new HashMapState<K,V>(parent, id, map);
     }
 
     public void put(K key, V value) {

@@ -22,11 +22,7 @@ import rails.game.state.Item;
  * which are permanent.
  * The conversion of Rails elements is in the responsibility of the RevenueAdapter.
  * For each GameManager instance only one RevenueManager is created.
- * 
- * @author freystef
- *
  */
-
 public final class RevenueManager extends AbstractItem implements ConfigurableComponent {
 
     protected static Logger log =
@@ -34,15 +30,21 @@ public final class RevenueManager extends AbstractItem implements ConfigurableCo
 
     private final HashSet<ConfigurableComponent> configurableModifiers = new HashSet<ConfigurableComponent>();
     
-    private final ArrayListState<NetworkGraphModifier> graphModifiers = ArrayListState.create(); 
-    private final ArrayListState<RevenueStaticModifier> staticModifiers = ArrayListState.create();
-    private final ArrayListState<RevenueDynamicModifier> dynamicModifiers = ArrayListState.create();
+    private final ArrayListState<NetworkGraphModifier> graphModifiers = ArrayListState.create(this, "graphModifiers"); 
+    private final ArrayListState<RevenueStaticModifier> staticModifiers = ArrayListState.create(this, "staticModifiers");
+    private final ArrayListState<RevenueDynamicModifier> dynamicModifiers = ArrayListState.create(this, "dynamicModifiers");
     
     private final ArrayList<RevenueStaticModifier> activeStaticModifiers = new ArrayList<RevenueStaticModifier>();
     private final ArrayList<RevenueDynamicModifier> activeDynamicModifiers = new ArrayList<RevenueDynamicModifier>();
     private RevenueDynamicModifier activeCalculator;
 
-    public RevenueManager() {}
+    private RevenueManager(Item parent, String id) {
+        super(parent, id);
+    }
+    
+    public static RevenueManager create(Item parent, String id){
+        return new RevenueManager(parent, id);
+    }
     
     public void configureFromXML(Tag tag) throws ConfigurationException {
         
@@ -92,14 +94,6 @@ public final class RevenueManager extends AbstractItem implements ConfigurableCo
             }
         }
 
-    }
-
-    @Override
-    public void init(Item parent, String id) {
-        super.init(parent, id);
-        graphModifiers.init(this, "NetworkGraphModifiers"); 
-        staticModifiers.init(this, "RevenueStaticModifiers"); 
-        dynamicModifiers.init(this, "RevenueDynamicModifiers");
     }
 
     public void finishConfiguration(GameManager parent)

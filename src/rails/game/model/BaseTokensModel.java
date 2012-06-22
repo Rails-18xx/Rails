@@ -3,7 +3,6 @@ package rails.game.model;
 import rails.game.BaseToken;
 import rails.game.PublicCompany;
 import rails.game.Token;
-import rails.game.state.Item;
 import rails.game.state.Model;
 import rails.game.state.PortfolioList;
 
@@ -12,27 +11,17 @@ import rails.game.state.PortfolioList;
  */
 public class BaseTokensModel extends Model {
 
-    private PortfolioList<Token> freeBaseTokens = PortfolioList.create();
-    private PortfolioList<Token> laidBaseTokens = PortfolioList.create();
+    private final PortfolioList<Token> freeBaseTokens;
+    private final PortfolioList<Token> laidBaseTokens;
 
-    private BaseTokensModel() {}
-
-    public static BaseTokensModel create(){
-        return new BaseTokensModel();
+    private BaseTokensModel(PublicCompany parent, String id) {
+        super(parent, id);
+        freeBaseTokens = PortfolioList.create(parent, "freeBaseTokens");
+        laidBaseTokens = PortfolioList.create(parent, "laidBaseTokens");
     }
 
-    /** 
-     * @param parent restricted to PublicCompany
-     */
-    @Override
-    public void init(Item parent, String id){
-        // init parent
-       super.checkedInit(parent, id, PublicCompany.class);
-       super.init(parent, id);
-        
-        // Init states
-        freeBaseTokens.init(parent, "freeBaseTokens");
-        laidBaseTokens.init(parent, "laidBaseTokens");
+    public static BaseTokensModel create(PublicCompany parent, String id){
+        return new BaseTokensModel(parent, id);
     }
     
     /**

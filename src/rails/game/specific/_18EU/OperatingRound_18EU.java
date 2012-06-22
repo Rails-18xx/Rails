@@ -9,7 +9,6 @@ import rails.game.*;
 import rails.game.action.BuyTrain;
 import rails.game.model.PortfolioModel;
 import rails.game.state.BooleanState;
-import rails.game.state.Item;
 import rails.game.state.Owner;
 
 /**
@@ -21,19 +20,17 @@ public class OperatingRound_18EU extends OperatingRound {
 
     protected final TrainCertificateType pullmannType;
 
-    protected final BooleanState hasPullmannAtStart = BooleanState.create();
+    protected final BooleanState hasPullmannAtStart = BooleanState.create(this, "ORCompanyHasPullmannAtStart");
 
-    public OperatingRound_18EU (GameManager gameManager) {
-        super (gameManager);
+    private OperatingRound_18EU (GameManager parent, String id) {
+        super(parent, id);
         pullmannType = trainManager.getCertTypeByName("P");
     }
-
-    @Override
-    public void init (Item parent, String id){
-        super.init(parent, id);
-        hasPullmannAtStart.init(this, "ORCompanyHasPullmannAtStart");
-    }
     
+    public static OperatingRound_18EU create(GameManager parent, String id) {
+        return new OperatingRound_18EU(parent, id);
+    }
+
     @Override
     protected void initTurn() {
         super.initTurn();

@@ -6,27 +6,18 @@ import com.google.common.collect.ImmutableList;
 
 public abstract class Portfolio<T extends Ownable<T>> extends State implements Iterable<T> {
 
+    protected Portfolio(PortfolioHolder parent, String id) {
+        super(parent, id);
+    }
 
     /**
-     * The parent of a Portfolio is restricted to a PortfolioHolder
-     * Otherwise an IllegalArgumentException is raised
-     */
-    @Override
-    public void init(Item parent, String id) {
-        super.checkedInit(parent, id, PortfolioHolder.class);
-    }
-    
-    /**
-     * The parent of a portfolio is always a PortfolioHolder
+     * @return the parent of a portfolio is a PortfolioHolder
      */
     @Override
     public PortfolioHolder getParent() {
         return (PortfolioHolder)super.getParent();
     }
     
-    /**
-     * The owner of a portfolio is either an Owner 
-     */
     public Owner getOwner() {
         if (getParent() instanceof PortfolioModel) {
             return ((PortfolioModel)getParent()).getParent();
@@ -82,6 +73,5 @@ public abstract class Portfolio<T extends Ownable<T>> extends State implements I
             to.moveInto(item);
         }
     }
-    
 
 }

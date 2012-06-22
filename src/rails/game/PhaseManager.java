@@ -14,13 +14,13 @@ import rails.game.state.Item;
 import rails.game.state.Owner;
 import rails.game.state.State;
 
-public class PhaseManager extends AbstractItem implements ConfigurableComponent {
+public final class PhaseManager extends AbstractItem implements ConfigurableComponent {
 
     protected ArrayList<Phase> phaseList;
     protected HashMap<String, Phase> phaseMap;
 
     protected int numberOfPhases = 0;
-    protected final GenericState<Phase> currentPhase = GenericState.create();
+    protected final GenericState<Phase> currentPhase = GenericState.create(this, "currentPhase");
 
     // Can be removed once setPhase() has been redone.
     protected GameManager gameManager;
@@ -28,7 +28,13 @@ public class PhaseManager extends AbstractItem implements ConfigurableComponent 
     protected static Logger log =
         LoggerFactory.getLogger(PhaseManager.class.getPackage().getName());
 
-    public PhaseManager() {}
+    private PhaseManager(Item parent, String id) {
+        super(parent, id);
+    }
+    
+    public static PhaseManager create(Item parent, String id) {
+        return new PhaseManager(parent, id);
+    }
 
     public void configureFromXML(Tag tag) throws ConfigurationException {
         /*
@@ -54,12 +60,6 @@ public class PhaseManager extends AbstractItem implements ConfigurableComponent 
         }
     }
     
-    @Override
-    public void init(Item parent, String id) {
-        super.init(parent, id);
-        currentPhase.init(this, "CurrentPhase");
-    }
-
     public void finishConfiguration (GameManager gameManager) 
     throws ConfigurationException {
         this.gameManager = gameManager;

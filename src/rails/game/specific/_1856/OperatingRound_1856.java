@@ -11,16 +11,15 @@ import rails.game.action.*;
 import rails.game.special.SellBonusToken;
 import rails.game.special.SpecialProperty;
 import rails.game.state.BooleanState;
-import rails.game.state.Item;
 import rails.game.model.MoneyModel;
 
 public class OperatingRound_1856 extends OperatingRound {
 
-    private final BooleanState finalLoanRepaymentPending = BooleanState.create();
+    private final BooleanState finalLoanRepaymentPending = BooleanState.create(this, "LoanRepaymentPending");
     private Player playerToStartLoanRepayment = null;
 
-    public OperatingRound_1856 (GameManager gameManager) {
-        super (gameManager);
+    public OperatingRound_1856 (GameManager parent, String id) {
+        super(parent, id);
 
         steps = new GameDef.OrStep[] {
                 GameDef.OrStep.INITIAL,
@@ -34,13 +33,11 @@ public class OperatingRound_1856 extends OperatingRound {
                 GameDef.OrStep.FINAL
         };
     }
-    
-    @Override
-    public void init(Item parent, String id){
-        super.init(parent, id);
-        finalLoanRepaymentPending.init(this, "LoanRepaymentPending");
-    }
 
+    public static OperatingRound_1856 create(GameManager parent, String id) {
+        return new OperatingRound_1856(parent, id);
+    }
+    
     /**
      * Implements special rules for first time operating in 1856
      */

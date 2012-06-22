@@ -10,16 +10,15 @@ import rails.game.action.*;
 import rails.game.state.ArrayListState;
 import rails.game.state.GenericState;
 import rails.game.state.IntegerState;
-import rails.game.state.Item;
 import rails.game.state.Model;
 
 public abstract class StartRound extends Round {
 
     protected StartPacket startPacket = null;
     protected int[] itemIndex;
-    protected final ArrayListState<StartItem> itemsToSell = ArrayListState.create();
-    protected final GenericState<StartItem> auctionItemState = GenericState.create();
-    protected final IntegerState numPasses = IntegerState.create();
+    protected final ArrayListState<StartItem> itemsToSell = ArrayListState.create(this, "itemsToSell");
+    protected final GenericState<StartItem> auctionItemState = GenericState.create(this, "auctionItemState");
+    protected final IntegerState numPasses = IntegerState.create(this, "numPasses");
     protected int numPlayers;
     protected String variant;
     protected Player currentPlayer;
@@ -45,23 +44,14 @@ public abstract class StartRound extends Round {
      * Will be created dynamically.
      *
      */
-    public StartRound(GameManager gameManager) {
-
-        super (gameManager);
-        this.startPacket = gameManager.getStartPacket();
+    protected StartRound(GameManager parent, String id) {
+        super (parent, id);
+        this.startPacket = parent.getStartPacket();
 
         guiHints.setVisibilityHint(GuiDef.Panel.STATUS, true);
         guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, false);
         guiHints.setVisibilityHint(GuiDef.Panel.MAP, true);
         guiHints.setActivePanel(GuiDef.Panel.START_ROUND);
-    }
-    
-    @Override
-    public void init(Item parent, String id) {
-        super.init(parent, id);
-        itemsToSell.init(this, "itemsToSell");
-        auctionItemState.init(this, "AuctionItem");
-        numPasses.init(this, "StartRoundPasses");
     }
     
     /**

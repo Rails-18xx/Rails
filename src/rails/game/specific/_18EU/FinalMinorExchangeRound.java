@@ -9,20 +9,23 @@ import rails.game.*;
 import rails.game.action.MergeCompanies;
 import rails.game.action.NullAction;
 
-
 /**
  * Implements a basic Stock Round. <p> A new instance must be created for each
  * new Stock Round. At the end of a round, the current instance should be
  * discarded. <p> Permanent memory is formed by static attributes (like who has
  * the Priority Deal).
  */
-public class FinalMinorExchangeRound extends StockRound_18EU {
+public final class FinalMinorExchangeRound extends StockRound_18EU {
 
-    public FinalMinorExchangeRound(GameManager aGameManager) {
-        super (aGameManager);
+    public FinalMinorExchangeRound(GameManager parent, String id) {
+        super(parent, id);
 
         guiHints.setVisibilityHint(GuiDef.Panel.MAP, true);
         guiHints.setActivePanel(GuiDef.Panel.STATUS);
+    }
+    
+    public static FinalMinorExchangeRound create(GameManager parent, String id){
+        return new FinalMinorExchangeRound(parent, id);
     }
 
     public void start(Player playerToStartFMERound) {

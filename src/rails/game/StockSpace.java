@@ -65,43 +65,35 @@ public class StockSpace extends Model {
     
     
     /*--- State fields */
-    protected final ArrayListState<PublicCompany> tokens = ArrayListState.create();
-    protected final ArrayListState<PublicCompany> fixedStartPrices = ArrayListState.create();
+    protected final ArrayListState<PublicCompany> tokens = ArrayListState.create(this, "tokens");
+    protected final ArrayListState<PublicCompany> fixedStartPrices = ArrayListState.create(this, "fixedStartPrices");
 
     protected static Logger log =
             LoggerFactory.getLogger(StockSpace.class.getPackage().getName());
 
-    /*--- Contructors ---*/
-    private StockSpace(int price, StockSpaceType type) {
+    /*--- Constructors ---*/
+    private StockSpace(Item parent, String id, int price, StockSpaceType type) {
+        super(parent, id);
         this.price = price;
         this.type = type;
+
+        this.row = Integer.parseInt(id.substring(1)) - 1;
+        this.column = (id.toUpperCase().charAt(0) - '@') - 1;
     }
 
     /**
      * @return fully initialized StockSpace
      */
     public static StockSpace create(Item parent, String id, int price, StockSpaceType type) {
-        StockSpace space = new StockSpace(price, type);
-        space.init(parent, id);
-        return space;
+        return new StockSpace(parent, id, price, type);
     }
     
     /**
-     * Factory method for initialized StockSpace with default StockSpaceType
+     * @return initialized StockSpace with default StockSpaceType
      */
     public static StockSpace create (Item parent, String id, int price) {
-        return create(parent, id, price, null);
+        return new StockSpace(parent, id, price, null);
     }
-
-    @Override
-    public void init(Item parent, String id){
-        super.init(parent, id);
-        tokens.init(this, "tokens");
-        fixedStartPrices.init(this, "fixedStartPrices");
-        this.row = Integer.parseInt(id.substring(1)) - 1;
-        this.column = (id.toUpperCase().charAt(0) - '@') - 1;
-    }
-    
 
     // No constructors for the booleans. Use the setters.
 

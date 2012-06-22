@@ -14,7 +14,7 @@ import rails.game.state.IntegerState;
 import rails.game.state.Item;
 import rails.util.*;
 
-public class TrainCertificateType extends AbstractItem {
+public final class TrainCertificateType extends AbstractItem {
 
     protected String name;
     protected int quantity = 0;
@@ -35,9 +35,9 @@ public class TrainCertificateType extends AbstractItem {
     protected Class<? extends Train> trainClass;
 
     // State variables
-    protected final IntegerState numberBoughtFromIPO = IntegerState.create(0);
-    protected final BooleanState available = BooleanState.create(false);
-    protected final BooleanState rusted = BooleanState.create(false);
+    protected final IntegerState numberBoughtFromIPO = IntegerState.create(this, "numberBoughtFromIPO");
+    protected final BooleanState available = BooleanState.create(this, "available");
+    protected final BooleanState rusted = BooleanState.create(this, "rusted");
 
     // References
     protected TrainManager trainManager;
@@ -48,9 +48,14 @@ public class TrainCertificateType extends AbstractItem {
     protected static Logger log =
         LoggerFactory.getLogger(TrainCertificateType.class.getPackage().getName());
     
-    public TrainCertificateType () {
+    private TrainCertificateType (Item parent, String id) {
+        super(parent, id);
     }
     
+    public static TrainCertificateType create(Item parent, String id) {
+        return new TrainCertificateType(parent, id);
+    }
+
     public void configureFromXML(Tag tag) throws ConfigurationException {
 
         trainClassName = tag.getAttributeAsString("class", trainClassName);
@@ -101,15 +106,6 @@ public class TrainCertificateType extends AbstractItem {
 
     }
     
-    @Override
-    public void init(Item parent, String id){
-        super.init(parent, id);
-        
-        // State inits
-        numberBoughtFromIPO .init(this, name + "-trains_Bought");
-        available.init(this, name + "-trains_Available");
-        rusted.init(this, name + "-trains_Rusted");
-    }
     
 
     public void finishConfiguration (GameManager gameManager) 

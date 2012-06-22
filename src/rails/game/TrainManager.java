@@ -21,7 +21,7 @@ import rails.game.state.IntegerState;
 import rails.game.state.Item;
 import rails.game.state.Owner;
 
-public class TrainManager extends AbstractItem implements ConfigurableComponent {
+public final class TrainManager extends AbstractItem implements ConfigurableComponent {
     // Static attributes
     protected final List<TrainType> lTrainTypes = new ArrayList<TrainType>();
 
@@ -47,7 +47,7 @@ public class TrainManager extends AbstractItem implements ConfigurableComponent 
 
     // Dynamic attributes
     // TODO: There are lots of dynamic attributes which are not State variables yet
-    protected final IntegerState newTypeIndex = IntegerState.create(0);
+    protected final IntegerState newTypeIndex = IntegerState.create(this, "newTypeIndex", 0);
     
     protected final Map<String, Integer> lastIndexPerType = new HashMap<String, Integer>();
 
@@ -62,7 +62,8 @@ public class TrainManager extends AbstractItem implements ConfigurableComponent 
     protected Bank bank = null;
     
     /** Required for the sell-train-to-foreigners feature of some games */
-    protected final BooleanState anyTrainBought = BooleanState.create();
+    protected final BooleanState anyTrainBought = BooleanState.create(this, "anyTrainBought");
+
     
     // Triggered phase changes
     protected final Map<TrainCertificateType, Map<Integer, Phase>> newPhases
@@ -77,11 +78,14 @@ public class TrainManager extends AbstractItem implements ConfigurableComponent 
     protected static Logger log =
         LoggerFactory.getLogger(TrainManager.class.getPackage().getName());
     
-    /**
-     * No-args constructor.
-     */
-    public TrainManager() { }
+    private TrainManager(Item parent, String id) {
+        super(parent, id);
+    }
 
+    public static TrainManager create(Item parent, String id){
+        return new TrainManager(parent, id);
+    }
+    
     /**
      * @see rails.common.parser.ConfigurableComponent#configureFromXML(org.w3c.dom.Element)
      */
@@ -99,7 +103,8 @@ public class TrainManager extends AbstractItem implements ConfigurableComponent 
 
         if (trainTypeTags != null) {
             for (Tag trainTypeTag : trainTypeTags) {
-                TrainCertificateType certType = new TrainCertificateType();
+                // FIXME: Creation of Type to be rewritten
+                TrainCertificateType certType = TrainCertificateType.create(this, null);
                 if (defaultsTag != null) certType.configureFromXML(defaultsTag);
                 certType.configureFromXML(trainTypeTag);
                 trainCertTypes.add(certType);
@@ -138,13 +143,6 @@ public class TrainManager extends AbstractItem implements ConfigurableComponent 
             removeTrain = true; // completed in finishConfiguration()
         }
         
-    }
-
-    @Override
-    public void init(Item parent, String id) {
-        super.init(parent, id);
-        anyTrainBought.init(this, "AnyTrainBought");
-        newTypeIndex.init(this, "NewTrainTypeIndex");
     }
 
     public void finishConfiguration (GameManager gameManager)
