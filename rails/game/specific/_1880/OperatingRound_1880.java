@@ -15,17 +15,14 @@ import rails.common.GuiDef;
 import rails.common.LocalText;
 import rails.game.Bank;
 import rails.game.BaseToken;
-import rails.game.Bonus;
 import rails.game.CashHolder;
 import rails.game.GameDef;
-import rails.game.GameManager;
 import rails.game.GameManagerI;
 import rails.game.MapHex;
 import rails.game.OperatingRound;
 import rails.game.PhaseI;
 import rails.game.Player;
 import rails.game.Portfolio;
-import rails.game.PrivateCompanyI;
 import rails.game.PublicCertificateI;
 import rails.game.PublicCompanyI;
 import rails.game.ReportBuffer;
@@ -47,7 +44,6 @@ import rails.game.special.SpecialTrainBuy;
 import rails.game.specific._1880.PublicCompany_1880;
 import rails.game.specific._1880.GameManager_1880;
 import rails.game.state.EnumState;
-import rails.ui.swing.GameUIManager;
 import rails.util.SequenceUtil;
 
 /**
@@ -497,7 +493,7 @@ public class OperatingRound_1880 extends OperatingRound {
            ));
            } else {
                int reducedCash = ((cash /10) * 2); //20 Percent of the Cash will move to the Owner
-               new CashMove (comp, owner, cash);
+               new CashMove (comp, owner, reducedCash);
                ReportBuffer.add(LocalText.getText("CashtransferfromInvestor",
                        company.getName(),
                        Bank.format(cash)
@@ -505,27 +501,6 @@ public class OperatingRound_1880 extends OperatingRound {
                }
            company.setClosed();
    
-
-        // TODO: investorCashToOwner needs to be gotten from the Owner of the
-        // Investor...
-        // TODO: we need to automatically move 20% of the Cash to the owner if
-        // the Investor is still alive on Game end..
-        if (investorCashToOwner != true) {
-            new CashMove(comp, controlCompany, cash);
-            ReportBuffer.add(LocalText.getText("CashtransferfromInvestor",
-                    company.getName(), Bank.format(cash)));
-        } else {
-            if (cash > 0) {
-                int reducedCash = ((cash / 10) * 2); // 20 Percent of the Cash
-                                                     // will move to the Owner
-                new CashMove(comp, owner, reducedCash);
-                ReportBuffer.add(LocalText.getText("CashTransferFromInvestor",
-                        company.getName(), Bank.format(cash)));
-            }
-            ReportBuffer.add(LocalText.getText("NoCashTransferFromInvestor",
-                    company.getName(), Bank.format(0)));
-        }
-        company.setClosed();
     }
 
     /* (non-Javadoc)
@@ -577,6 +552,7 @@ public class OperatingRound_1880 extends OperatingRound {
      *  4.   LAYING TILES
      *=======================================*/
 
+    @Override
     public boolean layTile(LayTile action) {
 
         String errMsg = null;
