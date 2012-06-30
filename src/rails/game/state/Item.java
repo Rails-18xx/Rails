@@ -14,7 +14,7 @@ package rails.game.state;
  */
 public interface Item {
 
-    static final char SEP = '.';
+    public static final char SEP = '/';
 
     String getId();
 

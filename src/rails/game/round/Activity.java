@@ -3,7 +3,7 @@ package rails.game.round;
 import java.util.List;
 
 import rails.game.action.PossibleAction;
-import rails.game.state.Context;
+import rails.game.state.Manager;
 
 interface Activity {
    
@@ -11,7 +11,7 @@ interface Activity {
      * creation based on a specific context
      * @param context
      */
-    public void create(Context context);
+    public void create(Manager context);
     
     /**
      * @return true if activity is active

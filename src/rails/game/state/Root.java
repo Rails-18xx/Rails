@@ -1,40 +1,63 @@
 package rails.game.state;
 
 import static com.google.common.base.Preconditions.checkArgument;
-
 /**
- * Root is a context that serves as the top node
-
- * It also contains the StateManager if the object tree
- * should be able to contain states
+ * Root is the top node of the context/item hierachy
  */
-public final class Root extends Context {
-
-   /**
-    * The reserved id for a root
-    */
-   public static final String ID = "root";
-  
-   private Root(StateManager parent) {
-       super(parent, ID);
+public final class Root extends Manager {
+    
+   public final static String ID = "/"; 
+   
+   private StateManager stateManager;
+    
+   private Root() {
+        super(null, ID);
    }
 
    /**
-    * @param the game used for this hierarchy
+    * @param stateManagerId for the embedded StateManager
+    * @return a Root object with initialized StateManager embedded
     */
-   public static Root create(Game parent) {
-       return new Root(parent);
+   public static Root create(String stateManagerId) {
+       Root root = new Root();
+       StateManager stateManager = StateManager.create(root, stateManagerId);
+       root.addStateManager(stateManager);
+       return root;
    }
    
+   private void addStateManager(StateManager stateManager) {
+       this.stateManager = stateManager;
+   }
+   
+   public StateManager getStateManager() {
+       return stateManager;
+   }
+   
+   /**
+    * @throws UnsupportedOperationsException
+    * Not supported for Root
+    */
    @Override
-   public StateManager getParent() {
-       return null;
+   public Item getParent() {
+       throw new UnsupportedOperationException();
    }
    
+   /**
+    * @return this
+    */
    @Override
    public Context getContext() {
-       return null;
+       return this;
    }
+   
+   /**
+    * @return this
+    */
+   @Override
+   public Root getRoot() {
+       return this;
+   }
+   
    
    @Override
    public String getURI() {
@@ -52,13 +75,22 @@ public final class Root extends Context {
        return items.get(uri);
    }
    
-   // Root methods
-   void addItemToRoot(Item item) {
+   @Override
+   public void addItem(Item item) {
        // check if it already exists
        checkArgument(items.containsKey(item.getFullURI()), "Root already contains item with identical fullURI");
        
-       // all preconditions ok
+       // all preconditions ok => add
        items.put(item.getFullURI(), item);
+   }
+
+   @Override
+   public void removeItem(Item item) {
+       // check if it already exists
+       checkArgument(!items.containsKey(item.getFullURI()), "Root does not contain item with that fullURI");
+       
+       // all preconditions ok => remove
+       items.remove(item.getFullURI());
    }
 
    @Override

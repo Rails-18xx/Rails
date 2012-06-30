@@ -11,9 +11,7 @@ import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.common.parser.*;
 import rails.game.action.PossibleAction;
-import rails.game.state.Context;
 import rails.game.state.Root;
-import rails.game.state.StateManager;
 import rails.util.GameFileIO;
 
 public class Game {
@@ -79,10 +77,9 @@ public class Game {
 
     public boolean setup() {
         // first define root GameContext to be able to define states
-        StateManager stateManager = StateManager.create(parent, id)
-        Context context = Root.create(parent);
+        Root root = Root.create("states");
 
-        GameFileParser gfp = new GameFileParser(context, name, gameOptions);
+        GameFileParser gfp = new GameFileParser(root, name, gameOptions);
         playerManager = gfp.getPlayerManager();
         companyManager = gfp.getCompanyManager();
         trainManager = gfp.getTrainManager();

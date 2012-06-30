@@ -13,7 +13,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
-public final class StateManager extends AbstractItem {
+public final class StateManager extends Manager {
     
     protected static Logger log =
         LoggerFactory.getLogger(StateManager.class.getPackage().getName());

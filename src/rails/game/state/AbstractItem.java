@@ -32,8 +32,8 @@ public abstract class AbstractItem implements Item {
     }
 
     public Context getContext() {
-        if (parent instanceof Context) {
-            return (Context)parent;
+        if (parent instanceof Manager) {
+            return (Manager)parent;
         } else {
             // recursive definition
             return parent.getContext();
@@ -41,7 +41,7 @@ public abstract class AbstractItem implements Item {
     }
 
     public String getURI() {
-        if (parent instanceof Context) {
+        if (parent instanceof Manager) {
             return id;
         } else {
             // recursive definition
