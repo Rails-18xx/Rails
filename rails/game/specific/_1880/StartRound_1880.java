@@ -36,6 +36,8 @@ public class StartRound_1880 extends StartRound {
     
    private final IntegerState investorChosen = 
         new IntegerState("InvestorChosen",0);
+   
+   protected IntegerState playersActed = new IntegerState("PlayersActedinStartround");
     
     /** A company in need for a par price. */
     PublicCompanyI companyNeedingPrice = null;
@@ -80,6 +82,7 @@ public class StartRound_1880 extends StartRound {
             
             if (currentItem == null || currentItem.get() != item ) { // we haven't seen this item before
                 numPasses.set(0); // new round so cancel all previous passes !
+                playersActed.set(0);
                 currentItem.set(item);
                 item.setStatus(StartItem.BIDDABLE);
                 item.setStatus(StartItem.BUYABLE);
@@ -134,6 +137,7 @@ public class StartRound_1880 extends StartRound {
                 } else {
                     // Can't bid: Autopass
                     numPasses.add(1);
+                    playersActed.add(1);
                     return false;
                 }
         } else { // Item is not a private ! should be a major or minor in 1880 special rules apply.
@@ -234,12 +238,16 @@ public class StartRound_1880 extends StartRound {
 
         moveStack.start(false);
 
+        if (! item.hasBid(player)) {
+        playersActed.add(1);
+        }
         item.setBid(bidAmount, player);
         ReportBuffer.add(LocalText.getText("BID_ITEM_LOG",
                 playerName,
                 Bank.format(bidAmount),
                 item.getName(),
                 Bank.format(player.getCash()) ));
+
         if ((item.getBidders() >0) && (numPasses.intValue()== getNumberOfPlayers()-1)) {
             // All but the highest bidder have passed.
             int price = item.getBid();
@@ -253,6 +261,7 @@ public class StartRound_1880 extends StartRound {
             }
             auctionItemState.set(null);
             numPasses.set(0);
+            playersActed.set(0);
            setNextStartingPlayer();
            return true;
         } else {
@@ -293,6 +302,7 @@ public class StartRound_1880 extends StartRound {
         moveStack.start(false);
 
         numPasses.add(1);
+        playersActed.add(1);
         
         if (numPasses.intValue() >= numPlayers) {
             // All players have passed.
@@ -307,6 +317,7 @@ public class StartRound_1880 extends StartRound {
                                 auctionItem.getName(),
                                 Bank.format(startPacket.getFirstItem().getBasePrice()) ));
                 numPasses.set(0);
+                playersActed.set(0);
                 if (auctionItem.getBasePrice() == 0) {
                     assignItem((Player)startingPlayer.get(),
                             auctionItem, 0, 0);
@@ -315,6 +326,7 @@ public class StartRound_1880 extends StartRound {
                 }
             } else {
                 numPasses.set(0);
+                playersActed.set(0);
                 finishRound();
 
             }
@@ -333,6 +345,7 @@ public class StartRound_1880 extends StartRound {
             }
             auctionItemState.set(null);
             numPasses.set(0);
+            playersActed.set(0);
            setNextStartingPlayer();
            return true;
         } else {
@@ -358,11 +371,26 @@ public class StartRound_1880 extends StartRound {
     }
     
     private void setNextBiddingPlayer(StartItem item, int currentIndex) {
+        boolean bidState = false;
         for (int i = currentIndex + 1; i < currentIndex
                                            + gameManager.getNumberOfPlayers(); i++) {
-            if (item.getBid(gameManager.getPlayerByIndex(i)) >0) {
-                setCurrentPlayerIndex(i);
-                break;
+            /*
+             * Ok we need to make sure that every one has at least the chance to bid once.
+             * We need to make sure that everyone that has passed cant bid again.
+             * Unfortunately getBid() or hasBid() return 0 so they cant be of use here until the second bidding round !
+             * Now we only need a status indicator how many people have acted already....
+             */
+            if (playersActed.intValue() == numPlayers) {
+                bidState = item.hasBid(gameManager.getPlayerByIndex(i));
+                if (bidState == true) {
+                    setCurrentPlayerIndex(i);
+                    break;
+                } else {
+                    continue;
+                }
+            } else {
+                    setCurrentPlayerIndex(i);
+                    break;
             }
         }
     }
