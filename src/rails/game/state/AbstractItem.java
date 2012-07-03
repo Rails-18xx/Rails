@@ -9,6 +9,7 @@ public abstract class AbstractItem implements Item {
 
     private final String id;
     private final Item parent;
+    private final Context context;
 
     protected AbstractItem(Item parent, String id){
         checkNotNull(parent, "Parent cannot be null");
@@ -18,9 +19,10 @@ public abstract class AbstractItem implements Item {
         // defined standard fields
         this.parent = parent;
         this.id = id;
+        context = parent.getContext();
 
         // add item to context
-        parent.getContext().addItem(this);
+        context.addItem(this);
     }
     
     public String getId() {
@@ -32,12 +34,12 @@ public abstract class AbstractItem implements Item {
     }
 
     public Context getContext() {
-        if (parent instanceof Manager) {
-            return (Manager)parent;
-        } else {
-            // recursive definition
-            return parent.getContext();
-        }
+        return context;
+    }
+    
+    public Root getRoot() {
+        // forward it to the context
+        return context.getRoot();
     }
 
     public String getURI() {

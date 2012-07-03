@@ -3,20 +3,12 @@ package rails.game.state;
 import rails.game.Player;
 
 /**
- * AutoChangeSets are linked to previous ActionChangeSets 
- * @author freystef
+ * AutoChangeSets are ChangeSets that belong to no action directly
  */
 final class AutoChangeSet extends ChangeSet {
 
-    private final ActionChangeSet previous;
 
-    AutoChangeSet(ActionChangeSet previous) {
-        this.previous = previous;
-    }
-    
-    ActionChangeSet getPrevious() {
-        return previous;
-    }
+    AutoChangeSet() {}
     
     @Override
     boolean isUndoableByPlayer(Player player) {
@@ -25,7 +17,7 @@ final class AutoChangeSet extends ChangeSet {
 
     @Override
     public String toString() {
-        return "AutoChangeSet linked to action " + previous.getAction();
+        return "AutoChangeSet";
     }
     
 }

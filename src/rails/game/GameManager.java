@@ -567,7 +567,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponent, 
         }
 
         // Initialisation is complete. Undoability starts here.
-        changeStack.enable();
+        // changeStack.enable();
     }
 
     private void setGuiParameters () {

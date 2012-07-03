@@ -8,11 +8,11 @@ final class WalletChange<T extends CountableItem> extends Change {
     private final int amount;
     
     WalletChange(Wallet<T> in, Wallet<T> out, T item, int amount) {
-        super(in);
         this.in = in;
         this.out = out;
         this.item = item;
         this.amount = amount;
+        super.init(in);
     }
     
     @Override

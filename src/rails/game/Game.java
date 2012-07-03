@@ -77,7 +77,7 @@ public class Game {
 
     public boolean setup() {
         // first define root GameContext to be able to define states
-        Root root = Root.create("states");
+        Root root = Root.create();
 
         GameFileParser gfp = new GameFileParser(root, name, gameOptions);
         playerManager = gfp.getPlayerManager();

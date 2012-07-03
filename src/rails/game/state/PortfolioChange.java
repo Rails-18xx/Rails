@@ -7,10 +7,10 @@ final class PortfolioChange<T extends Ownable<T>> extends Change {
     private final T item;
 
     PortfolioChange(Portfolio<T> in, Portfolio<T> out, T item) {
-        super(in);
         this.in = in;
         this.out = out;
         this.item = item;
+        super.init(in);
     }
     
     @Override

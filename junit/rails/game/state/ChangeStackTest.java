@@ -16,13 +16,6 @@ public class ChangeStackTest {
         assertNotNull(stack);
     }
 
-    @Test
-    public void testEnable() {
-        ChangeStack stack = ChangeStack.create(sm);
-        assertFalse(stack.isEnabled());
-        stack.enable();
-        assertTrue(stack.isEnabled());
-    }
 
     @Test
     public void testIsEnabled() {

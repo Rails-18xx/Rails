@@ -12,10 +12,10 @@ final class StringChange extends Change {
     private final String oldValue;
     
     StringChange(StringState state, String newValue) {
-        super(state);
         this.state = state;
         this.newValue = newValue;
         this.oldValue = state.stringValue();
+        super.init(state);
     }
     
     @Override

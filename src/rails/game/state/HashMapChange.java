@@ -16,26 +16,26 @@ final class HashMapChange<K,V> extends Change {
      * Put element into map
      */
     HashMapChange(HashMapState<K,V> state, K key, V value) {
-        super(state);
         this.state = state;
         this.key = key;
         newValue = value;
         remove = false;
         oldValue = state.get(key);
         existed = state.containsKey(key);
+        super.init(state);
     }
 
     /**
      * Remove element from map
      */
     HashMapChange(HashMapState<K,V> state, K key) {
-        super(state);
         this.state = state;
         this.key = key;
         newValue = null;
         remove = true;
         oldValue = state.get(key);
         existed = true;
+        super.init(state);
     }
 
     @Override

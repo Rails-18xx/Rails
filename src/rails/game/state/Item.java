@@ -21,6 +21,8 @@ public interface Item {
     Item getParent();
     
     Context getContext();
+    
+    Root getRoot();
 
     /** 
      * @return a string which allows to identify the item in the Context

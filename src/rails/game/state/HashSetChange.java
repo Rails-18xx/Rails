@@ -12,10 +12,10 @@ final class HashSetChange<E> extends Change {
      * Add/Remove element to/from the set
      */
     HashSetChange(HashSetState<E> state, E element, boolean addToSet){
-        super(state);
         this.state = state;
         this.element = element;
         this.addToSet = addToSet;
+        super.init(state);
     }
 
     @Override

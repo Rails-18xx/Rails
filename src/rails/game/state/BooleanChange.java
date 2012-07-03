@@ -12,10 +12,10 @@ final class BooleanChange extends Change {
     private final boolean oldValue;
     
     BooleanChange(BooleanState state,  boolean newValue) {
-        super(state);
         this.state = state;
         this.newValue = newValue;
         this.oldValue = state.booleanValue();
+        super.init(state);
     }
 
     @Override

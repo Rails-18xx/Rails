@@ -2,14 +2,12 @@ package rails.game.state;
 /**
  * A context describe a service that allows to locate items
  */
-public interface Context extends Item {
+public abstract class Context implements Item {
 
-    public Item localize(String uri);
+    public abstract Item locate(String uri);
 
-    public void addItem(Item item);
+    abstract void addItem(Item item);
 
-    public void removeItem(Item item);
-    
-    public Root getRoot();
+    abstract void removeItem(Item item);
     
 }

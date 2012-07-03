@@ -1,6 +1,5 @@
 package rails.game.state;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -19,31 +18,29 @@ public final class StateManager extends Manager {
         LoggerFactory.getLogger(StateManager.class.getPackage().getName());
     
     private final ChangeStack changeStack = ChangeStack.create(this);
-    private final PortfolioManager portfolioManager = PortfolioManager.create(this, "portfolioManager");
-    private final WalletManager walletManager = WalletManager.create(this, "walletManager");
+    private final HashSetState<State> allStates = HashSetState.create(this, null);
     
-    private final Set<State> allStates = new HashSet<State>();
-    
+//  private final PortfolioManager portfolioManager = PortfolioManager.create(this, "portfolioManager");
+//  private final WalletManager walletManager = WalletManager.create(this, "walletManager");
+
     private StateManager(Root parent, String id) {
         super(parent, id);
     }
 
-    public static StateManager create(Root parent, String id){
+    static StateManager create(Root parent, String id){
         return new StateManager(parent, id);
     }
-    
     /**
      * Register states 
      * Remark: Portfolios and Wallets get added from their respective managers automatically
      */
-    boolean registerState(State state) {
-        if (!allStates.add(state)) return false;
-        if (state instanceof Portfolio) {
-            return portfolioManager.addPortfolio((Portfolio<?>) state);
-        } else if (state instanceof Wallet) {
-            return walletManager.addWallet((Wallet<?>) state);
-        }
-        return true;
+    void registerState(State state) {
+        allStates.add(state);
+//        if (state instanceof Portfolio) {
+//            return portfolioManager.addPortfolio((Portfolio<?>) state);
+//        } else if (state instanceof Wallet) {
+//            return walletManager.addWallet((Wallet<?>) state);
+//        }
     }
     
     /**
@@ -52,11 +49,11 @@ public final class StateManager extends Manager {
      */
     boolean deRegisterState(State state) {
         if (!allStates.remove(state)) return false;
-        if (state instanceof PortfolioMap) {
-            return portfolioManager.removePortfolio((PortfolioMap<?>) state);
-        } else if (state instanceof Wallet) {
-            return walletManager.removeWallet((Wallet<?>) state);
-        }
+//        if (state instanceof PortfolioMap) {
+//            return portfolioManager.removePortfolio((PortfolioMap<?>) state);
+//        } else if (state instanceof Wallet) {
+//            return walletManager.removeWallet((Wallet<?>) state);
+//        }
         return true;
     }
 
@@ -186,7 +183,5 @@ public final class StateManager extends Manager {
     ChangeStack getChangeStack() {
         return changeStack;
     }
-    
-    
     
 }

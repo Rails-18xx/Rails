@@ -6,10 +6,10 @@ final class GenericStateChange<E> extends Change {
     final private E previous, next;
 
     public GenericStateChange(GenericState<E> state, E object) {
-        super(state);
         this.state = state;
         previous = state.get();
         next = object;
+        super.init(state);
     }
 
     @Override

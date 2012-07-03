@@ -7,11 +7,11 @@ final class MultimapChange<K,V> extends Change {
     final private boolean addToMap;
 
     MultimapChange(MultimapState<K,V> state, K key, V value, boolean addToMap) {
-        super(state);
         this.state = state;
         this.key = key;
         this.value = value;
         this.addToMap = addToMap;
+        super.init(state);
     }
     
     @Override

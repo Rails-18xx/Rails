@@ -9,50 +9,32 @@ import rails.game.Player;
 import rails.game.ReportBuffer;
 import rails.game.action.PossibleAction;
 
-public class ChangeStack extends AbstractItem {
+public class ChangeStack {
     protected static Logger log =
         LoggerFactory.getLogger(ChangeStack.class.getPackage().getName());
 
     private final LinkedList<ChangeSet> stack = new LinkedList<ChangeSet>();
-
-    private boolean enabled = false;
+    private final StateManager stateManager;
     
-    protected ChangeStack(Item parent, String id){
-        super(parent, id);
+    private ChangeStack(StateManager parent) {
+        stateManager = parent;
     }
     
     /**
      * @param parent restricted to StateManager
-     * ID set to class name
      */
     public static ChangeStack create(StateManager parent) {
-        return new ChangeStack(parent , ChangeStack.class.getSimpleName());
+        ChangeStack changeStack = new ChangeStack(parent);
+        changeStack.initAutoChangeSet();
+        return changeStack;
     }
     
-    /**
-     * Start making moves undoable. Will be called once, after all
-     * initialisations are complete.
-     */
-    public void enable() {
-        enabled = true;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-    
-    private void checkEnabled() {
-        if (!enabled) throw new IllegalStateException("ChangeStack is not enabled");
-    }
-
     /**
      * Returns a valid ChangeSet that is current for the ChangeStack
      * If the ChangeStack is not enabled or empty a IllegalStateExcpetion is thrown
      * @return the current changeSet
      */
     public ChangeSet getAvailableChangeSet() {
-        // check preconditions
-        checkEnabled();
         if (stack.isEmpty()) throw new IllegalStateException("No ChangeSet on ChangeStack");
         
         // return the last on the 
@@ -77,6 +59,23 @@ public class ChangeStack extends AbstractItem {
         }
         return changeSet;
     }
+
+    /**
+     * Creates new AutoChangeSet
+     */
+    public AutoChangeSet initAutoChangeSet() {
+        if (stack.peekLast() != null && !stack.peekLast().isClosed()) 
+            throw new IllegalStateException("Current ChangeSet not closed yet");
+        
+        // create new ChangeSet
+        AutoChangeSet changeSet = new AutoChangeSet();
+        
+        stack.offerLast(changeSet);
+        log.debug(">>> Start AutoChangeSet " + changeSet + " at index=" + stack.size() + " <<<");
+
+        return changeSet;
+    }
+    
     
     /**
      * Creates new ActionChangeSet 
@@ -85,9 +84,6 @@ public class ChangeStack extends AbstractItem {
      * @return the new current ChangeSet
      */
     public ActionChangeSet start(Player player, PossibleAction action) {
-        
-        // check preconditions
-        checkEnabled();
        
         if (stack.peekLast() != null && !stack.peekLast().isClosed()) 
             throw new IllegalStateException("Current ChangeSet not closed yet");
@@ -159,11 +155,11 @@ public class ChangeStack extends AbstractItem {
     }
 
     public boolean isUndoableByManager() {
-        return enabled && stack.size() != 0;
+        return stack.size() != 0;
     }
 
     public boolean isOpen() {
-        return enabled && stack.size() != 0 && !getAvailableChangeSet().isClosed();
+        return stack.size() != 0 && !getAvailableChangeSet().isClosed();
     }
     
     // TODO: What is correct?

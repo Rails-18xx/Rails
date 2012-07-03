@@ -4,48 +4,51 @@ import static com.google.common.base.Preconditions.checkArgument;
 /**
  * Root is the top node of the context/item hierachy
  */
-public final class Root extends Manager {
+public final class Root extends Context {
     
-   public final static String ID = "/"; 
+   public final static String ID = ""; 
    
    private StateManager stateManager;
+   private final HashMapState<String, Item> items = HashMapState.create(this, null);
     
-   private Root() {
-        super(null, ID);
-   }
+   private Root() { }
 
    /**
-    * @param stateManagerId for the embedded StateManager
     * @return a Root object with initialized StateManager embedded
     */
-   public static Root create(String stateManagerId) {
+   public static Root create() {
        Root root = new Root();
-       StateManager stateManager = StateManager.create(root, stateManagerId);
+       StateManager stateManager = StateManager.create(root, "states");
        root.addStateManager(stateManager);
        return root;
    }
    
    private void addStateManager(StateManager stateManager) {
        this.stateManager = stateManager;
+       this.addItem(stateManager);
    }
    
    public StateManager getStateManager() {
        return stateManager;
    }
+
+   // Item methods
    
    /**
     * @throws UnsupportedOperationsException
     * Not supported for Root
     */
-   @Override
    public Item getParent() {
        throw new UnsupportedOperationException();
+   }
+
+   public String getId() {
+       return "";
    }
    
    /**
     * @return this
     */
-   @Override
    public Context getContext() {
        return this;
    }
@@ -53,41 +56,34 @@ public final class Root extends Manager {
    /**
     * @return this
     */
-   @Override
    public Root getRoot() {
        return this;
    }
    
-   
-   @Override
    public String getURI() {
-       return ID;
+       return "";
    }
 
-   @Override
    public String getFullURI() {
-       return ID;
+       return "";
    }
    
    // Context methods
-   @Override
-   public Item localize(String uri) {
+   public Item locate(String uri) {
        return items.get(uri);
    }
    
-   @Override
-   public void addItem(Item item) {
+   void addItem(Item item) {
        // check if it already exists
-       checkArgument(items.containsKey(item.getFullURI()), "Root already contains item with identical fullURI");
+       checkArgument(!items.containsKey(item.getFullURI()), "Root already contains item with identical fullURI");
        
        // all preconditions ok => add
        items.put(item.getFullURI(), item);
    }
 
-   @Override
-   public void removeItem(Item item) {
+   void removeItem(Item item) {
        // check if it already exists
-       checkArgument(!items.containsKey(item.getFullURI()), "Root does not contain item with that fullURI");
+       checkArgument(items.containsKey(item.getFullURI()), "Root does not contain item with that fullURI");
        
        // all preconditions ok => remove
        items.remove(item.getFullURI());
@@ -97,5 +93,6 @@ public final class Root extends Manager {
    public String toString() {
        return ID;
    }
+
     
 }

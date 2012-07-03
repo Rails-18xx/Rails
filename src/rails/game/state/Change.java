@@ -3,13 +3,11 @@ package rails.game.state;
  * Base Class for all Change Objects
  * 
  * Replaces previous move interface
- * 
- * @author freystef
  */
 abstract class Change {
     
-    Change(State state){
-        state.getStateManager().addChangeToStack(this);
+    protected void init(State state){
+        state.getRoot().getStateManager().addChangeToStack(this);
     }
 
     abstract void execute();

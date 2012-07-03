@@ -10,10 +10,10 @@ final class IntegerChange extends Change {
     private final int oldValue;
     
     IntegerChange(IntegerState state, int newValue) {
-        super(state);
         this.state = state;
         this.newValue = newValue;
         this.oldValue = state.value();
+        super.init(state);
     }
 
     @Override

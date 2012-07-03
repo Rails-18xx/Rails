@@ -15,9 +15,6 @@ import static com.google.common.base.Preconditions.*;
  */
 public abstract class State extends Observable {
     
-    // reference to StateManager
-    private StateManager stateManager;
-    
     // optional formatter
     private Formatter<State> formatter = null;
 
@@ -28,11 +25,13 @@ public abstract class State extends Observable {
             addModel((Model)parent);
         }
         
-        // check if there is a StateManager available
-        checkState(getContext().getRoot().getStateManager() == null, "Root of state has no StateManager attached");
-        // if so => register state there
-        stateManager = getContext().getRoot().getStateManager();
-        stateManager.registerState(this);
+        // register if observable state
+        if (id != null) {
+            // check if there is a StateManager available
+            checkState(getContext().getRoot().getStateManager() != null, "Root of state has no StateManager attached");
+            // if so => register state there
+            getRoot().getStateManager().registerState(this);
+        }
     }
     
     // Observable methods
@@ -55,9 +54,5 @@ public abstract class State extends Observable {
      */
     public void setFormatter(Formatter<State> formatter) {
         this.formatter = formatter;
-    }
-
-    StateManager getStateManager() {
-        return stateManager;
     }
 }

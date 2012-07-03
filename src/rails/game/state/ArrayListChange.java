@@ -21,22 +21,22 @@ final class ArrayListChange<E> extends Change {
      * Add object at the specified index
      */
     ArrayListChange(ArrayListState<E> state, E object, int index) {
-        super(state);
         this.state = state;
         this.object = object;
         this.index = index;
         this.addToList = true;
+        super.init(state);
     }
 
     /**
      * Remove object at the specified index
      */
     ArrayListChange(ArrayListState<E> state, int index) {
-        super(state);
         this.state = state;
         this.object = state.get(index);
         this.index = index;
         this.addToList = false;
+        super.init(state);
     }
     
     @Override

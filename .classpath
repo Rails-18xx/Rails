@@ -17,5 +17,7 @@
 	<classpathentry kind="lib" path="src/lib/logback-1.0.4/logback-core-1.0.4.jar"/>
 	<classpathentry kind="lib" path="src/lib/sl4j-1.6.5/slf4j-api-1.6.5.jar"/>
 	<classpathentry kind="lib" path="src/lib/mockito-1.9.0/mockito-all-1.9.0.jar"/>
+	<classpathentry kind="lib" path="junit/lib/fest-2.0M5/fest-assert-core-2.0M5.jar"/>
+	<classpathentry kind="lib" path="junit/lib/fest-2.0M5/fest-util-1.2.0.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
