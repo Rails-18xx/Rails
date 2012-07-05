@@ -32,7 +32,7 @@ public final class CashMoneyModel extends MoneyModel implements CountableItem {
      * @param amount the new cash amount
      */
     public void set(int amount) {
-        if (!initialised.booleanValue()) {
+        if (!initialised.value()) {
             initialised.set(true);
         }
         value.set(amount); 
@@ -40,7 +40,7 @@ public final class CashMoneyModel extends MoneyModel implements CountableItem {
 
     // Countable interface
     public void change(int amount) {
-        if (initialised.booleanValue()) {
+        if (initialised.value()) {
             value.add(amount);
         } else {
             set(amount);
@@ -55,7 +55,7 @@ public final class CashMoneyModel extends MoneyModel implements CountableItem {
 
     @Override
     public boolean initialised() {
-        return initialised.booleanValue();
+        return initialised.value();
     }
 
 

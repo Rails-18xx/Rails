@@ -925,7 +925,7 @@ StationHolder {
 
             if (isHomeFor(company)
                     && isBlockedForTokenLays != null
-                    && isBlockedForTokenLays.booleanValue()) {
+                    && isBlockedForTokenLays.value()) {
                 // Assume that there is only one home base on such a tile,
                 // so we don't need to check for other ones
                 isBlockedForTokenLays.set(false);
@@ -1110,7 +1110,7 @@ StationHolder {
         if (isBlockedForTileLays == null)
             return false;
         else
-            return isBlockedForTileLays.booleanValue();
+            return isBlockedForTileLays.value();
     }
 
     /**
@@ -1182,7 +1182,7 @@ StationHolder {
             return false;
         } else if (isBlockedForTokenLays != null) {
             // Return MapHex attribute if defined
-            return isBlockedForTokenLays.booleanValue();
+            return isBlockedForTokenLays.value();
         } else if (homes != null && !homes.isEmpty()) {
             Stop cityToLay = this.getStop(cityNumber);
             if (cityToLay == null) { // city does not exist, this does not block itself

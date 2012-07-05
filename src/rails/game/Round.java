@@ -418,7 +418,7 @@ public abstract class Round extends AbstractItem {
     }
 
     public boolean wasInterrupted () {
-        return wasInterrupted.booleanValue();
+        return wasInterrupted.value();
     }
 
     @Override

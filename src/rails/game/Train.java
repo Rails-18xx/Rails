@@ -121,7 +121,7 @@ public class Train extends OwnableItem<Train> {
     }
 
     public boolean isObsolete() {
-        return obsolete.booleanValue();
+        return obsolete.value();
     }
 
     public void setRusted() {

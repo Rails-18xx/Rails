@@ -212,7 +212,7 @@ public final class OperatingRound_1835 extends OperatingRound {
 
                     // Exclude the second OBB free tile if the first was laid in this round
                     if (stl.getLocationNameString().matches("M1(7|9)")
-                            && hasLaidExtraOBBTile.booleanValue()) continue;
+                            && hasLaidExtraOBBTile.value()) continue;
 
                     currentSpecialTileLays.add(new LayTile(stl));
                 }
@@ -240,7 +240,7 @@ public final class OperatingRound_1835 extends OperatingRound {
 
         // The extra OBB tiles may not both be laid in the same round
         if (hasJustLaidExtraOBBTile) {
-            if (hasLaidExtraOBBTile.booleanValue()) {
+            if (hasLaidExtraOBBTile.value()) {
                 String errMsg = LocalText.getText("InvalidTileLay");
                 DisplayBuffer.add(LocalText.getText("CannotLayTileOn",
                         action.getCompanyName(),
@@ -291,7 +291,7 @@ public final class OperatingRound_1835 extends OperatingRound {
 
         boolean result = super.discardTrain(action);
         if (result && getStep() == GameDef.OrStep.BUY_TRAIN
-                && needPrussianFormationCall.booleanValue()) {
+                && needPrussianFormationCall.value()) {
             // Do the postponed formation calls
             ((GameManager_1835)gameManager).startPrussianFormationRound (this);
             needPrussianFormationCall.set(false);

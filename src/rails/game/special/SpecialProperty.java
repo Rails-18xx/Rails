@@ -235,7 +235,7 @@ public abstract class SpecialProperty extends OwnableItem<SpecialProperty> {
     }
 
     public boolean isExercised() {
-        return exercised.booleanValue();
+        return exercised.value();
     }
     
     public abstract boolean isExecutionable(); 

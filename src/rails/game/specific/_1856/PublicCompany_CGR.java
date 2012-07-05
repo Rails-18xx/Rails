@@ -42,7 +42,7 @@ public final class PublicCompany_CGR extends PublicCompany implements RevenueSta
     }
     
     public boolean hadPermanentTrain() {
-        return hadPermanentTrain.booleanValue();
+        return hadPermanentTrain.value();
     }
 
     public void setHadPermanentTrain(boolean hadPermanentTrain) {
@@ -100,7 +100,7 @@ public final class PublicCompany_CGR extends PublicCompany implements RevenueSta
      */
     @Override
     public void withhold(int amount) {
-        if (hasStockPrice && canSharePriceVary.booleanValue()) {
+        if (hasStockPrice && canSharePriceVary.value()) {
             stockMarket.withhold(this);
         }
     }

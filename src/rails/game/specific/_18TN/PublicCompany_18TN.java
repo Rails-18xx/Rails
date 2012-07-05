@@ -29,7 +29,7 @@ public final class PublicCompany_18TN extends PublicCompany implements RevenueSt
     }
 
     public boolean isCivilWar() {
-        return civilWar.booleanValue();
+        return civilWar.value();
     }
 
     public void setCivilWar(boolean value) {

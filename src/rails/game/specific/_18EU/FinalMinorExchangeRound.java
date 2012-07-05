@@ -43,7 +43,7 @@ public final class FinalMinorExchangeRound extends StockRound_18EU {
     @Override
     public boolean setPossibleActions() {
 
-        if (discardingTrains.booleanValue()) {
+        if (discardingTrains.value()) {
             return setTrainDiscardActions();
         } else {
             return setMinorMergeActions();
@@ -53,7 +53,7 @@ public final class FinalMinorExchangeRound extends StockRound_18EU {
 
     private boolean setMinorMergeActions() {
 
-        if (hasActed.booleanValue()) {
+        if (hasActed.value()) {
             possibleActions.add(new NullAction(NullAction.DONE));
             return true;
         }

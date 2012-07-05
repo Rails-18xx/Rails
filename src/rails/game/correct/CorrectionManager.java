@@ -36,7 +36,7 @@ public abstract class CorrectionManager extends AbstractItem implements Correcti
     }
 
     public boolean isActive(){
-        return active.booleanValue();
+        return active.value();
     }
     
     public List<CorrectionAction> createCorrections() {
@@ -74,7 +74,7 @@ public abstract class CorrectionManager extends AbstractItem implements Correcti
                     LocalText.getText(getCorrectionType().name())
             ));
         }
-        active.set(!active.booleanValue());
+        active.set(!active.value());
      
         return true;
     }

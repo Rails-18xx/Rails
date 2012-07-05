@@ -767,7 +767,7 @@ bonuses:        for (Bonus bonus : bonuses) {
             trainsToDiscardFrom = cgr.getPortfolioModel().getTrainList();
             forcedTrainDiscard = true;
             return true;
-        } else if (!this.cgrHasDiscardedTrains.booleanValue()) {
+        } else if (!this.cgrHasDiscardedTrains.value()) {
             // Check if CGR still has non-permanent trains
             // these may be discarded voluntarily
             trainsToDiscardFrom = new ArrayList<Train>();

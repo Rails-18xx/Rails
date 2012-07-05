@@ -670,7 +670,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponent, 
             startOperatingRound(true);
 
         } else if (round instanceof OperatingRound) {
-            if (gameOverPending.booleanValue() && !gameEndsAfterSetOfORs) {
+            if (gameOverPending.value() && !gameEndsAfterSetOfORs) {
 
                 finishGame();
 
@@ -680,7 +680,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponent, 
             } else if (startPacket != null && !startPacket.areAllSold()) {
                 startStartRound();
             } else {
-                if (gameOverPending.booleanValue() && gameEndsAfterSetOfORs) {
+                if (gameOverPending.value() && gameEndsAfterSetOfORs) {
                     finishGame();
                 } else {
                     ((OperatingRound)round).checkForeignSales();
@@ -1363,7 +1363,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponent, 
      * @see rails.game.GameManager#isGameOver()
      */
     public boolean isGameOver() {
-        return gameOver.booleanValue();
+        return gameOver.value();
     }
 
     public void setGameOverReportedUI(boolean b){

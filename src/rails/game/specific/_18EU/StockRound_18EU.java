@@ -42,7 +42,7 @@ public class StockRound_18EU extends StockRound {
     @Override
     public void start() {
         super.start();
-        if (discardingTrains.booleanValue()) {
+        if (discardingTrains.value()) {
             discardingTrains.set(false);
         }
 
@@ -52,7 +52,7 @@ public class StockRound_18EU extends StockRound {
 
     @Override
     public boolean setPossibleActions() {
-        if (discardingTrains.booleanValue()) {
+        if (discardingTrains.value()) {
             return setTrainDiscardActions();
         } else {
             return super.setPossibleActions();
@@ -655,7 +655,7 @@ public class StockRound_18EU extends StockRound {
         while (true) {
             // Checks
             // Must be correct step
-            if (!discardingTrains.booleanValue()) {
+            if (!discardingTrains.value()) {
                 errMsg = LocalText.getText("WrongActionNoDiscardTrain");
                 break;
             }
@@ -701,7 +701,7 @@ public class StockRound_18EU extends StockRound {
     @Override
     protected void finishTurn() {
 
-        if (!discardingTrains.booleanValue()) {
+        if (!discardingTrains.value()) {
             super.finishTurn();
         } else {
             PublicCompany comp =
@@ -723,7 +723,7 @@ public class StockRound_18EU extends StockRound {
     @Override
     protected void finishRound() {
 
-        if (discardingTrains.booleanValue()) {
+        if (discardingTrains.value()) {
 
             super.finishRound();
 

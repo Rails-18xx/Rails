@@ -14,7 +14,7 @@ final class BooleanChange extends Change {
     BooleanChange(BooleanState state,  boolean newValue) {
         this.state = state;
         this.newValue = newValue;
-        this.oldValue = state.booleanValue();
+        this.oldValue = state.value();
         super.init(state);
     }
 

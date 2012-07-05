@@ -68,7 +68,7 @@ public class OperatingRound_18EU extends OperatingRound {
 
         String extraMessage = null;
         boolean mustExchangePullmann = !isBelowTrainLimit()
-                && hasPullmannAtStart.booleanValue()
+                && hasPullmannAtStart.value()
                 && !possibleActions.contains(BuyTrain.class);
         if (mustExchangePullmann) {
             extraMessage = LocalText.getText("AutodiscardTrain",
@@ -166,7 +166,7 @@ public class OperatingRound_18EU extends OperatingRound {
     @Override
     protected boolean canBuyTrainNow() {
         return super.canBuyTrainNow() || hasPullmann ()
-               && hasPullmannAtStart.booleanValue();
+               && hasPullmannAtStart.value();
     }
 
     @Override

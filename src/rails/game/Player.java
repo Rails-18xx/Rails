@@ -59,7 +59,7 @@ public class Player extends AbstractItem implements CashOwner, PortfolioOwner, P
                 // if player is bankrupt cash is not counted
                 // as this was generated during forced selling
                 int worth;
-                if (bankrupt.booleanValue()) {
+                if (bankrupt.value()) {
                     worth = 0;
                 } else {
                     worth = cash.value();
@@ -202,7 +202,7 @@ public class Player extends AbstractItem implements CashOwner, PortfolioOwner, P
     }
 
     public boolean isBankrupt () {
-    	return bankrupt.booleanValue();
+    	return bankrupt.value();
     }
 
     // CashOwner interface

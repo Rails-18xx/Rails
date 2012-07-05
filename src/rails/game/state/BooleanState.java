@@ -32,7 +32,7 @@ public final class BooleanState extends State {
         new BooleanChange(this, value);
     }
 
-    public boolean booleanValue() {
+    public boolean value() {
         return value;
     }
     

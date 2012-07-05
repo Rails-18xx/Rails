@@ -156,7 +156,7 @@ public final class TrainCertificateType extends AbstractItem {
      * @return Returns the available.
      */
     public boolean isAvailable() {
-        return available.booleanValue();
+        return available.value();
     }
 
     /**
@@ -171,7 +171,7 @@ public final class TrainCertificateType extends AbstractItem {
     }
 
     public boolean hasRusted() {
-        return rusted.booleanValue();
+        return rusted.value();
     }
 
     /**

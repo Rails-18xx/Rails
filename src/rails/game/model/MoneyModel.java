@@ -82,8 +82,8 @@ public abstract class MoneyModel extends Model {
 
     @Override
     public String toString() {
-        if (fixedText.stringValue() != null) {
-            return fixedText.stringValue();
+        if (fixedText.value() != null) {
+            return fixedText.value();
         }
         int amount = this.value();
         if (amount == 0

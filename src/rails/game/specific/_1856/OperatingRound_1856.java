@@ -547,7 +547,7 @@ public class OperatingRound_1856 extends OperatingRound {
     @Override
     protected boolean finishTurnSpecials() {
 
-        if (finalLoanRepaymentPending.booleanValue()) {
+        if (finalLoanRepaymentPending.value()) {
 
             ((GameManager_1856)gameManager).startCGRFormationRound(this, playerToStartLoanRepayment);
             return false;

@@ -129,7 +129,7 @@ public class StockRound extends Round {
         setGameSpecificActions();
 
         if (passAllowed) {
-            if (hasActed.booleanValue()) {
+            if (hasActed.value()) {
                 possibleActions.add(new NullAction(NullAction.DONE));
             } else {
                 possibleActions.add(new NullAction(NullAction.PASS));
@@ -1279,7 +1279,7 @@ public class StockRound extends Round {
 
         // TODO: changeStack.start(false);
 
-        if (hasActed.booleanValue()) {
+        if (hasActed.value()) {
             numPasses.set(0);
         } else {
             numPasses.add(1);
@@ -1431,7 +1431,7 @@ public class StockRound extends Round {
 
         if (companyBoughtThisTurnWrapper.get() != null
                 && (sequenceRule == SELL_BUY_OR_BUY_SELL
-                        && hasSoldThisTurnBeforeBuying.booleanValue() || sequenceRule == SELL_BUY))
+                        && hasSoldThisTurnBeforeBuying.value() || sequenceRule == SELL_BUY))
             return false;
         return true;
     }

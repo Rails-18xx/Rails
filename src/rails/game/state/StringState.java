@@ -56,7 +56,7 @@ public final class StringState extends State {
     /**
      * @return current value of string state
      */
-    public String stringValue() {
+    public String value() {
         return value;
     }
 

@@ -14,7 +14,7 @@ final class StringChange extends Change {
     StringChange(StringState state, String newValue) {
         this.state = state;
         this.newValue = newValue;
-        this.oldValue = state.stringValue();
+        this.oldValue = state.value();
         super.init(state);
     }
     

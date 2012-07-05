@@ -159,7 +159,7 @@ implements ActionListener, KeyListener {
 //            this.rowIndex = rowIndex;
 //            this.reverseValue = reverseValue;
             this.observable.addObserver(this);
-            lastValue = ((BooleanState)observable).booleanValue() != reverseValue;
+            lastValue = ((BooleanState)observable).value() != reverseValue;
         }
 
         public boolean lastValue () {

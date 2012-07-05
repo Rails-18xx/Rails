@@ -62,8 +62,8 @@ public final class TreasuryShareRound extends StockRound {
         if (operatingCompany.mustHaveOperatedToTradeShares()
                 && !operatingCompany.hasOperated()) return true;
 
-        if (!hasSold.booleanValue()) setBuyableCerts();
-        if (!hasBought.booleanValue()) setSellableCerts();
+        if (!hasSold.value()) setBuyableCerts();
+        if (!hasBought.value()) setSellableCerts();
 
         if (possibleActions.isEmpty()) {
             // TODO Finish the round before it started...
@@ -281,7 +281,7 @@ public final class TreasuryShareRound extends StockRound {
             }
 
             // Company may not buy after sell
-            if (hasSold.booleanValue()) {
+            if (hasSold.value()) {
                 errMsg = LocalText.getText("MayNotBuyAndSell", companyName);
                 break;
             }
@@ -409,7 +409,7 @@ public final class TreasuryShareRound extends StockRound {
             }
 
             // Company may not sell after buying
-            if (hasBought.booleanValue()) {
+            if (hasBought.value()) {
                 errMsg = LocalText.getText("MayNotBuyAndSell", companyName);
                 break;
             }

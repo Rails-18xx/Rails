@@ -126,7 +126,7 @@ Cloneable, Comparable<Company>, PortfolioHolder {
      * @return whether this company is closed
      */
     public boolean isClosed() {
-        return closedObject.booleanValue();
+        return closedObject.value();
     }
 
     /**

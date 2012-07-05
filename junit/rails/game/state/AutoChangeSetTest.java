@@ -56,13 +56,13 @@ public class AutoChangeSetTest {
 
     @Test
     public void testUnAndReexecute() {
-        assertFalse(state.booleanValue());
+        assertFalse(state.value());
         state.set(true);
-        assertTrue(state.booleanValue());
+        assertTrue(state.value());
         changeSet.close();
         changeSet.unexecute();
-        assertFalse(state.booleanValue());
+        assertFalse(state.value());
         changeSet.reexecute();
-        assertTrue(state.booleanValue());
+        assertTrue(state.value());
     }
 }

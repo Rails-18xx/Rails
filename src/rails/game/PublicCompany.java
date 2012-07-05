@@ -861,7 +861,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner,
 
     public boolean hasReachedDestination() {
         return hasReachedDestination != null &&
-        hasReachedDestination.booleanValue();
+        hasReachedDestination.value();
     }
 
     public void setReachedDestination (boolean value) {
@@ -894,7 +894,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner,
         if (hasStockPrice) buyable.set(true);
 
         // In case of a restart: undo closing
-        if (closedObject.booleanValue()) closedObject.set(false);
+        if (closedObject.value()) closedObject.set(false);
 
         if (startSpace != null) {
             setParSpace(startSpace);
@@ -936,7 +936,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner,
      * @return Returns true is the company has started.
      */
     public boolean hasStarted() {
-        return hasStarted.booleanValue();
+        return hasStarted.value();
     }
 
     /** Make company shares buyable. Only useful where shares become
@@ -947,7 +947,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner,
     }
 
     public boolean isBuyable() {
-        return buyable.booleanValue();
+        return buyable.value();
     }
 
     /**
@@ -957,7 +957,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner,
 
         hasFloated.set(true);
         // In case of a restart
-        if (hasOperated.booleanValue()) hasOperated.set(false);
+        if (hasOperated.value()) hasOperated.set(false);
 
         // Remove the "unfloated" indicator in GameStatus
         // TODO: Is this still required?
@@ -987,7 +987,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner,
      * @return true if the company has floated.
      */
     public boolean hasFloated() {
-        return hasFloated.booleanValue();
+        return hasFloated.value();
     }
 
     /**
@@ -996,7 +996,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner,
      * @return true if the company has operated.
      */
     public boolean hasOperated() {
-        return hasOperated.booleanValue();
+        return hasOperated.value();
     }
 
     public void setOperated() {
@@ -1289,7 +1289,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner,
     }
 
     public String getlastRevenueAllocationText() {
-        return lastRevenueAllocation.stringValue();
+        return lastRevenueAllocation.value();
     }
 
     public StringState getLastRevenueAllocationModel() {
@@ -1391,7 +1391,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner,
     }
 
     public boolean canSharePriceVary() {
-        return canSharePriceVary.booleanValue();
+        return canSharePriceVary.value();
     }
 
     public int getFixedPrice() {

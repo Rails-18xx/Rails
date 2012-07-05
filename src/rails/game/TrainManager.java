@@ -394,7 +394,7 @@ public final class TrainManager extends AbstractItem implements ConfigurableComp
     }
 
     public boolean isAnyTrainBought () {
-        return anyTrainBought.booleanValue();
+        return anyTrainBought.value();
     }
     
     public void setAnyTrainBought (boolean newValue) {

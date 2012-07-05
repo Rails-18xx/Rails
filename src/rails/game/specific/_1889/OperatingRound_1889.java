@@ -57,7 +57,7 @@ public final class OperatingRound_1889 extends OperatingRound {
                     privB.getPortfolio().getOwner() != operatingCompany.get().getPresident()) {
                 SpecialProperty spPrivB = privB.getSpecialProperties().get(0);
                 if (spPrivB != null && !spPrivB.isExercised()) {
-                    if (!activeSpPrivB.booleanValue()) 
+                    if (!activeSpPrivB.value()) 
                         possibleActions.add(new UseSpecialProperty(spPrivB));
                     else {
                         possibleActions.add(new LayTile((SpecialTileLay)spPrivB));
@@ -70,7 +70,7 @@ public final class OperatingRound_1889 extends OperatingRound {
         }
         
         // private C: trigger by purchase of private -- see below
-        if (activeSpPrivC.booleanValue()) {
+        if (activeSpPrivC.value()) {
             possibleActions.clear();
             SpecialTileLay spPrivC = (SpecialTileLay)privC.getSpecialProperties().get(0);
             possibleActions.add(new LayTile(spPrivC));
@@ -121,7 +121,7 @@ public final class OperatingRound_1889 extends OperatingRound {
         
         boolean result = super.layTile(action);
 
-        if (result && activeSpPrivC.booleanValue()) {
+        if (result && activeSpPrivC.value()) {
             // moveStack identical to tile lay
             log.debug("1889 specific: Tile lay for C executed, return to previous step");
             activeSpPrivC.set(false);
@@ -132,7 +132,7 @@ public final class OperatingRound_1889 extends OperatingRound {
     
     @Override
     public void skip() {
-        if (activeSpPrivC.booleanValue()) {
+        if (activeSpPrivC.value()) {
             log.debug("1889 specific: Tile lay for C skipped, return to previous step");
             // TODO: changeStack.start(true);
             activeSpPrivC.set(false);
