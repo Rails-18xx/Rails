@@ -89,6 +89,8 @@ abstract class ChangeSet {
     boolean isEmpty() {
         return changes.isEmpty();
     }
+    
+    abstract boolean isTerminal();
 
     ImmutableSet<State> getStates() {
         if (!closed) throw new IllegalStateException("ChangeSet is still open");

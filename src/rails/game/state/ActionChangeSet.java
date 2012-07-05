@@ -3,7 +3,7 @@ package rails.game.state;
 import rails.game.Player;
 import rails.game.action.PossibleAction;
 
-final class ActionChangeSet extends ChangeSet {
+class ActionChangeSet extends ChangeSet {
 
     private final Player player;
     
@@ -21,6 +21,11 @@ final class ActionChangeSet extends ChangeSet {
     PossibleAction getAction() {
         return action;
     }
+    
+    boolean isTerminal() {
+        return false;
+    }
+    
     
     @Override
     public String toString() {

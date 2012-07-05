@@ -3,9 +3,20 @@ package rails.game.state;
 /**
  * AutoChangeSets are ChangeSets that belong to no action directly
  */
-final class AutoChangeSet extends ChangeSet {
+class AutoChangeSet extends ChangeSet {
 
-    AutoChangeSet() {}
+    private final boolean terminal;
+
+    /**
+     * @param terminal implies that this is the terminal of the stack
+     */
+    AutoChangeSet(boolean terminal) {
+        this.terminal = terminal;
+    }
+    
+    boolean isTerminal() {
+        return terminal;
+    }
     
     @Override
     public String toString() {

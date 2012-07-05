@@ -18,12 +18,13 @@ public class ChangeStack {
 
     private final Deque<ChangeSet> undoStack = new ArrayDeque<ChangeSet>();
     private final Deque<ChangeSet> redoStack = new ArrayDeque<ChangeSet>();
+    private ChangeSet currentSet;
 
     private ChangeStack() {};
     
     public static ChangeStack create() {
         ChangeStack changeStack = new ChangeStack();
-        changeStack.startAutoChangeSet();
+        changeStack.startAutoChangeSet(true); // first set is terminal
         return changeStack;
     }
     
@@ -31,78 +32,118 @@ public class ChangeStack {
      * @return the current changeSet
      */
     public ChangeSet getCurrentChangeSet() {
+        return currentSet;
+    }
+
+    /**
+     * @return the latest (closed) changeSet
+     */
+    public ChangeSet getLastClosedChangeSet() {
         return undoStack.peekFirst();
+    }
+    
+    // only closes the current change set (without opening a new one)
+    // an empty ActionChangeSet gets removed
+    private boolean closeCurrentChangeSetOnly() {
+        // if empty non-terminal AutoChangeSet remove it
+        if (currentSet instanceof AutoChangeSet && currentSet.isEmpty() && !((AutoChangeSet) currentSet).isTerminal()) {
+            return false;
+        } else {
+            currentSet.close();
+        }
+        undoStack.addFirst(currentSet);
+        return true;
+    }
+
+    // create a new AutoChangeSet
+    private void startAutoChangeSet(boolean terminal) {
+        AutoChangeSet changeSet = new AutoChangeSet(terminal);
+        log.debug(">>> Start AutoChangeSet " + changeSet + " at index=" + undoStack.size() + " <<<");
+        currentSet = changeSet;
     }
     
     /**
      * closes the current changeSet
-     * empty ActionChangeSets get removed instead
+     * @return (new) open AutoChangeSet
      */
-    public void closeCurrentChangeSet() {
-        ChangeSet changeSet = getCurrentChangeSet();
-        // check if already closed
-        if (changeSet.isClosed()) return;
-        // remove empty AutoChangeSet
-        if (changeSet instanceof AutoChangeSet && changeSet.isEmpty()) {
-            undoStack.removeFirst();
+    public AutoChangeSet closeCurrentChangeSet() {
+        if (closeCurrentChangeSetOnly()) {
+            startAutoChangeSet(false);
         }
-        // otherwise close the changeSet
-        changeSet.close();
+        return (AutoChangeSet)currentSet;
     }
-    
-    /**
-     * Creates a new AutoChangeSet
-     * @return new AutoChangeSet
-     */
-    public AutoChangeSet startAutoChangeSet() {
-        AutoChangeSet changeSet = new AutoChangeSet();
-        undoStack.addFirst(changeSet);
-        log.debug(">>> Start AutoChangeSet " + changeSet + " at index=" + undoStack.size() + " <<<");
 
-        return changeSet;
-    }
-    
     /**
-     * Creates new ActionChangeSet
+     * Creates new ActionChangeSet (and closes previously open changeSet)
      * @param player the owning player of the action
      * @param action the action that is connected
      * @return new ActionChangeSet
      */
     public ActionChangeSet startActionChangeSet(Player player, PossibleAction action) {
+        // close previous set
+        closeCurrentChangeSetOnly();
+        
         ActionChangeSet changeSet = new ActionChangeSet(player, action);
-        undoStack.addFirst(changeSet);
         log.debug(">>> Start ActionChangeSet " + changeSet + " at index=" + undoStack.size() + " <<<");
+        currentSet = changeSet;
 
         // TODO: Check if this is the correct place to create the report Item
         // ReportBuffer.createNewReportItem(getCurrentIndex());
         return changeSet;
     }
     
+    
     /**
      * Undo command
+     * Remark: this closes the current ChangeSet
      */
-    public void undo() {
-        ChangeSet undoSet = undoStack.pollFirst();
-        while (undoSet != null) { 
+    public boolean undo() {
+        // check if there is a terminal changeSet 
+        // TODO: Should be replaced by a better control of undo allowed
+        if (undoStack.peekFirst().isTerminal()) return false;
+
+        // if not, close and start undoing
+        closeCurrentChangeSetOnly();
+        while (true) {
+            // otherwise remove, unexecute and add to redoStack 
+            ChangeSet undoSet = undoStack.removeFirst();
             undoSet.unexecute();
             redoStack.addFirst(undoSet);
             if (undoSet instanceof ActionChangeSet) break;
-            undoSet = undoStack.pollFirst();
         }
-        startAutoChangeSet();
+        startAutoChangeSet(false);
+        return true;
     }
     
     /**
      * Redo command
+     * Remark: this closes the current ChangeSet
      */
-    public void redo() {
-        ChangeSet redoSet = redoStack.pollFirst();
-        while (redoSet != null) { 
-            redoSet.unexecute();
+    public boolean redo() {
+        // check if the there are changesets on the redo stack
+        // TODO: Should be replaced by a better control of redo allowed
+        if (redoStack.size() == 0) return false;
+        
+        // if so, close and start redoing
+        closeCurrentChangeSetOnly();
+        while (true) { 
+            // the first set is always the action changeSet
+            ChangeSet redoSet = redoStack.removeFirst();
+            redoSet.reexecute();
             undoStack.addFirst(redoSet);
-            if (redoSet instanceof ActionChangeSet) break;
-            redoSet = redoStack.pollFirst();
+            // break if stack is empty the next ActionChangeSet is in view
+            if (redoStack.size() == 0 || redoStack.peekFirst() instanceof ActionChangeSet) break;
         }
-        startAutoChangeSet();
+        startAutoChangeSet(false);
+        return true;
     }
+    
+    /**
+     * @return size of ChangeStack
+     */
+    public int sizeUndoStack() {
+        return undoStack.size();
+    }
+    
+    
 }

@@ -29,7 +29,7 @@ public class AutoChangeSetTest {
         state = BooleanState.create(root, STATE_ID);
         state.addModel(model);
         changeStack = root.getStateManager().getChangeStack();
-        changeSet = changeStack.startAutoChangeSet();
+        changeSet = changeStack.closeCurrentChangeSet();
     }
 
     @Test
