@@ -43,11 +43,21 @@ public abstract class Manager extends Context {
     }
     
     public Context getContext() {
-        return this;
+        if (parent instanceof Context) {
+            return (Context)parent;
+        } else { 
+            // recursive definition
+            return parent.getContext();
+        }
     }
     
     public String getURI() {
-        return "";
+        if (parent instanceof Context) {
+            return id;
+        } else {
+            // recursive definition
+            return parent.getURI() + Item.SEP + id;
+        }
     }
 
     public String getFullURI() {
@@ -56,8 +66,13 @@ public abstract class Manager extends Context {
     
     // Context methods
     public Item locate(String uri) {
-        return root.locate(fullURI + Item.SEP + uri);
+        // first try as fullURI
+        Item item = root.locateFullURI(uri);
+        if (item != null) return item;
+        // otherwise as local
+        return root.locateFullURI(fullURI + Item.SEP + uri);
     }
+    
 
    void addItem(Item item) {
         // check if this context is the containing one

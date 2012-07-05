@@ -19,7 +19,13 @@ public abstract class AbstractItem implements Item {
         // defined standard fields
         this.parent = parent;
         this.id = id;
-        context = parent.getContext();
+        
+        if (parent instanceof Context) {
+            context = (Context)parent;
+        } else { 
+            // recursive definition
+            context = parent.getContext();
+        }
 
         // add item to context
         context.addItem(this);
@@ -43,7 +49,7 @@ public abstract class AbstractItem implements Item {
     }
 
     public String getURI() {
-        if (parent instanceof Manager) {
+        if (parent instanceof Context) {
             return id;
         } else {
             // recursive definition

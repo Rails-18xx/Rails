@@ -11,7 +11,8 @@ public final class Root extends Context {
    private StateManager stateManager;
    private final HashMapState<String, Item> items = HashMapState.create(this, null);
     
-   private Root() { }
+   private Root() {
+   }
 
    /**
     * @return a Root object with initialized StateManager embedded
@@ -20,6 +21,7 @@ public final class Root extends Context {
        Root root = new Root();
        StateManager stateManager = StateManager.create(root, "states");
        root.addStateManager(stateManager);
+       root.addItem(root);
        return root;
    }
    
@@ -70,6 +72,15 @@ public final class Root extends Context {
    
    // Context methods
    public Item locate(String uri) {
+       // first try as fullURI
+       Item item = items.get(uri);
+       if (item != null) return item;
+       // otherwise as local
+       return items.get(Item.SEP + uri);
+   }
+
+   // used by other context
+   Item locateFullURI(String uri) {
        return items.get(uri);
    }
    

@@ -62,16 +62,24 @@ public class RootTest {
 
     @Test
     public void testLocate() {
+        // item is local
+        assertSame(root.locate(item.getURI()), item);
         assertSame(root.locate(item.getFullURI()), item);
+        // manager is local
+        assertSame(root.locate(manager.getURI()), manager);
+        assertSame(root.locate(manager.getFullURI()), manager);
+        // anotherItem is not local
+        assertNull(root.locate(anotherItem.getURI()));
         assertSame(root.locate(anotherItem.getFullURI()), anotherItem);
-    }
-    
-    @Test
-    public void testLocateFail() {
+        // root is local in root
+        assertSame(root.locate(root.getURI()), root);
+        assertSame(root.locate(root.getFullURI()), root);
+        // and if item is removed it is not found anymore
         root.removeItem(item);
+        assertNull(root.locate(item.getURI()));
         assertNull(root.locate(item.getFullURI()));
     }
-
+    
     @Test(expected=IllegalArgumentException.class)
     public void testAddItemFail() {
         root.addItem(item);

@@ -4,6 +4,10 @@ package rails.game.state;
  */
 public abstract class Context implements Item {
 
+    /**
+     * @param Either a fullURI or a (relative) URI inside the Context 
+     * @return Item if found, otherwise null
+     */
     public abstract Item locate(String uri);
 
     abstract void addItem(Item item);
