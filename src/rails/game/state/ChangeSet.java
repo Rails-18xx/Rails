@@ -6,8 +6,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rails.game.Player;
-
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
@@ -34,13 +32,13 @@ abstract class ChangeSet {
     
     private ImmutableSet<State> states = null;
 
-    // uses default constructor
+    // constructor
+    protected ChangeSet() {};
 
     /**
      * adds change to the ChangeSet and executes the change
      * @param change
      */
-    
     void addChange (Change change) {
         if (closed) throw new IllegalStateException("ChangeSet is closed");
         changes.add(change);
@@ -92,12 +90,8 @@ abstract class ChangeSet {
         return changes.isEmpty();
     }
 
-    @Deprecated
-    abstract boolean isUndoableByPlayer(Player player);
-    
     ImmutableSet<State> getStates() {
         if (!closed) throw new IllegalStateException("ChangeSet is still open");
         return states;
     }
-    
 }

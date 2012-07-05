@@ -23,11 +23,6 @@ final class ActionChangeSet extends ChangeSet {
     }
     
     @Override
-    boolean isUndoableByPlayer(Player player) {
-        return this.player.equals(player);
-    }
-
-    @Override
     public String toString() {
         return "ActionChangeSet for player " + player + " and action " + action;
     }

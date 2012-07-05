@@ -887,28 +887,29 @@ public class GameManager extends AbstractItem implements ConfigurableComponent, 
 
         // moveStack closing is done here to allow state changes to occur
         // when setting possible actions
-        if (action != null) {
-            if (result && !(action instanceof GameAction) && action.hasActed()) {
-                if (changeStack.isOpen()) changeStack.finish();
-                recoverySave();
-            } else {
-                if (changeStack.isOpen()) changeStack.cancel();
-            }
-        }
+        // FIXME: This has to be rewritten from scratch
+//        if (action != null) {
+//            if (result && !(action instanceof GameAction) && action.hasActed()) {
+//                if (changeStack.isOpen()) changeStack.finish();
+//                recoverySave();
+//            } else {
+//                if (changeStack.isOpen()) changeStack.cancel();
+//            }
+//        }
 
         if (!isGameOver()) setCorrectionActions();
 
         // Add the Undo/Redo possibleActions here.
-        // TODO: Check if this works correct (added player as argument)
-        if (changeStack.isUndoableByPlayer(getCurrentPlayer())) {
-            possibleActions.add(new GameAction(GameAction.UNDO));
-        }
-        if (changeStack.isUndoableByManager()) {
-            possibleActions.add(new GameAction(GameAction.FORCED_UNDO));
-        }
-        if (changeStack.isRedoable()) {
-            possibleActions.add(new GameAction(GameAction.REDO));
-        }
+        // FIXME: This has to be rewritten from scratch
+//        if (changeStack.isUndoableByPlayer(getCurrentPlayer())) {
+//            possibleActions.add(new GameAction(GameAction.UNDO));
+//        }
+//        if (changeStack.isUndoableByManager()) {
+//            possibleActions.add(new GameAction(GameAction.FORCED_UNDO));
+//        }
+//        if (changeStack.isRedoable()) {
+//            possibleActions.add(new GameAction(GameAction.REDO));
+//        }
 
 
         // logging of game actions activated
@@ -970,23 +971,26 @@ public class GameManager extends AbstractItem implements ConfigurableComponent, 
             result = reload(gameAction);
             break;
         case GameAction.UNDO:
-            changeStack.undo(false);
+            // FIXME: This has to be rewritten
+//            changeStack.undo(false);
             result = true;
             break;
         case GameAction.FORCED_UNDO:
-            if (index != -1) {
-                changeStack.gotoIndex(index);
-            } else {
-                changeStack.undo(true);
-            }
-            result = true;
+            // FIXME: This has to be rewritten
+//            if (index != -1) {
+//                changeStack.gotoIndex(index);
+//            } else {
+//                changeStack.undo(true);
+//            }
+//            result = true;
             break;
         case GameAction.REDO:
-            if (index != -1) {
-                changeStack.gotoIndex(index);
-            } else {
-                changeStack.redoMoveSet();
-            }
+            // FIXME: This has to be rewritten
+//            if (index != -1) {
+//                changeStack.gotoIndex(index);
+//            } else {
+//                changeStack.redoMoveSet();
+//            }
             result = true;
             break;
         case GameAction.EXPORT:
@@ -1042,7 +1046,8 @@ public class GameManager extends AbstractItem implements ConfigurableComponent, 
                 +" is considered invalid by the game engine";
                 log.error(msg);
                 DisplayBuffer.add(msg);
-                if (changeStack.isOpen()) changeStack.finish();
+                // FIXME: Rewrite command below
+                // if (changeStack.isOpen()) changeStack.finish();
                 return false;
             }
             possibleActions.clear();
@@ -1063,7 +1068,8 @@ public class GameManager extends AbstractItem implements ConfigurableComponent, 
         }
         executedActions.add(action);
         
-        if (changeStack.isOpen()) changeStack.finish();
+        // FIXME: Rewrite that below
+        // if (changeStack.isOpen()) changeStack.finish();
 
         log.debug("Turn: "+getCurrentPlayer().getId());
         return true;

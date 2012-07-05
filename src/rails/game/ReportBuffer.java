@@ -313,7 +313,9 @@ public final class ReportBuffer {
     
     public static String getReportItems() {
         // activeIndex is the index one before the current index for the next action
-        int activeIndex = GameManager.getInstance().getChangeStack().getCurrentIndex();
+        // FIXME: This has to be rewritten
+        // int activeIndex = GameManager.getInstance().getChangeStack().getCurrentIndex();
+        int activeIndex = 0;
         ReportBuffer instance = getInstance();
         
         StringBuffer s = new StringBuffer();
@@ -371,7 +373,9 @@ public final class ReportBuffer {
                 instance.reportQueue.add(message);
                 return;
             }
-            int moveStackIndex = gm.getChangeStack().getCurrentIndex();
+            // FIXME: This has to be rewritten
+            // int moveStackIndex = gm.getChangeStack().getCurrentIndex();
+            int moveStackIndex = 0;
             instance.addMessage(message, moveStackIndex);
         }
     }
@@ -384,7 +388,9 @@ public final class ReportBuffer {
            instance = gm.getReportBuffer();
        }
        if (instance != null) {
-           int index = gm.getChangeStack().getCurrentIndex(); // add one index before (active)
+           // FIXME: This has to be rewritten
+           //int index = gm.getChangeStack().getCurrentIndex(); // add one index before (active)
+           int index = 0;
            instance.commentItems.put(index, comment);
            log.debug("Added comment = " + comment + " at index = " + index);
        }
@@ -399,7 +405,9 @@ public final class ReportBuffer {
        }
        String comment = null;
        if (instance != null) {
-           int index = gm.getChangeStack().getCurrentIndex();
+           // FIXME: This has to be rewritten
+           // int index = gm.getChangeStack().getCurrentIndex();
+           int index = 0;
            comment = instance.commentItems.get(index);
        }
        return comment;

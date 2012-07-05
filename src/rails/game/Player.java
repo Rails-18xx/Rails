@@ -9,7 +9,7 @@ import rails.game.state.Item;
 import rails.game.state.PortfolioHolder;
 
 // TODO: PortfolioHolder is a fix for the TODO problem in CertificatesModel
-public final class Player extends AbstractItem implements CashOwner, PortfolioOwner, PortfolioHolder, Comparable<Player> {
+public class Player extends AbstractItem implements CashOwner, PortfolioOwner, PortfolioHolder, Comparable<Player> {
 
     // TODO: Are those still needed?
     public static int MAX_PLAYERS = 8;

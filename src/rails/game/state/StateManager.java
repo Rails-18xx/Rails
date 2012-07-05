@@ -17,7 +17,7 @@ public final class StateManager extends Manager {
     protected static Logger log =
         LoggerFactory.getLogger(StateManager.class.getPackage().getName());
     
-    private final ChangeStack changeStack = ChangeStack.create(this);
+    private final ChangeStack changeStack = ChangeStack.create();
     private final HashSetState<State> allStates = HashSetState.create(this, null);
     
 //  private final PortfolioManager portfolioManager = PortfolioManager.create(this, "portfolioManager");
@@ -173,13 +173,6 @@ public final class StateManager extends Manager {
 //    void registerReceiver(Triggerable receiver, State toState) {
 //    }
 
-    /**
-     * @param change to be added to the ChangeStack
-     */
-    void addChangeToStack(Change change) {
-        changeStack.addChange(change);
-    }
-    
     ChangeStack getChangeStack() {
         return changeStack;
     }
