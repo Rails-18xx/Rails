@@ -33,7 +33,13 @@ public abstract class Observable implements Item {
         // defined standard fields
         this.parent = parent;
         this.id = id;
-        context = parent.getContext();
+
+        if (parent instanceof Context) {
+            context = (Context)parent;
+        } else { 
+            // recursive definition
+            context = parent.getContext();
+        }
 
         // if id is null this is an "unobservable" observable
         if (id == null) {
@@ -42,6 +48,8 @@ public abstract class Observable implements Item {
         } else {
             observers = HashSetState.create(this, null);
             models = HashSetState.create(this, null);
+            // add item to context if it has an id
+            context.addItem(this);
         }
         
     }
@@ -108,7 +116,7 @@ public abstract class Observable implements Item {
 
     public String getURI() {
         checkState(id != null, "Cannot get URI of unobservable object");
-        if (parent instanceof Manager) {
+        if (parent instanceof Context) {
             return id;
         } else {
             // recursive definition
