@@ -2,8 +2,6 @@ package rails.game.state;
 
 /**
  * A stateful version of a boolean variable
- * 
- * @author Erik Vos, Stefan Frey (V2.0)
  */
 public final class BooleanState extends State {
     
@@ -22,16 +20,23 @@ public final class BooleanState extends State {
     }
     
     /**
+     * Creates a BooleanState with defined initial value
      * @param value initial value
      */
     public static BooleanState create(Item parent, String id, Boolean value){
         return new BooleanState(parent, id, value);
     }
     
+    /**
+     * @param value set state to this value
+     */
     public void set(boolean value) {
         new BooleanChange(this, value);
     }
 
+    /**
+     * @return current value of state variable
+     */
     public boolean value() {
         return value;
     }

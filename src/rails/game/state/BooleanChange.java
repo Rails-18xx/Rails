@@ -2,7 +2,6 @@ package rails.game.state;
 
 /**
  * Change associated with BooleanState
- * @author freystef
  */
 
 final class BooleanChange extends Change {
