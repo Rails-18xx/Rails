@@ -20,13 +20,14 @@ public abstract class State extends Observable {
 
     protected State(Item parent, String id) {
         super(parent, id);
-        // check if parent is a model and add as dependent model
-        if (parent instanceof Model) {
-            addModel((Model)parent);
-        }
+        
         
         // register if observable state
         if (id != null) {
+            // check if parent is a model and add as dependent model
+            if (parent instanceof Model) {
+                addModel((Model)parent);
+            }
             // check if there is a StateManager available
             checkState(getContext().getRoot().getStateManager() != null, "Root of state has no StateManager attached");
             // if so => register state there
