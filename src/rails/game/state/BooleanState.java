@@ -31,7 +31,7 @@ public final class BooleanState extends State {
      * @param value set state to this value
      */
     public void set(boolean value) {
-        new BooleanChange(this, value);
+        if (value != this.value) new BooleanChange(this, value);
     }
 
     /**

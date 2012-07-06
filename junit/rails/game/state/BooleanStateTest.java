@@ -38,6 +38,14 @@ public class BooleanStateTest {
     }
 
     @Test
+    public void testSetSameIgnored() {
+        state_default.set(false);
+        state_init.set(true);
+        stack.closeCurrentChangeSet();
+        assertThat(stack.getLastClosedChangeSet().getStates()).doesNotContain(state_default, state_init);
+    }
+    
+    @Test
     public void testUndoRedo() {
         assertFalse(state_default.value());
         state_default.set(true);

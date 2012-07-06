@@ -29,7 +29,19 @@ final class GenericStateChange<E> extends Change {
 
     @Override
     public String toString() {
-        return "Change State " + state.getId() + " from " + previous.toString() + " to" + next.toString();
+        String from, to;
+        if (previous == null) {
+            from = "<null>";
+        } else {
+            from = previous.toString();
+        }
+        if (next == null) {
+            to = "<null>";
+        } else {
+            to = next.toString();
+        }
+        
+        return "Change State " + state + " from " + from + " to " + to ;
     }
 
 }

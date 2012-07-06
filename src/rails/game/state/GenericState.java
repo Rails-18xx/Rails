@@ -29,22 +29,14 @@ public final class GenericState<E> extends State {
         return new GenericState<E>(parent, id, object);
     }
 
-    private void set(E object, boolean forced) {
+    public void set(E object) {
         if (object == null) {
             if (this.object != null) {
                 new GenericStateChange<E>(this, object);
             }
-        } else if (!object.equals(this.object) || forced) {
-                new GenericStateChange<E>(this, object);
+        } else if (object != this.object) {
+            new GenericStateChange<E>(this, object);
         }
-    }
-
-    public void set(E object) {
-        set(object, false);
-    }
-
-    public void setForced(E object) {
-        set(object, true);
     }
 
     public E get() {
