@@ -42,12 +42,12 @@ public class ActionChangeSetTest {
 
     @Test
     public void testGetPlayer() {
-        assertSame(changeSet.getPlayer(), player);
+        assertSame(player, changeSet.getPlayer());
     }
 
     @Test
     public void testGetAction() {
-        assertSame(changeSet.getAction(), action);
+        assertSame(action, changeSet.getAction());
     }
 
     @Test
@@ -78,6 +78,5 @@ public class ActionChangeSetTest {
         changeSet.reexecute();
         assertTrue(state.value());
     }
-
 
 }

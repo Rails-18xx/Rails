@@ -26,38 +26,38 @@ public class AbstractItemTest {
     
     @Test
     public void testGetId() {
-        assertEquals(item.getId(), ITEM_ID);
-        assertEquals(anotherItem.getId(), ANOTHER_ID);
+        assertEquals(ITEM_ID, item.getId());
+        assertEquals(ANOTHER_ID, anotherItem.getId());
     }
 
     @Test
     public void testGetParent() {
-        assertSame(item.getParent(), manager);
-        assertSame(anotherItem.getParent(), item);
+        assertSame(manager, item.getParent());
+        assertSame(item, anotherItem.getParent());
     }
 
     @Test
     public void testGetContext() {
-        assertSame(item.getContext(), manager);
-        assertSame(anotherItem.getContext(), manager);
+        assertSame(manager, item.getContext());
+        assertSame(manager, anotherItem.getContext());
     }
 
     @Test
     public void testGetRoot() {
-        assertSame(item.getRoot(), root);
-        assertSame(anotherItem.getRoot(), root);
+        assertSame(root, item.getRoot());
+        assertSame(root, anotherItem.getRoot());
     }
 
     @Test
     public void testGetURI() {
-        assertEquals(item.getURI(), ITEM_ID);
-        assertEquals(anotherItem.getURI(), ITEM_ID + Item.SEP + ANOTHER_ID);
+        assertEquals(ITEM_ID, item.getURI());
+        assertEquals(ITEM_ID + Item.SEP + ANOTHER_ID, anotherItem.getURI());
     }
 
     @Test
     public void testGetFullURI() {
-        assertEquals(item.getFullURI(), Item.SEP + MANAGER_ID + Item.SEP + ITEM_ID);
-        assertEquals(anotherItem.getFullURI(), Item.SEP + MANAGER_ID+ Item.SEP + ITEM_ID + Item.SEP + ANOTHER_ID);
+        assertEquals(Item.SEP + MANAGER_ID + Item.SEP + ITEM_ID, item.getFullURI());
+        assertEquals(Item.SEP + MANAGER_ID+ Item.SEP + ITEM_ID + Item.SEP + ANOTHER_ID, anotherItem.getFullURI());
     }
 
 }

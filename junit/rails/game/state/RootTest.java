@@ -37,43 +37,43 @@ public class RootTest {
 
     @Test
     public void testGetId() {
-        assertEquals(root.getId(), Root.ID);
+        assertEquals(Root.ID, root.getId());
     }
 
     @Test
     public void testGetContext() {
-        assertSame(root.getContext(), root);
+        assertSame(root, root.getContext());
     }
 
     @Test
     public void testGetRoot() {
-        assertSame(root.getRoot(), root);
+        assertSame(root, root.getRoot());
     }
 
     @Test
     public void testGetURI() {
-        assertSame(root.getURI(), Root.ID);
+        assertSame(Root.ID, root.getURI());
     }
 
     @Test
     public void testGetFullURI() {
-        assertSame(root.getFullURI(), Root.ID);
+        assertSame(Root.ID, root.getFullURI());
     }
 
     @Test
     public void testLocate() {
         // item is local
-        assertSame(root.locate(item.getURI()), item);
-        assertSame(root.locate(item.getFullURI()), item);
+        assertSame(item, root.locate(item.getURI()));
+        assertSame(item, root.locate(item.getFullURI()));
         // manager is local
-        assertSame(root.locate(manager.getURI()), manager);
-        assertSame(root.locate(manager.getFullURI()), manager);
+        assertSame(manager, root.locate(manager.getURI()));
+        assertSame(manager, root.locate(manager.getFullURI()));
         // anotherItem is not local
         assertNull(root.locate(anotherItem.getURI()));
         assertSame(root.locate(anotherItem.getFullURI()), anotherItem);
         // root is local in root
-        assertSame(root.locate(root.getURI()), root);
-        assertSame(root.locate(root.getFullURI()), root);
+        assertSame(root, root.locate(root.getURI()));
+        assertSame(root, root.locate(root.getFullURI()));
         // and if item is removed it is not found anymore
         root.removeItem(item);
         assertNull(root.locate(item.getURI()));
@@ -88,7 +88,7 @@ public class RootTest {
     public void testAddItemSuccess() {
         root.removeItem(item);
         root.addItem(item);
-        assertSame(root.locate(item.getFullURI()), item);
+        assertSame(item, root.locate(item.getFullURI()));
     }
     
     public void testRemoveItemSuccess() {

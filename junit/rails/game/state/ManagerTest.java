@@ -27,60 +27,59 @@ public class ManagerTest {
 
     @Test
     public void testGetId() {
-        assertEquals(manager.getId(), MANAGER_ID);
-        assertEquals(anotherManager.getId(), ANOTHER_MANAGER_ID);
+        assertEquals(MANAGER_ID, manager.getId());
+        assertEquals(ANOTHER_MANAGER_ID, anotherManager.getId());
     }
 
     @Test
     public void testGetParent() {
-        assertSame(manager.getParent(), item);
-        assertSame(anotherManager.getParent(), manager);
+        assertSame(item, manager.getParent());
+        assertSame(manager, anotherManager.getParent());
     }
 
     @Test
     public void testGetContext() {
-        System.out.println();
-        assertSame(manager.getContext(), root);
-        assertSame(anotherManager.getContext(), manager);
+        assertSame(root, manager.getContext());
+        assertSame(manager, anotherManager.getContext());
     }
 
     @Test
     public void testGetURI() {
-        assertEquals(manager.getURI(), ITEM_ID + Item.SEP + MANAGER_ID);
-        assertEquals(anotherManager.getURI(), ANOTHER_MANAGER_ID);
+        assertEquals(ITEM_ID + Item.SEP + MANAGER_ID, manager.getURI());
+        assertEquals(ANOTHER_MANAGER_ID, anotherManager.getURI());
     }
 
     @Test
     public void testGetFullURI() {
-        assertEquals(manager.getFullURI(), Item.SEP + ITEM_ID + Item.SEP + MANAGER_ID);
-        assertEquals(anotherManager.getFullURI(), Item.SEP + ITEM_ID + Item.SEP + MANAGER_ID + Item.SEP + ANOTHER_MANAGER_ID);
+        assertEquals(Item.SEP + ITEM_ID + Item.SEP + MANAGER_ID, manager.getFullURI());
+        assertEquals(Item.SEP + ITEM_ID + Item.SEP + MANAGER_ID + Item.SEP + ANOTHER_MANAGER_ID, anotherManager.getFullURI());
     }
 
     @Test
     public void testLocate() {
         // anotherItem is local
-        assertSame(manager.locate(anotherItem.getURI()), anotherItem);
-        assertSame(manager.locate(anotherItem.getFullURI()), anotherItem);
+        assertSame(anotherItem, manager.locate(anotherItem.getURI()));
+        assertSame(anotherItem, manager.locate(anotherItem.getFullURI()));
         
         // item is not local
         assertNull(manager.locate(item.getURI()));
-        assertSame(manager.locate(item.getFullURI()), item);
+        assertSame(item, manager.locate(item.getFullURI()));
 
         // manager is not local in itself, but in root
         assertNull(manager.locate(manager.getURI()));
-        assertSame(root.locate(manager.getURI()), manager);
-        assertSame(manager.locate(manager.getFullURI()), manager);
+        assertSame(manager, root.locate(manager.getURI()));
+        assertSame(manager, manager.locate(manager.getFullURI()));
 
         // anotherManager is not local in itself, but in manager
         assertNull(anotherManager.locate(anotherManager.getURI()));
-        assertSame(manager.locate(anotherManager.getURI()), anotherManager);
-        assertSame(anotherManager.locate(anotherManager.getFullURI()), anotherManager);
+        assertSame(anotherManager, manager.locate(anotherManager.getURI()));
+        assertSame(anotherManager, anotherManager.locate(anotherManager.getFullURI()));
     }
 
     @Test
     public void testGetRoot() {
-        assertSame(manager.getRoot(), root);
-        assertSame(anotherManager.getRoot(), root);
+        assertSame(root, manager.getRoot());
+        assertSame(root, anotherManager.getRoot());
     }
 
 }
