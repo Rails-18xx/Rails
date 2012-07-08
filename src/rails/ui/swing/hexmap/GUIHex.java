@@ -891,13 +891,6 @@ public class GUIHex implements Observer {
         toolTip = null;
     }
 
-    /** Needed to satisfy the ViewObject interface. Currently not used. */
-    public boolean deRegister() {
-        if (model == null) return false;
-        model.removeObserver(this);
-        return true;
-    }
-
     // FIXME: Why is this called getModel instead of getMapHex?
     public MapHex getModel() {
         return model;
@@ -931,15 +924,9 @@ public class GUIHex implements Observer {
     }
 
     // FIMXE: Add the code here
-    public void update() {
+    public void update(Observable observable, String id) {
         // TODO Auto-generated method stub
         
     }
-
-    public Observable getObservable() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
 
 }

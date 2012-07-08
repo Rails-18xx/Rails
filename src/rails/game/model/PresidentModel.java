@@ -43,14 +43,9 @@ public final class PresidentModel extends Model implements Observer {
         else return company.getPresident().getNameAndPriority();
     }
 
-    public Observable getObservable() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public boolean deRegister() {
-        // TODO Auto-generated method stub
-        return false;
+    // FIXME: Add code what to do here
+    public void update(Observable observable, String text) {
+        
     }
 
 }

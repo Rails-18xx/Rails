@@ -71,10 +71,11 @@ public class Field extends JLabel implements Observer {
         return observable;
     }
 
+    // FIXME: Rewrite that part here
     public void setModel(Observable m) {
         observable = m;
         observable.addObserver(this);
-        update();
+//        update();
     }
 
     public void setHighlight(boolean highlight) {
@@ -115,19 +116,8 @@ public class Field extends JLabel implements Observer {
     }
 
     /** Needed to satisfy the Observer interface. */
-    public void update() {
-        setText(observable.getText());
+    public void update(Observable observable, String text) {
+        setText(text);
     }
-
-    public boolean deRegister() {
-        dependents = null;
-        if (observable == null) return false;
-        return observable.removeObserver(this);
-    }
-
-    public Observable getObservable() {
-        return observable;
-    }
-
 
 }

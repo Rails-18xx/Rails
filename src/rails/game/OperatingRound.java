@@ -3124,7 +3124,7 @@ public class OperatingRound extends Round implements Observer {
     /**
      * Update the status if the step has changed by an Undo or Redo
      */
-    public void update() {
+    public void update(Observable observable, String text) {
         prepareStep();
     }
 
@@ -3142,16 +3142,6 @@ public class OperatingRound extends Round implements Observer {
     @Override
     public String getRoundName() {
         return toString();
-    }
-
-    // Observer Interface
-    public Observable getObservable() {
-        return stepObject;
-    }
-
-    public boolean deRegister() {
-        if (stepObject == null) return false;
-        return stepObject.removeObserver(this);
     }
 
 }

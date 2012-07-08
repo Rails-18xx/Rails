@@ -135,31 +135,11 @@ public class GUIStockSpace extends JLayeredPane implements Observer {
     /*
      * (non-Javadoc)
      *
-     * @see rails.ui.swing.elements.ViewObject#deRegister()
-     */
-    public boolean deRegister() {
-        if (model == null) return false;
-        return model.removeObserver(this);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
      * @see java.rails.util.Observer#update(java.rails.util.Observable,
      * java.lang.Object)
      */
-    public void update(String data) {
+    public void update(Observable observable, String text) {
         recreate();
-    }
-
-    public void update() {
-        // TODO Auto-generated method stub
-        
-    }
-
-    public Observable getObservable() {
-        // TODO Auto-generated method stub
-        return null;
     }
 
 

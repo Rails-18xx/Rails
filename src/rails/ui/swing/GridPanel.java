@@ -75,10 +75,11 @@ implements ActionListener, KeyListener {
         revalidate();
     }
 
+    // FIXME: This has to be replaced
     protected void deRegisterObservers() {
         log.debug("Deregistering observers");
         for (Observer vo : observers) {
-            vo.deRegister();
+//            vo.deRegister();
         }
     }
 
@@ -106,10 +107,11 @@ implements ActionListener, KeyListener {
 
         gridPanel.add(comp, gbc);
 
-        if (comp instanceof Observer
-            && ((Observer) comp).getObservable() != null) {
-            observers.add((Observer) comp);
-        }
+        // FIXME: This has to be replaced
+//        if (comp instanceof Observer
+//            && ((Observer) comp).getObservable() != null) {
+//            observers.add((Observer) comp);
+//        }
 
         if (fields != null && fields[x][y] == null) fields[x][y] = comp;
         comp.setVisible(visible);
@@ -178,18 +180,10 @@ implements ActionListener, KeyListener {
         }
 */
 
-        public void update() {
+        public void update(Observable observable, String text) {
             // FIXME: There was a Boolean object submitted if the company is closed
             // TODO: Make this functionality available again
             // see above the old update method
-        }
-
-        public Observable getObservable() {
-            return observable;
-        }
-
-        public boolean deRegister() {
-            return observable.removeObserver(this);
         }
 
 

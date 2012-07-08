@@ -1,18 +1,10 @@
 package rails.game.state;
 
 /**
- * An interface defining an observer for states and models
- * 
- * It is a very simple approach that only relays the update information itself.
- * 
- * @author freystef
+ * An interface defining an Observer to Observable classes
  */
 public interface Observer{
 
-    void update();
-    
-    Observable getObservable();
-    
-    boolean deRegister();
+    void update(Observable observable, String text);
     
 }
