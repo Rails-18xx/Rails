@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import rails.game.PublicCompany;
 import rails.game.StockSpace;
 import rails.game.state.Model;
-import rails.game.state.Observable;
 import rails.game.state.Observer;
 import rails.ui.swing.GUIToken;
 import rails.util.Util;
@@ -138,7 +137,7 @@ public class GUIStockSpace extends JLayeredPane implements Observer {
      * @see java.rails.util.Observer#update(java.rails.util.Observable,
      * java.lang.Object)
      */
-    public void update(Observable observable, String text) {
+    public void update(String text) {
         recreate();
     }
 

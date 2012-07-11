@@ -87,7 +87,7 @@ public class Field extends JLabel implements Observer {
     @Override
     public void paintComponent(Graphics g) {
         if (observable != null && pull) {
-            setText(observable.getText());
+            setText(observable.observerText());
         }
         super.paintComponent(g);
     }
@@ -116,7 +116,7 @@ public class Field extends JLabel implements Observer {
     }
 
     /** Needed to satisfy the Observer interface. */
-    public void update(Observable observable, String text) {
+    public void update(String text) {
         setText(text);
     }
 

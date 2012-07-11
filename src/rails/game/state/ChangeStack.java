@@ -2,9 +2,13 @@ package rails.game.state;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Sets;
 
 import rails.game.Player;
 import rails.game.action.PossibleAction;
@@ -18,12 +22,16 @@ public class ChangeStack {
 
     private final Deque<ChangeSet> undoStack = new ArrayDeque<ChangeSet>();
     private final Deque<ChangeSet> redoStack = new ArrayDeque<ChangeSet>();
+    private final StateManager stateManager;
+
     private ChangeSet currentSet;
 
-    private ChangeStack() {};
+    private ChangeStack(StateManager stateManager) {
+        this.stateManager = stateManager;
+    }
     
-    public static ChangeStack create() {
-        ChangeStack changeStack = new ChangeStack();
+    public static ChangeStack create(StateManager stateManager) {
+        ChangeStack changeStack = new ChangeStack(stateManager);
         changeStack.startAutoChangeSet(true); // first set is terminal
         return changeStack;
     }
@@ -50,6 +58,8 @@ public class ChangeStack {
             return false;
         } else {
             currentSet.close();
+            // FIXME: This is a hack, has to replaced
+            updateObservers(Sets.newHashSet(currentSet));
         }
         undoStack.addFirst(currentSet);
         return true;
@@ -139,11 +149,21 @@ public class ChangeStack {
     }
     
     /**
+     * Update the relevant observers
+     */
+    private void updateObservers(Set<ChangeSet> changeSets) {
+        Set<State> states = Sets.newHashSet();
+        for (ChangeSet cs:changeSets) {
+            states.addAll(cs.getStates());
+        }
+        stateManager.updateObservers(states);
+    }
+    
+    /**
      * @return size of ChangeStack
      */
     public int sizeUndoStack() {
         return undoStack.size();
     }
-    
     
 }

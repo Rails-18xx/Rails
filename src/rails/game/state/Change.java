@@ -7,7 +7,7 @@ package rails.game.state;
 abstract class Change {
     
     protected void init(State state){
-        state.getRoot().getStateManager().getChangeStack().getCurrentChangeSet().addChange(this);
+        state.getStateManager().getChangeStack().getCurrentChangeSet().addChange(this);
     }
 
     abstract void execute();

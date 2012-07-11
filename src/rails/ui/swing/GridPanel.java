@@ -180,7 +180,7 @@ implements ActionListener, KeyListener {
         }
 */
 
-        public void update(Observable observable, String text) {
+        public void update(String text) {
             // FIXME: There was a Boolean object submitted if the company is closed
             // TODO: Make this functionality available again
             // see above the old update method

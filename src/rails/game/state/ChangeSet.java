@@ -58,7 +58,9 @@ abstract class ChangeSet {
     private void defineStates() {
         ImmutableSet.Builder<State> builder = new ImmutableSet.Builder<State>();
         for (Change change:changes) {
-            builder.add(change.getState());
+            if (change.getState().isObservable()){
+                builder.add(change.getState());
+            }
         }
         states = builder.build();
     }
@@ -92,8 +94,16 @@ abstract class ChangeSet {
     
     abstract boolean isTerminal();
 
+    /**
+     * @return set of States in the ChangeSet
+     * Remark: It only includes those which are observable (isObservable = true)
+     */
     ImmutableSet<State> getStates() {
         if (!closed) throw new IllegalStateException("ChangeSet is still open");
         return states;
     }
+    
+    
+
+    
 }

@@ -46,9 +46,9 @@ public class StateTest {
     }
     
     @Test
-    public void testGetText() {
-        assertNull(state.getText());
-        assertEquals(STATE_TEXT, state_wo_id.getText());
-    }
+            public void testObserverText() {
+                assertNull(state.observerText());
+                assertEquals(STATE_TEXT, state_wo_id.observerText());
+            }
 
 }

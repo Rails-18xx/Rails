@@ -782,7 +782,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponent, 
     }
 
     public String getNumOfORs () {
-        return numOfORs.getText();
+        return numOfORs.observerText();
     }
 
     /* (non-Javadoc)

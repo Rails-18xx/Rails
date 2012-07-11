@@ -1,40 +1,60 @@
 package rails.game.state;
 
-import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InOrder;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
+@RunWith(MockitoJUnitRunner.class)
 public class FormatterTest {
+    
+    private static final String YES = "yes";
+    private static final String NO = "no";
 
     // This formatter doubles the text of the state
-    private class FormatterImpl implements Formatter<State> {
-        public String formatValue(State state) {
-            return state.toString() + state.toString();
+    private class FormatterImpl extends Formatter<BooleanState> {
+        private final BooleanState state;
+        private FormatterImpl(BooleanState state){
+            super(state);
+            this.state = state;
+        }
+        public String observerText() {
+            if (state.value()) {
+                return YES;
+            } else {
+                return NO;
+            }
         }
     }
     
     private final static String STATE_ID = "State";
-    private final static String STATE_TEXT = "Test";
     
     private Root root;
-    private State state;
-    private Formatter<State> formatter;
-    
+    private BooleanState state;
+    private Formatter<BooleanState> formatter;
+    @Mock private Observer observer;
+
     @Before
     public void setUp() {
-        root = Root.create();
-        state = new StateImpl(root, STATE_ID, STATE_TEXT);
-        formatter = new FormatterImpl();
+        root = StateTestUtils.setUpRoot();
+        state = BooleanState.create(root, STATE_ID);
+        formatter = new FormatterImpl(state);
+        formatter.addObserver(observer);
     }
     
     @Test
     public void testFormatValue() {
-        assertEquals(STATE_TEXT, state.getText());
-        state.setFormatter(formatter);
-        assertEquals(STATE_TEXT + STATE_TEXT, state.getText());
-        state.setFormatter(null);
-        assertEquals(STATE_TEXT, state.getText());
-    }
+        state.set(true);
+        root.getStateManager().getChangeStack().closeCurrentChangeSet();
+        state.set(false);
+        root.getStateManager().getChangeStack().closeCurrentChangeSet();
 
+        InOrder inOrder = inOrder(observer); 
+        inOrder.verify(observer).update(YES);
+        inOrder.verify(observer).update(NO);
+    }
 }

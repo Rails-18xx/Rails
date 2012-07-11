@@ -1191,7 +1191,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner,
     }
 
     public String getFormattedCash() {
-        return treasury.getText();
+        return treasury.observerText();
     }
 
     public Model getText() {

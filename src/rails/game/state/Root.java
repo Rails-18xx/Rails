@@ -9,25 +9,24 @@ public final class Root extends Context {
    public final static String ID = ""; 
    
    private StateManager stateManager;
-   private final HashMapState<String, Item> items = HashMapState.create(this, null);
+   private HashMapState<String, Item> items;
     
    private Root() {
+  
    }
 
    /**
     * @return a Root object with initialized StateManager embedded
     */
    public static Root create() {
+       // precise sequence to avoid any unintialized problems
        Root root = new Root();
        StateManager stateManager = StateManager.create(root, "states");
-       root.addStateManager(stateManager);
+       root.stateManager = stateManager;
+       root.items = HashMapState.create(root, null);
+       root.addItem(stateManager);
        root.addItem(root);
        return root;
-   }
-   
-   private void addStateManager(StateManager stateManager) {
-       this.stateManager = stateManager;
-       this.addItem(stateManager);
    }
    
    public StateManager getStateManager() {

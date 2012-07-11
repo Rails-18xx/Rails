@@ -3124,7 +3124,7 @@ public class OperatingRound extends Round implements Observer {
     /**
      * Update the status if the step has changed by an Undo or Redo
      */
-    public void update(Observable observable, String text) {
+    public void update(String text) {
         prepareStep();
     }
 

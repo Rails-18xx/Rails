@@ -15,11 +15,6 @@ public abstract class Observable implements Item {
     private final Item parent;
     private final Context context;
     
-    // stores observers and models if observable
-    // those are unobservable states themselves
-    private final HashSetState<Observer> observers;
-    private final HashSetState<Model> models;
-    
     /**
      * @param parent parent node in item hierarchy (cannot be null)
      * @param id id of the observable
@@ -43,45 +38,45 @@ public abstract class Observable implements Item {
 
         // if id is null this is an "unobservable" observable
         if (id == null) {
-            observers = null;
-            models = null;
         } else {
-            observers = HashSetState.create(this, null);
-            models = HashSetState.create(this, null);
             // add item to context if it has an id
             context.addItem(this);
         }
         
     }
+    
+    protected StateManager getStateManager() {
+        return context.getRoot().getStateManager();
+    }
 
     public void addObserver(Observer o) {
         checkState(id != null, "Cannot add observer to unobservable object");
-        observers.add(o);
+        getStateManager().addObserver(o, this);
     }
     
     public boolean removeObserver(Observer o) {
         checkState(id != null, "Cannot remove observer from unobservable object");
-        return observers.remove(o);
+        return getStateManager().removeObserver(o, this);
     }
     
     public ImmutableSet<Observer> getObservers() {
         checkState(id != null, "Cannot get observers of unobservable object");
-        return observers.view();
+        return getStateManager().getObservers(this);
     }
 
     public void addModel(Model m) {
         checkState(id != null, "Cannot add model to unobservable object");
-        models.add(m);
+        getStateManager().addModel(m, this);
     }
     
     public boolean removeModel(Model m) {
         checkState(id != null, "Cannot remove model from unobservable object");
-        return models.remove(m);
+        return getStateManager().removeModel(m, this);
     }
     
     public ImmutableSet<Model> getModels() {
         checkState(id != null, "Cannot get models of unobservable object");
-        return models.view();
+        return getStateManager().getModels(this);
     }
     
     /**
@@ -90,9 +85,13 @@ public abstract class Observable implements Item {
      */
     public void updateModels() {
         if (id == null) return;
-        for (Model m:models) {
+        for (Model m:this.getModels()) {
             m.update();
         }
+    }
+    
+    public boolean isObservable() {
+        return (id != null);
     }
     
     // Item methods
@@ -132,8 +131,8 @@ public abstract class Observable implements Item {
 
     
     /**
-     * @return text to be read by observers
+     * @return text delivered to observers, if no formatter is used
      */
-    public abstract String getText();
+    public abstract String observerText();
     
 }

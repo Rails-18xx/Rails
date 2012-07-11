@@ -3,18 +3,16 @@ package rails.game.model;
 import rails.game.Player;
 import rails.game.PublicCompany;
 import rails.game.state.Model;
-import rails.game.state.Observable;
-import rails.game.state.Observer;
 
 /**
  * model object for the current company president
  * gets registered by the ShareModels
  * 
- * FIXME: Finalize implementation
+ * FIXME: Finalize implementation, this does not work currently
  * TODO: Check if this is all done correctly, where is the observable stored?
  */
 
-public final class PresidentModel extends Model implements Observer {
+public final class PresidentModel extends Model {
 
     public static final String ID = "PresidentModel";  
     
@@ -41,11 +39,6 @@ public final class PresidentModel extends Model implements Observer {
         Player president = company.getPresident();
         if (president == null) return "";
         else return company.getPresident().getNameAndPriority();
-    }
-
-    // FIXME: Add code what to do here
-    public void update(Observable observable, String text) {
-        
     }
 
 }

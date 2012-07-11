@@ -1,6 +1,5 @@
 package rails.game.state;
 
-
 /**
  * Model is an abstract generic class
  * that defines the a middle layer between State(s) and
@@ -8,14 +7,12 @@ package rails.game.state;
  * 
  * Models themselves can be layered upon each other.
  * 
- * 
  * It replaces the ModelObject class in Rails 1.0 
- * 
- * @author freystef
  */
+
 public abstract class Model extends Observable {
 
-    private boolean updated = false;
+    private boolean current = false;
     private String cache = null;
     
     protected Model(Item parent, String id) {
@@ -23,24 +20,30 @@ public abstract class Model extends Observable {
     }
 
     /**
-     * Indicates that the model is updated, so the getText() cache
-     * is flushed
+     * Calling of update informs the model that some prerequisites has been updated
      */
     public void update() {
-        updated = false;
+        current = false;
     }
     
     /**
-     * For a model the text shown to observer is derived from toString()
-     * The value is cached until the model is updated
+     * {@inheritDoc}
+     * Remark: A Model has to either override this or cachedText(), the latter automatically caches results
      */
     @Override
-    public final String getText() {
-        if (!updated){
-            updated = true;
-            cache = toString();
+    public String observerText() {
+        if (!current){
+            current = true;
+            cache = this.cachedText();
         }
         return cache;
+    }
+    
+    /**
+     *  @return Default Model text used for Observer updates (gets cached automatically)
+     */
+    public String cachedText() {
+        return null;
     }
     
 }

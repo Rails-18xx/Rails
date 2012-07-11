@@ -37,7 +37,6 @@ import rails.game.Stop;
 import rails.game.Tile;
 import rails.game.TileOrientation;
 import rails.game.Token;
-import rails.game.state.Observable;
 import rails.game.state.Observer;
 import rails.ui.swing.GUIToken;
 import rails.util.Util;
@@ -897,6 +896,7 @@ public class GUIHex implements Observer {
     }
 
     // Used by Undo/Redo
+    // FIMXE: Does this still work?
     public void update(String notification) {
             // The below code so far only deals with tile lay undo/redo.
             // Tokens still to do
@@ -922,11 +922,4 @@ public class GUIHex implements Observer {
     public String toString () {
         return getName() + " (" + currentTile.getId() + ")";
     }
-
-    // FIMXE: Add the code here
-    public void update(Observable observable, String id) {
-        // TODO Auto-generated method stub
-        
-    }
-
 }

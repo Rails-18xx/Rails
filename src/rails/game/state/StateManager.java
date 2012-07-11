@@ -1,5 +1,7 @@
 package rails.game.state;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.util.List;
 import java.util.Set;
 
@@ -17,8 +19,16 @@ public final class StateManager extends Manager {
     protected static Logger log =
         LoggerFactory.getLogger(StateManager.class.getPackage().getName());
     
-    private final ChangeStack changeStack = ChangeStack.create();
+    private final ChangeStack changeStack = ChangeStack.create(this);
     private final HashSetState<State> allStates = HashSetState.create(this, null);
+
+    private final HashMultimapState<Observable, Observer> 
+        observers = HashMultimapState.create(this, null);
+    private final HashMapState<Observer, Formatter<? extends Observable>> 
+        formatters = HashMapState.create(this, null);
+    private final HashMultimapState<Observable, Model> 
+        models = HashMultimapState.create(this, null);
+    
     
 //  private final PortfolioManager portfolioManager = PortfolioManager.create(this, "portfolioManager");
 //  private final WalletManager walletManager = WalletManager.create(this, "walletManager");
@@ -57,6 +67,48 @@ public final class StateManager extends Manager {
         return true;
     }
 
+    /**
+     * Adds the combination of observer to observable
+     * @throws an IllegalArgumentException - if observer is already assigned to an observable
+     */
+    void addObserver(Observer observer, Observable observable) {
+        checkArgument(!observers.containsValue(observer), "Observer can only be assigned to one Observable");
+        observers.put(observable, observer);
+    }
+    
+    /**
+     * Adds the combination of observer to observable, using a Formatter
+     * @throws an IllegalArgumentException - if observer is already assigned to an observable
+     */
+    <T extends Observable>  void addObserver(Observer observer, Formatter<T> formatter) {
+        this.addObserver(observer, formatter.getObservable());
+        formatters.put(observer, formatter);
+    }
+    
+    boolean removeObserver(Observer observer, Observable observable) {
+        formatters.remove(observer);
+        return observers.remove(observable, observer);
+    }
+    
+    public ImmutableSet<Observer> getObservers(Observable observable) {
+        return observers.get(observable);
+    }
+    
+    /**
+     * Adds the combination of model to observable
+     */
+    void addModel(Model model, Observable observable) {
+        models.put(observable, model);
+    }
+
+    boolean removeModel(Model model, Observable observable) {
+        return models.remove(observable, model);
+    }
+    
+    public ImmutableSet<Model> getModels(Observable observable) {
+        return models.get(observable);
+    }
+    
     /**
      * A set of states is given as input
      * and then calculates all observer to update in the correct sequence
@@ -121,7 +173,7 @@ public final class StateManager extends Manager {
      * @param states Set of states
      * @return all observers to be updated from states (either directly or via Models)
      */
-    Set<Observer> getObservers(Set<State> states){
+    private Set<Observer> getObservers(Set<State> states){
         
         Set<Observer> observers = Sets.newHashSet();
         
@@ -136,6 +188,20 @@ public final class StateManager extends Manager {
         }
         
         return observers;
+    }
+    
+    void updateObservers(Set<State> states) {
+        for (Observable observable:getSortedObservables(states)) {
+            for (Observer observer:observable.getObservers()) {
+                // check if formatter is defined
+                if (formatters.containsKey(observer)) {
+                    observer.update(formatters.get(observer).observerText());
+                } else {
+                    // otherwise use observable text
+                    observer.update(observable.observerText());
+                }
+            }
+        }
     }
     
     /**

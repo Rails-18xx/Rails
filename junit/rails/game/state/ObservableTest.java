@@ -20,7 +20,7 @@ public class ObservableTest {
         }
 
         @Override
-        public String getText() {
+        public String observerText() {
             return null;
         }
     }

@@ -66,7 +66,8 @@ public class GenericStateTest {
         assertSame(another_item, state_init.get());
 
         stack.closeCurrentChangeSet();
-        assertThat(stack.getLastClosedChangeSet().getStates()).contains(state_default, state_init);
+        // remark: state_init is an internal (isObservable = false)
+        assertThat(stack.getLastClosedChangeSet().getStates()).contains(state_default);
         
         stack.undo();
         assertNull(state_default.get());
