@@ -27,7 +27,7 @@ public final class IntegerState extends State {
     }
 
     public void set(int value) {
-        new IntegerChange(this, value);
+        if (value != this.value) new IntegerChange(this, value);
     }
 
     public int add(int value) {
