@@ -27,7 +27,7 @@ public final class StockRound_1835 extends StockRound {
     @Override
     protected void setGameSpecificActions() {
         if (!mayCurrentPlayerBuyAnything()) return;
-        if (companyBoughtThisTurnWrapper.get() != null) return;
+        if (companyBoughtThisTurnWrapper.value() != null) return;
 
         List<Player> otherPlayers = new ArrayList<Player>();
         Owner owner;

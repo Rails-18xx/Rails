@@ -56,7 +56,7 @@ public final class PublicCompany_CGR extends PublicCompany implements RevenueSta
 
     public Player getTemporaryPresident() {
         if (temporaryPresident != null) {
-            return (Player) temporaryPresident.get();
+            return (Player) temporaryPresident.value();
         } else {
             return null;
         }

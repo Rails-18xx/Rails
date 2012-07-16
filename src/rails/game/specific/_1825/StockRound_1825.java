@@ -148,7 +148,7 @@ public final class StockRound_1825 extends StockRound {
                 /* In some games (1856), a just bought share may not be sold */
                 // This code ignores the possibility of different share units
                 if ((Boolean)gameManager.getGameParameter(GameDef.Parm.NO_SALE_OF_JUST_BOUGHT_CERT)
-                        && company.equals(companyBoughtThisTurnWrapper.get())) {
+                        && company.equals(companyBoughtThisTurnWrapper.value())) {
                     number--;
                 }
                 if (number <= 0) continue;

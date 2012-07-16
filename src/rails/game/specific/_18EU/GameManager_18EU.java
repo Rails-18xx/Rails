@@ -27,10 +27,10 @@ public class GameManager_18EU extends GameManager {
     @Override
     public void nextRound(Round round) {
         if (round instanceof OperatingRound_18EU) {
-            if (playerToStartFMERound.get() != null
+            if (playerToStartFMERound.value() != null
                     && relativeORNumber.value() == numOfORs.value()) {
                 createRound (FinalMinorExchangeRound.class).start
-                        ((Player)playerToStartFMERound.get());
+                        ((Player)playerToStartFMERound.value());
                 playerToStartFMERound.set(null);
             } else {
                 super.nextRound(round);
@@ -48,7 +48,7 @@ public class GameManager_18EU extends GameManager {
     }
 
     public Player getPlayerToStartFMERound() {
-        return (Player) playerToStartFMERound.get();
+        return (Player) playerToStartFMERound.value();
     }
 
     @Override

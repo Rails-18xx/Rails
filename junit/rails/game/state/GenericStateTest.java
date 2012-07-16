@@ -33,18 +33,18 @@ public class GenericStateTest {
     
     @Test
     public void testValue() {
-        assertNull(state_default.get());
-        assertSame(item, state_init.get());
+        assertNull(state_default.value());
+        assertSame(item, state_init.value());
     }
     
     @Test
     public void testSet() {
         state_default.set(item);
-        assertSame(item, state_default.get());
+        assertSame(item, state_default.value());
         state_default.set(null);
-        assertNull(state_default.get());
+        assertNull(state_default.value());
         state_init.set(another_item);
-        assertSame(another_item, state_init.get());
+        assertSame(another_item, state_init.value());
     }
     
     @Test
@@ -57,25 +57,25 @@ public class GenericStateTest {
 
     @Test
     public void testUndoRedo() {
-        assertNull(state_default.get());
-        assertSame(item, state_init.get());
+        assertNull(state_default.value());
+        assertSame(item, state_init.value());
 
         state_default.set(item);
         state_init.set(another_item);
-        assertSame(item, state_default.get());
-        assertSame(another_item, state_init.get());
+        assertSame(item, state_default.value());
+        assertSame(another_item, state_init.value());
 
         stack.closeCurrentChangeSet();
         // remark: state_init is an internal (isObservable = false)
         assertThat(stack.getLastClosedChangeSet().getStates()).contains(state_default);
         
         stack.undo();
-        assertNull(state_default.get());
-        assertSame(item, state_init.get());
+        assertNull(state_default.value());
+        assertSame(item, state_init.value());
 
         stack.redo();
-        assertSame(item, state_default.get());
-        assertSame(another_item, state_init.get());
+        assertSame(item, state_default.value());
+        assertSame(another_item, state_init.value());
     }
 
 }

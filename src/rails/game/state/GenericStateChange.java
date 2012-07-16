@@ -7,7 +7,7 @@ final class GenericStateChange<E> extends Change {
 
     public GenericStateChange(GenericState<E> state, E object) {
         this.state = state;
-        previous = state.get();
+        previous = state.value();
         next = object;
         super.init(state);
     }

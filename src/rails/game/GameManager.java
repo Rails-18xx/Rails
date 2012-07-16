@@ -914,7 +914,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponent, 
 
         // logging of game actions activated
         for (PossibleAction pa : possibleActions.getList()) {
-            log.debug(((Player) currentPlayer.get()).getId() + " may: "
+            log.debug(((Player) currentPlayer.value()).getId() + " may: "
                     + pa.toString());
         }
 
@@ -1031,8 +1031,8 @@ public class GameManager extends AbstractItem implements ConfigurableComponent, 
             if (skipNextDone) {
                 if (action instanceof NullAction
                         && ((NullAction)action).getMode() == NullAction.DONE) {
-                    if (currentRound.get() instanceof OperatingRound
-                            && ((OperatingRound)currentRound.get()).getStep() == skippedStep) {
+                    if (currentRound.value() instanceof OperatingRound
+                            && ((OperatingRound)currentRound.value()).getStep() == skippedStep) {
                         doProcess = false;
                     }
                 }
@@ -1407,7 +1407,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponent, 
      * @see rails.game.GameManager#getCurrentRound()
      */
     public Round getCurrentRound() {
-        return (Round) currentRound.get();
+        return (Round) currentRound.value();
     }
 
     /* (non-Javadoc)
@@ -1432,7 +1432,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponent, 
      */
     public void setCurrentPlayer(Player player) {
         // transfer messages for the next player to the display buffer
-        if ((Player)currentPlayer.get() != player && !nextPlayerMessages.isEmpty()) {
+        if ((Player)currentPlayer.value() != player && !nextPlayerMessages.isEmpty()) {
             DisplayBuffer.add(
                     LocalText.getText("NextPlayerMessage", getCurrentPlayer().getId()));
             for (String s:nextPlayerMessages.view())
@@ -1465,14 +1465,14 @@ public class GameManager extends AbstractItem implements ConfigurableComponent, 
      * @see rails.game.GameManager#getPriorityPlayer()
      */
     public Player getPriorityPlayer() {
-        return (Player) priorityPlayer.get();
+        return (Player) priorityPlayer.value();
     }
 
     /* (non-Javadoc)
      * @see rails.game.GameManager#getCurrentPlayer()
      */
     public Player getCurrentPlayer() {
-        return (Player) currentPlayer.get();
+        return (Player) currentPlayer.value();
     }
 
     /* (non-Javadoc)

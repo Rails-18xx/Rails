@@ -39,7 +39,7 @@ public final class GuiHints extends AbstractItem implements Serializable{
     }
     
     public Class<? extends Round> getCurrentRoundType() {
-        return currentRoundType.get();
+        return currentRoundType.value();
     }
 
     public void setCurrentRoundType(Class<? extends Round> currentRoundType) {
@@ -66,7 +66,7 @@ public final class GuiHints extends AbstractItem implements Serializable{
     }
 
     public GuiDef.Panel getActivePanel() {
-        return (GuiDef.Panel)activePanel.get();
+        return (GuiDef.Panel)activePanel.value();
     }
 
     public void setActivePanel(GuiDef.Panel activePanel) {

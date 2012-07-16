@@ -24,7 +24,7 @@ public class OperatingRound_18TN extends OperatingRound {
         return super.isPrivateSellingAllowed()
         // 18TN special
         || gameManager.getAbsoluteORNumber() == 1
-        && !ownsPrivate(operatingCompany.get());
+        && !ownsPrivate(operatingCompany.value());
     }
 
     @Override
@@ -101,7 +101,7 @@ public class OperatingRound_18TN extends OperatingRound {
     protected void executeSetRevenueAndDividend (SetDividend action) {
 
         // Save operating company (it may change)
-        PublicCompany_18TN company = (PublicCompany_18TN) operatingCompany.get();
+        PublicCompany_18TN company = (PublicCompany_18TN) operatingCompany.value();
 
         super.executeSetRevenueAndDividend(action);
 

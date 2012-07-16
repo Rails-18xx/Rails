@@ -73,7 +73,7 @@ public final class PhaseManager extends AbstractItem implements ConfigurableComp
     }
 
     public Phase getCurrentPhase() {
-        return (Phase) currentPhase.get();
+        return (Phase) currentPhase.value();
     }
     
     public State getCurrentPhaseModel() {

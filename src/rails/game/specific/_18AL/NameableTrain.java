@@ -21,7 +21,7 @@ public final class NameableTrain extends Train {
     }
 
     public NamedTrainToken getNameToken() {
-        return (NamedTrainToken) nameToken.get();
+        return (NamedTrainToken) nameToken.value();
     }
 
     @Override

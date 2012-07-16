@@ -232,10 +232,10 @@ public class OperatingRound extends Round implements Observer {
         if (action instanceof PossibleORAction
                 && !(action instanceof DiscardTrain)) {
             PublicCompany company = ((PossibleORAction) action).getCompany();
-            if (company != operatingCompany.get()) {
+            if (company != operatingCompany.value()) {
                 DisplayBuffer.add(LocalText.getText("WrongCompany",
                         company.getId(),
-                        operatingCompany.get().getId() ));
+                        operatingCompany.value().getId() ));
                 return false;
             }
         }
@@ -369,14 +369,14 @@ public class OperatingRound extends Round implements Observer {
         GameDef.OrStep step = getStep();
         if (step == GameDef.OrStep.LAY_TRACK) {
 
-            if (!operatingCompany.get().hasLaidHomeBaseTokens()) {
+            if (!operatingCompany.value().hasLaidHomeBaseTokens()) {
                 // This can occur if the home hex has two cities and track,
                 // such as the green OO tile #59
                                 
                 // BR: as this is a home token, need to call LayBaseToken with a MapHex, not a list
                 // to avoid the LayBaseToken action from being a regular token lay
                 // I am not sure that this will work with multiple home hexes.
-                for (MapHex home : operatingCompany.get().getHomeHexes()) {
+                for (MapHex home : operatingCompany.value().getHomeHexes()) {
                     possibleActions.add(new LayBaseToken (home) );
                 }
                 forced = true;
@@ -407,7 +407,7 @@ public class OperatingRound extends Round implements Observer {
             //        || operatingCompany.getObject().getPortfolio().getNumberOfTrains() > 0) {
             doneAllowed = true;
             //}
-            if (noMapMode && (operatingCompany.get().getLastRevenue() == 0))
+            if (noMapMode && (operatingCompany.value().getLastRevenue() == 0))
                 prepareNoMapActions();
 
         } else if (step == GameDef.OrStep.DISCARD_TRAINS) {
@@ -436,7 +436,7 @@ public class OperatingRound extends Round implements Observer {
             if (isPrivateSellingAllowed()) {
 
                 // Create a list of players with the current one in front
-                int currentPlayerIndex = operatingCompany.get().getPresident().getIndex();
+                int currentPlayerIndex = operatingCompany.value().getPresident().getIndex();
                 Player player;
                 int minPrice, maxPrice;
                 List<Player> players = getPlayers();
@@ -462,7 +462,7 @@ public class OperatingRound extends Round implements Observer {
                 }
             }
 
-            if (operatingCompany.get().canUseSpecialProperties()) {
+            if (operatingCompany.value().canUseSpecialProperties()) {
 
                 // Are there any "common" special properties,
                 // i.e. properties that are available to everyone?
@@ -473,8 +473,8 @@ public class OperatingRound extends Round implements Observer {
                         if (sp instanceof SellBonusToken) {
                             sbt = (SellBonusToken) sp;
                             // Can't buy if already owned
-                            if (operatingCompany.get().getBonuses() != null) {
-                                for (Bonus bonus : operatingCompany.get().getBonuses()) {
+                            if (operatingCompany.value().getBonuses() != null) {
+                                for (Bonus bonus : operatingCompany.value().getBonuses()) {
                                     if (bonus.getName().equals(sp.getId())) continue loop;
                                 }
                             }
@@ -484,7 +484,7 @@ public class OperatingRound extends Round implements Observer {
                 }
 
                 // Are there other step-independent special properties owned by the company?
-                List<SpecialProperty> orsps = operatingCompany.get().getPortfolioModel().getAllSpecialProperties();
+                List<SpecialProperty> orsps = operatingCompany.value().getPortfolioModel().getAllSpecialProperties();
         
                 // TODO: Do we still need this directly from the operating company?
 //                List<SpecialProperty> compsps = operatingCompany.get().getSpecialProperties();
@@ -529,7 +529,7 @@ public class OperatingRound extends Round implements Observer {
 
         for (PossibleAction pa : possibleActions.getList()) {
             try {
-                log.debug(operatingCompany.get().getId() + " may: " + pa.toString());
+                log.debug(operatingCompany.value().getId() + " may: " + pa.toString());
             } catch (Exception e) {
                 log.error("Error in toString() of " + pa.getClass(), e);
             }
@@ -548,36 +548,36 @@ public class OperatingRound extends Round implements Observer {
      *=======================================*/
 
     protected void initTurn() {
-        log.debug("Starting turn of "+operatingCompany.get().getId());
+        log.debug("Starting turn of "+operatingCompany.value().getId());
         ReportBuffer.add(" ");
         ReportBuffer.add(LocalText.getText("CompanyOperates",
-                operatingCompany.get().getId(),
-                operatingCompany.get().getPresident().getId()));
-        setCurrentPlayer(operatingCompany.get().getPresident());
+                operatingCompany.value().getId(),
+                operatingCompany.value().getPresident().getId()));
+        setCurrentPlayer(operatingCompany.value().getPresident());
 
-        if (noMapMode && !operatingCompany.get().hasLaidHomeBaseTokens()){
+        if (noMapMode && !operatingCompany.value().hasLaidHomeBaseTokens()){
             // Lay base token in noMapMode
-            BaseToken token = operatingCompany.get().getFreeToken();
+            BaseToken token = operatingCompany.value().getFreeToken();
             if (token == null) {
-                log.error("Company " + operatingCompany.get().getId() + " has no free token to lay base token");
+                log.error("Company " + operatingCompany.value().getId() + " has no free token to lay base token");
             } else {
-                log.debug("Company " + operatingCompany.get().getId() + " lays base token in nomap mode");
+                log.debug("Company " + operatingCompany.value().getId() + " lays base token in nomap mode");
                 // FIXME: This has to be rewritten
                 // Where are the nomap base tokens to be stored?
                 // bank.getUnavailable().addBonusToken(token);
             }
         }
-        operatingCompany.get().initTurn();
+        operatingCompany.value().initTurn();
         trainsBoughtThisTurn.clear();
     }
 
     protected void finishTurn() {
 
-        if (!operatingCompany.get().isClosed()) {
-            operatingCompany.get().setOperated();
-            companiesOperatedThisRound.add(operatingCompany.get());
+        if (!operatingCompany.value().isClosed()) {
+            operatingCompany.value().setOperated();
+            companiesOperatedThisRound.add(operatingCompany.value());
 
-            for (PrivateCompany priv : operatingCompany.get().getPortfolioModel().getPrivateCompanies()) {
+            for (PrivateCompany priv : operatingCompany.value().getPortfolioModel().getPrivateCompanies()) {
                 priv.checkClosingIfExercised(true);
             }
         }
@@ -603,18 +603,18 @@ public class OperatingRound extends Round implements Observer {
     protected boolean setNextOperatingCompany(boolean initial) {
 
         while (true) {
-            if (initial || operatingCompany.get() == null || operatingCompany == null) {
+            if (initial || operatingCompany.value() == null || operatingCompany == null) {
                 setOperatingCompany(operatingCompanies.get(0));
                 initial = false;
             } else {
-                int index = operatingCompanies.indexOf(operatingCompany.get());
+                int index = operatingCompanies.indexOf(operatingCompany.value());
                 if (++index >= operatingCompanies.size()) {
                     return false;
                 }
 
                 // Check if the operating order has changed
                 List<PublicCompany> newOperatingCompanies
-                = setOperatingCompanies (operatingCompanies.view(), operatingCompany.get());
+                = setOperatingCompanies (operatingCompanies.view(), operatingCompany.value());
                 PublicCompany company;
                 for (int i=0; i<newOperatingCompanies.size(); i++) {
                     company = newOperatingCompanies.get(i);
@@ -629,7 +629,7 @@ public class OperatingRound extends Round implements Observer {
                 setOperatingCompany(operatingCompanies.get(index));
             }
 
-            if (operatingCompany.get().isClosed()) continue;
+            if (operatingCompany.value().isClosed()) continue;
 
             return true;
         }
@@ -645,7 +645,7 @@ public class OperatingRound extends Round implements Observer {
      * @return The currently operating company object.
      */
     public PublicCompany getOperatingCompany() {
-        return operatingCompany.get();
+        return operatingCompany.value();
     }
 
     public List<PublicCompany> getOperatingCompanies() {
@@ -668,7 +668,7 @@ public class OperatingRound extends Round implements Observer {
      * @return The number that defines the next action.
      */
     public GameDef.OrStep getStep() {
-        return (GameDef.OrStep) stepObject.get();
+        return (GameDef.OrStep) stepObject.value();
     }
 
     /**
@@ -697,7 +697,7 @@ public class OperatingRound extends Round implements Observer {
     /** Take the next step after a given one (see nextStep()) */
     protected void nextStep(GameDef.OrStep step) {
 
-        PublicCompany company = operatingCompany.get();
+        PublicCompany company = operatingCompany.value();
 
         // Cycle through the steps until we reach one where a user action is
         // expected.
@@ -795,7 +795,7 @@ public class OperatingRound extends Round implements Observer {
      * updateStatus(), which is called after each user action)
      */
     protected void prepareStep() {
-        GameDef.OrStep step = stepObject.get();
+        GameDef.OrStep step = stepObject.value();
 
         if (step == GameDef.OrStep.LAY_TRACK) {
             //            getNormalTileLays();
@@ -813,7 +813,7 @@ public class OperatingRound extends Round implements Observer {
      *=======================================*/
 
     public void skip() {
-        log.debug("Skip step " + stepObject.get());
+        log.debug("Skip step " + stepObject.value());
         // TODO: Check if this is ok
         // FIXME: changeStack.start(true);
         nextStep();
@@ -827,8 +827,8 @@ public class OperatingRound extends Round implements Observer {
      */
     public boolean done() {
 
-        if (operatingCompany.get().getPortfolioModel().getNumberOfTrains() == 0
-                && operatingCompany.get().mustOwnATrain()) {
+        if (operatingCompany.value().getPortfolioModel().getNumberOfTrains() == 0
+                && operatingCompany.value().mustOwnATrain()) {
             // FIXME: Need to check for valid route before throwing an
             // error.
             /* Check TEMPORARILY disabled
@@ -918,7 +918,7 @@ public class OperatingRound extends Round implements Observer {
         // otherwise continue train buying
         if (!checkForExcessTrains()) {
             // Trains may have been discarded by other players
-            setCurrentPlayer (operatingCompany.get().getPresident());
+            setCurrentPlayer (operatingCompany.value().getPresident());
             stepObject.set(GameDef.OrStep.BUY_TRAIN);
         }
 
@@ -1023,11 +1023,11 @@ public class OperatingRound extends Round implements Observer {
                 break;
             }
             // Does the company have the money?
-            if (price > operatingCompany.get().getCash()) {
+            if (price > operatingCompany.value().getCash()) {
                 errMsg =
                     LocalText.getText("NotEnoughMoney",
                             publicCompanyName,
-                            Bank.format(operatingCompany.get().getCash()),
+                            Bank.format(operatingCompany.value().getCash()),
                             Bank.format(price) );
                 break;
             }
@@ -1053,7 +1053,7 @@ public class OperatingRound extends Round implements Observer {
 
         // TODO: changeStack.start(true);
 
-        operatingCompany.get().buyPrivate(privateCompany, player.getPortfolioModel(),
+        operatingCompany.value().buyPrivate(privateCompany, player.getPortfolioModel(),
                 price);
 
         return true;
@@ -1075,7 +1075,7 @@ public class OperatingRound extends Round implements Observer {
     protected int getPrivateMaximumPrice (PrivateCompany privComp) {
         int maxPrice = privComp.getUpperPrice();
         if (maxPrice == PrivateCompany.NO_PRICE_LIMIT) {
-            maxPrice = operatingCompany.get().getCash();
+            maxPrice = operatingCompany.value().getCash();
         }
         return maxPrice;
     }
@@ -1191,7 +1191,7 @@ public class OperatingRound extends Round implements Observer {
 
             // Checks
             // Is company operating?
-            if (company != operatingCompany.get()) {
+            if (company != operatingCompany.value()) {
                 errMsg =
                     LocalText.getText("WrongCompany",
                             companyName,
@@ -1224,31 +1224,31 @@ public class OperatingRound extends Round implements Observer {
 
         int number = action.getNumberTaken();
         int amount = calculateLoanAmount (number);
-        operatingCompany.get().addLoans(number);
-        MoneyModel.cashMove (bank, operatingCompany.get(), amount);
+        operatingCompany.value().addLoans(number);
+        MoneyModel.cashMove (bank, operatingCompany.value(), amount);
         if (number == 1) {
             ReportBuffer.add(LocalText.getText("CompanyTakesLoan",
-                    operatingCompany.get().getId(),
-                    Bank.format(operatingCompany.get().getValuePerLoan()),
+                    operatingCompany.value().getId(),
+                    Bank.format(operatingCompany.value().getValuePerLoan()),
                     Bank.format(amount)
             ));
         } else {
             ReportBuffer.add(LocalText.getText("CompanyTakesLoans",
-                    operatingCompany.get().getId(),
+                    operatingCompany.value().getId(),
                     number,
-                    Bank.format(operatingCompany.get().getValuePerLoan()),
+                    Bank.format(operatingCompany.value().getValuePerLoan()),
                     Bank.format(amount)
             ));
         }
 
-        if (operatingCompany.get().getMaxLoansPerRound() > 0) {
+        if (operatingCompany.value().getMaxLoansPerRound() > 0) {
             int oldLoansThisRound = 0;
             if (loansThisRound == null) {
                 loansThisRound = HashMapState.create(this, "loansThisRound");
-            } else if (loansThisRound.containsKey(operatingCompany.get())){
-                oldLoansThisRound = loansThisRound.get(operatingCompany.get());
+            } else if (loansThisRound.containsKey(operatingCompany.value())){
+                oldLoansThisRound = loansThisRound.get(operatingCompany.value());
             }
-            loansThisRound.put(operatingCompany.get(),
+            loansThisRound.put(operatingCompany.value(),
                     new Integer (oldLoansThisRound + number));
         }
     }
@@ -1267,11 +1267,11 @@ public class OperatingRound extends Round implements Observer {
             return false;
         }
 
-        int repayment = action.getNumberRepaid() * operatingCompany.get().getValuePerLoan();
-        if (repayment > 0 && repayment > operatingCompany.get().getCash()) {
+        int repayment = action.getNumberRepaid() * operatingCompany.value().getValuePerLoan();
+        if (repayment > 0 && repayment > operatingCompany.value().getCash()) {
             // President must contribute
-            int remainder = repayment - operatingCompany.get().getCash();
-            Player president = operatingCompany.get().getPresident();
+            int remainder = repayment - operatingCompany.value().getCash();
+            Player president = operatingCompany.value().getPresident();
             int presCash = president.getCashValue();
             if (remainder > presCash) {
                 // Start a share selling round
@@ -1281,8 +1281,8 @@ public class OperatingRound extends Round implements Observer {
                 log.info("President has $"+presCash+", so $"+cashToBeRaisedByPresident+" must be added");
                 savedAction = action;
                 // TODO: changeStack.start(true);
-                gameManager.startShareSellingRound(operatingCompany.get().getPresident(),
-                        cashToBeRaisedByPresident, operatingCompany.get(), false);
+                gameManager.startShareSellingRound(operatingCompany.value().getPresident(),
+                        cashToBeRaisedByPresident, operatingCompany.value(), false);
                 return true;
             }
         }
@@ -1307,50 +1307,50 @@ public class OperatingRound extends Round implements Observer {
         int payment;
         int remainder = 0;
 
-        operatingCompany.get().addLoans(-number);
-        int amount = number * operatingCompany.get().getValuePerLoan();
-        payment = Math.min(amount, operatingCompany.get().getCash());
+        operatingCompany.value().addLoans(-number);
+        int amount = number * operatingCompany.value().getValuePerLoan();
+        payment = Math.min(amount, operatingCompany.value().getCash());
         remainder = amount - payment;
         if (payment > 0) {
-            MoneyModel.cashMove (operatingCompany.get(), bank, payment);
+            MoneyModel.cashMove (operatingCompany.value(), bank, payment);
             ReportBuffer.add (LocalText.getText("CompanyRepaysLoans",
-                    operatingCompany.get().getId(),
+                    operatingCompany.value().getId(),
                     Bank.format(payment),
                     Bank.format(amount),
                     number,
-                    Bank.format(operatingCompany.get().getValuePerLoan())));
+                    Bank.format(operatingCompany.value().getValuePerLoan())));
         }
         if (remainder > 0) {
-            Player president = operatingCompany.get().getPresident();
+            Player president = operatingCompany.value().getPresident();
             if (president.getCashValue() >= remainder) {
                 payment = remainder;
                 MoneyModel.cashMove (president, bank, payment);
                 ReportBuffer.add (LocalText.getText("CompanyRepaysLoansWithPresCash",
-                        operatingCompany.get().getId(),
+                        operatingCompany.value().getId(),
                         Bank.format(payment),
                         Bank.format(amount),
                         number,
-                        Bank.format(operatingCompany.get().getValuePerLoan()),
+                        Bank.format(operatingCompany.value().getValuePerLoan()),
                         president.getId()));
             }
         }
     }
 
     protected int calculateLoanAmount (int numberOfLoans) {
-        return numberOfLoans * operatingCompany.get().getValuePerLoan();
+        return numberOfLoans * operatingCompany.value().getValuePerLoan();
     }
 
     // TODO UNUSED??
     public void payLoanInterest () {
-        int amount = operatingCompany.get().getCurrentLoanValue()
-        * operatingCompany.get().getLoanInterestPct() / 100;
-        MoneyModel.cashMove (operatingCompany.get(), bank, amount);
+        int amount = operatingCompany.value().getCurrentLoanValue()
+        * operatingCompany.value().getLoanInterestPct() / 100;
+        MoneyModel.cashMove (operatingCompany.value(), bank, amount);
         DisplayBuffer.add(LocalText.getText("CompanyPaysLoanInterest",
-                operatingCompany.get().getId(),
+                operatingCompany.value().getId(),
                 Bank.format(amount),
-                operatingCompany.get().getLoanInterestPct(),
-                operatingCompany.get().getCurrentNumberOfLoans(),
-                Bank.format(operatingCompany.get().getValuePerLoan())));
+                operatingCompany.value().getLoanInterestPct(),
+                operatingCompany.value().getCurrentNumberOfLoans(),
+                Bank.format(operatingCompany.value().getValuePerLoan())));
     }
 
     /*=======================================
@@ -1382,11 +1382,11 @@ public class OperatingRound extends Round implements Observer {
 
         // TODO: changeStack.start(true);
 
-        operatingCompany.get().setRight(rightName, rightValue);
-        MoneyModel.cashMove (operatingCompany.get(), bank, right.getCost());
+        operatingCompany.value().setRight(rightName, rightValue);
+        MoneyModel.cashMove (operatingCompany.value(), bank, right.getCost());
 
         ReportBuffer.add(LocalText.getText("BuysRight",
-                operatingCompany.get().getId(),
+                operatingCompany.value().getId(),
                 rightName,
                 Bank.format(right.getCost())));
 
@@ -1416,11 +1416,11 @@ public class OperatingRound extends Round implements Observer {
         while (true) {
             // Checks
             // Must be correct company.
-            if (!companyName.equals(operatingCompany.get().getId())) {
+            if (!companyName.equals(operatingCompany.value().getId())) {
                 errMsg =
                     LocalText.getText("WrongCompany",
                             companyName,
-                            operatingCompany.get().getId() );
+                            operatingCompany.value().getId() );
                 break;
             }
             // Must be correct step
@@ -1495,11 +1495,11 @@ public class OperatingRound extends Round implements Observer {
                 break;
             }
             // Does the company have the money?
-            if (cost > operatingCompany.get().getCash()) {
+            if (cost > operatingCompany.value().getCash()) {
                 errMsg =
                     LocalText.getText("NotEnoughMoney",
                             companyName,
-                            Bank.format(operatingCompany.get().getCash()),
+                            Bank.format(operatingCompany.value().getCash()),
                             Bank.format(cost) );
                 break;
             }
@@ -1520,8 +1520,8 @@ public class OperatingRound extends Round implements Observer {
 
         if (tile != null) {
             if (cost > 0)
-                MoneyModel.cashMove(operatingCompany.get(), bank, cost);
-            operatingCompany.get().layTile(hex, tile, orientation, cost);
+                MoneyModel.cashMove(operatingCompany.value(), bank, cost);
+            operatingCompany.value().layTile(hex, tile, orientation, cost);
 
             if (cost == 0) {
                 ReportBuffer.add(LocalText.getText("LaysTileAt",
@@ -1628,7 +1628,7 @@ public class OperatingRound extends Round implements Observer {
         // duplicate the phase colours
         Map<String, Integer> newTileColours = new HashMap<String, Integer>(getCurrentPhase().getTileColours());
         for (String colour : newTileColours.keySet()) {
-            int allowedNumber = operatingCompany.get().getNumberOfTileLays(colour);
+            int allowedNumber = operatingCompany.value().getNumberOfTileLays(colour);
             // Replace the null map value with the allowed number of lays
             newTileColours.put(colour, new Integer(allowedNumber));
         }
@@ -1679,7 +1679,7 @@ public class OperatingRound extends Round implements Observer {
         /* Special-property tile lays */
         List<LayTile> currentSpecialTileLays = new ArrayList<LayTile>();
 
-        if (operatingCompany.get().canUseSpecialProperties()) {
+        if (operatingCompany.value().canUseSpecialProperties()) {
 
             for (SpecialTileLay stl : getSpecialProperties(SpecialTileLay.class)) {
                 if (stl.isExtra()
@@ -1750,7 +1750,7 @@ public class OperatingRound extends Round implements Observer {
 
         MapHex hex = action.getChosenHex();
         int station = action.getChosenStation();
-        String companyName = operatingCompany.get().getId();
+        String companyName = operatingCompany.value().getId();
 
         // Dummy loop to enable a quick jump out.
         while (true) {
@@ -1764,12 +1764,12 @@ public class OperatingRound extends Round implements Observer {
                 break;
             }
 
-            if (operatingCompany.get().getNumberOfFreeBaseTokens() == 0) {
+            if (operatingCompany.value().getNumberOfFreeBaseTokens() == 0) {
                 errMsg = LocalText.getText("HasNoTokensLeft", companyName);
                 break;
             }
 
-            if (!isTokenLayAllowed (operatingCompany.get(), hex, station)) {
+            if (!isTokenLayAllowed (operatingCompany.value(), hex, station)) {
                 errMsg = LocalText.getText("BaseTokenSlotIsReserved");
                 break;
             }
@@ -1784,7 +1784,7 @@ public class OperatingRound extends Round implements Observer {
              * cities on one tile may hold tokens of the same company; this case
              * is not yet covered.
              */
-            if (hex.hasTokenOfCompany(operatingCompany.get())) {
+            if (hex.hasTokenOfCompany(operatingCompany.value())) {
                 errMsg =
                     LocalText.getText("TileAlreadyHasToken",
                             hex.getId(),
@@ -1806,14 +1806,14 @@ public class OperatingRound extends Round implements Observer {
                 if (stl != null) extra = stl.isExtra();
             }
 
-            cost = operatingCompany.get().getBaseTokenLayCost(hex);
+            cost = operatingCompany.value().getBaseTokenLayCost(hex);
             if (stl != null && stl.isFree()) cost = 0;
 
             // Does the company have the money?
-            if (cost > operatingCompany.get().getCash()) {
+            if (cost > operatingCompany.value().getCash()) {
                 errMsg = LocalText.getText("NotEnoughMoney",
                         companyName,
-                        Bank.format(operatingCompany.get().getCash()),
+                        Bank.format(operatingCompany.value().getCash()),
                         Bank.format(cost));
                 break;
             }
@@ -1831,10 +1831,10 @@ public class OperatingRound extends Round implements Observer {
         /* End of validation, start of execution */
         // TODO: changeStack.start(true);
 
-        if (hex.layBaseToken(operatingCompany.get(), station)) {
+        if (hex.layBaseToken(operatingCompany.value(), station)) {
             /* TODO: the false return value must be impossible. */
 
-            operatingCompany.get().layBaseToken(hex, cost);
+            operatingCompany.value().layBaseToken(hex, cost);
 
             // If this is a home base token lay, stop here
             if (action.getType() == LayBaseToken.HOME_CITY) {
@@ -1842,7 +1842,7 @@ public class OperatingRound extends Round implements Observer {
             }
 
             if (cost > 0) {
-                MoneyModel.cashMove(operatingCompany.get(), bank, cost);
+                MoneyModel.cashMove(operatingCompany.value(), bank, cost);
                 ReportBuffer.add(LocalText.getText("LAYS_TOKEN_ON",
                         companyName,
                         hex.getId(),
@@ -1872,7 +1872,7 @@ public class OperatingRound extends Round implements Observer {
 
             if (currentNormalTokenLays.isEmpty()) {
                 log.debug("No more normal token lays are allowed");
-            } else if (operatingCompany.get().getNumberOfFreeBaseTokens() == 0) {
+            } else if (operatingCompany.value().getNumberOfFreeBaseTokens() == 0) {
                 log.debug("Normal token lay allowed by no more tokens");
                 currentNormalTokenLays.clear();
             } else {
@@ -1916,7 +1916,7 @@ public class OperatingRound extends Round implements Observer {
         currentNormalTokenLays.clear();
 
         /* For now, we allow one token of the currently operating company */
-        if (operatingCompany.get().getNumberOfFreeBaseTokens() > 0) {
+        if (operatingCompany.value().getNumberOfFreeBaseTokens() > 0) {
             currentNormalTokenLays.add(new LayBaseToken((List<MapHex>) null));
         }
 
@@ -1933,13 +1933,13 @@ public class OperatingRound extends Round implements Observer {
         /* Special-property tile lays */
         currentSpecialTokenLays.clear();
 
-        if (!operatingCompany.get().canUseSpecialProperties()) return;
+        if (!operatingCompany.value().canUseSpecialProperties()) return;
 
         /*
          * In 1835, this only applies to major companies. TODO: For now,
          * hardcode this, but it must become configurable later.
          */
-        if (operatingCompany.get().getType().getId().equals("Minor")) return;
+        if (operatingCompany.value().getType().getId().equals("Minor")) return;
 
         for (SpecialTokenLay stl : getSpecialProperties(SpecialTokenLay.class)) {
             log.debug("Spec.prop:" + stl);
@@ -1988,10 +1988,10 @@ public class OperatingRound extends Round implements Observer {
             if (stl != null && stl.isFree()) cost = 0;
 
             // Does the company have the money?
-            if (cost > operatingCompany.get().getCash()) {
+            if (cost > operatingCompany.value().getCash()) {
                 errMsg =
                     LocalText.getText("NotEnoughMoney",
-                            operatingCompany.get().getId());
+                            operatingCompany.value().getId());
                 break;
             }
             break;
@@ -2011,13 +2011,13 @@ public class OperatingRound extends Round implements Observer {
         if (hex.layBonusToken(token, gameManager.getPhaseManager())) {
             /* TODO: the false return value must be impossible. */
 
-            operatingCompany.get().addBonus(new Bonus(operatingCompany.get(),
+            operatingCompany.value().addBonus(new Bonus(operatingCompany.value(),
                     token.getId(),
                     token.getValue(), Collections.singletonList(hex)));
-            token.setUser(operatingCompany.get());
+            token.setUser(operatingCompany.value());
 
             ReportBuffer.add(LocalText.getText("LaysBonusTokenOn",
-                    operatingCompany.get().getId(),
+                    operatingCompany.value().getId(),
                     token.getId(),
                     Bank.format(token.getValue()),
                     hex.getId() ));
@@ -2052,11 +2052,11 @@ public class OperatingRound extends Round implements Observer {
             seller = (CashOwner)sbt.getSeller(); // TODO: Remove the cast?
 
             // Does the company have the money?
-            if (cost > operatingCompany.get().getCash()) {
+            if (cost > operatingCompany.value().getCash()) {
                 errMsg =
                     LocalText.getText("NotEnoughMoney",
-                            operatingCompany.get().getId(),
-                            Bank.format(operatingCompany.get().getCash()),
+                            operatingCompany.value().getId(),
+                            Bank.format(operatingCompany.value().getCash()),
                             Bank.format(cost));
                 break;
             }
@@ -2064,7 +2064,7 @@ public class OperatingRound extends Round implements Observer {
         }
         if (errMsg != null) {
             DisplayBuffer.add(LocalText.getText("CannotBuyBonusToken",
-                    operatingCompany.get().getId(),
+                    operatingCompany.value().getId(),
                     sbt.getId(),
                     seller.getId(),
                     Bank.format(cost),
@@ -2075,14 +2075,14 @@ public class OperatingRound extends Round implements Observer {
         /* End of validation, start of execution */
         // TODO: changeStack.start(true);
 
-        MoneyModel.cashMove(operatingCompany.get(), seller, cost);
-        operatingCompany.get().addBonus(new Bonus(operatingCompany.get(),
+        MoneyModel.cashMove(operatingCompany.value(), seller, cost);
+        operatingCompany.value().addBonus(new Bonus(operatingCompany.value(),
                 sbt.getId(),
                 sbt.getValue(),
                 sbt.getLocations()));
 
         ReportBuffer.add(LocalText.getText("BuysBonusTokenFrom",
-                operatingCompany.get().getId(),
+                operatingCompany.value().getId(),
                 sbt.getId(),
                 Bank.format(sbt.getValue()),
                 seller.getId(),
@@ -2160,11 +2160,11 @@ public class OperatingRound extends Round implements Observer {
             // Must be correct company.
             company = action.getCompany();
             companyName = company.getId();
-            if (company != operatingCompany.get()) {
+            if (company != operatingCompany.value()) {
                 errMsg =
                     LocalText.getText("WrongCompany",
                             companyName,
-                            operatingCompany.get().getId() );
+                            operatingCompany.value().getId() );
                 break;
             }
             // Must be correct step
@@ -2220,9 +2220,9 @@ public class OperatingRound extends Round implements Observer {
                 action.setRevenueAllocation(SetDividend.WITHHOLD);
             }
 
-            if (amount == 0 && operatingCompany.get().getNumberOfTrains() == 0) {
+            if (amount == 0 && operatingCompany.value().getNumberOfTrains() == 0) {
                 DisplayBuffer.add(LocalText.getText("RevenueWithNoTrains",
-                        operatingCompany.get().getId(),
+                        operatingCompany.value().getId(),
                         Bank.format(0) ));
             }
 
@@ -2237,8 +2237,8 @@ public class OperatingRound extends Round implements Observer {
         int amount = action.getActualRevenue();
         int revenueAllocation = action.getRevenueAllocation();
 
-        operatingCompany.get().setLastRevenue(amount);
-        operatingCompany.get().setLastRevenueAllocation(revenueAllocation);
+        operatingCompany.value().setLastRevenue(amount);
+        operatingCompany.value().setLastRevenueAllocation(revenueAllocation);
 
         // Pay any debts from treasury, revenue and/or president's cash
         // The remaining dividend may be less that the original income
@@ -2247,27 +2247,27 @@ public class OperatingRound extends Round implements Observer {
         if (amount == 0) {
 
             ReportBuffer.add(LocalText.getText("CompanyDoesNotPayDividend",
-                    operatingCompany.get().getId()));
+                    operatingCompany.value().getId()));
             withhold(amount);
 
         } else if (revenueAllocation == SetDividend.PAYOUT) {
 
             ReportBuffer.add(LocalText.getText("CompanyPaysOutFull",
-                    operatingCompany.get().getId(), Bank.format(amount) ));
+                    operatingCompany.value().getId(), Bank.format(amount) ));
 
             payout(amount);
 
         } else if (revenueAllocation == SetDividend.SPLIT) {
 
             ReportBuffer.add(LocalText.getText("CompanySplits",
-                    operatingCompany.get().getId(), Bank.format(amount) ));
+                    operatingCompany.value().getId(), Bank.format(amount) ));
 
             splitRevenue(amount);
 
         } else if (revenueAllocation == SetDividend.WITHHOLD) {
 
             ReportBuffer.add(LocalText.getText("CompanyWithholds",
-                    operatingCompany.get().getId(),
+                    operatingCompany.value().getId(),
                     Bank.format(amount) ));
 
             withhold(amount);
@@ -2275,7 +2275,7 @@ public class OperatingRound extends Round implements Observer {
         }
 
         // Rust any obsolete trains
-        operatingCompany.get().getPortfolioModel().rustObsoleteTrains();
+        operatingCompany.value().getPortfolioModel().rustObsoleteTrains();
 
         // We have done the payout step, so continue from there
         nextStep(GameDef.OrStep.PAYOUT);
@@ -2303,17 +2303,17 @@ public class OperatingRound extends Round implements Observer {
             if (recipient instanceof Bank) continue;
             shares = (sharesPerRecipient.get(recipient));
             if (shares == 0) continue;
-            part = (int) Math.ceil(amount * shares * operatingCompany.get().getShareUnit() / 100.0);
+            part = (int) Math.ceil(amount * shares * operatingCompany.value().getShareUnit() / 100.0);
             ReportBuffer.add(LocalText.getText("Payout",
                     recipient.getId(),
                     Bank.format(part),
                     shares,
-                    operatingCompany.get().getShareUnit()));
+                    operatingCompany.value().getShareUnit()));
             pay(bank, recipient, part);
         }
 
         // Move the token
-        operatingCompany.get().payout(amount);
+        operatingCompany.value().payout(amount);
 
     }
 
@@ -2326,7 +2326,7 @@ public class OperatingRound extends Round implements Observer {
         // (the withheld half of split revenues is not handled here, see splitRevenue()).
 
         // First count the shares per recipient
-        for (PublicCertificate cert : operatingCompany.get().getCertificates()) {
+        for (PublicCertificate cert : operatingCompany.value().getCertificates()) {
             CashOwner recipient = getBeneficiary(cert);
             if (!sharesPerRecipient.containsKey(recipient)) {
                 sharesPerRecipient.put(recipient, cert.getShares());
@@ -2343,8 +2343,8 @@ public class OperatingRound extends Round implements Observer {
         CashOwner beneficiary;
         
         // Special cases apply if the holder is the IPO or the Pool
-        if (operatingCompany.get().paysOutToTreasury(cert)) {
-            beneficiary = operatingCompany.get();
+        if (operatingCompany.value().paysOutToTreasury(cert)) {
+            beneficiary = operatingCompany.value();
         } else if (cert.getOwner() instanceof CashOwner) {
             beneficiary = (CashOwner)cert.getOwner();
         } else { // TODO: check if this is a correct assumption that otherwise the money goes to the bank
@@ -2360,7 +2360,7 @@ public class OperatingRound extends Round implements Observer {
      */
     public void withhold(int amount) {
 
-        PublicCompany company = operatingCompany.get();
+        PublicCompany company = operatingCompany.value();
 
         // Payout revenue to company
         pay (bank, company, amount);
@@ -2392,11 +2392,11 @@ public class OperatingRound extends Round implements Observer {
         if (amount > 0) {
             // Withhold half of it
             // For now, hardcode the rule that payout is rounded up.
-            int numberOfShares = operatingCompany.get().getNumberOfShares();
+            int numberOfShares = operatingCompany.value().getNumberOfShares();
             int withheld =
                 (amount / (2 * numberOfShares)) * numberOfShares;
-            pay (bank, operatingCompany.get(), withheld);
-            ReportBuffer.add(operatingCompany.get().getId() + " receives " + Bank.format(withheld));
+            pay (bank, operatingCompany.value(), withheld);
+            ReportBuffer.add(operatingCompany.value().getId() + " receives " + Bank.format(withheld));
 
             // Payout the remainder
             int payed = amount - withheld;
@@ -2426,24 +2426,24 @@ public class OperatingRound extends Round implements Observer {
 
         while (true) {
             // Must be correct company.
-            if (!companyName.equals(operatingCompany.get().getId())) {
+            if (!companyName.equals(operatingCompany.value().getId())) {
                 errMsg =
                     LocalText.getText("WrongCompany",
                             companyName,
-                            operatingCompany.get().getId() );
+                            operatingCompany.value().getId() );
                 break;
             }
             // amount is available
-            if ((amount + operatingCompany.get().getCash()) < 0) {
+            if ((amount + operatingCompany.value().getCash()) < 0) {
                 errMsg =
                     LocalText.getText("NotEnoughMoney",
                             companyName,
-                            Bank.format(operatingCompany.get().getCash()),
+                            Bank.format(operatingCompany.value().getCash()),
                             Bank.format(amount)
                     );
                 break;
             }
-            if (typeOC == OperatingCost.OCType.LAY_BASE_TOKEN && operatingCompany.get().getNumberOfFreeBaseTokens() == 0) {
+            if (typeOC == OperatingCost.OCType.LAY_BASE_TOKEN && operatingCompany.value().getNumberOfFreeBaseTokens() == 0) {
                 errMsg =
                     LocalText.getText("HasNoTokensLeft", companyName);
                 break;
@@ -2462,31 +2462,31 @@ public class OperatingRound extends Round implements Observer {
 
         if (amount > 0) {
             // positive amounts: remove cash from cashholder
-            MoneyModel.cashMove(operatingCompany.get(), bank, amount);
+            MoneyModel.cashMove(operatingCompany.value(), bank, amount);
         } else if (amount > 0) {
             // negative amounts: add cash to cashholder
-            MoneyModel.cashMove(bank, operatingCompany.get(), -amount);
+            MoneyModel.cashMove(bank, operatingCompany.value(), -amount);
         }
 
         if (typeOC == OperatingCost.OCType.LAY_TILE) {
-            operatingCompany.get().layTilenNoMapMode(amount);
+            operatingCompany.value().layTilenNoMapMode(amount);
             ReportBuffer.add(LocalText.getText("OCLayTileExecuted",
-                    operatingCompany.get().getId(),
+                    operatingCompany.value().getId(),
                     Bank.format(amount) ));
         }
         if (typeOC == OperatingCost.OCType.LAY_BASE_TOKEN) {
             // move token to Bank
-            BaseToken token = operatingCompany.get().getFreeToken();
+            BaseToken token = operatingCompany.value().getFreeToken();
             if (token == null) {
-                log.error("Company " + operatingCompany.get().getId() + " has no free token");
+                log.error("Company " + operatingCompany.value().getId() + " has no free token");
                 return false;
             } else {
                 // FIXME: Check where to lay the base tokens in NoMapMode
                 // (bank.getUnavailable().addBonusToken(token));
             }
-            operatingCompany.get().layBaseTokennNoMapMode(amount);
+            operatingCompany.value().layBaseTokennNoMapMode(amount);
             ReportBuffer.add(LocalText.getText("OCLayBaseTokenExecuted",
-                    operatingCompany.get().getId(),
+                    operatingCompany.value().getId(),
                     Bank.format(amount) ));
         }
 
@@ -2496,11 +2496,11 @@ public class OperatingRound extends Round implements Observer {
     protected void prepareRevenueAndDividendAction () {
 
         // There is only revenue if there are any trains
-        if (operatingCompany.get().canRunTrains()) {
+        if (operatingCompany.value().canRunTrains()) {
             int[] allowedRevenueActions =
-                operatingCompany.get().isSplitAlways()
+                operatingCompany.value().isSplitAlways()
                 ? new int[] { SetDividend.SPLIT }
-            : operatingCompany.get().isSplitAllowed()
+            : operatingCompany.value().isSplitAllowed()
             ? new int[] { SetDividend.PAYOUT,
                     SetDividend.SPLIT,
                     SetDividend.WITHHOLD }
@@ -2508,7 +2508,7 @@ public class OperatingRound extends Round implements Observer {
                     SetDividend.WITHHOLD };
 
             possibleActions.add(new SetDividend(
-                    operatingCompany.get().getLastRevenue(), true,
+                    operatingCompany.value().getLastRevenue(), true,
                     allowedRevenueActions));
         }
     }
@@ -2517,13 +2517,13 @@ public class OperatingRound extends Round implements Observer {
 
         // LayTile Actions
         for (Integer tc: mapManager.getPossibleTileCosts()) {
-            if (tc <= operatingCompany.get().getCash())
+            if (tc <= operatingCompany.value().getCash())
                 possibleActions.add(new OperatingCost(OperatingCost.OCType.LAY_TILE, tc, false));
         }
 
         // LayBaseToken Actions
-        if (operatingCompany.get().getNumberOfFreeBaseTokens() != 0) {
-            int[] costsArray = operatingCompany.get().getBaseTokenLayCosts();
+        if (operatingCompany.value().getNumberOfFreeBaseTokens() != 0) {
+            int[] costsArray = operatingCompany.value().getBaseTokenLayCosts();
 
             // change to set to allow for identity and ordering
             Set<Integer> costsSet = new TreeSet<Integer>();
@@ -2539,7 +2539,7 @@ public class OperatingRound extends Round implements Observer {
             }
 
             for (int cost : costsSet) {
-                if (cost <= operatingCompany.get().getCash()) // distance method returns home base, but in sequence costsSet can be zero
+                if (cost <= operatingCompany.value().getCash()) // distance method returns home base, but in sequence costsSet can be zero
                     possibleActions.add(new OperatingCost(OperatingCost.OCType.LAY_BASE_TOKEN, cost, false));
             }
         }
@@ -2573,7 +2573,7 @@ public class OperatingRound extends Round implements Observer {
         int price = action.getPricePaid();
         int actualPresidentCash = 0;
         int cashToBeRaisedByPresident = 0;
-        Player currentPlayer = operatingCompany.get().getPresident();
+        Player currentPlayer = operatingCompany.value().getPresident();
 
         // Dummy loop to enable a quick jump out.
         while (true) {
@@ -2606,7 +2606,7 @@ public class OperatingRound extends Round implements Observer {
             }
 
             // Does the company have room for another train?
-            int trainLimit = operatingCompany.get().getCurrentTrainLimit();
+            int trainLimit = operatingCompany.value().getCurrentTrainLimit();
             if (!canBuyTrainNow() && !action.isForExchange()) {
                 errMsg =
                     LocalText.getText("WouldExceedTrainLimit",
@@ -2627,7 +2627,7 @@ public class OperatingRound extends Round implements Observer {
                 }
             } else if (action.mayPresidentAddCash()) {
                 // From another company
-                presidentCash = price - operatingCompany.get().getCash();
+                presidentCash = price - operatingCompany.value().getCash();
                 if (presidentCash > action.getPresidentCashToAdd()) {
                     errMsg =
                         LocalText.getText("PresidentMayNotAddMoreThan",
@@ -2643,11 +2643,11 @@ public class OperatingRound extends Round implements Observer {
 
             } else {
                 // No forced buy - does the company have the money?
-                if (price > operatingCompany.get().getCash()) {
+                if (price > operatingCompany.value().getCash()) {
                     errMsg =
                         LocalText.getText("NotEnoughMoney",
                                 companyName,
-                                Bank.format(operatingCompany.get().getCash()),
+                                Bank.format(operatingCompany.value().getCash()),
                                 Bank.format(price) );
                     break;
                 }
@@ -2660,9 +2660,9 @@ public class OperatingRound extends Round implements Observer {
                     //exchangedTrain = operatingCompany.getObject().getPortfolio().getTrainList().get(0);
                     //action.setExchangedTrain(exchangedTrain);
                     break;
-                } else if (operatingCompany.get().getPortfolioModel().getTrainOfType(exchangedTrain.getCertType()) == null) {
+                } else if (operatingCompany.value().getPortfolioModel().getTrainOfType(exchangedTrain.getCertType()) == null) {
                     errMsg = LocalText.getText("CompanyDoesNotOwnTrain",
-                            operatingCompany.get().getId(),
+                            operatingCompany.value().getId(),
                             exchangedTrain.getId());
                     break;
                 }
@@ -2690,16 +2690,16 @@ public class OperatingRound extends Round implements Observer {
         if (presidentMustSellShares) {
             savedAction = action;
 
-            gameManager.startShareSellingRound(operatingCompany.get().getPresident(),
-                    cashToBeRaisedByPresident, operatingCompany.get(), true);
+            gameManager.startShareSellingRound(operatingCompany.value().getPresident(),
+                    cashToBeRaisedByPresident, operatingCompany.value(), true);
 
             return true;
         }
 
         if (actualPresidentCash > 0) {
-            MoneyModel.cashMove(currentPlayer, operatingCompany.get(), presidentCash);
+            MoneyModel.cashMove(currentPlayer, operatingCompany.value(), presidentCash);
             ReportBuffer.add(LocalText.getText("PresidentAddsCash",
-                    operatingCompany.get().getId(),
+                    operatingCompany.value().getId(),
                     currentPlayer.getId(),
                     Bank.format(actualPresidentCash)));
         }
@@ -2708,7 +2708,7 @@ public class OperatingRound extends Round implements Observer {
 
         if (exchangedTrain != null) {
             Train oldTrain =
-                operatingCompany.get().getPortfolioModel().getTrainOfType(
+                operatingCompany.value().getPortfolioModel().getTrainOfType(
                         exchangedTrain.getCertType());
             (train.isObsolete() ? scrapHeap : pool).addTrain(oldTrain);
             ReportBuffer.add(LocalText.getText("ExchangesTrain",
@@ -2734,7 +2734,7 @@ public class OperatingRound extends Round implements Observer {
 
         train.setType(action.getType()); // Needed for dual trains bought from the Bank
 
-        operatingCompany.get().buyTrain(train, price);
+        operatingCompany.value().buyTrain(train, price);
 
         if (oldOwner == ipo.getTrainsModel()) {
             train.getCertType().addToBoughtFromIPO();
@@ -2807,21 +2807,21 @@ public class OperatingRound extends Round implements Observer {
      */
     public void setBuyableTrains() {
 
-        if (operatingCompany.get() == null) return;
+        if (operatingCompany.value() == null) return;
 
-        int cash = operatingCompany.get().getCash();
+        int cash = operatingCompany.value().getCash();
 
         int cost = 0;
         List<Train> trains;
 
         boolean hasTrains =
-            operatingCompany.get().getPortfolioModel().getNumberOfTrains() > 0;
+            operatingCompany.value().getPortfolioModel().getNumberOfTrains() > 0;
 
             // Cannot buy a train without any cash, unless you have to
             if (cash == 0 && hasTrains) return;
 
             boolean canBuyTrainNow = canBuyTrainNow();
-            boolean mustBuyTrain = !hasTrains && operatingCompany.get().mustOwnATrain();
+            boolean mustBuyTrain = !hasTrains && operatingCompany.value().mustOwnATrain();
             boolean emergency = false;
 
             SortedMap<Integer, Train> newEmergencyTrains = new TreeMap<Integer, Train>();
@@ -2838,7 +2838,7 @@ public class OperatingRound extends Round implements Observer {
                 /* New trains */
                 trains = trainMgr.getAvailableNewTrains();
                 for (Train train : trains) {
-                    if (!operatingCompany.get().mayBuyTrainType(train)) continue;
+                    if (!operatingCompany.value().mayBuyTrainType(train)) continue;
                     if (!mayBuyMoreOfEachType
                             && trainsBoughtThisTurn.contains(train.getCertType())) {
                         continue;
@@ -2864,7 +2864,7 @@ public class OperatingRound extends Round implements Observer {
                         cost = train.getCertType().getExchangeCost();
                         if (cost <= cash) {
                             List<Train> exchangeableTrains =
-                                operatingCompany.get().getPortfolioModel().getUniqueTrains();
+                                operatingCompany.value().getPortfolioModel().getUniqueTrains();
                             BuyTrain action = new BuyTrain(train, ipo.getParent(), cost);
                             action.setTrainsForExchange(exchangeableTrains);
                             //if (atTrainLimit) action.setForcedExchange(true);
@@ -2958,7 +2958,7 @@ public class OperatingRound extends Round implements Observer {
                 Player p;
                 int index;
                 int numberOfPlayers = getNumberOfPlayers();
-                int presidentCash = operatingCompany.get().getPresident().getCashValue();
+                int presidentCash = operatingCompany.value().getPresident().getCashValue();
 
                 // Set up a list per player of presided companies
                 List<List<PublicCompany>> companiesPerPlayer =
@@ -2968,7 +2968,7 @@ public class OperatingRound extends Round implements Observer {
                 List<PublicCompany> companies;
                 // Sort out which players preside over which companies.
                 for (PublicCompany c : getOperatingCompanies()) {
-                    if (c.isClosed() || c == operatingCompany.get()) continue;
+                    if (c.isClosed() || c == operatingCompany.value()) continue;
                     p = c.getPresident();
                     index = p.getIndex();
                     companiesPerPlayer.get(index).add(c);
@@ -2986,10 +2986,10 @@ public class OperatingRound extends Round implements Observer {
                             bt = null;
                             if (i != currentPlayerIndex
                                     && getGameParameterAsBoolean(GameDef.Parm.FIXED_PRICE_TRAINS_BETWEEN_PRESIDENTS)
-                                    || operatingCompany.get().mustTradeTrainsAtFixedPrice()
+                                    || operatingCompany.value().mustTradeTrainsAtFixedPrice()
                                     || company.mustTradeTrainsAtFixedPrice()) {
                                 // Fixed price
-                                if ((cash >= train.getCost()) && (operatingCompany.get().mayBuyTrainType(train))) {
+                                if ((cash >= train.getCost()) && (operatingCompany.value().mayBuyTrainType(train))) {
                                     // TODO: Check if this still works, as now the company is the from type
                                     bt = new BuyTrain(train, company, train.getCost());
                                 } else {
@@ -3013,8 +3013,8 @@ public class OperatingRound extends Round implements Observer {
                 }
             }
 
-            if (!operatingCompany.get().mustOwnATrain()
-                    || operatingCompany.get().getPortfolioModel().getNumberOfTrains() > 0) {
+            if (!operatingCompany.value().mustOwnATrain()
+                    || operatingCompany.value().getPortfolioModel().getNumberOfTrains() > 0) {
                 doneAllowed = true;
             }
     }
@@ -3026,7 +3026,7 @@ public class OperatingRound extends Round implements Observer {
      * @return
      */
     protected boolean isBelowTrainLimit() {
-        return operatingCompany.get().getNumberOfTrains() < operatingCompany.get().getCurrentTrainLimit();
+        return operatingCompany.value().getNumberOfTrains() < operatingCompany.value().getCurrentTrainLimit();
     }
 
     public void checkForeignSales() {
@@ -3046,11 +3046,11 @@ public class OperatingRound extends Round implements Observer {
     protected <T extends SpecialProperty> List<T> getSpecialProperties(
             Class<T> clazz) {
         List<T> specialProperties = new ArrayList<T>();
-        if (!operatingCompany.get().isClosed()) {
+        if (!operatingCompany.value().isClosed()) {
             // OC may have closed itself (e.g. in 1835 when M2 buys 1st 4T and starts PR)
-            specialProperties.addAll(operatingCompany.get().getPortfolioModel().getSpecialProperties(
+            specialProperties.addAll(operatingCompany.value().getPortfolioModel().getSpecialProperties(
                     clazz, false));
-            specialProperties.addAll(operatingCompany.get().getPresident().getPortfolioModel().getSpecialProperties(
+            specialProperties.addAll(operatingCompany.value().getPresident().getPortfolioModel().getSpecialProperties(
                     clazz, false));
         }
         return specialProperties;
@@ -3068,7 +3068,7 @@ public class OperatingRound extends Round implements Observer {
         StringBuffer b = new StringBuffer();
         b.append("<big>Operating round: ").append(thisOrNumber).append(
         "</big><br>");
-        b.append("<br><b>").append(operatingCompany.get().getId()).append(
+        b.append("<br><b>").append(operatingCompany.value().getId()).append(
         "</b> (president ").append(getCurrentPlayer().getId()).append(
         ") has the turn.");
         b.append("<br><br>Currently allowed actions:");

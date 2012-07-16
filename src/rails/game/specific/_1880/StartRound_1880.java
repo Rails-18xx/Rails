@@ -68,7 +68,7 @@ public final class StartRound_1880 extends StartRound {
             
             if (currentPlayer == startPlayer) ReportBuffer.add("");
             
-            if (currentItem == null || currentItem.get() != item ) { // we haven't seen this item before
+            if (currentItem == null || currentItem.value() != item ) { // we haven't seen this item before
                 numPasses.set(0); // new round so cancel all previous passes !
                 currentItem.set(item);
                 item.setStatus(StartItem.BIDDABLE);
@@ -136,7 +136,7 @@ public final class StartRound_1880 extends StartRound {
                      currentPlayer=getCurrentPlayer();
                      currentStartRoundPhase.set(1);
                      startingPlayer.set(currentPlayer);
-                     gameManager.setPriorityPlayer((Player) startingPlayer.get()); // Method doesn't exist in Startround ???
+                     gameManager.setPriorityPlayer((Player) startingPlayer.value()); // Method doesn't exist in Startround ???
             }
            if (investorChosen.value() == getNumberOfPlayers()) {
                for ( StartItem item1 : itemsToSell.view()) {
@@ -253,7 +253,7 @@ public final class StartRound_1880 extends StartRound {
     protected boolean pass(String playerName) {
         String errMsg = null;
         Player player = getCurrentPlayer();
-        StartItem auctionItem = (StartItem) auctionItemState.get();
+        StartItem auctionItem = (StartItem) auctionItemState.value();
 
         while (true) {
 
@@ -292,7 +292,7 @@ public final class StartRound_1880 extends StartRound {
                                 Bank.format(startPacket.getFirstItem().getBasePrice()) ));
                 numPasses.set(0);
                 if (auctionItem.getBasePrice() == 0) {
-                    assignItem((Player)startingPlayer.get(),
+                    assignItem((Player)startingPlayer.value(),
                             auctionItem, 0, 0);
                     setNextStartingPlayer();
                     // startPacket.getFirstItem().getName());
@@ -366,7 +366,7 @@ public final class StartRound_1880 extends StartRound {
     private void setNextStartingPlayer(){
         int i;
         Player player;
-        player = (Player) startingPlayer.get();
+        player = (Player) startingPlayer.value();
         i= player.getIndex();
         startingPlayer.set(gameManager.getPlayerByIndex(i+1));
         setCurrentPlayerIndex(i+1 % getNumberOfPlayers());

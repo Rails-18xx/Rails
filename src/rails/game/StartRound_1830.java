@@ -153,10 +153,10 @@ public final class StartRound_1830 extends StartRound {
 
             if (possibleActions.isEmpty()) {
                 numPasses.add(1);
-                if (auctionItemState.get() == null) {
+                if (auctionItemState.value() == null) {
                     setNextPlayer();
                 } else {
-                    setNextBiddingPlayer((StartItem) auctionItemState.get());
+                    setNextBiddingPlayer((StartItem) auctionItemState.value());
                 }
             }
         }
@@ -281,7 +281,7 @@ public final class StartRound_1830 extends StartRound {
 
         String errMsg = null;
         Player player = getCurrentPlayer();
-        StartItem auctionItem = (StartItem) auctionItemState.get();
+        StartItem auctionItem = (StartItem) auctionItemState.value();
 
         while (true) {
 

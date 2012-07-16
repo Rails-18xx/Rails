@@ -128,7 +128,7 @@ public class Stop extends AbstractItem implements PortfolioHolder {
 
     private void initStopProperties () {
 
-        Station station = relatedStation.get();
+        Station station = relatedStation.value();
         Tile tile = station.getTile();
         MapManager mapManager = getParent().getParent();
         TileManager tileManager = tile.getTileManager();
@@ -137,7 +137,7 @@ public class Stop extends AbstractItem implements PortfolioHolder {
         type = getParent().getStopType();
         if (type == null) type = tile.getStopType();
         if (type == null) {
-            String stationType = relatedStation.get().getType();
+            String stationType = relatedStation.value().getType();
             if (stationType.equals(Station.CITY)) {
                 type = Type.CITY;
             } else if (stationType.equals(Station.TOWN)) {
@@ -209,7 +209,7 @@ public class Stop extends AbstractItem implements PortfolioHolder {
     }
 
     public Station getRelatedStation() {
-        return relatedStation.get();
+        return relatedStation.value();
     }
 
     public void setRelatedStation(Station relatedStation) {
@@ -333,7 +333,7 @@ public class Stop extends AbstractItem implements PortfolioHolder {
         if (getParent().hasValuesPerPhase()) {
             return getParent().getCurrentValueForPhase(phase);
         } else {
-            return relatedStation.get().getValue();
+            return relatedStation.value().getValue();
         }
     }
 

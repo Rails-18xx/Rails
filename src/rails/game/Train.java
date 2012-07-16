@@ -54,7 +54,7 @@ public class Train extends OwnableItem<Train> {
     }
     
     public TrainType getType() {
-        return isAssigned() ? type.get() : null;
+        return isAssigned() ? type.value() : null;
     }
 
     /**import rails.game.state.AbstractItem;
@@ -109,7 +109,7 @@ public class Train extends OwnableItem<Train> {
     }
 
     public boolean isAssigned() {
-        return type.get() != null;
+        return type.value() != null;
     }
     
     public boolean isPermanent() {
@@ -117,7 +117,7 @@ public class Train extends OwnableItem<Train> {
     }
     
     public String getId() {
-        return isAssigned() ? type.get().getName() : certificateType.getName();
+        return isAssigned() ? type.value().getName() : certificateType.getName();
     }
 
     public boolean isObsolete() {

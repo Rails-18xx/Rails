@@ -16,6 +16,7 @@ public final class GenericState<E> extends State {
     }
 
     /** 
+     * {@inheritDoc}
      * Creates an empty GenericState
      */
     public static <E> GenericState<E> create(Item parent, String id){
@@ -39,7 +40,7 @@ public final class GenericState<E> extends State {
         }
     }
 
-    public E get() {
+    public E value() {
         return this.object;
     }
 

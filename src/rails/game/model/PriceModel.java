@@ -27,7 +27,7 @@ public final class PriceModel extends Model {
     }
 
     public StockSpace getPrice() {
-        return stockPrice.get();
+        return stockPrice.value();
     }
 
     public PublicCompany getCompany() {
@@ -48,8 +48,8 @@ public final class PriceModel extends Model {
     @Override
     public String toString() {
         if (stockPrice != null) {
-            return Bank.format(stockPrice.get().getPrice()) + " ("
-                   + stockPrice.get().getId() + ")";
+            return Bank.format(stockPrice.value().getPrice()) + " ("
+                   + stockPrice.value().getId() + ")";
         }
         return "";
     }

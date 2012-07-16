@@ -118,11 +118,11 @@ public final class OperatingRound_1835 extends OperatingRound {
 
         Map<CashOwner, Integer> sharesPerRecipient = super.countSharesPerRecipient();
 
-        if (operatingCompany.get().getId().equalsIgnoreCase(GameManager_1835.PR_ID)) {
+        if (operatingCompany.value().getId().equalsIgnoreCase(GameManager_1835.PR_ID)) {
             for (Player player : deniedIncomeShare.viewKeySet()) {
                 if (!sharesPerRecipient.containsKey(player)) continue;
                 int share = deniedIncomeShare.get(player);
-                int shares = share / operatingCompany.get().getShareUnit();
+                int shares = share / operatingCompany.value().getShareUnit();
                 sharesPerRecipient.put (player, sharesPerRecipient.get(player) - shares);
                 ReportBuffer.add(LocalText.getText("NoIncomeForPreviousOperation",
                         player.getId(),
@@ -144,10 +144,10 @@ public final class OperatingRound_1835 extends OperatingRound {
 
         super.initTurn();
 
-        List<SpecialProperty> sps = operatingCompany.get().getSpecialProperties();
+        List<SpecialProperty> sps = operatingCompany.value().getSpecialProperties();
         if (sps != null && !sps.isEmpty()) {
             ExchangeForShare efs = (ExchangeForShare) sps.get(0);
-            addIncomeDenialShare (operatingCompany.get().getPresident(), efs.getShare());
+            addIncomeDenialShare (operatingCompany.value().getPresident(), efs.getShare());
         }
     }
 
@@ -159,7 +159,7 @@ public final class OperatingRound_1835 extends OperatingRound {
                 // PR has just started. Check if it can operate this round
                 // That's only the case if M1 has just bought
                 // the first 4-train or 4+4-train
-                && operatingCompany.get() == companyManager.getPublicCompany("M1")) {
+                && operatingCompany.value() == companyManager.getPublicCompany("M1")) {
             log.debug("M2 has not operated: PR can operate");
 
             // Insert the Prussian before the first major company
@@ -173,7 +173,7 @@ public final class OperatingRound_1835 extends OperatingRound {
                         && company.hasStockPrice()
                         && company.hasFloated()
                         && !company.isClosed()
-                        && company != operatingCompany.get()
+                        && company != operatingCompany.value()
                         && company.getCurrentSpace().getPrice()
                             < prussian.getCurrentSpace().getPrice()) {
                     log.debug("PR will operate before "+company.getId());
@@ -201,7 +201,7 @@ public final class OperatingRound_1835 extends OperatingRound {
         /* Special-property tile lays */
         List<LayTile> currentSpecialTileLays = new ArrayList<LayTile>();
 
-        if (operatingCompany.get().canUseSpecialProperties()) {
+        if (operatingCompany.value().canUseSpecialProperties()) {
 
             for (SpecialTileLay stl : getSpecialProperties(SpecialTileLay.class)) {
                 if (stl.isExtra() 

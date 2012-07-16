@@ -103,7 +103,7 @@ public class StockRound_18EU extends StockRound {
         /* Get the next available IPO certificates */
         // Never buy more than one from the IPO
         PublicCompany companyBoughtThisTurn =
-                (PublicCompany) companyBoughtThisTurnWrapper.get();
+                (PublicCompany) companyBoughtThisTurnWrapper.value();
         if (companyBoughtThisTurn == null) {
             from = ipo;
             Map<String, List<PublicCertificate>> map =
@@ -300,7 +300,7 @@ public class StockRound_18EU extends StockRound {
             startAction = (StartCompany_18EU) action;
 
             // The player may not have bought this turn.
-            if (companyBoughtThisTurnWrapper.get() != null) {
+            if (companyBoughtThisTurnWrapper.value() != null) {
                 errMsg = LocalText.getText("AlreadyBought", playerName);
                 break;
             }

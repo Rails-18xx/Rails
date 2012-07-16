@@ -54,7 +54,7 @@ public final class OperatingRound_1889 extends OperatingRound {
         if (getStep() == GameDef.OrStep.LAY_TRACK) {
             if (!privB.isClosed() && 
                     privB.getPortfolio().getOwner() instanceof Player && 
-                    privB.getPortfolio().getOwner() != operatingCompany.get().getPresident()) {
+                    privB.getPortfolio().getOwner() != operatingCompany.value().getPresident()) {
                 SpecialProperty spPrivB = privB.getSpecialProperties().get(0);
                 if (spPrivB != null && !spPrivB.isExercised()) {
                     if (!activeSpPrivB.value()) 
