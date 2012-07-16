@@ -8,7 +8,8 @@ import org.junit.Test;
 
 public class BooleanStateTest {
 
-    private final static String STATE_ID = "Boolean";
+    private final static String DEFAULT_ID = "Default";
+    private final static String INIT_ID = "Init"; 
 
     private Root root;
     private ChangeStack stack;
@@ -18,8 +19,8 @@ public class BooleanStateTest {
     @Before
     public void setUp() {
         root = StateTestUtils.setUpRoot();
-        state_default = BooleanState.create(root,  STATE_ID);
-        state_init = BooleanState.create(root, null, true);
+        state_default = BooleanState.create(root,  DEFAULT_ID);
+        state_init = BooleanState.create(root, INIT_ID, true);
         stack = root.getStateManager().getChangeStack();
     }
 

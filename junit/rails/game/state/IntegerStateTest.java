@@ -8,7 +8,8 @@ import org.junit.Test;
 
 public class IntegerStateTest {
 
-    private final static String STATE_ID = "Integer";
+    private final static String DEFAULT_ID = "Default";
+    private final static String INIT_ID = "Init"; 
     private final static int INIT = 10;
     private final static int OTHER = -5;
 
@@ -23,8 +24,8 @@ public class IntegerStateTest {
         root = StateTestUtils.setUpRoot();
         stack = root.getStateManager().getChangeStack();
         
-        state_default = IntegerState.create(root, STATE_ID);
-        state_init = IntegerState.create(root, null, INIT);
+        state_default = IntegerState.create(root, DEFAULT_ID);
+        state_init = IntegerState.create(root, INIT_ID, INIT);
     }
     
     @Test

@@ -8,7 +8,8 @@ import org.junit.Test;
 
 public class GenericStateTest {
 
-    private final static String STATE_ID = "Generic";
+    private final static String DEFAULT_ID = "Default";
+    private final static String INIT_ID = "Init"; 
     private final static String ITEM_ID = "Item";
     private final static String ANOTHER_ID = "Another";
 
@@ -27,8 +28,8 @@ public class GenericStateTest {
         item = new AbstractItemImpl(root, ITEM_ID);
         another_item = new AbstractItemImpl(root, ANOTHER_ID);
         
-        state_default = GenericState.create(root, STATE_ID);
-        state_init = GenericState.create(root, null, item);
+        state_default = GenericState.create(root, DEFAULT_ID);
+        state_init = GenericState.create(root, INIT_ID, item);
     }
     
     @Test
