@@ -1644,7 +1644,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner,
         String tileLaid =
             "#" + tile.getExternalId() + "/" + hex.getId() + "/"
             + hex.getOrientationName(orientation);
-        tilesLaidThisTurn.appendWithDelimiter(tileLaid, ", ");
+        tilesLaidThisTurn.append(tileLaid, ", ");
 
         if (cost > 0) tilesCostThisTurn.change(cost);
 
@@ -1655,7 +1655,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner,
 
     public void layTilenNoMapMode(int cost) {
         if (cost > 0) tilesCostThisTurn.change(cost);
-        tilesLaidThisTurn.appendWithDelimiter(Bank.format(cost), ",");
+        tilesLaidThisTurn.append(Bank.format(cost), ",");
     }
 
     public StringState getTilesLaidThisTurnModel() {
@@ -1669,13 +1669,13 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner,
     public void layBaseToken(MapHex hex, int cost) {
 
         String tokenLaid = hex.getId();
-        tokensLaidThisTurn.appendWithDelimiter(tokenLaid, ", ");
+        tokensLaidThisTurn.append(tokenLaid, ", ");
         if (cost > 0) tokensCostThisTurn.change(cost);
     }
 
     public void layBaseTokennNoMapMode(int cost) {
         if (cost > 0) tokensCostThisTurn.change(cost);
-        tokensLaidThisTurn.appendWithDelimiter(Bank.format(cost), ",");
+        tokensLaidThisTurn.append(Bank.format(cost), ",");
     }
 
     /**

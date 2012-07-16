@@ -27,7 +27,15 @@ public final class StringState extends State {
     }
     
     public void set(String value) {
-        new StringChange(this, value);
+        if (value == null) {
+            if (this.value != null) {
+                new StringChange(this, value);
+            } // otherwise both are null
+        } else {
+            if (this.value == null || !value.equals(this.value)) {
+                new StringChange(this, value);
+            } // otherwise the non-null current value is unequal to the new value  
+        }
     }
     
     /**
@@ -37,7 +45,7 @@ public final class StringState extends State {
      * @param value string to append
      * @param delimiter to use before appending (only for non-empty value)
      */
-    public void appendWithDelimiter(String value, String delimiter) {
+    public void append(String value, String delimiter) {
         if (value == null || value.equals("") ) return;
         
         String newValue;

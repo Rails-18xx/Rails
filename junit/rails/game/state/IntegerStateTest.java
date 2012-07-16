@@ -25,7 +25,6 @@ public class IntegerStateTest {
         
         state_default = IntegerState.create(root, STATE_ID);
         state_init = IntegerState.create(root, null, INIT);
-        stack.closeCurrentChangeSet();
     }
     
     @Test
