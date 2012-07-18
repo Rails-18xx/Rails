@@ -11,8 +11,12 @@ class StateImpl extends State {
     }
     
     @Override
-    public String toString() {
+    public String observerText() {
         return text;
     }
     
+    @Override
+    public String toString() {
+        return text;
+    }
 }

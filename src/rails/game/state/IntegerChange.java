@@ -33,7 +33,7 @@ final class IntegerChange extends Change {
 
     @Override
     public String toString() {
-        return "Change IntegerState " + state.getId() + " from " + oldValue + " to " + newValue; 
+        return "Change for " + state + ": From " + oldValue + " to " + newValue; 
     }
 
 }

@@ -31,6 +31,10 @@ final class MultimapChange<K,V> extends Change {
 
     @Override
     public String toString() {
-        return "MultimapChange for " + state.getId() + ": key =  " + key + " value =  " + value + " addToMap" + addToMap;
+        if (addToMap) {
+            return "Change for " + state + ": Add key = " + key + " with value " + value;
+        } else {
+            return "Change for " + state + ": Remove key = " + key + " with value " + value;
+        }
     }
 }

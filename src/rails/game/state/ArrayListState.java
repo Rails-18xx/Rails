@@ -137,6 +137,11 @@ public final class ArrayListState<E> extends State implements Iterable<E>  {
     public Iterator<E> iterator() {
         return ImmutableList.copyOf(list).iterator();
     }
+    
+    @Override
+    public String observerText() {
+        return list.toString();
+    }
 
     void change(E object, int index, boolean addToList) {
         if (addToList) {

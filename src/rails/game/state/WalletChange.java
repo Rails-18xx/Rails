@@ -39,9 +39,9 @@ final class WalletChange<T extends CountableItem> extends Change {
     @Override
     public String toString() {
         if (out == null) {
-            return "WalletChange: Sets " + amount + " of " + item + " in wallet " + in.getId();
+            return "Change for " + in + ": Set " + item + " to " + amount;
         } else {
-            return "WalletChange: Moves " + amount + " of " + item + " from wallet " + out.getId() + " to wallet " + in.getId();
+            return "Change for " + in + ": Add " + amount + " of " + item + " from " + out;
         }
     }
 }

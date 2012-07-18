@@ -34,7 +34,7 @@ final class BooleanChange extends Change {
 
     @Override
     public String toString() {
-        return "Change BooleanState " + state.getId() + " from " + oldValue + " to " + newValue; 
+        return "Change for " + state + ": From " + oldValue + " to " + newValue; 
     }
         
 }

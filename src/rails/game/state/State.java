@@ -25,15 +25,4 @@ public abstract class State extends Observable {
             this.getStateManager().registerState(this);
         }
     }
-    
-    // Observable methods
-    /**
-     * {@inheritDoc}
-     * For a state defaultText() it is identical to toString()
-     * If this is not the correct behavior, overwrite it
-     */
-    @Override
-    public String observerText() {
-        return toString();
-    }
 }

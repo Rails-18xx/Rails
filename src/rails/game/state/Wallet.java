@@ -86,7 +86,11 @@ public final class Wallet<T extends CountableItem> extends State {
         return ImmutableMultiset.copyOf(wallet);
     }
     
-    
+    @Override
+    public String observerText() {
+        return wallet.toString();
+    }
+
     void change (T item, int value) {
         wallet.add(item, value);
     }

@@ -85,7 +85,7 @@ public final class HashMultimapState<K,V> extends MultimapState<K,V> implements 
     }
     
     @Override
-    public String toString() {
+    public String observerText() {
         return map.toString();
     }
 

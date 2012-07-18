@@ -55,7 +55,15 @@ final class HashMapChange<K,V> extends Change {
 
     @Override
     public String toString() {
-        return "HashMapChange for " + state.getId() + ": key =  " + key + " newValue =  " + newValue +  " oldValue = " + oldValue + " remove " + remove + " existed =  " + existed;
+        if (!remove) {
+            if (existed) {
+                return "Change for " + state + ": For key=" + key + " replace value " + oldValue + " by " + newValue;
+            } else {
+                return "Change for " + state + ": Add key=" + key + " with value " + newValue;
+            }
+        } else {
+            return "Change for " + state + ": Remove key=" + key + " with value " + newValue;
+        }
     }
 
 }

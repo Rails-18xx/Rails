@@ -44,9 +44,9 @@ public final class ArrayListMultimapState<K,V> extends MultimapState<K,V> {
     public boolean containsEntry(K key, V value) {
         return map.containsEntry(key, value);
     }
-    
+
     @Override
-    public String toString() {
+    public String observerText() {
         return map.toString();
     }
 
@@ -57,5 +57,6 @@ public final class ArrayListMultimapState<K,V> extends MultimapState<K,V> {
             map.remove(key, value);
         }
     }
+
     
 }

@@ -97,7 +97,7 @@ public final class HashSetState<E> extends State implements Iterable<E> {
     }
     
     @Override
-    public String toString() {
+    public String observerText() {
         return set.toString();
     }
     

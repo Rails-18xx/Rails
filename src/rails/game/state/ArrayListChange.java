@@ -49,7 +49,11 @@ final class ArrayListChange<E> extends Change {
     
     @Override
     public String toString() {
-        return "ArrayListChange for " + state.getId() + ": " + object.toString() + " at index " + index + " addToList = " + addToList;
+        if (addToList) {
+            return "Change for " + state + ": Add " + object + " at index " + index;
+        } else {
+            return "Change for " + state + ": Remove " + object + " at index " + index;
+        }
     }
 
 }

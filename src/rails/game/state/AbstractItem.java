@@ -62,4 +62,9 @@ public abstract class AbstractItem implements Item {
         return parent.getFullURI() + Item.SEP + id;
     }
     
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + "(Id=" + id + ")";
+    }
+    
 }

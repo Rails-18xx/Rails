@@ -35,7 +35,7 @@ final class StringChange extends Change {
 
     @Override
     public String toString() {
-        return "Change StringState " + state.getId() + " from " + oldValue + " to " + newValue; 
+        return "Change for " + state + ": From \"" + oldValue + "\" to \"" + newValue + "\""; 
     }
         
 }

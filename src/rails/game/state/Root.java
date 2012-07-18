@@ -99,10 +99,4 @@ public final class Root extends Context {
        items.remove(item.getFullURI());
    }
 
-   @Override
-   public String toString() {
-       return ID;
-   }
-
-    
 }

@@ -135,4 +135,15 @@ public abstract class Observable implements Item {
      */
     public abstract String observerText();
     
+    @Override
+    public String toString() {
+        if (getId() != null) {
+            return this.getClass().getSimpleName() + "(Id=" + getId() + ")";
+        } else {
+            return this.getClass().getSimpleName();
+        }
+    }
+    
+
+    
 }

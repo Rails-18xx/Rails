@@ -93,9 +93,4 @@ public abstract class Manager extends Context {
     public Root getRoot() {
         return root;
     }
-
-    @Override
-    public String toString() {
-        return parent.toString();
-    }
 }

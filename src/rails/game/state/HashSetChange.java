@@ -35,7 +35,11 @@ final class HashSetChange<E> extends Change {
     
     @Override
     public String toString() {
-        return "HashSetChange for " + state.getId() + ": " + element.toString() + " addToSet = " + addToSet;
+        if (addToSet) {
+            return "Change for " + state + ": Add " + element;
+        } else {
+            return "Change for " + state + ": Remove " + element;
+        }
     }
 
 }

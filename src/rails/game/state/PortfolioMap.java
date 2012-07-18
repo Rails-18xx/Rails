@@ -91,6 +91,10 @@ public final class PortfolioMap<T extends Ownable<T>> extends Portfolio<T> {
         return portfolio.values().iterator();
     }
     
+    @Override
+    public String observerText() {
+        return portfolio.toString();
+    }
 }
 
     

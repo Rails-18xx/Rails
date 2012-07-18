@@ -1,6 +1,8 @@
 package rails.game.state;
 /**
  * A context describe a service that allows to locate items
+ * 
+ * TODO: Check if we should check for non-null id here
  */
 public abstract class Context implements Item {
 
@@ -14,4 +16,8 @@ public abstract class Context implements Item {
 
     abstract void removeItem(Item item);
     
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + "(Id=" + getId() + ")";
+    }
 }

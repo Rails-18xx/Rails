@@ -125,7 +125,7 @@ public final class HashMapState<K,V> extends State {
     }
     
     @Override
-    public String toString() {
+    public String observerText() {
         return map.toString();
     }
     

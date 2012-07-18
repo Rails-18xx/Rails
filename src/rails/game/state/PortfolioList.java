@@ -59,7 +59,10 @@ public final class PortfolioList<T extends Ownable<T>> extends Portfolio<T> {
         return portfolio.iterator();
     }
 
-    
+    @Override
+    public String observerText() {
+        return portfolio.toString();
+    }
     
 }
 

@@ -44,6 +44,11 @@ public final class GenericState<E> extends State {
         return this.object;
     }
 
+    @Override
+    public String observerText() {
+        return object.toString();
+    }
+    
     void change(E object) {
         this.object = object; 
     }
