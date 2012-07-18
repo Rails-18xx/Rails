@@ -5,17 +5,10 @@ package rails.game.state;
  * @author evos, freystef
  */
 final class ArrayListChange<E> extends Change {
-    final private ArrayListState<E> state;
-    final private E object;
-    final private int index;
-    final private boolean addToList;
-
-    /**
-     * Add object to the end of the list
-     */
-    ArrayListChange(ArrayListState<E> state, E object) {
-        this(state, object, state.size() + 1);
-    }
+    private final ArrayListState<E> state;
+    private final E object;
+    private final int index;
+    private final boolean addToList;
 
     /**
      * Add object at the specified index

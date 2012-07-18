@@ -8,10 +8,8 @@ import com.google.common.collect.ImmutableList;
 
 /**
  * A stateful version of an ArrayList
- * 
- * @author Erik Vos, Stefan Frey (V2.0)
+ * TODO: Add all methods of List interface
  */
-
 public final class ArrayListState<E> extends State implements Iterable<E>  {
 
     private final ArrayList<E> list;
@@ -36,11 +34,24 @@ public final class ArrayListState<E> extends State implements Iterable<E>  {
         return new ArrayListState<E>(parent, id, collection);
     }
     
-    public void add(E element) {
-        new ArrayListChange<E>(this, element);
+    /**
+     * Appends the specified element to the end of the list
+     * @param element to be appended
+     * @return true (similar to the general contract of Collection.add)
+     */
+    public boolean add(E element) {
+        new ArrayListChange<E>(this, element, list.size());
+        return true;
     }
 
+    /**
+     * Inserts specified element at the specified position.
+     * @param element to be added
+     * @throws IndexOutOfBoundsException if index is out of range
+     */
     public void add(int index, E element) {
+        if (index < 0 || index > list.size()) throw new IndexOutOfBoundsException();
+        // if bounds ok, generate change
         new ArrayListChange<E>(this, element, index);
     }
 
@@ -52,9 +63,37 @@ public final class ArrayListState<E> extends State implements Iterable<E>  {
             return false;
         }
     }
-
-    public void move (E element, int toIndex) {
-        if (remove (element)) add (toIndex, element);
+    
+    /**
+     * remove element at index position
+     * @param index position
+     * @return element removed
+     * @throws IndexOutOfBoundsException if index is out of range
+     */
+    public E remove(int index) {
+        if (index < 0 || index > list.size()) throw new IndexOutOfBoundsException();
+        E element = list.get(index);
+        // if bounds ok, generate change
+        new ArrayListChange<E>(this, index);
+        return element;
+    }
+    
+    /**
+     * move element to a new index position in the list
+     * Remark: index position relative to the list after removal of the element
+     * @param element the specified element 
+     * @param index of the new position
+     * @return true if the list contained the specified element
+     * @throws IndexOutOfBoundsException if the new index is out of range (0 <= index < size) 
+     */
+    public boolean move(E element, int index) {
+        if (index < 0 || index > list.size() - 1) throw new IndexOutOfBoundsException();
+        // if bounds ok, start move
+        boolean remove = remove(element);
+        if (remove) { // only if element exists, execute move
+            add(index, element);
+        }
+        return remove;
     }
     
     public boolean contains (E element) {
@@ -62,13 +101,14 @@ public final class ArrayListState<E> extends State implements Iterable<E>  {
     }
 
     public void clear() {
-        for (E element:list) {
+        for (E element:ImmutableList.copyOf(list)) {
             remove(element);
         }
     }
 
     /**
-     * returns immutable view of list
+     * creates an immutable view of the list
+     * @return immutable copy
      */
     public ImmutableList<E> view() {
         return ImmutableList.copyOf(list);
@@ -90,13 +130,12 @@ public final class ArrayListState<E> extends State implements Iterable<E>  {
         return list.get(index);
     }
     
+    /**
+     * creates an iterator derived from the ImmutableCopy of the ArrayListState
+     * @return a suitable iterator for ArrayListState
+     */
     public Iterator<E> iterator() {
-        return list.iterator();
-    }
-
-    @Override
-    public String toString() {
-        return list.toString();
+        return ImmutableList.copyOf(list).iterator();
     }
 
     void change(E object, int index, boolean addToList) {

@@ -15,7 +15,12 @@ class StateTestUtils {
     public static Root setUpRoot() {
         Root root = Root.create();
         // avoid initial changeSet as it is not undoable
-        root.getStateManager().getChangeStack().startActionChangeSet(player, action);
+        startActionChangeSet(root);
         return root;
     }
+    
+    public static void startActionChangeSet(Root root) {
+        root.getStateManager().getChangeStack().startActionChangeSet(player, action);
+    }
+    
 }
