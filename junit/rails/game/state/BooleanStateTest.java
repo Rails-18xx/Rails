@@ -13,50 +13,50 @@ public class BooleanStateTest {
 
     private Root root;
     private ChangeStack stack;
-    private BooleanState state_default;
-    private BooleanState state_init;
+    private BooleanState stateDefault;
+    private BooleanState stateInit;
 
     @Before
     public void setUp() {
         root = StateTestUtils.setUpRoot();
-        state_default = BooleanState.create(root,  DEFAULT_ID);
-        state_init = BooleanState.create(root, INIT_ID, true);
+        stateDefault = BooleanState.create(root,  DEFAULT_ID);
+        stateInit = BooleanState.create(root, INIT_ID, true);
         stack = root.getStateManager().getChangeStack();
     }
 
     @Test
     public void testValue() {
-        assertFalse(state_default.value());
-        assertTrue(state_init.value());
+        assertFalse(stateDefault.value());
+        assertTrue(stateInit.value());
     }
     
     @Test
     public void testSet() {
-        state_default.set(true);
-        assertTrue(state_default.value());
-        state_init.set(false);
-        assertFalse(state_init.value());
+        stateDefault.set(true);
+        assertTrue(stateDefault.value());
+        stateInit.set(false);
+        assertFalse(stateInit.value());
     }
 
     @Test
     public void testSetSameIgnored() {
-        state_default.set(false);
-        state_init.set(true);
+        stateDefault.set(false);
+        stateInit.set(true);
         stack.closeCurrentChangeSet();
-        assertThat(stack.getLastClosedChangeSet().getStates()).doesNotContain(state_default, state_init);
+        assertThat(stack.getLastClosedChangeSet().getStates()).doesNotContain(stateDefault, stateInit);
     }
     
     @Test
     public void testUndoRedo() {
-        assertFalse(state_default.value());
-        state_default.set(true);
-        assertTrue(state_default.value());
+        assertFalse(stateDefault.value());
+        stateDefault.set(true);
+        assertTrue(stateDefault.value());
         stack.closeCurrentChangeSet();
-        assertThat(stack.getLastClosedChangeSet().getStates()).contains(state_default);
+        assertThat(stack.getLastClosedChangeSet().getStates()).contains(stateDefault);
         stack.undo();
-        assertFalse(state_default.value());
+        assertFalse(stateDefault.value());
         stack.redo();
-        assertTrue(state_default.value());
+        assertTrue(stateDefault.value());
     }
 
 }

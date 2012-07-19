@@ -26,8 +26,8 @@ public class ArrayListStateTest {
 
     private Root root;
     private ChangeStack stack;
-    private ArrayListState<Item> state_default;
-    private ArrayListState<Item> state_init;
+    private ArrayListState<Item> stateDefault;
+    private ArrayListState<Item> stateInit;
     
     private Item oneItem;
     private Item anotherItem;
@@ -41,8 +41,8 @@ public class ArrayListStateTest {
         oneItem = AbstractItemImpl.create(root, ONE_ITEM_ID);
         anotherItem = AbstractItemImpl.create(root, ANOTHER_ITEM_ID);
         
-        state_default = ArrayListState.create(root, DEFAULT_ID);
-        state_init = ArrayListState.create(root, INIT_ID, Lists.newArrayList(oneItem));
+        stateDefault = ArrayListState.create(root, DEFAULT_ID);
+        stateInit = ArrayListState.create(root, INIT_ID, Lists.newArrayList(oneItem));
     }
 
     // helper function to check the initial state after undo
@@ -50,21 +50,21 @@ public class ArrayListStateTest {
     private void assertInitialStateAfterUndo() {
         stack.closeCurrentChangeSet();
         stack.undo();
-        assertEquals(state_default.view(), Lists.newArrayList());
-        assertEquals(state_init.view(), Lists.newArrayList(oneItem));
+        assertEquals(stateDefault.view(), Lists.newArrayList());
+        assertEquals(stateInit.view(), Lists.newArrayList(oneItem));
         stack.redo();
     }
 
     private void assertTestAdd() {
         // TODO: replace with containsExactly, this does not work yet
-        assertThat(state_default).containsOnly(oneItem);
-        assertThat(state_init).containsSequence(oneItem, anotherItem);
+        assertThat(stateDefault).containsOnly(oneItem);
+        assertThat(stateInit).containsSequence(oneItem, anotherItem);
     }
     
     @Test
     public void testAdd() {
-        state_default.add(oneItem);
-        state_init.add(anotherItem);
+        stateDefault.add(oneItem);
+        stateInit.add(anotherItem);
         assertTestAdd();
 
         // check undo
@@ -74,20 +74,20 @@ public class ArrayListStateTest {
 
     @Test
     public void testAddIndex() {
-        state_init.add(0, anotherItem);
+        stateInit.add(0, anotherItem);
         // TODO: replace with containsExactly, this does not work yet
-        assertThat(state_init).containsSequence(anotherItem, oneItem);
-        state_init.add(2, anotherItem);
+        assertThat(stateInit).containsSequence(anotherItem, oneItem);
+        stateInit.add(2, anotherItem);
         // TODO: replace with containsExactly, this does not work yet
-        assertThat(state_init).containsSequence(anotherItem, oneItem, anotherItem);
-        state_init.add(1, oneItem);
+        assertThat(stateInit).containsSequence(anotherItem, oneItem, anotherItem);
+        stateInit.add(1, oneItem);
         // TODO: replace with containsExactly, this does not work yet
-        assertThat(state_init).containsSequence(anotherItem, oneItem, oneItem, anotherItem);
+        assertThat(stateInit).containsSequence(anotherItem, oneItem, oneItem, anotherItem);
         
         // Check undo
         assertInitialStateAfterUndo();
         // TODO: replace with containsExactly, this does not work yet
-        assertThat(state_init).containsSequence(anotherItem, oneItem, oneItem, anotherItem);
+        assertThat(stateInit).containsSequence(anotherItem, oneItem, oneItem, anotherItem);
     }
     
     @Test
@@ -95,13 +95,13 @@ public class ArrayListStateTest {
         // open new ChangeSet to test if it is still empty
         StateTestUtils.startActionChangeSet(root);
         try {
-            state_init.add(2, anotherItem);
+            stateInit.add(2, anotherItem);
             failBecauseExceptionWasNotThrown(IndexOutOfBoundsException.class);
         } catch (Exception e) {
             assertThat(e).isInstanceOf(IndexOutOfBoundsException.class);
         }
         try {
-            state_init.add(-1, anotherItem);
+            stateInit.add(-1, anotherItem);
             failBecauseExceptionWasNotThrown(IndexOutOfBoundsException.class);
         } catch (Exception e) {
             assertThat(e).isInstanceOf(IndexOutOfBoundsException.class);
@@ -114,105 +114,105 @@ public class ArrayListStateTest {
     @Test
     public void testRemove() {
         // remove a non-existing item
-        assertFalse(state_default.remove(oneItem));
+        assertFalse(stateDefault.remove(oneItem));
 
         // remove an existing item
-        assertTrue(state_init.remove(oneItem));
+        assertTrue(stateInit.remove(oneItem));
 
-        assertThat(state_init).doesNotContain(oneItem);
+        assertThat(stateInit).doesNotContain(oneItem);
         
         // check undo
         assertInitialStateAfterUndo();
         // ... and the redo
-        assertThat(state_init).doesNotContain(oneItem);
+        assertThat(stateInit).doesNotContain(oneItem);
     }
 
     @Test
     public void testMove() {
-        state_init.add(0, anotherItem);
+        stateInit.add(0, anotherItem);
         // TODO: replace with containsExactly, this does not work yet
-        assertThat(state_init).containsSequence(anotherItem, oneItem);
+        assertThat(stateInit).containsSequence(anotherItem, oneItem);
 
-        state_init.move(oneItem, 0);
+        stateInit.move(oneItem, 0);
         // TODO: replace with containsExactly, this does not work yet
-        assertThat(state_init).containsSequence(oneItem, anotherItem);
+        assertThat(stateInit).containsSequence(oneItem, anotherItem);
 
-        state_init.move(oneItem, 1);
+        stateInit.move(oneItem, 1);
         // TODO: replace with containsExactly, this does not work yet
-        assertThat(state_init).containsSequence(anotherItem, oneItem);
+        assertThat(stateInit).containsSequence(anotherItem, oneItem);
 
         // try illegal move and check if nothing has changed
         try {
-            state_init.move(oneItem, 2);
+            stateInit.move(oneItem, 2);
             failBecauseExceptionWasNotThrown(IndexOutOfBoundsException.class);
         } catch (Exception e) {
             assertThat(e).isInstanceOf(IndexOutOfBoundsException.class);
         }
         // TODO: replace with containsExactly, this does not work yet
-        assertThat(state_init).containsSequence(anotherItem, oneItem);
+        assertThat(stateInit).containsSequence(anotherItem, oneItem);
         
         
         // check undo
         assertInitialStateAfterUndo();
         // ... and the redo
         // TODO: replace with containsExactly, this does not work yet
-        assertThat(state_init).containsSequence(anotherItem, oneItem);
+        assertThat(stateInit).containsSequence(anotherItem, oneItem);
     }
 
     @Test
     public void testContains() {
-        assertTrue(state_init.contains(oneItem));
-        assertFalse(state_init.contains(anotherItem));
+        assertTrue(stateInit.contains(oneItem));
+        assertFalse(stateInit.contains(anotherItem));
     }
 
     @Test
     public void testClear() {
-        state_init.add(anotherItem);
-        state_init.clear();
-        assertTrue(state_init.isEmpty());
+        stateInit.add(anotherItem);
+        stateInit.clear();
+        assertTrue(stateInit.isEmpty());
         // check undo and redo
         assertInitialStateAfterUndo();
-        assertTrue(state_init.isEmpty());
+        assertTrue(stateInit.isEmpty());
     }
 
     @Test
     public void testView() {
         ImmutableList<Item> list = ImmutableList.of(oneItem);
-        assertEquals(list, state_init.view());
+        assertEquals(list, stateInit.view());
     }
 
     @Test
     public void testSize() {
-        assertEquals(0, state_default.size());
-        assertEquals(1, state_init.size());
-        state_init.add(anotherItem);
-        state_init.add(oneItem);
-        assertEquals(3, state_init.size());
+        assertEquals(0, stateDefault.size());
+        assertEquals(1, stateInit.size());
+        stateInit.add(anotherItem);
+        stateInit.add(oneItem);
+        assertEquals(3, stateInit.size());
     }
 
     @Test
     public void testIsEmpty() {
-        assertTrue(state_default.isEmpty());
-        assertFalse(state_init.isEmpty());
+        assertTrue(stateDefault.isEmpty());
+        assertFalse(stateInit.isEmpty());
     }
 
     @Test
     public void testIndexOf() {
-        state_init.add(anotherItem);
-        assertEquals(0, state_init.indexOf(oneItem));
-        assertEquals(1, state_init.indexOf(anotherItem));
+        stateInit.add(anotherItem);
+        assertEquals(0, stateInit.indexOf(oneItem));
+        assertEquals(1, stateInit.indexOf(anotherItem));
         // check if not included
-        assertEquals(-1, state_default.indexOf(oneItem));
+        assertEquals(-1, stateDefault.indexOf(oneItem));
     }
 
     @Test
     public void testGet() {
-        state_init.add(anotherItem);
-        assertSame(oneItem, state_init.get(0));
-        assertSame(anotherItem, state_init.get(1));
+        stateInit.add(anotherItem);
+        assertSame(oneItem, stateInit.get(0));
+        assertSame(anotherItem, stateInit.get(1));
         // check index out of bound
         try {
-            state_init.get(2);
+            stateInit.get(2);
             failBecauseExceptionWasNotThrown(IndexOutOfBoundsException.class);
         } catch (Exception e) {
             assertThat(e).isInstanceOf(IndexOutOfBoundsException.class);
@@ -220,21 +220,21 @@ public class ArrayListStateTest {
     }
 
     private void assertTestIterator() {
-        Iterator<Item> it = state_init.iterator();
+        Iterator<Item> it = stateInit.iterator();
         assertSame(oneItem,it.next());
         assertSame(anotherItem,it.next());
         // iterator is finished
         assertFalse(it.hasNext());
         // iterator is an immutable copy, thus not changed by adding a new item
-        state_init.add(oneItem);
+        stateInit.add(oneItem);
         assertFalse(it.hasNext());
         // remove the last added item
-        state_init.remove(state_init.size()-1);
+        stateInit.remove(stateInit.size()-1);
     }
     
     @Test
     public void testIterator() {
-        state_init.add(anotherItem);
+        stateInit.add(anotherItem);
         assertTestIterator();
         // check initial state after undo
         assertInitialStateAfterUndo();

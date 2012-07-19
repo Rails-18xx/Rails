@@ -26,8 +26,8 @@ public class HashSetStateTest {
 
     private Root root;
     private ChangeStack stack;
-    private HashSetState<Item> state_default;
-    private HashSetState<Item> state_init;
+    private HashSetState<Item> stateDefault;
+    private HashSetState<Item> stateInit;
     
     private Item oneItem;
     private Item anotherItem;
@@ -41,8 +41,8 @@ public class HashSetStateTest {
         oneItem = AbstractItemImpl.create(root, ONE_ITEM_ID);
         anotherItem = AbstractItemImpl.create(root, ANOTHER_ITEM_ID);
         
-        state_default = HashSetState.create(root, DEFAULT_ID);
-        state_init = HashSetState.create(root, INIT_ID, Sets.newHashSet(oneItem));
+        stateDefault = HashSetState.create(root, DEFAULT_ID);
+        stateInit = HashSetState.create(root, INIT_ID, Sets.newHashSet(oneItem));
     }
     
     
@@ -59,20 +59,20 @@ public class HashSetStateTest {
     private void assertInitialStateAfterUndo() {
         stack.closeCurrentChangeSet();
         stack.undo();
-        assertEquals(state_default.view(), Sets.newHashSet());
-        assertEquals(state_init.view(), Sets.newHashSet(oneItem));
+        assertEquals(stateDefault.view(), Sets.newHashSet());
+        assertEquals(stateInit.view(), Sets.newHashSet(oneItem));
         stack.redo();
     }
 
     private void assertTestAdd() {
-        assertThat(state_default).containsOnly(oneItem);
-        assertThat(state_init).containsOnly(oneItem, anotherItem);
+        assertThat(stateDefault).containsOnly(oneItem);
+        assertThat(stateInit).containsOnly(oneItem, anotherItem);
     }
     
     @Test
     public void testAdd() {
-        state_default.add(oneItem);
-        state_init.add(anotherItem);
+        stateDefault.add(oneItem);
+        stateInit.add(anotherItem);
         assertTestAdd();
 
         // check undo
@@ -83,62 +83,62 @@ public class HashSetStateTest {
     @Test
     public void testRemove() {
         // remove a non-existing item
-        assertFalse(state_default.remove(oneItem));
+        assertFalse(stateDefault.remove(oneItem));
 
         // remove an existing item
-        assertTrue(state_init.remove(oneItem));
+        assertTrue(stateInit.remove(oneItem));
 
-        assertThat(state_init).doesNotContain(oneItem);
+        assertThat(stateInit).doesNotContain(oneItem);
         
         // check undo
         assertInitialStateAfterUndo();
         // ... and the redo
-        assertThat(state_init).doesNotContain(oneItem);
+        assertThat(stateInit).doesNotContain(oneItem);
     }
 
     @Test
     public void testContains() {
-        assertTrue(state_init.contains(oneItem));
-        assertFalse(state_init.contains(anotherItem));
+        assertTrue(stateInit.contains(oneItem));
+        assertFalse(stateInit.contains(anotherItem));
     }
 
     @Test
     public void testClear() {
-        state_init.add(anotherItem);
-        state_init.clear();
-        assertTrue(state_init.isEmpty());
+        stateInit.add(anotherItem);
+        stateInit.clear();
+        assertTrue(stateInit.isEmpty());
         // check undo and redo
         assertInitialStateAfterUndo();
-        assertTrue(state_init.isEmpty());
+        assertTrue(stateInit.isEmpty());
     }
 
     @Test
     public void testView() {
         ImmutableSet<Item> list = ImmutableSet.of(oneItem);
-        assertEquals(list, state_init.view());
+        assertEquals(list, stateInit.view());
     }
 
     @Test
     public void testSize() {
-        assertEquals(0, state_default.size());
-        assertEquals(1, state_init.size());
-        state_init.add(anotherItem);
-        assertEquals(2, state_init.size());
-        state_init.add(oneItem);
-        assertEquals(2, state_init.size());
+        assertEquals(0, stateDefault.size());
+        assertEquals(1, stateInit.size());
+        stateInit.add(anotherItem);
+        assertEquals(2, stateInit.size());
+        stateInit.add(oneItem);
+        assertEquals(2, stateInit.size());
     }
 
     @Test
     public void testIsEmpty() {
-        assertTrue(state_default.isEmpty());
-        assertFalse(state_init.isEmpty());
+        assertTrue(stateDefault.isEmpty());
+        assertFalse(stateInit.isEmpty());
     }
 
     private void assertTestIterator(Item thirdItem) {
         // no order is defined, so store them
         Set<Item> iterated = Sets.newHashSet();
 
-        Iterator<Item> it = state_init.iterator();
+        Iterator<Item> it = stateInit.iterator();
         iterated.add(it.next());
         iterated.add(it.next());
         
@@ -146,15 +146,15 @@ public class HashSetStateTest {
         // iterator is finished
         assertFalse(it.hasNext());
         // iterator is an immutable copy, thus not changed by adding a new item
-        state_init.add(thirdItem);
+        stateInit.add(thirdItem);
         assertFalse(it.hasNext());
         // remove the last added item
-        state_init.remove(thirdItem);
+        stateInit.remove(thirdItem);
     }
     
     @Test
     public void testIterator() {
-        state_init.add(anotherItem);
+        stateInit.add(anotherItem);
         Item thirdItem = AbstractItemImpl.create(root, "Third");
         assertTestIterator(thirdItem);
         // check initial state after undo

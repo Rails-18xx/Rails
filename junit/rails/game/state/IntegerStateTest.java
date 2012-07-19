@@ -15,8 +15,8 @@ public class IntegerStateTest {
 
     private Root root;
     private ChangeStack stack;
-    private IntegerState state_default;
-    private IntegerState state_init;
+    private IntegerState stateDefault;
+    private IntegerState stateInit;
     
 
     @Before
@@ -24,62 +24,62 @@ public class IntegerStateTest {
         root = StateTestUtils.setUpRoot();
         stack = root.getStateManager().getChangeStack();
         
-        state_default = IntegerState.create(root, DEFAULT_ID);
-        state_init = IntegerState.create(root, INIT_ID, INIT);
+        stateDefault = IntegerState.create(root, DEFAULT_ID);
+        stateInit = IntegerState.create(root, INIT_ID, INIT);
     }
     
     @Test
     public void testValue() {
-        assertEquals(state_default.value(), 0);
-        assertEquals(state_init.value(), INIT);
+        assertEquals(stateDefault.value(), 0);
+        assertEquals(stateInit.value(), INIT);
     }
 
     @Test
     public void testSet() {
-        state_default.set(OTHER);
-        assertEquals(state_default.value(), OTHER);
-        state_init.set(0);
-        assertEquals(state_init.value(), 0);
+        stateDefault.set(OTHER);
+        assertEquals(stateDefault.value(), OTHER);
+        stateInit.set(0);
+        assertEquals(stateInit.value(), 0);
         
     }
 
     @Test
     public void testAdd() {
-        state_default.add(OTHER);
-        assertEquals(state_default.value(), OTHER);
-        state_init.add(OTHER);
-        assertEquals(state_init.value(), INIT + OTHER);
+        stateDefault.add(OTHER);
+        assertEquals(stateDefault.value(), OTHER);
+        stateInit.add(OTHER);
+        assertEquals(stateInit.value(), INIT + OTHER);
     }
     
     
     @Test
     public void testSetSameIgnored() {
-        state_default.set(0);
-        state_init.set((INIT));
+        stateDefault.set(0);
+        stateInit.set((INIT));
         stack.closeCurrentChangeSet();
-        assertThat(stack.getLastClosedChangeSet().getStates()).doesNotContain(state_default, state_init);
+        assertThat(stack.getLastClosedChangeSet().getStates()).doesNotContain(stateDefault, stateInit);
     }
 
     @Test
     public void testUndoRedo() {
         
-        state_default.set(INIT);
-        state_default.add(OTHER);
+        stateDefault.set(INIT);
+        stateDefault.add(OTHER);
         
-        state_init.add(OTHER);
-        state_init.set(0);
+        stateInit.add(OTHER);
+        stateInit.set(0);
         stack.closeCurrentChangeSet();
         
-        assertEquals(state_default.value(), INIT+OTHER);
-        assertEquals(state_init.value(), 0);
+        assertEquals(stateDefault.value(), INIT+OTHER);
+        assertEquals(stateInit.value(), 0);
 
         stack.undo();
-        assertEquals(state_default.value(), 0);
-        assertEquals(state_init.value(), INIT);
+        assertEquals(stateDefault.value(), 0);
+        assertEquals(stateInit.value(), INIT);
 
         stack.redo();
-        assertEquals(state_default.value(), INIT+OTHER);
-        assertEquals(state_init.value(), 0);
+        assertEquals(stateDefault.value(), INIT+OTHER);
+        assertEquals(stateInit.value(), 0);
     }
 
 }

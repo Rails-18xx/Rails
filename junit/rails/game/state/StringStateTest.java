@@ -17,8 +17,8 @@ public class StringStateTest {
 
     private Root root;
     private ChangeStack stack;
-    private StringState state_default;
-    private StringState state_init;
+    private StringState stateDefault;
+    private StringState stateInit;
     
 
     @Before
@@ -26,73 +26,73 @@ public class StringStateTest {
         root = StateTestUtils.setUpRoot();
         stack = root.getStateManager().getChangeStack();
         
-        state_default = StringState.create(root, DEFAULT_ID);
-        state_init = StringState.create(root, INIT_ID, INIT);
+        stateDefault = StringState.create(root, DEFAULT_ID);
+        stateInit = StringState.create(root, INIT_ID, INIT);
     }
     
     @Test
     public void testValue() {
-        assertEquals(state_default.value(), "");
-        assertEquals(state_init.value(), INIT);
+        assertEquals(stateDefault.value(), "");
+        assertEquals(stateInit.value(), INIT);
     }
 
     @Test
     public void testSet() {
-        state_default.set(OTHER);
-        assertEquals(state_default.value(), OTHER);
-        state_init.set("");
-        assertEquals(state_init.value(), "");
-        state_init.set(null);
-        assertEquals(state_init.value(), null);
+        stateDefault.set(OTHER);
+        assertEquals(stateDefault.value(), OTHER);
+        stateInit.set("");
+        assertEquals(stateInit.value(), "");
+        stateInit.set(null);
+        assertEquals(stateInit.value(), null);
     }
 
     @Test
     public void testAppend() {
-        state_default.append(OTHER, null);
-        assertEquals(state_default.value(), OTHER);
-        state_default.append(OTHER, "");
-        assertEquals(state_default.value(), OTHER + OTHER);
+        stateDefault.append(OTHER, null);
+        assertEquals(stateDefault.value(), OTHER);
+        stateDefault.append(OTHER, "");
+        assertEquals(stateDefault.value(), OTHER + OTHER);
         
-        state_init.append(OTHER, ",");
-        assertEquals(state_init.value(), INIT + "," + OTHER);
+        stateInit.append(OTHER, ",");
+        assertEquals(stateInit.value(), INIT + "," + OTHER);
     }
     
     
     @Test
     public void testSetSameIgnored() {
-        state_default.set("");
-        state_init.set(null);
+        stateDefault.set("");
+        stateInit.set(null);
         stack.closeCurrentChangeSet();
-        assertThat(stack.getLastClosedChangeSet().getStates()).doesNotContain(state_default);
-        assertThat(stack.getLastClosedChangeSet().getStates()).contains(state_init);
+        assertThat(stack.getLastClosedChangeSet().getStates()).doesNotContain(stateDefault);
+        assertThat(stack.getLastClosedChangeSet().getStates()).contains(stateInit);
 
-        state_default.set(null);
-        state_init.set(null);
+        stateDefault.set(null);
+        stateInit.set(null);
         stack.closeCurrentChangeSet();
-        assertThat(stack.getLastClosedChangeSet().getStates()).contains(state_default);
-        assertThat(stack.getLastClosedChangeSet().getStates()).doesNotContain(state_init);
+        assertThat(stack.getLastClosedChangeSet().getStates()).contains(stateDefault);
+        assertThat(stack.getLastClosedChangeSet().getStates()).doesNotContain(stateInit);
     }
 
     @Test
     public void testUndoRedo() {
         
-        state_default.set(OTHER);
-        state_default.append(OTHER, null);
+        stateDefault.set(OTHER);
+        stateDefault.append(OTHER, null);
         
-        state_init.append(OTHER, "");
-        state_init.set(null);
+        stateInit.append(OTHER, "");
+        stateInit.set(null);
         stack.closeCurrentChangeSet();
         
-        assertEquals(state_default.value(), OTHER+OTHER);
-        assertNull(state_init.value());
+        assertEquals(stateDefault.value(), OTHER+OTHER);
+        assertNull(stateInit.value());
 
         stack.undo();
-        assertEquals(state_default.value(), "");
-        assertEquals(state_init.value(), INIT);
+        assertEquals(stateDefault.value(), "");
+        assertEquals(stateInit.value(), INIT);
 
         stack.redo();
-        assertEquals(state_default.value(), OTHER+OTHER);
-        assertNull(state_init.value());
+        assertEquals(stateDefault.value(), OTHER+OTHER);
+        assertNull(stateInit.value());
     }
 
 
