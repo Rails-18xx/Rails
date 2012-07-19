@@ -3,10 +3,10 @@ package rails.game.state;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Iterator;
+import java.util.Set;
 
 
 import org.junit.Before;
@@ -135,9 +135,14 @@ public class HashSetStateTest {
     }
 
     private void assertTestIterator(Item thirdItem) {
+        // no order is defined, so store them
+        Set<Item> iterated = Sets.newHashSet();
+
         Iterator<Item> it = state_init.iterator();
-        assertSame(oneItem,it.next());
-        assertSame(anotherItem,it.next());
+        iterated.add(it.next());
+        iterated.add(it.next());
+        
+        assertThat(iterated).containsOnly(oneItem, anotherItem);
         // iterator is finished
         assertFalse(it.hasNext());
         // iterator is an immutable copy, thus not changed by adding a new item

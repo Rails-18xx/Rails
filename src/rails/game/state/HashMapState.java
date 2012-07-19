@@ -8,8 +8,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A stateful version of a HashMap
@@ -25,6 +29,7 @@ public final class HashMapState<K,V> extends State {
     }
 
     /**
+     * creates an empty HashMapState
      * @return empty HashMapState
      */
     public static <K,V> HashMapState<K,V> create(Item parent, String id){
@@ -32,78 +37,132 @@ public final class HashMapState<K,V> extends State {
     }
 
     /**
-     * @return prefilled HashMapState
+     * creates an initialized (filled) HashMapState
+     * @param map used for initialization
+     * @return initialized HashMapState
      */
     public static <K,V> HashMapState<K,V> create(Item parent, String id, Map<K,V> map){
         return new HashMapState<K,V>(parent, id, map);
     }
 
-    public void put(K key, V value) {
-        // check if element already has the specified value
-        if (map.containsKey(key) && map.get(key).equals(value)) return;
-        new HashMapChange<K,V>(this, key, value);
+    /**
+     * Add key,value pair to map
+     * @param key for mapping
+     * @param value associated with key 
+     * @return previous value associated with specified key, or null if there was no mapping for the key (or null was the value).
+     */
+    public V put(K key, V value) {
+        // check if the key is in the map
+        if (map.containsKey(key)) {
+            V oldValue = map.get(key);
+            // check if element already has the specified value
+            if (!oldValue.equals(value)) {
+                new HashMapChange<K,V>(this, key, value);
+            }
+            return oldValue;
+        } else {
+            // if not in map, add tuple and return null
+            new HashMapChange<K,V>(this, key, value);
+            return null;
+        }
     }
-
+    
+    /**
+     * Adds all (key,value) pairs
+     * @param map that gets added
+     * @throws NullPointerException if map is null
+     */
+    
     public void putAll(Map<K,V> map) {
+        checkNotNull(map);
         for (K key:map.keySet()) {
             put(key, map.get(key));
         }
     }
-
+    
+    /**
+     * return value for specified key
+     * @param key used to retrieve value
+     * @return value associated with the key, null if map does not contain key
+     */
     public V get(K key) {
         return map.get(key);
     }
 
-    public void remove(K key) {
+    /**
+     * removes key from mapping
+     * @param key to be removed from map
+     * @return value previously associated with key, null if map did not contain key
+     */
+    public V remove(K key) {
         // check if map contains key
-        if (!map.containsKey(key)) return;
+        if (!map.containsKey(key)) return null;
+        V old = map.get(key);
         new HashMapChange<K,V>(this, key);
+        return old;
     }
 
+    /**
+     * test if key is present in mapping
+     * @param key whose presence is tested
+     * @return true if key is present
+     */
     public boolean containsKey(K key) {
         return map.containsKey(key);
     }
 
+    /**
+     * removes all mappings from the map
+     */
     public void clear() {
-        // Two-step process to avoid concurrent modification exception
-        List<K> keys = new ArrayList<K>(map.keySet());
-        for (K key : keys) {
+        for (K key : ImmutableSet.copyOf(map.keySet())) {
             remove (key);
         }
     }
 
     /**
-     * (re)intializes the state map from another map
+     * checks if map is empty
+     * @return true if map is empty
+     */
+    public boolean isEmpty() {
+        return map.isEmpty();
+    }
+
+    /**
+     * (re)initializes the state map from another map
+     * @param map used for initialization
      */
     public void initFromMap(Map<K,V> initMap) {
         // all from initMap get added
         putAll(initMap);
         // remove those only in current map
-        for (K key:Sets.difference(map.keySet(), initMap.keySet())) {
+        for (K key:ImmutableSet.copyOf(Sets.difference(map.keySet(), initMap.keySet()))) {
             remove(key);
         }
     }
 
     /**
-     * @return unmodifiable view of map
+     * creates an immutable copy of the map
+     * @return immutable version of the map
      */
-    public Map<K,V> viewMap() {
-        return Collections.unmodifiableMap(map);
+    public ImmutableMap<K,V> viewMap() {
+        return ImmutableMap.copyOf(map);
     }
 
     /**
-     * @return unmodifiable view of keyset
+     * creates an immutable copy of the keyset
+     * @return immutable keyset of the map
      */
-    public Set<K> viewKeySet() {
-        return Collections.unmodifiableSet(map.keySet());
+    public ImmutableSet<K> viewKeySet() {
+        return ImmutableSet.copyOf(map.keySet());
     }
 
-    public Collection<V> viewValues() {
-        return Collections.unmodifiableCollection(map.values());
-    }
-
-    public boolean isEmpty() {
-        return map.isEmpty();
+    /**
+     * creates an immutable copy of the values
+     * @return immutable list of values
+     */
+    public ImmutableList<V> viewValues() {
+        return ImmutableList.copyOf(map.values());
     }
 
     public String getData() {
