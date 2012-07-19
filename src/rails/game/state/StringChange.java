@@ -18,18 +18,15 @@ final class StringChange extends Change {
         super.init(state);
     }
     
-    @Override
-    public void execute() {
+    @Override void execute() {
         state.change(newValue);
     }
 
-    @Override
-    public void undo() {
+    @Override void undo() {
         state.change(oldValue);
     }
 
-    @Override
-    public StringState getState() {
+    @Override StringState getState() {
         return state;
     }
 

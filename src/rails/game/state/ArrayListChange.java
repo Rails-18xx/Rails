@@ -32,18 +32,15 @@ final class ArrayListChange<E> extends Change {
         super.init(state);
     }
     
-    @Override
-    public void execute() {
+    @Override void execute() {
         state.change(object, index, addToList);
     }
 
-    @Override
-    public void undo() {
+    @Override void undo() {
         state.change(object, index, !addToList);
     }
 
-    @Override
-    public ArrayListState<E> getState() {
+    @Override ArrayListState<E> getState() {
         return state;
     }
     

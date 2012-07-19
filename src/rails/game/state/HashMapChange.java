@@ -38,18 +38,15 @@ final class HashMapChange<K,V> extends Change {
         super.init(state);
     }
 
-    @Override
-    public void execute() {
+    @Override void execute() {
         state.change(key, newValue, remove);
     }
 
-    @Override
-    public void undo() {
+    @Override void undo() {
         state.change(key, oldValue, !existed);
     }
 
-    @Override
-    public HashMapState<K,V> getState() {
+    @Override HashMapState<K,V> getState() {
         return state;
     }
 

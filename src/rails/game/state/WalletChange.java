@@ -15,24 +15,21 @@ final class WalletChange<T extends CountableItem> extends Change {
         super.init(in);
     }
     
-    @Override
-    public void execute() {
+    @Override void execute() {
         in.change(item, amount);
         if (out != null) {
             out.change(item, - amount);
         }
     }
 
-    @Override
-    public void undo() {
+    @Override void undo() {
         in.change(item, - amount);
         if (out != null) {
             out.change(item, amount);
         }
     }
 
-    @Override
-    public Wallet<T> getState() {
+    @Override Wallet<T> getState() {
         return in;
     }
     

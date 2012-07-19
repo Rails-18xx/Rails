@@ -14,18 +14,15 @@ final class MultimapChange<K,V> extends Change {
         super.init(state);
     }
     
-    @Override
-    public void execute() {
+    @Override void execute() {
         state.change(key, value, addToMap);
     }
 
-    @Override
-    public void undo() {
+    @Override void undo() {
         state.change(key, value, !addToMap);
     }
 
-    @Override
-    public MultimapState<K,V> getState() {
+    @Override MultimapState<K,V> getState() {
         return state;
     }
 

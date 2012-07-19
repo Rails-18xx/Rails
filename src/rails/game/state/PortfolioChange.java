@@ -13,24 +13,21 @@ final class PortfolioChange<T extends Ownable<T>> extends Change {
         super.init(in);
     }
     
-    @Override
-    public void execute() {
+    @Override void execute() {
         in.change(item, true);
         if (out != null) {
             out.change(item,  false);
         }
     }
 
-    @Override
-    public void undo() {
+    @Override void undo() {
         in.change(item,  false);
         if (out != null) {
             out.change(item, true);
         }
     }
 
-    @Override
-    public Portfolio<? super T> getState() {
+    @Override Portfolio<? super T> getState() {
         return in;
     }
     

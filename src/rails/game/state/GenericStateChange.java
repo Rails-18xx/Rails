@@ -12,18 +12,15 @@ final class GenericStateChange<E> extends Change {
         super.init(state);
     }
 
-    @Override
-    public void execute() {
+    @Override void execute() {
         state.change(next);
     }
 
-    @Override
-    public void undo() {
+    @Override void undo() {
         state.change(previous);
     }
 
-    @Override
-    public GenericState<E> getState() {
+    @Override GenericState<E> getState() {
         return state;
     }
 

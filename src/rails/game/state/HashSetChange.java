@@ -18,18 +18,15 @@ final class HashSetChange<E> extends Change {
         super.init(state);
     }
 
-    @Override
-    public void execute() {
+    @Override void execute() {
         state.change(element, addToSet);
     }
 
-    @Override
-    public void undo() {
+    @Override void undo() {
         state.change(element, !addToSet);
     }
     
-    @Override
-    public HashSetState<E> getState() {
+    @Override HashSetState<E> getState() {
         return state;
     }
     
