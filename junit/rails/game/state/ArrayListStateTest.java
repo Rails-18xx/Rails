@@ -44,7 +44,9 @@ public class ArrayListStateTest {
         state_default = ArrayListState.create(root, DEFAULT_ID);
         state_init = ArrayListState.create(root, INIT_ID, Lists.newArrayList(oneItem));
     }
-    
+
+    // helper function to check the initial state after undo
+    // includes redo, so after returning the state should be unchanged
     private void assertInitialStateAfterUndo() {
         stack.closeCurrentChangeSet();
         stack.undo();
@@ -167,6 +169,9 @@ public class ArrayListStateTest {
     public void testClear() {
         state_init.add(anotherItem);
         state_init.clear();
+        assertTrue(state_init.isEmpty());
+        // check undo and redo
+        assertInitialStateAfterUndo();
         assertTrue(state_init.isEmpty());
     }
 

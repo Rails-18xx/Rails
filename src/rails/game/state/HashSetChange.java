@@ -4,9 +4,9 @@ package rails.game.state;
  * Change associated with HashSetState
  */
 final class HashSetChange<E> extends Change {
-    final private HashSetState<E> state;
-    final private E element;
-    final private boolean addToSet;
+    private final HashSetState<E> state;
+    private final E element;
+    private final boolean addToSet;
 
     /**
      * Add/Remove element to/from the set

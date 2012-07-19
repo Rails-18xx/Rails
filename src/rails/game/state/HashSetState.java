@@ -63,10 +63,10 @@ public final class HashSetState<E> extends State implements Iterable<E> {
     }
 
     /**
-     * remove all elements from HashSetState (creates Moves)
+     * removes all elements
      */
     public void clear() {
-        for (E element:set) {
+        for (E element:ImmutableSet.copyOf(set)) {
             remove(element);
         }
     }

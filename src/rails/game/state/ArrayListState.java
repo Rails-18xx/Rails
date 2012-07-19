@@ -100,6 +100,9 @@ public final class ArrayListState<E> extends State implements Iterable<E>  {
         return list.contains(element);
     }
 
+    /**
+     * removes all elements 
+     */
     public void clear() {
         for (E element:ImmutableList.copyOf(list)) {
             remove(element);
