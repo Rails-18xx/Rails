@@ -69,7 +69,7 @@ public abstract class SpecialProperty extends OwnableItem<SpecialProperty> {
         LoggerFactory.getLogger(SpecialProperty.class.getPackage().getName());
 
     public SpecialProperty(Item parent, String id) {
-        super(parent, id);
+        super(parent, id, SpecialProperty.class);
         uniqueId = Integer.valueOf(id);
         gameManager = GameManager.getInstance();
         gameManager.storeObject(STORAGE_NAME, this);

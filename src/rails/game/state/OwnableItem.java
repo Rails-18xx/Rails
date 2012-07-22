@@ -1,24 +1,18 @@
 package rails.game.state;
 
-public abstract class OwnableItem<T extends OwnableItem<T>> extends AbstractItem implements Ownable<T> {
+public abstract class OwnableItem<T extends Ownable> extends AbstractItem implements Ownable {
     
-    private Portfolio<T> portfolio;
+    private Class<T> type;
     
-    protected OwnableItem(Item parent, String id) {
+    protected OwnableItem(Item parent, String id, Class<T> type) {
         super(parent, id);
+        this.type = type;
     }
-    
-    public Portfolio<T> getPortfolio() {
-        return portfolio;
+
+    // This unchecked warning is required as the type parameter above is 
+    // used to define the type of portfolios the items are stored
+    @SuppressWarnings("unchecked")
+    public void moveTo (Owner newOwner) {
+        getRoot().getStateManager().getPortfolioManager().moveItem(type, (T) this, newOwner);
     }
-    
-    public Owner getOwner() {
-        return portfolio.getOwner();
-    }
-    
-    public void setPortfolio(Portfolio<T> p) {
-        portfolio = p;
-    }
-    
-    
 }

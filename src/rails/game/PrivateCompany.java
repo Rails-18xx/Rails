@@ -18,7 +18,7 @@ import rails.util.*;
 
 // FIXME: Move static field numberOfPrivateCompanies to CompanyManager
 
-public class PrivateCompany extends Company implements Ownable<PrivateCompany>, Certificate, Closeable {
+public class PrivateCompany extends Company implements Ownable, Certificate, Closeable {
 
     public static final String TYPE_TAG = "Private";
     public static final String REVENUE = "revenue";

@@ -30,7 +30,7 @@ public final class StateManager extends Manager {
         models = HashMultimapState.create(this, null);
     
     
-//  private final PortfolioManager portfolioManager = PortfolioManager.create(this, "portfolioManager");
+    private final PortfolioManager portfolioManager = PortfolioManager.create(this, null);
 //  private final WalletManager walletManager = WalletManager.create(this, "walletManager");
 
     private StateManager(Root parent, String id) {
@@ -241,6 +241,10 @@ public final class StateManager extends Manager {
 
     ChangeStack getChangeStack() {
         return changeStack;
+    }
+    
+    PortfolioManager getPortfolioManager() {
+        return portfolioManager;
     }
     
 }

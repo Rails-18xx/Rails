@@ -16,8 +16,8 @@ public class BaseTokensModel extends Model {
 
     private BaseTokensModel(PublicCompany parent, String id) {
         super(parent, id);
-        freeBaseTokens = PortfolioList.create(parent, "freeBaseTokens");
-        laidBaseTokens = PortfolioList.create(parent, "laidBaseTokens");
+        freeBaseTokens = PortfolioList.create(parent, "freeBaseTokens", Token.class);
+        laidBaseTokens = PortfolioList.create(parent, "laidBaseTokens", Token.class);
     }
 
     public static BaseTokensModel create(PublicCompany parent, String id){

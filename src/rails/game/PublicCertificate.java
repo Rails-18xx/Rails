@@ -49,7 +49,7 @@ public class PublicCertificate extends OwnableItem<PublicCertificate> implements
     // TODO: Should every certificate have its own id and be registered with the parent?
     public PublicCertificate(Item parent, String id, int shares, boolean president, 
             boolean available, float certificateCount, int index) {
-        super(parent, id);
+        super(parent, id, PublicCertificate.class);
         this.shares = shares;
         this.president = president;
         this.initiallyAvailable = available;
@@ -59,7 +59,7 @@ public class PublicCertificate extends OwnableItem<PublicCertificate> implements
 
     // FIXME: Check if this does work, most likely not, as it duplicates IDs
     public PublicCertificate(PublicCertificate oldCert) {
-        super(oldCert.getParent(), oldCert.getId());
+        super(oldCert.getParent(), oldCert.getId(), PublicCertificate.class);
         this.shares = oldCert.getShares();
         this.president = oldCert.isPresidentShare();
         this.initiallyAvailable = oldCert.isInitiallyAvailable();

@@ -22,7 +22,7 @@ public abstract class Token extends OwnableItem<Token>  {
         LoggerFactory.getLogger(Token.class.getPackage().getName());
     
     protected Token(Item parent, String id) {
-        super(parent, id);
+        super(parent, id, Token.class);
         uniqueId = id;
         GameManager.getInstance().storeObject(STORAGE_NAME, this);
     }

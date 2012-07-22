@@ -27,7 +27,7 @@ public class Train extends OwnableItem<Train> {
             LoggerFactory.getLogger(Train.class.getPackage().getName());
 
     protected Train(Item parent, String id) {
-        super(parent, id);
+        super(parent, id, Train.class);
     }
     // TODO: Train creation is shared by three classes, simplify that
     public static Train create(Item parent, String id, TrainCertificateType certType, TrainType type)

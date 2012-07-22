@@ -126,7 +126,8 @@ StationHolder {
     protected List<PublicCompany> destinations;
 
     /** Tokens that are not bound to a Station (City), such as Bonus tokens */
-    protected final PortfolioList<Token> offStationTokens = PortfolioList.create(this, "offStationTokens");
+    protected final PortfolioList<Token> offStationTokens = PortfolioList.create(this,
+            "offStationTokens", Token.class);
 
     /** Storage of revenueBonus that are bound to the hex */
     protected List<RevenueBonusTemplate> revenueBonuses = null;

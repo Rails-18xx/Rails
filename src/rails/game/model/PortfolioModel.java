@@ -57,14 +57,15 @@ public final class PortfolioModel extends Model implements PortfolioHolder {
 
     /** Owned tokens */
     // TODO Currently only used to discard expired Bonus tokens.
-    private final Portfolio<Token> bonusTokens = PortfolioList.create(this, "BonusTokens");
+    private final Portfolio<Token> bonusTokens = PortfolioList.create(this, "BonusTokens", Token.class);
     
     /**
      * Private-independent special properties. When moved here, a special
      * property no longer depends on the private company being alive. Example:
      * 18AL named train tokens.
      */
-    private final Portfolio<SpecialProperty> specialProperties = PortfolioList.create(this, "SpecialProperties"); 
+    private final Portfolio<SpecialProperty> specialProperties = 
+            PortfolioList.create(this, "SpecialProperties", SpecialProperty.class); 
 
     private final GameManager gameManager;
 

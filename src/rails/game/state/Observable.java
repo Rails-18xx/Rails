@@ -44,7 +44,8 @@ public abstract class Observable implements Item {
         }
         
     }
-    
+
+    // has to be delayed as at the time of initialization the complete link is not yet defined
     protected StateManager getStateManager() {
         return context.getRoot().getStateManager();
     }

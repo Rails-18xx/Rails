@@ -8,16 +8,16 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
 
-public final class PortfolioMap<T extends Ownable<T>> extends Portfolio<T> {
+public final class PortfolioMap<T extends Ownable> extends Portfolio<T> {
 
     private ArrayListMultimap<Item, T> portfolio = ArrayListMultimap.create();
 
-    private PortfolioMap(PortfolioHolder parent, String id) {
-        super(parent, id);
+    private PortfolioMap(PortfolioHolder parent, String id, Class<T> type) {
+        super(parent, id, type);
     }
     
-    public static <T extends Ownable<T>> PortfolioMap<T> create(PortfolioHolder parent, String id) {
-        return new PortfolioMap<T>(parent, id);
+    public static <T extends Ownable> PortfolioMap<T> create(PortfolioHolder parent, String id, Class<T> type) {
+        return new PortfolioMap<T>(parent, id, type);
     }
 
     public boolean initialAdd(T item) {
@@ -28,7 +28,7 @@ public final class PortfolioMap<T extends Ownable<T>> extends Portfolio<T> {
 
     public boolean moveInto(T item) {
         if (portfolio.containsValue(item)) return false;
-        new PortfolioChange<T>(this, item.getPortfolio(), item);
+        getPortfolioManager().moveItem(getType(), item, this);
         return true;
     }
 
@@ -81,7 +81,6 @@ public final class PortfolioMap<T extends Ownable<T>> extends Portfolio<T> {
     void change(T item, boolean intoPortfolio) {
         if (intoPortfolio) {
             portfolio.put(item.getParent(), item);
-            item.setPortfolio(this);
         } else {
             portfolio.remove(item.getParent(), item);
         }

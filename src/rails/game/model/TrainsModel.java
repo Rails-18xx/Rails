@@ -21,7 +21,7 @@ public class TrainsModel extends Model {
 
     private TrainsModel(PortfolioHolder parent, String id) {
         super(parent, id);
-        trains = PortfolioMap.create(parent, "trains");
+        trains = PortfolioMap.create(parent, "trains", Train.class);
     }
     
     /** 

@@ -1,20 +1,15 @@
 package rails.game.state;
 
-public interface Ownable<T extends Ownable<T>> extends Item {
-    
+public interface Ownable extends Item {
+   
     /**
-     * @return the current portfolio
+     * move to new owner
      */
-    public Portfolio<T> getPortfolio();
+    public void moveTo(Class<? extends Ownable> type, Owner newOwner);
     
     /**
      * @return the current owner
      */
     public Owner getOwner();
     
-    /**
-     * @param p the new Portfolio to set
-     */
-    public void setPortfolio(Portfolio<T> p);
-
 }

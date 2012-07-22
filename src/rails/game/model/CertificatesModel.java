@@ -27,7 +27,7 @@ public final class CertificatesModel extends Model {
 
     private CertificatesModel(PortfolioHolder parent) {
         super(parent, ID);
-        certificates = PortfolioMap.create(parent, "certificates");
+        certificates = PortfolioMap.create(parent, "certificates", PublicCertificate.class);
     }
     
     public static CertificatesModel create(PortfolioHolder parent) {

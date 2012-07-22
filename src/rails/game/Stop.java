@@ -99,7 +99,7 @@ public class Stop extends AbstractItem implements PortfolioHolder {
         super(hex, String.valueOf(number));
         this.number = number;
         uniqueId = getParent().getId() + "_" + number;
-        tokens = PortfolioList.create(this, "tokens");
+        tokens = PortfolioList.create(this, "tokens", Token.class);
         relatedStation = GenericState.create(this, "City_"+uniqueId+"_station");
     }
 

@@ -6,16 +6,16 @@ import java.util.Iterator;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
-public final class PortfolioList<T extends Ownable<T>> extends Portfolio<T> {
+public final class PortfolioList<T extends Ownable> extends Portfolio<T> {
 
     private ArrayList<T> portfolio = Lists.newArrayList();
     
-    private PortfolioList(PortfolioHolder parent, String id) {
-        super(parent, id);
+    private PortfolioList(PortfolioHolder parent, String id, Class<T> type) {
+        super(parent, id, type);
     }
     
-    public static <T extends Ownable<T>> PortfolioList<T> create(PortfolioHolder parent, String id) {
-        return new PortfolioList<T>(parent, id);
+    public static <T extends Ownable> PortfolioList<T> create(PortfolioHolder parent, String id, Class<T> type) {
+        return new PortfolioList<T>(parent, id, type);
     }
 
     public boolean initialAdd(T item) {
@@ -26,7 +26,7 @@ public final class PortfolioList<T extends Ownable<T>> extends Portfolio<T> {
 
     public boolean moveInto(T item) {
         if (portfolio.contains(item)) return false;
-        new PortfolioChange<T>(this, item.getPortfolio(), item);
+        getPortfolioManager().moveItem(getType(), item, this);
         return true;
     }
 
@@ -49,7 +49,6 @@ public final class PortfolioList<T extends Ownable<T>> extends Portfolio<T> {
     void change(T item, boolean intoPortfolio) {
         if (intoPortfolio) {
             portfolio.add(item);
-            item.setPortfolio(this);
         } else {
             portfolio.remove(item);
         }

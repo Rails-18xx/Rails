@@ -1,15 +1,24 @@
 package rails.game.state;
-
-import rails.game.model.PortfolioModel;
-
 import com.google.common.collect.ImmutableList;
 
-public abstract class Portfolio<T extends Ownable<T>> extends State implements Iterable<T> {
+public abstract class Portfolio<T extends Ownable> extends State implements Iterable<T> {
 
-    protected Portfolio(PortfolioHolder parent, String id) {
+    private final Class<T> type;
+    
+    protected Portfolio(PortfolioHolder parent, String id, Class<T> type) {
         super(parent, id);
+        this.type = type;
     }
 
+    protected Class<T> getType() {
+        return type;
+    }
+    
+    // delayed due to initialization issues
+    protected PortfolioManager getPortfolioManager() {
+        return getStateManager().getPortfolioManager();
+    }
+    
     /**
      * @return the parent of a portfolio is a PortfolioHolder
      */
@@ -19,8 +28,8 @@ public abstract class Portfolio<T extends Ownable<T>> extends State implements I
     }
     
     public Owner getOwner() {
-        if (getParent() instanceof PortfolioModel) {
-            return ((PortfolioModel)getParent()).getParent();
+        if (getParent() instanceof PortfolioHolder) {
+            return ((PortfolioHolder)getParent()).getParent();
         } else {
             return (Owner)getParent();
         }
@@ -41,7 +50,7 @@ public abstract class Portfolio<T extends Ownable<T>> extends State implements I
      */
     // FIXME: Rename that to add
     public abstract boolean moveInto(T item);
-
+    
     /**
      * @param item that is checked if it is in the portfolio
      * @return true if contained, false otherwise
@@ -64,11 +73,11 @@ public abstract class Portfolio<T extends Ownable<T>> extends State implements I
     public abstract boolean isEmpty();
     
     abstract void change(T item, boolean intoPortfolio);
-
+    
     /**
      * Moves all items from one portfolio to the other
      */
-    public static <T extends Ownable<T>> void moveAll(Portfolio<T> from, Portfolio<T> to) {
+    public static <T extends Ownable> void moveAll(Portfolio<T> from, Portfolio<T> to) {
         for (T item: from.items()) {
             to.moveInto(item);
         }

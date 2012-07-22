@@ -17,7 +17,7 @@ public final class PrivatesModel extends Model {
 
     private PrivatesModel(PortfolioHolder parent, String id) {
         super(parent, id);
-        privates = PortfolioList.create(parent, "privates");
+        privates = PortfolioList.create(parent, "privates", PrivateCompany.class);
     }
     
     /**

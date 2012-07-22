@@ -1,8 +1,20 @@
 package rails.game.state;
 
+import java.util.List;
+
 /**
- * This is currently a marker for all objects that contain a Portfolio
+ * A PortfolioHolder holds portfolios indirectly for an Owner
+ * 
+ * An Implementation is the PortfolioModel
  */
 public interface PortfolioHolder extends Item {
+    
+    /**
+     * @return the owner of the PortfolioHolder
+     */
+    public Owner getParent();
+    
+    
+    public List<Portfolio<?>> getPortfolios();
     
 }

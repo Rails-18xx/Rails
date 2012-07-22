@@ -53,7 +53,8 @@ Cloneable, Comparable<Company>, PortfolioHolder {
     protected final BooleanState closedObject = BooleanState.create(this, "closed", false);
 
     // Moved here from PrivayeCOmpany on behalf of 1835
-    protected final PortfolioList<SpecialProperty> specialProperties = PortfolioList.create(this, "specialProperties");
+    protected final PortfolioList<SpecialProperty> specialProperties = 
+            PortfolioList.create(this, "specialProperties", SpecialProperty.class);
 
     protected static Logger log =
         LoggerFactory.getLogger(Company.class.getPackage().getName());

@@ -1703,7 +1703,8 @@ public class GameManager extends AbstractItem implements ConfigurableComponent, 
     public boolean addSpecialProperty(SpecialProperty property) {
         
         if (commonSpecialProperties == null) {
-            commonSpecialProperties = PortfolioList.create(this, "CommonSpecialProperties");
+            commonSpecialProperties = PortfolioList.create(this, 
+                    "CommonSpecialProperties", SpecialProperty.class);
         }
         return commonSpecialProperties.moveInto(property);
     }
