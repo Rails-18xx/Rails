@@ -977,8 +977,9 @@ public class GameStatus extends GridPanel implements ActionListener {
     public void setPriorityPlayer(int index) {
 
         for (int j = 0; j < np; j++) {
-            upperPlayerCaption[j].setText(players[j].getId()
-                    + (j == index ? " PD" : ""));
+            String playerNameAndPriority = players[j].getId() + (j == index ? " PD" : "");
+            upperPlayerCaption[j].setText(playerNameAndPriority);
+            lowerPlayerCaption[j].setText(playerNameAndPriority);
         }
     }
 
