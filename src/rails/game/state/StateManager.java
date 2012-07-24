@@ -26,8 +26,6 @@ public final class StateManager extends Manager {
 
     private final HashMultimapState<Observable, Observer> 
         observers = HashMultimapState.create(this, null);
-    private final HashMapState<Observer, Formatter<? extends Observable>> 
-        formatters = HashMapState.create(this, null);
     private final HashMultimapState<Observable, Model> 
         models = HashMultimapState.create(this, null);
     
@@ -78,17 +76,7 @@ public final class StateManager extends Manager {
         observers.put(observable, observer);
     }
     
-    /**
-     * Adds the combination of observer to observable, using a Formatter
-     * @throws an IllegalArgumentException - if observer is already assigned to an observable
-     */
-    <T extends Observable>  void addObserver(Observer observer, Formatter<T> formatter) {
-        this.addObserver(observer, formatter.getObservable());
-        formatters.put(observer, formatter);
-    }
-    
     boolean removeObserver(Observer observer, Observable observable) {
-        formatters.remove(observer);
         return observers.remove(observable, observer);
     }
     
@@ -195,13 +183,7 @@ public final class StateManager extends Manager {
     void updateObservers(Set<State> states) {
         for (Observable observable:getSortedObservables(states)) {
             for (Observer observer:observable.getObservers()) {
-                // check if formatter is defined
-                if (formatters.containsKey(observer)) {
-                    observer.update(formatters.get(observer).observerText());
-                } else {
-                    // otherwise use observable text
                     observer.update(observable.observerText());
-                }
             }
         }
     }
