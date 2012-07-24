@@ -87,7 +87,7 @@ public class BuyPrivate extends PossibleORAction {
     @Override
     public String toString() {
         return "BuyPrivate " + privateCompany.getId() + " holder="
-               + privateCompany.getPortfolio().getId();
+               + privateCompany.getOwner().getId();
     }
 
     /** Deserialize */

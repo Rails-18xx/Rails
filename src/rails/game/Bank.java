@@ -12,7 +12,6 @@ import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.model.CashMoneyModel;
 import rails.game.model.CashOwner;
-import rails.game.model.PortfolioModel;
 import rails.game.state.AbstractItem;
 import rails.game.state.BooleanState;
 import rails.game.state.Item;
@@ -129,12 +128,12 @@ public class Bank extends AbstractItem implements CashOwner, ConfigurableCompone
     /**
      * @return IPO Portfolio
      */
-    public PortfolioModel getIpo() {
-        return ipo.getPortfolioModel();
+    public BankPortfolio getIpo() {
+        return ipo;
     }
 
-    public PortfolioModel getScrapHeap() {
-        return scrapHeap.getPortfolioModel();
+    public BankPortfolio getScrapHeap() {
+        return scrapHeap;
     }
 
     /* FIXME: Add broken check somewhere
@@ -150,15 +149,15 @@ public class Bank extends AbstractItem implements CashOwner, ConfigurableCompone
     /**
      * @return Portfolio of stock in Bank Pool
      */
-    public PortfolioModel getPool() {
-        return pool.getPortfolioModel();
+    public BankPortfolio getPool() {
+        return pool;
     }
 
     /**
      * @return Portfolio of unavailable shares
      */
-    public PortfolioModel getUnavailable() {
-        return unavailable.getPortfolioModel();
+    public BankPortfolio getUnavailable() {
+        return unavailable;
     }
 
     public String getId() {

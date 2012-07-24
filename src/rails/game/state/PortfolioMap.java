@@ -15,8 +15,16 @@ public final class PortfolioMap<T extends Ownable> extends Portfolio<T> {
     private PortfolioMap(PortfolioHolder parent, String id, Class<T> type) {
         super(parent, id, type);
     }
+
+    private PortfolioMap(Owner parent, String id, Class<T> type) {
+        super(parent, id, type);
+    }
     
     public static <T extends Ownable> PortfolioMap<T> create(PortfolioHolder parent, String id, Class<T> type) {
+        return new PortfolioMap<T>(parent, id, type);
+    }
+
+    public static <T extends Ownable> PortfolioMap<T> create(Owner parent, String id, Class<T> type) {
         return new PortfolioMap<T>(parent, id, type);
     }
 

@@ -14,12 +14,12 @@ import rails.game.special.SpecialProperty;
 import rails.game.state.BooleanState;
 import rails.game.state.AbstractItem;
 import rails.game.state.Item;
-import rails.game.state.PortfolioHolder;
+import rails.game.state.Owner;
 import rails.game.state.PortfolioList;
 import rails.util.Util;
 
-public abstract class Company extends AbstractItem implements ConfigurableComponent,
-Cloneable, Comparable<Company>, PortfolioHolder {
+public abstract class Company extends AbstractItem implements Owner, ConfigurableComponent,
+Cloneable, Comparable<Company> {
 
     /** The name of the XML tag used to configure a company. */
     public static final String COMPANY_ELEMENT_ID = "Company";
@@ -62,6 +62,7 @@ Cloneable, Comparable<Company>, PortfolioHolder {
     protected Company(Item parent, String id) {
         super(parent, id);
     }
+    
     public void initType(CompanyType type) {
         this.type = type;
     }

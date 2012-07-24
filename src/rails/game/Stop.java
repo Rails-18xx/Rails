@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import rails.game.state.AbstractItem;
 import rails.game.state.GenericState;
-import rails.game.state.PortfolioHolder;
+import rails.game.state.Owner;
 import rails.game.state.PortfolioList;
 import rails.util.Util;
 
@@ -25,7 +25,7 @@ import rails.util.Util;
  *
  * @author Erik Vos
  */
-public class Stop extends AbstractItem implements PortfolioHolder {
+public class Stop extends AbstractItem implements Owner {
     private final int number;
     private String uniqueId;
     //private Station relatedStation;

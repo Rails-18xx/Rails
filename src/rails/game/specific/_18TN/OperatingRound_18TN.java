@@ -70,7 +70,7 @@ public class OperatingRound_18TN extends OperatingRound {
         Player sellingPlayer = null;
 
         if (gameManager.getAbsoluteORNumber() == 1) {
-            sellingPlayer = (Player)action.getPrivateCompany().getPortfolio().getOwner();
+            sellingPlayer = (Player)action.getPrivateCompany().getOwner();
         }
 
         boolean result = super.buyPrivate(action);

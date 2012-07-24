@@ -2,7 +2,6 @@ package rails.game.state;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.slf4j.Logger;

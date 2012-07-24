@@ -8,12 +8,9 @@ import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.special.SellBonusToken;
 import rails.game.special.SpecialProperty;
-import rails.game.state.GenericState;
 import rails.game.state.Item;
 import rails.game.state.Ownable;
 import rails.game.state.Owner;
-import rails.game.state.PortfolioHolder;
-import rails.game.state.Portfolio;
 import rails.util.*;
 
 // FIXME: Move static field numberOfPrivateCompanies to CompanyManager
@@ -70,10 +67,9 @@ public class PrivateCompany extends Company implements Ownable, Certificate, Clo
     protected boolean tradeableToCompany = true;
     protected boolean tradeableToPlayer = false;
     
-    private final GenericState<PortfolioHolder> owner = GenericState.create(this, "owner");
+    // required to implement Ownable Interface
+    private Owner owner;
 
-    private Portfolio<PrivateCompany> portfolio;
-    
     private PrivateCompany(Item parent, String id) {
         super(parent, id);
         this.privateNumber = numberOfPrivateCompanies++;
@@ -321,7 +317,7 @@ public class PrivateCompany extends Company implements Ownable, Certificate, Clo
         super.setClosed();
         unblockHexes();
         // FIXME: This is too long sequence of calls that must be possible to be done easier
-        GameManager.getInstance().getBank().getScrapHeap().getPrivatesOwnedModel().getPortfolio().moveInto(this);
+        GameManager.getInstance().getBank().getScrapHeap().getPortfolioModel().getPrivatesOwnedModel().getPortfolio().moveInto(this);
         ReportBuffer.add(LocalText.getText("PrivateCloses", getId()));
 
         // For 1856: buyable tokens still owned by the private will now
@@ -350,7 +346,7 @@ public class PrivateCompany extends Company implements Ownable, Certificate, Clo
             return false;
         }
         if (preventClosingConditions.contains("ifOwnedByPlayer")
-                && portfolio.getParent() instanceof Player) {
+                && owner instanceof Player) {
             log.debug("Private Company "+getId()+" does not close, as it is owned by a player.");
             return false;
         }
@@ -506,16 +502,15 @@ public class PrivateCompany extends Company implements Ownable, Certificate, Clo
     }
 
     // Ownable interface
-    public void setPortfolio(Portfolio<PrivateCompany> p) {
-        portfolio = p;
-    }
-    
-    public Owner getOwner() {
-        return portfolio.getOwner();
+    // FIXME: This should be replaced by making PrivateCompany extending the OwnableItem abstract class
+    // and implementing the Company interface instead
+    public void moveTo(Owner newOwner) {
+        getRoot().getStateManager().moveItem(this, newOwner);
+        owner = newOwner;
     }
 
-    public Portfolio<PrivateCompany> getPortfolio() {
-        return portfolio;
+    public Owner getOwner() {
+        return owner;
     }
-    
+
 }

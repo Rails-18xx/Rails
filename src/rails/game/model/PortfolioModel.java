@@ -320,7 +320,7 @@ public final class PortfolioModel extends Model implements PortfolioHolder {
 
     public void discardTrain(Train train) {
         // FIXME: This is a horrible list of method calls
-        GameManager.getInstance().getBank().getPool().getTrainsModel().getPortfolio().moveInto(train);
+        GameManager.getInstance().getBank().getPool().getPortfolioModel().getTrainsModel().getPortfolio().moveInto(train);
         
         
         ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",

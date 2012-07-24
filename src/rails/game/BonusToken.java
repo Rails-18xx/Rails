@@ -62,7 +62,7 @@ public final class BonusToken extends Token implements Closeable, ConfigurableCo
      */
     public void close() {
         // TODO: Can this be done better (use TokenManager as parent?)
-        GameManager.getInstance().getBank().getScrapHeap().getTokenHolder().moveInto(this);
+        GameManager.getInstance().getBank().getScrapHeap().getPortfolioModel().getTokenHolder().moveInto(this);
         if (user != null) {
             user.removeBonus(name);
         }
@@ -95,7 +95,7 @@ public final class BonusToken extends Token implements Closeable, ConfigurableCo
     }
 
     public boolean isPlaced() {
-        return (getPortfolio().getParent() instanceof MapHex);
+        return (getOwner() instanceof MapHex);
     }
 
     public String getId() {

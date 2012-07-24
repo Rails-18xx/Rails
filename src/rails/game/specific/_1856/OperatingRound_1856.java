@@ -372,7 +372,7 @@ public class OperatingRound_1856 extends OperatingRound {
                         SellBonusToken sbt = (SellBonusToken)sp;
                         // FIXME: Is it ipo or pool portfolio?
                         // Assume it is pool
-                        sbt.setSeller(bank.getPool().getParent());
+                        sbt.setSeller(bank.getPool());
                         log.debug("SP "+sp.getId()+" is now buyable from the Bank");
                     }
                 }

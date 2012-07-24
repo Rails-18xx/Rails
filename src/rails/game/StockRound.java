@@ -214,7 +214,7 @@ public class StockRound extends Round {
                     price = comp.getIPOPrice() / unitsForPrice;
                     if (price <= playerCash) {
                         possibleActions.add(new BuyCertificate(comp, cert.getShare(),
-                                from, price));
+                                from.getParent(), price));
                     }
                 } else if (!comp.hasStarted()) {
                     if (comp.getIPOPrice() != 0) {
@@ -315,7 +315,7 @@ public class StockRound extends Round {
                 if (number > 0) {
                     possibleActions.add(new BuyCertificate(comp,
                             uniqueCerts[shares].getShare(),
-                            from, price,
+                            from.getParent(), price,
                             number));
                 }
             }
@@ -340,7 +340,7 @@ public class StockRound extends Round {
                         && !mayPlayerBuyCertificate(currentPlayer, company, 1)) continue;
                 if (company.getMarketPrice() <= playerCash) {
                     possibleActions.add(new BuyCertificate(company, cert.getShare(),
-                            company.getPortfolioModel(), company.getMarketPrice()));
+                            company, company.getMarketPrice()));
                 }
             }
         }
@@ -1195,7 +1195,7 @@ public class StockRound extends Round {
         PublicCompany publicCompany =
             companyManager.getPublicCompany(sp.getPublicCompanyName());
         PrivateCompany privateCompany = (PrivateCompany)sp.getOriginalCompany();
-        Portfolio<PrivateCompany> portfolio = privateCompany.getPortfolio();
+        Owner owner= privateCompany.getOwner();
         Player player = null;
         String errMsg = null;
         boolean ipoHasShare = ipo.getShare(publicCompany) >= sp.getShare();
@@ -1204,14 +1204,14 @@ public class StockRound extends Round {
         while (true) {
 
             /* Check if the private is owned by a player */
-            if (!(portfolio.getParent() instanceof Player)) {
+            if (!(owner instanceof Player)) {
                 errMsg =
                     LocalText.getText("PrivateIsNotOwnedByAPlayer",
                             privateCompany.getId());
                 break;
             }
 
-            player = (Player) portfolio.getParent();
+            player = (Player) owner;
 
             /* Check if a share is available */
             if (!ipoHasShare && !poolHasShare) {

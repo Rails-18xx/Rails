@@ -27,7 +27,7 @@ import rails.util.*;
  * 
  * FIXME: Check if uninitialized states may cause trouble on undo
  */
-public class PublicCompany extends Company implements CashOwner, PortfolioOwner, PortfolioHolder {
+public class PublicCompany extends Company implements CashOwner, PortfolioOwner {
 
     public static final int CAPITALISE_FULL = 0;
 
@@ -974,10 +974,10 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner,
         if (initialTrainType != null) {
             TrainManager trainManager = gameManager.getTrainManager();
             TrainCertificateType type = trainManager.getCertTypeByName(initialTrainType);
-            Train train = bank.getIpo().getTrainOfType(type);
+            Train train = bank.getIpo().getPortfolioModel().getTrainOfType(type);
             buyTrain(train, initialTrainCost);
             train.setTradeable(initialTrainTradeable);
-            trainManager.checkTrainAvailability(train, bank.getIpo().getParent());
+            trainManager.checkTrainAvailability(train, bank.getIpo());
         }
     }
 
@@ -1007,7 +1007,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner,
     public void setClosed() {
         super.setClosed();
 
-        PortfolioModel shareDestination;
+        PortfolioOwner shareDestination;
         // If applicable, prepare for a restart
         if (canBeRestarted) {
             if (certsAreInitiallyAvailable) {
@@ -1024,15 +1024,15 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner,
         // Dispose of the certificates
         for (PublicCertificate cert : certificates.view()) {
             // TODO: Check if this is the correct condition, portfolioModel parent change Type?
-            if (cert.getPortfolio().getParent() != shareDestination.getParent()) {
+            if (cert.getOwner() != shareDestination.getParent()) {
                 // TODO: Could this be shortened?
-                shareDestination.getCertificatesModel().getPortfolio().moveInto(cert);
+                shareDestination.getPortfolioModel().getCertificatesModel().getPortfolio().moveInto(cert);
             }
         }
 
         // Any trains go to the pool (from the 1856 rules)
         // TODO: Can this be simplified?
-        Portfolio.moveAll(portfolio.getTrainsModel().getPortfolio(), bank.getPool().getTrainsModel().getPortfolio());
+        Portfolio.moveAll(portfolio.getTrainsModel().getPortfolio(), bank.getPool().getPortfolioModel().getTrainsModel().getPortfolio());
 
         // Any cash goes to the bank (from the 1856 rules)
         int cash = treasury.value();
@@ -1243,7 +1243,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner,
     // Relying on the ordering is not a good thing
     public Player getPresident() {
         if (hasStarted()) {
-            Owner owner = certificates.get(0).getPortfolio().getOwner();
+            Owner owner = certificates.get(0).getOwner();
             if (owner instanceof Player) return (Player) owner;
         }
         return null;
@@ -1316,9 +1316,9 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner,
 
     public boolean paysOutToTreasury (PublicCertificate cert) {
 
-        PortfolioHolder holder = cert.getPortfolio().getParent();
-        if (holder == bank.getIpo() && ipoPaysOut
-                || holder == bank.getPool() && poolPaysOut) {
+        Owner owner = cert.getOwner();
+        if (owner == bank.getIpo() && ipoPaysOut
+                || owner == bank.getPool() && poolPaysOut) {
             return true;
         }
         return false;
@@ -1342,10 +1342,10 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner,
      * @return true if the share price can move up.
      */
     public boolean isSoldOut() {
-        PortfolioHolder owner;
+        Owner owner;
 
         for (PublicCertificate cert : certificates.view()) {
-            owner = cert.getPortfolio().getParent();
+            owner = cert.getOwner();
             if (owner instanceof Bank || owner == cert.getCompany()) {
                 return false;
             }
@@ -1405,9 +1405,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner,
     public int sharesOwnedByPlayers() {
         int shares = 0;
         for (PublicCertificate cert : certificates.view()) {
-            // TODO: Check if this is correct, it can be
-            // that this links to a PortfolioModel
-            if (cert.getPortfolio().getParent() instanceof Player) {
+            if (cert.getOwner() instanceof Player) {
                 shares += cert.getShares();
             }
         }
@@ -1582,7 +1580,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner,
         return trainsCostThisTurn;
     }
 
-    public void buyPrivate(PrivateCompany privateCompany, PortfolioHolder from,
+    public void buyPrivate(PrivateCompany privateCompany, Owner from,
             int price) {
 
         if (from != bank.getIpo()) {

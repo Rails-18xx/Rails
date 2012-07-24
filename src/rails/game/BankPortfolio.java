@@ -6,10 +6,10 @@ import rails.game.state.AbstractItem;
 import rails.game.state.Item;
 
 /**
- * BankPortfolios
+ * BankPortfolios act as Owner of their owns
+ * Used for implementation of the separate Bank identities (IPO, POOL, SCRAPHEAP)
  */
-
-public class BankPortfolio extends AbstractItem implements PortfolioOwner {
+public final class BankPortfolio extends AbstractItem implements PortfolioOwner {
     
     private final PortfolioModel portfolio = PortfolioModel.create(this);
     

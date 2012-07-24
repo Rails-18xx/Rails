@@ -19,7 +19,6 @@ import rails.game.TrainType;
 import rails.game.special.SpecialProperty;
 import rails.game.special.SpecialTrainBuy;
 import rails.game.state.Owner;
-import rails.game.state.PortfolioHolder;
 import rails.game.state.Portfolio;
 import rails.util.Util;
 
@@ -192,8 +191,8 @@ public class BuyTrain extends PossibleORAction {
         return getTrain().getPortfolio();
     }
 
-    public PortfolioHolder getOwner() {
-        return getTrain().getPortfolio().getParent();
+    public Owner getOwner() {
+        return getTrain().getOwner();
     }
 
     public int getAddedCash() {

@@ -118,7 +118,7 @@ public class BuyBonusToken extends PossibleORAction {
                 getCompanyManager().getPrivateCompany(privateCompanyName);
         if (sellerName.equalsIgnoreCase("Bank")) {
             // TODO: Assume that it is the pool, not the ipo
-            seller = gameManager.getBank().getPool().getParent();
+            seller = gameManager.getBank().getPool();
         } else if (sellerName != null) {
             seller =
                 getCompanyManager().getPublicCompany(sellerName);

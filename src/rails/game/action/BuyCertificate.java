@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 
 import rails.game.*;
 import rails.game.model.PortfolioModel;
+import rails.game.model.PortfolioOwner;
 
 /**
  * @author Erik Vos
@@ -37,11 +38,11 @@ public class BuyCertificate extends PossibleAction {
     public static final long serialVersionUID = 1L;
 
     public BuyCertificate(PublicCompany company, int sharePerCert,
-            PortfolioModel from,
+            PortfolioOwner from,
             int price, int maximumNumber) {
         this.company = company;
         this.sharePerCert = sharePerCert;
-        this.from = from;
+        this.from = from.getPortfolioModel();
         // FIXME: From used to be a Portfolio(model) with unique name to identify
         // this.fromName = from.getUniqueName();
         this.price = price;
@@ -50,9 +51,9 @@ public class BuyCertificate extends PossibleAction {
         companyName = company.getId();
     }
 
-    /** Buy a certificate from some portfolio at a given price */
+    /** Buy a certificate from some owner at a given price */
     public BuyCertificate(PublicCompany company, int sharePerCert,
-            PortfolioModel from,
+            PortfolioOwner from,
             int price) {
         this(company, sharePerCert, from, price, 1);
     }

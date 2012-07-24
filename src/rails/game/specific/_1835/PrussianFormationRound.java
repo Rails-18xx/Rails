@@ -316,7 +316,7 @@ public final class PrussianFormationRound extends StockRound {
         for (Company company : companies) {
             log.debug("Merging company "+company.getId());
             if (company instanceof PrivateCompany) {
-                player = (Player)((PrivateCompany)company).getPortfolio().getOwner();
+                player = (Player)((PrivateCompany)company).getOwner();
             } else {
                 player = ((PublicCompany)company).getPresident();
             }

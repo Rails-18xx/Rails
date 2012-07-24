@@ -90,7 +90,8 @@ public class GameManager_18EU extends GameManager {
         }
         
         // Dump all shares
-        bankrupter.getPortfolioModel().getCertificatesModel().moveAll(bank.getPool().getCertificatesModel());
+        // TODO: Can this be simplified?
+        bankrupter.getPortfolioModel().getCertificatesModel().moveAll(bank.getPool().getPortfolioModel().getCertificatesModel());
         bankrupter.setBankrupt();
 
         // Finish the share selling round

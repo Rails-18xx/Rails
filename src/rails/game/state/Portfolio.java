@@ -4,10 +4,24 @@ import com.google.common.collect.ImmutableList;
 public abstract class Portfolio<T extends Ownable> extends State implements Iterable<T> {
 
     private final Class<T> type;
+    private final Owner owner;
     
+    /**
+     * Constructor using a PortfolioHolder
+     */
     protected Portfolio(PortfolioHolder parent, String id, Class<T> type) {
         super(parent, id);
         this.type = type;
+        this.owner = parent.getParent();
+    }
+
+    /**
+     * Constructor using an Owner
+     */
+    protected Portfolio(Owner parent, String id, Class<T> type) {
+        super(parent, id);
+        this.type = type;
+        this.owner = parent;
     }
 
     protected Class<T> getType() {
@@ -19,20 +33,8 @@ public abstract class Portfolio<T extends Ownable> extends State implements Iter
         return getStateManager().getPortfolioManager();
     }
     
-    /**
-     * @return the parent of a portfolio is a PortfolioHolder
-     */
-    @Override
-    public PortfolioHolder getParent() {
-        return (PortfolioHolder)super.getParent();
-    }
-    
     public Owner getOwner() {
-        if (getParent() instanceof PortfolioHolder) {
-            return ((PortfolioHolder)getParent()).getParent();
-        } else {
-            return (Owner)getParent();
-        }
+        return owner;
     }
     
     /**

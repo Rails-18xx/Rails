@@ -6,12 +6,12 @@ import java.util.List;
 import rails.algorithms.RevenueAdapter;
 import rails.algorithms.RevenueStaticModifier;
 import rails.common.parser.ConfigurationException;
+import rails.game.BankPortfolio;
 import rails.game.GameManager;
 import rails.game.Player;
 import rails.game.PublicCertificate;
 import rails.game.PublicCompany;
 import rails.game.Train;
-import rails.game.model.PortfolioModel;
 import rails.game.state.BooleanState;
 import rails.game.state.GenericState;
 import rails.game.state.Item;
@@ -119,10 +119,10 @@ public final class PublicCompany_CGR extends PublicCompany implements RevenueSta
             // Drop the last 10 shares
             List<PublicCertificate>certs = new ArrayList<PublicCertificate>(certificates.view());
             int share = 0;
-            PortfolioModel scrapHeap = bank.getScrapHeap();
+            BankPortfolio scrapHeap = bank.getScrapHeap();
             for (PublicCertificate cert : certs) {
                 if (share >= 100) {
-                    scrapHeap.addPublicCertificate(cert);
+                    scrapHeap.getPortfolioModel().addPublicCertificate(cert);
                     certificates.remove(cert);
                 } else {
                     cert.setCertificateCount(1.0f);

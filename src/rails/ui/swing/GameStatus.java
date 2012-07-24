@@ -18,7 +18,6 @@ import rails.game.action.*;
 import rails.game.correct.CashCorrectionAction;
 import rails.game.model.CashOwner;
 import rails.game.model.PortfolioModel;
-import rails.game.state.Owner;
 import rails.ui.swing.elements.*;
 
 /**
@@ -157,8 +156,9 @@ public class GameStatus extends GridPanel implements ActionListener {
         hasCompanyLoans = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_ANY_COMPANY_LOANS);
         hasRights = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_ANY_RIGHTS);
 
-        ipo = bank.getIpo();
-        pool = bank.getPool();
+        // TODO: Can this be done using ipo and pool directly?
+        ipo = bank.getIpo().getPortfolioModel();
+        pool = bank.getPool().getPortfolioModel();
 
         certPerPlayer = new Field[nc][np];
         certPerPlayerButton = new ClickField[nc][np];
@@ -550,7 +550,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         // Future trains
         addField(new Caption(LocalText.getText("Future")), futureTrainsXOffset,
                 futureTrainsYOffset - 1, futureTrainsWidth, 1, WIDE_TOP, true);
-        futureTrains = new Field(bank.getUnavailable().getTrainsModel());
+        futureTrains = new Field(bank.getUnavailable().getPortfolioModel().getTrainsModel());
         addField(futureTrains, futureTrainsXOffset, futureTrainsYOffset,
                 futureTrainsWidth, 1, 0, true);
 
@@ -817,7 +817,7 @@ public class GameStatus extends GridPanel implements ActionListener {
 
                 PublicCompany company;
                 int index;
-                Owner owner;
+                PortfolioModel portfolio;
 
                 List<BuyCertificate> buyableCerts =
                     possibleActions.getType(BuyCertificate.class);
@@ -825,14 +825,14 @@ public class GameStatus extends GridPanel implements ActionListener {
                     for (BuyCertificate bCert : buyableCerts) {
                         company = bCert.getCompany();
                         index = company.getPublicNumber();
-                        owner = bCert.getFromPortfolio().getParent();
-                        if (owner == ipo.getParent()) {
+                        portfolio = bCert.getFromPortfolio();
+                        if (portfolio == ipo) {
                             setIPOCertButton(index, true, bCert);
-                        } else if (owner == pool.getParent()) {
+                        } else if (portfolio == pool) {
                             setPoolCertButton(index, true, bCert);
-                        } else if (owner instanceof Player) {
-                            setPlayerCertButton(index, ((Player)owner).getIndex(), true, bCert);
-                        } else if (owner instanceof PublicCompany && compCanHoldOwnShares) {
+                        } else if ((portfolio.getParent()) instanceof Player) {
+                            setPlayerCertButton(index, ((Player)portfolio.getParent()).getIndex(), true, bCert);
+                        } else if (portfolio.getParent() instanceof PublicCompany && compCanHoldOwnShares) {
                             setTreasuryCertButton(index, true, bCert);
                         }
                     }

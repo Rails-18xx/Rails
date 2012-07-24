@@ -55,7 +55,7 @@ public final class StockRound_1835 extends StockRound {
                             price = (int)(1.5 * company.getCurrentPriceModel().getPrice().getPrice());
                             if (price <= cash) {
                                 possibleActions.add(new BuyCertificate (company, cert.getShare(),
-                                        otherPlayer.getPortfolioModel(),
+                                        otherPlayer,
                                     (int)(1.5 * company.getCurrentPriceModel().getPrice().getPrice()),
                                     1));
                             }

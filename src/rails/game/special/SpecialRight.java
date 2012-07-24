@@ -78,7 +78,7 @@ public class SpecialRight extends SpecialProperty implements RevenueStaticModifi
         // FIXME: Check if this works correctly
         // IT is better to rewrite this check
         // see ExchangeForShare
-        return ((PrivateCompany)originalCompany).getPortfolio().getOwner() instanceof Player;
+        return ((PrivateCompany)originalCompany).getOwner() instanceof Player;
     }
 
  

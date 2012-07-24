@@ -23,8 +23,8 @@ import rails.game.model.PortfolioModel;
 
 import rails.game.state.BooleanState;
 import rails.game.state.Observer;
+import rails.game.state.Owner;
 import rails.game.state.Portfolio;
-import rails.game.state.PortfolioHolder;
 import rails.game.state.PortfolioList;
 import rails.game.state.AbstractItem;
 import rails.util.*;
@@ -58,7 +58,7 @@ import rails.util.*;
  */
 
 // FIXME: MapHex was previous a model
-public class MapHex extends AbstractItem implements PortfolioHolder, ConfigurableComponent,
+public class MapHex extends AbstractItem implements Owner, ConfigurableComponent,
 StationHolder {
 
     private static final String[] ewOrNames =
@@ -815,7 +815,7 @@ StationHolder {
                                 ((BaseToken) token).getParent();
                             for (Token token2 : newCity.getTokens()) {
                                 if (token2 instanceof BaseToken
-                                        && company == ((BaseToken) token2).getPortfolio().getOwner()) {
+                                        && company == ((BaseToken) token2).getOwner()) {
                                     // No duplicate tokens in one city, so move to free tokens
                                     tokenDestinations.put(token, company.getBaseTokensModel().getFreeTokens());
                                     log.debug("Duplicate token "

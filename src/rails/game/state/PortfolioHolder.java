@@ -1,7 +1,5 @@
 package rails.game.state;
 
-import java.util.List;
-
 /**
  * A PortfolioHolder holds portfolios indirectly for an Owner
  * 
@@ -14,7 +12,5 @@ public interface PortfolioHolder extends Item {
      */
     public Owner getParent();
     
-    
-    public List<Portfolio<?>> getPortfolios();
-    
+
 }

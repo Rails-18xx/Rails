@@ -149,9 +149,10 @@ public final class TrainManager extends AbstractItem implements ConfigurableComp
     throws ConfigurationException {
         this.gameManager = gameManager;
         bank = gameManager.getBank();
-        ipo = bank.getIpo();
-        pool = bank.getPool();
-        unavailable = bank.getUnavailable();
+        // TODO: Can this be changed to use BankPortolios directly?
+        ipo = bank.getIpo().getPortfolioModel();
+        pool = bank.getPool().getPortfolioModel();
+        unavailable = bank.getUnavailable().getPortfolioModel();
 
         Map<Integer, String> newPhaseNames;
         Phase phase;
@@ -301,12 +302,12 @@ public final class TrainManager extends AbstractItem implements ConfigurableComp
 
         type.setAvailable();
 
-        PortfolioModel to =
+        BankPortfolio to =
             (type.getInitialPortfolio().equalsIgnoreCase("Pool") ? bank.getPool()
                     : bank.getIpo());
 
         for (Train train : trainsPerCertType.get(type)) {
-            to.addTrain(train);
+            to.getPortfolioModel().addTrain(train);
         }
     }
 

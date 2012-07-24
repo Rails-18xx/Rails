@@ -5,7 +5,7 @@ public interface Ownable extends Item {
     /**
      * move to new owner
      */
-    public void moveTo(Class<? extends Ownable> type, Owner newOwner);
+    public void moveTo(Owner newOwner);
     
     /**
      * @return the current owner

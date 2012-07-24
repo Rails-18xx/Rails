@@ -53,15 +53,15 @@ public final class OperatingRound_1889 extends OperatingRound {
         // private B: lay track at other company tile laying steps
         if (getStep() == GameDef.OrStep.LAY_TRACK) {
             if (!privB.isClosed() && 
-                    privB.getPortfolio().getOwner() instanceof Player && 
-                    privB.getPortfolio().getOwner() != operatingCompany.value().getPresident()) {
+                    privB.getOwner() instanceof Player && 
+                    privB.getOwner() != operatingCompany.value().getPresident()) {
                 SpecialProperty spPrivB = privB.getSpecialProperties().get(0);
                 if (spPrivB != null && !spPrivB.isExercised()) {
                     if (!activeSpPrivB.value()) 
                         possibleActions.add(new UseSpecialProperty(spPrivB));
                     else {
                         possibleActions.add(new LayTile((SpecialTileLay)spPrivB));
-                        DisplayBuffer.add(LocalText.getText("1889PrivateBactive", privB.getPortfolio().getOwner()));
+                        DisplayBuffer.add(LocalText.getText("1889PrivateBactive", privB.getOwner()));
                     }
                 }
             }
@@ -101,7 +101,7 @@ public final class OperatingRound_1889 extends OperatingRound {
     public boolean buyPrivate(BuyPrivate action){
 
        // store the seller name, playername in action is the owner of the buying company!
-       String sellerName = action.getPrivateCompany().getPortfolio().getOwner().getId();
+       String sellerName = action.getPrivateCompany().getOwner().getId();
         
        boolean result = super.buyPrivate(action);
        

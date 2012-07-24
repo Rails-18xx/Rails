@@ -1053,8 +1053,7 @@ public class OperatingRound extends Round implements Observer {
 
         // TODO: changeStack.start(true);
 
-        operatingCompany.value().buyPrivate(privateCompany, player.getPortfolioModel(),
-                price);
+        operatingCompany.value().buyPrivate(privateCompany, player, price);
 
         return true;
 

@@ -13,8 +13,16 @@ public final class PortfolioList<T extends Ownable> extends Portfolio<T> {
     private PortfolioList(PortfolioHolder parent, String id, Class<T> type) {
         super(parent, id, type);
     }
+
+    private PortfolioList(Owner parent, String id, Class<T> type) {
+        super(parent, id, type);
+    }
     
     public static <T extends Ownable> PortfolioList<T> create(PortfolioHolder parent, String id, Class<T> type) {
+        return new PortfolioList<T>(parent, id, type);
+    }
+
+    public static <T extends Ownable> PortfolioList<T> create(Owner parent, String id, Class<T> type) {
         return new PortfolioList<T>(parent, id, type);
     }
 

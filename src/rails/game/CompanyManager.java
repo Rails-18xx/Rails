@@ -277,7 +277,7 @@ public class CompanyManager extends AbstractItem implements ConfigurableComponen
         List<PrivateCompany> privatesOwnedByPlayers =
                 new ArrayList<PrivateCompany>();
         for (PrivateCompany priv : getAllPrivateCompanies()) {
-            if (priv.getPortfolio().getOwner() instanceof Player) {
+            if (priv.getOwner() instanceof Player) {
                 privatesOwnedByPlayers.add(priv);
             }
         }

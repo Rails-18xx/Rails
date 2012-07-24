@@ -18,6 +18,7 @@ import rails.game.state.AbstractItem;
 import rails.game.state.ArrayListState;
 import rails.game.state.BooleanState;
 import rails.game.state.ChangeStack;
+import rails.game.state.Owner;
 import rails.game.state.Portfolio;
 
 /**
@@ -71,10 +72,12 @@ public abstract class Round extends AbstractItem {
             companyManager = gameManager.getCompanyManager();
             playerManager = gameManager.getPlayerManager();
             bank = gameManager.getBank();
-            ipo = bank.getIpo();
-            pool = bank.getPool();
-            unavailable = bank.getUnavailable();
-            scrapHeap = bank.getScrapHeap();
+            // TODO: It would be good to work with BankPortfolio and Owner instead of PortfolioModels
+            // However this requires a lot of work inside the Round classes
+            ipo = bank.getIpo().getPortfolioModel();
+            pool = bank.getPool().getPortfolioModel();
+            unavailable = bank.getUnavailable().getPortfolioModel();
+            scrapHeap = bank.getScrapHeap().getPortfolioModel();
             stockMarket = gameManager.getStockMarket();
             mapManager = gameManager.getMapManager();
 
@@ -331,8 +334,8 @@ public abstract class Round extends AbstractItem {
 
     /** Can be subclassed for games with special rules */
     protected boolean certCountsAsSold (PublicCertificate cert) {
-        Portfolio<PublicCertificate> portfolio = cert.getPortfolio();
-        return portfolio.getOwner() instanceof Player || portfolio.getParent() == pool;
+        Owner owner = cert.getOwner();
+        return owner instanceof Player || owner == pool.getParent();
     }
 
     /**

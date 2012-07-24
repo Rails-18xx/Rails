@@ -153,8 +153,8 @@ public class StartItem extends AbstractItem {
         // in the game-specific StartRound class
         minimumBid.set(basePrice.value() + 5);
 
-        PortfolioModel ipo = gameManager.getBank().getIpo();
-        PortfolioModel unavailable = gameManager.getBank().getUnavailable();
+        PortfolioModel ipo = gameManager.getBank().getIpo().getPortfolioModel();
+        PortfolioModel unavailable = gameManager.getBank().getUnavailable().getPortfolioModel();
 
         CompanyManager compMgr = gameManager.getCompanyManager();
 
@@ -165,8 +165,8 @@ public class StartItem extends AbstractItem {
             primary = ipo.findCertificate((PublicCompany) company, president);
             // Move the certificate to the "unavailable" pool.
             PublicCertificate pubcert = (PublicCertificate) primary;
-            if (pubcert.getPortfolio().getOwner()== null
-                || pubcert.getPortfolio().getParent() != unavailable) {
+            if (pubcert.getOwner()== null
+                || pubcert.getOwner() != unavailable.getParent()) {
                 unavailable.getCertificatesModel().getPortfolio().moveInto(pubcert);
             }
         }
@@ -184,7 +184,7 @@ public class StartItem extends AbstractItem {
                 // Move the certificate to the "unavailable" pool.
                 // FIXME: This is still an issue to resolve 
                 PublicCertificate pubcert2 = (PublicCertificate) secondary;
-                if (pubcert2.getPortfolio().getParent() != unavailable) {
+                if (pubcert2.getOwner() != unavailable.getParent()) {
                     unavailable.getCertificatesModel().getPortfolio().moveInto(pubcert2);
                 }
             }

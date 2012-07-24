@@ -125,7 +125,8 @@ public class Train extends OwnableItem<Train> {
     }
 
     public void setRusted() {
-        GameManager.getInstance().getBank().getScrapHeap().getTrainsModel().getPortfolio().moveInto(this);
+        // FIXME: Awful long list of calls
+        GameManager.getInstance().getBank().getScrapHeap().getPortfolioModel().getTrainsModel().getPortfolio().moveInto(this);
     }
 
     public void setObsolete() {

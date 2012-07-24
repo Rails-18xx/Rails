@@ -1275,7 +1275,7 @@ public class ORUIManager implements DialogOwner {
             
             privatesForSale.add(LocalText.getText("BuyPrivatePrompt",
                     action.getPrivateCompany().getId(),
-                    action.getPrivateCompany().getPortfolio().getId(),
+                    action.getPrivateCompany().getOwner().getId(),
                     priceRange ));
         }
 

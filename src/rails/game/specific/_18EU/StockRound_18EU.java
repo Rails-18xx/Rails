@@ -162,7 +162,7 @@ public class StockRound_18EU extends StockRound {
                     }
                 } else if (comp.getMarketPrice() <= playerCash) {
                     possibleActions.add(new BuyCertificate(comp, cert.getShare(),
-                            from,
+                            from.getParent(),
                             comp.getMarketPrice()));
                 }
 
@@ -191,7 +191,7 @@ public class StockRound_18EU extends StockRound {
             // Does the player have enough cash?
             if (playerCash < price) continue;
 
-            possibleActions.add(new BuyCertificate(comp, cert.getShare(), from, price, 1));
+            possibleActions.add(new BuyCertificate(comp, cert.getShare(), from.getParent(), price, 1));
         }
 
         // Get any shares in company treasuries that can be bought
@@ -213,7 +213,7 @@ public class StockRound_18EU extends StockRound {
                     && !mayPlayerBuyCertificate(currentPlayer, company, 1)) continue;
                 if (company.getMarketPrice() <= playerCash) {
                     possibleActions.add(new BuyCertificate(company, cert.getShare(),
-                            company.getPortfolioModel(),
+                            company,
                             company.getMarketPrice()));
                 }
             }
@@ -565,11 +565,12 @@ public class StockRound_18EU extends StockRound {
                     major.getId(),
                     Bank.format(minorCash),
                     minorTrains ));
+            // FIXME: CHeck if this still works correctly
             ReportBuffer.add(LocalText.getText("GetShareForMinor",
                     currentPlayer.getId(),
                     cert.getShare(),
                     major.getId(),
-                    cert.getPortfolio().getId(),
+                    cert.getOwner().getId(),
                     minor.getId() ));
             if (major != null) {
                 if (action.getReplaceToken()) {

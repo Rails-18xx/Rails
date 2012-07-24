@@ -130,7 +130,7 @@ public final class TreasuryShareRound extends StockRound {
                 number--;
 
             if (number > 0) {
-                possibleActions.add(new BuyCertificate(comp, cert.getShare(), from, price,
+                possibleActions.add(new BuyCertificate(comp, cert.getShare(), from.getParent(), price,
                         number));
             }
         }
