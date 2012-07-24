@@ -28,10 +28,8 @@ public abstract class Manager extends Context {
         
         // find root and add context there
         root = parent.getContext().getRoot();
-        // add to root, except for StateManager, this is delayed
-        if (!(this instanceof StateManager)) {
-            root.addItem(this);
-        }
+        // add to root
+        root.addItem(this);
     }
     
     public String getId() {

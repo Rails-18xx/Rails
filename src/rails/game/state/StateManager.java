@@ -16,7 +16,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
-public final class StateManager extends Manager {
+public final class StateManager extends Manager implements DelayedItem {
     
     protected static Logger log =
         LoggerFactory.getLogger(StateManager.class.getPackage().getName());
@@ -30,7 +30,7 @@ public final class StateManager extends Manager {
         models = HashMultimapState.create(this, null);
     
     
-    private final PortfolioManager portfolioManager = PortfolioManager.create(this, null);
+    private final PortfolioManager portfolioManager = PortfolioManager.create(this, "Portfolios");
 //  private final WalletManager walletManager = WalletManager.create(this, "walletManager");
 
     private StateManager(Root parent, String id) {

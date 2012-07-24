@@ -1,18 +1,26 @@
 package rails.game.state;
 
 import static com.google.common.base.Preconditions.checkArgument;
+
+import java.util.List;
+
+import com.google.common.collect.Lists;
 /**
  * Root is the top node of the context/item hierachy
  */
-public final class Root extends Context {
+public final class Root extends Context implements DelayedItem {
     
    public final static String ID = ""; 
    
+
    private StateManager stateManager;
    private HashMapState<String, Item> items;
+
+   // only used during creation
+   private final List<DelayedItem> delayedItems = Lists.newArrayList();
     
    private Root() {
-  
+       addItem(this);
    }
 
    /**
@@ -21,12 +29,19 @@ public final class Root extends Context {
    public static Root create() {
        // precise sequence to avoid any unintialized problems
        Root root = new Root();
+       
        StateManager stateManager = StateManager.create(root, "states");
        root.stateManager = stateManager;
-       root.items = HashMapState.create(root, null);
-       root.addItem(stateManager);
-       root.addItem(root);
+       
+       root.initDelayedItems();
        return root;
+   }
+
+   private void initDelayedItems() {
+       items = HashMapState.create(this, null);
+       for (DelayedItem item: delayedItems) {
+           items.put(item.getFullURI(), item);
+       }
    }
    
    public StateManager getStateManager() {
@@ -84,6 +99,12 @@ public final class Root extends Context {
    }
    
    void addItem(Item item) {
+       // check if it has to be delayed
+       if (item instanceof DelayedItem) {
+           delayedItems.add((DelayedItem)item);
+           return;
+       }
+       
        // check if it already exists
        checkArgument(!items.containsKey(item.getFullURI()), "Root already contains item with identical fullURI");
        

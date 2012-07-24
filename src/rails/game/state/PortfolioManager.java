@@ -4,7 +4,7 @@ package rails.game.state;
  * PortfolioManager stores links to all existing portfolios
  */
 
-public final class PortfolioManager extends AbstractItem {
+public final class PortfolioManager extends Manager implements DelayedItem {
 
     private final class PMKey<T extends Ownable> {
         private final Class<T> type;
@@ -28,7 +28,8 @@ public final class PortfolioManager extends AbstractItem {
         }
     }
     
-    private final HashMapState<PMKey<? extends Ownable>, Portfolio<? extends Ownable>> portfolios = HashMapState.create(this, "portfolios");
+    private final HashMapState<PMKey<? extends Ownable>, Portfolio<? extends Ownable>> portfolios = 
+            HashMapState.create(this, null);
     
     private PortfolioManager(Item parent, String id) {
         super(parent, id);
