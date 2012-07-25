@@ -25,7 +25,7 @@ public class ArrayListStateTest {
     private final static String ANOTHER_ITEM_ID = "AnotherItem";
 
     private Root root;
-    private ChangeStack stack;
+    
     private ArrayListState<Item> stateDefault;
     private ArrayListState<Item> stateInit;
     
@@ -36,7 +36,6 @@ public class ArrayListStateTest {
     @Before
     public void setUp() {
         root = StateTestUtils.setUpRoot();
-        stack = root.getStateManager().getChangeStack();
         
         oneItem = AbstractItemImpl.create(root, ONE_ITEM_ID);
         anotherItem = AbstractItemImpl.create(root, ANOTHER_ITEM_ID);
@@ -48,11 +47,10 @@ public class ArrayListStateTest {
     // helper function to check the initial state after undo
     // includes redo, so after returning the state should be unchanged
     private void assertInitialStateAfterUndo() {
-        stack.closeCurrentChangeSet();
-        stack.undo();
+        StateTestUtils.closeAndUndo(root);
         assertEquals(stateDefault.view(), Lists.newArrayList());
         assertEquals(stateInit.view(), Lists.newArrayList(oneItem));
-        stack.redo();
+        StateTestUtils.redo(root);
     }
 
     private void assertTestAdd() {
@@ -107,8 +105,8 @@ public class ArrayListStateTest {
             assertThat(e).isInstanceOf(IndexOutOfBoundsException.class);
         }
         // close and do the check
-        stack.closeCurrentChangeSet();
-        assertTrue(stack.getLastClosedChangeSet().isEmpty());
+        StateTestUtils.close(root);
+        assertTrue(StateTestUtils.getLastClosedChangeSet(root).isEmpty());
     }
 
     @Test

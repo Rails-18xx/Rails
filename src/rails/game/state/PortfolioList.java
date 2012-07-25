@@ -1,14 +1,15 @@
 package rails.game.state;
 
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Set;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 public final class PortfolioList<T extends Ownable> extends Portfolio<T> {
 
-    private ArrayList<T> portfolio = Lists.newArrayList();
+    private final Set<T> portfolio = Sets.newHashSet();
     
     private PortfolioList(PortfolioHolder parent, String id, Class<T> type) {
         super(parent, id, type);
@@ -26,15 +27,9 @@ public final class PortfolioList<T extends Ownable> extends Portfolio<T> {
         return new PortfolioList<T>(parent, id, type);
     }
 
-    public boolean initialAdd(T item) {
-        if (portfolio.contains(item)) return false;
-        new PortfolioChange<T>(this, null, item);
-        return true;
-    }
-
     public boolean moveInto(T item) {
         if (portfolio.contains(item)) return false;
-        getPortfolioManager().moveItem(getType(), item, this);
+        item.moveTo(getOwner());
         return true;
     }
 
@@ -63,7 +58,7 @@ public final class PortfolioList<T extends Ownable> extends Portfolio<T> {
     }
     
     public Iterator<T> iterator() {
-        return portfolio.iterator();
+        return ImmutableSet.copyOf(portfolio).iterator();
     }
 
     @Override

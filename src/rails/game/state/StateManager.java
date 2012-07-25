@@ -8,8 +8,6 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rails.game.PrivateCompany;
-
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -230,11 +228,5 @@ public final class StateManager extends Manager implements DelayedItem {
     PortfolioManager getPortfolioManager() {
         return portfolioManager;
     }
-    
-    // Back-door for PrivateCompany
-    public void moveItem(PrivateCompany item, Owner newOwner) {
-        portfolioManager.moveItem(PrivateCompany.class, item, newOwner);
-    }
-
     
 }

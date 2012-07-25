@@ -14,7 +14,7 @@ public class GenericStateTest {
     private final static String ANOTHER_ID = "Another";
 
     private Root root;
-    private ChangeStack stack;
+    
     private GenericState<Item> stateDefault;
     private GenericState<Item> stateInit;
     
@@ -23,7 +23,7 @@ public class GenericStateTest {
     @Before
     public void setUp() {
         root = StateTestUtils.setUpRoot();
-        stack = root.getStateManager().getChangeStack();
+        
         
         item = new AbstractItemImpl(root, ITEM_ID);
         another_item = new AbstractItemImpl(root, ANOTHER_ID);
@@ -52,8 +52,8 @@ public class GenericStateTest {
     public void testSetSameIgnored() {
         stateDefault.set(null);
         stateInit.set(item);
-        stack.closeCurrentChangeSet();
-        assertThat(stack.getLastClosedChangeSet().getStates()).doesNotContain(stateDefault, stateInit);
+        StateTestUtils.close(root);
+        assertThat(StateTestUtils.getLastClosedChangeSet(root).getStates()).doesNotContain(stateDefault, stateInit);
     }
 
     @Test
@@ -66,15 +66,15 @@ public class GenericStateTest {
         assertSame(item, stateDefault.value());
         assertSame(another_item, stateInit.value());
 
-        stack.closeCurrentChangeSet();
+        StateTestUtils.close(root);
         // remark: stateInit is an internal (isObservable = false)
-        assertThat(stack.getLastClosedChangeSet().getStates()).contains(stateDefault);
+        assertThat(StateTestUtils.getLastClosedChangeSet(root).getStates()).contains(stateDefault);
         
-        stack.undo();
+        StateTestUtils.undo(root);
         assertNull(stateDefault.value());
         assertSame(item, stateInit.value());
 
-        stack.redo();
+        StateTestUtils.redo(root);
         assertSame(item, stateDefault.value());
         assertSame(another_item, stateInit.value());
     }

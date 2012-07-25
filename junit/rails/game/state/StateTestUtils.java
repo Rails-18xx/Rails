@@ -22,5 +22,27 @@ class StateTestUtils {
     public static void startActionChangeSet(Root root) {
         root.getStateManager().getChangeStack().startActionChangeSet(player, action);
     }
+
+    public static void close(Root root) {
+        root.getStateManager().getChangeStack().closeCurrentChangeSet();
+    }
     
+    public static void undo(Root root) {
+        root.getStateManager().getChangeStack().undo();
+    }
+    
+    public static void closeAndUndo(Root root) {
+        root.getStateManager().getChangeStack().closeCurrentChangeSet();
+        root.getStateManager().getChangeStack().undo();
+    }
+    
+    public static void redo(Root root) {
+        root.getStateManager().getChangeStack().redo();
+    }
+    
+    public static ChangeSet getLastClosedChangeSet(Root root) {
+        return root.getStateManager().getChangeStack().getLastClosedChangeSet();
+        
+    }
+     
 }

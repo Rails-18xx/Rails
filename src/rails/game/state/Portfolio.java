@@ -13,6 +13,7 @@ public abstract class Portfolio<T extends Ownable> extends State implements Iter
         super(parent, id);
         this.type = type;
         this.owner = parent.getParent();
+        getPortfolioManager().addPortfolio(this);
     }
 
     /**
@@ -22,6 +23,7 @@ public abstract class Portfolio<T extends Ownable> extends State implements Iter
         super(parent, id);
         this.type = type;
         this.owner = parent;
+        getPortfolioManager().addPortfolio(this);
     }
 
     protected Class<T> getType() {
@@ -36,13 +38,6 @@ public abstract class Portfolio<T extends Ownable> extends State implements Iter
     public Owner getOwner() {
         return owner;
     }
-    
-    /**
-     * Adds an item to the portfolio 
-     * @param item to add
-     * @return false if portfolio already contains the item, otherwise true
-     */
-    public abstract boolean initialAdd(T item);
 
     /**
      * Move a new item to the portfolio 

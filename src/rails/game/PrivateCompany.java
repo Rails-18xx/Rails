@@ -505,8 +505,7 @@ public class PrivateCompany extends Company implements Ownable, Certificate, Clo
     // FIXME: This should be replaced by making PrivateCompany extending the OwnableItem abstract class
     // and implementing the Company interface instead
     public void moveTo(Owner newOwner) {
-        getRoot().getStateManager().moveItem(this, newOwner);
-        owner = newOwner;
+        // do nothing
     }
 
     public Owner getOwner() {

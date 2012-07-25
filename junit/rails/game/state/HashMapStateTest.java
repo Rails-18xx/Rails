@@ -24,7 +24,7 @@ public class HashMapStateTest {
     private final static String THIRD_ITEM_ID = "ThirdItem";
 
     private Root root;
-    private ChangeStack stack;
+    
     private HashMapState<String, Item> state_default;
     private HashMapState<String, Item> stateInit; 
     private Map<String, Item> initMap, testMap;
@@ -34,7 +34,7 @@ public class HashMapStateTest {
     @Before
     public void setUp() {
         root = StateTestUtils.setUpRoot();
-        stack = root.getStateManager().getChangeStack();
+        
         
         firstItem = AbstractItemImpl.create(root, FIRST_ITEM_ID);
         secondItem = AbstractItemImpl.create(root, SECOND_ITEM_ID);
@@ -66,11 +66,10 @@ public class HashMapStateTest {
     // helper function to check the initial state after undo
     // includes redo, so after returning the state should be unchanged
     private void assertInitialStateAfterUndo() {
-        stack.closeCurrentChangeSet();
-        stack.undo();
+        StateTestUtils.closeAndUndo(root);
         assertThat(state_default.viewMap()).isEmpty();
         assertEquals(stateInit.viewMap(), initMap);
-        stack.redo();
+        StateTestUtils.redo(root);
     }
 
     

@@ -25,7 +25,7 @@ public class HashSetStateTest {
     private final static String ANOTHER_ITEM_ID = "AnotherItem";
 
     private Root root;
-    private ChangeStack stack;
+    
     private HashSetState<Item> stateDefault;
     private HashSetState<Item> stateInit;
     
@@ -36,7 +36,7 @@ public class HashSetStateTest {
     @Before
     public void setUp() {
         root = StateTestUtils.setUpRoot();
-        stack = root.getStateManager().getChangeStack();
+        
         
         oneItem = AbstractItemImpl.create(root, ONE_ITEM_ID);
         anotherItem = AbstractItemImpl.create(root, ANOTHER_ITEM_ID);
@@ -57,11 +57,10 @@ public class HashSetStateTest {
     // helper function to check the initial state after undo
     // includes redo, so after returning the state should be unchanged
     private void assertInitialStateAfterUndo() {
-        stack.closeCurrentChangeSet();
-        stack.undo();
+        StateTestUtils.closeAndUndo(root);
         assertEquals(stateDefault.view(), Sets.newHashSet());
         assertEquals(stateInit.view(), Sets.newHashSet(oneItem));
-        stack.redo();
+        StateTestUtils.redo(root);
     }
 
     private void assertTestAdd() {

@@ -12,7 +12,7 @@ public class BooleanStateTest {
     private final static String INIT_ID = "Init"; 
 
     private Root root;
-    private ChangeStack stack;
+    
     private BooleanState stateDefault;
     private BooleanState stateInit;
 
@@ -21,7 +21,7 @@ public class BooleanStateTest {
         root = StateTestUtils.setUpRoot();
         stateDefault = BooleanState.create(root,  DEFAULT_ID);
         stateInit = BooleanState.create(root, INIT_ID, true);
-        stack = root.getStateManager().getChangeStack();
+        
     }
 
     @Test
@@ -42,8 +42,8 @@ public class BooleanStateTest {
     public void testSetSameIgnored() {
         stateDefault.set(false);
         stateInit.set(true);
-        stack.closeCurrentChangeSet();
-        assertThat(stack.getLastClosedChangeSet().getStates()).doesNotContain(stateDefault, stateInit);
+        StateTestUtils.close(root);
+        assertThat(StateTestUtils.getLastClosedChangeSet(root).getStates()).doesNotContain(stateDefault, stateInit);
     }
     
     @Test
@@ -51,11 +51,11 @@ public class BooleanStateTest {
         assertFalse(stateDefault.value());
         stateDefault.set(true);
         assertTrue(stateDefault.value());
-        stack.closeCurrentChangeSet();
-        assertThat(stack.getLastClosedChangeSet().getStates()).contains(stateDefault);
-        stack.undo();
+        StateTestUtils.close(root);
+        assertThat(StateTestUtils.getLastClosedChangeSet(root).getStates()).contains(stateDefault);
+        StateTestUtils.undo(root);
         assertFalse(stateDefault.value());
-        stack.redo();
+        StateTestUtils.redo(root);
         assertTrue(stateDefault.value());
     }
 

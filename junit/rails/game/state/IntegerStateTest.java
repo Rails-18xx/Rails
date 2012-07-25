@@ -14,7 +14,7 @@ public class IntegerStateTest {
     private final static int OTHER = -5;
 
     private Root root;
-    private ChangeStack stack;
+    
     private IntegerState stateDefault;
     private IntegerState stateInit;
     
@@ -22,7 +22,7 @@ public class IntegerStateTest {
     @Before
     public void setUp() {
         root = StateTestUtils.setUpRoot();
-        stack = root.getStateManager().getChangeStack();
+        
         
         stateDefault = IntegerState.create(root, DEFAULT_ID);
         stateInit = IntegerState.create(root, INIT_ID, INIT);
@@ -56,8 +56,8 @@ public class IntegerStateTest {
     public void testSetSameIgnored() {
         stateDefault.set(0);
         stateInit.set((INIT));
-        stack.closeCurrentChangeSet();
-        assertThat(stack.getLastClosedChangeSet().getStates()).doesNotContain(stateDefault, stateInit);
+        StateTestUtils.close(root);
+        assertThat(StateTestUtils.getLastClosedChangeSet(root).getStates()).doesNotContain(stateDefault, stateInit);
     }
 
     @Test
@@ -68,16 +68,16 @@ public class IntegerStateTest {
         
         stateInit.add(OTHER);
         stateInit.set(0);
-        stack.closeCurrentChangeSet();
+        StateTestUtils.close(root);
         
         assertEquals(stateDefault.value(), INIT+OTHER);
         assertEquals(stateInit.value(), 0);
 
-        stack.undo();
+        StateTestUtils.undo(root);
         assertEquals(stateDefault.value(), 0);
         assertEquals(stateInit.value(), INIT);
 
-        stack.redo();
+        StateTestUtils.redo(root);
         assertEquals(stateDefault.value(), INIT+OTHER);
         assertEquals(stateInit.value(), 0);
     }

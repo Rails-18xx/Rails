@@ -28,15 +28,9 @@ public final class PortfolioMap<T extends Ownable> extends Portfolio<T> {
         return new PortfolioMap<T>(parent, id, type);
     }
 
-    public boolean initialAdd(T item) {
-        if (portfolio.containsValue(item)) return false;
-        new PortfolioChange<T>(this, null, item);
-        return true;
-    }
-
     public boolean moveInto(T item) {
         if (portfolio.containsValue(item)) return false;
-        getPortfolioManager().moveItem(getType(), item, this);
+        item.moveTo(getOwner());
         return true;
     }
 
