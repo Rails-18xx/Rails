@@ -10,8 +10,9 @@ import rails.common.LocalText;
 import rails.game.model.CertificatesModel;
 import rails.game.state.Item;
 import rails.game.state.OwnableItem;
+import rails.game.state.Typable;
 
-public class PublicCertificate extends OwnableItem<PublicCertificate> implements Certificate, Cloneable {
+public class PublicCertificate extends OwnableItem<PublicCertificate> implements Certificate, Cloneable, Typable<PublicCompany> {
 
     /** From which public company is this a certificate */
     protected PublicCompany company;
@@ -188,6 +189,11 @@ public class PublicCertificate extends OwnableItem<PublicCertificate> implements
         return certTypeId;
     }
 
+    // Typable interface
+    public PublicCompany getType() {
+        return company;
+    }
+    
     @Override
     protected Object clone() {
         try {

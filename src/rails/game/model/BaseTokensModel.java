@@ -4,20 +4,20 @@ import rails.game.BaseToken;
 import rails.game.PublicCompany;
 import rails.game.Token;
 import rails.game.state.Model;
-import rails.game.state.PortfolioList;
+import rails.game.state.PortfolioSet;
 
 /**
  * A model presenting the number of tokens
  */
 public class BaseTokensModel extends Model {
 
-    private final PortfolioList<Token> freeBaseTokens;
-    private final PortfolioList<Token> laidBaseTokens;
+    private final PortfolioSet<Token> freeBaseTokens;
+    private final PortfolioSet<Token> laidBaseTokens;
 
     private BaseTokensModel(PublicCompany parent, String id) {
         super(parent, id);
-        freeBaseTokens = PortfolioList.create(parent, "freeBaseTokens", Token.class);
-        laidBaseTokens = PortfolioList.create(parent, "laidBaseTokens", Token.class);
+        freeBaseTokens = PortfolioSet.create(parent, "freeBaseTokens", Token.class);
+        laidBaseTokens = PortfolioSet.create(parent, "laidBaseTokens", Token.class);
     }
 
     public static BaseTokensModel create(PublicCompany parent, String id){
@@ -46,11 +46,11 @@ public class BaseTokensModel extends Model {
         laidBaseTokens.moveInto(token);
     }
     
-    public PortfolioList<Token> getFreeTokens() {
+    public PortfolioSet<Token> getFreeTokens() {
         return freeBaseTokens;
     }
     
-    public PortfolioList<Token> getLaidTokens() {
+    public PortfolioSet<Token> getLaidTokens() {
         return laidBaseTokens;
     }
     

@@ -1,14 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyTrain.java,v 1.22 2010/06/21 21:35:50 stefanfrey Exp $
- *
- * Created on 20-May-2006
- * Change Log:
- */
 package rails.game.action;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import rails.game.Bank;
 import rails.game.CompanyManager;
@@ -34,7 +29,7 @@ public class BuyTrain extends PossibleORAction {
     private String fromName;
     private int fixedCost = 0;
     private boolean forcedBuyIfNoRoute = false; // TODO Can be disabled once route checking exists
-    transient private List<Train> trainsForExchange = null;
+    transient private Set<Train> trainsForExchange = null;
     private String[] trainsForExchangeUniqueIds;
 
     /** Obsolete, but left in for backwards compatibility of saved files */
@@ -79,13 +74,13 @@ public class BuyTrain extends PossibleORAction {
         this.typeName = type.getName();
     }
 
-    public BuyTrain setTrainsForExchange(List<Train> trains) {
+    public BuyTrain setTrainsForExchange(Set<Train> trains) {
         trainsForExchange = trains;
         if (trains != null) {
             trainsForExchangeUniqueIds = new String[trains.size()];
-            for (int i = 0; i < trains.size(); i++) {
-                trainsForExchangeUniqueIds[i] = trains.get(i).getId();
-                // Must be replaced by unique Ids - why was this a todo?
+            int i = 0;
+            for (Train train:trains) {
+                trainsForExchangeUniqueIds[i++] = train.getId();
             }
         }
         return this;
@@ -165,7 +160,7 @@ public class BuyTrain extends PossibleORAction {
         return trainsForExchange != null && !trainsForExchange.isEmpty();
     }
 
-    public List<Train> getTrainsForExchange() {
+    public Set<Train> getTrainsForExchange() {
         return trainsForExchange;
     }
 
@@ -325,7 +320,7 @@ public class BuyTrain extends PossibleORAction {
         // from = gameManager.getPortfolioByName(fromName);
         if (trainsForExchangeUniqueIds != null
             && trainsForExchangeUniqueIds.length > 0) {
-            trainsForExchange = new ArrayList<Train>();
+            trainsForExchange = new HashSet<Train>();
             for (int i = 0; i < trainsForExchangeUniqueIds.length; i++) {
                 trainsForExchange.add(trainManager.getTrainByUniqueId(trainsForExchangeUniqueIds[i]));
             }

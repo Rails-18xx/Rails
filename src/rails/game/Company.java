@@ -5,7 +5,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 import rails.common.parser.ConfigurableComponent;
 import rails.common.parser.ConfigurationException;
@@ -15,7 +15,7 @@ import rails.game.state.BooleanState;
 import rails.game.state.AbstractItem;
 import rails.game.state.Item;
 import rails.game.state.Owner;
-import rails.game.state.PortfolioList;
+import rails.game.state.PortfolioSet;
 import rails.util.Util;
 
 public abstract class Company extends AbstractItem implements Owner, ConfigurableComponent,
@@ -53,8 +53,8 @@ Cloneable, Comparable<Company> {
     protected final BooleanState closedObject = BooleanState.create(this, "closed", false);
 
     // Moved here from PrivayeCOmpany on behalf of 1835
-    protected final PortfolioList<SpecialProperty> specialProperties = 
-            PortfolioList.create(this, "specialProperties", SpecialProperty.class);
+    protected final PortfolioSet<SpecialProperty> specialProperties = 
+            PortfolioSet.create(this, "specialProperties", SpecialProperty.class);
 
     protected static Logger log =
         LoggerFactory.getLogger(Company.class.getPackage().getName());
@@ -96,9 +96,9 @@ Cloneable, Comparable<Company> {
     }
 
     /**
-     * @return ArrayList of all special properties we have.
+     * @return Set of all special properties we have.
      */
-    public ImmutableList<SpecialProperty> getSpecialProperties() {
+    public ImmutableSet<SpecialProperty> getSpecialProperties() {
         return specialProperties.items();
     }
 

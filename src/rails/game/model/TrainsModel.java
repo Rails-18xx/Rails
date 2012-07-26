@@ -1,21 +1,24 @@
 package rails.game.model;
 
 import com.google.common.collect.HashMultiset;
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multiset;
 
 import rails.game.TrainCertificateType;
 import rails.game.Train;
+import rails.game.TrainType;
 import rails.game.state.Model;
 import rails.game.state.Portfolio;
 import rails.game.state.PortfolioHolder;
 import rails.game.state.PortfolioMap;
 
+// FIXME: It is tricky to use the PortfolioMap as the TrainType can switch 
+// their type, potentially it is better to use a PortfolioSet
 public class TrainsModel extends Model {
 
     public static final String ID = "TrainsModel";
     
-    private final PortfolioMap<Train> trains;
+    private final PortfolioMap<TrainType, Train> trains;
     
     private boolean abbrList = false;
 
@@ -39,7 +42,7 @@ public class TrainsModel extends Model {
         this.abbrList = abbrList;
     }
     
-    public ImmutableList<Train> getTrains() {
+    public ImmutableSet<Train> getTrains() {
         return trains.items();
     }
     

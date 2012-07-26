@@ -3,28 +3,33 @@ package rails.game.state;
 import java.util.Iterator;
 import java.util.Set;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-public final class PortfolioList<T extends Ownable> extends Portfolio<T> {
+/**
+ * PortfolioSet is an implementation of a Portfolio that is based on a (Hash)Set
+
+ * @param <T> the type of Ownable (items) stored inside the portfolio
+ */
+
+public final class PortfolioSet<T extends Ownable> extends Portfolio<T> {
 
     private final Set<T> portfolio = Sets.newHashSet();
     
-    private PortfolioList(PortfolioHolder parent, String id, Class<T> type) {
+    private PortfolioSet(PortfolioHolder parent, String id, Class<T> type) {
         super(parent, id, type);
     }
 
-    private PortfolioList(Owner parent, String id, Class<T> type) {
+    private PortfolioSet(Owner parent, String id, Class<T> type) {
         super(parent, id, type);
     }
     
-    public static <T extends Ownable> PortfolioList<T> create(PortfolioHolder parent, String id, Class<T> type) {
-        return new PortfolioList<T>(parent, id, type);
+    public static <T extends Ownable> PortfolioSet<T> create(PortfolioHolder parent, String id, Class<T> type) {
+        return new PortfolioSet<T>(parent, id, type);
     }
 
-    public static <T extends Ownable> PortfolioList<T> create(Owner parent, String id, Class<T> type) {
-        return new PortfolioList<T>(parent, id, type);
+    public static <T extends Ownable> PortfolioSet<T> create(Owner parent, String id, Class<T> type) {
+        return new PortfolioSet<T>(parent, id, type);
     }
 
     public boolean moveInto(T item) {
@@ -37,8 +42,8 @@ public final class PortfolioList<T extends Ownable> extends Portfolio<T> {
         return portfolio.contains(item);
     }
 
-    public ImmutableList<T> items() {
-        return ImmutableList.copyOf(portfolio);
+    public ImmutableSet<T> items() {
+        return ImmutableSet.copyOf(portfolio);
     }
     
     public int size() {

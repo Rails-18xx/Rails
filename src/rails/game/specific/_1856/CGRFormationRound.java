@@ -34,7 +34,7 @@ public final class CGRFormationRound extends SwitchableUIRound {
      * effects from the merger, processed at the end
      * thus no need for state variables
      */
-    private List<Train> trainsToDiscardFrom = null;
+    private Set<Train> trainsToDiscardFrom = null;
     private boolean forcedTrainDiscard = true;
     private List<ExchangeableToken> tokensToExchangeFrom = null;
     private List<BaseToken> nonHomeTokens = null;
@@ -556,7 +556,7 @@ public final class CGRFormationRound extends SwitchableUIRound {
             }
 
             // Move any remaining trains
-            List<Train> trains = comp.getPortfolioModel().getTrainList();
+            Set<Train> trains = comp.getPortfolioModel().getTrainList();
             for (Train train : trains) {
                 cgr.getPortfolioModel().addTrain(train);
                 if (train.isPermanent()) cgr.setHadPermanentTrain(true);
@@ -668,7 +668,7 @@ bonuses:        for (Bonus bonus : bonuses) {
         // Check the trains, autodiscard any excess non-permanent trains
 //        int trainLimit = cgr.getTrainLimit(gameManager.getCurrentPlayerIndex());
         int trainLimit = cgr.getCurrentTrainLimit();
-        List<Train> trains = cgr.getPortfolioModel().getTrainList();
+        Set<Train> trains = cgr.getPortfolioModel().getTrainList();
         if (cgr.getNumberOfTrains() > trainLimit) {
             ReportBuffer.add("");
             int numberToDiscard = cgr.getNumberOfTrains() - trainLimit;
@@ -770,7 +770,7 @@ bonuses:        for (Bonus bonus : bonuses) {
         } else if (!this.cgrHasDiscardedTrains.value()) {
             // Check if CGR still has non-permanent trains
             // these may be discarded voluntarily
-            trainsToDiscardFrom = new ArrayList<Train>();
+            trainsToDiscardFrom = new HashSet<Train>();
             for (Train train : cgr.getPortfolioModel().getTrainList()) {
                 if (!train.isPermanent()) {
                     trainsToDiscardFrom.add(train);

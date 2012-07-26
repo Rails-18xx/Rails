@@ -14,6 +14,8 @@ import javax.swing.plaf.FontUIResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Iterables;
+
 import rails.common.DisplayBuffer;
 import rails.common.GuiDef;
 import rails.common.GuiHints;
@@ -521,7 +523,7 @@ public class GameUIManager implements DialogOwner {
 
         PublicCompany c = dt.getCompany();
         String playerName = dt.getPlayerName();
-        List<Train> trains = dt.getOwnedTrains();
+        Set<Train> trains = dt.getOwnedTrains();
         int size = trains.size() + (dt.isForced() ? 0 : 1);
         List<String> trainOptions =
                 new ArrayList<String>(size);
@@ -540,7 +542,7 @@ public class GameUIManager implements DialogOwner {
         for (int i = 0; i < trains.size(); i++) {
             trainOptions.add(
                     options[j++] = LocalText.getText("N_Train",
-                            trains.get(i).getId())
+                            Iterables.get(trains, i).getId())
             );
         }
         if (prompt == null) prompt = LocalText.getText(
@@ -556,9 +558,10 @@ public class GameUIManager implements DialogOwner {
                         options, options[0]);
         if (discardedTrainName != null) {
             int index = trainOptions.indexOf(discardedTrainName);
+            // FIXME: Does this work with the new Set defined?
             if (index >= offset) {
                 Train discardedTrain =
-                        trains.get(trainOptions.indexOf(discardedTrainName)-offset);
+                        Iterables.get(trains, trainOptions.indexOf(discardedTrainName)-offset);
                 dt.setDiscardedTrain(discardedTrain);
             }
 

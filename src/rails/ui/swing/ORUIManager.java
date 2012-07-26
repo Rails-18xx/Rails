@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.jgrapht.graph.SimpleGraph;
 
+import com.google.common.collect.Iterables;
+
 import rails.algorithms.*;
 import rails.common.GuiDef;
 import rails.common.LocalText;
@@ -906,7 +908,8 @@ public class ORUIManager implements DialogOwner {
         for (Stop oldStop : hex.getStops()) {
             if (oldStop.hasTokens()) {
                 // Assume only 1 token (no exceptions known)
-                PublicCompany company = ((BaseToken)oldStop.getTokens().items().get(0)).getParent();
+                // TODO: Rewrite this to make this code nicer
+                PublicCompany company = ((BaseToken)Iterables.get(oldStop.getTokens().items(), 0)).getParent();
 
                 List<String> prompts = new ArrayList<String>();
                 Map<String, Integer> promptToCityMap = new HashMap<String, Integer>();
@@ -1183,9 +1186,9 @@ public class ORUIManager implements DialogOwner {
 
         Train exchangedTrain = null;
         if (train != null && buyAction.isForExchange()) {
-            List<Train> oldTrains = buyAction.getTrainsForExchange();
+            Set<Train> oldTrains = buyAction.getTrainsForExchange();
             if (oldTrains.size() == 1) {
-                exchangedTrain = oldTrains.get(0);
+                exchangedTrain = Iterables.get(oldTrains,0);
             } else {
                 List<String> oldTrainOptions =
                         new ArrayList<String>(oldTrains.size());
@@ -1193,7 +1196,7 @@ public class ORUIManager implements DialogOwner {
                 int jj = 0;
                 for (int j = 0; j < oldTrains.size(); j++) {
                     options[jj + j] =
-                            LocalText.getText("N_Train", oldTrains.get(j).getId());
+                            LocalText.getText("N_Train", Iterables.get(oldTrains, j).getId());
                     oldTrainOptions.add(options[jj + j]);
                 }
                 String exchangedTrainName =
@@ -1206,7 +1209,7 @@ public class ORUIManager implements DialogOwner {
                 if (exchangedTrainName != null) {
                     int index = oldTrainOptions.indexOf(exchangedTrainName);
                     if (index >= 0) {
-                        exchangedTrain = oldTrains.get(index);
+                        exchangedTrain = Iterables.get(oldTrains, index);
                     }
                 }
                 if (exchangedTrain == null) {

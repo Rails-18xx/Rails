@@ -4,8 +4,10 @@ package rails.game;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -331,9 +333,9 @@ public final class TrainManager extends AbstractItem implements ConfigurableComp
 
     }
     
-    public List<Train> getAvailableNewTrains() {
+    public Set<Train> getAvailableNewTrains() {
 
-        List<Train> availableTrains = new ArrayList<Train>();
+        Set<Train> availableTrains = new HashSet<Train>();
         Train train;
 
         for (TrainCertificateType type : trainCertTypes) {

@@ -5,7 +5,7 @@ package rails.game.state;
  */
 class OwnableItemImpl extends OwnableItem<Ownable> {
 
-    private OwnableItemImpl(Item parent, String id) {
+    protected OwnableItemImpl(Item parent, String id) {
         super(parent, id, Ownable.class);
     }
 

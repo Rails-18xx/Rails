@@ -5,7 +5,7 @@ import rails.game.PrivateCompany;
 import rails.game.state.Model;
 import rails.game.state.Portfolio;
 import rails.game.state.PortfolioHolder;
-import rails.game.state.PortfolioList;
+import rails.game.state.PortfolioSet;
 
 public final class PrivatesModel extends Model {
 
@@ -17,7 +17,7 @@ public final class PrivatesModel extends Model {
 
     private PrivatesModel(PortfolioHolder parent, String id) {
         super(parent, id);
-        privates = PortfolioList.create(parent, "privates", PrivateCompany.class);
+        privates = PortfolioSet.create(parent, "privates", PrivateCompany.class);
     }
     
     /**

@@ -23,7 +23,7 @@ public class AssignNamedTrains extends UseSpecialProperty {
     public static final long serialVersionUID = 1L;
 
     public AssignNamedTrains(NameTrains namedTrainsSpecialProperty,
-            List<Train> trains) {
+            Set<Train> trains) {
         super(namedTrainsSpecialProperty);
 
         numberOfTrains = trains.size();

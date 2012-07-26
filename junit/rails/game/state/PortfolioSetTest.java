@@ -11,7 +11,7 @@ import org.junit.Test;
 
 import com.google.common.collect.Sets;
 
-public class PortfolioListTest {
+public class PortfolioSetTest {
 
     private final static String PORTFOLIO_A_ID = "PortfolioA";
     private final static String PORTFOLIO_B_ID = "PortfolioB";
@@ -21,8 +21,8 @@ public class PortfolioListTest {
     private final static String ANOTHER_ITEM_ID = "AnotherItem";
     
     private Root root;
-    private PortfolioList<Ownable> portfolioA;
-    private PortfolioList<Ownable> portfolioB;
+    private PortfolioSet<Ownable> portfolioA;
+    private PortfolioSet<Ownable> portfolioB;
     private Owner ownerA;
     private Owner ownerB;
     private Ownable item;
@@ -33,8 +33,8 @@ public class PortfolioListTest {
         root = StateTestUtils.setUpRoot();
         ownerA = OwnerImpl.create(root, OWNER_A_ID);
         ownerB = OwnerImpl.create(root, OWNER_B_ID);
-        portfolioA = PortfolioList.create(ownerA, PORTFOLIO_A_ID , Ownable.class);
-        portfolioB = PortfolioList.create(ownerB, PORTFOLIO_B_ID , Ownable.class);
+        portfolioA = PortfolioSet.create(ownerA, PORTFOLIO_A_ID , Ownable.class);
+        portfolioB = PortfolioSet.create(ownerB, PORTFOLIO_B_ID , Ownable.class);
         item = OwnableItemImpl.create(root, ITEM_ID);
         anotherItem = OwnableItemImpl.create(root, ANOTHER_ITEM_ID);
         portfolioA.moveInto(item);
@@ -75,7 +75,12 @@ public class PortfolioListTest {
     public void testItems() {
         assertThat(portfolioA.items()).containsOnly(item);
         anotherItem.moveTo(ownerA);
-        assertThat(portfolioA.items()).containsOnly(item, anotherItem);
+        Set<Ownable> items = portfolioA.items();
+        assertThat(items).containsOnly(item, anotherItem);
+        // and the view is unchanged after changing the portfolio
+        anotherItem.moveTo(ownerB);
+        assertTrue(items.contains(anotherItem));
+        assertFalse(portfolioA.containsItem(anotherItem));
     }
 
     @Test
@@ -103,6 +108,9 @@ public class PortfolioListTest {
         Set<Ownable> iterated = Sets.newHashSet();
 
         Iterator<Ownable> it = portfolioA.iterator();
+        // and it still works even after removing items
+        anotherItem.moveTo(ownerB);
+        
         iterated.add(it.next());
         iterated.add(it.next());
         

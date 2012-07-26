@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 import rails.algorithms.RevenueBonusTemplate;
 import rails.common.LocalText;
@@ -25,7 +25,7 @@ import rails.game.state.BooleanState;
 import rails.game.state.Observer;
 import rails.game.state.Owner;
 import rails.game.state.Portfolio;
-import rails.game.state.PortfolioList;
+import rails.game.state.PortfolioSet;
 import rails.game.state.AbstractItem;
 import rails.util.*;
 
@@ -126,7 +126,7 @@ StationHolder {
     protected List<PublicCompany> destinations;
 
     /** Tokens that are not bound to a Station (City), such as Bonus tokens */
-    protected final PortfolioList<Token> offStationTokens = PortfolioList.create(this,
+    protected final PortfolioSet<Token> offStationTokens = PortfolioSet.create(this,
             "offStationTokens", Token.class);
 
     /** Storage of revenueBonus that are bound to the hex */
@@ -979,7 +979,7 @@ StationHolder {
         return tokens;
     }
 
-    public PortfolioList<Token> getTokens() {
+    public PortfolioSet<Token> getTokens() {
         return offStationTokens;
     }
 
@@ -1015,11 +1015,11 @@ StationHolder {
         return false;
     }
 
-    public ImmutableList<Token> getTokens(int cityNumber) {
+    public ImmutableSet<Token> getTokens(int cityNumber) {
         if (stops.size() > 0 && mStops.get(cityNumber) != null) {
             return (mStops.get(cityNumber)).getTokens().items();
         } else {
-            return ImmutableList.of(); // empty List
+            return ImmutableSet.of(); // empty List
         }
     }
 

@@ -2,6 +2,8 @@ package rails.game.specific._1835;
 
 import java.util.*;
 
+import com.google.common.collect.Iterables;
+
 import rails.common.DisplayBuffer;
 import rails.common.GuiDef;
 import rails.common.LocalText;
@@ -79,19 +81,19 @@ public final class PrussianFormationRound extends StockRound {
             log.debug("Original Prussian starting player was "+startingPlayer.getId());
             setCurrentPlayer(startingPlayer);
             if (forcedMerge) {
-                List<SpecialProperty> sps;
+                Set<SpecialProperty> sps;
                 setFoldablePrePrussians();
                 List<Company> foldables = new ArrayList<Company> ();
                 for (PrivateCompany company : gameManager.getAllPrivateCompanies()) {
                     sps = company.getSpecialProperties();
-                    if (sps != null && !sps.isEmpty() && sps.get(0) instanceof ExchangeForShare) {
+                    if (sps != null && !sps.isEmpty() && Iterables.get(sps, 0) instanceof ExchangeForShare) {
                         foldables.add(company);
                     }
                 }
                 for (PublicCompany company : gameManager.getAllPublicCompanies()) {
                     if (company.isClosed()) continue;
                     sps = company.getSpecialProperties();
-                    if (sps != null && !sps.isEmpty() && sps.get(0) instanceof ExchangeForShare) {
+                    if (sps != null && !sps.isEmpty() && Iterables.get(sps, 0) instanceof ExchangeForShare) {
                         foldables.add(company);
                     }
                 }
@@ -135,18 +137,18 @@ public final class PrussianFormationRound extends StockRound {
         foldablePrePrussians = new ArrayList<Company> ();
         SpecialProperty sp;
         for (PrivateCompany company : currentPlayer.getPortfolioModel().getPrivateCompanies()) {
-            sp = company.getSpecialProperties().get(0);
+            sp = Iterables.get(company.getSpecialProperties(), 0);
             if (sp instanceof ExchangeForShare) {
                 foldablePrePrussians.add(company);
             }
         }
         PublicCompany company;
-        List<SpecialProperty> sps;
+        Set<SpecialProperty> sps;
         for (PublicCertificate cert : currentPlayer.getPortfolioModel().getCertificates()) {
             if (!cert.isPresidentShare()) continue;
             company = cert.getCompany();
             sps = company.getSpecialProperties();
-            if (sps != null && !sps.isEmpty() && sps.get(0) instanceof ExchangeForShare) {
+            if (sps != null && !sps.isEmpty() && Iterables.get(sps, 0) instanceof ExchangeForShare) {
                 foldablePrePrussians.add(company);
             }
         }
@@ -321,7 +323,7 @@ public final class PrussianFormationRound extends StockRound {
                 player = ((PublicCompany)company).getPresident();
             }
             // Shortcut, sp should be checked
-            efs = (ExchangeForShare) company.getSpecialProperties().get(0);
+            efs = (ExchangeForShare) Iterables.get(company.getSpecialProperties(), 0);
             cert = unavailable.findCertificate(prussian, efs.getShare()/prussian.getShareUnit(),
             		president);
             player.getPortfolioModel().addPublicCertificate(cert);

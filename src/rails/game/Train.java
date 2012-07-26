@@ -9,8 +9,11 @@ import rails.game.state.GenericState;
 import rails.game.state.Item;
 import rails.game.state.OwnableItem;
 import rails.game.state.Portfolio;
+import rails.game.state.Typable;
 
-public class Train extends OwnableItem<Train> {
+// FIXME: Trains a tricky as they can swap their type
+// This change has to be tracked if used in a PortfolioMap
+public class Train extends OwnableItem<Train> implements Typable<TrainType> {
 
     protected TrainCertificateType certificateType;
     

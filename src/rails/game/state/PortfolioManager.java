@@ -35,6 +35,12 @@ public final class PortfolioManager extends Manager implements DelayedItem {
         public int hashCode() {
             return Objects.hashCode(type, owner);
         }
+        
+        @Override
+        public String toString() {
+            return Objects.toStringHelper(this).add("Type", type).add("Owner", owner).toString();
+        }
+        
     }
     
     private final HashMapState<PMKey<? extends Ownable>, Portfolio<? extends Ownable>> portfolios = 

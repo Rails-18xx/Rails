@@ -3,8 +3,11 @@ package rails.ui.swing.gamespecific._18EU;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JOptionPane;
+
+import com.google.common.collect.Iterables;
 
 import rails.common.LocalText;
 import rails.game.PublicCompany;
@@ -54,7 +57,7 @@ public class StatusWindow_18EU extends StatusWindow {
                 // Following code largely copied from ORUIManager
                 PublicCompany c = dt.getCompany();
                 String playerName = dt.getPlayerName();
-                List<Train> trains = dt.getOwnedTrains();
+                Set<Train> trains = dt.getOwnedTrains();
                 List<String> trainOptions =
                         new ArrayList<String>(trains.size());
                 String[] options = new String[trains.size()];
@@ -62,7 +65,7 @@ public class StatusWindow_18EU extends StatusWindow {
                 for (int i = 0; i < options.length; i++) {
                     options[i] =
                             LocalText.getText("N_Train",
-                                    trains.get(i).getId());
+                                    Iterables.get(trains, i).getId());
                     trainOptions.add(options[i]);
                 }
                 String discardedTrainName =
@@ -76,8 +79,9 @@ public class StatusWindow_18EU extends StatusWindow {
                                 JOptionPane.QUESTION_MESSAGE, null, options,
                                 options[0]);
                 if (discardedTrainName != null) {
+                    // FIXME: Does this still work?
                     Train discardedTrain =
-                            trains.get(trainOptions.indexOf(discardedTrainName));
+                            Iterables.get(trains, trainOptions.indexOf(discardedTrainName));
 
                     dt.setDiscardedTrain(discardedTrain);
 

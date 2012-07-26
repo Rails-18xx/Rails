@@ -1,5 +1,6 @@
 package rails.game.state;
-import com.google.common.collect.ImmutableList;
+
+import com.google.common.collect.ImmutableSet;
 
 public abstract class Portfolio<T extends Ownable> extends State implements Iterable<T> {
 
@@ -57,7 +58,7 @@ public abstract class Portfolio<T extends Ownable> extends State implements Iter
     /** 
      * @return all items contained in the portfolio 
      */
-    public abstract ImmutableList<T> items();
+    public abstract ImmutableSet<T> items();
 
     /**
      * @return size of portfolio

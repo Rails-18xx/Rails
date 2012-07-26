@@ -3,6 +3,8 @@ package rails.game.specific._1856;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.Iterables;
+
 import rails.common.DisplayBuffer;
 import rails.common.GuiDef;
 import rails.common.LocalText;
@@ -66,7 +68,7 @@ public class OperatingRound_1856 extends OperatingRound {
             if (!operatingCompany.value().hasOperated()) {
                 int soldPercentage = getSoldPercentage (operatingCompany.value());
 
-                Train nextAvailableTrain = gameManager.getTrainManager().getAvailableNewTrains().get(0);
+                Train nextAvailableTrain = Iterables.get(gameManager.getTrainManager().getAvailableNewTrains(), 0);
                 int trainNumber;
                 try {
                     trainNumber = Integer.parseInt(nextAvailableTrain.getId());

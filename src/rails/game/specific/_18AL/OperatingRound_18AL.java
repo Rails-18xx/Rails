@@ -2,6 +2,7 @@ package rails.game.specific._18AL;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import rails.common.LocalText;
 import rails.game.*;
@@ -25,7 +26,7 @@ public final class OperatingRound_18AL extends OperatingRound {
         if (getGameOption("18ALOptimizeNamedTrains").equalsIgnoreCase("yes")) return;
         
         for (NameTrains stl : getSpecialProperties(NameTrains.class)) {
-            List<Train> trains =
+            Set<Train> trains =
                     operatingCompany.value().getPortfolioModel().getTrainList();
             if (trains != null && !trains.isEmpty()) {
                 possibleActions.add(new AssignNamedTrains(stl, trains));

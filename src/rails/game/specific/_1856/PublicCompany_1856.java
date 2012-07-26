@@ -1,5 +1,7 @@
 package rails.game.specific._1856;
 
+import com.google.common.collect.Iterables;
+
 import rails.game.*;
 import rails.game.state.IntegerState;
 import rails.game.state.Item;
@@ -23,7 +25,7 @@ public final class PublicCompany_1856 extends PublicCompany {
         super.start(startSpace);
 
         Train nextAvailableTrain
-            = gameManager.getTrainManager().getAvailableNewTrains().get(0);
+            = Iterables.get(gameManager.getTrainManager().getAvailableNewTrains(), 0);
         int trainNumber;
         try {
             trainNumber = Integer.parseInt(nextAvailableTrain.getId());

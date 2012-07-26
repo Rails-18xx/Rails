@@ -2,6 +2,8 @@ package rails.game.specific._1835;
 
 import java.util.*;
 
+import com.google.common.collect.Iterables;
+
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.common.parser.GameOption;
@@ -81,7 +83,7 @@ public final class OperatingRound_1835 extends OperatingRound {
                      * so it can be subtracted if PR operates */
                     if (recipient instanceof Player && priv.getSpecialProperties() != null
                             && priv.getSpecialProperties().size() > 0) {
-                        SpecialProperty sp = priv.getSpecialProperties().get(0);
+                        SpecialProperty sp = Iterables.get(priv.getSpecialProperties(), 0);
                         if (sp instanceof ExchangeForShare) {
                             ExchangeForShare efs = (ExchangeForShare) sp;
                             if (efs.getPublicCompanyName().equalsIgnoreCase(GameManager_1835.PR_ID)) {
@@ -144,9 +146,9 @@ public final class OperatingRound_1835 extends OperatingRound {
 
         super.initTurn();
 
-        List<SpecialProperty> sps = operatingCompany.value().getSpecialProperties();
+        Set<SpecialProperty> sps = operatingCompany.value().getSpecialProperties();
         if (sps != null && !sps.isEmpty()) {
-            ExchangeForShare efs = (ExchangeForShare) sps.get(0);
+            ExchangeForShare efs = (ExchangeForShare) Iterables.get(sps, 0);
             addIncomeDenialShare (operatingCompany.value().getPresident(), efs.getShare());
         }
     }

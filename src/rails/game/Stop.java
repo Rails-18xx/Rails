@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import rails.game.state.AbstractItem;
 import rails.game.state.GenericState;
 import rails.game.state.Owner;
-import rails.game.state.PortfolioList;
+import rails.game.state.PortfolioSet;
 import rails.util.Util;
 
 /**
@@ -31,7 +31,7 @@ public class Stop extends AbstractItem implements Owner {
     //private Station relatedStation;
     private GenericState<Station> relatedStation;
     private int slots;
-    private PortfolioList<Token> tokens;
+    private PortfolioSet<Token> tokens;
     private String trackEdges;
 
 
@@ -99,7 +99,7 @@ public class Stop extends AbstractItem implements Owner {
         super(hex, String.valueOf(number));
         this.number = number;
         uniqueId = getParent().getId() + "_" + number;
-        tokens = PortfolioList.create(this, "tokens", Token.class);
+        tokens = PortfolioSet.create(this, "tokens", Token.class);
         relatedStation = GenericState.create(this, "City_"+uniqueId+"_station");
     }
 
@@ -232,7 +232,7 @@ public class Stop extends AbstractItem implements Owner {
         return uniqueId;
     }
 
-    public PortfolioList<Token> getTokens() {
+    public PortfolioSet<Token> getTokens() {
         return tokens;
     }
 

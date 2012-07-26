@@ -1,14 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/DiscardTrain.java,v 1.11 2009/12/27 18:30:11 evos Exp $
- *
- * Created on 20-May-2006
- * Change Log:
- */
 package rails.game.action;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import rails.game.*;
 
@@ -18,7 +13,7 @@ import rails.game.*;
 public class DiscardTrain extends PossibleORAction {
 
     // Server settings
-    transient private List<Train> ownedTrains = null;
+    transient private Set<Train> ownedTrains = null;
     private String[] ownedTrainsUniqueIds;
 
     /** True if discarding trains is mandatory */
@@ -30,25 +25,26 @@ public class DiscardTrain extends PossibleORAction {
 
     public static final long serialVersionUID = 1L;
 
-    public DiscardTrain(PublicCompany company, List<Train> trains) {
+    public DiscardTrain(PublicCompany company, Set<Train> trains) {
 
         super();
         this.ownedTrains = trains;
         this.ownedTrainsUniqueIds = new String[trains.size()];
-        for (int i = 0; i < trains.size(); i++) {
-            ownedTrainsUniqueIds[i] = trains.get(i).getId();
+        int i = 0;
+        for (Train train:trains) {
+            ownedTrainsUniqueIds[i++] = train.getId();
         }
         this.company = company;
         this.companyName = company.getId();
     }
 
-    public DiscardTrain(PublicCompany company, List<Train> trains,
+    public DiscardTrain(PublicCompany company, Set<Train> trainsToDiscardFrom,
             boolean forced) {
-        this(company, trains);
+        this(company, trainsToDiscardFrom);
         this.forced = forced;
     }
 
-    public List<Train> getOwnedTrains() {
+    public Set<Train> getOwnedTrains() {
         return ownedTrains;
     }
 
@@ -110,7 +106,7 @@ public class DiscardTrain extends PossibleORAction {
         }
 
         if (ownedTrainsUniqueIds != null && ownedTrainsUniqueIds.length > 0) {
-            ownedTrains = new ArrayList<Train>();
+            ownedTrains = new HashSet<Train>();
             for (int i = 0; i < ownedTrainsUniqueIds.length; i++) {
                 ownedTrains.add(trainManager.getTrainByUniqueId(ownedTrainsUniqueIds[i]));
             }

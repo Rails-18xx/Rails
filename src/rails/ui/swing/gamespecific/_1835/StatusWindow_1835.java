@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.swing.JDialog;
 
+import com.google.common.collect.Iterables;
+
 import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.DiscardTrain;
@@ -85,7 +87,7 @@ public class StatusWindow_1835 extends StatusWindow {
             			company.getId(),
             			company.getLongName(),
             			prussian.getId(),
-            			((ExchangeForShare)(company.getSpecialProperties().get(0))).getShare()
+            			((ExchangeForShare)(Iterables.get(company.getSpecialProperties(),0))).getShare()
             			);
             }
             currentDialog = new CheckBoxDialog (gameUIManager,

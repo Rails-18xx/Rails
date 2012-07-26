@@ -1,5 +1,7 @@
 package rails.game.specific._1889;
 
+import com.google.common.collect.Iterables;
+
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.common.parser.GameOption;
@@ -55,7 +57,7 @@ public final class OperatingRound_1889 extends OperatingRound {
             if (!privB.isClosed() && 
                     privB.getOwner() instanceof Player && 
                     privB.getOwner() != operatingCompany.value().getPresident()) {
-                SpecialProperty spPrivB = privB.getSpecialProperties().get(0);
+                SpecialProperty spPrivB = Iterables.get(privB.getSpecialProperties(), 0);
                 if (spPrivB != null && !spPrivB.isExercised()) {
                     if (!activeSpPrivB.value()) 
                         possibleActions.add(new UseSpecialProperty(spPrivB));
@@ -72,7 +74,7 @@ public final class OperatingRound_1889 extends OperatingRound {
         // private C: trigger by purchase of private -- see below
         if (activeSpPrivC.value()) {
             possibleActions.clear();
-            SpecialTileLay spPrivC = (SpecialTileLay)privC.getSpecialProperties().get(0);
+            SpecialTileLay spPrivC = (SpecialTileLay)Iterables.get(privC.getSpecialProperties(),0);
             possibleActions.add(new LayTile(spPrivC));
             possibleActions.add(new NullAction(NullAction.SKIP));
             DisplayBuffer.add(LocalText.getText("1889PrivateCactive", previousOwnerName));
@@ -86,7 +88,7 @@ public final class OperatingRound_1889 extends OperatingRound {
         // private B
         if (action instanceof UseSpecialProperty) {
             UseSpecialProperty spAction=(UseSpecialProperty)action;
-            if (spAction.getSpecialProperty() == privB.getSpecialProperties().get(0)) {
+            if (spAction.getSpecialProperty() == Iterables.get(privB.getSpecialProperties(), 0)) {
                 // TODO: changeStack.start(true);
                 activeSpPrivB.set(true);
                 log.debug("1889 specific: Allows tile lay for B with player request");

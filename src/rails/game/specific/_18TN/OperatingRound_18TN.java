@@ -1,6 +1,6 @@
 package rails.game.specific._18TN;
 
-import java.util.List;
+import java.util.Set;
 
 import rails.game.*;
 import rails.game.action.BuyPrivate;
@@ -50,7 +50,7 @@ public class OperatingRound_18TN extends OperatingRound {
     }
 
     private boolean ownsPrivate (PublicCompany company) {
-        List<PrivateCompany> privates = company.getPortfolioModel().getPrivateCompanies();
+        Set<PrivateCompany> privates = company.getPortfolioModel().getPrivateCompanies();
         return privates != null && !privates.isEmpty();
     }
 

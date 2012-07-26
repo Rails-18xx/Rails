@@ -2,7 +2,7 @@ package rails.game.model;
 
 import java.util.Iterator;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 import rails.game.Player;
 import rails.game.PublicCertificate;
@@ -23,7 +23,7 @@ public final class CertificatesModel extends Model {
 
     public final static String ID = "CertificatesModel";
     
-    private final PortfolioMap<PublicCertificate> certificates;
+    private final PortfolioMap<PublicCompany, PublicCertificate> certificates;
 
     private CertificatesModel(PortfolioHolder parent) {
         super(parent, ID);
@@ -39,7 +39,7 @@ public final class CertificatesModel extends Model {
         return (PortfolioHolder)getParent();
     }
     
-    public PortfolioMap<PublicCertificate> getPortfolio() {
+    public PortfolioMap<PublicCompany, PublicCertificate> getPortfolio() {
         return certificates;
     }
     
@@ -78,11 +78,11 @@ public final class CertificatesModel extends Model {
         return certificates.toString();
     }
     
-    public ImmutableList<PublicCertificate> getCertificates() {
+    public ImmutableSet<PublicCertificate> getCertificates() {
         return certificates.items();
     }
     
-    public ImmutableList<PublicCertificate> getCertificates(PublicCompany company) {
+    public ImmutableSet<PublicCertificate> getCertificates(PublicCompany company) {
         return certificates.getItems(company);
     }
     

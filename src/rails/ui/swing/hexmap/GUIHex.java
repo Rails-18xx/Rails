@@ -25,6 +25,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Iterables;
+
 import rails.algorithms.RevenueBonusTemplate;
 import rails.game.Bank;
 import rails.game.BaseToken;
@@ -540,10 +542,10 @@ public class GUIHex implements Observer {
         }
 
         int numTokens = getHexModel().getTokens(1).size();
-        List<Token> tokens = getHexModel().getTokens(1);
+        Set<Token> tokens = getHexModel().getTokens(1);
 
         for (int i = 0; i < tokens.size(); i++) {
-            PublicCompany co = ((BaseToken) tokens.get(i)).getParent();
+            PublicCompany co = ((BaseToken) Iterables.get(tokens, i)).getParent();
             Point center = getTokenCenter(numTokens, i, 1, 0);
             drawBaseToken(g2, co, center, tokenDiameter);
         }
@@ -552,7 +554,7 @@ public class GUIHex implements Observer {
     private void paintSplitStations(Graphics2D g2) {
         int numStations = getHexModel().getStops().size();
         int numTokens;
-        List<Token> tokens;
+        Set<Token> tokens;
         Point origin;
         PublicCompany co;
 
@@ -562,7 +564,7 @@ public class GUIHex implements Observer {
 
             for (int j = 0; j < tokens.size(); j++) {
                 origin = getTokenCenter(numTokens, j, numStations, i);
-                co = ((BaseToken) tokens.get(j)).getParent();
+                co = ((BaseToken) Iterables.get(tokens, j)).getParent();
                 drawBaseToken(g2, co, origin, tokenDiameter);
             }
         }
@@ -572,7 +574,7 @@ public class GUIHex implements Observer {
     private static int[] offStationTokenY = new int[] { -19, 0 };
 
     private void paintOffStationTokens(Graphics2D g2) {
-        List<Token> tokens = getHexModel().getTokens().items();
+        Set<Token> tokens = getHexModel().getTokens().items();
         if (tokens == null) return;
 
         int i = 0;
@@ -786,7 +788,7 @@ public class GUIHex implements Observer {
                 tt.append(st.getValue());
                 if (st.getBaseSlots() > 0) {
                     tt.append(", ").append(st.getBaseSlots()).append(" slots");
-                    List<Token> tokens = model.getTokens(stopNumber);
+                    Set<Token> tokens = model.getTokens(stopNumber);
                     if (tokens.size() > 0) {
                         tt.append(" (");
                         int oldsize = tt.length();

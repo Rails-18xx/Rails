@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.util.*;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 
 import rails.common.GuiDef;
 import rails.common.LocalText;
@@ -1046,7 +1048,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
 
         // TODO: Check if this works correctly
         // move all laid tokens to free tokens again
-        PortfolioList.moveAll(
+        PortfolioSet.moveAll(
                 baseTokens.getLaidTokens(), baseTokens.getFreeTokens());
         // close company on the stock market
         stockMarket.close(this);
@@ -1601,7 +1603,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
         privatesCostThisTurn.change(price);
 
         // Move any special abilities to the portfolio, if configured so
-        List<SpecialProperty> sps = privateCompany.getSpecialProperties();
+        Set<SpecialProperty> sps = privateCompany.getSpecialProperties();
         if (sps != null) {
             // Need intermediate List to avoid ConcurrentModificationException
             List<SpecialProperty> spsToMoveHere =
@@ -1818,7 +1820,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
 
     public BaseToken getFreeToken() {
         if (baseTokens.getFreeTokens().size() > 0) {
-            return (BaseToken)baseTokens.getFreeTokens().items().get(0);
+            return (BaseToken) Iterables.get(baseTokens.getFreeTokens().items(), 0);
         } else {
             return null;
         }
@@ -1854,7 +1856,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
         return list;
     }
     
-    public ImmutableList<Token> getLaidBaseTokens() {
+    public ImmutableSet<Token> getLaidBaseTokens() {
         return baseTokens.getLaidTokens().items();
     }
 

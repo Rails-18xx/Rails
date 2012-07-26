@@ -3,6 +3,7 @@ package rails.game.specific._18EU;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import rails.common.LocalText;
 import rails.game.*;
@@ -49,7 +50,7 @@ public class OperatingRound_18EU extends OperatingRound {
         int cash = operatingCompany.value().getCash();
 
         int cost;
-        List<Train> trains;
+        Set<Train> trains;
         BuyTrain bt;
 
         boolean hasTrains =

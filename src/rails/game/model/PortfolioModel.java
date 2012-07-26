@@ -2,14 +2,17 @@ package rails.game.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
+import com.google.common.collect.ImmutableSet;
 
 import rails.common.LocalText;
 import rails.game.Bank;
@@ -31,7 +34,7 @@ import rails.game.special.SpecialProperty;
 import rails.game.state.Model;
 import rails.game.state.PortfolioHolder;
 import rails.game.state.Portfolio;
-import rails.game.state.PortfolioList;
+import rails.game.state.PortfolioSet;
 
 // FIXME: Solve id, name and uniquename clashes
 
@@ -57,7 +60,7 @@ public final class PortfolioModel extends Model implements PortfolioHolder {
 
     /** Owned tokens */
     // TODO Currently only used to discard expired Bonus tokens.
-    private final Portfolio<Token> bonusTokens = PortfolioList.create(this, "BonusTokens", Token.class);
+    private final Portfolio<Token> bonusTokens = PortfolioSet.create(this, "BonusTokens", Token.class);
     
     /**
      * Private-independent special properties. When moved here, a special
@@ -65,7 +68,7 @@ public final class PortfolioModel extends Model implements PortfolioHolder {
      * 18AL named train tokens.
      */
     private final Portfolio<SpecialProperty> specialProperties = 
-            PortfolioList.create(this, "SpecialProperties", SpecialProperty.class); 
+            PortfolioSet.create(this, "SpecialProperties", SpecialProperty.class); 
 
     private final GameManager gameManager;
 
@@ -140,11 +143,11 @@ public final class PortfolioModel extends Model implements PortfolioHolder {
        return null;
     }
    
-    public ImmutableList<PrivateCompany> getPrivateCompanies() {
+    public ImmutableSet<PrivateCompany> getPrivateCompanies() {
         return privates.getPortfolio().items();
     }
 
-    public ImmutableList<PublicCertificate> getCertificates() {
+    public ImmutableSet<PublicCertificate> getCertificates() {
         return certificates.getPortfolio().items();
     }
 
@@ -166,7 +169,7 @@ public final class PortfolioModel extends Model implements PortfolioHolder {
     }
 */
 
-    public ImmutableList<PublicCertificate> getCertificates(PublicCompany company) {
+    public ImmutableSet<PublicCertificate> getCertificates(PublicCompany company) {
         return certificates.getPortfolio().getItems(company);
     }
 
@@ -336,7 +339,7 @@ public final class PortfolioModel extends Model implements PortfolioHolder {
         return trains.getPortfolio().size();
     }
 
-    public ImmutableList<Train> getTrainList() {
+    public ImmutableSet<Train> getTrainList() {
         return trains.getPortfolio().items();
     }
 
@@ -355,9 +358,9 @@ public final class PortfolioModel extends Model implements PortfolioHolder {
     }
 
     /** Returns one train of any type held */
-    public List<Train> getUniqueTrains() {
+    public Set<Train> getUniqueTrains() {
 
-        List<Train> trainsFound = new ArrayList<Train>();
+        Set<Train> trainsFound = new HashSet<Train>();
         Map<TrainType, Object> trainTypesFound =
             new HashMap<TrainType, Object>();
         for (Train train : trains.getPortfolio()) {
@@ -506,9 +509,9 @@ public final class PortfolioModel extends Model implements PortfolioHolder {
 */
     
     /**
-     * @return ArrayList of all special properties we have.
+     * @return Set of all special properties we have.
      */
-    public ImmutableList<SpecialProperty> getPersistentSpecialProperties() {
+    public ImmutableSet<SpecialProperty> getPersistentSpecialProperties() {
         return specialProperties.items();
     }
 
@@ -542,7 +545,7 @@ public final class PortfolioModel extends Model implements PortfolioHolder {
     public <T extends SpecialProperty> List<T> getSpecialProperties(
             Class<T> clazz, boolean includeExercised) {
         List<T> result = new ArrayList<T>();
-        List<SpecialProperty> sps;
+        Set<SpecialProperty> sps;
 
         if (getParent() instanceof Player || getParent() instanceof PublicCompany) {
 

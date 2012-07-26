@@ -15,7 +15,7 @@ public class PortfolioManagerTest {
     
     private Root root;
     private PortfolioManager pm;
-    private PortfolioList<Ownable> portfolioA, portfolioB;
+    private PortfolioSet<Ownable> portfolioA, portfolioB;
     private Owner ownerA, ownerB, ownerC;
     
     @Before
@@ -25,8 +25,8 @@ public class PortfolioManagerTest {
         ownerA = OwnerImpl.create(root, OWNER_A_ID);
         ownerB = OwnerImpl.create(root, OWNER_B_ID);
         ownerC = OwnerImpl.create(root, OWNER_C_ID);
-        portfolioA = PortfolioList.create(ownerA, PORTFOLIO_A_ID , Ownable.class);
-        portfolioB = PortfolioList.create(ownerB, PORTFOLIO_B_ID , Ownable.class);
+        portfolioA = PortfolioSet.create(ownerA, PORTFOLIO_A_ID , Ownable.class);
+        portfolioB = PortfolioSet.create(ownerB, PORTFOLIO_B_ID , Ownable.class);
         StateTestUtils.startActionChangeSet(root);
     }
 

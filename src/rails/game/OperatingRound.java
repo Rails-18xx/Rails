@@ -10,6 +10,8 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import com.google.common.collect.Iterables;
+
 import rails.common.*;
 import rails.common.parser.GameOption;
 import rails.game.action.*;
@@ -2811,7 +2813,7 @@ public class OperatingRound extends Round implements Observer {
         int cash = operatingCompany.value().getCash();
 
         int cost = 0;
-        List<Train> trains;
+        Set<Train> trains;
 
         boolean hasTrains =
             operatingCompany.value().getPortfolioModel().getNumberOfTrains() > 0;
@@ -2862,7 +2864,7 @@ public class OperatingRound extends Round implements Observer {
                     if (train.canBeExchanged() && hasTrains) {
                         cost = train.getCertType().getExchangeCost();
                         if (cost <= cash) {
-                            List<Train> exchangeableTrains =
+                            Set<Train> exchangeableTrains =
                                 operatingCompany.value().getPortfolioModel().getUniqueTrains();
                             BuyTrain action = new BuyTrain(train, ipo.getParent(), cost);
                             action.setTrainsForExchange(exchangeableTrains);
@@ -3031,7 +3033,7 @@ public class OperatingRound extends Round implements Observer {
     public void checkForeignSales() {
         if (getGameParameterAsBoolean(GameDef.Parm.REMOVE_TRAIN_BEFORE_SR)
                 && trainManager.isAnyTrainBought()) {
-            Train train = trainManager.getAvailableNewTrains().get(0);
+            Train train = Iterables.get(trainManager.getAvailableNewTrains(), 0);
             if (train.getCertType().hasInfiniteQuantity()) return;
             scrapHeap.addTrain(train);
             ReportBuffer.add(LocalText.getText("RemoveTrain", train.getId()));
