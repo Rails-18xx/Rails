@@ -4,13 +4,14 @@ import java.util.Iterator;
 import java.util.Set;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 /**
  * A stateful version of a HashMultimap
  */
 
-public final class HashMultimapState<K,V> extends MultimapState<K,V> implements Iterable<V> {
+public final class HashMultimapState<K,V> extends State implements Iterable<V> {
     
     private final HashMultimap<K,V> map = HashMultimap.create();
 
@@ -34,7 +35,7 @@ public final class HashMultimapState<K,V> extends MultimapState<K,V> implements 
     
     public boolean put(K key, V value) {
         if (map.containsEntry(key, value)) return false;
-        new MultimapChange<K,V>(this, key, value, true);
+        new HashMultimapChange<K,V>(this, key, value, true);
         return true;
     }
     
@@ -44,12 +45,16 @@ public final class HashMultimapState<K,V> extends MultimapState<K,V> implements 
     
     public boolean remove(K key, V value) {
         if (!map.containsEntry(key, value)) return false;
-        new MultimapChange<K,V>(this, key, value, false);
+        new HashMultimapChange<K,V>(this, key, value, false);
         return true;
     }
     
     public Set<V> removeAll(K key) {
-        return map.removeAll(key);
+        Set<V> values = this.get(key);
+        for (V value:values) {
+            this.remove(key, value);
+        }
+        return values;
     }
     
     public boolean containsEntry(K key, V value) {
@@ -76,12 +81,18 @@ public final class HashMultimapState<K,V> extends MultimapState<K,V> implements 
         return ImmutableSet.copyOf(map.keySet());
     }
 
-    public ImmutableSet<V> values() {
-        return ImmutableSet.copyOf(map.values());
+    /**
+     * @return all values of the multimap
+     */
+    public ImmutableList<V> values() {
+        return ImmutableList.copyOf(map.values());
     }
     
+    /**
+     * @return an iterator over all values
+     */
     public Iterator<V> iterator() {
-        return map.values().iterator();
+        return ImmutableList.copyOf(map.values()).iterator();
     }
     
     @Override

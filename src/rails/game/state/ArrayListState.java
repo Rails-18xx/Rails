@@ -56,12 +56,10 @@ public final class ArrayListState<E> extends State implements Iterable<E>  {
     }
 
     public boolean remove(E element) {
-        if (list.contains(element)) {
-            new ArrayListChange<E>(this, list.indexOf(element));
-            return true;
-        } else {
-            return false;
-        }
+        // check first if element exists
+        if (!list.contains(element)) return false;
+        new ArrayListChange<E>(this, list.indexOf(element));
+        return true;
     }
     
     /**

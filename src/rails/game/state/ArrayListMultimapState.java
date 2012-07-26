@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.google.common.collect.ArrayListMultimap;
 
-public final class ArrayListMultimapState<K,V> extends MultimapState<K,V> {
+public final class ArrayListMultimapState<K,V> extends State {
 
     private final ArrayListMultimap<K,V> map = ArrayListMultimap.create(); ;
 
@@ -27,7 +27,7 @@ public final class ArrayListMultimapState<K,V> extends MultimapState<K,V> {
      */
 
     public boolean put(K key, V value) {
-        new MultimapChange<K,V>(this, key, value, true);
+        new ArrayListMultimapChange<K,V>(this, key, value, map.get(key).size());
         return true;
     }
     
@@ -37,12 +37,16 @@ public final class ArrayListMultimapState<K,V> extends MultimapState<K,V> {
     
     public boolean remove(K key, V value) {
         if (!map.containsEntry(key, value)) return false;
-        new MultimapChange<K,V>(this, key, value, false);
+        new ArrayListMultimapChange<K,V>(this, key, map.get(key).indexOf(value));
         return true;
     }
     
     public boolean containsEntry(K key, V value) {
         return map.containsEntry(key, value);
+    }
+    
+    public boolean isEmpty() {
+        return map.isEmpty();
     }
 
     @Override
@@ -50,11 +54,11 @@ public final class ArrayListMultimapState<K,V> extends MultimapState<K,V> {
         return map.toString();
     }
 
-    void change(K key, V value, boolean addToMap) {
-        if (addToMap) {
-            map.put(key, value);
+    void change(K key, V value, int index, boolean addToList) {
+        if (addToList) {
+            map.get(key).add(index, value);
         } else {
-            map.remove(key, value);
+            map.get(key).remove(index);
         }
     }
 

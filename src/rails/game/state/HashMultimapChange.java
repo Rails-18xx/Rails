@@ -1,12 +1,12 @@
 package rails.game.state;
 
-final class MultimapChange<K,V> extends Change {
-    final private MultimapState<K,V> state;
+final class HashMultimapChange<K,V> extends Change {
+    final private HashMultimapState<K,V> state;
     final private K key;
     final private V value;
     final private boolean addToMap;
 
-    MultimapChange(MultimapState<K,V> state, K key, V value, boolean addToMap) {
+    HashMultimapChange(HashMultimapState<K,V> state, K key, V value, boolean addToMap) {
         this.state = state;
         this.key = key;
         this.value = value;
@@ -22,7 +22,7 @@ final class MultimapChange<K,V> extends Change {
         state.change(key, value, !addToMap);
     }
 
-    @Override MultimapState<K,V> getState() {
+    @Override HashMultimapState<K,V> getState() {
         return state;
     }
 
