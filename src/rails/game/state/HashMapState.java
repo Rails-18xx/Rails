@@ -160,23 +160,23 @@ public final class HashMapState<K,V> extends State {
         return ImmutableList.copyOf(map.values());
     }
 
-    public String getData() {
-
-        if (map == null) return "";
-
-        StringBuilder buf = new StringBuilder("<html>");
-        for (K name : map.keySet()) {
-            if (buf.length() > 6) buf.append("<br>");
-            buf.append(name.toString());
-            Object value = map.get(name);
-            if (value != null && rails.util.Util.hasValue(value.toString())) buf.append("=").append(value.toString());
-        }
-        if (buf.length() > 6) {
-            buf.append("</html>");
-        }
-        return buf.toString();
-
-    }
+//    public String getData() {
+//
+//        if (map == null) return "";
+//
+//        StringBuilder buf = new StringBuilder("<html>");
+//        for (K name : map.keySet()) {
+//            if (buf.length() > 6) buf.append("<br>");
+//            buf.append(name.toString());
+//            Object value = map.get(name);
+//            if (value != null && rails.util.Util.hasValue(value.toString())) buf.append("=").append(value.toString());
+//        }
+//        if (buf.length() > 6) {
+//            buf.append("</html>");
+//        }
+//        return buf.toString();
+//
+//    }
     
     @Override
     public String observerText() {
