@@ -5,19 +5,15 @@ import static com.google.common.base.Preconditions.checkArgument;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
 
 public final class StateManager extends Manager implements DelayedItem {
     
@@ -104,7 +100,8 @@ public final class StateManager extends Manager implements DelayedItem {
      * @param states that have changed
      * @return sorted list of all models to be updated
      */
-    private static enum Color {WHITE, GREY, BLACK}
+    private static enum Color {WHITE, GREY, BLACK};
+    
     ImmutableList<Model> getModelsToUpdate(Collection<State> states) {
         // Topological sort
         // Initialize (we do not use WHITE explicitly, but implicit)

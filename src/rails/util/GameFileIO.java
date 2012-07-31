@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
-import rails.game.Game;
+import rails.game.GameRoot;
 import rails.game.GameManager;
 import rails.game.ReportBuffer;
 import rails.game.action.PossibleAction;
@@ -35,13 +35,13 @@ import rails.game.action.PossibleAction;
 public class GameFileIO {
 
     protected static Logger log =
-        LoggerFactory.getLogger(Game.class.getPackage().getName());
+        LoggerFactory.getLogger(GameRoot.class.getPackage().getName());
     
     private GameData gameData = new GameData();
 
     // fields for data load
     private ObjectInputStream ois = null;
-    private Game loadedGame = null;
+    private GameRoot loadedGame = null;
     private boolean dataLoadDone = false;
     private boolean initialized = false;
     
@@ -52,7 +52,7 @@ public class GameFileIO {
         return gameData.metaDataAsText() + gameData.gameOptionsAsText() + gameData.playerNamesAsText();
     }
  
-    public Game getGame() {
+    public GameRoot getGame() {
         return loadedGame;
     }
     
@@ -130,7 +130,7 @@ public class GameFileIO {
         }
     }
     
-    public Game initGame() throws ConfigurationException {
+    public GameRoot initGame() throws ConfigurationException {
 
         // check if initial load was done
         if (!dataLoadDone) {
@@ -138,7 +138,7 @@ public class GameFileIO {
         }
 
         // initialize loadedGame
-        loadedGame = new Game(gameData.meta.gameName, gameData.playerNames, gameData.gameOptions);
+        loadedGame = new GameRoot(gameData.meta.gameName, gameData.playerNames, gameData.gameOptions);
 
         if (!loadedGame.setup()) {
             loadedGame = null;
@@ -251,7 +251,7 @@ public class GameFileIO {
      * sets the meta data required for a game save
      */
     public void initSave(Long saveFileVersionID, String gameName, Map<String, String> gameOptions, List<String> playerNames) { 
-        gameData.meta.version = Game.version+" "+BuildInfo.buildDate;
+        gameData.meta.version = GameRoot.version+" "+BuildInfo.buildDate;
         gameData.meta.date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         gameData.meta.fileVersionID = saveFileVersionID;
         gameData.meta.gameName = gameName;

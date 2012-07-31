@@ -20,7 +20,7 @@ public interface Item {
 
     Item getParent();
     
-    Context getContext();
+    GameRoot getContext();
     
     Root getRoot();
 

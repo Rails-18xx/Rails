@@ -1,18 +1,21 @@
 package rails.game.state;
 
+import static org.fest.assertions.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
-import static org.fest.assertions.api.Assertions.assertThat;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
-
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import rails.game.state.BooleanState;
+import rails.game.state.ChangeStack;
+import rails.game.state.Model;
+import rails.game.state.Root;
+
 @RunWith(MockitoJUnitRunner.class)
-public class AutoChangeSetTest {
+public class BlockingChangeSetTest {
 
     private final static String STATE_ID = "State";
     
@@ -20,8 +23,7 @@ public class AutoChangeSetTest {
     private BooleanState state;
     @Mock Model model;
     private ChangeStack changeStack;
-    private AutoChangeSet changeSet;
-    
+    private ChangeSet changeSet;
     
     @Before
     public void setUp() {
@@ -29,14 +31,14 @@ public class AutoChangeSetTest {
         state = BooleanState.create(root, STATE_ID);
         state.addModel(model);
         changeStack = root.getStateManager().getChangeStack();
-        changeSet = changeStack.closeCurrentChangeSet();
-    }
-
-    @Test
-    public void testAutoChangeSet() {
-        assertNotNull(changeSet);
+        changeSet =  changeStack.startChangeSet(new ChangeSet(true, false));
     }
     
+    @Test
+    public void testActionChangeSet() {
+        assertNotNull(changeSet);
+    }
+
     @Test
     public void testAddChange() {
         assertTrue(changeSet.isEmpty());
@@ -51,7 +53,7 @@ public class AutoChangeSetTest {
         state.set(true);
         changeSet.close();
         assertTrue(changeSet.isClosed());
-        assertThat(changeSet.getStates()).contains(state);
+        assertThat(changeSet.getObservableStates()).contains(state);
     }
 
     @Test
@@ -65,4 +67,5 @@ public class AutoChangeSetTest {
         changeSet.reexecute();
         assertTrue(state.value());
     }
+
 }

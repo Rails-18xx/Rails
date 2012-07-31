@@ -9,7 +9,7 @@ public abstract class AbstractItem implements Item {
 
     private final String id;
     private final Item parent;
-    private final Context context;
+    private final GameRoot context;
 
     protected AbstractItem(Item parent, String id){
         checkNotNull(parent, "Parent cannot be null");
@@ -20,8 +20,8 @@ public abstract class AbstractItem implements Item {
         this.parent = parent;
         this.id = id;
         
-        if (parent instanceof Context) {
-            context = (Context)parent;
+        if (parent instanceof GameRoot) {
+            context = (GameRoot)parent;
         } else { 
             // recursive definition
             context = parent.getContext();
@@ -39,7 +39,7 @@ public abstract class AbstractItem implements Item {
         return parent;
     }
 
-    public Context getContext() {
+    public GameRoot getContext() {
         return context;
     }
     
@@ -49,7 +49,7 @@ public abstract class AbstractItem implements Item {
     }
 
     public String getURI() {
-        if (parent instanceof Context) {
+        if (parent instanceof GameRoot) {
             return id;
         } else {
             // recursive definition

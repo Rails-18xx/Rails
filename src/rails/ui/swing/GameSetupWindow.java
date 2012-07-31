@@ -44,7 +44,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
     List<String> playerNames = new ArrayList<String>();
     List<JComponent> optionComponents = new ArrayList<JComponent>();
     List<GameOption> availableOptions = new ArrayList<GameOption>();
-    Game game;
+    GameRoot game;
 
     SortedSet<File> recentFiles;
     String savedFileExtension;
@@ -224,7 +224,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
      * loads and start the game given a filename
      */
     private void loadAndStartGame(String filePath, String saveDirectory) {
-        if ((game = Game.load(filePath)) == null) {
+        if ((game = GameRoot.load(filePath)) == null) {
             JOptionPane.showMessageDialog(this,
                     DisplayBuffer.get(), "", JOptionPane.ERROR_MESSAGE);
             return;
@@ -490,7 +490,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
             }
         }
 
-        game = new Game(this.getSelectedGameInfo().getName(), playerNames, selectedOptions);
+        game = new GameRoot(this.getSelectedGameInfo().getName(), playerNames, selectedOptions);
         if (!game.setup()) {
             JOptionPane.showMessageDialog(this, DisplayBuffer.get(), "",
                     JOptionPane.ERROR_MESSAGE);
@@ -514,7 +514,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
         killConfigWindow();
     }
 
-    private void startGameUIManager(Game game, boolean wasLoaded) {
+    private void startGameUIManager(GameRoot game, boolean wasLoaded) {
         GameManager gameManager = game.getGameManager();
         String gameUIManagerClassName = gameManager.getClassName(GuiDef.ClassName.GAME_UI_MANAGER);
         try {

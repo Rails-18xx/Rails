@@ -20,7 +20,7 @@ class StateTestUtils {
     }
     
     public static void startActionChangeSet(Root root) {
-        root.getStateManager().getChangeStack().startActionChangeSet(player, action);
+        root.getStateManager().getChangeStack().startChangeSet(new ChangeSet(true, false));
     }
 
     public static void close(Root root) {

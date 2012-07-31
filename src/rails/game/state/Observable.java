@@ -13,7 +13,7 @@ public abstract class Observable implements Item {
     // fields for Item implementation
     private final String id;
     private final Item parent;
-    private final Context context;
+    private final GameRoot context;
     
     /**
      * @param parent parent node in item hierarchy (cannot be null)
@@ -29,8 +29,8 @@ public abstract class Observable implements Item {
         this.parent = parent;
         this.id = id;
 
-        if (parent instanceof Context) {
-            context = (Context)parent;
+        if (parent instanceof GameRoot) {
+            context = (GameRoot)parent;
         } else { 
             // recursive definition
             context = parent.getContext();
@@ -105,7 +105,7 @@ public abstract class Observable implements Item {
         return parent;
     }
 
-    public Context getContext() {
+    public GameRoot getContext() {
         return context;
     }
     
@@ -116,7 +116,7 @@ public abstract class Observable implements Item {
 
     public String getURI() {
         checkState(id != null, "Cannot get URI of unobservable object");
-        if (parent instanceof Context) {
+        if (parent instanceof GameRoot) {
             return id;
         } else {
             // recursive definition

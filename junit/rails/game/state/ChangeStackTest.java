@@ -1,16 +1,13 @@
 package rails.game.state;
 
-import static org.junit.Assert.*;
+import static org.fest.assertions.api.Fail.failBecauseExceptionWasNotThrown;
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import rails.game.Player;
-import rails.game.action.PossibleAction;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ChangeStackTest {
@@ -21,24 +18,26 @@ public class ChangeStackTest {
     private BooleanState state;
     private ChangeStack changeStack;
     
-    private AutoChangeSet auto_1, auto_2, auto_3;
-    private ActionChangeSet action_1, action_2, action_3;
-    @Mock Player player;
-    @Mock PossibleAction action;
+    private ChangeSet auto_1, auto_2, auto_3;
+    private ChangeSet action_1, action_2, action_3;
 
+    private ChangeSet startActionChangeSet() {
+        return changeStack.startChangeSet(new ChangeSet(true, false));
+    }
+    
     @Before
     public void setUp() {
         root = Root.create();
         state = BooleanState.create(root, STATE_ID);
         changeStack = root.getStateManager().getChangeStack();
-        auto_1 = (AutoChangeSet)changeStack.getCurrentChangeSet();
-        action_1 = changeStack.startActionChangeSet(player, action);
+        auto_1 = changeStack.getCurrentChangeSet();
+        action_1 = startActionChangeSet();
         auto_2 = changeStack.closeCurrentChangeSet();
         state.set(true);
         auto_3 = changeStack.closeCurrentChangeSet();
-        action_2 = changeStack.startActionChangeSet(player, action);
+        action_2 = startActionChangeSet();
         state.set(false);
-        action_3 = changeStack.startActionChangeSet(player, action);
+        action_3 = startActionChangeSet();
     }
 
     @Test
@@ -61,28 +60,33 @@ public class ChangeStackTest {
     public void testUndo() {
         assertFalse(state.value());
         // undo action 3
-        assertTrue(changeStack.undo());
+        changeStack.undo();
         assertEquals(4, changeStack.sizeUndoStack());
         assertSame(action_2, changeStack.getLastClosedChangeSet());
-        assertThat(changeStack.getCurrentChangeSet()).isInstanceOf(AutoChangeSet.class);
+        assertFalse(changeStack.getCurrentChangeSet().isBlocking());
         assertFalse(state.value());
         // undo action 2
-        assertTrue(changeStack.undo());
+        changeStack.undo();
         assertEquals(3, changeStack.sizeUndoStack());
         assertSame(auto_2, changeStack.getLastClosedChangeSet());
-        assertThat(changeStack.getCurrentChangeSet()).isInstanceOf(AutoChangeSet.class);
+        assertFalse(changeStack.getCurrentChangeSet().isBlocking());
         assertTrue(state.value());
         // undo auto_2 and action 1
-        assertTrue(changeStack.undo());
+        changeStack.undo();
         assertEquals(1, changeStack.sizeUndoStack());
         assertSame(auto_1, changeStack.getLastClosedChangeSet());
-        assertThat(changeStack.getCurrentChangeSet()).isInstanceOf(AutoChangeSet.class);
+        assertFalse(changeStack.getCurrentChangeSet().isBlocking());
         assertFalse(state.value());
-        // undo should not do anything now
-        assertFalse(changeStack.undo());
+        // undo should fail now
+        try{
+            changeStack.undo();
+            failBecauseExceptionWasNotThrown(IllegalStateException.class);
+        } catch (Exception e){
+            assertThat(e).isInstanceOf(IllegalStateException.class);
+        }
         assertEquals(1, changeStack.sizeUndoStack());
         assertSame(auto_1, changeStack.getLastClosedChangeSet());
-        assertThat(changeStack.getCurrentChangeSet()).isInstanceOf(AutoChangeSet.class);
+        assertFalse(changeStack.getCurrentChangeSet().isBlocking());
         assertFalse(state.value());
     }
 
@@ -92,30 +96,30 @@ public class ChangeStackTest {
         changeStack.undo();
         changeStack.undo();
         changeStack.undo();
-        // the state unitl now was checked in testUndo
+        // the state until now was checked in testUndo
         // now redo action_1 and auto_2
-        assertTrue(changeStack.redo());
+        changeStack.redo();
         assertEquals(3, changeStack.sizeUndoStack());
         assertSame(auto_2, changeStack.getLastClosedChangeSet());
-        assertThat(changeStack.getCurrentChangeSet()).isInstanceOf(AutoChangeSet.class);
+        assertFalse(changeStack.getCurrentChangeSet().isBlocking());
         assertTrue(state.value());
         // redo action_2
-        assertTrue(changeStack.redo());
+        changeStack.redo();
         assertEquals(4, changeStack.sizeUndoStack());
         assertSame(action_2, changeStack.getLastClosedChangeSet());
-        assertThat(changeStack.getCurrentChangeSet()).isInstanceOf(AutoChangeSet.class);
+        assertFalse(changeStack.getCurrentChangeSet().isBlocking());
         assertFalse(state.value());
         // redo action_3
-        assertTrue(changeStack.redo());
+        changeStack.redo();
         assertEquals(5, changeStack.sizeUndoStack());
         assertSame(action_3, changeStack.getLastClosedChangeSet());
-        assertThat(changeStack.getCurrentChangeSet()).isInstanceOf(AutoChangeSet.class);
+        assertFalse(changeStack.getCurrentChangeSet().isBlocking());
         assertFalse(state.value());
         // then it should do anything
-        assertFalse(changeStack.redo());
+        changeStack.redo();
         assertEquals(5, changeStack.sizeUndoStack());
         assertSame(action_3, changeStack.getLastClosedChangeSet());
-        assertThat(changeStack.getCurrentChangeSet()).isInstanceOf(AutoChangeSet.class);
+        assertFalse(changeStack.getCurrentChangeSet().isBlocking());
         assertFalse(state.value());
     }
 

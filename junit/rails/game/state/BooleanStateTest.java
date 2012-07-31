@@ -43,7 +43,7 @@ public class BooleanStateTest {
         stateDefault.set(false);
         stateInit.set(true);
         StateTestUtils.close(root);
-        assertThat(StateTestUtils.getLastClosedChangeSet(root).getStates()).doesNotContain(stateDefault, stateInit);
+        assertThat(StateTestUtils.getLastClosedChangeSet(root).getObservableStates()).doesNotContain(stateDefault, stateInit);
     }
     
     @Test
@@ -52,7 +52,7 @@ public class BooleanStateTest {
         stateDefault.set(true);
         assertTrue(stateDefault.value());
         StateTestUtils.close(root);
-        assertThat(StateTestUtils.getLastClosedChangeSet(root).getStates()).contains(stateDefault);
+        assertThat(StateTestUtils.getLastClosedChangeSet(root).getObservableStates()).contains(stateDefault);
         StateTestUtils.undo(root);
         assertFalse(stateDefault.value());
         StateTestUtils.redo(root);

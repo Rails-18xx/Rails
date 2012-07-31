@@ -7,10 +7,10 @@ import rails.common.parser.ConfigurableComponent;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.model.MoneyModel;
-import rails.game.state.AbstractItem;
 import rails.game.state.Item;
+import rails.game.state.Manager;
 
-public class PlayerManager extends AbstractItem implements ConfigurableComponent {
+public class PlayerManager extends Manager implements ConfigurableComponent {
 
     private int numberOfPlayers;
     private List<Player> players;

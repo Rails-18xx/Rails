@@ -14,7 +14,7 @@ import rails.game.action.PossibleAction;
 import rails.game.state.Root;
 import rails.util.GameFileIO;
 
-public class Game {
+public class GameRoot extends Root {
     public static final String version = "1.5";
 
     /** The component Manager */
@@ -36,11 +36,11 @@ public class Game {
     protected Map<String, String> gameOptions;
 
     protected static Logger log =
-        LoggerFactory.getLogger(Game.class.getPackage().getName());
+        LoggerFactory.getLogger(GameRoot.class.getPackage().getName());
 
-    // The new Game entry point
-    public Game(String name, List<String> players, Map<String, String> options) {
-
+    public GameRoot(String name, List<String> players, Map<String, String> options) {
+        super(); // initialize root
+        
         this.name = name;
         this.gameOptions = options;
 
@@ -76,10 +76,19 @@ public class Game {
     }
 
     public boolean setup() {
-        // first define root GameContext to be able to define states
-        Root root = Root.create();
-
-        GameFileParser gfp = new GameFileParser(root, name, gameOptions);
+        GameFileParser gfp;
+        try{
+            gfp = new GameFileParser(this, name, gameOptions);
+        } catch (Exception e) {
+            String message =
+                    LocalText.getText("GameSetupFailed", GameFileParser.GAME_XML_FILE);
+            log.error(message, e);
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            DisplayBuffer.add(message + ":\n " + e.getMessage());
+            return false;
+        }
+        
         playerManager = gfp.getPlayerManager();
         companyManager = gfp.getCompanyManager();
         trainManager = gfp.getTrainManager();
@@ -123,7 +132,7 @@ public class Game {
     }
 
 
-    public static Game load(String filepath)  {
+    public static GameRoot load(String filepath)  {
 
         // use GameLoader object to load game
         GameFileIO gameLoader = new GameFileIO();
@@ -146,9 +155,9 @@ public class Game {
     }
 
     @SuppressWarnings("unchecked")
-    public static Game load_old(String filepath) {
+    public static GameRoot load_old(String filepath) {
 
-        Game game = null;
+        GameRoot game = null;
 
         log.debug("Loading game from file " + filepath);
         String filename = filepath.replaceAll(".*[/\\\\]", "");
@@ -187,7 +196,7 @@ public class Game {
                 (Map<String, String>) ois.readObject();
             List<String> playerNames = (List<String>) ois.readObject();
 
-            game = new Game(name, playerNames, selectedGameOptions);
+            game = new GameRoot(name, playerNames, selectedGameOptions);
 
             if (!game.setup()) {
                 throw new ConfigurationException("Error in setting up " + name);

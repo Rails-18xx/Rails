@@ -63,14 +63,14 @@ public class StringStateTest {
         stateDefault.set("");
         stateInit.set(null);
         StateTestUtils.close(root);
-        assertThat(StateTestUtils.getLastClosedChangeSet(root).getStates()).doesNotContain(stateDefault);
-        assertThat(StateTestUtils.getLastClosedChangeSet(root).getStates()).contains(stateInit);
+        assertThat(StateTestUtils.getLastClosedChangeSet(root).getObservableStates()).doesNotContain(stateDefault);
+        assertThat(StateTestUtils.getLastClosedChangeSet(root).getObservableStates()).contains(stateInit);
 
         stateDefault.set(null);
         stateInit.set(null);
         StateTestUtils.close(root);
-        assertThat(StateTestUtils.getLastClosedChangeSet(root).getStates()).contains(stateDefault);
-        assertThat(StateTestUtils.getLastClosedChangeSet(root).getStates()).doesNotContain(stateInit);
+        assertThat(StateTestUtils.getLastClosedChangeSet(root).getObservableStates()).contains(stateDefault);
+        assertThat(StateTestUtils.getLastClosedChangeSet(root).getObservableStates()).doesNotContain(stateInit);
     }
 
     @Test

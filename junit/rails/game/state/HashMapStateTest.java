@@ -20,6 +20,7 @@ public class HashMapStateTest {
     private final static String INIT_ID = "Init"; 
     
     private final static String FIRST_ITEM_ID = "FirstItem";
+    private final static String NEW_FIRST_ITEM_ID = "NewFirstItem";
     private final static String SECOND_ITEM_ID = "SecondItem";
     private final static String THIRD_ITEM_ID = "ThirdItem";
 
@@ -29,24 +30,25 @@ public class HashMapStateTest {
     private HashMapState<String, Item> stateInit; 
     private Map<String, Item> initMap, testMap;
     
-    private Item firstItem, secondItem, thirdItem;
+    private Item firstItem, newFirstItem, secondItem, thirdItem;
 
     @Before
     public void setUp() {
         root = StateTestUtils.setUpRoot();
         
-        
         firstItem = AbstractItemImpl.create(root, FIRST_ITEM_ID);
+        newFirstItem = AbstractItemImpl.create(root, NEW_FIRST_ITEM_ID);
         secondItem = AbstractItemImpl.create(root, SECOND_ITEM_ID);
         thirdItem = AbstractItemImpl.create(root, THIRD_ITEM_ID);
         
         state_default = HashMapState.create(root, DEFAULT_ID);
         
         // intialize stateInit with initMap and create testMap
+        initMap = ImmutableMap.of(FIRST_ITEM_ID, firstItem);
+        stateInit = HashMapState.create(root, INIT_ID, initMap);
+
         testMap = Maps.newHashMap();
-        testMap.put(FIRST_ITEM_ID, firstItem);
-        initMap = ImmutableMap.copyOf(testMap);
-        stateInit = HashMapState.create(root, INIT_ID, testMap);
+        testMap.put(FIRST_ITEM_ID, newFirstItem);
         testMap.put(SECOND_ITEM_ID, secondItem);
     }
 

@@ -4,7 +4,7 @@ package rails.game.state;
  * 
  * TODO: Check if we should check for non-null id here
  */
-public abstract class Context implements Item {
+public abstract class GameRoot implements Item {
 
     /**
      * @param Either a fullURI or a (relative) URI inside the Context 

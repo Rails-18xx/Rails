@@ -1,19 +1,18 @@
 package rails.game.state;
 
-import static org.fest.assertions.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
+import static org.fest.assertions.api.Assertions.assertThat;
 
-import org.junit.*;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import rails.game.Player;
-import rails.game.action.PossibleAction;
-
 @RunWith(MockitoJUnitRunner.class)
-public class ActionChangeSetTest {
+public class GameChangeSetTest {
 
     private final static String STATE_ID = "State";
     
@@ -21,9 +20,7 @@ public class ActionChangeSetTest {
     private BooleanState state;
     @Mock Model model;
     private ChangeStack changeStack;
-    @Mock Player player;
-    @Mock PossibleAction action;
-    private ActionChangeSet changeSet;
+    private ChangeSet changeSet;
     
     
     @Before
@@ -32,24 +29,14 @@ public class ActionChangeSetTest {
         state = BooleanState.create(root, STATE_ID);
         state.addModel(model);
         changeStack = root.getStateManager().getChangeStack();
-        changeSet = changeStack.startActionChangeSet(player, action);
+        changeSet = changeStack.closeCurrentChangeSet();
     }
-    
+
     @Test
-    public void testActionChangeSet() {
+    public void testAutoChangeSet() {
         assertNotNull(changeSet);
     }
-
-    @Test
-    public void testGetPlayer() {
-        assertSame(player, changeSet.getPlayer());
-    }
-
-    @Test
-    public void testGetAction() {
-        assertSame(action, changeSet.getAction());
-    }
-
+    
     @Test
     public void testAddChange() {
         assertTrue(changeSet.isEmpty());
@@ -64,7 +51,7 @@ public class ActionChangeSetTest {
         state.set(true);
         changeSet.close();
         assertTrue(changeSet.isClosed());
-        assertThat(changeSet.getStates()).contains(state);
+        assertThat(changeSet.getObservableStates()).contains(state);
     }
 
     @Test
@@ -78,5 +65,4 @@ public class ActionChangeSetTest {
         changeSet.reexecute();
         assertTrue(state.value());
     }
-
 }
