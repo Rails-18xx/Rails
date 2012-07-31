@@ -2,15 +2,20 @@ package rails.game.state;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
@@ -39,30 +44,21 @@ public final class StateManager extends Manager implements DelayedItem {
         return new StateManager(parent, id);
     }
     /**
-     * Register states 
-     * Remark: Portfolios and Wallets get added from their respective managers automatically
+     * Register states (usually done automatically at state creation)
      */
     void registerState(State state) {
         allStates.add(state);
-//        if (state instanceof Portfolio) {
-//            return portfolioManager.addPortfolio((Portfolio<?>) state);
-//        } else if (state instanceof Wallet) {
-//            return walletManager.addWallet((Wallet<?>) state);
-//        }
     }
     
     /**
-     * De-Register states 
-     * Remark: Portfolios and Wallets are removed from their respective managers automatically
+     * De-Register states
      */
     boolean deRegisterState(State state) {
-        if (!allStates.remove(state)) return false;
-//        if (state instanceof PortfolioMap) {
-//            return portfolioManager.removePortfolio((PortfolioMap<?>) state);
-//        } else if (state instanceof Wallet) {
-//            return walletManager.removeWallet((Wallet<?>) state);
-//        }
-        return true;
+        return allStates.remove(state);
+    }
+    
+    ImmutableSet<State> getAllStates() {
+        return allStates.view();
     }
 
     /**
@@ -84,6 +80,8 @@ public final class StateManager extends Manager implements DelayedItem {
     
     /**
      * Adds the combination of model to observable
+     * @param Model the model that tracks the observable
+     * @param Observable the observable to monitor
      */
     void addModel(Model model, Observable observable) {
         models.put(observable, model);
@@ -96,127 +94,60 @@ public final class StateManager extends Manager implements DelayedItem {
     public ImmutableSet<Model> getModels(Observable observable) {
         return models.get(observable);
     }
-    
+
     /**
      * A set of states is given as input
      * and then calculates all observer to update in the correct sequence
      * 
-     * It uses a topological sort algorithm (Kahn 1962)
+     * It uses a topological sort based on DFS
      * 
-     * @param states Set of states
-     * @return sorted list of all observables (states and models)
+     * @param states that have changed
+     * @return sorted list of all models to be updated
      */
-    List<Observable> getSortedObservables(Set<State> states) {
-
-        // 1: define all models
-        Set<Model> models = getModels(states);
+    private static enum Color {WHITE, GREY, BLACK}
+    ImmutableList<Model> getModelsToUpdate(Collection<State> states) {
+        // Topological sort
+        // Initialize (we do not use WHITE explicitly, but implicit)
+        Map<Observable, Color> colors = Maps.newHashMap();
+        LinkedList<Model> topoList = Lists.newLinkedList();
         
-        // 2: define graph
-        Multimap<Model, Observable> edges = HashMultimap.create(); 
-        
-        // 2a: add edges that start from states
-        for (State s:states) {
-            for (Model m:s.getModels()) {
-                edges.put(m, s);
-            }
+        // For all states
+        for (State s: states) {
+            topoSort(s, colors, topoList);
         }
-        
-        // 2b: add edges that start from models
-        for (Model m1:models) {
-            for (Model m2:m1.getModels()) {
-                edges.put(m2, m1);
-            }
-        }
-
-        // 3: run topological sort
-        List<Observable> sortedList = Lists.newArrayList();
-        List<Observable> startNodes = Lists.newArrayList();
-        startNodes.addAll(states);
-        
-        while (!startNodes.isEmpty()) {
-            // remove node n
-            Observable n = startNodes.remove(0);
-            // insert node into sortedList 
-            sortedList.add(n);
-            for (Model m:n.getModels()) {
-                edges.remove(m, n);
-                // check if m is now a start node
-                if (!edges.containsKey(m)) {
-                    startNodes.add(m);
-                }
-            }
-        }
-        
-        // if graph is not empty => cyclical graph
-        if (!edges.isEmpty()) {
-            log.debug("StateManager: Cyclical graph detected in State/Model relations.");
-            // add remaining models to the end
-            sortedList.addAll(edges.keySet());
-        }
-        
-        return sortedList;
+        log.debug("Observables to Update = " + topoList.toString());
+        return ImmutableList.copyOf(topoList);
     }
     
-    /**
-     * @param states Set of states
-     * @return all observers to be updated from states (either directly or via Models)
-     */
-    private Set<Observer> getObservers(Set<State> states){
-        
-        Set<Observer> observers = Sets.newHashSet();
-        
+    private void topoSort(Observable v, Map<Observable, Color> colors, LinkedList<Model> topoList) {
+        colors.put(v, Color.GREY);
+        for (Model m:v.getModels()) {
+            if (!colors.containsKey(m)) {
+                topoSort(m, colors, topoList);
+            } else if (colors.get(m) == Color.GREY) {
+                throw new IllegalStateException("Graph of Observables contains Cycle");
+            }
+        }
+        colors.put(v, Color.BLACK);
+        if (v instanceof Model) topoList.addFirst((Model)v);
+    }
+    
+    
+    void updateObservers(Set<State> states) {
         // all direct observers
         for (State s:states){
-            observers.addAll(s.getObservers());
+            for (Observer o:s.getObservers()) {
+                o.update(s.observerText());
+            }
         }
         
         // all indirect observers
-        for (Model m:getModels(states)){
-            observers.addAll(m.getObservers());
-        }
-        
-        return observers;
-    }
-    
-    void updateObservers(Set<State> states) {
-        for (Observable observable:getSortedObservables(states)) {
-            for (Observer observer:observable.getObservers()) {
-                    observer.update(observable.observerText());
+        for (Model m:getModelsToUpdate(states)) {
+            for (Observer o:m.getObservers()) {
+                o.update(m.observerText());
             }
         }
     }
-    
-    /**
-     * @param states Set of states
-     * @return all models to be updated from states
-     */
-    Set<Model> getModels(Set<State> states) {
-        
-        Set<Model> allModels = Sets.newHashSet();
-        
-        // add all models updated from states directly
-        for (State s:states) {
-            allModels.addAll(s.getModels());
-        }
-        
-        // then add models called indirectly
-        ImmutableSet<Model> checkModels = ImmutableSet.copyOf(allModels);
-        Set<Model> newModels = Sets.newHashSet();
-        while (!checkModels.isEmpty()) {
-            for (Model m1:checkModels) {
-                for (Model m2:m1.getModels()) {
-                    if (!allModels.contains(m2)) {
-                        allModels.add(m2);
-                        newModels.add(m2);
-                    }
-                }
-            }
-            checkModels = ImmutableSet.copyOf(newModels);
-            newModels.clear();
-        }
-        return allModels;
-    }
-    
     
 //    void registerReceiver(Triggerable receiver, State toState) {
 //    }

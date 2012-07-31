@@ -40,6 +40,10 @@ class StateTestUtils {
         root.getStateManager().getChangeStack().redo();
     }
     
+    public static ChangeSet getCurrentChangeSet(Root root) {
+        return root.getStateManager().getChangeStack().getCurrentChangeSet();
+    }
+    
     public static ChangeSet getLastClosedChangeSet(Root root) {
         return root.getStateManager().getChangeStack().getLastClosedChangeSet();
         

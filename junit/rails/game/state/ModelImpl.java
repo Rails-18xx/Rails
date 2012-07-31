@@ -3,15 +3,27 @@ package rails.game.state;
 //An implementation only for testing
 class ModelImpl extends Model {
 
-    private final String text;
+    private final StringState text = StringState.create(this, "text");
     
-    ModelImpl(Item parent, String id, String text) {
+    private ModelImpl(Item parent, String id, String text) {
         super(parent, id);
-        this.text = text;
+        this.text.set(text);
+    }
+    
+    static ModelImpl create(Item parent, String id, String text) {
+        return new ModelImpl(parent, id, text);
+    }
+    
+    void changeText(String text) {
+        this.text.set(text);
+    }
+    
+    State getState() {
+        return text;
     }
     
     @Override
-    public String toString() {
-        return text;
+    public String cachedText() {
+        return text.value();
     }
 }

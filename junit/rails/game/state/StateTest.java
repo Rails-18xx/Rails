@@ -21,10 +21,10 @@ public class StateTest {
     @Before
     public void setUp() {
         root = Root.create();
-        state = new StateImpl(root, STATE_ID, null);
-        model = new ModelImpl(root, MODEL_ID, null);
-        state_model = new StateImpl(model, STATE_ID, null);
-        state_wo_id = new StateImpl(model, null, STATE_TEXT);
+        state = StateImpl.create(root, STATE_ID, null);
+        model = ModelImpl.create(root, MODEL_ID, null);
+        state_model = StateImpl.create(model, STATE_ID, null);
+        state_wo_id = StateImpl.create(model, null, STATE_TEXT);
     }
     
     @Test

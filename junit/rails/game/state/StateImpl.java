@@ -5,9 +5,13 @@ class StateImpl extends State {
 
     private final String text;
     
-    StateImpl(Item parent, String id, String text) {
+    private StateImpl(Item parent, String id, String text) {
         super(parent, id);
         this.text = text;
+    }
+    
+    static StateImpl create(Item parent, String id, String text) {
+        return new StateImpl(parent, id, text);
     }
     
     @Override
