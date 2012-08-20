@@ -8,19 +8,18 @@ import rails.game.action.*;
 /**
  * Implements an 1830-style initial auction.
  */
-public final class StartRound_1830 extends StartRound {
+public class StartRound_1830 extends StartRound {
     int bidIncrement;
 
-    private StartRound_1830(GameManager parent, String id) {
+    /**
+     * Constructed via Configure
+     */
+    public StartRound_1830(GameManager parent, String id) {
         super(parent, id);
         hasBidding = true;
         bidIncrement = startPacket.getModulus();
     }
     
-    public static StartRound_1830 create(GameManager parent, String id){
-        return new StartRound_1830(parent, id);
-    }
-
     /**
      * Start the 1830-style start round.
      *

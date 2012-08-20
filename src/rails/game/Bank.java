@@ -7,17 +7,17 @@ import org.slf4j.LoggerFactory;
 
 import rails.common.LocalText;
 import rails.common.parser.Config;
-import rails.common.parser.ConfigurableComponent;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.model.CashMoneyModel;
 import rails.game.model.CashOwner;
 import rails.game.state.AbstractItem;
 import rails.game.state.BooleanState;
+import rails.game.state.Configurable;
 import rails.game.state.Item;
 import rails.util.*;
 
-public class Bank extends AbstractItem implements CashOwner, ConfigurableComponent {
+public class Bank extends AbstractItem implements CashOwner, Configurable {
 
     private static Bank instance = null;
 
@@ -55,7 +55,10 @@ public class Bank extends AbstractItem implements CashOwner, ConfigurableCompone
     protected static Logger log =
         LoggerFactory.getLogger(Bank.class.getPackage().getName());
 
-    protected Bank(Item parent, String id) {
+    /**
+     * Used by Configure (via reflection) only
+     */
+    public Bank(Item parent, String id) {
         super(parent, id);
         instance = this;
 
@@ -65,12 +68,8 @@ public class Bank extends AbstractItem implements CashOwner, ConfigurableCompone
         }
     }
     
-    public static Bank create(Item parent, String id) {
-        return new Bank(parent, id);
-    }
-    
     /**
-     * @see rails.common.parser.ConfigurableComponent#configureFromXML(org.w3c.dom.Element)
+     * @see rails.game.state.Configurable#configureFromXML(org.w3c.dom.Element)
      */
     public void configureFromXML(Tag tag) throws ConfigurationException {
 
@@ -116,10 +115,9 @@ public class Bank extends AbstractItem implements CashOwner, ConfigurableCompone
         for (PublicCompany comp : companies) {
             for (PublicCertificate cert : comp.getCertificates()) {
                 if (cert.isInitiallyAvailable()) {
-                    // TODO: Make this shorter
-                    ipo.getPortfolioModel().getShareModel(comp).getPortfolio().moveInto(cert);
+                    cert.moveTo(ipo);
                 } else {
-                    unavailable.getPortfolioModel().getShareModel(comp).getPortfolio().moveInto(cert);
+                    cert.moveTo(unavailable);
                 }
             }
         }
@@ -187,8 +185,7 @@ public class Bank extends AbstractItem implements CashOwner, ConfigurableCompone
     }
 
     public CashMoneyModel getCashModel() {
-        // TODO Auto-generated method stub
-        return null;
+        return cash;
     }
     
 }

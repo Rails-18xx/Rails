@@ -42,7 +42,8 @@ public final class PrivatesModel extends Model {
         this.addLineBreak = lineBreak;
     }
 
-    public String getData() {
+    @Override
+    public String observerText() {
 
         StringBuffer buf = new StringBuffer("<html>");
         for (Company priv : privates) {

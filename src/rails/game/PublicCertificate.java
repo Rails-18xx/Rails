@@ -34,11 +34,12 @@ public class PublicCertificate extends OwnableItem<PublicCertificate> implements
     /** A key identifying the certificate's unique ID */
     protected String certId;
     
+    // FIMXE: 
     /** Index within company (to be maintained in the IPO) */
     protected int indexInCompany;
 
     /** A map allowing to find certificates by unique id */
-    // FIXME: Remove static map
+    // FIXME: Remove static map, replace by other location mechanisms
     protected static Map<String, PublicCertificate> certMap =
             new HashMap<String, PublicCertificate>();
 
@@ -58,15 +59,16 @@ public class PublicCertificate extends OwnableItem<PublicCertificate> implements
         this.indexInCompany = index;
     }
 
-    // FIXME: Check if this does work, most likely not, as it duplicates IDs
-    public PublicCertificate(PublicCertificate oldCert) {
-        super(oldCert.getParent(), oldCert.getId(), PublicCertificate.class);
-        this.shares = oldCert.getShares();
-        this.president = oldCert.isPresidentShare();
-        this.initiallyAvailable = oldCert.isInitiallyAvailable();
-        this.certificateCount = oldCert.getCertificateCount();
-        this.indexInCompany = oldCert.getIndexInCompany();
-    }
+// TODO: Can be removed, as
+//    most likely this does not work, as it duplicates ids
+//    public PublicCertificate(PublicCertificate oldCert) {
+//        super(oldCert.getParent(), oldCert.getId(), PublicCertificate.class);
+//        this.shares = oldCert.getShares();
+//        this.president = oldCert.isPresidentShare();
+//        this.initiallyAvailable = oldCert.isInitiallyAvailable();
+//        this.certificateCount = oldCert.getCertificateCount();
+//        this.indexInCompany = oldCert.getIndexInCompany();
+//    }
 
     /** Set the certificate's unique ID, for use in deserializing */
     public void setUniqueId(String name, int index) {
@@ -126,8 +128,9 @@ public class PublicCertificate extends OwnableItem<PublicCertificate> implements
      * and the share percentage of this certificate. If it is a 100% share (as
      * occurs with e.g. 1835 minors), only the company name is given. If it is a
      * president's share, that fact is mentioned.
+     * FIXME: This was renamed from getID(), this will cause some display errors
      */
-    public String getId() {
+    public String getName() {
         int share = getShare();
         if (share == 100) {
             /* Applies to shareless minors: just name the company */
@@ -214,16 +217,19 @@ public class PublicCertificate extends OwnableItem<PublicCertificate> implements
      *
      * @param cert Public company certificate to compare with.
      * @return True if the certs are "equal" in the defined sense.
+     * 
+     * FIXME: This cannot work as long as HashCode is not defined accordingly
      */
-    public boolean equals(PublicCertificate cert) {
-        return (cert != null && getCompany() == cert.getCompany()
-                && isPresidentShare() == cert.isPresidentShare() && getShares() == cert.getShares());
-    }
+//    public boolean equals(PublicCertificate cert) {
+//        return (cert != null && getCompany() == cert.getCompany()
+//                && isPresidentShare() == cert.isPresidentShare() && getShares() == cert.getShares());
+//    }
 
-    @Override
-    public String toString() {
-        return "PublicCertificate: " + getId();
-    }
+    // TODO: Check if this was required somewhere
+//    @Override
+//    public String toString() {
+//        return "PublicCertificate: " + getId();
+//    }
 
 
 }

@@ -81,7 +81,7 @@ public abstract class MoneyModel extends Model {
     public abstract boolean initialised();
 
     @Override
-    public String toString() {
+    public String observerText() {
         if (fixedText.value() != null) {
             return fixedText.value();
         }

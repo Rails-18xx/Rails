@@ -97,9 +97,9 @@ public class OperatingRound extends Round implements Observer {
      *=======================================*/
 
     /**
-     * Constructor with no parameters, call the super Class (Round's) Constructor with no parameters
+     * Constructed via Configure
      */
-    protected OperatingRound(GameManager parent, String id) {
+    public OperatingRound(GameManager parent, String id) {
         super (parent, id);
 
         operatingCompanies = ArrayListState.create(this, "operatingCompanies", setOperatingCompanies());
@@ -110,10 +110,6 @@ public class OperatingRound extends Round implements Observer {
         guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, false);
         guiHints.setVisibilityHint(GuiDef.Panel.STATUS, true);
         guiHints.setActivePanel(GuiDef.Panel.MAP);
-    }
-    
-    public static OperatingRound create(GameManager parent, String id) {
-        return new OperatingRound(parent, id);
     }
     
     public void start() {

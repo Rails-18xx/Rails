@@ -27,7 +27,7 @@ import rails.game.state.BooleanState;
 import rails.game.state.HashMapState;
 import rails.game.state.Owner;
 
-public final class OperatingRound_1835 extends OperatingRound {
+public class OperatingRound_1835 extends OperatingRound {
 
     private final BooleanState needPrussianFormationCall = BooleanState.create(this, "NeedPrussianFormationCall");
     private final BooleanState hasLaidExtraOBBTile = BooleanState.create(this, "HasLaidExtraOBBTile");
@@ -38,14 +38,13 @@ public final class OperatingRound_1835 extends OperatingRound {
      */
     private final HashMapState<Player, Integer> deniedIncomeShare = HashMapState.create(this, "deniedIncomeShare");
 
-    private OperatingRound_1835 (GameManager parent, String id) {
+    /**
+     * Constructed via Configure
+     */
+    public OperatingRound_1835 (GameManager parent, String id) {
         super (parent, id);
     }
 
-    public static OperatingRound_1835 create(GameManager parent, String id) {
-        return new OperatingRound_1835(parent, id);
-    }
-    
     /** Can a public company operate? (1835 special version) */
     @Override
     protected boolean canCompanyOperateThisRound (PublicCompany company) {

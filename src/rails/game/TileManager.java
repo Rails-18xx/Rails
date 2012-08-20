@@ -14,10 +14,11 @@ import rails.game.Stop.RunTo;
 import rails.game.Stop.Score;
 import rails.game.Stop.Type;
 import rails.game.state.AbstractItem;
+import rails.game.state.Configurable;
 import rails.game.state.Item;
 import rails.util.Util;
 
-public final class TileManager extends AbstractItem implements ConfigurableComponent {
+public final class TileManager extends AbstractItem implements Configurable {
 
     protected Map<Integer, Tile> tileMap = new HashMap<Integer, Tile>();
     protected List<Integer> tileIds = new ArrayList<Integer>();
@@ -34,16 +35,15 @@ public final class TileManager extends AbstractItem implements ConfigurableCompo
     protected static Logger log =
         LoggerFactory.getLogger(TileManager.class.getPackage().getName());
 
-    private TileManager(Item parent, String id) {
+    /**
+     * Used by Configure (via reflection) only
+     */
+    public TileManager(Item parent, String id) {
         super(parent, id);
     }
 
-    public static TileManager create(Item parent, String id) {
-        return new TileManager(parent, id);
-    }
-    
     /**
-     * @see rails.common.parser.ConfigurableComponent#configureFromXML(org.w3c.dom.Element)
+     * @see rails.game.state.Configurable#configureFromXML(org.w3c.dom.Element)
      */
     public void configureFromXML(Tag tileSetTop) throws ConfigurationException {
         /*

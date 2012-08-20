@@ -22,7 +22,7 @@ import rails.game.state.BooleanState;
 /**
  * Adds specific code for 1889 to allow the special timing of the special tile laying private companies
  */
-public final class OperatingRound_1889 extends OperatingRound {
+public class OperatingRound_1889 extends OperatingRound {
 
     private final PrivateCompany privB;
     private final BooleanState activeSpPrivB = BooleanState.create(this, "ActiveSpPrivB");
@@ -35,15 +35,14 @@ public final class OperatingRound_1889 extends OperatingRound {
     private GameDef.OrStep storeActiveStep;
     private String previousOwnerName; 
     
-    private OperatingRound_1889(GameManager parent, String id) {
+    /**
+     * Constructed via Configure
+     */
+    public OperatingRound_1889(GameManager parent, String id) {
         super(parent, id);
         privB = companyManager.getPrivateCompany("B");
         privC = companyManager.getPrivateCompany("C");
         beginnerGame = GameOption.convertValueToBoolean(getGameOption("BeginnerGame"));
-    }
-
-    public static OperatingRound_1889 create(GameManager parent, String id) {
-        return new OperatingRound_1889(parent, id);
     }
 
     @Override

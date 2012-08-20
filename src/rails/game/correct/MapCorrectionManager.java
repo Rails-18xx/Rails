@@ -2,6 +2,8 @@ package rails.game.correct;
 
 import java.util.*;
 
+import com.google.common.collect.ImmutableList;
+
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.game.*;
@@ -152,15 +154,11 @@ public final class MapCorrectionManager extends CorrectionManager {
                     // B. or the current tile requires relays
                     || hex.getCurrentTile().relayBaseTokensOnUpgrade()) {
                 // define tokens for relays
-                List<BaseToken> tokens = new ArrayList<BaseToken>();
+                ImmutableList.Builder<BaseToken> tokens = ImmutableList.builder();
                 for (Stop oldStop:hex.getStops()) {
-                    for (Token token:oldStop.getTokens()) {
-                        if (token instanceof BaseToken) {
-                            tokens.add((BaseToken)token);
-                        }
-                    }
+                    tokens.addAll(oldStop.getBaseTokens());
                 }
-                action.setTokensToRelay(tokens);
+                action.setTokensToRelay(tokens.build());
                 // define possible stations
                 action.setPossibleStations(chosenTile.getStations());
                 break;

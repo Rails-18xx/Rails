@@ -2,7 +2,6 @@ package rails.game.specific._1856;
 
 import rails.game.GameManager;
 import rails.game.PublicCompany;
-import rails.game.Round;
 import rails.game.ShareSellingRound;
 import rails.game.state.IntegerState;
 
@@ -13,14 +12,12 @@ public final class ShareSellingRound_1856 extends ShareSellingRound {
     private final IntegerState sharesSoldSoFar = IntegerState.create(this, "sharesSoldSoFar");
     private final IntegerState squaresDownSoFar = IntegerState.create(this, "squaresDownSoFar");
 
-    private ShareSellingRound_1856(GameManager parent, String id, Round parentRound) {
-        super(parent, id, parentRound);
+    /**
+     * Created using Configure
+     */
+    public ShareSellingRound_1856(GameManager parent, String id) {
+        super(parent, id);
     }
-
-    public static ShareSellingRound_1856 create(GameManager parent, String id, Round parentRound) {
-        return new ShareSellingRound_1856(parent, id, parentRound);
-    }
-
     @Override
 	protected void adjustSharePrice (PublicCompany company, int numberSold, boolean soldBefore) {
 

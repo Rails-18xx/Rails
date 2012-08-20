@@ -7,7 +7,7 @@ import rails.game.action.*;
 import rails.game.state.IntegerState;
 import rails.game.state.GenericState;
 
-public final class StartRound_18EU extends StartRound {
+public class StartRound_18EU extends StartRound {
 
     public final static int SELECT_STEP = 0;
     public final static int OPEN_STEP = 1;
@@ -19,14 +19,13 @@ public final class StartRound_18EU extends StartRound {
     private final IntegerState currentBuyPrice = IntegerState.create(this, "currentBuyPrice");
     private final GenericState<StartItem> currentAuctionItem = GenericState.create(this, "currentAuctionItem");
 
-    private StartRound_18EU(GameManager parent, String id) {
+    /**
+     * Constructed via Configure
+     */
+    public StartRound_18EU(GameManager parent, String id) {
         super(parent, id);
         hasBidding = true;
         hasBasePrices = false;
-    }
-
-    public static StartRound_18EU create(GameManager parent, String id){
-        return new StartRound_18EU(parent, id);
     }
 
     /**

@@ -7,15 +7,14 @@ import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;
 
-public final class StartRound_1851 extends StartRound {
+public class StartRound_1851 extends StartRound {
 
+    /**
+     * Constructed via Configure
+     */
     public StartRound_1851(GameManager parent, String id) {
         super(parent, id);
         hasBidding = false;
-    }
-
-    public static StartRound_1851 create(GameManager parent, String id){
-        return new StartRound_1851(parent, id);
     }
 
     /**

@@ -21,12 +21,9 @@ public abstract class OwnableItem<T extends Ownable> extends AbstractItem implem
         this.owner.set(pm.getUnkownOwner());
     }
 
-    /**
-     * Moves the ownable (item) to the new owner  
-     * @param newOwner the new Owner of the Item
-     * @throws NullPointerException if the new owner has no portfolio which accepts the item
-     */
-    public void moveTo(Owner newOwner) {
+    public boolean moveTo(Owner newOwner) {
+        if (newOwner == owner.value()) return false;
+        
         // move from old to new portfolio
         Portfolio<T> oldPortfolio = pm.getPortfolio(type, owner.value());
         Portfolio<T> newPortfolio = pm.getPortfolio(type, newOwner);
@@ -35,6 +32,7 @@ public abstract class OwnableItem<T extends Ownable> extends AbstractItem implem
         new PortfolioChange<T>(newPortfolio, oldPortfolio, type.cast(this));
         // and change the owner
         owner.set(newOwner);
+        return true;
     }
     
     public Owner getOwner() {

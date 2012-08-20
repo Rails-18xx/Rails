@@ -34,7 +34,6 @@ import rails.game.MapManager;
 import rails.game.PublicCompany;
 import rails.game.Station;
 import rails.game.Tile;
-import rails.game.Token;
 import rails.game.Track;
 import rails.game.state.Owner;
 
@@ -176,8 +175,7 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
         return mapVertexes.get(identVertex);
     }
     
-    public NetworkVertex getVertex(Token token) {
-        if (!(token instanceof BaseToken)) return null;
+    public NetworkVertex getVertex(BaseToken token) {
         Owner owner = token.getOwner();
         // TODO: Check if this still works
         if (!(owner instanceof Stop)) return null;

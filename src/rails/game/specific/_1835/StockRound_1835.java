@@ -13,16 +13,15 @@ import rails.game.action.BuyCertificate;
 import rails.game.model.PortfolioModel;
 import rails.game.state.Owner;
 
-public final class StockRound_1835 extends StockRound {
+public class StockRound_1835 extends StockRound {
 
-    private StockRound_1835 (GameManager parent, String id) {
+    /**
+     * Constructed via Configure
+     */
+    public StockRound_1835 (GameManager parent, String id) {
         super(parent, id);
     }
     
-    public static StockRound_1835 create(GameManager parent, String id){
-        return new StockRound_1835(parent, id);
-    }
-
     /** Add nationalisations */
     @Override
     protected void setGameSpecificActions() {

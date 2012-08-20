@@ -18,15 +18,13 @@ public class NameTrains extends SpecialProperty {
     private List<NamedTrainToken> tokens = new ArrayList<NamedTrainToken>(2);
     private String name = "NameTrains";
 
-    private NameTrains(Item parent, String id) {
+    /**
+     * Used by Configure (via reflection) only
+     */
+    public NameTrains(Item parent, String id) {
         super(parent, id);
     }
 
-    public static NameTrains create(Item parent) {
-        String uniqueId = SpecialProperty.createUniqueId();
-        return new NameTrains(parent, uniqueId);
-    }
-    
     @Override
     public void configureFromXML(Tag tag) throws ConfigurationException {
 
@@ -108,10 +106,11 @@ public class NameTrains extends SpecialProperty {
         return description;
     }
 
-    @Override
-    public String toString() {
-        return description;
-    }
+    // FIXME: The toString() methods are removed, change calls to those
+//    @Override
+//    public String toString() {
+//        return description;
+//    }
     
     @Override
     public String getInfo() {

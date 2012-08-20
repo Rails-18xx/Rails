@@ -149,7 +149,7 @@ public final class StateManager extends Manager implements DelayedItem {
 //    void registerReceiver(Triggerable receiver, State toState) {
 //    }
 
-    ChangeStack getChangeStack() {
+    public ChangeStack getChangeStack() {
         return changeStack;
     }
     

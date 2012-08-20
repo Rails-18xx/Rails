@@ -3,14 +3,14 @@ package rails.game;
 import java.util.*;
 
 import rails.common.LocalText;
-import rails.common.parser.ConfigurableComponent;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.model.MoneyModel;
+import rails.game.state.Configurable;
 import rails.game.state.Item;
 import rails.game.state.Manager;
 
-public class PlayerManager extends Manager implements ConfigurableComponent {
+public class PlayerManager extends Manager implements Configurable {
 
     private int numberOfPlayers;
     private List<Player> players;
@@ -25,12 +25,11 @@ public class PlayerManager extends Manager implements ConfigurableComponent {
 
     private int[] playerCertificateLimits = new int[Player.MAX_PLAYERS];
 
-    private PlayerManager(Item parent, String id) {
+    /**
+     * Used by Configure (via reflection) only
+     */
+    public PlayerManager(Item parent, String id) {
         super(parent, id);
-    }
-    
-    public static PlayerManager create(Item parent, String id){
-        return new PlayerManager(parent, id);
     }
 
     public void configureFromXML(Tag tag) throws ConfigurationException {

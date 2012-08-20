@@ -23,15 +23,14 @@ public class OperatingRound_18EU extends OperatingRound {
 
     protected final BooleanState hasPullmannAtStart = BooleanState.create(this, "ORCompanyHasPullmannAtStart");
 
-    private OperatingRound_18EU (GameManager parent, String id) {
+    /**
+     * Constructed via Configure
+     */
+    public OperatingRound_18EU (GameManager parent, String id) {
         super(parent, id);
         pullmannType = trainManager.getCertTypeByName("P");
     }
     
-    public static OperatingRound_18EU create(GameManager parent, String id) {
-        return new OperatingRound_18EU(parent, id);
-    }
-
     @Override
     protected void initTurn() {
         super.initTurn();

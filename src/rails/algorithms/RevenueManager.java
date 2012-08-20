@@ -9,12 +9,12 @@ import org.slf4j.LoggerFactory;
 
 
 import rails.common.LocalText;
-import rails.common.parser.ConfigurableComponent;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.GameManager;
 import rails.game.state.AbstractItem;
 import rails.game.state.ArrayListState;
+import rails.game.state.Configurable;
 import rails.game.state.Item;
 
 /**
@@ -23,12 +23,12 @@ import rails.game.state.Item;
  * The conversion of Rails elements is in the responsibility of the RevenueAdapter.
  * For each GameManager instance only one RevenueManager is created.
  */
-public final class RevenueManager extends AbstractItem implements ConfigurableComponent {
+public final class RevenueManager extends AbstractItem implements Configurable {
 
     protected static Logger log =
         LoggerFactory.getLogger(RevenueManager.class.getPackage().getName());
 
-    private final HashSet<ConfigurableComponent> configurableModifiers = new HashSet<ConfigurableComponent>();
+    private final HashSet<Configurable> configurableModifiers = new HashSet<Configurable>();
     
     private final ArrayListState<NetworkGraphModifier> graphModifiers = ArrayListState.create(this, "graphModifiers"); 
     private final ArrayListState<RevenueStaticModifier> staticModifiers = ArrayListState.create(this, "staticModifiers");
@@ -38,12 +38,11 @@ public final class RevenueManager extends AbstractItem implements ConfigurableCo
     private final ArrayList<RevenueDynamicModifier> activeDynamicModifiers = new ArrayList<RevenueDynamicModifier>();
     private RevenueDynamicModifier activeCalculator;
 
-    private RevenueManager(Item parent, String id) {
+    /**
+     * Used by Configure (via reflection) only
+     */
+    public RevenueManager(Item parent, String id) {
         super(parent, id);
-    }
-    
-    public static RevenueManager create(Item parent, String id){
-        return new RevenueManager(parent, id);
     }
     
     public void configureFromXML(Tag tag) throws ConfigurationException {
@@ -88,8 +87,8 @@ public final class RevenueManager extends AbstractItem implements ConfigurableCo
                     throw new ConfigurationException(LocalText.getText(
                             "ClassIsNotAModifier", className));
                 }
-                if (isModifier && modifier instanceof ConfigurableComponent) {
-                    configurableModifiers.add((ConfigurableComponent)modifier);
+                if (isModifier && modifier instanceof Configurable) {
+                    configurableModifiers.add((Configurable)modifier);
                 }
             }
         }
@@ -98,7 +97,7 @@ public final class RevenueManager extends AbstractItem implements ConfigurableCo
 
     public void finishConfiguration(GameManager parent)
             throws ConfigurationException {
-        for (ConfigurableComponent modifier:configurableModifiers) {
+        for (Configurable modifier:configurableModifiers) {
                 modifier.finishConfiguration(parent);
         }
     }

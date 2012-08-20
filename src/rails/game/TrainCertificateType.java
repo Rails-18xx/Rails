@@ -10,12 +10,16 @@ import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.state.AbstractItem;
 import rails.game.state.BooleanState;
+import rails.game.state.Configure;
 import rails.game.state.IntegerState;
 import rails.game.state.Item;
 import rails.util.*;
 
-public final class TrainCertificateType extends AbstractItem {
-
+// TODO: Name to id conversion
+public class TrainCertificateType extends AbstractItem {
+    
+    private final static String DEFAULT_TRAIN_CLASS = "rails.game.Train";
+    
     protected String name;
     protected int quantity = 0;
     protected boolean infiniteQuantity = false;
@@ -31,7 +35,6 @@ public final class TrainCertificateType extends AbstractItem {
     protected int cost;
     protected int exchangeCost;
     
-    protected String trainClassName = "rails.game.Train";
     protected Class<? extends Train> trainClass;
 
     // State variables
@@ -57,14 +60,8 @@ public final class TrainCertificateType extends AbstractItem {
     }
 
     public void configureFromXML(Tag tag) throws ConfigurationException {
-
-        trainClassName = tag.getAttributeAsString("class", trainClassName);
-        try {
-            trainClass = Class.forName(trainClassName).asSubclass(Train.class);
-        } catch (ClassNotFoundException e) {
-            throw new ConfigurationException("Class " + trainClassName
-                    + "not found", e);
-        }
+        String trainClassName = tag.getAttributeAsString("class", DEFAULT_TRAIN_CLASS);
+        trainClass = Configure.getClassForName(Train.class, trainClassName);
 
         // Name
         name = tag.getAttributeAsString("name");
@@ -128,20 +125,8 @@ public final class TrainCertificateType extends AbstractItem {
         return newPhaseNames;
     }
 
-    public Train createTrain () throws ConfigurationException {
-
-        Train train;
-        try {
-            train = trainClass.newInstance();
-        } catch (InstantiationException e) {
-            throw new ConfigurationException(
-                    "Cannot instantiate class " + trainClassName, e);
-        } catch (IllegalAccessException e) {
-            throw new ConfigurationException("Cannot access class "
-                    + trainClassName
-                    + "constructor", e);
-        }
-        return train;
+    public Train createTrain (Item parent, String id) throws ConfigurationException {
+        return Configure.create(trainClass, parent, id);
     }
 
     public List<TrainType> getPotentialTrainTypes() {
@@ -227,7 +212,7 @@ public final class TrainCertificateType extends AbstractItem {
 
     public String getInfo() {
         StringBuilder b = new StringBuilder ("<html>");
-        b.append(LocalText.getText("Trainnfo", name, Bank.format(cost), quantity));
+        b.append(LocalText.getText("TrainInfo", name, Bank.format(cost), quantity));
         if (b.length() == 6) b.append(LocalText.getText("None"));
 
         return b.toString();

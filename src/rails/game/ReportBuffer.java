@@ -162,6 +162,8 @@ public final class ReportBuffer {
             }
             initialQueue.clear();
         }
+        // FIXME: Workaround to store first messages
+        reportItems.put(0, new ReportItem());
     }
 
     
@@ -313,9 +315,8 @@ public final class ReportBuffer {
     
     public static String getReportItems() {
         // activeIndex is the index one before the current index for the next action
-        // FIXME: This has to be rewritten
-        // int activeIndex = GameManager.getInstance().getChangeStack().getCurrentIndex();
-        int activeIndex = 0;
+        // FIXME: This is a workaround
+        int activeIndex = GameManager.getInstance().getRoot().getStateManager().getChangeStack().sizeUndoStack();
         ReportBuffer instance = getInstance();
         
         StringBuffer s = new StringBuffer();

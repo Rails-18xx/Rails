@@ -8,16 +8,15 @@ import rails.game.GameManager;
 import rails.game.PublicCompany;
 import rails.game.StockRound;
 
-public final class StockRound_1880 extends StockRound {
+public class StockRound_1880 extends StockRound {
 
-    private StockRound_1880 (GameManager parent, String id) {
+    /**
+     * Constructed via Configure
+     */
+    public StockRound_1880 (GameManager parent, String id) {
         super(parent, id);
     }
 
-    public static StockRound_1880 create(GameManager parent, String id){
-        return new StockRound_1880(parent, id);
-    }
-    
     @Override
     // The sell-in-same-turn-at-decreasing-price option does not apply here
     protected int getCurrentSellPrice (PublicCompany company) {

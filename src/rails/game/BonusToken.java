@@ -1,8 +1,9 @@
 package rails.game;
 
-import rails.common.parser.ConfigurableComponent;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
+import rails.game.state.Configurable;
+import rails.game.state.Item;
 import rails.util.Util;
 
 /**
@@ -12,8 +13,7 @@ import rails.util.Util;
  * which are intended for base tokens, but on some unoccupied part of a tile.  
  */
 
-//FIXME: Check if PublicCompany is the parent of a token
-public final class BonusToken extends Token implements Closeable, ConfigurableComponent  {
+public class BonusToken extends Token<BonusToken> implements Closeable, Configurable  {
 
     private int value;
     private String name;
@@ -21,13 +21,13 @@ public final class BonusToken extends Token implements Closeable, ConfigurableCo
     private Object removingObject = null;
     private PublicCompany user = null;
 
-    private BonusToken(PublicCompany parent, String id) {
-        super(parent, id);
+    private BonusToken(Item parent, String id) {
+        super(parent, id, BonusToken.class);
     }
     
-    public static BonusToken create(PublicCompany company) {
+    public static BonusToken create(Item parent) {
         String uniqueId = Token.createUniqueId();
-        BonusToken token = new BonusToken(company, uniqueId);
+        BonusToken token = new BonusToken(parent, uniqueId);
         return token;
     }
     

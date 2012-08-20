@@ -25,7 +25,7 @@ public class StockSpace extends Model {
      * The getId() of the XML attribute for the stock price's getId() (like "A1" -
      * naming is like spreadsheet cells.
      */
-    public static final String NAME_TAG = "getId()";
+    public static final String NAME_TAG = "name";
 
     /** The getId() of the XML attribute for the stock price. */
     public static final String PRICE_TAG = "price";

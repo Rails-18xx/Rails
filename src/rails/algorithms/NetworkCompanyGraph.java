@@ -17,8 +17,8 @@ import org.jgrapht.graph.SimpleGraph;
 import org.jgrapht.graph.Subgraph;
 
 import rails.algorithms.RevenueAdapter.EdgeTravel;
+import rails.game.BaseToken;
 import rails.game.PublicCompany;
-import rails.game.Token;
 
 /**
  * This class stores and creates the various graphs
@@ -115,7 +115,7 @@ public class NetworkCompanyGraph {
     
     public List<NetworkVertex> getCompanyBaseTokenVertexes(PublicCompany company) {
         List<NetworkVertex> vertexes = new ArrayList<NetworkVertex>();
-        for (Token token:company.getLaidBaseTokens()){
+        for (BaseToken token:company.getLaidBaseTokens()){
             NetworkVertex vertex = graphBuilder.getVertex(token);
             if (vertex == null) continue;
             vertexes.add(vertex);

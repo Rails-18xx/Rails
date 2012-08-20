@@ -19,15 +19,11 @@ import rails.game.state.*;
 import rails.util.GameFileIO;
 import rails.util.Util;
 
-/*
- * FIXME: Removed NDC mechanism
- */
-
 /**
  * This class manages the playing rounds by supervising all implementations of
  * Round. Currently everything is hardcoded &agrave; la 1830.
  */
-public class GameManager extends AbstractItem implements ConfigurableComponent, Owner {
+public class GameManager extends Manager implements Configurable, Owner {
     /** Version ID of the Save file header, as written in save() */
     private static final long saveFileHeaderVersionID = 3L;
     /**
@@ -229,13 +225,10 @@ public class GameManager extends AbstractItem implements ConfigurableComponent, 
     protected static Logger log =
         LoggerFactory.getLogger(GameManager.class.getPackage().getName());
 
-    // FIXME: This has to be rewritten
-    public GameManager() {
-        super(null, GM_NAME); // TODO: fix that 
+    public GameManager(Item parent, String id) {
+        super(parent, id);  
         gmName = GM_NAME;
         gmKey = GM_KEY;
-//        NDC.clear();
-//        NDC.push (GM_KEY);
         gameManagerMap.put(GM_KEY, this);
         displayBuffer = new DisplayBuffer();
         reportBuffer = new ReportBuffer();
@@ -618,7 +611,7 @@ public class GameManager extends AbstractItem implements ConfigurableComponent, 
      */
     public static GameManager getInstance () {
 //        return gameManagerMap.get(NDC.peek());
-        return null;
+        return gameManagerMap.get(GM_KEY);
     }
 
     /* (non-Javadoc)
@@ -692,20 +685,12 @@ public class GameManager extends AbstractItem implements ConfigurableComponent, 
 
     protected void startStartRound() {
         String startRoundClassName = startPacket.getRoundClassName();
-        Class<? extends StartRound> startRoundClass = null;
-        try {
-            startRoundClass = Class.forName (startRoundClassName).asSubclass(StartRound.class);
-        } catch (Exception e) {
-            log.error("Cannot find class "
-                    + startRoundClassName, e);
-            System.exit(1);
-        }
-        StartRound startRound = createRound (startRoundClass);
-        startRound.start ();
+        StartRound startRound = createRound(StartRound.class, startRoundClassName, "startRound");
+        startRound.start();
     }
 
     protected void startStockRound() {
-        StockRound sr = createRound (stockRoundClass);
+        StockRound sr = createRound(stockRoundClass, "SR_" + srNumber.value());
         srNumber.add(1);
         sr.start();
     }
@@ -713,17 +698,16 @@ public class GameManager extends AbstractItem implements ConfigurableComponent, 
     protected void startOperatingRound(boolean operate) {
         log.debug("Operating round started with operate-flag=" + operate);
 
-        OperatingRound or = createRound(operatingRoundClass);
+        OperatingRound or = createRound(operatingRoundClass, "OR_" + absoluteORNumber.value());
         if (operate) absoluteORNumber.add(1);
         or.start();
     }
 
-    protected <T extends Round> T createRound (Class<T> roundClass) {
-
+    // FIXME: We need an ID!
+    protected <T extends Round> T createRound (Class<T> roundClass, String roundClassName, String id) {
         T round = null;
         try {
-            Constructor<T> cons = roundClass.getConstructor(GameManager.class);
-            round = cons.newInstance(this);
+            round = Configure.create(roundClass, roundClassName, GameManager.class, this, id);
         } catch (Exception e) {
             log.error("Cannot instantiate class "
                     + roundClass.getName(), e);
@@ -732,18 +716,12 @@ public class GameManager extends AbstractItem implements ConfigurableComponent, 
         setRound (round);
         return round;
     }
-
-    protected <T extends Round, U extends Round>
-    T createRound (Class<T> roundClass, U parentRound) {
-
-        if (parentRound == null) {
-            return createRound (roundClass);
-        }
-
+    
+    // FIXME: We need an ID!
+    protected <T extends Round> T createRound(Class<T> roundClass, String id) {
         T round = null;
         try {
-            Constructor<T> cons = roundClass.getConstructor(GameManager.class, Round.class);
-            round = cons.newInstance(this, parentRound);
+            round = Configure.create(roundClass, GameManager.class, this, id); 
         } catch (Exception e) {
             log.error("Cannot instantiate class "
                     + roundClass.getName(), e);
@@ -801,20 +779,17 @@ public class GameManager extends AbstractItem implements ConfigurableComponent, 
         interruptedRound = getCurrentRound();
 
         // check if other companies can be dumped
-        createRound (shareSellingRoundClass, interruptedRound)
-        .start(player, cashToRaise, cashNeedingCompany,
+        // FIXME: This ID will not work, as it will create duplication
+        createRound(shareSellingRoundClass, "ShareSellingRound").start(
+                interruptedRound, player, cashToRaise, cashNeedingCompany,
                 !problemDumpOtherCompanies || forcedSellingCompanyDump);
         // the last parameter indicates if the dump of other companies is allowed, either this is explicit or
         // the action does not require that check
     }
 
-    /* (non-Javadoc)
-     * @see rails.game.GameManager#startTreasuryShareTradingRound(rails.game.OperatingRound, rails.game.PublicCompany)
-     */
     public void startTreasuryShareTradingRound() {
-
         interruptedRound = getCurrentRound();
-        createRound (TreasuryShareRound.class, interruptedRound).start();
+        createRound (TreasuryShareRound.class, "TreasuryShareRound").start(interruptedRound);
     }
 
     /* (non-Javadoc)
@@ -1351,7 +1326,8 @@ public class GameManager extends AbstractItem implements ConfigurableComponent, 
         // activate gameReport for UI
         setGameOverReportedUI(false);
 
-        createRound(EndOfGameRound.class);
+        // FIXME: This will not work, as it will create duplicated IDs
+        createRound(EndOfGameRound.class, "EndOfGameRound");
     }
 
 

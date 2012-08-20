@@ -11,12 +11,11 @@ public class OperatingRound_18TN extends OperatingRound {
 
     private ArrayListState<Player> playersSoldInOR1 = ArrayListState.create(this, "PlayersSoldPrivateInOR1");
 
+    /**
+     * Constructed via Configure
+     */
     public OperatingRound_18TN (GameManager parent, String id) {
         super(parent, id);
-    }
-
-    public static OperatingRound_18TN create(GameManager parent, String id) {
-        return new OperatingRound_18TN(parent, id);
     }
 
     @Override

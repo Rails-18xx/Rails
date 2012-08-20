@@ -1,10 +1,13 @@
 package rails.game.state;
+
+import com.google.common.base.Objects;
+
 /**
  * A context describe a service that allows to locate items
  * 
  * TODO: Check if we should check for non-null id here
  */
-public abstract class GameRoot implements Item {
+public abstract class Context implements Item {
 
     /**
      * @param Either a fullURI or a (relative) URI inside the Context 
@@ -18,6 +21,6 @@ public abstract class GameRoot implements Item {
     
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + "(Id=" + getId() + ")";
+        return Objects.toStringHelper(this).add("id", getId()).toString();
     }
 }

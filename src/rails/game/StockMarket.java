@@ -4,15 +4,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import rails.common.LocalText;
-import rails.common.parser.ConfigurableComponent;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.state.AbstractItem;
 import rails.game.state.BooleanState;
+import rails.game.state.Configurable;
 import rails.game.state.Item;
 
-public final class StockMarket extends AbstractItem implements ConfigurableComponent {
+public class StockMarket extends AbstractItem implements Configurable {
+
+    final static Logger log = LoggerFactory.getLogger(StockMarket.class);
 
      /**
      *  This is the name by which the CompanyManager should be registered with
@@ -51,19 +56,18 @@ public final class StockMarket extends AbstractItem implements ConfigurableCompo
 
     public static final String DEFAULT = "default";
 
-    private StockMarket(Item parent, String id) {
+    /**
+     * Used by Configure (via reflection) only
+     */
+    public StockMarket(Item parent, String id) {
         super(parent, id);
     }
     
-    public static StockMarket create(Item parent, String id) {
-        return new StockMarket(parent, id);
-    }
-    
     /**
-     * @see rails.common.parser.ConfigurableComponent#configureFromXML(org.w3c.dom.Element)
+     * @see rails.game.state.Configurable#configureFromXML(org.w3c.dom.Element)
      */
     public void configureFromXML(Tag tag) throws ConfigurationException {
-
+        
         // Define a default stockspace type with colour white
         defaultType = new StockSpaceType(DEFAULT, StockSpaceType.WHITE);
         stockSpaceTypes.put (DEFAULT, defaultType);

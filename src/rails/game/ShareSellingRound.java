@@ -24,24 +24,22 @@ public class ShareSellingRound extends StockRound {
 
     private List<SellShares> sellableShares;
 
-    protected ShareSellingRound(GameManager parent, String id, Round parentRound) {
+    /**
+     * Created using Configure
+     */
+    public ShareSellingRound(GameManager parent, String id) {
         super(parent, id);
-        this.parentRound = parentRound;
-
         guiHints.setActivePanel(GuiDef.Panel.STATUS);
     }
-    
-    public static ShareSellingRound create(GameManager parent, String id, Round parentRound) {
-        return new ShareSellingRound(parent, id, parentRound);
-    }
 
-    public void start(Player sellingPlayer, int cashToRaise,
+    public void start(Round parentRound, Player sellingPlayer, int cashToRaise,
             PublicCompany cashNeedingCompany, boolean dumpOtherCompaniesAllowed) {
         log.info("Share selling round started, player="
                 +sellingPlayer.getId()+" cash="+cashToRaise);
         ReportBuffer.add (LocalText.getText("PlayerMustSellShares",
                 sellingPlayer.getId(),
                 Bank.format(cashToRaise)));
+        this.parentRound = parentRound;
         currentPlayer = this.sellingPlayer = sellingPlayer;
         this.cashNeedingCompany = cashNeedingCompany;
         this.cashToRaise = IntegerState.create(this, "CashToRaise", cashToRaise);

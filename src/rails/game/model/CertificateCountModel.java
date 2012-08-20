@@ -26,7 +26,7 @@ public final class CertificateCountModel extends Model {
     }
 
     @Override
-    public String toString() {
+    public String observerText() {
         return ("" + getParent().getCertificateCount()).replaceFirst("\\.0", "").replaceFirst("\\.5", "\u00bd");
     }
 

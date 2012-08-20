@@ -7,6 +7,7 @@ import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.state.AbstractItem;
+import rails.game.state.Configure;
 import rails.game.state.Item;
 
 /**
@@ -58,7 +59,7 @@ public class CompanyType extends AbstractItem {
     }
 
     /**
-     * @see rails.common.parser.ConfigurableComponent#configureFromXML(org.w3c.dom.Element)
+     * @see rails.game.state.Configurable#configureFromXML(org.w3c.dom.Element)
      */
     public void configureFromXML(Tag tag) throws ConfigurationException {
         //No longer needed.
@@ -68,16 +69,16 @@ public class CompanyType extends AbstractItem {
 
     }
 
-    public Company createCompany(String name, Tag typeTag, Tag tag)
+    public Company createCompany(String id, Tag typeTag, Tag tag)
     throws ConfigurationException {
         Company newCompany = null;
         try {
-            newCompany = (Company) Class.forName(className).newInstance();
+            newCompany = Configure.create(Company.class, className, this, id);
         } catch (Exception e) {
             throw new ConfigurationException(LocalText.getText(
                     "ClassCannotBeInstantiated", className), e);
         }
-        // newCompany.init(this, name);
+        newCompany.initType(this);
         newCompany.configureFromXML(typeTag);
         newCompany.configureFromXML(tag);
         companies.add(newCompany);

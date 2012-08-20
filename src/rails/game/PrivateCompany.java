@@ -3,6 +3,8 @@ package rails.game;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.ImmutableSet;
+
 import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
@@ -11,6 +13,7 @@ import rails.game.special.SpecialProperty;
 import rails.game.state.Item;
 import rails.game.state.Ownable;
 import rails.game.state.Owner;
+import rails.game.state.PortfolioSet;
 import rails.util.*;
 
 // FIXME: Move static field numberOfPrivateCompanies to CompanyManager
@@ -67,22 +70,25 @@ public class PrivateCompany extends Company implements Ownable, Certificate, Clo
     protected boolean tradeableToCompany = true;
     protected boolean tradeableToPlayer = false;
     
+    // FIXME: Used to be here, but was moved to Company for 1835,
+    // however this does not work as SpecialProperty Portfolio already belongs to PortfolioModel
+    protected final PortfolioSet<SpecialProperty> specialProperties = 
+            PortfolioSet.create(this, "specialProperties", SpecialProperty.class);
+
+    
     // required to implement Ownable Interface
     private Owner owner;
 
-    private PrivateCompany(Item parent, String id) {
+    /**
+     * Used by Configure (via reflection) only
+     */
+    public PrivateCompany(Item parent, String id) {
         super(parent, id);
         this.privateNumber = numberOfPrivateCompanies++;
     }
 
-    public static PrivateCompany create(Item parent, String id, CompanyType type) {
-        PrivateCompany company = new PrivateCompany(parent, id);
-        company.initType(type);
-        return company;
-    }
-    
     /**
-     * @see rails.common.parser.ConfigurableComponent#configureFromXML(org.w3c.dom.Element)
+     * @see rails.game.state.Configurable#configureFromXML(org.w3c.dom.Element)
      */
     @Override
     public void configureFromXML(Tag tag) throws ConfigurationException {
@@ -501,11 +507,27 @@ public class PrivateCompany extends Company implements Ownable, Certificate, Clo
         return tradeableToPlayer;
     }
 
+    /**
+     * @return Set of all special properties we have.
+     */
+    public ImmutableSet<SpecialProperty> getSpecialProperties() {
+        return specialProperties.items();
+    }
+
+    /**
+     * Do we have any special properties?
+     *
+     * @return Boolean
+     */
+    public boolean hasSpecialProperties() {
+        return specialProperties != null && !specialProperties.isEmpty();
+    }
+    
     // Ownable interface
     // FIXME: This should be replaced by making PrivateCompany extending the OwnableItem abstract class
     // and implementing the Company interface instead
-    public void moveTo(Owner newOwner) {
-        // do nothing
+    public boolean moveTo(Owner newOwner) {
+        return true;
     }
 
     public Owner getOwner() {

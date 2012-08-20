@@ -7,7 +7,10 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 
 import rails.algorithms.RevenueBonusTemplate;
 import rails.common.LocalText;
@@ -22,9 +25,9 @@ import rails.game.model.CashMoneyModel;
 import rails.game.model.PortfolioModel;
 
 import rails.game.state.BooleanState;
+import rails.game.state.Configurable;
 import rails.game.state.Observer;
 import rails.game.state.Owner;
-import rails.game.state.Portfolio;
 import rails.game.state.PortfolioSet;
 import rails.game.state.AbstractItem;
 import rails.util.*;
@@ -58,7 +61,7 @@ import rails.util.*;
  */
 
 // FIXME: MapHex was previous a model
-public class MapHex extends AbstractItem implements Owner, ConfigurableComponent,
+public class MapHex extends AbstractItem implements Owner, Configurable,
 StationHolder {
 
     private static final String[] ewOrNames =
@@ -126,8 +129,10 @@ StationHolder {
     protected List<PublicCompany> destinations;
 
     /** Tokens that are not bound to a Station (City), such as Bonus tokens */
-    protected final PortfolioSet<Token> offStationTokens = PortfolioSet.create(this,
-            "offStationTokens", Token.class);
+    protected final PortfolioSet<BonusToken> bonusTokens = PortfolioSet.create(this, "bonusTokens", BonusToken.class);
+    
+    protected final PortfolioSet<BaseToken> offStationTokens = PortfolioSet.create(this,
+            "offStationTokens", BaseToken.class);
 
     /** Storage of revenueBonus that are bound to the hex */
     protected List<RevenueBonusTemplate> revenueBonuses = null;
@@ -181,14 +186,15 @@ StationHolder {
     }
 
     public static MapHex create(MapManager parent, Tag tag) throws ConfigurationException {
-        // TODO: Rewrite the creation process of MapHex
-        MapHex hex = new MapHex(parent, null);
+        // name serves as id
+        String id = tag.getAttributeAsString("name");
+        MapHex hex = new MapHex(parent, id);
         hex.configureFromXML(tag);
         return hex;
     }
 
     /**
-     * @see rails.common.parser.ConfigurableComponent#configureFromXML(org.w3c.dom.Element)
+     * @see rails.game.state.Configurable#configureFromXML(org.w3c.dom.Element)
      */
     public void configureFromXML(Tag tag) throws ConfigurationException {
         Pattern namePattern = Pattern.compile("(\\D+?)(-?\\d+)");
@@ -802,51 +808,40 @@ StationHolder {
             }
 
             // Move the tokens
-            Map<Token, Portfolio<Token>> tokenDestinations =
-                new HashMap<Token, Portfolio<Token>>();
-
+            Map<BaseToken, Owner> tokenDestinations = Maps.newHashMap();
             for (Stop oldCity : stops) {
                 newCity = oldToNewCities.get(oldCity);
                 if (newCity != null) {
-                    oldtoken: for (Token token : oldCity.getTokens()) {
-                        if (token instanceof BaseToken) {
-                            // Check if the new city already has such a token
-                            PublicCompany company =
-                                ((BaseToken) token).getParent();
-                            for (Token token2 : newCity.getTokens()) {
-                                if (token2 instanceof BaseToken
-                                        && company == ((BaseToken) token2).getOwner()) {
-                                    // No duplicate tokens in one city, so move to free tokens
-                                    tokenDestinations.put(token, company.getBaseTokensModel().getFreeTokens());
-                                    log.debug("Duplicate token "
-                                            + token.getUniqueId()
-                                            + " moved from "
-                                            + oldCity.getId() + " to "
-                                            + company.getId());
-                                    ReportBuffer.add(LocalText.getText(
-                                            "DuplicateTokenRemoved",
-                                            company.getId(),
-                                            getId() ));
-                                    continue oldtoken;
-                                }
+                    oldtoken: for (BaseToken token : oldCity.getBaseTokens()) {
+                        // Check if the new city already has such a token
+                        PublicCompany company = token.getParent();
+                        for (BaseToken token2 : newCity.getBaseTokens()) {
+                            if (company == token2.getOwner()) {
+                                // No duplicate tokens in one city, so move to free tokens
+                                tokenDestinations.put(token, company);
+                                log.debug("Duplicate token "
+                                        + token.getUniqueId()
+                                        + " moved from "
+                                        + oldCity.getId() + " to "
+                                        + company.getId());
+                                ReportBuffer.add(LocalText.getText(
+                                        "DuplicateTokenRemoved",
+                                        company.getId(),
+                                        getId() ));
+                                continue oldtoken;
                             }
                         }
-                        tokenDestinations.put(token, newCity.getTokens());
+                        tokenDestinations.put(token, newCity);
                         log.debug("Token " + token.getUniqueId()
                                 + " moved from " + oldCity.getId() + " to "
                                 + newCity.getId());
                     }
-                if (!tokenDestinations.isEmpty()) {
-                    for (Token token : tokenDestinations.keySet()) {
-                        tokenDestinations.get(token).moveInto(token);
-                    }
                 }
-                } else {
-                    log.debug("No new city!?");
-                }
-
             }
-
+            // TODO: Move that after the for-loop, check if this still works
+            for (BaseToken token : tokenDestinations.keySet()) {
+                token.moveTo(tokenDestinations.get(token));
+            }
         }
 
         // TODO: Check as the code below was not reachable
@@ -920,7 +915,7 @@ StationHolder {
             log.error("Company " + company.getId() + " has no free token");
             return false;
         } else {
-            city.getTokens().moveInto(token);
+            city.getBaseTokens().moveInto(token);
             // TODO: is this still required?
             // update();
 
@@ -944,47 +939,31 @@ StationHolder {
      * @return
      */
     public boolean layBonusToken(BonusToken token, PhaseManager phaseManager) {
-        if (token == null) {
-            log.error("No token specified");
-            return false;
-        } else {
-            offStationTokens.moveInto(token);
-            token.prepareForRemoval (phaseManager);
-            return true;
-        }
-    }
-
-    
-    // TODO: This is not called anymore
-    public boolean addToken(Token token, int position) {
-
-        if (offStationTokens.containsItem(token)) {
-            return false;
-        } 
-
-        offStationTokens.moveInto(token);
+        Preconditions.checkArgument(token != null, "No token specified");
+        bonusTokens.moveInto(token);
+        token.prepareForRemoval(phaseManager);
         return true;
     }
-
-    public List<BaseToken> getBaseTokens () {
+    
+    public ImmutableList<BaseToken> getBaseTokens () {
         if (stops == null || stops.isEmpty()) return null;
-        List<BaseToken> tokens = new ArrayList<BaseToken>();
+        ImmutableList.Builder<BaseToken> tokens = ImmutableList.builder();
         for (Stop city : stops) {
-            for (Token token : city.getTokens()) {
-                if (token instanceof BaseToken) {
-                    tokens.add((BaseToken)token);
-                }
-            }
+            tokens.addAll(city.getBaseTokens().items());
         }
-        return tokens;
+        return tokens.build();
     }
 
-    public PortfolioSet<Token> getTokens() {
+    public PortfolioSet<BaseToken> getOffStationTokens() {
         return offStationTokens;
+    }
+    
+    public PortfolioSet<BonusToken> getBonusTokens() {
+        return bonusTokens;
     }
 
     public boolean hasTokens() {
-        return offStationTokens.size() > 0;
+        return offStationTokens.size() > 0 || bonusTokens.size() > 0;
     }
 
     public boolean hasTokenSlotsLeft(int station) {
@@ -1015,9 +994,9 @@ StationHolder {
         return false;
     }
 
-    public ImmutableSet<Token> getTokens(int cityNumber) {
+    public ImmutableSet<BaseToken> getTokens(int cityNumber) {
         if (stops.size() > 0 && mStops.get(cityNumber) != null) {
-            return (mStops.get(cityNumber)).getTokens().items();
+            return (mStops.get(cityNumber)).getBaseTokens().items();
         } else {
             return ImmutableSet.of(); // empty List
         }
@@ -1033,9 +1012,8 @@ StationHolder {
     public int getCityOfBaseToken(PublicCompany company) {
         if (stops == null || stops.isEmpty()) return 0;
         for (Stop city : stops) {
-            for (Token token : city.getTokens()) {
-                if (token instanceof BaseToken
-                        && ((BaseToken) token).getParent() == company) {
+            for (BaseToken token : city.getBaseTokens()) {
+                if (token.getParent() == company) {
                     return city.getNumber();
                 }
             }
@@ -1279,7 +1257,7 @@ StationHolder {
     }
 
     public MapManager getParent() {
-        return (MapManager)getParent();
+        return (MapManager)super.getParent();
     }
 
     @Override

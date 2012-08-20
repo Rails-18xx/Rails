@@ -15,13 +15,12 @@ public final class ExchangeForShare extends SpecialProperty {
     /** The share size */
     int share;
 
-    private ExchangeForShare(Item parent, String id) {
-        super(parent, id);
-    }
 
-    public static ExchangeForShare create(Item parent) {
-        String uniqueId = SpecialProperty.createUniqueId();
-        return new ExchangeForShare(parent, uniqueId);
+    /**
+     * Used by Configure (via reflection) only
+     */
+    public ExchangeForShare(Item parent, String id) {
+        super(parent, id);
     }
 
     @Override
@@ -65,11 +64,12 @@ public final class ExchangeForShare extends SpecialProperty {
         return toString();
     }
 
-    @Override
-    public String toString() {
-        return "Swap " + originalCompany.getId() + " for " + share
-               + "% share of " + publicCompanyName;
-    }
+    // FIXME: The toString() methods are removed, change calls to those
+//    @Override
+//    public String toString() {
+//        return "Swap " + originalCompany.getId() + " for " + share
+//               + "% share of " + publicCompanyName;
+//    }
 
     @Override
     public String toMenu() {

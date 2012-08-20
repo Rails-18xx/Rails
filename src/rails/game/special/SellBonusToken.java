@@ -23,15 +23,13 @@ public class SellBonusToken extends SpecialProperty {
     private int maxNumberToSell;
     private final IntegerState numberSold = IntegerState.create(this, "numberSold");
 
-    private SellBonusToken(Item parent, String id) {
+    /**
+     * Used by Configure (via reflection) only
+     */
+    public SellBonusToken(Item parent, String id) {
         super(parent, id);
     }
 
-    public static SellBonusToken create(Item parent) {
-        String uniqueId = SpecialProperty.createUniqueId();
-        return new SellBonusToken(parent, uniqueId);
-    }
-    
     @Override
     public void configureFromXML(Tag tag) throws ConfigurationException {
         super.configureFromXML(tag);
@@ -112,11 +110,11 @@ public class SellBonusToken extends SpecialProperty {
         this.seller.set(seller);
     }
 
-    @Override
-    public String toString() {
-        return "SellBonusToken comp=" + originalCompany.getId() + " hex="
-               + locationCodes + " value=" + value + " price=" + price
-               + " max="+maxNumberToSell+" sold="+numberSold.value();
-    }
+//    @Override
+//    public String toString() {
+//        return "SellBonusToken comp=" + originalCompany.getId() + " hex="
+//               + locationCodes + " value=" + value + " price=" + price
+//               + " max="+maxNumberToSell+" sold="+numberSold.value();
+//    }
 
 }

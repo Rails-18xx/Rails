@@ -11,7 +11,7 @@ import rails.game.state.IntegerState;
 /**
  * Implements an 1835-style startpacket sale.
  */
-public final class StartRound_1835 extends StartRound {
+public class StartRound_1835 extends StartRound {
     /* Additional variants */
     public static final String CLEMENS_VARIANT = "Clemens";
     public static final String SNAKE_VARIANT = "Snake";
@@ -22,13 +22,12 @@ public final class StartRound_1835 extends StartRound {
     private final IntegerState turn = IntegerState.create(this, "turn");
     private final IntegerState startRoundNumber = IntegerState.create(this, "startRoundNumber");
 
-    private StartRound_1835(GameManager parent, String id) {
+    /**
+     * Constructed via Configure
+     */
+    public StartRound_1835(GameManager parent, String id) {
         super(parent, id);
         hasBidding = false;
-    }
-    
-    public static StartRound_1835 create(GameManager parent, String id){
-        return new StartRound_1835(parent, id);
     }
     
     /**

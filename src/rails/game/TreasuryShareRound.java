@@ -9,7 +9,7 @@ import rails.game.action.*;
 import rails.game.model.PortfolioModel;
 import rails.game.state.BooleanState;
 
-public final class TreasuryShareRound extends StockRound {
+public class TreasuryShareRound extends StockRound {
 
     protected Player sellingPlayer;
     protected PublicCompany operatingCompany;
@@ -17,30 +17,19 @@ public final class TreasuryShareRound extends StockRound {
     private final BooleanState hasSold = BooleanState.create(this, "hasSold");
 
     /**
-     * Constructor with the GameManager, will call super class (StockRound's) Constructor to initialize, and
-     * and other parameters used by the Treasury Share Round Class
-     *
-     * @param aGameManager The GameManager Object needed to initialize the StockRound Class
-     * @param operatingCompany The PublicCompany Object that is selling shares
+     * Created via Configure
      */
     public TreasuryShareRound(GameManager parent, String id, Round parentRound) {
         super(parent, id);
-
-        operatingCompany = ((OperatingRound)parentRound).getOperatingCompany();
-        sellingPlayer = operatingCompany.getPresident();
-        log.debug("Creating TreasuryShareRound");
-        setCurrentPlayerIndex(sellingPlayer.getIndex());
-
         guiHints.setActivePanel(GuiDef.Panel.STATUS);
     }
-    
-    public static TreasuryShareRound create(GameManager parent, String id, Round parentRound) {
-        return new TreasuryShareRound(parent, id, parentRound);
-    }
 
-    @Override
-    public void start() {
+    // TODO: Check if this still works, as the initialization was moved back to here
+    public void start(Round parentRound) {
         log.info("Treasury share trading round started");
+        operatingCompany = ((OperatingRound)parentRound).getOperatingCompany();
+        sellingPlayer = operatingCompany.getPresident();
+        setCurrentPlayerIndex(sellingPlayer.getIndex());
         currentPlayer = sellingPlayer;
     }
 

@@ -15,18 +15,17 @@ public class SpecialTokenLay extends SpecialProperty {
     boolean extra = false;
     boolean free = false;
     boolean connected = false;
+    @SuppressWarnings("rawtypes")
     Class<? extends Token> tokenClass;
-    Token token = null;
+    Token<? extends Token<?>> token = null;
     int numberAvailable = 1;
     int numberUsed = 0;
 
-    private SpecialTokenLay(Item parent, String id) {
+    /**
+     * Used by Configure (via reflection) only
+     */
+    public SpecialTokenLay(Item parent, String id) {
         super(parent, id);
-    }
-
-    public static SpecialTokenLay create(Item parent) {
-        String uniqueId = SpecialProperty.createUniqueId();
-        return new SpecialTokenLay(parent, uniqueId);
     }
 
     @Override
@@ -56,11 +55,10 @@ public class SpecialTokenLay extends SpecialProperty {
 
         String tokenName = "";
         int tokenValue = 0;
-
         try {
             tokenClass = Class.forName(tokenClassName).asSubclass(Token.class);
             if (tokenClass == BonusToken.class) {
-                BonusToken bToken = (BonusToken) tokenClass.newInstance();
+                BonusToken bToken = BonusToken.create(getParent());
                 token = bToken;
                 bToken.configureFromXML(tokenLayTag);
 
@@ -79,12 +77,12 @@ public class SpecialTokenLay extends SpecialProperty {
         }
 
         if (tokenClass == BaseToken.class) {
-            description = LocalText.getText("LayBaseTokennfo",
+            description = LocalText.getText("LayBaseTokenInfo",
                     locationCodes,
                     (extra ? LocalText.getText("extra"):LocalText.getText("notExtra")),
                     (free ? LocalText.getText("noCost") : LocalText.getText("normalCost")));
         } else if (tokenClass == BonusToken.class) {
-            description = LocalText.getText("LayBonusTokennfo",
+            description = LocalText.getText("LayBonusTokenInfo",
                     tokenName,
                     Bank.format(tokenValue),
                     locationCodes);
@@ -126,11 +124,12 @@ public class SpecialTokenLay extends SpecialProperty {
         return locationCodes;
     }
 
+    @SuppressWarnings("rawtypes")
     public Class<? extends Token> getTokenClass() {
         return tokenClass;
     }
 
-    public Token getToken() {
+    public Token<? extends Token<?>> getToken() {
         return token;
     }
 
@@ -138,13 +137,13 @@ public class SpecialTokenLay extends SpecialProperty {
         return toString();
     }
 
-    @Override
-    public String toString() {
-        return "SpecialTokenLay comp=" + originalCompany.getId() + " type="
-               + tokenClass.getSimpleName() + ": "
-               + (token != null ? token.toString() : "") + " hex="
-               + locationCodes + " extra=" + extra + " cost=" + free;
-    }
+//    @Override
+//    public String toString() {
+//        return "SpecialTokenLay comp=" + originalCompany.getId() + " type="
+//               + tokenClass.getSimpleName() + ": "
+//               + (token != null ? token.toString() : "") + " hex="
+//               + locationCodes + " extra=" + extra + " cost=" + free;
+//    }
 
     @Override
     public String toMenu() {

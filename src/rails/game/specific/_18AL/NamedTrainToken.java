@@ -10,14 +10,14 @@ import org.slf4j.LoggerFactory;
 //import rails.algorithms.RevenueBonus;
 //import rails.algorithms.RevenueManager;
 //import rails.algorithms.RevenueStaticModifier;
-import rails.common.parser.ConfigurableComponent;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.*;
+import rails.game.state.Configurable;
 import rails.game.state.Item;
 import rails.util.Util;
 
-public final class NamedTrainToken extends Token implements ConfigurableComponent /*, RevenueStaticModifier */ {
+public final class NamedTrainToken extends Token<NamedTrainToken> implements Configurable /*, RevenueStaticModifier */ {
 
     protected static Logger log =
         LoggerFactory.getLogger(NamedTrainToken.class.getPackage().getName());
@@ -30,7 +30,7 @@ public final class NamedTrainToken extends Token implements ConfigurableComponen
     private String description;
 
     private NamedTrainToken(Item parent, String id) {
-        super(parent, id);
+        super(parent, id, NamedTrainToken.class);
     }
     
     public static NamedTrainToken create(NameTrains parent) {

@@ -15,18 +15,17 @@ import rails.game.model.PortfolioModel;
 import rails.game.state.IntegerState;
 import rails.game.state.PortfolioHolder;
 
-public final class StockRound_1856 extends StockRound {
+public class StockRound_1856 extends StockRound {
 
     /* Cope with multiple 5% share sales in one turn */
     private final IntegerState sharesSoldSoFar = IntegerState.create(this, "sharesSoldSoFar");
     private final IntegerState squaresDownSoFar = IntegerState.create(this, "squaresDownSoFar");
 
-    private StockRound_1856 (GameManager parent, String id) {
+    /**
+     * Constructed via Configure
+     */
+    public StockRound_1856 (GameManager parent, String id) {
         super(parent, id);
-    }
-
-    public static StockRound_1856 create(GameManager parent, String id){
-        return new StockRound_1856(parent, id);
     }
 
     /**
@@ -141,10 +140,10 @@ public final class StockRound_1856 extends StockRound {
             Player oldPresident = company.getPresident();
             ((PublicCompany_CGR)company).setTemporaryPresident(null);
             // TODO: is this still required?
-            company.getPresident().getPortfolioModel().getShareModel(company).update();
+            //company.getPresident().getPortfolioModel().getShareModel(company).update();
             if (currentPlayer != oldPresident) {
                 // TODO: is this still required?
-                oldPresident.getPortfolioModel().getShareModel(company).update();
+            //    oldPresident.getPortfolioModel().getShareModel(company).update();
             }
         }
     }

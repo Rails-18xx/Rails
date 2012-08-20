@@ -17,7 +17,7 @@ import junit.framework.TestSuite;
 
 
 import rails.common.parser.Config;
-import rails.game.GameRoot;
+import rails.game.RailsRoot;
 import rails.game.ReportBuffer;
 
 public final class TestGameBuilder extends TestCase {
@@ -52,10 +52,10 @@ public final class TestGameBuilder extends TestCase {
     
     private static void prepareGameReport(File gameFile, String reportFilename) {
         
-        GameRoot game = null;
+        RailsRoot game = null;
         if (gameFile.exists()) 
             System.out.println("Found game at " + gameFile.getAbsolutePath());
-            game = GameRoot.load(gameFile.getAbsolutePath());
+            game = RailsRoot.load(gameFile.getAbsolutePath());
         
         if (game != null) {  
             List<String> report = ReportBuffer.getAsList();

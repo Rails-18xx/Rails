@@ -103,7 +103,8 @@ public class TrainsModel extends Model {
         return b.toString();
     }
     
-    public String getData() {
+    @Override
+    public String observerText() {
         if (!abbrList) {
             return makeListOfTrains();
         } else {

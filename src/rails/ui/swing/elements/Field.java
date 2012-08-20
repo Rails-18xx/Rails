@@ -54,6 +54,7 @@ public class Field extends JLabel implements Observer {
         this("");
         this.observable = modelObject;
         modelObject.addObserver(this);
+        setText(modelObject.observerText());
     }
 
     public Field(Observable modelObject, boolean pull) {

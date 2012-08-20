@@ -30,14 +30,12 @@ public class StockRound_18EU extends StockRound {
     protected boolean phase5Reached = false;
     protected PublicCompany[] discardingCompanies;
 
+    /**
+     * Constructed via Configure
+     */
     public StockRound_18EU (GameManager parent, String id) {
         super(parent, id);
     }
-
-    public static StockRound_18EU create(GameManager parent, String id){
-        return new StockRound_18EU(parent, id);
-    }
-    
 
     @Override
     public void start() {
@@ -92,7 +90,7 @@ public class StockRound_18EU extends StockRound {
             freeStations = new ArrayList<Stop>();
             MapManager map = gameManager.getMapManager();
             for (Stop city : map.getCurrentStations()) {
-                if (city.getSlots() > city.getTokens().size()) {
+                if (city.getSlots() > city.getBaseTokens().size()) {
                     freeStations.add(city);
                 }
             }
@@ -362,7 +360,7 @@ public class StockRound_18EU extends StockRound {
             } else {
                 // Check if a valid home base has been selected
                 selectedHomeCity = startAction.getSelectedHomeStation();
-                if (selectedHomeCity.getSlots() <= selectedHomeCity.getTokens().size()) {
+                if (selectedHomeCity.getSlots() <= selectedHomeCity.getBaseTokens().size()) {
                     errMsg =
                             LocalText.getText("InvalidHomeBase",
                                     selectedHomeCity.toString(),

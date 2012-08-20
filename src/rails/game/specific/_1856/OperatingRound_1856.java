@@ -20,6 +20,9 @@ public class OperatingRound_1856 extends OperatingRound {
     private final BooleanState finalLoanRepaymentPending = BooleanState.create(this, "LoanRepaymentPending");
     private Player playerToStartLoanRepayment = null;
 
+    /**
+     * Constructed via Configure
+     */
     public OperatingRound_1856 (GameManager parent, String id) {
         super(parent, id);
 
@@ -36,10 +39,6 @@ public class OperatingRound_1856 extends OperatingRound {
         };
     }
 
-    public static OperatingRound_1856 create(GameManager parent, String id) {
-        return new OperatingRound_1856(parent, id);
-    }
-    
     /**
      * Implements special rules for first time operating in 1856
      */

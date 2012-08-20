@@ -10,7 +10,7 @@ import rails.game.state.OwnableItem;
  * FIXME: Use other mechanism (TokenManager) to store token ids
  * FIXME: UniqueId and id are a double structure
  */
-public abstract class Token extends OwnableItem<Token>  {
+public abstract class Token<T extends Token<T>> extends OwnableItem<T>  {
 
     protected String description = "";
     protected String uniqueId;
@@ -21,8 +21,8 @@ public abstract class Token extends OwnableItem<Token>  {
     protected static Logger log =
         LoggerFactory.getLogger(Token.class.getPackage().getName());
     
-    protected Token(Item parent, String id) {
-        super(parent, id, Token.class);
+    protected Token(Item parent, String id, Class<T> clazz) {
+        super(parent, id, clazz);
         uniqueId = id;
         GameManager.getInstance().storeObject(STORAGE_NAME, this);
     }
@@ -38,12 +38,8 @@ public abstract class Token extends OwnableItem<Token>  {
         return uniqueId;
     }
 
-    public boolean equals(Token otherToken) {
-        return otherToken != null && uniqueId.equals(otherToken.getUniqueId());
-    }
-
-    public static Token getByUniqueId(String id) {
+    public static <T extends Token<T>> T getByUniqueId(Class<T> clazz, String id) {
         int i = Integer.valueOf(id.replace(STORAGE_NAME + "_", ""));
-        return (Token)GameManager.getInstance().retrieveObject(STORAGE_NAME, i);
+        return clazz.cast(GameManager.getInstance().retrieveObject(STORAGE_NAME, i));
     }
 }

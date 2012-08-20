@@ -22,15 +22,13 @@ public final class LocatedBonus extends SpecialProperty {
     String name;
     int value;
 
-    private LocatedBonus(Item parent, String id) {
+    /**
+     * Used by Configure (via reflection) only
+     */
+    public LocatedBonus(Item parent, String id) {
         super(parent, id);
     }
 
-    public static LocatedBonus create(Item parent) {
-        String uniqueId = SpecialProperty.createUniqueId();
-        return new LocatedBonus(parent, uniqueId);
-    }
-    
     @Override
     public void configureFromXML(Tag tag) throws ConfigurationException {
 
@@ -79,9 +77,10 @@ public final class LocatedBonus extends SpecialProperty {
     }
 
 
-    @Override
-    public String toString() {
-        return "LocatedBonus "+name+" comp=" + originalCompany.getId() + " hex="
-               + locationCodes + " value=" + value;
-    }
+    // FIXME: The toString() methods are removed, change calls to those
+//    @Override
+//    public String toString() {
+//        return "LocatedBonus "+name+" comp=" + originalCompany.getId() + " hex="
+//               + locationCodes + " value=" + value;
+//    }
 }

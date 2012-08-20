@@ -14,6 +14,8 @@ import rails.game.ShareSellingRound;
 import rails.game.model.MoneyModel;
 import rails.game.model.PortfolioModel;
 import rails.game.state.GenericState;
+import rails.game.state.Item;
+import rails.game.state.Portfolio;
 
 /**
  * This class manages the playing rounds by supervising all implementations of
@@ -24,12 +26,16 @@ public class GameManager_18EU extends GameManager {
     protected final GenericState<Player> playerToStartFMERound =
        GenericState.create(this, "playerToStartFMERound");
     
+    public GameManager_18EU(Item parent, String id) {
+        super(parent, id);
+    }
     @Override
     public void nextRound(Round round) {
         if (round instanceof OperatingRound_18EU) {
             if (playerToStartFMERound.value() != null
                     && relativeORNumber.value() == numOfORs.value()) {
-                createRound (FinalMinorExchangeRound.class).start
+                // TODO: Fix the ID issue
+                createRound (FinalMinorExchangeRound.class, "FinalMinorExchangeRound").start
                         ((Player)playerToStartFMERound.value());
                 playerToStartFMERound.set(null);
             } else {
@@ -89,9 +95,8 @@ public class GameManager_18EU extends GameManager {
             }
         }
         
-        // Dump all shares
-        // TODO: Can this be simplified?
-        bankrupter.getPortfolioModel().getCertificatesModel().moveAll(bank.getPool().getPortfolioModel().getCertificatesModel());
+        // Dump all shares to pool
+        Portfolio.moveAll(PublicCertificate.class, bankrupter, bank.getPool());
         bankrupter.setBankrupt();
 
         // Finish the share selling round

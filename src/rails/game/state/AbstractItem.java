@@ -2,6 +2,8 @@ package rails.game.state;
 
 import static com.google.common.base.Preconditions.*;
 
+import com.google.common.base.Objects;
+
 /**
  * An AbstractItem is a default implementation of Item
  */
@@ -9,19 +11,18 @@ public abstract class AbstractItem implements Item {
 
     private final String id;
     private final Item parent;
-    private final GameRoot context;
+    private final Context context;
 
     protected AbstractItem(Item parent, String id){
         checkNotNull(parent, "Parent cannot be null");
-        checkNotNull(id, "Id cannot be null");
         checkArgument(id != Root.ID, "Id cannot equal " + Root.ID);
 
         // defined standard fields
         this.parent = parent;
         this.id = id;
         
-        if (parent instanceof GameRoot) {
-            context = (GameRoot)parent;
+        if (parent instanceof Context) {
+            context = (Context)parent;
         } else { 
             // recursive definition
             context = parent.getContext();
@@ -39,7 +40,7 @@ public abstract class AbstractItem implements Item {
         return parent;
     }
 
-    public GameRoot getContext() {
+    public Context getContext() {
         return context;
     }
     
@@ -49,7 +50,7 @@ public abstract class AbstractItem implements Item {
     }
 
     public String getURI() {
-        if (parent instanceof GameRoot) {
+        if (parent instanceof Context) {
             return id;
         } else {
             // recursive definition
@@ -64,7 +65,7 @@ public abstract class AbstractItem implements Item {
     
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + "(Id=" + id + ")";
+        return Objects.toStringHelper(this).add("id", id).add("parent", parent.getId()).toString();
     }
     
 }

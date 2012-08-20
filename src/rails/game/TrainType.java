@@ -201,7 +201,7 @@ public class TrainType implements Cloneable {
 
     public String getInfo() {
         StringBuilder b = new StringBuilder ("<html>");
-        b.append(LocalText.getText("Trainnfo", name, Bank.format(cost), 0));
+        b.append(LocalText.getText("TrainInfo", name, Bank.format(cost), 0));
         if (b.length() == 6) b.append(LocalText.getText("None"));
 
         return b.toString();

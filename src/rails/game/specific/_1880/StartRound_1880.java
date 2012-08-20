@@ -30,14 +30,13 @@ public final class StartRound_1880 extends StartRound {
     /** A company in need for a par price. */
 //    private PublicCompany companyNeedingPrice = null;
     
-    private StartRound_1880(GameManager parent, String id) {
+    /**
+     * Constructed via Configure
+     */
+    public StartRound_1880(GameManager parent, String id) {
         super(parent, id);
         hasBasePrices=true;
         hasBidding=true;
-    }
-    
-    public static StartRound_1880 create(GameManager parent, String id){
-        return new StartRound_1880(parent, id);
     }
     
     @Override

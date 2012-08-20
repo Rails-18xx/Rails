@@ -3,11 +3,10 @@ package rails.common.parser;
 import java.util.Map;
 
 import rails.algorithms.RevenueManager;
-import rails.common.parser.ComponentManager;
 import rails.game.Bank;
 import rails.game.CompanyManager;
 import rails.game.GameManager;
-import rails.game.GameRoot;
+import rails.game.RailsRoot;
 import rails.game.MapManager;
 import rails.game.PhaseManager;
 import rails.game.PlayerManager;
@@ -32,7 +31,7 @@ public class GameFileParser extends XMLParser {
     private final RevenueManager revenueManager;
     private final Bank bank;
     
-    public GameFileParser(GameRoot root, String name, Map<String, String> gameOptions) 
+    public GameFileParser(RailsRoot root, String name, Map<String, String> gameOptions) 
         throws ConfigurationException {
         
         directories.add("data/" + name);

@@ -87,7 +87,7 @@ public class LayBonusToken extends LayToken {
         }
 
         if (tokenId != null) {
-            token = (BonusToken) Token.getByUniqueId(tokenId);
+            token = Token.getByUniqueId(BonusToken.class, tokenId);
         }
         if (specialPropertyId > 0) {
             specialProperty =

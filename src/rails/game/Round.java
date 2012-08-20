@@ -18,13 +18,11 @@ import rails.game.state.AbstractItem;
 import rails.game.state.ArrayListState;
 import rails.game.state.BooleanState;
 import rails.game.state.ChangeStack;
+import rails.game.state.Creatable;
 import rails.game.state.Owner;
 import rails.game.state.Portfolio;
 
-/**
- * @author Erik Vos
- */
-public abstract class Round extends AbstractItem {
+public abstract class Round extends AbstractItem implements Creatable {
 
     protected PossibleActions possibleActions = PossibleActions.getInstance();
     protected GuiHints guiHints = null;
@@ -55,12 +53,6 @@ public abstract class Round extends AbstractItem {
     protected ArrayListState<Player> canRequestTurn = null;
     protected ArrayListState<Player> hasRequestedTurn = null;
 
-    /**
-     * Constructor with the GameManager, will call setGameManager with the parameter to initialize
-     *
-     * @param aGameManager The GameManager Object needed to initialize the Round Class
-     *
-     */
     protected Round (GameManager parent, String id) {
         super(parent, id);
 
@@ -389,9 +381,8 @@ public abstract class Round extends AbstractItem {
         if (capitalisationMode == PublicCompany.CAPITALISE_INCREMENTAL
                 && company.canHoldOwnShares()) {
             // move all shares from ipo to the company portfolio
-            // FIXME: Is this correct?
-            // Should a company not have a Portfolio<Share> where it stores the certificates that it owns
-            Portfolio.moveAll(ipo.getShareModel(company).getPortfolio(), company.getPortfolioModel().getShareModel(company).getPortfolio());
+            // FIXME: Does this work correctly?
+            Portfolio.moveAll(ipo.getCertificates(company), company);
         }
     }
 
@@ -422,11 +413,6 @@ public abstract class Round extends AbstractItem {
 
     public boolean wasInterrupted () {
         return wasInterrupted.value();
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getName().replaceAll(".*\\.", "");
     }
 
     protected void transferCertificate(Certificate cert, PortfolioModel newHolder) {

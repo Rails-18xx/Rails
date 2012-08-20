@@ -1,8 +1,10 @@
 package rails.game.model;
 
+import com.google.common.collect.ImmutableSet;
+
 import rails.game.BaseToken;
 import rails.game.PublicCompany;
-import rails.game.Token;
+import rails.game.state.HashSetState;
 import rails.game.state.Model;
 import rails.game.state.PortfolioSet;
 
@@ -11,13 +13,15 @@ import rails.game.state.PortfolioSet;
  */
 public class BaseTokensModel extends Model {
 
-    private final PortfolioSet<Token> freeBaseTokens;
-    private final PortfolioSet<Token> laidBaseTokens;
+    // the free tokens belong to the company
+    private final PortfolioSet<BaseToken> freeBaseTokens;
+    // the laid tokens are only be referenced
+    private final HashSetState<BaseToken> laidBaseTokens;
 
     private BaseTokensModel(PublicCompany parent, String id) {
         super(parent, id);
-        freeBaseTokens = PortfolioSet.create(parent, "freeBaseTokens", Token.class);
-        laidBaseTokens = PortfolioSet.create(parent, "laidBaseTokens", Token.class);
+        freeBaseTokens = PortfolioSet.create(parent, "freeBaseTokens", BaseToken.class);
+        laidBaseTokens = HashSetState.create(parent, "laidBaseTokens");
     }
 
     public static BaseTokensModel create(PublicCompany parent, String id){
@@ -33,25 +37,22 @@ public class BaseTokensModel extends Model {
     }
     
     /**
-     * add a free base token
+     * Adds a BaseToken (back) to the list of free token
+     * Removes it from the LaidTokenList
+     * Remark: It is automatically removed from the previous owner portfolio
+     * @return true if it was previously on the LaidTokenList
      */
-    public void addFreeToken(BaseToken token) {
+    public boolean addFreeToken(BaseToken token) {
         freeBaseTokens.moveInto(token);
+        return laidBaseTokens.remove(token);
     }
     
-    /**
-     * lay a base token
-     */
-    public void layBaseToken(BaseToken token) {
-        laidBaseTokens.moveInto(token);
+    public ImmutableSet<BaseToken> getFreeTokens() {
+        return freeBaseTokens.items();
     }
     
-    public PortfolioSet<Token> getFreeTokens() {
-        return freeBaseTokens;
-    }
-    
-    public PortfolioSet<Token> getLaidTokens() {
-        return laidBaseTokens;
+    public ImmutableSet<BaseToken> getLaidTokens() {
+        return laidBaseTokens.view();
     }
     
     public int nbAllTokens() {
@@ -70,11 +71,11 @@ public class BaseTokensModel extends Model {
      * @return true if token is laid
      */
     public boolean tokenIsLaid(BaseToken token) {
-        return laidBaseTokens.containsItem(token);
+        return laidBaseTokens.contains(token);
     }
     
     @Override 
-    public String toString() {
+    public String observerText() {
         int allTokens = nbAllTokens();
         int freeTokens = nbFreeTokens();
         if (allTokens == 0) {

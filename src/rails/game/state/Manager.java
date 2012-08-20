@@ -6,7 +6,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * A Manager is a baseline implementation of a Context
  */
-public abstract class Manager extends GameRoot {
+public abstract class Manager extends Context {
     
     // item fields
     private final String id;
@@ -40,9 +40,9 @@ public abstract class Manager extends GameRoot {
         return parent;
     }
     
-    public GameRoot getContext() {
-        if (parent instanceof GameRoot) {
-            return (GameRoot)parent;
+    public Context getContext() {
+        if (parent instanceof Context) {
+            return (Context)parent;
         } else { 
             // recursive definition
             return parent.getContext();
@@ -50,7 +50,7 @@ public abstract class Manager extends GameRoot {
     }
     
     public String getURI() {
-        if (parent instanceof GameRoot) {
+        if (parent instanceof Context) {
             return id;
         } else {
             // recursive definition

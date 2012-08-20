@@ -7,8 +7,9 @@ import com.google.common.collect.ImmutableSet;
 import rails.game.Player;
 import rails.game.PublicCertificate;
 import rails.game.PublicCompany;
+import rails.game.state.HashMapState;
 import rails.game.state.Model;
-import rails.game.state.Portfolio;
+import rails.game.state.Owner;
 import rails.game.state.PortfolioHolder;
 import rails.game.state.PortfolioMap;
 
@@ -16,14 +17,16 @@ import rails.game.state.PortfolioMap;
  * Model that contains and manages the certificates
  * TODO: It might improve performance to separate the large multimap into smaller ones per individual companies, but I doubt it
         // TODO: find out where the president model has to be linked
-        // this.addObserver(company.getPresidentModel());
+        // this.addModel(company.getPresidentModel());
  * @author freystef
  */
-public final class CertificatesModel extends Model {
+public class CertificatesModel extends Model {
 
     public final static String ID = "CertificatesModel";
     
     private final PortfolioMap<PublicCompany, PublicCertificate> certificates;
+    
+    private final HashMapState<PublicCompany, ShareModel> shareModels = HashMapState.create(this, "shareModels");
 
     private CertificatesModel(PortfolioHolder parent) {
         super(parent, ID);
@@ -36,18 +39,32 @@ public final class CertificatesModel extends Model {
     
     @Override
     public PortfolioHolder getParent() {
-        return (PortfolioHolder)getParent();
+        return (PortfolioHolder)super.getParent();
+    }
+    
+    public Owner getOwner() {
+        return getParent().getParent();
     }
     
     public PortfolioMap<PublicCompany, PublicCertificate> getPortfolio() {
         return certificates;
     }
     
-    public void moveAll(CertificatesModel to) {
-        Portfolio.moveAll(certificates, to.getPortfolio());
+    public void moveAll(Owner newOwner) {
+        certificates.moveAll(newOwner);
     }
     
-    public int getShare(PublicCompany company) {
+    public ShareModel getShareModel(PublicCompany company) {
+        if (shareModels.containsKey(company)) {
+            return shareModels.get(company);
+        } else {
+            ShareModel model = ShareModel.create(this, company);
+            shareModels.put(company, model);
+            return model;
+        }
+    }
+    
+    int getShare(PublicCompany company) {
         int share = 0;
         for (PublicCertificate cert : certificates.getItems(company)) {
             share += cert.getShare();
@@ -55,17 +72,15 @@ public final class CertificatesModel extends Model {
         return share;
     }
 
-    public String getText(PublicCompany company) {
+    String getText(PublicCompany company) {
         int share = this.getShare(company);
         
         if (share == 0) return "";
         StringBuffer b = new StringBuffer();
         b.append(share).append("%");
         
-        // FIXME: Check if this still works correctly
-        // Required to add PortfolioHolder to Player
-        if (getParent() instanceof Player
-            && company.getPresident() == getParent()) {
+        if (getOwner() instanceof Player
+            && company.getPresident() == getOwner()) {
             b.append("P");
             if (!company.hasFloated()) b.append("U");
             b.append(company.getExtraShareMarks());
@@ -74,7 +89,7 @@ public final class CertificatesModel extends Model {
     }
     
     @Override
-    public String toString() {
+    public String observerText() {
         return certificates.toString();
     }
     

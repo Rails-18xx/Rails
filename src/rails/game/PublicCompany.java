@@ -3,9 +3,9 @@ package rails.game;
 import java.awt.Color;
 import java.util.*;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 
 import rails.common.GuiDef;
 import rails.common.LocalText;
@@ -295,12 +295,11 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
     protected HashMapState<String, String> rights = null;
     // created in finishConfiguration
 
+
     /**
-     * The constructor. The way this class is instantiated does not allow
-     * arguments.
-     * FIXME: This has to be rewritten
+     * Used by Configure (via reflection) only
      */
-    protected PublicCompany(Item parent, String id) {
+    public PublicCompany(Item parent, String id) {
         super(parent, id);
         lastRevenue.setSuppressInitialZero(true);
 
@@ -561,7 +560,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
                 }
 
                 for (int k = 0; k < number; k++) {
-                    certificate = new PublicCertificate(this, "certificate", shares, president,
+                    certificate = new PublicCertificate(this, "cert#" + certIndex, shares, president,
                             certIsInitiallyAvailable, certificateCount, certIndex++);
                     certificates.add(certificate);
                     shareTotal += shares * shareUnit.value();
@@ -743,8 +742,9 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
         parentInfoText = "";
         
         // Can companies acquire special rights (such as in 1830 Coalfields)?
-        if (specialProperties != null) {
-            for (SpecialProperty sp : specialProperties) {
+        // TODO: Can this be simplified?
+        if (portfolio.getSpecialProperties() != null) {
+            for (SpecialProperty sp : portfolio.getSpecialProperties()) {
                 if (sp instanceof SpecialRight) {
                     gameManager.setGuiParameter (GuiDef.Parm.HAS_ANY_RIGHTS, true);
                     // Initialize rights here to prevent overhead if not used, 
@@ -962,8 +962,8 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
         if (hasOperated.value()) hasOperated.set(false);
 
         // Remove the "unfloated" indicator in GameStatus
-        // TODO: Is this still required?
-        getPresident().getPortfolioModel().getShareModel(this).update();
+        // FIXME: Is this still required?
+        // getPresident().getPortfolioModel().getShareModel(this).update();
 
         if (sharePriceUpOnFloating) {
             stockMarket.moveUp(this);
@@ -1033,8 +1033,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
         }
 
         // Any trains go to the pool (from the 1856 rules)
-        // TODO: Can this be simplified?
-        Portfolio.moveAll(portfolio.getTrainsModel().getPortfolio(), bank.getPool().getPortfolioModel().getTrainsModel().getPortfolio());
+        portfolio.getTrainsModel().getPortfolio().moveAll(bank.getPool());
 
         // Any cash goes to the bank (from the 1856 rules)
         int cash = treasury.value();
@@ -1046,10 +1045,10 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
         lastRevenue.setSuppressZero(true);
         setLastRevenue(0);
 
-        // TODO: Check if this works correctly
         // move all laid tokens to free tokens again
-        PortfolioSet.moveAll(
-                baseTokens.getLaidTokens(), baseTokens.getFreeTokens());
+        for (BaseToken token:baseTokens.getLaidTokens()) {
+            baseTokens.addFreeToken(token);
+        }
         // close company on the stock market
         stockMarket.close(this);
 
@@ -1820,7 +1819,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
 
     public BaseToken getFreeToken() {
         if (baseTokens.getFreeTokens().size() > 0) {
-            return (BaseToken) Iterables.get(baseTokens.getFreeTokens().items(), 0);
+            return (BaseToken) Iterables.get(baseTokens.getFreeTokens(), 0);
         } else {
             return null;
         }
@@ -1833,31 +1832,19 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
      * as well. The token is removed from the company laid token list and added
      * to the free token list.
      */
-    // FIXME: Create a new Token model that distinguishs between laidBaseTokens and freeBaseTokens
-    // not by the holder
-    public boolean addToken(Token token) {
+    public boolean addFreeToken(BaseToken token) {
         boolean result = false;
-/*        if (token instanceof BaseToken
-                && laidBaseTokens.remove(token)
-                // FIXME: This is plain wrong as we cannot add the token to the view list
-                && Util.addToList(freeBaseTokens.view(), token, position)) {
-            token.setHolder(this);
-            // TODO: Is this still required?
-            this.baseTokensModel.update();
-        }
-        */
+        baseTokens.addFreeToken(token);
         return result;
 
     }
 
-    public ImmutableList<Token> getAllBaseTokens() {
-        ImmutableList<Token> list = ImmutableList.copyOf(baseTokens.getFreeTokens());
-        list.addAll(baseTokens.getLaidTokens().items());
-        return list;
+    public ImmutableSet<BaseToken> getAllBaseTokens() {
+        return ImmutableSet.copyOf(Sets.union(baseTokens.getFreeTokens(), baseTokens.getLaidTokens()));
     }
     
-    public ImmutableSet<Token> getLaidBaseTokens() {
-        return baseTokens.getLaidTokens().items();
+    public ImmutableSet<BaseToken> getLaidBaseTokens() {
+        return baseTokens.getLaidTokens();
     }
 
     public int getNumberOfBaseTokens() {
@@ -2026,6 +2013,11 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
     // PortfolioOwner method
     public PortfolioModel getPortfolioModel() {
         return portfolio;
+    }
+    
+    @Override
+    public ImmutableSet<SpecialProperty> getSpecialProperties() {
+        return portfolio.getSpecialProperties().items();
     }
 
 }

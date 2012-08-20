@@ -10,14 +10,14 @@ import rails.algorithms.RevenueBonus;
 import rails.algorithms.RevenueDynamicModifier;
 import rails.algorithms.RevenueStaticModifier;
 import rails.algorithms.RevenueTrainRun;
-import rails.common.parser.ConfigurableComponent;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.GameManager;
 import rails.game.MapHex;
 import rails.game.Train;
+import rails.game.state.Configurable;
 
-public class NamedTrainRevenueModifier implements RevenueStaticModifier, RevenueDynamicModifier, ConfigurableComponent {
+public class NamedTrainRevenueModifier implements RevenueStaticModifier, RevenueDynamicModifier, Configurable {
 
     private boolean dynamic;
     private List<RevenueBonus> bonuses;

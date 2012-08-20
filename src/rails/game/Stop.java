@@ -31,7 +31,7 @@ public class Stop extends AbstractItem implements Owner {
     //private Station relatedStation;
     private GenericState<Station> relatedStation;
     private int slots;
-    private PortfolioSet<Token> tokens;
+    private PortfolioSet<BaseToken> tokens;
     private String trackEdges;
 
 
@@ -99,7 +99,7 @@ public class Stop extends AbstractItem implements Owner {
         super(hex, String.valueOf(number));
         this.number = number;
         uniqueId = getParent().getId() + "_" + number;
-        tokens = PortfolioSet.create(this, "tokens", Token.class);
+        tokens = PortfolioSet.create(this, "tokens", BaseToken.class);
         relatedStation = GenericState.create(this, "City_"+uniqueId+"_station");
     }
 
@@ -232,7 +232,7 @@ public class Stop extends AbstractItem implements Owner {
         return uniqueId;
     }
 
-    public PortfolioSet<Token> getTokens() {
+    public PortfolioSet<BaseToken> getBaseTokens() {
         return tokens;
     }
 
@@ -264,9 +264,8 @@ public class Stop extends AbstractItem implements Owner {
     }
 
     public boolean hasTokenOf (String companyName) {
-        for (Token token : tokens) {
-            if (token instanceof BaseToken
-                    && ((BaseToken)token).getParent().getId().equals(companyName)) {
+        for (BaseToken token : tokens) {
+            if (token.getParent().getId().equals(companyName)) {
                 return true;
             }
         }

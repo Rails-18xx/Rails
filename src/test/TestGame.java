@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import rails.common.parser.Config;
-import rails.game.GameRoot;
+import rails.game.RailsRoot;
 import rails.game.ReportBuffer;
 
 import junit.framework.TestCase;
@@ -97,7 +97,7 @@ public class TestGame extends TestCase {
         
         if (gameFile.exists()) {
             log.debug("Found gamefile at " + gameFilename);
-            GameRoot testGame = GameRoot.load(gameFilename);
+            RailsRoot testGame = RailsRoot.load(gameFilename);
             if (testGame != null) {
                 testReport = ReportBuffer.getAsList();
 //                NDC.clear(); // remove reference to GameManager

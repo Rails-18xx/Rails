@@ -8,7 +8,7 @@ import com.google.common.collect.Lists;
 /**
  * Root is the top node of the context/item hierachy
  */
-public class Root extends GameRoot implements DelayedItem {
+public class Root extends Context implements DelayedItem {
     
    public final static String ID = ""; 
 
@@ -23,17 +23,18 @@ public class Root extends GameRoot implements DelayedItem {
    }
 
    /**
-    * @return a Root object with initialized StateManager embedded
+    * @return a Root object with everything initialized (including sub-components like StateManager)
     */
    public static Root create() {
-       // precise sequence to avoid any unintialized problems
+       // precise sequence to avoid any uninitialized problems
        Root root = new Root();
-       
-       StateManager stateManager = StateManager.create(root, "states");
-       root.stateManager = stateManager;
-       
-       root.initDelayedItems();
        return root;
+   }
+   
+   protected void init() {
+       StateManager stateManager = StateManager.create(this, "states");
+       this.stateManager = stateManager;
+       initDelayedItems();
    }
 
    private void initDelayedItems() {
@@ -64,7 +65,7 @@ public class Root extends GameRoot implements DelayedItem {
    /**
     * @return this
     */
-   public GameRoot getContext() {
+   public Context getContext() {
        return this;
    }
    

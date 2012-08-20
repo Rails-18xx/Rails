@@ -13,17 +13,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import rails.common.LocalText;
-import rails.common.parser.ConfigurableComponent;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.model.PortfolioModel;
 import rails.game.state.AbstractItem;
 import rails.game.state.BooleanState;
+import rails.game.state.Configurable;
 import rails.game.state.IntegerState;
 import rails.game.state.Item;
 import rails.game.state.Owner;
 
-public final class TrainManager extends AbstractItem implements ConfigurableComponent {
+public final class TrainManager extends AbstractItem implements Configurable {
     // Static attributes
     protected final List<TrainType> lTrainTypes = new ArrayList<TrainType>();
 
@@ -80,16 +80,15 @@ public final class TrainManager extends AbstractItem implements ConfigurableComp
     protected static Logger log =
         LoggerFactory.getLogger(TrainManager.class.getPackage().getName());
     
-    private TrainManager(Item parent, String id) {
+    /**
+     * Used by Configure (via reflection) only
+     */
+    public TrainManager(Item parent, String id) {
         super(parent, id);
     }
 
-    public static TrainManager create(Item parent, String id){
-        return new TrainManager(parent, id);
-    }
-    
     /**
-     * @see rails.common.parser.ConfigurableComponent#configureFromXML(org.w3c.dom.Element)
+     * @see rails.game.state.Configurable#configureFromXML(org.w3c.dom.Element)
      */
     public void configureFromXML(Tag tag) throws ConfigurationException {
         
@@ -106,7 +105,8 @@ public final class TrainManager extends AbstractItem implements ConfigurableComp
         if (trainTypeTags != null) {
             for (Tag trainTypeTag : trainTypeTags) {
                 // FIXME: Creation of Type to be rewritten
-                TrainCertificateType certType = TrainCertificateType.create(this, null);
+                String trainTypeId = trainTypeTag.getAttributeAsString("name");
+                TrainCertificateType certType = TrainCertificateType.create(this, trainTypeId);
                 if (defaultsTag != null) certType.configureFromXML(defaultsTag);
                 certType.configureFromXML(trainTypeTag);
                 trainCertTypes.add(certType);
@@ -178,8 +178,7 @@ public final class TrainManager extends AbstractItem implements ConfigurableComp
              * Each time this train is bought, another one is created.
              */
             for (int i = 0; i < (certType.hasInfiniteQuantity() ? 1 : certType.getQuantity()); i++) {
-                train = certType.createTrain();
-                Train.create(this, getNewUniqueId(certType.getName()), certType, initialType);
+                train = Train.create(this, getNewUniqueId(certType.getName()), certType, initialType);
                 addTrain(train);
                 unavailable.addTrain(train);
             }

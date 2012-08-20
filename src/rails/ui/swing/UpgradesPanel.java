@@ -257,7 +257,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         // activate upgrade panel
         upgradePanel.removeAll();
         GridLayout panelLayout = (GridLayout)upgradePanel.getLayout();
-        List<? extends Token> tokens = orUIManager.tokenLays;
+        List<? extends Token<?>> tokens = orUIManager.tokenLays;
 
         if (tokens == null || tokens.size() == 0) {
             // reset to the number of elements
@@ -272,7 +272,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
             Tokencon icon;
             CorrectionTokenLabel tokenLabel;
             correctionTokenLabels = new ArrayList<CorrectionTokenLabel>();
-            for (Token token:tokens) {
+            for (Token<?> token:tokens) {
                 if (token instanceof BaseToken) {
                     PublicCompany comp = ((BaseToken)token).getParent();
                     fgColour = comp.getFgColour();
@@ -471,7 +471,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         // TODO: Was never used
 //        private Token token;
 
-        CorrectionTokenLabel(Icon tokenIcon, Token token) {
+        CorrectionTokenLabel(Icon tokenIcon, Token<?> token) {
             super(tokenIcon);
 //            this.token = token;
         }

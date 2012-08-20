@@ -505,17 +505,18 @@ public class StartItem extends AbstractItem {
         return type;
     }
 
-    public boolean equals(StartItem item) {
-        log.debug("Item " + item.getType() + "/" + item.getName()
-                  + " is compared with " + type + "/" + name);
-        return this.name.equals(item.getName())
-               && this.type.equals(item.getType());
-    }
+    // FIXME: This is not a good idea as long as hashCode has not been changed
+//    public boolean equals(StartItem item) {
+//        log.debug("Item " + item.getType() + "/" + item.getName()
+//                  + " is compared with " + type + "/" + name);
+//        return this.name.equals(item.getName())
+//               && this.type.equals(item.getType());
+//    }
 
-    @Override
-    public String toString() {
-        return ("StartItem "+name+" status="+statusName[status.value()]);
-    }
+//    @Override
+//    public String toString() {
+//        return ("StartItem "+name+" status="+statusName[status.value()]);
+//    }
 
     public String getText () {
         return toString();

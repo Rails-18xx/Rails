@@ -14,7 +14,7 @@ import rails.game.action.PossibleAction;
 import rails.game.state.Root;
 import rails.util.GameFileIO;
 
-public class GameRoot extends Root {
+public class RailsRoot extends Root {
     public static final String version = "1.5";
 
     /** The component Manager */
@@ -36,10 +36,11 @@ public class GameRoot extends Root {
     protected Map<String, String> gameOptions;
 
     protected static Logger log =
-        LoggerFactory.getLogger(GameRoot.class.getPackage().getName());
+        LoggerFactory.getLogger(RailsRoot.class.getPackage().getName());
 
-    public GameRoot(String name, List<String> players, Map<String, String> options) {
-        super(); // initialize root
+    public RailsRoot(String name, List<String> players, Map<String, String> options) {
+        super();
+        init(); // initialize everything inside
         
         this.name = name;
         this.gameOptions = options;
@@ -132,7 +133,7 @@ public class GameRoot extends Root {
     }
 
 
-    public static GameRoot load(String filepath)  {
+    public static RailsRoot load(String filepath)  {
 
         // use GameLoader object to load game
         GameFileIO gameLoader = new GameFileIO();
@@ -155,9 +156,9 @@ public class GameRoot extends Root {
     }
 
     @SuppressWarnings("unchecked")
-    public static GameRoot load_old(String filepath) {
+    public static RailsRoot load_old(String filepath) {
 
-        GameRoot game = null;
+        RailsRoot game = null;
 
         log.debug("Loading game from file " + filepath);
         String filename = filepath.replaceAll(".*[/\\\\]", "");
@@ -196,7 +197,7 @@ public class GameRoot extends Root {
                 (Map<String, String>) ois.readObject();
             List<String> playerNames = (List<String>) ois.readObject();
 
-            game = new GameRoot(name, playerNames, selectedGameOptions);
+            game = new RailsRoot(name, playerNames, selectedGameOptions);
 
             if (!game.setup()) {
                 throw new ConfigurationException("Error in setting up " + name);
@@ -298,9 +299,12 @@ public class GameRoot extends Root {
     }
 
     /*----- Getters -----*/
-
     public GameManager getGameManager() {
         return gameManager;
     }
-
+    
+    @Override
+    public RailsRoot getRoot() {
+        return this;
+    }
 }

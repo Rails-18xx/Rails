@@ -4,16 +4,15 @@ import java.util.*;
 
 import rails.game.*;
 
-public final class OperatingRound_1825 extends OperatingRound {
+public class OperatingRound_1825 extends OperatingRound {
 
-    private OperatingRound_1825(GameManager parent, String id) {
+    /**
+     * Constructed via Configure
+     */
+    public OperatingRound_1825(GameManager parent, String id) {
         super(parent, id);
     }
     
-    public static OperatingRound_1825 create(GameManager parent, String id) {
-        return new OperatingRound_1825(parent, id);
-    }
-
     @Override
     public List<PublicCompany> setOperatingCompanies() {
         Map<Integer, PublicCompany> operatingCompanies = new TreeMap<Integer, PublicCompany>();

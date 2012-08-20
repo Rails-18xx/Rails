@@ -38,7 +38,6 @@ import rails.game.Station;
 import rails.game.Stop;
 import rails.game.Tile;
 import rails.game.TileOrientation;
-import rails.game.Token;
 import rails.game.state.Observer;
 import rails.ui.swing.GUIToken;
 import rails.util.Util;
@@ -90,7 +89,6 @@ public class GUIHex implements Observer {
     protected GUITile provisionalGUITile = null;
     protected boolean upgradeMustConnect;
 
-    protected List<Token> offStationTokens;
     protected List<Integer> barStartPoints;
 
     protected GUIToken provisionalGUIToken = null;
@@ -454,7 +452,7 @@ public class GUIHex implements Observer {
                     }
                 }
                 // check the number of tokens laid there already
-                p = getTokenCenter (1, homeCity.getTokens().size(), getHexModel().getStops().size(),
+                p = getTokenCenter (1, homeCity.getBaseTokens().size(), getHexModel().getStops().size(),
                         homeCity.getNumber()-1);
                 drawHome (g2, company, p);
             }
@@ -542,10 +540,10 @@ public class GUIHex implements Observer {
         }
 
         int numTokens = getHexModel().getTokens(1).size();
-        Set<Token> tokens = getHexModel().getTokens(1);
+        Set<BaseToken> tokens = getHexModel().getTokens(1);
 
         for (int i = 0; i < tokens.size(); i++) {
-            PublicCompany co = ((BaseToken) Iterables.get(tokens, i)).getParent();
+            PublicCompany co = Iterables.get(tokens, i).getParent();
             Point center = getTokenCenter(numTokens, i, 1, 0);
             drawBaseToken(g2, co, center, tokenDiameter);
         }
@@ -554,7 +552,7 @@ public class GUIHex implements Observer {
     private void paintSplitStations(Graphics2D g2) {
         int numStations = getHexModel().getStops().size();
         int numTokens;
-        Set<Token> tokens;
+        Set<BaseToken> tokens;
         Point origin;
         PublicCompany co;
 
@@ -564,7 +562,7 @@ public class GUIHex implements Observer {
 
             for (int j = 0; j < tokens.size(); j++) {
                 origin = getTokenCenter(numTokens, j, numStations, i);
-                co = ((BaseToken) Iterables.get(tokens, j)).getParent();
+                co = Iterables.get(tokens, j).getParent();
                 drawBaseToken(g2, co, origin, tokenDiameter);
             }
         }
@@ -573,26 +571,25 @@ public class GUIHex implements Observer {
     private static int[] offStationTokenX = new int[] { -11, 0 };
     private static int[] offStationTokenY = new int[] { -19, 0 };
 
+    // FIXME: Where to paint more than one offStationTokens?
     private void paintOffStationTokens(Graphics2D g2) {
-        Set<Token> tokens = getHexModel().getTokens().items();
-        if (tokens == null) return;
-
         int i = 0;
-        for (Token token : tokens) {
-
+        for (BaseToken token : model.getOffStationTokens()) {
             Point origin =
                     new Point(center.x + offStationTokenX[i],
                             center.y + offStationTokenY[i]);
-            if (token instanceof BaseToken) {
-
-                PublicCompany co = ((BaseToken) token).getParent();
+                PublicCompany co = token.getParent();
                 drawBaseToken(g2, co, origin, tokenDiameter);
-
-            } else if (token instanceof BonusToken) {
-
-                drawBonusToken(g2, (BonusToken) token, origin);
-            }
-            if (++i > 1) break;
+            if (++i > 1) return;
+        }
+        
+        for (BonusToken token : model.getBonusTokens())  {
+            Point origin =
+                new Point(center.x + offStationTokenX[i],
+                        center.y + offStationTokenY[i]);
+            drawBonusToken(g2, token, origin);
+            if (++i > 1) return;
+            
         }
     }
 
@@ -788,11 +785,11 @@ public class GUIHex implements Observer {
                 tt.append(st.getValue());
                 if (st.getBaseSlots() > 0) {
                     tt.append(", ").append(st.getBaseSlots()).append(" slots");
-                    Set<Token> tokens = model.getTokens(stopNumber);
+                    Set<BaseToken> tokens = model.getTokens(stopNumber);
                     if (tokens.size() > 0) {
                         tt.append(" (");
                         int oldsize = tt.length();
-                        for (Token token : tokens) {
+                        for (BaseToken token : tokens) {
                             if (tt.length() > oldsize) tt.append(",");
                             tt.append(token.getId());
                         }

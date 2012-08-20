@@ -14,7 +14,7 @@ import rails.game.special.ExchangeForShare;
 import rails.game.special.SpecialProperty;
 import rails.game.model.MoneyModel;
 
-public final class PrussianFormationRound extends StockRound {
+public class PrussianFormationRound extends StockRound {
 
     private PublicCompany prussian;
     private PublicCompany m2;
@@ -38,17 +38,16 @@ public final class PrussianFormationRound extends StockRound {
 	private static String PR_ID = GameManager_1835.PR_ID;
     private static String M2_ID = GameManager_1835.M2_ID;
 
-    private PrussianFormationRound (GameManager parent, String id) {
+    /**
+     * Constructed via Configure
+     */
+    public PrussianFormationRound (GameManager parent, String id) {
         super(parent, id);
 
         guiHints.setVisibilityHint(GuiDef.Panel.MAP, true);
         guiHints.setVisibilityHint(GuiDef.Panel.STATUS, true);
     }
     
-    public static PrussianFormationRound create(GameManager parent, String id){
-        return new PrussianFormationRound(parent, id);
-    }
-
  	@Override
 	public void start() {
 
@@ -352,10 +351,10 @@ public final class PrussianFormationRound extends StockRound {
                 PublicCompany minor = (PublicCompany) company;
 
                 // Replace the home token
-                BaseToken token = (BaseToken) minor.getAllBaseTokens().get(0);
+                BaseToken token = Iterables.get(minor.getAllBaseTokens(),0);
                 Stop city = (Stop) token.getOwner();
                 MapHex hex = city.getHolder();
-                minor.addToken(token);
+                minor.addFreeToken(token);
                 if (!hex.hasTokenOfCompany(prussian) && hex.layBaseToken(prussian, city.getNumber())) {
                     /* TODO: the false return value must be impossible. */
                     message = LocalText.getText("ExchangesBaseToken",

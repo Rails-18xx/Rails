@@ -4,17 +4,16 @@ import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.BuyPrivate;
 
-public final class OperatingRound_18GA extends OperatingRound {
+public class OperatingRound_18GA extends OperatingRound {
 
     public final static String OS_NAME = "OSO";
     public final static String OS_EXTRA_TRAIN_TYPE = "2";
     
-    private OperatingRound_18GA (GameManager parent, String id) {
+    /**
+     * Constructed via Configure
+     */
+    public OperatingRound_18GA (GameManager parent, String id) {
         super(parent, id);
-    }
-    
-    public static OperatingRound_18GA create(GameManager parent, String id) {
-        return new OperatingRound_18GA(parent, id);
     }
     
     public boolean buyPrivate(BuyPrivate action) {

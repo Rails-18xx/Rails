@@ -20,15 +20,13 @@ public class SpecialTrainBuy extends SpecialProperty {
     boolean absoluteDeduction = false;
     int deductionAmount; // Money or percentage
 
-    private SpecialTrainBuy(Item parent, String id) {
+    /**
+     * Used by Configure (via reflection) only
+     */
+    public SpecialTrainBuy(Item parent, String id) {
         super(parent, id);
     }
 
-    public static SpecialTrainBuy create(Item parent) {
-        String uniqueId = SpecialProperty.createUniqueId();
-        return new SpecialTrainBuy(parent, uniqueId);
-    }
-    
     public void configureFromXML(Tag tag) throws ConfigurationException {
         
         super.configureFromXML(tag);
@@ -115,10 +113,11 @@ public class SpecialTrainBuy extends SpecialProperty {
         return trainTypeName;
     }
 
-    public String toString() {
-        return "SpecialTrainBuy comp=" + originalCompany.getId() + " extra="
-               + extra + " deduction=" + deductionString;
-    }
+    // FIXME: The toString() methods are removed, change calls to those
+//    public String toString() {
+//        return "SpecialTrainBuy comp=" + originalCompany.getId() + " extra="
+//               + extra + " deduction=" + deductionString;
+//    }
     
     @Override
     public String toMenu() {

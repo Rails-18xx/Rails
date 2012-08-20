@@ -2,6 +2,7 @@
 package rails.game.specific._1835;
 
 import rails.game.*;
+import rails.game.state.Item;
 
 public class GameManager_1835 extends GameManager {
 
@@ -17,6 +18,10 @@ public class GameManager_1835 extends GameManager {
     public static String BA_ID = "BA";
     public static String SX_ID = "SX";
     public static String BY_ID = "BY";
+    
+    public GameManager_1835(Item parent, String id) {
+        super(parent, id);
+    }
     
     @Override
     public void nextRound(Round round) {
@@ -47,7 +52,7 @@ public class GameManager_1835 extends GameManager {
     public void startPrussianFormationRound(OperatingRound_1835 or) {
 
         interruptedRound = or;
-    	createRound (PrussianFormationRound.class).start ();
+    	createRound(PrussianFormationRound.class, "PrussianFormationRound").start ();
     }
 
     public void setPrussianFormationStartingPlayer(Player prFormStartingPlayer) {

@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import rails.common.parser.ConfigurationException;
 import rails.game.state.BooleanState;
+import rails.game.state.Creatable;
 import rails.game.state.GenericState;
 import rails.game.state.Item;
 import rails.game.state.OwnableItem;
@@ -13,7 +14,7 @@ import rails.game.state.Typable;
 
 // FIXME: Trains a tricky as they can swap their type
 // This change has to be tracked if used in a PortfolioMap
-public class Train extends OwnableItem<Train> implements Typable<TrainType> {
+public class Train extends OwnableItem<Train> implements Typable<TrainType>, Creatable {
 
     protected TrainCertificateType certificateType;
     
@@ -29,13 +30,15 @@ public class Train extends OwnableItem<Train> implements Typable<TrainType> {
     protected static Logger log =
             LoggerFactory.getLogger(Train.class.getPackage().getName());
 
-    protected Train(Item parent, String id) {
+    /**
+     * Used by Configure (via reflection) only
+     */
+    public Train(Item parent, String id) {
         super(parent, id, Train.class);
     }
-    // TODO: Train creation is shared by three classes, simplify that
     public static Train create(Item parent, String id, TrainCertificateType certType, TrainType type)
             throws ConfigurationException {
-        Train train = certType.createTrain();
+        Train train = certType.createTrain(parent, id);
         train.setCertificateType(certType);
         train.setType(type);
         return train;
@@ -119,9 +122,10 @@ public class Train extends OwnableItem<Train> implements Typable<TrainType> {
         return certificateType.isPermanent();
     }
     
-    public String getId() {
-        return isAssigned() ? type.value().getName() : certificateType.getName();
-    }
+    // FIXME: This has to be rewritten
+//    public String getId() {
+//        return isAssigned() ? type.value().getName() : certificateType.getName();
+//    }
 
     public boolean isObsolete() {
         return obsolete.value();
@@ -150,13 +154,6 @@ public class Train extends OwnableItem<Train> implements Typable<TrainType> {
 
     public void setTradeable(boolean tradeable) {
         this.tradeable = tradeable;
-    }
-
-    public String toString() {
-        StringBuilder b = new StringBuilder(getId());
-        b.append(" certType=").append(getCertType());
-        b.append(" type=").append(getType());
-        return b.toString();
     }
 
     // OwnableItem interface

@@ -7,18 +7,18 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableSet;
 
-import rails.common.parser.ConfigurableComponent;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.special.SpecialProperty;
 import rails.game.state.BooleanState;
 import rails.game.state.AbstractItem;
+import rails.game.state.Configurable;
+import rails.game.state.Configure;
 import rails.game.state.Item;
 import rails.game.state.Owner;
-import rails.game.state.PortfolioSet;
 import rails.util.Util;
 
-public abstract class Company extends AbstractItem implements Owner, ConfigurableComponent,
+public abstract class Company extends AbstractItem implements Owner, Configurable,
 Cloneable, Comparable<Company> {
 
     /** The name of the XML tag used to configure a company. */
@@ -52,10 +52,6 @@ Cloneable, Comparable<Company> {
     /** Closed state */
     protected final BooleanState closedObject = BooleanState.create(this, "closed", false);
 
-    // Moved here from PrivayeCOmpany on behalf of 1835
-    protected final PortfolioSet<SpecialProperty> specialProperties = 
-            PortfolioSet.create(this, "specialProperties", SpecialProperty.class);
-
     protected static Logger log =
         LoggerFactory.getLogger(Company.class.getPackage().getName());
 
@@ -81,41 +77,16 @@ Cloneable, Comparable<Company> {
                 if (!Util.hasValue(className))
                     throw new ConfigurationException(
                     "Missing class in private special property");
-                SpecialProperty sp = null;
-                try {
-                    sp = (SpecialProperty) Class.forName(className).newInstance();
-                } catch (Exception e) {
-                    log.error ("Cannot instantiate "+className, e);
-                    System.exit(-1);
-                }
+                String uniqueId = SpecialProperty.createUniqueId();
+                SpecialProperty sp = Configure.create(SpecialProperty.class, className, this, uniqueId);
+                sp.setOriginalCompany(this);
                 sp.configureFromXML(spTag);
-                specialProperties.moveInto(sp);
+                sp.moveTo(this);
                 parentInfoText += "<br>" + sp.getInfo();
             }
         }
     }
 
-    /**
-     * @return Set of all special properties we have.
-     */
-    public ImmutableSet<SpecialProperty> getSpecialProperties() {
-        return specialProperties.items();
-    }
-
-    /**
-     * Do we have any special properties?
-     *
-     * @return Boolean
-     */
-    public boolean hasSpecialProperties() {
-        return specialProperties != null && !specialProperties.isEmpty();
-    }
-
-    public boolean hasPortfolio() {
-        return true;
-    }
-
-    
     /**
      * 
      * @return This company's number
@@ -199,25 +170,9 @@ Cloneable, Comparable<Company> {
         value = i;
     }
 
-    // TODO: Check if this is still required, moved to subclasses
-/*    public Portfolio  getHolder() {
-        return portfolio;
-    }
-*/
-
     @Override
     public Object clone() throws CloneNotSupportedException {
         return super.clone();
-    }
-
-    /**
-     * Stub method implemented to comply with HolderModel<Token>I interface. Always
-     * returns false.
-     *
-     * Use addToken(MapHex hex) method instead.
-     */
-    public boolean addToken(Company company, int position) {
-        return false;
     }
 
     @Override
@@ -255,4 +210,11 @@ Cloneable, Comparable<Company> {
         }
         return b.toString();
     }
+    
+    // Since 1835 required for both private and public companies
+    /**
+     * @return Set of all special properties we have.
+     */
+    public abstract ImmutableSet<SpecialProperty> getSpecialProperties();
+
 }

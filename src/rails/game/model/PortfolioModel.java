@@ -25,7 +25,6 @@ import rails.game.PrivateCompany;
 import rails.game.PublicCertificate;
 import rails.game.PublicCompany;
 import rails.game.ReportBuffer;
-import rails.game.Token;
 import rails.game.Train;
 import rails.game.TrainCertificateType;
 import rails.game.TrainType;
@@ -60,7 +59,7 @@ public final class PortfolioModel extends Model implements PortfolioHolder {
 
     /** Owned tokens */
     // TODO Currently only used to discard expired Bonus tokens.
-    private final Portfolio<Token> bonusTokens = PortfolioSet.create(this, "BonusTokens", Token.class);
+    private final Portfolio<BonusToken> bonusTokens = PortfolioSet.create(this, "BonusTokens", BonusToken.class);
     
     /**
      * Private-independent special properties. When moved here, a special
@@ -103,10 +102,10 @@ public final class PortfolioModel extends Model implements PortfolioHolder {
     public void transferAssetsFrom(PortfolioModel otherPortfolio) {
 
         // Move trains
-        Portfolio.moveAll(otherPortfolio.getTrainsModel().getPortfolio(), trains.getPortfolio());
+        otherPortfolio.getTrainsModel().getPortfolio().moveAll(otherPortfolio.getParent());
 
         // Move treasury certificates
-        Portfolio.moveAll(otherPortfolio.getCertificatesModel().getPortfolio(), certificates.getPortfolio());
+        otherPortfolio.getCertificatesModel().getPortfolio().moveAll(otherPortfolio.getParent());
     }
 
     /** Low-level method, only to be called by the local addObject() method and by initialisation code. */
@@ -137,11 +136,10 @@ public final class PortfolioModel extends Model implements PortfolioHolder {
    public CertificatesModel getCertificatesModel() {
        return certificates;
    }
-    
-   public CertificatesModel getShareModel(PublicCompany company) {
-       // FIXME: This has to rewritten
-       return null;
-    }
+   
+   public ShareModel getShareModel(PublicCompany company) {
+       return certificates.getShareModel(company);
+   }
    
     public ImmutableSet<PrivateCompany> getPrivateCompanies() {
         return privates.getPortfolio().items();
@@ -237,12 +235,12 @@ public final class PortfolioModel extends Model implements PortfolioHolder {
 */
     
     /**
-     * @return
+     * FIXME: This should be replaced by some legacy code for id
      */
-    public String getId() {
-        return null; // FIXME
-//        return name;
-    }
+//    public String getId() {
+//        return null; // FIXME
+////        return name;
+//    }
 
     /** Get unique name (prefixed by the owners class type, to avoid Bank, Player and Company
      * namespace clashes).
@@ -313,10 +311,6 @@ public final class PortfolioModel extends Model implements PortfolioHolder {
             return null;
         }
         certificates.getPortfolio().moveInto(cert);
-
-        // Make sure the old President is no longer marked as such
-        // getShareModel(company).setShare();
-        getShareModel(company).update(); // FIXME: Is this still required
 
         return swapped;
     }
@@ -593,8 +587,7 @@ public final class PortfolioModel extends Model implements PortfolioHolder {
         return bonusTokens.moveInto(token);
     }
     
-    // TODO: Check as this should return only BonusToken, however the tokenholder is only restricted to Tokens
-    public Portfolio<Token> getTokenHolder() {
+    public Portfolio<BonusToken> getTokenHolder() {
         return bonusTokens;
     }
     

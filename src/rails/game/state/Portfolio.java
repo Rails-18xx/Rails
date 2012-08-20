@@ -2,11 +2,12 @@ package rails.game.state;
 
 import com.google.common.collect.ImmutableSet;
 
-public abstract class Portfolio<T extends Ownable> extends State implements Iterable<T> {
+public abstract class Portfolio<T extends Ownable> extends State implements
+        Iterable<T> {
 
     private final Class<T> type;
     private final Owner owner;
-    
+
     /**
      * Constructor using a PortfolioHolder
      */
@@ -30,19 +31,20 @@ public abstract class Portfolio<T extends Ownable> extends State implements Iter
     protected Class<T> getType() {
         return type;
     }
-    
+
     // delayed due to initialization issues
     protected PortfolioManager getPortfolioManager() {
         return getStateManager().getPortfolioManager();
     }
-    
+
     public Owner getOwner() {
         return owner;
     }
 
     /**
-     * Move a new item to the portfolio 
-     * and removes the item from the previous portfolio
+     * Move a new item to the portfolio and removes the item from the previous
+     * portfolio
+     * 
      * @param item to move
      * @return false if the portfolio already contains the item, otherwise true
      */
@@ -55,8 +57,8 @@ public abstract class Portfolio<T extends Ownable> extends State implements Iter
      */
     public abstract boolean containsItem(T item);
 
-    /** 
-     * @return all items contained in the portfolio 
+    /**
+     * @return all items contained in the portfolio
      */
     public abstract ImmutableSet<T> items();
 
@@ -64,21 +66,43 @@ public abstract class Portfolio<T extends Ownable> extends State implements Iter
      * @return size of portfolio
      */
     public abstract int size();
-    
-    /** 
+
+    /**
      * @return true if portfolio is empty
      */
     public abstract boolean isEmpty();
-    
+
     abstract void change(T item, boolean intoPortfolio);
+
+    /**
+     * Moves all items of the portfolio to the new owner
+     * @param newOwner
+     */
+    public void moveAll(Owner newOwner) {
+        for (T item : items()) {
+            item.moveTo(newOwner);
+        }
+    }
+
+    /**
+     * Moves all items of an iterable object to a new owner
+     * @param newOwner
+     */
+    public static <T extends Ownable> void moveAll(Iterable<T> items,
+            Owner newOwner) {
+        for (T item : items) {
+            item.moveTo(newOwner);
+        }
+    }
     
     /**
-     * Moves all items from one portfolio to the other
+     * Moves all items of a specific type from one owner to the other
      */
-    public static <T extends Ownable> void moveAll(Portfolio<T> from, Portfolio<T> to) {
-        for (T item: from.items()) {
-            to.moveInto(item);
-        }
+    public static <T extends Ownable> void moveAll(Class<T> type, Owner owner, Owner newOwner) {
+        // get the portfolio
+        Portfolio<T> pf = owner.getRoot().getStateManager().getPortfolioManager().getPortfolio(type, newOwner);
+        // and move items
+        pf.moveAll(newOwner);
     }
 
 }

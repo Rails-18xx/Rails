@@ -13,16 +13,15 @@ import rails.common.LocalText;
 
 public final class EndOfGameRound extends Round {
 
-    public EndOfGameRound(GameManager parent, String id) {
+    /**
+     * Constructed via Configure
+     */
+   public EndOfGameRound(GameManager parent, String id) {
         super(parent, id);
         guiHints.setVisibilityHint(GuiDef.Panel.MAP, true);
         guiHints.setActivePanel(GuiDef.Panel.STATUS);
     }
     
-    public static EndOfGameRound create(GameManager parent, String id) {
-        return new EndOfGameRound(parent, id);
-    }
-
     @Override
     public boolean setPossibleActions() {
         possibleActions.clear();

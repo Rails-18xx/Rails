@@ -10,10 +10,10 @@ package rails.game;
  */
 
 // FIXME: Check if PublicCompany is the parent of a token
-public final class BaseToken extends Token {
+public class BaseToken extends Token<BaseToken> {
 
     private BaseToken(PublicCompany parent, String id) {
-        super(parent, id);
+        super(parent, id, BaseToken.class);
     }
     
     public static BaseToken create(PublicCompany company) {
@@ -34,11 +34,5 @@ public final class BaseToken extends Token {
     public String getId() {
         return getParent().getId();
     }
-
     
-    @Override
-    public String toString() {
-        return getId();
-    }
-
 }

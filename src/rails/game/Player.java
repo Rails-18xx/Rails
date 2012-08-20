@@ -7,7 +7,6 @@ import rails.game.state.AbstractItem;
 import rails.game.state.IntegerState;
 import rails.game.state.Item;
 
-// TODO: PortfolioHolder is a fix for the TODO problem in CertificatesModel
 public class Player extends AbstractItem implements CashOwner, PortfolioOwner, Comparable<Player> {
 
     // TODO: Are those still needed?
@@ -15,8 +14,6 @@ public class Player extends AbstractItem implements CashOwner, PortfolioOwner, C
     public static int MIN_PLAYERS = 2;
     
     // static data (configured)
-    // TODO: How does the index work? Still needed?
-    private String name = "";
     private int index = 0;
     
     // dynamic data (states and models)
@@ -85,16 +82,9 @@ public class Player extends AbstractItem implements CashOwner, PortfolioOwner, C
         return new Player(parent, id, index);
     }
    
-    /**
-     * @return Returns the player's name.
-     * TODO: Is this still needed?
-     */
-    public String getId() {
-        return name;
-    }
 
     public String getNameAndPriority() {
-        return name + (GameManager.getInstance().getPriorityPlayer() == this ? " PD" : "");
+        return getId() + (GameManager.getInstance().getPriorityPlayer() == this ? " PD" : "");
     }
 
     /**
@@ -228,14 +218,8 @@ public class Player extends AbstractItem implements CashOwner, PortfolioOwner, C
         return result;
     }
 
-    @Override
-    public String toString() {
-        return name;
-    }
-
     public CashMoneyModel getCashModel() {
-        // TODO Auto-generated method stub
-        return null;
+        return cash;
     }
 
 }

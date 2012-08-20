@@ -63,7 +63,10 @@ public class StockRound extends Round {
     /* Rules */
     protected int sequenceRule;
 
-    protected StockRound (GameManager parent, String id) {
+    /**
+     * Constructed via Configure
+     */
+    public StockRound (GameManager parent, String id) {
         super(parent, id);
 
         if (numberOfPlayers == 0)
@@ -74,10 +77,6 @@ public class StockRound extends Round {
         guiHints.setVisibilityHint(GuiDef.Panel.MAP, true);
         guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, true);
         guiHints.setActivePanel(GuiDef.Panel.STATUS);
-    }
-    
-    public static StockRound create(GameManager parent, String id){
-        return new StockRound(parent, id);
     }
     
     public void start() {
@@ -1572,13 +1571,8 @@ public class StockRound extends Round {
     }
 
     @Override
-    public String toString() {
-        return "StockRound " + getStockRoundNumber();
-    }
-
-    @Override
     public String getRoundName() {
-        return toString();
+        return "StockRound " + getStockRoundNumber();
     }
 
 	public boolean isSellObligationLifted(PublicCompany company) {

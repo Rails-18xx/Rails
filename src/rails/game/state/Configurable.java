@@ -1,14 +1,15 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/ConfigurableComponentI.java,v 1.7 2009/10/31 17:08:26 evos Exp $ */
-package rails.common.parser;
+package rails.game.state;
 
+import rails.common.parser.ConfigurationException;
+import rails.common.parser.Tag;
 import rails.game.GameManager;
 
 /**
  * Interface for rails.game components which can be configured from an XML
  * element.
  */
-public interface ConfigurableComponent {
-
+public interface Configurable extends Creatable {
+    
     /**
      * Instructs the component to configure itself from the provided XML
      * element.

@@ -8,12 +8,13 @@ import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.*;
 import rails.game.state.BooleanState;
+import rails.game.state.Configurable;
 import rails.game.state.Item;
 import rails.game.state.OwnableItem;
 import rails.game.state.PortfolioHolder;
 import rails.util.*;
 
-public abstract class SpecialProperty extends OwnableItem<SpecialProperty> {
+public abstract class SpecialProperty extends OwnableItem<SpecialProperty> implements Configurable {
 
     // copied from SpecialProperty
     public enum Priority {
@@ -68,22 +69,26 @@ public abstract class SpecialProperty extends OwnableItem<SpecialProperty> {
     protected static Logger log =
         LoggerFactory.getLogger(SpecialProperty.class.getPackage().getName());
 
-    public SpecialProperty(Item parent, String id) {
-        super(parent, id, SpecialProperty.class);
+    protected SpecialProperty(Item parent, String id) {
+        super(parent, convertId(id) , SpecialProperty.class);
         uniqueId = Integer.valueOf(id);
         gameManager = GameManager.getInstance();
         gameManager.storeObject(STORAGE_NAME, this);
     }
     
+    // convert to the full id used 
+    private static String convertId(String id) {
+        return STORAGE_NAME + "_" + id;
+    }
+
     /** 
      * @return Special Property unique_id 
      */
-    protected static String createUniqueId() {
-        return STORAGE_NAME + "_" + GameManager.getInstance().getStorageId(STORAGE_NAME) + 1;
+    public static String createUniqueId() {
+        return String.valueOf(GameManager.getInstance().getStorageId(STORAGE_NAME) + 1);
         // increase unique id to allow loading old save files (which increase by 1)
         // TODO: remove that legacy issue
     }
-
 
     public void configureFromXML(Tag tag) throws ConfigurationException {
 
@@ -137,14 +142,9 @@ public abstract class SpecialProperty extends OwnableItem<SpecialProperty> {
         return (SpecialProperty)GameManager.getInstance().retrieveObject(STORAGE_NAME, id);
     }
 
-    // FIXME: Due to setCompany this has the side effect that the special property gets executed
-    // this has to be done somewhere
-    public void setCompany(Company company) {
-//        originalCompany = company;
-//        owner = company;
-//        exercised =
-//                BooleanState.create(this, company.getId() + "_SP_" + uniqueId
-//                                 + "_Exercised", false);
+    // Sets the first (time) owner
+    public void setOriginalCompany(Company company) {
+        originalCompany = company;
     }
 
     public Company getOriginalCompany() {
@@ -275,11 +275,13 @@ public abstract class SpecialProperty extends OwnableItem<SpecialProperty> {
 //        Owners.move(this, newOwner);
     }
 
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + " of private "
-               + originalCompany.getId();
-    }
+    
+    // FIXME: The toString() methods are removed, change calls to those
+//    @Override
+//    public String toString() {
+//        return getClass().getSimpleName() + " of private "
+//               + originalCompany.getId();
+//    }
 
     /**
      * Default menu item text, should be by all special properties that can

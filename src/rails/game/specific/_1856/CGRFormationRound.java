@@ -12,9 +12,8 @@ import rails.game.model.PortfolioModel;
 import rails.game.special.SellBonusToken;
 import rails.game.state.BooleanState;
 import rails.game.state.IntegerState;
-import rails.game.state.Portfolio;
 
-public final class CGRFormationRound extends SwitchableUIRound {
+public class CGRFormationRound extends SwitchableUIRound {
 
     private Player startingPlayer;
     private int maxLoansToRepayByPresident = 0;
@@ -53,17 +52,16 @@ public final class CGRFormationRound extends SwitchableUIRound {
         {6, 7, 8, 10, 11, 12, 14, 15}
     };
 
-    private CGRFormationRound(GameManager parent, String id) {
+    /**
+     * Constructed via Configure
+     */
+    public CGRFormationRound(GameManager parent, String id) {
         super(parent, id);
 
         guiHints.setVisibilityHint(GuiDef.Panel.MAP, true);
         guiHints.setVisibilityHint(GuiDef.Panel.STATUS, true);
     }
     
-    public static CGRFormationRound create(GameManager parent, String id) {
-        return new CGRFormationRound(parent, id);
-    }
-
     @Override
     /** This class needs the game status window to show up
      * rather than the operating round window.
@@ -443,8 +441,7 @@ public final class CGRFormationRound extends SwitchableUIRound {
 
         // Move the remaining CGR shares to the ipo.
         // Clone the shares list first
-        // TODO: below is too long, can this be simplified?
-        Portfolio.moveAll(cgr.getPortfolioModel().getShareModel(cgr).getPortfolio(), ipo.getShareModel(cgr).getPortfolio());
+        cgr.getPortfolioModel().getCertificatesModel().moveAll(ipo.getParent());
 
         // Assign the new president
         if (newPresident.getPortfolioModel().getShare(cgr) == cgr.getShareUnit()) {
@@ -536,17 +533,15 @@ public final class CGRFormationRound extends SwitchableUIRound {
 
             // Exchange home tokens and collect non-home tokens
             List<MapHex> homeHexes = comp.getHomeHexes();
-            for (Token token :comp.getAllBaseTokens()) {
-                if (token instanceof BaseToken) {
-                    bt = (BaseToken) token;
-                    if (!bt.isPlaced()) continue;
-                    city = (Stop) bt.getOwner();
-                    hex = city.getHolder();
-                    if (homeHexes != null && homeHexes.contains(hex)) {
-                        homeTokens.add(bt);
-                    } else {
-                        nonHomeTokens.add(bt);
-                    }
+            for (BaseToken token :comp.getAllBaseTokens()) {
+                bt = token;
+                if (!bt.isPlaced()) continue;
+                city = (Stop) bt.getOwner();
+                hex = city.getHolder();
+                if (homeHexes != null && homeHexes.contains(hex)) {
+                    homeTokens.add(bt);
+                } else {
+                    nonHomeTokens.add(bt);
                 }
             }
 
@@ -601,7 +596,7 @@ bonuses:        for (Bonus bonus : bonuses) {
             hex = city.getHolder();
             // TODO: Check if this works correct
             // token.moveTo(token.getCompany())
-            token.getParent().addToken(token);
+            token.getParent().addFreeToken(token);
             if (hex.layBaseToken(cgr, city.getNumber())) {
                 /* TODO: the false return value must be impossible. */
                 ReportBuffer.add(LocalText.getText("ExchangesBaseToken",
@@ -625,7 +620,7 @@ bonuses:        for (Bonus bonus : bonuses) {
                                 city.getId()));
                         // TODO: Check if this works correct
                         // token.moveTo(token.getCompany())
-                        token.getParent().addToken(token);
+                        token.getParent().addFreeToken(token);
                         nonHomeTokens.remove(token);
                         break;
                     }
@@ -697,7 +692,7 @@ bonuses:        for (Bonus bonus : bonuses) {
             city = (Stop) token.getOwner();
             hex = city.getHolder();
             // TODO: Check if this still works
-            token.getParent().addToken(token);
+            token.getParent().addFreeToken(token);
             // Replace it with a CGR token
             if (hex.layBaseToken(cgr, city.getNumber())) {
                 cgr.layBaseToken(hex, 0);

@@ -22,13 +22,11 @@ public class SpecialRight extends SpecialProperty implements RevenueStaticModifi
     protected String locationNames;
     protected List<MapHex> locations;
 
-    private SpecialRight(Item parent, String id) {
+    /**
+     * Used by Configure (via reflection) only
+     */
+    public SpecialRight(Item parent, String id) {
         super(parent, id);
-    }
-
-    public static SpecialRight create(Item parent) {
-        String uniqueId = SpecialProperty.createUniqueId();
-        return new SpecialRight(parent, uniqueId);
     }
 
     @Override
@@ -110,14 +108,15 @@ public class SpecialRight extends SpecialProperty implements RevenueStaticModifi
         return locations;
     }
 
-    @Override
-    public String toString() {
-        StringBuilder b = new StringBuilder();
-        b.append(cost > 0 ? "Buy '" : "Get '").append(rightName).append("'");
-        if (locationNames != null) b.append(" at ").append(locationNames);
-        if (cost > 0) b.append(" for ").append(Bank.format(cost));
-        return b.toString();
-    }
+    // FIXME: The toString() methods are removed, change calls to those
+//    @Override
+//    public String toString() {
+//        StringBuilder b = new StringBuilder();
+//        b.append(cost > 0 ? "Buy '" : "Get '").append(rightName).append("'");
+//        if (locationNames != null) b.append(" at ").append(locationNames);
+//        if (cost > 0) b.append(" for ").append(Bank.format(cost));
+//        return b.toString();
+//    }
     
     @Override
     public String toMenu() {

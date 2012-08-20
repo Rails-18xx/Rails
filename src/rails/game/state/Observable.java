@@ -3,6 +3,7 @@ package rails.game.state;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 /**
  * Requirement:
@@ -13,7 +14,7 @@ public abstract class Observable implements Item {
     // fields for Item implementation
     private final String id;
     private final Item parent;
-    private final GameRoot context;
+    private final Context context;
     
     /**
      * @param parent parent node in item hierarchy (cannot be null)
@@ -29,8 +30,8 @@ public abstract class Observable implements Item {
         this.parent = parent;
         this.id = id;
 
-        if (parent instanceof GameRoot) {
-            context = (GameRoot)parent;
+        if (parent instanceof Context) {
+            context = (Context)parent;
         } else { 
             // recursive definition
             context = parent.getContext();
@@ -105,7 +106,7 @@ public abstract class Observable implements Item {
         return parent;
     }
 
-    public GameRoot getContext() {
+    public Context getContext() {
         return context;
     }
     
@@ -116,7 +117,7 @@ public abstract class Observable implements Item {
 
     public String getURI() {
         checkState(id != null, "Cannot get URI of unobservable object");
-        if (parent instanceof GameRoot) {
+        if (parent instanceof Context) {
             return id;
         } else {
             // recursive definition
@@ -138,13 +139,7 @@ public abstract class Observable implements Item {
     
     @Override
     public String toString() {
-        if (getId() != null) {
-            return this.getClass().getSimpleName() + "(Id=" + getId() + ")";
-        } else {
-            return this.getClass().getSimpleName();
-        }
+        return Objects.toStringHelper(this).add("id", id).add("parent", parent.getId()).toString();
     }
-    
-
     
 }

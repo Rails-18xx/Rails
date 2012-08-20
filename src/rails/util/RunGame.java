@@ -2,7 +2,7 @@ package rails.util;
 
 import rails.common.GuiDef;
 import rails.common.parser.Config;
-import rails.game.GameRoot;
+import rails.game.RailsRoot;
 import rails.game.GameManager;
 import rails.ui.swing.GameSetupWindow;
 import rails.ui.swing.GameUIManager;
@@ -55,10 +55,10 @@ public class RunGame {
 
     static void loadGame (String[] args) {
 
-        GameRoot game = null;
+        RailsRoot game = null;
         String filepath = args[0];
         System.out.println("Starting game from saved file "+filepath);
-        if ((game = GameRoot.load(filepath)) == null) {
+        if ((game = RailsRoot.load(filepath)) == null) {
             System.err.println("Loading file "+filepath+" was unsuccessful");
             return;
         }

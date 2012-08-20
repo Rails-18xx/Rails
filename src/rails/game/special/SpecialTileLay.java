@@ -21,15 +21,13 @@ public class SpecialTileLay extends SpecialProperty {
     boolean free = false;
     boolean connected = false;
     
-    private SpecialTileLay(Item parent, String id) {
+    /**
+     * Used by Configure (via reflection) only
+     */
+    public SpecialTileLay(Item parent, String id) {
         super(parent, id);
     }
 
-    public static SpecialTileLay create(Item parent) {
-        String uniqueId = SpecialProperty.createUniqueId();
-        return new SpecialTileLay(parent, uniqueId);
-    }
-    
     /** Tile colours that can be laid with this special property.
      * Default is same colours as is allowed in a a normal tile lay.
      * Don't use if specific tiles are specified! */
@@ -64,7 +62,7 @@ public class SpecialTileLay extends SpecialProperty {
                 tileLayTag.getAttributeAsInteger("closingValue", closingValue);
 
         if (tileNumber > 0) {
-	    	description = LocalText.getText("LayNamedTilenfo",
+	    	description = LocalText.getText("LayNamedTileInfo",
 	    			tileNumber,
 	    			name != null ? name : "",
 	    			locationCodes,
@@ -74,7 +72,7 @@ public class SpecialTileLay extends SpecialProperty {
                     /* sfy 1889 extension */
 	    	        );
         } else {
-	    	description = LocalText.getText("LayTilenfo",
+	    	description = LocalText.getText("LayTileInfo",
 	    			locationCodes,
 	    			(extra ? LocalText.getText("extra"):LocalText.getText("notExtra")),
 	    			(free ? LocalText.getText("noCost") : LocalText.getText("normalCost")),
@@ -148,11 +146,11 @@ public class SpecialTileLay extends SpecialProperty {
         return name;
     }
 
-    @Override
-	public String toString() {
-        return "SpecialTileLay comp=" + originalCompany.getId() + " hex="
-               + locationCodes + " extra=" + extra + " cost=" + free + " connected=" + connected;
-    }
+//    @Override
+//	public String toString() {
+//        return "SpecialTileLay comp=" + originalCompany.getId() + " hex="
+//               + locationCodes + " extra=" + extra + " cost=" + free + " connected=" + connected;
+//    }
 
     @Override
 	public String toMenu() {

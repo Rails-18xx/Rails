@@ -59,7 +59,7 @@ public class ORUIManager implements DialogOwner {
 
     private boolean tokenLayingEnabled = false;
     public List<LayToken> allowedTokenLays = new ArrayList<LayToken>();
-    public List<? extends Token> tokenLays;
+    public List<? extends Token<?>> tokenLays;
     private int selectedTokenndex;
     private LayToken selectedTokenAllowance;
 
@@ -909,7 +909,7 @@ public class ORUIManager implements DialogOwner {
             if (oldStop.hasTokens()) {
                 // Assume only 1 token (no exceptions known)
                 // TODO: Rewrite this to make this code nicer
-                PublicCompany company = ((BaseToken)Iterables.get(oldStop.getTokens().items(), 0)).getParent();
+                PublicCompany company = (Iterables.get(oldStop.getBaseTokens().items(), 0)).getParent();
 
                 List<String> prompts = new ArrayList<String>();
                 Map<String, Integer> promptToCityMap = new HashMap<String, Integer>();

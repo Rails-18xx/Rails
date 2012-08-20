@@ -171,7 +171,7 @@ implements ActionListener, KeyListener, RevenueListener {
         infoMenu.add(remainingTilesMenuItem);
         menuBar.add(infoMenu);
 
-        addCompanynfo();
+        addCompanyInfo();
         addTrainsInfo();
         addPhasesInfo();
         addNetworkInfo();
@@ -507,7 +507,7 @@ implements ActionListener, KeyListener, RevenueListener {
 
     }
 
-    protected void addCompanynfo() {
+    protected void addCompanyInfo() {
 
     	CompanyManager cm = orUIManager.getGameUIManager().getGameManager().getCompanyManager();
     	List<CompanyType> comps = cm.getCompanyTypes();
