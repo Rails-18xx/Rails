@@ -54,7 +54,7 @@ public class Field extends JLabel implements Observer {
         this("");
         this.observable = modelObject;
         modelObject.addObserver(this);
-        setText(modelObject.observerText());
+        setText(modelObject.toText());
     }
 
     public Field(Observable modelObject, boolean pull) {
@@ -88,7 +88,7 @@ public class Field extends JLabel implements Observer {
     @Override
     public void paintComponent(Graphics g) {
         if (observable != null && pull) {
-            setText(observable.observerText());
+            setText(observable.toText());
         }
         super.paintComponent(g);
     }

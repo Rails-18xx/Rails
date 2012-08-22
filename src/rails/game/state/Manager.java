@@ -62,6 +62,10 @@ public abstract class Manager extends Context {
         return fullURI;
     }
     
+    public String toText() {
+        return id;
+    }
+    
     // Context methods
     public Item locate(String uri) {
         // first try as fullURI

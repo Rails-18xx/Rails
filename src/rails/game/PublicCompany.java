@@ -213,7 +213,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
     protected boolean mustHaveOperatedToTradeShares = false;
 
     /** The certificates of this company (minimum 1) */
-    protected final ArrayListState<PublicCertificate> certificates = ArrayListState.create(this, "certificates");
+    protected final ArrayListState<PublicCertificate> certificates = ArrayListState.create(this, "ownCertificates");
     /** Are the certificates available from the first SR? */
     boolean certsAreInitiallyAvailable = true;
 
@@ -1192,7 +1192,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
     }
 
     public String getFormattedCash() {
-        return treasury.observerText();
+        return treasury.toText();
     }
 
     public Model getText() {
@@ -1555,8 +1555,8 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
         
         // check first if it is bought from another company
         // FIXME: The type of owner can be tainted as it can link to portfolioModel
-        if (train.getPortfolio().getOwner() instanceof PublicCompany) {
-            PublicCompany previousOwner = (PublicCompany)train.getPortfolio().getOwner();
+        if (train.getOwner() instanceof PublicCompany) {
+            PublicCompany previousOwner = (PublicCompany)train.getOwner();
             //  adjust the money spent on trains field
             ((CashMoneyModel)previousOwner.getTrainsSpentThisTurnModel()).change(-price);
             // pay the money to the other company
@@ -1624,7 +1624,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
                 }
             }
             for (SpecialProperty sp : spsToMoveHere) {
-                sp.moveTo(portfolio);
+                sp.moveTo(portfolio.getParent());
             }
             for (SpecialProperty sp : spsToMoveToGM) {
                 gameManager.addSpecialProperty(sp);
@@ -2010,7 +2010,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
         return true;
     }
 
-    // PortfolioOwner method
+    // Owner method
     public PortfolioModel getPortfolioModel() {
         return portfolio;
     }

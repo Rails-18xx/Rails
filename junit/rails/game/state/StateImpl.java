@@ -15,7 +15,7 @@ class StateImpl extends State {
     }
     
     @Override
-    public String observerText() {
+    public String toText() {
         return text;
     }
     

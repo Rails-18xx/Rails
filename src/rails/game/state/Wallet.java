@@ -87,7 +87,7 @@ public final class Wallet<T extends CountableItem> extends State {
     }
     
     @Override
-    public String observerText() {
+    public String toText() {
         return wallet.toString();
     }
 

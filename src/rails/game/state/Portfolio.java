@@ -1,6 +1,9 @@
 package rails.game.state;
 
+import java.util.Comparator;
+
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedSet;
 
 public abstract class Portfolio<T extends Ownable> extends State implements
         Iterable<T> {
@@ -9,23 +12,23 @@ public abstract class Portfolio<T extends Ownable> extends State implements
     private final Owner owner;
 
     /**
-     * Constructor using a PortfolioHolder
-     */
-    protected Portfolio(PortfolioHolder parent, String id, Class<T> type) {
-        super(parent, id);
-        this.type = type;
-        this.owner = parent.getParent();
-        getPortfolioManager().addPortfolio(this);
-    }
-
-    /**
-     * Constructor using an Owner
+     * Creation of a portfolio
+     * @param parent owner of the portfolio
+     * @param id identifier of the portfolio
+     * @param type type of items stored in the portfolio
      */
     protected Portfolio(Owner parent, String id, Class<T> type) {
         super(parent, id);
         this.type = type;
         this.owner = parent;
         getPortfolioManager().addPortfolio(this);
+    }
+    /**
+     * @return the owner of the portfolio
+     */
+    @Override
+    public Owner getParent() {
+        return owner;
     }
 
     protected Class<T> getType() {
@@ -36,11 +39,7 @@ public abstract class Portfolio<T extends Ownable> extends State implements
     protected PortfolioManager getPortfolioManager() {
         return getStateManager().getPortfolioManager();
     }
-
-    public Owner getOwner() {
-        return owner;
-    }
-
+    
     /**
      * Move a new item to the portfolio and removes the item from the previous
      * portfolio
@@ -63,6 +62,11 @@ public abstract class Portfolio<T extends Ownable> extends State implements
     public abstract ImmutableSet<T> items();
 
     /**
+     * @return all items sorted using the comparator
+     */
+    public abstract ImmutableSortedSet<T> items(Comparator<T> comparator);
+    
+    /**
      * @return size of portfolio
      */
     public abstract int size();
@@ -71,7 +75,8 @@ public abstract class Portfolio<T extends Ownable> extends State implements
      * @return true if portfolio is empty
      */
     public abstract boolean isEmpty();
-
+    
+    
     abstract void change(T item, boolean intoPortfolio);
 
     /**

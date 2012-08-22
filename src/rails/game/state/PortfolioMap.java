@@ -1,10 +1,12 @@
 package rails.game.state;
 
+import java.util.Comparator;
 import java.util.Iterator;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
+import com.google.common.collect.ImmutableSortedSet;
 
 /**
  * PortfolioMap is an implementation of a portfolio based on a HashMultimap
@@ -14,44 +16,46 @@ import com.google.common.collect.ImmutableSetMultimap;
  * Remark: T has to extend Typable<K> to inform the portfolio about its type 
  */
 
-public final class PortfolioMap<K, T extends Ownable & Typable<K>> extends Portfolio<T> {
+public class PortfolioMap<K, T extends Ownable & Typable<K>> extends Portfolio<T> {
 
     private final HashMultimap<K, T> portfolio = HashMultimap.create();
-
-    private PortfolioMap(PortfolioHolder parent, String id, Class<T> type) {
-        super(parent, id, type);
-    }
 
     private PortfolioMap(Owner parent, String id, Class<T> type) {
         super(parent, id, type);
     }
     
-    public static <K, T extends Ownable & Typable<K>> PortfolioMap<K, T> create(PortfolioHolder parent, String id, Class<T> type) {
-        return new PortfolioMap<K,T>(parent, id, type);
-    }
-
     public static <K, T extends Ownable & Typable<K>> PortfolioMap<K,T> create(Owner parent, String id, Class<T> type) {
         return new PortfolioMap<K,T>(parent, id, type);
     }
 
+    @Override
     public boolean moveInto(T item) {
         if (portfolio.containsValue(item)) return false;
-        item.moveTo(getOwner());
+        item.moveTo(getParent());
         return true;
     }
 
+    @Override
     public boolean containsItem(T item) {
         return portfolio.containsValue(item);
     }
 
+    @Override
     public ImmutableSet<T> items() {
         return ImmutableSet.copyOf(portfolio.values());
     }
+    
+    @Override
+    public ImmutableSortedSet<T> items(Comparator<T> comparator) {
+        return ImmutableSortedSet.copyOf(comparator, portfolio.values());
+    }
 
+    @Override
     public int size() {
         return portfolio.size();
     }
     
+    @Override
     public boolean isEmpty() {
         return portfolio.isEmpty();
     }
@@ -79,6 +83,7 @@ public final class PortfolioMap<K, T extends Ownable & Typable<K>> extends Portf
         return ImmutableSetMultimap.copyOf(portfolio);
     }
 
+    @Override
     void change(T item, boolean intoPortfolio) {
         if (intoPortfolio) {
             portfolio.put(item.getType(), item);
@@ -92,7 +97,7 @@ public final class PortfolioMap<K, T extends Ownable & Typable<K>> extends Portf
     }
     
     @Override
-    public String observerText() {
+    public String toText() {
         return portfolio.toString();
     }
 }

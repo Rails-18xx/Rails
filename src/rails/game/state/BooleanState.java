@@ -42,7 +42,7 @@ public final class BooleanState extends State {
     }
     
     @Override
-    public String observerText() {
+    public String toText() {
         return Boolean.toString(value);
     }
 

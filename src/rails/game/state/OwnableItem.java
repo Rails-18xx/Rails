@@ -38,4 +38,9 @@ public abstract class OwnableItem<T extends Ownable> extends AbstractItem implem
     public Owner getOwner() {
         return owner.value();
     }
+
+    public int compareTo(Ownable other) {
+        return this.getId().compareTo(other.getId());
+    }
+
 }

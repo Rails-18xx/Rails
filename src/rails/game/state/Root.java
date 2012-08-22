@@ -11,6 +11,7 @@ import com.google.common.collect.Lists;
 public class Root extends Context implements DelayedItem {
     
    public final static String ID = ""; 
+   private final static String TEXT_ID = "root";
 
    private StateManager stateManager;
    private HashMapState<String, Item> items;
@@ -84,6 +85,10 @@ public class Root extends Context implements DelayedItem {
        return "";
    }
    
+   public String toText() {
+       return TEXT_ID;
+   }
+   
    // Context methods
    public Item locate(String uri) {
        // first try as fullURI
@@ -106,7 +111,8 @@ public class Root extends Context implements DelayedItem {
        }
        
        // check if it already exists
-       checkArgument(!items.containsKey(item.getFullURI()), "Root already contains item with identical fullURI");
+       checkArgument(!items.containsKey(item.getFullURI()), 
+               "Root already contains item with identical fullURI = " + item.getFullURI());
        
        // all preconditions ok => add
        items.put(item.getFullURI(), item);
@@ -114,10 +120,16 @@ public class Root extends Context implements DelayedItem {
 
    void removeItem(Item item) {
        // check if it already exists
-       checkArgument(items.containsKey(item.getFullURI()), "Root does not contain item with that fullURI");
+       checkArgument(items.containsKey(item.getFullURI()), 
+               "Root does not contain item with that fullURI = " + item.getFullURI());
        
        // all preconditions ok => remove
        items.remove(item.getFullURI());
+   }
+   
+   @Override
+   public String toString() {
+       return TEXT_ID;
    }
 
 }

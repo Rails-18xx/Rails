@@ -13,7 +13,7 @@ import rails.game.action.BuyCertificate;
 import rails.game.model.CashOwner;
 import rails.game.model.PortfolioModel;
 import rails.game.state.IntegerState;
-import rails.game.state.PortfolioHolder;
+import rails.game.state.Owner;
 
 public class StockRound_1856 extends StockRound {
 
@@ -86,13 +86,13 @@ public class StockRound_1856 extends StockRound {
     }
 
     @Override
-    protected CashOwner getSharePriceRecipient(PublicCompany company, PortfolioHolder from, int price) {
+    protected CashOwner getSharePriceRecipient(PublicCompany company, Owner from, int price) {
 
         CashOwner recipient;
 
         if (price != 0
                 && !company.getId().equalsIgnoreCase(PublicCompany_CGR.NAME)
-                && from == ipo) {
+                && from == ipo.getParent()) {
 
             PublicCompany_1856 comp = (PublicCompany_1856)company;
 

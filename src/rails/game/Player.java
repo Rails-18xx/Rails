@@ -1,7 +1,13 @@
 package rails.game;
 
-import rails.game.model.*;
+import rails.game.model.CalculatedMoneyModel;
 import rails.game.model.CalculatedMoneyModel.CalculationMethod;
+import rails.game.model.CashMoneyModel;
+import rails.game.model.CashOwner;
+import rails.game.model.CertificateCountModel;
+import rails.game.model.MoneyModel;
+import rails.game.model.PortfolioModel;
+import rails.game.model.PortfolioOwner;
 import rails.game.state.BooleanState;
 import rails.game.state.AbstractItem;
 import rails.game.state.IntegerState;
@@ -199,7 +205,7 @@ public class Player extends AbstractItem implements CashOwner, PortfolioOwner, C
         return cash.value();
     }
 
-    // PortfolioOwner interface
+    // Owner interface
     public PortfolioModel getPortfolioModel() {
         return portfolio;
     }

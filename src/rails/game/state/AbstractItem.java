@@ -62,6 +62,10 @@ public abstract class AbstractItem implements Item {
         // recursive definition
         return parent.getFullURI() + Item.SEP + id;
     }
+
+    public String toText() {
+        return id;
+    }
     
     @Override
     public String toString() {

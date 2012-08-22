@@ -72,7 +72,7 @@ public class OperatingRound_18EU extends OperatingRound {
                 && !possibleActions.contains(BuyTrain.class);
         if (mustExchangePullmann) {
             extraMessage = LocalText.getText("AutodiscardTrain",
-                    pullmannType.getName());
+                    pullmannType.toText());
         }
          /* New trains */
         trains = trainMgr.getAvailableNewTrains();

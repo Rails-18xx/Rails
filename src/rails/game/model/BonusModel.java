@@ -24,7 +24,7 @@ public class BonusModel extends Model {
     }
 
     @Override
-    public String observerText() {
+    public String toText() {
         if (bonuses == null || bonuses.isEmpty()) return "";
 
         StringBuffer b = new StringBuffer("<html><center>");

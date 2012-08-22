@@ -140,7 +140,7 @@ public final class ArrayListState<E> extends State implements Iterable<E>  {
     }
     
     @Override
-    public String observerText() {
+    public String toText() {
         return list.toString();
     }
 

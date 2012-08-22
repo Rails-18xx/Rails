@@ -33,4 +33,9 @@ public interface Item {
      * @return a string which allows to locate the item from the Root
      */
     String getFullURI();
+    
+    /**
+     * @return a string used for display
+     */
+    String toText();
 }

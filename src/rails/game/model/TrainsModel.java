@@ -2,36 +2,39 @@ package rails.game.model;
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Multiset;
 
 import rails.game.TrainCertificateType;
 import rails.game.Train;
-import rails.game.TrainType;
 import rails.game.state.Model;
+import rails.game.state.Owner;
 import rails.game.state.Portfolio;
-import rails.game.state.PortfolioHolder;
-import rails.game.state.PortfolioMap;
+import rails.game.state.PortfolioSet;
 
-// FIXME: It is tricky to use the PortfolioMap as the TrainType can switch 
-// their type, potentially it is better to use a PortfolioSet
 public class TrainsModel extends Model {
 
     public static final String ID = "TrainsModel";
     
-    private final PortfolioMap<TrainType, Train> trains;
+    private final PortfolioSet<Train> trains;
     
     private boolean abbrList = false;
 
-    private TrainsModel(PortfolioHolder parent, String id) {
+    private TrainsModel(Owner parent, String id) {
         super(parent, id);
-        trains = PortfolioMap.create(parent, "trains", Train.class);
+        trains = PortfolioSet.create(parent, "trains", Train.class);
     }
     
     /** 
      * @return fully initialized TrainsModel
      */
-    public static TrainsModel create(PortfolioHolder parent) {
+    public static TrainsModel create(Owner parent) {
         return new TrainsModel(parent, ID);
+    }
+    
+    @Override
+    public Owner getParent() {
+        return (Owner)super.getParent();
     }
     
     public Portfolio<Train> getPortfolio() {
@@ -61,12 +64,10 @@ public class TrainsModel extends Model {
         if (trains.isEmpty()) return "";
 
         StringBuilder b = new StringBuilder();
-
-        // FIXME: trains has to be sorted by traintype
         for (Train train:trains) {
             if (b.length() > 0) b.append(" ");
             if (train.isObsolete()) b.append("[");
-            b.append(train.getId());
+            b.append(train.toText());
             if (train.isObsolete()) b.append("]");
         }
 
@@ -88,10 +89,9 @@ public class TrainsModel extends Model {
         
         StringBuilder b = new StringBuilder();
         
-        // FIXME: add sorting
-        for (TrainCertificateType certType:trainCertTypes) {
+        for (TrainCertificateType certType:ImmutableSortedSet.copyOf(trainCertTypes.elementSet())) {
             if (b.length() > 0) b.append(" ");
-            b.append(certType.getName()).append("(");
+            b.append(certType.toText()).append("(");
             if (certType.hasInfiniteQuantity()) {
                 b.append("+");
             } else {
@@ -104,7 +104,7 @@ public class TrainsModel extends Model {
     }
     
     @Override
-    public String observerText() {
+    public String toText() {
         if (!abbrList) {
             return makeListOfTrains();
         } else {

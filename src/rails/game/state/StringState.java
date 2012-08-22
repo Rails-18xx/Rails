@@ -69,7 +69,7 @@ public final class StringState extends State {
     }
 
     @Override 
-    public String observerText() {
+    public String toText() {
         return value;
     }
 

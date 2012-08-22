@@ -96,7 +96,7 @@ public final class HashMultimapState<K,V> extends State implements Iterable<V> {
     }
     
     @Override
-    public String observerText() {
+    public String toText() {
         return map.toString();
     }
 

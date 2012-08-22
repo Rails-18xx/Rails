@@ -41,7 +41,7 @@ public final class IntegerState extends State {
     }
 
     @Override
-    public String observerText() {
+    public String toText() {
         return Integer.toString(value);
     }
 

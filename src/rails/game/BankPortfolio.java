@@ -29,7 +29,7 @@ public final class BankPortfolio extends AbstractItem implements PortfolioOwner 
         return (Bank)super.getParent();
     }
     
-    // PortfolioOwner methods
+    // Owner methods
     public PortfolioModel getPortfolioModel() {
         return portfolio;
     }

@@ -9,7 +9,6 @@ package rails.game;
  * and discussions are "railhead", "station", "garrison", or just "token".
  */
 
-// FIXME: Check if PublicCompany is the parent of a token
 public class BaseToken extends Token<BaseToken> {
 
     private BaseToken(PublicCompany parent, String id) {
@@ -34,5 +33,5 @@ public class BaseToken extends Token<BaseToken> {
     public String getId() {
         return getParent().getId();
     }
-    
+
 }

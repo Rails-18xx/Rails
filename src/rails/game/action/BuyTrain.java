@@ -14,12 +14,8 @@ import rails.game.TrainType;
 import rails.game.special.SpecialProperty;
 import rails.game.special.SpecialTrainBuy;
 import rails.game.state.Owner;
-import rails.game.state.Portfolio;
 import rails.util.Util;
 
-/**
- * @author Erik Vos
- */
 public class BuyTrain extends PossibleORAction {
 
     // Initial settings
@@ -178,12 +174,6 @@ public class BuyTrain extends PossibleORAction {
 
     public boolean isForcedBuyIfNoRoute() {
         return forcedBuyIfNoRoute;
-    }
-
-    // TODO: Check if this is still required, now this points to Portfolio<Train> 
-    // instead of PortfolioModel
-    public Portfolio<Train> getPortfolio() {
-        return getTrain().getPortfolio();
     }
 
     public Owner getOwner() {

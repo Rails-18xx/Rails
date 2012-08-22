@@ -29,9 +29,9 @@ public class ObserverTest {
     public void testUpdate() {
         assertThat(state.getObservers()).contains(observer);
         state.set(true);
-        verify(observer, never()).update(state.observerText());
+        verify(observer, never()).update(state.toText());
         root.getStateManager().getChangeStack().closeCurrentChangeSet();
-        verify(observer).update(state.observerText());
+        verify(observer).update(state.toText());
     }
 
 }

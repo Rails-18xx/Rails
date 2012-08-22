@@ -46,7 +46,7 @@ public final class PriceModel extends Model {
 //    }
 
     @Override
-    public String observerText() {
+    public String toText() {
         if (stockPrice.value() != null) {
             return Bank.format(stockPrice.value().getPrice()) + " ("
                    + stockPrice.value().getId() + ")";

@@ -10,8 +10,8 @@ import rails.game.*;
 import rails.game.state.BooleanState;
 import rails.game.state.Configurable;
 import rails.game.state.Item;
+import rails.game.state.Ownable;
 import rails.game.state.OwnableItem;
-import rails.game.state.PortfolioHolder;
 import rails.util.*;
 
 public abstract class SpecialProperty extends OwnableItem<SpecialProperty> implements Configurable {
@@ -27,7 +27,6 @@ public abstract class SpecialProperty extends OwnableItem<SpecialProperty> imple
 
     
     protected Company originalCompany;
-    protected PortfolioHolder owner = null;
     protected int closingValue = 0;
     protected BooleanState exercised;
     
@@ -270,10 +269,10 @@ public abstract class SpecialProperty extends OwnableItem<SpecialProperty> imple
      * Only to be used for special properties that have the "transfer" attribute.
      */
     // FIXME: This is not used anymore, however we have to check for transfer attribute somewhere
-    public void moveTo(PortfolioHolder newOwner) {
+//    public void moveTo(PortfolioHolder newOwner) {
 //        if (transferText.equals("")) return;
 //        Owners.move(this, newOwner);
-    }
+//    }
 
     
     // FIXME: The toString() methods are removed, change calls to those
@@ -301,4 +300,5 @@ public abstract class SpecialProperty extends OwnableItem<SpecialProperty> imple
         return LocalText.getText ("YouCan", Util.lowerCaseFirst(toMenu()));
 
     }
+    
 }

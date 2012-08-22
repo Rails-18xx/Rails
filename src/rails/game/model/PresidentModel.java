@@ -35,7 +35,7 @@ public final class PresidentModel extends Model {
     }
 
     @Override
-    public String observerText() {
+    public String toText() {
         Player president = company.getPresident();
         if (president == null) return "";
         else return company.getPresident().getNameAndPriority();

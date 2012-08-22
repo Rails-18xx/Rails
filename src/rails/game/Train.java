@@ -3,18 +3,17 @@ package rails.game;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ComparisonChain;
+
 import rails.common.parser.ConfigurationException;
 import rails.game.state.BooleanState;
 import rails.game.state.Creatable;
 import rails.game.state.GenericState;
 import rails.game.state.Item;
+import rails.game.state.Ownable;
 import rails.game.state.OwnableItem;
-import rails.game.state.Portfolio;
-import rails.game.state.Typable;
 
-// FIXME: Trains a tricky as they can swap their type
-// This change has to be tracked if used in a PortfolioMap
-public class Train extends OwnableItem<Train> implements Typable<TrainType>, Creatable {
+public class Train extends OwnableItem<Train> implements Creatable {
 
     protected TrainCertificateType certificateType;
     
@@ -25,8 +24,6 @@ public class Train extends OwnableItem<Train> implements Typable<TrainType>, Cre
 
     protected final BooleanState obsolete = BooleanState.create(this, "obsolete");
     
-    private Portfolio<Train> portfolio;
-
     protected static Logger log =
             LoggerFactory.getLogger(Train.class.getPackage().getName());
 
@@ -122,18 +119,12 @@ public class Train extends OwnableItem<Train> implements Typable<TrainType>, Cre
         return certificateType.isPermanent();
     }
     
-    // FIXME: This has to be rewritten
-//    public String getId() {
-//        return isAssigned() ? type.value().getName() : certificateType.getName();
-//    }
-
     public boolean isObsolete() {
         return obsolete.value();
     }
 
     public void setRusted() {
-        // FIXME: Awful long list of calls
-        GameManager.getInstance().getBank().getScrapHeap().getPortfolioModel().getTrainsModel().getPortfolio().moveInto(this);
+        this.moveTo(GameManager.getInstance().getBank().getScrapHeap());
     }
 
     public void setObsolete() {
@@ -144,8 +135,9 @@ public class Train extends OwnableItem<Train> implements Typable<TrainType>, Cre
         return certificateType.nextCanBeExchanged();
     }
 
-    public String toDisplay() {
-        return getId();
+    @Override
+    public String toText() {
+        return isAssigned() ? type.value().getName() : certificateType.toText();
     }
 
     public boolean isTradeable() {
@@ -156,13 +148,16 @@ public class Train extends OwnableItem<Train> implements Typable<TrainType>, Cre
         this.tradeable = tradeable;
     }
 
-    // OwnableItem interface
-    public void setPortfolio(Portfolio<Train> p) {
-        portfolio = p;
-    }
-
-    public Portfolio<Train> getPortfolio() {
-        return portfolio;
+    @Override
+    public int compareTo(Ownable other) {
+        if (other instanceof Train) {
+            Train oTrain = (Train)other;
+            return ComparisonChain.start()
+                    .compare(this.getCertType(), oTrain.getCertType())
+                    .compare(this.getId(), oTrain.getId())
+                    .result();
+        }
+        return 0;
     }
 
 }

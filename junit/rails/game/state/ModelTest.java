@@ -30,10 +30,10 @@ public class ModelTest {
     
     @Test
     public void testModel() {
-        assertEquals(MODEL_TEXT_INIT, model.observerText());
+        assertEquals(MODEL_TEXT_INIT, model.toText());
         model.changeText(MODEL_TEXT_CHANGE);
         StateTestUtils.close(root);
-        assertEquals(MODEL_TEXT_CHANGE, model.observerText());
+        assertEquals(MODEL_TEXT_CHANGE, model.toText());
         verify(observer).update(MODEL_TEXT_CHANGE);
     }
 

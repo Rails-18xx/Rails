@@ -115,5 +115,4 @@ public class BonusToken extends Token<BonusToken> implements Closeable, Configur
     public String toString() {
         return description;
     }
-
 }

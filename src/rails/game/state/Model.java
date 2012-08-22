@@ -31,7 +31,7 @@ public abstract class Model extends Observable {
      * Remark: A Model has to either override this or cachedText(), the latter automatically caches results
      */
     @Override
-    public String observerText() {
+    public String toText() {
         if (!current){
             current = true;
             cache = this.cachedText();

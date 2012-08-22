@@ -1,6 +1,5 @@
 package rails.game;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -103,14 +102,15 @@ public final class TrainManager extends AbstractItem implements Configurable {
         List<Tag> trainTypeTags = tag.getChildren("TrainType");
 
         if (trainTypeTags != null) {
+            int trainTypeIndex = 0;
             for (Tag trainTypeTag : trainTypeTags) {
                 // FIXME: Creation of Type to be rewritten
                 String trainTypeId = trainTypeTag.getAttributeAsString("name");
-                TrainCertificateType certType = TrainCertificateType.create(this, trainTypeId);
+                TrainCertificateType certType = TrainCertificateType.create(this, trainTypeId, trainTypeIndex++);
                 if (defaultsTag != null) certType.configureFromXML(defaultsTag);
                 certType.configureFromXML(trainTypeTag);
                 trainCertTypes.add(certType);
-                trainCertTypeMap.put(certType.getName(), certType);
+                trainCertTypeMap.put(certType.getId(), certType);
                 
                 // The potential train types
                 typeTags = trainTypeTag.getChildren("Train");
@@ -178,7 +178,7 @@ public final class TrainManager extends AbstractItem implements Configurable {
              * Each time this train is bought, another one is created.
              */
             for (int i = 0; i < (certType.hasInfiniteQuantity() ? 1 : certType.getQuantity()); i++) {
-                train = Train.create(this, getNewUniqueId(certType.getName()), certType, initialType);
+                train = Train.create(this, getNewUniqueId(certType.getId()), certType, initialType);
                 addTrain(train);
                 unavailable.addTrain(train);
             }
@@ -223,7 +223,7 @@ public final class TrainManager extends AbstractItem implements Configurable {
         List<TrainType> types = certType.getPotentialTrainTypes();
         TrainType initialType = types.size() == 1 ? types.get(0) : null;
         try {
-            train = Train.create(this, getNewUniqueId(certType.getName()), certType, initialType);
+            train = Train.create(this, getNewUniqueId(certType.getId()), certType, initialType);
         } catch (ConfigurationException e) {
             log.warn("Unexpected exception", e);
         }
@@ -275,9 +275,9 @@ public final class TrainManager extends AbstractItem implements Configurable {
                     if (!nextType.isAvailable()) {
                         makeTrainAvailable(nextType);
                         trainAvailabilityChanged = true;
-                        ReportBuffer.add("All " + boughtType.getName()
+                        ReportBuffer.add("All " + boughtType.toText()
                                          + "-trains are sold out, "
-                                         + nextType.getName() + "-trains now available");
+                                         + nextType.toText() + "-trains now available");
                     }
                 }
             }
@@ -287,7 +287,7 @@ public final class TrainManager extends AbstractItem implements Configurable {
         if (trainIndex == 1) {
             // First train of a new type bought
             ReportBuffer.add(LocalText.getText("FirstTrainBought",
-                    boughtType.getName()));
+                    boughtType.toText()));
         }
         
         // New style phase changes, can be triggered by any bought train.
@@ -353,7 +353,7 @@ public final class TrainManager extends AbstractItem implements Configurable {
         for (TrainCertificateType certType : trainCertTypes) {
             if (certType.getCost() > 0) {
                 if (b.length() > 1) b.append(" ");
-                b.append(certType.getName()).append(":").append(Bank.format(certType.getCost()));
+                b.append(certType.toText()).append(":").append(Bank.format(certType.getCost()));
                 if (certType.getExchangeCost() > 0) {
                     b.append("(").append(Bank.format(certType.getExchangeCost())).append(")");
                 }
@@ -404,4 +404,5 @@ public final class TrainManager extends AbstractItem implements Configurable {
             anyTrainBought.set(newValue);
         }
     }
+    
 }

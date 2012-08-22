@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TrainType.java,v 1.32 2010/05/11 21:47:21 stefanfrey Exp $ */
 package rails.game;
 
 import org.slf4j.Logger;

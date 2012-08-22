@@ -50,7 +50,7 @@ public final class ArrayListMultimapState<K,V> extends State {
     }
 
     @Override
-    public String observerText() {
+    public String toText() {
         return map.toString();
     }
 

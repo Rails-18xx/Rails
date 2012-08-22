@@ -133,9 +133,9 @@ public abstract class Observable implements Item {
 
     
     /**
-     * @return text delivered to observers, if no formatter is used
+     * @return text delivered to observers
      */
-    public abstract String observerText();
+    public abstract String toText();
     
     @Override
     public String toString() {

@@ -628,7 +628,7 @@ public class StockRound extends Round {
         // All is OK, now start the company
         company.start(startSpace);
 
-        CashOwner priceRecipient = getSharePriceRecipient (company, ipo, price);
+        CashOwner priceRecipient = getSharePriceRecipient (company, ipo.getParent(), price);
 
         // Transfer the President's certificate
         currentPlayer.getPortfolioModel().addPublicCertificate(cert);
@@ -806,7 +806,7 @@ public class StockRound extends Round {
         // All seems OK, now buy the shares.
         // TODO: changeStack.start(true);
 
-        CashOwner priceRecipient = getSharePriceRecipient (company, from, cost);
+        CashOwner priceRecipient = getSharePriceRecipient(company, from.getParent(), cost);
 
         if (number == 1) {
             ReportBuffer.add(LocalText.getText("BUY_SHARE_LOG",
@@ -880,11 +880,11 @@ public class StockRound extends Round {
      * @return
      */
     protected CashOwner getSharePriceRecipient (PublicCompany comp,
-            PortfolioHolder from, int price) {
+            Owner from, int price) {
 
         CashOwner recipient;
         if (comp.hasFloated()
-                && from == ipo
+                && from == ipo.getParent()
                 && comp.getCapitalisation() == PublicCompany.CAPITALISE_INCREMENTAL) {
             recipient = comp;
         } else {

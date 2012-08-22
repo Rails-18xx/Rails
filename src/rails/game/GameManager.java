@@ -1,7 +1,6 @@
 package rails.game;
 
 import java.io.*;
-import java.lang.reflect.Constructor;
 import java.util.*;
 
 import org.slf4j.Logger;
@@ -760,7 +759,7 @@ public class GameManager extends Manager implements Configurable, Owner {
     }
 
     public String getNumOfORs () {
-        return numOfORs.observerText();
+        return numOfORs.toText();
     }
 
     /* (non-Javadoc)

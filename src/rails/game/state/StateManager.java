@@ -134,14 +134,14 @@ public final class StateManager extends Manager implements DelayedItem {
         // all direct observers
         for (State s:states){
             for (Observer o:s.getObservers()) {
-                o.update(s.observerText());
+                o.update(s.toText());
             }
         }
         
         // all indirect observers
         for (Model m:getModelsToUpdate(states)) {
             for (Observer o:m.getObservers()) {
-                o.update(m.observerText());
+                o.update(m.toText());
             }
         }
     }

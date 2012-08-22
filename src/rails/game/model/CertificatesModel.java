@@ -10,7 +10,6 @@ import rails.game.PublicCompany;
 import rails.game.state.HashMapState;
 import rails.game.state.Model;
 import rails.game.state.Owner;
-import rails.game.state.PortfolioHolder;
 import rails.game.state.PortfolioMap;
 
 /**
@@ -28,22 +27,18 @@ public class CertificatesModel extends Model {
     
     private final HashMapState<PublicCompany, ShareModel> shareModels = HashMapState.create(this, "shareModels");
 
-    private CertificatesModel(PortfolioHolder parent) {
+    private CertificatesModel(Owner parent) {
         super(parent, ID);
         certificates = PortfolioMap.create(parent, "certificates", PublicCertificate.class);
     }
     
-    public static CertificatesModel create(PortfolioHolder parent) {
+    public static CertificatesModel create(Owner parent) {
         return new CertificatesModel(parent);
     }
     
     @Override
-    public PortfolioHolder getParent() {
-        return (PortfolioHolder)super.getParent();
-    }
-    
-    public Owner getOwner() {
-        return getParent().getParent();
+    public Owner getParent() {
+        return (Owner)super.getParent();
     }
     
     public PortfolioMap<PublicCompany, PublicCertificate> getPortfolio() {
@@ -79,8 +74,8 @@ public class CertificatesModel extends Model {
         StringBuffer b = new StringBuffer();
         b.append(share).append("%");
         
-        if (getOwner() instanceof Player
-            && company.getPresident() == getOwner()) {
+        if (getParent() instanceof Player
+            && company.getPresident() == getParent()) {
             b.append("P");
             if (!company.hasFloated()) b.append("U");
             b.append(company.getExtraShareMarks());
@@ -89,7 +84,7 @@ public class CertificatesModel extends Model {
     }
     
     @Override
-    public String observerText() {
+    public String toText() {
         return certificates.toString();
     }
     

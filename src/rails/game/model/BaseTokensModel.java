@@ -75,7 +75,7 @@ public class BaseTokensModel extends Model {
     }
     
     @Override 
-    public String observerText() {
+    public String toText() {
         int allTokens = nbAllTokens();
         int freeTokens = nbFreeTokens();
         if (allTokens == 0) {

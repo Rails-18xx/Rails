@@ -10,61 +10,67 @@ import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.state.AbstractItem;
 import rails.game.state.BooleanState;
+import rails.game.state.Configurable;
 import rails.game.state.Configure;
 import rails.game.state.IntegerState;
 import rails.game.state.Item;
-import rails.util.*;
+import rails.util.Util;
 
-// TODO: Name to id conversion
-public class TrainCertificateType extends AbstractItem {
+/**
+ * TrainCertificateType indicates the type of a TrainCertficate
+ * TrainCertficates can be multi-sided (thus provide several TrainType options)
+ */
+public class TrainCertificateType extends AbstractItem implements Configurable, Comparable<TrainCertificateType> {
     
     private final static String DEFAULT_TRAIN_CLASS = "rails.game.Train";
+
+    // Static definitions
+    private int index; // for sorting
     
-    protected String name;
-    protected int quantity = 0;
-    protected boolean infiniteQuantity = false;
+    private int quantity = 0;
+    private boolean infiniteQuantity = false;
 
-    protected List<TrainType> potentialTrainTypes = new ArrayList<TrainType>(2);
+    private List<TrainType> potentialTrainTypes = new ArrayList<TrainType>(2);
     
-    protected Map<Integer, String> newPhaseNames;
+    private Map<Integer, String> newPhaseNames;
     
-    protected boolean permanent = true;
-    protected boolean obsoleting = false;
+    private boolean permanent = true;
+    private boolean obsoleting = false;
 
-    protected boolean canBeExchanged = false;
-    protected int cost;
-    protected int exchangeCost;
+    private boolean canBeExchanged = false;
+    private int cost;
+    private int exchangeCost;
     
-    protected Class<? extends Train> trainClass;
+    private Class<? extends Train> trainClass;
 
-    // State variables
-    protected final IntegerState numberBoughtFromIPO = IntegerState.create(this, "numberBoughtFromIPO");
-    protected final BooleanState available = BooleanState.create(this, "available");
-    protected final BooleanState rusted = BooleanState.create(this, "rusted");
+    /** In some cases, trains start their life in the Pool, default is IPO */
+    private String initialPortfolio = "IPO";
 
-    // References
-    protected TrainManager trainManager;
-
-    /** In some cases, trains start their life in the Pool */
-    protected String initialPortfolio = "IPO";
+    // Dynamic state variables
+    private final IntegerState numberBoughtFromIPO = IntegerState.create(this, "numberBoughtFromIPO");
+    private final BooleanState available = BooleanState.create(this, "available");
+    private final BooleanState rusted = BooleanState.create(this, "rusted");
 
     protected static Logger log =
         LoggerFactory.getLogger(TrainCertificateType.class.getPackage().getName());
     
-    private TrainCertificateType (Item parent, String id) {
+    private TrainCertificateType (Item parent, String id, int index) {
         super(parent, id);
+        this.index = index;
     }
     
-    public static TrainCertificateType create(Item parent, String id) {
-        return new TrainCertificateType(parent, id);
+    public static TrainCertificateType create(TrainManager parent, String id, int index) {
+        return new TrainCertificateType(parent, id, index);
     }
-
+    
+    @Override
+    public TrainManager getParent() {
+        return (TrainManager)super.getParent();
+    }
+    
     public void configureFromXML(Tag tag) throws ConfigurationException {
         String trainClassName = tag.getAttributeAsString("class", DEFAULT_TRAIN_CLASS);
         trainClass = Configure.getClassForName(Train.class, trainClassName);
-
-        // Name
-        name = tag.getAttributeAsString("name");
 
         // Quantity
         quantity = tag.getAttributeAsInteger("quantity", quantity);
@@ -84,7 +90,7 @@ public class TrainCertificateType extends AbstractItem {
             for (Tag newPhaseTag : newPhaseTags) {
                 phaseName = newPhaseTag.getAttributeAsString("phaseName");
                 if (!Util.hasValue(phaseName)) {
-                    throw new ConfigurationException ("TrainType "+name+" has NewPhase without phase name");
+                    throw new ConfigurationException ("TrainType "+ getId() +" has NewPhase without phase name");
                 }
                 index = newPhaseTag.getAttributeAsInteger("trainIndex", 1);
                 newPhaseNames.put(index, phaseName);
@@ -102,22 +108,14 @@ public class TrainCertificateType extends AbstractItem {
         obsoleting = tag.getAttributeAsBoolean("obsoleting");
 
     }
-    
-    
 
     public void finishConfiguration (GameManager gameManager) 
-    throws ConfigurationException {
+            throws ConfigurationException {
 
-        trainManager = gameManager.getTrainManager();
-        
-        if (name == null) {
-            throw new ConfigurationException("No name specified for TrainType");
-        }
-        
         if (quantity == -1) {
             infiniteQuantity = true;
         } else if (quantity <= 0) {
-            throw new ConfigurationException("Invalid quantity "+quantity+" for train cert type "+name);
+            throw new ConfigurationException("Invalid quantity "+quantity+" for train cert type "+ this);
         }
     }
 
@@ -157,13 +155,6 @@ public class TrainCertificateType extends AbstractItem {
 
     public boolean hasRusted() {
         return rusted.value();
-    }
-
-    /**
-     * @return Returns the name.
-     */
-    public String getName() {
-        return name;
     }
 
     public boolean isPermanent() {
@@ -212,20 +203,19 @@ public class TrainCertificateType extends AbstractItem {
 
     public String getInfo() {
         StringBuilder b = new StringBuilder ("<html>");
-        b.append(LocalText.getText("TrainInfo", name, Bank.format(cost), quantity));
+        b.append(LocalText.getText("TrainInfo", getId(), Bank.format(cost), quantity));
         if (b.length() == 6) b.append(LocalText.getText("None"));
 
         return b.toString();
     }
 
-    // TODO: Is this still required, was never used!
-//    private void appendInfoText (StringBuilder b, String text) {
-//        if (text == null || text.length() == 0) return;
-//        if (b.length() > 6) b.append("<br>");
-//        b.append(text);
-//    }
-
-    public String toString() {
-        return name;
+    public int getIndex() {
+        return index;
     }
+
+    // Comparable interface
+    public int compareTo(TrainCertificateType o) {
+        return ((Integer)index).compareTo(o.getIndex());
+    }
+    
 }

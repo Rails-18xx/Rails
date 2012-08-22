@@ -25,7 +25,7 @@ public final class NameableTrain extends Train {
     }
 
     @Override
-    public String toDisplay() {
+    public String toText() {
         NamedTrainToken token = getNameToken();
         if (token == null) {
             return getId();

@@ -179,7 +179,7 @@ public final class HashMapState<K,V> extends State {
 //    }
     
     @Override
-    public String observerText() {
+    public String toText() {
         return map.toString();
     }
     
