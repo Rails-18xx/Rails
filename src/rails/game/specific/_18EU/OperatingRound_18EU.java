@@ -216,7 +216,7 @@ public class OperatingRound_18EU extends OperatingRound {
         // If so, record the current player as the first
         // one to act in the Final Minor Exchange Round.
         if (result && gameManager.getPhaseManager().hasReachedPhase("5")
-            && operatingCompanies.get(0).getTypeName().equalsIgnoreCase("Minor")
+            && operatingCompanies.get(0).getType().getId().equalsIgnoreCase("Minor")
             && ((GameManager_18EU)gameManager).getPlayerToStartFMERound() == null) {
             ((GameManager_18EU)gameManager).setPlayerToStartFMERound(operatingCompany.value().getPresident());
         }

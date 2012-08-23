@@ -1,25 +1,15 @@
 package rails.game;
 
-import java.util.List;
+import java.util.Comparator;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.ImmutableSet;
 
-import rails.common.parser.ConfigurationException;
-import rails.common.parser.Tag;
 import rails.game.special.SpecialProperty;
-import rails.game.state.BooleanState;
-import rails.game.state.AbstractItem;
 import rails.game.state.Configurable;
-import rails.game.state.Configure;
-import rails.game.state.Item;
 import rails.game.state.Owner;
-import rails.util.Util;
 
-public abstract class Company extends AbstractItem implements Owner, Configurable,
-Cloneable, Comparable<Company> {
+public interface Company extends Owner, Configurable, Cloneable {
 
     /** The name of the XML tag used to configure a company. */
     public static final String COMPANY_ELEMENT_ID = "Company";
@@ -29,188 +19,88 @@ Cloneable, Comparable<Company> {
 
     /** The name of the XML attribute for the company's type. */
     public static final String COMPANY_TYPE_TAG = "type";
-    
-    protected String longName;
-    protected String alias = null; // To allow reloading files with old names after name changes
-    protected CompanyType type;
-    protected int companyNumber; // For internal use
-
-    protected String infoText = "";
-    protected String parentInfoText = "";
 
     /**
-     * The value per certificate at the end of the rails.game. Default 0 (for
-     * privates).
+     * A Comparator for Companies
      */
-    protected int value = 0;
-    /**
-     * Twice the amount each certificate counts against the limit (this way we
-     * take care for certs that count for 0.5)
-     */
-    protected int certLimitCount = 2;
-
-    /** Closed state */
-    protected final BooleanState closedObject = BooleanState.create(this, "closed", false);
-
-    protected static Logger log =
-        LoggerFactory.getLogger(Company.class.getPackage().getName());
-
-    protected Company(Item parent, String id) {
-        super(parent, id);
-    }
-    
-    public void initType(CompanyType type) {
-        this.type = type;
-    }
-
-    /** Only to be called from subclasses */
-    public void configureFromXML(Tag tag) throws ConfigurationException {
-
-        // Special properties
-        Tag spsTag = tag.getChild("SpecialProperties");
-        if (spsTag != null) {
-
-            List<Tag> spTags = spsTag.getChildren("SpecialProperty");
-            String className;
-            for (Tag spTag : spTags) {
-                className = spTag.getAttributeAsString("class");
-                if (!Util.hasValue(className))
-                    throw new ConfigurationException(
-                    "Missing class in private special property");
-                String uniqueId = SpecialProperty.createUniqueId();
-                SpecialProperty sp = Configure.create(SpecialProperty.class, className, this, uniqueId);
-                sp.setOriginalCompany(this);
-                sp.configureFromXML(spTag);
-                sp.moveTo(this);
-                parentInfoText += "<br>" + sp.getInfo();
-            }
+    public static final Comparator<Company> COMPANY_COMPARATOR = new Comparator<Company>() {
+        public int compare(Company c0, Company c1) {
+            return ComparisonChain.start()
+                    .compare(c0.getType().getId(), c1.getType().getId())
+                    .compare(c0.getId(), c1.getId())
+                    .result();
         }
-    }
+    };
 
-    /**
-     * 
-     * @return This company's number
-     */
-    public int getNumber() {
-        return companyNumber;
-    }
+//    protected String longName;
+//    protected String alias = null; // To allow reloading files with old names after name changes
+//    protected CompanyType type;
+//    protected int companyNumber; // For internal use
+//
+//    protected String infoText = "";
+//    protected String parentInfoText = "";
+//
+//    /**
+//     * The value per certificate at the end of the rails.game. Default 0 (for
+//     * privates).
+//     */
+//    protected int value = 0;
+//    /**
+//     * Twice the amount each certificate counts against the limit (this way we
+//     * take care for certs that count for 0.5)
+//     */
+//    protected int certLimitCount = 2;
+//
+//    /** Closed state */
+//    protected final BooleanState closedObject = BooleanState.create(this, "closed", false);
+//
+    /** Only to be called from subclasses */
+//    public void configureFromXML(Tag tag) throws ConfigurationException {
+//
+//        // Special properties
+//        Tag spsTag = tag.getChild("SpecialProperties");
+//        if (spsTag != null) {
+//
+//            List<Tag> spTags = spsTag.getChildren("SpecialProperty");
+//            String className;
+//            for (Tag spTag : spTags) {
+//                className = spTag.getAttributeAsString("class");
+//                if (!Util.hasValue(className))
+//                    throw new ConfigurationException(
+//                    "Missing class in private special property");
+//                String uniqueId = SpecialProperty.createUniqueId();
+//                SpecialProperty sp = Configure.create(SpecialProperty.class, className, this, uniqueId);
+//                sp.setOriginalCompany(this);
+//                sp.configureFromXML(spTag);
+//                sp.moveTo(this);
+//                parentInfoText += "<br>" + sp.getInfo();
+//            }
+//        }
+//    }
 
-    /**
-     * @return whether this company is closed
-     */
-    public boolean isClosed() {
-        return closedObject.value();
-    }
-
-    /**
-     * Close this company.
-     */
-    public void setClosed() {
-        closedObject.set(true);
-    }
+    public void initType(CompanyType type);
 
     /**
      * @return Type of company (Public/Private)
      */
-    public CompanyType getType() {
-        return type;
-    }
+    public CompanyType getType();
 
     /**
-     * @return String for type of company (Public/Private)
+     * @return whether this company is closed
      */
-    public String getTypeName() {
-        return type.getId();
-    }
-
-    public String getLongName() {
-        return longName;
-    }
-
-    public String getAlias() {
-        return alias;
-    }
-
-    public String getInfoText(){
-        return infoText;
-    }
+    public boolean isClosed();
 
     /**
-     * @return
+     * Close this company.
      */
-    public int getCertLimitCount() {
-        return certLimitCount;
-    }
+    public void setClosed();
 
-    /**
-     * @return This company's number
-     */
-    public int getCompanyNumber() {
-        return companyNumber;
-    }
+    public String getLongName();
 
-    /**
-     * @return Value of this company
-     */
-    public int getValue() {
-        return value;
-    }
+    public String getAlias();
 
-    /**
-     * @param i
-     */
-    public void setCertLimitCount(int i) {
-        certLimitCount = i;
-    }
+    public String getInfoText();
 
-    /**
-     * @param i
-     */
-    public void setValue(int i) {
-        value = i;
-    }
-
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        return super.clone();
-    }
-
-    @Override
-    public String toString() {
-        return getTypeName() + ": " + getCompanyNumber() + ". " + getId()
-        + " $" + this.getValue();
-    }
-
-    public boolean equals(Company company) {
-        if (this.companyNumber == company.getCompanyNumber()
-                && this.getId().equals(company.getId())
-                && this.type.equals(company.getType())) return true;
-
-        return false;
-    }
-
-    public int compareTo(Company otherCompany){
-        int result;
-        // compare typeNames first
-        result = this.getTypeName().compareTo(otherCompany.getTypeName());
-        // if same typeName then name
-        if (result == 0)
-            result = this.getId().compareTo(otherCompany.getId());
-
-        return result;
-    }
-
-    public static String joinNamesWithDelimiter (List<Company> companies, String delimiter) {
-        StringBuilder b = new StringBuilder("");
-        if (companies != null) {
-            for (Company company : companies) {
-                if (b.length() > 0) b.append(delimiter);
-                b.append(company.getId());
-            }
-        }
-        return b.toString();
-    }
-    
     // Since 1835 required for both private and public companies
     /**
      * @return Set of all special properties we have.

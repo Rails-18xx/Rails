@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/Util.java,v 1.22 2010/05/16 20:57:40 evos Exp $*/
 package rails.util;
 
 import java.awt.Color;
@@ -8,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import rails.common.parser.ConfigurationException;
+import rails.game.state.Item;
 
 public final class Util {
 
@@ -39,6 +39,18 @@ public final class Util {
         }
         return b.toString();
     }
+    
+    public static String joinNamesWithDelimiter (Iterable<? extends Item> items, String delimiter) {
+        StringBuilder b = new StringBuilder("");
+        if (items != null) {
+            for (Item company : items) {
+                if (b.length() > 0) b.append(delimiter);
+                b.append(company.getId());
+            }
+        }
+        return b.toString();
+    }
+
 
     public static String joinWithDelimiter (int[] sa, String delimiter) {
         StringBuilder b = new StringBuilder();

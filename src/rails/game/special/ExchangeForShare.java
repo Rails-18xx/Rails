@@ -60,16 +60,11 @@ public final class ExchangeForShare extends SpecialProperty {
         return share;
     }
 
-    public String getId() {
-        return toString();
+    @Override
+    public String toText() {
+        return "Swap " + originalCompany.getId() + " for " + share
+               + "% share of " + publicCompanyName;
     }
-
-    // FIXME: The toString() methods are removed, change calls to those
-//    @Override
-//    public String toString() {
-//        return "Swap " + originalCompany.getId() + " for " + share
-//               + "% share of " + publicCompanyName;
-//    }
 
     @Override
     public String toMenu() {

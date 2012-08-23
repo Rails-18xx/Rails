@@ -95,10 +95,8 @@ public class NameTrains extends SpecialProperty {
      * exercised.
      */
     @Override
-    public void setExercised() {}
-
-    public String getId() {
-        return name;
+    public void setExercised() {
+        // do nothing
     }
 
     @Override
@@ -106,11 +104,10 @@ public class NameTrains extends SpecialProperty {
         return description;
     }
 
-    // FIXME: The toString() methods are removed, change calls to those
-//    @Override
-//    public String toString() {
-//        return description;
-//    }
+    @Override
+    public String toText() {
+        return description;
+    }
     
     @Override
     public String getInfo() {

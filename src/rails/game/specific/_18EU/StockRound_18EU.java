@@ -82,7 +82,7 @@ public class StockRound_18EU extends StockRound {
         if (mustMergeMinor) {
             minors = new ArrayList<PublicCompany>();
             for (PublicCertificate c : getCurrentPlayer().getPortfolioModel().getCertificates()) {
-                if (c.getCompany().getTypeName().equalsIgnoreCase("Minor")) {
+                if (c.getCompany().getType().getId().equalsIgnoreCase("Minor")) {
                     minors.add(c.getCompany());
                 }
             }
@@ -233,7 +233,7 @@ public class StockRound_18EU extends StockRound {
         String type;
 
         for (PublicCompany comp : comps) {
-            type = comp.getTypeName();
+            type = comp.getType().getId();
             if (type.equals("Major") && comp.hasStarted()
                 && !comp.hasOperated()) {
                 targetCompanies.add(comp);

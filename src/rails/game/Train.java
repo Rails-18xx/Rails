@@ -1,8 +1,5 @@
 package rails.game;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.collect.ComparisonChain;
 
 import rails.common.parser.ConfigurationException;
@@ -23,9 +20,6 @@ public class Train extends OwnableItem<Train> implements Creatable {
     protected boolean tradeable = true;
 
     protected final BooleanState obsolete = BooleanState.create(this, "obsolete");
-    
-    protected static Logger log =
-            LoggerFactory.getLogger(Train.class.getPackage().getName());
 
     /**
      * Used by Configure (via reflection) only

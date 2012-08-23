@@ -36,7 +36,7 @@ public class StockRound_1835 extends StockRound {
 
         // Nationalization
         for (PublicCompany company : companyManager.getAllPublicCompanies()) {
-            if (!company.getTypeName().equalsIgnoreCase("Major")) continue;
+            if (!company.getType().getId().equalsIgnoreCase("Major")) continue;
             if (!company.hasFloated()) continue;
             if (company.getPresident() != currentPlayer) continue;
             if (currentPlayer.getPortfolioModel().getShare(company) >= 55) {

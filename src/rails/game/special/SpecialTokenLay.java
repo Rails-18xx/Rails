@@ -133,17 +133,13 @@ public class SpecialTokenLay extends SpecialProperty {
         return token;
     }
 
-    public String getId() {
-        return toString();
+    @Override
+    public String toText() {
+        return "SpecialTokenLay comp=" + originalCompany.getId() + " type="
+               + tokenClass.getSimpleName() + ": "
+               + (token != null ? token.toString() : "") + " hex="
+               + locationCodes + " extra=" + extra + " cost=" + free;
     }
-
-//    @Override
-//    public String toString() {
-//        return "SpecialTokenLay comp=" + originalCompany.getId() + " type="
-//               + tokenClass.getSimpleName() + ": "
-//               + (token != null ? token.toString() : "") + " hex="
-//               + locationCodes + " extra=" + extra + " cost=" + free;
-//    }
 
     @Override
     public String toMenu() {

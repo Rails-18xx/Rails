@@ -3,6 +3,9 @@ package rails.game;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.collect.ImmutableSet;
 
 import rails.common.LocalText;
@@ -10,15 +13,17 @@ import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.special.SellBonusToken;
 import rails.game.special.SpecialProperty;
+import rails.game.state.BooleanState;
 import rails.game.state.Item;
-import rails.game.state.Ownable;
-import rails.game.state.Owner;
+import rails.game.state.OwnableItem;
 import rails.game.state.PortfolioSet;
 import rails.util.*;
 
 // FIXME: Move static field numberOfPrivateCompanies to CompanyManager
 
-public class PrivateCompany extends Company implements Ownable, Certificate, Closeable {
+public class PrivateCompany extends OwnableItem<PrivateCompany> implements Company, Certificate, Closeable {
+
+    private static Logger log = LoggerFactory.getLogger(PrivateCompany.class);
 
     public static final String TYPE_TAG = "Private";
     public static final String REVENUE = "revenue";
@@ -70,27 +75,28 @@ public class PrivateCompany extends Company implements Ownable, Certificate, Clo
     protected boolean tradeableToCompany = true;
     protected boolean tradeableToPlayer = false;
     
-    // FIXME: Used to be here, but was moved to Company for 1835,
-    // however this does not work as SpecialProperty Portfolio already belongs to PortfolioModel
-    protected final PortfolioSet<SpecialProperty> specialProperties = 
+    private final PortfolioSet<SpecialProperty> specialProperties = 
             PortfolioSet.create(this, "specialProperties", SpecialProperty.class);
 
+    // used for Company interface
+    private String longName;
+    private String alias;
+    private CompanyType type;
+    private String infoText;
+    private String parentInfoText;
+    private final BooleanState closed = BooleanState.create(this, "closed", false);
     
-    // required to implement Ownable Interface
-    private Owner owner;
-
     /**
      * Used by Configure (via reflection) only
      */
     public PrivateCompany(Item parent, String id) {
-        super(parent, id);
+        super(parent, id, PrivateCompany.class);
         this.privateNumber = numberOfPrivateCompanies++;
     }
 
     /**
      * @see rails.game.state.Configurable#configureFromXML(org.w3c.dom.Element)
      */
-    @Override
     public void configureFromXML(Tag tag) throws ConfigurationException {
         /* Configure private company features */
         try {
@@ -126,8 +132,8 @@ public class PrivateCompany extends Company implements Ownable, Certificate, Clo
             }
 
 
-            // For special properties (now included in Company).
-            super.configureFromXML(tag);
+            // SpecialProperties
+            parentInfoText += SpecialProperty.configure(this, tag);
 
             // Closing conditions
             // Currently only used to handle closure following laying
@@ -314,16 +320,17 @@ public class PrivateCompany extends Company implements Ownable, Certificate, Clo
         return closingPhase;
     }
 
-    @Override
     public void setClosed() {
 
         if (isClosed()) return;
         //        if (!isCloseable()) return;  /* moved hat to call in closeAllPrivates, to allow other closing actions */
+        
+        closed.set(true);
 
-        super.setClosed();
         unblockHexes();
-        // FIXME: This is too long sequence of calls that must be possible to be done easier
-        GameManager.getInstance().getBank().getScrapHeap().getPortfolioModel().getPrivatesOwnedModel().getPortfolio().moveInto(this);
+
+        moveTo(GameManager.getInstance().getBank().getScrapHeap());
+        
         ReportBuffer.add(LocalText.getText("PrivateCloses", getId()));
 
         // For 1856: buyable tokens still owned by the private will now
@@ -352,7 +359,7 @@ public class PrivateCompany extends Company implements Ownable, Certificate, Clo
             return false;
         }
         if (preventClosingConditions.contains("ifOwnedByPlayer")
-                && owner instanceof Player) {
+                && getOwner() instanceof Player) {
             log.debug("Private Company "+getId()+" does not close, as it is owned by a player.");
             return false;
         }
@@ -508,13 +515,6 @@ public class PrivateCompany extends Company implements Ownable, Certificate, Clo
     }
 
     /**
-     * @return Set of all special properties we have.
-     */
-    public ImmutableSet<SpecialProperty> getSpecialProperties() {
-        return specialProperties.items();
-    }
-
-    /**
      * Do we have any special properties?
      *
      * @return Boolean
@@ -522,16 +522,34 @@ public class PrivateCompany extends Company implements Ownable, Certificate, Clo
     public boolean hasSpecialProperties() {
         return specialProperties != null && !specialProperties.isEmpty();
     }
+
+    // Company methods
+    public void initType(CompanyType type) {
+        this.type = type;
+    }
+
+    public CompanyType getType() {
+        return type;
+    }
+
+    public boolean isClosed() {
+        return closed.value();
+    }
+
+    public String getLongName() {
+        return longName;
+    }
+
+    public String getAlias() {
+        return alias;
+    }
+
+    public String getInfoText() {
+        return infoText;
+    }
+
+    public ImmutableSet<SpecialProperty> getSpecialProperties() {
+        return specialProperties.items();
+    }
     
-    // Ownable interface
-    // FIXME: This should be replaced by making PrivateCompany extending the OwnableItem abstract class
-    // and implementing the Company interface instead
-    public boolean moveTo(Owner newOwner) {
-        return true;
-    }
-
-    public Owner getOwner() {
-        return owner;
-    }
-
 }

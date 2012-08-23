@@ -90,10 +90,6 @@ public class SellBonusToken extends SpecialProperty {
         return locationCodes;
     }
 
-    public String getId() {
-        return name;
-    }
-
     public int getPrice() {
         return price;
     }
@@ -110,11 +106,11 @@ public class SellBonusToken extends SpecialProperty {
         this.seller.set(seller);
     }
 
-//    @Override
-//    public String toString() {
-//        return "SellBonusToken comp=" + originalCompany.getId() + " hex="
-//               + locationCodes + " value=" + value + " price=" + price
-//               + " max="+maxNumberToSell+" sold="+numberSold.value();
-//    }
+    @Override
+    public String toText() {
+        return "SellBonusToken comp=" + originalCompany.getId() + " hex="
+               + locationCodes + " value=" + value + " price=" + price
+               + " max="+maxNumberToSell+" sold="+numberSold.value();
+    }
 
 }

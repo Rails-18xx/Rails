@@ -1,7 +1,10 @@
 package rails.game.special;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
@@ -9,8 +12,8 @@ import rails.common.parser.Tag;
 import rails.game.*;
 import rails.game.state.BooleanState;
 import rails.game.state.Configurable;
+import rails.game.state.Configure;
 import rails.game.state.Item;
-import rails.game.state.Ownable;
 import rails.game.state.OwnableItem;
 import rails.util.*;
 
@@ -300,5 +303,39 @@ public abstract class SpecialProperty extends OwnableItem<SpecialProperty> imple
         return LocalText.getText ("YouCan", Util.lowerCaseFirst(toMenu()));
 
     }
+    
+ 
+    /**
+     * @param company the company that owns the SpecialProperties
+     * @param tag with XML to create SpecialProperties
+     * @return additional InfoText
+     * @throws ConfigurationException
+     */
+    public static String configure(Company company, Tag tag) throws ConfigurationException {
+
+      StringBuilder text = new StringBuilder();
+        
+      // Special properties
+      Tag spsTag = tag.getChild("SpecialProperties");
+      if (spsTag != null) {
+
+          List<Tag> spTags = spsTag.getChildren("SpecialProperty");
+          String className;
+          for (Tag spTag : spTags) {
+              className = spTag.getAttributeAsString("class");
+              if (!Util.hasValue(className))
+                  throw new ConfigurationException(
+                  "Missing class in private special property");
+              String uniqueId = SpecialProperty.createUniqueId();
+              SpecialProperty sp = Configure.create(SpecialProperty.class, className, company, uniqueId);
+              sp.setOriginalCompany(company);
+              sp.configureFromXML(spTag);
+              sp.moveTo(company);
+              text.append("<br>" + sp.getInfo());
+          }
+      }
+      return text.toString();
+  }
+
     
 }

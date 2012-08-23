@@ -65,7 +65,7 @@ public final class FinalMinorExchangeRound extends StockRound_18EU {
         String type;
 
         for (PublicCompany comp : comps) {
-            type = comp.getTypeName();
+            type = comp.getType().getId();
             if (type.equals("Major") && comp.hasStarted() && !comp.isClosed()) {
                 targetCompanies.add(comp);
             } else if (type.equals("Minor")) {
@@ -79,7 +79,7 @@ public final class FinalMinorExchangeRound extends StockRound_18EU {
         while (minors.isEmpty()) {
             setNextPlayer();
             for (PublicCompany comp : comps) {
-                type = comp.getTypeName();
+                type = comp.getType().getId();
                 if (type.equals("Minor")) {
                     if (comp.isClosed()) continue;
                     if (comp.getPresident() == currentPlayer) {
@@ -105,7 +105,7 @@ public final class FinalMinorExchangeRound extends StockRound_18EU {
         // TODO: changeStack.start(false);
 
         for (PublicCompany comp : companyManager.getAllPublicCompanies()) {
-            if (comp.getTypeName().equals("Minor")) {
+            if (comp.getType().getId().equals("Minor")) {
                 if (!comp.isClosed()) {
                     finishTurn();
                     return true;

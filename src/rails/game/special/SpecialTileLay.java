@@ -12,14 +12,14 @@ import rails.util.*;
 
 public class SpecialTileLay extends SpecialProperty {
 
-    String locationCodes = null;
-    List<MapHex> locations = null;
-    int tileNumber;
-    Tile tile = null;
-    String name;
-    boolean extra = false;
-    boolean free = false;
-    boolean connected = false;
+    private String locationCodes = null;
+    private List<MapHex> locations = null;
+    private int tileNumber;
+    private Tile tile = null;
+    private String name;
+    private boolean extra = false;
+    private boolean free = false;
+    private boolean connected = false;
     
     /**
      * Used by Configure (via reflection) only
@@ -142,15 +142,11 @@ public class SpecialTileLay extends SpecialProperty {
         return tileColours;
     }
 
-    public String getId() {
-        return name;
+    @Override
+	public String toText() {
+        return "SpecialTileLay comp=" + originalCompany.getId() + " hex="
+               + locationCodes + " extra=" + extra + " cost=" + free + " connected=" + connected;
     }
-
-//    @Override
-//	public String toString() {
-//        return "SpecialTileLay comp=" + originalCompany.getId() + " hex="
-//               + locationCodes + " extra=" + extra + " cost=" + free + " connected=" + connected;
-//    }
 
     @Override
 	public String toMenu() {

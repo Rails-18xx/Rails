@@ -67,7 +67,7 @@ public class GameManager_1835 extends GameManager {
     public int getPlayerCertificateLimit(Player player) {
         int limit = playerCertificateLimit.value();
         for (PublicCompany company : companyManager.getAllPublicCompanies()) {
-            if (company.getTypeName().equalsIgnoreCase("Major")
+            if (company.getType().getId().equalsIgnoreCase("Major")
                     && company.getPresident() == player
                     && player.getPortfolioModel().getShare(company) >= 80) limit++;
         }

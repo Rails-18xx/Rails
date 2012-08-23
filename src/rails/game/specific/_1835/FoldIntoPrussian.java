@@ -24,7 +24,7 @@ public class FoldIntoPrussian extends PossibleAction {
 
     public FoldIntoPrussian(List<Company> companies) {
         this.foldableCompanies = companies;
-        foldableCompanyNames = Company.joinNamesWithDelimiter (foldableCompanies, ",");
+        foldableCompanyNames = Util.joinNamesWithDelimiter(foldableCompanies, ",");
     }
 
     public FoldIntoPrussian(Company company) {
@@ -38,7 +38,7 @@ public class FoldIntoPrussian extends PossibleAction {
 
     public void setFoldedCompanies(List<Company> foldedCompanies) {
         this.foldedCompanies = foldedCompanies;
-        foldedCompanyNames = Company.joinNamesWithDelimiter (foldedCompanies, ",");
+        foldedCompanyNames = Util.joinNamesWithDelimiter (foldedCompanies, ",");
     }
 
 

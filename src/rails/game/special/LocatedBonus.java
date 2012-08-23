@@ -17,10 +17,10 @@ import rails.util.Util;
  */
 public final class LocatedBonus extends SpecialProperty {
 
-    String locationCodes = null;
-    List<MapHex> locations = null;
-    String name;
-    int value;
+    private String locationCodes = null;
+    private List<MapHex> locations = null;
+    private String name;
+    private int value;
 
     /**
      * Used by Configure (via reflection) only
@@ -68,19 +68,13 @@ public final class LocatedBonus extends SpecialProperty {
         return locationCodes;
     }
 
-    public String getId() {
-        return name;
-    }
-
     public int getValue() {
         return value;
     }
 
-
-    // FIXME: The toString() methods are removed, change calls to those
-//    @Override
-//    public String toString() {
-//        return "LocatedBonus "+name+" comp=" + originalCompany.getId() + " hex="
-//               + locationCodes + " value=" + value;
-//    }
+    @Override
+    public String toText() {
+        return "LocatedBonus " +name + " comp=" + originalCompany.getId() + " hex="
+               + locationCodes + " value=" + value;
+    }
 }

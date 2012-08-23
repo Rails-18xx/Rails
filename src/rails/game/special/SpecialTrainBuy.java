@@ -113,11 +113,10 @@ public class SpecialTrainBuy extends SpecialProperty {
         return trainTypeName;
     }
 
-    // FIXME: The toString() methods are removed, change calls to those
-//    public String toString() {
-//        return "SpecialTrainBuy comp=" + originalCompany.getId() + " extra="
-//               + extra + " deduction=" + deductionString;
-//    }
+    public String toText() {
+        return "SpecialTrainBuy comp=" + originalCompany.getId() + " extra="
+               + extra + " deduction=" + deductionString;
+    }
     
     @Override
     public String toMenu() {

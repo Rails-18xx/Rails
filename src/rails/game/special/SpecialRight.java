@@ -15,12 +15,12 @@ import rails.util.*;
 public class SpecialRight extends SpecialProperty implements RevenueStaticModifier {
 
     /** The public company of which a share can be obtained. */
-    protected String rightName;
-    protected String rightDefaultValue;
-    protected String rightValue;
-    protected int cost = 0;
-    protected String locationNames;
-    protected List<MapHex> locations;
+    private String rightName;
+    private String rightDefaultValue;
+    private String rightValue;
+    private int cost = 0;
+    private String locationNames;
+    private List<MapHex> locations;
 
     /**
      * Used by Configure (via reflection) only
@@ -78,12 +78,7 @@ public class SpecialRight extends SpecialProperty implements RevenueStaticModifi
         // see ExchangeForShare
         return ((PrivateCompany)originalCompany).getOwner() instanceof Player;
     }
-
  
-    public String getId() {
-        return rightName;
-    }
-
     public String getDefaultValue() {
         return rightDefaultValue;
     }
@@ -108,15 +103,14 @@ public class SpecialRight extends SpecialProperty implements RevenueStaticModifi
         return locations;
     }
 
-    // FIXME: The toString() methods are removed, change calls to those
-//    @Override
-//    public String toString() {
-//        StringBuilder b = new StringBuilder();
-//        b.append(cost > 0 ? "Buy '" : "Get '").append(rightName).append("'");
-//        if (locationNames != null) b.append(" at ").append(locationNames);
-//        if (cost > 0) b.append(" for ").append(Bank.format(cost));
-//        return b.toString();
-//    }
+    @Override
+    public String toText() {
+        StringBuilder b = new StringBuilder();
+        b.append(cost > 0 ? "Buy '" : "Get '").append(rightName).append("'");
+        if (locationNames != null) b.append(" at ").append(locationNames);
+        if (cost > 0) b.append(" for ").append(Bank.format(cost));
+        return b.toString();
+    }
     
     @Override
     public String toMenu() {

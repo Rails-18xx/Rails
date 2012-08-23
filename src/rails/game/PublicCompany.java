@@ -3,6 +3,9 @@ package rails.game;
 import java.awt.Color;
 import java.util.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
@@ -29,7 +32,9 @@ import rails.util.*;
  * 
  * FIXME: Check if uninitialized states may cause trouble on undo
  */
-public class PublicCompany extends Company implements CashOwner, PortfolioOwner {
+public class PublicCompany extends AbstractItem implements Company, CashOwner, PortfolioOwner {
+    
+    private static Logger log = LoggerFactory.getLogger(PublicCompany.class);
 
     public static final int CAPITALISE_FULL = 0;
 
@@ -55,6 +60,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
 
     protected int homeBaseTokensLayTime = START_OF_FIRST_OR;
 
+    
     /**
      * Foreground (i.e. text) colour of the company tokens (if pictures are not
      * used)
@@ -295,6 +301,13 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
     protected HashMapState<String, String> rights = null;
     // created in finishConfiguration
 
+    // used for Company interface
+    private String longName;
+    private String alias;
+    private CompanyType type;
+    private String infoText;
+    private String parentInfoText;
+    private final BooleanState closed = BooleanState.create(this, "closed", false);
 
     /**
      * Used by Configure (via reflection) only
@@ -325,7 +338,6 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
      * To configure all public companies from the &lt;PublicCompany&gt; XML
      * element
      */
-    @Override
     public void configureFromXML(Tag tag) throws ConfigurationException {
 
         longName = tag.getAttributeAsString("longname", getId());
@@ -389,7 +401,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
         }
 
         // Special properties (as in the 1835 black minors)
-        super.configureFromXML(tag);
+        parentInfoText += SpecialProperty.configure(this, tag);
 
         poolPaysOut = poolPaysOut || tag.getChild("PoolPaysOut") != null;
 
@@ -896,7 +908,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
         if (hasStockPrice) buyable.set(true);
 
         // In case of a restart: undo closing
-        if (closedObject.value()) closedObject.set(false);
+        if (closed.value()) closed.set(false);
 
         if (startSpace != null) {
             setParSpace(startSpace);
@@ -1005,55 +1017,6 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
         hasOperated.set(true);
     }
 
-    @Override
-    public void setClosed() {
-        super.setClosed();
-
-        PortfolioOwner shareDestination;
-        // If applicable, prepare for a restart
-        if (canBeRestarted) {
-            if (certsAreInitiallyAvailable) {
-                shareDestination = bank.getIpo();
-            } else {
-                shareDestination = bank.getUnavailable();
-            }
-            reinitialise();
-        } else {
-            shareDestination = bank.getScrapHeap();
-            inGameState.set(false);
-        }
-
-        // Dispose of the certificates
-        for (PublicCertificate cert : certificates.view()) {
-            // TODO: Check if this is the correct condition, portfolioModel parent change Type?
-            if (cert.getOwner() != shareDestination.getParent()) {
-                // TODO: Could this be shortened?
-                shareDestination.getPortfolioModel().getCertificatesModel().getPortfolio().moveInto(cert);
-            }
-        }
-
-        // Any trains go to the pool (from the 1856 rules)
-        portfolio.getTrainsModel().getPortfolio().moveAll(bank.getPool());
-
-        // Any cash goes to the bank (from the 1856 rules)
-        int cash = treasury.value();
-        if (cash > 0) {
-            treasury.setSuppressZero(true);
-            MoneyModel.cashMoveToBank(this, cash);
-        }
-
-        lastRevenue.setSuppressZero(true);
-        setLastRevenue(0);
-
-        // move all laid tokens to free tokens again
-        for (BaseToken token:baseTokens.getLaidTokens()) {
-            baseTokens.addFreeToken(token);
-        }
-        // close company on the stock market
-        stockMarket.close(this);
-
-    }
-
     /** Reinitialize a company, i.e. close it and make the shares available for a new company start.
      * IMplemented rules are now as in 18EU.
      * TODO Will see later if this is generic enough.
@@ -1072,7 +1035,7 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
     }
 
     public BooleanState getIsClosedModel () {
-        return closedObject;
+        return closed;
     }
 
     /**
@@ -2015,7 +1978,79 @@ public class PublicCompany extends Company implements CashOwner, PortfolioOwner 
         return portfolio;
     }
     
-    @Override
+    // Company methods
+    public void initType(CompanyType type) {
+        this.type = type;
+    }
+
+    public CompanyType getType() {
+        return type;
+    }
+
+    public boolean isClosed() {
+        return closed.value();
+    }
+
+    public void setClosed() {
+        closed.set(true);
+        
+        PortfolioOwner shareDestination;
+        // If applicable, prepare for a restart
+        if (canBeRestarted) {
+            if (certsAreInitiallyAvailable) {
+                shareDestination = bank.getIpo();
+            } else {
+                shareDestination = bank.getUnavailable();
+            }
+            reinitialise();
+        } else {
+            shareDestination = bank.getScrapHeap();
+            inGameState.set(false);
+        }
+
+        // Dispose of the certificates
+        for (PublicCertificate cert : certificates.view()) {
+            // TODO: Check if this is the correct condition, portfolioModel parent change Type?
+            if (cert.getOwner() != shareDestination.getParent()) {
+                // TODO: Could this be shortened?
+                shareDestination.getPortfolioModel().getCertificatesModel().getPortfolio().moveInto(cert);
+            }
+        }
+
+        // Any trains go to the pool (from the 1856 rules)
+        portfolio.getTrainsModel().getPortfolio().moveAll(bank.getPool());
+
+        // Any cash goes to the bank (from the 1856 rules)
+        int cash = treasury.value();
+        if (cash > 0) {
+            treasury.setSuppressZero(true);
+            MoneyModel.cashMoveToBank(this, cash);
+        }
+
+        lastRevenue.setSuppressZero(true);
+        setLastRevenue(0);
+
+        // move all laid tokens to free tokens again
+        for (BaseToken token:baseTokens.getLaidTokens()) {
+            baseTokens.addFreeToken(token);
+        }
+        // close company on the stock market
+        stockMarket.close(this);
+
+    }
+
+    public String getLongName() {
+        return longName;
+    }
+
+    public String getAlias() {
+        return alias;
+    }
+
+    public String getInfoText() {
+        return infoText;
+    }
+
     public ImmutableSet<SpecialProperty> getSpecialProperties() {
         return portfolio.getSpecialProperties().items();
     }

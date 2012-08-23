@@ -461,7 +461,7 @@ public class PrussianFormationRound extends StockRound {
     public static boolean prussianIsComplete(GameManager gameManager) {
 
         for (PublicCompany company : gameManager.getAllPublicCompanies()) {
-            if (!company.getTypeName().equalsIgnoreCase("Minor")) continue;
+            if (!company.getType().getId().equalsIgnoreCase("Minor")) continue;
             if (!company.isClosed()) return false;
         }
         return true;
