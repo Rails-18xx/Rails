@@ -16,18 +16,11 @@ import rails.common.ResourceLoader;
  * XMLParser is our catch-all class for parsing an XML Document.
  */
 public class XMLParser {
-	protected HashMap<String, Document> documentCache = new HashMap<String, Document>();
-	protected ArrayList<String> directories = new ArrayList<String>();
+    protected final static Logger log = LoggerFactory.getLogger(XMLParser.class);
 
-	protected static Logger log;
+    protected final HashMap<String, Document> documentCache = new HashMap<String, Document>();
 
-	public XMLParser() {
-		log = LoggerFactory.getLogger(XMLParser.class);
-
-		directories.add("data");
-		directories.add("data/xml");
-		directories.add("xml");
-	}
+	public XMLParser() {}
 
 	/**
 	 * Opens and parses an xml file.
@@ -38,7 +31,7 @@ public class XMLParser {
 	 * @throws ConfigurationException
 	 *             if there is any problem opening and parsing the file
 	 */
-	protected Document getDocument(String filename, List<String> directories)
+	protected Document getDocument(String filename, String directory)
 			throws ConfigurationException {
 
 		if (documentCache.containsKey(filename)) {
@@ -51,7 +44,7 @@ public class XMLParser {
 						.newInstance();
 				dbf.setNamespaceAware(true);
 				doc = dbf.newDocumentBuilder().parse(
-						ResourceLoader.getInputStream(filename, directories));
+						ResourceLoader.getInputStream(filename, directory));
 			} catch (ParserConfigurationException e) {
 				throw new ConfigurationException("Could not read/parse "
 						+ filename, e);

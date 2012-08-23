@@ -33,7 +33,7 @@ public class ImageLoader {
     private static double svgHeight = svgWidth * 0.5 * Math.sqrt(3.0);
     private static String svgTileDir = "tiles/svg";
     private static String tileRootDir = Config.get("tile.root_directory");
-    private static List<String> directories = new ArrayList<String>();
+    private static String directory;
 
     static {
         GUIHex.setScale(1.0);
@@ -88,9 +88,9 @@ public class ImageLoader {
                 DocumentBuilder db = dbf.newDocumentBuilder();
 
                 // Step 3: parse the input file to get a Document object
-                doc =
+                doc = 
                         db.parse(ResourceLoader.getInputStream(fn,
-                                directories));
+                                directory));
                 // Cache the doc
                 svgMap.put(tileID, doc);
             }
@@ -137,8 +137,7 @@ public class ImageLoader {
     }
 
     public ImageLoader() {
-        directories.add(tileRootDir + svgTileDir);
-        directories.add(tileRootDir);
+        directory = (tileRootDir + svgTileDir);
     }
 
 }

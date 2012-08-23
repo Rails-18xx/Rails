@@ -13,10 +13,10 @@ public final class StringState extends State {
     }
 
     /** 
-     * Creates a StringState with default value of an empty string
+     * Creates a StringState with default value of null
      */
     public static StringState create(Item parent, String id){
-        return new StringState(parent, id, "");
+        return new StringState(parent, id, null);
     }
     
     /**

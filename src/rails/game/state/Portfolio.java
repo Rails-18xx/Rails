@@ -1,8 +1,5 @@
 package rails.game.state;
 
-import java.util.Comparator;
-
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 
 public abstract class Portfolio<T extends Ownable> extends State implements
@@ -59,13 +56,8 @@ public abstract class Portfolio<T extends Ownable> extends State implements
     /**
      * @return all items contained in the portfolio
      */
-    public abstract ImmutableSet<T> items();
+    public abstract ImmutableSortedSet<T> items();
 
-    /**
-     * @return all items sorted using the comparator
-     */
-    public abstract ImmutableSortedSet<T> items(Comparator<T> comparator);
-    
     /**
      * @return size of portfolio
      */

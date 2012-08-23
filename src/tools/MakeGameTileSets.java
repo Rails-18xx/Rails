@@ -64,9 +64,9 @@ public class MakeGameTileSets {
 
     private MakeGameTileSets(String[] games) throws ConfigurationException {
 
-        directories.add("tiles");
+        String directory = "tiles";
         Element inputTopElement =
-                Tag.findTopTagInFile(tilesFilePath, directories, "Tiles").getElement();
+                Tag.findTopTagInFile(tilesFilePath, directory, "Tiles").getElement();
 
         Map<String, Element> tileMap = new HashMap<String, Element>();
         Element tileSpec;
@@ -89,13 +89,13 @@ public class MakeGameTileSets {
     private void makeTileSet(String gameName, Map<String, Element> tileMap)
             throws ConfigurationException {
 
-        directories.clear();
-        directories.add("../data/" + gameName);
+        // FIXME: Check if this path does indeed work?
+        String directory = "../data/" + gameName;
 
         // Open and read the tile set for this rails.game
         String tileSetPath = "TileSet.xml";
         Element tileSet =
-                Tag.findTopTagInFile(tileSetPath, directories, "TileManager").getElement();
+                Tag.findTopTagInFile(tileSetPath, directory, "TileManager").getElement();
         if (tileSet == null) return;
         NodeList tiles = tileSet.getElementsByTagName("Tile");
         Map<String, Object> tilesInSet = new HashMap<String, Object>();
@@ -103,7 +103,7 @@ public class MakeGameTileSets {
         // Also open and read the map tiles.
         String mapPath = "Map.xml";
         Element mapHexes =
-                Tag.findTopTagInFile(mapPath, directories, "Map").getElement();
+                Tag.findTopTagInFile(mapPath, directory, "Map").getElement();
         NodeList hexes = mapHexes.getElementsByTagName("Hex");
 
         String tilesPath = "../data/" + gameName + "/Tiles.xml";

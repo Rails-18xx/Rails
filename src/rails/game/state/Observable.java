@@ -139,7 +139,14 @@ public abstract class Observable implements Item {
     
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("id", id).add("parent", parent.getId()).toString();
+        if (id == null) {
+            if (parent instanceof Root) {
+                return "hidden " + Objects.toStringHelper(this).add("parent", "root");
+            } else {
+                return "hidden " + Objects.toStringHelper(this).add("parent", parent.getFullURI());
+            }
+        }
+        return Objects.toStringHelper(this).add("uri", getFullURI()).toString();
     }
     
 }

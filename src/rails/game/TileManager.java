@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/TileManager.java,v 1.17 2010/05/29 09:38:58 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -23,17 +22,14 @@ public final class TileManager extends AbstractItem implements Configurable {
     protected Map<Integer, Tile> tileMap = new HashMap<Integer, Tile>();
     protected List<Integer> tileIds = new ArrayList<Integer>();
 
-    //    private static List<String> directories = new ArrayList<String>();
-    private List<String> directories = new ArrayList<String>();
-
     // Stop property defaults per stop type
     protected Map<Type,RunTo> runToDefaults = new HashMap<Type, RunTo>();
     protected Map<Type,RunThrough> runThroughDefaults = new HashMap<Type, RunThrough>();
     protected Map<Type,Loop> loopDefaults = new HashMap<Type, Loop>();
     protected Map<Type,Score> scoreTypeDefaults = new HashMap<Type, Score>();
 
-    protected static Logger log =
-        LoggerFactory.getLogger(TileManager.class.getPackage().getName());
+    private static final Logger log =
+        LoggerFactory.getLogger(TileManager.class);
 
     /**
      * Used by Configure (via reflection) only
@@ -55,9 +51,9 @@ public final class TileManager extends AbstractItem implements Configurable {
         if (tileDefFileName == null)
             throw new ConfigurationException(LocalText.getText("NoTilesXML"));
 
-        directories.add("data/" + GameManager.getInstance().getGameName());
+        String directory = "data/" + GameManager.getInstance().getGameName();
         Tag tileDefTop =
-            Tag.findTopTagInFile(tileDefFileName, directories, "Tiles");
+            Tag.findTopTagInFile(tileDefFileName, directory, "Tiles");
         if (tileDefTop == null)
             throw new ConfigurationException(LocalText.getText("NoTilesTag"));
 

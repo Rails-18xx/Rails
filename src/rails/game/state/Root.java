@@ -29,6 +29,7 @@ public class Root extends Context implements DelayedItem {
    public static Root create() {
        // precise sequence to avoid any uninitialized problems
        Root root = new Root();
+       root.init();
        return root;
    }
    

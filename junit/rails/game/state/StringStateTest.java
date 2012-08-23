@@ -32,7 +32,7 @@ public class StringStateTest {
     
     @Test
     public void testValue() {
-        assertEquals(stateDefault.value(), "");
+        assertEquals(stateDefault.value(), null);
         assertEquals(stateInit.value(), INIT);
     }
 
@@ -60,13 +60,13 @@ public class StringStateTest {
     
     @Test
     public void testSetSameIgnored() {
-        stateDefault.set("");
+        stateDefault.set(null);
         stateInit.set(null);
         StateTestUtils.close(root);
         assertThat(StateTestUtils.getLastClosedChangeSet(root).getObservableStates()).doesNotContain(stateDefault);
         assertThat(StateTestUtils.getLastClosedChangeSet(root).getObservableStates()).contains(stateInit);
 
-        stateDefault.set(null);
+        stateDefault.set("");
         stateInit.set(null);
         StateTestUtils.close(root);
         assertThat(StateTestUtils.getLastClosedChangeSet(root).getObservableStates()).contains(stateDefault);
@@ -87,7 +87,7 @@ public class StringStateTest {
         assertNull(stateInit.value());
 
         StateTestUtils.undo(root);
-        assertEquals(stateDefault.value(), "");
+        assertEquals(stateDefault.value(), null);
         assertEquals(stateInit.value(), INIT);
 
         StateTestUtils.redo(root);

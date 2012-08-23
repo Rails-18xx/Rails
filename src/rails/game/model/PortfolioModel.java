@@ -175,7 +175,7 @@ public final class PortfolioModel extends Model {
 */
 
     public ImmutableSet<PublicCertificate> getCertificates(PublicCompany company) {
-        return certificates.getPortfolio().getItems(company);
+        return certificates.getPortfolio().items(company);
     }
 
     /**

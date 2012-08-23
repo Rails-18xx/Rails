@@ -61,7 +61,7 @@ public class CertificatesModel extends Model {
     
     int getShare(PublicCompany company) {
         int share = 0;
-        for (PublicCertificate cert : certificates.getItems(company)) {
+        for (PublicCertificate cert : certificates.items(company)) {
             share += cert.getShare();
         }
         return share;
@@ -93,7 +93,7 @@ public class CertificatesModel extends Model {
     }
     
     public ImmutableSet<PublicCertificate> getCertificates(PublicCompany company) {
-        return certificates.getItems(company);
+        return certificates.items(company);
     }
     
     public float getCertificateCount() {

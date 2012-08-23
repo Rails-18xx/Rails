@@ -69,7 +69,7 @@ public abstract class AbstractItem implements Item {
     
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("id", id).add("parent", parent.getId()).toString();
+        return Objects.toStringHelper(this).add("URI", getFullURI()).toString();
     }
     
 }

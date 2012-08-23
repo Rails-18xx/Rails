@@ -183,7 +183,10 @@ public final class ReportBuffer {
             }
             // legacy report queue
             reportQueue.add(message);
-            // new queue
+            // new queue: check if reportItem was created, otherwise create it now
+            if (!reportItems.containsKey(moveStackIndex)) {
+                createNewReportItem(moveStackIndex);
+            }
             reportItems.get(moveStackIndex).addMessage(message);
             /* Also log the message */
             if (message.length() > 0) log.info(message);

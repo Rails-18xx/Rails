@@ -108,9 +108,9 @@ public class PortfolioMapTest {
 
     @Test
     public void testGetItems() {
-        assertThat(portfolioMap.getItems(TYPE_ID)).isEmpty();
+        assertThat(portfolioMap.items(TYPE_ID)).isEmpty();
         item.moveTo(ownerMap);
-        assertThat(portfolioMap.getItems(TYPE_ID)).containsOnly(item);
+        assertThat(portfolioMap.items(TYPE_ID)).containsOnly(item);
     }
 
     @Test

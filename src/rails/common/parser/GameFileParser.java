@@ -16,6 +16,8 @@ import rails.game.TrainManager;
 
 public class GameFileParser extends XMLParser {
     public static final String GAME_XML_FILE = "Game.xml";
+
+    private final String directory;
     
     private Tag componentManagerTag;
 
@@ -34,9 +36,9 @@ public class GameFileParser extends XMLParser {
     public GameFileParser(RailsRoot root, String name, Map<String, String> gameOptions) 
         throws ConfigurationException {
         
-        directories.add("data/" + name);
+        directory = "data/" + name;
         
-        componentManagerTag = Tag.findTopTagInFile(GAME_XML_FILE, directories, XMLTags.COMPONENT_MANAGER_ELEMENT_ID);
+        componentManagerTag = Tag.findTopTagInFile(GAME_XML_FILE, directory, XMLTags.COMPONENT_MANAGER_ELEMENT_ID);
         componentManagerTag.setGameOptions(gameOptions);
         
         componentManager = new ComponentManager(root, name, componentManagerTag, gameOptions);

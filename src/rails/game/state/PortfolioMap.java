@@ -1,30 +1,29 @@
 package rails.game.state;
 
-import java.util.Comparator;
 import java.util.Iterator;
 
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.TreeMultimap;
 
 /**
- * PortfolioMap is an implementation of a portfolio based on a HashMultimap
+ * PortfolioMap is an implementation of a portfolio based on a SortedMultimap
  *
  * @param <K> type of the keys that are used to structure the portfolio
  * @param <T> type of Ownable (items) stored inside the portfolio
  * Remark: T has to extend Typable<K> to inform the portfolio about its type 
  */
 
-public class PortfolioMap<K, T extends Ownable & Typable<K>> extends Portfolio<T> {
+public class PortfolioMap<K extends Comparable<K>, T extends Ownable & Typable<K>> extends Portfolio<T> {
 
-    private final HashMultimap<K, T> portfolio = HashMultimap.create();
+    private final TreeMultimap<K, T> portfolio = TreeMultimap.create();
 
     private PortfolioMap(Owner parent, String id, Class<T> type) {
         super(parent, id, type);
     }
     
-    public static <K, T extends Ownable & Typable<K>> PortfolioMap<K,T> create(Owner parent, String id, Class<T> type) {
+    public static <K extends Comparable<K>, T extends Ownable & Typable<K>> PortfolioMap<K,T> create(Owner parent, String id, Class<T> type) {
         return new PortfolioMap<K,T>(parent, id, type);
     }
 
@@ -41,15 +40,10 @@ public class PortfolioMap<K, T extends Ownable & Typable<K>> extends Portfolio<T
     }
 
     @Override
-    public ImmutableSet<T> items() {
-        return ImmutableSet.copyOf(portfolio.values());
+    public ImmutableSortedSet<T> items() {
+        return ImmutableSortedSet.copyOf(portfolio.values());
     }
     
-    @Override
-    public ImmutableSortedSet<T> items(Comparator<T> comparator) {
-        return ImmutableSortedSet.copyOf(comparator, portfolio.values());
-    }
-
     @Override
     public int size() {
         return portfolio.size();
@@ -67,13 +61,21 @@ public class PortfolioMap<K, T extends Ownable & Typable<K>> extends Portfolio<T
     public boolean containsKey(K key) {
         return portfolio.containsKey(key);
     }
+    
+    /**
+     * Returns the set of keys, each appearing once 
+     * @return collection of distinct keys
+     */
+    public ImmutableSortedSet<K> keySet() {
+        return ImmutableSortedSet.copyOf(portfolio.keySet());
+    }
 
     /**
      * @param key that defines the specific for which the portfolio members get returned
      * @return all items for the key contained in the portfolio
      */
-    public ImmutableSet<T> getItems(K key) {
-        return ImmutableSet.copyOf(portfolio.get(key));
+    public ImmutableSortedSet<T> items(K key) {
+        return ImmutableSortedSet.copyOf(portfolio.get(key));
     }
 
     /**

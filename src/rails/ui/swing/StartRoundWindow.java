@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StartRoundWindow.java,v 1.38 2010/06/10 20:54:31 stefanfrey Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;

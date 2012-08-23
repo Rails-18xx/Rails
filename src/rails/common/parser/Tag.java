@@ -376,7 +376,7 @@ public class Tag {
      * parsing the file, or if the file does not contain a top level element
      * with the given name.
      */
-    public static Tag findTopTagInFile(String filename, List<String> directories,
+    public static Tag findTopTagInFile(String filename, String directory,
             String tagName) throws ConfigurationException {
         Document doc = null;
         try {
@@ -389,7 +389,7 @@ public class Tag {
             // Step 3: parse the input file to get a Document object
             doc =
                     db.parse(ResourceLoader.getInputStream(filename,
-                            directories));
+                            directory));
         } catch (ParserConfigurationException e) {
             throw new ConfigurationException("Could not read/parse " + filename
                                              + " to find element " + tagName, e);

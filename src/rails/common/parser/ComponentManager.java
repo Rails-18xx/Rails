@@ -23,8 +23,6 @@ public class ComponentManager {
     private String gameName;
 
     private List<Tag> componentTags;
-
-    protected List<String> directories = new ArrayList<String>();
     
     private Map<String, Configurable> mComponentMap =
             new HashMap<String, Configurable>();
@@ -70,8 +68,8 @@ public class ComponentManager {
         // Configure the component, from a file, or the embedded XML.
         Tag configElement = componentTag;
         if (file != null) {
-            directories.add("data/" + gameName);
-            configElement = Tag.findTopTagInFile(file, directories, name);
+            String directory =  "data/" + gameName;
+            configElement = Tag.findTopTagInFile(file, directory, name);
             configElement.setGameOptions(componentTag.getGameOptions());
         }
 

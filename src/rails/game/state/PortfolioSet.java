@@ -1,6 +1,5 @@
 package rails.game.state;
 
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.SortedSet;
 
@@ -39,15 +38,10 @@ public final class PortfolioSet<T extends Ownable> extends Portfolio<T> {
     }
 
     @Override
-    public ImmutableSet<T> items() {
-        return ImmutableSet.copyOf(portfolio);
+    public ImmutableSortedSet<T> items() {
+        return ImmutableSortedSet.copyOf(portfolio);
     }
     
-    @Override
-    public ImmutableSortedSet<T> items(Comparator<T> comparator) {
-        return ImmutableSortedSet.copyOf(comparator, portfolio);
-    }
-
     @Override
     public int size() {
         return portfolio.size();

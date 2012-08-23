@@ -32,7 +32,7 @@ import rails.util.*;
  * 
  * FIXME: Check if uninitialized states may cause trouble on undo
  */
-public class PublicCompany extends AbstractItem implements Company, CashOwner, PortfolioOwner {
+public class PublicCompany extends AbstractItem implements Company, CashOwner, PortfolioOwner, Comparable<PublicCompany> {
     
     private static Logger log = LoggerFactory.getLogger(PublicCompany.class);
 
@@ -2055,4 +2055,9 @@ public class PublicCompany extends AbstractItem implements Company, CashOwner, P
         return portfolio.getSpecialProperties().items();
     }
 
+
+    // Comparable interface
+    public int compareTo(PublicCompany other) {
+        return this.getId().compareTo(other.getId());
+    }
 }

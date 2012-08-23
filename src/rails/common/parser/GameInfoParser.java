@@ -9,16 +9,13 @@ import org.w3c.dom.Element;
 
 
 public class GameInfoParser extends XMLParser {
-
-	ArrayList<GameInfo> gameInfoList;
-	String credits = "";
+    
+	private String credits = "";
 	
-	private final String filename = "GamesList.xml";
+	private final static String DIRECTORY = "data";
+	private final static String FILENAME = "GamesList.xml";
 
-	public GameInfoParser() {
-		super();
-		gameInfoList = new ArrayList<GameInfo>();
-	}
+	public GameInfoParser() {}
 
 	public String getCredits() {
 		return credits;
@@ -28,7 +25,7 @@ public class GameInfoParser extends XMLParser {
 
 		ArrayList<GameInfo> gameList = new ArrayList<GameInfo>();
 
-		Document doc = getDocument(filename, directories);
+		Document doc = getDocument(FILENAME, DIRECTORY);
 		Element root = getTopElement(doc);
 
 		// <CREDITS>

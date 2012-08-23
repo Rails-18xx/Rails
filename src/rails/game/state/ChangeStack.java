@@ -5,8 +5,6 @@ import java.util.LinkedList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rails.game.ReportBuffer;
-
 import com.google.common.collect.ImmutableSet;
 
 public class ChangeStack {
@@ -60,8 +58,6 @@ public class ChangeStack {
     private void nextChangeSet(ChangeSet next)  {
         currentSet = next;
         log.debug(">>> Start new ChangeSet " + next + " at index=" + undoStack.size() + " <<<");
-        // FIXME: This is a workaround, rewrite ReportBuffer
-        ReportBuffer.createNewReportItem(undoStack.size());
     }
 
     // create a new Game ChangeSet

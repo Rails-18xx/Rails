@@ -51,7 +51,7 @@ public class ChangeSet {
         // immediate execution
         change.execute();
         change.getState().updateModels();
-        log.debug("Added change: " + change);
+        log.debug("Add " + change);
     }
     
     /**
