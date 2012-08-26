@@ -30,7 +30,7 @@ public class ObserverTest {
         assertThat(state.getObservers()).contains(observer);
         state.set(true);
         verify(observer, never()).update(state.toText());
-        root.getStateManager().getChangeStack().closeCurrentChangeSet();
+        root.getStateManager().getChangeStack().close();
         verify(observer).update(state.toText());
     }
 

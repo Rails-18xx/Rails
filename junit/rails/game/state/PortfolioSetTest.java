@@ -38,7 +38,7 @@ public class PortfolioSetTest {
         item = OwnableItemImpl.create(root, ITEM_ID);
         anotherItem = OwnableItemImpl.create(root, ANOTHER_ITEM_ID);
         portfolioA.moveInto(item);
-        StateTestUtils.startActionChangeSet(root);
+        StateTestUtils.closeAndNew(root);
     }
 
     // helper function to check the initial state after undo

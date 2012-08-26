@@ -1,30 +1,28 @@
 package rails.game.state;
 
-import org.mockito.Mock;
-
-import rails.game.Player;
-import rails.game.action.PossibleAction;
-
 /**
  * Common Utilities for State Testing
  */
 class StateTestUtils {
-    @Mock static Player player;
-    @Mock static PossibleAction action;
-    
+
     public static Root setUpRoot() {
         Root root = Root.create();
-        // avoid initial changeSet as it is not undoable
-        startActionChangeSet(root);
+        closeAndNew(root);
         return root;
     }
     
-    public static void startActionChangeSet(Root root) {
-        root.getStateManager().getChangeStack().startChangeSet(new ChangeSet(true, false));
+    public static void closeAndNew(Root root) {
+        // starts a non-initial ChangeSet
+        root.getStateManager().getChangeStack().close();
+        root.getStateManager().getChangeStack().newChangeSet(null);
     }
 
     public static void close(Root root) {
-        root.getStateManager().getChangeStack().closeCurrentChangeSet();
+        root.getStateManager().getChangeStack().close();
+    }
+    
+    public static void newChangeSet(Root root) {
+        root.getStateManager().getChangeStack().newChangeSet(null);
     }
     
     public static void undo(Root root) {
@@ -32,7 +30,7 @@ class StateTestUtils {
     }
     
     public static void closeAndUndo(Root root) {
-        root.getStateManager().getChangeStack().closeCurrentChangeSet();
+        root.getStateManager().getChangeStack().close();
         root.getStateManager().getChangeStack().undo();
     }
     
@@ -45,7 +43,7 @@ class StateTestUtils {
     }
     
     public static ChangeSet getLastClosedChangeSet(Root root) {
-        return root.getStateManager().getChangeStack().getLastClosedChangeSet();
+        return root.getStateManager().getChangeStack().getPreviousChangeSet();
         
     }
      

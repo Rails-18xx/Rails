@@ -154,11 +154,15 @@ public class HashSetStateTest {
     @Test
     public void testIterator() {
         stateInit.add(anotherItem);
+     
+        // create another test item
         Item thirdItem = AbstractItemImpl.create(root, "Third");
+        
         assertTestIterator(thirdItem);
         // check initial state after undo
         assertInitialStateAfterUndo();
         // and check iterator after redo
+        StateTestUtils.newChangeSet(root); // test requires open changeset
         assertTestIterator(thirdItem);
     }
     

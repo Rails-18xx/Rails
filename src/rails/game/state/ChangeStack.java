@@ -1,11 +1,11 @@
 package rails.game.state;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import java.util.LinkedList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.ImmutableSet;
 
 public class ChangeStack {
     protected static Logger log =
@@ -23,146 +23,120 @@ public class ChangeStack {
         this.stateManager = stateManager;
     }
     
+    /**
+     * Creates a new ChangeStack with an initial ChangeSet
+     */
     public static ChangeStack create(StateManager stateManager) {
         ChangeStack changeStack = new ChangeStack(stateManager);
-        changeStack.startGameChangeSet(true); // first set is terminal
+        changeStack.startChangeSet(null, true);
         return changeStack;
     }
     
     /**
-     * @return the current changeSet
+     * @return the current (open) changeSet
      */
     public ChangeSet getCurrentChangeSet() {
         return currentSet;
     }
-
+    
     /**
-     * @return the latest (closed) changeSet
+     * @return the previous (closed) changeSet, null if empty
      */
-    public ChangeSet getLastClosedChangeSet() {
+    public ChangeSet getPreviousChangeSet() {
         return undoStack.peekFirst();
     }
 
-    private boolean closeCurrentChangeSetOnly() {
-        // closes non-blocking, initial or non-empty sets
-        if (currentSet.isBlocking() || currentSet.isInitial() || !currentSet.isEmpty()) {
-            currentSet.close();
-            // update the observers (direct and indirect)
-            stateManager.updateObservers(currentSet.getObservableStates());
-            undoStack.addFirst(currentSet);
-            return true;
-        }
-        return false;
-    }
-
-    private void nextChangeSet(ChangeSet next)  {
-        currentSet = next;
-        log.debug(">>> Start new ChangeSet " + next + " at index=" + undoStack.size() + " <<<");
-    }
-
-    // create a new Game ChangeSet
-    private void startGameChangeSet(boolean initial) {
-        ChangeSet changeSet = new ChangeSet(false, initial);
-        nextChangeSet(changeSet);
+    /**
+     * Add change to current changeSet
+     * @throws IllegalStateException if current changeSet is null
+     */
+    void addChange(Change change) {
+        checkState(currentSet != null, "No open ChangeSet to add change to");
+        currentSet.addChange(change);
     }
     
     /**
-     * closes the current changeSet (without providing an own)
-     * this automatically creates a new (non-blocking) Game ChangeSet
-     * @return the new current ChangeSet (thus the automatically created Game ChangeSet)
+     * closes the current changeSet and moves it to the undoStack
+     * sets the currentSet to null
+     * @return the closed changeSet
+     * @throws IllegalStateException if current changeSet is null 
      */
-    public ChangeSet closeCurrentChangeSet() {
-        if (closeCurrentChangeSetOnly()) {
-            startGameChangeSet(false);
-        }
-        return currentSet;
+    public ChangeSet close() {
+        checkState(currentSet != null, "No open ChangeSet to close");
+        
+        // close and store for return
+        currentSet.close();
+        ChangeSet storeCurrentSet = currentSet;
+        log.debug("<<< Closed changeSet " + currentSet + " at index =" + getCurrentIndex());
+        
+        // update the observers (direct and indirect)
+        stateManager.updateObservers(currentSet.getObservableStates());
+        undoStack.addFirst(currentSet);
+        
+        // set null and return stored
+        currentSet = null;
+        return storeCurrentSet;
     }
 
     
     /**
-     * Starts new ChangeSet (and closes previously open changeSet)
-     * @param next the new ChangeSet to use now
-     * @return the current ChangeSet (thus returns the parameter)
+     * Starts new ChangeSet
+     * @param action associated ChangeAction
+     * @return the new current ChangeSet
      */
-    public ChangeSet startChangeSet(ChangeSet next) {
-        // close previous set
-        closeCurrentChangeSetOnly();
-        // and set the next
-        nextChangeSet(next);
-        return currentSet;
+    public ChangeSet newChangeSet(ChangeAction action) {
+        return startChangeSet(action, false);
     }
-    
-    /**
-     * Undo command goes until an blocking ChangeSet is undone 
-     * Remark: This automatically closes the current ChangeSet
-     * @return the (Game) changeSet that is opened automatically
-     */
-    public ChangeSet undo() {
-        closeCurrentChangeSetOnly();
 
-        // keep track of all states (for update)
-        ImmutableSet.Builder<State> statesToUpdate = ImmutableSet.builder();
+    private ChangeSet startChangeSet(ChangeAction action, boolean initial) {
+        checkState(currentSet == null, "An unclosed ChangeSet still open");
 
-        while (true) {
-            // otherwise unexecute and move from undoStack add to redoStack
-            ChangeSet undoSet = undoStack.peekFirst();
-            undoSet.unexecute(); // throws IllegalStateException if not possible
-            statesToUpdate.addAll(undoSet.getObservableStates());
-            undoStack.removeFirst();
-            redoStack.addFirst(undoSet);
-            // stop if blocking set is reached 
-            if (undoSet.isBlocking()) break;
-        }
-        // update observers of the states undone
-        stateManager.updateObservers(statesToUpdate.build());
-
-        startGameChangeSet(false);
+        currentSet = new ChangeSet(action, initial);
+        log.debug(">>> Start new ChangeSet " + currentSet + " at index=" + getCurrentIndex());
         return currentSet;
     }
     
     /**
-     * Redo command goes until (another) blocking ChangeSet gets into sight or the redo stack is empty).
-     * Remark: This automatically closes the current ChangeSet
-     * If the redo stack is empty, nothing happens.
-     * @return the current ChangeSet (potentially an automatically opened game ChangeSet)
+     * Undo command
+     * @throws IllegalStateException if remaining ChangeSet is initial or there is an open ChangeSet
      */
-    public ChangeSet redo() {
-        closeCurrentChangeSetOnly();
-        if (redoStack.size() == 0) return currentSet;
+    public void undo() {
+        checkState(currentSet == null, "An unclosed ChangeSet still open");
+
+        ChangeSet undoSet = undoStack.peekFirst();
+        checkState(!undoSet.isInitial(), "ChangeSet with intial attribute on top of undo stack");
         
-        // keep track of all states (for update)
-        ImmutableSet.Builder<State> statesToUpdate = ImmutableSet.builder();
-        
-        while (true) { 
-            // the first set is always the action changeSet
-            ChangeSet redoSet = redoStack.removeFirst();
-            redoSet.reexecute();
-            // add states for update
-            statesToUpdate.addAll(redoSet.getObservableStates());
-            undoStack.addFirst(redoSet);
-            // break if stack is empty the next blocking ChangeSet is in view
-            if (redoStack.size() == 0 || redoStack.peekFirst().isBlocking()) break;
-        }
-        // update observers of the states redone
-        stateManager.updateObservers(statesToUpdate.build());
-        
-        // start a new game changeSet 
-        startGameChangeSet(false);
-        
-        return currentSet;
+        undoStack.pollFirst();
+        undoSet.unexecute();
+        redoStack.addFirst(undoSet);
+        stateManager.updateObservers(undoSet.getObservableStates());
     }
     
     /**
-     * @return size of UndoStack (including game ChangeSets)
+     * Redo command
+     * @throws IllegalStateException if redo stack is empty or there is an open ChangeSet
      */
-    public int sizeUndoStack() {
+    public void redo() {
+        checkState(currentSet == null, "An unclosed ChangeSet still open");
+        checkState(!redoStack.isEmpty(), "RedoStack is empty");
+        
+        ChangeSet redoSet = redoStack.pollFirst();
+        redoSet.reexecute();
+        undoStack.addFirst(redoSet);
+        stateManager.updateObservers(redoSet.getObservableStates());
+    }
+    
+    /**
+     * @return current index of the ChangeStack
+     */
+    public int getCurrentIndex() {
         return undoStack.size();
     }
     
     /**
-     * @return size of RedoStack (including game ChangeSets)
+     * @return size of RedoStack
      */
-    public int sizeRedoStack() {
+    public int getSizeRedoStack() {
         return redoStack.size();
     }
     

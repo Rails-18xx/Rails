@@ -14,29 +14,23 @@ import com.google.common.collect.Lists;
  * A ChangeSet object represents the collection of all changes
  * that belong to the same activity.
  * 
- * In general activities can be 
- * - User triggered: Thus they belong to an action of a player.
- * - Game triggered: Changes that are mainly triggered by an automated game action (e.g. a scoring phase, end of turn 
- * or round activities)
- * 
  * ChangeSet objects are stored in the ChangeStack.
  */
 
 public class ChangeSet {
 
-    protected static Logger log =
-        LoggerFactory.getLogger(ChangeSet.class.getPackage().getName());
+    private static final Logger log = LoggerFactory.getLogger(ChangeSet.class);
 
     // static fields
+    private final ChangeAction action;
     private final List<Change> changes = Lists.newArrayList();
-    private final boolean blocking;
     private final boolean initial;
     
     // dynamic fields
     private boolean closed = false; 
     
-    protected ChangeSet(boolean blocking, boolean initial) {
-        this.blocking = blocking;
+    protected ChangeSet(ChangeAction action, boolean initial) {
+        this.action = action;
         this.initial = initial;
     };
 
@@ -48,7 +42,7 @@ public class ChangeSet {
     void addChange (Change change) {
         checkState(!closed, "ChangeSet is closed");
         changes.add(change);
-        // immediate execution
+        // immediate execution and update of models
         change.execute();
         change.getState().updateModels();
         log.debug("Add " + change);
@@ -121,12 +115,19 @@ public class ChangeSet {
         return changes.isEmpty();
     }
     
+    /**
+     * returns the ChangeAction associated with the ChangeSet
+     * @return the associated ChangeAction
+     */
+    ChangeAction getAction() {
+        return action;
+    }
+
+    /**
+     * returns true if the ChangeSet is an initial state
+     * @return true if initial
+     */
     boolean isInitial() {
         return initial;
     }
-    
-    boolean isBlocking() {
-        return blocking;
-    }
-
 }

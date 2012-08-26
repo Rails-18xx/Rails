@@ -66,6 +66,7 @@ public class StringStateTest {
         assertThat(StateTestUtils.getLastClosedChangeSet(root).getObservableStates()).doesNotContain(stateDefault);
         assertThat(StateTestUtils.getLastClosedChangeSet(root).getObservableStates()).contains(stateInit);
 
+        StateTestUtils.newChangeSet(root);
         stateDefault.set("");
         stateInit.set(null);
         StateTestUtils.close(root);

@@ -91,7 +91,7 @@ public class ArrayListStateTest {
     @Test
     public void testAddIndexFail() {
         // open new ChangeSet to test if it is still empty
-        StateTestUtils.startActionChangeSet(root);
+        StateTestUtils.closeAndNew(root);
         try {
             stateInit.add(2, anotherItem);
             failBecauseExceptionWasNotThrown(IndexOutOfBoundsException.class);
@@ -237,6 +237,7 @@ public class ArrayListStateTest {
         // check initial state after undo
         assertInitialStateAfterUndo();
         // and check iterator after redo
+        StateTestUtils.newChangeSet(root); // requires open changeset
         assertTestIterator();
     }
 

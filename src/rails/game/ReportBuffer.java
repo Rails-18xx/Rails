@@ -319,7 +319,7 @@ public final class ReportBuffer {
     public static String getReportItems() {
         // activeIndex is the index one before the current index for the next action
         // FIXME: This is a workaround
-        int activeIndex = GameManager.getInstance().getRoot().getStateManager().getChangeStack().sizeUndoStack();
+        int activeIndex = GameManager.getInstance().getRoot().getStateManager().getChangeStack().getCurrentIndex();
         ReportBuffer instance = getInstance();
         
         StringBuffer s = new StringBuffer();
