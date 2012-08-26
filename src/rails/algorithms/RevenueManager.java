@@ -9,12 +9,12 @@ import org.slf4j.LoggerFactory;
 
 
 import rails.common.LocalText;
+import rails.common.parser.Configurable;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.GameManager;
 import rails.game.state.AbstractItem;
 import rails.game.state.ArrayListState;
-import rails.game.state.Configurable;
 import rails.game.state.Item;
 
 /**

@@ -1,8 +1,7 @@
-package rails.game.state;
+package rails.common.parser;
 
-import rails.common.parser.ConfigurationException;
-import rails.common.parser.Tag;
 import rails.game.GameManager;
+import rails.game.state.Creatable;
 
 /**
  * Interface for rails.game components which can be configured from an XML

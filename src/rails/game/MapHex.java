@@ -25,7 +25,6 @@ import rails.game.model.CashMoneyModel;
 import rails.game.model.PortfolioModel;
 
 import rails.game.state.BooleanState;
-import rails.game.state.Configurable;
 import rails.game.state.Observer;
 import rails.game.state.Owner;
 import rails.game.state.PortfolioSet;
@@ -194,7 +193,7 @@ StationHolder {
     }
 
     /**
-     * @see rails.game.state.Configurable#configureFromXML(org.w3c.dom.Element)
+     * @see rails.common.parser.Configurable#configureFromXML(org.w3c.dom.Element)
      */
     public void configureFromXML(Tag tag) throws ConfigurationException {
         Pattern namePattern = Pattern.compile("(\\D+?)(-?\\d+)");

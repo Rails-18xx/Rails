@@ -1,8 +1,8 @@
 package rails.game;
 
+import rails.common.parser.Configurable;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
-import rails.game.state.Configurable;
 import rails.game.state.Item;
 import rails.util.Util;
 

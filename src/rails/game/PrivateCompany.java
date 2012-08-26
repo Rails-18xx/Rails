@@ -95,7 +95,7 @@ public class PrivateCompany extends OwnableItem<PrivateCompany> implements Compa
     }
 
     /**
-     * @see rails.game.state.Configurable#configureFromXML(org.w3c.dom.Element)
+     * @see rails.common.parser.Configurable#configureFromXML(org.w3c.dom.Element)
      */
     public void configureFromXML(Tag tag) throws ConfigurationException {
         /* Configure private company features */

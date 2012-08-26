@@ -10,10 +10,10 @@ import rails.algorithms.NetworkVertex;
 import rails.algorithms.RevenueAdapter;
 import rails.algorithms.RevenueBonus;
 import rails.algorithms.RevenueStaticModifier;
+import rails.common.parser.Configurable;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.GameManager;
-import rails.game.state.Configurable;
 
 public class RuhrRevenueModifier implements RevenueStaticModifier, Configurable {
 

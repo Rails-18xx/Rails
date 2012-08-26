@@ -5,16 +5,14 @@ import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import rails.common.parser.Configurable;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
-import rails.game.state.AbstractItem;
-import rails.game.state.Configurable;
 import rails.game.state.GenericState;
-import rails.game.state.Item;
 import rails.game.state.Owner;
 import rails.game.state.State;
 
-public final class PhaseManager extends AbstractItem implements Configurable {
+public class PhaseManager extends RailsManager implements Configurable {
 
     protected ArrayList<Phase> phaseList;
     protected HashMap<String, Phase> phaseMap;
@@ -32,7 +30,7 @@ public final class PhaseManager extends AbstractItem implements Configurable {
     /**
      * Used by Configure (via reflection) only
      */
-    public PhaseManager(Item parent, String id) {
+    public PhaseManager(RailsRoot parent, String id) {
         super(parent, id);
     }
     

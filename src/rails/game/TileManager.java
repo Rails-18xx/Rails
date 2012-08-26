@@ -13,7 +13,6 @@ import rails.game.Stop.RunTo;
 import rails.game.Stop.Score;
 import rails.game.Stop.Type;
 import rails.game.state.AbstractItem;
-import rails.game.state.Configurable;
 import rails.game.state.Item;
 import rails.util.Util;
 
@@ -39,7 +38,7 @@ public final class TileManager extends AbstractItem implements Configurable {
     }
 
     /**
-     * @see rails.game.state.Configurable#configureFromXML(org.w3c.dom.Element)
+     * @see rails.common.parser.Configurable#configureFromXML(org.w3c.dom.Element)
      */
     public void configureFromXML(Tag tileSetTop) throws ConfigurationException {
         /*

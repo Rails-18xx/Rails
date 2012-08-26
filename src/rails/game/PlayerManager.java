@@ -3,14 +3,12 @@ package rails.game;
 import java.util.*;
 
 import rails.common.LocalText;
+import rails.common.parser.Configurable;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.model.MoneyModel;
-import rails.game.state.Configurable;
-import rails.game.state.Item;
-import rails.game.state.Manager;
 
-public class PlayerManager extends Manager implements Configurable {
+public class PlayerManager extends RailsManager implements Configurable {
 
     private int numberOfPlayers;
     private List<Player> players;
@@ -28,7 +26,7 @@ public class PlayerManager extends Manager implements Configurable {
     /**
      * Used by Configure (via reflection) only
      */
-    public PlayerManager(Item parent, String id) {
+    public PlayerManager(RailsRoot parent, String id) {
         super(parent, id);
     }
 

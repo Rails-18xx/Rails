@@ -9,13 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import rails.common.LocalText;
+import rails.common.parser.Configurable;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
-import rails.game.state.AbstractItem;
-import rails.game.state.Configurable;
-import rails.game.state.Item;
 
-public class CompanyManager extends AbstractItem implements Configurable {
+public class CompanyManager extends RailsManager implements Configurable {
 
     /**
      * This is the name by which the CompanyManager should be registered with
@@ -66,7 +64,7 @@ public class CompanyManager extends AbstractItem implements Configurable {
     /**
      * Used by Configure (via reflection) only
      */
-    public CompanyManager(Item parent, String id) {
+    public CompanyManager(RailsRoot parent, String id) {
         super(parent, id);
     }
 
@@ -78,7 +76,7 @@ public class CompanyManager extends AbstractItem implements Configurable {
      */
 
     /**
-     * @see rails.game.state.Configurable#configureFromXML(org.w3c.dom.Element)
+     * @see rails.common.parser.Configurable#configureFromXML(org.w3c.dom.Element)
      */
     public void configureFromXML(Tag tag) throws ConfigurationException {
 

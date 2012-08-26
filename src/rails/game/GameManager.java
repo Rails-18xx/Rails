@@ -22,7 +22,7 @@ import rails.util.Util;
  * This class manages the playing rounds by supervising all implementations of
  * Round. Currently everything is hardcoded &agrave; la 1830.
  */
-public class GameManager extends Manager implements Configurable, Owner {
+public class GameManager extends RailsManager implements Configurable, Owner {
     /** Version ID of the Save file header, as written in save() */
     private static final long saveFileHeaderVersionID = 3L;
     /**
@@ -161,13 +161,6 @@ public class GameManager extends Manager implements Configurable, Owner {
     public static final String GM_NAME = "GameManager";
 
     /**
-     * The MoveSet stack is maintained to enable Undo and Redo throughout the game.
-     * FIXME: ChangeStack moved to StateManager
-     */
-    @Deprecated
-    protected final ChangeStack changeStack = null;
-
-    /**
      * The DisplayBuffer instance collects messages to be displayed in the UI.
      */
     protected DisplayBuffer displayBuffer;
@@ -224,7 +217,7 @@ public class GameManager extends Manager implements Configurable, Owner {
     protected static Logger log =
         LoggerFactory.getLogger(GameManager.class.getPackage().getName());
 
-    public GameManager(Item parent, String id) {
+    public GameManager(RailsRoot parent, String id) {
         super(parent, id);  
         gmName = GM_NAME;
         gmKey = GM_KEY;
@@ -233,7 +226,7 @@ public class GameManager extends Manager implements Configurable, Owner {
         reportBuffer = new ReportBuffer();
         guiHints = GuiHints.create(this, "guiHints");
     }
-
+    
     public void configureFromXML(Tag tag) throws ConfigurationException {
         /* Get the rails.game name as configured */
         Tag gameTag = tag.getChild("Game");
@@ -1739,10 +1732,6 @@ public class GameManager extends Manager implements Configurable, Owner {
 
     public String getGMKey () {
         return gmKey;
-    }
-
-    public ChangeStack getChangeStack () {
-        return changeStack;
     }
 
     public DisplayBuffer getDisplayBuffer() {

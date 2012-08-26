@@ -12,17 +12,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import rails.common.LocalText;
+import rails.common.parser.Configurable;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.model.PortfolioModel;
-import rails.game.state.AbstractItem;
 import rails.game.state.BooleanState;
-import rails.game.state.Configurable;
 import rails.game.state.IntegerState;
-import rails.game.state.Item;
 import rails.game.state.Owner;
 
-public final class TrainManager extends AbstractItem implements Configurable {
+public class TrainManager extends RailsManager implements Configurable {
     // Static attributes
     protected final List<TrainType> lTrainTypes = new ArrayList<TrainType>();
 
@@ -82,12 +80,12 @@ public final class TrainManager extends AbstractItem implements Configurable {
     /**
      * Used by Configure (via reflection) only
      */
-    public TrainManager(Item parent, String id) {
+    public TrainManager(RailsRoot parent, String id) {
         super(parent, id);
     }
 
     /**
-     * @see rails.game.state.Configurable#configureFromXML(org.w3c.dom.Element)
+     * @see rails.common.parser.Configurable#configureFromXML(org.w3c.dom.Element)
      */
     public void configureFromXML(Tag tag) throws ConfigurationException {
         

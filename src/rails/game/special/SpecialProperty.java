@@ -7,12 +7,12 @@ import org.slf4j.LoggerFactory;
 
 
 import rails.common.LocalText;
+import rails.common.parser.Configurable;
 import rails.common.parser.ConfigurationException;
+import rails.common.parser.Configure;
 import rails.common.parser.Tag;
 import rails.game.*;
 import rails.game.state.BooleanState;
-import rails.game.state.Configurable;
-import rails.game.state.Configure;
 import rails.game.state.Item;
 import rails.game.state.OwnableItem;
 import rails.util.*;

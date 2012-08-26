@@ -1,4 +1,4 @@
-package rails.game.state;
+package rails.common.parser;
 
 import java.lang.reflect.Constructor;
 
@@ -6,7 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import rails.common.LocalText;
-import rails.common.parser.ConfigurationException;
+import rails.game.state.Creatable;
+import rails.game.state.Item;
 
 /**
  * Configure provides static methods that come along with the Configurable and Creatable Interfaces

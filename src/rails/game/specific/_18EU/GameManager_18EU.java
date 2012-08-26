@@ -8,13 +8,13 @@ import rails.game.GameManager;
 import rails.game.Player;
 import rails.game.PublicCertificate;
 import rails.game.PublicCompany;
+import rails.game.RailsRoot;
 import rails.game.ReportBuffer;
 import rails.game.Round;
 import rails.game.ShareSellingRound;
 import rails.game.model.MoneyModel;
 import rails.game.model.PortfolioModel;
 import rails.game.state.GenericState;
-import rails.game.state.Item;
 import rails.game.state.Portfolio;
 
 /**
@@ -26,7 +26,7 @@ public class GameManager_18EU extends GameManager {
     protected final GenericState<Player> playerToStartFMERound =
        GenericState.create(this, "playerToStartFMERound");
     
-    public GameManager_18EU(Item parent, String id) {
+    public GameManager_18EU(RailsRoot parent, String id) {
         super(parent, id);
     }
     @Override

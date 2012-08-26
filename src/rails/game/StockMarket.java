@@ -8,14 +8,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import rails.common.LocalText;
+import rails.common.parser.Configurable;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
-import rails.game.state.AbstractItem;
 import rails.game.state.BooleanState;
-import rails.game.state.Configurable;
-import rails.game.state.Item;
 
-public class StockMarket extends AbstractItem implements Configurable {
+public class StockMarket extends RailsManager implements Configurable {
 
     final static Logger log = LoggerFactory.getLogger(StockMarket.class);
 
@@ -51,7 +49,7 @@ public class StockMarket extends AbstractItem implements Configurable {
     /** GameOver becomes true if a stock market square is reached that is marked as such */ 
     protected final BooleanState gameOver = BooleanState.create(this, "gameOver", false);
 
-    // TODO: Check if this should not be a state?
+    // FIXME: Check if this should not be a state?
     ArrayList<PublicCertificate> ipoPile;
 
     public static final String DEFAULT = "default";
@@ -59,12 +57,12 @@ public class StockMarket extends AbstractItem implements Configurable {
     /**
      * Used by Configure (via reflection) only
      */
-    public StockMarket(Item parent, String id) {
+    public StockMarket(RailsRoot parent, String id) {
         super(parent, id);
     }
     
     /**
-     * @see rails.game.state.Configurable#configureFromXML(org.w3c.dom.Element)
+     * @see rails.common.parser.Configurable#configureFromXML(org.w3c.dom.Element)
      */
     public void configureFromXML(Tag tag) throws ConfigurationException {
         

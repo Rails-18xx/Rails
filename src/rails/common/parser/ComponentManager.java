@@ -1,33 +1,28 @@
 package rails.common.parser;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Maps;
+
 import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.common.parser.XMLTags;
-import rails.game.state.Configurable;
-import rails.game.state.Configure;
-import rails.game.state.Context;
+import rails.game.RailsRoot;
 
 public class ComponentManager {
 
-    final static Logger log = LoggerFactory.getLogger(ComponentManager.class);
+    private static final Logger log = LoggerFactory.getLogger(ComponentManager.class);
 
-    private String gameName;
-
-    private List<Tag> componentTags;
+    private final String gameName;
+    private final List<Tag> componentTags;
+    private final Map<String, Configurable> mComponentMap = Maps.newHashMap();
     
-    private Map<String, Configurable> mComponentMap =
-            new HashMap<String, Configurable>();
-    
-    public ComponentManager(Context context, String gameName, Tag tag, Map<String, String> gameOptions)
+    public ComponentManager(RailsRoot root, String gameName, Tag tag, Map<String, String> gameOptions)
             throws ConfigurationException {
         this.gameName = gameName;
 
@@ -35,12 +30,12 @@ public class ComponentManager {
         for (Tag component : componentTags) {
             String compName = component.getAttributeAsString("name");
             log.debug("Found component " + compName);
-            configureComponent(context, component);
+            configureComponent(root, component);
             component.setGameOptions(gameOptions);
         }
     }
 
-    private void configureComponent(Context context, Tag componentTag)
+    private void configureComponent(RailsRoot root, Tag componentTag)
             throws ConfigurationException {
 
         // Extract the attributes of the Component
@@ -62,8 +57,8 @@ public class ComponentManager {
                     "ComponentConfiguredTwice", name));
         }
 
-        // Now construct the component
-        Configurable component = Configure.create(Configurable.class, clazz, context, name);
+        // Now construct the component: Parent is a RailsRoot
+        Configurable component = Configure.create(Configurable.class, clazz, RailsRoot.class, root, name);
 
         // Configure the component, from a file, or the embedded XML.
         Tag configElement = componentTag;

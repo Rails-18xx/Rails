@@ -2,15 +2,15 @@ package rails.game.specific._1856;
 
 import rails.game.GameManager;
 import rails.game.Player;
+import rails.game.RailsRoot;
 import rails.game.Round;
-import rails.game.state.Item;
 
 
 public class GameManager_1856 extends GameManager {
 
     private Player playerToStartCGRFRound = null;
 
-    public GameManager_1856(Item parent, String id) {
+    public GameManager_1856(RailsRoot parent, String id) {
         super(parent, id);
     }
 

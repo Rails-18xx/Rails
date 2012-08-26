@@ -5,9 +5,9 @@ import java.util.List;
 
 import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
+import rails.common.parser.Configure;
 import rails.common.parser.Tag;
 import rails.game.state.AbstractItem;
-import rails.game.state.Configure;
 import rails.game.state.Item;
 
 /**
@@ -59,7 +59,7 @@ public class CompanyType extends AbstractItem {
     }
 
     /**
-     * @see rails.game.state.Configurable#configureFromXML(org.w3c.dom.Element)
+     * @see rails.common.parser.Configurable#configureFromXML(org.w3c.dom.Element)
      */
     public void configureFromXML(Tag tag) throws ConfigurationException {
         //No longer needed.

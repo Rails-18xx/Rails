@@ -17,7 +17,6 @@ import rails.game.special.SpecialProperty;
 import rails.game.state.AbstractItem;
 import rails.game.state.ArrayListState;
 import rails.game.state.BooleanState;
-import rails.game.state.ChangeStack;
 import rails.game.state.Creatable;
 import rails.game.state.Owner;
 import rails.game.state.Portfolio;
@@ -42,8 +41,6 @@ public abstract class Round extends AbstractItem implements Creatable {
     protected MapManager mapManager = null;
 
     protected final BooleanState wasInterrupted = BooleanState.create(this, "wasInterrupted");
-
-    protected ChangeStack changeStack = null;
 
 
     /** Autopasses */
@@ -73,7 +70,7 @@ public abstract class Round extends AbstractItem implements Creatable {
             stockMarket = gameManager.getStockMarket();
             mapManager = gameManager.getMapManager();
 
-            changeStack = gameManager.getChangeStack();
+            // changeStack = gameManager.getChangeStack();
         }
 
         guiHints = gameManager.getUIHints();

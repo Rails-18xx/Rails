@@ -20,7 +20,6 @@ import rails.common.LocalText;
 import rails.game.ReportBuffer;
 import rails.game.action.GameAction;
 import rails.game.action.PossibleActions;
-import rails.game.state.ChangeStack;
 import rails.ui.swing.elements.ActionButton;
 
 /**
@@ -229,7 +228,7 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
 
     // TODO: Rewrite this procedure
     private void gotoIndex(int index) {
-        ChangeStack stack = gameUIManager.getGameManager().getChangeStack();
+        // ChangeStack stack = gameUIManager.getGameManager().getChangeStack();
         // FIXME: This has to be rewritten
         // int currentIndex = stack.getIndex();
         int currentIndex = 0;

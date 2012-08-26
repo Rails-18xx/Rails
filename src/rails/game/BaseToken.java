@@ -29,9 +29,10 @@ public class BaseToken extends Token<BaseToken> {
         return getParent().getBaseTokensModel().tokenIsLaid(this);
     }
 
-    // TODO: Check if this is correct? Should this really return the company id?
-    public String getId() {
-        return getParent().getId();
-    }
+    // FIXME: Check if this works, previously it returned the parent id
+    // However this was invalid for the portfolio storage
+//    public String getId() {
+//        return getParent().getId();
+//    }
 
 }

@@ -5,8 +5,8 @@ import java.util.Comparator;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.ImmutableSet;
 
+import rails.common.parser.Configurable;
 import rails.game.special.SpecialProperty;
-import rails.game.state.Configurable;
 import rails.game.state.Owner;
 
 public interface Company extends Owner, Configurable, Cloneable {
