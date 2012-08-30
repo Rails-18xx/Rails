@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSetMultimap;
+import com.google.common.collect.ImmutableSortedSet;
 
 import rails.common.LocalText;
 import rails.game.Bank;
@@ -109,10 +111,10 @@ public final class PortfolioModel extends Model {
     public void transferAssetsFrom(PortfolioModel otherPortfolio) {
 
         // Move trains
-        otherPortfolio.getTrainsModel().getPortfolio().moveAll(otherPortfolio.getParent());
+        otherPortfolio.getTrainsModel().getPortfolio().moveAll(this.getParent());
 
         // Move treasury certificates
-        otherPortfolio.getCertificatesModel().getPortfolio().moveAll(otherPortfolio.getParent());
+        otherPortfolio.moveAllCertificates(this.getParent());
     }
 
     /** Low-level method, only to be called by the local addObject() method and by initialisation code. */
@@ -152,14 +154,10 @@ public final class PortfolioModel extends Model {
         return privates.getPortfolio().items();
     }
 
-    public ImmutableSet<PublicCertificate> getCertificates() {
+    public ImmutableSortedSet<PublicCertificate> getCertificates() {
         return certificates.getPortfolio().items();
     }
 
-    public boolean addPublicCertificate(PublicCertificate c) {
-        return certificates.moveInto(c);
-    }
-    
     /** Get the number of certificates that count against the certificate limit */
     public float getCertificateCount() {
 
@@ -167,14 +165,12 @@ public final class PortfolioModel extends Model {
 
         return number + certificates.getCertificateCount();
     }
-    
-    // TODO: This will be removed as this is certificates itself
-/*    public Map<String, List<PublicCertificate>> getCertsPerCompanyMap() {
-        return certPerCompany;
-    }
-*/
 
-    public ImmutableSet<PublicCertificate> getCertificates(PublicCompany company) {
+    public ImmutableSetMultimap<PublicCompany, PublicCertificate> getCertsPerCompanyMap() {
+        return certificates.getPortfolio().view();
+    }
+
+    public ImmutableSortedSet<PublicCertificate> getCertificates(PublicCompany company) {
         return certificates.getPortfolio().items(company);
     }
 
@@ -192,32 +188,23 @@ public final class PortfolioModel extends Model {
         return findCertificate(company, 1, president);
     }
 
-    /** Find a certificate for a given company. */
+    /** Find a specified certificate
+     * @return (first) certificate found, null if not found */
     public PublicCertificate findCertificate(PublicCompany company,
             int shares, boolean president) {
-        if (!certificates.contains(company)) {
-            return null;
-        }
-        for (PublicCertificate cert : certificates.getCertificates(company)) {
-            if (cert.getCompany() == company) {
-                if (company.getShareUnit() == 100 || president
-                        && cert.isPresidentShare() || !president
-                        && !cert.isPresidentShare() && cert.getShares() == shares) {
-                    return cert;
-                }
+        for (PublicCertificate cert : certificates.getPortfolio().items(company)) {
+            if (company.getShareUnit() == 100 || president
+                    && cert.isPresidentShare() || !president
+                    && !cert.isPresidentShare() && cert.getShares() == shares) {
+                return cert;
             }
         }
         return null;
     }
 
-    // FIXME: Rewrite that do use a better structure
-/*    public Map<String, List<PublicCertificate>> getCertsPerType() {
-        return certsPerType;
-    }
-*/
     public ImmutableList<PublicCertificate> getCertsOfType(String certTypeId) {
         Builder<PublicCertificate> list = ImmutableList.builder();
-        for (PublicCertificate cert : certificates.getCertificates()) {
+        for (PublicCertificate cert : certificates) {
             if (cert.getTypeId().equals(certTypeId)) {
                 list.add(cert);
             }
@@ -226,7 +213,7 @@ public final class PortfolioModel extends Model {
     }
     
    public PublicCertificate getAnyCertOfType(String certTypeId) {
-       for (PublicCertificate cert : certificates.getCertificates()) {
+       for (PublicCertificate cert : certificates) {
            if (cert.getTypeId().equals(certTypeId)) {
                return cert;
            }
@@ -234,35 +221,8 @@ public final class PortfolioModel extends Model {
        return null;
     }
     
-    // TODO: Check if this is needed and should be supported (owner should be final?)
-/*
-    public void setOwner(CashHolder owner) {
-        this.owner = owner;
-    }
-*/
-    
-    /**
-     * FIXME: This should be replaced by some legacy code for id
-     */
-//    public String getId() {
-//        return null; // FIXME
-////        return name;
-//    }
-
-    /** Get unique name (prefixed by the owners class type, to avoid Bank, Player and Company
-     * namespace clashes).
-     * @return
-     */
-    public String getUniqueName () {
-        return null; // FIXME: For the unique name
-//        return uniqueName;
-    }
-
     /**
      * Returns percentage that a portfolio contains of one company.
-     *
-     * @param company
-     * @return
      */
     public int getShare(PublicCompany company) {
         return certificates.getShare(company);
@@ -272,7 +232,7 @@ public final class PortfolioModel extends Model {
             boolean president) {
         int certs = 0;
         if (certificates.contains(company)) {
-            for (PublicCertificate cert : certificates.getCertificates(company)) {
+            for (PublicCertificate cert : certificates.getPortfolio().items(company)) {
                 if (president) {
                     if (cert.isPresidentShare()) return 1;
                 } else if (cert.getShares() == unit) {
@@ -281,6 +241,10 @@ public final class PortfolioModel extends Model {
             }
         }
         return certs;
+    }
+    
+    public void moveAllCertificates(Owner owner) {
+        certificates.getPortfolio().moveAll(owner);
     }
 
     /**
@@ -294,32 +258,34 @@ public final class PortfolioModel extends Model {
     public List<PublicCertificate> swapPresidentCertificate(
             PublicCompany company, PortfolioModel other) {
 
-        List<PublicCertificate> swapped = new ArrayList<PublicCertificate>();
-        PublicCertificate swapCert;
-
-        // Find the President's certificate
-        PublicCertificate cert = this.findCertificate(company, true);
-        if (cert == null) return null;
-        int shares = cert.getShares();
-
-        // Check if counterparty has enough single certificates
-        if (other.ownsCertificates(company, 1, false) >= shares) {
-            for (int i = 0; i < shares; i++) {
-                swapCert = other.findCertificate(company, 1, false);
-                certificates.getPortfolio().moveInto(swapCert);
-                swapped.add(swapCert);
-
-            }
-        } else if (other.ownsCertificates(company, shares, false) >= 1) {
-            swapCert = other.findCertificate(company, 2, false);
-            certificates.getPortfolio().moveInto(swapCert);
-            swapped.add(swapCert);
-        } else {
-            return null;
-        }
-        certificates.getPortfolio().moveInto(cert);
-
-        return swapped;
+        // FIXME: Rewrite this parrt
+//        List<PublicCertificate> swapped = new ArrayList<PublicCertificate>();
+//        PublicCertificate swapCert;
+//
+//        // Find the President's certificate
+//        PublicCertificate cert = this.findCertificate(company, true);
+//        if (cert == null) return null;
+//        int shares = cert.getShares();
+//
+//        // Check if counterparty has enough single certificates
+//        if (other.ownsCertificates(company, 1, false) >= shares) {
+//            for (int i = 0; i < shares; i++) {
+//                swapCert = other.findCertificate(company, 1, false);
+//                certificates.getPortfolio().moveInto(swapCert);
+//                swapped.add(swapCert);
+//
+//            }
+//        } else if (other.ownsCertificates(company, shares, false) >= 1) {
+//            swapCert = other.findCertificate(company, 2, false);
+//            certificates.getPortfolio().moveInto(swapCert);
+//            swapped.add(swapCert);
+//        } else {
+//            return null;
+//        }
+//        certificates.getPortfolio().moveInto(cert);
+//
+//        return swapped;
+        return null;
     }
 
     public void discardTrain(Train train) {
@@ -619,17 +585,22 @@ public final class PortfolioModel extends Model {
         trains.update();
     }
 
+    /**
+     * FIXME: This should be replaced by some legacy code for id
+     */
+//    public String getId() {
+//        return null; // FIXME
+////        return name;
+//    }
+
+    /** Get unique name (prefixed by the owners class type, to avoid Bank, Player and Company
+     * namespace clashes).
+     * @return
+     */
+    public String getUniqueName () {
+        return null; // FIXME: For the unique name
+//        return uniqueName;
+    }
+
     
-    // FIXME: This mechanism has to be rewritten
-    public Map<String, List<PublicCertificate>> getCertsPerCompanyMap() {
-        return null;
-    }
-
-    // FIXME: This mechanism has to be rewritten
-/*    public AbstractOwnable getCertOfType(String string) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-*/
-
 }

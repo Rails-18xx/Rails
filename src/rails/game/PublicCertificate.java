@@ -6,9 +6,12 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ComparisonChain;
+
 import rails.common.LocalText;
 import rails.game.model.CertificatesModel;
 import rails.game.state.Item;
+import rails.game.state.Ownable;
 import rails.game.state.OwnableItem;
 import rails.game.state.Typable;
 
@@ -209,6 +212,29 @@ public class PublicCertificate extends OwnableItem<PublicCertificate> implements
 
     public PublicCertificate copy() {
         return (PublicCertificate) this.clone();
+    }
+    
+    /**
+     * Compare is based on 
+     * A) Presidency (presidency comes first in natural ordering)
+     * B) Number of Shares (more shares means come first)
+     * C) Id of CertificateType
+     * D) Id of Certificate
+     */
+    @Override
+    public int compareTo(Ownable other) {
+        if (other instanceof PublicCertificate) {
+            PublicCertificate otherCert = (PublicCertificate)other;
+            // sort by the criteria defined above
+            return ComparisonChain.start()
+                    .compare(otherCert.isPresidentShare(), this.isPresidentShare())
+                    .compare(otherCert.getShares(), this.getShares())
+                    .compare(this.getType().getId(), otherCert.getType().getId())
+                    .compare(this.getId(), otherCert.getId())
+                    .result();
+        } else {
+            return super.compareTo(other);
+        }
     }
 
     /**

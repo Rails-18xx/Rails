@@ -1,59 +1,43 @@
 package rails.game;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.google.common.collect.ImmutableSortedSet;
 
 import rails.common.LocalText;
 import rails.common.parser.Configurable;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
-import rails.game.state.BooleanState;
 
 public class StockMarket extends RailsManager implements Configurable {
 
-    final static Logger log = LoggerFactory.getLogger(StockMarket.class);
+    /**
+    *  This is the name by which the CompanyManager should be registered with
+    * the ComponentManager.
+    */
+   public static final String COMPONENT_NAME = "StockMarket";
 
-     /**
-     *  This is the name by which the CompanyManager should be registered with
-     * the ComponentManager.
-     */
-    public static final String COMPONENT_NAME = "StockMarket";
+   public static final String DEFAULT = "default";
     
-    
-    protected HashMap<String, StockSpaceType> stockSpaceTypes =
+    private final HashMap<String, StockSpaceType> stockSpaceTypes =
         new HashMap<String, StockSpaceType>();
-    protected HashMap<String, StockSpace> stockChartSpaces =
+    private final HashMap<String, StockSpace> stockChartSpaces =
         new HashMap<String, StockSpace>();
+    private final HashMap<Integer, StockSpace> startSpaces = new HashMap<Integer, StockSpace>();
     
-    protected StockSpace stockChart[][];
-    protected StockSpace currentSquare;
-    protected int numRows = 0;
-    protected int numCols = 0;
-    protected ArrayList<StockSpace> startSpaces = new ArrayList<StockSpace>();
-    protected int[] startPrices;
-    protected StockSpaceType defaultType;
+    private StockSpace stockChart[][];
+    private int numRows = 0;
+    private int numCols = 0;
+    private StockSpaceType defaultType;
     
-    GameManager gameManager;
+    private GameManager gameManager;
 
     /* Game-specific flags */
-    protected boolean upOrDownRight = false; /*
-     * Sold out and at top: go down
-     * right (1870)
-     */
+    private boolean upOrDownRight = false;
+    /* Sold out and at top: go down or right (1870) */
 
-    /* States */
-    /** GameOver becomes true if a stock market square is reached that is marked as such */ 
-    protected final BooleanState gameOver = BooleanState.create(this, "gameOver", false);
-
-    // FIXME: Check if this should not be a state?
-    ArrayList<PublicCertificate> ipoPile;
-
-    public static final String DEFAULT = "default";
-
+    // TODO: There used to be a BooleanState gameOver, did this have a function?
     /**
      * Used by Configure (via reflection) only
      */
@@ -145,18 +129,13 @@ public class StockMarket extends RailsManager implements Configurable {
             // Loop through the stock space flags
             if (spaceTag.getChild(StockSpace.START_SPACE_TAG) != null) {
                 space.setStart(true);
-                startSpaces.add(space);
+                startSpaces.put(space.getPrice(), space);
             }
             space.setClosesCompany(spaceTag.getChild(StockSpace.CLOSES_COMPANY_TAG) != null);
             space.setEndsGame(spaceTag.getChild(StockSpace.GAME_OVER_TAG) != null);
             space.setBelowLedge(spaceTag.getChild(StockSpace.BELOW_LEDGE_TAG) != null);
             space.setLeftOfLedge(spaceTag.getChild(StockSpace.LEFT_OF_LEDGE_TAG) != null);
 
-        }
-
-        startPrices = new int[startSpaces.size()];
-        for (int i = 0; i < startPrices.length; i++) {
-            startPrices[i] = (startSpaces.get(i)).getPrice();
         }
 
         stockChart = new StockSpace[numRows][numCols];
@@ -329,70 +308,35 @@ public class StockMarket extends RailsManager implements Configurable {
         }
         company.setCurrentSpace(to);
         
-        // the following 2 commands replaced: new PriceTokenMove(company, from, to, this);
         to.addToken(company);
-        from.removeToken(company);
+        if (from != null) {
+            from.removeToken(company);
+        }
     }
     
-    // TODO: Check what states effect players worth and link those
-//    public void processMove(PublicCompany company, StockSpace from,
-//            StockSpace to) {
-//        if (from != null) from.removeToken(company);
-//        if (to != null) to.addToken(company);
-//        company.updatePlayersWorth();
-//    }
-//
-//    public void processMoveToStackPosition(PublicCompany company, StockSpace from,
-//            StockSpace to, int toStackPosition) {
-//        if (from != null) from.removeToken(company);
-//        if (to != null) to.addTokenAtStackPosition(company, toStackPosition);
-//        company.updatePlayersWorth();
-//    }
-
+    // TODO: The StockSpace changes have to update the players worth
+    // thus link the state of company space to the players worth
+    
     /**
-     * @return
+     * Return start prices as an sorted set
      */
-    public List<StockSpace> getStartSpaces() {
-        return startSpaces;
-    }
-
-    /**
-     * Return start prices as an int array. Note: this array is NOT sorted.
-     *
-     * @return
-     */
-    public int[] getStartPrices() {
-        return startPrices;
+    public ImmutableSortedSet<Integer> getStartPrices() {
+        return ImmutableSortedSet.copyOf(startSpaces.keySet());
     }
 
     public StockSpace getStartSpace(int price) {
-        for (StockSpace square : startSpaces) {
-            if (square.getPrice() == price) return square;
-        }
-        return null;
-    }
-
-    public PublicCertificate removeShareFromPile(PublicCertificate stock) {
-        if (ipoPile.contains(stock)) {
-            int index = ipoPile.lastIndexOf(stock);
-            stock = ipoPile.get(index);
-            ipoPile.remove(index);
-            return stock;
-        } else {
-            return null;
-        }
-
+        return startSpaces.get(price);
     }
 
     /**
-     * @return
+     * @return number of columns
      */
     public int getNumberOfColumns() {
         return numCols;
     }
 
     /**
-     * @return
+     * @return number of rows
      */
     public int getNumberOfRows() {
         return numRows;

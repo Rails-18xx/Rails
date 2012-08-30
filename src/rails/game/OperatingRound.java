@@ -307,7 +307,7 @@ public class OperatingRound extends Round implements Observer {
             switch (nullAction.getMode()) {
             case NullAction.DONE:
             case NullAction.PASS:
-                result = done();
+                result = done(nullAction);
                 break;
             case NullAction.SKIP:
                 skip();
@@ -819,11 +819,12 @@ public class OperatingRound extends Round implements Observer {
 
     /**
      * The current Company is done operating.
-     *
+     * @param action TODO
      * @param company Name of the company that finished operating.
+     *
      * @return False if an error is found.
      */
-    public boolean done() {
+    public boolean done(NullAction action) {
 
         if (operatingCompany.value().getPortfolioModel().getNumberOfTrains() == 0
                 && operatingCompany.value().mustOwnATrain()) {
@@ -839,7 +840,7 @@ public class OperatingRound extends Round implements Observer {
              */
         }
 
-        // TODO: changeStack.start(false);
+        getRoot().getChangeStack().newChangeSet(action);
 
         nextStep();
 
@@ -898,7 +899,7 @@ public class OperatingRound extends Round implements Observer {
         }
 
         /* End of validation, start of execution */
-        // TODO: changeStack.start(true);
+        getRoot().getChangeStack().newChangeSet(action);
         
         // FIXME: if (action.isForced()) changeStack.linkToPreviousMoveSet();
 
@@ -1049,7 +1050,7 @@ public class OperatingRound extends Round implements Observer {
             return false;
         }
 
-        // TODO: changeStack.start(true);
+        getRoot().getChangeStack().newChangeSet(action);
 
         operatingCompany.value().buyPrivate(privateCompany, player, price);
 
@@ -1097,7 +1098,7 @@ public class OperatingRound extends Round implements Observer {
             return false;
         }
 
-        // TODO: changeStack.start(true);
+        getRoot().getChangeStack().newChangeSet(action);
 
         priv.setClosed();
 
@@ -1168,7 +1169,7 @@ public class OperatingRound extends Round implements Observer {
             return false;
         }
 
-        // TODO: changeStack.start(true);
+        getRoot().getChangeStack().newChangeSet(action);
 
         executeTakeLoans (action);
 
@@ -1277,14 +1278,14 @@ public class OperatingRound extends Round implements Observer {
                         + remainder + " loan repayment");
                 log.info("President has $"+presCash+", so $"+cashToBeRaisedByPresident+" must be added");
                 savedAction = action;
-                // TODO: changeStack.start(true);
+                getRoot().getChangeStack().newChangeSet(action);
                 gameManager.startShareSellingRound(operatingCompany.value().getPresident(),
                         cashToBeRaisedByPresident, operatingCompany.value(), false);
                 return true;
             }
         }
 
-        // TODO: changeStack.start(true);
+        getRoot().getChangeStack().newChangeSet(action);
 
         if (repayment > 0) executeRepayLoans (action);
 
@@ -1377,7 +1378,7 @@ public class OperatingRound extends Round implements Observer {
             return false;
         }
 
-        // TODO: changeStack.start(true);
+        getRoot().getChangeStack().newChangeSet(action);
 
         operatingCompany.value().setRight(rightName, rightValue);
         MoneyModel.cashMove (operatingCompany.value(), bank, right.getCost());
@@ -1513,7 +1514,7 @@ public class OperatingRound extends Round implements Observer {
         }
 
         /* End of validation, start of execution */
-        // TODO: changeStack.start(true);
+        getRoot().getChangeStack().newChangeSet(action);
 
         if (tile != null) {
             if (cost > 0)
@@ -1826,7 +1827,7 @@ public class OperatingRound extends Round implements Observer {
         }
 
         /* End of validation, start of execution */
-        // TODO: changeStack.start(true);
+        getRoot().getChangeStack().newChangeSet(action);
 
         if (hex.layBaseToken(operatingCompany.value(), station)) {
             /* TODO: the false return value must be impossible. */
@@ -2003,7 +2004,7 @@ public class OperatingRound extends Round implements Observer {
         }
 
         /* End of validation, start of execution */
-        // TODO: changeStack.start(true);
+        getRoot().getChangeStack().newChangeSet(action);
 
         if (hex.layBonusToken(token, gameManager.getPhaseManager())) {
             /* TODO: the false return value must be impossible. */
@@ -2070,7 +2071,7 @@ public class OperatingRound extends Round implements Observer {
         }
 
         /* End of validation, start of execution */
-        // TODO: changeStack.start(true);
+        getRoot().getChangeStack().newChangeSet(action);
 
         MoneyModel.cashMove(operatingCompany.value(), seller, cost);
         operatingCompany.value().addBonus(new Bonus(operatingCompany.value(),
@@ -2124,7 +2125,7 @@ public class OperatingRound extends Round implements Observer {
             return false;
         }
 
-        // TODO: changeStack.start(true);
+        getRoot().getChangeStack().newChangeSet(action);
 
         ReportBuffer.add(LocalText.getText("CompanyRevenue",
                 action.getCompanyName(),
@@ -2455,7 +2456,7 @@ public class OperatingRound extends Round implements Observer {
             return false;
         }
 
-        // TODO: changeStack.start(true);
+        getRoot().getChangeStack().newChangeSet(action);
 
         if (amount > 0) {
             // positive amounts: remove cash from cashholder
@@ -2681,7 +2682,7 @@ public class OperatingRound extends Round implements Observer {
         }
 
         /* End of validation, start of execution */
-        // TODO: changeStack.start(true);
+        getRoot().getChangeStack().newChangeSet(action);
         Phase previousPhase = getCurrentPhase();
 
         if (presidentMustSellShares) {

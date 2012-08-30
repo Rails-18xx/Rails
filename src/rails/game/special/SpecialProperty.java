@@ -5,6 +5,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
+
 
 import rails.common.LocalText;
 import rails.common.parser.Configurable;
@@ -27,11 +29,10 @@ public abstract class SpecialProperty extends OwnableItem<SpecialProperty> imple
     };
     
     public static final Priority DEFAULT_PRIORITY = Priority.FIRST;
-
     
     protected Company originalCompany;
     protected int closingValue = 0;
-    protected BooleanState exercised;
+    private final BooleanState exercised = BooleanState.create(this, "exercised");
     
     /* Usability conditions. Not all of these are already being used. */
     protected boolean usableIfOwnedByPlayer = false;
@@ -146,6 +147,7 @@ public abstract class SpecialProperty extends OwnableItem<SpecialProperty> imple
 
     // Sets the first (time) owner
     public void setOriginalCompany(Company company) {
+        Preconditions.checkState(originalCompany == null, "OriginalCompany can only set once");
         originalCompany = company;
     }
 

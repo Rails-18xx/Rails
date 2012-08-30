@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import rails.game.*;
+import rails.game.state.ChangeAction;
 
 /**
  * PossibleAction is the superclass of all classes that describe an allowed user
@@ -20,7 +21,7 @@ import rails.game.*;
  * @author Erik Vos
  */
 /* Or should this be an interface? We will see. */
-public abstract class PossibleAction implements Serializable {
+public abstract class PossibleAction implements ChangeAction, Serializable {
 
     protected String playerName;
     protected int playerIndex;

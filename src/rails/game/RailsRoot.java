@@ -11,6 +11,7 @@ import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.common.parser.*;
 import rails.game.action.PossibleAction;
+import rails.game.state.ChangeStack;
 import rails.game.state.Root;
 import rails.util.GameFileIO;
 
@@ -299,6 +300,10 @@ public class RailsRoot extends Root {
     }
 
     /*----- Getters -----*/
+    public ChangeStack getChangeStack() {
+        return getStateManager().getChangeStack();
+    }
+    
     public GameManager getGameManager() {
         return gameManager;
     }

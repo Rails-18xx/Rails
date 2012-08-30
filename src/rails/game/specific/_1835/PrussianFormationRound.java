@@ -235,7 +235,7 @@ public class PrussianFormationRound extends StockRound {
         }
 
         // all actions linked during formation round to avoid serious undo problems
-        // TODO: changeStack.start(false);
+        getRoot().getChangeStack().newChangeSet(action);
         // FIXME: changeStack.linkToPreviousMoveSet();
 
         if (folding) executeStartPrussian(false);
@@ -297,7 +297,7 @@ public class PrussianFormationRound extends StockRound {
         */
 
         // all actions linked during formation round to avoid serious undo problems
-        // TODO: changeStack.start(false);
+        getRoot().getChangeStack().newChangeSet(action);
         // FIMXE: changeStack.linkToPreviousMoveSet();
 
         // Execute
@@ -325,7 +325,7 @@ public class PrussianFormationRound extends StockRound {
             efs = (ExchangeForShare) Iterables.get(company.getSpecialProperties(), 0);
             cert = unavailable.findCertificate(prussian, efs.getShare()/prussian.getShareUnit(),
             		president);
-            player.getPortfolioModel().addPublicCertificate(cert);
+            cert.moveTo(player);
             //company.setClosed();
             String message = LocalText.getText("MERGE_MINOR_LOG",
                     player.getId(),
@@ -426,7 +426,7 @@ public class PrussianFormationRound extends StockRound {
         }
 
         /* End of validation, start of execution */
-        // TODO: changeStack.start(true);
+        getRoot().getChangeStack().newChangeSet(action);
         // FIXME: if (action.isForced()) changeStack.linkToPreviousMoveSet();
 
         pool.addTrain(train);

@@ -2,7 +2,6 @@ package rails.ui.swing;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
 import java.util.List;
 
 import javax.swing.*;
@@ -607,34 +606,21 @@ public class StartRoundWindow extends JFrame implements ActionListener,
             StockMarket stockMarket = gameUIManager.getGameManager().getStockMarket();
 
             // Get a sorted prices List
-            // TODO: should be included in BuyStartItem
-            List<StockSpace> startSpaces = stockMarket.getStartSpaces();
-            Map<Integer, StockSpace> spacePerPrice =
-                    new HashMap<Integer, StockSpace>();
-            int[] prices = new int[startSpaces.size()];
-            StockSpace[] options = new StockSpace[startSpaces.size()];
-            for (int i = 0; i < startSpaces.size(); i++) {
-                prices[i] = startSpaces.get(i).getPrice();
-                spacePerPrice.put(prices[i], startSpaces.get(i));
-            }
-            Arrays.sort(prices);
-            for (int i = 0; i < startSpaces.size(); i++) {
-                options[i] = spacePerPrice.get(prices[i]);
-            }
+            // TODO: Add price format
+            Integer[] prices = stockMarket.getStartPrices().toArray(new Integer[0]);
 
-            StockSpace sp =
-                    (StockSpace) JOptionPane.showInputDialog(this,
+            Integer sp =
+                    (Integer) JOptionPane.showInputDialog(this,
                             LocalText.getText("WHICH_START_PRICE",
                                     activeItem.getPlayerName(),
                                     compName),
                             LocalText.getText("WHICH_PRICE"),
-                            JOptionPane.QUESTION_MESSAGE, null, options,
-                            options[0]);
+                            JOptionPane.QUESTION_MESSAGE, null, prices,
+                            prices[0]);
             if (sp == null) {
                 return false;
             }
-            int price = sp.getPrice();
-            activeItem.setAssociatedSharePrice(price);
+            activeItem.setAssociatedSharePrice(sp);
         }
         return true;
     }

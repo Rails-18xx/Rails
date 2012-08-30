@@ -8,10 +8,10 @@ import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.model.MoneyModel;
-import rails.game.model.PortfolioModel;
 import rails.game.special.SellBonusToken;
 import rails.game.state.BooleanState;
 import rails.game.state.IntegerState;
+import rails.game.state.Portfolio;
 
 public class CGRFormationRound extends SwitchableUIRound {
 
@@ -252,7 +252,7 @@ public class CGRFormationRound extends SwitchableUIRound {
 
         // TODO Validation skipped for now...
 
-        // TODO: changeStack.start(true);
+        getRoot().getChangeStack().newChangeSet(action);
         // FIMXE: linked to previous moveset
         // changeStack.linkToPreviousMoveSet();
 
@@ -306,7 +306,6 @@ public class CGRFormationRound extends SwitchableUIRound {
     private void formCGR () {
 
         Player player;
-        PortfolioModel portfolio;
         int count, cgrSharesUsed, oldShares, newShares;
         PublicCertificate cgrCert, poolCert;
         List<PublicCertificate> certs = new ArrayList<PublicCertificate>();
@@ -323,7 +322,6 @@ public class CGRFormationRound extends SwitchableUIRound {
 
         do {
             player = getCurrentPlayer();
-            portfolio = player.getPortfolioModel();
             oldShares = newShares = 0;
             certs.clear();
             poolCert = null;
@@ -343,7 +341,7 @@ public class CGRFormationRound extends SwitchableUIRound {
                 count = oldShares;
                 if (count >= 4 && temporaryPresident == null && cgrSharesUsed <= 18) {
                     cgrCert = cgr.getPresidentsShare();
-                    portfolio.addPublicCertificate(cgrCert);
+                    cgrCert.moveTo(player);
                     count -= 4;
                     cgrSharesUsed += 2;
                     newShares += 2;
@@ -351,7 +349,7 @@ public class CGRFormationRound extends SwitchableUIRound {
                 }
                 while (count >= 2 && cgrSharesUsed <= 19) {
                     cgrCert = unavailable.findCertificate(cgr, false);
-                    portfolio.addPublicCertificate(cgrCert);
+                    cgrCert.moveTo(player);
                     count -= 2;
                     cgrSharesUsed++;
                     newShares++;
@@ -369,7 +367,7 @@ public class CGRFormationRound extends SwitchableUIRound {
                     // Should work OK even if this is a president's share.
                     // In the pool we will treat all certs equally.
                     poolCert = certs.get(certs.size()-1);
-                    pool.addPublicCertificate(poolCert);
+                    poolCert.moveTo(pool.getParent());
                     certs.remove(poolCert);
 
                     message = LocalText.getText("HasPutShareInPool",
@@ -406,7 +404,7 @@ public class CGRFormationRound extends SwitchableUIRound {
         count = oldShares;
         while (count >= 2 && cgrSharesUsed <= 19) {
             cgrCert = unavailable.findCertificate(cgr, false);
-            pool.addPublicCertificate(cgrCert);
+            cgrCert.moveTo(pool.getParent());
             count -= 2;
             cgrSharesUsed++;
             newShares++;
@@ -420,10 +418,7 @@ public class CGRFormationRound extends SwitchableUIRound {
         DisplayBuffer.add(message);
         ReportBuffer.add(message);
 
-        for (PublicCertificate discardCert : certs) {
-            scrapHeap.addPublicCertificate(discardCert);
-        }
-
+        Portfolio.moveAll(certs, scrapHeap.getParent());
         log.info(cgrSharesUsed+" CGR shares are now in play");
 
         // If no more than 10 shares are in play, the CGR share
@@ -441,7 +436,7 @@ public class CGRFormationRound extends SwitchableUIRound {
 
         // Move the remaining CGR shares to the ipo.
         // Clone the shares list first
-        cgr.getPortfolioModel().getCertificatesModel().moveAll(ipo.getParent());
+        cgr.getPortfolioModel().moveAllCertificates(ipo.getParent());
 
         // Assign the new president
         if (newPresident.getPortfolioModel().getShare(cgr) == cgr.getShareUnit()) {
@@ -833,7 +828,7 @@ bonuses:        for (Bonus bonus : bonuses) {
 
         /* End of validation, start of execution */
         // new: link always, see below commented
-        // TODO: changeStack.start(true);
+        getRoot().getChangeStack().newChangeSet(action);
         // FIXME:changeStack.linkToPreviousMoveSet();
 
         if (train != null) {

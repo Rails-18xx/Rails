@@ -162,7 +162,7 @@ public class StockRound_1835 extends StockRound {
                 // President sold: release four 10% Prussian shares
             	gameManager.getCompanyManager().getPublicCompany(GameManager_1835.PR_ID).setBuyable(true);
                 for (int i=0; i<4; i++) {
-                    ipo.addPublicCertificate(unavailable.getAnyCertOfType(GameManager_1835.PR_ID+"_10%"));
+                    unavailable.getAnyCertOfType(GameManager_1835.PR_ID+"_10%").moveTo(ipo.getParent());
                 }
                 ReportBuffer.add (LocalText.getText("SharesReleased",
                         "4 10%", GameManager_1835.PR_ID));

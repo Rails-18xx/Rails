@@ -14,14 +14,13 @@ import rails.game.model.CashOwner;
 import rails.game.model.MoneyModel;
 import rails.game.model.PortfolioModel;
 import rails.game.special.SpecialProperty;
-import rails.game.state.AbstractItem;
 import rails.game.state.ArrayListState;
 import rails.game.state.BooleanState;
 import rails.game.state.Creatable;
 import rails.game.state.Owner;
 import rails.game.state.Portfolio;
 
-public abstract class Round extends AbstractItem implements Creatable {
+public abstract class Round extends RailsItem implements Creatable {
 
     protected PossibleActions possibleActions = PossibleActions.getInstance();
     protected GuiHints guiHints = null;
@@ -45,10 +44,9 @@ public abstract class Round extends AbstractItem implements Creatable {
 
     /** Autopasses */
     // TODO: Should this be moved to the StockRound classes?
-    // Only initialized if used
-    protected ArrayListState<Player> autopasses = null;
-    protected ArrayListState<Player> canRequestTurn = null;
-    protected ArrayListState<Player> hasRequestedTurn = null;
+    private final ArrayListState<Player> autopasses = ArrayListState.create(this, "autopasses");
+    private final ArrayListState<Player> canRequestTurn = ArrayListState.create(this, "canRequestTurn");
+    private final ArrayListState<Player> hasRequestedTurn = ArrayListState.create(this, "hasRequestedTurn");
 
     protected Round (GameManager parent, String id) {
         super(parent, id);
@@ -179,7 +177,7 @@ public abstract class Round extends AbstractItem implements Creatable {
             return false;
         }
 
-        // TODO: changeStack.start(true);
+        getRoot().getChangeStack().newChangeSet(action);
         // FIMXE: if (linkedMoveSet) changeStack.linkToPreviousMoveSet();
 
         if (exchanged > 0) {
@@ -414,7 +412,7 @@ public abstract class Round extends AbstractItem implements Creatable {
 
     protected void transferCertificate(Certificate cert, PortfolioModel newHolder) {
         if (cert instanceof PublicCertificate) {
-            newHolder.addPublicCertificate((PublicCertificate)cert);
+            ((PublicCertificate)cert).moveTo(newHolder.getParent());
         } else if (cert instanceof PrivateCompany) {
             newHolder.addPrivateCompany((PrivateCompany)cert);
         }
@@ -467,10 +465,7 @@ public abstract class Round extends AbstractItem implements Creatable {
     }
 
     public boolean requestTurn (Player player) {
-        if (canRequestTurn (player)) {
-            if (hasRequestedTurn == null) {
-                hasRequestedTurn = ArrayListState.create(this, "hasRequestedTurn");
-            }
+        if (canRequestTurn(player)) {
             if (!hasRequestedTurn.contains(player)) hasRequestedTurn.add(player);
             return true;
         }
@@ -478,13 +473,10 @@ public abstract class Round extends AbstractItem implements Creatable {
     }
 
     public boolean canRequestTurn (Player player) {
-        return canRequestTurn != null && canRequestTurn.contains(player);
+        return canRequestTurn.contains(player);
     }
 
     public void setCanRequestTurn (Player player, boolean value) {
-        if (canRequestTurn == null) {
-            canRequestTurn = ArrayListState.create(this, "canRequestTurn");
-        }
         if (value && !canRequestTurn.contains(player)) {
             canRequestTurn.add(player);
         } else if (!value && canRequestTurn.contains(player)) {
@@ -493,9 +485,6 @@ public abstract class Round extends AbstractItem implements Creatable {
     }
 
     public void setAutopass (Player player, boolean value) {
-        if (autopasses == null) {
-            autopasses = ArrayListState.create(this, "autopasses");
-        }
         if (value && !autopasses.contains(player)) {
             autopasses.add(player);
         } else if (!value && autopasses.contains(player)) {
@@ -504,7 +493,7 @@ public abstract class Round extends AbstractItem implements Creatable {
     }
 
     public boolean hasAutopassed (Player player) {
-        return autopasses != null && autopasses.contains(player);
+        return autopasses.contains(player);
     }
 
     public List<Player> getAutopasses() {

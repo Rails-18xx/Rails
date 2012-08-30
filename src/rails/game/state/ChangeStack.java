@@ -45,6 +45,14 @@ public class ChangeStack {
     public ChangeSet getPreviousChangeSet() {
         return undoStack.peekFirst();
     }
+    
+    /**
+     * @return true if there is an current (open) changeSet available
+     */
+    public boolean isOpen() {
+        // the latter condition should always be true, but this could change
+        return currentSet != null && !currentSet.isClosed();
+    }
 
     /**
      * Add change to current changeSet
@@ -77,14 +85,21 @@ public class ChangeStack {
         currentSet = null;
         return storeCurrentSet;
     }
-
     
     /**
-     * Starts new ChangeSet
+     * Cancels the current open set
+     */
+    public void cancel() {
+        currentSet = null;
+    }
+   
+    /**
+     * Starts new ChangeSet (closes if one is still open)
      * @param action associated ChangeAction
      * @return the new current ChangeSet
      */
     public ChangeSet newChangeSet(ChangeAction action) {
+        if (isOpen()) close();
         return startChangeSet(action, false);
     }
 

@@ -11,14 +11,12 @@ import rails.game.Stop.RunThrough;
 import rails.game.Stop.RunTo;
 import rails.game.Stop.Score;
 import rails.game.Stop.Type;
-import rails.game.state.AbstractItem;
-import rails.game.state.Item;
 import rails.util.Util;
 
 /**
  * MapManager configures the map layout from XML
  */
-public class MapManager extends AbstractItem implements Configurable {
+public class MapManager extends RailsManager implements Configurable {
 
     private String mapUIClassName = null;
 
@@ -68,7 +66,7 @@ public class MapManager extends AbstractItem implements Configurable {
     /**
      * Used by Configure (via reflection) only
      */
-    public MapManager(Item parent, String id) {
+    public MapManager(RailsRoot parent, String id) {
         super(parent, id);
     }
     

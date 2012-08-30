@@ -232,7 +232,7 @@ public final class StartRound_1880 extends StartRound {
             return false;
         }
 
-        // TODO: changeStack.start(false);
+        getRoot().getChangeStack().newChangeSet(bidItem);
 
         item.setBid(bidAmount, player);
         ReportBuffer.add(LocalText.getText("BID_ITEM_LOG",
@@ -249,7 +249,7 @@ public final class StartRound_1880 extends StartRound {
      * @see rails.game.StartRound#pass(java.lang.String)
      */
     @Override
-    protected boolean pass(String playerName) {
+    protected boolean pass(NullAction action, String playerName) {
         String errMsg = null;
         Player player = getCurrentPlayer();
         StartItem auctionItem = (StartItem) auctionItemState.value();
@@ -273,7 +273,7 @@ public final class StartRound_1880 extends StartRound {
 
         ReportBuffer.add(LocalText.getText("PASSES", playerName));
 
-        // TODO: changeStack.start(false);
+        getRoot().getChangeStack().newChangeSet(action);
 
         numPasses.add(1);
         

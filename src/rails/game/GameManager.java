@@ -550,9 +550,6 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         } else {
             startStockRound();
         }
-
-        // Initialisation is complete. Undoability starts here.
-        // changeStack.enable();
     }
 
     private void setGuiParameters () {
@@ -852,19 +849,22 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             result = process(possibleActions.getList().get(0));
         }
 
-        // moveStack closing is done here to allow state changes to occur
-        // when setting possible actions
-        // FIXME: This has to be rewritten from scratch
-//        if (action != null) {
-//            if (result && !(action instanceof GameAction) && action.hasActed()) {
-//                if (changeStack.isOpen()) changeStack.finish();
-//                recoverySave();
-//            } else {
-//                if (changeStack.isOpen()) changeStack.cancel();
-//            }
-//        }
-
+        // TODO: Check if this still works as it moved above the close of the ChangeStack 
+        // to have a ChangeSet open to initialize the CorrectionManagers
         if (!isGameOver()) setCorrectionActions();
+
+        // Check what is to be done with the ChangeStack
+        ChangeStack changeStack = getRoot().getChangeStack();
+        
+        if (action != null) {
+            if (result && !(action instanceof GameAction) && action.hasActed()) {
+                if (changeStack.isOpen()) changeStack.close();
+                recoverySave();
+            } else {
+                if (changeStack.isOpen()) changeStack.cancel();
+            }
+        }
+
 
         // Add the Undo/Redo possibleActions here.
         // FIXME: This has to be rewritten from scratch
@@ -1013,8 +1013,8 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                 +" is considered invalid by the game engine";
                 log.error(msg);
                 DisplayBuffer.add(msg);
-                // FIXME: Rewrite command below
-                // if (changeStack.isOpen()) changeStack.finish();
+                ChangeStack changeStack = getRoot().getStateManager().getChangeStack();
+                if (changeStack.isOpen()) changeStack.close();
                 return false;
             }
             possibleActions.clear();
@@ -1035,8 +1035,8 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         }
         executedActions.add(action);
         
-        // FIXME: Rewrite that below
-        // if (changeStack.isOpen()) changeStack.finish();
+        // ChangeStack changeStack = getRoot().getStateManager().getChangeStack();
+        // if (changeStack.isOpen()) changeStack.close(); // TODO: Check if this still works, but open ChangeSet required
 
         log.debug("Turn: "+getCurrentPlayer().getId());
         return true;

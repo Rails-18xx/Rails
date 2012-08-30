@@ -218,11 +218,10 @@ public class StartRound_1835 extends StartRound {
 
     /**
      * Process a player's pass.
-     *
      * @param playerName The name of the current player (for checking purposes).
      */
     @Override
-    public boolean pass(String playerName) {
+    public boolean pass(NullAction action, String playerName) {
 
         String errMsg = null;
         Player player = getCurrentPlayer();
@@ -246,7 +245,7 @@ public class StartRound_1835 extends StartRound {
 
         ReportBuffer.add(LocalText.getText("PASSES", playerName));
 
-        // TODO: changeStack.start(false);
+        getRoot().getChangeStack().newChangeSet(action);
 
         numPasses.add(1);
 

@@ -2,8 +2,6 @@ package rails.game.model;
 
 import java.util.Iterator;
 
-import com.google.common.collect.ImmutableSet;
-
 import rails.game.Player;
 import rails.game.PublicCertificate;
 import rails.game.PublicCompany;
@@ -19,7 +17,7 @@ import rails.game.state.PortfolioMap;
         // this.addModel(company.getPresidentModel());
  * @author freystef
  */
-public class CertificatesModel extends Model {
+public class CertificatesModel extends Model implements Iterable<PublicCertificate> {
 
     public final static String ID = "CertificatesModel";
     
@@ -41,14 +39,6 @@ public class CertificatesModel extends Model {
         return (Owner)super.getParent();
     }
     
-    public PortfolioMap<PublicCompany, PublicCertificate> getPortfolio() {
-        return certificates;
-    }
-    
-    public void moveAll(Owner newOwner) {
-        certificates.moveAll(newOwner);
-    }
-    
     public ShareModel getShareModel(PublicCompany company) {
         if (shareModels.containsKey(company)) {
             return shareModels.get(company);
@@ -59,6 +49,29 @@ public class CertificatesModel extends Model {
         }
     }
     
+    public float getCertificateCount() {
+        float number = 0;
+        for (PublicCertificate cert:certificates) {
+            PublicCompany company = cert.getCompany();
+            if (!company.hasFloated() || !company.hasStockPrice()
+                    || !cert.getCompany().getCurrentSpace().isNoCertLimit()) {
+                number += cert.getCertificateCount();
+            }
+        }
+        return number;
+    }
+    public boolean contains(PublicCompany company) {
+        return certificates.containsKey(company);
+    }
+    
+    public PortfolioMap<PublicCompany, PublicCertificate> getPortfolio() {
+        return certificates;
+    }
+
+    public Iterator<PublicCertificate> iterator() {
+        return certificates.iterator();
+    }
+
     int getShare(PublicCompany company) {
         int share = 0;
         for (PublicCertificate cert : certificates.items(company)) {
@@ -66,8 +79,8 @@ public class CertificatesModel extends Model {
         }
         return share;
     }
-
-    String getText(PublicCompany company) {
+    
+    String toText(PublicCompany company) {
         int share = this.getShare(company);
         
         if (share == 0) return "";
@@ -82,54 +95,11 @@ public class CertificatesModel extends Model {
         }
         return b.toString();
     }
-    
+
     @Override
     public String toText() {
         return certificates.toString();
     }
     
-    public ImmutableSet<PublicCertificate> getCertificates() {
-        return certificates.items();
-    }
-    
-    public ImmutableSet<PublicCertificate> getCertificates(PublicCompany company) {
-        return certificates.items(company);
-    }
-    
-    public float getCertificateCount() {
-        float number = 0;
-        for (PublicCertificate cert:certificates) {
-            PublicCompany company = cert.getCompany();
-            if (!company.hasFloated() || !company.hasStockPrice()
-                    || !cert.getCompany().getCurrentSpace().isNoCertLimit()) {
-                number += cert.getCertificateCount();
-            }
-        }
-        return number;
-    }
-    
-    public boolean contains(PublicCertificate certificate) {
-        return certificates.containsItem(certificate);
-    }
-    
-    public boolean contains(PublicCompany company) {
-        return certificates.containsKey(company);
-    }
-    
-    public Iterator<PublicCertificate> iterator() {
-        return certificates.iterator();
-    }
-
-    public boolean moveInto(PublicCertificate c) {
-        return certificates.moveInto(c);
-    }
-
-    public int size() {
-        return certificates.size();
-    }
-
-    public boolean isEmpty() {
-        return certificates.isEmpty();
-    }
 
 }

@@ -2,6 +2,10 @@ package rails.game;
 
 import java.util.*;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSetMultimap;
+import com.google.common.collect.Iterables;
+
 import rails.common.DisplayBuffer;
 import rails.common.GuiDef;
 import rails.common.LocalText;
@@ -75,9 +79,8 @@ public class TreasuryShareRound extends StockRound {
      */
     @Override
     public void setBuyableCerts() {
-        List<PublicCertificate> certs;
+        ImmutableSet<PublicCertificate> certs;
         PublicCertificate cert;
-        PublicCompany comp;
         PortfolioModel from;
         int price;
         int number;
@@ -86,15 +89,14 @@ public class TreasuryShareRound extends StockRound {
 
         /* Get the unique Pool certificates and check which ones can be bought */
         from = pool;
-        Map<String, List<PublicCertificate>> map =
+        ImmutableSetMultimap<PublicCompany, PublicCertificate> map =
                 from.getCertsPerCompanyMap();
 
-        for (String compName : map.keySet()) {
-            certs = map.get(compName);
-            if (certs == null || certs.isEmpty()) continue;
+        for (PublicCompany comp: map.keySet()) {
+            certs = map.get(comp);
+            // if (certs.isEmpty()) continue; // TODO: Check if removal is correct 
 
-            cert = certs.get(0);
-            comp = cert.getCompany();
+            cert = Iterables.get(certs, 0);
 
             // TODO For now, only consider own certificates.
             // This will have to be revisited with 1841.
@@ -337,7 +339,7 @@ public class TreasuryShareRound extends StockRound {
                     Bank.format(cashAmount) ));
         }
 
-        // TODO: changeStack.start(true);
+        getRoot().getChangeStack().newChangeSet(action);
 
         pay (company, bank, cashAmount);
         PublicCertificate cert2;
@@ -462,7 +464,7 @@ public class TreasuryShareRound extends StockRound {
             sellPrices.put(company, sellPrice);
         }
 
-        // TODO: changeStack.start(true);
+        getRoot().getChangeStack().newChangeSet(action);
 
         int cashAmount = numberSold * price;
         ReportBuffer.add(LocalText.getText("SELL_SHARES_LOG",
@@ -492,13 +494,13 @@ public class TreasuryShareRound extends StockRound {
 
     /**
      * The current Player passes or is done.
-     *
      * @param player Name of the passing player.
+     *
      * @return False if an error is found.
      */
     @Override
     // Autopassing does not apply here
-    public boolean done(String playerName, boolean hasAutopassed) {
+    public boolean done(NullAction action, String playerName, boolean hasAutopassed) {
 
         currentPlayer = getCurrentPlayer();
 
@@ -507,7 +509,7 @@ public class TreasuryShareRound extends StockRound {
             return false;
         }
 
-        // TODO: changeStack.start(false);
+        getRoot().getChangeStack().newChangeSet(action);
 
         // Inform GameManager
         gameManager.finishTreasuryShareRound();

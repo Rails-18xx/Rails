@@ -134,7 +134,7 @@ public class StartRound_18EU extends StartRound {
             return false;
         }
 
-        // TODO: changeStack.start(false);
+        getRoot().getChangeStack().newChangeSet(boughtItem);
 
         assignItem(player, item, price, 0);
         ((PublicCertificate) item.getPrimary()).getCompany().start();
@@ -218,7 +218,7 @@ public class StartRound_18EU extends StartRound {
             return false;
         }
 
-        // TODO: changeStack.start(false);
+        getRoot().getChangeStack().newChangeSet(bidItem);
 
         if (getStep() == SELECT_STEP) {
 
@@ -275,16 +275,15 @@ public class StartRound_18EU extends StartRound {
 
     /**
      * Process a player's pass.
-     *
      * @param playerName The name of the current player (for checking purposes).
      */
     @Override
-    public boolean pass(String playerName) {
+    public boolean pass(NullAction action, String playerName) {
         // All validations have already been done
 
         ReportBuffer.add(LocalText.getText("PASSES", playerName));
 
-        // TODO: changeStack.start(false);
+        getRoot().getChangeStack().newChangeSet(action);
 
         StartItem auctionedItem = (StartItem) currentAuctionItem.value();
 

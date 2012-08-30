@@ -109,11 +109,10 @@ public class StartRound_1825 extends StartRound {
 
     /**
      * Process a player's pass.
-     *
      * @param playerName The name of the current player (for checking purposes).
      */
     @Override
-    public boolean pass(String playerName) {
+    public boolean pass(NullAction action, String playerName) {
         ReportBuffer.add(LocalText.getText("PASSES", playerName));
         numPasses.add(1);
         if (numPasses.value() >= numPlayers) {

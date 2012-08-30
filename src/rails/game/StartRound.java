@@ -102,7 +102,7 @@ public abstract class StartRound extends Round {
             NullAction nullAction = (NullAction) action;
             switch (nullAction.getMode()) {
             case NullAction.PASS:
-                result = pass(playerName);
+                result = pass(nullAction, playerName);
                 break;
             }
 
@@ -229,7 +229,7 @@ public abstract class StartRound extends Round {
             return false;
         }
 
-        // TODO: changeStack.start(false);
+        getRoot().getChangeStack().newChangeSet(boughtItem);
 
         assignItem(player, item, price, sharePrice);
 
@@ -305,10 +305,10 @@ public abstract class StartRound extends Round {
 
     /**
      * Process a player's pass.
-     *
+     * @param action TODO
      * @param playerName The name of the current player (for checking purposes).
      */
-    protected abstract boolean pass(String playerName);
+    protected abstract boolean pass(NullAction action, String playerName);
 
     @Override
     protected void finishRound() {

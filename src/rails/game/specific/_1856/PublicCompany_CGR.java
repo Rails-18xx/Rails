@@ -122,7 +122,7 @@ public final class PublicCompany_CGR extends PublicCompany implements RevenueSta
             BankPortfolio scrapHeap = bank.getScrapHeap();
             for (PublicCertificate cert : certs) {
                 if (share >= 100) {
-                    scrapHeap.getPortfolioModel().addPublicCertificate(cert);
+                    cert.moveTo(scrapHeap);
                     certificates.remove(cert);
                 } else {
                     cert.setCertificateCount(1.0f);

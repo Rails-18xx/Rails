@@ -49,24 +49,18 @@ public class StockSpaceType {
 
 
     /*--- Instance attributes ---*/
-    protected String name;
-    protected String colourString;
-    protected Color colour;
+    private final String name;
+    private final String colourString;
+    private final Color colour;
     protected boolean noCertLimit = false; // In yellow zone
     protected boolean noHoldLimit = false; // In orange zone (1830)
     protected boolean noBuyLimit = false; // In brown zone (1830)
 
     public static final String WHITE = "FFFFFF";
 
-    /*--- Contructors ---*/
-    public StockSpaceType(String name) throws ConfigurationException {
-        this(name, "");
-    }
-
     public StockSpaceType(String name, String colour) throws ConfigurationException {
         this.name = name;
         this.colourString = colour;
-        //this.colour = new Color(Integer.parseInt(colourString, 16));
         this.colour = Util.parseColour(colourString);
     }
 

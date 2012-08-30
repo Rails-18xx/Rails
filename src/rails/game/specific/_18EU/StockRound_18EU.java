@@ -2,7 +2,9 @@ package rails.game.specific._18EU;
 
 import java.util.*;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSetMultimap;
+import com.google.common.collect.Iterables;
 
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
@@ -67,9 +69,8 @@ public class StockRound_18EU extends StockRound {
     public void setBuyableCerts() {
         if (!mayCurrentPlayerBuyAnything()) return;
 
-        List<PublicCertificate> certs;
+        ImmutableSet<PublicCertificate> certs;
         PublicCertificate cert;
-        PublicCompany comp;
         StockSpace stockSpace;
         PortfolioModel from;
         int price;
@@ -104,13 +105,13 @@ public class StockRound_18EU extends StockRound {
                 (PublicCompany) companyBoughtThisTurnWrapper.value();
         if (companyBoughtThisTurn == null) {
             from = ipo;
-            Map<String, List<PublicCertificate>> map =
-                    ipo.getCertsPerCompanyMap();
+            ImmutableSetMultimap<PublicCompany, PublicCertificate> map =
+                    from.getCertsPerCompanyMap();
             int shares;
 
-            for (String compName : map.keySet()) {
-                certs = map.get(compName);
-                if (certs == null || certs.isEmpty()) continue;
+            for (PublicCompany comp : map.keySet()) {
+                certs = map.get(comp);
+                // if (certs.isEmpty()) continue; // TODO: Check if this removal is correct
 
                 /* Only the top certificate is buyable from the IPO */
                 int lowestIndex = 99;
@@ -169,14 +170,13 @@ public class StockRound_18EU extends StockRound {
 
         /* Get the unique Pool certificates and check which ones can be bought */
         from = pool;
-        Map<String, List<PublicCertificate>> map =
-                pool.getCertsPerCompanyMap();
+        ImmutableSetMultimap<PublicCompany, PublicCertificate> map =
+                from.getCertsPerCompanyMap();
 
-        for (String compName : map.keySet()) {
-            certs = map.get(compName);
-            if (certs == null || certs.isEmpty()) continue;
-            cert = certs.get(0);
-            comp = cert.getCompany();
+        for (PublicCompany comp : map.keySet()) {
+            certs = map.get(comp);
+            // if (certs.isEmpty()) continue; // TODO: Check if this removal is correct
+            cert = Iterables.get(certs, 0);
             if (isSaleRecorded(currentPlayer, comp)) continue;
             if (maxAllowedNumberOfSharesToBuy(currentPlayer, comp,
                     cert.getShare()) < 1) continue;
@@ -196,16 +196,13 @@ public class StockRound_18EU extends StockRound {
         if (gameManager.canAnyCompanyHoldShares()) {
 
             for (PublicCompany company : companyManager.getAllPublicCompanies()) {
-                // TODO: Rewrite
-                certs = ImmutableList.copyOf(
-                        company.getPortfolioModel().getCertificates(
-                                company));
-                if (certs == null || certs.isEmpty()) continue;
-                cert = certs.get(0);
+                certs = company.getPortfolioModel().getCertificates(company);
+                if (certs.isEmpty()) continue;
+                cert = Iterables.get(certs, 0);
                 if (isSaleRecorded(currentPlayer, company)) continue;
                 if (!checkAgainstHoldLimit(currentPlayer, company, 1)) continue;
                 if (maxAllowedNumberOfSharesToBuy(currentPlayer, company,
-                        certs.get(0).getShare()) < 1) continue;
+                        cert.getShare()) < 1) continue;
                 stockSpace = company.getCurrentSpace();
                 if (!stockSpace.isNoCertLimit()
                     && !mayPlayerBuyCertificate(currentPlayer, company, 1)) continue;
@@ -383,7 +380,7 @@ public class StockRound_18EU extends StockRound {
             return false;
         }
 
-        // TODO: changeStack.start(true);
+        getRoot().getChangeStack().newChangeSet(action);
 
         // All is OK, now start the company
         MapHex homeHex = null;
@@ -409,14 +406,13 @@ public class StockRound_18EU extends StockRound {
                 company.getId() ));
 
         // Transfer the President's certificate
-        currentPlayer.getPortfolioModel().addPublicCertificate(cert);
-
+        cert.moveTo(currentPlayer);
         MoneyModel.cashMove(currentPlayer, company, shares * price);
 
         if (minor != null) {
             // Get the extra certificate for the minor, for free
             PublicCertificate cert2 = ipo.findCertificate(company, false);
-            currentPlayer.getPortfolioModel().addPublicCertificate(cert2);
+            cert2.moveTo(currentPlayer);
             // Transfer the minor assets into the started company
             int minorCash = minor.getCash();
             int minorTrains = minor.getPortfolioModel().getTrainList().size();
@@ -501,7 +497,7 @@ public class StockRound_18EU extends StockRound {
 
         // TODO Validation to be added?
 
-        // TODO: changeStack.start(true);
+        getRoot().getChangeStack().newChangeSet(action);
 
         if (major != null) {
             cert = major.getPortfolioModel().findCertificate(major, false);
@@ -583,7 +579,7 @@ public class StockRound_18EU extends StockRound {
                             homeHex.getId()));
                 }
             }
-            currentPlayer.getPortfolioModel().addPublicCertificate(cert);
+            cert.moveTo(currentPlayer);
             ReportBuffer.add(LocalText.getText("MinorCloses", minor.getId()));
             checkFlotation(major);
 
@@ -630,9 +626,7 @@ public class StockRound_18EU extends StockRound {
             // Put the remaining 5 shares in the pool,
             // getting cash in return
             // Move the remaining certificates to the company treasury
-            for (PublicCertificate cert: company.getPortfolioModel().getCertificates(company)) {
-                pool.addPublicCertificate(cert);
-            }
+            company.getPortfolioModel().moveAllCertificates(pool.getParent());
             int cash = 5 * company.getMarketPrice();
             MoneyModel.cashMove(bank, company, cash);
             ReportBuffer.add(LocalText.getText("MonetiseTreasuryShares",
@@ -685,7 +679,7 @@ public class StockRound_18EU extends StockRound {
         }
 
         /* End of validation, start of execution */
-        // TODO: changeStack.start(false);
+        getRoot().getChangeStack().newChangeSet(action);
         // FIXME: if (action.isForced()) changeStack.linkToPreviousMoveSet();
         pool.addTrain(train);
         ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",

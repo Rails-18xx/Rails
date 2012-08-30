@@ -2009,11 +2009,9 @@ public class PublicCompany extends AbstractItem implements Company, CashOwner, P
         }
 
         // Dispose of the certificates
-        for (PublicCertificate cert : certificates.view()) {
-            // TODO: Check if this is the correct condition, portfolioModel parent change Type?
-            if (cert.getOwner() != shareDestination.getParent()) {
-                // TODO: Could this be shortened?
-                shareDestination.getPortfolioModel().getCertificatesModel().getPortfolio().moveInto(cert);
+        for (PublicCertificate cert : certificates) {
+            if (cert.getOwner() != shareDestination) {
+                cert.moveTo(shareDestination);
             }
         }
 

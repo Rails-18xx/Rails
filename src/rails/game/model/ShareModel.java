@@ -28,7 +28,7 @@ public final class ShareModel extends Model {
     
     @Override
     public String toText() {
-        return getParent().getText(company);
+        return getParent().toText(company);
     }
     
 }

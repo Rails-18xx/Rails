@@ -12,11 +12,9 @@ import rails.game.Stop.RunThrough;
 import rails.game.Stop.RunTo;
 import rails.game.Stop.Score;
 import rails.game.Stop.Type;
-import rails.game.state.AbstractItem;
-import rails.game.state.Item;
 import rails.util.Util;
 
-public final class TileManager extends AbstractItem implements Configurable {
+public final class TileManager extends RailsManager implements Configurable {
 
     protected Map<Integer, Tile> tileMap = new HashMap<Integer, Tile>();
     protected List<Integer> tileIds = new ArrayList<Integer>();
@@ -33,7 +31,7 @@ public final class TileManager extends AbstractItem implements Configurable {
     /**
      * Used by Configure (via reflection) only
      */
-    public TileManager(Item parent, String id) {
+    public TileManager(RailsRoot parent, String id) {
         super(parent, id);
     }
 

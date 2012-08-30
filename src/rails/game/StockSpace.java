@@ -52,24 +52,23 @@ public class StockSpace extends Model {
     public static final String GAME_OVER_TAG = "GameOver";
 
     /*--- Instance attributes ---*/
-    protected int row;
-    protected int column;
-    protected int price;
-    protected String colour;
-    protected boolean belowLedge = false; // For 1870
-    protected boolean leftOfLedge = false; // For 1870
-    protected boolean closesCompany = false;// For 1856 and other games
-    protected boolean endsGame = false; // For 1841 and other games
-    protected boolean start = false; // Company may start here
-    protected StockSpaceType type = null;
+    private final int row;
+    private final int column;
+    private final int price;
+    private final StockSpaceType type;
+    private boolean belowLedge = false; // For 1870
+    private boolean leftOfLedge = false; // For 1870
+    private boolean closesCompany = false;// For 1856 and other games
+    private boolean endsGame = false; // For 1841 and other games
+    private boolean start = false; // Company may start here
     
     
     /*--- State fields */
-    protected final ArrayListState<PublicCompany> tokens = ArrayListState.create(this, "tokens");
-    protected final ArrayListState<PublicCompany> fixedStartPrices = ArrayListState.create(this, "fixedStartPrices");
+    private final ArrayListState<PublicCompany> tokens = ArrayListState.create(this, "tokens");
+    private final ArrayListState<PublicCompany> fixedStartPrices = ArrayListState.create(this, "fixedStartPrices");
 
-    protected static Logger log =
-            LoggerFactory.getLogger(StockSpace.class.getPackage().getName());
+    private static final Logger log =
+            LoggerFactory.getLogger(StockSpace.class);
 
     /*--- Constructors ---*/
     private StockSpace(Item parent, String id, int price, StockSpaceType type) {
@@ -290,12 +289,9 @@ public class StockSpace extends Model {
         return !tokens.isEmpty();
     }
 
-    public String getData() {
+    @Override
+    public String toText() {
         return Bank.format(price);
     }
 
-    @Override
-    public String toString() {
-        return getData();
-    }
 }

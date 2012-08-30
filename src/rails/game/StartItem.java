@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import rails.game.model.CashMoneyModel;
-import rails.game.model.PortfolioModel;
 import rails.game.state.AbstractItem;
 import rails.game.state.IntegerState;
 import rails.game.state.Item;
@@ -153,8 +152,8 @@ public class StartItem extends AbstractItem {
         // in the game-specific StartRound class
         minimumBid.set(basePrice.value() + 5);
 
-        PortfolioModel ipo = gameManager.getBank().getIpo().getPortfolioModel();
-        PortfolioModel unavailable = gameManager.getBank().getUnavailable().getPortfolioModel();
+        BankPortfolio ipo = gameManager.getBank().getIpo();
+        BankPortfolio unavailable = gameManager.getBank().getUnavailable();
 
         CompanyManager compMgr = gameManager.getCompanyManager();
 
@@ -162,12 +161,12 @@ public class StartItem extends AbstractItem {
         if (company instanceof PrivateCompany) {
             primary = (Certificate) company;
         } else {
-            primary = ipo.findCertificate((PublicCompany) company, president);
+            primary = ipo.getPortfolioModel().findCertificate((PublicCompany) company, president);
             // Move the certificate to the "unavailable" pool.
             PublicCertificate pubcert = (PublicCertificate) primary;
-            if (pubcert.getOwner()== null
+            if (pubcert.getOwner() == null
                 || pubcert.getOwner() != unavailable.getParent()) {
-                unavailable.getCertificatesModel().getPortfolio().moveInto(pubcert);
+                pubcert.moveTo(unavailable);
             }
         }
 
@@ -179,13 +178,13 @@ public class StartItem extends AbstractItem {
                 secondary = (Certificate) company2;
             } else {
                 secondary =
-                        ipo.findCertificate((PublicCompany) company2,
+                        ipo.getPortfolioModel().findCertificate((PublicCompany) company2,
                                 president2);
                 // Move the certificate to the "unavailable" pool.
-                // FIXME: This is still an issue to resolve 
+                // FIXME: This is still an issue to resolve  ???
                 PublicCertificate pubcert2 = (PublicCertificate) secondary;
-                if (pubcert2.getOwner() != unavailable.getParent()) {
-                    unavailable.getCertificatesModel().getPortfolio().moveInto(pubcert2);
+                if (pubcert2.getOwner() != unavailable) {
+                    pubcert2.moveTo(unavailable);
                 }
             }
         }

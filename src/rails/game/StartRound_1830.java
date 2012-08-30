@@ -247,7 +247,7 @@ public class StartRound_1830 extends StartRound {
             return false;
         }
 
-        // TODO: changeStack.start(false);
+        getRoot().getChangeStack().newChangeSet(bidItem);
 
         item.setBid(bidAmount, player);
         if (previousBid > 0) player.unblockCash(previousBid);
@@ -272,11 +272,10 @@ public class StartRound_1830 extends StartRound {
 
     /**
      * Process a player's pass.
-     *
      * @param playerName The name of the current player (for checking purposes).
      */
     @Override
-    protected boolean pass(String playerName) {
+    protected boolean pass(NullAction action, String playerName) {
 
         String errMsg = null;
         Player player = getCurrentPlayer();
@@ -301,7 +300,7 @@ public class StartRound_1830 extends StartRound {
 
         ReportBuffer.add(LocalText.getText("PASSES", playerName));
 
-        // TODO: changeStack.start(false);
+        getRoot().getChangeStack().newChangeSet(action);
 
         numPasses.add(1);
         if (auctionItem != null) {

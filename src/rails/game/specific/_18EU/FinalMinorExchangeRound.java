@@ -100,9 +100,10 @@ public final class FinalMinorExchangeRound extends StockRound_18EU {
 
     @Override
     // Autopassing does not apply here
-    public boolean done(String playerName, boolean hasAutopassed) {
+    public boolean done(NullAction action, String playerName, boolean hasAutopassed) {
 
-        // TODO: changeStack.start(false);
+        // TODO: Here no action is stored
+        getRoot().getChangeStack().newChangeSet(action);
 
         for (PublicCompany comp : companyManager.getAllPublicCompanies()) {
             if (comp.getType().getId().equals("Minor")) {

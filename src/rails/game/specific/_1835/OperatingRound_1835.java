@@ -251,7 +251,7 @@ public class OperatingRound_1835 extends OperatingRound {
                         errMsg ));
                 return false;
             } else {
-                // TODO: changeStack.start(true); // Duplicate, but we have to
+                getRoot().getChangeStack().newChangeSet(action); // Duplicate, but we have to
                 hasLaidExtraOBBTile.set(true); 
                 // Done here to make getSpecialTileLays() return the correct value.
                 // It's provisional, on the assumption that other validations are OK.

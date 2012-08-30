@@ -7,15 +7,14 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import rails.common.LocalText;
 import rails.common.parser.Configurable;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.GameManager;
-import rails.game.state.AbstractItem;
+import rails.game.RailsManager;
+import rails.game.RailsRoot;
 import rails.game.state.ArrayListState;
-import rails.game.state.Item;
 
 /**
  * Coordinates and stores all elements related to revenue calulcation,
@@ -23,7 +22,7 @@ import rails.game.state.Item;
  * The conversion of Rails elements is in the responsibility of the RevenueAdapter.
  * For each GameManager instance only one RevenueManager is created.
  */
-public final class RevenueManager extends AbstractItem implements Configurable {
+public final class RevenueManager extends RailsManager implements Configurable {
 
     protected static Logger log =
         LoggerFactory.getLogger(RevenueManager.class.getPackage().getName());
@@ -41,7 +40,7 @@ public final class RevenueManager extends AbstractItem implements Configurable {
     /**
      * Used by Configure (via reflection) only
      */
-    public RevenueManager(Item parent, String id) {
+    public RevenueManager(RailsRoot parent, String id) {
         super(parent, id);
     }
     
