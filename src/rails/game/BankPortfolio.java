@@ -2,18 +2,16 @@ package rails.game;
 
 import rails.game.model.PortfolioModel;
 import rails.game.model.PortfolioOwner;
-import rails.game.state.AbstractItem;
-import rails.game.state.Item;
 
 /**
  * BankPortfolios act as Owner of their owns
  * Used for implementation of the separate Bank identities (IPO, POOL, SCRAPHEAP)
  */
-public final class BankPortfolio extends AbstractItem implements PortfolioOwner {
+public final class BankPortfolio extends RailsAbstractItem implements PortfolioOwner {
     
     private final PortfolioModel portfolio = PortfolioModel.create(this);
     
-    protected BankPortfolio(Item parent, String id) {
+    protected BankPortfolio(Bank parent, String id) {
         super (parent, id);
     }
     

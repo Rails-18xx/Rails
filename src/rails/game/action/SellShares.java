@@ -115,7 +115,7 @@ public class SellShares extends PossibleAction {
         return "SellShares: "
                + (numberSold > 0 ? numberSold : "max " + maximumNumber)
                + " of " + share + "% " + companyName + " at "
-               + Bank.format(shareUnits * price) + " apiece";
+               + Currency.format(company, shareUnits * price) + " apiece";
     }
 
     /** Deserialize */

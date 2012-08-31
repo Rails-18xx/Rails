@@ -337,7 +337,7 @@ public class StartRoundWindow extends JFrame implements ActionListener,
                     playerFree[i] =
                             new Field(includeBidding
                                     ? round.getFreeCashModel(i)
-                                    : players[i].getCashModel());
+                                    : players[i].getWallet());
             addField(f, playerFreeCashXOffset + i, playerFreeCashYOffset, 1, 1,
                     firstBelowTable ? WIDE_TOP : 0);
         }
@@ -474,7 +474,7 @@ public class StartRoundWindow extends JFrame implements ActionListener,
                 itemNameButton[i].setSelected(selected);
                 itemNameButton[i].setEnabled(!selected);
                 setItemNameButton(i, true);
-                minBid[i].setText(Bank.format(item.getMinimumBid()));
+                minBid[i].setText(Currency.format(item, item.getMinimumBid()));
             }
         }
 
@@ -672,7 +672,7 @@ public class StartRoundWindow extends JFrame implements ActionListener,
             b.append (item.getPrimary().toString());
             if (item.getPrimary() instanceof PrivateCompany) {
                 PrivateCompany priv = (PrivateCompany) item.getPrimary();
-                b.append ("<br>Revenue: ").append(Bank.formatIntegerArray(priv.getRevenue()));
+                b.append ("<br>Revenue: ").append(Currency.format(item, priv.getRevenue()));
                 List<MapHex> blockedHexes = priv.getBlockedHexes();
                 if (blockedHexes == null) {
                 } else if (blockedHexes.size() == 1) {

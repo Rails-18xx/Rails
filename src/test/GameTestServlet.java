@@ -353,7 +353,7 @@
  * if (items.length == 1) { out.append("<input type=hidden name=BuyItem
  * value=\"") .append(startRound.getBuyableItems()[0].getName())
  * .append("\">\n") .append(startRound.getBuyableItems()[0].getName()) .append("
- * for ") .append(Bank.format(startRound.getBuyableItems()[0] .getBasePrice())); }
+ * for ") .append(Currency.format(this, startRound.getBuyableItems()[0] .getBasePrice())); }
  * else { out.append("<select name=BuyItem>"); for (i=0; i<items.length; i++) {
  * out.append("<option value=\"") .append(items[i].getName()) .append("\">")
  * .append(items[i].getName()) .append(" for ")
@@ -404,7 +404,7 @@
  * (stockRound.isCompanyStartable(company.getName())) { out.append("<option
  * value=\"") .append(company.getName()) .append("\">")
  * .append(company.getName()); if (company.getParPrice() != null) { out.append("
- * at ") .append(Bank.format(company.getParPrice().getPrice())); askStartPrice =
+ * at ") .append(Currency.format(this, company.getParPrice().getPrice())); askStartPrice =
  * false; } out.append("\n"); } } out.append("</select>\n</td>"); if
  * (askStartPrice) { out.append("<td> at <select name=StartPrice>\n"); Iterator
  * it = Game.getStockMarket().getStartSpaces() .iterator(); while (it.hasNext()) {
@@ -517,12 +517,12 @@
  * 
  * if (!company.hasStockPrice()) { out.append("<td colspan=2>&nbsp;</td>"); }
  * else if (company.getParPrice() != null) { out.append("<td>").append(
- * company.hasParPrice() ? Bank.format(company .getParPrice().getPrice()) :
- * "&nbsp;").append("</td><td>") .append( Bank.format(company
+ * company.hasParPrice() ? Currency.format(this, company .getParPrice().getPrice()) :
+ * "&nbsp;").append("</td><td>") .append( Currency.format(this, company
  * .getCurrentPrice() .getPrice())).append( "</td>"); } else { out.append("<td colspan=2>Not
  * started</td>"); } if (company.hasFloated()) { out.append("<td>" +
  * company.getFormattedCash() + "</td><td>" +
- * Bank.format(company.getLastRevenue()) + "</td><td>&nbsp;"); Iterator it =
+ * Currency.format(this, company.getLastRevenue()) + "</td><td>&nbsp;"); Iterator it =
  * company.getPortfolio() .getPrivateCompanies().iterator(); while
  * (it.hasNext()) { out.append(((PrivateCompany) it.next()) .getName() + " "); } }
  * else { out.append("<td colspan=3>Not floated"); } out.append("</td><td>" +
@@ -548,7 +548,7 @@
  * GameManager.getPriorityPlayer()) out.append(" *P*"); out.append("</td><td>" +
  * player.getFormattedCash()); if (currentRound instanceof StartRoundI &&
  * player.getCash() > player.getUnblockedCash()) { out.append(" (").append(
- * Bank.format(player.getUnblockedCash())).append(")"); } out.append("</td><td>"); //
+ * Currency.format(this, player.getUnblockedCash())).append(")"); } out.append("</td><td>"); //
  * Private companies it =
  * player.getPortfolio().getPrivateCompanies().iterator(); while (it.hasNext()) {
  * out.append(" " + ((PrivateCompany) it.next()).getName()); } // Bids if

@@ -1,6 +1,6 @@
 package rails.game.state;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.base.Preconditions;
 
 public abstract class OwnableItem<T extends Ownable> extends AbstractItem implements Ownable {
     
@@ -21,18 +21,26 @@ public abstract class OwnableItem<T extends Ownable> extends AbstractItem implem
         this.owner.set(pm.getUnkownOwner());
     }
 
-    public boolean moveTo(Owner newOwner) {
-        if (newOwner == owner.value()) return false;
+    public void moveTo(Owner newOwner) {
+        Preconditions.checkArgument(newOwner != owner.value(), 
+                "New Owner identical to the existing owner" + newOwner);
         
-        // move from old to new portfolio
-        Portfolio<T> oldPortfolio = pm.getPortfolio(type, owner.value());
-        Portfolio<T> newPortfolio = pm.getPortfolio(type, newOwner);
+
         // check newPortfolio
-        checkNotNull(newPortfolio, "No Portfolio available for owner " + newOwner);
-        new PortfolioChange<T>(newPortfolio, oldPortfolio, type.cast(this));
+        Portfolio<T> newPortfolio = pm.getPortfolio(type, newOwner);
+        Preconditions.checkArgument(newPortfolio != null, "No Portfolio available for owner " + newOwner);
+        
+        // create change for new portfolio
+        new PortfolioChange<T>(newPortfolio, type.cast(this), true);
+        
+        //  remove from old portfolio
+        if (owner.value() != pm.getUnkownOwner()) {
+            Portfolio<T> oldPortfolio = pm.getPortfolio(type, owner.value());
+            new PortfolioChange<T>(oldPortfolio, type.cast(this), false);
+        }
+
         // and change the owner
         owner.set(newOwner);
-        return true;
     }
     
     public Owner getOwner() {

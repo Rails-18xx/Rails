@@ -8,8 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
-import rails.game.state.AbstractItem;
-import rails.game.state.Item;
 import rails.util.Util;
 
 /**
@@ -17,7 +15,7 @@ import rails.util.Util;
  * must be completely sold out before normal share buying can start (but there
  * are exceptions to this rule).
  */
-public final class StartPacket extends AbstractItem {
+public class StartPacket extends RailsAbstractItem {
 
     /**
      * A Map holding all start packets of a rails.game (yes, there can be more
@@ -27,7 +25,7 @@ public final class StartPacket extends AbstractItem {
     //        new HashMap<String, StartPacket>();
 
     /**
-     * The start packet name. Usually the default name "�nitial" is used.
+     * The start packet name. Usually the default name "Initial" is used.
      */
     @SuppressWarnings("unused")
     private String name; // For identification if there is more than one.
@@ -48,7 +46,7 @@ public final class StartPacket extends AbstractItem {
     protected static Logger log =
             LoggerFactory.getLogger(StartPacket.class.getPackage().getName());
 
-    private StartPacket(Item parent, String id, String roundClassName) {
+    private StartPacket(RailsItem parent, String id, String roundClassName) {
         super(parent, Util.hasValue(id) ? id : DEFAULT_ID);
         this.roundClassName = roundClassName;
         //packets.put(name, this);
@@ -58,7 +56,7 @@ public final class StartPacket extends AbstractItem {
      * @param id The start packet name.
      * @param roundClassName The StartRound class name.
      */
-    public static StartPacket create(Item parent, String id, String roundClassName) {
+    public static StartPacket create(RailsItem parent, String id, String roundClassName) {
         return new StartPacket(parent, id, roundClassName);
     }
 

@@ -3,7 +3,6 @@ package rails.game;
 import rails.common.parser.Configurable;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
-import rails.game.state.Item;
 import rails.util.Util;
 
 /**
@@ -21,11 +20,11 @@ public class BonusToken extends Token<BonusToken> implements Closeable, Configur
     private Object removingObject = null;
     private PublicCompany user = null;
 
-    private BonusToken(Item parent, String id) {
+    private BonusToken(RailsItem parent, String id) {
         super(parent, id, BonusToken.class);
     }
     
-    public static BonusToken create(Item parent) {
+    public static BonusToken create(RailsItem parent) {
         String uniqueId = Token.createUniqueId();
         BonusToken token = new BonusToken(parent, uniqueId);
         return token;
@@ -46,7 +45,7 @@ public class BonusToken extends Token<BonusToken> implements Closeable, Configur
         if (!Util.hasValue(name)) {
             throw new ConfigurationException("Bonus token must have a name");
         }
-        description = name + " +" + Bank.format(value) + " bonus token";
+        description = name + " +" + Currency.format(this, value) + " bonus token";
 
         removingObjectDesc = bonusTokenTag.getAttributeAsString("removed");
     }

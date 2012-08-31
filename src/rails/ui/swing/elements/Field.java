@@ -12,6 +12,8 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 
+import com.google.common.base.Objects;
+
 import rails.game.state.Observable;
 import rails.game.state.Observer;
 
@@ -72,12 +74,6 @@ public class Field extends JLabel implements Observer {
         return observable;
     }
 
-    // FIXME: Rewrite that part here
-    public void setModel(Observable m) {
-        observable = m;
-        observable.addObserver(this);
-//        update();
-    }
 
     public void setHighlight(boolean highlight) {
         setBackground(highlight ? HIGHLIGHT_BG_COLOUR : normalBgColour);
@@ -119,6 +115,11 @@ public class Field extends JLabel implements Observer {
     /** Needed to satisfy the Observer interface. */
     public void update(String text) {
         setText(text);
+    }
+    
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this).add("observable", observable.getId()).toString();
     }
 
 }

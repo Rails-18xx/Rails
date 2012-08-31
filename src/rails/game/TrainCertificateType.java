@@ -10,17 +10,15 @@ import rails.common.parser.Configurable;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Configure;
 import rails.common.parser.Tag;
-import rails.game.state.AbstractItem;
 import rails.game.state.BooleanState;
 import rails.game.state.IntegerState;
-import rails.game.state.Item;
 import rails.util.Util;
 
 /**
  * TrainCertificateType indicates the type of a TrainCertficate
  * TrainCertficates can be multi-sided (thus provide several TrainType options)
  */
-public class TrainCertificateType extends AbstractItem implements Configurable, Comparable<TrainCertificateType> {
+public class TrainCertificateType extends RailsAbstractItem implements Configurable, Comparable<TrainCertificateType> {
     
     private final static String DEFAULT_TRAIN_CLASS = "rails.game.Train";
 
@@ -54,7 +52,7 @@ public class TrainCertificateType extends AbstractItem implements Configurable, 
     protected static Logger log =
         LoggerFactory.getLogger(TrainCertificateType.class.getPackage().getName());
     
-    private TrainCertificateType (Item parent, String id, int index) {
+    private TrainCertificateType (TrainManager parent, String id, int index) {
         super(parent, id);
         this.index = index;
     }
@@ -123,7 +121,7 @@ public class TrainCertificateType extends AbstractItem implements Configurable, 
         return newPhaseNames;
     }
 
-    public Train createTrain (Item parent, String id) throws ConfigurationException {
+    public Train createTrain (RailsItem parent, String id) throws ConfigurationException {
         return Configure.create(trainClass, parent, id);
     }
 
@@ -203,7 +201,7 @@ public class TrainCertificateType extends AbstractItem implements Configurable, 
 
     public String getInfo() {
         StringBuilder b = new StringBuilder ("<html>");
-        b.append(LocalText.getText("TrainInfo", getId(), Bank.format(cost), quantity));
+        b.append(LocalText.getText("TrainInfo", getId(), Currency.format(this, cost), quantity));
         if (b.length() == 6) b.append(LocalText.getText("None"));
 
         return b.toString();

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rails.common.LocalText;
+import rails.game.Currency;
 import rails.game.GameManager;
 import rails.game.Player;
 import rails.game.PublicCertificate;
@@ -12,7 +13,6 @@ import rails.game.RailsRoot;
 import rails.game.ReportBuffer;
 import rails.game.Round;
 import rails.game.ShareSellingRound;
-import rails.game.model.MoneyModel;
 import rails.game.model.PortfolioModel;
 import rails.game.state.GenericState;
 import rails.game.state.Portfolio;
@@ -66,7 +66,7 @@ public class GameManager_18EU extends GameManager {
 
         // Assume default case as in 18EU: all assets to Bank/Pool
         Player bankrupter = getCurrentPlayer();
-        MoneyModel.cashMove(bankrupter, bank, bankrupter.getCashValue());
+        Currency.toBankAll(bankrupter);
         PortfolioModel bpf = bankrupter.getPortfolioModel();
         List<PublicCompany> presidencies = new ArrayList<PublicCompany>();
         for (PublicCertificate cert : bpf.getCertificates()) {

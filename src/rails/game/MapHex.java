@@ -21,14 +21,13 @@ import rails.game.Stop.RunTo;
 import rails.game.Stop.Score;
 import rails.game.Stop.Type;
 import rails.game.action.LayTile;
-import rails.game.model.CashMoneyModel;
+import rails.game.model.WalletMoneyModel;
 import rails.game.model.PortfolioModel;
 
 import rails.game.state.BooleanState;
 import rails.game.state.Observer;
 import rails.game.state.Owner;
 import rails.game.state.PortfolioSet;
-import rails.game.state.AbstractItem;
 import rails.util.*;
 
 // TODO: Rewrite the mechanisms for tokens
@@ -60,7 +59,7 @@ import rails.util.*;
  */
 
 // FIXME: MapHex was previous a model
-public class MapHex extends AbstractItem implements Owner, Configurable,
+public class MapHex extends RailsAbstractItem implements Owner, Configurable,
 StationHolder {
 
     private static final String[] ewOrNames =
@@ -1358,7 +1357,7 @@ StationHolder {
         return false;
     }
 
-    public CashMoneyModel getCash() {
+    public WalletMoneyModel getCash() {
         return null;
     }
 

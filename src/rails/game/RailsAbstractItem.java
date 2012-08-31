@@ -1,13 +1,13 @@
 package rails.game;
 
-import rails.game.state.Manager;
+import rails.game.state.AbstractItem;
 
 /**
- * RailsManager adds Rails specific methods to Manager
+ * RailsAbstractItem adds Rails specific methods to AbstractItem
  */
-public abstract class RailsManager extends Manager implements RailsItem {
+public abstract class RailsAbstractItem extends AbstractItem implements RailsItem {
 
-    protected RailsManager(RailsItem parent, String id) {
+    protected RailsAbstractItem(RailsItem parent, String id) {
         super(parent, id);
     }
     

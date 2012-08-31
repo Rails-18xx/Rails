@@ -5,22 +5,16 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-//import rails.algorithms.NetworkVertex;
-//import rails.algorithms.RevenueAdapter;
-//import rails.algorithms.RevenueBonus;
-//import rails.algorithms.RevenueManager;
-//import rails.algorithms.RevenueStaticModifier;
 import rails.common.parser.Configurable;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.*;
-import rails.game.state.Item;
 import rails.util.Util;
 
-public final class NamedTrainToken extends Token<NamedTrainToken> implements Configurable /*, RevenueStaticModifier */ {
+public class NamedTrainToken extends Token<NamedTrainToken> implements Configurable {
 
     protected static Logger log =
-        LoggerFactory.getLogger(NamedTrainToken.class.getPackage().getName());
+        LoggerFactory.getLogger(NamedTrainToken.class);
 
     private String name;
     private String longName;
@@ -29,7 +23,7 @@ public final class NamedTrainToken extends Token<NamedTrainToken> implements Con
     private List<MapHex> hexes;
     private String description;
 
-    private NamedTrainToken(Item parent, String id) {
+    private NamedTrainToken(RailsItem parent, String id) {
         super(parent, id, NamedTrainToken.class);
     }
     
@@ -60,7 +54,7 @@ public final class NamedTrainToken extends Token<NamedTrainToken> implements Con
         hexesString = tag.getAttributeAsString("ifRouteIncludes");
 
         description =
-                longName + " [" + hexesString + "] +" + Bank.format(value);
+                longName + " [" + hexesString + "] +" + Currency.format(this, value);
     }
 
     public void finishConfiguration (GameManager gameManager)
@@ -69,9 +63,6 @@ public final class NamedTrainToken extends Token<NamedTrainToken> implements Con
         if (hexesString != null) {
             hexes = gameManager.getMapManager().parseLocations(hexesString);
         }
-        
-        // add them to the call list of the RevenueManager
-//        GameManager.getInstance().getRevenueManager().addStaticModifier(this);
         
     }
 
@@ -95,25 +86,5 @@ public final class NamedTrainToken extends Token<NamedTrainToken> implements Con
     public List<MapHex> getHexesToPass() {
         return hexes;
     }
-
-
-//    public void modifyCalculator(RevenueAdapter revenueAdapter) {
-//
-//        // 1. check if holder is a NameableTrain
-//        if (!(this.holder instanceof NameableTrain)) return;
-//        NameableTrain train = (NameableTrain)this.holder;
-//        
-//        // 2. check if operating company is owner of the train
-//        if (train.getOwner() == revenueAdapter.getCompany()) {
-//            // 2. define revenue bonus
-//            RevenueBonus bonus = new RevenueBonus(value, name);
-//            bonus.addTrain(train);
-//            for (NetworkVertex vertex:NetworkVertex.getVerticesByHexes(revenueAdapter.getVertices(), hexes)) {
-//                if (!vertex.isStation()) continue;
-//                bonus.addVertex(vertex);
-//            }
-//            revenueAdapter.addRevenueBonus(bonus);
-//        }
-//    }
 
 }

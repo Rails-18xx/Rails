@@ -7,9 +7,9 @@ import java.util.List;
 
 import rails.game.Bank;
 import rails.game.Company;
+import rails.game.MoneyOwner;
 import rails.game.Player;
 import rails.game.PublicCompany;
-import rails.game.model.CashOwner;
 
 
 public class SequenceUtil {
@@ -17,13 +17,13 @@ public class SequenceUtil {
     // private constructor
     private SequenceUtil() {};
     
-    private static <E extends CashOwner> List<E> 
-        selectCashOwners(Class<E> clazz, Collection<CashOwner> coll)  {
+    private static <E extends MoneyOwner> List<E> 
+        selectMoneyOwners(Class<E> clazz, Collection<MoneyOwner> coll)  {
         
         // select all cashholders of that type
         List<E> list = new ArrayList<E>();
         
-        for (CashOwner c:coll) { 
+        for (MoneyOwner c:coll) { 
             if (clazz.isAssignableFrom(c.getClass())) {
                 @SuppressWarnings("unchecked")
                 E cast = (E) c;
@@ -39,22 +39,22 @@ public class SequenceUtil {
      * Defines a sorting on cashHolders
      * @return sorted list of cashholders
      */
-    public static List<CashOwner> sortCashHolders(Collection<CashOwner> coll) {
+    public static List<MoneyOwner> sortCashHolders(Collection<MoneyOwner> coll) {
         
-       List<CashOwner> sortedList = new ArrayList<CashOwner>();
+       List<MoneyOwner> sortedList = new ArrayList<MoneyOwner>();
 
        // first add players
-       List<Player> players = selectCashOwners(Player.class, coll);
+       List<Player> players = selectMoneyOwners(Player.class, coll);
        Collections.sort(players);
        sortedList.addAll(players);
        
        // then public companies
-       List<PublicCompany> PublicCompanys = selectCashOwners(PublicCompany.class, coll);
+       List<PublicCompany> PublicCompanys = selectMoneyOwners(PublicCompany.class, coll);
        Collections.sort(PublicCompanys, Company.COMPANY_COMPARATOR);
        sortedList.addAll(PublicCompanys);
        
        // last add the bank
-       sortedList.addAll(selectCashOwners(Bank.class, coll));
+       sortedList.addAll(selectMoneyOwners(Bank.class, coll));
        
        return sortedList;
     }

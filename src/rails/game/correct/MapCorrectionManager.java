@@ -168,7 +168,7 @@ public final class MapCorrectionManager extends CorrectionManager {
                 return execute(action);
             }
         case FINISHED:
-            // TODO: gameManager.getChangeStack().start(false);
+            getRoot().getChangeStack().newChangeSet(action);
 
             // lays tile
             int orientation = action.getOrientation();

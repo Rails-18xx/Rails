@@ -22,6 +22,7 @@ import rails.common.GuiHints;
 import rails.common.LocalText;
 import rails.common.parser.Config;
 import rails.game.*;
+import rails.game.Currency;
 import rails.game.action.*;
 import rails.ui.swing.elements.*;
 import rails.util.*;
@@ -1088,6 +1089,11 @@ public class GameUIManager implements DialogOwner {
         configWindow.pack();
         SwingUtilities.updateComponentTreeUI(stockChart);
         stockChart.pack();
+    }
+    
+    // Forwards the format() method to the server
+    public String format(int amount) {
+        return Currency.format(gameManager, amount);
     }
 
     /** update fonts settings

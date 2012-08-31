@@ -1,21 +1,26 @@
 package rails.game.model;
 
-import rails.game.Bank;
 import rails.game.Bonus;
+import rails.game.Currency;
+import rails.game.RailsItem;
 import rails.game.state.ArrayListState;
-import rails.game.state.Item;
 import rails.game.state.Model;
 
 public class BonusModel extends Model {
     
     private ArrayListState<Bonus> bonuses;
     
-    protected BonusModel(Item parent, String id) {
+    protected BonusModel(RailsItem parent, String id) {
         super(parent, id);
     }
 
-    public static BonusModel create(Item parent, String id){
+    public static BonusModel create(RailsItem parent, String id){
         return new BonusModel(parent, id);
+    }
+    
+    @Override
+    public RailsItem getParent() {
+        return (RailsItem)super.getParent();
     }
 
     public void setBonuses(ArrayListState<Bonus> bonuses) {
@@ -33,7 +38,7 @@ public class BonusModel extends Model {
             if (b.length() > 14) {
                 b.append("<br>");
             }
-            b.append(bonus.getIdForView()).append("+").append(Bank.format(bonus.getValue()));
+            b.append(bonus.getIdForView()).append("+").append(Currency.format(getParent(), bonus.getValue()));
         }
 
         return b.toString();

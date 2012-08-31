@@ -2,7 +2,6 @@ package rails.game.correct;
 
 import rails.game.*;
 import rails.game.action.PossibleAction;
-import rails.game.model.CashOwner;
 import rails.util.Util;
 
 import java.io.IOException;
@@ -21,7 +20,7 @@ public class CashCorrectionAction extends CorrectionAction {
     /* Preconditions */
    
     /** cash holder */
-    transient private CashOwner correctCashHolder; 
+    transient private MoneyOwner correctCashHolder; 
 
     /** converted to name */
     private String cashHolderName; 
@@ -61,7 +60,7 @@ public class CashCorrectionAction extends CorrectionAction {
    }
    
    
-   public CashOwner getCashHolder() {
+   public MoneyOwner getCashHolder() {
        return correctCashHolder;
    }
 

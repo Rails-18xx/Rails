@@ -30,7 +30,7 @@ public final class StateManager extends Manager implements DelayedItem {
     
     
     private final PortfolioManager portfolioManager = PortfolioManager.create(this, "Portfolios");
-//  private final WalletManager walletManager = WalletManager.create(this, "walletManager");
+    private final WalletManager walletManager = WalletManager.create(this, "walletManager");
 
     private StateManager(Root parent, String id) {
         super(parent, id);
@@ -155,6 +155,10 @@ public final class StateManager extends Manager implements DelayedItem {
     
     PortfolioManager getPortfolioManager() {
         return portfolioManager;
+    }
+    
+    public WalletManager getWalletManager() {
+        return walletManager;
     }
     
 }

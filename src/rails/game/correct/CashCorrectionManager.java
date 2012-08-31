@@ -4,16 +4,14 @@ import java.util.List;
 
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
-import rails.game.Bank;
 import rails.game.GameManager;
+import rails.game.Currency;
+import rails.game.MoneyOwner;
 import rails.game.Player;
 import rails.game.PublicCompany;
 import rails.game.ReportBuffer;
-import rails.game.model.CashOwner;
-import rails.game.model.MoneyModel;
 
-
-public final class CashCorrectionManager extends CorrectionManager {
+public class CashCorrectionManager extends CorrectionManager {
     
     private CashCorrectionManager(GameManager parent) {
         super(parent, CorrectionType.CORRECT_CASH);
@@ -55,7 +53,7 @@ public final class CashCorrectionManager extends CorrectionManager {
 
         boolean result = false;
 
-        CashOwner ch = cashAction.getCashHolder();
+        MoneyOwner ch = cashAction.getCashHolder();
         int amount = cashAction.getAmount();
 
         String errMsg = null;
@@ -70,8 +68,8 @@ public final class CashCorrectionManager extends CorrectionManager {
                 errMsg =
                     LocalText.getText("NotEnoughMoney", 
                             ch.getId(),
-                            Bank.format(ch.getCash()),
-                            Bank.format(-amount) 
+                            Currency.format(this, ch.getCash()),
+                            Currency.format(this, -amount) 
                     );
                 break;
             }
@@ -85,24 +83,23 @@ public final class CashCorrectionManager extends CorrectionManager {
             result = true;
         } else {
             // no error occured 
-            // TODO: gameManager.getChangeStack().start(false);
-
-            Bank bank = getParent().getBank();
+            
+            getRoot().getChangeStack().newChangeSet(cashAction);
 
             String msg;
             if (amount < 0) {
                 // negative amounts: remove cash from cashholder
-                MoneyModel.cashMove(ch, bank , -amount);
+                String text = Currency.toBank(ch, -amount);
 
                 msg = LocalText.getText("CorrectCashSubstractMoney",
                         ch.getId(),
-                        Bank.format(-amount) );
+                        text );
             } else {
                 // positive amounts: add cash to cashholder
-                MoneyModel.cashMove(bank, ch, amount);
+                String text = Currency.fromBank(amount, ch);
                 msg = LocalText.getText("CorrectCashAddMoney",
                         ch.getId(),
-                        Bank.format(amount));
+                        text);
             }
             ReportBuffer.add(msg);
             getParent().addToNextPlayerMessages(msg, true);

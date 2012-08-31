@@ -7,9 +7,10 @@ import com.google.common.collect.Iterables;
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.common.parser.GameOption;
-import rails.game.Bank;
+import rails.game.Currency;
 import rails.game.GameDef;
 import rails.game.GameManager;
+import rails.game.MoneyOwner;
 import rails.game.OperatingRound;
 import rails.game.Phase;
 import rails.game.Player;
@@ -18,8 +19,6 @@ import rails.game.PublicCompany;
 import rails.game.ReportBuffer;
 import rails.game.action.DiscardTrain;
 import rails.game.action.LayTile;
-import rails.game.model.CashOwner;
-import rails.game.model.MoneyModel;
 import rails.game.special.ExchangeForShare;
 import rails.game.special.SpecialProperty;
 import rails.game.special.SpecialTileLay;
@@ -68,15 +67,15 @@ public class OperatingRound_1835 extends OperatingRound {
         for (PrivateCompany priv : companyManager.getAllPrivateCompanies()) {
             if (!priv.isClosed()) {
                 // The bank portfolios are all not cashOwners themselves!
-                if (priv.getOwner() instanceof CashOwner) {
+                if (priv.getOwner() instanceof MoneyOwner) {
                     Owner recipient = priv.getOwner();
                     int revenue = priv.getRevenueByPhase(getCurrentPhase()); // sfy 1889: revenue by phase
                     if (count++ == 0) ReportBuffer.add("");
+                    String revText = Currency.fromBank(revenue, (MoneyOwner)recipient);
                     ReportBuffer.add(LocalText.getText("ReceivesFor",
                             recipient.getId(),
-                            Bank.format(revenue),
+                            revText,
                             priv.getId()));
-                    MoneyModel.cashMove(bank, (CashOwner)recipient, revenue);
 
                     /* Register black private equivalent PR share value
                      * so it can be subtracted if PR operates */
@@ -115,9 +114,9 @@ public class OperatingRound_1835 extends OperatingRound {
      * income twice during an OR.
      */
     @Override
-    protected  Map<CashOwner, Integer>  countSharesPerRecipient () {
+    protected  Map<MoneyOwner, Integer>  countSharesPerRecipient () {
 
-        Map<CashOwner, Integer> sharesPerRecipient = super.countSharesPerRecipient();
+        Map<MoneyOwner, Integer> sharesPerRecipient = super.countSharesPerRecipient();
 
         if (operatingCompany.value().getId().equalsIgnoreCase(GameManager_1835.PR_ID)) {
             for (Player player : deniedIncomeShare.viewKeySet()) {
@@ -247,7 +246,7 @@ public class OperatingRound_1835 extends OperatingRound {
                         action.getCompanyName(),
                         action.getLaidTile().getExternalId(),
                         action.getChosenHex().getId(),
-                        Bank.format(0),
+                        Currency.format(this, 0),
                         errMsg ));
                 return false;
             } else {

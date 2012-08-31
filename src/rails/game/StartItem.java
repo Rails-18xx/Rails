@@ -5,10 +5,8 @@ import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rails.game.model.CashMoneyModel;
-import rails.game.state.AbstractItem;
+import rails.game.model.CountingMoneyModel;
 import rails.game.state.IntegerState;
-import rails.game.state.Item;
 import rails.game.state.Model;
 
 /**
@@ -18,13 +16,13 @@ import rails.game.state.Model;
  * other attributes are saved. The certificate objects are linked to in the
  * later initialisation step.
  */
-public class StartItem extends AbstractItem {
+public class StartItem extends RailsAbstractItem {
 
     // Fixed properties
     protected String name = null;
     protected Certificate primary = null;
     protected Certificate secondary = null;
-    protected final CashMoneyModel basePrice = CashMoneyModel.create(this, "basePrice", false);
+    protected final CountingMoneyModel basePrice = CountingMoneyModel.create(this, "basePrice", false);
     protected int row = 0;
     protected int column = 0;
     protected int index;
@@ -33,8 +31,8 @@ public class StartItem extends AbstractItem {
     protected final IntegerState lastBidderIndex = IntegerState.create(this, "lastBidder", -1);
     protected List<Player> players;
     protected int numberOfPlayers;
-    protected CashMoneyModel[] bids;
-    protected final CashMoneyModel minimumBid = CashMoneyModel.create(this, "minimumBid", false);
+    protected CountingMoneyModel[] bids;
+    protected final CountingMoneyModel minimumBid = CountingMoneyModel.create(this, "minimumBid", false);
 
     // Status info for the UI ==> MOVED TO BuyOrBidStartItem
     // TODO REDUNDANT??
@@ -86,7 +84,7 @@ public class StartItem extends AbstractItem {
      * FIXME: Double usage for name and id
      *
      */
-    private StartItem(Item parent, String name, String type, int index, boolean president) {
+    private StartItem(RailsItem parent, String name, String type, int index, boolean president) {
         super(parent, name);
         this.name = name;
         this.type = type;
@@ -109,7 +107,7 @@ public class StartItem extends AbstractItem {
      * share.
      * @return a fully intialized StartItem 
      */
-    public static StartItem create(Item parent, String name, String type, int price, int index, boolean president){
+    public static StartItem create(RailsItem parent, String name, String type, int price, int index, boolean president){
         StartItem item = new StartItem(parent, name, type, index, president);
         item.initBasePrice(price);
         return item;
@@ -141,10 +139,10 @@ public class StartItem extends AbstractItem {
 
         this.players = gameManager.getPlayers();
         numberOfPlayers = players.size();
-        bids = new CashMoneyModel[numberOfPlayers];
+        bids = new CountingMoneyModel[numberOfPlayers];
         for (int i = 0; i < numberOfPlayers; i++) {
             // TODO: Check if this is correct or that it should be initialized with zero
-            bids[i] = CashMoneyModel.create(this, "bidBy_" + players.get(i).getId(), false);
+            bids[i] = CountingMoneyModel.create(this, "bidBy_" + players.get(i).getId(), false);
             bids[i].setSuppressZero(true);
 
         }

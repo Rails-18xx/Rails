@@ -6,7 +6,6 @@ import rails.common.LocalText;
 import rails.common.parser.Configurable;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
-import rails.game.model.MoneyModel;
 
 public class PlayerManager extends RailsManager implements Configurable {
 
@@ -63,18 +62,18 @@ public class PlayerManager extends RailsManager implements Configurable {
 
         int playerIndex = 0;
         int startCash = getStartCash();
+        String cashText = null;
         for (String playerName : playerNames) {
             player = Player.create(this, playerName, playerIndex++);
             players.add(player);
             playerMap.put(playerName, player);
-            MoneyModel.cashMove(bank, player, startCash);
+            cashText = Currency.fromBank(startCash, player);
             ReportBuffer.add(LocalText.getText("PlayerIs",
                     playerIndex,
                     player.getId() ));
         }
-        ReportBuffer.add(LocalText.getText("PlayerCash", Bank.format(startCash)));
-        ReportBuffer.add(LocalText.getText("BankHas",
-                Bank.format(bank.getCash())));
+        ReportBuffer.add(LocalText.getText("PlayerCash", cashText));
+        ReportBuffer.add(LocalText.getText("BankHas", bank.getWallet().formattedValue()));
     }
 
     /**

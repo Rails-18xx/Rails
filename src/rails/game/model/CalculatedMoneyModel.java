@@ -1,6 +1,6 @@
 package rails.game.model;
 
-import rails.game.state.Item;
+import rails.game.RailsItem;
 
 /**
  * This is MoneyModel that derives it value from a calculation method.
@@ -15,12 +15,12 @@ public final class CalculatedMoneyModel extends MoneyModel {
     
     private final CalculationMethod method;
 
-    private CalculatedMoneyModel(Item parent, String id, CalculationMethod method) {
-        super(parent, id);
+    private CalculatedMoneyModel(RailsItem parent, String id, CalculationMethod method) {
+        super(parent, id, parent.getRoot().getCurrency());
         this.method = method;
     }
 
-    public static CalculatedMoneyModel create(Item parent, String id, CalculationMethod method) {
+    public static CalculatedMoneyModel create(RailsItem parent, String id, CalculationMethod method) {
         return new CalculatedMoneyModel(parent, id, method);
     }
     

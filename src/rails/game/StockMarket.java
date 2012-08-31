@@ -286,7 +286,7 @@ public class StockMarket extends RailsManager implements Configurable {
         if (from != null && from == to) {
             ReportBuffer.add(LocalText.getText("PRICE_STAYS_LOG",
                     company.getId(),
-                    Bank.format(from.getPrice()),
+                    Currency.format(this, from.getPrice()),
                     from.getId() ));
             return;
         } else if (from == null && to != null) {
@@ -294,9 +294,9 @@ public class StockMarket extends RailsManager implements Configurable {
         } else if (from != null && to != null) {
             ReportBuffer.add(LocalText.getText("PRICE_MOVES_LOG",
                     company.getId(),
-                    Bank.format(from.getPrice()),
+                    Currency.format(this, from.getPrice()),
                     from.getId(),
-                    Bank.format(to.getPrice()),
+                    Currency.format(this, to.getPrice()),
                     to.getId() ));
 
             /* Check for rails.game closure */

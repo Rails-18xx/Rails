@@ -318,16 +318,18 @@ public class TreasuryShareRound extends StockRound {
             return false;
         }
 
-        int cashAmount = shares * price;
-
         // All seems OK, now buy the shares.
+        getRoot().getChangeStack().newChangeSet(action);
+
+        int cashAmount = shares * price;
+        String cashText = Currency.toBank(company, cashAmount);
         if (number == 1) {
             ReportBuffer.add(LocalText.getText("BUY_SHARE_LOG",
                     companyName,
                     shareUnit,
                     companyName,
                     from.getId(),
-                    Bank.format(cashAmount) ));
+                    cashText ));
         } else {
             ReportBuffer.add(LocalText.getText("BUY_SHARES_LOG",
                     companyName,
@@ -336,12 +338,9 @@ public class TreasuryShareRound extends StockRound {
                     number * shareUnit,
                     companyName,
                     from.getId(),
-                    Bank.format(cashAmount) ));
+                    cashText ));
         }
 
-        getRoot().getChangeStack().newChangeSet(action);
-
-        pay (company, bank, cashAmount);
         PublicCertificate cert2;
         for (int i = 0; i < number; i++) {
             cert2 = from.findCertificate(company, sharePerCert/shareUnit, false);
@@ -467,15 +466,15 @@ public class TreasuryShareRound extends StockRound {
         getRoot().getChangeStack().newChangeSet(action);
 
         int cashAmount = numberSold * price;
+        String cashText = Currency.fromBank(cashAmount, company);
         ReportBuffer.add(LocalText.getText("SELL_SHARES_LOG",
                 companyName,
                 numberSold,
                 company.getShareUnit(),
                 (numberSold * company.getShareUnit()),
                 companyName,
-                Bank.format(cashAmount) ));
+                cashText ));
 
-        pay (bank, company, cashAmount);
         // Transfer the sold certificates
         transferCertificates (certsToSell, pool);
         /*

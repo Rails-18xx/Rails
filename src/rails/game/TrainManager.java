@@ -351,14 +351,14 @@ public class TrainManager extends RailsManager implements Configurable {
         for (TrainCertificateType certType : trainCertTypes) {
             if (certType.getCost() > 0) {
                 if (b.length() > 1) b.append(" ");
-                b.append(certType.toText()).append(":").append(Bank.format(certType.getCost()));
+                b.append(certType.toText()).append(":").append(Currency.format(this, certType.getCost()));
                 if (certType.getExchangeCost() > 0) {
-                    b.append("(").append(Bank.format(certType.getExchangeCost())).append(")");
+                    b.append("(").append(Currency.format(this, certType.getExchangeCost())).append(")");
                 }
             } else {
                 for (TrainType type : certType.getPotentialTrainTypes()) {
                     if (b.length() > 1) b.append(" ");
-                    b.append(type.getName()).append(":").append(Bank.format(type.getCost()));
+                    b.append(type.getName()).append(":").append(Currency.format(this, type.getCost()));
                 }
             }
         }

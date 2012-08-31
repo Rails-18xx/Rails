@@ -4,7 +4,6 @@ import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.*;
-import rails.game.state.Item;
 import rails.util.*;
 
 public final class ExchangeForShare extends SpecialProperty {
@@ -19,7 +18,7 @@ public final class ExchangeForShare extends SpecialProperty {
     /**
      * Used by Configure (via reflection) only
      */
-    public ExchangeForShare(Item parent, String id) {
+    public ExchangeForShare(RailsItem parent, String id) {
         super(parent, id);
     }
 

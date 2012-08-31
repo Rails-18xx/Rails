@@ -11,10 +11,10 @@ import rails.game.GameManager;
 import rails.game.Player;
 import rails.game.PublicCertificate;
 import rails.game.PublicCompany;
+import rails.game.RailsItem;
 import rails.game.Train;
 import rails.game.state.BooleanState;
 import rails.game.state.GenericState;
-import rails.game.state.Item;
 
 public final class PublicCompany_CGR extends PublicCompany implements RevenueStaticModifier {
 
@@ -26,7 +26,7 @@ public final class PublicCompany_CGR extends PublicCompany implements RevenueSta
     /** If no player has 2 shares, we need a separate attribute to mark the president. */
     private final GenericState<Player> temporaryPresident = GenericState.create(this, "temporaryPresident");
 
-    public PublicCompany_CGR(Item parent, String id) {
+    public PublicCompany_CGR(RailsItem parent, String id) {
         super(parent, id);    
         // Share price is initially fixed
         // TODO: Is this the correct location or should that moved to some stage later?

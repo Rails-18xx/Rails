@@ -1,14 +1,14 @@
 package rails.game.specific._1825;
 
 import rails.game.PublicCompany;
+import rails.game.RailsItem;
 import rails.game.state.IntegerState;
-import rails.game.state.Item;
 
 public final class PublicCompany_1825 extends PublicCompany {
     
     protected final IntegerState formationOrderIndex = IntegerState.create(this, "formationOrderIndex");
 
-    public PublicCompany_1825(Item parent, String id) {
+    public PublicCompany_1825(RailsItem parent, String id) {
         super(parent, id);    
     }
     

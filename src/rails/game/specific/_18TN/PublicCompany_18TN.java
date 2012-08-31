@@ -10,14 +10,14 @@ import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
 import rails.game.GameManager;
 import rails.game.PublicCompany;
+import rails.game.RailsItem;
 import rails.game.state.BooleanState;
-import rails.game.state.Item;
 
 public final class PublicCompany_18TN extends PublicCompany implements RevenueStaticModifier {
 
     private final BooleanState civilWar = BooleanState.create(this, "civilWar");
 
-    public PublicCompany_18TN(Item parent, String id) {
+    public PublicCompany_18TN(RailsItem parent, String id) {
         super(parent, id);    
     }
 

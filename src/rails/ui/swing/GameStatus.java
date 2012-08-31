@@ -16,7 +16,6 @@ import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.correct.CashCorrectionAction;
-import rails.game.model.CashOwner;
 import rails.game.model.PortfolioModel;
 import rails.ui.swing.elements.*;
 
@@ -399,7 +398,7 @@ public class GameStatus extends GridPanel implements ActionListener {
             addField(f, currPriceXOffset, currPriceYOffset + i, 1, 1,
                     WIDE_RIGHT, visible);
 
-            f = compCash[i] = new Field(c.getCashModel());
+            f = compCash[i] = new Field(c.getWallet());
             addField(f, compCashXOffset, compCashYOffset + i, 1, 1, 0, visible);
             f =
                 compCashButton[i] =
@@ -454,7 +453,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         addField(new Caption(LocalText.getText("CASH")), 0, playerCashYOffset,
                 1, 1, WIDE_TOP + WIDE_RIGHT, true);
         for (int i = 0; i < np; i++) {
-            f = playerCash[i] = new Field(players[i].getCashModel());
+            f = playerCash[i] = new Field(players[i].getWallet());
             addField(f, playerCashXOffset + i, playerCashYOffset, 1, 1,
                     WIDE_TOP, true);
             f =
@@ -527,7 +526,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                 bankCashYOffset - 1, 1, 2, WIDE_TOP + WIDE_LEFT, true);
         addField(new Caption(LocalText.getText("CASH")), bankCashXOffset,
                 bankCashYOffset - 1, 1, 1, WIDE_TOP, true);
-        bankCash = new Field(bank.getCashModel());
+        bankCash = new Field(bank.getWallet());
         addField(bankCash, bankCashXOffset, bankCashYOffset, 1, 1, 0, true);
 
         // Trains
@@ -594,7 +593,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                                 sale.getShare(),
                                 i * sale.getShare(),
                                 sale.getCompanyName(),
-                                Bank.format(i * sale.getShareUnits()
+                                gameUIManager.format( i * sale.getShareUnits()
                                         * sale.getPrice()) ));
                         sellActions.add(sale);
                         sellAmounts.add(i);
@@ -658,9 +657,9 @@ public class GameStatus extends GridPanel implements ActionListener {
                             if (startPrices.length > 1) {
                                 for (int i = 0; i < startPrices.length; i++) {
                                     options.add(LocalText.getText("StartCompany",
-                                            Bank.format(startPrices[i]),
+                                            gameUIManager.format(startPrices[i]),
                                             sharePerCert,
-                                            Bank.format(sharesPerCert * startPrices[i]) ));
+                                            gameUIManager.format(sharesPerCert * startPrices[i]) ));
                                     buyActions.add(buy);
                                     buyAmounts.add(startPrices[i]);
                                 }
@@ -668,7 +667,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                                 options.add (LocalText.getText("StartACompany",
                                         companyName,
                                         company.getPresidentsShare().getShare(),
-                                        Bank.format(company.getPresidentsShare().getShares() * startPrices[0])));
+                                        gameUIManager.format(company.getPresidentsShare().getShares() * startPrices[0])));
                                 buyActions.add(buy);
                                 buyAmounts.add(startPrices[0]);
                             }
@@ -677,7 +676,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                             options.add(LocalText.getText("StartCompanyFixed",
                                     companyName,
                                     sharePerCert,
-                                    Bank.format(startPrices[0]) ));
+                                    gameUIManager.format(startPrices[0]) ));
                             buyActions.add(buy);
                             buyAmounts.add(startPrices[0]);
                         }
@@ -688,7 +687,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                                 sharePerCert,
                                 companyName,
                                 buy.getFromPortfolio().getId(),
-                                Bank.format(sharesPerCert * buy.getPrice()) ));
+                                gameUIManager.format(sharesPerCert * buy.getPrice()) ));
                         buyActions.add(buy);
                         buyAmounts.add(1);
                         for (int i = 2; i <= buy.getMaximumNumber(); i++) {
@@ -697,7 +696,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                                     sharePerCert,
                                     companyName,
                                     buy.getFromPortfolio().getId(),
-                                    Bank.format(i * sharesPerCert
+                                    gameUIManager.format(i * sharesPerCert
                                             * buy.getPrice()) ));
                             buyActions.add(buy);
                             buyAmounts.add(i);
@@ -890,7 +889,7 @@ public class GameStatus extends GridPanel implements ActionListener {
 
         if (actions != null) {
             for (CashCorrectionAction a : actions) {
-                CashOwner ch = a.getCashHolder();
+                MoneyOwner ch = a.getCashHolder();
                 if (ch instanceof PublicCompany) {
                     PublicCompany pc = (PublicCompany)ch;
                     int i = pc.getPublicNumber();

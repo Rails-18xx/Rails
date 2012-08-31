@@ -2,41 +2,38 @@ package rails.game.state;
 
 final class PortfolioChange<T extends Ownable> extends Change {
 
-    private final Portfolio<T> in;
-    private final Portfolio<T> out; // can be null
+    private final Portfolio<T> portfolio;
     private final T item;
+    private final boolean intoPortfolio;
 
-    PortfolioChange(Portfolio<T> in, Portfolio<T> out, T item) {
-        this.in = in;
-        this.out = out;
+    PortfolioChange(Portfolio<T> portfolio, T item, boolean intoPortfolio) {
+        this.portfolio = portfolio;
         this.item = item;
-        super.init(in);
+        this.intoPortfolio = intoPortfolio;
+        super.init(portfolio);
     }
     
-    @Override void execute() {
-        in.change(item, true);
-        if (out != null) {
-            out.change(item,  false);
-        }
+    @Override 
+    void execute() {
+        portfolio.change(item, intoPortfolio);
     }
 
-    @Override void undo() {
-        in.change(item,  false);
-        if (out != null) {
-            out.change(item, true);
-        }
+    @Override 
+    void undo() {
+        portfolio.change(item, !intoPortfolio);
     }
 
-    @Override Portfolio<? super T> getState() {
-        return in;
+    @Override 
+    Portfolio<? super T> getState() {
+        return portfolio;
     }
     
     @Override
     public String toString() {
-        if (out == null) {
-            return "Change for " + in + ": Add " + item;
+        if (intoPortfolio) {
+            return "Change for " + portfolio + ": Add + " + item;
         } else {
-            return "Change for " + in + ": Add + " + item + " from " + out;
+            return "Change for " + portfolio + ": Remove + " + item;
         }
     }
 

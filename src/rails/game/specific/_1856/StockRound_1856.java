@@ -2,15 +2,15 @@ package rails.game.specific._1856;
 
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
-import rails.game.Bank;
+import rails.game.Currency;
 import rails.game.GameManager;
+import rails.game.MoneyOwner;
 import rails.game.Player;
 import rails.game.PublicCertificate;
 import rails.game.PublicCompany;
 import rails.game.ReportBuffer;
 import rails.game.StockRound;
 import rails.game.action.BuyCertificate;
-import rails.game.model.CashOwner;
 import rails.game.model.PortfolioModel;
 import rails.game.state.IntegerState;
 import rails.game.state.Owner;
@@ -86,9 +86,9 @@ public class StockRound_1856 extends StockRound {
     }
 
     @Override
-    protected CashOwner getSharePriceRecipient(PublicCompany company, Owner from, int price) {
+    protected MoneyOwner getSharePriceRecipient(PublicCompany company, Owner from, int price) {
 
-        CashOwner recipient;
+        MoneyOwner recipient;
 
         if (price != 0
                 && !company.getId().equalsIgnoreCase(PublicCompany_CGR.NAME)
@@ -106,8 +106,8 @@ public class StockRound_1856 extends StockRound {
                     recipient = bank;
                     comp.addMoneyInEscrow(price);
                     ReportBuffer.addWaiting(LocalText.getText("HoldMoneyInEscrow",
-                            Bank.format(price),
-                            Bank.format(comp.getMoneyInEscrow()),
+                            Currency.format(this, price),
+                            Currency.format(this, comp.getMoneyInEscrow()),
                             comp.getId() ));
                     break;
                 }
@@ -120,7 +120,7 @@ public class StockRound_1856 extends StockRound {
                 recipient = bank;
             }
         } else {
-            recipient = (CashOwner)from; // TODO: Remove this cast?
+            recipient = (MoneyOwner)from; // TODO: Remove this cast?
         }
         return recipient;
     }

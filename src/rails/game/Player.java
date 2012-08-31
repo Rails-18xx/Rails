@@ -2,18 +2,16 @@ package rails.game;
 
 import rails.game.model.CalculatedMoneyModel;
 import rails.game.model.CalculatedMoneyModel.CalculationMethod;
-import rails.game.model.CashMoneyModel;
-import rails.game.model.CashOwner;
+import rails.game.model.CountingMoneyModel;
+import rails.game.model.WalletMoneyModel;
 import rails.game.model.CertificateCountModel;
 import rails.game.model.MoneyModel;
 import rails.game.model.PortfolioModel;
 import rails.game.model.PortfolioOwner;
 import rails.game.state.BooleanState;
-import rails.game.state.AbstractItem;
 import rails.game.state.IntegerState;
-import rails.game.state.Item;
 
-public class Player extends AbstractItem implements CashOwner, PortfolioOwner, Comparable<Player> {
+public class Player extends RailsAbstractItem implements MoneyOwner, PortfolioOwner, Comparable<Player> {
 
     // TODO: Are those still needed?
     public static int MAX_PLAYERS = 8;
@@ -26,16 +24,16 @@ public class Player extends AbstractItem implements CashOwner, PortfolioOwner, C
     private final PortfolioModel portfolio = PortfolioModel.create(this);
     private final CertificateCountModel certCount = CertificateCountModel.create(portfolio);
 
-    private final CashMoneyModel cash = CashMoneyModel.create(this, "cash", false);
+    private final WalletMoneyModel cash = WalletMoneyModel.create(this, "cash", false);
     private final CalculatedMoneyModel freeCash;
-    private final CashMoneyModel blockedCash = CashMoneyModel.create(this, "blockedCash", false);
+    private final CountingMoneyModel blockedCash = CountingMoneyModel.create(this, "blockedCash", false);
     private final CalculatedMoneyModel worth;
-    private final CashMoneyModel lastORWorthIncrease = CashMoneyModel.create(this, "lastORIncome", false);
+    private final CountingMoneyModel lastORWorthIncrease = CountingMoneyModel.create(this, "lastORIncome", false);
 
     private final BooleanState bankrupt = BooleanState.create(this, "isBankrupt");
     private final IntegerState worthAtORStart = IntegerState.create(this, "worthAtORStart");
 
-    private Player(Item parent, String id, int index) {
+    private Player(RailsItem parent, String id, int index) {
         super(parent, id);
         this.index = index;
 
@@ -200,7 +198,7 @@ public class Player extends AbstractItem implements CashOwner, PortfolioOwner, C
     	return bankrupt.value();
     }
 
-    // CashOwner interface
+    // MoneyOwner interface
     public int getCash() {
         return cash.value();
     }
@@ -224,7 +222,7 @@ public class Player extends AbstractItem implements CashOwner, PortfolioOwner, C
         return result;
     }
 
-    public CashMoneyModel getCashModel() {
+    public WalletMoneyModel getWallet() {
         return cash;
     }
 

@@ -217,7 +217,7 @@ public final class StartRound_1880 extends StartRound {
 
             // Has the buyer enough cash?
             if (bidAmount > player.getCash()) {
-                errMsg = LocalText.getText("BidTooHigh", Bank.format(bidAmount));
+                errMsg = LocalText.getText("BidTooHigh", Currency.format(this, bidAmount));
                 break;
             }
 
@@ -237,9 +237,9 @@ public final class StartRound_1880 extends StartRound {
         item.setBid(bidAmount, player);
         ReportBuffer.add(LocalText.getText("BID_ITEM_LOG",
                 playerName,
-                Bank.format(bidAmount),
+                Currency.format(this, bidAmount),
                 item.getName(),
-                Bank.format(player.getCash()) ));
+                Currency.format(this, player.getCash()) ));
          setNextBiddingPlayer(item);
          return true;
 
@@ -288,7 +288,7 @@ public final class StartRound_1880 extends StartRound {
                 ReportBuffer.add(LocalText.getText(
                         "ITEM_PRICE_REDUCED",
                                 auctionItem.getName(),
-                                Bank.format(startPacket.getFirstItem().getBasePrice()) ));
+                                Currency.format(this, startPacket.getFirstItem().getBasePrice()) ));
                 numPasses.set(0);
                 if (auctionItem.getBasePrice() == 0) {
                     assignItem((Player)startingPlayer.value(),

@@ -28,11 +28,8 @@ import rails.util.*;
  * but this will still be the form in which ownership is expressed. <p> Company
  * shares may or may not have a price on the stock market.
  * 
- * FIXME: This mechanism has to be rewritten!
- * 
- * FIXME: Check if uninitialized states may cause trouble on undo
  */
-public class PublicCompany extends AbstractItem implements Company, CashOwner, PortfolioOwner, Comparable<PublicCompany> {
+public class PublicCompany extends RailsAbstractItem implements Company, MoneyOwner, PortfolioOwner, Comparable<PublicCompany> {
     
     private static Logger log = LoggerFactory.getLogger(PublicCompany.class);
 
@@ -114,7 +111,8 @@ public class PublicCompany extends AbstractItem implements Company, CashOwner, P
     protected PriceModel currentPrice;
 
     /** Company treasury, holding cash */
-    protected final CashMoneyModel treasury = CashMoneyModel.create(this, "treasury", false);
+    protected final WalletMoneyModel treasury = 
+            WalletMoneyModel.create(this, "treasury", false);
 
     /** PresidentModel */
     protected final PresidentModel presidentModel = PresidentModel.create(this);
@@ -129,7 +127,7 @@ public class PublicCompany extends AbstractItem implements Company, CashOwner, P
     protected final ArrayListState<Bonus> bonuses = ArrayListState.create(this, "bonuses");
 
     /** Most recent revenue earned. */
-    protected final CashMoneyModel lastRevenue = CashMoneyModel.create(this, "lastRevenue", false);
+    protected final CountingMoneyModel lastRevenue = CountingMoneyModel.create(this, "lastRevenue", false);
 
     /** Most recent payout decision. */
     protected final StringState lastRevenueAllocation = StringState.create(this, "lastRevenueAllocation");
@@ -173,17 +171,17 @@ public class PublicCompany extends AbstractItem implements Company, CashOwner, P
     protected final IntegerState extraTiles = IntegerState.create(this, "extraTiles", -1);
 
     /* Spendings in the current operating turn */
-    protected final CashMoneyModel privatesCostThisTurn = CashMoneyModel.create(this, "privatesCostThisTurn", false);
+    protected final CountingMoneyModel privatesCostThisTurn = CountingMoneyModel.create(this, "privatesCostThisTurn", false);
 
     protected final StringState tilesLaidThisTurn = StringState.create(this, "tilesLaidThisTurn");
 
-    protected final CashMoneyModel tilesCostThisTurn = CashMoneyModel.create(this, "tilesCostThisTurn", false); 
+    protected final CountingMoneyModel tilesCostThisTurn = CountingMoneyModel.create(this, "tilesCostThisTurn", false); 
 
     protected final StringState tokensLaidThisTurn = StringState.create(this, "tokenLaidThisTurn");
 
-    protected final CashMoneyModel tokensCostThisTurn = CashMoneyModel.create(this, "tokensCostThisTurn", false);
+    protected final CountingMoneyModel tokensCostThisTurn = CountingMoneyModel.create(this, "tokensCostThisTurn", false);
 
-    protected final CashMoneyModel trainsCostThisTurn = CashMoneyModel.create(this, "trainsCostThisTurn", false);
+    protected final CountingMoneyModel trainsCostThisTurn = CountingMoneyModel.create(this, "trainsCostThisTurn", false);
 
     protected boolean canBuyStock = false;
 
@@ -288,7 +286,7 @@ public class PublicCompany extends AbstractItem implements Company, CashOwner, P
     protected IntegerState currentNumberOfLoans = null; // init during finishConfig
     protected int loanInterestPct = 0;
     protected int maxLoansPerRound = 0;
-    protected CashMoneyModel currentLoanValue = null; // init during finishConfig
+    protected CountingMoneyModel currentLoanValue = null; // init during finishConfig
 
     protected BooleanState canSharePriceVary;
 
@@ -312,7 +310,7 @@ public class PublicCompany extends AbstractItem implements Company, CashOwner, P
     /**
      * Used by Configure (via reflection) only
      */
-    public PublicCompany(Item parent, String id) {
+    public PublicCompany(RailsItem parent, String id) {
         super(parent, id);
         lastRevenue.setSuppressInitialZero(true);
 
@@ -687,7 +685,7 @@ public class PublicCompany extends AbstractItem implements Company, CashOwner, P
 
        if (maxNumberOfLoans != 0) {
             currentNumberOfLoans = IntegerState.create(this, "currentNumberOfLoans");
-            currentLoanValue = CashMoneyModel.create(this, "currentLoanValue", false);
+            currentLoanValue = CountingMoneyModel.create(this, "currentLoanValue", false);
             currentLoanValue.setSuppressZero(true);
         }
 
@@ -925,7 +923,7 @@ public class PublicCompany extends AbstractItem implements Company, CashOwner, P
     public void start(int price) {
         StockSpace startSpace = stockMarket.getStartSpace(price);
         if (startSpace == null) {
-            log.error("Invalid start price " + Bank.format(price));
+            log.error("Invalid start price " + getRoot().getCurrency().format(price)); // TODO: Do this nicer
         } else {
             start(startSpace);
         }
@@ -941,7 +939,7 @@ public class PublicCompany extends AbstractItem implements Company, CashOwner, P
     public void transferAssetsFrom(PublicCompany otherCompany) {
 
         if (otherCompany.getCash() > 0) {
-            MoneyModel.cashMove(otherCompany, this, otherCompany.getCash());
+            Currency.wireAll(otherCompany, this);
         }
         portfolio.transferAssetsFrom(otherCompany.getPortfolioModel());
     }
@@ -1150,7 +1148,7 @@ public class PublicCompany extends AbstractItem implements Company, CashOwner, P
         return treasury.value();
     }
     
-    public CashMoneyModel getCashModel() {
+    public WalletMoneyModel getWallet() {
         return treasury;
     }
 
@@ -1517,16 +1515,15 @@ public class PublicCompany extends AbstractItem implements Company, CashOwner, P
     public void buyTrain(Train train, int price) {
         
         // check first if it is bought from another company
-        // FIXME: The type of owner can be tainted as it can link to portfolioModel
         if (train.getOwner() instanceof PublicCompany) {
             PublicCompany previousOwner = (PublicCompany)train.getOwner();
             //  adjust the money spent on trains field
-            ((CashMoneyModel)previousOwner.getTrainsSpentThisTurnModel()).change(-price);
+            previousOwner.getTrainsSpentThisTurnModel().change(-price);
             // pay the money to the other company
-            MoneyModel.cashMove(this, previousOwner, price);
+            Currency.wire(this, price, previousOwner);
         } else { // TODO: make this a serious test, no assumption
             // else it is from the bank
-            MoneyModel.cashMoveToBank(this, price);
+            Currency.toBank(this, price);
         }
 
         // increase own train costs
@@ -1540,7 +1537,7 @@ public class PublicCompany extends AbstractItem implements Company, CashOwner, P
         }
     }
 
-    public Model getTrainsSpentThisTurnModel() {
+    public CountingMoneyModel getTrainsSpentThisTurnModel() {
         return trainsCostThisTurn;
     }
 
@@ -1554,14 +1551,16 @@ public class PublicCompany extends AbstractItem implements Company, CashOwner, P
                     getId(),
                     privateCompany.getId(),
                     from.getId(),
-                    Bank.format(price) ));
+                    Currency.format(this, price) ));
         }
 
         // Move the private certificate
         portfolio.getPrivatesOwnedModel().getPortfolio().moveInto(privateCompany);
 
         // Move the money
-        if (price > 0) MoneyModel.cashMove(this, (CashOwner)from, price); // TODO: Remove the cast
+        if (price > 0) {
+            Currency.wire(this, price, (MoneyOwner)from); // TODO: Remove the cast
+        }
         privatesCostThisTurn.change(price);
 
         // Move any special abilities to the portfolio, if configured so
@@ -1617,7 +1616,7 @@ public class PublicCompany extends AbstractItem implements Company, CashOwner, P
 
     public void layTilenNoMapMode(int cost) {
         if (cost > 0) tilesCostThisTurn.change(cost);
-        tilesLaidThisTurn.append(Bank.format(cost), ",");
+        tilesLaidThisTurn.append(Currency.format(this, cost), ",");
     }
 
     public StringState getTilesLaidThisTurnModel() {
@@ -1637,7 +1636,7 @@ public class PublicCompany extends AbstractItem implements Company, CashOwner, P
 
     public void layBaseTokennNoMapMode(int cost) {
         if (cost > 0) tokensCostThisTurn.change(cost);
-        tokensLaidThisTurn.append(Bank.format(cost), ",");
+        tokensLaidThisTurn.append(Currency.format(this, cost), ",");
     }
 
     /**
@@ -2022,7 +2021,7 @@ public class PublicCompany extends AbstractItem implements Company, CashOwner, P
         int cash = treasury.value();
         if (cash > 0) {
             treasury.setSuppressZero(true);
-            MoneyModel.cashMoveToBank(this, cash);
+            Currency.toBank(this, cash);
         }
 
         lastRevenue.setSuppressZero(true);

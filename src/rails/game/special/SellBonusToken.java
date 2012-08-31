@@ -6,9 +6,9 @@ import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.GameManager;
 import rails.game.MapHex;
+import rails.game.RailsItem;
 import rails.game.state.GenericState;
 import rails.game.state.IntegerState;
-import rails.game.state.Item;
 import rails.game.state.Owner;
 import rails.util.Util;
 
@@ -26,7 +26,7 @@ public class SellBonusToken extends SpecialProperty {
     /**
      * Used by Configure (via reflection) only
      */
-    public SellBonusToken(Item parent, String id) {
+    public SellBonusToken(RailsItem parent, String id) {
         super(parent, id);
     }
 

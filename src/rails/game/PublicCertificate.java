@@ -10,7 +10,6 @@ import com.google.common.collect.ComparisonChain;
 
 import rails.common.LocalText;
 import rails.game.model.CertificatesModel;
-import rails.game.state.Item;
 import rails.game.state.Ownable;
 import rails.game.state.OwnableItem;
 import rails.game.state.Typable;
@@ -52,7 +51,7 @@ public class PublicCertificate extends OwnableItem<PublicCertificate> implements
 
     // TODO: Rewrite constructors
     // TODO: Should every certificate have its own id and be registered with the parent?
-    public PublicCertificate(Item parent, String id, int shares, boolean president, 
+    public PublicCertificate(RailsItem parent, String id, int shares, boolean president, 
             boolean available, float certificateCount, int index) {
         super(parent, id, PublicCertificate.class);
         this.shares = shares;
@@ -73,6 +72,16 @@ public class PublicCertificate extends OwnableItem<PublicCertificate> implements
 //        this.indexInCompany = oldCert.getIndexInCompany();
 //    }
 
+    @Override
+    public RailsItem getParent(){
+        return (RailsItem)super.getParent();
+    }
+    
+    @Override
+    public RailsRoot getRoot() {
+        return (RailsRoot)super.getRoot();
+    }
+    
     /** Set the certificate's unique ID, for use in deserializing */
     public void setUniqueId(String name, int index) {
         certId = name + "-" + index;

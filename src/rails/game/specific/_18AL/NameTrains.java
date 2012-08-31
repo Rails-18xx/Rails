@@ -6,10 +6,10 @@ import java.util.List;
 import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
-import rails.game.Bank;
+import rails.game.Currency;
 import rails.game.GameManager;
+import rails.game.RailsItem;
 import rails.game.special.SpecialProperty;
-import rails.game.state.Item;
 
 public class NameTrains extends SpecialProperty {
 
@@ -21,7 +21,7 @@ public class NameTrains extends SpecialProperty {
     /**
      * Used by Configure (via reflection) only
      */
-    public NameTrains(Item parent, String id) {
+    public NameTrains(RailsItem parent, String id) {
         super(parent, id);
     }
 
@@ -64,7 +64,7 @@ public class NameTrains extends SpecialProperty {
                         (NamedTrainToken) tokenClass.newInstance();
                 tokens.add(token);
                 token.configureFromXML(tokenTag);
-                description += token.getLongName() + ": " + Bank.format(token.getValue()) + ", ";
+                description += token.getLongName() + ": " + Currency.format(this, token.getValue()) + ", ";
             } catch (Exception e) {
                 throw new ConfigurationException("Cannot instantiate class "
                                                  + tokenClassName, e);

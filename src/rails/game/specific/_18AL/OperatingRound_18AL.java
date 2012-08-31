@@ -8,7 +8,6 @@ import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.LayBaseToken;
 import rails.game.action.PossibleAction;
-import rails.game.model.MoneyModel;
 
 public class OperatingRound_18AL extends OperatingRound {
 
@@ -89,10 +88,10 @@ public class OperatingRound_18AL extends OperatingRound {
             MapHex hex = action.getChosenHex();
             if (hex == operatingCompany.value().getDestinationHex()) {
                 int payout = 100;
-                MoneyModel.cashMove(bank, operatingCompany.value(), payout);
+                String payoutText = Currency.fromBank(payout, operatingCompany.value());
                 ReportBuffer.add(LocalText.getText("DestinationReachedByToken",
                         operatingCompany.value().getId(),
-                        Bank.format(payout),
+                        payoutText,
                         hex.getId() ));
             }
             return true;

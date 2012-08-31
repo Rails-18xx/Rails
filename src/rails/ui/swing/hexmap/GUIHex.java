@@ -31,6 +31,7 @@ import rails.algorithms.RevenueBonusTemplate;
 import rails.game.Bank;
 import rails.game.BaseToken;
 import rails.game.BonusToken;
+import rails.game.Currency;
 import rails.game.MapHex;
 import rails.game.PrivateCompany;
 import rails.game.PublicCompany;
@@ -422,7 +423,7 @@ public class GUIHex implements Observer {
         FontMetrics fontMetrics = g2.getFontMetrics();
         if (getHexModel().getTileCost() > 0 ) {
             g2.drawString(
-                    Bank.format(getHexModel().getTileCost()),
+                    Currency.format(getHexModel(), getHexModel().getTileCost()),
                     rectBound.x
                             + (rectBound.width - fontMetrics.stringWidth(Integer.toString(getHexModel().getTileCost())))
                             * 3 / 5,
@@ -812,7 +813,7 @@ public class GUIHex implements Observer {
             tt.append("<br><b>Upgrades</b>: ").append(upgrades);
             if (model.getTileCost() > 0)
                 tt.append("<br>Upgrade cost: "
-                          + Bank.format(model.getTileCost()));
+                          + Currency.format(model, model.getTileCost()));
         }
 
         if (getHexModel().getDestinations() != null) {

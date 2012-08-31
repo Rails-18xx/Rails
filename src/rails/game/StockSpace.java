@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableList;
 
 import rails.game.state.ArrayListState;
-import rails.game.state.Item;
 import rails.game.state.Model;
 
 /**
@@ -71,7 +70,7 @@ public class StockSpace extends Model {
             LoggerFactory.getLogger(StockSpace.class);
 
     /*--- Constructors ---*/
-    private StockSpace(Item parent, String id, int price, StockSpaceType type) {
+    private StockSpace(StockMarket parent, String id, int price, StockSpaceType type) {
         super(parent, id);
         this.price = price;
         this.type = type;
@@ -83,17 +82,15 @@ public class StockSpace extends Model {
     /**
      * @return fully initialized StockSpace
      */
-    public static StockSpace create(Item parent, String id, int price, StockSpaceType type) {
+    public static StockSpace create(StockMarket parent, String id, int price, StockSpaceType type) {
         return new StockSpace(parent, id, price, type);
     }
-    
-    /**
-     * @return initialized StockSpace with default StockSpaceType
-     */
-    public static StockSpace create (Item parent, String id, int price) {
-        return new StockSpace(parent, id, price, null);
-    }
 
+    @Override
+    public StockMarket getParent() {
+        return (StockMarket)super.getParent();
+    }
+    
     // No constructors for the booleans. Use the setters.
 
     /*--- Token handling methods ---*/
@@ -291,7 +288,7 @@ public class StockSpace extends Model {
 
     @Override
     public String toText() {
-        return Bank.format(price);
+        return Currency.format(getParent(), price);
     }
 
 }

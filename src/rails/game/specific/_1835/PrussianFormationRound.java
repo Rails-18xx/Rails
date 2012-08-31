@@ -8,11 +8,11 @@ import rails.common.DisplayBuffer;
 import rails.common.GuiDef;
 import rails.common.LocalText;
 import rails.game.*;
+import rails.game.Currency;
 import rails.game.action.DiscardTrain;
 import rails.game.action.PossibleAction;
 import rails.game.special.ExchangeForShare;
 import rails.game.special.SpecialProperty;
-import rails.game.model.MoneyModel;
 
 public class PrussianFormationRound extends StockRound {
 
@@ -248,7 +248,7 @@ public class PrussianFormationRound extends StockRound {
         prussian.start();
         String message = LocalText.getText("START_MERGED_COMPANY",
                 PR_ID,
-                Bank.format(prussian.getIPOPrice()),
+                Currency.format(this, prussian.getIPOPrice()),
                 prussian.getStartSpace());
         ReportBuffer.add(message);
         if (display) DisplayBuffer.add(message);
@@ -259,10 +259,10 @@ public class PrussianFormationRound extends StockRound {
         int cash = capFactor * prussian.getIPOPrice();
 
         if (cash > 0) {
-            MoneyModel.cashMove(bank, prussian, cash);
+            String cashText = Currency.fromBank(cash, prussian);
             ReportBuffer.add(LocalText.getText("FloatsWithCash",
                 prussian.getId(),
-                Bank.format(cash) ));
+                cashText ));
         } else {
             ReportBuffer.add(LocalText.getText("Floats",
                     prussian.getId()));
@@ -332,7 +332,7 @@ public class PrussianFormationRound extends StockRound {
                     company.getId(),
                     PR_ID,
                     company instanceof PrivateCompany ? "no"
-                            : Bank.format(((PublicCompany)company).getCash()),
+                            : Currency.format(this, ((PublicCompany)company).getCash()),
                     company instanceof PrivateCompany ? "no"
                             : ((PublicCompany)company).getPortfolioModel().getTrainList().size());
             ReportBuffer.add(message);
@@ -368,7 +368,7 @@ public class PrussianFormationRound extends StockRound {
 
                 // Move any cash
                 if (minor.getCash() > 0) {
-                    MoneyModel.cashMove (minor, prussian, minor.getCash());
+                    Currency.wireAll(minor, prussian);
                 }
 
                 // Move any trains

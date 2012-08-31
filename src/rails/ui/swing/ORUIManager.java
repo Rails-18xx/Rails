@@ -1020,7 +1020,7 @@ public class ORUIManager implements DialogOwner {
             if (ac.isFreeEntryAllowed())
                 suggestedCostText = LocalText.getText("OCAmountEntry");
             else
-                suggestedCostText = Bank.format(ac.getAmount());
+                suggestedCostText = gameUIManager.format(ac.getAmount());
 
             OperatingCost.OCType t = ac.getOCType();
             if (t == OperatingCost.OCType.LAY_TILE)
@@ -1099,7 +1099,7 @@ public class ORUIManager implements DialogOwner {
             }
             if (cost > 0) {
                 b.append(" ").append(
-                        LocalText.getText("AT_PRICE", Bank.format(cost)));
+                        LocalText.getText("AT_PRICE", gameUIManager.format(cost)));
             }
             if (bTrain.hasSpecialProperty()) {
                 String priv =
@@ -1110,11 +1110,11 @@ public class ORUIManager implements DialogOwner {
             if (bTrain.mustPresidentAddCash()) {
                 b.append(" ").append(
                         LocalText.getText("YOU_MUST_ADD_CASH",
-                                Bank.format(bTrain.getPresidentCashToAdd())));
+                                gameUIManager.format(bTrain.getPresidentCashToAdd())));
             } else if (bTrain.mayPresidentAddCash()) {
                 b.append(" ").append(
                         LocalText.getText("YOU_MAY_ADD_CASH",
-                                Bank.format(bTrain.getPresidentCashToAdd())));
+                                gameUIManager.format(bTrain.getPresidentCashToAdd())));
             }
 
             if (bTrain.getExtraMessage() != null) {
@@ -1202,7 +1202,7 @@ public class ORUIManager implements DialogOwner {
                 String exchangedTrainName =
                         (String) JOptionPane.showInputDialog(orWindow,
                                 LocalText.getText("WHICH_TRAIN_EXCHANGE_FOR",
-                                        Bank.format(price)),
+                                        gameUIManager.format(price)),
                                 LocalText.getText("WHICH_TRAIN_TO_EXCHANGE"),
                                 JOptionPane.QUESTION_MESSAGE, null, options,
                                 options[0]);
@@ -1271,9 +1271,10 @@ public class ORUIManager implements DialogOwner {
             minPrice = action.getMinimumPrice();
             maxPrice = action.getMaximumPrice();
             if (minPrice < maxPrice) {
-                priceRange = Bank.format(minPrice) + "..." + Bank.format(maxPrice);
+                priceRange = gameUIManager.format(minPrice) + "..." 
+                        + gameUIManager.format(maxPrice);
             } else {
-                priceRange = Bank.format(maxPrice);
+                priceRange = gameUIManager.format(maxPrice);
             }
             
             privatesForSale.add(LocalText.getText("BuyPrivatePrompt",
@@ -1299,8 +1300,8 @@ public class ORUIManager implements DialogOwner {
                             JOptionPane.showInputDialog(orWindow,
                                     LocalText.getText("WHICH_PRIVATE_PRICE",
                                             chosenOption,
-                                            Bank.format(minPrice),
-                                            Bank.format(maxPrice) ),
+                                            gameUIManager.format(minPrice),
+                                            gameUIManager.format(maxPrice) ),
                                     LocalText.getText("WHICH_PRICE"),
                                     JOptionPane.QUESTION_MESSAGE);
                     try {
@@ -1397,7 +1398,7 @@ public class ORUIManager implements DialogOwner {
             String message = LocalText.getText("PleaseConfirm");
             String prompt = LocalText.getText("TakeLoanPrompt",
                     action.getCompanyName(),
-                    Bank.format(action.getPrice()));
+                    gameUIManager.format(action.getPrice()));
             if (JOptionPane.showConfirmDialog(orWindow, prompt,
                             message, JOptionPane.OK_CANCEL_OPTION,
                             JOptionPane.QUESTION_MESSAGE)
@@ -1424,8 +1425,8 @@ public class ORUIManager implements DialogOwner {
             JOptionPane.showMessageDialog (orWindow,
                     LocalText.getText("RepayLoan",
                             minNumber,
-                            Bank.format(loanAmount),
-                            Bank.format(minNumber * loanAmount)));
+                            gameUIManager.format(loanAmount),
+                            gameUIManager.format(minNumber * loanAmount)));
             numberRepaid = minNumber;
             action.setNumberTaken(numberRepaid);
             orWindow.process(action);
@@ -1438,8 +1439,8 @@ public class ORUIManager implements DialogOwner {
                 } else {
                     options[j] = LocalText.getText("RepayLoan",
                             i,
-                            Bank.format(loanAmount),
-                            Bank.format(i * loanAmount));
+                            gameUIManager.format(loanAmount),
+                            gameUIManager.format(i * loanAmount));
                 }
             }
             RadioButtonDialog currentDialog = new RadioButtonDialog (gameUIManager,
@@ -1584,7 +1585,7 @@ public class ORUIManager implements DialogOwner {
             if (action.getRequiredCash() > 0) {
                 message += "<br><font color=\"red\">"
                     + LocalText.getText("WarningNeedCash",
-                            Bank.format(action.getRequiredCash()))
+                            gameUIManager.format(action.getRequiredCash()))
                     + "</font>";
             }
             setMessage(message);
@@ -1696,9 +1697,9 @@ public class ORUIManager implements DialogOwner {
                 String text =
                         LocalText.getText("BuyBonusToken",
                                 bbt.getName(),
-                                Bank.format(bbt.getValue()),
+                                gameUIManager.format(bbt.getValue()),
                                 bbt.getSellerName(),
-                                Bank.format(bbt.getPrice()) );
+                                gameUIManager.format(bbt.getPrice()) );
                 orPanel.addSpecialAction(bbt, text);
             }
         }

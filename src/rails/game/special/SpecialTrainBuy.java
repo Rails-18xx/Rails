@@ -3,7 +3,7 @@ package rails.game.special;
 import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
-import rails.game.state.Item;
+import rails.game.RailsItem;
 import rails.util.Util;
 
 /**
@@ -23,7 +23,7 @@ public class SpecialTrainBuy extends SpecialProperty {
     /**
      * Used by Configure (via reflection) only
      */
-    public SpecialTrainBuy(Item parent, String id) {
+    public SpecialTrainBuy(RailsItem parent, String id) {
         super(parent, id);
     }
 

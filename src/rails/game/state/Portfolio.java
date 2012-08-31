@@ -6,7 +6,6 @@ public abstract class Portfolio<T extends Ownable> extends State implements
         Iterable<T> {
 
     private final Class<T> type;
-    private final Owner owner;
 
     /**
      * Creation of a portfolio
@@ -17,7 +16,6 @@ public abstract class Portfolio<T extends Ownable> extends State implements
     protected Portfolio(Owner parent, String id, Class<T> type) {
         super(parent, id);
         this.type = type;
-        this.owner = parent;
         getPortfolioManager().addPortfolio(this);
     }
     /**
@@ -25,7 +23,7 @@ public abstract class Portfolio<T extends Ownable> extends State implements
      */
     @Override
     public Owner getParent() {
-        return owner;
+        return (Owner)super.getParent();
     }
 
     protected Class<T> getType() {
@@ -33,6 +31,7 @@ public abstract class Portfolio<T extends Ownable> extends State implements
     }
 
     // delayed due to initialization issues
+    // TODO: Check is this still true?
     protected PortfolioManager getPortfolioManager() {
         return getStateManager().getPortfolioManager();
     }

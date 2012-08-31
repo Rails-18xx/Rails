@@ -3,14 +3,13 @@ package rails.game;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rails.game.state.Item;
 import rails.game.state.OwnableItem;
 
 /**
  * FIXME: Use other mechanism (TokenManager) to store token ids
  * FIXME: UniqueId and id are a double structure
  */
-public abstract class Token<T extends Token<T>> extends OwnableItem<T>  {
+public abstract class Token<T extends Token<T>> extends OwnableItem<T> implements RailsItem  {
 
     protected String description = "";
     protected String uniqueId;
@@ -21,10 +20,20 @@ public abstract class Token<T extends Token<T>> extends OwnableItem<T>  {
     protected static Logger log =
         LoggerFactory.getLogger(Token.class.getPackage().getName());
     
-    protected Token(Item parent, String id, Class<T> clazz) {
+    protected Token(RailsItem parent, String id, Class<T> clazz) {
         super(parent, id, clazz);
         uniqueId = id;
         GameManager.getInstance().storeObject(STORAGE_NAME, this);
+    }
+    
+    @Override
+    public RailsItem getParent() {
+        return (RailsItem)super.getParent();
+    }
+    
+    @Override
+    public RailsRoot getRoot() {
+        return (RailsRoot)super.getRoot();
     }
     
     /** 

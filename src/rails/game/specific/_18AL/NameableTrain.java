@@ -1,8 +1,8 @@
 package rails.game.specific._18AL;
 
+import rails.game.RailsItem;
 import rails.game.Train;
 import rails.game.state.GenericState;
-import rails.game.state.Item;
 
 // FIXME: Check train creation methods
 
@@ -10,7 +10,7 @@ public final class NameableTrain extends Train {
 
     private final GenericState<NamedTrainToken> nameToken = GenericState.create(this, "nameToken");
     
-    private NameableTrain(Item parent, String id) {
+    private NameableTrain(RailsItem parent, String id) {
         super(parent, id);
     }
 

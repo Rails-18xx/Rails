@@ -10,8 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import rails.common.*;
 import rails.game.action.*;
-import rails.game.model.CashOwner;
-import rails.game.model.MoneyModel;
 import rails.game.model.PortfolioModel;
 import rails.game.special.SpecialProperty;
 import rails.game.state.ArrayListState;
@@ -20,7 +18,7 @@ import rails.game.state.Creatable;
 import rails.game.state.Owner;
 import rails.game.state.Portfolio;
 
-public abstract class Round extends RailsItem implements Creatable {
+public abstract class Round extends RailsAbstractItem implements Creatable {
 
     protected PossibleActions possibleActions = PossibleActions.getInstance();
     protected GuiHints guiHints = null;
@@ -364,10 +362,10 @@ public abstract class Round extends RailsItem implements Creatable {
         // up)
 
         if (cash > 0) {
-            MoneyModel.cashMove(bank, company, cash);
+            String cashText = Currency.fromBank(cash, company);
             ReportBuffer.add(LocalText.getText("FloatsWithCash",
                     company.getId(),
-                    Bank.format(cash) ));
+                    cashText ));
         } else {
             ReportBuffer.add(LocalText.getText("Floats",
                     company.getId()));
@@ -387,12 +385,12 @@ public abstract class Round extends RailsItem implements Creatable {
         for (PublicCompany c : companyManager.getAllPublicCompanies()) {
             if (c.hasFloated() && !c.isClosed()) {
                 ReportBuffer.add(LocalText.getText("Has", c.getId(),
-                        Bank.format(c.getCash())));
+                        Currency.format(this, c.getCash())));
             }
         }
         for (Player p : playerManager.getPlayers()) {
             ReportBuffer.add(LocalText.getText("Has", p.getId(),
-                    Bank.format(p.getCashValue())));
+                    Currency.format(this, p.getCashValue())));
         }
         // Inform GameManager
         gameManager.nextRound(this);
@@ -427,12 +425,6 @@ public abstract class Round extends RailsItem implements Creatable {
             if (cert != null) {
                 transferCertificate(cert, newHolder);
             }
-        }
-    }
-
-    protected void pay (CashOwner from, CashOwner to, int amount) {
-        if (to != null && amount != 0) {
-            MoneyModel.cashMove (from, to, amount);
         }
     }
 

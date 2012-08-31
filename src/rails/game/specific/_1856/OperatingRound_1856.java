@@ -13,7 +13,6 @@ import rails.game.action.*;
 import rails.game.special.SellBonusToken;
 import rails.game.special.SpecialProperty;
 import rails.game.state.BooleanState;
-import rails.game.model.MoneyModel;
 
 public class OperatingRound_1856 extends OperatingRound {
 
@@ -159,7 +158,7 @@ public class OperatingRound_1856 extends OperatingRound {
 
         ReportBuffer.add((LocalText.getText("CompanyMustPayLoanInterest",
                 operatingCompany.value().getId(),
-                Bank.format(due))));
+                Currency.format(this, due))));
 
         // Can it be paid from company treasury?
         // TODO: Hard code 10% payment
@@ -214,16 +213,16 @@ public class OperatingRound_1856 extends OperatingRound {
         // TODO: Hard-coded 10% payment
         int payment = Math.min(due, (operatingCompany.value().getCash() / 10) * 10);
         if (payment > 0) {
-            MoneyModel.cashMove (operatingCompany.value(), bank, payment);
+            String paymentText = Currency.toBank(operatingCompany.value(), payment);
             if (payment == due) {
                 ReportBuffer.add (LocalText.getText("InterestPaidFromTreasury",
                         operatingCompany.value().getId(),
-                        Bank.format(payment)));
+                        paymentText));
             } else {
                 ReportBuffer.add (LocalText.getText("InterestPartlyPaidFromTreasury",
                         operatingCompany.value().getId(),
-                        Bank.format(payment),
-                        Bank.format(due)));
+                        paymentText,
+                        bank.getCurrency().format(due))); // TODO: Do this nicer
             }
             remainder -= payment;
         }
@@ -236,8 +235,8 @@ public class OperatingRound_1856 extends OperatingRound {
             remainder -= payment;
             ReportBuffer.add (LocalText.getText("InterestPaidFromRevenue",
                     operatingCompany.value().getId(),
-                    Bank.format(payment),
-                    Bank.format(due)));
+                    Currency.format(this, payment),
+                    Currency.format(this, due)));
             // This reduces train income
             amount -= payment;
         }
@@ -256,11 +255,11 @@ public class OperatingRound_1856 extends OperatingRound {
         } else {
 
             payment = remainder;
-            MoneyModel.cashMove (president, bank, payment);
+            String paymentText = Currency.toBank(president, payment);
             ReportBuffer.add (LocalText.getText("InterestPaidFromPresidentCash",
                     operatingCompany.value().getId(),
-                    Bank.format(payment),
-                    Bank.format(due),
+                    paymentText,
+                    bank.getCurrency().format(due), // TODO: Do this nicer
                     president.getId()));
         }
 
@@ -289,11 +288,10 @@ public class OperatingRound_1856 extends OperatingRound {
         PublicCompany_1856 comp = (PublicCompany_1856) company;
         int cashInEscrow = comp.getMoneyInEscrow();
         if (cashInEscrow > 0) {
-            MoneyModel.cashMove (bank, company, cashInEscrow);
+            String cashText = Currency.fromBank(cashInEscrow, company);
             ReportBuffer.add(LocalText.getText("ReleasedFromEscrow",
                     company.getId(),
-                    Bank.format(cashInEscrow)
-            ));
+                    cashText));
         }
 
     }
@@ -336,8 +334,8 @@ public class OperatingRound_1856 extends OperatingRound {
                     DisplayBuffer.add(LocalText.getText("MustRepayLoans",
                             operatingCompany.value().getId(),
                             minNumber,
-                            Bank.format(operatingCompany.value().getValuePerLoan()),
-                            Bank.format(minNumber * operatingCompany.value().getValuePerLoan())));
+                            Currency.format(this, operatingCompany.value().getValuePerLoan()),
+                            Currency.format(this, minNumber * operatingCompany.value().getValuePerLoan())));
                 }
                 possibleActions.add(new RepayLoans(operatingCompany.value(),
                         minNumber, maxNumber, operatingCompany.value().getValuePerLoan()));

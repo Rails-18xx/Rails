@@ -15,11 +15,10 @@ import rails.common.parser.Configure;
 import rails.common.parser.Tag;
 import rails.game.*;
 import rails.game.state.BooleanState;
-import rails.game.state.Item;
 import rails.game.state.OwnableItem;
 import rails.util.*;
 
-public abstract class SpecialProperty extends OwnableItem<SpecialProperty> implements Configurable {
+public abstract class SpecialProperty extends OwnableItem<SpecialProperty> implements RailsItem, Configurable {
 
     // copied from SpecialProperty
     public enum Priority {
@@ -72,7 +71,7 @@ public abstract class SpecialProperty extends OwnableItem<SpecialProperty> imple
     protected static Logger log =
         LoggerFactory.getLogger(SpecialProperty.class.getPackage().getName());
 
-    protected SpecialProperty(Item parent, String id) {
+    protected SpecialProperty(RailsItem parent, String id) {
         super(parent, convertId(id) , SpecialProperty.class);
         uniqueId = Integer.valueOf(id);
         gameManager = GameManager.getInstance();
@@ -93,6 +92,16 @@ public abstract class SpecialProperty extends OwnableItem<SpecialProperty> imple
         // TODO: remove that legacy issue
     }
 
+    @Override
+    public RailsItem getParent() {
+        return (RailsItem)super.getParent();
+    }
+    
+    @Override
+    public RailsRoot getRoot() {
+        return (RailsRoot)super.getRoot();
+    }
+    
     public void configureFromXML(Tag tag) throws ConfigurationException {
 
         conditionText = tag.getAttributeAsString("condition");
@@ -128,7 +137,7 @@ public abstract class SpecialProperty extends OwnableItem<SpecialProperty> imple
         }
         
     }
-
+    
     public void finishConfiguration (GameManager gameManager)
     throws ConfigurationException {
 

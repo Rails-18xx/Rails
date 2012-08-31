@@ -11,7 +11,7 @@ public final class ShareModel extends Model {
     private final PublicCompany company;
 
     private ShareModel(CertificatesModel parent, PublicCompany company) {
-        super(parent, company.getId());
+        super(parent, "shareModel_" + company.getId());
         this.company = company;
     }
 

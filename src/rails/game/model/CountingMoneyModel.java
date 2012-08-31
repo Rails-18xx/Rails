@@ -1,31 +1,26 @@
 package rails.game.model;
 
+import rails.game.RailsItem;
 import rails.game.state.BooleanState;
-import rails.game.state.CountableItem;
 import rails.game.state.IntegerState;
-import rails.game.state.Item;
 
-/**
- * A MoneyModel that stores the money value inside
- * FIXME: Check if initialised is done correctly
- */
-public final class CashMoneyModel extends MoneyModel implements CountableItem {
+public class CountingMoneyModel extends MoneyModel {
 
     private final IntegerState value;
     private final BooleanState initialised;
 
-    private CashMoneyModel(Item parent, String id, int amount, boolean init) {
-        super(parent, id);
-        value = IntegerState.create(this, "value", amount);
+    private CountingMoneyModel(RailsItem parent, String id, int amount, boolean init) {
+        super(parent, id, parent.getRoot().getCurrency());
+        value = IntegerState.create(this, "counting", amount);
         initialised = BooleanState.create(this, "initialised", init);
     }
     
-    public static CashMoneyModel create(Item parent, String id, boolean init){
-        return new CashMoneyModel(parent, id, 0, init);
+    public static CountingMoneyModel create(RailsItem parent, String id, boolean init){
+        return new CountingMoneyModel(parent, id, 0, init);
     }
     
-    public static CashMoneyModel create(Item parent, String id, int amount){
-        return new CashMoneyModel(parent, id, amount, true);
+    public static CountingMoneyModel create(RailsItem parent, String id, int amount){
+        return new CountingMoneyModel(parent, id, amount, true);
     }
     
     /**
@@ -57,6 +52,7 @@ public final class CashMoneyModel extends MoneyModel implements CountableItem {
     public boolean initialised() {
         return initialised.value();
     }
+
 
 
 }

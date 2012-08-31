@@ -85,8 +85,8 @@ public class StatusWindow_1856 extends StatusWindow {
             } else {
                 options[i] = LocalText.getText("RepayLoan",
                         i,
-                        Bank.format(loanAmount),
-                        Bank.format(i * loanAmount));
+                        gameUIManager.format(loanAmount),
+                        gameUIManager.format(i * loanAmount));
             }
         }
 

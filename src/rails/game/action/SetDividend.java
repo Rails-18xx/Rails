@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.Arrays;
 
-import rails.game.Bank;
+import rails.game.Currency;
 import rails.util.Util;
 
 /**
@@ -173,12 +173,12 @@ public class SetDividend extends PossibleORAction implements Cloneable {
         StringBuffer b = new StringBuffer();
         b.append(getClass().getSimpleName()).append(": ").append(company.getId());
         if (mayUserSetRevenue) {
-            b.append(", settable, previous=").append(Bank.format(presetRevenue));
+            b.append(", settable, previous=").append(Currency.format(company, presetRevenue));
             if (actualRevenue > 0) {
-                b.append(", new=").append(Bank.format(actualRevenue));
+                b.append(", new=").append(Currency.format(company, actualRevenue));
             }
         } else {
-            b.append(", fixed, calculated=").append(Bank.format(presetRevenue));
+            b.append(", fixed, calculated=").append(Currency.format(company, presetRevenue));
         }
         b.append(", allowed=");
         for (int i : allowedRevenueAllocations) {

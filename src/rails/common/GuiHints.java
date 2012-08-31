@@ -4,10 +4,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import rails.game.RailsAbstractItem;
+import rails.game.RailsItem;
 import rails.game.Round;
-import rails.game.state.AbstractItem;
 import rails.game.state.GenericState;
-import rails.game.state.Item;
 
 /**
  * This class contains hints from the server (game engine) to the client (GUI)
@@ -17,7 +17,7 @@ import rails.game.state.Item;
  * @author VosE
  *
  */
-public final class GuiHints extends AbstractItem implements Serializable{
+public final class GuiHints extends RailsAbstractItem implements Serializable{
 
     public static final long serialVersionUID = 1L;
 
@@ -30,11 +30,11 @@ public final class GuiHints extends AbstractItem implements Serializable{
     /** Which window type is active and should be on top? */
     private GenericState<GuiDef.Panel> activePanel = GenericState.create(this, "activePanel");
 
-    private GuiHints(Item parent, String id) {
+    private GuiHints(RailsItem parent, String id) {
         super(parent, id);
     }
     
-    public static GuiHints create(Item parent, String id){
+    public static GuiHints create(RailsItem parent, String id){
         return new GuiHints(parent, id);
     }
     

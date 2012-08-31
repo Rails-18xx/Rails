@@ -1,8 +1,7 @@
 package rails.game.model;
 
-import rails.game.Bank;
-import rails.game.GameManager;
-import rails.game.state.Item;
+import rails.game.Currency;
+import rails.game.RailsItem;
 import rails.game.state.Model;
 import rails.game.state.StringState;
 
@@ -18,6 +17,7 @@ public abstract class MoneyModel extends Model {
     
     // Data
     private final StringState fixedText = StringState.create(this, "fixedText");
+    private final Currency currency;
     
     // Format Options (with defaults)
     private boolean suppressZero = false;
@@ -25,10 +25,15 @@ public abstract class MoneyModel extends Model {
     private boolean addPlus = false;
     private boolean displayNegative = false;
  
-    protected MoneyModel(Item parent, String id) {
+    protected MoneyModel(RailsItem parent, String id, Currency currency) {
         super(parent, id);
+        this.currency = currency;
     }
 
+    public Currency getCurrency() {
+        return currency;
+    }
+    
     /**
      * @param suppressZero true: displays an empty string instead of a zero value
      * This is not a state variable, so do not change after the MoneyModel is used
@@ -75,6 +80,14 @@ public abstract class MoneyModel extends Model {
      */
     public abstract int value();
     
+    
+    /**
+     * @return formatted value of the MoneyModel
+     */
+    public String formattedValue() {
+        return currency.format(value());
+    }
+    
     /**
      * @return true if MoneyValue has a value set already
      */
@@ -94,33 +107,11 @@ public abstract class MoneyModel extends Model {
         } else if (amount < 0 && !displayNegative) {
             return "";
         } else if (addPlus) {
-            return "+" + Bank.format(amount);
+            return "+" + currency.format(amount);
         } else {
-            return Bank.format(amount);
+            return currency.format(amount);
         }
     }
-
-    public static void cashMoveFromBank(CashOwner to, int amount) {
-        // TODO: get this from the GameContext
-        Bank bank = GameManager.getInstance().getBank();
-        cashMove(bank, to, amount);
-    }
-
-    public static void cashMoveToBank(CashOwner from, int amount) {
-        // TODO: get this from the GameContext
-        Bank bank = GameManager.getInstance().getBank();
-        cashMove(from, bank, amount);
-    }
-
-    /**
-     * Facilitates a move of cash. In this specific case either from or to may
-     * be null, in which case the Bank is implied.
-     */
-    public static void cashMove(CashOwner from, CashOwner to, int amount) {
-        to.getCashModel().change(amount);
-        from.getCashModel().change(-amount);
-    }
-
 
 
 }

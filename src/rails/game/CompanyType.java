@@ -7,8 +7,6 @@ import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Configure;
 import rails.common.parser.Tag;
-import rails.game.state.AbstractItem;
-import rails.game.state.Item;
 
 /**
  * Objects of this class represent a particular type of company, of which
@@ -18,7 +16,7 @@ import rails.game.state.Item;
  * reducing the need to repeatedly specify common properties with different
  * companies.
  */
-public class CompanyType extends AbstractItem {
+public class CompanyType extends RailsAbstractItem {
     
     /*--- Class attributes ---*/
 
@@ -44,7 +42,7 @@ public class CompanyType extends AbstractItem {
 
     protected List<Company> companies = new ArrayList<Company>();
 
-    protected CompanyType(Item parent, String id, String className) {
+    protected CompanyType(RailsItem parent, String id, String className) {
         super(parent, id);
         this.className = className;
     }

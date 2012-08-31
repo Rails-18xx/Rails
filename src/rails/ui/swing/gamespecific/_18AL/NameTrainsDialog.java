@@ -105,7 +105,7 @@ public class NameTrainsDialog extends JDialog implements ActionListener {
             trainPerToken.set(tokens.indexOf(token), preAssignedTrain);
 
             addItem(new JLabel(token.getId()), x, ++y);
-            addItem(new JLabel("+" + Bank.format(token.getValue())), ++x, y);
+            addItem(new JLabel("+" + orWindow.getGameUIManager().format(token.getValue())), ++x, y);
             group = new ButtonGroup();
             List<JRadioButton> buttons = new ArrayList<JRadioButton>();
             buttonsPerToken.put(token, buttons);

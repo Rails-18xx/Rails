@@ -88,7 +88,6 @@ public class PortfolioManager extends Manager implements DelayedItem {
     // however it should not be a problem as we store only type-safe portfolios
     @SuppressWarnings("unchecked")
     <T extends Ownable> Portfolio<T> getPortfolio(Class<T> type, Owner owner) {
-        if (owner == unknown) return null;
         return (Portfolio<T>) portfolios.get(new PMKey<T>(type, owner));
     }
 

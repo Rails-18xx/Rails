@@ -11,8 +11,6 @@ import rails.common.GuiDef;
 import rails.common.LocalText;
 import rails.common.parser.GameOption;
 import rails.game.action.*;
-import rails.game.model.CashOwner;
-import rails.game.model.MoneyModel;
 import rails.game.model.PortfolioModel;
 import rails.game.special.*;
 import rails.game.state.*;
@@ -596,7 +594,7 @@ public class StockRound extends Round {
                 // Else the given price must be a valid start price
                 if ((startSpace = stockMarket.getStartSpace(price)) == null) {
                     errMsg = LocalText.getText("InvalidStartPrice",
-                            Bank.format(price),
+                            Currency.format(this, price),
                             company.getId() );
                     break;
                 }
@@ -616,7 +614,7 @@ public class StockRound extends Round {
             DisplayBuffer.add(LocalText.getText("CantStart",
                     playerName,
                     companyName,
-                    Bank.format(price),
+                    Currency.format(this, price),
                     errMsg ));
             return false;
         }
@@ -626,7 +624,7 @@ public class StockRound extends Round {
         // All is OK, now start the company
         company.start(startSpace);
 
-        CashOwner priceRecipient = getSharePriceRecipient (company, ipo.getParent(), price);
+        MoneyOwner priceRecipient = getSharePriceRecipient (company, ipo.getParent(), price);
 
         // Transfer the President's certificate
         cert.moveTo(currentPlayer);
@@ -639,13 +637,13 @@ public class StockRound extends Round {
         }
 
         // Pay for these shares
-        MoneyModel.cashMove (currentPlayer, priceRecipient, cost);
+        String costText = Currency.wire(currentPlayer, cost, priceRecipient);
 
         ReportBuffer.add(LocalText.getText("START_COMPANY_LOG",
                 playerName,
                 companyName,
-                Bank.format(price),
-                Bank.format(cost),
+                bank.getCurrency().format(price), // TODO: Do this nicer
+                costText,
                 shares,
                 cert.getShare(),
                 priceRecipient.getId() ));
@@ -803,7 +801,7 @@ public class StockRound extends Round {
         // All seems OK, now buy the shares.
         getRoot().getChangeStack().newChangeSet(action);
 
-        CashOwner priceRecipient = getSharePriceRecipient(company, from.getParent(), cost);
+        MoneyOwner priceRecipient = getSharePriceRecipient(company, from.getParent(), cost);
 
         if (number == 1) {
             ReportBuffer.add(LocalText.getText("BUY_SHARE_LOG",
@@ -811,7 +809,7 @@ public class StockRound extends Round {
                     share,
                     companyName,
                     from.getId(),
-                    Bank.format(cost) ));
+                    Currency.format(this, cost) ));
         } else {
             ReportBuffer.add(LocalText.getText("BUY_SHARES_LOG",
                     playerName,
@@ -820,7 +818,7 @@ public class StockRound extends Round {
                     shares,
                     companyName,
                     from.getId(),
-                    Bank.format(cost) ));
+                    Currency.format(this, cost) ));
         }
         ReportBuffer.getAllWaiting();
 
@@ -833,11 +831,11 @@ public class StockRound extends Round {
             }
             cert2.moveTo(currentPlayer);
         }
-        MoneyModel.cashMove (currentPlayer, priceRecipient, cost);
 
+        String costText = Currency.wire(currentPlayer, cost, priceRecipient);
         if (priceRecipient != from.getParent()) {
             ReportBuffer.add(LocalText.getText("PriceIsPaidTo",
-                    Bank.format(cost),
+                    costText,
                     priceRecipient.getId() ));
         }
 
@@ -876,17 +874,18 @@ public class StockRound extends Round {
      * @param cert
      * @return
      */
-    protected CashOwner getSharePriceRecipient (PublicCompany comp,
+    protected MoneyOwner getSharePriceRecipient (PublicCompany comp,
             Owner from, int price) {
 
-        CashOwner recipient;
+        MoneyOwner recipient;
         if (comp.hasFloated()
                 && from == ipo.getParent()
                 && comp.getCapitalisation() == PublicCompany.CAPITALISE_INCREMENTAL) {
             recipient = comp;
+        } else if (from instanceof BankPortfolio) {
+            recipient = ((BankPortfolio)from).getParent();
         } else {
-            // FIXME: It could be one of the Bank portfolios
-            recipient = (CashOwner)from;
+            recipient = (MoneyOwner)from;
         }
         return recipient;
     }
@@ -1052,12 +1051,13 @@ public class StockRound extends Round {
 
         getRoot().getChangeStack().newChangeSet(action);
 
+        String cashText = Currency.fromBank(cashAmount, currentPlayer);
         if (numberSold == 1) {
             ReportBuffer.add(LocalText.getText("SELL_SHARE_LOG",
                     playerName,
                     company.getShareUnit() * shareUnits,
                     companyName,
-                    Bank.format(cashAmount) ));
+                    cashText));
         } else {
             ReportBuffer.add(LocalText.getText("SELL_SHARES_LOG",
                     playerName,
@@ -1065,10 +1065,9 @@ public class StockRound extends Round {
                     company.getShareUnit() * shareUnits,
                     numberSold * company.getShareUnit() * shareUnits,
                     companyName,
-                    Bank.format(cashAmount) ));
+                    cashText ));
         }
 
-        pay (bank, currentPlayer, cashAmount);
         adjustSharePrice (company, numberSold, soldBefore);
 
         if (!company.isClosed()) {
@@ -1316,14 +1315,14 @@ public class StockRound extends Round {
                 if (newSpace != oldSpace) {
                     ReportBuffer.add(LocalText.getText("SoldOut",
                             company.getId(),
-                            Bank.format(oldSpace.getPrice()),
+                            Currency.format(this, oldSpace.getPrice()),
                             oldSpace.getId(),
-                            Bank.format(newSpace.getPrice()),
+                            Currency.format(this, newSpace.getPrice()),
                             newSpace.getId()));
                 } else {
                     ReportBuffer.add(LocalText.getText("SoldOutNoRaise",
                             company.getId(),
-                            Bank.format(newSpace.getPrice()),
+                            Currency.format(this, newSpace.getPrice()),
                             newSpace.getId()));
                 }
             }

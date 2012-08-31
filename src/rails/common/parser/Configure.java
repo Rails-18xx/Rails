@@ -6,8 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import rails.common.LocalText;
+import rails.game.RailsItem;
 import rails.game.state.Creatable;
-import rails.game.state.Item;
 
 /**
  * Configure provides static methods that come along with the Configurable and Creatable Interfaces
@@ -29,24 +29,24 @@ public class Configure {
         return subClazz;
     }
     
-    public static <T extends Creatable> T create(Class<T> clazz, String className, Item parent, String id)
+    public static <T extends Creatable> T create(Class<T> clazz, String className, RailsItem parent, String id)
         throws ConfigurationException {
         Class<? extends T> subClazz = getClassForName(clazz, className);
-        return create(subClazz, Item.class, parent, id);
+        return create(subClazz, RailsItem.class, parent, id);
     }
     
-    public static <T extends Creatable, P extends Item> T create(Class<T> clazz, String className, Class<P> parentClazz, P parent, String id)
+    public static <T extends Creatable, P extends RailsItem> T create(Class<T> clazz, String className, Class<P> parentClazz, P parent, String id)
         throws ConfigurationException {
         Class<? extends T> subClazz = getClassForName(clazz, className);
         return create(subClazz, parentClazz, parent, id );
     }
     
-    public static <T extends Creatable> T create(Class<T> clazz, Item parent, String id)
+    public static <T extends Creatable> T create(Class<T> clazz, RailsItem parent, String id)
             throws ConfigurationException {
-        return create(clazz, Item.class, parent, id);
+        return create(clazz, RailsItem.class, parent, id);
     }
     
-    public static <T extends Creatable, P extends Item> T create(
+    public static <T extends Creatable, P extends RailsItem> T create(
         Class<T> clazz, Class<P> parentClazz, P parent, String id)
         throws ConfigurationException {
         T component;

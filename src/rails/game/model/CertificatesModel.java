@@ -27,7 +27,10 @@ public class CertificatesModel extends Model implements Iterable<PublicCertifica
 
     private CertificatesModel(Owner parent) {
         super(parent, ID);
+        // certificates have the Owner as parent directly
         certificates = PortfolioMap.create(parent, "certificates", PublicCertificate.class);
+        // so make this model updating
+        certificates.addModel(this);
     }
     
     public static CertificatesModel create(Owner parent) {

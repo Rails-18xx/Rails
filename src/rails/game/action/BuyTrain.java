@@ -7,6 +7,7 @@ import java.util.Set;
 
 import rails.game.Bank;
 import rails.game.CompanyManager;
+import rails.game.Currency;
 import rails.game.GameManager;
 import rails.game.Train;
 import rails.game.TrainManager;
@@ -218,7 +219,7 @@ public class BuyTrain extends PossibleORAction {
         }
         b.append("train (").append(trainUniqueId).append(") from ").append(from.getId());
         if (fixedCost > 0) {
-            b.append(" for ").append(Bank.format(fixedCost));
+            b.append(" for ").append(Currency.format(train, fixedCost));
         } else {
             b.append(" for any amount");
         }
@@ -229,14 +230,14 @@ public class BuyTrain extends PossibleORAction {
             b.append(forcedExchange ? " (forced exchange)" : " (exchange)");
         }
         if (presidentMustAddCash) {
-            b.append(" must add cash ").append(Bank.format(presidentCashToAdd));
+            b.append(" must add cash ").append(Currency.format(train, presidentCashToAdd));
         } else if (presidentMayAddCash) {
             b.append(" may add cash up to ").append(
-                    Bank.format(presidentCashToAdd));
+                    Currency.format(train, presidentCashToAdd));
         }
         if (acted) {
-            b.append(" - paid: ").append(Bank.format(pricePaid));
-            if (addedCash > 0) b.append(" pres.cash added: "+Bank.format(addedCash));
+            b.append(" - paid: ").append(Currency.format(train, pricePaid));
+            if (addedCash > 0) b.append(" pres.cash added: "+Currency.format(train, addedCash));
             if (exchangedTrain != null) b.append(" exchanged for "+exchangedTrain.getId()+"-train");
         }
 

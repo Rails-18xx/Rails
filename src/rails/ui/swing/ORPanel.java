@@ -427,7 +427,7 @@ implements ActionListener, KeyListener, RevenueListener {
             f = sharePrice[i] = new Field(c.getCurrentPriceModel());
             addField(f, sharePriceXOffset, sharePriceYOffset + i, 1, 1, 0, visible);
 
-            f = cash[i] = new Field(c.getCashModel());
+            f = cash[i] = new Field(c.getWallet());
             addField(f, cashXOffset, cashYOffset + i, 1, 1, WIDE_RIGHT, visible);
 
             if (privatesCanBeBought) {
@@ -740,7 +740,8 @@ implements ActionListener, KeyListener, RevenueListener {
     }
 
     public void setRevenue(int orCompIndex, int amount) {
-        revenue[orCompIndex].setText(Bank.format(amount));
+        // TODO: the round reference is a workaround
+        revenue[orCompIndex].setText(orUIManager.getGameUIManager().format(amount));
     }
 
     public void resetActions() {

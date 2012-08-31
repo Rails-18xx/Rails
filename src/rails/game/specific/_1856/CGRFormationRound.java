@@ -6,8 +6,8 @@ import rails.common.DisplayBuffer;
 import rails.common.GuiDef;
 import rails.common.LocalText;
 import rails.game.*;
+import rails.game.Currency;
 import rails.game.action.*;
-import rails.game.model.MoneyModel;
 import rails.game.special.SellBonusToken;
 import rails.game.state.BooleanState;
 import rails.game.state.IntegerState;
@@ -153,8 +153,8 @@ public class CGRFormationRound extends SwitchableUIRound {
                     currentCompany.getId(),
                     player.getId(),
                     numberOfLoans,
-                    Bank.format(valuePerLoan),
-                    Bank.format(numberOfLoans * valuePerLoan));
+                    Currency.format(this, valuePerLoan),
+                    Currency.format(this, numberOfLoans * valuePerLoan));
             ReportBuffer.add(" ");
             DisplayBuffer.add(" ", false);
             ReportBuffer.add(message);
@@ -165,15 +165,15 @@ public class CGRFormationRound extends SwitchableUIRound {
                     compCash / valuePerLoan);
             if (numberToRepay > 0) {
                 payment = numberToRepay * valuePerLoan;
-                MoneyModel.cashMove(currentCompany, bank, payment);
+                String paymentText = Currency.toBank(currentCompany, payment);
                 currentCompany.addLoans(-numberToRepay);
 
                 message = LocalText.getText("CompanyRepaysLoans",
                         currentCompany.getId(),
-                        Bank.format(payment),
-                        Bank.format(numberOfLoans * valuePerLoan),
+                        paymentText,
+                        bank.getCurrency().format(numberOfLoans * valuePerLoan), // TODO: Do this nicer
                         numberToRepay,
-                        Bank.format(valuePerLoan));
+                        bank.getCurrency().format(valuePerLoan)); // TODO: Do this nicer
                 ReportBuffer.add (message);
                 DisplayBuffer.add(message, false);
             }
@@ -267,23 +267,23 @@ public class CGRFormationRound extends SwitchableUIRound {
 
             company.addLoans(-numberRepaid);
             if (repaymentByCompany > 0) {
-                MoneyModel.cashMove (company, bank, repaymentByCompany);
+                String repayCompanyText = Currency.toBank(company, repaymentByCompany);
                 ReportBuffer.add (LocalText.getText("CompanyRepaysLoans",
                         company.getId(),
-                    Bank.format(repaymentByCompany),
-                    Bank.format(repayment),
+                    repayCompanyText,
+                    bank.getCurrency().format(repayment), // TODO: Make this nicer
                     numberRepaid,
-                    Bank.format(company.getValuePerLoan())));
+                    bank.getCurrency().format(company.getValuePerLoan()))); // TODO: Make this nicer
             }
             if (repaymentByPresident > 0) {
                 Player president = company.getPresident();
-                MoneyModel.cashMove (president, bank, repaymentByPresident);
+                String repayPresidentText =  Currency.toBank(president, repaymentByPresident);
                 ReportBuffer.add (LocalText.getText("CompanyRepaysLoansWithPresCash",
                         company.getId(),
-                        Bank.format(repaymentByPresident),
-                        Bank.format(repayment),
+                        repayPresidentText,
+                        bank.getCurrency().format(repayment), // TODO: Make this nicer
                         numberRepaid,
-                        Bank.format(company.getValuePerLoan()),
+                        bank.getCurrency().format(company.getValuePerLoan()), // TODO: Make this nicer
                         president.getId()));
             }
          }
@@ -493,7 +493,7 @@ public class CGRFormationRound extends SwitchableUIRound {
                 cgr.start(startSpace);
                 message = LocalText.getText("START_MERGED_COMPANY",
                         PublicCompany_CGR.NAME,
-                        Bank.format(startSpace.getPrice()),
+                        Currency.format(this, startSpace.getPrice()),
                         startSpace.getId());
                 DisplayBuffer.add(message);
                 ReportBuffer.add(message);
@@ -542,7 +542,7 @@ public class CGRFormationRound extends SwitchableUIRound {
 
             // Move any remaining cash
             if (comp.getCash() > 0) {
-                MoneyModel.cashMove (comp, cgr, comp.getCash());
+                Currency.wireAll(comp, cgr);
             }
 
             // Move any remaining trains

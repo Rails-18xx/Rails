@@ -9,7 +9,7 @@ import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.*;
-import rails.game.state.Item;
+import rails.game.Currency;
 import rails.util.*;
 
 public class SpecialRight extends SpecialProperty implements RevenueStaticModifier {
@@ -25,7 +25,7 @@ public class SpecialRight extends SpecialProperty implements RevenueStaticModifi
     /**
      * Used by Configure (via reflection) only
      */
-    public SpecialRight(Item parent, String id) {
+    public SpecialRight(RailsItem parent, String id) {
         super(parent, id);
     }
 
@@ -108,7 +108,7 @@ public class SpecialRight extends SpecialProperty implements RevenueStaticModifi
         StringBuilder b = new StringBuilder();
         b.append(cost > 0 ? "Buy '" : "Get '").append(rightName).append("'");
         if (locationNames != null) b.append(" at ").append(locationNames);
-        if (cost > 0) b.append(" for ").append(Bank.format(cost));
+        if (cost > 0) b.append(" for ").append(Currency.format(this, cost));
         return b.toString();
     }
     
@@ -116,7 +116,7 @@ public class SpecialRight extends SpecialProperty implements RevenueStaticModifi
     public String toMenu() {
         return LocalText.getText("BuyRight",
                 rightName,
-                Bank.format(cost));
+                Currency.format(this, cost));
     }
     
     public String getInfo() {

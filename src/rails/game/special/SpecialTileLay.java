@@ -7,7 +7,6 @@ import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.*;
-import rails.game.state.Item;
 import rails.util.*;
 
 public class SpecialTileLay extends SpecialProperty {
@@ -24,7 +23,7 @@ public class SpecialTileLay extends SpecialProperty {
     /**
      * Used by Configure (via reflection) only
      */
-    public SpecialTileLay(Item parent, String id) {
+    public SpecialTileLay(RailsItem parent, String id) {
         super(parent, id);
     }
 

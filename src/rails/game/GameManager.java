@@ -57,8 +57,8 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     protected Bank bank;
 
     // map of correctionManagers
-    protected final Map<CorrectionType, CorrectionManagerI> correctionManagers =
-        new HashMap<CorrectionType, CorrectionManagerI>();
+    protected final Map<CorrectionType, CorrectionManager> correctionManagers =
+        new HashMap<CorrectionType, CorrectionManager>();
 
     protected String gameName;
     protected Map<String, String> gameOptions;
@@ -897,7 +897,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
         // If any Correction is active
         for (CorrectionType ct:EnumSet.allOf(CorrectionType.class)) {
-            CorrectionManagerI cm = getCorrectionManager(ct);
+            CorrectionManager cm = getCorrectionManager(ct);
             if (cm.isActive()) {
                 possibleActions.clear();
             }
@@ -906,7 +906,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
         // Correction Actions
         for (CorrectionType ct:EnumSet.allOf(CorrectionType.class)) {
-            CorrectionManagerI cm = getCorrectionManager(ct);
+            CorrectionManager cm = getCorrectionManager(ct);
             possibleActions.addAll(cm.createCorrections());
         }
     }
@@ -918,7 +918,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         if (a instanceof CorrectionAction) {
             CorrectionAction ca= (CorrectionAction)a;
             CorrectionType ct = ca.getCorrectionType();
-            CorrectionManagerI cm = getCorrectionManager(ct);
+            CorrectionManager cm = getCorrectionManager(ct);
             result = cm.executeCorrection(ca);
         }
 
@@ -1288,7 +1288,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         gameOverPending.set(true);
         ReportBuffer.add(LocalText.getText("MaxedSharePriceReportText",
                 company.getId(),
-                Bank.format(space.getPrice())));
+                Currency.format(this, space.getPrice())));
         String msgContinue;
         if (gameEndsAfterSetOfORs)
             msgContinue = LocalText.getText("gameOverPlaySetOfORs");
@@ -1296,7 +1296,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             msgContinue = LocalText.getText("gameOverPlayOnlyOR");
         String msg = LocalText.getText("MaxedSharePriceDisplayText",
                 company.getId(),
-                Bank.format(space.getPrice()),
+                Currency.format(this, space.getPrice()),
                 msgContinue);
         DisplayBuffer.add(msg);
         addToNextPlayerMessages(msg, true);
@@ -1364,7 +1364,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         /* Report final ranking */
         int i = 0;
         for (Player p : rankedPlayers) {
-            b.add((++i) + ". " + Bank.format(p.getWorth()) + " "
+            b.add((++i) + ". " + Currency.format(this, p.getWorth()) + " "
                     + p.getId());
         }
 
@@ -1754,8 +1754,8 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         return guiHints;
     }
 
-    public CorrectionManagerI getCorrectionManager(CorrectionType ct) {
-        CorrectionManagerI cm = correctionManagers.get(ct);
+    public CorrectionManager getCorrectionManager(CorrectionType ct) {
+        CorrectionManager cm = correctionManagers.get(ct);
         if (cm == null) {
             cm=ct.newCorrectionManager(this);
             correctionManagers.put(ct, cm);
@@ -1828,7 +1828,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             player = players.get(i);
             player.setIndex (i);
             playerNames.set (i, player.getId());
-            log.debug("New player "+i+" is "+player.getId() +" (cash="+Bank.format(player.getCash())+")");
+            log.debug("New player "+i+" is "+player.getId() +" (cash="+Currency.format(this, player.getCash())+")");
         }
 
         return players.get(0);

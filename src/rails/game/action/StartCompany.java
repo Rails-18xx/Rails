@@ -50,14 +50,14 @@ public class StartCompany extends BuyCertificate {
         StringBuilder text = new StringBuilder();
         text.append("StartCompany: ").append(company != null ? company.getId() : null);
         if (price > 0) {
-            text.append(" price=").append(Bank.format(price));
+            text.append(" price=").append(Currency.format(company, price));
             if (numberBought > 1) {
                 text.append(" number=").append(numberBought);
             }
         } else {
             text.append(" prices=");
             for (int i = 0; i < startPrices.length; i++) {
-                text.append(Bank.format(startPrices[i]));
+                text.append(Currency.format(company, startPrices[i]));
             }
         }
         return text.toString();

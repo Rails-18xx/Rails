@@ -9,11 +9,11 @@ import org.slf4j.LoggerFactory;
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.game.GameManager;
+import rails.game.RailsAbstractItem;
 import rails.game.ReportBuffer;
-import rails.game.state.AbstractItem;
 import rails.game.state.BooleanState;
 
-public abstract class CorrectionManager extends AbstractItem implements CorrectionManagerI {
+public abstract class CorrectionManager extends RailsAbstractItem {
     
     private final CorrectionType correctionType;
     private final BooleanState active = BooleanState.create(this, "active");
@@ -59,7 +59,7 @@ public abstract class CorrectionManager extends AbstractItem implements Correcti
     
     private boolean execute(CorrectionModeAction action) {
         
-        // TODO: gameManager.getChangeStack().start(false);
+        getRoot().getChangeStack().newChangeSet(action);
         if (!isActive()) {
             String text = LocalText.getText("CorrectionModeActivate",
                     getParent().getCurrentPlayer().getId(),

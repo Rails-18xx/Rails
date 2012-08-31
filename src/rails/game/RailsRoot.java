@@ -15,7 +15,7 @@ import rails.game.state.ChangeStack;
 import rails.game.state.Root;
 import rails.util.GameFileIO;
 
-public class RailsRoot extends Root {
+public class RailsRoot extends Root implements RailsItem {
     public static final String version = "1.5";
 
     /** The component Manager */
@@ -33,6 +33,8 @@ public class RailsRoot extends Root {
 
     protected List<String> directories = new ArrayList<String>();
     protected List<String> players;
+    
+    protected Currency currency;
 
     protected Map<String, String> gameOptions;
 
@@ -299,6 +301,12 @@ public class RailsRoot extends Root {
         return null;
     }
 
+    // Setters
+    
+    public void setCurrency(Currency currency) {
+        this.currency = currency;
+    }
+    
     /*----- Getters -----*/
     public ChangeStack getChangeStack() {
         return getStateManager().getChangeStack();
@@ -308,8 +316,18 @@ public class RailsRoot extends Root {
         return gameManager;
     }
     
+    public Currency getCurrency() {
+        return currency;
+    }
+    
+    @Override
+    public RailsRoot getParent() {
+        throw new UnsupportedOperationException();
+    }
+    
     @Override
     public RailsRoot getRoot() {
         return this;
     }
+    
 }

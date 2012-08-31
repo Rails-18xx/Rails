@@ -17,11 +17,11 @@ import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.ImmutableSortedSet;
 
 import rails.common.LocalText;
-import rails.game.Bank;
 import rails.game.BankPortfolio;
 import rails.game.Bonus;
 import rails.game.BonusToken;
 import rails.game.Company;
+import rails.game.Currency;
 import rails.game.GameManager;
 import rails.game.Player;
 import rails.game.PrivateCompany;
@@ -43,13 +43,11 @@ import rails.game.state.PortfolioSet;
 /**
  * A Portfolio(Model) stores several portfolios
  */
-
-// TODO: Check if it is correct to assume the PortfolioModel being the owner
-public final class PortfolioModel extends Model {
+public class PortfolioModel extends Model {
     public static final String ID = "PortfolioModel";
     
     protected static Logger log =
-        LoggerFactory.getLogger(PortfolioModel.class.getPackage().getName());
+        LoggerFactory.getLogger(PortfolioModel.class);
     
     /** Owned certificates */
     private final CertificatesModel certificates;
@@ -381,7 +379,7 @@ public final class PortfolioModel extends Model {
             ReportBuffer.add(LocalText.getText("AcquiresBonus",
                     getParent().getId(),
                     locBonus.getId(),
-                    Bank.format(locBonus.getValue()),
+                    Currency.format(getParent(), locBonus.getValue()),
                     locBonus.getLocationNameString()));
         }
 

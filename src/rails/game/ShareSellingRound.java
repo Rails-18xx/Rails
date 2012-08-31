@@ -38,7 +38,7 @@ public class ShareSellingRound extends StockRound {
                 +sellingPlayer.getId()+" cash="+cashToRaise);
         ReportBuffer.add (LocalText.getText("PlayerMustSellShares",
                 sellingPlayer.getId(),
-                Bank.format(cashToRaise)));
+                Currency.format(this, cashToRaise)));
         this.parentRound = parentRound;
         currentPlayer = this.sellingPlayer = sellingPlayer;
         this.cashNeedingCompany = cashNeedingCompany;
@@ -358,17 +358,17 @@ public class ShareSellingRound extends StockRound {
         getRoot().getChangeStack().newChangeSet(action);
         // FIXME: changeStack.linkToPreviousMoveSet();
 
+        String cashText = Currency.fromBank(cashAmount, currentPlayer);
         ReportBuffer.add(LocalText.getText("SELL_SHARES_LOG",
                 playerName,
                 numberSold,
                 company.getShareUnit(),
                 numberSold * company.getShareUnit(),
                 companyName,
-                Bank.format(cashAmount) ));
+                cashText ));
 
         boolean soldBefore = sellPrices.containsKey(company);
 
-        pay (bank, currentPlayer, cashAmount);
         adjustSharePrice (company, numberSold, soldBefore);
 
         if (!company.isClosed()) {
@@ -383,7 +383,7 @@ public class ShareSellingRound extends StockRound {
             gameManager.finishShareSellingRound();
         } else if (getSellableShares().isEmpty()) {
             DisplayBuffer.add(LocalText.getText("YouMustRaiseCashButCannot",
-                    Bank.format(cashToRaise.value())));
+                    Currency.format(this, cashToRaise.value())));
             currentPlayer.setBankrupt();
             gameManager.registerBankruptcy();
         }

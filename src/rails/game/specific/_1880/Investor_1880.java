@@ -1,7 +1,7 @@
 package rails.game.specific._1880;
 
 import rails.game.PublicCompany;
-import rails.game.state.Item;
+import rails.game.RailsItem;
 
 public final class Investor_1880 extends PublicCompany {
 /*
@@ -23,7 +23,7 @@ public final class Investor_1880 extends PublicCompany {
     */
     protected boolean canBorrowTrain=true;
     
-    public Investor_1880(Item parent, String id) {
+    public Investor_1880(RailsItem parent, String id) {
         super(parent, id);    
     }
     

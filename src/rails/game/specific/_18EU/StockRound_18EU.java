@@ -9,9 +9,8 @@ import com.google.common.collect.Iterables;
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.game.*;
+import rails.game.Currency;
 import rails.game.action.*;
-import rails.game.model.CashOwner;
-import rails.game.model.MoneyModel;
 import rails.game.model.PortfolioModel;
 import rails.game.state.ArrayListState;
 import rails.game.state.BooleanState;
@@ -331,7 +330,7 @@ public class StockRound_18EU extends StockRound {
             if ((startSpace = stockMarket.getStartSpace(price)) == null) {
                 errMsg =
                         LocalText.getText("InvalidStartPrice",
-                                Bank.format(price),
+                                Currency.format(this, price),
                                 company.getId() );
                 break;
             }
@@ -375,7 +374,7 @@ public class StockRound_18EU extends StockRound {
             DisplayBuffer.add(LocalText.getText("CantStart",
                     playerName,
                     companyName,
-                    Bank.format(price),
+                    Currency.format(this, price),
                     errMsg ));
             return false;
         }
@@ -399,15 +398,15 @@ public class StockRound_18EU extends StockRound {
         ReportBuffer.add(LocalText.getText("START_COMPANY_LOG",
                 playerName,
                 companyName,
-                Bank.format(price),
-                Bank.format(shares * price),
+                Currency.format(this, price),
+                Currency.format(this, shares * price),
                 shares,
                 cert.getShare(),
                 company.getId() ));
 
         // Transfer the President's certificate
         cert.moveTo(currentPlayer);
-        MoneyModel.cashMove(currentPlayer, company, shares * price);
+        Currency.wire(currentPlayer, shares * price, company);
 
         if (minor != null) {
             // Get the extra certificate for the minor, for free
@@ -422,7 +421,7 @@ public class StockRound_18EU extends StockRound {
                     currentPlayer.getId(),
                     minor.getId(),
                     company.getId(),
-                    Bank.format(minorCash),
+                    Currency.format(this, minorCash),
                     minorTrains ));
             ReportBuffer.add(LocalText.getText("GetShareForMinor",
                     currentPlayer.getId(),
@@ -446,10 +445,10 @@ public class StockRound_18EU extends StockRound {
 
         // TODO must get this amount from XML
         int tokensCost = 100;
-        MoneyModel.cashMove(company, bank, tokensCost);
+        String costText = Currency.toBank(company, tokensCost);
         ReportBuffer.add(LocalText.getText("PaysForTokens",
                 company.getId(),
-                Bank.format(100),
+                costText,
                 company.getNumberOfBaseTokens() ));
 
         companyBoughtThisTurnWrapper.set(company);
@@ -492,7 +491,7 @@ public class StockRound_18EU extends StockRound {
         PublicCompany minor = action.getMergingCompany();
         PublicCompany major = action.getSelectedTargetCompany();
         PublicCertificate cert = null;
-        CashOwner cashDestination = null; // Bank
+        MoneyOwner cashDestination = null; // Bank
         Train pullmannToDiscard = null;
 
         // TODO Validation to be added?
@@ -515,7 +514,9 @@ public class StockRound_18EU extends StockRound {
         int minorTrains = minor.getPortfolioModel().getTrainList().size();
         if (cashDestination == null) {
             // Assets go to the bank
-            if (minorCash > 0) MoneyModel.cashMove(minor, bank, minorCash);
+            if (minorCash > 0) {
+                Currency.toBankAll(minor);
+            }
             pool.transferAssetsFrom(minor.getPortfolioModel());
         } else {
             // Assets go to the major company
@@ -557,7 +558,7 @@ public class StockRound_18EU extends StockRound {
                     currentPlayer.getId(),
                     minor.getId(),
                     major.getId(),
-                    Bank.format(minorCash),
+                    Currency.format(this, minorCash),
                     minorTrains ));
             // FIXME: CHeck if this still works correctly
             ReportBuffer.add(LocalText.getText("GetShareForMinor",
@@ -594,7 +595,7 @@ public class StockRound_18EU extends StockRound {
             ReportBuffer.add(LocalText.getText("CLOSE_MINOR_LOG",
                     currentPlayer.getId(),
                     minor.getId(),
-                    Bank.format(minorCash),
+                    Currency.format(this, minorCash),
                     minorTrains ));
         }
         hasActed.set(true);
@@ -628,10 +629,10 @@ public class StockRound_18EU extends StockRound {
             // Move the remaining certificates to the company treasury
             company.getPortfolioModel().moveAllCertificates(pool.getParent());
             int cash = 5 * company.getMarketPrice();
-            MoneyModel.cashMove(bank, company, cash);
+            String cashText = Currency.fromBank(cash, company);
             ReportBuffer.add(LocalText.getText("MonetiseTreasuryShares",
                     company.getId(),
-                    Bank.format(cash) ));
+                    cashText ));
 
         }
     }

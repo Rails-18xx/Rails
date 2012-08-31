@@ -6,7 +6,6 @@ import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.*;
-import rails.game.state.Item;
 import rails.util.*;
 
 public class SpecialTokenLay extends SpecialProperty {
@@ -24,7 +23,7 @@ public class SpecialTokenLay extends SpecialProperty {
     /**
      * Used by Configure (via reflection) only
      */
-    public SpecialTokenLay(Item parent, String id) {
+    public SpecialTokenLay(RailsItem parent, String id) {
         super(parent, id);
     }
 
@@ -84,7 +83,7 @@ public class SpecialTokenLay extends SpecialProperty {
         } else if (tokenClass == BonusToken.class) {
             description = LocalText.getText("LayBonusTokenInfo",
                     tokenName,
-                    Bank.format(tokenValue),
+                    Currency.format(this, tokenValue),
                     locationCodes);
         }
     }

@@ -1,6 +1,6 @@
 package rails.game.model;
 
-import rails.game.Bank;
+import rails.game.Currency;
 import rails.game.PublicCompany;
 import rails.game.StockSpace;
 import rails.game.state.GenericState;
@@ -20,6 +20,11 @@ public final class PriceModel extends Model {
 
     public static PriceModel create(PublicCompany parent, String id){
         return new PriceModel(parent, id);
+    }
+    
+    @Override
+    public PublicCompany getParent() {
+        return (PublicCompany)super.getParent();
     }
     
     public void setPrice(StockSpace price) {
@@ -48,7 +53,7 @@ public final class PriceModel extends Model {
     @Override
     public String toText() {
         if (stockPrice.value() != null) {
-            return Bank.format(stockPrice.value().getPrice()) + " ("
+            return Currency.format(getParent(), stockPrice.value().getPrice()) + " ("
                    + stockPrice.value().getId() + ")";
         }
         return "";

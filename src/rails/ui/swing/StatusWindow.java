@@ -473,7 +473,7 @@ public class StatusWindow extends JFrame implements ActionListener,
             if (!possibleActions.contains(SellShares.class)) {
 // should not occur anymore
 //                JOptionPane.showMessageDialog(this, LocalText.getText(
-//                        "YouMustRaiseCashButCannot", Bank.format(cash)), "",
+//                        "YouMustRaiseCashButCannot", Currency.format(this, cash)), "",
 //                        JOptionPane.OK_OPTION);
                 /*
                  * For now assume that this ends the game (not true in all
@@ -490,7 +490,7 @@ public class StatusWindow extends JFrame implements ActionListener,
 //                return;
             } else {
                 JOptionPane.showMessageDialog(this, LocalText.getText(
-                        "YouMustRaiseCash", Bank.format(cash)), "",
+                        "YouMustRaiseCash", gameUIManager.format(cash)), "",
                         JOptionPane.OK_OPTION);
             }
         } else if (currentRound instanceof StockRound && !updateGameSpecificSettings()) {

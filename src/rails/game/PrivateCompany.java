@@ -14,7 +14,6 @@ import rails.common.parser.Tag;
 import rails.game.special.SellBonusToken;
 import rails.game.special.SpecialProperty;
 import rails.game.state.BooleanState;
-import rails.game.state.Item;
 import rails.game.state.OwnableItem;
 import rails.game.state.PortfolioSet;
 import rails.util.*;
@@ -89,7 +88,7 @@ public class PrivateCompany extends OwnableItem<PrivateCompany> implements Compa
     /**
      * Used by Configure (via reflection) only
      */
-    public PrivateCompany(Item parent, String id) {
+    public PrivateCompany(RailsItem parent, String id) {
         super(parent, id, PrivateCompany.class);
         this.privateNumber = numberOfPrivateCompanies++;
     }
@@ -111,7 +110,7 @@ public class PrivateCompany extends OwnableItem<PrivateCompany> implements Compa
             // pld: adding revenue to info text
             infoText += "<br>Revenue: ";
             for (int i = 0; i < revenue.length;i++) {
-                infoText += (Bank.format(revenue[i]));
+                infoText += (Currency.format(this, revenue[i]));
                 if (i < revenue.length-1) {infoText += ", ";};
             }
 
@@ -551,5 +550,17 @@ public class PrivateCompany extends OwnableItem<PrivateCompany> implements Compa
     public ImmutableSet<SpecialProperty> getSpecialProperties() {
         return specialProperties.items();
     }
+
+    // RailsItem methods
+    @Override
+    public RailsItem getParent() {
+        return (RailsItem)super.getParent();
+    }
+    
+    @Override
+    public RailsRoot getRoot() {
+        return (RailsRoot)super.getRoot();
+    }
+    
     
 }

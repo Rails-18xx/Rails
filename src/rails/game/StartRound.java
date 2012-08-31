@@ -213,7 +213,7 @@ public abstract class StartRound extends Round {
                 if ((stockMarket.getStartSpace(sharePrice)) == null) {
                     errMsg =
                             LocalText.getText("InvalidStartPrice",
-                                    Bank.format(sharePrice),
+                                    Currency.format(this, sharePrice),
                                     shareCompName );
                     break;
                 }
@@ -257,11 +257,11 @@ public abstract class StartRound extends Round {
     protected void assignItem(Player player, StartItem item, int price,
             int sharePrice) {
         Certificate primary = item.getPrimary();
+        String priceText = Currency.toBank(player, price);
         ReportBuffer.add(LocalText.getText("BuysItemFor",
                 player.getId(),
                 primary.getId(),
-                Bank.format(price) ));
-        pay (player, bank, price);
+                priceText ));
         transferCertificate (primary, player.getPortfolioModel());
         checksOnBuying(primary, sharePrice);
         if (item.hasSecondary()) {

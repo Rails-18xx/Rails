@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GridPanel.java,v 1.8 2010/05/24 11:42:35 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.Color;
@@ -25,7 +24,6 @@ import rails.game.Player;
 import rails.game.PublicCompany;
 import rails.game.Round;
 import rails.game.state.BooleanState;
-import rails.game.state.Observable;
 import rails.game.state.Observer;
 import rails.ui.swing.elements.Field;
 
@@ -145,47 +143,35 @@ implements ActionListener, KeyListener {
         }
     }
 
+    
+    /**
+     * An observer object that receives the updates 
+     * if the Company is closed
+     * 
+     * TODO: It is unclear to me what the reverseValue really does?
+     */
     public class RowVisibility implements Observer {
 
-        private Observable observable;
-        private boolean lastValue;
+        private final GridPanel parent;
+        private final int rowIndex;
+        private final BooleanState observable;
 
-        // TODO: Fields below there never used!
-//        private GridPanel parent;
-//        private int rowIndex;
-//        private boolean reverseValue;
-
-        public RowVisibility (GridPanel parent, int rowIndex, Observable observable, boolean reverseValue) {
-//            this.parent = parent;
+        public RowVisibility (GridPanel parent, int rowIndex, BooleanState observable, boolean reverseValue) {
+            this.parent = parent;
+            this.rowIndex = rowIndex;
             this.observable = observable;
-//            this.rowIndex = rowIndex;
-//            this.reverseValue = reverseValue;
-            this.observable.addObserver(this);
-            lastValue = ((BooleanState)observable).value() != reverseValue;
+            // TODO: This was the previous setup
+//            lastValue = ((BooleanState)observable).value() != reverseValue;
+            
         }
 
         public boolean lastValue () {
-            return lastValue;
+            return observable.value();
         }
-
-        /** Needed to satisfy the Observer interface.
-         * The closedObject model will send true if the company is closed. */
-        
-/*  
-       public void update(Observable o1, Object o2) {
-            if (o2 instanceof Boolean) {
-                lastValue = (Boolean)o2;
-                parent.setRowVisibility(rowIndex, lastValue);
-            }
-        }
-*/
 
         public void update(String text) {
-            // FIXME: There was a Boolean object submitted if the company is closed
-            // TODO: Make this functionality available again
-            // see above the old update method
+            parent.setRowVisibility(rowIndex, lastValue());
         }
-
 
     }
 

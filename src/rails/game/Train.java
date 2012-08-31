@@ -6,11 +6,10 @@ import rails.common.parser.ConfigurationException;
 import rails.game.state.BooleanState;
 import rails.game.state.Creatable;
 import rails.game.state.GenericState;
-import rails.game.state.Item;
 import rails.game.state.Ownable;
 import rails.game.state.OwnableItem;
 
-public class Train extends OwnableItem<Train> implements Creatable {
+public class Train extends OwnableItem<Train> implements Creatable, RailsItem {
 
     protected TrainCertificateType certificateType;
     
@@ -24,15 +23,26 @@ public class Train extends OwnableItem<Train> implements Creatable {
     /**
      * Used by Configure (via reflection) only
      */
-    public Train(Item parent, String id) {
+    public Train(RailsItem parent, String id) {
         super(parent, id, Train.class);
     }
-    public static Train create(Item parent, String id, TrainCertificateType certType, TrainType type)
+    
+    public static Train create(RailsItem parent, String id, TrainCertificateType certType, TrainType type)
             throws ConfigurationException {
         Train train = certType.createTrain(parent, id);
         train.setCertificateType(certType);
         train.setType(type);
         return train;
+    }
+    
+    @Override
+    public RailsItem getParent() {
+        return (RailsItem)super.getParent();
+    }
+
+    @Override
+    public RailsRoot getRoot() {
+        return (RailsRoot)super.getRoot();
     }
 
     public void setCertificateType(TrainCertificateType type) {

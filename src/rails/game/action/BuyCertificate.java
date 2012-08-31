@@ -128,7 +128,7 @@ public class BuyCertificate extends PossibleAction {
         if (maximumNumber > 1) text.append ("max."+maximumNumber+" of ");
         text.append(sharePerCert).append("% ").append(companyName)
             .append(" from ").append(from.getId())
-            .append(" price=").append(Bank.format((sharePerCert/company.getShareUnit()) * price));
+            .append(" price=").append(Currency.format(company, (sharePerCert/company.getShareUnit()) * price));
         return text.toString();
     }
 

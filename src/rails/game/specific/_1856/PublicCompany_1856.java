@@ -4,7 +4,6 @@ import com.google.common.collect.Iterables;
 
 import rails.game.*;
 import rails.game.state.IntegerState;
-import rails.game.state.Item;
 
 public final class PublicCompany_1856 extends PublicCompany {
 
@@ -15,7 +14,7 @@ public final class PublicCompany_1856 extends PublicCompany {
     // TODO: Is this still used, as CGR has it owns class
     private boolean hadPermanentTrain = false;
 
-    public PublicCompany_1856(Item parent, String id) {
+    public PublicCompany_1856(RailsItem parent, String id) {
         super(parent, id);    
     }
 
