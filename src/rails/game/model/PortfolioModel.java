@@ -252,38 +252,38 @@ public class PortfolioModel extends Model {
      * @param company The company whose Presidency is handed over.
      * @param other The new President's portfolio.
      * @return The common certificates returned.
+     * 
+     * TODO: Rewrite the method replacing PortfolioModel with Owner
      */
     public List<PublicCertificate> swapPresidentCertificate(
             PublicCompany company, PortfolioModel other) {
 
         // FIXME: Rewrite this parrt
-//        List<PublicCertificate> swapped = new ArrayList<PublicCertificate>();
-//        PublicCertificate swapCert;
-//
-//        // Find the President's certificate
-//        PublicCertificate cert = this.findCertificate(company, true);
-//        if (cert == null) return null;
-//        int shares = cert.getShares();
-//
-//        // Check if counterparty has enough single certificates
-//        if (other.ownsCertificates(company, 1, false) >= shares) {
-//            for (int i = 0; i < shares; i++) {
-//                swapCert = other.findCertificate(company, 1, false);
-//                certificates.getPortfolio().moveInto(swapCert);
-//                swapped.add(swapCert);
-//
-//            }
-//        } else if (other.ownsCertificates(company, shares, false) >= 1) {
-//            swapCert = other.findCertificate(company, 2, false);
-//            certificates.getPortfolio().moveInto(swapCert);
-//            swapped.add(swapCert);
-//        } else {
-//            return null;
-//        }
-//        certificates.getPortfolio().moveInto(cert);
-//
-//        return swapped;
-        return null;
+        List<PublicCertificate> swapped = new ArrayList<PublicCertificate>();
+        PublicCertificate swapCert;
+
+        // Find the President's certificate
+        PublicCertificate cert = this.findCertificate(company, true);
+        if (cert == null) return null;
+        int shares = cert.getShares();
+
+        // Check if counterparty has enough single certificates
+        if (other.ownsCertificates(company, 1, false) >= shares) {
+            for (int i = 0; i < shares; i++) {
+                swapCert = other.findCertificate(company, 1, false);
+                swapCert.moveTo(getParent());
+                swapped.add(swapCert);
+            }
+        } else if (other.ownsCertificates(company, shares, false) >= 1) {
+            swapCert = other.findCertificate(company, 2, false);
+            swapCert.moveTo(getParent());
+            swapped.add(swapCert);
+        } else {
+            return null;
+        }
+        cert.moveTo(other.getParent());
+
+        return swapped;
     }
 
     public void discardTrain(Train train) {

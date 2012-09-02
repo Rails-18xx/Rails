@@ -98,7 +98,7 @@ public class Field extends JLabel implements Observer {
                 setBackground((Color)vu.getValue(key));
                    normalBgColour = getBackground();
                    setForeground (Util.isDark(normalBgColour) ? Color.WHITE : Color.BLACK);
-            }
+            }   
         }
     }
         */
