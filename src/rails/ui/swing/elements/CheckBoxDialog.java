@@ -34,7 +34,7 @@ public class CheckBoxDialog extends JDialog implements ActionListener {
     boolean hasCancelButton = false;
 
     protected static Logger log =
-            LoggerFactory.getLogger(CheckBoxDialog.class.getPackage().getName());
+            LoggerFactory.getLogger(CheckBoxDialog.class);
 
     public CheckBoxDialog(DialogOwner owner, JFrame window, String title, String message,
             String[] options) {

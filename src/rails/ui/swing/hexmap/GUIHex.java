@@ -118,7 +118,7 @@ public class GUIHex implements Observer {
     protected boolean tilePainted = true;
 
     protected static Logger log =
-            LoggerFactory.getLogger(GUIHex.class.getPackage().getName());
+            LoggerFactory.getLogger(GUIHex.class);
 
     public GUIHex(HexMap hexMap, double cx, double cy, int scale,
             int xCoord, int yCoord) {

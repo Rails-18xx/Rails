@@ -37,7 +37,7 @@ public class NetworkIterator extends
     private final Graph<NetworkVertex, NetworkEdge> graph;
 
     protected static Logger log =
-        LoggerFactory.getLogger(NetworkIterator.class.getPackage().getName());
+        LoggerFactory.getLogger(NetworkIterator.class);
 
     
     public NetworkIterator(Graph<NetworkVertex, NetworkEdge> graph,

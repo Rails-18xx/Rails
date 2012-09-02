@@ -105,7 +105,7 @@ public class StartRoundWindow extends JFrame implements ActionListener,
 //    private boolean repacked = false;
 
     protected static Logger log =
-            LoggerFactory.getLogger(StartRoundWindow.class.getPackage().getName());
+            LoggerFactory.getLogger(StartRoundWindow.class);
 
     public StartRoundWindow(StartRound round, GameUIManager parent) {
         super();

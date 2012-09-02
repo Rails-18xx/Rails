@@ -35,7 +35,7 @@ import rails.game.action.PossibleAction;
 public class GameFileIO {
 
     protected static Logger log =
-        LoggerFactory.getLogger(RailsRoot.class.getPackage().getName());
+        LoggerFactory.getLogger(RailsRoot.class);
     
     private GameData gameData = new GameData();
 

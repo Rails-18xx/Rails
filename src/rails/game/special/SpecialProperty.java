@@ -69,7 +69,7 @@ public abstract class SpecialProperty extends OwnableItem<SpecialProperty> imple
     protected GameManager gameManager;
 
     protected static Logger log =
-        LoggerFactory.getLogger(SpecialProperty.class.getPackage().getName());
+        LoggerFactory.getLogger(SpecialProperty.class);
 
     protected SpecialProperty(RailsItem parent, String id) {
         super(parent, convertId(id) , SpecialProperty.class);

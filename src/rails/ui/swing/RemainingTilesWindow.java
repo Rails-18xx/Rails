@@ -35,7 +35,7 @@ public class RemainingTilesWindow extends JFrame implements WindowListener,
     private final static int COLUMNS = 10;
 
     protected static Logger log =
-            LoggerFactory.getLogger(RemainingTilesWindow.class.getPackage().getName());
+            LoggerFactory.getLogger(RemainingTilesWindow.class);
 
     public RemainingTilesWindow(ORWindow orWindow) {
         super();

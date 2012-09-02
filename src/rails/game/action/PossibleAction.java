@@ -32,7 +32,7 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
     public static final long serialVersionUID = 3L;
 
     protected static Logger log =
-            LoggerFactory.getLogger(PossibleAction.class.getPackage().getName());
+            LoggerFactory.getLogger(PossibleAction.class);
 
     /**
      *

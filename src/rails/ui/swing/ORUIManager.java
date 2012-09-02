@@ -94,7 +94,7 @@ public class ORUIManager implements DialogOwner {
                     "CorrectMap" };
 
     protected static Logger log =
-            LoggerFactory.getLogger(ORUIManager.class.getPackage().getName());
+            LoggerFactory.getLogger(ORUIManager.class);
 
     public ORUIManager() {
 

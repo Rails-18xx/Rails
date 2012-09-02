@@ -16,7 +16,7 @@ import rails.game.TrainType;
 public final class RevenueBonus {
 
     protected static Logger log =
-        LoggerFactory.getLogger(RevenueBonus.class.getPackage().getName());
+        LoggerFactory.getLogger(RevenueBonus.class);
     
     // bonus values
     private final int value;

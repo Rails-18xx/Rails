@@ -44,7 +44,7 @@ public class StartPacket extends RailsAbstractItem {
     public static final String DEFAULT_ID = "Initial";
 
     protected static Logger log =
-            LoggerFactory.getLogger(StartPacket.class.getPackage().getName());
+            LoggerFactory.getLogger(StartPacket.class);
 
     private StartPacket(RailsItem parent, String id, String roundClassName) {
         super(parent, Util.hasValue(id) ? id : DEFAULT_ID);

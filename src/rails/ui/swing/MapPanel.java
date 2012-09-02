@@ -32,7 +32,7 @@ public class MapPanel extends JPanel {
     private Dimension currentMapSize;
 
     protected static Logger log =
-            LoggerFactory.getLogger(MapPanel.class.getPackage().getName());
+            LoggerFactory.getLogger(MapPanel.class);
 
     public MapPanel(GameUIManager gameUIManager) {
         this.gameUIManager = gameUIManager;

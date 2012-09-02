@@ -16,7 +16,7 @@ import rails.game.MapHex;
 public class BirminghamTileModifier implements NetworkGraphModifier {
 
     protected static Logger log =
-        LoggerFactory.getLogger(BirminghamTileModifier.class.getPackage().getName());
+        LoggerFactory.getLogger(BirminghamTileModifier.class);
 
     public void modifyGraph(NetworkGraphBuilder graphBuilder) {
         

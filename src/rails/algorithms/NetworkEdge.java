@@ -17,7 +17,7 @@ import rails.ui.swing.hexmap.HexMap;
 public final class NetworkEdge implements Comparable<NetworkEdge> {
 
     protected static Logger log =
-        LoggerFactory.getLogger(NetworkEdge.class.getPackage().getName());
+        LoggerFactory.getLogger(NetworkEdge.class);
     
     private final NetworkVertex source;
 

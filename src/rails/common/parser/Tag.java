@@ -35,7 +35,7 @@ public class Tag {
     private Map<String, String> gameOptions = null;
 
     protected static Logger log =
-            LoggerFactory.getLogger(Tag.class.getPackage().getName());
+            LoggerFactory.getLogger(Tag.class);
 
     public Tag(Element element) {
         this.element = element;

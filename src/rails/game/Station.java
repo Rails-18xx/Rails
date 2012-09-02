@@ -48,7 +48,7 @@ public class Station {
     private static final List<String> validTypes = Arrays.asList(types);
 
     protected static Logger log =
-        LoggerFactory.getLogger(Station.class.getPackage().getName());
+        LoggerFactory.getLogger(Station.class);
 
     /** Check validity of a Station type */
     public static boolean isTypeValid(String type) {

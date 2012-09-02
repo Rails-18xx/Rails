@@ -24,7 +24,7 @@ public class PhaseManager extends RailsManager implements Configurable {
     protected GameManager gameManager;
 
     protected static Logger log =
-        LoggerFactory.getLogger(PhaseManager.class.getPackage().getName());
+        LoggerFactory.getLogger(PhaseManager.class);
 
     
     /**

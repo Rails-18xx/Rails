@@ -43,7 +43,7 @@ public class TrainType implements Cloneable {
     protected String initialPortfolio = "IPO";
 
     protected static Logger log =
-        LoggerFactory.getLogger(TrainType.class.getPackage().getName());
+        LoggerFactory.getLogger(TrainType.class);
 
     /**
      * @param real False for the default type, else real. The default type does

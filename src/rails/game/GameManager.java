@@ -215,7 +215,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     protected Map<String, Integer> storageIds = new HashMap<String, Integer>();
     
     protected static Logger log =
-        LoggerFactory.getLogger(GameManager.class.getPackage().getName());
+        LoggerFactory.getLogger(GameManager.class);
 
     public GameManager(RailsRoot parent, String id) {
         super(parent, id);  

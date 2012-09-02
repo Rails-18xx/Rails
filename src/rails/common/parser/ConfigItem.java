@@ -16,7 +16,7 @@ import rails.util.Util;
 public final class ConfigItem {
 
     protected static Logger log =
-        LoggerFactory.getLogger(ConfigItem.class.getPackage().getName());
+        LoggerFactory.getLogger(ConfigItem.class);
 
     /**
      * Defines possible types (Java classes used as types in ConfigItem below

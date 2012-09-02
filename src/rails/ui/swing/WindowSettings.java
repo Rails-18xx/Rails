@@ -21,7 +21,7 @@ public class WindowSettings {
     private static final String settingsfilename = "settings_xxxx.rails_ini";
 
     protected static Logger log =
-        LoggerFactory.getLogger(WindowSettings.class.getPackage().getName());
+        LoggerFactory.getLogger(WindowSettings.class);
 
     public WindowSettings (String gameName) {
         String directory = System.getProperty("settings.directory");

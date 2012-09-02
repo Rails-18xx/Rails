@@ -57,7 +57,7 @@ public class CompanyManager extends RailsManager implements Configurable {
     private int numberOfPublicCompanies = 0;
 
     protected static Logger log =
-            LoggerFactory.getLogger(CompanyManager.class.getPackage().getName());
+            LoggerFactory.getLogger(CompanyManager.class);
 
     protected GameManager gameManager;
 

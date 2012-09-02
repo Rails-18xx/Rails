@@ -47,7 +47,7 @@ public class GUITile {
     public static final double SVG_Y_CENTER_LOC = 0.426;
 
     protected static Logger log =
-            LoggerFactory.getLogger(GUITile.class.getPackage().getName());
+            LoggerFactory.getLogger(GUITile.class);
 
     public GUITile(int tileId, GUIHex guiHex) {
         this.guiHex = guiHex;

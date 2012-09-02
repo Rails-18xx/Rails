@@ -18,7 +18,7 @@ import rails.game.GameManager;
 public class RuhrRevenueModifier implements RevenueStaticModifier, Configurable {
 
     protected static Logger log =
-        LoggerFactory.getLogger(RuhrRevenueModifier.class.getPackage().getName());
+        LoggerFactory.getLogger(RuhrRevenueModifier.class);
 
     private boolean doublesOnlyMajors;
     

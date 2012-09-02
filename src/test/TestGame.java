@@ -26,7 +26,7 @@ public class TestGame extends TestCase {
     private boolean passed = false;
     
     protected static Logger log =
-        LoggerFactory.getLogger(TestGame.class.getPackage().getName());
+        LoggerFactory.getLogger(TestGame.class);
 
     public TestGame(String gameName, String gamePath) {
         super(gameName);

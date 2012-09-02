@@ -18,7 +18,7 @@ import rails.game.Tile;
 public class OffBoardRevenueModifier implements RevenueStaticModifier {
 
     protected static Logger log =
-        LoggerFactory.getLogger(OffBoardRevenueModifier.class.getPackage().getName());
+        LoggerFactory.getLogger(OffBoardRevenueModifier.class);
     
 
     public boolean modifyCalculator(RevenueAdapter revenueAdapter) {

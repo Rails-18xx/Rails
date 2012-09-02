@@ -32,7 +32,7 @@ public class RadioButtonDialog extends JDialog implements ActionListener {
     int chosenOption = -1;
 
     protected static Logger log =
-            LoggerFactory.getLogger(RadioButtonDialog.class.getPackage().getName());
+            LoggerFactory.getLogger(RadioButtonDialog.class);
 
     public RadioButtonDialog(DialogOwner owner, JFrame window, String title, String message,
             String[] options, int selectedOption) {

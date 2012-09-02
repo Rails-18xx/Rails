@@ -46,7 +46,7 @@ public class Bank extends RailsManager implements MoneyOwner, Configurable {
     private final BooleanState broken = BooleanState.create(this, "broken");
 
     protected static Logger log =
-        LoggerFactory.getLogger(Bank.class.getPackage().getName());
+        LoggerFactory.getLogger(Bank.class);
 
     /**
      * Used by Configure (via reflection) only

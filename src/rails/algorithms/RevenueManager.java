@@ -25,7 +25,7 @@ import rails.game.state.ArrayListState;
 public final class RevenueManager extends RailsManager implements Configurable {
 
     protected static Logger log =
-        LoggerFactory.getLogger(RevenueManager.class.getPackage().getName());
+        LoggerFactory.getLogger(RevenueManager.class);
 
     private final HashSet<Configurable> configurableModifiers = new HashSet<Configurable>();
     

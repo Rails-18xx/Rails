@@ -177,7 +177,7 @@ StationHolder {
     protected Score scoreType = null;
 
     protected static Logger log =
-        LoggerFactory.getLogger(MapHex.class.getPackage().getName());
+        LoggerFactory.getLogger(MapHex.class);
 
     private MapHex(MapManager parent, String id) {
         super(parent, id);

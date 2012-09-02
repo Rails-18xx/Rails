@@ -41,7 +41,7 @@ public class GUIStockSpace extends JLayeredPane implements Observer {
     private static final int TOKEN_DIAMETER = 20;
 
     protected static Logger log =
-            LoggerFactory.getLogger(GUIStockSpace.class.getPackage().getName());
+            LoggerFactory.getLogger(GUIStockSpace.class);
 
     public GUIStockSpace(int x, int y, StockSpace model) {
 

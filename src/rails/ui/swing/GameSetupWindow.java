@@ -60,7 +60,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
     static final int AI_PLAYER = 2;
 
     protected static Logger log =
-            LoggerFactory.getLogger(GameSetupWindow.class.getPackage().getName());
+            LoggerFactory.getLogger(GameSetupWindow.class);
 
     public GameSetupWindow() {
         super();

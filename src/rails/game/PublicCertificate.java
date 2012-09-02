@@ -47,7 +47,7 @@ public class PublicCertificate extends OwnableItem<PublicCertificate> implements
 
     
     protected static Logger log =
-            LoggerFactory.getLogger(PublicCertificate.class.getPackage().getName());
+            LoggerFactory.getLogger(PublicCertificate.class);
 
     // TODO: Rewrite constructors
     // TODO: Should every certificate have its own id and be registered with the parent?

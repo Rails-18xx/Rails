@@ -61,7 +61,7 @@ public class MapManager extends RailsManager implements Configurable {
     protected Map<Type,Score> scoreTypeDefaults = new HashMap<Type, Score>();
 
     protected static Logger log =
-        LoggerFactory.getLogger(MapManager.class.getPackage().getName());
+        LoggerFactory.getLogger(MapManager.class);
 
     /**
      * Used by Configure (via reflection) only

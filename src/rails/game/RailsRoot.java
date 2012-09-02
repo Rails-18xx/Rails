@@ -39,7 +39,7 @@ public class RailsRoot extends Root implements RailsItem {
     protected Map<String, String> gameOptions;
 
     protected static Logger log =
-        LoggerFactory.getLogger(RailsRoot.class.getPackage().getName());
+        LoggerFactory.getLogger(RailsRoot.class);
 
     public RailsRoot(String name, List<String> players, Map<String, String> options) {
         super();

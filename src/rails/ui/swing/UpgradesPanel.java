@@ -49,7 +49,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
     private HexMap hexMap;
 
     protected static Logger log =
-        LoggerFactory.getLogger(UpgradesPanel.class.getPackage().getName());
+        LoggerFactory.getLogger(UpgradesPanel.class);
 
     public UpgradesPanel(ORUIManager orUIManager) {
         super(BoxLayout.Y_AXIS);

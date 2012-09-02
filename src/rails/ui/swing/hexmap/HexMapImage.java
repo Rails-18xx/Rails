@@ -26,7 +26,7 @@ public class HexMapImage extends JSVGCanvas  {
     private static final long serialVersionUID = 1L;
 
     protected static Logger log =
-            LoggerFactory.getLogger(HexMapImage.class.getPackage().getName());
+            LoggerFactory.getLogger(HexMapImage.class);
 
     protected MapManager mapManager;
 

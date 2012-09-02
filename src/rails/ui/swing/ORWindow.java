@@ -40,7 +40,7 @@ public class ORWindow extends JFrame implements ActionPerformer {
     List<LayToken> allowedTokenLays = new ArrayList<LayToken>();
 
     protected static Logger log =
-            LoggerFactory.getLogger(ORWindow.class.getPackage().getName());
+            LoggerFactory.getLogger(ORWindow.class);
 
     public ORWindow(GameUIManager gameUIManager) {
         super();

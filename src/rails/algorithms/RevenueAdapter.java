@@ -37,7 +37,7 @@ import rails.ui.swing.hexmap.HexMap;
 public final class RevenueAdapter implements Runnable {
 
     protected static Logger log =
-        LoggerFactory.getLogger(RevenueAdapter.class.getPackage().getName());
+        LoggerFactory.getLogger(RevenueAdapter.class);
     
     // define VertexVisitSet
     public class VertexVisit {

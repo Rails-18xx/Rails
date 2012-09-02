@@ -66,7 +66,7 @@ implements ActionListener, KeyListener {
     protected List<JMenuItem> menuItemsToReset = new ArrayList<JMenuItem>();
 
     protected static Logger log =
-        LoggerFactory.getLogger(GridPanel.class.getPackage().getName());
+        LoggerFactory.getLogger(GridPanel.class);
 
 
     public void redisplay() {

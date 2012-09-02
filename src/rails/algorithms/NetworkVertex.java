@@ -15,7 +15,7 @@ import rails.ui.swing.hexmap.*;
 public final class NetworkVertex implements Comparable<NetworkVertex> {
 
     protected static Logger log =
-        LoggerFactory.getLogger(NetworkVertex.class.getPackage().getName());
+        LoggerFactory.getLogger(NetworkVertex.class);
 
     public static enum VertexType {
         STATION,

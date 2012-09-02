@@ -96,7 +96,7 @@ public class GameUIManager implements DialogOwner {
     protected boolean previousResult;
 
     protected static Logger log =
-            LoggerFactory.getLogger(GameUIManager.class.getPackage().getName());
+            LoggerFactory.getLogger(GameUIManager.class);
 
     public GameUIManager() {
 

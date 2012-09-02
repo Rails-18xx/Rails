@@ -41,7 +41,7 @@ public class Stop extends RailsAbstractItem implements Owner {
     private Score scoreType = null;
 
     protected static Logger log =
-        LoggerFactory.getLogger(Stop.class.getPackage().getName());
+        LoggerFactory.getLogger(Stop.class);
 
     public enum RunTo {
         YES,

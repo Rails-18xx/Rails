@@ -99,7 +99,7 @@ abstract class RevenueCalculator {
     }
     
     protected static Logger log =
-        LoggerFactory.getLogger(RevenueCalculator.class.getPackage().getName());
+        LoggerFactory.getLogger(RevenueCalculator.class);
 
     
     public RevenueCalculator (RevenueAdapter revenueAdapter, int nbVertexes, int nbEdges, 

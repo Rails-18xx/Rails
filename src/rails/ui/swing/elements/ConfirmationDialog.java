@@ -27,7 +27,7 @@ public class ConfirmationDialog extends JDialog implements ActionListener {
     boolean answer = false;
 
     protected static Logger log =
-            LoggerFactory.getLogger(ConfirmationDialog.class.getPackage().getName());
+            LoggerFactory.getLogger(ConfirmationDialog.class);
 
     public ConfirmationDialog(DialogOwner owner, String title, String message,
             String okText, String cancelText) {

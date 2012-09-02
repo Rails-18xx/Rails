@@ -28,7 +28,7 @@ public class PossibleActions {
     private List<PossibleAction> possibleActions;
 
     protected static Logger log =
-            LoggerFactory.getLogger(PossibleActions.class.getPackage().getName());
+            LoggerFactory.getLogger(PossibleActions.class);
 
     /**
      * This class can only be instantiated locally.

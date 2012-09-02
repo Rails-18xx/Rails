@@ -119,7 +119,7 @@ implements ActionListener, KeyListener, RevenueListener {
     private Thread revenueThread = null;
 
     protected static Logger log =
-            LoggerFactory.getLogger(ORPanel.class.getPackage().getName());
+            LoggerFactory.getLogger(ORPanel.class);
 
     public ORPanel(ORWindow parent, ORUIManager orUIManager) {
         super();

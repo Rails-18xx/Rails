@@ -22,7 +22,7 @@ public final class DisplayBuffer {
     protected static List<String> initialQueue = new ArrayList<String>();
 
     protected static Logger log =
-            LoggerFactory.getLogger(DisplayBuffer.class.getPackage().getName());
+            LoggerFactory.getLogger(DisplayBuffer.class);
 
     public DisplayBuffer() {
         if (!initialQueue.isEmpty()) {

@@ -19,7 +19,7 @@ public abstract class CorrectionManager extends RailsAbstractItem {
     private final BooleanState active = BooleanState.create(this, "active");
     
     protected static Logger log =
-        LoggerFactory.getLogger(CorrectionManager.class.getPackage().getName());
+        LoggerFactory.getLogger(CorrectionManager.class);
 
     protected CorrectionManager(GameManager parent, CorrectionType ct) {
         super(parent, ct.name());

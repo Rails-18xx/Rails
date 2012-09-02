@@ -22,7 +22,7 @@ import rails.game.*;
 public class TileMove {
 
     protected static Logger log =
-        LoggerFactory.getLogger(TileMove.class.getPackage().getName());
+        LoggerFactory.getLogger(TileMove.class);
 
     MapHex hex;
     Tile oldTile;

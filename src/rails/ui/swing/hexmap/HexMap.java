@@ -51,7 +51,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
     private static final long serialVersionUID = 1L;
 
     protected static Logger log =
-            LoggerFactory.getLogger(HexMap.class.getPackage().getName());
+            LoggerFactory.getLogger(HexMap.class);
 
     protected ORUIManager orUIManager;
     protected MapManager mapManager;

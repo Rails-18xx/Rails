@@ -27,7 +27,7 @@ public class MessageDialog extends JDialog implements ActionListener {
     String message;
 
     protected static Logger log =
-            LoggerFactory.getLogger(MessageDialog.class.getPackage().getName());
+            LoggerFactory.getLogger(MessageDialog.class);
 
     public MessageDialog(DialogOwner owner, JFrame window, String title, String message) {
 

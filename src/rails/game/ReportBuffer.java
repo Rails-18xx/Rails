@@ -151,7 +151,7 @@ public final class ReportBuffer {
     }
 
     private static Logger log =
-        LoggerFactory.getLogger(ReportBuffer.class.getPackage().getName());
+        LoggerFactory.getLogger(ReportBuffer.class);
 
 
     public ReportBuffer() {

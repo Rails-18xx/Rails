@@ -74,7 +74,7 @@ public class StartItem extends RailsAbstractItem {
     protected static Map<String, StartItem> startItemMap;
 
     protected static Logger log =
-            LoggerFactory.getLogger(StartItem.class.getPackage().getName());
+            LoggerFactory.getLogger(StartItem.class);
 
     /**
      * The constructor, taking the properties of the "primary" (often teh only)

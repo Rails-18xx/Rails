@@ -24,7 +24,7 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
     protected GuiHints guiHints = null;
 
     protected static Logger log =
-        LoggerFactory.getLogger(Round.class.getPackage().getName());
+        LoggerFactory.getLogger(Round.class);
 
     protected GameManager gameManager = null;
     protected CompanyManager companyManager = null;

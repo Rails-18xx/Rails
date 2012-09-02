@@ -29,7 +29,7 @@ public class AutoLoadPoller extends Thread {
     public static final int SUSPENDED = 2;
 
     protected static Logger log =
-        LoggerFactory.getLogger(AutoLoadPoller.class.getPackage().getName());
+        LoggerFactory.getLogger(AutoLoadPoller.class);
 
     public AutoLoadPoller (GameUIManager guiMgr, String saveDirectory, String savePrefix, String ownPostfix,
             int status, int pollingInterval) {

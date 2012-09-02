@@ -10,7 +10,7 @@ import rails.game.TrainType;
 public final class NetworkTrain implements Comparable<NetworkTrain>{
 
     protected static Logger log =
-        LoggerFactory.getLogger(NetworkTrain.class.getPackage().getName());
+        LoggerFactory.getLogger(NetworkTrain.class);
 
     private int majors;
     private int minors;

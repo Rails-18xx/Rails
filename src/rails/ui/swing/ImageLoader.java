@@ -40,7 +40,7 @@ public class ImageLoader {
     }
 
     private static Logger log =
-            LoggerFactory.getLogger(ImageLoader.class.getPackage().getName());
+            LoggerFactory.getLogger(ImageLoader.class);
 
     static {
         if (Util.hasValue(tileRootDir) && !tileRootDir.endsWith("/")) {

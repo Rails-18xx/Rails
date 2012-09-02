@@ -85,7 +85,7 @@ public class Phase implements Configurable {
     protected Map<String, String> parameters = null;
 
     protected static Logger log =
-        LoggerFactory.getLogger(Phase.class.getPackage().getName());
+        LoggerFactory.getLogger(Phase.class);
 
     public Phase(int index, String name, Phase previousPhase) {
         this.index = index;

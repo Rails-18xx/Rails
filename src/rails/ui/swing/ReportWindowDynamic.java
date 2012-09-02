@@ -44,7 +44,7 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
     private boolean timeWarpMode;
 
     protected static Logger log =
-        LoggerFactory.getLogger(ReportWindowDynamic.class.getPackage().getName());
+        LoggerFactory.getLogger(ReportWindowDynamic.class);
 
     public ReportWindowDynamic(GameUIManager gameUIManager) {
         super(gameUIManager);

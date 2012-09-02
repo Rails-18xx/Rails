@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 public class ChangeStack {
     protected static Logger log =
-        LoggerFactory.getLogger(ChangeStack.class.getPackage().getName());
+        LoggerFactory.getLogger(ChangeStack.class);
 
     // static fields
     private final LinkedList<ChangeSet> undoStack = new LinkedList<ChangeSet>();

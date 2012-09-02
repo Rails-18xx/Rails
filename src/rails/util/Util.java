@@ -161,7 +161,7 @@ public final class Util {
     }
 
     public static Logger getLogger () {
-        if (log == null) log = LoggerFactory.getLogger(Util.class.getPackage().getName());
+        if (log == null) log = LoggerFactory.getLogger(Util.class);
         return log;
 
     }

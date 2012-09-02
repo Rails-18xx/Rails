@@ -18,7 +18,7 @@ public abstract class Token<T extends Token<T>> extends OwnableItem<T> implement
     protected static String STORAGE_NAME = "Token";
 
     protected static Logger log =
-        LoggerFactory.getLogger(Token.class.getPackage().getName());
+        LoggerFactory.getLogger(Token.class);
     
     protected Token(RailsItem parent, String id, Class<T> clazz) {
         super(parent, id, clazz);

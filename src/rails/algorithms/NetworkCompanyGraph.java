@@ -27,7 +27,7 @@ import rails.game.PublicCompany;
  */
 public class NetworkCompanyGraph {
     protected static Logger log =
-        LoggerFactory.getLogger(NetworkCompanyGraph.class.getPackage().getName());
+        LoggerFactory.getLogger(NetworkCompanyGraph.class);
 
     private final NetworkGraphBuilder graphBuilder;
     private final PublicCompany company;

@@ -364,7 +364,7 @@ public final class Config {
         System.out.println("log4j.configuration =  " + log4jSelection);
 
         // delayed setting of logger
-        log = LoggerFactory.getLogger(Config.class.getPackage().getName());
+        log = LoggerFactory.getLogger(Config.class);
 
         // define settings for testing
         legacyConfigFile = false;
@@ -390,7 +390,7 @@ public final class Config {
         System.out.println("log4j.configuration =  " + log4jSelection);
 
         // delayed setting of logger
-        log = LoggerFactory.getLogger(Config.class.getPackage().getName());
+        log = LoggerFactory.getLogger(Config.class);
 
         /*
          * Check if the profile has been set from the command line to do this is

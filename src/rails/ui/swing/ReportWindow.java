@@ -50,7 +50,7 @@ public class ReportWindow extends AbstractReportWindow implements ActionListener
     protected static final String FIND_PREV_CMD = "FindPrev";
 
     protected static Logger log =
-        LoggerFactory.getLogger(ReportWindow.class.getPackage().getName());
+        LoggerFactory.getLogger(ReportWindow.class);
 
 
     public ReportWindow(GameUIManager gameUIManager) {

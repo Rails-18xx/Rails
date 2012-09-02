@@ -24,7 +24,7 @@ import rails.game.TrainType;
 public final class RevenueBonusTemplate implements Configurable {
 
     protected static Logger log =
-        LoggerFactory.getLogger(RevenueBonusTemplate.class.getPackage().getName());
+        LoggerFactory.getLogger(RevenueBonusTemplate.class);
 
     // bonus value
     private int value;

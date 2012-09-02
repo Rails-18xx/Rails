@@ -40,7 +40,7 @@ import rails.game.state.Owner;
 public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
 
     protected static Logger log =
-        LoggerFactory.getLogger(NetworkGraphBuilder.class.getPackage().getName());
+        LoggerFactory.getLogger(NetworkGraphBuilder.class);
     
     private final SimpleGraph<NetworkVertex, NetworkEdge> mapGraph;
     

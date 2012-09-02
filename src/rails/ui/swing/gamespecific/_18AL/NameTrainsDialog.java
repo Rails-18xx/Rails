@@ -41,7 +41,7 @@ public class NameTrainsDialog extends JDialog implements ActionListener {
             new HashMap<NamedTrainToken, List<JRadioButton>>();
 
     protected static Logger log =
-            LoggerFactory.getLogger(NameTrainsDialog.class.getPackage().getName());
+            LoggerFactory.getLogger(NameTrainsDialog.class);
 
     public NameTrainsDialog(ORWindow orWindow, AssignNamedTrains action) {
 

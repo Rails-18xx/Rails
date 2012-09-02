@@ -50,7 +50,7 @@ public class TrainCertificateType extends RailsAbstractItem implements Configura
     private final BooleanState rusted = BooleanState.create(this, "rusted");
 
     protected static Logger log =
-        LoggerFactory.getLogger(TrainCertificateType.class.getPackage().getName());
+        LoggerFactory.getLogger(TrainCertificateType.class);
     
     private TrainCertificateType (TrainManager parent, String id, int index) {
         super(parent, id);
