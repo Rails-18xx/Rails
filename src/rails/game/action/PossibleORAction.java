@@ -16,8 +16,8 @@ import rails.util.Util;
 /* Or should this be an interface? We will see. */
 public abstract class PossibleORAction extends PossibleAction {
 
-    // FIXME: Does this still work?, added to avoid warning
-    private static final long serialVersionUID = 1L;
+    // This is a fix to be compatible with Rails 1.x
+    private static final long serialVersionUID = -1656570654856705840L;
 
     transient protected PublicCompany company;
     protected String companyName;

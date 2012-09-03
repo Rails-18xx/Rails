@@ -216,6 +216,8 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
 
     protected boolean mustHaveOperatedToTradeShares = false;
 
+    protected List<Tag> certificateTags = null;
+    
     /** The certificates of this company (minimum 1) */
     protected final ArrayListState<PublicCertificate> certificates = ArrayListState.create(this, "ownCertificates");
     /** Are the certificates available from the first SR? */
@@ -533,54 +535,11 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
             }
         }
 
-        // FIXME: The certificates mechanism has to be adopted
-        // to the new structure of init etc.
-        // So this is not going to work as it is now
-        int certIndex = 0;
-        List<Tag> certificateTags = tag.getChildren("Certificate");
-        if (certificateTags != null) {
-            int shareTotal = 0;
-            boolean gotPresident = false;
-            PublicCertificate certificate;
-            // Throw away
-            // the per-type
-            // specification
-
-            for (Tag certificateTag : certificateTags) {
-                int shares = certificateTag.getAttributeAsInteger("shares", 1);
-
-                boolean president =
-                    "President".equals(certificateTag.getAttributeAsString(
-                            "type", ""));
-                int number = certificateTag.getAttributeAsInteger("number", 1);
-
-                boolean certIsInitiallyAvailable
-                = certificateTag.getAttributeAsBoolean("available",
-                        certsAreInitiallyAvailable);
-
-                float certificateCount = certificateTag.getAttributeAsFloat("certificateCount", 1.0f);
-
-                if (president) {
-                    if (number > 1 || gotPresident)
-                        throw new ConfigurationException(
-                                "Company type "
-                                + getId()
-                                + " cannot have multiple President shares");
-                    gotPresident = true;
-                }
-
-                for (int k = 0; k < number; k++) {
-                    certificate = new PublicCertificate(this, "cert#" + certIndex, shares, president,
-                            certIsInitiallyAvailable, certificateCount, certIndex++);
-                    certificates.add(certificate);
-                    shareTotal += shares * shareUnit.value();
-                }
-            }
-            if (shareTotal != 100)
-                throw new ConfigurationException("Company type " + getId()
-                        + " total shares is not 100%");
-        }
-        nameCertificates();
+        // TODO: Check if this still works correctly
+        // The certificate init was moved to the finishConfig phase
+        // as PublicCompany is configured twice
+        List<Tag> certTags = tag.getChildren("Certificate");
+        if (certTags != null) certificateTags = certTags;
 
         // BaseToken
         Tag baseTokenTag = tag.getChild("BaseTokens");
@@ -703,6 +662,52 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
         if (shareUnit == null) {
             shareUnit = IntegerState.create(this, "shareUnit", DEFAULT_SHARE_UNIT);
         }
+
+        int certIndex = 0;
+        if (certificateTags != null) {
+            int shareTotal = 0;
+            boolean gotPresident = false;
+            PublicCertificate certificate;
+            // Throw away
+            // the per-type
+            // specification
+
+            for (Tag certificateTag : certificateTags) {
+                int shares = certificateTag.getAttributeAsInteger("shares", 1);
+
+                boolean president =
+                    "President".equals(certificateTag.getAttributeAsString(
+                            "type", ""));
+                int number = certificateTag.getAttributeAsInteger("number", 1);
+
+                boolean certIsInitiallyAvailable
+                = certificateTag.getAttributeAsBoolean("available",
+                        certsAreInitiallyAvailable);
+
+                float certificateCount = certificateTag.getAttributeAsFloat("certificateCount", 1.0f);
+
+                if (president) {
+                    if (number > 1 || gotPresident)
+                        throw new ConfigurationException(
+                                "Company type "
+                                + getId()
+                                + " cannot have multiple President shares");
+                    gotPresident = true;
+                }
+
+                for (int k = 0; k < number; k++) {
+                    certificate = new PublicCertificate(this, "cert#" + certIndex, shares, president,
+                            certIsInitiallyAvailable, certificateCount, certIndex++);
+                    certificates.add(certificate);
+                    shareTotal += shares * shareUnit.value();
+                }
+            }
+            if (shareTotal != 100)
+                throw new ConfigurationException("Company type " + getId()
+                        + " total shares is not 100%");
+        }
+        
+        nameCertificates();
 
         // Give each certificate an unique Id
         PublicCertificate cert;
