@@ -1509,7 +1509,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     }
 
     public void addPortfolio (PortfolioModel portfolio) {
-        portfolioMap.put(portfolio.getId(), portfolio);
+        portfolioMap.put(portfolio.getName(), portfolio);
         portfolioUniqueNameMap.put(portfolio.getUniqueName(), portfolio);
     }
 

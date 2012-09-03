@@ -158,16 +158,16 @@ public class BuyCertificate extends PossibleAction {
             // Old style
             certUniqueId = companyManager.checkAliasInCertId(certUniqueId);
             certificate = PublicCertificate.getByUniqueId(certUniqueId);
-            // FIXME: This function needs a compatible replacement 
-            //from = gameManager.getPortfolioByName(fromName);
+            // TODO: This function needs a compatible replacement 
+            from = gameManager.getPortfolioByName(fromName);
             company = certificate.getCompany();
             companyName = company.getId();
             sharePerCert = certificate.getShare();
         } else if (companyName != null) {
             // New style (since Rails.1.3.1)
             company = gameManager.getCompanyManager().getPublicCompany(companyName);
-            // FIXME: This function needs a compatible replacement 
-            //from = gameManager.getPortfolioByUniqueName(fromName);
+            // TODO: This function needs a compatible replacement 
+            from = gameManager.getPortfolioByUniqueName(fromName);
             // We don't need the certificate anymore.
         }
 

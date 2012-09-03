@@ -584,20 +584,19 @@ public class PortfolioModel extends Model {
     }
 
     /**
-     * FIXME: This should be replaced by some legacy code for id
+     * Used to identify portfolios on reload
      */
-//    public String getId() {
-//        return null; // FIXME
-////        return name;
-//    }
-
-    /** Get unique name (prefixed by the owners class type, to avoid Bank, Player and Company
-     * namespace clashes).
-     * @return
+    @Deprecated
+    public String getName() {
+        return getParent().getId();
+    }
+    
+    /**
+     * Used to identify portfolios on reload
      */
+    @Deprecated
     public String getUniqueName () {
-        return null; // FIXME: For the unique name
-//        return uniqueName;
+        return getParent().getClass().getSimpleName() + "_" + getParent().getId();
     }
 
     
