@@ -1313,7 +1313,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
 
         for (PublicCertificate cert : certificates.view()) {
             owner = cert.getOwner();
-            if (owner instanceof Bank || owner == cert.getCompany()) {
+            if (owner instanceof BankPortfolio || owner == cert.getCompany()) {
                 return false;
             }
         }

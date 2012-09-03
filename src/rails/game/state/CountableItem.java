@@ -22,7 +22,9 @@ public abstract class CountableItem<T extends Countable> extends AbstractItem im
     public void move(Owner from, int amount, Owner to) {
         Preconditions.checkArgument(from != to, 
                 "New Owner identical to the existing owner" + to);
-        Preconditions.checkArgument(amount > 0, 
+        // TODO: Currently we still allow zero amounts
+        // as e.g. during withhold the zero amount is paid
+        Preconditions.checkArgument(amount >= 0, 
                 "Amount to move restricted to positive numbers");
         
         // add to new wallet
