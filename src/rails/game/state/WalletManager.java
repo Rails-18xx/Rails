@@ -7,7 +7,7 @@ import com.google.common.base.Preconditions;
  * WalletManager stores links to all existing wallets
  */
 
-public class WalletManager extends Manager implements DelayedItem {
+public class WalletManager extends Manager {
 
     class WMKey<T extends Countable> {
         private final Class<T> type;

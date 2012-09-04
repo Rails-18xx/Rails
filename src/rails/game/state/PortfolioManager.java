@@ -8,7 +8,7 @@ import com.google.common.base.Objects;
  * PortfolioManager stores links to all existing portfolios
  */
 
-public class PortfolioManager extends Manager implements DelayedItem {
+public class PortfolioManager extends Manager {
 
     class PMKey<T extends Ownable> {
         private final Class<T> type;

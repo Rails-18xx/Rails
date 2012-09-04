@@ -15,7 +15,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-public final class StateManager extends Manager implements DelayedItem {
+public final class StateManager extends Manager{
     
     protected static Logger log =
         LoggerFactory.getLogger(StateManager.class);

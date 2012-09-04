@@ -8,7 +8,7 @@ import com.google.common.collect.Lists;
 /**
  * Root is the top node of the context/item hierachy
  */
-public class Root extends Context implements DelayedItem {
+public class Root extends Context{
     
    public final static String ID = ""; 
    private final static String TEXT_ID = "root";
@@ -17,7 +17,8 @@ public class Root extends Context implements DelayedItem {
    private HashMapState<String, Item> items;
 
    // only used during creation
-   private final List<DelayedItem> delayedItems = Lists.newArrayList();
+   private boolean delayItems = true;
+   private final List<Item> delayedItems = Lists.newArrayList();
     
    protected Root() {
        addItem(this);
@@ -40,10 +41,11 @@ public class Root extends Context implements DelayedItem {
    }
 
    private void initDelayedItems() {
-       items = HashMapState.create(this, null);
-       for (DelayedItem item: delayedItems) {
+       items = HashMapState.create(this, "items");
+       for (Item item: delayedItems) {
            items.put(item.getFullURI(), item);
        }
+       delayItems = false;
    }
    
    public StateManager getStateManager() {
@@ -106,8 +108,8 @@ public class Root extends Context implements DelayedItem {
    
    void addItem(Item item) {
        // check if it has to be delayed
-       if (item instanceof DelayedItem) {
-           delayedItems.add((DelayedItem)item);
+       if (delayItems) {
+           delayedItems.add(item);
            return;
        }
        
