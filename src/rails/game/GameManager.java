@@ -993,6 +993,19 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         try {
             log.debug("Action ("+action.getPlayerName()+"): " + action);
 
+            // Log possible actions (normally this is outcommented)
+            String playerName = getCurrentPlayer().getId();
+            for (PossibleAction a : possibleActions.getList()) {
+                log.debug(playerName+" may: "+a.toString());
+            }
+
+            // New in Rails2.0: Check if the action is allowed
+            if (!possibleActions.validate(action)) {
+                DisplayBuffer.add(LocalText.getText("ActionNotAllowed",
+                        action.toString()));
+                return false;
+            }
+
             // FOR BACKWARDS COMPATIBILITY
             boolean doProcess = true;
             if (skipNextDone) {
@@ -1019,12 +1032,6 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             }
             possibleActions.clear();
             getCurrentRound().setPossibleActions();
-
-            // Log possible actions (normally this is outcommented)
-            String playerName = getCurrentPlayer().getId();
-            for (PossibleAction a : possibleActions.getList()) {
-                log.debug(playerName+" may: "+a.toString());
-            }
 
 
             if (!isGameOver()) setCorrectionActions();

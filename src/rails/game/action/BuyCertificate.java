@@ -106,9 +106,9 @@ public class BuyCertificate extends PossibleAction {
 
     @Override
     public boolean equalsAsOption(PossibleAction action) {
-        if (!(action instanceof BuyCertificate)) return false;
+        if (!(action.getClass() == BuyCertificate.class)) return false;
         BuyCertificate a = (BuyCertificate) action;
-        return a.certificate == certificate && a.from == from
+        return a.company == company && a.from == from
                && a.price == price && a.maximumNumber == maximumNumber;
     }
 

@@ -5,7 +5,6 @@ import java.io.ObjectInputStream;
 import java.util.HashSet;
 import java.util.Set;
 
-import rails.game.Bank;
 import rails.game.CompanyManager;
 import rails.game.Currency;
 import rails.game.GameManager;
@@ -307,8 +306,8 @@ public class BuyTrain extends PossibleORAction {
             type = trainManager.getTypeByName(typeName);
         }
 
-        // FIXME: This has to be replaced by a new mechanism
-        // from = gameManager.getPortfolioByName(fromName);
+        // TODO: This has to be replaced by a new mechanism for owners at some time
+        from = gameManager.getPortfolioByName(fromName).getParent();
         if (trainsForExchangeUniqueIds != null
             && trainsForExchangeUniqueIds.length > 0) {
             trainsForExchange = new HashSet<Train>();

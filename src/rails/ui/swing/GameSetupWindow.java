@@ -291,6 +291,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
             if (recentFiles == null || recentFiles.size() == 0) return;
             File[] files = recentFiles.toArray(new File[]{});
             int numOptions = 20;
+            numOptions = Math.min(numOptions, recentFiles.size());
             String[] options = new String[numOptions];
             int dirPathLength = saveDirectory.getPath().length();
             for (int i=0; i<numOptions;i++) {

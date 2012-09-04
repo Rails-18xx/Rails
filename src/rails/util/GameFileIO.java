@@ -232,6 +232,9 @@ public class GameFileIO {
       log.debug("Starting to execute loaded actions");
       gameManager.setReloading(true);
         
+      // set possible actions for first action
+      gameManager.getCurrentRound().setPossibleActions();
+      
       for (PossibleAction action : gameData.actions) {
               if (!gameManager.processOnReload(action)) {
                   log.error ("Load interrupted");

@@ -1,5 +1,9 @@
 package rails.game.action;
 
+import java.util.Arrays;
+
+import com.google.common.primitives.Ints;
+
 import rails.game.*;
 
 public class StartCompany extends BuyCertificate {
@@ -45,6 +49,13 @@ public class StartCompany extends BuyCertificate {
         price = startPrice;
     }
 
+    @Override
+    public boolean equalsAsOption(PossibleAction action) {
+        if (!(action.getClass() == StartCompany.class)) return false;
+        StartCompany a = (StartCompany) action;
+        return a.company == company && a.from == from && Ints.asList(startPrices).contains(a.price);
+    }
+    
     @Override
     public String toString() {
         StringBuilder text = new StringBuilder();
