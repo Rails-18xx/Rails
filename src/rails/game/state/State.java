@@ -16,13 +16,13 @@ public abstract class State extends Observable {
     protected State(Item parent, String id) {
         super(parent, id);
         
-        // register if observable state
-        if (id != null) {
-            // check if parent is a model and add as dependent model
-            if (parent instanceof Model) {
-                addModel((Model)parent);
-            }
+        // register if not StateManager itself is the parent
+        if (!(parent instanceof StateManager)) {
             this.getStateManager().registerState(this);
+        }
+        // check if parent is a model and add as dependent model
+        if (parent instanceof Model) {
+            addModel((Model)parent);
         }
     }
 }

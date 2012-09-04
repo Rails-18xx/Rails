@@ -32,7 +32,7 @@ public class ObservableTest {
     private Root root;
     private Manager manager;
     private Item item;
-    private Observable observable, unobservable;
+    private Observable observable;
     @Mock private Observer observer;
     @Mock private Model model;
     
@@ -42,7 +42,6 @@ public class ObservableTest {
         manager = new ManagerImpl(root, MANAGER_ID);
         item = new AbstractItemImpl(manager, ITEM_ID);
         observable = new ObservableImpl(item, OBS_ID);
-        unobservable = new ObservableImpl(root, null);
     }
     
 
@@ -59,22 +58,6 @@ public class ObservableTest {
         // remove observer not contained anymore
         assertFalse(observable.removeObserver(observer));
         
-        // Check failing on unobservable
-        try {
-            unobservable.addObserver(observer);
-        } catch (Exception e) {
-            assertThat(e).isInstanceOf(IllegalStateException.class);
-        }
-        try {
-            unobservable.removeObserver(observer);
-        } catch (Exception e) {
-            assertThat(e).isInstanceOf(IllegalStateException.class);
-        }
-        try {
-            unobservable.getObservers();
-        } catch (Exception e) {
-            assertThat(e).isInstanceOf(IllegalStateException.class);
-        }
     }
 
     @Test
@@ -96,59 +79,32 @@ public class ObservableTest {
         
         // remove Model not contained anymore
         assertFalse(observable.removeModel(model));
-        
-        // Check failing on unobservable
-        try {
-            unobservable.addModel(model);
-        } catch (Exception e) {
-            assertThat(e).isInstanceOf(IllegalStateException.class);
-        }
-        try {
-            unobservable.removeModel(model);
-        } catch (Exception e) {
-            assertThat(e).isInstanceOf(IllegalStateException.class);
-        }
-        try {
-            unobservable.getModels();
-        } catch (Exception e) {
-            assertThat(e).isInstanceOf(IllegalStateException.class);
-        }
-
     }
 
     @Test
     public void testGetId() {
         assertEquals(OBS_ID, observable.getId());
-        assertEquals(null, unobservable.getId());
     }
 
     @Test
     public void testGetParent() {
         assertSame(item, observable.getParent());
-        assertSame(root, unobservable.getParent());
     }
 
     @Test
     public void testGetContext() {
         assertSame(manager, observable.getContext());
-        assertSame(root, unobservable.getContext());
     }
 
     @Test
     public void testGetRoot() {
         assertSame(root, observable.getRoot());
-        assertSame(root, unobservable.getRoot());
     }
 
     @Test
     public void testGetURI() {
         assertEquals(ITEM_ID + Item.SEP + OBS_ID, observable.getURI());
         assertSame(observable, observable.getContext().locate(observable.getURI()));
-        try {
-            unobservable.getURI();
-        } catch (Exception e) {
-            assertThat(e).isInstanceOf(IllegalStateException.class);
-        }
     }
 
     @Test
@@ -156,11 +112,6 @@ public class ObservableTest {
         assertEquals(Item.SEP + MANAGER_ID + Item.SEP + ITEM_ID + Item.SEP + OBS_ID, observable.getFullURI());
         assertSame(observable, observable.getContext().locate(observable.getURI()));
         assertSame(observable, observable.getRoot().locate(observable.getFullURI()));
-        try {
-            unobservable.getFullURI();
-        } catch (Exception e) {
-            assertThat(e).isInstanceOf(IllegalStateException.class);
-        }
     }
 
 }

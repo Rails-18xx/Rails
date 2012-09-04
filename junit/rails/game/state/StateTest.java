@@ -10,12 +10,10 @@ public class StateTest {
 
     private final static String STATE_ID = "State";
     private final static String MODEL_ID = "Model";
-    private final static String STATE_TEXT = "Test";
     
     private Root root;
     private State state;
     private State state_model;
-    private State state_wo_id;
     private Model model;
     
     @Before
@@ -24,7 +22,6 @@ public class StateTest {
         state = StateImpl.create(root, STATE_ID, null);
         model = ModelImpl.create(root, MODEL_ID, null);
         state_model = StateImpl.create(model, STATE_ID, null);
-        state_wo_id = StateImpl.create(model, null, STATE_TEXT);
     }
     
     @Test
@@ -35,20 +32,11 @@ public class StateTest {
         assertThat(state.getModels()).doesNotContain(model);
         state.addModel(model);
         assertThat(state.getModels()).contains(model);
-        
-        // state_wo_id does not have any link
-        try {
-            state_wo_id.getModels();
-        } catch (Exception e) {
-            assertThat(e).isInstanceOf(IllegalStateException.class);
-        }
-        
     }
     
     @Test
     public void testObserverText() {
         assertNull(state.toText());
-        assertEquals(STATE_TEXT, state_wo_id.toText());
     }
 
 }

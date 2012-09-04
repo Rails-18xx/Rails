@@ -44,7 +44,7 @@ public class PortfolioManager extends Manager {
     }
     
     private final HashMapState<PMKey<? extends Ownable>, Portfolio<? extends Ownable>> portfolios = 
-            HashMapState.create(this, null);
+            HashMapState.create(this, "portfolios");
     
     private final UnknownOwner unknown = UnknownOwner.create(this, "unknown");
     

@@ -37,6 +37,7 @@ public class Root extends Context{
    protected void init() {
        StateManager stateManager = StateManager.create(this, "states");
        this.stateManager = stateManager;
+       stateManager.init();
        initDelayedItems();
    }
 

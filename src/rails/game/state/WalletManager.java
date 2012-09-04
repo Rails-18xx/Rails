@@ -43,7 +43,7 @@ public class WalletManager extends Manager {
     }
     
     private final HashMapState<WMKey<? extends Countable>, Wallet<? extends Countable>> wallets = 
-            HashMapState.create(this, null);
+            HashMapState.create(this, "wallets");
     
     private final UnknownOwner unknown = UnknownOwner.create(this, "unknown");
     

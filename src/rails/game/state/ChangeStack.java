@@ -78,7 +78,7 @@ public class ChangeStack {
         log.debug("<<< Closed changeSet " + currentSet + " at index =" + getCurrentIndex());
         
         // update the observers (direct and indirect)
-        stateManager.updateObservers(currentSet.getObservableStates());
+        stateManager.updateObservers(currentSet.getStates());
         undoStack.addFirst(currentSet);
         
         // set null and return stored
@@ -124,7 +124,7 @@ public class ChangeStack {
         undoStack.pollFirst();
         undoSet.unexecute();
         redoStack.addFirst(undoSet);
-        stateManager.updateObservers(undoSet.getObservableStates());
+        stateManager.updateObservers(undoSet.getStates());
     }
     
     /**
@@ -138,7 +138,7 @@ public class ChangeStack {
         ChangeSet redoSet = redoStack.pollFirst();
         redoSet.reexecute();
         undoStack.addFirst(redoSet);
-        stateManager.updateObservers(redoSet.getObservableStates());
+        stateManager.updateObservers(redoSet.getStates());
     }
     
     /**

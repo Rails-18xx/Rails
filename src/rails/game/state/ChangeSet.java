@@ -57,15 +57,13 @@ public class ChangeSet {
     }
     
    /**
-    * retrieves all (observable) states that are changed by Changes in the ChangeSet
+    * retrieves all states that are changed by Changes in the ChangeSet
     * @return set of all states affected by Changes
     */
-   ImmutableSet<State> getObservableStates() {
+   ImmutableSet<State> getStates() {
         ImmutableSet.Builder<State> builder = new ImmutableSet.Builder<State>();
         for (Change change:changes) {
-            if (change.getState().isObservable()){
-                builder.add(change.getState());
-            }
+            builder.add(change.getState());
         }
         return builder.build();
     }

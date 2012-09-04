@@ -20,6 +20,7 @@ public class HashSetStateTest {
 
     private final static String DEFAULT_ID = "Default";
     private final static String INIT_ID = "Init"; 
+    private final static String OTHER_ID = "Other";
     
     private final static String ONE_ITEM_ID = "OneItem";
     private final static String ANOTHER_ITEM_ID = "AnotherItem";
@@ -49,7 +50,7 @@ public class HashSetStateTest {
     @Test
     public void testCreationWithList() {
         // checks if the set is created with a list, that it only contains non-unique elements
-        HashSetState<Item> state = HashSetState.create(root, null, Lists.newArrayList(oneItem, oneItem));
+        HashSetState<Item> state = HashSetState.create(root, OTHER_ID, Lists.newArrayList(oneItem, oneItem));
         assertThat(state).containsOnly(oneItem);
         assertThat(state).hasSize(1);
     }

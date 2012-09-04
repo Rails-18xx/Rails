@@ -21,16 +21,17 @@ public final class StateManager extends Manager{
         LoggerFactory.getLogger(StateManager.class);
     
     private final ChangeStack changeStack = ChangeStack.create(this);
-    private final HashSetState<State> allStates = HashSetState.create(this, null);
+    private final HashSetState<State> allStates = HashSetState.create(this, "allStates");
 
     private final HashMultimapState<Observable, Observer> 
-        observers = HashMultimapState.create(this, null);
+        observers = HashMultimapState.create(this, "observer");
     private final HashMultimapState<Observable, Model> 
-        models = HashMultimapState.create(this, null);
+        models = HashMultimapState.create(this, "models");
     
     
-    private final PortfolioManager portfolioManager = PortfolioManager.create(this, "Portfolios");
-    private final WalletManager walletManager = WalletManager.create(this, "walletManager");
+    // initialized later in init()
+    private PortfolioManager portfolioManager;
+    private WalletManager walletManager;
 
     private StateManager(Root parent, String id) {
         super(parent, id);
@@ -39,6 +40,17 @@ public final class StateManager extends Manager{
     static StateManager create(Root parent, String id){
         return new StateManager(parent, id);
     }
+    
+    void init() {
+        // register embedded states
+        registerState(allStates);
+        registerState(observers);
+        registerState(models);
+        // create managers
+        portfolioManager = PortfolioManager.create(this, "Portfolios");
+        walletManager = WalletManager.create(this, "walletManager");
+    }
+    
     /**
      * Register states (usually done automatically at state creation)
      */
