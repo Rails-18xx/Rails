@@ -553,7 +553,7 @@ public class OperatingRound extends Round implements Observer {
 
         if (noMapMode && !operatingCompany.value().hasLaidHomeBaseTokens()){
             // Lay base token in noMapMode
-            BaseToken token = operatingCompany.value().getFreeToken();
+            BaseToken token = operatingCompany.value().getNextBaseToken();
             if (token == null) {
                 log.error("Company " + operatingCompany.value().getId() + " has no free token to lay base token");
             } else {
@@ -2480,7 +2480,7 @@ public class OperatingRound extends Round implements Observer {
         }
         if (typeOC == OperatingCost.OCType.LAY_BASE_TOKEN) {
             // move token to Bank
-            BaseToken token = operatingCompany.value().getFreeToken();
+            BaseToken token = operatingCompany.value().getNextBaseToken();
             if (token == null) {
                 log.error("Company " + operatingCompany.value().getId() + " has no free token");
                 return false;

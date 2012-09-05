@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
 import rails.common.GuiDef;
@@ -718,10 +717,13 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
                     && this.certsAreInitiallyAvailable);
         }
 
+        Set<BaseToken> newTokens = Sets.newHashSet();
         for (int i = 0; i < numberOfBaseTokens; i++) {
             BaseToken token =  BaseToken.create(this);
-            baseTokens.addFreeToken(token);
+            newTokens.add(token);
         }
+        baseTokens.initTokens(newTokens);
+        
         if (homeHexNames != null) {
             homeHexes = new ArrayList<MapHex>(2);
             MapHex homeHex;
@@ -1740,7 +1742,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
     }
 
     public boolean hasLaidHomeBaseTokens() {
-        return baseTokens.getLaidTokens().size() > 0;
+        return baseTokens.nbLaidTokens() > 0;
     }
 
     // Return value is not used
@@ -1784,30 +1786,15 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
         return true;
     }
 
-    public BaseToken getFreeToken() {
-        if (baseTokens.getFreeTokens().size() > 0) {
-            return (BaseToken) Iterables.get(baseTokens.getFreeTokens(), 0);
-        } else {
-            return null;
-        }
-    }
-
     /**
-     * Add a base token to the company charter. This method is called when a
-     * base token is removed from a map hex. This may happen because of an Undo
-     * action. In some games tokens can be taken back for more "regular" reasons
-     * as well. The token is removed from the company laid token list and added
-     * to the free token list.
+     * @return the next (free) token to lay, null if none is available
      */
-    public boolean addFreeToken(BaseToken token) {
-        boolean result = false;
-        baseTokens.addFreeToken(token);
-        return result;
-
+    public BaseToken getNextBaseToken() {
+        return baseTokens.getNextToken();
     }
 
     public ImmutableSet<BaseToken> getAllBaseTokens() {
-        return ImmutableSet.copyOf(Sets.union(baseTokens.getFreeTokens(), baseTokens.getLaidTokens()));
+        return baseTokens.getAllTokens();
     }
     
     public ImmutableSet<BaseToken> getLaidBaseTokens() {
@@ -1826,7 +1813,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
         return baseTokens.nbLaidTokens();
     }
 
-    public boolean hasTokens() {
+    public boolean hasBaseTokens() {
         return (baseTokens.nbAllTokens() > 0);
     }
 
@@ -2033,9 +2020,8 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
         setLastRevenue(0);
 
         // move all laid tokens to free tokens again
-        for (BaseToken token:baseTokens.getLaidTokens()) {
-            baseTokens.addFreeToken(token);
-        }
+        Portfolio.moveAll(baseTokens.getLaidTokens(), this);
+
         // close company on the stock market
         stockMarket.close(this);
 

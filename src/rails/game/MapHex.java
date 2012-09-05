@@ -908,7 +908,7 @@ StationHolder {
         }
         Stop city = mStops.get(station);
 
-        BaseToken token = company.getFreeToken();
+        BaseToken token = company.getNextBaseToken();
         if (token == null) {
             log.error("Company " + company.getId() + " has no free token");
             return false;

@@ -1,10 +1,14 @@
 package rails.game.model;
 
+import java.util.Set;
+
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 
 import rails.game.BaseToken;
 import rails.game.PublicCompany;
-import rails.game.state.HashSetState;
 import rails.game.state.Model;
 import rails.game.state.PortfolioSet;
 
@@ -15,21 +19,24 @@ public class BaseTokensModel extends Model {
 
     // the free tokens belong to the company
     private final PortfolioSet<BaseToken> freeBaseTokens;
-    // the laid tokens are only be referenced
-    private final HashSetState<BaseToken> laidBaseTokens;
+    // a list of all base tokens, configured later
+    private ImmutableSortedSet<BaseToken> allTokens;
 
     private BaseTokensModel(PublicCompany parent, String id) {
         super(parent, id);
         freeBaseTokens = PortfolioSet.create(parent, "freeBaseTokens", BaseToken.class);
-        laidBaseTokens = HashSetState.create(parent, "laidBaseTokens");
     }
 
     public static BaseTokensModel create(PublicCompany parent, String id){
         return new BaseTokensModel(parent, id);
     }
+
+    public void initTokens(Set<BaseToken> tokens) {
+        allTokens = ImmutableSortedSet.copyOf(tokens);
+    }
     
     /**
-     * @return restricted to PublicCompany
+     * @return parent the public company
      */
     @Override
     public PublicCompany getParent() {
@@ -37,14 +44,15 @@ public class BaseTokensModel extends Model {
     }
     
     /**
-     * Adds a BaseToken (back) to the list of free token
-     * Removes it from the LaidTokenList
-     * Remark: It is automatically removed from the previous owner portfolio
-     * @return true if it was previously on the LaidTokenList
+     * @return the next (free) token to lay, null if none is available
      */
-    public boolean addFreeToken(BaseToken token) {
-        freeBaseTokens.moveInto(token);
-        return laidBaseTokens.remove(token);
+    public BaseToken getNextToken() {
+        if (freeBaseTokens.size() == 0) return null;
+        return Iterables.get(freeBaseTokens, 0);
+    }
+    
+    public ImmutableSet<BaseToken> getAllTokens() {
+        return allTokens;
     }
     
     public ImmutableSet<BaseToken> getFreeTokens() {
@@ -52,11 +60,11 @@ public class BaseTokensModel extends Model {
     }
     
     public ImmutableSet<BaseToken> getLaidTokens() {
-        return laidBaseTokens.view();
+        return Sets.difference(allTokens, freeBaseTokens.items()).immutableCopy();
     }
     
     public int nbAllTokens() {
-        return nbFreeTokens() + nbLaidTokens();
+        return allTokens.size();
     }
     
     public int nbFreeTokens() {
@@ -64,14 +72,14 @@ public class BaseTokensModel extends Model {
     }
     
     public int nbLaidTokens() {
-        return laidBaseTokens.size();
+        return allTokens.size() - freeBaseTokens.size();
     }
     
     /**
      * @return true if token is laid
      */
     public boolean tokenIsLaid(BaseToken token) {
-        return laidBaseTokens.contains(token);
+        return allTokens.contains(token);
     }
     
     @Override 

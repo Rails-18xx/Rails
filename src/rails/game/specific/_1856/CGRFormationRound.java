@@ -589,9 +589,8 @@ bonuses:        for (Bonus bonus : bonuses) {
         for (BaseToken token : homeTokens) {
             city = (Stop) token.getOwner();
             hex = city.getHolder();
-            // TODO: Check if this works correct
-            // token.moveTo(token.getCompany())
-            token.getParent().addFreeToken(token);
+            // return token to home
+            token.moveTo(token.getParent());
             if (hex.layBaseToken(cgr, city.getNumber())) {
                 /* TODO: the false return value must be impossible. */
                 ReportBuffer.add(LocalText.getText("ExchangesBaseToken",
@@ -613,9 +612,8 @@ bonuses:        for (Bonus bonus : bonuses) {
                         ReportBuffer.add(LocalText.getText("DiscardsBaseToken",
                                 cgrName, token.getParent().getId(),
                                 city.getId()));
-                        // TODO: Check if this works correct
-                        // token.moveTo(token.getCompany())
-                        token.getParent().addFreeToken(token);
+                        // return token to home
+                        token.moveTo(token.getParent());
                         nonHomeTokens.remove(token);
                         break;
                     }
@@ -686,8 +684,8 @@ bonuses:        for (Bonus bonus : bonuses) {
             // Remove old token
             city = (Stop) token.getOwner();
             hex = city.getHolder();
-            // TODO: Check if this still works
-            token.getParent().addFreeToken(token);
+            // return token to Company
+            token.moveTo(token.getParent());
             // Replace it with a CGR token
             if (hex.layBaseToken(cgr, city.getNumber())) {
                 cgr.layBaseToken(hex, 0);
