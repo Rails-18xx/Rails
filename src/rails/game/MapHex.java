@@ -78,7 +78,7 @@ StationHolder {
     protected int letter;
     protected int number;
     protected String tileFileName;
-    protected int preprintedTiled;
+    protected int preprintedTileId;
     protected Tile currentTile;
     protected int currentTileRotation;
     protected int preprintedTileRotation;
@@ -252,7 +252,7 @@ StationHolder {
             }
         }
 
-        preprintedTiled = tag.getAttributeAsInteger("tile", -999);
+        preprintedTileId = tag.getAttributeAsInteger("tile", -999);
 
         preprintedTileRotation = tag.getAttributeAsInteger("orientation", 0);
         currentTileRotation  = preprintedTileRotation;
@@ -353,7 +353,7 @@ StationHolder {
             throw new IllegalArgumentException("gameManager must not be null");
         }
 
-        currentTile = gameManager.getTileManager().getTile(preprintedTiled);
+        currentTile = gameManager.getTileManager().getTile(preprintedTileId);
         // We need completely new objects, not just references to the Tile's
         // stations.
         stops = new ArrayList<Stop>(4);
@@ -483,10 +483,10 @@ StationHolder {
     }
 
     /**
-     * @return Returns the preprintedTiled.
+     * @return Returns the preprintedTileId.
      */
-    public int getPreprintedTiled() {
-        return preprintedTiled;
+    public int getPreprintedTileId() {
+        return preprintedTileId;
     }
 
     public int getPreprintedTileRotation() {
@@ -530,7 +530,7 @@ StationHolder {
     }
 
     public int getTileCost() {
-        if (currentTile.getNb() == preprintedTiled) {
+        if (currentTile.getNb() == preprintedTileId) {
             return getTileCost(0);
         } else {
             return getTileCost(currentTile.getColourNumber());

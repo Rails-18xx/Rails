@@ -1,22 +1,16 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayTile.java,v 1.17 2009/10/30 21:53:04 evos Exp $
- *
- * Created on 14-Sep-2006
- * Change Log:
- */
 package rails.game.action;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.*;
 
+import com.google.common.base.Objects;
+
 import rails.game.*;
 import rails.game.special.SpecialProperty;
 import rails.game.special.SpecialTileLay;
 import rails.util.Util;
 
-/**
- * @author Erik Vos
- */
 public class LayTile extends PossibleORAction {
 
     /* LayTile types */
@@ -57,7 +51,7 @@ public class LayTile extends PossibleORAction {
 
     /** The tile actually laid */
     transient private Tile laidTile = null;
-    private int laidTiled;
+    private int laidTileId;
 
     /** The map hex on which the tile is laid */
     transient private MapHex chosenHex = null;
@@ -71,17 +65,6 @@ public class LayTile extends PossibleORAction {
     private String relaidBaseTokensString = null;
 
     public static final long serialVersionUID = 1L;
-
-    /**
-     * Allow laying a tile on a given location.
-     */
-    // NOTE: NOT YET USED
-    public LayTile(List<MapHex> locations, List<Tile> tiles) {
-        type = LOCATION_SPECIFIC;
-        this.locations = locations;
-        if (locations != null) buildLocationNameString();
-        setTiles(tiles);
-    }
 
     public LayTile(Map<String, Integer> tileColours) {
         type = GENERIC;
@@ -141,7 +124,7 @@ public class LayTile extends PossibleORAction {
      */
     public void setLaidTile(Tile laidTile) {
         this.laidTile = laidTile;
-        this.laidTiled = laidTile.getNb();
+        this.laidTileId = laidTile.getNb();
     }
 
     /**
@@ -235,20 +218,23 @@ public class LayTile extends PossibleORAction {
 
     @Override
     public boolean equalsAsOption(PossibleAction action) {
-        if (!(action instanceof LayTile)) return false;
+        if (!(action.getClass() == LayTile.class)) return false;
         LayTile a = (LayTile) action;
-        return (a.locationNames == null && locationNames == null || a.locationNames.equals(locationNames))
+        return (Objects.equal(a.locationNames, locationNames)
                && a.type == type
-               && a.tileColours == tileColours
-               && a.tiles == tiles 
-               && a.specialProperty == specialProperty;
+               && Objects.equal(a.tiles, tiles) 
+               && Objects.equal(a.specialProperty, specialProperty));
+//              && a.tileColours == tileColours
+        // TODO: Replace this by testing if the tile is part of the map 
+        // Remark: this test is invalid as sometimes zero values got stored
+        // This is a quick fix for Rails2.0 (see comment above)
     }
 
     @Override
     public boolean equalsAsAction (PossibleAction action) {
         if (!(action instanceof LayTile)) return false;
         LayTile a = (LayTile) action;
-        return (a.laidTiled == laidTiled
+        return (a.laidTileId == laidTileId
                && a.chosenHexName.equals(chosenHexName)
                && a.orientation == orientation
                && (a.relaidBaseTokensString == null && relaidBaseTokensString == null
@@ -291,7 +277,7 @@ public class LayTile extends PossibleORAction {
         tileColours = (Map<String, Integer>) fields.get("tileColours", tileColours);
         tileIds = (int[]) fields.get("tileIds", tileIds);
         specialPropertyId = fields.get("specialPropertyId", specialPropertyId);
-        laidTiled = fields.get("laidTiled", laidTiled);
+        laidTileId = fields.get("laidTileId", laidTileId);
         chosenHexName = (String) fields.get("chosenHexName", chosenHexName);
         orientation = fields.get("orientation", orientation);
         relayBaseTokens = fields.get("relayBaseTokens", relayBaseTokens);
@@ -317,8 +303,8 @@ public class LayTile extends PossibleORAction {
             specialProperty =
                     (SpecialTileLay) SpecialProperty.getByUniqueId(specialPropertyId);
         }
-        if (laidTiled != 0) {
-            laidTile = tmgr.getTile(laidTiled);
+        if (laidTileId != 0) {
+            laidTile = tmgr.getTile(laidTileId);
         }
         if (chosenHexName != null && chosenHexName.length() > 0) {
             chosenHex = mmgr.getHex(chosenHexName);

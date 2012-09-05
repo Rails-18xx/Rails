@@ -195,7 +195,7 @@ public abstract class HexMap extends JComponent implements MouseListener,
                             calcYCoordinates(mh.getRow(), tileYOffset),
                             scale, i-minX+1, j-minY+1);
                     hex.setHexModel(mh);
-                    hex.originalTiled = hex.currentTiled;
+                    hex.originalTileId = hex.currentTileId;
                     hexesByName.put(mh.getId(), hex);
                     h[i][j] = hex;
                     hexes.add(hex);

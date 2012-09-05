@@ -294,7 +294,7 @@ public class GUITile {
         return tile;
     }
 
-    public int getTiled() {
+    public int getTileId() {
         return tileId;
     }
 

@@ -60,7 +60,7 @@ public final class MapCorrectionManager extends CorrectionManager {
 
         Tile chosenTile = action.getChosenTile();
         TileManager tmgr = getParent().getTileManager();
-        Tile preprintedTile = tmgr.getTile(hex.getPreprintedTiled());
+        Tile preprintedTile = tmgr.getTile(hex.getPreprintedTileId());
 
         // check conditions
         String errMsg = null;

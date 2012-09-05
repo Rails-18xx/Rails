@@ -198,7 +198,7 @@ public final class TileManager extends RailsManager implements Configurable {
     }
 
     /** Get the tile IDs in the XML definition sequence */
-    public List<Integer> getTileds() {
+    public List<Integer> getTileIds() {
         return tileIds;
     }
 

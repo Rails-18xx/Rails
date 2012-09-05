@@ -66,7 +66,7 @@ public class RemainingTilesWindow extends JFrame implements WindowListener,
 
         // Build the grid with tiles in the sequence as
         // these have been defined in Tiles.xml
-        List<Integer> tileIds = tmgr.getTileds();
+        List<Integer> tileIds = tmgr.getTileIds();
         log.debug("There are " + tileIds.size() + " tiles known in this game");
 
         for (int tileId : tileIds) {

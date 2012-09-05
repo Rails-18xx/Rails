@@ -393,12 +393,12 @@ public final class Tile extends Model implements StationHolder, Comparable<Tile>
 
         for (Upgrade upgrade : upgrades) {
 
-            Tile tile = tileManager.getTile(upgrade.getTiled());
+            Tile tile = tileManager.getTile(upgrade.getTileId());
             if (tile != null) {
                 upgrade.setTile(tile);
             } else {
                 throw new ConfigurationException ("Cannot find upgrade tile #"
-                        +upgrade.getTiled()+" for tile #"+nb);
+                        +upgrade.getTileId()+" for tile #"+nb);
             }
         }
     }
@@ -725,7 +725,7 @@ public final class Tile extends Model implements StationHolder, Comparable<Tile>
             return tile;
         }
 
-        public int getTiled() {
+        public int getTileId() {
             return tileId;
         }
 
