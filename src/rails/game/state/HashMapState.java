@@ -1,6 +1,7 @@
 package rails.game.state;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableList;
@@ -12,8 +13,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A stateful version of a HashMap
+ * 
+ * It allows automatic iteration over it values
  */
-public final class HashMapState<K,V> extends State {
+public final class HashMapState<K,V> extends State implements Iterable<V> {
 
     private final HashMap<K,V> map;
 
@@ -122,6 +125,13 @@ public final class HashMapState<K,V> extends State {
     public boolean isEmpty() {
         return map.isEmpty();
     }
+    
+    /**
+     * @return number of elements
+     */
+    public int size() {
+        return map.size();
+    }
 
     /**
      * (re)initializes the state map from another map
@@ -178,6 +188,11 @@ public final class HashMapState<K,V> extends State {
 //
 //    }
     
+    public Iterator<V> iterator() {
+        return ImmutableSet.copyOf(map.values()).iterator();
+    }
+
+
     @Override
     public String toText() {
         return map.toString();

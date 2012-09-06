@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
@@ -25,7 +24,10 @@ import rails.game.model.WalletMoneyModel;
 import rails.game.model.PortfolioModel;
 
 import rails.game.state.BooleanState;
-import rails.game.state.Observer;
+import rails.game.state.GenericState;
+import rails.game.state.HashMapState;
+import rails.game.state.IntegerState;
+import rails.game.state.Model;
 import rails.game.state.Owner;
 import rails.game.state.PortfolioSet;
 import rails.util.*;
@@ -58,15 +60,17 @@ import rails.util.*;
  * tiles the above picture should be rotated 30 degrees clockwise.
  */
 
-// FIXME: MapHex was previous a model
-public class MapHex extends RailsAbstractItem implements Owner, Configurable,
-StationHolder {
+public class MapHex extends Model implements RailsItem, Owner, Configurable, StationHolder {
 
     private static final String[] ewOrNames =
     { "SW", "W", "NW", "NE", "E", "SE" };
     private static final String[] nsOrNames =
     { "S", "SW", "NW", "N", "NE", "SE" };
 
+    ////////////////////////
+    // Static fields
+    ////////////////////////
+    
     // Coordinates as used in the rails.ui.swing.hexmap package
     protected int x;
     protected int y;
@@ -79,8 +83,6 @@ StationHolder {
     protected int number;
     protected String tileFileName;
     protected int preprintedTileId;
-    protected Tile currentTile;
-    protected int currentTileRotation;
     protected int preprintedTileRotation;
     protected int[] tileCost;
     protected String cityName;
@@ -103,34 +105,9 @@ StationHolder {
     protected String impassable = null;
     protected List<Integer> impassableSides;
 
-    protected List<Stop> stops;
-    protected Map<Integer, Stop> mStops;
-
-    /*
-     * changed to state variable to fix undo bug #2954645
-     * null as default implies false - see isBlocked()
-     */
-    private final BooleanState isBlockedForTileLays = BooleanState.create(this, "isBlockedForTileLays");
-
-    /**
-     * Is the hex initially blocked for token lays (e.g. when a home base
-     * must first be laid)? <p>
-     * NOTE:<br>null means: blocked unless there is more free space than unlaid home bases,<br>
-     * false means: blocked unless there is any free space.<br>
-     * This makes a difference for 1835 Berlin, which is home to PR, but
-     * the absence of a PR token does not block the third slot
-     * when the green tile is laid.
-     */
-    private final BooleanState isBlockedForTokenLays = BooleanState.create(this, "isBlockedForTokenLays");
 
     protected Map<PublicCompany, Stop> homes;
     protected List<PublicCompany> destinations;
-
-    /** Tokens that are not bound to a Station (City), such as Bonus tokens */
-    protected final PortfolioSet<BonusToken> bonusTokens = PortfolioSet.create(this, "bonusTokens", BonusToken.class);
-    
-    protected final PortfolioSet<BaseToken> offStationTokens = PortfolioSet.create(this,
-            "offStationTokens", BaseToken.class);
 
     /** Storage of revenueBonus that are bound to the hex */
     protected List<RevenueBonusTemplate> revenueBonuses = null;
@@ -176,6 +153,42 @@ StationHolder {
      */
     protected Score scoreType = null;
 
+    
+    ////////////////////////
+    // dynamic fields
+    ////////////////////////
+    protected final GenericState<Tile> currentTile = 
+            GenericState.create(this, "currentTile");
+    protected final IntegerState currentTileRotation = 
+            IntegerState.create(this, "currentTileRotation");
+
+    // Stops (Cities, Towns etc.)
+    protected final HashMapState<Integer, Stop> mStops =
+            HashMapState.create(this, "stops");
+
+    /*
+     * changed to state variable to fix undo bug #2954645
+     * null as default implies false - see isBlocked()
+     */
+    private final BooleanState isBlockedForTileLays = BooleanState.create(this, "isBlockedForTileLays");
+
+    /**
+     * Is the hex initially blocked for token lays (e.g. when a home base
+     * must first be laid)? <p>
+     * NOTE:<br>null means: blocked unless there is more free space than unlaid home bases,<br>
+     * false means: blocked unless there is any free space.<br>
+     * This makes a difference for 1835 Berlin, which is home to PR, but
+     * the absence of a PR token does not block the third slot
+     * when the green tile is laid.
+     */
+    private final BooleanState isBlockedForTokenLays = BooleanState.create(this, "isBlockedForTokenLays");
+
+    /** Tokens that are not bound to a Station (City), such as Bonus tokens */
+    protected final PortfolioSet<BonusToken> bonusTokens = PortfolioSet.create(this, "bonusTokens", BonusToken.class);
+    
+    protected final PortfolioSet<BaseToken> offStationTokens = PortfolioSet.create(this,
+            "offStationTokens", BaseToken.class);
+
     protected static Logger log =
         LoggerFactory.getLogger(MapHex.class);
 
@@ -190,7 +203,7 @@ StationHolder {
         hex.configureFromXML(tag);
         return hex;
     }
-
+        
     /**
      * @see rails.common.parser.Configurable#configureFromXML(org.w3c.dom.Element)
      */
@@ -255,7 +268,7 @@ StationHolder {
         preprintedTileId = tag.getAttributeAsInteger("tile", -999);
 
         preprintedTileRotation = tag.getAttributeAsInteger("orientation", 0);
-        currentTileRotation  = preprintedTileRotation;
+        currentTileRotation.set(preprintedTileRotation);
 
         impassable = tag.getAttributeAsString("impassable");
         tileCost = tag.getAttributeAsIntegerArray("cost", new int[0]);
@@ -353,27 +366,34 @@ StationHolder {
             throw new IllegalArgumentException("gameManager must not be null");
         }
 
-        currentTile = gameManager.getTileManager().getTile(preprintedTileId);
+        currentTile.set(gameManager.getTileManager().getTile(preprintedTileId));
         // We need completely new objects, not just references to the Tile's
         // stations.
-        stops = new ArrayList<Stop>(4);
-        mStops = new HashMap<Integer, Stop>(4);
-        for (Station s : currentTile.getStations()) {
+        for (Station s : currentTile.value().getStations()) {
             // sid, type, value, slots
             Stop c = Stop.create(this, s.getNumber(), s);
-            stops.add(c);
             mStops.put(c.getNumber(), c);
         }
 
         /* Superseded by new code in Stop - or do we still need it?
         if (runThroughAllowed == null) {
-            runThroughAllowed = currentTile.getColourName().equalsIgnoreCase("red")
+            runThroughAllowed = currentTile.value().getColourName().equalsIgnoreCase("red")
             ? RunThrough.NO : RunThrough.YES;
         }
         if (runToAllowed == null) {
             runToAllowed = RunTo.YES;
         }
          */
+    }
+    
+    @Override
+    public MapManager getParent() {
+        return (MapManager)super.getParent();
+    }
+    
+    @Override
+    public RailsRoot getRoot() {
+        return (RailsRoot)super.getRoot();
     }
 
     public void addImpassableSide (int orientation) {
@@ -522,18 +542,18 @@ StationHolder {
     }
 
     public Tile getCurrentTile() {
-        return currentTile;
+        return currentTile.value();
     }
 
     public int getCurrentTileRotation() {
-        return currentTileRotation;
+        return currentTileRotation.value();
     }
 
     public int getTileCost() {
-        if (currentTile.getNb() == preprintedTileId) {
+        if (currentTile.value().getNb() == preprintedTileId) {
             return getTileCost(0);
         } else {
-            return getTileCost(currentTile.getColourNumber());
+            return getTileCost(currentTile.value().getColourNumber());
         }
     }
 
@@ -574,7 +594,7 @@ StationHolder {
 
         if (relaidTokens == null) relaidTokens = new HashMap<String, Integer>();
 
-        if (currentTile.getNumStations() == newTile.getNumStations()) {
+        if (currentTile.value().getNumStations() == newTile.getNumStations()) {
             // If the number of stations does not change,
             // reassign new Stations to existing cities,
             // keeping the original numbers (which therefore
@@ -584,7 +604,7 @@ StationHolder {
 
             // Check for manual handling of tokens
             for (String compName : relaidTokens.keySet()) {
-                for (Stop city : stops) {
+                for (Stop city : mStops.viewValues()) {
                     if (city.hasTokenOf(compName)) {
                         citiesToStations.put(city, newTile.getStations().get(relaidTokens.get(compName)-1));
                     }
@@ -593,11 +613,11 @@ StationHolder {
 
             // Scan the old cities/stations,
             // and assign new stations where tracks correspond
-            for (Stop city : stops) {
+            for (Stop city : mStops) {
                 if (citiesToStations.containsKey(city)) continue;
                 Station oldStation = city.getRelatedStation();
                 int[] oldTrackEnds =
-                    getTrackEndPoints(currentTile, currentTileRotation,
+                    getTrackEndPoints(currentTile.value(), currentTileRotation.value(),
                             oldStation);
                 if (oldTrackEnds.length == 0) continue;
                 station: for (Station newStation : newTile.getStations()) {
@@ -616,7 +636,7 @@ StationHolder {
             }
 
             // Map any unassigned cities randomly
-            city: for (Stop city : stops) {
+            city: for (Stop city : mStops) {
                 if (citiesToStations.containsKey(city)) continue;
                 for (Station newStation : newTile.getStations()) {
                     if (citiesToStations.values().contains(newStation)) continue;
@@ -642,13 +662,13 @@ StationHolder {
                         + " from "
                         + oldStation.getId()
                         + " "
-                        + getConnectionString(currentTile,
-                                currentTileRotation,
+                        + getConnectionString(currentTile.value(),
+                                currentTileRotation.value(),
                                 oldStation.getNumber())
                                 + " to " + newStation.getId() + " "
                                 + newTracks);
             }
-            newCities = stops;
+            newCities = mStops.viewValues();
 
         } else {
             // If the number of stations does change,
@@ -665,19 +685,19 @@ StationHolder {
             // Scan the old cities/stations,
             // and assign new stations where tracks correspond
             int newCityNumber = 0;
-            for (Stop oldCity : stops) {
+            for (Stop oldCity : mStops) {
                 int cityNumber = oldCity.getNumber();
                 Station oldStation = oldCity.getRelatedStation();
                 int[] oldTrackEnds =
-                    getTrackEndPoints(currentTile, currentTileRotation,
+                    getTrackEndPoints(currentTile.value(), currentTileRotation.value(),
                             oldStation);
                 log.debug("Old city #"
-                        + currentTile.getNb()
+                        + currentTile.value().getNb()
                         + " city "
                         + oldCity.getNumber()
                         + ": "
-                        + getConnectionString(currentTile,
-                                currentTileRotation, oldStation.getNumber()));
+                        + getConnectionString(currentTile.value(),
+                                currentTileRotation.value(), oldStation.getNumber()));
                 station: for (Station newStation : newTile.getStations()) {
                     int[] newTrackEnds =
                         getTrackEndPoints(newTile, newRotation, newStation);
@@ -711,14 +731,14 @@ StationHolder {
                                 log.debug("Assigned from "
                                         + oldCity.getUniqueId()
                                         + " #"
-                                        + currentTile.getNb()
+                                        + currentTile.value().getNb()
                                         + "/"
                                         + currentTileRotation
                                         + " "
                                         + oldStation.getId()
                                         + " "
-                                        + getConnectionString(currentTile,
-                                                currentTileRotation,
+                                        + getConnectionString(currentTile.value(),
+                                                currentTileRotation.value(),
                                                 oldStation.getNumber())
                                                 + " to " + newCity.getUniqueId()
                                                 + " #" + newTile.getNb() + "/"
@@ -736,18 +756,18 @@ StationHolder {
 
             // If an old city is not yet connected, check if was
             // connected to another city it has merged into (1851 Louisville)
-            for (Stop oldCity : stops) {
+            for (Stop oldCity : mStops) {
                 if (oldToNewCities.containsKey(oldCity)) continue;
                 Station oldStation = oldCity.getRelatedStation();
                 int[] oldTrackEnds =
-                    getTrackEndPoints(currentTile, currentTileRotation,
+                    getTrackEndPoints(currentTile.value(), currentTileRotation.value(),
                             oldStation);
                 station: for (int i = 0; i < oldTrackEnds.length; i++) {
                     log.debug("Old track ending at "+oldTrackEnds[i]);
                     if (oldTrackEnds[i] < 0) {
                         int oldStationNumber = -oldTrackEnds[i];
                         // Find the old city that has this number
-                        for (Stop oldCity2 : stops) {
+                        for (Stop oldCity2 : mStops) {
                             log.debug("Old city "+oldCity2.getNumber()+" has station "+oldCity2.getRelatedStation().getNumber());
                             log.debug("  and links to new city "+oldToNewCities.get(oldCity2));
                             if (oldCity2.getRelatedStation().getNumber()
@@ -758,14 +778,14 @@ StationHolder {
                                 log.debug("Assigned from "
                                         + oldCity.getUniqueId()
                                         + " #"
-                                        + currentTile.getNb()
+                                        + currentTile.value().getNb()
                                         + "/"
                                         + currentTileRotation
                                         + " "
                                         + oldStation.getId()
                                         + " "
-                                        + getConnectionString(currentTile,
-                                                currentTileRotation,
+                                        + getConnectionString(currentTile.value(),
+                                                currentTileRotation.value(),
                                                 oldStation.getNumber())
                                                 + " to " + newCity.getUniqueId()
                                                 + " #" + newTile.getNb() + "/"
@@ -807,7 +827,7 @@ StationHolder {
 
             // Move the tokens
             Map<BaseToken, Owner> tokenDestinations = Maps.newHashMap();
-            for (Stop oldCity : stops) {
+            for (Stop oldCity : mStops) {
                 newCity = oldToNewCities.get(oldCity);
                 if (newCity != null) {
                     oldtoken: for (BaseToken token : oldCity.getBaseTokens()) {
@@ -859,30 +879,29 @@ StationHolder {
      * @param newTileOrientation The orientation of the new tile (0-5).
      */
     public void replaceTile(Tile oldTile, Tile newTile,
-            int newTileOrientation, List<Stop> newCities) {
+            int newTileOrientation, List<Stop> newStops) {
 
-        if (oldTile != currentTile) {
+        if (oldTile != currentTile.value()) {
             new Exception("ERROR! Hex " + name + " wants to replace tile #"
                     + oldTile.getNb() + " but has tile #"
-                    + currentTile.getNb() + "!").printStackTrace();
+                    + currentTile.value().getNb() + "!").printStackTrace();
         }
         if (currentTile != null) {
-            currentTile.remove(this);
+            currentTile.value().remove(this);
         }
 
-        log.debug("On hex " + name + " replacing tile " + currentTile.getNb()
+        log.debug("On hex " + name + " replacing tile " + currentTile.value().getNb()
                 + "/" + currentTileRotation + " by " + newTile.getNb() + "/"
                 + newTileOrientation);
 
         newTile.add(this);
 
-        currentTile = newTile;
-        currentTileRotation = newTileOrientation;
+        currentTile.set(newTile);
+        currentTileRotation.set(newTileOrientation);
 
-        stops = newCities;
         mStops.clear();
-        if (stops != null) {
-            for (Stop city : stops) {
+        if (newStops != null) {
+            for (Stop city : newStops) {
                 mStops.put(city.getNumber(), city);
                 log.debug("Tile #"
                         + newTile.getNb()
@@ -900,7 +919,7 @@ StationHolder {
     }
 
     public boolean layBaseToken(PublicCompany company, int station) {
-        if (stops == null || stops.isEmpty()) {
+        if (mStops.isEmpty()) {
             log.error("Tile " + getId()
                     + " has no station for home token of company "
                     + company.getId());
@@ -913,9 +932,8 @@ StationHolder {
             log.error("Company " + company.getId() + " has no free token");
             return false;
         } else {
-            city.getBaseTokens().moveInto(token);
-            // TODO: is this still required?
-            // update();
+            // transfer token
+            token.moveTo(city);
 
             if (isHomeFor(company)
                     && isBlockedForTokenLays != null
@@ -943,10 +961,10 @@ StationHolder {
         return true;
     }
     
-    public ImmutableList<BaseToken> getBaseTokens () {
-        if (stops == null || stops.isEmpty()) return null;
-        ImmutableList.Builder<BaseToken> tokens = ImmutableList.builder();
-        for (Stop city : stops) {
+    public ImmutableSet<BaseToken> getBaseTokens () {
+        if (mStops == null || mStops.isEmpty()) return null;
+        ImmutableSet.Builder<BaseToken> tokens = ImmutableSet.builder();
+        for (Stop city : mStops) {
             tokens.addAll(city.getBaseTokens().items());
         }
         return tokens.build();
@@ -971,13 +989,13 @@ StationHolder {
             return city.hasTokenSlotsLeft();
         } else {
             log.error("Invalid station " + station + ", max is "
-                    + (stops.size() - 1));
+                    + (mStops.size() - 1));
             return false;
         }
     }
 
     public boolean hasTokenSlotsLeft() {
-        for (Stop city : stops) {
+        for (Stop city : mStops) {
             if (city.hasTokenSlotsLeft()) return true;
         }
         return false;
@@ -986,17 +1004,18 @@ StationHolder {
     /** Check if the tile already has a token of a company in any station */
     public boolean hasTokenOfCompany(PublicCompany company) {
 
-        for (Stop city : stops) {
+        for (Stop city : mStops) {
             if (city.hasTokenOf(company)) return true;
         }
         return false;
     }
 
     public ImmutableSet<BaseToken> getTokens(int cityNumber) {
-        if (stops.size() > 0 && mStops.get(cityNumber) != null) {
+        // TODO: Is the test for null still required
+        if (mStops.size() > 0 && mStops.get(cityNumber) != null) {
             return (mStops.get(cityNumber)).getBaseTokens().items();
         } else {
-            return ImmutableSet.of(); // empty List
+            return ImmutableSet.of(); // empty set
         }
     }
 
@@ -1008,8 +1027,8 @@ StationHolder {
      * @return
      */
     public int getCityOfBaseToken(PublicCompany company) {
-        if (stops == null || stops.isEmpty()) return 0;
-        for (Stop city : stops) {
+        if (mStops == null || mStops.isEmpty()) return 0;
+        for (Stop city : mStops) {
             for (BaseToken token : city.getBaseTokens()) {
                 if (token.getParent() == company) {
                     return city.getNumber();
@@ -1020,7 +1039,7 @@ StationHolder {
     }
 
     public List<Stop> getStops() {
-        return stops;
+        return mStops.viewValues();
     }
 
     public Stop getStop(int stopNumber) {
@@ -1029,7 +1048,7 @@ StationHolder {
 
     public Stop getRelatedStop(Station station) {
         Stop foundStop = null;
-        for (Stop stop:mStops.values()) {
+        for (Stop stop:mStops) {
             if (station == stop.getRelatedStation()) {
                 foundStop = stop;
             }
@@ -1039,18 +1058,18 @@ StationHolder {
 
     public void addHome(PublicCompany company, int stopNumber) throws ConfigurationException {
         if (homes == null) homes = new HashMap<PublicCompany, Stop>();
-        if (stops.isEmpty()) {
+        if (mStops.isEmpty()) {
             log.error("No cities for home station on hex " + name);
         } else {
             // not yet decided
             if (stopNumber == 0) {
                 homes.put(company, null);
                 log.debug("Added home of " + company  + " in hex " + this.toString() +  " city not yet decided");
-            } else if (stopNumber > stops.size()) {
+            } else if (stopNumber > mStops.size()) {
                 throw new ConfigurationException ("Invalid city number "+stopNumber+" for hex "+name
-                        +" which has "+stops.size()+" cities");
+                        +" which has "+mStops.size()+" cities");
             } else {
-                Stop homeCity = stops.get(Math.max(stopNumber - 1, 0));
+                Stop homeCity = mStops.get(Math.max(stopNumber - 1, 0));
                 homes.put(company, homeCity);
                 log.debug("Added home of " + company + " set to " + homeCity + " id= " +homeCity.getUniqueId());
             }
@@ -1103,10 +1122,10 @@ StationHolder {
             return false;
         }
         if (currentTile != null) {
-            if (currentTile.isUpgradeable()) {
+            if (currentTile.value().isUpgradeable()) {
                 return true;
             } else {
-                log.debug("Hex " + name + " tile #" + currentTile.getNb()
+                log.debug("Hex " + name + " tile #" + currentTile.value().getNb()
                         + " is not upgradable now");
                 return false;
             }
@@ -1193,7 +1212,7 @@ StationHolder {
             }
             // check if the overall hex slots are sufficient
             int allTokenSlotsLeft = 0;
-            for (Stop city:stops) {
+            for (Stop city:mStops) {
                 allTokenSlotsLeft += city.getTokenSlotsLeft();
             }
             if (allBlockCompanies + anyBlockCompanies  + cityBlockCompanies + 1 > allTokenSlotsLeft) {
@@ -1254,10 +1273,6 @@ StationHolder {
         return false;
     }
 
-    public MapManager getParent() {
-        return (MapManager)super.getParent();
-    }
-
     @Override
     public String toString() {
         return name + " (" + row + "," + column + ")";
@@ -1270,7 +1285,7 @@ StationHolder {
      * @TODO include tokens??
      */
     public String getData() {
-        return currentTile.getNb() + "/" + currentTileRotation;
+        return currentTile.value().getNb() + "/" + currentTileRotation;
     }
 
     /**
@@ -1282,7 +1297,7 @@ StationHolder {
     public String getConnectionString(Tile tile, int rotation,
             int stationNumber) {
         StringBuffer b = new StringBuffer("");
-        if (stops != null && stops.size() > 0) {
+        if (mStops != null && mStops.size() > 0) {
             Map<Integer, List<Track>> tracks = tile.getTracksPerStationMap();
             if (tracks != null && tracks.get(stationNumber) != null) {
                 for (Track track : tracks.get(stationNumber)) {
@@ -1300,7 +1315,7 @@ StationHolder {
     public String getConnectionString(int cityNumber) {
         int stationNumber =
             mStops.get(cityNumber).getRelatedStation().getNumber();
-        return getConnectionString(currentTile, currentTileRotation,
+        return getConnectionString(currentTile.value(), currentTileRotation.value(),
                 stationNumber);
     }
 
@@ -1366,13 +1381,4 @@ StationHolder {
         
     }
 
-    public void addObserver(Observer observer) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    public void removeObserver(Observer observer) {
-        // TODO Auto-generated method stub
-        
-    }
 }

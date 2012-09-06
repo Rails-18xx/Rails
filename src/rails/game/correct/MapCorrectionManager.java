@@ -78,7 +78,7 @@ public final class MapCorrectionManager extends CorrectionManager {
                 break;
             }
             // check if chosenTile contains enough slots
-            List<BaseToken> baseTokens = hex.getBaseTokens();
+            Set<BaseToken> baseTokens = hex.getBaseTokens();
             if (chosenTile != null && baseTokens != null && !baseTokens.isEmpty()) {
                 List<Station> stations = chosenTile.getStations();
                 int nbSlots = 0;

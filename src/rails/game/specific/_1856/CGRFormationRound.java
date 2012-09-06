@@ -605,7 +605,7 @@ bonuses:        for (Bonus bonus : bonuses) {
         for (BaseToken token : new ArrayList<BaseToken>(nonHomeTokens)) {
             city = (Stop) token.getOwner();
             hex = city.getHolder();
-            List<BaseToken> otherTokens = hex.getBaseTokens();
+            Set<BaseToken> otherTokens = hex.getBaseTokens();
             if (otherTokens != null) {
                 for (BaseToken token2 : otherTokens) {
                     if (token2.getParent() == cgr
