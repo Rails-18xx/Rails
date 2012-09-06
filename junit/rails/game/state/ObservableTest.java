@@ -1,7 +1,6 @@
 package rails.game.state;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 import org.junit.Before;
@@ -65,17 +64,10 @@ public class ObservableTest {
         // add observer and test if contained
         observable.addModel(model);
         assertThat(observable.getModels()).contains(model);
-        
-        // check update
-        observable.updateModels();
-        verify(model).update();
-        
+      
         // remove Model and test if not contained
         assertTrue(observable.removeModel(model));
         assertThat(observable.getModels()).doesNotContain(model);
-        observable.updateModels();
-        // still only called once(!)
-        verify(model).update();
         
         // remove Model not contained anymore
         assertFalse(observable.removeModel(model));

@@ -4,7 +4,7 @@ package rails.game.state;
  * 
  * Replaces previous move interface
  */
-abstract class Change {
+public abstract class Change {
     
     protected void init(State state){
         state.getStateManager().getChangeStack().addChange(this);

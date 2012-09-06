@@ -121,8 +121,8 @@ public class Player extends RailsAbstractItem implements MoneyOwner, PortfolioOw
     }
     
     public void updateWorth () {
-        // TODO: Is this method still required
-        worth.update();
+        // FIXME: Is this method still required
+        // worth.update();
     }
 
     public CertificateCountModel getCertCountModel() {

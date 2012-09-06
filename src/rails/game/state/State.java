@@ -25,4 +25,9 @@ public abstract class State extends Observable {
             addModel((Model)parent);
         }
     }
+    
+    void sendChangeToModels(Change change) {
+        this.getStateManager().sendChangeToModels(this, change);
+    }
+   
 }

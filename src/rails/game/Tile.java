@@ -569,8 +569,8 @@ public final class Tile extends Model implements StationHolder, Comparable<Tile>
      * This method may only be called via the TileMove execute() and undo() methods. */
     public boolean add(MapHex hex) {
         tilesLaid.add(hex);
-        // TODO: is this still required?
-        update();
+        // FIXME: is this still required?
+        // update();
         return true;
     }
 
@@ -578,8 +578,8 @@ public final class Tile extends Model implements StationHolder, Comparable<Tile>
      * This method may only be called via the TileMove execute() and undo() methods. */
     public boolean remove(MapHex hex) {
         tilesLaid.remove(hex);
-        // TODO: is this still required?
-        update();
+        // FIXME: is this still required?
+        // update();
         return true;
     }
 

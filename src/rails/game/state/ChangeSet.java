@@ -42,10 +42,10 @@ public class ChangeSet {
     void addChange (Change change) {
         checkState(!closed, "ChangeSet is closed");
         changes.add(change);
-        // immediate execution and update of models
-        change.execute();
-        change.getState().updateModels();
         log.debug("Add " + change);
+        // immediate execution and information of models
+        change.execute();
+        change.getState().sendChangeToModels(change);
     }
     
     /**
@@ -76,7 +76,6 @@ public class ChangeSet {
         checkState(closed, "ChangeSet is still open");
         for (Change change:changes) {            
             change.execute();
-            change.getState().updateModels();
             log.debug("Redo: " + change);
         }
     }
@@ -92,7 +91,6 @@ public class ChangeSet {
         // iterate reverse
         for (Change change:Lists.reverse(changes)) {
             change.undo();
-            change.getState().updateModels();
             log.debug("Undone: " + change);
         }
     }

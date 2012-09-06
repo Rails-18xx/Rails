@@ -33,8 +33,8 @@ public class OperatingRound_18GA extends OperatingRound {
                 ReportBuffer.add(LocalText.getText("GetsExtraTrain",
                         company.getId(),
                         OS_EXTRA_TRAIN_TYPE));
-                // TODO: is this still required?
-                company.getPortfolioModel().getTrainsModel().update();
+                // TODO: do we need a replacement for this?
+                // company.getPortfolioModel().getTrainsModel().update();
             }
         }
         

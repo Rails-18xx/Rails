@@ -68,14 +68,14 @@ public abstract class Observable implements Item {
     public ImmutableSet<Model> getModels() {
         return getStateManager().getModels(this);
     }
-    
+
     /**
-     * Calls update() of registered Models
+     * Text to delivered to Observers
+     * Default is defined to be identical with toString()
+     * @return text for observers
      */
-    public void updateModels() {
-        for (Model m:this.getModels()) {
-            m.update();
-        }
+    public String toText() {
+        return this.toString();
     }
     
     // Item methods
@@ -110,12 +110,6 @@ public abstract class Observable implements Item {
         // recursive definition
         return parent.getFullURI() + Item.SEP + id;
     }
-
-    
-    /**
-     * @return text delivered to observers
-     */
-    public abstract String toText();
     
     @Override
     public String toString() {

@@ -295,9 +295,9 @@ public class PortfolioModel extends Model {
                 getParent().getId(), train.getId() ));
     }
 
-    // TODO: Is this still needed?
+    // FIXME: Is this still needed?
     public void updateTrainsModel() {
-        trains.update();
+        // trains.update();
     }
 
     public int getNumberOfTrains() {
@@ -579,8 +579,8 @@ public class PortfolioModel extends Model {
                     + getParent().getId() + ") rusted");
             train.setRusted();
         }
-        // TODO: Still required?
-        trains.update();
+        // FIXME:: Still required?
+        // trains.update();
     }
 
     /**
@@ -599,5 +599,4 @@ public class PortfolioModel extends Model {
         return getParent().getClass().getSimpleName() + "_" + getParent().getId();
     }
 
-    
 }

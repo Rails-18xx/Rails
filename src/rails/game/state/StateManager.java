@@ -10,6 +10,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -21,13 +22,16 @@ public final class StateManager extends Manager{
         LoggerFactory.getLogger(StateManager.class);
     
     private final ChangeStack changeStack = ChangeStack.create(this);
-    private final HashSetState<State> allStates = HashSetState.create(this, "allStates");
-
-    private final HashMultimapState<Observable, Observer> 
-        observers = HashMultimapState.create(this, "observer");
-    private final HashMultimapState<Observable, Model> 
-        models = HashMultimapState.create(this, "models");
     
+    private final HashSetState<State> allStates = 
+            HashSetState.create(this, "allStates");
+    private final HashMultimapState<Observable, Model> models = 
+            HashMultimapState.create(this, "models");
+
+    // observers is not a state variable (as the have to register and de-register themselves)
+    // gui eleemnts do not have a state of their own (with respect to the game engine)
+    private final HashMultimap<Observable, Observer> observers = 
+            HashMultimap.create();
     
     // initialized later in init()
     private PortfolioManager portfolioManager;
@@ -44,7 +48,6 @@ public final class StateManager extends Manager{
     void init() {
         // manually register embedded states
         registerState(allStates);
-        registerState(observers);
         registerState(models);
         // create managers
         portfolioManager = PortfolioManager.create(this, "Portfolios");
@@ -58,12 +61,13 @@ public final class StateManager extends Manager{
         allStates.add(state);
     }
     
-    /**
-     * De-Register states
-     */
-    boolean deRegisterState(State state) {
-        return allStates.remove(state);
-    }
+//    /**
+//     * De-Register states
+//     */
+//    TODO: Add this
+//    boolean deRegisterState(State state) {
+//        return allStates.remove(state);
+//    }
     
     /**
      * set of all states stored in the StateManager
@@ -92,8 +96,8 @@ public final class StateManager extends Manager{
     /**
      * Set of all observers that observe the observable
      */
-    public ImmutableSet<Observer> getObservers(Observable observable) {
-        return observers.get(observable);
+    ImmutableSet<Observer> getObservers(Observable observable) {
+        return ImmutableSet.copyOf(observers.get(observable));
     }
     
     /**
@@ -109,36 +113,53 @@ public final class StateManager extends Manager{
         return models.remove(observable, model);
     }
     
-    public ImmutableSet<Model> getModels(Observable observable) {
+    ImmutableSet<Model> getModels(Observable observable) {
         return models.get(observable);
     }
 
+    
+    void sendChangeToModels(State state, Change change) {
+        // check if there are models
+        ImmutableSet<Model> initModels = state.getModels();
+        if (initModels.isEmpty()) return;
+        
+        for (Model m:initModels) {
+            m.update(change);
+            log.debug("State " + state + " sends change to " + m);
+        }
+
+        ImmutableList<Model> upperModels = getModelsToUpdate(initModels);
+
+        for (Model m:upperModels) {
+            m.update(change);
+            log.debug("State " + state + " sends change to " + m);
+        }
+    }
+    
     /**
-     * A set of states is given as input
+     * A set of observables is given as input
      * and then calculates all observer to update in the correct sequence
      * 
      * It uses a topological sort based on DFS
      * 
-     * @param states that have changed
+     * @param observables that have been updated
      * @return sorted list of all models to be updated
      */
-    private static enum Color {WHITE, GREY, BLACK};
-    
-    ImmutableList<Model> getModelsToUpdate(Collection<State> states) {
+    ImmutableList<Model> getModelsToUpdate(Collection<? extends Observable> observables) {
         // Topological sort
         // Initialize (we do not use WHITE explicitly, but implicit)
-        Map<Observable, Color> colors = Maps.newHashMap();
-        LinkedList<Model> topoList = Lists.newLinkedList();
+        final Map<Observable, Color> colors = Maps.newHashMap();
+        final LinkedList<Model> topoList = Lists.newLinkedList();
         
         // For all states
-        for (State s: states) {
+        for (Observable s: observables) {
             topoSort(s, colors, topoList);
         }
-        log.debug("Observables to Update = " + topoList.toString());
         return ImmutableList.copyOf(topoList);
     }
     
-    private void topoSort(Observable v, Map<Observable, Color> colors, LinkedList<Model> topoList) {
+    private static enum Color {WHITE, GREY, BLACK};
+    private void topoSort(final Observable v, final Map<Observable, Color> colors, final LinkedList<Model> topoList) {
         colors.put(v, Color.GREY);
         for (Model m:v.getModels()) {
             if (!colors.containsKey(m)) {
@@ -155,15 +176,25 @@ public final class StateManager extends Manager{
     void updateObservers(Set<State> states) {
         // all direct observers
         for (State s:states){
-            for (Observer o:s.getObservers()) {
-                o.update(s.toText());
+            Set<Observer> observers = s.getObservers();
+            if (observers.isEmpty()) continue;
+            // cache StateText
+            String stateText = s.toText();
+            for (Observer o:observers) {
+                o.update(stateText);
+                log.debug("State " + s + " updates observer " + o);
             }
         }
         
         // all indirect observers
         for (Model m:getModelsToUpdate(states)) {
-            for (Observer o:m.getObservers()) {
-                o.update(m.toText());
+            Set<Observer> observers = m.getObservers();
+            if (observers.isEmpty()) continue;
+            // cache ModelText
+            String modelText = m.toText();
+            for (Observer o:observers) {
+                o.update(modelText);
+                log.debug("Model " + m + " updates observer " + o);
             }
         }
     }

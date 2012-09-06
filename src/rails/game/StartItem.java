@@ -301,13 +301,13 @@ public class StartItem extends RailsAbstractItem {
         } else if (amount == 0) {
             // Used in 18EU to force making the "bid"
             // (in fact: buy price) visible
-            // TODO: is this still required?
-            bids[index].update();
+            // FIXME: is this still required?
+            // bids[index].update();
         } else if (amount == -1) {
             // Passed (standard type)
             bids[index].set(0);
-            // TODO: is this still required?
-            bids[index].update();
+            // FIXME: is this still required?
+            // bids[index].update();
         }
     }
 

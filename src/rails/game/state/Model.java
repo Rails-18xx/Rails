@@ -12,38 +12,16 @@ package rails.game.state;
 
 public abstract class Model extends Observable {
 
-    private boolean current = false;
-    private String cache = null;
-    
     protected Model(Item parent, String id) {
         super(parent, id);
     }
 
     /**
-     * Calling of update informs the model that some prerequisites has been updated
+     * Calling of update informs the model that some state has changed
+     * Overriding this does not require a call, as it usually does nothing
      */
-    public void update() {
-        current = false;
-    }
-    
-    /**
-     * {@inheritDoc}
-     * Remark: A Model has to either override this or cachedText(), the latter automatically caches results
-     */
-    @Override
-    public String toText() {
-        if (!current){
-            current = true;
-            cache = this.cachedText();
-        }
-        return cache;
-    }
-    
-    /**
-     *  @return Default Model text used for Observer updates (gets cached automatically)
-     */
-    public String cachedText() {
-        return null;
+    public void update(Change change) {
+        // Standard behavior is do nothing
     }
     
 }

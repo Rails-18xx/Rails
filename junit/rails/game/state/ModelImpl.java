@@ -23,7 +23,7 @@ class ModelImpl extends Model {
     }
     
     @Override
-    public String cachedText() {
+    public String toText() {
         return text.value();
     }
 }

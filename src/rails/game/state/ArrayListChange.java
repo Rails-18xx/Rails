@@ -2,7 +2,6 @@ package rails.game.state;
 
 /**
  * Change associated with ArrayListState
- * @author evos, freystef
  */
 final class ArrayListChange<E> extends Change {
     private final ArrayListState<E> state;
