@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.game.*;
+import rails.game.state.ChangeStack;
 
 public final class MapCorrectionManager extends CorrectionManager {
 
@@ -168,7 +169,7 @@ public final class MapCorrectionManager extends CorrectionManager {
                 return execute(action);
             }
         case FINISHED:
-            getRoot().getChangeStack().newChangeSet(action);
+            ChangeStack.start(this, action);
 
             // lays tile
             int orientation = action.getOrientation();

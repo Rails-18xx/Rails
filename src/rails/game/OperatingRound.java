@@ -838,7 +838,7 @@ public class OperatingRound extends Round implements Observer {
              */
         }
 
-        getRoot().getChangeStack().newChangeSet(action);
+        ChangeStack.start(this, action);
 
         nextStep();
 
@@ -897,7 +897,7 @@ public class OperatingRound extends Round implements Observer {
         }
 
         /* End of validation, start of execution */
-        getRoot().getChangeStack().newChangeSet(action);
+        ChangeStack.start(this, action);
         
         // FIXME: if (action.isForced()) changeStack.linkToPreviousMoveSet();
 
@@ -1048,7 +1048,7 @@ public class OperatingRound extends Round implements Observer {
             return false;
         }
 
-        getRoot().getChangeStack().newChangeSet(action);
+        ChangeStack.start(this, action);
 
         operatingCompany.value().buyPrivate(privateCompany, player, price);
 
@@ -1096,7 +1096,7 @@ public class OperatingRound extends Round implements Observer {
             return false;
         }
 
-        getRoot().getChangeStack().newChangeSet(action);
+        ChangeStack.start(this, action);
 
         priv.setClosed();
 
@@ -1167,7 +1167,7 @@ public class OperatingRound extends Round implements Observer {
             return false;
         }
 
-        getRoot().getChangeStack().newChangeSet(action);
+        ChangeStack.start(this, action);
 
         executeTakeLoans (action);
 
@@ -1276,14 +1276,14 @@ public class OperatingRound extends Round implements Observer {
                         + remainder + " loan repayment");
                 log.info("President has $"+presCash+", so $"+cashToBeRaisedByPresident+" must be added");
                 savedAction = action;
-                getRoot().getChangeStack().newChangeSet(action);
+                ChangeStack.start(this, action);
                 gameManager.startShareSellingRound(operatingCompany.value().getPresident(),
                         cashToBeRaisedByPresident, operatingCompany.value(), false);
                 return true;
             }
         }
 
-        getRoot().getChangeStack().newChangeSet(action);
+        ChangeStack.start(this, action);
 
         if (repayment > 0) executeRepayLoans (action);
 
@@ -1377,7 +1377,7 @@ public class OperatingRound extends Round implements Observer {
             return false;
         }
 
-        getRoot().getChangeStack().newChangeSet(action);
+        ChangeStack.start(this, action);
 
         operatingCompany.value().setRight(rightName, rightValue);
         String costText = Currency.toBank(operatingCompany.value(), right.getCost());
@@ -1513,7 +1513,7 @@ public class OperatingRound extends Round implements Observer {
         }
 
         /* End of validation, start of execution */
-        getRoot().getChangeStack().newChangeSet(action);
+        ChangeStack.start(this, action);
 
         if (tile != null) {
             String costText = null;
@@ -1828,7 +1828,7 @@ public class OperatingRound extends Round implements Observer {
         }
 
         /* End of validation, start of execution */
-        getRoot().getChangeStack().newChangeSet(action);
+        ChangeStack.start(this, action);
 
         if (hex.layBaseToken(operatingCompany.value(), station)) {
             /* TODO: the false return value must be impossible. */
@@ -2005,7 +2005,7 @@ public class OperatingRound extends Round implements Observer {
         }
 
         /* End of validation, start of execution */
-        getRoot().getChangeStack().newChangeSet(action);
+        ChangeStack.start(this, action);
 
         if (hex.layBonusToken(token, gameManager.getPhaseManager())) {
             /* TODO: the false return value must be impossible. */
@@ -2072,7 +2072,7 @@ public class OperatingRound extends Round implements Observer {
         }
 
         /* End of validation, start of execution */
-        getRoot().getChangeStack().newChangeSet(action);
+        ChangeStack.start(this, action);
 
         String costText = Currency.wire(operatingCompany.value(), cost, seller);
         
@@ -2127,7 +2127,7 @@ public class OperatingRound extends Round implements Observer {
             return false;
         }
 
-        getRoot().getChangeStack().newChangeSet(action);
+        ChangeStack.start(this, action);
 
         ReportBuffer.add(LocalText.getText("CompanyRevenue",
                 action.getCompanyName(),
@@ -2461,7 +2461,7 @@ public class OperatingRound extends Round implements Observer {
             return false;
         }
 
-        getRoot().getChangeStack().newChangeSet(action);
+        ChangeStack.start(this, action);
 
         String cashText = null;
         if (amount > 0) {
@@ -2688,7 +2688,7 @@ public class OperatingRound extends Round implements Observer {
         }
 
         /* End of validation, start of execution */
-        getRoot().getChangeStack().newChangeSet(action);
+        ChangeStack.start(this, action);
         Phase previousPhase = getCurrentPhase();
 
         if (presidentMustSellShares) {

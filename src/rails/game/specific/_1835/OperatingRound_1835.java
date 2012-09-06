@@ -23,6 +23,7 @@ import rails.game.special.ExchangeForShare;
 import rails.game.special.SpecialProperty;
 import rails.game.special.SpecialTileLay;
 import rails.game.state.BooleanState;
+import rails.game.state.ChangeStack;
 import rails.game.state.HashMapState;
 import rails.game.state.Owner;
 
@@ -250,7 +251,7 @@ public class OperatingRound_1835 extends OperatingRound {
                         errMsg ));
                 return false;
             } else {
-                getRoot().getChangeStack().newChangeSet(action); // Duplicate, but we have to
+                ChangeStack.start(this, action); // Duplicate, but we have to
                 hasLaidExtraOBBTile.set(true); 
                 // Done here to make getSpecialTileLays() return the correct value.
                 // It's provisional, on the assumption that other validations are OK.

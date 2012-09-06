@@ -154,5 +154,11 @@ public class ChangeStack {
     public int getSizeRedoStack() {
         return redoStack.size();
     }
-    
+
+    /**
+     * Start of a new ChangeSet
+     */
+    public static void start(Item item, ChangeAction action) {
+        item.getRoot().getStateManager().getChangeStack().newChangeSet(action);
+    }
 }

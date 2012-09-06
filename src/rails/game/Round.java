@@ -14,6 +14,7 @@ import rails.game.model.PortfolioModel;
 import rails.game.special.SpecialProperty;
 import rails.game.state.ArrayListState;
 import rails.game.state.BooleanState;
+import rails.game.state.ChangeStack;
 import rails.game.state.Creatable;
 import rails.game.state.Owner;
 import rails.game.state.Portfolio;
@@ -175,7 +176,7 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
             return false;
         }
 
-        getRoot().getChangeStack().newChangeSet(action);
+        ChangeStack.start(this, action);
         // FIMXE: if (linkedMoveSet) changeStack.linkToPreviousMoveSet();
 
         if (exchanged > 0) {

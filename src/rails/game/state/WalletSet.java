@@ -58,4 +58,9 @@ public class WalletSet<T extends Countable> extends Wallet<T> {
         wallet.put(item, value(item) + value);
     }
     
+    @Override
+    public String toText() {
+        return wallet.toString();
+    }
+    
 }

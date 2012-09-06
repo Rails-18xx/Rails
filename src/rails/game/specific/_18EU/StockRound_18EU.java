@@ -14,6 +14,7 @@ import rails.game.action.*;
 import rails.game.model.PortfolioModel;
 import rails.game.state.ArrayListState;
 import rails.game.state.BooleanState;
+import rails.game.state.ChangeStack;
 import rails.game.state.IntegerState;
 
 /**
@@ -379,7 +380,7 @@ public class StockRound_18EU extends StockRound {
             return false;
         }
 
-        getRoot().getChangeStack().newChangeSet(action);
+        ChangeStack.start(this, action);
 
         // All is OK, now start the company
         MapHex homeHex = null;
@@ -496,7 +497,7 @@ public class StockRound_18EU extends StockRound {
 
         // TODO Validation to be added?
 
-        getRoot().getChangeStack().newChangeSet(action);
+        ChangeStack.start(this, action);
 
         if (major != null) {
             cert = major.getPortfolioModel().findCertificate(major, false);
@@ -680,7 +681,7 @@ public class StockRound_18EU extends StockRound {
         }
 
         /* End of validation, start of execution */
-        getRoot().getChangeStack().newChangeSet(action);
+        ChangeStack.start(this, action);
         // FIXME: if (action.isForced()) changeStack.linkToPreviousMoveSet();
         pool.addTrain(train);
         ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",

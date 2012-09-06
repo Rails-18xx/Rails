@@ -8,6 +8,7 @@ import rails.common.LocalText;
 import rails.common.parser.GameOption;
 import rails.game.action.*;
 import rails.game.state.ArrayListState;
+import rails.game.state.ChangeStack;
 import rails.game.state.GenericState;
 import rails.game.state.IntegerState;
 import rails.game.state.Model;
@@ -229,7 +230,7 @@ public abstract class StartRound extends Round {
             return false;
         }
 
-        getRoot().getChangeStack().newChangeSet(boughtItem);
+        ChangeStack.start(this, boughtItem);
 
         assignItem(player, item, price, sharePrice);
 

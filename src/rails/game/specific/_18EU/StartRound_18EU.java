@@ -4,6 +4,7 @@ import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;
+import rails.game.state.ChangeStack;
 import rails.game.state.IntegerState;
 import rails.game.state.GenericState;
 
@@ -134,7 +135,7 @@ public class StartRound_18EU extends StartRound {
             return false;
         }
 
-        getRoot().getChangeStack().newChangeSet(boughtItem);
+        ChangeStack.start(this, boughtItem);
 
         assignItem(player, item, price, 0);
         ((PublicCertificate) item.getPrimary()).getCompany().start();
@@ -218,7 +219,7 @@ public class StartRound_18EU extends StartRound {
             return false;
         }
 
-        getRoot().getChangeStack().newChangeSet(bidItem);
+        ChangeStack.start(this, bidItem);
 
         if (getStep() == SELECT_STEP) {
 
@@ -283,7 +284,7 @@ public class StartRound_18EU extends StartRound {
 
         ReportBuffer.add(LocalText.getText("PASSES", playerName));
 
-        getRoot().getChangeStack().newChangeSet(action);
+        ChangeStack.start(this, action);
 
         StartItem auctionedItem = (StartItem) currentAuctionItem.value();
 

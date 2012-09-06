@@ -10,6 +10,7 @@ import rails.game.MoneyOwner;
 import rails.game.Player;
 import rails.game.PublicCompany;
 import rails.game.ReportBuffer;
+import rails.game.state.ChangeStack;
 
 public class CashCorrectionManager extends CorrectionManager {
     
@@ -84,7 +85,7 @@ public class CashCorrectionManager extends CorrectionManager {
         } else {
             // no error occured 
             
-            getRoot().getChangeStack().newChangeSet(cashAction);
+            ChangeStack.start(this, cashAction);
 
             String msg;
             if (amount < 0) {

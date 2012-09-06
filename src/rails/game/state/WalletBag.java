@@ -42,5 +42,10 @@ public class WalletBag<T extends Countable> extends Wallet<T> {
     void change (T item, int value) {
         amount += value;
     }
-    
+
+    @Override
+    public String toText() {
+        return Integer.toString(amount);
+    }
+
 }

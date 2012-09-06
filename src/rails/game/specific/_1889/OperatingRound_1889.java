@@ -18,6 +18,7 @@ import rails.game.action.UseSpecialProperty;
 import rails.game.special.SpecialProperty;
 import rails.game.special.SpecialTileLay;
 import rails.game.state.BooleanState;
+import rails.game.state.ChangeStack;
 
 /**
  * Adds specific code for 1889 to allow the special timing of the special tile laying private companies
@@ -88,7 +89,7 @@ public class OperatingRound_1889 extends OperatingRound {
         if (action instanceof UseSpecialProperty) {
             UseSpecialProperty spAction=(UseSpecialProperty)action;
             if (spAction.getSpecialProperty() == Iterables.get(privB.getSpecialProperties(), 0)) {
-                getRoot().getChangeStack().newChangeSet(action);
+                ChangeStack.start(this, action);
                 activeSpPrivB.set(true);
                 log.debug("1889 specific: Allows tile lay for B with player request");
                 return true;
@@ -136,7 +137,7 @@ public class OperatingRound_1889 extends OperatingRound {
         if (activeSpPrivC.value()) {
             log.debug("1889 specific: Tile lay for C skipped, return to previous step");
             // TODO: This is a GameAction which should not be used here
-            getRoot().getChangeStack().newChangeSet(null);
+            ChangeStack.start(this, null);
             activeSpPrivC.set(false);
             stepObject.set(storeActiveStep);
         } else {

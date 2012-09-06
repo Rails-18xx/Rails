@@ -42,7 +42,7 @@ public final class StateManager extends Manager{
     }
     
     void init() {
-        // register embedded states
+        // manually register embedded states
         registerState(allStates);
         registerState(observers);
         registerState(models);
@@ -52,7 +52,7 @@ public final class StateManager extends Manager{
     }
     
     /**
-     * Register states (usually done automatically at state creation)
+     * Register states (usually called automatically at state creation)
      */
     void registerState(State state) {
         allStates.add(state);
@@ -65,12 +65,16 @@ public final class StateManager extends Manager{
         return allStates.remove(state);
     }
     
+    /**
+     * set of all states stored in the StateManager
+     */
     ImmutableSet<State> getAllStates() {
         return allStates.view();
     }
 
     /**
      * Adds the combination of observer to observable
+     * Usually this is one via addObserver of the observable
      * @throws an IllegalArgumentException - if observer is already assigned to an observable
      */
     void addObserver(Observer observer, Observable observable) {
@@ -78,10 +82,16 @@ public final class StateManager extends Manager{
         observers.put(observable, observer);
     }
     
+    /** 
+     * Remove combination of observer to observable 
+     */
     boolean removeObserver(Observer observer, Observable observable) {
         return observers.remove(observable, observer);
     }
     
+    /**
+     * Set of all observers that observe the observable
+     */
     public ImmutableSet<Observer> getObservers(Observable observable) {
         return observers.get(observable);
     }
@@ -158,9 +168,9 @@ public final class StateManager extends Manager{
         }
     }
     
-//    void registerReceiver(Triggerable receiver, State toState) {
-//    }
-
+    // StateManager getters for sub-components
+    //////////////////////////////////////////
+    
     public ChangeStack getChangeStack() {
         return changeStack;
     }

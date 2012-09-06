@@ -8,6 +8,7 @@ import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.LayBaseToken;
 import rails.game.action.PossibleAction;
+import rails.game.state.ChangeStack;
 
 public class OperatingRound_18AL extends OperatingRound {
 
@@ -60,7 +61,7 @@ public class OperatingRound_18AL extends OperatingRound {
                             tokens.get(i));
             }
 
-            getRoot().getChangeStack().newChangeSet(action);
+            ChangeStack.start(this, action);
 
             for (int i = 0; i < trains.size(); i++) {
                 oldToken = trains.get(i).getNameToken();

@@ -31,9 +31,9 @@ final class PortfolioChange<T extends Ownable> extends Change {
     @Override
     public String toString() {
         if (intoPortfolio) {
-            return "Change for " + portfolio + ": Add + " + item;
+            return "Change for " + portfolio + ": Add " + item;
         } else {
-            return "Change for " + portfolio + ": Remove + " + item;
+            return "Change for " + portfolio + ": Remove " + item;
         }
     }
 

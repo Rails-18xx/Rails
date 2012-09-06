@@ -4,6 +4,7 @@ import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;
+import rails.game.state.ChangeStack;
 import rails.game.state.GenericState;
 import rails.game.state.IntegerState;
 
@@ -232,7 +233,7 @@ public final class StartRound_1880 extends StartRound {
             return false;
         }
 
-        getRoot().getChangeStack().newChangeSet(bidItem);
+        ChangeStack.start(this, bidItem);
 
         item.setBid(bidAmount, player);
         ReportBuffer.add(LocalText.getText("BID_ITEM_LOG",
@@ -273,7 +274,7 @@ public final class StartRound_1880 extends StartRound {
 
         ReportBuffer.add(LocalText.getText("PASSES", playerName));
 
-        getRoot().getChangeStack().newChangeSet(action);
+        ChangeStack.start(this, action);
 
         numPasses.add(1);
         

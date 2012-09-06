@@ -10,6 +10,7 @@ import rails.game.Currency;
 import rails.game.action.*;
 import rails.game.special.SellBonusToken;
 import rails.game.state.BooleanState;
+import rails.game.state.ChangeStack;
 import rails.game.state.IntegerState;
 import rails.game.state.Portfolio;
 
@@ -252,7 +253,7 @@ public class CGRFormationRound extends SwitchableUIRound {
 
         // TODO Validation skipped for now...
 
-        getRoot().getChangeStack().newChangeSet(action);
+        ChangeStack.start(this, action);
         // FIMXE: linked to previous moveset
         // changeStack.linkToPreviousMoveSet();
 
@@ -826,7 +827,7 @@ bonuses:        for (Bonus bonus : bonuses) {
 
         /* End of validation, start of execution */
         // new: link always, see below commented
-        getRoot().getChangeStack().newChangeSet(action);
+        ChangeStack.start(this, action);
         // FIXME:changeStack.linkToPreviousMoveSet();
 
         if (train != null) {

@@ -8,6 +8,7 @@ import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.MergeCompanies;
 import rails.game.action.NullAction;
+import rails.game.state.ChangeStack;
 
 /**
  * Implements a basic Stock Round. <p> A new instance must be created for each
@@ -103,7 +104,7 @@ public final class FinalMinorExchangeRound extends StockRound_18EU {
     public boolean done(NullAction action, String playerName, boolean hasAutopassed) {
 
         // TODO: Here no action is stored
-        getRoot().getChangeStack().newChangeSet(action);
+        ChangeStack.start(this, action);
 
         for (PublicCompany comp : companyManager.getAllPublicCompanies()) {
             if (comp.getType().getId().equals("Minor")) {

@@ -46,10 +46,4 @@ public abstract class Wallet<T extends Countable> extends State {
 
     abstract void change(T item, int value);
     
-    @Override
-    public String toText() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
 }

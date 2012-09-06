@@ -13,6 +13,7 @@ import rails.game.action.DiscardTrain;
 import rails.game.action.PossibleAction;
 import rails.game.special.ExchangeForShare;
 import rails.game.special.SpecialProperty;
+import rails.game.state.ChangeStack;
 
 public class PrussianFormationRound extends StockRound {
 
@@ -235,7 +236,7 @@ public class PrussianFormationRound extends StockRound {
         }
 
         // all actions linked during formation round to avoid serious undo problems
-        getRoot().getChangeStack().newChangeSet(action);
+        ChangeStack.start(this, action);
         // FIXME: changeStack.linkToPreviousMoveSet();
 
         if (folding) executeStartPrussian(false);
@@ -297,7 +298,7 @@ public class PrussianFormationRound extends StockRound {
         */
 
         // all actions linked during formation round to avoid serious undo problems
-        getRoot().getChangeStack().newChangeSet(action);
+        ChangeStack.start(this, action);
         // FIMXE: changeStack.linkToPreviousMoveSet();
 
         // Execute
@@ -426,7 +427,7 @@ public class PrussianFormationRound extends StockRound {
         }
 
         /* End of validation, start of execution */
-        getRoot().getChangeStack().newChangeSet(action);
+        ChangeStack.start(this, action);
         // FIXME: if (action.isForced()) changeStack.linkToPreviousMoveSet();
 
         pool.addTrain(train);
