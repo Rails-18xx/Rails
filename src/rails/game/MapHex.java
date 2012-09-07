@@ -20,8 +20,6 @@ import rails.game.Stop.RunTo;
 import rails.game.Stop.Score;
 import rails.game.Stop.Type;
 import rails.game.action.LayTile;
-import rails.game.model.WalletMoneyModel;
-import rails.game.model.PortfolioModel;
 
 import rails.game.state.BooleanState;
 import rails.game.state.GenericState;
@@ -1278,8 +1276,8 @@ public class MapHex extends Model implements RailsItem, Owner, Configurable {
      *
      * @TODO include tokens??
      */
-    public String getData() {
-        return currentTile.value().getNb() + "/" + currentTileRotation;
+    public String toText() {
+        return currentTile.value().getNb() + "/" + currentTileRotation.value();
     }
 
     /**
@@ -1350,29 +1348,6 @@ public class MapHex extends Model implements RailsItem, Owner, Configurable {
 
     public Score getScoreType() {
         return scoreType;
-    }
-
-    // Owner interface
-    
-    public boolean hasPortfolio() {
-        return false;
-    }
-
-    public PortfolioModel getPortfolioModel() {
-        return null;
-    }
-
-    public boolean hasCash() {
-        return false;
-    }
-
-    public WalletMoneyModel getCash() {
-        return null;
-    }
-
-    public void update() {
-        // TODO Auto-generated method stub
-        
     }
 
 }

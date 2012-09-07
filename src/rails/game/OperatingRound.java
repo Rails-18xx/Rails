@@ -308,7 +308,7 @@ public class OperatingRound extends Round implements Observer {
                 result = done(nullAction);
                 break;
             case NullAction.SKIP:
-                skip();
+                skip(nullAction);
                 result = true;
                 break;
             }
@@ -703,10 +703,11 @@ public class OperatingRound extends Round implements Observer {
         }
         while (++stepIndex < steps.length) {
             step = steps[stepIndex];
-            log.debug("Step " + step);
+            log.debug("OR considers step " + step);
 
             if (step == GameDef.OrStep.LAY_TOKEN
                     && company.getNumberOfFreeBaseTokens() == 0) {
+                log.debug("OR skips " + step + ": No freeBaseTokens");
                 continue;
             }
 
@@ -714,6 +715,7 @@ public class OperatingRound extends Round implements Observer {
 
                 if (!company.canRunTrains()) {
                     // No trains, then the revenue is zero.
+                    log.debug("OR skips " + step + ": Cannot run trains");
                     executeSetRevenueAndDividend (
                             new SetDividend (0, false, new int[] {SetDividend.NO_TRAIN}));
                     // TODO: This probably does not handle share selling correctly
@@ -723,6 +725,7 @@ public class OperatingRound extends Round implements Observer {
 
             if (step == GameDef.OrStep.PAYOUT) {
                 // This step is now obsolete
+                log.debug("OR skips " + step + ": Always skipped");
                 continue;
             }
 
@@ -767,7 +770,10 @@ public class OperatingRound extends Round implements Observer {
 
             }
 
-            if (!gameSpecificNextStep (step)) continue;
+            if (!gameSpecificNextStep (step)) {
+                log.debug("OR skips " + step + ": Not game specific");
+                continue;
+            }
 
             // No reason found to skip this step
             break;
@@ -808,10 +814,10 @@ public class OperatingRound extends Round implements Observer {
      *  3.1.   NOOPS
      *=======================================*/
 
-    public void skip() {
+    public void skip(NullAction action) {
         log.debug("Skip step " + stepObject.value());
         // TODO: Check if this is ok
-        // FIXME: changeStack.start(true);
+        ChangeStack.start(this, action);
         nextStep();
     }
 
@@ -2742,7 +2748,7 @@ public class OperatingRound extends Round implements Observer {
 
         operatingCompany.value().buyTrain(train, price);
 
-        if (oldOwner == ipo.getTrainsModel()) {
+        if (oldOwner == ipo.getParent()) {
             train.getCertType().addToBoughtFromIPO();
             trainManager.setAnyTrainBought(true);
             // Clone the train if infinitely available
@@ -2751,7 +2757,7 @@ public class OperatingRound extends Round implements Observer {
             }
 
         }
-        if (oldOwner instanceof Bank) {
+        if (oldOwner instanceof BankPortfolio) {
             trainsBoughtThisTurn.add(train.getCertType());
         }
 

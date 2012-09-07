@@ -17,6 +17,7 @@ import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.ImmutableSortedSet;
 
 import rails.common.LocalText;
+import rails.game.Bank;
 import rails.game.BankPortfolio;
 import rails.game.Bonus;
 import rails.game.BonusToken;
@@ -593,9 +594,14 @@ public class PortfolioModel extends Model {
     
     /**
      * Used to identify portfolios on reload
+     * TODO: Remove that in the future
      */
     @Deprecated
     public String getUniqueName () {
+        // For BankPortfolios use Bank
+        if (getParent() instanceof BankPortfolio) {
+            return Bank.class.getSimpleName() + "_" + getParent().getId();
+        }
         return getParent().getClass().getSimpleName() + "_" + getParent().getId();
     }
 

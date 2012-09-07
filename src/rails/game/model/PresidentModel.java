@@ -16,8 +16,6 @@ public final class PresidentModel extends Model {
 
     public static final String ID = "PresidentModel";  
     
-    PublicCompany company;
-    
     private PresidentModel(PublicCompany parent, String id) {
         super(parent, id);
     }
@@ -36,9 +34,9 @@ public final class PresidentModel extends Model {
 
     @Override
     public String toText() {
-        Player president = company.getPresident();
+        Player president = getParent().getPresident();
         if (president == null) return "";
-        else return company.getPresident().getNameAndPriority();
+        else return getParent().getPresident().getNameAndPriority();
     }
 
 }

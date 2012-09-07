@@ -767,9 +767,10 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
         interruptedRound = getCurrentRound();
 
+        // An id basd on interruptedRound and company id
+        String id = "SSR_" + interruptedRound.getId() + "_" + cashNeedingCompany.getId();
         // check if other companies can be dumped
-        // FIXME: This ID will not work, as it will create duplication
-        createRound(shareSellingRoundClass, "ShareSellingRound").start(
+        createRound(shareSellingRoundClass, id).start(
                 interruptedRound, player, cashToRaise, cashNeedingCompany,
                 !problemDumpOtherCompanies || forcedSellingCompanyDump);
         // the last parameter indicates if the dump of other companies is allowed, either this is explicit or

@@ -5,6 +5,8 @@ import java.io.ObjectInputStream;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.google.common.base.Objects;
+
 import rails.game.CompanyManager;
 import rails.game.Currency;
 import rails.game.GameManager;
@@ -218,7 +220,7 @@ public class BuyTrain extends PossibleORAction {
         }
         b.append("train (").append(trainUniqueId).append(") from ").append(from.getId());
         if (fixedCost > 0) {
-            b.append(" for ").append(Currency.format(train, fixedCost));
+            b.append(" for ").append(Currency.format(company, fixedCost));
         } else {
             b.append(" for any amount");
         }
@@ -229,14 +231,14 @@ public class BuyTrain extends PossibleORAction {
             b.append(forcedExchange ? " (forced exchange)" : " (exchange)");
         }
         if (presidentMustAddCash) {
-            b.append(" must add cash ").append(Currency.format(train, presidentCashToAdd));
+            b.append(" must add cash ").append(Currency.format(company, presidentCashToAdd));
         } else if (presidentMayAddCash) {
             b.append(" may add cash up to ").append(
-                    Currency.format(train, presidentCashToAdd));
+                    Currency.format(company, presidentCashToAdd));
         }
         if (acted) {
-            b.append(" - paid: ").append(Currency.format(train, pricePaid));
-            if (addedCash > 0) b.append(" pres.cash added: "+Currency.format(train, addedCash));
+            b.append(" - paid: ").append(Currency.format(company, pricePaid));
+            if (addedCash > 0) b.append(" pres.cash added: "+Currency.format(company, addedCash));
             if (exchangedTrain != null) b.append(" exchanged for "+exchangedTrain.getId()+"-train");
         }
 
@@ -247,8 +249,9 @@ public class BuyTrain extends PossibleORAction {
     public boolean equalsAsOption(PossibleAction action) {
         if (!(action instanceof BuyTrain)) return false;
         BuyTrain a = (BuyTrain) action;
-        return a.getTrain() == getTrain() && a.from == from && a.fixedCost == fixedCost
-               && a.trainsForExchange == trainsForExchange;
+        return a.getTrain() == getTrain() && a.from == from 
+                && a.fixedCost == fixedCost
+                && Objects.equal(a.trainsForExchange, trainsForExchange);
     }
 
     @Override

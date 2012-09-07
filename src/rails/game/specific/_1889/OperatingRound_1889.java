@@ -133,7 +133,7 @@ public class OperatingRound_1889 extends OperatingRound {
     }
     
     @Override
-    public void skip() {
+    public void skip(NullAction action) {
         if (activeSpPrivC.value()) {
             log.debug("1889 specific: Tile lay for C skipped, return to previous step");
             // TODO: This is a GameAction which should not be used here
@@ -141,7 +141,7 @@ public class OperatingRound_1889 extends OperatingRound {
             activeSpPrivC.set(false);
             stepObject.set(storeActiveStep);
         } else {
-            super.skip();
+            super.skip(action);
         }
     }
     

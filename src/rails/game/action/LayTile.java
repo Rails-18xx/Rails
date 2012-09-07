@@ -221,9 +221,9 @@ public class LayTile extends PossibleORAction {
         if (!(action.getClass() == LayTile.class)) return false;
         LayTile a = (LayTile) action;
         return (Objects.equal(a.locationNames, locationNames)
-               && a.type == type
-               && Objects.equal(a.tiles, tiles) 
-               && Objects.equal(a.specialProperty, specialProperty));
+//              && a.type == type // type is not stored 
+               && ( Objects.equal(a.tiles, tiles) && specialProperty == null 
+               || Objects.equal(a.specialProperty, specialProperty) && specialProperty != null));
 //              && a.tileColours == tileColours
         // TODO: Replace this by testing if the tile is part of the map 
         // Remark: this test is invalid as sometimes zero values got stored

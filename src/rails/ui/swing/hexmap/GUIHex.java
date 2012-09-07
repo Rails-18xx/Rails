@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/GUIHex.java,v 1.45 2010/06/24 21:48:08 stefanfrey Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.BasicStroke;
@@ -28,7 +27,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Iterables;
 
 import rails.algorithms.RevenueBonusTemplate;
-import rails.game.Bank;
+
 import rails.game.BaseToken;
 import rails.game.BonusToken;
 import rails.game.Currency;
@@ -890,7 +889,6 @@ public class GUIHex implements Observer {
         toolTip = null;
     }
 
-    // FIXME: Why is this called getModel instead of getMapHex?
     public MapHex getModel() {
         return model;
     }

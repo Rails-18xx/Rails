@@ -1,7 +1,5 @@
 package rails.game.action;
 
-import java.util.Arrays;
-
 import com.google.common.primitives.Ints;
 
 import rails.game.*;

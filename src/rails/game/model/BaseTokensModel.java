@@ -10,6 +10,7 @@ import com.google.common.collect.Sets;
 import rails.game.BaseToken;
 import rails.game.PublicCompany;
 import rails.game.state.Model;
+import rails.game.state.Portfolio;
 import rails.game.state.PortfolioSet;
 
 /**
@@ -31,8 +32,12 @@ public class BaseTokensModel extends Model {
         return new BaseTokensModel(parent, id);
     }
 
+    /**
+     * Initialize a set of tokens
+     */
     public void initTokens(Set<BaseToken> tokens) {
         allTokens = ImmutableSortedSet.copyOf(tokens);
+        Portfolio.moveAll(allTokens, getParent());
     }
     
     /**

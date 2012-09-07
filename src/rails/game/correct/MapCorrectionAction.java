@@ -178,8 +178,8 @@ public class MapCorrectionAction extends CorrectionAction {
     @Override
     public boolean equalsAsOption(PossibleAction action) {
         if (!(action instanceof MapCorrectionAction)) return false;
-        MapCorrectionAction a = (MapCorrectionAction) action;
-        return (a.step == this.step);
+        // anything is allowed, no restriction
+        return true;
     }
 
     @Override

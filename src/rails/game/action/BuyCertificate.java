@@ -7,9 +7,6 @@ import rails.game.*;
 import rails.game.model.PortfolioModel;
 import rails.game.model.PortfolioOwner;
 
-/**
- * @author Erik Vos
- */
 public class BuyCertificate extends PossibleAction {
 
     // Server-side settings

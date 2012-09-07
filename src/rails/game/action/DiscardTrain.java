@@ -83,7 +83,7 @@ public class DiscardTrain extends PossibleORAction {
     public boolean equalsAsOption(PossibleAction action) {
         if (!(action instanceof DiscardTrain)) return false;
         DiscardTrain a = (DiscardTrain) action;
-        return a.ownedTrains == ownedTrains && a.company == company;
+        return a.ownedTrains.equals(ownedTrains) && a.company == company;
     }
 
     @Override
