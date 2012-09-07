@@ -180,7 +180,7 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
         // TODO: Check if this still works
         if (!(owner instanceof Stop)) return null;
         Stop city = (Stop)owner;
-        MapHex hex = city.getHolder();
+        MapHex hex = city.getParent();
         Station station = city.getRelatedStation();
         return getVertex(hex, station);
     }

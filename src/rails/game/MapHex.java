@@ -60,7 +60,7 @@ import rails.util.*;
  * tiles the above picture should be rotated 30 degrees clockwise.
  */
 
-public class MapHex extends Model implements RailsItem, Owner, Configurable, StationHolder {
+public class MapHex extends Model implements RailsItem, Owner, Configurable {
 
     private static final String[] ewOrNames =
     { "SW", "W", "NW", "NE", "E", "SE" };
@@ -589,7 +589,7 @@ public class MapHex extends Model implements RailsItem, Owner, Configurable, Sta
     public void upgrade(Tile newTile, int newRotation, Map<String, Integer> relaidTokens) {
 
         Stop newCity;
-        String newTracks;
+        // String newTracks;
         List<Stop> newCities;
 
         if (relaidTokens == null) relaidTokens = new HashMap<String, Integer>();
@@ -650,15 +650,9 @@ public class MapHex extends Model implements RailsItem, Owner, Configurable, Sta
             for (Stop city : citiesToStations.keySet()) {
                 Station newStation = citiesToStations.get(city);
                 Station oldStation = city.getRelatedStation();
-                city.setRelatedStation(newStation);
-                city.setSlots(newStation.getBaseSlots());
-                newTracks =
-                    getConnectionString(newTile,
-                            newRotation,
-                            newStation.getNumber());
-                city.setTrackEdges(newTracks);
+                city.setRelatedStation(newStation, this, newTile, newRotation);
                 log.debug("Assigned "
-                        + city.getUniqueId()
+                        + city.getSpecificId()
                         + " from "
                         + oldStation.getId()
                         + " "
@@ -666,7 +660,7 @@ public class MapHex extends Model implements RailsItem, Owner, Configurable, Sta
                                 currentTileRotation.value(),
                                 oldStation.getNumber())
                                 + " to " + newStation.getId() + " "
-                                + newTracks);
+                                + city.getTrackEdges());
             }
             newCities = mStops.viewValues();
 
@@ -711,25 +705,29 @@ public class MapHex extends Model implements RailsItem, Owner, Configurable, Sta
                     for (int i = 0; i < oldTrackEnds.length; i++) {
                         for (int j = 0; j < newTrackEnds.length; j++) {
                             if (oldTrackEnds[i] == newTrackEnds[j]) {
-                                // Match found!
+                                // Match found: A new station refers to a old station
+                                // Then check if the new station is already assigned to a stop
                                 if (!newStationsToCities.containsKey(newStation)) {
-                                    newCity = Stop.create(this, ++newCityNumber, newStation);
+                                    newCity = Stop.create(this, ++newCityNumber, newStation, newTile, newRotation);
                                     newCities.add(newCity);
                                     mNewCities.put(cityNumber, newCity);
                                     newStationsToCities.put(newStation, newCity);
-                                    newCity.setSlots(newStation.getBaseSlots());
                                 } else {
+                                    // station already used, thus get the new stop
                                     newCity =
                                         newStationsToCities.get(newStation);
                                 }
                                 oldToNewCities.put(oldCity, newCity);
-                                newTracks =
-                                    getConnectionString(newTile,
-                                            newRotation,
-                                            newStation.getNumber());
-                                newCity.setTrackEdges(newTracks);
+                                // here the trackedges were created using the number of the newStation
+                                // thus in a case of a dual relationship the latter number was used
+                                // TODO: Does this matter?
+//                                newTracks =
+//                                    getConnectionString(newTile,
+//                                            newRotation,
+//                                            newStation.getNumber());
+//                                newCity.setTrackEdges(newTracks);
                                 log.debug("Assigned from "
-                                        + oldCity.getUniqueId()
+                                        + oldCity.getSpecificId()
                                         + " #"
                                         + currentTile.value().getNb()
                                         + "/"
@@ -740,11 +738,11 @@ public class MapHex extends Model implements RailsItem, Owner, Configurable, Sta
                                         + getConnectionString(currentTile.value(),
                                                 currentTileRotation.value(),
                                                 oldStation.getNumber())
-                                                + " to " + newCity.getUniqueId()
+                                                + " to " + newCity.getSpecificId()
                                                 + " #" + newTile.getNb() + "/"
                                                 + newRotation + " "
                                                 + newStation.getId() + " "
-                                                + newTracks);
+                                                + newCity.getTrackEdges());
                                 break station;
                             }
                         }
@@ -776,7 +774,7 @@ public class MapHex extends Model implements RailsItem, Owner, Configurable, Sta
                                 newCity = oldToNewCities.get(oldCity2);
                                 oldToNewCities.put(oldCity, newCity);
                                 log.debug("Assigned from "
-                                        + oldCity.getUniqueId()
+                                        + oldCity.getSpecificId()
                                         + " #"
                                         + currentTile.value().getNb()
                                         + "/"
@@ -787,7 +785,7 @@ public class MapHex extends Model implements RailsItem, Owner, Configurable, Sta
                                         + getConnectionString(currentTile.value(),
                                                 currentTileRotation.value(),
                                                 oldStation.getNumber())
-                                                + " to " + newCity.getUniqueId()
+                                                + " to " + newCity.getSpecificId()
                                                 + " #" + newTile.getNb() + "/"
                                                 + newRotation + " "
                                                 + newCity.getRelatedStation().getId() + " "
@@ -811,18 +809,13 @@ public class MapHex extends Model implements RailsItem, Owner, Configurable, Sta
                 int cityNumber;
                 for (cityNumber = 1; mNewCities.containsKey(cityNumber); cityNumber++)
                     ;
-                newCity = Stop.create(this, ++newCityNumber, newStation);
+                newCity = Stop.create(this, ++newCityNumber, newStation, newTile, newRotation);
                 newCities.add(newCity);
                 mNewCities.put(cityNumber, newCity);
                 newStationsToCities.put(newStation, newCity);
-                newCity.setSlots(newStation.getBaseSlots());
-                newTracks =
-                    getConnectionString(newTile, newRotation,
-                            newStation.getNumber());
-                newCity.setTrackEdges(newTracks);
-                log.debug("New city added " + newCity.getUniqueId() + " #"
+               log.debug("New city added " + newCity.getSpecificId() + " #"
                         + newTile.getNb() + "/" + newRotation + " "
-                        + newStation.getId() + " " + newTracks);
+                        + newStation.getId() + " " + newCity.getTrackEdges());
             }
 
             // Move the tokens
@@ -840,7 +833,7 @@ public class MapHex extends Model implements RailsItem, Owner, Configurable, Sta
                                 log.debug("Duplicate token "
                                         + token.getUniqueId()
                                         + " moved from "
-                                        + oldCity.getId() + " to "
+                                        + oldCity.getSpecificId() + " to "
                                         + company.getId());
                                 ReportBuffer.add(LocalText.getText(
                                         "DuplicateTokenRemoved",
@@ -851,23 +844,24 @@ public class MapHex extends Model implements RailsItem, Owner, Configurable, Sta
                         }
                         tokenDestinations.put(token, newCity);
                         log.debug("Token " + token.getUniqueId()
-                                + " moved from " + oldCity.getId() + " to "
-                                + newCity.getId());
+                                + " moved from " + oldCity.getSpecificId() + " to "
+                                + newCity.getSpecificId());
                     }
                 }
             }
-            // TODO: Move that after the for-loop, check if this still works
+
+            // TODO: Moved after for loop, check if this still works
             for (BaseToken token : tokenDestinations.keySet()) {
                 token.moveTo(tokenDestinations.get(token));
             }
         }
 
-        // TODO: Check as the code below was not reachable
-        // Replace the tile
+        
+        // TODO: It now created a tile move which calls hex.replaceTile(...)
 //        new TileMove(this, currentTile, currentTileRotation, stops,
 //                newTile, newRotation, newCities);
-
-        /* TODO Further consequences to be processed here, e.g. new routes etc. */
+// Check if this still works and could be simplified?        
+        this.replaceTile(currentTile.value(), newTile, newRotation, newCities);
     }
 
     /**
@@ -1069,9 +1063,9 @@ public class MapHex extends Model implements RailsItem, Owner, Configurable, Sta
                 throw new ConfigurationException ("Invalid city number "+stopNumber+" for hex "+name
                         +" which has "+mStops.size()+" cities");
             } else {
-                Stop homeCity = mStops.get(Math.max(stopNumber - 1, 0));
+                Stop homeCity = mStops.get(stopNumber);
                 homes.put(company, homeCity);
-                log.debug("Added home of " + company + " set to " + homeCity + " id= " +homeCity.getUniqueId());
+                log.debug("Added home of " + company + " set to " + homeCity + " id= " +homeCity.getSpecificId());
             }
         }
     }

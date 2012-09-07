@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Station.java,v 1.12 2010/05/11 21:47:21 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.Arrays;
@@ -19,36 +18,39 @@ import org.slf4j.LoggerFactory;
  * represented by Tile objects, so laying the first tile on a hex is treated as
  * a normal upgrade in this program. <p> See also the City class, which
  * represents stations on tiles that have actually been laid on a MapHex.
- *
- * @author Erik Vos
+ * 
+ * Station has the following ids:
+ * String id: The attribute "id" of the station tag (e.g. "city1")
+ * int number: The number inside the string (e.g. 1)
+ * 
  */
 public class Station {
 
-    private String id;
-    private String type;
-    private int number;
-    private int value;
-    private int baseSlots;
-    private Tile tile;
-    private int position;
-    private String cityName;
-    private int x;
-    private int y;
-
+    // TODO: Check if this is still required
+    // replace that by something new?
     public static final String CITY = "City";
     public static final String TOWN = "Town";
     public static final String HALT = "Halt";
     public static final String OFF_MAP_AREA = "OffMapCity";
     public static final String PORT = "Port";
     public static final String PASS = "Pass";
-    public static final String JUNCTION = "Junction"; // No station, just a
-    // branching point.
+    public static final String JUNCTION = "Junction"; 
+    // No station, just a branching point.
     private static final String[] types =
     { CITY, TOWN, HALT, OFF_MAP_AREA, PORT, PASS, JUNCTION };
     private static final List<String> validTypes = Arrays.asList(types);
 
     protected static Logger log =
         LoggerFactory.getLogger(Station.class);
+
+    private final String id;
+    private final String type;
+    private final int number;
+    private final int value;
+    private final int baseSlots;
+    private final Tile tile;
+    private final int position;
+    private final String cityName;
 
     /** Check validity of a Station type */
     public static boolean isTypeValid(String type) {
@@ -65,8 +67,7 @@ public class Station {
         this.baseSlots = slots;
         this.position = position;
         this.cityName = cityName;
-        convertPosition();
-        // log.debug(toString()+": x="+x+" y="+y);
+        log.debug("Created " + this);
     }
 
     public String getName() {
@@ -114,7 +115,6 @@ public class Station {
      * @return Returns the value.
      */
     public int getValue() {
-        // log.debug(toString());
         return value;
     }
 
@@ -122,38 +122,40 @@ public class Station {
         return position;
     }
 
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    private void convertPosition() {
-        if (position == 0) {
-            x = y = 0;
-            return;
-        }
-
-        x = 0;
-        y = 12;
-        rotatePosition(position / 100);
-    }
-
-    private void rotatePosition(int rotation) {
-        double r = Math.toRadians(60 * rotation);
-        double dx = x * Math.sin(r) + y * Math.cos(r);
-        double dy = y * Math.sin(r) + x * Math.cos(r);
-        x = (int) Math.round(dx);
-        y = (int) Math.round(dy);
-    }
+    // TODO: Is this code still required somewhere?
+    // Otherwise drop code
+//    public int getX() {
+//        return x;
+//    }
+//
+//    public int getY() {
+//        return y;
+//    }
+//
+//    private void convertPosition() {
+//        if (position == 0) {
+//            x = y = 0;
+//            return;
+//        }
+//
+//        x = 0;
+//        y = 12;
+//        rotatePosition(position / 100);
+//    }
+//
+//    private void rotatePosition(int rotation) {
+//        double r = Math.toRadians(60 * rotation);
+//        double dx = x * Math.sin(r) + y * Math.cos(r);
+//        double dy = y * Math.sin(r) + x * Math.cos(r);
+//        x = (int) Math.round(dx);
+//        y = (int) Math.round(dy);
+//    }
 
     @Override
     public String toString() {
         return "Station " + number + " on tile #" + tile.getNb() + " ID: " + id
         + ", Type: " + type + ", Slots: " + baseSlots + ", Value: "
-        + value;
+        + value + ", Position:" + position;
     }
 
 }

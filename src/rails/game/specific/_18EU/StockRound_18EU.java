@@ -389,7 +389,7 @@ public class StockRound_18EU extends StockRound {
             homeHex = minor.getHomeHexes().get(0);
             homeCityNumber = homeHex.getCityOfBaseToken(minor);
         } else if (selectedHomeCity != null) {
-            homeHex = selectedHomeCity.getHolder();
+            homeHex = selectedHomeCity.getParent();
             homeCityNumber = selectedHomeCity.getNumber();
         }
         company.setHomeHex(homeHex);

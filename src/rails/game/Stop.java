@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import rails.game.state.GenericState;
 import rails.game.state.Owner;
 import rails.game.state.PortfolioSet;
+import rails.game.state.StringState;
 import rails.util.Util;
 
 /**
@@ -21,17 +22,16 @@ import rails.util.Util;
  * tile. However, the Stop numbers will not change, unless cities are merged
  * during upgrades; but even then it is attempted to retain the old Stop numbers
  * as much as possible.
- *
- * @author Erik Vos
  */
 public class Stop extends RailsAbstractItem implements Owner {
+    
     private final int number;
-    private String uniqueId;
-    //private Station relatedStation;
-    private GenericState<Station> relatedStation;
-    private int slots;
-    private PortfolioSet<BaseToken> tokens;
-    private String trackEdges;
+    private final GenericState<Station> relatedStation = 
+            GenericState.create(this, "station");
+    private final PortfolioSet<BaseToken> tokens = 
+            PortfolioSet.create(this, "tokens", BaseToken.class);
+    // TODO: Replace TrackEdges by a call (do not store that)
+    private final StringState trackEdges = StringState.create(this, "trackEdges");
 
 
     private Type type = null;
@@ -97,27 +97,23 @@ public class Stop extends RailsAbstractItem implements Owner {
     private Stop(MapHex hex, int number) {
         super(hex, String.valueOf(number));
         this.number = number;
-        uniqueId = getParent().getId() + "_" + number;
-        tokens = PortfolioSet.create(this, "tokens", BaseToken.class);
-        relatedStation = GenericState.create(this, "City_"+uniqueId+"_station");
     }
 
-    // TODO: Can this all be simplified, maybe stop <=> station relationship is enough
     /**
      * returns initialized Stop
      */
-    public static Stop create(MapHex hex, int number, Station station){
+    // TODO: Simplify that (should it really require tile and rotation?)
+    public static Stop create(MapHex hex, int number, Station station, Tile tile, int rotation){
         Stop stop = new Stop(hex, number);
-        stop.initStation(station);
+        stop.setRelatedStation(station, hex, tile, rotation);
         return stop;
     }
 
-    /**
-     * @param station that the stop refers to
-     */
-    public void initStation(Station station) {
-        setRelatedStation(station);
-        initStopProperties();
+    // this returns a station initialized with the current tile and tile rotation /for trackEdges
+    public static Stop create(MapHex hex, int number, Station station){
+        Stop stop = new Stop(hex, number);
+        stop.setRelatedStation(station, hex, hex.getCurrentTile(), hex.getCurrentTileRotation());
+        return stop;
     }
     
     @Override
@@ -125,12 +121,15 @@ public class Stop extends RailsAbstractItem implements Owner {
         return (MapHex)super.getParent();
     }
 
+    
+    // FIXME: This is not undo proof, replace by direct calls
+    // TODO: Simplify the properties structure
     private void initStopProperties () {
 
         Station station = relatedStation.value();
         Tile tile = station.getTile();
         MapManager mapManager = getParent().getParent();
-        TileManager tileManager = tile.getTileManager();
+        TileManager tileManager = tile.getParent();
 
         // Stop type
         type = getParent().getStopType();
@@ -191,16 +190,9 @@ public class Stop extends RailsAbstractItem implements Owner {
                 +" loop="+loopAllowed+" scoreType="+scoreType);
     }
 
-    public String getId() {
+    public String getSpecificId() {
         return getParent().getId() + "/" + number;
 
-    }
-
-    /**
-     * @return Returns the holder.
-     */
-    public MapHex getHolder() {
-        return getParent();
     }
 
     public int getNumber() {
@@ -211,24 +203,14 @@ public class Stop extends RailsAbstractItem implements Owner {
         return relatedStation.value();
     }
 
-    public void setRelatedStation(Station relatedStation) {
+    // TODO: Should be simplified
+    public void setRelatedStation(Station relatedStation, MapHex hex, Tile tile, int rotation) {
         this.relatedStation.set(relatedStation);
-        slots = relatedStation.getBaseSlots();
-        trackEdges =
-            getParent().getConnectionString(getParent().getCurrentTile(),
-                    getParent().getCurrentTileRotation(),
-                    relatedStation.getNumber());
-    }
-
-    public void setSlots(int slots) {
-        this.slots = slots;
-    }
-
-    /**
-     * @return Returns the id.
-     */
-    public String getUniqueId() {
-        return uniqueId;
+        trackEdges.set(
+            hex.getConnectionString(tile,
+                    rotation,
+                    relatedStation.getNumber()));
+        initStopProperties();
     }
 
     public PortfolioSet<BaseToken> getBaseTokens() {
@@ -240,15 +222,15 @@ public class Stop extends RailsAbstractItem implements Owner {
     }
 
     public int getSlots() {
-        return slots;
+        return relatedStation.value().getBaseSlots();
     }
 
     public boolean hasTokenSlotsLeft() {
-        return tokens.size() < slots;
+        return tokens.size() < getSlots();
     }
 
     public int getTokenSlotsLeft () {
-        return slots - tokens.size();
+        return getSlots() - tokens.size();
     }
 
     /**
@@ -272,11 +254,7 @@ public class Stop extends RailsAbstractItem implements Owner {
     }
 
     public String getTrackEdges() {
-        return trackEdges;
-    }
-
-    public void setTrackEdges(String trackEdges) {
-        this.trackEdges = trackEdges;
+        return trackEdges.value();
     }
 
     public Type getType() {

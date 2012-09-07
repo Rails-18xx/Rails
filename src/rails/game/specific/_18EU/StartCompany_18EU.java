@@ -54,7 +54,7 @@ public class StartCompany_18EU extends StartCompany {
             StringBuffer b = new StringBuffer();
             for (Stop station : availableHomeStations) {
                 if (b.length() > 0) b.append(",");
-                b.append(station.getId());
+                b.append(station.getSpecificId());
             }
             availableHomeStationNames = b.toString();
         }
@@ -92,7 +92,7 @@ public class StartCompany_18EU extends StartCompany {
 
     public void setHomeStation(Stop homeStation) {
         selectedHomeStation = homeStation;
-        selectedHomeStationName = homeStation.getId();
+        selectedHomeStationName = homeStation.getSpecificId();
     }
 
     @Override

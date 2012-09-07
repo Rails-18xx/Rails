@@ -210,14 +210,14 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
                         ReportBuffer.add(LocalText.getText("ExchangesBaseToken",
                                 comp.getId(),
                                 token.getOldCompanyName(),
-                                city.getId()));
+                                city.getSpecificId()));
                         comp.layBaseToken(hex, 0);
                     }
                 } else {
                     ReportBuffer.add(LocalText.getText("NoBaseTokenExchange",
                             comp.getId(),
                             token.getOldCompanyName(),
-                            city.getId()));
+                            city.getSpecificId()));
                 }
             }
         }

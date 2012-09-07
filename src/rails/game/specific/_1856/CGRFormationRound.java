@@ -533,7 +533,7 @@ public class CGRFormationRound extends SwitchableUIRound {
                 bt = token;
                 if (!bt.isPlaced()) continue;
                 city = (Stop) bt.getOwner();
-                hex = city.getHolder();
+                hex = city.getParent();
                 if (homeHexes != null && homeHexes.contains(hex)) {
                     homeTokens.add(bt);
                 } else {
@@ -589,14 +589,14 @@ bonuses:        for (Bonus bonus : bonuses) {
         ReportBuffer.add("");
         for (BaseToken token : homeTokens) {
             city = (Stop) token.getOwner();
-            hex = city.getHolder();
+            hex = city.getParent();
             // return token to home
             token.moveTo(token.getParent());
             if (hex.layBaseToken(cgr, city.getNumber())) {
                 /* TODO: the false return value must be impossible. */
                 ReportBuffer.add(LocalText.getText("ExchangesBaseToken",
                         cgrName, token.getParent().getId(),
-                        city.getId()));
+                        city.getSpecificId()));
                 cgr.layBaseToken(hex, 0);
             }
         }
@@ -604,7 +604,7 @@ bonuses:        for (Bonus bonus : bonuses) {
         // Clean up any non-home tokens on cities now having a CGR token
         for (BaseToken token : new ArrayList<BaseToken>(nonHomeTokens)) {
             city = (Stop) token.getOwner();
-            hex = city.getHolder();
+            hex = city.getParent();
             Set<BaseToken> otherTokens = hex.getBaseTokens();
             if (otherTokens != null) {
                 for (BaseToken token2 : otherTokens) {
@@ -612,7 +612,7 @@ bonuses:        for (Bonus bonus : bonuses) {
                             || nonHomeTokens.contains(token2) && token2 != token) {
                         ReportBuffer.add(LocalText.getText("DiscardsBaseToken",
                                 cgrName, token.getParent().getId(),
-                                city.getId()));
+                                city.getSpecificId()));
                         // return token to home
                         token.moveTo(token.getParent());
                         nonHomeTokens.remove(token);
@@ -684,7 +684,7 @@ bonuses:        for (Bonus bonus : bonuses) {
         for (BaseToken token : exchangedTokens) {
             // Remove old token
             city = (Stop) token.getOwner();
-            hex = city.getHolder();
+            hex = city.getParent();
             // return token to Company
             token.moveTo(token.getParent());
             // Replace it with a CGR token

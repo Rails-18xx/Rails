@@ -29,6 +29,7 @@ public class BaseToken extends Token<BaseToken> {
         return getParent().getBaseTokensModel().tokenIsLaid(this);
     }
 
+
     // FIXME: Check if this works, previously it returned the parent id
     // However this was invalid for the portfolio storage
 //    public String getId() {

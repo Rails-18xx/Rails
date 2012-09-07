@@ -122,17 +122,11 @@ public final class StateManager extends Manager{
         // check if there are models
         ImmutableSet<Model> initModels = state.getModels();
         if (initModels.isEmpty()) return;
-        
-        for (Model m:initModels) {
-            m.update(change);
-            log.debug("State " + state + " sends change to " + m);
-        }
+        ImmutableList<Model> allModels = getModelsToUpdate(initModels);
 
-        ImmutableList<Model> upperModels = getModelsToUpdate(initModels);
-
-        for (Model m:upperModels) {
+        for (Model m:allModels) {
             m.update(change);
-            log.debug("State " + state + " sends change to " + m);
+            log.debug("State " + state + " sends change to Model " + m);
         }
     }
     

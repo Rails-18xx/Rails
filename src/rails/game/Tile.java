@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/Tile.java,v 1.43 2010/05/29 09:38:58 stefanfrey Exp $ */
 package rails.game;
 
 import java.util.*;
@@ -14,6 +13,7 @@ import rails.game.Stop.RunThrough;
 import rails.game.Stop.RunTo;
 import rails.game.Stop.Score;
 import rails.game.Stop.Type;
+import rails.game.state.HashSetState;
 import rails.game.state.Item;
 import rails.game.state.Model;
 import rails.util.Util;
@@ -21,13 +21,11 @@ import rails.util.Util;
 /** Represents a certain tile <i>type</i>, identified by its id (tile number).
  * <p> For each tile number, only one tile object is created.
  * The list <b>tilesLaid</b> records in which hexes a certain tile number has been laid.
- * @author Erik
  *
  *
- * FIXME: A lot to be done 
- * Why is the Model, why do we need StationHolder? etc.
+ * TODO: A lot could be improved
  */
-public final class Tile extends Model implements StationHolder, Comparable<Tile> {
+public final class Tile extends Model implements RailsItem, Comparable<Tile> {
 
     /** The 'internal id', identifying the tile in the XML files */
     private final int nb;
@@ -49,14 +47,19 @@ public final class Tile extends Model implements StationHolder, Comparable<Tile>
     private final List<Upgrade> upgrades = new ArrayList<Upgrade>(); // Contains
     // Upgrade instances
     //private String upgradesString = "";
+    // TODO: Replace side by objects and then keep tracks there
     @SuppressWarnings("rawtypes")
     private final List[] tracksPerSide = new ArrayList[6];
     // N.B. Cannot parametrise collection array
+
+    // TODO: Move that to station class
     private Map<Integer, List<Track>> tracksPerStation = null;
     private final List<Track> tracks = new ArrayList<Track>();
     private final List<Station> stations = new ArrayList<Station>();
+
     private static final Pattern sidePattern = Pattern.compile("side(\\d+)");
     private static final Pattern cityPattern = Pattern.compile("city(\\d+)");
+    
     private int quantity;
     private boolean unlimited = false;
     private boolean allowsMultipleBasesOfOneCompany = false;
@@ -66,19 +69,19 @@ public final class Tile extends Model implements StationHolder, Comparable<Tile>
     public static final int UNLIMITED_TILES = -1;
 
     // Stop properties
-    protected Type stopType = null;
-    protected RunTo runToAllowed = null;
-    protected RunThrough runThroughAllowed = null;
-    protected Loop loopAllowed = null;
-    protected Score scoreType = null;
-
-    protected TileManager tileManager;
+    private Type stopType = null;
+    private RunTo runToAllowed = null;
+    private RunThrough runThroughAllowed = null;
+    private Loop loopAllowed = null;
+    private Score scoreType = null;
 
     /**
      * Flag indicating that player must reposition any basetokens during the upgrade.
      */
-    boolean relayBaseTokensOnUpgrade = false;
+    private boolean relayBaseTokensOnUpgrade = false;
 
+    // TODO: Replace TileColors as Strings with a TileColor enum
+    
     /** Off-board preprinted tiles */
     public static final String RED_COLOUR_NAME = "red";
     public static final int RED_COLOUR_NUMBER = -2;
@@ -97,6 +100,7 @@ public final class Tile extends Model implements StationHolder, Comparable<Tile>
     public static final String GREY_COLOUR_NAME = "grey";
     public static final int GREY_COLOUR_NUMBER = 4;
 
+    
     protected static final List<String> VALID_COLOUR_NAMES =
         Arrays.asList(new String[] { RED_COLOUR_NAME, FIXED_COLOUR_NAME,
                 WHITE_COLOUR_NAME, YELLOW_COLOUR_NAME, GREEN_COLOUR_NAME,
@@ -107,18 +111,16 @@ public final class Tile extends Model implements StationHolder, Comparable<Tile>
      * higher are upgradeable.
      */
 
-    protected static final int TILE_NUMBER_OFFSET = 2;
+    private static final int TILE_NUMBER_OFFSET = 2;
 
     /** Records in which hexes a certain tile number has been laid.
-     * The length of this list indicates the number of tiles laid on the map board.
-     * <p>As this list is not a State object, it must only be updated via the TileMove execute() and undo() methods.
+     * The size of the collection indicates the number of tiles laid on the map board.
      */
-    private final ArrayList<MapHex> tilesLaid = new ArrayList<MapHex>();
+    private final HashSetState<MapHex> tilesLaid = HashSetState.create(this, "tilesLaid");
 
     /** Storage of revenueBonus that are bound to the tile */
-    protected List<RevenueBonusTemplate> revenueBonuses = null;
+    private List<RevenueBonusTemplate> revenueBonuses = null;
 
-    // TODO: Rewrite this to use the 2-stage approach with init()
     private Tile(Item owner, Integer id) {
         super(owner, Integer.toString(id));
         this.nb = id;
@@ -134,10 +136,21 @@ public final class Tile extends Model implements StationHolder, Comparable<Tile>
         return new Tile(parent, id);
     }
     
+    @Override
+    public TileManager getParent() {
+        return (TileManager)super.getParent();
+    }
+    
+    @Override
+    public RailsRoot getRoot() {
+        return (RailsRoot)super.getParent();
+    }
+    
     /**
      * @param se &lt;Tile&gt; element from TileSet.xml
      * @param te &lt;Tile&gt; element from Tiles.xml
      */
+    // TODO: Warning due to list array 
     @SuppressWarnings("unchecked")
     public void configureFromXML(Tag setTag, Tag defTag)
     throws ConfigurationException {
@@ -389,8 +402,6 @@ public final class Tile extends Model implements StationHolder, Comparable<Tile>
     public void finishConfiguration (TileManager tileManager)
     throws ConfigurationException {
 
-        this.tileManager = tileManager;
-
         for (Upgrade upgrade : upgrades) {
 
             Tile tile = tileManager.getTile(upgrade.getTileId());
@@ -565,22 +576,15 @@ public final class Tile extends Model implements StationHolder, Comparable<Tile>
         return relayBaseTokensOnUpgrade;
     }
 
-    /** Register a tile of this type being laid on the map.
-     * This method may only be called via the TileMove execute() and undo() methods. */
+    /** Register a tile of this type being laid on the map. */
     public boolean add(MapHex hex) {
         tilesLaid.add(hex);
-        // FIXME: is this still required?
-        // update();
         return true;
     }
 
-    /** Register a tile of this type being removed from the map.
-     * This method may only be called via the TileMove execute() and undo() methods. */
+    /** Register a tile of this type being removed from the map. */
     public boolean remove(MapHex hex) {
-        tilesLaid.remove(hex);
-        // FIXME: is this still required?
-        // update();
-        return true;
+        return tilesLaid.remove(hex);
     }
 
     /** Return the number of free tiles */
@@ -647,11 +651,6 @@ public final class Tile extends Model implements StationHolder, Comparable<Tile>
     public Score getScoreType() {
         return scoreType;
     }
-
-    public TileManager getTileManager () {
-        return tileManager;
-    }
-
 
     protected class Upgrade {
 
