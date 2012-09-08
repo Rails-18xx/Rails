@@ -45,7 +45,7 @@ public class ChangeSet {
         log.debug("Add " + change);
         // immediate execution and information of models
         change.execute();
-        change.getState().sendChangeToModels(change);
+        change.getState().informTriggers(change);
     }
     
     /**

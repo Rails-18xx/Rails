@@ -16,12 +16,4 @@ public abstract class Model extends Observable {
         super(parent, id);
     }
 
-    /**
-     * Calling of update informs the model that some state has changed
-     * Overriding this does not require a call, as it usually does nothing
-     */
-    public void update(Change change) {
-        // Standard behavior is do nothing
-    }
-    
 }

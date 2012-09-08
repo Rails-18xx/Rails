@@ -26,8 +26,8 @@ public abstract class State extends Observable {
         }
     }
     
-    void sendChangeToModels(Change change) {
-        this.getStateManager().sendChangeToModels(this, change);
+    void informTriggers(Change change) {
+        this.getStateManager().informTriggers(this, change);
     }
    
 }

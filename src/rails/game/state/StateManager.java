@@ -27,6 +27,9 @@ public final class StateManager extends Manager{
             HashSetState.create(this, "allStates");
     private final HashMultimapState<Observable, Model> models = 
             HashMultimapState.create(this, "models");
+    private final HashMultimapState<Observable, Trigger> triggers = 
+            HashMultimapState.create(this, "triggers");
+    
 
     // observers is not a state variable (as the have to register and de-register themselves)
     // gui eleemnts do not have a state of their own (with respect to the game engine)
@@ -102,7 +105,7 @@ public final class StateManager extends Manager{
     
     /**
      * Adds the combination of model to observable
-     * @param Model the model that tracks the observable
+     * @param Model the model that is updated by the observable
      * @param Observable the observable to monitor
      */
     void addModel(Model model, Observable observable) {
@@ -117,16 +120,42 @@ public final class StateManager extends Manager{
         return models.get(observable);
     }
 
+    /**
+     * Adds the combination of trigger to observable
+     * @param Trigger the trigger that tracks the observable
+     * @param Observable the observable to monitor
+     */
+    void addTrigger(Trigger trigger, Observable observable) {
+        triggers.put(observable, trigger);
+    }
     
-    void sendChangeToModels(State state, Change change) {
+    boolean removeTrigger(Trigger trigger, Observable observable) {
+        return triggers.remove(observable, trigger);
+    }
+    
+    ImmutableSet<Trigger> getTriggers(Observable observable) {
+        return triggers.get(observable);
+    }
+    
+    void informTriggers(State state, Change change) {
+        
+        // Inform direct triggers
+        for (Trigger t:getTriggers(state)) {
+            t.triggered(state, change);
+            log.debug("State " + state + " sends change to Trigger " + t);
+        }
+        
         // check if there are models
-        ImmutableSet<Model> initModels = state.getModels();
+        ImmutableSet<Model> initModels = getModels(state);
         if (initModels.isEmpty()) return;
         ImmutableList<Model> allModels = getModelsToUpdate(initModels);
 
+        // Inform indirect triggers
         for (Model m:allModels) {
-            m.update(change);
-            log.debug("State " + state + " sends change to Model " + m);
+            for (Trigger t:getTriggers(m)) {
+                t.triggered(m, change);
+                log.debug("Model " + m + " sends change to Trigger " + t);
+            }
         }
     }
     
@@ -155,7 +184,7 @@ public final class StateManager extends Manager{
     private static enum Color {WHITE, GREY, BLACK};
     private void topoSort(final Observable v, final Map<Observable, Color> colors, final LinkedList<Model> topoList) {
         colors.put(v, Color.GREY);
-        for (Model m:v.getModels()) {
+        for (Model m:getModels(v)) {
             if (!colors.containsKey(m)) {
                 topoSort(m, colors, topoList);
             } else if (colors.get(m) == Color.GREY) {
@@ -170,7 +199,7 @@ public final class StateManager extends Manager{
     void updateObservers(Set<State> states) {
         // all direct observers
         for (State s:states){
-            Set<Observer> observers = s.getObservers();
+            Set<Observer> observers = getObservers(s);
             if (observers.isEmpty()) continue;
             // cache StateText
             String stateText = s.toText();
@@ -182,7 +211,7 @@ public final class StateManager extends Manager{
         
         // all indirect observers
         for (Model m:getModelsToUpdate(states)) {
-            Set<Observer> observers = m.getObservers();
+            Set<Observer> observers = getObservers(m);
             if (observers.isEmpty()) continue;
             // cache ModelText
             String modelText = m.toText();

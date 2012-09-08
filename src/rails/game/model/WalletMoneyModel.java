@@ -17,6 +17,7 @@ public class WalletMoneyModel extends MoneyModel {
     private WalletMoneyModel(MoneyOwner parent, String id, Boolean init, Currency currency) {
         super(parent, id, currency);
         wallet = WalletBag.create(parent, "wallet", Currency.class, currency);
+        wallet.addModel(this);
         initialised = BooleanState.create(this, "initialised", init);
     }
     

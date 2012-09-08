@@ -12,6 +12,9 @@ import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.model.WalletMoneyModel;
 import rails.game.state.BooleanState;
+import rails.game.state.Change;
+import rails.game.state.Observable;
+import rails.game.state.Trigger;
 import rails.game.state.UnknownOwner;
 import rails.util.Util;
 
@@ -44,7 +47,23 @@ public class Bank extends RailsManager implements MoneyOwner, Configurable {
 
     /** Is the bank broken */
     private final BooleanState broken = BooleanState.create(this, "broken");
-
+    
+    // Instance initializer to create a BankBroken model
+    {
+        new Trigger() {
+            {// instance initializer
+                cash.addTrigger(this);
+            }
+            public void triggered(Observable obs, Change change) {
+                if (cash.value() <= 0 && !broken.value()) {
+                    broken.set(true);
+                    cash.setText(LocalText.getText("BROKEN"));
+                    GameManager.getInstance().registerBrokenBank();
+                }
+            }
+        };
+    }
+    
     protected static Logger log =
         LoggerFactory.getLogger(Bank.class);
 
@@ -137,16 +156,6 @@ public class Bank extends RailsManager implements MoneyOwner, Configurable {
         return scrapHeap;
     }
 
-    /* FIXME: Add broken check somewhere
-         * Check if the bank has broken. In some games <0 could apply, so this
-         * will become configurable.
-        if (cash.value() <= 0 && !broken.booleanValue()) {
-            broken.set(true);
-            cash.setText(LocalText.getText("BROKEN"));
-            GameManager.getInstance().registerBrokenBank();
-        }
-        */
-
     /**
      * @return Portfolio of stock in Bank Pool
      */
@@ -161,10 +170,10 @@ public class Bank extends RailsManager implements MoneyOwner, Configurable {
         return unavailable;
     }
 
-    public String getId() {
+    public String toText() {
         return LocalText.getText("BANK");
     }
-
+    
     // MoneyOwner interface
     public int getCash() {
         return cash.value();
@@ -173,5 +182,6 @@ public class Bank extends RailsManager implements MoneyOwner, Configurable {
     public WalletMoneyModel getWallet() {
         return cash;
     }
+    
     
 }

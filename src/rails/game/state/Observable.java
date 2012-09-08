@@ -69,6 +69,18 @@ public abstract class Observable implements Item {
         return getStateManager().getModels(this);
     }
 
+    public void addTrigger(Trigger m) {
+        getStateManager().addTrigger(m, this);
+    }
+    
+    public boolean removeTrigger(Trigger m) {
+        return getStateManager().removeTrigger(m, this);
+    }
+    
+    public ImmutableSet<Trigger> getTriggers() {
+        return getStateManager().getTriggers(this);
+    }
+
     /**
      * Text to delivered to Observers
      * Default is defined to be identical with toString()
