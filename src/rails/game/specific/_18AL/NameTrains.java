@@ -5,16 +5,18 @@ import java.util.List;
 
 import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
+import rails.common.parser.Configure;
 import rails.common.parser.Tag;
 import rails.game.Currency;
 import rails.game.GameManager;
 import rails.game.RailsItem;
 import rails.game.special.SpecialProperty;
+import rails.util.Util;
 
 public class NameTrains extends SpecialProperty {
 
     private String tokenClassName;
-    private Class<?> tokenClass;
+    private Class<? extends NamedTrainToken> tokenClass;
     private List<NamedTrainToken> tokens = new ArrayList<NamedTrainToken>(2);
     private String name = "NameTrains";
 
@@ -41,12 +43,7 @@ public class NameTrains extends SpecialProperty {
                     "No named train token class name provided");
         }
 
-        try {
-            tokenClass = Class.forName(tokenClassName);
-        } catch (ClassNotFoundException e) {
-            throw new ConfigurationException("Unknown class " + tokenClassName,
-                    e);
-        }
+        tokenClass = Configure.getClassForName(NamedTrainToken.class, tokenClassName);
 
         String tokenTagName = tokenClassName.replaceAll(".*\\.", "");
         List<Tag> tokenTags = assignTag.getChildren(tokenTagName);
@@ -59,16 +56,15 @@ public class NameTrains extends SpecialProperty {
         description = name + ": ";
 
         for (Tag tokenTag : tokenTags) {
-            try {
-                NamedTrainToken token =
-                        (NamedTrainToken) tokenClass.newInstance();
-                tokens.add(token);
-                token.configureFromXML(tokenTag);
-                description += token.getLongName() + ": " + Currency.format(this, token.getValue()) + ", ";
-            } catch (Exception e) {
-                throw new ConfigurationException("Cannot instantiate class "
-                                                 + tokenClassName, e);
+            String tokenName = tokenTag.getAttributeAsString("name");
+            if (!Util.hasValue(tokenName)) {
+                throw new ConfigurationException(
+                        "Named Train token must have a name");
             }
+            NamedTrainToken token = Configure.create(tokenClass, this, tokenName);
+            tokens.add(token);
+            token.configureFromXML(tokenTag);
+            description += token.getLongName() + ": " + Currency.format(this, token.getValue()) + ", ";
         }
         description = description.replaceFirst(", $", "");
     }

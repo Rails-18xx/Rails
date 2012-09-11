@@ -10,7 +10,10 @@ public final class NameableTrain extends Train {
 
     private final GenericState<NamedTrainToken> nameToken = GenericState.create(this, "nameToken");
     
-    private NameableTrain(RailsItem parent, String id) {
+    /**
+     * Created via Configure
+     */
+    public NameableTrain(RailsItem parent, String id) {
         super(parent, id);
     }
 
@@ -28,9 +31,9 @@ public final class NameableTrain extends Train {
     public String toText() {
         NamedTrainToken token = getNameToken();
         if (token == null) {
-            return getId();
+            return super.toText();
         } else {
-            return getId() + "\'" + token.getId() + "\'";
+            return super.toText() + "\'" + token.getId() + "\'";
         }
     }
 

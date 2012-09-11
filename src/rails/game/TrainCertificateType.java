@@ -39,6 +39,8 @@ public class TrainCertificateType extends RailsAbstractItem implements Configura
     private int cost;
     private int exchangeCost;
     
+    // store the trainClassName to allow dual configuration
+    private String trainClassName = DEFAULT_TRAIN_CLASS;
     private Class<? extends Train> trainClass;
 
     /** In some cases, trains start their life in the Pool, default is IPO */
@@ -67,7 +69,7 @@ public class TrainCertificateType extends RailsAbstractItem implements Configura
     }
     
     public void configureFromXML(Tag tag) throws ConfigurationException {
-        String trainClassName = tag.getAttributeAsString("class", DEFAULT_TRAIN_CLASS);
+        trainClassName = tag.getAttributeAsString("class", trainClassName);
         trainClass = Configure.getClassForName(Train.class, trainClassName);
 
         // Quantity

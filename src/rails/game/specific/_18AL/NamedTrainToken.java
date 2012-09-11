@@ -23,15 +23,13 @@ public class NamedTrainToken extends Token<NamedTrainToken> implements Configura
     private List<MapHex> hexes;
     private String description;
 
-    private NamedTrainToken(RailsItem parent, String id) {
+    /**
+     * Used via Configure (reflection)
+     */
+    public NamedTrainToken(RailsItem parent, String id) {
         super(parent, id, NamedTrainToken.class);
     }
     
-    public static NamedTrainToken create(NameTrains parent) {
-        String uniqueId = Token.createUniqueId();
-        return new NamedTrainToken(parent, uniqueId);
-    }
-
     public void configureFromXML(Tag tag) throws ConfigurationException {
         value = tag.getAttributeAsInteger("value");
         if (value <= 0) {
