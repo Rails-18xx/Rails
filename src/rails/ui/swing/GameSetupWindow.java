@@ -14,6 +14,8 @@ import rails.common.parser.GameInfoParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ComparisonChain;
+
 import rails.common.DisplayBuffer;
 import rails.common.GuiDef;
 import rails.common.LocalText;
@@ -278,7 +280,10 @@ public class GameSetupWindow extends JDialog implements ActionListener {
             
             recentFiles = new TreeSet<File>(new Comparator<File> (){
                 public int compare (File a, File b) {
-                    return Math.round(b.lastModified() - a.lastModified());
+                    return ComparisonChain.start()
+                            .compare(b.lastModified(), a.lastModified())
+                            .compare(a.getName(), b.getName())
+                            .result();
                 }
             });
             savedFileExtension = Config.get("save.filename.extension");
