@@ -95,7 +95,7 @@ public class Stop extends RailsAbstractItem implements Owner {
     }
 
     private Stop(MapHex hex, int number) {
-        super(hex, String.valueOf(number));
+        super(hex, String.valueOf(hex.getNextStopId()));
         this.number = number;
     }
 

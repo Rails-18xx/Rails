@@ -106,6 +106,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     protected final GenericState<Round> currentRound = GenericState.create(this, "currentRound");
     protected Round interruptedRound = null;
 
+    protected final IntegerState startRoundNumber = IntegerState.create(this, "startRoundNumber");
     protected final IntegerState srNumber = IntegerState.create(this, "srNumber");
 
     protected final IntegerState absoluteORNumber = IntegerState.create(this, "absoluteORNUmber");
@@ -660,7 +661,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                 // There will be another OR
                 startOperatingRound(true);
             } else if (startPacket != null && !startPacket.areAllSold()) {
-                startStartRound();
+                startStartRound(); 
             } else {
                 if (gameOverPending.value() && gameEndsAfterSetOfORs) {
                     finishGame();
@@ -674,7 +675,9 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
     protected void startStartRound() {
         String startRoundClassName = startPacket.getRoundClassName();
-        StartRound startRound = createRound(StartRound.class, startRoundClassName, "startRound");
+        StartRound startRound = createRound(StartRound.class, startRoundClassName, 
+                "startRound_" + startRoundNumber.value());
+        startRoundNumber.add(1);
         startRound.start();
     }
 
@@ -686,8 +689,13 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
     protected void startOperatingRound(boolean operate) {
         log.debug("Operating round started with operate-flag=" + operate);
-
-        OperatingRound or = createRound(operatingRoundClass, "OR_" + absoluteORNumber.value());
+        String orId;
+        if (operate) {
+             orId = "OR_" + absoluteORNumber.value();
+        } else {
+            orId = "OR_Start_" + startRoundNumber.value();
+        }
+        OperatingRound or = createRound(operatingRoundClass, orId);
         if (operate) absoluteORNumber.add(1);
         or.start();
     }

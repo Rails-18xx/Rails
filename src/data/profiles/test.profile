@@ -33,7 +33,7 @@ money_format=@
 # directory, that directory is used as a starting point for any
 # file choosing action for the Save and Load commands.
 # The path may be relative or absolute.
-save.directory=test/data
+save.directory=src/test/data
 # The default Save filename is <gamename>_<datetimepattern>.<extension>
 # This name will be initially proposed.
 # As soon as that proposal has been changed once in a Save action,

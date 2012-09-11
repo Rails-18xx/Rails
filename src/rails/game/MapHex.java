@@ -163,6 +163,9 @@ public class MapHex extends Model implements RailsItem, Owner, Configurable {
     // Stops (Cities, Towns etc.)
     protected final HashMapState<Integer, Stop> mStops =
             HashMapState.create(this, "stops");
+    
+    protected final IntegerState nextStopId =
+            IntegerState.create(this, "nextStopId");
 
     /*
      * changed to state variable to fix undo bug #2954645
@@ -1030,6 +1033,13 @@ public class MapHex extends Model implements RailsItem, Owner, Configurable {
         return 0;
     }
 
+    // get stopid and increase by one
+    int getNextStopId() {
+        int id = nextStopId.value();
+        nextStopId.add(1);
+        return id;
+    }
+    
     public List<Stop> getStops() {
         return mStops.viewValues();
     }
@@ -1246,6 +1256,7 @@ public class MapHex extends Model implements RailsItem, Owner, Configurable {
     public String getInfo () {
         return infoText;
     }
+    
 
     public String getReservedForCompany() {
         return reservedForCompany;

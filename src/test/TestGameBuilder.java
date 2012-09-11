@@ -11,6 +11,9 @@ import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
 
+import org.junit.runners.AllTests;
+import org.junit.runner.RunWith;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -20,6 +23,7 @@ import rails.common.parser.Config;
 import rails.game.RailsRoot;
 import rails.game.ReportBuffer;
 
+@RunWith(AllTests.class)
 public final class TestGameBuilder extends TestCase {
 
     private static char extensionSeparator = '.';
