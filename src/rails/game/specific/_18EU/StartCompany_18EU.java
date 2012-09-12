@@ -5,7 +5,10 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.primitives.Ints;
+
 import rails.game.*;
+import rails.game.action.PossibleAction;
 import rails.game.action.StartCompany;
 
 public class StartCompany_18EU extends StartCompany {
@@ -95,6 +98,13 @@ public class StartCompany_18EU extends StartCompany {
         selectedHomeStationName = homeStation.getSpecificId();
     }
 
+    @Override
+    public boolean equalsAsOption(PossibleAction action) {
+        if (!(action.getClass() == StartCompany_18EU.class)) return false;
+        StartCompany_18EU a = (StartCompany_18EU) action;
+        return a.company == company && a.from == from && Ints.asList(startPrices).contains(a.price);
+    }
+    
     @Override
     public String toString() {
         StringBuffer text = new StringBuffer(super.toString());

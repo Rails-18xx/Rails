@@ -21,6 +21,10 @@ public final class BankPortfolio extends RailsAbstractItem implements PortfolioO
     public static BankPortfolio create(Bank parent, String id) {
         return new BankPortfolio(parent, id);
     }
+    
+    public void finishConfiguration() {
+        portfolio.finishConfiguration();
+    }
 
     @Override
     public Bank getParent() {

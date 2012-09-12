@@ -114,7 +114,7 @@
 		</Phase>
 		<Phase name="5">
 			<Tiles colour="yellow,green,brown"/>
-			<Trains limitStep="2"/>
+			<Trains limitStep="3"/>
 			<OffBoardRevenue step="2"/>
 		</Phase>
 		<Phase name="6">

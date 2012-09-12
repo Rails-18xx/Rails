@@ -96,7 +96,7 @@ public class OperatingRound_18EU extends OperatingRound {
         for (Train train : trains) {
             // May not buy Pullmann if one is already owned,
             // or if no train is owned at all
-            if (train.getType().getName().equals("P")
+            if (train.getCertType() == pullmannType
                     &&(operatingCompany.value().getPortfolioModel().getTrainOfType(pullmannType) != null
                             || !hasTrains)) {
                 continue;
@@ -151,7 +151,7 @@ public class OperatingRound_18EU extends OperatingRound {
                     trains = pf.getUniqueTrains();
 
                     for (Train train : trains) {
-                        if (train.getType().getName().equals("P")) continue;
+                        if (train.getCertType() == pullmannType) continue;
                         bt = new BuyTrain(train, pf.getParent(), 0);
                         if (mustExchangePullmann) bt.setExtraMessage(extraMessage);
                         possibleActions.add(bt);
@@ -191,12 +191,12 @@ public class OperatingRound_18EU extends OperatingRound {
         // If train was bought from another company, check for a lone Pullmann
         Owner seller = action.getFromOwner();
         if (seller instanceof PublicCompany
-                && !action.getTrain().getId().equalsIgnoreCase("P")) {
+                && !(action.getTrain().getCertType() == pullmannType)) {
             boolean hasPullmann = false;
             boolean hasNonPullmann = false;
             Train pullmann = null;
             for (Train sellerTrain : ((PublicCompany)seller).getPortfolioModel().getTrainList()) {
-                if ("P".equalsIgnoreCase(sellerTrain.getId())) {
+                if (sellerTrain.getCertType() == pullmannType) {
                     hasPullmann = true;
                     pullmann = sellerTrain;
                 } else if (sellerTrain != null){

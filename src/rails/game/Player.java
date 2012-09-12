@@ -85,7 +85,10 @@ public class Player extends RailsAbstractItem implements MoneyOwner, PortfolioOw
     public static Player create(PlayerManager parent, String id, int index) {
         return new Player(parent, id, index);
     }
-   
+    
+    public void finishConfiguration() {
+        portfolio.finishConfiguration();
+    }
 
     public String getNameAndPriority() {
         return getId() + (GameManager.getInstance().getPriorityPlayer() == this ? " PD" : "");

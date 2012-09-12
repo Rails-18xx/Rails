@@ -249,7 +249,8 @@ public class BuyTrain extends PossibleORAction {
     public boolean equalsAsOption(PossibleAction action) {
         if (!(action instanceof BuyTrain)) return false;
         BuyTrain a = (BuyTrain) action;
-        return a.getTrain() == getTrain() && a.from == from 
+        return a.getTrain().getType() == getTrain().getType() // only types have to be equal
+                && a.from == from 
                 && a.fixedCost == fixedCost
                 && Objects.equal(a.trainsForExchange, trainsForExchange);
     }

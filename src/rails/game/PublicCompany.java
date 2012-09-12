@@ -160,14 +160,12 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
     /** Copy of turnsWithExtraTileLaysInit, per company */
     protected Map<String, IntegerState> turnsWithExtraTileLays = null; 
     // init during finishConfig
-    
     /**
      * Number of tiles laid. Only used where more tiles can be laid in the
      * company's first OR turn.
-     * It is set to -1 as this flags a special state 
-     * TODO: Check if this works
      */
-    protected final IntegerState extraTiles = IntegerState.create(this, "extraTiles", -1);
+    protected IntegerState extraTiles = null;
+    
 
     /* Spendings in the current operating turn */
     protected final CountingMoneyModel privatesCostThisTurn = CountingMoneyModel.create(this, "privatesCostThisTurn", false);
@@ -774,6 +772,9 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
                 }
             }
         }
+        
+        // finish Configuration of portfolio
+        portfolio.finishConfiguration();
     }
 
     /** Reset turn objects */
@@ -1615,7 +1616,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
         tilesLaidThisTurn.append(tileLaid, ", ");
 
         if (cost > 0) tilesCostThisTurn.change(cost);
-
+        
         if (extraTiles != null && extraTiles.value() > 0) {
             extraTiles.add(-1);
         }
@@ -1817,7 +1818,6 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
         return (baseTokens.nbAllTokens() > 0);
     }
 
-    // TODO: Check if the rewritten part below really works
     public int getNumberOfTileLays(String tileColour) {
 
         if (extraTileLays == null) return 1;
@@ -1831,24 +1831,14 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
 
         int i = ii;
         if (i > 1) {
-//            if (extraTiles == null && turnsWithExtraTileLays != null) {
-//                extraTiles = turnsWithExtraTileLays.get(tileColour);
-//            }
-//            if (extraTiles != null) {
-//                if (extraTiles.value() == 0) {
-//                    extraTiles = null;
-//                    return 1;
-//                }
-//            }
-// the above is replaced by
-            // FIXME: Check if the rewritten part below really works
-            // There is some flagging going on with setting extraTiles to null
-            if (turnsWithExtraTileLays != null && extraTiles.value() == -1) {
-                extraTiles.set(turnsWithExtraTileLays.get(tileColour).value());
+            if (extraTiles == null && turnsWithExtraTileLays != null) {
+                extraTiles = turnsWithExtraTileLays.get(tileColour);
             }
-            if (extraTiles.value() == 0) {
-                extraTiles.set(-1);
-                return 1;
+            if (extraTiles != null) {
+                if (extraTiles.value() == 0) {
+                    extraTiles = null;
+                    return 1;
+                }
             }
         }
         return i;

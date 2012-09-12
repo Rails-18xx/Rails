@@ -20,7 +20,8 @@ public class PullmanRevenueModifier implements RevenueDynamicModifier {
         hasPullman = false;
         List<NetworkTrain> trains = revenueAdapter.getTrains();
         for (NetworkTrain train:trains) {
-            if (train.getRailsTrainType() != null && train.getRailsTrainType().getName().equals("P")) {
+            if (train.getRailsTrainType() != null 
+                    && train.getRailsTrainType().getCertificateType().getId().equals("P")) {
                 hasPullman = true;
                 revenueAdapter.removeTrain(train); // remove from revenueAdapter
                 break;

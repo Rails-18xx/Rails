@@ -766,7 +766,7 @@ public class OperatingRound extends Round implements Observer {
                             continue;
                         }
 
-                        gameManager.startTreasuryShareTradingRound();
+                        gameManager.startTreasuryShareTradingRound(operatingCompany.value());
 
             }
 

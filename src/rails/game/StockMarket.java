@@ -308,7 +308,9 @@ public class StockMarket extends RailsManager implements Configurable {
         }
         company.setCurrentSpace(to);
         
-        to.addToken(company);
+        if (to != null) {
+            to.addToken(company);
+        }
         if (from != null) {
             from.removeToken(company);
         }

@@ -820,17 +820,17 @@ public class MapHex extends Model implements RailsItem, Owner, Configurable {
             }
 
             // Move the tokens
-            Map<BaseToken, Owner> tokenDestinations = Maps.newHashMap();
+            // TODO: This is rewritten, check if this still works
             for (Stop oldCity : mStops) {
                 newCity = oldToNewCities.get(oldCity);
                 if (newCity != null) {
                     oldtoken: for (BaseToken token : oldCity.getBaseTokens()) {
                         // Check if the new city already has such a token
                         PublicCompany company = token.getParent();
-                        for (BaseToken token2 : newCity.getBaseTokens()) {
-                            if (company == token2.getOwner()) {
-                                // No duplicate tokens in one city, so move to free tokens
-                                tokenDestinations.put(token, company);
+                        for (BaseToken otherToken : newCity.getBaseTokens()) {
+                            if (company == otherToken.getParent()) {
+                                // No duplicate tokens allowed in one city, so move to free tokens
+                                token.moveTo(company);
                                 log.debug("Duplicate token "
                                         + token.getUniqueId()
                                         + " moved from "
@@ -843,17 +843,12 @@ public class MapHex extends Model implements RailsItem, Owner, Configurable {
                                 continue oldtoken;
                             }
                         }
-                        tokenDestinations.put(token, newCity);
+                        token.moveTo(newCity);
                         log.debug("Token " + token.getUniqueId()
                                 + " moved from " + oldCity.getSpecificId() + " to "
                                 + newCity.getSpecificId());
                     }
                 }
-            }
-
-            // TODO: Moved after for loop, check if this still works
-            for (BaseToken token : tokenDestinations.keySet()) {
-                token.moveTo(tokenDestinations.get(token));
             }
         }
 

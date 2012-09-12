@@ -16,6 +16,7 @@ import rails.game.state.ArrayListState;
 import rails.game.state.BooleanState;
 import rails.game.state.ChangeStack;
 import rails.game.state.IntegerState;
+import rails.game.state.Portfolio;
 
 /**
  * Implements a basic Stock Round. <p> A new instance must be created for each
@@ -437,8 +438,7 @@ public class StockRound_18EU extends StockRound {
         }
 
         // Move the remaining certificates to the company treasury
-        // FIXME: This has to be only those certificates that relate to that public company 
-        // Owners.moveAll(ipo, company, PublicCertficate.class);
+        Portfolio.moveAll(ipo.getCertificates(company), company);
 
         ReportBuffer.add(LocalText.getText("SharesPutInTreasury",
                 company.getPortfolioModel().getShare(company),
@@ -747,8 +747,9 @@ public class StockRound_18EU extends StockRound {
         }
     }
 
-    @Override
-    public String toString() {
-        return "StockRound_18EU " + getStockRoundNumber();
-    }
+    // TODO: Is this required somwhere?
+//    @Override
+//    public String toString() {
+//        return "StockRound_18EU " + getStockRoundNumber();
+//    }
 }

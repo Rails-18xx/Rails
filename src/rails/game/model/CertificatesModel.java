@@ -1,21 +1,26 @@
 package rails.game.model;
 
+import java.util.HashMap;
 import java.util.Iterator;
+
+import com.google.common.collect.Maps;
 
 import rails.game.Player;
 import rails.game.PublicCertificate;
 import rails.game.PublicCompany;
+import rails.game.state.Change;
 import rails.game.state.HashMapState;
 import rails.game.state.Model;
+import rails.game.state.Observable;
 import rails.game.state.Owner;
 import rails.game.state.PortfolioMap;
+import rails.game.state.Trigger;
 
 /**
  * Model that contains and manages the certificates
  * TODO: It might improve performance to separate the large multimap into smaller ones per individual companies, but I doubt it
         // TODO: find out where the president model has to be linked
         // this.addModel(company.getPresidentModel());
- * @author freystef
  */
 public class CertificatesModel extends Model implements Iterable<PublicCertificate> {
 
@@ -23,7 +28,7 @@ public class CertificatesModel extends Model implements Iterable<PublicCertifica
     
     private final PortfolioMap<PublicCompany, PublicCertificate> certificates;
     
-    private final HashMapState<PublicCompany, ShareModel> shareModels = HashMapState.create(this, "shareModels");
+    private final HashMap<PublicCompany, ShareModel> shareModels = Maps.newHashMap();
 
     private CertificatesModel(Owner parent) {
         super(parent, ID);
@@ -31,6 +36,7 @@ public class CertificatesModel extends Model implements Iterable<PublicCertifica
         certificates = PortfolioMap.create(parent, "certificates", PublicCertificate.class);
         // so make this model updating
         certificates.addModel(this);
+        
     }
     
     public static CertificatesModel create(Owner parent) {
@@ -41,15 +47,17 @@ public class CertificatesModel extends Model implements Iterable<PublicCertifica
     public Owner getParent() {
         return (Owner)super.getParent();
     }
-    
-    public ShareModel getShareModel(PublicCompany company) {
-        if (shareModels.containsKey(company)) {
-            return shareModels.get(company);
-        } else {
+   
+    void initShareModels(Iterable<PublicCompany> companies) {
+        // create shareModels
+        for (PublicCompany company:companies) {
             ShareModel model = ShareModel.create(this, company);
             shareModels.put(company, model);
-            return model;
         }
+    }
+    
+    public ShareModel getShareModel(PublicCompany company) {
+        return shareModels.get(company);
     }
     
     public float getCertificateCount() {
@@ -103,6 +111,5 @@ public class CertificatesModel extends Model implements Iterable<PublicCertifica
     public String toText() {
         return certificates.toString();
     }
-    
 
 }

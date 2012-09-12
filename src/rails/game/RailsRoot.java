@@ -114,6 +114,7 @@ public class RailsRoot extends Root implements RailsItem {
                 tileManager, revenueManager, bank);
 
         try {
+            playerManager.finishConfiguration(gameManager);
             companyManager.finishConfiguration(gameManager);
             trainManager.finishConfiguration(gameManager);
             phaseManager.finishConfiguration(gameManager);

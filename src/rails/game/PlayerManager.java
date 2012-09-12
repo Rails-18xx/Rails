@@ -48,7 +48,11 @@ public class PlayerManager extends RailsManager implements Configurable {
         }
     }
 
-    public void finishConfiguration (GameManager gameManager) {}
+    public void finishConfiguration (GameManager gameManager) {
+        for (Player player:players) {
+            player.finishConfiguration();
+        }
+    }
     
     public void setPlayers (List<String> playerNames, Bank bank) {
 

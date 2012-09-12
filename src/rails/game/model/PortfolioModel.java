@@ -98,10 +98,14 @@ public class PortfolioModel extends Model {
         gameManager.addPortfolio(this);
     }
     
-    public static PortfolioModel create(Owner parent) {
+    public static PortfolioModel create(PortfolioOwner parent) {
         return new PortfolioModel(parent, ID);
     }
 
+    public void finishConfiguration() {
+        certificates.initShareModels(gameManager.getAllPublicCompanies());
+    }
+        
     @Override
     public PortfolioOwner getParent() {
         return (PortfolioOwner)super.getParent();

@@ -785,9 +785,10 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         // the action does not require that check
     }
 
-    public void startTreasuryShareTradingRound() {
+    public void startTreasuryShareTradingRound(PublicCompany company) {
         interruptedRound = getCurrentRound();
-        createRound (TreasuryShareRound.class, "TreasuryShareRound").start(interruptedRound);
+        String id =  "TreasuryShareRound_"  + interruptedRound.getId() + "_" + company.getId();
+        createRound (TreasuryShareRound.class, id).start(interruptedRound);
     }
 
     /* (non-Javadoc)

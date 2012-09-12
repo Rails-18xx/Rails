@@ -24,7 +24,7 @@ public class TreasuryShareRound extends StockRound {
     /**
      * Created via Configure
      */
-    public TreasuryShareRound(GameManager parent, String id, Round parentRound) {
+    public TreasuryShareRound(GameManager parent, String id) {
         super(parent, id);
         guiHints.setActivePanel(GuiDef.Panel.STATUS);
     }

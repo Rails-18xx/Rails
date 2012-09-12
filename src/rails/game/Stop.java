@@ -314,7 +314,7 @@ public class Stop extends RailsAbstractItem implements Owner {
     }
 
     @Override
-    public String toString() {
+    public String toText() {
         StringBuffer b = new StringBuffer();
         b.append("Hex ").append(getParent().getId());
         String cityName = getParent().getCityName();
@@ -323,7 +323,7 @@ public class Stop extends RailsAbstractItem implements Owner {
             b.append(cityName);
         }
         if (getParent().getStops().size() > 1) {
-            b.append(" ").append(trackEdges);
+            b.append(" ").append(trackEdges.value());
         }
         b.append(")");
         return b.toString();
