@@ -65,11 +65,12 @@ public class OperatingRound_1856 extends OperatingRound {
 
             if (!operatingCompany.value().hasOperated()) {
                 int soldPercentage = getSoldPercentage (operatingCompany.value());
-
+                // TODO: Refactor the code duplication
                 Train nextAvailableTrain = Iterables.get(gameManager.getTrainManager().getAvailableNewTrains(), 0);
+                log.debug("Next Train type" + nextAvailableTrain.getCertType().getId());
                 int trainNumber;
                 try {
-                    trainNumber = Integer.parseInt(nextAvailableTrain.getId());
+                    trainNumber = Integer.parseInt(nextAvailableTrain.getCertType().getId());
                 } catch (NumberFormatException e) {
                     trainNumber = 6; // Diesel!
                 }

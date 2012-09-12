@@ -883,7 +883,7 @@ public class StockRound extends Round {
                 && comp.getCapitalisation() == PublicCompany.CAPITALISE_INCREMENTAL) {
             recipient = comp;
         } else if (from instanceof BankPortfolio) {
-            recipient = ((BankPortfolio)from).getParent();
+            recipient = bank;
         } else {
             recipient = (MoneyOwner)from;
         }

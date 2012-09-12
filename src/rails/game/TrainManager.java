@@ -3,10 +3,10 @@ package rails.game;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -332,7 +332,7 @@ public class TrainManager extends RailsManager implements Configurable {
     
     public Set<Train> getAvailableNewTrains() {
 
-        Set<Train> availableTrains = new HashSet<Train>();
+        Set<Train> availableTrains = new TreeSet<Train>();
         Train train;
 
         for (TrainCertificateType type : trainCertTypes) {

@@ -26,7 +26,7 @@ public class BaseToken extends Token<BaseToken> {
     }
     
     public boolean isPlaced() {
-        return getParent().getBaseTokensModel().tokenIsLaid(this);
+        return !(getOwner() == getParent());
     }
 
 

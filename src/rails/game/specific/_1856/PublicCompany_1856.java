@@ -23,11 +23,12 @@ public final class PublicCompany_1856 extends PublicCompany {
 
         super.start(startSpace);
 
+        // TODO: Refactor the code duplication
         Train nextAvailableTrain
             = Iterables.get(gameManager.getTrainManager().getAvailableNewTrains(), 0);
         int trainNumber;
         try {
-            trainNumber = Integer.parseInt(nextAvailableTrain.getId());
+            trainNumber = Integer.parseInt(nextAvailableTrain.getCertType().getId());
         } catch (NumberFormatException e) {
             trainNumber = 6; // Diesel!
         }

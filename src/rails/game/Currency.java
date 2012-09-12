@@ -1,6 +1,7 @@
 package rails.game;
 
 import rails.game.state.CountableItem;
+import rails.game.state.Owner;
 
 /**
  * The class that represents a Currency

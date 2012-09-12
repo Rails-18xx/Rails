@@ -2054,7 +2054,13 @@ public class OperatingRound extends Round implements Observer {
             // Checks
             sbt = action.getSpecialProperty();
             cost = sbt.getPrice();
-            seller = (MoneyOwner)sbt.getSeller(); // TODO: Remove the cast?
+            Owner from = sbt.getSeller();
+            // TODO: Remove redundancy use a generalized check
+            if (from instanceof BankPortfolio) {
+                seller = bank;
+            } else {
+                seller = (MoneyOwner)from;
+            }
 
             // Does the company have the money?
             if (cost > operatingCompany.value().getCash()) {

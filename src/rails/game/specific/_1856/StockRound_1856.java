@@ -2,6 +2,7 @@ package rails.game.specific._1856;
 
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
+import rails.game.BankPortfolio;
 import rails.game.Currency;
 import rails.game.GameManager;
 import rails.game.MoneyOwner;
@@ -119,8 +120,10 @@ public class StockRound_1856 extends StockRound {
             default:
                 recipient = bank;
             }
+        } else if (from instanceof BankPortfolio) {
+            recipient = bank;
         } else {
-            recipient = (MoneyOwner)from; // TODO: Remove this cast?
+            recipient = (MoneyOwner)from;
         }
         return recipient;
     }
