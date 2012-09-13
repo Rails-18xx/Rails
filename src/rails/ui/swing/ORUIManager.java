@@ -1160,7 +1160,7 @@ public class ORUIManager implements DialogOwner {
         if (price == 0 && seller instanceof PublicCompany) {
             prompt = LocalText.getText("WHICH_TRAIN_PRICE",
                             orComp.getId(),
-                            train.getId(),
+                            train.toText(),
                             seller.getId() );
             String response;
             for (;;) {
@@ -1196,7 +1196,7 @@ public class ORUIManager implements DialogOwner {
                 int jj = 0;
                 for (int j = 0; j < oldTrains.size(); j++) {
                     options[jj + j] =
-                            LocalText.getText("N_Train", Iterables.get(oldTrains, j).getId());
+                            LocalText.getText("N_Train", Iterables.get(oldTrains, j).toText());
                     oldTrainOptions.add(options[jj + j]);
                 }
                 String exchangedTrainName =

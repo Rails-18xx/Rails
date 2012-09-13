@@ -920,8 +920,8 @@ LaysTileAt,L&N,23,F7,S
 CompanyRevenue,L&N,220
 CompanyPaysOutFull,L&N,220
 Payout,Justin,22,1,10
-Payout,Steve,110,5,10
 BankIsBrokenReportText
+Payout,Steve,110,5,10
 Payout,Jim,22,1,10
 Payout,Peter,44,2,10
 Payout,L&N,22,1,10

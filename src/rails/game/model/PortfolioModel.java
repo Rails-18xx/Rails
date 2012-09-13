@@ -24,6 +24,7 @@ import rails.game.BonusToken;
 import rails.game.Company;
 import rails.game.Currency;
 import rails.game.GameManager;
+import rails.game.MoneyOwner;
 import rails.game.Player;
 import rails.game.PrivateCompany;
 import rails.game.PublicCertificate;
@@ -109,6 +110,14 @@ public class PortfolioModel extends Model {
     @Override
     public PortfolioOwner getParent() {
         return (PortfolioOwner)super.getParent();
+    }
+    
+    // returns the associated MoneyOwner 
+    public MoneyOwner getMoneyOwner() {
+        if (getParent() instanceof BankPortfolio) {
+            return ((BankPortfolio)getParent()).getParent();
+        }
+        return (MoneyOwner)getParent();
     }
     
     public void transferAssetsFrom(PortfolioModel otherPortfolio) {
@@ -297,7 +306,7 @@ public class PortfolioModel extends Model {
         
         
         ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
-                getParent().getId(), train.getId() ));
+                getParent().getId(), train.toText() ));
     }
 
     // FIXME: Is this still needed?
@@ -579,7 +588,7 @@ public class PortfolioModel extends Model {
         // otherwise we get a ConcurrentModificationException on trains.
         for (Train train : trainsToRust) {
             ReportBuffer.add(LocalText.getText("TrainsObsoleteRusted",
-                    train.getId(), getParent().getId()));
+                    train.toText(), getParent().getId()));
             log.debug("Obsolete train " + train.getId() + " (owned by "
                     + getParent().getId() + ") rusted");
             train.setRusted();

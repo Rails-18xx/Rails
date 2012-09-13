@@ -20,6 +20,8 @@ import rails.util.Util;
 
 public class Bank extends RailsManager implements MoneyOwner, Configurable {
 
+    public static final String ID = "BANK";
+    
     /** Specific portfolio names */
     public static final String IPO_NAME = "IPO";
     public static final String POOL_NAME = "Pool";
@@ -71,7 +73,8 @@ public class Bank extends RailsManager implements MoneyOwner, Configurable {
      * Used by Configure (via reflection) only
      */
     public Bank(RailsRoot parent, String id) {
-        super(parent, id);
+        // FIXME: This is a workaround to keep id to large caps
+        super(parent, ID);
         // feedback to Railsroot
         parent.setCurrency(currency);
     }

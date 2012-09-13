@@ -269,7 +269,7 @@ public abstract class StartRound extends Round {
             Certificate extra = item.getSecondary();
             ReportBuffer.add(LocalText.getText("ALSO_GETS",
                     player.getId(),
-                    extra.getId() ));
+                    extra.getName() ));
             transferCertificate (extra, player.getPortfolioModel());
             checksOnBuying(extra, sharePrice);
         }

@@ -183,7 +183,7 @@ public class OperatingRound_18EU extends OperatingRound {
                 pool.addTrain(pullmann);
                 ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
                         operatingCompany.value().getId(),
-                        pullmann.getId() ));
+                        pullmann.toText() ));
 
             }
         }
@@ -207,7 +207,7 @@ public class OperatingRound_18EU extends OperatingRound {
                 pool.addTrain(pullmann);
                 ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
                         seller.getId(),
-                        pullmann.getId() ));
+                        pullmann.toText() ));
             }
         }
 

@@ -543,7 +543,7 @@ public class GameUIManager implements DialogOwner {
         for (int i = 0; i < trains.size(); i++) {
             trainOptions.add(
                     options[j++] = LocalText.getText("N_Train",
-                            Iterables.get(trains, i).getId())
+                            Iterables.get(trains, i).toText())
             );
         }
         if (prompt == null) prompt = LocalText.getText(

@@ -1204,8 +1204,8 @@ CompanyPaysOutFull,KO,580
 Payout,stefan,58,1,10
 Payout,Josha,58,1,10
 Payout,bernd,58,1,10
-Payout,klaus,232,4,10
 BankIsBrokenReportText
+Payout,klaus,232,4,10
 Payout,KO,174,3,10
 PRICE_MOVES_LOG,KO,90,G5,100,H5
  

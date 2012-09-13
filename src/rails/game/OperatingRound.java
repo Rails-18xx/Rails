@@ -888,7 +888,7 @@ public class OperatingRound extends Round implements Observer {
                 errMsg =
                     LocalText.getText("CompanyDoesNotOwnTrain",
                             company.getId(),
-                            train.getId() );
+                            train.toText() );
                 break;
             }
 
@@ -897,7 +897,7 @@ public class OperatingRound extends Round implements Observer {
         if (errMsg != null) {
             DisplayBuffer.add(LocalText.getText("CannotDiscardTrain",
                     companyName,
-                    (train != null ?train.getId() : "?"),
+                    (train != null ?train.toText() : "?"),
                     errMsg ));
             return false;
         }
@@ -915,7 +915,7 @@ public class OperatingRound extends Round implements Observer {
         (train.isObsolete() ? scrapHeap : pool).addTrain(train);
         ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
                 companyName,
-                train.getId() ));
+                train.toText() ));
 
         // Check if any more companies must discard trains,
         // otherwise continue train buying
@@ -2679,7 +2679,7 @@ public class OperatingRound extends Round implements Observer {
                 } else if (operatingCompany.value().getPortfolioModel().getTrainOfType(exchangedTrain.getCertType()) == null) {
                     errMsg = LocalText.getText("CompanyDoesNotOwnTrain",
                             operatingCompany.value().getId(),
-                            exchangedTrain.getId());
+                            exchangedTrain.toText());
                     break;
                 }
             }
@@ -2693,7 +2693,7 @@ public class OperatingRound extends Round implements Observer {
         if (errMsg != null) {
             DisplayBuffer.add(LocalText.getText("CannotBuyTrainFor",
                     companyName,
-                    train.getId(),
+                    train.toText(),
                     Currency.format(this, price),
                     errMsg ));
             return false;
@@ -2731,20 +2731,20 @@ public class OperatingRound extends Round implements Observer {
             (train.isObsolete() ? scrapHeap : pool).addTrain(oldTrain);
             ReportBuffer.add(LocalText.getText("ExchangesTrain",
                     companyName,
-                    exchangedTrain.getId(),
-                    train.getId(),
+                    exchangedTrain.toText(),
+                    train.toText(),
                     oldOwner.getId(),
                     Currency.format(this, price) ));
         } else if (stb == null) {
             ReportBuffer.add(LocalText.getText("BuysTrain",
                     companyName,
-                    train.getId(),
+                    train.toText(),
                     oldOwner.getId(),
                     Currency.format(this, price) ));
         } else {
             ReportBuffer.add(LocalText.getText("BuysTrainUsingSP",
                     companyName,
-                    train.getId(),
+                    train.toText(),
                     oldOwner.getId(),
                     Currency.format(this, price),
                     stb.getOriginalCompany().getId() ));
@@ -3053,7 +3053,7 @@ public class OperatingRound extends Round implements Observer {
             Train train = Iterables.get(trainManager.getAvailableNewTrains(), 0);
             if (train.getCertType().hasInfiniteQuantity()) return;
             scrapHeap.addTrain(train);
-            ReportBuffer.add(LocalText.getText("RemoveTrain", train.getId()));
+            ReportBuffer.add(LocalText.getText("RemoveTrain", train.toText()));
         }
     }
 

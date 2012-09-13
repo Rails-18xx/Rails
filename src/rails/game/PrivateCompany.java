@@ -561,6 +561,10 @@ public class PrivateCompany extends OwnableItem<PrivateCompany> implements Compa
     public RailsRoot getRoot() {
         return (RailsRoot)super.getRoot();
     }
-    
+
+    // Certficate method
+    public String getName() {
+        return getId();
+    }
     
 }

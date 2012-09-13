@@ -63,7 +63,7 @@ public final class PublicCompany_CGR extends PublicCompany implements RevenueSta
     }
     
     public boolean mayBuyTrainType (Train train) {
-        return !"4".equals(train.getId());
+        return !"4".equals(train.toText());
     }
 
     @Override

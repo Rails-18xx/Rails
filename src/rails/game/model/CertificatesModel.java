@@ -8,13 +8,9 @@ import com.google.common.collect.Maps;
 import rails.game.Player;
 import rails.game.PublicCertificate;
 import rails.game.PublicCompany;
-import rails.game.state.Change;
-import rails.game.state.HashMapState;
 import rails.game.state.Model;
-import rails.game.state.Observable;
 import rails.game.state.Owner;
 import rails.game.state.PortfolioMap;
-import rails.game.state.Trigger;
 
 /**
  * Model that contains and manages the certificates

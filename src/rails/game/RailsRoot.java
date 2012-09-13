@@ -62,9 +62,6 @@ public class RailsRoot extends Root implements RailsItem {
 
         this.players = players;
 
-        log.info("========== Start of rails.game " + name + " ==========");
-        log.info("Rails version "+version);
-        ReportBuffer.add(LocalText.getText("GameIs", name));
     }
 
     public String start() {
@@ -103,6 +100,10 @@ public class RailsRoot extends Root implements RailsItem {
         revenueManager = gfp.getRevenueManager();
         bank = gfp.getBank();
         gameManager = gfp.getGameManager();
+
+        log.info("========== Start of rails.game " + name + " ==========");
+        log.info("Rails version "+version);
+        ReportBuffer.add(LocalText.getText("GameIs", name));
 
         /*
          * Initializations that involve relations between components can

@@ -671,7 +671,7 @@ bonuses:        for (Bonus bonus : bonuses) {
             for (Train train : trainsToDiscard) {
                 pool.addTrain(train);
                 ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
-                        cgrName, train.getId()));
+                        cgrName, train.toText()));
             }
         }
 
@@ -811,7 +811,7 @@ bonuses:        for (Bonus bonus : bonuses) {
                 errMsg =
                         LocalText.getText("CompanyDoesNotOwnTrain",
                                 company.getId(),
-                                train.getId() );
+                                train.toText() );
                 break;
             }
 
@@ -820,7 +820,7 @@ bonuses:        for (Bonus bonus : bonuses) {
         if (errMsg != null) {
             DisplayBuffer.add(LocalText.getText("CannotDiscardTrain",
                     companyName,
-                    train.getId(),
+                    train.toText(),
                     errMsg ));
             return false;
         }
@@ -836,7 +836,7 @@ bonuses:        for (Bonus bonus : bonuses) {
             pool.addTrain(train);
             ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
                     companyName,
-                    train.getId() ));
+                    train.toText() ));
 
         } else {
             cgrHasDiscardedTrains.set(true);

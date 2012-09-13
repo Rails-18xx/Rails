@@ -526,7 +526,7 @@ public class StockRound_18EU extends StockRound {
             // Check for multiple Pullmanns
             boolean hasPullmann = false;
             for (Train train : major.getPortfolioModel().getTrainList()) {
-                if (train.getId().equalsIgnoreCase("P")) {
+                if (train.toText().equalsIgnoreCase("P")) {
                     if (!hasPullmann) {
                         hasPullmann = true;
                     } else {
@@ -589,7 +589,7 @@ public class StockRound_18EU extends StockRound {
                 pool.addTrain(pullmannToDiscard);
                 ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
                         major.getId(),
-                        pullmannToDiscard.getId() ));
+                        pullmannToDiscard.toText() ));
             }
         } else {
             ReportBuffer.add("");
@@ -666,7 +666,7 @@ public class StockRound_18EU extends StockRound {
                 errMsg =
                         LocalText.getText("CompanyDoesNotOwnTrain",
                                 company.getId(),
-                                train.getId() );
+                                train.toText() );
                 break;
             }
 
@@ -675,7 +675,7 @@ public class StockRound_18EU extends StockRound {
         if (errMsg != null) {
             DisplayBuffer.add(LocalText.getText("CannotDiscardTrain",
                     companyName,
-                    train.getId(),
+                    train.toText(),
                     errMsg ));
             return false;
         }
@@ -686,7 +686,7 @@ public class StockRound_18EU extends StockRound {
         pool.addTrain(train);
         ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
                 companyName,
-                train.getId() ));
+                train.toText() ));
 
         finishTurn();
 

@@ -71,7 +71,7 @@ public class OperatingRound_18AL extends OperatingRound {
                     if (newToken != null) {
                         ReportBuffer.add(LocalText.getText("NamesTrain",
                                 operatingCompany.value().getId(),
-                                trains.get(i).getId(),
+                                trains.get(i).toText(),
                                 newToken.getLongName() ));
                     }
                 }

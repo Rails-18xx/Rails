@@ -1885,8 +1885,8 @@ CompanyOperates,Erie,Marcus
 CompanyRevenue,Erie,330
 CompanyPaysOutFull,Erie,330
 Payout,Chris,33,1,10
-Payout,Ed,33,1,10
 BankIsBrokenReportText
+Payout,Ed,33,1,10
 Payout,Marcus,198,6,10
 Payout,Erie,33,1,10
 PRICE_MOVES_LOG,Erie,75,I6,80,J6

@@ -65,7 +65,7 @@ public class StatusWindow_18EU extends StatusWindow {
                 for (int i = 0; i < options.length; i++) {
                     options[i] =
                             LocalText.getText("N_Train",
-                                    Iterables.get(trains, i).getId());
+                                    Iterables.get(trains, i).toText());
                     trainOptions.add(options[i]);
                 }
                 String discardedTrainName =

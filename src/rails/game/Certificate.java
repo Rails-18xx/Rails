@@ -10,5 +10,7 @@ package rails.game;
  */
 public interface Certificate extends RailsItem {
 
+    // returns the name of the certificate
+    public String getName();
 
 }

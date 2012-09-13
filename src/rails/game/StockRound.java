@@ -808,7 +808,7 @@ public class StockRound extends Round {
                     playerName,
                     share,
                     companyName,
-                    from.getId(),
+                    from.getName(),
                     Currency.format(this, cost) ));
         } else {
             ReportBuffer.add(LocalText.getText("BUY_SHARES_LOG",
@@ -817,7 +817,7 @@ public class StockRound extends Round {
                     share,
                     shares,
                     companyName,
-                    from.getId(),
+                    from.getName(),
                     Currency.format(this, cost) ));
         }
         ReportBuffer.getAllWaiting();
@@ -833,7 +833,7 @@ public class StockRound extends Round {
         }
 
         String costText = Currency.wire(currentPlayer, cost, priceRecipient);
-        if (priceRecipient != from.getParent()) {
+        if (priceRecipient != from.getMoneyOwner()) {
             ReportBuffer.add(LocalText.getText("PriceIsPaidTo",
                     costText,
                     priceRecipient.getId() ));

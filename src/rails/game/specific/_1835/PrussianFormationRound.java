@@ -412,7 +412,7 @@ public class PrussianFormationRound extends StockRound {
                 errMsg =
                         LocalText.getText("CompanyDoesNotOwnTrain",
                                 company.getId(),
-                                train.getId() );
+                                train.toText() );
                 break;
             }
 
@@ -421,7 +421,7 @@ public class PrussianFormationRound extends StockRound {
         if (errMsg != null) {
             DisplayBuffer.add(LocalText.getText("CannotDiscardTrain",
                     company.getId(),
-                    (train != null ?train.getId() : "?"),
+                    (train != null ?train.toText() : "?"),
                     errMsg ));
             return false;
         }
@@ -433,7 +433,7 @@ public class PrussianFormationRound extends StockRound {
         pool.addTrain(train);
         ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
                 company.getId(),
-                train.getId() ));
+                train.toText() ));
 
         // This always finished this type of round
         finishRound();
