@@ -328,6 +328,8 @@ public class TrainManager extends RailsManager implements Configurable {
     private boolean isTrainObsolete(Train train, Owner lastBuyingCompany) {
         // check fist if train can obsolete at all
         if (!train.getCertType().isObsoleting()) return false;
+        // and if it is in the pool (always rust)
+        if (train.getOwner() == pool.getParent()) return false;
         
         // then check if obsolete type
         if (obsoleteTrainFor == ObsoleteTrainForType.ALL) {
