@@ -1,13 +1,13 @@
-Rails release 1.7.8:
+Rails release 1.7.9:
 
 A new maintenance release for Rails 1.x series
 
-This release fixes several bugs.
+This release fixes two bugs.
 
-Contributors: Erik Vos, Stefan Frey
+Contributors: Stefan Frey
 
-Bugs reported by Martin Brumm, John David Galt
+Bugs reported by Arne Österlund
 
 Lists of bugs fixed:
-- All Games: Update "PD" label in GameStatus lower player names panel
-- 1835 (and others with NoMapMode): Cannot save game file with ClosePrivate action
+- List of recent files does not work with few entries
+- 1830 Coalfields (and others): Obsolete Trains in Pool should rust (previously the stayed forever) 
