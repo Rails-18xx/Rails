@@ -429,7 +429,7 @@ public class StockRound_18EU extends StockRound {
                     currentPlayer.getId(),
                     cert2.getShare(),
                     company.getId(),
-                    ipo.getId(),
+                    ipo.getParent().getId(),
                     minor.getId() ));
         } else {
             ReportBuffer.add(LocalText.getText("SelectedHomeBase",

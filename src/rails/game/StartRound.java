@@ -261,7 +261,7 @@ public abstract class StartRound extends Round {
         String priceText = Currency.toBank(player, price);
         ReportBuffer.add(LocalText.getText("BuysItemFor",
                 player.getId(),
-                primary.getId(),
+                primary.getName(),
                 priceText ));
         transferCertificate (primary, player.getPortfolioModel());
         checksOnBuying(primary, sharePrice);
