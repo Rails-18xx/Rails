@@ -462,7 +462,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
                 firstTrainTag.getAttributeAsString("type", "Private");
             if (typeName.equalsIgnoreCase("Private")) {
                 privateToCloseOnFirstTrainName =
-                    firstTrainTag.getAttributeAsString("getId()");
+                    firstTrainTag.getAttributeAsString("name");
             } else {
                 throw new ConfigurationException(
                 "Only Privates can be closed on first train buy");
