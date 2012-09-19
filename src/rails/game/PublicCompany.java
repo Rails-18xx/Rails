@@ -693,7 +693,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
                 }
 
                 for (int k = 0; k < number; k++) {
-                    certificate = new PublicCertificate(this, "cert#" + certIndex, shares, president,
+                    certificate = new PublicCertificate(this, "cert_" + certIndex, shares, president,
                             certIsInitiallyAvailable, certificateCount, certIndex++);
                     certificates.add(certificate);
                     shareTotal += shares * shareUnit.value();
