@@ -146,26 +146,13 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
     // TODO: Check if there was some assumption to be null at some place
     protected final BooleanState inGameState = BooleanState.create(this, "inGameState", true);
 
-    /**
-     * A map per tile colour. Each entry contains a map per phase, of which each
-     * value is an Integer defining the number of allowed tile lays. Only
-     * numbers deviating from 1 need be specified, the default is always 1.
-     */
-    protected Map<String, HashMap<String, Integer>> extraTileLays = null;
-    /**
-     * A map per tile colour, holding the number of turns that the tile lay
-     * number applies. The default number is always 1.
-     */
-    //protected Map<String, Integer> turnsWithExtraTileLaysInit = null;
-    /** Copy of turnsWithExtraTileLaysInit, per company */
-    protected Map<String, IntegerState> turnsWithExtraTileLays = null; 
-    // init during finishConfig
-    /**
-     * Number of tiles laid. Only used where more tiles can be laid in the
-     * company's first OR turn.
-     */
-    protected IntegerState extraTiles = null;
+    // TODO: the extra turn model has to be rewritten (it is not fully undo proof)
     
+    /** Stores the number of turns with extraLays */
+    protected Map<String, IntegerState> turnsWithExtraTileLays = null; 
+
+    /** This receives the current value of turnsWithExtraTileLays  */
+    protected GenericState<IntegerState> extraTiles = GenericState.create(this, "extraTiles");
 
     /* Spendings in the current operating turn */
     protected final CountingMoneyModel privatesCostThisTurn = CountingMoneyModel.create(this, "privatesCostThisTurn", false);
@@ -485,52 +472,6 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
             }
         }
 
-        /*Tag tileLaysTag = tag.getChild("TileLays");
-        if (tileLaysTag != null) {
-
-            for (Tag numberTag : tileLaysTag.getChildren("Number")) {
-
-                String colourString = numberTag.getAttributeAsString("colour");
-                if (colourString == null)
-                    throw new ConfigurationException(
-                    "No colour entry for NumberOfTileLays");
-                String phaseString = numberTag.getAttributeAsString("phase");
-                if (phaseString == null)
-                    throw new ConfigurationException(
-                    "No phase entry for NumberOfTileLays");
-                int number = numberTag.getAttributeAsInteger("number");
-                Integer lays = new Integer(number);
-
-                int validForTurns =
-                    numberTag.getAttributeAsInteger("occurrences", 0);
-
-                String[] colours = colourString.split(",");
-                HashMap<String, Integer> phaseMap;
-                /**
-         * TODO: should not be necessary to specify all phases
-         * separately
-         *//*
-                String[] phases = phaseString.split(",");
-                for (int i = 0; i < colours.length; i++) {
-                    if (extraTileLays == null)
-                        extraTileLays =
-                            new HashMap<String, HashMap<String, Integer>>();
-                    extraTileLays.put(colours[i], (phaseMap =
-                        new HashMap<String, Integer>()));
-                    for (int k = 0; k < phases.length; k++) {
-                        phaseMap.put(phases[k], lays);
-                    }
-                    if (validForTurns > 0) {
-                        if (turnsWithExtraTileLaysInit == null) {
-                            turnsWithExtraTileLaysInit =
-                                new HashMap<String, Integer>();
-                        }
-                        turnsWithExtraTileLaysInit.put(colours[i],
-                                validForTurns);
-                    }
-                }
-            }
-        }*/
 
         // TODO: Check if this still works correctly
         // The certificate init was moved to the finishConfig phase
@@ -629,17 +570,6 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
         bank = gameManager.getBank();
         stockMarket = gameManager.getStockMarket();
         mapManager = gameManager.getMapManager();
-
-        /*
-        if (turnsWithExtraTileLaysInit != null) {
-            turnsWithExtraTileLays = new HashMap<String, IntegerState>();
-            for (String colour : turnsWithExtraTileLaysInit.keySet()) {
-                IntegerState tileLays = IntegerState.create
-                        (this, "" + colour + "_ExtraTileTurns", turnsWithExtraTileLaysInit.get(colour));
-                turnsWithExtraTileLays.put(colour, tileLays);
-            }
-        }
-         */
 
         if (maxNumberOfLoans != 0) {
             currentNumberOfLoans = IntegerState.create(this, "currentNumberOfLoans");
@@ -1625,9 +1555,6 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
 
         if (cost > 0) tilesCostThisTurn.change(cost);
         
-        if (extraTiles != null && extraTiles.value() > 0) {
-            extraTiles.add(-1);
-        }
     }
 
     public void layTilenNoMapMode(int cost) {
@@ -1830,25 +1757,28 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
 
         Phase phase = gameManager.getPhaseManager().getCurrentPhase();
 
-        // New style
+        // Get the number of tile lays from Phase
         int tileLays = phase.getTileLaysPerColour(getType().getId(), tileColour);
-        if (tileLays <= 1) {
-            extraTileLays = null;
-            return tileLays;
-        }
 
+        // standard cases: 0 and 1, return
+        if (tileLays <= 1) return tileLays;
+        
         // More than one tile lay allowed.
         // Check if there is a limitation on the number of turns that this is valid.
         if (turnsWithExtraTileLays != null) {
-            extraTiles = turnsWithExtraTileLays.get(tileColour);
+            extraTiles.set(turnsWithExtraTileLays.get(tileColour));
         }
-        if (extraTiles != null) {
-                if (extraTiles.value() == 0) {
-                extraTiles.set(-1);
-                    return 1;
-                }
+        
+        // check if extraTiles is defined
+        if (extraTiles.value() != null) {
+            // the value is zero already, thus no extra tiles
+            if (extraTiles.value().value() == 0) {
+                return 1;
+            } else {
+                // reduce the number of turns by one
+                extraTiles.value().add(-1);
             }
-
+        }
         return tileLays;
     }
 
