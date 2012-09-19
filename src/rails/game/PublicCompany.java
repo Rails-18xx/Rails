@@ -221,8 +221,8 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
     boolean certsAreInitiallyAvailable = true;
 
     /** What percentage of ownership constitutes "one share" */
-    protected IntegerState shareUnit = null; // configured see below
-
+    protected IntegerState shareUnit = IntegerState.create(this, "shareUnit", DEFAULT_SHARE_UNIT);
+    
     /** What number of share units relates to the share price
      * (normally 1, but 2 for 1835 Prussian)
      */
@@ -364,7 +364,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
 
         Tag shareUnitTag = tag.getChild("ShareUnit");
         if (shareUnitTag != null) {
-            shareUnit = IntegerState.create(this, "shareUnit", shareUnitTag.getAttributeAsInteger("percentage", DEFAULT_SHARE_UNIT));
+            shareUnit.set(shareUnitTag.getAttributeAsInteger("percentage", DEFAULT_SHARE_UNIT));
             shareUnitsForSharePrice
             = shareUnitTag.getAttributeAsInteger("sharePriceUnits", shareUnitsForSharePrice);
         }
@@ -654,10 +654,6 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
                         + getId());
             currentPrice.setPrice(parPrice.getPrice());
 
-        }
-
-        if (shareUnit == null) {
-            shareUnit = IntegerState.create(this, "shareUnit", DEFAULT_SHARE_UNIT);
         }
 
         int certIndex = 0;

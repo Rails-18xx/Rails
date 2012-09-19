@@ -54,9 +54,15 @@ public class GameManager_1835 extends GameManager {
     }
 
     public void startPrussianFormationRound(OperatingRound_1835 or) {
-
         interruptedRound = or;
-    	createRound(PrussianFormationRound.class, "PrussianFormationRound").start ();
+        String roundName;
+        if (interruptedRound == null) {
+            // after a round
+            roundName = "PrussianFormationRound_after_" + previousRound.getId();
+        } else {
+            roundName = "PrussianFormationRound_in_" + or.getId();
+        }
+    	createRound(PrussianFormationRound.class, roundName).start();
     }
 
     public void setPrussianFormationStartingPlayer(Player prFormStartingPlayer) {

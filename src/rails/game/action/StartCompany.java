@@ -51,7 +51,8 @@ public class StartCompany extends BuyCertificate {
     public boolean equalsAsOption(PossibleAction action) {
         if (!(action.getClass() == StartCompany.class)) return false;
         StartCompany a = (StartCompany) action;
-        return a.company == company && a.from == from && Ints.asList(startPrices).contains(a.price);
+        return a.company == company && a.from == from 
+                && (startPrices == null && a.startPrices == null || Ints.asList(startPrices).contains(a.price));
     }
     
     @Override

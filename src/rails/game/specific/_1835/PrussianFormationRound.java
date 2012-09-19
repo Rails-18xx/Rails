@@ -250,7 +250,7 @@ public class PrussianFormationRound extends StockRound {
         String message = LocalText.getText("START_MERGED_COMPANY",
                 PR_ID,
                 Currency.format(this, prussian.getIPOPrice()),
-                prussian.getStartSpace());
+                prussian.getStartSpace().toText());
         ReportBuffer.add(message);
         if (display) DisplayBuffer.add(message);
 
@@ -342,7 +342,7 @@ public class PrussianFormationRound extends StockRound {
                     player.getId(),
                     cert.getShare(),
                     PR_ID,
-                    ipo.getId(),
+                    ipo.getParent().getId(),
                     company.getId());
             ReportBuffer.add(message);
             if (display) DisplayBuffer.add (message);

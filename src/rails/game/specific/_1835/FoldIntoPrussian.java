@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.google.common.collect.ImmutableSet;
+
 import rails.game.*;
 import rails.game.action.PossibleAction;
 import rails.util.Util;
@@ -73,7 +75,7 @@ public class FoldIntoPrussian extends PossibleAction {
     public boolean equalsAsOption(PossibleAction action) {
         if (!(action instanceof FoldIntoPrussian)) return false;
         FoldIntoPrussian a = (FoldIntoPrussian) action;
-        return a.foldableCompanyNames.equals(foldableCompanyNames);
+        return ImmutableSet.copyOf(a.foldableCompanies).equals(ImmutableSet.copyOf(foldableCompanies));
     }
 
     @Override
@@ -95,7 +97,9 @@ public class FoldIntoPrussian extends PossibleAction {
         if (foldableCompanyNames != null) {
             foldableCompanies = new ArrayList<Company>();
             for (String name : foldableCompanyNames.split(",")) {
-                foldableCompanies.add(cmgr.getPublicCompany(name));
+                company = cmgr.getPublicCompany(name);
+                if (company == null) company = cmgr.getPrivateCompany(name);
+                if (company != null) foldableCompanies.add(company);
             }
         }
         if (Util.hasValue(foldedCompanyNames)) {
