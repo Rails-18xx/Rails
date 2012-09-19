@@ -436,8 +436,7 @@ public class CGRFormationRound extends SwitchableUIRound {
         ReportBuffer.add(message);
 
         // Move the remaining CGR shares to the ipo.
-        // Clone the shares list first
-        cgr.getPortfolioModel().moveAllCertificates(ipo.getParent());
+        Portfolio.moveAll(unavailable.getCertificates(cgr), ipo.getParent());
 
         // Assign the new president
         if (newPresident.getPortfolioModel().getShare(cgr) == cgr.getShareUnit()) {
@@ -630,7 +629,7 @@ bonuses:        for (Bonus bonus : bonuses) {
             String cityName;
             for (BaseToken token : nonHomeTokens) {
                 if (token.getOwner() instanceof Stop) {
-                    cityName = token.getOwner().getId();
+                    cityName = ((Stop)token.getOwner()).getSpecificId();
                     if (oldTokens.containsKey(cityName)) {
                         oldTokens.put(cityName,
                                 oldTokens.get(cityName)+","+token.getParent().getId());

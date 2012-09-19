@@ -1,6 +1,6 @@
 package rails.game.state;
 
-final class PortfolioChange<T extends Ownable> extends Change {
+public final class PortfolioChange<T extends Ownable> extends Change {
 
     private final Portfolio<T> portfolio;
     private final T item;
@@ -35,6 +35,15 @@ final class PortfolioChange<T extends Ownable> extends Change {
         } else {
             return "Change for " + portfolio + ": Remove " + item;
         }
+    }
+    
+    // external information
+    public T getItem() {
+        return item;
+    }
+    
+    public boolean isIntoPortfolio() {
+        return intoPortfolio;
     }
 
 }

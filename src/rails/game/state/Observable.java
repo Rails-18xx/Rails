@@ -69,15 +69,15 @@ public abstract class Observable implements Item {
         return getStateManager().getModels(this);
     }
 
-    public void addTrigger(Trigger m) {
+    public void addTrigger(Triggerable m) {
         getStateManager().addTrigger(m, this);
     }
     
-    public boolean removeTrigger(Trigger m) {
+    public boolean removeTrigger(Triggerable m) {
         return getStateManager().removeTrigger(m, this);
     }
     
-    public ImmutableSet<Trigger> getTriggers() {
+    public ImmutableSet<Triggerable> getTriggers() {
         return getStateManager().getTriggers(this);
     }
 

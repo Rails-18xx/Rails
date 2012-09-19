@@ -14,7 +14,7 @@ import rails.game.model.WalletMoneyModel;
 import rails.game.state.BooleanState;
 import rails.game.state.Change;
 import rails.game.state.Observable;
-import rails.game.state.Trigger;
+import rails.game.state.Triggerable;
 import rails.game.state.UnknownOwner;
 import rails.util.Util;
 
@@ -52,7 +52,7 @@ public class Bank extends RailsManager implements MoneyOwner, Configurable {
     
     // Instance initializer to create a BankBroken model
     {
-        new Trigger() {
+        new Triggerable() {
             {// instance initializer
                 cash.addTrigger(this);
             }

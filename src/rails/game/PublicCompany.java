@@ -758,8 +758,8 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
         
         // Can companies acquire special rights (such as in 1830 Coalfields)?
         // TODO: Can this be simplified?
-        if (portfolio.getSpecialProperties() != null) {
-            for (SpecialProperty sp : portfolio.getSpecialProperties()) {
+        if (portfolio.hasSpecialProperties()) {
+            for (SpecialProperty sp : portfolio.getPersistentSpecialProperties()) {
                 if (sp instanceof SpecialRight) {
                     gameManager.setGuiParameter (GuiDef.Parm.HAS_ANY_RIGHTS, true);
                     // Initialize rights here to prevent overhead if not used, 
@@ -2030,7 +2030,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
     }
 
     public ImmutableSet<SpecialProperty> getSpecialProperties() {
-        return portfolio.getSpecialProperties().items();
+        return portfolio.getPersistentSpecialProperties();
     }
 
 

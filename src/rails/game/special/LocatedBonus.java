@@ -70,6 +70,10 @@ public final class LocatedBonus extends SpecialProperty {
     public int getValue() {
         return value;
     }
+    
+    public String getName() {
+        return name;
+    }
 
     @Override
     public String toText() {

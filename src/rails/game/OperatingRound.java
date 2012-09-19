@@ -2095,7 +2095,7 @@ public class OperatingRound extends Round implements Observer {
 
         ReportBuffer.add(LocalText.getText("BuysBonusTokenFrom",
                 operatingCompany.value().getId(),
-                sbt.getId(),
+                sbt.getName(),
                 bank.getCurrency().format(sbt.getValue()), // TODO: Do this nicer
                 seller.getId(),
                 bank.getCurrency().format(sbt.getPrice()))); // TODO: Do this nicer

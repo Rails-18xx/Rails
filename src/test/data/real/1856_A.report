@@ -1807,8 +1807,8 @@ CompanyOperates,CV,Joakim
 LaysTileAt,CV,24,L11,NE
 CompanyRevenue,CV,630
 CompanyPaysOutFull,CV,630
-Payout,Joakim,378,6,10
 BankIsBrokenReportText
+Payout,Joakim,378,6,10
 Payout,Aliza,126,2,10
 Payout,Ed,63,1,10
 Payout,Adam,63,1,10

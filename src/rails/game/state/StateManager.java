@@ -27,7 +27,7 @@ public final class StateManager extends Manager{
             HashSetState.create(this, "allStates");
     private final HashMultimapState<Observable, Model> models = 
             HashMultimapState.create(this, "models");
-    private final HashMultimapState<Observable, Trigger> triggers = 
+    private final HashMultimapState<Observable, Triggerable> triggers = 
             HashMultimapState.create(this, "triggers");
     
 
@@ -122,25 +122,25 @@ public final class StateManager extends Manager{
 
     /**
      * Adds the combination of trigger to observable
-     * @param Trigger the trigger that tracks the observable
+     * @param Triggerable the trigger that tracks the observable
      * @param Observable the observable to monitor
      */
-    void addTrigger(Trigger trigger, Observable observable) {
+    void addTrigger(Triggerable trigger, Observable observable) {
         triggers.put(observable, trigger);
     }
     
-    boolean removeTrigger(Trigger trigger, Observable observable) {
+    boolean removeTrigger(Triggerable trigger, Observable observable) {
         return triggers.remove(observable, trigger);
     }
     
-    ImmutableSet<Trigger> getTriggers(Observable observable) {
+    ImmutableSet<Triggerable> getTriggers(Observable observable) {
         return triggers.get(observable);
     }
     
     void informTriggers(State state, Change change) {
         
         // Inform direct triggers
-        for (Trigger t:getTriggers(state)) {
+        for (Triggerable t:getTriggers(state)) {
             t.triggered(state, change);
             log.debug("State " + state + " sends change to Trigger " + t);
         }
@@ -152,7 +152,7 @@ public final class StateManager extends Manager{
 
         // Inform indirect triggers
         for (Model m:allModels) {
-            for (Trigger t:getTriggers(m)) {
+            for (Triggerable t:getTriggers(m)) {
                 t.triggered(m, change);
                 log.debug("Model " + m + " sends change to Trigger " + t);
             }

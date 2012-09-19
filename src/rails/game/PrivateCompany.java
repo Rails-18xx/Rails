@@ -519,7 +519,7 @@ public class PrivateCompany extends OwnableItem<PrivateCompany> implements Compa
      * @return Boolean
      */
     public boolean hasSpecialProperties() {
-        return specialProperties != null && !specialProperties.isEmpty();
+        return !specialProperties.isEmpty();
     }
 
     // Company methods
@@ -550,7 +550,7 @@ public class PrivateCompany extends OwnableItem<PrivateCompany> implements Compa
     public ImmutableSet<SpecialProperty> getSpecialProperties() {
         return specialProperties.items();
     }
-
+    
     // RailsItem methods
     @Override
     public RailsItem getParent() {

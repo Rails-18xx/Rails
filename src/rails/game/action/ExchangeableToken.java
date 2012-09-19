@@ -8,6 +8,8 @@ package rails.game.action;
 
 import java.io.Serializable;
 
+import com.google.common.base.Objects;
+
 /**
  * A simple, serializable class that holds the <i>original</i> location
  * of a Base token, to facilitate its replacement even after its company
@@ -42,6 +44,11 @@ public class ExchangeableToken implements Serializable {
 
     public void setSelected(boolean selected) {
         this.selected = selected;
+    }
+    
+    public boolean equalsAsOption(ExchangeableToken other) {
+        return Objects.equal(this.cityName, other.cityName) 
+                && Objects.equal(this.oldCompanyName, other.oldCompanyName);
     }
     
     public String toString() {

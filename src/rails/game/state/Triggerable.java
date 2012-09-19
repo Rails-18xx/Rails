@@ -1,6 +1,6 @@
 package rails.game.state;
 
-public interface Trigger {
+public interface Triggerable {
 
     /**
      * Method that is called if something has changed

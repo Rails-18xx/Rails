@@ -74,7 +74,14 @@ public class ExchangeTokens extends PossibleORAction {
     public boolean equalsAsOption(PossibleAction action) {
         if (!(action instanceof ExchangeTokens)) return false;
         ExchangeTokens a = (ExchangeTokens) action;
-        return a.tokensToExchange == tokensToExchange && a.company == company;
+        if (a.company != this.company) return false;
+        // check if all tokensToExchange are equal as option (without selected)
+        for (int i=0; i< tokensToExchange.size(); i++) {
+            if (!(a.tokensToExchange.get(i).equalsAsOption(tokensToExchange.get(i)))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
