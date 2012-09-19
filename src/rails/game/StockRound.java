@@ -441,7 +441,7 @@ public class StockRound extends Round {
                             / (i * company.getShareUnit()));
                 if (number <= 0) continue;
 
-
+                possibleActions.add(new SellShares(company.getId(), i, number, price));
             }
         }
     }
