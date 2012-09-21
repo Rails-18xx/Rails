@@ -1,4 +1,4 @@
-Rails release 1.7.9:
+Rails release 1.7.10:
 
 A new maintenance release for Rails 1.x series
 
@@ -6,8 +6,8 @@ This release fixes two bugs.
 
 Contributors: Stefan Frey
 
-Bugs reported by Arne Österlund
+Bugs reported by theos and Russel J. Alphey
 
 Lists of bugs fixed:
-- List of recent files does not work with few entries
-- 1830 Coalfields (and others): Obsolete Trains in Pool should rust (previously the stayed forever) 
+- fixed bug in starting a company in 18EU if only one start price is possible
+- fixed bug that the ReportWindow does not scroll down at game start
