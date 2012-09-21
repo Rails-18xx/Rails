@@ -181,21 +181,25 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
     @Override
     public void scrollDown() {
         // only set caret if visible
-        if (!this.isVisible()) return;
+        //if (!this.isVisible()) return;
 
         // find the active message in the parsed html code (not identical to the position in the html string)
         // thus the message indicator is used
-        int caretPosition;
-        try{
-            String docText = editorPane.getDocument().getText(0, editorPane.getDocument().getLength());
-            caretPosition = docText.indexOf(ReportBuffer.ACTIVE_MESSAGE_INDICATOR);
-        } catch (BadLocationException e){
-            caretPosition = -1;
-        };
-        final int caretPositionStore = caretPosition;
-        if (caretPosition != -1) {
-            editorPane.setCaretPosition(caretPositionStore);
-        }
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                int caretPosition;
+                try{
+                    String docText = editorPane.getDocument().getText(0, editorPane.getDocument().getLength());
+                    caretPosition = docText.indexOf(ReportBuffer.ACTIVE_MESSAGE_INDICATOR);
+                } catch (BadLocationException e){
+                    caretPosition = -1;
+                };
+                final int caretPositionStore = caretPosition;
+                if (caretPosition != -1) {
+                    editorPane.setCaretPosition(caretPositionStore);
+                }
+            }
+        });
     }
 
     public void actionPerformed(ActionEvent e) {
