@@ -1771,8 +1771,8 @@ public class OperatingRound extends Round implements Observer {
         for (String colour : layableColours) {
             if (hexes != null) {
                 for (MapHex hex : hexes) {
-                    // Check if the company can pay any costs
-                    if (cash < hex.getTileCost()) continue;
+                    // Check if the company can pay any costs (if not free)
+                    if (!stl.isFree() && cash < hex.getTileCost()) continue;
 
                     // At least one hex does not have that colour yet
                     if (hex.getCurrentTile().getColourNumber() + 1
