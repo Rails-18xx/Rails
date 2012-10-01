@@ -10,6 +10,6 @@ locale=te_ST
 # Example: �@ to specify a pound sign prefix: �100.
 money_format=@
 
-save.directory=test/data
+save.directory=src/test/data
 report.filename.extension=report
 failed.filename.extension=failed

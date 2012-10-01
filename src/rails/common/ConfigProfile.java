@@ -14,7 +14,9 @@ import java.util.Set;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
-import org.apache.log4j.Logger;
+
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 import rails.util.SystemOS;
 import rails.util.Util;
@@ -24,9 +26,8 @@ import rails.util.Util;
  */
 
 public final class ConfigProfile {
-
-    protected static Logger log =
-            Logger.getLogger(ConfigProfile.class.getPackage().getName());
+    private static final Logger log =
+            LoggerFactory.getLogger(ConfigItem.class);
     
     // available profile types
     public enum Type {SYSTEM, PREDEFINED, USER};

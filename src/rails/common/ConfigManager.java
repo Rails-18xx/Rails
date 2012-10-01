@@ -7,14 +7,15 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.common.ConfigManager;
-import rails.common.parser.ConfigurableComponentI;
+import rails.common.parser.Configurable;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
-import rails.game.Game;
-import rails.game.GameManagerI;
+import rails.game.RailsRoot;
+import rails.game.GameManager;
 import rails.util.Util;
 
 /**
@@ -24,9 +25,9 @@ import rails.util.Util;
  * It is a rewrite of the previouslsy used static class Config
  */
 
-public class ConfigManager implements ConfigurableComponentI {
+public class ConfigManager implements Configurable {
 
-    protected static Logger log;
+    private static Logger log;
     
     // STATIC CONSTANTS
     
@@ -70,7 +71,7 @@ public class ConfigManager implements ConfigurableComponentI {
         System.out.println("log4j.configuration =  " + log4jSelection);
    
         // Activate logger
-        log = Logger.getLogger(ConfigManager.class.getPackage().getName());
+        log = LoggerFactory.getLogger(ConfigManager.class);
         log.debug("Activate log4j logging using configuration file = " + log4jSelection);
         
     }
@@ -79,11 +80,9 @@ public class ConfigManager implements ConfigurableComponentI {
         startlog4j();
         
         try {
-            List<String> directories = new ArrayList<String>();
-            directories.add(CONFIG_XML_DIR);
             // Find the config tag inside the the config xml file
             Tag configTag =
-                    Tag.findTopTagInFile(CONFIG_XML_FILE, directories, CONFIG_TAG);
+                    Tag.findTopTagInFile(CONFIG_XML_FILE, CONFIG_XML_DIR, CONFIG_TAG);
             log.debug("Opened config xml, filename = " + CONFIG_XML_FILE);
             instance.configureFromXML(configTag);
         } catch (ConfigurationException e) {
@@ -135,7 +134,7 @@ public class ConfigManager implements ConfigurableComponentI {
     }
 
     
-    public void finishConfiguration(GameManagerI parent)
+    public void finishConfiguration(GameManager parent)
             throws ConfigurationException {
         // do nothing
     }
@@ -167,12 +166,12 @@ public class ConfigManager implements ConfigurableComponentI {
 
         String version = versionNumber.getProperty("version");
         if (Util.hasValue("version")) {
-            Game.setVersion(version);
+            RailsRoot.setVersion(version);
         }
             
         String develop = versionNumber.getProperty("develop");
         if (Util.hasValue(develop)) {
-            Game.setDevelop(develop != "");
+            RailsRoot.setDevelop(develop != "");
         }
     }
 
