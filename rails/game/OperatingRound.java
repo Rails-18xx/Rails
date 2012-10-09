@@ -3062,7 +3062,9 @@ public class OperatingRound extends Round implements Observer {
                     companiesPerPlayer.add(new ArrayList<PublicCompanyI>(4));
                 List<PublicCompanyI> companies;
                 // Sort out which players preside over which companies.
-                for (PublicCompanyI c : getOperatingCompanies()) {
+                //for (PublicCompanyI c : getOperatingCompanies()) {
+                for (PublicCompanyI c : companyManager.getAllPublicCompanies()) {
+                    if (!c.hasFloated()) continue;
                     if (c.isClosed() || c == operatingCompany.get()) continue;
                     p = c.getPresident();
                     index = p.getIndex();
