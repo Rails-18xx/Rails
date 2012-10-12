@@ -12970,10 +12970,6 @@ object TTilesWrapper
         item
           Position1 = tp1SideF
           Position2 = tp4SideB
-        end
-        item
-          Position1 = tp4SideC
-          Position2 = tp4SideC
         end>
       Junctions = <
         item

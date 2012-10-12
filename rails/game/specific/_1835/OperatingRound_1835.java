@@ -147,7 +147,7 @@ public class OperatingRound_1835 extends OperatingRound {
                 // PR has just started. Check if it can operate this round
                 // That's only the case if M1 has just bought
                 // the first 4-train or 4+4-train
-                && operatingCompany.get() == companyManager.getPublicCompany("M1")) {
+                && operatingCompany.getName().equalsIgnoreCase(GameManager_1835.M1_ID)) {
             log.debug("M2 has not operated: PR can operate");
 
             // Insert the Prussian before the first major company
@@ -178,6 +178,9 @@ public class OperatingRound_1835 extends OperatingRound {
             log.debug("M2 has operated: PR cannot operate");
 
         }
+
+        // Check if the operating company still exists
+        if (operatingCompany.get().isClosed()) finishTurn();
 
         guiHints.setCurrentRoundType(getClass());
         super.resume();

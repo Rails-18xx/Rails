@@ -9,6 +9,7 @@ public class GameManager_1835 extends GameManager {
     private RoundI previousRound = null;
     private Player prFormStartingPlayer = null;
 
+    public static String M1_ID = "M1";
     public static String M2_ID = "M2";
     public static String PR_ID = "PR";
     public static String OL_ID = "OL";

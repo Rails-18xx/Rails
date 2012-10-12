@@ -17779,11 +17779,6 @@
 				<position1>tp1SideF</position1>
 				<position2>tp4SideB</position2>
 			</connection>
-			<connection>
-				<conType>ctNormal</conType>
-				<position1>tp4SideC</position1>
-				<position2>tp4SideC</position2>
-			</connection>
 		</connections>
 	</tile>
 	<tile>
