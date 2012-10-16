@@ -264,6 +264,7 @@ public abstract class HexMap implements MouseListener,
                 
             } catch (NullPointerException ex) {
                 // If we try to paint before something is loaded, just retry later.
+                log.debug("Premature call to TilesLayer.paintImage(Graphics g)");
             }
         }
     }

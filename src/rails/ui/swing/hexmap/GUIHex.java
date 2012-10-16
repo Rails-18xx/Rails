@@ -162,7 +162,7 @@ public class GUIHex implements Observer {
              *         3
              */
             xVertex[0] = cx + SQRT3 * scale;
-            yVertex[0] = cy + scale;
+            yVertex[0] =cy + scale;
             xVertex[1] = cx + 2 * SQRT3 * scale;
             yVertex[1] = cy;
             xVertex[2] = cx + 2 * SQRT3 * scale;

@@ -6,6 +6,7 @@ import java.util.*;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.batik.transcoder.*;
 import org.apache.batik.transcoder.image.ImageTranscoder;
@@ -37,6 +38,8 @@ public class ImageLoader {
     private static String svgTileDir = "tiles/svg";
     private static String tileRootDir = Config.get("tile.root_directory");
     private static String directory;
+    
+    private final DocumentBuilder svgDocBuilder; 
 
     static {
         GUIHex.setScale(1.0);
@@ -84,18 +87,14 @@ public class ImageLoader {
             }
             if (!svgMap.containsKey(tileID)) {
                  Document doc = null;
-                // Step 1: create a DocumentBuilderFactory and setNamespaceAware
-                DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-                dbf.setNamespaceAware(true);
-                // Step 2: create a DocumentBuilder
-                DocumentBuilder db = dbf.newDocumentBuilder();
 
                 // Step 3: parse the input file to get a Document object
                 doc = 
-                        db.parse(ResourceLoader.getInputStream(fn,
+                        svgDocBuilder.parse(ResourceLoader.getInputStream(fn,
                                 directory));
                 // Cache the doc
                 svgMap.put(tileID, doc);
+                log.debug("SVG document for tile id " + tileID + " succeeded ");
             }
             BufferedImageTranscoder t = new BufferedImageTranscoder();
             t.addTranscodingHint(ImageTranscoder.KEY_MAX_WIDTH, new Float(svgWidth * zoomFactor));
@@ -103,6 +102,7 @@ public class ImageLoader {
             TranscoderInput input = new TranscoderInput(svgMap.get(tileID));
             t.transcode(input, null);
             image = t.getImage();
+            log.debug("SVG transcoding for tile id " + tileID + " and zoomFactor " + zoomFactor + " succeeded ");
 
         } catch (Exception e) {
             log.error("SVG transcoding for tile id " + tileID + " failed with "
@@ -161,6 +161,18 @@ public class ImageLoader {
 
     public ImageLoader() {
         directory = (tileRootDir + svgTileDir);
+
+        // Step 1: create a DocumentBuilderFactory and setNamespaceAware
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        // Step 2: create a DocumentBuilder
+        DocumentBuilder db = null;
+        try{
+            db = dbf.newDocumentBuilder(); }
+        catch (ParserConfigurationException e) {
+            // do nothing
+        }
+        svgDocBuilder = db;
     }
 
 }
