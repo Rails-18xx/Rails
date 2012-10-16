@@ -7,9 +7,8 @@ import com.google.common.collect.ImmutableSet;
 
 import rails.common.parser.Configurable;
 import rails.game.special.SpecialProperty;
-import rails.game.state.Owner;
 
-public interface Company extends RailsItem, Owner, Configurable, Cloneable {
+public interface Company extends RailsOwner, Configurable, Cloneable {
 
     /** The name of the XML tag used to configure a company. */
     public static final String COMPANY_ELEMENT_ID = "Company";

@@ -3,13 +3,11 @@ package rails.game;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rails.game.state.OwnableItem;
-
 /**
  * FIXME: Use other mechanism (TokenManager) to store token ids
  * FIXME: UniqueId and id are a double structure
  */
-public abstract class Token<T extends Token<T>> extends OwnableItem<T> implements RailsItem  {
+public abstract class Token<T extends Token<T>> extends RailsOwnableItem<T> {
 
     protected String description = "";
     protected String uniqueId;

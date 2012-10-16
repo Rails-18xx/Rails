@@ -27,12 +27,12 @@ import rails.game.Player;
 import rails.game.PrivateCompany;
 import rails.game.PublicCertificate;
 import rails.game.PublicCompany;
+import rails.game.RailsOwner;
 import rails.game.ReportBuffer;
 import rails.game.Train;
 import rails.game.TrainCertificateType;
 import rails.game.TrainType;
 import rails.game.special.SpecialProperty;
-import rails.game.state.Model;
 import rails.game.state.Owner;
 import rails.game.state.Portfolio;
 import rails.game.state.PortfolioSet;
@@ -42,7 +42,7 @@ import rails.game.state.PortfolioSet;
 /**
  * A Portfolio(Model) stores several portfolios
  */
-public class PortfolioModel extends Model {
+public class PortfolioModel extends RailsModel {
     public static final String ID = "PortfolioModel";
 
     protected static Logger log = LoggerFactory.getLogger(PortfolioModel.class);
@@ -69,7 +69,7 @@ public class PortfolioModel extends Model {
 
     private final GameManager gameManager;
 
-    private PortfolioModel(Owner parent, String id) {
+    private PortfolioModel(RailsOwner parent, String id) {
         super(parent, id);
 
         // TODO: Replace this with a better mechanism

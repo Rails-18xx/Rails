@@ -2,12 +2,11 @@ package rails.game.model;
 
 import rails.game.Company;
 import rails.game.PrivateCompany;
-import rails.game.state.Model;
-import rails.game.state.Owner;
+import rails.game.RailsOwner;
 import rails.game.state.Portfolio;
 import rails.game.state.PortfolioSet;
 
-public final class PrivatesModel extends Model {
+public final class PrivatesModel extends RailsModel {
 
     public static final String ID = "PrivatesModel";
     
@@ -15,7 +14,7 @@ public final class PrivatesModel extends Model {
     
     private boolean addLineBreak = false;
 
-    private PrivatesModel(Owner parent, String id) {
+    private PrivatesModel(RailsOwner parent, String id) {
         super(parent, id);
         privates = PortfolioSet.create(parent, "privates", PrivateCompany.class);
     }
@@ -23,13 +22,13 @@ public final class PrivatesModel extends Model {
     /**
      * Creates an initialized PrivatesModel
      */
-    public static PrivatesModel create(Owner parent) {
+    public static PrivatesModel create(RailsOwner parent) {
         return new PrivatesModel(parent, ID);
     }
 
     @Override
-    public Owner getParent() {
-        return (Owner)super.getParent();
+    public RailsOwner getParent() {
+        return (RailsOwner)super.getParent();
     }
     
     public Portfolio<PrivateCompany> getPortfolio() {

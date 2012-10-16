@@ -2,7 +2,7 @@ package rails.game.model;
 
 import rails.game.state.Model;
 
-public final class CertificateCountModel extends Model {
+public final class CertificateCountModel extends RailsModel {
     
     public final static String ID = "CertificateCountModel"; 
 

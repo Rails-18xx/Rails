@@ -6,7 +6,7 @@ import rails.game.RailsItem;
 import rails.game.state.ArrayListState;
 import rails.game.state.Model;
 
-public class BonusModel extends Model {
+public class BonusModel extends RailsModel {
     
     private ArrayListState<Bonus> bonuses;
     

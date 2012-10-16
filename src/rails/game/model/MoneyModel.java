@@ -11,7 +11,7 @@ import rails.game.state.StringState;
  * FIXME: PublicCompany money is shown as "" as long as it has not started, this
  * was coded inside the toString() method
  */
-public abstract class MoneyModel extends Model {
+public abstract class MoneyModel extends RailsModel {
     
     public static final int CASH_DEFAULT = 0;
     

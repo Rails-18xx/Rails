@@ -230,7 +230,7 @@ public final class ReportBuffer {
         /* Create the pathname */
         reportPathname =
                 reportDirectory + "/" + GameManager.getInstance().getGameName() + "_"
-                        + GameManager.getInstance().getGMKey() + "_"
+// TODO: Check if this still works                        + GameManager.getInstance().getGMKey() + "_"
                         + dateFormat.format(new Date()) + "."
                         + reportFilenameExtension;
         log.debug("Report pathname is " + reportPathname);

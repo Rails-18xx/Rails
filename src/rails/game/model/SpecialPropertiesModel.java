@@ -4,24 +4,23 @@ import rails.common.LocalText;
 import rails.game.Bonus;
 import rails.game.Currency;
 import rails.game.PublicCompany;
+import rails.game.RailsOwner;
 import rails.game.ReportBuffer;
 import rails.game.state.Change;
-import rails.game.state.Model;
 import rails.game.state.Observable;
-import rails.game.state.Owner;
 import rails.game.state.PortfolioChange;
 import rails.game.state.PortfolioSet;
 import rails.game.state.Triggerable;
 import rails.game.special.LocatedBonus;
 import rails.game.special.SpecialProperty;
 
-public class SpecialPropertiesModel extends Model implements Triggerable {
+public class SpecialPropertiesModel extends RailsModel implements Triggerable {
 
     public final static String ID = "SpecialPropertiesModel";
 
     private final PortfolioSet<SpecialProperty> specialProperties;
 
-    private SpecialPropertiesModel(Owner parent) {
+    private SpecialPropertiesModel(RailsOwner parent) {
         super(parent, ID);
         // specialProperties have the Owner as parent directly
         specialProperties = PortfolioSet.create(parent, "specialProperties", SpecialProperty.class);
@@ -31,13 +30,13 @@ public class SpecialPropertiesModel extends Model implements Triggerable {
         specialProperties.addTrigger(this);
     }
     
-    public static SpecialPropertiesModel create(Owner parent) {
+    public static SpecialPropertiesModel create(RailsOwner parent) {
         return new SpecialPropertiesModel(parent);
     }
     
     @Override
-    public Owner getParent() {
-        return (Owner)super.getParent();
+    public RailsOwner getParent() {
+        return (RailsOwner)super.getParent();
     }
 
     PortfolioSet<SpecialProperty> getPortfolio() {

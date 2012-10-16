@@ -6,7 +6,7 @@ import rails.game.StockSpace;
 import rails.game.state.GenericState;
 import rails.game.state.Model;
 
-public final class PriceModel extends Model {
+public final class PriceModel extends RailsModel {
 
     // FIXME: Remove duplication of company and parent
     private final PublicCompany company;

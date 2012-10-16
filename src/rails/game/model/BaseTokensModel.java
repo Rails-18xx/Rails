@@ -16,7 +16,7 @@ import rails.game.state.PortfolioSet;
 /**
  * A model presenting the number of tokens
  */
-public class BaseTokensModel extends Model {
+public class BaseTokensModel extends RailsModel {
 
     // the free tokens belong to the company
     private final PortfolioSet<BaseToken> freeBaseTokens;

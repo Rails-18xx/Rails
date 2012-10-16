@@ -8,13 +8,13 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.ImmutableList;
 
+import rails.game.model.RailsModel;
 import rails.game.state.ArrayListState;
-import rails.game.state.Model;
 
 /**
  * Objects of this class represent a square on the StockMarket.
  */
-public class StockSpace extends Model implements Comparable<StockSpace> {
+public class StockSpace extends RailsModel implements Comparable<StockSpace> {
 
     /*--- Class attributes ---*/
     /*--- Constants ---*/

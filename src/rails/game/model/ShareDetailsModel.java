@@ -9,7 +9,7 @@ import rails.game.state.Model;
 /**
  * Model for displaying the share details (used for ToolTips)
 */
-public final class ShareDetailsModel extends Model {
+public final class ShareDetailsModel extends RailsModel {
         
     private final PublicCompany company;
 

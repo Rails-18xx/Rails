@@ -12,7 +12,7 @@ import rails.game.state.Model;
  * TODO: Check if this is all done correctly, where is the observable stored?
  */
 
-public final class PresidentModel extends Model {
+public final class PresidentModel extends RailsModel {
 
     public static final String ID = "PresidentModel";  
     

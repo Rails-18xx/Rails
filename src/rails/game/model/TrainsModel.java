@@ -5,14 +5,13 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Multiset;
 
+import rails.game.RailsOwner;
 import rails.game.TrainCertificateType;
 import rails.game.Train;
-import rails.game.state.Model;
-import rails.game.state.Owner;
 import rails.game.state.Portfolio;
 import rails.game.state.PortfolioSet;
 
-public class TrainsModel extends Model {
+public class TrainsModel extends RailsModel {
 
     public static final String ID = "TrainsModel";
     
@@ -20,7 +19,7 @@ public class TrainsModel extends Model {
     
     private boolean abbrList = false;
 
-    private TrainsModel(Owner parent, String id) {
+    private TrainsModel(RailsOwner parent, String id) {
         super(parent, id);
         trains = PortfolioSet.create(parent, "trains", Train.class);
     }
@@ -28,13 +27,13 @@ public class TrainsModel extends Model {
     /** 
      * @return fully initialized TrainsModel
      */
-    public static TrainsModel create(Owner parent) {
+    public static TrainsModel create(RailsOwner parent) {
         return new TrainsModel(parent, ID);
     }
     
     @Override
-    public Owner getParent() {
-        return (Owner)super.getParent();
+    public RailsOwner getParent() {
+        return (RailsOwner)super.getParent();
     }
     
     public Portfolio<Train> getPortfolio() {

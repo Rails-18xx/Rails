@@ -11,10 +11,9 @@ import com.google.common.collect.ComparisonChain;
 import rails.common.LocalText;
 import rails.game.model.CertificatesModel;
 import rails.game.state.Ownable;
-import rails.game.state.OwnableItem;
 import rails.game.state.Typable;
 
-public class PublicCertificate extends OwnableItem<PublicCertificate> implements Certificate, Cloneable, Typable<PublicCompany> {
+public class PublicCertificate extends RailsOwnableItem<PublicCertificate> implements Certificate, Cloneable, Typable<PublicCompany> {
 
     /** From which public company is this a certificate */
     protected PublicCompany company;

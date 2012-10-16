@@ -10,8 +10,7 @@ import com.google.common.collect.Maps;
 import rails.game.Player;
 import rails.game.PublicCertificate;
 import rails.game.PublicCompany;
-import rails.game.state.Model;
-import rails.game.state.Owner;
+import rails.game.RailsOwner;
 import rails.game.state.PortfolioMap;
 
 /**
@@ -20,7 +19,7 @@ import rails.game.state.PortfolioMap;
         // TODO: find out where the president model has to be linked
         // this.addModel(company.getPresidentModel());
  */
-public class CertificatesModel extends Model implements Iterable<PublicCertificate> {
+public class CertificatesModel extends RailsModel implements Iterable<PublicCertificate> {
 
     public final static String ID = "CertificatesModel";
     
@@ -30,7 +29,7 @@ public class CertificatesModel extends Model implements Iterable<PublicCertifica
     
     private final HashMap<PublicCompany, ShareDetailsModel> shareDetailsModels = Maps.newHashMap();
 
-    private CertificatesModel(Owner parent) {
+    private CertificatesModel(RailsOwner parent) {
         super(parent, ID);
         // certificates have the Owner as parent directly
         certificates = PortfolioMap.create(parent, "certificates", PublicCertificate.class);
@@ -39,13 +38,13 @@ public class CertificatesModel extends Model implements Iterable<PublicCertifica
         
     }
     
-    public static CertificatesModel create(Owner parent) {
+    public static CertificatesModel create(RailsOwner parent) {
         return new CertificatesModel(parent);
     }
     
     @Override
-    public Owner getParent() {
-        return (Owner)super.getParent();
+    public RailsOwner getParent() {
+        return (RailsOwner)super.getParent();
     }
    
     void initShareModels(Iterable<PublicCompany> companies) {

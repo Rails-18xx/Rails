@@ -6,7 +6,7 @@ import rails.game.state.Model;
 /**
  * ShareModel for displaying the share percentages
  */
-public final class ShareModel extends Model {
+public final class ShareModel extends RailsModel {
     
     private final PublicCompany company;
 

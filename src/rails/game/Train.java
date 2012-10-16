@@ -7,9 +7,9 @@ import rails.game.state.BooleanState;
 import rails.game.state.Creatable;
 import rails.game.state.GenericState;
 import rails.game.state.Ownable;
-import rails.game.state.OwnableItem;
 
-public class Train extends OwnableItem<Train> implements Creatable, RailsItem {
+
+public class Train extends RailsOwnableItem<Train> implements Creatable {
 
     protected TrainCertificateType certificateType;
     

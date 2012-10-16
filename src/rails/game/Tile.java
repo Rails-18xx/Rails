@@ -13,9 +13,8 @@ import rails.game.Stop.RunThrough;
 import rails.game.Stop.RunTo;
 import rails.game.Stop.Score;
 import rails.game.Stop.Type;
+import rails.game.model.RailsModel;
 import rails.game.state.HashSetState;
-import rails.game.state.Item;
-import rails.game.state.Model;
 import rails.util.Util;
 
 /** Represents a certain tile <i>type</i>, identified by its id (tile number).
@@ -25,7 +24,7 @@ import rails.util.Util;
  *
  * TODO: A lot could be improved
  */
-public final class Tile extends Model implements RailsItem, Comparable<Tile> {
+public final class Tile extends RailsModel implements RailsItem, Comparable<Tile> {
 
     /** The 'internal id', identifying the tile in the XML files */
     private final int nb;
@@ -121,7 +120,7 @@ public final class Tile extends Model implements RailsItem, Comparable<Tile> {
     /** Storage of revenueBonus that are bound to the tile */
     private List<RevenueBonusTemplate> revenueBonuses = null;
 
-    private Tile(Item owner, Integer id) {
+    private Tile(RailsItem owner, Integer id) {
         super(owner, Integer.toString(id));
         this.nb = id;
         pictureId = id;

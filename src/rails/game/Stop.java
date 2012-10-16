@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableSet;
 
 import rails.game.state.GenericState;
-import rails.game.state.Owner;
 import rails.game.state.PortfolioSet;
 import rails.game.state.StringState;
 import rails.util.Util;
@@ -25,7 +24,7 @@ import rails.util.Util;
  * during upgrades; but even then it is attempted to retain the old Stop numbers
  * as much as possible.
  */
-public class Stop extends RailsAbstractItem implements Owner {
+public class Stop extends RailsAbstractItem implements RailsOwner {
     
     private final int number;
     private final GenericState<Station> relatedStation = 

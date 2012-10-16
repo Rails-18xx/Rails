@@ -14,13 +14,12 @@ import rails.common.parser.Tag;
 import rails.game.special.SellBonusToken;
 import rails.game.special.SpecialProperty;
 import rails.game.state.BooleanState;
-import rails.game.state.OwnableItem;
 import rails.game.state.PortfolioSet;
 import rails.util.*;
 
 // FIXME: Move static field numberOfPrivateCompanies to CompanyManager
 
-public class PrivateCompany extends OwnableItem<PrivateCompany> implements Company, Certificate, Closeable {
+public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements Company, Certificate, Closeable {
 
     private static Logger log = LoggerFactory.getLogger(PrivateCompany.class);
 

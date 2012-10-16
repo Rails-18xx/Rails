@@ -20,12 +20,11 @@ import rails.game.Stop.Score;
 import rails.game.Stop.Type;
 import rails.game.action.LayTile;
 
+import rails.game.model.RailsModel;
 import rails.game.state.BooleanState;
 import rails.game.state.GenericState;
 import rails.game.state.HashMapState;
 import rails.game.state.IntegerState;
-import rails.game.state.Model;
-import rails.game.state.Owner;
 import rails.game.state.PortfolioSet;
 import rails.util.*;
 
@@ -57,7 +56,7 @@ import rails.util.*;
  * tiles the above picture should be rotated 30 degrees clockwise.
  */
 
-public class MapHex extends Model implements RailsItem, Owner, Configurable {
+public class MapHex extends RailsModel implements RailsOwner, Configurable {
 
     private static final String[] ewOrNames =
     { "SW", "W", "NW", "NE", "E", "SE" };
