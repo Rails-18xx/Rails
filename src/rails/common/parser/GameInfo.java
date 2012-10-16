@@ -1,7 +1,8 @@
 package rails.common.parser;
 
 import java.util.ArrayList;
-import rails.common.parser.GameOption;
+
+import rails.common.GameOption;
 
 /**
  * GameInfo holds basic information about the game, such as:

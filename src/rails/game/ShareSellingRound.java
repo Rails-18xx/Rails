@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import rails.common.*;
-import rails.common.parser.GameOption;
 import rails.game.action.PossibleAction;
 import rails.game.action.SellShares;
 import rails.game.model.PortfolioModel;
@@ -35,7 +34,7 @@ public class ShareSellingRound extends StockRound {
             PublicCompany cashNeedingCompany, boolean dumpOtherCompaniesAllowed) {
         log.info("Share selling round started, player="
                 +sellingPlayer.getId()+" cash="+cashToRaise);
-        ReportBuffer.add (LocalText.getText("PlayerMustSellShares",
+        ReportBuffer.add(this,LocalText.getText("PlayerMustSellShares",
                 sellingPlayer.getId(),
                 Currency.format(this, cashToRaise)));
         this.parentRound = parentRound;
@@ -138,7 +137,7 @@ public class ShareSellingRound extends StockRound {
                 if (company == cashNeedingCompany || !dumpOtherCompaniesAllowed) {
                     // case A: selling of president not allowed (either company triggered share selling or no dump of others)
                     int maxOtherShares = 0;
-                    for (Player player : gameManager.getPlayers()) {
+                    for (Player player : getRoot().getPlayerManager().getPlayers()) {
                         if (player == currentPlayer) continue;
                         maxOtherShares = Math.max(maxOtherShares, player.getPortfolioModel().getShare(company));
                     }
@@ -150,7 +149,7 @@ public class ShareSellingRound extends StockRound {
                     if (share - maxShareToSell < presidentShare) {
                         // dump necessary
                         dumpPossible = false;
-                        for (Player player : gameManager.getPlayers()) {
+                        for (Player player : getRoot().getPlayerManager().getPlayers()) {
                             if (player == currentPlayer) continue;
                             // there is a player with holding exceeding the president share
                             if (player.getPortfolioModel().getShare(company) >= presidentShare) {
@@ -302,7 +301,7 @@ public class ShareSellingRound extends StockRound {
                 Player otherPlayer;
                 for (int i = currentIndex + 1; i < currentIndex
                 + numberOfPlayers; i++) {
-                    otherPlayer = gameManager.getPlayerByIndex(i);
+                    otherPlayer = getRoot().getPlayerManager().getPlayerByIndex(i);
                     if (otherPlayer.getPortfolioModel().getShare(company) >= presCert.getShare()) {
                         // Check if he has the right kind of share
                         if (numberToSell > 1
@@ -332,7 +331,7 @@ public class ShareSellingRound extends StockRound {
 
         int numberSold = action.getNumber();
         if (errMsg != null) {
-            DisplayBuffer.add(LocalText.getText("CantSell",
+            DisplayBuffer.add(this, LocalText.getText("CantSell",
                     playerName,
                     numberSold,
                     companyName,
@@ -346,7 +345,7 @@ public class ShareSellingRound extends StockRound {
 
         // Get the sell price (does not change within a turn)
         if (sellPrices.containsKey(company)
-                && GameOption.convertValueToBoolean(getGameOption("SeparateSalesAtSamePrice"))) {
+                && GameOption.getAsBoolean(this, "SeparateSalesAtSamePrice")) {
             price = (sellPrices.get(company).getPrice());
         } else {
             sellPrice = company.getCurrentSpace();
@@ -359,7 +358,7 @@ public class ShareSellingRound extends StockRound {
         // FIXME: changeStack.linkToPreviousMoveSet();
 
         String cashText = Currency.fromBank(cashAmount, currentPlayer);
-        ReportBuffer.add(LocalText.getText("SELL_SHARES_LOG",
+        ReportBuffer.add(this,LocalText.getText("SELL_SHARES_LOG",
                 playerName,
                 numberSold,
                 company.getShareUnit(),
@@ -382,7 +381,7 @@ public class ShareSellingRound extends StockRound {
         if (cashToRaise.value() <= 0) {
             gameManager.finishShareSellingRound();
         } else if (getSellableShares().isEmpty()) {
-            DisplayBuffer.add(LocalText.getText("YouMustRaiseCashButCannot",
+            DisplayBuffer.add(this, LocalText.getText("YouMustRaiseCashButCannot",
                     Currency.format(this, cashToRaise.value())));
             currentPlayer.setBankrupt();
             gameManager.registerBankruptcy();

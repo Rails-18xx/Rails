@@ -8,9 +8,9 @@ import rails.algorithms.RevenueAdapter;
 import rails.algorithms.RevenueStaticModifier;
 import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
-import rails.game.GameManager;
 import rails.game.PublicCompany;
 import rails.game.RailsItem;
+import rails.game.RailsRoot;
 import rails.game.state.BooleanState;
 
 public final class PublicCompany_18TN extends PublicCompany implements RevenueStaticModifier {
@@ -22,10 +22,10 @@ public final class PublicCompany_18TN extends PublicCompany implements RevenueSt
     }
 
     @Override
-    public void finishConfiguration(GameManager gameManager)
+    public void finishConfiguration(RailsRoot root)
     throws ConfigurationException {
-        super.finishConfiguration(gameManager);
-        gameManager.getRevenueManager().addStaticModifier(this);
+        super.finishConfiguration(root);
+        root.getRevenueManager().addStaticModifier(this);
     }
 
     public boolean isCivilWar() {
@@ -42,7 +42,7 @@ public final class PublicCompany_18TN extends PublicCompany implements RevenueSt
     @Override
     public void withhold(int amount) {
         if (isCivilWar() && portfolio.getNumberOfTrains() == 1) return;
-        stockMarket.withhold(this);
+        getRoot().getStockMarket().withhold(this);
     }
 
     /**

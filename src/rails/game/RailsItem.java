@@ -8,7 +8,7 @@ import rails.game.state.Item;
 public interface RailsItem extends Item {
 
     public RailsItem getParent();
-    
+
     public RailsRoot getRoot();
     
 }

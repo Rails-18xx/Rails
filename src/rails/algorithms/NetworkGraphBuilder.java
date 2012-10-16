@@ -27,8 +27,8 @@ import com.jgraph.layout.JGraphLayout;
 import com.jgraph.layout.organic.JGraphFastOrganicLayout;
 
 import rails.game.BaseToken;
+import rails.game.RailsRoot;
 import rails.game.Stop;
-import rails.game.GameManager;
 import rails.game.MapHex;
 import rails.game.MapManager;
 import rails.game.PublicCompany;
@@ -53,9 +53,9 @@ public final class NetworkGraphBuilder implements Iterable<NetworkVertex> {
         mapVertexes = new HashMap<String, NetworkVertex> ();
     }
     
-    public static NetworkGraphBuilder create(GameManager gameManager) {
+    public static NetworkGraphBuilder create(RailsRoot root) {
         NetworkGraphBuilder graphBuilder = new NetworkGraphBuilder();
-        graphBuilder.generateGraph(gameManager.getMapManager(), gameManager.getRevenueManager());
+        graphBuilder.generateGraph(root.getMapManager(), root.getRevenueManager());
         return graphBuilder;
     }
     

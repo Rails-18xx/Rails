@@ -10,10 +10,11 @@ import rails.algorithms.NetworkVertex;
 import rails.algorithms.RevenueAdapter;
 import rails.algorithms.RevenueBonus;
 import rails.algorithms.RevenueStaticModifier;
+import rails.common.GameOption;
 import rails.common.parser.Configurable;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
-import rails.game.GameManager;
+import rails.game.RailsRoot;
 
 public class RuhrRevenueModifier implements RevenueStaticModifier, Configurable {
 
@@ -26,9 +27,9 @@ public class RuhrRevenueModifier implements RevenueStaticModifier, Configurable 
         // does nothing
     }
 
-    public void finishConfiguration(GameManager parent)
+    public void finishConfiguration(RailsRoot root)
             throws ConfigurationException {
-        doublesOnlyMajors = parent.getGameOption("18KaasRuhrgebiedDoublesOnlyMajors").equalsIgnoreCase("yes");
+        doublesOnlyMajors = GameOption.getAsBoolean(root, "18KaasRuhrgebiedDoublesOnlyMajors");
         log.debug("Finish configuration of RuhrRevenueModifier, doublesOnlyMajors = " + doublesOnlyMajors);
     }
 

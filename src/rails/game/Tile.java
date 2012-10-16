@@ -140,11 +140,6 @@ public final class Tile extends RailsModel implements RailsItem, Comparable<Tile
         return (TileManager)super.getParent();
     }
     
-    @Override
-    public RailsRoot getRoot() {
-        return (RailsRoot)super.getParent();
-    }
-    
     /**
      * @param se &lt;Tile&gt; element from TileSet.xml
      * @param te &lt;Tile&gt; element from Tiles.xml
@@ -259,8 +254,8 @@ public final class Tile extends RailsModel implements RailsItem, Comparable<Tile
         /* Value '99' and '-1' mean 'unlimited' */
         /* BR: added option for unlimited plain tiles: tiles with one track and no stations */
         unlimited = (quantity == 99 || quantity == UNLIMITED_TILES
-                || "yes".equalsIgnoreCase(setTag.getGameOptions().get("UnlimitedTiles"))
-                || ("yellow plain".equalsIgnoreCase(setTag.getGameOptions().get("UnlimitedTiles"))
+                || "yes".equalsIgnoreCase(getRoot().getGameOptions().get("UnlimitedTiles"))
+                || ("yellow plain".equalsIgnoreCase(getRoot().getGameOptions().get("UnlimitedTiles"))
                         && tracks.size() == 1 && stations.isEmpty()));
         if (unlimited) {
             quantity = UNLIMITED_TILES;
@@ -513,7 +508,7 @@ public final class Tile extends RailsModel implements RailsItem, Comparable<Tile
         Tile tile;
         for (Upgrade upgrade : upgrades) {
             tile = upgrade.getTile();
-            if (hex == null || upgrade.isAllowedForHex(hex, phase.getName())) upgr.add(tile);
+            if (hex == null || upgrade.isAllowedForHex(hex, phase.getId())) upgr.add(tile);
         }
         return upgr;
     }
@@ -558,7 +553,7 @@ public final class Tile extends RailsModel implements RailsItem, Comparable<Tile
             tile = upgrade.getTile();
             if (phase.isTileColourAllowed(tile.getColourName())
                     && tile.countFreeTiles() != 0 /* -1 means unlimited */
-                    && upgrade.isAllowedForHex(hex, phase.getName())) {
+                    && upgrade.isAllowedForHex(hex, phase.getId())) {
                 valid.add(tile);
             }
         }

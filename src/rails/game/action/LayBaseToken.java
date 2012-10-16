@@ -131,7 +131,7 @@ public class LayBaseToken extends LayToken {
 
         in.defaultReadObject();
 
-        MapManager mmgr = gameManager.getMapManager();
+        MapManager mmgr = getRoot().getMapManager();
         locations = new ArrayList<MapHex>();
         if (Util.hasValue(locationNames)) {
             for (String hexName : locationNames.split(",")) {

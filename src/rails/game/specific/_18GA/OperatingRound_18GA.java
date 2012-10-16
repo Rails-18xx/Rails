@@ -1,6 +1,7 @@
 package rails.game.specific._18GA;
 
 import rails.common.LocalText;
+import rails.common.ReportBuffer;
 import rails.game.*;
 import rails.game.action.BuyPrivate;
 
@@ -30,7 +31,7 @@ public class OperatingRound_18GA extends OperatingRound {
                 Train train = trainManager.cloneTrain(certType);
                 company.getPortfolioModel().addTrain(train);
                 train.setTradeable(false);
-                ReportBuffer.add(LocalText.getText("GetsExtraTrain",
+                ReportBuffer.add(this,LocalText.getText("GetsExtraTrain",
                         company.getId(),
                         OS_EXTRA_TRAIN_TYPE));
                 // TODO: do we need a replacement for this?

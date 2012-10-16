@@ -10,11 +10,12 @@ import rails.algorithms.RevenueBonus;
 import rails.algorithms.RevenueDynamicModifier;
 import rails.algorithms.RevenueStaticModifier;
 import rails.algorithms.RevenueTrainRun;
+import rails.common.GameOption;
 import rails.common.parser.Configurable;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
-import rails.game.GameManager;
 import rails.game.MapHex;
+import rails.game.RailsRoot;
 import rails.game.Train;
 
 public class NamedTrainRevenueModifier implements RevenueStaticModifier, RevenueDynamicModifier, Configurable {
@@ -27,9 +28,10 @@ public class NamedTrainRevenueModifier implements RevenueStaticModifier, Revenue
         // do nothing
     }
 
-    public void finishConfiguration(GameManager parent)
+    public void finishConfiguration(RailsRoot root)
             throws ConfigurationException {
-        dynamic = parent.getGameOption("18ALOptimizeNamedTrains").equalsIgnoreCase("yes");
+        // TODO (Rails 2.0): Move GameOption to root
+        dynamic = GameOption.getAsBoolean(root, "18ALOptimizeNamedTrains");
     }
     
     private RevenueBonus defineBonus(RevenueAdapter revenueAdapter, NamedTrainToken token, boolean useLongname) {

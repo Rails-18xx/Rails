@@ -17,9 +17,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import rails.common.LocalText;
-import rails.game.ReportBuffer;
+import rails.common.ReportBuffer;
 import rails.game.action.GameAction;
 import rails.game.action.PossibleActions;
+import rails.game.state.Observable;
+import rails.game.state.Observer;
 import rails.sound.SoundManager;
 import rails.ui.swing.elements.ActionButton;
 import rails.ui.swing.elements.RailsIcon;
@@ -28,9 +30,12 @@ import rails.ui.swing.elements.RailsIcon;
  * Dynamic Report window that acts as linked game history
  */
 
-public class ReportWindowDynamic extends AbstractReportWindow implements  ActionListener, HyperlinkListener {
+public class ReportWindowDynamic extends AbstractReportWindow 
+    implements Observer, ActionListener, HyperlinkListener {
     private static final long serialVersionUID = 1L;
 
+    private final ReportBuffer buffer;
+    
     private JLabel message;
 
     private JScrollPane reportPane;
@@ -51,6 +56,9 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
     public ReportWindowDynamic(GameUIManager gameUIManager) {
         super(gameUIManager);
         init();
+        // add as observer
+        buffer = gameUIManager.getRoot().getReportManager().getReportBuffer(); 
+        buffer.addObserver(this);
     }
 
     @Override
@@ -117,37 +125,23 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
         buttonPanel.add(forwardButton);
 
 
-        commentButton = new JButton(LocalText.getText("REPORT_COMMENT"));
-        commentButton.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent arg0) {
-                        String newComment = (String)JOptionPane.showInputDialog(
-                                ReportWindowDynamic.this,
-                                LocalText.getText("REPORT_COMMENT_ASK"),
-                                LocalText.getText("REPORT_COMMENT_TITLE"),
-                                JOptionPane.PLAIN_MESSAGE,
-                                null,
-                                null,
-                                ReportBuffer.getComment()
-                        );
-                        if (newComment != null) {
-                            ReportBuffer.addComment(newComment);
-                            updateLog();
-                            scrollDown();
-                        }
-                    }
-                }
-        );
-        buttonPanel.add(commentButton);
+        // FIXME (Rails2.0): Add Comment has to be added again
+        //commentButton = new JButton(LocalText.getText("REPORT_COMMENT"));
+        // buttonPanel.add(commentButton);
 
         super.init();
 
     }
 
+    // FIXME (Rails2.0): Replace this by toTe
     @Override
     public void updateLog() {
+        updateLogInternal(buffer.toText());
+    }
+        
+    private void updateLogInternal(String text) {
         // set the content of the pane to the current
-        editorPane.setText(ReportBuffer.getReportItems());
+        editorPane.setText(text);
         scrollDown();
 
         forwardButton.setEnabled(false);
@@ -265,5 +259,14 @@ public class ReportWindowDynamic extends AbstractReportWindow implements  Action
         timeWarpMode = false;
         SoundManager.notifyOfTimeWarp(timeWarpMode);
         closeable = true;
+    }
+
+    // Observer methods
+    public void update(String text) {
+        updateLogInternal(text);
+    }
+
+    public Observable getObservable() {
+        return buffer;
     }
 }

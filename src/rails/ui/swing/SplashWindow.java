@@ -25,7 +25,6 @@ import javax.swing.border.EtchedBorder;
 
 import rails.common.Config;
 import rails.common.LocalText;
-import rails.game.RailsRoot;
 
 /**
  * Splash window shown during setup of game UI components and game loading.
@@ -165,7 +164,7 @@ public class SplashWindow {
 
         //set up static elements
 
-        JLabel railsLabel = new JLabel("Rails " + RailsRoot.getFullVersion());
+        JLabel railsLabel = new JLabel("Rails " +Config.getVersion());
         railsLabel.setFont(railsLabel.getFont().deriveFont( 
                 (float)2.0 * railsLabel.getFont().getSize()));
         railsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);

@@ -40,7 +40,7 @@ public class Bonus implements Closeable, RevenueStaticModifier {
         this.locations = locations;
     
         // add them to the call list of the RevenueManager
-        GameManager.getInstance().getRevenueManager().addStaticModifier(this);
+        RailsRoot.getInstance().getRevenueManager().addStaticModifier(this);
 
     }
     public boolean isExecutionable() {
@@ -83,7 +83,7 @@ public class Bonus implements Closeable, RevenueStaticModifier {
      * See prepareForRemovel().
      */
     public void close() {
-        GameManager.getInstance().getRevenueManager().removeStaticModifier(this);
+        RailsRoot.getInstance().getRevenueManager().removeStaticModifier(this);
     }
 
     

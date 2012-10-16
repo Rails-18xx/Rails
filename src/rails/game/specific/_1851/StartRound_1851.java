@@ -90,7 +90,7 @@ public class StartRound_1851 extends StartRound {
     @Override
     public boolean bid(String playerName, BidStartItem item) {
 
-        DisplayBuffer.add(LocalText.getText("InvalidAction"));
+        DisplayBuffer.add(this, LocalText.getText("InvalidAction"));
         return false;
     }
 

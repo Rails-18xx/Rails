@@ -4,12 +4,12 @@ import java.util.List;
 
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
+import rails.common.ReportBuffer;
 import rails.game.GameManager;
 import rails.game.Currency;
 import rails.game.MoneyOwner;
 import rails.game.Player;
 import rails.game.PublicCompany;
-import rails.game.ReportBuffer;
 import rails.game.state.ChangeStack;
 
 public class CashCorrectionManager extends CorrectionManager {
@@ -27,7 +27,7 @@ public class CashCorrectionManager extends CorrectionManager {
         List<CorrectionAction> actions = super.createCorrections();
         
         if (isActive()) {
-            List<Player> players = getParent().getPlayers();
+            List<Player> players = getRoot().getPlayerManager().getPlayers();
             for(Player pl:players){
                 actions.add(new CashCorrectionAction(pl));
             }
@@ -78,7 +78,7 @@ public class CashCorrectionManager extends CorrectionManager {
         }
 
         if (errMsg != null) {
-            DisplayBuffer.add(LocalText.getText("CorrectCashError",
+            DisplayBuffer.add(this, LocalText.getText("CorrectCashError",
                     ch.getId(),
                     errMsg));
             result = true;
@@ -102,7 +102,7 @@ public class CashCorrectionManager extends CorrectionManager {
                         ch.getId(),
                         text);
             }
-            ReportBuffer.add(msg);
+            ReportBuffer.add(this,msg);
             getParent().addToNextPlayerMessages(msg, true);
             result = true;
         }

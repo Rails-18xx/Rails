@@ -2,6 +2,7 @@ package rails.game.specific._1880;
 
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
+import rails.common.ReportBuffer;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.state.ChangeStack;
@@ -66,7 +67,7 @@ public final class StartRound_1880 extends StartRound {
             
             currentBuyPrice.set(item.getMinimumBid());
             
-            if (currentPlayer == startPlayer) ReportBuffer.add("");
+            if (currentPlayer == startPlayer) ReportBuffer.add(this,"");
             
             if (currentItem == null || currentItem.value() != item ) { // we haven't seen this item before
                 numPasses.set(0); // new round so cancel all previous passes !
@@ -128,15 +129,16 @@ public final class StartRound_1880 extends StartRound {
                 }
         } else { // Item is not a private ! should be a major or minor in 1880 special rules apply.
             //Check if all players own a minor/investor already then declare Startinground over...
+            PlayerManager pmgr = getRoot().getPlayerManager();
             if (currentStartRoundPhase.value() == 0) { //first time a non Private gets called up; initialize the rest of items to BUYABLE
                       // Priority Deal goes to the player with the smallest wallet...
-                     gameManager.setCurrentPlayer(gameManager.reorderPlayersByCash(true));
+                     pmgr.setCurrentPlayer(pmgr.reorderPlayersByCash(true));
                      //setCurrentPlayerIndex(0); //lowest or highest Player is always at the start of the player list after reordering !
                      //Send Message that Playerorder has Changed !...
                      currentPlayer=getCurrentPlayer();
                      currentStartRoundPhase.set(1);
                      startingPlayer.set(currentPlayer);
-                     gameManager.setPriorityPlayer((Player) startingPlayer.value()); // Method doesn't exist in Startround ???
+                     pmgr.setPriorityPlayer((Player) startingPlayer.value()); // Method doesn't exist in Startround ???
             }
            if (investorChosen.value() == getNumberOfPlayers()) {
                for ( StartItem item1 : itemsToSell.view()) {
@@ -226,7 +228,7 @@ public final class StartRound_1880 extends StartRound {
         }
 
         if (errMsg != null) {
-            DisplayBuffer.add(LocalText.getText("InvalidBid",
+            DisplayBuffer.add(this, LocalText.getText("InvalidBid",
                     playerName,
                     item.getName(),
                     errMsg ));
@@ -236,7 +238,7 @@ public final class StartRound_1880 extends StartRound {
         ChangeStack.start(this, bidItem);
 
         item.setBid(bidAmount, player);
-        ReportBuffer.add(LocalText.getText("BID_ITEM_LOG",
+        ReportBuffer.add(this,LocalText.getText("BID_ITEM_LOG",
                 playerName,
                 Currency.format(this, bidAmount),
                 item.getName(),
@@ -266,13 +268,13 @@ public final class StartRound_1880 extends StartRound {
         }
 
         if (errMsg != null) {
-            DisplayBuffer.add(LocalText.getText("InvalidPass",
+            DisplayBuffer.add(this, LocalText.getText("InvalidPass",
                     playerName,
                     errMsg ));
             return false;
         }
 
-        ReportBuffer.add(LocalText.getText("PASSES", playerName));
+        ReportBuffer.add(this,LocalText.getText("PASSES", playerName));
 
         ChangeStack.start(this, action);
 
@@ -280,13 +282,13 @@ public final class StartRound_1880 extends StartRound {
         
         if (numPasses.value() >= numPlayers) {
             // All players have passed.
-            ReportBuffer.add(LocalText.getText("ALL_PASSED"));
+            ReportBuffer.add(this,LocalText.getText("ALL_PASSED"));
             // It the first item has not been sold yet, reduce its price by
             // 5.
             if (auctionItem.getIndex() < 2) {
                 auctionItem.reduceBasePriceBy(5);
                 auctionItem.setMinimumBid(auctionItem.getBasePrice());
-                ReportBuffer.add(LocalText.getText(
+                ReportBuffer.add(this,LocalText.getText(
                         "ITEM_PRICE_REDUCED",
                                 auctionItem.getName(),
                                 Currency.format(this, startPacket.getFirstItem().getBasePrice()) ));
@@ -345,8 +347,8 @@ public final class StartRound_1880 extends StartRound {
     
     private void setNextBiddingPlayer(StartItem item, int currentIndex) {
         for (int i = currentIndex + 1; i < currentIndex
-                                           + gameManager.getNumberOfPlayers(); i++) {
-            if (item.getBid(gameManager.getPlayerByIndex(i)) >=0) {
+                                           + getRoot().getPlayerManager().getNumberOfPlayers(); i++) {
+            if (item.getBid(getRoot().getPlayerManager().getPlayerByIndex(i)) >=0) {
                 setCurrentPlayerIndex(i);
                 break;
             }
@@ -368,7 +370,7 @@ public final class StartRound_1880 extends StartRound {
         Player player;
         player = (Player) startingPlayer.value();
         i= player.getIndex();
-        startingPlayer.set(gameManager.getPlayerByIndex(i+1));
+        startingPlayer.set(getRoot().getPlayerManager().getPlayerByIndex(i+1));
         setCurrentPlayerIndex(i+1 % getNumberOfPlayers());
     }
 

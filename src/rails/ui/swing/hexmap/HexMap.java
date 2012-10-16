@@ -905,10 +905,7 @@ public abstract class HexMap implements MouseListener,
      */
     public Phase getPhase () {
         if (orUIManager != null) {
-            GameUIManager u = orUIManager.getGameUIManager();
-            GameManager g = u.getGameManager();
-            PhaseManager p = g.getPhaseManager();
-            return p.getCurrentPhase();
+            return orUIManager.getGameUIManager().getRoot().getPhaseManager().getCurrentPhase();
         }
         return null;
     }

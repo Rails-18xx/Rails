@@ -1,9 +1,10 @@
 package rails.game;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import rails.common.parser.Configurable;
 import rails.common.parser.ConfigurationException;
@@ -13,20 +14,13 @@ import rails.game.state.Owner;
 import rails.game.state.State;
 
 public class PhaseManager extends RailsManager implements Configurable {
-
-    protected ArrayList<Phase> phaseList;
-    protected HashMap<String, Phase> phaseMap;
-
-    protected int numberOfPhases = 0;
-    protected final GenericState<Phase> currentPhase = GenericState.create(this, "currentPhase");
-
-    // Can be removed once setPhase() has been redone.
-    protected GameManager gameManager;
-
-    protected static Logger log =
-        LoggerFactory.getLogger(PhaseManager.class);
-
+    // static data
+    private final List<Phase> phaseList = Lists.newArrayList();
+    private final Map<String, Phase> phaseMap = Maps.newHashMap();
     
+    // dynamic data
+    private final GenericState<Phase> currentPhase = GenericState.create(this, "currentPhase");
+
     /**
      * Used by Configure (via reflection) only
      */
@@ -40,9 +34,6 @@ public class PhaseManager extends RailsManager implements Configurable {
          * needed.
          */
         List<Tag> phaseTags = tag.getChildren("Phase");
-        numberOfPhases = phaseTags.size();
-        phaseList = new ArrayList<Phase>();
-        phaseMap = new HashMap<String, Phase>();
         Phase phase;
         Phase previousPhase = null;
         String name;
@@ -50,7 +41,7 @@ public class PhaseManager extends RailsManager implements Configurable {
         int n = 0;
         for (Tag phaseTag : phaseTags) {
             name = phaseTag.getAttributeAsString("name", String.valueOf(n + 1));
-            phase = new Phase(n++, name, previousPhase);
+            phase = new Phase(this, name, n++, previousPhase);
             phaseList.add(phase);
             phaseMap.put(name, phase);
             phase.configureFromXML(phaseTag);
@@ -58,12 +49,11 @@ public class PhaseManager extends RailsManager implements Configurable {
         }
     }
     
-    public void finishConfiguration (GameManager gameManager) 
+    public void finishConfiguration (RailsRoot root) 
     throws ConfigurationException {
-        this.gameManager = gameManager;
         
         for (Phase phase : phaseList) {
-            phase.finishConfiguration(gameManager);
+            phase.finishConfiguration(root);
         }
         
         Phase initialPhase = phaseList.get(0);
@@ -71,7 +61,7 @@ public class PhaseManager extends RailsManager implements Configurable {
     }
 
     public Phase getCurrentPhase() {
-        return (Phase) currentPhase.value();
+        return currentPhase.value();
     }
     
     public State getCurrentPhaseModel() {
@@ -90,11 +80,7 @@ public class PhaseManager extends RailsManager implements Configurable {
         if (phase != null) {
             phase.setLastTrainBuyer (lastTrainBuyer);
             currentPhase.set(phase);
-
-            // TODO Redundant, should be replaced by phase.activate()
-            // as soon as privates closing is included there.
-            // Please consider Undo/Redo as well
-            gameManager.initialiseNewPhase(phase);
+            phase.activate();
         }
     }
 

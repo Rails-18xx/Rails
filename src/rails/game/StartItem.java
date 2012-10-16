@@ -137,7 +137,7 @@ public class StartItem extends RailsAbstractItem {
      */
     public void init(GameManager gameManager) {
 
-        this.players = gameManager.getPlayers();
+        this.players = getRoot().getPlayerManager().getPlayers();
         numberOfPlayers = players.size();
         bids = new CountingMoneyModel[numberOfPlayers];
         for (int i = 0; i < numberOfPlayers; i++) {
@@ -150,10 +150,10 @@ public class StartItem extends RailsAbstractItem {
         // in the game-specific StartRound class
         minimumBid.set(basePrice.value() + 5);
 
-        BankPortfolio ipo = gameManager.getBank().getIpo();
-        BankPortfolio unavailable = gameManager.getBank().getUnavailable();
+        BankPortfolio ipo = getRoot().getBank().getIpo();
+        BankPortfolio unavailable = getRoot().getBank().getUnavailable();
 
-        CompanyManager compMgr = gameManager.getCompanyManager();
+        CompanyManager compMgr = getRoot().getCompanyManager();
 
         Company company = compMgr.getCompany(type, name);
         if (company instanceof PrivateCompany) {

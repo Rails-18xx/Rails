@@ -14,7 +14,7 @@ public class StartCompany extends BuyCertificate {
     public StartCompany(PublicCompany company, int[] prices,
             int maximumNumber) {
         super(company, company.getPresidentsShare().getShare(),
-                GameManager.getInstance().getBank().getIpo(),
+                RailsRoot.getInstance().getBank().getIpo(),
                 0, maximumNumber);
         this.startPrices = prices.clone();
     }
@@ -26,7 +26,7 @@ public class StartCompany extends BuyCertificate {
     public StartCompany(PublicCompany company, int price,
             int maximumNumber) {
         super(company, company.getPresidentsShare().getShare(),
-                GameManager.getInstance().getBank().getIpo(),
+                RailsRoot.getInstance().getBank().getIpo(),
                 0, maximumNumber);
         this.price = price;
     }

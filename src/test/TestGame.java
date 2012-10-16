@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import rails.common.Config;
 import rails.game.RailsRoot;
-import rails.game.ReportBuffer;
+import rails.util.GameLoader;
 
 import junit.framework.TestCase;
 
@@ -97,10 +97,11 @@ public class TestGame extends TestCase {
         
         if (gameFile.exists()) {
             log.debug("Found gamefile at " + gameFilename);
-            RailsRoot testGame = RailsRoot.load(gameFilename);
-            if (testGame != null) {
-                testReport = ReportBuffer.getAsList();
-//                NDC.clear(); // remove reference to GameManager
+            GameLoader gameLoader = new GameLoader();
+            if (gameLoader.createFromFile(gameFilename)) {
+                testReport = gameLoader.getRoot().getReportManager().getReportBuffer().getAsList();
+            } else {
+                log.error("Game load failed", gameLoader.getException());
             }
         } else {
             log.error("Did not find gamefile at " + gameFilename);
@@ -108,6 +109,7 @@ public class TestGame extends TestCase {
    }
 
     protected void tearDown() throws Exception {
+        try {
         // test has failed, so save the test Report
         String reportFilename = gamePath + File.separator + gameName + "." + Config.get("failed.filename.extension"); 
         if (!passed) {
@@ -120,9 +122,14 @@ public class TestGame extends TestCase {
                 }
             }
         }
-        super.tearDown();
-        testReport.clear();
-        expectedReport.clear();
+        } catch (Exception e) {
+            System.err.println("Could not create test fail report");
+        } finally {
+            super.tearDown();
+            testReport = null;
+            expectedReport = null;
+            RailsRoot.clearInstance();
+        }
     }
 
 }

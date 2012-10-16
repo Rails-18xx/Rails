@@ -16,7 +16,6 @@ import rails.common.parser.Configurable;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.RailsRoot;
-import rails.game.GameManager;
 import rails.util.SystemOS;
 import rails.util.Util;
 
@@ -53,6 +52,11 @@ public class ConfigManager implements Configurable {
     
     // INSTANCE DATA
     
+    // version string and development flag
+    private String version = "unknown";
+    private boolean develop = false;
+    private String buildDate = "unknown";
+    
     // configuration items: replace with Multimap in Rails 2.0
     private final Map<String, List<ConfigItem>> configSections = new HashMap<String, List<ConfigItem>>();
 
@@ -61,6 +65,7 @@ public class ConfigManager implements Configurable {
     
     // profile storage
     private ConfigProfile activeProfile;
+    
     
     /**
      * Initial configuration immediately after startup:
@@ -90,7 +95,7 @@ public class ConfigManager implements Configurable {
         try {
             // Find the config tag inside the the config xml file
             Tag configTag =
-                    Tag.findTopTagInFile(CONFIG_XML_FILE, CONFIG_XML_DIR, CONFIG_TAG);
+                    Tag.findTopTagInFile(CONFIG_XML_FILE, CONFIG_XML_DIR, CONFIG_TAG, null);
             log.debug("Opened config xml, filename = " + CONFIG_XML_FILE);
             instance.configureFromXML(configTag);
         } catch (ConfigurationException e) {
@@ -142,7 +147,7 @@ public class ConfigManager implements Configurable {
     }
 
     
-    public void finishConfiguration(GameManager parent)
+    public void finishConfiguration(RailsRoot parent)
             throws ConfigurationException {
         // do nothing
     }
@@ -178,17 +183,47 @@ public class ConfigManager implements Configurable {
         Properties versionNumber = new Properties();
         Util.loadPropertiesFromResource(versionNumber, "version.number");
 
-        String version = versionNumber.getProperty("version");
-        if (Util.hasValue("version")) {
-            RailsRoot.setVersion(version);
+        String sVersion = versionNumber.getProperty("version");
+        if (Util.hasValue(sVersion)) {
+           this.version = sVersion;
         }
             
-        String develop = versionNumber.getProperty("develop");
-        if (Util.hasValue(develop)) {
-            RailsRoot.setDevelop(develop != "");
+        String sDevelop = versionNumber.getProperty("develop");
+        if (Util.hasValue(sDevelop)) {
+            this.develop = sDevelop != "";
+        }
+
+        String sBuildDate = versionNumber.getProperty("buildDate");
+        if (Util.hasValue(sBuildDate)) {
+            this.buildDate = sBuildDate;
         }
     }
 
+    /**
+    * @return version id (including a "+" attached if development)
+    */
+    String getVersion() {
+        if (develop) {
+            return version + "+";
+        } else {
+            return version;
+        }
+    }
+
+    /**
+     * @return true if development version
+     */
+    boolean getDevelop() {
+        return develop;
+    }
+    
+    /**
+     * @return the buildDate
+     */
+    String getBuildDate() {
+        return buildDate;
+    }
+    
     String getValue(String key, String defaultValue) {
 
         // get value from active profile (this escalates)

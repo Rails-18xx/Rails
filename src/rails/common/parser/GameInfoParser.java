@@ -7,6 +7,8 @@ import java.util.Iterator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import rails.common.GameOption;
+
 
 public class GameInfoParser extends XMLParser {
     

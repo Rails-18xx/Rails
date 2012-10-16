@@ -11,6 +11,7 @@ import com.google.common.collect.Sets;
 
 import rails.common.GuiDef;
 import rails.common.LocalText;
+import rails.common.ReportBuffer;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.action.SetDividend;
@@ -277,11 +278,6 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
     protected CountingMoneyModel currentLoanValue = null; // init during finishConfig
 
     protected BooleanState canSharePriceVary;
-
-    protected GameManager gameManager;
-    protected Bank bank;
-    protected StockMarket stockMarket;
-    protected MapManager mapManager;
 
     /** Rights */
     protected HashMapState<String, String> rights = null;
@@ -570,13 +566,8 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
     /**
      * Final initialisation, after all XML has been processed.
      */
-    public void finishConfiguration(GameManager gameManager)
+    public void finishConfiguration(RailsRoot root)
     throws ConfigurationException {
-
-        this.gameManager = gameManager;
-        bank = gameManager.getBank();
-        stockMarket = gameManager.getStockMarket();
-        mapManager = gameManager.getMapManager();
 
         if (maxNumberOfLoans != 0) {
             currentNumberOfLoans = IntegerState.create(this, "currentNumberOfLoans");
@@ -585,7 +576,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
         }
 
         if (hasStockPrice && Util.hasValue(startSpace)) {
-            parPrice.setPrice(stockMarket.getStockSpace(
+            parPrice.setPrice(getRoot().getStockMarket().getStockSpace(
                     startSpace));
             if (parPrice.getPrice() == null)
                 throw new ConfigurationException("Invalid start space "
@@ -661,7 +652,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
             homeHexes = new ArrayList<MapHex>(2);
             MapHex homeHex;
             for (String homeHexName : homeHexNames.split(",")) {
-                homeHex = mapManager.getHex(homeHexName);
+                homeHex = getRoot().getMapManager().getHex(homeHexName);
                 if (homeHex == null) {
                     throw new ConfigurationException("Invalid home hex "
                             + homeHexName
@@ -673,7 +664,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
         }
 
         if (destinationHexName != null) {
-            destinationHex = mapManager.getHex(destinationHexName);
+            destinationHex = getRoot().getMapManager().getHex(destinationHexName);
             if (destinationHex == null) {
                 throw new ConfigurationException("Invalid destination hex "
                         + destinationHexName
@@ -684,7 +675,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
 
         if (Util.hasValue(privateToCloseOnFirstTrainName)) {
             privateToCloseOnFirstTrain =
-                gameManager.getCompanyManager().getPrivateCompany(
+                getRoot().getCompanyManager().getPrivateCompany(
                         privateToCloseOnFirstTrainName);
         }
 
@@ -702,14 +693,14 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
         if (portfolio.hasSpecialProperties()) {
             for (SpecialProperty sp : portfolio.getPersistentSpecialProperties()) {
                 if (sp instanceof SpecialRight) {
-                    gameManager.setGuiParameter (GuiDef.Parm.HAS_ANY_RIGHTS, true);
+                    getRoot().getGameManager().setGuiParameter (GuiDef.Parm.HAS_ANY_RIGHTS, true);
                     // Initialize rights here to prevent overhead if not used,
                     // but if rights are used, the GUI needs it from the start.
                     if (rights == null) {
                         rights = HashMapState.create(this, "rights");
                     }
                     // TODO: This is only a workaround for the missing finishConfiguration of special properties (SFY)
-                    sp.finishConfiguration(gameManager);
+                    sp.finishConfiguration(root);
                 }
             }
         }
@@ -873,7 +864,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
 
             // Drop the current price token, if allowed at this point
             if (dropPriceToken == WHEN_STARTED) {
-                stockMarket.start(this, startSpace);
+                getRoot().getStockMarket().start(this, startSpace);
             }
         }
 
@@ -884,7 +875,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
     }
 
     public void start(int price) {
-        StockSpace startSpace = stockMarket.getStartSpace(price);
+        StockSpace startSpace = getRoot().getStockMarket().getStartSpace(price);
         if (startSpace == null) {
             log.error("Invalid start price " + getRoot().getCurrency().format(price)); // TODO: Do this nicer
         } else {
@@ -939,12 +930,12 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
         // getPresident().getPortfolioModel().getShareModel(this).update();
 
         if (sharePriceUpOnFloating) {
-            stockMarket.moveUp(this);
+            getRoot().getStockMarket().moveUp(this);
         }
 
         // Drop the current price token, if allowed at this point
         if (dropPriceToken == WHEN_FLOATED) {
-            stockMarket.start(this, getCurrentSpace());
+            getRoot().getStockMarket().start(this, getCurrentSpace());
         }
 
         if (homeBaseTokensLayTime == WHEN_FLOATED) {
@@ -952,12 +943,12 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
         }
 
         if (initialTrainType != null) {
-            TrainManager trainManager = gameManager.getTrainManager();
+            TrainManager trainManager = getRoot().getTrainManager();
             TrainCertificateType type = trainManager.getCertTypeByName(initialTrainType);
-            Train train = bank.getIpo().getPortfolioModel().getTrainOfType(type);
+            Train train = getRoot().getBank().getIpo().getPortfolioModel().getTrainOfType(type);
             buyTrain(train, initialTrainCost);
             train.setTradeable(initialTrainTradeable);
-            trainManager.checkTrainAvailability(train, bank.getIpo());
+            trainManager.checkTrainAvailability(train, getRoot().getBank().getIpo());
         }
     }
 
@@ -1169,6 +1160,23 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
         return floatPerc;
     }
 
+    /** Determine sold percentage for floating purposes */
+    public int getSoldPercentage() {
+        int soldPercentage = 0;
+        for (PublicCertificate cert : certificates.view()) {
+            if (certCountsAsSold(cert)) {
+                soldPercentage += cert.getShare();
+            }
+        }
+        return soldPercentage;
+    }
+
+    /** Can be subclassed for games with special rules */
+    protected boolean certCountsAsSold (PublicCertificate cert) {
+        Owner owner = cert.getOwner();
+        return owner instanceof Player || owner == getRoot().getBank().getPool();
+    }
+    
     /**
      * Get the company President.
      *
@@ -1243,7 +1251,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
         if (hasStockPrice
                 && (!payoutMustExceedPriceToMove
                         || amount >= currentPrice.getPrice().getPrice())) {
-            stockMarket.payOut(this);
+            getRoot().getStockMarket().payOut(this);
         }
 
     }
@@ -1251,8 +1259,8 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
     public boolean paysOutToTreasury (PublicCertificate cert) {
 
         Owner owner = cert.getOwner();
-        if (owner == bank.getIpo() && ipoPaysOut
-                || owner == bank.getPool() && poolPaysOut) {
+        if (owner == getRoot().getBank().getIpo() && ipoPaysOut
+                || owner == getRoot().getBank().getPool() && poolPaysOut) {
             return true;
         }
         return false;
@@ -1264,7 +1272,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
      * @param The revenue amount.
      */
     public void withhold(int amount) {
-        if (hasStockPrice) stockMarket.withhold(this);
+        if (hasStockPrice) getRoot().getStockMarket().withhold(this);
     }
 
     /**
@@ -1379,7 +1387,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
         if (buyerShare > presShare) {
             pres.getPortfolioModel().swapPresidentCertificate(this,
                     buyer.getPortfolioModel(), 0);
-            ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
+            ReportBuffer.add(this,LocalText.getText("IS_NOW_PRES_OF",
                     buyer.getId(),
                     getId() ));
         }
@@ -1396,17 +1404,17 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
         int presIndex = seller.getIndex();
         Player player;
         int share;
-        GameManager gmgr = GameManager.getInstance();
+        PlayerManager pmgr = getRoot().getPlayerManager();
 
         for (int i = presIndex + 1; i < presIndex
-        + gmgr.getNumberOfPlayers(); i++) {
-            player = gmgr.getPlayerByIndex(i);
+        + pmgr.getNumberOfPlayers(); i++) {
+            player = pmgr.getPlayerByIndex(i);
             share = player.getPortfolioModel().getShare(this);
             if (share > presShare) {
                 // Presidency must be transferred
                 seller.getPortfolioModel().swapPresidentCertificate(this,
                         player.getPortfolioModel(), 0);
-                ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
+                ReportBuffer.add(this,LocalText.getText("IS_NOW_PRES_OF",
                         player.getId(),
                         getId() ));
             }
@@ -1420,19 +1428,19 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
         int presIndex = president.getIndex();
         int presShare = president.getPortfolioModel().getShare(this);
 
-        GameManager gmgr = GameManager.getInstance();
+        PlayerManager pmgr = getRoot().getPlayerManager();
         Player player;
         int share;
 
         for (int i = presIndex + 1; i < presIndex
-        + gmgr.getNumberOfPlayers(); i++) {
-            player = gmgr.getPlayerByIndex(i);
+        + pmgr.getNumberOfPlayers(); i++) {
+            player = pmgr.getPlayerByIndex(i);
             share = player.getPortfolioModel().getShare(this);
             if (share > presShare) {
                 // Hand presidency to the first player with a higher share
                 president.getPortfolioModel().swapPresidentCertificate(this,
                         player.getPortfolioModel(), 0);
-                ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
+                ReportBuffer.add(this,LocalText.getText("IS_NOW_PRES_OF",
                         player.getId(),
                         getId() ));
                 return;
@@ -1470,7 +1478,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
     }
 
     public int getCurrentTrainLimit() {
-        return getTrainLimit(gameManager.getCurrentPhase().getTrainLimitIndex());
+        return getTrainLimit(getRoot().getGameManager().getCurrentPhase().getTrainLimitIndex());
     }
 
     public int getNumberOfTrains() {
@@ -1516,10 +1524,10 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
     public void buyPrivate(PrivateCompany privateCompany, Owner from,
             int price) {
 
-        if (from != bank.getIpo()) {
+        if (from != getRoot().getBank().getIpo()) {
             // The initial buy is reported from StartRound. This message should also
             // move to elsewhere.
-            ReportBuffer.add(LocalText.getText("BuysPrivateFromFor",
+            ReportBuffer.add(this,LocalText.getText("BuysPrivateFromFor",
                     getId(),
                     privateCompany.getId(),
                     from.getId(),
@@ -1561,7 +1569,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
                 sp.moveTo(portfolio.getParent());
             }
             for (SpecialProperty sp : spsToMoveToGM) {
-                gameManager.addSpecialProperty(sp);
+                getRoot().getGameManager().addSpecialProperty(sp);
                 log.debug("SP "+sp.getId()+" is now a common property");
             }
         }
@@ -1632,7 +1640,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
                 return baseTokenLayCost[0];
             } else {
                 // WARNING: no provision yet for multiple home hexes.
-                return mapManager.getHexDistance(homeHexes.get(0), hex) * baseTokenLayCost[0];
+                return getRoot().getMapManager().getHexDistance(homeHexes.get(0), hex) * baseTokenLayCost[0];
             }
         } else {
             return 0;
@@ -1649,7 +1657,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
             return new int[] {getBaseTokenLayCost(null)};
         } else if (baseTokenLayCostMethod.equals(BASE_COST_DISTANCE)) {
             // WARNING: no provision yet for multiple home hexes.
-            int[] distances = mapManager.getCityDistances(homeHexes.get(0));
+            int[] distances = getRoot().getMapManager().getCityDistances(homeHexes.get(0));
             int[] costs = new int[distances.length];
             int i = 0;
             for (int distance : distances) {
@@ -1781,7 +1789,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
 
     public int getNumberOfTileLays(String tileColour) {
 
-        Phase phase = gameManager.getPhaseManager().getCurrentPhase();
+        Phase phase = getRoot().getPhaseManager().getCurrentPhase();
 
         // Get the number of tile lays from Phase
         int tileLays = phase.getTileLaysPerColour(getType().getId(), tileColour);
@@ -1943,13 +1951,13 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
         // If applicable, prepare for a restart
         if (canBeRestarted) {
             if (certsAreInitiallyAvailable) {
-                shareDestination = bank.getIpo();
+                shareDestination = getRoot().getBank().getIpo();
             } else {
-                shareDestination = bank.getUnavailable();
+                shareDestination = getRoot().getBank().getUnavailable();
             }
             reinitialise();
         } else {
-            shareDestination = bank.getScrapHeap();
+            shareDestination = getRoot().getBank().getScrapHeap();
             inGameState.set(false);
         }
 
@@ -1961,7 +1969,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
         }
 
         // Any trains go to the pool (from the 1856 rules)
-        portfolio.getTrainsModel().getPortfolio().moveAll(bank.getPool());
+        portfolio.getTrainsModel().getPortfolio().moveAll(getRoot().getBank().getPool());
 
         // Any cash goes to the bank (from the 1856 rules)
         int cash = treasury.value();
@@ -1977,7 +1985,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
         Portfolio.moveAll(baseTokens.getLaidTokens(), this);
 
         // close company on the stock market
-        stockMarket.close(this);
+        getRoot().getStockMarket().close(this);
 
     }
 

@@ -72,7 +72,7 @@ public class StockChart extends JFrame implements KeyListener {
 
         gc = new GridBagConstraints();
 
-        market = gameUIManager.getGameManager().getStockMarket().getStockChart();
+        market = gameUIManager.getRoot().getStockMarket().getStockChart();
 
         gc.gridx = 0;
         gc.gridy = 0;

@@ -239,11 +239,11 @@ public class MapCorrectionAction extends CorrectionAction {
         if (Util.hasValue(nextStepName))
             nextStep = ActionStep.valueOf(nextStepName);
             
-        MapManager mmgr = gameManager.getMapManager();
+        MapManager mmgr = getRoot().getMapManager();
         if (Util.hasValue(locationCoordinates))
             location = mmgr.getHex(locationCoordinates);
 
-        TileManager tmgr = gameManager.getTileManager();
+        TileManager tmgr = getRoot().getTileManager();
         if (tileIds != null && tileIds.length > 0) {
             tiles = new ArrayList<Tile>();
             for (int i = 0; i < tileIds.length; i++) {

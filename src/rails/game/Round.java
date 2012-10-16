@@ -55,17 +55,17 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
         if (gameManager == null) {
             companyManager = null;
         } else {
-            companyManager = gameManager.getCompanyManager();
-            playerManager = gameManager.getPlayerManager();
-            bank = gameManager.getBank();
+            companyManager = getRoot().getCompanyManager();
+            playerManager = getRoot().getPlayerManager();
+            bank = getRoot().getBank();
             // TODO: It would be good to work with BankPortfolio and Owner instead of PortfolioModels
             // However this requires a lot of work inside the Round classes
             ipo = bank.getIpo().getPortfolioModel();
             pool = bank.getPool().getPortfolioModel();
             unavailable = bank.getUnavailable().getPortfolioModel();
             scrapHeap = bank.getScrapHeap().getPortfolioModel();
-            stockMarket = gameManager.getStockMarket();
-            mapManager = gameManager.getMapManager();
+            stockMarket = getRoot().getStockMarket();
+            mapManager = getRoot().getMapManager();
 
             // changeStack = gameManager.getChangeStack();
         }
@@ -75,8 +75,8 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
     }
     
     public Player getCurrentPlayer() {
-
-        if (gameManager != null) return gameManager.getCurrentPlayer();
+        // TODO: Check if the null test can be removed
+        if (getRoot().getPlayerManager() != null) return getRoot().getPlayerManager().getCurrentPlayer();
         return null;
     }
 
@@ -88,19 +88,19 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
     }
 
     public void setCurrentPlayerIndex(int newIndex) {
-        gameManager.setCurrentPlayerIndex(newIndex);
+        getRoot().getPlayerManager().setCurrentPlayerIndex(newIndex);
     }
 
     public void setCurrentPlayer(Player player) {
-        gameManager.setCurrentPlayer(player);
+        getRoot().getPlayerManager().setCurrentPlayer(player);
     }
 
     protected List<Player> getPlayers() {
-        return gameManager.getPlayers();
+        return getRoot().getPlayerManager().getPlayers();
     }
 
     protected int getNumberOfPlayers() {
-        return gameManager.getNumberOfPlayers();
+        return getRoot().getPlayerManager().getNumberOfPlayers();
     }
 
     protected int getNumberOfActivePlayers () {
@@ -123,10 +123,6 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
      */
     public Class<? extends Round> getRoundTypeForUI () {
         return this.getClass();
-    }
-
-    public String getGameOption (String name) {
-        return gameManager.getGameOption(name);
     }
 
     // TODO: Remove as this is abstract class?
@@ -168,7 +164,7 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
         }
 
         if (errMsg != null) {
-            DisplayBuffer.add(LocalText.getText("CannotExchangeTokens",
+            DisplayBuffer.add(this, LocalText.getText("CannotExchangeTokens",
                     action.getCompany(),
                     action.toString(),
                     errMsg));
@@ -187,7 +183,7 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
             String[] ct;
             PublicCompany comp = action.getCompany();
 
-            ReportBuffer.add("");
+            ReportBuffer.add(this,"");
 
             for (ExchangeableToken token : tokens) {
                 cityName = token.getCityName();
@@ -207,14 +203,14 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
                     // This is true in the 1856 CGR formation.
                     if (hex.layBaseToken(comp, city.getNumber())) {
                         /* TODO: the false return value must be impossible. */
-                        ReportBuffer.add(LocalText.getText("ExchangesBaseToken",
+                        ReportBuffer.add(this,LocalText.getText("ExchangesBaseToken",
                                 comp.getId(),
                                 token.getOldCompanyName(),
                                 city.getSpecificId()));
                         comp.layBaseToken(hex, 0);
                     }
                 } else {
-                    ReportBuffer.add(LocalText.getText("NoBaseTokenExchange",
+                    ReportBuffer.add(this,LocalText.getText("NoBaseTokenExchange",
                             comp.getId(),
                             token.getOldCompanyName(),
                             city.getSpecificId()));
@@ -300,28 +296,10 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
 
         if (!company.hasStarted() || company.hasFloated()) return;
 
-        if (getSoldPercentage(company) >= company.getFloatPercentage()) {
+        if (company.getSoldPercentage() >= company.getFloatPercentage()) {
             // Company floats
             floatCompany(company);
         }
-    }
-
-    /** Determine sold percentage for floating purposes */
-    protected int getSoldPercentage (PublicCompany company) {
-
-        int soldPercentage = 0;
-        for (PublicCertificate cert : company.getCertificates()) {
-            if (certCountsAsSold(cert)) {
-                soldPercentage += cert.getShare();
-            }
-        }
-        return soldPercentage;
-    }
-
-    /** Can be subclassed for games with special rules */
-    protected boolean certCountsAsSold (PublicCertificate cert) {
-        Owner owner = cert.getOwner();
-        return owner instanceof Player || owner == pool.getParent();
     }
 
     /**
@@ -334,7 +312,7 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
     protected void floatCompany(PublicCompany company) {
 
         // Move cash and shares where required
-        int soldPercentage = getSoldPercentage(company);
+        int soldPercentage = company.getSoldPercentage();
         int cash = 0;
         int capitalisationMode = company.getCapitalisation();
         if (company.hasStockPrice()) {
@@ -364,11 +342,11 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
 
         if (cash > 0) {
             String cashText = Currency.fromBank(cash, company);
-            ReportBuffer.add(LocalText.getText("FloatsWithCash",
+            ReportBuffer.add(this,LocalText.getText("FloatsWithCash",
                     company.getId(),
                     cashText ));
         } else {
-            ReportBuffer.add(LocalText.getText("Floats",
+            ReportBuffer.add(this,LocalText.getText("Floats",
                     company.getId()));
         }
 
@@ -382,15 +360,15 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
 
     protected void finishRound() {
         // Report financials
-        ReportBuffer.add("");
+        ReportBuffer.add(this,"");
         for (PublicCompany c : companyManager.getAllPublicCompanies()) {
             if (c.hasFloated() && !c.isClosed()) {
-                ReportBuffer.add(LocalText.getText("Has", c.getId(),
+                ReportBuffer.add(this,LocalText.getText("Has", c.getId(),
                         Currency.format(this, c.getCash())));
             }
         }
         for (Player p : playerManager.getPlayers()) {
-            ReportBuffer.add(LocalText.getText("Has", p.getId(),
+            ReportBuffer.add(this,LocalText.getText("Has", p.getId(),
                     Currency.format(this, p.getCashValue())));
         }
         // Inform GameManager

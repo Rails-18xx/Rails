@@ -145,10 +145,10 @@ public class BuyCertificate extends PossibleAction {
 
         numberBought = fields.get("numberBought", numberBought);
 
-        GameManager gameManager = GameManager.getInstance();
+        RailsRoot root = RailsRoot.getInstance();
 
         /* Check for aliases (old company names) */
-        CompanyManager companyManager = gameManager.getCompanyManager();
+        CompanyManager companyManager = root.getCompanyManager();
         companyName = companyManager.checkAlias (companyName);
 
         if (certUniqueId != null) {
@@ -156,15 +156,15 @@ public class BuyCertificate extends PossibleAction {
             certUniqueId = companyManager.checkAliasInCertId(certUniqueId);
             certificate = PublicCertificate.getByUniqueId(certUniqueId);
             // TODO: This function needs a compatible replacement 
-            from = gameManager.getPortfolioByName(fromName);
+            from = getGameManager().getPortfolioByName(fromName);
             company = certificate.getCompany();
             companyName = company.getId();
             sharePerCert = certificate.getShare();
         } else if (companyName != null) {
             // New style (since Rails.1.3.1)
-            company = gameManager.getCompanyManager().getPublicCompany(companyName);
+            company = root.getCompanyManager().getPublicCompany(companyName);
             // TODO: This function needs a compatible replacement 
-            from = gameManager.getPortfolioByUniqueName(fromName);
+            from = getGameManager().getPortfolioByUniqueName(fromName);
             // We don't need the certificate anymore.
         }
 

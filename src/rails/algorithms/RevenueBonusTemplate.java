@@ -9,10 +9,10 @@ import org.slf4j.LoggerFactory;
 import rails.common.parser.Configurable;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
-import rails.game.GameManager;
 import rails.game.MapHex;
 import rails.game.Phase;
 import rails.game.PhaseManager;
+import rails.game.RailsRoot;
 import rails.game.TrainManager;
 import rails.game.TrainType;
 
@@ -86,20 +86,20 @@ public final class RevenueBonusTemplate implements Configurable {
     /**
      * is not used, use toRevenueBonus instead
      */
-    public void finishConfiguration(GameManager parent)
+    public void finishConfiguration(RailsRoot parent)
             throws ConfigurationException {
         throw new ConfigurationException("Use toRevenueBonus");
     }
     
-    public RevenueBonus toRevenueBonus(MapHex hex, GameManager gm, NetworkGraphBuilder ngb) {
+    public RevenueBonus toRevenueBonus(MapHex hex, RailsRoot root, NetworkGraphBuilder ngb) {
         log.info("Convert " + this);
         RevenueBonus bonus = new RevenueBonus(value, name);
         if (!convertVertices(bonus, ngb, hex)) {
             log.info("Not all vertices found");
             return null; 
         }
-        convertTrainTypes(bonus, gm.getTrainManager());
-        convertPhases(bonus, gm.getPhaseManager());
+        convertTrainTypes(bonus, root.getTrainManager());
+        convertPhases(bonus, root.getPhaseManager());
         log.info("Converted to " + bonus);
         return bonus;
     }

@@ -5,6 +5,7 @@ import java.util.List;
 
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
+import rails.common.ReportBuffer;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.state.ChangeStack;
@@ -106,7 +107,7 @@ public class StartRound_1835 extends StartRound {
         while (possibleActions.isEmpty()) {
 
             Player currentPlayer = getCurrentPlayer();
-            if (currentPlayer == startPlayer) ReportBuffer.add("");
+            if (currentPlayer == startPlayer) ReportBuffer.add(this,"");
 
             int cashToSpend = currentPlayer.getCash();
 
@@ -123,8 +124,8 @@ public class StartRound_1835 extends StartRound {
                 String message =
                     LocalText.getText("CannotBuyAnything",
                             currentPlayer.getId());
-                ReportBuffer.add(message);
-                //DisplayBuffer.add(message);
+                ReportBuffer.add(this,message);
+                //DisplayBuffer.add(this, message);
                 numPasses.add(1);
                 if (numPasses.value() >= numPlayers) {
                     /*
@@ -156,7 +157,7 @@ public class StartRound_1835 extends StartRound {
     @Override
     public boolean bid(String playerName, BidStartItem item) {
 
-        DisplayBuffer.add(LocalText.getText("InvalidAction"));
+        DisplayBuffer.add(this, LocalText.getText("InvalidAction"));
         return false;
     }
 
@@ -240,13 +241,13 @@ public class StartRound_1835 extends StartRound {
         }
 
         if (errMsg != null) {
-            DisplayBuffer.add(LocalText.getText("InvalidPass",
+            DisplayBuffer.add(this, LocalText.getText("InvalidPass",
                     playerName,
                     errMsg ));
             return false;
         }
 
-        ReportBuffer.add(LocalText.getText("PASSES", playerName));
+        ReportBuffer.add(this,LocalText.getText("PASSES", playerName));
 
         ChangeStack.start(this, action);
 
@@ -254,7 +255,7 @@ public class StartRound_1835 extends StartRound {
 
         if (numPasses.value() >= numPlayers) {
             // All players have passed.
-            ReportBuffer.add(LocalText.getText("ALL_PASSED"));
+            ReportBuffer.add(this,LocalText.getText("ALL_PASSED"));
             numPasses.set(0);
             //gameManager.nextRound(this);
             finishRound();

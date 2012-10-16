@@ -85,7 +85,7 @@ public class StatusWindow_1856 extends StatusWindow {
 
         String message = LocalText.getText("SelectLoansToRepay",
                 action.getCompanyName());
-        String[] waitingMessages = DisplayBuffer.get();
+        String[] waitingMessages = gameUIManager.getDisplayBuffer().get();
         if (waitingMessages != null) {
             message = "<html>" + Util.joinWithDelimiter(waitingMessages, "<br>")
             + "<br>" + message;

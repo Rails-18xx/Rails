@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
+import com.google.common.base.Joiner;
+
 import rails.common.ResourceLoader;
 import rails.util.Util;
 
@@ -23,35 +25,24 @@ import rails.util.Util;
  *
  */
 public class Tag {
+    private static final Logger log =
+            LoggerFactory.getLogger(Tag.class);
 
-    private Element element = null;
+    // static data
+    private final Element element;
+    private final Map<String, String> gameOptions;
+
+    // dynamic data
     private Map<String, String> attributes = null;
     private Map<String, List<Tag>> children = null;
     private String text = null;
     private boolean parsed = false;
     private boolean parsing = false;
 
-    /** A reference to the current game chosen options */
-    private Map<String, String> gameOptions = null;
-
-    protected static Logger log =
-            LoggerFactory.getLogger(Tag.class);
-
-    public Tag(Element element) {
-        this.element = element;
-    }
 
     public Tag (Element element, Map<String, String> gameOptions) {
-        this (element);
+        this.element = element;
         this.gameOptions = gameOptions;
-    }
-
-    public void setGameOptions (Map<String, String> gameOptions) {
-        this.gameOptions = gameOptions;
-    }
-
-    public Map<String, String> getGameOptions () {
-        return gameOptions;
     }
 
     public Map<String, List<Tag>> getChildren() throws ConfigurationException {
@@ -225,6 +216,11 @@ public class Tag {
 
         return getAttributeAsString(name) != null;
     }
+
+    public Element getElement() {
+        return element;
+    }
+
     /**
      * Extract all attributes of an Element into a HashMap. This includes
      * conditional values, embedded in (possibly nested) &lt;IfOption&gt;
@@ -300,7 +296,7 @@ public class Tag {
                     Node parmAttr = nnp.getNamedItem("parm");
                     if (parmAttr != null) {
                     	value = parmAttr.getNodeValue();
-                    	name = GameOption.constructParametrisedName(name, value.split(","));
+                    	name = Joiner.on("_").join(name, value.split(","));
                     }
                     Node valueAttr = nnp.getNamedItem("value");
                     if (valueAttr == null)
@@ -337,11 +333,12 @@ public class Tag {
                     }
                     
                     // If not assigned in the previous step, take the default value
+                    // FIXME (Rails2.0): This default approach value does not work anymore
                     if (optionValue == null) {
-                        GameOption go = GameOption.getByName(name);
-                        optionValue = go != null ? go.getDefaultValue() : "";
+//                        GameOption go = GameOption.get(name);
+//                        optionValue = go != null ? go.getDefaultValue() : "";
                         log.warn("GameOption " + name + "=" + value
-                                 + " but no assigned value found, assumed "+optionValue);
+                                 + " but no assigned value found, assumed "+ optionValue);
 
                     }
 
@@ -377,7 +374,7 @@ public class Tag {
      * with the given name.
      */
     public static Tag findTopTagInFile(String filename, String directory,
-            String tagName) throws ConfigurationException {
+            String tagName, Map<String, String> gameOptions) throws ConfigurationException {
         Document doc = null;
         try {
             // Step 1: create a DocumentBuilderFactory and setNamespaceAware
@@ -412,14 +409,11 @@ public class Tag {
             if ((childNode != null)
                 && (childNode.getNodeName().equals(tagName))
                 && (childNode.getNodeType() == Node.ELEMENT_NODE)) {
-                return new Tag((Element) childNode);
+                return new Tag((Element) childNode, gameOptions);
             }
         }
         throw new ConfigurationException("Could not find " + tagName + " in "
                                          + filename);
     }
 
-    public Element getElement() {
-        return element;
-    }
 }

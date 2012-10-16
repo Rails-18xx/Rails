@@ -3,7 +3,6 @@ package rails.game;
 import java.util.List;
 
 import rails.common.*;
-import rails.common.parser.GameOption;
 import rails.game.action.*;
 import rails.game.state.ArrayListState;
 import rails.game.state.ChangeStack;
@@ -60,9 +59,9 @@ public abstract class StartRound extends Round {
      */
     public void start() {
 
-        this.variant = gameManager.getGameOption(GameOption.VARIANT);
+        this.variant = GameOption.getValue(this, GameOption.VARIANT);
         if (variant == null) variant = "";
-        numPlayers = gameManager.getNumberOfPlayers();
+        numPlayers = getRoot().getPlayerManager().getNumberOfPlayers();
 
         itemIndex = new int[startPacket.getItems().size()];
         int index = 0;
@@ -79,12 +78,12 @@ public abstract class StartRound extends Round {
         numPasses.set(0);
         auctionItemState.set(null);
 
-        setCurrentPlayerIndex(gameManager.getPriorityPlayer().getIndex());
+        setCurrentPlayerIndex(getRoot().getPlayerManager().getPriorityPlayer().getIndex());
         currentPlayer = getCurrentPlayer();
         startPlayer = currentPlayer;
 
-        ReportBuffer.add(LocalText.getText("StartOfInitialRound"));
-        ReportBuffer.add(LocalText.getText("HasPriority",
+        ReportBuffer.add(this,LocalText.getText("StartOfInitialRound"));
+        ReportBuffer.add(this,LocalText.getText("HasPriority",
                 getCurrentPlayer().getId()));
     }
 
@@ -121,7 +120,7 @@ public abstract class StartRound extends Round {
                     startItemAction.getStartItem().setStatus(
                             StartItem.NEEDS_SHARE_PRICE);
                     // We must set the priority player, though
-                    gameManager.setPriorityPlayer();
+                    getRoot().getPlayerManager().setPriorityPlayer();
                     result = true;
                 } else {
                     result = buy(playerName, buyAction);
@@ -131,7 +130,7 @@ public abstract class StartRound extends Round {
             }
         } else {
 
-            DisplayBuffer.add(LocalText.getText("UnexpectedAction",
+            DisplayBuffer.add(this, LocalText.getText("UnexpectedAction",
                     action.toString()));
         }
 
@@ -221,7 +220,7 @@ public abstract class StartRound extends Round {
         }
 
         if (errMsg != null) {
-            DisplayBuffer.add(LocalText.getText("CantBuyItem",
+            DisplayBuffer.add(this, LocalText.getText("CantBuyItem",
                     playerName,
                     item.getName(),
                     errMsg ));
@@ -235,7 +234,7 @@ public abstract class StartRound extends Round {
         // Set priority (only if the item was not auctioned)
         // ASSUMPTION: getting an item in auction mode never changes priority
         if (lastBid == 0) {
-            gameManager.setPriorityPlayer();
+            getRoot().getPlayerManager().setPriorityPlayer();
         }
         setNextPlayer();
 
@@ -257,7 +256,7 @@ public abstract class StartRound extends Round {
             int sharePrice) {
         Certificate primary = item.getPrimary();
         String priceText = Currency.toBank(player, price);
-        ReportBuffer.add(LocalText.getText("BuysItemFor",
+        ReportBuffer.add(this,LocalText.getText("BuysItemFor",
                 player.getId(),
                 primary.getName(),
                 priceText ));
@@ -265,7 +264,7 @@ public abstract class StartRound extends Round {
         checksOnBuying(primary, sharePrice);
         if (item.hasSecondary()) {
             Certificate extra = item.getSecondary();
-            ReportBuffer.add(LocalText.getText("ALSO_GETS",
+            ReportBuffer.add(this,LocalText.getText("ALSO_GETS",
                     player.getId(),
                     extra.getName() ));
             transferCertificate (extra, player.getPortfolioModel());
@@ -324,11 +323,11 @@ public abstract class StartRound extends Round {
      */
     @Override
     public int getCurrentPlayerIndex() {
-        return gameManager.getCurrentPlayerIndex();
+        return getRoot().getPlayerManager().getCurrentPlayer().getIndex();
     }
 
     protected void setPriorityPlayer() {
-        setCurrentPlayer(gameManager.getPriorityPlayer());
+        setCurrentPlayer(getRoot().getPlayerManager().getPriorityPlayer());
         currentPlayer = getCurrentPlayer();
     }
 
@@ -381,12 +380,12 @@ public abstract class StartRound extends Round {
 
     // TODO: Maybe this should be a subclass of a readableCashModel
     public Model getFreeCashModel(int playerIndex) {
-        return gameManager.getPlayerByIndex(playerIndex).getFreeCashModel();
+        return getRoot().getPlayerManager().getPlayerByIndex(playerIndex).getFreeCashModel();
     }
 
     // TODO: Maybe this should be a subclass of a readableCashModel
     public Model getBlockedCashModel(int playerIndex) {
-        return gameManager.getPlayerByIndex(playerIndex).getBlockedCashModel();
+        return getRoot().getPlayerManager().getPlayerByIndex(playerIndex).getBlockedCashModel();
     }
 
 }

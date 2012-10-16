@@ -2,6 +2,7 @@ package rails.game.specific._18EU;
 
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
+import rails.common.ReportBuffer;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.state.ChangeStack;
@@ -128,7 +129,7 @@ public class StartRound_18EU extends StartRound {
         }
 
         if (errMsg != null) {
-            DisplayBuffer.add(LocalText.getText("CantBuyItem",
+            DisplayBuffer.add(this, LocalText.getText("CantBuyItem",
                     playerName,
                     item.getName(),
                     errMsg ));
@@ -212,7 +213,7 @@ public class StartRound_18EU extends StartRound {
         }
 
         if (errMsg != null) {
-            DisplayBuffer.add(LocalText.getText("InvalidBid",
+            DisplayBuffer.add(this, LocalText.getText("InvalidBid",
                     playerName,
                     item.getName(),
                     errMsg ));
@@ -234,8 +235,8 @@ public class StartRound_18EU extends StartRound {
                 setStep(OPEN_STEP);
             }
 
-            ReportBuffer.add(" ");
-            ReportBuffer.add(LocalText.getText("SelectForAuctioning",
+            ReportBuffer.add(this," ");
+            ReportBuffer.add(this,LocalText.getText("SelectForAuctioning",
                     playerName,
                     item.getName() ));
         }
@@ -245,7 +246,7 @@ public class StartRound_18EU extends StartRound {
             item.setMinimumBid(bidAmount + 5);
             setStep(BID_STEP);
 
-            ReportBuffer.add(LocalText.getText("BID_ITEM",
+            ReportBuffer.add(this,LocalText.getText("BID_ITEM",
                     playerName,
                     Currency.format(this, bidAmount),
                     item.getName() ));
@@ -282,7 +283,7 @@ public class StartRound_18EU extends StartRound {
     public boolean pass(NullAction action, String playerName) {
         // All validations have already been done
 
-        ReportBuffer.add(LocalText.getText("PASSES", playerName));
+        ReportBuffer.add(this,LocalText.getText("PASSES", playerName));
 
         ChangeStack.start(this, action);
 
@@ -296,7 +297,7 @@ public class StartRound_18EU extends StartRound {
                 // All have passed, now lower the buy price
                 currentBuyPrice.add(-10);
                 auctionedItem.setMinimumBid(currentBuyPrice.value());
-                ReportBuffer.add(LocalText.getText("ITEM_PRICE_REDUCED",
+                ReportBuffer.add(this,LocalText.getText("ITEM_PRICE_REDUCED",
                         auctionedItem.getName(),
                         Currency.format(this, currentBuyPrice.value()) ));
                 setStep(BUY_STEP);

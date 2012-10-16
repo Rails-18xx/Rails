@@ -8,6 +8,7 @@ import com.google.common.collect.Iterables;
 import rails.common.DisplayBuffer;
 import rails.common.GuiDef;
 import rails.common.LocalText;
+import rails.common.ReportBuffer;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.special.SellBonusToken;
@@ -64,9 +65,9 @@ public class OperatingRound_1856 extends OperatingRound {
             if (operatingCompany.value().isClosed()) continue;
 
             if (!operatingCompany.value().hasOperated()) {
-                int soldPercentage = getSoldPercentage (operatingCompany.value());
+                int soldPercentage = operatingCompany.value().getSoldPercentage();
                 // TODO: Refactor the code duplication
-                Train nextAvailableTrain = Iterables.get(gameManager.getTrainManager().getAvailableNewTrains(), 0);
+                Train nextAvailableTrain = Iterables.get(trainManager.getAvailableNewTrains(), 0);
                 log.debug("Next Train type" + nextAvailableTrain.toText());
                 int trainNumber;
                 try {
@@ -81,7 +82,7 @@ public class OperatingRound_1856 extends OperatingRound {
 
 
                 if (soldPercentage < floatPercentage) {
-                    DisplayBuffer.add(LocalText.getText("MayNotYetOperate",
+                    DisplayBuffer.add(this, LocalText.getText("MayNotYetOperate",
                             operatingCompany.value().getId(),
                             String.valueOf(soldPercentage),
                             String.valueOf(floatPercentage)
@@ -105,7 +106,7 @@ public class OperatingRound_1856 extends OperatingRound {
 
             if (operatingCompany.value() instanceof PublicCompany_CGR
                         && !((PublicCompany_CGR)operatingCompany.value()).hadPermanentTrain()) {
-                    DisplayBuffer.add(LocalText.getText("MustWithholdUntilPermanent",
+                    DisplayBuffer.add(this, LocalText.getText("MustWithholdUntilPermanent",
                             PublicCompany_CGR.NAME));
                     possibleActions.add(new SetDividend(
                             operatingCompany.value().getLastRevenue(), true,
@@ -157,7 +158,7 @@ public class OperatingRound_1856 extends OperatingRound {
         if (due == 0) return amount;
         int remainder = due;
 
-        ReportBuffer.add((LocalText.getText("CompanyMustPayLoanInterest",
+        ReportBuffer.add(this,(LocalText.getText("CompanyMustPayLoanInterest",
                 operatingCompany.value().getId(),
                 Currency.format(this, due))));
 
@@ -216,11 +217,11 @@ public class OperatingRound_1856 extends OperatingRound {
         if (payment > 0) {
             String paymentText = Currency.toBank(operatingCompany.value(), payment);
             if (payment == due) {
-                ReportBuffer.add (LocalText.getText("InterestPaidFromTreasury",
+                ReportBuffer.add(this,LocalText.getText("InterestPaidFromTreasury",
                         operatingCompany.value().getId(),
                         paymentText));
             } else {
-                ReportBuffer.add (LocalText.getText("InterestPartlyPaidFromTreasury",
+                ReportBuffer.add(this,LocalText.getText("InterestPartlyPaidFromTreasury",
                         operatingCompany.value().getId(),
                         paymentText,
                         bank.getCurrency().format(due))); // TODO: Do this nicer
@@ -234,7 +235,7 @@ public class OperatingRound_1856 extends OperatingRound {
         if (payment > 0) {
             // Payment money remains in the bank
             remainder -= payment;
-            ReportBuffer.add (LocalText.getText("InterestPaidFromRevenue",
+            ReportBuffer.add(this,LocalText.getText("InterestPaidFromRevenue",
                     operatingCompany.value().getId(),
                     Currency.format(this, payment),
                     Currency.format(this, due)));
@@ -257,7 +258,7 @@ public class OperatingRound_1856 extends OperatingRound {
 
             payment = remainder;
             String paymentText = Currency.toBank(president, payment);
-            ReportBuffer.add (LocalText.getText("InterestPaidFromPresidentCash",
+            ReportBuffer.add(this,LocalText.getText("InterestPaidFromPresidentCash",
                     operatingCompany.value().getId(),
                     paymentText,
                     bank.getCurrency().format(due), // TODO: Do this nicer
@@ -290,7 +291,7 @@ public class OperatingRound_1856 extends OperatingRound {
         int cashInEscrow = comp.getMoneyInEscrow();
         if (cashInEscrow > 0) {
             String cashText = Currency.fromBank(cashInEscrow, company);
-            ReportBuffer.add(LocalText.getText("ReleasedFromEscrow",
+            ReportBuffer.add(this,LocalText.getText("ReleasedFromEscrow",
                     company.getId(),
                     cashText));
         }
@@ -332,7 +333,7 @@ public class OperatingRound_1856 extends OperatingRound {
 
                 if (minNumber > 0) {
                     // Mandatory repayment
-                    DisplayBuffer.add(LocalText.getText("MustRepayLoans",
+                    DisplayBuffer.add(this, LocalText.getText("MustRepayLoans",
                             operatingCompany.value().getId(),
                             minNumber,
                             Currency.format(this, operatingCompany.value().getValuePerLoan()),
@@ -361,11 +362,11 @@ public class OperatingRound_1856 extends OperatingRound {
         Phase postPhase = getCurrentPhase();
 
         if (postPhase != prePhase) {
-            if (postPhase.getName().equals("6")) {
+            if (postPhase.getId().equals("6")) {
                 finalLoanRepaymentPending.set(true);
                 playerToStartLoanRepayment
-                    = gameManager.getPlayerByIndex(action.getPlayerIndex());
-            } else if (postPhase.getName().equals("5")) {
+                    = getRoot().getPlayerManager().getPlayerByIndex(action.getPlayerIndex());
+            } else if (postPhase.getId().equals("5")) {
                 // Make Bridge and Tunnel tokens buyable from the Bank.
                 for (SpecialProperty sp : gameManager.getCommonSpecialProperties()) {
                     if (sp instanceof SellBonusToken) {
@@ -393,9 +394,9 @@ public class OperatingRound_1856 extends OperatingRound {
             while (true) {
                 // Still allowed in current phase?
                 if (gameManager.getCurrentPhase().getIndex()
-                        > gameManager.getPhaseManager().getPhaseByName("5").getIndex()) {
+                        > getRoot().getPhaseManager().getPhaseByName("5").getIndex()) {
                     errMsg = LocalText.getText("WrongPhase",
-                            gameManager.getCurrentPhase().getName());
+                            gameManager.getCurrentPhase().getId());
                     break;
                 }
                 // Exceeds number of shares in player hands?
@@ -527,11 +528,11 @@ public class OperatingRound_1856 extends OperatingRound {
             message = LocalText.getText("DoesNotForm", cgr.getId());
             roundFinished = !setNextOperatingCompany(false);
         }
-        ReportBuffer.add(LocalText.getText("EndOfFormationRound",
+        ReportBuffer.add(this,LocalText.getText("EndOfFormationRound",
                 cgr.getId(),
                 getRoundName()));
-        ReportBuffer.add (message);
-        DisplayBuffer.add(message);
+        ReportBuffer.add(this,message);
+        DisplayBuffer.add(this, message);
 
         // Find the first company that has not yet operated
         // and is not closed.

@@ -3,8 +3,8 @@ package rails.game.specific._1889;
 import com.google.common.collect.Iterables;
 
 import rails.common.DisplayBuffer;
+import rails.common.GameOption;
 import rails.common.LocalText;
-import rails.common.parser.GameOption;
 import rails.game.GameDef;
 import rails.game.GameManager;
 import rails.game.OperatingRound;
@@ -43,7 +43,7 @@ public class OperatingRound_1889 extends OperatingRound {
         super(parent, id);
         privB = companyManager.getPrivateCompany("B");
         privC = companyManager.getPrivateCompany("C");
-        beginnerGame = GameOption.convertValueToBoolean(getGameOption("BeginnerGame"));
+        beginnerGame = GameOption.getAsBoolean(this, "BeginnerGame");
     }
 
     @Override
@@ -67,7 +67,7 @@ public class OperatingRound_1889 extends OperatingRound {
                         possibleActions.clear();
                         possibleActions.add(layTile);
                         possibleActions.add(new NullAction(NullAction.SKIP));
-                        DisplayBuffer.add(LocalText.getText("1889PrivateBactive", privB.getOwner()));
+                        DisplayBuffer.add(this, LocalText.getText("1889PrivateBactive", privB.getOwner()));
 
                     }
                 }
@@ -84,7 +84,7 @@ public class OperatingRound_1889 extends OperatingRound {
                 possibleActions.clear();
                 possibleActions.add(layTile);
                 possibleActions.add(new NullAction(NullAction.SKIP));
-                DisplayBuffer.add(LocalText.getText("1889PrivateCactive", previousOwnerName));
+                DisplayBuffer.add(this, LocalText.getText("1889PrivateCactive", previousOwnerName));
             }
         }
 

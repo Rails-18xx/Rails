@@ -7,11 +7,11 @@ import rails.algorithms.RevenueAdapter;
 import rails.algorithms.RevenueStaticModifier;
 import rails.common.parser.ConfigurationException;
 import rails.game.BankPortfolio;
-import rails.game.GameManager;
 import rails.game.Player;
 import rails.game.PublicCertificate;
 import rails.game.PublicCompany;
 import rails.game.RailsItem;
+import rails.game.RailsRoot;
 import rails.game.Train;
 import rails.game.state.BooleanState;
 import rails.game.state.GenericState;
@@ -34,11 +34,11 @@ public final class PublicCompany_CGR extends PublicCompany implements RevenueSta
     }
     
     @Override
-    public void finishConfiguration(GameManager gameManager) throws ConfigurationException {
-        super.finishConfiguration(gameManager);
+    public void finishConfiguration(RailsRoot root) throws ConfigurationException {
+        super.finishConfiguration(root);
 
         // add revenue modifier for the case that there is no train
-        gameManager.getRevenueManager().addStaticModifier(this);
+        getRoot().getRevenueManager().addStaticModifier(this);
     }
     
     public boolean hadPermanentTrain() {
@@ -101,7 +101,7 @@ public final class PublicCompany_CGR extends PublicCompany implements RevenueSta
     @Override
     public void withhold(int amount) {
         if (hasStockPrice && canSharePriceVary.value()) {
-            stockMarket.withhold(this);
+            getRoot().getStockMarket().withhold(this);
         }
     }
 
@@ -119,7 +119,7 @@ public final class PublicCompany_CGR extends PublicCompany implements RevenueSta
             // Drop the last 10 shares
             List<PublicCertificate>certs = new ArrayList<PublicCertificate>(certificates.view());
             int share = 0;
-            BankPortfolio scrapHeap = bank.getScrapHeap();
+            BankPortfolio scrapHeap = getRoot().getBank().getScrapHeap();
             for (PublicCertificate cert : certs) {
                 if (share >= 100) {
                     cert.moveTo(scrapHeap);

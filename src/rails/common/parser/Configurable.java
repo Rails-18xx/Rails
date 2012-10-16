@@ -1,6 +1,6 @@
 package rails.common.parser;
 
-import rails.game.GameManager;
+import rails.game.RailsRoot;
 import rails.game.state.Creatable;
 
 /**
@@ -31,7 +31,7 @@ public interface Configurable extends Creatable {
      * the 'child' to access any other object without the need to resort to
      * static calls where possible. 
      */
-    void finishConfiguration (GameManager parent)
+    void finishConfiguration (RailsRoot parent)
     throws ConfigurationException;
 
 }

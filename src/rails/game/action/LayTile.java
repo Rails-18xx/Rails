@@ -288,8 +288,8 @@ public class LayTile extends PossibleORAction {
         relaidBaseTokens = (Map<String,Integer>)fields.get("relaidBaseTokens", relaidBaseTokens);
         relaidBaseTokensString = (String) fields.get("relaidBaseTokensString", relaidBaseTokensString);
 
-        MapManager mmgr = gameManager.getMapManager();
-        TileManager tmgr = gameManager.getTileManager();
+        MapManager mmgr = getRoot().getMapManager();
+        TileManager tmgr = getRoot().getTileManager();
         locations = new ArrayList<MapHex>();
         if (Util.hasValue(locationNames)) {
             for (String hexName : locationNames.split(",")) {

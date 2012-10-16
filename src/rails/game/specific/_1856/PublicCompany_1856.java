@@ -25,7 +25,7 @@ public final class PublicCompany_1856 extends PublicCompany {
 
         // TODO: Refactor the code duplication
         Train nextAvailableTrain
-            = Iterables.get(gameManager.getTrainManager().getAvailableNewTrains(), 0);
+            = Iterables.get(getRoot().getTrainManager().getAvailableNewTrains(), 0);
         int trainNumber;
         try {
             trainNumber = Integer.parseInt(nextAvailableTrain.toText());

@@ -37,7 +37,7 @@ public final class PublicCompany_1825 extends PublicCompany {
             }
             
             for (int i = 0; i < shareMultiplier && i < 4; i++) {
-                stockMarket.payOut(this);
+                getRoot().getStockMarket().payOut(this);
             }
         }
     }
@@ -48,7 +48,7 @@ public final class PublicCompany_1825 extends PublicCompany {
         
         //Need to find out if other corps exist at this IPO price
         //If so increment formationOrderIndex to control Operating sequence
-        for (PublicCompany company : gameManager.getAllPublicCompanies()) {
+        for (PublicCompany company : getRoot().getCompanyManager().getAllPublicCompanies()) {
             if (this.getIPOPrice() == company.getIPOPrice() && (this.getId() != company.getId())){
                 //Yes, we share IPO prices, has this other company been launched yet?
                 if (company.hasFloated()){

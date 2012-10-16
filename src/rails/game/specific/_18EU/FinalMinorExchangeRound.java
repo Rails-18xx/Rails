@@ -5,6 +5,7 @@ import java.util.List;
 
 import rails.common.GuiDef;
 import rails.common.LocalText;
+import rails.common.ReportBuffer;
 import rails.game.*;
 import rails.game.action.MergeCompanies;
 import rails.game.action.NullAction;
@@ -32,12 +33,12 @@ public final class FinalMinorExchangeRound extends StockRound_18EU {
     }
 
     public void start(Player playerToStartFMERound) {
-        ReportBuffer.add("");
-        ReportBuffer.add(LocalText.getText("StartFinalMinorExchangeRound"));
+        ReportBuffer.add(this,"");
+        ReportBuffer.add(this,LocalText.getText("StartFinalMinorExchangeRound"));
 
         setCurrentPlayerIndex(playerToStartFMERound.getIndex());
         initPlayer();
-        ReportBuffer.add(LocalText.getText("HasFirstTurn",
+        ReportBuffer.add(this,LocalText.getText("HasFirstTurn",
                 playerToStartFMERound.getId() ));
     }
 

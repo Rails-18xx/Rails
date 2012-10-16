@@ -11,7 +11,9 @@ import rails.algorithms.NetworkGraphBuilder;
 import rails.algorithms.NetworkGraphModifier;
 import rails.algorithms.NetworkVertex;
 import rails.game.GameManager;
+import rails.game.GameManager;
 import rails.game.MapHex;
+import rails.game.RailsRoot;
 
 /**
  * Analogue to the BirminghamTileModifier in 1851
@@ -25,17 +27,18 @@ public class ElsasModifier implements NetworkGraphModifier {
             LoggerFactory.getLogger(ElsasModifier.class);
 
     public void modifyGraph(NetworkGraphBuilder graphBuilder) {
+        
+        RailsRoot root = RailsRoot.getInstance();
 
-        GameManager gm = GameManager.getInstance();
         SimpleGraph<NetworkVertex, NetworkEdge> graph = graphBuilder.getMapGraph();
 
         // Check if (one of the  elsasHex has zero value ...
-        MapHex hex = gm.getMapManager().getHex("M5");
-        if (hex.getCurrentValueForPhase(gm.getCurrentPhase()) == 0) {
+        MapHex hex = root.getMapManager().getHex("M5");
+        if (hex.getCurrentValueForPhase(root.getPhaseManager().getCurrentPhase()) == 0) {
             // .. then remove both
             Set<NetworkVertex> vertices = NetworkVertex.getVerticesByHex(graph.vertexSet(), hex);
             graph.removeAllVertices(vertices);
-            hex = gm.getMapManager().getHex("N4");
+            hex = root.getMapManager().getHex("N4");
             vertices = NetworkVertex.getVerticesByHex(graph.vertexSet(), hex);
             graph.removeAllVertices(vertices);
             log.debug("Elsas is inactive");

@@ -1,6 +1,6 @@
 package rails.common;
 
-import rails.game.GameManager;
+import rails.game.RailsRoot;
 import rails.util.Util;
 
 /**
@@ -8,6 +8,24 @@ import rails.util.Util;
  */
 
 public class Config {
+
+    /**
+    * @return version id (including a "+" attached if development)
+    */
+    public static String getVersion() {
+        return ConfigManager.getInstance().getVersion();
+    }
+    
+    /**
+     * @return true if development version
+     */
+    public static boolean getDevelop() {
+        return ConfigManager.getInstance().getDevelop();
+    }
+    
+    public static String getBuildDate() {
+        return ConfigManager.getInstance().getBuildDate();
+    }
 
     /**
      * Configuration option (default value is empty string)
@@ -39,7 +57,7 @@ public class Config {
      * Configuration option: First tries to return {key}.{gameName}, if undefined returns {key} 
      */
     public static String getGameSpecific(String key) {
-        return getSpecific(key, GameManager.getInstance().getGameName());
+        return getSpecific(key, RailsRoot.getInstance().getGameName());
     }
 
     public static String getRecent(String key) {

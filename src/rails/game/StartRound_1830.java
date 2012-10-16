@@ -1,8 +1,9 @@
 package rails.game;
 
 import rails.common.DisplayBuffer;
+import rails.common.GameOption;
 import rails.common.LocalText;
-import rails.common.parser.GameOption;
+import rails.common.ReportBuffer;
 import rails.game.action.*;
 import rails.game.state.ChangeStack;
 
@@ -62,7 +63,7 @@ public class StartRound_1830 extends StartRound {
 
         possibleActions.clear();
 
-        if (currentPlayer == startPlayer) ReportBuffer.add("");
+        if (currentPlayer == startPlayer) ReportBuffer.add(this,"");
 
         while (possibleActions.isEmpty()) {
 
@@ -112,7 +113,7 @@ public class StartRound_1830 extends StartRound {
                             assignItem(item.getBidder(), item, item.getBid(), 0);
                         }
                     } else if (item.getBidders() > 1) {
-                        ReportBuffer.add(LocalText.getText("TO_AUCTION",
+                        ReportBuffer.add(this,LocalText.getText("TO_AUCTION",
                                 item.getName()));
                         // Start left of the currently highest bidder
                         if (item.getStatus() != StartItem.AUCTIONED) {
@@ -241,7 +242,7 @@ public class StartRound_1830 extends StartRound {
         }
 
         if (errMsg != null) {
-            DisplayBuffer.add(LocalText.getText("InvalidBid",
+            DisplayBuffer.add(this, LocalText.getText("InvalidBid",
                     playerName,
                     item.getName(),
                     errMsg ));
@@ -253,7 +254,7 @@ public class StartRound_1830 extends StartRound {
         item.setBid(bidAmount, player);
         if (previousBid > 0) player.unblockCash(previousBid);
         player.blockCash(bidAmount);
-        ReportBuffer.add(LocalText.getText("BID_ITEM_LOG",
+        ReportBuffer.add(this,LocalText.getText("BID_ITEM_LOG",
                 playerName,
                 Currency.format(this, bidAmount),
                 item.getName(),
@@ -293,13 +294,13 @@ public class StartRound_1830 extends StartRound {
         }
 
         if (errMsg != null) {
-            DisplayBuffer.add(LocalText.getText("InvalidPass",
+            DisplayBuffer.add(this, LocalText.getText("InvalidPass",
                     playerName,
                     errMsg ));
             return false;
         }
 
-        ReportBuffer.add(LocalText.getText("PASSES", playerName));
+        ReportBuffer.add(this,LocalText.getText("PASSES", playerName));
 
         ChangeStack.start(this, action);
 
@@ -324,7 +325,7 @@ public class StartRound_1830 extends StartRound {
             } else {
                 // More than one left: find next bidder
 
-                if (GameOption.OPTION_VALUE_YES.equalsIgnoreCase(getGameOption("LeaveAuctionOnPass"))) {
+                if (GameOption.getAsBoolean(this, "LeaveAuctionOnPass")) {
                     // Game option: player to leave auction after a pass (default no).
                     player.unblockCash(auctionItem.getBid(player));
                     auctionItem.setBid(-1, player);
@@ -338,12 +339,12 @@ public class StartRound_1830 extends StartRound {
 
             if (numPasses.value() >= numPlayers) {
                 // All players have passed.
-                ReportBuffer.add(LocalText.getText("ALL_PASSED"));
+                ReportBuffer.add(this,LocalText.getText("ALL_PASSED"));
                 // It the first item has not been sold yet, reduce its price by
                 // 5.
                 if (startPacket.getFirstUnsoldItem() == startPacket.getFirstItem()) {
                     startPacket.getFirstItem().reduceBasePriceBy(5);
-                    ReportBuffer.add(LocalText.getText(
+                    ReportBuffer.add(this,LocalText.getText(
                             "ITEM_PRICE_REDUCED",
                                     startPacket.getFirstItem().getName(),
                                     Currency.format(this, startPacket.getFirstItem().getBasePrice()) ));
@@ -351,7 +352,7 @@ public class StartRound_1830 extends StartRound {
                     if (startPacket.getFirstItem().getBasePrice() == 0) {
                         assignItem(getCurrentPlayer(),
                                 startPacket.getFirstItem(), 0, 0);
-                        gameManager.setPriorityPlayer();
+                        getRoot().getPlayerManager().setPriorityPlayer();
                         // startPacket.getFirstItem().getName());
                     } else {
                         //BR: If the first item's price is reduced, but not to 0, 
@@ -377,8 +378,8 @@ public class StartRound_1830 extends StartRound {
 
     private void setNextBiddingPlayer(StartItem item, int currentIndex) {
         for (int i = currentIndex + 1; i < currentIndex
-                                           + gameManager.getNumberOfPlayers(); i++) {
-            if (item.hasBid(gameManager.getPlayerByIndex(i))) {
+                                           + getRoot().getPlayerManager().getNumberOfPlayers(); i++) {
+            if (item.hasBid(getRoot().getPlayerManager().getPlayerByIndex(i))) {
                 setCurrentPlayerIndex(i);
                 break;
             }

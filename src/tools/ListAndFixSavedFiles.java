@@ -9,10 +9,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -38,17 +37,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import rails.common.Config;
-import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.common.ConfigManager;
-import rails.common.parser.ConfigurationException;
-import rails.game.GameManager;
 import rails.game.MapHex;
+import rails.game.RailsRoot;
 import rails.game.Tile;
 import rails.game.Train;
 import rails.game.action.*;
 import rails.ui.swing.elements.ActionMenuItem;
-import rails.util.GameFileIO;
+import rails.util.GameLoader;
+import rails.util.GameSaver;
 import rails.util.Util;
 
 public class ListAndFixSavedFiles extends JFrame
@@ -70,13 +68,13 @@ implements ActionListener, KeyListener {
 
     private StringBuffer headerText = new StringBuffer();
 
-    private GameFileIO fileIO;
+    private GameLoader gameLoader;
 
     private int vbarPos;
 
     private static String saveDirectory;
     private String filepath;
-    private GameManager gameManager;
+    private RailsRoot root;
 
     protected static Logger log;
 
@@ -211,21 +209,16 @@ implements ActionListener, KeyListener {
             headerText = new StringBuffer();
 
             // use GameLoader object to load game
-            fileIO = new GameFileIO();
-
-            fileIO.loadGameData(filepath);
-            add(fileIO.getGameDataAsText());
+            gameLoader = new GameLoader();
+            add(gameLoader.getGameDataAsText());
             try{
-                fileIO.initGame();
-                fileIO.loadActionsAndComments();
+                gameLoader.loadGameData(filepath);
+                gameLoader.getRoot().start();
                 setReportText(true);
-
-            } catch (ConfigurationException e)  {
-                log.error("Load failed", e);
-                DisplayBuffer.add(LocalText.getText("LoadFailed", e.getMessage()));
+            } catch (Exception e)  {
+                log.error(LocalText.getText("LoadFailed", e));
             }
-
-            gameManager = fileIO.getGame().getGameManager();
+            root = gameLoader.getRoot();
         }
 
     }
@@ -246,14 +239,9 @@ implements ActionListener, KeyListener {
         reportText.setText(headerText.toString());
         // append actionText
         int i=0;
-        for (PossibleAction action : fileIO.getActions()) {
+        for (PossibleAction action : gameLoader.getActions()) {
             reportText.append("Action "+i+" "+action.getPlayerName()+": "+action.toString());
             reportText.append("\n");
-            // check for comments for this action
-            String comment = fileIO.getComments().get(i);
-            if (comment!= null) {
-                reportText.append("Comment to action " + i + ": " + comment + "\n");
-            }
             i++;
         }
         scrollDown(vbarPos);
@@ -281,14 +269,8 @@ implements ActionListener, KeyListener {
                 try {
                     int index = Integer.parseInt(result);
                     // delete actions
-                    int size = fileIO.getActions().size();
-                    fileIO.getActions().subList(index + 1, size).clear();
-                    // delete comments
-                    for (int id = 0; id < size; id++) {
-                        if (id > index) {
-                            fileIO.getComments().remove(id);
-                        }
-                    }
+                    int size = gameLoader.getActions().size();
+                    gameLoader.getActions().subList(index + 1, size).clear();
                     setReportText(false);
                 } catch (NumberFormatException e) {
 
@@ -299,17 +281,7 @@ implements ActionListener, KeyListener {
             if (Util.hasValue(result)) {
                 try {
                     int index = Integer.parseInt(result);
-                    fileIO.getActions().remove(index);
-                    // delete and renumber in user Comments
-                    SortedMap<Integer, String> newComments = new TreeMap<Integer, String>();
-                    for (Integer id:fileIO.getComments().keySet()) {
-                        if (id < index) {
-                            newComments.put(id, fileIO.getComments().get(id));
-                        } else if (id > index) {
-                            newComments.put(id-1, fileIO.getComments().get(id));
-                        }
-                    }
-                    fileIO.setComments(newComments);
+                    gameLoader.getActions().remove(index);
                     setReportText(false);
                 } catch (NumberFormatException e) {
                     log.error("Number format exception for '"+result+"'", e);
@@ -342,13 +314,19 @@ implements ActionListener, KeyListener {
         }
         if (jfc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
             File selectedFile = jfc.getSelectedFile();
-            fileIO.saveGame(selectedFile, true, "SaveFailed");
+            GameSaver gameSaver = new GameSaver(gameLoader);
+            try {
+                gameSaver.saveGame(selectedFile);
+            } catch (IOException e) {
+                String message = LocalText.getText("SaveFailed", e.getMessage());
+                log.error(message);
+            }
         }
 
     }
 
     private void correct (int index) {
-        correctedAction = fileIO.getActions().get(index);
+        correctedAction = gameLoader.getActions().get(index);
         correctedIndex = index;
         if (correctedAction instanceof BuyTrain) {
             new BuyTrainDialog ((BuyTrain)correctedAction);
@@ -362,7 +340,7 @@ implements ActionListener, KeyListener {
 
     protected void processCorrections (PossibleAction newAction) {
         if (newAction != null && !newAction.equalsAsAction(correctedAction)) {
-            fileIO.getActions().set(correctedIndex, newAction);
+            gameLoader.getActions().set(correctedIndex, newAction);
             setReportText(false);
         }
     }
@@ -457,7 +435,7 @@ implements ActionListener, KeyListener {
             } catch (NumberFormatException e) {
             }
             String exchangedTrainID = ((JTextField)inputElements.get(4)).getText();
-            Train exchangedTrain = gameManager.getTrainManager().getTrainByUniqueId(exchangedTrainID);
+            Train exchangedTrain = root.getTrainManager().getTrainByUniqueId(exchangedTrainID);
             if (exchangedTrain != null) action.setExchangedTrain(exchangedTrain);
             try {
                 int fixedCost = Integer.parseInt(((JTextField)inputElements.get(5)).getText());
@@ -497,12 +475,12 @@ implements ActionListener, KeyListener {
             log.debug("Action was "+action);
             try {
                 int tileID = Integer.parseInt(((JTextField)inputElements.get(0)).getText());
-                Tile tile = gameManager.getTileManager().getTile(tileID);
+                Tile tile = root.getTileManager().getTile(tileID);
                 if (tileID > 0 && tile != null) action.setLaidTile(tile);
             } catch (NumberFormatException e) {
             }
             String hexID = ((JTextField)inputElements.get(1)).getText();
-            MapHex hex = gameManager.getMapManager().getHex(hexID);
+            MapHex hex = root.getMapManager().getHex(hexID);
             if (hexID != null && hex != null) action.setChosenHex(hex);
             try {
                 int orientation = Integer.parseInt(((JTextField)inputElements.get(2)).getText());

@@ -35,9 +35,9 @@ public class LayBonusToken extends LayToken {
         this.tokenId = token.getUniqueId();
     }
 
-    public void finishConfiguration (GameManager gameManager)
+    public void finishConfiguration (RailsRoot root)
     throws ConfigurationException {
-        token.prepareForRemoval(gameManager.getPhaseManager());
+        token.prepareForRemoval(root.getPhaseManager());
     }
 
     public BonusToken getToken() {
@@ -78,7 +78,7 @@ public class LayBonusToken extends LayToken {
 
         in.defaultReadObject();
 
-        MapManager mmgr = gameManager.getMapManager();
+        MapManager mmgr = getRoot().getMapManager();
         locations = new ArrayList<MapHex>();
         if (Util.hasValue(locationNames)) {
             for (String hexName : locationNames.split(",")) {

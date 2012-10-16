@@ -629,7 +629,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         }
 
         protected void setToolTip (String headerLine) {
-            Tile currentTile = orUIManager.getGameUIManager().getGameManager().getTileManager().getTile(internalId);
+            Tile currentTile = orUIManager.getGameUIManager().getRoot().getTileManager().getTile(internalId);
             StringBuffer tt = new StringBuffer("<html>");
             if (headerLine != null && !headerLine.equals("")) {
                 tt.append("<b><u>"+headerLine+"</u></b><br>");

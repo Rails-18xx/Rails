@@ -198,14 +198,14 @@ public class CompanyManager extends RailsManager implements Configurable {
     }
 
     // Post XML parsing initialisations
-    public void finishConfiguration (GameManager gameManager)
+    public void finishConfiguration (RailsRoot root)
     throws ConfigurationException {
 
         for (PublicCompany comp : lPublicCompanies) {
-            comp.finishConfiguration(gameManager);
+            comp.finishConfiguration(root);
         }
         for (PrivateCompany comp : lPrivateCompanies) {
-            comp.finishConfiguration(gameManager);
+            comp.finishConfiguration(root);
         }
     }
 

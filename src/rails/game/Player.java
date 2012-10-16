@@ -33,7 +33,7 @@ public class Player extends RailsAbstractItem implements MoneyOwner, PortfolioOw
     private final BooleanState bankrupt = BooleanState.create(this, "isBankrupt");
     private final IntegerState worthAtORStart = IntegerState.create(this, "worthAtORStart");
 
-    private Player(RailsItem parent, String id, int index) {
+    private Player(PlayerManager parent, String id, int index) {
         super(parent, id);
         this.index = index;
 
@@ -86,12 +86,16 @@ public class Player extends RailsAbstractItem implements MoneyOwner, PortfolioOw
         return new Player(parent, id, index);
     }
     
+    public PlayerManager getParent() {
+        return (PlayerManager)super.getParent();
+    }
+    
     public void finishConfiguration() {
         portfolio.finishConfiguration();
     }
 
     public String getNameAndPriority() {
-        return getId() + (GameManager.getInstance().getPriorityPlayer() == this ? " PD" : "");
+        return getId() + (getParent().getPriorityPlayer() == this ? " PD" : "");
     }
 
     /**

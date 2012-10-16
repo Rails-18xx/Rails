@@ -105,7 +105,7 @@ public class ORUIManager implements DialogOwner {
 
     public void setGameUIManager (GameUIManager gameUIManager) {
         this.gameUIManager = gameUIManager;
-        this.tileManager = gameUIManager.getGameManager().getTileManager();
+        this.tileManager = gameUIManager.getRoot().getTileManager();
     }
 
     public void init(ORWindow orWindow) {
@@ -137,7 +137,7 @@ public class ORUIManager implements DialogOwner {
     }
 
     private SimpleGraph<NetworkVertex, NetworkEdge> getCompanyGraph(){
-        NetworkGraphBuilder nwGraph = NetworkGraphBuilder.create(gameUIManager.getGameManager());
+        NetworkGraphBuilder nwGraph = NetworkGraphBuilder.create(gameUIManager.getRoot());
         NetworkCompanyGraph companyGraph = NetworkCompanyGraph.create(nwGraph, orComp);
         SimpleGraph<NetworkVertex, NetworkEdge> graph = companyGraph.createRouteGraph(true);
         return graph;
@@ -709,7 +709,7 @@ public class ORUIManager implements DialogOwner {
 
     public void tileSelected(int tileId) {
 
-        Tile tile = gameUIManager.getGameManager().getTileManager().getTile(tileId);
+        Tile tile = gameUIManager.getRoot().getTileManager().getTile(tileId);
         GUIHex hex = map.getSelectedHex();
 
         // map correction override
@@ -753,7 +753,7 @@ public class ORUIManager implements DialogOwner {
 
     public void addTileUpgradeIfValid(GUIHex hex, int tileId) {
         addTileUpgradeIfValid (hex,
-                gameUIManager.getGameManager().getTileManager().getTile(tileId));
+                gameUIManager.getRoot().getTileManager().getTile(tileId));
     }
 
     public void addTileUpgradeIfValid(GUIHex hex, Tile tile) {

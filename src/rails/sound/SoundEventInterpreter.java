@@ -23,23 +23,23 @@ public class SoundEventInterpreter {
 
     private class CurrentPlayerModelObserver implements Observer {
         private Player formerCurrentPlayer = null;
-        private GameManager gm;
-        public CurrentPlayerModelObserver(GameManager gm) {
-            this.gm = gm;
-            if (gm != null) formerCurrentPlayer = gm.getCurrentPlayer();
+        private PlayerManager pm;
+        public CurrentPlayerModelObserver(PlayerManager pm) {
+            this.pm = pm;
+            if (pm != null) formerCurrentPlayer = pm.getCurrentPlayer();
         }
         public void update(String text) {
-            if (formerCurrentPlayer != gm.getCurrentPlayer()) {
-                formerCurrentPlayer = gm.getCurrentPlayer();
+            if (formerCurrentPlayer != pm.getCurrentPlayer()) {
+                formerCurrentPlayer = pm.getCurrentPlayer();
                 if (SoundConfig.isSFXEnabled()) {
                     player.playSFXByConfigKey (
                             SoundConfig.KEY_SFX_GEN_NewCurrentPlayer,
-                            gm.getCurrentPlayer().getId());
+                            pm.getCurrentPlayer().getId());
                 }
             }
         }
         public Observable getObservable() {
-            return gm.getCurrentPlayerModel();
+            return pm.getCurrentPlayerModel();
         }
     }
 
@@ -96,7 +96,7 @@ public class SoundEventInterpreter {
         this.context = context;
         this.player = player;
     }
-    public void notifyOfActionProcessing(GameManager gm,PossibleAction action) {
+    public void notifyOfActionProcessing(RailsRoot root,PossibleAction action) {
         
         /**
          * Interpretation of events for which are only sfx is relevant 
@@ -193,14 +193,16 @@ public class SoundEventInterpreter {
             
         }
     }
-    public void notifyOfGameInit(final GameManager gameManager) {
+    public void notifyOfGameInit(final RailsRoot root) {
+        final PlayerManager pm = root.getPlayerManager();
         //subscribe to current player changes
-        if (gameManager.getCurrentPlayerModel() != null) {
-            gameManager.getCurrentPlayerModel().addObserver(
-                    new CurrentPlayerModelObserver(gameManager));
+        if (pm.getCurrentPlayerModel() != null) {
+            pm.getCurrentPlayerModel().addObserver(
+                    new CurrentPlayerModelObserver(pm));
         }
 
         //subscribe to round changes
+        final GameManager gameManager = root.getGameManager();
         if (gameManager.getCurrentRoundModel() != null) {
             gameManager.getCurrentRoundModel().addObserver(
                     new Observer() {
@@ -235,21 +237,21 @@ public class SoundEventInterpreter {
         }
 
         //subscribe to phase changes
-        if (gameManager.getPhaseManager() != null) {
-            gameManager.getPhaseManager().getCurrentPhaseModel().addObserver(
+        if (root.getPhaseManager() != null) {
+            root.getPhaseManager().getCurrentPhaseModel().addObserver(
                     new Observer() {
                         public void update(String text) {
                                  context.notifyOfPhase(gameManager.getCurrentPhase());
                          }
                         public Observable getObservable() {
-                            return gameManager.getPhaseManager().getCurrentPhaseModel();
+                            return root.getPhaseManager().getCurrentPhaseModel();
                         }
                     });
         }
 
         //subscribe to company events
-        if (gameManager.getCompanyManager() != null) {
-            for (PublicCompany c : gameManager.getCompanyManager().getAllPublicCompanies() ) {
+        if (root.getCompanyManager() != null) {
+            for (PublicCompany c : root.getCompanyManager().getAllPublicCompanies() ) {
                 //presidency changes
                 c.getPresidentModel().addObserver(new PresidentModelObserver(c));
                 //company floats

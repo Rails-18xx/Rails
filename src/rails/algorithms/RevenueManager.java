@@ -11,7 +11,6 @@ import rails.common.LocalText;
 import rails.common.parser.Configurable;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
-import rails.game.GameManager;
 import rails.game.RailsManager;
 import rails.game.RailsRoot;
 import rails.game.state.ArrayListState;
@@ -94,7 +93,7 @@ public final class RevenueManager extends RailsManager implements Configurable {
 
     }
 
-    public void finishConfiguration(GameManager parent)
+    public void finishConfiguration(RailsRoot parent)
             throws ConfigurationException {
         for (Configurable modifier:configurableModifiers) {
                 modifier.finishConfiguration(parent);

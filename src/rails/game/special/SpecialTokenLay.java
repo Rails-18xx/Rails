@@ -89,13 +89,13 @@ public class SpecialTokenLay extends SpecialProperty {
     }
 
     @Override
-    public void finishConfiguration (GameManager gameManager)
+    public void finishConfiguration (RailsRoot root)
     throws ConfigurationException {
 
-        locations = gameManager.getMapManager().parseLocations(locationCodes);
+        locations = root.getMapManager().parseLocations(locationCodes);
 
         if (token instanceof BonusToken) {
-            ((BonusToken)token).prepareForRemoval(gameManager.getPhaseManager());
+            ((BonusToken)token).prepareForRemoval(root.getPhaseManager());
         }
     }
 

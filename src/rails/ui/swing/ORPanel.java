@@ -236,7 +236,7 @@ implements ActionListener, KeyListener, RevenueListener {
         zoomMenu.add(fitToHeight);
         calibrateMap = new JMenuItem("CalibrateMap");
         calibrateMap.addActionListener(this);
-        calibrateMap.setEnabled(RailsRoot.getDevelop());
+        calibrateMap.setEnabled(Config.getDevelop());
         zoomMenu.add(calibrateMap);
         menuBar.add(zoomMenu);
 
@@ -642,7 +642,7 @@ implements ActionListener, KeyListener, RevenueListener {
 
     protected void addCompanyInfo() {
 
-    	CompanyManager cm = orUIManager.getGameUIManager().getGameManager().getCompanyManager();
+    	CompanyManager cm = orUIManager.getGameUIManager().getGameManager().getRoot().getCompanyManager();
     	List<CompanyType> comps = cm.getCompanyTypes();
         JMenu compMenu, menu, item;
 
@@ -681,7 +681,7 @@ implements ActionListener, KeyListener, RevenueListener {
 
     protected void addTrainsInfo() {
 
-        TrainManager tm = orWindow.getGameUIManager().getGameManager().getTrainManager();
+        TrainManager tm = orWindow.getGameUIManager().getRoot().getTrainManager();
         List<TrainType> types = tm.getTrainTypes();
         JMenu item;
 
@@ -699,7 +699,7 @@ implements ActionListener, KeyListener, RevenueListener {
 
     protected void addPhasesInfo() {
 
-        PhaseManager pm = orWindow.getGameUIManager().getGameManager().getPhaseManager();
+        PhaseManager pm = orWindow.getGameUIManager().getRoot().getPhaseManager();
         List<Phase> phases = pm.getPhases();
         JMenu item;
         StringBuffer b = new StringBuffer("<html>");
@@ -727,7 +727,7 @@ implements ActionListener, KeyListener, RevenueListener {
             if (Util.hasValue(phase.getInfo())) {
                 appendInfoText(b, phase.getInfo());
             }
-            item = new JMenu (LocalText.getText("PhaseX", phase.getName()));
+            item = new JMenu (LocalText.getText("PhaseX", phase.getId()));
             item.setEnabled(true);
             item.add(new JMenuItem(b.toString()));
             phasesInfoMenu.add(item);
@@ -752,7 +752,7 @@ implements ActionListener, KeyListener, RevenueListener {
         JMenu networkMenu = new JMenu(LocalText.getText("NetworkInfo"));
 
         //network graphs only for developers
-        if (route_highlight && RailsRoot.getDevelop()) {
+        if (route_highlight && Config.getDevelop()) {
             JMenuItem item = new JMenuItem("Network");
             item.addActionListener(this);
             item.setActionCommand(NETWORK_INFO_CMD);
@@ -760,7 +760,7 @@ implements ActionListener, KeyListener, RevenueListener {
         }
 
         if (revenue_suggest) {
-            CompanyManager cm = orUIManager.getGameUIManager().getGameManager().getCompanyManager();
+            CompanyManager cm = orUIManager.getGameUIManager().getGameManager().getRoot().getCompanyManager();
             for (PublicCompany comp : cm.getAllPublicCompanies()) {
                 if (!comp.hasFloated() || comp.isClosed()) continue;
                 JMenuItem item = new JMenuItem(comp.getId());
@@ -774,17 +774,17 @@ implements ActionListener, KeyListener, RevenueListener {
     }
 
     protected void executeNetworkInfo(String companyName) {
-        GameManager gm = orUIManager.getGameUIManager().getGameManager();
+        RailsRoot root = orUIManager.getGameUIManager().getRoot();
 
         if (companyName.equals("Network")) {
-            NetworkGraphBuilder nwGraph = NetworkGraphBuilder.create(gm);
+            NetworkGraphBuilder nwGraph = NetworkGraphBuilder.create(root);
             SimpleGraph<NetworkVertex, NetworkEdge> mapGraph = nwGraph.getMapGraph();
 
             //            NetworkGraphBuilder.visualize(mapGraph, "Map Network");
             mapGraph = NetworkGraphBuilder.optimizeGraph(mapGraph);
             NetworkGraphBuilder.visualize(mapGraph, "Optimized Map Network");
         } else {
-            CompanyManager cm = gm.getCompanyManager();
+            CompanyManager cm = root.getCompanyManager();
             PublicCompany company = cm.getPublicCompany(companyName);
             //handle the case of invalid parameters
             //could occur if the method is not invoked by the menu (but by the click listener)
@@ -803,7 +803,7 @@ implements ActionListener, KeyListener, RevenueListener {
             RevenueAdapter ra = null;
             while (anotherTrain) {
                 // multi
-                ra = RevenueAdapter.createRevenueAdapter(gm, company, gm.getCurrentPhase());
+                ra = RevenueAdapter.createRevenueAdapter(root, company, root.getPhaseManager().getCurrentPhase());
                 for (String addTrain:addTrainList) {
                     ra.addTrainByString(addTrain);
                 }
@@ -822,7 +822,7 @@ implements ActionListener, KeyListener, RevenueListener {
                 try {revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());}
                 catch (Exception e) {}
 
-                if (!RailsRoot.getDevelop()) {
+                if (!Config.getDevelop()) {
                     //parent component is ORPanel so that dialog won't hide the routes painted on the map
                     JOptionPane.showMessageDialog(this,
                             LocalText.getText("NetworkInfoDialogMessage",company.getId(),
@@ -1073,8 +1073,8 @@ implements ActionListener, KeyListener, RevenueListener {
             //if suggest option is on
             isRevenueValueToBeSet = isSetRevenueStep ? isSuggestRevenue() : false;
 
-            GameManager gm = orUIManager.getGameUIManager().getGameManager();
-            revenueAdapter = RevenueAdapter.createRevenueAdapter(gm, orComp, gm.getCurrentPhase());
+            RailsRoot root = orUIManager.getGameUIManager().getRoot();
+            revenueAdapter = RevenueAdapter.createRevenueAdapter(root, orComp, root.getPhaseManager().getCurrentPhase());
             revenueAdapter.initRevenueCalculator(true);
             revenueAdapter.addRevenueListener(this);
             revenueThread = new Thread(revenueAdapter);

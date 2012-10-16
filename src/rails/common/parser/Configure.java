@@ -17,6 +17,20 @@ import rails.game.state.Creatable;
 public class Configure {
     final static Logger log = LoggerFactory.getLogger(Configure.class);
     
+    /** Check if a classname can be instantiated.
+     * Throws a ConfiguratioNException if not.
+     * @param className
+     * @throws ConfigurationException
+     */
+    public static void canClassBeInstantiated (String className) throws ConfigurationException {
+        try {
+            Class.forName(className);
+        } catch (ClassNotFoundException e) {
+            throw new ConfigurationException("Cannot find class "
+                    + className, e);
+        }
+    }
+    
     public static <T extends Creatable> Class<? extends T> getClassForName(Class<T> clazz, String className)
             throws ConfigurationException {
         Class<? extends T> subClazz;

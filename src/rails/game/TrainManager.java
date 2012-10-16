@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import rails.common.LocalText;
+import rails.common.ReportBuffer;
 import rails.common.parser.Configurable;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
@@ -61,7 +62,6 @@ public class TrainManager extends RailsManager implements Configurable {
 
     protected List<PublicCompany> companiesWithExcessTrains;
 
-    protected GameManager gameManager = null;
     protected Bank bank = null;
     
     /** Required for the sell-train-to-foreigners feature of some games */
@@ -159,10 +159,9 @@ public class TrainManager extends RailsManager implements Configurable {
         
     }
 
-    public void finishConfiguration (GameManager gameManager)
+    public void finishConfiguration (RailsRoot root)
     throws ConfigurationException {
-        this.gameManager = gameManager;
-        bank = gameManager.getBank();
+        bank = root.getBank();
         // TODO: Can this be changed to use BankPortolios directly?
         ipo = bank.getIpo().getPortfolioModel();
         pool = bank.getPool().getPortfolioModel();
@@ -171,14 +170,14 @@ public class TrainManager extends RailsManager implements Configurable {
         Map<Integer, String> newPhaseNames;
         Phase phase;
         String phaseName;
-        PhaseManager phaseManager = gameManager.getPhaseManager();
+        PhaseManager phaseManager = root.getPhaseManager();
         
         for (TrainCertificateType certType : trainCertTypes) {
-            certType.finishConfiguration(gameManager);
+            certType.finishConfiguration(root);
             
             List<TrainType> types = certType.getPotentialTrainTypes();
             for (TrainType type : types) {
-                type.finishConfiguration(gameManager, certType);
+                type.finishConfiguration(root, certType);
             }
             
             // Now create the trains of this type
@@ -217,11 +216,11 @@ public class TrainManager extends RailsManager implements Configurable {
 
         // Trains "bought by foreigners" (1844, 1824)
         if (removeTrain) {
-            gameManager.setGameParameter(GameDef.Parm.REMOVE_TRAIN_BEFORE_SR, true);
+            root.getGameManager().setGameParameter(GameDef.Parm.REMOVE_TRAIN_BEFORE_SR, true);
         }
         
         // Train trading between different players at face value only (1851)
-        gameManager.setGameParameter(GameDef.Parm.FIXED_PRICE_TRAINS_BETWEEN_PRESIDENTS,
+        root.getGameManager().setGameParameter(GameDef.Parm.FIXED_PRICE_TRAINS_BETWEEN_PRESIDENTS,
                 trainPriceAtFaceValueIfDifferentPresidents);
     }
 
@@ -287,7 +286,7 @@ public class TrainManager extends RailsManager implements Configurable {
                     if (!nextType.isAvailable()) {
                         makeTrainAvailable(nextType);
                         trainAvailabilityChanged = true;
-                        ReportBuffer.add("All " + boughtType.toText()
+                        ReportBuffer.add(this,"All " + boughtType.toText()
                                          + "-trains are sold out, "
                                          + nextType.toText() + "-trains now available");
                     }
@@ -298,7 +297,7 @@ public class TrainManager extends RailsManager implements Configurable {
         int trainIndex = boughtType.getNumberBoughtFromIPO();
         if (trainIndex == 1) {
             // First train of a new type bought
-            ReportBuffer.add(LocalText.getText("FirstTrainBought",
+            ReportBuffer.add(this,LocalText.getText("FirstTrainBought",
                     boughtType.toText()));
         }
         
@@ -306,7 +305,7 @@ public class TrainManager extends RailsManager implements Configurable {
         Phase newPhase;
         if (newPhases.get(boughtType) != null
                 && (newPhase = newPhases.get(boughtType).get(trainIndex)) != null) {
-            gameManager.getPhaseManager().setPhase(newPhase, train.getOwner());
+            getRoot().getPhaseManager().setPhase(newPhase, train.getOwner());
             phaseHasChanged = true;
         }
     }
@@ -359,9 +358,9 @@ public class TrainManager extends RailsManager implements Configurable {
         }
         // report about event
         if (type.isObsoleting()) {
-            ReportBuffer.add(LocalText.getText("TrainsObsolete." + obsoleteTrainFor, type.getId()));
+            ReportBuffer.add(this,LocalText.getText("TrainsObsolete." + obsoleteTrainFor, type.getId()));
         } else {
-            ReportBuffer.add(LocalText.getText("TrainsRusted",type.getId()));
+            ReportBuffer.add(this,LocalText.getText("TrainsRusted",type.getId()));
         }
     }
     

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import rails.common.LocalText;
+import rails.common.ReportBuffer;
 import rails.game.*;
 import rails.game.action.BuyTrain;
 import rails.game.model.PortfolioModel;
@@ -64,7 +65,6 @@ public class OperatingRound_18EU extends OperatingRound {
         boolean presidentMayHelp = operatingCompany.value().mustOwnATrain();
         Train cheapestTrain = null;
         int costOfCheapestTrain = 0;
-        TrainManager trainMgr = gameManager.getTrainManager();
 
         String extraMessage = null;
         boolean mustExchangePullmann = !isBelowTrainLimit()
@@ -75,7 +75,7 @@ public class OperatingRound_18EU extends OperatingRound {
                     pullmannType.toText());
         }
          /* New trains */
-        trains = trainMgr.getAvailableNewTrains();
+        trains = trainManager.getAvailableNewTrains();
         for (Train train : trains) {
             cost = train.getCost();
             if (cost <= cash) {
@@ -181,7 +181,7 @@ public class OperatingRound_18EU extends OperatingRound {
             Train pullmann = operatingCompany.value().getPortfolioModel().getTrainOfType(pullmannType);
             if (pullmann != null) {  // must be non-null
                 pool.addTrain(pullmann);
-                ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
+                ReportBuffer.add(this,LocalText.getText("CompanyDiscardsTrain",
                         operatingCompany.value().getId(),
                         pullmann.toText() ));
 
@@ -205,7 +205,7 @@ public class OperatingRound_18EU extends OperatingRound {
             }
             if (hasPullmann && !hasNonPullmann) {
                 pool.addTrain(pullmann);
-                ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
+                ReportBuffer.add(this,LocalText.getText("CompanyDiscardsTrain",
                         seller.getId(),
                         pullmann.toText() ));
             }
@@ -215,7 +215,7 @@ public class OperatingRound_18EU extends OperatingRound {
         // if we still have at least one Minor operating.
         // If so, record the current player as the first
         // one to act in the Final Minor Exchange Round.
-        if (result && gameManager.getPhaseManager().hasReachedPhase("5")
+        if (result && getRoot().getPhaseManager().hasReachedPhase("5")
             && operatingCompanies.get(0).getType().getId().equalsIgnoreCase("Minor")
             && ((GameManager_18EU)gameManager).getPlayerToStartFMERound() == null) {
             ((GameManager_18EU)gameManager).setPlayerToStartFMERound(operatingCompany.value().getPresident());

@@ -8,6 +8,7 @@ import com.google.common.collect.Iterables;
 
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
+import rails.common.ReportBuffer;
 import rails.common.parser.ConfigurationException;
 import rails.game.*;
 import rails.game.Currency;
@@ -48,7 +49,7 @@ public class StockRound_18EU extends StockRound {
             discardingTrains.set(false);
         }
 
-        phase5Reached = gameManager.getPhaseManager().hasReachedPhase("5");
+        phase5Reached = getRoot().getPhaseManager().hasReachedPhase("5");
 
     }
 
@@ -91,7 +92,7 @@ public class StockRound_18EU extends StockRound {
             }
         } else {
             freeStations = new ArrayList<Stop>();
-            MapManager map = gameManager.getMapManager();
+            MapManager map = getRoot().getMapManager();
             for (Stop city : map.getCurrentStations()) {
                 if (city.getSlots() > city.getBaseTokens().size()) {
                     freeStations.add(city);
@@ -374,7 +375,7 @@ public class StockRound_18EU extends StockRound {
         }
 
         if (errMsg != null) {
-            DisplayBuffer.add(LocalText.getText("CantStart",
+            DisplayBuffer.add(this, LocalText.getText("CantStart",
                     playerName,
                     companyName,
                     Currency.format(this, price),
@@ -405,7 +406,7 @@ public class StockRound_18EU extends StockRound {
         company.setHomeCityNumber(homeCityNumber);
 
         company.start(startSpace);
-        ReportBuffer.add(LocalText.getText("START_COMPANY_LOG",
+        ReportBuffer.add(this,LocalText.getText("START_COMPANY_LOG",
                 playerName,
                 companyName,
                 Currency.format(this, price),
@@ -427,20 +428,20 @@ public class StockRound_18EU extends StockRound {
             int minorTrains = minor.getPortfolioModel().getTrainList().size();
             company.transferAssetsFrom(minor);
             minor.setClosed();
-            ReportBuffer.add(LocalText.getText("MERGE_MINOR_LOG",
+            ReportBuffer.add(this,LocalText.getText("MERGE_MINOR_LOG",
                     currentPlayer.getId(),
                     minor.getId(),
                     company.getId(),
                     Currency.format(this, minorCash),
                     minorTrains ));
-            ReportBuffer.add(LocalText.getText("GetShareForMinor",
+            ReportBuffer.add(this,LocalText.getText("GetShareForMinor",
                     currentPlayer.getId(),
                     cert2.getShare(),
                     company.getId(),
                     ipo.getParent().getId(),
                     minor.getId() ));
         } else {
-            ReportBuffer.add(LocalText.getText("SelectedHomeBase",
+            ReportBuffer.add(this,LocalText.getText("SelectedHomeBase",
                     company.getId(),
                     selectedHomeCity.toString() ));
         }
@@ -448,14 +449,14 @@ public class StockRound_18EU extends StockRound {
         // Move the remaining certificates to the company treasury
         Portfolio.moveAll(ipo.getCertificates(company), company);
 
-        ReportBuffer.add(LocalText.getText("SharesPutInTreasury",
+        ReportBuffer.add(this,LocalText.getText("SharesPutInTreasury",
                 company.getPortfolioModel().getShare(company),
                 company.getId() ));
 
         // TODO must get this amount from XML
         int tokensCost = 100;
         String costText = Currency.toBank(company, tokensCost);
-        ReportBuffer.add(LocalText.getText("PaysForTokens",
+        ReportBuffer.add(this,LocalText.getText("PaysForTokens",
                 company.getId(),
                 costText,
                 company.getNumberOfBaseTokens() ));
@@ -562,15 +563,15 @@ public class StockRound_18EU extends StockRound {
         }
 
         if (cert != null) {
-            ReportBuffer.add("");
-            ReportBuffer.add(LocalText.getText("MERGE_MINOR_LOG",
+            ReportBuffer.add(this,"");
+            ReportBuffer.add(this,LocalText.getText("MERGE_MINOR_LOG",
                     currentPlayer.getId(),
                     minor.getId(),
                     major.getId(),
                     Currency.format(this, minorCash),
                     minorTrains ));
             // FIXME: CHeck if this still works correctly
-            ReportBuffer.add(LocalText.getText("GetShareForMinor",
+            ReportBuffer.add(this,LocalText.getText("GetShareForMinor",
                     currentPlayer.getId(),
                     cert.getShare(),
                     major.getId(),
@@ -578,30 +579,30 @@ public class StockRound_18EU extends StockRound {
                     minor.getId() ));
             if (major != null) {
                 if (action.getReplaceToken()) {
-                    ReportBuffer.add(LocalText.getText("ExchangesBaseToken",
+                    ReportBuffer.add(this,LocalText.getText("ExchangesBaseToken",
                             major.getId(),
                             minor.getId(),
                             homeHex.getId()));
                 } else {
-                    ReportBuffer.add(LocalText.getText("NoBaseTokenExchange",
+                    ReportBuffer.add(this,LocalText.getText("NoBaseTokenExchange",
                             major.getId(),
                             minor.getId(),
                             homeHex.getId()));
                 }
             }
             cert.moveTo(currentPlayer);
-            ReportBuffer.add(LocalText.getText("MinorCloses", minor.getId()));
+            ReportBuffer.add(this,LocalText.getText("MinorCloses", minor.getId()));
             checkFlotation(major);
 
             if (pullmannToDiscard != null) {
                 pool.addTrain(pullmannToDiscard);
-                ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
+                ReportBuffer.add(this,LocalText.getText("CompanyDiscardsTrain",
                         major.getId(),
                         pullmannToDiscard.toText() ));
             }
         } else {
-            ReportBuffer.add("");
-            ReportBuffer.add(LocalText.getText("CLOSE_MINOR_LOG",
+            ReportBuffer.add(this,"");
+            ReportBuffer.add(this,LocalText.getText("CLOSE_MINOR_LOG",
                     currentPlayer.getId(),
                     minor.getId(),
                     Currency.format(this, minorCash),
@@ -628,7 +629,7 @@ public class StockRound_18EU extends StockRound {
     protected void floatCompany(PublicCompany company) {
 
         company.setFloated();
-        ReportBuffer.add(LocalText.getText("Floats", company.getId()));
+        ReportBuffer.add(this,LocalText.getText("Floats", company.getId()));
 
         // Before phase 5, no other actions are required.
 
@@ -639,7 +640,7 @@ public class StockRound_18EU extends StockRound {
             company.getPortfolioModel().moveAllCertificates(pool.getParent());
             int cash = 5 * company.getMarketPrice();
             String cashText = Currency.fromBank(cash, company);
-            ReportBuffer.add(LocalText.getText("MonetiseTreasuryShares",
+            ReportBuffer.add(this,LocalText.getText("MonetiseTreasuryShares",
                     company.getId(),
                     cashText ));
 
@@ -681,7 +682,7 @@ public class StockRound_18EU extends StockRound {
             break;
         }
         if (errMsg != null) {
-            DisplayBuffer.add(LocalText.getText("CannotDiscardTrain",
+            DisplayBuffer.add(this, LocalText.getText("CannotDiscardTrain",
                     companyName,
                     train.toText(),
                     errMsg ));
@@ -692,7 +693,7 @@ public class StockRound_18EU extends StockRound {
         ChangeStack.start(this, action);
         // FIXME: if (action.isForced()) changeStack.linkToPreviousMoveSet();
         pool.addTrain(train);
-        ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
+        ReportBuffer.add(this,LocalText.getText("CompanyDiscardsTrain",
                 companyName,
                 train.toText() ));
 

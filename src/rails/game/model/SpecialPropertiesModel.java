@@ -1,11 +1,11 @@
 package rails.game.model;
 
 import rails.common.LocalText;
+import rails.common.ReportBuffer;
 import rails.game.Bonus;
 import rails.game.Currency;
 import rails.game.PublicCompany;
 import rails.game.RailsOwner;
-import rails.game.ReportBuffer;
 import rails.game.state.Change;
 import rails.game.state.Observable;
 import rails.game.state.PortfolioChange;
@@ -59,7 +59,7 @@ public class SpecialPropertiesModel extends RailsModel implements Triggerable {
             Bonus bonus = new Bonus(company, locBonus.getId(), locBonus.getValue(),
                     locBonus.getLocations());
             company.addBonus(bonus);
-            ReportBuffer.add(LocalText.getText("AcquiresBonus",
+            ReportBuffer.add(this,LocalText.getText("AcquiresBonus",
                     getParent().getId(),
                     locBonus.getName(),
                     Currency.format(company, locBonus.getValue()),

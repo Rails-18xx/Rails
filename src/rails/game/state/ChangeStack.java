@@ -2,22 +2,27 @@ package rails.game.state;
 
 import static com.google.common.base.Preconditions.checkState;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ChangeStack {
-    protected static Logger log =
+
+    private static final Logger log =
         LoggerFactory.getLogger(ChangeStack.class);
 
     // static fields
     private final LinkedList<ChangeSet> undoStack = new LinkedList<ChangeSet>();
     private final LinkedList<ChangeSet> redoStack = new LinkedList<ChangeSet>();
     private final StateManager stateManager;
+    private final List<Observer> observers = new ArrayList<Observer>();
     
-    // dynamic field
+    // dynamic fields
     private ChangeSet currentSet;
+    private int changeSetId;
 
     private ChangeStack(StateManager stateManager) {
         this.stateManager = stateManager;
@@ -106,8 +111,15 @@ public class ChangeStack {
     private ChangeSet startChangeSet(ChangeAction action, boolean initial) {
         checkState(currentSet == null, "An unclosed ChangeSet still open");
 
-        currentSet = new ChangeSet(action, initial);
+        currentSet = new ChangeSet(changeSetId, action, initial);
+        changeSetId ++;
         log.debug(">>> Start new ChangeSet " + currentSet + " at index=" + getCurrentIndex());
+        
+        // inform observers
+        for (Observer o:observers) {
+            o.changeSetCreated(currentSet);
+        }
+        
         return currentSet;
     }
     
@@ -160,5 +172,21 @@ public class ChangeStack {
      */
     public static void start(Item item, ChangeAction action) {
         item.getRoot().getStateManager().getChangeStack().newChangeSet(action);
+    }
+
+    
+    /**
+     * Add a ChangeStack observer
+     * @param observer observer to add
+     */
+    public void addObserver(Observer observer) {
+        observers.add(observer);
+    }
+    
+    /**
+     * Observer interface to be updated about new ChangeSets
+     */
+    public interface Observer {
+        void changeSetCreated(ChangeSet created);
     }
 }

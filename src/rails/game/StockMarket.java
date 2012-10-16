@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Lists;
 
 import rails.common.LocalText;
+import rails.common.ReportBuffer;
 import rails.common.parser.Configurable;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
@@ -33,8 +34,6 @@ public class StockMarket extends RailsManager implements Configurable {
     private int numRows = 0;
     private int numCols = 0;
     private StockSpaceType defaultType;
-    
-    private GameManager gameManager;
 
     /* Game-specific flags */
     private boolean upOrDownRight = false;
@@ -154,11 +153,9 @@ public class StockMarket extends RailsManager implements Configurable {
      * Final initialisations, to be called after all XML processing is complete.
      * The purpose is to register fixed company start prices.
      */
-    public void finishConfiguration (GameManager gameManager) {
-
-        this.gameManager = gameManager;
+    public void finishConfiguration (RailsRoot root) {
         
-        for (PublicCompany comp : gameManager.getCompanyManager().getAllPublicCompanies()) {
+        for (PublicCompany comp : root.getCompanyManager().getAllPublicCompanies()) {
             if (!comp.hasStarted() && comp.getStartSpace() != null) {
                 comp.getStartSpace().addFixedStartPrice(comp);
             }
@@ -287,7 +284,7 @@ public class StockMarket extends RailsManager implements Configurable {
             StockSpace to) {
         // To be written to a log file in the future.
         if (from != null && from == to) {
-            ReportBuffer.add(LocalText.getText("PRICE_STAYS_LOG",
+            ReportBuffer.add(this,LocalText.getText("PRICE_STAYS_LOG",
                     company.getId(),
                     Currency.format(this, from.getPrice()),
                     from.getId() ));
@@ -295,7 +292,7 @@ public class StockMarket extends RailsManager implements Configurable {
         } else if (from == null && to != null) {
             ;
         } else if (from != null && to != null) {
-            ReportBuffer.add(LocalText.getText("PRICE_MOVES_LOG",
+            ReportBuffer.add(this,LocalText.getText("PRICE_MOVES_LOG",
                     company.getId(),
                     Currency.format(this, from.getPrice()),
                     from.getId(),
@@ -304,8 +301,8 @@ public class StockMarket extends RailsManager implements Configurable {
 
             /* Check for rails.game closure */
             if (to.endsGame()) {
-                ReportBuffer.add(LocalText.getText("GAME_OVER"));
-                gameManager.registerMaxedSharePrice(company, to);
+                ReportBuffer.add(this,LocalText.getText("GAME_OVER"));
+                getRoot().getGameManager().registerMaxedSharePrice(company, to);
             }
 
         }

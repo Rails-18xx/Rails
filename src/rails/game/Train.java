@@ -128,7 +128,7 @@ public class Train extends RailsOwnableItem<Train> implements Creatable {
     }
 
     public void setRusted() {
-        this.moveTo(GameManager.getInstance().getBank().getScrapHeap());
+        this.moveTo(getRoot().getBank().getScrapHeap());
     }
 
     public void setObsolete() {

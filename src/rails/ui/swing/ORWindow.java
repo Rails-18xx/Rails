@@ -299,7 +299,7 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
 
     protected String getLayoutFileName() {
         return getClass().getSimpleName() + "_" 
-                + gameUIManager.getGameManager().getGameName() ;
+                + gameUIManager.getRoot().getGameName() ;
     }
 
 }

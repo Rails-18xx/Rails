@@ -1,354 +1,265 @@
 package rails.game;
 
-import java.io.*;
-import java.util.*;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import rails.algorithms.RevenueManager;
+import rails.common.Config;
 import rails.common.DisplayBuffer;
+import rails.common.GameData;
+import rails.common.GameOption;
 import rails.common.LocalText;
-import rails.common.parser.*;
-import rails.game.action.PossibleAction;
-import rails.game.state.ChangeStack;
+import rails.common.ReportBuffer;
+import rails.common.ReportManager;
+import rails.common.parser.ComponentManager;
+import rails.common.parser.Configurable;
+import rails.common.parser.ConfigurationException;
+import rails.common.parser.Tag;
+import rails.common.parser.XMLTags;
 import rails.game.state.Root;
-import rails.util.GameFileIO;
+
+import com.google.common.base.Preconditions;
 
 public class RailsRoot extends Root implements RailsItem {
-    // the correct version number and develop status
-    // is set during initialLoad in Config class
-    private static String version = "unknown";
-    private static boolean develop = false;
 
-    public static void setVersion(String version) {
-        RailsRoot.version = version;
-    }
-
-    public static String getVersion() {
-        return version;
-    }
-
-    public static String getFullVersion() {
-        if (develop) {
-            return version + "+";
-        } else {
-            return version;
-        }
-    }
-
-    public static void setDevelop(boolean develop) {
-        RailsRoot.develop = develop;
-    }
-
-    public static boolean getDevelop() {
-        return develop;
-    }
-
-    // in the following the Game objects are defined
-
-    /** The component Manager */
-    protected GameManager gameManager;
-    protected CompanyManager companyManager;
-    protected PlayerManager playerManager;
-    protected PhaseManager phaseManager;
-    protected TrainManager trainManager;
-    protected StockMarket stockMarket;
-    protected MapManager mapManager;
-    protected TileManager tileManager;
-    protected RevenueManager revenueManager;
-    protected Bank bank;
-    protected String name;
-
-    protected List<String> directories = new ArrayList<String>();
-    protected List<String> players;
+    private static final Logger log =
+            LoggerFactory.getLogger(RailsRoot.class);
     
-    protected Currency currency;
+    // currently we assume that there is only one instance running
+    // thus it is possible to retrieve that version
+    // TODO: Replace this by a full support of concurrent usage
+    private static RailsRoot instance;
+    
+    public static RailsRoot getInstance() {
+        return instance;
+    }
 
-    protected Map<String, String> gameOptions;
+    // Base XML file
+    private static final String GAME_XML_FILE = "Game.xml";
+    
+    // Instance fields
+    
+    // Game data fields
+    private final GameData gameData;
 
-    protected static Logger log =
-        LoggerFactory.getLogger(RailsRoot.class);
+    // Component Managers
+    private GameManager gameManager;
+    private CompanyManager companyManager;
+    private PlayerManager playerManager;
+    private PhaseManager phaseManager;
+    private TrainManager trainManager;
+    private StockMarket stockMarket;
+    private MapManager mapManager;
+    private TileManager tileManager;
+    private RevenueManager revenueManager;
+    private Bank bank;
+    
+    // Other Managers
+    private ReportManager reportManager;
 
-    public RailsRoot(String name, List<String> players, Map<String, String> options) {
+    // TODO (Rails2.0): Move currency to Bank 
+    private Currency currency;
+
+    private RailsRoot(GameData gameData) {
         super();
-        init(); // initialize everything inside
         
-        this.name = name;
-        this.gameOptions = options;
+        // TODO (Rails2.0): Is this the correct place?
+        gameData.getGameOptions().put(GameOption.NUMBER_OF_PLAYERS,
+                String.valueOf(gameData.getPlayers().size()));
 
-        gameOptions.put(GameOption.NUMBER_OF_PLAYERS,
-                String.valueOf(players.size()));
-
-        for (String playerName : players) {
+        for (String playerName : gameData.getPlayers()) {
             log.debug("Player: " + playerName);
         }
-        for (String optionName : gameOptions.keySet()) {
+        for (String optionName : gameData.getGameOptions().keySet()) {
             log.debug("Option: " + optionName + "="
-                    + gameOptions.get(optionName));
+                    + gameData.getGameOptions().get(optionName));
         }
 
-
-        this.players = players;
+        this.gameData = gameData;
     }
-
-    public String start() {
-
-        if (players.size() < playerManager.minPlayers
-                || players.size() > playerManager.maxPlayers) {
-            return name+" is not configured to be played with "+players.size()+" players\n"
-            + "Please enter a valid number of players, or add a <Players> entry to data/"+name+"/Game.xml";
-        }
-
-        gameManager.startGame(gameOptions);
-
-        return null;
-    }
-
-    public boolean setup() {
-        GameFileParser gfp;
-        try{
-            gfp = new GameFileParser(this, name, gameOptions);
-        } catch (Exception e) {
-            String message =
-                    LocalText.getText("GameSetupFailed", GameFileParser.GAME_XML_FILE);
-            log.error(message, e);
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-            DisplayBuffer.add(message + ":\n " + e.getMessage());
-            return false;
-        }
+    
+    public static RailsRoot create(GameData gameData) throws ConfigurationException {
+        Preconditions.checkState(instance == null, 
+                "Currently only a single instance of RailsRoot is allowed");
+        instance = new RailsRoot(gameData);
+        log.debug("RailsRoot: instance created");
+        instance.init();
+        log.debug("RailsRoot: instance initialized");
+        instance.initGameFromXML();
+        log.debug("RailsRoot: game configuration initialized");
+        instance.finishConfiguration();
+        log.debug("RailsRoot: game configuration finished");
         
-        playerManager = gfp.getPlayerManager();
-        companyManager = gfp.getCompanyManager();
-        trainManager = gfp.getTrainManager();
-        phaseManager = gfp.getPhaseManager();
-        stockMarket = gfp.getStockMarket();
-        mapManager = gfp.getMapManager();
-        tileManager = gfp.getTileManager();
-        revenueManager = gfp.getRevenueManager();
-        bank = gfp.getBank();
-        gameManager = gfp.getGameManager();
+        return instance;
+    }
 
-        log.info("========== Start of rails.game " + name + " ==========");
-        log.info("Rails version "+version);
-        ReportBuffer.add(LocalText.getText("GameIs", name));
+    
+    // feedback from ComponentManager
+    public void setComponent(Configurable component) {
+        if (component instanceof PlayerManager) {
+            playerManager = (PlayerManager) component;
+        } else if (component instanceof Bank) {
+            bank = (Bank) component;
+        } else if (component instanceof CompanyManager) {
+            companyManager = (CompanyManager) component;
+        } else if (component instanceof StockMarket) {
+            stockMarket = (StockMarket) component;
+        } else if (component instanceof GameManager) {
+            gameManager = (GameManager) component;
+        } else if (component instanceof PhaseManager) {
+            phaseManager = (PhaseManager) component;
+        } else if (component instanceof TrainManager) {
+            trainManager = (TrainManager) component;
+        } else if (component instanceof MapManager) {
+            mapManager = (MapManager) component;
+        } else if (component instanceof TileManager) {
+            tileManager = (TileManager) component;
+        } else if (component instanceof RevenueManager) {
+            revenueManager = (RevenueManager) component;
+        }
+    }
+    
+    public void initGameFromXML() throws ConfigurationException {
+        String directory = "data/" + gameData.getGameName();
+        
+        Tag componentManagerTag = Tag.findTopTagInFile(
+                GAME_XML_FILE, directory, XMLTags.COMPONENT_MANAGER_ELEMENT_ID, gameData.getGameOptions());
+        
+        ComponentManager componentManager = new ComponentManager();
+        componentManager.start(this,  componentManagerTag);
+        // The componentManager automatically returns results
 
+        // creation of Report facilities
+        reportManager = ReportManager.create(this, "reportManager");
+    }
+    
+    public boolean finishConfiguration() {
         /*
          * Initializations that involve relations between components can
          * only be done after all XML has been processed.
          */
-        playerManager.setPlayers(players, bank);
-        gameManager.init(name, playerManager, companyManager,
-                phaseManager, trainManager, stockMarket, mapManager,
-                tileManager, revenueManager, bank);
+        log.info("========== Start of rails.game " + gameData.getGameName() + " ==========");
+        log.info("Rails version "+ Config.getVersion());
+        ReportBuffer.add(this,LocalText.getText("GameIs", gameData.getGameName()));
+
+        playerManager.setPlayers(gameData.getPlayers(), bank);
+        gameManager.init();
+        // TODO: Can this be merged above?
+        playerManager.init();
 
         try {
-            playerManager.finishConfiguration(gameManager);
-            companyManager.finishConfiguration(gameManager);
-            trainManager.finishConfiguration(gameManager);
-            phaseManager.finishConfiguration(gameManager);
-            tileManager.finishConfiguration(gameManager);
-            mapManager.finishConfiguration(gameManager);
-            bank.finishConfiguration(gameManager);
-            stockMarket.finishConfiguration(gameManager);
+            playerManager.finishConfiguration(this);
+            companyManager.finishConfiguration(this);
+            trainManager.finishConfiguration(this);
+            phaseManager.finishConfiguration(this);
+            tileManager.finishConfiguration(this);
+            mapManager.finishConfiguration(this);
+            bank.finishConfiguration(this);
+            stockMarket.finishConfiguration(this);
 
             if (revenueManager != null)
-                revenueManager.finishConfiguration(gameManager);
+                revenueManager.finishConfiguration(this);
         } catch (ConfigurationException e) {
             log.error(e.getMessage());
             System.out.println(e.getMessage());
             e.printStackTrace();
-            DisplayBuffer.add(e.getMessage());
+            DisplayBuffer.add(this, e.getMessage());
             return false;
         }
-
         return true;
     }
-
-
-    public static RailsRoot load(String filepath)  {
-
-        // use GameLoader object to load game
-        GameFileIO gameLoader = new GameFileIO();
-        gameLoader.loadGameData(filepath);
-        try{
-            gameLoader.initGame();
-            gameLoader.loadActionsAndComments();
-        } catch (ConfigurationException e)  {
-            log.error("Load failed", e);
-            DisplayBuffer.add(LocalText.getText("LoadFailed", e.getMessage()));
+    
+    public String start() {
+        // FIXME (Rails2.0): Should this not be part of the initial Setup configuration?
+        int nbPlayers = gameData.getPlayers().size();
+        if (nbPlayers < playerManager.getMinPlayers()
+                || nbPlayers > playerManager.getMaxPlayers()) {
+            return gameData.getGameName() +" is not configured to be played with "+ nbPlayers +" players\n"
+                    + "Please enter a valid number of players, or add a <Players> entry to data/"+ gameData.getGameName() +"/Game.xml";
         }
-        try{
-            gameLoader.replayGame();
-        } catch (Exception e) {
-            log.error("Replay failed", e);
-            DisplayBuffer.add(LocalText.getText("LoadFailed", e.getMessage()));
-        }
-
-        return gameLoader.getGame();
-    }
-
-    @SuppressWarnings("unchecked")
-    public static RailsRoot load_old(String filepath) {
-
-        RailsRoot game = null;
-
-        log.debug("Loading game from file " + filepath);
-        String filename = filepath.replaceAll(".*[/\\\\]", "");
-
-        /*--- Remember to keep GameManager.reload() in sync with this code! ---*/
-        try {
-            ObjectInputStream ois =
-                new ObjectInputStream(new FileInputStream(
-                        new File(filepath)));
-
-            // New in 1.0.7: Rails version & save date/time.
-            // Allow for older saved file versions.
-            Object object = ois.readObject();
-            if (object instanceof String) {
-                log.info("Reading Rails "+(String)object+" saved file "+filename);
-                object = ois.readObject();
-            } else {
-                log.info("Reading Rails (pre-1.0.7) saved file "+filename);
-            }
-            if (object instanceof String) {
-                log.info("File was saved at "+(String)object);
-                object = ois.readObject();
-            }
-
-            long versionID = (Long) object;
-            log.debug("Saved versionID="+versionID+" (object="+object+")");
-            long saveFileVersionID = GameManager.saveFileVersionID;
-            if (versionID != saveFileVersionID) {
-                throw new Exception("Save version " + versionID
-                        + " is incompatible with current version "
-                        + saveFileVersionID);
-            }
-            String name = (String) ois.readObject();
-            log.debug("Saved game="+name);
-            Map<String, String> selectedGameOptions =
-                (Map<String, String>) ois.readObject();
-            List<String> playerNames = (List<String>) ois.readObject();
-
-            game = new RailsRoot(name, playerNames, selectedGameOptions);
-
-            if (!game.setup()) {
-                throw new ConfigurationException("Error in setting up " + name);
-            }
-
-            String startError = game.start();
-            if (startError != null) {
-                DisplayBuffer.add(startError);
-                return null;
-            }
-            GameManager gameManager = game.getGameManager();
-
-            log.debug("Starting to execute loaded actions");
-
-            gameManager.setReloading(true);
-
-            Object actionObject = null;
-            int actionIndex = 0;
-
-            while (true) { // Single-pass loop.
-                try {
-                    actionObject = ois.readObject();
-                } catch (EOFException e) {
-                    // Allow saved file at start of game (with no actions).
-                    break;
-                }
-                if (actionObject instanceof List) {
-                    // Old-style: one List of PossibleActions
-                    List<PossibleAction> executedActions =
-                        (List<PossibleAction>) actionObject;
-                    for (PossibleAction action : executedActions) {
-                        ++actionIndex;
-                        try {
-                            if (!gameManager.processOnReload(action)) {
-                                log.error ("Load interrupted");
-                                DisplayBuffer.add(LocalText.getText("LoadInterrupted"));
-                                break;
-                            }
-                        } catch (Exception e) {
-                            log.error("Action "+actionIndex+" '"+action+"' reload exception", e);
-                            throw new Exception ("Reload exception", e);
-                        }
-                    }
-                } else if (actionObject instanceof PossibleAction) {
-                    // New style: separate PossibleActionsObjects, since Rails 1.3.1
-                    while (actionObject instanceof PossibleAction) {
-                        ++actionIndex;
-                        try {
-                            if (!gameManager.processOnReload((PossibleAction)actionObject)) {
-                                log.error ("Load interrupted");
-                                DisplayBuffer.add(LocalText.getText("LoadInterrupted"));
-                                break;
-                            }
-                        } catch (Exception e) {
-                            log.error("Action "+actionIndex+" '"+((PossibleAction)actionObject).toString()
-                                    +"' reload exception", e);
-                            throw new Exception ("Reload exception", e);
-                        }
-                        try {
-                            actionObject = ois.readObject();
-                        } catch (EOFException e) {
-                            break;
-                        }
-                    }
-                }
-                break;
-            }
-
-            // load user comments (is the last
-            if (actionObject instanceof SortedMap) {
-                ReportBuffer.setCommentItems((SortedMap<Integer, String>) actionObject);
-                log.debug("Found sorted map");
-            } else {
-                try {
-                    object = ois.readObject();
-                    if (object instanceof SortedMap) {
-                        ReportBuffer.setCommentItems((SortedMap<Integer, String>) object);
-                    }
-                } catch (IOException e) {
-                    // continue without comments, if any IOException occurs
-                    // sometimes not only the EOF Exception is raised
-                    // but also the java.io.StreamCorruptedException: invalid type code
-                }
-            }
-
-            ois.close();
-            ois = null;
-
-            gameManager.setReloading(false);
-            gameManager.finishLoading();
-            return game;
-
-        } catch (Exception e) {
-            log.error("Load failed", e);
-            DisplayBuffer.add(LocalText.getText("LoadFailed", e.getMessage()));
-        }
-
+        
+        gameManager.startGame();
         return null;
     }
 
     // Setters
-    
+    // TODO (Rails2.0): Replace Currency here, move to Bank
     public void setCurrency(Currency currency) {
         this.currency = currency;
     }
-    
-    /*----- Getters -----*/
-    public ChangeStack getChangeStack() {
-        return getStateManager().getChangeStack();
+
+    public Currency getCurrency() {
+        return currency;
     }
     
+    /*----- Getters -----*/
+
     public GameManager getGameManager() {
         return gameManager;
     }
     
-    public Currency getCurrency() {
-        return currency;
+    public CompanyManager getCompanyManager() {
+        return companyManager;
+    }
+
+    public PlayerManager getPlayerManager() {
+        return playerManager;
+    }
+
+    public PhaseManager getPhaseManager() {
+        return phaseManager;
+    }
+
+    public TrainManager getTrainManager() {
+        return trainManager;
+    }
+
+    public StockMarket getStockMarket() {
+        return stockMarket;
+    }
+
+    public MapManager getMapManager() {
+        return mapManager;
+    }
+
+    public TileManager getTileManager() {
+        return tileManager;
+    }
+
+    public RevenueManager getRevenueManager() {
+        return revenueManager;
+    }
+
+    public Bank getBank() {
+        return bank;
+    }
+    
+    public ReportManager getReportManager() {
+        return reportManager;
+    }
+    
+    
+    /**
+     * @return the gameName
+     */
+    public String getGameName() {
+        return gameData.getGameName();
+    }
+    
+    /**
+     * @return the gameOptions
+     */
+    public Map<String, String> getGameOptions() {
+        return gameData.getGameOptions();
+    }
+    
+    /**
+     * @return the gameData
+     */
+    public GameData getGameData() {
+        return gameData;
     }
     
     @Override
@@ -361,4 +272,7 @@ public class RailsRoot extends Root implements RailsItem {
         return this;
     }
     
+    public static void clearInstance() {
+        instance = null;
+    }
 }

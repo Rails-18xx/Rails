@@ -134,7 +134,7 @@ public class GameStatus extends GridPanel implements ActionListener {
 
         this.parent = parent;
         this.gameUIManager = gameUIManager;
-        bank = gameUIManager.getGameManager().getBank();
+        bank = gameUIManager.getRoot().getBank();
 
         gridPanel = this;
         parentFrame = parent;
@@ -553,14 +553,14 @@ public class GameStatus extends GridPanel implements ActionListener {
         // Certificate Limit
         addField(new Caption(LocalText.getText("LIMIT")), certLimitXOffset - 1,
                 certLimitYOffset, 1, 1, WIDE_TOP, true);
-        addField(new Field(gameUIManager.getGameManager().getPlayerCertificateLimitModel()),
+        addField(new Field(gameUIManager.getRoot().getPlayerManager().getPlayerCertificateLimitModel()),
                 certLimitXOffset,
                 certLimitYOffset, 1, 1, WIDE_TOP + WIDE_RIGHT, true);
 
         // Phase
         addField(new Caption(LocalText.getText("PHASE")), phaseXOffset - 1,
                 phaseYOffset, 1, 1, WIDE_TOP, true);
-        addField(new Field(gameUIManager.getGameManager().getPhaseManager().getCurrentPhaseModel()),
+        addField(new Field(gameUIManager.getRoot().getPhaseManager().getCurrentPhaseModel()),
                 phaseXOffset,
                 phaseYOffset, 1, 1, WIDE_TOP, true);
 
@@ -601,7 +601,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                 poolTrainsXOffset - certInIPOXOffset, 2, 0, true);
 
         // Train cost overview
-        String text = gameUIManager.getGameManager().getTrainManager().getTrainCostOverview();
+        String text = gameUIManager.getRoot().getTrainManager().getTrainCostOverview();
         addField (f = new Caption("<html>" + text + "</html>"), poolTrainsXOffset, newTrainsYOffset + 1,
                 futureTrainsWidth + 2, 2, 0, true);
         f.setPreferredSize(new Dimension (1,1));// To enable auto word wrap

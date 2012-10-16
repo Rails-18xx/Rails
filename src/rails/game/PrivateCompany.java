@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableSet;
 
 import rails.common.LocalText;
+import rails.common.ReportBuffer;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.special.SellBonusToken;
@@ -227,15 +228,15 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
 
     }
 
-    public void finishConfiguration (GameManager gameManager)
+    public void finishConfiguration (RailsRoot root)
     throws ConfigurationException {
 
         for (SpecialProperty sp : specialProperties) {
-            sp.finishConfiguration(gameManager);
+            sp.finishConfiguration(root);
         }
 
         if (Util.hasValue(blockedHexesString)) {
-            MapManager mapManager = gameManager.getMapManager();
+            MapManager mapManager = root.getMapManager();
             blockedHexes = new ArrayList<MapHex>();
             for (String hexName : blockedHexesString.split(",")) {
                 MapHex hex = mapManager.getHex(hexName);
@@ -248,7 +249,7 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
         parentInfoText = "";
 
         if (Util.hasValue(closeAtPhaseName)) {
-            Phase closingPhase = gameManager.getPhaseManager().getPhaseByName(closeAtPhaseName);
+            Phase closingPhase = root.getPhaseManager().getPhaseByName(closeAtPhaseName);
             if (closingPhase != null) {
                 closingPhase.addObjectToClose(this);
             }
@@ -327,9 +328,9 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
 
         unblockHexes();
 
-        moveTo(GameManager.getInstance().getBank().getScrapHeap());
+        moveTo(getRoot().getBank().getScrapHeap());
         
-        ReportBuffer.add(LocalText.getText("PrivateCloses", getId()));
+        ReportBuffer.add(this,LocalText.getText("PrivateCloses", getId()));
 
         // For 1856: buyable tokens still owned by the private will now
         // become commonly buyable, i.e. owned by GameManager.

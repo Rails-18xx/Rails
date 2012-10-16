@@ -1,8 +1,7 @@
 package rails.sound;
 
-import rails.game.GameManager;
+import rails.game.RailsRoot;
 import rails.game.action.PossibleAction;
-import rails.game.action.StartItemAction;
 
 /**
  * This is a singleton class as there should never be two
@@ -36,8 +35,8 @@ public class SoundManager {
     public static void init() {
         getInstance().context.notifyOfMusicEnablement(SoundConfig.isBGMEnabled());
     }
-    public static void notifyOfActionProcessing(GameManager gm,PossibleAction action) {
-        getInstance().eventInterpreter.notifyOfActionProcessing(gm,action);
+    public static void notifyOfActionProcessing(RailsRoot root,PossibleAction action) {
+        getInstance().eventInterpreter.notifyOfActionProcessing(root, action);
     }
     public static void notifyOfSetRevenue(int actualRevenue) {
         if (SoundConfig.isSFXEnabled()) {
@@ -47,8 +46,8 @@ public class SoundManager {
     /**
      * Called when game engine has been instantiated for a specific game
      */
-    public static void notifyOfGameInit(GameManager gameManager) {
-        getInstance().eventInterpreter.notifyOfGameInit(gameManager);
+    public static void notifyOfGameInit(RailsRoot root) {
+        getInstance().eventInterpreter.notifyOfGameInit(root);
     }
     /**
      * Called when game setup window initially opens

@@ -64,17 +64,13 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
     
     protected static final String STORAGE_NAME = "SpecialProperty";
 
-    /** To give subclasses access to the various 'managers' */
-    protected GameManager gameManager;
-
     protected static Logger log =
         LoggerFactory.getLogger(SpecialProperty.class);
 
     protected SpecialProperty(RailsItem parent, String id) {
         super(parent, convertId(id) , SpecialProperty.class);
         uniqueId = Integer.valueOf(id);
-        gameManager = GameManager.getInstance();
-        gameManager.storeObject(STORAGE_NAME, this);
+        getRoot().getGameManager().storeObject(STORAGE_NAME, this);
     }
     
     // convert to the full id used 
@@ -91,17 +87,7 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
         // TODO: remove that legacy issue
     }
 
-    @Override
-    public RailsItem getParent() {
-        return (RailsItem)super.getParent();
-    }
-    
-    @Override
-    public RailsRoot getRoot() {
-        return (RailsRoot)super.getRoot();
-    }
-    
-    public void configureFromXML(Tag tag) throws ConfigurationException {
+   public void configureFromXML(Tag tag) throws ConfigurationException {
 
         conditionText = tag.getAttributeAsString("condition");
         if (!Util.hasValue(conditionText))
@@ -137,7 +123,7 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
         
     }
     
-    public void finishConfiguration (GameManager gameManager)
+    public void finishConfiguration (RailsRoot root)
     throws ConfigurationException {
 
     }

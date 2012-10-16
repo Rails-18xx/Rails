@@ -56,19 +56,20 @@ public class RunGame {
         splashWindow.notifyOfStep(SplashWindow.STEP_LOAD_GAME);
 
         System.out.println("Starting game from saved file "+filepath);
-        if ((game = RailsRoot.load(filepath)) == null) {
+        GameLoader gameLoader = new GameLoader();
+        if (gameLoader.createFromFile(filepath)) {
             System.err.println("Loading file "+filepath+" was unsuccessful");
             return;
         }
 
-        GameManager gameManager = game.getGameManager();
+        GameManager gameManager = gameLoader.getRoot().getGameManager();
         GameUIManager gameUIManager;
         String gameUIManagerClassName = gameManager.getClassName(GuiDef.ClassName.GAME_UI_MANAGER);
         try {
             Class<? extends GameUIManager> gameUIManagerClass =
                 Class.forName(gameUIManagerClassName).asSubclass(GameUIManager.class);
             gameUIManager = gameUIManagerClass.newInstance();
-            gameUIManager.init(gameManager, true, splashWindow);
+            gameUIManager.init(game, true, splashWindow);
 
             String directory = new java.io.File(filepath).getParent();
             if(directory != null) {

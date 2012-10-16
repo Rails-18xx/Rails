@@ -10,6 +10,8 @@ import com.google.common.base.Objects;
 import rails.game.CompanyManager;
 import rails.game.Currency;
 import rails.game.GameManager;
+import rails.game.GameManager;
+import rails.game.RailsRoot;
 import rails.game.Train;
 import rails.game.TrainManager;
 import rails.game.TrainType;
@@ -137,7 +139,7 @@ public class BuyTrain extends PossibleORAction {
      */
     public Train getTrain() {
         if (train == null) {
-            train = GameManager.getInstance().getTrainManager().getTrainByUniqueId(trainUniqueId);
+            train = RailsRoot.getInstance().getTrainManager().getTrainByUniqueId(trainUniqueId);
         }
         return train;
     }
@@ -293,9 +295,9 @@ public class BuyTrain extends PossibleORAction {
         exchangedTrainUniqueId = (String) fields.get("exchangedTrainUniqueId", exchangedTrainUniqueId);
         extraMessage = (String) fields.get("extraMessage", extraMessage);
 
-        GameManager gameManager = GameManager.getInstance();
-        TrainManager trainManager = gameManager.getTrainManager();
-        CompanyManager companyManager = gameManager.getCompanyManager();
+        RailsRoot root = RailsRoot.getInstance();
+        TrainManager trainManager = root.getTrainManager();
+        CompanyManager companyManager = root.getCompanyManager();
 
         fromName = companyManager.checkAlias (fromName);
 
@@ -316,7 +318,7 @@ public class BuyTrain extends PossibleORAction {
         }
 
         // TODO: This has to be replaced by a new mechanism for owners at some time
-        from = gameManager.getPortfolioByName(fromName).getParent();
+        from = getGameManager().getPortfolioByName(fromName).getParent();
         if (trainsForExchangeUniqueIds != null
             && trainsForExchangeUniqueIds.length > 0) {
             trainsForExchange = new HashSet<Train>();

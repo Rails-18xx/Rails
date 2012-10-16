@@ -1,6 +1,5 @@
 package rails.game;
 
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,92 +8,95 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+
 import rails.common.LocalText;
+import rails.common.ReportBuffer;
 import rails.common.parser.Configurable;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
+import rails.game.state.GenericState;
 import rails.game.state.Owner;
 import rails.util.Util;
 
-public class Phase implements Configurable {
+public class Phase extends RailsAbstractItem implements Configurable {
 
-    protected int index;
+    private static Logger log =
+            LoggerFactory.getLogger(Phase.class);
 
-    protected String name;
+    // static data
+    private int index;
+    private String name;
+    private ImmutableList <String> tileColours;
+    private Map<String, Integer> tileLaysPerColour;
 
-    protected String realName;
-
-    protected List <String> tileColours;
-    protected String tileColoursString;
-    protected Map<String, Integer> tileLaysPerColour;
     /** For how many turns can extra tiles be laid (per company type and colour)?
      * Default: infinite.
      * <p>This attribute is only used during configuration. It is finally passed to CompanyType.
      * NOT CLONED from previous phase.*/
-    protected Map<String, Integer> tileLaysPerColourTurns;
-
-    protected boolean privateSellingAllowed = false;
-
-    protected boolean privatesClose = false;
-
-    protected int numberOfOperatingRounds = 1;
-
-    protected int offBoardRevenueStep = 1;
+    private Map<String, Integer> tileLaysPerColourTurns;
+    private boolean privateSellingAllowed = false;
+    private boolean privatesClose = false;
+    private int numberOfOperatingRounds = 1;
+    private int offBoardRevenueStep = 1;
 
     /** New style train limit configuration.
      */
-    protected int trainLimitStep = 1;
+    private int trainLimitStep = 1;
 
-    protected int privatesRevenueStep = 1; // sfy 1889
+    private int privatesRevenueStep = 1; // sfy 1889
 
-    protected boolean trainTradingAllowed = false;
+    private boolean trainTradingAllowed = false;
 
     /** May company buy more than one Train from the Bank per turn? */
-    protected boolean oneTrainPerTurn = false;
+    private boolean oneTrainPerTurn = false;
 
     /** May company buy more than one Train of each type from the Bank per turn? */
-    protected boolean oneTrainPerTypePerTurn = false;
+    private boolean oneTrainPerTypePerTurn = false;
 
     /** Is loan taking allowed */
-    protected boolean loanTakingAllowed = false;
+    private boolean loanTakingAllowed = false;
 
     /** Previous phase, defining the current one's defaults */
-    protected Phase defaults = null;
+    private Phase defaults = null;
 
     /** Items to close if a phase gets activated */
-    protected List<Closeable> closedObjects = null;
+    private List<Closeable> closedObjects;
 
     /** Train types to rust or obsolete if a phase gets activated */
-    protected List<TrainCertificateType> rustedTrains;
-    String rustedTrainNames;
+    private ImmutableList<TrainCertificateType> rustedTrains;
+    private String rustedTrainNames;
 
     /** Train types to release (make available for buying) if a phase gets activated */
-    protected List<TrainCertificateType> releasedTrains;
-    String releasedTrainNames;
+    private ImmutableList<TrainCertificateType> releasedTrains;
+    private String releasedTrainNames;
 
     /** Actions for this phase.
      * When this phase is activated, the GameManager method phaseAction() will be called,
      * which in turn will call the current Round, which is responsible to handle the action.
      * <p>
-     * Set actions have a name and may have a value. */
-    protected Map<String, String> actions;
+     * Set actions have a name and may have a value. 
+     * TODO: Replace this by triggers
+     * */
+    private Map<String, String> actions;
 
-    private GameManager gameManager;
-    private Owner lastTrainBuyer;
-
-    protected String extraInfo = "";
+    private String extraInfo = "";
 
     /** A HashMap to contain phase-dependent parameters
      * by name and value.
      */
-    protected Map<String, String> parameters = null;
+    private Map<String, String> parameters = null;
 
-    protected static Logger log =
-        LoggerFactory.getLogger(Phase.class);
+    // dynamic information
+    // is this really dynamic, is it used over time?
+    private final GenericState<Owner> lastTrainBuyer = GenericState.create(this, "lastTrainBuyer");
 
-    public Phase(int index, String name, Phase previousPhase) {
+    public Phase(PhaseManager parent, String id, int index, Phase previousPhase) {
+        super(parent, id);
         this.index = index;
-        this.name = name;
         this.defaults = previousPhase;
     }
 
@@ -112,43 +114,32 @@ public class Phase implements Configurable {
             oneTrainPerTypePerTurn = defaults.oneTrainPerTypePerTurn;
             loanTakingAllowed = defaults.loanTakingAllowed;
             if (defaults.parameters != null) {
-                this.parameters = new HashMap<String, String>();
-                for (String key : defaults.parameters.keySet()) {
-                    parameters.put(key, defaults.parameters.get(key));
-                }
+                parameters = ImmutableMap.copyOf(defaults.parameters);
             }
         }
 
         // Real name (as in the printed game)
-        realName = tag.getAttributeAsString("realName", null);
+        name = tag.getAttributeAsString("realName", null);
 
         // Allowed tile colours
         Tag tilesTag = tag.getChild("Tiles");
         if (tilesTag != null) {
             String colourList = tilesTag.getAttributeAsString("colour", null);
             if (Util.hasValue(colourList)) {
-                tileColoursString = colourList;
-                tileColours = new ArrayList<String>();
-                String[] colourArray = colourList.split(",");
-                for (int i = 0; i < colourArray.length; i++) {
-                    tileColours.add(colourArray[i]);
-                }
+                tileColours = ImmutableList.copyOf(Splitter.on(",").split(colourList));
             }
 
             List<Tag> laysTag = tilesTag.getChildren("Lays");
             if (laysTag != null && !laysTag.isEmpty()) {
                 // First create a copy of the previous map, if it exists, otherwise create the map.
-                if (tileLaysPerColour == null) {
-                    tileLaysPerColour = new HashMap<String, Integer>(4);
-                } else if (!tileLaysPerColour.isEmpty()) {
-                    // Wish there was a one-liner to deep-clone a map.  Does Guava have one?
-                    Map <String, Integer> newTileLaysPerColour = new HashMap <String, Integer>(4);
-                    for (String key : tileLaysPerColour.keySet()) {
-                        newTileLaysPerColour.put (key, tileLaysPerColour.get(key));
-                    }
-                    tileLaysPerColour = newTileLaysPerColour;
+                Map <String, Integer> newTileLaysPerColour;
+                if (tileLaysPerColour == null || tileLaysPerColour.isEmpty()) {
+                     newTileLaysPerColour = Maps.newHashMap();
+                } else {
+                    newTileLaysPerColour = Maps.newHashMap(tileLaysPerColour);
                 }
 
+                ImmutableMap.Builder<String, Integer> newTileLaysPerColourTurns = null;
                 for (Tag layTag : laysTag) {
                     String colourString = layTag.getAttributeAsString("colour");
                     if (!Util.hasValue(colourString))
@@ -164,17 +155,21 @@ public class Phase implements Configurable {
 
                     String key = typeString + "~" + colourString;
                     if (number == 1) {
-                        tileLaysPerColour.remove(key);
+                        newTileLaysPerColour.remove(key);
                     } else {
-                        tileLaysPerColour.put(key, number);
+                        newTileLaysPerColour.put(key, number);
                     }
 
                     if (validForTurns != 0) {
-                        if (tileLaysPerColourTurns == null) {
-                            tileLaysPerColourTurns = new HashMap<String, Integer>(4);
+                        if (newTileLaysPerColourTurns == null) {
+                            newTileLaysPerColourTurns = ImmutableMap.builder();
                         }
-                        tileLaysPerColourTurns.put(key, validForTurns);
+                        newTileLaysPerColourTurns.put(key, validForTurns);
                     }
+                }
+                tileLaysPerColour = ImmutableMap.copyOf(newTileLaysPerColour);
+                if (newTileLaysPerColourTurns != null) {
+                    tileLaysPerColourTurns = newTileLaysPerColourTurns.build();
                 }
             }
         }
@@ -257,39 +252,42 @@ public class Phase implements Configurable {
 
     }
 
-    public void finishConfiguration (GameManager gameManager)
+    public void finishConfiguration (RailsRoot root)
     throws ConfigurationException {
 
-        this.gameManager = gameManager;
-        TrainManager trainManager = gameManager.getTrainManager();
+        TrainManager trainManager = getRoot().getTrainManager();
         TrainCertificateType type;
 
         if (rustedTrainNames != null) {
-            rustedTrains = new ArrayList<TrainCertificateType>(2);
+            ImmutableList.Builder<TrainCertificateType> newRustedTrains = 
+                    ImmutableList.builder();
             for (String typeName : rustedTrainNames.split(",")) {
                 type = trainManager.getCertTypeByName(typeName);
                 if (type == null) {
-                    throw new ConfigurationException (" Unknown rusted train type '"+typeName+"' for phase '"+name+"'");
+                    throw new ConfigurationException (" Unknown rusted train type '"+typeName+"' for phase '"+ getId()+"'");
                 }
-                rustedTrains.add(type);
+                newRustedTrains.add(type);
                 type.setPermanent(false);
             }
+            rustedTrains = newRustedTrains.build();
         }
 
         if (releasedTrainNames != null) {
-            releasedTrains = new ArrayList<TrainCertificateType>(2);
+            ImmutableList.Builder<TrainCertificateType> newReleasedTrains = 
+                    ImmutableList.builder();
             for (String typeName : releasedTrainNames.split(",")) {
                 type = trainManager.getCertTypeByName(typeName);
                 if (type == null) {
-                    throw new ConfigurationException (" Unknown released train type '"+typeName+"' for phase '"+name+"'");
+                    throw new ConfigurationException (" Unknown released train type '"+typeName+"' for phase '"+getId()+"'");
                 }
-                releasedTrains.add(type);
+                newReleasedTrains.add(type);
             }
+            releasedTrains = newReleasedTrains.build();
         }
 
         // Push any extra tile lay turns to the appropriate company type.
         if (tileLaysPerColourTurns != null) {
-            CompanyManager companyManager = gameManager.getCompanyManager();
+            CompanyManager companyManager = getRoot().getCompanyManager();
             companyManager.addExtraTileLayTurnsInfo (tileLaysPerColourTurns);
         }
         tileLaysPerColourTurns = null;  // We no longer need it.
@@ -297,11 +295,11 @@ public class Phase implements Configurable {
 
     /** Called when a phase gets activated */
     public void activate() {
-        log.debug("Phase " + name + " activated");
-
+        ReportBuffer.add(this,LocalText.getText("StartOfPhase", getId()));
+        
         // Report any extra info
         if (Util.hasValue(extraInfo)) {
-            ReportBuffer.add(extraInfo.replaceFirst("^<[Bb][Rr]>", "").replaceAll("<[Bb][Rr]>", "\n"));
+            ReportBuffer.add(this,extraInfo.replaceFirst("^<[Bb][Rr]>", "").replaceAll("<[Bb][Rr]>", "\n"));
         }
 
         if (closedObjects != null && !closedObjects.isEmpty()) {
@@ -311,11 +309,11 @@ public class Phase implements Configurable {
             }
         }
 
-        TrainManager trainManager = gameManager.getTrainManager();
+        TrainManager trainManager = getRoot().getTrainManager();
 
         if (rustedTrains != null && !rustedTrains.isEmpty()) {
             for (TrainCertificateType type : rustedTrains) {
-                trainManager.rustTrainType(type, lastTrainBuyer);
+                trainManager.rustTrainType(type, lastTrainBuyer.value());
             }
         }
 
@@ -327,14 +325,17 @@ public class Phase implements Configurable {
 
         if (actions != null && !actions.isEmpty()) {
             for (String actionName : actions.keySet()) {
-                gameManager.processPhaseAction (actionName, actions.get(actionName));
+                getRoot().getGameManager().processPhaseAction (actionName, actions.get(actionName));
             }
         }
-
+        
+        if (doPrivatesClose()) {
+            getRoot().getCompanyManager().closeAllPrivates();
+        }
     }
 
     public void setLastTrainBuyer(Owner lastTrainBuyer) {
-        this.lastTrainBuyer = lastTrainBuyer;
+        this.lastTrainBuyer.set(lastTrainBuyer);
     }
 
     public String getInfo() {
@@ -382,12 +383,9 @@ public class Phase implements Configurable {
         return index;
     }
 
-    public String getName() {
-        return name;
-    }
-
+    // FIXME (Rails2.0): This is no used so far
     public String getRealName() {
-        return realName;
+        return (name != null) ? name : getId();
     }
 
     /**
@@ -465,7 +463,7 @@ public class Phase implements Configurable {
         try {
             return Integer.parseInt(stringValue);
         } catch (Exception e) {
-            log.error ("Error while parsing parameter "+key+" in phase "+name, e);
+            log.error ("Error while parsing parameter "+key+" in phase "+ getId(), e);
             return 0;
         }
 
@@ -475,12 +473,4 @@ public class Phase implements Configurable {
         return closedObjects;
     }
 
-    @Override
-    public String toString() {
-        if (realName == null) {
-            return name;
-        } else {
-            return name + " [" + realName+ "]";
-        }
-    }
 }

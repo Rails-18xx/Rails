@@ -20,12 +20,14 @@ import rails.game.state.ChangeAction;
  *
  * @author Erik Vos
  */
+// TODO (Rails2.0): Replace this with a new XML version
+// Remove the link getInstance variables and methods
+
 /* Or should this be an interface? We will see. */
 public abstract class PossibleAction implements ChangeAction, Serializable {
 
     protected String playerName;
     protected int playerIndex;
-    transient protected GameManager gameManager;
 
     protected boolean acted = false;
 
@@ -38,10 +40,7 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
      *
      */
     public PossibleAction() {
-
-        gameManager = GameManager.getInstance();
-        if (gameManager == null) return;  // TODO If created in client ?!?!
-        Player player = gameManager.getCurrentPlayer();
+        Player player = getRoot().getPlayerManager().getCurrentPlayer();
         if (player != null) {
             playerName = player.getId();
             playerIndex = player.getIndex();
@@ -103,12 +102,16 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
      */
     public abstract boolean equalsAsAction (PossibleAction pa);
 
+    protected RailsRoot getRoot() {
+        return RailsRoot.getInstance();
+    }
+    
     protected GameManager getGameManager() {
         return GameManager.getInstance();
     }
 
     protected CompanyManager getCompanyManager () {
-        return getGameManager().getCompanyManager();
+        return RailsRoot.getInstance().getCompanyManager();
     }
 
     /** Default version of an Menu item text. To be overridden where useful. */
@@ -116,10 +119,4 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
         return toString();
     }
 
-    private void readObject(ObjectInputStream in) throws IOException,
-            ClassNotFoundException {
-        in.defaultReadObject();
-        gameManager = GameManager.getInstance();
-
-    }
 }

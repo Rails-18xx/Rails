@@ -4,6 +4,7 @@ import java.util.List;
 
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
+import rails.common.ReportBuffer;
 import rails.game.*;
 import rails.game.action.*;
 
@@ -103,7 +104,7 @@ public class StartRound_1825 extends StartRound {
     @Override
     public boolean bid(String playerName, BidStartItem item) {
 
-        DisplayBuffer.add(LocalText.getText("InvalidAction"));
+        DisplayBuffer.add(this, LocalText.getText("InvalidAction"));
         return false;
     }
 
@@ -113,11 +114,11 @@ public class StartRound_1825 extends StartRound {
      */
     @Override
     public boolean pass(NullAction action, String playerName) {
-        ReportBuffer.add(LocalText.getText("PASSES", playerName));
+        ReportBuffer.add(this,LocalText.getText("PASSES", playerName));
         numPasses.add(1);
         if (numPasses.value() >= numPlayers) {
             //Everyone has passed
-            ReportBuffer.add(LocalText.getText("ALL_PASSED"));
+            ReportBuffer.add(this,LocalText.getText("ALL_PASSED"));
             numPasses.set(0);
             finishRound();
         }

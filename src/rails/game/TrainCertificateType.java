@@ -109,7 +109,7 @@ public class TrainCertificateType extends RailsAbstractItem implements Configura
 
     }
 
-    public void finishConfiguration (GameManager gameManager) 
+    public void finishConfiguration (RailsRoot root) 
             throws ConfigurationException {
 
         if (quantity == -1) {

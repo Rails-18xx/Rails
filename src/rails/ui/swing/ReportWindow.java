@@ -12,8 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import rails.common.Config;
 import rails.common.LocalText;
+import rails.common.ReportBuffer;
 import rails.game.GameManager;
-import rails.game.ReportBuffer;
 import rails.ui.swing.elements.ActionMenuItem;
 import rails.util.*;
 
@@ -165,7 +165,7 @@ public class ReportWindow extends AbstractReportWindow implements ActionListener
      */
     @Override
     public void updateLog() {
-        String newText = ReportBuffer.get();
+        String newText = gameUIManager.getRoot().getReportManager().getReportBuffer().getCurrent();
         if (newText.length() > 0) {
             reportText.append(newText);
             scrollDown();

@@ -5,8 +5,9 @@ import java.util.*;
 import com.google.common.collect.Iterables;
 
 import rails.common.DisplayBuffer;
+import rails.common.GameOption;
 import rails.common.LocalText;
-import rails.common.parser.GameOption;
+import rails.common.ReportBuffer;
 import rails.game.Currency;
 import rails.game.GameDef;
 import rails.game.GameManager;
@@ -16,7 +17,6 @@ import rails.game.Phase;
 import rails.game.Player;
 import rails.game.PrivateCompany;
 import rails.game.PublicCompany;
-import rails.game.ReportBuffer;
 import rails.game.action.DiscardTrain;
 import rails.game.action.LayTile;
 import rails.game.special.ExchangeForShare;
@@ -55,8 +55,8 @@ public class OperatingRound_1835 extends OperatingRound {
         // Majors always operate
         if (company.hasStockPrice()) return true;
         // In some variants minors don't run if BY has not floated
-        if (gameManager.getGameOption(GameOption.VARIANT).equalsIgnoreCase("Clemens")
-                || gameManager.getGameOption("MinorsRequireFloatedBY").equalsIgnoreCase("yes")) {
+        if (GameOption.getValue(this,GameOption.VARIANT).equalsIgnoreCase("Clemens")
+                || GameOption.getValue(this, "MinorsRequireFloatedBY").equalsIgnoreCase("yes")) {
             return companyManager.getPublicCompany(GameManager_1835.BY_ID).hasFloated();
         }
         return true;
@@ -71,9 +71,9 @@ public class OperatingRound_1835 extends OperatingRound {
                 if (priv.getOwner() instanceof MoneyOwner) {
                     Owner recipient = priv.getOwner();
                     int revenue = priv.getRevenueByPhase(getCurrentPhase()); // sfy 1889: revenue by phase
-                    if (count++ == 0) ReportBuffer.add("");
+                    if (count++ == 0) ReportBuffer.add(this,"");
                     String revText = Currency.fromBank(revenue, (MoneyOwner)recipient);
-                    ReportBuffer.add(LocalText.getText("ReceivesFor",
+                    ReportBuffer.add(this,LocalText.getText("ReceivesFor",
                             recipient.getId(),
                             revText,
                             priv.getId()));
@@ -125,7 +125,7 @@ public class OperatingRound_1835 extends OperatingRound {
                 int share = deniedIncomeShare.get(player);
                 int shares = share / operatingCompany.value().getShareUnit();
                 sharesPerRecipient.put (player, sharesPerRecipient.get(player) - shares);
-                ReportBuffer.add(LocalText.getText("NoIncomeForPreviousOperation",
+                ReportBuffer.add(this,LocalText.getText("NoIncomeForPreviousOperation",
                         player.getId(),
                         share,
                         GameManager_1835.PR_ID));
@@ -218,7 +218,7 @@ public class OperatingRound_1835 extends OperatingRound {
         if (hasJustLaidExtraOBBTile) {
             if (hasLaidExtraOBBTile.value()) {
                 String errMsg = LocalText.getText("InvalidTileLay");
-                DisplayBuffer.add(LocalText.getText("CannotLayTileOn",
+                DisplayBuffer.add(this, LocalText.getText("CannotLayTileOn",
                         action.getCompanyName(),
                         action.getLaidTile().getExternalId(),
                         action.getChosenHex().getId(),
@@ -247,10 +247,10 @@ public class OperatingRound_1835 extends OperatingRound {
     @Override
     protected void newPhaseChecks() {
         Phase phase = getCurrentPhase();
-        if (phase.getName().equals("4")
-                || phase.getName().equals("4+4")
+        if (phase.getId().equals("4")
+                || phase.getId().equals("4+4")
                 && !companyManager.getPublicCompany(GameManager_1835.PR_ID).hasStarted()
-                || phase.getName().equals("5")
+                || phase.getId().equals("5")
                 && !PrussianFormationRound.prussianIsComplete(gameManager)) {
             if (getStep() == GameDef.OrStep.DISCARD_TRAINS) {
                 // Postpone until trains are discarded

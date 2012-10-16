@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import rails.common.LocalText;
 import rails.common.Config;
+import rails.common.ReportBuffer;
 import rails.common.parser.Configurable;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
@@ -115,9 +116,9 @@ public class Bank extends RailsManager implements MoneyOwner, Configurable {
 
     }
 
-    public void finishConfiguration (GameManager gameManager) {
+    public void finishConfiguration (RailsRoot root) {
 
-        ReportBuffer.add(LocalText.getText("BankSizeIs", 
+        ReportBuffer.add(this,LocalText.getText("BankSizeIs", 
                 currency.format(cash.value())));
 
         // finish configuration of BankPortfolios
@@ -128,14 +129,14 @@ public class Bank extends RailsManager implements MoneyOwner, Configurable {
         
         // Add privates
         List<PrivateCompany> privates =
-            gameManager.getCompanyManager().getAllPrivateCompanies();
+            root.getCompanyManager().getAllPrivateCompanies();
         for (PrivateCompany priv : privates) {
             ipo.getPortfolioModel().addPrivateCompany(priv);
         }
 
         // Add public companies
         List<PublicCompany> companies =
-            gameManager.getCompanyManager().getAllPublicCompanies();
+            root.getCompanyManager().getAllPublicCompanies();
         for (PublicCompany comp : companies) {
             for (PublicCertificate cert : comp.getCertificates()) {
                 if (cert.isInitiallyAvailable()) {

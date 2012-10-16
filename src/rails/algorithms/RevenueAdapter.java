@@ -19,10 +19,10 @@ import org.jgrapht.Graphs;
 import org.jgrapht.graph.SimpleGraph;
 
 import rails.common.LocalText;
-import rails.game.GameManager;
 import rails.game.MapHex;
 import rails.game.Phase;
 import rails.game.PublicCompany;
+import rails.game.RailsRoot;
 import rails.game.Train;
 import rails.game.TrainType;
 import rails.ui.swing.hexmap.HexMap;
@@ -60,7 +60,7 @@ public final class RevenueAdapter implements Runnable {
     }
     
     // basic links, to be defined at creation
-    private final GameManager gameManager;
+    private final RailsRoot root;
     private final RevenueManager revenueManager;
     private final NetworkGraphBuilder graphBuilder;
     private final NetworkCompanyGraph companyGraph;
@@ -89,10 +89,10 @@ public final class RevenueAdapter implements Runnable {
     // revenue listener to communicate results
     private RevenueListener revenueListener;
     
-    public RevenueAdapter(GameManager gameManager, NetworkGraphBuilder graphBuilder, NetworkCompanyGraph companyGraph, 
+    public RevenueAdapter(RailsRoot root, NetworkGraphBuilder graphBuilder, NetworkCompanyGraph companyGraph, 
             PublicCompany company, Phase phase){
-        this.gameManager = gameManager;
-        this.revenueManager = gameManager.getRevenueManager();
+        this.root = root;
+        this.revenueManager = root.getRevenueManager();
         this.graphBuilder = graphBuilder;
         this.companyGraph = companyGraph;
         this.company = company;
@@ -107,10 +107,10 @@ public final class RevenueAdapter implements Runnable {
         this.protectedVertices = new HashSet<NetworkVertex>();
     }
     
-    public static RevenueAdapter createRevenueAdapter(GameManager gm, PublicCompany company, Phase phase) {
-        NetworkGraphBuilder nwGraph = NetworkGraphBuilder.create(gm);
+    public static RevenueAdapter createRevenueAdapter(RailsRoot root, PublicCompany company, Phase phase) {
+        NetworkGraphBuilder nwGraph = NetworkGraphBuilder.create(root);
         NetworkCompanyGraph companyGraph = NetworkCompanyGraph.create(nwGraph, company);
-        RevenueAdapter ra = new RevenueAdapter(gm, nwGraph, companyGraph, company, phase);
+        RevenueAdapter ra = new RevenueAdapter(root, nwGraph, companyGraph, company, phase);
         ra.populateFromRails();
         return ra;
     }
@@ -181,11 +181,11 @@ public final class RevenueAdapter implements Runnable {
     }
 
     public boolean addTrainByString(String trainString) {
-        TrainType trainType = gameManager.getTrainManager().getTypeByName(trainString.trim());
+        TrainType trainType = root.getTrainManager().getTypeByName(trainString.trim());
         if (trainType != null) { // string defines available trainType
             log.info("RA: found trainType" + trainType);
             // FIXME Rails2.0: This does not work anymore (problems with train cloning)
-            Train railsTrain = gameManager.getTrainManager().cloneTrain(trainType.getCertificateType());
+            Train railsTrain = root.getTrainManager().cloneTrain(trainType.getCertificateType());
             return addTrain(railsTrain);
         } else { // otherwise interpret the train
             NetworkTrain train = NetworkTrain.createFromString(trainString);
@@ -283,7 +283,7 @@ public final class RevenueAdapter implements Runnable {
             if (tileBonuses != null) bonuses.addAll(tileBonuses);
 
             for (RevenueBonusTemplate bonus:bonuses) {
-                addRevenueBonus(bonus.toRevenueBonus(hex, gameManager, graphBuilder));
+                addRevenueBonus(bonus.toRevenueBonus(hex, root, graphBuilder));
             }
         }
         log.info("RA: RevenueBonuses = " + revenueBonuses);

@@ -2,6 +2,7 @@ package rails.game.specific._1856;
 
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
+import rails.common.ReportBuffer;
 import rails.game.BankPortfolio;
 import rails.game.Currency;
 import rails.game.GameManager;
@@ -9,7 +10,6 @@ import rails.game.MoneyOwner;
 import rails.game.Player;
 import rails.game.PublicCertificate;
 import rails.game.PublicCompany;
-import rails.game.ReportBuffer;
 import rails.game.StockRound;
 import rails.game.action.BuyCertificate;
 import rails.game.model.PortfolioModel;
@@ -39,7 +39,7 @@ public class StockRound_1856 extends StockRound {
 
         if (!company.hasStarted() || company.hasFloated()) return;
 
-        int soldPercentage = getSoldPercentage(company);
+        int soldPercentage = company.getSoldPercentage();
 
         PublicCompany_1856 comp = (PublicCompany_1856) company;
         int trainNumberAtStart = comp.getTrainNumberAvailableAtStart();
@@ -102,11 +102,13 @@ public class StockRound_1856 extends StockRound {
             case 3:
             case 4:
                 // Note, that the share has not yet been moved
-                if (getSoldPercentage(comp) >= 50
+                if (comp.getSoldPercentage() >= 50
                         && !comp.hasReachedDestination()) {
                     recipient = bank;
                     comp.addMoneyInEscrow(price);
-                    ReportBuffer.addWaiting(LocalText.getText("HoldMoneyInEscrow",
+                    // FIXME (Rails2.0): This used to be addWaiting in ReportBuffer
+                    // potentially the reporting is now incorrect
+                    ReportBuffer.add(this, LocalText.getText("HoldMoneyInEscrow",
                             Currency.format(this, price),
                             Currency.format(this, comp.getMoneyInEscrow()),
                             comp.getId() ));
@@ -178,7 +180,7 @@ public class StockRound_1856 extends StockRound {
                 price2 = cgr.getCurrentPriceModel().getPrice().getPrice();
                 if (price2 < lowestPrice) lowestPrice = price2;
             }
-            DisplayBuffer.add(LocalText.getText("MustBuyExtraShareAsPresident",
+            DisplayBuffer.add(this, LocalText.getText("MustBuyExtraShareAsPresident",
                     currentPlayer.getId(),
                     cgr.getId(),
                     cgr.getShareUnit()));

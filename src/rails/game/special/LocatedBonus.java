@@ -50,9 +50,9 @@ public final class LocatedBonus extends SpecialProperty {
     }
 
     @Override
-    public void finishConfiguration (GameManager gameManager) 
+    public void finishConfiguration (RailsRoot root) 
     throws ConfigurationException {
-        locations = gameManager.getMapManager().parseLocations(locationCodes);
+        locations = root.getMapManager().parseLocations(locationCodes);
     }
 
     public boolean isExecutionable() {

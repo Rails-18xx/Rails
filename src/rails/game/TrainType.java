@@ -103,10 +103,10 @@ public class TrainType implements Cloneable {
 
     }
 
-    public void finishConfiguration (GameManager gameManager, TrainCertificateType trainCertificateType) 
+    public void finishConfiguration (RailsRoot root, TrainCertificateType trainCertificateType) 
     throws ConfigurationException {
 
-        trainManager = gameManager.getTrainManager();
+        trainManager = root.getTrainManager();
         this.certificateType = trainCertificateType;
         
         if (name == null) {

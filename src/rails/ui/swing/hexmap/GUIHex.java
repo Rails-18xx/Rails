@@ -545,7 +545,7 @@ public class GUIHex implements Observer {
         if (getHexModel().isBlockedForTileLays()) {
             List<PrivateCompany> privates =
                     //GameManager.getInstance().getCompanyManager().getAllPrivateCompanies();
-            		hexMap.getOrUIManager().getGameUIManager().getGameManager()
+            		hexMap.getOrUIManager().getGameUIManager().getRoot()
             			.getCompanyManager().getAllPrivateCompanies();
             for (PrivateCompany p : privates) {
                 List<MapHex> blocked = p.getBlockedHexes();

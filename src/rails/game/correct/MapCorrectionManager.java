@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableList;
 
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
+import rails.common.ReportBuffer;
 import rails.game.*;
 import rails.game.state.ChangeStack;
 
@@ -60,7 +61,7 @@ public final class MapCorrectionManager extends CorrectionManager {
         MapHex hex = action.getLocation();
 
         Tile chosenTile = action.getChosenTile();
-        TileManager tmgr = getParent().getTileManager();
+        TileManager tmgr = getRoot().getTileManager();
         Tile preprintedTile = tmgr.getTile(hex.getPreprintedTileId());
 
         // check conditions
@@ -111,7 +112,7 @@ public final class MapCorrectionManager extends CorrectionManager {
         }
 
         if (errMsg != null) {
-            DisplayBuffer.add(LocalText.getText("CorrectMapCannotLayTile",
+            DisplayBuffer.add(this, LocalText.getText("CorrectMapCannotLayTile",
                     chosenTile.getExternalId(),
                     hex.getId(),
                     errMsg ));
@@ -177,7 +178,7 @@ public final class MapCorrectionManager extends CorrectionManager {
 
             String msg = LocalText.getText("CorrectMapLaysTileAt",
                     chosenTile.getExternalId(), hex.getId(), hex.getOrientationName(orientation));
-            ReportBuffer.add(msg);
+            ReportBuffer.add(this,msg);
             getParent().addToNextPlayerMessages(msg, true);
 
             // relays tokens

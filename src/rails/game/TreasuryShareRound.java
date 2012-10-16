@@ -9,6 +9,7 @@ import com.google.common.collect.Iterables;
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.common.GuiDef;
+import rails.common.ReportBuffer;
 import rails.game.action.*;
 import rails.game.model.PortfolioModel;
 import rails.game.state.BooleanState;
@@ -309,7 +310,7 @@ public class TreasuryShareRound extends StockRound {
         }
 
         if (errMsg != null) {
-            DisplayBuffer.add(LocalText.getText("CantBuy",
+            DisplayBuffer.add(this, LocalText.getText("CantBuy",
                     companyName,
                     shares,
                     companyName,
@@ -324,14 +325,14 @@ public class TreasuryShareRound extends StockRound {
         int cashAmount = shares * price;
         String cashText = Currency.toBank(company, cashAmount);
         if (number == 1) {
-            ReportBuffer.add(LocalText.getText("BUY_SHARE_LOG",
+            ReportBuffer.add(this,LocalText.getText("BUY_SHARE_LOG",
                     companyName,
                     shareUnit,
                     companyName,
                     from.getId(),
                     cashText ));
         } else {
-            ReportBuffer.add(LocalText.getText("BUY_SHARES_LOG",
+            ReportBuffer.add(this,LocalText.getText("BUY_SHARES_LOG",
                     companyName,
                     number,
                     shareUnit,
@@ -442,7 +443,7 @@ public class TreasuryShareRound extends StockRound {
 
         int numberSold = action.getNumber();
         if (errMsg != null) {
-            DisplayBuffer.add(LocalText.getText("CantSell",
+            DisplayBuffer.add(this, LocalText.getText("CantSell",
                     companyName,
                     numberSold,
                     companyName,
@@ -467,7 +468,7 @@ public class TreasuryShareRound extends StockRound {
 
         int cashAmount = numberSold * price;
         String cashText = Currency.fromBank(cashAmount, company);
-        ReportBuffer.add(LocalText.getText("SELL_SHARES_LOG",
+        ReportBuffer.add(this,LocalText.getText("SELL_SHARES_LOG",
                 companyName,
                 numberSold,
                 company.getShareUnit(),
@@ -504,7 +505,7 @@ public class TreasuryShareRound extends StockRound {
         currentPlayer = getCurrentPlayer();
 
         if (!playerName.equals(currentPlayer.getId())) {
-            DisplayBuffer.add(LocalText.getText("WrongPlayer", playerName, currentPlayer.getId()));
+            DisplayBuffer.add(this, LocalText.getText("WrongPlayer", playerName, currentPlayer.getId()));
             return false;
         }
 

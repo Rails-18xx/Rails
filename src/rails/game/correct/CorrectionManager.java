@@ -8,9 +8,9 @@ import org.slf4j.LoggerFactory;
 
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
+import rails.common.ReportBuffer;
 import rails.game.GameManager;
 import rails.game.RailsAbstractItem;
-import rails.game.ReportBuffer;
 import rails.game.state.BooleanState;
 import rails.game.state.ChangeStack;
 
@@ -63,15 +63,15 @@ public abstract class CorrectionManager extends RailsAbstractItem {
         ChangeStack.start(this, action);
         if (!isActive()) {
             String text = LocalText.getText("CorrectionModeActivate",
-                    getParent().getCurrentPlayer().getId(),
+                    getRoot().getPlayerManager().getCurrentPlayer().getId(),
                     LocalText.getText(getCorrectionType().name())
             );
-            ReportBuffer.add(text);
-            DisplayBuffer.add(text);
+            ReportBuffer.add(this,text);
+            DisplayBuffer.add(this, text);
         }
         else {
-            ReportBuffer.add(LocalText.getText("CorrectionModeDeactivate",
-                    getParent().getCurrentPlayer().getId(),
+            ReportBuffer.add(this,LocalText.getText("CorrectionModeDeactivate",
+                    getRoot().getPlayerManager().getCurrentPlayer().getId(),
                     LocalText.getText(getCorrectionType().name())
             ));
         }

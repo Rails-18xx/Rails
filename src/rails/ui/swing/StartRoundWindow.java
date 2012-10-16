@@ -168,8 +168,8 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
 
         gbc = new GridBagConstraints();
 
-        players = gameUIManager.getGameManager().getPlayers().toArray(new Player[0]);
-        np = gameUIManager.getGameManager().getNumberOfPlayers();
+        players = gameUIManager.getRoot().getPlayerManager().getPlayers().toArray(new Player[0]);
+        np = gameUIManager.getRoot().getPlayerManager().getNumberOfPlayers();
         packet = round.getStartPacket();
         crossIndex = new int[packet.getNumberOfItems()];
 
@@ -623,7 +623,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
 
         if (activeItem.hasSharePriceToSet()) {
             String compName = activeItem.getCompanyToSetPriceFor();
-            StockMarket stockMarket = gameUIManager.getGameManager().getStockMarket();
+            StockMarket stockMarket = gameUIManager.getRoot().getStockMarket();
 
             // Get a sorted prices List
             // TODO: should be included in BuyStartItem

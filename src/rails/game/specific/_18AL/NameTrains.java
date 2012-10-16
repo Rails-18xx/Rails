@@ -8,8 +8,8 @@ import rails.common.parser.ConfigurationException;
 import rails.common.parser.Configure;
 import rails.common.parser.Tag;
 import rails.game.Currency;
-import rails.game.GameManager;
 import rails.game.RailsItem;
+import rails.game.RailsRoot;
 import rails.game.special.SpecialProperty;
 import rails.util.Util;
 
@@ -70,11 +70,11 @@ public class NameTrains extends SpecialProperty {
     }
 
     @Override
-    public void finishConfiguration (GameManager gameManager)
+    public void finishConfiguration (RailsRoot root)
     throws ConfigurationException {
 
         for (NamedTrainToken token : tokens) {
-            token.finishConfiguration(gameManager);
+            token.finishConfiguration(root);
         }
     }
 

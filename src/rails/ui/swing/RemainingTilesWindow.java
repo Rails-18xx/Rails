@@ -70,7 +70,7 @@ public class RemainingTilesWindow extends JFrame implements WindowListener,
 
     private void init(GameUIManager gameUIManager) {
 
-        TileManager tmgr = gameUIManager.getGameManager().getTileManager();
+        TileManager tmgr = gameUIManager.getRoot().getTileManager();
         Tile tile;
         Field label;
         BufferedImage hexImage;

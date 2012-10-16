@@ -18,24 +18,22 @@ public class ComponentManager {
 
     private static final Logger log = LoggerFactory.getLogger(ComponentManager.class);
 
-    private final String gameName;
-    private final List<Tag> componentTags;
     private final Map<String, Configurable> mComponentMap = Maps.newHashMap();
     
-    public ComponentManager(RailsRoot root, String gameName, Tag tag, Map<String, String> gameOptions)
-            throws ConfigurationException {
-        this.gameName = gameName;
-
-        componentTags = tag.getChildren(XMLTags.COMPONENT_ELEMENT_ID);
-        for (Tag component : componentTags) {
-            String compName = component.getAttributeAsString("name");
+    public ComponentManager() {}
+    
+    public void start(RailsRoot root, Tag tag) throws ConfigurationException {
+        List<Tag> componentTags = tag.getChildren(XMLTags.COMPONENT_ELEMENT_ID);
+        for (Tag componentTag : componentTags) {
+            String compName = componentTag.getAttributeAsString("name");
             log.debug("Found component " + compName);
-            configureComponent(root, component);
-            component.setGameOptions(gameOptions);
+            Configurable component = configureComponent(root, componentTag);
+            // feedback to RailsRoot
+            root.setComponent(component);
         }
     }
 
-    private void configureComponent(RailsRoot root, Tag componentTag)
+    private Configurable configureComponent(RailsRoot root, Tag componentTag)
             throws ConfigurationException {
 
         // Extract the attributes of the Component
@@ -63,9 +61,8 @@ public class ComponentManager {
         // Configure the component, from a file, or the embedded XML.
         Tag configElement = componentTag;
         if (file != null) {
-            String directory =  "data/" + gameName;
-            configElement = Tag.findTopTagInFile(file, directory, name);
-            configElement.setGameOptions(componentTag.getGameOptions());
+            String directory =  "data/" + root.getGameName();
+            configElement = Tag.findTopTagInFile(file, directory, name, root.getGameOptions());
         }
 
         try {
@@ -78,23 +75,8 @@ public class ComponentManager {
         // Add it to the map of known components.
         mComponentMap.put(name, component);
         log.debug(LocalText.getText("ComponentInitAs", name, clazz ));
-
+        
+        return component;
     }
 
-    /**
-     * Returns the configured parameter with the given name.
-     *
-     * @param componentName the of the component sought.
-     * @return the component sought, or null if it has not been configured.
-     */
-    public Configurable findComponent(String componentName) throws ConfigurationException {
-        Configurable comp = mComponentMap.get(componentName);
-        
-        //FIXME: Revenue Manager is currently optional.
-        if (comp == null && componentName != "RevenueManager") {
-            throw new ConfigurationException("No XML element found for component named: " + componentName);
-        }
-        
-        return comp;
-    }
 }

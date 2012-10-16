@@ -50,7 +50,7 @@ public class MapPanel extends JPanel {
 
         setLayout(new BorderLayout());
 
-        mmgr = gameUIManager.getGameManager().getMapManager();
+        mmgr = gameUIManager.getRoot().getMapManager();
         try {
             map =(HexMap) Class.forName(mmgr.getMapUIClassName()).newInstance();
             map.init(gameUIManager.getORUIManager(), mmgr);

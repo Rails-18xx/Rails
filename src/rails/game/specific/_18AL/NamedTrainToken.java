@@ -55,11 +55,11 @@ public class NamedTrainToken extends Token<NamedTrainToken> implements Configura
                 longName + " [" + hexesString + "] +" + Currency.format(this, value);
     }
 
-    public void finishConfiguration (GameManager gameManager)
+    public void finishConfiguration (RailsRoot root)
     throws ConfigurationException {
 
         if (hexesString != null) {
-            hexes = gameManager.getMapManager().parseLocations(hexesString);
+            hexes = root.getMapManager().parseLocations(hexesString);
         }
         
     }

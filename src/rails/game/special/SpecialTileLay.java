@@ -83,11 +83,11 @@ public class SpecialTileLay extends SpecialProperty {
     }
 
     @Override
-	public void finishConfiguration (GameManager gameManager)
+	public void finishConfiguration (RailsRoot root)
     throws ConfigurationException {
 
-        TileManager tmgr = gameManager.getTileManager();
-        MapManager mmgr = gameManager.getMapManager();
+        TileManager tmgr = root.getTileManager();
+        MapManager mmgr = root.getMapManager();
         MapHex hex;
 
         if (tileNumber > 0) {

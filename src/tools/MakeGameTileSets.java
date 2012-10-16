@@ -66,7 +66,7 @@ public class MakeGameTileSets {
 
         String directory = "tiles";
         Element inputTopElement =
-                Tag.findTopTagInFile(tilesFilePath, directory, "Tiles").getElement();
+                Tag.findTopTagInFile(tilesFilePath, directory, "Tiles", null).getElement();
 
         Map<String, Element> tileMap = new HashMap<String, Element>();
         Element tileSpec;
@@ -95,7 +95,7 @@ public class MakeGameTileSets {
         // Open and read the tile set for this rails.game
         String tileSetPath = "TileSet.xml";
         Element tileSet =
-                Tag.findTopTagInFile(tileSetPath, directory, "TileManager").getElement();
+                Tag.findTopTagInFile(tileSetPath, directory, "TileManager", null).getElement();
         if (tileSet == null) return;
         NodeList tiles = tileSet.getElementsByTagName("Tile");
         Map<String, Object> tilesInSet = new HashMap<String, Object>();
@@ -103,7 +103,7 @@ public class MakeGameTileSets {
         // Also open and read the map tiles.
         String mapPath = "Map.xml";
         Element mapHexes =
-                Tag.findTopTagInFile(mapPath, directory, "Map").getElement();
+                Tag.findTopTagInFile(mapPath, directory, "Map", null).getElement();
         NodeList hexes = mapHexes.getElementsByTagName("Hex");
 
         String tilesPath = "../data/" + gameName + "/Tiles.xml";

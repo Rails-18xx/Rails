@@ -1,52 +1,59 @@
-package rails.common.parser;
+package rails.common;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import rails.common.LocalText;
+import rails.game.RailsItem;
+import rails.util.Util;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableList;
 
 public class GameOption {
 
-    private String name;
-    private String parametrisedName;
-    private boolean isBoolean = false;
-    private String type;
-    private String defaultValue = null;
-    private List<String> allowedValues = null;
-    private String[] parm = null;
-
-    private static Map<String, GameOption> optionsMap =
-            new HashMap<String, GameOption>();
-
-    public static final String OPTION_VALUE_YES = "yes";
-    public static final String OPTION_VALUE_NO = "no";
-
     // A default option that will always be set
     public static final String NUMBER_OF_PLAYERS = "NumberOfPlayers";
-
     // Some other common game options
     public static final String VARIANT = "Variant";
 
     // A regex to match parameters against
-    private static final Pattern pattern = Pattern.compile("\\{(.*)\\}");
+    private static final Pattern PATTERN = Pattern.compile("\\{(.*)\\}");
+    // Strings that define yes or no options
+    private static final String OPTION_VALUE_YES = "yes";
+    private static final String OPTION_VALUE_NO = "no";
+    
+    // Static Data
+    private final String name;
+    
+    // Dynamic Data
+    private boolean isBoolean = false;
+    private String type;
+    private String defaultValue = null;
+    private List<String> allowedValues = null;
+    private List<String> parameters = null;
+    private String parametrisedName;
 
     public GameOption(String name) {
         this.name = name;
-        parametrisedName = constructParametrisedName (name, null);
+        parametrisedName = name;
+        parameters = ImmutableList.of();
     }
     
     public GameOption(String name, String[] parameters) {
-        this(name);
+        this.name = name;
         this.setParameters(parameters);
     }
     
     public void setParameters(String[] parameters) {
     	if (parameters != null) {
-    	    parm = parameters.clone();
+    	    this.parameters = ImmutableList.copyOf(parameters);
+    	    parametrisedName = Joiner.on("_").join(name, parameters);
+    	} else {
+    	    this.parameters = ImmutableList.of();
+    	    parametrisedName = name;
     	}
-        parametrisedName = constructParametrisedName (name, parameters);
-        optionsMap.put(parametrisedName, this);
     }
 
     public void setType(String type) {
@@ -62,17 +69,17 @@ public class GameOption {
     public String getName() {
         return parametrisedName;
     }
-
+    
     public String getLocalisedName() {
-        String[] localisedParms = null;
-        if (parm != null) {
-            localisedParms = parm.clone();
-            for (int i=0; i<parm.length; i++) {
-                Matcher m = pattern.matcher(parm[i]);
-                if (m.matches()) localisedParms[i] = LocalText.getText(m.group(1));
+        ImmutableList.Builder<String> localTextPars = ImmutableList.builder();
+        for (String par:parameters) {
+            Matcher m = PATTERN.matcher(par);
+            if (m.matches()) {
+                localTextPars.add(LocalText.getText(m.group(1)));
             }
         }
-        return LocalText.getText(name, (Object[]) localisedParms);
+        // TODO (Rails2.0): Chane method signature in LocalText
+        return LocalText.getText(name, (Object[]) localTextPars.build().toArray());
     }
 
     public String getType() {
@@ -118,24 +125,24 @@ public class GameOption {
         }
     }
 
-    public static GameOption getByName(String name) {
-        return optionsMap.get(name);
-    }
-
     /** Get GameOption Value as Boolean Value */
     public static boolean convertValueToBoolean(String value) {
         return value != null
             && OPTION_VALUE_YES.equalsIgnoreCase(value);
     }
-
-    public static String constructParametrisedName (String optionName,
-    		String[] optionNameParameters) {
-        String parametrisedName = optionName;
-    	if (optionNameParameters != null) {
-    		for (String parameter : optionNameParameters) {
-    			parametrisedName += "_" + parameter;
-    		}
-    	}
-    	return parametrisedName;
+    
+    public static String getValue(RailsItem item, String gameOption) {
+        // check the System properties for overwrites first
+        if (Util.hasValue(System.getProperty(gameOption))) {
+            return System.getProperty(gameOption);
+        } else {
+            return item.getRoot().getGameOptions().get(gameOption);
+        }
     }
+    
+    public static boolean getAsBoolean(RailsItem item, String gameOption) {
+        String value = getValue(item, gameOption);
+        return value != null && OPTION_VALUE_YES.equalsIgnoreCase(value);
+    }
+
 }

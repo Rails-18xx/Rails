@@ -21,9 +21,10 @@ import junit.framework.TestSuite;
 
 import rails.common.Config;
 import rails.common.ConfigManager;
+import rails.common.ReportBuffer;
 import rails.game.RailsRoot;
+import rails.util.GameLoader;
 
-import rails.game.ReportBuffer;
 
 @RunWith(AllTests.class)
 public final class TestGameBuilder extends TestCase {
@@ -59,14 +60,16 @@ public final class TestGameBuilder extends TestCase {
     private static void prepareGameReport(File gameFile, String reportFilename) {
         
         RailsRoot game = null;
-        if (gameFile.exists()) 
+        if (gameFile.exists()) { 
             System.out.println("Found game at " + gameFile.getAbsolutePath());
-            game = RailsRoot.load(gameFile.getAbsolutePath());
-        
+            GameLoader gameLoader = new GameLoader();
+            if (gameLoader.createFromFile(gameFile.getAbsolutePath())) {
+                game = gameLoader.getRoot();
+            }
+        }
         if (game != null) {  
-            List<String> report = ReportBuffer.getAsList();
+            List<String> report = game.getReportManager().getReportBuffer().getAsList();
             saveGameReport(report, reportFilename, false);
-//            NDC.clear(); // remove reference to GameManager
         }
     }
 

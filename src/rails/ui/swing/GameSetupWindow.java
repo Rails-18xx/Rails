@@ -17,7 +17,9 @@ import rails.common.*;
 import rails.common.parser.*;
 import rails.game.*;
 import rails.sound.SoundManager;
-import rails.util.GameFileIO;
+import rails.util.GameLoader;
+import rails.util.GameSaver;
+import rails.util.RailsReplayException;
 import rails.util.SystemOS;
 import rails.util.Util;
 
@@ -43,7 +45,6 @@ public class GameSetupWindow extends JDialog implements ActionListener {
     List<String> playerNames = new ArrayList<String>();
     List<JComponent> optionComponents = new ArrayList<JComponent>();
     List<GameOption> availableOptions = new ArrayList<GameOption>();
-    RailsRoot game;
 
     SortedSet<File> recentFiles;
     String savedFileExtension;
@@ -243,15 +244,24 @@ public class GameSetupWindow extends JDialog implements ActionListener {
         prepareGameUIInit();
         SplashWindow splashWindow = new SplashWindow(true,filePath);
         splashWindow.notifyOfStep(SplashWindow.STEP_LOAD_GAME);
-        if ((game = RailsRoot.load(filePath)) == null) {
-          JOptionPane.showMessageDialog(this,
-                    DisplayBuffer.get(), "", JOptionPane.ERROR_MESSAGE);
-            return;
-        } else if (DisplayBuffer.getSize() > 0) {
-            JOptionPane.showMessageDialog(this,
-                    DisplayBuffer.get(), "", JOptionPane.ERROR_MESSAGE);
+        // use gameLoader instance to start game
+        GameLoader gameLoader = new GameLoader();
+        if (!gameLoader.createFromFile(filePath)) {
+            Exception e = gameLoader.getException();
+            log.error("Game load failed", e);
+            if (e instanceof RailsReplayException) {
+                String title = LocalText.getText("LOAD_INTERRUPTED_TITLE");
+                String message = LocalText.getText("LOAD_INTERRUPTED_MESSAGE", e.getMessage());
+                JOptionPane.showMessageDialog(this, message, title, JOptionPane.ERROR_MESSAGE);
+            } else {
+                String title = LocalText.getText("LOAD_FAILED_TITLE");
+                String message = LocalText.getText("LOAD_FAILED_MESSAGE", e.getMessage());
+                JOptionPane.showMessageDialog(this, message, title, JOptionPane.ERROR_MESSAGE);
+                // in this case start of game cannot continued
+                return;
+            }
         }
-        startGameUIManager(game, true, splashWindow);
+        startGameUIManager(gameLoader.getRoot(), true, splashWindow);
         if (saveDirectory != null) {
             gameUIManager.setSaveDirectory (saveDirectory);
         }
@@ -345,8 +355,8 @@ public class GameSetupWindow extends JDialog implements ActionListener {
             new Thread() {
                 @Override
                 public void run() {
-                    String filePath = SystemOS.get().getConfigurationFolder(GameFileIO.autosaveFolder, true).getAbsolutePath() 
-                            + File.separator + GameFileIO.autosaveFile;
+                    String filePath = SystemOS.get().getConfigurationFolder(GameSaver.autosaveFolder, true).getAbsolutePath() 
+                            + File.separator + GameSaver.autosaveFile;
                     loadAndStartGame(filePath, null);
                 }
             }.start();
@@ -533,29 +543,25 @@ public class GameSetupWindow extends JDialog implements ActionListener {
         String gameName = getSelectedGameInfo().getName();
 
         SplashWindow splashWindow = new SplashWindow(false,gameName);
-
-        game = new RailsRoot(gameName, playerNames, selectedOptions);
-
-        if (!game.setup()) {
-            JOptionPane.showMessageDialog(this, DisplayBuffer.get(), "",
-                    JOptionPane.ERROR_MESSAGE);
-
-            // Should want to return false and continue,
-            // but as of now the game engine cannot be restarted
-            // once we have passed setup(), so we can only quit.
+        
+        RailsRoot railsRoot = null;
+        try {
+            railsRoot = RailsRoot.create(new GameData(gameName, selectedOptions, playerNames));
+        } catch (ConfigurationException e) {
+            // Simply exit
             System.exit(-1);
-        } else {
-            String startError = game.start();
-            if (startError != null) {
-                JOptionPane.showMessageDialog(this, startError, "",
-                        JOptionPane.ERROR_MESSAGE);
-                System.exit(-1);
-            }
-            prepareGameUIInit();
-            startGameUIManager (game, false, splashWindow);
-            gameUIManager.gameUIInit(true); // true indicates new game
-            completeGameUIInit(splashWindow);
         }
+
+        String startError = railsRoot.start();
+        if (startError != null) {
+            JOptionPane.showMessageDialog(this, startError, "",
+                    JOptionPane.ERROR_MESSAGE);
+            System.exit(-1);
+        }
+        prepareGameUIInit();
+        startGameUIManager (railsRoot, false, splashWindow);
+        gameUIManager.gameUIInit(true); // true indicates new game
+        completeGameUIInit(splashWindow);
 
     }
 
@@ -582,7 +588,7 @@ public class GameSetupWindow extends JDialog implements ActionListener {
             Class<? extends GameUIManager> gameUIManagerClass =
                 Class.forName(gameUIManagerClassName).asSubclass(GameUIManager.class);
             gameUIManager = gameUIManagerClass.newInstance();
-            gameUIManager.init(gameManager, wasLoaded, splashWindow);
+            gameUIManager.init(game, wasLoaded, splashWindow);
         } catch (Exception e) {
             log.error("Cannot instantiate class " + gameUIManagerClassName, e);
             System.exit(1);

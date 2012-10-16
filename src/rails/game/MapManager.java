@@ -236,7 +236,7 @@ public class MapManager extends RailsManager implements Configurable {
         }
     }
 
-    public void finishConfiguration (GameManager gameManager) throws ConfigurationException {
+    public void finishConfiguration (RailsRoot root) throws ConfigurationException {
 
         MapHex hex;
         int i, j, k;
@@ -255,7 +255,7 @@ public class MapManager extends RailsManager implements Configurable {
 
         for (String hexName : mHexes.keySet()) {
             hex = mHexes.get(hexName);
-            hex.finishConfiguration(gameManager);
+            hex.finishConfiguration(root);
         }
 
         // Initialise the neighbours
@@ -284,7 +284,7 @@ public class MapManager extends RailsManager implements Configurable {
         }
 
         List<MapHex> homeHexes;
-        for (PublicCompany company : gameManager.getCompanyManager().getAllPublicCompanies()) {
+        for (PublicCompany company : root.getCompanyManager().getAllPublicCompanies()) {
             if ((homeHexes = company.getHomeHexes()) != null) {
                 for (MapHex homeHex : homeHexes) {
                     homeHex.addHome(company, company.getHomeCityNumber());

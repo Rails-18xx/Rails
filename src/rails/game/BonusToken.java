@@ -50,8 +50,8 @@ public class BonusToken extends Token<BonusToken> implements Closeable, Configur
         removingObjectDesc = bonusTokenTag.getAttributeAsString("removed");
     }
 
-    public void finishConfiguration(GameManager gameManager) {
-        prepareForRemoval (gameManager.getPhaseManager());
+    public void finishConfiguration(RailsRoot root) {
+        prepareForRemoval (root.getPhaseManager());
     }
 
     /**
@@ -60,8 +60,7 @@ public class BonusToken extends Token<BonusToken> implements Closeable, Configur
      * See prepareForRemovel().
      */
     public void close() {
-        // TODO: Can this be done better (use TokenManager as parent?)
-        GameManager.getInstance().getBank().getScrapHeap().getPortfolioModel().getTokenHolder().moveInto(this);
+        this.moveTo(getRoot().getBank().getScrapHeap());
         if (user != null) {
             user.removeBonus(name);
         }

@@ -15,6 +15,7 @@
 		<filterset id="versionFilter">
 			<filter token="VERSION" value="${version}"/> 
 			<filter token="DEVELOP" value=""/> 
+			<filter token="BUILDDATE" value=""/> 
 		</filterset> 
 						
 		<!-- Clean the current release -->

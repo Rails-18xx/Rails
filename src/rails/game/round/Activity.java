@@ -1,37 +1,34 @@
 package rails.game.round;
 
-import java.util.List;
-
+import rails.game.RailsAbstractItem;
+import rails.game.RailsItem;
 import rails.game.action.PossibleAction;
-import rails.game.state.Manager;
 
-interface Activity {
+public abstract class Activity extends RailsAbstractItem {
    
-    /**
-     * creation based on a specific context
-     * @param context
-     */
-    public void create(Manager context);
-    
+    protected Activity(RailsItem parent, String id) {
+        super(parent, id);
+    }
+
     /**
      * @return true if activity is active
      */
-    public boolean isActive();
+    public abstract boolean isActive();
 
     /**
      * @return available actions thus checks the preconditions and creates the allowed actions 
      */
-    public List<PossibleAction> getPossibleActions();
+    public abstract Iterable<PossibleAction> getActions();
     
     /**
      * @return checks if the conditions of the actions are fullfilled
      */
-    public boolean isActionAllowed(PossibleAction action);
+    public abstract boolean isActionAllowed(PossibleAction action);
     
     /**
      * executes the action
      */
-    public void executeAction(PossibleAction action);
+    public abstract void executeAction(PossibleAction action);
     
 }
     

@@ -7,6 +7,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
@@ -22,6 +23,7 @@ public class ChangeSet {
     private static final Logger log = LoggerFactory.getLogger(ChangeSet.class);
 
     // static fields
+    private final int id;
     private final ChangeAction action;
     private final List<Change> changes = Lists.newArrayList();
     private final boolean initial;
@@ -29,7 +31,8 @@ public class ChangeSet {
     // dynamic fields
     private boolean closed = false; 
     
-    protected ChangeSet(ChangeAction action, boolean initial) {
+    protected ChangeSet(int id, ChangeAction action, boolean initial) {
+        this.id = id;
         this.action = action;
         this.initial = initial;
     };
@@ -126,4 +129,18 @@ public class ChangeSet {
     boolean isInitial() {
         return initial;
     }
+    
+    /**
+     * returns the (unique) id of the ChangeSet
+     * @return id
+     */
+    int getId() {
+        return id;
+    }
+    
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this).addValue(id).toString();
+    }
+    
 }

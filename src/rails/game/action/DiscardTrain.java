@@ -99,7 +99,7 @@ public class DiscardTrain extends PossibleORAction {
 
         in.defaultReadObject();
 
-        TrainManager trainManager = GameManager.getInstance().getTrainManager();
+        TrainManager trainManager = RailsRoot.getInstance().getTrainManager();
 
         if (discardedTrainUniqueId != null) {
             discardedTrain = trainManager.getTrainByUniqueId(discardedTrainUniqueId);

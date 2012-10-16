@@ -43,7 +43,7 @@ public class GameUIManager implements DialogOwner {
 
     public static ImageLoader imageLoader;
 
-    protected GameManager gameManager;
+    protected RailsRoot railsRoot;
     protected PossibleAction lastAction;
     protected ActionPerformer activeWindow = null;
     protected StartRound startRound;
@@ -109,15 +109,15 @@ public class GameUIManager implements DialogOwner {
 
     }
 
-    public void init (GameManager gameManager, boolean wasLoaded, SplashWindow splashWindow) {
+    public void init (RailsRoot root, boolean wasLoaded, SplashWindow splashWindow) {
 
         this.splashWindow = splashWindow;
         splashWindow.notifyOfStep(SplashWindow.STEP_INIT_UI);
 
         instance = this;
-        this.gameManager = gameManager;
-        uiHints = gameManager.getUIHints();
-        savePrefix = gameManager.getGameName();
+        this.railsRoot = root;
+        uiHints = railsRoot.getGameManager().getUIHints();
+        savePrefix = railsRoot.getGameName();
         gameWasLoaded = wasLoaded;
 
         initWindowSettings();
@@ -130,7 +130,7 @@ public class GameUIManager implements DialogOwner {
 
     private void initWindowSettings () {
 
-        windowSettings = new WindowSettings (gameManager.getGameName());
+        windowSettings = new WindowSettings (railsRoot.getGameName());
         windowSettings.load();
     }
 
@@ -255,7 +255,7 @@ public class GameUIManager implements DialogOwner {
 
         // notify sound manager of game initialization
         splashWindow.notifyOfStep(SplashWindow.STEP_INIT_SOUND);
-        SoundManager.notifyOfGameInit(gameManager);
+        SoundManager.notifyOfGameInit(railsRoot);
     }
 
     public void startLoadedGame() {
@@ -289,7 +289,7 @@ public class GameUIManager implements DialogOwner {
             // Notification has to be done before action processing so that
             // resulting sfx are played in the correct order (first the action
             // related sfx and then model-change related sfx)
-            SoundManager.notifyOfActionProcessing(gameManager, action);
+            SoundManager.notifyOfActionProcessing(railsRoot, action);
 
             // Process the action on the server
             result = previousResult = processOnServer (action);
@@ -332,7 +332,7 @@ public class GameUIManager implements DialogOwner {
         statusWindow.setCorrectionMenu();
 
         // Is this perhaps the right place to display messages...?
-        if (DisplayBuffer.getAutoDisplay()) {
+        if (getDisplayBuffer().getAutoDisplay()) {
             if (displayServerMessage()) {
                 // Interrupt processing.
                 // Will be continued via dialogActionPerformed().
@@ -341,7 +341,7 @@ public class GameUIManager implements DialogOwner {
         }
 
         // display the end of game report
-        if (gameManager.isGameOver()) statusWindow.endOfGameReport();
+        if (railsRoot.getGameManager().isGameOver()) statusWindow.endOfGameReport();
 
         if (!result) return false;
 
@@ -363,7 +363,7 @@ public class GameUIManager implements DialogOwner {
         }
 
         // Process the action on the server
-        result = gameManager.process(action);
+        result = railsRoot.getGameManager().process(action);
 
         // Follow-up the result
         log.debug("==Result from server: " + result);
@@ -373,7 +373,7 @@ public class GameUIManager implements DialogOwner {
     }
 
     public boolean displayServerMessage() {
-        String[] message = DisplayBuffer.get();
+        String[] message = getDisplayBuffer().get();
         if (message != null) {
             setCurrentDialog(new MessageDialog(null, this,
                     (JFrame) activeWindow,
@@ -392,7 +392,7 @@ public class GameUIManager implements DialogOwner {
         previousRoundName = currentRoundName;
         previousRound = currentRound;
 
-        currentRound = gameManager.getCurrentRound();
+        currentRound = railsRoot.getGameManager().getCurrentRound();
         currentRoundName = currentRound.toString();
 
         log.debug("Current round=" + currentRoundName + ", previous round="
@@ -880,7 +880,8 @@ public class GameUIManager implements DialogOwner {
 
         // copy latest report buffer entries to clipboard
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        StringSelection reportText = new StringSelection(ReportBuffer.getLatestReportItems());
+        StringSelection reportText = new StringSelection(
+                getRoot().getReportManager().getReportBuffer().getRecentPlayer());
         clipboard.setContents(reportText, null);
 
         JFileChooser jfc = new JFileChooser();
@@ -959,7 +960,8 @@ public class GameUIManager implements DialogOwner {
             localPlayerName = Config.get("local.player.name");
         }
         if (!Util.hasValue(localPlayerName)) {
-            DisplayBuffer.add("You cannot activate AutoSave/Load without setting local.player.name");
+            // FIXME (Rails2.0) Replace this with something better (DisplayBuffer is not available so far
+            // DisplayBuffer.add(this, "You cannot activate AutoSave/Load without setting local.player.name");
             return;
         }
         log.debug("Polling local player name: "+localPlayerName);
@@ -1060,7 +1062,7 @@ public class GameUIManager implements DialogOwner {
 
         } catch (IOException e) {
             log.error("Save failed", e);
-            DisplayBuffer.add(LocalText.getText("SaveFailed", e.getMessage()));
+            getDisplayBuffer().add(LocalText.getText("SaveFailed", e.getMessage()));
         }
     }
 
@@ -1076,8 +1078,16 @@ public class GameUIManager implements DialogOwner {
         return imageLoader;
     }
 
+    public RailsRoot getRoot() {
+        return railsRoot;
+    }
+    
     public GameManager getGameManager() {
-        return gameManager;
+        return railsRoot.getGameManager();
+    }
+    
+    public DisplayBuffer getDisplayBuffer() {
+        return railsRoot.getReportManager().getDisplayBuffer();
     }
 
     public void setORUIManager(ORUIManager orUIManager) {
@@ -1089,51 +1099,51 @@ public class GameUIManager implements DialogOwner {
     }
 
     public Round getCurrentRound() {
-        return gameManager.getCurrentRound();
+        return railsRoot.getGameManager().getCurrentRound();
     }
 
     public boolean isGameOver() {
-        return gameManager.isGameOver();
+        return railsRoot.getGameManager().isGameOver();
     }
 
     public String getHelp () {
-        return gameManager.getHelp();
+        return railsRoot.getGameManager().getHelp();
     }
 
     public int getNumberOfPlayers() {
-        return gameManager.getNumberOfPlayers();
+        return railsRoot.getPlayerManager().getNumberOfPlayers();
     }
 
     public List<Player> getPlayers() {
-        return gameManager.getPlayers();
+        return railsRoot.getPlayerManager().getPlayers();
     }
     
     public List<String> getPlayerNames() {
-        return gameManager.getPlayerNames();
+        return railsRoot.getPlayerManager().getPlayerNames();
     }
 
     public Player getCurrentPlayer() {
-        return gameManager.getCurrentPlayer();
+        return railsRoot.getPlayerManager().getCurrentPlayer();
     }
 
     public Player getPriorityPlayer () {
-        return gameManager.getPriorityPlayer();
+        return railsRoot.getPlayerManager().getPriorityPlayer();
     }
 
     public Phase getCurrentPhase() {
-        return gameManager.getCurrentPhase();
+        return railsRoot.getPhaseManager().getCurrentPhase();
     }
 
     public List<PublicCompany> getAllPublicCompanies(){
-        return gameManager.getAllPublicCompanies();
+        return railsRoot.getCompanyManager().getAllPublicCompanies();
     }
 
     public String getClassName (GuiDef.ClassName key) {
-        return gameManager.getClassName(key);
+        return railsRoot.getGameManager().getClassName(key);
     }
 
     public Object getGameParameter (GuiDef.Parm key) {
-        return gameManager.getGuiParameter(key);
+        return railsRoot.getGameManager().getGuiParameter(key);
     }
 
     public boolean getGameParameterAsBoolean (GuiDef.Parm key) {
@@ -1174,7 +1184,7 @@ public class GameUIManager implements DialogOwner {
     
     // Forwards the format() method to the server
     public String format(int amount) {
-        return Currency.format(gameManager, amount);
+        return Currency.format(railsRoot, amount);
     }
 
     /** update fonts settings

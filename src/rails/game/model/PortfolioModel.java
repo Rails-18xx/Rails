@@ -17,18 +17,17 @@ import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.ImmutableSortedSet;
 
 import rails.common.LocalText;
+import rails.common.ReportBuffer;
 import rails.game.Bank;
 import rails.game.BankPortfolio;
 import rails.game.BonusToken;
 import rails.game.Company;
-import rails.game.GameManager;
 import rails.game.MoneyOwner;
 import rails.game.Player;
 import rails.game.PrivateCompany;
 import rails.game.PublicCertificate;
 import rails.game.PublicCompany;
 import rails.game.RailsOwner;
-import rails.game.ReportBuffer;
 import rails.game.Train;
 import rails.game.TrainCertificateType;
 import rails.game.TrainType;
@@ -67,13 +66,8 @@ public class PortfolioModel extends RailsModel {
      */
     private final SpecialPropertiesModel specialProperties;
 
-    private final GameManager gameManager;
-
     private PortfolioModel(RailsOwner parent, String id) {
         super(parent, id);
-
-        // TODO: Replace this with a better mechanism
-        gameManager = GameManager.getInstance();
 
         // create internal models and portfolios
         certificates = CertificatesModel.create(parent);
@@ -93,7 +87,6 @@ public class PortfolioModel extends RailsModel {
             privates.setLineBreak(true);
         }
 
-        gameManager.addPortfolio(this);
     }
 
     public static PortfolioModel create(PortfolioOwner parent) {
@@ -101,7 +94,9 @@ public class PortfolioModel extends RailsModel {
     }
 
     public void finishConfiguration() {
-        certificates.initShareModels(gameManager.getAllPublicCompanies());
+        certificates.initShareModels(getRoot().getCompanyManager().getAllPublicCompanies());
+        // TODO (Rails2.0): the linkage of all portfolios to the GameManager should be removed
+        getRoot().getGameManager().addPortfolio(this);
     }
 
     @Override
@@ -328,17 +323,10 @@ public class PortfolioModel extends RailsModel {
     
     
     public void discardTrain(Train train) {
-        // FIXME: This is a horrible list of method calls
-        GameManager.getInstance().getBank().getPool().getPortfolioModel().getTrainsModel().getPortfolio().moveInto(
-                train);
+        train.moveTo(getRoot().getBank().getPool());
 
-        ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
+        ReportBuffer.add(this,LocalText.getText("CompanyDiscardsTrain",
                 getParent().getId(), train.toText()));
-    }
-
-    // FIXME: Is this still needed?
-    public void updateTrainsModel() {
-        // trains.update();
     }
 
     public int getNumberOfTrains() {
@@ -550,7 +538,7 @@ public class PortfolioModel extends RailsModel {
         // Need to separate selection and execution,
         // otherwise we get a ConcurrentModificationException on trains.
         for (Train train : trainsToRust) {
-            ReportBuffer.add(LocalText.getText("TrainsObsoleteRusted",
+            ReportBuffer.add(this,LocalText.getText("TrainsObsoleteRusted",
                     train.toText(), getParent().getId()));
             log.debug("Obsolete train " + train.getId() + " (owned by "
                       + getParent().getId() + ") rusted");

@@ -125,7 +125,7 @@ public class CashCorrectionAction extends CorrectionAction {
 
         if (Util.hasValue(cashHolderType) && Util.hasValue(cashHolderName)) {
             if (cashHolderType.equals("Player"))
-                correctCashHolder = getGameManager().getPlayerManager().getPlayerByName(cashHolderName);
+                correctCashHolder = getGameManager().getRoot().getPlayerManager().getPlayerByName(cashHolderName);
             else if (cashHolderType.equals("PublicCompany"))
                 correctCashHolder = getCompanyManager().getPublicCompany(cashHolderName);
         }

@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rails.common.LocalText;
+import rails.common.ReportBuffer;
 import rails.game.Currency;
 import rails.game.GameManager;
 import rails.game.Player;
+import rails.game.PlayerManager;
 import rails.game.PublicCertificate;
 import rails.game.PublicCompany;
 import rails.game.RailsRoot;
-import rails.game.ReportBuffer;
 import rails.game.Round;
 import rails.game.ShareSellingRound;
 import rails.game.model.PortfolioModel;
@@ -60,7 +61,7 @@ public class GameManager_18EU extends GameManager {
     @Override
     protected void processBankruptcy () {
         Player player, newPresident;
-        int numberOfPlayers = getNumberOfPlayers();
+        int numberOfPlayers = getRoot().getPlayerManager().getNumberOfPlayers();
         int maxShare;
         int share;
 
@@ -76,9 +77,10 @@ public class GameManager_18EU extends GameManager {
             // Check if the presidency is dumped on someone
             newPresident = null;
             maxShare = 0;
-            for (int index=getCurrentPlayerIndex()+1;
-            index<getCurrentPlayerIndex()+numberOfPlayers; index++) {
-                player = getPlayerByIndex(index%numberOfPlayers);
+            PlayerManager pm = getRoot().getPlayerManager();
+            for (int index=pm.getCurrentPlayerIndex()+1;
+            index<pm.getCurrentPlayerIndex()+numberOfPlayers; index++) {
+                player = pm.getPlayerByIndex(index%numberOfPlayers);
                 share = player.getPortfolioModel().getShare(company);
                 if (share >= company.getPresidentsShare().getShare()
                         && (share > maxShare)) {
@@ -91,12 +93,12 @@ public class GameManager_18EU extends GameManager {
                         newPresident.getPortfolioModel());
             } else {
                 company.setClosed();  // This also makes majors restartable
-                ReportBuffer.add(LocalText.getText("CompanyCloses", company.getId()));
+                ReportBuffer.add(this,LocalText.getText("CompanyCloses", company.getId()));
             }
         }
         
         // Dump all shares to pool
-        Portfolio.moveAll(PublicCertificate.class, bankrupter, bank.getPool());
+        Portfolio.moveAll(PublicCertificate.class, bankrupter, getRoot().getBank());
         bankrupter.setBankrupt();
 
         // Finish the share selling round

@@ -26,7 +26,7 @@ public class CGRFormationRound extends SwitchableUIRound {
      */
     private String cgrName = PublicCompany_CGR.NAME;
     private PublicCompany_CGR cgr
-    = (PublicCompany_CGR)gameManager.getCompanyManager().getPublicCompany(cgrName);
+    = (PublicCompany_CGR)gameManager.getRoot().getCompanyManager().getPublicCompany(cgrName);
 
     /*
      * effects from the merger, processed at the end
@@ -78,9 +78,9 @@ public class CGRFormationRound extends SwitchableUIRound {
 
         companiesToRepayLoans = null;
 
-        ReportBuffer.add(LocalText.getText("StartFormationRound",
+        ReportBuffer.add(this,LocalText.getText("StartFormationRound",
                 cgrName));
-        ReportBuffer.add(LocalText.getText("StartingPlayer", startingPlayer.getId()));
+        ReportBuffer.add(this,LocalText.getText("StartingPlayer", startingPlayer.getId()));
 
         guiHints.setCurrentRoundType(getClass());
 
@@ -100,7 +100,7 @@ public class CGRFormationRound extends SwitchableUIRound {
         }
 
         if (companiesToRepayLoans == null) {
-            ReportBuffer.add(LocalText.getText("DoesNotForm", cgr.getId()));
+            ReportBuffer.add(this,LocalText.getText("DoesNotForm", cgr.getId()));
             finishRound();
             return;
         }
@@ -125,7 +125,7 @@ public class CGRFormationRound extends SwitchableUIRound {
         while (true) {
 
             while (!companiesToRepayLoans.containsKey(getCurrentPlayer())) {
-                gameManager.setNextPlayer();
+                getRoot().getPlayerManager().setNextPlayer();
                 if (getCurrentPlayer().equals(startingPlayer)) {
                     return false;
                 }
@@ -155,10 +155,10 @@ public class CGRFormationRound extends SwitchableUIRound {
                     numberOfLoans,
                     Currency.format(this, valuePerLoan),
                     Currency.format(this, numberOfLoans * valuePerLoan));
-            ReportBuffer.add(" ");
-            DisplayBuffer.add(" ", false);
-            ReportBuffer.add(message);
-            DisplayBuffer.add(message, false);
+            ReportBuffer.add(this," ");
+            DisplayBuffer.add(this, " ", false);
+            ReportBuffer.add(this,message);
+            DisplayBuffer.add(this, message, false);
 
             // Let company repay all loans for which it has the cash
             int numberToRepay = Math.min(numberOfLoans,
@@ -174,8 +174,8 @@ public class CGRFormationRound extends SwitchableUIRound {
                         bank.getCurrency().format(numberOfLoans * valuePerLoan), // TODO: Do this nicer
                         numberToRepay,
                         bank.getCurrency().format(valuePerLoan)); // TODO: Do this nicer
-                ReportBuffer.add (message);
-                DisplayBuffer.add(message, false);
+                ReportBuffer.add(this, message);
+                DisplayBuffer.add(this, message, false);
             }
 
             // If that was all, we're done with this company
@@ -190,13 +190,13 @@ public class CGRFormationRound extends SwitchableUIRound {
             if ((compCash + presCash) / valuePerLoan > 0) {
                 int maxNumber = Math.min((compCash + presCash)/valuePerLoan, numberOfLoans);
                 if (maxNumber == numberOfLoans) {
-                    DisplayBuffer.add(LocalText.getText("YouCanRepayAllLoans",
+                    DisplayBuffer.add(this, LocalText.getText("YouCanRepayAllLoans",
                             player.getId(),
                             maxNumber,
                             currentCompany.getId()),
                             false);
                 } else {
-                    DisplayBuffer.add(LocalText.getText("YouCannotRepayAllLoans",
+                    DisplayBuffer.add(this, LocalText.getText("YouCannotRepayAllLoans",
                             player.getId(),
                             maxNumber,
                             numberOfLoans,
@@ -213,8 +213,8 @@ public class CGRFormationRound extends SwitchableUIRound {
                 message = LocalText.getText("WillMergeInto",
                         currentCompany.getId(),
                         PublicCompany_CGR.NAME);
-                DisplayBuffer.add(message, false);
-                ReportBuffer.add(message);
+                DisplayBuffer.add(this, message, false);
+                ReportBuffer.add(this,message);
                 continue;
             }
         }
@@ -268,7 +268,7 @@ public class CGRFormationRound extends SwitchableUIRound {
             company.addLoans(-numberRepaid);
             if (repaymentByCompany > 0) {
                 String repayCompanyText = Currency.toBank(company, repaymentByCompany);
-                ReportBuffer.add (LocalText.getText("CompanyRepaysLoans",
+                ReportBuffer.add(this, LocalText.getText("CompanyRepaysLoans",
                         company.getId(),
                     repayCompanyText,
                         numberRepaid,
@@ -277,7 +277,7 @@ public class CGRFormationRound extends SwitchableUIRound {
             if (repaymentByPresident > 0) {
                 Player president = company.getPresident();
                 String repayPresidentText =  Currency.toBank(president, repaymentByPresident);
-                ReportBuffer.add (LocalText.getText("CompanyRepaysLoansWithPresCash",
+                ReportBuffer.add(this, LocalText.getText("CompanyRepaysLoansWithPresCash",
                         company.getId(),
                         repayPresidentText,
                         bank.getCurrency().format(repayment), // TODO: Make this nicer
@@ -293,8 +293,8 @@ public class CGRFormationRound extends SwitchableUIRound {
             String message = LocalText.getText("WillMergeInto",
                     currentCompany.getId(),
                     PublicCompany_CGR.NAME);
-            DisplayBuffer.add(message, true);
-            ReportBuffer.add(message);
+            DisplayBuffer.add(this, message, true);
+            ReportBuffer.add(this,message);
 
         }
 
@@ -317,7 +317,7 @@ public class CGRFormationRound extends SwitchableUIRound {
         setCurrentPlayer(startingPlayer);
         cgrSharesUsed = 0;
 
-        ReportBuffer.add("");
+        ReportBuffer.add(this,"");
 
         do {
             player = getCurrentPlayer();
@@ -359,8 +359,8 @@ public class CGRFormationRound extends SwitchableUIRound {
                         oldShares,
                         newShares,
                         PublicCompany_CGR.NAME);
-                DisplayBuffer.add(message, false);
-                ReportBuffer.add(message);
+                DisplayBuffer.add(this, message, false);
+                ReportBuffer.add(this,message);
 
                 if (count == 1) {
                     // Should work OK even if this is a president's share.
@@ -371,8 +371,8 @@ public class CGRFormationRound extends SwitchableUIRound {
 
                     message = LocalText.getText("HasPutShareInPool",
                             player.getId());
-                    DisplayBuffer.add(message, false);
-                    ReportBuffer.add(message);
+                    DisplayBuffer.add(this, message, false);
+                    ReportBuffer.add(this,message);
 
                 }
                 // Note: old shares are removed when company is closed
@@ -386,7 +386,7 @@ public class CGRFormationRound extends SwitchableUIRound {
                 }
             }
 
-            gameManager.setNextPlayer();
+            getRoot().getPlayerManager().setNextPlayer();
 
         } while (getCurrentPlayer() != startingPlayer);
 
@@ -414,8 +414,8 @@ public class CGRFormationRound extends SwitchableUIRound {
                 oldShares,
                 newShares,
                 PublicCompany_CGR.NAME);
-        DisplayBuffer.add(message);
-        ReportBuffer.add(message);
+        DisplayBuffer.add(this, message);
+        ReportBuffer.add(this,message);
 
         Portfolio.moveAll(certs, scrapHeap.getParent());
         log.info(cgrSharesUsed+" CGR shares are now in play");
@@ -428,10 +428,10 @@ public class CGRFormationRound extends SwitchableUIRound {
         }
         message = LocalText.getText("CompanyHasShares",
                 cgr.getId(), 100/cgr.getShareUnit(), cgr.getShareUnit());
-        DisplayBuffer.add(" ");
-        ReportBuffer.add(" ");
-        DisplayBuffer.add(message);
-        ReportBuffer.add(message);
+        DisplayBuffer.add(this, " ");
+        ReportBuffer.add(this," ");
+        DisplayBuffer.add(this, message);
+        ReportBuffer.add(this,message);
 
         // Move the remaining CGR shares to the ipo.
         Portfolio.moveAll(unavailable.getCertificates(cgr), ipo.getParent());
@@ -453,8 +453,8 @@ public class CGRFormationRound extends SwitchableUIRound {
         // newPresident.getPortfolio().getShareModel(cgr).setShare();
         message = LocalText.getText("IS_NOW_PRES_OF",
                 newPresident.getId(), cgrName);
-        ReportBuffer.add(message);
-        DisplayBuffer.add(message);
+        ReportBuffer.add(this,message);
+        DisplayBuffer.add(this, message);
 
         // Determine the CGR starting price,
         // and close the absorbed companies.
@@ -493,28 +493,28 @@ public class CGRFormationRound extends SwitchableUIRound {
                         PublicCompany_CGR.NAME,
                         Currency.format(this, startSpace.getPrice()),
                         startSpace.getId());
-                DisplayBuffer.add(message);
-                ReportBuffer.add(message);
+                DisplayBuffer.add(this, message);
+                ReportBuffer.add(this,message);
                 break;
             }
         }
         cgr.setFloated();
-        ReportBuffer.add (LocalText.getText("Floats", PublicCompany_CGR.NAME));
+        ReportBuffer.add(this,LocalText.getText("Floats", PublicCompany_CGR.NAME));
 
         // Determine the new certificate limit.
         // The number of available companies is 11,
         // or 12 minus the number of closed companies, whichever is lower.
         int numCompanies = Math.min(11, 12-mergingCompanies.size());
-        int numPlayers = gameManager.getNumberOfPlayers();
+        int numPlayers = getNumberOfPlayers();
         // Need some checks here...
         int newCertLimit = certLimitsTable[numPlayers-2][numCompanies-4];
-        gameManager.setPlayerCertificateLimit(newCertLimit);
+        getRoot().getPlayerManager().setPlayerCertificateLimit(newCertLimit);
         message = LocalText.getText("CertificateLimit",
                 newCertLimit,
                 numPlayers,
                 numCompanies);
-        DisplayBuffer.add(message);
-        ReportBuffer.add(message);
+        DisplayBuffer.add(this, message);
+        ReportBuffer.add(this,message);
 
         // Collect the old token spots, and move cash and trains
         List<BaseToken> homeTokens = new ArrayList<BaseToken>();
@@ -583,7 +583,7 @@ public class CGRFormationRound extends SwitchableUIRound {
         }
 
         // Replace the home tokens
-        ReportBuffer.add("");
+        ReportBuffer.add(this,"");
         for (BaseToken token : homeTokens) {
             city = (Stop) token.getOwner();
             hex = city.getParent();
@@ -591,7 +591,7 @@ public class CGRFormationRound extends SwitchableUIRound {
             token.moveTo(token.getParent());
             if (hex.layBaseToken(cgr, city.getNumber())) {
                 /* TODO: the false return value must be impossible. */
-                ReportBuffer.add(LocalText.getText("ExchangesBaseToken",
+                ReportBuffer.add(this,LocalText.getText("ExchangesBaseToken",
                         cgrName, token.getParent().getId(),
                         city.getSpecificId()));
                 cgr.layBaseToken(hex, 0);
@@ -607,7 +607,7 @@ public class CGRFormationRound extends SwitchableUIRound {
                 for (BaseToken token2 : otherTokens) {
                     if (token2.getParent() == cgr
                             || nonHomeTokens.contains(token2) && token2 != token) {
-                        ReportBuffer.add(LocalText.getText("DiscardsBaseToken",
+                        ReportBuffer.add(this,LocalText.getText("DiscardsBaseToken",
                                 cgrName, token.getParent().getId(),
                                 city.getSpecificId()));
                         // return token to home
@@ -656,7 +656,7 @@ public class CGRFormationRound extends SwitchableUIRound {
         int trainLimit = cgr.getCurrentTrainLimit();
         Set<Train> trains = cgr.getPortfolioModel().getTrainList();
         if (cgr.getNumberOfTrains() > trainLimit) {
-            ReportBuffer.add("");
+            ReportBuffer.add(this,"");
             int numberToDiscard = cgr.getNumberOfTrains() - trainLimit;
             List<Train> trainsToDiscard = new ArrayList<Train>(4);
             for (Train train : trains) {
@@ -667,7 +667,7 @@ public class CGRFormationRound extends SwitchableUIRound {
             }
             for (Train train : trainsToDiscard) {
                 pool.addTrain(train);
-                ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
+                ReportBuffer.add(this,LocalText.getText("CompanyDiscardsTrain",
                         cgrName, train.toText()));
             }
         }
@@ -677,7 +677,7 @@ public class CGRFormationRound extends SwitchableUIRound {
     private void executeExchangeTokens (List<BaseToken> exchangedTokens) {
         Stop city;
         MapHex hex;
-        ReportBuffer.add("");
+        ReportBuffer.add(this,"");
         for (BaseToken token : exchangedTokens) {
             // Remove old token
             city = (Stop) token.getOwner();
@@ -815,7 +815,7 @@ public class CGRFormationRound extends SwitchableUIRound {
             break;
         }
         if (errMsg != null) {
-            DisplayBuffer.add(LocalText.getText("CannotDiscardTrain",
+            DisplayBuffer.add(this, LocalText.getText("CannotDiscardTrain",
                     companyName,
                     train.toText(),
                     errMsg ));
@@ -831,7 +831,7 @@ public class CGRFormationRound extends SwitchableUIRound {
 
             //            if (action.isForced()) moveStack.linkToPreviousMoveSet();
             pool.addTrain(train);
-            ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
+            ReportBuffer.add(this,LocalText.getText("CompanyDiscardsTrain",
                     companyName,
                     train.toText() ));
 

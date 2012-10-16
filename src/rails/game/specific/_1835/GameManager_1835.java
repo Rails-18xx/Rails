@@ -1,7 +1,7 @@
 package rails.game.specific._1835;
 
 import rails.game.GameManager;
-import rails.common.parser.GameOption;
+import rails.common.GameOption;
 import rails.game.Phase;
 import rails.game.Player;
 import rails.game.PublicCompany;
@@ -35,9 +35,9 @@ public class GameManager_1835 extends GameManager {
      */
     @Override
     protected boolean runIfStartPacketIsNotCompletelySold() {
-        if (getGameOption(GameOption.VARIANT).equalsIgnoreCase("Clemens")
-                || getGameOption("MinorsRequireFloatedBY").equalsIgnoreCase("yes")) {
-            return companyManager.getPublicCompany(GameManager_1835.BY_ID).hasFloated();
+        if (GameOption.getAsBoolean(this, "Clemens")
+                || GameOption.getAsBoolean(this, "MinorsRequireFloatedBY")) {
+            return getRoot().getCompanyManager().getPublicCompany(GameManager_1835.BY_ID).hasFloated();
         }
         return true;
     }
@@ -56,8 +56,8 @@ public class GameManager_1835 extends GameManager {
             }
         } else {
         	Phase phase = getCurrentPhase();
-            if ((phase.getName().equals("4") || phase.getName().equals("4+4")
-                    || phase.getName().equals("5"))
+            if ((phase.getId().equals("4") || phase.getId().equals("4+4")
+                    || phase.getId().equals("5"))
                     && !PrussianFormationRound.prussianIsComplete(this)) {
                 previousRound = round;
                 startPrussianFormationRound (null);
@@ -90,8 +90,8 @@ public class GameManager_1835 extends GameManager {
 
     @Override
     public int getPlayerCertificateLimit(Player player) {
-        int limit = playerCertificateLimit.value();
-        for (PublicCompany company : companyManager.getAllPublicCompanies()) {
+        int limit = getRoot().getPlayerManager().getPlayerCertificateLimit(player);
+        for (PublicCompany company : getRoot().getCompanyManager().getAllPublicCompanies()) {
             if (company.getType().getId().equalsIgnoreCase("Major")
                     && company.getPresident() == player
                     && player.getPortfolioModel().getShare(company) >= 80) limit++;

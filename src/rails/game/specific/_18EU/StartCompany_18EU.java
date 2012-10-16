@@ -84,7 +84,7 @@ public class StartCompany_18EU extends StartCompany {
         // use delayed selectedHomeStation initialization
         // as not all cities are defined immediately
         if (selectedHomeStation == null && selectedHomeStationName != null) {
-            MapManager mapManager = GameManager.getInstance().getMapManager();
+            MapManager mapManager = getRoot().getMapManager();
             String[] parts = parseStationName (selectedHomeStationName);
             MapHex hex = mapManager.getHex(parts[0]);
             selectedHomeStation = hex.getStop(Integer.parseInt(parts[1]));
@@ -138,7 +138,7 @@ public class StartCompany_18EU extends StartCompany {
             chosenMinor = cmgr.getPublicCompany(chosenMinorName);
         }
 
-        MapManager mapManager = GameManager.getInstance().getMapManager();
+        MapManager mapManager = RailsRoot.getInstance().getMapManager();
         if (availableHomeStationNames != null) {
             availableHomeStations = new ArrayList<Stop>();
             for (String cityName : availableHomeStationNames.split(",")) {

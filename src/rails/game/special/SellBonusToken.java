@@ -4,9 +4,9 @@ import java.util.List;
 
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
-import rails.game.GameManager;
 import rails.game.MapHex;
 import rails.game.RailsItem;
+import rails.game.RailsRoot;
 import rails.game.state.GenericState;
 import rails.game.state.IntegerState;
 import rails.game.state.Owner;
@@ -58,10 +58,10 @@ public class SellBonusToken extends SpecialProperty {
     }
     
     @Override
-    public void finishConfiguration (GameManager gameManager) 
+    public void finishConfiguration (RailsRoot root) 
     throws ConfigurationException {
         
-        locations = gameManager.getMapManager().parseLocations(locationCodes);
+        locations = root.getMapManager().parseLocations(locationCodes);
     }
 
     @Override

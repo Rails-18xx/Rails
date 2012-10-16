@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableSet;
 
 import rails.algorithms.RevenueBonusTemplate;
 import rails.common.LocalText;
+import rails.common.ReportBuffer;
 import rails.common.parser.*;
 import rails.game.Stop.Loop;
 import rails.game.Stop.RunThrough;
@@ -362,12 +363,8 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
 
     }
 
-    public void finishConfiguration (GameManager gameManager) {
-        if(gameManager == null) {
-            throw new IllegalArgumentException("gameManager must not be null");
-        }
-
-        currentTile.set(gameManager.getTileManager().getTile(preprintedTileId));
+    public void finishConfiguration (RailsRoot root) {
+        currentTile.set(root.getTileManager().getTile(preprintedTileId));
         // We need completely new objects, not just references to the Tile's
         // stations.
         for (Station s : currentTile.value().getStations()) {
@@ -851,7 +848,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
                                         + " moved from "
                                         + oldCity.getSpecificId() + " to "
                                         + company.getId());
-                                ReportBuffer.add(LocalText.getText(
+                                ReportBuffer.add(this,LocalText.getText(
                                         "DuplicateTokenRemoved",
                                         company.getId(),
                                         getId() ));

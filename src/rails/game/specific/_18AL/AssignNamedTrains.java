@@ -118,7 +118,7 @@ public class AssignNamedTrains extends UseSpecialProperty {
 
         in.defaultReadObject();
 
-        TrainManager trainManager = GameManager.getInstance().getTrainManager();
+        TrainManager trainManager = RailsRoot.getInstance().getTrainManager();
 
         nameableTrains = new ArrayList<NameableTrain>();
         if (trainIds != null) {

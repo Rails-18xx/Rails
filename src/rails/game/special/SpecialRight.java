@@ -52,15 +52,15 @@ public class SpecialRight extends SpecialProperty implements RevenueStaticModifi
     }
 
     @Override
-    public void finishConfiguration (GameManager gameManager) throws ConfigurationException {
-        super.finishConfiguration(gameManager);
+    public void finishConfiguration (RailsRoot root) throws ConfigurationException {
+        super.finishConfiguration(root);
         
         // add them to the call list of the RevenueManager
-        gameManager.getRevenueManager().addStaticModifier(this);
+        root.getRevenueManager().addStaticModifier(this);
         
         if (locationNames != null) {
             locations = new ArrayList<MapHex>();
-            MapManager mmgr = gameManager.getMapManager();
+            MapManager mmgr = root.getMapManager();
             MapHex hex;
             for (String hexName : locationNames.split(",")) {
                 hex = mmgr.getHex(hexName);

@@ -48,9 +48,9 @@ public final class TileManager extends RailsManager implements Configurable {
         if (tileDefFileName == null)
             throw new ConfigurationException(LocalText.getText("NoTilesXML"));
 
-        String directory = "data/" + GameManager.getInstance().getGameName();
+        String directory = "data/" + getRoot().getGameName();
         Tag tileDefTop =
-            Tag.findTopTagInFile(tileDefFileName, directory, "Tiles");
+            Tag.findTopTagInFile(tileDefFileName, directory, "Tiles", null);
         if (tileDefTop == null)
             throw new ConfigurationException(LocalText.getText("NoTilesTag"));
 
@@ -186,7 +186,7 @@ public final class TileManager extends RailsManager implements Configurable {
         }
     }
 
-    public void finishConfiguration (GameManager gameManager)
+    public void finishConfiguration (RailsRoot root)
     throws ConfigurationException {
         for (Tile tile : tileMap.values()) {
             tile.finishConfiguration(this);
