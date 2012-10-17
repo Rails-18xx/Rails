@@ -1,19 +1,12 @@
-Rails release 1.7.11:
+Rails release 1.7.12:
 
 A new maintenance release for Rails 1.x series
 
-This release fixes two bugs.
+This release fixes a single bug.
 
-Contributors: Erik Vos, Stefan Frey
+Contributors: Erik Vos
 
-Bugs reported by Volker Schnell
+Bug reported by Volker Schnell
 
-Lists of bugs fixed:
-- When buying trains from other companies, include companies that have floated 
-but do not operate in the current round for any reason.
-Example was the PR in 1835.
-- 1889: the free tile lay of private C was not offered if the cash position was not exceeding
-the (not-applicable) costs of building in the hex
-
-Further:
-- Sorted 1835 game options to make the Options list looks prettier.
+1835: after resuming an OR after a PR formation round, a check was missing if the (minor) operating company still exists.
+Fix: finish the turn if the operating company is closed at that point.
