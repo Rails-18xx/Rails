@@ -1,0 +1,1118 @@
+GameIs,1835
+PlayerIs,1,Klaus-Jürgen
+PlayerIs,2,Jupp
+PlayerIs,3,Volker S
+PlayerIs,4,Sven K.
+PlayerCash,475
+BankHas,10100
+StartOfPhase,2
+BankSizeIs,10100
+StartOfInitialRound
+HasPriority,Klaus-Jürgen
+BuysItemFor,Sven K.,M2,170
+FloatsWithCash,M2,170
+BuysItemFor,Volker S,M5,80
+FloatsWithCash,M5,80
+BuysItemFor,Jupp,M3,80
+FloatsWithCash,M3,80
+BuysItemFor,Klaus-Jürgen,M1,80
+FloatsWithCash,M1,80
+BuysItemFor,Klaus-Jürgen,M6,80
+FloatsWithCash,M6,80
+BuysItemFor,Jupp,LD,190
+ALSO_GETS,Jupp,PRES_CERT_NAME,SX,20
+BuysItemFor,Volker S,NF,100
+ALSO_GETS,Volker S,CERT_NAME,BY,10
+BuysItemFor,Sven K.,OBB,120
+ALSO_GETS,Sven K.,CERT_NAME,BY,10
+BuysItemFor,Klaus-Jürgen,BB,130
+BuysItemFor,Jupp,PRES_CERT_NAME,BY,20,184
+BuysItemFor,Volker S,PfB,150
+ALSO_GETS,Volker S,CERT_NAME,BY,10
+FloatsWithCash,BY,460
+BuysItemFor,Sven K.,HB,160
+BuysItemFor,Klaus-Jürgen,M4,160
+FloatsWithCash,M4,160
+Has,M1,80
+Has,M2,170
+Has,M3,80
+Has,M4,160
+Has,M5,80
+Has,M6,80
+Has,BY,460
+Has,Klaus-Jürgen,25
+Has,Jupp,21
+Has,Volker S,145
+Has,Sven K.,25
+StartStockRound,1
+HasPriority,Jupp
+PASSES,Jupp
+BUY_SHARE_LOG,Volker S,10,BY,IPO,92
+PriceIsPaidTo,92,BY
+IS_NOW_PRES_OF,Volker S,BY
+PASSES,Sven K.
+PASSES,Klaus-Jürgen
+PASSES,Jupp
+PASSES,Volker S
+ 
+END_SR,1
+Has,M1,80
+Has,M2,170
+Has,M3,80
+Has,M4,160
+Has,M5,80
+Has,M6,80
+Has,BY,552
+Has,Klaus-Jürgen,25
+Has,Jupp,21
+Has,Volker S,53
+Has,Sven K.,25
+START_OR,1.1
+ReceivesFor,Volker S,5,NF
+ReceivesFor,Sven K.,10,OBB
+ReceivesFor,Volker S,15,PfB
+ReceivesFor,Jupp,20,LD
+ReceivesFor,Klaus-Jürgen,25,BB
+ReceivesFor,Sven K.,30,HB
+ 
+CompanyOperates,M1,Klaus-Jürgen
+LaysTileAt,M1,201,H2,SE
+CompanyDoesNotPayDividend,M1
+BuysTrain,M1,2,IPO,80
+FirstTrainBought,2
+ 
+CompanyOperates,M2,Sven K.
+LaysTileAt,M2,8,E17,NW
+CompanyDoesNotPayDividend,M2
+ 
+CompanyOperates,M3,Jupp
+LaysTileAt,M3,6,F14,NW
+CompanyDoesNotPayDividend,M3
+BuysTrain,M3,2,IPO,80
+ 
+CompanyOperates,M4,Klaus-Jürgen
+LaysTileAt,M4,6,G5,NE
+CompanyDoesNotPayDividend,M4
+BuysTrain,M4,2,IPO,80
+BuysTrain,M4,2,IPO,80
+ 
+CompanyOperates,M5,Volker S
+LaysTileAt,M5,8,D18,NE
+CompanyDoesNotPayDividend,M5
+BuysTrain,M5,2,IPO,80
+ 
+CompanyOperates,M6,Klaus-Jürgen
+LaysTileAt,M6,9,B10,NW
+CompanyDoesNotPayDividend,M6
+BuysTrain,M6,2,IPO,80
+ 
+CompanyOperates,BY,Volker S
+LaysTileAt,BY,201,O15,NW
+LaysTileAt,BY,8,O13,NW
+CompanyDoesNotPayDividend,BY
+PRICE_MOVES_LOG,BY,92,C3,86,B3
+BuysTrain,BY,2,IPO,80
+BuysTrain,BY,2,IPO,80
+ 
+EndOfOperatingRound,1.1
+ORWorthIncrease,Klaus-Jürgen,1.1,25
+ORWorthIncrease,Jupp,1.1,8
+ORWorthIncrease,Volker S,1.1,2
+ORWorthIncrease,Sven K.,1.1,34
+Has,M1,0
+Has,M2,170
+Has,M3,0
+Has,M4,0
+Has,M5,0
+Has,M6,0
+Has,BY,392
+Has,Klaus-Jürgen,50
+Has,Jupp,41
+Has,Volker S,73
+Has,Sven K.,65
+StartStockRound,2
+HasPriority,Sven K.
+PASSES,Sven K.
+PASSES,Klaus-Jürgen
+PASSES,Jupp
+PASSES,Volker S
+ 
+END_SR,2
+Has,M1,0
+Has,M2,170
+Has,M3,0
+Has,M4,0
+Has,M5,0
+Has,M6,0
+Has,BY,392
+Has,Klaus-Jürgen,50
+Has,Jupp,41
+Has,Volker S,73
+Has,Sven K.,65
+START_OR,2.1
+ReceivesFor,Volker S,5,NF
+ReceivesFor,Sven K.,10,OBB
+ReceivesFor,Volker S,15,PfB
+ReceivesFor,Jupp,20,LD
+ReceivesFor,Klaus-Jürgen,25,BB
+ReceivesFor,Sven K.,30,HB
+ 
+CompanyOperates,M1,Klaus-Jürgen
+LaysTileAt,M1,69,H4,SW
+CompanyRevenue,M1,40
+CompanySplits,M1,40
+M1 receives 20
+Payout,Klaus-Jürgen,20,1,100
+ 
+CompanyOperates,M2,Sven K.
+LaysTileAt,M2,8,D16,SE
+CompanyDoesNotPayDividend,M2
+BuysTrain,M2,2,IPO,80
+All 2-trains are sold out, 2+2-trains now available
+ 
+CompanyOperates,M3,Jupp
+LaysTileAt,M3,4,G15,NW
+CompanyRevenue,M3,40
+CompanySplits,M3,40
+M3 receives 20
+Payout,Jupp,20,1,100
+ 
+CompanyOperates,M4,Klaus-Jürgen
+LaysTileAt,M4,3,F4,E
+CompanyRevenue,M4,60
+CompanySplits,M4,60
+M4 receives 30
+Payout,Klaus-Jürgen,30,1,100
+ 
+CompanyOperates,M5,Volker S
+LaysTileAt,M5,8,C19,E
+CompanyRevenue,M5,50
+CompanySplits,M5,50
+M5 receives 25
+Payout,Volker S,25,1,100
+ 
+CompanyOperates,M6,Klaus-Jürgen
+LaysTileAt,M6,6,A11,NW
+CompanyRevenue,M6,60
+CompanySplits,M6,60
+M6 receives 30
+Payout,Klaus-Jürgen,30,1,100
+ 
+CompanyOperates,BY,Volker S
+LaysTileAt,BY,8,N14,SE
+LaysTileAt,BY,5,N12,SW
+LAYS_FREE_TOKEN_ON,BY,L14
+PrivateCloses,NF
+CompanyRevenue,BY,100
+CompanyPaysOutFull,BY,100
+Payout,Jupp,20,2,10
+Payout,Volker S,30,3,10
+Payout,Sven K.,10,1,10
+PRICE_MOVES_LOG,BY,86,B3,92,C3
+BuysTrain,BY,2+2,IPO,120
+FirstTrainBought,2+2
+ 
+EndOfOperatingRound,2.1
+ORWorthIncrease,Klaus-Jürgen,2.1,105
+ORWorthIncrease,Jupp,2.1,72
+ORWorthIncrease,Volker S,2.1,-7
+ORWorthIncrease,Sven K.,2.1,56
+Has,M1,20
+Has,M2,90
+Has,M3,20
+Has,M4,30
+Has,M5,25
+Has,M6,30
+Has,BY,272
+Has,Klaus-Jürgen,155
+Has,Jupp,101
+Has,Volker S,148
+Has,Sven K.,115
+StartStockRound,3
+HasPriority,Sven K.
+BUY_SHARE_LOG,Sven K.,10,BY,IPO,92
+PriceIsPaidTo,92,BY
+BUY_SHARE_LOG,Klaus-Jürgen,10,BY,IPO,92
+PriceIsPaidTo,92,BY
+BUY_SHARE_LOG,Jupp,10,BY,IPO,92
+PriceIsPaidTo,92,BY
+BUY_SHARE_LOG,Volker S,10,BY,IPO,92
+PriceIsPaidTo,92,BY
+PASSES,Sven K.
+Autopasses,Klaus-Jürgen
+SELL_SHARE_LOG,Jupp,10,BY,92
+PRICE_MOVES_LOG,BY,92,C3,88,C4
+BUY_SHARE_LOG,Jupp,10,SX,IPO,88
+Autopasses,Volker S
+Autopasses,Sven K.
+Autopasses,Klaus-Jürgen
+SELL_SHARE_LOG,Jupp,10,BY,88
+PRICE_MOVES_LOG,BY,88,C4,86,C5
+BUY_SHARE_LOG,Jupp,10,SX,IPO,88
+Autopasses,Volker S
+Autopasses,Sven K.
+Autopasses,Klaus-Jürgen
+SELL_SHARE_LOG,Jupp,10,BY,86
+PRICE_MOVES_LOG,BY,86,C5,82,C6
+BUY_SHARE_LOG,Jupp,10,SX,IPO,88
+FloatsWithCash,SX,440
+Autopasses,Volker S
+Autopasses,Sven K.
+Autopasses,Klaus-Jürgen
+PASSES,Jupp
+ 
+END_SR,3
+Has,M1,20
+Has,M2,90
+Has,M3,20
+Has,M4,30
+Has,M5,25
+Has,M6,30
+Has,BY,640
+Has,SX,440
+Has,Klaus-Jürgen,63
+Has,Jupp,11
+Has,Volker S,56
+Has,Sven K.,23
+START_OR,3.1
+ReceivesFor,Sven K.,10,OBB
+ReceivesFor,Volker S,15,PfB
+ReceivesFor,Jupp,20,LD
+ReceivesFor,Klaus-Jürgen,25,BB
+ReceivesFor,Sven K.,30,HB
+ 
+CompanyOperates,M1,Klaus-Jürgen
+LaysTileAt,M1,8,I5,SW
+CompanyRevenue,M1,40
+CompanySplits,M1,40
+M1 receives 20
+Payout,Klaus-Jürgen,20,1,100
+ 
+CompanyOperates,M2,Sven K.
+LaysTileAtFor,M2,8,D14,NW,50
+CompanyRevenue,M2,70
+CompanySplits,M2,70
+M2 receives 35
+Payout,Sven K.,35,1,100
+ 
+CompanyOperates,M3,Jupp
+LaysTileAt,M3,57,H16,NW
+CompanyRevenue,M3,40
+CompanySplits,M3,40
+M3 receives 20
+Payout,Jupp,20,1,100
+ 
+CompanyOperates,M4,Klaus-Jürgen
+LaysTileAt,M4,4,F6,W
+CompanyRevenue,M4,60
+CompanySplits,M4,60
+M4 receives 30
+Payout,Klaus-Jürgen,30,1,100
+ 
+CompanyOperates,M5,Volker S
+CompanyRevenue,M5,50
+CompanySplits,M5,50
+M5 receives 25
+Payout,Volker S,25,1,100
+ 
+CompanyOperates,M6,Klaus-Jürgen
+LaysTileAt,M6,58,B12,NW
+CompanyRevenue,M6,60
+CompanySplits,M6,60
+M6 receives 30
+Payout,Klaus-Jürgen,30,1,100
+ 
+CompanyOperates,SX,Jupp
+LaysTileAt,SX,56,I17,NE
+LaysTileAt,SX,202,H20,W
+LAYS_TOKEN_ON,SX,H20,40
+CompanyDoesNotPayDividend,SX
+PRICE_MOVES_LOG,SX,88,C4,84,B4
+BuysTrain,SX,2+2,IPO,120
+PrivateCloses,LD
+BuysTrain,SX,2+2,IPO,120
+BuysTrain,SX,2+2,IPO,120
+All 2+2-trains are sold out, 3-trains now available
+ 
+CompanyOperates,BY,Volker S
+LaysTileAt,BY,8,K13,SE
+LaysTileAt,BY,58,K11,NW
+CompanyRevenue,BY,140
+CompanyPaysOutFull,BY,140
+Payout,Volker S,56,4,10
+Payout,Sven K.,28,2,10
+Payout,Klaus-Jürgen,14,1,10
+Payout,BY,42,3,10
+PRICE_MOVES_LOG,BY,82,C6,88,D6
+BuysTrain,BY,3,IPO,180
+FirstTrainBought,3
+StartOfPhase,3
+ 
+EndOfOperatingRound,3.1
+ORWorthIncrease,Klaus-Jürgen,3.1,125
+ORWorthIncrease,Jupp,3.1,-170
+ORWorthIncrease,Volker S,3.1,120
+ORWorthIncrease,Sven K.,3.1,115
+Has,M1,40
+Has,M2,75
+Has,M3,40
+Has,M4,60
+Has,M5,50
+Has,M6,60
+Has,BY,502
+Has,SX,40
+Has,Klaus-Jürgen,182
+Has,Jupp,51
+Has,Volker S,152
+Has,Sven K.,126
+StartStockRound,4
+HasPriority,Volker S
+BUY_SHARE_LOG,Volker S,10,BY,Pool,88
+BUY_SHARE_LOG,Sven K.,10,BY,Pool,88
+BUY_SHARE_LOG,Klaus-Jürgen,10,BY,Pool,88
+Autopasses,Jupp
+Autopasses,Volker S
+Autopasses,Sven K.
+BUY_SHARE_LOG,Klaus-Jürgen,10,SX,IPO,88
+PriceIsPaidTo,88,SX
+Autopasses,Jupp
+Autopasses,Volker S
+Autopasses,Sven K.
+PASSES,Klaus-Jürgen
+ 
+END_SR,4
+PRICE_MOVES_LOG,BY,88,D6,90,D5
+SoldOut,BY,88,D6,90,D5
+Has,M1,40
+Has,M2,75
+Has,M3,40
+Has,M4,60
+Has,M5,50
+Has,M6,60
+Has,BY,502
+Has,SX,128
+Has,Klaus-Jürgen,6
+Has,Jupp,51
+Has,Volker S,64
+Has,Sven K.,38
+START_OR,4.1
+ReceivesFor,Sven K.,10,OBB
+ReceivesFor,Volker S,15,PfB
+ReceivesFor,Klaus-Jürgen,25,BB
+ReceivesFor,Sven K.,30,HB
+ 
+CompanyOperates,M1,Klaus-Jürgen
+LaysTileAt,M1,207,H2,E
+CompanyRevenue,M1,50
+CompanySplits,M1,50
+M1 receives 25
+Payout,Klaus-Jürgen,25,1,100
+ 
+CompanyOperates,M2,Sven K.
+LaysTileAt,M2,209,E19,NE
+CompanyRevenue,M2,80
+CompanySplits,M2,80
+M2 receives 40
+Payout,Sven K.,40,1,100
+ 
+CompanyOperates,M3,Jupp
+LaysTileAt,M3,206,H16,SW
+CompanyRevenue,M3,40
+CompanySplits,M3,40
+M3 receives 20
+Payout,Jupp,20,1,100
+BuysTrain,M3,2+2,SX,60
+ 
+CompanyOperates,M4,Klaus-Jürgen
+LaysTileAt,M4,12,G5,NW
+CompanyRevenue,M4,80
+CompanySplits,M4,80
+M4 receives 40
+Payout,Klaus-Jürgen,40,1,100
+ 
+CompanyOperates,M5,Volker S
+LaysTileAt,M5,9,F20,NW
+CompanyRevenue,M5,80
+CompanySplits,M5,80
+M5 receives 40
+Payout,Volker S,40,1,100
+BuysTrain,M5,2,BY,90
+ 
+CompanyOperates,M6,Klaus-Jürgen
+LaysTileAt,M6,12,A11,W
+CompanyRevenue,M6,70
+CompanySplits,M6,70
+M6 receives 35
+Payout,Klaus-Jürgen,35,1,100
+BuysTrain,M6,2,M4,95
+ 
+CompanyOperates,BY,Volker S
+LaysTileAt,BY,8,J10,SE
+LAYS_TOKEN_ON,BY,J8,120
+CompanyRevenue,BY,180
+CompanyPaysOutFull,BY,180
+Payout,Volker S,90,5,10
+Payout,Sven K.,54,3,10
+Payout,Klaus-Jürgen,36,2,10
+PRICE_MOVES_LOG,BY,90,D5,96,E5
+BuysTrain,BY,3,IPO,180
+ 
+CompanyOperates,SX,Jupp
+LaysTileAt,SX,208,H20,W
+CompanyRevenue,SX,180
+CompanyPaysOutFull,SX,180
+Payout,Klaus-Jürgen,18,1,10
+Payout,Jupp,90,5,10
+PRICE_MOVES_LOG,SX,84,B4,88,C4
+BuysTrain,SX,3,IPO,180
+ 
+EndOfOperatingRound,4.1
+ORWorthIncrease,Klaus-Jürgen,4.1,195
+ORWorthIncrease,Jupp,4.1,130
+ORWorthIncrease,Volker S,4.1,175
+ORWorthIncrease,Sven K.,4.1,152
+Has,M1,65
+Has,M2,115
+Has,M3,0
+Has,M4,195
+Has,M5,0
+Has,M6,0
+Has,BY,292
+Has,SX,8
+Has,Klaus-Jürgen,185
+Has,Jupp,161
+Has,Volker S,209
+Has,Sven K.,172
+START_OR,4.2
+ReceivesFor,Sven K.,10,OBB
+ReceivesFor,Volker S,15,PfB
+ReceivesFor,Klaus-Jürgen,25,BB
+ReceivesFor,Sven K.,30,HB
+ 
+CompanyOperates,M1,Klaus-Jürgen
+LaysTileAtFor,M1,201,I3,NE,50
+CompanyRevenue,M1,70
+CompanySplits,M1,70
+M1 receives 35
+Payout,Klaus-Jürgen,35,1,100
+BuysTrain,M1,2,M6,5
+ 
+CompanyOperates,M2,Sven K.
+CompanyRevenue,M2,80
+CompanySplits,M2,80
+M2 receives 40
+Payout,Sven K.,40,1,100
+ 
+CompanyOperates,M3,Jupp
+LaysTileAt,M3,205,F14,SE
+CompanyRevenue,M3,120
+CompanySplits,M3,120
+M3 receives 60
+Payout,Jupp,60,1,100
+ 
+CompanyOperates,M4,Klaus-Jürgen
+LaysTileAtFor,M4,215,G3,W,50
+CompanyRevenue,M4,60
+CompanySplits,M4,60
+M4 receives 30
+Payout,Klaus-Jürgen,30,1,100
+BuysTrain,M4,2,M1,175
+ 
+CompanyOperates,M5,Volker S
+LaysTileAt,M5,8,H18,E
+CompanyRevenue,M5,160
+CompanySplits,M5,160
+M5 receives 80
+Payout,Volker S,80,1,100
+ 
+CompanyOperates,M6,Klaus-Jürgen
+LaysTileAt,M6,204,B12,SE
+CompanyRevenue,M6,70
+CompanySplits,M6,70
+M6 receives 35
+Payout,Klaus-Jürgen,35,1,100
+ 
+CompanyOperates,BY,Volker S
+LaysTileAtFor,BY,213,J6,SE,50
+CompanyRevenue,BY,250
+CompanyPaysOutFull,BY,250
+Payout,Volker S,125,5,10
+Payout,Sven K.,75,3,10
+Payout,Klaus-Jürgen,50,2,10
+PRICE_MOVES_LOG,BY,96,E5,104,F5
+ 
+CompanyOperates,SX,Jupp
+LaysTileAt,SX,8,F18,W
+CompanyRevenue,SX,290
+CompanyPaysOutFull,SX,290
+Payout,Klaus-Jürgen,29,1,10
+Payout,Jupp,145,5,10
+PRICE_MOVES_LOG,SX,88,C4,94,D4
+ 
+EndOfOperatingRound,4.2
+ORWorthIncrease,Klaus-Jürgen,4.2,226
+ORWorthIncrease,Jupp,4.2,235
+ORWorthIncrease,Volker S,4.2,260
+ORWorthIncrease,Sven K.,4.2,179
+Has,M1,220
+Has,M2,155
+Has,M3,60
+Has,M4,0
+Has,M5,80
+Has,M6,40
+Has,BY,242
+Has,SX,8
+Has,Klaus-Jürgen,389
+Has,Jupp,366
+Has,Volker S,429
+Has,Sven K.,327
+StartStockRound,5
+HasPriority,Jupp
+BUY_SHARE_LOG,Jupp,10,SX,IPO,88
+PriceIsPaidTo,88,SX
+BUY_SHARE_LOG,Volker S,10,SX,IPO,88
+PriceIsPaidTo,88,SX
+BUY_SHARE_LOG,Sven K.,10,SX,IPO,88
+PriceIsPaidTo,88,SX
+BUY_SHARE_LOG,Klaus-Jürgen,10,SX,IPO,88
+PriceIsPaidTo,88,SX
+SharesReleased,All,BA
+PASSES,Jupp
+SELL_SHARE_LOG,Volker S,10,SX,94
+PRICE_MOVES_LOG,SX,94,D4,90,D5
+START_COMPANY_LOG,Volker S,BA,84,168,2,20,BANK
+SharesReleased,4 10%,PR
+BUY_SHARE_LOG,Sven K.,10,SX,Pool,90
+PASSES,Klaus-Jürgen
+PASSES,Jupp
+BUY_SHARE_LOG,Volker S,10,BA,IPO,84
+PASSES,Sven K.
+PASSES,Klaus-Jürgen
+PASSES,Jupp
+BUY_SHARE_LOG,Volker S,10,BA,IPO,84
+PASSES,Sven K.
+BUY_SHARE_LOG,Klaus-Jürgen,10,PR,IPO,154
+PASSES,Jupp
+BUY_SHARE_LOG,Volker S,10,BA,IPO,84
+FloatsWithCash,BA,420
+SharesReleased,All,WT
+BUY_SHARE_LOG,Sven K.,10,BA,IPO,84
+PriceIsPaidTo,84,BA
+SELL_SHARES_LOG,Klaus-Jürgen,2,10,20,BY,208
+PRICE_MOVES_LOG,BY,104,F5,98,F6
+START_COMPANY_LOG,Klaus-Jürgen,WT,84,168,2,20,BANK
+BUY_SHARE_LOG,Jupp,10,BY,Pool,98
+Autopasses,Volker S
+PASSES,Sven K.
+BUY_SHARE_LOG,Klaus-Jürgen,10,WT,IPO,84
+PASSES,Jupp
+Autopasses,Volker S
+PASSES,Sven K.
+BUY_SHARE_LOG,Klaus-Jürgen,10,WT,IPO,84
+PASSES,Jupp
+Autopasses,Volker S
+PASSES,Sven K.
+SELL_SHARE_LOG,Klaus-Jürgen,10,SX,90
+PRICE_MOVES_LOG,SX,90,D5,88,D6
+BUY_SHARE_LOG,Klaus-Jürgen,10,WT,IPO,84
+FloatsWithCash,WT,420
+SharesReleased,All,HE
+BUY_SHARE_LOG,Jupp,10,SX,Pool,88
+Autopasses,Volker S
+PASSES,Sven K.
+PASSES,Klaus-Jürgen
+BUY_SHARE_LOG,Jupp,10,BA,IPO,84
+PriceIsPaidTo,84,BA
+Autopasses,Volker S
+PASSES,Sven K.
+PASSES,Klaus-Jürgen
+PASSES,Jupp
+ 
+END_SR,5
+PRICE_MOVES_LOG,SX,88,D6,90,D5
+SoldOut,SX,88,D6,90,D5
+Has,M1,220
+Has,M2,155
+Has,M3,60
+Has,M4,0
+Has,M5,80
+Has,M6,40
+Has,BY,242
+Has,SX,360
+Has,BA,588
+Has,WT,420
+Has,Klaus-Jürgen,25
+Has,Jupp,8
+Has,Volker S,15
+Has,Sven K.,65
+START_OR,5.1
+ReceivesFor,Sven K.,10,OBB
+ReceivesFor,Volker S,15,PfB
+ReceivesFor,Klaus-Jürgen,25,BB
+ReceivesFor,Sven K.,30,HB
+ 
+CompanyOperates,M1,Klaus-Jürgen
+LaysTileAt,M1,8,K5,NW
+CompanyRevenue,M1,70
+CompanySplits,M1,70
+M1 receives 35
+Payout,Klaus-Jürgen,35,1,100
+BuysTrain,M1,3,IPO,180
+All 3-trains are sold out, 3+3-trains now available
+ 
+CompanyOperates,M2,Sven K.
+CompanyRevenue,M2,80
+CompanySplits,M2,80
+M2 receives 40
+Payout,Sven K.,40,1,100
+ 
+CompanyOperates,M3,Jupp
+LaysTileAt,M3,9,F16,W
+CompanyRevenue,M3,140
+CompanySplits,M3,140
+M3 receives 70
+Payout,Jupp,70,1,100
+ 
+CompanyOperates,M4,Klaus-Jürgen
+LaysTileAt,M4,207,I3,NE
+CompanyRevenue,M4,100
+CompanySplits,M4,100
+M4 receives 50
+Payout,Klaus-Jürgen,50,1,100
+ 
+CompanyOperates,M5,Volker S
+LaysTileAt,M5,58,I15,E
+CompanyRevenue,M5,160
+CompanySplits,M5,160
+M5 receives 80
+Payout,Volker S,80,1,100
+ 
+CompanyOperates,M6,Klaus-Jürgen
+LaysTileAt,M6,4,B14,W
+CompanyRevenue,M6,70
+CompanySplits,M6,70
+M6 receives 35
+Payout,Klaus-Jürgen,35,1,100
+ 
+CompanyOperates,BY,Volker S
+LaysTileAtFor,BY,9,K7,SW,50
+LaysTileAt,BY,210,L6,E
+CompanyRevenue,BY,320
+CompanyPaysOutFull,BY,320
+Payout,Volker S,160,5,10
+Payout,Sven K.,96,3,10
+Payout,Jupp,32,1,10
+Payout,BY,32,1,10
+PRICE_MOVES_LOG,BY,98,F6,106,G6
+ 
+CompanyOperates,SX,Jupp
+LaysTileAt,SX,16,H18,E
+LAYS_TOKEN_ON,SX,E19,60
+CompanyRevenue,SX,300
+CompanyPaysOutFull,SX,300
+Payout,Sven K.,60,2,10
+Payout,Klaus-Jürgen,30,1,10
+Payout,Jupp,210,7,10
+PRICE_MOVES_LOG,SX,90,D5,96,E5
+BuysTrain,SX,2,M3,1
+ 
+CompanyOperates,BA,Volker S
+LaysTileAt,BA,24,K5,NW
+LAYS_TOKEN_ON,BA,H2,80
+CompanyDoesNotPayDividend,BA
+PRICE_MOVES_LOG,BA,84,B4,78,A4
+BuysTrain,BA,3+3,IPO,270
+FirstTrainBought,3+3
+BuysTrain,BA,2,M5,1
+BuysTrain,BA,2+2,BY,110
+ 
+CompanyOperates,WT,Klaus-Jürgen
+LaysTileAt,WT,5,M9,NE
+CompanyDoesNotPayDividend,WT
+PRICE_MOVES_LOG,WT,84,B4,78,A4
+BuysTrain,WT,3+3,IPO,270
+ 
+EndOfOperatingRound,5.1
+ORWorthIncrease,Klaus-Jürgen,5.1,151
+ORWorthIncrease,Jupp,5.1,356
+ORWorthIncrease,Volker S,5.1,265
+ORWorthIncrease,Sven K.,5.1,266
+Has,M1,75
+Has,M2,195
+Has,M3,131
+Has,M4,50
+Has,M5,161
+Has,M6,75
+Has,BY,334
+Has,SX,299
+Has,BA,127
+Has,WT,150
+Has,Klaus-Jürgen,200
+Has,Jupp,320
+Has,Volker S,270
+Has,Sven K.,301
+START_OR,5.2
+ReceivesFor,Sven K.,10,OBB
+ReceivesFor,Volker S,15,PfB
+ReceivesFor,Klaus-Jürgen,25,BB
+ReceivesFor,Sven K.,30,HB
+ 
+CompanyOperates,M1,Klaus-Jürgen
+LaysTileAt,M1,19,K7,NE
+CompanyRevenue,M1,180
+CompanySplits,M1,180
+M1 receives 90
+Payout,Klaus-Jürgen,90,1,100
+ 
+CompanyOperates,M2,Sven K.
+CompanyRevenue,M2,80
+CompanySplits,M2,80
+M2 receives 40
+Payout,Sven K.,40,1,100
+ 
+CompanyOperates,M3,Jupp
+LaysTileAt,M3,23,F18,SW
+CompanyRevenue,M3,80
+CompanySplits,M3,80
+M3 receives 40
+Payout,Jupp,40,1,100
+BuysTrain,M3,2+2,SX,171
+ 
+CompanyOperates,M4,Klaus-Jürgen
+LaysTileAt,M4,55,L8,SW
+CompanyRevenue,M4,100
+CompanySplits,M4,100
+M4 receives 50
+Payout,Klaus-Jürgen,50,1,100
+ 
+CompanyOperates,M5,Volker S
+LaysTileAt,M5,23,D14,W
+CompanyRevenue,M5,80
+CompanySplits,M5,80
+M5 receives 40
+Payout,Volker S,40,1,100
+BuysTrain,M5,2,BA,201
+ 
+CompanyOperates,M6,Klaus-Jürgen
+LaysTileAt,M6,58,B16,SE
+CompanyRevenue,M6,70
+CompanySplits,M6,70
+M6 receives 35
+Payout,Klaus-Jürgen,35,1,100
+ 
+CompanyOperates,BY,Volker S
+LaysTileAt,BY,16,I5,SE
+CompanyRevenue,BY,280
+CompanyPaysOutFull,BY,280
+Payout,Volker S,140,5,10
+Payout,Sven K.,84,3,10
+Payout,Jupp,28,1,10
+Payout,BY,28,1,10
+PRICE_MOVES_LOG,BY,106,G6,114,G5
+ 
+CompanyOperates,SX,Jupp
+LaysTileAt,SX,23,D18,NW
+CompanyRevenue,SX,280
+CompanyPaysOutFull,SX,280
+Payout,Sven K.,56,2,10
+Payout,Jupp,196,7,10
+Payout,Klaus-Jürgen,28,1,10
+PRICE_MOVES_LOG,SX,96,E5,104,F5
+ 
+CompanyOperates,BA,Volker S
+LaysTileAt,BA,204,H4,E
+CompanyRevenue,BA,230
+CompanyPaysOutFull,BA,230
+Payout,Volker S,115,5,10
+Payout,Jupp,23,1,10
+Payout,Sven K.,23,1,10
+PRICE_MOVES_LOG,BA,78,A4,84,B4
+ 
+CompanyOperates,WT,Klaus-Jürgen
+LaysTileAt,WT,69,M7,SE
+LAYS_TOKEN_ON,WT,I3,100
+CompanyRevenue,WT,140
+CompanyPaysOutFull,WT,140
+Payout,Klaus-Jürgen,70,5,10
+PRICE_MOVES_LOG,WT,78,A4,84,B4
+BuysTrain,WT,2,M4,1
+ 
+EndOfOperatingRound,5.2
+ORWorthIncrease,Klaus-Jürgen,5.2,336
+ORWorthIncrease,Jupp,5.2,357
+ORWorthIncrease,Volker S,5.2,380
+ORWorthIncrease,Sven K.,5.2,289
+Has,M1,165
+Has,M2,235
+Has,M3,0
+Has,M4,101
+Has,M5,0
+Has,M6,110
+Has,BY,362
+Has,SX,470
+Has,BA,328
+Has,WT,49
+Has,Klaus-Jürgen,498
+Has,Jupp,607
+Has,Volker S,580
+Has,Sven K.,544
+StartStockRound,6
+HasPriority,Volker S
+BUY_SHARE_LOG,Volker S,10,BY,Pool,114
+START_COMPANY_LOG,Sven K.,HE,84,168,2,20,BANK
+BUY_SHARE_LOG,Klaus-Jürgen,10,PR,IPO,154
+BUY_SHARE_LOG,Jupp,10,PR,IPO,154
+BUY_SHARE_LOG,Volker S,10,PR,IPO,154
+BUY_SHARE_LOG,Sven K.,10,HE,IPO,84
+BUY_SHARE_LOG,Klaus-Jürgen,10,WT,IPO,84
+PriceIsPaidTo,84,WT
+BUY_SHARE_LOG,Jupp,10,WT,IPO,84
+PriceIsPaidTo,84,WT
+BUY_SHARE_LOG,Volker S,10,BA,IPO,84
+PriceIsPaidTo,84,BA
+BUY_SHARE_LOG,Sven K.,20,BA,IPO,168
+PriceIsPaidTo,168,BA
+BUY_SHARE_LOG,Klaus-Jürgen,10,WT,IPO,84
+PriceIsPaidTo,84,WT
+BUY_SHARE_LOG,Jupp,20,WT,IPO,168
+PriceIsPaidTo,168,WT
+BUY_SHARE_LOG,Volker S,10,BY,Sven K.,171
+BUY_SHARE_LOG,Sven K.,10,HE,IPO,84
+PASSES,Klaus-Jürgen
+PASSES,Jupp
+Autopasses,Volker S
+BUY_SHARE_LOG,Sven K.,10,HE,IPO,84
+FloatsWithCash,HE,420
+CorrectionModeActivate,Klaus-Jürgen,CORRECT_CASH
+CorrectCashAddMoney,M1,5
+CorrectCashAddMoney,Klaus-Jürgen,5
+CorrectionModeDeactivate,Klaus-Jürgen,CORRECT_CASH
+PASSES,Klaus-Jürgen
+PASSES,Jupp
+Autopasses,Volker S
+BUY_SHARE_LOG,Sven K.,10,HE,IPO,84
+PriceIsPaidTo,84,HE
+PASSES,Klaus-Jürgen
+BUY_SHARE_LOG,Jupp,10,HE,IPO,84
+PriceIsPaidTo,84,HE
+Autopasses,Volker S
+SELL_SHARE_LOG,Sven K.,10,BA,84
+PRICE_MOVES_LOG,BA,84,B4,80,B5
+BUY_SHARE_LOG,Sven K.,10,HE,IPO,84
+PriceIsPaidTo,84,HE
+BUY_SHARE_LOG,Klaus-Jürgen,10,BA,Pool,80
+PASSES,Jupp
+Autopasses,Volker S
+PASSES,Sven K.
+PASSES,Klaus-Jürgen
+ 
+END_SR,6
+PRICE_MOVES_LOG,BY,114,G5,124,G4
+SoldOut,BY,114,G5,124,G4
+PRICE_MOVES_LOG,SX,104,F5,112,F4
+SoldOut,SX,104,F5,112,F4
+PRICE_MOVES_LOG,WT,84,B4,86,B3
+SoldOut,WT,84,B4,86,B3
+PRICE_MOVES_LOG,BA,80,B5,84,B4
+SoldOut,BA,80,B5,84,B4
+Has,M1,170
+Has,M2,235
+Has,M3,0
+Has,M4,101
+Has,M5,0
+Has,M6,110
+Has,BY,362
+Has,SX,470
+Has,BA,580
+Has,WT,469
+Has,HE,672
+Has,Klaus-Jürgen,101
+Has,Jupp,117
+Has,Volker S,57
+Has,Sven K.,43
+START_OR,6.1
+ReceivesFor,Sven K.,10,OBB
+ReceivesFor,Volker S,15,PfB
+ReceivesFor,Klaus-Jürgen,25,BB
+ReceivesFor,Sven K.,30,HB
+ 
+CompanyOperates,M1,Klaus-Jürgen
+LaysTileAt,M1,15,M9,W
+CompanyRevenue,M1,180
+CompanySplits,M1,180
+M1 receives 90
+Payout,Klaus-Jürgen,90,1,100
+ 
+CompanyOperates,M2,Sven K.
+LaysTileAt,M2,9,C17,NW
+CompanyRevenue,M2,80
+CompanySplits,M2,80
+M2 receives 40
+Payout,Sven K.,40,1,100
+BuysTrain,M2,3+3,IPO,270
+All 3+3-trains are sold out, 4-trains now available
+ 
+CompanyOperates,M3,Jupp
+CompanyRevenue,M3,140
+CompanySplits,M3,140
+M3 receives 70
+Payout,Jupp,70,1,100
+ 
+CompanyOperates,M4,Klaus-Jürgen
+LaysTileAt,M4,8,F8,W
+CompanyRevenue,M4,60
+CompanySplits,M4,60
+M4 receives 30
+Payout,Klaus-Jürgen,30,1,100
+BuysTrain,M4,3,M1,131
+ 
+CompanyOperates,M5,Volker S
+LaysTileAt,M5,9,D12,W
+CompanyRevenue,M5,160
+CompanySplits,M5,160
+M5 receives 80
+Payout,Volker S,80,1,100
+ 
+CompanyOperates,M6,Klaus-Jürgen
+LaysTileAt,M6,25,E17,NW
+CompanyRevenue,M6,70
+CompanySplits,M6,70
+M6 receives 35
+Payout,Klaus-Jürgen,35,1,100
+BuysTrain,M6,2,M1,145
+ 
+CompanyOperates,BY,Volker S
+LaysTileAt,BY,15,N12,NW
+CompanyRevenue,BY,290
+CompanyPaysOutFull,BY,290
+Payout,Volker S,203,7,10
+Payout,Jupp,29,1,10
+Payout,Sven K.,58,2,10
+PRICE_MOVES_LOG,BY,124,G4,138,H4
+BuysTrain,BY,4,IPO,360
+FirstTrainBought,4
+StartOfPhase,4
+TrainsRusted,2
+CompanyDiscardsTrain,M3,2+2
+StartFormationRound,PR
+StartingPlayer,Sven K.
+START_MERGED_COMPANY,PR,154,154
+FloatsWithCash,PR,616
+MERGE_MINOR_LOG,Sven K.,M2,PR,5,1
+GetShareForMinor,Sven K.,10,PR,IPO,M2
+ExchangesBaseToken,PR,M2,E19/1
+MERGE_MINOR_LOG,Klaus-Jürgen,M6,PR,0,0
+GetShareForMinor,Klaus-Jürgen,5,PR,IPO,M6
+ExchangesBaseToken,PR,M6,C11/1
+ 
+EndOfFormationRound,PR,OperatingRound 6.1
+IS_NOW_PRES_OF,Klaus-Jürgen,PR
+ 
+CompanyOperates,SX,Jupp
+LaysTileAt,SX,9,G17,SW
+CompanyRevenue,SX,210
+CompanyPaysOutFull,SX,210
+Payout,Sven K.,42,2,10
+Payout,Jupp,147,7,10
+Payout,Klaus-Jürgen,21,1,10
+PRICE_MOVES_LOG,SX,112,F4,124,G4
+BuysTrain,SX,4,IPO,360
+ 
+CompanyOperates,WT,Klaus-Jürgen
+LaysTileAt,WT,8,M11,SE
+CompanyRevenue,WT,150
+CompanyPaysOutFull,WT,150
+Payout,Jupp,45,3,10
+Payout,Klaus-Jürgen,105,7,10
+PRICE_MOVES_LOG,WT,86,B3,92,C3
+BuysTrain,WT,4,IPO,360
+All 4-trains are sold out, 4+4-trains now available
+BuysTrain,WT,3+3,PR,108
+ 
+CompanyOperates,HE,Sven K.
+LaysTileAt,HE,25,K13,W
+CompanyDoesNotPayDividend,HE
+PRICE_MOVES_LOG,HE,84,B4,78,A4
+BuysTrain,HE,3+3,WT,1
+BuysTrain,HE,4+4,IPO,440
+All 4+4-trains are sold out, 5-trains now available
+FirstTrainBought,4+4
+StartOfPhase,4+4
+TrainsRusted,2+2
+ 
+CompanyOperates,BA,Volker S
+LaysTileAt,BA,9,L10,SW
+CompanyRevenue,BA,140
+CompanyPaysOutFull,BA,140
+Payout,Volker S,84,6,10
+Payout,Jupp,14,1,10
+Payout,Sven K.,28,2,10
+Payout,Klaus-Jürgen,14,1,10
+PRICE_MOVES_LOG,BA,84,B4,88,C4
+BuysTrain,BA,3,BY,49
+ 
+EndOfOperatingRound,6.1
+ORWorthIncrease,Klaus-Jürgen,6.1,455
+ORWorthIncrease,Jupp,6.1,419
+ORWorthIncrease,Volker S,6.1,504
+ORWorthIncrease,Sven K.,6.1,380
+Has,M1,536
+Has,M3,70
+Has,M4,0
+Has,M5,80
+Has,BY,51
+Has,SX,110
+Has,BA,531
+Has,WT,2
+Has,HE,231
+Has,PR,729
+Has,Klaus-Jürgen,421
+Has,Jupp,422
+Has,Volker S,439
+Has,Sven K.,251
+StartFormationRound,PR
+MERGE_MINOR_LOG,Sven K.,HB,PR,no,no
+GetShareForMinor,Sven K.,10,PR,IPO,HB
+PrivateCloses,HB
+MERGE_MINOR_LOG,Klaus-Jürgen,BB,PR,no,no
+GetShareForMinor,Klaus-Jürgen,10,PR,IPO,BB
+PrivateCloses,BB
+MERGE_MINOR_LOG,Klaus-Jürgen,M4,PR,0,1
+GetShareForMinor,Klaus-Jürgen,10,PR,IPO,M4
+ExchangesBaseToken,PR,M4,G5/1
+ 
+EndOfFormationRoundNoInterrupt,PR
+START_OR,6.2
+ReceivesFor,Sven K.,10,OBB
+ReceivesFor,Volker S,15,PfB
+ 
+CompanyOperates,M1,Klaus-Jürgen
+LaysTileAt,M1,203,K11,W
+CompanyDoesNotPayDividend,M1
+BuysTrain,M1,5,IPO,500
+FirstTrainBought,5
+StartOfPhase,5
+PhaseClosesAllPrivates,
+PrivateCloses,OBB
+PrivateCloses,PfB
+StartFormationRound,PR
+MERGE_MINOR_LOG,Klaus-Jürgen,M1,PR,36,1
+GetShareForMinor,Klaus-Jürgen,5,PR,IPO,M1
+ExchangesBaseToken,PR,M1,H2/1
+MERGE_MINOR_LOG,Jupp,M3,PR,70,0
+GetShareForMinor,Jupp,5,PR,IPO,M3
+ExchangesBaseToken,PR,M3,F14/1
+MERGE_MINOR_LOG,Volker S,M5,PR,80,0
+GetShareForMinor,Volker S,5,PR,IPO,M5
+ 
+EndOfFormationRound,PR,OperatingRound 6.2
+ 
+CompanyOperates,PR,Klaus-Jürgen
+CompanyRevenue,PR,300
+CompanyPaysOutFull,PR,300
+NoIncomeForPreviousOperation,Klaus-Jürgen,5,PR
+Payout,Volker S,45,3,5
+Payout,Jupp,45,3,5
+Payout,Klaus-Jürgen,135,9,5
+Payout,Sven K.,60,4,5
+PRICE_MOVES_LOG,PR,154,I4,172,J4
