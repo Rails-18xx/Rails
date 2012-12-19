@@ -2,22 +2,29 @@
 <ComponentManager>
 	<Component name="GameManager" class="rails.game.GameManager">
 		<Game name="1851"/>
-		<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Deactivate" />
-		<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Deactivate" />
+		<GameOption name="RouteAwareness" values="Highlight,Deactivate"	default="Deactivate"/>
+		<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Deactivate"/>
 		<GameOption name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="Yellow Plain"/>
-		<GameOption name="NoMapMode" type="toggle" default="no" />
+		<GameOption name="NoMapMode" type="toggle" default="no"/>
 		<GameOption name="UnlimitedTopTrains" parm="8" type="toggle" default="no"/>
-        <GameOption name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
+		<GameOption name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
+		<GameOption name="TwoPlayersCertLimit70Percent" type="toggle" default="no"/>
 		<GameParameters>
-			<PlayerShareLimit percentage="60"/>
+			<PlayerShareLimit percentage="60">
+				<IfOption name="NumberOfPlayers" value="2">
+					<IfOption name="TwoPlayersCertLimit70Percent" value="yes">
+						<Attributes percentage="70"/>
+					</IfOption>
+				</IfOption>
+			</PlayerShareLimit>
 			<BankPoolLimit percentage="50"/>
 			<TreasuryShareLimit percentage="50"/>
 			<StockRound sequence="SellBuy">
 				<NoSaleIfNotOperated/>
 			</StockRound>
-            <OperatingRound>
-                <EmergencyTrainBuying mustBuyCheapestTrain="yes" mayBuyFromCompany="yes"/>
-            </OperatingRound>
+			<OperatingRound>
+				<EmergencyTrainBuying mustBuyCheapestTrain="yes" mayBuyFromCompany="yes"/>
+			</OperatingRound>
 		</GameParameters>
 		<EndOfGame>
 			<Bankruptcy/>
@@ -26,6 +33,7 @@
 		</EndOfGame>
 	</Component>
 	<Component name="PlayerManager" class="rails.game.PlayerManager">
+		<Players number="2" cash="650" certLimit="21"/>
 		<Players number="3" cash="500" certLimit="15"/>
 		<Players number="4" cash="430" certLimit="12"/>
 		<Players number="5" cash="400" certLimit="10"/>
@@ -34,57 +42,49 @@
 		<Bank amount="8040"/>
 		<Money format="$@"/>
 	</Component>
-	<Component name="TileManager" class="rails.game.TileManager" 
-		file="TileSet.xml"/>
+	<Component name="TileManager" class="rails.game.TileManager" file="TileSet.xml"/>
 	<Component name="Map" class="rails.game.MapManager" file="Map.xml"/>
-	<Component name="CompanyManager" class="rails.game.CompanyManager" 
-		file="CompanyManager.xml"/>
-	<Component name="StockMarket" class="rails.game.StockMarket" 
-		file="StockMarket.xml"/>
+	<Component name="CompanyManager" class="rails.game.CompanyManager" file="CompanyManager.xml"/>
+	<Component name="StockMarket" class="rails.game.StockMarket" file="StockMarket.xml"/>
 	<Component name="TrainManager" class="rails.game.TrainManager">
 		<Defaults>
 			<Reach base="stops" countTowns="yes"/>
-			<!-- Alternative values: 
-				base="hexes" for H-trains as in 1826, 1849 etc.
-				countTowns="no" for all trains in 1841, 18EU, etc.,
-				  where towns score but do not count against the train length.
-				  Otherwise, towns are counted as minor or major stops,
-				  depending on the presence or absence of a "minorStops" value.
-			-->
+			<!-- Alternative values: base="hexes" for H-trains as in 1826, 1849 etc. 
+				countTowns="no" for all trains in 1841, 18EU, etc., where towns score but 
+				do not count against the train length. Otherwise, towns are counted as minor 
+				or major stops, depending on the presence or absence of a "minorStops" value. -->
 			<Score towns="yes"/>
-			<!-- Alternative values:
-				towns="no" for trains that ignore towns (e.g. 1826 TGV).
-				cities="double" if city-revenue is doubled (e.g. 1826 TGV).
-			-->
+			<!-- Alternative values: towns="no" for trains that ignore towns (e.g. 
+				1826 TGV). cities="double" if city-revenue is doubled (e.g. 1826 TGV). -->
 		</Defaults>
 		<TrainType name="2" majorStops="2" cost="100" quantity="5"/>
 		<TrainType name="3" majorStops="3" cost="200" quantity="4">
-            <NewPhase phaseName="3"/>
+			<NewPhase phaseName="3"/>
 		</TrainType>
 		<TrainType name="4" majorStops="4" cost="300" quantity="3">
 			<NewPhase phaseName="4"/>
 		</TrainType>
 		<TrainType name="5" majorStops="5" cost="500" quantity="2">
-            <NewPhase phaseName="5"/>
-        </TrainType>
+			<NewPhase phaseName="5"/>
+		</TrainType>
 		<TrainType name="6" majorStops="6" cost="600" quantity="2">
-            <NewPhase phaseName="6"/>
-        </TrainType>
+			<NewPhase phaseName="6"/>
+		</TrainType>
 		<TrainType name="8" majorStops="8" cost="800" quantity="4">
-            <NewPhase phaseName="8"/>
-            <IfOption name="UnlimitedTopTrains" value="yes">
+			<NewPhase phaseName="8"/>
+			<IfOption name="UnlimitedTopTrains" value="yes">
 				<Attributes quantity="-1"/>
 			</IfOption>
-        </TrainType>
+		</TrainType>
 		<TrainBuyingRules>
 			<FaceValueIfDifferentPresidents/>
 		</TrainBuyingRules>
 	</Component>
 	<Component name="PhaseManager" class="rails.game.PhaseManager">
-		<!-- Note: released and rusted trains are now specified per TrainType
-			but could as well be moved here. To be sorted out when we do 18US. -->
+		<!-- Note: released and rusted trains are now specified per TrainType but
+			could as well be moved here. To be sorted out when we do 18US. -->
 		<!-- Each Phase's defaults are the previous one's values -->
-		<Phase name="2" >
+		<Phase name="2">
 			<Tiles colour="yellow"/>
 			<Privates sellingAllowed="no"/>
 			<OperatingRounds number="1"/>
@@ -102,7 +102,7 @@
 		</Phase>
 		<Phase name="5">
 			<Tiles colour="yellow,green,brown"/>
-            <Trains limitStep="3"/>
+			<Trains limitStep="3"/>
 			<Privates close="yes"/>
 			<OperatingRounds number="3"/>
 		</Phase>
@@ -115,8 +115,8 @@
 			<Trains rusted="4"/>
 		</Phase>
 	</Component>
-		<Component name="RevenueManager" class="rails.algorithms.RevenueManager">
-		<Modifier class="rails.game.specific._1851.OffBoardRevenueModifier_1851" />
-		<Modifier class="rails.game.specific._1851.BirminghamTileModifier" />
+	<Component name="RevenueManager" class="rails.algorithms.RevenueManager">
+		<Modifier class="rails.game.specific._1851.OffBoardRevenueModifier_1851"/>
+		<Modifier class="rails.game.specific._1851.BirminghamTileModifier"/>
 	</Component>
 </ComponentManager>
