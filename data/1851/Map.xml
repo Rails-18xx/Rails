@@ -1,4 +1,5 @@
 <Map tileOrientation="EW" letterOrientation="vertical" even="B">
+  <Image file="1851/MapImage.svg" x="-2" y="-1" scale="0.1634" />
 	<Hex name="@18" tile="-902" orientation="1" value="40,50,60" city="Cincinnati"/>
 	<Hex name="A3" tile="-901" orientation="5" value="40,50,70" city="St. Louis"/>
 	<Hex name="A5" tile="-10" orientation="1" city="East St. Louis"/>
