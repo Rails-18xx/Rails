@@ -45,7 +45,7 @@
 			longname="Memphis and Charleston Railroad">
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
-				<SpecialTileLay location="H5" extra="yes" free="yes"/>
+				<SpecialTileLay location="H3" extra="yes" free="yes"/>
 			</SpecialProperty>
 		</SpecialProperties>
 	</Company>
