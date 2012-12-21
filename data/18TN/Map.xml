@@ -1,5 +1,5 @@
 <Map tileOrientation="EW" letterOrientation="vertical" even="A">
-
+<Image file="18TN/MapImage.svg" x="-2" y="-1" scale="0.1634" />
 <Hex name="A16" tile="-902" city="Cincinnati" orientation="1" value="50,80"/>
 <Hex name="B13" tile="-10001" city="Louisville"/>
 <Hex name="B15" tile="0" cost="60" />
