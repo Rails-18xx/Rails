@@ -12,7 +12,7 @@
 <Hex name="C16" tile="-1" city="Danville"/>
 <Hex name="C18" tile="0" cost="60" />
 <Hex name="D5" tile="0" cost="60" />
-<Hex name="D7" tile="-10" cost="40" />
+<Hex name="D7" tile="-10" city="Paducah" cost="40" />
 <Hex name="D9" tile="0" />
 <Hex name="D11" tile="4" city="Bowling Green"/>
 <Hex name="D13" tile="0" />
@@ -39,8 +39,8 @@
 <Hex name="F17" tile="-10" city="Knoxville" cost="40" />
 <Hex name="F19" tile="0" cost="120" />
 <Hex name="F21" tile="0" cost="120" />
-<Hex name="G2" tile="0" />
-<Hex name="G4" tile="0" cost="60" />
+<Hex name="G2" tile="0" cost="60" />
+<Hex name="G4" tile="0" />
 <Hex name="G6" tile="6" city="Jackson"/>
 <Hex name="G8" tile="0" cost="40" />
 <Hex name="G10" tile="0" />
@@ -52,7 +52,7 @@
 <Hex name="H1" tile="-903" city="Little Rock" orientation="5" value="20,40"/>
 <Hex name="H3" tile="-10" city="Memphis" cost="60" />
 <Hex name="H5" tile="0" />
-<Hex name="H7" tile="-10" city="Corinth"/>
+<Hex name="H7" tile="-10" city="Corinth" cost="40" />
 <Hex name="H9" tile="0" cost="40" />
 <Hex name="H11" tile="0" cost="60" />
 <Hex name="H13" tile="0" cost="60" />
