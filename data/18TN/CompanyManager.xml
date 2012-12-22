@@ -4,7 +4,7 @@
 		<ClosingConditions>
             <Phase>5</Phase>
 		</ClosingConditions>
-		<Tradeable toCompany="yes" lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
+		<Tradeable toCompany="yes" lowerPriceFactor="0.5" upperPriceFactor="1.5"/>
 		<Tradeable toPlayer="yes"/>	
 	</CompanyType>
 	<CompanyType name="Public" class="rails.game.specific._18TN.PublicCompany_18TN">
