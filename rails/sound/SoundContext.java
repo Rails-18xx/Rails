@@ -109,12 +109,14 @@ public class SoundContext {
     synchronized public void notifyOfRound(RoundI newRound) {
         if (newRound != null && !newRound.equals(currentRound)) {
 
-            //play stock market opening bell if (non treasury) stock round became current round
+            //play stock market opening bell if (non treasury / non share selling)
+            //stock round became current round
             //and the round before was not
             if (SoundConfig.isSFXEnabled() 
                     && !(currentRound instanceof StockRound)
                     && newRound instanceof StockRound
-                    && !(newRound instanceof TreasuryShareRound)) {
+                    && !(newRound instanceof TreasuryShareRound)
+                    && !(newRound instanceof ShareSellingRound)) {
                 player.playSFXByConfigKey(SoundConfig.KEY_SFX_SR_OpeningBell);
             }
             
