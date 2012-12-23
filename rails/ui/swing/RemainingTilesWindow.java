@@ -55,7 +55,7 @@ ActionListener {
     private static final Color TILE_BACKGROUND = null;
     private static final Color TILE_BACKGROUND_HIGHLIGHTED = new Color(255,255,255);
     private DeferredTileHighlighter deferredTileHighlighter;
-    private static final long HIGHLIGHTING_DEFERRED_BY_MINISECS = 100;
+    private static final long HIGHLIGHTING_DEFERRED_BY_MINISECS = 200;
     
     protected static Logger log =
         Logger.getLogger(RemainingTilesWindow.class.getPackage().getName());
