@@ -9,5 +9,6 @@ map.displayCurrentRoutes=yes
 map.highlightHexes=yes
 ### parent
 profile.parent=pbem
+map.highlightUpgrades=yes
 ### cannot be derived
 profile.final=yes

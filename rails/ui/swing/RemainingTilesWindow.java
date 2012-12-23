@@ -1,16 +1,24 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/RemainingTilesWindow.java,v 1.8 2009/12/15 18:56:11 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/RemainingTilesWindotringw.java,v 1.8 2009/12/15 18:56:11 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.RescaleOp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 
 import org.apache.log4j.Logger;
 
+import rails.common.Config;
 import rails.common.LocalText;
 import rails.game.TileI;
 import rails.game.TileManager;
@@ -32,6 +40,23 @@ ActionListener {
     private List<Field> labels = new ArrayList<Field>();
     private List<TileI> shownTiles = new ArrayList<TileI>();
 
+    //The following mapping allows for looking up tiles / their graphical representation
+    //based on a tile name
+    private Map<Integer,Field> tileID_to_field;
+    private Map<Integer,ImageIcon> tileID_to_imageIcon;
+    private Map<Integer,ImageIcon> tileID_to_imageIconHighlighted;
+    private List<Integer> priorHighlightedTileIDs;
+    private List<Integer> currentHighlightedTileIDs;
+    private static final float HIGHLIGHT_RGB_SCALE_FACTOR = 1;
+    private static final float HIGHLIGHT_RGB_OFFSET = 50;
+    private static final Border TILE_BORDER = new EmptyBorder(6,3,3,3);
+    private static final Border TILE_BORDER_HIGHLIGHTED = new CompoundBorder(
+            new LineBorder(new Color(255,80,80),3),new EmptyBorder(3,0,0,0));
+    private static final Color TILE_BACKGROUND = null;
+    private static final Color TILE_BACKGROUND_HIGHLIGHTED = new Color(255,255,255);
+    private DeferredTileHighlighter deferredTileHighlighter;
+    private static final long HIGHLIGHTING_DEFERRED_BY_MINISECS = 100;
+    
     protected static Logger log =
         Logger.getLogger(RemainingTilesWindow.class.getPackage().getName());
 
@@ -65,7 +90,11 @@ ActionListener {
         }
     }
 
-    private void init(GameUIManager gameUIManager) {
+    /**
+     * Synchronized so that no highlighting occurs on a non ready tile list
+     * @param gameUIManager
+     */
+    synchronized private void init(GameUIManager gameUIManager) {
 
         TileManager tmgr = gameUIManager.getGameManager().getTileManager();
         TileI tile;
@@ -79,6 +108,14 @@ ActionListener {
         List<Integer> tileIds = tmgr.getTileIds();
         log.debug("There are " + tileIds.size() + " tiles known in this game");
 
+        tileID_to_field = new HashMap<Integer,Field>();
+        tileID_to_imageIcon = new HashMap<Integer,ImageIcon>();
+        tileID_to_imageIconHighlighted = new HashMap<Integer,ImageIcon>();
+        priorHighlightedTileIDs = new ArrayList<Integer>();
+        currentHighlightedTileIDs = new ArrayList<Integer>();
+        deferredTileHighlighter = new DeferredTileHighlighter();
+        deferredTileHighlighter.start();
+
         for (int tileId : tileIds) {
             if (tileId <= 0) continue;
 
@@ -91,16 +128,34 @@ ActionListener {
                     (int) (hexIcon.getIconWidth() * GUIHex.NORMAL_SCALE * 0.8),
                     (int) (hexIcon.getIconHeight() * GUIHex.NORMAL_SCALE * 0.8),
                     Image.SCALE_SMOOTH));
-
+            
+            //get highlighted version of the tile icon image
+            BufferedImage hexImageHighlighted = new BufferedImage(hexImage.getColorModel(), hexImage.copyData(null), hexImage.getColorModel().isAlphaPremultiplied(), null);
+            new RescaleOp(HIGHLIGHT_RGB_SCALE_FACTOR, HIGHLIGHT_RGB_OFFSET,null).filter(
+                    hexImage,hexImageHighlighted);
+            ImageIcon hexIconHighlighted = new ImageIcon(hexImageHighlighted);
+            hexIconHighlighted.setImage(hexIconHighlighted.getImage().getScaledInstance(
+                    (int) (hexIconHighlighted.getIconWidth() * GUIHex.NORMAL_SCALE * 0.8),
+                    (int) (hexIconHighlighted.getIconHeight() * GUIHex.NORMAL_SCALE * 0.8),
+                    Image.SCALE_SMOOTH));
+            
             label = new Field((ModelObject) tile, hexIcon, Field.CENTER);
             label.setVerticalTextPosition(Field.BOTTOM);
             label.setHorizontalTextPosition(Field.CENTER);
             label.setVisible(true);
+            if ("yes".equals(Config.get("map.highlightHexes"))) {
+                label.setBackground(TILE_BACKGROUND);
+                label.setBorder(TILE_BORDER);
+            }
 
             tilePanel.add(label);
             shownTiles.add(tile);
             labels.add(label);
 
+            //remember tile data for later highlighting
+            tileID_to_field.put(tileId, label);
+            tileID_to_imageIcon.put(tileId, hexIcon);
+            tileID_to_imageIconHighlighted.put(tileId, hexIconHighlighted);
         }
 
     }
@@ -178,6 +233,90 @@ ActionListener {
         }
         public void setParentSlider(JScrollPane parentSlider) {
             this.parentSlider = parentSlider;
+        }
+    }
+
+    /**
+     * Synchronized so that highlighting requests are processed one-by-one
+     * @param upgrades Tiles to be highlighted (any tile not listed is not highlighted, even if it was before)
+     */
+    synchronized public void setHighlightedTiles(List<TileI> upgrades) {
+        //ignore if not yet initialized
+        if (tileID_to_field == null) return;
+        
+        List<Integer> requestedTileIDs = new ArrayList<Integer>();
+        if (upgrades != null) {
+            for (TileI upgrade : upgrades) {
+                requestedTileIDs.add(upgrade.getId());
+            }
+        }
+
+        // ensure that actually something has to be done
+        if (requestedTileIDs.equals(currentHighlightedTileIDs)) return;
+
+        currentHighlightedTileIDs = requestedTileIDs;
+
+        // schedule the deferred highlighting
+        synchronized (deferredTileHighlighter) {
+            deferredTileHighlighter.notify();
+        }
+    }
+
+    synchronized public void executeHighlighting() {
+        for (int tileID : priorHighlightedTileIDs) {
+            if (!currentHighlightedTileIDs.contains(tileID)) {
+                //remove highlighting
+                Field f = tileID_to_field.get(tileID);
+                f.setIcon(tileID_to_imageIcon.get(tileID));
+                f.setBackground(TILE_BACKGROUND);
+                f.setBorder(TILE_BORDER);
+            }
+        }
+        for (int tileID : currentHighlightedTileIDs) {
+            if (!priorHighlightedTileIDs.contains(tileID)) {
+                //add highlighting
+                Field f = tileID_to_field.get(tileID);
+                f.setIcon(tileID_to_imageIconHighlighted.get(tileID));
+                f.setBackground(TILE_BACKGROUND_HIGHLIGHTED);
+                f.setBorder(TILE_BORDER_HIGHLIGHTED);
+            }
+        }
+
+        priorHighlightedTileIDs = currentHighlightedTileIDs;
+    }
+    
+    /**
+     * Performs the highlighting only if no other set of tiles has been chosen
+     * to be highlighted in the meantime.
+     * 
+     * Such deferred highlighting is necessary since otherwise rapid mouse
+     * movements over the map lead to slower response times for the map's hex
+     * highlighting.
+     * 
+     * @author Frederick Weld
+     *
+     */
+    private class DeferredTileHighlighter extends Thread {
+        @Override
+        synchronized public void run() {
+            while (true) {
+                //wait for next highlighting request
+                try {
+                    wait();
+                } catch (InterruptedException e) {}
+                
+                //defer highlighting until request has been stable for the specified deferral time
+                List<Integer> currentRequest = null;
+                while (!currentHighlightedTileIDs.equals(currentRequest)) {
+                    currentRequest = currentHighlightedTileIDs;
+                    try {
+                        wait(HIGHLIGHTING_DEFERRED_BY_MINISECS);
+                    } catch (InterruptedException e) {
+                        //apparently not thrown even if notified, hence loop check based on request content
+                    }
+                }
+                executeHighlighting();
+            }
         }
     }
 

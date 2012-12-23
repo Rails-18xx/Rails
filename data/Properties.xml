@@ -33,6 +33,7 @@
 		<Property name="map.image.display" type="BOOLEAN" />
 		<Property name="map.displayCurrentRoutes" type="BOOLEAN" />
 		<Property name="map.highlightHexes" type="BOOLEAN" />
+		<Property name="map.highlightUpgrades" type="BOOLEAN" />
 	</Section>
 	<Section name="Windows">
 		<Property name="report.window.type" type="LIST" values="static,dynamic" />

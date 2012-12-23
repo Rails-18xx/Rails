@@ -86,8 +86,9 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
             
             //initialize remaining tile panel as it is no optional part in the docking layout
             splashWindow.notifyOfStep(SplashWindow.STEP_OR_INIT_TILES);
-            JScrollPane remainingTilesPanelSlider = 
-                    new RemainingTilesWindow(this).getScrollPane();
+            RemainingTilesWindow rtw = new RemainingTilesWindow(this);
+            orUIManager.setRemainingTilesWindows(rtw);
+            JScrollPane remainingTilesPanelSlider = rtw.getScrollPane();
             
             //generate layout
             splashWindow.notifyOfStep(SplashWindow.STEP_OR_APPLY_DOCKING_FRAME);
