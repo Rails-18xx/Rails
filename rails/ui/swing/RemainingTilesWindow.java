@@ -45,8 +45,6 @@ ActionListener {
     private Map<Integer,Field> tileID_to_field;
     private Map<Integer,ImageIcon> tileID_to_imageIcon;
     private Map<Integer,ImageIcon> tileID_to_imageIconHighlighted;
-    private List<Integer> priorHighlightedTileIDs;
-    private List<Integer> currentHighlightedTileIDs;
     private static final float HIGHLIGHT_RGB_SCALE_FACTOR = 1;
     private static final float HIGHLIGHT_RGB_OFFSET = 50;
     private static final Border TILE_BORDER = new EmptyBorder(6,3,3,3);
@@ -111,8 +109,6 @@ ActionListener {
         tileID_to_field = new HashMap<Integer,Field>();
         tileID_to_imageIcon = new HashMap<Integer,ImageIcon>();
         tileID_to_imageIconHighlighted = new HashMap<Integer,ImageIcon>();
-        priorHighlightedTileIDs = new ArrayList<Integer>();
-        currentHighlightedTileIDs = new ArrayList<Integer>();
         deferredTileHighlighter = new DeferredTileHighlighter();
         deferredTileHighlighter.start();
 
@@ -251,40 +247,10 @@ ActionListener {
             }
         }
 
-        // ensure that actually something has to be done
-        if (requestedTileIDs.equals(currentHighlightedTileIDs)) return;
-
-        currentHighlightedTileIDs = requestedTileIDs;
-
         // schedule the deferred highlighting
-        synchronized (deferredTileHighlighter) {
-            deferredTileHighlighter.notify();
-        }
+        deferredTileHighlighter.setHighlightedTiles(requestedTileIDs);
     }
 
-    synchronized public void executeHighlighting() {
-        for (int tileID : priorHighlightedTileIDs) {
-            if (!currentHighlightedTileIDs.contains(tileID)) {
-                //remove highlighting
-                Field f = tileID_to_field.get(tileID);
-                f.setIcon(tileID_to_imageIcon.get(tileID));
-                f.setBackground(TILE_BACKGROUND);
-                f.setBorder(TILE_BORDER);
-            }
-        }
-        for (int tileID : currentHighlightedTileIDs) {
-            if (!priorHighlightedTileIDs.contains(tileID)) {
-                //add highlighting
-                Field f = tileID_to_field.get(tileID);
-                f.setIcon(tileID_to_imageIconHighlighted.get(tileID));
-                f.setBackground(TILE_BACKGROUND_HIGHLIGHTED);
-                f.setBorder(TILE_BORDER_HIGHLIGHTED);
-            }
-        }
-
-        priorHighlightedTileIDs = currentHighlightedTileIDs;
-    }
-    
     /**
      * Performs the highlighting only if no other set of tiles has been chosen
      * to be highlighted in the meantime.
@@ -293,10 +259,19 @@ ActionListener {
      * movements over the map lead to slower response times for the map's hex
      * highlighting.
      * 
+     * The methods are all synchronized to ensure that new highlight requests
+     * are only added if no highlighting is currently performed.
+     * 
      * @author Frederick Weld
      *
      */
     private class DeferredTileHighlighter extends Thread {
+        private List<Integer> priorHighlightedTileIDs;
+        private List<Integer> currentHighlightedTileIDs;
+        public DeferredTileHighlighter() {
+            priorHighlightedTileIDs = new ArrayList<Integer>();
+            currentHighlightedTileIDs = new ArrayList<Integer>();
+        }
         @Override
         synchronized public void run() {
             while (true) {
@@ -318,6 +293,40 @@ ActionListener {
                 executeHighlighting();
             }
         }
+
+        synchronized public void setHighlightedTiles(List<Integer> requestedTileIDs) {
+            // ensure that actually something has to be done
+            if (requestedTileIDs.equals(currentHighlightedTileIDs)) return;
+
+            currentHighlightedTileIDs = requestedTileIDs;
+
+            // schedule the deferred highlighting (meaning wait in run-method is interrupted)
+            this.notify();
+        }
+
+        synchronized public void executeHighlighting() {
+            for (int tileID : priorHighlightedTileIDs) {
+                if (!currentHighlightedTileIDs.contains(tileID)) {
+                    //remove highlighting
+                    Field f = tileID_to_field.get(tileID);
+                    f.setIcon(tileID_to_imageIcon.get(tileID));
+                    f.setBackground(TILE_BACKGROUND);
+                    f.setBorder(TILE_BORDER);
+                }
+            }
+            for (int tileID : currentHighlightedTileIDs) {
+                if (!priorHighlightedTileIDs.contains(tileID)) {
+                    //add highlighting
+                    Field f = tileID_to_field.get(tileID);
+                    f.setIcon(tileID_to_imageIconHighlighted.get(tileID));
+                    f.setBackground(TILE_BACKGROUND_HIGHLIGHTED);
+                    f.setBorder(TILE_BORDER_HIGHLIGHTED);
+                }
+            }
+
+            priorHighlightedTileIDs = currentHighlightedTileIDs;
+        }
+        
     }
 
 }
