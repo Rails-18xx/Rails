@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GameOptions>
+    <!--  Check if Clements is correct as default -->
+	<GameOption name="Variant" values="Standard,Clemens,Snake" default="Clemens"/>
+	<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
+	<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
+	<GameOption name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
+	<GameOption name="NoMapMode" type="toggle" default="no" />
+	<GameOption name="BYFloatsAt" values="50%,20%" default="50%"/>
+	<GameOption name="LDIncome" values="20M,30M" default="20M"/>
+	<GameOption name="MinorsRequireFloatedBY" type="toggle" default="no"/>
+</GameOptions>

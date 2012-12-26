@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GameOptions>
+	<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
+	<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
+	<GameOption name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
+<!--		<Option name="NoMapMode" type="toggle" default="no" /> -->
+	<GameOption name="UnlimitedBonusTokens" type="toggle" default="no"/>
+	<GameOption name="LeaveAuctionOnPass" type="toggle" default="no"/>
+	<GameOption name="TwoPlayersCertLimit70Percent" type="toggle" default="yes"/>
+	<GameOption name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
+	<GameOption name="1856THBHomeBlocked" type="toggle" default="no" />
+	<GameOption name="1856AlternateTrains" type="toggle" default="no" />
+	<GameOption name="1856AlternateDestinations" type="toggle" default="no" />
+</GameOptions>

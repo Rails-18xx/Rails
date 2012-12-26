@@ -2,16 +2,6 @@
 <ComponentManager>
 	<Component name="GameManager" class="rails.game.GameManager">
 		<Game name="18AL"/>
-		<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Deactivate" />
-		<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Deactivate" />
-		<GameOption name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
-		<GameOption name="NoMapMode" type="toggle" default="no" />
-		<GameOption name ="18ALOptimizeNamedTrains" default="no"/>
-		<GameOption name="UnlimitedTopTrains" parm="4D" type="toggle" default="no"/>
-		<GameOption name="Obsolete4Trains" type="toggle" default="yes"/>
-		<GameOption name="LeaveAuctionOnPass" type="toggle" default="no"/>
-        <GameOption name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
-		<GameOption name="TwoPlayersCertLimit70Percent" type="toggle" default="yes"/>
 		<GameParameters>
 			<OperatingRound class="rails.game.specific._18AL.OperatingRound_18AL"/>
 			<PlayerShareLimit percentage="60">

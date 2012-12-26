@@ -2,32 +2,6 @@
 <ComponentManager>
 	<Component name="GameManager" class="rails.game.GameManager">
 		<Game name="1830"/>
-		<!-- GAME OPTIONS must have:
-			- a name, which must also exist as an entry in LocalText.properties,
-			- optionally 'type="toggle"', which has the effect that the
-			  selection uses a checkbox instead of a dropdown list.
-			  In this case, 'values' must be absent 
-			  (the allowed values are fixed to "yes,no").
-			- optionally, 'values="a,b,c"' i,e, a list of allowed values.
-			- optionally, a default value (only affects a toggle;
-			  in a dropdown the first item is always the default).
-		-->
-		<!-- The options in Game.xml are not currently used.
-			 See GamesList.xml for the real ones.
-		--> 
-		<GameOption name="Variant" values="Basegame,Pere Marquette,Coalfields,Reading,Coalfields&amp;Reading,Simple,Wabash" default="Basegame" />
-		<GameOption name="NoMapMode" type="toggle" default="no" />
-		<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Deactivate" />
-		<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Deactivate" />
-		<GameOption name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
-		<GameOption name="BeginnerGame" type="toggle" default="no" />
-		<GameOption name="WithOptional6Train" type="toggle" default="no"/>
-		<GameOption name="UnlimitedTopTrains" parm="D" type="toggle" default="no"/>
-		<GameOption name="LeaveAuctionOnPass" type="toggle" default="no"/>
-		<GameOption name="TwoPlayersCertLimit70Percent" type="toggle" default="yes"/>
-        <GameOption name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
-        <GameOption name="C&amp;ACertificate(ReadingOnly)" values="PRR,RDG" default="PRR"/>
-
 		<GameParameters>
 			<PlayerShareLimit percentage="60">
 				<!-- Option "NumberOfPlayers" is automatically set 

@@ -2,13 +2,6 @@
 <ComponentManager>
 	<Component name="GameManager" class="rails.game.GameManager">
 		<Game name="18TN"/>
-		<GameOption name="NoMapMode" type="toggle" default="no" />
-		<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
-		<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
-		<GameOption name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
-		<GameOption name="UnlimitedTopTrains" parm="8" type="toggle" default="no"/>
-		<GameOption name="LeaveAuctionOnPass" type="toggle" default="no"/>
-		<GameOption name="TwoPlayersCertLimit70Percent" type="toggle" default="yes"/>
 		<GameParameters>
 			<PlayerShareLimit percentage="60">
 				<!-- Option "NumberOfPlayers" is automatically set 

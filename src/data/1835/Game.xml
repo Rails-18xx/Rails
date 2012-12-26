@@ -3,14 +3,6 @@
 	<!--Component name="GameManager"  class="rails.game.GameManager"-->
 	<Component name="GameManager"  class="rails.game.specific._1835.GameManager_1835">
 		<Game name="1835"/>
-		<GameOption name="Variant" values="Standard,Clemens,Snake"/>
-		<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Deactivate" />
-		<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Deactivate" />
-		<GameOption name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
-		<GameOption name="NoMapMode" type="toggle" default="no" />
-		<GameOption name="BYFloatsAt" values="50%,20%" default="50%"/>
-		<GameOption name="LDIncome" values="20M,30M" default="20M"/>
-		<GameOption name="MinorsRequireFloatedBY" type="toggle" default="no"/>
 		<GameParameters>
 			<PlayerShareLimit percentage="100"/>
 			<BankPoolLimit percentage="50"/>

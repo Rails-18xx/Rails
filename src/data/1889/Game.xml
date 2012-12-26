@@ -15,14 +15,6 @@
 		<!-- The options in Game.xml are not currently used.
 			 See GamesList.xml for the real ones.
 		--> 
-		<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Deactivate" />
-		<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Deactivate" />
-		<GameOption name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
-		<GameOption name="NoMapMode" type="toggle" default="no" />
-        <GameOption name="BeginnerGame" type="toggle" default="no" />
-		<GameOption name="UnlimitedTopTrains" parm="D" type="toggle" default="yes"/>
-		<GameOption name="TwoPlayersCertLimit70Percent" type="toggle" default="yes"/>
-        <GameOption name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
 		<GameParameters>
 			<PlayerShareLimit percentage="60">
 				<!-- Option "NumberOfPlayers" is automatically set 

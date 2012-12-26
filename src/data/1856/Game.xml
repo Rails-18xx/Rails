@@ -2,17 +2,6 @@
 <ComponentManager>
 	<Component name="GameManager" class="rails.game.specific._1856.GameManager_1856">
 		<Game name="1856"/>
-		<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Deactivate" />
-		<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Deactivate" />
-		<GameOption name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
-	<!--		<Option name="NoMapMode" type="toggle" default="no" /> -->
-		<GameOption name="UnlimitedBonusTokens" type="toggle" default="no"/>
-		<GameOption name="LeaveAuctionOnPass" type="toggle" default="no"/>
-		<GameOption name="TwoPlayersCertLimit70Percent" type="toggle" default="yes"/>
-        <GameOption name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
-        <GameOption name="1856THBHomeBlocked" type="toggle" default="no" />
-        <GameOption name="1856AlternateTrains" type="toggle" default="no" />
-        <GameOption name="1856AlternateDestinations" type="toggle" default="no" />
 		<GameParameters>
 			<StockRound class="rails.game.specific._1856.StockRound_1856" 
 				sequence="SellBuyOrBuySell">

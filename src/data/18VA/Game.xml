@@ -2,19 +2,6 @@
 <ComponentManager>
 	<Component name="GameManager" class="rails.game.GameManager">
 		<Game name="18VA"/>
-		<!-- GAME OPTIONS must have:
-		- a name, which must also exist as an entry in LocalText.properties,
-		- optionally 'type="toggle"', which has the effect that the
-		selection uses a checkbox instead of a dropdown list.
-		In this case, 'values' must be absent 
-		(the allowed values are fixed to "yes,no").
-		- optionally, 'values="a,b,c"' i,e, a list of allowed values.
-		- optionally, a default value (only affects a toggle;
-		in a dropdown the first item is always the default).
-		-->
-		<!-- The options in Game.xml are not currently used.
-		See GamesList.xml for the real ones.
-		-->
 		<GameParameters>
 			<PlayerShareLimit percentage="60">
 				<!-- Option "NumberOfPlayers" is automatically set 

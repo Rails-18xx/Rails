@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GameOptions>
+	<GameOption name="Include" parm="Unit1" type="toggle" default="yes"/>
+	<GameOption name="Include" parm="Unit2" type="toggle" default="no"/>
+	<GameOption name="Include" parm="Unit3" type="toggle" default="no"/>
+	<GameOption name="Include" parm="R1" type="toggle" default="no"/>
+	<GameOption name="Include" parm="R2" type="toggle" default="no"/>
+	<GameOption name="Include" parm="R3" type="toggle" default="no"/>
+	<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Deactivate" />
+	<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Deactivate" />
+	<GameOption name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
+	<GameOption name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
+</GameOptions>

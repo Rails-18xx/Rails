@@ -22,7 +22,6 @@ public class GameOption {
     private static final Pattern PATTERN = Pattern.compile("\\{(.*)\\}");
     // Strings that define yes or no options
     private static final String OPTION_VALUE_YES = "yes";
-    private static final String OPTION_VALUE_NO = "no";
     
     // Static Data
     private final String name;
@@ -124,13 +123,10 @@ public class GameOption {
             return "";
         }
     }
-
-    /** Get GameOption Value as Boolean Value */
-    public static boolean convertValueToBoolean(String value) {
-        return value != null
-            && OPTION_VALUE_YES.equalsIgnoreCase(value);
-    }
     
+    /**
+     * Returns the value of the gameOption in a game which contains the RailItem
+     */
     public static String getValue(RailsItem item, String gameOption) {
         // check the System properties for overwrites first
         if (Util.hasValue(System.getProperty(gameOption))) {
@@ -140,6 +136,10 @@ public class GameOption {
         }
     }
     
+    /**
+     * Returns the boolean value of the gameOption in a game which contains the RailItem
+     * If not defined as in OPTION_VALUE_YES, it returns false 
+     */
     public static boolean getAsBoolean(RailsItem item, String gameOption) {
         String value = getValue(item, gameOption);
         return value != null && OPTION_VALUE_YES.equalsIgnoreCase(value);

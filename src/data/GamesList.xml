@@ -13,27 +13,6 @@ Limitations:
 - The M&amp;H/NYC share swap can only be executed in the SR, in the owning player's turn.
 - Privates cannot be traded between players.
 		</Description>
-		<!-- GAME OPTIONS must have:
-			- a name, which must also exist as an entry in LocalText.properties,
-			- optionally 'type="toggle"', which has the effect that the
-			  selection uses a checkbox instead of a dropdown list.
-			  In this case, 'values' must be absent 
-			  (the allowed values are fixed to "yes,no").
-			- optionally, 'values="a,b,c"' i,e, a list of allowed values.
-			- optionally, a default value (only affects a toggle;
-			  in a dropdown the first item is always the default).
-		-->
-		<Option name="Variant" values="Basegame,Pere Marquette,Coalfields,Reading,Coalfields&amp;Reading,Simple,Wabash" default="Basegame" />
-		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
-		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
-		<Option name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
-		<Option name="NoMapMode" type="toggle" default="no" />
-		<Option name="WithOptional6Train" type="toggle" default="no"/>
-		<Option name="UnlimitedTopTrains" parm="D" type="toggle" default="no"/>
-		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
-		<Option name="TwoPlayersCertLimit70Percent" type="toggle" default="no"/>
-		<Option name="C&amp;ACertificate(ReadingOnly)" values="PRR,RDG" default="PRR" ></Option>
-		<Option name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
 		<Players minimum="2" maximum="6"/>
 	</Game>
 
@@ -52,14 +31,6 @@ Known limitations:
 	- OBB and PfB do not always close when required. 
 	  Workaround: close minor via the Special menu.
 		</Description>
-		<Option name="Variant" values="Standard,Clemens,Snake"/>
-		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
-		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
-		<Option name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
-		<Option name="NoMapMode" type="toggle" default="no" />
-		<Option name="BYFloatsAt" values="50%,20%" default="50%"/>
-		<Option name="LDIncome" values="20M,30M" default="20M"/>
-		<Option name="MinorsRequireFloatedBY" type="toggle" default="no"/>
 		<Players minimum="3" maximum="7"/>
 	</Game>
 
@@ -71,12 +42,6 @@ Known limitations:
 Limitation:
 - No random assignment of private companies (players should do this off-line and enter the result)
 		</Description>
-		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
-		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
-		<Option name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="Yellow Plain"/>
-		<Option name="NoMapMode" type="toggle" default="no" />
-		<Option name="UnlimitedTopTrains" parm="8" type="toggle" default="no"/>
-        <Option name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
 		<Players minimum="3" maximum="5"/>
 	</Game>
 
@@ -90,17 +55,6 @@ Limitation:
 - The restriction that shares cannot be sold in the same round that these are bought is not enforced.
 - The alternate destinations for VA amd TGB are not shown correctly (only one hex)
 		</Description>
-		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
-		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
-		<Option name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
-		<!--		<Option name="NoMapMode" type="toggle" default="no" /> -->
-		<Option name="UnlimitedBonusTokens" type="toggle" default="no"/>
-		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
-        <Option name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
-        <Option name="1856THBHomeBlocked" type="toggle" default="no" />
-		<Option name="TwoPlayersCertLimit70Percent" type="toggle" default="no"/>
-        <Option name="1856AlternateTrains" type="toggle" default="no" />
-        <Option name="1856AlternateDestinations" type="toggle" default="no" />
        	<Players minimum="2" maximum="6"/>
 	</Game>
 
@@ -114,14 +68,6 @@ Limitation:
 - Privates cannot be traded between players.
 		</Description>
 		<Players minimum="2" maximum="6"/>
-		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
-		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
-		<Option name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
-		<Option name="NoMapMode" type="toggle" default="no" />
-        <Option name="BeginnerGame" type="toggle" default="no" />
-		<Option name="UnlimitedTopTrains" parm="D" type="toggle" default="yes"/>
-		<Option name="TwoPlayersCertLimit70Percent" type="toggle" default="no"/>
-        <Option name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
 	</Game>
 	
 	<Game name="18AL">
@@ -135,16 +81,6 @@ Both the original and the final version (without/with delayed 4-train obsolescen
 Limitation: 
 - Privates cannot be traded between players.
 		</Description>
-		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
-		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
-		<Option name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
-		<Option name="NoMapMode" type="toggle" default="no" />
-		<Option name ="18ALOptimizeNamedTrains"  type="toggle" default="yes"/>
-		<Option name="UnlimitedTopTrains" parm="4D" type="toggle" default="no"/>
-		<Option name="Obsolete4Trains" type="toggle" default="yes"/>
-		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
-        <Option name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
-		<Option name="TwoPlayersCertLimit70Percent" type="toggle" default="no"/>
 		<Players minimum="2" maximum="5"/>
 	</Game>
 
@@ -157,12 +93,6 @@ Published 2004 by Deep Thought Games, LLC
 Not yet implemented:
 - Bankruptcy rules (game currently hangs when a player goes bankrupt)
 		</Description>
-		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
-		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
-		<Option name="Extra3Trains" values="0,1,2" default="0"/>
-		<Option name="Extra4Trains" values="0,1" default="0"/>
-		<Option name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
-		<Option name="NoMapMode" type="toggle" default="no" />
 		<Players minimum="2" maximum="6"/>
 	</Game>
 
@@ -170,14 +100,6 @@ Not yet implemented:
         <Note>Fully playable</Note>
         <Description>18GA - The Railroads Come to Georgia
         Copyright 2000, 2007, Mark Derrick and John David Galt</Description>
-		<Option name="Variant" values="Basegame,Cotton Port" default="Basegame" />
-		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
-		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
-		<Option name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
-		<Option name="NoMapMode" type="toggle" default="no" />
-		<Option name="UnlimitedTopTrains" parm="8" type="toggle" default="no"/>
-		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
-		<Option name="TwoPlayersCertLimit70Percent" type="toggle" default="no"/>
         <Players minimum="2" maximum="5"/>
     </Game>
 
@@ -188,17 +110,6 @@ Not yet implemented:
 
 Should work, but has not been extensively tested. Limitations as with 1830.
 		</Description>
-        <Option name="VersionOf" parm="{MAP}" values="v1,v2" default="v2" />
-        <!-- Note: a parameter in braces {...} will be localised for display-->
-		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
-		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
-		<Option name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
-		<Option name="18KaasRuhrgebiedDoublesOnlyMajors" type="toggle" default="yes" />
-		<Option name="NoMapMode" type="toggle" default="no" />
-		<Option name="WithOptional6Train" type="toggle" default="no"/>
-		<Option name="UnlimitedTopTrains" parm="D" type="toggle" default="no"/>
-		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
-        <Option name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
 		<Players minimum="3" maximum="6"/>
 	</Game>
     
@@ -209,13 +120,6 @@ Should work, but has not been extensively tested. Limitations as with 1830.
         Published by Deep Thought Games, LLC
         
         </Description>
-		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
-		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
-		<Option name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
-		<Option name="NoMapMode" type="toggle" default="no" />
-		<Option name="UnlimitedTopTrains" parm="8" type="toggle" default="no"/>
-		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
-		<Option name="TwoPlayersCertLimit70Percent" type="toggle" default="no"/>
         <Players minimum="2" maximum="5"/>
     </Game>
 
@@ -227,8 +131,6 @@ Should work, but has not been extensively tested. Limitations as with 1830.
         - Frau Waas baking Gugelhupf not implemented
         - Bidding for start position not implemented
         </Description>
-		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
-		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
         <Players minimum="2" maximum="4"/>
     </Game>
 	 
@@ -241,10 +143,6 @@ Designed by Bill Dixon
 Limitations:
 All aspects not present in 1830 have not been implemented yet.
 		</Description>
-		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
-		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
-		<Option name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
-		<Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
 		<Players minimum="2" maximum="6"/>
 	</Game>
 	
@@ -281,16 +179,6 @@ Known Issues:
 - Not implemented: receivership
 </Description>
     <Players minimum="3" maximum="5" />
-	    <Option name="Include" parm="Unit1" type="toggle" default="yes"/>
-        <Option name="Include" parm="Unit2" type="toggle" default="no"/>
-        <Option name="Include" parm="Unit3" type="toggle" default="no"/>
-        <Option name="Include" parm="R1" type="toggle" default="no"/>
-        <Option name="Include" parm="R2" type="toggle" default="no"/>
-        <Option name="Include" parm="R3" type="toggle" default="no"/>
-		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
-		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
-		<Option name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
-		<Option name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
   </Game>
    <Game name="1826">
     <Note>Prototype</Note>
