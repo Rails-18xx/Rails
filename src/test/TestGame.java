@@ -2,16 +2,16 @@ package test;
 
 import java.io.File;
 import java.io.FileReader;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableList;
+
 import rails.common.Config;
 import rails.game.RailsRoot;
-import rails.game.ReportBuffer;
 
 import junit.framework.TestCase;
 
@@ -82,10 +82,12 @@ public class TestGame extends TestCase {
         if (reportFile.exists()) {
             log.debug("Found reportfile at " + reportFilename);
                 Scanner reportScanner = new Scanner(new FileReader(reportFilename));
-                expectedReport = new ArrayList<String>();
-                while (reportScanner.hasNext())
-                    expectedReport.add(reportScanner.nextLine());
+                ImmutableList.Builder<String> report = ImmutableList.builder();
+                while (reportScanner.hasNext()) {
+                    report.add(reportScanner.nextLine());
+                }
                 reportScanner.close();
+                expectedReport = report.build();
         } else {
             log.debug("Did not find reportfile at " + reportFilename);
         }
@@ -99,7 +101,7 @@ public class TestGame extends TestCase {
             log.debug("Found gamefile at " + gameFilename);
             RailsRoot testGame = RailsRoot.load(gameFilename);
             if (testGame != null) {
-                testReport = ReportBuffer.getAsList();
+                testReport = testGame.getReportBuffer().getReportQueue();
 //                NDC.clear(); // remove reference to GameManager
             }
         } else {
@@ -121,8 +123,8 @@ public class TestGame extends TestCase {
             }
         }
         super.tearDown();
-        testReport.clear();
-        expectedReport.clear();
+        testReport = null;
+        expectedReport = null;
     }
 
 }

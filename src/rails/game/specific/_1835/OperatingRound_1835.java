@@ -21,9 +21,7 @@ import rails.game.action.DiscardTrain;
 import rails.game.action.LayTile;
 import rails.game.special.ExchangeForShare;
 import rails.game.special.SpecialProperty;
-import rails.game.special.SpecialTileLay;
 import rails.game.state.BooleanState;
-import rails.game.state.ChangeStack;
 import rails.game.state.HashMapState;
 import rails.game.state.Owner;
 
@@ -71,9 +69,9 @@ public class OperatingRound_1835 extends OperatingRound {
                 if (priv.getOwner() instanceof MoneyOwner) {
                     Owner recipient = priv.getOwner();
                     int revenue = priv.getRevenueByPhase(getCurrentPhase()); // sfy 1889: revenue by phase
-                    if (count++ == 0) ReportBuffer.add("");
+                    if (count++ == 0) ReportBuffer.add(this, "");
                     String revText = Currency.fromBank(revenue, (MoneyOwner)recipient);
-                    ReportBuffer.add(LocalText.getText("ReceivesFor",
+                    ReportBuffer.add(this, LocalText.getText("ReceivesFor",
                             recipient.getId(),
                             revText,
                             priv.getId()));
@@ -125,7 +123,7 @@ public class OperatingRound_1835 extends OperatingRound {
                 int share = deniedIncomeShare.get(player);
                 int shares = share / operatingCompany.value().getShareUnit();
                 sharesPerRecipient.put (player, sharesPerRecipient.get(player) - shares);
-                ReportBuffer.add(LocalText.getText("NoIncomeForPreviousOperation",
+                ReportBuffer.add(this, LocalText.getText("NoIncomeForPreviousOperation",
                         player.getId(),
                         share,
                         GameManager_1835.PR_ID));
@@ -220,13 +218,13 @@ public class OperatingRound_1835 extends OperatingRound {
                 String errMsg = LocalText.getText("InvalidTileLay");
                 DisplayBuffer.add(LocalText.getText("CannotLayTileOn",
                         action.getCompanyName(),
-                        action.getLaidTile().getExternalId(),
+                        action.getLaidTile().toText(),
                         action.getChosenHex().getId(),
                         Currency.format(this, 0),
                         errMsg ));
                 return false;
             } else {
-                ChangeStack.start(this, action); // Duplicate, but we have to
+                 // Duplicate, but we have to
                 hasLaidExtraOBBTile.set(true);
                 // Done here to make getSpecialTileLays() return the correct value.
                 // It's provisional, on the assumption that other validations are OK.
@@ -247,10 +245,10 @@ public class OperatingRound_1835 extends OperatingRound {
     @Override
     protected void newPhaseChecks() {
         Phase phase = getCurrentPhase();
-        if (phase.getName().equals("4")
-                || phase.getName().equals("4+4")
+        if (phase.getId().equals("4")
+                || phase.getId().equals("4+4")
                 && !companyManager.getPublicCompany(GameManager_1835.PR_ID).hasStarted()
-                || phase.getName().equals("5")
+                || phase.getId().equals("5")
                 && !PrussianFormationRound.prussianIsComplete(gameManager)) {
             if (getStep() == GameDef.OrStep.DISCARD_TRAINS) {
                 // Postpone until trains are discarded

@@ -9,7 +9,6 @@ import rails.common.parser.GameOption;
 import rails.game.action.PossibleAction;
 import rails.game.action.SellShares;
 import rails.game.model.PortfolioModel;
-import rails.game.state.ChangeStack;
 import rails.game.state.IntegerState;
 
 // TODO: Check if un-initialized states cause undo problems
@@ -35,7 +34,7 @@ public class ShareSellingRound extends StockRound {
             PublicCompany cashNeedingCompany, boolean dumpOtherCompaniesAllowed) {
         log.info("Share selling round started, player="
                 +sellingPlayer.getId()+" cash="+cashToRaise);
-        ReportBuffer.add (LocalText.getText("PlayerMustSellShares",
+        ReportBuffer.add(this, LocalText.getText("PlayerMustSellShares",
                 sellingPlayer.getId(),
                 Currency.format(this, cashToRaise)));
         this.parentRound = parentRound;
@@ -355,11 +354,11 @@ public class ShareSellingRound extends StockRound {
         }
         int cashAmount = numberSold * price * shareUnits;
 
-        ChangeStack.start(this, action);
+        
         // FIXME: changeStack.linkToPreviousMoveSet();
 
         String cashText = Currency.fromBank(cashAmount, currentPlayer);
-        ReportBuffer.add(LocalText.getText("SELL_SHARES_LOG",
+        ReportBuffer.add(this, LocalText.getText("SELL_SHARES_LOG",
                 playerName,
                 numberSold,
                 company.getShareUnit(),

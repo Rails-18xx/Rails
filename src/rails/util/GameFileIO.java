@@ -17,13 +17,10 @@ import rails.game.action.PossibleAction;
 
 /**
  * Functions to load and save games from/to file
- * 
- * @author freystef
- *
  */
 public class GameFileIO {
 
-    protected static Logger log =
+    private static final Logger log =
         LoggerFactory.getLogger(RailsRoot.class);
 
     private GameData gameData = new GameData();
@@ -235,14 +232,15 @@ public class GameFileIO {
                 if (!gameManager.processOnReload(action)) {
                     log.error ("Load interrupted");
                     DisplayBuffer.add(LocalText.getText("LoadInterrupted", count));
-                    ReportBuffer.add(LocalText.getText("LoadInterrupted", count));
+                    ReportBuffer.add(gameManager, LocalText.getText("LoadInterrupted", count));
                     break;
                 }
             }
         }
+        // update all observers TODO: Can this be replaced by something better
+        // loadedGame.getChangeStack().updateObservers();
 
         gameManager.setReloading(false);
-        ReportBuffer.setCommentItems(gameData.userComments);
 
         // callback to GameManager
         gameManager.finishLoading();

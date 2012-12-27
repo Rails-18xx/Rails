@@ -2,7 +2,6 @@ package rails.game.model;
 
 import rails.game.Player;
 import rails.game.PublicCompany;
-import rails.game.state.Model;
 
 /**
  * model object for the current company president

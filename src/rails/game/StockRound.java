@@ -88,12 +88,12 @@ public class StockRound extends Round {
      */
     public void start() {
 
-        ReportBuffer.add(LocalText.getText("StartStockRound",
+        ReportBuffer.add(this, LocalText.getText("StartStockRound",
                 getStockRoundNumber()));
 
         setCurrentPlayerIndex(gameManager.getPriorityPlayer().getIndex());
         startingPlayer = getCurrentPlayer(); // For the Report
-        ReportBuffer.add(LocalText.getText("HasPriority",
+        ReportBuffer.add(this, LocalText.getText("HasPriority",
                 startingPlayer.getId() ));
 
         initPlayer();
@@ -699,7 +699,7 @@ public class StockRound extends Round {
             return false;
         }
 
-        ChangeStack.start(this, action);
+        
 
         // All is OK, now start the company
         company.start(startSpace);
@@ -719,7 +719,7 @@ public class StockRound extends Round {
         // Pay for these shares
         String costText = Currency.wire(currentPlayer, cost, priceRecipient);
 
-        ReportBuffer.add(LocalText.getText("START_COMPANY_LOG",
+        ReportBuffer.add(this, LocalText.getText("START_COMPANY_LOG",
                 playerName,
                 companyName,
                 bank.getCurrency().format(price), // TODO: Do this nicer
@@ -727,7 +727,7 @@ public class StockRound extends Round {
                 shares,
                 cert.getShare(),
                 priceRecipient.getId() ));
-        ReportBuffer.getAllWaiting();
+        ReportBuffer.getAllWaiting(this);
 
         checkFlotation(company);
 
@@ -879,19 +879,19 @@ public class StockRound extends Round {
         }
 
         // All seems OK, now buy the shares.
-        ChangeStack.start(this, action);
+        
 
         MoneyOwner priceRecipient = getSharePriceRecipient(company, from.getParent(), cost);
 
         if (number == 1) {
-            ReportBuffer.add(LocalText.getText("BUY_SHARE_LOG",
+            ReportBuffer.add(this, LocalText.getText("BUY_SHARE_LOG",
                     playerName,
                     share,
                     companyName,
                     from.getName(),
                     Currency.format(this, cost) ));
         } else {
-            ReportBuffer.add(LocalText.getText("BUY_SHARES_LOG",
+            ReportBuffer.add(this, LocalText.getText("BUY_SHARES_LOG",
                     playerName,
                     number,
                     share,
@@ -900,7 +900,7 @@ public class StockRound extends Round {
                     from.getName(),
                     Currency.format(this, cost) ));
         }
-        ReportBuffer.getAllWaiting();
+        ReportBuffer.getAllWaiting(this );
 
         PublicCertificate cert2;
         for (int i = 0; i < number; i++) {
@@ -914,7 +914,7 @@ public class StockRound extends Round {
 
         String costText = Currency.wire(currentPlayer, cost, priceRecipient);
         if (priceRecipient != from.getMoneyOwner()) {
-            ReportBuffer.add(LocalText.getText("PriceIsPaidTo",
+            ReportBuffer.add(this, LocalText.getText("PriceIsPaidTo",
                     costText,
                     priceRecipient.getId() ));
         }
@@ -1129,17 +1129,17 @@ public class StockRound extends Round {
             sellPrices.put(company, company.getCurrentSpace());
         }
 
-        ChangeStack.start(this, action);
+        
 
         String cashText = Currency.fromBank(cashAmount, currentPlayer);
         if (numberSold == 1) {
-            ReportBuffer.add(LocalText.getText("SELL_SHARE_LOG",
+            ReportBuffer.add(this, LocalText.getText("SELL_SHARE_LOG",
                     playerName,
                     company.getShareUnit() * shareUnits,
                     companyName,
                     cashText));
         } else {
-            ReportBuffer.add(LocalText.getText("SELL_SHARES_LOG",
+            ReportBuffer.add(this, LocalText.getText("SELL_SHARES_LOG",
                     playerName,
                     numberSold,
                     company.getShareUnit() * shareUnits,
@@ -1175,7 +1175,7 @@ public class StockRound extends Round {
 
         // Check if the presidency has changed
         if (dumpedPlayer != null && presSharesToSell > 0) {
-            ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
+            ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
                     dumpedPlayer.getId(),
                     company.getId() ));
             // First swap the certificates
@@ -1198,7 +1198,7 @@ public class StockRound extends Round {
                 if (otherPlayer.getPortfolioModel().getShare(company) > portfolio.getShare(company)) {
                     portfolio.swapPresidentCertificate(company,
                             otherPlayer.getPortfolioModel(), swapShareSize);
-                    ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
+                    ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
                             otherPlayer.getId(),
                             company.getId() ));
                     break;
@@ -1232,7 +1232,7 @@ public class StockRound extends Round {
 
         if (newSpace.closesCompany() && company.canClose()) {
             company.setClosed();
-            ReportBuffer.add(LocalText.getText("CompanyClosesAt",
+            ReportBuffer.add(this, LocalText.getText("CompanyClosesAt",
                     company.getId(),
                     newSpace.getId()));
             return;
@@ -1311,14 +1311,14 @@ public class StockRound extends Round {
             return false;
         }
 
-        ChangeStack.start(this, action);
+        
 
         Certificate cert =
             ipoHasShare ? ipo.findCertificate(publicCompany,
                     false) : pool.findCertificate(publicCompany,
                             false);
             transferCertificate(cert, player.getPortfolioModel());
-            ReportBuffer.add(LocalText.getText("SwapsPrivateForCertificate",
+            ReportBuffer.add(this, LocalText.getText("SwapsPrivateForCertificate",
                     player.getId(),
                     privateCompany.getId(),
                     sp.getShare(),
@@ -1348,7 +1348,7 @@ public class StockRound extends Round {
             return false;
         }
 
-        ChangeStack.start(this, action);
+        
 
         if (hasActed.value()) {
             numPasses.set(0);
@@ -1359,10 +1359,10 @@ public class StockRound extends Round {
                     setAutopass (currentPlayer, true);
                     setCanRequestTurn (currentPlayer, true);
                 }
-                ReportBuffer.add(LocalText.getText("Autopasses",
+                ReportBuffer.add(this, LocalText.getText("Autopasses",
                         currentPlayer.getId()));
             } else {
-                ReportBuffer.add(LocalText.getText("PASSES",
+                ReportBuffer.add(this, LocalText.getText("PASSES",
                         currentPlayer.getId()));
             }
         }
@@ -1382,8 +1382,8 @@ public class StockRound extends Round {
     @Override
     protected void finishRound () {
 
-        ReportBuffer.add(" ");
-        ReportBuffer.add(LocalText.getText("END_SR",
+        ReportBuffer.add(this, " ");
+        ReportBuffer.add(this, LocalText.getText("END_SR",
                 String.valueOf(getStockRoundNumber())));
 
         if (raiseIfSoldOut) {
@@ -1394,14 +1394,14 @@ public class StockRound extends Round {
                     stockMarket.soldOut(company);
                 StockSpace newSpace = company.getCurrentSpace();
                     if (newSpace != oldSpace) {
-                        ReportBuffer.add(LocalText.getText("SoldOut",
+                        ReportBuffer.add(this, LocalText.getText("SoldOut",
                             company.getId(),
                             Currency.format(this, oldSpace.getPrice()),
                             oldSpace.getId(),
                             Currency.format(this, newSpace.getPrice()),
                             newSpace.getId()));
                     } else {
-                        ReportBuffer.add(LocalText.getText("SoldOutNoRaise",
+                        ReportBuffer.add(this, LocalText.getText("SoldOutNoRaise",
                             company.getId(),
                             Currency.format(this, newSpace.getPrice()),
                             newSpace.getId()));
@@ -1425,7 +1425,7 @@ public class StockRound extends Round {
             return false;
         }
 
-        ChangeStack.start(this, action);
+        
         if (hasAutopassed(requestingPlayer)) {
             setAutopass(requestingPlayer, false);
         } else {
@@ -1465,7 +1465,7 @@ public class StockRound extends Round {
         companyBoughtThisTurnWrapper.set(null);
         hasSoldThisTurnBeforeBuying.set(false);
         hasActed.set(false);
-        if (currentPlayer == startingPlayer) ReportBuffer.add("");
+        if (currentPlayer == startingPlayer) ReportBuffer.add(this, "");
     }
 
     /**

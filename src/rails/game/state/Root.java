@@ -27,15 +27,15 @@ public class Root extends Context{
    /**
     * @return a Root object with everything initialized (including sub-components like StateManager)
     */
-   public static Root create() {
+   public static Root create(ChangeReporter changeReporter) {
        // precise sequence to avoid any uninitialized problems
        Root root = new Root();
-       root.init();
+       root.init(changeReporter);
        return root;
    }
    
-   protected void init() {
-       StateManager stateManager = StateManager.create(this, "states");
+   protected void init(ChangeReporter changeReporter) {
+       StateManager stateManager = StateManager.create(this, "states", changeReporter);
        this.stateManager = stateManager;
        stateManager.init();
        initDelayedItems();

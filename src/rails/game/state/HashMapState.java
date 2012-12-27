@@ -16,7 +16,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * 
  * It allows automatic iteration over it values
  */
-public final class HashMapState<K,V> extends State implements Iterable<V> {
+public final class HashMapState<K,V> extends MapState<K,V> implements Iterable<V> {
 
     private final HashMap<K,V> map;
 
@@ -49,18 +49,19 @@ public final class HashMapState<K,V> extends State implements Iterable<V> {
      * @param value associated with key 
      * @return previous value associated with specified key, or null if there was no mapping for the key (or null was the value).
      */
+    @Override
     public V put(K key, V value) {
         // check if the key is in the map
         if (map.containsKey(key)) {
             V oldValue = map.get(key);
             // check if element already has the specified value
             if (!oldValue.equals(value)) {
-                new HashMapChange<K,V>(this, key, value);
+                new MapChange<K,V>(this, key, value);
             }
             return oldValue;
         } else {
             // if not in map, add tuple and return null
-            new HashMapChange<K,V>(this, key, value);
+            new MapChange<K,V>(this, key, value);
             return null;
         }
     }
@@ -70,7 +71,7 @@ public final class HashMapState<K,V> extends State implements Iterable<V> {
      * @param map that gets added
      * @throws NullPointerException if map is null
      */
-    
+    @Override
     public void putAll(Map<K,V> map) {
         checkNotNull(map);
         for (K key:map.keySet()) {
@@ -83,6 +84,7 @@ public final class HashMapState<K,V> extends State implements Iterable<V> {
      * @param key used to retrieve value
      * @return value associated with the key, null if map does not contain key
      */
+    @Override
     public V get(K key) {
         return map.get(key);
     }
@@ -96,7 +98,7 @@ public final class HashMapState<K,V> extends State implements Iterable<V> {
         // check if map contains key
         if (!map.containsKey(key)) return null;
         V old = map.get(key);
-        new HashMapChange<K,V>(this, key);
+        new MapChange<K,V>(this, key);
         return old;
     }
 
@@ -189,7 +191,7 @@ public final class HashMapState<K,V> extends State implements Iterable<V> {
 //    }
     
     public Iterator<V> iterator() {
-        return ImmutableSet.copyOf(map.values()).iterator();
+        return ImmutableList.copyOf(map.values()).iterator();
     }
 
 

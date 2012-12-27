@@ -12,6 +12,6 @@ package rails.algorithms;
 
 public interface NetworkGraphModifier {
 
-    public void modifyGraph(NetworkGraphBuilder graphBuilder);
+    public void modifyGraph(NetworkGraph mapGraph);
     
 }

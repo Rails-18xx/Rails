@@ -33,7 +33,7 @@ public class WalletManagerTest {
         ownerC = OwnerImpl.create(root, OWNER_C_ID);
         walletA = WalletBag.create(ownerA, WALLET_A_ID , Countable.class, item);
         walletB = WalletBag.create(ownerB, WALLET_B_ID , Countable.class, item);
-        StateTestUtils.closeAndNew(root);
+        StateTestUtils.close(root);
     }
 
     @Test
@@ -82,7 +82,7 @@ public class WalletManagerTest {
     public void testAddWallet() {
         // remove first to prepare
         wm.removeWallet(walletA);
-        StateTestUtils.closeAndNew(root);
+        StateTestUtils.close(root);
         assertNull(wm.getWallet(Countable.class, ownerA));
         
         // then add

@@ -3,19 +3,19 @@ package rails.game.state;
 /**
  * Change associated with HashMapState
  */
-final class HashMapChange<K,V> extends Change {
+class MapChange<K,V> extends Change {
 
-    final private HashMapState<K,V> state;
-    final private K key;
-    final private V newValue;
-    final private boolean remove;
-    final private V oldValue;
-    final private boolean existed;
+    private final MapState<K,V> state;
+    private final K key;
+    private final V newValue;
+    private final boolean remove;
+    private final V oldValue;
+    private final boolean existed;
 
     /**
      * Put element into map
      */
-    HashMapChange(HashMapState<K,V> state, K key, V value) {
+    MapChange(MapState<K,V> state, K key, V value) {
         this.state = state;
         this.key = key;
         newValue = value;
@@ -28,7 +28,7 @@ final class HashMapChange<K,V> extends Change {
     /**
      * Remove element from map
      */
-    HashMapChange(HashMapState<K,V> state, K key) {
+    MapChange(MapState<K,V> state, K key) {
         this.state = state;
         this.key = key;
         newValue = null;
@@ -46,7 +46,7 @@ final class HashMapChange<K,V> extends Change {
         state.change(key, oldValue, !existed);
     }
 
-    @Override HashMapState<K,V> getState() {
+    @Override MapState<K,V> getState() {
         return state;
     }
 

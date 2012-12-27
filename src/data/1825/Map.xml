@@ -1,321 +1,324 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <Map tileOrientation="EW" letterOrientation="vertical" even="R">
 	<IfOption name="Include" parm="Unit3" value="yes">
-		<Hex name="C1" tile="-25017" orientation="4"/>
-		<Hex name="C3" tile="-25017" orientation="4"/>
-		<Hex name="C5" tile="-25017" orientation="4"/>
-		<Hex name="B8" tile="-5" orientation="1" city="Inverness"/>
-		<Hex name="B12" tile="-25011" city="Aberdeen"/>
-		<Hex name="C7" tile="-1" cost="100" city="Pitlochry" open="1,2"/>
-		<Hex name="C9" tile="0" cost="100" open="3"/>
-		<Hex name="C11" tile="0" open="2"/>
-		<Hex name="C13" tile="-4004" orientation="4"/>
-		<Hex name="D0" tile="-4004" orientation="1"/>
-		<Hex name="D2" tile="0" cost="100"/>
-		<Hex name="D4" tile="0" cost="100"/>
-		<Hex name="D6" tile="0" cost="100"/>
-		<Hex name="D8" tile="0" cost="100"/>
-		<Hex name="D10" tile="-1" city="Montrose"/>
-		<Hex name="D12" tile="-4000"/>
-		<Hex name="E1" tile="-5" orientation="5" cost="40" city="Oban"/>
-		<Hex name="E3" tile="0" cost="100"/>
-		<Hex name="E5" tile="0" cost="100"/>
-		<Hex name="E7" tile="-25005" orientation="1" city="Perth"/>
-		<Hex name="E9" tile="-10" cost="80" city="Dundee"/>
-		<Hex name="E11" tile="-4000"/>
-		<Hex name="F2" tile="-25012" city="Helensburgh, Gourock"/>
-		<Hex name="F4" tile="-1" cost="40" city="Dumbarton"/>
-		<Hex name="F6" tile="-1" city="Stirling"/>
+		<Hex name="C1" tile="-25017" orientation="4" />
+		<Hex name="C3" tile="-25017" orientation="4" />
+		<Hex name="C5" tile="-25017" orientation="4" />
+		<Hex name="B8" tile="-5" orientation="1" city="Inverness" />
+		<Hex name="B12" tile="-25011" city="Aberdeen" />
+		<Hex name="C7" tile="-1" cost="100" city="Pitlochry" open="1,2" />
+		<Hex name="C9" tile="0" cost="100" open="3" />
+		<Hex name="C11" tile="0" open="2" />
+		<Hex name="C13" tile="-4004" orientation="4" />
+		<Hex name="D0" tile="-4004" orientation="1" />
+		<Hex name="D2" tile="0" cost="100" />
+		<Hex name="D4" tile="0" cost="100" />
+		<Hex name="D6" tile="0" cost="100" />
+		<Hex name="D8" tile="0" cost="100" />
+		<Hex name="D10" tile="-1" city="Montrose" />
+		<Hex name="D12" tile="-4000" />
+		<Hex name="E1" tile="-5" orientation="5" cost="40" city="Oban" />
+		<Hex name="E3" tile="0" cost="100" />
+		<Hex name="E5" tile="0" cost="100" />
+		<Hex name="E7" tile="-25005" orientation="1" city="Perth" />
+		<Hex name="E9" tile="-10" cost="80" city="Dundee" />
+		<Hex name="E11" tile="-4000" />
+		<Hex name="F2" tile="-25012" city="Helensburgh, Gourock" />
+		<Hex name="F4" tile="-1" cost="40" city="Dumbarton" />
+		<Hex name="F6" tile="-1" city="Stirling" />
 		<Hex name="F8" tile="-2" orientation="3" cost="120"
-			city="Dumfermline, Kirkaldy"/>
-		<Hex name="F10" tile="-25013" city="Anstruther"/>
-		<Hex name="F12" tile="-4000"/>
-		<Hex name="G1" tile="-4004" orientation="1"/>
-		<Hex name="G3" tile="-10" city="Greenock"/>
-		<Hex name="G5" tile="-25002" city="Glasgow"/>
-		<Hex name="G7" tile="-2" city="Coatbridge, Airdrie"/>
-		<Hex name="G9" tile="-20" city="Edinburgh, Leith"/>
-		<Hex name="G11" tile="0"/>
-		<Hex name="G13" tile="-4000"/>
-		<Hex name="G15" tile="-4000"/>
-		<Hex name="H2" tile="-4000"/>
-		<Hex name="H4" tile="-2" city="Ayr, Kilmarnock" reserved="GSWR"/>
-		<Hex name="H6" tile="-10" city="Motherwell"/>
-		<Hex name="H8" tile="0" cost="100"/>
-		<Hex name="H10" tile="0" cost="100"/>
-		<Hex name="H12" tile="0"/>
-		<Hex name="H14" tile="0"/>
-		<Hex name="H16" tile="-4004" orientation="4"/>
-		<Hex name="I1" tile="-4000"/>
-		<Hex name="I3" tile="0" cost="100"/>
-		<Hex name="I5" tile="0"/>
-		<Hex name="I7" tile="0" cost="100"/>
-		<Hex name="I9" tile="0" cost="100"/>
-		<Hex name="I11" tile="0" cost="100"/>
-		<Hex name="I13" tile="-2"/>
-		<Hex name="I15" tile="-4000"/>
-		<Hex name="J0" tile="-4004" orientation="1"/>
-		<Hex name="J2" tile="-10" city="Stranraer"/>
-		<Hex name="J4" tile="0" cost="100"/>
-		<Hex name="J6" tile="-10" city="Dumfries"/>
-		<Hex name="J8" tile="0"/>
-		<Hex name="J10" tile="-10" ciry="Carlisle"/>
-		<Hex name="J12" tile="0" cost="100"/>
-		<Hex name="J14" tile="-20" cost="40" city="Newcastle u/T, Sunderland"/>
-		<Hex name="J16" tile="-4000"/>
-		<Hex name="K1" tile="-4005" orientation="1"/>
-		<Hex name="K3" tile="-4005" orientation="1"/>
-		<Hex name="K5" tile="-4005" orientation="1"/>
-		<Hex name="K7" tile="-25014" city="Maryport"/>
-		<Hex name="K9" tile="0" cost="100" open="0,5"/>
-		<Hex name="K11" tile="0" cost="100" open="0,5"/>
-		<Hex name="K13" tile="-1" city="Durham" open="0,5"/>
-		<Hex name="K15" tile="-2" city="Stockton, Middlesbro" open="0,5"/>
-		<Hex name="K17" tile="-4000"/>
-		<IfOption name="Include" parm="Unit2" value="no">
-			<Hex name="L8" tile="-25017" orientation="1"/>
-			<Hex name="L10" tile="-25017" orientation="1"/>
-			<Hex name="L12" tile="-25017" orientation="1"/>
-			<Hex name="L14" tile="-25017" orientation="1"/>
-			<Hex name="L16" tile="-25017" orientation="1"/>
+			city="Dumfermline, Kirkaldy" />
+		<Hex name="F10" tile="-25013" city="Anstruther" />
+		<Hex name="F12" tile="-4000" />
+		<Hex name="G1" tile="-4004" orientation="1" />
+		<Hex name="G3" tile="-10" city="Greenock" />
+		<Hex name="G5" tile="-25002" city="Glasgow" />
+		<Hex name="G7" tile="-2" city="Coatbridge, Airdrie" />
+		<Hex name="G9" tile="-20" city="Edinburgh, Leith" />
+		<Hex name="G11" tile="0" />
+		<Hex name="G13" tile="-4000" />
+		<Hex name="G15" tile="-4000" />
+		<Hex name="H2" tile="-4000" />
+		<Hex name="H4" tile="-2" city="Ayr, Kilmarnock" reserved="GSWR" />
+		<Hex name="H6" tile="-10" city="Motherwell" />
+		<Hex name="H8" tile="0" cost="100" />
+		<Hex name="H10" tile="0" cost="100" />
+		<Hex name="H12" tile="0" />
+		<Hex name="H14" tile="0" />
+		<Hex name="H16" tile="-4004" orientation="4" />
+		<Hex name="I1" tile="-4000" />
+		<Hex name="I3" tile="0" cost="100" />
+		<Hex name="I5" tile="0" />
+		<Hex name="I7" tile="0" cost="100" />
+		<Hex name="I9" tile="0" cost="100" />
+		<Hex name="I11" tile="0" cost="100" />
+		<Hex name="I13" tile="-2" />
+		<Hex name="I15" tile="-4000" />
+		<Hex name="J0" tile="-4004" orientation="1" />
+		<Hex name="J2" tile="-10" city="Stranraer" />
+		<Hex name="J4" tile="0" cost="100" />
+		<Hex name="J6" tile="-10" city="Dumfries" />
+		<Hex name="J8" tile="0" />
+		<Hex name="J10" tile="-10" ciry="Carlisle" />
+		<Hex name="J12" tile="0" cost="100" />
+		<Hex name="J14" tile="-20" cost="40" city="Newcastle u/T, Sunderland" />
+		<Hex name="J16" tile="-4000" />
+		<Hex name="K1" tile="-4005" orientation="1" />
+		<Hex name="K3" tile="-4005" orientation="1" />
+		<Hex name="K5" tile="-4005" orientation="1" />
+		<Hex name="K7" tile="-25014" city="Maryport" />
+		<Hex name="K9" tile="0" cost="100" open="0,5" />
+		<Hex name="K11" tile="0" cost="100" open="0,5" />
+		<Hex name="K13" tile="-1" city="Durham" open="0,5" />
+		<Hex name="K15" tile="-2" city="Stockton, Middlesbro" open="0,5" />
+		<Hex name="K17" tile="-4000" />
+	</IfOption>
+	<IfOption name="Include" parm="Unit2" value="no">
+		<Hex name="L8" tile="-25017" orientation="1" />
+		<Hex name="L10" tile="-25017" orientation="1" />
+		<Hex name="L12" tile="-25017" orientation="1" />
+		<Hex name="L14" tile="-25017" orientation="1" />
+		<Hex name="L16" tile="-25017" orientation="1" />
 	</IfOption>
 	<IfOption name="Include" parm="Unit2" value="yes">
-		<Hex name="L8" tile="0" open="2,3"/>
-		<Hex name="L10" tile="0" open="2,3"/>
-		<Hex name="L12" tile="0" cost="100" open="2,3"/>
-		<Hex name="L14" tile="-10" city="Darlington" open="2,3" reserved="NER"/>
-		<Hex name="K17" tile="-4000"/>
-		<Hex name="K19" tile="-4005" orientation="4"/>
-		<Hex name="L6" tile="-4000"/>
-		<Hex name="L16" tile="0" open="2"/>
-		<Hex name="L18" tile="-1" city="Scarborough"/>
-		<Hex name="L20" tile="-4000"/>
-		<Hex name="M7" tile="-4000"/>
-		<Hex name="M9" tile="-25008" city="Barrow"/>
-		<Hex name="M11" tile="0" cost="100"/>
-		<Hex name="M13" tile="0" cost="100"/>
-		<Hex name="M15" tile="-2" city="Harrogate, York"/>
-		<Hex name="M17" tile="0"/>
-		<Hex name="M19" tile="0"/>
-		<Hex name="M21" tile="-4004" orientation="4"/>
-		<Hex name="N8" tile="-4000"/>
-		<Hex name="N10" tile="-10" city="Preston" reserved="L&amp;Y"/>
-		<Hex name="N12" tile="-2" city="Burnley, Halifax"/>
-		<Hex name="N14" tile="-20" city="Bradford, Leeds"/>
-		<Hex name="N16" tile="0"/>
-		<Hex name="N18" tile="-10" cost="40" city="Hull"/>
-		<Hex name="N20" tile="-4000"/>
-		<Hex name="O7" tile="-4004" orientation="1"/>
-		<Hex name="O9" tile="-25009" cost="40" city="Liverpool"/>
-		<Hex name="O11" tile="-25002" orientation="1" city="Manchester"/>
-		<Hex name="O13" tile="0" cost="100"/>
-		<Hex name="O15" tile="-25010" city="Barnsley, Doncaster"/>
-		<Hex name="O17" tile="0" cost="40"/>
-		<Hex name="O19" tile="0"/>
-		<Hex name="O21" tile="-4000"/>
-		<Hex name="P8" tile="-41" orientation="4"/>
-		<Hex name="P10" tile="0" cost="40"/>
-		<Hex name="P12" tile="0" cost="100"/>
-		<Hex name="P14" tile="0" cost="100"/>
-		<Hex name="P16" tile="-20" city="Sheffield, Rotherham"/>
-		<Hex name="P18" tile="-1" city="Lincoln"/>
-		<Hex name="P20" tile="0"/>
-		<Hex name="P22" tile="-4004" orientation="4"/>
-		<Hex name="Q9" tile="0" open="0,5"/>
-		<Hex name="Q11" tile="-25004" city="Crewe"/>
-		<Hex name="Q13" tile="-2" city="Newcastle u/L, Hanley" open="0,5"/>
-		<Hex name="Q15" tile="-10" city="Derby" open="0,5" reserved="MR"/>
-		<Hex name="Q17" tile="-10" city="Nottingham" open="0,5"/>
-		<Hex name="Q19" tile="0" open="0,5"/>
-		<Hex name="Q21" tile="-4000"/>
+		<Hex name="L8" tile="0" open="2,3" />
+		<Hex name="L10" tile="0" open="2,3" />
+		<Hex name="L12" tile="0" cost="100" open="2,3" />
+		<Hex name="L14" tile="-10" city="Darlington" open="2,3" reserved="NER" />
+		<Hex name="K17" tile="-4000" />
+		<Hex name="K19" tile="-4005" orientation="4" />
+		<Hex name="L6" tile="-4000" />
+		<Hex name="L16" tile="0" open="2" />
+		<Hex name="L18" tile="-1" city="Scarborough" />
+		<Hex name="L20" tile="-4000" />
+		<Hex name="M7" tile="-4000" />
+		<Hex name="M9" tile="-25008" city="Barrow" />
+		<Hex name="M11" tile="0" cost="100" />
+		<Hex name="M13" tile="0" cost="100" />
+		<Hex name="M15" tile="-2" city="Harrogate, York" />
+		<Hex name="M17" tile="0" />
+		<Hex name="M19" tile="0" />
+		<Hex name="M21" tile="-4004" orientation="4" />
+		<Hex name="N8" tile="-4000" />
+		<Hex name="N10" tile="-10" city="Preston" reserved="L&amp;Y" />
+		<Hex name="N12" tile="-2" city="Burnley, Halifax" />
+		<Hex name="N14" tile="-20" city="Bradford, Leeds" />
+		<Hex name="N16" tile="0" />
+		<Hex name="N18" tile="-10" cost="40" city="Hull" />
+		<Hex name="N20" tile="-4000" />
+		<Hex name="O7" tile="-4004" orientation="1" />
+		<Hex name="O9" tile="-25009" cost="40" city="Liverpool" />
+		<Hex name="O11" tile="-25002" orientation="1" city="Manchester" />
+		<Hex name="O13" tile="0" cost="100" />
+		<Hex name="O15" tile="-25010" city="Barnsley, Doncaster" />
+		<Hex name="O17" tile="0" cost="40" />
+		<Hex name="O19" tile="0" />
+		<Hex name="O21" tile="-4000" />
+		<Hex name="P8" tile="-41" orientation="4" />
+		<Hex name="P10" tile="0" cost="40" />
+		<Hex name="P12" tile="0" cost="100" />
+		<Hex name="P14" tile="0" cost="100" />
+		<Hex name="P16" tile="-20" city="Sheffield, Rotherham" />
+		<Hex name="P18" tile="-1" city="Lincoln" />
+		<Hex name="P20" tile="0" />
+		<Hex name="P22" tile="-4004" orientation="4" />
+		<Hex name="Q9" tile="0" open="0,5" />
+		<Hex name="Q11" tile="-25004" city="Crewe" />
+		<Hex name="Q13" tile="-2" city="Newcastle u/L, Hanley" open="0,5" />
+		<Hex name="Q15" tile="-10" city="Derby" open="0,5" reserved="MR" />
+		<Hex name="Q17" tile="-10" city="Nottingham" open="0,5" />
+		<Hex name="Q19" tile="0" open="0,5" />
+		<Hex name="Q21" tile="-4000" />
 	</IfOption>
 	<IfOption name="Include" parm="Unit1" value="yes">
 		<IfOption name="Include" parm="R1" value="no">
-			<Hex name="Q7" tile="-25017" orientation="4"/>
-			<Hex name="Q9" tile="-25017" orientation="4"/>
+			<Hex name="Q7" tile="-25017" orientation="4" />
+			<Hex name="Q9" tile="-25017" orientation="4" />
 		</IfOption>
 		<IfOption name="Include" parm="Unit2" value="no">
-			<Hex name="Q11" tile="-25017" orientation="4" impassable="R10"/>
-			<Hex name="Q13" tile="-25017" orientation="4"/>
-			<Hex name="Q15" tile="-25017" orientation="4"/>
-			<Hex name="Q17" tile="-25017" orientation="4"/>
-			<Hex name="Q19" tile="-25017" orientation="4"/>
+			<Hex name="Q11" tile="-25017" orientation="4" impassable="R10" />
+			<Hex name="Q13" tile="-25017" orientation="4" />
+			<Hex name="Q15" tile="-25017" orientation="4" />
+			<Hex name="Q17" tile="-25017" orientation="4" />
+			<Hex name="Q19" tile="-25017" orientation="4" />
 		</IfOption>
-		<Hex name="Q21" tile="-4000"/>
+		<Hex name="Q21" tile="-4000" />
 		<IfOption name="Include" parm="R3" value="no">
-			<Hex name="Q23" tile="-25017" orientation="4"/>
-			<Hex name="Q25" tile="-25017" orientation="4"/>
+			<Hex name="Q23" tile="-25017" orientation="4" />
+			<Hex name="Q25" tile="-25017" orientation="4" />
 		</IfOption>
-		<Hex name="Q27" tile="-4000"/>
+		<Hex name="Q27" tile="-4000" />
 		<IfOption name="Include" parm="R1" value="no">
-			<Hex name="R6" tile="-25018" orientation="1"/>
-			<Hex name="S7" tile="-25018" orientation="1"/>
-			<Hex name="T6" tile="-25018" orientation="1"/>
-			<Hex name="U7" tile="-25018" orientation="1"/>
-			<Hex name="V6" tile="-25018" orientation="1"/>
+			<Hex name="R6" tile="-25018" orientation="1" />
+			<Hex name="S7" tile="-25018" orientation="1" />
+			<Hex name="T6" tile="-25018" orientation="1" />
+			<Hex name="U7" tile="-25018" orientation="1" />
+			<Hex name="V6" tile="-25018" orientation="1" />
 		</IfOption>
 		<IfOption name="Include" parm="R2" value="no">
-			<Hex name="X6" tile="-25018" orientation="1"/>
-			<Hex name="Y7" tile="-25018" orientation="1"/>
-			<Hex name="Z8" tile="-4005" orientation="1"/>
+			<Hex name="X6" tile="-25018" orientation="1" />
+			<Hex name="Y7" tile="-25018" orientation="1" />
+			<Hex name="Z8" tile="-4005" orientation="1" />
 		</IfOption>
-		<Hex name="R8" tile="0"/>
-		<Hex name="R10" tile="-1" city="Shrewsbury" orientation="3"/>
+		<Hex name="R8" tile="0" />
+		<Hex name="R10" tile="-1" city="Shrewsbury" orientation="3" />
 		<Hex name="R12" tile="-20" orientation="1" city="Wolverhampton, Walsall"
-			open="2,3"/>
+			open="2,3" />
 		<Hex name="R14" tile="0">
 			<IfOption name="Include" parm="Unit2" value="yes">
-				<Attributes reserved="MR"/>
+				<Attributes reserved="MR" />
 			</IfOption>
 		</Hex>
-		<Hex name="R16" tile="-10" city="Leicester"/>
-		<Hex name="R18" tile="0" open="2,3"/>
-		<Hex name="R20" tile="-1" city="Peterborough" orientation="3"/>
-		<Hex name="R22" tile="0" open="3"/>
-		<Hex name="R24" tile="-10" city="Norwich" orientation="4"/>
-		<Hex name="R26" tile="-1" city="Great Yarmouth" orientation="1"/>
-		<Hex name="R28" tile="-4004" orientation="4"/>
-		<Hex name="S9" tile="0" open="1"/>
-		<Hex name="S11" tile="0"/>
-		<Hex name="S13" tile="-25002" city="Birmingham"/>
-		<Hex name="S15" tile="-1" city="Northampton" orientation="2"/>
-		<Hex name="S17" tile="0"/>
-		<Hex name="S19" tile="0"/>
-		<Hex name="S21" tile="0"/>
-		<Hex name="S23" tile="0"/>
-		<Hex name="S25" tile="0"/>
-		<Hex name="S27" tile="-4000"/>
-		<Hex name="T8" tile="0" cost="100"/>
-		<Hex name="T10" tile="0"/>
-		<Hex name="T12" tile="0"/>
-		<Hex name="T14" tile="0"/>
-		<Hex name="T16" tile="-25004" city="Wolverton"/>
-		<Hex name="T18" tile="0"/>
-		<Hex name="T20" tile="-1" city="Cambridge"/>
-		<Hex name="T22" tile="0"/>
-		<Hex name="T24" tile="-1" city="Ipswich" orientation="1"/>
-		<Hex name="T26" tile="-4000"/>
-		<Hex name="U9" tile="0" open="1"/>
-		<Hex name="U11" tile="-1" cost="40" city="Gloucester" orientation="1"></Hex>
-		<Hex name="U13" tile="0"/>
-		<Hex name="U15" tile="0"/>
-		<Hex name="U17" tile="0" reserved="LNWR"/>
-		<Hex name="U19" tile="0"/>
-		<Hex name="U21" tile="0"/>
-		<Hex name="U23" tile="-1" city="Colchester" reserved="GER"/>
-		<Hex name="U25" tile="-104" orientation="2" city="Harwich"/>
-		<Hex name="U27" tile="-4004" orientation="4"/>
-		<Hex name="V8" tile="-20" city="Cardiff, Newport"/>
-		<Hex name="V10" tile="-25003" city="Bristol"/>
-		<Hex name="V12" tile="0"/>
-		<Hex name="V14" tile="-25005" city="Swindon"/>
-		<Hex name="V16" tile="-1" city="Reading" orientation="1"/>
-		<Hex name="V18" tile="0" reserved="GWR"/>
-		<Hex name="V20" tile="-25001" city="London"/>
-		<Hex name="V22" tile="-25006" value="20" city="Southend"/>
-		<Hex name="V24" tile="-4000"/>
-		<Hex name="V26" tile="-4000"/>
-		<Hex name="W7" tile="-4000"/>
+		<Hex name="R16" tile="-10" city="Leicester" />
+		<Hex name="R18" tile="0" open="2,3" />
+		<Hex name="R20" tile="-1" city="Peterborough" orientation="3" />
+		<Hex name="R22" tile="0" open="3" />
+		<Hex name="R24" tile="-10" city="Norwich" orientation="4" />
+		<Hex name="R26" tile="-1" city="Great Yarmouth" orientation="1" />
+		<Hex name="R28" tile="-4004" orientation="4" />
+		<Hex name="S9" tile="0" open="1" />
+		<Hex name="S11" tile="0" />
+		<Hex name="S13" tile="-25002" city="Birmingham" />
+		<Hex name="S15" tile="-1" city="Northampton" orientation="2" />
+		<Hex name="S17" tile="0" />
+		<Hex name="S19" tile="0" />
+		<Hex name="S21" tile="0" />
+		<Hex name="S23" tile="0" />
+		<Hex name="S25" tile="0" />
+		<Hex name="S27" tile="-4000" />
+		<Hex name="T8" tile="0" cost="100" />
+		<Hex name="T10" tile="0" />
+		<Hex name="T12" tile="0" />
+		<Hex name="T14" tile="0" />
+		<Hex name="T16" tile="-25004" city="Wolverton" />
+		<Hex name="T18" tile="0" />
+		<Hex name="T20" tile="-1" city="Cambridge" />
+		<Hex name="T22" tile="0" />
+		<Hex name="T24" tile="-1" city="Ipswich" orientation="1" />
+		<Hex name="T26" tile="-4000" />
+		<Hex name="U9" tile="0" open="1" />
+		<Hex name="U11" tile="-1" cost="40" city="Gloucester" orientation="1" />
+		<Hex name="U13" tile="0" />
+		<Hex name="U15" tile="0" />
+		<Hex name="U17" tile="0" reserved="LNWR" />
+		<Hex name="U19" tile="0" />
+		<Hex name="U21" tile="0" />
+		<Hex name="U23" tile="-1" city="Colchester" reserved="GER" />
+		<Hex name="U25" tile="-104" orientation="2" city="Harwich" />
+		<Hex name="U27" tile="-4004" orientation="4" />
+		<Hex name="V8" tile="-20" city="Cardiff, Newport" />
+		<Hex name="V10" tile="-25003" city="Bristol" />
+		<Hex name="V12" tile="0" />
+		<Hex name="V14" tile="-25005" city="Swindon" />
+		<Hex name="V16" tile="-1" city="Reading" orientation="1" />
+		<Hex name="V18" tile="0" reserved="GWR" />
+		<Hex name="V20" tile="-25001" city="London" />
+		<Hex name="V22" tile="-25006" value="20" city="Southend" />
+		<Hex name="V24" tile="-4000" />
+		<Hex name="V26" tile="-4000" />
+		<Hex name="W7" tile="-4000" />
 		<IfOption name="Include" parm="R2" value="no">
-			<Hex name="W9" tile="-41" orientation="3"/>
+			<Hex name="W9" tile="-41" orientation="3" />
 		</IfOption>
 		<IfOption name="Include" parm="R2" value="yes">
-			<Hex name="W9" tile="-25016"/>
+			<Hex name="W9" tile="-25016" />
 		</IfOption>
-		<Hex name="W11" tile="-2" city="Bath,Trowbridge" orientation="4"/>
-		<Hex name="W13" tile="0"/>
-		<Hex name="W15" tile="0"/>
-		<Hex name="W17" tile="0"/>
-		<Hex name="W19" tile="-2" city="Kingston on Thames, Reigate" orientation="4"
-			reserved="LSWR"/>
-		<Hex name="W21" tile="0"/>
-		<Hex name="W23" tile="-10" city="Ashford" orientation="5"/>
-		<Hex name="W25" tile="-5" orientation="2" city="Dover"/>
-		<Hex name="W27" tile="-4004" orientation="4"/>
-		<Hex name="X8" tile="0" open="0,1"/>
-		<Hex name="X10" tile="0"/>
-		<Hex name="X12" tile="0"/>
-		<Hex name="X14" tile="-10" city="Southampton" orientation="5"/>
-		<Hex name="X16" tile="-20" city="Gosport, Portsmouth" orientation="1"/>
-		<Hex name="X18" tile="0"/>
-		<Hex name="X20" tile="-10" city="Brighton" orientation="5" reserved="LBSC"/>
-		<Hex name="X22" tile="-1" city="Hastings" orientation="2"/>
-		<Hex name="X24" tile="0"/>
-		<Hex name="X26" tile="-4000"/>
-		<Hex name="Y9" tile="0" open="1"/>
-		<Hex name="Y11" tile="-1" city="Weymouth" orientation="3"/>
-		<Hex name="Y13" tile="-25007" city="Bournemouth"/>
-		<Hex name="Y15" tile="-4000"/>
-		<Hex name="Y17" tile="-7" orientation="4"/>
-		<Hex name="Y19" tile="-7" orientation="4"/>
-		<Hex name="Y21" tile="-4000"/>
-		<Hex name="Y23" tile="-4000"/>
-		<Hex name="Y25" tile="-4000"/>
-		<Hex name="Z10" tile="-4005" orientation="1"/>
-		<Hex name="Z12" tile="-4005" orientation="1"/>
+		<Hex name="W11" tile="-2" city="Bath,Trowbridge" orientation="4" />
+		<Hex name="W13" tile="0" />
+		<Hex name="W15" tile="0" />
+		<Hex name="W17" tile="0" />
+		<Hex name="W19" tile="-2" city="Kingston on Thames, Reigate"
+			orientation="4" reserved="LSWR" />
+		<Hex name="W21" tile="0" />
+		<Hex name="W23" tile="-10" city="Ashford" orientation="5" />
+		<Hex name="W25" tile="-5" orientation="2" city="Dover" />
+		<Hex name="W27" tile="-4004" orientation="4" />
+		<Hex name="X8" tile="0" open="0,1" />
+		<Hex name="X10" tile="0" />
+		<Hex name="X12" tile="0" />
+		<Hex name="X14" tile="-10" city="Southampton" orientation="5" />
+		<Hex name="X16" tile="-20" city="Gosport, Portsmouth" orientation="1" />
+		<Hex name="X18" tile="0" />
+		<Hex name="X20" tile="-10" city="Brighton" orientation="5"
+			reserved="LBSC" />
+		<Hex name="X22" tile="-1" city="Hastings" orientation="2" />
+		<Hex name="X24" tile="0" />
+		<Hex name="X26" tile="-4000" />
+		<Hex name="Y9" tile="0" open="1" />
+		<Hex name="Y11" tile="-1" city="Weymouth" orientation="3" />
+		<Hex name="Y13" tile="-25007" city="Bournemouth" />
+		<Hex name="Y15" tile="-4000" />
+		<Hex name="Y17" tile="-7" orientation="4" />
+		<Hex name="Y19" tile="-7" orientation="4" />
+		<Hex name="Y21" tile="-4000" />
+		<Hex name="Y23" tile="-4000" />
+		<Hex name="Y25" tile="-4000" />
+		<Hex name="Z10" tile="-4005" orientation="1" />
+		<Hex name="Z12" tile="-4005" orientation="1" />
 		<IfOption name="Include" parm="R1" value="yes">
-			<Hex name="O3" tile="-4005" orientation="4"/>
-			<Hex name="O5" tile="-4005" orientation="4"/>
-			<Hex name="O7" tile="-4005" orientation="4"/>
-			<Hex name="P2" tile="-4004" orientation="1"/>
-			<Hex name="P4" tile="-5" city="Holyhead"/>
-			<Hex name="P6" tile="0" cost="40"/>
+			<Hex name="O3" tile="-4005" orientation="4" />
+			<Hex name="O5" tile="-4005" orientation="4" />
+			<Hex name="O7" tile="-4005" orientation="4" />
+			<Hex name="P2" tile="-4004" orientation="1" />
+			<Hex name="P4" tile="-5" city="Holyhead" />
+			<Hex name="P6" tile="0" cost="40" />
 			<IfOption name="Include" parm="Unit2" value="no">
-				<Hex name="P8" tile="-25018" orientation="4"/>
+				<Hex name="P8" tile="-25018" orientation="4" />
 			</IfOption>
-			<Hex name="Q3" tile="-4000"/>
-			<Hex name="Q5" tile="-1" city="Portmadoc"/>
-			<Hex name="Q7" tile="0" cost="100"/>
-			<Hex name="R4" tile="-4000"/>
-			<Hex name="R6" tile="0"/>
-			<Hex name="S1" tile="-4000"/>
-			<Hex name="S3" tile="-4000"/>
-			<Hex name="S5" tile="-1" city="Aberystwyth"/>
-			<Hex name="S7" tile="0" cost="100"/>
-			<Hex name="T0" tile="-4000"/>
-			<Hex name="T2" tile="-10" city="Fishguard"/>
-			<Hex name="T4" tile="0"/>
-			<Hex name="T6" tile="0" cost="100"/>
-			<Hex name="U99" tile="-4004" orientation="1"/>
-			<Hex name="U1" tile="-25015" city="Milford Haven"/>
-			<Hex name="U3" tile="0"/>
-			<Hex name="U5" tile="0"/>
-			<Hex name="U7" tile="-2"/>
-			<Hex name="V0" tile="-4000"/>
-			<Hex name="V2" tile="-4000"/>
-			<Hex name="V4" tile="-4000"/>
-			<Hex name="V6" tile="-25007" orientation="1" city="Swansea"/>
+			<Hex name="Q3" tile="-4000" />
+			<Hex name="Q5" tile="-1" city="Portmadoc" />
+			<Hex name="Q7" tile="0" cost="100" />
+			<Hex name="R4" tile="-4000" />
+			<Hex name="R6" tile="0" />
+			<Hex name="S1" tile="-4000" />
+			<Hex name="S3" tile="-4000" />
+			<Hex name="S5" tile="-1" city="Aberystwyth" />
+			<Hex name="S7" tile="0" cost="100" />
+			<Hex name="T0" tile="-4000" />
+			<Hex name="T2" tile="-10" city="Fishguard" />
+			<Hex name="T4" tile="0" />
+			<Hex name="T6" tile="0" cost="100" />
+			<Hex name="U99" tile="-4004" orientation="1" />
+			<Hex name="U1" tile="-25015" city="Milford Haven" />
+			<Hex name="U3" tile="0" />
+			<Hex name="U5" tile="0" />
+			<Hex name="U7" tile="-2" />
+			<Hex name="V0" tile="-4000" />
+			<Hex name="V2" tile="-4000" />
+			<Hex name="V4" tile="-4000" />
+			<Hex name="V6" tile="-25007" orientation="1" city="Swansea" />
 		</IfOption>
 		<IfOption name="Include" parm="R2" value="yes">
-			<Hex name="W3" tile="-4000"/>
-			<Hex name="W5" tile="-4000"/>
-			<Hex name="X0" tile="-4000"/>
-			<Hex name="X2" tile="-4000"/>
-			<Hex name="X4" tile="-1" city="Barnstaple"/>
-			<Hex name="X6" tile="0" cost="100"/>
-			<Hex name="Y99" tile="-4000"/>
-			<Hex name="Y1" tile="0"/>
-			<Hex name="Y3" tile="0"/>
-			<Hex name="Y5" tile="0" cost="100"/>
-			<Hex name="Y7" tile="-10" city="Exeter"/>
-			<Hex name="Z98" tile="-4000"/>
-			<Hex name="Z0" tile="0"/>
-			<Hex name="Z2" tile="-1" city="Fowey"/>
-			<Hex name="Z4" tile="-20" city="Devenport, Plymouth"/>
-			<Hex name="Z6" tile="-1" city="Torquay"/>
-			<Hex name="Z8" tile="-4000"/>
-			<Hex name="AA97" tile="-4004" orientation="1"/>
-			<Hex name="AA99" tile="-1" city="Penzance"/>
-			<Hex name="AA1" tile="-10" city="Falmouth"/>
-			<Hex name="AA3" tile="-4000"/>
-			<Hex name="AA5" tile="-4005" orientation="1"/>
-			<Hex name="AA7" tile="-4005" orientation="1"/>
-			<Hex name="AB98" tile="-4005" orientation="1"/>
-			<Hex name="AB0" tile="-4005" orientation="1"/>
-			<Hex name="AB2" tile="-4005" orientation="1"/>
+			<Hex name="W3" tile="-4000" />
+			<Hex name="W5" tile="-4000" />
+			<Hex name="X0" tile="-4000" />
+			<Hex name="X2" tile="-4000" />
+			<Hex name="X4" tile="-1" city="Barnstaple" />
+			<Hex name="X6" tile="0" cost="100" />
+			<Hex name="Y99" tile="-4000" />
+			<Hex name="Y1" tile="0" />
+			<Hex name="Y3" tile="0" />
+			<Hex name="Y5" tile="0" cost="100" />
+			<Hex name="Y7" tile="-10" city="Exeter" />
+			<Hex name="Z98" tile="-4000" />
+			<Hex name="Z0" tile="0" />
+			<Hex name="Z2" tile="-1" city="Fowey" />
+			<Hex name="Z4" tile="-20" city="Devenport, Plymouth" />
+			<Hex name="Z6" tile="-1" city="Torquay" />
+			<Hex name="Z8" tile="-4000" />
+			<Hex name="AA97" tile="-4004" orientation="1" />
+			<Hex name="AA99" tile="-1" city="Penzance" />
+			<Hex name="AA1" tile="-10" city="Falmouth" />
+			<Hex name="AA3" tile="-4000" />
+			<Hex name="AA5" tile="-4005" orientation="1" />
+			<Hex name="AA7" tile="-4005" orientation="1" />
+			<Hex name="AB98" tile="-4005" orientation="1" />
+			<Hex name="AB0" tile="-4005" orientation="1" />
+			<Hex name="AB2" tile="-4005" orientation="1" />
 		</IfOption>
 		<IfOption name="Include" parm="R3" value="yes">
-			<Hex name="Q23" tile="-25014" orientation="1" city="Melton Constable"/>
-			<Hex name="Q25" tile="0"/>
+			<Hex name="Q23" tile="-25014" orientation="1" city="Melton Constable" />
+			<Hex name="Q25" tile="0" />
 		</IfOption>
 	</IfOption>
 </Map>

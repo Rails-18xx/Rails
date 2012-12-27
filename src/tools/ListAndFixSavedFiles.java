@@ -481,10 +481,10 @@ implements ActionListener, KeyListener {
             this.action = action;
             addTextField (this, "Tile laid",
                     action.getLaidTile(),
-                    action.getLaidTile().getId());  // 0
+                    action.getLaidTile().toText());  // 0
             addTextField (this, "Hex laid",
                     action.getChosenHex(),
-                    action.getChosenHex().getName());  // 1
+                    action.getChosenHex().getId());  // 1
             addTextField (this, "Orientation",
                     new Integer(action.getOrientation()),
                     String.valueOf(action.getOrientation()));  // 2
@@ -496,9 +496,9 @@ implements ActionListener, KeyListener {
 
             log.debug("Action was "+action);
             try {
-                int tileID = Integer.parseInt(((JTextField)inputElements.get(0)).getText());
+                String tileID = ((JTextField)inputElements.get(0)).getText();
                 Tile tile = gameManager.getTileManager().getTile(tileID);
-                if (tileID > 0 && tile != null) action.setLaidTile(tile);
+                if (tile != null) action.setLaidTile(tile);
             } catch (NumberFormatException e) {
             }
             String hexID = ((JTextField)inputElements.get(1)).getText();

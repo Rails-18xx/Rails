@@ -103,8 +103,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
     // Current state
     private int playerIndex = -1;
 
-    private final PossibleActions possibleActions =
-        PossibleActions.getInstance();
+    private PossibleActions possibleActions;
     private PossibleAction immediateAction = null;
 
     private final ButtonGroup itemGroup = new ButtonGroup();
@@ -125,6 +124,8 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
         includeBidding = round.hasBidding();
         showBasePrices = round.hasBasePrices();
         gameUIManager = parent;
+        possibleActions = gameUIManager.getGameManager().getPossibleActions();
+                
         setTitle(LocalText.getText("START_ROUND_TITLE"));
         getContentPane().setLayout(new BorderLayout());
 

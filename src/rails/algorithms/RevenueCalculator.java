@@ -569,12 +569,15 @@ abstract class RevenueCalculator {
             // express train
             trainValue += maxMajorRevenues[trainId][trainMajors[trainId]];
         } else {
-            // default and plus trains
             if (trainMinors[trainId] > 0){
                 trainValue += maxMajorRevenues[trainId][trainMajors[trainId]];
                 trainValue += maxMinorRevenues[trainId][trainMinors[trainId]];
             } else { // <= 0
-                trainValue += maxMajorRevenues[trainId][trainMajors[trainId] + trainMinors[trainId]]; 
+                int trainStations = trainMajors[trainId] + trainMinors[trainId];
+                // trainStations can be zero or negative (for H trains)
+                if (trainStations > 0) {
+                    trainValue += maxMajorRevenues[trainId][trainStations]; 
+                }
             }
         }
         // add potential bonuses

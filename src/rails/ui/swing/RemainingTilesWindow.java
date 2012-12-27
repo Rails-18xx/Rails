@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/RemainingTilesWindow.java,v 1.8 2009/12/15 18:56:11 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.Component;
@@ -7,8 +6,7 @@ import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 import javax.swing.*;
 
@@ -24,6 +22,9 @@ import rails.ui.swing.hexmap.GUIHex;
 /**
  * This Window displays the availability of tiles.
  */
+
+// FIXME: This is a temporary workaround as it does not update the number of tiles
+// replace this with a field again
 public class RemainingTilesWindow extends JFrame implements WindowListener,
         ActionListener {
     private static final long serialVersionUID = 1L;
@@ -31,10 +32,7 @@ public class RemainingTilesWindow extends JFrame implements WindowListener,
     private ORUIManager orUIManager;
     private AlignedWidthPanel tilePanel;
     private JScrollPane slider;
-
-    private List<Field> labels = new ArrayList<Field>();
-    private List<Tile> shownTiles = new ArrayList<Tile>();
-
+  
     protected static Logger log =
             LoggerFactory.getLogger(RemainingTilesWindow.class);
 
@@ -71,38 +69,33 @@ public class RemainingTilesWindow extends JFrame implements WindowListener,
     private void init(GameUIManager gameUIManager) {
 
         TileManager tmgr = gameUIManager.getGameManager().getTileManager();
-        Tile tile;
-        Field label;
-        BufferedImage hexImage;
-        ImageIcon hexIcon;
-        int picId;
 
         // Build the grid with tiles in the sequence as
         // these have been defined in Tiles.xml
-        List<Integer> tileIds = tmgr.getTileIds();
-        log.debug("There are " + tileIds.size() + " tiles known in this game");
+        Set<Tile> tiles = tmgr.getTiles();
+        log.debug("There are " + tiles.size() + " tiles known in this game");
 
-        for (int tileId : tileIds) {
-            if (tileId <= 0) continue;
+        for (Tile tile:tiles) {
+            if (tile.isFixed()) continue;
+            String picId = tile.getPictureId();
 
-            tile = tmgr.getTile(tileId);
-            picId = tile.getPictureId();
-
-            hexImage = GameUIManager.getImageLoader().getTile(picId, 10);
-            hexIcon = new ImageIcon(hexImage);
+            BufferedImage hexImage = GameUIManager.getImageLoader().getTile(picId, 10);
+            ImageIcon hexIcon = new ImageIcon(hexImage);
             hexIcon.setImage(hexIcon.getImage().getScaledInstance(
                     (int) (hexIcon.getIconWidth() * GUIHex.NORMAL_SCALE * 0.8),
                     (int) (hexIcon.getIconHeight() * GUIHex.NORMAL_SCALE * 0.8),
                     Image.SCALE_SMOOTH));
 
-            label = new Field(tile, hexIcon, Field.CENTER);
+//            HexLabel hexLabel = new HexLabel(hexIcon, tile);
+//            hexLabel.setVerticalTextPosition(Field.BOTTOM);
+//            hexLabel.setHorizontalTextPosition(Field.CENTER);
+//            hexLabel.setVisible(true);
+//            tilePanel.add(hexLabel);
+            Field label = new Field(tile.getCountModel(), hexIcon, Field.CENTER);
             label.setVerticalTextPosition(Field.BOTTOM);
             label.setHorizontalTextPosition(Field.CENTER);
             label.setVisible(true);
-
             tilePanel.add(label);
-            shownTiles.add(tile);
-            labels.add(label);
 
         }
 

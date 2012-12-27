@@ -14,29 +14,28 @@ import rails.game.model.PortfolioModel;
 import rails.game.special.SpecialProperty;
 import rails.game.state.ArrayListState;
 import rails.game.state.BooleanState;
-import rails.game.state.ChangeStack;
 import rails.game.state.Creatable;
 import rails.game.state.Owner;
 import rails.game.state.Portfolio;
 
 public abstract class Round extends RailsAbstractItem implements Creatable {
 
-    protected PossibleActions possibleActions = PossibleActions.getInstance();
-    protected GuiHints guiHints = null;
-
     protected static Logger log =
-        LoggerFactory.getLogger(Round.class);
+            LoggerFactory.getLogger(Round.class);
 
-    protected GameManager gameManager = null;
-    protected CompanyManager companyManager = null;
-    protected PlayerManager playerManager = null;
-    protected Bank bank = null;
-    protected PortfolioModel ipo = null;
-    protected PortfolioModel pool = null;
-    protected PortfolioModel unavailable = null;
-    protected PortfolioModel scrapHeap = null;
-    protected StockMarket stockMarket = null;
-    protected MapManager mapManager = null;
+    protected final PossibleActions possibleActions;
+    protected final GuiHints guiHints;
+
+    protected final GameManager gameManager;
+    protected final CompanyManager companyManager;
+    protected final PlayerManager playerManager;
+    protected final Bank bank;
+    protected final PortfolioModel ipo;
+    protected final PortfolioModel pool;
+    protected final PortfolioModel unavailable;
+    protected final PortfolioModel scrapHeap;
+    protected final StockMarket stockMarket;
+    protected final MapManager mapManager;
 
     protected final BooleanState wasInterrupted = BooleanState.create(this, "wasInterrupted");
 
@@ -51,24 +50,19 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
         super(parent, id);
 
         this.gameManager = parent;
+        this.possibleActions = gameManager.getPossibleActions();
 
-        if (gameManager == null) {
-            companyManager = null;
-        } else {
-            companyManager = gameManager.getCompanyManager();
-            playerManager = gameManager.getPlayerManager();
-            bank = gameManager.getBank();
-            // TODO: It would be good to work with BankPortfolio and Owner instead of PortfolioModels
-            // However this requires a lot of work inside the Round classes
-            ipo = bank.getIpo().getPortfolioModel();
-            pool = bank.getPool().getPortfolioModel();
-            unavailable = bank.getUnavailable().getPortfolioModel();
-            scrapHeap = bank.getScrapHeap().getPortfolioModel();
-            stockMarket = gameManager.getStockMarket();
-            mapManager = gameManager.getMapManager();
-
-            // changeStack = gameManager.getChangeStack();
-        }
+        companyManager = gameManager.getCompanyManager();
+        playerManager = gameManager.getPlayerManager();
+        bank = gameManager.getBank();
+        // TODO: It would be good to work with BankPortfolio and Owner instead of PortfolioModels
+        // However this requires a lot of work inside the Round classes
+        ipo = bank.getIpo().getPortfolioModel();
+        pool = bank.getPool().getPortfolioModel();
+        unavailable = bank.getUnavailable().getPortfolioModel();
+        scrapHeap = bank.getScrapHeap().getPortfolioModel();
+        stockMarket = gameManager.getStockMarket();
+        mapManager = gameManager.getMapManager();
 
         guiHints = gameManager.getUIHints();
         guiHints.setCurrentRoundType(getClass());
@@ -176,48 +170,48 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
             return false;
         }
 
-        ChangeStack.start(this, action);
+        
         // FIMXE: if (linkedMoveSet) changeStack.linkToPreviousMoveSet();
 
         if (exchanged > 0) {
             MapHex hex;
-            Stop city;
-            String cityName, hexName;
-            int cityNumber;
+            Stop stop;
+            String stopName, hexName;
+            int stationNumber;
             String[] ct;
             PublicCompany comp = action.getCompany();
 
-            ReportBuffer.add("");
+            ReportBuffer.add(this, "");
 
             for (ExchangeableToken token : tokens) {
-                cityName = token.getCityName();
-                ct = cityName.split("/");
+                stopName = token.getCityName();
+                ct = stopName.split("/");
                 hexName = ct[0];
                 try {
-                    cityNumber = Integer.parseInt(ct[1]);
+                    stationNumber = Integer.parseInt(ct[1]);
                 } catch (NumberFormatException e) {
-                    cityNumber = 1;
+                    stationNumber = 1;
                 }
                 hex = mapManager.getHex(hexName);
-                city = hex.getStop(cityNumber);
+                stop = hex.getRelatedStop(stationNumber);
 
                 if (token.isSelected()) {
 
                     // For now we'll assume that the old token(s) have already been removed.
                     // This is true in the 1856 CGR formation.
-                    if (hex.layBaseToken(comp, city.getNumber())) {
+                    if (hex.layBaseToken(comp, stop)) {
                         /* TODO: the false return value must be impossible. */
-                        ReportBuffer.add(LocalText.getText("ExchangesBaseToken",
+                        ReportBuffer.add(this, LocalText.getText("ExchangesBaseToken",
                                 comp.getId(),
                                 token.getOldCompanyName(),
-                                city.getSpecificId()));
+                                stop.getSpecificId()));
                         comp.layBaseToken(hex, 0);
                     }
                 } else {
-                    ReportBuffer.add(LocalText.getText("NoBaseTokenExchange",
+                    ReportBuffer.add(this, LocalText.getText("NoBaseTokenExchange",
                             comp.getId(),
                             token.getOldCompanyName(),
-                            city.getSpecificId()));
+                            stop.getSpecificId()));
                 }
             }
         }
@@ -364,11 +358,11 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
 
         if (cash > 0) {
             String cashText = Currency.fromBank(cash, company);
-            ReportBuffer.add(LocalText.getText("FloatsWithCash",
+            ReportBuffer.add(this, LocalText.getText("FloatsWithCash",
                     company.getId(),
                     cashText ));
         } else {
-            ReportBuffer.add(LocalText.getText("Floats",
+            ReportBuffer.add(this, LocalText.getText("Floats",
                     company.getId()));
         }
 
@@ -382,15 +376,15 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
 
     protected void finishRound() {
         // Report financials
-        ReportBuffer.add("");
+        ReportBuffer.add(this, "");
         for (PublicCompany c : companyManager.getAllPublicCompanies()) {
             if (c.hasFloated() && !c.isClosed()) {
-                ReportBuffer.add(LocalText.getText("Has", c.getId(),
+                ReportBuffer.add(this, LocalText.getText("Has", c.getId(),
                         Currency.format(this, c.getCash())));
             }
         }
         for (Player p : playerManager.getPlayers()) {
-            ReportBuffer.add(LocalText.getText("Has", p.getId(),
+            ReportBuffer.add(this, LocalText.getText("Has", p.getId(),
                     Currency.format(this, p.getCashValue())));
         }
         // Inform GameManager

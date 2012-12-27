@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.jgrapht.graph.SimpleGraph;
 
 import rails.algorithms.NetworkEdge;
-import rails.algorithms.NetworkGraphBuilder;
+import rails.algorithms.NetworkGraph;
 import rails.algorithms.NetworkGraphModifier;
 import rails.algorithms.NetworkVertex;
 import rails.game.GameManager;
@@ -18,10 +18,10 @@ public class BirminghamTileModifier implements NetworkGraphModifier {
     protected static Logger log =
         LoggerFactory.getLogger(BirminghamTileModifier.class);
 
-    public void modifyGraph(NetworkGraphBuilder graphBuilder) {
+    public void modifyGraph(NetworkGraph mapGraph) {
         
         GameManager gm = GameManager.getInstance();
-        SimpleGraph<NetworkVertex, NetworkEdge> graph = graphBuilder.getMapGraph();
+        SimpleGraph<NetworkVertex, NetworkEdge> graph = mapGraph.getGraph();
         
         // 1. check Phase
         // this is a violation of the assumption that the track network only dependents on the map configuration

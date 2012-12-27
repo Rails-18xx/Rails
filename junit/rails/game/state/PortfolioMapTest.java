@@ -41,7 +41,7 @@ public class PortfolioMapTest {
         item = TypeOwnableItemImpl.create(root, ITEM_ID, TYPE_ID);
         anotherItem = TypeOwnableItemImpl.create(root, ANOTHER_ITEM_ID, ANOTHER_TYPE_ID);
         portfolioSet.moveInto(item);
-        StateTestUtils.closeAndNew(root);
+        StateTestUtils.close(root);
     }
 
     // helper function to check the initial state after undo

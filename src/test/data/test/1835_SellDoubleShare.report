@@ -1169,7 +1169,7 @@ START_MERGED_COMPANY,PR,154,154
 FloatsWithCash,PR,616
 MERGE_MINOR_LOG,m3,M2,PR,410,1
 GetShareForMinor,m3,10,PR,IPO,M2
-ExchangesBaseToken,PR,M2,E19/1
+ExchangesBaseToken,PR,M2,E19/2
 MERGE_MINOR_LOG,m3,HB,PR,no,no
 GetShareForMinor,m3,10,PR,IPO,HB
 PrivateCloses,HB

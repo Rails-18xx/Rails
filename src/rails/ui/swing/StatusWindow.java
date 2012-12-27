@@ -73,7 +73,7 @@ KeyListener, ActionPerformer {
 
     protected Round currentRound;
 
-    protected PossibleActions possibleActions = PossibleActions.getInstance();
+    protected PossibleActions possibleActions;
     protected PossibleAction immediateAction = null;
 
     JPanel pane = new JPanel(new BorderLayout());
@@ -278,6 +278,7 @@ KeyListener, ActionPerformer {
 
     public void init(GameUIManager gameUIManager) {
         this.gameUIManager = gameUIManager;
+        this.possibleActions = gameUIManager.getGameManager().getPossibleActions();
 
         String gameStatusClassName = gameUIManager.getClassName(GuiDef.ClassName.GAME_STATUS);
         try {
@@ -780,18 +781,20 @@ KeyListener, ActionPerformer {
                 JOptionPane.PLAIN_MESSAGE
         );
 
-        // show game report line by line
-        List<String> gameReport = gm.getGameReport();
-        Collections.reverse(gameReport);
 
-        StringBuilder report = new StringBuilder();
-        for (String s:gameReport) {
-            report.insert(0, s + "\n");
-            JOptionPane.showMessageDialog(this,
-                    report,
-                    LocalText.getText("EoGFinalRanking"),
-                    JOptionPane.PLAIN_MESSAGE
-            );
+        if (!RailsRoot.getDevelop()) {
+            // show game report line by line
+            List<String> gameReport = gm.getGameReport();
+            Collections.reverse(gameReport);
+            StringBuilder report = new StringBuilder();
+            for (String s:gameReport) {
+                report.insert(0, s + "\n");
+                JOptionPane.showMessageDialog(this,
+                        report,
+                        LocalText.getText("EoGFinalRanking"),
+                        JOptionPane.PLAIN_MESSAGE
+                );
+            }
         }
     }
 

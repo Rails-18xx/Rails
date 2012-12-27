@@ -187,17 +187,12 @@ public class GameManager extends RailsManager implements Configurable, Owner {
      */
     protected final ArrayListState<String> nextPlayerMessages = ArrayListState.create(this, "nextPlayerMessages");
 
-    /**
-     * The ReportBuffer collects messages to be shown in the Game Report.
-     */
-    protected ReportBuffer reportBuffer;
-
     protected String gmName;
     protected String gmKey;
 
     protected StartPacket startPacket;
 
-    protected PossibleActions possibleActions = PossibleActions.getInstance();
+    protected PossibleActions possibleActions = PossibleActions.create();
 
     protected final ArrayListState<PossibleAction> executedActions = ArrayListState.create(this, "executedActions");
 
@@ -241,7 +236,6 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         gmKey = GM_KEY;
         gameManagerMap.put(GM_KEY, this);
         displayBuffer = new DisplayBuffer();
-        reportBuffer = new ReportBuffer();
         guiHints = GuiHints.create(this, "guiHints");
     }
     
@@ -631,6 +625,10 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         return gameManagerMap.get(GM_KEY);
     }
 
+    public PossibleActions getPossibleActions() {
+        return possibleActions;
+    }
+    
     /* (non-Javadoc)
      * @see rails.game.GameManager#getCompanyManager()
      */
@@ -658,7 +656,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                 if (currentPhase.getNumberOfOperatingRounds() != numOfORs.value()) {
                     numOfORs.set(currentPhase.getNumberOfOperatingRounds());
                 }
-                log.info("Phase=" + currentPhase.getName() + " ORs=" + numOfORs);
+                log.info("Phase=" + currentPhase.toText() + " ORs=" + numOfORs);
 
                 // Create a new OperatingRound (never more than one Stock Round)
                 // OperatingRound.resetRelativeORNumber();
@@ -672,7 +670,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             Phase currentPhase = getCurrentPhase();
             if (currentPhase == null) log.error ("Current Phase is null??", new Exception (""));
             numOfORs.set(currentPhase.getNumberOfOperatingRounds());
-            log.info("Phase=" + currentPhase.getName() + " ORs=" + numOfORs);
+            log.info("Phase=" + currentPhase.toText() + " ORs=" + numOfORs);
 
             // Create a new OperatingRound (never more than one Stock Round)
             // OperatingRound.resetRelativeORNumber();
@@ -841,13 +839,16 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
         DisplayBuffer.clear();
         guiHints.clearVisibilityHints();
-
+        ChangeStack changeStack = getRoot().getChangeStack();
+        boolean startGameAction = false;
+        
         if (action instanceof NullAction && ((NullAction)action).getMode() == NullAction.START_GAME) {
             // Skip processing at game start after Load.
             // We're only here to create PossibleActions.
             result = true;
-
+            startGameAction = true;
         } else if (action != null) {
+
             // Should never be null.
 
             action.setActed();
@@ -869,29 +870,34 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                 return false;
             }
 
-            for (;;) {
-
+            
+            if (action instanceof GameAction) {
                 // Process undo/redo centrally
-                if (action instanceof GameAction) {
-                    GameAction gameAction = (GameAction) action;
-                    result = processGameActions(gameAction);
-                    if (result) break;
-                }
-
+                GameAction gameAction = (GameAction) action;
+                result = processGameActions(gameAction);
+            } else {
                 // All other actions: process per round
+                
                 result = processCorrectionActions(action) ||  getCurrentRound().process(action);
-                break;
+                if (result && action.hasActed()) {
+                    executedActions.add(action);
+                }
             }
 
-            if (result && !(action instanceof GameAction) && action.hasActed()) {
-                executedActions.add(action);
-            }
         }
 
-        // Note: round may have changed!
-        possibleActions.clear();
-        getCurrentRound().setPossibleActions();
 
+        possibleActions.clear();
+
+        // Note: round may have changed!
+        getCurrentRound().setPossibleActions();
+        
+        // TODO: SetPossibleAction can contain state changes (like initTurn)
+        // Remove that and move closing the ChangeStack after the processing of the action
+        if (!(action instanceof GameAction) && !(startGameAction)) {
+            changeStack.close(action);
+        }
+        
         // only pass available => execute automatically
         if (!isGameOver() && possibleActions.containsOnlyPass()) {
             result = process(possibleActions.getList().get(0));
@@ -901,31 +907,16 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         // to have a ChangeSet open to initialize the CorrectionManagers
         if (!isGameOver()) setCorrectionActions();
 
-        // Check what is to be done with the ChangeStack
-        ChangeStack changeStack = getRoot().getChangeStack();
-        
-        if (action != null) {
-            if (result && !(action instanceof GameAction) && action.hasActed()) {
-                if (changeStack.isOpen()) changeStack.close();
-                recoverySave();
-            } else {
-                if (changeStack.isOpen()) changeStack.cancel();
-            }
-        }
-
-
         // Add the Undo/Redo possibleActions here.
-        // FIXME: This has to be rewritten from scratch
-//        if (changeStack.isUndoableByPlayer(getCurrentPlayer())) {
-//            possibleActions.add(new GameAction(GameAction.UNDO));
-//        }
-//        if (changeStack.isUndoableByManager()) {
-//            possibleActions.add(new GameAction(GameAction.FORCED_UNDO));
-//        }
-//        if (changeStack.isRedoable()) {
-//            possibleActions.add(new GameAction(GameAction.REDO));
-//        }
-
+        if (changeStack.isUndoPossible(getCurrentPlayer())) {
+            possibleActions.add(new GameAction(GameAction.UNDO));
+        }
+        if (changeStack.isUndoPossible()) {
+            possibleActions.add(new GameAction(GameAction.FORCED_UNDO));
+        }
+        if (changeStack.isRedoPossible()) {
+            possibleActions.add(new GameAction(GameAction.REDO));
+        }
 
         // logging of game actions activated
         for (PossibleAction pa : possibleActions.getList()) {
@@ -977,6 +968,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         // Process undo/redo centrally
         boolean result = false;
 
+        ChangeStack changeStack = getRoot().getChangeStack();
         int index = gameAction.getmoveStackIndex();
         switch (gameAction.getMode()) {
         case GameAction.SAVE:
@@ -986,26 +978,23 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             result = reload(gameAction);
             break;
         case GameAction.UNDO:
-            // FIXME: This has to be rewritten
-//            changeStack.undo(false);
+            changeStack.undo();
             result = true;
             break;
         case GameAction.FORCED_UNDO:
-            // FIXME: This has to be rewritten
-//            if (index != -1) {
-//                changeStack.gotoIndex(index);
-//            } else {
-//                changeStack.undo(true);
-//            }
-//            result = true;
+            if (index == -1) {
+                changeStack.undo();
+            } else {
+                changeStack.undo(index);
+            }
+            result = true;
             break;
         case GameAction.REDO:
-            // FIXME: This has to be rewritten
-//            if (index != -1) {
-//                changeStack.gotoIndex(index);
-//            } else {
-//                changeStack.redoMoveSet();
-//            }
+            if (index == -1) {
+                changeStack.redo();
+            } else {
+                changeStack.redo(index);
+            }
             result = true;
             break;
         case GameAction.EXPORT:
@@ -1068,18 +1057,19 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             skipNextDone = false;
             skippedStep = null;
 
+            ChangeStack changeStack = getRoot().getStateManager().getChangeStack();
+
             if (doProcess && !processCorrectionActions(action) && !getCurrentRound().process(action)) {
                 String msg = "Player "+action.getPlayerName()+"\'s action \""
                 +action.toString()+"\"\n  in "+getCurrentRound().getRoundName()
                 +" is considered invalid by the game engine";
                 log.error(msg);
                 DisplayBuffer.add(msg);
-                ChangeStack changeStack = getRoot().getStateManager().getChangeStack();
-                if (changeStack.isOpen()) changeStack.close();
                 return false;
             }
             possibleActions.clear();
             getCurrentRound().setPossibleActions();
+            changeStack.close(action);
 
 
             if (!isGameOver()) setCorrectionActions();
@@ -1090,9 +1080,6 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         }
         executedActions.add(action);
         
-        // ChangeStack changeStack = getRoot().getStateManager().getChangeStack();
-        // if (changeStack.isOpen()) changeStack.close(); // TODO: Check if this still works, but open ChangeSet required
-
         log.debug("Turn: "+getCurrentPlayer().getId());
         return true;
     }
@@ -1170,7 +1157,6 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         GameFileIO gameSaver = new GameFileIO();
         gameSaver.initSave(saveFileVersionID, gameName, gameOptions, playerNames);
         gameSaver.setActions(executedActions.view());
-        gameSaver.setComments(ReportBuffer.getCommentItems());
         return gameSaver.saveGame(file, displayErrorMessage, errorMessageKey);
     }
     /**
@@ -1240,13 +1226,13 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             DisplayBuffer.add(LocalText.getText("LoadFailed", e.getMessage()));
             return true;
         }
-
-
+        // update all observers TODO: Can this be replaced by something better
+        // getRoot().getChangeStack().updateObservers();
+        
         setReloading(false);
         finishLoading();
 
         // use new comments (without checks)
-        ReportBuffer.setCommentItems(gameLoader.getComments());
 
         log.info("Reloading finished");
         return true;
@@ -1262,17 +1248,12 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             PrintWriter pw = new PrintWriter(filename);
 
             // write map information
-            MapHex[][] allHexes =mapManager.getHexes();
-
-            for (MapHex[] hexRow:allHexes)
-                for (MapHex hex:hexRow)
-                    if (hex != null) {
-                        pw.println(hex.getId() + "," + hex.getCurrentTile().getExternalId() + ","
+            for (MapHex hex:mapManager.getHexes()) {
+                        pw.println(hex.getId() + "," + hex.getCurrentTile().toText() + ","
                                 + hex.getCurrentTileRotation() + ","
                                 + hex.getOrientationName(hex.getCurrentTileRotation())
                         ) ;
-                    }
-
+            }
             pw.close();
             result = true;
 
@@ -1316,7 +1297,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         String message =
             LocalText.getText("PlayerIsBankrupt",
                     getCurrentPlayer().getId());
-        ReportBuffer.add(message);
+        ReportBuffer.add(this, message);
         DisplayBuffer.add(message);
         if (gameEndsWithBankruptcy) {
             finishGame();
@@ -1332,7 +1313,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
     public void registerBrokenBank(){
         gameOverPending.set(true);
-        ReportBuffer.add(LocalText.getText("BankIsBrokenReportText"));
+        ReportBuffer.add(this, LocalText.getText("BankIsBrokenReportText"));
         String msgContinue;
         if (gameEndsAfterSetOfORs)
             msgContinue = LocalText.getText("gameOverPlaySetOfORs");
@@ -1345,7 +1326,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
     public void registerMaxedSharePrice(PublicCompany company, StockSpace space){
         gameOverPending.set(true);
-        ReportBuffer.add(LocalText.getText("MaxedSharePriceReportText",
+        ReportBuffer.add(this, LocalText.getText("MaxedSharePriceReportText",
                 company.getId(),
                 Currency.format(this, space.getPrice())));
         String msgContinue;
@@ -1365,14 +1346,14 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         gameOver.set(true);
 
         String message = LocalText.getText("GameOver");
-        ReportBuffer.add(message);
+        ReportBuffer.add(this, message);
         DisplayBuffer.add(message);
 
-        ReportBuffer.add("");
+        ReportBuffer.add(this, "");
 
         List<String> gameReport = getGameReport();
         for (String s:gameReport)
-            ReportBuffer.add(s);
+            ReportBuffer.add(this, s);
 
         // activate gameReport for UI
         setGameOverReportedUI(false);
@@ -1659,7 +1640,8 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
     // TODO Should be removed
     public void initialiseNewPhase(Phase phase) {
-        ReportBuffer.add(LocalText.getText("StartOfPhase", phase.getName()));
+        // TODO: Should phase.getId() replaced by toText()?
+        ReportBuffer.add(this, LocalText.getText("StartOfPhase", phase.getId()));
 
         phase.activate();
 
@@ -1818,10 +1800,6 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             nextPlayerMessages.add(s);
         else
             nextPlayerMessages.add(s);
-    }
-
-    public ReportBuffer getReportBuffer() {
-        return reportBuffer;
     }
 
     public GuiHints getUIHints() {

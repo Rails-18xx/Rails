@@ -4,7 +4,6 @@ import com.google.common.collect.Multimap;
 
 import rails.game.PublicCertificate;
 import rails.game.PublicCompany;
-import rails.game.state.Model;
 
 /**
  * Model for displaying the share details (used for ToolTips)

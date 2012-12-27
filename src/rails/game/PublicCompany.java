@@ -94,7 +94,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
 
     protected int baseTokensBuyCost = 0;
     /** An array of base token laying costs, per successive token */
-    protected int[] baseTokenLayCost;
+    protected List<Integer> baseTokenLayCost;
     protected String baseTokenLayCostMethod = "sequential";
 
     protected final BaseTokensModel baseTokens = BaseTokensModel.create(this, "baseTokens"); // Create after cloning ?
@@ -246,7 +246,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
     protected int fixedPrice = 0;
 
     /** Train limit per phase (index) */
-    protected int[] trainLimit = new int[0];
+    protected List<Integer> trainLimit;
 
     /** Private to close if first train is bought */
     protected String privateToCloseOnFirstTrainName = null;
@@ -436,7 +436,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
 
         Tag trainsTag = tag.getChild("Trains");
         if (trainsTag != null) {
-            trainLimit = trainsTag.getAttributeAsIntegerArray("limit", trainLimit);
+            trainLimit = trainsTag.getAttributeAsIntegerList("limit");
             mustOwnATrain =
                 trainsTag.getAttributeAsBoolean("mandatory", mustOwnATrain);
         }
@@ -507,7 +507,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
                 }
 
                 baseTokenLayCost =
-                    layCostTag.getAttributeAsIntegerArray("cost");
+                    layCostTag.getAttributeAsIntegerList("cost");
             }
 
             /* Cost of buying a token (mutually exclusive with laying cost) */
@@ -668,7 +668,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
                             + " for company " + getId());
                 }
                 homeHexes.add (homeHex);
-                infoText += "<br>Home: " + homeHex.getInfo();
+                infoText += "<br>Home: " + homeHex.toText();
             }
         }
 
@@ -679,7 +679,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
                         + destinationHexName
                         + " for company " + getId());
             }
-            infoText += "<br>Destination: "+destinationHex.getInfo();
+            infoText += "<br>Destination: "+destinationHex.toText();
         }
 
         if (Util.hasValue(privateToCloseOnFirstTrainName)) {
@@ -1379,7 +1379,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
         if (buyerShare > presShare) {
             pres.getPortfolioModel().swapPresidentCertificate(this,
                     buyer.getPortfolioModel(), 0);
-            ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
+            ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
                     buyer.getId(),
                     getId() ));
         }
@@ -1406,7 +1406,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
                 // Presidency must be transferred
                 seller.getPortfolioModel().swapPresidentCertificate(this,
                         player.getPortfolioModel(), 0);
-                ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
+                ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
                         player.getId(),
                         getId() ));
             }
@@ -1432,7 +1432,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
                 // Hand presidency to the first player with a higher share
                 president.getPortfolioModel().swapPresidentCertificate(this,
                         player.getPortfolioModel(), 0);
-                ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
+                ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
                         player.getId(),
                         getId() ));
                 return;
@@ -1466,7 +1466,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
      * so one must be subtracted before calling this method.
      */
     protected int getTrainLimit(int index) {
-        return trainLimit[Math.min(index, trainLimit.length - 1)];
+        return trainLimit.get(Math.min(index, trainLimit.size() - 1));
     }
 
     public int getCurrentTrainLimit() {
@@ -1519,7 +1519,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
         if (from != bank.getIpo()) {
             // The initial buy is reported from StartRound. This message should also
             // move to elsewhere.
-            ReportBuffer.add(LocalText.getText("BuysPrivateFromFor",
+            ReportBuffer.add(this, LocalText.getText("BuysPrivateFromFor",
                     getId(),
                     privateCompany.getId(),
                     from.getId(),
@@ -1575,7 +1575,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
     public void layTile(MapHex hex, Tile tile, int orientation, int cost) {
 
         String tileLaid =
-            "#" + tile.getExternalId() + "/" + hex.getId() + "/"
+            "#" + tile.toText() + "/" + hex.getId() + "/"
             + hex.getOrientationName(orientation);
         tilesLaidThisTurn.append(tileLaid, ", ");
 
@@ -1621,18 +1621,18 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
         if (baseTokenLayCostMethod.equals(BASE_COST_SEQUENCE)) {
             int index = getNumberOfLaidBaseTokens();
 
-            if (index >= baseTokenLayCost.length) {
-                index = baseTokenLayCost.length - 1;
+            if (index >= baseTokenLayCost.size()) {
+                index = baseTokenLayCost.size() - 1;
             } else if (index < 0) {
                 index = 0;
             }
-            return baseTokenLayCost[index];
+            return baseTokenLayCost.get(index);
         } else if (baseTokenLayCostMethod.equals(BASE_COST_DISTANCE)) {
             if (hex == null) {
-                return baseTokenLayCost[0];
+                return baseTokenLayCost.get(0);
             } else {
                 // WARNING: no provision yet for multiple home hexes.
-                return mapManager.getHexDistance(homeHexes.get(0), hex) * baseTokenLayCost[0];
+                return mapManager.getHexDistance(homeHexes.get(0), hex) * baseTokenLayCost.get(0);
             }
         } else {
             return 0;
@@ -1653,7 +1653,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
             int[] costs = new int[distances.length];
             int i = 0;
             for (int distance : distances) {
-                costs[i++] = distance * baseTokenLayCost[0];
+                costs[i++] = distance * baseTokenLayCost.get(0);
             }
             return costs;
         } else {
@@ -1718,22 +1718,20 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
                 // On a trackless tile it does not matter, but if
                 // the tile has track (such as the green OO tile),
                 // the player must select a city.
-                Map<Integer, List<Track>> tracks
-                = homeHex.getCurrentTile().getTracksPerStationMap();
-                if (tracks == null || tracks.isEmpty()) {
+                if (homeHex.getCurrentTile().hasNoStationTracks()) {
                     // No tracks, then it doesn't matter
                     homeCityNumber = 1;
                 } else {
                     // Cover the case that there already is another token.
                     // Allowing this is optional for 1856 Hamilton (THB home)
-                    List<Stop> stops = homeHex.getStops();
+                    Set<Stop> stops = homeHex.getStops();
                     List<Stop> openStops = new ArrayList<Stop>();
                     for (Stop stop : stops) {
                         if (stop.hasTokenSlotsLeft()) openStops.add (stop);
                     }
                     if (openStops.size() == 1) {
                         // Just one spot: lay the home base there.
-                        homeCityNumber = openStops.get(0).getNumber();
+                        homeCityNumber = openStops.get(0).getRelatedNumber();
                     } else {
                         // ??
                         // TODO Will player be asked??
@@ -1743,7 +1741,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
             }
             log.debug(getId() + " lays home base on " + homeHex.getId() + " city "
                     + homeCityNumber);
-            homeHex.layBaseToken(this, homeCityNumber);
+            homeHex.layBaseToken(this, homeHex.getRelatedStop(homeCityNumber));
         }
         return true;
     }

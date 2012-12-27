@@ -34,6 +34,8 @@ public class MapCorrectionAction extends CorrectionAction {
     
     /** Tiles: which tile(s) to lay */
     transient private List<Tile> tiles = null;
+    private String[] sTileIds;
+    // FIXME: Rewrite this with Rails1.x version flag
     private int[] tileIds;
     
     /** Orientation: how to lay the tile */
@@ -44,7 +46,7 @@ public class MapCorrectionAction extends CorrectionAction {
     //private String[]tokensToRelayOwner;
     transient private List<Station> stationsForRelay;
     //private int[] stationForRelayId;
-    transient private List<Station> possibleStations;
+    transient private Collection<Station> possibleStations;
     //private int[] possibleStationsId;
                 
     /**
@@ -79,9 +81,9 @@ public class MapCorrectionAction extends CorrectionAction {
     
     void setTiles(List<Tile> tiles) {
         this.tiles = tiles;
-        this.tileIds = new int[tiles.size()];
+        this.sTileIds = new String[tiles.size()];
         for (int i = 0; i < tiles.size(); i++)
-            tileIds[i] = tiles.get(i).getNb();
+            sTileIds[i] = tiles.get(i).getId();
     }
     
     public List<Station> getStationsForRelay() {
@@ -100,11 +102,11 @@ public class MapCorrectionAction extends CorrectionAction {
         this.tokensToRelay = tokens;
     }
     
-    public List<Station> getPossibleStations() {
+    public Collection<Station> getPossibleStations() {
         return possibleStations;
     }
     
-    void setPossibleStations(List<Station> possibleStations) {
+    void setPossibleStations(Collection<Station> possibleStations) {
         this.possibleStations = possibleStations;
     }
     
@@ -244,10 +246,17 @@ public class MapCorrectionAction extends CorrectionAction {
             location = mmgr.getHex(locationCoordinates);
 
         TileManager tmgr = gameManager.getTileManager();
+        if (sTileIds != null && sTileIds.length > 0) {
+            tiles = new ArrayList<Tile>();
+            for (int i = 0; i < sTileIds.length; i++) {
+                tiles.add(tmgr.getTile(sTileIds[i]));
+            }
+        }
+        // FIXME: Rewrite this with Rails1.x version flag
         if (tileIds != null && tileIds.length > 0) {
             tiles = new ArrayList<Tile>();
             for (int i = 0; i < tileIds.length; i++) {
-                tiles.add(tmgr.getTile(tileIds[i]));
+                tiles.add(tmgr.getTile(String.valueOf(tileIds[i])));
             }
         }
     }

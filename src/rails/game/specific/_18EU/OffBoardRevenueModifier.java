@@ -13,7 +13,7 @@ import rails.algorithms.RevenueStaticModifier;
 import rails.algorithms.RevenueAdapter.VertexVisit;
 import rails.game.Phase;
 import rails.game.Station;
-import rails.game.Tile;
+import rails.game.TileColour;
 
 public class OffBoardRevenueModifier implements RevenueStaticModifier {
 
@@ -26,11 +26,11 @@ public class OffBoardRevenueModifier implements RevenueStaticModifier {
         // 1. define value
         Phase phase = revenueAdapter.getPhase();
         int bonusValue;
-        if (phase.isTileColourAllowed(Tile.GREY_COLOUR_NAME)) {
+        if (phase.isTileColourAllowed(TileColour.GREY.name())) {
             bonusValue = 30;
-        } else if (phase.isTileColourAllowed(Tile.BROWN_COLOUR_NAME)) {
+        } else if (phase.isTileColourAllowed(TileColour.BROWN.name())) {
             bonusValue = 20;
-        } else if (phase.isTileColourAllowed(Tile.GREEN_COLOUR_NAME)) {
+        } else if (phase.isTileColourAllowed(TileColour.GREEN.name())) {
             bonusValue = 10;
         } else {
             return false;
@@ -41,7 +41,7 @@ public class OffBoardRevenueModifier implements RevenueStaticModifier {
         // 2. get all off-board type stations and Hamburg
         Set<NetworkVertex> offBoard = new HashSet<NetworkVertex>();
         for (NetworkVertex vertex:revenueAdapter.getVertices()) {
-            if (vertex.isStation() && vertex.getStation().getType().equals(Station.OFF_MAP_AREA)){
+            if (vertex.isStation() && vertex.getStation().getType() == Station.Type.OFFMAPCITY){
                 offBoard.add(vertex);
             }
         }

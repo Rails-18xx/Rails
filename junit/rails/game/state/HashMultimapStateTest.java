@@ -32,7 +32,7 @@ public class HashMultimapStateTest {
         itemA = OwnableItemImpl.create(root, ITEM_A_ID);
         itemB = OwnableItemImpl.create(root, ITEM_B_ID);
         itemC = OwnableItemImpl.create(root, ITEM_C_ID);
-        StateTestUtils.closeAndNew(root);
+        StateTestUtils.close(root);
     }
 
     private void initState() {
@@ -42,7 +42,7 @@ public class HashMultimapStateTest {
         state.put(ITEM_A_ID, itemC);
         state.put(ITEM_B_ID, itemB);
         state.put(ITEM_C_ID, itemC);
-        StateTestUtils.closeAndNew(root);
+        StateTestUtils.close(root);
         initContents = Lists.newArrayList(itemA, itemB, itemC, itemB, itemC);
     }
 

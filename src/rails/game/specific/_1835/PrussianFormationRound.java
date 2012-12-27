@@ -13,7 +13,6 @@ import rails.game.action.DiscardTrain;
 import rails.game.action.PossibleAction;
 import rails.game.special.ExchangeForShare;
 import rails.game.special.SpecialProperty;
-import rails.game.state.ChangeStack;
 
 public class PrussianFormationRound extends StockRound {
 
@@ -55,11 +54,11 @@ public class PrussianFormationRound extends StockRound {
         prussian = companyManager.getPublicCompany(PR_ID);
         phase = getCurrentPhase();
         startPr = !prussian.hasStarted();
-        forcedMerge = phase.getName().equals("5");
-        forcedStart = phase.getName().equals("4+4") || forcedMerge;
+        forcedMerge = phase.getId().equals("5");
+        forcedStart = phase.getId().equals("4+4") || forcedMerge;
         mergePr = !prussianIsComplete(gameManager);
 
-        ReportBuffer.add(LocalText.getText("StartFormationRound", PR_ID));
+        ReportBuffer.add(this, LocalText.getText("StartFormationRound", PR_ID));
         log.debug("StartPr="+startPr+" forcedStart="+forcedStart
                 +" mergePr="+mergePr+" forcedMerge="+forcedMerge);
 
@@ -119,7 +118,7 @@ public class PrussianFormationRound extends StockRound {
             Player m2Owner = m2.getPresident();
             startingPlayer = m2Owner;
             setCurrentPlayer(m2Owner);
-            ReportBuffer.add(LocalText.getText("StartingPlayer",
+            ReportBuffer.add(this, LocalText.getText("StartingPlayer",
                     getCurrentPlayer().getId()));
 
             possibleActions.add(new FoldIntoPrussian(m2));
@@ -244,7 +243,7 @@ public class PrussianFormationRound extends StockRound {
         }
 
         // all actions linked during formation round to avoid serious undo problems
-        ChangeStack.start(this, action);
+        
         // FIXME: changeStack.linkToPreviousMoveSet();
 
         if (folding) executeStartPrussian(false);
@@ -259,7 +258,7 @@ public class PrussianFormationRound extends StockRound {
                 PR_ID,
                 Currency.format(this, prussian.getIPOPrice()),
                 prussian.getStartSpace().toText());
-        ReportBuffer.add(message);
+        ReportBuffer.add(this, message);
         if (display) DisplayBuffer.add(message);
 
         // add money from sold shares
@@ -269,11 +268,11 @@ public class PrussianFormationRound extends StockRound {
 
         if (cash > 0) {
             String cashText = Currency.fromBank(cash, prussian);
-            ReportBuffer.add(LocalText.getText("FloatsWithCash",
+            ReportBuffer.add(this, LocalText.getText("FloatsWithCash",
                 prussian.getId(),
                 cashText ));
         } else {
-            ReportBuffer.add(LocalText.getText("Floats",
+            ReportBuffer.add(this, LocalText.getText("Floats",
                     prussian.getId()));
         }
 
@@ -306,7 +305,7 @@ public class PrussianFormationRound extends StockRound {
         */
 
         // all actions linked during formation round to avoid serious undo problems
-        ChangeStack.start(this, action);
+        
         // FIMXE: changeStack.linkToPreviousMoveSet();
 
         // Execute
@@ -344,7 +343,7 @@ public class PrussianFormationRound extends StockRound {
                             : Currency.format(this, ((PublicCompany)company).getCash()),
                     company instanceof PrivateCompany ? "no"
                             : ((PublicCompany)company).getPortfolioModel().getTrainList().size());
-            ReportBuffer.add(message);
+            ReportBuffer.add(this, message);
             if (display) DisplayBuffer.add (message);
             message = LocalText.getText("GetShareForMinor",
                     player.getId(),
@@ -352,7 +351,7 @@ public class PrussianFormationRound extends StockRound {
                     PR_ID,
                     ipo.getParent().getId(),
                     company.getId());
-            ReportBuffer.add(message);
+            ReportBuffer.add(this, message);
             if (display) DisplayBuffer.add (message);
 
             if (company instanceof PublicCompany) {
@@ -364,12 +363,12 @@ public class PrussianFormationRound extends StockRound {
                 Stop city = (Stop) token.getOwner();
                 MapHex hex = city.getParent();
                 token.moveTo(minor);
-                if (!hex.hasTokenOfCompany(prussian) && hex.layBaseToken(prussian, city.getNumber())) {
+                if (!hex.hasTokenOfCompany(prussian) && hex.layBaseToken(prussian, city)) {
                     /* TODO: the false return value must be impossible. */
                     message = LocalText.getText("ExchangesBaseToken",
                             PR_ID, minor.getId(),
                             city.getSpecificId());
-                    ReportBuffer.add(message);
+                    ReportBuffer.add(this, message);
                     if (display) DisplayBuffer.add (message);
 
                     prussian.layBaseToken(hex, 0);
@@ -435,11 +434,11 @@ public class PrussianFormationRound extends StockRound {
         }
 
         /* End of validation, start of execution */
-        ChangeStack.start(this, action);
+        
         // FIXME: if (action.isForced()) changeStack.linkToPreviousMoveSet();
 
         pool.addTrain(train);
-        ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
+        ReportBuffer.add(this, LocalText.getText("CompanyDiscardsTrain",
                 company.getId(),
                 train.toText() ));
 
@@ -457,12 +456,12 @@ public class PrussianFormationRound extends StockRound {
     @Override
     protected void finishRound() {
         Round interruptedRound = gameManager.getInterruptedRound();
-        ReportBuffer.add(" ");
+        ReportBuffer.add(this, " ");
         if (interruptedRound != null) {
-            ReportBuffer.add(LocalText.getText("EndOfFormationRound", PR_ID,
+            ReportBuffer.add(this, LocalText.getText("EndOfFormationRound", PR_ID,
                     interruptedRound.getRoundName()));
         } else {
-            ReportBuffer.add(LocalText.getText("EndOfFormationRoundNoInterrupt", PR_ID));
+            ReportBuffer.add(this, LocalText.getText("EndOfFormationRoundNoInterrupt", PR_ID));
         }
 
         if (prussian.hasStarted()) prussian.checkPresidency();

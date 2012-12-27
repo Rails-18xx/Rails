@@ -125,7 +125,7 @@ public class SoundEventInterpreter {
                     //city upgrade
                     player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_LayTile_City);
                 }
-                if (lt.getLaidTile().countFreeTiles() == 1) {
+                if (!lt.getLaidTile().isUnlimited() && lt.getLaidTile().getFreeCount() == 1) {
                     //last available tile is about to be laid
                     player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_LayTile_LastTileLaid);
                 }

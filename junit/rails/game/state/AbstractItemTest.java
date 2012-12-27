@@ -18,7 +18,7 @@ public class AbstractItemTest {
     
     @Before
     public void setUp() {
-        root = Root.create();
+        root = Root.create(new ChangeReporterImpl());
         manager = new ManagerImpl(root, MANAGER_ID);
         item = new AbstractItemImpl(manager, ITEM_ID);
         anotherItem = new AbstractItemImpl(item, ANOTHER_ID);

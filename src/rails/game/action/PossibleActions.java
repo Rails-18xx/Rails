@@ -1,57 +1,37 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleActions.java,v 1.17 2010/04/04 22:02:53 stefanfrey Exp $
- *
- * Created on 17-Sep-2006
- * Change Log:
- */
 package rails.game.action;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.google.common.collect.Lists;
 
 /**
  * This class manages the actions that the current user can execute at any point
  * in time. Each possible action is represented by an instance of a subclass of
- * PossibleAction. The complete set is stored in aan ArrayList.
- * <p>This class is implemented as a singleton to prevent multiple
- * instances lingering around, as there can only be one set of possible actions
- * at any point in time.
- *
- * @author Erik Vos
+ * PossibleAction. The complete set is stored in an ArrayList.
+ * 
+ * TODO: Should this be changed to a set?
  */
 public class PossibleActions {
 
-    private static PossibleActions instance = new PossibleActions();
+    private final List<PossibleAction> actions = Lists.newArrayList();
 
-    private List<PossibleAction> possibleActions;
+    private PossibleActions() { }
 
-    protected static Logger log =
-            LoggerFactory.getLogger(PossibleActions.class);
-
-    /**
-     * This class can only be instantiated locally.
-     */
-    private PossibleActions() {
-        possibleActions = new ArrayList<PossibleAction>();
-
-    }
-
-    public static PossibleActions getInstance() {
-        return instance;
+    public static PossibleActions create() {
+        return new PossibleActions();
     }
 
     public void clear() {
-        possibleActions.clear();
+        actions.clear();
     }
 
     public void add(PossibleAction action) {
-        possibleActions.add(action);
+        actions.add(action);
     }
 
     public void remove(PossibleAction action) {
-        possibleActions.remove(action);
+        actions.remove(action);
     }
 
     public void addAll(List<? extends PossibleAction> actions) {
@@ -61,7 +41,7 @@ public class PossibleActions {
     }
 
     public boolean contains(Class<? extends PossibleAction> clazz) {
-        for (PossibleAction action : possibleActions) {
+        for (PossibleAction action : actions) {
             if (clazz.isAssignableFrom(action.getClass())) return true;
         }
         return false;
@@ -70,23 +50,23 @@ public class PossibleActions {
     @SuppressWarnings("unchecked")
     public <T extends PossibleAction> List<T> getType(Class<T> clazz) {
         List<T> result = new ArrayList<T>();
-        for (PossibleAction action : possibleActions) {
+        for (PossibleAction action : actions) {
             if (clazz.isAssignableFrom(action.getClass())) result.add((T) action);
         }
         return result;
     }
 
     public List<PossibleAction> getList() {
-        return possibleActions;
+        return actions;
     }
 
     public boolean isEmpty() {
-        return possibleActions.isEmpty();
+        return actions.isEmpty();
     }
 
     public boolean containsOnlyPass() {
-        if (possibleActions.size() != 1) return false;
-        PossibleAction action = possibleActions.get(0);
+        if (actions.size() != 1) return false;
+        PossibleAction action = actions.get(0);
         if (action instanceof NullAction && ((NullAction)action).getMode() == NullAction.PASS) {
             return true;
         } else {
@@ -106,7 +86,7 @@ public class PossibleActions {
         }
 
         // Check if action accurs in the list of possible actions
-        for (PossibleAction action : possibleActions) {
+        for (PossibleAction action : actions) {
             if (action.equalsAsOption(checkedAction)) {
                 return true;
             }

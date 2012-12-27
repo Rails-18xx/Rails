@@ -15,7 +15,7 @@
 		<!-- The options in Game.xml are not currently used.
 			 See GamesList.xml for the real ones.
 		--> 
-		<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Deactivate" />
+		<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
 		<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Deactivate" />
 		<GameOption name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
 		<GameOption name="NoMapMode" type="toggle" default="no" />

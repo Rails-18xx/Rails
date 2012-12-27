@@ -23,8 +23,6 @@ import rails.common.Config;
 import rails.common.ConfigManager;
 import rails.game.RailsRoot;
 
-import rails.game.ReportBuffer;
-
 @RunWith(AllTests.class)
 public final class TestGameBuilder extends TestCase {
 
@@ -58,15 +56,14 @@ public final class TestGameBuilder extends TestCase {
     
     private static void prepareGameReport(File gameFile, String reportFilename) {
         
-        RailsRoot game = null;
+        RailsRoot root = null;
         if (gameFile.exists()) 
             System.out.println("Found game at " + gameFile.getAbsolutePath());
-            game = RailsRoot.load(gameFile.getAbsolutePath());
+            root = RailsRoot.load(gameFile.getAbsolutePath());
         
-        if (game != null) {  
-            List<String> report = ReportBuffer.getAsList();
+        if (root != null) {  
+            List<String> report = root.getReportBuffer().getReportQueue();
             saveGameReport(report, reportFilename, false);
-//            NDC.clear(); // remove reference to GameManager
         }
     }
 

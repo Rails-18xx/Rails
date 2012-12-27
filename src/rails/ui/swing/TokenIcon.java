@@ -4,13 +4,14 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.geom.Ellipse2D;
 
 import javax.swing.Icon;
 
-/** Inner class Tokencon is used to draw a token on the Upgrade chart. */
-class Tokencon implements Icon {
+import rails.ui.swing.hexmap.GUIHex.HexPoint;
+
+/** Class TokenIcon is used to draw a token on the Upgrade chart. */
+class TokenIcon implements Icon {
 
     public static final int DEFAULT_DIAMETER = 21;
 
@@ -19,7 +20,7 @@ class Tokencon implements Icon {
     private Color bgColour;
     private String text;
 
-    public Tokencon(int diameter, Color fgColour, Color bgColour, String text) {
+    public TokenIcon(int diameter, Color fgColour, Color bgColour, String text) {
 
         this.diameter = diameter;
         this.fgColour = fgColour;
@@ -40,9 +41,8 @@ class Tokencon implements Icon {
         g2d.draw(circle);
 
         g2d.setColor(oldColour);
-        GUIToken.drawTokenText(text, g, fgColour, 
-                new Point((int)(circle.x + diameter/2),(int)(circle.y + diameter/2)), 
-                diameter);
+        HexPoint center = new HexPoint(x + diameter / 2.0, y + diameter / 2.0);
+        GUIToken.drawTokenText(text, g2d, fgColour, center, diameter);
     }
 
     public int getIconWidth() {

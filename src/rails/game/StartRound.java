@@ -6,7 +6,6 @@ import rails.common.*;
 import rails.common.parser.GameOption;
 import rails.game.action.*;
 import rails.game.state.ArrayListState;
-import rails.game.state.ChangeStack;
 import rails.game.state.GenericState;
 import rails.game.state.IntegerState;
 import rails.game.state.Model;
@@ -83,8 +82,8 @@ public abstract class StartRound extends Round {
         currentPlayer = getCurrentPlayer();
         startPlayer = currentPlayer;
 
-        ReportBuffer.add(LocalText.getText("StartOfInitialRound"));
-        ReportBuffer.add(LocalText.getText("HasPriority",
+        ReportBuffer.add(this, LocalText.getText("StartOfInitialRound"));
+        ReportBuffer.add(this, LocalText.getText("HasPriority",
                 getCurrentPlayer().getId()));
     }
 
@@ -228,7 +227,7 @@ public abstract class StartRound extends Round {
             return false;
         }
 
-        ChangeStack.start(this, boughtItem);
+        
 
         assignItem(player, item, price, sharePrice);
 
@@ -257,7 +256,7 @@ public abstract class StartRound extends Round {
             int sharePrice) {
         Certificate primary = item.getPrimary();
         String priceText = Currency.toBank(player, price);
-        ReportBuffer.add(LocalText.getText("BuysItemFor",
+        ReportBuffer.add(this, LocalText.getText("BuysItemFor",
                 player.getId(),
                 primary.getName(),
                 priceText ));
@@ -265,7 +264,7 @@ public abstract class StartRound extends Round {
         checksOnBuying(primary, sharePrice);
         if (item.hasSecondary()) {
             Certificate extra = item.getSecondary();
-            ReportBuffer.add(LocalText.getText("ALSO_GETS",
+            ReportBuffer.add(this, LocalText.getText("ALSO_GETS",
                     player.getId(),
                     extra.getName() ));
             transferCertificate (extra, player.getPortfolioModel());

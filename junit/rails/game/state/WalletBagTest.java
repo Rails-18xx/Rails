@@ -30,7 +30,7 @@ public class WalletBagTest {
         item = CountableItemImpl.create(root, ITEM_ID);
         walletA = WalletBag.create(ownerA, WALLET_A_ID , Countable.class, item);
         walletB = WalletBag.create(ownerB, WALLET_B_ID , Countable.class, item);
-        StateTestUtils.closeAndNew(root);
+        StateTestUtils.close(root);
     }
 
     @Test

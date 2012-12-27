@@ -91,7 +91,7 @@ public class ArrayListStateTest {
     @Test
     public void testAddIndexFail() {
         // open new ChangeSet to test if it is still empty
-        StateTestUtils.closeAndNew(root);
+        StateTestUtils.close(root);
         try {
             stateInit.add(2, anotherItem);
             failBecauseExceptionWasNotThrown(IndexOutOfBoundsException.class);
@@ -104,9 +104,6 @@ public class ArrayListStateTest {
         } catch (Exception e) {
             assertThat(e).isInstanceOf(IndexOutOfBoundsException.class);
         }
-        // close and do the check
-        StateTestUtils.close(root);
-        assertTrue(StateTestUtils.getLastClosedChangeSet(root).isEmpty());
     }
 
     @Test
@@ -237,7 +234,7 @@ public class ArrayListStateTest {
         // check initial state after undo
         assertInitialStateAfterUndo();
         // and check iterator after redo
-        StateTestUtils.newChangeSet(root); // requires open changeset
+        StateTestUtils.close(root);// requires open changeset
         assertTestIterator();
     }
 

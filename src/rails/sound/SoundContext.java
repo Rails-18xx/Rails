@@ -90,7 +90,7 @@ public class SoundContext {
         // - new music is to be played
         if (currentRoundConfigKey != null) {
             String currentPhaseName = "";
-            if (currentPhase != null) currentPhaseName = currentPhase.getName();
+            if (currentPhase != null) currentPhaseName = currentPhase.getId();
             String newBackgroundMusicFileName = SoundConfig.get(
                     currentRoundConfigKey, currentPhaseName);
             if (!newBackgroundMusicFileName.equals(currentBackgroundMusicFileName)) {

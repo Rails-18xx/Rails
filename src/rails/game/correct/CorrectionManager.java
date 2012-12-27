@@ -12,7 +12,6 @@ import rails.game.GameManager;
 import rails.game.RailsAbstractItem;
 import rails.game.ReportBuffer;
 import rails.game.state.BooleanState;
-import rails.game.state.ChangeStack;
 
 public abstract class CorrectionManager extends RailsAbstractItem {
     
@@ -60,17 +59,17 @@ public abstract class CorrectionManager extends RailsAbstractItem {
     
     private boolean execute(CorrectionModeAction action) {
         
-        ChangeStack.start(this, action);
+        
         if (!isActive()) {
             String text = LocalText.getText("CorrectionModeActivate",
                     getParent().getCurrentPlayer().getId(),
                     LocalText.getText(getCorrectionType().name())
             );
-            ReportBuffer.add(text);
+            ReportBuffer.add(this, text);
             DisplayBuffer.add(text);
         }
         else {
-            ReportBuffer.add(LocalText.getText("CorrectionModeDeactivate",
+            ReportBuffer.add(this, LocalText.getText("CorrectionModeDeactivate",
                     getParent().getCurrentPlayer().getId(),
                     LocalText.getText(getCorrectionType().name())
             ));

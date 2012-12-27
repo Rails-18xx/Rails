@@ -16,6 +16,9 @@ import rails.game.state.Root;
 import rails.util.GameFileIO;
 
 public class RailsRoot extends Root implements RailsItem {
+    private static final Logger log =
+            LoggerFactory.getLogger(RailsRoot.class);
+    
     // the correct version number and develop status
     // is set during initialLoad in Config class
     private static String version = "unknown";
@@ -48,31 +51,29 @@ public class RailsRoot extends Root implements RailsItem {
     // in the following the Game objects are defined
 
     /** The component Manager */
-    protected GameManager gameManager;
-    protected CompanyManager companyManager;
-    protected PlayerManager playerManager;
-    protected PhaseManager phaseManager;
-    protected TrainManager trainManager;
-    protected StockMarket stockMarket;
-    protected MapManager mapManager;
-    protected TileManager tileManager;
-    protected RevenueManager revenueManager;
-    protected Bank bank;
-    protected String name;
-
-    protected List<String> directories = new ArrayList<String>();
-    protected List<String> players;
+    private GameManager gameManager;
+    private CompanyManager companyManager;
+    private PlayerManager playerManager;
+    private PhaseManager phaseManager;
+    private TrainManager trainManager;
+    private StockMarket stockMarket;
+    private MapManager mapManager;
+    private TileManager tileManager;
+    private RevenueManager revenueManager;
+    private Bank bank;
     
-    protected Currency currency;
-
-    protected Map<String, String> gameOptions;
-
-    protected static Logger log =
-        LoggerFactory.getLogger(RailsRoot.class);
+    // further general objects
+    private Currency currency;
+    private final ReportBuffer reportBuffer;
+    
+    private final String name;
+    private final List<String> players;
+    private final Map<String, String> gameOptions;
 
     public RailsRoot(String name, List<String> players, Map<String, String> options) {
         super();
-        init(); // initialize everything inside
+        reportBuffer = new ReportBuffer();
+        init(reportBuffer); // initialize everything inside
         
         this.name = name;
         this.gameOptions = options;
@@ -87,8 +88,6 @@ public class RailsRoot extends Root implements RailsItem {
             log.debug("Option: " + optionName + "="
                     + gameOptions.get(optionName));
         }
-
-
         this.players = players;
     }
 
@@ -132,7 +131,7 @@ public class RailsRoot extends Root implements RailsItem {
 
         log.info("========== Start of rails.game " + name + " ==========");
         log.info("Rails version "+version);
-        ReportBuffer.add(LocalText.getText("GameIs", name));
+        ReportBuffer.add(this, LocalText.getText("GameIs", name));
 
         /*
          * Initializations that involve relations between components can
@@ -300,15 +299,15 @@ public class RailsRoot extends Root implements RailsItem {
                 break;
             }
 
-            // load user comments (is the last
+            // load user comments (latest object)
+            // TODO: Not used in Rails2.0
             if (actionObject instanceof SortedMap) {
-                ReportBuffer.setCommentItems((SortedMap<Integer, String>) actionObject);
                 log.debug("Found sorted map");
             } else {
                 try {
                     object = ois.readObject();
                     if (object instanceof SortedMap) {
-                        ReportBuffer.setCommentItems((SortedMap<Integer, String>) object);
+                        // TODO: Not used in Rails2.0
                     }
                 } catch (IOException e) {
                     // continue without comments, if any IOException occurs
@@ -341,6 +340,10 @@ public class RailsRoot extends Root implements RailsItem {
     /*----- Getters -----*/
     public ChangeStack getChangeStack() {
         return getStateManager().getChangeStack();
+    }
+    
+    public ReportBuffer getReportBuffer() {
+        return reportBuffer;
     }
     
     public GameManager getGameManager() {

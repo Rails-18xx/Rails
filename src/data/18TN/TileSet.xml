@@ -29,7 +29,7 @@
 	</Tile>
 
 	<Tile id="6" quantity="3" >
-		<Upgrade id="14,15,619" hex="-H15,-F11"/>
+		<Upgrade id="14,15,619" hex="-H15,F11"/>
 		<Upgrade id="598" hex="H15"/>
 		<Upgrade id="599" hex="F11"/>
 	</Tile>

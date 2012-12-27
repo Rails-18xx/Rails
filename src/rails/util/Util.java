@@ -55,7 +55,7 @@ public final class Util {
     }
 
 
-    public static String joinWithDelimiter (int[] sa, String delimiter) {
+    public static String joinWithDelimiter (Iterable<Integer> sa, String delimiter) {
         StringBuilder b = new StringBuilder();
         for (int s : sa) {
             if (b.length() > 0) b.append(delimiter);

@@ -1,12 +1,9 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORWindow.java,v 1.36 2010/06/24 21:48:08 stefanfrey Exp $*/
 package rails.ui.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
@@ -31,19 +28,17 @@ import rails.ui.swing.elements.DockingFrame;
  */
 public class ORWindow extends DockingFrame implements ActionPerformer {
     private static final long serialVersionUID = 1L;
-    protected GameUIManager gameUIManager;
+   
+    protected final GameUIManager gameUIManager;
     protected ORUIManager orUIManager;
-    protected MapPanel mapPanel;
-    protected ORPanel orPanel;
-    protected UpgradesPanel upgradePanel;
-    protected MessagePanel messagePanel;
+    protected final MapPanel mapPanel;
+    protected final ORPanel orPanel;
+    protected final UpgradesPanel upgradePanel;
+    protected final MessagePanel messagePanel;
 
     protected Rectangle lastBounds;
 
-    protected PossibleActions possibleActions = PossibleActions.getInstance();
-
-    List<LayTile> allowedTileLays = new ArrayList<LayTile>();
-    List<LayToken> allowedTokenLays = new ArrayList<LayToken>();
+    protected final PossibleActions possibleActions;
 
     protected static Logger log =
             LoggerFactory.getLogger(ORWindow.class);
@@ -51,6 +46,7 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
     public ORWindow(GameUIManager gameUIManager,SplashWindow splashWindow) {
         super( "yes".equals(Config.get("or.window.dockablePanels")) , splashWindow );
         this.gameUIManager = gameUIManager;
+        this.possibleActions = gameUIManager.getGameManager().getPossibleActions();
 
         splashWindow.notifyOfStep(SplashWindow.STEP_OR_INIT_PANELS);
         
@@ -169,8 +165,6 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
                 guiMgr.getWindowSettings().set(frame);
             }
         });
-
-        getGameUIManager().reportWindow.updateLog();
 
         //call pack and size init within the swing EDT
         //(as this frame is not inited within the EDT)

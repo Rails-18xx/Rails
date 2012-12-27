@@ -128,16 +128,19 @@ public class SpecialRight extends SpecialProperty implements RevenueStaticModifi
     }
 
     /** 
-     *  modify revenue calculation of the 
+     *  modify revenue calculation of the special rights
      *  TODO: if owner would be known or only one rights object pretty print would be possible
+     *  TODO: check if calculation is only modified or the whole graph (including tile and token lays)
      */
     public boolean modifyCalculator(RevenueAdapter revenueAdapter) {
         // 1. check operating company if it has the right then it is excluded from the removal
         if (revenueAdapter.getCompany().hasRight(rightName)) return false;
         
-        // 2. find vertices to hex and remove those
+        // 2. find vertices to hex and remove the station
         Set<NetworkVertex> verticesToRemove = NetworkVertex.getVerticesByHexes(revenueAdapter.getVertices(), locations);
-        revenueAdapter.getGraph().removeAllVertices(verticesToRemove);
+        for (NetworkVertex v:verticesToRemove) {
+            if (v.isStation()) revenueAdapter.getGraph().removeVertex(v);
+        }
         
         // nothing to print, as the owner is unknown
         return false;

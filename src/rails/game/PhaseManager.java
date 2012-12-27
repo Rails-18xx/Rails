@@ -50,7 +50,7 @@ public class PhaseManager extends RailsManager implements Configurable {
         int n = 0;
         for (Tag phaseTag : phaseTags) {
             name = phaseTag.getAttributeAsString("name", String.valueOf(n + 1));
-            phase = new Phase(n++, name, previousPhase);
+            phase = Phase.create(this, name, n++, previousPhase);
             phaseList.add(phase);
             phaseMap.put(name, phase);
             phase.configureFromXML(phaseTag);

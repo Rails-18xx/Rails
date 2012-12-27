@@ -287,7 +287,7 @@ public class StockMarket extends RailsManager implements Configurable {
             StockSpace to) {
         // To be written to a log file in the future.
         if (from != null && from == to) {
-            ReportBuffer.add(LocalText.getText("PRICE_STAYS_LOG",
+            ReportBuffer.add(this, LocalText.getText("PRICE_STAYS_LOG",
                     company.getId(),
                     Currency.format(this, from.getPrice()),
                     from.getId() ));
@@ -295,7 +295,7 @@ public class StockMarket extends RailsManager implements Configurable {
         } else if (from == null && to != null) {
             ;
         } else if (from != null && to != null) {
-            ReportBuffer.add(LocalText.getText("PRICE_MOVES_LOG",
+            ReportBuffer.add(this, LocalText.getText("PRICE_MOVES_LOG",
                     company.getId(),
                     Currency.format(this, from.getPrice()),
                     from.getId(),
@@ -304,7 +304,7 @@ public class StockMarket extends RailsManager implements Configurable {
 
             /* Check for rails.game closure */
             if (to.endsGame()) {
-                ReportBuffer.add(LocalText.getText("GAME_OVER"));
+                ReportBuffer.add(this, LocalText.getText("GAME_OVER"));
                 gameManager.registerMaxedSharePrice(company, to);
             }
 

@@ -9,9 +9,10 @@ import rails.game.model.MoneyModel;
 import rails.game.model.PortfolioModel;
 import rails.game.model.PortfolioOwner;
 import rails.game.state.BooleanState;
+import rails.game.state.ChangeActionOwner;
 import rails.game.state.IntegerState;
 
-public class Player extends RailsAbstractItem implements MoneyOwner, PortfolioOwner, Comparable<Player> {
+public class Player extends RailsAbstractItem implements MoneyOwner, PortfolioOwner, ChangeActionOwner, Comparable<Player> {
 
     // TODO: Are those still needed?
     public static int MAX_PLAYERS = 8;

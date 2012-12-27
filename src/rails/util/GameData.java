@@ -10,11 +10,9 @@ import rails.game.action.PossibleAction;
  * Combines all fields required for game IO
  * Defines the complete game
  * 
- * @author freystef
+ * TODO: Rewrite this from scratch
  * */
-
-
-class GameData {
+public class GameData {
     class MetaData {
         String version;
         String date;

@@ -1,10 +1,12 @@
 package rails.game;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+
+import rails.common.LocalText;
+import rails.common.parser.ConfigurationException;
+import rails.common.parser.Tag;
 
 /**
  * A Station object represents any junction on a tile, where one, two or more
@@ -16,7 +18,7 @@ import org.slf4j.LoggerFactory;
  * by just one Tile object (which is NOT cloned or newly instantiated when a
  * Tile is laid). Please note, that all preprinted tiles on the map are also
  * represented by Tile objects, so laying the first tile on a hex is treated as
- * a normal upgrade in this program. <p> See also the City class, which
+ * a normal upgrade in this program. <p> See also the Stop class, which
  * represents stations on tiles that have actually been laid on a MapHex.
  * 
  * Station has the following ids:
@@ -24,27 +26,37 @@ import org.slf4j.LoggerFactory;
  * int number: The number inside the string (e.g. 1)
  * 
  */
-public class Station {
+public class Station extends TrackPoint {
 
-    // TODO: Check if this is still required
-    // replace that by something new?
-    public static final String CITY = "City";
-    public static final String TOWN = "Town";
-    public static final String HALT = "Halt";
-    public static final String OFF_MAP_AREA = "OffMapCity";
-    public static final String PORT = "Port";
-    public static final String PASS = "Pass";
-    public static final String JUNCTION = "Junction"; 
-    // No station, just a branching point.
-    private static final String[] types =
-    { CITY, TOWN, HALT, OFF_MAP_AREA, PORT, PASS, JUNCTION };
-    private static final List<String> validTypes = Arrays.asList(types);
+    private static final Logger log =
+            LoggerFactory.getLogger(Station.class);
 
-    protected static Logger log =
-        LoggerFactory.getLogger(Station.class);
+    public static enum Type {
+        CITY (StopType.Defaults.CITY, "City"), 
+        TOWN (StopType.Defaults.TOWN, "Town"), 
+        HALT (StopType.Defaults.TOWN, "Halt"), 
+        OFFMAPCITY (StopType.Defaults.OFFMAP, "OffMap"), 
+        PORT (StopType.Defaults.TOWN, "Port"), 
+        PASS (StopType.Defaults.CITY, "Pass"), 
+        JUNCTION (StopType.Defaults.NULL, "Junction");
+        
+        private final StopType stopType;
+        private final String text;
+        
+        private Type(StopType.Defaults type, String text) {
+            this.stopType = type.getStopType(); 
+            this.text = text;
+        }
+        public StopType getStopType() {
+            return stopType;
+        }
+        public String toText() {
+            return text;
+        }
+    }
 
     private final String id;
-    private final String type;
+    private final Station.Type type;
     private final int number;
     private final int value;
     private final int baseSlots;
@@ -52,12 +64,7 @@ public class Station {
     private final int position;
     private final String cityName;
 
-    /** Check validity of a Station type */
-    public static boolean isTypeValid(String type) {
-        return validTypes.contains(type);
-    }
-
-    public Station(Tile tile, int number, String id, String type, int value,
+    private Station(Tile tile, int number, String id, Station.Type type, int value,
             int slots, int position, String cityName) {
         this.tile = tile;
         this.number = number;
@@ -70,9 +77,39 @@ public class Station {
         log.debug("Created " + this);
     }
 
+    public static Station create(Tile tile, Tag stationTag) throws ConfigurationException {
+        String sid = stationTag.getAttributeAsString("id");
+
+        if (sid == null)
+            throw new ConfigurationException(LocalText.getText(
+                    "TileStationHasNoID", tile.getId()));
+        
+        int number = - TrackPoint.parseTrackPointNumber(sid);
+        
+        String stype = stationTag.getAttributeAsString("type");
+        if (stype == null)
+            throw new ConfigurationException(LocalText.getText(
+                    "TileStationHasNoType", tile.getId()));
+
+        Station.Type type = Station.Type.valueOf(stype.toUpperCase());
+        if (type == null) {
+            throw new ConfigurationException(LocalText.getText(
+                    "TileStationHasInvalidType",
+                    tile.getId(),
+                    type ));
+        }
+        int value = stationTag.getAttributeAsInteger("value", 0);
+        int slots = stationTag.getAttributeAsInteger("slots", 0);
+        int position = stationTag.getAttributeAsInteger("position", 0);
+        String cityName = stationTag.getAttributeAsString("city");
+        return new Station(tile, number, sid, type, value, slots,
+                    position, cityName);
+    }
+
+    
     public String getName() {
         return "Station " + id + " on " + tile.getClass().getSimpleName() + " "
-        + tile.getId();
+        + tile.toText();
     }
 
     public String getCityName() {
@@ -96,14 +133,7 @@ public class Station {
     public int getNumber() {
         return number;
     }
-
-    /**
-     * @return Returns the type.
-     */
-    public String getType() {
-        return type;
-    }
-
+    
     /**
      * @return Returns the baseSlots.
      */
@@ -121,41 +151,38 @@ public class Station {
     public int getPosition() {
         return position;
     }
+    
+    public StopType getStopType() {
+        return type.getStopType();
+    }
 
-    // TODO: Is this code still required somewhere?
-    // Otherwise drop code
-//    public int getX() {
-//        return x;
-//    }
-//
-//    public int getY() {
-//        return y;
-//    }
-//
-//    private void convertPosition() {
-//        if (position == 0) {
-//            x = y = 0;
-//            return;
-//        }
-//
-//        x = 0;
-//        y = 12;
-//        rotatePosition(position / 100);
-//    }
-//
-//    private void rotatePosition(int rotation) {
-//        double r = Math.toRadians(60 * rotation);
-//        double dx = x * Math.sin(r) + y * Math.cos(r);
-//        double dy = y * Math.sin(r) + x * Math.cos(r);
-//        x = (int) Math.round(dx);
-//        y = (int) Math.round(dy);
-//    }
+    public Station.Type getType() {
+        return type;
+    }
+    
+    // TrackPoint methods
+    public int getTrackPointNumber() {
+        return -number;
+    }
 
+    public TrackPoint.Type getTrackPointType() {
+        return TrackPoint.Type.STATION;
+    }
+    
+    public TrackPoint rotate(HexSide rotation) {
+        return this;
+    }
+    
+    public String toText() {
+        return type.toText() + " " + number;
+    }
+
+    
+    
     @Override
     public String toString() {
-        return "Station " + number + " on tile #" + tile.getNb() + " ID: " + id
+        return "Station " + number + " on tile #" + tile.getId() + " ID: " + id
         + ", Type: " + type + ", Slots: " + baseSlots + ", Value: "
         + value + ", Position:" + position;
     }
-
 }

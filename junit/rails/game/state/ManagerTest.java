@@ -18,7 +18,7 @@ public class ManagerTest {
 
     @Before
     public void setUp() {
-        root = Root.create();
+        root = Root.create(new ChangeReporterImpl());
         item = new AbstractItemImpl(root, ITEM_ID);
         manager = new ManagerImpl(item, MANAGER_ID);
         anotherItem = new AbstractItemImpl(manager, ANOTHER_ITEM_ID);

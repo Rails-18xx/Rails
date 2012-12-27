@@ -1,6 +1,5 @@
 package rails.ui.swing;
 
-import java.awt.Rectangle;
 import java.awt.event.*;
 
 import javax.swing.JFrame;
@@ -11,9 +10,9 @@ import rails.common.LocalText;
 public abstract class AbstractReportWindow extends JFrame {
     private static final long serialVersionUID = 1L;
 
-    protected GameUIManager gameUIManager;
+    protected final GameUIManager gameUIManager;
 
-    // can be set to false, than it cannot be closed
+    // if set to true, the report window cannot be closed
     protected boolean closeable = true;
 
     public AbstractReportWindow (GameUIManager gameUIManager) {
@@ -53,8 +52,10 @@ public abstract class AbstractReportWindow extends JFrame {
                 "yes".equalsIgnoreCase(Config.get("report.window.open")));
     }
 
-    public abstract void updateLog();
+    public abstract void setActions();
 
     public abstract void scrollDown();
 
+    public abstract void update(String text);
+    
 }

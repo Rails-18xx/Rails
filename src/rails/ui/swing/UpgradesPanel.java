@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/UpgradesPanel.java,v 1.29 2010/06/25 20:47:45 evos Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -14,65 +13,73 @@ import javax.swing.border.EtchedBorder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
 import rails.common.LocalText;
 import rails.game.*;
+import rails.game.HexUpgrade.Validation;
 import rails.game.action.*;
-import rails.game.correct.MapCorrectionAction;
 import rails.ui.swing.elements.ActionLabel;
+import rails.ui.swing.elements.HexLabel;
 import rails.ui.swing.elements.RailsIcon;
 import rails.ui.swing.elements.RailsIconButton;
 import rails.ui.swing.hexmap.GUIHex;
 import rails.ui.swing.hexmap.GUITile;
 import rails.ui.swing.hexmap.HexHighlightMouseListener;
-import rails.ui.swing.hexmap.HexMap;
 
 public class UpgradesPanel extends Box implements MouseListener, ActionListener {
     private static final long serialVersionUID = 1L;
-    
+
     private static final int UPGRADE_TILE_ZOOM_STEP = 10;
+    private static final Color DEFAULT_LABEL_BG_COLOUR = new JLabel("").getBackground();
+    private static final Color SELECTED_LABEL_BG_COLOUR = new Color(255, 220, 150);
+    private static final int DEFAULT_NB_PANEL_ELEMENTS = 15;
 
-    private ORUIManager orUIManager;
-    private List<ActionLabel> tokenLabels;
-    private List<CorrectionTokenLabel> correctionTokenLabels;
+    private final ORUIManager orUIManager;
+    
+    // token elements
+    private final List<ActionLabel> tokenLabels = Lists.newArrayList();
+    private final List<CorrectionTokenLabel> correctionTokenLabels = Lists.newArrayList();
+    private final List<LayToken> possibleTokenLays = new ArrayList<LayToken>(3);
     private int selectedTokenndex;
-    private List<LayToken> possibleTokenLays = new ArrayList<LayToken>(3);
+    
+    // tile laying
+    private final SortedSet<HexUpgrade> tileUpgrades = Sets.newTreeSet();
+    private final SortedSet<HexUpgrade> invalidTileUpgrades = Sets.newTreeSet();
 
-    static private Color defaultLabelBgColour = new JLabel("").getBackground();
-    static private Color selectedLabelBgColour = new Color(255, 220, 150);
-    private static final int defaultNbPanelElements = 15;
+    // ui elements
+    private final JPanel upgradePanel;
+    private final JScrollPane scrollPane;
+    private final Border border = new EtchedBorder();
+    private final RailsIconButton cancelButton = new RailsIconButton(
+            RailsIcon.NO_TILE);
+    private final RailsIconButton doneButton =
+            new RailsIconButton(RailsIcon.LAY_TILE);
 
-    private JPanel upgradePanel;
-    private JScrollPane scrollPane;
+    // dynamic elements
     private Dimension preferredSize;
-    private Border border = new EtchedBorder();
     private boolean tokenMode = false;
     private boolean correctionTokenMode = false;
-    private RailsIconButton cancelButton = new RailsIconButton(RailsIcon.NO_TILE);
-    private RailsIconButton doneButton = new RailsIconButton(RailsIcon.LAY_TILE);
-    private HexMap hexMap;
-    
     /**
      * If set, done/cancel buttons are not added to the pane. Instead, the
-     * visibility property of these buttons are handled such that they are set to
-     * visible if they normally would be added to the pane.
+     * visibility property of these buttons are handled such that they are set
+     * to visible if they normally would be added to the pane.
      */
     private boolean omitButtons;
-    
-    //list of tiles with an attached reason why it would represent an invalid upgrade
-    private Map<Tile, String> invalidTileUpgrades = null;
-    private static final String invalidUpgradeNoTilesLeft = "NoTilesLeft";
-    private static final String invalidUpgradeNoValidOrientation = "NoValidOrientation";
 
-    protected static Logger log =
-        LoggerFactory.getLogger(UpgradesPanel.class);
+    protected static Logger log = LoggerFactory.getLogger(UpgradesPanel.class);
 
-    public UpgradesPanel(ORUIManager orUIManager,boolean omitButtons) {
+    public UpgradesPanel(ORUIManager orUIManager, boolean omitButtons) {
         super(BoxLayout.Y_AXIS);
 
         this.orUIManager = orUIManager;
         this.omitButtons = omitButtons;
 
-        preferredSize = new Dimension((int)Math.round(110 * (2 +  Scale.getFontScale())/3), 200);
+        preferredSize =
+                new Dimension(
+                        (int) Math.round(110 * (2 + GUIGlobals.getFontsScale()) / 3),
+                        200);
         setSize(preferredSize);
         setVisible(true);
 
@@ -81,7 +88,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         upgradePanel.setOpaque(true);
         upgradePanel.setBackground(Color.DARK_GRAY);
         upgradePanel.setBorder(border);
-        upgradePanel.setLayout(new GridLayout(defaultNbPanelElements, 1));
+        upgradePanel.setLayout(new GridLayout(DEFAULT_NB_PANEL_ELEMENTS, 1));
 
         scrollPane = new JScrollPane(upgradePanel);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -94,7 +101,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         cancelButton.setActionCommand("Cancel");
         cancelButton.setMnemonic(KeyEvent.VK_C);
         cancelButton.addActionListener(this);
-        
+
         if (omitButtons) {
             doneButton.setVisible(false);
             cancelButton.setVisible(false);
@@ -103,69 +110,22 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         add(scrollPane);
     }
 
-    public void populate(Phase currentPhase) {
-        if (hexMap == null) hexMap = orUIManager.getMapPanel().getMap();
-
-        GUIHex uiHex = hexMap.getSelectedHex();
-        MapHex hex = uiHex.getHexModel();
-        orUIManager.tileUpgrades = new ArrayList<Tile>();
-        List<Tile> tiles;
-        Set<String> allowedColours = new HashSet<String> (currentPhase.getTileColours());
-
-        for (LayTile layTile : hexMap.getTileAllowancesForHex(hex)) {
-            tiles = layTile.getTiles();
-            if (tiles == null) {
-                for (Tile tile : uiHex.getCurrentTile().getValidUpgrades(hex,
-                        orUIManager.gameUIManager.getCurrentPhase())) {
-                    // Skip if not allowed in LayTile
-                    //if (!layTile.isTileColourAllowed(tile.getColourName())) continue;
-
-                    if (layTile.isTileColourAllowed(tile.getColourName()))
-                        orUIManager.addTileUpgradeIfValid(uiHex,tile);
-                }
-            } else {
-                for (Tile tile : tiles) {
-                    // Skip if colour is not allowed yet
-                    if (!allowedColours.contains(tile.getColourName())) continue;
-                    orUIManager.addTileUpgradeIfValid(uiHex,tile);
-                }
-            }
-        }
-        
-        //determine invalid upgrades
-        //duplicates game engine logic to some degree
-        //but this is indispensable since the game engine's services not sufficient here
-        invalidTileUpgrades = new HashMap<Tile, String>();
-        for (Tile tile : uiHex.getCurrentTile().getUpgrades(hex, currentPhase)) {
-            if (!orUIManager.tileUpgrades.contains(tile)) {
-                if (!currentPhase.isTileColourAllowed(tile.getColourName())) {
-                    //current design decision: don't display tiles for invalid phases
-                } else if (!orUIManager.isTileUpgradeValid(uiHex, tile)) {
-                    invalidTileUpgrades.put(tile, invalidUpgradeNoValidOrientation);
-                } else if (tile.countFreeTiles() == 0) {
-                    invalidTileUpgrades.put(tile, invalidUpgradeNoTilesLeft);
-                }
-            }
-        }
-    }
-
-    public void showUpgrades() {
+    public void showUpgrades(int localStep) {
         clearPanel();
 
         // reset to the number of elements
-        GridLayout panelLayout = (GridLayout)upgradePanel.getLayout();
-        panelLayout.setRows(defaultNbPanelElements);
+        GridLayout panelLayout = (GridLayout) upgradePanel.getLayout();
+        panelLayout.setRows(DEFAULT_NB_PANEL_ELEMENTS);
 
-        if (tokenMode && possibleTokenLays != null
-                && possibleTokenLays.size() > 0) {
+        if (tokenMode && possibleTokenLays.size() > 0) {
 
             Color fgColour = null;
             Color bgColour = null;
             String text = null;
             String description = null;
-            Tokencon icon;
+            TokenIcon icon;
             ActionLabel tokenLabel;
-            tokenLabels = new ArrayList<ActionLabel>();
+            tokenLabels.clear();
             for (LayToken action : possibleTokenLays) {
                 if (action instanceof LayBaseToken) {
                     PublicCompany comp = ((LayBaseToken) action).getCompany();
@@ -173,21 +133,24 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
                     bgColour = comp.getBgColour();
                     description = text = comp.getId();
                     if (action.getSpecialProperty() != null) {
-                        description += " (" + action.getSpecialProperty().getOriginalCompany().getId()+")";
+                        description +=
+                                " ("
+                                        + action.getSpecialProperty().getOriginalCompany().getId()
+                                        + ")";
                     }
                 } else if (action instanceof LayBonusToken) {
                     fgColour = Color.BLACK;
                     bgColour = Color.WHITE;
                     BonusToken token =
-                        (BonusToken) action.getSpecialProperty().getToken();
+                            (BonusToken) action.getSpecialProperty().getToken();
                     description = token.getId();
                     text = "+" + token.getValue();
                 }
-                icon = new Tokencon(25, fgColour, bgColour, text);
+                icon = new TokenIcon(25, fgColour, bgColour, text);
                 tokenLabel = new ActionLabel(icon);
                 tokenLabel.setName(description);
                 tokenLabel.setText(description);
-                tokenLabel.setBackground(defaultLabelBgColour);
+                tokenLabel.setBackground(DEFAULT_LABEL_BG_COLOUR);
                 tokenLabel.setOpaque(true);
                 tokenLabel.setVisible(true);
                 tokenLabel.setBorder(border);
@@ -200,63 +163,74 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
 
             setSelectedToken();
 
-        } else if (orUIManager.tileUpgrades == null) {
-            ;
-        } else { 
-            if (orUIManager.tileUpgrades.size() == 0) {
+        } else {
+            if (tileUpgrades.size() == 0 && localStep == ORUIManager.SELECT_TILE) {
                 orUIManager.setMessage(LocalText.getText("NoTiles"));
             } else {
-            for (Tile tile : orUIManager.tileUpgrades) {
-                    HexLabel hexLabel = createHexLabel(tile, null);
+                for (HexUpgrade upgrade : tileUpgrades) {
+                    HexLabel hexLabel = createHexLabel(upgrade, null, null);
                     hexLabel.addMouseListener(this);
                     upgradePanel.add(hexLabel);
                 }
             }
-            if (invalidTileUpgrades != null) {
-                for (Tile tile : invalidTileUpgrades.keySet()) {
-                    HexLabel hexLabel = createHexLabel(tile, 
-                            LocalText.getText(invalidTileUpgrades.get(tile)));
-                    hexLabel.setEnabled(false);
-                    hexLabel.setToolTipText(hexLabel.getToolTip());
-                    //highlight where tiles of this ID have been laid if no tiles left
-                    if (invalidTileUpgrades.get(tile).equals(invalidUpgradeNoTilesLeft)) {
-                        HexHighlightMouseListener.addMouseListener(hexLabel, 
-                            orUIManager, tile.getNb(), true);
-                    }
-                    upgradePanel.add(hexLabel);
+            for (HexUpgrade hexUpgrade : invalidTileUpgrades) {
+                TileUpgrade upgrade = hexUpgrade.getUpgrade();
+                StringBuilder invalidText = new StringBuilder();
+                for (Validation invalid : hexUpgrade.getInvalids()) {
+                    invalidText.append(invalid.toString() + "<br>");
                 }
+                HexLabel hexLabel =
+                        createHexLabel(hexUpgrade,
+                                LocalText.getText("TILE_INVALID"),
+                                invalidText.toString());
+                hexLabel.setEnabled(false);
+                // highlight where tiles of this ID have been laid if no
+                // tiles left
+                if (hexUpgrade.getInvalids().contains(
+                        Validation.COLOUR_NOT_ALLOWED)) {
+                    HexHighlightMouseListener.addMouseListener(hexLabel,
+                            orUIManager,
+                            upgrade.getTargetTile(), true);
+                }
+                upgradePanel.add(hexLabel);
             }
         }
-        
+
         addButtons();
-        
-        //repaint();
+
+        // repaint();
         revalidate();
     }
-    
-    private HexLabel createHexLabel(Tile tile,String toolTipHeaderLine) {
+
+    private HexLabel createHexLabel(HexUpgrade hexUpgrade,
+            String toolTipHeaderLine, String toolTipBody) {
         BufferedImage hexImage = null;
 
-        //get a buffered image of the tile in the first valid orientation
-        GUIHex selectedGUIHex = hexMap.getSelectedHex();
+        // get a buffered image of the tile
+        GUIHex selectedGUIHex = orUIManager.getMap().getSelectedHex();
+        TileUpgrade upgrade = hexUpgrade.getUpgrade();
         if (selectedGUIHex != null) {
-            GUITile tempGUITile = selectedGUIHex.createUpgradeTileIfValid (
-                    tile.getNb(), 
-                    orUIManager.getMustConnectRequirement(selectedGUIHex, tile));
-            
-            if (tempGUITile != null) {
-                //tile has been rotated to valid orientation
-                //get unscaled image for this orientation 
-                hexImage = tempGUITile.getTileImage(getZoomStep());
+            // if tile is already selected, choose the current rotation
+            HexSide rotation;
+            if (selectedGUIHex.canFixTile()
+                && selectedGUIHex.getProvisionalTile() == upgrade.getTargetTile()) {
+                rotation = selectedGUIHex.getProvisionalTileRotation();
+            } else { // otherwise in the first valid rotation, returns null if no valid rotation
+                rotation = hexUpgrade.getRotations().getNext(HexSide.defaultRotation());
+                if (rotation == null) {
+                    // fallback if no valid orientation exists:
+                    // get the image in the standard orientation
+                    rotation = HexSide.defaultRotation();
+                }
             }
+            GUITile tempGUITile =
+                    new GUITile(upgrade.getTargetTile(), selectedGUIHex);
+            tempGUITile.setRotation(rotation);
+            // tile has been rotated to valid orientation
+            // get unscaled image for this orientation
+            hexImage = tempGUITile.getTileImage(getZoomStep());
         }
 
-        //fallback if no valid orientation exists: 
-        //get the image in the standard orientation
-        if (hexImage == null) {
-            hexImage = getHexImage(tile.getPictureId());
-        }
-        
         ImageIcon hexIcon = new ImageIcon(hexImage);
 
         // Cheap n' Easy rescaling.
@@ -265,9 +239,11 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
                 (int) (hexIcon.getIconHeight() * GUIHex.NORMAL_SCALE * 0.8),
                 Image.SCALE_SMOOTH));
 
-        HexLabel hexLabel = new HexLabel(hexIcon, tile.getNb(),toolTipHeaderLine);
-                hexLabel.setName(tile.getId());
-        hexLabel.setTextFromTile(tile);
+        Tile tile = upgrade.getTargetTile();
+        HexLabel hexLabel =
+                new HexLabel(hexIcon, hexUpgrade, toolTipHeaderLine,
+                        toolTipBody);
+        hexLabel.setName(tile.toText());
         hexLabel.setOpaque(true);
         hexLabel.setVisible(true);
         hexLabel.setBorder(border);
@@ -283,20 +259,21 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
 
         // activate upgrade panel
         clearPanel();
-        GridLayout panelLayout = (GridLayout)upgradePanel.getLayout();
-        List<Tile> tiles = orUIManager.tileUpgrades;
+        GridLayout panelLayout = (GridLayout) upgradePanel.getLayout();
 
-        if (tiles == null || tiles.size() == 0) {
+        if (tileUpgrades.size() == 0 && invalidTileUpgrades.size() == 0) {
             // reset to the number of elements
-            panelLayout.setRows(defaultNbPanelElements);
+            panelLayout.setRows(DEFAULT_NB_PANEL_ELEMENTS);
             // set to position 0
             scrollPane.getVerticalScrollBar().setValue(0);
         } else {
             // set to the max of available or the default number of elements
-            panelLayout.setRows(Math.max(tiles.size() + 2, defaultNbPanelElements));
-            for (Tile tile : tiles) {
-
-                BufferedImage hexImage = getHexImage(tile.getNb());
+            panelLayout.setRows(Math.max(tileUpgrades.size() +
+                    invalidTileUpgrades.size() + 2, DEFAULT_NB_PANEL_ELEMENTS));
+            for (HexUpgrade u : tileUpgrades) {
+                TileUpgrade upgrade = u.getUpgrade();
+                Tile tile = upgrade.getTargetTile();
+                BufferedImage hexImage = getHexImage(tile.getPictureId());
                 ImageIcon hexIcon = new ImageIcon(hexImage);
 
                 // Cheap n' Easy rescaling.
@@ -305,9 +282,8 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
                         (int) (hexIcon.getIconHeight() * GUIHex.NORMAL_SCALE * 0.8),
                         Image.SCALE_SMOOTH));
 
-                HexLabel hexLabel = new HexLabel(hexIcon, tile.getNb());
-                hexLabel.setName(tile.getId());
-                hexLabel.setTextFromTile(tile);
+                HexLabel hexLabel = new HexLabel(hexIcon, u);
+                hexLabel.setName(tile.toText());
                 hexLabel.setOpaque(true);
                 hexLabel.setVisible(true);
                 hexLabel.setBorder(border);
@@ -319,63 +295,63 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
 
         addButtons();
 
-        //      repaint();
+        // repaint();
         revalidate();
     }
 
-    // populate version for corrections
-    public void showCorrectionTokenUpgrades(MapCorrectionAction action) {
-        // activate correctionTokenMode and deactivate standard tokenMode
-        correctionTokenMode = true;
-        tokenMode = false;
-
-        // activate upgrade panel
-        clearPanel();
-        GridLayout panelLayout = (GridLayout)upgradePanel.getLayout();
-        List<? extends Token<?>> tokens = orUIManager.tokenLays;
-
-        if (tokens == null || tokens.size() == 0) {
-            // reset to the number of elements
-            panelLayout.setRows(defaultNbPanelElements);
-            // set to position 0
-            scrollPane.getVerticalScrollBar().setValue(0);
-        } else {
-            Color fgColour = null;
-            Color bgColour = null;
-            String text = null;
-            String description = null;
-            Tokencon icon;
-            CorrectionTokenLabel tokenLabel;
-            correctionTokenLabels = new ArrayList<CorrectionTokenLabel>();
-            for (Token<?> token:tokens) {
-                if (token instanceof BaseToken) {
-                    PublicCompany comp = ((BaseToken)token).getParent();
-                    fgColour = comp.getFgColour();
-                    bgColour = comp.getBgColour();
-                    description = text = comp.getId();
-                }
-                icon = new Tokencon(25, fgColour, bgColour, text);
-                tokenLabel = new CorrectionTokenLabel(icon, token);
-                tokenLabel.setName(description);
-                tokenLabel.setText(description);
-                tokenLabel.setBackground(defaultLabelBgColour);
-                tokenLabel.setOpaque(true);
-                tokenLabel.setVisible(true);
-                tokenLabel.setBorder(border);
-                tokenLabel.addMouseListener(this);
-                tokenLabel.addPossibleAction(action);
-                correctionTokenLabels.add(tokenLabel);
-                upgradePanel.add(tokenLabel);
-            }
-
-        }
-        
-        addButtons();
-
-        //      repaint();
-        revalidate();
-
-    }
+//    // populate version for corrections
+//    public void showCorrectionTokenUpgrades(MapCorrectionAction action) {
+//        // activate correctionTokenMode and deactivate standard tokenMode
+//        correctionTokenMode = true;
+//        tokenMode = false;
+//
+//        // activate upgrade panel
+//        clearPanel();
+//        GridLayout panelLayout = (GridLayout) upgradePanel.getLayout();
+//        List<? extends Token<?>> tokens = orUIManager.getTokenLays();
+//
+//        if (tokens == null || tokens.size() == 0) {
+//            // reset to the number of elements
+//            panelLayout.setRows(DEFAULT_NB_PANEL_ELEMENTS);
+//            // set to position 0
+//            scrollPane.getVerticalScrollBar().setValue(0);
+//        } else {
+//            Color fgColour = null;
+//            Color bgColour = null;
+//            String text = null;
+//            String description = null;
+//            Tokencon icon;
+//            CorrectionTokenLabel tokenLabel;
+//            correctionTokenLabels.clear();
+//            for (Token<?> token : tokens) {
+//                if (token instanceof BaseToken) {
+//                    PublicCompany comp = ((BaseToken) token).getParent();
+//                    fgColour = comp.getFgColour();
+//                    bgColour = comp.getBgColour();
+//                    description = text = comp.getId();
+//                }
+//                icon = new Tokencon(25, fgColour, bgColour, text);
+//                tokenLabel = new CorrectionTokenLabel(icon, token);
+//                tokenLabel.setName(description);
+//                tokenLabel.setText(description);
+//                tokenLabel.setBackground(DEFAULT_LABEL_BG_COLOUR);
+//                tokenLabel.setOpaque(true);
+//                tokenLabel.setVisible(true);
+//                tokenLabel.setBorder(border);
+//                tokenLabel.addMouseListener(this);
+//                tokenLabel.addPossibleAction(action);
+//                correctionTokenLabels.add(tokenLabel);
+//                upgradePanel.add(tokenLabel);
+//            }
+//
+//        }
+//
+//        addButtons();
+//
+//        // repaint();
+//        revalidate();
+//
+//    }
 
     public void clear() {
         clearPanel();
@@ -385,43 +361,44 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
 
     public void setSelectedTokenndex(int index) {
         log.debug("Selected token index from " + selectedTokenndex + " to "
-                + index);
+                  + index);
         selectedTokenndex = index;
     }
 
     public void setSelectedToken() {
-        if (tokenLabels == null || tokenLabels.isEmpty()) return;
+        if (tokenLabels.isEmpty()) return;
         int index = -1;
         for (ActionLabel tokenLabel : tokenLabels) {
             tokenLabel.setBackground(++index == selectedTokenndex
-                    ? selectedLabelBgColour : defaultLabelBgColour);
+                    ? SELECTED_LABEL_BG_COLOUR : DEFAULT_LABEL_BG_COLOUR);
         }
     }
 
     // NOTE: NOT USED
     // TODO: Check is this still required
-//    private void setSelectedCorrectionToken() {
-//        if (correctionTokenLabels == null || correctionTokenLabels.isEmpty()) return;
-//        int index = -1;
-//        for (CorrectionTokenLabel tokenLabel : correctionTokenLabels) {
-//            tokenLabel.setBackground(++index == selectedTokenndex
-//                    ? selectedLabelBgColour : defaultLabelBgColour);
-//        }
-//    }
+    // private void setSelectedCorrectionToken() {
+    // if (correctionTokenLabels == null || correctionTokenLabels.isEmpty())
+    // return;
+    // int index = -1;
+    // for (CorrectionTokenLabel tokenLabel : correctionTokenLabels) {
+    // tokenLabel.setBackground(++index == selectedTokenndex
+    // ? selectedLabelBgColour : defaultLabelBgColour);
+    // }
+    // }
 
-    private BufferedImage getHexImage(int tileId) {
+    private BufferedImage getHexImage(String tileId) {
         return GameUIManager.getImageLoader().getTile(tileId, getZoomStep());
     }
-    
+
     /**
      * @return Default zoom step for conventional panes or, for dockable panes,
-     * the zoom step used in the map.
-     * Map zoom step can only be used for dockable panes as user-based pane sizing
-     * could be necessary when displaying tiles of an arbitrary size 
+     * the zoom step used in the map. Map zoom step can only be used for
+     * dockable panes as user-based pane sizing could be necessary when
+     * displaying tiles of an arbitrary size
      */
     private int getZoomStep() {
         if (orUIManager.getORWindow().isDockingFrameworkEnabled()) {
-            return hexMap.getZoomStep();
+            return orUIManager.getMap().getZoomStep();
         } else {
             return UPGRADE_TILE_ZOOM_STEP;
         }
@@ -437,21 +414,30 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         this.preferredSize = preferredSize;
     }
 
-    public void setTileUpgrades(List<Tile> upgrades) {
-        this.orUIManager.tileUpgrades = upgrades;
+    public void clearTileUpgrades() {
+        tileUpgrades.clear();
+        invalidTileUpgrades.clear();
     }
 
-    public void addUpgrades(List<Tile> upgrades) {
-        this.orUIManager.tileUpgrades.addAll(upgrades);
+    public void addUpgrade(HexUpgrade upgrade, boolean valid) {
+        if (valid) {
+            tileUpgrades.add(upgrade);
+        } else {
+            invalidTileUpgrades.add(upgrade);
+        }
+    }
+
+    public void removeUpgrade(HexUpgrade upgrade) {
+        tileUpgrades.remove(upgrade);
     }
 
     public void setTileMode(boolean tileMode) {
-        setTileUpgrades(null);
+        clearTileUpgrades();
     }
 
     public void setTokenMode(boolean tokenMode) {
         this.tokenMode = tokenMode;
-        setTileUpgrades(null);
+        clearTileUpgrades();
         possibleTokenLays.clear();
         selectedTokenndex = -1;
     }
@@ -506,39 +492,22 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         } else if (correctionTokenMode) {
             int id = correctionTokenLabels.indexOf(source);
             selectedTokenndex = id;
-            log.info("Correction Token index = " + selectedTokenndex + " selected");
+            log.info("Correction Token index = " + selectedTokenndex
+                     + " selected");
         } else {
 
-            int id = ((HexLabel) e.getSource()).getInternalId();
-
-            orUIManager.tileSelected(id);
+            HexUpgrade upgrade = ((HexLabel) e.getSource()).getUpgrade();
+            orUIManager.tileSelected(upgrade);
         }
 
     }
 
     public void mouseEntered(MouseEvent e) {
-        Object source = e.getSource();
-        if (!(source instanceof JLabel)) return;
-
-        if (!tokenMode && !correctionTokenMode) {
-            // tile mode
-            HexLabel tile = (HexLabel) e.getSource();
-            String tooltip = tile.getToolTip();
-            if (tooltip != "") {
-                tile.setToolTipText(tooltip);
-            }
-        }
+    
     }
 
     public void mouseExited(MouseEvent e) {
-        Object source = e.getSource();
-        if (!(source instanceof JLabel)) return;
 
-        if (!tokenMode && !correctionTokenMode) {
-            // tile mode
-            HexLabel tile = (HexLabel) e.getSource();
-            tile.setToolTipText(null);
-        }
     }
 
     public void mousePressed(MouseEvent e) {}
@@ -549,7 +518,7 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         setDoneEnabled(false);
         setCancelEnabled(false);
     }
-    
+
     private void clearPanel() {
         upgradePanel.removeAll();
         if (omitButtons) {
@@ -557,12 +526,13 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
             cancelButton.setVisible(false);
         }
     }
-    
+
     private void addButtons() {
         if (omitButtons) {
-            //only set externally managed buttons to visible if at least
-            //one of them is enabled
-            boolean isVisible = doneButton.isEnabled() || cancelButton.isEnabled();
+            // only set externally managed buttons to visible if at least
+            // one of them is enabled
+            boolean isVisible =
+                    doneButton.isEnabled() || cancelButton.isEnabled();
             doneButton.setVisible(isVisible);
             cancelButton.setVisible(isVisible);
         } else {
@@ -570,9 +540,9 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
             upgradePanel.add(cancelButton);
         }
     }
-    
+
     public RailsIconButton[] getButtons() {
-        return new RailsIconButton[] {doneButton, cancelButton};
+        return new RailsIconButton[] { doneButton, cancelButton };
     }
 
     /** ActionLabel extension that allows to attach the token */
@@ -581,78 +551,11 @@ public class UpgradesPanel extends Box implements MouseListener, ActionListener 
         private static final long serialVersionUID = 1L;
 
         // TODO: Was never used
-//        private Token token;
+        // private Token token;
 
         CorrectionTokenLabel(Icon tokenIcon, Token<?> token) {
             super(tokenIcon);
-//            this.token = token;
-        }
-
-    }
-
-    /** JLabel extension to allow attaching the internal hex ID */
-    private class HexLabel extends JLabel {
-
-        private static final long serialVersionUID = 1L;
-
-        String toolTip;
-        int internalId;
-
-        HexLabel(ImageIcon hexIcon, int internalId) {
-            this(hexIcon,internalId,null);
-        }
-        
-        HexLabel(ImageIcon hexIcon, int internalId, String toolTipHeaderLine) {
-            super(hexIcon);
-            this.internalId = internalId;
-            this.setToolTip(toolTipHeaderLine);
-        }
-        
-        int getInternalId() {
-            return internalId;
-        }
-
-        public String getToolTip() {
-            return toolTip;
-        }
-
-        void setTextFromTile(Tile tile) {
-            StringBuffer text = new StringBuffer();
-            if (rails.util.Util.hasValue(tile.getExternalId())) {
-                text.append("<HTML><BODY>" + tile.getExternalId());
-                if (tile.countFreeTiles() != -1) {
-                    text.append("<BR> (" + tile.countFreeTiles() + ")");
-                }
-                text.append("</BODY></HTML>");
-            }
-            this.setText(text.toString());
-        }
-
-        protected void setToolTip (String headerLine) {
-            Tile currentTile = orUIManager.getGameUIManager().getGameManager().getTileManager().getTile(internalId);
-            StringBuffer tt = new StringBuffer("<html>");
-            if (headerLine != null && !headerLine.equals("")) {
-                tt.append("<b><u>"+headerLine+"</u></b><br>");
-            }
-            tt.append("<b>Tile</b>: ").append(currentTile.getId());
-            if (currentTile.hasStations()) {
-                // for (Station st : currentTile.getStations())
-                int cityNumber = 0;
-                // Tile has stations, but
-                for (Station st : currentTile.getStations()) {
-                    cityNumber++; // = city.getNumber();
-                    tt.append("<br>  ").append(st.getType()).append(" ").append(
-                            cityNumber) // .append("/").append(st.getNumber())
-                            .append(": value ");
-                    tt.append(st.getValue());
-                    if (st.getBaseSlots() > 0) {
-                        tt.append(", ").append(st.getBaseSlots()).append(
-                        " slots");
-                    }
-                }
-            }
-            tt.append("</html>");
-            toolTip = tt.toString();
+            // this.token = token;
         }
 
     }

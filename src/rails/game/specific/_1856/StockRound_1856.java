@@ -106,7 +106,7 @@ public class StockRound_1856 extends StockRound {
                         && !comp.hasReachedDestination()) {
                     recipient = bank;
                     comp.addMoneyInEscrow(price);
-                    ReportBuffer.addWaiting(LocalText.getText("HoldMoneyInEscrow",
+                    ReportBuffer.addWaiting(this, LocalText.getText("HoldMoneyInEscrow",
                             Currency.format(this, price),
                             Currency.format(this, comp.getMoneyInEscrow()),
                             comp.getId() ));

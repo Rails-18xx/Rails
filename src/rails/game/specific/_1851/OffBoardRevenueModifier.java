@@ -19,7 +19,7 @@ public class OffBoardRevenueModifier implements RevenueStaticModifier {
         Set<NetworkVertex> otherStations = new HashSet<NetworkVertex>();
         for (NetworkVertex vertex:revenueAdapter.getVertices()) {
             if (vertex.isStation()) {
-                if (vertex.getStation().getType().equals(Station.OFF_MAP_AREA)){
+                if (vertex.getStation().getType() == Station.Type.OFFMAPCITY) {
                     offBoard.add(vertex);
                 } else {
                     otherStations.add(vertex);

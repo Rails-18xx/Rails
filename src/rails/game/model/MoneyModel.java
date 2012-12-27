@@ -2,7 +2,6 @@ package rails.game.model;
 
 import rails.game.Currency;
 import rails.game.RailsItem;
-import rails.game.state.Model;
 import rails.game.state.StringState;
 
 /**

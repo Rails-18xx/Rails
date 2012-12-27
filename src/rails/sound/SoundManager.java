@@ -2,7 +2,6 @@ package rails.sound;
 
 import rails.game.GameManager;
 import rails.game.action.PossibleAction;
-import rails.game.action.StartItemAction;
 
 /**
  * This is a singleton class as there should never be two

@@ -91,7 +91,7 @@ public class GameManager_18EU extends GameManager {
                         newPresident.getPortfolioModel());
             } else {
                 company.setClosed();  // This also makes majors restartable
-                ReportBuffer.add(LocalText.getText("CompanyCloses", company.getId()));
+                ReportBuffer.add(this, LocalText.getText("CompanyCloses", company.getId()));
             }
         }
         

@@ -117,7 +117,7 @@ public class Bank extends RailsManager implements MoneyOwner, Configurable {
 
     public void finishConfiguration (GameManager gameManager) {
 
-        ReportBuffer.add(LocalText.getText("BankSizeIs", 
+        ReportBuffer.add(this, LocalText.getText("BankSizeIs", 
                 currency.format(cash.value())));
 
         // finish configuration of BankPortfolios

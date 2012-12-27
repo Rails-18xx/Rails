@@ -54,8 +54,8 @@ public class MergeCompanies extends PossibleAction {
                 canReplaceToken.add(target.getNumberOfFreeBaseTokens() > 0
                     && (!hex.hasTokenOfCompany(target)
                         || hex.getCurrentTile().allowsMultipleBasesOfOneCompany()
-                            && hex.getCityOfBaseToken(mergingCompany)
-                                != hex.getCityOfBaseToken(target)));
+                            && hex.getStopOfBaseToken(mergingCompany)
+                                != hex.getStopOfBaseToken(target)));
             }
         }
         targetCompanyNames = b.toString();

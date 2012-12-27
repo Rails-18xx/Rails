@@ -345,4 +345,3 @@ LaysTileAt,SX,56,I17,NE
 LaysTileAt,SX,202,H20,W
 CompanyDoesNotPayDividend,SX
 PRICE_MOVES_LOG,SX,88,C4,84,B4
-LoadInterrupted,120

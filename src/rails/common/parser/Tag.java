@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
+import com.google.common.collect.ImmutableList;
+
 import rails.common.ResourceLoader;
 import rails.util.Util;
 
@@ -175,31 +177,22 @@ public class Tag {
         return getAttributeAsInteger(name, 0);
     }
 
-    public int[] getAttributeAsIntegerArray(String name, int[] defaultArray)
+    public List<Integer> getAttributeAsIntegerList(String name)
             throws ConfigurationException {
 
         String valueString = getAttributeAsString(name);
-        if (!Util.hasValue(valueString)) return defaultArray;
+        if (!Util.hasValue(valueString)) return ImmutableList.of();
 
-        String[] values = valueString.split(",");
-        int[] result = new int[values.length];
-        int i = 0;
+        ImmutableList.Builder<Integer> result = ImmutableList.builder();
         try {
-            for (i = 0; i < values.length; i++) {
-                result[i] = Integer.parseInt(values[i]);
+            for (String value:valueString.split(",")) {
+                result.add(Integer.parseInt(value));
             }
         } catch (NumberFormatException e) {
-            throw new ConfigurationException("Invalid integer '" + values[i]
-                                             + "' in attribute '" + name + "'");
+            throw new ConfigurationException("Invalid integer in attribute " + name + "'");
         }
-        return result;
+        return result.build();
 
-    }
-
-    public int[] getAttributeAsIntegerArray(String name)
-            throws ConfigurationException {
-
-        return getAttributeAsIntegerArray(name, new int[0]);
     }
 
     public boolean getAttributeAsBoolean(String name, boolean defaultValue)

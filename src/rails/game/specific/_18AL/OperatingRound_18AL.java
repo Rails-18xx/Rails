@@ -8,7 +8,6 @@ import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.LayBaseToken;
 import rails.game.action.PossibleAction;
-import rails.game.state.ChangeStack;
 
 public class OperatingRound_18AL extends OperatingRound {
 
@@ -61,7 +60,7 @@ public class OperatingRound_18AL extends OperatingRound {
                             tokens.get(i));
             }
 
-            ChangeStack.start(this, action);
+            
 
             for (int i = 0; i < trains.size(); i++) {
                 oldToken = trains.get(i).getNameToken();
@@ -69,7 +68,7 @@ public class OperatingRound_18AL extends OperatingRound {
                 if (oldToken != newToken) {
                     trains.get(i).setNameToken(newToken);
                     if (newToken != null) {
-                        ReportBuffer.add(LocalText.getText("NamesTrain",
+                        ReportBuffer.add(this, LocalText.getText("NamesTrain",
                                 operatingCompany.value().getId(),
                                 trains.get(i).toText(),
                                 newToken.getLongName() ));
@@ -90,7 +89,7 @@ public class OperatingRound_18AL extends OperatingRound {
             if (hex == operatingCompany.value().getDestinationHex()) {
                 int payout = 100;
                 String payoutText = Currency.fromBank(payout, operatingCompany.value());
-                ReportBuffer.add(LocalText.getText("DestinationReachedByToken",
+                ReportBuffer.add(this, LocalText.getText("DestinationReachedByToken",
                         operatingCompany.value().getId(),
                         payoutText,
                         hex.getId() ));

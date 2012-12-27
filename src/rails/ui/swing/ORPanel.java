@@ -11,7 +11,8 @@ import javax.swing.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.jgrapht.graph.SimpleGraph;
+
+import com.google.common.collect.Lists;
 
 import rails.algorithms.*;
 import rails.common.Config;
@@ -727,7 +728,7 @@ implements ActionListener, KeyListener, RevenueListener {
             if (Util.hasValue(phase.getInfo())) {
                 appendInfoText(b, phase.getInfo());
             }
-            item = new JMenu (LocalText.getText("PhaseX", phase.getName()));
+            item = new JMenu (LocalText.getText("PhaseX", phase.toText()));
             item.setEnabled(true);
             item.add(new JMenuItem(b.toString()));
             phasesInfoMenu.add(item);
@@ -777,27 +778,19 @@ implements ActionListener, KeyListener, RevenueListener {
         GameManager gm = orUIManager.getGameUIManager().getGameManager();
 
         if (companyName.equals("Network")) {
-            NetworkGraphBuilder nwGraph = NetworkGraphBuilder.create(gm);
-            SimpleGraph<NetworkVertex, NetworkEdge> mapGraph = nwGraph.getMapGraph();
-
-            //            NetworkGraphBuilder.visualize(mapGraph, "Map Network");
-            mapGraph = NetworkGraphBuilder.optimizeGraph(mapGraph);
-            NetworkGraphBuilder.visualize(mapGraph, "Optimized Map Network");
+            NetworkAdapter network = NetworkAdapter.create(gm);
+            NetworkGraph mapGraph = network.getMapGraph();
+            mapGraph.optimizeGraph();
+            mapGraph.visualize("Optimized Map Network");
         } else {
             CompanyManager cm = gm.getCompanyManager();
             PublicCompany company = cm.getPublicCompany(companyName);
             //handle the case of invalid parameters
             //could occur if the method is not invoked by the menu (but by the click listener)
             if (company == null) return;
-            //
-            //            NetworkGraphBuilder nwGraph = NetworkGraphBuilder.create(gm);
-            //            NetworkCompanyGraph companyGraph = NetworkCompanyGraph.create(nwGraph, company);
-            //            companyGraph.createRouteGraph(false);
-            //            companyGraph.createRevenueGraph(new ArrayList<NetworkVertex>());
-            //            Multigraph<NetworkVertex, NetworkEdge> graph= companyGraph.createPhaseTwoGraph();
-            //            NetworkGraphBuilder.visualize(graph, "Phase Two Company Network");
-            //            JOptionPane.showMessageDialog(orWindow,
-            //                    "Vertices = " + graph.vertexSet().size() + ", Edges = " + graph.edgeSet().size());
+            NetworkAdapter network = NetworkAdapter.create(gm);
+            NetworkGraph routeGraph = network.getRevenueGraph(company, Lists.<NetworkVertex>newArrayList());
+            routeGraph.visualize("Route Network for " + company);
             List<String> addTrainList = new ArrayList<String>();
             boolean anotherTrain = true;
             RevenueAdapter ra = null;
@@ -814,12 +807,7 @@ implements ActionListener, KeyListener, RevenueListener {
                 log.debug("Revenue Run:" + ra.getOptimalRunPrettyPrint(true));
                 //try-catch clause temporary workaround as revenue adapter's 
                 //convertRcRun might erroneously raise exceptions
-                try {revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());}
-                catch (Exception e) {}
-
-                //try-catch clause temporary workaround as revenue adapter's 
-                //convertRcRun might erroneously raise exceptions
-                try {revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());}
+                try {ra.drawOptimalRunAsPath(orUIManager.getMap());}
                 catch (Exception e) {}
 
                 if (!RailsRoot.getDevelop()) {

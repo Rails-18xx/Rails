@@ -1,6 +1,5 @@
 package rails.algorithms;
 
-
 class RevenueCalculatorMulti extends RevenueCalculator {
 
     protected final int[] edgeNbTravelSets;

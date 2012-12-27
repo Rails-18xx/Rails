@@ -1,13 +1,15 @@
 package rails.game;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.collect.ImmutableSet;
 
+import rails.game.StopType.Loop;
+import rails.game.StopType.RunThrough;
+import rails.game.StopType.RunTo;
+import rails.game.StopType.Score;
 import rails.game.state.GenericState;
+import rails.game.state.HashSetState;
+import rails.game.state.IntegerState;
 import rails.game.state.PortfolioSet;
-import rails.game.state.StringState;
 import rails.util.Util;
 
 /**
@@ -25,96 +27,31 @@ import rails.util.Util;
  * as much as possible.
  */
 public class Stop extends RailsAbstractItem implements RailsOwner {
-    
-    private final int number;
-    private final GenericState<Station> relatedStation = 
-            GenericState.create(this, "station");
     private final PortfolioSet<BaseToken> tokens = 
             PortfolioSet.create(this, "tokens", BaseToken.class);
-    // TODO: Replace TrackEdges by a call (do not store that)
-    private final StringState trackEdges = StringState.create(this, "trackEdges");
+    private final GenericState<Station> relatedStation = 
+            GenericState.create(this, "station");
+    // FIXME: Only used for Rails1.x compatibility
+    private final IntegerState legacyNumber = 
+            IntegerState.create(this, "legacyNumber", 0);
+    // FIXME: Only used for Rails1.x compatibility
+    private final HashSetState<Integer> previousNumbers = 
+            HashSetState.create(this, "previousNumbers");
 
-
-    private Type type = null;
-    private RunTo runToAllowed = null;
-    private RunThrough runThroughAllowed = null;
-    private Loop loopAllowed = null;
-    private Score scoreType = null;
-
-    protected static Logger log =
-        LoggerFactory.getLogger(Stop.class);
-
-    public enum RunTo {
-        YES,
-        NO,
-        TOKENONLY
-    }
-
-    public enum RunThrough {
-        YES,
-        NO,
-        TOKENONLY
-    }
-
-    public enum Loop {
-        YES,
-        NO
-    }
-
-    public enum Type {
-
-        CITY (RunTo.YES, RunThrough.YES, Loop.YES, Score.MAJOR),
-        TOWN (RunTo.YES, RunThrough.YES, Loop.YES, Score.MINOR),
-        OFFMAP (RunTo.YES, RunThrough.NO, Loop.NO, Score.MAJOR);
-
-        private RunTo defaultRunToAllowed;
-        private RunThrough defaultRunThroughAllowed;
-        private Loop defaultLoopAllowed;
-        private Score defaultScoreType;
-
-        Type (RunTo runTo,
-                RunThrough runThrough,
-                Loop loop,
-                Score scoreType) {
-
-            this.defaultRunToAllowed = runTo;
-            this.defaultRunThroughAllowed = runThrough;
-            this.defaultLoopAllowed = loop;
-            this.defaultScoreType = scoreType;
+    private Stop(MapHex hex, String id, Station station) {
+        super(hex, id);
+        relatedStation.set(station);
+        if (station != null) {
+            legacyNumber.set(station.getNumber());
         }
-
-        public RunTo getDefaultRunTo() { return defaultRunToAllowed; }
-        public RunThrough getDefaultRunThrough() { return defaultRunThroughAllowed; }
-        public Loop getDefaultLoop() { return defaultLoopAllowed; }
-        public Score getDefaultScoreType() { return defaultScoreType; }
-
     }
 
-    public enum Score {
-        MAJOR,
-        MINOR
-    }
-
-    private Stop(MapHex hex, int number) {
-        super(hex, String.valueOf(hex.getNextStopId()));
-        this.number = number;
-    }
-
-    /**
-     * returns initialized Stop
-     */
-    // TODO: Simplify that (should it really require tile and rotation?)
-    public static Stop create(MapHex hex, int number, Station station, Tile tile, int rotation){
-        Stop stop = new Stop(hex, number);
-        stop.setRelatedStation(station, hex, tile, rotation);
-        return stop;
-    }
-
-    // this returns a station initialized with the current tile and tile rotation /for trackEdges
-    public static Stop create(MapHex hex, int number, Station station){
-        Stop stop = new Stop(hex, number);
-        stop.setRelatedStation(station, hex, hex.getCurrentTile(), hex.getCurrentTileRotation());
-        return stop;
+    public static Stop create(MapHex hex, Station station){
+        if (station == null) {
+            return new Stop(hex, "0", null);
+        } else {
+            return new Stop(hex, String.valueOf(station.getNumber()), station);
+        }
     }
     
     @Override
@@ -122,98 +59,45 @@ public class Stop extends RailsAbstractItem implements RailsOwner {
         return (MapHex)super.getParent();
     }
 
-    
-    // FIXME: This is not undo proof, replace by direct calls
-    // TODO: Simplify the properties structure
-    private void initStopProperties () {
-
-        Station station = relatedStation.value();
-        Tile tile = station.getTile();
-        MapManager mapManager = getParent().getParent();
-        TileManager tileManager = tile.getParent();
-
-        // Stop type
-        type = getParent().getStopType();
-        if (type == null) type = tile.getStopType();
-        if (type == null) {
-            String stationType = relatedStation.value().getType();
-            if (stationType.equals(Station.CITY)) {
-                type = Type.CITY;
-            } else if (stationType.equals(Station.TOWN)) {
-                type = Type.TOWN;
-            } else if (stationType.equals(Station.OFF_MAP_AREA)) {
-                type = Type.OFFMAP;
-            } else if (stationType.equals(Station.PASS)) {
-                type = Type.CITY;
-            } else {
-                // The above four types seem to be all that can be assigned in ConvertTileXML.
-                // If all else fails, assume City.
-                type = Type.CITY;
-            }
-        }
-
-        // RunTo
-        runToAllowed = getParent().isRunToAllowed();
-        if (runToAllowed == null) runToAllowed = tile.isRunToAllowed();
-        if (runToAllowed == null) runToAllowed = mapManager.getRunToDefault(type);
-        if (runToAllowed == null) runToAllowed = tileManager.getRunToDefault(type);
-        if (runToAllowed == null) runToAllowed = mapManager.getRunToDefault(null);
-        if (runToAllowed == null) runToAllowed = tileManager.getRunToDefault(null);
-        if (runToAllowed == null) runToAllowed = type.getDefaultRunTo();
-
-        // RunThrough
-        runThroughAllowed = getParent().isRunThroughAllowed();
-        if (runThroughAllowed == null) runThroughAllowed = tile.isRunThroughAllowed();
-        if (runThroughAllowed == null) runThroughAllowed = mapManager.getRunThroughDefault(type);
-        if (runThroughAllowed == null) runThroughAllowed = tileManager.getRunThroughDefault(type);
-        if (runThroughAllowed == null) runThroughAllowed = mapManager.getRunThroughDefault(null);
-        if (runThroughAllowed == null) runThroughAllowed = tileManager.getRunThroughDefault(null);
-        if (runThroughAllowed == null) runThroughAllowed = type.getDefaultRunThrough();
-
-        // Loop
-        loopAllowed = getParent().isLoopAllowed();
-        if (loopAllowed == null) loopAllowed = tile.isLoopAllowed();
-        if (loopAllowed == null) loopAllowed = mapManager.getLoopDefault(type);
-        if (loopAllowed == null) loopAllowed = tileManager.getLoopDefault(type);
-        if (loopAllowed == null) loopAllowed = mapManager.getLoopDefault(null);
-        if (loopAllowed == null) loopAllowed = tileManager.getLoopDefault(null);
-        if (loopAllowed == null) loopAllowed = type.getDefaultLoop();
-
-        // Score type
-        scoreType = getParent().getScoreType();
-        if (scoreType == null) scoreType = tile.getScoreType();
-        if (scoreType == null) scoreType = mapManager.getScoreTypeDefault(type);
-        if (scoreType == null) scoreType = tileManager.getScoreTypeDefault(type);
-        if (scoreType == null) scoreType = type.getDefaultScoreType();
-
-        log.debug("+++ Hex="+getParent().getId()+" tile="+tile.getNb()+" city="+number
-                +": stopType="+type+" runTo="+runToAllowed+" runThrough="+runThroughAllowed
-                +" loop="+loopAllowed+" scoreType="+scoreType);
-    }
-
+    // This should not be used for identification reasons
+    // It is better to use the getRelatedNumber()
+    @Deprecated
     public String getSpecificId() {
-        return getParent().getId() + "/" + number;
-
-    }
-
-    public int getNumber() {
-        return number;
+        return getParent().getId() + "/" + this.getId();
     }
 
     public Station getRelatedStation() {
         return relatedStation.value();
     }
-
-    // TODO: Should be simplified
-    public void setRelatedStation(Station relatedStation, MapHex hex, Tile tile, int rotation) {
-        this.relatedStation.set(relatedStation);
-        trackEdges.set(
-            hex.getConnectionString(tile,
-                    rotation,
-                    relatedStation.getNumber()));
-        initStopProperties();
+    
+    public void setRelatedStation(Station station) {
+        relatedStation.set(station);
+    }
+    
+    // FIMXE: Due to Rails1.x compatibility use the legacy number 
+    public int getRelatedNumber() {
+        // return relatedStation.value().getNumber();
+        return getLegacyNumber();
     }
 
+    // FIMXE: Due to Rails1.x compatibility
+    @Deprecated
+    public int getLegacyNumber() {
+        return legacyNumber.value();
+    }
+
+    // FIMXE: Due to Rails1.x compatibility
+    @Deprecated
+    public boolean checkPreviousNumbers(int number) {
+        return previousNumbers.contains(number);
+    }
+    
+    // FIMXE: Due to Rails1.x compatibility
+    @Deprecated
+    public void addPreviousNumbers(int number) {
+        previousNumbers.add(number);
+    }
+    
     public ImmutableSet<BaseToken> getBaseTokens() {
         return tokens.items();
     }
@@ -242,44 +126,44 @@ public class Stop extends RailsAbstractItem implements RailsOwner {
      * of Token not a ArrayList of PublicCompany.
      */
     public boolean hasTokenOf(PublicCompany company) {
-        return hasTokenOf (company.getId());
-    }
-
-    public boolean hasTokenOf (String companyName) {
         for (BaseToken token : tokens) {
-            if (token.getParent().getId().equals(companyName)) {
+            if (token.getParent() == company) {
                 return true;
             }
         }
         return false;
     }
 
-    public String getTrackEdges() {
-        return trackEdges.value();
+    public RunTo getRunToAllowed() {
+        RunTo runTo = getParent().getStopType().getRunToAllowed();
+        if (runTo == null) runTo = getParent().getCurrentTile().getStopType().getRunToAllowed();
+        if (runTo == null) runTo = getRelatedStation().getStopType().getRunToAllowed();
+        return runTo;
     }
 
-    public Type getType() {
-        return type;
+    public RunThrough getRunThroughAllowed() {
+        RunThrough runThrough = getParent().getStopType().getRunThroughAllowed();
+        if (runThrough == null) runThrough = getParent().getCurrentTile().getStopType().getRunThroughAllowed();
+        if (runThrough == null) runThrough = getRelatedStation().getStopType().getRunThroughAllowed();
+        return runThrough;
     }
 
-    public Score getScoreType () {
-        return scoreType;
-    }
-
-    public RunTo isRunToAllowed() {
-        return runToAllowed;
-    }
-
-    public RunThrough isRunThroughAllowed() {
-        return runThroughAllowed;
-    }
-
-    public Loop isLoopAllowed() {
+    public Loop getLoopAllowed() {
+        Loop loopAllowed = getParent().getStopType().getLoopAllowed();
+        if (loopAllowed == null) loopAllowed = getParent().getCurrentTile().getStopType().getLoopAllowed();
+        if (loopAllowed == null) loopAllowed = getRelatedStation().getStopType().getLoopAllowed();
         return loopAllowed;
     }
 
+    public Score getScoreType () {
+        Score scoreType = getParent().getStopType().getScoreType();
+        if (scoreType == null) scoreType = getParent().getCurrentTile().getStopType().getScoreType();
+        if (scoreType == null) scoreType = getRelatedStation().getStopType().getScoreType();
+        return scoreType;
+    }
+
     public boolean isRunToAllowedFor (PublicCompany company) {
-        switch (runToAllowed) {
+        switch (getRunToAllowed()) {
         case YES:
             return true;
         case NO:
@@ -293,7 +177,7 @@ public class Stop extends RailsAbstractItem implements RailsOwner {
     }
 
     public boolean isRunThroughAllowedFor (PublicCompany company) {
-        switch (runThroughAllowed) {
+        switch (getRunThroughAllowed()) {
         case YES: // either it has no tokens at all, or it has a company tokens or empty token slots
             return !hasTokens() || hasTokenOf (company) || hasTokenSlotsLeft() ;
         case NO:
@@ -324,7 +208,7 @@ public class Stop extends RailsAbstractItem implements RailsOwner {
             b.append(cityName);
         }
         if (getParent().getStops().size() > 1) {
-            b.append(" ").append(trackEdges.value());
+            b.append(" ").append(getParent().getConnectionString(relatedStation.value()));
         }
         b.append(")");
         return b.toString();

@@ -9,6 +9,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 import rails.common.LocalText;
 import rails.common.parser.Configurable;
 import rails.common.parser.ConfigurationException;
@@ -16,60 +17,61 @@ import rails.common.parser.Tag;
 import rails.game.state.Owner;
 import rails.util.Util;
 
-public class Phase implements Configurable {
+public class Phase extends RailsAbstractItem implements Configurable {
 
-    protected int index;
+    private static final Logger log =
+            LoggerFactory.getLogger(Phase.class);
 
-    protected String name;
+    private final int index;
+    
+    private String realName;
 
-    protected String realName;
-
-    protected List <String> tileColours;
-    protected String tileColoursString;
-    protected Map<String, Integer> tileLaysPerColour;
+    private List <String> tileColours;
+    private String tileColoursString;
+    private Map<String, Integer> tileLaysPerColour;
     /** For how many turns can extra tiles be laid (per company type and colour)?
      * Default: infinite.
      * <p>This attribute is only used during configuration. It is finally passed to CompanyType.
      * NOT CLONED from previous phase.*/
-    protected Map<String, Integer> tileLaysPerColourTurns;
+    private Map<String, Integer> tileLaysPerColourTurns;
 
-    protected boolean privateSellingAllowed = false;
+    private boolean privateSellingAllowed = false;
 
-    protected boolean privatesClose = false;
+    private boolean privatesClose = false;
 
-    protected int numberOfOperatingRounds = 1;
+    private int numberOfOperatingRounds = 1;
 
-    protected int offBoardRevenueStep = 1;
+    private int offBoardRevenueStep = 1;
 
     /** New style train limit configuration.
      */
-    protected int trainLimitStep = 1;
+    private int trainLimitStep = 1;
 
-    protected int privatesRevenueStep = 1; // sfy 1889
+    private int privatesRevenueStep = 1; // sfy 1889
 
-    protected boolean trainTradingAllowed = false;
+    private boolean trainTradingAllowed = false;
 
     /** May company buy more than one Train from the Bank per turn? */
-    protected boolean oneTrainPerTurn = false;
+    private boolean oneTrainPerTurn = false;
 
     /** May company buy more than one Train of each type from the Bank per turn? */
-    protected boolean oneTrainPerTypePerTurn = false;
+    private boolean oneTrainPerTypePerTurn = false;
 
     /** Is loan taking allowed */
-    protected boolean loanTakingAllowed = false;
+    private boolean loanTakingAllowed = false;
 
     /** Previous phase, defining the current one's defaults */
-    protected Phase defaults = null;
+    private Phase defaults = null;
 
     /** Items to close if a phase gets activated */
-    protected List<Closeable> closedObjects = null;
+    private List<Closeable> closedObjects = null;
 
     /** Train types to rust or obsolete if a phase gets activated */
-    protected List<TrainCertificateType> rustedTrains;
+    private List<TrainCertificateType> rustedTrains;
     String rustedTrainNames;
 
     /** Train types to release (make available for buying) if a phase gets activated */
-    protected List<TrainCertificateType> releasedTrains;
+    private List<TrainCertificateType> releasedTrains;
     String releasedTrainNames;
 
     /** Actions for this phase.
@@ -77,25 +79,28 @@ public class Phase implements Configurable {
      * which in turn will call the current Round, which is responsible to handle the action.
      * <p>
      * Set actions have a name and may have a value. */
-    protected Map<String, String> actions;
+    private Map<String, String> actions;
 
     private GameManager gameManager;
     private Owner lastTrainBuyer;
 
-    protected String extraInfo = "";
+    private String extraInfo = "";
 
     /** A HashMap to contain phase-dependent parameters
      * by name and value.
      */
-    protected Map<String, String> parameters = null;
+    private Map<String, String> parameters = null;
 
-    protected static Logger log =
-        LoggerFactory.getLogger(Phase.class);
 
-    public Phase(int index, String name, Phase previousPhase) {
+    private Phase(PhaseManager manager, String id, int index, Phase previousPhase) {
+        super(manager, id);
         this.index = index;
-        this.name = name;
         this.defaults = previousPhase;
+    }
+    
+    // TODO: Move more code here
+    public static Phase create(PhaseManager manager, String id, int index, Phase previousPhase) {
+        return new Phase(manager, id, index, previousPhase);
     }
 
     public void configureFromXML(Tag tag) throws ConfigurationException {
@@ -241,7 +246,7 @@ public class Phase implements Configurable {
             if (actions == null) actions = new HashMap<String, String>();
             String key = setTag.getAttributeAsString("name");
             if (!Util.hasValue(key)) {
-                throw new ConfigurationException ("Phase "+name+": <Set> without action name");
+                throw new ConfigurationException ("Phase "+ getId() +": <Set> without action name");
             }
             String value = setTag.getAttributeAsString("value", null);
             actions.put (key, value);
@@ -269,7 +274,7 @@ public class Phase implements Configurable {
             for (String typeName : rustedTrainNames.split(",")) {
                 type = trainManager.getCertTypeByName(typeName);
                 if (type == null) {
-                    throw new ConfigurationException (" Unknown rusted train type '"+typeName+"' for phase '"+name+"'");
+                    throw new ConfigurationException (" Unknown rusted train type '"+typeName+"' for phase '"+ getId()+"'");
                 }
                 rustedTrains.add(type);
                 type.setPermanent(false);
@@ -281,7 +286,7 @@ public class Phase implements Configurable {
             for (String typeName : releasedTrainNames.split(",")) {
                 type = trainManager.getCertTypeByName(typeName);
                 if (type == null) {
-                    throw new ConfigurationException (" Unknown released train type '"+typeName+"' for phase '"+name+"'");
+                    throw new ConfigurationException (" Unknown released train type '"+typeName+"' for phase '"+ getId()+"'");
                 }
                 releasedTrains.add(type);
             }
@@ -294,14 +299,19 @@ public class Phase implements Configurable {
         }
         tileLaysPerColourTurns = null;  // We no longer need it.
     }
+    
+    @Override
+    public PhaseManager getParent() {
+        return (PhaseManager)super.getParent();
+    }
 
     /** Called when a phase gets activated */
     public void activate() {
-        log.debug("Phase " + name + " activated");
+        log.debug("Phase " + toText() + " activated");
 
         // Report any extra info
         if (Util.hasValue(extraInfo)) {
-            ReportBuffer.add(extraInfo.replaceFirst("^<[Bb][Rr]>", "").replaceAll("<[Bb][Rr]>", "\n"));
+            ReportBuffer.add(this, extraInfo.replaceFirst("^<[Bb][Rr]>", "").replaceAll("<[Bb][Rr]>", "\n"));
         }
 
         if (closedObjects != null && !closedObjects.isEmpty()) {
@@ -382,14 +392,6 @@ public class Phase implements Configurable {
         return index;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getRealName() {
-        return realName;
-    }
-
     /**
      * @return Returns the privatesClose.
      */
@@ -465,7 +467,7 @@ public class Phase implements Configurable {
         try {
             return Integer.parseInt(stringValue);
         } catch (Exception e) {
-            log.error ("Error while parsing parameter "+key+" in phase "+name, e);
+            log.error ("Error while parsing parameter "+key+" in phase " + getId(), e);
             return 0;
         }
 
@@ -476,11 +478,20 @@ public class Phase implements Configurable {
     }
 
     @Override
-    public String toString() {
+    public String toText() {
         if (realName == null) {
-            return name;
+            return getId();
         } else {
-            return name + " [" + realName+ "]";
+            return getId() + " [" + realName+ "]";
         }
+    }
+    
+    @Override
+    public String toString() {
+        String s = super.toString();
+        if (realName != null) {
+            s += realName;
+        }
+        return s;
     }
 }

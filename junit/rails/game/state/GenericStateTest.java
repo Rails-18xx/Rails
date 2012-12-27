@@ -53,7 +53,7 @@ public class GenericStateTest {
         stateDefault.set(null);
         stateInit.set(item);
         StateTestUtils.close(root);
-        assertThat(StateTestUtils.getLastClosedChangeSet(root).getStates()).doesNotContain(stateDefault, stateInit);
+        assertThat(StateTestUtils.getPreviousChangeSet(root).getStates()).doesNotContain(stateDefault, stateInit);
     }
 
     @Test
@@ -68,7 +68,7 @@ public class GenericStateTest {
 
         StateTestUtils.close(root);
         // remark: stateInit is an internal (isObservable = false)
-        assertThat(StateTestUtils.getLastClosedChangeSet(root).getStates()).contains(stateDefault);
+        assertThat(StateTestUtils.getPreviousChangeSet(root).getStates()).contains(stateDefault);
         
         StateTestUtils.undo(root);
         assertNull(stateDefault.value());

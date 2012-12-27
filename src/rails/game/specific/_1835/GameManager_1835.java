@@ -56,8 +56,8 @@ public class GameManager_1835 extends GameManager {
             }
         } else {
         	Phase phase = getCurrentPhase();
-            if ((phase.getName().equals("4") || phase.getName().equals("4+4")
-                    || phase.getName().equals("5"))
+            if ((phase.getId().equals("4") || phase.getId().equals("4+4")
+                    || phase.getId().equals("5"))
                     && !PrussianFormationRound.prussianIsComplete(this)) {
                 previousRound = round;
                 startPrussianFormationRound (null);

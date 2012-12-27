@@ -34,7 +34,7 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
 
     protected int basePrice = 0;
     // list of revenue sfy 1889
-    protected int[] revenue;
+    protected List<Integer> revenue;
     protected String auctionType;
 
     // Closing conditions
@@ -104,13 +104,13 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
             basePrice = tag.getAttributeAsInteger("basePrice", 0);
 
             // sfy 1889 changed to IntegerArray
-            revenue = tag.getAttributeAsIntegerArray("revenue", new int[0]);
+            revenue = tag.getAttributeAsIntegerList("revenue");
 
             // pld: adding revenue to info text
             infoText += "<br>Revenue: ";
-            for (int i = 0; i < revenue.length;i++) {
-                infoText += (Currency.format(this, revenue[i]));
-                if (i < revenue.length-1) {infoText += ", ";};
+            for (int i = 0; i < revenue.size();i++) {
+                infoText += (Currency.format(this, revenue.get(i)));
+                if (i < revenue.size()-1) {infoText += ", ";};
             }
 
             // Blocked hexes (until bought by a company)
@@ -295,16 +295,16 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
     /**
      * @return Revenue
      */
-    public int[] getRevenue() {
+    public List<Integer> getRevenue() {
         return revenue;
     }
 
     //  start: sfy 1889: new method
     public int getRevenueByPhase(Phase phase){
         if (phase != null) {
-            return revenue[Math.min(
-                    revenue.length,
-                    phase.getPrivatesRevenueStep()) - 1];
+            return revenue.get(Math.min(
+                    revenue.size(),
+                    phase.getPrivatesRevenueStep()) - 1);
         } else {
             return 0;
         }
@@ -329,7 +329,7 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
 
         moveTo(GameManager.getInstance().getBank().getScrapHeap());
         
-        ReportBuffer.add(LocalText.getText("PrivateCloses", getId()));
+        ReportBuffer.add(this, LocalText.getText("PrivateCloses", getId()));
 
         // For 1856: buyable tokens still owned by the private will now
         // become commonly buyable, i.e. owned by GameManager.

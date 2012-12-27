@@ -4,7 +4,6 @@ import rails.game.Bonus;
 import rails.game.Currency;
 import rails.game.RailsItem;
 import rails.game.state.ArrayListState;
-import rails.game.state.Model;
 
 public class BonusModel extends RailsModel {
     

@@ -39,11 +39,16 @@ public class Currency extends CountableItem<Currency> implements RailsItem {
         return result;
     }
 
-    public String format(int[] amountList) {
+    public String format(Iterable<Integer> amountList) {
         StringBuilder result = new StringBuilder();
-        for (int i = 0; i < amountList.length;++i) {
-            if (!(i == 0)) result.append(",");
-            result.append(format(amountList[i]));
+        boolean init = true;
+        for (int amount:amountList) {
+            if (init) {
+                init = false; 
+            } else {
+                result.append(",");
+            }
+            result.append(format(amount));
         }
         return result.toString();
     }
@@ -83,7 +88,7 @@ public class Currency extends CountableItem<Currency> implements RailsItem {
         return currency.format(amount);
     }
 
-    public static String format(RailsItem item, int[] amount) {
+    public static String format(RailsItem item, Iterable<Integer> amount) {
         Currency currency = item.getRoot().getCurrency();
         return currency.format(amount);
     }
