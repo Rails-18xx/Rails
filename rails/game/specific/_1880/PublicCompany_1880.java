@@ -62,6 +62,8 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
     private boolean fullyCapitalised = false;
     
     protected IntegerState formationOrderIndex;
+    
+    protected IntegerState operationSlotIndex = new IntegerState ("OperatingSlot, 0");
   
 
     /**
@@ -356,7 +358,7 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
         this.allCertsAvail.set(flag);
     }
 
-    @Override
+/*    @Override
     public void setFloated() {
         super.setFloated();
         if (this.getTypeName().equals("Minor")) return;
@@ -374,6 +376,20 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
             }
                 
         }
+    }
+*/
+    /**
+     * @return the operationSlotIndex
+     */
+    public int getOperationSlotIndex() {
+        return operationSlotIndex.intValue();
+    }
+
+    /**
+     * @param operationSlotIndex the operationSlotIndex to set
+     */
+    public void setOperationSlotIndex(int operationSlotIndex) {
+        this.operationSlotIndex.add(operationSlotIndex);
     }
     
 }

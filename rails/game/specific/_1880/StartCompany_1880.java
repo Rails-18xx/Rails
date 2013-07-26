@@ -5,7 +5,9 @@ package rails.game.specific._1880;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.List;
 
 import rails.game.CompanyManagerI;
 import rails.game.PublicCompanyI;
@@ -58,7 +60,6 @@ public class StartCompany_1880 extends StartCompany {
         super(company, price, maximumNumber);
         StockSpaceI parPrice=gameManager.getStockMarket().getStartSpace(price);
         this.getCompany().setParSpace(parPrice);
-        // TODO Auto-generated constructor stub
     }
 
     /**
@@ -113,22 +114,33 @@ public class StartCompany_1880 extends StartCompany {
     /* (non-Javadoc)
      * @see rails.game.action.StartCompany#getStartPrices()
      */
-    @Override
+  
     public int[] getStartPrices() {
+        int [] startPrices2;
+        List<Integer> startPrices_new = new ArrayList<Integer>();
         // TODO Auto-generated method stub
-        return super.getStartPrices();
+        // make sure that all exhausted price Slots will not be returned as valid prices anymore...
+        startPrices2 = super.getStartPrices();
+        for (int e =0 ; e< 4 ; e++)
+        {
+            if (  ((StockMarket_1880) gameManager.getStockMarket()).getParSlot(startPrices2[e])== true) //free slot found
+            {
+                startPrices_new.add(startPrices2[e]);
+            }
+        }
+        int[] startPrices2_new = new int [startPrices_new.size()];
+        for ( int i = 0; i < startPrices2_new.length; i++)
+            startPrices2_new[i] = startPrices_new.get(i).intValue();
+        return startPrices2_new;
     }
 
     /* (non-Javadoc)
      * @see rails.game.action.StartCompany#setStartPrice(int)
      */
-    @Override
-    public void setStartPrice(int startPrice) {
-        // TODO Auto-generated method stub
-        price = startPrice;
+    public void setStartPrice(int startPrice, int index) {
         StockSpaceI parPrice=gameManager.getStockMarket().getStartSpace(startPrice);
         this.getCompany().setParSpace(parPrice);
-        ((StockMarket_1880) gameManager.getStockMarket()).setParSlot(startPrice);
+        ((StockMarket_1880) gameManager.getStockMarket()).setParSlot(index);
     }
     
     /** Deserialize */
@@ -177,5 +189,10 @@ public class StartCompany_1880 extends StartCompany {
          return buildingRightString;
          }
          return "None";
+    }
+
+    public void setOperatingSlot(int index) {
+        ((PublicCompany_1880) this.getCompany()).setOperationSlotIndex(index);
+        
     }
 }

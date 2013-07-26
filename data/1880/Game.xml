@@ -20,7 +20,8 @@
 			</ShareSellingRound>
 		</GameParameters>
 		<GuiClasses>
-			<StatusWindow class="rails.ui.swing.StatusWindow"/>
+			<GameStatus
+				class="rails.ui.swing.gamespecific._1880.GameStatus_1880"/>
 			<StartRoundWindow
 				class="rails.ui.swing.gamespecific._1880.StartRoundWindow_1880"/>
 			<GameUIManager

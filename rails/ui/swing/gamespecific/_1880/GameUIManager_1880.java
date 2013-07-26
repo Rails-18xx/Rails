@@ -100,7 +100,7 @@ public class GameUIManager_1880 extends GameUIManager {
         } else if (COMPANY_START_PRICE_DIALOG.equals(key)
                 && currentDialogAction instanceof StartCompany_1880) {
 
-            // A start price has been selected (or not) for a stating major company.
+            // A start price has been selected (or not) for a starting major company.
             RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
             StartCompany_1880 action = (StartCompany_1880) currentDialogAction;
 
@@ -109,7 +109,11 @@ public class GameUIManager_1880 extends GameUIManager {
                 currentDialogAction = null;
                 return;
             }
-            action.setStartPrice(action.getStartPrices()[index]);
+            
+            int index2 = index /4;
+            action.setStartPrice(action.getStartPrices()[index2], index);
+            action.setOperatingSlot(index);
+            
 
             /* Set up another dialog for the next step
             *  need to setup Options based on the Presidents Certificate Size...
@@ -118,9 +122,9 @@ public class GameUIManager_1880 extends GameUIManager {
             */
              
             int freePlayerCash = gameManager.getCurrentPlayer().getFreeCash();
-            if (freePlayerCash >= (action.getStartPrices()[index]*4)) { //enough Cash for 40 Percent 
+            if (freePlayerCash >= (action.getStartPrices()[index2]*4)) { //enough Cash for 40 Percent 
                 presidentShareSizes = new String[] {"20 Percent", "30 Percent", "40 Percent"};
-            } else if (freePlayerCash >= (action.getStartPrices()[index]*3)) { //enough Cash for 30 Percent 
+            } else if (freePlayerCash >= (action.getStartPrices()[index2]*3)) { //enough Cash for 30 Percent 
                 presidentShareSizes = new String[] {"20 Percent", "30 Percent"};
             } else  { //enough Cash only for 20 Percent 
                 presidentShareSizes = new String[] {"20 Percent"};

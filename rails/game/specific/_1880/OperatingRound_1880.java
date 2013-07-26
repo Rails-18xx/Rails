@@ -508,7 +508,6 @@ public class OperatingRound_1880 extends OperatingRound {
      */
     @Override
     public List<PublicCompanyI> setOperatingCompanies() {
-        // TODO Auto-generated method stub
         Map<Integer, PublicCompanyI> operatingCompanies = new TreeMap<Integer, PublicCompanyI>();
       int space = 100;
       int key;
@@ -526,7 +525,7 @@ public class OperatingRound_1880 extends OperatingRound {
           //subtracting the formation order index will put it at the right point to operate
           //This wouldn't work if there are lots of corps at the same price
           //there are not too many corps in each banding for this to be an issue in 1825 even with all 3 units
-          key = 1000000 - (space - ((PublicCompany_1880) company).getFormationOrderIndex());
+          key = 1000000 - (space - ((PublicCompany_1880) company).getOperationSlotIndex());
           operatingCompanies.put(new Integer(key), company);
           }
           else {
