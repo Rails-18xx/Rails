@@ -91,7 +91,7 @@
 		</SpecialProperties>
 	</Company>
 	<Company name="JO" longname="Jeme Tien Yow Engineer Office" type="Private"
-		basePrice="70" revenue="20">
+		basePrice="70" revenue="25">
 		<!-- SpecialProperties-->
 		<!-- SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep"
 			class="rails.game.specific._1880.BuildingPermit"-->
@@ -99,7 +99,7 @@
 		<!--  -->/SpecialProperties-->
 	</Company>
 	<Company name="IG" longname="Imperial Qing Government" type="Private"
-		basePrice="160" revenue="20">
+		basePrice="160" revenue="0">
 		<Info key="ComesWithPresidency" parm="BCR,20"/>
 	</Company>
 	<Company name="RC" longname="Rocket Company" type="Private" basePrice="70"
