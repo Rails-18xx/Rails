@@ -121,7 +121,7 @@ public class StartCompany_1880 extends StartCompany {
         // TODO Auto-generated method stub
         // make sure that all exhausted price Slots will not be returned as valid prices anymore...
         startPrices2 = super.getStartPrices();
-        for (int e =0 ; e< 4 ; e++)
+        for (int e = 0 ; e < startPrices2.length ; e++)
         {
             if (  ((StockMarket_1880) gameManager.getStockMarket()).getParSlot(startPrices2[e])== true) //free slot found
             {

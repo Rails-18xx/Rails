@@ -4,6 +4,8 @@
 package rails.game.specific._1880;
 
 import java.util.BitSet;
+import java.util.List;
+import java.util.Vector;
 
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
@@ -41,6 +43,8 @@ public class StartRound_1880 extends StartRound {
     
     /** A company in need for a par price. */
     PublicCompanyI companyNeedingPrice = null;
+    
+    private final List<Player> playersPassed = new Vector<Player>();
     
     
     /**
@@ -83,6 +87,7 @@ public class StartRound_1880 extends StartRound {
             if (currentItem == null || currentItem.get() != item ) { // we haven't seen this item before
                 numPasses.set(0); // new round so cancel all previous passes !
                 playersActed.set(0);
+                playersPassed.clear();
                 currentItem.set(item);
                 item.setStatus(StartItem.BIDDABLE);
                 item.setStatus(StartItem.BUYABLE);
@@ -138,6 +143,7 @@ public class StartRound_1880 extends StartRound {
                     // Can't bid: Autopass
                     numPasses.add(1);
                     playersActed.add(1);
+                    playersPassed.add(currentPlayer);
                     return false;
                 }
         } else { // Item is not a private ! should be a major or minor in 1880 special rules apply.
@@ -262,6 +268,7 @@ public class StartRound_1880 extends StartRound {
             auctionItemState.set(null);
             numPasses.set(0);
             playersActed.set(0);
+            playersPassed.clear();
            setNextStartingPlayer();
            return true;
         } else {
@@ -303,6 +310,7 @@ public class StartRound_1880 extends StartRound {
 
         numPasses.add(1);
         playersActed.add(1);
+        playersPassed.add(player);
         
         if (numPasses.intValue() >= numPlayers) {
             // All players have passed.
@@ -318,6 +326,7 @@ public class StartRound_1880 extends StartRound {
                                 Bank.format(startPacket.getFirstItem().getBasePrice()) ));
                 numPasses.set(0);
                 playersActed.set(0);
+                playersPassed.clear();
                 if (auctionItem.getBasePrice() == 0) {
                     assignItem((Player)startingPlayer.get(),
                             auctionItem, 0, 0);
@@ -327,6 +336,7 @@ public class StartRound_1880 extends StartRound {
             } else {
                 numPasses.set(0);
                 playersActed.set(0);
+                playersPassed.clear();
                 finishRound();
 
             }
@@ -346,6 +356,7 @@ public class StartRound_1880 extends StartRound {
             auctionItemState.set(null);
             numPasses.set(0);
             playersActed.set(0);
+            playersPassed.clear();
            setNextStartingPlayer();
            return true;
         } else {
@@ -371,26 +382,11 @@ public class StartRound_1880 extends StartRound {
     }
     
     private void setNextBiddingPlayer(StartItem item, int currentIndex) {
-        boolean bidState = false;
         for (int i = currentIndex + 1; i < currentIndex
                                            + gameManager.getNumberOfPlayers(); i++) {
-            /*
-             * Ok we need to make sure that every one has at least the chance to bid once.
-             * We need to make sure that everyone that has passed cant bid again.
-             * Unfortunately getBid() or hasBid() return 0 so they cant be of use here until the second bidding round !
-             * Now we only need a status indicator how many people have acted already....
-             */
-            if (playersActed.intValue() == numPlayers) {
-                bidState = item.hasBid(gameManager.getPlayerByIndex(i));
-                if (bidState == true) {
-                    setCurrentPlayerIndex(i);
-                    break;
-                } else {
-                    continue;
-                }
-            } else {
-                    setCurrentPlayerIndex(i);
-                    break;
+            if (playersPassed.contains(gameManager.getPlayerByIndex(i)) == false) {
+                setCurrentPlayerIndex(i);
+                break;
             }
         }
     }
@@ -543,7 +539,15 @@ public class StartRound_1880 extends StartRound {
             if (lastBid == 0) {
                 gameManager.setPriorityPlayer();
             }
-            setNextPlayer();
+
+            // If this item is the "IG" (BCR), then we are still in the "auction" portion
+            // of the stock round, and the next player is based on the current player
+            // (not the current player).
+            if (item == StartItem.getByName("IG")) {
+                setCurrentPlayerIndex(((Player) startingPlayer.get()).getIndex());
+            } else {
+                setNextPlayer();
+            }
 
             auctionItemState.set(null);
             numPasses.set(0);
