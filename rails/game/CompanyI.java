@@ -111,4 +111,8 @@ public interface CompanyI extends ConfigurableComponentI, MoveableHolder {
     public String toString();
 
     public boolean equals(CompanyI company);
+    /**
+     * @param string
+     */
+    public void setInfoText(String string);
 }

@@ -205,7 +205,7 @@
 	</Company>
 	<Company name="PR" longname="Preu&#223;ische Eisenbahn" type="Major" startspace="I4" available="no" tokens="7" fgColour="FFFFFF" bgColour="000000"
 			alias="Pr">
-        <Home hex="E19"/>
+        <Home hex="E19" mapDisplay="no"/>
 		<ShareUnit percentage="5" sharePriceUnits="2"/>
 		<Float percentage="10"/>
 		<Certificate type="President" shares="2"/>

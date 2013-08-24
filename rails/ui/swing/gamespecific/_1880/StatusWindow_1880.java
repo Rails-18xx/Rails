@@ -20,15 +20,4 @@ public class StatusWindow_1880 extends StatusWindow {
         super();
     }
 
-    @Override
-    public boolean updateGameSpecificSettings(){
-        if (currentRound instanceof StockRound){
-            if (((StockRound) currentRound).getStockRoundNumber() ==1){
-                gameStatus.init((StatusWindow) getParent(), gameUIManager);
-            }
-        }
-        return false;
-        
-    }
-    
 }

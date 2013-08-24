@@ -44,7 +44,8 @@
 				<exclude name="rails-*-${version}/**"/>
 				<exclude name="rails.bat"/>
 				<exclude name="rails.sh"/>
-				<exclude name="version.number" />
+				<exclude name="version.number"/>
+				<exclude name="readme.txt"/>
 				<exclude name=".project"/>
 				<exclude name=".classpath"/>
 				<exclude name=".git/**"/>
@@ -97,6 +98,7 @@
 			<fileset dir=".">
 				<include name="LICENSE"/>
 				<include name="README"/>
+				<include name="readme.txt"/>
 				<include name="AUTHORS"/>
 				<include name="readme.txt"/>
 				<include name="rails.bat"/>

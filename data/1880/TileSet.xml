@@ -32,7 +32,6 @@
 	<Tile id="-901"/>
 	<Tile id="-902"/>
 	<Tile id="-903"/>
-	
 	<!-- Yellow -->
 	<Tile id="5" quantity="6">
 		<Upgrade id="14,15,619" />

@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 import rails.common.*;
 import rails.game.*;
 import rails.game.action.*;
+import rails.game.model.ModelObject;
 import rails.sound.SoundManager;
 import rails.ui.swing.elements.*;
 import rails.util.Util;
@@ -89,6 +90,14 @@ public class GameUIManager implements DialogOwner {
 
     protected boolean previousResult;
 
+    // Player order
+    protected PlayerOrderView playerOrderView;
+    /** Player names set at time of initialisation or after reordering.
+     *<p> To be used as a reference to the current player order as shown in the UI.
+     * Note, that getPlayers() currently calls the game engine directly, and
+     * therefore updates before the UI gets notice via the playerOrderView.*/
+    protected List<String> currentGuiPlayerNames;
+
     /* Keys of dialogs owned by this class */
     public static final String COMPANY_START_PRICE_DIALOG = "CompanyStartPrice";
     public static final String SELECT_COMPANY_DIALOG = "SelectCompany";
@@ -122,6 +131,11 @@ public class GameUIManager implements DialogOwner {
 
         configuredStockChartVisibility = "yes".equalsIgnoreCase(Config.get("stockchart.window.open"));
 
+        playerOrderView = new PlayerOrderView();
+        currentGuiPlayerNames = new ArrayList<String>();
+        for (Player player : getPlayers()) {
+            currentGuiPlayerNames.add (player.getName());
+        }
     }
 
     private void initWindowSettings () {
@@ -558,6 +572,12 @@ public class GameUIManager implements DialogOwner {
 
         updateStatus(activeWindow);
 
+    }
+
+    protected void updatePlayerOrder (List<String> newPlayerOrder) {
+        if (startRoundWindow != null) startRoundWindow.updatePlayerOrder (newPlayerOrder);
+        if (statusWindow != null) statusWindow.updatePlayerOrder (newPlayerOrder);
+        currentGuiPlayerNames = newPlayerOrder;
     }
 
     /** Stub, to be overridden in subclasses for special round types */
@@ -1225,5 +1245,35 @@ public class GameUIManager implements DialogOwner {
                 ws.set(finalFrame);
             }
         });
+    }
+
+    public List<String> getCurrentGuiPlayerNames() {
+        return currentGuiPlayerNames;
+    }
+
+    public class PlayerOrderView implements ViewObject {
+
+        PlayerOrderView () {
+            gameManager.getPlayerNamesModel().addObserver(this);
+        }
+
+        public void update(Observable o, Object arg) {
+            if (o instanceof GameManager.PlayerOrderState && arg instanceof String) {
+                List<String> newPlayerNames = Arrays.asList(((String)arg).split(";"));
+                updatePlayerOrder (newPlayerNames);
+            }
+
+        }
+
+        public ModelObject getModel() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        public void deRegister() {
+            // TODO Auto-generated method stub
+
+        }
+
     }
 }

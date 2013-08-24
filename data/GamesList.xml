@@ -311,14 +311,21 @@ Known Issues:
     <Players minimum="2" maximum="5" />
   </Game>
 
-    <Game name="1880">
-        <Note>Prototype</Note>
-        <Description>1880 - China
-        (c) 2010 Double O Games  Mayfair Games, Inc.
-        Designed by Leonhard Ogler and Helmut Ohley
-        Limitations:
-        All aspects not present in 1880 have not been implemented yet.</Description>
-        <Players minimum="3" maximum="7"/>
+  <Game name="1880">
+   <Note>Almost Playable</Note>
+   <Description>1880 - China
+    (c) 2010 Double O Games  Mayfair Games, Inc.
+    Designed by Leonhard Ogler and Helmut Ohley
+    Limitations:
+    After the End of the StartRound the Playerorder in the Statuswindow is switched but not the Values
+    Workaround: Please save the game and reload it to fix this.
+    Not yet Implemented:
+    Automatic Deduction of Ferry Fees, please adjust manually or disable automatic RevenueCalculation
+    The Investor will be closed and the cash will go to the original company, the owner will receive 50 Yuan. 		
+    </Description>
+    <Players minimum="3" maximum="7"/>
+		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
+		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
     </Game>
    <Game name="18Scan">
     <Note>Prototype</Note>
@@ -326,6 +333,16 @@ Known Issues:
     <Players minimum="2" maximum="4" />
   </Game>
 
+  <Game name="1837">
+   <Note>In development</Note>
+   <Description>1837 - Austra-Hungary
+    (c) Leonhard Orgler
+    Designed by Leonhard Ogler
+    </Description>
+    <Players minimum="3" maximum="7"/>
+		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
+		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
+    </Game>
    	
 	<Credits>&lt;html&gt;Rails is a computer implementation of a number of board games.&lt;br&gt; 
 	These games all have a railroad theme. They are collectively known as "18xx" &lt;br&gt;

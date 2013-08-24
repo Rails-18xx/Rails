@@ -13,7 +13,6 @@ import rails.common.*;
 import rails.game.action.*;
 import rails.game.move.*;
 import rails.game.special.SpecialPropertyI;
-import rails.game.specific._1880.PublicCompany_1880;
 import rails.game.state.BooleanState;
 
 /**

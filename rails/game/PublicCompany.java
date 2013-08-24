@@ -67,6 +67,8 @@ public class PublicCompany extends Company implements PublicCompanyI {
     protected List<MapHex> homeHexes = null;
     protected int homeCityNumber = 1;
     protected boolean homeAllCitiesBlocked = false;
+    protected boolean homeMapDisplay = true;
+
 
     /** Destination hex * */
     protected String destinationHexName = null;
@@ -343,6 +345,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
             homeHexNames = homeBaseTag.getAttributeAsString("hex");
             homeCityNumber = homeBaseTag.getAttributeAsInteger("city", 1);
             homeAllCitiesBlocked = homeBaseTag.getAttributeAsBoolean("allCitiesBlocked", false);
+            homeMapDisplay = homeBaseTag.getAttributeAsBoolean("mapDisplay", true);
         }
 
         Tag destinationTag = tag.getChild("Destination");
@@ -890,6 +893,9 @@ public class PublicCompany extends Company implements PublicCompanyI {
         return homeAllCitiesBlocked;
     }
 
+    public boolean isHomeMapDisplay() {
+        return homeMapDisplay;
+    }
 
     /**
      * @return Returns the destinationHex.
@@ -1755,21 +1761,25 @@ public class PublicCompany extends Company implements PublicCompanyI {
 
         if (baseTokenLayCost == null) return 0;
 
-        if (baseTokenLayCostMethod.equals(BASE_COST_SEQUENCE)) {
-            int index = getNumberOfLaidBaseTokens();
+        /* Changed by JDG/EV: allow cost array for both calculation methods.
+         * In 1837, token lay cost per hex distance depends on
+         * the number of tokens laid before. */
+        int index = getNumberOfLaidBaseTokens();
 
-            if (index >= baseTokenLayCost.length) {
-                index = baseTokenLayCost.length - 1;
-            } else if (index < 0) {
-                index = 0;
-            }
+        if (index >= baseTokenLayCost.length) {
+            index = baseTokenLayCost.length - 1;
+        } else if (index < 0) {
+            index = 0;
+        }
+
+        if (baseTokenLayCostMethod.equals(BASE_COST_SEQUENCE)) {
             return baseTokenLayCost[index];
         } else if (baseTokenLayCostMethod.equals(BASE_COST_DISTANCE)) {
             if (hex == null) {
-                return baseTokenLayCost[0];
+                return baseTokenLayCost[index];
             } else {
                 // WARNING: no provision yet for multiple home hexes.
-                return mapManager.getHexDistance(homeHexes.get(0), hex) * baseTokenLayCost[0];
+                return mapManager.getHexDistance(homeHexes.get(0), hex) * baseTokenLayCost[index];
             }
         } else {
             return 0;
@@ -2114,6 +2124,13 @@ public class PublicCompany extends Company implements PublicCompanyI {
      */
     public boolean hasRoute() {
         return true;
+    }
+
+    /**
+     * @param destinationHex the destinationHex to set
+     */
+    public void setDestinationHex(MapHex destinationHex) {
+        this.destinationHex = destinationHex;
     }
 
 }

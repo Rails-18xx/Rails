@@ -47,17 +47,20 @@
 	
 	<Company name="WR" longname="Woosong Railway" type="Private" basePrice="5"
 		revenue="0">
-		
-		<!--SpecialProperty condition="ifOwnedByPlayer" Phasenwechsel-Freie Lok -->
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByPlayer" when="anyTurn" 
+				class="rails.game.specific._1880.ExchangeForCash_1880">
+				<ExchangeForCash/>
+			</SpecialProperty>
+		</SpecialProperties>
 		<ClosingConditions>
-			<Phase>4</Phase>
 			<SpecialProperties condition="ifExercised"/>
 		</ClosingConditions>
 	</Company>
 	<Company name="KR" longname="Kaiping Railway" type="Private" basePrice="10"
 		revenue="5">
 		<ClosingConditions>
-			<Phase>4</Phase>
+			<Phase>4+4</Phase>
 		</ClosingConditions>
 	</Company>
 	<Company name="YC" longname="Yanda Ferry Company" type="Private"
@@ -65,7 +68,7 @@
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByPlayer" when="revenueStep" 
 				class="rails.game.special.LocatedBonus" transfer="toCompany">
-				<LocatedBonus name="Ferry" location="F12,F14,I15" value="10"/>
+				<LocatedBonus name="Ferry" location="F12,F14,I15,J16" value="10"/>
 			</SpecialProperty>
 		</SpecialProperties>
 	</Company>
@@ -81,14 +84,14 @@
 	<Company name="CC" longname="Chinese Rivers Ferry Company" type="Private"
 		basePrice="70" revenue="20">
 		<SpecialProperties>
-		<SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep"
+		<SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" permanent="true"
 			class="rails.game.special.SpecialTileLay">
-			<SpecialTileLay location="M15" extra="no" free="yes"/>
+			<SpecialTileLay location="G1,G3,G5,G11,H4,H10,I9,I7,I5,J2,I1,K1,O1,O3,N4,N6,M7,L8,L10,L12,K13,J14" extra="no" free="yes"/>
 		</SpecialProperty>
 		</SpecialProperties>
 	</Company>
 	<Company name="JO" longname="Jeme Tien Yow Engineer Office" type="Private"
-		basePrice="70" revenue="20">
+		basePrice="70" revenue="25">
 		<!-- SpecialProperties-->
 		<!-- SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep"
 			class="rails.game.specific._1880.BuildingPermit"-->
@@ -96,83 +99,84 @@
 		<!--  -->/SpecialProperties-->
 	</Company>
 	<Company name="IG" longname="Imperial Qing Government" type="Private"
-		basePrice="160" revenue="20">
+		basePrice="160" revenue="0">
 		<Info key="ComesWithPresidency" parm="BCR,20"/>
 	</Company>
 	<Company name="RC" longname="Rocket Company" type="Private" basePrice="70"
 		revenue="0">
-		<!-- SpecialProperties-->
-		<!--  SpecialProperty condition="ifOwnedByPlayer" when="trainBuyingStep"
-			class="rails.game.special.SpecialTrainBuy"/-->
+		<SpecialProperties>
+		<SpecialProperty condition="ifOwnedByPlayer" when="anyTurn"  
+					class="rails.game.specific._1880.SpecialTrainBuy_1880">
+					<SpecialTrainBuy_1880 traintype="2,2+2,3,3+3,4" deduction="100%"></SpecialTrainBuy_1880>
 		<!--  Kostenfreie Lok bei Phasenwechsel durch Lokkauf -->
-		<!-- Can exchange Certificate for actual train in one phase 2,2+3,3,3+3,4 
-		as soon as train has been bought -->
 		<!-- The train can be moved upon purchase into one company owned by the 
 		owner of the certificate --> <!-- Company must have space for the new train, but can hand back an older 
 		train to bank (2+2,3,3+3) -->
-		<!-- /SpecialProperties-->
+		</SpecialProperty>
+		</SpecialProperties>
 		<ClosingConditions>
-			<Phase>5</Phase>
+			<SpecialProperties condition="ifExercised"/>
+			<Phase>4+4</Phase>
 		</ClosingConditions>
 	</Company>
 	<Company name="BCR" longname="Baocheng Railway" type="Major" tokens="3"
-		fgColour="FFFFFF" bgColour="0000FF">
+		fgColour="FFFFFF" bgColour="4A4A97">
 		<Home hex="M3"/>
 	</Company>
 	<Company name="JHA" longname="Jingha Railway" type="Major" tokens="3"
-		fgColour="FFFFFF" bgColour="FF0000">
+		fgColour="000000" bgColour="E78B01">
 		<Home hex="F8" city="1"/>
 	</Company>
 	<Company name="JHU" longname="Jinghu 
 			Railway" type="Major" tokens="3"
-		fgColour="FFFFFF" bgColour="FF0000">
+		fgColour="FFFFFF" bgColour="000000">
 		<Home hex="F8" city="2"/>
 	</Company>
 	<Company name="JGG" longname="Jingguang Railway" type="Major" tokens="3"
-		fgColour="FFFFFF" bgColour="FF0000">
+		fgColour="FFFFFF" bgColour="92278A">
 		<Home hex="F8" city="3"/>
 	</Company>
 	<Company name="JLR" longname="Jinglan Railway" type="Major" tokens="3"
-		fgColour="FFFFFF" bgColour="FF0000">
+		fgColour="000000" bgColour="60B495">
 		<Home hex="F8" city="4"/>
 	</Company>
 	<Company name="BZU" longname="Binzhou 
 			Railway" type="Major" tokens="3"
-		fgColour="FFFFFF" bgColour="FF0000">
+		fgColour="000000" bgColour="EFEBC7">
 		<Home hex="B8"/>
 	</Company>
 	<Company name="LHR" longname="Longhai Railway" type="Major" tokens="3"
-		fgColour="FFFFFF" bgColour="FF0000">
+		fgColour="000000" bgColour="C0B4B7">
 		<Home hex="J2"/>
 	</Company>
 	<Company name="SCR" longname="Schichang Railway" type="Major" tokens="3"
-		fgColour="FFFFFF" bgColour="FF0000">
+		fgColour="FFFFFF" bgColour="71B622">
 		<Home hex="N12"/>
 	</Company>
 	<Company name="CKR" longname="Chengkun Railway" type="Major" tokens="3"
-		fgColour="FFFFFF" bgColour="FF0000">
+		fgColour="000000" bgColour="D24026">
 		<Home hex="O5"/>
 	</Company>
 	<Company name="NXR" longname="Ningxi 
 			Railway" type="Major" tokens="3"
-		fgColour="FFFFFF" bgColour="FF0000">
+		fgColour="000000" bgColour="CF8ABC">
 		<Home hex="J6"/>
 	</Company>
 	<Company name="HKR" longname="Hukun Railway" type="Major" tokens="3"
-		fgColour="FFFFFF" bgColour="FF0000">
+		fgColour="FFFFFF" bgColour="A3CE06">
 		<Home hex="K15"/>
 	</Company>
 	<Company name="NJR" longname="Najiang Railway" type="Major" tokens="3"
-		fgColour="FFFFFF" bgColour="FF0000">
+		fgColour="000000" bgColour="DBBC04">
 		<Home hex="K13"/>
 	</Company>
 	<Company name="QSR" longname="Qinshen 
 			Railway" type="Major" tokens="3"
-		fgColour="FFFFFF" bgColour="FF0000">
+		fgColour="000000" bgColour="55B3D7">
 		<Home hex="D12"/>
 	</Company>
 	<Company name="WNR" longname="Wunan Railway" type="Major" tokens="3"
-		fgColour="FFFFFF" bgColour="FF0000">
+		fgColour="000000" bgColour="EDE201">
 		<Home hex="L10"/>
 	</Company>
 	<Company name="1" longname="Chinese Eastern Railway" type="Minor" price="0"

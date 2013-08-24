@@ -6,6 +6,7 @@ import java.util.Map;
 import rails.algorithms.RevenueManager;
 import rails.common.*;
 import rails.common.parser.ConfigurableComponentI;
+import rails.game.GameManager.PlayerOrderState;
 import rails.game.action.PossibleAction;
 import rails.game.correct.CorrectionManagerI;
 import rails.game.correct.CorrectionType;
@@ -13,7 +14,6 @@ import rails.game.model.ModelObject;
 import rails.game.move.MoveStack;
 import rails.game.move.MoveableHolder;
 import rails.game.special.SpecialPropertyI;
-import rails.game.state.StringState;
 
 public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
 
@@ -222,7 +222,7 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
     public void setSkipDone (GameDef.OrStep step);
 
     public Player reorderPlayersByCash(boolean high);
-    public StringState getPlayerNameModel(int index) ;
+    public PlayerOrderState getPlayerNamesModel();
 
     /**
      * reset the storage for other elements like tokens, special property

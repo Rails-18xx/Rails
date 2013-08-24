@@ -2,10 +2,8 @@
 <ComponentManager>
 	<Component name="GameManager" class="rails.game.specific._1880.GameManager_1880">
 		<Game name="1880"/>
-		<GameOption name="RouteAwareness" values="Highlight,Deactivate"
-			default="Deactivate"/>
-		<GameOption name="RevenueCalculation" values="Suggest,Deactivate"
-			default="Deactivate"/>
+		<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Highlight"/>
+		<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest"/>
 		<GameOption name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
 		<GameOption name="LeaveAuctionOnPass" type="toggle" default="no"/>
 		<GameParameters>
@@ -16,13 +14,18 @@
 			</StockRound>
 			<OperatingRound
 				class="rails.game.specific._1880.OperatingRound_1880">
-				<EmergencyTrainBuying mayBuyFromCompany="no"/>
+				<EmergencyTrainBuying mayBuyFromCompany="yes"/>
 			</OperatingRound>
+			<ShareSellingRound class="rails.game.specific._1880.ShareSellingRound_1880">
+			</ShareSellingRound>
 		</GameParameters>
 		<GuiClasses>
-			<StatusWindow class="rails.ui.swing.StatusWindow"/>
+			<GameStatus
+				class="rails.ui.swing.gamespecific._1880.GameStatus_1880"/>
 			<StartRoundWindow
 				class="rails.ui.swing.gamespecific._1880.StartRoundWindow_1880"/>
+			<GameUIManager
+				class="rails.ui.swing.gamespecific._1880.GameUIManager_1880"/>
  		</GuiClasses>
 		<EndOfGame/>
 		
@@ -70,6 +73,8 @@
 		<TrainType name="6" majorStops="6" cost="600" quantity="5">
 			<NewPhase phaseName="6"/>
 		</TrainType>
+		<TrainType name="2R" majorStops="2" cost="250" quantity="10">
+		</TrainType>
 		<TrainType name="6e" majorStops="-1" cost="700" quantity="5">
 			<NewPhase phaseName="6e"/>
 		</TrainType>
@@ -83,7 +88,6 @@
 			<NewPhase phaseName="8e"/>
 		</TrainType>
 		<!-- majorStops="-1" indicates that this not a normally running train-->
-		
 		<!-- The e-type trains are express trains that can ignore towns/cities on their way for a maximum payout-->
 		<TrainType name="10" majorStops="10" cost="1000" quantity="-1">
 			<NewPhase phaseName="8e"/>
@@ -158,11 +162,9 @@
 		</Phase>
 		<Phase name="8e" realName="D3">
 		</Phase>
-		<Component name="RevenueManager" class="rails.algorithms.RevenueManager">
-			<Modifier class="rails.game.specific._1880.OffBoardRevenueModifier"/>
-			<Modifier
-				class="rails.game.specific._1880.ExpressTrainRevenueModifier"/>
 		</Component>
-	</Component>
+		<Component name="RevenueManager" class="rails.algorithms.RevenueManager">
+		<Modifier class="rails.game.specific._1880.OffBoardRevenueModifier_1880"/>
+		</Component>
 		
 </ComponentManager>

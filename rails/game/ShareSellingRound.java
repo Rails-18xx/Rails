@@ -20,9 +20,9 @@ public class ShareSellingRound extends StockRound {
 
     RoundI parentRound;
     Player sellingPlayer;
-    IntegerState cashToRaise;
-    PublicCompanyI cashNeedingCompany;
-    boolean dumpOtherCompaniesAllowed;
+    protected IntegerState cashToRaise;
+    protected PublicCompanyI cashNeedingCompany;
+    protected boolean dumpOtherCompaniesAllowed;
 
     private List<SellShares> sellableShares;
 
@@ -94,7 +94,7 @@ public class ShareSellingRound extends StockRound {
      * Create a list of certificates that a player may sell in an emergency
      * share selling round, taking all rules taken into account.
      */
-    private List<SellShares> getSellableShares () {
+    protected List<SellShares> getSellableShares () {
 
         sellableShares = new ArrayList<SellShares> ();
 

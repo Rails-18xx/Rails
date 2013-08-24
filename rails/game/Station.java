@@ -45,6 +45,7 @@ public class Station {
     private static final String[] types =
     { CITY, TOWN, HALT, OFF_MAP_AREA, PORT, PASS, JUNCTION };
     private static final List<String> validTypes = Arrays.asList(types);
+    
 
     protected static Logger log =
         Logger.getLogger(Station.class.getPackage().getName());

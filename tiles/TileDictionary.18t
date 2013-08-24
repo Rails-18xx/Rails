@@ -17438,5 +17438,366 @@ object TTilesWrapper
           Revenue = 30
           RevenuePosition = tp3CornerB
         end>
+    end
+    item
+      Code = -37001
+      LongName = 'RGTE'
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end>
+      Junctions = <
+        item
+          JunType = jtWhistlestop
+        end>
+    end
+    item
+      Code = -37002
+      LongName = 'ZKB'
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tpCurve1LeftE
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tpCurve1LeftE
+          Position2 = tp4SideF
+        end>
+      Junctions = <
+        item
+          JunType = jtWhistlestop
+        end
+        item
+          JunType = jtWhistlestop
+          Position = tpCurve1LeftE
+          Revenue = 10
+          RevenuePosition = tp3CornerE
+        end>
+    end
+    item
+      Code = -37003
+      LongName = 'EHS'
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tp4SideF
+          Position2 = tp4SideE
+        end>
+      Junctions = <
+        item
+          JunType = jtWhistlestop
+        end>
+    end
+    item
+      Code = -37007
+      LongName = 'T'
+      Category = 'T'
+      Level = tlMapUpgradableToYellow
+      Connections = <>
+      Junctions = <
+        item
+          JunType = jtCity
+        end
+        item
+          Position = tp1CornerC
+        end>
+    end
+    item
+      Code = -37008
+      LongName = 'X'
+      Category = 'X'
+      Level = tlMapUpgradableToYellow
+      Connections = <>
+      Junctions = <
+        item
+          JunType = jtCity
+        end>
+    end
+    item
+      Code = -37009
+      LongName = 'Bregenz'
+      Level = tlMapUpgradableToBrown
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Revenue = 20
+        end>
+    end
+    item
+      Code = -37010
+      LongName = 'BudaPest'
+      Level = tlMapUpgradableToGreen
+      Connections = <
+        item
+          Position1 = tp2CornerD
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tp2CornerD
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tp1SideF
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tp1SideF
+          Position2 = tp4SideA
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Position = tp1SideF
+          Revenue = 40
+          RevenuePosition = tp2SideB
+        end
+        item
+          JunType = jtCity
+          Position = tp2CornerD
+          Revenue = 40
+          RevenuePosition = tp2SideB
+        end>
+    end
+    item
+      Code = -37011
+      LongName = 'Marburg'
+      Category = 'X'
+      CategoryPosition = tp3CornerC
+      Level = tlMapUpgradableToGreen
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideE
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Revenue = 30
+        end>
+    end
+    item
+      Code = -37012
+      LongName = 'Wien'
+      Category = 'Wien'
+      CategoryPosition = tp2CornerC
+      Level = tlMapUpgradableToGreen
+      Connections = <
+        item
+          Position1 = tp2CornerB
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tpCurve2LeftF
+          Position2 = tp4SideF
+        end
+        item
+          Position1 = tpCurve2RightE
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tp2CornerD
+          Position2 = tp4SideD
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Position = tp2CornerB
+          Revenue = 40
+          RevenuePosition = tpCenter
+        end
+        item
+          JunType = jtCity
+          Position = tpCurve2LeftF
+          Revenue = 40
+          RevenuePosition = tpCenter
+        end
+        item
+          JunType = jtCity
+          Position = tpCurve2RightE
+          Revenue = 40
+          RevenuePosition = tpCenter
+        end
+        item
+          JunType = jtCity
+          Position = tp2CornerD
+          Revenue = 40
+          RevenuePosition = tpCenter
+        end>
+    end
+    item
+      Code = -37156
+      LongName = '-37156'
+      Level = tlMapUpgradableToGreen
+      Connections = <
+        item
+          Position1 = tpCurve2RightF
+          Position2 = tp4SideF
+        end
+        item
+          Position1 = tpCurve2RightF
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tpCurve2LeftC
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tpCurve2LeftC
+          Position2 = tp4SideE
+        end>
+      Junctions = <
+        item
+          JunType = jtWhistlestop
+          Position = tpCurve2RightF
+          Revenue = 10
+        end
+        item
+          JunType = jtWhistlestop
+          Position = tpCurve2LeftC
+          Revenue = 10
+          RevenuePosition = tp3CornerC
+        end>
+    end
+    item
+      Code = -37103
+      LongName = '-37103'
+      Level = tlMapUpgradableToGreen
+      Connections = <
+        item
+          Position1 = tp2CornerA
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tp2CornerA
+          Position2 = tp4SideF
+        end>
+      Junctions = <
+        item
+          JunType = jtWhistlestop
+          Position = tp2CornerA
+          Revenue = 10
+          RevenuePosition = tp3CornerF
+        end>
+    end
+    item
+      Code = -37109
+      LongName = '-37109'
+      Level = tlMapUpgradableToGreen
+      Connections = <
+        item
+          Position1 = tp4SideE
+          Position2 = tp4SideB
+        end>
+      Junctions = <>
+    end
+    item
+      Code = -37123
+      LongName = '-37123'
+      Level = tlMapUpgradableToBrown
+      Connections = <
+        item
+          Position1 = tp4SideA
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tp4SideA
+          Position2 = tp4SideE
+        end>
+      Junctions = <>
+    end
+    item
+      Code = -37158
+      LongName = '-37158'
+      Level = tlMapUpgradableToGreen
+      Connections = <
+        item
+          Position1 = tp1SideA
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tp1SideA
+          Position2 = tp4SideF
+        end>
+      Junctions = <
+        item
+          JunType = jtWhistlestop
+          Position = tp1SideA
+          Revenue = 10
+          RevenuePosition = tp1CornerE
+        end>
+    end
+    item
+      Code = -37206
+      LongName = 'Fuenfkirchen'
+      Level = tlMapUpgradableToBrown
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Revenue = 30
+        end>
+    end
+    item
+      Code = -37402
+      LongName = 'Prag'
+      Category = 'X'
+      Level = tlMapUpgradableToGreen
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Revenue = 20
+        end>
+    end
+    item
+      Code = -42
+      LongName = '-42'
+      Connections = <
+        item
+          Position1 = tp4SideD
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tp4SideD
+          Position2 = tp4SideF
+        end
+        item
+          Position1 = tp4SideA
+          Position2 = tp4SideF
+        end>
+      Junctions = <>
     end>
 end
