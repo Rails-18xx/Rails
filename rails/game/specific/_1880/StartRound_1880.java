@@ -150,6 +150,7 @@ public class StartRound_1880 extends StartRound {
             //Check if all players own a minor/investor already then declare Startinground over...
             if (currentStartRoundPhase.intValue() == 0) { //first time a non Private gets called up; initialize the rest of items to BUYABLE
                       // Priority Deal goes to the player with the smallest wallet...
+                     playersPassed.clear();
                      gameManager.setCurrentPlayer(gameManager.reorderPlayersByCash(true));
                      //setCurrentPlayerIndex(0); //lowest or highest Player is always at the start of the player list after reordering !
                      //Send Message that Playerorder has Changed !...
@@ -366,9 +367,13 @@ public class StartRound_1880 extends StartRound {
                 auctionItem.setBid(-1, player);
                 setNextBiddingPlayer(auctionItem,
                         getCurrentPlayerIndex());          
-            }else {
+            }else {//need to make sure that there is no valid bid on the auctionItem after the first round 
                 auctionItem.setBid(-1, player);
+                if (auctionItem.getBidders() >0){
+                    setNextBiddingPlayer(auctionItem,getCurrentPlayerIndex());
+                } else {
                 setNextPlayer();
+                }
             }
            
            
