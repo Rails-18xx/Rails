@@ -134,7 +134,7 @@ public class StartRound_1880 extends StartRound {
                     } else {
                         BidStartItem possibleAction =
                             new BidStartItem(item, item.getMinimumBid(),
-                                startPacket.getModulus(), true);
+                                5, true);
                         possibleActions.add(possibleAction); // Player can offer a bid
                         possibleActions.add(new NullAction(NullAction.PASS));
                         return true;
