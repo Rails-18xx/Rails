@@ -3126,7 +3126,7 @@
 		<Track from="city1" gauge="normal" to="side4"/>
 		<Track from="city1" gauge="normal" to="side3"/>
 		<Track from="city1" gauge="normal" to="side1"/>
-		<Track from="side2" gauge="normal" to="side2"/>
+<<<<<<< HEAD
 	</Tile>
 	<Tile colour="yellow" id="-807" name="XX">
 		<Station id="city1" position="102" slots="1" type="City"/>
@@ -4208,7 +4208,7 @@
 		<Track from="city1" gauge="normal" to="side1"/>
 		<Track from="city1" gauge="normal" to="side3"/>
 	</Tile>
-	<Tile colour="yellow" id="235" name="OO">
+		<Tile colour="yellow" id="235" name="OO">
 		<Station id="city1" position="302" slots="1" type="City" value="30"/>
 		<Station id="city2" position="502" slots="1" type="City" value="30"/>
 		<Track from="city2" gauge="normal" to="side5"/>

@@ -1,18 +1,12 @@
-Rails release 1.7.7:
+Rails release 1.7.12:
 
 A new maintenance release for Rails 1.x series
 
-This release fixes several bugs.
+This release fixes a single bug.
 
-Contributors: Erik Vos, Stefan Frey
+Contributors: Erik Vos
 
-Bug reported by Are-Harald Brenne, John David Galt
+Bug reported by Volker Schnell
 
-New:
-- Added little fun variant 18Lummer
-
-Lists of bugs fixed:
-- Errors in UI after adding a comment at game start
-- Fixed failure on reloading a just started game
-- 1835: Manual close of Pfalzbahn is possible (to enable closing after token lay only)
-- 1835 (and others): Fixed UI issues with token relays on OO-tiles
+1835: after resuming an OR after a PR formation round, a check was missing if the (minor) operating company still exists.
+Fix: finish the turn if the operating company is closed at that point.

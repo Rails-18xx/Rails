@@ -56,10 +56,10 @@ Known limitations:
 		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
 		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
 		<Option name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
-		<Option name="NoMapMode" type="toggle" default="no" />
 		<Option name="BYFloatsAt" values="50%,20%" default="50%"/>
 		<Option name="LDIncome" values="20M,30M" default="20M"/>
 		<Option name="MinorsRequireFloatedBY" type="toggle" default="no"/>
+		<Option name="NoMapMode" type="toggle" default="no" />
 		<Players minimum="3" maximum="7"/>
 	</Game>
 

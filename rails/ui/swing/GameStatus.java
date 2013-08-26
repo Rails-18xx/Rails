@@ -14,6 +14,7 @@ import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.*;
 import rails.game.correct.CashCorrectionAction;
+import rails.game.specific._18EU.StartCompany_18EU;
 import rails.sound.SoundManager;
 import rails.ui.swing.elements.*;
 import rails.ui.swing.hexmap.HexHighlightMouseListener;
@@ -801,7 +802,8 @@ public class GameStatus extends GridPanel implements ActionListener {
                     }
                 }
                 int index = 0;
-                if (options.size() > 1) {
+                // check for instanceof StartCompany_18EU allows to continue with selecting the minor
+                if (options.size() > 1 || actions.get(0) instanceof StartCompany_18EU) {
                     if (startCompany) {
                         RadioButtonDialog dialog = new RadioButtonDialog (
                                 GameUIManager.COMPANY_START_PRICE_DIALOG,
@@ -1011,8 +1013,9 @@ public class GameStatus extends GridPanel implements ActionListener {
     public void setPriorityPlayer(int index) {
 
         for (int j = 0; j < np; j++) {
-            upperPlayerCaption[j].setText(players.get(j).getName()
-                    + (j == index ? " PD" : ""));
+            String playerNameAndPriority = players.get(j).getName() + (j == index ? " PD" : "");
+            upperPlayerCaption[j].setText(playerNameAndPriority);
+            lowerPlayerCaption[j].setText(playerNameAndPriority);
         }
     }
 

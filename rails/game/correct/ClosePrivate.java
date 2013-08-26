@@ -18,7 +18,7 @@ public class ClosePrivate extends PossibleAction {
     /* Preconditions */
     
     /** private company to close */
-    private PrivateCompanyI privateCompany;
+    transient private PrivateCompanyI privateCompany;
     
     /** converted to name */
     private String privateCompanyName; 
