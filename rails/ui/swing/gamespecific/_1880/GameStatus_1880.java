@@ -227,12 +227,27 @@ public class GameStatus_1880 extends GameStatus {
                         index = options.indexOf(sp);
                     }
                 } else if (options.size() == 1) {
+                    if (startCompany) {
+                        RadioButtonDialog dialog = new RadioButtonDialog (
+                                GameUIManager.COMPANY_START_PRICE_DIALOG,
+                                gameUIManager,
+                                parent,
+                                LocalText.getText("PleaseSelect"),
+                                LocalText.getText("WHICH_START_PRICE",
+                                        playerName,
+                                        companyName),
+                                        options.toArray(new String[0]), -1);
+                        gameUIManager.setCurrentDialog(dialog, actions.get(0));
+                        parent.disableButtons();
+                        return;
+                    } else {
                     int result =
                         JOptionPane.showConfirmDialog(this, options.get(0),
                                 LocalText.getText("PleaseConfirm"),
                                 JOptionPane.OK_CANCEL_OPTION,
                                 JOptionPane.QUESTION_MESSAGE);
                     index = (result == JOptionPane.OK_OPTION ? 0 : -1);
+                    }
                 }
                 if (index < 0) {
                     // cancelled

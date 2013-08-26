@@ -320,8 +320,6 @@ public class StockRound_1880 extends StockRound {
             if (isSaleRecorded(currentPlayer, comp)) continue;
             if ((comp.sharesOwnedByPlayers() ==50) && (!((PublicCompany_1880) comp).getAllCertsAvail())) continue;
             if (companyBoughtThisTurn != null) {
-                // If a cert was bought before, only brown zone ones can be
-                // bought again in the same turn
                 if (comp != companyBoughtThisTurn) continue;
                 if (!stockSpace.isNoBuyLimit()) continue;
             }
