@@ -29,11 +29,7 @@ public class StockMarket_1880 extends StockMarket {
     public IntegerState parPlace_80;
 
     public IntegerState parPlace_70;
-
-    protected int parSlots[]= new int [16];
-
-    private int freeParSlots [] = new int [16];
-
+    
     GameManagerI gameManager;
 
     /**
@@ -171,115 +167,5 @@ public class StockMarket_1880 extends StockMarket {
                 comp.getStartSpace().addFixedStartPrice(comp);
             }
         }
-    }
-
-    /**
-     * @return all free parSlots
-     */
-    public int[] getParSlots() {
-       
-        int i = 0;
-        for (int e: parSlots )
-        {
-         if (parSlots[e] == 0)
-                 {
-                 freeParSlots[i] = e+1;
-                 i++;
-                 }
-        }
-        return freeParSlots;
-    }
-
-    public int [] getParSlots(int price){
-        int [] freeParSlotsPerPrice= new int [4];
-        int i =0;
-        switch (price) {
-        case 70:
-            for (int e=0 ; e< 4; e++ )
-            {
-                if ( parSlots[e] == 0)
-                   freeParSlotsPerPrice[e] =e+1;
-            }
-                   
-            break;
-        case 80:
-            for (int e=4 ; e< 8; e++ )
-            {
-                if ( parSlots[e] == 0) {
-                   i = e % 4; 
-                   freeParSlotsPerPrice[i] =e+1;
-                }
-            }
-            break;
-        case 90:
-            for (int e=8 ; e< 12; e++ )
-            {
-                if ( parSlots[e] == 0)
-                {
-                    i = e % 4; 
-                freeParSlotsPerPrice[i] =e+1;
-                }
-            }
-            break;
-        case 100:
-            for (int e=12 ; e< 16; e++ )
-            {
-                if ( parSlots[e] == 0){
-                    i = e % 4; 
-                freeParSlotsPerPrice[i] =e+1;
-                }
-            }
-        default:
-            return freeParSlotsPerPrice;
-        }
-        return freeParSlotsPerPrice;
-    }
-    /**
-     * @param parSlots the parSlots to set
-     */
-    public void setParSlots(int[] parSlots) {
-        this.parSlots = parSlots;
-    }
-
-    public boolean setParSlot(int position) {
-        
-        if (this.parSlots[position] > 0) {
-            return false;
-        } else {
-            this.parSlots[position] = 1;
-            return true;
-        }
-    }
-
-    public boolean getParSlot(int price) {
-        switch (price) {
-        case 70:
-            for (int e=0 ; e< 4; e++ )
-               if ( parSlots[e] == 0)
-                   return true;
-            break;
-        case 80:
-            for (int e=4 ; e< 8; e++ )
-                if ( parSlots[e] == 0)
-                    return true;
-            break;
-        case 90:
-            for (int e=8 ; e< 12; e++ )
-                if ( parSlots[e] == 0)
-                    return true;
-            break;
-        case 100:
-            for (int e=12 ; e< 16; e++ )
-                if ( parSlots[e] == 0)
-                    return true;
-            break;
-        default:
-            return false;
-        }
-        return false;
-    }
-
-    public boolean getParSlot(int price, int position) {
-        return true;
     }
 }

@@ -31,6 +31,7 @@ public class GameManager_1880 extends GameManager {
     public IntegerState numOfORs = new IntegerState("numOfORs");
     //Keeps track of the company that purchased the last train
     private PublicCompany_1880 lastTrainBuyingCompany;
+    private ParSlots_1880 parSlots = new ParSlots_1880();
     /**
      * 
      */
@@ -141,6 +142,10 @@ public class GameManager_1880 extends GameManager {
         possibleActions.clear(); //Do we need this here ? 
         
         super.finishShareSellingRound();
+    }
+    
+    public ParSlots_1880 getParSlots() {
+        return parSlots;
     }
 
 }

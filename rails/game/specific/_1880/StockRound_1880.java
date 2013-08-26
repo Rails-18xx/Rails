@@ -274,7 +274,7 @@ public class StockRound_1880 extends StockRound {
                 } else if (!comp.hasStarted()) {
                     List<Integer> startPrices = new ArrayList<Integer>();
                         for (int startPrice : stockMarket.getStartPrices()) {
-                            if ((startPrice * shares <= playerCash) && (((StockMarket_1880) gameManager.getStockMarket()).getParSlot(startPrice))) {
+                            if ((startPrice * shares <= playerCash) && (((GameManager_1880) gameManager).getParSlots().freeSlotAtPrice(startPrice))) {
                                 startPrices.add(startPrice);
                             }
                         }

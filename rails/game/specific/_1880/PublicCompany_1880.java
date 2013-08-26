@@ -65,7 +65,6 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
     
     protected IntegerState operationSlotIndex = new IntegerState ("OperatingSlot, 0");
   
-
     /**
      * 
      */
@@ -378,18 +377,5 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
         }
     }
 */
-    /**
-     * @return the operationSlotIndex
-     */
-    public int getOperationSlotIndex() {
-        return operationSlotIndex.intValue();
-    }
-
-    /**
-     * @param operationSlotIndex the operationSlotIndex to set
-     */
-    public void setOperationSlotIndex(int operationSlotIndex) {
-        this.operationSlotIndex.add(operationSlotIndex);
-    }
     
 }

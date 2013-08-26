@@ -13,20 +13,17 @@ import javax.swing.JOptionPane;
 
 import rails.common.LocalText;
 import rails.game.Bank;
-import rails.game.PublicCertificateI;
 import rails.game.PublicCompanyI;
 import rails.game.action.BuyCertificate;
 import rails.game.action.PossibleAction;
 import rails.game.action.SellShares;
 import rails.game.action.StartCompany;
 import rails.game.correct.CashCorrectionAction;
-import rails.game.specific._1880.StockMarket_1880;
 import rails.sound.SoundManager;
 import rails.ui.swing.GameStatus;
 import rails.ui.swing.GameUIManager;
 import rails.ui.swing.elements.ClickField;
 import rails.ui.swing.elements.RadioButtonDialog;
-import rails.ui.swing.gamespecific._1880.*;
 import rails.game.specific._1880.*;
 
 /**
@@ -128,7 +125,6 @@ public class GameStatus_1880 extends GameStatus {
                     new ArrayList<BuyCertificate>();
                 List<Integer> buyAmounts = new ArrayList<Integer>();
                 BuyCertificate buy;
-                PublicCertificateI cert;
                 String companyName = "";
                 String playerName = "";
                 int sharePerCert;
@@ -149,26 +145,19 @@ public class GameStatus_1880 extends GameStatus {
 
                         startCompany = true;
                         int[] startPrices;
-                        int[] freeParSlotsPerPrice;
                         if (((StartCompany_1880) buy).mustSelectAPrice()) {
                             startPrices =
                                 ((StartCompany_1880) buy).getStartPrices();
+                            List<ParSlot_1880> startParSlots = ((StartCompany_1880) buy).getStartParSlots();
                             Arrays.sort(startPrices);
                             if (startPrices.length > 1) {
-                                for (int i = 0; i < startPrices.length; i++) {
-                                    freeParSlotsPerPrice =
-                                            ((StockMarket_1880) gameUIManager.getGameManager().getStockMarket()).getParSlots(startPrices[i]);
-                                    for (int e = 0; e <freeParSlotsPerPrice.length; e++)
-                                    {
-                                        if (freeParSlotsPerPrice[e] !=0){
-                                            options.add(LocalText.getText("StartCompany",
-                                                Bank.format(startPrices[i]),
-                                                sharePerCert,
-                                                Bank.format(sharesPerCert * startPrices[i]) )+"Slot-"+freeParSlotsPerPrice[e]);
-                                        }
-                                    }
+                                for (ParSlot_1880 parSlot : startParSlots) {
+                                    options.add(LocalText.getText("StartCompany",
+                                            Bank.format(parSlot.getPrice()),
+                                            sharePerCert,
+                                            Bank.format(sharesPerCert * parSlot.getPrice()) )+" Slot-"+parSlot.getIndex());
                                     buyActions.add(buy);
-                                    buyAmounts.add(startPrices[i]);
+                                    buyAmounts.add(parSlot.getPrice());
                                 }
                             } else {
                                 options.add (LocalText.getText("StartACompany",

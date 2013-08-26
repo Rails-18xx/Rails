@@ -21,6 +21,8 @@ public class BuyStartItem_1880 extends BuyStartItem {
     private BitSet buildingRights;
     
     private BitSet associatedBuildingRight;
+    
+    private int parSlotIndex = 0;
     /**
      * @param startItem
      * @param price
@@ -166,6 +168,15 @@ public class BuyStartItem_1880 extends BuyStartItem {
         return buildingRightString;
         }
         return "None";
+    }
+
+
+    public void setParSlotIndex(int index) {
+        parSlotIndex = index;        
+    }
+    
+    public int getParSlotIndex() {
+        return parSlotIndex;
     }
      
 }

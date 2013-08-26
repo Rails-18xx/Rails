@@ -6,14 +6,12 @@ package rails.ui.swing.gamespecific._1880;
 
 
 import javax.swing.JDialog;
-import rails.game.StockMarketI;
 import rails.ui.swing.StartRoundWindow;
 import rails.common.LocalText;
 import rails.game.action.PossibleAction;
 import rails.game.action.StartItemAction;
 import rails.game.specific._1880.BuyStartItem_1880;
 import rails.ui.swing.elements.*;
-import rails.game.specific._1880.*;
 
 
 /**
@@ -127,7 +125,6 @@ public class StartRoundWindow_1880 extends StartRoundWindow {
   public void dialogActionPerformed () {
       
       String key="";
-      StockMarketI stockMarket = getGameUIManager().getGameManager().getStockMarket();
       
       if (currentDialog instanceof NonModalDialog) key = ((NonModalDialog) currentDialog).getKey();
       
@@ -139,9 +136,8 @@ public class StartRoundWindow_1880 extends StartRoundWindow {
           int index = dialog.getSelectedOption();
           if (index >= 0) {
               int price = 100;
-              index = index +12; //Position in parSlot for price 100 starts at slot 12 dueto convention to have the lower prices displayed first
               action.setAssociatedSharePrice(price);
-              ((StockMarket_1880) stockMarket).setParSlot(index);
+              action.setParSlotIndex(index);  // index happens to line up to allows this.
               
               requestBuildingRight((BuyStartItem_1880) action);
               } else {

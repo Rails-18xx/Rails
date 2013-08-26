@@ -5,10 +5,13 @@ package rails.ui.swing.gamespecific._1880;
 
 
 
+import java.util.List;
+
 import rails.ui.swing.GameUIManager;
 import rails.common.LocalText;
 import rails.game.action.PossibleORAction;
 import rails.game.specific._1880.OperatingRound_1880;
+import rails.game.specific._1880.ParSlot_1880;
 import rails.game.specific._1880.PublicCompany_1880;
 import rails.game.specific._1880.StartCompany_1880;
 import rails.ui.swing.elements.NonModalDialog;
@@ -110,9 +113,12 @@ public class GameUIManager_1880 extends GameUIManager {
                 return;
             }
             
-            int index2 = index /4;
-            action.setStartPrice(action.getStartPrices()[index2], index);
-            action.setOperatingSlot(index);
+            List<ParSlot_1880> startParSlots = action.getStartParSlots();
+            int price = startParSlots.get(index).getPrice();
+            int parSlot = startParSlots.get(index).getIndex();
+            
+            action.setStartPrice(price);
+            action.setParSlotIndex(parSlot);
             
 
             /* Set up another dialog for the next step
@@ -122,9 +128,9 @@ public class GameUIManager_1880 extends GameUIManager {
             */
              
             int freePlayerCash = gameManager.getCurrentPlayer().getFreeCash();
-            if (freePlayerCash >= (action.getStartPrices()[index2]*4)) { //enough Cash for 40 Percent 
+            if (freePlayerCash >= (price*4)) { //enough Cash for 40 Percent 
                 presidentShareSizes = new String[] {"20 Percent", "30 Percent", "40 Percent"};
-            } else if (freePlayerCash >= (action.getStartPrices()[index2]*3)) { //enough Cash for 30 Percent 
+            } else if (freePlayerCash >= (price*3)) { //enough Cash for 30 Percent 
                 presidentShareSizes = new String[] {"20 Percent", "30 Percent"};
             } else  { //enough Cash only for 20 Percent 
                 presidentShareSizes = new String[] {"20 Percent"};

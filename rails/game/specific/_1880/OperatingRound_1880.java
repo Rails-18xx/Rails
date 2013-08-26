@@ -509,30 +509,25 @@ public class OperatingRound_1880 extends OperatingRound {
     @Override
     public List<PublicCompanyI> setOperatingCompanies() {
         Map<Integer, PublicCompanyI> operatingCompanies = new TreeMap<Integer, PublicCompanyI>();
-      int space = 100;
-      int key;
-      int minorNo = 0;
+      int key = 1;
+      
+      // Put in Foreign Investors first      
       for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
           if (!canCompanyOperateThisRound(company)) continue; 
-          if (! company.hasFloated()) continue;
-          // Key must put companies in reverse operating order, because sort
-          // is ascending.
-          if (company.hasStockPrice()) {
-          space = company.getStartSpace().getPrice();
-          //Corps operate in descending Startprice
-          //Corps with the same Start price operate in the order they were floated
-          //Start price will inherently be in the right order
-          //subtracting the formation order index will put it at the right point to operate
-          //This wouldn't work if there are lots of corps at the same price
-          //there are not too many corps in each banding for this to be an issue in 1825 even with all 3 units
-          key = 1000000 - (space - ((PublicCompany_1880) company).getOperationSlotIndex());
-          operatingCompanies.put(new Integer(key), company);
-          }
-          else {
-              key = 50 + ++minorNo;
-              operatingCompanies.put(new Integer(key), company);
+          if (!company.hasFloated()) continue;
+          if (!company.hasStockPrice()) {
+              operatingCompanies.put(new Integer(key++), company);
           }
       }
+      
+      // Now the share companies in par slot order
+      List<PublicCompanyI> companies = ((GameManager_1880) gameManager).getParSlots().getCompaniesInOperatingOrder();
+      for (PublicCompanyI company : companies) {
+          if (!canCompanyOperateThisRound(company)) continue; 
+          if (!company.hasFloated()) continue;
+          operatingCompanies.put(new Integer(key++), company);
+      }
+      
       return new ArrayList<PublicCompanyI>(operatingCompanies.values());
     }
 
