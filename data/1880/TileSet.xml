@@ -24,7 +24,7 @@
 		<Upgrade id="235,8854,8855,8856,8857,8858" />
 	</Tile>
 	<Tile id="-80003">
-		<Upgrade id="8887" />
+		<Upgrade id="8877" />
 	</Tile>
 	<Tile id="-80004">
 		<Upgrade id="8886" />
@@ -130,7 +130,9 @@
 	<Tile id="8872" quantity="2" />
 	<Tile id="8873" quantity="2" />
 	<Tile id="8874" quantity="2" />
-	<Tile id="8879" quantity="1" />
+	<Tile id="8879" quantity="1" >
+	<Upgrade id="8880" />
+	</Tile>
 	<Tile id="8887" quantity="1" >
 	<Upgrade id="8888" />
 	</Tile>
