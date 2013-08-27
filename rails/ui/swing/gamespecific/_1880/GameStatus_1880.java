@@ -155,7 +155,7 @@ public class GameStatus_1880 extends GameStatus {
                                     options.add(LocalText.getText("StartCompany",
                                             Bank.format(parSlot.getPrice()),
                                             sharePerCert,
-                                            Bank.format(sharesPerCert * parSlot.getPrice()) )+" Slot-"+parSlot.getIndex());
+                                            Bank.format(sharesPerCert * parSlot.getPrice()) )+" Slot - "+(parSlot.getIndex()+1));
                                     buyActions.add(buy);
                                     buyAmounts.add(parSlot.getPrice());
                                 }

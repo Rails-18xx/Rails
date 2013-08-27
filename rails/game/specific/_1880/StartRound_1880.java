@@ -167,7 +167,6 @@ public class StartRound_1880 extends StartRound {
                            possibleActions.add(possibleAction);
                        }
                    }   
-                investorChosen.add(1);
                 return true;
               }
                
@@ -480,8 +479,9 @@ public class StartRound_1880 extends StartRound {
             int sharePrice = 0;
             String shareCompName = "";
             BitSet buildingRights = new BitSet(5);
+            int parSlotIndex = 0;
             BuyStartItem_1880 boughtItem_1880 = (BuyStartItem_1880) boughtItem;
-
+            
             while (true) {
                 if (!boughtItem_1880.setSharePriceOnly()) {
                     if (item.getStatus() != StartItem.BUYABLE) {
@@ -504,6 +504,7 @@ public class StartRound_1880 extends StartRound {
                     shareCompName = boughtItem_1880.getCompanyToSetPriceFor();
                     sharePrice = boughtItem_1880.getAssociatedSharePrice();
                     buildingRights = boughtItem_1880.getAssociatedBuildingRight();
+                    parSlotIndex = boughtItem_1880.getParSlotIndex();
                     
                     if (sharePrice == 0) {
                         errMsg =
@@ -523,6 +524,7 @@ public class StartRound_1880 extends StartRound {
                                         shareCompName );
                         break;
                     }
+                    // TODO: Add check for parSlot validity
                 }
                 break;
             }
@@ -537,7 +539,7 @@ public class StartRound_1880 extends StartRound {
 
             moveStack.start(false);
 
-            assignItem(player, item, price, sharePrice, buildingRights);
+            assignItem(player, item, price, sharePrice, buildingRights, parSlotIndex);
 
             // Set priority (only if the item was not auctioned)
             // ASSUMPTION: getting an item in auction mode never changes priority
@@ -568,7 +570,7 @@ public class StartRound_1880 extends StartRound {
      * @param buildingRights
      */
     private void assignItem(Player player, StartItem item, int price,
-            int sharePrice, BitSet buildingRights) {
+            int sharePrice, BitSet buildingRights, int parSlotIndex) {
         Certificate primary = item.getPrimary();
         ReportBuffer.add(LocalText.getText("BuysItemFor",
                 player.getName(),
@@ -576,17 +578,22 @@ public class StartRound_1880 extends StartRound {
                 Bank.format(price) ));
         pay (player, bank, price);
         transferCertificate (primary, player.getPortfolio());
-        checksOnBuying(primary, sharePrice, buildingRights);
+        checksOnBuying(primary, sharePrice, buildingRights, parSlotIndex, player);
         if (item.hasSecondary()) {
             Certificate extra = item.getSecondary();
             ReportBuffer.add(LocalText.getText("ALSO_GETS",
                     player.getName(),
                     extra.getName() ));
             transferCertificate (extra, player.getPortfolio());
-            checksOnBuying(extra, sharePrice, buildingRights);
+            checksOnBuying(extra, sharePrice, buildingRights, parSlotIndex, player);
         }
         item.setSold(player, price);
         
+        if (item.getPrimary() instanceof PublicCertificate) {
+            if (((PublicCertificate) item.getPrimary()).getCompany().getTypeName().equals("Minor")) {
+                investorChosen.add(1);
+            }
+        }
     }
     /**
      * @param cert
@@ -594,7 +601,7 @@ public class StartRound_1880 extends StartRound {
      * @param buildingRights
      */
     private void checksOnBuying(Certificate cert, int sharePrice,
-            BitSet buildingRights) {
+            BitSet buildingRights, int parSlotIndex, Player player) {
         if (cert instanceof PublicCertificateI) {
             PublicCertificateI pubCert = (PublicCertificateI) cert;
             PublicCompany_1880 comp = (PublicCompany_1880) pubCert.getCompany();
@@ -609,6 +616,8 @@ public class StartRound_1880 extends StartRound {
                         comp.start(sharePrice);
                         //Building Rights are also set..
                         comp.setBuildingRights(buildingRights);
+                        comp.setFounder(player);
+                        ((GameManager_1880) gameManager).getParSlots().setCompanyAtSlot(comp, parSlotIndex);
                         comp.setRight("BuildingRight",buildingRightToString(buildingRights));
                     } else {
                         log.error("No start price for " + comp.getName());
