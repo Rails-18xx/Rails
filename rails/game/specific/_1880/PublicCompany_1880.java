@@ -64,6 +64,8 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
     protected IntegerState formationOrderIndex;
     
     protected IntegerState operationSlotIndex = new IntegerState ("OperatingSlot, 0");
+    
+    private Player founder = null;
   
     /**
      * 
@@ -72,21 +74,10 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
         super();
         // TODO Auto-generated constructor stub
     }
-
+    
     public void start(StockSpaceI startSpace) {
         super.start(startSpace);
-        //PD: used to track flotation order
-        formationOrderIndex = new IntegerState(name+"_formationOrderIndex");
     }
-
-    public int getFormationOrderIndex() {
-        return formationOrderIndex.intValue();
-    }
-
-    public void setFormationOrderIndex(int formationOrderIndex) {
-        this.formationOrderIndex.set(formationOrderIndex);
-    }
-
 
     /* (non-Javadoc)
      * @see rails.game.PublicCompany#configureFromXML(rails.common.parser.Tag)
@@ -355,6 +346,23 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
      */
     public void setAllCertsAvail(boolean flag ) {
         this.allCertsAvail.set(flag);
+    }
+    
+    public boolean certsAvailableForSale() {
+        if ((sharesOwnedByPlayers() == 5) && (allCertsAvail.booleanValue() == false)) {
+            return false;
+        } else if (sharesOwnedByPlayers() == 10) {
+            return false;
+        }
+        return true;
+    }
+
+    public Player getFounder() {
+        return founder;
+    }
+
+    public void setFounder(Player founder) {
+        this.founder = founder;
     }
 
 /*    @Override

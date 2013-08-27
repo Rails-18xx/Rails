@@ -124,7 +124,8 @@ public class StockRound_1880 extends StockRound {
                  if ((privComp.getTypeName().equals ("Minor")) && (privComp.getPresident()==getCurrentPlayer())) {
                      // We have an Investor and the President is the current Player
                      //now we need to find out if the Portfolio of that Minor holds a share (only one is allowed !) of any Company...
-                     if (privComp.getPortfolio().ownsCertificates(company, 1, false) == 0) {
+                     if ((privComp.getPortfolio().ownsCertificates(company, 1, false) == 0) && 
+                             (getCurrentPlayer() == ((PublicCompany_1880) company).getFounder())) {
                          //need to check if the Private Company owns any other certificate of a company...
                          for (PublicCompanyI comp2 : allComp) {
                              if (privComp.getPortfolio().ownsCertificates(comp2,1,false) > 0) {
@@ -255,9 +256,8 @@ public class StockRound_1880 extends StockRound {
                 //Make sure that only 50  percent of shares are sold until all Certs are to become avail upon Phase change
                 //after the first 3 Train has been sold from IPO.
                                       
-                //find the President Certificate Check the Percentage; sharesOwnedByPlayers returns the number of Certificates and not the share percentages.. 
-                if ((ipoShares == 5) && (!((PublicCompany_1880) comp).getAllCertsAvail())) continue;
-
+                if (!((PublicCompany_1880) comp).certsAvailableForSale()) continue;
+                
                 /* Would the player exceed the total certificate limit? */
                 stockSpace = comp.getCurrentSpace();
                 if ((stockSpace == null || !stockSpace.isNoCertLimit()) && !mayPlayerBuyCertificate(
@@ -405,7 +405,7 @@ public class StockRound_1880 extends StockRound {
         if (raiseIfSoldOut) {
             /* Check if any companies are sold out. */
             for (PublicCompanyI company : gameManager.getCompaniesInRunningOrder()) {
-                if (company.hasStockPrice() && company.isSoldOut() && (!((PublicCompany_1880) company).isCommunistPhase())) {
+                if (company.hasStockPrice() && !((PublicCompany_1880) company).certsAvailableForSale() && (!((PublicCompany_1880) company).isCommunistPhase())) {
                     StockSpaceI oldSpace = company.getCurrentSpace();
                     stockMarket.soldOut(company);
                     StockSpaceI newSpace = company.getCurrentSpace();
@@ -544,11 +544,8 @@ public class StockRound_1880 extends StockRound {
     String playerName = action.getPlayerName();
     
         if (action instanceof StartCompany) {
-
             StartCompany_1880 startCompanyAction = (StartCompany_1880) action;
-
             result = startCompany(playerName, startCompanyAction);
-            
             return result;
         } else {
         return super.process(action);
@@ -682,7 +679,9 @@ public class StockRound_1880 extends StockRound {
 
         // All is OK, now start the company
         company.start(startSpace);
-
+        ((PublicCompany_1880) company).setFounder(currentPlayer);
+        ((GameManager_1880) gameManager).getParSlots().setCompanyAtSlot(((PublicCompany_1880) company), action.getParSlotIndex());
+        
         CashHolder priceRecipient = getSharePriceRecipient (company, ipo, price);
 
         // Transfer the President's certificate

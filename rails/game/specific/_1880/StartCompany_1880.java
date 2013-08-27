@@ -28,6 +28,7 @@ public class StartCompany_1880 extends StartCompany {
 
     BitSet buildingRight = new BitSet(4);
     BitSet savedBuildingRight = new BitSet(4);
+    private int parSlotIndex = 0;
     
     /**
      * @param company
@@ -210,7 +211,16 @@ public class StartCompany_1880 extends StartCompany {
          return "None";
     }
 
+//    public void setParSlotIndex(int index) {
+//        ((GameManager_1880) gameManager).getParSlots().setCompanyAtSlot(this.getCompany(), index);        
+//    }
+    
+    public int getParSlotIndex() {
+        return parSlotIndex;
+    }
+    
     public void setParSlotIndex(int index) {
-        ((GameManager_1880) gameManager).getParSlots().setCompanyAtSlot(this.getCompany(), index);        
+        parSlotIndex = index;
+        ((GameManager_1880) gameManager).getParSlots().setCompanyAtSlot(this.getCompany(), index);
     }
 }
