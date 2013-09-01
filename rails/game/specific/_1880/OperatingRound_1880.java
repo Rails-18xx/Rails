@@ -52,6 +52,9 @@ import rails.util.SequenceUtil;
  */
 public class OperatingRound_1880 extends OperatingRound {
 
+    
+    List<Investor_1880> investorsToClose = new ArrayList<Investor_1880>();
+    
     /**
      * @param gameManager
      */
@@ -97,14 +100,13 @@ public class OperatingRound_1880 extends OperatingRound {
 
     @Override
     protected void prepareRevenueAndDividendAction() {
-
         int[] allowedRevenueActions = new int[] {};
         // There is only revenue if there are any trains
         if (operatingCompany.get().canRunTrains()) {
             if (operatingCompany.get().hasStockPrice()) {
                 allowedRevenueActions =
                         new int[] { SetDividend.PAYOUT, SetDividend.WITHHOLD };
-            } else { // Minors in 1880 are not allowed to hand out Cash except
+            } else { // Investors in 1880 are not allowed to hand out Cash except
                      // in Closing
                 allowedRevenueActions = new int[] { SetDividend.WITHHOLD };
             }
@@ -315,7 +317,6 @@ public class OperatingRound_1880 extends OperatingRound {
         selectedAction = action;
 
         if (selectedAction instanceof NullAction) {
-
             NullAction nullAction = (NullAction) action;
             switch (nullAction.getMode()) {
             case NullAction.DONE: // Making Sure that the NullAction.DONE is in
@@ -359,10 +360,15 @@ public class OperatingRound_1880 extends OperatingRound {
                 break;
             }
             return result;
+        } else if (action instanceof CloseInvestor_1880) {
+            closeInvestor(action);
+            result = done();
+            return result;
         } else {
             return super.process(action);
         }
     }
+
 
     /*
      * (non-Javadoc)
@@ -390,9 +396,20 @@ public class OperatingRound_1880 extends OperatingRound {
         }
 
         if ((getStep() == GameDef.OrStep.BUY_TRAIN)
-            && (operatingCompany.get().getTypeName().equals("Minor"))) {
-            nextStep(GameDef.OrStep.FINAL);
+            && (operatingCompany.get() instanceof Investor_1880)) {
+            setStep(GameDef.OrStep.TRADE_SHARES);
         }
+        
+        if ((getStep() == GameDef.OrStep.TRADE_SHARES) && (operatingCompany.get() instanceof Investor_1880)) {
+            Investor_1880 investor = (Investor_1880) operatingCompany.get();
+            if (investor.isConnectedToLinkedCompany() == true) {
+                possibleActions.add(new CloseInvestor_1880(investor));
+                return true;
+            } else {
+                nextStep(GameDef.OrStep.FINAL);
+            }
+        }
+        
         return super.setPossibleActions();
     }
 
@@ -417,10 +434,7 @@ public class OperatingRound_1880 extends OperatingRound {
         Set<CashHolder> recipientSet = sharesPerRecipient.keySet();
         for (CashHolder recipient : SequenceUtil.sortCashHolders(recipientSet)) {
             if (recipient instanceof Bank) continue;
-            if (recipient instanceof PublicCompany_1880) {
-                if (((PublicCompany_1880) recipient).getTypeName().equals(
-                        "Minor")) continue;
-            }
+            if (recipient instanceof Investor_1880) continue;
             shares = (sharesPerRecipient.get(recipient));
             if (shares == 0) continue;
             part =
@@ -438,7 +452,7 @@ public class OperatingRound_1880 extends OperatingRound {
 
     }
 
-    @Override
+/*    @Override
     protected void setDestinationActions() {
 
         List<PublicCompanyI> possibleDestinations =
@@ -476,7 +490,7 @@ public class OperatingRound_1880 extends OperatingRound {
            controlCompany= (PublicCompany_1880) investorCerts.get(0).getCompany();
            //Find the controlling Major Company... 
            if (hh.layBaseToken(controlCompany, city.getNumber())) {
-               /* TODO: the false return value must be impossible. */
+                TODO: the false return value must be impossible. 
                ReportBuffer.add(LocalText.getText("ExchangesBaseToken",
                        controlCompany.getName(), bt.getCompany().getName(),
                        city.getName()));
@@ -501,7 +515,56 @@ public class OperatingRound_1880 extends OperatingRound {
                }
            company.setClosed();
    
-    }
+    }*/
+    
+    private void closeInvestor(PossibleAction action) {
+        CloseInvestor_1880 closeInvestorAction = (CloseInvestor_1880) action;
+        Investor_1880 investor = closeInvestorAction.getInvestor();
+        Player investorOwner = investor.getPresident();
+        PublicCompany_1880 linkedCompany = (PublicCompany_1880) investor.getLinkedCompany();
+        ReportBuffer.add(LocalText.getText("FIConnected", investor.getName(),
+                  linkedCompany.getName()));
+        
+        // The owner gets $50
+        ReportBuffer.add(LocalText.getText("FIConnectedPayout", investorOwner.getName()));
+        new CashMove(bank, investorOwner, 50);
+                
+        // Pick where the treasury goes
+        if (closeInvestorAction.getTreasuryToLinkedCompany() == true) {
+        ReportBuffer.add(LocalText.getText("FIConnectedTreasuryToCompany", linkedCompany.getName(), investor.getName(), investor.getCash()));            
+        new CashMove(investor, linkedCompany, investor.getCash());
+        } else {
+             ReportBuffer.add(LocalText.getText("FIConnectedTreasuryToOwner", investorOwner.getName(), investor.getName(), (investor.getCash()/5)));            
+             new CashMove(investor, investorOwner, (investor.getCash() / 5));
+             new CashMove(investor, bank, investor.getCash());
+        }
+                
+        BaseToken token = (BaseToken) investor.getTokens().get(0);
+        MapHex hex = investor.getHomeHexes().get(0);
+        Stop city = (Stop) token.getHolder();
+        token.moveTo(token.getCompany());
+                
+        // Pick if the token gets replaced
+        if (closeInvestorAction.getReplaceToken() == true) {
+           if (hex.layBaseToken(linkedCompany, city.getNumber())) {
+               ReportBuffer.add(LocalText.getText("FIConnectedReplaceToken", linkedCompany.getName(), investor.getName()));            
+               linkedCompany.layBaseToken(hex, 0); // (should this be city.getNumber as well?)
+               }            
+        } else {
+               ReportBuffer.add(LocalText.getText("FIConnectedDontReplaceToken", linkedCompany.getName(), investor.getName()));            
+        }
+     // Move the certificate
+         ReportBuffer.add(LocalText.getText("FIConnectedMoveCert", investorOwner.getName(), linkedCompany.getName(), investor.getName()));            
+         Portfolio investorPortfolio = investor.getPortfolio();
+         List<PublicCertificateI> investorCerts = investorPortfolio.getCertificates();
+         investorCerts.get(0).moveTo(investorOwner.getPortfolio()); // should only be one
+     
+         // Set the company to close at the end of the operating round.  It's just too 
+         // hard to do it immediately - the checks to see if the operating order changed 
+         // conflict with the check to see if something closed.
+        
+         investorsToClose.add(investor);
+     }
 
     /* (non-Javadoc)
      * @see rails.game.Round#setOperatingCompanies()
@@ -717,7 +780,6 @@ public class OperatingRound_1880 extends OperatingRound {
      */
     @Override
     public boolean processGameSpecificAction(PossibleAction action) {
-        // TODO Auto-generated method stub
         return super.processGameSpecificAction(action);
     }
 
@@ -726,8 +788,14 @@ public class OperatingRound_1880 extends OperatingRound {
      */
     @Override
     protected void setGameSpecificPossibleActions() {
-        // TODO Auto-generated method stub
         super.setGameSpecificPossibleActions();
     }
 
+    protected void finishOR() {
+        for (Investor_1880 investor : investorsToClose) {
+            investor.setClosed();
+        }
+        super.finishOR();
+    }
+    
 }

@@ -83,6 +83,7 @@ public class StockRound_1880 extends StockRound {
     @Override
     public boolean mayPlayerSellShareOfCompany(PublicCompanyI company) {
         if ((company.getPresident() == gameManager.getCurrentPlayer())
+                && (company instanceof PublicCompany_1880)
             && (((PublicCompany_1880) company).isCommunistPhase())) {
             return false;
         }
@@ -121,9 +122,9 @@ public class StockRound_1880 extends StockRound {
              CompanyManagerI compMgr= gameManager.getCompanyManager();
              List<PublicCompanyI>allComp=compMgr.getAllPublicCompanies();
              for (PublicCompanyI privComp:  allComp) {
-                 if ((privComp.getTypeName().equals ("Minor")) && (privComp.getPresident()==getCurrentPlayer())) {
+                 if ((privComp instanceof Investor_1880) && (privComp.getPresident()==getCurrentPlayer())) {
                      // We have an Investor and the President is the current Player
-                     //now we need to find out if the Portfolio of that Minor holds a share (only one is allowed !) of any Company...
+                     //now we need to find out if the Portfolio of that Investor holds a share (only one is allowed !) of any Company...
                      if ((privComp.getPortfolio().ownsCertificates(company, 1, false) == 0) && 
                              (getCurrentPlayer() == ((PublicCompany_1880) company).getFounder())) {
                          //need to check if the Private Company owns any other certificate of a company...
@@ -139,7 +140,8 @@ public class StockRound_1880 extends StockRound {
                                          + "% share in " + boughtFrom.getName());
                              }
                              cert2.moveTo(privComp.getPortfolio());
-                             ((PublicCompany_1880) privComp).setDestinationHex(company.getHomeHexes().get(0));
+                             ((Investor_1880) privComp).setDestinationHex(company.getHomeHexes().get(0));
+                             ((Investor_1880) privComp).setLinkedCompany((PublicCompany) company);
                              privComp.setInfoText(privComp.getInfoText() + "<br>Destination: "+privComp.getDestinationHex().getInfo());
                              // Check if the company has floated
                             // if (!company.hasFloated()) checkFlotation(company);
@@ -234,7 +236,6 @@ public class StockRound_1880 extends StockRound {
 
                 /* Only the top certificate is buyable from the IPO */
                 int lowestIndex = 99;
-                int ipoShares = 0;
                 cert = null;
                 int index;
                 for (PublicCertificateI c : certs) {
@@ -242,9 +243,6 @@ public class StockRound_1880 extends StockRound {
                     if (index < lowestIndex) {
                         lowestIndex = index;
                         cert = c;
-                    }
-                    if (c.getPortfolio().getOwner() == bank ) {
-                        ipoShares += cert.getShares();
                     }
                 }
 

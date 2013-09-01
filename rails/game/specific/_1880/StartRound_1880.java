@@ -96,8 +96,6 @@ public class StartRound_1880 extends StartRound {
             } else {
                 initialItemRound.add(1);
             }
-            
-             
           
                 Player currentPlayer = getCurrentPlayer();
                 
@@ -590,7 +588,7 @@ public class StartRound_1880 extends StartRound {
         item.setSold(player, price);
         
         if (item.getPrimary() instanceof PublicCertificate) {
-            if (((PublicCertificate) item.getPrimary()).getCompany().getTypeName().equals("Minor")) {
+            if (((PublicCertificate) item.getPrimary()).getCompany() instanceof Investor_1880) {
                 investorChosen.add(1);
             }
         }
@@ -604,21 +602,22 @@ public class StartRound_1880 extends StartRound {
             BitSet buildingRights, int parSlotIndex, Player player) {
         if (cert instanceof PublicCertificateI) {
             PublicCertificateI pubCert = (PublicCertificateI) cert;
-            PublicCompany_1880 comp = (PublicCompany_1880) pubCert.getCompany();
+            PublicCompany comp = (PublicCompany) pubCert.getCompany(); // BAD CAST
             // Start the company, look for a fixed start price
             if (!comp.hasStarted()) {
                 if (!comp.hasStockPrice()) {
                     comp.start();
                 } else if (pubCert.isPresidentShare()) {
+                    PublicCompany_1880 pcomp = (PublicCompany_1880) comp;
                     /* Company to be started. Check if it has a start price */
                     if (sharePrice > 0) {
                         // User has told us the start price
-                        comp.start(sharePrice);
+                        pcomp.start(sharePrice);
                         //Building Rights are also set..
-                        comp.setBuildingRights(buildingRights);
-                        comp.setFounder(player);
+                        pcomp.setBuildingRights(buildingRights);
+                        pcomp.setFounder(player);
                         ((GameManager_1880) gameManager).getParSlots().setCompanyAtSlot(comp, parSlotIndex);
-                        comp.setRight("BuildingRight",buildingRightToString(buildingRights));
+                        pcomp.setRight("BuildingRight",buildingRightToString(buildingRights));
                     } else {
                         log.error("No start price for " + comp.getName());
                     }
@@ -628,7 +627,7 @@ public class StartRound_1880 extends StartRound {
                 checkFlotation(comp);
             }
             PublicCompany_1880 compX=(PublicCompany_1880) companyManager.getPublicCompany("BCR");
-            if ((comp.getTypeName().equals("Minor")) && (comp.getPresident().getPortfolio().findCertificate(compX, true)!=null)) {
+            if ((comp instanceof Investor_1880) && (comp.getPresident().getPortfolio().findCertificate(compX, true)!=null)) {
                 //
                 PublicCertificateI cert2;
                 cert2 = ipo.findCertificate(compX, 1, false);
@@ -638,6 +637,7 @@ public class StartRound_1880 extends StartRound {
                     }
                     cert2.moveTo(comp.getPortfolio());
                     comp.setDestinationHex(compX.getHomeHexes().get(0));
+                    ((Investor_1880) comp).setLinkedCompany(compX);
                     comp.setInfoText(comp.getInfoText() + "<br>Destination: "+comp.getDestinationHex().getInfo());
             }
         }
