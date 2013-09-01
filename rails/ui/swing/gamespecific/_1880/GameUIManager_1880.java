@@ -5,11 +5,18 @@ package rails.ui.swing.gamespecific._1880;
 
 
 
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.JOptionPane;
 
 import rails.ui.swing.GameUIManager;
 import rails.common.LocalText;
+import rails.game.PublicCompanyI;
+import rails.game.TrainI;
+import rails.game.action.PossibleAction;
 import rails.game.action.PossibleORAction;
+import rails.game.specific._1880.CloseInvestor_1880;
 import rails.game.specific._1880.OperatingRound_1880;
 import rails.game.specific._1880.ParSlot_1880;
 import rails.game.specific._1880.PublicCompany_1880;
@@ -26,7 +33,6 @@ public class GameUIManager_1880 extends GameUIManager {
     public static final String COMPANY_SELECT_BUILDING_RIGHT = "SelectBuildingRight";
     public static final String COMPANY_SELECT_PRESIDENT_SHARE_SIZE = "SelectPresidentShareSize";
     public static final String COMPANY_START_PRICE_DIALOG = "CompanyStartPrice";
-    public static final String Investor_has_Destination = "Investor_at_Destination";
     
 
     @Override
@@ -156,6 +162,46 @@ public class GameUIManager_1880 extends GameUIManager {
         // Dialog action found and processed, let the superclass initiate processing.
         super.dialogActionPerformed(true);
     
+    }
+    
+    public void closeInvestor(CloseInvestor_1880 action) {
+        String[] cashOptions = new String[2];
+        cashOptions[0] = LocalText.getText("GiveToCompany", action.getInvestor().getCash(), action.getInvestor().getLinkedCompany().getName());
+        cashOptions[1] = LocalText.getText("GiveToPresident", (action.getInvestor().getCash()/5), action.getInvestor().getPresident());
+        
+        String cashChoice =
+                (String) JOptionPane.showInputDialog(orWindow,
+                        LocalText.getText("FIClosingAskAboutTreasury", action.getInvestor().getName()),
+                        LocalText.getText("TreasuryChoice"),
+                        JOptionPane.QUESTION_MESSAGE, null,
+                        cashOptions, cashOptions[0]);
+        if (cashChoice == cashOptions[0]) {
+            action.setTreasuryToLinkedCompany(true);
+        } else {
+            action.setTreasuryToLinkedCompany(false);
+        }
+        
+        String[] tokenOptions = new String[2];
+        tokenOptions[0] = LocalText.getText("ReplaceToken", action.getInvestor().getName(), action.getInvestor().getLinkedCompany().getName());
+        tokenOptions[1] = LocalText.getText("DoNotReplaceToken", action.getInvestor().getName(), action.getInvestor().getLinkedCompany().getName());
+        String tokenChoice =
+                (String) JOptionPane.showInputDialog(orWindow,
+                        LocalText.getText("FIClosingAskAboutToken"),
+                        LocalText.getText("TokenChoice"),
+                        JOptionPane.QUESTION_MESSAGE, null,
+                        tokenOptions, tokenOptions[0]);
+        if (tokenChoice == tokenOptions[0]) {
+            action.setReplaceToken(true);
+        } else {
+            action.setReplaceToken(false);
+        }
+
+        orWindow.process(action);
+    }
+    
+    public boolean processAction(PossibleAction action) {
+        
+        return super.processAction(action);
     }
 
 }

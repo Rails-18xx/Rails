@@ -26,6 +26,8 @@
 				class="rails.ui.swing.gamespecific._1880.StartRoundWindow_1880"/>
 			<GameUIManager
 				class="rails.ui.swing.gamespecific._1880.GameUIManager_1880"/>
+			<ORUIManager
+				class="rails.ui.swing.gamespecific._1880.ORUIManager_1880"/>
  		</GuiClasses>
 		<EndOfGame/>
 		

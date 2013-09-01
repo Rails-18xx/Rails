@@ -179,29 +179,29 @@
 		fgColour="000000" bgColour="EDE201">
 		<Home hex="L10"/>
 	</Company>
-	<Company name="1" longname="Chinese Eastern Railway" type="Minor" price="0"
+	<Company name="1" longname="Chinese Eastern Railway" type="Investor" price="0"
 		tokens="1">
 		<Home hex="A3" city="1"/>
 	</Company>
-	<Company name="2" longname="South Manchuria Railway" type="Minor" price="0"
+	<Company name="2" longname="South Manchuria Railway" type="Investor" price="0"
 		tokens="1">
 		<Home hex="E13" city="1"/>
 	</Company>>
-	<Company name="3" longname="Zeng Tai Railway" type="Minor" price="0" tokens="1">
+	<Company name="3" longname="Zeng Tai Railway" type="Investor" price="0" tokens="1">
 		<Home hex="H6" city="1"/>
 	</Company>
-	<Company name="4" longname="Schantung-Eisenbahngesellschaft" type="Minor"
+	<Company name="4" longname="Schantung-Eisenbahngesellschaft" type="Investor"
 		price="0" tokens="1">
 		<Home hex="H14" city="1"/>
 	</Company>
-	<Company name="5" longname="Kowloon-Canton Railway" type="Minor" price="0"
+	<Company name="5" longname="Kowloon-Canton Railway" type="Investor" price="0"
 		tokens="1">
 		<Home hex="Q15" city="1"/>
 	</Company>
-	<Company name="6" longname="Macau Hafen" type="Minor" price="0" tokens="1">
+	<Company name="6" longname="Macau Hafen" type="Investor" price="0" tokens="1">
 		<Home hex="P12" city="1"/>
 	</Company>
-	<Company name="7" longname="Kunming-Hekou Railway" type="Minor" price="0"
+	<Company name="7" longname="Kunming-Hekou Railway" type="Investor" price="0"
 		tokens="1">
 		<Home hex="Q7" city="1"/>
 	</Company>
@@ -218,12 +218,12 @@
 			<SubItem name="BCR" type="Major" president="yes"/>
 		</Item>
 		<Item name="RC" type="Private" basePrice="50"/>
-		<Item name="1" type="Minor" basePrice="0"/>
-		<Item name="2" type="Minor" basePrice="0"/>
-		<Item name="3" type="Minor" basePrice="0"/>
-		<Item name="4" type="Minor" basePrice="0"/>
-		<Item name="5" type="Minor" basePrice="0"/>
-		<Item name="6" type="Minor" basePrice="0"/>
-		<Item name="7" type="Minor" basePrice="0"/>
+		<Item name="1" type="Investor" basePrice="0"/>
+		<Item name="2" type="Investor" basePrice="0"/>
+		<Item name="3" type="Investor" basePrice="0"/>
+		<Item name="4" type="Investor" basePrice="0"/>
+		<Item name="5" type="Investor" basePrice="0"/>
+		<Item name="6" type="Investor" basePrice="0"/>
+		<Item name="7" type="Investor" basePrice="0"/>
 	</StartPacket>
 	</CompanyManager>

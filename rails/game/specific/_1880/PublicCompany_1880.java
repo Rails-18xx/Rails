@@ -102,9 +102,6 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
         if (rights == null) rights = new HashMapState<String, String>(name+"_Rights");
         // add revenue modifier for the Investors
         gameManager.getRevenueManager().addStaticModifier(this);
-        if (this.getTypeName().equals("Minor")) {
-        hasReachedDestination = new BooleanState (name+"_reachedDestination", false);
-        }
     }
 
     /**
@@ -214,17 +211,10 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
     public boolean modifyCalculator(RevenueAdapter revenueAdapter) {
         // check if running company is this company, otherwise quit
         if (revenueAdapter.getCompany() != this) return false; 
-        
-        // check if company is a minor
-        if (this.getTypeName().equals("Minor")) {
-            // add the current Available train from the IPO and not the last train in Use
-            TrainManager trainManager=gameManager.getTrainManager();
-            revenueAdapter.addTrainByString(trainManager.getAvailableNewTrains().get(0).getName());
-        } else {
-            int additionalStockRevenue = revenueAdapter.getCompany().getCurrentSpace().getType().hasAddRevenue()*10;
-            RevenueBonus bonus = new RevenueBonus(additionalStockRevenue, "StockPosition");
-            revenueAdapter.addRevenueBonus(bonus);
-        }
+
+        int additionalStockRevenue = revenueAdapter.getCompany().getCurrentSpace().getType().hasAddRevenue()*10;
+        RevenueBonus bonus = new RevenueBonus(additionalStockRevenue, "StockPosition");
+        revenueAdapter.addRevenueBonus(bonus);
         // no text needed
         return false;
     }
@@ -363,27 +353,9 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
 
     public void setFounder(Player founder) {
         this.founder = founder;
-    }
-
-/*    @Override
-    public void setFloated() {
-        super.setFloated();
-        if (this.getTypeName().equals("Minor")) return;
-        //Need to find out if other corps exist at this par price
-        //If so increment formationOrderIndex to control Operating sequence
-        for (PublicCompanyI company : gameManager.getAllPublicCompanies()) {
-            if ((company.hasStarted()) && (!company.getTypeName().equals("Minor"))){
-                if (this.getStartSpace().getPrice() == company.getStartSpace().getPrice() && (this.getName() != company.getName())){
-                    //Yes, we share IPO prices, has this other company been launched yet?
-                    if (company.hasFloated()){
-                        //it has, we need to skip ahead of this corp
-                        formationOrderIndex.add(1);
-                    }
-                }
-            }
-                
-        }
-    }
-*/
+    }    
     
+    public List<TokenI> getLaidBaseTokens() {
+        return laidBaseTokens;
+    }
 }
