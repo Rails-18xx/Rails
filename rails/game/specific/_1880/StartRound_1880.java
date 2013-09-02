@@ -679,4 +679,15 @@ public class StartRound_1880 extends StartRound {
        return "None";
    }
     
+    protected void finishRound() {
+        for (PublicCompanyI company : gameManager.getAllPublicCompanies()) {
+            if (company instanceof Investor_1880) {
+                if (company.getPresident() == null) {
+                    company.setClosed();
+                }
+            }
+        }
+        super.finishRound();
+    }
+    
 }

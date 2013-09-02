@@ -1,12 +1,5 @@
 package rails.game.specific._1880;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.util.ArrayList;
-import java.util.List;
-
-import rails.game.CompanyManagerI;
-import rails.game.PublicCompanyI;
 import rails.game.action.PossibleAction;
 import rails.game.action.PossibleORAction;
 
@@ -81,41 +74,5 @@ public class CloseInvestor_1880 extends PossibleORAction {
             }
         }
         return false;
-    }
-
-//    @SuppressWarnings("unchecked")
-//    private void readObject(ObjectInputStream in) throws IOException,
-//            ClassNotFoundException {
-//
-//        System.out.println("In readObject");
-//        //in.defaultReadObject();
-//        // Custom reading for backwards compatibility
-//        ObjectInputStream.GetField fields = in.readFields();
-//        mergingCompanyName = (String) fields.get("mergingCompanyName", mergingCompanyName);
-//        targetCompanyNames = (String) fields.get("targetCompanyNames", targetCompanyNames);
-//        canReplaceToken = (List<Boolean>) fields.get("canReplaceToken", canReplaceToken);
-//        selectedTargetCompanyName = (String) fields.get("selectedTargetCompanyName", selectedTargetCompanyName);
-//        replaceToken = fields.get("replaceToken", replaceToken);
-//
-//        CompanyManagerI cmgr = getCompanyManager();
-//
-//        mergingCompany = cmgr.getPublicCompany(mergingCompanyName);
-//
-//        targetCompanies = new ArrayList<PublicCompanyI>();
-//        for (String name : targetCompanyNames.split(",")) {
-//            if (name.equals("null")) {
-//                targetCompanies.add(null);
-//            } else {
-//                targetCompanies.add(cmgr.getPublicCompany(name));
-//            }
-//        }
-//
-//        if (selectedTargetCompanyName != null
-//            && !selectedTargetCompanyName.equals("null")) {
-//            selectedTargetCompany =
-//                    cmgr.getPublicCompany(selectedTargetCompanyName);
-//        }
-//    }    
-    
-    
+    }    
 }

@@ -35,7 +35,6 @@ import rails.game.action.BuyTrain;
 import rails.game.action.LayTile;
 import rails.game.action.NullAction;
 import rails.game.action.PossibleAction;
-import rails.game.action.ReachDestinations;
 import rails.game.action.SetDividend;
 import rails.game.move.CashMove;
 import rails.game.move.ObjectMove;

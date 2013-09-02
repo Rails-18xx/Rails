@@ -264,7 +264,7 @@ public class StockRound_1880 extends StockRound {
                 shares = cert.getShares();
 
                 if (!cert.isPresidentShare()) {
-                    price = comp.getIPOPrice() / unitsForPrice;
+                    price = comp.getMarketPrice() / unitsForPrice; // Always use the market price
                     if (price <= playerCash) {
                         possibleActions.add(new BuyCertificate(comp, cert.getShare(),
                                 from, price));
@@ -403,7 +403,7 @@ public class StockRound_1880 extends StockRound {
         if (raiseIfSoldOut) {
             /* Check if any companies are sold out. */
             for (PublicCompanyI company : gameManager.getCompaniesInRunningOrder()) {
-                if (company.hasStockPrice() && !((PublicCompany_1880) company).certsAvailableForSale() && (!((PublicCompany_1880) company).isCommunistPhase())) {
+                if (company.hasStarted() && company.hasStockPrice() && !((PublicCompany_1880) company).certsAvailableForSale() && (!((PublicCompany_1880) company).isCommunistPhase())) {
                     StockSpaceI oldSpace = company.getCurrentSpace();
                     stockMarket.soldOut(company);
                     StockSpaceI newSpace = company.getCurrentSpace();
@@ -719,4 +719,45 @@ public class StockRound_1880 extends StockRound {
         action.setStartPrice(action.getPrice());
         return true;
     }
+    
+    
+    protected void executeShareTransfer (PublicCompanyI company,
+            List<PublicCertificateI> certsToSell,
+            Player dumpedPlayer, int presSharesToSell, int swapShareSize) {
+
+        Portfolio portfolio = currentPlayer.getPortfolio();
+
+        // Check if the presidency has changed
+        if (dumpedPlayer != null && presSharesToSell > 0) {
+            ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
+                    dumpedPlayer.getName(),
+                    company.getName() ));
+            // First swap the certificates
+            Portfolio dumpedPortfolio = dumpedPlayer.getPortfolio();
+            List<PublicCertificateI> swapped =
+                portfolio.swapPresidentCertificate(company, dumpedPortfolio, swapShareSize);
+            for (int i = 0; i < presSharesToSell; i++) {
+                certsToSell.add(swapped.get(i));
+            }
+        }
+
+        transferCertificates (certsToSell, ipo);
+
+        // Check if we still have the presidency
+        if (currentPlayer == company.getPresident()) {
+            Player otherPlayer;
+            int currentIndex = getCurrentPlayerIndex();
+            for (int i = currentIndex + 1; i < currentIndex + numberOfPlayers; i++) {
+                otherPlayer = gameManager.getPlayerByIndex(i);
+                if (otherPlayer.getPortfolio().getShare(company) > portfolio.getShare(company)) {
+                    portfolio.swapPresidentCertificate(company,
+                            otherPlayer.getPortfolio(), swapShareSize);
+                    ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
+                            otherPlayer.getName(),
+                            company.getName() ));
+                    break;
+                }
+            }
+        }
+    } 
 }
