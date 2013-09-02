@@ -13,6 +13,7 @@ import org.jgrapht.traverse.*;
 import rails.algorithms.NetworkEdge;
 import rails.algorithms.NetworkVertex;
 import rails.game.PublicCompanyI;
+import rails.game.Station;
 
 public class NetworkIterator_1880 extends 
     AbstractGraphIterator<NetworkVertex, NetworkEdge> {
@@ -161,7 +162,13 @@ public class NetworkIterator_1880 extends
     
     private void addUnseenChildrenOf(NetworkVertex vertex, boolean greedy) {
         log.debug("Iterator: Add unseen children of " + vertex);
-
+        if ((vertex != startVertex) && ((vertex.getType() == NetworkVertex.VertexType.STATION))) {
+            Station station = vertex.getStation();
+            if (station.getType().equals(Station.OFF_MAP_AREA)) {
+                return;
+            }
+        }
+        
         for (NetworkEdge edge : graph.edgesOf(vertex)) {
             log.debug("Iterator: Check edge for neighbor in edge " + edge.toFullInfoString());
             if (!greedy || edge.isGreedy()) {

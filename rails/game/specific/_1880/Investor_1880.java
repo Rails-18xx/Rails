@@ -17,7 +17,6 @@ import rails.common.GuiDef;
 import rails.common.parser.ConfigurationException;
 import rails.game.GameManagerI;
 import rails.game.PublicCompany;
-import rails.game.PublicCompanyI;
 import rails.game.Stop;
 import rails.game.TokenHolder;
 import rails.game.TokenI;
@@ -58,10 +57,10 @@ public class Investor_1880 extends PublicCompany implements RevenueStaticModifie
         super();
     }
     
-//    public void initTurn() {
-//        super.initTurn();
-//    }
-    
+    public int getCurrentTrainLimit() {
+        return 0;
+    }
+        
     public boolean canOwnShare(){
         return canOwnShare;
     }

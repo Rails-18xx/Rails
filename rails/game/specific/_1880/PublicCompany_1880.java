@@ -339,9 +339,15 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
     }
     
     public boolean certsAvailableForSale() {
-        if ((sharesOwnedByPlayers() == 5) && (allCertsAvail.booleanValue() == false)) {
+        int sharesInIpo = 0;
+        for (PublicCertificateI cert : certificates) {
+            if (cert.getPortfolio().getOwner() instanceof Bank) {
+                sharesInIpo += cert.getShares();
+            }
+        }
+        if ((sharesInIpo == 5) && (allCertsAvail.booleanValue() == false)) {
             return false;
-        } else if (sharesOwnedByPlayers() == 10) {
+        } else if (sharesInIpo == 0) {
             return false;
         }
         return true;

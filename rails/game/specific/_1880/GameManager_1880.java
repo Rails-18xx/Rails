@@ -5,7 +5,6 @@ package rails.game.specific._1880;
 
 import rails.common.GuiDef;
 import rails.game.GameManager;
-import rails.game.OperatingRound;
 import rails.game.PhaseI;
 import rails.game.Player;
 import rails.game.PublicCompanyI;
@@ -43,6 +42,7 @@ public class GameManager_1880 extends GameManager {
     protected void setGuiParameters () {
         super.setGuiParameters();
         guiParameters.put(GuiDef.Parm.PLAYER_ORDER_VARIES, true);
+        guiParameters.put(GuiDef.Parm.HAS_ANY_PAR_PRICE, false);
     }
 
     /* (non-Javadoc)
