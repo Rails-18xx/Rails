@@ -3801,7 +3801,7 @@
 		<Track from="side0" gauge="normal" to="city1"/>
 	</Tile>
 	<Tile colour="yellow" id="8877" name="8877">
-		<Station id="city1" position="0" slots="1" type="City" value="20"/>
+		<Station id="city1" position="0" slots="1" type="City" value="30"/>
 		<Track from="side3" gauge="normal" to="city1"/>
 		<Track from="city1" gauge="normal" to="side0"/>
 	</Tile>

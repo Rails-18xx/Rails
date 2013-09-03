@@ -21643,7 +21643,7 @@
 				<junType>jtCity</junType>
 				<position>tpCenter</position>
 				<revenue>
-					<value>20</value>
+					<value>30</value>
 					<position>tp3CornerA</position>
 				</revenue>
 			</junction>
