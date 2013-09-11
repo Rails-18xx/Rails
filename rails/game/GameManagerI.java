@@ -164,11 +164,6 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
     public Portfolio getPortfolioByUniqueName (String name);
 
     /**
-     * @return the StartPacket
-     */
-    public abstract StartPacket getStartPacket();
-
-    /**
      * @return Current phase
      */
     public abstract PhaseI getCurrentPhase();

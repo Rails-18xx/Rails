@@ -15,8 +15,11 @@ import rails.algorithms.RevenueAdapter;
 import rails.algorithms.RevenueStaticModifier;
 import rails.common.GuiDef;
 import rails.common.parser.ConfigurationException;
+import rails.game.CompanyManagerI;
 import rails.game.GameManagerI;
+import rails.game.Player;
 import rails.game.PublicCompany;
+import rails.game.PublicCompanyI;
 import rails.game.Stop;
 import rails.game.TokenHolder;
 import rails.game.TokenI;
@@ -151,6 +154,15 @@ public class Investor_1880 extends PublicCompany implements RevenueStaticModifie
             }
             
         return false;
+    }
+    
+    static public Investor_1880 getInvestorForPlayer(CompanyManagerI companyManager, Player player) {
+        for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
+            if ((company instanceof Investor_1880) && (company.getPresident() == player)) {
+                return (Investor_1880) company;
+            }
+        }
+        return null;
     }
         
 }

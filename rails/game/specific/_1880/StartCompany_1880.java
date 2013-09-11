@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.BitSet;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,8 +25,7 @@ public class StartCompany_1880 extends StartCompany {
      */
     private static final long serialVersionUID = 1L;
 
-    BitSet buildingRight = new BitSet(4);
-    BitSet savedBuildingRight = new BitSet(4);
+    protected String buildingRightsString;
     private int parSlotIndex = 0;
     
     /**
@@ -38,7 +36,6 @@ public class StartCompany_1880 extends StartCompany {
     public StartCompany_1880(PublicCompanyI company, int[] prices,
             int maximumNumber) {
         super(company, prices, maximumNumber);
-        // TODO Auto-generated constructor stub
     }
 
     /**
@@ -46,9 +43,7 @@ public class StartCompany_1880 extends StartCompany {
      * @param startPrice
      */
     public StartCompany_1880(PublicCompanyI company, int[] startPrice) {
-        this(company, startPrice, 1);
-        // TODO Auto-generated constructor stub
-        
+        this(company, startPrice, 1);        
     }
 
     /**
@@ -69,58 +64,23 @@ public class StartCompany_1880 extends StartCompany {
      */
     public StartCompany_1880(PublicCompanyI company, int price) {
         super(company, price);
-        // TODO Auto-generated constructor stub
     }
 
     
-    public void setBuildingRight(PublicCompany_1880 company, String buildingRightString ) {
-      
-        
-       if (buildingRightString == "A") {
-            buildingRight.set(0);
-        } else  if (buildingRightString == "B") {
-            buildingRight.set(1);
-        } else  if (buildingRightString == "C") {
-            buildingRight.set(2);
-        } else  if (buildingRightString == "D") {
-            buildingRight.set(3);
-        } else  if (buildingRightString == "A+B") {
-            buildingRight.set(0);
-            buildingRight.set(1);
-        } else  if (buildingRightString == "A+B+C") {
-            buildingRight.set(0);
-            buildingRight.set(1);
-            buildingRight.set(2);
-       } else  if (buildingRightString == "B+C") {
-            buildingRight.set(1);
-            buildingRight.set(2);
-        } else  if (buildingRightString == "B+C+D") {
-            buildingRight.set(1);
-            buildingRight.set(2);
-            buildingRight.set(3);
-       } else  if (buildingRightString == "C+D") {
-           buildingRight.set(2);
-           buildingRight.set(3);
-        }
-        
-       company.setBuildingRights( buildingRight);
-       company.setRight("BuildingRight", buildingRightString);
+    public void setBuildingRights(String buildingRightsString) {
+        this.buildingRightsString = buildingRightsString;
     }
-
     
-    public void setPresidentPercentage(PublicCompany_1880 company, int percentage) {
-        company.setPresidentShares(percentage);
+    public String getBuildingRights() {
+        return buildingRightsString;
     }
 
     /* (non-Javadoc)
      * @see rails.game.action.StartCompany#getStartPrices()
      */
-  
     public int[] getStartPrices() {
         int [] startPrices2;
         List<Integer> startPrices_new = new ArrayList<Integer>();
-        // TODO Auto-generated method stub
-        // make sure that all exhausted price Slots will not be returned as valid prices anymore...
         startPrices2 = super.getStartPrices();
         for (int e = 0 ; e < startPrices2.length ; e++)
         {
@@ -166,54 +126,8 @@ public class StartCompany_1880 extends StartCompany {
     /** Deserialize */
     private void readObject(ObjectInputStream in) throws IOException,
     ClassNotFoundException {
-
         in.defaultReadObject();
-
-        if (!buildingRight.isEmpty()) {
-            savedBuildingRight = (BitSet) buildingRight.clone();
-        }
-        
     }
-
-    public String buildingRightToString(BitSet buildingRight2) {
-        String buildingRightString = null;
-        
-        if (! buildingRight.isEmpty()){
-           if (buildingRight.get(0)== true) {
-                buildingRightString = "A";
-                 if (buildingRight.get(1) == true) {
-                      buildingRightString = "A+B";
-                      if (buildingRight.get(2) == true) {
-                          buildingRightString = "A+B+C";
-                      }
-                  }
-              }
-              else if (buildingRight.get(1) == true) {
-                      buildingRightString = "B";
-                      if (buildingRight.get(2) == true) {
-                          buildingRightString = "B+C";
-                        if (buildingRight.get(3) == true){
-                             buildingRightString = "B+C+D";
-                        }
-                     }
-              }
-             else if (buildingRight.get(2) == true){
-                buildingRightString = "C";
-                  if (buildingRight.get(3) == true){
-                      buildingRightString = "C+D";
-                  }
-              }
-              else if (buildingRight.get(3) == true){
-                 buildingRightString= "D";
-             }
-         return buildingRightString;
-         }
-         return "None";
-    }
-
-//    public void setParSlotIndex(int index) {
-//        ((GameManager_1880) gameManager).getParSlots().setCompanyAtSlot(this.getCompany(), index);        
-//    }
     
     public int getParSlotIndex() {
         return parSlotIndex;

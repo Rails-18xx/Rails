@@ -18,7 +18,6 @@ public class StartRound_1830 extends StartRound {
     public StartRound_1830(GameManagerI gameManager) {
         super(gameManager);
         hasBidding = true;
-        bidIncrement = startPacket.getModulus();
     }
 
     /**
@@ -27,8 +26,9 @@ public class StartRound_1830 extends StartRound {
      * @param startPacket The startpacket to be sold in this start round.
      */
     @Override
-    public void start() {
-        super.start();
+    public void start(StartPacket startPacket) {
+        super.start(startPacket);
+        bidIncrement = startPacket.getModulus();
         setPossibleActions();
 
     }

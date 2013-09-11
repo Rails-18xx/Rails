@@ -9,8 +9,10 @@ import javax.swing.JDialog;
 import rails.ui.swing.StartRoundWindow;
 import rails.common.LocalText;
 import rails.game.action.PossibleAction;
+import rails.game.action.PossibleActions;
 import rails.game.action.StartItemAction;
 import rails.game.specific._1880.BuyStartItem_1880;
+import rails.game.specific._1880.SetupNewPublicDetails_1880;
 import rails.ui.swing.elements.*;
 
 
@@ -22,15 +24,15 @@ public class StartRoundWindow_1880 extends StartRoundWindow {
 
     
     /* Keys of dialogues owned by this class */
-    public static final String COMPANY_START_PRICE_DIALOG = "CompanyStartPrice";
     public static final String COMPANY_BUILDING_RIGHT_DIALOG = "CompanyBuildingRight";
-    public static final String COMPANY_PRESIDENCY_PERCENTAGE_DIALOG = "CompanyPresidentPercentage";
+    public static final String COMPANY_PAR_SLOT_DIALOG = "CompanyParSlotRight";
     
     protected JDialog currentDialog = null;
     protected PossibleAction currentDialogAction = null;
     protected int[] startPrices = null;
     protected int[] operationOrder = null;
-    String[] bRights = {"A+B+C", "B+C+D"};
+    private static final String[] bRights = {"A+B+C", "B+C+D"};
+    private static final String[] parSlots = {"1", "2", "3", "4"};
     
     private static final long serialVersionUID = 1L;
     /**
@@ -40,7 +42,7 @@ public class StartRoundWindow_1880 extends StartRoundWindow {
     public StartRoundWindow_1880() {
     }
     
-  
+
    @Override
    public boolean processImmediateAction() {
            
@@ -60,111 +62,25 @@ public class StartRoundWindow_1880 extends StartRoundWindow {
        }
        return true;
    }
-
-   
-   
-   protected boolean requestStartPrice(BuyStartItem_1880 activeItem) {
-
-       if (activeItem.hasSharePriceToSet()) {
-           String compName = activeItem.getCompanyToSetPriceFor();
-
-           // Get a sorted prices List
-           // TODO: should be included in BuyStartItem
-//           List<StockSpaceI> startSpaces = stockMarket.getStartSpaces();
-//           Map<Integer, StockSpaceI> spacePerPrice =
-//                   new HashMap<Integer, StockSpaceI>();
-//           startPrices = new int[startSpaces.size()];
-           String[] options = {"100-Slot 1","100-Slot 2","100-Slot 3","100-Slot 4"};
-//           for (int i = 0; i < startSpaces.size(); i++) {
-//               if (((StockMarket_1880) stockMarket).getParSlot(startSpaces.get(i).getPrice())) { //Make sure we got a Parslot left over
-//               startPrices[i] = startSpaces.get(i).getPrice();
-//               spacePerPrice.put(startPrices[i], startSpaces.get(i));
-//               }
-//           }
-//           Arrays.sort(startPrices);
-//           for (int i = 0; i < startSpaces.size(); i++) {
-//               options[i] = Bank.format(spacePerPrice.get(startPrices[i]).getPrice());
-//           }
-//          options[0] = "100";
-           RadioButtonDialog dialog = new RadioButtonDialog(
-                   COMPANY_START_PRICE_DIALOG,
-                   this,
-                   this,
-                   LocalText.getText("PleaseSelect"),
-                           LocalText.getText("WHICH_START_PRICE",
-                                   activeItem.getPlayerName(),
-                                   compName),
-                           options,
-                           0);
-           setCurrentDialog (dialog, activeItem);
-           }
-       return true;
-   }
   
-  protected boolean requestBuildingRight(BuyStartItem_1880 activeItem) {
-       
-      
-      
-       String compName = activeItem.getCompanyToSetPriceFor();
-      
-       
-       RadioButtonDialog dialog = new RadioButtonDialog(
-               COMPANY_BUILDING_RIGHT_DIALOG,
-               this,
-               this,
-               LocalText.getText("PleaseSelect"),       
-                       LocalText.getText("WhichBuildingRight",
-                              activeItem.getPlayerName(),
-                              compName),
-                       bRights,
-                       0);
-       setCurrentDialog (dialog, activeItem);
-       return true;
-   }   
 
   public void dialogActionPerformed () {
-      
       String key="";
       
-      if (currentDialog instanceof NonModalDialog) key = ((NonModalDialog) currentDialog).getKey();
+      if (currentDialog instanceof NonModalDialog) {
+          key = ((NonModalDialog) currentDialog).getKey();
+      }
       
-      if (COMPANY_START_PRICE_DIALOG.equals(key)) {
-      
-          RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
-          BuyStartItem_1880 action = (BuyStartItem_1880) currentDialogAction;
-
-          int index = dialog.getSelectedOption();
-          if (index >= 0) {
-              int price = 100;
-              action.setAssociatedSharePrice(price);
-              action.setParSlotIndex(index);  // index happens to line up to allows this.
-              
-              requestBuildingRight((BuyStartItem_1880) action);
-              } else {
-              // No selection done - no action
-              return;
-          }
-
+      if (COMPANY_PAR_SLOT_DIALOG.equals(key)) {
+          handleStartSlot();
       } else if (COMPANY_BUILDING_RIGHT_DIALOG.equals(key)) {
-        
-          RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
-          BuyStartItem_1880 action = (BuyStartItem_1880) currentDialogAction;
-
-          int index = dialog.getSelectedOption();
-          if (index >= 0) {
-            String buildingRight=bRights[index];
-            action.setAssociatedBuildingRight(buildingRight);
-            process (action);
-          } else {
-           // No selection done - no action
-              return; 
-          }
+          handleBuildingRights();
           
       }
       return;
   }
-  
-  public void setCurrentDialog (JDialog dialog, PossibleAction action) {
+
+public void setCurrentDialog (JDialog dialog, PossibleAction action) {
       if (currentDialog != null) {
           currentDialog.dispose();
       }
@@ -172,5 +88,66 @@ public class StartRoundWindow_1880 extends StartRoundWindow {
       currentDialogAction = action;
       disableButtons();
   }
+  
+    public void updateStatus(boolean myTurn) {
+        for (PossibleAction action : PossibleActions.getInstance().getList()) {
+            if (action instanceof SetupNewPublicDetails_1880) {
+                requestStartSlot((SetupNewPublicDetails_1880) action);
+                return;
+            }
+        }
+        super.updateStatus(myTurn);
+    }
+    
+    
+    //-- Start slot
+    private boolean requestStartSlot(SetupNewPublicDetails_1880 action) {
+        RadioButtonDialog dialog = new RadioButtonDialog(
+                COMPANY_PAR_SLOT_DIALOG, this, this,
+                LocalText.getText("PleaseSelect"),       
+                        LocalText.getText("PickParSlot", action.getPlayerName(), action.getPrice(), action.getCompanyName()),
+                        parSlots, 0);
+        setCurrentDialog (dialog, action);
+        return true;
+    }
+   
+    private void handleStartSlot() {
+        RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
+        SetupNewPublicDetails_1880 action =
+                (SetupNewPublicDetails_1880) currentDialogAction;
+
+        int index = dialog.getSelectedOption();
+        if (index >= 0) {
+            action.setParSlotIndex(index);  // Fortunately this lines up...
+            requestBuildingRights(action);
+        } 
+    }
+
+    
+    //-- Building Rights
+    private boolean requestBuildingRights(SetupNewPublicDetails_1880 action) {
+        RadioButtonDialog dialog = new RadioButtonDialog(
+                COMPANY_BUILDING_RIGHT_DIALOG, this, this,
+                LocalText.getText("PleaseSelect"),       
+                        LocalText.getText("WhichBuildingRight", action.getPlayerName(), action.getCompanyName()),
+                        bRights, 0);
+        setCurrentDialog (dialog, action);
+        return true;
+    }   
+    
+
+    private void handleBuildingRights() {
+        RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
+        SetupNewPublicDetails_1880 action =
+                (SetupNewPublicDetails_1880) currentDialogAction;
+
+        int index = dialog.getSelectedOption();
+        if (index >= 0) {
+            String buildingRight = bRights[index];
+            action.setBuildRightsString(buildingRight);
+            process(action);
+        } 
+    }
+
 }
    

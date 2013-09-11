@@ -16,10 +16,12 @@ import rails.game.PublicCompanyI;
 import rails.game.TrainI;
 import rails.game.action.PossibleAction;
 import rails.game.action.PossibleORAction;
+import rails.game.specific._1880.BuildingRights_1880;
 import rails.game.specific._1880.CloseInvestor_1880;
 import rails.game.specific._1880.OperatingRound_1880;
 import rails.game.specific._1880.ParSlot_1880;
 import rails.game.specific._1880.PublicCompany_1880;
+import rails.game.specific._1880.SetupNewPublicDetails_1880;
 import rails.game.specific._1880.StartCompany_1880;
 import rails.ui.swing.elements.NonModalDialog;
 import rails.ui.swing.elements.RadioButtonDialog;
@@ -34,13 +36,13 @@ public class GameUIManager_1880 extends GameUIManager {
     public static final String COMPANY_SELECT_PRESIDENT_SHARE_SIZE = "SelectPresidentShareSize";
     public static final String COMPANY_START_PRICE_DIALOG = "CompanyStartPrice";
     
+    public static final String NEW_COMPANY_SELECT_BUILDING_RIGHT = "NewSelectBuildingRight";
+    
 
     @Override
     public void dialogActionPerformed () {
 
         String key = "";
-        String[] brights;
-        String[] brights2= {"A", "B", "C","D", "A+B", "A+B+C", "B+C", "B+C+D", "C+D"}; 
         String[] presidentShareSizes; 
         if (currentDialog instanceof NonModalDialog) key = ((NonModalDialog) currentDialog).getKey();
 
@@ -63,6 +65,7 @@ public class GameUIManager_1880 extends GameUIManager {
         
             RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
             StartCompany_1880 action = (StartCompany_1880) currentDialogAction;
+            String[] possibleBuildingRights;
 
             int index = dialog.getSelectedOption();
             if (index < 0) {
@@ -70,18 +73,19 @@ public class GameUIManager_1880 extends GameUIManager {
                 return;
             }
             
+            int shares = 0;
+           
             if (index > 1) { // 40 Percent Share has been chosen
-                action.setPresidentPercentage((PublicCompany_1880) action.getCompany(), 40);
-               brights= new String[] {"A", "B", "C", "D"};
-                
+                shares = 4;
             } else if ( index == 1) {
-                action.setPresidentPercentage((PublicCompany_1880) action.getCompany(), 30);
-                brights= new String[] {"A", "B", "C", "D", "A+B", "B+C", "C+D"};
+                shares = 3;
             } else {  // 20 Percent Share chosen
-                action.setPresidentPercentage((PublicCompany_1880) action.getCompany(), 20);
-                brights= new String[] {"A", "B", "C","D", "A+B", "A+B+C", "B+C", "B+C+D", "C+D"};
+                shares = 2;
             }
             
+            action.setNumberBought(shares);
+            possibleBuildingRights = BuildingRights_1880.getRightsForPresidentShareSize(shares);                
+
             dialog = new RadioButtonDialog (COMPANY_SELECT_BUILDING_RIGHT,
                     this,
                     statusWindow,
@@ -89,7 +93,7 @@ public class GameUIManager_1880 extends GameUIManager {
                     LocalText.getText(
                             "WhichBuildingRight",action.getPlayerName(),
                             action.getCompanyName()),
-                            brights, -1);
+                            possibleBuildingRights, -1);
                 setCurrentDialog(dialog, action);
                 statusWindow.disableButtons();
                 return;
@@ -99,12 +103,14 @@ public class GameUIManager_1880 extends GameUIManager {
             RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
             StartCompany_1880 action = (StartCompany_1880) currentDialogAction;
 
+            String[] possibleBuildingRights = BuildingRights_1880.getRightsForPresidentShareSize(action.getNumberBought());                
+
             int index = dialog.getSelectedOption();
             if (index < 0) {
                 currentDialogAction = null;
                 return;
             }
-                action.setBuildingRight((PublicCompany_1880) action.getCompany(), brights2[index]);
+            action.setBuildingRights(possibleBuildingRights[index]);
             
         } else if (COMPANY_START_PRICE_DIALOG.equals(key)
                 && currentDialogAction instanceof StartCompany_1880) {
@@ -164,6 +170,26 @@ public class GameUIManager_1880 extends GameUIManager {
     
     }
     
+    public void setupNewPublicDetails(SetupNewPublicDetails_1880 action) {
+        // TODO: Check if this is the right first step
+        RadioButtonDialog dialog;
+        String[] rightsOptions = BuildingRights_1880.getRightsForPresidentShareSize(action.getShares());
+        
+        dialog = new RadioButtonDialog (NEW_COMPANY_SELECT_BUILDING_RIGHT,
+                this,
+                statusWindow,
+                LocalText.getText("PleaseSelect"),
+                LocalText.getText(
+                        "WhichBuildingRight",action.getPlayerName(),
+                        action.getCompanyName()),
+                        rightsOptions, -1);
+            setCurrentDialog(dialog, action);
+            statusWindow.disableButtons();
+        setCurrentDialog(dialog, action);
+        statusWindow.disableButtons();
+        return;
+    }
+    
     public void closeInvestor(CloseInvestor_1880 action) {
         String[] cashOptions = new String[2];
         cashOptions[0] = LocalText.getText("GiveToCompany", action.getInvestor().getCash(), action.getInvestor().getLinkedCompany().getName());
@@ -198,11 +224,6 @@ public class GameUIManager_1880 extends GameUIManager {
 
         orWindow.process(action);
     }
-    
-    public boolean processAction(PossibleAction action) {
         
-        return super.processAction(action);
-    }
-
 }
 
