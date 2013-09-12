@@ -4,13 +4,11 @@
 package rails.game.specific._1880;
 
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.List;
 
 import rails.algorithms.RevenueAdapter;
 import rails.algorithms.RevenueBonus;
 import rails.algorithms.RevenueStaticModifier;
-import rails.common.GuiDef;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.game.*;
@@ -18,7 +16,6 @@ import rails.game.model.ModelObject;
 import rails.game.move.MoveableHolder;
 import rails.game.move.RemoveFromList;
 import rails.game.state.BooleanState;
-import rails.game.state.HashMapState;
 import rails.game.state.IntegerState;
 
 
@@ -44,38 +41,33 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
      *    Bit 4 set True Player can build in Phase D
      *    
      */
-    private BitSet buildingRights = new BitSet(5); 
-    
-
-    
+    private BuildingRights_1880 buildingRights = new BuildingRights_1880(); 
+   
     //Implementation of PhaseAction to be able to handle the CommunistPhase
     private BooleanState communistTakeOver = new BooleanState ("communistTakeOver",false);
-    
-    //Implementation of PhaseAction to be able to handle the Change in Capitalisation
-    private BooleanState capitalChanged = new BooleanState ("capitalChanged",false);
-    
+        
     //Implementation of Phase Action to be able to handle the Post Communist Phase
     private BooleanState shanghaiExchangeFounded = new BooleanState ("shanghaiExchangeFounded",false);
     
     private BooleanState allCertsAvail = new BooleanState ("allCertsAvail", false);
     
-    private boolean fullyCapitalised = false;
+    private boolean fullyCapitalized = false;
+    private boolean fullCapitalAvailable = false;
+    private int extraCapital = 0;
     
     protected IntegerState formationOrderIndex;
     
     protected IntegerState operationSlotIndex = new IntegerState ("OperatingSlot, 0");
-    
-    private Player founder = null;
   
     /**
      * 
      */
     public PublicCompany_1880() {
         super();
-        // TODO Auto-generated constructor stub
     }
     
     public void start(StockSpaceI startSpace) {
+        extraCapital = 5 * (startSpace.getPrice());
         super.start(startSpace);
     }
 
@@ -84,7 +76,6 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
      */
     @Override
     public void configureFromXML(Tag tag) throws ConfigurationException {
-        // TODO Auto-generated method stub
         super.configureFromXML(tag);
     }
     
@@ -95,27 +86,15 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
     @Override
     public void finishConfiguration(GameManagerI gameManager)
             throws ConfigurationException {
-        // TODO Auto-generated method stub
         super.finishConfiguration(gameManager);
-        // Introducing the rights field in the Display to be used by Building Rights Display and other Special Properties...
-        gameManager.setGuiParameter (GuiDef.Parm.HAS_ANY_RIGHTS, true);
-        if (rights == null) rights = new HashMapState<String, String>(name+"_Rights");
-        // add revenue modifier for the Investors
         gameManager.getRevenueManager().addStaticModifier(this);
-    }
-
-    /**
-     * @return the buildingRights
-     */
-    public BitSet getBuildingRights() {
-        return buildingRights;
     }
 
     /**
      * @param buildingRights the buildingRights to set
      */
-    public void setBuildingRights(BitSet buildingRights) {
-        this.buildingRights = buildingRights;
+    public void setBuildingRights(String buildingRights) {
+        this.buildingRights.setRights(buildingRights);
     }
 
     public void setCommunistTakeOver(boolean b) {
@@ -173,24 +152,6 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
     }
 
     /**
-     * @return the capitalChanged
-     */
-    public BooleanState getCapitalChanged() {
-        return capitalChanged;
-    }
-
-    /**
-     * @param capitalChanged the capitalChanged to set
-     */
-    public void setCapitalChanged(BooleanState capitalChanged) {
-        this.capitalChanged = capitalChanged;
-    }
-    
-    public boolean shouldBeCapitalisedFull() {
-        return this.capitalChanged.booleanValue();
-    }
-    
-    /**
      * @return the shanghaiExchangeFounded
      */
     public BooleanState getShanghaiExchangeFounded() {
@@ -209,12 +170,12 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
     }
     
     public boolean modifyCalculator(RevenueAdapter revenueAdapter) {
+        
         // check if running company is this company, otherwise quit
         if (revenueAdapter.getCompany() != this) return false; 
 
         int additionalStockRevenue = revenueAdapter.getCompany().getCurrentSpace().getType().hasAddRevenue()*10;
-        RevenueBonus bonus = new RevenueBonus(additionalStockRevenue, "StockPosition");
-        revenueAdapter.addRevenueBonus(bonus);
+        revenueAdapter.addOverallBonus("Stock Position", additionalStockRevenue);
         // no text needed
         return false;
     }
@@ -229,21 +190,8 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
     /*
      * @param Phase
      */
-    public boolean hasBuildingRightForPhase(PhaseI phase){
-        
-        String currentPhase=phase.getRealName();
-        
-        if ((this.buildingRights.get(0)) && ((currentPhase.startsWith("A")))) {
-        return true;
-        } else if ((this.buildingRights.get(1)) && ((currentPhase.startsWith("B")))) {
-            return true;
-        } else if ((this.buildingRights.get(2)) && ((currentPhase.startsWith("C")))) {
-            return true;
-        } else if ((this.buildingRights.get(3)) && ((currentPhase.startsWith("D")))) {
-            return true;    
-        } else {
-            return false;
-        }
+    public boolean hasBuildingRightForPhase(PhaseI phase) {
+        return buildingRights.canBuildInPhase(phase);
     }
     
     /*
@@ -313,15 +261,15 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
     /**
      * @return the fullyCapitalised
      */
-    public boolean isFullyCapitalised() {
-        return fullyCapitalised;
+    public boolean isFullyCapitalized() {
+        return fullyCapitalized;
     }
 
     /**
      * @param fullyCapitalised the fullyCapitalised to set
      */
-    public void setFullyCapitalised(boolean fullyCapitalised) {
-        this.fullyCapitalised = fullyCapitalised;
+    public void setFullyCapitalized(boolean fullyCapitalised) {
+        this.fullyCapitalized = fullyCapitalised;
     }
 
     /**
@@ -339,29 +287,50 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
     }
     
     public boolean certsAvailableForSale() {
+        if ((sharesInIpo() == 5) && (allCertsAvail.booleanValue() == false)) {
+            return false;
+        } else if (sharesInIpo() == 0) {
+            return false;
+        }
+        return true;
+    }
+    
+    private int sharesInIpo() {
         int sharesInIpo = 0;
         for (PublicCertificateI cert : certificates) {
             if (cert.getPortfolio().getOwner() instanceof Bank) {
                 sharesInIpo += cert.getShares();
             }
         }
-        if ((sharesInIpo == 5) && (allCertsAvail.booleanValue() == false)) {
-            return false;
-        } else if (sharesInIpo == 0) {
-            return false;
-        }
-        return true;
+        return sharesInIpo;
     }
-
-    public Player getFounder() {
-        return founder;
-    }
-
-    public void setFounder(Player founder) {
-        this.founder = founder;
-    }    
     
     public List<TokenI> getLaidBaseTokens() {
         return laidBaseTokens;
     }
+
+    public void setFullFundingAvail() {
+        this.fullCapitalAvailable = true;
+        checkToFullyCapitalize();
+    }
+
+    public void sharePurchased() {
+        if (fullyCapitalized == true) {
+            return;
+        }
+        checkToFullyCapitalize();
+    }
+    
+    private void checkToFullyCapitalize() {
+        if ((hasFloated() == true) && (sharesInIpo() <= 5) && (fullCapitalAvailable == true)) {
+            fullyCapitalized = true;
+            addCash(extraCapital);  // TODO: Should this be a "MOVE" instead?
+        }
+    }
+    
+    public ModelObject getRightsModel () {
+        setRight(buildingRights.rightsString(), "");            
+        return rights;
+    }
+
 }

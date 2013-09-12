@@ -6,7 +6,7 @@
 			- a name, which must also exist as an entry in LocalText.properties,
 			- optionally 'type="toggle"', which has the effect that the
 			  selection uses a checkbox instead of a dropdown list.
-			  In this case, 'values' must be absent 
+			  In this case, 'values' must be absent
 			  (the allowed values are fixed to "yes,no").
 			- optionally, 'values="a,b,c"' i,e, a list of allowed values.
 			- optionally, a default value (only affects a toggle;
@@ -14,7 +14,7 @@
 		-->
 		<!-- The options in Game.xml are not currently used.
 			 See GamesList.xml for the real ones.
-		--> 
+		-->
 		<GameOption name="Variant" values="Basegame,Pere Marquette,Coalfields,Reading,Coalfields&amp;Reading,Simple,Wabash" default="Basegame" />
 		<GameOption name="NoMapMode" type="toggle" default="no" />
 		<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Deactivate" />
@@ -30,14 +30,14 @@
 
 		<GameParameters>
 			<PlayerShareLimit percentage="60">
-				<!-- Option "NumberOfPlayers" is automatically set 
+				<!-- Option "NumberOfPlayers" is automatically set
 					by the game engine -->
 				<IfOption name="NumberOfPlayers" value="2">
 					<IfOption name="TwoPlayersCertLimit70Percent" value="yes">
 						<Attributes percentage="70"/>
 					</IfOption>
 				</IfOption>
-			</PlayerShareLimit>			
+			</PlayerShareLimit>
 			<BankPoolLimit percentage="50"/>
 			<StockRound>
 				<NoSaleInFirstSR/>
@@ -89,14 +89,14 @@
 			<Players number="4" cash="600" certLimit="18"/>
 			<Players number="5" cash="480" certLimit="15"/>
 			<Players number="6" cash="400" certLimit="13"/>
-		</IfOption>		
+		</IfOption>
         <IfOption name="Variant" value="Wabash">
             <Players number="2" cash="1200" certLimit="29"/>
             <Players number="3" cash="800" certLimit="22"/>
             <Players number="4" cash="600" certLimit="17"/>
             <Players number="5" cash="480" certLimit="15"/>
             <Players number="6" cash="400" certLimit="13"/>
-        </IfOption>     
+        </IfOption>
 	</Component>
 	<Component name="Bank" class="rails.game.Bank">
         <IfOption name="Variant" value="Basegame,Pere Marquette,Coalfields,Reading,Simple">
@@ -110,12 +110,12 @@
         </IfOption>
 		<Money format="$@"/>
 	</Component>
-	<Component name="TileManager" class="rails.game.TileManager" 
+	<Component name="TileManager" class="rails.game.TileManager"
 		file="TileSet.xml"/>
 	<Component name="Map" class="rails.game.MapManager" file="Map.xml"/>
-	<Component name="CompanyManager" class="rails.game.CompanyManager" 
+	<Component name="CompanyManager" class="rails.game.CompanyManager"
 		file="CompanyManager.xml"/>
-	<Component name="StockMarket" class="rails.game.StockMarket" 
+	<Component name="StockMarket" class="rails.game.StockMarket"
 		file="StockMarket.xml"/>
 	<Component name="TrainManager" class="rails.game.TrainManager">
 		<IfOption name="Variant"
@@ -124,7 +124,7 @@
 		</IfOption>
 		<Defaults>
 			<Reach base="stops" countTowns="yes"/>
-			<!-- Alternative values: 
+			<!-- Alternative values:
 				base="hexes" for H-trains as in 1826, 1849 etc.
 				countTowns="no" for all trains in 1841, 18EU, etc.,
 				  where towns score but do not count against the train length.
@@ -195,7 +195,7 @@
 		</IfOption>
         <IfOption name="Variant" value="Wabash">
             <TrainType name="7" majorStops="7" cost="830" quantity="-1">
-            	<NewPhase phaseName="D"/>
+               <NewPhase phaseName="D"/>
 	    </TrainType>
         </IfOption>
 		<IfOption name="Variant" value="Basegame,Pere Marquette,Reading,Coalfields,Coalfields&amp;Reading,Simple">

@@ -54,9 +54,15 @@
 	<Tile id="235" quantity="5">
 	<Upgrade id="8860,8861,8862,8863,8864,8865" />
 	</Tile>
-	<Tile id="8850" quantity="5" />
-	<Tile id="8851" quantity="6" />
-	<Tile id="8852" quantity="6" />
+	<Tile id="8850" quantity="5">
+	<Upgrade id="8866,887,888" />
+	</Tile>
+	<Tile id="8851" quantity="6">
+	<Upgrade id="8866,887,888" />
+	</Tile>
+	<Tile id="8852" quantity="6">
+	<Upgrade id="8866,887,888" />
+	</Tile>
 	<Tile id="8854" quantity="2" />
 	<Tile id="8855" quantity="2" />
 	<Tile id="8856" quantity="2" />

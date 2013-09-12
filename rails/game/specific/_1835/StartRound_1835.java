@@ -36,8 +36,8 @@ public class StartRound_1835 extends StartRound {
      * @param startPacket The startpacket to be sold in this start round.
      */
     @Override
-    public void start() {
-        super.start();
+    public void start(StartPacket startPacket) {
+        super.start(startPacket);
 
         if (variant.equalsIgnoreCase(CLEMENS_VARIANT)) {
             setCurrentPlayerIndex (numPlayers-1);

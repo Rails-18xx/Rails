@@ -25,7 +25,7 @@ public class StartPacket {
     //        new HashMap<String, StartPacket>();
 
     /**
-     * The start packet name. Usually the default name "Ïnitial" is used.
+     * The start packet name. Usually the default name "Initial" is used.
      */
     @SuppressWarnings("unused")
     private String name; // For identification if there is more than one.
@@ -95,6 +95,13 @@ public class StartPacket {
             StartItem item =
                     (new StartItem(itemName, itemType, basePrice, index++, president));
             items.add(item);
+            
+            String itemNoBidsReaction = itemTag.getAttributeAsString("noBidsReaction");
+            if (itemNoBidsReaction != null) {
+                if (itemNoBidsReaction.equals("ReduceAndRebid")) {
+                    item.setNoBidsReaction(StartItem.NoBidsReaction.REDUCE_AND_REBID);
+                    }
+                }
 
             // Optional attributes
             int row = itemTag.getAttributeAsInteger("row", 0);

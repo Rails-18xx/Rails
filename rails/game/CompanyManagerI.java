@@ -66,9 +66,8 @@ public interface CompanyManagerI extends ConfigurableComponentI {
 
     public List<PrivateCompanyI> getPrivatesOwnedByPlayers();
 
-    public StartPacket getStartPacket (int index);
-    public StartPacket getStartPacket (String name);
-
+    public StartPacket getNextUnfinishedStartPacket();
+        
     public void addExtraTileLayTurnsInfo (Map<String, Integer> extraTileTurns);
 
 }

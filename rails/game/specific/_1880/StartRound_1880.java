@@ -57,8 +57,8 @@ public class StartRound_1880 extends StartRound {
 
     }
     @Override
-    public void start() {
-        super.start();
+    public void start(StartPacket startPacket) {
+        super.start(startPacket);
         
         // crude fix for StartItem hardcoded SetMinimumbid ignoring the initial value out of the XMLs....
         for (StartItem item : startPacket.getItems()) {
@@ -75,7 +75,6 @@ public class StartRound_1880 extends StartRound {
         possibleActions.clear();
         
         StartItem item = startPacket.getFirstUnsoldItem();
-       
         
         //Need Logic to check for all Type Minor/Investor Certificate
         if ( (item.getType()!=null ) && (item.getType().equals("Private"))) {
@@ -537,7 +536,7 @@ public class StartRound_1880 extends StartRound {
 
             moveStack.start(false);
 
-            assignItem(player, item, price, sharePrice, buildingRights, parSlotIndex);
+//            assignItem(player, item, price, sharePrice, buildingRights, parSlotIndex);
 
             // Set priority (only if the item was not auctioned)
             // ASSUMPTION: getting an item in auction mode never changes priority
@@ -568,7 +567,7 @@ public class StartRound_1880 extends StartRound {
      * @param buildingRights
      */
     private void assignItem(Player player, StartItem item, int price,
-            int sharePrice, BitSet buildingRights, int parSlotIndex) {
+            int sharePrice, String buildingRights, int parSlotIndex) {
         Certificate primary = item.getPrimary();
         ReportBuffer.add(LocalText.getText("BuysItemFor",
                 player.getName(),
@@ -599,7 +598,7 @@ public class StartRound_1880 extends StartRound {
      * @param buildingRights
      */
     private void checksOnBuying(Certificate cert, int sharePrice,
-            BitSet buildingRights, int parSlotIndex, Player player) {
+            String buildingRights, int parSlotIndex, Player player) {
         if (cert instanceof PublicCertificateI) {
             PublicCertificateI pubCert = (PublicCertificateI) cert;
             PublicCompany comp = (PublicCompany) pubCert.getCompany(); // BAD CAST
@@ -615,9 +614,7 @@ public class StartRound_1880 extends StartRound {
                         pcomp.start(sharePrice);
                         //Building Rights are also set..
                         pcomp.setBuildingRights(buildingRights);
-                        pcomp.setFounder(player);
                         ((GameManager_1880) gameManager).getParSlots().setCompanyAtSlot(comp, parSlotIndex);
-                        pcomp.setRight("BuildingRight",buildingRightToString(buildingRights));
                     } else {
                         log.error("No start price for " + comp.getName());
                     }

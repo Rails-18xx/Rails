@@ -24,7 +24,6 @@ public class BuyStartItem extends StartItemAction {
 
     // Client-provided fields
     private int associatedSharePrice;
-    private BitSet associatedBuildingRight;
 
     public static final long serialVersionUID = 1L;
 

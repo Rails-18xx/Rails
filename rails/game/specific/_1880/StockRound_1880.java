@@ -96,63 +96,49 @@ public class StockRound_1880 extends StockRound {
     @Override
       protected void gameSpecificChecks(Portfolio boughtFrom,
             PublicCompanyI company) {
-        boolean fullCap = false;
         
-        if (boughtFrom != ipo) return;
-         
-        fullCap =  ((PublicCompany_1880) company).isFullyCapitalised();
-        if  (fullCap == true) return; // If the company is already fully capitalized do nothing
-       
-        if ((((PublicCompany_1880) company).hasFloated()) && (!((PublicCompany_1880) company).isFullyCapitalised()) && ((getSoldPercentage(company)>= 50) && 
-                ( ((PublicCompany_1880) company).shouldBeCapitalisedFull()))) {
-                    company.setCapitalisation(0); //CAPITALISATION_FULL
-                    int additionalOperatingCapital;
-                    additionalOperatingCapital=company.getIPOPrice()*5;
-                    company.addCash(additionalOperatingCapital);
-                    ((PublicCompany_1880) company).setFullyCapitalised(true);
-                    // Can be used as 1880 has no game end on bank break or should CashMove() be used ?
-        }// TODO: Do we need to add money to the companies wallet somewhere ?
+        ((PublicCompany_1880) company).sharePurchased();        
         
-        // how to find out which certificates have been bought ?
-        //check the current player
-         PublicCertificateI cert= null;
-         cert = getCurrentPlayer().getPortfolio().findCertificate(company, true);
-         if (cert !=null) { //the current player has the president certificate of this PublicCompany..
-             //check if the investor of the current player has a share of this PublicCompany
-             CompanyManagerI compMgr= gameManager.getCompanyManager();
-             List<PublicCompanyI>allComp=compMgr.getAllPublicCompanies();
-             for (PublicCompanyI privComp:  allComp) {
-                 if ((privComp instanceof Investor_1880) && (privComp.getPresident()==getCurrentPlayer())) {
-                     // We have an Investor and the President is the current Player
-                     //now we need to find out if the Portfolio of that Investor holds a share (only one is allowed !) of any Company...
-                     if ((privComp.getPortfolio().ownsCertificates(company, 1, false) == 0) && 
-                             (getCurrentPlayer() == ((PublicCompany_1880) company).getFounder())) {
-                         //need to check if the Private Company owns any other certificate of a company...
-                         for (PublicCompanyI comp2 : allComp) {
-                             if (privComp.getPortfolio().ownsCertificates(comp2,1,false) > 0) {
-                                return;
-                             } // if clause end to be left if no certificate has been found otherwise early 
-                         } // we have a Private thats in Possession of our current Player  that doesnt have a certificate of the company in possession where the player is president of...
-                         PublicCertificateI cert2;
-                         cert2 = boughtFrom.findCertificate(company, 1, false);
-                         if (cert2 == null) {
-                                 log.error("Cannot find " + company.getName() + " " + 1*10
-                                         + "% share in " + boughtFrom.getName());
-                             }
-                             cert2.moveTo(privComp.getPortfolio());
-                             ((Investor_1880) privComp).setDestinationHex(company.getHomeHexes().get(0));
-                             ((Investor_1880) privComp).setLinkedCompany((PublicCompany) company);
-                             privComp.setInfoText(privComp.getInfoText() + "<br>Destination: "+privComp.getDestinationHex().getInfo());
-                             // Check if the company has floated
-                            // if (!company.hasFloated()) checkFlotation(company);
-                             // moved to finishRound
-                             return;
-                     } else {
-                         return;
-                     }
-                 }
-             }
-         }
+//        // how to find out which certificates have been bought ?
+//        //check the current player
+//         PublicCertificateI cert= null;
+//         cert = getCurrentPlayer().getPortfolio().findCertificate(company, true);
+//         if (cert !=null) { //the current player has the president certificate of this PublicCompany..
+//             //check if the investor of the current player has a share of this PublicCompany
+//             CompanyManagerI compMgr= gameManager.getCompanyManager();
+//             List<PublicCompanyI>allComp=compMgr.getAllPublicCompanies();
+//             for (PublicCompanyI privComp:  allComp) {
+//                 if ((privComp instanceof Investor_1880) && (privComp.getPresident()==getCurrentPlayer())) {
+//                     // We have an Investor and the President is the current Player
+//                     //now we need to find out if the Portfolio of that Investor holds a share (only one is allowed !) of any Company...
+//                     if ((privComp.getPortfolio().ownsCertificates(company, 1, false) == 0) && 
+//                             (getCurrentPlayer() == ((PublicCompany_1880) company).getFounder())) {
+//                         //need to check if the Private Company owns any other certificate of a company...
+//                         for (PublicCompanyI comp2 : allComp) {
+//                             if (privComp.getPortfolio().ownsCertificates(comp2,1,false) > 0) {
+//                                return;
+//                             } // if clause end to be left if no certificate has been found otherwise early 
+//                         } // we have a Private thats in Possession of our current Player  that doesnt have a certificate of the company in possession where the player is president of...
+//                         PublicCertificateI cert2;
+//                         cert2 = boughtFrom.findCertificate(company, 1, false);
+//                         if (cert2 == null) {
+//                                 log.error("Cannot find " + company.getName() + " " + 1*10
+//                                         + "% share in " + boughtFrom.getName());
+//                             }
+//                             cert2.moveTo(privComp.getPortfolio());
+//                             ((Investor_1880) privComp).setDestinationHex(company.getHomeHexes().get(0));
+//                             ((Investor_1880) privComp).setLinkedCompany((PublicCompany) company);
+//                             privComp.setInfoText(privComp.getInfoText() + "<br>Destination: "+privComp.getDestinationHex().getInfo());
+//                             // Check if the company has floated
+//                            // if (!company.hasFloated()) checkFlotation(company);
+//                             // moved to finishRound
+//                             return;
+//                     } else {
+//                         return;
+//                     }
+//                 }
+//             }
+//         }
 
         
         super.gameSpecificChecks(boughtFrom, company);
@@ -425,7 +411,7 @@ public class StockRound_1880 extends StockRound {
         }
         
         for (PublicCompanyI c : companyManager.getAllPublicCompanies()) {
-            if (c.hasStarted() && !c.hasFloated()) {
+            if (c.hasStarted() && !c.hasFloated() && !(c instanceof Investor_1880)) {
                 checkFlotation(c);
             }
         }
@@ -583,140 +569,20 @@ public class StockRound_1880 extends StockRound {
     }
     
     public boolean startCompany(String playerName, StartCompany_1880 action) {
+        super.startCompany(playerName, action);
 
-        PublicCompanyI company = action.getCompany();
-        int price = action.getPrice();
-        int shares = action.getNumberBought();
-
-        String errMsg = null;
-        StockSpaceI startSpace = null;
-        int numberOfCertsToBuy = 0;
-        PublicCertificateI cert = null;
-        String companyName = company.getName();
-        int cost = 0;
-
-        currentPlayer = getCurrentPlayer();
-
-        // Dummy loop to allow a quick jump out
-        while (true) {
-
-            // Check everything
-            // Only the player that has the turn may buy
-            if (!playerName.equals(currentPlayer.getName())) {
-                errMsg = LocalText.getText("WrongPlayer", playerName, currentPlayer.getName());
-                break;
-            }
-
-            // The player may not have bought this turn.
-            if (companyBoughtThisTurnWrapper.get() != null) {
-                errMsg = LocalText.getText("AlreadyBought", playerName);
-                break;
-            }
-
-            // Check company
-            if (company == null) {
-                errMsg = LocalText.getText("CompanyDoesNotExist", companyName);
-                break;
-            }
-            // The company may not have started yet.
-            if (company.hasStarted()) {
-                errMsg =
-                    LocalText.getText("CompanyAlreadyStarted", companyName);
-                break;
-            }
-
-            // Find the President's certificate
-            cert = ipo.findCertificate(company, true);
-            // Make sure that we buy at least one!
-            if (shares < cert.getShares()) shares = cert.getShares();
-
-            // Determine the number of Certificates to buy
-            // (shortcut: assume that any additional certs are one share each)
-            numberOfCertsToBuy = shares - (cert.getShares() - 1);
-            // Check if the player may buy that many certificates.
-            if (!mayPlayerBuyCertificate(currentPlayer, company, numberOfCertsToBuy)) {
-                errMsg = LocalText.getText("CantBuyMoreCerts");
-                break;
-            }
-
-            // Check if the company has a fixed par price (1835).
-            startSpace = company.getStartSpace();
-            if (startSpace != null) {
-                // If so, it overrides whatever is given.
-                price = startSpace.getPrice();
-            } else {
-                // Else the given price must be a valid start price
-                if ((startSpace = stockMarket.getStartSpace(price)) == null) {
-                    errMsg = LocalText.getText("InvalidStartPrice",
-                            Bank.format(price),
-                            company.getName() );
-                    break;
-                }
-            }
-
-            // Check if the Player has the money.
-            cost = shares * price;
-            if (currentPlayer.getCash() < cost) {
-                errMsg = LocalText.getText("NoMoney");
-                break;
-            }
-
-            break;
-        }
-
-        if (errMsg != null) {
-            DisplayBuffer.add(LocalText.getText("CantStart",
-                    playerName,
-                    companyName,
-                    Bank.format(price),
-                    errMsg ));
-            return false;
-        }
-
-        moveStack.start(true);
-
-        // All is OK, now start the company
-        company.start(startSpace);
-        ((PublicCompany_1880) company).setFounder(currentPlayer);
-        ((GameManager_1880) gameManager).getParSlots().setCompanyAtSlot(((PublicCompany_1880) company), action.getParSlotIndex());
+        Player player = gameManager.getPlayerManager().getPlayerByName(playerName);
+        PublicCompany_1880 company = (PublicCompany_1880) action.getCompany();
+        company.setBuildingRights(action.getBuildingRights());
+        ((GameManager_1880) gameManager).getParSlots().setCompanyAtSlot(company, action.getParSlotIndex());
         
-        CashHolder priceRecipient = getSharePriceRecipient (company, ipo, price);
-
-        // Transfer the President's certificate
-        cert.moveTo(currentPlayer.getPortfolio());
-
-
-        // If more than one certificate is bought at the same time, transfer
-        // these too.
-        for (int i = 1; i < numberOfCertsToBuy; i++) {
-            cert = ipo.findCertificate(company, false);
-            cert.moveTo(currentPlayer.getPortfolio());
+        // If this player's investor doesn't have a linked company yet - this is it
+        Investor_1880 investor = Investor_1880.getInvestorForPlayer(gameManager.getCompanyManager(), player);
+        if ((investor != null) && (investor.getLinkedCompany() == null)) {
+            PublicCertificateI bcrCertificate = ipo.findCertificate(company, 1, false);
+            bcrCertificate.moveTo(investor.getPortfolio());
+            investor.setLinkedCompany(company);            
         }
-
-        // Pay for these shares
-        new CashMove (currentPlayer, priceRecipient, cost);
-
-        ReportBuffer.add(LocalText.getText("START_COMPANY_LOG",
-                playerName,
-                companyName,
-                Bank.format(price),
-                Bank.format(cost),
-                shares,
-                cert.getShare(),
-                priceRecipient.getName() ));
-        ReportBuffer.getAllWaiting();
-
-        //checkFlotation(company); We need to check in finishRound 
-
-        companyBoughtThisTurnWrapper.set(company);
-        hasActed.set(true);
-        setPriority();
-
-        // Check for any game-specific consequences
-        // (such as making another company available in the IPO)
-        gameSpecificChecks(ipo, company);
-        action.setBuildingRight((PublicCompany_1880) action.getCompany(), action.buildingRightToString(action.buildingRight));
-        action.setStartPrice(action.getPrice());
         return true;
     }
     

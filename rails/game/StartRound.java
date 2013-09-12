@@ -34,6 +34,12 @@ public abstract class StartRound extends Round {
      * in 1841 and 18EU.
      */
     protected boolean hasBasePrices = true;
+    
+    /**
+     * Is buying allowed in the start round?  Not in the first start round of
+     * 1880, for example, where everything is auctioned.
+     */
+    protected boolean hasBuying = true;
 
     /** A company in need for a par price. */
     PublicCompanyI companyNeedingPrice = null;
@@ -46,7 +52,6 @@ public abstract class StartRound extends Round {
     public StartRound(GameManagerI gameManager) {
 
         super (gameManager);
-        this.startPacket = gameManager.getStartPacket();
 
         guiHints.setVisibilityHint(GuiDef.Panel.STATUS, true);
         guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, false);
@@ -59,8 +64,8 @@ public abstract class StartRound extends Round {
      *
      * @param startPacket The startpacket to be sold in this start round.
      */
-    public void start() {
-
+    public void start(StartPacket startPacket) {
+        this.startPacket = startPacket;
         this.variant = gameManager.getGameOption(GameOption.VARIANT);
         if (variant == null) variant = "";
         numPlayers = gameManager.getNumberOfPlayers();
@@ -373,6 +378,10 @@ public abstract class StartRound extends Round {
         return hasBasePrices;
     }
 
+    public boolean hasBuying() {
+        return hasBuying;
+    }
+
     public ModelObject getBidModel(int privateIndex, int playerIndex) {
         return (itemsToSell.get(privateIndex)).getBidForPlayerModel(playerIndex);
     }
@@ -388,5 +397,4 @@ public abstract class StartRound extends Round {
     public ModelObject getBlockedCashModel(int playerIndex) {
         return gameManager.getPlayerByIndex(playerIndex).getBlockedCashModel();
     }
-
 }
