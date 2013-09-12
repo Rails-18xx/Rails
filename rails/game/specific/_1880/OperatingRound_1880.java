@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import rails.common.DisplayBuffer;
 import rails.common.GuiDef;
@@ -17,12 +16,14 @@ import rails.game.Bank;
 import rails.game.BaseToken;
 import rails.game.CashHolder;
 import rails.game.GameDef;
+import rails.game.GameDef.OrStep;
 import rails.game.GameManagerI;
 import rails.game.MapHex;
 import rails.game.OperatingRound;
 import rails.game.PhaseI;
 import rails.game.Player;
 import rails.game.Portfolio;
+import rails.game.PrivateCompanyI;
 import rails.game.PublicCertificateI;
 import rails.game.PublicCompanyI;
 import rails.game.ReportBuffer;
@@ -65,32 +66,36 @@ public class OperatingRound_1880 extends OperatingRound {
     public void processPhaseAction(String name, String value) {
         if (name.equalsIgnoreCase("RaisingCertAvailability")) {
             for (PublicCompanyI company : gameManager.getAllPublicCompanies()) {
-                if (!company.hasFloated()) {
-                    ((PublicCompany_1880) company).setFloatPercentage(30);
+                if (company instanceof PublicCompany_1880) {
                     ((PublicCompany_1880) company).setAllCertsAvail(true);
+                    if (!company.hasFloated()) {
+                        ((PublicCompany_1880) company).setFloatPercentage(30);
+                    } else { 
+                        ((PublicCompany_1880) company).setFullFundingAvail();
+                    }
                 }
             }
         }
         if (name.equalsIgnoreCase("CommunistTakeOver")) {
             for (PublicCompanyI company : getOperatingCompanies()) {
-                if (company.hasFloated()) {
+                if (((company instanceof PublicCompany_1880) && company.hasFloated())) {
                     ((PublicCompany_1880) company).setCommunistTakeOver(true);
                 }
             }
             for (PublicCompanyI company : gameManager.getAllPublicCompanies()) {
-                if (!company.hasFloated()) {
+                if (((company instanceof PublicCompany_1880) && !company.hasFloated())) {
                     ((PublicCompany_1880) company).setFloatPercentage(40);
                 }
             }
         }
         if (name.equalsIgnoreCase("ShanghaiExchangeOpen")) {
             for (PublicCompanyI company : getOperatingCompanies()) {
-                if (company.hasFloated()) {
+                if (((company instanceof PublicCompany_1880) && company.hasFloated())) {
                     ((PublicCompany_1880) company).setCommunistTakeOver(false);
                 }
             }
             for (PublicCompanyI company : gameManager.getAllPublicCompanies()) {
-                if (!company.hasFloated()) {
+                if (((company instanceof PublicCompany_1880) && !company.hasFloated())) {
                     ((PublicCompany_1880) company).setFloatPercentage(60);
                 }
             }
@@ -179,8 +184,14 @@ public class OperatingRound_1880 extends OperatingRound {
             }
 
             if (setNextOperatingCompany(true)) {
-                setStep(GameDef.OrStep.INITIAL);
-            }
+                setStep(((GameManager_1880) gameManager).getNextOperatingPhase());
+            } else {
+                ((GameManager_1880) gameManager).setFirstCompanyToOperate(null);
+                ((GameManager_1880) gameManager).setSkipFirstCompanyToOperate(false);
+                ((GameManager_1880) gameManager).setNextOperatingPhase(OrStep.INITIAL);
+                finishOR();
+                             }                     
+
             return;
         }
 
@@ -222,14 +233,15 @@ public class OperatingRound_1880 extends OperatingRound {
                     ((GameManager_1880) gameManager).getLastTrainBuyingCompany();
 
             if (super.buyTrain(action)) {
-                if (stb.isExercised()) {
-                    ((GameManager_1880) gameManager).setLastTrainBuyingCompany(oldLastTrainBuyingCompany);
-                } else {
-                    ((GameManager_1880) gameManager).setLastTrainBuyingCompany((PublicCompany_1880) operatingCompany.get());
-                }
-                // Check: Did we just buy the last Train of that Type ? Then we
-                // fire up the Stockround
-                if (lastTrainOfType) {
+                if (action.getFromPortfolio() == ipo) {
+                    if (stb.isExercised()) {
+                        ((GameManager_1880) gameManager).setLastTrainBuyingCompany(oldLastTrainBuyingCompany);
+                    } else {
+                        ((GameManager_1880) gameManager).setLastTrainBuyingCompany((PublicCompany_1880) operatingCompany.get());
+                    }
+                    // Check: Did we just buy the last Train of that Type ? Then we
+                    // fire up the Stockround
+                    if (lastTrainOfType) {
                     
                     //but we also possibly have to close the P0 and payout the owner
                     //depending on the train sold with either:
@@ -237,7 +249,12 @@ public class OperatingRound_1880 extends OperatingRound {
                     // 70 Yuan if the train was a 3
                     // 100 yuan if the train was a 3+3
                     //TODO : How can we fit this in the action Logic here ??
-                    ((GameManager_1880) gameManager).startStockRound_1880(this);
+                        ((GameManager_1880) gameManager).setFirstCompanyToOperate(operatingCompany.get());
+                        ((GameManager_1880) gameManager).setSkipFirstCompanyToOperate(false);
+                        ((GameManager_1880) gameManager).setNextOperatingPhase(getStep());
+                        finishOR();
+                        return true;
+                    }
                 }
                 return true;
             } else {
@@ -245,11 +262,18 @@ public class OperatingRound_1880 extends OperatingRound {
             }
         } else {
             if (super.buyTrain(action)) {
+                if (action.getFromPortfolio() == ipo) {
                 ((GameManager_1880) gameManager).setLastTrainBuyingCompany((PublicCompany_1880) operatingCompany.get());
                 // Check: Did we just buy the last Train of that Type ? Then we
                 // fire up the Stockround
                 if (lastTrainOfType) {
-                    ((GameManager_1880) gameManager).startStockRound_1880(this);
+                        ((GameManager_1880) gameManager).setFirstCompanyToOperate(operatingCompany.get());
+                        ((GameManager_1880) gameManager).setSkipFirstCompanyToOperate(false);
+                        ((GameManager_1880) gameManager).setNextOperatingPhase(getStep());
+                        finishOR();
+                        return true;
+                    }
+
                 }
                 return true;
             } else {
@@ -298,6 +322,9 @@ public class OperatingRound_1880 extends OperatingRound {
         if (getOperatingCompany() != null) {
             setStep(GameDef.OrStep.BUY_TRAIN);
         } else {
+            ((GameManager_1880) gameManager).setFirstCompanyToOperate(null);
+            ((GameManager_1880) gameManager).setSkipFirstCompanyToOperate(false);
+            ((GameManager_1880) gameManager).setNextOperatingPhase(OrStep.INITIAL);
             finishOR();
         }
         wasInterrupted.set(true);
@@ -327,6 +354,7 @@ public class OperatingRound_1880 extends OperatingRound {
                 if (operatingCompany.get() == ((GameManager_1880) gameManager).getLastTrainBuyingCompany()) {
                     if ((trainsBoughtThisTurn.isEmpty())
                         && (wasInterrupted.booleanValue() == false)) {
+                        
                         // The current Company is the Company that has bought
                         // the last train and that purchase was not in this OR..
                         // we now discard the remaining active trains of that
@@ -344,7 +372,10 @@ public class OperatingRound_1880 extends OperatingRound {
                         // Need to make next train available !
                         trainManager.checkTrainAvailability(trainsToDiscard[0],
                                 ipo);
-                        ((GameManager_1880) gameManager).startStockRound_1880(this);
+                        ((GameManager_1880) gameManager).setFirstCompanyToOperate(operatingCompany.get());
+                        ((GameManager_1880) gameManager).setSkipFirstCompanyToOperate(true);
+                        ((GameManager_1880) gameManager).setNextOperatingPhase(OrStep.INITIAL);
+                        finishOR();
                         return true;
                     }
                 }
@@ -387,7 +418,7 @@ public class OperatingRound_1880 extends OperatingRound {
             initTurn();
             if ((noMapMode)
                 || (!((PublicCompany_1880) operatingCompany.get()).hasBuildingRightForPhase(gameManager.getCurrentPhase()))) {
-                nextStep(GameDef.OrStep.LAY_TOKEN);
+                nextStep(GameDef.OrStep.LAY_TRACK);
             } else {
                 initNormalTileLays(); // new: only called once per turn ?
                 setStep(GameDef.OrStep.LAY_TRACK);
@@ -419,7 +450,6 @@ public class OperatingRound_1880 extends OperatingRound {
      */
     @Override
     public void payout(int amount) {
-        // TODO Auto-generated method stub
         if (amount == 0) return;
 
         int part;
@@ -450,71 +480,6 @@ public class OperatingRound_1880 extends OperatingRound {
         operatingCompany.get().payout(amount);
 
     }
-
-/*    @Override
-    protected void setDestinationActions() {
-
-        List<PublicCompanyI> possibleDestinations =
-                new ArrayList<PublicCompanyI>();
-        for (PublicCompanyI comp : operatingCompanies.viewList()) {
-            if (comp.hasDestination() && !comp.hasReachedDestination()) {
-                possibleDestinations.add(comp);
-            }
-        }
-        if (possibleDestinations.size() > 0) {
-            possibleActions.add(new ReachDestinations(possibleDestinations));
-        }
-    }
-
-   @Override
-   protected void reachDestination (PublicCompanyI company) {
-
-       PublicCompany_1880 comp = (PublicCompany_1880) company;
-       PublicCompany_1880 controlCompany = null;
-       CashHolder owner = comp.getPresident();
-       int cash=comp.getCash();
-       boolean investorCashToOwner = false;
-       new CashMove (bank,owner,50); //50 Yuan as bonus for connecting the investor for the owner
-           BaseToken bt = (BaseToken) comp.getTokens().get(0);
-           MapHex hh= comp.getHomeHexes().get(0);
-           Stop city = (Stop) bt.getHolder();
-           bt.moveTo(bt.getCompany());
-           
-           // There should be only one Certificate in the Portfolio of the Investor. And this Certificate belongs to the Company that was started
-           // by the initial owner of the Investor. The Owner of the Investor is to decide to either pay out of not pay out the money to the company
-           // linked to the investor´; if the director has changed hands the owner might rather choose to get 20 Percent of the money himself.
-           Portfolio investorPortfolio = comp.getPortfolio();
-           List<PublicCertificateI> investorCerts=investorPortfolio.getCertificates();
-           //There should not be another Certificate in the Portfolio of an investor !
-           controlCompany= (PublicCompany_1880) investorCerts.get(0).getCompany();
-           //Find the controlling Major Company... 
-           if (hh.layBaseToken(controlCompany, city.getNumber())) {
-                TODO: the false return value must be impossible. 
-               ReportBuffer.add(LocalText.getText("ExchangesBaseToken",
-                       controlCompany.getName(), bt.getCompany().getName(),
-                       city.getName()));
-               controlCompany.layBaseToken(hh, 0);
-           }
-           
-           // TODO: investorCashToOwner needs to be gotten from the Owner of the Investor...
-           // TODO: we need to automatically move 20% of the Cash to the owner if the Investor is still alive on Game end..
-           if ( investorCashToOwner != true) {
-           new CashMove (comp, controlCompany, cash);
-           ReportBuffer.add(LocalText.getText("CashtransferfromInvestor",
-                   company.getName(),
-                   Bank.format(cash)
-           ));
-           } else {
-               int reducedCash = ((cash /10) * 2); //20 Percent of the Cash will move to the Owner
-               new CashMove (comp, owner, reducedCash);
-               ReportBuffer.add(LocalText.getText("CashtransferfromInvestor",
-                       company.getName(),
-                       Bank.format(cash)
-               ));
-               }
-           company.setClosed();
-   
-    }*/
     
     private void closeInvestor(PossibleAction action) {
         CloseInvestor_1880 closeInvestorAction = (CloseInvestor_1880) action;
@@ -570,27 +535,39 @@ public class OperatingRound_1880 extends OperatingRound {
      */
     @Override
     public List<PublicCompanyI> setOperatingCompanies() {
-        Map<Integer, PublicCompanyI> operatingCompanies = new TreeMap<Integer, PublicCompanyI>();
+        List<PublicCompanyI> companyList = new ArrayList<PublicCompanyI>();
       int key = 1;
+
+        // Put in Foreign Investors first      
+        for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
+            if ((company instanceof Investor_1880) && (company.isClosed() == false)) {
+                companyList.add(company);
+            }
+        }
+
       
-      // Put in Foreign Investors first      
-      for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
-          if (!canCompanyOperateThisRound(company)) continue; 
-          if (!company.hasFloated()) continue;
-          if (!company.hasStockPrice()) {
-              operatingCompanies.put(new Integer(key++), company);
-          }
-      }
+        // Now the share companies in par slot order
+        List<PublicCompanyI> companies = ((GameManager_1880) gameManager).getParSlots().getCompaniesInOperatingOrder();
+        for (PublicCompanyI company : companies) {
+            if (!canCompanyOperateThisRound(company)) continue; 
+            if (!company.hasFloated()) continue;
+            companyList.add(company);
+        }
       
-      // Now the share companies in par slot order
-      List<PublicCompanyI> companies = ((GameManager_1880) gameManager).getParSlots().getCompaniesInOperatingOrder();
-      for (PublicCompanyI company : companies) {
-          if (!canCompanyOperateThisRound(company)) continue; 
-          if (!company.hasFloated()) continue;
-          operatingCompanies.put(new Integer(key++), company);
-      }
-      
-      return new ArrayList<PublicCompanyI>(operatingCompanies.values());
+        // Skip ahead if we have to
+        PublicCompanyI firstCompany = ((GameManager_1880) gameManager).getFirstCompanyToOperate();
+        if (firstCompany != null) {
+            while (companyList.get(0) != firstCompany) {
+                companyList.remove(0);
+            }
+        }
+        
+        if (((GameManager_1880) gameManager).getSkipFirstCompanyToOperate() == true) {
+            companyList.remove(0);
+        }
+               
+
+        return new ArrayList<PublicCompanyI>(companyList);
     }
 
     /* (non-Javadoc)
@@ -796,5 +773,39 @@ public class OperatingRound_1880 extends OperatingRound {
         }
         super.finishOR();
     }
+    
+    protected void finishTurn() {
+        if (!operatingCompany.get().isClosed()) {
+            operatingCompany.get().setOperated();
+            companiesOperatedThisRound.add(operatingCompany.get());
+
+            // Check if any privates must be closed (now only applies to 1856 W&SR)
+            // Copy list first to avoid concurrent modifications
+            for (PrivateCompanyI priv :
+                new ArrayList<PrivateCompanyI> (operatingCompany.get().getPortfolio().getPrivateCompanies())) {
+                priv.checkClosingIfExercised(true);
+            }
+        }
+
+        if (!finishTurnSpecials()) return;
+
+        if (setNextOperatingCompany(false)) {
+            setStep(GameDef.OrStep.INITIAL);
+        } else {
+            ((GameManager_1880) gameManager).setFirstCompanyToOperate(null);
+            ((GameManager_1880) gameManager).setSkipFirstCompanyToOperate(false);
+            ((GameManager_1880) gameManager).setNextOperatingPhase(OrStep.INITIAL);
+            finishOR();
+        }
+    }
+    
+    @Override
+    protected void privatesPayOut() {
+        if (((GameManager_1880) gameManager).getFirstCompanyToOperate() == null) {
+            super.privatesPayOut();
+       }
+    }
+    
+
     
 }
