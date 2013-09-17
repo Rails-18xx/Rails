@@ -5,22 +5,14 @@ package rails.ui.swing.gamespecific._1880;
 
 
 
-import java.util.ArrayList;
-import java.util.List;
-
+import java.util.Arrays;
 import javax.swing.JOptionPane;
 
 import rails.ui.swing.GameUIManager;
 import rails.common.LocalText;
-import rails.game.PublicCompanyI;
-import rails.game.TrainI;
-import rails.game.action.PossibleAction;
-import rails.game.action.PossibleORAction;
 import rails.game.specific._1880.BuildingRights_1880;
 import rails.game.specific._1880.CloseInvestor_1880;
-import rails.game.specific._1880.OperatingRound_1880;
-import rails.game.specific._1880.ParSlot_1880;
-import rails.game.specific._1880.PublicCompany_1880;
+import rails.game.specific._1880.ParSlotManager_1880;
 import rails.game.specific._1880.SetupNewPublicDetails_1880;
 import rails.game.specific._1880.StartCompany_1880;
 import rails.ui.swing.elements.NonModalDialog;
@@ -35,17 +27,17 @@ public class GameUIManager_1880 extends GameUIManager {
     public static final String COMPANY_SELECT_BUILDING_RIGHT = "SelectBuildingRight";
     public static final String COMPANY_SELECT_PRESIDENT_SHARE_SIZE = "SelectPresidentShareSize";
     public static final String COMPANY_START_PRICE_DIALOG = "CompanyStartPrice";
+    public static final String COMPANY_SELECT_PAR_SLOT_INDEX = "CompanySelectParSlotIndex";
     
     public static final String NEW_COMPANY_SELECT_BUILDING_RIGHT = "NewSelectBuildingRight";
     
 
     @Override
     public void dialogActionPerformed () {
-
         String key = "";
         String[] presidentShareSizes; 
         if (currentDialog instanceof NonModalDialog) key = ((NonModalDialog) currentDialog).getKey();
-
+        
         // Check for the dialogs that are postprocessed in this class.
 /*
  * The mechanismn for starting a company and getting the necessary decisions by a player 
@@ -93,7 +85,7 @@ public class GameUIManager_1880 extends GameUIManager {
                     LocalText.getText(
                             "WhichBuildingRight",action.getPlayerName(),
                             action.getCompanyName()),
-                            possibleBuildingRights, -1);
+                            possibleBuildingRights, 0);
                 setCurrentDialog(dialog, action);
                 statusWindow.disableButtons();
                 return;
@@ -125,40 +117,64 @@ public class GameUIManager_1880 extends GameUIManager {
                 return;
             }
             
-            List<ParSlot_1880> startParSlots = action.getStartParSlots();
-            int price = startParSlots.get(index).getPrice();
-            int parSlot = startParSlots.get(index).getIndex();
-            
-            action.setStartPrice(price);
-            action.setParSlotIndex(parSlot);
-            
+            int[] startPrices = action.getStartPrices();
+            Arrays.sort(startPrices);
 
-            /* Set up another dialog for the next step
-            *  need to setup Options based on the Presidents Certificate Size...
-            *  The player should only get valid percentages presented to him for selection
-            *  This leads to the check what amount of cash does the player have
-            */
-             
-            int freePlayerCash = gameManager.getCurrentPlayer().getFreeCash();
-            if (freePlayerCash >= (price*4)) { //enough Cash for 40 Percent 
-                presidentShareSizes = new String[] {"20 Percent", "30 Percent", "40 Percent"};
-            } else if (freePlayerCash >= (price*3)) { //enough Cash for 30 Percent 
-                presidentShareSizes = new String[] {"20 Percent", "30 Percent"};
-            } else  { //enough Cash only for 20 Percent 
-                presidentShareSizes = new String[] {"20 Percent"};
+            int selectedPrice = startPrices[index];
+            action.setStartPrice(selectedPrice);
+            
+            int[] parSlots = ParSlotManager_1880.filterByPrice(action.getPossibleParSlotIndices(), selectedPrice);
+            String[] parSlotStrings = new String[parSlots.length];
+            for (int i = 0; i < parSlots.length; i++) {
+                parSlotStrings[i] = Integer.toString(parSlots[i] + 1);
             }
-            dialog = new RadioButtonDialog (COMPANY_SELECT_PRESIDENT_SHARE_SIZE,
-                    this,
-                    statusWindow,
-                    LocalText.getText("PleaseSelect"),
-                    LocalText.getText(
-                            "WhichPresidentShareSize",
-                            action.getPlayerName(),
-                            action.getCompanyName()),
-                            presidentShareSizes, -1);
-                setCurrentDialog(dialog, action);
-                statusWindow.disableButtons();
+            dialog = new RadioButtonDialog(
+                    COMPANY_SELECT_PAR_SLOT_INDEX, 
+                        this, statusWindow,
+                        LocalText.getText("PleaseSelect"),       
+                            LocalText.getText("PickParSlot", action.getPlayerName(), selectedPrice, 
+                                    action.getCompanyName()), parSlotStrings, 0);
+            setCurrentDialog(dialog, action);
+            statusWindow.disableButtons();
+            return;
+        } else if (COMPANY_SELECT_PAR_SLOT_INDEX.equals(key)
+                && currentDialogAction instanceof StartCompany_1880) {
+
+            RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
+            StartCompany_1880 action = (StartCompany_1880) currentDialogAction;
+            
+            int index = dialog.getSelectedOption();
+            if (index < 0) {
+                currentDialogAction = null;
                 return;
+            }
+            
+            int price = action.getPrice();
+            int[] parSlots = ParSlotManager_1880.filterByPrice(action.getPossibleParSlotIndices(), price);
+            action.setParSlotIndex(parSlots[index]);
+
+          int freePlayerCash = gameManager.getCurrentPlayer().getFreeCash();
+          if (freePlayerCash >= (price*4)) { //enough Cash for 40 Percent 
+              presidentShareSizes = new String[] {"20 Percent", "30 Percent", "40 Percent"};
+          } else if (freePlayerCash >= (price*3)) { //enough Cash for 30 Percent 
+              presidentShareSizes = new String[] {"20 Percent", "30 Percent"};
+          } else  { //enough Cash only for 20 Percent 
+              presidentShareSizes = new String[] {"20 Percent"};
+          }
+          dialog = new RadioButtonDialog (COMPANY_SELECT_PRESIDENT_SHARE_SIZE,
+                  this,
+                  statusWindow,
+                  LocalText.getText("PleaseSelect"),
+                  LocalText.getText(
+                          "WhichPresidentShareSize",
+                          action.getPlayerName(),
+                          action.getCompanyName()),
+                          presidentShareSizes, 0);
+              setCurrentDialog(dialog, action);
+              statusWindow.disableButtons();
+              return;
+
+        
         } else {
             // Current dialog not found yet, try the superclass.
             super.dialogActionPerformed(false);
@@ -182,7 +198,7 @@ public class GameUIManager_1880 extends GameUIManager {
                 LocalText.getText(
                         "WhichBuildingRight",action.getPlayerName(),
                         action.getCompanyName()),
-                        rightsOptions, -1);
+                        rightsOptions, 0);
             setCurrentDialog(dialog, action);
             statusWindow.disableButtons();
         setCurrentDialog(dialog, action);

@@ -40,7 +40,7 @@ public class StartRound_Investors_1880 extends StartRound {
     public boolean setPossibleActions() {
         for (StartItem item : startPacket.getItems()) {
             if (item.isSold() == false) {
-                possibleActions.add(new BuyStartItem_1880(item, 0, false));
+                possibleActions.add(new BuyStartItem(item, 0, false));
             }
         }
         return true;
@@ -100,13 +100,12 @@ public class StartRound_Investors_1880 extends StartRound {
 
     @Override
     protected void finishRound() {
-        for (PublicCompanyI company : gameManager.getAllPublicCompanies()) {
-            if (company instanceof Investor_1880) {
-                if (company.getPresident() == null) {
-                    company.setClosed();
-                }
+        for (Investor_1880 investor : Investor_1880.getInvestors(companyManager)) {
+            if (investor.getPresident() == null) {
+                investor.setClosed();
             }
         }
+
         for (StartItem item : startPacket.getItems()) {
             if (item.isSold() == false) {
                 item.setStatus(StartItem.SOLD);

@@ -3,11 +3,12 @@ package rails.game.specific._1880;
 import rails.game.action.PossibleAction;
 import rails.game.action.PossibleORAction;
 
+/**
+ * @author Michael Alexander
+ * 
+ */
 public class CloseInvestor_1880 extends PossibleORAction {
     
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
     private boolean treasuryToLinkedCompany = false;
     private boolean replaceToken = false;

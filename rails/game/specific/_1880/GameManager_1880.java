@@ -4,10 +4,7 @@
 package rails.game.specific._1880;
 
 import rails.common.GuiDef;
-import rails.game.GameDef.OrStep;
 import rails.game.GameManager;
-import rails.game.OperatingRound;
-import rails.game.PhaseI;
 import rails.game.Player;
 import rails.game.PublicCompanyI;
 import rails.game.RoundI;
@@ -23,21 +20,16 @@ import rails.game.state.IntegerState;
  * 
  */
 
-
-
 public class GameManager_1880 extends GameManager {
 
     protected Class<? extends ShareSellingRound> shareSellingRoundClass
     = ShareSellingRound_1880.class;
     
     public IntegerState numOfORs = new IntegerState("numOfORs");
-    //Keeps track of the company that purchased the last train
-    private PublicCompany_1880 lastTrainBuyingCompany;
-    private ParSlots_1880 parSlots = new ParSlots_1880();
+
+    private ParSlotManager_1880 parSlotManager;    
+    private OperatingRoundControl_1880 orControl = new OperatingRoundControl_1880();
     
-    private PublicCompanyI firstCompanyToOperate = null;
-    private boolean skipFirstCompanyToOperate = false;
-    private OrStep nextOperatingPhase = OrStep.INITIAL;
     /**
      * 
      */
@@ -45,6 +37,7 @@ public class GameManager_1880 extends GameManager {
     
     public GameManager_1880() {
         super();
+        parSlotManager = new ParSlotManager_1880(this);
     }
 
     @Override
@@ -81,7 +74,7 @@ public class GameManager_1880 extends GameManager {
                 continueStartRound(companyManager.getNextUnfinishedStartPacket());
             } else if (gameOverPending.booleanValue() && gameEndsAfterSetOfORs) {
                 finishGame();
-            } else if (firstCompanyToOperate != null) {
+            } else if (orControl.orEnded() == true) {
                 startStockRound();
             } else {
                 startOperatingRound(true);
@@ -89,20 +82,6 @@ public class GameManager_1880 extends GameManager {
             
         }
     }// End of nextRound
-
-    /**
-     * @return the lastTrainBuyingCompany
-     */
-    public PublicCompany_1880 getLastTrainBuyingCompany() {
-        return lastTrainBuyingCompany;
-    }
-
-    /**
-     * @param lastTrainBuyingCompany the lastTrainBuyingCompany to set
-     */
-    public void setLastTrainBuyingCompany(PublicCompany_1880 lastTrainBuyingCompany) {
-        this.lastTrainBuyingCompany = lastTrainBuyingCompany;
-    }
 
     /* (non-Javadoc)
      * @see rails.game.GameManager#startStockRound()
@@ -144,31 +123,11 @@ public class GameManager_1880 extends GameManager {
         super.finishShareSellingRound();
     }
     
-    public ParSlots_1880 getParSlots() {
-        return parSlots;
+    public ParSlotManager_1880 getParSlotManager() {
+        return parSlotManager;
     }
 
-    public PublicCompanyI getFirstCompanyToOperate() {
-        return firstCompanyToOperate;
-    }
-
-    public void setFirstCompanyToOperate(PublicCompanyI firstCompanyToOperate) {
-        this.firstCompanyToOperate = firstCompanyToOperate;
-    }
-
-    public OrStep getNextOperatingPhase() {
-        return nextOperatingPhase;
-    }
-
-    public void setNextOperatingPhase(OrStep orStep) {
-        this.nextOperatingPhase = orStep;
-    }
-
-    public boolean getSkipFirstCompanyToOperate() {
-        return skipFirstCompanyToOperate;
-    }
-
-    public void setSkipFirstCompanyToOperate(boolean skipFirstCompanyToOperate) {
-        this.skipFirstCompanyToOperate = skipFirstCompanyToOperate;
+    public OperatingRoundControl_1880 getORControl() {
+        return orControl;
     }
 }

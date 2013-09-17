@@ -31,12 +31,14 @@ public class StartRound_Privates_1880 extends StartRound_Sequential {
                     (PublicCompany_1880) castAction.getCompany();
             company.setBuildingRights(castAction.getBuildRightsString());
             company.start(castAction.getPrice());
-            ((GameManager_1880) gameManager).getParSlots().setCompanyAtSlot(
+            ((GameManager_1880) gameManager).getParSlotManager().setCompanyAtSlot(
                     company, castAction.getParSlotIndex());
-            ReportBuffer.add(LocalText.getText("BuildingRightsChosen", player.getName(), 
-                    castAction.getBuildRightsString(), company.getName()));
-            ReportBuffer.add(LocalText.getText("ParSlotChosen", player.getName(), 
-                    (castAction.getParSlotIndex()+1), company.getName()));
+            ReportBuffer.add(LocalText.getText("BuildingRightsChosen",
+                    player.getName(), castAction.getBuildRightsString(),
+                    company.getName()));
+            ReportBuffer.add(LocalText.getText("ParSlotChosen",
+                    player.getName(), (castAction.getParSlotIndex() + 1),
+                    company.getName()));
 
             pendingAction = null;
             return true;
@@ -76,10 +78,12 @@ public class StartRound_Privates_1880 extends StartRound_Sequential {
     @Override
     protected void finishRound() {
         gameManager.setCurrentPlayer(gameManager.reorderPlayersByCash(true));
-        currentPlayer=getCurrentPlayer();
-        gameManager.setPriorityPlayer((Player) currentPlayer); // Method doesn't exist in Startround ???
+        currentPlayer = getCurrentPlayer();
+        gameManager.setPriorityPlayer((Player) currentPlayer); // Method doesn't
+                                                               // exist in
+                                                               // Startround ???
         ReportBuffer.add(LocalText.getText("PlayersReordered"));
         super.finishRound();
     }
-    
+
 }

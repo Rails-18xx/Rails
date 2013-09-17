@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rails.algorithms.RevenueAdapter;
-import rails.algorithms.RevenueBonus;
 import rails.algorithms.RevenueStaticModifier;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
@@ -41,7 +40,7 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
      *    Bit 4 set True Player can build in Phase D
      *    
      */
-    private BuildingRights_1880 buildingRights = new BuildingRights_1880(); 
+    private BuildingRights_1880 buildingRights = new BuildingRights_1880("buildingRights"); 
    
     //Implementation of PhaseAction to be able to handle the CommunistPhase
     private BooleanState communistTakeOver = new BooleanState ("communistTakeOver",false);
@@ -94,7 +93,7 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
      * @param buildingRights the buildingRights to set
      */
     public void setBuildingRights(String buildingRights) {
-        this.buildingRights.setRights(buildingRights);
+        this.buildingRights.set(buildingRights);
     }
 
     public void setCommunistTakeOver(boolean b) {
@@ -118,7 +117,7 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
     @Override
     public void withhold(int amount) {
         if (isCommunistPhase()) return;
-        if (hasStockPrice) stockMarket.withhold(this);
+        if (hasStockPrice) stockMarket.withhold(this); // TODO: Cleanup
     }
 
     public void setFloatPercentage(int i) {
@@ -128,7 +127,7 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
     
     @Override
     public boolean canRunTrains() {
-        if (!isCommunistPhase() && (!hasStockPrice()) ){
+        if (!isCommunistPhase() && (!hasStockPrice()) ){ // TODO: Cleanup
             return true;
             }
         return portfolio.getNumberOfTrains() > 0;
@@ -329,8 +328,18 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
     }
     
     public ModelObject getRightsModel () {
-        setRight(buildingRights.rightsString(), "");            
-        return rights;
+        return buildingRights;
     }
+    
+    static public List<PublicCompany_1880> getPublicCompanies(CompanyManagerI companyManager) {
+        List<PublicCompany_1880> companies = new ArrayList<PublicCompany_1880>();
+        for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
+            if (company instanceof PublicCompany_1880) {
+                companies.add((PublicCompany_1880) company);
+            }
+        }
+        return companies;
+    }
+
 
 }

@@ -159,12 +159,11 @@ public class StockMarket_1880 extends StockMarket {
 
     @Override
     public void finishConfiguration(GameManagerI gameManager) {
-
         this.gameManager = gameManager;
-
-        for (PublicCompanyI comp : gameManager.getCompanyManager().getAllPublicCompanies()) {
-            if (!comp.hasStarted() && comp.getStartSpace() != null) {
-                comp.getStartSpace().addFixedStartPrice(comp);
+        
+        for (PublicCompany_1880 company : PublicCompany_1880.getPublicCompanies(gameManager.getCompanyManager())) {
+            if (!company.hasStarted() && company.getStartSpace() != null) {
+                company.getStartSpace().addFixedStartPrice(company);
             }
         }
     }
