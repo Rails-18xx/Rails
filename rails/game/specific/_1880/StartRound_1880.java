@@ -415,7 +415,6 @@ public class StartRound_1880 extends StartRound {
      */
     @Override
     protected void startPacketChecks() {
-        // TODO Auto-generated method stub
         super.startPacketChecks();
         if (investorChosen.intValue() == getNumberOfPlayers()) {
             for ( StartItem item1 : itemsToSell) {
@@ -614,7 +613,7 @@ public class StartRound_1880 extends StartRound {
                         pcomp.start(sharePrice);
                         //Building Rights are also set..
                         pcomp.setBuildingRights(buildingRights);
-                        ((GameManager_1880) gameManager).getParSlots().setCompanyAtSlot(comp, parSlotIndex);
+                        ((GameManager_1880) gameManager).getParSlotManager().setCompanyAtSlot(pcomp, parSlotIndex);
                     } else {
                         log.error("No start price for " + comp.getName());
                     }

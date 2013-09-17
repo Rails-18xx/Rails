@@ -147,37 +147,13 @@ public class GameStatus_1880 extends GameStatus {
                         int[] startPrices;
                         if (((StartCompany_1880) buy).mustSelectAPrice()) {
                             startPrices =
-                                ((StartCompany_1880) buy).getStartPrices();
-                            List<ParSlot_1880> startParSlots = ((StartCompany_1880) buy).getStartParSlots();
+                                ((StartCompany_1880) buy).getStartPrices(); 
                             Arrays.sort(startPrices);
-                            if (startPrices.length > 1) {
-                                for (ParSlot_1880 parSlot : startParSlots) {
-                                    options.add(LocalText.getText("StartCompany",
-                                            Bank.format(parSlot.getPrice()),
-                                            sharePerCert,
-                                            Bank.format(sharesPerCert * parSlot.getPrice()) )+" Slot - "+(parSlot.getIndex()+1));
-                                    buyActions.add(buy);
-                                    buyAmounts.add(parSlot.getPrice());
-                                }
-                            } else {
-                                options.add (LocalText.getText("StartACompany",
-                                        companyName,
-                                        company.getPresidentsShare().getShare(),
-                                        Bank.format(company.getPresidentsShare().getShares() * startPrices[0])));
-                                buyActions.add(buy);
-                                buyAmounts.add(startPrices[0]);
+                            for (int i = 0; i < startPrices.length; i++) {
+                                options.add("$" + startPrices[i]);
                             }
-                        } else {
-                            startPrices = new int[] {((StartCompany) buy).getPrice()};
-                            options.add(LocalText.getText("StartCompanyFixed",
-                                    companyName,
-                                    sharePerCert,
-                                    Bank.format(startPrices[0]) ));
-                            buyActions.add(buy);
-                            buyAmounts.add(startPrices[0]);
-                        }
-
-                    } else {
+                        } 
+                    } else { 
 
                         options.add(LocalText.getText("BuyCertificate",
                                 sharePerCert,
@@ -210,7 +186,7 @@ public class GameStatus_1880 extends GameStatus {
                                 LocalText.getText("WHICH_START_PRICE",
                                         playerName,
                                         companyName),
-                                        options.toArray(new String[0]), -1);
+                                        options.toArray(new String[0]), 0);
                         gameUIManager.setCurrentDialog(dialog, actions.get(0));
                         parent.disableButtons();
                         return;
@@ -236,7 +212,7 @@ public class GameStatus_1880 extends GameStatus {
                                 LocalText.getText("WHICH_START_PRICE",
                                         playerName,
                                         companyName),
-                                        options.toArray(new String[0]), -1);
+                                        options.toArray(new String[0]), 0);
                         gameUIManager.setCurrentDialog(dialog, actions.get(0));
                         parent.disableButtons();
                         return;

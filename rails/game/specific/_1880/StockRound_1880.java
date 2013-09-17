@@ -35,6 +35,24 @@ public class StockRound_1880 extends StockRound {
     public StockRound_1880(GameManagerI aGameManager) {
         super(aGameManager);
     }
+    
+    public void start() {
+        for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) {
+            if (company.hasSpecialProperties() == true) {
+                List<SpecialPropertyI> properties = company.getSpecialProperties();
+                // TODO: Make this part of a "generic" instead of hardcoded...
+                if (company.getName().equals("WR") == true) {
+                    if (properties.get(0).isExercised() == true) {
+                        System.out.println("WR is exercised");
+                    } else {
+                        System.out.println("WR is not exercised");
+                    }
+                }
+            }
+        }
+        
+        super.start();
+    }
 
     @Override
     // The sell-in-same-turn-at-decreasing-price option does not apply here
@@ -98,49 +116,6 @@ public class StockRound_1880 extends StockRound {
             PublicCompanyI company) {
         
         ((PublicCompany_1880) company).sharePurchased();        
-        
-//        // how to find out which certificates have been bought ?
-//        //check the current player
-//         PublicCertificateI cert= null;
-//         cert = getCurrentPlayer().getPortfolio().findCertificate(company, true);
-//         if (cert !=null) { //the current player has the president certificate of this PublicCompany..
-//             //check if the investor of the current player has a share of this PublicCompany
-//             CompanyManagerI compMgr= gameManager.getCompanyManager();
-//             List<PublicCompanyI>allComp=compMgr.getAllPublicCompanies();
-//             for (PublicCompanyI privComp:  allComp) {
-//                 if ((privComp instanceof Investor_1880) && (privComp.getPresident()==getCurrentPlayer())) {
-//                     // We have an Investor and the President is the current Player
-//                     //now we need to find out if the Portfolio of that Investor holds a share (only one is allowed !) of any Company...
-//                     if ((privComp.getPortfolio().ownsCertificates(company, 1, false) == 0) && 
-//                             (getCurrentPlayer() == ((PublicCompany_1880) company).getFounder())) {
-//                         //need to check if the Private Company owns any other certificate of a company...
-//                         for (PublicCompanyI comp2 : allComp) {
-//                             if (privComp.getPortfolio().ownsCertificates(comp2,1,false) > 0) {
-//                                return;
-//                             } // if clause end to be left if no certificate has been found otherwise early 
-//                         } // we have a Private thats in Possession of our current Player  that doesnt have a certificate of the company in possession where the player is president of...
-//                         PublicCertificateI cert2;
-//                         cert2 = boughtFrom.findCertificate(company, 1, false);
-//                         if (cert2 == null) {
-//                                 log.error("Cannot find " + company.getName() + " " + 1*10
-//                                         + "% share in " + boughtFrom.getName());
-//                             }
-//                             cert2.moveTo(privComp.getPortfolio());
-//                             ((Investor_1880) privComp).setDestinationHex(company.getHomeHexes().get(0));
-//                             ((Investor_1880) privComp).setLinkedCompany((PublicCompany) company);
-//                             privComp.setInfoText(privComp.getInfoText() + "<br>Destination: "+privComp.getDestinationHex().getInfo());
-//                             // Check if the company has floated
-//                            // if (!company.hasFloated()) checkFlotation(company);
-//                             // moved to finishRound
-//                             return;
-//                     } else {
-//                         return;
-//                     }
-//                 }
-//             }
-//         }
-
-        
         super.gameSpecificChecks(boughtFrom, company);
     }
     /**
@@ -256,24 +231,23 @@ public class StockRound_1880 extends StockRound {
                                 from, price));
                     }
                 } else if (!comp.hasStarted()) {
-                    List<Integer> startPrices = new ArrayList<Integer>();
-                        for (int startPrice : stockMarket.getStartPrices()) {
-                            if ((startPrice * shares <= playerCash) && (((GameManager_1880) gameManager).getParSlots().freeSlotAtPrice(startPrice))) {
-                                startPrices.add(startPrice);
-                            }
-                        }
-                        if (startPrices.size() > 0) {
-                            int[] prices = new int[startPrices.size()];
-                            for (int i = 0; i < prices.length; i++) {
-                                prices[i] = startPrices.get(i);
-                            }
-                            Arrays.sort(prices);
-                            StartCompany_1880 action =
-                                    new StartCompany_1880(comp, prices);
-                            possibleActions.add(action);
-                        }
+                    ParSlotManager_1880 parSlotManager = ((GameManager_1880) gameManager).getParSlotManager();
+                    Integer[] prices = parSlotManager.getAvailablePrices(playerCash/2);
+                    Arrays.sort(prices);
+                    int[] convertedPrices = new int[prices.length];
+                    for (int i = 0; i < prices.length; i++) {
+                        convertedPrices[i] = prices[i];
+                    }
+                    StartCompany_1880 action = new StartCompany_1880(comp, convertedPrices);
+                    Integer[] parSlotIndicies = parSlotManager.getAvailableSlots(playerCash/2);
+                    int[] convertedSlots = new int [parSlotIndicies.length];
+                    for (int i = 0; i < parSlotIndicies.length; i++) {
+                        convertedSlots[i] = parSlotIndicies[i];
+                    }
+                    action.setPossibleParSlotIndices(convertedSlots);
+                    possibleActions.add(action);
                 }
-             }
+            }
         }
 
         /* Get the unique Pool certificates and check which ones can be bought */
@@ -389,7 +363,7 @@ public class StockRound_1880 extends StockRound {
         if (raiseIfSoldOut) {
             /* Check if any companies are sold out. */
             for (PublicCompanyI company : gameManager.getCompaniesInRunningOrder()) {
-                if (company.hasStarted() && company.hasStockPrice() && !((PublicCompany_1880) company).certsAvailableForSale() && (!((PublicCompany_1880) company).isCommunistPhase())) {
+                if (company.hasStarted() && (company instanceof PublicCompany_1880) && !((PublicCompany_1880) company).certsAvailableForSale() && (!((PublicCompany_1880) company).isCommunistPhase())) {
                     StockSpaceI oldSpace = company.getCurrentSpace();
                     stockMarket.soldOut(company);
                     StockSpaceI newSpace = company.getCurrentSpace();
@@ -410,8 +384,8 @@ public class StockRound_1880 extends StockRound {
             }
         }
         
-        for (PublicCompanyI c : companyManager.getAllPublicCompanies()) {
-            if (c.hasStarted() && !c.hasFloated() && !(c instanceof Investor_1880)) {
+        for (PublicCompany_1880 c : PublicCompany_1880.getPublicCompanies(companyManager)) {
+            if (c.hasStarted() && !c.hasFloated()) {
                 checkFlotation(c);
             }
         }
@@ -574,7 +548,7 @@ public class StockRound_1880 extends StockRound {
         Player player = gameManager.getPlayerManager().getPlayerByName(playerName);
         PublicCompany_1880 company = (PublicCompany_1880) action.getCompany();
         company.setBuildingRights(action.getBuildingRights());
-        ((GameManager_1880) gameManager).getParSlots().setCompanyAtSlot(company, action.getParSlotIndex());
+        ((GameManager_1880) gameManager).getParSlotManager().setCompanyAtSlot(company, action.getParSlotIndex());
         
         // If this player's investor doesn't have a linked company yet - this is it
         Investor_1880 investor = Investor_1880.getInvestorForPlayer(gameManager.getCompanyManager(), player);

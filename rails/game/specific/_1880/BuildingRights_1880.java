@@ -8,13 +8,14 @@ import java.util.List;
 import java.util.Map;
 
 import rails.game.PhaseI;
+import rails.game.state.StringState;
 
 /**
  * @author Michael Alexander
  * 
  */
 
-public class BuildingRights_1880 {
+public class BuildingRights_1880 extends StringState {
     
     private static final Map<Integer, String> RIGHTS_TEXT_MAP = createMap();
 
@@ -30,29 +31,29 @@ public class BuildingRights_1880 {
     private final static int NUM_RIGHTS = 4;
     
     private BitSet buildingRights = new BitSet(NUM_RIGHTS); 
-
-    public BuildingRights_1880() {
+    
+    public BuildingRights_1880(String name) {
+        super(name, "");
         for (int i = 0; i < NUM_RIGHTS; i++) {
-            buildingRights.clear(i);            
+            buildingRights.clear(i);
+        }
+    }    
+    
+    public String getText() {
+        return super.stringValue();
+    }
+
+    public void set(String string) {
+        super.set(string);
+        for (int i = 0; i < NUM_RIGHTS; i++) {
+            if (string.contains(RIGHTS_TEXT_MAP.get(i))) {
+                buildingRights.set(i);
+            } else {
+                buildingRights.clear(i);
+            }
         }
     }
     
-    public String rightsString() {
-        StringBuffer text = new StringBuffer();
-        boolean addPlus = false;
-        for (int i = 0; i < NUM_RIGHTS; i++) {
-            if (buildingRights.get(i) == true) {
-                if (addPlus == true) {
-                    text.append("+");
-                } else {
-                    addPlus = true;
-                }
-                text.append(RIGHTS_TEXT_MAP.get(i));
-            }
-        }
-        return text.toString();
-    }
-
     public boolean canBuildInPhase(PhaseI phase) {
         boolean canBuild = false;
         for (int i = 0; i < NUM_RIGHTS; i++) {
@@ -62,16 +63,6 @@ public class BuildingRights_1880 {
             }
         }
         return canBuild;
-    }
-
-    public void setRights(String buildingRightsString) {
-        for (int i = 0; i < NUM_RIGHTS; i++) {
-            if (buildingRightsString.contains(RIGHTS_TEXT_MAP.get(i))) {
-                buildingRights.set(i);
-            } else {
-                buildingRights.clear(i);
-            }
-        }
     }
 
     public static String[] getRightsForPresidentShareSize(int shares) {
@@ -92,5 +83,4 @@ public class BuildingRights_1880 {
         
         return options.toArray(new String[options.size()]);
     }
-
 }

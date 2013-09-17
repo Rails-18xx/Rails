@@ -106,8 +106,8 @@
 		revenue="0">
 		<SpecialProperties>
 		<SpecialProperty condition="ifOwnedByPlayer" when="anyTurn"  
-					class="rails.game.specific._1880.SpecialTrainBuy_1880" closedIfExercised="yes">
-					<SpecialTrainBuy_1880 traintype="2,2+2,3,3+3,4" deduction="100%"></SpecialTrainBuy_1880>
+					class="rails.game.special.SpecialTrainBuy" closedIfExercised="yes">
+					<SpecialTrainBuy traintype="2,2+2,3,3+3,4" deduction="100%" />
 		<!--  Kostenfreie Lok bei Phasenwechsel durch Lokkauf -->
 		<!-- The train can be moved upon purchase into one company owned by the 
 		owner of the certificate --> <!-- Company must have space for the new train, but can hand back an older 

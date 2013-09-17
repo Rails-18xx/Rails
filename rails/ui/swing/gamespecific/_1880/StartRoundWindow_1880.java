@@ -8,10 +8,10 @@ package rails.ui.swing.gamespecific._1880;
 import javax.swing.JDialog;
 import rails.ui.swing.StartRoundWindow;
 import rails.common.LocalText;
+import rails.game.action.BuyStartItem;
 import rails.game.action.PossibleAction;
 import rails.game.action.PossibleActions;
 import rails.game.action.StartItemAction;
-import rails.game.specific._1880.BuyStartItem_1880;
 import rails.game.specific._1880.SetupNewPublicDetails_1880;
 import rails.ui.swing.elements.*;
 
@@ -54,8 +54,8 @@ public class StartRoundWindow_1880 extends StartRoundWindow {
           immediateAction = null;
           if (nextAction instanceof StartItemAction) {
                StartItemAction action = (StartItemAction) nextAction;
-               if (action instanceof BuyStartItem_1880) {
-                   requestStartPrice((BuyStartItem_1880) action);
+               if (action instanceof BuyStartItem) {
+                   requestStartPrice((BuyStartItem) action);
                   return false;
                }
            }
