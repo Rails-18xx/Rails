@@ -72,7 +72,15 @@ public class StartItem {
     //protected static int nextIndex = 0;
 
     protected static Map<String, StartItem> startItemMap;
+    
+    public enum NoBidsReaction {
+        REDUCE_AND_REBID,
+        RUN_OPERATING_ROUND
+    };
 
+    protected NoBidsReaction noBidsReaction = NoBidsReaction.RUN_OPERATING_ROUND;
+
+    
     protected static Logger log =
             Logger.getLogger(StartItem.class.getPackage().getName());
 
@@ -125,7 +133,6 @@ public class StartItem {
      * after IPO initialisation.
      */
     public void init(GameManagerI gameManager) {
-
         this.players = gameManager.getPlayers();
         numberOfPlayers = players.size();
         bids = new MoneyModel[numberOfPlayers];
@@ -479,6 +486,14 @@ public class StartItem {
     public ModelObject getMinimumBidModel() {
         return minimumBid;
     }
+    
+    public void setNoBidsReaction(NoBidsReaction action) {
+        this.noBidsReaction = action;
+    }
+    
+    public NoBidsReaction getNoBidsReaction() {
+        return noBidsReaction;
+    }
 
     public static StartItem getByName(String name) {
         return startItemMap.get(name);
@@ -503,5 +518,7 @@ public class StartItem {
     public String getText () {
         return toString();
     }
+    
+    
 
 }

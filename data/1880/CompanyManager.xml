@@ -106,8 +106,8 @@
 		revenue="0">
 		<SpecialProperties>
 		<SpecialProperty condition="ifOwnedByPlayer" when="anyTurn"  
-					class="rails.game.specific._1880.SpecialTrainBuy_1880" closedIfExercised="yes">
-					<SpecialTrainBuy_1880 traintype="2,2+2,3,3+3,4" deduction="100%"></SpecialTrainBuy_1880>
+					class="rails.game.special.SpecialTrainBuy" closedIfExercised="yes">
+					<SpecialTrainBuy traintype="2,2+2,3,3+3,4" deduction="100%" />
 		<!--  Kostenfreie Lok bei Phasenwechsel durch Lokkauf -->
 		<!-- The train can be moved upon purchase into one company owned by the 
 		owner of the certificate --> <!-- Company must have space for the new train, but can hand back an older 
@@ -206,10 +206,10 @@
 		<Home hex="Q7" city="1"/>
 	</Company>
 	
-	<StartPacket roundClass="rails.game.specific._1880.StartRound_1880">
+	<StartPacket name="sellPrivates" roundClass="rails.game.specific._1880.StartRound_Privates_1880">
 		<Bidding initial="0" minimum="0" increment="5"/>
-		<Item name="WR" type="Private" basePrice="5"/>
-		<Item name="KR" type="Private" basePrice="10"/>
+		<Item name="WR" type="Private" basePrice="5" noBidsReaction="ReduceAndRebid" />
+		<Item name="KR" type="Private" basePrice="10" noBidsReaction="ReduceAndRebid" />
 		<Item name="YC" type="Private" basePrice="25"/>
 		<Item name="TL" type="Private" basePrice="45"/>
 		<Item name="CC" type="Private" basePrice="70"/>
@@ -218,6 +218,8 @@
 			<SubItem name="BCR" type="Major" president="yes"/>
 		</Item>
 		<Item name="RC" type="Private" basePrice="50"/>
+	</StartPacket>
+	<StartPacket name="chooseInvestors" roundClass="rails.game.specific._1880.StartRound_Investors_1880">
 		<Item name="1" type="Investor" basePrice="0"/>
 		<Item name="2" type="Investor" basePrice="0"/>
 		<Item name="3" type="Investor" basePrice="0"/>

@@ -198,8 +198,6 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
     protected String gmName;
     protected String gmKey;
 
-    protected StartPacket startPacket;
-
     protected PossibleActions possibleActions = PossibleActions.getInstance();
 
     protected List<PossibleAction> executedActions = new ArrayList<PossibleAction>();
@@ -577,13 +575,9 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         this.gameOptions = gameOptions;
         setGuiParameters();
 
-        if (startPacket == null)
-            startPacket = companyManager.getStartPacket(StartPacket.DEFAULT_NAME);
-        if (startPacket != null && !startPacket.areAllSold()) {
-            startPacket.init(this);
-
-            // If we have a non-exhausted start packet
-            startStartRound();
+        StartPacket startPacket = companyManager.getNextUnfinishedStartPacket();
+        if (startPacket != null) {
+            startStartRound(startPacket);
         } else {
             startStockRound();
         }
@@ -661,23 +655,30 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
      */
     public void nextRound(RoundI round) {
         if (round instanceof StartRound) {
-            if (startPacket != null && !startPacket.areAllSold()) {
-                startOperatingRound(runIfStartPacketIsNotCompletelySold());
-            } else if (skipFirstStockRound) {
-                PhaseI currentPhase =
-                    phaseManager.getCurrentPhase();
-                if (currentPhase.getNumberOfOperatingRounds() != numOfORs.intValue()) {
-                    numOfORs.set(currentPhase.getNumberOfOperatingRounds());
+            if (((StartRound) round).getStartPacket().areAllSold()) { // This start round was "completed"
+                StartPacket nextStartPacket = companyManager.getNextUnfinishedStartPacket();
+                if (nextStartPacket == null) {
+                    if (skipFirstStockRound) {
+                        PhaseI currentPhase =
+                                phaseManager.getCurrentPhase();
+                            if (currentPhase.getNumberOfOperatingRounds() != numOfORs.intValue()) {
+                                numOfORs.set(currentPhase.getNumberOfOperatingRounds());
+                            }
+                            log.info("Phase=" + currentPhase.getName() + " ORs=" + numOfORs);
+
+                            // Create a new OperatingRound (never more than one Stock Round)
+                            // OperatingRound.resetRelativeORNumber();
+
+                            relativeORNumber.set(1);
+                            startOperatingRound(true);                        
+                    } else {
+                        startStockRound(); // All start rounds complete - start stock rounds
+                    }
+                } else {
+                    startStartRound(nextStartPacket); // Start next start round
                 }
-                log.info("Phase=" + currentPhase.getName() + " ORs=" + numOfORs);
-
-                // Create a new OperatingRound (never more than one Stock Round)
-                // OperatingRound.resetRelativeORNumber();
-
-                relativeORNumber.set(1);
-                startOperatingRound(true);
             } else {
-                startStockRound();
+                startOperatingRound(runIfStartPacketIsNotCompletelySold());
             }
         } else if (round instanceof StockRound) {
             PhaseI currentPhase = getCurrentPhase();
@@ -698,8 +699,8 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             } else if (relativeORNumber.add(1) <= numOfORs.intValue()) {
                 // There will be another OR
                 startOperatingRound(true);
-            } else if (startPacket != null && !startPacket.areAllSold()) {
-                startStartRound();
+            } else if (companyManager.getNextUnfinishedStartPacket() != null) {
+                continueStartRound(companyManager.getNextUnfinishedStartPacket());
             } else {
                 if (gameOverPending.booleanValue() && gameEndsAfterSetOfORs) {
                     finishGame();
@@ -719,7 +720,15 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
         return false;
     }
 
-    protected void startStartRound() {
+    protected void startStartRound(StartPacket startPacket) {
+        beginStartRound(startPacket, true);
+    }
+    
+    protected void continueStartRound(StartPacket startPacket) {
+        beginStartRound(startPacket, false);
+    }
+    
+    protected void beginStartRound(StartPacket startPacket, boolean callInit) {
         String startRoundClassName = startPacket.getRoundClassName();
         Class<? extends StartRound> startRoundClass = null;
         try {
@@ -729,10 +738,14 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
                     + startRoundClassName, e);
             System.exit(1);
         }
+        if (callInit == true) {
+            startPacket.init(this);
+        }
         StartRound startRound = createRound (startRoundClass);
         startRoundNumber.add(1);
-        startRound.start ();
+        startRound.start(startPacket);
     }
+    
 
     protected void startStockRound() {
         StockRound sr = createRound (stockRoundClass);
@@ -1594,13 +1607,6 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
 
     public Portfolio getPortfolioByUniqueName (String name) {
         return portfolioUniqueNameMap.get(name);
-    }
-
-    /* (non-Javadoc)
-     * @see rails.game.GameManagerI#getStartPacket()
-     */
-    public StartPacket getStartPacket() {
-        return startPacket;
     }
 
     public PhaseI getCurrentPhase() {

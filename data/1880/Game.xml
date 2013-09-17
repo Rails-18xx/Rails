@@ -60,7 +60,7 @@
 		<TrainType name="2+2" majorStops="2" minorStops="2" cost="180" quantity="5">
 			<NewPhase phaseName="2+2"/>
 		</TrainType>
-		<TrainType name="3" majorStops="3" cost="180" quantity="6">
+		<TrainType name="3" majorStops="3" cost="180" quantity="5">
 			<NewPhase phaseName="3"/>
 		</TrainType>
 		<TrainType name="3+3" majorStops="3" minorStops="3" cost="300" quantity="5">
@@ -167,6 +167,6 @@
 		</Component>
 		<Component name="RevenueManager" class="rails.algorithms.RevenueManager">
 		<Modifier class="rails.game.specific._1880.OffBoardRevenueModifier_1880"/>
-		</Component>
+				</Component>
 		
 </ComponentManager>

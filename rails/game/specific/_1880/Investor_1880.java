@@ -3,7 +3,8 @@
  */
 package rails.game.specific._1880;
 
-import java.util.BitSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.jgrapht.graph.SimpleGraph;
@@ -13,16 +14,16 @@ import rails.algorithms.NetworkGraphBuilder;
 import rails.algorithms.NetworkVertex;
 import rails.algorithms.RevenueAdapter;
 import rails.algorithms.RevenueStaticModifier;
-import rails.common.GuiDef;
 import rails.common.parser.ConfigurationException;
+import rails.game.CompanyManagerI;
 import rails.game.GameManagerI;
+import rails.game.Player;
 import rails.game.PublicCompany;
+import rails.game.PublicCompanyI;
 import rails.game.Stop;
 import rails.game.TokenHolder;
 import rails.game.TokenI;
 import rails.game.TrainManager;
-import rails.game.state.BooleanState;
-import rails.game.state.HashMapState;
 
 /**
  * @author Martin 2011/04/11
@@ -30,52 +31,22 @@ import rails.game.state.HashMapState;
  */
 public class Investor_1880 extends PublicCompany implements RevenueStaticModifier {
 /*
- * Investors in 1880 get chosen at start after the initial starting package is sold out. They get one share from a new company 
- * TODO: Make sure that dividends aren't accumulated on the investors
-    
-*/
-    protected boolean canOwnShare=true;
-    
-    protected int maxPercofShares=1;
-    
-    protected boolean hasStockPrice=false;
-    
-    protected boolean hasParPrice=false;
+ * Investors in 1880 get chosen at start after the initial starting package is sold out. 
+ * They get one share from a new company 
+ */ 
+    // Values used to configure super class
+    final protected boolean hasStockPrice = false;    
+    final protected boolean hasParPrice = false;
     
     protected PublicCompany linkedCompany;  // An Investor is always linked to a (exactly one) Public Major Company..
     
-    /* Investors in 1880 operate with the newest train model on lease from the bank for zero costs.
-    */
-    protected boolean canBorrowTrain=true;
-
-    private BitSet buildingRights = new BitSet(5); // Not used - just here as a dummy value
-      
-    /**
+    /*
      * 
      */
     public Investor_1880() {
         super();
     }
-    
-    public int getCurrentTrainLimit() {
-        return 0;
-    }
-        
-    public boolean canOwnShare(){
-        return canOwnShare;
-    }
-    
-    public int maxPercofShares(){
-        return maxPercofShares;
-    }
-    public boolean hasStockPrice(){
-        return hasStockPrice;
-    }
-    
-    public boolean hasParPrice(){
-        return hasParPrice;
-    }
-    
+                    
     public PublicCompany getLinkedCompany(){
         return linkedCompany;
     }
@@ -90,24 +61,10 @@ public class Investor_1880 extends PublicCompany implements RevenueStaticModifie
         return false; 
         }
     
-    public BitSet getBuildingRights() {
-        return buildingRights;
-    }
-
-    public void setBuildingRights(BitSet buildingRights) {
-        this.buildingRights = buildingRights;
-    }
-
     public void finishConfiguration(GameManagerI gameManager)
             throws ConfigurationException {
-        // TODO Auto-generated method stub
         super.finishConfiguration(gameManager);
-        // Introducing the rights field in the Display to be used by Building Rights Display and other Special Properties...
-        gameManager.setGuiParameter (GuiDef.Parm.HAS_ANY_RIGHTS, true);
-        if (rights == null) rights = new HashMapState<String, String>(name+"_Rights");
-        // add revenue modifier for the Investors
         gameManager.getRevenueManager().addStaticModifier(this);
-        hasReachedDestination = new BooleanState (name+"_reachedDestination", false);   
     }
 
     public boolean modifyCalculator(RevenueAdapter revenueAdapter) {
@@ -151,6 +108,25 @@ public class Investor_1880 extends PublicCompany implements RevenueStaticModifie
             }
             
         return false;
+    }
+    
+    static public Investor_1880 getInvestorForPlayer(CompanyManagerI companyManager, Player player) {
+        for (Investor_1880 investor : getInvestors(companyManager)) {
+            if (investor.getPresident() == player) {
+                return investor;
+            }
+        }
+        return null;
+    }
+    
+    static public List<Investor_1880> getInvestors(CompanyManagerI companyManager) {
+        List<Investor_1880> investors = new ArrayList<Investor_1880>();
+        for (PublicCompanyI company : companyManager.getAllPublicCompanies()) {
+            if (company instanceof Investor_1880) {
+                investors.add((Investor_1880) company);
+            }
+        }
+        return investors;
     }
         
 }
