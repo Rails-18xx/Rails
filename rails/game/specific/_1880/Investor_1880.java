@@ -24,6 +24,7 @@ import rails.game.Stop;
 import rails.game.TokenHolder;
 import rails.game.TokenI;
 import rails.game.TrainManager;
+import rails.game.model.ModelObject;
 
 /**
  * @author Martin 2011/04/11
@@ -39,7 +40,11 @@ public class Investor_1880 extends PublicCompany implements RevenueStaticModifie
     final protected boolean hasParPrice = false;
     
     protected PublicCompany linkedCompany;  // An Investor is always linked to a (exactly one) Public Major Company..
-    
+
+    // Dummy rights...  investors really don't have any rights.  But because the ORPanel needs
+    // to have it...
+    private BuildingRights_1880 buildingRights = new BuildingRights_1880("buildingRights"); 
+
     /*
      * 
      */
@@ -83,6 +88,10 @@ public class Investor_1880 extends PublicCompany implements RevenueStaticModifie
     public boolean canRunTrains() {
         // By the time communism hits, this company can't run anyway.
         return true;       
+    }
+    
+    public ModelObject getRightsModel () {
+        return buildingRights;
     }
     
     public boolean isConnectedToLinkedCompany() {

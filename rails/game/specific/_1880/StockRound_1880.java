@@ -36,23 +36,23 @@ public class StockRound_1880 extends StockRound {
         super(aGameManager);
     }
     
-    public void start() {
-        for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) {
-            if (company.hasSpecialProperties() == true) {
-                List<SpecialPropertyI> properties = company.getSpecialProperties();
-                // TODO: Make this part of a "generic" instead of hardcoded...
-                if (company.getName().equals("WR") == true) {
-                    if (properties.get(0).isExercised() == true) {
-                        System.out.println("WR is exercised");
-                    } else {
-                        System.out.println("WR is not exercised");
-                    }
-                }
-            }
-        }
-        
-        super.start();
-    }
+//    public void start() {
+//        for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) {
+//            if (company.hasSpecialProperties() == true) {
+//                List<SpecialPropertyI> properties = company.getSpecialProperties();
+//                // TODO: Make this part of a "generic" instead of hardcoded...
+//                if (company.getName().equals("WR") == true) {
+//                    if (properties.get(0).isExercised() == true) {
+//                        System.out.println("WR is exercised");
+//                    } else {
+//                        System.out.println("WR is not exercised");
+//                    }
+//                }
+//            }
+//        }
+//        
+//        super.start();
+//    }
 
     @Override
     // The sell-in-same-turn-at-decreasing-price option does not apply here

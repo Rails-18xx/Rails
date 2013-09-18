@@ -10,6 +10,7 @@ import rails.algorithms.RevenueAdapter;
 import rails.algorithms.RevenueStaticModifier;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
+import rails.common.GuiDef;
 import rails.game.*;
 import rails.game.model.ModelObject;
 import rails.game.move.MoveableHolder;
@@ -86,6 +87,7 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
     public void finishConfiguration(GameManagerI gameManager)
             throws ConfigurationException {
         super.finishConfiguration(gameManager);
+        gameManager.setGuiParameter (GuiDef.Parm.HAS_ANY_RIGHTS, true);
         gameManager.getRevenueManager().addStaticModifier(this);
     }
 
