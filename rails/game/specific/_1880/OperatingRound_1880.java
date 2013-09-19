@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Set;
 
 import rails.common.DisplayBuffer;
-import rails.common.GuiDef;
 import rails.common.LocalText;
 import rails.game.Bank;
 import rails.game.BaseToken;
@@ -30,7 +29,6 @@ import rails.game.ReportBuffer;
 import rails.game.Stop;
 import rails.game.TileI;
 import rails.game.TrainI;
-import rails.game.TrainManager;
 import rails.game.TrainType;
 import rails.game.action.BuyTrain;
 import rails.game.action.LayTile;
@@ -40,8 +38,6 @@ import rails.game.action.SetDividend;
 import rails.game.action.UseSpecialProperty;
 import rails.game.move.CashMove;
 import rails.game.move.ObjectMove;
-import rails.game.special.SpecialProperty;
-import rails.game.special.SpecialPropertyI;
 import rails.game.special.SpecialTileLay;
 import rails.game.special.SpecialTrainBuy;
 import rails.game.specific._1880.PublicCompany_1880;
@@ -241,7 +237,7 @@ public class OperatingRound_1880 extends OperatingRound {
             // OR end, end it.
             if ((ipo.getTrainsPerType(action.getType()).length == 0)
                 && (trainTypeCanEndOR(action.getType()) == true)) {
-                orControl.orEndedLastTrainPurchased(operatingCompany.get());  //TODO: Fix this for stb
+                orControl.orEnded(operatingCompany.get());  //TODO: Fix this for stb
                 finishOR();
             } else {
                 // If this was not part of a special action, extend the OR.
@@ -325,7 +321,7 @@ public class OperatingRound_1880 extends OperatingRound {
                         // Need to make next train available !
                         trainManager.checkTrainAvailability(trainsToDiscard[0],
                                 ipo);
-                        orControl.orEndedNoTrainPurchased(operatingCompany.get());
+                        orControl.orEnded(operatingCompany.get());
                         finishOR();
                         return true;
                     }
@@ -520,12 +516,6 @@ public class OperatingRound_1880 extends OperatingRound {
             }
         }
         
-        if (orControl.getSkipFirstCompany() == true) {
-            companyList.remove(0);
-        }
-     
-               
-
         return new ArrayList<PublicCompanyI>(companyList);
     }
 

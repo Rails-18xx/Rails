@@ -34,7 +34,6 @@ public class GameManager_1880 extends GameManager {
      * 
      */
     
-    
     public GameManager_1880() {
         super();
         parSlotManager = new ParSlotManager_1880(this);

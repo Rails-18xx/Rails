@@ -88,7 +88,6 @@ abstract class RevenueCalculator {
     
     // activate dynamic revenue modifiers
     protected boolean callDynamicModifiers;
-    private int overallBonus;
     
     // termination results
     protected static enum Terminated {
@@ -532,7 +531,6 @@ abstract class RevenueCalculator {
         }
 
         if (callDynamicModifiers) totalValue += revenueAdapter.dynamicEvaluation();
-        totalValue += overallBonus;
         
         nbEvaluations++;
         log.debug("RC: current total value " + totalValue);
@@ -636,8 +634,4 @@ abstract class RevenueCalculator {
         return buffer.toString();
     }
 
-    public void setOverallRevenueBonus(int overallBonus) {
-        this.overallBonus = overallBonus;
-    }
-    
 }

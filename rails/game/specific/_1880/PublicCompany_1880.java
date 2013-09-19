@@ -10,6 +10,7 @@ import rails.algorithms.RevenueAdapter;
 import rails.algorithms.RevenueStaticModifier;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
+import rails.common.GuiDef;
 import rails.game.*;
 import rails.game.model.ModelObject;
 import rails.game.move.MoveableHolder;
@@ -86,6 +87,7 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
     public void finishConfiguration(GameManagerI gameManager)
             throws ConfigurationException {
         super.finishConfiguration(gameManager);
+        gameManager.setGuiParameter (GuiDef.Parm.HAS_ANY_RIGHTS, true);
         gameManager.getRevenueManager().addStaticModifier(this);
     }
 
@@ -109,6 +111,10 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
     
     public ModelObject getCommunistTakeOver() {
         return communistTakeOver;
+    }
+
+    public boolean modifyCalculator(RevenueAdapter revenueAdapter) {
+        return false;
     }
 
     /** Don't move the space if the company is withholding train income during the CommunistPhase
@@ -175,17 +181,6 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
         return this.shanghaiExchangeFounded.booleanValue();
     }
     
-    public boolean modifyCalculator(RevenueAdapter revenueAdapter) {
-        
-        // check if running company is this company, otherwise quit
-        if (revenueAdapter.getCompany() != this) return false; 
-
-        int additionalStockRevenue = revenueAdapter.getCompany().getCurrentSpace().getType().hasAddRevenue()*10;
-        revenueAdapter.addOverallBonus("Stock Position", additionalStockRevenue);
-        // no text needed
-        return false;
-    }
-
     /* (non-Javadoc)
      * @see rails.algorithms.RevenueStaticModifier#prettyPrint(rails.algorithms.RevenueAdapter)
      */
@@ -347,6 +342,5 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
         }
         return companies;
     }
-
 
 }

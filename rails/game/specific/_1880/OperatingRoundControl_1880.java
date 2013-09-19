@@ -1,6 +1,5 @@
 package rails.game.specific._1880;
 
-import rails.game.Company;
 import rails.game.GameDef.OrStep;
 import rails.game.PublicCompanyI;
 
@@ -8,9 +7,7 @@ public class OperatingRoundControl_1880 {
     
     private PublicCompanyI lastCompanyToBuyTrain;
     private PublicCompanyI firstCompanyToRun;
-    private OrStep nextStep;
-    private boolean skipFirstCompany;
-    
+    private OrStep nextStep;    
     
     public OperatingRoundControl_1880() {
         reset();
@@ -24,20 +21,12 @@ public class OperatingRoundControl_1880 {
         lastCompanyToBuyTrain = company;
     }
     
-    public void orEndedNoTrainPurchased(PublicCompanyI company) {
+    public void orEnded(PublicCompanyI company) {
         firstCompanyToRun = company;
-        skipFirstCompany = true;
-        nextStep = OrStep.INITIAL;
-        lastCompanyToBuyTrain = null;
-    }
-    
-    public void orEndedLastTrainPurchased(PublicCompanyI company) {
-        firstCompanyToRun = company;
-        skipFirstCompany = false;
         nextStep = OrStep.BUY_TRAIN;
         lastCompanyToBuyTrain = null;
     }
-    
+        
     public boolean startingAtTopOfOrder() {
         if (firstCompanyToRun == null) {
             return true;
@@ -49,14 +38,9 @@ public class OperatingRoundControl_1880 {
         return firstCompanyToRun;
     }
     
-    public boolean getSkipFirstCompany() {
-        return skipFirstCompany;
-    }
-    
     public void reset() {
         firstCompanyToRun = null;
         nextStep = OrStep.INITIAL;
-        skipFirstCompany = false;
     }
 
     public OrStep getNextPhase() {
