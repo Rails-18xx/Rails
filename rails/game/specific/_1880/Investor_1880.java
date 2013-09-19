@@ -96,26 +96,30 @@ public class Investor_1880 extends PublicCompany implements RevenueStaticModifie
     
     public boolean isConnectedToLinkedCompany() {
         NetworkGraphBuilder nwGraph = NetworkGraphBuilder.create(gameManager);
-        NetworkCompanyGraph_1880 companyGraph = NetworkCompanyGraph_1880.create(nwGraph, this);
-        SimpleGraph<NetworkVertex, NetworkEdge> graph = companyGraph.createConnectionGraph(true);
+        NetworkCompanyGraph_1880 companyGraph =
+                NetworkCompanyGraph_1880.create(nwGraph, this);
+        SimpleGraph<NetworkVertex, NetworkEdge> graph =
+                companyGraph.createConnectionGraph(true);
         Set<NetworkVertex> verticies = graph.vertexSet();
-            
-        PublicCompany_1880 linkedCompany = (PublicCompany_1880) ((Investor_1880) this).getLinkedCompany();
-            
+
+        PublicCompany_1880 linkedCompany =
+                (PublicCompany_1880) ((Investor_1880) this).getLinkedCompany();
+        if (linkedCompany != null) {
             for (TokenI token : linkedCompany.getLaidBaseTokens()) {
                 TokenHolder holder = token.getHolder();
                 if (!(holder instanceof Stop)) continue;
-                Stop stop = (Stop) holder;                
-                
+                Stop stop = (Stop) holder;
+
                 for (NetworkVertex vertex : verticies) {
                     if (vertex.getType() == NetworkVertex.VertexType.STATION) {
-                        if ((stop.getRelatedStation() == vertex.getStation()) && (stop.getHolder() == vertex.getHex())) {
+                        if ((stop.getRelatedStation() == vertex.getStation())
+                            && (stop.getHolder() == vertex.getHex())) {
                             return true;
                         }
                     }
                 }
             }
-            
+        }
         return false;
     }
     

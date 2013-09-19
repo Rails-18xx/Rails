@@ -17,11 +17,19 @@ public class StockMarketBonusModifier implements RevenueDynamicModifier {
     }
     
     public int predictionValue() {
-        return company.getCurrentSpace().getType().hasAddRevenue()*10;
+        if (company instanceof PublicCompany_1880) {
+            return company.getCurrentSpace().getType().hasAddRevenue()*10;
+        } else {
+            return 0;
+        }
     }
 
     public int evaluationValue(List<RevenueTrainRun> runs, boolean optimalRuns) {
-        return company.getCurrentSpace().getType().hasAddRevenue()*10;
+        if (company instanceof PublicCompany_1880) {
+            return company.getCurrentSpace().getType().hasAddRevenue()*10;
+        } else {
+            return 0;
+        }
     }
 
     public void adjustOptimalRun(List<RevenueTrainRun> optimalRuns) {        
