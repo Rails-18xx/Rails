@@ -113,6 +113,10 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
         return communistTakeOver;
     }
 
+    public boolean modifyCalculator(RevenueAdapter revenueAdapter) {
+        return false;
+    }
+
     /** Don't move the space if the company is withholding train income during the CommunistPhase
      * 
      */
@@ -170,17 +174,6 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
         return this.shanghaiExchangeFounded.booleanValue();
     }
     
-    public boolean modifyCalculator(RevenueAdapter revenueAdapter) {
-        
-        // check if running company is this company, otherwise quit
-        if (revenueAdapter.getCompany() != this) return false; 
-
-        int additionalStockRevenue = revenueAdapter.getCompany().getCurrentSpace().getType().hasAddRevenue()*10;
-        revenueAdapter.addOverallBonus("Stock Position", additionalStockRevenue);
-        // no text needed
-        return false;
-    }
-
     /* (non-Javadoc)
      * @see rails.algorithms.RevenueStaticModifier#prettyPrint(rails.algorithms.RevenueAdapter)
      */
@@ -342,6 +335,5 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
         }
         return companies;
     }
-
 
 }
