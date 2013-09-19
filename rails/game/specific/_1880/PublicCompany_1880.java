@@ -141,13 +141,20 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
      */
     @Override
     public int getNumberOfTileLays(String tileColour) {
-
+        PhaseI phase = gameManager.getPhaseManager().getCurrentPhase();
+        
          if ((tileColour.equals("yellow")) && (this.getName().equals("BCR"))) {
-             int result=2;
-             return result;
+             return 2;
          } else {
-        return super.getNumberOfTileLays(tileColour);
-         }
+         // New style
+             int tileLays = phase.getTileLaysPerColour(getTypeName(), tileColour);
+             if (tileLays <= 1) {
+                 extraTileLays = null;
+                 return tileLays;
+                 }
+            // More than one tile lay allowed.
+             return tileLays;
+             }
     }
 
     /**

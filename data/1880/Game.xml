@@ -99,7 +99,7 @@
 		<Phase name="2" realName="A1">
 			<Tiles colour="yellow">
 				<Lays companyType="Major" colour="yellow" number="1"/>
-				<Lays companyType="Minor" colour="yellow" number="1"/>
+				<Lays companyType="Investor" colour="yellow" number="1"/>
 			</Tiles>
 			<OperatingRounds number="-1"/>
 			<Float percentage="20"/>
@@ -111,9 +111,9 @@
 		<Phase name="3" realName="B1">
 			<Tiles colour="yellow,green"/>
 				<Lays companyType="Major" colour="yellow" number="2"/>
-				<Lays companyType="Minor" colour="yellow" number="1"/>
+				<Lays companyType="Investor" colour="yellow" number="1"/>
 				<Lays companyType="Major" colour="green" number="1"/>
-				<Lays companyType="Minor" colour="green" number="1"/>
+				<Lays companyType="Investor" colour="green" number="1"/>
 				
 			<Float percentage="30"/>
 			<Stocks avail="10"/>
