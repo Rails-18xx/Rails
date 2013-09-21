@@ -4,6 +4,7 @@
 package rails.game.specific._1880;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +57,7 @@ public class OperatingRound_1880 extends OperatingRound {
     
     List<Investor_1880> investorsToClose = new ArrayList<Investor_1880>();
     PossibleAction manditoryNextAction = null;
+    private PublicCompanyI firstCompanyBeforePrivates;
     
     
    /**
@@ -187,9 +189,9 @@ public class OperatingRound_1880 extends OperatingRound {
             }
 
             if (setNextOperatingCompany(true)) {
-                setStep(orControl.getNextPhase());
+                setStep(orControl.getNextStep());
             } else {
-                orControl.reset();
+                orControl.startNewOR();
                 finishOR();
             }                     
 
@@ -232,13 +234,14 @@ public class OperatingRound_1880 extends OperatingRound {
             return false;
         }
 
+        
         // If this train was not from the ipo, nothing else to do.
         if (action.getFromPortfolio() == ipo) {
             // If there are no more trains of this type, and this type causes an
             // OR end, end it.
             if ((ipo.getTrainsPerType(action.getType()).length == 0)
                 && (trainTypeCanEndOR(action.getType()) == true)) {
-                orControl.orEnded(operatingCompany.get());  //TODO: Fix this for stb
+                orControl.orExitToStockRound(operatingCompany.get());  //TODO: Fix this for stb
                 manditoryNextAction = actionForPrivateExchange(action.getType());
                 if (manditoryNextAction == null) {
                     finishOR();
@@ -328,7 +331,7 @@ public class OperatingRound_1880 extends OperatingRound {
                     result = done();
                     break;
                 }
-                if (operatingCompany.get() == orControl.getLastCompanyToBuyTrain()) {
+                if (operatingCompany.get() == orControl.lastCompanyToBuyTrain()) {
                     if (trainsBoughtThisTurn.isEmpty()) {
                         
                         // The current Company is the Company that has bought
@@ -348,7 +351,7 @@ public class OperatingRound_1880 extends OperatingRound {
                         // Need to make next train available !
                         trainManager.checkTrainAvailability(trainsToDiscard[0],
                                 ipo);
-                        orControl.orEnded(operatingCompany.get());
+                        orControl.orExitToStockRound(operatingCompany.get());
                         manditoryNextAction = actionForPrivateExchange(activeTrainTypeToDiscard);
                         if (manditoryNextAction == null) {
                             finishOR();
@@ -545,15 +548,19 @@ public class OperatingRound_1880 extends OperatingRound {
             if (!company.hasFloated()) continue;
             companyList.add(company);
         }
+        
+        // Save the first company in the order.  It is before this company that privates
+        // pay out.
+        firstCompanyBeforePrivates = companyList.get(0);
       
         // Skip ahead if we have to
         PublicCompanyI firstCompany = orControl.getFirstCompanyToRun();
         if (firstCompany != null) {
             while (companyList.get(0) != firstCompany) {
-                companyList.remove(0);
+                Collections.rotate(companyList, 1);
             }
         }
-        
+                
         return new ArrayList<PublicCompanyI>(companyList);
     }
 
@@ -779,16 +786,25 @@ public class OperatingRound_1880 extends OperatingRound {
         if (setNextOperatingCompany(false)) {
             setStep(GameDef.OrStep.INITIAL);
         } else {
-            orControl.reset();
+            orControl.startNewOR();
             finishOR();
         }
     }
     
     @Override
     protected void privatesPayOut() {
-        if (orControl.startingAtTopOfOrder()) {
-            super.privatesPayOut();
-       }
+        // Do nothing - this is now handled elsewhere because of the OR timing
+//        if (orControl.startingAtTopOfOrder()) {
+//            super.privatesPayOut();
+//       }
     }
+    
+    protected void setOperatingCompany (PublicCompanyI company) {
+        if (company == firstCompanyBeforePrivates) {
+            super.privatesPayOut();
+        }
+        super.setOperatingCompany(company);
+    }
+
     
 }

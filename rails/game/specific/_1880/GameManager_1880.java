@@ -73,8 +73,9 @@ public class GameManager_1880 extends GameManager {
                 continueStartRound(companyManager.getNextUnfinishedStartPacket());
             } else if (gameOverPending.booleanValue() && gameEndsAfterSetOfORs) {
                 finishGame();
-            } else if (orControl.hasOREnded() == true) {
+            } else if (orControl.isExitingToStockRound() == true) {
                 startStockRound();
+//                orControl.startingStockRound();
             } else {
                 startOperatingRound(true);
             }

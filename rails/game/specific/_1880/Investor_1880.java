@@ -93,6 +93,10 @@ public class Investor_1880 extends PublicCompany implements RevenueStaticModifie
     public ModelObject getRightsModel () {
         return buildingRights;
     }
+
+    public int getCurrentTrainLimit() {
+        return 0;
+    }
     
     public boolean isConnectedToLinkedCompany() {
         NetworkGraphBuilder nwGraph = NetworkGraphBuilder.create(gameManager);
