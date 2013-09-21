@@ -75,7 +75,6 @@ public class GameManager_1880 extends GameManager {
                 finishGame();
             } else if (orControl.isExitingToStockRound() == true) {
                 startStockRound();
-//                orControl.startingStockRound();
             } else {
                 startOperatingRound(true);
             }

@@ -122,6 +122,7 @@
 		</Phase>
 		<Phase name="3+3" realName="B2">
 			<OffBoardRevenue step="2"/>
+			<Trains limitStep="2"/>
 		</Phase>
 		<Phase name="4" realName="B3">
 			<Action name="CommunistTakeOver"/>
@@ -143,7 +144,7 @@
 			<Action name="ShanghaiExchangeOpen"/>
 			<Float percentage="60"/>
 			<OffBoardRevenue step="3"/>
-			<Trains limitStep="3" rusted="3"/>
+			<Trains limitStep="2" rusted="3"/>
 		</Phase>
 		<Phase name="6e" realName="C3">
 			<OffBoardRevenue step="3"/>
@@ -163,6 +164,7 @@
 			<Trains limitStep="3" rusted="4+4"/>
 		</Phase>
 		<Phase name="8e" realName="D3">
+		    <Trains limitStep="3"/>
 		</Phase>
 		</Component>
 		<Component name="RevenueManager" class="rails.algorithms.RevenueManager">
