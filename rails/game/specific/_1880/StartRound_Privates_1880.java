@@ -1,12 +1,14 @@
 package rails.game.specific._1880;
 
 import rails.common.LocalText;
+import rails.game.Bank;
 import rails.game.GameManagerI;
 import rails.game.Player;
 import rails.game.PublicCertificateI;
 import rails.game.ReportBuffer;
 import rails.game.StartItem;
 import rails.game.action.PossibleAction;
+import rails.game.move.CashMove;
 
 public class StartRound_Privates_1880 extends StartRound_Sequential {
 
@@ -30,7 +32,7 @@ public class StartRound_Privates_1880 extends StartRound_Sequential {
             PublicCompany_1880 company =
                     (PublicCompany_1880) castAction.getCompany();
             company.setBuildingRights(castAction.getBuildRightsString());
-            company.start(castAction.getPrice());
+            
             ((GameManager_1880) gameManager).getParSlotManager().setCompanyAtSlot(
                     company, castAction.getParSlotIndex());
             ReportBuffer.add(LocalText.getText("BuildingRightsChosen",
@@ -39,7 +41,12 @@ public class StartRound_Privates_1880 extends StartRound_Sequential {
             ReportBuffer.add(LocalText.getText("ParSlotChosen",
                     player.getName(), (castAction.getParSlotIndex() + 1),
                     company.getName()));
-
+            company.start(castAction.getPrice());
+            company.setFloated();
+            new CashMove(bank, company, 500);
+            ReportBuffer.add(LocalText.getText("FloatsWithCash",company.getName(), Bank.format(500)));
+            
+            
             pendingAction = null;
             return true;
         }
