@@ -55,6 +55,7 @@ public class OperatingRound_1880 extends OperatingRound {
     private ParSlotManager_1880 parSlotManager;
     
     List<Investor_1880> investorsToClose = new ArrayList<Investor_1880>();
+    PossibleAction manditoryNextAction = null;
     
     
    /**
@@ -238,7 +239,10 @@ public class OperatingRound_1880 extends OperatingRound {
             if ((ipo.getTrainsPerType(action.getType()).length == 0)
                 && (trainTypeCanEndOR(action.getType()) == true)) {
                 orControl.orEnded(operatingCompany.get());  //TODO: Fix this for stb
-                finishOR();
+                manditoryNextAction = actionForPrivateExchange(action.getType());
+                if (manditoryNextAction == null) {
+                    finishOR();
+                }
             } else {
                 // If this was not part of a special action, extend the OR.
                 SpecialTrainBuy stb = action.getSpecialProperty();
@@ -248,6 +252,28 @@ public class OperatingRound_1880 extends OperatingRound {
             }
         }
 
+        return true;
+    }
+
+    
+    private PossibleAction actionForPrivateExchange(TrainType soldOutTrainType) {
+        PossibleAction action = null;
+        PrivateCompanyI company = companyManager.getPrivateCompany("WR");
+        if (company.isClosed() == false) {
+            action = ExchangeForCash.getAction(company, soldOutTrainType);
+        }
+        return action;
+    }
+
+    private boolean exchangeForCash(ExchangeForCash action) {
+        if (action.getExchangeCompany() == true) {
+            ReportBuffer.add(LocalText.getText("WrExchanged", action.getOwnerName(),
+                    action.getCashValue()));
+            Player player = playerManager.getPlayerByName(action.getOwnerName());
+            new CashMove(bank, player, action.getCashValue());
+            companyManager.getPrivateCompany("WR").close();
+        }
+        finishOR();
         return true;
     }
 
@@ -291,7 +317,8 @@ public class OperatingRound_1880 extends OperatingRound {
         boolean result = false;
 
         selectedAction = action;
-
+        manditoryNextAction = null;
+        
         if (selectedAction instanceof NullAction) {
             NullAction nullAction = (NullAction) action;
             switch (nullAction.getMode()) {
@@ -322,7 +349,10 @@ public class OperatingRound_1880 extends OperatingRound {
                         trainManager.checkTrainAvailability(trainsToDiscard[0],
                                 ipo);
                         orControl.orEnded(operatingCompany.get());
-                        finishOR();
+                        manditoryNextAction = actionForPrivateExchange(activeTrainTypeToDiscard);
+                        if (manditoryNextAction == null) {
+                            finishOR();
+                        }
                         return true;
                     }
                 }
@@ -346,10 +376,14 @@ public class OperatingRound_1880 extends OperatingRound {
             buyTrain.setSpecialProperty((SpecialTrainBuy) ((UseSpecialProperty) action).getSpecialProperty()); // TODO Fix.
             result = specialBuyTrain(buyTrain);
             return result;
+        } else if ((action instanceof ExchangeForCash)) {
+            result = exchangeForCash((ExchangeForCash) action);
+            return true;
         } else {
             return super.process(action);
         }
     }
+
 
 
     /*
@@ -359,6 +393,10 @@ public class OperatingRound_1880 extends OperatingRound {
      */
     @Override
     public boolean setPossibleActions() {
+        if (manditoryNextAction != null) {
+            possibleActions.add(manditoryNextAction);
+            return true;
+        }
         
         /*
          * Filter out the Tile Lay Step if the operating Company is not allowed

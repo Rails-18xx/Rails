@@ -47,15 +47,6 @@
 	
 	<Company name="WR" longname="Woosong Railway" type="Private" basePrice="5"
 		revenue="0">
-		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByPlayer" when="anyTurn" 
-				class="rails.game.specific._1880.ExchangeForCash_1880">
-				<ExchangeForCash/>
-			</SpecialProperty>
-		</SpecialProperties>
-		<ClosingConditions>
-			<SpecialProperties condition="ifExercised"/>
-		</ClosingConditions>
 	</Company>
 	<Company name="KR" longname="Kaiping Railway" type="Private" basePrice="10"
 		revenue="5">

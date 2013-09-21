@@ -7,7 +7,7 @@ public class OperatingRoundControl_1880 {
     
     private PublicCompanyI lastCompanyToBuyTrain;
     private PublicCompanyI firstCompanyToRun;
-    private OrStep nextStep;    
+    private OrStep nextStep;
     
     public OperatingRoundControl_1880() {
         reset();
@@ -47,12 +47,10 @@ public class OperatingRoundControl_1880 {
         return nextStep;
     }
     
-    public boolean orEnded() {
+    public boolean hasOREnded() {
         if (firstCompanyToRun == null) {
             return false;
         }
         return true;
-    }
-    
-    
+    }    
 }
