@@ -32,6 +32,7 @@ import rails.game.TileI;
 import rails.game.TrainI;
 import rails.game.TrainType;
 import rails.game.action.BuyTrain;
+import rails.game.action.LayBaseToken;
 import rails.game.action.LayTile;
 import rails.game.action.NullAction;
 import rails.game.action.PossibleAction;
@@ -500,15 +501,17 @@ public class OperatingRound_1880 extends OperatingRound {
         MapHex hex = investor.getHomeHexes().get(0);
         Stop city = (Stop) token.getHolder();
         token.moveTo(token.getCompany());
-                
-        // Pick if the token gets replaced
-        if (closeInvestorAction.getReplaceToken() == true) {
-           if (hex.layBaseToken(linkedCompany, city.getNumber())) {
-               ReportBuffer.add(LocalText.getText("FIConnectedReplaceToken", linkedCompany.getName(), investor.getName()));            
-               linkedCompany.layBaseToken(hex, 0); // (should this be city.getNumber as well?)
-               }            
-        } else {
+
+        if (linkedCompany.getNumberOfFreeBaseTokens() > 0) { // Only exchange Tokens if there are any left in the linked company...
+            // Pick if the token gets replaced
+            if (closeInvestorAction.getReplaceToken() == true) {
+                    if (hex.layBaseToken(linkedCompany, city.getNumber())) {
+                        ReportBuffer.add(LocalText.getText("FIConnectedReplaceToken", linkedCompany.getName(), investor.getName()));            
+                          linkedCompany.layBaseToken(hex, 0); // (should this be city.getNumber as well?)
+                    }            
+               } else {
                ReportBuffer.add(LocalText.getText("FIConnectedDontReplaceToken", linkedCompany.getName(), investor.getName()));            
+               }
         }
      // Move the certificate
          ReportBuffer.add(LocalText.getText("FIConnectedMoveCert", investorOwner.getName(), linkedCompany.getName(), investor.getName()));            
