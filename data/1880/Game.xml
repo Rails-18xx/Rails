@@ -168,9 +168,10 @@
 		</Phase>
 		</Component>
 		<Component name="RevenueManager" class="rails.algorithms.RevenueManager">
-		<Modifier class="rails.game.specific._1880.OffBoardRevenueModifier_1880"/>
-		<Modifier class="rails.game.specific._1880.StockMarketBonusModifier"/>
-		<Modifier class="rails.game.specific._1880.FerryConnectionModifier"/>
-				</Component>
+			<Modifier class="rails.game.specific._1880.OffBoardRevenueModifier_1880"/>
+			<Modifier class="rails.game.specific._1880.StockMarketBonusModifier"/>
+			<Modifier class="rails.game.specific._1880.FerryConnectionModifier"/>
+			<Modifier class="rails.game.specific._1880.TaiwanWesternModifier"/>
+		</Component>
 		
 </ComponentManager>

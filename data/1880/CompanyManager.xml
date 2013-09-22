@@ -56,18 +56,9 @@
 	</Company>
 	<Company name="YC" longname="Yanda Ferry Company" type="Private"
 		basePrice="25" revenue="10">
-		<ClosingConditions>
-			<Phase>4+4</Phase>
-		</ClosingConditions>
 	</Company>
 	<Company name="TL" longname="Taiwan Western Line" type="Private" basePrice="45"
 		revenue="15">
-		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByPlayer" when="revenueStep" 
-					class="rails.game.special.LocatedBonus" transfer="toCompany">
-				<LocatedBonus name="Taiwan" location="N16" value="20"/>
-			</SpecialProperty>
-		</SpecialProperties>
 	</Company>
 	<Company name="CC" longname="Chinese Rivers Ferry Company" type="Private"
 		basePrice="70" revenue="20">
