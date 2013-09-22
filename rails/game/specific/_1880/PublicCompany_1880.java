@@ -152,6 +152,9 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
          if ((tileColour.equals("yellow")) && (this.getName().equals("BCR"))) {
              return 2;
          } else {
+             if ((tileColour.equals("yellow")) && (phase.getRealName().startsWith("A"))){
+                 return 1;
+             }
          // New style
              int tileLays = phase.getTileLaysPerColour(getTypeName(), tileColour);
              if (tileLays <= 1) {
