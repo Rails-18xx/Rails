@@ -240,18 +240,21 @@ public class GameUIManager_1880 extends GameUIManager {
         } else {
             action.setTreasuryToLinkedCompany(false);
         }
-        
-        String[] tokenOptions = new String[2];
-        tokenOptions[0] = LocalText.getText("ReplaceToken", action.getInvestor().getName(), action.getInvestor().getLinkedCompany().getName());
-        tokenOptions[1] = LocalText.getText("DoNotReplaceToken", action.getInvestor().getName(), action.getInvestor().getLinkedCompany().getName());
-        String tokenChoice =
-                (String) JOptionPane.showInputDialog(orWindow,
-                        LocalText.getText("FIClosingAskAboutToken"),
-                        LocalText.getText("TokenChoice"),
-                        JOptionPane.QUESTION_MESSAGE, null,
-                        tokenOptions, tokenOptions[0]);
-        if (tokenChoice == tokenOptions[0]) {
-            action.setReplaceToken(true);
+        if (action.getInvestor().getLinkedCompany().getNumberOfFreeBaseTokens() > 0) {
+            String[] tokenOptions = new String[2];
+            tokenOptions[0] = LocalText.getText("ReplaceToken", action.getInvestor().getName(), action.getInvestor().getLinkedCompany().getName());
+            tokenOptions[1] = LocalText.getText("DoNotReplaceToken", action.getInvestor().getName(), action.getInvestor().getLinkedCompany().getName());
+            String tokenChoice =
+                   (String) JOptionPane.showInputDialog(orWindow,
+                            LocalText.getText("FIClosingAskAboutToken"),
+                            LocalText.getText("TokenChoice"),
+                            JOptionPane.QUESTION_MESSAGE, null,
+                            tokenOptions, tokenOptions[0]);
+            if (tokenChoice == tokenOptions[0]) {
+                action.setReplaceToken(true);
+            } else {
+                action.setReplaceToken(false);
+            }
         } else {
             action.setReplaceToken(false);
         }
