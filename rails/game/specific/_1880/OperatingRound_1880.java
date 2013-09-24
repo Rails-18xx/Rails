@@ -32,7 +32,6 @@ import rails.game.TileI;
 import rails.game.TrainI;
 import rails.game.TrainType;
 import rails.game.action.BuyTrain;
-import rails.game.action.LayBaseToken;
 import rails.game.action.LayTile;
 import rails.game.action.NullAction;
 import rails.game.action.PossibleAction;
@@ -191,6 +190,10 @@ public class OperatingRound_1880 extends OperatingRound {
             }
 
             if (setNextOperatingCompany(true)) {
+                if (orControl.getNextStep() != GameDef.OrStep.INITIAL) {
+                    initTurn();
+                    initNormalTileLays();
+                }
                 setStep(orControl.getNextStep());
             } else {
                 orControl.startNewOR();
@@ -215,12 +218,7 @@ public class OperatingRound_1880 extends OperatingRound {
     }
 
     public boolean specialBuyTrain(BuyTrain action) {
-        OrStep currentStep = getStep();
-        setStep(GameDef.OrStep.BUY_TRAIN);
-        boolean results = super.buyTrain(action);
-        setStep(currentStep);
-        // TODO: Add 'end of OR'
-        return results;
+        return buyTrain(action);
     }
 
     /*
@@ -230,7 +228,12 @@ public class OperatingRound_1880 extends OperatingRound {
      */
     @Override
     public boolean buyTrain(BuyTrain action) {
+        // If this is a special buy, we might not be in the correct step...
+        OrStep currentStep = getStep();
+        setStep(GameDef.OrStep.BUY_TRAIN);
+
         if (super.buyTrain(action) != true) {
+            setStep(currentStep);
             return false;
         }
 
@@ -240,10 +243,8 @@ public class OperatingRound_1880 extends OperatingRound {
             // OR end, end it.
             if ((ipo.getTrainsPerType(action.getType()).length == 0)
                 && (trainTypeCanEndOR(action.getType()) == true)) {
-                orControl.orExitToStockRound(operatingCompany.get()); // TODO:
-                                                                      // Fix
-                                                                      // this
-                                                                      // for stb
+                orControl.orExitToStockRound(operatingCompany.get(),
+                        currentStep); // TODO: Fix this for stb
                 manditoryNextAction =
                         actionForPrivateExchange(action.getType());
                 if (manditoryNextAction == null) {
@@ -254,10 +255,13 @@ public class OperatingRound_1880 extends OperatingRound {
                 SpecialTrainBuy stb = action.getSpecialProperty();
                 if ((stb == null) || (stb.isExercised() == false)) {
                     orControl.trainPurchased((PublicCompany_1880) operatingCompany.get());
+                } else {
+                    // System.out.println("Ignoring purchase (stb)");
                 }
             }
         }
 
+        setStep(currentStep);
         return true;
     }
 
@@ -350,7 +354,8 @@ public class OperatingRound_1880 extends OperatingRound {
                         // Need to make next train available !
                         trainManager.checkTrainAvailability(trainsToDiscard[0],
                                 ipo);
-                        orControl.orExitToStockRound(operatingCompany.get());
+                        orControl.orExitToStockRound(operatingCompany.get(),
+                                OrStep.BUY_TRAIN);
                         manditoryNextAction =
                                 actionForPrivateExchange(activeTrainTypeToDiscard);
                         if (manditoryNextAction == null) {
@@ -435,7 +440,6 @@ public class OperatingRound_1880 extends OperatingRound {
                 nextStep(GameDef.OrStep.FINAL);
             }
         }
-
         return super.setPossibleActions();
     }
 
@@ -819,9 +823,6 @@ public class OperatingRound_1880 extends OperatingRound {
     @Override
     protected void privatesPayOut() {
         // Do nothing - this is now handled elsewhere because of the OR timing
-        // if (orControl.startingAtTopOfOrder()) {
-        // super.privatesPayOut();
-        // }
     }
 
     protected void setOperatingCompany(PublicCompanyI company) {
@@ -829,6 +830,9 @@ public class OperatingRound_1880 extends OperatingRound {
             super.privatesPayOut();
         }
         super.setOperatingCompany(company);
+        // if (operatingCompany.get().getTypeName().equals("Major")) {
+        // initTurn();
+        // }
     }
 
 }

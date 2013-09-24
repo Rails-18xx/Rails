@@ -17,9 +17,9 @@ public class OperatingRoundControl_1880 {
         exitingToStockRound = false;
     }
 
-    public void orExitToStockRound(PublicCompanyI company) {
+    public void orExitToStockRound(PublicCompanyI company, OrStep step) {
         firstCompanyToRun = company;
-        nextStep = OrStep.BUY_TRAIN;
+        nextStep = step;
         lastCompanyToBuyTrain = null;
         exitingToStockRound = true;
     }
