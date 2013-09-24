@@ -87,9 +87,9 @@
 		<Station id="city1" position="303" type="Town" value="20"/>
 		<Station id="city2" position="103" type="Town" value="20"/>
 		<Track from="side3" gauge="normal" to="city1"/>
-		<Track from="side3" gauge="normal" to="side0"/>
+		<Track from="city1" gauge="normal" to="side0"/>
 		<Track from="side1" gauge="normal" to="city2"/>
-		<Track from="side1" gauge="normal" to="side4"/>
+		<Track from="city2" gauge="normal" to="side4"/>
 	</Tile><Tile colour="yellow" id="8856" name="8856">
 		<Station id="city1" position="307" type="Town" value="20"/>
 		<Station id="city2" position="008" type="Town" value="20"/>
