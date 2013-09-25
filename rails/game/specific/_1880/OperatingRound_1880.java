@@ -4,19 +4,20 @@
 package rails.game.specific._1880;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import rails.common.DisplayBuffer;
-import rails.common.GuiDef;
 import rails.common.LocalText;
 import rails.game.Bank;
 import rails.game.BaseToken;
 import rails.game.CashHolder;
 import rails.game.GameDef;
 import rails.game.GameDef.OrStep;
+import rails.game.CompanyManagerI;
 import rails.game.GameManagerI;
 import rails.game.MapHex;
 import rails.game.OperatingRound;
@@ -30,7 +31,6 @@ import rails.game.ReportBuffer;
 import rails.game.Stop;
 import rails.game.TileI;
 import rails.game.TrainI;
-import rails.game.TrainManager;
 import rails.game.TrainType;
 import rails.game.action.BuyTrain;
 import rails.game.action.LayTile;
@@ -40,8 +40,6 @@ import rails.game.action.SetDividend;
 import rails.game.action.UseSpecialProperty;
 import rails.game.move.CashMove;
 import rails.game.move.ObjectMove;
-import rails.game.special.SpecialProperty;
-import rails.game.special.SpecialPropertyI;
 import rails.game.special.SpecialTileLay;
 import rails.game.special.SpecialTrainBuy;
 import rails.game.specific._1880.PublicCompany_1880;
@@ -57,18 +55,20 @@ public class OperatingRound_1880 extends OperatingRound {
 
     private OperatingRoundControl_1880 orControl;
     private ParSlotManager_1880 parSlotManager;
-    
+
     List<Investor_1880> investorsToClose = new ArrayList<Investor_1880>();
-    
-    
-   /**
+    PossibleAction manditoryNextAction = null;
+    private PublicCompanyI firstCompanyBeforePrivates;
+
+    /**
      * @param gameManager
      */
     public OperatingRound_1880(GameManagerI gameManager_1880) {
         super(gameManager_1880);
         orControl = ((GameManager_1880) gameManager_1880).getORControl();
-        parSlotManager = ((GameManager_1880) gameManager_1880).getParSlotManager();
-  }
+        parSlotManager =
+                ((GameManager_1880) gameManager_1880).getParSlotManager();
+    }
 
     @Override
     public void processPhaseAction(String name, String value) {
@@ -77,12 +77,12 @@ public class OperatingRound_1880 extends OperatingRound {
                 company.setAllCertsAvail(true);
                 if (!company.hasFloated()) {
                     company.setFloatPercentage(30);
-                } else { 
+                } else {
                     company.setFullFundingAvail();
                 }
             }
         }
-        if (name.equalsIgnoreCase("CommunistTakeOver")) {
+        if (name.equalsIgnoreCase("CommunistTakeOver")) {            
             for (PublicCompany_1880 company : PublicCompany_1880.getPublicCompanies(companyManager)) {
                 if (company.hasFloated()) {
                     company.setCommunistTakeOver(true);
@@ -91,8 +91,9 @@ public class OperatingRound_1880 extends OperatingRound {
             for (PublicCompany_1880 company : PublicCompany_1880.getPublicCompanies(companyManager)) {
                 if (!company.hasFloated()) {
                     company.setFloatPercentage(40);
-                }
+                } 
             }
+            checkForForcedRocketExchange();
         }
         if (name.equalsIgnoreCase("ShanghaiExchangeOpen")) {
             for (PublicCompany_1880 company : PublicCompany_1880.getPublicCompanies(companyManager)) {
@@ -108,6 +109,38 @@ public class OperatingRound_1880 extends OperatingRound {
         }
     }
 
+    private void checkForForcedRocketExchange() {
+        PrivateCompanyI rocket = companyManager.getPrivateCompany("RC");
+        if (rocket.isClosed() == false) {
+            Player rocketOwner = (Player) rocket.getPortfolio().getOwner();
+            List<PublicCompany_1880> ownedCompaniesWithSpace = new ArrayList<PublicCompany_1880>();
+            List<PublicCompany_1880> ownedCompaniesFull = new ArrayList<PublicCompany_1880>();
+            for (PublicCompany_1880 company : PublicCompany_1880.getPublicCompanies(companyManager)) {
+                if (company.getPresident() == rocketOwner) {
+                    if (company.getNumberOfTrains() < company.getCurrentTrainLimit()) {
+                        ownedCompaniesWithSpace.add(company);
+                    } else {
+                        ownedCompaniesFull.add(company);
+                    }
+                }
+            }
+            
+            ForcedRocketExchange action = null;
+            if (ownedCompaniesWithSpace.isEmpty() == false) {
+                action = new ForcedRocketExchange();
+                for (PublicCompany_1880 company : ownedCompaniesWithSpace) {
+                    action.addCompanyWithSpace(company);                    
+                }
+            } else if (ownedCompaniesFull.isEmpty() == false) {
+                action = new ForcedRocketExchange();
+                for (PublicCompany_1880 company : ownedCompaniesFull) {
+                    action.addCompanyWithNoSpace(company);                    
+                }
+            } 
+            manditoryNextAction = action;
+        }
+    }
+
     @Override
     protected void prepareRevenueAndDividendAction() {
         int[] allowedRevenueActions = new int[] {};
@@ -116,7 +149,8 @@ public class OperatingRound_1880 extends OperatingRound {
             if (operatingCompany.get() instanceof PublicCompany_1880) {
                 allowedRevenueActions =
                         new int[] { SetDividend.PAYOUT, SetDividend.WITHHOLD };
-            } else { // Investors in 1880 are not allowed to hand out Cash except
+            } else { // Investors in 1880 are not allowed to hand out Cash
+                     // except
                      // in Closing
                 allowedRevenueActions = new int[] { SetDividend.WITHHOLD };
             }
@@ -190,11 +224,15 @@ public class OperatingRound_1880 extends OperatingRound {
             }
 
             if (setNextOperatingCompany(true)) {
-                setStep(orControl.getNextPhase());
+                if (orControl.getNextStep() != GameDef.OrStep.INITIAL) {
+                    initTurn();
+                    initNormalTileLays();
+                }
+                setStep(orControl.getNextStep());
             } else {
-                orControl.reset();
+                orControl.startNewOR();
                 finishOR();
-            }                     
+            }
 
             return;
         }
@@ -206,24 +244,17 @@ public class OperatingRound_1880 extends OperatingRound {
         finishRound();
     }
 
-    
     private boolean trainTypeCanEndOR(TrainType type) {
         if (type.getName().equals("2R") == false) {
             return true;
         }
         return false;
     }
-    
-    
+
     public boolean specialBuyTrain(BuyTrain action) {
-        OrStep currentStep = getStep();
-        setStep(GameDef.OrStep.BUY_TRAIN);
-        boolean results = super.buyTrain(action);
-        setStep(currentStep);
-        // TODO: Add 'end of OR'
-        return results;
+        return buyTrain(action);
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -231,7 +262,12 @@ public class OperatingRound_1880 extends OperatingRound {
      */
     @Override
     public boolean buyTrain(BuyTrain action) {
+        // If this is a special buy, we might not be in the correct step...
+        OrStep currentStep = getStep();
+        setStep(GameDef.OrStep.BUY_TRAIN);
+
         if (super.buyTrain(action) != true) {
+            setStep(currentStep);
             return false;
         }
 
@@ -241,17 +277,47 @@ public class OperatingRound_1880 extends OperatingRound {
             // OR end, end it.
             if ((ipo.getTrainsPerType(action.getType()).length == 0)
                 && (trainTypeCanEndOR(action.getType()) == true)) {
-                orControl.orEndedLastTrainPurchased(operatingCompany.get());  //TODO: Fix this for stb
-                finishOR();
+                orControl.orExitToStockRound(operatingCompany.get(),
+                        currentStep); // TODO: Fix this for stb
+                manditoryNextAction =
+                        actionForPrivateExchange(action.getType());
+                if (manditoryNextAction == null) {
+                    finishOR();
+                }
             } else {
                 // If this was not part of a special action, extend the OR.
                 SpecialTrainBuy stb = action.getSpecialProperty();
                 if ((stb == null) || (stb.isExercised() == false)) {
                     orControl.trainPurchased((PublicCompany_1880) operatingCompany.get());
+                } else {
+                    // System.out.println("Ignoring purchase (stb)");
                 }
             }
         }
 
+        setStep(currentStep);
+        return true;
+    }
+
+    private PossibleAction actionForPrivateExchange(TrainType soldOutTrainType) {
+        PossibleAction action = null;
+        PrivateCompanyI company = companyManager.getPrivateCompany("WR");
+        if (company.isClosed() == false) {
+            action = ExchangeForCash.getAction(company, soldOutTrainType);
+        }
+        return action;
+    }
+
+    private boolean exchangeForCash(ExchangeForCash action) {
+        if (action.getExchangeCompany() == true) {
+            ReportBuffer.add(LocalText.getText("WrExchanged",
+                    action.getOwnerName(), action.getCashValue()));
+            Player player =
+                    playerManager.getPlayerByName(action.getOwnerName());
+            new CashMove(bank, player, action.getCashValue());
+            companyManager.getPrivateCompany("WR").close();
+        }
+        finishOR();
         return true;
     }
 
@@ -265,22 +331,18 @@ public class OperatingRound_1880 extends OperatingRound {
         PhaseI newPhase = getCurrentPhase();
         if (newPhase.getName().equals("2+2")) {
             askForPrivateRocket(newPhase);
-        }
-        else if (newPhase.getName().equals("3")) {
+        } else if (newPhase.getName().equals("3")) {
             askForPrivateRocket(newPhase);
-        }
-        else if (newPhase.getName().equals("3+3")) {
+        } else if (newPhase.getName().equals("3+3")) {
             askForPrivateRocket(newPhase);
-        }
-        else if (newPhase.getName().equals("4")) {
+        } else if (newPhase.getName().equals("4")) {
             askForPrivateRocket(newPhase);
-        }
-        else if (newPhase.getName().equals("8")) {
-            ((GameManager_1880) gameManager).numOfORs.set(2); 
+        } else if (newPhase.getName().equals("8")) {
+            ((GameManager_1880) gameManager).numOfORs.set(2);
             // After the first 8 has been bought there will be a last
             // Stockround and two ORs.
         } else if (newPhase.getName().equals("8e")) {
-                return;
+            return;
         }
 
     }
@@ -295,6 +357,7 @@ public class OperatingRound_1880 extends OperatingRound {
         boolean result = false;
 
         selectedAction = action;
+        manditoryNextAction = null;
 
         if (selectedAction instanceof NullAction) {
             NullAction nullAction = (NullAction) action;
@@ -305,9 +368,9 @@ public class OperatingRound_1880 extends OperatingRound {
                     result = done();
                     break;
                 }
-                if (operatingCompany.get() == orControl.getLastCompanyToBuyTrain()) {
+                if (operatingCompany.get() == orControl.lastCompanyToBuyTrain()) {
                     if (trainsBoughtThisTurn.isEmpty()) {
-                        
+
                         // The current Company is the Company that has bought
                         // the last train and that purchase was not in this OR..
                         // we now discard the remaining active trains of that
@@ -325,8 +388,13 @@ public class OperatingRound_1880 extends OperatingRound {
                         // Need to make next train available !
                         trainManager.checkTrainAvailability(trainsToDiscard[0],
                                 ipo);
-                        orControl.orEndedNoTrainPurchased(operatingCompany.get());
-                        finishOR();
+                        orControl.orExitToStockRound(operatingCompany.get(),
+                                OrStep.BUY_TRAIN);
+                        manditoryNextAction =
+                                actionForPrivateExchange(activeTrainTypeToDiscard);
+                        if (manditoryNextAction == null) {
+                            finishOR();
+                        }
                         return true;
                     }
                 }
@@ -344,11 +412,21 @@ public class OperatingRound_1880 extends OperatingRound {
         } else if (action instanceof CloseInvestor_1880) {
             closeInvestor(action);
             result = done();
-            return result;            
-        } else if ((action instanceof UseSpecialProperty) && (((UseSpecialProperty) action).getSpecialProperty() instanceof SpecialTrainBuy)) {
-            BuyTrain buyTrain = new BuyTrain(trainManager.getAvailableNewTrains().get(0), ipo, 0); //TODO get from special action
-            buyTrain.setSpecialProperty((SpecialTrainBuy) ((UseSpecialProperty) action).getSpecialProperty()); // TODO Fix.
+            return result;
+        } else if ((action instanceof UseSpecialProperty)
+                   && (((UseSpecialProperty) action).getSpecialProperty() instanceof SpecialTrainBuy)) {
+            BuyTrain buyTrain =
+                    new BuyTrain(trainManager.getAvailableNewTrains().get(0),
+                            ipo, 0); // TODO get from special action
+            buyTrain.setSpecialProperty((SpecialTrainBuy) ((UseSpecialProperty) action).getSpecialProperty()); // TODO
+                                                                                                               // Fix.
             result = specialBuyTrain(buyTrain);
+            return result;
+        } else if (action instanceof ExchangeForCash) {
+            result = exchangeForCash((ExchangeForCash) action);
+            return result;
+        } else if (action instanceof ForcedRocketExchange) {
+            result = forcedRocketExchange((ForcedRocketExchange) action);
             return result;
         } else {
             return super.process(action);
@@ -363,7 +441,11 @@ public class OperatingRound_1880 extends OperatingRound {
      */
     @Override
     public boolean setPossibleActions() {
-        
+        if (manditoryNextAction != null) {
+            possibleActions.add(manditoryNextAction);
+            return true;
+        }
+
         /*
          * Filter out the Tile Lay Step if the operating Company is not allowed
          * to build anymore because it doesnt possess the necessary building
@@ -385,8 +467,9 @@ public class OperatingRound_1880 extends OperatingRound {
             && (operatingCompany.get() instanceof Investor_1880)) {
             setStep(GameDef.OrStep.TRADE_SHARES);
         }
-        
-        if ((getStep() == GameDef.OrStep.TRADE_SHARES) && (operatingCompany.get() instanceof Investor_1880)) {
+
+        if ((getStep() == GameDef.OrStep.TRADE_SHARES)
+            && (operatingCompany.get() instanceof Investor_1880)) {
             Investor_1880 investor = (Investor_1880) operatingCompany.get();
             if (investor.isConnectedToLinkedCompany() == true) {
                 possibleActions.add(new CloseInvestor_1880(investor));
@@ -395,7 +478,6 @@ public class OperatingRound_1880 extends OperatingRound {
                 nextStep(GameDef.OrStep.FINAL);
             }
         }
-        
         return super.setPossibleActions();
     }
 
@@ -436,113 +518,137 @@ public class OperatingRound_1880 extends OperatingRound {
         operatingCompany.get().payout(amount);
 
     }
-    
+
     private void closeInvestor(PossibleAction action) {
         CloseInvestor_1880 closeInvestorAction = (CloseInvestor_1880) action;
         Investor_1880 investor = closeInvestorAction.getInvestor();
         Player investorOwner = investor.getPresident();
-        PublicCompany_1880 linkedCompany = (PublicCompany_1880) investor.getLinkedCompany();
+        PublicCompany_1880 linkedCompany =
+                (PublicCompany_1880) investor.getLinkedCompany();
         ReportBuffer.add(LocalText.getText("FIConnected", investor.getName(),
-                  linkedCompany.getName()));
-        
+                linkedCompany.getName()));
+
         // The owner gets $50
-        ReportBuffer.add(LocalText.getText("FIConnectedPayout", investorOwner.getName()));
+        ReportBuffer.add(LocalText.getText("FIConnectedPayout",
+                investorOwner.getName()));
         new CashMove(bank, investorOwner, 50);
-                
+
         // Pick where the treasury goes
         if (closeInvestorAction.getTreasuryToLinkedCompany() == true) {
-        ReportBuffer.add(LocalText.getText("FIConnectedTreasuryToCompany", linkedCompany.getName(), investor.getName(), investor.getCash()));            
-        new CashMove(investor, linkedCompany, investor.getCash());
+            ReportBuffer.add(LocalText.getText("FIConnectedTreasuryToCompany",
+                    linkedCompany.getName(), investor.getName(),
+                    investor.getCash()));
+            new CashMove(investor, linkedCompany, investor.getCash());
         } else {
-             ReportBuffer.add(LocalText.getText("FIConnectedTreasuryToOwner", investorOwner.getName(), investor.getName(), (investor.getCash()/5)));            
-             new CashMove(investor, investorOwner, (investor.getCash() / 5));
-             new CashMove(investor, bank, investor.getCash());
+            ReportBuffer.add(LocalText.getText("FIConnectedTreasuryToOwner",
+                    investorOwner.getName(), investor.getName(),
+                    (investor.getCash() / 5)));
+            new CashMove(investor, investorOwner, (investor.getCash() / 5));
+            new CashMove(investor, bank, investor.getCash());
         }
-                
+
         BaseToken token = (BaseToken) investor.getTokens().get(0);
         MapHex hex = investor.getHomeHexes().get(0);
         Stop city = (Stop) token.getHolder();
         token.moveTo(token.getCompany());
-                
+
         // Pick if the token gets replaced
         if (closeInvestorAction.getReplaceToken() == true) {
-           if (hex.layBaseToken(linkedCompany, city.getNumber())) {
-               ReportBuffer.add(LocalText.getText("FIConnectedReplaceToken", linkedCompany.getName(), investor.getName()));            
-               linkedCompany.layBaseToken(hex, 0); // (should this be city.getNumber as well?)
-               }            
+            if (hex.layBaseToken(linkedCompany, city.getNumber())) {
+                ReportBuffer.add(LocalText.getText("FIConnectedReplaceToken",
+                        linkedCompany.getName(), investor.getName()));
+                linkedCompany.layBaseToken(hex, 0); // (should this be
+                                                    // city.getNumber as well?)
+            }
         } else {
-               ReportBuffer.add(LocalText.getText("FIConnectedDontReplaceToken", linkedCompany.getName(), investor.getName()));            
+            ReportBuffer.add(LocalText.getText("FIConnectedDontReplaceToken",
+                    linkedCompany.getName(), investor.getName()));
         }
-     // Move the certificate
-         ReportBuffer.add(LocalText.getText("FIConnectedMoveCert", investorOwner.getName(), linkedCompany.getName(), investor.getName()));            
-         Portfolio investorPortfolio = investor.getPortfolio();
-         List<PublicCertificateI> investorCerts = investorPortfolio.getCertificates();
-         investorCerts.get(0).moveTo(investorOwner.getPortfolio()); // should only be one
-         // Set the company to close at the end of the operating round.  It's just too 
-         // hard to do it immediately - the checks to see if the operating order changed 
-         // conflict with the check to see if something closed.
-        
-         investorsToClose.add(investor);
-     }
+        // Move the certificate
+        ReportBuffer.add(LocalText.getText("FIConnectedMoveCert",
+                investorOwner.getName(), linkedCompany.getName(),
+                investor.getName()));
+        Portfolio investorPortfolio = investor.getPortfolio();
+        List<PublicCertificateI> investorCerts =
+                investorPortfolio.getCertificates();
+        investorCerts.get(0).moveTo(investorOwner.getPortfolio()); // should
+                                                                   // only be
+                                                                   // one
+        // Set the company to close at the end of the operating round. It's just
+        // too
+        // hard to do it immediately - the checks to see if the operating order
+        // changed
+        // conflict with the check to see if something closed.
 
-    /* (non-Javadoc)
+        investorsToClose.add(investor);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see rails.game.Round#setOperatingCompanies()
      */
     @Override
     public List<PublicCompanyI> setOperatingCompanies() {
-        // These are Initialized here - there's no opportunity to do this in the constructor 
-        // for OperatingRound, and this function gets called from that constructor.  Yuck.
+        // These are Initialized here - there's no opportunity to do this in the
+        // constructor
+        // for OperatingRound, and this function gets called from that
+        // constructor. Yuck.
         orControl = ((GameManager_1880) gameManager).getORControl();
         parSlotManager = ((GameManager_1880) gameManager).getParSlotManager();
 
         List<PublicCompanyI> companyList = new ArrayList<PublicCompanyI>();
 
-        // Put in Foreign Investors first      
+        // Put in Foreign Investors first
         for (Investor_1880 investor : Investor_1880.getInvestors(companyManager)) {
             if (investor.isClosed() == false) {
                 companyList.add(investor);
             }
         }
-      
+
         // Now the share companies in par slot order
-        List<PublicCompanyI> companies = parSlotManager.getCompaniesInParSlotOrder();
+        List<PublicCompanyI> companies =
+                parSlotManager.getCompaniesInParSlotOrder();
         for (PublicCompanyI company : companies) {
-            if (!canCompanyOperateThisRound(company)) continue; 
+            if (!canCompanyOperateThisRound(company)) continue;
             if (!company.hasFloated()) continue;
             companyList.add(company);
         }
-      
+
+        // Save the first company in the order. It is before this company that
+        // privates
+        // pay out.
+        firstCompanyBeforePrivates = companyList.get(0);
+
         // Skip ahead if we have to
         PublicCompanyI firstCompany = orControl.getFirstCompanyToRun();
         if (firstCompany != null) {
             while (companyList.get(0) != firstCompany) {
-                companyList.remove(0);
+                Collections.rotate(companyList, 1);
             }
         }
-        
-        if (orControl.getSkipFirstCompany() == true) {
-            companyList.remove(0);
-        }
-     
-               
 
         return new ArrayList<PublicCompanyI>(companyList);
     }
 
-    /* (non-Javadoc)
-     * @see rails.game.Round#setOperatingCompanies(java.util.List, rails.game.PublicCompanyI)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see rails.game.Round#setOperatingCompanies(java.util.List,
+     * rails.game.PublicCompanyI)
      */
     @Override
     public List<PublicCompanyI> setOperatingCompanies(
             List<PublicCompanyI> oldOperatingCompanies,
             PublicCompanyI lastOperatingCompany) {
         // TODO Auto-generated method stub
-       return setOperatingCompanies();
+        return setOperatingCompanies();
     }
 
-    /*=======================================
-     *  4.   LAYING TILES
-     *=======================================*/
+    /*
+     * ======================================= 4. LAYING TILES
+     * =======================================
+     */
 
     @Override
     public boolean layTile(LayTile action) {
@@ -564,9 +670,8 @@ public class OperatingRound_1880 extends OperatingRound {
             // Must be correct company.
             if (!companyName.equals(operatingCompany.get().getName())) {
                 errMsg =
-                    LocalText.getText("WrongCompany",
-                            companyName,
-                            operatingCompany.get().getName() );
+                        LocalText.getText("WrongCompany", companyName,
+                                operatingCompany.get().getName());
                 break;
             }
             // Must be correct step
@@ -579,14 +684,14 @@ public class OperatingRound_1880 extends OperatingRound {
 
             if (!getCurrentPhase().isTileColourAllowed(tile.getColourName())) {
                 errMsg =
-                    LocalText.getText("TileNotYetAvailable",
-                            tile.getExternalId());
+                        LocalText.getText("TileNotYetAvailable",
+                                tile.getExternalId());
                 break;
             }
             if (tile.countFreeTiles() == 0) {
                 errMsg =
-                    LocalText.getText("TileNotAvailable",
-                            tile.getExternalId());
+                        LocalText.getText("TileNotAvailable",
+                                tile.getExternalId());
                 break;
             }
 
@@ -599,10 +704,8 @@ public class OperatingRound_1880 extends OperatingRound {
                 List<TileI> tiles = action.getTiles();
                 if (tiles != null && !tiles.isEmpty() && !tiles.contains(tile)) {
                     errMsg =
-                        LocalText.getText(
-                                "TileMayNotBeLaidInHex",
-                                tile.getExternalId(),
-                                hex.getName() );
+                            LocalText.getText("TileMayNotBeLaidInHex",
+                                    tile.getExternalId(), hex.getName());
                     break;
                 }
                 stl = action.getSpecialProperty();
@@ -615,49 +718,40 @@ public class OperatingRound_1880 extends OperatingRound {
              */
             if (!extra && !validateNormalTileLay(tile)) {
                 errMsg =
-                    LocalText.getText("NumberOfNormalTileLaysExceeded",
-                            tile.getColourName());
+                        LocalText.getText("NumberOfNormalTileLaysExceeded",
+                                tile.getColourName());
                 break;
             }
 
-            // Sort out cost
-            if (stl != null && stl.isFree()) {
-                cost = hex.getTileCost()-20;  //Or we implement a general SpecialRight that deduces cost if a private is owned
-            } else {
-                cost = hex.getTileCost();
-            }
+            cost = getTileCost(hex);
 
             // Amount must be non-negative multiple of 10
             if (cost < 0) {
                 errMsg =
-                    LocalText.getText("NegativeAmountNotAllowed",
-                            Bank.format(cost));
+                        LocalText.getText("NegativeAmountNotAllowed",
+                                Bank.format(cost));
                 break;
             }
             if (cost % 10 != 0) {
                 errMsg =
-                    LocalText.getText("AmountMustBeMultipleOf10",
-                            Bank.format(cost));
+                        LocalText.getText("AmountMustBeMultipleOf10",
+                                Bank.format(cost));
                 break;
             }
             // Does the company have the money?
             if (cost > operatingCompany.get().getCash()) {
                 errMsg =
-                    LocalText.getText("NotEnoughMoney",
-                            companyName,
-                            Bank.format(operatingCompany.get().getCash()),
-                            Bank.format(cost) );
+                        LocalText.getText("NotEnoughMoney", companyName,
+                                Bank.format(operatingCompany.get().getCash()),
+                                Bank.format(cost));
                 break;
             }
             break;
         }
         if (errMsg != null) {
-            DisplayBuffer.add(LocalText.getText("CannotLayTileOn",
-                    companyName,
-                    tile.getExternalId(),
-                    hex.getName(),
-                    Bank.format(cost),
-                    errMsg ));
+            DisplayBuffer.add(LocalText.getText("CannotLayTileOn", companyName,
+                    tile.getExternalId(), hex.getName(), Bank.format(cost),
+                    errMsg));
             return false;
         }
 
@@ -665,32 +759,26 @@ public class OperatingRound_1880 extends OperatingRound {
         moveStack.start(true);
 
         if (tile != null) {
-            if (cost > 0)
-                new CashMove(operatingCompany.get(), bank, cost);
+            if (cost > 0) new CashMove(operatingCompany.get(), bank, cost);
             operatingCompany.get().layTile(hex, tile, orientation, cost);
 
             if (cost == 0) {
-                ReportBuffer.add(LocalText.getText("LaysTileAt",
-                        companyName,
-                        tile.getExternalId(),
-                        hex.getName(),
+                ReportBuffer.add(LocalText.getText("LaysTileAt", companyName,
+                        tile.getExternalId(), hex.getName(),
                         hex.getOrientationName(orientation)));
             } else {
                 ReportBuffer.add(LocalText.getText("LaysTileAtFor",
-                        companyName,
-                        tile.getExternalId(),
-                        hex.getName(),
-                        hex.getOrientationName(orientation),
-                        Bank.format(cost) ));
+                        companyName, tile.getExternalId(), hex.getName(),
+                        hex.getOrientationName(orientation), Bank.format(cost)));
             }
             hex.upgrade(action);
 
             // Was a special property used?
             if (stl != null) {
                 stl.setExercised();
-                //currentSpecialTileLays.remove(action);
+                // currentSpecialTileLays.remove(action);
                 log.debug("This was a special tile lay, "
-                        + (extra ? "" : " not") + " extra");
+                          + (extra ? "" : " not") + " extra");
 
             }
             if (!extra) {
@@ -706,19 +794,40 @@ public class OperatingRound_1880 extends OperatingRound {
         return true;
     }
 
-    private void askForPrivateRocket(PhaseI newPhase) {
-         
+    
+    // TODO: Make generic
+    private int getTileCost(MapHex hex) {
+        // Lucky us.  Tiles that cost 20, 50, and 60 happen to be rivers.  Tiles that cost
+        // anything else are not.
+        int baseCost = hex.getTileCost();
+        if ((baseCost == 20) || (baseCost == 50) || (baseCost == 60)) {
+            PrivateCompanyI riverFerry = companyManager.getPrivateCompany("CC");            
+            if (riverFerry.getPortfolio().getOwner() == getCurrentPlayer()) {
+                baseCost = baseCost - 20;
+            }
+        }
+        return baseCost;
     }
 
-    /* (non-Javadoc)
-     * @see rails.game.OperatingRound#processGameSpecificAction(rails.game.action.PossibleAction)
+    private void askForPrivateRocket(PhaseI newPhase) {
+
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * rails.game.OperatingRound#processGameSpecificAction(rails.game.action
+     * .PossibleAction)
      */
     @Override
     public boolean processGameSpecificAction(PossibleAction action) {
         return super.processGameSpecificAction(action);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see rails.game.OperatingRound#setGameSpecificPossibleActions()
      */
     @Override
@@ -732,16 +841,17 @@ public class OperatingRound_1880 extends OperatingRound {
         }
         super.finishOR();
     }
-    
+
     protected void finishTurn() {
         if (!operatingCompany.get().isClosed()) {
             operatingCompany.get().setOperated();
             companiesOperatedThisRound.add(operatingCompany.get());
 
-            // Check if any privates must be closed (now only applies to 1856 W&SR)
+            // Check if any privates must be closed (now only applies to 1856
+            // W&SR)
             // Copy list first to avoid concurrent modifications
-            for (PrivateCompanyI priv :
-                new ArrayList<PrivateCompanyI> (operatingCompany.get().getPortfolio().getPrivateCompanies())) {
+            for (PrivateCompanyI priv : new ArrayList<PrivateCompanyI>(
+                    operatingCompany.get().getPortfolio().getPrivateCompanies())) {
                 priv.checkClosingIfExercised(true);
             }
         }
@@ -751,16 +861,35 @@ public class OperatingRound_1880 extends OperatingRound {
         if (setNextOperatingCompany(false)) {
             setStep(GameDef.OrStep.INITIAL);
         } else {
-            orControl.reset();
+            orControl.startNewOR();
             finishOR();
         }
     }
-    
+
     @Override
     protected void privatesPayOut() {
-        if (orControl.startingAtTopOfOrder()) {
-            super.privatesPayOut();
-       }
+        // Do nothing - this is now handled elsewhere because of the OR timing
     }
+
+    protected void setOperatingCompany(PublicCompanyI company) {
+        if (company == firstCompanyBeforePrivates) {
+            super.privatesPayOut();
+        }
+        super.setOperatingCompany(company);
+        // if (operatingCompany.get().getTypeName().equals("Major")) {
+        // initTurn();
+        // }
+    }
+
+    
+    private boolean forcedRocketExchange(ForcedRocketExchange action) {
+        moveStack.start(true);
+
+        TrainI train = trainManager.getAvailableNewTrains().get(0); // TODO: Verify that this is a 4-train
+        PublicCompanyI company = companyManager.getPublicCompany(action.getCompanyToReceiveTrain());
+        company.buyTrain(train, 0);
+        return true;
+    }
+
     
 }

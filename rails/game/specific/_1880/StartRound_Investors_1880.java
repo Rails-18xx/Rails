@@ -79,7 +79,11 @@ public class StartRound_Investors_1880 extends StartRound {
         
         investorsPurchased += 1;
         if (investorsPurchased == gameManager.getNumberOfPlayers()) {
-            finishRound();            
+            for (StartItem item : startPacket.getItems()) {
+                if (item.isSold() == false) {
+                    item.setStatus(StartItem.SOLD);
+                }
+            }
         }
         return true;
     }
@@ -106,11 +110,6 @@ public class StartRound_Investors_1880 extends StartRound {
             }
         }
 
-        for (StartItem item : startPacket.getItems()) {
-            if (item.isSold() == false) {
-                item.setStatus(StartItem.SOLD);
-            }
-        }
         super.finishRound();
     }
 

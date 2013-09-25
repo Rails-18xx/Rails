@@ -34,7 +34,6 @@ public class GameManager_1880 extends GameManager {
      * 
      */
     
-    
     public GameManager_1880() {
         super();
         parSlotManager = new ParSlotManager_1880(this);
@@ -74,7 +73,7 @@ public class GameManager_1880 extends GameManager {
                 continueStartRound(companyManager.getNextUnfinishedStartPacket());
             } else if (gameOverPending.booleanValue() && gameEndsAfterSetOfORs) {
                 finishGame();
-            } else if (orControl.orEnded() == true) {
+            } else if (orControl.isExitingToStockRound() == true) {
                 startStockRound();
             } else {
                 startOperatingRound(true);

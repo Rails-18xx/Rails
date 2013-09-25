@@ -35,24 +35,6 @@ public class StockRound_1880 extends StockRound {
     public StockRound_1880(GameManagerI aGameManager) {
         super(aGameManager);
     }
-    
-    public void start() {
-        for (PrivateCompanyI company : companyManager.getAllPrivateCompanies()) {
-            if (company.hasSpecialProperties() == true) {
-                List<SpecialPropertyI> properties = company.getSpecialProperties();
-                // TODO: Make this part of a "generic" instead of hardcoded...
-                if (company.getName().equals("WR") == true) {
-                    if (properties.get(0).isExercised() == true) {
-                        System.out.println("WR is exercised");
-                    } else {
-                        System.out.println("WR is not exercised");
-                    }
-                }
-            }
-        }
-        
-        super.start();
-    }
 
     @Override
     // The sell-in-same-turn-at-decreasing-price option does not apply here
@@ -431,66 +413,6 @@ public class StockRound_1880 extends StockRound {
         {
             return false;
         }
-    }
-
-    /* (non-Javadoc)
-     * @see rails.game.StockRound#useSpecialProperty(rails.game.action.UseSpecialProperty)
-     */
-    @Override
-    public boolean useSpecialProperty(UseSpecialProperty action) {
-        SpecialPropertyI sp = action.getSpecialProperty();
-
-        // TODO This should work for all subclasses, but not all have execute()
-        // yet.
-        if (sp instanceof ExchangeForCash_1880) {
-
-            boolean result = executeExchangeForCash((ExchangeForCash_1880) sp);
-            if (result) hasActed.set(true);
-            return result;
-
-        } else {
-            return super.useSpecialProperty(action);
-        }
-     
-    }
-
-    private boolean executeExchangeForCash(ExchangeForCash_1880 sp) {
-        CompanyI privateCompany = sp.getOriginalCompany();
-        Portfolio portfolio = privateCompany.getPortfolio();
-        
-        Player player = null;
-        String errMsg = null;
-        
-        while (true) {
-
-            /* Check if the private is owned by a player */
-            if (!(portfolio.getOwner() instanceof Player)) {
-                errMsg =
-                    LocalText.getText("PrivateIsNotOwnedByAPlayer",
-                            privateCompany.getName());
-                break;
-            }
-            player = (Player) portfolio.getOwner();
-            break;
-        }
-        if (errMsg != null) {
-            DisplayBuffer.add(LocalText.getText(
-                    "CannotSwapPrivateForCash",
-                    player.getName(),
-                    privateCompany.getName(),
-                    errMsg ));
-            return false;
-        }
-        
-        moveStack.start(true);
-        int amount = sp.getPhaseAmount();
-        if (amount >0 ) {
-        player.addCash(amount);
-        sp.setExercised();
-        privateCompany.setClosed();
-        return true;
-        }
-        return false;
     }
 
     /* (non-Javadoc)

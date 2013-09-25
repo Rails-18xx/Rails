@@ -6,12 +6,16 @@ package rails.ui.swing.gamespecific._1880;
 
 
 import java.util.Arrays;
+import java.util.List;
+
 import javax.swing.JOptionPane;
 
 import rails.ui.swing.GameUIManager;
 import rails.common.LocalText;
 import rails.game.specific._1880.BuildingRights_1880;
 import rails.game.specific._1880.CloseInvestor_1880;
+import rails.game.specific._1880.ExchangeForCash;
+import rails.game.specific._1880.ForcedRocketExchange;
 import rails.game.specific._1880.ParSlotManager_1880;
 import rails.game.specific._1880.SetupNewPublicDetails_1880;
 import rails.game.specific._1880.StartCompany_1880;
@@ -28,7 +32,9 @@ public class GameUIManager_1880 extends GameUIManager {
     public static final String COMPANY_SELECT_PRESIDENT_SHARE_SIZE = "SelectPresidentShareSize";
     public static final String COMPANY_START_PRICE_DIALOG = "CompanyStartPrice";
     public static final String COMPANY_SELECT_PAR_SLOT_INDEX = "CompanySelectParSlotIndex";
-    
+    public static final String EXCHANGE_PRIVATE_FOR_CASH = "ExchangePrivateForCash";
+    public static final String FORCED_ROCKET_EXCHANGE = "ForcedRocketExchange";
+
     public static final String NEW_COMPANY_SELECT_BUILDING_RIGHT = "NewSelectBuildingRight";
     
 
@@ -173,8 +179,40 @@ public class GameUIManager_1880 extends GameUIManager {
               setCurrentDialog(dialog, action);
               statusWindow.disableButtons();
               return;
-
         
+        } else if (EXCHANGE_PRIVATE_FOR_CASH.equals(key)
+                && currentDialogAction instanceof ExchangeForCash) {
+            RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
+            ExchangeForCash action = (ExchangeForCash) currentDialogAction;
+
+            int index = dialog.getSelectedOption();
+            if (index < 0) {
+                currentDialogAction = null;
+                return;
+            }
+            
+            if (index == 0) {
+                action.setExchangeCompany(true);
+            } else {
+                action.setExchangeCompany(false);
+            }
+            
+        } else if (FORCED_ROCKET_EXCHANGE.equals(key)
+                && currentDialogAction instanceof ForcedRocketExchange) {
+            RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
+            ForcedRocketExchange action = (ForcedRocketExchange) currentDialogAction;
+
+            int index = dialog.getSelectedOption();
+            if (index < 0) {
+                currentDialogAction = null;
+                return;
+            }
+            
+            List<String> companiesWithSpace = action.getCompaniesWithSpace();
+            if (companiesWithSpace.isEmpty() == false) {
+                action.setCompanyToReceiveTrain(companiesWithSpace.get(index));
+            }
+            
         } else {
             // Current dialog not found yet, try the superclass.
             super.dialogActionPerformed(false);
@@ -222,23 +260,69 @@ public class GameUIManager_1880 extends GameUIManager {
         } else {
             action.setTreasuryToLinkedCompany(false);
         }
-        
-        String[] tokenOptions = new String[2];
-        tokenOptions[0] = LocalText.getText("ReplaceToken", action.getInvestor().getName(), action.getInvestor().getLinkedCompany().getName());
-        tokenOptions[1] = LocalText.getText("DoNotReplaceToken", action.getInvestor().getName(), action.getInvestor().getLinkedCompany().getName());
-        String tokenChoice =
-                (String) JOptionPane.showInputDialog(orWindow,
-                        LocalText.getText("FIClosingAskAboutToken"),
-                        LocalText.getText("TokenChoice"),
-                        JOptionPane.QUESTION_MESSAGE, null,
-                        tokenOptions, tokenOptions[0]);
-        if (tokenChoice == tokenOptions[0]) {
-            action.setReplaceToken(true);
+        if (action.getInvestor().getLinkedCompany().getNumberOfFreeBaseTokens() > 0) {
+            String[] tokenOptions = new String[2];
+            tokenOptions[0] = LocalText.getText("ReplaceToken", action.getInvestor().getName(), action.getInvestor().getLinkedCompany().getName());
+            tokenOptions[1] = LocalText.getText("DoNotReplaceToken", action.getInvestor().getName(), action.getInvestor().getLinkedCompany().getName());
+            String tokenChoice =
+                   (String) JOptionPane.showInputDialog(orWindow,
+                            LocalText.getText("FIClosingAskAboutToken"),
+                            LocalText.getText("TokenChoice"),
+                            JOptionPane.QUESTION_MESSAGE, null,
+                            tokenOptions, tokenOptions[0]);
+            if (tokenChoice == tokenOptions[0]) {
+                action.setReplaceToken(true);
+            } else {
+                action.setReplaceToken(false);
+            }
         } else {
             action.setReplaceToken(false);
         }
 
         orWindow.process(action);
+    }
+
+    public void exchangeForCash(ExchangeForCash exchangeForCash) {
+        RadioButtonDialog dialog;
+        String[] exchangeOptions;
+        if (exchangeForCash.getOwnerHasChoice() == true) {
+            exchangeOptions =
+                    new String[] {LocalText.getText("ExchangeWRForCash", exchangeForCash.getCashValue()),
+                        LocalText.getText("DoNotExchange") };
+        } else {
+            exchangeOptions =
+                    new String[] { LocalText.getText("ExchangeWRForCash", exchangeForCash.getCashValue()) };
+        }
+
+        dialog =
+                new RadioButtonDialog(EXCHANGE_PRIVATE_FOR_CASH, this,
+                        statusWindow, LocalText.getText("PleaseSelect"),
+                        LocalText.getText("CanExchangeWR", exchangeForCash.getOwnerName()), exchangeOptions, 0);
+        setCurrentDialog(dialog, exchangeForCash);
+        statusWindow.disableButtons();
+        return;
+    }
+    
+    public void forcedRocketExchange(ForcedRocketExchange forcedRocketExchange) {
+        RadioButtonDialog dialog;
+        String[] exchangeOptions;
+        
+        List<String> companiesWithSpace = forcedRocketExchange.getCompaniesWithSpace();
+        if (companiesWithSpace.isEmpty() == false) {
+            exchangeOptions = new String[companiesWithSpace.size()];
+            for (int i = 0; i < companiesWithSpace.size(); i++) {
+                exchangeOptions[i] = "Put 4-train in " + companiesWithSpace.get(i); 
+            }
+        } else {
+            exchangeOptions = new String[1];
+        }
+
+        dialog =
+                new RadioButtonDialog(FORCED_ROCKET_EXCHANGE, this,
+                        statusWindow, LocalText.getText("PleaseSelect"),
+                        "Which company should receive the 4-train?", exchangeOptions, 0);
+        setCurrentDialog(dialog, forcedRocketExchange);
+        statusWindow.disableButtons();        
     }
         
 }

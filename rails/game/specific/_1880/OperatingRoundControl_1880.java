@@ -1,6 +1,5 @@
 package rails.game.specific._1880;
 
-import rails.game.Company;
 import rails.game.GameDef.OrStep;
 import rails.game.PublicCompanyI;
 
@@ -9,14 +8,23 @@ public class OperatingRoundControl_1880 {
     private PublicCompanyI lastCompanyToBuyTrain;
     private PublicCompanyI firstCompanyToRun;
     private OrStep nextStep;
-    private boolean skipFirstCompany;
-    
+    private boolean exitingToStockRound;
     
     public OperatingRoundControl_1880() {
-        reset();
+        lastCompanyToBuyTrain = null;
+        firstCompanyToRun = null;      
+        nextStep = OrStep.INITIAL;
+        exitingToStockRound = false;
+    }
+
+    public void orExitToStockRound(PublicCompanyI company, OrStep step) {
+        firstCompanyToRun = company;
+        nextStep = step;
+        lastCompanyToBuyTrain = null;
+        exitingToStockRound = true;
     }
     
-    public PublicCompanyI getLastCompanyToBuyTrain() {
+    public PublicCompanyI lastCompanyToBuyTrain() {
         return lastCompanyToBuyTrain;
     }
     
@@ -24,51 +32,25 @@ public class OperatingRoundControl_1880 {
         lastCompanyToBuyTrain = company;
     }
     
-    public void orEndedNoTrainPurchased(PublicCompanyI company) {
-        firstCompanyToRun = company;
-        skipFirstCompany = true;
-        nextStep = OrStep.INITIAL;
-        lastCompanyToBuyTrain = null;
+    public boolean isExitingToStockRound() {
+        return exitingToStockRound;
     }
     
-    public void orEndedLastTrainPurchased(PublicCompanyI company) {
-        firstCompanyToRun = company;
-        skipFirstCompany = false;
-        nextStep = OrStep.BUY_TRAIN;
-        lastCompanyToBuyTrain = null;
-    }
-    
-    public boolean startingAtTopOfOrder() {
-        if (firstCompanyToRun == null) {
-            return true;
-        }
-        return false;
+    public void startingStockRound() {
+        exitingToStockRound = false;
     }
     
     public PublicCompanyI getFirstCompanyToRun() {
         return firstCompanyToRun;
     }
     
-    public boolean getSkipFirstCompany() {
-        return skipFirstCompany;
-    }
-    
-    public void reset() {
-        firstCompanyToRun = null;
-        nextStep = OrStep.INITIAL;
-        skipFirstCompany = false;
-    }
-
-    public OrStep getNextPhase() {
+    public OrStep getNextStep() {
         return nextStep;
     }
-    
-    public boolean orEnded() {
-        if (firstCompanyToRun == null) {
-            return false;
-        }
-        return true;
+
+    public void startNewOR() {
+        exitingToStockRound = false;
+        nextStep = OrStep.INITIAL;        
     }
-    
-    
+
 }

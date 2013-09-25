@@ -24,6 +24,7 @@ import rails.game.Stop;
 import rails.game.TokenHolder;
 import rails.game.TokenI;
 import rails.game.TrainManager;
+import rails.game.model.ModelObject;
 
 /**
  * @author Martin 2011/04/11
@@ -39,7 +40,11 @@ public class Investor_1880 extends PublicCompany implements RevenueStaticModifie
     final protected boolean hasParPrice = false;
     
     protected PublicCompany linkedCompany;  // An Investor is always linked to a (exactly one) Public Major Company..
-    
+
+    // Dummy rights...  investors really don't have any rights.  But because the ORPanel needs
+    // to have it...
+    private BuildingRights_1880 buildingRights = new BuildingRights_1880("buildingRights"); 
+
     /*
      * 
      */
@@ -85,28 +90,40 @@ public class Investor_1880 extends PublicCompany implements RevenueStaticModifie
         return true;       
     }
     
+    public ModelObject getRightsModel () {
+        return buildingRights;
+    }
+
+    public int getCurrentTrainLimit() {
+        return 0;
+    }
+    
     public boolean isConnectedToLinkedCompany() {
         NetworkGraphBuilder nwGraph = NetworkGraphBuilder.create(gameManager);
-        NetworkCompanyGraph_1880 companyGraph = NetworkCompanyGraph_1880.create(nwGraph, this);
-        SimpleGraph<NetworkVertex, NetworkEdge> graph = companyGraph.createConnectionGraph(true);
+        NetworkCompanyGraph_1880 companyGraph =
+                NetworkCompanyGraph_1880.create(nwGraph, this);
+        SimpleGraph<NetworkVertex, NetworkEdge> graph =
+                companyGraph.createConnectionGraph(true);
         Set<NetworkVertex> verticies = graph.vertexSet();
-            
-        PublicCompany_1880 linkedCompany = (PublicCompany_1880) ((Investor_1880) this).getLinkedCompany();
-            
+
+        PublicCompany_1880 linkedCompany =
+                (PublicCompany_1880) ((Investor_1880) this).getLinkedCompany();
+        if (linkedCompany != null) {
             for (TokenI token : linkedCompany.getLaidBaseTokens()) {
                 TokenHolder holder = token.getHolder();
                 if (!(holder instanceof Stop)) continue;
-                Stop stop = (Stop) holder;                
-                
+                Stop stop = (Stop) holder;
+
                 for (NetworkVertex vertex : verticies) {
                     if (vertex.getType() == NetworkVertex.VertexType.STATION) {
-                        if ((stop.getRelatedStation() == vertex.getStation()) && (stop.getHolder() == vertex.getHex())) {
+                        if ((stop.getRelatedStation() == vertex.getStation())
+                            && (stop.getHolder() == vertex.getHex())) {
                             return true;
                         }
                     }
                 }
             }
-            
+        }
         return false;
     }
     

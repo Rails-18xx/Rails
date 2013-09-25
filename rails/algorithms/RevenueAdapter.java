@@ -74,7 +74,6 @@ public final class RevenueAdapter implements Runnable {
     private List<RevenueBonus> revenueBonuses;
     private Set<NetworkVertex> protectedVertices;
     private Map<NetworkEdge, EdgeTravel> edgeTravelSets;
-    private int overallBonus;
     
     // components related to the revenue calculator
     private RevenueCalculator rc;
@@ -105,8 +104,6 @@ public final class RevenueAdapter implements Runnable {
         this.edgeTravelSets = new HashMap<NetworkEdge, EdgeTravel>();
         this.revenueBonuses = new ArrayList<RevenueBonus>();
         this.protectedVertices = new HashSet<NetworkVertex>();
-        
-        this.overallBonus = 0;
     }
     
     public static RevenueAdapter createRevenueAdapter(GameManagerI gm, PublicCompanyI company, PhaseI phase) {
@@ -213,11 +210,7 @@ public final class RevenueAdapter implements Runnable {
         revenueBonuses.add(bonus);
         protectedVertices.addAll(bonus.getVertices());
     }
-    
-    public void addOverallBonus(String description, int amount) {
-        overallBonus = amount;
-    }
-    
+        
     public void populateFromRails() {
         // define graph, without HQ
         graph = companyGraph.createRouteGraph(false);
@@ -533,9 +526,6 @@ public final class RevenueAdapter implements Runnable {
         
         // activate dynamic modifiers
         rc.setDynamicModifiers(hasDynamicModifiers);
-        
-        // set overall revenue bonus
-        rc.setOverallRevenueBonus(overallBonus);
     }
 
     public int getVertexValue(NetworkVertex vertex, NetworkTrain train, PhaseI phase) {

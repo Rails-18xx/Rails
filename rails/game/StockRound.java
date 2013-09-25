@@ -87,6 +87,7 @@ public class StockRound extends Round {
      */
     public void start() {
 
+        
         ReportBuffer.add(LocalText.getText("StartStockRound",
                 getStockRoundNumber()));
 
