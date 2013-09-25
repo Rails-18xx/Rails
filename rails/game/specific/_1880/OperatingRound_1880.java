@@ -685,14 +685,7 @@ public class OperatingRound_1880 extends OperatingRound {
                 break;
             }
 
-            // Sort out cost
-            if (stl != null && stl.isFree()) {
-                cost = hex.getTileCost() - 20; // Or we implement a general
-                                               // SpecialRight that deduces cost
-                                               // if a private is owned
-            } else {
-                cost = hex.getTileCost();
-            }
+            cost = getTileCost(hex);
 
             // Amount must be non-negative multiple of 10
             if (cost < 0) {
@@ -761,6 +754,21 @@ public class OperatingRound_1880 extends OperatingRound {
         }
 
         return true;
+    }
+
+    
+    // TODO: Make generic
+    private int getTileCost(MapHex hex) {
+        // Lucky us.  Tiles that cost 20, 50, and 60 happen to be rivers.  Tiles that cost
+        // anything else are not.
+        int baseCost = hex.getTileCost();
+        if ((baseCost == 20) || (baseCost == 50) || (baseCost == 60)) {
+            PrivateCompanyI riverFerry = companyManager.getPrivateCompany("CC");            
+            if (riverFerry.getPortfolio().getOwner() == getCurrentPlayer()) {
+                baseCost = baseCost - 20;
+            }
+        }
+        return baseCost;
     }
 
     private void askForPrivateRocket(PhaseI newPhase) {

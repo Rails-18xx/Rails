@@ -62,12 +62,6 @@
 	</Company>
 	<Company name="CC" longname="Chinese Rivers Ferry Company" type="Private"
 		basePrice="70" revenue="20">
-		<SpecialProperties>
-		<SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" permanent="true"
-			class="rails.game.special.SpecialTileLay">
-			<SpecialTileLay location="G1,G3,G5,G11,H4,H10,I9,I7,I5,J2,I1,K1,O1,O3,N4,N6,M7,L8,L10,L12,K13,J14" extra="no" free="yes"/>
-		</SpecialProperty>
-		</SpecialProperties>
 	</Company>
 	<Company name="JO" longname="Jeme Tien Yow Engineer Office" type="Private"
 		basePrice="70" revenue="25">
