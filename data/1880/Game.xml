@@ -125,6 +125,10 @@
 			<Trains limitStep="2"/>
 		</Phase>
 		<Phase name="4" realName="B3">
+			<Tiles colour="yellow,green">
+				<Lays companyType="Major" colour="yellow" number="2"/>
+				<Lays companyType="Major" colour="green" number="1"/>
+				</Tiles>
 			<Action name="CommunistTakeOver"/>
 			<OffBoardRevenue step="2"/>
 			<Privates close="yes"/>

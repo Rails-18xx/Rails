@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
+import rails.game.state.HashMapState;
 import rails.util.Util;
 
 public class Phase implements PhaseI {
@@ -20,12 +21,12 @@ public class Phase implements PhaseI {
 
     protected List <String> tileColours;
     protected String tileColoursString;
-    protected Map<String, Integer> tileLaysPerColour;
+    protected HashMapState<String, Integer> tileLaysPerColour;
     /** For how many turns can extra tiles be laid (per company type and colour)?
      * Default: infinite.
      * <p>This attribute is only used during configuration. It is finally passed to CompanyType.
      * NOT CLONED from previous phase.*/
-    protected Map<String, Integer> tileLaysPerColourTurns;
+    protected HashMapState<String, Integer> tileLaysPerColourTurns;
 
     protected boolean privateSellingAllowed = false;
 
@@ -115,7 +116,8 @@ public class Phase implements PhaseI {
 
         // Real name (as in the printed game)
         realName = tag.getAttributeAsString("realName", null);
-
+        HashMapState<String, Integer> oldTileLaysPerColour = new HashMapState <String, Integer>("oldTileLaysPerColour");
+        
         // Allowed tile colours
         Tag tilesTag = tag.getChild("Tiles");
         if (tilesTag != null) {
@@ -133,14 +135,14 @@ public class Phase implements PhaseI {
             if (laysTag != null && !laysTag.isEmpty()) {
                 // First create a copy of the previous map, if it exists, otherwise create the map.
                 if (tileLaysPerColour == null) {
-                    tileLaysPerColour = new HashMap<String, Integer>(4);
+                    tileLaysPerColour = new HashMapState<String, Integer>("tileLaysPerColour");
                 } else if (!tileLaysPerColour.isEmpty()) {
                     // Wish there was a one-liner to deep-clone a map.  Does Guava have one?
-                    Map <String, Integer> newTileLaysPerColour = new HashMap <String, Integer>(4);
-                    for (String key : tileLaysPerColour.keySet()) {
-                        newTileLaysPerColour.put (key, tileLaysPerColour.get(key));
+                    
+                    for (String key : tileLaysPerColour.viewKeySet()) {
+                        oldTileLaysPerColour.put (key, tileLaysPerColour.get(key));
                     }
-                    tileLaysPerColour = newTileLaysPerColour;
+                    tileLaysPerColour = new HashMapState<String, Integer>("tileLaysPerColour");
                 }
 
                 for (Tag layTag : laysTag) {
@@ -157,17 +159,16 @@ public class Phase implements PhaseI {
                         layTag.getAttributeAsInteger("occurrences", 0);
 
                     String key = typeString + "~" + colourString;
-                    if (number == 1) {
-                        tileLaysPerColour.remove(key);
-                    } else {
-                        tileLaysPerColour.put(key, number);
-                    }
-
+                    tileLaysPerColour.put(key, number);
+                  
                     if (validForTurns != 0) {
                         if (tileLaysPerColourTurns == null) {
-                            tileLaysPerColourTurns = new HashMap<String, Integer>(4);
+                            tileLaysPerColourTurns = new HashMapState<String, Integer>("tileLaysPerColourTurns");
                         }
                         tileLaysPerColourTurns.put(key, validForTurns);
+                    }
+                    if (tileLaysPerColour.isEmpty()) {
+                        tileLaysPerColour = oldTileLaysPerColour;
                     }
                 }
             }
@@ -357,7 +358,7 @@ public class Phase implements PhaseI {
         if (tileLaysPerColour == null) return 1;
 
         String key = companyTypeName + "~" + colourName;
-        if (tileLaysPerColour.containsKey(key)) {
+        if (tileLaysPerColour.hasKey(key)) {
             return tileLaysPerColour.get(key);
         } else {
             return 1;
