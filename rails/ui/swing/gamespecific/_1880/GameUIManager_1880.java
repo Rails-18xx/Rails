@@ -6,6 +6,8 @@ package rails.ui.swing.gamespecific._1880;
 
 
 import java.util.Arrays;
+import java.util.List;
+
 import javax.swing.JOptionPane;
 
 import rails.ui.swing.GameUIManager;
@@ -13,6 +15,7 @@ import rails.common.LocalText;
 import rails.game.specific._1880.BuildingRights_1880;
 import rails.game.specific._1880.CloseInvestor_1880;
 import rails.game.specific._1880.ExchangeForCash;
+import rails.game.specific._1880.ForcedRocketExchange;
 import rails.game.specific._1880.ParSlotManager_1880;
 import rails.game.specific._1880.SetupNewPublicDetails_1880;
 import rails.game.specific._1880.StartCompany_1880;
@@ -30,7 +33,8 @@ public class GameUIManager_1880 extends GameUIManager {
     public static final String COMPANY_START_PRICE_DIALOG = "CompanyStartPrice";
     public static final String COMPANY_SELECT_PAR_SLOT_INDEX = "CompanySelectParSlotIndex";
     public static final String EXCHANGE_PRIVATE_FOR_CASH = "ExchangePrivateForCash";
-    
+    public static final String FORCED_ROCKET_EXCHANGE = "ForcedRocketExchange";
+
     public static final String NEW_COMPANY_SELECT_BUILDING_RIGHT = "NewSelectBuildingRight";
     
 
@@ -192,7 +196,23 @@ public class GameUIManager_1880 extends GameUIManager {
             } else {
                 action.setExchangeCompany(false);
             }
+            
+        } else if (FORCED_ROCKET_EXCHANGE.equals(key)
+                && currentDialogAction instanceof ForcedRocketExchange) {
+            RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
+            ForcedRocketExchange action = (ForcedRocketExchange) currentDialogAction;
 
+            int index = dialog.getSelectedOption();
+            if (index < 0) {
+                currentDialogAction = null;
+                return;
+            }
+            
+            List<String> companiesWithSpace = action.getCompaniesWithSpace();
+            if (companiesWithSpace.isEmpty() == false) {
+                action.setCompanyToReceiveTrain(companiesWithSpace.get(index));
+            }
+            
         } else {
             // Current dialog not found yet, try the superclass.
             super.dialogActionPerformed(false);
@@ -281,6 +301,28 @@ public class GameUIManager_1880 extends GameUIManager {
         setCurrentDialog(dialog, exchangeForCash);
         statusWindow.disableButtons();
         return;
+    }
+    
+    public void forcedRocketExchange(ForcedRocketExchange forcedRocketExchange) {
+        RadioButtonDialog dialog;
+        String[] exchangeOptions;
+        
+        List<String> companiesWithSpace = forcedRocketExchange.getCompaniesWithSpace();
+        if (companiesWithSpace.isEmpty() == false) {
+            exchangeOptions = new String[companiesWithSpace.size()];
+            for (int i = 0; i < companiesWithSpace.size(); i++) {
+                exchangeOptions[i] = "Put 4-train in " + companiesWithSpace.get(i); 
+            }
+        } else {
+            exchangeOptions = new String[1];
+        }
+
+        dialog =
+                new RadioButtonDialog(FORCED_ROCKET_EXCHANGE, this,
+                        statusWindow, LocalText.getText("PleaseSelect"),
+                        "Which company should receive the 4-train?", exchangeOptions, 0);
+        setCurrentDialog(dialog, forcedRocketExchange);
+        statusWindow.disableButtons();        
     }
         
 }

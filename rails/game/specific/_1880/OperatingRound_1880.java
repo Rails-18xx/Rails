@@ -17,6 +17,7 @@ import rails.game.BaseToken;
 import rails.game.CashHolder;
 import rails.game.GameDef;
 import rails.game.GameDef.OrStep;
+import rails.game.CompanyManagerI;
 import rails.game.GameManagerI;
 import rails.game.MapHex;
 import rails.game.OperatingRound;
@@ -81,7 +82,7 @@ public class OperatingRound_1880 extends OperatingRound {
                 }
             }
         }
-        if (name.equalsIgnoreCase("CommunistTakeOver")) {
+        if (name.equalsIgnoreCase("CommunistTakeOver")) {            
             for (PublicCompany_1880 company : PublicCompany_1880.getPublicCompanies(companyManager)) {
                 if (company.hasFloated()) {
                     company.setCommunistTakeOver(true);
@@ -90,8 +91,9 @@ public class OperatingRound_1880 extends OperatingRound {
             for (PublicCompany_1880 company : PublicCompany_1880.getPublicCompanies(companyManager)) {
                 if (!company.hasFloated()) {
                     company.setFloatPercentage(40);
-                }
+                } 
             }
+            checkForForcedRocketExchange();
         }
         if (name.equalsIgnoreCase("ShanghaiExchangeOpen")) {
             for (PublicCompany_1880 company : PublicCompany_1880.getPublicCompanies(companyManager)) {
@@ -104,6 +106,38 @@ public class OperatingRound_1880 extends OperatingRound {
                     company.setFloatPercentage(60);
                 }
             }
+        }
+    }
+
+    private void checkForForcedRocketExchange() {
+        PrivateCompanyI rocket = companyManager.getPrivateCompany("RC");
+        if (rocket.isClosed() == false) {
+            Player rocketOwner = (Player) rocket.getPortfolio().getOwner();
+            List<PublicCompany_1880> ownedCompaniesWithSpace = new ArrayList<PublicCompany_1880>();
+            List<PublicCompany_1880> ownedCompaniesFull = new ArrayList<PublicCompany_1880>();
+            for (PublicCompany_1880 company : PublicCompany_1880.getPublicCompanies(companyManager)) {
+                if (company.getPresident() == rocketOwner) {
+                    if (company.getNumberOfTrains() < company.getCurrentTrainLimit()) {
+                        ownedCompaniesWithSpace.add(company);
+                    } else {
+                        ownedCompaniesFull.add(company);
+                    }
+                }
+            }
+            
+            ForcedRocketExchange action = null;
+            if (ownedCompaniesWithSpace.isEmpty() == false) {
+                action = new ForcedRocketExchange();
+                for (PublicCompany_1880 company : ownedCompaniesWithSpace) {
+                    action.addCompanyWithSpace(company);                    
+                }
+            } else if (ownedCompaniesFull.isEmpty() == false) {
+                action = new ForcedRocketExchange();
+                for (PublicCompany_1880 company : ownedCompaniesFull) {
+                    action.addCompanyWithNoSpace(company);                    
+                }
+            } 
+            manditoryNextAction = action;
         }
     }
 
@@ -388,13 +422,17 @@ public class OperatingRound_1880 extends OperatingRound {
                                                                                                                // Fix.
             result = specialBuyTrain(buyTrain);
             return result;
-        } else if ((action instanceof ExchangeForCash)) {
+        } else if (action instanceof ExchangeForCash) {
             result = exchangeForCash((ExchangeForCash) action);
-            return true;
+            return result;
+        } else if (action instanceof ForcedRocketExchange) {
+            result = forcedRocketExchange((ForcedRocketExchange) action);
+            return result;
         } else {
             return super.process(action);
         }
     }
+
 
     /*
      * (non-Javadoc)
@@ -843,4 +881,15 @@ public class OperatingRound_1880 extends OperatingRound {
         // }
     }
 
+    
+    private boolean forcedRocketExchange(ForcedRocketExchange action) {
+        moveStack.start(true);
+
+        TrainI train = trainManager.getAvailableNewTrains().get(0); // TODO: Verify that this is a 4-train
+        PublicCompanyI company = companyManager.getPublicCompany(action.getCompanyToReceiveTrain());
+        company.buyTrain(train, 0);
+        return true;
+    }
+
+    
 }
