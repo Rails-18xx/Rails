@@ -45,52 +45,30 @@
 		
 	</CompanyType>
 	
-	<Company name="WR" longname="Woosong Railway" type="Private" basePrice="5"
-		revenue="0">
+	<Company name="WR" longname="Woosong Railway" type="Private" basePrice="0"
+		revenue="0,0">
 	</Company>
-	<Company name="KR" longname="Kaiping Railway" type="Private" basePrice="10"
-		revenue="5">
-		<ClosingConditions>
-			<Phase>4+4</Phase>
-		</ClosingConditions>
+	<Company name="KR" longname="Kaiping Railway" type="Private" basePrice="0"
+		revenue="5,0">
 	</Company>
 	<Company name="YC" longname="Yanda Ferry Company" type="Private"
-		basePrice="25" revenue="10">
+		basePrice="0" revenue="10,0">
 	</Company>
-	<Company name="TL" longname="Taiwan Western Line" type="Private" basePrice="45"
-		revenue="15">
+	<Company name="TL" longname="Taiwan Western Line" type="Private" basePrice="0"
+		revenue="15,0">
 	</Company>
 	<Company name="CC" longname="Chinese Rivers Ferry Company" type="Private"
-		basePrice="70" revenue="20">
+		basePrice="0" revenue="20,0">
 	</Company>
 	<Company name="JO" longname="Jeme Tien Yow Engineer Office" type="Private"
-		basePrice="70" revenue="25">
-		<!-- SpecialProperties-->
-		<!-- SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep"
-			class="rails.game.specific._1880.BuildingPermit"-->
-		<!-- /SpecialProperty-->
-		<!--  -->/SpecialProperties-->
+		basePrice="0" revenue="25,0">
 	</Company>
 	<Company name="IG" longname="Imperial Qing Government" type="Private"
-		basePrice="160" revenue="0">
+		basePrice="0" revenue="0,0">
 		<Info key="ComesWithPresidency" parm="BCR,20"/>
 	</Company>
-	<Company name="RC" longname="Rocket Company" type="Private" basePrice="70"
-		revenue="0">
-		<SpecialProperties>
-		<SpecialProperty condition="ifOwnedByPlayer" when="orTurn"  
-					class="rails.game.special.SpecialTrainBuy" closedIfExercised="yes">
-					<SpecialTrainBuy traintype="2,2+2,3,3+3,4" deduction="100%" />
-		<!--  Kostenfreie Lok bei Phasenwechsel durch Lokkauf -->
-		<!-- The train can be moved upon purchase into one company owned by the 
-		owner of the certificate --> <!-- Company must have space for the new train, but can hand back an older 
-		train to bank (2+2,3,3+3) -->
-		</SpecialProperty>
-		</SpecialProperties>
-		<ClosingConditions>
-			<SpecialProperties condition="ifExercised"/>
-			<Phase>4+4</Phase>
-		</ClosingConditions>
+	<Company name="RC" longname="Rocket Company" type="Private" basePrice="0"
+		revenue="0,0">
 	</Company>
 	<Company name="BCR" longname="Baocheng Railway" type="Major" tokens="3"
 		fgColour="FFFFFF" bgColour="4A4A97">

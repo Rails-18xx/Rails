@@ -307,8 +307,8 @@ public class GameUIManager_1880 extends GameUIManager {
         RadioButtonDialog dialog;
         String[] exchangeOptions;
         
-        List<String> companiesWithSpace = forcedRocketExchange.getCompaniesWithSpace();
-        if (companiesWithSpace.isEmpty() == false) {
+        if (forcedRocketExchange.hasCompaniesWithSpace() == true) {
+            List<String> companiesWithSpace = forcedRocketExchange.getCompaniesWithSpace();
             exchangeOptions = new String[companiesWithSpace.size()];
             for (int i = 0; i < companiesWithSpace.size(); i++) {
                 exchangeOptions[i] = "Put 4-train in " + companiesWithSpace.get(i); 

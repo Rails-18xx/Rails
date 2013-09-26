@@ -127,8 +127,8 @@
 		<Phase name="4" realName="B3">
 			<Action name="CommunistTakeOver"/>
 			<OffBoardRevenue step="2"/>
-			<Privates close="yes"/>
 			<Investors active="no"/>
+			<Privates revenueStep="2"/>
 			<Float percentage="40"/>
 			<Trains limitStep="2" rusted="2"/>
 		</Phase>

@@ -1,8 +1,12 @@
 package rails.game.specific._1880;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import rails.game.TrainI;
+import rails.game.TrainType;
 import rails.game.action.PossibleAction;
 import rails.game.action.PossibleORAction;
 
@@ -13,7 +17,8 @@ import rails.game.action.PossibleORAction;
 public class ForcedRocketExchange extends PossibleORAction {
     
     private static final long serialVersionUID = 1L;
-    private List<String> companiesWithSpace = new ArrayList<String>();
+    private transient List<String> companiesWithSpace = new ArrayList<String>();
+    private transient Map<String, List<TrainI>> companiesWithNoSpace = new HashMap<String, List<TrainI>>();
 
     private String companyToReceiveTrain;
         
@@ -28,11 +33,20 @@ public class ForcedRocketExchange extends PossibleORAction {
     public List<String> getCompaniesWithSpace() {
         return companiesWithSpace;
     }
-
-    public void addCompanyWithNoSpace(PublicCompany_1880 company) {
-        // TODO Auto-generated method stub
+    
+    public boolean hasCompaniesWithSpace() {
+        return (companiesWithSpace.isEmpty() == false);
     }
 
+    public void addCompanyWithNoSpace(PublicCompany_1880 company) {
+        List<TrainI> trains = company.getPortfolio().getUniqueTrains();
+        companiesWithNoSpace.put(company.getName(), trains);
+    }
+
+    public Map<String, List<TrainI>> getCompaniesWithNoSpace() {
+        return companiesWithNoSpace;
+    }
+    
     public String getCompanyToReceiveTrain() {
         return companyToReceiveTrain;
     }
