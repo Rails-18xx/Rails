@@ -259,19 +259,17 @@ public class OperatingRound_1880 extends OperatingRound {
         // If this train was not from the ipo, nothing else to do.
         if (action.getFromPortfolio() == ipo) {
             trainPurchasedThisTurn = true;
+            orControl.trainPurchased((PublicCompany_1880) operatingCompany.get());
             // If there are no more trains of this type, and this type causes an
             // OR end, end it.
             if ((ipo.getTrainsPerType(action.getType()).length == 0)
                 && (trainTypeCanEndOR(action.getType()) == true)) {
-                orControl.trainPurchased((PublicCompany_1880) operatingCompany.get());
                 orControl.orExitToStockRound(operatingCompany.get(),
                         GameDef.OrStep.BUY_TRAIN);
                 setActionForPrivateExchange(action.getType());
                 if (manditoryNextAction == null) {
                     finishOR();
                 }
-            } else {
-                orControl.trainPurchased((PublicCompany_1880) operatingCompany.get());
             } 
         }
 
