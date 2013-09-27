@@ -67,8 +67,21 @@
 		basePrice="0" revenue="0,0">
 		<Info key="ComesWithPresidency" parm="BCR,20"/>
 	</Company>
-	<Company name="RC" longname="Rocket Company" type="Private" basePrice="0"
+	<Company name="RC" longname="Rocket Company" type="Private" basePrice="70"
 		revenue="0,0">
+		<SpecialProperties>
+		<SpecialProperty condition="ifOwnedByPlayer" when="orTurn"  
+					class="rails.game.special.SpecialTrainBuy" closedIfExercised="yes">
+					<SpecialTrainBuy traintype="2,2+2,3,3+3,4" deduction="100%" />
+		<!--  Kostenfreie Lok bei Phasenwechsel durch Lokkauf -->
+		<!-- The train can be moved upon purchase into one company owned by the 
+		owner of the certificate --> <!-- Company must have space for the new train, but can hand back an older 
+		train to bank (2+2,3,3+3) -->
+		</SpecialProperty>
+		</SpecialProperties>
+		<ClosingConditions>
+			<SpecialProperties condition="ifExercised"/>
+		</ClosingConditions>
 	</Company>
 	<Company name="BCR" longname="Baocheng Railway" type="Major" tokens="3"
 		fgColour="FFFFFF" bgColour="4A4A97">

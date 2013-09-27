@@ -125,6 +125,13 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
         if (isCommunistPhase()) return;
         if (hasStockPrice) stockMarket.withhold(this); // TODO: Cleanup
     }
+    
+    public void payout(int amount) {
+        if (isCommunistPhase() == false) {
+            stockMarket.payOut(this);        
+        }
+    }
+
 
     public void setFloatPercentage(int i) {
         this.floatPerc=i;

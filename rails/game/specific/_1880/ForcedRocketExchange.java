@@ -21,9 +21,11 @@ public class ForcedRocketExchange extends PossibleORAction {
     private transient Map<String, List<TrainI>> companiesWithNoSpace = new HashMap<String, List<TrainI>>();
 
     private String companyToReceiveTrain;
+    private String trainToReplace;
         
     public ForcedRocketExchange() {
-        companyToReceiveTrain = "";
+        companyToReceiveTrain = null;
+        trainToReplace = null;
     }
 
     public void addCompanyWithSpace(PublicCompany_1880 company) {
@@ -55,6 +57,15 @@ public class ForcedRocketExchange extends PossibleORAction {
         this.companyToReceiveTrain = companyToReceiveTrain;
     }
     
+    public String getTrainToReplace() {
+        return trainToReplace;
+    }
+    
+    public void setTrainToReplace(String trainToReplace) {
+        this.trainToReplace = trainToReplace;        
+    }
+
+    
     public String toString() {
         return("ForcedRocketExchange");
     }
@@ -83,6 +94,7 @@ public class ForcedRocketExchange extends PossibleORAction {
 //        }
         return true;
     }
+
 
 
 

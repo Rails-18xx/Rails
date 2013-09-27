@@ -5,13 +5,16 @@ package rails.ui.swing.gamespecific._1880;
 
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JOptionPane;
 
 import rails.ui.swing.GameUIManager;
 import rails.common.LocalText;
+import rails.game.TrainI;
 import rails.game.specific._1880.BuildingRights_1880;
 import rails.game.specific._1880.CloseInvestor_1880;
 import rails.game.specific._1880.ExchangeForCash;
@@ -199,20 +202,9 @@ public class GameUIManager_1880 extends GameUIManager {
             
         } else if (FORCED_ROCKET_EXCHANGE.equals(key)
                 && currentDialogAction instanceof ForcedRocketExchange) {
-            RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
-            ForcedRocketExchange action = (ForcedRocketExchange) currentDialogAction;
-
-            int index = dialog.getSelectedOption();
-            if (index < 0) {
-                currentDialogAction = null;
+            if (handleForcedRocketExchange() == false) {
                 return;
             }
-            
-            List<String> companiesWithSpace = action.getCompaniesWithSpace();
-            if (companiesWithSpace.isEmpty() == false) {
-                action.setCompanyToReceiveTrain(companiesWithSpace.get(index));
-            }
-            
         } else {
             // Current dialog not found yet, try the superclass.
             super.dialogActionPerformed(false);
@@ -307,14 +299,16 @@ public class GameUIManager_1880 extends GameUIManager {
         RadioButtonDialog dialog;
         String[] exchangeOptions;
         
-        if (forcedRocketExchange.hasCompaniesWithSpace() == true) {
-            List<String> companiesWithSpace = forcedRocketExchange.getCompaniesWithSpace();
-            exchangeOptions = new String[companiesWithSpace.size()];
-            for (int i = 0; i < companiesWithSpace.size(); i++) {
-                exchangeOptions[i] = "Put 4-train in " + companiesWithSpace.get(i); 
+        List<RocketDestination> destinations = getRocketDestinations(forcedRocketExchange);
+        exchangeOptions = new String[destinations.size()];
+        for (int i = 0; i < destinations.size(); i++) {
+            RocketDestination destination = destinations.get(i);
+            if (destination.hasReplacementTrain() == true) {
+                exchangeOptions[i] = "Put 4-train in " + destination.getCompany() 
+                        + " replacing " + destination.getReplacementTrain(); 
+            } else {
+                exchangeOptions[i] = "Put 4-train in " + destination.getCompany();
             }
-        } else {
-            exchangeOptions = new String[1];
         }
 
         dialog =
@@ -323,6 +317,65 @@ public class GameUIManager_1880 extends GameUIManager {
                         "Which company should receive the 4-train?", exchangeOptions, 0);
         setCurrentDialog(dialog, forcedRocketExchange);
         statusWindow.disableButtons();        
+    }
+    
+    private boolean handleForcedRocketExchange() {
+        RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
+        ForcedRocketExchange action = (ForcedRocketExchange) currentDialogAction;
+
+        int index = dialog.getSelectedOption();
+        if (index < 0) {
+            currentDialogAction = null;
+            return false;
+        }
+    
+        List<RocketDestination> destinations = getRocketDestinations(action);
+        action.setCompanyToReceiveTrain(destinations.get(index).getCompany());
+        action.setTrainToReplace(destinations.get(index).getReplacementTrain());
+        
+        return true;
+    }
+    
+    private List<RocketDestination> getRocketDestinations(ForcedRocketExchange forcedRocketExchange) {
+        List<RocketDestination> destinations = new ArrayList<RocketDestination>();
+        
+        if (forcedRocketExchange.hasCompaniesWithSpace() == true) {
+            List<String> companies = forcedRocketExchange.getCompaniesWithSpace();
+            for (String company : companies) {
+                destinations.add(new RocketDestination(company, null));
+            }
+        } else {
+            Map<String, List<TrainI>> companies = forcedRocketExchange.getCompaniesWithNoSpace();
+            for (String company : companies.keySet()) {
+                for (TrainI train : companies.get(company)) {
+                    destinations.add(new RocketDestination(company, train.getName()));
+                }
+            }
+        }
+        
+        return destinations;
+    }
+    
+    class RocketDestination {
+        private String company;
+        private String replacementTrain;
+        
+        public RocketDestination(String company, String replacementTrain) {
+            this.company = company;
+            this.replacementTrain = replacementTrain;
+        }
+        
+        public String getCompany() {
+            return company;
+        }
+        
+        public boolean hasReplacementTrain() {
+            return (replacementTrain != null);
+        }
+        
+        public String getReplacementTrain() {
+            return replacementTrain;
+        }
     }
         
 }

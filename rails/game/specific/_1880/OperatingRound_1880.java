@@ -109,37 +109,7 @@ public class OperatingRound_1880 extends OperatingRound {
         }
     }
 
-    private void checkForForcedRocketExchange() {
-        PrivateCompanyI rocket = companyManager.getPrivateCompany("RC");
-        if (rocket.isClosed() == false) {
-            Player rocketOwner = (Player) rocket.getPortfolio().getOwner();
-            List<PublicCompany_1880> ownedCompaniesWithSpace = new ArrayList<PublicCompany_1880>();
-            List<PublicCompany_1880> ownedCompaniesFull = new ArrayList<PublicCompany_1880>();
-            for (PublicCompany_1880 company : PublicCompany_1880.getPublicCompanies(companyManager)) {
-                if (company.getPresident() == rocketOwner) {
-                    if (company.getNumberOfTrains() < company.getCurrentTrainLimit()) {
-                        ownedCompaniesWithSpace.add(company);
-                    } else {
-                        ownedCompaniesFull.add(company);
-                    }
-                }
-            }
-            
-            ForcedRocketExchange action = null;
-            if (ownedCompaniesWithSpace.isEmpty() == false) {
-                action = new ForcedRocketExchange();
-                for (PublicCompany_1880 company : ownedCompaniesWithSpace) {
-                    action.addCompanyWithSpace(company);                    
-                }
-            } else if (ownedCompaniesFull.isEmpty() == false) {
-                action = new ForcedRocketExchange();
-                for (PublicCompany_1880 company : ownedCompaniesFull) {
-                    action.addCompanyWithNoSpace(company);                    
-                }
-            } 
-            manditoryNextAction = action;
-        }
-    }
+
 
     @Override
     protected void prepareRevenueAndDividendAction() {
@@ -847,9 +817,6 @@ public class OperatingRound_1880 extends OperatingRound {
             operatingCompany.get().setOperated();
             companiesOperatedThisRound.add(operatingCompany.get());
 
-            // Check if any privates must be closed (now only applies to 1856
-            // W&SR)
-            // Copy list first to avoid concurrent modifications
             for (PrivateCompanyI priv : new ArrayList<PrivateCompanyI>(
                     operatingCompany.get().getPortfolio().getPrivateCompanies())) {
                 priv.checkClosingIfExercised(true);
@@ -882,12 +849,56 @@ public class OperatingRound_1880 extends OperatingRound {
     }
 
     
+    private void checkForForcedRocketExchange() {
+        PrivateCompanyI rocket = companyManager.getPrivateCompany("RC");
+        if (rocket.isClosed() == false) {
+            Player rocketOwner = (Player) rocket.getPortfolio().getOwner();
+            List<PublicCompany_1880> ownedCompaniesWithSpace = new ArrayList<PublicCompany_1880>();
+            List<PublicCompany_1880> ownedCompaniesFull = new ArrayList<PublicCompany_1880>();
+            
+            for (PublicCompany_1880 company : PublicCompany_1880.getPublicCompanies(companyManager)) {
+                if (company.getPresident() == rocketOwner) {
+                    if (company.getNumberOfTrains() < company.getCurrentTrainLimit()) {
+                        ownedCompaniesWithSpace.add(company);
+                    } else {
+                        ownedCompaniesFull.add(company);
+                    }
+                }
+            }
+            
+            ForcedRocketExchange action = null;
+            if (ownedCompaniesWithSpace.isEmpty() == false) {
+                action = new ForcedRocketExchange();
+                for (PublicCompany_1880 company : ownedCompaniesWithSpace) {
+                    action.addCompanyWithSpace(company);                    
+                }
+            } else if (ownedCompaniesFull.isEmpty() == false) {
+                action = new ForcedRocketExchange();
+                for (PublicCompany_1880 company : ownedCompaniesFull) {
+                    action.addCompanyWithNoSpace(company);                    
+                }
+            } else {
+                rocket.close();
+            }
+            manditoryNextAction = action;
+        }
+    }
+    
     private boolean forcedRocketExchange(ForcedRocketExchange action) {
         moveStack.start(true);
-
         TrainI train = trainManager.getAvailableNewTrains().get(0); // TODO: Verify that this is a 4-train
         PublicCompanyI company = companyManager.getPublicCompany(action.getCompanyToReceiveTrain());
+        String trainNameToReplace = action.getTrainToReplace();
+        
+        for (TrainI companyTrain : company.getPortfolio().getTrainList()) {
+            if (companyTrain.getName().equals(trainNameToReplace)) {
+                companyTrain.moveTo(scrapHeap);
+                break;
+            }
+        }
+        
         company.buyTrain(train, 0);
+        companyManager.getPrivateCompany("RC").close();
         return true;
     }
 
