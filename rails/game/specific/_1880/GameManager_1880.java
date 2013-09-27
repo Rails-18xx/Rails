@@ -65,6 +65,7 @@ public class GameManager_1880 extends GameManager {
             numOfORs.set(10);
         } else if (round instanceof StockRound) {
             relativeORNumber.set(1);
+            orControl.startedFromStockRound();
             startOperatingRound(true);
         } else if (round instanceof OperatingRound_1880) {
             if (gameOverPending.booleanValue() && !gameEndsAfterSetOfORs) {
@@ -76,6 +77,7 @@ public class GameManager_1880 extends GameManager {
             } else if (orControl.isExitingToStockRound() == true) {
                 startStockRound();
             } else {
+                orControl.startedFromOperatingRound();
                 startOperatingRound(true);
             }
             

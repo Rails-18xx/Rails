@@ -17,7 +17,6 @@ import rails.game.BaseToken;
 import rails.game.CashHolder;
 import rails.game.GameDef;
 import rails.game.GameDef.OrStep;
-import rails.game.CompanyManagerI;
 import rails.game.GameManagerI;
 import rails.game.MapHex;
 import rails.game.OperatingRound;
@@ -59,7 +58,8 @@ public class OperatingRound_1880 extends OperatingRound {
     List<Investor_1880> investorsToClose = new ArrayList<Investor_1880>();
     PossibleAction manditoryNextAction = null;
     private PublicCompanyI firstCompanyBeforePrivates;
-
+    private boolean trainPurchasedThisTurn = false;
+    
     /**
      * @param gameManager
      */
@@ -170,8 +170,6 @@ public class OperatingRound_1880 extends OperatingRound {
             player.setWorthAtORStart();
         }
 
-        privatesPayOut();
-
         if ((operatingCompanies.size() > 0)
             && (gameManager.getAbsoluteORNumber() >= 1)) {
             // even if the BCR is sold she doesn't operate until all privates
@@ -199,6 +197,9 @@ public class OperatingRound_1880 extends OperatingRound {
                     initNormalTileLays();
                 }
                 setStep(orControl.getNextStep());
+                if (orControl.wasStartedFromStockRound() == true) {
+                    trainPurchasedThisTurn = true;
+                }
             } else {
                 orControl.startNewOR();
                 finishOR();
@@ -241,6 +242,8 @@ public class OperatingRound_1880 extends OperatingRound {
             return false;
         }
 
+        trainPurchasedThisTurn = true;
+        
         // If this train was not from the ipo, nothing else to do.
         if (action.getFromPortfolio() == ipo) {
             // If there are no more trains of this type, and this type causes an
@@ -248,7 +251,7 @@ public class OperatingRound_1880 extends OperatingRound {
             if ((ipo.getTrainsPerType(action.getType()).length == 0)
                 && (trainTypeCanEndOR(action.getType()) == true)) {
                 orControl.orExitToStockRound(operatingCompany.get(),
-                        currentStep); // TODO: Fix this for stb
+                        currentStep);
                 manditoryNextAction =
                         actionForPrivateExchange(action.getType());
                 if (manditoryNextAction == null) {
@@ -259,9 +262,7 @@ public class OperatingRound_1880 extends OperatingRound {
                 SpecialTrainBuy stb = action.getSpecialProperty();
                 if ((stb == null) || (stb.isExercised() == false)) {
                     orControl.trainPurchased((PublicCompany_1880) operatingCompany.get());
-                } else {
-                    // System.out.println("Ignoring purchase (stb)");
-                }
+                } 
             }
         }
 
@@ -338,9 +339,9 @@ public class OperatingRound_1880 extends OperatingRound {
                     result = done();
                     break;
                 }
+                
                 if (operatingCompany.get() == orControl.lastCompanyToBuyTrain()) {
-                    if (trainsBoughtThisTurn.isEmpty()) {
-
+                    if (trainPurchasedThisTurn == false) {
                         // The current Company is the Company that has bought
                         // the last train and that purchase was not in this OR..
                         // we now discard the remaining active trains of that
@@ -842,10 +843,8 @@ public class OperatingRound_1880 extends OperatingRound {
         if (company == firstCompanyBeforePrivates) {
             super.privatesPayOut();
         }
+        trainPurchasedThisTurn = false;
         super.setOperatingCompany(company);
-        // if (operatingCompany.get().getTypeName().equals("Major")) {
-        // initTurn();
-        // }
     }
 
     
