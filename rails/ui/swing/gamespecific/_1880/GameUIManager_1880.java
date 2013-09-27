@@ -304,17 +304,17 @@ public class GameUIManager_1880 extends GameUIManager {
         for (int i = 0; i < destinations.size(); i++) {
             RocketDestination destination = destinations.get(i);
             if (destination.hasReplacementTrain() == true) {
-                exchangeOptions[i] = "Put 4-train in " + destination.getCompany() 
-                        + " replacing " + destination.getReplacementTrain(); 
+                exchangeOptions[i] = LocalText.getText("PlaceRocketAndReplace", destination.getCompany(),
+                        destination.getReplacementTrain());
             } else {
-                exchangeOptions[i] = "Put 4-train in " + destination.getCompany();
+                exchangeOptions[i] = LocalText.getText("PlaceRocket", destination.getCompany());
             }
         }
 
         dialog =
                 new RadioButtonDialog(FORCED_ROCKET_EXCHANGE, this,
-                        statusWindow, LocalText.getText("PleaseSelect"),
-                        "Which company should receive the 4-train?", exchangeOptions, 0);
+                        statusWindow, LocalText.getText("PleaseSelect"), 
+                        LocalText.getText("SelectRocketCompany"), exchangeOptions, 0);
         setCurrentDialog(dialog, forcedRocketExchange);
         statusWindow.disableButtons();        
     }

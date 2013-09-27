@@ -878,6 +878,7 @@ public class OperatingRound_1880 extends OperatingRound {
                     action.addCompanyWithNoSpace(company);                    
                 }
             } else {
+                ReportBuffer.add(LocalText.getText("RocketLost", rocketOwner));
                 rocket.close();
             }
             manditoryNextAction = action;
@@ -886,15 +887,23 @@ public class OperatingRound_1880 extends OperatingRound {
     
     private boolean forcedRocketExchange(ForcedRocketExchange action) {
         moveStack.start(true);
-        TrainI train = trainManager.getAvailableNewTrains().get(0); // TODO: Verify that this is a 4-train
+        TrainI train = trainManager.getAvailableNewTrains().get(0); 
         PublicCompanyI company = companyManager.getPublicCompany(action.getCompanyToReceiveTrain());
         String trainNameToReplace = action.getTrainToReplace();
         
+        TrainI replacementTrain = null;
         for (TrainI companyTrain : company.getPortfolio().getTrainList()) {
             if (companyTrain.getName().equals(trainNameToReplace)) {
-                companyTrain.moveTo(scrapHeap);
+                replacementTrain = companyTrain;
                 break;
             }
+        }
+
+        if (replacementTrain != null) {
+            ReportBuffer.add(LocalText.getText("RocketPlacedScrappingTrain", company.getName(), trainNameToReplace));
+            replacementTrain.moveTo(scrapHeap);
+        } else {
+            ReportBuffer.add(LocalText.getText("RocketPlaced", company.getName()));            
         }
         
         company.buyTrain(train, 0);
