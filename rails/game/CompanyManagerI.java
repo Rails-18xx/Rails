@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import rails.common.parser.ConfigurableComponentI;
+import rails.game.state.HashMapState;
 
 /**
  * Interface for CompanyManager objects. A company manager is a factory which
@@ -68,6 +69,6 @@ public interface CompanyManagerI extends ConfigurableComponentI {
 
     public StartPacket getNextUnfinishedStartPacket();
         
-    public void addExtraTileLayTurnsInfo (Map<String, Integer> extraTileTurns);
+    public void addExtraTileLayTurnsInfo (HashMapState<String, Integer> tileLaysPerColourTurns);
 
 }
