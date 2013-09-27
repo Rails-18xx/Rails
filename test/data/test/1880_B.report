@@ -1,0 +1,367 @@
+GameIs,1880
+PlayerIs,1,Martin
+PlayerIs,2, Frederick
+PlayerIs,3, Erik
+PlayerIs,4, Stefan
+PlayerCash,480
+BankHas,28080
+StartOfPhase,2
+BankSizeIs,28080
+StartOfInitialRound
+HasPriority,Martin
+BID_ITEM_LOG,Martin,5,WR,475
+PASSES, Frederick
+PASSES, Erik
+PASSES, Stefan
+BuysItemFor,Martin,WR,5
+BID_ITEM_LOG, Frederick,10,KR,470
+PASSES, Erik
+PASSES, Stefan
+PASSES,Martin
+BuysItemFor, Frederick,KR,10
+BID_ITEM_LOG, Erik,25,YC,455
+PASSES, Stefan
+PASSES,Martin
+PASSES, Frederick
+BuysItemFor, Erik,YC,25
+BID_ITEM_LOG, Stefan,45,TL,435
+PASSES,Martin
+PASSES, Frederick
+PASSES, Erik
+BuysItemFor, Stefan,TL,45
+BID_ITEM_LOG,Martin,70,CC,405
+PASSES, Frederick
+PASSES, Erik
+PASSES, Stefan
+BuysItemFor,Martin,CC,70
+BID_ITEM_LOG, Frederick,100,JO,370
+PASSES, Erik
+PASSES, Stefan
+PASSES,Martin
+BuysItemFor, Frederick,JO,100
+BID_ITEM_LOG, Erik,160,IG,295
+PASSES, Stefan
+PASSES,Martin
+PASSES, Frederick
+BuysItemFor, Erik,IG,160
+ALSO_GETS, Erik,PRES_CERT_NAME,BCR,20
+BuildingRightsChosen, Erik,A+B+C,BCR
+ParSlotChosen, Erik,1,BCR
+FloatsWithCash,BCR,500
+BID_ITEM_LOG, Stefan,50,RC,385
+PASSES,Martin
+PASSES, Frederick
+PASSES, Erik
+BuysItemFor, Stefan,RC,50
+PlayersReordered
+Has,BCR,500
+Has,Martin,405
+Has, Frederick,370
+Has, Erik,295
+Has, Stefan,385
+StartOfInitialRound
+HasPriority, Erik
+ChoosesInvestor, Erik,2
+ChoosesInvestor, Frederick,3
+ChoosesInvestor, Stefan,4
+ChoosesInvestor,Martin,5
+Has,BCR,500
+Has,2,0
+Has,3,0
+Has,4,0
+Has,5,0
+Has,Martin,405
+Has, Frederick,370
+Has, Erik,295
+Has, Stefan,385
+StartStockRound,1
+HasPriority, Erik
+BUY_SHARE_LOG, Erik,10,BCR,IPO,100
+START_COMPANY_LOG, Frederick,JGG,90,180,2,20,BANK
+FloatsWithCash,JGG,450
+START_COMPANY_LOG, Stefan,HKR,100,200,2,20,BANK
+FloatsWithCash,HKR,500
+START_COMPANY_LOG,Martin,SCR,100,200,2,20,BANK
+FloatsWithCash,SCR,500
+BUY_SHARE_LOG, Erik,10,BCR,IPO,100
+BUY_SHARE_LOG, Frederick,10,JGG,IPO,90
+BUY_SHARE_LOG, Stefan,10,HKR,IPO,100
+BUY_SHARE_LOG,Martin,10,SCR,IPO,100
+BUY_SHARE_LOG, Erik,10,JGG,IPO,90
+BUY_SHARE_LOG, Frederick,10,HKR,IPO,100
+PASSES, Stefan
+BUY_SHARE_LOG,Martin,10,SCR,IPO,100
+PASSES, Erik
+PASSES, Frederick
+PASSES, Stefan
+PASSES,Martin
+ 
+END_SR,1
+PRICE_MOVES_LOG,BCR,100,D2,105,D1
+SoldOut,BCR,100,D2,105,D1
+PRICE_MOVES_LOG,HKR,100,D2,105,D1
+SoldOut,HKR,100,D2,105,D1
+PRICE_MOVES_LOG,SCR,100,D2,105,D1
+SoldOut,SCR,100,D2,105,D1
+PRICE_MOVES_LOG,JGG,90,D4,95,D3
+SoldOut,JGG,90,D4,95,D3
+Has,BCR,500
+Has,JGG,450
+Has,SCR,500
+Has,HKR,500
+Has,2,0
+Has,3,0
+Has,4,0
+Has,5,0
+Has,Martin,5
+Has, Frederick,0
+Has, Erik,5
+Has, Stefan,85
+START_OR,1.1
+ReceivesFor,Martin,0,WR
+ReceivesFor, Frederick,5,KR
+ReceivesFor, Erik,10,YC
+ReceivesFor, Stefan,15,TL
+ReceivesFor,Martin,20,CC
+ReceivesFor, Frederick,25,JO
+ReceivesFor, Erik,0,IG
+ReceivesFor, Stefan,0,RC
+ 
+CompanyOperates,2, Erik
+LaysTileAt,2,5,E13,W
+CompanyRevenue,2,0
+CompanyDoesNotPayDividend,2
+ 
+CompanyOperates,3, Frederick
+LaysTileAt,3,5,H6,SW
+CompanyRevenue,3,0
+CompanyDoesNotPayDividend,3
+ 
+CompanyOperates,4, Stefan
+LaysTileAt,4,6,H14,NW
+CompanyRevenue,4,0
+CompanyDoesNotPayDividend,4
+ 
+CompanyOperates,5,Martin
+LaysTileAt,5,57,P14,NW
+CompanyRevenue,5,40
+CompanyWithholds,5,40
+ 
+CompanyOperates,BCR, Erik
+LaysTileAt,BCR,5,M3,SW
+LaysTileAtFor,BCR,8852,M5,W,30
+CompanyDoesNotPayDividend,BCR
+PRICE_MOVES_LOG,BCR,105,D1,100,C1
+BuysTrain,BCR,2,IPO,100
+FirstTrainBought,2
+BuysTrain,BCR,2,IPO,100
+BuysTrain,BCR,2,IPO,100
+ 
+CompanyOperates,HKR, Stefan
+LaysTileAt,HKR,8877,K15,SW
+CompanyDoesNotPayDividend,HKR
+PRICE_MOVES_LOG,HKR,105,D1,100,C1
+BuysTrain,HKR,2,IPO,100
+BuysTrain,HKR,2,IPO,100
+ 
+CompanyOperates,SCR,Martin
+LaysTileAt,SCR,235,N12,NE
+CompanyDoesNotPayDividend,SCR
+PRICE_MOVES_LOG,SCR,105,D1,100,C1
+BuysTrain,SCR,2,IPO,100
+ 
+CompanyOperates,JGG, Frederick
+LaysTileAt,JGG,7,G7,NE
+CompanyDoesNotPayDividend,JGG
+PRICE_MOVES_LOG,JGG,95,D3,90,C3
+BuysTrain,JGG,2,IPO,100
+ 
+EndOfOperatingRound,1.1
+ORWorthIncrease, Erik,1.1,-15
+ORWorthIncrease, Frederick,1.1,10
+ORWorthIncrease, Stefan,1.1,0
+ORWorthIncrease,Martin,1.1,0
+Has,BCR,170
+Has,JGG,350
+Has,SCR,400
+Has,HKR,300
+Has,2,0
+Has,3,0
+Has,4,0
+Has,5,40
+Has,Martin,25
+Has, Frederick,30
+Has, Erik,15
+Has, Stefan,100
+START_OR,1.1
+ReceivesFor,Martin,0,WR
+ReceivesFor, Frederick,5,KR
+ReceivesFor, Erik,10,YC
+ReceivesFor, Stefan,15,TL
+ReceivesFor,Martin,20,CC
+ReceivesFor, Frederick,25,JO
+ReceivesFor, Erik,0,IG
+ReceivesFor, Stefan,0,RC
+ 
+CompanyOperates,2, Erik
+LaysTileAt,2,57,F10,W
+CompanyRevenue,2,40
+CompanyWithholds,2,40
+ 
+CompanyOperates,3, Frederick
+LaysTileAt,3,235,H8,SE
+CompanyRevenue,3,50
+CompanyWithholds,3,50
+ 
+CompanyOperates,4, Stefan
+LaysTileAt,4,8857,H12,SW
+CompanyRevenue,4,40
+CompanyWithholds,4,40
+FIConnected,4,HKR
+FIConnectedPayout, Stefan
+FIConnectedTreasuryToCompany,HKR,4,40
+FIConnectedReplaceToken,HKR,4
+FIConnectedMoveCert, Stefan,HKR,4
+ 
+CompanyOperates,5,Martin
+LaysTileAt,5,9,O13,NW
+CompanyRevenue,5,40
+CompanyWithholds,5,40
+FIConnected,5,SCR
+FIConnectedPayout,Martin
+FIConnectedTreasuryToCompany,SCR,5,80
+FIConnectedReplaceToken,SCR,5
+FIConnectedMoveCert,Martin,SCR,5
+ 
+CompanyOperates,BCR, Erik
+LaysTileAtFor,BCR,57,M7,W,20
+LaysTileAtFor,BCR,235,N4,SW,20
+LAYS_TOKEN_ON,BCR,M7,40
+CompanyRevenue,BCR,130
+CompanyPaysOutFull,BCR,130
+Payout, Erik,52,4,10
+PRICE_MOVES_LOG,BCR,100,C1,105,D1
+ 
+CompanyOperates,HKR, Stefan
+LaysTileAt,HKR,6,L14,SW
+CompanyRevenue,HKR,90
+CompanyPaysOutFull,HKR,90
+Payout, Stefan,36,4,10
+Payout, Frederick,9,1,10
+PRICE_MOVES_LOG,HKR,100,C1,105,D1
+BuysTrain,HKR,2,IPO,100
+ 
+CompanyOperates,SCR,Martin
+CompanyRevenue,SCR,50
+CompanyPaysOutFull,SCR,50
+Payout,Martin,25,5,10
+PRICE_MOVES_LOG,SCR,100,C1,105,D1
+BuysTrain,SCR,2,IPO,100
+ 
+CompanyOperates,JGG, Frederick
+LaysTileAt,JGG,8851,G9,W
+CompanyRevenue,JGG,40
+CompanyPaysOutFull,JGG,40
+Payout, Erik,4,1,10
+Payout, Frederick,12,3,10
+PRICE_MOVES_LOG,JGG,90,C3,95,D3
+BuysTrain,JGG,2,IPO,100
+All 2-trains are sold out, 2+2-trains now available
+ 
+EndOfOperatingRound,1.1
+ORWorthIncrease, Erik,1.1,91
+ORWorthIncrease, Frederick,1.1,71
+ORWorthIncrease, Stefan,1.1,221
+ORWorthIncrease,Martin,1.1,220
+Has,BCR,90
+Has,JGG,250
+Has,SCR,380
+Has,HKR,240
+Has,2,40
+Has,3,50
+Has,Martin,120
+Has, Frederick,81
+Has, Erik,81
+Has, Stefan,201
+StartStockRound,2
+HasPriority, Erik
+PASSES, Erik
+PASSES, Frederick
+START_COMPANY_LOG, Stefan,NJR,100,200,2,20,BANK
+FloatsWithCash,NJR,500
+BUY_SHARE_LOG,Martin,10,NJR,IPO,100
+PASSES, Erik
+PASSES, Frederick
+PASSES, Stefan
+PASSES,Martin
+ 
+END_SR,2
+PRICE_MOVES_LOG,BCR,105,D1,105,E2
+SoldOut,BCR,105,D1,105,E2
+PRICE_MOVES_LOG,HKR,105,D1,105,E2
+SoldOut,HKR,105,D1,105,E2
+PRICE_MOVES_LOG,SCR,105,D1,105,E2
+SoldOut,SCR,105,D1,105,E2
+PRICE_MOVES_LOG,JGG,95,D3,100,D2
+SoldOut,JGG,95,D3,100,D2
+Has,BCR,90
+Has,JGG,250
+Has,SCR,380
+Has,HKR,240
+Has,NJR,500
+Has,2,40
+Has,3,50
+Has,Martin,20
+Has, Frederick,81
+Has, Erik,81
+Has, Stefan,1
+START_OR,2.1
+ 
+CompanyOperates,JGG, Frederick
+ReceivesFor,Martin,0,WR
+ReceivesFor, Frederick,5,KR
+ReceivesFor, Erik,10,YC
+ReceivesFor, Stefan,15,TL
+ReceivesFor,Martin,20,CC
+ReceivesFor, Frederick,25,JO
+ReceivesFor, Erik,0,IG
+ReceivesFor, Stefan,0,RC
+ 
+CompanyOperates,2, Erik
+LaysTileAt,2,9,G13,SW
+CompanyRevenue,2,60
+CompanyWithholds,2,60
+ 
+CompanyOperates,3, Frederick
+LaysTileAtFor,3,8,I7,SW,50
+CompanyRevenue,3,50
+CompanyWithholds,3,50
+ 
+CompanyOperates,BCR, Erik
+LaysTileAt,BCR,8,M9,W
+LaysTileAtFor,BCR,57,L10,SW,20
+CompanyRevenue,BCR,130
+CompanyPaysOutFull,BCR,130
+Payout, Erik,52,4,10
+PRICE_MOVES_LOG,BCR,105,E2,110,F2
+ 
+CompanyOperates,HKR, Stefan
+LaysTileAt,HKR,8852,M15,NW
+LAYS_TOKEN_ON,HKR,L14,100
+CompanyRevenue,HKR,130
+CompanyPaysOutFull,HKR,130
+Payout, Stefan,52,4,10
+Payout, Frederick,13,1,10
+PRICE_MOVES_LOG,HKR,105,E2,110,F2
+BuysTrainUsingSP,HKR,2+2,IPO,0,RC
+PrivateCloses,RC
+FirstTrainBought,2+2
+StartOfPhase,2+2
+ 
+CompanyOperates,SCR,Martin
+CompanyRevenue,SCR,90
+CompanyPaysOutFull,SCR,90
+Payout,Martin,45,5,10
+PRICE_MOVES_LOG,SCR,105,E2,110,F2
+ 
+CompanyOperates,NJR, Stefan
