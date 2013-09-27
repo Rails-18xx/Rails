@@ -223,7 +223,26 @@ public class OperatingRound_1880 extends OperatingRound {
     }
 
     public boolean specialBuyTrain(BuyTrain action) {
-        return buyTrain(action);
+        // We might not be in the correct step...
+        OrStep currentStep = getStep();
+        setStep(GameDef.OrStep.BUY_TRAIN);
+        boolean trainResults = super.buyTrain(action);
+        setStep(currentStep);
+
+        if (trainResults == false) {
+            return false;
+        }
+
+        if ((ipo.getTrainsPerType(action.getType()).length == 0)
+                && (trainTypeCanEndOR(action.getType()) == true)) {
+            orControl.orExitToStockRound(operatingCompany.get(), currentStep);
+            setActionForPrivateExchange(action.getType());
+            if (manditoryNextAction == null) {
+                finishOR();
+            }
+        } 
+
+        return true;
     }
 
     /*
@@ -233,39 +252,29 @@ public class OperatingRound_1880 extends OperatingRound {
      */
     @Override
     public boolean buyTrain(BuyTrain action) {
-        // If this is a special buy, we might not be in the correct step...
-        OrStep currentStep = getStep();
-        setStep(GameDef.OrStep.BUY_TRAIN);
-
         if (super.buyTrain(action) != true) {
-            setStep(currentStep);
             return false;
         }
 
-        trainPurchasedThisTurn = true;
-        
         // If this train was not from the ipo, nothing else to do.
         if (action.getFromPortfolio() == ipo) {
+            trainPurchasedThisTurn = true;
             // If there are no more trains of this type, and this type causes an
             // OR end, end it.
             if ((ipo.getTrainsPerType(action.getType()).length == 0)
                 && (trainTypeCanEndOR(action.getType()) == true)) {
+                orControl.trainPurchased((PublicCompany_1880) operatingCompany.get());
                 orControl.orExitToStockRound(operatingCompany.get(),
-                        currentStep);
+                        GameDef.OrStep.BUY_TRAIN);
                 setActionForPrivateExchange(action.getType());
                 if (manditoryNextAction == null) {
                     finishOR();
                 }
             } else {
-                // If this was not part of a special action, extend the OR.
-                SpecialTrainBuy stb = action.getSpecialProperty();
-                if ((stb == null) || (stb.isExercised() == false)) {
-                    orControl.trainPurchased((PublicCompany_1880) operatingCompany.get());
-                } 
-            }
+                orControl.trainPurchased((PublicCompany_1880) operatingCompany.get());
+            } 
         }
 
-        setStep(currentStep);
         return true;
     }
 
@@ -293,7 +302,7 @@ public class OperatingRound_1880 extends OperatingRound {
      * @see rails.game.OperatingRound#process(rails.game.action.PossibleAction)
      */
     @Override
-    public boolean process(PossibleAction action) {
+    public boolean process(PossibleAction action) {        
         boolean result = false;
 
         selectedAction = action;
