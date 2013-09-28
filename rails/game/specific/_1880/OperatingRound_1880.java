@@ -912,6 +912,7 @@ public class OperatingRound_1880 extends OperatingRound {
         
         company.buyTrain(train, 0);
         companyManager.getPrivateCompany("RC").close();
+        train.getCertType().addToBoughtFromIPO();
         trainManager.checkTrainAvailability(train, ipo); 
         // If there are no available trains now, time for a stock round.
         if (train.getType() != trainManager.getAvailableNewTrains().get(0).getType()) {

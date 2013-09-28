@@ -172,6 +172,7 @@ public class GameFileIO {
                         gameData.actions.add((PossibleAction)actionObject);
                         try {
                             actionObject = ois.readObject();
+                            log.debug("Read action: " + actionObject.toString());
                         } catch (EOFException e) {
                             break;
                         }
