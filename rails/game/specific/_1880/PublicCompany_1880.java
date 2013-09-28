@@ -348,4 +348,38 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
         return companies;
     }
 
+
+    /* (non-Javadoc)
+     * @see rails.game.PublicCompany#getBaseTokenLayCost(rails.game.MapHex)
+     */
+    @Override
+    public int getBaseTokenLayCost(MapHex hex) {
+        PhaseI phase = gameManager.getPhaseManager().getCurrentPhase();
+        if (phase.getRealName().startsWith("D")) {
+            int result;
+            result = super.getBaseTokenLayCost(hex) * 2;
+            return result;
+        }
+        return super.getBaseTokenLayCost(hex);
+    }
+
+    /* (non-Javadoc)
+     * @see rails.game.PublicCompany#getBaseTokenLayCosts()
+     */
+    @Override
+    public int[] getBaseTokenLayCosts() {
+        PhaseI phase = gameManager.getPhaseManager().getCurrentPhase();
+        if (phase.getRealName().startsWith("D")) {
+            int[] result = null;
+            int[] resultPhaseD = null;
+            result = super.getBaseTokenLayCosts();
+            resultPhaseD = result.clone();
+            for ( int i = 0; i < result.length; i++)
+                resultPhaseD[i] = result[i]+ result[i];
+            return resultPhaseD;
+        }
+        return super.getBaseTokenLayCosts();
+    }
+
+    
 }
