@@ -1,28 +1,37 @@
 package rails.game.specific._1880;
 
 import rails.game.GameDef.OrStep;
+import rails.game.state.BooleanState;
+import rails.game.state.EnumState;
+import rails.game.GameDef;
 import rails.game.PublicCompanyI;
 
 public class OperatingRoundControl_1880 {
     
     private PublicCompanyI lastCompanyToBuyTrain;
     private PublicCompanyI firstCompanyToRun;
-    private OrStep nextStep;
-    private boolean exitingToStockRound;
-    private boolean startedFromStockRound;
+    private EnumState<GameDef.OrStep> nextStep;
+    private BooleanState exitingToStockRound = new BooleanState ("ExitedToStockRound",false);
+    private BooleanState startedFromStockRound = new BooleanState ("StartingFromStockRound",false);
+
     
     public OperatingRoundControl_1880() {
         lastCompanyToBuyTrain = null;
-        firstCompanyToRun = null;      
-        nextStep = OrStep.INITIAL;
-        exitingToStockRound = false;
-        startedFromStockRound = false;
+        firstCompanyToRun = null;   
+        
+        if (nextStep == null) {
+            nextStep =
+                    new EnumState<GameDef.OrStep>("ORStep",
+                            GameDef.OrStep.INITIAL);
+        }
+        exitingToStockRound.set(false);
+        startedFromStockRound.set(false);
     }
 
     public void orExitToStockRound(PublicCompanyI company, OrStep step) {
         firstCompanyToRun = company;
-        nextStep = step;
-        exitingToStockRound = true;
+        nextStep.set(step);
+        exitingToStockRound.set(true);
     }
     
     public PublicCompanyI lastCompanyToBuyTrain() {
@@ -34,11 +43,11 @@ public class OperatingRoundControl_1880 {
     }
     
     public boolean isExitingToStockRound() {
-        return exitingToStockRound;
+        return exitingToStockRound.booleanValue();
     }
     
     public void startingStockRound() {
-        exitingToStockRound = false;
+        exitingToStockRound.set(false);
     }
     
     public PublicCompanyI getFirstCompanyToRun() {
@@ -46,24 +55,24 @@ public class OperatingRoundControl_1880 {
     }
     
     public OrStep getNextStep() {
-        return nextStep;
+        return nextStep.value();
     }
 
     public void startNewOR() {
-        exitingToStockRound = false;
-        nextStep = OrStep.INITIAL;        
+        exitingToStockRound.set(false);
+        nextStep.set(OrStep.INITIAL);        
     }
 
     public boolean wasStartedFromStockRound() {
-        return startedFromStockRound;
+        return startedFromStockRound.booleanValue();
     }
 
     public void startedFromStockRound() {
-        startedFromStockRound = true;        
+        startedFromStockRound.set(true);        
     }
 
     public void startedFromOperatingRound() {
-        startedFromStockRound = false;        
+        startedFromStockRound.set(false);        
     }
 
 }
