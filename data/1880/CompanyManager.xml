@@ -47,21 +47,27 @@
 	
 	<Company name="WR" longname="Woosong Railway" type="Private" basePrice="0"
 		revenue="0,0">
+		<NotAgainstLimit />
 	</Company>
 	<Company name="KR" longname="Kaiping Railway" type="Private" basePrice="0"
 		revenue="5,0">
+		<NotAgainstLimit />
 	</Company>
 	<Company name="YC" longname="Yanda Ferry Company" type="Private"
 		basePrice="0" revenue="10,0">
+		<NotAgainstLimit />
 	</Company>
 	<Company name="TL" longname="Taiwan Western Line" type="Private" basePrice="0"
 		revenue="15,0">
+		<NotAgainstLimit />
 	</Company>
 	<Company name="CC" longname="Chinese Rivers Ferry Company" type="Private"
 		basePrice="0" revenue="20,0">
+		<NotAgainstLimit />
 	</Company>
 	<Company name="JO" longname="Jeme Tien Yow Engineer Office" type="Private"
 		basePrice="0" revenue="25,0">
+		<NotAgainstLimit />
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep"
 				class="rails.game.specific._1880.AddBuildingPermit">
@@ -71,10 +77,12 @@
 	</Company>
 	<Company name="IG" longname="Imperial Qing Government" type="Private"
 		basePrice="0" revenue="0,0">
+		<NotAgainstLimit />
 		<Info key="ComesWithPresidency" parm="BCR,20"/>
 	</Company>
 	<Company name="RC" longname="Rocket Company" type="Private" basePrice="70"
 		revenue="0,0">
+		<NotAgainstLimit />
 		<SpecialProperties>
 		<SpecialProperty condition="ifOwnedByPlayer" when="orTurn"  
 					class="rails.game.special.SpecialTrainBuy" closedIfExercised="yes">
