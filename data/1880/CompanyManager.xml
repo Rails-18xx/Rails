@@ -62,6 +62,12 @@
 	</Company>
 	<Company name="JO" longname="Jeme Tien Yow Engineer Office" type="Private"
 		basePrice="0" revenue="25,0">
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep"
+				class="rails.game.specific._1880.AddBuildingPermit">
+				<AddedPermit name="D"/>
+			</SpecialProperty>
+		</SpecialProperties>
 	</Company>
 	<Company name="IG" longname="Imperial Qing Government" type="Private"
 		basePrice="0" revenue="0,0">

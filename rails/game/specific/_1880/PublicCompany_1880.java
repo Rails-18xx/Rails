@@ -98,6 +98,11 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
         this.buildingRights.set(buildingRights);
     }
 
+    public void addBuildingPermit(String permitName) {
+        buildingRights.set(buildingRights.get() + "+" + permitName);
+    }
+
+    
     public void setCommunistTakeOver(boolean b) {
         communistTakeOver.set(b);
         
@@ -380,6 +385,7 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
         }
         return super.getBaseTokenLayCosts();
     }
+
 
     
 }

@@ -251,6 +251,7 @@ public class OperatingRound_1880 extends OperatingRound {
      * 
      * @see rails.game.OperatingRound#buyTrain(rails.game.action.BuyTrain)
      */
+    
     @Override
     public boolean buyTrain(BuyTrain action) {
         if (super.buyTrain(action) != true) {
@@ -259,8 +260,12 @@ public class OperatingRound_1880 extends OperatingRound {
 
         // If this train was not from the ipo, nothing else to do.
         if (action.getFromPortfolio() == ipo) {
-            trainPurchasedThisTurn.set(true);
-            orControl.trainPurchased((PublicCompany_1880) operatingCompany.get());
+            SpecialTrainBuy stb = action.getSpecialProperty();
+            if ((stb == null) || (stb.isExercised() == false)) {
+                trainPurchasedThisTurn.set(true);
+                orControl.trainPurchased((PublicCompany_1880) operatingCompany.get());
+            } 
+
             // If there are no more trains of this type, and this type causes an
             // OR end, end it.
             if ((ipo.getTrainsPerType(action.getType()).length == 0)
@@ -376,6 +381,10 @@ public class OperatingRound_1880 extends OperatingRound {
                                                                                                                // Fix.
             result = specialBuyTrain(buyTrain);
             return result;
+        } else if ((action instanceof UseSpecialProperty)
+                && (((UseSpecialProperty) action).getSpecialProperty() instanceof AddBuildingPermit)) {
+            result = addBuildingPermit(action);
+            return result;
         } else if (action instanceof ExchangeForCash) {
             result = exchangeForCash((ExchangeForCash) action);
             return result;
@@ -386,8 +395,6 @@ public class OperatingRound_1880 extends OperatingRound {
             return super.process(action);
         }
     }
-
-
 
     /*
      * (non-Javadoc)
@@ -470,7 +477,7 @@ public class OperatingRound_1880 extends OperatingRound {
         }
 
         // Move the token
-        operatingCompany.get().payout(amount); //TODO: Check if PublicCompany_1880 needs to be the target...
+        operatingCompany.get().payout(amount);
 
     }
 
@@ -922,5 +929,14 @@ public class OperatingRound_1880 extends OperatingRound {
         return true;
     }
 
-    
+
+    private boolean addBuildingPermit(PossibleAction action) {
+        AddBuildingPermit addPermit = (AddBuildingPermit) ((UseSpecialProperty) action).getSpecialProperty();
+        ((PublicCompany_1880) operatingCompany.get()).addBuildingPermit(addPermit.getPermitName());
+        addPermit.setExercised();
+        ReportBuffer.add(LocalText.getText("AddedRights", operatingCompany.get().getName(), addPermit.getPermitName()));            
+        return true;
+    }
+
+
 }
