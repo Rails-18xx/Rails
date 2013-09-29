@@ -51,9 +51,9 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
     
     private BooleanState allCertsAvail = new BooleanState ("allCertsAvail", false);
     
-    private boolean fullyCapitalized = false;
-    private boolean fullCapitalAvailable = false;
-    private int extraCapital = 0;
+    private BooleanState fullyCapitalized = new BooleanState ("fullyCapitalized", false);
+    private BooleanState fullCapitalAvailable = new BooleanState ("fullCapitalAvailable", false);
+    private int extraCapital = 0; // Just one Change at Start of the game, can stay as it is..
     
     protected IntegerState formationOrderIndex;
     
@@ -268,14 +268,14 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
      * @return the fullyCapitalised
      */
     public boolean isFullyCapitalized() {
-        return fullyCapitalized;
+        return fullyCapitalized.booleanValue();
     }
 
     /**
      * @param fullyCapitalised the fullyCapitalised to set
      */
     public void setFullyCapitalized(boolean fullyCapitalised) {
-        this.fullyCapitalized = fullyCapitalised;
+        this.fullyCapitalized.set(fullyCapitalised);
     }
 
     /**
@@ -316,20 +316,20 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
     }
 
     public void setFullFundingAvail() {
-        this.fullCapitalAvailable = true;
+        this.fullCapitalAvailable.set(true);
         checkToFullyCapitalize();
     }
 
     public void sharePurchased() {
-        if (fullyCapitalized == true) {
+        if (fullyCapitalized.booleanValue() == true) {
             return;
         }
         checkToFullyCapitalize();
     }
     
     private void checkToFullyCapitalize() {
-        if ((hasFloated() == true) && (sharesInIpo() <= 5) && (fullCapitalAvailable == true)) {
-            fullyCapitalized = true;
+        if ((hasFloated() == true) && (sharesInIpo() <= 5) && (fullCapitalAvailable.booleanValue() == true)) {
+            fullyCapitalized.set(true);
             addCash(extraCapital);  // TODO: Should this be a "MOVE" instead?
         }
     }

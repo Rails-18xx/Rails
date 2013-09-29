@@ -43,6 +43,7 @@ import rails.game.special.SpecialTileLay;
 import rails.game.special.SpecialTrainBuy;
 import rails.game.specific._1880.PublicCompany_1880;
 import rails.game.specific._1880.GameManager_1880;
+import rails.game.state.BooleanState;
 import rails.game.state.EnumState;
 import rails.util.SequenceUtil;
 
@@ -58,7 +59,7 @@ public class OperatingRound_1880 extends OperatingRound {
     List<Investor_1880> investorsToClose = new ArrayList<Investor_1880>();
     PossibleAction manditoryNextAction = null;
     private PublicCompanyI firstCompanyBeforePrivates;
-    private boolean trainPurchasedThisTurn = false;
+    private BooleanState trainPurchasedThisTurn = new BooleanState ("trainPurchaseThisTurn",false);
     
     /**
      * @param gameManager
@@ -198,7 +199,7 @@ public class OperatingRound_1880 extends OperatingRound {
                 }
                 setStep(orControl.getNextStep());
                 if (orControl.wasStartedFromStockRound() == true) {
-                    trainPurchasedThisTurn = true;
+                    trainPurchasedThisTurn.set(true);
                 }
             } else {
                 orControl.startNewOR();
@@ -258,7 +259,7 @@ public class OperatingRound_1880 extends OperatingRound {
 
         // If this train was not from the ipo, nothing else to do.
         if (action.getFromPortfolio() == ipo) {
-            trainPurchasedThisTurn = true;
+            trainPurchasedThisTurn.set(true);
             orControl.trainPurchased((PublicCompany_1880) operatingCompany.get());
             // If there are no more trains of this type, and this type causes an
             // OR end, end it.
@@ -317,7 +318,7 @@ public class OperatingRound_1880 extends OperatingRound {
                 }
                 
                 if (operatingCompany.get() == orControl.lastCompanyToBuyTrain()) {
-                    if (trainPurchasedThisTurn == false) {
+                    if (trainPurchasedThisTurn.booleanValue() == false) {
                         // The current Company is the Company that has bought
                         // the last train and that purchase was not in this OR..
                         // we now discard the remaining active trains of that
@@ -469,7 +470,7 @@ public class OperatingRound_1880 extends OperatingRound {
         }
 
         // Move the token
-        operatingCompany.get().payout(amount);
+        operatingCompany.get().payout(amount); //TODO: Check if PublicCompany_1880 needs to be the target...
 
     }
 
@@ -822,7 +823,7 @@ public class OperatingRound_1880 extends OperatingRound {
         if (company == firstCompanyBeforePrivates) {
             super.privatesPayOut();
         }
-        trainPurchasedThisTurn = false;
+        trainPurchasedThisTurn.set(false);
         super.setOperatingCompany(company);
     }
 
