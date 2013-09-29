@@ -250,6 +250,7 @@ public class OperatingRound_1880 extends OperatingRound {
      * 
      * @see rails.game.OperatingRound#buyTrain(rails.game.action.BuyTrain)
      */
+    
     @Override
     public boolean buyTrain(BuyTrain action) {
         if (super.buyTrain(action) != true) {
@@ -258,8 +259,12 @@ public class OperatingRound_1880 extends OperatingRound {
 
         // If this train was not from the ipo, nothing else to do.
         if (action.getFromPortfolio() == ipo) {
-            trainPurchasedThisTurn = true;
-            orControl.trainPurchased((PublicCompany_1880) operatingCompany.get());
+            SpecialTrainBuy stb = action.getSpecialProperty();
+            if ((stb == null) || (stb.isExercised() == false)) {
+                trainPurchasedThisTurn = true;
+                orControl.trainPurchased((PublicCompany_1880) operatingCompany.get());
+            } 
+
             // If there are no more trains of this type, and this type causes an
             // OR end, end it.
             if ((ipo.getTrainsPerType(action.getType()).length == 0)
