@@ -32,6 +32,7 @@ import rails.game.TileI;
 import rails.game.TrainI;
 import rails.game.TrainType;
 import rails.game.action.BuyTrain;
+import rails.game.action.DiscardTrain;
 import rails.game.action.LayTile;
 import rails.game.action.NullAction;
 import rails.game.action.PossibleAction;
@@ -936,6 +937,14 @@ public class OperatingRound_1880 extends OperatingRound {
         ReportBuffer.add(LocalText.getText("AddedRights", operatingCompany.get().getName(), addPermit.getPermitName()));            
         return true;
     }
-
+    
+    public boolean discardTrain(DiscardTrain action) {
+        if (super.discardTrain(action) == false) {
+            return false;
+        }
+        
+        action.getDiscardedTrain().moveTo(scrapHeap);
+        return true;
+    }
 
 }
