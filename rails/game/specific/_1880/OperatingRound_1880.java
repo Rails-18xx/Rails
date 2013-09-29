@@ -380,6 +380,10 @@ public class OperatingRound_1880 extends OperatingRound {
                                                                                                                // Fix.
             result = specialBuyTrain(buyTrain);
             return result;
+        } else if ((action instanceof UseSpecialProperty)
+                && (((UseSpecialProperty) action).getSpecialProperty() instanceof AddBuildingPermit)) {
+            result = addBuildingPermit(action);
+            return result;
         } else if (action instanceof ExchangeForCash) {
             result = exchangeForCash((ExchangeForCash) action);
             return result;
@@ -390,8 +394,6 @@ public class OperatingRound_1880 extends OperatingRound {
             return super.process(action);
         }
     }
-
-
 
     /*
      * (non-Javadoc)
@@ -926,5 +928,14 @@ public class OperatingRound_1880 extends OperatingRound {
         return true;
     }
 
-    
+
+    private boolean addBuildingPermit(PossibleAction action) {
+        AddBuildingPermit addPermit = (AddBuildingPermit) ((UseSpecialProperty) action).getSpecialProperty();
+        ((PublicCompany_1880) operatingCompany.get()).addBuildingPermit(addPermit.getPermitName());
+        addPermit.setExercised();
+        ReportBuffer.add(LocalText.getText("AddedRights", operatingCompany.get().getName(), addPermit.getPermitName()));            
+        return true;
+    }
+
+
 }
