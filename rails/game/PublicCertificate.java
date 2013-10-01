@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import rails.common.LocalText;
 import rails.game.move.MoveableHolder;
 import rails.game.move.ObjectMove;
+import rails.game.state.IntegerState;
 
 public class PublicCertificate implements PublicCertificateI, Cloneable {
 
@@ -17,7 +18,8 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
     /**
      * Share percentage represented by this certificate
      */
-    protected int shares;
+    protected IntegerState shares = new IntegerState("shares");
+    
     /** President's certificate? */
     protected boolean president;
     /** Count against certificate limits */
@@ -46,7 +48,7 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
 
     public PublicCertificate(int shares, boolean president, 
             boolean available, float certificateCount, int index) {
-        this.shares = shares;
+        this.shares.set(shares);
         this.president = president;
         this.initiallyAvailable = available;
         this.certificateCount = certificateCount;
@@ -54,7 +56,7 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
     }
 
     public PublicCertificate(PublicCertificateI oldCert) {
-        this.shares = oldCert.getShares();
+        this.shares.set(oldCert.getShares());
         this.president = oldCert.isPresidentShare();
         this.initiallyAvailable = oldCert.isInitiallyAvailable();
         this.certificateCount = oldCert.getCertificateCount();
@@ -106,7 +108,15 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
      * @return The number of shares.
      */
     public int getShares() {
-        return shares;
+        return (Integer) shares.get();
+    }
+    
+    /**
+     * Set the number of shares that this certificate represents.
+     *
+     */
+    public void setShares(int shares) {
+        this.shares.set(shares);
     }
 
     /**
@@ -116,7 +126,7 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
      * @return The share percentage.
      */
     public int getShare() {
-        return shares * company.getShareUnit();
+        return ((Integer) shares.get()) * company.getShareUnit();
     }
 
     /**
@@ -192,6 +202,14 @@ public class PublicCertificate implements PublicCertificateI, Cloneable {
 
     public String getTypeId() {
         return certTypeId;
+    }
+    
+    public String getDisplayType() {
+        String displayType = company.getName() + "_" + getShare() + "%";
+        if (president) {
+            displayType += "_P";
+        }
+        return displayType;
     }
 
     @Override

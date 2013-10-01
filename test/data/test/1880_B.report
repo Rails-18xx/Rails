@@ -353,10 +353,7 @@ CompanyPaysOutFull,HKR,130
 Payout, Stefan,52,4,10
 Payout, Frederick,13,1,10
 PRICE_MOVES_LOG,HKR,105,E2,110,F2
-BuysTrainUsingSP,HKR,2+2,IPO,0,RC
-PrivateCloses,RC
-FirstTrainBought,2+2
-StartOfPhase,2+2
+AddedRights,HKR,D
  
 CompanyOperates,SCR,Martin
 CompanyRevenue,SCR,90

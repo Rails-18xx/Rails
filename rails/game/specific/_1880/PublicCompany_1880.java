@@ -306,10 +306,10 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
         return true;
     }
     
-    private int sharesInIpo() {
+    public int sharesInIpo() {
         int sharesInIpo = 0;
         for (PublicCertificateI cert : certificates) {
-            if (cert.getPortfolio().getOwner() instanceof Bank) {
+            if (cert.getPortfolio() == gameManager.getBank().getIpo()) {
                 sharesInIpo += cert.getShares();
             }
         }

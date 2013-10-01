@@ -557,9 +557,9 @@ CorrectCashAddMoney,mike,1000
 CorrectCashAddMoney,andy,1000
 CorrectionModeDeactivate,marc,CORRECT_CASH
 PASSES,marc
-START_COMPANY_LOG,todd,QSR,70,280,4,10,BANK
+START_COMPANY_LOG,todd,QSR,70,280,4,40,BANK
 FloatsWithCash,QSR,350
-START_COMPANY_LOG,mike,WNR,70,280,4,10,BANK
+START_COMPANY_LOG,mike,WNR,70,280,4,40,BANK
 FloatsWithCash,WNR,350
 PASSES,andy
 PASSES,marc
