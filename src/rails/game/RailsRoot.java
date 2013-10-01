@@ -65,10 +65,6 @@ public class RailsRoot extends Root implements RailsItem {
     private RailsRoot(GameData gameData) {
         super();
         
-        // TODO (Rails2.0): Is this the correct place?
-        gameData.getGameOptions().put(GameOption.NUMBER_OF_PLAYERS,
-                String.valueOf(gameData.getPlayers().size()));
-
         for (String playerName : gameData.getPlayers()) {
             log.debug("Player: " + playerName);
         }

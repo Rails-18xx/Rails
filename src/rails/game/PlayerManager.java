@@ -5,6 +5,8 @@ import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Maps;
+
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.common.ReportBuffer;
@@ -29,8 +31,10 @@ public class PlayerManager extends RailsManager implements Configurable {
     // configure data
     private int maxPlayers;
     private int minPlayers;
-    private int[] playerStartCash = new int[Player.MAX_PLAYERS];
-    private int[] playerCertificateLimits = new int[Player.MAX_PLAYERS];
+    private final Map<Integer, Integer> playerStartCash = 
+            Maps.newHashMap();
+    private final Map<Integer, Integer> playerCertificateLimits = 
+            Maps.newHashMap();
     
     // dynamic data
     private final GenericState<Player> currentPlayer = GenericState.create(this, "currentPlayer");
@@ -59,9 +63,9 @@ public class PlayerManager extends RailsManager implements Configurable {
         for (Tag playerTag : playerTags) {
             number = playerTag.getAttributeAsInteger("number");
             startCash = playerTag.getAttributeAsInteger("cash");
-            playerStartCash[number] = startCash;
+            playerStartCash.put(number, startCash);
             certLimit = playerTag.getAttributeAsInteger("certLimit");
-            playerCertificateLimits[number] = certLimit;
+            playerCertificateLimits.put(number, certLimit);
 
             minPlayers = Math.min(minPlayers, number);
             maxPlayers = Math.max(maxPlayers, number);
@@ -134,14 +138,14 @@ public class PlayerManager extends RailsManager implements Configurable {
     }
 
     protected int getStartCash () {
-        return playerStartCash[numberOfPlayers];
+        return playerStartCash.get(numberOfPlayers);
     }
 
     /** Only to be called at initialisation time.
      * Does not reflect later changes to this limit.
      */
     public int getInitialPlayerCertificateLimit() {
-        return playerCertificateLimits[numberOfPlayers];
+        return playerCertificateLimits.get(numberOfPlayers);
     }
 
     // dynamic getter/setters

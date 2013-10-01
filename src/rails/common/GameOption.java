@@ -1,103 +1,57 @@
 package rails.common;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import rails.game.RailsItem;
 import rails.util.Util;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
+import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.ImmutableList;
 
-public class GameOption {
+public class GameOption implements Comparable<GameOption> {
+    
+    // Strings that define yes or no options
+    public static final String OPTION_VALUE_YES = "yes";
+    public static final String OPTION_VALUE_NO = "no";
 
+    // Strings that define types
+    public static final String OPTION_TYPE_SELECTION = "selection";
+    public static final String OPTION_TYPE_TOGGLE = "toggle";
+    
     // A default option that will always be set
     public static final String NUMBER_OF_PLAYERS = "NumberOfPlayers";
     // Some other common game options
     public static final String VARIANT = "Variant";
 
-    // A regex to match parameters against
-    private static final Pattern PATTERN = Pattern.compile("\\{(.*)\\}");
-    // Strings that define yes or no options
-    private static final String OPTION_VALUE_YES = "yes";
-    
-    // Static Data
     private final String name;
-    
-    // Dynamic Data
-    private boolean isBoolean = false;
-    private String type;
-    private String defaultValue = null;
-    private List<String> allowedValues = null;
-    private List<String> parameters = null;
-    private String parametrisedName;
+    private final String localisedName;
+    private final boolean isBoolean;
+    private final String defaultValue;
+    private final List<String> allowedValues;
+    private final int ordering;
 
-    public GameOption(String name) {
+    public GameOption(String name, String localisedName, boolean isBoolean, 
+            String defaultValue, List<String> allowedValues, int ordering) {
         this.name = name;
-        parametrisedName = name;
-        parameters = ImmutableList.of();
-    }
-    
-    public GameOption(String name, String[] parameters) {
-        this.name = name;
-        this.setParameters(parameters);
-    }
-    
-    public void setParameters(String[] parameters) {
-    	if (parameters != null) {
-    	    this.parameters = ImmutableList.copyOf(parameters);
-    	    parametrisedName = Joiner.on("_").join(name, parameters);
-    	} else {
-    	    this.parameters = ImmutableList.of();
-    	    parametrisedName = name;
-    	}
-    }
-
-    public void setType(String type) {
-        this.type = type;
-        if (type.equalsIgnoreCase("toggle")) {
-            isBoolean = true;
-            allowedValues = new ArrayList<String>();
-            allowedValues.add("yes");
-            allowedValues.add("no");
-        }
+        this.localisedName = localisedName;
+        this.isBoolean = isBoolean;
+        this.defaultValue = defaultValue;
+        this.allowedValues = allowedValues;
+        this.ordering = ordering;
     }
 
     public String getName() {
-        return parametrisedName;
-    }
-    
-    public String getLocalisedName() {
-        ImmutableList.Builder<String> localTextPars = ImmutableList.builder();
-        for (String par:parameters) {
-            Matcher m = PATTERN.matcher(par);
-            if (m.matches()) {
-                localTextPars.add(LocalText.getText(m.group(1)));
-            }
-        }
-        // TODO (Rails2.0): Chane method signature in LocalText
-        return LocalText.getText(name, (Object[]) localTextPars.build().toArray());
+        return name;
     }
 
-    public String getType() {
-        return type;
+    public String getLocalisedName() {
+        return localisedName;
     }
 
     public boolean isBoolean() {
         return isBoolean;
-    }
-
-    public void setAllowedValues(List<String> values) {
-        allowedValues = values;
-    }
-
-    public void setAllowedValues(String[] values) {
-        allowedValues = new ArrayList<String>();
-        for (String value : values) {
-            allowedValues.add(value);
-        }
     }
 
     public List<String> getAllowedValues() {
@@ -105,25 +59,131 @@ public class GameOption {
     }
 
     public boolean isValueAllowed(String value) {
-        return allowedValues == null || allowedValues.contains(value);
-    }
-
-    public void setDefaultValue(String defaultValue) {
-        this.defaultValue = defaultValue;
+        return allowedValues.contains(value);
     }
 
     public String getDefaultValue() {
-        if (defaultValue != null) {
-            return defaultValue;
-        } else if (isBoolean) {
-            return "no";
-        } else if (allowedValues != null && !allowedValues.isEmpty()) {
-            return allowedValues.get(0);
-        } else {
-            return "";
+        return defaultValue;
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(name);
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        final GameOption other = (GameOption) obj;
+        return Objects.equal(this.name, other.name);
+    }
+    
+    @Override
+    public String toString() {
+        return name;
+    }
+
+    public int compareTo(GameOption other) {
+        return ComparisonChain.start()
+                .compare(this.ordering, other.ordering)
+                .compare(this.name, other.name)
+                .result();
+    }
+    
+    public static Builder builder(String name) {
+        return new Builder(name);
+    }
+    
+    public static class Builder {
+        private final String name;
+        private String type = OPTION_TYPE_SELECTION;
+        private String defaultValue = null;
+        private List<String> allowedValues = null;
+        private List<String> parameters = null;
+        private int ordering = 0;
+        
+        private Builder(String name) {
+            this.name = name;
+        }
+        
+        public void setType(String type) {
+            this.type = type;
+        }
+        
+        public void setDefaultValue(String defaultValue) {
+            this.defaultValue = defaultValue;
+        }
+        
+        public void setAllowedValues(Iterable<String> values) {
+            allowedValues = ImmutableList.copyOf(values);
+        }
+
+        public void setParameters(Iterable<String> parameters) {
+            this.parameters = ImmutableList.copyOf(parameters);
+        }
+        
+        public void setOrdering(int ordering) {
+            this.ordering = ordering;
+        }
+
+        private String getParameterisedName() {
+            if (parameters != null && !parameters.isEmpty()) {
+                return name + "_" +  Joiner.on("_").join(parameters);
+            } else {
+                this.parameters = ImmutableList.of();
+                return name;
+            }
+        }
+
+        private String getLocalisedName() {
+            ImmutableList.Builder<String> localTextPars = ImmutableList.builder();
+            for (String par : parameters) {
+                localTextPars.add(LocalText.getText(par));
+            }
+            // TODO (Rails2.0): Change method signature in LocalText
+            return LocalText.getText(name,
+                    (Object[]) localTextPars.build().toArray());
+        }
+
+        private String getFinalDefaultValue(Boolean isBoolean, List<String> finalAllowedValues) {
+            if (defaultValue != null) {
+                return defaultValue;
+            } else if (isBoolean) {
+                return OPTION_VALUE_NO;
+            } else if (!allowedValues.isEmpty()) {
+                return allowedValues.get(0);
+            } else {
+                return null;
+            }
+        }
+        
+        public GameOption build() {
+
+            // use type information
+            Boolean isBoolean = false;
+            List<String> finalAllowedValues = ImmutableList.of();
+            if (type.equalsIgnoreCase(OPTION_TYPE_TOGGLE)) {
+                isBoolean = true;
+                finalAllowedValues = ImmutableList.of(OPTION_VALUE_YES, OPTION_VALUE_NO);
+            } else if (type.equalsIgnoreCase(OPTION_TYPE_SELECTION)) {
+                if (allowedValues == null) {
+                    finalAllowedValues = ImmutableList.of();
+                } else {
+                    finalAllowedValues = allowedValues;
+                }
+            }
+
+            String parameterisedName = getParameterisedName();
+            String localisedName = getLocalisedName();
+            String finalDefaultValue = getFinalDefaultValue(isBoolean, finalAllowedValues);
+            
+            return new GameOption(parameterisedName, localisedName, isBoolean, 
+                    finalDefaultValue, finalAllowedValues, ordering);
         }
     }
     
+
     /**
      * Returns the value of the gameOption in a game which contains the RailItem
      */
@@ -135,10 +195,10 @@ public class GameOption {
             return item.getRoot().getGameOptions().get(gameOption);
         }
     }
-    
+
     /**
-     * Returns the boolean value of the gameOption in a game which contains the RailItem
-     * If not defined as in OPTION_VALUE_YES, it returns false 
+     * Returns the boolean value of the gameOption in a game which contains the
+     * RailItem If not defined as in OPTION_VALUE_YES, it returns false
      */
     public static boolean getAsBoolean(RailsItem item, String gameOption) {
         String value = getValue(item, gameOption);

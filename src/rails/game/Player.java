@@ -13,10 +13,6 @@ import rails.game.state.IntegerState;
 
 public class Player extends RailsAbstractItem implements MoneyOwner, PortfolioOwner, Comparable<Player> {
 
-    // TODO: Are those still needed?
-    public static int MAX_PLAYERS = 8;
-    public static int MIN_PLAYERS = 2;
-    
     // static data (configured)
     private int index = 0;
     

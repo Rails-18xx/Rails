@@ -1,21 +1,24 @@
 package rails.common.parser;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.SortedSet;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import rails.common.GameOption;
+import com.google.common.collect.Sets;
 
+import rails.common.GameInfo;
 
-public class GameInfoParser extends XMLParser {
+public class GameInfoParser {
     
-	private String credits = "";
-	
-	private final static String DIRECTORY = "data";
-	private final static String FILENAME = "GamesList.xml";
+    public final static String DIRECTORY = "data";
+    private final static String FILENAME = "GamesList.xml";
+    
+	private final XMLParser parser = new XMLParser();
+    private String credits;
 
 	public GameInfoParser() {}
 
@@ -23,38 +26,34 @@ public class GameInfoParser extends XMLParser {
 		return credits;
 	}
 
-	public ArrayList<GameInfo> processGameList() throws ConfigurationException {
+	public SortedSet<GameInfo> processGameList() throws ConfigurationException {
 
-		ArrayList<GameInfo> gameList = new ArrayList<GameInfo>();
+		SortedSet<GameInfo> gameList = Sets.newTreeSet();
 
-		Document doc = getDocument(FILENAME, DIRECTORY);
-		Element root = getTopElement(doc);
+		Document doc = parser.getDocument(FILENAME, DIRECTORY);
+		Element root = parser.getTopElement(doc);
 
 		// <CREDITS>
-		ArrayList<Element> creditsElement = getElementList(XMLTags.CREDITS_TAG, root.getChildNodes());
-		this.credits = getElementText(creditsElement.get(0).getChildNodes());
+		List<Element> creditsElement = parser.getElementList(XMLTags.CREDITS_TAG, root.getChildNodes());
+		this.credits = parser.getElementText(creditsElement.get(0).getChildNodes());
 		
-		ArrayList<Element> gameElements = getElementList(XMLTags.GAME_TAG, root
+		ArrayList<Element> gameElements = parser.getElementList(XMLTags.GAME_TAG, root
 				.getChildNodes());
 
 		// <GAME>
 		Iterator<Element> it = gameElements.iterator();
+		int count = 0;
 		while (it.hasNext()) {
 			Element el = it.next();
 			
-			GameInfo gameInfo = new GameInfo();
+			GameInfo.Builder gameInfo = GameInfo.builder();
 			
-			ArrayList<GameOption> optionsList = new ArrayList<GameOption>();
+//			ArrayList<GameOption> optionsList = new ArrayList<GameOption>();
 
 			//TODO: push validation into getAttributeAs* methods
-			gameInfo.setName(getAttributeAsString(XMLTags.NAME_ATTR, el));
-			
-			if (getAttributeAsString(XMLTags.COMPLETE_ATTR, el).equals(
-					"yes")) {
-				gameInfo.setComplete(true);
-			}
+			gameInfo.setName(parser.getAttributeAsString(XMLTags.NAME_ATTR, el));
 
-			ArrayList<Element> childElements = getElementList(el.getChildNodes());
+			ArrayList<Element> childElements = parser.getElementList(el.getChildNodes());
 			
 			// <PLAYER> , <OPTION>, <DESCRIPTION>
 			Iterator<Element> childIt = childElements.iterator();
@@ -62,50 +61,20 @@ public class GameInfoParser extends XMLParser {
 				Element child = childIt.next();
 				
 				if (child.getNodeName().equals(XMLTags.DESCR_TAG)) {
-					gameInfo.setDescription(getElementText(child.getChildNodes()));
+					gameInfo.setDescription(parser.getElementText(child.getChildNodes()));
 				}
 				
 				if (child.getNodeName().equals(XMLTags.NOTE_TAG)) {
-				    gameInfo.setNote(getElementText(child.getChildNodes()));
+				    gameInfo.setNote(parser.getElementText(child.getChildNodes()));
 				}
 
 				if (child.getNodeName().equals(XMLTags.PLAYERS_TAG)) {
-					gameInfo.setMinPlayers(getAttributeAsInteger(XMLTags.MIN_ATTR, child));
-					gameInfo.setMaxPlayers(getAttributeAsInteger(XMLTags.MAX_ATTR, child));
+					gameInfo.setMinPlayers(parser.getAttributeAsInteger(XMLTags.MIN_ATTR, child));
+					gameInfo.setMaxPlayers(parser.getAttributeAsInteger(XMLTags.MAX_ATTR, child));
 				}
 
-				if (child.getNodeName().equals(XMLTags.OPTION_TAG)) {
-					HashMap<String, String> optionMap = getAllAttributes(child);
-
-					GameOption options = null;
-
-					if (optionMap.containsKey(XMLTags.NAME_ATTR)) {
-						options = new GameOption(optionMap.get(XMLTags.NAME_ATTR));
-					}
-
-					if (options != null) {
-						if (optionMap.containsKey(XMLTags.TYPE_ATTR)) {
-							options.setType(optionMap.get(XMLTags.TYPE_ATTR));
-						}
-
-						if (optionMap.containsKey(XMLTags.DEFAULT_ATTR)) {
-							options.setDefaultValue(optionMap.get(XMLTags.DEFAULT_ATTR));
-						}
-
-					    if (optionMap.containsKey(XMLTags.PARM_ATTR)) {
-                            options.setParameters(optionMap.get(XMLTags.PARM_ATTR).split(XMLTags.VALUES_DELIM));
-                        }
-						if (optionMap.containsKey(XMLTags.VALUES_ATTR)) {
-							String values = optionMap.get(XMLTags.VALUES_ATTR);
-							String[] valArr = values.split(XMLTags.VALUES_DELIM);
-							options.setAllowedValues(valArr);
-						}
-						optionsList.add(options);
-					}
-					gameInfo.setOptions(optionsList);
-				}
 			}
-			gameList.add(gameInfo);
+			gameList.add(gameInfo.build(count++));
 		}
 		return gameList;
 	}

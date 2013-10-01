@@ -4,6 +4,7 @@ import rails.common.GuiDef;
 import rails.common.ConfigManager;
 import rails.game.RailsRoot;
 import rails.game.GameManager;
+import rails.ui.swing.GameSetupController;
 import rails.ui.swing.GameSetupWindow;
 import rails.ui.swing.GameUIManager;
 import rails.ui.swing.SplashWindow;
@@ -32,7 +33,8 @@ public class RunGame {
             loadGameOnEventQueue(args);
         } else {
             /* Start the rails.game selector, which will do all the rest. */
-            new GameSetupWindow();
+            GameSetupController.Builder setupBuilder = GameSetupController.builder();
+            setupBuilder.start();
         }
     }
 

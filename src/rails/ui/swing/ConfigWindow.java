@@ -446,7 +446,7 @@ class ConfigWindow extends JFrame {
                             if (cm.deleteActiveProfile()) {
                                 // delete item from selection in GameSetupWindow
                                 if (parent instanceof GameSetupWindow) {
-                                    ((GameSetupWindow) parent).configureBox.removeItem(activeProfile);
+                                    ((GameSetupWindow) parent).removeConfigureProfile(activeProfile);
                                 }
                                 changeProfile(cm.getActiveProfile());
                             }
@@ -461,7 +461,7 @@ class ConfigWindow extends JFrame {
     private void changeProfile(String profileName) {
         cm.changeProfile(profileName);
         if (parent instanceof GameSetupWindow) {
-            ((GameSetupWindow) parent).configureBox.setSelectedItem(profileName);
+            ((GameSetupWindow) parent).changeConfigureProfile(profileName);
         }
         repaintLater();
     }
@@ -528,7 +528,7 @@ class ConfigWindow extends JFrame {
             if (result) {
                 // add new item to selection in GameSetupWindow
                 if (parent instanceof GameSetupWindow) {
-                    ((GameSetupWindow) parent).configureBox.addItem(newProfile);
+                    ((GameSetupWindow) parent).addConfigureProfile(newProfile);
                 }
                 changeProfile(newProfile);
             }

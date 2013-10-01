@@ -12,10 +12,15 @@ import java.util.SortedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import rails.common.GameData;
+import rails.common.GameInfo;
+import rails.common.GameOption;
 import rails.common.LocalText;
+import rails.common.parser.ConfigurationException;
+import rails.common.parser.GameOptionsParser;
 import rails.game.GameManager;
 import rails.game.RailsRoot;
 import rails.game.action.PossibleAction;
@@ -38,6 +43,25 @@ public class GameLoader {
 
     public GameLoader() {};
 
+    // FIXME: Rails 2.0 add undefined attribute to allow
+    // deviations from undefined to default values
+    private void addDefaultGameOptions(String gameName, Map<String, String> gameOptions) {
+        log.debug("Load default Game Options of " + gameName);
+        List<GameOption> loadGameOptions = ImmutableList.of();
+        try {
+            loadGameOptions = GameOptionsParser.load(gameName);
+        } catch (ConfigurationException e) {
+            log.error(e.getMessage());
+        }
+        // Initialize all GameOptions with default values
+        for (GameOption option:loadGameOptions) {
+            if (!gameOptions.containsKey(option.getName())) {
+                gameOptions.put(option.getName(), option.getDefaultValue());
+                log.debug("Added gameOption " + option.getName() + " with default = " + option.getDefaultValue());
+            }
+        }
+    }
+    
     /**
      * Load the gameData from file
      * @param filepath
@@ -87,10 +111,13 @@ public class GameLoader {
 
         // read selected game options and player names
         Map<String, String> gameOptions = (Map<String, String>) ois.readObject();
-        log.debug("Selected game options = " + gameOptions);
+        log.debug("Saved game options = " + gameOptions);
+        addDefaultGameOptions(gameName, gameOptions);
+        
         List<String> playerNames = (List<String>) ois.readObject();
         log.debug("Player names = " + playerNames);
-        gameIOData.setGameData(new GameData(gameName, gameOptions, playerNames));
+        GameInfo game = GameInfo.createLegacy(gameName);
+        gameIOData.setGameData(GameData.createLegacy(game, gameOptions, playerNames));
     }
     
     /**

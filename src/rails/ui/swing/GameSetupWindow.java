@@ -2,100 +2,72 @@ package rails.ui.swing;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
 import java.util.*;
 import java.util.List;
 
 import javax.swing.*;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
-import com.google.common.collect.ComparisonChain;
-
-import rails.common.*;
-import rails.common.parser.*;
-import rails.game.*;
-import rails.sound.SoundManager;
-import rails.util.GameLoader;
-import rails.util.GameSaver;
-import rails.util.RailsReplayException;
-import rails.util.SystemOS;
-import rails.util.Util;
+import rails.common.Config;
+import rails.common.ConfigManager;
+import rails.common.GameInfo;
+import rails.common.GameOption;
+import rails.common.LocalText;
 
 /**
  * The Game Setup Window displays the first window presented to the user. This
  * window contains all of the options available for starting a new rails.game.
  */
-public class GameSetupWindow extends JDialog implements ActionListener {
-
+public class GameSetupWindow extends JDialog {
     private static final long serialVersionUID = 1L;
-    GridBagConstraints gc;
-    JPanel gameListPane, playersPane, buttonPane, optionsPane;
-    JButton newButton, loadButton, recentButton, recoveryButton, quitButton, optionButton, infoButton,
-    creditsButton, randomizeButton, configureButton;
-    JComboBox configureBox;
-    JComboBox gameNameBox = new JComboBox();
-    JComboBox[] playerBoxes = new JComboBox[Player.MAX_PLAYERS];
-    JTextField[] playerNameFields = new JTextField[Player.MAX_PLAYERS];
-    GameUIManager gameUIManager;
-    Map<String, String> gameNotes;
-    Map<String, String> gameDescs;
-    Map<String, String> selectedOptions = new HashMap<String, String>();
-    List<String> playerNames = new ArrayList<String>();
-    List<JComponent> optionComponents = new ArrayList<JComponent>();
-    List<GameOption> availableOptions = new ArrayList<GameOption>();
 
-    SortedSet<File> recentFiles;
-    String savedFileExtension;
-
-    private ConfigWindow configWindow;
-
-    private ArrayList<GameInfo> gameInfoList;
-    private String credits = "Credits";
-
-    // Used by the player selection combo box.
-    static final int NONE_PLAYER = 0;
-    static final int HUMAN_PLAYER = 1;
-    static final int AI_PLAYER = 2;
-
-    protected static Logger log =
-            LoggerFactory.getLogger(GameSetupWindow.class);
-
-    public GameSetupWindow() {
+    private final JPanel gameListPane = new JPanel();
+    private final JPanel playersPane = new JPanel();
+    private final JPanel buttonPane = new JPanel();
+    private final JPanel optionsPane = new JPanel();
+    
+    private final JButton newButton = new JButton(LocalText.getText("NewGame"));
+    private final JButton loadButton = new JButton(LocalText.getText("LoadGame"));
+    private final JButton recentButton = new JButton(LocalText.getText("LoadRecentGame"));
+    private final JButton recoveryButton = new JButton(LocalText.getText("RecoverGame"));
+    private final JButton quitButton = new JButton(LocalText.getText("QUIT"));
+    private final JButton optionButton = new JButton(LocalText.getText("OPTIONS"));
+    private final JButton infoButton = new JButton(LocalText.getText("INFO"));
+    private final JButton creditsButton = new JButton(LocalText.getText("CREDITS"));
+    private final JButton configureButton= new JButton(LocalText.getText("CONFIG"));
+    private final JButton randomizeButton = new JButton(LocalText.getText("RandomizePlayers"));
+    
+    private final JComboBox configureBox = new JComboBox();
+    private final JComboBox gameNameBox = new JComboBox();
+    
+    private static class PlayerInfo {
+        private final JLabel number = new JLabel();
+        private final JTextField name = new JTextField();
+    }
+    private final List<PlayerInfo> players = Lists.newArrayList();
+    
+    private final SortedMap<GameOption, JComponent> optionComponents =
+            Maps.newTreeMap();
+    
+    private final GameSetupController controller;
+    
+    public GameSetupWindow(GameSetupController controller) {
         super();
-
-        GameInfoParser gip = new GameInfoParser();
-        try {
-            gameInfoList = gip.processGameList();
-            credits = gip.getCredits();
-        } catch (ConfigurationException e) {
-            log.error(e.getMessage());
-        }
-
+        
+        this.controller = controller;
         initialize();
-        populateGridBag();
-
+        initGridBag();
+        GameInfo selectedGame = initGameList();
+        initPlayersPane(selectedGame);
+        initConfigBox();
         this.pack();
         this.setVisible(true);
     }
 
     private void initialize() {
-        gameListPane = new JPanel();
-        playersPane = new JPanel();
-        buttonPane = new JPanel();
-        optionsPane = new JPanel();
-
-        newButton = new JButton(LocalText.getText("NewGame"));
-        loadButton = new JButton(LocalText.getText("LoadGame"));
-        recentButton = new JButton(LocalText.getText("LoadRecentGame"));
-        recoveryButton = new JButton(LocalText.getText("RecoverGame"));
-        quitButton = new JButton(LocalText.getText("QUIT"));
-        optionButton = new JButton(LocalText.getText("OPTIONS"));
-        infoButton = new JButton(LocalText.getText("INFO"));
-        creditsButton = new JButton(LocalText.getText("CREDITS"));
-        configureButton= new JButton(LocalText.getText("CONFIG"));
-
         newButton.setMnemonic(KeyEvent.VK_N);
         loadButton.setMnemonic(KeyEvent.VK_L);
         recentButton.setMnemonic(KeyEvent.VK_D);
@@ -105,25 +77,11 @@ public class GameSetupWindow extends JDialog implements ActionListener {
         infoButton.setMnemonic(KeyEvent.VK_G);
         creditsButton.setMnemonic(KeyEvent.VK_E);
         configureButton.setMnemonic(KeyEvent.VK_C);
+        randomizeButton.setMnemonic(KeyEvent.VK_R);
 
         this.getContentPane().setLayout(new GridBagLayout());
         this.setTitle("Rails: New Game");
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-        populateGameList(gameInfoList, gameNameBox);
-
-        final ConfigManager cm = ConfigManager.getInstance();
-        configureBox = new JComboBox(cm.getProfiles().toArray());
-        configureBox.setSelectedItem(cm.getActiveProfile());
-        configureBox.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent arg0) {
-                cm.changeProfile((String)configureBox.getSelectedItem());
-                if (configWindow != null) {
-                    configWindow.init(false);
-                }
-            }
-        }
-        );
 
         gameListPane.add(new JLabel("Available Games:"));
         gameListPane.add(gameNameBox);
@@ -131,16 +89,16 @@ public class GameSetupWindow extends JDialog implements ActionListener {
         gameListPane.setLayout(new GridLayout(2, 2));
         gameListPane.setBorder(BorderFactory.createLoweredBevelBorder());
 
-        newButton.addActionListener(this);
-        loadButton.addActionListener(this);
-        recentButton.addActionListener(this);
-        recoveryButton.addActionListener(this);
-        quitButton.addActionListener(this);
-        optionButton.addActionListener(this);
-        infoButton.addActionListener(this);
-        creditsButton.addActionListener(this);
-        gameNameBox.addActionListener(this);
-        configureButton.addActionListener(this);
+        newButton.addActionListener(controller.newAction);
+        loadButton.addActionListener(controller.loadAction);
+        recentButton.addActionListener(controller.recentAction);
+        recoveryButton.addActionListener(controller.recoveryAction);
+        quitButton.addActionListener(controller.quitAction);
+        optionButton.addActionListener(controller.optionPanelAction);
+        infoButton.addActionListener(controller.infoAction);
+        creditsButton.addActionListener(controller.creditsAction);
+        configureButton.addActionListener(controller.configureAction);
+        randomizeButton.addActionListener(controller.randomizeAction);
 
         buttonPane.add(configureButton);
         buttonPane.add(configureBox);
@@ -159,15 +117,11 @@ public class GameSetupWindow extends JDialog implements ActionListener {
 
         optionsPane.setLayout(new FlowLayout());
         optionsPane.setVisible(false);
-
-        // This needs to happen after we have a valid gameName.
-        fillPlayersPane();
-
-        // Notify the sound manager about having started the setup menu
-        SoundManager.notifyOfGameSetup();
     }
 
-    private void populateGridBag() {
+    private void initGridBag() {
+        GridBagConstraints gc;
+        
         gc = new GridBagConstraints();
         gc.gridx = 0;
         gc.gridy = 0;
@@ -225,443 +179,256 @@ public class GameSetupWindow extends JDialog implements ActionListener {
         this.getContentPane().add(buttonPane, gc);
     }
 
-    private void populateGameList(List<GameInfo> gameList, JComboBox gameNameBox) {
-        String preferredgame = Config.get("default_game");
-        for (GameInfo game : gameList) {
+    private GameInfo initGameList() {
+        GameInfo selectedGame = null;
+        for (GameInfo game : controller.getGameList()) {
             String gameName = game.getName();
             String gameText = gameName + " - " + game.getNote();
             gameNameBox.addItem(gameText);
-            if (preferredgame.equals(gameName)) {
+            if (game.equals(controller.getDefaultGame())) {
                 gameNameBox.setSelectedItem(gameText);
+                selectedGame = game;
             }
         }
+        gameNameBox.addActionListener(controller.gameAction);
+        return selectedGame;
     }
 
-    /*
-     * loads and start the game given a filename
-     */
-    private void loadAndStartGame(String filePath, String saveDirectory) {
-        prepareGameUIInit();
-        SplashWindow splashWindow = new SplashWindow(true,filePath);
-        splashWindow.notifyOfStep(SplashWindow.STEP_LOAD_GAME);
-        // use gameLoader instance to start game
-        GameLoader gameLoader = new GameLoader();
-        if (!gameLoader.createFromFile(filePath)) {
-            Exception e = gameLoader.getException();
-            log.error("Game load failed", e);
-            if (e instanceof RailsReplayException) {
-                String title = LocalText.getText("LOAD_INTERRUPTED_TITLE");
-                String message = LocalText.getText("LOAD_INTERRUPTED_MESSAGE", e.getMessage());
-                JOptionPane.showMessageDialog(this, message, title, JOptionPane.ERROR_MESSAGE);
-            } else {
-                String title = LocalText.getText("LOAD_FAILED_TITLE");
-                String message = LocalText.getText("LOAD_FAILED_MESSAGE", e.getMessage());
-                JOptionPane.showMessageDialog(this, message, title, JOptionPane.ERROR_MESSAGE);
-                // in this case start of game cannot continued
-                return;
+    private void initConfigBox() {
+        final ConfigManager cm = ConfigManager.getInstance();
+        for (String profile:cm.getProfiles()) {
+            configureBox.addItem(profile);
+        }
+        configureBox.setSelectedItem(cm.getActiveProfile());
+
+        configureBox.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent arg0) {
+                cm.changeProfile((String)configureBox.getSelectedItem());
             }
         }
-        startGameUIManager(gameLoader.getRoot(), true, splashWindow);
-        if (saveDirectory != null) {
-            gameUIManager.setSaveDirectory (saveDirectory);
-        }
-        gameUIManager.startLoadedGame();
-        completeGameUIInit(splashWindow);
+        );
     }
 
-    public void actionPerformed(ActionEvent arg0) {
-        if (arg0.getSource().equals(newButton)) {
-            //start in new thread so that swing thread is not used for game setup
-            new Thread() {
-                @Override
-                public void run() {
-                    startNewGame();
-                }
-            }.start();
-        } else if (arg0.getSource().equals(optionButton)) {
-            toggleOptions();
-            this.pack();
-        } else if (arg0.getSource().equals(configureButton)) {
-            // start configureWindow
-            if (configWindow == null) {
-                configWindow = new ConfigWindow(this);
-                configWindow.init(true);
-                configWindow.setVisible(true);
-            } else {
-                configWindow.setVisible(true);
-            }
-        } else if (arg0.getSource().equals(loadButton)) {
-            String saveDirectory = Config.get("save.directory");
-            JFileChooser jfc = new JFileChooser();
-            jfc.setCurrentDirectory(new File(saveDirectory));
-
-            if (jfc.showOpenDialog(getContentPane()) == JFileChooser.APPROVE_OPTION) {
-                final File selectedFile = jfc.getSelectedFile();
-                //start in new thread so that swing thread is not used for game setup
-                new Thread() {
-                    @Override
-                    public void run() {
-                        loadAndStartGame(selectedFile.getPath(), selectedFile.getParent());
-                    }
-                }.start();
-            } else { // cancel pressed
-                return;
-            }
-        } else if (arg0.getSource().equals(recentButton)) {
-            File saveDirectory = new File(Config.get("save.directory"));
-
-            recentFiles = new TreeSet<File>(new Comparator<File> (){
-                public int compare (File a, File b) {
-                    return ComparisonChain.start()
-                            .compare(b.lastModified(), a.lastModified())
-                            .compare(a.getName(), b.getName())
-                            .result();
-                }
-            });
-            savedFileExtension = Config.get("save.filename.extension");
-            if (!Util.hasValue(savedFileExtension)) {
-                savedFileExtension = GameUIManager.DEFAULT_SAVE_EXTENSION;
-            }
-            savedFileExtension = "."+savedFileExtension;
-
-            getRecentFiles(saveDirectory);
-            if (recentFiles == null || recentFiles.size() == 0) return;
-            File[] files = recentFiles.toArray(new File[]{});
-            int numOptions = 20;
-            numOptions = Math.min(numOptions, recentFiles.size());
-            String[] options = new String[numOptions];
-            int dirPathLength = saveDirectory.getPath().length();
-            for (int i=0; i<numOptions;i++) {
-                // Get path relative to saveDirectory
-                options[i] = files[i].getPath().substring(dirPathLength+1);
-            }
-            String text = LocalText.getText("Select");
-            String result = (String) JOptionPane.showInputDialog(this, text, text,
-                    JOptionPane.OK_CANCEL_OPTION,
-                    null, options, options[0]);
-            if (result == null) return;
-            final File selectedFile = files[Arrays.asList(options).indexOf(result)];
-            if (selectedFile != null) {
-                new Thread() {
-                    @Override
-                    public void run() {
-                        loadAndStartGame(selectedFile.getPath(), selectedFile.getParent());
-                    }
-                }.start();
-            } else { // cancel pressed
-                return;
-            }
-        } else if (arg0.getSource().equals(recoveryButton)) {
-            new Thread() {
-                @Override
-                public void run() {
-                    String filePath = SystemOS.get().getConfigurationFolder(GameSaver.autosaveFolder, true).getAbsolutePath() 
-                            + File.separator + GameSaver.autosaveFile;
-                    loadAndStartGame(filePath, null);
-                }
-            }.start();
-        } else if (arg0.getSource().equals(infoButton)) {
-            GameInfo gameInfo = this.getSelectedGameInfo();
-            JOptionPane.showMessageDialog(this,
-                    gameInfo.getDescription(),
-                    "Information about " + gameInfo.getName(),
-                    JOptionPane.INFORMATION_MESSAGE);
-        } else if (arg0.getSource().equals(quitButton)) {
-            System.exit(0);
-        } else if (arg0.getSource().equals(creditsButton)) {
-            JOptionPane.showMessageDialog(this,
-                    new JLabel(credits), //enable html rendering
-                    LocalText.getText("CREDITS"),
-                    JOptionPane.INFORMATION_MESSAGE);
-        } else if (arg0.getSource().equals(gameNameBox)) {
-            fillPlayersPane();
-
-            if (optionsPane.isVisible()) {
-                // XXX: Kludgy and slightly inefficient.
-                toggleOptions();
-                toggleOptions();
-            }
-
-            this.pack();
-        } else if (arg0.getSource() instanceof JComboBox) {
-            JComboBox comboBox = (JComboBox) arg0.getSource();
-            String[] boxName = comboBox.getName().split("=");
-
-            if (boxName[0].equalsIgnoreCase("P")) {
-                switch (comboBox.getSelectedIndex()) {
-                case NONE_PLAYER:
-                    playerNameFields[Integer.parseInt(boxName[1])].setText("");
-                    playerNameFields[Integer.parseInt(boxName[1])].setEnabled(false);
-                    break;
-                case HUMAN_PLAYER:
-                    playerNameFields[Integer.parseInt(boxName[1])].setEnabled(true);
-                    break;
-                case AI_PLAYER:
-                    playerNameFields[Integer.parseInt(boxName[1])].setText("");
-                    playerNameFields[Integer.parseInt(boxName[1])].setEnabled(false);
-                    break;
-                }
-            }
-        } else if (arg0.getSource().equals(randomizeButton)) {
-            // randomize the order of the players
-            if (playerNameFields.length > 0) {
-                List<String> playerList = new ArrayList<String>();
-                for (int i = 0; i < playerNameFields.length; i++) {
-                    if (playerNameFields[i] != null
-                            && playerNameFields[i].getText().length() > 0) {
-                        playerList.add(playerNameFields[i].getText());
-                        playerNameFields[i].setText("");
-                    }
-                }
-                Collections.shuffle(playerList);
-                for (int i = 0; i < playerList.size(); i++) {
-                    playerNameFields[i].setText(playerList.get(i));
-
-                }
-            }
-        }
-    }
-
-    private void getRecentFiles (File dir) {
-        if (!dir.exists() || !dir.isDirectory()) return;
-        for (File entry : dir.listFiles()) {
-            if (entry.isFile() && entry.getName().endsWith(savedFileExtension)) {
-                recentFiles.add(entry);
-            } else if (entry.isDirectory()){
-                getRecentFiles(entry);
-            }
-        }
-    }
-
-    private void toggleOptions() {
+    void toggleOptions() {
         if (optionsPane.isVisible()) {
             optionsPane.setVisible(false);
-            optionsPane.removeAll();
-            optionComponents.clear();
             optionButton.setText(LocalText.getText("OPTIONS"));
         } else {
-            availableOptions = this.getSelectedGameInfo().getOptions();
-
-            if (availableOptions != null && !availableOptions.isEmpty()) {
-                optionsPane.setLayout(new GridLayout((availableOptions.size()),
-                        1));
-
-                for (GameOption option : availableOptions) {
-                    if (option.isBoolean()) {
-                        JCheckBox checkbox =
-                            new JCheckBox(option.getLocalisedName());
-                        if (option.getDefaultValue().equalsIgnoreCase("yes")) {
-                            checkbox.setSelected(true);
-                        }
-                        optionsPane.add(checkbox);
-                        optionComponents.add(checkbox);
-                    } else {
-                        optionsPane.setLayout(new GridLayout(
-                                (availableOptions.size() + 1), 1));
-                        optionsPane.add(new JLabel(LocalText.getText("SelectSomething",
-                                option.getLocalisedName())));
-                        JComboBox dropdown = new JComboBox();
-                        for (String value : option.getAllowedValues()) {
-                            dropdown.addItem(value);
-                        }
-                        String defaultValue = option.getDefaultValue();
-                        if (defaultValue != null) {
-                            dropdown.setSelectedItem(defaultValue);
-                        }
-                        optionsPane.add(dropdown);
-                        optionComponents.add(dropdown);
-                    }
-                }
-            } else {
-                JLabel label = new JLabel(LocalText.getText("NoGameOptions"));
-                optionsPane.add(label);
-            }
-
             optionsPane.setVisible(true);
             optionButton.setText(LocalText.getText("HIDE_OPTIONS"));
         }
     }
+    
+    // TODO: Rewrite Options mechanism to allow for common options
+    void initOptions(GameInfo selectedGame) {
+        // clear all previous options
+        optionsPane.removeAll();
+        optionComponents.clear();
 
-    private void startNewGame() {
-        try {
+        Map<GameOption, String> availableOptions = controller.getAvailableOptions(selectedGame);
+        if (availableOptions == null || availableOptions.isEmpty()) {
+            // no options available
+            JLabel label = new JLabel(LocalText.getText("NoGameOptions"));
+            optionsPane.add(label);
+        } else  { 
+            optionsPane.setLayout(
+                    new GridLayout(((availableOptions.size() + 1) / 2), 2, 2, 2));
 
-            for (int i = 0; i < playerBoxes.length; i++) {
-                if (playerBoxes[i] != null
-                        && playerBoxes[i].getSelectedIndex() == HUMAN_PLAYER
-                        && !playerNameFields[i].getText().equals("")) {
-                    playerNames.add(playerNameFields[i].getText());
-                }
-            }
-
-            if (playerNames.size() < Player.MIN_PLAYERS
-                    || playerNames.size() > Player.MAX_PLAYERS) {
-                if (JOptionPane.showConfirmDialog(this,
-                        "Not enough players. Continue Anyway?",
-                        "Are you sure?", JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
-                    return;
-                }
-            }
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this,
-            "Unable to load selected rails.game. Exiting...");
-            System.exit(-1);
-        }
-
-        if (optionsPane.isVisible()) {
-            GameOption option;
-            JCheckBox checkbox;
-            JComboBox dropdown;
-            String value;
-
-            for (int i = 0; i < availableOptions.size(); i++) {
-                option = availableOptions.get(i);
+            for (GameOption option : availableOptions.keySet()) {
+                String selectedValue = availableOptions.get(option);
                 if (option.isBoolean()) {
-                    checkbox = (JCheckBox) optionComponents.get(i);
-                    value = checkbox.isSelected() ? "yes" : "no";
+                    JCheckBox checkbox =
+                            new JCheckBox(option.getLocalisedName());
+                    if (selectedValue.equalsIgnoreCase("yes")) {
+                        checkbox.setSelected(true);
+                    }
+                    // the action related to the action
+                    checkbox.addActionListener(controller.getOptionChangeAction(option));
+                    optionComponents.put(option, checkbox);
+
+                    optionsPane.add(checkbox); 
                 } else {
-                    dropdown = (JComboBox) optionComponents.get(i);
-                    value = (String) dropdown.getSelectedItem();
+                    // put dropdown and label into one panel to align with checkboxes
+                    JPanel dropdownPanel = new JPanel();
+                    dropdownPanel.setLayout(new BoxLayout(dropdownPanel, BoxLayout.LINE_AXIS));
+                    dropdownPanel.add(new JLabel(LocalText.getText("SelectSomething",
+                            option.getLocalisedName())));
+                    dropdownPanel.add(Box.createHorizontalGlue());
+                    
+                    JComboBox dropdown = new JComboBox();
+                    for (String value : option.getAllowedValues()) {
+                        dropdown.addItem(value);
+                    }
+                    if (selectedValue != null) {
+                        dropdown.setSelectedItem(selectedValue);
+                    }
+                    // the action related to the action
+                    dropdown.addActionListener(controller.getOptionChangeAction(option));
+                    optionComponents.put(option, dropdown);
+
+                    dropdownPanel.add(dropdown);
+                    optionsPane.add(dropdownPanel);
                 }
-                selectedOptions.put(option.getName(), value);
-                log.info("Game option " + option.getName() + " set to " + value);
             }
-        } else {
-            GameOption option;
-            String value;
-
-            // No options selected: take the defaults (from the games list!)
-            availableOptions = this.getSelectedGameInfo().getOptions();
-            for (int i = 0; i < availableOptions.size(); i++) {
-                option = availableOptions.get(i);
-                value = option.getDefaultValue();
-                selectedOptions.put(option.getName(), value);
-                log.info("Game option " + option.getName() + " set to " + value);
-            }
-        }
-
-        String gameName = getSelectedGameInfo().getName();
-
-        SplashWindow splashWindow = new SplashWindow(false,gameName);
-        
-        RailsRoot railsRoot = null;
-        try {
-            railsRoot = RailsRoot.create(new GameData(gameName, selectedOptions, playerNames));
-        } catch (ConfigurationException e) {
-            // Simply exit
-            System.exit(-1);
-        }
-
-        String startError = railsRoot.start();
-        if (startError != null) {
-            JOptionPane.showMessageDialog(this, startError, "",
-                    JOptionPane.ERROR_MESSAGE);
-            System.exit(-1);
-        }
-        prepareGameUIInit();
-        startGameUIManager (railsRoot, false, splashWindow);
-        gameUIManager.gameUIInit(true); // true indicates new game
-        completeGameUIInit(splashWindow);
-
-    }
-
-    private void prepareGameUIInit() {
-        setVisible(false);
-        if (configWindow != null) configWindow.setVisible(false);
-    }
-
-    private void completeGameUIInit(SplashWindow splashWindow) {
-        if (configWindow != null) {
-            configWindow.dispose();
-            configWindow = null;
-        }
-
-        gameUIManager.notifyOfSplashFinalization();
-        splashWindow.finalizeGameInit();
-        splashWindow = null;
-    }
-
-    private void startGameUIManager(RailsRoot game, boolean wasLoaded, SplashWindow splashWindow) {
-        GameManager gameManager = game.getGameManager();
-        String gameUIManagerClassName = gameManager.getClassName(GuiDef.ClassName.GAME_UI_MANAGER);
-        try {
-            Class<? extends GameUIManager> gameUIManagerClass =
-                Class.forName(gameUIManagerClassName).asSubclass(GameUIManager.class);
-            gameUIManager = gameUIManagerClass.newInstance();
-            gameUIManager.init(game, wasLoaded, splashWindow);
-        } catch (Exception e) {
-            log.error("Cannot instantiate class " + gameUIManagerClassName, e);
-            System.exit(1);
+            optionsPane.setVisible(true);
+            optionButton.setText(LocalText.getText("HIDE_OPTIONS"));
         }
     }
+    
+    void hideOptions() {
+        optionsPane.setVisible(false);
+        optionsPane.removeAll();
+        optionComponents.clear();
+        optionButton.setText(LocalText.getText("OPTIONS"));
+    }
 
-    private void fillPlayersPane() {
+    void initPlayersPane(GameInfo selectedGame) {
         playersPane.setVisible(false);
 
-        int maxPlayers = this.getSelectedGameInfo().getMaxPlayers();
-        int minPlayers = this.getSelectedGameInfo().getMinPlayers();
-
-        String[] playerList = new String[maxPlayers];
-        String[] testPlayers = Config.get("default_players").split(",");
-
         // Remember names that have already been filled-in...
-        for (int i = 0; i < playerNameFields.length; i++) {
-            if (playerNameFields[i] != null
-                    && playerNameFields[i].getText().length() > 0) {
-                playerList[i] = playerNameFields[i].getText();
-            } else if (i < testPlayers.length && testPlayers[i].length() > 0) {
-                playerList[i] = testPlayers[i];
+        List<String> prefilledPlayers = Lists.newArrayList();
+        for (PlayerInfo player:players) {
+            if (player.name != null
+                    && player.name.getText().length() > 0) {
+                prefilledPlayers.add(player.name.getText());
             }
         }
-
+        // and remove existing players
+        players.clear();
+        
+        // use default players if none provided so far
+        if (prefilledPlayers.isEmpty()) {
+            prefilledPlayers = Arrays.asList(Config.get("default_players").split(","));
+        }
+        
+        // create playersPane
         playersPane.removeAll();
 
-        playersPane.setLayout(new GridLayout(maxPlayers + 1, 0));
+        int maxPlayers = selectedGame.getMaxPlayers();
+        int minPlayers = selectedGame.getMinPlayers();
+
+        playersPane.setLayout(new GridLayout(maxPlayers + 1, 0, 0, 2));
         playersPane.setBorder(BorderFactory.createLoweredBevelBorder());
         playersPane.add(new JLabel("Players:"));
 
-        randomizeButton = new JButton(LocalText.getText("RandomizePlayers"));
-        randomizeButton.setMnemonic(KeyEvent.VK_R);
-        randomizeButton.addActionListener(this);
         playersPane.add(randomizeButton);
 
-        for (int i = 0; i < this.getSelectedGameInfo().getMaxPlayers(); i++) {
-            playerBoxes[i] = new JComboBox();
-            playerBoxes[i].addItem("None");
-            playerBoxes[i].addItem("Human");
-            playerBoxes[i].addActionListener(this);
-            playerBoxes[i].setName("P=" + Integer.toString(i));
+        for (int i = 0; i < maxPlayers; i++) {
+            
+            PlayerInfo player = new PlayerInfo();
+            
+            player.number.setText(LocalText.getText("PlayerName", Integer.toString(i + 1)));
+            player.name.setInputVerifier(controller.playerNameVerifier);
 
             /*
              * Prefill with any configured player names. This can be useful to
              * speed up testing purposes.
              */
-            if (testPlayers.length > 0 && i < playerList.length) {
-                playerNameFields[i] = new JTextField(playerList[i]);
+            if (i < prefilledPlayers.size()) {
+                player.name.setText(prefilledPlayers.get(i));
+            }
+            if (i < minPlayers) {
+                player.name.setBorder(BorderFactory.createLineBorder(Color.RED));
+            }
+            if (i <= minPlayers || i <= prefilledPlayers.size()) {
+                player.name.setEnabled(true);
+                player.number.setForeground(Color.BLACK);
             } else {
-                playerNameFields[i] = new JTextField();
+                player.name.setEnabled(false);
+                player.number.setForeground(Color.GRAY);
             }
 
-            if (playerNameFields[i].getText().length() > 0 || i <= minPlayers) {
-                playerBoxes[i].setSelectedIndex(HUMAN_PLAYER);
-            } else {
-                playerBoxes[i].setSelectedIndex(NONE_PLAYER);
-            }
-
-            playersPane.add(playerBoxes[i]);
-            playersPane.add(playerNameFields[i]);
+            playersPane.add(player.number);
+            playersPane.add(player.name);
+            players.add(player);
         }
         playersPane.setVisible(true);
     }
 
-    private GameInfo getSelectedGameInfo() {
-        String gameName = gameNameBox.getSelectedItem().toString().split(" ")[0];
-        for(GameInfo gi : gameInfoList) {
-            if (gi.getName().equals(gameName)) {
-                return gi;
-            }
-        }
-        return null;
+    GameInfo getSelectedGame() {
+        return controller.getGameList().get(gameNameBox.getSelectedIndex());
+    }
+    
+    String getPlayerName(int i) {
+        PlayerInfo player = players.get(i);
+        return player.name.getText();
+    }
+    
+    int getPlayerCount() {
+        return getPlayers().size();
     }
 
+    ImmutableList<String> getPlayers() {
+        ImmutableList.Builder<String> playerList = ImmutableList.builder();
+        for (PlayerInfo player:players) {
+            String name = player.name.getText();
+            if (name != null && name.length() > 0) {
+                playerList.add(name);
+            }
+        }
+        return playerList.build();
+    }
+    
+    void setPlayers(List<String> newPlayers) {
+        LinkedList<String> newPlayersCopy = Lists.newLinkedList(newPlayers);
+        for (PlayerInfo player:players) {
+            if (newPlayersCopy.isEmpty()) {
+                player.name.setText(null);
+            } else {
+                player.name.setText(newPlayersCopy.pop());
+            }
+        }
+    }
+    
+    void enablePlayer(Integer playerNr) {
+        final PlayerInfo player = players.get(playerNr);
+        player.name.setEnabled(true);
+        player.number.setForeground(Color.BLACK);
+    }
+    
+    void disablePlayer(Integer playerNr) {
+        PlayerInfo player = players.get(playerNr);
+        player.name.setEnabled(false);
+        player.number.setForeground(Color.GRAY);
+    }
+    
+    boolean isPlayerEnabled(Integer playerNr) {
+        return players.get(playerNr).name.isEnabled();
+    }
+    
+    void setFocus(Integer playerNr) {
+        final PlayerInfo focus = players.get(playerNr);
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                focus.name.requestFocusInWindow();
+            }
+        });
+    }
+
+    boolean areOptionsVisible() {
+        return optionsPane.isVisible();
+    }
+    
+    String getSelectedGameOption(GameOption option) {
+        if (option.isBoolean()) {
+            JCheckBox checkbox = (JCheckBox) optionComponents.get(option);
+            return checkbox.isSelected() ? "yes" : "no";
+        } else {
+            JComboBox dropdown = (JComboBox) optionComponents.get(option);
+            return (String) dropdown.getSelectedItem();
+        }
+    }
+    
+    void addConfigureProfile(String profile) {
+        configureBox.addItem(profile);
+    }
+    
+    void removeConfigureProfile(String profile) {
+        configureBox.removeItem(profile);
+    }
+    
+    void changeConfigureProfile(String profile) {
+        configureBox.setSelectedItem(profile);
+    }
+    
 }

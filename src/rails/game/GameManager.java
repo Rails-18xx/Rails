@@ -172,49 +172,6 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
         initGameParameters();
 
-        /* Check the game options provided with the game.
-         * These duplicate the game options in Game.xml, but are still
-         * required here to set default values when loading a game from
-         * a save file, as in that case the options in GamesList.xml are
-         * not included.
-         * */
-        GameOption option;
-        String optionName, optionType, optionValues, optionDefault;
-        String optionNameParameters;
-        String[] optionParameters;
-        List<Tag> optionTags = tag.getChildren("GameOption");
-        if (optionTags != null) {
-            for (Tag optionTag : optionTags) {
-                optionName = optionTag.getAttributeAsString("name");
-                if (optionName == null)
-                    throw new ConfigurationException("GameOption without name");
-                optionParameters = null;
-                optionNameParameters =
-                    optionTag.getAttributeAsString("parm");
-                if (optionNameParameters != null) {
-                    optionParameters = optionNameParameters.split(",");
-                }
-                // create them first and check if they are contained already
-                option = new GameOption(optionName, optionParameters);
-                if (getRoot().getGameOptions().containsKey(option.getName())) continue;
-
-                // Include missing option with according default
-                availableGameOptions.add(option);
-
-                optionType = optionTag.getAttributeAsString("type");
-                if (optionType != null) option.setType(optionType);
-                optionValues = optionTag.getAttributeAsString("values");
-                if (optionValues != null)
-                    option.setAllowedValues(optionValues.split(","));
-                optionDefault = optionTag.getAttributeAsString("default", "");
-                if (optionDefault != null)
-                    option.setDefaultValue(optionDefault);
-
-                getRoot().getGameOptions().put(optionName, optionDefault);
-            }
-        }
-
-
         Tag gameParmTag = tag.getChild("GameParameters");
         if (gameParmTag != null) {
 

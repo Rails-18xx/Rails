@@ -1,5 +1,6 @@
 package rails.common.parser;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -61,7 +62,7 @@ public class ComponentManager {
         // Configure the component, from a file, or the embedded XML.
         Tag configElement = componentTag;
         if (file != null) {
-            String directory =  "data/" + root.getGameName();
+            String directory =  GameInfoParser.DIRECTORY + File.separator + root.getGameName();
             configElement = Tag.findTopTagInFile(file, directory, name, root.getGameOptions());
         }
 
