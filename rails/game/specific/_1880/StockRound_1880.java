@@ -377,8 +377,10 @@ public class StockRound_1880 extends StockRound {
          */
         for (Player p : playerManager.getPlayers()) {
             if (p.getCash() <0 ) {
-                int fine = p.getCash()/2;
-                p.addCash(-fine);
+                int fine = p.getCash() / 2;
+                ReportBuffer.add(LocalText.getText("DebtPenaltyStockRound", p.getName(),
+                        Bank.format(-fine)));
+                p.addCash(fine);
             }
         }
         
@@ -465,13 +467,26 @@ public class StockRound_1880 extends StockRound {
     }
     
     public boolean startCompany(String playerName, StartCompany_1880 action) {
+        int numShares = action.getNumberBought();
+        PublicCompanyI startCompany = action.getCompany();
+        
+        if (numShares > 2) {
+            PublicCertificateI presCert = ipo.findCertificate(startCompany, true);
+            presCert.setShares(numShares);
+            for (int i = 0; i < (numShares - 2); i++) {
+                PublicCertificateI scrapCert = ipo.findCertificate(startCompany, false);
+                scrapCert.setShares(0);
+                scrapCert.moveTo(scrapHeap);
+            }            
+        }
+                
         super.startCompany(playerName, action);
 
         Player player = gameManager.getPlayerManager().getPlayerByName(playerName);
         PublicCompany_1880 company = (PublicCompany_1880) action.getCompany();
         company.setBuildingRights(action.getBuildingRights());
         ((GameManager_1880) gameManager).getParSlotManager().setCompanyAtSlot(company, action.getParSlotIndex());
-        
+
         // If this player's investor doesn't have a linked company yet - this is it
         Investor_1880 investor = Investor_1880.getInvestorForPlayer(gameManager.getCompanyManager(), player);
         if ((investor != null) && (investor.getLinkedCompany() == null)) {
@@ -479,6 +494,7 @@ public class StockRound_1880 extends StockRound {
             bcrCertificate.moveTo(investor.getPortfolio());
             investor.setLinkedCompany(company);            
         }
+
         return true;
     }
     

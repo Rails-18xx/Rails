@@ -63,16 +63,13 @@ public class ShareSellingRound_1880 extends ShareSellingRound {
      */
     @Override
     public boolean process(PossibleAction action) {
- 
         currentPlayer = getCurrentPlayer();
-
+        
         if (action instanceof NullAction) {
-
-             currentPlayer.addCash(-cashToRaise.intValue());
              gameManager.finishShareSellingRound();
              return true;
         } else {
-        return super.process(action);
+            return super.process(action);
         }
     }
 
@@ -238,7 +235,7 @@ public class ShareSellingRound_1880 extends ShareSellingRound {
         }
 
         cashToRaise.add(-numberSold * price);
-
+        
         if (cashToRaise.intValue() <= 0) {
             gameManager.finishShareSellingRound();
         } else if (getSellableShares().isEmpty()) {

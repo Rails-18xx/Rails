@@ -41,7 +41,7 @@ public class ShareModel extends ModelObject {
             Map<String, Integer> numberPerCertType = new HashMap<String, Integer>();
             String certType;
             for (PublicCertificateI cert : certs) {
-                certType = cert.getTypeId();
+                certType = cert.getDisplayType();
                 if (!numberPerCertType.containsKey(certType)) {
                     numberPerCertType.put(certType, 1);
                 } else {

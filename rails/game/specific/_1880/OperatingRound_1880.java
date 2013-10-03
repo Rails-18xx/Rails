@@ -12,12 +12,12 @@ import java.util.Set;
 
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
+import rails.common.GuiDef;
 import rails.game.Bank;
 import rails.game.BaseToken;
 import rails.game.CashHolder;
 import rails.game.GameDef;
 import rails.game.GameDef.OrStep;
-import rails.game.CompanyManagerI;
 import rails.game.GameManagerI;
 import rails.game.MapHex;
 import rails.game.OperatingRound;
@@ -33,6 +33,7 @@ import rails.game.TileI;
 import rails.game.TrainI;
 import rails.game.TrainType;
 import rails.game.action.BuyTrain;
+import rails.game.action.DiscardTrain;
 import rails.game.action.LayTile;
 import rails.game.action.NullAction;
 import rails.game.action.PossibleAction;
@@ -44,6 +45,7 @@ import rails.game.special.SpecialTileLay;
 import rails.game.special.SpecialTrainBuy;
 import rails.game.specific._1880.PublicCompany_1880;
 import rails.game.specific._1880.GameManager_1880;
+import rails.game.state.BooleanState;
 import rails.game.state.EnumState;
 import rails.util.SequenceUtil;
 
@@ -59,7 +61,8 @@ public class OperatingRound_1880 extends OperatingRound {
     List<Investor_1880> investorsToClose = new ArrayList<Investor_1880>();
     PossibleAction manditoryNextAction = null;
     private PublicCompanyI firstCompanyBeforePrivates;
-
+    private BooleanState trainPurchasedThisTurn = new BooleanState ("trainPurchaseThisTurn",false);
+    
     /**
      * @param gameManager
      */
@@ -109,37 +112,7 @@ public class OperatingRound_1880 extends OperatingRound {
         }
     }
 
-    private void checkForForcedRocketExchange() {
-        PrivateCompanyI rocket = companyManager.getPrivateCompany("RC");
-        if (rocket.isClosed() == false) {
-            Player rocketOwner = (Player) rocket.getPortfolio().getOwner();
-            List<PublicCompany_1880> ownedCompaniesWithSpace = new ArrayList<PublicCompany_1880>();
-            List<PublicCompany_1880> ownedCompaniesFull = new ArrayList<PublicCompany_1880>();
-            for (PublicCompany_1880 company : PublicCompany_1880.getPublicCompanies(companyManager)) {
-                if (company.getPresident() == rocketOwner) {
-                    if (company.getNumberOfTrains() < company.getCurrentTrainLimit()) {
-                        ownedCompaniesWithSpace.add(company);
-                    } else {
-                        ownedCompaniesFull.add(company);
-                    }
-                }
-            }
-            
-            ForcedRocketExchange action = null;
-            if (ownedCompaniesWithSpace.isEmpty() == false) {
-                action = new ForcedRocketExchange();
-                for (PublicCompany_1880 company : ownedCompaniesWithSpace) {
-                    action.addCompanyWithSpace(company);                    
-                }
-            } else if (ownedCompaniesFull.isEmpty() == false) {
-                action = new ForcedRocketExchange();
-                for (PublicCompany_1880 company : ownedCompaniesFull) {
-                    action.addCompanyWithNoSpace(company);                    
-                }
-            } 
-            manditoryNextAction = action;
-        }
-    }
+
 
     @Override
     protected void prepareRevenueAndDividendAction() {
@@ -200,8 +173,6 @@ public class OperatingRound_1880 extends OperatingRound {
             player.setWorthAtORStart();
         }
 
-        privatesPayOut();
-
         if ((operatingCompanies.size() > 0)
             && (gameManager.getAbsoluteORNumber() >= 1)) {
             // even if the BCR is sold she doesn't operate until all privates
@@ -229,6 +200,9 @@ public class OperatingRound_1880 extends OperatingRound {
                     initNormalTileLays();
                 }
                 setStep(orControl.getNextStep());
+                if (orControl.wasStartedFromStockRound() == true) {
+                    trainPurchasedThisTurn.set(true);
+                }
             } else {
                 orControl.startNewOR();
                 finishOR();
@@ -252,7 +226,26 @@ public class OperatingRound_1880 extends OperatingRound {
     }
 
     public boolean specialBuyTrain(BuyTrain action) {
-        return buyTrain(action);
+        // We might not be in the correct step...
+        OrStep currentStep = getStep();
+        setStep(GameDef.OrStep.BUY_TRAIN);
+        boolean trainResults = super.buyTrain(action);
+        setStep(currentStep);
+
+        if (trainResults == false) {
+            return false;
+        }
+
+        if ((ipo.getTrainsPerType(action.getType()).length == 0)
+                && (trainTypeCanEndOR(action.getType()) == true)) {
+            orControl.orExitToStockRound(operatingCompany.get(), currentStep);
+            setActionForPrivateExchange(action.getType());
+            if (manditoryNextAction == null) {
+                finishOR();
+            }
+        } 
+
+        return true;
     }
 
     /*
@@ -260,64 +253,34 @@ public class OperatingRound_1880 extends OperatingRound {
      * 
      * @see rails.game.OperatingRound#buyTrain(rails.game.action.BuyTrain)
      */
+    
     @Override
     public boolean buyTrain(BuyTrain action) {
-        // If this is a special buy, we might not be in the correct step...
-        OrStep currentStep = getStep();
-        setStep(GameDef.OrStep.BUY_TRAIN);
-
         if (super.buyTrain(action) != true) {
-            setStep(currentStep);
             return false;
         }
 
         // If this train was not from the ipo, nothing else to do.
         if (action.getFromPortfolio() == ipo) {
+            SpecialTrainBuy stb = action.getSpecialProperty();
+            if ((stb == null) || (stb.isExercised() == false)) {
+                trainPurchasedThisTurn.set(true);
+                orControl.trainPurchased((PublicCompany_1880) operatingCompany.get());
+            } 
+
             // If there are no more trains of this type, and this type causes an
             // OR end, end it.
             if ((ipo.getTrainsPerType(action.getType()).length == 0)
                 && (trainTypeCanEndOR(action.getType()) == true)) {
                 orControl.orExitToStockRound(operatingCompany.get(),
-                        currentStep); // TODO: Fix this for stb
-                manditoryNextAction =
-                        actionForPrivateExchange(action.getType());
+                        GameDef.OrStep.BUY_TRAIN);
+                setActionForPrivateExchange(action.getType());
                 if (manditoryNextAction == null) {
                     finishOR();
                 }
-            } else {
-                // If this was not part of a special action, extend the OR.
-                SpecialTrainBuy stb = action.getSpecialProperty();
-                if ((stb == null) || (stb.isExercised() == false)) {
-                    orControl.trainPurchased((PublicCompany_1880) operatingCompany.get());
-                } else {
-                    // System.out.println("Ignoring purchase (stb)");
-                }
-            }
+            } 
         }
 
-        setStep(currentStep);
-        return true;
-    }
-
-    private PossibleAction actionForPrivateExchange(TrainType soldOutTrainType) {
-        PossibleAction action = null;
-        PrivateCompanyI company = companyManager.getPrivateCompany("WR");
-        if (company.isClosed() == false) {
-            action = ExchangeForCash.getAction(company, soldOutTrainType);
-        }
-        return action;
-    }
-
-    private boolean exchangeForCash(ExchangeForCash action) {
-        if (action.getExchangeCompany() == true) {
-            ReportBuffer.add(LocalText.getText("WrExchanged",
-                    action.getOwnerName(), action.getCashValue()));
-            Player player =
-                    playerManager.getPlayerByName(action.getOwnerName());
-            new CashMove(bank, player, action.getCashValue());
-            companyManager.getPrivateCompany("WR").close();
-        }
-        finishOR();
         return true;
     }
 
@@ -329,15 +292,7 @@ public class OperatingRound_1880 extends OperatingRound {
     @Override
     protected void newPhaseChecks() {
         PhaseI newPhase = getCurrentPhase();
-        if (newPhase.getName().equals("2+2")) {
-            askForPrivateRocket(newPhase);
-        } else if (newPhase.getName().equals("3")) {
-            askForPrivateRocket(newPhase);
-        } else if (newPhase.getName().equals("3+3")) {
-            askForPrivateRocket(newPhase);
-        } else if (newPhase.getName().equals("4")) {
-            askForPrivateRocket(newPhase);
-        } else if (newPhase.getName().equals("8")) {
+        if (newPhase.getName().equals("8")) {
             ((GameManager_1880) gameManager).numOfORs.set(2);
             // After the first 8 has been bought there will be a last
             // Stockround and two ORs.
@@ -353,7 +308,7 @@ public class OperatingRound_1880 extends OperatingRound {
      * @see rails.game.OperatingRound#process(rails.game.action.PossibleAction)
      */
     @Override
-    public boolean process(PossibleAction action) {
+    public boolean process(PossibleAction action) {        
         boolean result = false;
 
         selectedAction = action;
@@ -368,9 +323,9 @@ public class OperatingRound_1880 extends OperatingRound {
                     result = done();
                     break;
                 }
+                
                 if (operatingCompany.get() == orControl.lastCompanyToBuyTrain()) {
-                    if (trainsBoughtThisTurn.isEmpty()) {
-
+                    if (trainPurchasedThisTurn.booleanValue() == false) {
                         // The current Company is the Company that has bought
                         // the last train and that purchase was not in this OR..
                         // we now discard the remaining active trains of that
@@ -382,16 +337,22 @@ public class OperatingRound_1880 extends OperatingRound {
                         TrainI[] trainsToDiscard =
                                 bank.getIpo().getTrainsPerType(
                                         activeTrainTypeToDiscard);
-                        for (TrainI train : trainsToDiscard) {
-                            new ObjectMove(train, ipo, scrapHeap);
+                        // If we need to do a rocket exchange, then leave one 4-train
+                        int firstTrainToDiscard = 0;
+                        if ((activeTrainTypeToDiscard.getName().equals("4")) && 
+                                (checkForForcedRocketExchange() == true)) {
+                            firstTrainToDiscard = 1;                            
+                        }
+                        
+                        for (int i = firstTrainToDiscard; i < trainsToDiscard.length; i++) {
+                            new ObjectMove(trainsToDiscard[i], ipo, scrapHeap);
                         }
                         // Need to make next train available !
                         trainManager.checkTrainAvailability(trainsToDiscard[0],
                                 ipo);
                         orControl.orExitToStockRound(operatingCompany.get(),
                                 OrStep.BUY_TRAIN);
-                        manditoryNextAction =
-                                actionForPrivateExchange(activeTrainTypeToDiscard);
+                        setActionForPrivateExchange(activeTrainTypeToDiscard);
                         if (manditoryNextAction == null) {
                             finishOR();
                         }
@@ -422,6 +383,10 @@ public class OperatingRound_1880 extends OperatingRound {
                                                                                                                // Fix.
             result = specialBuyTrain(buyTrain);
             return result;
+        } else if ((action instanceof UseSpecialProperty)
+                && (((UseSpecialProperty) action).getSpecialProperty() instanceof AddBuildingPermit)) {
+            result = addBuildingPermit(action);
+            return result;
         } else if (action instanceof ExchangeForCash) {
             result = exchangeForCash((ExchangeForCash) action);
             return result;
@@ -432,7 +397,6 @@ public class OperatingRound_1880 extends OperatingRound {
             return super.process(action);
         }
     }
-
 
     /*
      * (non-Javadoc)
@@ -479,6 +443,47 @@ public class OperatingRound_1880 extends OperatingRound {
             }
         }
         return super.setPossibleActions();
+    }
+
+    
+    @Override
+    public void resume() {
+        guiHints.setActivePanel(GuiDef.Panel.MAP);
+        guiHints.setCurrentRoundType(getClass());
+        if (savedAction instanceof BuyTrain) {
+            BuyTrain action = (BuyTrain) savedAction;
+            
+            // We are here because this player couldn't pay for a train.  
+            Player player = playerManager.getPlayerByName(action.getPlayerName());
+            PublicCompanyI company = action.getCompany();
+            int initialPlayerCash = player.getCash();
+            int trainCost = action.getFixedCost();
+                                
+            // Give the company enough money to buy the train, then deduct 
+            // that amount from the player.
+            int amountOwed = (trainCost - company.getCash());            
+            company.addCash(amountOwed);
+            player.addCash(-amountOwed);
+
+            // Perform the buy action
+            BuyTrain newTrainBuy = new BuyTrain(action.getTrain(), action.getFromPortfolio(), trainCost);
+            newTrainBuy.setPricePaid(trainCost);
+            buyTrain (newTrainBuy);
+            
+            // The player has to pay a 50% penalty for any additional debt he took on.
+            int additionalDebt = -player.getCash();
+            if (initialPlayerCash < 0) {
+                additionalDebt = additionalDebt - (-initialPlayerCash);                
+            }
+            
+            int penalty = (additionalDebt / 2);
+
+            ReportBuffer.add(LocalText.getText("DebtPenalty", player.getName(),
+                    Bank.format(penalty)));
+
+            player.addCash(-penalty);
+        }
+        wasInterrupted.set(true);
     }
 
     /*
@@ -809,10 +814,6 @@ public class OperatingRound_1880 extends OperatingRound {
         return baseCost;
     }
 
-    private void askForPrivateRocket(PhaseI newPhase) {
-
-    }
-
     /*
      * (non-Javadoc)
      * 
@@ -847,9 +848,6 @@ public class OperatingRound_1880 extends OperatingRound {
             operatingCompany.get().setOperated();
             companiesOperatedThisRound.add(operatingCompany.get());
 
-            // Check if any privates must be closed (now only applies to 1856
-            // W&SR)
-            // Copy list first to avoid concurrent modifications
             for (PrivateCompanyI priv : new ArrayList<PrivateCompanyI>(
                     operatingCompany.get().getPortfolio().getPrivateCompanies())) {
                 priv.checkClosingIfExercised(true);
@@ -875,21 +873,121 @@ public class OperatingRound_1880 extends OperatingRound {
         if (company == firstCompanyBeforePrivates) {
             super.privatesPayOut();
         }
+        trainPurchasedThisTurn.set(false);
         super.setOperatingCompany(company);
-        // if (operatingCompany.get().getTypeName().equals("Major")) {
-        // initTurn();
-        // }
     }
 
+
+    private void setActionForPrivateExchange(TrainType soldOutTrainType) {
+        PrivateCompanyI company = companyManager.getPrivateCompany("WR");
+        if (company.isClosed() == false) {
+            manditoryNextAction = ExchangeForCash.getAction(company, soldOutTrainType);
+        }
+    }
+
+    private boolean exchangeForCash(ExchangeForCash action) {
+        if (action.getExchangeCompany() == true) {
+            ReportBuffer.add(LocalText.getText("WrExchanged",
+                    action.getOwnerName(), action.getCashValue()));
+            Player player =
+                    playerManager.getPlayerByName(action.getOwnerName());
+            new CashMove(bank, player, action.getCashValue());
+            companyManager.getPrivateCompany("WR").close();
+        }
+        finishOR();
+        return true;
+    }
+    
+    private boolean checkForForcedRocketExchange() {
+        PrivateCompanyI rocket = companyManager.getPrivateCompany("RC");
+
+        if (rocket.isClosed() == true) {
+            return false;
+        }
+        
+        Player rocketOwner = (Player) rocket.getPortfolio().getOwner();
+        List<PublicCompany_1880> ownedCompaniesWithSpace =
+                new ArrayList<PublicCompany_1880>();
+        List<PublicCompany_1880> ownedCompaniesFull =
+                new ArrayList<PublicCompany_1880>();
+
+        for (PublicCompany_1880 company : PublicCompany_1880.getPublicCompanies(companyManager)) {
+            if (company.getPresident() == rocketOwner) {
+                if (company.getNumberOfTrains() < company.getCurrentTrainLimit()) {
+                    ownedCompaniesWithSpace.add(company);
+                } else {
+                    ownedCompaniesFull.add(company);
+                }
+            }
+        }
+
+        ForcedRocketExchange action = null;
+        if (ownedCompaniesWithSpace.isEmpty() == false) {
+            action = new ForcedRocketExchange();
+            for (PublicCompany_1880 company : ownedCompaniesWithSpace) {
+                action.addCompanyWithSpace(company);
+            }
+        } else if (ownedCompaniesFull.isEmpty() == false) {
+            action = new ForcedRocketExchange();
+            for (PublicCompany_1880 company : ownedCompaniesFull) {
+                action.addCompanyWithNoSpace(company);
+            }
+        } else {
+            ReportBuffer.add(LocalText.getText("RocketLost", rocketOwner));
+            rocket.close();
+        }
+        manditoryNextAction = action;
+        return (action != null);        
+    }
     
     private boolean forcedRocketExchange(ForcedRocketExchange action) {
         moveStack.start(true);
-
-        TrainI train = trainManager.getAvailableNewTrains().get(0); // TODO: Verify that this is a 4-train
+        TrainI train = trainManager.getAvailableNewTrains().get(0);
         PublicCompanyI company = companyManager.getPublicCompany(action.getCompanyToReceiveTrain());
+        String trainNameToReplace = action.getTrainToReplace();
+        
+        TrainI replacementTrain = null;
+        for (TrainI companyTrain : company.getPortfolio().getTrainList()) {
+            if (companyTrain.getName().equals(trainNameToReplace)) {
+                replacementTrain = companyTrain;
+                break;
+            }
+        }
+
+        if (replacementTrain != null) {
+            ReportBuffer.add(LocalText.getText("RocketPlacedScrappingTrain", company.getName(), trainNameToReplace));
+            replacementTrain.moveTo(scrapHeap);
+        } else {
+            ReportBuffer.add(LocalText.getText("RocketPlaced", company.getName()));            
+        }
+        
         company.buyTrain(train, 0);
+        companyManager.getPrivateCompany("RC").close();
+        train.getCertType().addToBoughtFromIPO();
+        trainManager.checkTrainAvailability(train, ipo); 
+        // If there are no available trains now, time for a stock round.
+        if (train.getType() != trainManager.getAvailableNewTrains().get(0).getType()) {
+            finishOR();
+        }
         return true;
     }
 
+
+    private boolean addBuildingPermit(PossibleAction action) {
+        AddBuildingPermit addPermit = (AddBuildingPermit) ((UseSpecialProperty) action).getSpecialProperty();
+        ((PublicCompany_1880) operatingCompany.get()).addBuildingPermit(addPermit.getPermitName());
+        addPermit.setExercised();
+        ReportBuffer.add(LocalText.getText("AddedRights", operatingCompany.get().getName(), addPermit.getPermitName()));            
+        return true;
+    }
     
+    public boolean discardTrain(DiscardTrain action) {
+        if (super.discardTrain(action) == false) {
+            return false;
+        }
+        
+        action.getDiscardedTrain().moveTo(scrapHeap);
+        return true;
+    }
+
 }

@@ -84,4 +84,8 @@ public interface PublicCertificateI extends Certificate, Moveable {
      */
     public boolean equals(PublicCertificateI cert);
 
+    public void setShares(int i);
+
+    public String getDisplayType();
+
 }

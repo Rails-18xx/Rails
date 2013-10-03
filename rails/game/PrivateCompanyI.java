@@ -45,7 +45,7 @@ public interface PrivateCompanyI extends CompanyI, Certificate, MoveableHolder, 
     public boolean closesManually();
     public void checkClosingIfExercised(boolean endOfOR);
     
-
+    public boolean countsAgainstCertLimit();
     /**
      * @return Returns the upperPrice that the company can be sold in for.
      */

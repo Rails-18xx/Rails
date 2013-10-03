@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import rails.game.CompanyManagerI;
 import rails.game.GameManagerI;
 import rails.game.PublicCompanyI;
 import rails.game.state.StringState;
@@ -94,43 +93,4 @@ public class ParSlotManager_1880 {
         }
         return results;
     }
-
-    
-//    public List<ParSlot_1880> getEmptyParSlotsAtPrice(int price) {
-//        List<ParSlot_1880> emptySlots = new ArrayList<ParSlot_1880>();
-//        for (ParSlot_1880 slot : parSlots) {
-//            if ((slot.getCompany() == null) && (slot.getPrice() == price)) {
-//                emptySlots.add(slot);
-//            }
-//        }
-//        return emptySlots;
-//    }
-//        
-//    public boolean freeSlotAtPrice(int price) {
-//        for (ParSlot_1880 slot : parSlots) {
-//            if ((slot.getCompany() == null) && (slot.getPrice() == price)) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-//
-//    public void setCompanyAtSlot(PublicCompanyI company, int index) {
-//        for (ParSlot_1880 slot : parSlots) {
-//            if (slot.getIndex() == index) {
-//                slot.setCompany(company);
-//                break;
-//            }
-//        }
-//    }
-//    
-//    public List<PublicCompanyI> getCompaniesInOperatingOrder() {
-//        List<PublicCompanyI> companies = new ArrayList<PublicCompanyI>();
-//        for (ParSlot_1880 slot : parSlots) {
-//            if (slot.getCompany() != null) {
-//                companies.add(slot.getCompany());
-//            }
-//        }
-//        return companies;
-//    }    
 }

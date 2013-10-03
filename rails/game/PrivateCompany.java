@@ -34,6 +34,8 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
     protected String closeAtPhaseName = null;
     // Manual close possible
     protected boolean closeManually = false;
+    //Counts against certificate limit
+    protected boolean countsAgainstCertLimit = true;
 
     protected String blockedHexesString = null;
     protected List<MapHex> blockedHexes = null;
@@ -91,6 +93,11 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
                 blockedHexesString =
                     blockedTag.getAttributeAsString("hex");
                 infoText += "<br>Blocking: "+blockedHexesString;
+            }
+            //Determine if the Private Certificate counts against the Certificate Limit
+            Tag certCountTag = tag.getChild("NotAgainstLimit");
+            if (certCountTag !=null) {
+                countsAgainstCertLimit = false;
             }
 
             // Extra info text(usually related to extra-share special properties)
@@ -529,5 +536,9 @@ public class PrivateCompany extends Company implements PrivateCompanyI {
     
     public boolean tradeableToPlayer() {
         return tradeableToPlayer;
+    }
+
+    public boolean countsAgainstCertLimit() {
+        return countsAgainstCertLimit;
     }
 }

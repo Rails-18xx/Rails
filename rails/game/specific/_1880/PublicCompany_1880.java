@@ -51,9 +51,9 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
     
     private BooleanState allCertsAvail = new BooleanState ("allCertsAvail", false);
     
-    private boolean fullyCapitalized = false;
-    private boolean fullCapitalAvailable = false;
-    private int extraCapital = 0;
+    private BooleanState fullyCapitalized = new BooleanState ("fullyCapitalized", false);
+    private BooleanState fullCapitalAvailable = new BooleanState ("fullCapitalAvailable", false);
+    private int extraCapital = 0; // Just one Change at Start of the game, can stay as it is..
     
     protected IntegerState formationOrderIndex;
     
@@ -98,6 +98,11 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
         this.buildingRights.set(buildingRights);
     }
 
+    public void addBuildingPermit(String permitName) {
+        buildingRights.set(buildingRights.get() + "+" + permitName);
+    }
+
+    
     public void setCommunistTakeOver(boolean b) {
         communistTakeOver.set(b);
         
@@ -125,6 +130,13 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
         if (isCommunistPhase()) return;
         if (hasStockPrice) stockMarket.withhold(this); // TODO: Cleanup
     }
+    
+    public void payout(int amount) {
+        if (isCommunistPhase() == false) {
+            stockMarket.payOut(this);        
+        }
+    }
+
 
     public void setFloatPercentage(int i) {
         this.floatPerc=i;
@@ -151,20 +163,15 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
         
          if ((tileColour.equals("yellow")) && (this.getName().equals("BCR"))) {
              return 2;
-         } else {
-             if ((tileColour.equals("yellow")) && (phase.getRealName().startsWith("A"))){
-                 return 1;
-             }
-         // New style
-             int tileLays = phase.getTileLaysPerColour(getTypeName(), tileColour);
+         }
+         int tileLays = phase.getTileLaysPerColour(getTypeName(), tileColour);
              if (tileLays <= 1) {
                  extraTileLays = null;
                  return tileLays;
                  }
             // More than one tile lay allowed.
              return tileLays;
-             }
-    }
+     }
 
     /**
      * @return the shanghaiExchangeFounded
@@ -266,14 +273,14 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
      * @return the fullyCapitalised
      */
     public boolean isFullyCapitalized() {
-        return fullyCapitalized;
+        return fullyCapitalized.booleanValue();
     }
 
     /**
      * @param fullyCapitalised the fullyCapitalised to set
      */
     public void setFullyCapitalized(boolean fullyCapitalised) {
-        this.fullyCapitalized = fullyCapitalised;
+        this.fullyCapitalized.set(fullyCapitalised);
     }
 
     /**
@@ -299,10 +306,10 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
         return true;
     }
     
-    private int sharesInIpo() {
+    public int sharesInIpo() {
         int sharesInIpo = 0;
         for (PublicCertificateI cert : certificates) {
-            if (cert.getPortfolio().getOwner() instanceof Bank) {
+            if (cert.getPortfolio() == gameManager.getBank().getIpo()) {
                 sharesInIpo += cert.getShares();
             }
         }
@@ -314,20 +321,20 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
     }
 
     public void setFullFundingAvail() {
-        this.fullCapitalAvailable = true;
+        this.fullCapitalAvailable.set(true);
         checkToFullyCapitalize();
     }
 
     public void sharePurchased() {
-        if (fullyCapitalized == true) {
+        if (fullyCapitalized.booleanValue() == true) {
             return;
         }
         checkToFullyCapitalize();
     }
     
     private void checkToFullyCapitalize() {
-        if ((hasFloated() == true) && (sharesInIpo() <= 5) && (fullCapitalAvailable == true)) {
-            fullyCapitalized = true;
+        if ((hasFloated() == true) && (sharesInIpo() <= 5) && (fullCapitalAvailable.booleanValue() == true)) {
+            fullyCapitalized.set(true);
             addCash(extraCapital);  // TODO: Should this be a "MOVE" instead?
         }
     }
@@ -346,4 +353,39 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
         return companies;
     }
 
+
+    /* (non-Javadoc)
+     * @see rails.game.PublicCompany#getBaseTokenLayCost(rails.game.MapHex)
+     */
+    @Override
+    public int getBaseTokenLayCost(MapHex hex) {
+        PhaseI phase = gameManager.getPhaseManager().getCurrentPhase();
+        if (phase.getRealName().startsWith("D")) {
+            int result;
+            result = super.getBaseTokenLayCost(hex) * 2;
+            return result;
+        }
+        return super.getBaseTokenLayCost(hex);
+    }
+
+    /* (non-Javadoc)
+     * @see rails.game.PublicCompany#getBaseTokenLayCosts()
+     */
+    @Override
+    public int[] getBaseTokenLayCosts() {
+        PhaseI phase = gameManager.getPhaseManager().getCurrentPhase();
+        if (phase.getRealName().startsWith("D")) {
+            int[] result = null;
+            int[] resultPhaseD = null;
+            result = super.getBaseTokenLayCosts();
+            resultPhaseD = result.clone();
+            for ( int i = 0; i < result.length; i++)
+                resultPhaseD[i] = result[i]+ result[i];
+            return resultPhaseD;
+        }
+        return super.getBaseTokenLayCosts();
+    }
+
+
+    
 }

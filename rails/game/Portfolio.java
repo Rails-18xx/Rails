@@ -218,9 +218,15 @@ public class Portfolio implements TokenHolder, MoveableHolder {
 
     /** Get the number of certificates that count against the certificate limit */
     public float getCertificateCount() {
-
+        float number = 0;
+        
+        for (PrivateCompanyI priv : privateCompanies) {
+            if (priv.countsAgainstCertLimit() != false) number++;
+        }
+        /*
         float number = privateCompanies.size(); // May not hold for all games
-        PublicCompanyI comp;
+        
+       */ PublicCompanyI comp;
 
         for (PublicCertificateI cert : certificates) {
             comp = cert.getCompany();
