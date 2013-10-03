@@ -12,6 +12,7 @@ import java.util.Set;
 
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
+import rails.common.GuiDef;
 import rails.game.Bank;
 import rails.game.BaseToken;
 import rails.game.CashHolder;
@@ -442,6 +443,47 @@ public class OperatingRound_1880 extends OperatingRound {
             }
         }
         return super.setPossibleActions();
+    }
+
+    
+    @Override
+    public void resume() {
+        guiHints.setActivePanel(GuiDef.Panel.MAP);
+        guiHints.setCurrentRoundType(getClass());
+        if (savedAction instanceof BuyTrain) {
+            BuyTrain action = (BuyTrain) savedAction;
+            
+            // We are here because this player couldn't pay for a train.  
+            Player player = playerManager.getPlayerByName(action.getPlayerName());
+            PublicCompanyI company = action.getCompany();
+            int initialPlayerCash = player.getCash();
+            int trainCost = action.getFixedCost();
+                                
+            // Give the company enough money to buy the train, then deduct 
+            // that amount from the player.
+            int amountOwed = (trainCost - company.getCash());            
+            company.addCash(amountOwed);
+            player.addCash(-amountOwed);
+
+            // Perform the buy action
+            BuyTrain newTrainBuy = new BuyTrain(action.getTrain(), action.getFromPortfolio(), trainCost);
+            newTrainBuy.setPricePaid(trainCost);
+            buyTrain (newTrainBuy);
+            
+            // The player has to pay a 50% penalty for any additional debt he took on.
+            int additionalDebt = -player.getCash();
+            if (initialPlayerCash < 0) {
+                additionalDebt = additionalDebt - (-initialPlayerCash);                
+            }
+            
+            int penalty = (additionalDebt / 2);
+
+            ReportBuffer.add(LocalText.getText("DebtPenalty", player.getName(),
+                    Bank.format(penalty)));
+
+            player.addCash(-penalty);
+        }
+        wasInterrupted.set(true);
     }
 
     /*
