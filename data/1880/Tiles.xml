@@ -219,14 +219,14 @@
 		<Track from="side3" gauge="normal" to="city1"/>
 	</Tile><Tile colour="green" id="8863" name="8863">
 		<Station id="city1" position="0" slots="1" type="City" value="40"/>
-		<Station id="city2" position="552" slots="1" type="City" value="40"/>
+		<Station id="city2" position="452" slots="1" type="City" value="40"/>
 		<Track from="side0" gauge="normal" to="city1"/>
 		<Track from="side3" gauge="normal" to="city1"/>
 		<Track from="side4" gauge="normal" to="city2"/>
 		<Track from="city2" gauge="normal" to="side5"/>
 	</Tile><Tile colour="green" id="8864" name="8864">
 		<Station id="city1" position="308" slots="1" type="City" value="40"/>
-		<Station id="city2" position="152" slots="1" type="City" value="40"/>
+		<Station id="city2" position="052" slots="1" type="City" value="40"/>
 		<Track from="side0" gauge="normal" to="city2"/>
 		<Track from="city2" gauge="normal" to="side1"/>
 		<Track from="side3" gauge="normal" to="city1"/>
