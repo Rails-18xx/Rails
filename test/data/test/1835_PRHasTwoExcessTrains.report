@@ -1140,4 +1140,5 @@ CompanyDiscardsTrain,PR,3
  
 EndOfFormationRound,PR,OperatingRound 7.2
 IS_NOW_PRES_OF,Bob,PR
+ 
 CompanyOperates,BA,Bob
