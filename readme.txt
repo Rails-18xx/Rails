@@ -1,18 +1,12 @@
-Rails release 1.7.7:
+Rails release 1.8.0
 
-A new maintenance release for Rails 1.x series
+Rails now supports the variant 1880 by Double O Games.
 
-This release fixes several bugs.
+This release is build on the maintenance branch of 1.7.12.
 
-Contributors: Erik Vos, Stefan Frey
+Please report any bugs you find on the mailinglist as usual.
 
-Bug reported by Are-Harald Brenne, John David Galt
+Thank you for the patience and feedback.
 
-New:
-- Added little fun variant 18Lummer
+Martin & Michael (together with the rest of the rails crew :))
 
-Lists of bugs fixed:
-- Errors in UI after adding a comment at game start
-- Fixed failure on reloading a just started game
-- 1835: Manual close of Pfalzbahn is possible (to enable closing after token lay only)
-- 1835 (and others): Fixed UI issues with token relays on OO-tiles
