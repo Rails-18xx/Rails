@@ -1,12 +1,11 @@
-Rails release 1.7.12:
+Rails release 1.8.0
 
-A new maintenance release for Rails 1.x series
+Rails now supports the variant 1880 by Double O Games.
 
-This release fixes a single bug.
+This release is build on the maintenance branch of 1.7.12.
 
-Contributors: Erik Vos
+Please report any bugs you find on the mailinglist as usual.
 
-Bug reported by Volker Schnell
+Thank you for the patience and feedback.
 
-1835: after resuming an OR after a PR formation round, a check was missing if the (minor) operating company still exists.
-Fix: finish the turn if the operating company is closed at that point.
+Martin & Michael (together with the rest of the rails crew :))
