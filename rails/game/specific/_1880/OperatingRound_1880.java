@@ -78,11 +78,10 @@ public class OperatingRound_1880 extends OperatingRound {
         if (name.equalsIgnoreCase("RaisingCertAvailability")) {
             for (PublicCompany_1880 company : PublicCompany_1880.getPublicCompanies(companyManager)) {
                 company.setAllCertsAvail(true);
+                company.setFullFundingAvail();
                 if (!company.hasFloated()) {
                     company.setFloatPercentage(30);
-                } else {
-                    company.setFullFundingAvail();
-                }
+                } 
             }
         }
         if (name.equalsIgnoreCase("CommunistTakeOver")) {            
