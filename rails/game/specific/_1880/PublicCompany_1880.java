@@ -44,11 +44,9 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
     private BuildingRights_1880 buildingRights = new BuildingRights_1880("buildingRights"); 
    
     //Implementation of PhaseAction to be able to handle the CommunistPhase
-    private BooleanState communistTakeOver = new BooleanState ("communistTakeOver",false);
-        
-    //Implementation of Phase Action to be able to handle the Post Communist Phase
-    private BooleanState shanghaiExchangeFounded = new BooleanState ("shanghaiExchangeFounded",false);
-    
+    private BooleanState canStockPriceMove = new BooleanState ("canStockPriceMove", true);
+    private BooleanState canPresidentSellShare = new BooleanState ("canPresidentSellShare", true);
+            
     private BooleanState allCertsAvail = new BooleanState ("allCertsAvail", false);
     
     private BooleanState fullyCapitalized = new BooleanState ("fullyCapitalized", false);
@@ -103,23 +101,20 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
     }
 
     
-    public void setCommunistTakeOver(boolean b) {
-        communistTakeOver.set(b);
-        
-    }
-    /**
-     * @return the communistTakeOver
-     */
-    public Boolean isCommunistPhase() {
-        return communistTakeOver.booleanValue();
-    }
-    
-    public ModelObject getCommunistTakeOver() {
-        return communistTakeOver;
-    }
-
     public boolean modifyCalculator(RevenueAdapter revenueAdapter) {
         return false;
+    }
+
+    public void stockPriceCanMove() {
+        canStockPriceMove.set(true);
+    }
+        
+    public void stockPriceCannotMove() {
+        canStockPriceMove.set(false);
+    }
+    
+    public boolean canStockPriceMove() {
+        return (canStockPriceMove.booleanValue());
     }
 
     /** Don't move the space if the company is withholding train income during the CommunistPhase
@@ -127,14 +122,27 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
      */
     @Override
     public void withhold(int amount) {
-        if (isCommunistPhase()) return;
-        if (hasStockPrice) stockMarket.withhold(this); // TODO: Cleanup
+        if (canStockPriceMove.booleanValue() == true)  {
+            stockMarket.withhold(this);
+        }
     }
     
     public void payout(int amount) {
-        if (isCommunistPhase() == false) {
-            stockMarket.payOut(this);        
+        if (canStockPriceMove.booleanValue() == true)  {
+            stockMarket.payOut(this);
         }
+    }
+
+    public void presidentCanSellShare() {
+        canPresidentSellShare.set(true);
+    }
+        
+    public void presidentCannotSellShare() {
+        canPresidentSellShare.set(false);
+    }
+    
+    public boolean canPresidentSellShare() {
+        return (canPresidentSellShare.booleanValue());
     }
 
 
@@ -145,14 +153,8 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
     
     @Override
     public boolean canRunTrains() {
-        if (!isCommunistPhase() && (!hasStockPrice()) ){ // TODO: Cleanup
-            return true;
-            }
-        return portfolio.getNumberOfTrains() > 0;
-       
+        return portfolio.getNumberOfTrains() > 0;       
     }
-    
-    
     
     /* (non-Javadoc)
      * @see rails.game.PublicCompany#getNumberOfTileLays(java.lang.String)
@@ -173,23 +175,6 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
              return tileLays;
      }
 
-    /**
-     * @return the shanghaiExchangeFounded
-     */
-    public BooleanState getShanghaiExchangeFounded() {
-        return shanghaiExchangeFounded;
-    }
-
-    /**
-     * @param shanghaiExchangeFounded the shanghaiExchangeFounded to set
-     */
-    public void setShanghaiExchangeFounded(BooleanState shanghaiExchangeFounded) {
-        this.shanghaiExchangeFounded = shanghaiExchangeFounded;
-    }
-
-    public boolean shanghaiExchangeIsOperational(){
-        return this.shanghaiExchangeFounded.booleanValue();
-    }
     
     /* (non-Javadoc)
      * @see rails.algorithms.RevenueStaticModifier#prettyPrint(rails.algorithms.RevenueAdapter)

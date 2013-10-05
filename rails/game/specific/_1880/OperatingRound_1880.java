@@ -86,24 +86,19 @@ public class OperatingRound_1880 extends OperatingRound {
         }
         if (name.equalsIgnoreCase("CommunistTakeOver")) {            
             for (PublicCompany_1880 company : PublicCompany_1880.getPublicCompanies(companyManager)) {
-                if (company.hasFloated()) {
-                    company.setCommunistTakeOver(true);
-                }
-            }
-            for (PublicCompany_1880 company : PublicCompany_1880.getPublicCompanies(companyManager)) {
+                company.stockPriceCannotMove();
+                company.presidentCannotSellShare();
                 if (!company.hasFloated()) {
                     company.setFloatPercentage(40);
                 } 
             }
             checkForForcedRocketExchange();
         }
+        
         if (name.equalsIgnoreCase("ShanghaiExchangeOpen")) {
             for (PublicCompany_1880 company : PublicCompany_1880.getPublicCompanies(companyManager)) {
-                if (company.hasFloated()) {
-                    company.setCommunistTakeOver(false);
-                }
-            }
-            for (PublicCompany_1880 company : PublicCompany_1880.getPublicCompanies(companyManager)) {
+                company.stockPriceCanMove();
+                company.presidentCanSellShare();
                 if (!company.hasFloated()) {
                     company.setFloatPercentage(60);
                 }

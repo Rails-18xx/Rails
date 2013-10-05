@@ -39,23 +39,7 @@ public class StockRound_1880 extends StockRound {
     @Override
     // The sell-in-same-turn-at-decreasing-price option does not apply here
     protected int getCurrentSellPrice(PublicCompanyI company) {
-
-        String companyName = company.getName();
-        int price;
-
-        if (sellPrices.containsKey(companyName)) {
-            price = (sellPrices.get(companyName)).getPrice();
-        } else {
-            price = company.getCurrentSpace().getPrice();
-        }
-        if (!((PublicCompany_1880) company).isCommunistPhase()) {
-            // stored price is the previous unadjusted price
-            price = price / company.getShareUnitsForSharePrice();
-            // Price adjusted by -5 per share for selling but only if we are not
-            // in CommunistPhase...
-            price = price - 5;
-        }
-        return price;
+        return (super.getCurrentSellPrice(company) - 5);
     }
 
     /**
@@ -64,11 +48,7 @@ public class StockRound_1880 extends StockRound {
     @Override
     protected void adjustSharePrice(PublicCompanyI company, int numberSold,
             boolean soldBefore) {
-        // No more changes if it has already dropped
-        // Or we are in the CommunistTakeOverPhase after the 4T has been bought
-        // and the 6T has not yet been bought
-        if ((!soldBefore)
-            || (!((PublicCompany_1880) company).isCommunistPhase())) {
+        if (((PublicCompany_1880) company).canStockPriceMove() == true) {      
             super.adjustSharePrice(company, 1, soldBefore);
         }
     }
@@ -82,9 +62,9 @@ public class StockRound_1880 extends StockRound {
      */
     @Override
     public boolean mayPlayerSellShareOfCompany(PublicCompanyI company) {
-        if ((company.getPresident() == gameManager.getCurrentPlayer())
-                && (company instanceof PublicCompany_1880)
-            && (((PublicCompany_1880) company).isCommunistPhase())) {
+        if ((company.getPresident() == gameManager.getCurrentPlayer()) && 
+                (company instanceof PublicCompany_1880) &&
+                (((PublicCompany_1880) company).canPresidentSellShare() == false)) {
             return false;
         }
         return super.mayPlayerSellShareOfCompany(company);
@@ -116,7 +96,7 @@ public class StockRound_1880 extends StockRound {
         // 50 percent of the shares.
         // The exception of the rule of course are the late starting companies after the first 6 has been bought when the 
         // flotation will happen after 60 percent have been bought.
-        if (((PublicCompany_1880) company).shanghaiExchangeIsOperational()) {
+        if (((PublicCompany_1880) company).getFloatPercentage() == 60) {
             cash = 10 * price;
         } else {
             cash = 5 * price;
@@ -345,7 +325,7 @@ public class StockRound_1880 extends StockRound {
         if (raiseIfSoldOut) {
             /* Check if any companies are sold out. */
             for (PublicCompanyI company : gameManager.getCompaniesInRunningOrder()) {
-                if (company.hasStarted() && (company instanceof PublicCompany_1880) && !((PublicCompany_1880) company).certsAvailableForSale() && (!((PublicCompany_1880) company).isCommunistPhase())) {
+                if (company.hasStarted() && (company instanceof PublicCompany_1880) && !((PublicCompany_1880) company).certsAvailableForSale() && (((PublicCompany_1880) company).canStockPriceMove())) {
                     StockSpaceI oldSpace = company.getCurrentSpace();
                     stockMarket.soldOut(company);
                     StockSpaceI newSpace = company.getCurrentSpace();
