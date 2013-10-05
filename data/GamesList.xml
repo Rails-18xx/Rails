@@ -104,7 +104,24 @@ Limitation:
        	<Players minimum="2" maximum="6"/>
 	</Game>
 
-	<Game name="1889">
+	<Game name="1880">
+   <Note>Fully Playable</Note>
+   <Description>1880 - China
+    (c) 2010 Double O Games  Mayfair Games, Inc.
+    Designed by Leonhard Ogler and Helmut Ohley
+    Limitations:
+    After the End of the StartRound the Playerorder in the Statuswindow is switched but not the Values
+    Workaround: Please save the game and reload it to fix this.
+    Not yet Implemented:
+    Automatic Deduction of Ferry Fees, please adjust manually or disable automatic RevenueCalculation
+    The Investor will be closed and the cash will go to the original company, the owner will receive 50 Yuan. 		
+    </Description>
+    <Players minimum="3" maximum="7"/>
+		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
+		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
+    </Game>
+    
+    <Game name="1889">
 		<Note>Fully playable</Note>
 		<Description>1889 - History of Shikoku Railways
 (c) 2003-2006 Yasutaka Ikeda
@@ -311,22 +328,7 @@ Known Issues:
     <Players minimum="2" maximum="5" />
   </Game>
 
-  <Game name="1880">
-   <Note>Fully Playable</Note>
-   <Description>1880 - China
-    (c) 2010 Double O Games  Mayfair Games, Inc.
-    Designed by Leonhard Ogler and Helmut Ohley
-    Limitations:
-    After the End of the StartRound the Playerorder in the Statuswindow is switched but not the Values
-    Workaround: Please save the game and reload it to fix this.
-    Not yet Implemented:
-    Automatic Deduction of Ferry Fees, please adjust manually or disable automatic RevenueCalculation
-    The Investor will be closed and the cash will go to the original company, the owner will receive 50 Yuan. 		
-    </Description>
-    <Players minimum="3" maximum="7"/>
-		<Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
-		<Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
-    </Game>
+
    <Game name="18Scan">
     <Note>Prototype</Note>
     <Description>18Scan</Description>
@@ -359,6 +361,7 @@ Contributors: &lt;br&gt;
 	Martin Brumm&lt;br&gt;
 	Chris Shaffer &lt;br&gt;
 	Brett Lentz&lt;br&gt;
+	Frederick Weld&lt;br&gt;
 	Michael Alexander&lt;br&gt;
 &lt;br&gt;
 All rights reserved by the respective owners of the original games&lt;br&gt; 
