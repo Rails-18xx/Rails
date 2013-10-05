@@ -195,19 +195,21 @@ public class StockRound_1880 extends StockRound {
                 } else if (!comp.hasStarted()) {
                     ParSlotManager_1880 parSlotManager = ((GameManager_1880) gameManager).getParSlotManager();
                     Integer[] prices = parSlotManager.getAvailablePrices(playerCash/2);
-                    Arrays.sort(prices);
-                    int[] convertedPrices = new int[prices.length];
-                    for (int i = 0; i < prices.length; i++) {
-                        convertedPrices[i] = prices[i];
+                    if (prices.length > 0) {
+                        Arrays.sort(prices);
+                        int[] convertedPrices = new int[prices.length];
+                        for (int i = 0; i < prices.length; i++) {
+                            convertedPrices[i] = prices[i];
+                        }
+                        StartCompany_1880 action = new StartCompany_1880(comp, convertedPrices);
+                        Integer[] parSlotIndicies = parSlotManager.getAvailableSlots(playerCash/2);
+                        int[] convertedSlots = new int [parSlotIndicies.length];
+                        for (int i = 0; i < parSlotIndicies.length; i++) {
+                            convertedSlots[i] = parSlotIndicies[i];
+                        }
+                        action.setPossibleParSlotIndices(convertedSlots);
+                        possibleActions.add(action);
                     }
-                    StartCompany_1880 action = new StartCompany_1880(comp, convertedPrices);
-                    Integer[] parSlotIndicies = parSlotManager.getAvailableSlots(playerCash/2);
-                    int[] convertedSlots = new int [parSlotIndicies.length];
-                    for (int i = 0; i < parSlotIndicies.length; i++) {
-                        convertedSlots[i] = parSlotIndicies[i];
-                    }
-                    action.setPossibleParSlotIndices(convertedSlots);
-                    possibleActions.add(action);
                 }
             }
         }
