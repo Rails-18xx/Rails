@@ -16,6 +16,7 @@ public class ParSlotModel extends ModelObject implements StateI {
     
     public void setCompany(PublicCompanyI company) {
         this.company = company;
+        update();
     }
     
     public Object getUpdate() {
