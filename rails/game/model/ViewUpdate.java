@@ -17,6 +17,7 @@ public class ViewUpdate implements Serializable {
 
     public static final String TEXT = "TEXT";
     public static final String BGCOLOUR = "BGCOLOUR";
+    public static final String FGCOLOUR = "FGCOLOUR";
     public static final String SHARES = "SHARES";
 
     public static final long serialVersionUID = 1L;

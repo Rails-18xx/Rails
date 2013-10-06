@@ -28,7 +28,8 @@
 				class="rails.ui.swing.gamespecific._1880.GameUIManager_1880"/>
 			<ORUIManager
 				class="rails.ui.swing.gamespecific._1880.ORUIManager_1880"/>
- 		</GuiClasses>
+			<StatusWindow class="rails.ui.swing.gamespecific._1880.StatusWindow_1880"/>
+		</GuiClasses>
 		<EndOfGame/>
 		
 		<!--  need to implement the 3 OR set limit after purchase of first 8 TrainType -->

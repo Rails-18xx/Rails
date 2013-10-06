@@ -97,14 +97,21 @@ public class Field extends Cell implements ViewObject {
     }
 
     protected void updateDetails (ViewUpdate vu) {
+        boolean fgSpecified = false;
         for (String key : vu.getKeys()) {
             if (ViewUpdate.TEXT.equalsIgnoreCase(key)) {
                 setText (vu.getText());
             } else if (ViewUpdate.BGCOLOUR.equalsIgnoreCase(key)) {
                 setBackground((Color)vu.getValue(key));
-                normalBgColour = getBackground();
-                setForeground (Util.isDark(normalBgColour) ? Color.WHITE : Color.BLACK);
+                if (fgSpecified == false) {// Handles where case where background was set second.  
+                    normalBgColour = getBackground();
+                    setForeground (Util.isDark(normalBgColour) ? Color.WHITE : Color.BLACK);
+                }
+            } else if (ViewUpdate.FGCOLOUR.equalsIgnoreCase(key)) {
+                setForeground((Color)vu.getValue(key));
+                fgSpecified = true;
             } else if (ViewUpdate.SHARES.equalsIgnoreCase(key)) {
+            
                 int count;
                 String type;
                 String[] items;

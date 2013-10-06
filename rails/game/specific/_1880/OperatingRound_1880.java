@@ -260,6 +260,7 @@ public class OperatingRound_1880 extends OperatingRound {
             if ((stb == null) || (stb.isExercised() == false)) {
                 trainPurchasedThisTurn.set(true);
                 orControl.trainPurchased((PublicCompany_1880) operatingCompany.get());
+                ((GameManager_1880) gameManager).getParSlotManager().trainPurchased((PublicCompany_1880) operatingCompany.get());
             } 
 
             // If there are no more trains of this type, and this type causes an

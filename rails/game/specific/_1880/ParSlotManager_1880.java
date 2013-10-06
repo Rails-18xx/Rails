@@ -29,35 +29,41 @@ public class ParSlotManager_1880 {
     }
     private final static int NUM_PAR_SLOTS = 16;
     
-    StringState companies[] = new StringState[16];
+    ParSlotModel companies[] = new ParSlotModel[16];
     private GameManagerI gameManager;
-        
+    StringState lastTrainStates[] = new StringState[16];
+    
+    
     public ParSlotManager_1880(GameManagerI gameManager) {
         this.gameManager = gameManager;
         for (int i = 0; i < NUM_PAR_SLOTS; i++) {
-            companies[i] = new StringState("ParSlot_" + i);
-            companies[i].set("");
+            companies[i] = new ParSlotModel("ParSlot_" + i);
+            lastTrainStates[i] = new StringState("TrainState_" + i, " ");
         }
     }
 
     public List<PublicCompanyI> getCompaniesInParSlotOrder() {
         List<PublicCompanyI> results = new ArrayList<PublicCompanyI>();
         for (int i = 0; i < NUM_PAR_SLOTS; i++) {
-            if (companies[i].get().equals("") == false) {
-                results.add(gameManager.getCompanyManager().getPublicCompany((String) companies[i].get()));
+            if (companies[i].isEmpty() == false) {
+                results.add(gameManager.getCompanyManager().getPublicCompany(companies[i].getText()));
             }
         }
         return results;
     }
 
     public void setCompanyAtSlot(PublicCompany_1880 company, int parSlotIndex) {
-        companies[parSlotIndex].set(company.getName());
+        companies[parSlotIndex].setCompany(company);
+    }
+    
+    public ParSlotModel getModelAtSlot(int slot) {
+        return companies[slot];
     }
     
     public Integer[] getAvailableSlots(int maximumPrice) {
         List<Integer> slots = new ArrayList<Integer>();
         for (int i = 0; i < NUM_PAR_SLOTS; i++) {
-            if ((companies[i].get().equals("") == true) && (SLOTS_PRICE_MAP.get(i) <= maximumPrice)) {
+            if ((companies[i].isEmpty()) && (SLOTS_PRICE_MAP.get(i) <= maximumPrice)) {
                 slots.add(i);
             }
         }
@@ -67,7 +73,7 @@ public class ParSlotManager_1880 {
     public Integer[] getAvailablePrices(int maximumPrice) {
         List<Integer> prices = new ArrayList<Integer>();
         for (int i = 0; i < NUM_PAR_SLOTS; i++) {
-            if ((companies[i].get().equals("") == true) && (SLOTS_PRICE_MAP.get(i) <= maximumPrice) && 
+            if ((companies[i].isEmpty() == true) && (SLOTS_PRICE_MAP.get(i) <= maximumPrice) && 
                     (prices.contains(SLOTS_PRICE_MAP.get(i)) == false)) {
                 prices.add(SLOTS_PRICE_MAP.get(i));
             }
@@ -92,5 +98,19 @@ public class ParSlotManager_1880 {
             results[i] = slots.get(i);
         }
         return results;
+    }
+
+    public StringState getLastTrainStateAtSlot(int i) {
+        return lastTrainStates[i];
+    }
+    
+    public void trainPurchased(PublicCompany_1880 company) {
+        for (int i = 0; i < NUM_PAR_SLOTS; i++) {
+            if (companies[i].get() == company) {
+                lastTrainStates[i].set("X");
+            } else {
+                lastTrainStates[i].set(" ");
+            }
+        }
     }
 }
