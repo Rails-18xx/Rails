@@ -212,7 +212,7 @@ public class OperatingRound_1880 extends OperatingRound {
         finishRound();
     }
 
-    private boolean trainTypeCanEndOR(TrainType type) {
+    private boolean trainTypeCanAffectOR(TrainType type) {
         if (type.getName().equals("2R") == false) {
             return true;
         }
@@ -231,7 +231,7 @@ public class OperatingRound_1880 extends OperatingRound {
         }
 
         if ((ipo.getTrainsPerType(action.getType()).length == 0)
-                && (trainTypeCanEndOR(action.getType()) == true)) {
+                && (trainTypeCanAffectOR(action.getType()) == true)) {
             orControl.orExitToStockRound(operatingCompany.get(), currentStep);
             setActionForPrivateExchange(action.getType());
             if (manditoryNextAction == null) {
@@ -258,15 +258,17 @@ public class OperatingRound_1880 extends OperatingRound {
         if (action.getFromPortfolio() == ipo) {
             SpecialTrainBuy stb = action.getSpecialProperty();
             if ((stb == null) || (stb.isExercised() == false)) {
-                trainPurchasedThisTurn.set(true);
-                orControl.trainPurchased((PublicCompany_1880) operatingCompany.get());
-                ((GameManager_1880) gameManager).getParSlotManager().trainPurchased((PublicCompany_1880) operatingCompany.get());
+                if (trainTypeCanAffectOR(action.getType()) == true) {
+                    trainPurchasedThisTurn.set(true);
+                    orControl.trainPurchased((PublicCompany_1880) operatingCompany.get());                
+                    ((GameManager_1880) gameManager).getParSlotManager().trainPurchased((PublicCompany_1880) operatingCompany.get());
+                }
             } 
 
             // If there are no more trains of this type, and this type causes an
             // OR end, end it.
             if ((ipo.getTrainsPerType(action.getType()).length == 0)
-                && (trainTypeCanEndOR(action.getType()) == true)) {
+                && (trainTypeCanAffectOR(action.getType()) == true)) {
                 orControl.orExitToStockRound(operatingCompany.get(),
                         GameDef.OrStep.BUY_TRAIN);
                 setActionForPrivateExchange(action.getType());
