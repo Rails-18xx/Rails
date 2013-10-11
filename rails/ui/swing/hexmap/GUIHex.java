@@ -731,6 +731,31 @@ public class GUIHex implements ViewObject {
         case 4:
             x += (-0.5 + currentToken % 2) * CITY_SIZE * zoomFactor;
             y += (0.5 - currentToken / 2) * CITY_SIZE * zoomFactor;
+        case 6:
+            switch (currentToken)  {
+            case 0:
+                x += (-1) * CITY_SIZE * zoomFactor;
+                y += (-0.5) * CITY_SIZE * zoomFactor;
+                break;
+            case 1:
+                x += (-1) * CITY_SIZE * zoomFactor;
+                y += (0.5) * CITY_SIZE * zoomFactor;
+                break;
+            case 2:
+                y += (1) * CITY_SIZE * zoomFactor;
+                break;
+            case 3:
+                x += (1) * CITY_SIZE * zoomFactor;
+                y += (0.5) * CITY_SIZE * zoomFactor;
+                break;
+            case 4:
+                x += (1) * CITY_SIZE * zoomFactor;
+                y += (-0.5) * CITY_SIZE * zoomFactor;
+                break;
+            case 5:
+                y += (-1) * CITY_SIZE * zoomFactor;
+                break;
+            }
         }
 
         // Correct for the tile base and actual rotations
