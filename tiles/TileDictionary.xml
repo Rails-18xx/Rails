@@ -22242,11 +22242,6 @@
 			<connection>
 				<conType>ctNormal</conType>
 				<position1>tpCenter</position1>
-				<position2>tpCenter</position2>
-			</connection>
-			<connection>
-				<conType>ctNormal</conType>
-				<position1>tpCenter</position1>
 				<position2>tp4SideA</position2>
 			</connection>
 			<connection>
@@ -22456,48 +22451,8 @@
 		</category>
 		<junctions>
 			<junction>
-				<junType>jtCity</junType>
-				<position>tp3SideE</position>
-				<revenue>
-					<value>60</value>
-					<position>tpCenter</position>
-				</revenue>
-			</junction>
-			<junction>
-				<junType>jtCity</junType>
-				<position>tp3SideD</position>
-				<revenue>
-					<value>60</value>
-					<position>tpCenter</position>
-				</revenue>
-			</junction>
-			<junction>
-				<junType>jtCity</junType>
-				<position>tp3SideC</position>
-				<revenue>
-					<value>60</value>
-					<position>tpCenter</position>
-				</revenue>
-			</junction>
-			<junction>
-				<junType>jtCity</junType>
-				<position>tp3SideB</position>
-				<revenue>
-					<value>60</value>
-					<position>tpCenter</position>
-				</revenue>
-			</junction>
-			<junction>
-				<junType>jtCity</junType>
-				<position>tp3SideA</position>
-				<revenue>
-					<value>60</value>
-					<position>tpCenter</position>
-				</revenue>
-			</junction>
-			<junction>
-				<junType>jtCity</junType>
-				<position>tp3SideF</position>
+				<junType>jtSextupleCity</junType>
+				<position>tpCenter</position>
 				<revenue>
 					<value>60</value>
 					<position>tpCenter</position>
@@ -22507,32 +22462,32 @@
 		<connections>
 			<connection>
 				<conType>ctNormal</conType>
-				<position1>tp3SideF</position1>
+				<position1>tpCenter</position1>
 				<position2>tp4SideF</position2>
 			</connection>
 			<connection>
 				<conType>ctNormal</conType>
-				<position1>tp3SideE</position1>
+				<position1>tpCenter</position1>
 				<position2>tp4SideE</position2>
 			</connection>
 			<connection>
 				<conType>ctNormal</conType>
-				<position1>tp3SideD</position1>
+				<position1>tpCenter</position1>
 				<position2>tp4SideD</position2>
 			</connection>
 			<connection>
 				<conType>ctNormal</conType>
-				<position1>tp3SideC</position1>
+				<position1>tpCenter</position1>
 				<position2>tp4SideC</position2>
 			</connection>
 			<connection>
 				<conType>ctNormal</conType>
-				<position1>tp3SideB</position1>
+				<position1>tpCenter</position1>
 				<position2>tp4SideB</position2>
 			</connection>
 			<connection>
 				<conType>ctNormal</conType>
-				<position1>tp3SideA</position1>
+				<position1>tpCenter</position1>
 				<position2>tp4SideA</position2>
 			</connection>
 		</connections>
@@ -22589,7 +22544,7 @@
 		<ID>455</ID>
 		<shape>tsHexagon</shape>
 		<level>tlGray</level>
-		<name>495</name>
+		<name>455</name>
 		<junctions>
 			<junction>
 				<junType>jtTripleCity</junType>
@@ -22712,18 +22667,13 @@
 			</connection>
 			<connection>
 				<conType>ctNormal</conType>
-				<position1>tp4SideA</position1>
-				<position2>tpCenter</position2>
-			</connection>
-			<connection>
-				<conType>ctNormal</conType>
-				<position1>tp4SideA</position1>
-				<position2>tp4SideD</position2>
+				<position1>tpCenter</position1>
+				<position2>tp4SideC</position2>
 			</connection>
 			<connection>
 				<conType>ctNormal</conType>
 				<position1>tpCenter</position1>
-				<position2>tp4SideC</position2>
+				<position2>tp4SideD</position2>
 			</connection>
 			<connection>
 				<conType>ctNormal</conType>
@@ -22962,239 +22912,44 @@
 		</category>
 		<junctions>
 			<junction>
-				<junType>jtCity</junType>
-				<position>tp3SideE</position>
+				<junType>jtSextupleCity</junType>
+				<position>tpCenter</position>
 				<revenue>
 					<value>80</value>
-					<position>tp3CornerA</position>
-				</revenue>
-			</junction>
-			<junction>
-				<junType>jtCity</junType>
-				<position>tp3SideD</position>
-				<revenue>
-					<value>80</value>
-					<position>tp3CornerA</position>
-				</revenue>
-			</junction>
-			<junction>
-				<junType>jtCity</junType>
-				<position>tp3SideC</position>
-				<revenue>
-					<value>80</value>
-					<position>tp3CornerA</position>
-				</revenue>
-			</junction>
-			<junction>
-				<junType>jtCity</junType>
-				<position>tp3SideB</position>
-				<revenue>
-					<value>80</value>
-					<position>tp3CornerA</position>
-				</revenue>
-			</junction>
-			<junction>
-				<junType>jtCity</junType>
-				<position>tp3SideA</position>
-				<revenue>
-					<value>80</value>
-					<position>tp3CornerA</position>
-				</revenue>
-			</junction>
-			<junction>
-				<junType>jtCity</junType>
-				<position>tp3SideF</position>
-				<revenue>
-					<value>80</value>
-					<position>tp3CornerA</position>
+					<position>tpCenter</position>
 				</revenue>
 			</junction>
 		</junctions>
 		<connections>
 			<connection>
 				<conType>ctNormal</conType>
-				<position1>tp3SideC</position1>
+				<position1>tpCenter</position1>
 				<position2>tp4SideC</position2>
 			</connection>
 			<connection>
 				<conType>ctNormal</conType>
-				<position1>tp3SideB</position1>
+				<position1>tpCenter</position1>
 				<position2>tp4SideB</position2>
 			</connection>
 			<connection>
 				<conType>ctNormal</conType>
-				<position1>tp3SideA</position1>
+				<position1>tpCenter</position1>
 				<position2>tp4SideA</position2>
 			</connection>
 			<connection>
 				<conType>ctNormal</conType>
-				<position1>tp3SideF</position1>
+				<position1>tpCenter</position1>
 				<position2>tp4SideF</position2>
 			</connection>
 			<connection>
 				<conType>ctNormal</conType>
-				<position1>tp3SideE</position1>
+				<position1>tpCenter</position1>
 				<position2>tp4SideE</position2>
 			</connection>
 			<connection>
 				<conType>ctNormal</conType>
-				<position1>tp3SideD</position1>
+				<position1>tpCenter</position1>
 				<position2>tp4SideD</position2>
-			</connection>
-			<connection>
-				<conType>ctNormal</conType>
-				<position1>tp3SideD</position1>
-				<position2>tp4SideC</position2>
-			</connection>
-			<connection>
-				<conType>ctNormal</conType>
-				<position1>tp3SideD</position1>
-				<position2>tp4SideB</position2>
-			</connection>
-			<connection>
-				<conType>ctNormal</conType>
-				<position1>tp3SideD</position1>
-				<position2>tp4SideA</position2>
-			</connection>
-			<connection>
-				<conType>ctNormal</conType>
-				<position1>tp3SideD</position1>
-				<position2>tp4SideF</position2>
-			</connection>
-			<connection>
-				<conType>ctNormal</conType>
-				<position1>tp3SideD</position1>
-				<position2>tp4SideE</position2>
-			</connection>
-			<connection>
-				<conType>ctNormal</conType>
-				<position1>tp3SideC</position1>
-				<position2>tp4SideB</position2>
-			</connection>
-			<connection>
-				<conType>ctNormal</conType>
-				<position1>tp3SideC</position1>
-				<position2>tp4SideA</position2>
-			</connection>
-			<connection>
-				<conType>ctNormal</conType>
-				<position1>tp3SideC</position1>
-				<position2>tp4SideF</position2>
-			</connection>
-			<connection>
-				<conType>ctNormal</conType>
-				<position1>tp3SideC</position1>
-				<position2>tp4SideE</position2>
-			</connection>
-			<connection>
-				<conType>ctNormal</conType>
-				<position1>tp3SideC</position1>
-				<position2>tp4SideE</position2>
-			</connection>
-			<connection>
-				<conType>ctNormal</conType>
-				<position1>tp3SideC</position1>
-				<position2>tp4SideD</position2>
-			</connection>
-			<connection>
-				<conType>ctNormal</conType>
-				<position1>tp3SideB</position1>
-				<position2>tp4SideC</position2>
-			</connection>
-			<connection>
-				<conType>ctNormal</conType>
-				<position1>tp3SideB</position1>
-				<position2>tp4SideA</position2>
-			</connection>
-			<connection>
-				<conType>ctNormal</conType>
-				<position1>tp3SideB</position1>
-				<position2>tp4SideF</position2>
-			</connection>
-			<connection>
-				<conType>ctNormal</conType>
-				<position1>tp3SideB</position1>
-				<position2>tp4SideE</position2>
-			</connection>
-			<connection>
-				<conType>ctNormal</conType>
-				<position1>tp3SideB</position1>
-				<position2>tp4SideD</position2>
-			</connection>
-			<connection>
-				<conType>ctNormal</conType>
-				<position1>tp3SideA</position1>
-				<position2>tp4SideB</position2>
-			</connection>
-			<connection>
-				<conType>ctNormal</conType>
-				<position1>tp3SideA</position1>
-				<position2>tp4SideC</position2>
-			</connection>
-			<connection>
-				<conType>ctNormal</conType>
-				<position1>tp3SideA</position1>
-				<position2>tp4SideD</position2>
-			</connection>
-			<connection>
-				<conType>ctNormal</conType>
-				<position1>tp3SideA</position1>
-				<position2>tp4SideE</position2>
-			</connection>
-			<connection>
-				<conType>ctNormal</conType>
-				<position1>tp3SideA</position1>
-				<position2>tp4SideF</position2>
-			</connection>
-			<connection>
-				<conType>ctNormal</conType>
-				<position1>tp3SideF</position1>
-				<position2>tp4SideE</position2>
-			</connection>
-			<connection>
-				<conType>ctNormal</conType>
-				<position1>tp3SideF</position1>
-				<position2>tp4SideD</position2>
-			</connection>
-			<connection>
-				<conType>ctNormal</conType>
-				<position1>tp3SideF</position1>
-				<position2>tp4SideC</position2>
-			</connection>
-			<connection>
-				<conType>ctNormal</conType>
-				<position1>tp3SideF</position1>
-				<position2>tp4SideB</position2>
-			</connection>
-			<connection>
-				<conType>ctNormal</conType>
-				<position1>tp3SideF</position1>
-				<position2>tp4SideA</position2>
-			</connection>
-			<connection>
-				<conType>ctNormal</conType>
-				<position1>tp3SideE</position1>
-				<position2>tp4SideD</position2>
-			</connection>
-			<connection>
-				<conType>ctNormal</conType>
-				<position1>tp3SideE</position1>
-				<position2>tp4SideC</position2>
-			</connection>
-			<connection>
-				<conType>ctNormal</conType>
-				<position1>tp3SideE</position1>
-				<position2>tp4SideB</position2>
-			</connection>
-			<connection>
-				<conType>ctNormal</conType>
-				<position1>tp3SideE</position1>
-				<position2>tp4SideA</position2>
-			</connection>
-			<connection>
-				<conType>ctNormal</conType>
-				<position1>tp3SideE</position1>
-				<position2>tp4SideF</position2>
 			</connection>
 		</connections>
 	</tile>
