@@ -16360,7 +16360,6 @@ object TTilesWrapper
           RevenuePosition = tpCenter
         end>
     end
-    end
     item
       Code = 895
       LongName = '895'
@@ -16685,7 +16684,6 @@ object TTilesWrapper
         item
           Position1 = tpCenter
           Position2 = tp4SideD
-        end
         end>
       Junctions = <
         item
@@ -17673,8 +17671,8 @@ object TTilesWrapper
           Position2 = tp4SideF
         end>
       Junctions = <>
-    end>
-        item
+    end
+    item
       Code = -24031
       LongName = 'Wien'
       Category = 'W'
