@@ -62,7 +62,7 @@ public class ConvertTilesXML {
         stationMap.put("jtDoubleCity", new String[] { "City", "2" });
         stationMap.put("jtTripleCity", new String[] { "City", "3" });
         stationMap.put("jtQuadrupleCity", new String[] { "City", "4" });
-        stationMap.put("jtSextupleCity", new String[] {"City", "6"});
+        stationMap.put("jtHextupleCity", new String[] {"City", "6"});
         stationMap.put("jtNone", new String[] { "", "0" });
         // Note: an additional station type is "Pass".
 

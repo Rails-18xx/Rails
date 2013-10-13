@@ -90,4 +90,25 @@
 		<Track from="city1" gauge="normal" to="side4"/>
 		<Track from="city1" gauge="normal" to="side3"/>
 	</Tile>
+	   <Tile colour="fixed" id="-24901" name="EPP Coal Mine">
+      <Station id="city1" position="0" type="Town" />
+      <Track from="side5" gauge="normal" to="city1" />
+      <Track from="side4" gauge="normal" to="city1" />
+      <Track from="city1" gauge="normal" to="city1" />
+   </Tile>
+   <Tile colour="fixed" id="-24902" name="EOD Coal Mine">
+      <Station id="city1" position="0" type="Town" />
+      <Track from="side3" gauge="normal" to="city1" />
+      <Track from="side1" gauge="normal" to="city1" />
+   </Tile>
+   <Tile colour="fixed" id="-24903" name="MLB Coal Mine">
+      <Station id="city1" position="0" type="Town" />
+      <Track from="side1" gauge="normal" to="city1" />
+      <Track from="side3" gauge="normal" to="city1" />
+   </Tile>
+   <Tile colour="fixed" id="-24904" name="SPB Coal Mine">
+      <Station id="city1" position="0" type="Town" />
+      <Track from="side3" gauge="normal" to="city1" />
+      <Track from="side5" gauge="normal" to="city1" />
+   </Tile>
  </Tiles>
