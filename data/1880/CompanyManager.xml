@@ -129,7 +129,7 @@
 	</Company>
 	<Company name="SCR" longname="Schichang Railway" type="Major" tokens="3"
 		fgColour="FFFFFF" bgColour="71B622">
-		<Home hex="N12"/>
+		<Home hex="N12" city="1"/>
 	</Company>
 	<Company name="CKR" longname="Chengkun Railway" type="Major" tokens="3"
 		fgColour="000000" bgColour="D24026">
