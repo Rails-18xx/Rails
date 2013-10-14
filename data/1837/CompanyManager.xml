@@ -30,7 +30,7 @@
         <CompanyType name="Minor2" class="rails.game.PublicCompany">
                 <ShareUnit percentage="50"/>
                 <Certificate type="President" shares="1"/>
-                <Certificate shares="1" number="1"/>
+                <Certificate shares="1" number="2"/>
                 <StockPrice market="no"/>
                 <BaseTokens>
                         <HomeBase lay="whenFloated"/>
@@ -359,35 +359,43 @@
         </Company>
         
         <!--StartPacket roundClass="rails.game.specific._1837.StartRound_1837"-->
-        <StartPacket roundClass="rails.game.specific._1835.StartRound_1835">
-                <Item name="EKT" type="Coal" basePrice="100" column="1"/>
-                <Item name="EOD" type="Coal" basePrice="100" column="1"/>
-                <Item name="KwB" type="Private" basePrice="170" column="1">
+        <StartPacket name="Coal Mines" roundClass="rails.game.specific._1837.StartRound_1837">
+                <Item name="EKT" type="Coal" basePrice="100" column="1" row="1"/>
+                <Item name="EOD" type="Coal" basePrice="100" column="1" row="2"/>
+                <Item name="KwB" type="Private" basePrice="170" column="1" row="3">
                         <SubItem name="S2" type="Minor1"/>
                 </Item>
-                <Item name="MLB" type="Coal" basePrice="100" column="1"/>
-                <Item name="BrB" type="Private" basePrice="140" column="1">
+                <Item name="MLB" type="Coal" basePrice="100" column="1" row="4"/>
+                <Item name="BrB" type="Private" basePrice="140" column="1"  row="5">
                         <SubItem name="S4" type="Minor1"/>
                 </Item>
-                <Item name="WB" type="Private" basePrice="130" column="1"/>
- 
-                <Item name="EPP" type="Coal" basePrice="100" column="2"/>
-                <Item name="RGTE" type="Coal" basePrice="100" column="2"/>
-                <Item name="AB" type="Private" basePrice="185" column="2">
+                <Item name="WB" type="Private" basePrice="130" column="1" row="6"/>
+                <Item name="EPP" type="Coal" basePrice="100" column="2" row="1"/>
+                <Item name="RGTE" type="Coal" basePrice="100" column="2"row="2"/>
+                <Item name="AB" type="Private" basePrice="185" column="2" row="3">
                         <SubItem name="S3" type="Minor1"/>
                 </Item>
-                <Item name="EHS" type="Coal" basePrice="100" column="2"/>
-                <Item name="LRB" type="Coal" basePrice="100" column="2"/>
-                <Item name="KB" type="Private" basePrice="120" column="2">
+                <Item name="EHS" type="Coal" basePrice="100" column="2" row="4"/>
+                <Item name="LRB" type="Coal" basePrice="100" column="2"row="5"/>
+                <Item name="KB" type="Private" basePrice="120" column="2" row="6">
                         <SubItem name="S5" type="Minor1"/>
                 </Item>
-
-                <Item name="BB" type="Coal" basePrice="100" column="3"/>
-                <Item name="SmB" type="Private" basePrice="150" column="3">
+                <Item name="BB" type="Coal" basePrice="100" column="3" row="1"/>
+                <Item name="SmB" type="Private" basePrice="150" column="3" row="2">
                         <SubItem name="S1" type="Minor1"/>
                 </Item>
-                <Item name="SPB" type="Coal" basePrice="100" column="3"/>
-                <Item name="ZKB" type="Coal" basePrice="100" column="3"/>
-                <Item name="TB" type="Private" basePrice="150" column="3"/>
+                <Item name="SPB" type="Coal" basePrice="100" column="3" row="3"/>
+                <Item name="ZKB" type="Coal" basePrice="100" column="3" row="4"/>
+                <Item name="TB" type="Private" basePrice="150" column="3" row="5"/>
+        </StartPacket>
+        <StartPacket name="KuK Privates" roundClass="rails.game.specific._1837.StartRound_1837">
+        <Item name="K1" type="Minor2" president="yes"/>
+        <Item name="K1" type="Minor2" />
+        <Item name="K2" type="Minor1"/>
+        <Item name="K3" type="Minor2" president="yes"/>
+        <Item name="K3" type="Minor2" />
+        </StartPacket>
+        <StartPacket name="Hungary Privates" roundClass="rails.game.specific._1837.StartRound_1837">
+        
         </StartPacket>
 </CompanyManager>
