@@ -15959,6 +15959,7 @@ object TTilesWrapper
       Code = 8863
       LongName = '8863'
       Category = 'OO'
+      CategoryPosition = tp3CornerC
       Level = tlGreen
       Connections = <
         item
@@ -15971,10 +15972,10 @@ object TTilesWrapper
         end
         item
           Position1 = tp4SideE
-          Position2 = tp2CornerF
+          Position2 = tpCurve1RightF
         end
         item
-          Position1 = tp2CornerF
+          Position1 = tpCurve1RightF
           Position2 = tp4SideF
         end>
       Junctions = <
@@ -15985,9 +15986,8 @@ object TTilesWrapper
         end
         item
           JunType = jtCity
-          Position = tp2CornerF
+          Position = tpCurve1RightF
           Revenue = 40
-          RevenuePosition = tp3CornerE
         end>
     end
     item
@@ -16311,11 +16311,11 @@ object TTilesWrapper
           Position2 = tp4SideD
         end
         item
-          Position1 = tp3Center
+          Position1 = tpCenter
           Position2 = tp4SideC
         end
         item
-          Position1 = tp3Center
+          Position1 = tpCenter
           Position2 = tp4SideB
         end
         item
@@ -16324,8 +16324,7 @@ object TTilesWrapper
         end>
       Junctions = <
         item
-          JunType = jtHextupleCity
-          Position = tpCenter
+          JunType = 
           Revenue = 60
           RevenuePosition = tpCenter
         end>
@@ -16657,7 +16656,7 @@ object TTilesWrapper
         end>
       Junctions = <
         item
-          JunType = jtHextupleCity
+          JunType = 
           Position = tp3SideE
           Revenue = 80
         end>
@@ -18000,6 +17999,7 @@ object TTilesWrapper
     end
     item
       Code = 447
+      LongName = '447'
       Category = 'T'
       Level = tlYellow
       Connections = <
@@ -18019,6 +18019,7 @@ object TTilesWrapper
     end
     item
       Code = 497
+      LongName = '497'
       Category = 'T'
       Level = tlBrown
       Connections = <
@@ -18064,4 +18065,3 @@ object TTilesWrapper
         end>
     end>
 end
-

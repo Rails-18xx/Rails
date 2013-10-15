@@ -98,7 +98,7 @@
 	<Hex name="N6" tile="0" cost="20"/>
 	<Hex name="N8" tile="0" cost="30"/>
 	<Hex name="N10" tile="-80001" city="Test3" />
-	<Hex name="N12" tile="-80020" city="Changsha, Nanchang" />
+	<Hex name="N12" tile="-80020" orientation="4" city="Changsha, Nanchang" />
 	<Hex name="N14" tile="0" />
 	<Hex name="N16" tile="-903" pic="-9031" orientation="2" value="30,30,0,0" city="Taiwan">
 	<Access score="minor" />
