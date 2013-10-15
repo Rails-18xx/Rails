@@ -151,63 +151,6 @@ public class StartRound_1837 extends StartRound {
         return false;
     }
 
-    /**
-     * Set the next player turn.
-     *
-     */
-    @Override
-    protected void setNextPlayer() {
-
-        /* Select the player that has the turn. */
-
-        if (gameManager.getStartRoundNumber() == 1) {
-            /*
-             * Some variants have a reversed player order in the first or second
-             * cycle of the first round (a cycle spans one turn of all players).
-             * In such a case we need to keep track of the number of player
-             * turns.
-             */
-            turn.add(1);
-            int turnNumber = turn.intValue();
-            int cycleNumber = turnNumber / numPlayers;
-            int turnIndex = turnNumber % numPlayers;
-            int newIndex;
-
-            if (variant.equalsIgnoreCase(CLEMENS_VARIANT)) {
-                /* Reverse order in the first cycle only */
-                newIndex =
-                    cycleNumber == 0 ? numPlayers - 1 - turnIndex
-                            : turnIndex;
-            } else if (variant.equalsIgnoreCase(SNAKE_VARIANT)) {
-                /* Reverse order in the second cycle only */
-                newIndex =
-                    cycleNumber == 1 ? numPlayers - 1 - turnIndex
-                            : turnIndex;
-            } else {
-                newIndex = turnIndex;
-            }
-            Player oldPlayer = getCurrentPlayer();
-            setCurrentPlayerIndex(newIndex);
-            Player newPlayer = getCurrentPlayer();
-            log.debug("Game turn has moved from " + oldPlayer.getName()
-                    + " to " + newPlayer.getName()
-                    + " [startRound=" + gameManager.getStartRoundNumber()
-                    + " cycle=" + cycleNumber
-                    + " turn=" + turnNumber
-                    + " newIndex=" + newIndex + "]");
-
-        } else {
-
-            /* In any subsequent Round, the normal order applies. */
-            Player oldPlayer = getCurrentPlayer();
-            super.setNextPlayer();
-            Player newPlayer = getCurrentPlayer();
-            log.debug("Game turn has moved from " + oldPlayer.getName()
-                    + " to " + newPlayer.getName());
-        }
-
-        return;
-    }
 
     /**
      * Process a player's pass.
