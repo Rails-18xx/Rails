@@ -1,4 +1,4 @@
-package rails.game.specific._1880;
+package rails.game.model;
 
 import rails.game.PublicCompanyI;
 import rails.game.state.StateI;
