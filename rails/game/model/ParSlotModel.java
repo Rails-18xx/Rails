@@ -1,8 +1,6 @@
-package rails.game.specific._1880;
+package rails.game.model;
 
 import rails.game.PublicCompanyI;
-import rails.game.model.ModelObject;
-import rails.game.model.ViewUpdate;
 import rails.game.state.StateI;
 
 public class ParSlotModel extends ModelObject implements StateI {
