@@ -7,15 +7,14 @@ import java.awt.event.ActionEvent;
 import javax.swing.BorderFactory;
 
 import rails.common.LocalText;
+import rails.game.model.ParSlotModel;
 import rails.game.state.StringState;
 import rails.ui.swing.GameUIManager;
 import rails.ui.swing.GridPanel;
 import rails.ui.swing.elements.Caption;
 import rails.ui.swing.elements.Field;
-
 import rails.game.specific._1880.GameManager_1880;
 import rails.game.specific._1880.ParSlotManager_1880;
-import rails.game.specific._1880.ParSlotModel;
 
 public class ParSlotsPanel extends GridPanel {
     private static final long serialVersionUID = 1L;

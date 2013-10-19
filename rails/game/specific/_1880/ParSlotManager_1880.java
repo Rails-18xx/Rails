@@ -13,6 +13,7 @@ import java.util.Map;
 
 import rails.game.GameManagerI;
 import rails.game.PublicCompanyI;
+import rails.game.model.ParSlotModel;
 import rails.game.state.StringState;
 
 public class ParSlotManager_1880 {
