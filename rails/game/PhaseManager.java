@@ -79,7 +79,7 @@ public class PhaseManager implements ConfigurableComponentI {
         setPhase(phaseMap.get(name), lastTrainBuyer);
     }
 
-    protected void setPhase(PhaseI phase, Portfolio lastTrainBuyer) {
+    public void setPhase(PhaseI phase, Portfolio lastTrainBuyer) {
         if (phase != null) {
             phase.setLastTrainBuyer (lastTrainBuyer);
             currentPhase.set(phase);
