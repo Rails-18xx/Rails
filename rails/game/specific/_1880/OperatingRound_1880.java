@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
@@ -31,6 +33,7 @@ import rails.game.ReportBuffer;
 import rails.game.Stop;
 import rails.game.TileI;
 import rails.game.TrainI;
+import rails.game.TrainManager;
 import rails.game.TrainType;
 import rails.game.action.BuyTrain;
 import rails.game.action.DiscardTrain;
@@ -987,4 +990,225 @@ public class OperatingRound_1880 extends OperatingRound {
         return true;
     }
 
+    /* (non-Javadoc)
+     * @see rails.game.OperatingRound#setBuyableTrains()
+     */
+    @Override
+    public void setBuyableTrains() {
+        if (operatingCompany.get() == null) return;
+
+        int cash = operatingCompany.get().getCash();
+
+        int cost = 0;
+        List<TrainI> trains;
+
+       
+
+            // Cannot buy a train without any cash, unless you have to
+            if (cash == 0 && hasValidTrains()) return;
+
+            boolean canBuyTrainNow = canBuyTrainNow();
+            boolean mustBuyTrain = !hasValidTrains() && operatingCompany.get().mustOwnATrain();
+            boolean emergency = false;
+
+            SortedMap<Integer, TrainI> newEmergencyTrains = new TreeMap<Integer, TrainI>();
+            SortedMap<Integer, TrainI> usedEmergencyTrains = new TreeMap<Integer, TrainI>();
+            TrainManager trainMgr = gameManager.getTrainManager();
+
+            // First check if any more trains may be bought from the Bank
+            // Postpone train limit checking, because an exchange might be possible
+            if (getCurrentPhase().canBuyMoreTrainsPerTurn()
+                    || trainsBoughtThisTurn.isEmpty()) {
+                boolean mayBuyMoreOfEachType =
+                    getCurrentPhase().canBuyMoreTrainsPerTypePerTurn();
+
+                /* New trains */
+                trains = trainMgr.getAvailableNewTrains();
+                for (TrainI train : trains) {
+                    if (!operatingCompany.get().mayBuyTrainType(train)) continue;
+                    if (!mayBuyMoreOfEachType
+                            && trainsBoughtThisTurn.contains(train.getCertType())) {
+                        continue;
+                    }
+
+                    // Allow dual trains (since jun 2011)
+                    List<TrainType> types = train.getCertType().getPotentialTrainTypes();
+                    for (TrainType type : types) {
+                        cost = type.getCost();
+                        if (cost <= cash) {
+                            if (canBuyTrainNow) {
+                                BuyTrain action = new BuyTrain(train, type, ipo, cost);
+                                action.setForcedBuyIfNoRoute(mustBuyTrain); // TEMPORARY
+                                possibleActions.add(action);
+                            }
+                        } else if (mustBuyTrain) {
+                            //TODO : Can't Finance a 2R Train
+                            if (!train.getName().equals("2R")) {
+                            newEmergencyTrains.put(cost, train);
+                            }
+                        }
+                    }
+
+                    if (!canBuyTrainNow) continue;
+
+                    // Can a special property be used?
+                    // N.B. Assume that this never occurs in combination with
+                    // dual trains or train exchanges,
+                    // otherwise the below code must be duplicated above.
+                    for (SpecialTrainBuy stb : getSpecialProperties(SpecialTrainBuy.class)) {
+                        int reducedPrice = stb.getPrice(cost);
+                        if (reducedPrice > cash) continue;
+                        BuyTrain bt = new BuyTrain(train, ipo, reducedPrice);
+                        bt.setSpecialProperty(stb);
+                        bt.setForcedBuyIfNoRoute(mustBuyTrain); // TEMPORARY
+                        possibleActions.add(bt);
+                    }
+
+                }
+                if (!canBuyTrainNow) return;
+
+                /* Used trains */
+                trains = pool.getUniqueTrains();
+                for (TrainI train : trains) {
+                    if (!mayBuyMoreOfEachType
+                            && trainsBoughtThisTurn.contains(train.getCertType())) {
+                        continue;
+                    }
+                    cost = train.getCost();
+                    if (cost <= cash) {
+                        BuyTrain bt = new BuyTrain(train, pool, cost);
+                        bt.setForcedBuyIfNoRoute(mustBuyTrain); // TEMPORARY
+                        possibleActions.add(bt);
+                    } else if (mustBuyTrain) {
+                        usedEmergencyTrains.put(cost, train);
+                    }
+                }
+                if (!possibleActions.getType(BuyTrain.class).isEmpty()) { //Check if the train bought is a 2R as that doesn't fulfill the emergency conditions
+                    List<PossibleAction> pActions=possibleActions.getList();
+                    for (PossibleAction pAction : pActions) {
+                        BuyTrain trainAction = ((BuyTrain) pAction);
+                        if (trainAction.getType().getName().equals("2R") ){
+                            emergency = mustBuyTrain;
+                        } 
+                        else {
+                            emergency = mustBuyTrain && possibleActions.getType(BuyTrain.class).isEmpty();  
+                        }
+                    }
+                } 
+                else {
+                    emergency = mustBuyTrain;
+                }
+                
+                
+
+                // If we must buy a train and haven't found one yet, the president must add cash.
+                if (emergency && !newEmergencyTrains.isEmpty()) {
+                        // All possible bank trains are buyable
+                        for (TrainI train : newEmergencyTrains.values()) {
+                            BuyTrain bt = new BuyTrain(train, ipo, train.getCost());
+                            bt.setPresidentMustAddCash(train.getCost() - cash);
+                            bt.setForcedBuyIfNoRoute(mustBuyTrain); // TODO TEMPORARY
+                            possibleActions.add(bt);
+                        }
+                        for (TrainI train : usedEmergencyTrains.values()) {
+                            BuyTrain bt = new BuyTrain(train, pool, train.getCost());
+                            bt.setPresidentMustAddCash(train.getCost() - cash);
+                            bt.setForcedBuyIfNoRoute(mustBuyTrain); // TODO TEMPORARY
+                            possibleActions.add(bt);
+                        }
+                    }
+                }
+            
+            if (!canBuyTrainNow) return;
+
+            /* Other company trains, sorted by president (current player first) */
+            if (getCurrentPhase().isTrainTradingAllowed()) {
+                BuyTrain bt;
+                Player p;
+                Portfolio pf;
+                int index;
+                int numberOfPlayers = getNumberOfPlayers();
+                int presidentCash = operatingCompany.get().getPresident().getCash();
+
+                // Set up a list per player of presided companies
+                List<List<PublicCompanyI>> companiesPerPlayer =
+                    new ArrayList<List<PublicCompanyI>>(numberOfPlayers);
+                for (int i = 0; i < numberOfPlayers; i++)
+                    companiesPerPlayer.add(new ArrayList<PublicCompanyI>(4));
+                List<PublicCompanyI> companies;
+                // Sort out which players preside over which companies.
+                //for (PublicCompanyI c : getOperatingCompanies()) {
+                for (PublicCompanyI c : companyManager.getAllPublicCompanies()) {
+                    if (!c.hasFloated()) continue;
+                    if (c.isClosed() || c == operatingCompany.get()) continue;
+                    p = c.getPresident();
+                    index = p.getIndex();
+                    companiesPerPlayer.get(index).add(c);
+                }
+                // Scan trains per company per player, operating company president
+                // first
+                int currentPlayerIndex = getCurrentPlayer().getIndex();
+                for (int i = currentPlayerIndex; i < currentPlayerIndex
+                + numberOfPlayers; i++) {
+                    companies = companiesPerPlayer.get(i % numberOfPlayers);
+                    for (PublicCompanyI company : companies) {
+                        pf = company.getPortfolio();
+                        trains = pf.getUniqueTrains();
+
+                        for (TrainI train : trains) {
+                            if (train.isObsolete() || !train.isTradeable()) continue;
+                            bt = null;
+                            if (i != currentPlayerIndex
+                                    && getGameParameterAsBoolean(GameDef.Parm.FIXED_PRICE_TRAINS_BETWEEN_PRESIDENTS)
+                                    || operatingCompany.get().mustTradeTrainsAtFixedPrice()
+                                    || company.mustTradeTrainsAtFixedPrice()) {
+                                // Fixed price
+                                if ((cash >= train.getCost()) && (operatingCompany.get().mayBuyTrainType(train))) {
+                                    bt = new BuyTrain(train, pf, train.getCost());
+                                } else {
+                                    continue;
+                                }
+                            } else if (cash > 0
+                                    || emergency
+                                    && getGameParameterAsBoolean (GameDef.Parm.EMERGENCY_MAY_BUY_FROM_COMPANY)) {
+                                bt = new BuyTrain(train, pf, 0);
+
+                                // In some games the president may add extra cash up to the list price
+                                if (emergency && cash < train.getCost()) {
+                                    bt.setPresidentMayAddCash(Math.min(train.getCost() - cash,
+                                            presidentCash));
+                                }
+                            }
+                            if (bt != null) possibleActions.add(bt);
+                        }
+                    }
+                }
+            }
+
+            if (!operatingCompany.get().mustOwnATrain()
+                    || hasValidTrains()) {
+                doneAllowed = true;
+            }
+    }
+
+    private boolean hasValidTrains() {
+        List<TrainI> trains = operatingCompany.get().getPortfolio().getTrainList();
+        int rTypeFound = 0;
+        int numberOfTrainsFound = 0;
+        
+        numberOfTrainsFound = operatingCompany.get().getPortfolio().getNumberOfTrains();
+        
+        if (numberOfTrainsFound >0) {
+            for (TrainI train : trains) {
+                if (train.getName().equals("2R")) rTypeFound++;
+            }
+            if (numberOfTrainsFound == rTypeFound) return false;
+            return true;
+        } 
+        else { 
+            return false;
+        }
+    }
+    
+ 
 }
