@@ -332,8 +332,14 @@ public class OperatingRound_1880 extends OperatingRound {
                         // Subphase and start a stockround...
                         List<TrainI> trains =
                                 trainManager.getAvailableNewTrains();
-                        TrainType activeTrainTypeToDiscard =
-                                trains.get(0).getType();
+                        TrainType activeTrainTypeToDiscard = null;
+                        for (TrainI train : trains) {
+                            if (!train.getType().getName().equals("2R")) {
+                                activeTrainTypeToDiscard =
+                                        train.getType();
+                                break;
+                            }
+                        }
                         TrainI[] trainsToDiscard =
                                 bank.getIpo().getTrainsPerType(
                                         activeTrainTypeToDiscard);
