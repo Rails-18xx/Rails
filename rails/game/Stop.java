@@ -199,6 +199,13 @@ public class Stop implements TokenHolder {
     public void setRelatedStation(Station relatedStation) {
         this.relatedStation.set(relatedStation);
         slots = relatedStation.getBaseSlots();
+        // Fix for 1880 Type Medium Cities that might get a downgrade from the normal City to a Town
+        // needs observation if that fix here doesnt break other scenarios.
+        // Author M.Brumm - 2013-10-29
+        if (slots ==0) { // No slots mean a town tile is being placed on a hex with a medium city.
+            this.type = Type.TOWN;
+            this.scoreType= Score.MINOR;
+        }
         trackEdges =
             mapHex.getConnectionString(mapHex.getCurrentTile(),
                     mapHex.getCurrentTileRotation(),
