@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <StockMarket type="rectangular">
-	<UpOrDownRight />
 	<StockSpaceType name="yellow" colour="255,255,100">
 	<Revenue5/>
 	</StockSpaceType>

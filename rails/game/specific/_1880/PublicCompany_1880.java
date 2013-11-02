@@ -318,7 +318,7 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
     }
     
     private void checkToFullyCapitalize() {
-        if ((hasFloated() == true) && (sharesInIpo() <= 5) && (fullCapitalAvailable.booleanValue() == true)) {
+        if ((hasFloated() == true) && (sharesInIpo() <= 5) && (fullCapitalAvailable.booleanValue() == true) && (getFloatPercentage() != 60)) {
             fullyCapitalized.set(true);
             addCash(extraCapital);  // TODO: Should this be a "MOVE" instead?
         }
