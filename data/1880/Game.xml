@@ -104,7 +104,7 @@
 			</Tiles>
 			<OperatingRounds number="-1"/>
 			<Float percentage="20"/>
-			<Trains tradingAllowed="yes"/>
+			<Trains tradingAllowed="no"/>
 			<Stocks avail="5"/>
 		</Phase>
 		<Phase name="2+2" realName="A2">
@@ -117,6 +117,7 @@
 				<Lays companyType="Investor" colour="green" number="1"/>
 				</Tiles>
 			<Float percentage="30"/>
+			<Trains tradingAllowed="yes"/>
 			<Stocks avail="10"/>
 			<OffBoardRevenue step="2"/>
 			<Action name="RaisingCertAvailability"/>
