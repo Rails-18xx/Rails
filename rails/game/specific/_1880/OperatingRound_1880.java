@@ -860,8 +860,6 @@ public class OperatingRound_1880 extends OperatingRound {
             }
         }
 
-        if (!finishTurnSpecials()) return;
-
         if (setNextOperatingCompany(false)) {
             setStep(GameDef.OrStep.INITIAL);
         } else {
