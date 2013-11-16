@@ -72,11 +72,14 @@ public class TrainManager_1880 extends TrainManager {
         }
         
         int trainIndex = boughtType.getNumberBoughtFromIPO();
+        if (trainIndex == 0) {
+            trainIndex = 1; // Workaround - if all the trains were trashed, we still need to change phase.
+        }
         if (trainIndex == 1) {
             // First train of a new type bought
             ReportBuffer.add(LocalText.getText("FirstTrainBought",
                     boughtType.getName()));
-        }
+        } 
         
         // New style phase changes, can be triggered by any bought train.
         Phase newPhase;
