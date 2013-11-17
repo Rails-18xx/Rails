@@ -511,6 +511,7 @@ public class GUIHex implements ViewObject {
                         }
                     }
                 }
+
                 // check the number of tokens laid there already
                 p = getTokenCenter (1, homeCity.getTokens().size(), getHexModel().getStops().size(),
                         homeCity.getNumber()-1);
@@ -699,7 +700,14 @@ public class GUIHex implements ViewObject {
         Point p = new Point(center.x, center.y);
 
         int cityNumber = stationNumber + 1;
-        Station station = model.getStop(cityNumber).getRelatedStation();
+
+        Stop stop = model.getStop(cityNumber); 
+        if (stop == null) {
+            // This is an ugly fix.  How should we handle when the home station of a
+            // company gets merged into a station?
+            stop = model.getStop(1);
+        }
+        Station station = stop.getRelatedStation();
 
         // Find the correct position on the tile
         double x = 0;
