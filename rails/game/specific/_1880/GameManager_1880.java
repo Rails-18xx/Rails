@@ -24,8 +24,6 @@ public class GameManager_1880 extends GameManager {
 
     protected Class<? extends ShareSellingRound> shareSellingRoundClass
     = ShareSellingRound_1880.class;
-    
-    public IntegerState numOfORs = new IntegerState("numOfORs");
 
     private ParSlotManager_1880 parSlotManager;    
     private OperatingRoundControl_1880 orControl = new OperatingRoundControl_1880();
@@ -68,16 +66,15 @@ public class GameManager_1880 extends GameManager {
             orControl.startedFromStockRound();
             startOperatingRound(true);
         } else if (round instanceof OperatingRound_1880) {
-            if (gameOverPending.booleanValue() && !gameEndsAfterSetOfORs) {
+            if ((orControl.isFinalOperatingRoundSequence()) && (getRelativeORNumber() == 3)) {
                 finishGame();
             } else if (companyManager.getNextUnfinishedStartPacket() != null) {
                 continueStartRound(companyManager.getNextUnfinishedStartPacket());
-            } else if (gameOverPending.booleanValue() && gameEndsAfterSetOfORs) {
-                finishGame();
             } else if (orControl.isExitingToStockRound() == true) {
                 startStockRound();
             } else {
                 orControl.startedFromOperatingRound();
+                relativeORNumber.add(1);
                 startOperatingRound(true);
             }
             
@@ -131,4 +128,5 @@ public class GameManager_1880 extends GameManager {
     public OperatingRoundControl_1880 getORControl() {
         return orControl;
     }
+
 }

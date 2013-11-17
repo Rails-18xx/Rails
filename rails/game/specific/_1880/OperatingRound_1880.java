@@ -216,9 +216,9 @@ public class OperatingRound_1880 extends OperatingRound {
     }
 
     private boolean trainTypeCanAffectOR(TrainType type) {
-        if (type.getName().equals("2R") == false) {
+        if ((type.getName().equals("2R") == false) && (type.getName().equals("10") == false)) {
             return true;
-        }
+                }
         return false;
     }
 
@@ -263,15 +263,27 @@ public class OperatingRound_1880 extends OperatingRound {
             if ((stb == null) || (stb.isExercised() == false)) {
                 if (trainTypeCanAffectOR(action.getType()) == true) {
                     trainPurchasedThisTurn.set(true);
-                    orControl.trainPurchased((PublicCompany_1880) operatingCompany.get());                
+                    orControl.trainPurchased((PublicCompany_1880) operatingCompany.get());
+                    //Only Change that trainpurchase indicator if we are not in the last two phases...
+                    if ((!gameManager.getPhaseManager().getCurrentPhase().getRealName().equals("D2"))&&
+                            (!gameManager.getPhaseManager().getCurrentPhase().getRealName().equals("D3"))) {
                     ((GameManager_1880) gameManager).getParSlotManager().trainPurchased((PublicCompany_1880) operatingCompany.get());
+                    }
                 }
             } 
+            //If the train bought was a 8e Train no more trains will be discarded.
+            if (action.getType().getName().equals("8e")) {
+                orControl.setNoTrainsToDiscard(true);
+            }
 
             // If there are no more trains of this type, and this type causes an
             // OR end, end it.
             if ((ipo.getTrainsPerType(action.getType()).length == 0)
                 && (trainTypeCanAffectOR(action.getType()) == true)) {
+                if (action.getType().getName().equals("8")) {
+                    orControl.setLastCompanyToOperate(((PublicCompany_1880) operatingCompany.get()));
+                    orControl.setFinalOperatingRoundSequence(true);
+                }
                 orControl.orExitToStockRound(operatingCompany.get(),
                         GameDef.OrStep.BUY_TRAIN);
                 setActionForPrivateExchange(action.getType());
@@ -291,15 +303,6 @@ public class OperatingRound_1880 extends OperatingRound {
      */
     @Override
     protected void newPhaseChecks() {
-        PhaseI newPhase = getCurrentPhase();
-        if (newPhase.getName().equals("8")) {
-            ((GameManager_1880) gameManager).numOfORs.set(2);
-            // After the first 8 has been bought there will be a last
-            // Stockround and two ORs.
-        } else if (newPhase.getName().equals("8e")) {
-            return;
-        }
-
     }
 
     /*
@@ -325,7 +328,13 @@ public class OperatingRound_1880 extends OperatingRound {
                 }
                 
                 if (operatingCompany.get() == orControl.lastCompanyToBuyTrain()) {
-                    if (trainPurchasedThisTurn.booleanValue() == false) {
+                    
+                    // Need to create the final Jumpoff Point there to end the game !
+                    if (gameManager.getRelativeORNumber() == 3) {
+                    finishOR();
+                    }
+                    
+                    if ((trainPurchasedThisTurn.booleanValue() == false) && (!orControl.noTrainsToDiscard())) {
                         // The current Company is the Company that has bought
                         // the last train and that purchase was not in this OR..
                         // we now discard the remaining active trains of that
@@ -334,33 +343,43 @@ public class OperatingRound_1880 extends OperatingRound {
                                 trainManager.getAvailableNewTrains();
                         TrainType activeTrainTypeToDiscard = null;
                         for (TrainI train : trains) {
-                            if (!train.getType().getName().equals("2R")) {
+                            if ((!train.getType().getName().equals("2R")) 
+                                    && (!train.getType().getName().equals("10"))){
                                 activeTrainTypeToDiscard =
                                         train.getType();
                                 break;
                             }
                         }
-                        TrainI[] trainsToDiscard =
-                                bank.getIpo().getTrainsPerType(
-                                        activeTrainTypeToDiscard);
-                        // If we need to do a rocket exchange, then leave one 4-train
-                        int firstTrainToDiscard = 0;
-                        if ((activeTrainTypeToDiscard.getName().equals("4")) && 
-                                (checkForForcedRocketExchange() == true)) {
-                            firstTrainToDiscard = 1;                            
-                        }
-                        
-                        for (int i = firstTrainToDiscard; i < trainsToDiscard.length; i++) {
-                            new ObjectMove(trainsToDiscard[i], ipo, scrapHeap);
-                        }
-                        // Need to make next train available !
-                        trainManager.checkTrainAvailability(trainsToDiscard[0],
-                                ipo);
-                        orControl.orExitToStockRound(operatingCompany.get(),
-                                OrStep.BUY_TRAIN);
-                        setActionForPrivateExchange(activeTrainTypeToDiscard);
-                        if (manditoryNextAction == null) {
-                            finishOR();
+                        if (activeTrainTypeToDiscard != null) {
+                            if (activeTrainTypeToDiscard.getName().equals("8")) {
+                                orControl.setLastCompanyToOperate(((PublicCompany_1880) operatingCompany.get()));
+                                orControl.setFinalOperatingRoundSequence(true);
+                            }
+                            if (activeTrainTypeToDiscard.getName().equals("8e")) {
+                                orControl.setNoTrainsToDiscard(true);
+                            }
+                            TrainI[] trainsToDiscard =
+                                    bank.getIpo().getTrainsPerType(
+                                            activeTrainTypeToDiscard);
+                            // If we need to do a rocket exchange, then leave one 4-train
+                            int firstTrainToDiscard = 0;
+                            if ((activeTrainTypeToDiscard.getName().equals("4")) && 
+                                    (checkForForcedRocketExchange() == true)) {
+                                firstTrainToDiscard = 1;                            
+                            }
+                            
+                            for (int i = firstTrainToDiscard; i < trainsToDiscard.length; i++) {
+                                new ObjectMove(trainsToDiscard[i], ipo, scrapHeap);
+                            }
+                            // Need to make next train available !
+                            trainManager.checkTrainAvailability(trainsToDiscard[0],
+                                    ipo);
+                            orControl.orExitToStockRound(operatingCompany.get(),
+                                    OrStep.BUY_TRAIN);
+                            setActionForPrivateExchange(activeTrainTypeToDiscard);
+                            if (manditoryNextAction == null) {
+                                finishOR();
+                            }
                         }
                         return true;
                     }
@@ -632,12 +651,14 @@ public class OperatingRound_1880 extends OperatingRound {
         firstCompanyBeforePrivates = companyList.get(0);
 
         // Skip ahead if we have to
-        PublicCompanyI firstCompany = orControl.getFirstCompanyToRun();
-        if (firstCompany != null) {
-            while (companyList.get(0) != firstCompany) {
-                Collections.rotate(companyList, 1);
+        //if (!orControl.isFinalOperatingRoundSequence()) {
+            PublicCompanyI firstCompany = orControl.getFirstCompanyToRun();
+            if (firstCompany != null) {
+                while (companyList.get(0) != firstCompany) {
+                    Collections.rotate(companyList, 1);
+                }
             }
-        }
+        //}
 
         return new ArrayList<PublicCompanyI>(companyList);
     }

@@ -10,14 +10,18 @@ public class OperatingRoundControl_1880 {
     
     private PublicCompanyI lastCompanyToBuyTrain;
     private PublicCompanyI firstCompanyToRun;
+    private PublicCompanyI lastCompanyToOperate;
     private EnumState<GameDef.OrStep> nextStep;
     private BooleanState exitingToStockRound = new BooleanState ("ExitedToStockRound",false);
     private BooleanState startedFromStockRound = new BooleanState ("StartingFromStockRound",false);
+    private BooleanState finalOperatingRoundSequence = new  BooleanState ("FinalOperatingRoundSequence",false);
+    private BooleanState noTrainsToDiscard = new BooleanState ("NoMoreTrainsToDiscard", false);
 
     
     public OperatingRoundControl_1880() {
         lastCompanyToBuyTrain = null;
         firstCompanyToRun = null;   
+        lastCompanyToOperate = null;
         
         if (nextStep == null) {
             nextStep =
@@ -75,4 +79,29 @@ public class OperatingRoundControl_1880 {
         startedFromStockRound.set(false);        
     }
 
+    public boolean isFinalOperatingRoundSequence() {
+        return finalOperatingRoundSequence.booleanValue();
+    }
+    
+    public void setFinalOperatingRoundSequence(boolean maybe) {
+        if (maybe == true) {
+        finalOperatingRoundSequence.set(true);
+        }
+    }
+    
+    public PublicCompanyI lastCompanyToOperate() {
+        return lastCompanyToOperate;
+    }
+    
+    public void setLastCompanyToOperate(PublicCompanyI company) {
+        lastCompanyToOperate = company;
+    }
+
+    public boolean noTrainsToDiscard() {
+        return noTrainsToDiscard.booleanValue();
+    }
+
+    public void setNoTrainsToDiscard(boolean maybe) {
+        noTrainsToDiscard.set(maybe);
+    }
 }

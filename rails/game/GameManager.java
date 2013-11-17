@@ -1997,5 +1997,10 @@ public class GameManager implements ConfigurableComponentI, GameManagerI {
             return Util.joinWithDelimiter(get().toArray(new String[0]), ";");
         }
     }
+
+    public void setNumOfORs(int i) {
+        numOfORs.set(i);
+        
+    }
 }
 

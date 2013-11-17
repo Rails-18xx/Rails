@@ -246,6 +246,7 @@ public interface GameManagerI extends MoveableHolder, ConfigurableComponentI {
 
     /** Process an action triggered by a phase change. */
     public void processPhaseAction (String name, String value);
+    public abstract void setNumOfORs(int i);
 
 
 }
