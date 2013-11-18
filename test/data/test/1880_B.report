@@ -193,7 +193,7 @@ Has,Martin,25
 Has, Frederick,30
 Has, Erik,15
 Has, Stefan,100
-START_OR,1.1
+START_OR,1.2
 ReceivesFor,Martin,0,WR
 ReceivesFor, Frederick,5,KR
 ReceivesFor, Erik,10,YC
@@ -268,11 +268,11 @@ PRICE_MOVES_LOG,JGG,90,C3,95,D3
 BuysTrain,JGG,2,IPO,100
 All 2-trains are sold out, 2+2-trains now available
  
-EndOfOperatingRound,1.1
-ORWorthIncrease, Erik,1.1,91
-ORWorthIncrease, Frederick,1.1,71
-ORWorthIncrease, Stefan,1.1,221
-ORWorthIncrease,Martin,1.1,220
+EndOfOperatingRound,1.2
+ORWorthIncrease, Erik,1.2,91
+ORWorthIncrease, Frederick,1.2,71
+ORWorthIncrease, Stefan,1.2,221
+ORWorthIncrease,Martin,1.2,220
 Has,BCR,90
 Has,JGG,250
 Has,SCR,380
@@ -296,12 +296,12 @@ PASSES, Stefan
 PASSES,Martin
  
 END_SR,2
-PRICE_MOVES_LOG,BCR,105,D1,105,E2
-SoldOut,BCR,105,D1,105,E2
-PRICE_MOVES_LOG,HKR,105,D1,105,E2
-SoldOut,HKR,105,D1,105,E2
-PRICE_MOVES_LOG,SCR,105,D1,105,E2
-SoldOut,SCR,105,D1,105,E2
+PRICE_STAYS_LOG,BCR,105,D1
+SoldOutNoRaise,BCR,105,D1
+PRICE_STAYS_LOG,HKR,105,D1
+SoldOutNoRaise,HKR,105,D1
+PRICE_STAYS_LOG,SCR,105,D1
+SoldOutNoRaise,SCR,105,D1
 PRICE_MOVES_LOG,JGG,95,D3,100,D2
 SoldOut,JGG,95,D3,100,D2
 Has,BCR,90
@@ -343,7 +343,7 @@ LaysTileAtFor,BCR,57,L10,SW,20
 CompanyRevenue,BCR,130
 CompanyPaysOutFull,BCR,130
 Payout, Erik,52,4,10
-PRICE_MOVES_LOG,BCR,105,E2,110,F2
+PRICE_MOVES_LOG,BCR,105,D1,110,E1
  
 CompanyOperates,HKR, Stefan
 LaysTileAt,HKR,8852,M15,NW
@@ -352,13 +352,13 @@ CompanyRevenue,HKR,130
 CompanyPaysOutFull,HKR,130
 Payout, Stefan,52,4,10
 Payout, Frederick,13,1,10
-PRICE_MOVES_LOG,HKR,105,E2,110,F2
+PRICE_MOVES_LOG,HKR,105,D1,110,E1
 AddedRights,HKR,D
  
 CompanyOperates,SCR,Martin
 CompanyRevenue,SCR,90
 CompanyPaysOutFull,SCR,90
 Payout,Martin,45,5,10
-PRICE_MOVES_LOG,SCR,105,E2,110,F2
+PRICE_MOVES_LOG,SCR,105,D1,110,E1
  
 CompanyOperates,NJR, Stefan

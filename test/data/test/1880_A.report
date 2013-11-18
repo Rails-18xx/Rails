@@ -228,7 +228,7 @@ Has,mike,70
 Has,marc,10
 Has,andy,35
 Has,todd,65
-START_OR,1.1
+START_OR,1.2
 ReceivesFor,mike,0,WR
 ReceivesFor,andy,5,KR
 ReceivesFor,todd,10,YC
@@ -290,11 +290,11 @@ PRICE_MOVES_LOG,NJR,95,C2,100,D2
 BuysTrain,NJR,2,IPO,100
 All 2-trains are sold out, 2+2-trains now available
  
-EndOfOperatingRound,1.1
-ORWorthIncrease,marc,1.1,30
-ORWorthIncrease,todd,1.1,73
-ORWorthIncrease,mike,1.1,33
-ORWorthIncrease,andy,1.1,150
+EndOfOperatingRound,1.2
+ORWorthIncrease,marc,1.2,30
+ORWorthIncrease,todd,1.2,73
+ORWorthIncrease,mike,1.2,33
+ORWorthIncrease,andy,1.2,150
 Has,BCR,190
 Has,JHU,300
 Has,JGG,350
@@ -424,7 +424,7 @@ Has,mike,67
 Has,marc,118
 Has,andy,77
 Has,todd,107
-START_OR,2.1
+START_OR,2.2
  
 CompanyOperates,NJR,mike
 LaysTileAt,NJR,8852,M15,NW
@@ -483,11 +483,11 @@ CompanyPaysOutFull,JHU,80
 Payout,todd,24,3,10
 PRICE_MOVES_LOG,JHU,105,E2,110,F2
  
-EndOfOperatingRound,2.1
-ORWorthIncrease,marc,2.1,81
-ORWorthIncrease,todd,2.1,94
-ORWorthIncrease,mike,2.1,90
-ORWorthIncrease,andy,2.1,87
+EndOfOperatingRound,2.2
+ORWorthIncrease,marc,2.2,81
+ORWorthIncrease,todd,2.2,94
+ORWorthIncrease,mike,2.2,90
+ORWorthIncrease,andy,2.2,87
 Has,BCR,130
 Has,JHU,260
 Has,JGG,350
@@ -500,7 +500,7 @@ Has,mike,132
 Has,marc,174
 Has,andy,129
 Has,todd,186
-START_OR,2.1
+START_OR,2.3
  
 CompanyOperates,NJR,mike
 LaysTileAt,NJR,6,J12,NW
@@ -521,13 +521,34 @@ CompanyPaysOutFull,HKR,40
 Payout,andy,12,3,10
 Payout,marc,8,2,10
 PRICE_MOVES_LOG,HKR,95,E4,100,F4
+ 
+EndOfOperatingRound,2.3
+ORWorthIncrease,marc,2.3,18
+ORWorthIncrease,todd,2.3,0
+ORWorthIncrease,mike,2.3,44
+ORWorthIncrease,andy,2.3,69
+Has,BCR,130
+Has,JHU,260
+Has,JGG,350
+Has,SCR,250
+Has,HKR,120
+Has,NJR,60
+Has,4,190
+Has,5,270
+Has,mike,166
+Has,marc,182
+Has,andy,168
+Has,todd,186
+START_OR,2.4
 All 2+2-trains are sold out, 3-trains now available
  
-EndOfOperatingRound,2.1
-ORWorthIncrease,marc,2.1,18
-ORWorthIncrease,todd,2.1,0
-ORWorthIncrease,mike,2.1,44
-ORWorthIncrease,andy,2.1,69
+CompanyOperates,NJR,mike
+ 
+EndOfOperatingRound,2.4
+ORWorthIncrease,marc,2.4,0
+ORWorthIncrease,todd,2.4,0
+ORWorthIncrease,mike,2.4,0
+ORWorthIncrease,andy,2.4,0
 Has,BCR,130
 Has,JHU,260
 Has,JGG,350
@@ -796,7 +817,7 @@ Has,mike,242
 Has,marc,179
 Has,andy,8
 Has,todd,324
-START_OR,4.1
+START_OR,4.2
  
 CompanyOperates,JGG,andy
 LaysTileAt,JGG,8864,I9,SE
@@ -831,11 +852,11 @@ Payout,mike,123,3,10
 PRICE_MOVES_LOG,SCR,90,G7,95,G6
 All 3+3-trains are sold out, 4-trains now available
  
-EndOfOperatingRound,4.1
-ORWorthIncrease,marc,4.1,136
-ORWorthIncrease,todd,4.1,80
-ORWorthIncrease,mike,4.1,138
-ORWorthIncrease,andy,4.1,244
+EndOfOperatingRound,4.2
+ORWorthIncrease,marc,4.2,136
+ORWorthIncrease,todd,4.2,80
+ORWorthIncrease,mike,4.2,138
+ORWorthIncrease,andy,4.2,244
 Has,BCR,630
 Has,JHU,460
 Has,JGG,519
