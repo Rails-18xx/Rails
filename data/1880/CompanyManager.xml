@@ -69,7 +69,7 @@
 		basePrice="0" revenue="25,0">
 		<NotAgainstLimit />
 		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep"
+			<SpecialProperty condition="ifOwnedByPlayer" when="anyTurn"
 				class="rails.game.specific._1880.AddBuildingPermit">
 				<AddedPermit name="D"/>
 			</SpecialProperty>
