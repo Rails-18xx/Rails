@@ -9,7 +9,7 @@ import rails.game.special.SpecialProperty;
  * Special private ability involving deductions in train buying. The deduction
  * can be absolute (an amount) or relative (a percentage)
  * 
- * @author Erik Vos
+ * @author Michael Alexander
  * 
  */
 public class AddBuildingPermit extends SpecialProperty {
