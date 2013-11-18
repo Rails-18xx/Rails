@@ -355,7 +355,7 @@ public class OperatingRound_1880 extends OperatingRound {
                                 orControl.setLastCompanyToOperate(((PublicCompany_1880) operatingCompany.get()));
                                 orControl.setFinalOperatingRoundSequence(true);
                             }
-                            if (activeTrainTypeToDiscard.getName().equals("8e")) {
+                            if (activeTrainTypeToDiscard.getName().equals("8E")) {
                                 orControl.setNoTrainsToDiscard(true);
                             }
                             TrainI[] trainsToDiscard =
