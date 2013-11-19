@@ -171,7 +171,7 @@
 			<OffBoardRevenue step="4"/>
 			<Trains limitStep="3" rusted="4+4"/>
 		</Phase>
-		<Phase name="8e" realName="D3">
+		<Phase name="10" realName="D3">
 		    <Trains limitStep="3"/>
 		</Phase>
 		</Component>
