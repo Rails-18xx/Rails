@@ -93,7 +93,7 @@
 				<!-- majorStops="-1" indicates that this not a normally running train-->
 		<!-- The e-type trains are express trains that can ignore towns/cities on their way for a maximum payout-->
 		<TrainType name="10" majorStops="10" cost="1000" quantity="-1">
-			<NewPhase phaseName="8e"/>
+			<NewPhase phaseName="10"/>
 		</TrainType>
 	</Component>
 	<Component name="PhaseManager" class="rails.game.PhaseManager">
