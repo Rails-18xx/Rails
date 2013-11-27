@@ -49,7 +49,7 @@
 	<Hex name="H2" tile="0" cost="30"/>
 	<Hex name="H4" tile="0" cost="20" />
 	<Hex name="H6" tile="-10" city="Taiyuan" />
-	<Hex name="H8" tile="-80020"  city="Test9, Test10"/>
+	<Hex name="H8" tile="-80002"  city="Test9, Test10"/>
 	<Hex name="H10" tile="-10" city="Jinan" cost="20" />
 	<Hex name="H12" tile="-2" />
 	<Hex name="H14" tile="-10" city="Qingdao" />
