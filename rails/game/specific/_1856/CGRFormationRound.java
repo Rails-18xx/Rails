@@ -486,12 +486,12 @@ public class CGRFormationRound extends SwitchableUIRound {
             int colPrice;
             StockSpaceI startSpace;
             for (int col=6; col <= stockMarket.getNumberOfColumns(); col++) {
-                colPrice = stockMarket.getStockSpace(1, col).getPrice();
+                colPrice = stockMarket.getStockSpace(0, col).getPrice();
                 if (cgrPrice > colPrice) continue;
                 if (cgrPrice - prevColPrice < colPrice - cgrPrice) {
-                    startSpace = stockMarket.getStockSpace(1, col-1);
+                    startSpace = stockMarket.getStockSpace(0, col-1);
                 } else {
-                    startSpace = stockMarket.getStockSpace(1, col);
+                    startSpace = stockMarket.getStockSpace(0, col);
                 }
                 cgr.start(startSpace);
                 message = LocalText.getText("START_MERGED_COMPANY",
