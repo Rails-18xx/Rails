@@ -68,7 +68,7 @@
 	<Hex name="J10" tile="0" />
 	<Hex name="J12" tile="-10" city="Hefei" />
 	<Hex name="J14" tile="-1" cost="20"/>
-	<Hex name="J16" tile="-4008" orientation="6"/>
+	<Hex name="J16" tile="-4008" orientation="6" value="-10"/>
 	<Hex name="K1" tile="-903" orientation="5" value="0,0,0,80" city="Lhasa" />
 	<Hex name="K3" tile="0" cost="30" />
 	<Hex name="K5" tile="-1" cost="30" />
