@@ -48,6 +48,13 @@ Three variants have been implemented:
 	- Clemens
 	- Snake
 
+The following options are possible:
+
+    -Bayern floats at values=50%, 20% default=50%
+    -LDIncome values=20M, 30M default=20M
+    -MinorsRequireFloatedBY type=toggle default=No 
+    -Prussian Stock (Ignores reserved shares at determining sold out status after prussian formation) type=toggle default=no"
+
 Known limitations:
 	- OBB and PfB do not always close when required. 
 	  Workaround: close minor via the Special menu.
@@ -60,6 +67,7 @@ Known limitations:
 		<Option name="BYFloatsAt" values="50%,20%" default="50%"/>
 		<Option name="LDIncome" values="20M,30M" default="20M"/>
 		<Option name="MinorsRequireFloatedBY" type="toggle" default="no"/>
+        <Option name="PrussianReservedIgnored" type="toggle" default="no"/>
 		<Players minimum="3" maximum="7"/>
 	</Game>
 
