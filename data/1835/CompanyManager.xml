@@ -2,7 +2,7 @@
 <CompanyManager>
 	<CompanyType name="Private" class="rails.game.PrivateCompany">
 	</CompanyType>
-	<CompanyType name="Minor" class="rails.game.PublicCompany">
+	<CompanyType name="Minor" class="rails.game.specific._1835.PublicCompany_1835">
 		<ShareUnit percentage="100"/>
 		<Certificate type="President" shares="1"/>
 		<StockPrice market="no"/>
@@ -12,7 +12,7 @@
 		<Payout split="always"/>
 	<Trains limit="2,1" mandatory="no"/>
 	</CompanyType>
-	<CompanyType name="Major" class="rails.game.PublicCompany" capitalisation="incremental">
+	<CompanyType name="Major" class="rails.game.specific._1835.PublicCompany_1835" capitalisation="incremental">
 		<PoolPaysOut/>
 		<Float percentage="50"/>
 		<StockPrice par="yes"/>
