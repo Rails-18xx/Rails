@@ -124,10 +124,13 @@
 	</Tile>
 	<Tile id="8866" quantity="3">
     <Upgrade id="8871" />
+    </Tile>
 	<Tile id="887" quantity="5">
     <Upgrade id="8871" />
+	</Tile>
 	<Tile id="888" quantity="3">
     <Upgrade id="8871" />
+	</Tile>
 	<Tile id="63" quantity="6" >
 	<Upgrade id="895,455" />
 	</Tile>
@@ -137,10 +140,13 @@
 	<Tile id="8871" quantity="3" />
 	<Tile id="8872" quantity="2" >
     <Upgrade id="8875" />
+    </Tile>
 	<Tile id="8873" quantity="2" >
     <Upgrade id="8875" />
+	</Tile>
 	<Tile id="8874" quantity="2" >
     <Upgrade id="8875" />
+	</Tile>
 	<Tile id="8879" quantity="1" >
 	<Upgrade id="8880" />
 	</Tile>
