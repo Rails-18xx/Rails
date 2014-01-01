@@ -145,5 +145,17 @@ public class Investor_1880 extends PublicCompany implements RevenueStaticModifie
         }
         return investors;
     }
+
+    /* (non-Javadoc)
+     * @see rails.game.PublicCompany#hasLaidHomeBaseTokens()
+     */
+    @Override
+    public boolean hasLaidHomeBaseTokens() {
+        if (this.hasOperated()) {
+            return true;
+        }
+        return laidBaseTokens.size() > 0;
+    }
         
+    
 }
