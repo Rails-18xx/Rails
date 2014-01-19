@@ -1,4 +1,4 @@
-Rails release 1.8.5
+Rails release 1.8.6
 
 This is a minor release fixing the following bugs:
 

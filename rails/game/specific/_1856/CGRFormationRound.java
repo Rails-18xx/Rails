@@ -305,6 +305,7 @@ public class CGRFormationRound extends SwitchableUIRound {
         int count, cgrSharesUsed, oldShares, newShares;
         PublicCertificateI cgrCert, poolCert;
         List<PublicCertificateI> certs = new ArrayList<PublicCertificateI>();
+        List<PublicCompanyI> availableCompanies;
         Player temporaryPresident = null;
         Player newPresident = null;
         Player firstCGRowner = null;
@@ -509,7 +510,17 @@ public class CGRFormationRound extends SwitchableUIRound {
         // Determine the new certificate limit.
         // The number of available companies is 11,
         // or 12 minus the number of closed companies, whichever is lower.
-        int numCompanies = Math.min(11, 12-mergingCompanies.size());
+        // Make sure that only available Companies are counted.
+        availableCompanies = gameManager.getAllPublicCompanies();
+        int validCompanies = 12; //including the CGR
+        //Need to find out if a company is already closed if yes 
+        //decrease the validCompanies value per company by 1
+        for (PublicCompanyI c : availableCompanies) {
+            if (c.isClosed()) {
+                validCompanies --;
+            }
+        }
+        int numCompanies = Math.min(11, validCompanies-mergingCompanies.size());
         int numPlayers = gameManager.getNumberOfPlayers();
         // Need some checks here...
         int newCertLimit = certLimitsTable[numPlayers-2][numCompanies-4];
