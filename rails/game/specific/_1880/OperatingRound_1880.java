@@ -419,7 +419,14 @@ public class OperatingRound_1880 extends OperatingRound {
             result = forcedRocketExchange((ForcedRocketExchange) action);
             return result;
         } else {
-            return super.process(action);
+            result = super.process(action);
+            if (operatingCompany.get() instanceof Investor_1880) {
+                Investor_1880 investor = (Investor_1880) (operatingCompany.get());
+                if ((action instanceof SetDividend) && (investor.isConnectedToLinkedCompany() == false)) {
+                    result = done();                    
+                }
+            }
+            return result;
         }
     }
 
@@ -430,6 +437,7 @@ public class OperatingRound_1880 extends OperatingRound {
      */
     @Override
     public boolean setPossibleActions() {
+        
         if (manditoryNextAction != null) {
             possibleActions.add(manditoryNextAction);
             return true;
@@ -440,33 +448,26 @@ public class OperatingRound_1880 extends OperatingRound {
          * to build anymore because it doesnt possess the necessary building
          * right for this phase. Only Majors need to be prechecked.
          */
-        if ((getStep() == GameDef.OrStep.INITIAL)
-            && (operatingCompany.get().getTypeName().equals("Major"))) {
+        if (getStep() == GameDef.OrStep.INITIAL) {
             initTurn();
-            if ((noMapMode)
-                || (!((PublicCompany_1880) operatingCompany.get()).hasBuildingRightForPhase(gameManager.getCurrentPhase()))) {
-                nextStep(GameDef.OrStep.LAY_TRACK);
-            } else {
-                initNormalTileLays(); // new: only called once per turn ?
-                setStep(GameDef.OrStep.LAY_TRACK);
+            if (operatingCompany.get() instanceof PublicCompany_1880) {
+                if ((noMapMode)
+                        || (!((PublicCompany_1880) operatingCompany.get()).hasBuildingRightForPhase(gameManager.getCurrentPhase()))) {
+                    nextStep(GameDef.OrStep.LAY_TRACK);
+                } else {
+                    initNormalTileLays(); // new: only called once per turn ?
+                    setStep(GameDef.OrStep.LAY_TRACK);
+                }
             }
         }
 
         if ((getStep() == GameDef.OrStep.BUY_TRAIN)
             && (operatingCompany.get() instanceof Investor_1880)) {
-            setStep(GameDef.OrStep.TRADE_SHARES);
+            // Only way to get here is if this is a connected investor...
+            possibleActions.add(new CloseInvestor_1880((Investor_1880) operatingCompany.get()));
+            return true;
         }
 
-        if ((getStep() == GameDef.OrStep.TRADE_SHARES)
-            && (operatingCompany.get() instanceof Investor_1880)) {
-            Investor_1880 investor = (Investor_1880) operatingCompany.get();
-            if (investor.isConnectedToLinkedCompany() == true) {
-                possibleActions.add(new CloseInvestor_1880(investor));
-                return true;
-            } else {
-                nextStep(GameDef.OrStep.FINAL);
-            }
-        }
         return super.setPossibleActions();
     }
 
