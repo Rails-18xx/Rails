@@ -1264,7 +1264,7 @@ CompanyOperates,PR,m3
 LaysTileAt,PR,8,I11,W
 CompanyRevenue,PR,120
 CompanyPaysOutFull,PR,120
-NoIncomeForPreviousOperation,m4,10,PR
+Payout,m4,12,2,5
 Payout,m3,42,7,5
 Payout,m1,24,4,5
 Payout,m2,30,5,5
@@ -1320,7 +1320,7 @@ EndOfOperatingRound,8.2
 ORWorthIncrease,m1,8.2,-131
 ORWorthIncrease,m2,8.2,75
 ORWorthIncrease,m3,8.2,83
-ORWorthIncrease,m4,8.2,363
+ORWorthIncrease,m4,8.2,375
 Has,BY,335
 Has,SX,915
 Has,BA,530
@@ -1330,7 +1330,7 @@ Has,PR,1641
 Has,m1,350
 Has,m2,379
 Has,m3,616
-Has,m4,830
+Has,m4,842
 StartStockRound,9
 HasPriority,m4
 BUY_SHARE_LOG,m4,10,WT,Pool,54
@@ -1378,7 +1378,7 @@ Has,PR,1641
 Has,m1,26
 Has,m2,131
 Has,m3,376
-Has,m4,616
+Has,m4,628
 START_OR,9.1
  
 CompanyOperates,PR,m3
@@ -1454,7 +1454,7 @@ Has,PR,2111
 Has,m1,283
 Has,m2,548
 Has,m3,579
-Has,m4,819
+Has,m4,831
 START_OR,9.2
  
 CompanyOperates,PR,m3
@@ -1540,7 +1540,7 @@ Has,PR,2041
 Has,m1,739
 Has,m2,1125
 Has,m3,1132
-Has,m4,1305
+Has,m4,1317
 START_OR,9.3
  
 CompanyOperates,PR,m3
@@ -1635,7 +1635,7 @@ Has,PR,601
 Has,m1,1279
 Has,m2,1664
 Has,m3,1646
-Has,m4,1913
+Has,m4,1925
 StartStockRound,10
 HasPriority,m2
 PASSES,m2

@@ -128,9 +128,13 @@ ReceivesFor, Erik,0,IG
 ReceivesFor, Stefan,0,RC
  
 CompanyOperates,2, Erik
+ 
+CompanyOperates,2, Erik
 LaysTileAt,2,5,E13,W
 CompanyRevenue,2,0
 CompanyDoesNotPayDividend,2
+ 
+CompanyOperates,3, Frederick
  
 CompanyOperates,3, Frederick
 LaysTileAt,3,5,H6,SW
@@ -138,9 +142,13 @@ CompanyRevenue,3,0
 CompanyDoesNotPayDividend,3
  
 CompanyOperates,4, Stefan
+ 
+CompanyOperates,4, Stefan
 LaysTileAt,4,6,H14,NW
 CompanyRevenue,4,0
 CompanyDoesNotPayDividend,4
+ 
+CompanyOperates,5,Martin
  
 CompanyOperates,5,Martin
 LaysTileAt,5,57,P14,NW
@@ -204,14 +212,20 @@ ReceivesFor, Erik,0,IG
 ReceivesFor, Stefan,0,RC
  
 CompanyOperates,2, Erik
+ 
+CompanyOperates,2, Erik
 LaysTileAt,2,57,F10,W
 CompanyRevenue,2,40
 CompanyWithholds,2,40
  
 CompanyOperates,3, Frederick
+ 
+CompanyOperates,3, Frederick
 LaysTileAt,3,235,H8,SE
 CompanyRevenue,3,50
 CompanyWithholds,3,50
+ 
+CompanyOperates,4, Stefan
  
 CompanyOperates,4, Stefan
 LaysTileAt,4,8857,H12,SW
@@ -222,6 +236,8 @@ FIConnectedPayout, Stefan
 FIConnectedTreasuryToCompany,HKR,4,40
 FIConnectedReplaceToken,HKR,4
 FIConnectedMoveCert, Stefan,HKR,4
+ 
+CompanyOperates,5,Martin
  
 CompanyOperates,5,Martin
 LaysTileAt,5,9,O13,NW
@@ -328,9 +344,13 @@ ReceivesFor, Erik,0,IG
 ReceivesFor, Stefan,0,RC
  
 CompanyOperates,2, Erik
+ 
+CompanyOperates,2, Erik
 LaysTileAt,2,9,G13,SW
 CompanyRevenue,2,60
 CompanyWithholds,2,60
+ 
+CompanyOperates,3, Frederick
  
 CompanyOperates,3, Frederick
 LaysTileAtFor,3,8,I7,SW,50

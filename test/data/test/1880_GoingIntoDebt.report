@@ -150,16 +150,24 @@ ReceivesFor,marc,0,IG
 ReceivesFor,marc,0,RC
  
 CompanyOperates,3,andy
+ 
+CompanyOperates,3,andy
 CompanyRevenue,3,0
 CompanyDoesNotPayDividend,3
+ 
+CompanyOperates,4,todd
  
 CompanyOperates,4,todd
 CompanyRevenue,4,0
 CompanyDoesNotPayDividend,4
  
 CompanyOperates,5,mike
+ 
+CompanyOperates,5,mike
 CompanyRevenue,5,0
 CompanyDoesNotPayDividend,5
+ 
+CompanyOperates,7,marc
  
 CompanyOperates,7,marc
 CompanyRevenue,7,0
@@ -236,16 +244,24 @@ ReceivesFor,todd,25,JO
 ReceivesFor,marc,0,IG
  
 CompanyOperates,3,andy
+ 
+CompanyOperates,3,andy
 CompanyRevenue,3,0
 CompanyDoesNotPayDividend,3
+ 
+CompanyOperates,4,todd
  
 CompanyOperates,4,todd
 CompanyRevenue,4,0
 CompanyDoesNotPayDividend,4
  
 CompanyOperates,5,mike
+ 
+CompanyOperates,5,mike
 CompanyRevenue,5,0
 CompanyDoesNotPayDividend,5
+ 
+CompanyOperates,7,marc
  
 CompanyOperates,7,marc
 CompanyRevenue,7,0

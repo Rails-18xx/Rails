@@ -150,9 +150,13 @@ ReceivesFor,marc,0,IG
 ReceivesFor,marc,0,RC
  
 CompanyOperates,3,andy
+ 
+CompanyOperates,3,andy
 LaysTileAt,3,5,H6,SE
 CompanyRevenue,3,0
 CompanyDoesNotPayDividend,3
+ 
+CompanyOperates,4,todd
  
 CompanyOperates,4,todd
 LaysTileAt,4,6,H14,NW
@@ -160,9 +164,13 @@ CompanyRevenue,4,0
 CompanyDoesNotPayDividend,4
  
 CompanyOperates,5,mike
+ 
+CompanyOperates,5,mike
 LaysTileAt,5,6,P14,SW
 CompanyRevenue,5,40
 CompanyWithholds,5,40
+ 
+CompanyOperates,7,marc
  
 CompanyOperates,7,marc
 LaysTileAt,7,6,P8,NE
@@ -233,16 +241,24 @@ ReceivesFor,marc,0,IG
 ReceivesFor,marc,0,RC
  
 CompanyOperates,3,andy
+ 
+CompanyOperates,3,andy
 CompanyRevenue,3,0
 CompanyDoesNotPayDividend,3
+ 
+CompanyOperates,4,todd
  
 CompanyOperates,4,todd
 CompanyRevenue,4,0
 CompanyDoesNotPayDividend,4
  
 CompanyOperates,5,mike
+ 
+CompanyOperates,5,mike
 CompanyRevenue,5,40
 CompanyWithholds,5,40
+ 
+CompanyOperates,7,marc
  
 CompanyOperates,7,marc
 CompanyRevenue,7,50
@@ -460,16 +476,24 @@ ReceivesFor,marc,0,IG
 ReceivesFor,marc,0,RC
  
 CompanyOperates,3,andy
+ 
+CompanyOperates,3,andy
 CompanyRevenue,3,0
 CompanyDoesNotPayDividend,3
+ 
+CompanyOperates,4,todd
  
 CompanyOperates,4,todd
 CompanyRevenue,4,0
 CompanyDoesNotPayDividend,4
  
 CompanyOperates,5,mike
+ 
+CompanyOperates,5,mike
 CompanyRevenue,5,50
 CompanyWithholds,5,50
+ 
+CompanyOperates,7,marc
  
 CompanyOperates,7,marc
 CompanyRevenue,7,60
@@ -605,16 +629,24 @@ ReceivesFor,marc,0,IG
 ReceivesFor,marc,0,RC
  
 CompanyOperates,3,andy
+ 
+CompanyOperates,3,andy
 CompanyRevenue,3,0
 CompanyDoesNotPayDividend,3
+ 
+CompanyOperates,4,todd
  
 CompanyOperates,4,todd
 CompanyRevenue,4,0
 CompanyDoesNotPayDividend,4
  
 CompanyOperates,5,mike
+ 
+CompanyOperates,5,mike
 CompanyRevenue,5,50
 CompanyWithholds,5,50
+ 
+CompanyOperates,7,marc
  
 CompanyOperates,7,marc
 CompanyRevenue,7,60

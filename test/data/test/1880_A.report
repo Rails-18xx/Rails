@@ -150,9 +150,13 @@ ReceivesFor,marc,0,IG
 ReceivesFor,marc,0,RC
  
 CompanyOperates,3,andy
+ 
+CompanyOperates,3,andy
 LaysTileAt,3,5,H6,SE
 CompanyRevenue,3,0
 CompanyDoesNotPayDividend,3
+ 
+CompanyOperates,4,todd
  
 CompanyOperates,4,todd
 LaysTileAt,4,6,H14,NW
@@ -160,9 +164,13 @@ CompanyRevenue,4,0
 CompanyDoesNotPayDividend,4
  
 CompanyOperates,5,mike
+ 
+CompanyOperates,5,mike
 LaysTileAt,5,6,P14,SW
 CompanyRevenue,5,40
 CompanyWithholds,5,40
+ 
+CompanyOperates,7,marc
  
 CompanyOperates,7,marc
 LaysTileAt,7,6,P8,NE
@@ -239,6 +247,8 @@ ReceivesFor,marc,0,IG
 ReceivesFor,marc,0,RC
  
 CompanyOperates,3,andy
+ 
+CompanyOperates,3,andy
 LaysTileAt,3,235,H8,SE
 CompanyRevenue,3,50
 CompanyWithholds,3,50
@@ -249,14 +259,20 @@ FIConnectedReplaceToken,JGG,3
 FIConnectedMoveCert,andy,JGG,3
  
 CompanyOperates,4,todd
+ 
+CompanyOperates,4,todd
 LaysTileAt,4,8855,H12,SW
 CompanyRevenue,4,50
 CompanyWithholds,4,50
  
 CompanyOperates,5,mike
+ 
+CompanyOperates,5,mike
 LaysTileAtFor,5,8852,O15,SW,30
 CompanyRevenue,5,40
 CompanyWithholds,5,40
+ 
+CompanyOperates,7,marc
  
 CompanyOperates,7,marc
 LaysTileAtFor,7,57,O7,NW,30
@@ -374,13 +390,19 @@ ReceivesFor,marc,0,IG
 ReceivesFor,marc,0,RC
  
 CompanyOperates,4,todd
+ 
+CompanyOperates,4,todd
 LaysTileAt,4,6,H10,W
 CompanyRevenue,4,70
 CompanyWithholds,4,70
  
 CompanyOperates,5,mike
+ 
+CompanyOperates,5,mike
 CompanyRevenue,5,110
 CompanyWithholds,5,110
+ 
+CompanyOperates,7,marc
  
 CompanyOperates,7,marc
 LaysTileAt,7,8852,P6,NW
@@ -463,8 +485,12 @@ ReceivesFor,marc,0,IG
 ReceivesFor,marc,0,RC
  
 CompanyOperates,4,todd
+ 
+CompanyOperates,4,todd
 CompanyRevenue,4,70
 CompanyWithholds,4,70
+ 
+CompanyOperates,5,mike
  
 CompanyOperates,5,mike
 CompanyRevenue,5,110
@@ -521,34 +547,13 @@ CompanyPaysOutFull,HKR,40
 Payout,andy,12,3,10
 Payout,marc,8,2,10
 PRICE_MOVES_LOG,HKR,95,E4,100,F4
+All 2+2-trains are sold out, 3-trains now available
  
 EndOfOperatingRound,2.3
 ORWorthIncrease,marc,2.3,18
 ORWorthIncrease,todd,2.3,0
 ORWorthIncrease,mike,2.3,44
 ORWorthIncrease,andy,2.3,69
-Has,BCR,130
-Has,JHU,260
-Has,JGG,350
-Has,SCR,250
-Has,HKR,120
-Has,NJR,60
-Has,4,190
-Has,5,270
-Has,mike,166
-Has,marc,182
-Has,andy,168
-Has,todd,186
-START_OR,2.4
-All 2+2-trains are sold out, 3-trains now available
- 
-CompanyOperates,NJR,mike
- 
-EndOfOperatingRound,2.4
-ORWorthIncrease,marc,2.4,0
-ORWorthIncrease,todd,2.4,0
-ORWorthIncrease,mike,2.4,0
-ORWorthIncrease,andy,2.4,0
 Has,BCR,130
 Has,JHU,260
 Has,JGG,350
@@ -634,9 +639,13 @@ ReceivesFor,marc,0,IG
 ReceivesFor,marc,0,RC
  
 CompanyOperates,4,todd
+ 
+CompanyOperates,4,todd
 LaysTileAt,4,15,H14,SE
 CompanyRevenue,4,80
 CompanyWithholds,4,80
+ 
+CompanyOperates,5,mike
  
 CompanyOperates,5,mike
 LaysTileAt,5,14,P14,NW
@@ -764,6 +773,8 @@ ReceivesFor,marc,0,IG
 ReceivesFor,marc,0,RC
  
 CompanyOperates,4,todd
+ 
+CompanyOperates,4,todd
 LaysTileAt,4,235,I9,W
 CompanyRevenue,4,110
 CompanyWithholds,4,110
@@ -772,6 +783,8 @@ FIConnectedPayout,todd
 FIConnectedTreasuryToCompany,JHU,4,380
 FIConnectedReplaceToken,JHU,4
 FIConnectedMoveCert,todd,JHU,4
+ 
+CompanyOperates,5,mike
  
 CompanyOperates,5,mike
 LaysTileAt,5,9,O13,NW
