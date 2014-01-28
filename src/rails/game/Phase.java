@@ -18,11 +18,12 @@ import rails.common.ReportBuffer;
 import rails.common.parser.Configurable;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
+import rails.game.model.RailsModel;
 import rails.game.state.GenericState;
 import rails.game.state.Owner;
 import rails.util.Util;
 
-public class Phase extends RailsAbstractItem implements Configurable {
+public class Phase extends RailsModel implements Configurable {
 
     private static Logger log =
             LoggerFactory.getLogger(Phase.class);
@@ -471,6 +472,11 @@ public class Phase extends RailsAbstractItem implements Configurable {
 
     public List<Closeable> getClosedObjects() {
         return closedObjects;
+    }
+    
+    @Override
+    public String toText() {
+        return getRealName();
     }
 
 }
