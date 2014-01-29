@@ -96,12 +96,12 @@ public class PlayerManager extends RailsManager implements Configurable {
             players.add(player);
             playerMap.put(playerName, player);
             cashText = Currency.fromBank(startCash, player);
-            ReportBuffer.add(this,LocalText.getText("PlayerIs",
+            ReportBuffer.add(this, LocalText.getText("PlayerIs",
                     playerIndex,
                     player.getId() ));
         }
-        ReportBuffer.add(this,LocalText.getText("PlayerCash", cashText));
-        ReportBuffer.add(this,LocalText.getText("BankHas", bank.getWallet().formattedValue()));
+        ReportBuffer.add(this, LocalText.getText("PlayerCash", cashText));
+        ReportBuffer.add(this, LocalText.getText("BankHas", bank.getWallet().formattedValue()));
     }
     
     // sets initial priority player and certificate limits

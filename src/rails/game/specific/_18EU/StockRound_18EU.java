@@ -406,7 +406,7 @@ public class StockRound_18EU extends StockRound {
         company.setHomeCityNumber(homeCityNumber);
 
         company.start(startSpace);
-        ReportBuffer.add(this,LocalText.getText("START_COMPANY_LOG",
+        ReportBuffer.add(this, LocalText.getText("START_COMPANY_LOG",
                 playerName,
                 companyName,
                 Currency.format(this, price),
@@ -428,20 +428,20 @@ public class StockRound_18EU extends StockRound {
             int minorTrains = minor.getPortfolioModel().getTrainList().size();
             company.transferAssetsFrom(minor);
             minor.setClosed();
-            ReportBuffer.add(this,LocalText.getText("MERGE_MINOR_LOG",
+            ReportBuffer.add(this, LocalText.getText("MERGE_MINOR_LOG",
                     currentPlayer.getId(),
                     minor.getId(),
                     company.getId(),
                     Currency.format(this, minorCash),
                     minorTrains ));
-            ReportBuffer.add(this,LocalText.getText("GetShareForMinor",
+            ReportBuffer.add(this, LocalText.getText("GetShareForMinor",
                     currentPlayer.getId(),
                     cert2.getShare(),
                     company.getId(),
                     ipo.getParent().getId(),
                     minor.getId() ));
         } else {
-            ReportBuffer.add(this,LocalText.getText("SelectedHomeBase",
+            ReportBuffer.add(this, LocalText.getText("SelectedHomeBase",
                     company.getId(),
                     selectedHomeCity.toString() ));
         }
@@ -449,14 +449,14 @@ public class StockRound_18EU extends StockRound {
         // Move the remaining certificates to the company treasury
         Portfolio.moveAll(ipo.getCertificates(company), company);
 
-        ReportBuffer.add(this,LocalText.getText("SharesPutInTreasury",
+        ReportBuffer.add(this, LocalText.getText("SharesPutInTreasury",
                 company.getPortfolioModel().getShare(company),
                 company.getId() ));
 
         // TODO must get this amount from XML
         int tokensCost = 100;
         String costText = Currency.toBank(company, tokensCost);
-        ReportBuffer.add(this,LocalText.getText("PaysForTokens",
+        ReportBuffer.add(this, LocalText.getText("PaysForTokens",
                 company.getId(),
                 costText,
                 company.getNumberOfBaseTokens() ));
@@ -563,15 +563,15 @@ public class StockRound_18EU extends StockRound {
         }
 
         if (cert != null) {
-            ReportBuffer.add(this,"");
-            ReportBuffer.add(this,LocalText.getText("MERGE_MINOR_LOG",
+            ReportBuffer.add(this, "");
+            ReportBuffer.add(this, LocalText.getText("MERGE_MINOR_LOG",
                     currentPlayer.getId(),
                     minor.getId(),
                     major.getId(),
                     Currency.format(this, minorCash),
                     minorTrains ));
             // FIXME: CHeck if this still works correctly
-            ReportBuffer.add(this,LocalText.getText("GetShareForMinor",
+            ReportBuffer.add(this, LocalText.getText("GetShareForMinor",
                     currentPlayer.getId(),
                     cert.getShare(),
                     major.getId(),
@@ -579,30 +579,30 @@ public class StockRound_18EU extends StockRound {
                     minor.getId() ));
             if (major != null) {
                 if (action.getReplaceToken()) {
-                    ReportBuffer.add(this,LocalText.getText("ExchangesBaseToken",
+                    ReportBuffer.add(this, LocalText.getText("ExchangesBaseToken",
                             major.getId(),
                             minor.getId(),
                             homeHex.getId()));
                 } else {
-                    ReportBuffer.add(this,LocalText.getText("NoBaseTokenExchange",
+                    ReportBuffer.add(this, LocalText.getText("NoBaseTokenExchange",
                             major.getId(),
                             minor.getId(),
                             homeHex.getId()));
                 }
             }
             cert.moveTo(currentPlayer);
-            ReportBuffer.add(this,LocalText.getText("MinorCloses", minor.getId()));
+            ReportBuffer.add(this, LocalText.getText("MinorCloses", minor.getId()));
             checkFlotation(major);
 
             if (pullmannToDiscard != null) {
                 pool.addTrain(pullmannToDiscard);
-                ReportBuffer.add(this,LocalText.getText("CompanyDiscardsTrain",
+                ReportBuffer.add(this, LocalText.getText("CompanyDiscardsTrain",
                         major.getId(),
                         pullmannToDiscard.toText() ));
             }
         } else {
-            ReportBuffer.add(this,"");
-            ReportBuffer.add(this,LocalText.getText("CLOSE_MINOR_LOG",
+            ReportBuffer.add(this, "");
+            ReportBuffer.add(this, LocalText.getText("CLOSE_MINOR_LOG",
                     currentPlayer.getId(),
                     minor.getId(),
                     Currency.format(this, minorCash),
@@ -629,7 +629,7 @@ public class StockRound_18EU extends StockRound {
     protected void floatCompany(PublicCompany company) {
 
         company.setFloated();
-        ReportBuffer.add(this,LocalText.getText("Floats", company.getId()));
+        ReportBuffer.add(this, LocalText.getText("Floats", company.getId()));
 
         // Before phase 5, no other actions are required.
 
@@ -640,7 +640,7 @@ public class StockRound_18EU extends StockRound {
             company.getPortfolioModel().moveAllCertificates(pool.getParent());
             int cash = 5 * company.getMarketPrice();
             String cashText = Currency.fromBank(cash, company);
-            ReportBuffer.add(this,LocalText.getText("MonetiseTreasuryShares",
+            ReportBuffer.add(this, LocalText.getText("MonetiseTreasuryShares",
                     company.getId(),
                     cashText ));
 
@@ -693,7 +693,7 @@ public class StockRound_18EU extends StockRound {
         ChangeStack.start(this, action);
         // FIXME: if (action.isForced()) changeStack.linkToPreviousMoveSet();
         pool.addTrain(train);
-        ReportBuffer.add(this,LocalText.getText("CompanyDiscardsTrain",
+        ReportBuffer.add(this, LocalText.getText("CompanyDiscardsTrain",
                 companyName,
                 train.toText() ));
 

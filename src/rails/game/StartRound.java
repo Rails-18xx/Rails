@@ -82,8 +82,8 @@ public abstract class StartRound extends Round {
         currentPlayer = getCurrentPlayer();
         startPlayer = currentPlayer;
 
-        ReportBuffer.add(this,LocalText.getText("StartOfInitialRound"));
-        ReportBuffer.add(this,LocalText.getText("HasPriority",
+        ReportBuffer.add(this, LocalText.getText("StartOfInitialRound"));
+        ReportBuffer.add(this, LocalText.getText("HasPriority",
                 getCurrentPlayer().getId()));
     }
 
@@ -256,7 +256,7 @@ public abstract class StartRound extends Round {
             int sharePrice) {
         Certificate primary = item.getPrimary();
         String priceText = Currency.toBank(player, price);
-        ReportBuffer.add(this,LocalText.getText("BuysItemFor",
+        ReportBuffer.add(this, LocalText.getText("BuysItemFor",
                 player.getId(),
                 primary.getName(),
                 priceText ));
@@ -264,7 +264,7 @@ public abstract class StartRound extends Round {
         checksOnBuying(primary, sharePrice);
         if (item.hasSecondary()) {
             Certificate extra = item.getSecondary();
-            ReportBuffer.add(this,LocalText.getText("ALSO_GETS",
+            ReportBuffer.add(this, LocalText.getText("ALSO_GETS",
                     player.getId(),
                     extra.getName() ));
             transferCertificate (extra, player.getPortfolioModel());

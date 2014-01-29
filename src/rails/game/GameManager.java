@@ -1054,7 +1054,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         String message =
             LocalText.getText("PlayerIsBankrupt",
                     getCurrentPlayer().getId());
-        ReportBuffer.add(this,message);
+        ReportBuffer.add(this, message);
         DisplayBuffer.add(this, message);
         if (gameEndsWithBankruptcy) {
             finishGame();
@@ -1069,7 +1069,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
     public void registerBrokenBank(){
         gameOverPending.set(true);
-        ReportBuffer.add(this,LocalText.getText("BankIsBrokenReportText"));
+        ReportBuffer.add(this, LocalText.getText("BankIsBrokenReportText"));
         String msgContinue;
         if (gameEndsAfterSetOfORs)
             msgContinue = LocalText.getText("gameOverPlaySetOfORs");
@@ -1082,7 +1082,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
     public void registerMaxedSharePrice(PublicCompany company, StockSpace space){
         gameOverPending.set(true);
-        ReportBuffer.add(this,LocalText.getText("MaxedSharePriceReportText",
+        ReportBuffer.add(this, LocalText.getText("MaxedSharePriceReportText",
                 company.getId(),
                 Currency.format(this, space.getPrice())));
         String msgContinue;
@@ -1102,14 +1102,14 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         gameOver.set(true);
 
         String message = LocalText.getText("GameOver");
-        ReportBuffer.add(this,message);
+        ReportBuffer.add(this, message);
         DisplayBuffer.add(this, message);
 
-        ReportBuffer.add(this,"");
+        ReportBuffer.add(this, "");
 
         List<String> gameReport = getGameReport();
         for (String s:gameReport)
-            ReportBuffer.add(this,s);
+            ReportBuffer.add(this, s);
 
         // activate gameReport for UI
         setGameOverReportedUI(false);

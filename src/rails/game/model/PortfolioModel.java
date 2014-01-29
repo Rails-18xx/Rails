@@ -325,7 +325,7 @@ public class PortfolioModel extends RailsModel {
     public void discardTrain(Train train) {
         train.moveTo(getRoot().getBank().getPool());
 
-        ReportBuffer.add(this,LocalText.getText("CompanyDiscardsTrain",
+        ReportBuffer.add(this, LocalText.getText("CompanyDiscardsTrain",
                 getParent().getId(), train.toText()));
     }
 
@@ -538,7 +538,7 @@ public class PortfolioModel extends RailsModel {
         // Need to separate selection and execution,
         // otherwise we get a ConcurrentModificationException on trains.
         for (Train train : trainsToRust) {
-            ReportBuffer.add(this,LocalText.getText("TrainsObsoleteRusted",
+            ReportBuffer.add(this, LocalText.getText("TrainsObsoleteRusted",
                     train.toText(), getParent().getId()));
             log.debug("Obsolete train " + train.getId() + " (owned by "
                       + getParent().getId() + ") rusted");

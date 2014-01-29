@@ -178,7 +178,7 @@ public final class MapCorrectionManager extends CorrectionManager {
 
             String msg = LocalText.getText("CorrectMapLaysTileAt",
                     chosenTile.getExternalId(), hex.getId(), hex.getOrientationName(orientation));
-            ReportBuffer.add(this,msg);
+            ReportBuffer.add(this, msg);
             getParent().addToNextPlayerMessages(msg, true);
 
             // relays tokens

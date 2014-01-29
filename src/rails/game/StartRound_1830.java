@@ -63,7 +63,7 @@ public class StartRound_1830 extends StartRound {
 
         possibleActions.clear();
 
-        if (currentPlayer == startPlayer) ReportBuffer.add(this,"");
+        if (currentPlayer == startPlayer) ReportBuffer.add(this, "");
 
         while (possibleActions.isEmpty()) {
 
@@ -113,7 +113,7 @@ public class StartRound_1830 extends StartRound {
                             assignItem(item.getBidder(), item, item.getBid(), 0);
                         }
                     } else if (item.getBidders() > 1) {
-                        ReportBuffer.add(this,LocalText.getText("TO_AUCTION",
+                        ReportBuffer.add(this, LocalText.getText("TO_AUCTION",
                                 item.getName()));
                         // Start left of the currently highest bidder
                         if (item.getStatus() != StartItem.AUCTIONED) {
@@ -254,7 +254,7 @@ public class StartRound_1830 extends StartRound {
         item.setBid(bidAmount, player);
         if (previousBid > 0) player.unblockCash(previousBid);
         player.blockCash(bidAmount);
-        ReportBuffer.add(this,LocalText.getText("BID_ITEM_LOG",
+        ReportBuffer.add(this, LocalText.getText("BID_ITEM_LOG",
                 playerName,
                 Currency.format(this, bidAmount),
                 item.getName(),
@@ -300,7 +300,7 @@ public class StartRound_1830 extends StartRound {
             return false;
         }
 
-        ReportBuffer.add(this,LocalText.getText("PASSES", playerName));
+        ReportBuffer.add(this, LocalText.getText("PASSES", playerName));
 
         ChangeStack.start(this, action);
 
@@ -339,12 +339,12 @@ public class StartRound_1830 extends StartRound {
 
             if (numPasses.value() >= numPlayers) {
                 // All players have passed.
-                ReportBuffer.add(this,LocalText.getText("ALL_PASSED"));
+                ReportBuffer.add(this, LocalText.getText("ALL_PASSED"));
                 // It the first item has not been sold yet, reduce its price by
                 // 5.
                 if (startPacket.getFirstUnsoldItem() == startPacket.getFirstItem()) {
                     startPacket.getFirstItem().reduceBasePriceBy(5);
-                    ReportBuffer.add(this,LocalText.getText(
+                    ReportBuffer.add(this, LocalText.getText(
                             "ITEM_PRICE_REDUCED",
                                     startPacket.getFirstItem().getName(),
                                     Currency.format(this, startPacket.getFirstItem().getBasePrice()) ));

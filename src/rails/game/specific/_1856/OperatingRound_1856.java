@@ -158,7 +158,7 @@ public class OperatingRound_1856 extends OperatingRound {
         if (due == 0) return amount;
         int remainder = due;
 
-        ReportBuffer.add(this,(LocalText.getText("CompanyMustPayLoanInterest",
+        ReportBuffer.add(this, (LocalText.getText("CompanyMustPayLoanInterest",
                 operatingCompany.value().getId(),
                 Currency.format(this, due))));
 
@@ -217,11 +217,11 @@ public class OperatingRound_1856 extends OperatingRound {
         if (payment > 0) {
             String paymentText = Currency.toBank(operatingCompany.value(), payment);
             if (payment == due) {
-                ReportBuffer.add(this,LocalText.getText("InterestPaidFromTreasury",
+                ReportBuffer.add(this, LocalText.getText("InterestPaidFromTreasury",
                         operatingCompany.value().getId(),
                         paymentText));
             } else {
-                ReportBuffer.add(this,LocalText.getText("InterestPartlyPaidFromTreasury",
+                ReportBuffer.add(this, LocalText.getText("InterestPartlyPaidFromTreasury",
                         operatingCompany.value().getId(),
                         paymentText,
                         bank.getCurrency().format(due))); // TODO: Do this nicer
@@ -235,7 +235,7 @@ public class OperatingRound_1856 extends OperatingRound {
         if (payment > 0) {
             // Payment money remains in the bank
             remainder -= payment;
-            ReportBuffer.add(this,LocalText.getText("InterestPaidFromRevenue",
+            ReportBuffer.add(this, LocalText.getText("InterestPaidFromRevenue",
                     operatingCompany.value().getId(),
                     Currency.format(this, payment),
                     Currency.format(this, due)));
@@ -258,7 +258,7 @@ public class OperatingRound_1856 extends OperatingRound {
 
             payment = remainder;
             String paymentText = Currency.toBank(president, payment);
-            ReportBuffer.add(this,LocalText.getText("InterestPaidFromPresidentCash",
+            ReportBuffer.add(this, LocalText.getText("InterestPaidFromPresidentCash",
                     operatingCompany.value().getId(),
                     paymentText,
                     bank.getCurrency().format(due), // TODO: Do this nicer
@@ -291,7 +291,7 @@ public class OperatingRound_1856 extends OperatingRound {
         int cashInEscrow = comp.getMoneyInEscrow();
         if (cashInEscrow > 0) {
             String cashText = Currency.fromBank(cashInEscrow, company);
-            ReportBuffer.add(this,LocalText.getText("ReleasedFromEscrow",
+            ReportBuffer.add(this, LocalText.getText("ReleasedFromEscrow",
                     company.getId(),
                     cashText));
         }
@@ -528,10 +528,10 @@ public class OperatingRound_1856 extends OperatingRound {
             message = LocalText.getText("DoesNotForm", cgr.getId());
             roundFinished = !setNextOperatingCompany(false);
         }
-        ReportBuffer.add(this,LocalText.getText("EndOfFormationRound",
+        ReportBuffer.add(this, LocalText.getText("EndOfFormationRound",
                 cgr.getId(),
                 getRoundName()));
-        ReportBuffer.add(this,message);
+        ReportBuffer.add(this, message);
         DisplayBuffer.add(this, message);
 
         // Find the first company that has not yet operated

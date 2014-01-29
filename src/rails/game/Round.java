@@ -183,7 +183,7 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
             String[] ct;
             PublicCompany comp = action.getCompany();
 
-            ReportBuffer.add(this,"");
+            ReportBuffer.add(this, "");
 
             for (ExchangeableToken token : tokens) {
                 cityName = token.getCityName();
@@ -203,14 +203,14 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
                     // This is true in the 1856 CGR formation.
                     if (hex.layBaseToken(comp, city.getNumber())) {
                         /* TODO: the false return value must be impossible. */
-                        ReportBuffer.add(this,LocalText.getText("ExchangesBaseToken",
+                        ReportBuffer.add(this, LocalText.getText("ExchangesBaseToken",
                                 comp.getId(),
                                 token.getOldCompanyName(),
                                 city.getSpecificId()));
                         comp.layBaseToken(hex, 0);
                     }
                 } else {
-                    ReportBuffer.add(this,LocalText.getText("NoBaseTokenExchange",
+                    ReportBuffer.add(this, LocalText.getText("NoBaseTokenExchange",
                             comp.getId(),
                             token.getOldCompanyName(),
                             city.getSpecificId()));
@@ -342,11 +342,11 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
 
         if (cash > 0) {
             String cashText = Currency.fromBank(cash, company);
-            ReportBuffer.add(this,LocalText.getText("FloatsWithCash",
+            ReportBuffer.add(this, LocalText.getText("FloatsWithCash",
                     company.getId(),
                     cashText ));
         } else {
-            ReportBuffer.add(this,LocalText.getText("Floats",
+            ReportBuffer.add(this, LocalText.getText("Floats",
                     company.getId()));
         }
 
@@ -360,15 +360,15 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
 
     protected void finishRound() {
         // Report financials
-        ReportBuffer.add(this,"");
+        ReportBuffer.add(this, "");
         for (PublicCompany c : companyManager.getAllPublicCompanies()) {
             if (c.hasFloated() && !c.isClosed()) {
-                ReportBuffer.add(this,LocalText.getText("Has", c.getId(),
+                ReportBuffer.add(this, LocalText.getText("Has", c.getId(),
                         Currency.format(this, c.getCash())));
             }
         }
         for (Player p : playerManager.getPlayers()) {
-            ReportBuffer.add(this,LocalText.getText("Has", p.getId(),
+            ReportBuffer.add(this, LocalText.getText("Has", p.getId(),
                     Currency.format(this, p.getCashValue())));
         }
         // Inform GameManager

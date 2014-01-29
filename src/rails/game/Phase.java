@@ -296,11 +296,11 @@ public class Phase extends RailsModel implements Configurable {
 
     /** Called when a phase gets activated */
     public void activate() {
-        ReportBuffer.add(this,LocalText.getText("StartOfPhase", getId()));
+        ReportBuffer.add(this, LocalText.getText("StartOfPhase", getId()));
         
         // Report any extra info
         if (Util.hasValue(extraInfo)) {
-            ReportBuffer.add(this,extraInfo.replaceFirst("^<[Bb][Rr]>", "").replaceAll("<[Bb][Rr]>", "\n"));
+            ReportBuffer.add(this, extraInfo.replaceFirst("^<[Bb][Rr]>", "").replaceAll("<[Bb][Rr]>", "\n"));
         }
 
         if (closedObjects != null && !closedObjects.isEmpty()) {

@@ -138,7 +138,7 @@ public class RailsRoot extends Root implements RailsItem {
          */
         log.info("========== Start of rails.game " + gameData.getGameName() + " ==========");
         log.info("Rails version "+ Config.getVersion());
-        ReportBuffer.add(this,LocalText.getText("GameIs", gameData.getGameName()));
+        ReportBuffer.add(this, LocalText.getText("GameIs", gameData.getGameName()));
 
         playerManager.setPlayers(gameData.getPlayers(), bank);
         gameManager.init();

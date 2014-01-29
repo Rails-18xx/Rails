@@ -330,7 +330,7 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
 
         moveTo(getRoot().getBank().getScrapHeap());
         
-        ReportBuffer.add(this,LocalText.getText("PrivateCloses", getId()));
+        ReportBuffer.add(this, LocalText.getText("PrivateCloses", getId()));
 
         // For 1856: buyable tokens still owned by the private will now
         // become commonly buyable, i.e. owned by GameManager.

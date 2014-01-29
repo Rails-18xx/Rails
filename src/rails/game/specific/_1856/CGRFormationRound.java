@@ -78,9 +78,9 @@ public class CGRFormationRound extends SwitchableUIRound {
 
         companiesToRepayLoans = null;
 
-        ReportBuffer.add(this,LocalText.getText("StartFormationRound",
+        ReportBuffer.add(this, LocalText.getText("StartFormationRound",
                 cgrName));
-        ReportBuffer.add(this,LocalText.getText("StartingPlayer", startingPlayer.getId()));
+        ReportBuffer.add(this, LocalText.getText("StartingPlayer", startingPlayer.getId()));
 
         guiHints.setCurrentRoundType(getClass());
 
@@ -100,7 +100,7 @@ public class CGRFormationRound extends SwitchableUIRound {
         }
 
         if (companiesToRepayLoans == null) {
-            ReportBuffer.add(this,LocalText.getText("DoesNotForm", cgr.getId()));
+            ReportBuffer.add(this, LocalText.getText("DoesNotForm", cgr.getId()));
             finishRound();
             return;
         }
@@ -155,9 +155,9 @@ public class CGRFormationRound extends SwitchableUIRound {
                     numberOfLoans,
                     Currency.format(this, valuePerLoan),
                     Currency.format(this, numberOfLoans * valuePerLoan));
-            ReportBuffer.add(this," ");
+            ReportBuffer.add(this, " ");
             DisplayBuffer.add(this, " ", false);
-            ReportBuffer.add(this,message);
+            ReportBuffer.add(this, message);
             DisplayBuffer.add(this, message, false);
 
             // Let company repay all loans for which it has the cash
@@ -214,7 +214,7 @@ public class CGRFormationRound extends SwitchableUIRound {
                         currentCompany.getId(),
                         PublicCompany_CGR.NAME);
                 DisplayBuffer.add(this, message, false);
-                ReportBuffer.add(this,message);
+                ReportBuffer.add(this, message);
                 continue;
             }
         }
@@ -294,7 +294,7 @@ public class CGRFormationRound extends SwitchableUIRound {
                     currentCompany.getId(),
                     PublicCompany_CGR.NAME);
             DisplayBuffer.add(this, message, true);
-            ReportBuffer.add(this,message);
+            ReportBuffer.add(this, message);
 
         }
 
@@ -317,7 +317,7 @@ public class CGRFormationRound extends SwitchableUIRound {
         setCurrentPlayer(startingPlayer);
         cgrSharesUsed = 0;
 
-        ReportBuffer.add(this,"");
+        ReportBuffer.add(this, "");
 
         do {
             player = getCurrentPlayer();
@@ -360,7 +360,7 @@ public class CGRFormationRound extends SwitchableUIRound {
                         newShares,
                         PublicCompany_CGR.NAME);
                 DisplayBuffer.add(this, message, false);
-                ReportBuffer.add(this,message);
+                ReportBuffer.add(this, message);
 
                 if (count == 1) {
                     // Should work OK even if this is a president's share.
@@ -372,7 +372,7 @@ public class CGRFormationRound extends SwitchableUIRound {
                     message = LocalText.getText("HasPutShareInPool",
                             player.getId());
                     DisplayBuffer.add(this, message, false);
-                    ReportBuffer.add(this,message);
+                    ReportBuffer.add(this, message);
 
                 }
                 // Note: old shares are removed when company is closed
@@ -415,7 +415,7 @@ public class CGRFormationRound extends SwitchableUIRound {
                 newShares,
                 PublicCompany_CGR.NAME);
         DisplayBuffer.add(this, message);
-        ReportBuffer.add(this,message);
+        ReportBuffer.add(this, message);
 
         Portfolio.moveAll(certs, scrapHeap.getParent());
         log.info(cgrSharesUsed+" CGR shares are now in play");
@@ -429,9 +429,9 @@ public class CGRFormationRound extends SwitchableUIRound {
         message = LocalText.getText("CompanyHasShares",
                 cgr.getId(), 100/cgr.getShareUnit(), cgr.getShareUnit());
         DisplayBuffer.add(this, " ");
-        ReportBuffer.add(this," ");
+        ReportBuffer.add(this, " ");
         DisplayBuffer.add(this, message);
-        ReportBuffer.add(this,message);
+        ReportBuffer.add(this, message);
 
         // Move the remaining CGR shares to the ipo.
         Portfolio.moveAll(unavailable.getCertificates(cgr), ipo.getParent());
@@ -453,7 +453,7 @@ public class CGRFormationRound extends SwitchableUIRound {
         // newPresident.getPortfolio().getShareModel(cgr).setShare();
         message = LocalText.getText("IS_NOW_PRES_OF",
                 newPresident.getId(), cgrName);
-        ReportBuffer.add(this,message);
+        ReportBuffer.add(this, message);
         DisplayBuffer.add(this, message);
 
         // Determine the CGR starting price,
@@ -494,12 +494,12 @@ public class CGRFormationRound extends SwitchableUIRound {
                         Currency.format(this, startSpace.getPrice()),
                         startSpace.getId());
                 DisplayBuffer.add(this, message);
-                ReportBuffer.add(this,message);
+                ReportBuffer.add(this, message);
                 break;
             }
         }
         cgr.setFloated();
-        ReportBuffer.add(this,LocalText.getText("Floats", PublicCompany_CGR.NAME));
+        ReportBuffer.add(this, LocalText.getText("Floats", PublicCompany_CGR.NAME));
 
         // Determine the new certificate limit.
         // The number of available companies is 11,
@@ -514,7 +514,7 @@ public class CGRFormationRound extends SwitchableUIRound {
                 numPlayers,
                 numCompanies);
         DisplayBuffer.add(this, message);
-        ReportBuffer.add(this,message);
+        ReportBuffer.add(this, message);
 
         // Collect the old token spots, and move cash and trains
         List<BaseToken> homeTokens = new ArrayList<BaseToken>();
@@ -583,7 +583,7 @@ public class CGRFormationRound extends SwitchableUIRound {
         }
 
         // Replace the home tokens
-        ReportBuffer.add(this,"");
+        ReportBuffer.add(this, "");
         for (BaseToken token : homeTokens) {
             city = (Stop) token.getOwner();
             hex = city.getParent();
@@ -591,7 +591,7 @@ public class CGRFormationRound extends SwitchableUIRound {
             token.moveTo(token.getParent());
             if (hex.layBaseToken(cgr, city.getNumber())) {
                 /* TODO: the false return value must be impossible. */
-                ReportBuffer.add(this,LocalText.getText("ExchangesBaseToken",
+                ReportBuffer.add(this, LocalText.getText("ExchangesBaseToken",
                         cgrName, token.getParent().getId(),
                         city.getSpecificId()));
                 cgr.layBaseToken(hex, 0);
@@ -607,7 +607,7 @@ public class CGRFormationRound extends SwitchableUIRound {
                 for (BaseToken token2 : otherTokens) {
                     if (token2.getParent() == cgr
                             || nonHomeTokens.contains(token2) && token2 != token) {
-                        ReportBuffer.add(this,LocalText.getText("DiscardsBaseToken",
+                        ReportBuffer.add(this, LocalText.getText("DiscardsBaseToken",
                                 cgrName, token.getParent().getId(),
                                 city.getSpecificId()));
                         // return token to home
@@ -656,7 +656,7 @@ public class CGRFormationRound extends SwitchableUIRound {
         int trainLimit = cgr.getCurrentTrainLimit();
         Set<Train> trains = cgr.getPortfolioModel().getTrainList();
         if (cgr.getNumberOfTrains() > trainLimit) {
-            ReportBuffer.add(this,"");
+            ReportBuffer.add(this, "");
             int numberToDiscard = cgr.getNumberOfTrains() - trainLimit;
             List<Train> trainsToDiscard = new ArrayList<Train>(4);
             for (Train train : trains) {
@@ -667,7 +667,7 @@ public class CGRFormationRound extends SwitchableUIRound {
             }
             for (Train train : trainsToDiscard) {
                 pool.addTrain(train);
-                ReportBuffer.add(this,LocalText.getText("CompanyDiscardsTrain",
+                ReportBuffer.add(this, LocalText.getText("CompanyDiscardsTrain",
                         cgrName, train.toText()));
             }
         }
@@ -677,7 +677,7 @@ public class CGRFormationRound extends SwitchableUIRound {
     private void executeExchangeTokens (List<BaseToken> exchangedTokens) {
         Stop city;
         MapHex hex;
-        ReportBuffer.add(this,"");
+        ReportBuffer.add(this, "");
         for (BaseToken token : exchangedTokens) {
             // Remove old token
             city = (Stop) token.getOwner();
@@ -831,7 +831,7 @@ public class CGRFormationRound extends SwitchableUIRound {
 
             //            if (action.isForced()) moveStack.linkToPreviousMoveSet();
             pool.addTrain(train);
-            ReportBuffer.add(this,LocalText.getText("CompanyDiscardsTrain",
+            ReportBuffer.add(this, LocalText.getText("CompanyDiscardsTrain",
                     companyName,
                     train.toText() ));
 

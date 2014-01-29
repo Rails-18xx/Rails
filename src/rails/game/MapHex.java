@@ -848,7 +848,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
                                         + " moved from "
                                         + oldCity.getSpecificId() + " to "
                                         + company.getId());
-                                ReportBuffer.add(this,LocalText.getText(
+                                ReportBuffer.add(this, LocalText.getText(
                                         "DuplicateTokenRemoved",
                                         company.getId(),
                                         getId() ));

@@ -1387,7 +1387,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
         if (buyerShare > presShare) {
             pres.getPortfolioModel().swapPresidentCertificate(this,
                     buyer.getPortfolioModel(), 0);
-            ReportBuffer.add(this,LocalText.getText("IS_NOW_PRES_OF",
+            ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
                     buyer.getId(),
                     getId() ));
         }
@@ -1414,7 +1414,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
                 // Presidency must be transferred
                 seller.getPortfolioModel().swapPresidentCertificate(this,
                         player.getPortfolioModel(), 0);
-                ReportBuffer.add(this,LocalText.getText("IS_NOW_PRES_OF",
+                ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
                         player.getId(),
                         getId() ));
             }
@@ -1440,7 +1440,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
                 // Hand presidency to the first player with a higher share
                 president.getPortfolioModel().swapPresidentCertificate(this,
                         player.getPortfolioModel(), 0);
-                ReportBuffer.add(this,LocalText.getText("IS_NOW_PRES_OF",
+                ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
                         player.getId(),
                         getId() ));
                 return;
@@ -1527,7 +1527,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
         if (from != getRoot().getBank().getIpo()) {
             // The initial buy is reported from StartRound. This message should also
             // move to elsewhere.
-            ReportBuffer.add(this,LocalText.getText("BuysPrivateFromFor",
+            ReportBuffer.add(this, LocalText.getText("BuysPrivateFromFor",
                     getId(),
                     privateCompany.getId(),
                     from.getId(),

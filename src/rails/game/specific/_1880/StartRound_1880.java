@@ -67,7 +67,7 @@ public final class StartRound_1880 extends StartRound {
             
             currentBuyPrice.set(item.getMinimumBid());
             
-            if (currentPlayer == startPlayer) ReportBuffer.add(this,"");
+            if (currentPlayer == startPlayer) ReportBuffer.add(this, "");
             
             if (currentItem == null || currentItem.value() != item ) { // we haven't seen this item before
                 numPasses.set(0); // new round so cancel all previous passes !
@@ -238,7 +238,7 @@ public final class StartRound_1880 extends StartRound {
         ChangeStack.start(this, bidItem);
 
         item.setBid(bidAmount, player);
-        ReportBuffer.add(this,LocalText.getText("BID_ITEM_LOG",
+        ReportBuffer.add(this, LocalText.getText("BID_ITEM_LOG",
                 playerName,
                 Currency.format(this, bidAmount),
                 item.getName(),
@@ -274,7 +274,7 @@ public final class StartRound_1880 extends StartRound {
             return false;
         }
 
-        ReportBuffer.add(this,LocalText.getText("PASSES", playerName));
+        ReportBuffer.add(this, LocalText.getText("PASSES", playerName));
 
         ChangeStack.start(this, action);
 
@@ -282,13 +282,13 @@ public final class StartRound_1880 extends StartRound {
         
         if (numPasses.value() >= numPlayers) {
             // All players have passed.
-            ReportBuffer.add(this,LocalText.getText("ALL_PASSED"));
+            ReportBuffer.add(this, LocalText.getText("ALL_PASSED"));
             // It the first item has not been sold yet, reduce its price by
             // 5.
             if (auctionItem.getIndex() < 2) {
                 auctionItem.reduceBasePriceBy(5);
                 auctionItem.setMinimumBid(auctionItem.getBasePrice());
-                ReportBuffer.add(this,LocalText.getText(
+                ReportBuffer.add(this, LocalText.getText(
                         "ITEM_PRICE_REDUCED",
                                 auctionItem.getName(),
                                 Currency.format(this, startPacket.getFirstItem().getBasePrice()) ));

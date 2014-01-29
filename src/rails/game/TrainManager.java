@@ -286,7 +286,7 @@ public class TrainManager extends RailsManager implements Configurable {
                     if (!nextType.isAvailable()) {
                         makeTrainAvailable(nextType);
                         trainAvailabilityChanged = true;
-                        ReportBuffer.add(this,"All " + boughtType.toText()
+                        ReportBuffer.add(this, "All " + boughtType.toText()
                                          + "-trains are sold out, "
                                          + nextType.toText() + "-trains now available");
                     }
@@ -297,7 +297,7 @@ public class TrainManager extends RailsManager implements Configurable {
         int trainIndex = boughtType.getNumberBoughtFromIPO();
         if (trainIndex == 1) {
             // First train of a new type bought
-            ReportBuffer.add(this,LocalText.getText("FirstTrainBought",
+            ReportBuffer.add(this, LocalText.getText("FirstTrainBought",
                     boughtType.toText()));
         }
         
@@ -358,9 +358,9 @@ public class TrainManager extends RailsManager implements Configurable {
         }
         // report about event
         if (type.isObsoleting()) {
-            ReportBuffer.add(this,LocalText.getText("TrainsObsolete." + obsoleteTrainFor, type.getId()));
+            ReportBuffer.add(this, LocalText.getText("TrainsObsolete." + obsoleteTrainFor, type.getId()));
         } else {
-            ReportBuffer.add(this,LocalText.getText("TrainsRusted",type.getId()));
+            ReportBuffer.add(this, LocalText.getText("TrainsRusted",type.getId()));
         }
     }
     

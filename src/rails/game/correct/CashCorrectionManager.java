@@ -102,7 +102,7 @@ public class CashCorrectionManager extends CorrectionManager {
                         ch.getId(),
                         text);
             }
-            ReportBuffer.add(this,msg);
+            ReportBuffer.add(this, msg);
             getParent().addToNextPlayerMessages(msg, true);
             result = true;
         }

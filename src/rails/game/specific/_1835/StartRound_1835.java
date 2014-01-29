@@ -107,7 +107,7 @@ public class StartRound_1835 extends StartRound {
         while (possibleActions.isEmpty()) {
 
             Player currentPlayer = getCurrentPlayer();
-            if (currentPlayer == startPlayer) ReportBuffer.add(this,"");
+            if (currentPlayer == startPlayer) ReportBuffer.add(this, "");
 
             int cashToSpend = currentPlayer.getCash();
 
@@ -124,7 +124,7 @@ public class StartRound_1835 extends StartRound {
                 String message =
                     LocalText.getText("CannotBuyAnything",
                             currentPlayer.getId());
-                ReportBuffer.add(this,message);
+                ReportBuffer.add(this, message);
                 //DisplayBuffer.add(this, message);
                 numPasses.add(1);
                 if (numPasses.value() >= numPlayers) {
@@ -247,7 +247,7 @@ public class StartRound_1835 extends StartRound {
             return false;
         }
 
-        ReportBuffer.add(this,LocalText.getText("PASSES", playerName));
+        ReportBuffer.add(this, LocalText.getText("PASSES", playerName));
 
         ChangeStack.start(this, action);
 
@@ -255,7 +255,7 @@ public class StartRound_1835 extends StartRound {
 
         if (numPasses.value() >= numPlayers) {
             // All players have passed.
-            ReportBuffer.add(this,LocalText.getText("ALL_PASSED"));
+            ReportBuffer.add(this, LocalText.getText("ALL_PASSED"));
             numPasses.set(0);
             //gameManager.nextRound(this);
             finishRound();

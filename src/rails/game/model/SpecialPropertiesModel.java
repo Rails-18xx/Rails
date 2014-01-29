@@ -59,7 +59,7 @@ public class SpecialPropertiesModel extends RailsModel implements Triggerable {
             Bonus bonus = new Bonus(company, locBonus.getId(), locBonus.getValue(),
                     locBonus.getLocations());
             company.addBonus(bonus);
-            ReportBuffer.add(this,LocalText.getText("AcquiresBonus",
+            ReportBuffer.add(this, LocalText.getText("AcquiresBonus",
                     getParent().getId(),
                     locBonus.getName(),
                     Currency.format(company, locBonus.getValue()),

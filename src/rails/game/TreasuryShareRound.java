@@ -325,14 +325,14 @@ public class TreasuryShareRound extends StockRound {
         int cashAmount = shares * price;
         String cashText = Currency.toBank(company, cashAmount);
         if (number == 1) {
-            ReportBuffer.add(this,LocalText.getText("BUY_SHARE_LOG",
+            ReportBuffer.add(this, LocalText.getText("BUY_SHARE_LOG",
                     companyName,
                     shareUnit,
                     companyName,
                     from.getId(),
                     cashText ));
         } else {
-            ReportBuffer.add(this,LocalText.getText("BUY_SHARES_LOG",
+            ReportBuffer.add(this, LocalText.getText("BUY_SHARES_LOG",
                     companyName,
                     number,
                     shareUnit,
@@ -468,7 +468,7 @@ public class TreasuryShareRound extends StockRound {
 
         int cashAmount = numberSold * price;
         String cashText = Currency.fromBank(cashAmount, company);
-        ReportBuffer.add(this,LocalText.getText("SELL_SHARES_LOG",
+        ReportBuffer.add(this, LocalText.getText("SELL_SHARES_LOG",
                 companyName,
                 numberSold,
                 company.getShareUnit(),

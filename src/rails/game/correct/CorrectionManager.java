@@ -66,11 +66,11 @@ public abstract class CorrectionManager extends RailsAbstractItem {
                     getRoot().getPlayerManager().getCurrentPlayer().getId(),
                     LocalText.getText(getCorrectionType().name())
             );
-            ReportBuffer.add(this,text);
+            ReportBuffer.add(this, text);
             DisplayBuffer.add(this, text);
         }
         else {
-            ReportBuffer.add(this,LocalText.getText("CorrectionModeDeactivate",
+            ReportBuffer.add(this, LocalText.getText("CorrectionModeDeactivate",
                     getRoot().getPlayerManager().getCurrentPlayer().getId(),
                     LocalText.getText(getCorrectionType().name())
             ));

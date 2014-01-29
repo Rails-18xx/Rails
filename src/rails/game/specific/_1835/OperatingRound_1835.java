@@ -71,9 +71,9 @@ public class OperatingRound_1835 extends OperatingRound {
                 if (priv.getOwner() instanceof MoneyOwner) {
                     Owner recipient = priv.getOwner();
                     int revenue = priv.getRevenueByPhase(getCurrentPhase()); // sfy 1889: revenue by phase
-                    if (count++ == 0) ReportBuffer.add(this,"");
+                    if (count++ == 0) ReportBuffer.add(this, "");
                     String revText = Currency.fromBank(revenue, (MoneyOwner)recipient);
-                    ReportBuffer.add(this,LocalText.getText("ReceivesFor",
+                    ReportBuffer.add(this, LocalText.getText("ReceivesFor",
                             recipient.getId(),
                             revText,
                             priv.getId()));
@@ -125,7 +125,7 @@ public class OperatingRound_1835 extends OperatingRound {
                 int share = deniedIncomeShare.get(player);
                 int shares = share / operatingCompany.value().getShareUnit();
                 sharesPerRecipient.put (player, sharesPerRecipient.get(player) - shares);
-                ReportBuffer.add(this,LocalText.getText("NoIncomeForPreviousOperation",
+                ReportBuffer.add(this, LocalText.getText("NoIncomeForPreviousOperation",
                         player.getId(),
                         share,
                         GameManager_1835.PR_ID));

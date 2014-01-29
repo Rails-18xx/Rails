@@ -34,7 +34,7 @@ public class ShareSellingRound extends StockRound {
             PublicCompany cashNeedingCompany, boolean dumpOtherCompaniesAllowed) {
         log.info("Share selling round started, player="
                 +sellingPlayer.getId()+" cash="+cashToRaise);
-        ReportBuffer.add(this,LocalText.getText("PlayerMustSellShares",
+        ReportBuffer.add(this, LocalText.getText("PlayerMustSellShares",
                 sellingPlayer.getId(),
                 Currency.format(this, cashToRaise)));
         this.parentRound = parentRound;
@@ -358,7 +358,7 @@ public class ShareSellingRound extends StockRound {
         // FIXME: changeStack.linkToPreviousMoveSet();
 
         String cashText = Currency.fromBank(cashAmount, currentPlayer);
-        ReportBuffer.add(this,LocalText.getText("SELL_SHARES_LOG",
+        ReportBuffer.add(this, LocalText.getText("SELL_SHARES_LOG",
                 playerName,
                 numberSold,
                 company.getShareUnit(),
