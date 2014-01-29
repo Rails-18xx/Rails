@@ -50,7 +50,7 @@ public class TileManager extends RailsManager implements Configurable {
 
         String directory = "data/" + getRoot().getGameName();
         Tag tileDefTop =
-            Tag.findTopTagInFile(tileDefFileName, directory, "Tiles");
+            Tag.findTopTagInFile(tileDefFileName, directory, "Tiles", getRoot().getGameOptions());
         if (tileDefTop == null)
             throw new ConfigurationException(LocalText.getText("NoTilesTag"));
 
@@ -129,7 +129,8 @@ public class TileManager extends RailsManager implements Configurable {
         }
     }
 
-    public void finishConfiguration (RailsRoot root)
+    public void finishConfiguration (RailsRoot root) 
+            throws ConfigurationException {
         
         ImmutableSortedSet.Builder<Tile> tileSetBuilder = 
                 ImmutableSortedSet.naturalOrder();

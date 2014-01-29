@@ -40,13 +40,13 @@ public final class StateManager extends Manager{
     private PortfolioManager portfolioManager;
     private WalletManager walletManager;
 
-    private StateManager(Root parent, String id, ChangeReporter changeReporter) {
+    private StateManager(Root parent, String id) {
         super(parent, id);
-        this.changeStack = ChangeStack.create(this, changeReporter);
+        this.changeStack = ChangeStack.create(this);
     }
 
-    static StateManager create(Root parent, String id, ChangeReporter changeReporter){
-        return new StateManager(parent, id, changeReporter);
+    static StateManager create(Root parent, String id){
+        return new StateManager(parent, id);
     }
     
     void init() {

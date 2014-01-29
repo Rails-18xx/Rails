@@ -272,7 +272,7 @@ public class ORUIManager implements DialogOwner {
         
         for (MapHex hex:Sets.union(mapHexSides.keySet(), mapHexStations.keySet())) {
             GUIHex guiHex = map.getHex(hex);
-            String routeAlgorithm = gameUIManager.getGameManager().getGameOption("RouteAlgorithm");
+            String routeAlgorithm = GameOption.getValue(gameUIManager.getRoot(), "RouteAlgorithm");
             Set<HexUpgrade> upgrades = HexUpgrade.create(hex, mapHexSides.get(hex), 
                     mapHexStations.get(hex), layTile, routeAlgorithm);
             hexUpgrades.putAll(guiHex, upgrades);

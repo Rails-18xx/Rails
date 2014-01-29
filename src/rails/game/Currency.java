@@ -1,5 +1,8 @@
 package rails.game;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import rails.game.state.CountableItem;
 
 /**
@@ -7,6 +10,9 @@ import rails.game.state.CountableItem;
  */
 public class Currency extends CountableItem<Currency> implements RailsItem {
 
+    protected static Logger log =
+            LoggerFactory.getLogger(Currency.class);
+    
     /**
      * The money format template. '@' is replaced by the numeric amount, the
      * rest is copied.
@@ -84,6 +90,7 @@ public class Currency extends CountableItem<Currency> implements RailsItem {
     }
 
     public static String format(RailsItem item, int amount) {
+        log.debug("item = " + item);
         Currency currency = item.getRoot().getCurrency();
         return currency.format(amount);
     }

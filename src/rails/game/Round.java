@@ -15,7 +15,6 @@ import rails.game.special.SpecialProperty;
 import rails.game.state.ArrayListState;
 import rails.game.state.BooleanState;
 import rails.game.state.Creatable;
-import rails.game.state.Owner;
 import rails.game.state.Portfolio;
 
 public abstract class Round extends RailsAbstractItem implements Creatable {
@@ -52,21 +51,17 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
         this.gameManager = parent;
         this.possibleActions = gameManager.getPossibleActions();
 
-        if (gameManager == null) {
-            companyManager = null;
-        } else {
-            companyManager = getRoot().getCompanyManager();
-            playerManager = getRoot().getPlayerManager();
-            bank = getRoot().getBank();
-            // TODO: It would be good to work with BankPortfolio and Owner instead of PortfolioModels
-            // However this requires a lot of work inside the Round classes
-            ipo = bank.getIpo().getPortfolioModel();
-            pool = bank.getPool().getPortfolioModel();
-            unavailable = bank.getUnavailable().getPortfolioModel();
-            scrapHeap = bank.getScrapHeap().getPortfolioModel();
-            stockMarket = getRoot().getStockMarket();
-            mapManager = getRoot().getMapManager();
-        }
+        companyManager = getRoot().getCompanyManager();
+        playerManager = getRoot().getPlayerManager();
+        bank = getRoot().getBank();
+        // TODO: It would be good to work with BankPortfolio and Owner instead of PortfolioModels
+        // However this requires a lot of work inside the Round classes
+        ipo = bank.getIpo().getPortfolioModel();
+        pool = bank.getPool().getPortfolioModel();
+        unavailable = bank.getUnavailable().getPortfolioModel();
+        scrapHeap = bank.getScrapHeap().getPortfolioModel();
+        stockMarket = getRoot().getStockMarket();
+        mapManager = getRoot().getMapManager();
 
         guiHints = gameManager.getUIHints();
         guiHints.setCurrentRoundType(getClass());

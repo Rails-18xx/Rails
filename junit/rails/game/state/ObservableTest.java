@@ -37,7 +37,7 @@ public class ObservableTest {
     
     @Before
     public void setUp() {
-        root = Root.create(new ChangeReporterImpl());
+        root = Root.create();
         manager = new ManagerImpl(root, MANAGER_ID);
         item = new AbstractItemImpl(manager, ITEM_ID);
         observable = new ObservableImpl(item, OBS_ID);

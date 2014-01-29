@@ -1,13 +1,12 @@
 package rails.game.state;
 
 public interface ChangeReporter {
+    
+    void updateOnClose(ChangeSet current);
+    
+    void informOnUndo();
 
-    void setChangeStack(ChangeStack changeStack);
+    void informOnRedo();
     
-    void addMessage(String message);
-
-    void close(ChangeSet set);
-    
-    void update();
-    
+    void update(ChangeSet changeSet);
 }

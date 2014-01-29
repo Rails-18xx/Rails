@@ -8,9 +8,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableList;
 
 import rails.common.GameOption;
+import rails.common.GameOptionsSet;
 
 public class GameOptionsParser {
 
@@ -19,9 +19,9 @@ public class GameOptionsParser {
 
     public GameOptionsParser() {}
 
-    public List<GameOption> processOptions(String directory) throws ConfigurationException {
+    public GameOptionsSet.Builder processOptions(String directory) throws ConfigurationException {
 
-        ImmutableList.Builder<GameOption> options = ImmutableList.builder();
+        GameOptionsSet.Builder options = GameOptionsSet.builder();
         
         Document doc = parser.getDocument(FILENAME, directory);
         Element root = parser.getTopElement(doc);
@@ -63,10 +63,10 @@ public class GameOptionsParser {
                 options.add(option.build());
             }
         }
-        return options.build();
+        return options;
     }
 
-    public static List<GameOption> load(String gameName) throws ConfigurationException {
+    public static GameOptionsSet.Builder load(String gameName) throws ConfigurationException {
         GameOptionsParser gop = new GameOptionsParser();
         String directory =  GameInfoParser.DIRECTORY + File.separator + gameName;
         return gop.processOptions(directory);

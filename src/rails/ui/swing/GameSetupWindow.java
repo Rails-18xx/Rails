@@ -15,6 +15,7 @@ import rails.common.Config;
 import rails.common.ConfigManager;
 import rails.common.GameInfo;
 import rails.common.GameOption;
+import rails.common.GameOptionsSet;
 import rails.common.LocalText;
 
 /**
@@ -225,17 +226,18 @@ public class GameSetupWindow extends JDialog {
         optionsPane.removeAll();
         optionComponents.clear();
 
-        Map<GameOption, String> availableOptions = controller.getAvailableOptions(selectedGame);
-        if (availableOptions == null || availableOptions.isEmpty()) {
+        GameOptionsSet.Builder availableOptions = controller.getAvailableOptions(selectedGame);
+        if (availableOptions == null || availableOptions.getOptions().isEmpty()) {
             // no options available
             JLabel label = new JLabel(LocalText.getText("NoGameOptions"));
             optionsPane.add(label);
         } else  { 
+            List<GameOption> options = availableOptions.getOptions();
             optionsPane.setLayout(
-                    new GridLayout(((availableOptions.size() + 1) / 2), 2, 2, 2));
+                    new GridLayout(((options.size() + 1) / 2), 2, 2, 2));
 
-            for (GameOption option : availableOptions.keySet()) {
-                String selectedValue = availableOptions.get(option);
+            for (GameOption option : options) {
+                String selectedValue = option.getSelectedValue();
                 if (option.isBoolean()) {
                     JCheckBox checkbox =
                             new JCheckBox(option.getLocalisedName());

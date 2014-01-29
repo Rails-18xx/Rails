@@ -6,7 +6,7 @@ package rails.game.state;
 class StateTestUtils {
 
     public static Root setUpRoot() {
-        Root root = Root.create(new ChangeReporterImpl());
+        Root root = Root.create();
         close(root);
         return root;
     }

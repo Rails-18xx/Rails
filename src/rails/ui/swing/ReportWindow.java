@@ -4,6 +4,10 @@ import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.net.URL;
 import java.util.List;
 
@@ -16,21 +20,29 @@ import javax.swing.text.html.HTMLDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import rails.common.Config;
 import rails.common.LocalText;
 import rails.common.ReportBuffer;
 import rails.game.action.GameAction;
+import rails.game.state.ChangeStack;
 import rails.sound.SoundManager;
 import rails.ui.swing.elements.ActionButton;
 import rails.ui.swing.elements.RailsIcon;
 
 /**
- * Dynamic Report window that acts as linked game history
+ * ReportWindow displays the game history
  */
-
-public class ReportWindowDynamic extends AbstractReportWindow implements 
-    ActionListener, HyperlinkListener {
+public class ReportWindow extends JFrame implements 
+    ActionListener, HyperlinkListener, ReportBuffer.Observer {
    
     private static final long serialVersionUID = 1L;
+
+    private static Logger log =
+            LoggerFactory.getLogger(ReportWindow.class);
+
+    private final GameUIManager gameUIManager;
+    private final ReportBuffer reportBuffer;
+    private final ChangeStack changeStack;
 
     private JLabel message;
 
@@ -46,19 +58,21 @@ public class ReportWindowDynamic extends AbstractReportWindow implements
 
     private boolean timeWarpMode;
     
-    private final ReportBuffer reportBuffer;
-    
-    protected static Logger log =
-        LoggerFactory.getLogger(ReportWindowDynamic.class);
 
-    public ReportWindowDynamic(GameUIManager gameUIManager) {
-        super(gameUIManager);
+    public ReportWindow(GameUIManager gameUIManager) {
+        this.gameUIManager = gameUIManager;
+        timeWarpMode = false;
+
+        reportBuffer = gameUIManager.getRoot().getReportManager().getReportBuffer();
+        reportBuffer.addObserver(this);
+        changeStack = gameUIManager.getRoot().getStateManager().getChangeStack();
+        
         init();
-        reportBuffer = gameUIManager.getGameManager().getRoot().getReportBuffer();
-        reportBuffer.registerReportWindow(this);
+        
+        // set initial text
+        editorPane.setText(reportBuffer.toText());
     }
 
-    @Override
     public void init() {
         setLayout(new BorderLayout());
 
@@ -145,19 +159,49 @@ public class ReportWindowDynamic extends AbstractReportWindow implements
 //        );
 //        buttonPanel.add(commentButton);
 
-        super.init();
+        // remaining code from AbstractReportWindow
+        
+        setSize(400, 400);
+        setLocation(600, 400);
+        setTitle(LocalText.getText("GameReportTitle"));
+
+        final JFrame frame = this;
+        this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                if (timeWarpMode) return;
+                StatusWindow.uncheckMenuItemBox(StatusWindow.REPORT_CMD);
+                frame.dispose();
+            }
+        });
+        final GameUIManager guiMgr = gameUIManager;
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentMoved(ComponentEvent e) {
+                guiMgr.getWindowSettings().set(frame);
+            }
+            @Override
+            public void componentResized(ComponentEvent e) {
+                guiMgr.getWindowSettings().set(frame);
+            }
+        });
+
+        gameUIManager.packAndApplySizing(this);
+
+        gameUIManager.setMeVisible(this,
+                "yes".equalsIgnoreCase(Config.get("report.window.open")));
 
     }
 
     // FIXME (Rails2.0): Replace this by toTe
-    @Override
     public void setActions() {
 
         forwardButton.setEnabled(false);
         backwardButton.setEnabled(false);
 
         boolean haveRedo = false;
-        List<GameAction> gameActions = PossibleActions.getInstance().getType(GameAction.class);
+        List<GameAction> gameActions = gameUIManager.getGameManager().getPossibleActions().getType(GameAction.class);
         boolean undoFlag = false;
         for (GameAction action:gameActions) {
             switch (action.getMode()) {
@@ -181,7 +225,6 @@ public class ReportWindowDynamic extends AbstractReportWindow implements
         if (!haveRedo) deactivateTimeWarp();
     }
 
-    @Override
     public void scrollDown() {
         // only set caret if visible
         //if (!this.isVisible()) return;
@@ -227,11 +270,11 @@ public class ReportWindowDynamic extends AbstractReportWindow implements
     }
 
     private void gotoLastIndex() {
-        gotoIndex(reportBuffer.getLastIndex());
+        gotoIndex(changeStack.getMaximumIndex());
     }
 
     private void gotoIndex(int index) {
-        int currentIndex = reportBuffer.getCurrentIndex();
+        int currentIndex = changeStack.getCurrentIndex();
         if (index > currentIndex) { // move forward
             GameAction action = new GameAction(GameAction.REDO);
             action.setmoveStackIndex(index);
@@ -250,7 +293,6 @@ public class ReportWindowDynamic extends AbstractReportWindow implements
             returnButton.setVisible(true);
             gameUIManager.setEnabledAllWindows(false, this);
             timeWarpMode = true;
-            closeable = false;
             SoundManager.notifyOfTimeWarp(timeWarpMode);
         }
     }
@@ -262,14 +304,20 @@ public class ReportWindowDynamic extends AbstractReportWindow implements
         returnButton.setVisible(false);
         timeWarpMode = false;
         SoundManager.notifyOfTimeWarp(timeWarpMode);
-        closeable = true;
     }
     
-    // update by the changeStack
-    public void update(String text) {
+    // ReportBuffer.Observer methods
+    
+    // FIXME: Rails 2.0 Not used so far 
+    public void append(String text) {
+        // do nothing
+    }
+
+    public void update(String text) { 
         log.debug("Update dynamic report window");
         // set the content of the pane to the current
         editorPane.setText(text);
         scrollDown();
     }
+
 }

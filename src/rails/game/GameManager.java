@@ -112,7 +112,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
     protected StartPacket startPacket;
 
-    protected PossibleActions possibleActions = PossibleActions.getInstance();
+    protected PossibleActions possibleActions = PossibleActions.create();
 
     protected final ArrayListState<PossibleAction> executedActions = ArrayListState.create(this, "executedActions");
 
@@ -121,11 +121,6 @@ public class GameManager extends RailsManager implements Configurable, Owner {
      */
     protected Portfolio<SpecialProperty> commonSpecialProperties = null;
     
-
-    /** A List of available game options */
-    protected List<GameOption> availableGameOptions =
-        new ArrayList<GameOption>();
-
     /** indicates that the recoverySave already issued a warning, avoids displaying several warnings */
     protected boolean recoverySaveWarning = true;
 
@@ -457,6 +452,10 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     public static GameManager getInstance () {
         return RailsRoot.getInstance().getGameManager();
     }
+    
+    public PossibleActions getPossibleActions() {
+        return possibleActions;
+    }
 
     protected void setRound(Round round) {
         currentRound.set(round);
@@ -639,7 +638,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
         getRoot().getReportManager().getDisplayBuffer().clear();
         guiHints.clearVisibilityHints();
-        ChangeStack changeStack = getRoot().getChangeStack();
+        ChangeStack changeStack = getRoot().getStateManager().getChangeStack();
         boolean startGameAction = false;
         
         if (action instanceof NullAction && ((NullAction)action).getMode() == NullAction.START_GAME) {
@@ -768,7 +767,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         // Process undo/redo centrally
         boolean result = false;
 
-        ChangeStack changeStack = getRoot().getChangeStack();
+        ChangeStack changeStack = getRoot().getStateManager().getChangeStack();
         int index = gameAction.getmoveStackIndex();
         switch (gameAction.getMode()) {
         case GameAction.SAVE:
@@ -1000,7 +999,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             PrintWriter pw = new PrintWriter(filename);
 
             // write map information
-            for (MapHex hex:getRoot().mapManager.getHexes()) {
+            for (MapHex hex:getRoot().getMapManager().getHexes()) {
                         pw.println(hex.getId() + "," + hex.getCurrentTile().toText() + ","
                                 + hex.getCurrentTileRotation() + ","
                                 + hex.getOrientationName(hex.getCurrentTileRotation())
@@ -1088,7 +1087,9 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
         String message = LocalText.getText("GameOver");
         ReportBuffer.add(this, message);
-        DisplayBuffer.add(this, message);
+        
+        // FIXME: Rails 2.0 this is not allowed as this causes troubles with Undo
+        // DisplayBuffer.add(this, message);
 
         ReportBuffer.add(this, "");
 

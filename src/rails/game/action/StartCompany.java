@@ -57,6 +57,7 @@ public class StartCompany extends BuyCertificate {
     
     @Override
     public String toString() {
+        log.debug("company= " + company);
         StringBuilder text = new StringBuilder();
         text.append("StartCompany: ").append(company != null ? company.getId() : null);
         if (price > 0) {

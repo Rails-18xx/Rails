@@ -78,7 +78,7 @@ class GameIOData {
     
     String gameOptionsAsText() {
         StringBuilder s = new StringBuilder();
-        for (String key : gameData.getGameOptions().keySet()) {
+        for (String key : gameData.getGameOptions().getOptions().keySet()) {
             s.append("Option "+key+"="+gameData.getGameOptions().get(key)+ "\n");
         }
         return s.toString();

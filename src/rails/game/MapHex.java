@@ -469,7 +469,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         if (relaidTokens != null) {
             // Check for manual handling of tokens
             for (String compName : relaidTokens.keySet()) {
-                PublicCompany company = getRoot().getGameManager().getCompanyManager().getPublicCompany(compName);
+                PublicCompany company = getRoot().getCompanyManager().getPublicCompany(compName);
                 for (Stop stop : stops) {
                     if (stop.hasTokenOf(company)) {
                         Station newStation = newTile.getStation(relaidTokens.get(compName));

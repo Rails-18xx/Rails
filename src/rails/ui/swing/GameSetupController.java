@@ -29,14 +29,14 @@ import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.common.collect.Table;
-import com.google.common.collect.TreeBasedTable;
 
 import rails.common.Config;
 import rails.common.GameData;
 import rails.common.GameInfo;
 import rails.common.GameOption;
+import rails.common.GameOptionsSet;
 import rails.common.GuiDef;
 import rails.common.LocalText;
 import rails.common.parser.ConfigurationException;
@@ -61,12 +61,9 @@ public class GameSetupController {
     
     private final String credits;
     
-    private final Table<GameInfo, GameOption, String> gameOptions =
-            TreeBasedTable.create();
+    private final Map<GameInfo, GameOptionsSet.Builder> gameOptions =
+            Maps.newHashMap();
             
-    private final Set<GameInfo> optionsLoaded = 
-            Sets.newHashSet();
-
     // UI references
     private final GameSetupWindow window;
     private ConfigWindow configWindow;
@@ -120,12 +117,11 @@ public class GameSetupController {
         splashWindow = null;
     }
     
-    Map<GameOption, String> getAvailableOptions(GameInfo game) {
-        if (!optionsLoaded.contains(game)) {
-            loadOptions(game);
-            optionsLoaded.add(game);
+    GameOptionsSet.Builder getAvailableOptions(GameInfo game) {
+        if (!gameOptions.containsKey(game)) {
+            return loadOptions(game);
         }
-        return gameOptions.row(game);
+        return gameOptions.get(game);
     }
     
     
@@ -133,18 +129,17 @@ public class GameSetupController {
         return new OptionChangeAction(option);
     }
     
-    private void loadOptions(GameInfo game) {
+    private GameOptionsSet.Builder loadOptions(GameInfo game) {
         log.debug("Load Game Options of " + game.getName());
-        List<GameOption> loadGameOptions = ImmutableList.of();
+        GameOptionsSet.Builder loadGameOptions = null;
         try {
             loadGameOptions = GameOptionsParser.load(game.getName());
         } catch (ConfigurationException e) {
             log.error(e.getMessage());
+            loadGameOptions = GameOptionsSet.builder();
         }
-        // Initialize all GameOptions with default values
-        for (GameOption option:loadGameOptions) {
-            gameOptions.put(game, option, option.getDefaultValue());
-        }
+        gameOptions.put(game, loadGameOptions);
+        return loadGameOptions;
     }
 
     private void startGameUIManager(RailsRoot game, boolean wasLoaded, SplashWindow splashWindow) {
@@ -220,7 +215,7 @@ public class GameSetupController {
             
             GameInfo selectedGame = window.getSelectedGame();
             List<String> players = window.getPlayers();
-            Map<GameOption, String> selectedOptions = getAvailableOptions(selectedGame);
+            GameOptionsSet.Builder selectedOptions = getAvailableOptions(selectedGame);
 
             // check against number of available players
             if (players.size() < selectedGame.getMinPlayers()) {
@@ -407,7 +402,7 @@ public class GameSetupController {
                 value =  String.valueOf(((JComboBox)source).getSelectedItem());
             }
             GameInfo game  = window.getSelectedGame();
-            gameOptions.put(game, option, value);
+            option.setSelectedValue(value);
             log.debug("GameOption " + option + " set to " + value +  " for game " + game);
         }
     }

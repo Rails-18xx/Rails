@@ -2,22 +2,21 @@ package rails.game.state;
 
 public class ChangeReporterImpl implements ChangeReporter {
 
-    public void setChangeStack(ChangeStack changeStack) {
+    public void linkToChangeStack(ChangeStack changeStack) {
         // do nothing
     }
 
-    public void addMessage(String message) {
+    public void updateOnClose(ChangeSet current) {
         // do nothing
     }
-
-    public void close(ChangeSet set) {
+    public void informOnUndo() {
         // do nothing
-
     }
-
-    public void update() {
+    public void informOnRedo() {
         // do nothing
-
+    }
+    public void update(ChangeSet changeSet) {
+        // do nothing
     }
 
 }

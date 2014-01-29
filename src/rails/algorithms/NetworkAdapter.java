@@ -5,8 +5,8 @@ import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rails.game.GameManager;
 import rails.game.PublicCompany;
+import rails.game.RailsRoot;
 
 /**
  * This class coordinates the creation of company related graphs
@@ -16,7 +16,7 @@ public class NetworkAdapter {
     protected static Logger log =
             LoggerFactory.getLogger(NetworkAdapter.class);
 
-    private final GameManager gameManager;
+    private final RailsRoot root;
     
     private NetworkGraph mapGraph;
     private NetworkGraph routeGraph;
@@ -26,17 +26,17 @@ public class NetworkAdapter {
     private PublicCompany company;
     private boolean addHQ;
     
-    private NetworkAdapter(GameManager gameManager) {
-        this.gameManager = gameManager;
+    private NetworkAdapter(RailsRoot root) {
+        this.root = root;
     }
 
-    public static NetworkAdapter create(GameManager gameManager) {
-        return new NetworkAdapter(gameManager);
+    public static NetworkAdapter create(RailsRoot root) {
+        return new NetworkAdapter(root);
     }
     
     public NetworkGraph getMapGraph() {
         if (mapGraph == null) {
-            mapGraph = NetworkGraph.createMapGraph(gameManager);
+            mapGraph = NetworkGraph.createMapGraph(root);
             log.info("MapGraph created");
         }
         return mapGraph;

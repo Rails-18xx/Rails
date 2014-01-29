@@ -2,7 +2,7 @@ package rails.game.state;
 
 import static com.google.common.base.Preconditions.checkState;
 
-import java.util.List;
+import java.util.Deque;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -20,33 +20,41 @@ public class ChangeStack {
     // static fields
     private final StateManager stateManager;
 
-    private final List<ChangeSet> undoStack = Lists.newArrayList();
-    private final List<ChangeSet> redoStack = Lists.newArrayList();
-    private final ChangeReporter reporter;
+    private final Deque<ChangeSet> undoStack = Lists.newLinkedList();
+    private final Deque<ChangeSet> redoStack = Lists.newLinkedList();
     
     // dynamic fields
-    private ImmutableList.Builder<Change> changeBuilder = ImmutableList.builder();
+    private ChangeReporter reporter; // however only assigned once
+    private ImmutableList.Builder<Change> changeBuilder;
 
-    private ChangeStack(StateManager stateManager, ChangeReporter reporter) {
+    private ChangeStack(StateManager stateManager) {
         this.stateManager = stateManager;
-        this.reporter = reporter;
+        reporter = null;
+        changeBuilder = ImmutableList.builder();
     }
     
     /**
-     * Creates a new ChangeStack with an initial ChangeSet
+     * Creates a new ChangeStack
+     * It is initialized automatically, as there is an open ChangeBuilder
      */
-    public static ChangeStack create(StateManager stateManager, ChangeReporter changeReporter) {
-        ChangeStack changeStack = new ChangeStack(stateManager, changeReporter);
-        changeReporter.setChangeStack(changeStack);
+    public static ChangeStack create(StateManager stateManager) {
+        ChangeStack changeStack = new ChangeStack(stateManager);
         return changeStack;
     }
     
     /**
-     * @return the previous (closed) changeSet
+     * Add ChangeReporter
+     */
+    public void addChangeReporter(ChangeReporter reporter) {
+        this.reporter = reporter;
+        log.debug("Added ChangeReporter " + reporter);
+    }
+
+    /**
+     * @return the previous (closed) changeSet, null if empty
      */
     public ChangeSet getPreviousChangeSet() {
-        checkState(getCurrentIndex() >= 0, "No ChangeSet available at start");
-        return undoStack.get(getCurrentIndex());
+        return undoStack.peekLast();
     }
     
     /**
@@ -60,13 +68,7 @@ public class ChangeStack {
         change.getState().informTriggers(change);
     }
     
-    
-    void addMessage(String message) {
-        log.info("Message: " + message);
-        reporter.addMessage(message);
-    }
-    
-    private boolean checkRequirements(ChangeAction action) {
+    private boolean checkRequirementsForClose(ChangeAction action) {
         if (changeBuilder.build().isEmpty() || action == null) {
             return false;
         } else {
@@ -75,16 +77,21 @@ public class ChangeStack {
     }
     
     public void close(ChangeAction action) {
-        if (checkRequirements(action)) {
-            ChangeSet set = new ChangeSet(changeBuilder.build(), action, getCurrentIndex());
-            reporter.close(set);
-            log.debug("<<< Closed changeSet " + set + " at index =" + getCurrentIndex());
-            undoStack.add(set);
+        if (checkRequirementsForClose(action)) {
+            // this has to be done before the changeBuilder closes
+            int index = undoStack.size() + 1;
+            ChangeSet closeSet = new ChangeSet(changeBuilder.build(), action, index);
+            log.debug("<<< Closed changeSet " + closeSet);
+            undoStack.addLast(closeSet);
             redoStack.clear();
+
+            if (reporter != null) {
+                reporter.updateOnClose(closeSet);
+            }
             // restart builders
             restart();
             // inform direct and indirect observers
-            updateObservers(set.getStates());
+            updateObservers(closeSet.getStates());
         }
     }
 
@@ -97,38 +104,39 @@ public class ChangeStack {
         // update the observers of states and models
         log.debug("ChangeStack: update Observers");
         stateManager.updateObservers(states);
-        reporter.update();
+        // FIXME: Rails 2.0 is this still required?
+        //reporter.update();
     }
     
-    // undo return 
+    // is undo possible (protect first index) 
     public boolean isUndoPossible() {
-        return (getCurrentIndex() >= 1);
+        return (!undoStack.isEmpty() && undoStack.size() != 1);
     }
 
     public boolean isUndoPossible(ChangeActionOwner owner) {
         return (isUndoPossible() && 
-                undoStack.get(getCurrentIndex()-1).getOwner() == owner);
+                undoStack.peekLast().getOwner() == owner);
     }
     
     /**
      * Undo command
      */
     public void undo() {
-        checkState(getCurrentIndex() > 1, "Undo not possible");
+        checkState(isUndoPossible(), "Undo not possible");
         ChangeSet undoSet = executeUndo();
         restart();
         updateObservers(undoSet.getStates());
     }
     
     /**
-     * Example: Undo-Stack has 4 elements (0,1,2,3), current-Index = 4
-     * Undo to index 2, requires removing the latest element, such that current-Index = 3
+     * Example: Undo-Stack has 4 elements (1,2,3,4), size = 4
+     * Undo to index 2, requires removing the latest element, such that size = 3
      */
     
     public void undo(int index) {
-        checkState(index < getCurrentIndex() && index >= 1, "Undo not possible");
+        checkState(isUndoPossible() && index < undoStack.size() , "Undo not possible");
         ImmutableSet.Builder<State> states = ImmutableSet.builder();
-        while (getCurrentIndex() > index) {
+        while (undoStack.size() > index) {
             states.addAll(executeUndo().getStates());
         }
         restart();
@@ -136,11 +144,15 @@ public class ChangeStack {
     }
 
     private ChangeSet executeUndo() {
-        log.debug("Size of undoStack = " + undoStack.size());
-        ChangeSet undoSet = undoStack.remove(getCurrentIndex()-1);
+        ChangeSet undoSet = undoStack.pollLast();
         log.debug("UndoSet = " + undoSet);
         undoSet.unexecute();
-        redoStack.add(undoSet);
+        redoStack.addFirst(undoSet);
+        
+        if (reporter != null) {
+            reporter.informOnUndo();
+        }
+        
         return undoSet;
     }
     
@@ -151,7 +163,7 @@ public class ChangeStack {
 
     public boolean isRedoPossible(ChangeActionOwner owner) {
         return (isRedoPossible() && 
-                redoStack.get(redoStack.size() - 1).getOwner() == owner);
+                redoStack.peekFirst().getOwner() == owner);
     }
     
     /**
@@ -159,7 +171,7 @@ public class ChangeStack {
      * @throws IllegalStateException if redo stack is empty or there is an open ChangeSet
      */
     public void redo() {
-        checkState(!redoStack.isEmpty(), "Redo not possible");
+        checkState(isRedoPossible(), "Redo not possible");
         
         ChangeSet redoSet = executeRedo();
         restart();
@@ -167,11 +179,11 @@ public class ChangeStack {
     }
 
     public void redo(int index) {
-        checkState(!redoStack.isEmpty() && index <= getMaximumIndex(), 
+        checkState(index > undoStack.size() && index <= undoStack.size() + redoStack.size(), 
                 "Redo not possible");
 
         ImmutableSet.Builder<State> states = ImmutableSet.builder();
-        while (getCurrentIndex() < index) {
+        while (undoStack.size() < index) {
             states.addAll(executeRedo().getStates());
         }
         restart();
@@ -179,25 +191,30 @@ public class ChangeStack {
     }
     
     private ChangeSet executeRedo() {
-        ChangeSet redoSet = redoStack.remove(redoStack.size() - 1);
+        ChangeSet redoSet = redoStack.pollFirst();
+        log.debug("RedoSet = " + redoSet);
         redoSet.reexecute();
-        undoStack.add(redoSet);
+        undoStack.addLast(redoSet);
+        
+        if (reporter != null) {
+            reporter.informOnRedo();
+        }
         
         return redoSet;
     }
 
     /**
-     * @return current index of the ChangeStack
+     * @return current index of the ChangeStack (equal to size of undo stack)
      */
     public int getCurrentIndex() {
         return undoStack.size();
     }
     
     /**
-     * @return size of RedoStack
+     * @return size of undoStack plus RedoStack
      */
     public int getMaximumIndex() {
-        return redoStack.size() + getCurrentIndex();
+        return redoStack.size() + undoStack.size();
     }
 
 }

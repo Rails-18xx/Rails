@@ -65,6 +65,7 @@ public class ChangeSet {
         
         // iterate reverse
         for (Change change:Lists.reverse(changes)) {
+            log.debug("About to undo: " + change);
             change.undo();
             log.debug("Undone: " + change);
         }
@@ -91,6 +92,9 @@ public class ChangeSet {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("action", action).add("Owner", getOwner()).toString();
+        return Objects.toStringHelper(this).add("action", action)
+                .add("Owner", getOwner())
+                .add("Index", index)
+                .toString();
     }
 }

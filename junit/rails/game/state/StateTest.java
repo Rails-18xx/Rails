@@ -18,7 +18,7 @@ public class StateTest {
     
     @Before
     public void setUp() {
-        root = Root.create(new ChangeReporterImpl());
+        root = Root.create();
         state = StateImpl.create(root, STATE_ID, null);
         model = ModelImpl.create(root, MODEL_ID, null);
         state_model = StateImpl.create(model, STATE_ID, null);

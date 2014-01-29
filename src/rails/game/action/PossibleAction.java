@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import rails.game.*;
 import rails.game.state.ChangeAction;
+import rails.game.state.ChangeActionOwner;
 
 /**
  * PossibleAction is the superclass of all classes that describe an allowed user
@@ -28,6 +29,7 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
 
     protected String playerName;
     protected int playerIndex;
+    transient protected Player player;
 
     protected boolean acted = false;
 
@@ -119,4 +121,15 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
         return toString();
     }
 
+    // Implementation for ChangeAction Interface
+    public ChangeActionOwner getActionOwner() {
+        return player;
+    }
+
+    // FIXME: Rails 2.0 check if playerindex is the correct identifier or prefer name?
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        player = getRoot().getPlayerManager().getPlayerByIndex(playerIndex);
+    }
+    
 }

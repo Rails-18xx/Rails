@@ -16,6 +16,7 @@ public class ReportManager extends RailsManager {
     
     private ReportManager(RailsRoot parent, String id) {
         super(parent, id);
+        parent.getStateManager().getChangeStack().addChangeReporter(reportBuffer);
     }
 
     public static ReportManager create(RailsRoot parent, String id) {

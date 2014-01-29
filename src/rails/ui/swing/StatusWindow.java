@@ -782,7 +782,7 @@ KeyListener, ActionPerformer {
         );
 
 
-        if (!RailsRoot.getDevelop()) {
+        if (!Config.getDevelop()) {
             // show game report line by line
             List<String> gameReport = gm.getGameReport();
             Collections.reverse(gameReport);

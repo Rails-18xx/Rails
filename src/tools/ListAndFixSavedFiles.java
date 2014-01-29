@@ -11,6 +11,7 @@ import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -210,13 +211,13 @@ implements ActionListener, KeyListener {
 
             // use GameLoader object to load game
             gameLoader = new GameLoader();
-            add(gameLoader.getGameDataAsText());
             try{
-                gameLoader.loadGameData(filepath);
-                gameLoader.getRoot().start();
+                gameLoader.createFromFile(filepath);
+                add(gameLoader.getGameDataAsText());
+                //gameLoader.getRoot().start();
                 setReportText(true);
             } catch (Exception e)  {
-                log.error(LocalText.getText("LoadFailed", e));
+                log.error("" + e);
             }
             root = gameLoader.getRoot();
         }

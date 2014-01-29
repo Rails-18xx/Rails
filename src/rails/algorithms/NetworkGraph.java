@@ -22,11 +22,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import rails.game.BaseToken;
-import rails.game.GameManager;
 import rails.game.HexSidesSet;
 import rails.game.MapHex;
 import rails.game.MapManager;
 import rails.game.PublicCompany;
+import rails.game.RailsRoot;
 import rails.game.Station;
 import rails.game.Stop;
 import rails.game.Tile;
@@ -70,9 +70,9 @@ public class NetworkGraph {
         vertices = Maps.newHashMap(inGraph.vertices);
     }
 
-    public static NetworkGraph createMapGraph(GameManager gameManager) {
+    public static NetworkGraph createMapGraph(RailsRoot root) {
         NetworkGraph graph = new NetworkGraph();
-        graph.generateMapGraph(gameManager);
+        graph.generateMapGraph(root);
         return graph;
     }
     
@@ -199,9 +199,9 @@ public class NetworkGraph {
         }
     }
 
-    private void generateMapGraph(GameManager gameManager) {
-        MapManager mapManager = gameManager.getMapManager();
-        RevenueManager revenueManager = gameManager.getRevenueManager();
+    private void generateMapGraph(RailsRoot root) {
+        MapManager mapManager = root.getMapManager();
+        RevenueManager revenueManager = root.getRevenueManager();
         for (MapHex hex:mapManager.getHexes()) {
             // get Tile
             Tile tile = hex.getCurrentTile();

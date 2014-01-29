@@ -32,7 +32,7 @@ public class GameUIManager implements DialogOwner {
 
     public StockChart stockChart;
     public StatusWindow statusWindow;
-    public AbstractReportWindow reportWindow;
+    public ReportWindow reportWindow;
     public ConfigWindow configWindow;
     public ORUIManager orUIManager;
     public ORWindow orWindow; // TEMPORARY
@@ -215,7 +215,7 @@ public class GameUIManager implements DialogOwner {
         if (Config.get("report.window.type").equalsIgnoreCase("static")) {
             // reportWindow = new ReportWindowStatic(this);
         } else {
-            reportWindow = new ReportWindowDynamic(this);
+            reportWindow = new ReportWindow(this);
         }
 
         orWindow = new ORWindow(this, splashWindow);
@@ -638,7 +638,7 @@ public class GameUIManager implements DialogOwner {
             } catch (NumberFormatException e) {
                 cityNumber = 1;
             }
-            hex = root.getMapManager().getHex(hexName);
+            hex = railsRoot.getMapManager().getHex(hexName);
             station = hex.getStation(cityNumber);
             oldCompName = t.getOldCompanyName();
             options.add(LocalText.getText("ExchangeableToken",

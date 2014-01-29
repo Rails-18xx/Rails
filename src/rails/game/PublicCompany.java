@@ -1640,7 +1640,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
                 return baseTokenLayCost.get(0);
             } else {
                 // WARNING: no provision yet for multiple home hexes.
-                return getRoot().getMapManager().getHexDistance(homeHexes.get(0), hex) * baseTokenLayCost[0];
+                return getRoot().getMapManager().getHexDistance(homeHexes.get(0), hex) * baseTokenLayCost.get(0);
             }
         } else {
             return 0;

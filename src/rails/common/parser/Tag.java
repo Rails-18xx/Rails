@@ -10,8 +10,11 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 
+import rails.common.GameOption;
+import rails.common.GameOptionsSet;
 import rails.common.ResourceLoader;
 import rails.util.Util;
 
@@ -30,7 +33,7 @@ public class Tag {
 
     // static data
     private final Element element;
-    private final Map<String, String> gameOptions;
+    private final GameOptionsSet gameOptions;
 
     // dynamic data
     private Map<String, String> attributes = null;
@@ -40,7 +43,7 @@ public class Tag {
     private boolean parsing = false;
 
 
-    public Tag (Element element, Map<String, String> gameOptions) {
+    public Tag (Element element, GameOptionsSet gameOptions) {
         this.element = element;
         this.gameOptions = gameOptions;
     }
@@ -282,8 +285,10 @@ public class Tag {
                     Node parmAttr = nnp.getNamedItem("parm");
                     if (parmAttr != null) {
                     	value = parmAttr.getNodeValue();
-                    	name = GameOption.constructParametrisedName(name, value.split(","));
+                    	Iterable<String> parameters = Splitter.on(XMLTags.VALUES_DELIM).split(value);
+                    	name = GameOption.constructParameterisedName(name, ImmutableList.copyOf(parameters));
                     }
+                    
                     Node valueAttr = nnp.getNamedItem("value");
                     if (valueAttr == null)
                         throw new ConfigurationException(
@@ -307,27 +312,33 @@ public class Tag {
                      * Parametrization means that the actual name is UnlimitedTopTrains_D,
                      * for instance in saved files, and so the name must be shortened to find a match.
                      */
-                    if (optionValue == null) {
-                    	for (String optName : gameOptions.keySet()) {
-                    	    // startsWith is a shortcut, perhaps it should be matches(name+"_.*").
-                    		if (optName != null && optName.startsWith(name)) {
-                    			optionValue = gameOptions.get(optName);
-                    			log.warn("Option name "+name+" replaced by "+optName);
-                    			break;
-                    		}
-                    	}
-                    }
                     
-                    // If not assigned in the previous step, take the default value
+                    // FIXME: Rails 2.0 removed that handling, only logging errors now
                     if (optionValue == null) {
-                        GameOption go = GameOption.getByName(name);
-                        optionValue = go != null ? go.getDefaultValue() : "";
-                        log.warn("GameOption " + name + "=" + value
-                                 + " but no assigned value found, assumed "+optionValue);
-
+                        log.error("GameOption " + name + "=" + value
+                                + " has no assigned value");
                     }
 
-                    //if (optionValue.equalsIgnoreCase(value)) {
+//                    if (optionValue == null) {
+//                    	for (String optName : gameOptions.getOptions().keySet()) {
+//                    	    // startsWith is a shortcut, perhaps it should be matches(name+"_.*").
+//                    		if (optName != null && optName.startsWith(name)) {
+//                    			optionValue = gameOptions.get(optName);
+//                    			log.warn("Option name "+name+" replaced by "+optName);
+//                    			break;
+//                    		}
+//                    	}
+//                    }
+//                    
+//                    // If not assigned in the previous step, take the default value
+//                    if (optionValue == null) {
+//                        GameOption go = GameOption.getByName(name);
+//                        optionValue = go != null ? go.getDefaultValue() : "";
+//                        log.warn("GameOption " + name + "=" + value
+//                                 + " but no assigned value found, assumed "+optionValue);
+//
+//                    }
+
                     if (valueList.contains(optionValue)) {
                         parseSubTags(childElement);
                     }
@@ -359,7 +370,7 @@ public class Tag {
      * with the given name.
      */
     public static Tag findTopTagInFile(String filename, String directory,
-            String tagName) throws ConfigurationException {
+            String tagName, GameOptionsSet gameOptions) throws ConfigurationException {
         Document doc = null;
         try {
             // Step 1: create a DocumentBuilderFactory and setNamespaceAware
@@ -394,7 +405,7 @@ public class Tag {
             if ((childNode != null)
                 && (childNode.getNodeName().equals(tagName))
                 && (childNode.getNodeType() == Node.ELEMENT_NODE)) {
-                return new Tag((Element) childNode);
+                return new Tag((Element) childNode, gameOptions);
             }
         }
         throw new ConfigurationException("Could not find " + tagName + " in "

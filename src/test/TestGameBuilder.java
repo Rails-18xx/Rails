@@ -63,11 +63,11 @@ public final class TestGameBuilder extends TestCase {
             System.out.println("Found game at " + gameFile.getAbsolutePath());
             GameLoader gameLoader = new GameLoader();
             if (gameLoader.createFromFile(gameFile.getAbsolutePath())) {
-                game = gameLoader.getRoot();
+                root = gameLoader.getRoot();
             }
         }
-        if (game != null) {  
-            List<String> report = game.getReportManager().getReportBuffer().getAsList();
+        if (root != null) {  
+            List<String> report = root.getReportManager().getReportBuffer().getAsList();
             saveGameReport(report, reportFilename, false);
         }
     }

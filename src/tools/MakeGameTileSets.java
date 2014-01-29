@@ -65,6 +65,7 @@ public class MakeGameTileSets {
     private MakeGameTileSets(String[] games) throws ConfigurationException {
 
         String directory = "tiles";
+        // the last arguments refers to the fact that no GameOptions are required
         Element inputTopElement =
                 Tag.findTopTagInFile(tilesFilePath, directory, "Tiles", null).getElement();
 

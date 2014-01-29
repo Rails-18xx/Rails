@@ -190,7 +190,7 @@ public class TileUpgrade {
     public static TileUpgrade createSpecific(Tile current, Tile specific) {
         TileUpgrade upgrade = new TileUpgrade(current, specific.getId(), null, null);
         try {
-            upgrade.finishConfiguration(current.getRoot().getGameManager());
+            upgrade.finishConfiguration(current.getRoot());
         } catch (ConfigurationException e) {
             log.error(LocalText.getText("InvalidUpgrade", 
                     current.toText(), specific.toText()), e);
@@ -198,15 +198,15 @@ public class TileUpgrade {
         return upgrade;
     }
 
-    public void finishConfiguration(GameManager gameManager) throws ConfigurationException {
-        targetTile = gameManager.getTileManager().getTile(targetTileId);
+    public void finishConfiguration(RailsRoot root) throws ConfigurationException {
+        targetTile = root.getTileManager().getTile(targetTileId);
         if (targetTile == null) {
             throw new ConfigurationException(LocalText.getText("InvalidUpgrade", 
                     baseTile.toText(), targetTileId));
         }
         initRotations();
-        parsePhases(gameManager);
-        parseHexes(gameManager);
+        parsePhases(root);
+        parseHexes(root);
     }
     
     public Tile getTargetTile() {
@@ -250,12 +250,12 @@ public class TileUpgrade {
         rotations = rotationBuilder.build();
     }
     
-    private void parsePhases(GameManager gameManager) throws ConfigurationException {
+    private void parsePhases(RailsRoot root) throws ConfigurationException {
         if (phases == null) return;
 
         ImmutableList.Builder<Phase> phaseBuilder = ImmutableList.builder();
         for (String phaseName:phases.split(",")) {
-            Phase phase = gameManager.getPhaseManager().getPhaseByName(phaseName);
+            Phase phase = root.getPhaseManager().getPhaseByName(phaseName);
             if (phase == null) {
                 throw new ConfigurationException(LocalText.getText(
                         "IllegalPhaseDefinition",
@@ -268,12 +268,12 @@ public class TileUpgrade {
         allowedPhases = phaseBuilder.build();
     }
     
-    private List<MapHex> parseHexString(GameManager gameManager, String sHexes)
+    private List<MapHex> parseHexString(RailsRoot root, String sHexes)
         throws ConfigurationException {
         ImmutableList.Builder<MapHex> hexBuilder = ImmutableList.builder();
         
         for (String sHex:sHexes.split(",")) {
-            MapHex hex = gameManager.getMapManager().getHex(sHex);
+            MapHex hex = root.getMapManager().getHex(sHex);
             if (hex == null) {
                 throw new ConfigurationException(LocalText.getText("InvalidUpgrade", 
                         baseTile.toText(), sHexes));
@@ -284,14 +284,14 @@ public class TileUpgrade {
         return hexBuilder.build();
     }
     
-    private void parseHexes(GameManager gameManager) throws ConfigurationException {
+    private void parseHexes(RailsRoot root) throws ConfigurationException {
         if (hexes == null) return;
 
         boolean allowed = !hexes.startsWith("-");
         if (allowed) {
-            allowedHexes = parseHexString(gameManager, hexes);
+            allowedHexes = parseHexString(root, hexes);
         } else {
-            disallowedHexes = parseHexString(gameManager, hexes.substring(1));
+            disallowedHexes = parseHexString(root, hexes.substring(1));
         }
     }
     

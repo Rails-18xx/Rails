@@ -19,7 +19,7 @@ public class RootTest {
     
     @Before
     public void setUp() {
-        root = Root.create(new ChangeReporterImpl());
+        root = Root.create();
         manager = new ManagerImpl(root, MANAGER_ID);
         item = new AbstractItemImpl(root, ITEM_ID);
         anotherItem = new AbstractItemImpl(manager, ANOTHER_ID);

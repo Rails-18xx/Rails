@@ -1,7 +1,5 @@
 package rails.game;
 
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,7 +7,7 @@ import rails.algorithms.RevenueManager;
 import rails.common.Config;
 import rails.common.DisplayBuffer;
 import rails.common.GameData;
-import rails.common.GameOption;
+import rails.common.GameOptionsSet;
 import rails.common.LocalText;
 import rails.common.ReportBuffer;
 import rails.common.ReportManager;
@@ -68,7 +66,7 @@ public class RailsRoot extends Root implements RailsItem {
         for (String playerName : gameData.getPlayers()) {
             log.debug("Player: " + playerName);
         }
-        for (String optionName : gameData.getGameOptions().keySet()) {
+        for (String optionName : gameData.getGameOptions().getOptions().keySet()) {
             log.debug("Option: " + optionName + "="
                     + gameData.getGameOptions().get(optionName));
         }
@@ -121,7 +119,7 @@ public class RailsRoot extends Root implements RailsItem {
         String directory = "data/" + gameData.getGameName();
         
         Tag componentManagerTag = Tag.findTopTagInFile(
-                GAME_XML_FILE, directory, XMLTags.COMPONENT_MANAGER_ELEMENT_ID, gameData.getGameOptions());
+                GAME_XML_FILE, directory, XMLTags.COMPONENT_MANAGER_ELEMENT_ID, gameData.getGameOptions() );
         
         ComponentManager componentManager = new ComponentManager();
         componentManager.start(this,  componentManagerTag);
@@ -247,7 +245,7 @@ public class RailsRoot extends Root implements RailsItem {
     /**
      * @return the gameOptions
      */
-    public Map<String, String> getGameOptions() {
+    public GameOptionsSet getGameOptions() {
         return gameData.getGameOptions();
     }
     

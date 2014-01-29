@@ -1,9 +1,7 @@
 package rails.common;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableList;
 
 import rails.game.state.ChangeSet;
 import rails.util.Util;
@@ -20,41 +18,34 @@ class ReportSet {
     private static final String NEWLINE_STRING = "<br>&#10;";
 
     private final ChangeSet changeSet;
-    private final List<String> messages = new ArrayList<String>();
+    private final ImmutableList<String> messages;
+    private final String htmlText;
+    private final String htmlTextActive;
     
-    ReportSet(ChangeSet changeSet){
+    ReportSet(ChangeSet changeSet, ImmutableList<String> messages){
         this.changeSet = changeSet;
+        this.messages = messages;
+        this.htmlText = toHtml(false);
+        this.htmlTextActive = toHtml(true);
     }
     
-    ChangeSet getChangeSet() {
-        return changeSet;
+    String getAsHtml(ChangeSet currentChangeSet) {
+        if (currentChangeSet == changeSet) {
+            return htmlTextActive;
+        } else {
+            return htmlText;
+        }
     }
   
-    void addMessage(String message) {
-        messages.add(message);
-    }
-    
-    List<String> getAsList() {
+    ImmutableList<String> getAsList() {
         return messages;
-    }
-    
-    String getMessages(boolean html) {
-        StringBuffer s = new StringBuffer();
-        for (String message:messages) {
-            if (html) {
-                s.append(Util.convertToHtml(message)); 
-            } else {
-                s.append(message);
-            }
-        }
-        return s.toString();
     }
     
     /**
      * converts messages to html string
      * @param activeMessage if true, adds indicator and highlighting for active message
      */
-    String toHtml(boolean activeMessage) {
+    private String toHtml(boolean activeMessage) {
         if (messages.isEmpty()) {
             if (activeMessage) {
                 return ("<span bgcolor=Yellow>" + ReportBuffer.ACTIVE_MESSAGE_INDICATOR + "</span>"
@@ -72,7 +63,7 @@ class ReportSet {
                 if (activeMessage) {
                     s.append("<span bgcolor=Yellow>" + ReportBuffer.ACTIVE_MESSAGE_INDICATOR) ;
                 }
-                s.append("<a href=http://rails:"  + changeSet + ">");
+                s.append("<a href=http://rails:"  + changeSet.getIndex() + ">");
                 s.append(message);
                 s.append("</a>"); 
                 if (activeMessage) {
@@ -87,17 +78,29 @@ class ReportSet {
         return s.toString();
     }
     
-    public String toText() {
-        StringBuffer s = new StringBuffer();
-        for (String message:messages) {
-            s.append(message + "\n");
-        }
-        return s.toString();
-    }
-    
     @Override
     public String toString() {
         return Objects.toStringHelper(this).addValue(changeSet).toString();
+    }
+    
+    static Builder builder() {
+        return new Builder();
+    }
+    
+    static class Builder {
+        
+        private final ImmutableList.Builder<String> messageBuilder = ImmutableList.builder();
+        
+        private Builder() {}
+        
+        void addMessage(String message) {
+            messageBuilder.add(message);
+        }
+        
+        ReportSet build(ChangeSet changeSet) {
+            return new ReportSet(changeSet, messageBuilder.build());
+        }
+        
     }
 
 }

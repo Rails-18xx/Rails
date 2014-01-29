@@ -236,7 +236,7 @@ public class Tile extends RailsModel implements Comparable<Tile> {
                         getParent().getDefaultStopTypes());
     }
 
-    public void finishConfiguration(GameManager gameManager, int sortingDigits)
+    public void finishConfiguration(RailsRoot root, int sortingDigits)
             throws ConfigurationException {
 
         try {
@@ -249,7 +249,7 @@ public class Tile extends RailsModel implements Comparable<Tile> {
         }
         
         for (TileUpgrade upgrade : upgrades) {
-            upgrade.finishConfiguration(gameManager);
+            upgrade.finishConfiguration(root);
         }
     }
 

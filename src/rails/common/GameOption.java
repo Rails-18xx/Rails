@@ -31,6 +31,9 @@ public class GameOption implements Comparable<GameOption> {
     private final String defaultValue;
     private final List<String> allowedValues;
     private final int ordering;
+    
+    // dynamic values
+    private String selectedValue;
 
     public GameOption(String name, String localisedName, boolean isBoolean, 
             String defaultValue, List<String> allowedValues, int ordering) {
@@ -64,6 +67,18 @@ public class GameOption implements Comparable<GameOption> {
 
     public String getDefaultValue() {
         return defaultValue;
+    }
+    
+    public void setSelectedValue(String value) {
+        this.selectedValue = value;
+    }
+    
+    public String getSelectedValue() {
+        if (selectedValue == null) {
+            return defaultValue;
+        } else {
+            return selectedValue;
+        }
     }
     
     @Override
@@ -127,16 +142,11 @@ public class GameOption implements Comparable<GameOption> {
             this.ordering = ordering;
         }
 
-        private String getParameterisedName() {
-            if (parameters != null && !parameters.isEmpty()) {
-                return name + "_" +  Joiner.on("_").join(parameters);
-            } else {
-                this.parameters = ImmutableList.of();
-                return name;
-            }
-        }
-
         private String getLocalisedName() {
+            if (parameters == null || parameters.isEmpty()) {
+                return LocalText.getText(name);
+            }
+            
             ImmutableList.Builder<String> localTextPars = ImmutableList.builder();
             for (String par : parameters) {
                 localTextPars.add(LocalText.getText(par));
@@ -174,7 +184,7 @@ public class GameOption implements Comparable<GameOption> {
                 }
             }
 
-            String parameterisedName = getParameterisedName();
+            String parameterisedName = constructParameterisedName(name, parameters);
             String localisedName = getLocalisedName();
             String finalDefaultValue = getFinalDefaultValue(isBoolean, finalAllowedValues);
             
@@ -182,8 +192,17 @@ public class GameOption implements Comparable<GameOption> {
                     finalDefaultValue, finalAllowedValues, ordering);
         }
     }
-    
 
+    /**
+     * Returns parameterised Name
+     */
+    public static String constructParameterisedName(String name, List<String> parameters) {
+        if (parameters != null && !parameters.isEmpty()) {
+            return name + "_" +  Joiner.on("_").join(parameters);
+        } else {
+            return name;
+        }
+    }
     /**
      * Returns the value of the gameOption in a game which contains the RailItem
      */
@@ -204,5 +223,4 @@ public class GameOption implements Comparable<GameOption> {
         String value = getValue(item, gameOption);
         return value != null && OPTION_VALUE_YES.equalsIgnoreCase(value);
     }
-
 }
