@@ -25,7 +25,6 @@ import rails.common.ReportBuffer;
 import rails.game.RailsRoot;
 import rails.util.GameLoader;
 
-
 @RunWith(AllTests.class)
 public final class TestGameBuilder extends TestCase {
 
@@ -59,7 +58,7 @@ public final class TestGameBuilder extends TestCase {
     
     private static void prepareGameReport(File gameFile, String reportFilename) {
         
-        RailsRoot game = null;
+        RailsRoot root = null;
         if (gameFile.exists()) { 
             System.out.println("Found game at " + gameFile.getAbsolutePath());
             GameLoader gameLoader = new GameLoader();

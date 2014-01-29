@@ -152,10 +152,11 @@ public final class NetworkEdge implements Comparable<NetworkEdge> {
     @Override
     // set to "" to faciltate visual graph
     public String toString() {
-        if (!greedy)
-            return "*** / " + distance;
-        else
-          return "" + distance;
+        return getConnection();
+//        if (!greedy)
+//            return "*** / " + distance;
+//        else
+//          return "" + distance;
     }
 
     /** 

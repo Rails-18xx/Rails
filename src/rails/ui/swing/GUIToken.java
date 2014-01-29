@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/GUIToken.java,v 1.11 2010/01/31 22:22:33 macfreek Exp $*/
 package rails.ui.swing;
 
 import java.awt.*;
@@ -10,21 +9,27 @@ import java.util.Map;
 
 import javax.swing.JPanel;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import rails.ui.swing.hexmap.GUIHex.HexPoint;
+
 /**
  * This class draws a company's token.
  */
 
 public class GUIToken extends JPanel {
+    private static final Logger log = 
+            LoggerFactory.getLogger(GUIToken.class);
+    
     private static final long serialVersionUID = 1L;
-    private Color fgColor, bgColor;
-    private Ellipse2D.Double circle;
-    private String name;
-    private double diameter;
+    
+    private final Color fgColor, bgColor;
+    private final Ellipse2D.Double circle;
+    private final String name;
+    private final double diameter;
 
-    public static final int DEFAULT_DIAMETER = 21;
-    public static final int DEFAULT_X_COORD = 1;
-    public static final int DEFAULT_Y_COORD = 1;
-
+//    private static final Font tokenFontTemplate = new Font("DroidSans", Font.BOLD, 10);
     private static final Font tokenFontTemplate = new Font("Helvetica", Font.BOLD, 10);
     /**
      * defined by the ratio of margin to diameter 
@@ -32,17 +37,42 @@ public class GUIToken extends JPanel {
      */
     private static final double tokenTextMargin = 0.15;
 
+    public GUIToken(Color fc, Color bc, String name, HexPoint center,
+            double diameter) {
+        this(fc ,bc, name, center.getX(), center.getY(), diameter);
+    }
+
+    public GUIToken(Color fc, Color bc, String name, double c_x, double c_y,
+            double diameter) {
+        super();
+
+        double x = c_x - 0.5 * diameter;
+        double y = c_y - 0.5 * diameter;
+
+        fgColor = fc;
+        bgColor = bc;
+        this.diameter = diameter;
+
+        circle = new Ellipse2D.Double(x, y, diameter, diameter);
+
+        this.setForeground(fgColor);
+        this.setOpaque(false);
+        this.setVisible(true);
+        this.setBounds((int)Math.round(x), (int)Math.round(y), 
+                (int)Math.round(diameter), (int)Math.round(diameter));
+        this.name = name;
+        log.debug("GUIToken with circle " + circle.getBounds2D());
+    }
+
     @Override
     public void paintComponent(Graphics g) {
-        clear(g);
+        super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
-
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
         drawToken(g2d);
-
     }
 
     public void drawToken(Graphics2D g2d) {
-
         Color oldColor = g2d.getColor();
         g2d.setColor(Color.BLACK);
         g2d.draw(circle);
@@ -50,47 +80,8 @@ public class GUIToken extends JPanel {
         g2d.fill(circle);
         g2d.setColor(oldColor);
 
-        drawTokenText(name, g2d, fgColor, 
-                new Point((int)(circle.x + diameter/2),(int)(circle.y + diameter/2)), 
-                diameter);
-    }
-
-    protected void clear(Graphics g) {
-        super.paintComponent(g);
-    }
-
-    public GUIToken(String name) {
-        this(Color.BLACK, Color.WHITE, name, DEFAULT_X_COORD, DEFAULT_Y_COORD,
-                DEFAULT_DIAMETER);
-    }
-
-    public GUIToken(Color fc, Color bc, String name) {
-        this(fc, bc, name, DEFAULT_X_COORD, DEFAULT_Y_COORD, DEFAULT_DIAMETER);
-    }
-
-    public GUIToken(int x, int y, String name) {
-        this(Color.BLACK, Color.WHITE, name, x, y, DEFAULT_DIAMETER);
-    }
-
-    public GUIToken(Color fc, Color bc, String name, int x, int y) {
-        this(fc, bc, name, x, y, DEFAULT_DIAMETER);
-    }
-
-    public GUIToken(Color fc, Color bc, String name, int xCenter, int yCenter,
-            double diameter) {
-        super();
-
-        fgColor = fc;
-        bgColor = bc;
-        this.diameter = diameter;
-
-        circle = new Ellipse2D.Double(xCenter - 0.5*diameter,
-                yCenter-0.5*diameter, diameter, diameter);
-
-        this.setForeground(fgColor);
-        this.setOpaque(false);
-        this.setVisible(true);
-        this.name = name;
+        HexPoint tokenCenter = new HexPoint(circle.x + diameter/2,circle.y + diameter/2); 
+        drawTokenText(name, g2d, fgColor, tokenCenter, diameter); 
     }
 
     public Color getBgColor() {
@@ -110,17 +101,18 @@ public class GUIToken extends JPanel {
         return name;
     }
 
-    public static void drawTokenText (String text, Graphics g, Color c, Point tokenCenter, double tokenDiameter) {
+    public static void drawTokenText (String text, Graphics g, Color c, HexPoint tokenCenter, double tokenDiameter) {
 
         //recursion if text contains more than 3 characters
         //not perfect (heuristic!) but good enough for this exceptional case
         if (text.length() > 3) {
+            double newTokenDiameter = tokenDiameter / 2 / (1 - tokenTextMargin) * 1.2; 
+            HexPoint newTokenCenterA = tokenCenter.translate(0, - tokenDiameter / 4 / 1.3);
+            HexPoint newTokenCenterB = tokenCenter.translate(0, tokenDiameter / 4 * 1.1);
             drawTokenText( text.substring(0, text.length() / 2), g, c, 
-                    new Point (tokenCenter.x, (int)((double)tokenCenter.y - tokenDiameter / 4 / 1.3)), 
-                    tokenDiameter / 2 / (1 - tokenTextMargin) * 1.2);
+                    newTokenCenterA, newTokenDiameter); 
             drawTokenText( text.substring(text.length() / 2, text.length()), g, c, 
-                    new Point (tokenCenter.x, (int)((double)tokenCenter.y + tokenDiameter / 4 * 1.1)), 
-                    tokenDiameter / 2 / (1 - tokenTextMargin) * 1.2);
+                    newTokenCenterB, newTokenDiameter); 
             return;
         }
         
@@ -149,8 +141,8 @@ public class GUIToken extends JPanel {
         g.setFont(fontTemplate.deriveFont((float)fontSize)); //float needed to indicate size (not style)
         Rectangle2D textBounds = g.getFontMetrics().getStringBounds(text, g);
         g.drawString(text,
-                tokenCenter.x - (int)textBounds.getCenterX(),
-                tokenCenter.y - (int)textBounds.getCenterY());
+                (int)Math.round(tokenCenter.getX() - textBounds.getCenterX()),
+                (int)Math.round(tokenCenter.getY() - textBounds.getCenterY()));
         g.setColor(oldColor);
         g.setFont(oldFont);
 

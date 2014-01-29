@@ -1,8 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayBaseToken.java,v 1.7 2010/02/03 20:16:40 evos Exp $
- *
- * Created on 14-Sep-2006
- * Change Log:
- */
 package rails.game.action;
 
 import java.io.IOException;
@@ -12,6 +7,7 @@ import java.util.List;
 
 import rails.game.MapHex;
 import rails.game.MapManager;
+import rails.game.Stop;
 import rails.game.special.SpecialProperty;
 import rails.game.special.SpecialTokenLay;
 import rails.util.Util;
@@ -79,8 +75,13 @@ public class LayBaseToken extends LayToken {
         type = HOME_CITY;
     }
 
+    @Deprecated
     public int getChosenStation() {
         return chosenStation;
+    }
+    
+    public Stop getChosenStop() {
+        return chosenHex.getRelatedStop(chosenStation);
     }
 
     public void setChosenStation(int chosenStation) {

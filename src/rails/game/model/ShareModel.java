@@ -1,7 +1,6 @@
 package rails.game.model;
 
 import rails.game.PublicCompany;
-import rails.game.state.Model;
 
 /**
  * ShareModel for displaying the share percentages

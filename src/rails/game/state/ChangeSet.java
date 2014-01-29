@@ -23,40 +23,14 @@ public class ChangeSet {
     private static final Logger log = LoggerFactory.getLogger(ChangeSet.class);
 
     // static fields
-    private final int id;
+    private final List<Change> changes;
     private final ChangeAction action;
-    private final List<Change> changes = Lists.newArrayList();
-    private final boolean initial;
+    private final int index;
     
-    // dynamic fields
-    private boolean closed = false; 
-    
-    protected ChangeSet(int id, ChangeAction action, boolean initial) {
-        this.id = id;
+    ChangeSet(List<Change> changes, ChangeAction action, int index) {
+        this.changes = changes;
         this.action = action;
-        this.initial = initial;
-    };
-
-    /**
-     * adds change to the ChangeSet and executes the change (including updates of the depending models)
-     * @param change to add to the ChangeSet
-     * @throws IllegalStateException if ChangeSet is closed
-     */
-    void addChange (Change change) {
-        checkState(!closed, "ChangeSet is closed");
-        changes.add(change);
-        log.debug("Add " + change);
-        // immediate execution and information of models
-        change.execute();
-        change.getState().informTriggers(change);
-    }
-    
-    /**
-     * closes ChangeSet: No further Changes can be added, undo and redo is possible
-     */
-    void close() {
-        checkState(!closed, "ChangeSet is closed already");
-        closed = true;
+        this.index = index;
     }
     
    /**
@@ -70,13 +44,12 @@ public class ChangeSet {
         }
         return builder.build();
     }
-    
+   
    /**
     * re-execute all Changes in the ChangeSet (redo)
     * @ŧhrows IllegalStateException if ChangeSet is still open 
     */
    void reexecute() {
-        checkState(closed, "ChangeSet is still open");
         for (Change change:changes) {            
             change.execute();
             log.debug("Redo: " + change);
@@ -88,8 +61,7 @@ public class ChangeSet {
     * @throws IllegalStateException if ChangeSet is still open or ChangeSet is initial
     */
     void unexecute() {
-        if (!closed) throw new IllegalStateException("ChangeSet is still open");
-        if (initial) throw new IllegalStateException("ChangeSet is initial - cannot be undone");
+        checkState(index != -1, "ChangeSet is initial - cannot be undone");
         
         // iterate reverse
         for (Change change:Lists.reverse(changes)) {
@@ -99,48 +71,26 @@ public class ChangeSet {
     }
 
     /**
-     * returns the ChangeSet open/close state
-     * @return true if ChangeSet is closed
-     */
-    boolean isClosed() {
-        return closed;
-    }
-    
-    /**
-     * checks if the ChangeSet is empty
-     * @return true if ChangeSet is empty
-     */
-    boolean isEmpty() {
-        return changes.isEmpty();
-    }
-    
-    /**
      * returns the ChangeAction associated with the ChangeSet
      * @return the associated ChangeAction
      */
     ChangeAction getAction() {
         return action;
     }
+    
+    /**
+     * returns the Owner associated with the ChangeSet
+     */
+    public ChangeActionOwner getOwner() {
+        return action.getActionOwner();
+    }
+    
+    public int getIndex() {
+        return index;
+    }
 
-    /**
-     * returns true if the ChangeSet is an initial state
-     * @return true if initial
-     */
-    boolean isInitial() {
-        return initial;
-    }
-    
-    /**
-     * returns the (unique) id of the ChangeSet
-     * @return id
-     */
-    int getId() {
-        return id;
-    }
-    
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).addValue(id).toString();
+        return Objects.toStringHelper(this).add("action", action).add("Owner", getOwner()).toString();
     }
-    
 }

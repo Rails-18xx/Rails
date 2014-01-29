@@ -72,9 +72,12 @@ public class NetworkIterator extends
     /**
      * @return the graph being traversed
      */
-    public Graph<NetworkVertex, NetworkEdge> getGraph()
-    {
+    public Graph<NetworkVertex, NetworkEdge> getGraph() {
         return graph;
+    }
+    
+    public Map<NetworkVertex, greedyState> getSeenData() {
+        return seen;
     }
 
     public List<NetworkVertex> getCurrentRoute() {
@@ -142,19 +145,7 @@ public class NetworkIterator extends
     }
 
     
-    /**
-     * Stores iterator-dependent data for a vertex that has been seen.
-     *
-     * @param vertex a vertex which has been seen.
-     * @param data data to be associated with the seen vertex.
-     *
-     * @return previous value associated with specified vertex or <code>
-     * null</code> if no data was associated with the vertex. A <code>
-     * null</code> return can also indicate that the vertex was explicitly
-     * associated with <code>null</code>.
-     */
-    private void putSeenData(NetworkVertex vertex, boolean greedy)
-    {
+    private void putSeenData(NetworkVertex vertex, boolean greedy) {
         if (!vertex.isSide()) {
             seen.put(vertex, greedyState.seen);
             log.debug("Iterator:  Vertex " + vertex + " seen with greedyState = seen");

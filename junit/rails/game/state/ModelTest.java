@@ -24,7 +24,7 @@ public class ModelTest {
     public void setUp() {
         root = StateTestUtils.setUpRoot();
         model = ModelImpl.create(root, MODEL_ID, MODEL_TEXT_INIT);
-        StateTestUtils.closeAndNew(root);
+        StateTestUtils.close(root);
         model.addObserver(observer);
     }
     

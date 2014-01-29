@@ -4,7 +4,6 @@ import rails.game.Currency;
 import rails.game.PublicCompany;
 import rails.game.StockSpace;
 import rails.game.state.GenericState;
-import rails.game.state.Model;
 
 public final class PriceModel extends RailsModel {
 

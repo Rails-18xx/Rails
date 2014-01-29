@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
-import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableList;
 
 import rails.common.ResourceLoader;
 import rails.util.Util;
@@ -166,31 +166,22 @@ public class Tag {
         return getAttributeAsInteger(name, 0);
     }
 
-    public int[] getAttributeAsIntegerArray(String name, int[] defaultArray)
+    public List<Integer> getAttributeAsIntegerList(String name)
             throws ConfigurationException {
 
         String valueString = getAttributeAsString(name);
-        if (!Util.hasValue(valueString)) return defaultArray;
+        if (!Util.hasValue(valueString)) return ImmutableList.of();
 
-        String[] values = valueString.split(",");
-        int[] result = new int[values.length];
-        int i = 0;
+        ImmutableList.Builder<Integer> result = ImmutableList.builder();
         try {
-            for (i = 0; i < values.length; i++) {
-                result[i] = Integer.parseInt(values[i]);
+            for (String value:valueString.split(",")) {
+                result.add(Integer.parseInt(value));
             }
         } catch (NumberFormatException e) {
-            throw new ConfigurationException("Invalid integer '" + values[i]
-                                             + "' in attribute '" + name + "'");
+            throw new ConfigurationException("Invalid integer in attribute " + name + "'");
         }
-        return result;
+        return result.build();
 
-    }
-
-    public int[] getAttributeAsIntegerArray(String name)
-            throws ConfigurationException {
-
-        return getAttributeAsIntegerArray(name, new int[0]);
     }
 
     public boolean getAttributeAsBoolean(String name, boolean defaultValue)
@@ -216,11 +207,6 @@ public class Tag {
 
         return getAttributeAsString(name) != null;
     }
-
-    public Element getElement() {
-        return element;
-    }
-
     /**
      * Extract all attributes of an Element into a HashMap. This includes
      * conditional values, embedded in (possibly nested) &lt;IfOption&gt;
@@ -296,7 +282,7 @@ public class Tag {
                     Node parmAttr = nnp.getNamedItem("parm");
                     if (parmAttr != null) {
                     	value = parmAttr.getNodeValue();
-                    	name = Joiner.on("_").join(name, value.split(","));
+                    	name = GameOption.constructParametrisedName(name, value.split(","));
                     }
                     Node valueAttr = nnp.getNamedItem("value");
                     if (valueAttr == null)
@@ -333,12 +319,11 @@ public class Tag {
                     }
                     
                     // If not assigned in the previous step, take the default value
-                    // FIXME (Rails2.0): This default approach value does not work anymore
                     if (optionValue == null) {
-//                        GameOption go = GameOption.get(name);
-//                        optionValue = go != null ? go.getDefaultValue() : "";
+                        GameOption go = GameOption.getByName(name);
+                        optionValue = go != null ? go.getDefaultValue() : "";
                         log.warn("GameOption " + name + "=" + value
-                                 + " but no assigned value found, assumed "+ optionValue);
+                                 + " but no assigned value found, assumed "+optionValue);
 
                     }
 
@@ -374,7 +359,7 @@ public class Tag {
      * with the given name.
      */
     public static Tag findTopTagInFile(String filename, String directory,
-            String tagName, Map<String, String> gameOptions) throws ConfigurationException {
+            String tagName) throws ConfigurationException {
         Document doc = null;
         try {
             // Step 1: create a DocumentBuilderFactory and setNamespaceAware
@@ -409,11 +394,14 @@ public class Tag {
             if ((childNode != null)
                 && (childNode.getNodeName().equals(tagName))
                 && (childNode.getNodeType() == Node.ELEMENT_NODE)) {
-                return new Tag((Element) childNode, gameOptions);
+                return new Tag((Element) childNode);
             }
         }
         throw new ConfigurationException("Could not find " + tagName + " in "
                                          + filename);
     }
 
+    public Element getElement() {
+        return element;
+    }
 }

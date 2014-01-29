@@ -815,8 +815,7 @@ public class OperatingRound extends Round implements Observer {
 
     public void skip(NullAction action) {
         log.debug("Skip step " + stepObject.value());
-        // TODO: Check if this is ok
-        ChangeStack.start(this, action);
+        
         nextStep();
     }
 
@@ -843,7 +842,7 @@ public class OperatingRound extends Round implements Observer {
              */
         }
 
-        ChangeStack.start(this, action);
+        
 
         nextStep();
 
@@ -902,7 +901,7 @@ public class OperatingRound extends Round implements Observer {
         }
 
         /* End of validation, start of execution */
-        ChangeStack.start(this, action);
+        
         
         // FIXME: if (action.isForced()) changeStack.linkToPreviousMoveSet();
 
@@ -1053,7 +1052,7 @@ public class OperatingRound extends Round implements Observer {
             return false;
         }
 
-        ChangeStack.start(this, action);
+        
 
         operatingCompany.value().buyPrivate(privateCompany, player, price);
 
@@ -1101,7 +1100,7 @@ public class OperatingRound extends Round implements Observer {
             return false;
         }
 
-        ChangeStack.start(this, action);
+        
 
         priv.setClosed();
 
@@ -1129,7 +1128,6 @@ public class OperatingRound extends Round implements Observer {
             for (PublicCompany company : destinedCompanies) {
                 if (company.hasDestination()
                         && !company.hasReachedDestination()) {
-                    // TODO: if (!changeStack.isOpen()) changeStack.start(true);
                     company.setReachedDestination(true);
                     ReportBuffer.add(this, LocalText.getText("DestinationReached",
                             company.getId(),
@@ -1172,7 +1170,7 @@ public class OperatingRound extends Round implements Observer {
             return false;
         }
 
-        ChangeStack.start(this, action);
+        
 
         executeTakeLoans (action);
 
@@ -1281,14 +1279,14 @@ public class OperatingRound extends Round implements Observer {
                         + remainder + " loan repayment");
                 log.info("President has $"+presCash+", so $"+cashToBeRaisedByPresident+" must be added");
                 savedAction = action;
-                ChangeStack.start(this, action);
+                
                 gameManager.startShareSellingRound(operatingCompany.value().getPresident(),
                         cashToBeRaisedByPresident, operatingCompany.value(), false);
                 return true;
             }
         }
 
-        ChangeStack.start(this, action);
+        
 
         if (repayment > 0) executeRepayLoans (action);
 
@@ -1396,7 +1394,7 @@ public class OperatingRound extends Round implements Observer {
             return false;
         }
 
-        ChangeStack.start(this, action);
+        
 
         operatingCompany.value().setRight(rightName, rightValue);
         // TODO: Creates a zero cost transfer if cost == 0
@@ -1448,16 +1446,16 @@ public class OperatingRound extends Round implements Observer {
 
             if (tile == null) break;
 
-            if (!getCurrentPhase().isTileColourAllowed(tile.getColourName())) {
+            if (!getCurrentPhase().isTileColourAllowed(tile.getColourText())) {
                 errMsg =
                     LocalText.getText("TileNotYetAvailable",
-                            tile.getExternalId());
+                            tile.toText());
                 break;
             }
-            if (tile.countFreeTiles() == 0) {
+            if (tile.getFreeCount() == 0) {
                 errMsg =
                     LocalText.getText("TileNotAvailable",
-                            tile.getExternalId());
+                            tile.toText());
                 break;
             }
 
@@ -1472,7 +1470,7 @@ public class OperatingRound extends Round implements Observer {
                     errMsg =
                         LocalText.getText(
                                 "TileMayNotBeLaidInHex",
-                                tile.getExternalId(),
+                                tile.toText(),
                                 hex.getId() );
                     break;
                 }
@@ -1487,7 +1485,7 @@ public class OperatingRound extends Round implements Observer {
             if (!extra && !validateNormalTileLay(tile)) {
                 errMsg =
                     LocalText.getText("NumberOfNormalTileLaysExceeded",
-                            tile.getColourName());
+                            tile.getColourText());
                 break;
             }
 
@@ -1525,7 +1523,7 @@ public class OperatingRound extends Round implements Observer {
         if (errMsg != null) {
             DisplayBuffer.add(this, LocalText.getText("CannotLayTileOn",
                     companyName,
-                    tile.getExternalId(),
+                    tile.toText(),
                     hex.getId(),
                     Currency.format(this, cost),
                     errMsg ));
@@ -1533,7 +1531,7 @@ public class OperatingRound extends Round implements Observer {
         }
 
         /* End of validation, start of execution */
-        ChangeStack.start(this, action);
+        
 
         if (tile != null) {
             String costText = null;
@@ -1545,13 +1543,13 @@ public class OperatingRound extends Round implements Observer {
             if (costText == null) {
                 ReportBuffer.add(this, LocalText.getText("LaysTileAt",
                         companyName,
-                        tile.getExternalId(),
+                        tile.toText(),
                         hex.getId(),
                         hex.getOrientationName(orientation)));
             } else {
                 ReportBuffer.add(this, LocalText.getText("LaysTileAtFor",
                         companyName,
-                        tile.getExternalId(),
+                        tile.toText(),
                         hex.getId(),
                         hex.getOrientationName(orientation),
                         costText ));
@@ -1594,7 +1592,7 @@ public class OperatingRound extends Round implements Observer {
             return !tileLaysPerColour.isEmpty();
         }
 
-        String colour = tile.getColourName();
+        String colour = tile.getColourText();
         Integer oldAllowedNumberObject = tileLaysPerColour.get(colour);
 
         if (oldAllowedNumberObject == null) return false;
@@ -1754,7 +1752,7 @@ public class OperatingRound extends Round implements Observer {
         String[] stlc = stl.getTileColours();
         if ((stlc == null || stlc.length == 0) && tile != null) {
             // ... or implicitly
-            stlc = new String[] {tile.getColourName()};
+            stlc = new String[] {tile.getColourText()};
         }
 
         // Which of the specified tile colours can really be laid now?
@@ -1787,8 +1785,10 @@ public class OperatingRound extends Round implements Observer {
                     if (!stl.isFree() && cash < hex.getTileCost()) continue;
 
                     // At least one hex does not have that colour yet
+                    // TODO: Check if this can be rewritten in a simpler fashion
+                    // using TileColours directly
                     if (hex.getCurrentTile().getColourNumber() + 1
-                            == Tile.getColourNumberForName(colour)) {
+                            == TileColour.valueOfIgnoreCase(colour).getNumber()) {
                         tc.put(colour, 1);
                         remainingColours.add(colour);
                         remainingHexes.add(hex);
@@ -1844,7 +1844,8 @@ public class OperatingRound extends Round implements Observer {
         boolean extra = false;
 
         MapHex hex = action.getChosenHex();
-        int station = action.getChosenStation();
+        Stop stop = action.getChosenStop();
+
         String companyName = operatingCompany.value().getId();
 
         // Dummy loop to enable a quick jump out.
@@ -1864,12 +1865,12 @@ public class OperatingRound extends Round implements Observer {
                 break;
             }
 
-            if (!isTokenLayAllowed (operatingCompany.value(), hex, station)) {
+            if (!isTokenLayAllowed (operatingCompany.value(), hex, stop)) {
                 errMsg = LocalText.getText("BaseTokenSlotIsReserved");
                 break;
             }
 
-            if (!hex.hasTokenSlotsLeft(station)) {
+            if (!stop.hasTokenSlotsLeft()) {
                 errMsg = LocalText.getText("CityHasNoEmptySlots");
                 break;
             }
@@ -1924,9 +1925,9 @@ public class OperatingRound extends Round implements Observer {
         }
 
         /* End of validation, start of execution */
-        ChangeStack.start(this, action);
+        
 
-        if (hex.layBaseToken(operatingCompany.value(), station)) {
+        if (hex.layBaseToken(operatingCompany.value(), stop)) {
             /* TODO: the false return value must be impossible. */
 
             operatingCompany.value().layBaseToken(hex, cost);
@@ -2001,8 +2002,8 @@ public class OperatingRound extends Round implements Observer {
      * is to be laid (0 if any or immaterial).
      */
     protected boolean isTokenLayAllowed (PublicCompany company,
-            MapHex hex, int station) {
-        return !hex.isBlockedForTokenLays(company, station);
+            MapHex hex, Stop stop) {
+        return !hex.isBlockedForTokenLays(company, stop);
     }
 
     protected void setNormalTokenLays() {
@@ -2052,8 +2053,11 @@ public class OperatingRound extends Round implements Observer {
                 if (locations != null && !locations.isEmpty()) {
                     boolean canLay = false;
                     for (MapHex location : locations) {
+                        // TODO: The zero has been hardcoded below, is it always valid?
                         if (!location.hasTokenOfCompany(company)
-                                && !location.isBlockedForTokenLays(company, 0)) canLay = true;
+                                && !location.isBlockedForTokenLays(company, location.getRelatedStop(0))) { 
+                            canLay = true;
+                        }
                     }
                     if (!canLay) continue;
                 }
@@ -2114,7 +2118,7 @@ public class OperatingRound extends Round implements Observer {
         }
 
         /* End of validation, start of execution */
-        ChangeStack.start(this, action);
+        
 
         if (hex.layBonusToken(token, getRoot().getPhaseManager())) {
             /* TODO: the false return value must be impossible. */
@@ -2187,7 +2191,7 @@ public class OperatingRound extends Round implements Observer {
         }
 
         /* End of validation, start of execution */
-        ChangeStack.start(this, action);
+        
 
         // TODO: Is text of cost used below?
         Currency.wire(operatingCompany.value(), cost, seller);
@@ -2243,7 +2247,7 @@ public class OperatingRound extends Round implements Observer {
             return false;
         }
 
-        ChangeStack.start(this, action);
+        
 
         ReportBuffer.add(this, LocalText.getText("CompanyRevenue",
                 action.getCompanyName(),
@@ -2577,7 +2581,7 @@ public class OperatingRound extends Round implements Observer {
             return false;
         }
 
-        ChangeStack.start(this, action);
+        
 
         String cashText = null;
         if (amount > 0) {
@@ -2804,7 +2808,7 @@ public class OperatingRound extends Round implements Observer {
         }
 
         /* End of validation, start of execution */
-        ChangeStack.start(this, action);
+        
         Phase previousPhase = getCurrentPhase();
 
         if (presidentMustSellShares) {

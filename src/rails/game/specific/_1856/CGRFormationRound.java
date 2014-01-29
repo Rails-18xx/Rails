@@ -8,7 +8,6 @@ import rails.game.Currency;
 import rails.game.action.*;
 import rails.game.special.SellBonusToken;
 import rails.game.state.BooleanState;
-import rails.game.state.ChangeStack;
 import rails.game.state.IntegerState;
 import rails.game.state.Portfolio;
 
@@ -252,7 +251,7 @@ public class CGRFormationRound extends SwitchableUIRound {
 
         // TODO Validation skipped for now...
 
-        ChangeStack.start(this, action);
+        
         // FIMXE: linked to previous moveset
         // changeStack.linkToPreviousMoveSet();
 
@@ -521,7 +520,7 @@ public class CGRFormationRound extends SwitchableUIRound {
         nonHomeTokens = new ArrayList<BaseToken>();
         BaseToken bt;
         MapHex hex;
-        Stop city;
+        Stop stop;
         for (PublicCompany comp : mergingCompanies) {
 
             // Exchange home tokens and collect non-home tokens
@@ -529,8 +528,8 @@ public class CGRFormationRound extends SwitchableUIRound {
             for (BaseToken token :comp.getAllBaseTokens()) {
                 bt = token;
                 if (!bt.isPlaced()) continue;
-                city = (Stop) bt.getOwner();
-                hex = city.getParent();
+                stop = (Stop) bt.getOwner();
+                hex = stop.getParent();
                 if (homeHexes != null && homeHexes.contains(hex)) {
                     homeTokens.add(bt);
                 } else {
@@ -585,23 +584,23 @@ public class CGRFormationRound extends SwitchableUIRound {
         // Replace the home tokens
         ReportBuffer.add(this, "");
         for (BaseToken token : homeTokens) {
-            city = (Stop) token.getOwner();
-            hex = city.getParent();
+            stop = (Stop) token.getOwner();
+            hex = stop.getParent();
             // return token to home
             token.moveTo(token.getParent());
-            if (hex.layBaseToken(cgr, city.getNumber())) {
+            if (hex.layBaseToken(cgr, stop)) {
                 /* TODO: the false return value must be impossible. */
                 ReportBuffer.add(this, LocalText.getText("ExchangesBaseToken",
                         cgrName, token.getParent().getId(),
-                        city.getSpecificId()));
+                        stop.getSpecificId()));
                 cgr.layBaseToken(hex, 0);
             }
         }
 
         // Clean up any non-home tokens on cities now having a CGR token
         for (BaseToken token : new ArrayList<BaseToken>(nonHomeTokens)) {
-            city = (Stop) token.getOwner();
-            hex = city.getParent();
+            stop = (Stop) token.getOwner();
+            hex = stop.getParent();
             Set<BaseToken> otherTokens = hex.getBaseTokens();
             if (otherTokens != null) {
                 for (BaseToken token2 : otherTokens) {
@@ -609,7 +608,7 @@ public class CGRFormationRound extends SwitchableUIRound {
                             || nonHomeTokens.contains(token2) && token2 != token) {
                         ReportBuffer.add(this, LocalText.getText("DiscardsBaseToken",
                                 cgrName, token.getParent().getId(),
-                                city.getSpecificId()));
+                                stop.getSpecificId()));
                         // return token to home
                         token.moveTo(token.getParent());
                         nonHomeTokens.remove(token);
@@ -675,17 +674,17 @@ public class CGRFormationRound extends SwitchableUIRound {
     }
 
     private void executeExchangeTokens (List<BaseToken> exchangedTokens) {
-        Stop city;
+        Stop stop;
         MapHex hex;
         ReportBuffer.add(this, "");
         for (BaseToken token : exchangedTokens) {
             // Remove old token
-            city = (Stop) token.getOwner();
-            hex = city.getParent();
+            stop = (Stop) token.getOwner();
+            hex = stop.getParent();
             // return token to Company
             token.moveTo(token.getParent());
             // Replace it with a CGR token
-            if (hex.layBaseToken(cgr, city.getNumber())) {
+            if (hex.layBaseToken(cgr, stop)) {
                 cgr.layBaseToken(hex, 0);
             } else {
                 log.error("Error in laying CGR token on "+hex.getId()+" "+hex.getCityName());
@@ -824,7 +823,7 @@ public class CGRFormationRound extends SwitchableUIRound {
 
         /* End of validation, start of execution */
         // new: link always, see below commented
-        ChangeStack.start(this, action);
+        
         // FIXME:changeStack.linkToPreviousMoveSet();
 
         if (train != null) {

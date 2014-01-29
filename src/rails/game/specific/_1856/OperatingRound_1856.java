@@ -396,7 +396,7 @@ public class OperatingRound_1856 extends OperatingRound {
                 if (gameManager.getCurrentPhase().getIndex()
                         > getRoot().getPhaseManager().getPhaseByName("5").getIndex()) {
                     errMsg = LocalText.getText("WrongPhase",
-                            gameManager.getCurrentPhase().getId());
+                            gameManager.getCurrentPhase().toText());
                     break;
                 }
                 // Exceeds number of shares in player hands?

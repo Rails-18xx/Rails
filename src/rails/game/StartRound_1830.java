@@ -5,7 +5,6 @@ import rails.common.GameOption;
 import rails.common.LocalText;
 import rails.common.ReportBuffer;
 import rails.game.action.*;
-import rails.game.state.ChangeStack;
 
 /**
  * Implements an 1830-style initial auction.
@@ -249,7 +248,7 @@ public class StartRound_1830 extends StartRound {
             return false;
         }
 
-        ChangeStack.start(this, bidItem);
+        
 
         item.setBid(bidAmount, player);
         if (previousBid > 0) player.unblockCash(previousBid);
@@ -302,7 +301,7 @@ public class StartRound_1830 extends StartRound {
 
         ReportBuffer.add(this, LocalText.getText("PASSES", playerName));
 
-        ChangeStack.start(this, action);
+        
 
         numPasses.add(1);
         if (auctionItem != null) {

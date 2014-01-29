@@ -1,11 +1,12 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/NSHexMap.java,v 1.15 2010/06/24 21:48:08 stefanfrey Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
 
+import rails.game.MapOrientation;
+
 /**
  * Class NSHexMap displays a basic hex map with
- * {@link rails.game.TileOrientation#NS NS} exit orientation.
+ * {@link rails.game.MapOrientation#NS NS} exit orientation.
  */
 
 public class NSHexMap extends HexMap {
@@ -23,20 +24,20 @@ public class NSHexMap extends HexMap {
     }
 
     protected double calcXCoordinates(int col, double offset) {
-        double colAdj = col - minCol + peakMargin + offset;
+        double colAdj = col - minimum.getCol() + peakMargin + offset;
 //        log.debug("x-Coordinate for col= " + col + " -> colAdj = " + colAdj);
         return Math.round(scale * 3 * colAdj);
     }
     
     protected double calcYCoordinates(int row, double offset) {
-       double rowAdj = (row - minRow)/2.0 + flatMargin + offset; 
+       double rowAdj = (row - minimum.getCol())/2.0 + flatMargin + offset; 
 //       log.debug("y-Coordinate for row= " + row + " -> rowAdj = " + rowAdj);
-       return Math.round(scale * 2 * GUIHex.SQRT3 * rowAdj);
+       return Math.round(scale * 2 * MapOrientation.SQRT3 * rowAdj);
     }
 
     protected void setOriginalSize() {
-        originalSize = new Dimension( (int) calcXCoordinates(maxCol, peakMargin), 
-                (int) calcYCoordinates(maxRow, flatMargin));
+        originalSize = new Dimension( (int) calcXCoordinates(maximum.getCol(), peakMargin), 
+                (int) calcYCoordinates(maximum.getRow(), flatMargin));
     }
 
 }

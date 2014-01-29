@@ -1,11 +1,12 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/hexmap/EWHexMap.java,v 1.16 2010/06/24 21:48:08 stefanfrey Exp $*/
 package rails.ui.swing.hexmap;
 
 import java.awt.*;
 
+import rails.game.MapOrientation;
+
 /**
  * Class EWHexMap displays a basic hex map with
- * {@link rails.game.TileOrientation#EW EW} exit orientation.
+ * {@link rails.game.MapOrientation#EW EW} exit orientation.
  */
 
 public class EWHexMap extends HexMap {
@@ -13,9 +14,9 @@ public class EWHexMap extends HexMap {
 
     public EWHexMap() {
         // tile x-reference in EW is left side
-        tileXOffset = -0.5;
+        tileXOffset = -0.5f;
         // tile y-reference in EW is 1/3 of the baseline 
-        tileYOffset = 0.333;
+        tileYOffset = 0.333f;
         
         // coordinate margins
         coordinateXMargin = coordinateFlatMargin;
@@ -24,21 +25,21 @@ public class EWHexMap extends HexMap {
     
     @Override
     protected double calcXCoordinates(int col, double offset) {
-        double colAdj = (col - minCol)/2.0 + flatMargin + offset;
+        double colAdj = (col - minimum.getCol()) / 2.0f + flatMargin + offset;
 //        log.debug("x-Coordinate for col= " + col + " -> colAdj = " + colAdj);
-        return Math.round(scale * 2 * GUIHex.SQRT3 * colAdj);
+        return Math.round(scale * 2 * MapOrientation.SQRT3 * colAdj);
     }
     
     @Override
     protected double calcYCoordinates(int row, double offset) {
-       double rowAdj = row  - minRow  + peakMargin+ offset; 
+       double rowAdj = row  - minimum.getRow()  + peakMargin+ offset; 
 //       log.debug("y-Coordinate for row= " + row + " -> rowAdj = " + rowAdj);
        return Math.round(scale * 3 * rowAdj);
     }
     
     protected void setOriginalSize() {
-        originalSize = new Dimension( (int) calcXCoordinates(maxCol, flatMargin), 
-                        (int) calcYCoordinates(maxRow, peakMargin));
+        originalSize = new Dimension( (int) calcXCoordinates(maximum.getCol(), flatMargin), 
+                        (int) calcYCoordinates(maximum.getRow(), peakMargin));
     }
 
 }

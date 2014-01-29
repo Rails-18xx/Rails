@@ -4,7 +4,6 @@ import javax.swing.WindowConstants;
 
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
-import rails.game.Bank;
 import rails.game.Round;
 import rails.game.action.*;
 import rails.game.specific._1856.CGRFormationRound;

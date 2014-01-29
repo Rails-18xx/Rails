@@ -57,7 +57,7 @@ public class IntegerStateTest {
         stateDefault.set(0);
         stateInit.set((INIT));
         StateTestUtils.close(root);
-        assertThat(StateTestUtils.getLastClosedChangeSet(root).getStates()).doesNotContain(stateDefault, stateInit);
+        assertThat(StateTestUtils.getPreviousChangeSet(root).getStates()).doesNotContain(stateDefault, stateInit);
     }
 
     @Test

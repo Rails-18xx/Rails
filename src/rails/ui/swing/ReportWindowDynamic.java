@@ -19,9 +19,6 @@ import org.slf4j.LoggerFactory;
 import rails.common.LocalText;
 import rails.common.ReportBuffer;
 import rails.game.action.GameAction;
-import rails.game.action.PossibleActions;
-import rails.game.state.Observable;
-import rails.game.state.Observer;
 import rails.sound.SoundManager;
 import rails.ui.swing.elements.ActionButton;
 import rails.ui.swing.elements.RailsIcon;
@@ -30,12 +27,11 @@ import rails.ui.swing.elements.RailsIcon;
  * Dynamic Report window that acts as linked game history
  */
 
-public class ReportWindowDynamic extends AbstractReportWindow 
-    implements Observer, ActionListener, HyperlinkListener {
+public class ReportWindowDynamic extends AbstractReportWindow implements 
+    ActionListener, HyperlinkListener {
+   
     private static final long serialVersionUID = 1L;
 
-    private final ReportBuffer buffer;
-    
     private JLabel message;
 
     private JScrollPane reportPane;
@@ -46,19 +42,20 @@ public class ReportWindowDynamic extends AbstractReportWindow
     private ActionButton backwardButton;
     private JButton returnButton;
     private JButton playFromHereButton;
-    private JButton commentButton;
+    // private JButton commentButton;
 
     private boolean timeWarpMode;
-
+    
+    private final ReportBuffer reportBuffer;
+    
     protected static Logger log =
         LoggerFactory.getLogger(ReportWindowDynamic.class);
 
     public ReportWindowDynamic(GameUIManager gameUIManager) {
         super(gameUIManager);
         init();
-        // add as observer
-        buffer = gameUIManager.getRoot().getReportManager().getReportBuffer(); 
-        buffer.addObserver(this);
+        reportBuffer = gameUIManager.getGameManager().getRoot().getReportBuffer();
+        reportBuffer.registerReportWindow(this);
     }
 
     @Override
@@ -124,10 +121,29 @@ public class ReportWindowDynamic extends AbstractReportWindow
         forwardButton.addActionListener(this);
         buttonPanel.add(forwardButton);
 
-
-        // FIXME (Rails2.0): Add Comment has to be added again
-        //commentButton = new JButton(LocalText.getText("REPORT_COMMENT"));
-        // buttonPanel.add(commentButton);
+        // TODO: Add new command button functionality 
+//        commentButton = new JButton(LocalText.getText("REPORT_COMMENT"));
+//        commentButton.addActionListener(
+//                new ActionListener() {
+//                    public void actionPerformed(ActionEvent arg0) {
+//                        String newComment = (String)JOptionPane.showInputDialog(
+//                                ReportWindowDynamic.this,
+//                                LocalText.getText("REPORT_COMMENT_ASK"),
+//                                LocalText.getText("REPORT_COMMENT_TITLE"),
+//                                JOptionPane.PLAIN_MESSAGE,
+//                                null,
+//                                null,
+//                                ReportBuffer.getComment()
+//                        );
+//                        if (newComment != null) {
+//                            ReportBuffer.addComment(newComment);
+//                            updateLog();
+//                            scrollDown();
+//                        }
+//                    }
+//                }
+//        );
+//        buttonPanel.add(commentButton);
 
         super.init();
 
@@ -135,14 +151,7 @@ public class ReportWindowDynamic extends AbstractReportWindow
 
     // FIXME (Rails2.0): Replace this by toTe
     @Override
-    public void updateLog() {
-        updateLogInternal(buffer.toText());
-    }
-        
-    private void updateLogInternal(String text) {
-        // set the content of the pane to the current
-        editorPane.setText(text);
-        scrollDown();
+    public void setActions() {
 
         forwardButton.setEnabled(false);
         backwardButton.setEnabled(false);
@@ -218,16 +227,11 @@ public class ReportWindowDynamic extends AbstractReportWindow
     }
 
     private void gotoLastIndex() {
-        // FIXME: This has to be rewritten
-       //gotoIndex(gameUIManager.getGameManager().getChangeStack().size());
+        gotoIndex(reportBuffer.getLastIndex());
     }
 
-    // TODO: Rewrite this procedure
     private void gotoIndex(int index) {
-        // ChangeStack stack = gameUIManager.getGameManager().getChangeStack();
-        // FIXME: This has to be rewritten
-        // int currentIndex = stack.getIndex();
-        int currentIndex = 0;
+        int currentIndex = reportBuffer.getCurrentIndex();
         if (index > currentIndex) { // move forward
             GameAction action = new GameAction(GameAction.REDO);
             action.setmoveStackIndex(index);
@@ -260,13 +264,12 @@ public class ReportWindowDynamic extends AbstractReportWindow
         SoundManager.notifyOfTimeWarp(timeWarpMode);
         closeable = true;
     }
-
-    // Observer methods
+    
+    // update by the changeStack
     public void update(String text) {
-        updateLogInternal(text);
-    }
-
-    public Observable getObservable() {
-        return buffer;
+        log.debug("Update dynamic report window");
+        // set the content of the pane to the current
+        editorPane.setText(text);
+        scrollDown();
     }
 }

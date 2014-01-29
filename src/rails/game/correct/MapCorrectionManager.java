@@ -8,7 +8,6 @@ import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.common.ReportBuffer;
 import rails.game.*;
-import rails.game.state.ChangeStack;
 
 public final class MapCorrectionManager extends CorrectionManager {
 
@@ -68,12 +67,14 @@ public final class MapCorrectionManager extends CorrectionManager {
         String errMsg = null;
         while (true) {
             // check if chosenTile is still available (not for preprinted)
-            if (chosenTile != null && rails.util.Util.hasValue(chosenTile.getExternalId())
+            // FIXME: Check if this is still correct (Rails 2.0), removed that check as all 
+            // tiles have external id defined
+            if (chosenTile != null // && rails.util.Util.hasValue(chosenTile.toText())
                     && chosenTile != hex.getCurrentTile()
-                    && chosenTile.countFreeTiles() == 0) {
+                    && chosenTile.getFreeCount() == 0) {
                 errMsg =
                     LocalText.getText("TileNotAvailable",
-                            chosenTile.getExternalId());
+                            chosenTile.toText());
                 // return to step of tile selection
                 action.selectHex(hex);
                 break;
@@ -81,7 +82,7 @@ public final class MapCorrectionManager extends CorrectionManager {
             // check if chosenTile contains enough slots
             Set<BaseToken> baseTokens = hex.getBaseTokens();
             if (chosenTile != null && baseTokens != null && !baseTokens.isEmpty()) {
-                List<Station> stations = chosenTile.getStations();
+                Collection<Station> stations = chosenTile.getStations();
                 int nbSlots = 0;
                 if (stations != null) {
                     for (Station station:stations) {
@@ -90,7 +91,7 @@ public final class MapCorrectionManager extends CorrectionManager {
                 }
                 if (baseTokens.size() > nbSlots) {
                     errMsg =
-                        LocalText.getText("CorrectMapNotEnoughSlots", chosenTile.getExternalId());
+                        LocalText.getText("CorrectMapNotEnoughSlots", chosenTile.toText());
                     // return to step of tile selection
                     action.selectHex(hex);
                     break;
@@ -102,7 +103,7 @@ public final class MapCorrectionManager extends CorrectionManager {
                         // B. or the current tile requires relays
                         || hex.getCurrentTile().relayBaseTokensOnUpgrade()) {
                     errMsg =
-                        LocalText.getText("CorrectMapRequiresRelays", chosenTile.getExternalId());
+                        LocalText.getText("CorrectMapRequiresRelays", chosenTile.toText());
                     // return to step of tile selection
                     action.selectHex(hex);
                     break;
@@ -113,7 +114,7 @@ public final class MapCorrectionManager extends CorrectionManager {
 
         if (errMsg != null) {
             DisplayBuffer.add(this, LocalText.getText("CorrectMapCannotLayTile",
-                    chosenTile.getExternalId(),
+                    chosenTile.toText(),
                     hex.getId(),
                     errMsg ));
             ;
@@ -138,11 +139,13 @@ public final class MapCorrectionManager extends CorrectionManager {
         case SELECT_ORIENTATION:
             // default orientation for preprinted files
             if (preprintedTile == chosenTile) {
-                action.selectOrientation(hex.getPreprintedTileRotation());
+                int orientation = hex.getPreprintedTileRotation().getTrackPointNumber();
+                action.selectOrientation(orientation);
                 action.setNextStep(ActionStep.CONFIRM);
                 break;
-            } else if (chosenTile.getFixedOrientation() != -1) {
-                action.selectOrientation(chosenTile.getFixedOrientation());
+            } else if (chosenTile.getFixedOrientation() != null) {
+                int orientation = chosenTile.getFixedOrientation().getTrackPointNumber();
+                action.selectOrientation(orientation);
                 action.setNextStep(ActionStep.CONFIRM);
                 break;
             } else {
@@ -170,14 +173,14 @@ public final class MapCorrectionManager extends CorrectionManager {
                 return execute(action);
             }
         case FINISHED:
-            ChangeStack.start(this, action);
+            
 
             // lays tile
-            int orientation = action.getOrientation();
+            HexSide orientation = HexSide.get(action.getOrientation());
             hex.upgrade(chosenTile, orientation, new HashMap<String,Integer>());
 
             String msg = LocalText.getText("CorrectMapLaysTileAt",
-                    chosenTile.getExternalId(), hex.getId(), hex.getOrientationName(orientation));
+                    chosenTile.toText(), hex.getId(), hex.getOrientationName(orientation));
             ReportBuffer.add(this, msg);
             getParent().addToNextPlayerMessages(msg, true);
 

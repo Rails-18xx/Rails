@@ -91,10 +91,10 @@ public final class RevenueBonusTemplate implements Configurable {
         throw new ConfigurationException("Use toRevenueBonus");
     }
     
-    public RevenueBonus toRevenueBonus(MapHex hex, RailsRoot root, NetworkGraphBuilder ngb) {
+    public RevenueBonus toRevenueBonus(MapHex hex, RailsRoot root, NetworkGraph graph) {
         log.info("Convert " + this);
         RevenueBonus bonus = new RevenueBonus(value, name);
-        if (!convertVertices(bonus, ngb, hex)) {
+        if (!convertVertices(bonus, graph, hex)) {
             log.info("Not all vertices found");
             return null; 
         }
@@ -104,9 +104,9 @@ public final class RevenueBonusTemplate implements Configurable {
         return bonus;
     }
 
-    private boolean convertVertices(RevenueBonus bonus, NetworkGraphBuilder ngb, MapHex hex) {
+    private boolean convertVertices(RevenueBonus bonus, NetworkGraph graph, MapHex hex) {
         for (Integer identVertex:identVertices) {
-            NetworkVertex vertex = ngb.getVertex(hex, identVertex);
+            NetworkVertex vertex = graph.getVertex(hex, identVertex);
             if (vertex == null) {
                 return false;
             } else {

@@ -21,7 +21,7 @@ public final class StateManager extends Manager{
     protected static Logger log =
         LoggerFactory.getLogger(StateManager.class);
     
-    private final ChangeStack changeStack = ChangeStack.create(this);
+    private final ChangeStack changeStack;
     
     private final HashSetState<State> allStates = 
             HashSetState.create(this, "allStates");
@@ -40,12 +40,13 @@ public final class StateManager extends Manager{
     private PortfolioManager portfolioManager;
     private WalletManager walletManager;
 
-    private StateManager(Root parent, String id) {
+    private StateManager(Root parent, String id, ChangeReporter changeReporter) {
         super(parent, id);
+        this.changeStack = ChangeStack.create(this, changeReporter);
     }
 
-    static StateManager create(Root parent, String id){
-        return new StateManager(parent, id);
+    static StateManager create(Root parent, String id, ChangeReporter changeReporter){
+        return new StateManager(parent, id, changeReporter);
     }
     
     void init() {

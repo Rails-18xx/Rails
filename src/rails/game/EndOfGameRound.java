@@ -31,10 +31,6 @@ public final class EndOfGameRound extends Round {
     public GuiHints getGuiHints() {
         return guiHints;
     }
-
-    public void setGuiHints(GuiHints guiHints) {
-        this.guiHints = guiHints; 
-    }
     
     @Override
     public String getHelp() {

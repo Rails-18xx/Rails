@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import rails.game.MapManager;
-import rails.game.action.LayTile;
 import rails.game.action.LayToken;
 import rails.ui.swing.hexmap.HexMap;
 import rails.ui.swing.hexmap.HexMapImage;
@@ -45,8 +44,7 @@ public class MapPanel extends JPanel {
 
     public MapPanel(GameUIManager gameUIManager) {
         this.gameUIManager = gameUIManager;
-        //Scale.set(15);
-        Scale.set(16);
+        
 
         setLayout(new BorderLayout());
 
@@ -125,10 +123,6 @@ public class MapPanel extends JPanel {
                 scrollPane.getViewport().setViewPosition(viewPosition);
             }
         });
-    }
-
-    public void setAllowedTileLays(List<LayTile> allowedTileLays) {
-        map.setAllowedTileLays(allowedTileLays);
     }
 
     public <T extends LayToken> void setAllowedTokenLays(

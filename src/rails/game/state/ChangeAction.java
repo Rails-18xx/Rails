@@ -5,5 +5,6 @@ package rails.game.state;
  */
 public interface ChangeAction {
     
+    public ChangeActionOwner getActionOwner();
     
 }

@@ -13,7 +13,6 @@ import rails.common.ReportBuffer;
 import rails.game.action.*;
 import rails.game.model.PortfolioModel;
 import rails.game.state.BooleanState;
-import rails.game.state.ChangeStack;
 
 public class TreasuryShareRound extends StockRound {
 
@@ -320,7 +319,7 @@ public class TreasuryShareRound extends StockRound {
         }
 
         // All seems OK, now buy the shares.
-        ChangeStack.start(this, action);
+        
 
         int cashAmount = shares * price;
         String cashText = Currency.toBank(company, cashAmount);
@@ -464,7 +463,7 @@ public class TreasuryShareRound extends StockRound {
             sellPrices.put(company, sellPrice);
         }
 
-        ChangeStack.start(this, action);
+        
 
         int cashAmount = numberSold * price;
         String cashText = Currency.fromBank(cashAmount, company);
@@ -509,7 +508,7 @@ public class TreasuryShareRound extends StockRound {
             return false;
         }
 
-        ChangeStack.start(this, action);
+        
 
         // Inform GameManager
         gameManager.finishTreasuryShareRound();

@@ -80,7 +80,7 @@
 
 	<!-- Straight city (20) -->
 	<Tile id="57" quantity="4">
-		<Upgrade id="14,15" hex="-D10,-G13" />
+		<Upgrade id="14,15" hex="-D10,G13" />
 		<Upgrade id="1453" hex="D10" />
 		<IfOption name="Variant" value="Basegame">
 			<Upgrade id="1454" hex="G13" />

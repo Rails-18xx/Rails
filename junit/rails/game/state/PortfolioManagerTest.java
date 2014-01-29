@@ -27,7 +27,7 @@ public class PortfolioManagerTest {
         ownerC = OwnerImpl.create(root, OWNER_C_ID);
         portfolioA = PortfolioSet.create(ownerA, PORTFOLIO_A_ID , Ownable.class);
         portfolioB = PortfolioSet.create(ownerB, PORTFOLIO_B_ID , Ownable.class);
-        StateTestUtils.closeAndNew(root);
+        StateTestUtils.close(root);
     }
 
     @Test
@@ -76,7 +76,7 @@ public class PortfolioManagerTest {
     public void testAddPortfolio() {
         // remove first to prepare
         pm.removePortfolio(portfolioA);
-        StateTestUtils.closeAndNew(root);
+        StateTestUtils.close(root);
         assertNull(pm.getPortfolio(Ownable.class, ownerA));
         
         // then add

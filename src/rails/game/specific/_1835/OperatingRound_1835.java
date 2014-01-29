@@ -21,9 +21,7 @@ import rails.game.action.DiscardTrain;
 import rails.game.action.LayTile;
 import rails.game.special.ExchangeForShare;
 import rails.game.special.SpecialProperty;
-import rails.game.special.SpecialTileLay;
 import rails.game.state.BooleanState;
-import rails.game.state.ChangeStack;
 import rails.game.state.HashMapState;
 import rails.game.state.Owner;
 
@@ -220,13 +218,13 @@ public class OperatingRound_1835 extends OperatingRound {
                 String errMsg = LocalText.getText("InvalidTileLay");
                 DisplayBuffer.add(this, LocalText.getText("CannotLayTileOn",
                         action.getCompanyName(),
-                        action.getLaidTile().getExternalId(),
+                        action.getLaidTile().toText(),
                         action.getChosenHex().getId(),
                         Currency.format(this, 0),
                         errMsg ));
                 return false;
             } else {
-                ChangeStack.start(this, action); // Duplicate, but we have to
+                 // Duplicate, but we have to
                 hasLaidExtraOBBTile.set(true);
                 // Done here to make getSpecialTileLays() return the correct value.
                 // It's provisional, on the assumption that other validations are OK.

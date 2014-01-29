@@ -8,7 +8,6 @@ import rails.common.LocalText;
 import rails.common.ReportBuffer;
 import rails.game.*;
 import rails.game.action.*;
-import rails.game.state.ChangeStack;
 import rails.game.state.IntegerState;
 
 /**
@@ -249,7 +248,7 @@ public class StartRound_1835 extends StartRound {
 
         ReportBuffer.add(this, LocalText.getText("PASSES", playerName));
 
-        ChangeStack.start(this, action);
+        
 
         numPasses.add(1);
 

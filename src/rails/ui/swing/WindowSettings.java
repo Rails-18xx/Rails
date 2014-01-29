@@ -9,7 +9,6 @@ import javax.swing.JFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rails.common.Config;
 import rails.util.SystemOS;
 
 public class WindowSettings {

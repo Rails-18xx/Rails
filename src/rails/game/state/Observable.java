@@ -122,7 +122,7 @@ public abstract class Observable implements Item {
         // recursive definition
         return parent.getFullURI() + Item.SEP + id;
     }
-    
+
     @Override
     public String toString() {
         return Objects.toStringHelper(this).add("uri", getFullURI()).toString();

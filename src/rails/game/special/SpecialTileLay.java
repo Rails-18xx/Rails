@@ -13,24 +13,24 @@ public class SpecialTileLay extends SpecialProperty {
 
     private String locationCodes = null;
     private List<MapHex> locations = null;
-    private int tileNumber;
+    private String tileId = null;
     private Tile tile = null;
-    private String name;
+    private String name = null;
     private boolean extra = false;
     private boolean free = false;
     private boolean connected = false;
     
+    /** Tile colours that can be laid with this special property.
+     * Default is same colours as is allowed in a a normal tile lay.
+     * Don't use if specific tiles are specified! */
+    protected String[] tileColours = null;
+
     /**
      * Used by Configure (via reflection) only
      */
     public SpecialTileLay(RailsItem parent, String id) {
         super(parent, id);
     }
-
-    /** Tile colours that can be laid with this special property.
-     * Default is same colours as is allowed in a a normal tile lay.
-     * Don't use if specific tiles are specified! */
-    protected String[] tileColours = null;
 
     @Override
     public void configureFromXML(Tag tag) throws ConfigurationException {
@@ -45,7 +45,7 @@ public class SpecialTileLay extends SpecialProperty {
         if (!Util.hasValue(locationCodes))
             throw new ConfigurationException("SpecialTileLay: location missing");
 
-        tileNumber = tileLayTag.getAttributeAsInteger("tile", 0);
+        tileId = tileLayTag.getAttributeAsString("tile", null);
 
         String coloursString = tileLayTag.getAttributeAsString("colour");
         if (Util.hasValue(coloursString)) {
@@ -60,9 +60,9 @@ public class SpecialTileLay extends SpecialProperty {
         closingValue =
             tileLayTag.getAttributeAsInteger("closingValue", closingValue);
 
-        if (tileNumber > 0) {
+        if (tileId != null) {
             description = LocalText.getText("LayNamedTileInfo",
-                    tileNumber,
+                    tileId,
                     name != null ? name : "",
                             locationCodes,
                             (extra ? LocalText.getText("extra"):LocalText.getText("notExtra")),
@@ -90,8 +90,8 @@ public class SpecialTileLay extends SpecialProperty {
         MapManager mmgr = root.getMapManager();
         MapHex hex;
 
-        if (tileNumber > 0) {
-            tile = tmgr.getTile(tileNumber);
+        if (tileId != null) {
+            tile = tmgr.getTile(tileId);
         }
 
         locations = new ArrayList<MapHex>();
@@ -129,8 +129,8 @@ public class SpecialTileLay extends SpecialProperty {
         return locationCodes;
     }
 
-    public int getTileNumber() {
-        return tileNumber;
+    public String getTileId() {
+        return tileId;
     }
 
     public Tile getTile() {

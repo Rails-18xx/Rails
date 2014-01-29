@@ -69,8 +69,8 @@ public class ComponentManager {
         try {
             component.configureFromXML(configElement);
         } catch (ConfigurationException e) {
-            // Temporarily allow components to be incompletely configured.
-            log.warn(LocalText.getText("AcceptingConfigFailure"), e);
+            // Do not do this!
+            throw e;
         }
 
         // Add it to the map of known components.

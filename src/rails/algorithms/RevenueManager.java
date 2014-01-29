@@ -26,12 +26,15 @@ public final class RevenueManager extends RailsManager implements Configurable {
     protected static Logger log =
         LoggerFactory.getLogger(RevenueManager.class);
 
+    // Modifiers that are configurable
     private final HashSet<Configurable> configurableModifiers = new HashSet<Configurable>();
     
+    // Variables to store modifiers (permanent)
     private final ArrayListState<NetworkGraphModifier> graphModifiers = ArrayListState.create(this, "graphModifiers"); 
     private final ArrayListState<RevenueStaticModifier> staticModifiers = ArrayListState.create(this, "staticModifiers");
     private final ArrayListState<RevenueDynamicModifier> dynamicModifiers = ArrayListState.create(this, "dynamicModifiers");
     
+    // Variables that store the active modifier (per RevenueAdapter)
     private final ArrayList<RevenueStaticModifier> activeStaticModifiers = new ArrayList<RevenueStaticModifier>();
     private final ArrayList<RevenueDynamicModifier> activeDynamicModifiers = new ArrayList<RevenueDynamicModifier>();
     private RevenueDynamicModifier activeCalculator;
@@ -145,7 +148,7 @@ public final class RevenueManager extends RailsManager implements Configurable {
         return result;
     }
 
-    void initGraphModifiers(NetworkGraphBuilder graphBuilder) {
+    void initGraphModifiers(NetworkGraph graphBuilder) {
         for (NetworkGraphModifier modifier:graphModifiers.view()) {
             modifier.modifyGraph(graphBuilder);
         }

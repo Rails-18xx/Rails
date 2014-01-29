@@ -699,7 +699,7 @@ public class StockRound extends Round {
             return false;
         }
 
-        ChangeStack.start(this, action);
+        
 
         // All is OK, now start the company
         company.start(startSpace);
@@ -727,7 +727,7 @@ public class StockRound extends Round {
                 shares,
                 cert.getShare(),
                 priceRecipient.getId() ));
-        // ReportBuffer.getAllWaiting();
+        ReportBuffer.getAllWaiting(this);
 
         checkFlotation(company);
 
@@ -879,7 +879,7 @@ public class StockRound extends Round {
         }
 
         // All seems OK, now buy the shares.
-        ChangeStack.start(this, action);
+        
 
         MoneyOwner priceRecipient = getSharePriceRecipient(company, from.getParent(), cost);
 
@@ -900,7 +900,7 @@ public class StockRound extends Round {
                     from.getName(),
                     Currency.format(this, cost) ));
         }
-        // ReportBuffer.getAllWaiting();
+        ReportBuffer.getAllWaiting(this );
 
         PublicCertificate cert2;
         for (int i = 0; i < number; i++) {
@@ -1129,7 +1129,7 @@ public class StockRound extends Round {
             sellPrices.put(company, company.getCurrentSpace());
         }
 
-        ChangeStack.start(this, action);
+        
 
         String cashText = Currency.fromBank(cashAmount, currentPlayer);
         if (numberSold == 1) {
@@ -1311,7 +1311,7 @@ public class StockRound extends Round {
             return false;
         }
 
-        ChangeStack.start(this, action);
+        
 
         Certificate cert =
             ipoHasShare ? ipo.findCertificate(publicCompany,
@@ -1348,7 +1348,7 @@ public class StockRound extends Round {
             return false;
         }
 
-        ChangeStack.start(this, action);
+        
 
         if (hasActed.value()) {
             numPasses.set(0);
@@ -1425,7 +1425,7 @@ public class StockRound extends Round {
             return false;
         }
 
-        ChangeStack.start(this, action);
+        
         if (hasAutopassed(requestingPlayer)) {
             setAutopass(requestingPlayer, false);
         } else {

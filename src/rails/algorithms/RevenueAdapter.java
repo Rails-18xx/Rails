@@ -24,7 +24,6 @@ import rails.game.Phase;
 import rails.game.PublicCompany;
 import rails.game.RailsRoot;
 import rails.game.Train;
-import rails.game.TrainType;
 import rails.ui.swing.hexmap.HexMap;
 
 /**
@@ -62,13 +61,12 @@ public final class RevenueAdapter implements Runnable {
     // basic links, to be defined at creation
     private final RailsRoot root;
     private final RevenueManager revenueManager;
-    private final NetworkGraphBuilder graphBuilder;
-    private final NetworkCompanyGraph companyGraph;
+    private final NetworkAdapter networkAdapter;
     private final PublicCompany company;
     private final Phase phase;
 
     // basic components, defined empty at creation
-    private SimpleGraph<NetworkVertex, NetworkEdge> graph;
+    private NetworkGraph graph;
     private Set<NetworkVertex> startVertices;
     private List<NetworkTrain> trains;
     private List<VertexVisit> vertexVisitSets;
@@ -89,16 +87,15 @@ public final class RevenueAdapter implements Runnable {
     // revenue listener to communicate results
     private RevenueListener revenueListener;
     
-    public RevenueAdapter(RailsRoot root, NetworkGraphBuilder graphBuilder, NetworkCompanyGraph companyGraph, 
+    public RevenueAdapter(RailsRoot root, NetworkAdapter networkAdapter, 
             PublicCompany company, Phase phase){
         this.root = root;
         this.revenueManager = root.getRevenueManager();
-        this.graphBuilder = graphBuilder;
-        this.companyGraph = companyGraph;
+        this.networkAdapter = networkAdapter;
         this.company = company;
         this.phase = phase;
         
-        this.graph = new SimpleGraph<NetworkVertex, NetworkEdge>(NetworkEdge.class);
+        this.graph = null;
         this.trains = new ArrayList<NetworkTrain>();
         this.startVertices = new HashSet<NetworkVertex>();
         this.vertexVisitSets = new ArrayList<VertexVisit>();
@@ -108,9 +105,8 @@ public final class RevenueAdapter implements Runnable {
     }
     
     public static RevenueAdapter createRevenueAdapter(RailsRoot root, PublicCompany company, Phase phase) {
-        NetworkGraphBuilder nwGraph = NetworkGraphBuilder.create(root);
-        NetworkCompanyGraph companyGraph = NetworkCompanyGraph.create(nwGraph, company);
-        RevenueAdapter ra = new RevenueAdapter(root, nwGraph, companyGraph, company, phase);
+        NetworkAdapter networkAdapter = NetworkAdapter.create(root);
+        RevenueAdapter ra = new RevenueAdapter(root, networkAdapter, company, phase);
         ra.populateFromRails();
         return ra;
     }
@@ -125,15 +121,15 @@ public final class RevenueAdapter implements Runnable {
     }
     
     public SimpleGraph<NetworkVertex,NetworkEdge> getGraph() {
-        return graph;
+        return graph.getGraph();
     }
     
     public Set<NetworkVertex> getVertices() {
-        return graph.vertexSet();
+        return graph.getGraph().vertexSet();
     }
    
     public Set<NetworkEdge> getEdges() {
-        return graph.edgeSet();
+        return graph.getGraph().edgeSet();
     }
     
     public Graph<NetworkVertex,NetworkEdge> getRCGraph() {
@@ -181,18 +177,10 @@ public final class RevenueAdapter implements Runnable {
     }
 
     public boolean addTrainByString(String trainString) {
-        TrainType trainType = root.getTrainManager().getTypeByName(trainString.trim());
-        if (trainType != null) { // string defines available trainType
-            log.info("RA: found trainType" + trainType);
-            // FIXME Rails2.0: This does not work anymore (problems with train cloning)
-            Train railsTrain = root.getTrainManager().cloneTrain(trainType.getCertificateType());
-            return addTrain(railsTrain);
-        } else { // otherwise interpret the train
-            NetworkTrain train = NetworkTrain.createFromString(trainString);
-            if (train == null) return false;
-            trains.add(train);
-            return true;
-        }
+        NetworkTrain train = NetworkTrain.createFromString(trainString);
+        if (train == null) return false;
+        trains.add(train);
+        return true;
     }
 
     public List<VertexVisit> getVertexVisitSets() {
@@ -215,13 +203,13 @@ public final class RevenueAdapter implements Runnable {
     
     public void populateFromRails() {
         // define graph, without HQ
-        graph = companyGraph.createRouteGraph(false);
+        graph = networkAdapter.getRouteGraph(company, false);
         
         // initialize vertices
         NetworkVertex.initAllRailsVertices(graph, company, phase);
 
         // define startVertexes
-        addStartVertices(companyGraph.getCompanyBaseTokenVertexes(company));
+        addStartVertices(graph.getCompanyBaseTokenVertexes(company));
         
         // define visit sets
         defineVertexVisitSets();
@@ -230,7 +218,6 @@ public final class RevenueAdapter implements Runnable {
         defineRevenueBonuses();
         
         // define Trains
-        company.getPortfolioModel().getTrainList();
         for (Train train:company.getPortfolioModel().getTrainList()) {
             addTrain(train);
         }
@@ -283,7 +270,7 @@ public final class RevenueAdapter implements Runnable {
             if (tileBonuses != null) bonuses.addAll(tileBonuses);
 
             for (RevenueBonusTemplate bonus:bonuses) {
-                addRevenueBonus(bonus.toRevenueBonus(hex, root, graphBuilder));
+                addRevenueBonus(bonus.toRevenueBonus(hex, root, graph));
             }
         }
         log.info("RA: RevenueBonuses = " + revenueBonuses);
@@ -314,13 +301,16 @@ public final class RevenueAdapter implements Runnable {
         }
         
         // define optimized graph
-        rcGraph = companyGraph.createRevenueGraph(protectedVertices);
         
         if (useMultiGraph) {
             // generate phase 2 graph
-            rcGraph = companyGraph.createPhaseTwoGraph();
+            NetworkMultigraph multiGraph = networkAdapter.getMultigraph(company, protectedVertices); 
+            rcGraph = multiGraph.getGraph();
             // retrieve edge sets
-            edgeTravelSets.putAll(companyGraph.getPhaseTwoEdgeSets(this));
+            edgeTravelSets.putAll(multiGraph.getPhaseTwoEdgeSets(this));
+        } else {
+            // generate standard graph
+            rcGraph = networkAdapter.getRevenueGraph(company, protectedVertices).getGraph();
         }
    
         // define the vertices and edges lists
@@ -506,13 +496,16 @@ public final class RevenueAdapter implements Runnable {
             }
             rc.setVisitSet(setArray);
         }
-        log.info("rcVertices:" + rcVertices);
+        log.info("RA: rcVertices:" + rcVertices);
+        log.info("RA: rcEdges:" + rcEdges);
 
         // set revenue bonuses
         int id = 0;
         for (RevenueBonus bonus:revenueBonuses) {
             if (bonus.addToRevenueCalculator(rc, id, rcVertices, trains, phase)) id ++;
         }
+        
+        log.info("RA: edgeTravelSets:" + edgeTravelSets);
         
         // set edge sets
         if (useMultiGraph) {
@@ -565,8 +558,12 @@ public final class RevenueAdapter implements Runnable {
     private List<RevenueTrainRun> convertRcRun(int[][] rcRun) {
         
         List<RevenueTrainRun> convertRun = new ArrayList<RevenueTrainRun>();
+                
         for (int j=0; j < rcRun.length; j++) {
             RevenueTrainRun trainRun = new RevenueTrainRun(this, trains.get(j));
+            convertRun.add(trainRun);
+
+            if (rcEdges.size() == 0) continue; 
             for (int v=0; v < rcRun[j].length; v++) {
                 int id= rcRun[j][v];
                 if (id == -1) break;
@@ -581,7 +578,6 @@ public final class RevenueAdapter implements Runnable {
             } else {
                 trainRun.convertVerticesToEdges();
             }
-            convertRun.add(trainRun);
         }
         return convertRun;
     }

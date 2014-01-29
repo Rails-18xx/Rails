@@ -102,7 +102,7 @@ public class GameStatus extends GridPanel implements ActionListener {
     protected GameUIManager gameUIManager;
     protected Bank bank;
 
-    protected PossibleActions possibleActions = PossibleActions.getInstance();
+    protected PossibleActions possibleActions;
 
     protected boolean hasParPrices = false;
     protected boolean compCanBuyPrivates = false;
@@ -135,6 +135,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         this.parent = parent;
         this.gameUIManager = gameUIManager;
         bank = gameUIManager.getRoot().getBank();
+        possibleActions = gameUIManager.getGameManager().getPossibleActions();
 
         gridPanel = this;
         parentFrame = parent;

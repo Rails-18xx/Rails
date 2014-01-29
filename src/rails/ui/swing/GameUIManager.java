@@ -199,8 +199,8 @@ public class GameUIManager implements DialogOwner {
             if (font != null) log.debug("Change text fonts globally to " + font.getName() + " / " + (boldStyle ? "Bold" : "Plain"));
         }
 
-        log.debug("Change text fonts to relative scale " + Scale.getFontScale());
-        changeGlobalFont(font, Scale.getFontScale());
+        log.debug("Change text fonts to relative scale " + GUIGlobals.getFontsScale());
+        changeGlobalFont(font, GUIGlobals.getFontsScale());
     }
 
 
@@ -213,7 +213,7 @@ public class GameUIManager implements DialogOwner {
 
         splashWindow.notifyOfStep(SplashWindow.STEP_REPORT_WINDOW);
         if (Config.get("report.window.type").equalsIgnoreCase("static")) {
-            reportWindow = new ReportWindow(this);
+            // reportWindow = new ReportWindowStatic(this);
         } else {
             reportWindow = new ReportWindowDynamic(this);
         }
@@ -330,6 +330,7 @@ public class GameUIManager implements DialogOwner {
         if (!myTurn) return true;
         statusWindow.setGameActions();
         statusWindow.setCorrectionMenu();
+        reportWindow.setActions();
 
         // Is this perhaps the right place to display messages...?
         if (getDisplayBuffer().getAutoDisplay()) {
@@ -367,7 +368,6 @@ public class GameUIManager implements DialogOwner {
 
         // Follow-up the result
         log.debug("==Result from server: " + result);
-        reportWindow.updateLog();
 
         return result;
     }
@@ -626,7 +626,7 @@ public class GameUIManager implements DialogOwner {
         String[] ct;
         MapHex hex;
         List<String> options = new ArrayList<String>();
-        Stop city;
+        Station station;
         List<ExchangeableToken> oldTokens = action.getTokensToExchange();
 
         for (ExchangeableToken t : oldTokens) {
@@ -638,15 +638,14 @@ public class GameUIManager implements DialogOwner {
             } catch (NumberFormatException e) {
                 cityNumber = 1;
             }
-            hex = orWindow.getMapPanel().getMap().getHexByName (hexName).getHexModel();
-            city = hex.getStop(cityNumber);
+            hex = root.getMapManager().getHex(hexName);
+            station = hex.getStation(cityNumber);
             oldCompName = t.getOldCompanyName();
             options.add(LocalText.getText("ExchangeableToken",
                     oldCompName,
-                    hexName,
-                    hex.getCityName(),
+                    hex.toText(),
                     cityNumber,
-                    city.getTrackEdges()));
+                    hex.getConnectionString(station)));
         }
 
 
@@ -1089,7 +1088,7 @@ public class GameUIManager implements DialogOwner {
     public DisplayBuffer getDisplayBuffer() {
         return railsRoot.getReportManager().getDisplayBuffer();
     }
-
+    
     public void setORUIManager(ORUIManager orUIManager) {
         this.orUIManager = orUIManager;
     }
@@ -1191,7 +1190,7 @@ public class GameUIManager implements DialogOwner {
      * (after configuration changes)
      */
     public static void updateUILookAndFeel() {
-        Scale.initFromConfiguration();
+        GUIGlobals.initFontsScale();
         instance.initFontSettings();
         instance.updateWindowsLookAndFeel();
     }

@@ -23,5 +23,6 @@
 	<classpathentry kind="lib" path="src/lib/df_1.1.0/dockingFramesCommon.jar"/>
 	<classpathentry kind="lib" path="src/lib/df_1.1.0/dockingFramesCore.jar"/>
 	<classpathentry kind="lib" path="src/lib/commons-io-2.1/commons-io-2.1.jar"/>
+	<classpathentry kind="lib" path="src/lib/migLayout-4.0/miglayout-4.0-swing.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

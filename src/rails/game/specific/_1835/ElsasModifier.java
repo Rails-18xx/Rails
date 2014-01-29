@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import rails.algorithms.NetworkEdge;
-import rails.algorithms.NetworkGraphBuilder;
+import rails.algorithms.NetworkGraph;
 import rails.algorithms.NetworkGraphModifier;
 import rails.algorithms.NetworkVertex;
 import rails.game.GameManager;
@@ -26,11 +26,10 @@ public class ElsasModifier implements NetworkGraphModifier {
     private static final Logger log =
             LoggerFactory.getLogger(ElsasModifier.class);
 
-    public void modifyGraph(NetworkGraphBuilder graphBuilder) {
+    public void modifyGraph(NetworkGraph mapGraph) {
         
         RailsRoot root = RailsRoot.getInstance();
-
-        SimpleGraph<NetworkVertex, NetworkEdge> graph = graphBuilder.getMapGraph();
+        SimpleGraph<NetworkVertex, NetworkEdge> graph = mapGraph.getGraph();
 
         // Check if (one of the  elsasHex has zero value ...
         MapHex hex = root.getMapManager().getHex("M5");

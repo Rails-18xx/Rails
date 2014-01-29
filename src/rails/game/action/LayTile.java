@@ -34,6 +34,7 @@ public class LayTile extends PossibleORAction {
     /** Allowed tiles on a specific location (empty means unspecified) */
     transient private List<Tile> tiles = null;
     private int[] tileIds;
+    private String[] sTileIds;
 
     /**
      * Special property that will be fulfilled by this tile lay. If null, this
@@ -52,6 +53,7 @@ public class LayTile extends PossibleORAction {
     /** The tile actually laid */
     transient private Tile laidTile = null;
     private int laidTileId;
+    private String sLaidTileId;
 
     /** The map hex on which the tile is laid */
     transient private MapHex chosenHex = null;
@@ -124,7 +126,7 @@ public class LayTile extends PossibleORAction {
      */
     public void setLaidTile(Tile laidTile) {
         this.laidTile = laidTile;
-        this.laidTileId = laidTile.getNb();
+        this.sLaidTileId = laidTile.getId();
     }
 
     /**
@@ -154,9 +156,9 @@ public class LayTile extends PossibleORAction {
      */
     public void setTiles(List<Tile> tiles) {
         this.tiles = tiles;
-        this.tileIds = new int[tiles.size()];
+        this.sTileIds = new String[tiles.size()];
         for (int i = 0; i < tiles.size(); i++) {
-            tileIds[i] = tiles.get(i).getNb();
+            sTileIds[i] = tiles.get(i).getId();
         }
     }
 
@@ -262,7 +264,7 @@ public class LayTile extends PossibleORAction {
                 }
             }
         } else {
-            b.append(" tile=").append(laidTile.getNb()).append(" hex=").append(
+            b.append(" tile=").append(laidTile.getId()).append(" hex=").append(
                     chosenHex.getId()).append(" orientation=").append(
                             orientation).append(" tokens=").append(relaidBaseTokensString);
         }
@@ -279,9 +281,15 @@ public class LayTile extends PossibleORAction {
         ObjectInputStream.GetField fields = in.readFields();
         locationNames = (String) fields.get("locationNames", locationNames);
         tileColours = (Map<String, Integer>) fields.get("tileColours", tileColours);
+        // FIXME: Rewrite this with Rails1.x version flag
         tileIds = (int[]) fields.get("tileIds", tileIds);
+        sTileIds = (String[]) fields.get("tileIds", sTileIds);
+        
         specialPropertyId = fields.get("specialPropertyId", specialPropertyId);
+        // FIXME: Rewrite this with Rails1.x version flag
         laidTileId = fields.get("laidTileId", laidTileId);
+        sLaidTileId = (String)fields.get("sLaidTileId", sLaidTileId);
+        
         chosenHexName = (String) fields.get("chosenHexName", chosenHexName);
         orientation = fields.get("orientation", orientation);
         relayBaseTokens = fields.get("relayBaseTokens", relayBaseTokens);
@@ -297,19 +305,33 @@ public class LayTile extends PossibleORAction {
             }
         }
 
+        // FIXME: Rewrite this with Rails1.x version flag
         if (tileIds != null && tileIds.length > 0) {
             tiles = new ArrayList<Tile>();
-            for (int i = 0; i < tileIds.length; i++) {
-                tiles.add(tmgr.getTile(tileIds[i]));
+            for (int tileNb:tileIds) {
+                tiles.add(tmgr.getTile(String.valueOf(tileNb)));
             }
         }
+        
+        if (sTileIds != null && sTileIds.length > 0) {
+            tiles = new ArrayList<Tile>();
+            for (String tileId:sTileIds) {
+                tiles.add(tmgr.getTile(tileId));
+            }
+        }
+        
         if (specialPropertyId > 0) {
             specialProperty =
                 (SpecialTileLay) SpecialProperty.getByUniqueId(specialPropertyId);
         }
+        // FIXME: Rewrite this with Rails1.x version flag
         if (laidTileId != 0) {
-            laidTile = tmgr.getTile(laidTileId);
+            sLaidTileId = String.valueOf(laidTileId);
         }
+        if (sLaidTileId != null) {
+            laidTile = tmgr.getTile(sLaidTileId);
+        }
+
         if (chosenHexName != null && chosenHexName.length() > 0) {
             chosenHex = mmgr.getHex(chosenHexName);
         }

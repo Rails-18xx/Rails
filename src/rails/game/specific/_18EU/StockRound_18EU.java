@@ -9,14 +9,12 @@ import com.google.common.collect.Iterables;
 import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.common.ReportBuffer;
-import rails.common.parser.ConfigurationException;
 import rails.game.*;
 import rails.game.Currency;
 import rails.game.action.*;
 import rails.game.model.PortfolioModel;
 import rails.game.state.ArrayListState;
 import rails.game.state.BooleanState;
-import rails.game.state.ChangeStack;
 import rails.game.state.IntegerState;
 import rails.game.state.Portfolio;
 
@@ -82,7 +80,7 @@ public class StockRound_18EU extends StockRound {
         // start a company by trading in a Minor
         boolean mustMergeMinor = !phase5Reached;
         List<PublicCompany> minors = null;
-        List<Stop> freeStations = null;
+        List<Stop> freeStops = null;
         if (mustMergeMinor) {
             minors = new ArrayList<PublicCompany>();
             for (PublicCertificate c : getCurrentPlayer().getPortfolioModel().getCertificates()) {
@@ -91,11 +89,11 @@ public class StockRound_18EU extends StockRound {
                 }
             }
         } else {
-            freeStations = new ArrayList<Stop>();
+            freeStops = new ArrayList<Stop>();
             MapManager map = getRoot().getMapManager();
-            for (Stop city : map.getCurrentStations()) {
-                if (city.getSlots() > city.getBaseTokens().size()) {
-                    freeStations.add(city);
+            for (Stop stop : map.getCurrentStops()) {
+                if (stop.hasTokenSlotsLeft()) {
+                    freeStops.add(stop);
                 }
             }
         }
@@ -138,7 +136,7 @@ public class StockRound_18EU extends StockRound {
                     if (mustMergeMinor) {
                         if (minors.isEmpty()) continue;
                     } else {
-                        if (freeStations.isEmpty()) continue;
+                        if (freeStops.isEmpty()) continue;
                     }
 
                     List<Integer> startPrices = new ArrayList<Integer>();
@@ -158,7 +156,7 @@ public class StockRound_18EU extends StockRound {
                         if (mustMergeMinor) {
                             action.setMinorsToMerge(minors);
                         } else {
-                            action.setAvailableHomeStations(freeStations);
+                            action.setAvailableHomeStations(freeStops);
                         }
                         possibleActions.add(action);
                     }
@@ -383,24 +381,20 @@ public class StockRound_18EU extends StockRound {
             return false;
         }
 
-        ChangeStack.start(this, action);
+        
 
         // All is OK, now start the company
         MapHex homeHex = null;
         int homeCityNumber = 1;
         if (minor != null) {
             homeHex = minor.getHomeHexes().get(0);
-            homeCityNumber = homeHex.getCityOfBaseToken(minor);
+            homeCityNumber = homeHex.getStopOfBaseToken(minor).getRelatedNumber();
         } else if (selectedHomeCity != null) {
             homeHex = selectedHomeCity.getParent();
-            homeCityNumber = selectedHomeCity.getNumber();
+            homeCityNumber = selectedHomeCity.getRelatedNumber();
             //Bugfix for Error reported by John Galt- Mar 31 2012 ; Martin Brumm
             //The maphex needs to have the homes map set with the company value.
-            try {
-                homeHex.addHome(company, homeCityNumber);
-            } catch (ConfigurationException e) {
-               log.error(e.getStackTrace().toString());
-            }
+            homeHex.addHome(company, selectedHomeCity);
         }
         company.setHomeHex(homeHex);
         company.setHomeCityNumber(homeCityNumber);
@@ -506,7 +500,7 @@ public class StockRound_18EU extends StockRound {
 
         // TODO Validation to be added?
 
-        ChangeStack.start(this, action);
+        
 
         if (major != null) {
             cert = major.getPortfolioModel().findCertificate(major, false);
@@ -546,13 +540,13 @@ public class StockRound_18EU extends StockRound {
         }
 
         MapHex homeHex = minor.getHomeHexes().get(0);
-        int homeCityNumber = homeHex.getCityOfBaseToken(minor);
+        Stop homeStop  = homeHex.getStopOfBaseToken(minor);
         minor.setClosed();
 
         if (major != null && action.getReplaceToken()) {
-            if (homeHex.layBaseToken(major, homeCityNumber)) {
+            if (homeHex.layBaseToken(major, homeStop)) {
                 major.layBaseToken(homeHex, 0);
-            }
+            }   
         }
 
         if (major != null) {
@@ -690,7 +684,7 @@ public class StockRound_18EU extends StockRound {
         }
 
         /* End of validation, start of execution */
-        ChangeStack.start(this, action);
+        
         // FIXME: if (action.isForced()) changeStack.linkToPreviousMoveSet();
         pool.addTrain(train);
         ReportBuffer.add(this, LocalText.getText("CompanyDiscardsTrain",

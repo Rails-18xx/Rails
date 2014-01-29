@@ -24,7 +24,7 @@ public class ArrayListMultimapStateTest {
         itemA = OwnableItemImpl.create(root, ITEM_A_ID);
         itemB = OwnableItemImpl.create(root, ITEM_B_ID);
         itemC = OwnableItemImpl.create(root, ITEM_C_ID);
-        StateTestUtils.closeAndNew(root);
+        StateTestUtils.close(root);
  }
 
     @Test
@@ -49,7 +49,7 @@ public class ArrayListMultimapStateTest {
         state.put(ITEM_A_ID, itemA);
         state.put(ITEM_A_ID, itemB);
         state.put(ITEM_A_ID, itemA);
-        StateTestUtils.closeAndNew(root);
+        StateTestUtils.close(root);
         assertThat(state.get(ITEM_A_ID)).containsExactly(itemA, itemB, itemA);
         // remove items
         state.remove(ITEM_A_ID, itemA);

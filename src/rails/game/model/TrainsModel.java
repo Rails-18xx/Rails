@@ -22,6 +22,7 @@ public class TrainsModel extends RailsModel {
     private TrainsModel(RailsOwner parent, String id) {
         super(parent, id);
         trains = PortfolioSet.create(parent, "trains", Train.class);
+        trains.addModel(this);
     }
     
     /** 

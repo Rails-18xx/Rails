@@ -25,7 +25,6 @@ public class StringStateTest {
     public void setUp() {
         root = StateTestUtils.setUpRoot();
         
-        
         stateDefault = StringState.create(root, DEFAULT_ID);
         stateInit = StringState.create(root, INIT_ID, INIT);
     }
@@ -63,15 +62,15 @@ public class StringStateTest {
         stateDefault.set(null);
         stateInit.set(null);
         StateTestUtils.close(root);
-        assertThat(StateTestUtils.getLastClosedChangeSet(root).getStates()).doesNotContain(stateDefault);
-        assertThat(StateTestUtils.getLastClosedChangeSet(root).getStates()).contains(stateInit);
+        assertThat(StateTestUtils.getPreviousChangeSet(root).getStates()).doesNotContain(stateDefault);
+        assertThat(StateTestUtils.getPreviousChangeSet(root).getStates()).contains(stateInit);
 
-        StateTestUtils.newChangeSet(root);
+        StateTestUtils.close(root);
         stateDefault.set("");
         stateInit.set(null);
         StateTestUtils.close(root);
-        assertThat(StateTestUtils.getLastClosedChangeSet(root).getStates()).contains(stateDefault);
-        assertThat(StateTestUtils.getLastClosedChangeSet(root).getStates()).doesNotContain(stateInit);
+        assertThat(StateTestUtils.getPreviousChangeSet(root).getStates()).contains(stateDefault);
+        assertThat(StateTestUtils.getPreviousChangeSet(root).getStates()).doesNotContain(stateInit);
     }
 
     @Test

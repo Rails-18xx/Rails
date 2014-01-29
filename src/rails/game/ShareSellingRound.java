@@ -8,7 +8,6 @@ import rails.common.*;
 import rails.game.action.PossibleAction;
 import rails.game.action.SellShares;
 import rails.game.model.PortfolioModel;
-import rails.game.state.ChangeStack;
 import rails.game.state.IntegerState;
 
 // TODO: Check if un-initialized states cause undo problems
@@ -354,7 +353,7 @@ public class ShareSellingRound extends StockRound {
         }
         int cashAmount = numberSold * price * shareUnits;
 
-        ChangeStack.start(this, action);
+        
         // FIXME: changeStack.linkToPreviousMoveSet();
 
         String cashText = Currency.fromBank(cashAmount, currentPlayer);

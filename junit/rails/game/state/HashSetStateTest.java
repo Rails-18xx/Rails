@@ -163,7 +163,7 @@ public class HashSetStateTest {
         // check initial state after undo
         assertInitialStateAfterUndo();
         // and check iterator after redo
-        StateTestUtils.newChangeSet(root); // test requires open changeset
+        StateTestUtils.close(root); // test requires open changeset
         assertTestIterator(thirdItem);
     }
     

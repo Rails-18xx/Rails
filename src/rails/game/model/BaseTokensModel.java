@@ -9,7 +9,6 @@ import com.google.common.collect.Sets;
 
 import rails.game.BaseToken;
 import rails.game.PublicCompany;
-import rails.game.state.Model;
 import rails.game.state.Portfolio;
 import rails.game.state.PortfolioSet;
 

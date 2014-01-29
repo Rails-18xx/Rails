@@ -14,7 +14,6 @@ import rails.game.action.DiscardTrain;
 import rails.game.action.PossibleAction;
 import rails.game.special.ExchangeForShare;
 import rails.game.special.SpecialProperty;
-import rails.game.state.ChangeStack;
 
 public class PrussianFormationRound extends StockRound {
 
@@ -245,7 +244,7 @@ public class PrussianFormationRound extends StockRound {
         }
 
         // all actions linked during formation round to avoid serious undo problems
-        ChangeStack.start(this, action);
+        
         // FIXME: changeStack.linkToPreviousMoveSet();
 
         if (folding) executeStartPrussian(false);
@@ -307,7 +306,7 @@ public class PrussianFormationRound extends StockRound {
         */
 
         // all actions linked during formation round to avoid serious undo problems
-        ChangeStack.start(this, action);
+        
         // FIMXE: changeStack.linkToPreviousMoveSet();
 
         // Execute
@@ -365,7 +364,7 @@ public class PrussianFormationRound extends StockRound {
                 Stop city = (Stop) token.getOwner();
                 MapHex hex = city.getParent();
                 token.moveTo(minor);
-                if (!hex.hasTokenOfCompany(prussian) && hex.layBaseToken(prussian, city.getNumber())) {
+                if (!hex.hasTokenOfCompany(prussian) && hex.layBaseToken(prussian, city)) {
                     /* TODO: the false return value must be impossible. */
                     message = LocalText.getText("ExchangesBaseToken",
                             PR_ID, minor.getId(),
@@ -436,7 +435,7 @@ public class PrussianFormationRound extends StockRound {
         }
 
         /* End of validation, start of execution */
-        ChangeStack.start(this, action);
+        
         // FIXME: if (action.isForced()) changeStack.linkToPreviousMoveSet();
 
         pool.addTrain(train);

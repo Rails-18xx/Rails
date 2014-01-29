@@ -29,7 +29,8 @@ public class Phase extends RailsModel implements Configurable {
             LoggerFactory.getLogger(Phase.class);
 
     // static data
-    private int index;
+    private final int index;
+    
     private String name;
     private ImmutableList <String> tileColours;
     private Map<String, Integer> tileLaysPerColour;
@@ -384,7 +385,6 @@ public class Phase extends RailsModel implements Configurable {
         return index;
     }
 
-    // FIXME (Rails2.0): This is no used so far
     public String getRealName() {
         return (name != null) ? name : getId();
     }
