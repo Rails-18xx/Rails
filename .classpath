@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="junit"/>
-	<classpathentry kind="src" path="src"/>
+	<classpathentry excluding="main/java/|main/java/" kind="src" path="src"/>
+	<classpathentry kind="src" path="src/main/java"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="src/lib/batik-1.7/lib/batik-bridge.jar"/>
 	<classpathentry kind="lib" path="src/lib/batik-1.7/lib/batik-dom.jar"/>
