@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <GameOptions>
 	<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
+	<GameOption name="RouteAlgorithm" values="Permissive,Semi-Restrictive,Restrictive" default="Semi-Restrictive" />
 	<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
 	<GameOption name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="Yellow Plain"/>
 	<GameOption name="NoMapMode" type="toggle" default="no" />

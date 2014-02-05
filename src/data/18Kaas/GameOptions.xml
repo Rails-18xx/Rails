@@ -3,6 +3,7 @@
     <!-- Note: a parameter in braces {...} will be localised for display-->
 	<GameOption name="VersionOf" parm="{MAP}" values="v1,v2" default="v2" />
 	<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
+	<GameOption name="RouteAlgorithm" values="Permissive,Semi-Restrictive,Restrictive" default="Permissive" />
 	<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
 	<GameOption name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
 	<GameOption name="18KaasRuhrgebiedDoublesOnlyMajors" type="toggle" default="yes" />

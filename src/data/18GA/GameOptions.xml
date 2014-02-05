@@ -3,6 +3,7 @@
 	<GameOption name="Variant" values="Basegame,Cotton Port" default="Basegame"/>
 	<GameOption name="NoMapMode" type="toggle" default="no"/>
 	<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Highlight"/>
+	<GameOption name="RouteAlgorithm" values="Permissive,Semi-Restrictive,Restrictive" default="Semi-Restrictive" />
 	<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest"/>
 	<GameOption name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
 	<GameOption name="UnlimitedTopTrains" parm="8" type="toggle" default="no"/>

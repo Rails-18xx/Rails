@@ -7,6 +7,7 @@
 	<GameOption name="Include" parm="R2" type="toggle" default="no"/>
 	<GameOption name="Include" parm="R3" type="toggle" default="no"/>
 	<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Deactivate" />
+	<GameOption name="RouteAlgorithm" values="Permissive,Semi-Restrictive,Restrictive" default="Restrictive" />
 	<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Deactivate" />
 	<GameOption name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
 	<GameOption name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <GameOptions>
 	<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Highlight"/>
+	<GameOption name="RouteAlgorithm" values="Permissive,Semi-Restrictive,Restrictive" default="Permissive" />
 	<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest"/>
 	<GameOption name="Extra3Trains" values="0,1,2" default="0"/>
 	<GameOption name="Extra4Trains" values="0,1" default="0"/>
