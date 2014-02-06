@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ComponentManager>
-	<Component name="GameManager" class="rails.game.GameManager">
+	<Component name="GameManager" class="net.sf.rails.game.GameManager">
 		<Game name="1826"/>
 		<GameParameters>
 			<PlayerShareLimit percentage="60">
@@ -28,24 +28,24 @@
 				but uses the 'finish' attribute value defined above. -->
 		</EndOfGame>
 	</Component>
-	<Component name="PlayerManager" class="rails.game.PlayerManager">
+	<Component name="PlayerManager" class="net.sf.rails.game.PlayerManager">
 		<Players number="2" cash="900" certLimit="28"/>
 		<Players number="3" cash="600" certLimit="20"/>
 		<Players number="4" cash="450" certLimit="16"/>
 		<Players number="5" cash="360" certLimit="13"/>
 		<Players number="6" cash="300" certLimit="11"/>		
 	</Component>
-	<Component name="Bank" class="rails.game.Bank">
+	<Component name="Bank" class="net.sf.rails.game.Bank">
 		<Bank amount="12000"/>
 	</Component>
-	<Component name="TileManager" class="rails.game.TileManager" 
+	<Component name="TileManager" class="net.sf.rails.game.TileManager" 
 		file="TileSet.xml"/>
-	<Component name="Map" class="rails.game.MapManager" file="Map.xml"/>
-	<Component name="CompanyManager" class="rails.game.CompanyManager" 
+	<Component name="Map" class="net.sf.rails.game.MapManager" file="Map.xml"/>
+	<Component name="CompanyManager" class="net.sf.rails.game.CompanyManager" 
 		file="CompanyManager.xml"/>
-	<Component name="StockMarket" class="rails.game.StockMarket" 
+	<Component name="StockMarket" class="net.sf.rails.game.StockMarket" 
 		file="StockMarket.xml"/>
-	<Component name="TrainManager" class="rails.game.TrainManager">
+	<Component name="TrainManager" class="net.sf.rails.game.TrainManager">
 		<Defaults>
 			<Reach base="stops" countTowns="yes"/>
 			<!-- Alternative values: 
@@ -78,7 +78,7 @@
             <NewPhase phaseName="TGV"/>
         </TrainType>
 	</Component>
-	<Component name="PhaseManager" class="rails.game.PhaseManager">
+	<Component name="PhaseManager" class="net.sf.rails.game.PhaseManager">
 		<Phase name="2H" >
 			<Tiles colour="yellow"/>
 			<OperatingRounds number="1"/>
@@ -103,7 +103,7 @@
 			<Tiles colour="yellow,green,brown,gray"/>
 		</Phase>
 	</Component>
-	<Component name="RevenueManager" class="rails.algorithms.RevenueManager">
-				<Modifier class="rails.game.specific._1826.TGVModifier" /> 
+	<Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager">
+				<Modifier class="net.sf.rails.game.specific._1826.TGVModifier" /> 
 	</Component>
 </ComponentManager>

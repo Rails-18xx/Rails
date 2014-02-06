@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ComponentManager>
-	<Component name="GameManager" class="rails.game.GameManager">
+	<Component name="GameManager" class="net.sf.rails.game.GameManager">
 		<Game name="18VA"/>
 		<GameParameters>
 			<PlayerShareLimit percentage="60">
@@ -27,7 +27,7 @@
 			<!-- "Runs out"; when "broken", -1 is the limit -->
 		</EndOfGame>
 	</Component>
-	<Component name="PlayerManager" class="rails.game.PlayerManager">
+	<Component name="PlayerManager" class="net.sf.rails.game.PlayerManager">
 		<IfOption name="Variant" value="Basegame">
 			<Players number="2" cash="600" certLimit="27"/>
 			<Players number="3" cash="400" certLimit="18"/>
@@ -35,18 +35,18 @@
 			<Players number="5" cash="240" certLimit="10"/>
 		</IfOption>
 	</Component>
-	<Component name="Bank" class="rails.game.Bank">
+	<Component name="Bank" class="net.sf.rails.game.Bank">
 		<Bank amount="8000"/>
 		<Money format="$@"/>
 	</Component>
-	<Component name="TileManager" class="rails.game.TileManager"
+	<Component name="TileManager" class="net.sf.rails.game.TileManager"
 		file="TileSet.xml"/>
-	<Component name="Map" class="rails.game.MapManager" file="Map.xml"/>
-	<Component name="CompanyManager" class="rails.game.CompanyManager"
+	<Component name="Map" class="net.sf.rails.game.MapManager" file="Map.xml"/>
+	<Component name="CompanyManager" class="net.sf.rails.game.CompanyManager"
 		file="CompanyManager.xml"/>
-	<Component name="StockMarket" class="rails.game.StockMarket"
+	<Component name="StockMarket" class="net.sf.rails.game.StockMarket"
 		file="StockMarket.xml"/>
-	<Component name="TrainManager" class="rails.game.TrainManager">
+	<Component name="TrainManager" class="net.sf.rails.game.TrainManager">
 		<Defaults>
 			<Reach base="stops" countTowns="no"/>
 			<Score towns="yes"/>
@@ -68,7 +68,7 @@
 			<NewPhase phaseName="4D"/>
 		</TrainType>
 	</Component>
-	<Component name="PhaseManager" class="rails.game.PhaseManager">
+	<Component name="PhaseManager" class="net.sf.rails.game.PhaseManager">
 		<!-- Each Phase's defaults are the previous one's values -->
 		<Phase name="2">
 			<Tiles colour="yellow"/>

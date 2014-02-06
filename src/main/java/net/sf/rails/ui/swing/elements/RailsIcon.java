@@ -1,6 +1,7 @@
 package net.sf.rails.ui.swing.elements;
 
 import java.awt.Image;
+import java.io.File;
 
 import javax.swing.ImageIcon;
 
@@ -57,7 +58,7 @@ public enum RailsIcon {
     //null meaning all public fields are null
     NULL ();
     
-    private final static String IMAGE_PATH = "/rails/ui/images/";
+    private final static String IMAGE_PATH = "/images/ui";
     private final static int SMALL_IMAGE_WIDTH = 16;
     private final static int SMALL_IMAGE_HEIGHT = 16;
     private final String configKey;
@@ -93,7 +94,7 @@ public enum RailsIcon {
         }
         
         //get icon
-        String path = IMAGE_PATH + fileName;
+        String path = IMAGE_PATH + File.separator + fileName;
         java.net.URL imgURL = getClass().getResource(path);
         if (imgURL != null) {
             return new ImageIcon(imgURL, description);

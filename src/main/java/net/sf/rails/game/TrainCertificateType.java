@@ -20,8 +20,8 @@ import org.slf4j.LoggerFactory;
  * TrainCertficates can be multi-sided (thus provide several TrainType options)
  */
 public class TrainCertificateType extends RailsAbstractItem implements Configurable, Comparable<TrainCertificateType> {
-    
-    private final static String DEFAULT_TRAIN_CLASS = "rails.game.Train";
+    // FIXME: Rails 2.0, move this to some default .xml!
+    private final static String DEFAULT_TRAIN_CLASS = "net.sf.rails.game.Train";
 
     // Static definitions
     private int index; // for sorting

@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <CompanyManager>
-	<CompanyType name="Private" class="rails.game.PrivateCompany">
+	<CompanyType name="Private" class="net.sf.rails.game.PrivateCompany">
 		<Tradeable toCompany="yes" lowerPriceFactor="0.5" upperPriceFactor="1.5"/>
 	</CompanyType>
-	<CompanyType name="Public" class="rails.game.PublicCompany">
+	<CompanyType name="Public" class="net.sf.rails.game.PublicCompany">
 		<CanBuyPrivates/>
 		<PoolPaysOut/>
 		<Float percentage="60"/>
@@ -22,8 +22,8 @@
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany"
 				when="anyTimeDuringORTurn"
-				class="rails.game.special.SpecialTokenLay">
-				<SpecialTokenLay class="rails.game.BonusToken"
+				class="net.sf.rails.game.special.SpecialTokenLay">
+				<SpecialTokenLay class="net.sf.rails.game.BonusToken"
 					location="E6,G4,G6,H3,H5" connected="yes" extra="yes">
 					<BonusToken name="Coalfield" value="10"
 						removed="Phase:6" />
@@ -35,7 +35,7 @@
 		longname="Brown &amp; Sons Lumber Co.">
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany"
-				when="tileLayingStep" class="rails.game.special.SpecialTileLay">
+				when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
 				<SpecialTileLay tile="445" name="Lumber Terminal"
 					location="G2,M2,N5,O4,P5" connected="no" free="yes" extra="yes" />
 			</SpecialProperty>
@@ -46,9 +46,9 @@
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany"
 				when="anyTimeDuringORTurn"
-				class="rails.game.specific._18AL.NameTrains" transfer="toCompany">
+				class="net.sf.rails.game.specific._18AL.NameTrains" transfer="toCompany">
 				<NameTrains
-					class="rails.game.specific._18AL.NamedTrainToken">
+					class="net.sf.rails.game.specific._18AL.NamedTrainToken">
 					<NamedTrainToken name="RELee"
 						longName='"Robert E. Lee" (Birmingham - Atlanta)' value="20"
 						ifRouteIncludes="G4,G8" />
@@ -64,7 +64,7 @@
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany"
 				when="duringTrainBuyingStep"
-				class="rails.game.special.SpecialTrainBuy" closeIfExercised="yes">
+				class="net.sf.rails.game.special.SpecialTrainBuy" closeIfExercised="yes">
 				<SpecialTrainBuy trainType="any" deduction="50%" />
 			</SpecialProperty>
 		</SpecialProperties>
@@ -103,7 +103,7 @@
 		<Home hex="A4" />
 		<Destination hex="G4" />
 	</Company>
-	<StartPacket roundClass="rails.game.StartRound_1830">
+	<StartPacket roundClass="net.sf.rails.game.StartRound_1830">
 		<Bidding initial="5" minimum="5" increment="1"/>
 		<Item name="Tusc" type="Private" basePrice="20"/>
 		<Item name="S&amp;NA" type="Private" basePrice="40"/>

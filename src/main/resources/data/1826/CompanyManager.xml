@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <CompanyManager>
-	<CompanyType name="Private" class="rails.game.PrivateCompany">
+	<CompanyType name="Private" class="net.sf.rails.game.PrivateCompany">
 		<ClosingConditions>
 			<Phase>5</Phase>
 		</ClosingConditions>
 		<Tradeable toCompany="yes" lowerPriceFactor="0.5" upperPriceFactor="1.5"/>
 		<Tradeable toPlayer="yes"/>
 	</CompanyType>
-	<CompanyType name="Public" class="rails.game.PublicCompany">
+	<CompanyType name="Public" class="net.sf.rails.game.PublicCompany">
 		<Capitalisation type="incremental"/>
 		<StockPrice par="no"/>
 		<Float percentage="60"/>
@@ -99,7 +99,7 @@
 		longname="Société Nationale des Chemins de fer Français">
 	</Company>	
 	
-	<StartPacket roundClass="rails.game.StartRound_1830">
+	<StartPacket roundClass="net.sf.rails.game.StartRound_1830">
 		<Bidding initial="5" minimum="5" increment="1"/>
 		<Item name="Bridge" type="Private" basePrice="20"/>
 		<Item name="Mail" type="Private" basePrice="40"/>

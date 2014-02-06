@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <CompanyManager>
-	<CompanyType name="Private" class="rails.game.PrivateCompany">
+	<CompanyType name="Private" class="net.sf.rails.game.PrivateCompany">
 		<ClosingConditions>
 			<Phase>5</Phase>
 		</ClosingConditions>
 	</CompanyType>
 
-	<CompanyType name="Minor" class="rails.game.PublicCompany" fgColour="FFCC11" bgColour="9370DB">
+	<CompanyType name="Minor" class="net.sf.rails.game.PublicCompany" fgColour="FFCC11" bgColour="9370DB">
 		<ShareUnit percentage="100"/>
 		<Certificate type="President" shares="1"/>
 	<StockPrice market="no"/>
@@ -17,7 +17,7 @@
 	<Trains limit="2,1" mandatory="no"/>
 	</CompanyType>
 	
-	<CompanyType name="Public" class="rails.game.PublicCompany">
+	<CompanyType name="Public" class="net.sf.rails.game.PublicCompany">
 		<Capitalisation type="incremental"/>
 		<Float percentage="20"/>
 		<StockPrice par="no"/>
@@ -69,7 +69,7 @@
 		<Trains limit="3"/>
 	</Company>
 
-	<StartPacket roundClass="rails.game.StartRound_1830">
+	<StartPacket roundClass="net.sf.rails.game.StartRound_1830">
 		<Bidding initial="5" minimum="5" increment="1"/>
 		<Item name="Ferry" type="Private" basePrice="120">
 			<SubItem name="VR" type="Public" />

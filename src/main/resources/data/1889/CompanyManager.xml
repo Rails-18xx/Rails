@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <CompanyManager>
  <!-- 	Specific PrivateCompany to avoid closing of Uno-Takamatsu Ferry -->
-	<CompanyType name="Private" class="rails.game.PrivateCompany">
+	<CompanyType name="Private" class="net.sf.rails.game.PrivateCompany">
 		<Tradeable toCompany="yes" lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
 	</CompanyType>
-	<CompanyType name="Public" class="rails.game.PublicCompany">
+	<CompanyType name="Public" class="net.sf.rails.game.PublicCompany">
 		<IfOption name="BeginnerGame" value="no">
 			<CanBuyPrivates/>
 		</IfOption>
@@ -52,7 +52,7 @@
 			longName="Mitsubishi Ferry">
 <!-- 			Handling of special property outside of players public company turn is done in OperatingRound_1889, coded against name "B" -->
 			<SpecialProperties>
-				<SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
+				<SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
 					<SpecialTileLay location="B11,G10,I12,J9" tile="437" extra="yes" free="yes"/>
 				</SpecialProperty>
 			</SpecialProperties>
@@ -62,7 +62,7 @@
 			<Blocking hex="C4"/>
 			<SpecialProperties>
 <!-- 			Timing of special property is done in OperatingRound_1889, coded against name "C" -->
-				<SpecialProperty condition="specific" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
+				<SpecialProperty condition="specific" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
 					<SpecialTileLay location="C4" colour="green" extra="yes" free="yes"/>
 				</SpecialProperty>
 			</SpecialProperties>
@@ -70,7 +70,7 @@
 		<Company name="D" type="Private" basePrice="50" revenue="15"
 			longName="Sumitomo Mines Railway">
 			<SpecialProperties>
-				<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" permanent="yes" class="rails.game.special.SpecialTileLay">
+				<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" permanent="yes" class="net.sf.rails.game.special.SpecialTileLay">
 					<SpecialTileLay location="A8,B9,C6,D5,D7,E4,E6,F5,F7,G6,G8,H9,H11,H13" extra="no" free="yes" connected="yes"/>
 				</SpecialProperty>
 			</SpecialProperties>
@@ -78,7 +78,7 @@
 		<Company name="E" type="Private" basePrice="60" revenue="15"
 			longName="Dougo Railway">
 			<SpecialProperties>
-				<SpecialProperty condition="ifOwnedByPlayer" when="anyTurn" class="rails.game.special.ExchangeForShare">
+				<SpecialProperty condition="ifOwnedByPlayer" when="anyTurn" class="net.sf.rails.game.special.ExchangeForShare">
 					<ExchangeForShare company="IR" share="10"/>
 				</SpecialProperty>
 			</SpecialProperties>
@@ -118,7 +118,7 @@
 	<Company name="UR" longname="Uwajima Railway" type="Public" tokens="3" fgColour="255,255,255" bgColour="140,70,20">
     <Home hex="B7"/> <!--Uwajima-->
   </Company>
-	<StartPacket roundClass="rails.game.StartRound_1830">
+	<StartPacket roundClass="net.sf.rails.game.StartRound_1830">
 		<Bidding initial="5" minimum="5" increment="1"/>
 		<IfOption name="BeginnerGame" value="yes">
 			<IfOption name="NumberOfPlayers" value="2">

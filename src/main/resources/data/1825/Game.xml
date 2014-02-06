@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ComponentManager>
-	<Component name="GameManager" class="rails.game.GameManager">
+	<Component name="GameManager" class="net.sf.rails.game.GameManager">
 		<Game name="1825"/>
 		<EndOfGame>
 			<Bankruptcy/>
@@ -10,32 +10,32 @@
 		<GameParameters>
 			<PlayerShareLimit percentage="100" />
 			<BankPoolShareLimit percentage="100"/>
-			<StockRound sequence="SellBuySell" class="rails.game.specific._1825.StockRound_1825">
+			<StockRound sequence="SellBuySell" class="net.sf.rails.game.specific._1825.StockRound_1825">
 				<NoSaleInFirstSR/>
 			</StockRound>
-			<OperatingRound class="rails.game.specific._1825.OperatingRound_1825">
+			<OperatingRound class="net.sf.rails.game.specific._1825.OperatingRound_1825">
 				<OperatingOrder dynamic="no"/><!-- default is "yes"-->
 			</OperatingRound>
 		</GameParameters>
 	</Component>
-	<Component name="PlayerManager" class="rails.game.PlayerManager">
+	<Component name="PlayerManager" class="net.sf.rails.game.PlayerManager">
 		<Players number="2" cash="1200" certLimit="24"/>
 		<Players number="3" cash="830" certLimit="16"/>
 		<Players number="4" cash="630" certLimit="12"/>
 		<Players number="5" cash="504" certLimit="10"/>
 	</Component>
-	<Component name="Bank" class="rails.game.Bank">
+	<Component name="Bank" class="net.sf.rails.game.Bank">
 		<Bank amount="12000"/>
 		<Money format="&#xa3;@"></Money>
 	</Component>
-	<Component name="TileManager" class="rails.game.TileManager" 
+	<Component name="TileManager" class="net.sf.rails.game.TileManager" 
 		file="TileSet.xml"/>
-	<Component name="Map" class="rails.game.MapManager" file="Map.xml"/>
-	<Component name="CompanyManager" class="rails.game.CompanyManager" 
+	<Component name="Map" class="net.sf.rails.game.MapManager" file="Map.xml"/>
+	<Component name="CompanyManager" class="net.sf.rails.game.CompanyManager" 
 		file="CompanyManager.xml"/>
-	<Component name="StockMarket" class="rails.game.StockMarket" 
+	<Component name="StockMarket" class="net.sf.rails.game.StockMarket" 
 		file="StockMarket.xml"/>
-	<Component name="TrainManager" class="rails.game.TrainManager">
+	<Component name="TrainManager" class="net.sf.rails.game.TrainManager">
 		<Defaults>
 			<Reach base="stops" countTowns="yes"/>
 			<Score towns="yes"/>
@@ -49,7 +49,7 @@
             <NewPhase phaseName="3"/>
 		</TrainType>
 	</Component>
-	<Component name="PhaseManager" class="rails.game.PhaseManager">
+	<Component name="PhaseManager" class="net.sf.rails.game.PhaseManager">
 		<!-- Note: released and rusted trains are now specified per TrainType
 			but could as well be moved here. To be sorted out when we do 18US. -->
 		<!-- Each Phase's defaults are the previous one's values -->
@@ -71,10 +71,10 @@
 			<OperatingRounds number="3"/>
 		</Phase>
 	</Component>
-	<Component name="RevenueManager" class="rails.algorithms.RevenueManager"> 
+	<Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager"> 
 <!--		The terminate modifier has to evaluated before DoubleHeading -->
-		<Modifier class="rails.game.specific._1825.TerminateAtMajorModifier" />
-		<Modifier class="rails.game.specific._1825.DoubleHeadingModifier" />
-		<Modifier class="rails.game.specific._1825.ScoreTileOnlyOnceModifier" />
+		<Modifier class="net.sf.rails.game.specific._1825.TerminateAtMajorModifier" />
+		<Modifier class="net.sf.rails.game.specific._1825.DoubleHeadingModifier" />
+		<Modifier class="net.sf.rails.game.specific._1825.ScoreTileOnlyOnceModifier" />
 	</Component>
 </ComponentManager>

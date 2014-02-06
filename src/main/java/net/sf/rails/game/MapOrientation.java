@@ -147,11 +147,12 @@ public enum MapOrientation {
     }
     
     public String getUIClassName() {
+        // FIXME: Rails 2.0, move this to some default .xml!
         switch(this) {
         case NS:
-            return "rails.ui.swing.hexmap.NSHexMap";
+            return "net.sf.rails.ui.swing.hexmap.NSHexMap";
         case EW:
-            return "rails.ui.swing.hexmap.EWHexMap";
+            return "net.sf.rails.ui.swing.hexmap.EWHexMap";
         default:
             throw new AssertionError(this);
         }

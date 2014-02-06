@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ComponentManager>
-	<Component name="GameManager" class="rails.game.GameManager">
+	<Component name="GameManager" class="net.sf.rails.game.GameManager">
 		<Game name="18TN"/>
 		<GameParameters>
 			<PlayerShareLimit percentage="60">
@@ -16,7 +16,7 @@
 			<StockRound>
 				<NoSaleInFirstSR/>
 			</StockRound>
-            <OperatingRound class="rails.game.specific._18TN.OperatingRound_18TN">
+            <OperatingRound class="net.sf.rails.game.specific._18TN.OperatingRound_18TN">
                 <EmergencyTrainBuying mustBuyCheapestTrain="yes" mayBuyFromCompany="no"/>
             </OperatingRound>
 		</GameParameters>
@@ -28,24 +28,24 @@
 				but uses the 'finish' attribute value defined above. -->
 		</EndOfGame>
 	</Component>
-	<Component name="PlayerManager" class="rails.game.PlayerManager">
+	<Component name="PlayerManager" class="net.sf.rails.game.PlayerManager">
 			<Players number="2" cash="810" certLimit="21"/>
 			<Players number="3" cash="600" certLimit="16"/>
 			<Players number="4" cash="450" certLimit="12"/>
 			<Players number="5" cash="360" certLimit="10"/>
 	</Component>
-	<Component name="Bank" class="rails.game.Bank">
+	<Component name="Bank" class="net.sf.rails.game.Bank">
 		<Bank amount="8000"/>
 		<Money format="$@"/>
 	</Component>
-	<Component name="TileManager" class="rails.game.TileManager" 
+	<Component name="TileManager" class="net.sf.rails.game.TileManager" 
 		file="TileSet.xml"/>
-	<Component name="Map" class="rails.game.MapManager" file="Map.xml"/>
-	<Component name="CompanyManager" class="rails.game.CompanyManager" 
+	<Component name="Map" class="net.sf.rails.game.MapManager" file="Map.xml"/>
+	<Component name="CompanyManager" class="net.sf.rails.game.CompanyManager" 
 		file="CompanyManager.xml"/>
-	<Component name="StockMarket" class="rails.game.StockMarket" 
+	<Component name="StockMarket" class="net.sf.rails.game.StockMarket" 
 		file="StockMarket.xml"/>
-	<Component name="TrainManager" class="rails.game.TrainManager">
+	<Component name="TrainManager" class="net.sf.rails.game.TrainManager">
 		<Attributes ObsoleteTrainFor="EXCEPT_TRIGGERING" />
 		<Defaults>
 			<Reach base="stops" countTowns="yes"/>
@@ -81,7 +81,7 @@
             <NewPhase phaseName="8"/>
         </TrainType>
 	</Component>
-	<Component name="PhaseManager" class="rails.game.PhaseManager">
+	<Component name="PhaseManager" class="net.sf.rails.game.PhaseManager">
 		<!-- Each Phase's defaults are the previous one's values -->
 		<Phase name="2" >
 			<Tiles colour="yellow">
@@ -120,7 +120,7 @@
 			<Tiles colour="yellow,green,brown,grey"/>
 		</Phase>
 		</Component>
-	<Component name="RevenueManager" class="rails.algorithms.RevenueManager">
+	<Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager">
 		<!--		Required for TN civil war '-->
 	</Component>
 </ComponentManager>

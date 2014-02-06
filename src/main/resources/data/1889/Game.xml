@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ComponentManager>
-	<Component name="GameManager" class="rails.game.GameManager">
+	<Component name="GameManager" class="net.sf.rails.game.GameManager">
 		<Game name="1889"/>
 		<!-- GAME OPTIONS must have:
 			- a name, which must also exist as an entry in LocalText.properties,
@@ -29,7 +29,7 @@
 			<StockRound sequence="SellBuyOrBuySell">
 				<NoSaleInFirstSR/>
 			</StockRound>
-			<OperatingRound class="rails.game.specific._1889.OperatingRound_1889">
+			<OperatingRound class="net.sf.rails.game.specific._1889.OperatingRound_1889">
                 <EmergencyTrainBuying mustBuyCheapestTrain="yes" mayBuyFromCompany="no"/>
             </OperatingRound>
 		</GameParameters>
@@ -40,26 +40,26 @@
 			<!-- "Runs out"; when "broken", -1 is the limit -->
 		</EndOfGame>
 	</Component>
-	<Component name="PlayerManager" class="rails.game.PlayerManager">
+	<Component name="PlayerManager" class="net.sf.rails.game.PlayerManager">
 		<Players number="2" cash="420" certLimit="25"/>
 		<Players number="3" cash="420" certLimit="19"/>
 		<Players number="4" cash="420" certLimit="14"/>
 		<Players number="5" cash="390" certLimit="12"/>
 		<Players number="6" cash="390" certLimit="11"/>
 	</Component>
-	<Component name="Bank" class="rails.game.Bank">
+	<Component name="Bank" class="net.sf.rails.game.Bank">
 		<Bank amount="7000"/>
 		<Money format="&#xa5;@"/>
 	</Component>
-	<Component name="TileManager" class="rails.game.TileManager" 
+	<Component name="TileManager" class="net.sf.rails.game.TileManager" 
 		file="TileSet.xml"/>
-	<Component name="Map" class="rails.game.MapManager" file="Map.xml"/>
+	<Component name="Map" class="net.sf.rails.game.MapManager" file="Map.xml"/>
 <!-- 	Specific CompanyManager to avoid closing of Uno-Takamatsu Ferry -->
-        <Component name="CompanyManager" class="rails.game.CompanyManager" 
+        <Component name="CompanyManager" class="net.sf.rails.game.CompanyManager" 
 		file="CompanyManager.xml"/>
-	<Component name="StockMarket" class="rails.game.StockMarket" 
+	<Component name="StockMarket" class="net.sf.rails.game.StockMarket" 
 		file="StockMarket.xml"/>
-	<Component name="TrainManager" class="rails.game.TrainManager">
+	<Component name="TrainManager" class="net.sf.rails.game.TrainManager">
 		<Defaults>
 			<Reach base="stops" countTowns="yes"/>
 			<!-- Alternative values: 
@@ -99,7 +99,7 @@
 			<Exchange cost="800"/>
 		</TrainType>
 	</Component>
-	<Component name="PhaseManager" class="rails.game.PhaseManager">
+	<Component name="PhaseManager" class="net.sf.rails.game.PhaseManager">
 		<!-- Note: released and rusted trains are now specified per TrainType
 			but could as well be moved here. To be sorted out when we do 18US. -->
 		<!-- Each Phase's defaults are the previous one's values -->

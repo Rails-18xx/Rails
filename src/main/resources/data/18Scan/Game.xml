@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ComponentManager>
-	<Component name="GameManager" class="rails.game.GameManager">
+	<Component name="GameManager" class="net.sf.rails.game.GameManager">
 		<Game name="18Scan"/>
 		<GameParameters>
 			<PlayerShareLimit percentage="60">
@@ -28,22 +28,22 @@
 			but uses the 'finish' attribute value defined above. -->
 		</EndOfGame>
 	</Component>
-	<Component name="PlayerManager" class="rails.game.PlayerManager">
+	<Component name="PlayerManager" class="net.sf.rails.game.PlayerManager">
 		<Players number="2" cash="900" certLimit="18"/>
 		<Players number="3" cash="600" certLimit="12"/>
 		<Players number="4" cash="450" certLimit="9"/>
 	</Component>
-	<Component name="Bank" class="rails.game.Bank">
+	<Component name="Bank" class="net.sf.rails.game.Bank">
 		<Bank amount="6000"/>
 	</Component>
-	<Component name="TileManager" class="rails.game.TileManager"
+	<Component name="TileManager" class="net.sf.rails.game.TileManager"
 		file="TileSet.xml"/>
-	<Component name="Map" class="rails.game.MapManager" file="Map.xml"/>
-	<Component name="CompanyManager" class="rails.game.CompanyManager"
+	<Component name="Map" class="net.sf.rails.game.MapManager" file="Map.xml"/>
+	<Component name="CompanyManager" class="net.sf.rails.game.CompanyManager"
 		file="CompanyManager.xml"/>
-	<Component name="StockMarket" class="rails.game.StockMarket"
+	<Component name="StockMarket" class="net.sf.rails.game.StockMarket"
 		file="StockMarket.xml"/>
-	<Component name="TrainManager" class="rails.game.TrainManager">
+	<Component name="TrainManager" class="net.sf.rails.game.TrainManager">
 		<Defaults>
 			<Reach base="stops" countTowns="no"/>
 			<Score towns="yes"/>
@@ -75,7 +75,7 @@
 		</TrainType>
 		
 	</Component>
-	<Component name="PhaseManager" class="rails.game.PhaseManager">
+	<Component name="PhaseManager" class="net.sf.rails.game.PhaseManager">
 		<Phase name="2">
 			<Tiles colour="yellow"/>
 			<OperatingRounds number="2"/>
@@ -102,6 +102,6 @@
 		</Phase>
 		
 	</Component>
-	<Component name="RevenueManager" class="rails.algorithms.RevenueManager">
+	<Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager">
 	</Component>
 </ComponentManager>

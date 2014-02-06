@@ -1,16 +1,16 @@
 <?xml version="1.0"?>
 <ComponentManager>
 	<Component name="GameManager"
-		class="rails.game.specific._18EU.GameManager_18EU">
+		class="net.sf.rails.game.specific._18EU.GameManager_18EU">
 		<Game name="18EU"/>
 		<GameParameters>
-			<StockRound class="rails.game.specific._18EU.StockRound_18EU"
+			<StockRound class="net.sf.rails.game.specific._18EU.StockRound_18EU"
 				sequence="sellBuy" skipFirst="yes">
 				<NoSaleInFirstSR/>
 				<NoSaleIfNotOperated/>
 			</StockRound>
 			<OperatingRound
-				class="rails.game.specific._18EU.OperatingRound_18EU">
+				class="net.sf.rails.game.specific._18EU.OperatingRound_18EU">
 				<EmergencyTrainBuying mustBuyCheapestTrain="no"
 					mayBuyFromCompany="yes"/>
 			</OperatingRound>
@@ -20,11 +20,11 @@
 		</GameParameters>
 		<GuiClasses>
 			<GameStatus
-				class="rails.ui.swing.gamespecific._18EU.GameStatus_18EU"/>
+				class="net.sf.rails.ui.swing.gamespecific._18EU.GameStatus_18EU"/>
 			<StatusWindow
-				class="rails.ui.swing.gamespecific._18EU.StatusWindow_18EU"/>
+				class="net.sf.rails.ui.swing.gamespecific._18EU.StatusWindow_18EU"/>
 			<GameUIManager
-				class="rails.ui.swing.gamespecific._18EU.GameUIManager_18EU"/>
+				class="net.sf.rails.ui.swing.gamespecific._18EU.GameUIManager_18EU"/>
 		</GuiClasses>
 		<EndOfGame>
 			<BankBreaks limit="0" finish="setOfORs"/>
@@ -33,24 +33,24 @@
 			<!-- Also when the share value reaches $300; this is configured in teh stock market XML -->
 		</EndOfGame>
 	</Component>
-	<Component name="PlayerManager" class="rails.game.PlayerManager">
+	<Component name="PlayerManager" class="net.sf.rails.game.PlayerManager">
 		<Players number="2" cash="750" certLimit="28"/>
 		<Players number="3" cash="450" certLimit="20"/>
 		<Players number="4" cash="350" certLimit="16"/>
 		<Players number="5" cash="300" certLimit="13"/>
 		<Players number="6" cash="250" certLimit="11"/>
 	</Component>
-	<Component name="Bank" class="rails.game.Bank">
+	<Component name="Bank" class="net.sf.rails.game.Bank">
 		<Bank amount="12000"/>
 	</Component>
-	<Component name="TileManager" class="rails.game.TileManager"
+	<Component name="TileManager" class="net.sf.rails.game.TileManager"
 		file="TileSet.xml"/>
-	<Component name="Map" class="rails.game.MapManager" file="Map.xml"/>
-	<Component name="CompanyManager" class="rails.game.CompanyManager"
+	<Component name="Map" class="net.sf.rails.game.MapManager" file="Map.xml"/>
+	<Component name="CompanyManager" class="net.sf.rails.game.CompanyManager"
 		file="CompanyManager.xml"/>
-	<Component name="StockMarket" class="rails.game.StockMarket"
+	<Component name="StockMarket" class="net.sf.rails.game.StockMarket"
 		file="StockMarket.xml"/>
-	<Component name="TrainManager" class="rails.game.TrainManager">
+	<Component name="TrainManager" class="net.sf.rails.game.TrainManager">
 		<Defaults>
 			<Reach base="stops" countTowns="no"/>
 			<Score towns="yes"/>
@@ -90,7 +90,7 @@
 		<TrainType name="P" initialPortfolio="Pool" majorStops="-1" cost="100"
 			quantity="5"/>
 	</Component>
-	<Component name="PhaseManager" class="rails.game.PhaseManager">
+	<Component name="PhaseManager" class="net.sf.rails.game.PhaseManager">
 		<Phase name="2">
 			<Tiles colour="yellow">
                 <Lays companyType="Minor" colour="yellow" number="2" occurrences="1"/>
@@ -121,8 +121,8 @@
 			<Trains rusted="4"/>
 		</Phase>
 	</Component>
-	<Component name="RevenueManager" class="rails.algorithms.RevenueManager">
-		<Modifier class="rails.game.specific._18EU.OffBoardRevenueModifier"/>
-		<Modifier class="rails.game.specific._18EU.PullmanRevenueModifier"/>
+	<Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager">
+		<Modifier class="net.sf.rails.game.specific._18EU.OffBoardRevenueModifier"/>
+		<Modifier class="net.sf.rails.game.specific._18EU.PullmanRevenueModifier"/>
 	</Component>
 </ComponentManager>

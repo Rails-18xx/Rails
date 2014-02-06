@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ComponentManager>
-	<Component name="GameManager" class="rails.game.GameManager">
+	<Component name="GameManager" class="net.sf.rails.game.GameManager">
 		<Game name="1830"/>
 		<GameParameters>
 			<PlayerShareLimit percentage="60">
@@ -26,7 +26,7 @@
 			<!-- "Runs out"; when "broken", -1 is the limit -->
 		</EndOfGame>
 	</Component>
-	<Component name="PlayerManager" class="rails.game.PlayerManager">
+	<Component name="PlayerManager" class="net.sf.rails.game.PlayerManager">
 		<IfOption name="Variant" value="Basegame,Simple">
 			<Players number="2" cash="1200" certLimit="28"/>
 			<Players number="3" cash="800" certLimit="20"/>
@@ -72,7 +72,7 @@
             <Players number="6" cash="400" certLimit="13"/>
         </IfOption>     
 	</Component>
-	<Component name="Bank" class="rails.game.Bank">
+	<Component name="Bank" class="net.sf.rails.game.Bank">
         <IfOption name="Variant" value="Basegame,Pere Marquette,Coalfields,Reading,Simple">
 			<Bank amount="12000"/>
 		</IfOption>
@@ -84,14 +84,14 @@
         </IfOption>
 		<Money format="$@"/>
 	</Component>
-	<Component name="TileManager" class="rails.game.TileManager" 
+	<Component name="TileManager" class="net.sf.rails.game.TileManager" 
 		file="TileSet.xml"/>
-	<Component name="Map" class="rails.game.MapManager" file="Map.xml"/>
-	<Component name="CompanyManager" class="rails.game.CompanyManager" 
+	<Component name="Map" class="net.sf.rails.game.MapManager" file="Map.xml"/>
+	<Component name="CompanyManager" class="net.sf.rails.game.CompanyManager" 
 		file="CompanyManager.xml"/>
-	<Component name="StockMarket" class="rails.game.StockMarket" 
+	<Component name="StockMarket" class="net.sf.rails.game.StockMarket" 
 		file="StockMarket.xml"/>
-	<Component name="TrainManager" class="rails.game.TrainManager">
+	<Component name="TrainManager" class="net.sf.rails.game.TrainManager">
 		<IfOption name="Variant"
 				value="Coalfields,Reading,Coalfields&amp;Reading">
 			<Attributes ObsoleteTrainFor="ALL" />
@@ -190,7 +190,7 @@
 			</TrainType>
         </IfOption>
 	</Component>
-	<Component name="PhaseManager" class="rails.game.PhaseManager">
+	<Component name="PhaseManager" class="net.sf.rails.game.PhaseManager">
 		<!-- Note: released and rusted trains are now specified per TrainType
 			but could as well be moved here. To be sorted out when we do 18US. -->
 		<!-- Each Phase's defaults are the previous one's values -->
@@ -230,7 +230,7 @@
             <Trains rusted="4"/>
 		</Phase>
 	</Component>
-	<Component name="RevenueManager" class="rails.algorithms.RevenueManager">
+	<Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager">
 <!--		Required for coalfield rights '-->
 	</Component>
 </ComponentManager>

@@ -4,7 +4,7 @@
 <Properties>
 	<Section name="General">
 		<Property name="locale" type="LIST" values="en_US,te_ST"
-			initClass="rails.common.LocalText" initMethod="setLocale"
+			initclass="net.sf.rails.common.LocalText" initMethod="setLocale"
 			initParameter="yes" />
 		<Property name="default_game" type="STRING" />
 		<Property name="default_players" type="STRING" />
@@ -20,11 +20,11 @@
 	</Section>
 	<Section name="Font">
 		<Property name="font.ui.scale" type="PERCENT" 
-			initClass="rails.ui.swing.GameUIManager" initMethod="updateUILookAndFeel" initParameter="no" />
+			initclass="net.sf.rails.ui.swing.GameUIManager" initMethod="updateUILookAndFeel" initParameter="no" />
 		<Property name="font.ui.name" type="FONT"
-			initClass="rails.ui.swing.GameUIManager" initMethod="updateUILookAndFeel" initParameter="no" />
+			initclass="net.sf.rails.ui.swing.GameUIManager" initMethod="updateUILookAndFeel" initParameter="no" />
 		<Property name="font.ui.style" type="LIST" values="plain,bold" 
-			initClass="rails.ui.swing.GameUIManager" initMethod="updateUILookAndFeel" initParameter="no" />
+			initclass="net.sf.rails.ui.swing.GameUIManager" initMethod="updateUILookAndFeel" initParameter="no" />
 	</Section>
 	<Section name="Map">
 		<Property name="map.autoscroll" type="BOOLEAN" />
@@ -49,19 +49,19 @@
     <Section name="Appearance">
 		<Property name="gridPanel.tableBorders" type="LIST" values="disabled,enabled"/>
 		<Property name="button.iconText" type="LIST" values="text and icon,only text,only icon"
-		initClass="rails.ui.swing.elements.RailsIconButton" initMethod="resetRailsIcons" initParameter="no" />
+		initclass="net.sf.rails.ui.swing.elements.RailsIconButton" initMethod="resetRailsIcons" initParameter="no" />
 		<Property name="button.iconSize" type="LIST" values="small,large"
-		initClass="rails.ui.swing.elements.RailsIconButton" initMethod="resetRailsIcons" initParameter="no" />
+		initclass="net.sf.rails.ui.swing.elements.RailsIconButton" initMethod="resetRailsIcons" initParameter="no" />
 		<Property name="button.iconPosition" type="LIST" values="left,above"
-		initClass="rails.ui.swing.elements.RailsIconButton" initMethod="resetRailsIcons" initParameter="no" />
+		initclass="net.sf.rails.ui.swing.elements.RailsIconButton" initMethod="resetRailsIcons" initParameter="no" />
 		<Property name="route.colour.1" type="COLOR" 
-		initClass="rails.ui.swing.hexmap.HexMap" initMethod="setRouteColours" />
+		initclass="net.sf.rails.ui.swing.hexmap.HexMap" initMethod="setRouteColours" />
 		<Property name="route.colour.2" type="COLOR" 
-		initClass="rails.ui.swing.hexmap.HexMap" initMethod="setRouteColours" />
+		initclass="net.sf.rails.ui.swing.hexmap.HexMap" initMethod="setRouteColours" />
 		<Property name="route.colour.3" type="COLOR" 
-		initClass="rails.ui.swing.hexmap.HexMap" initMethod="setRouteColours" />
+		initclass="net.sf.rails.ui.swing.hexmap.HexMap" initMethod="setRouteColours" />
 		<Property name="route.colour.4" type="COLOR" 
-		initClass="rails.ui.swing.hexmap.HexMap" initMethod="setRouteColours" />
+		initclass="net.sf.rails.ui.swing.hexmap.HexMap" initMethod="setRouteColours" />
 	</Section>
 	<Section name="Log">
 		<Property name="report.directory" type="DIRECTORY" />
@@ -70,7 +70,7 @@
 	</Section>
 	<Section name="Music">
 		<Property name="sound.backgroundMusic" type="LIST" values="disabled,enabled"
-				initClass="rails.sound.SoundManager" initMethod="init"
+				initclass="net.sf.rails.sound.SoundManager" initMethod="init"
 				alwaysCallInit="true"/>
 		<Property name="sound.backgroundMusic.gameSetup" type="FILE" />
 		<Property name="sound.backgroundMusic.startRound" type="FILE" />

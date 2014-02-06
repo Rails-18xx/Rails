@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <CompanyManager>
-	<CompanyType name="Private" class="rails.game.PrivateCompany">
+	<CompanyType name="Private" class="net.sf.rails.game.PrivateCompany">
 	</CompanyType>
 	
-	<CompanyType name="Public" class="rails.game.specific._1825.PublicCompany_1825">
+	<CompanyType name="Public" class="net.sf.rails.game.specific._1825.PublicCompany_1825">
 		<Float percentage="60"/>
 		<StockPrice par="yes"></StockPrice><ShareUnit percentage="10"/>
         <BaseTokens>
@@ -64,7 +64,7 @@
 		<Home hex="X20"></Home>
 	</Company>
 
-	<StartPacket roundClass="rails.game.specific._1825.StartRound_1825">
+	<StartPacket roundClass="net.sf.rails.game.specific._1825.StartRound_1825">
 		<Item name="S&amp;M" type="Private" basePrice="30"/>
 		<Item name="CHP" type="Private" basePrice="75"/>
 		<Item name="C&amp;W" type="Private" basePrice="130"/>

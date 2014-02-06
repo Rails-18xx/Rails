@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <CompanyManager>
-	<CompanyType name="Private" class="rails.game.PrivateCompany">
+	<CompanyType name="Private" class="net.sf.rails.game.PrivateCompany">
 		<ClosingConditions>
 			<Phase>5</Phase>
 		</ClosingConditions>
 		<Tradeable toCompany="yes" lowerPriceFactor="0.5" upperPriceFactor="1.5"/>
 		<Tradeable toPlayer="yes"/>
 	</CompanyType>
-	<CompanyType name="Public" class="rails.game.PublicCompany">
+	<CompanyType name="Public" class="net.sf.rails.game.PublicCompany">
 		<PoolPaysOut/>
 		<Float percentage="60"/>
 		<ShareUnit percentage="10"/>
@@ -28,7 +28,7 @@
 		<Blocking hex="F12"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep"
-				class="rails.game.special.SpecialTileLay">
+				class="net.sf.rails.game.special.SpecialTileLay">
 				<SpecialTileLay location="F12" extra="yes" free="yes"/>
 			</SpecialProperty>
 		</SpecialProperties>
@@ -37,11 +37,11 @@
 		longname="Waycross and Southern Railroad">
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep"
-				class="rails.game.special.SpecialTileLay">
+				class="net.sf.rails.game.special.SpecialTileLay">
 				<SpecialTileLay location="I9" extra="no" free="no" tile="57"/>
 			</SpecialProperty>
 			<SpecialProperty condition="ifOwnedByCompany" when="tokenLayingStep"
-				class="rails.game.special.SpecialTokenLay">
+				class="net.sf.rails.game.special.SpecialTokenLay">
 				<SpecialTokenLay location="I9" extra="no" free="yes"/>
 			</SpecialProperty>
 		</SpecialProperties>
@@ -88,7 +88,7 @@
 		bgColour="994778" longname="Western and Atlantic Railroad">
 		<Home hex="D4" city="0"/>
 	</Company>
-	<StartPacket roundClass="rails.game.StartRound_1830">
+	<StartPacket roundClass="net.sf.rails.game.StartRound_1830">
 		<Bidding initial="5" minimum="5" increment="1"/>
 		<Item name="LT" type="Private" basePrice="20"/>
 		<Item name="MR" type="Private" basePrice="40"/>

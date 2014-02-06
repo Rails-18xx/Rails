@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <CompanyManager>
-	<CompanyType name="Private" class="rails.game.PrivateCompany">
+	<CompanyType name="Private" class="net.sf.rails.game.PrivateCompany">
 		<ClosingConditions>
             <Phase>5</Phase>
 		</ClosingConditions>
 		<Tradeable toCompany="yes" lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
 	</CompanyType>
-	<CompanyType name="Public" class="rails.game.PublicCompany">
+	<CompanyType name="Public" class="net.sf.rails.game.PublicCompany">
 		<CanBuyPrivates/>
 		<PoolPaysOut/>
 		<Float percentage="60"/>
@@ -66,7 +66,7 @@
 				longname="Western Maryland Railway">
 			<Home hex="D3"/>
 		</Company>
-		<StartPacket roundClass="rails.game.StartRound_1830">
+		<StartPacket roundClass="net.sf.rails.game.StartRound_1830">
 		<Bidding initial="5" minimum="5" increment="1"/>
 		<Item name="REA" type="Private" basePrice="40"/>
 		<Item name="TIW" type="Private" basePrice="60"/>

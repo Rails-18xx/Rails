@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <CompanyManager>
-	<CompanyType name="Private" class="rails.game.PrivateCompany">
+	<CompanyType name="Private" class="net.sf.rails.game.PrivateCompany">
 		<ClosingConditions>
             <Phase>5</Phase>
 		</ClosingConditions>
 		<Tradeable toCompany="yes" lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
 		<Tradeable toPlayer="yes"/>	
 	</CompanyType>
-	<CompanyType name="Public" class="rails.game.PublicCompany">
+	<CompanyType name="Public" class="net.sf.rails.game.PublicCompany">
 		<CanBuyPrivates/>
 		<PoolPaysOut/>
 		<Float percentage="60"/>
@@ -25,7 +25,7 @@
         <IfOption name="Variant" value="Coalfields,Coalfields&amp;Reading">
 			<CanUseSpecialProperties/>
 			<SpecialProperties>
-				<SpecialProperty condition="ifOwnedByCompany" when="orTurn" class="rails.game.special.SpecialRight">
+				<SpecialProperty condition="ifOwnedByCompany" when="orTurn" class="net.sf.rails.game.special.SpecialRight">
 					<SpecialRight name="Coalfields" cost="140" location="L10"/>
 				</SpecialProperty>
 			</SpecialProperties>
@@ -39,7 +39,7 @@
 			longname="Champlain &amp; St.Lawrence">
 		<Blocking hex="B20"/>
 		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
 				<SpecialTileLay colour="yellow" location="B20" extra="yes" free="yes"/>
 			</SpecialProperty>
 		</SpecialProperties>
@@ -48,10 +48,10 @@
 		longname="Delaware &amp; Hudson">
 		<Blocking hex="F16"/>
 		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
 				<SpecialTileLay location="F16" extra="no" free="no" tile="57" />
 			</SpecialProperty>
-			<SpecialProperty condition="ifOwnedByCompany" when="tokenLayingStep" class="rails.game.special.SpecialTokenLay">
+			<SpecialProperty condition="ifOwnedByCompany" when="tokenLayingStep" class="net.sf.rails.game.special.SpecialTokenLay">
 				<SpecialTokenLay location="F16" extra="no" free="yes"/>
 			</SpecialProperty>
 		</SpecialProperties>
@@ -60,7 +60,7 @@
 		longname="Mohawk &amp; Hudson">
 		<Blocking hex="D18"/>
 		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByPlayer" when="anyTurn" class="rails.game.special.ExchangeForShare">
+			<SpecialProperty condition="ifOwnedByPlayer" when="anyTurn" class="net.sf.rails.game.special.ExchangeForShare">
 				<ExchangeForShare company="NYC" share="10"/>
 			</SpecialProperty>
 		</SpecialProperties>
@@ -160,7 +160,7 @@
         </Company>
     </IfOption>
 	
-	<StartPacket roundClass="rails.game.StartRound_1830">
+	<StartPacket roundClass="net.sf.rails.game.StartRound_1830">
 		<Bidding initial="5" minimum="5" increment="1"/>
 		<Item name="SVNRR" type="Private" basePrice="20"/>
 		<Item name="C&amp;StL" type="Private" basePrice="40"/>

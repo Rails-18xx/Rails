@@ -176,8 +176,9 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             // StockRound class and other properties
             Tag srTag = gameParmTag.getChild("StockRound");
             if (srTag != null) {
+                // FIXME: Rails 2.0, move this to some default .xml!
                 String srClassName =
-                    srTag.getAttributeAsString("class", "rails.game.StockRound");
+                    srTag.getAttributeAsString("class", "net.sf.rails.game.StockRound");
                 try {
                     stockRoundClass =
                         Class.forName(srClassName).asSubclass(StockRound.class);
@@ -219,8 +220,9 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             // OperatingRound class
             Tag orTag = gameParmTag.getChild("OperatingRound");
             if (orTag != null) {
+                // FIXME: Rails 2.0, move this to some default .xml!
                 String orClassName =
-                    orTag.getAttributeAsString("class", "rails.game.OperatingRound");
+                    orTag.getAttributeAsString("class", "net.sf.rails.game.OperatingRound");
                 try {
                     operatingRoundClass =
                         Class.forName(orClassName).asSubclass(
@@ -253,8 +255,9 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             // ShareSellingRound class
             Tag ssrTag = gameParmTag.getChild("ShareSellingRound");
             if (ssrTag != null) {
+                // FIXME: Rails 2.0, move this to some default .xml!
                 String ssrClassName =
-                    ssrTag.getAttributeAsString("class", "rails.game.ShareSellingRound");
+                    ssrTag.getAttributeAsString("class", "net.sf.rails.game.ShareSellingRound");
                 try {
                     shareSellingRoundClass =
                         Class.forName(ssrClassName).asSubclass(ShareSellingRound.class);

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ComponentManager>
-	<Component name="GameManager" class="rails.game.GameManager">
+	<Component name="GameManager" class="net.sf.rails.game.GameManager">
 		<Game name="1851"/>
 		<GameParameters>
 			<PlayerShareLimit percentage="60"/>
@@ -19,23 +19,23 @@
 			<!-- 0 = "Runs out"; -1 = "broken" -->
 		</EndOfGame>
 	</Component>
-	<Component name="PlayerManager" class="rails.game.PlayerManager">
+	<Component name="PlayerManager" class="net.sf.rails.game.PlayerManager">
 		<Players number="3" cash="500" certLimit="15"/>
 		<Players number="4" cash="430" certLimit="12"/>
 		<Players number="5" cash="400" certLimit="10"/>
 	</Component>
-	<Component name="Bank" class="rails.game.Bank">
+	<Component name="Bank" class="net.sf.rails.game.Bank">
 		<Bank amount="8040"/>
 		<Money format="$@"/>
 	</Component>
-	<Component name="TileManager" class="rails.game.TileManager" 
+	<Component name="TileManager" class="net.sf.rails.game.TileManager" 
 		file="TileSet.xml"/>
-	<Component name="Map" class="rails.game.MapManager" file="Map.xml"/>
-	<Component name="CompanyManager" class="rails.game.CompanyManager" 
+	<Component name="Map" class="net.sf.rails.game.MapManager" file="Map.xml"/>
+	<Component name="CompanyManager" class="net.sf.rails.game.CompanyManager" 
 		file="CompanyManager.xml"/>
-	<Component name="StockMarket" class="rails.game.StockMarket" 
+	<Component name="StockMarket" class="net.sf.rails.game.StockMarket" 
 		file="StockMarket.xml"/>
-	<Component name="TrainManager" class="rails.game.TrainManager">
+	<Component name="TrainManager" class="net.sf.rails.game.TrainManager">
 		<Defaults>
 			<Reach base="stops" countTowns="yes"/>
 			<!-- Alternative values: 
@@ -74,7 +74,7 @@
 			<FaceValueIfDifferentPresidents/>
 		</TrainBuyingRules>
 	</Component>
-	<Component name="PhaseManager" class="rails.game.PhaseManager">
+	<Component name="PhaseManager" class="net.sf.rails.game.PhaseManager">
 		<!-- Note: released and rusted trains are now specified per TrainType
 			but could as well be moved here. To be sorted out when we do 18US. -->
 		<!-- Each Phase's defaults are the previous one's values -->
@@ -109,8 +109,8 @@
 			<Trains rusted="4"/>
 		</Phase>
 	</Component>
-		<Component name="RevenueManager" class="rails.algorithms.RevenueManager">
-		<Modifier class="rails.game.specific._1851.OffBoardRevenueModifier" />
-		<Modifier class="rails.game.specific._1851.BirminghamTileModifier" />
+		<Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager">
+		<Modifier class="net.sf.rails.game.specific._1851.OffBoardRevenueModifier" />
+		<Modifier class="net.sf.rails.game.specific._1851.BirminghamTileModifier" />
 	</Component>
 </ComponentManager>

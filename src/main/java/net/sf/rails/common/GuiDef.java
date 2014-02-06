@@ -3,14 +3,15 @@ package net.sf.rails.common;
 public class GuiDef {
 
     /** Identifiers and default names for configurable UI classes */
+    // FIXME: Rails 2.0 move this to xml files
     public enum ClassName {
 
-        GAME_UI_MANAGER ("rails.ui.swing.GameUIManager"),
-        OR_UI_MANAGER ("rails.ui.swing.ORUIManager"),
-        STATUS_WINDOW ("rails.ui.swing.StatusWindow"),
-        GAME_STATUS ("rails.ui.swing.GameStatus"),
-        OR_WINDOW ("rails.ui.swing.ORWindow"),
-        START_ROUND_WINDOW ("rails.ui.swing.StartRoundWindow");
+        GAME_UI_MANAGER ("net.sf.rails.ui.swing.GameUIManager"),
+        OR_UI_MANAGER ("net.sf.rails.ui.swing.ORUIManager"),
+        STATUS_WINDOW ("net.sf.rails.ui.swing.StatusWindow"),
+        GAME_STATUS ("net.sf.rails.ui.swing.GameStatus"),
+        OR_WINDOW ("net.sf.rails.ui.swing.ORWindow"),
+        START_ROUND_WINDOW ("net.sf.rails.ui.swing.StartRoundWindow");
 
         private String defaultClassName;
 

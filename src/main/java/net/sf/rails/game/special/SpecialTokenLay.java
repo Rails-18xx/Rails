@@ -49,9 +49,10 @@ public class SpecialTokenLay extends SpecialProperty {
         closingValue =
                 tokenLayTag.getAttributeAsInteger("closingValue", closingValue);
 
+        // FIXME: Rails 2.0, move this to some default .xml!
         String tokenClassName =
                 tokenLayTag.getAttributeAsString("class",
-                        "rails.game.BaseToken");
+                        "net.sf.rails.game.BaseToken");
 
         String tokenName = "";
         int tokenValue = 0;

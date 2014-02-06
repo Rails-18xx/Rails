@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <CompanyManager>
-	<CompanyType name="Private" class="rails.game.PrivateCompany">
+	<CompanyType name="Private" class="net.sf.rails.game.PrivateCompany">
 	</CompanyType>
-	<CompanyType name="Public" class="rails.game.PublicCompany">
+	<CompanyType name="Public" class="net.sf.rails.game.PublicCompany">
 		<Capitalisation type="incremental"/>
 		<StockPrice par="no"/>
 		<TreasuryCanHoldOwnShares maxPerc="50"/>
@@ -60,7 +60,7 @@
 		<Home hex="F12" />
 	</Company>
 
-	<StartPacket roundClass="rails.game.specific._1851.StartRound_1851">
+	<StartPacket roundClass="net.sf.rails.game.specific._1851.StartRound_1851">
 		<Item name="L&amp;O" type="Private" basePrice="200">
 			<SubItem name="L&amp;N" type="Public" president="yes"/>
 		</Item>

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <CompanyManager>
-	<CompanyType name="Minor" class="rails.game.PublicCompany" fgColour="000000"
+	<CompanyType name="Minor" class="net.sf.rails.game.PublicCompany" fgColour="000000"
 		bgColour="CCCCCC">
 		<ShareUnit percentage="100"/>
 		<Certificate type="President" shares="1"/>
@@ -18,7 +18,7 @@
 		<Trains limit="2,1" mandatory="no"/>
 		<InitialTrain type="2" cost="0" tradeable="yes"/>
 	</CompanyType>
-	<CompanyType name="Major" class="rails.game.PublicCompany"
+	<CompanyType name="Major" class="net.sf.rails.game.PublicCompany"
 		capitalisation="incremental" restartable="yes">
 		<Float percentage="50"/>
 		<TreasuryCanHoldOwnShares maxPerc="80"/>
@@ -109,7 +109,7 @@
 		fgColour="FFFFFF" bgColour="000000">
 	</Company>
 	
-	<StartPacket roundClass="rails.game.specific._18EU.StartRound_18EU">
+	<StartPacket roundClass="net.sf.rails.game.specific._18EU.StartRound_18EU">
 		<Bidding initial="0" minimum="5" increment="5"/>
 		<Item name="1" type="Minor" basePrice="100"/>
 		<Item name="2" type="Minor" basePrice="100"/>

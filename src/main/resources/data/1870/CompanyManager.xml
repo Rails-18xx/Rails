@@ -2,11 +2,11 @@
 <!-- 1870 CompanyManager.xml -->
 <CompanyManager>
 
-	<CompanyType name="Private" class="rails.game.PrivateCompany">
+	<CompanyType name="Private" class="net.sf.rails.game.PrivateCompany">
 		<Tradeable toCompany="yes" lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
 	</CompanyType>
 	
-	<CompanyType name="Public" class="rails.game.PublicCompany">
+	<CompanyType name="Public" class="net.sf.rails.game.PublicCompany">
 		<CanBuyPrivates/>
 		<IPOPaysOut/>
 		<Float percentage="60"/>
@@ -104,7 +104,7 @@
 		<Destination hex="A22" />
 	</Company>
 
-	<StartPacket roundClass="rails.game.StartRound_1830">
+	<StartPacket roundClass="net.sf.rails.game.StartRound_1830">
 		<Bidding initial="5" minimum="5" increment="1"/>
 		<Item name="GRSC"  type="Private" basePrice="20"/>
 		<Item name="Brdg"  type="Private" basePrice="40"/>

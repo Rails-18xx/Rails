@@ -1,48 +1,48 @@
 <?xml version="1.0"?>
 <ComponentManager>
-	<!--Component name="GameManager"  class="rails.game.GameManager"-->
-	<Component name="GameManager"  class="rails.game.specific._1835.GameManager_1835">
+	<!--Component name="GameManager"  class="net.sf.rails.game.GameManager"-->
+	<Component name="GameManager"  class="net.sf.rails.game.specific._1835.GameManager_1835">
 		<Game name="1835"/>
 		<GameParameters>
 			<PlayerShareLimit percentage="100"/>
 			<BankPoolLimit percentage="50"/>
-			<StockRound class="rails.game.specific._1835.StockRound_1835" 
+			<StockRound class="net.sf.rails.game.specific._1835.StockRound_1835" 
 				sequence="SellBuySell">
 				<NoSaleInFirstSR/>
 				<NoSaleIfNotOperated/>
 			</StockRound>
-			<OperatingRound class="rails.game.specific._1835.OperatingRound_1835">
+			<OperatingRound class="net.sf.rails.game.specific._1835.OperatingRound_1835">
 				<EmergencyTrainBuying mustBuyCheapestTrain="no" mayAlwaysBuyNewTrain="yes" mayBuyFromCompany="yes"/>
 			</OperatingRound>
 		</GameParameters>
 		<GuiClasses>
-			<StatusWindow class="rails.ui.swing.gamespecific._1835.StatusWindow_1835"/>
-			<GameUIManager class="rails.ui.swing.gamespecific._1835.GameUIManager_1835"/>
+			<StatusWindow class="net.sf.rails.ui.swing.gamespecific._1835.StatusWindow_1835"/>
+			<GameUIManager class="net.sf.rails.ui.swing.gamespecific._1835.GameUIManager_1835"/>
 		</GuiClasses>
 		<EndOfGame>
 			<BankBreaks limit="0" finish="currentOR"/>
 			<!-- "Runs out"; when "broken", -1 is the limit -->
 		</EndOfGame>
 	</Component>
-	<Component name="PlayerManager" class="rails.game.PlayerManager">
+	<Component name="PlayerManager" class="net.sf.rails.game.PlayerManager">
 		<Players number="3" cash="600" certLimit="19"/>
 		<Players number="4" cash="475" certLimit="15"/>
 		<Players number="5" cash="390" certLimit="12"/>
 		<Players number="6" cash="340" certLimit="11"/>
 		<Players number="7" cash="310" certLimit="9"/>
 	</Component>
-	<Component name="Bank" class="rails.game.Bank">
+	<Component name="Bank" class="net.sf.rails.game.Bank">
 		<Bank amount="12000"/>
 		<Money format="@M"/>
 	</Component>
-	<Component name="TileManager" class="rails.game.TileManager"
+	<Component name="TileManager" class="net.sf.rails.game.TileManager"
 		file="TileSet.xml"/>
-	<Component name="Map" class="rails.game.MapManager" file="Map.xml"/>
-	<Component name="CompanyManager" class="rails.game.CompanyManager"
+	<Component name="Map" class="net.sf.rails.game.MapManager" file="Map.xml"/>
+	<Component name="CompanyManager" class="net.sf.rails.game.CompanyManager"
 		file="CompanyManager.xml"/>
-	<Component name="StockMarket" class="rails.game.StockMarket"
+	<Component name="StockMarket" class="net.sf.rails.game.StockMarket"
 		file="StockMarket.xml"/>
-	<Component name="TrainManager" class="rails.game.TrainManager">
+	<Component name="TrainManager" class="net.sf.rails.game.TrainManager">
 		<Defaults>
 			<Reach base="stops" countTowns="yes"/>
 			<Score towns="yes"/>
@@ -70,7 +70,7 @@
 			<NewPhase phaseName="6+6"/>
 		</TrainType>
 	</Component>
-	<Component name="PhaseManager" class="rails.game.PhaseManager">
+	<Component name="PhaseManager" class="net.sf.rails.game.PhaseManager">
 		<Phase name="2" realName="1">
 			<Tiles colour="yellow">
 				<Lays companyType="Major" colour="yellow" number="2"/>
@@ -106,7 +106,7 @@
             <Trains rusted="3+3"/>
         </Phase>
 	</Component>
-	<Component name="RevenueManager" class="rails.algorithms.RevenueManager">
-		<Modifier class="rails.game.specific._1835.ElsasModifier" />
+	<Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager">
+		<Modifier class="net.sf.rails.game.specific._1835.ElsasModifier" />
 	</Component>
 </ComponentManager>

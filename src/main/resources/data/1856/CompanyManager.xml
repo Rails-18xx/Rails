@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <CompanyManager>
-	<CompanyType name="Private" class="rails.game.PrivateCompany">
+	<CompanyType name="Private" class="net.sf.rails.game.PrivateCompany">
 		<Tradeable toCompany="yes" lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
 	</CompanyType>
-	<CompanyType name="Public" class="rails.game.specific._1856.PublicCompany_1856">
+	<CompanyType name="Public" class="net.sf.rails.game.specific._1856.PublicCompany_1856">
 		<CanBuyPrivates/>
 		<PoolPaysOut/>
 		<ShareUnit percentage="10"/>
@@ -18,7 +18,7 @@
 		<!-- Number of loans is undefined and handled in the code -->
         <CanUseSpecialProperties/>
 	</CompanyType>
-	<CompanyType name="State" class="rails.game.specific._1856.PublicCompany_CGR">
+	<CompanyType name="State" class="net.sf.rails.game.specific._1856.PublicCompany_CGR">
 		<PoolPaysOut/>
 		<ShareUnit percentage="5"/>
 		<Certificate type="President" shares="2" certificateCount="1"/>
@@ -36,10 +36,10 @@
 	<Company name="W&amp;SR" type="Private" basePrice="40" revenue="10">
 		<Blocking hex="I12"/>
 		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
 				<SpecialTileLay tile="59" location="I12" connected="no" extra="no"/>
 			</SpecialProperty>
-			<SpecialProperty condition="ifOwnedByCompany" when="tokenLayingStep" class="rails.game.special.SpecialTokenLay">
+			<SpecialProperty condition="ifOwnedByCompany" when="tokenLayingStep" class="net.sf.rails.game.special.SpecialTokenLay">
 				<SpecialTokenLay location="I12" connected="no" extra="no" free="yes"/>
 			</SpecialProperty>
 		</SpecialProperties>
@@ -50,7 +50,7 @@
 	<Company name="TCC" type="Private" basePrice="50" revenue="10">
 		<Blocking hex="H11"/>
 		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
 				<SpecialTileLay location="H11" connected="no" extra="yes"/>
 			</SpecialProperty>
 		</SpecialProperties>
@@ -59,8 +59,8 @@
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany" 
 				when="anyTimeDuringORTurn" 
-				class="rails.game.special.SpecialTokenLay">
-				<SpecialTokenLay class="rails.game.BonusToken" 
+				class="net.sf.rails.game.special.SpecialTokenLay">
+				<SpecialTokenLay class="net.sf.rails.game.BonusToken" 
 						location="C14,D19,E18,F9,F17,H5,H7,H17,J5,J17,K2,M18,O18" connected="yes" extra="yes">
 					<BonusToken name="Port" value="20" removed="Phase:5"/>
 				</SpecialTokenLay>
@@ -73,11 +73,11 @@
 	<Company name="Brdg" type="Private" basePrice="100" revenue="20">
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany" when="revenueStep" 
-				class="rails.game.special.LocatedBonus" transfer="toCompany">
+				class="net.sf.rails.game.special.LocatedBonus" transfer="toCompany">
 			<LocatedBonus name="Bridge" location="P17,P19" value="10"/>
 			</SpecialProperty>
 			<SpecialProperty condition="ifOwnedByCompany" when="anyTimeDuringOR" 
-				class="rails.game.special.SellBonusToken" transfer="toGameManager">
+				class="net.sf.rails.game.special.SellBonusToken" transfer="toGameManager">
 			<SellBonusToken name="Bridge" location="P17,P19" price="50" value="10">
 				<IfOption name="UnlimitedBonusTokens" value="yes">
 					<Attributes amount="-1"/>
@@ -92,11 +92,11 @@
 	<Company name="Tunn" type="Private" basePrice="100" revenue="20">
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany" when="revenueStep" 
-				class="rails.game.special.LocatedBonus" transfer="toCompany">
+				class="net.sf.rails.game.special.LocatedBonus" transfer="toCompany">
 			<LocatedBonus name="Tunnel" location="B13" value="10"/>
 			</SpecialProperty>
 			<SpecialProperty condition="ifOwnedByCompany" when="anyTimeDuringOR" 
-				class="rails.game.special.SellBonusToken" transfer="toGameManager">
+				class="net.sf.rails.game.special.SellBonusToken" transfer="toGameManager">
 			<SellBonusToken name="Tunnel" location="B13" price="50" value="10">
 				<IfOption name="UnlimitedBonusTokens" value="yes">
 					<Attributes amount="-1"/>
@@ -212,7 +212,7 @@
         </IfOption>        
 	</Company>
 
-	<StartPacket roundClass="rails.game.StartRound_1830">
+	<StartPacket roundClass="net.sf.rails.game.StartRound_1830">
 		<Bidding initial="5" minimum="5" increment="1"/>
 		<Item name="Flos"     type="Private" basePrice="20"/>
 		<Item name="W&amp;SR" type="Private" basePrice="40"/>
