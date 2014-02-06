@@ -16,11 +16,12 @@ import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.OperatingRound;
-import net.sf.rails.game.action.*;
 import net.sf.rails.ui.swing.elements.DockingFrame;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import rails.game.action.*;
 
 
 /**

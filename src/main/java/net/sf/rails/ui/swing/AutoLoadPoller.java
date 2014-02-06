@@ -5,10 +5,11 @@ import java.util.Calendar;
 
 import javax.swing.SwingUtilities;
 
-import net.sf.rails.game.action.GameAction;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import rails.game.action.GameAction;
 
 
 public class AutoLoadPoller extends Thread {

@@ -13,7 +13,6 @@ import javax.swing.border.EtchedBorder;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.*;
 import net.sf.rails.game.HexUpgrade.Validation;
-import net.sf.rails.game.action.*;
 import net.sf.rails.ui.swing.elements.ActionLabel;
 import net.sf.rails.ui.swing.elements.HexLabel;
 import net.sf.rails.ui.swing.elements.RailsIcon;
@@ -24,6 +23,8 @@ import net.sf.rails.ui.swing.hexmap.HexHighlightMouseListener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import rails.game.action.*;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;

@@ -1,10 +1,10 @@
 package net.sf.rails.game.specific._18EU;
 
+import rails.game.action.*;
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.*;
-import net.sf.rails.game.action.*;
 import net.sf.rails.game.state.GenericState;
 import net.sf.rails.game.state.IntegerState;
 

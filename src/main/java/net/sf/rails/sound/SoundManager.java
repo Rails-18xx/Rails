@@ -1,7 +1,7 @@
 package net.sf.rails.sound;
 
+import rails.game.action.PossibleAction;
 import net.sf.rails.game.RailsRoot;
-import net.sf.rails.game.action.PossibleAction;
 
 /**
  * This is a singleton class as there should never be two

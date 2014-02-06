@@ -6,8 +6,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import rails.game.action.PossibleAction;
+
 import net.sf.rails.game.*;
-import net.sf.rails.game.action.PossibleAction;
 import net.sf.rails.util.Util;
 
 import com.google.common.collect.ImmutableSet;

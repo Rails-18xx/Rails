@@ -8,7 +8,6 @@ import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
-import net.sf.rails.game.action.SetDividend;
 import net.sf.rails.game.model.*;
 import net.sf.rails.game.special.*;
 import net.sf.rails.game.state.*;
@@ -16,6 +15,8 @@ import net.sf.rails.util.Util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import rails.game.action.SetDividend;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;

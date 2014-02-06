@@ -2,10 +2,11 @@ package net.sf.rails.game.specific._1851;
 
 import java.util.List;
 
+import rails.game.action.*;
+
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.*;
-import net.sf.rails.game.action.*;
 
 
 public class StartRound_1851 extends StartRound {

@@ -2,6 +2,9 @@ package net.sf.rails.game.specific._1835;
 
 import java.util.*;
 
+import rails.game.action.DiscardTrain;
+import rails.game.action.LayTile;
+
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.GameOption;
 import net.sf.rails.common.LocalText;
@@ -15,8 +18,6 @@ import net.sf.rails.game.Phase;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PrivateCompany;
 import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.action.DiscardTrain;
-import net.sf.rails.game.action.LayTile;
 import net.sf.rails.game.special.ExchangeForShare;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.state.BooleanState;

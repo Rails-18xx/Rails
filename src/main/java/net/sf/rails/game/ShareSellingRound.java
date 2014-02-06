@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import rails.game.action.PossibleAction;
+import rails.game.action.SellShares;
+
 import net.sf.rails.common.*;
-import net.sf.rails.game.action.PossibleAction;
-import net.sf.rails.game.action.SellShares;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.state.IntegerState;
 

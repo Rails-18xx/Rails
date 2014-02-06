@@ -1,4 +1,4 @@
-package net.sf.rails.game.action;
+package rails.game.action;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -277,9 +277,10 @@ public class LayTile extends PossibleORAction {
     private void readObject(ObjectInputStream in) throws IOException,
     ClassNotFoundException {
 
-        //in.defaultReadObject();
+//        in.defaultReadObject();
         // Custom reading for backwards compatibility
         ObjectInputStream.GetField fields = in.readFields();
+        
         locationNames = (String) fields.get("locationNames", locationNames);
         tileColours = (Map<String, Integer>) fields.get("tileColours", tileColours);
         // FIXME: Rewrite this with Rails1.x version flag

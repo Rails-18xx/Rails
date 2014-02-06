@@ -7,8 +7,9 @@ package net.sf.rails.game.specific._1825;
 import java.util.ArrayList;
 import java.util.List;
 
+import rails.game.action.SellShares;
+
 import net.sf.rails.game.*;
-import net.sf.rails.game.action.SellShares;
 import net.sf.rails.game.model.PortfolioModel;
 
 

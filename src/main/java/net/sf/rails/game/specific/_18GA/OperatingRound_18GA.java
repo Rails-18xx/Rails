@@ -1,9 +1,9 @@
 package net.sf.rails.game.specific._18GA;
 
+import rails.game.action.BuyPrivate;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.*;
-import net.sf.rails.game.action.BuyPrivate;
 
 public class OperatingRound_18GA extends OperatingRound {
 

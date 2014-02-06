@@ -1,8 +1,8 @@
 package net.sf.rails.game.round;
 
+import rails.game.action.PossibleAction;
 import net.sf.rails.game.RailsAbstractItem;
 import net.sf.rails.game.RailsItem;
-import net.sf.rails.game.action.PossibleAction;
 
 public abstract class Activity extends RailsAbstractItem {
    

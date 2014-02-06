@@ -4,8 +4,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.*;
 
+import rails.game.action.*;
+
 import net.sf.rails.game.*;
-import net.sf.rails.game.action.*;
 
 
 public class AssignNamedTrains extends UseSpecialProperty {

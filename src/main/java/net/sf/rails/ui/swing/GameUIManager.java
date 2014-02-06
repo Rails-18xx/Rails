@@ -14,13 +14,14 @@ import javax.swing.plaf.FontUIResource;
 import net.sf.rails.common.*;
 import net.sf.rails.game.*;
 import net.sf.rails.game.Currency;
-import net.sf.rails.game.action.*;
 import net.sf.rails.sound.SoundManager;
 import net.sf.rails.ui.swing.elements.*;
 import net.sf.rails.util.Util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import rails.game.action.*;
 
 import com.google.common.collect.Iterables;
 

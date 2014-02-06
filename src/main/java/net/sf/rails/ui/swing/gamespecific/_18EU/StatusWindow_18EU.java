@@ -7,11 +7,12 @@ import java.util.Set;
 
 import javax.swing.JOptionPane;
 
+import rails.game.action.DiscardTrain;
+import rails.game.action.PossibleAction;
+
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.Train;
-import net.sf.rails.game.action.DiscardTrain;
-import net.sf.rails.game.action.PossibleAction;
 import net.sf.rails.game.specific._18EU.FinalMinorExchangeRound;
 import net.sf.rails.ui.swing.StatusWindow;
 

@@ -9,7 +9,6 @@ import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.common.parser.*;
 import net.sf.rails.game.TileUpgrade.Rotation;
-import net.sf.rails.game.action.LayTile;
 import net.sf.rails.game.model.RailsModel;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.GenericState;
@@ -20,6 +19,8 @@ import net.sf.rails.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import rails.game.action.LayTile;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;

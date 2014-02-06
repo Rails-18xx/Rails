@@ -3,7 +3,7 @@
  * Created on 17-Sep-2006
  * Change Log:
  */
-package net.sf.rails.game.action;
+package rails.game.action;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -11,8 +11,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import rails.game.action.PossibleAction;
+
 import net.sf.rails.game.*;
-import net.sf.rails.game.action.PossibleAction;
 
 
 /**

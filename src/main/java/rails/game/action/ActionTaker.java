@@ -1,4 +1,4 @@
-package net.sf.rails.game.action;
+package rails.game.action;
 
 import java.util.List;
 

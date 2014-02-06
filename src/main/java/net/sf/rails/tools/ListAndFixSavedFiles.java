@@ -41,7 +41,6 @@ import net.sf.rails.game.MapHex;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.Tile;
 import net.sf.rails.game.Train;
-import net.sf.rails.game.action.*;
 import net.sf.rails.ui.swing.elements.ActionMenuItem;
 import net.sf.rails.util.GameLoader;
 import net.sf.rails.util.GameSaver;
@@ -49,6 +48,8 @@ import net.sf.rails.util.Util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import rails.game.action.*;
 
 
 public class ListAndFixSavedFiles extends JFrame

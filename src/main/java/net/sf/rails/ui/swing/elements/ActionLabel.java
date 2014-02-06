@@ -7,8 +7,9 @@ import java.util.List;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 
-import net.sf.rails.game.action.ActionTaker;
-import net.sf.rails.game.action.PossibleAction;
+import rails.game.action.ActionTaker;
+import rails.game.action.PossibleAction;
+
 
 
 /**

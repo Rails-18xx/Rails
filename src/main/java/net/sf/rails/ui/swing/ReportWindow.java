@@ -20,7 +20,6 @@ import javax.swing.text.html.HTMLDocument;
 import net.sf.rails.common.Config;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
-import net.sf.rails.game.action.GameAction;
 import net.sf.rails.game.state.ChangeStack;
 import net.sf.rails.sound.SoundManager;
 import net.sf.rails.ui.swing.elements.ActionButton;
@@ -28,6 +27,8 @@ import net.sf.rails.ui.swing.elements.RailsIcon;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import rails.game.action.GameAction;
 
 
 /**

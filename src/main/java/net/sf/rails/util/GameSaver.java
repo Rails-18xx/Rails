@@ -11,10 +11,11 @@ import java.util.List;
 import net.sf.rails.common.Config;
 import net.sf.rails.common.GameData;
 import net.sf.rails.common.LocalText;
-import net.sf.rails.game.action.PossibleAction;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import rails.game.action.PossibleAction;
 
 
 /**

@@ -2,10 +2,11 @@ package net.sf.rails.game.specific._1856;
 
 import java.util.*;
 
+import rails.game.action.*;
+
 import net.sf.rails.common.*;
 import net.sf.rails.game.*;
 import net.sf.rails.game.Currency;
-import net.sf.rails.game.action.*;
 import net.sf.rails.game.special.SellBonusToken;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.IntegerState;

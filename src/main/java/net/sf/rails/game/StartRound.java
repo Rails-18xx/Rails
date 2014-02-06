@@ -2,8 +2,9 @@ package net.sf.rails.game;
 
 import java.util.List;
 
+import rails.game.action.*;
+
 import net.sf.rails.common.*;
-import net.sf.rails.game.action.*;
 import net.sf.rails.game.state.ArrayListState;
 import net.sf.rails.game.state.GenericState;
 import net.sf.rails.game.state.IntegerState;

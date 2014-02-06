@@ -1,5 +1,5 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/GameAction.java,v 1.5 2010/04/04 22:02:53 stefanfrey Exp $*/
-package net.sf.rails.game.action;
+package rails.game.action;
 
 /* THIS CLASS NEED NOT BE SERIALIZED */
 public class GameAction extends PossibleAction {

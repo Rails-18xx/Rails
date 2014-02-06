@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import net.sf.rails.common.*;
-import net.sf.rails.game.action.*;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.state.ArrayListState;
@@ -16,6 +15,8 @@ import net.sf.rails.game.state.Portfolio;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import rails.game.action.*;
 
 
 public abstract class Round extends RailsAbstractItem implements Creatable {

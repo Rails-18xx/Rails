@@ -6,10 +6,11 @@ import java.util.Iterator;
 import java.util.Set;
 
 import net.sf.rails.common.LocalText;
-import net.sf.rails.game.action.LayTile;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import rails.game.action.LayTile;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;

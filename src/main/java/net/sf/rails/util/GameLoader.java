@@ -4,7 +4,9 @@ import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.io.ObjectStreamClass;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
@@ -18,10 +20,11 @@ import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.GameOptionsParser;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.RailsRoot;
-import net.sf.rails.game.action.PossibleAction;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import rails.game.action.PossibleAction;
 
 import com.google.common.collect.Lists;
 
@@ -66,7 +69,7 @@ public class GameLoader {
     public void loadGameData(String filepath) throws Exception {
         log.info("Loading game from file " + filepath);
         String filename = filepath.replaceAll(".*[/\\\\]", "");
-        ois = new ObjectInputStream(new FileInputStream(
+        ois = new RailsObjectInputStream(new FileInputStream(
                 new File(filepath)));
 
         Object object = ois.readObject();
@@ -271,4 +274,32 @@ public class GameLoader {
         return replayGame();
     }
     
+    /**
+     * A subclass of ObjectInputStream that allows to use new package names and still load
+     * old game files
+     * 
+     * See: http://stackoverflow.com/questions/5305473
+     */
+    
+    public static class RailsObjectInputStream extends ObjectInputStream {
+
+        public RailsObjectInputStream(InputStream in) throws IOException {
+            super(in);
+        }
+        
+//        @Override
+//        protected java.io.ObjectStreamClass readClassDescriptor() 
+//                throws IOException, ClassNotFoundException {
+//            ObjectStreamClass desc = super.readClassDescriptor();
+//            String className = desc.getName();
+//            log.debug("Found class = " + className);
+//            if (className.startsWith("rails.")) {
+//                String newClassName = className.replace("rails.", "net.sf.rails.");
+//                log.debug("Replaced class " + className + " by new class " + newClassName);
+//                return ObjectStreamClass.lookup(Class.forName(newClassName));
+//            } else {
+//                return desc;
+//            }
+//        }
+    }
 }

@@ -1,6 +1,6 @@
 package net.sf.rails.game.correct;
 
-import net.sf.rails.game.action.PossibleAction;
+import rails.game.action.PossibleAction;
 /**
  * Base class for all actions that correct the state of the game. 
  * 

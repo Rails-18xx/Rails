@@ -2,9 +2,10 @@ package net.sf.rails.game.specific._18TN;
 
 import java.util.Set;
 
+import rails.game.action.BuyPrivate;
+import rails.game.action.SetDividend;
+
 import net.sf.rails.game.*;
-import net.sf.rails.game.action.BuyPrivate;
-import net.sf.rails.game.action.SetDividend;
 import net.sf.rails.game.state.ArrayListState;
 
 

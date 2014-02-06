@@ -3,7 +3,7 @@
  * Created on 14-Sep-2006
  * Change Log:
  */
-package net.sf.rails.game.action;
+package rails.game.action;
 
 import java.util.ArrayList;
 import java.util.List;

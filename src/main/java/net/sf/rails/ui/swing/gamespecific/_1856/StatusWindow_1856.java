@@ -2,10 +2,11 @@ package net.sf.rails.ui.swing.gamespecific._1856;
 
 import javax.swing.WindowConstants;
 
+import rails.game.action.*;
+
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.Round;
-import net.sf.rails.game.action.*;
 import net.sf.rails.game.specific._1856.CGRFormationRound;
 import net.sf.rails.ui.swing.GameUIManager;
 import net.sf.rails.ui.swing.StatusWindow;

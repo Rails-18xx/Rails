@@ -5,9 +5,10 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import rails.game.action.PossibleAction;
+import rails.game.action.StartCompany;
+
 import net.sf.rails.game.*;
-import net.sf.rails.game.action.PossibleAction;
-import net.sf.rails.game.action.StartCompany;
 
 import com.google.common.primitives.Ints;
 

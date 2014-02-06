@@ -1,5 +1,5 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/NullAction.java,v 1.10 2010/01/31 22:22:29 macfreek Exp $*/
-package net.sf.rails.game.action;
+package rails.game.action;
 
 public class NullAction extends PossibleAction {
 

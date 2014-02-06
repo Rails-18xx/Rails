@@ -2,7 +2,8 @@ package net.sf.rails.ui.swing.gamespecific._18AL;
 
 import java.util.List;
 
-import net.sf.rails.game.action.PossibleAction;
+import rails.game.action.PossibleAction;
+
 import net.sf.rails.game.specific._18AL.AssignNamedTrains;
 import net.sf.rails.ui.swing.ORUIManager;
 

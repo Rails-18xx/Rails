@@ -1,10 +1,10 @@
 package net.sf.rails.game;
 
+import rails.game.action.*;
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.GameOption;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
-import net.sf.rails.game.action.*;
 
 /**
  * Implements an 1830-style initial auction.

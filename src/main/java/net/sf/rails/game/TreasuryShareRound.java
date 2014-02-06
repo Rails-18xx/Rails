@@ -2,11 +2,12 @@ package net.sf.rails.game;
 
 import java.util.*;
 
+import rails.game.action.*;
+
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
-import net.sf.rails.game.action.*;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.state.BooleanState;
 

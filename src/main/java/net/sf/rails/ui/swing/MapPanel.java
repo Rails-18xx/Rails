@@ -8,12 +8,13 @@ import java.util.List;
 import javax.swing.*;
 
 import net.sf.rails.game.MapManager;
-import net.sf.rails.game.action.LayToken;
 import net.sf.rails.ui.swing.hexmap.HexMap;
 import net.sf.rails.ui.swing.hexmap.HexMapImage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import rails.game.action.LayToken;
 
 
 /**

@@ -4,8 +4,9 @@ package net.sf.rails.game.correct;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-import net.sf.rails.game.action.PossibleAction;
-import net.sf.rails.game.action.PossibleORAction;
+import rails.game.action.PossibleAction;
+import rails.game.action.PossibleORAction;
+
 import net.sf.rails.util.Util;
 
 /**

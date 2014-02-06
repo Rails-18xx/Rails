@@ -10,8 +10,9 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import rails.game.action.*;
+
 import net.sf.rails.common.*;
-import net.sf.rails.game.action.*;
 import net.sf.rails.game.correct.ClosePrivate;
 import net.sf.rails.game.correct.OperatingCost;
 import net.sf.rails.game.special.*;

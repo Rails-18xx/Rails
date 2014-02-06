@@ -2,7 +2,8 @@ package net.sf.rails.ui.swing.elements;
 
 import javax.swing.JDialog;
 
-import net.sf.rails.game.action.PossibleAction;
+import rails.game.action.PossibleAction;
+
 
 
 public interface DialogOwner {

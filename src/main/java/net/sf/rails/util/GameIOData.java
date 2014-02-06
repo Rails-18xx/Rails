@@ -2,8 +2,9 @@ package net.sf.rails.util;
 
 import java.util.List;
 
+import rails.game.action.PossibleAction;
+
 import net.sf.rails.common.GameData;
-import net.sf.rails.game.action.PossibleAction;
 
 
 /**

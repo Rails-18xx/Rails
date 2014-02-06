@@ -5,10 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import rails.game.action.BuyTrain;
+
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.*;
-import net.sf.rails.game.action.BuyTrain;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.Owner;

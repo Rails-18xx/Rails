@@ -13,7 +13,6 @@ import java.util.TreeMap;
 import net.sf.rails.algorithms.RevenueManager;
 import net.sf.rails.common.*;
 import net.sf.rails.common.parser.*;
-import net.sf.rails.game.action.*;
 import net.sf.rails.game.correct.*;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.special.SpecialProperty;
@@ -25,6 +24,8 @@ import net.sf.rails.util.Util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import rails.game.action.*;
 
 
 /**

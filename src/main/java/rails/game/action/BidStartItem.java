@@ -3,7 +3,7 @@
  * Created on 17-Sep-2006
  * Change Log:
  */
-package net.sf.rails.game.action;
+package rails.game.action;
 
 import net.sf.rails.game.StartItem;
 

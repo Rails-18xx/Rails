@@ -4,13 +4,14 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.*;
 
+import rails.game.action.PossibleAction;
+
 import net.sf.rails.game.BaseToken;
 import net.sf.rails.game.MapHex;
 import net.sf.rails.game.MapManager;
 import net.sf.rails.game.Station;
 import net.sf.rails.game.Tile;
 import net.sf.rails.game.TileManager;
-import net.sf.rails.game.action.PossibleAction;
 import net.sf.rails.game.correct.MapCorrectionManager.*;
 import net.sf.rails.util.Util;
 

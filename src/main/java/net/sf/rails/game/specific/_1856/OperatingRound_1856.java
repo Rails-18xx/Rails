@@ -3,12 +3,13 @@ package net.sf.rails.game.specific._1856;
 import java.util.ArrayList;
 import java.util.List;
 
+import rails.game.action.*;
+
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.*;
-import net.sf.rails.game.action.*;
 import net.sf.rails.game.special.SellBonusToken;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.state.BooleanState;

@@ -1,5 +1,10 @@
 package net.sf.rails.game.specific._1889;
 
+import rails.game.action.BuyPrivate;
+import rails.game.action.LayTile;
+import rails.game.action.NullAction;
+import rails.game.action.PossibleAction;
+import rails.game.action.UseSpecialProperty;
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.GameOption;
 import net.sf.rails.common.LocalText;
@@ -8,11 +13,6 @@ import net.sf.rails.game.GameManager;
 import net.sf.rails.game.OperatingRound;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PrivateCompany;
-import net.sf.rails.game.action.BuyPrivate;
-import net.sf.rails.game.action.LayTile;
-import net.sf.rails.game.action.NullAction;
-import net.sf.rails.game.action.PossibleAction;
-import net.sf.rails.game.action.UseSpecialProperty;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.special.SpecialTileLay;
 import net.sf.rails.game.state.BooleanState;

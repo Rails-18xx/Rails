@@ -1,7 +1,7 @@
 package net.sf.rails.sound;
 
+import rails.game.action.*;
 import net.sf.rails.game.*;
-import net.sf.rails.game.action.*;
 import net.sf.rails.game.model.PresidentModel;
 import net.sf.rails.game.state.*;
 import net.sf.rails.ui.swing.ORUIManager;
@@ -183,10 +183,10 @@ public class SoundEventInterpreter {
 
             //Start Round actions
             
-            else if (action instanceof net.sf.rails.game.action.BidStartItem) {
+            else if (action instanceof rails.game.action.BidStartItem) {
                 player.playSFXByConfigKey (SoundConfig.KEY_SFX_STR_BidStartItem);
 
-            } else if (action instanceof net.sf.rails.game.action.BuyStartItem) {
+            } else if (action instanceof rails.game.action.BuyStartItem) {
                 player.playSFXByConfigKey (SoundConfig.KEY_SFX_STR_BuyStartItem);
             
             }

@@ -3,10 +3,11 @@ package net.sf.rails.ui.swing.gamespecific._18EU;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
+import rails.game.action.MergeCompanies;
+import rails.game.action.PossibleAction;
+
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.action.MergeCompanies;
-import net.sf.rails.game.action.PossibleAction;
 import net.sf.rails.ui.swing.GameStatus;
 import net.sf.rails.ui.swing.elements.RadioButtonDialog;
 

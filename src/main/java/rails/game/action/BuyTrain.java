@@ -1,4 +1,4 @@
-package net.sf.rails.game.action;
+package rails.game.action;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -276,7 +276,7 @@ public class BuyTrain extends PossibleORAction {
     private void readObject(ObjectInputStream in) throws IOException,
             ClassNotFoundException {
 
-        //in.defaultReadObject();
+//        in.defaultReadObject();
         // TEMPORARY Custom reading for backwards compatibility
         ObjectInputStream.GetField fields = in.readFields();
         trainUniqueId = (String) fields.get("trainUniqueId", trainUniqueId);

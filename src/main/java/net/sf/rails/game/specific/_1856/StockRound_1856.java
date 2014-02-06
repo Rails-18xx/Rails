@@ -1,5 +1,6 @@
 package net.sf.rails.game.specific._1856;
 
+import rails.game.action.BuyCertificate;
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
@@ -11,7 +12,6 @@ import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCertificate;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.StockRound;
-import net.sf.rails.game.action.BuyCertificate;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.state.IntegerState;
 import net.sf.rails.game.state.Owner;

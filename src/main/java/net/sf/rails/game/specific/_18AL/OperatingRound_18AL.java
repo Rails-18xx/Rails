@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import rails.game.action.LayBaseToken;
+import rails.game.action.PossibleAction;
+
 import net.sf.rails.common.GameOption;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.*;
-import net.sf.rails.game.action.LayBaseToken;
-import net.sf.rails.game.action.PossibleAction;
 
 
 public class OperatingRound_18AL extends OperatingRound {

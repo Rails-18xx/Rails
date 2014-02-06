@@ -12,7 +12,6 @@ import javax.swing.*;
 import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.*;
-import net.sf.rails.game.action.*;
 import net.sf.rails.game.correct.CashCorrectionAction;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.specific._18EU.StartCompany_18EU;
@@ -23,6 +22,8 @@ import net.sf.rails.util.Util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import rails.game.action.*;
 
 
 /**

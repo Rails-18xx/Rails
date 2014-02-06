@@ -3,12 +3,13 @@ package net.sf.rails.game.specific._18EU;
 import java.util.ArrayList;
 import java.util.List;
 
+import rails.game.action.MergeCompanies;
+import rails.game.action.NullAction;
+
 import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.*;
-import net.sf.rails.game.action.MergeCompanies;
-import net.sf.rails.game.action.NullAction;
 
 
 /**

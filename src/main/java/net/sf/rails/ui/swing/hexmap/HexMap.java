@@ -34,15 +34,16 @@ import net.sf.rails.game.Phase;
 import net.sf.rails.game.PhaseManager;
 import net.sf.rails.game.Tile;
 import net.sf.rails.game.TileColour;
-import net.sf.rails.game.action.LayBaseToken;
-import net.sf.rails.game.action.LayBonusToken;
-import net.sf.rails.game.action.LayToken;
 import net.sf.rails.ui.swing.GameUIManager;
 import net.sf.rails.ui.swing.ORUIManager;
 import net.sf.rails.util.Util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import rails.game.action.LayBaseToken;
+import rails.game.action.LayBonusToken;
+import rails.game.action.LayToken;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
