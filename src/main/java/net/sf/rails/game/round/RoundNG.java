@@ -1,0 +1,29 @@
+package net.sf.rails.game.round;
+
+import net.sf.rails.game.Player;
+import net.sf.rails.game.RailsItem;
+import net.sf.rails.game.RailsManager;
+import net.sf.rails.game.action.PossibleAction;
+
+/**
+ * RoundNG is the abstract base class for Round types (like StockRound, OperatingRound, StartRound) in Rails.
+ * 
+ */
+
+public abstract class RoundNG extends RailsManager {
+
+    protected RoundNG(RailsItem parent, String id) {
+        super(parent, id);
+    }
+
+    public abstract void start();
+    
+    public abstract Iterable<PossibleAction> getActions();
+    
+    public abstract Player getCurrentPlayer();
+    
+    public abstract boolean process(PossibleAction action);
+    
+    public abstract void finish();
+    
+}

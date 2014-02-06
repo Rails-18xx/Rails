@@ -1,29 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="junit"/>
-	<classpathentry excluding="main/java/|main/java/" kind="src" path="src"/>
 	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="src" path="src/test/java"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="src/lib/batik-1.7/lib/batik-bridge.jar"/>
-	<classpathentry kind="lib" path="src/lib/batik-1.7/lib/batik-dom.jar"/>
-	<classpathentry kind="lib" path="src/lib/batik-1.7/lib/batik-ext.jar"/>
-	<classpathentry kind="lib" path="src/lib/batik-1.7/lib/batik-gvt.jar"/>
-	<classpathentry kind="lib" path="src/lib/batik-1.7/lib/batik-util.jar"/>
-	<classpathentry kind="lib" path="src/lib/batik-1.7/batik.jar"/>
-	<classpathentry kind="lib" path="src/lib/guava-r09/guava-r09.jar"/>
-	<classpathentry kind="lib" path="src/lib/jgraph5/jgraph.jar"/>
-	<classpathentry kind="lib" path="src/lib/jgrapht-0.7.3/jgrapht-jdk1.5.jar"/>
-	<classpathentry kind="lib" path="src/lib/logback-1.0.4/logback-classic-1.0.4.jar"/>
-	<classpathentry kind="lib" path="src/lib/logback-1.0.4/logback-core-1.0.4.jar"/>
-	<classpathentry kind="lib" path="src/lib/sl4j-1.6.5/slf4j-api-1.6.5.jar"/>
-	<classpathentry kind="lib" path="junit/lib/junit-4.8.2/junit.jar"/>
-	<classpathentry kind="lib" path="junit/lib/mockito-1.9.0/mockito-all-1.9.0.jar"/>
-	<classpathentry kind="lib" path="junit/lib/fest-2.0M6/fest-assert-core-2.0M6.jar"/>
-	<classpathentry kind="lib" path="junit/lib/fest-2.0M6/fest-util-1.2.1.jar"/>
-	<classpathentry kind="lib" path="src/lib/JLayer1.0.1/jl1.0.1jar"/>
-	<classpathentry kind="lib" path="src/lib/df_1.1.0/dockingFramesCommon.jar"/>
-	<classpathentry kind="lib" path="src/lib/df_1.1.0/dockingFramesCore.jar"/>
-	<classpathentry kind="lib" path="src/lib/commons-io-2.1/commons-io-2.1.jar"/>
-	<classpathentry kind="lib" path="src/lib/migLayout-4.0/miglayout-4.0-swing.jar"/>
+	<classpathentry kind="lib" path="libs/main/commons-io-2.1/commons-io-2.1.jar"/>
+	<classpathentry kind="lib" path="libs/main/df_1.1.0/dockingFramesCommon.jar"/>
+	<classpathentry kind="lib" path="libs/main/df_1.1.0/dockingFramesCore.jar"/>
+	<classpathentry kind="lib" path="libs/main/guava-r09/guava-r09.jar"/>
+	<classpathentry kind="lib" path="libs/main/jgraph5/jgraph.jar"/>
+	<classpathentry kind="lib" path="libs/main/jgrapht-0.7.3/jgrapht-jdk1.5.jar"/>
+	<classpathentry kind="lib" path="libs/main/JLayer1.0.1/jl1.0.1jar"/>
+	<classpathentry kind="lib" path="libs/main/logback-1.0.4/logback-classic-1.0.4.jar"/>
+	<classpathentry kind="lib" path="libs/main/logback-1.0.4/logback-core-1.0.4.jar"/>
+	<classpathentry kind="lib" path="libs/main/sl4j-1.6.5/slf4j-api-1.6.5.jar"/>
+	<classpathentry kind="lib" path="libs/test/fest-2.0M6/fest-assert-core-2.0M6.jar"/>
+	<classpathentry kind="lib" path="libs/test/fest-2.0M6/fest-util-1.2.1.jar"/>
+	<classpathentry kind="lib" path="libs/test/junit-4.8.2/junit.jar"/>
+	<classpathentry kind="lib" path="libs/test/mockito-1.9.0/mockito-all-1.9.0.jar"/>
+	<classpathentry kind="lib" path="libs/main/batik-1.7/lib/batik-anim.jar"/>
+	<classpathentry kind="lib" path="libs/main/batik-1.7/lib/batik-awt-util.jar"/>
+	<classpathentry kind="lib" path="libs/main/batik-1.7/lib/batik-bridge.jar"/>
+	<classpathentry kind="lib" path="libs/main/batik-1.7/lib/batik-codec.jar"/>
+	<classpathentry kind="lib" path="libs/main/batik-1.7/lib/batik-css.jar"/>
+	<classpathentry kind="lib" path="libs/main/batik-1.7/lib/batik-dom.jar"/>
+	<classpathentry kind="lib" path="libs/main/batik-1.7/lib/batik-ext.jar"/>
+	<classpathentry kind="lib" path="libs/main/batik-1.7/lib/batik-gui-util.jar"/>
+	<classpathentry kind="lib" path="libs/main/batik-1.7/lib/batik-gvt.jar"/>
+	<classpathentry kind="lib" path="libs/main/batik-1.7/lib/batik-parser.jar"/>
+	<classpathentry kind="lib" path="libs/main/batik-1.7/lib/batik-script.jar"/>
+	<classpathentry kind="lib" path="libs/main/batik-1.7/lib/batik-svg-dom.jar"/>
+	<classpathentry kind="lib" path="libs/main/batik-1.7/lib/batik-swing.jar"/>
+	<classpathentry kind="lib" path="libs/main/batik-1.7/lib/batik-transcoder.jar"/>
+	<classpathentry kind="lib" path="libs/main/batik-1.7/lib/batik-util.jar"/>
+	<classpathentry kind="lib" path="libs/main/batik-1.7/lib/batik-xml.jar"/>
+	<classpathentry kind="lib" path="libs/main/batik-1.7/lib/js.jar"/>
+	<classpathentry kind="lib" path="libs/main/batik-1.7/lib/xerces_2_5_0.jar"/>
+	<classpathentry kind="lib" path="libs/main/batik-1.7/lib/xml-apis-ext.jar"/>
+	<classpathentry kind="lib" path="libs/main/batik-1.7/lib/xml-apis.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
