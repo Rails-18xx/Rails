@@ -91,7 +91,6 @@ public class Currency extends CountableItem<Currency> implements RailsItem {
     }
 
     public static String format(RailsItem item, int amount) {
-        log.debug("item = " + item);
         Currency currency = item.getRoot().getCurrency();
         return currency.format(amount);
     }

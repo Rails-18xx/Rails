@@ -1,4 +1,4 @@
-package net.sf.rails.game.correct;
+package rails.game.correct;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

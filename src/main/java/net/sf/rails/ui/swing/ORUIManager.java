@@ -8,8 +8,6 @@ import javax.swing.JOptionPane;
 import net.sf.rails.algorithms.*;
 import net.sf.rails.common.*;
 import net.sf.rails.game.*;
-import net.sf.rails.game.correct.*;
-import net.sf.rails.game.correct.MapCorrectionManager.ActionStep;
 import net.sf.rails.game.special.*;
 import net.sf.rails.game.state.Owner;
 import net.sf.rails.sound.SoundManager;
@@ -22,6 +20,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import rails.game.action.*;
+import rails.game.correct.*;
+import rails.game.correct.MapCorrectionManager.ActionStep;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterables;
