@@ -2,15 +2,98 @@ apply plugin: 'java'
 sourceCompatibility = 1.5
 targetCompatibility = 1.6
 
+def railsMainClass = 'net.sf.rails.uti.RunGame'
+def sourceforgeJnlpPath = 'http://rails.sf.net/webstart'
+def sourceforgeJnlpFileName = 'rails'
+
 dependencies {
-  compile fileTree(dir: "libs", include: '**/*.jar')
+  compile fileTree(dir: "libs/main", include: '**/*.jar')
+  testCompile fileTree(dir: "libs/test", include: '**/*.jar')
 }
 
 jar {
-  from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
     manifest {
-        def manifestClasspath = configurations.runtime.collect { it.getName() }.join(',')
-        attributes 'Class-Path': manifestClasspath, 'Main-Class': 'net.sf.rails.util.RunGame'
+	def manifestClasspath = configurations.runtime.collect { "./" + it.getName() }.join(' ')
+        attributes 'Class-Path': manifestClasspath, 'Main-Class': "$railsMainClass"
     }
   
 } 
+
+// The following implements a creation of a Webstart version
+// refer to http://www.apprenticeshipnotes.org/2013/01/generating-webstart-files-using-gradle.html
+// and http://java.dzone.com/articles/java-web-start-jnlp-hello
+
+task copyFiles(type: Copy, dependsOn: [jar]) {
+//	the next line is required if we have several jars
+    from configurations.runtime
+    from("$buildDir/libs")
+    into("webstart/lib")
+    include('*.jar')
+}
+
+
+task signAll(dependsOn: [copyFiles]) << {
+    new File('webstart/signed').mkdirs()
+    def libFiles = fileTree(dir: 'webstart/lib', include:'**/*.jar')
+    libFiles.each {
+        ant.signjar(
+                destDir: 'webstart/signed',
+                alias: 'http://rails.sf.net',
+                jar: it,
+		keystore: '../../keystore/rails.keys',
+		storepass: 'rails18xx',
+                preservelastmodified: 'true',
+		lazy: 'true')
+    }
+}
+
+task generateJnlp(dependsOn: [signAll]) << {
+    File jnlpTemplateFile = new File('src/main/resources/webstart/template.jnlp')
+    def root = new XmlParser().parse(jnlpTemplateFile)
+    def jnlpFileName = "${sourceforgeJnlpFileName}.jnlp"
+    
+    // Setting values in the jnlp template
+    // Setting root values
+    
+    // File CodeBase
+    // root.@codebase = 'file:/'+new File('webstart/signed').absolutePath
+    
+    // Http CodeBase
+    root.@codebase = sourceforgeJnlpPath
+    root.@href = jnlpFileName
+
+    // Setting information values
+    def information = root.information[0]
+    def title = information.title[0]
+    def vendor = information.vendor[0]
+    title.setValue('Rails program')
+    vendor.setValue('Rails 18xx project')
+    def descriptionList = information.description
+    descriptionList.each {
+        it.setValue('Rails is a moderator program for 18xx games')
+    }
+    
+    // Setting resources
+    def resource = root.resources[0]
+    def j2se = resource.j2se[0]
+    j2se.@version = "1.6+"
+    
+    def collection = fileTree(dir:'webstart/lib', include:'**/*.jar')
+    def mainJar = 'rails.jar'
+
+    collection.each {
+        def resourceValues = [href: it.name]
+        if (mainJar == it.name) {
+            resourceValues = [href: it.name, main: 'true']
+        }
+        resource.appendNode('jar', resourceValues)
+    }
+    
+    // Setting the main class
+    def applicationDesc = root.'application-desc'[0]
+    applicationDesc.'@main-class' = "$railsMainClass"
+    
+    // Writing the jnlp file filled
+    File jnlpFile = new File('webstart/signed/' + jnlpFileName)
+    new XmlNodePrinter(new PrintWriter(jnlpFile)).print(root)
+}
