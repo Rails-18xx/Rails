@@ -272,7 +272,7 @@ public class OperatingRound_1880 extends OperatingRound {
                 }
             } 
             //If the train bought was a 8e Train no more trains will be discarded.
-            if (action.getType().getName().equals("8e")) {
+            if (action.getType().getName().equals("8E")) {
                 orControl.setNoTrainsToDiscard(true);
             }
 
@@ -327,7 +327,7 @@ public class OperatingRound_1880 extends OperatingRound {
                     break;
                 }
                 
-                if (operatingCompany.get() == orControl.lastCompanyToBuyTrain()) {
+                if (operatingCompany.get() == orControl.lastCompanyToOperate()) {
                     
                     // Need to create the final Jumpoff Point there to end the game !
                     if ((gameManager.getRelativeORNumber() == 3) && (orControl.isFinalOperatingRoundSequence())) {

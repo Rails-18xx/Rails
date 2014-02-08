@@ -87,7 +87,8 @@
             <Score scoreTowns="no" scoreCities="Yes" />
 			<NewPhase phaseName="8"/>
 		</TrainType>
-		<TrainType name="8E" majorStops="-1" cost="900" quantity="2">
+		<TrainType name="8E" majorStops="8" cost="900" quantity="2">
+		    <Score scoreTowns="no" scoreCities="Yes" />
 			<NewPhase phaseName="8e"/>
         </TrainType>
 				<!-- majorStops="-1" indicates that this not a normally running train-->
