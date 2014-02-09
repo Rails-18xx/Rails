@@ -309,6 +309,7 @@ public class CGRFormationRound extends SwitchableUIRound {
         int count, cgrSharesUsed, oldShares, newShares;
         PublicCertificate cgrCert, poolCert;
         List<PublicCertificate> certs = new ArrayList<PublicCertificate>();
+        List<PublicCompany> availableCompanies;
         Player temporaryPresident = null;
         Player newPresident = null;
         Player firstCGRowner = null;
@@ -482,12 +483,12 @@ public class CGRFormationRound extends SwitchableUIRound {
             int colPrice;
             StockSpace startSpace;
             for (int col=6; col <= stockMarket.getNumberOfColumns(); col++) {
-                colPrice = stockMarket.getStockSpace(1, col).getPrice();
+                colPrice = stockMarket.getStockSpace(0, col).getPrice();
                 if (cgrPrice > colPrice) continue;
                 if (cgrPrice - prevColPrice < colPrice - cgrPrice) {
-                    startSpace = stockMarket.getStockSpace(1, col-1);
+                    startSpace = stockMarket.getStockSpace(0, col-1);
                 } else {
-                    startSpace = stockMarket.getStockSpace(1, col);
+                    startSpace = stockMarket.getStockSpace(0, col);
                 }
                 cgr.start(startSpace);
                 message = LocalText.getText("START_MERGED_COMPANY",
@@ -505,7 +506,17 @@ public class CGRFormationRound extends SwitchableUIRound {
         // Determine the new certificate limit.
         // The number of available companies is 11,
         // or 12 minus the number of closed companies, whichever is lower.
-        int numCompanies = Math.min(11, 12-mergingCompanies.size());
+        //Make sure that only available companies are counted
+        availableCompanies= getRoot().getGameManager().getAllPublicCompanies();
+        int validCompanies= 12; //including the CGR
+        //Need to find out if a company is already closed, if yes
+        //decrease the validCompany value by 1
+        for(PublicCompany c : availableCompanies) {
+            if (c.isClosed()) {
+                validCompanies--;
+            }
+        }
+        int numCompanies = Math.min(11, validCompanies-mergingCompanies.size());
         int numPlayers = getNumberOfPlayers();
         // Need some checks here...
         int newCertLimit = certLimitsTable[numPlayers-2][numCompanies-4];

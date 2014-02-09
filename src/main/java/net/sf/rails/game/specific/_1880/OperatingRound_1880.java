@@ -270,7 +270,7 @@ public class OperatingRound_1880 extends OperatingRound {
                 }
             } 
             //If the train bought was a 8e Train no more trains will be discarded.
-            if (action.getType().getName().equals("8e")) {
+            if (action.getType().getName().equals("8E")) {
                 orControl.setNoTrainsToDiscard(true);
             }
 
@@ -328,7 +328,7 @@ public class OperatingRound_1880 extends OperatingRound {
                 if (operatingCompany.value() == orControl.lastCompanyToBuyTrain()) {
                     
                     // Need to create the final Jumpoff Point there to end the game !
-                    if (gameManager.getRelativeORNumber() == 3) {
+                    if ((gameManager.getRelativeORNumber() == 3) && (orControl.isFinalOperatingRoundSequence())){
                     finishOR();
                     }
                     
@@ -419,7 +419,14 @@ public class OperatingRound_1880 extends OperatingRound {
             result = forcedRocketExchange((ForcedRocketExchange) action);
             return result;
         } else {
-            return super.process(action);
+            result= super.process(action);
+            if (operatingCompany.value() instanceof Investor_1880) {
+                Investor_1880 investor = (Investor_1880) (operatingCompany.value());
+                if ((action instanceof SetDividend) && (investor.isConnectedToLinkedCompany() == false)) {
+                    result = done(null);
+                }
+            }
+            return result;
         }
     }
 
@@ -440,9 +447,9 @@ public class OperatingRound_1880 extends OperatingRound {
          * to build anymore because it doesnt possess the necessary building
          * right for this phase. Only Majors need to be prechecked.
          */
-        if ((getStep() == GameDef.OrStep.INITIAL)
-            && (operatingCompany.value().getType().equals("Major"))) {
+        if (getStep() == GameDef.OrStep.INITIAL) {
             initTurn();
+           if (operatingCompany.value() instanceof PublicCompany_1880)  {
             if ((noMapMode)
                 || (!((PublicCompany_1880) operatingCompany.value()).hasBuildingRightForPhase(gameManager.getCurrentPhase()))) {
                 nextStep(GameDef.OrStep.LAY_TRACK);
@@ -450,23 +457,16 @@ public class OperatingRound_1880 extends OperatingRound {
                 initNormalTileLays(); // new: only called once per turn ?
                 setStep(GameDef.OrStep.LAY_TRACK);
             }
+          }
         }
 
         if ((getStep() == GameDef.OrStep.BUY_TRAIN)
             && (operatingCompany.value() instanceof Investor_1880)) {
-            setStep(GameDef.OrStep.TRADE_SHARES);
+            //Only way to get here is if this is a connected Investor...
+            possibleActions.add(new CloseInvestor_1880 ((Investor_1880) operatingCompany.value()));
+            return true;
         }
 
-        if ((getStep() == GameDef.OrStep.TRADE_SHARES)
-            && (operatingCompany.value() instanceof Investor_1880)) {
-            Investor_1880 investor = (Investor_1880) operatingCompany.value();
-            if (investor.isConnectedToLinkedCompany() == true) {
-                possibleActions.add(new CloseInvestor_1880(investor));
-                return true;
-            } else {
-                nextStep(GameDef.OrStep.FINAL);
-            }
-        }
         return super.setPossibleActions();
     }
 
