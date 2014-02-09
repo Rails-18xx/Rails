@@ -311,5 +311,14 @@ public class CompanyManager extends RailsManager implements Configurable {
         }
     }
 
+    public StartPacket getNextUnfinishedStartPacket() {
+      for (StartPacket packet: startPackets) {
+          if (packet.areAllSold() == false) {
+              return packet;
+              
+              }
+          }
+      return null;
+    }
     
 }

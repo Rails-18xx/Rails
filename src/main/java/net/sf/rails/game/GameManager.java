@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import net.sf.rails.algorithms.RevenueManager;
 import net.sf.rails.common.*;
 import net.sf.rails.common.parser.*;
 import net.sf.rails.game.model.PortfolioModel;
@@ -394,15 +393,16 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         setGuiParameters();
 
         if (startPacket == null)
-            startPacket = getRoot().getCompanyManager().getStartPacket(StartPacket.DEFAULT_ID);
+            startPacket = getRoot().getCompanyManager().getNextUnfinishedStartPacket();
         if (startPacket != null && !startPacket.areAllSold()) {
             startPacket.init(this);
 
             // If we have a non-exhausted start packet
-            startStartRound();
+            startStartRound(startPacket);
         } else {
             startStockRound();
         }
+        
     }
 
     protected void setGuiParameters () {
@@ -468,24 +468,31 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
     public void nextRound(Round round) {
         if (round instanceof StartRound) {
-            if (startPacket != null && !startPacket.areAllSold()) {
-                startOperatingRound(runIfStartPacketIsNotCompletelySold());
-            } else if (skipFirstStockRound) {
-                Phase currentPhase =
-                    getRoot().getPhaseManager().getCurrentPhase();
-                if (currentPhase.getNumberOfOperatingRounds() != numOfORs.value()) {
-                    numOfORs.set(currentPhase.getNumberOfOperatingRounds());
-                }
-                log.info("Phase=" + currentPhase.toText() + " ORs=" + numOfORs);
+            if (((StartRound) round).getStartPacket().areAllSold()) { //This start Round was completed
+                StartPacket nextStartPacket = getRoot().getCompanyManager().getNextUnfinishedStartPacket();
+             if (nextStartPacket == null) {
+                 if (skipFirstStockRound) {
+                     Phase currentPhase =
+                             getRoot().getPhaseManager().getCurrentPhase();
+                     if (currentPhase.getNumberOfOperatingRounds() != numOfORs.value()) {
+                         numOfORs.set(currentPhase.getNumberOfOperatingRounds());
+                     }
+                     log.info("Phase=" + currentPhase.toText() + " ORs=" + numOfORs);
 
-                // Create a new OperatingRound (never more than one Stock Round)
-                // OperatingRound.resetRelativeORNumber();
+                     // Create a new OperatingRound (never more than one Stock Round)
+                     // OperatingRound.resetRelativeORNumber();
 
-                relativeORNumber.set(1);
-                startOperatingRound(true);
-            } else {
-                startStockRound();
-            }
+                     relativeORNumber.set(1);
+                     startOperatingRound(true);
+                 } else {
+                     startStockRound();
+                 }
+             } else {
+                 startStartRound(nextStartPacket);
+             }
+            }else {
+                 startOperatingRound(runIfStartPacketIsNotCompletelySold());
+             }
         } else if (round instanceof StockRound) {
             Phase currentPhase = getRoot().getPhaseManager().getCurrentPhase();
             if (currentPhase == null) log.error ("Current Phase is null??", new Exception (""));
@@ -505,8 +512,8 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             } else if (relativeORNumber.add(1) <= numOfORs.value()) {
                 // There will be another OR
                 startOperatingRound(true);
-            } else if (startPacket != null && !startPacket.areAllSold()) {
-                startStartRound(); 
+            } else if (getRoot().getCompanyManager().getNextUnfinishedStartPacket() !=null) {
+                continueStartRound(getRoot().getCompanyManager().getNextUnfinishedStartPacket());
             } else {
                 if (gameOverPending.value() && gameEndsAfterSetOfORs) {
                     finishGame();
@@ -518,6 +525,29 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         }
     }
 
+    protected void continueStartRound(StartPacket startPacket) {
+        beginStartRound(startPacket, false);
+        
+    }
+
+    protected void beginStartRound(StartPacket startPacket, boolean callInit) {
+        String startRoundClassName = startPacket.getRoundClassName();
+        Class<? extends StartRound> startRoundClass = null;
+        try{
+            startRoundClass = Class.forName(startRoundClassName).asSubclass(StartRound.class);
+        } catch (Exception e) {
+            log.error("Cannot find class "+ startRoundClassName, e);
+            System.exit(1);
+        }
+        if (callInit == true) {
+            startPacket.init(this);
+        }
+        StartRound startRound = createRound (StartRound.class, startRoundClassName,    
+                "startRound_" + startRoundNumber.value());
+        startRoundNumber.add(1);
+        startRound.start(startPacket);
+    }
+
     /** Stub, to be overridden if companies can run before the Start Packet has been completely sold
      * (as in 1835).
      * @return true if companies can run regardless. Default false.
@@ -526,7 +556,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         return false;
     }
 
-    protected void startStartRound() {
+    protected void startStartRound(StartPacket startPacket) {
         String startRoundClassName = startPacket.getRoundClassName();
         StartRound startRound = createRound(StartRound.class, startRoundClassName, 
                 "startRound_" + startRoundNumber.value());

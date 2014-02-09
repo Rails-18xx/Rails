@@ -3,7 +3,6 @@ package net.sf.rails.game.specific._1851;
 import java.util.List;
 
 import rails.game.action.*;
-
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.*;
@@ -23,8 +22,8 @@ public class StartRound_1851 extends StartRound {
      * @param startPacket The startpacket to be sold in this start round.
      */
     @Override
-    public void start() {
-        super.start();
+    public void start(StartPacket startPacket) {
+        super.start(startPacket);
 
         if (!setPossibleActions()) {
             /*
