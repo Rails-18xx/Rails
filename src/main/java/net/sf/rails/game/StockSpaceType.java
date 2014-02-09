@@ -56,6 +56,7 @@ public class StockSpaceType {
     protected boolean noCertLimit = false; // In yellow zone
     protected boolean noHoldLimit = false; // In orange zone (1830)
     protected boolean noBuyLimit = false; // In brown zone (1830)
+    protected int addRevenue = 0; // additional Revenue for company listed at that space (1880)
 
     public static final String WHITE = "FFFFFF";
 
@@ -121,6 +122,15 @@ public class StockSpaceType {
      */
     public void setNoHoldLimit(boolean b) {
         noHoldLimit = b;
+    }
+
+    public void setAddRevenue(int revenue) {
+        addRevenue = revenue;
+        
+    }
+
+    public int hasAddRevenue() {
+        return addRevenue;
     }
 
 }

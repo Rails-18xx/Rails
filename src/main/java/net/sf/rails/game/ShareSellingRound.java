@@ -17,11 +17,11 @@ public class ShareSellingRound extends StockRound {
 
     protected Round parentRound;
     protected Player sellingPlayer;
-    private IntegerState cashToRaise; // intialized later
-    private PublicCompany cashNeedingCompany;
-    private boolean dumpOtherCompaniesAllowed;
+    protected IntegerState cashToRaise; // intialized later
+    protected PublicCompany cashNeedingCompany;
+    protected boolean dumpOtherCompaniesAllowed;
 
-    private List<SellShares> sellableShares;
+    protected List<SellShares> sellableShares;
 
     /**
      * Created using Configure
@@ -82,7 +82,7 @@ public class ShareSellingRound extends StockRound {
      * Create a list of certificates that a player may sell in an emergency
      * share selling round, taking all rules taken into account.
      */
-    private List<SellShares> getSellableShares () {
+    protected List<SellShares> getSellableShares () {
 
         sellableShares = new ArrayList<SellShares> ();
 

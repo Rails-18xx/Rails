@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Set;
 
 import net.sf.rails.algorithms.NetworkEdge;
+import net.sf.rails.algorithms.NetworkGraph;
+import net.sf.rails.algorithms.NetworkGraphModifier;
 import net.sf.rails.algorithms.NetworkVertex;
 import net.sf.rails.algorithms.RevenueAdapter;
 import net.sf.rails.algorithms.RevenueStaticModifier;
@@ -114,9 +116,9 @@ public class Investor_1880 extends PublicCompany implements RevenueStaticModifie
     }
 
     public boolean isConnectedToLinkedCompany() {
-        NetworkGraphBuilder nwGraph = NetworkGraphBuilder.create(getRoot());
+        NetworkGraph nwGraph = NetworkGraph.createMapGraph(getRoot());
         NetworkCompanyGraph_1880 companyGraph =
-                NetworkCompanyGraph_1880.create(nwGraph, this);
+                NetworkCompanyGraph_1880.createMapGraph(nwGraph, this);
         SimpleGraph<NetworkVertex, NetworkEdge> graph =
                 companyGraph.createConnectionGraph(true);
         Set<NetworkVertex> verticies = graph.vertexSet();

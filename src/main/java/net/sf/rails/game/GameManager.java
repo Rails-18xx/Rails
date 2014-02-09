@@ -1117,7 +1117,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         addToNextPlayerMessages(msg, true);
     }
 
-    private void finishGame() {
+    protected void finishGame() {
         gameOver.set(true);
 
         String message = LocalText.getText("GameOver");

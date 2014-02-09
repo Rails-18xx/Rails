@@ -82,15 +82,6 @@ public class GameManager_1880 extends net.sf.rails.game.GameManager {
         }
     }// End of nextRound
 
-    /* (non-Javadoc)
-     * @see rails.game.GameManager#startStockRound()
-     */
-
-    private void continueStartRound(StartPacket nextUnfinishedStartPacket) {
-        // TODO Auto-generated method stub
-        
-    }
-
     protected void startStockRound_1880(OperatingRound_1880 or) {
         interruptedRound = or;
         super.startStockRound();

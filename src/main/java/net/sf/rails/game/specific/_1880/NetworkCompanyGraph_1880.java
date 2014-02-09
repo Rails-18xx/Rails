@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import net.sf.rails.algorithms.NetworkEdge;
+import net.sf.rails.algorithms.NetworkGraph;
 import net.sf.rails.algorithms.NetworkVertex;
 import net.sf.rails.game.BaseToken;
 import net.sf.rails.game.PublicCompany;
@@ -24,21 +25,21 @@ public class NetworkCompanyGraph_1880 {
     protected static Logger log =
             LoggerFactory.getLogger(NetworkCompanyGraph_1880.class.getPackage().getName());
 
-    private final NetworkGraphBuilder graphBuilder;
+    private final NetworkGraph graphBuilder;
     private final PublicCompany company;
         
-    private NetworkCompanyGraph_1880(NetworkGraphBuilder graphBuilder, PublicCompany company) {
+    private NetworkCompanyGraph_1880(NetworkGraph graphBuilder, PublicCompany company) {
         this.graphBuilder = graphBuilder;
         this.company = company;
     }
     
-    public static NetworkCompanyGraph_1880 create(NetworkGraphBuilder graphBuilder, PublicCompany company) {
+    public static NetworkCompanyGraph_1880 createMapGraph(NetworkGraph graphBuilder, PublicCompany company) {
        return new NetworkCompanyGraph_1880(graphBuilder, company);
     }
         
     public SimpleGraph<NetworkVertex, NetworkEdge> createConnectionGraph(boolean addHQ) {
         // get mapgraph from builder
-        SimpleGraph<NetworkVertex, NetworkEdge> mapGraph = graphBuilder.getMapGraph();
+        NetworkGraph mapGraph = graphBuilder.getGraph();
         
         // set sinks on mapgraph
         NetworkVertex.initAllRailsVertices(mapGraph, company, null);

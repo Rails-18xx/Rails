@@ -25,19 +25,19 @@ public class StockMarket extends RailsManager implements Configurable {
 
    public static final String DEFAULT = "default";
     
-    private final HashMap<String, StockSpaceType> stockSpaceTypes =
+    protected final HashMap<String, StockSpaceType> stockSpaceTypes =
         new HashMap<String, StockSpaceType>();
-    private final HashMap<String, StockSpace> stockChartSpaces =
+    protected final HashMap<String, StockSpace> stockChartSpaces =
         new HashMap<String, StockSpace>();
-    private final SortedSet<StockSpace> startSpaces = new TreeSet<StockSpace>();
+    protected final SortedSet<StockSpace> startSpaces = new TreeSet<StockSpace>();
     
-    private StockSpace stockChart[][];
-    private int numRows = 0;
-    private int numCols = 0;
-    private StockSpaceType defaultType;
+    protected StockSpace stockChart[][];
+    protected int numRows = 0;
+    protected int numCols = 0;
+    protected StockSpaceType defaultType;
 
     /* Game-specific flags */
-    private boolean upOrDownRight = false;
+    protected boolean upOrDownRight = false;
     /* Sold out and at top: go down or right (1870) */
 
     // TODO: There used to be a BooleanState gameOver, did this have a function?
