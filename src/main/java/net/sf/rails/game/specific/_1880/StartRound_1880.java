@@ -41,8 +41,8 @@ public final class StartRound_1880 extends StartRound {
     }
     
     @Override
-    public void start() {
-        super.start();
+    public void start(StartPacket startpacket) {
+        super.start(startpacket);
         
         // crude fix for StartItem hardcoded SetMinimumbid ignoring the initial value out of the XMLs....
         for (StartItem item : startPacket.getItems()) {
