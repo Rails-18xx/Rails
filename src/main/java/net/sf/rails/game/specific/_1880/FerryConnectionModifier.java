@@ -64,7 +64,7 @@ public class FerryConnectionModifier implements RevenueDynamicModifier {
     }            
 
     private boolean connectionIsOverWater(MapHex firstHex, MapHex secondHex) {
-        String hexesString = firstHex.getName() + "-" + secondHex.getName();
+        String hexesString = firstHex.toText() + "-" + secondHex.toText();
         if (FERRY_RUN_SET.contains(hexesString) == true) {
             return true;
         }

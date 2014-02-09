@@ -405,7 +405,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         }
     }
 
-    private void setGuiParameters () {
+    protected void setGuiParameters () {
         CompanyManager cm = getRoot().getCompanyManager();
 
         for (PublicCompany company : cm.getAllPublicCompanies()) {
@@ -531,7 +531,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         StartRound startRound = createRound(StartRound.class, startRoundClassName, 
                 "startRound_" + startRoundNumber.value());
         startRoundNumber.add(1);
-        startRound.start();
+        startRound.start(startPacket);
     }
 
     protected void startStockRound() {

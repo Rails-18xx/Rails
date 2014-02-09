@@ -437,5 +437,20 @@ public class TrainManager extends RailsManager implements Configurable {
             anyTrainBought.set(newValue);
         }
     }
+
+    public List<TrainType> parseTrainTypes(String trainTypeName) {
+        List <TrainType> trainTypes = new ArrayList<TrainType>();
+        TrainType trainType;
+        for (String trainTypeSingle : trainTypeName.split(",")) {
+            trainType = getTypeByName(trainTypeSingle);
+            if (trainType!= null) {
+                trainTypes.add(trainType);
+            } else {
+                continue;
+            }
+        }
+        
+        return trainTypes;
+    }  
     
 }

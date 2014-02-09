@@ -34,6 +34,12 @@ public abstract class StartRound extends Round {
      * in 1841 and 18EU.
      */
     protected boolean hasBasePrices = true;
+    
+    /**
+     * Is buying allowed in the start round?  Not in the first start round of
+     * 1880, for example, where everything is auctioned.
+     */
+    protected boolean hasBuying = true;
 
     /** A company in need for a par price. */
     PublicCompany companyNeedingPrice = null;
@@ -58,8 +64,38 @@ public abstract class StartRound extends Round {
      *
      * @param startPacket The startpacket to be sold in this start round.
      */
-    public void start() {
+ /*   public void start() {
 
+        this.variant = GameOption.getValue(this, GameOption.VARIANT);
+        if (variant == null) variant = "";
+        numPlayers = getRoot().getPlayerManager().getNumberOfPlayers();
+
+        itemIndex = new int[startPacket.getItems().size()];
+        int index = 0;
+
+        for (StartItem item : startPacket.getItems()) {
+
+            // New: we only include items that have not yet been sold
+            // at the start of the current StartRound
+            if (!item.isSold()) {
+                itemsToSell.add(item);
+                itemIndex[index++] = item.getIndex();
+            }
+        }
+        numPasses.set(0);
+        auctionItemState.set(null);
+
+        setCurrentPlayerIndex(getRoot().getPlayerManager().getPriorityPlayer().getIndex());
+        currentPlayer = getCurrentPlayer();
+        startPlayer = currentPlayer;
+
+        ReportBuffer.add(this,LocalText.getText("StartOfInitialRound"));
+        ReportBuffer.add(this,LocalText.getText("HasPriority",
+                getCurrentPlayer().getId()));
+    }*/
+
+    public void start(StartPacket startPacket) {
+        this.startPacket = startPacket;
         this.variant = GameOption.getValue(this, GameOption.VARIANT);
         if (variant == null) variant = "";
         numPlayers = getRoot().getPlayerManager().getNumberOfPlayers();
@@ -87,7 +123,6 @@ public abstract class StartRound extends Round {
         ReportBuffer.add(this, LocalText.getText("HasPriority",
                 getCurrentPlayer().getId()));
     }
-
     @Override
     public boolean process(PossibleAction action) {
 
@@ -228,8 +263,6 @@ public abstract class StartRound extends Round {
             return false;
         }
 
-        
-
         assignItem(player, item, price, sharePrice);
 
         // Set priority (only if the item was not auctioned)
@@ -257,7 +290,7 @@ public abstract class StartRound extends Round {
             int sharePrice) {
         Certificate primary = item.getPrimary();
         String priceText = Currency.toBank(player, price);
-        ReportBuffer.add(this, LocalText.getText("BuysItemFor",
+        ReportBuffer.add(this,LocalText.getText("BuysItemFor",
                 player.getId(),
                 primary.getName(),
                 priceText ));
@@ -265,7 +298,7 @@ public abstract class StartRound extends Round {
         checksOnBuying(primary, sharePrice);
         if (item.hasSecondary()) {
             Certificate extra = item.getSecondary();
-            ReportBuffer.add(this, LocalText.getText("ALSO_GETS",
+            ReportBuffer.add(this,LocalText.getText("ALSO_GETS",
                     player.getId(),
                     extra.getName() ));
             transferCertificate (extra, player.getPortfolioModel());

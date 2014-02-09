@@ -16,8 +16,8 @@ public class BuyStartItem extends StartItemAction {
     /* Server-provided fields */
     private int price;
     private boolean selected;
-    private boolean sharePriceToSet = false;
-    private String companyNeedingSharePrice = null;
+    protected boolean sharePriceToSet = false;
+    protected String companyNeedingSharePrice = null;
     private boolean setSharePriceOnly = false;
 
     // Client-provided fields

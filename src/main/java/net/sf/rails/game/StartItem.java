@@ -9,7 +9,6 @@ import net.sf.rails.game.state.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * Each object of this class represents a "start packet item", which consist of
  * one or two certificates. The whole start packet must be bought before the
@@ -71,6 +70,13 @@ public class StartItem extends RailsAbstractItem {
     //protected static Portfolio unavailable;
     //protected static CompanyManager compMgr;
     //protected static int nextIndex = 0;
+    
+    public enum NoBidsReaction {
+        REDUCE_AND_REBID,
+        RUN_OPERATING_ROUND
+    };
+
+    protected NoBidsReaction noBidsReaction = NoBidsReaction.RUN_OPERATING_ROUND;
 
     protected static Map<String, StartItem> startItemMap;
 
@@ -503,6 +509,13 @@ public class StartItem extends RailsAbstractItem {
         return type;
     }
 
+    public void setNoBidsReaction(NoBidsReaction action) {
+        this.noBidsReaction = action;
+    }
+    
+    public NoBidsReaction getNoBidsReaction() {
+        return noBidsReaction;
+    }
     // FIXME: This is not a good idea as long as hashCode has not been changed
 //    public boolean equals(StartItem item) {
 //        log.debug("Item " + item.getType() + "/" + item.getName()
@@ -521,3 +534,4 @@ public class StartItem extends RailsAbstractItem {
     }
 
 }
+
