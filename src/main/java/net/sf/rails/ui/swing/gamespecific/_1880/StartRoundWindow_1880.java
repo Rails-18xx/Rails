@@ -92,7 +92,7 @@ public void setCurrentDialog (JDialog dialog, PossibleAction action) {
   }
   
     public void updateStatus(boolean myTurn) {
-        for (PossibleAction action : PossibleActions.getInstance().getList()) {
+         for (PossibleAction action : possibleActions.getList()) {
             if (action instanceof SetupNewPublicDetails_1880) {
                 requestStartSlot((SetupNewPublicDetails_1880) action);
                 return;

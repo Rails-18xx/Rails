@@ -78,7 +78,7 @@ KeyListener, ActionPerformer {
     protected PossibleActions possibleActions;
     protected PossibleAction immediateAction = null;
 
-    JPanel pane = new JPanel(new BorderLayout());
+    protected JPanel pane = new JPanel(new BorderLayout());
 
     private JMenuBar menuBar;
 
