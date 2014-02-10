@@ -3,6 +3,8 @@ package net.sf.rails.ui.swing;
 
 import rails.game.action.PossibleAction;
 
+// TODO: Refactor this to make it more generic
+// And the UIManager should perform actions not the windows classes
 public interface ActionPerformer {
 
     public void updateStatus(boolean myTurn);

@@ -22,7 +22,7 @@ import net.sf.rails.game.BaseToken;
 import net.sf.rails.game.BonusToken;
 import net.sf.rails.game.Currency;
 import net.sf.rails.game.HexSide;
-import net.sf.rails.game.HexUpgrade;
+import net.sf.rails.game.TileHexUpgrade;
 import net.sf.rails.game.MapHex;
 import net.sf.rails.game.MapOrientation;
 import net.sf.rails.game.PrivateCompany;
@@ -141,7 +141,7 @@ public class GUIHex implements Observer {
 
     private GUITile currentGUITile = null;
     private GUITile provisionalGUITile = null;
-    private HexUpgrade upgrade;
+    private TileHexUpgrade upgrade;
 
     private GeneralPath innerHexagonSelected;
     private double selectedStrokeWidth;
@@ -233,7 +233,7 @@ public class GUIHex implements Observer {
         return innerHexagon;
     }
 
-    public MapHex getHexModel() {
+    public MapHex getHex() {
         return this.hex;
     }
 
@@ -241,8 +241,8 @@ public class GUIHex implements Observer {
         return hexMap;
     }
 
-    public Point2D getCityPoint2D(Stop city){
-        return getTokenCenter(0, city).get2D();
+    public Point2D getStopPoint2D(Stop stop){
+        return getTokenCenter(0, stop).get2D();
     }
 
     public Point2D getSidePoint2D(HexSide side){
@@ -435,17 +435,17 @@ public class GUIHex implements Observer {
         if (!isTilePainted()) return;
         
         FontMetrics fontMetrics = g.getFontMetrics();
-        if (getHexModel().getTileCost() > 0 ) {
+        if (getHex().getTileCost() > 0 ) {
             g.drawString(
-                    Currency.format(getHexModel(), getHexModel().getTileCost()),
+                    Currency.format(getHex(), getHex().getTileCost()),
                     rectBound.x
-                            + (rectBound.width - fontMetrics.stringWidth(Integer.toString(getHexModel().getTileCost())))
+                            + (rectBound.width - fontMetrics.stringWidth(Integer.toString(getHex().getTileCost())))
                             * 3 / 5,
                     rectBound.y
                             + ((fontMetrics.getHeight() + rectBound.height) * 9 / 15));
         }
 
-        Map<PublicCompany, Stop> homes = getHexModel().getHomes();
+        Map<PublicCompany, Stop> homes = getHex().getHomes();
 
         if (homes  != null) {
             for (PublicCompany company : homes.keySet()) {
@@ -456,7 +456,7 @@ public class GUIHex implements Observer {
                 Stop homeCity = homes.get(company);
                 if (homeCity.getRelatedStation() == null) { // not yet decided where the token will be
                     // find a free slot
-                    Set<Stop> stops = getHexModel().getStops();
+                    Set<Stop> stops = getHex().getStops();
                     for (Stop stop:stops) {
                         if (stop.hasTokenSlotsLeft()) {
                             homeCity = stop;
@@ -470,7 +470,7 @@ public class GUIHex implements Observer {
             }
         }
 
-        if (getHexModel().isBlockedForTileLays()) {
+        if (getHex().isBlockedForTileLays()) {
             List<PrivateCompany> privates =
                     //GameManager.getInstance().getCompanyManager().getAllPrivateCompanies();
             		hexMap.getOrUIManager().getGameUIManager().getRoot()
@@ -479,7 +479,7 @@ public class GUIHex implements Observer {
                 List<MapHex> blocked = p.getBlockedHexes();
                 if (blocked != null) {
                     for (MapHex hex : blocked) {
-                        if (getHexModel().equals(hex)) {
+                        if (getHex().equals(hex)) {
                         	String text = "(" + p.getId() + ")";
                             g.drawString(
                                   text,
@@ -540,7 +540,7 @@ public class GUIHex implements Observer {
     }
 
     private void paintStationTokens(Graphics2D g2) {
-        for (Stop stop:getHexModel().getStops()) {
+        for (Stop stop:getHex().getStops()) {
             int j = 0;
             log.debug("Stop = " + stop + ",BaseTokens = " + stop.getBaseTokens());
             for (BaseToken token:stop.getBaseTokens()) {
@@ -596,7 +596,7 @@ public class GUIHex implements Observer {
         token.drawToken(g2);
     }
 
-    public HexUpgrade getUpgrade() {
+    public TileHexUpgrade getUpgrade() {
         return upgrade;
     }
     
@@ -749,9 +749,9 @@ public class GUIHex implements Observer {
                           + Currency.format(hex, hex.getTileCost()));
         }
 
-        if (getHexModel().getDestinations() != null) {
+        if (getHex().getDestinations() != null) {
             tt.append("<br><b>Destination</b>:");
-            for (PublicCompany dest : getHexModel().getDestinations()) {
+            for (PublicCompany dest : getHex().getDestinations()) {
                 tt.append(" ");
                 tt.append(dest.getId());
             }
@@ -762,7 +762,8 @@ public class GUIHex implements Observer {
         return tt.toString();
     }
 
-    public boolean dropTile(HexUpgrade upgrade) {
+    // FIXME: Can this still return false?
+    public boolean dropTile(TileHexUpgrade upgrade) {
         this.upgrade = upgrade;
 
         provisionalGUITile = new GUITile(upgrade.getUpgrade().getTargetTile(),this);
@@ -777,7 +778,7 @@ public class GUIHex implements Observer {
     }
 
     /** forces the tile to drop */
-    public void forcedDropTile(HexUpgrade upgrade, HexSide orientation) {
+    public void forcedDropTile(TileHexUpgrade upgrade, HexSide orientation) {
         provisionalGUITile = new GUITile(upgrade.getUpgrade().getTargetTile(), this);
         provisionalGUITile.setRotation(orientation);
         provisionalGUITile.setScale(SELECTED_SCALE);

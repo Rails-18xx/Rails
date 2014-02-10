@@ -2,6 +2,7 @@ package net.sf.rails.sound;
 
 import rails.game.action.PossibleAction;
 import net.sf.rails.game.RailsRoot;
+import net.sf.rails.ui.swing.ORUIManager;
 
 /**
  * This is a singleton class as there should never be two
@@ -58,7 +59,7 @@ public class SoundManager {
     public static void notifyOfTimeWarp(boolean timeWarpMode) {
         getInstance().eventInterpreter.notifyOfTimeWarp(timeWarpMode);
     }
-    public static void notifyOfORLocalStep(int currentStep) {
+    public static void notifyOfORLocalStep(ORUIManager.LocalSteps currentStep) {
         getInstance().eventInterpreter.notifyOfORLocalStep(currentStep);
     }
     public static void notifyOfClickFieldSelection(PossibleAction clickFieldAction) {

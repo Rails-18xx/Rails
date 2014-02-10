@@ -689,7 +689,7 @@ public class CGRFormationRound extends SwitchableUIRound {
             if (hex.layBaseToken(cgr, stop)) {
                 cgr.layBaseToken(hex, 0);
             } else {
-                log.error("Error in laying CGR token on "+hex.getId()+" "+hex.getCityName());
+                log.error("Error in laying CGR token on "+hex.getId()+" "+hex.getStopName());
             }
         }
     }

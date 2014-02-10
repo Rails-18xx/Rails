@@ -234,7 +234,7 @@ public final class RevenueAdapter implements Runnable {
         // define map of all locationNames 
         Map<String, VertexVisit> locations = new HashMap<String, VertexVisit>();
         for (NetworkVertex vertex:getVertices()) {
-            String ln = vertex.getCityName();
+            String ln = vertex.getStopName();
             if (ln == null) continue;
             if (locations.containsKey(ln)) {
                 locations.get(ln).set.add(vertex);

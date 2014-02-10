@@ -1,8 +1,8 @@
 package rails.game.action;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 /**
@@ -35,9 +35,7 @@ public class PossibleActions {
     }
 
     public void addAll(List<? extends PossibleAction> actions) {
-        for (PossibleAction action : actions) {
-            add(action);
-        }
+        this.actions.addAll(actions);
     }
 
     public boolean contains(Class<? extends PossibleAction> clazz) {
@@ -48,16 +46,18 @@ public class PossibleActions {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends PossibleAction> List<T> getType(Class<T> clazz) {
-        List<T> result = new ArrayList<T>();
+    public <T extends PossibleAction> ImmutableList<T> getType(Class<T> clazz) {
+        ImmutableList.Builder<T> result = ImmutableList.builder();
         for (PossibleAction action : actions) {
-            if (clazz.isAssignableFrom(action.getClass())) result.add((T) action);
+            if (clazz.isAssignableFrom(action.getClass())) {
+                result.add((T) action);
+            }
         }
-        return result;
+        return result.build();
     }
 
-    public List<PossibleAction> getList() {
-        return actions;
+    public ImmutableList<PossibleAction> getList() {
+        return ImmutableList.copyOf(actions);
     }
 
     public boolean isEmpty() {

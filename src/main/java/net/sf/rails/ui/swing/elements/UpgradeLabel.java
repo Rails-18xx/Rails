@@ -2,40 +2,44 @@ package net.sf.rails.ui.swing.elements;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.border.Border;
+import javax.swing.border.EtchedBorder;
 
-import net.sf.rails.game.HexUpgrade;
+import net.sf.rails.game.MapUpgrade;
+import net.sf.rails.game.TileHexUpgrade;
 import net.sf.rails.game.Station;
 import net.sf.rails.game.Tile;
 
-
 /** JLabel extension to allow attaching the internal hex ID */
-public class HexLabel extends JLabel {
-
+public class UpgradeLabel extends JLabel {
     private static final long serialVersionUID = 1L;
 
-    private final HexUpgrade upgrade;
+    private static final Border BORDER = new EtchedBorder();
 
-    public HexLabel(ImageIcon hexIcon, HexUpgrade upgrade) {
-        this(hexIcon, upgrade, null, null);
-    }
+    private final MapUpgrade upgrade;
 
-    public HexLabel(ImageIcon hexIcon, HexUpgrade upgrade,
+    private UpgradeLabel(ImageIcon hexIcon, TileHexUpgrade upgrade,
             String toolTipHeaderLine, String toolTipBody) {
         super(hexIcon);
         this.upgrade = upgrade;
         Tile tile = upgrade.getUpgrade().getTargetTile();
         this.setText(labelText(tile, true));
         this.setToolTipText(toolTipText(tile, toolTipHeaderLine, toolTipBody));
-    }
-    
-    public HexLabel(ImageIcon hexIcon, Tile tile) {
-        super(hexIcon);
-        this.upgrade = null;
-        this.setText(labelText(tile, false));
-        this.setToolTipText(toolTipText(tile, null, null));
+        this.setOpaque(true);
+        this.setVisible(true);
+        this.setBorder(BORDER);
     }
 
-    public HexUpgrade getUpgrade() {
+    public static UpgradeLabel create(ImageIcon icon, TileHexUpgrade upgrade,
+            String toolTipHeaderLine, String toolTipBody) {
+        return new UpgradeLabel(icon, upgrade, toolTipHeaderLine, toolTipBody);
+    }
+    
+    public static UpgradeLabel create(ImageIcon icon, TileHexUpgrade upgrade) {
+        return UpgradeLabel.create(icon, upgrade, null, null);
+    }
+
+    public MapUpgrade getUpgrade() {
         return upgrade;
     }
 

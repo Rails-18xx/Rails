@@ -6,7 +6,7 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 
 import net.sf.rails.game.HexSide;
-import net.sf.rails.game.HexUpgrade;
+import net.sf.rails.game.TileHexUpgrade;
 import net.sf.rails.game.MapHex;
 import net.sf.rails.game.MapOrientation;
 import net.sf.rails.game.Tile;
@@ -44,7 +44,7 @@ public class GUITile {
     public GUITile(Tile tile, GUIHex guiHex) {
         this.guiHex = guiHex;
         this.tile = tile;
-        MapHex hex = guiHex.getHexModel();
+        MapHex hex = guiHex.getHex();
         // Preprinted tiles can have a different picture ID, defined per hex or per tile.
         // MapHex refers back to Tile if necessary
         this.picId = hex.getPictureId(tile);
@@ -63,7 +63,7 @@ public class GUITile {
         this.rotation = hexSide;
     }
     
-    public boolean rotate(HexUpgrade upgrade, GUITile previousGUITile) {
+    public boolean rotate(TileHexUpgrade upgrade, GUITile previousGUITile) {
         HexSide fixedRotation = getTile().getFixedOrientation();
         if (fixedRotation != null) {
             setRotation (fixedRotation);
@@ -100,20 +100,21 @@ public class GUITile {
                     tileImage.getWidth() * SVG_X_CENTER_LOC * tileScale,
                     tileImage.getHeight()* SVG_Y_CENTER_LOC * tileScale
             );
-
-            AffineTransform af = AffineTransform.getRotateInstance(radians, center.getX(), center.getY());
+            HexPoint difference = HexPoint.difference(origin, center);
+            AffineTransform af = AffineTransform.getTranslateInstance(difference.getX(), difference.getY());
+            af.rotate(radians, center.getX(), center.getY());
             af.scale(tileScale, tileScale);
 
             AffineTransformOp aop = new AffineTransformOp(af,
                     GUIGlobals.getRenderingHints());
-            
-            HexPoint difference = HexPoint.difference(origin, center);
-            
             // FIXME: Change this to a sub-pixel approach
             // compare with 
             // http://stackoverflow.com/questions/8676909/drawing-an-image-using-sub-pixel-level-accuracy-using-graphics2d
-            g2.drawImage(tileImage, aop, (int) difference.getX(), (int) difference.getY());
-
+            //g2.drawImage(tileImage, aop, (int) difference.getX(), (int) difference.getY());
+            // already a first approach, integrated into the affine transform, however it does not
+            // increase the quality of the map
+            g2.drawImage(tileImage, aop, 0, 0);
+            
         } else {
             log.error("No image for tile "+ tile +" on hex "+guiHex.toText());
         }

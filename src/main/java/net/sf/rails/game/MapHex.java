@@ -38,7 +38,7 @@ import com.google.common.collect.Sets.SetView;
 /**
  * Represents a Hex on the Map from the Model side.
  */
-public class MapHex extends RailsModel implements RailsOwner, Configurable {
+public class MapHex extends RailsModel implements RailsOwner, Location, Configurable {
     
     private static final Logger log =
             LoggerFactory.getLogger(MapHex.class);
@@ -162,7 +162,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
 
     private List<Integer> tileCost;
 
-    private String cityName;
+    private String stopName;
     private String reservedForCompany = null;
 
     /** Values if this is an off-board hex */
@@ -277,7 +277,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         valuesPerPhase = tag.getAttributeAsIntegerList("value");
 
         // City name
-        cityName = tag.getAttributeAsString("city", "");
+        stopName = tag.getAttributeAsString("city", "");
 
         if (tag.getAttributeAsString("unlaidHomeBlocksTokens") == null) {
             // default (undefined) is RESERVE_SLOT
@@ -866,8 +866,8 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         }
     }
 
-    public String getCityName() {
-        return cityName;
+    public String getStopName() {
+        return stopName;
     }
 
     public String getReservedForCompany() {
@@ -889,8 +889,8 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
 
     @Override
     public String toText() {
-        if (Util.hasValue(cityName)) {
-            return getId() + " " + cityName;
+        if (Util.hasValue(stopName)) {
+            return getId() + " " + stopName;
         } else {
             return getId();
         }

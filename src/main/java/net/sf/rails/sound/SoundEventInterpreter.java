@@ -5,6 +5,7 @@ import net.sf.rails.game.*;
 import net.sf.rails.game.model.PresidentModel;
 import net.sf.rails.game.state.*;
 import net.sf.rails.ui.swing.ORUIManager;
+import net.sf.rails.ui.swing.ORUIManager.LocalSteps;
 
 /**
  * Converts processed actions and model updates to triggers for playing sounds.
@@ -269,18 +270,18 @@ public class SoundEventInterpreter {
      * equal to currentStep)
      * @param currentStep Step as defined as constant in ORUIManager
      */
-    public void notifyOfORLocalStep(int currentStep) {
+    public void notifyOfORLocalStep(ORUIManager.LocalSteps currentStep) {
         if (SoundConfig.isSFXEnabled()) {
             //play rotate sound if tile has been rotated or is now ready for rotations
-            if (currentStep == ORUIManager.ROTATE_OR_CONFIRM_TILE) {
+            if (currentStep == LocalSteps.RotateTile) {
                 player.playSFXByConfigKey(SoundConfig.KEY_SFX_OR_RotateTile);
             }
             
             //play hex selection sound if the follow-up step (select tile/token) is active
             //(don't consider whether prior step was "select hex..." because hexes
             // can also be selected during selectTile/Token)
-            else if ( currentStep == ORUIManager.SELECT_TILE 
-                    || currentStep == ORUIManager.SELECT_TOKEN ) {
+            else if ( currentStep == LocalSteps.SelectATile 
+                    || currentStep == LocalSteps.SelectAToken) {
                 player.playSFXByConfigKey(SoundConfig.KEY_SFX_GEN_Select);
                 
             }

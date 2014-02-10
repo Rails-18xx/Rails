@@ -36,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
@@ -136,27 +137,6 @@ public class NetworkGraph {
         return vertices.get(hex.getId() + "." + point.getTrackPointNumber());
     }
     
-    public List<MapHex> getTokenableStationHexes(PublicCompany company){
-        List<MapHex> hexes = new ArrayList<MapHex>();
-        for(NetworkVertex vertex:graph.vertexSet()) {
-            Stop city = vertex.getCity();
-            if (city != null && city.hasTokenSlotsLeft() && !city.hasTokenOf(company)) {
-                hexes.add(vertex.getHex());
-            }
-        }
-        return hexes;
-    }
-
-    public List<MapHex> getReachableMapHexes(){
-        List<MapHex> hexes = new ArrayList<MapHex>();
-        for(NetworkVertex vertex:graph.vertexSet()) {
-            if (vertex.isStation() || vertex.isSide()) {
-                hexes.add(vertex.getHex());
-            }
-        }
-        return hexes;
-    }
-    
     public ImmutableMap<MapHex, HexSidesSet> getReachableSides() {
         // first create builders for all HexSides
         Map<MapHex, HexSidesSet.Builder> hexSides = Maps.newHashMap();
@@ -178,7 +158,10 @@ public class NetworkGraph {
         return hexBuilder.build();
     }
 
-    public Multimap<MapHex, Station> getReachableStations() {
+    /**
+     * @return a map of all hexes and stations that can be run through
+     */
+    public Multimap<MapHex, Station> getPassableStations() {
         
         ImmutableMultimap.Builder<MapHex, Station> hexStations = 
                 ImmutableMultimap.builder();
@@ -191,7 +174,22 @@ public class NetworkGraph {
 
         return hexStations.build();
     }
-    
+
+    /**
+     * @return a list of all stops that are tokenable for the argument company
+     */
+    public ImmutableList<Stop> getTokenableStops(PublicCompany company){
+        
+        ImmutableList.Builder<Stop> stops = ImmutableList.builder();
+        for(NetworkVertex vertex:graph.vertexSet()) {
+            Stop stop = vertex.getStop();
+            if (stop != null && stop.isTokenableFor(company)) {
+                stops.add(stop);
+            }
+        }
+        return stops.build();
+    }
+
     private void rebuildVertices() {
         // rebuild mapVertices
         vertices.clear();

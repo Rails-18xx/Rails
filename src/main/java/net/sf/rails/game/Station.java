@@ -63,7 +63,7 @@ public class Station extends TrackPoint {
     private final int baseSlots;
     private final Tile tile;
     private final int position;
-    private final String cityName;
+    private final String stopName;
 
     private Station(Tile tile, int number, String id, Station.Type type, int value,
             int slots, int position, String cityName) {
@@ -74,7 +74,7 @@ public class Station extends TrackPoint {
         this.value = value;
         this.baseSlots = slots;
         this.position = position;
-        this.cityName = cityName;
+        this.stopName = cityName;
         log.debug("Created " + this);
     }
 
@@ -113,8 +113,8 @@ public class Station extends TrackPoint {
         + tile.toText();
     }
 
-    public String getCityName() {
-        return cityName;
+    public String getStopName() {
+        return stopName;
     }
 
     /**

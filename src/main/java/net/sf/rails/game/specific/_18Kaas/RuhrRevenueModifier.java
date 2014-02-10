@@ -40,7 +40,7 @@ public class RuhrRevenueModifier implements RevenueStaticModifier, Configurable 
         Set<NetworkVertex> ruhrGebied = new HashSet<NetworkVertex>();
         for (NetworkVertex vertex:revenueAdapter.getVertices()) {
             // 1. get all vertices that point to Ruhrgebied
-            if (vertex.getCityName() != null && vertex.getCityName().equals("Ruhrgebied")){
+            if (vertex.getStopName() != null && vertex.getStopName().equals("Ruhrgebied")){
                 ruhrGebied.add(vertex);
             } 
         }

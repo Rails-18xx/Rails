@@ -3,19 +3,16 @@ package net.sf.rails.ui.swing;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.List;
 
 import javax.swing.*;
 
 import net.sf.rails.game.MapManager;
+import net.sf.rails.ui.swing.hexmap.GUIHex;
 import net.sf.rails.ui.swing.hexmap.HexMap;
 import net.sf.rails.ui.swing.hexmap.HexMapImage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import rails.game.action.LayToken;
-
 
 /**
  * MapWindow class displays the Map Window. It's shocking, I know.
@@ -125,11 +122,6 @@ public class MapPanel extends JPanel {
                 scrollPane.getViewport().setViewPosition(viewPosition);
             }
         });
-    }
-
-    public <T extends LayToken> void setAllowedTokenLays(
-            List<T> allowedTokenLays) {
-        map.setAllowedTokenLays(allowedTokenLays);
     }
 
     private void adjustToNewMapZoom () {
@@ -268,5 +260,9 @@ public class MapPanel extends JPanel {
 
     public HexMap getMap() {
         return map;
+    }
+    
+    public GUIHex getSelectedHex() {
+        return map.getSelectedHex();
     }
 }

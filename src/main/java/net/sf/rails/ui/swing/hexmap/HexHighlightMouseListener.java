@@ -28,7 +28,7 @@ import net.sf.rails.ui.swing.ORUIManager;
 /**
  * Takes care of highlighting certain hexes in case of mouseover events.
  */
-// TODO: The approach to direct calls should be replaced with an appropriate model
+// FIXME: This seems very confusing, as it mixes all types of MouseListeners
 public class HexHighlightMouseListener implements MouseListener {
 
     private List<MapHex> hexList;
@@ -203,7 +203,7 @@ public class HexHighlightMouseListener implements MouseListener {
 
         //build the list of hexes the current tiles of which have the given tile ID
         if (hexMap != null) {
-            guiHexList = hexMap.getHexesByCurrentTileId(tile);
+            guiHexList.addAll(hexMap.getHexesByCurrentTileId(tile));
         }
     }
     

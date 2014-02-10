@@ -27,7 +27,7 @@ import com.google.common.collect.ImmutableSet;
  * during upgrades; but even then it is attempted to retain the old Stop numbers
  * as much as possible.
  */
-public class Stop extends RailsAbstractItem implements RailsOwner {
+public class Stop extends RailsAbstractItem implements RailsOwner, Location {
     private final PortfolioSet<BaseToken> tokens = 
             PortfolioSet.create(this, "tokens", BaseToken.class);
     private final GenericState<Station> relatedStation = 
@@ -134,6 +134,13 @@ public class Stop extends RailsAbstractItem implements RailsOwner {
         }
         return false;
     }
+    
+    /**
+     * @return true if stop is tokenable, thus it has open token slots and no company token yet
+     */
+    public boolean isTokenableFor(PublicCompany company) {
+        return hasTokenSlotsLeft() && !hasTokenOf(company);
+    }
 
     public RunTo getRunToAllowed() {
         RunTo runTo = getParent().getStopType().getRunToAllowed();
@@ -203,7 +210,7 @@ public class Stop extends RailsAbstractItem implements RailsOwner {
     public String toText() {
         StringBuffer b = new StringBuffer();
         b.append("Hex ").append(getParent().getId());
-        String cityName = getParent().getCityName();
+        String cityName = getParent().getStopName();
         b.append(" (");
         if (Util.hasValue(cityName)) {
             b.append(cityName);

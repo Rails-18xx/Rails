@@ -2,10 +2,10 @@ package net.sf.rails.common;
 
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedSet;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
@@ -28,8 +28,8 @@ public class GameOptionsSet {
         return set;
     }
     
-    public ImmutableMap<String, String> getOptions() {
-        return ImmutableMap.copyOf(optionsToValues);
+    public Map<String, String> getOptions() {
+        return Maps.newHashMap(optionsToValues);
     }
     
     public String get(String option) {

@@ -76,7 +76,7 @@ public class GameSaver {
         oos.writeObject(gameIOData.getDate());
         oos.writeObject(gameIOData.getFileVersionID());
         oos.writeObject(gameIOData.getGameData().getGameName());
-        oos.writeObject(gameIOData.getGameData().getGameOptions());
+        oos.writeObject(gameIOData.getGameData().getGameOptions().getOptions());
         oos.writeObject(gameIOData.getGameData().getPlayers());
         for (PossibleAction action : gameIOData.getActions()) {
             oos.writeObject(action);

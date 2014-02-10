@@ -25,13 +25,11 @@ import javax.swing.ToolTipManager;
 
 import net.sf.rails.common.Config;
 import net.sf.rails.common.parser.ConfigurationException;
-import net.sf.rails.game.GameManager;
 import net.sf.rails.game.HexSide;
 import net.sf.rails.game.HexSidesSet;
 import net.sf.rails.game.MapHex;
 import net.sf.rails.game.MapManager;
 import net.sf.rails.game.Phase;
-import net.sf.rails.game.PhaseManager;
 import net.sf.rails.game.Tile;
 import net.sf.rails.game.TileColour;
 import net.sf.rails.ui.swing.GameUIManager;
@@ -563,7 +561,6 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
     protected Dimension originalSize;
     private Dimension currentSize;
 
-
     private GUIHex selectedHex = null;
 
     /**
@@ -571,15 +568,6 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
      */
     private GUIHex hexAtMousePosition = null;
 
-    /** A list of all allowed token lays */
-    /* (may be redundant) */
-    private List<LayToken> allowedTokenLays = null;
-
-    /** A Map linking tile allowed tiles to each map hex */
-    private Map<MapHex, List<LayToken>> allowedTokensPerHex = null;
-
-    private boolean bonusTokenLayingEnabled = false;
-    
     /** list of generalpath elements to indicate train runs */
     private List<GeneralPath> trainPaths;
 
@@ -827,84 +815,86 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
         return hexBuilder.build();
     }
 
-    @SuppressWarnings("unchecked")
-    public <T extends LayToken> void setAllowedTokenLays(
-            List<T> allowedTokenLays) {
-
-        this.allowedTokenLays = (List<LayToken>) allowedTokenLays;
-        allowedTokensPerHex = new HashMap<MapHex, List<LayToken>>();
-        bonusTokenLayingEnabled = false;
-
-        /* Build the per-hex allowances map */
-        for (LayToken allowance : this.allowedTokenLays) {
-            List<MapHex> locations = allowance.getLocations();
-            if (locations == null) {
-                /*
-                 * The location may be null, which means: anywhere. This is
-                 * intended to be a temporary fixture, to be replaced by a
-                 * detailed allowed-tiles-per-hex specification later.
-                 */
-                // For now, allow all hexes having non-filled city stations
-                if (allowance instanceof LayBaseToken) {
-                    MapHex hex;
-                    for (GUIHex guiHex : hex2gui.values()) {
-                        hex = guiHex.getHexModel();
-                        if (hex.hasTokenSlotsLeft()) {
-                            allowTokenOnHex(hex, allowance);
-                        }
-                    }
-                } else {
-                    allowTokenOnHex(null, allowance);
-                }
-            } else {
-                for (MapHex location : locations) {
-                    allowTokenOnHex(location, allowance);
-                }
-            }
-            if (allowance instanceof LayBonusToken) {
-                bonusTokenLayingEnabled = true;
-            }
-        }
-    }
-
-    private void allowTokenOnHex(MapHex hex, LayToken allowance) {
-        if (!allowedTokensPerHex.containsKey(hex)) {
-            allowedTokensPerHex.put(hex, new ArrayList<LayToken>());
-        }
-        allowedTokensPerHex.get(hex).add(allowance);
-    }
-
-    public List<LayToken> getTokenAllowanceForHex(MapHex hex) {
-        List<LayToken> allowances = new ArrayList<LayToken>(2);
-        if (hex != null && allowedTokensPerHex.containsKey(hex)) {
-            allowances.addAll(allowedTokensPerHex.get(hex));
-        }
-        if (allowedTokensPerHex.containsKey(null)) {
-            allowances.addAll(allowedTokensPerHex.get(null));
-        }
-        return allowances;
-    }
-
-    public List<LayBaseToken> getBaseTokenAllowanceForHex(MapHex hex) {
-        List<LayBaseToken> allowances = new ArrayList<LayBaseToken>(2);
-        for (LayToken allowance : getTokenAllowanceForHex(hex)) {
-            if (allowance instanceof LayBaseToken) {
-                allowances.add((LayBaseToken) allowance);
-            }
-        }
-        return allowances;
-    }
-
-    public List<LayBonusToken> getBonusTokenAllowanceForHex(MapHex hex) {
-        List<LayBonusToken> allowances = new ArrayList<LayBonusToken>(2);
-        for (LayToken allowance : getTokenAllowanceForHex(hex)) {
-            if (allowance instanceof LayBonusToken) {
-                allowances.add((LayBonusToken) allowance);
-            }
-        }
-        return allowances;
-    }
-
+    
+    // FIXME: Remove the code here, only used for reference during rewrite of token code
+//    @SuppressWarnings("unchecked")
+//    public <T extends LayToken> void setAllowedTokenLays(
+//            List<T> allowedTokenLays) {
+//
+//        this.allowedTokenLays = (List<LayToken>) allowedTokenLays;
+//        allowedTokensPerHex = new HashMap<MapHex, List<LayToken>>();
+//        bonusTokenLayingEnabled = false;
+//
+//        /* Build the per-hex allowances map */
+//        for (LayToken allowance : this.allowedTokenLays) {
+//            List<MapHex> locations = allowance.getLocations();
+//            if (locations == null) {
+//                /*
+//                 * The location may be null, which means: anywhere. This is
+//                 * intended to be a temporary fixture, to be replaced by a
+//                 * detailed allowed-tiles-per-hex specification later.
+//                 */
+//                // For now, allow all hexes having non-filled city stations
+//                if (allowance instanceof LayBaseToken) {
+//                    MapHex hex;
+//                    for (GUIHex guiHex : hex2gui.values()) {
+//                        hex = guiHex.getHexModel();
+//                        if (hex.hasTokenSlotsLeft()) {
+//                            allowTokenOnHex(hex, allowance);
+//                        }
+//                    }
+//                } else {
+//                    allowTokenOnHex(null, allowance);
+//                }
+//            } else {
+//                for (MapHex location : locations) {
+//                    allowTokenOnHex(location, allowance);
+//                }
+//            }
+//            if (allowance instanceof LayBonusToken) {
+//                bonusTokenLayingEnabled = true;
+//            }
+//        }
+//    }
+//
+//    private void allowTokenOnHex(MapHex hex, LayToken allowance) {
+//        if (!allowedTokensPerHex.containsKey(hex)) {
+//            allowedTokensPerHex.put(hex, new ArrayList<LayToken>());
+//        }
+//        allowedTokensPerHex.get(hex).add(allowance);
+//    }
+//
+//    public List<LayToken> getTokenAllowanceForHex(MapHex hex) {
+//        List<LayToken> allowances = new ArrayList<LayToken>(2);
+//        if (hex != null && allowedTokensPerHex.containsKey(hex)) {
+//            allowances.addAll(allowedTokensPerHex.get(hex));
+//        }
+//        if (allowedTokensPerHex.containsKey(null)) {
+//            allowances.addAll(allowedTokensPerHex.get(null));
+//        }
+//        return allowances;
+//    }
+//
+//    public List<LayBaseToken> getBaseTokenAllowanceForHex(MapHex hex) {
+//        List<LayBaseToken> allowances = new ArrayList<LayBaseToken>(2);
+//        for (LayToken allowance : getTokenAllowanceForHex(hex)) {
+//            if (allowance instanceof LayBaseToken) {
+//                allowances.add((LayBaseToken) allowance);
+//            }
+//        }
+//        return allowances;
+//    }
+//
+//    public List<LayBonusToken> getBonusTokenAllowanceForHex(MapHex hex) {
+//        List<LayBonusToken> allowances = new ArrayList<LayBonusToken>(2);
+//        for (LayToken allowance : getTokenAllowanceForHex(hex)) {
+//            if (allowance instanceof LayBonusToken) {
+//                allowances.add((LayBonusToken) allowance);
+//            }
+//        }
+//        return allowances;
+//    }
+//
     public List<GeneralPath> getTrainPaths() {
         return trainPaths;
     }

@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 
 import rails.game.action.*;
 import rails.game.correct.*;
-import rails.game.correct.MapCorrectionManager.ActionStep;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterables;
@@ -30,8 +29,14 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
 
+// FIXME: Add back corrections mechanisms
 
 public class ORUIManager implements DialogOwner {
+
+    private static Logger log =
+            LoggerFactory.getLogger(ORUIManager.class);
+
+    protected GameUIManager gameUIManager;
 
     protected ORWindow orWindow;
     protected ORPanel orPanel;
@@ -41,79 +46,38 @@ public class ORUIManager implements DialogOwner {
     private MessagePanel messagePanel;
     private RemainingTilesWindow remainingTiles;
 
-    protected GameUIManager gameUIManager;
-    protected TileManager tileManager;
-
     private OperatingRound oRound;
     private PublicCompany[] companies;
     private PublicCompany orComp;
     private int orCompIndex;
 
     private GameDef.OrStep orStep;
-    private int localStep;
+    private LocalSteps localStep;
 
-    protected PossibleActions possibleActions;
     private boolean privatesCanBeBoughtNow;
-    private final List<PossibleAction> mapRelatedActions =
-        new ArrayList<PossibleAction>();
 
-    private boolean tileLayingEnabled = false;
-    private final List<LayTile> allowedTileLays = Lists.newArrayList();
-    private final SetMultimap<GUIHex, HexUpgrade> hexUpgrades = HashMultimap.create();
+    private final SetMultimap<GUIHex, TileHexUpgrade> tileUpgrades = HashMultimap.create();
 
-    private boolean tokenLayingEnabled = false;
-    private final List<LayToken> allowedTokenLays = Lists.newArrayList();
-    private int selectedTokenndex;
-    private LayToken selectedTokenAllowance;
-
-    // map corrections
-    private boolean mapCorrectionEnabled = false;
-    private MapCorrectionAction mapCorrectionAction = null;
-
-    /**
-     * Will be set true if a cancelled action does not need to be reported to
-     * the server, because it does not change the OR turn step. For instance, if
-     * a bonus token lay is locally initiated but cancelled.
-     */
-    protected boolean localAction = false;
+    private final SetMultimap<GUIHex, TokenStopUpgrade> tokenUpgrades = HashMultimap.create(); 
 
     /* Local substeps */
-    public static final int INACTIVE = 0;
-    public static final int SELECT_HEX_FOR_TILE = 1;
-    public static final int SELECT_TILE = 2;
-    public static final int ROTATE_OR_CONFIRM_TILE = 3;
-    public static final int SELECT_HEX_FOR_TOKEN = 4;
-    public static final int SELECT_TOKEN = 5;
-    public static final int CONFIRM_TOKEN = 6;
-    public static final int SET_REVENUE = 7;
-    public static final int SELECT_PAYOUT = 8;
-    public static final int MAP_CORRECTION = 9;
-
-    /* Message key per substep */
-    protected static final String[] messageKey =
-        new String[] { "Inactive", "SelectAHexForTile", "SelectATile",
-        "RotateTile", "SelectAHexForToken", "SelectAToken",
-        "ConfirmToken", "SetRevenue", "SelectPayout",
-    "CorrectMap" };
+    public static enum LocalSteps {
+        Inactive, SelectAHexForTile, SelectATile, RotateTile, SelectAHexForToken
+        , SelectAToken, ConfirmToken, SetRevenue, SelectPayout }
 
     /* Keys of dialogs owned by this class */
     public static final String SELECT_DESTINATION_COMPANIES_DIALOG = "SelectDestinationCompanies";
     public static final String REPAY_LOANS_DIALOG = "RepayLoans";
 
-    protected static Logger log =
-            LoggerFactory.getLogger(ORUIManager.class);
-
     public ORUIManager() {
 
     }
 
-    public void setGameUIManager (GameUIManager gameUIManager) {
+    void setGameUIManager (GameUIManager gameUIManager) {
         this.gameUIManager = gameUIManager;
-        this.tileManager = gameUIManager.getRoot().getTileManager();
-        this.possibleActions = gameUIManager.getGameManager().getPossibleActions();
     }
 
-    public void init(ORWindow orWindow) {
+    void init(ORWindow orWindow) {
 
         this.orWindow = orWindow;
 
@@ -125,9 +89,7 @@ public class ORUIManager implements DialogOwner {
 
     }
 
-
-
-    public void initOR(OperatingRound or) {
+    void initOR(OperatingRound or) {
         oRound = or;
         companies = (oRound).getOperatingCompanies().toArray(new PublicCompany[0]);
         map.updateOffBoardToolTips(); // FIXME: This method is deleted
@@ -136,34 +98,22 @@ public class ORUIManager implements DialogOwner {
 
     public void finish() {
         orWindow.finish();
+        upgradePanel.setState(UpgradesPanel.States.Inactive);
+        upgradePanel.init();
         if (!(gameUIManager.getCurrentRound() instanceof ShareSellingRound)) {
             setORCompanyTurn(-1);
         }
     }
 
-    private NetworkGraph getCompanyGraph(){
-        NetworkAdapter network = NetworkAdapter.create(gameUIManager.getRoot());
-        return network.getRouteGraph(orComp, true);
-    }
-
-    public <T extends PossibleAction> void setMapRelatedActions(List<T> actions) {
+    public void setMapRelatedActions(PossibleActions actions) {
 
         GUIHex selectedHex = mapPanel.getMap().getSelectedHex();
-        int nextSubStep = ORUIManager.INACTIVE;
+        LocalSteps nextSubStep = LocalSteps.Inactive;
 
-        allowedTileLays.clear();
-        allowedTokenLays.clear();
-
-        for (T action : actions) {
-            if (action instanceof LayTile) {
-                allowedTileLays.add((LayTile) action);
-            } else if (action instanceof LayToken) {
-                allowedTokenLays.add((LayToken) action);
-            }
-        }
-
-        // moved the check for finishing steps to the beginning
-        if (allowedTileLays.size() == 0 && tileLayingEnabled) {
+        List<LayTile> tileActions = actions.getType(LayTile.class);
+        List<LayToken> tokenActions = actions.getType(LayToken.class);
+        
+        if (tileActions.isEmpty() & !tileUpgrades.isEmpty()) {
             /* Finish tile laying step */
             if (selectedHex != null) {
                 selectedHex.removeTile();
@@ -171,13 +121,13 @@ public class ORUIManager implements DialogOwner {
                 selectedHex = null;
             }
             // remove selectable indications
-            for (GUIHex guiHex:hexUpgrades.keySet()) {
+            for (GUIHex guiHex:tileUpgrades.keySet()) {
                 guiHex.setSelectable(false);
             }
-            hexUpgrades.clear();
+            tileUpgrades.clear();
         }
 
-        if (allowedTokenLays.size() == 0 && tokenLayingEnabled) {
+        if (tokenActions.isEmpty() && !tokenUpgrades.isEmpty()) {
             /* Finish token laying step */
             if (selectedHex != null) {
                 selectedHex.removeToken();
@@ -185,56 +135,42 @@ public class ORUIManager implements DialogOwner {
                 selectedHex = null;
             }
             // remove selectable indications
-            for (GUIHex guiHex:hexUpgrades.keySet()) {
+            for (GUIHex guiHex:tokenUpgrades.keySet()) {
                 guiHex.setSelectable(false);
             }
-            hexUpgrades.clear();
+            tokenUpgrades.clear();
         }
 
-        if (allowedTileLays.size() > 0) {
-            nextSubStep = ORUIManager.SELECT_HEX_FOR_TILE;
-            // if  hexupgrades is not null, then remove indicators
-            if (hexUpgrades != null) {
-                for (GUIHex guiHex:hexUpgrades.keySet()) {
+        if (!tileActions.isEmpty()) {
+            nextSubStep = LocalSteps.SelectAHexForTile;
+            if (tileUpgrades != null) {
+                for (GUIHex guiHex:tileUpgrades.keySet()) {
                     guiHex.setSelectable(false);
                 }
             }
 
-            // check actions for allowed hexes
-            hexUpgrades.clear();
-            if (gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.ROUTE_HIGHLIGHT)) {
-                defineTileUpgrades();
-            }
+            tileUpgrades.clear();
+            defineTileUpgrades(tileActions);
         }
 
-        if (allowedTokenLays.size() > 0) {
-            nextSubStep = ORUIManager.SELECT_HEX_FOR_TOKEN;
-            mapPanel.setAllowedTokenLays(allowedTokenLays);
+        if (tokenActions.size() > 0) {
+            nextSubStep = LocalSteps.SelectAHexForToken;
             // if  hexupgrades is not null, then remove indicators
-            if (hexUpgrades != null) {
-                for (GUIHex guiHex:hexUpgrades.keySet()) {
+            if (tokenUpgrades != null) {
+                for (GUIHex guiHex:tokenUpgrades.keySet()) {
                     guiHex.setSelectable(false);
                 }
             }
 
-            // check actions for allowed hexes
-            hexUpgrades.clear();
-            if (gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.ROUTE_HIGHLIGHT)) {
-                defineTokenUpgrades();
-            }
+            tokenUpgrades.clear();
+            defineTokenUpgrades(tokenActions);
         }
 
         setLocalStep(nextSubStep);
-        tileLayingEnabled = allowedTileLays.size() > 0;
-        tokenLayingEnabled = allowedTokenLays.size() > 0;
-        upgradePanel.setTileMode(tileLayingEnabled);
-        upgradePanel.setTokenMode(tokenLayingEnabled);
-
-        setLocalAction(false);
     }
     
-    private void defineTileUpgrades() {
-        for (LayTile layTile:allowedTileLays) {
+    private void defineTileUpgrades(List<LayTile> actions) {
+        for (LayTile layTile:actions) {
             switch (layTile.getType()) {
             case (LayTile.GENERIC):
                 addGenericTileLays(layTile);
@@ -256,12 +192,14 @@ public class ORUIManager implements DialogOwner {
             }
         }
 
-        // activate upgrades
-        for (GUIHex hex:hexUpgrades.keySet()) {
-            for (HexUpgrade upgrade:hexUpgrades.get(hex)) {
-                if (upgrade.validate(gameUIManager.getCurrentPhase())) {
-                    hex.setSelectable(true);
-                    break;
+        // show selectable hexes if highlight is active
+        if (gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.ROUTE_HIGHLIGHT)) {
+            for (GUIHex hex:tileUpgrades.keySet()) {
+                for (TileHexUpgrade upgrade:tileUpgrades.get(hex)) {
+                    if (upgrade.isValid()) {
+                        hex.setSelectable(true);
+                        break;
+                    }
                 }
             }
         }
@@ -270,16 +208,17 @@ public class ORUIManager implements DialogOwner {
     private void addGenericTileLays(LayTile layTile) {
         NetworkGraph graph = getCompanyGraph();
         Map<MapHex, HexSidesSet> mapHexSides = graph.getReachableSides();
-        Multimap<MapHex, Station> mapHexStations = graph.getReachableStations();
+        Multimap<MapHex, Station> mapHexStations = graph.getPassableStations();
         
         for (MapHex hex:Sets.union(mapHexSides.keySet(), mapHexStations.keySet())) {
             GUIHex guiHex = map.getHex(hex);
             String routeAlgorithm = GameOption.getValue(gameUIManager.getRoot(), "RouteAlgorithm");
-            Set<HexUpgrade> upgrades = HexUpgrade.create(hex, mapHexSides.get(hex), 
+            Set<TileHexUpgrade> upgrades = TileHexUpgrade.create(hex, mapHexSides.get(hex), 
                     mapHexStations.get(hex), layTile, routeAlgorithm);
-            hexUpgrades.putAll(guiHex, upgrades);
+            TileHexUpgrade.validateAndEnable(upgrades, gameUIManager.getCurrentPhase());
+            tileUpgrades.putAll(guiHex, upgrades);
         }
-        log.debug("hexUpgrades = " + hexUpgrades);
+        log.debug("tileUpgrades = " + tileUpgrades);
         
         // scroll map to center over companies network
         String autoScroll = Config.getGameSpecific("map.autoscroll");
@@ -294,38 +233,67 @@ public class ORUIManager implements DialogOwner {
     private void addLocatedTileLays(LayTile layTile) {
         for (MapHex hex:layTile.getLocations()) {
             GUIHex guiHex = map.getHex(hex);
-            Set<HexUpgrade> upgrades = HexUpgrade.createLocated(hex, layTile);
-            hexUpgrades.putAll(guiHex, upgrades);
+            Set<TileHexUpgrade> upgrades = TileHexUpgrade.createLocated(hex, layTile);
+            tileUpgrades.putAll(guiHex, upgrades);
         }
     }
 
-    private void defineTokenUpgrades() {
-        boolean mapHexes = false;
-        for (LayToken layToken:allowedTokenLays) {
-            SpecialProperty sp = layToken.getSpecialProperty();
-            if (sp == null) {
-                mapHexes = true;
-            } else if (layToken.getLocations() != null) {
-                for (MapHex hex:layToken.getLocations()) {
-                    GUIHex guiHex = map.getHex(hex);
-                    hexUpgrades.put(guiHex, null);
+    private void defineTokenUpgrades(List<LayToken> actions) {
+
+        NetworkGraph graph = getCompanyGraph();
+        List<Stop> stops = graph.getTokenableStops(orComp);
+
+        for (LayToken layToken:actions) {
+            if (layToken instanceof LayBaseToken) {
+                LayBaseToken layBaseToken = (LayBaseToken)layToken;
+                switch (layBaseToken.getType()) {
+                case (LayBaseToken.GENERIC):
+                    addGenericTokenLays(layToken, stops);
+                    break;
+                case (LayBaseToken.LOCATION_SPECIFIC):
+                case (LayBaseToken.SPECIAL_PROPERTY):
+                    if (layBaseToken.getLocations() != null) {
+                        addLocatedTokenLays(layBaseToken);
+                    } else {
+                        addGenericTokenLays(layBaseToken, stops);
+                    }
+                break;
+                case (LayBaseToken.HOME_CITY):
+                    addLocatedTokenLays(layBaseToken);
+                break;
+                default:
                 }
             }
         }
-
+        
+        // FIXME: Add highlighting for all available tokens
+        if (gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.ROUTE_HIGHLIGHT)) {
+            for (GUIHex hex:tokenUpgrades.keySet()) {
+                hex.setSelectable(true);
+            }
+        }    
         // standard tokens
-        if (mapHexes) {
-            NetworkGraph graph = getCompanyGraph();
-            Multimap<MapHex, Station> mapHexStations = graph.getReachableStations();
-            // generate network graph to indicate the token lays
-            //        //hexUpgrades.addAll(getCompanyGraph().getTokenableStationHexes(orComp));
-            //        for (MapHex hex:hexUpgrades) {
-            //            GUIHex guiHex = map.getHexByName(hex.getId());
-            //            guiHex.setSelectable(true);
-            //        }
-        }
+        log.debug("tokenUpgrades = " + tokenUpgrades);
     }
 
+    private void addGenericTokenLays(LayToken action, List<Stop> tokenableStops) {
+        for (Stop stop:tokenableStops) {
+            MapHex hex = stop.getParent();
+            TokenStopUpgrade upgrade = TokenStopUpgrade.create(stop, action);
+            GUIHex guiHex = map.getHex(hex);
+            tokenUpgrades.put(guiHex, upgrade);
+        }
+    }
+    
+    private void addLocatedTokenLays(LayToken action) {
+        for (MapHex hex:action.getLocations()) {
+            for (Stop stop:hex.getStops()) {
+                TokenStopUpgrade upgrade = TokenStopUpgrade.create(stop, action);
+                GUIHex guiHex = map.getHex(hex);
+                tokenUpgrades.put(guiHex, upgrade);
+            }
+        }
+    }
     
     public void updateMessage() {
 
@@ -335,29 +303,28 @@ public class ORUIManager implements DialogOwner {
          * , new
          * Exception("TRACE")
          */);
-        if (localStep == ORUIManager.INACTIVE) return;
+        if (localStep == LocalSteps.Inactive) return;
 
-        String message = LocalText.getText(ORUIManager.messageKey[localStep]);
+        String message = LocalText.getText(localStep.toString());
         SpecialProperty sp;
 
         /* Add any extra messages */
         String extraMessage = "";
 
-        if (localStep == ORUIManager.MAP_CORRECTION) {
-            if (mapCorrectionAction != null)
-                extraMessage = LocalText.getText("CorrectMap" + mapCorrectionAction.getStep().name());
-        }
+        // FIXME: Add this text again on rewrite of the Correction Mechanism
+//        if (localStep == ORUIManager.MAP_CORRECTION) {
+//            if (mapCorrectionAction != null)
+//                extraMessage = LocalText.getText("CorrectMap" + mapCorrectionAction.getStep().name());
+//        }
 
-        if (localStep == ORUIManager.SELECT_HEX_FOR_TILE) {
+        if (localStep == LocalSteps.SelectAHexForTile) {
             /* Compose prompt for tile laying */
             StringBuffer normalTileMessage = new StringBuffer(" ");
 
-            List<LayTile> tileLays = possibleActions.getType(LayTile.class);
-            log.debug("There are " + tileLays.size() + " TileLay objects");
+            List<LayTile> tileLays = getPossibleActions().getType(LayTile.class);
             int ii = 0;
             for (LayTile tileLay : tileLays) {
                 Map<String, Integer> tileColours;
-                log.debug("TileLay object " + (++ii) + ": " + tileLay);
                 sp = tileLay.getSpecialProperty();
                 /*
                  * A LayTile object contais either: 1. a special property
@@ -390,14 +357,14 @@ public class ORUIManager implements DialogOwner {
                             normalTileMessage);
             }
 
-        } else if (localStep == ORUIManager.SELECT_HEX_FOR_TOKEN) {
+        } else if (localStep == LocalSteps.SelectAHexForToken) {
 
             /* Compose prompt for token laying */
             String locations;
             StringBuffer normalTokenMessage = new StringBuffer(" ");
 
             List<LayBaseToken> tokenLays =
-                possibleActions.getType(LayBaseToken.class);
+                getPossibleActions().getType(LayBaseToken.class);
             log.debug("There are " + tokenLays.size() + " TokenLay objects");
             int ii = 0;
             for (LayBaseToken tokenLay : tokenLays) {
@@ -433,6 +400,7 @@ public class ORUIManager implements DialogOwner {
      * @param command
      * @param actions
      */
+    // FIXME: Can this be really a list of actions?
     public void processAction(String command, List<PossibleAction> actions) {
 
         if (actions != null && actions.size() > 0
@@ -453,9 +421,10 @@ public class ORUIManager implements DialogOwner {
 
                 /* Only used outside the token laying step */
                 // Can currently handle only one location!
-                LayBaseToken lbt = (LayBaseToken) actions.get(0);
-                map.selectHex(map.getHex(lbt.getLocations().get(0)));
-                layBaseToken (lbt);
+                // FIXME: This has to be redefined to be able to use all types of token lays
+//                LayBaseToken lbt = (LayBaseToken) actions.get(0);
+//                map.selectHex(map.getHex(lbt.getLocations().get(0)));
+//                layBaseToken (lbt);
 
             } else if (actionType == BuyBonusToken.class) {
 
@@ -512,6 +481,7 @@ public class ORUIManager implements DialogOwner {
     }
 
     /** Stub, can be overridden in subclasses */
+    // FIXME: As above, really a list of actions?
     protected boolean processGameSpecificActions(List<PossibleAction> actions) {
 
         return false;
@@ -539,7 +509,7 @@ public class ORUIManager implements DialogOwner {
                 orWindow.process(action);
             } else {
                 log.debug("Allocation is unknown, asking for it");
-                setLocalStep(SELECT_PAYOUT);
+                setLocalStep(LocalSteps.SelectPayout);
                 updateStatus(action, true);
 
                 // Locally update revenue if we don't inform the server yet.
@@ -551,20 +521,22 @@ public class ORUIManager implements DialogOwner {
         }
     }
 
+    // FIXME: Rewrite of Bonus Tokens
     private void prepareBonusToken(LayBonusToken action) {
 
-        orWindow.requestFocus();
-
-        allowedTokenLays.clear();
-        allowedTokenLays.add(action);
-        setMapRelatedActions(allowedTokenLays);
-        setLocalAction(true);
-
-        log.debug("BonusTokens can be laid");
-
-        mapPanel.setAllowedTokenLays(allowedTokenLays);
-
-        orPanel.initTokenLayingStep();
+        // 
+//        orWindow.requestFocus();
+//
+//        allowedTokenLays.clear();
+//        allowedTokenLays.add(action);
+//        setMapRelatedActions(allowedTokenLays);
+//        setLocalAction(true);
+//
+//        log.debug("BonusTokens can be laid");
+//
+//        mapPanel.setAllowedTokenLays(allowedTokenLays);
+//
+//        orPanel.initTokenLayingStep();
 
     }
 
@@ -648,60 +620,55 @@ public class ORUIManager implements DialogOwner {
 
         boolean triggerORPanelRepaint = false;
 
-        if (mapCorrectionEnabled) {
-            triggerORPanelRepaint = true;
-            boolean checkClickedHex = false;
-            switch (mapCorrectionAction.getStep()) {
-            case SELECT_HEX:
-            case SELECT_TILE: // if tile is selected
-                checkClickedHex = true;
-                break;
-            case SELECT_ORIENTATION:
-                if (clickedHex == selectedHex) {
-                    selectedHex.forcedRotateTile();
-                } else
-                    checkClickedHex = true;
-                break;
-            }
-            if (checkClickedHex && clickedHex !=null && clickedHex != selectedHex) {
-                map.selectHex(clickedHex);
-                mapCorrectionAction.selectHex(clickedHex.getHexModel());
-                orWindow.process(mapCorrectionAction);
-            }
-        } else if (tokenLayingEnabled) {
+        // FIXME: Map Correction removed
+//        if (mapCorrectionEnabled) {
+//            triggerORPanelRepaint = true;
+//            boolean checkClickedHex = false;
+//            switch (mapCorrectionAction.getStep()) {
+//            case SELECT_HEX:
+//            case SELECT_TILE: // if tile is selected
+//                checkClickedHex = true;
+//                break;
+//            case SELECT_ORIENTATION:
+//                if (clickedHex == selectedHex) {
+//                    selectedHex.forcedRotateTile();
+//                } else
+//                    checkClickedHex = true;
+//                break;
+//            }
+//            if (checkClickedHex && clickedHex !=null && clickedHex != selectedHex) {
+//                map.selectHex(clickedHex);
+//                mapCorrectionAction.selectHex(clickedHex.getHex());
+//                orWindow.process(mapCorrectionAction);
+//            }
+//        } else if (tokenLayingEnabled) {
+        if (!tokenUpgrades.isEmpty()) {
             triggerORPanelRepaint = true;
             // if clickedHex == null, then go back to select hex step
             if (clickedHex == null) {
-                upgradePanel.setPossibleTokenLays(null);
-                setLocalStep(SELECT_HEX_FOR_TOKEN);
+                upgradePanel.init();
+                setLocalStep(LocalSteps.SelectAHexForToken);
                 return true;
             }
-            List<LayToken> allowances =
-                map.getTokenAllowanceForHex(clickedHex.getHexModel());
-            if (allowances.size() > 0) {
-                log.debug("Hex " + clickedHex.toText()
-                        + " clicked, allowances:");
-                for (LayToken allowance : allowances) {
-                    log.debug(allowance.toString());
-                }
+            Set<TokenStopUpgrade> upgrades = tokenUpgrades.get(clickedHex);
+            if (!upgrades.isEmpty()) {
                 map.selectHex(clickedHex);
-                setLocalStep(SELECT_TOKEN);
+                setLocalStep(LocalSteps.SelectAToken);
             } else {
                 JOptionPane.showMessageDialog(mapPanel, LocalText.getText(
                         "NoTokenPossible", clickedHex.toText()));
-                setLocalStep(ORUIManager.SELECT_HEX_FOR_TOKEN);
+                setLocalStep(LocalSteps.SelectAHexForToken);
             }
 
-        } else if (tileLayingEnabled) {
+        } else if (!tileUpgrades.isEmpty()) {
             triggerORPanelRepaint = true;
-            if (localStep == ROTATE_OR_CONFIRM_TILE
+            if (localStep == LocalSteps.RotateTile
                     && clickedHex == selectedHex) {
                 selectedHex.rotateTile();
                 //directly inform sound framework of "rotate tile" local step
                 //as notification via "set local step" does not occur
                 SoundManager.notifyOfORLocalStep(localStep);
                 return true;
-
             } else {
                 if (selectedHex != null && clickedHex != selectedHex) {
                     selectedHex.removeTile();
@@ -709,11 +676,11 @@ public class ORUIManager implements DialogOwner {
                 }
                 // if clickedHex == null, then go back to select hex step
                 if (clickedHex == null) {
-                    upgradePanel.clearTileUpgrades();
-                    setLocalStep(SELECT_HEX_FOR_TILE);
+                    upgradePanel.init();
+                    setLocalStep(LocalSteps.SelectAHexForTile);
                 } else {
                     map.selectHex(clickedHex);
-                    setLocalStep(SELECT_TILE);
+                    setLocalStep(LocalSteps.SelectATile);
                 }
             }
         }
@@ -723,58 +690,50 @@ public class ORUIManager implements DialogOwner {
         return triggerORPanelRepaint;
     }
 
-    public void tileSelected(HexUpgrade upgrade) {
+    public void tileSelected(TileHexUpgrade upgrade) {
         Tile tile = upgrade.getUpgrade().getTargetTile();
         GUIHex hex = map.getSelectedHex();
         
         // if tile already selected, then it is identical as if the hex was clicked again
         // this activates the rotation step
-        if (localStep == ROTATE_OR_CONFIRM_TILE && hex.getProvisionalTile() == tile) {
+        // FIXME: Check if this still works
+        if (localStep == LocalSteps.RotateTile && hex.getProvisionalTile() == tile) {
             hexClicked(hex, hex);
-            upgradePanel.showUpgrades(localStep);
+            upgradePanel.showUpgrades();
             return;
         }
 
+        // FIXME: Solve that during rewrite of Map Correction
         // map correction override
-        if (mapCorrectionEnabled) {
-            // paint tile
-            hex.forcedDropTile(upgrade, HexSide.defaultRotation());
-            // inform map correction manager
-            mapCorrectionAction.selectTile(tile);
-            orWindow.process(mapCorrectionAction);
-            return;
-        }
+//        if (mapCorrectionEnabled) {
+//            // paint tile
+//            hex.forcedDropTile(upgrade, HexSide.defaultRotation());
+//            // inform map correction manager
+//            mapCorrectionAction.selectTile(tile);
+//            orWindow.process(mapCorrectionAction);
+//            return;
+//        }
 
-        if (hex.dropTile(upgrade)) {
+//        if (hex.dropTile(upgrade)) {
             /* Lay tile */
-            setLocalStep(ORUIManager.ROTATE_OR_CONFIRM_TILE);
-        } else {
-            /* Tile cannot be laid in a valid orientation: refuse it */
-            JOptionPane.showMessageDialog(mapPanel,
-            "This tile cannot be laid in a valid orientation.");
-            upgradePanel.removeUpgrade(upgrade);
-            setLocalStep(ORUIManager.SELECT_TILE);
-            upgradePanel.showUpgrades(localStep);
-        }
+        hex.dropTile(upgrade);
+        setLocalStep(LocalSteps.RotateTile);
+//        } else {
+//            // FIXME: This should not happen anymore
+//            /* Tile cannot be laid in a valid orientation: refuse it */
+//            JOptionPane.showMessageDialog(mapPanel,
+//            "This tile cannot be laid in a valid orientation.");
+//            upgradePanel.removeUpgrade(upgrade);
+//            setLocalStep(ORUIManager.SELECT_TILE);
+//            upgradePanel.showUpgrades(localStep);
+//        }
     }
 
-    public void tokenSelected(LayToken tokenAllowance) {
-
-        if (tokenAllowance != null && allowedTokenLays.contains(tokenAllowance)) {
-            selectedTokenAllowance = tokenAllowance;
-            selectedTokenndex = allowedTokenLays.indexOf(tokenAllowance);
-        } else {
-            selectedTokenAllowance = null;
-            selectedTokenndex = -1;
-        }
-        upgradePanel.setSelectedTokenndex(selectedTokenndex);
-    }
-
-    private void layTile() {
+    void layTile() {
 
         GUIHex selectedHex = map.getSelectedHex();
         if (selectedHex != null && selectedHex.canFixTile()) {
-            HexUpgrade upgrade = selectedHex.getUpgrade();
+            TileHexUpgrade upgrade = selectedHex.getUpgrade();
             LayTile allowance = upgrade.getAction();
             // FIXME: Removed a lot of checks here
 //            List<LayTile> allowances =
@@ -816,7 +775,7 @@ public class ORUIManager implements DialogOwner {
 //                                == SpecialProperty.Priority.FIRST ? spec_lt : gen_lt;
 //
 //            }
-            allowance.setChosenHex(selectedHex.getHexModel());
+            allowance.setChosenHex(selectedHex.getHex());
             int orientation = selectedHex.getProvisionalTileRotation().getTrackPointNumber();
             allowance.setOrientation(orientation);
             allowance.setLaidTile(upgrade.getUpgrade().getTargetTile());
@@ -827,84 +786,26 @@ public class ORUIManager implements DialogOwner {
                 selectedHex.fixTile();
             } else {
                 selectedHex.removeTile();
-                setLocalStep(SELECT_HEX_FOR_TILE);
+                setLocalStep(LocalSteps.SelectAHexForTile);
             }
             map.selectHex(null);
         }
     }
 
-    public void layBaseToken(LayBaseToken action) {
+    public void layBaseToken(TokenStopUpgrade upgrade) {
+        Stop stop = upgrade.getLocation();
+        LayBaseToken action = (LayBaseToken) upgrade.getAction();
+        
+        action.setChosenHex(stop.getParent());
+        action.setChosenStation(stop.getRelatedNumber());
+        
+        log.debug("Token action is: " + action);
 
-        GUIHex selectedHex = map.getSelectedHex();
-        LayBaseToken allowance;
-
-        if (selectedHex != null) {
-            if (action != null) {
-                allowance = action;
-            } else {
-                List<LayBaseToken> allowances =
-                    map.getBaseTokenAllowanceForHex(selectedHex.getHexModel());
-                // Pick the first one (unknown if we will ever need more than one)
-                allowance = allowances.get(0);
-            }
-            int station;
-            Set<Stop> stops = selectedHex.getHexModel().getStops();
-
-            switch (stops.size()) {
-            case 0: // No stations
-                return;
-
-            case 1:
-                station = 1;
-                break;
-
-            default:
-                // Check what connections each city has.
-                // Also remove any cities with no room.
-                List<String> prompts = new ArrayList<String>();
-                Map<String, Stop> promptToCityMap = new HashMap<String, Stop>();
-                String prompt;
-                for (Stop stop : stops) {
-                    if (stop.hasTokenSlotsLeft()) {
-                        Station relatedStation = stop.getRelatedStation();
-                        prompt = LocalText.getText(
-                                "SelectStationForTokenOption",
-                                relatedStation.getNumber(),
-                                selectedHex.getHexModel().getConnectionString(relatedStation));
-                        prompts.add(prompt);
-                        promptToCityMap.put(prompt, stop);
-                    }
-                }
-                if (prompts.isEmpty()) {
-                    return;
-                }
-                // If more than one City to choose from, ask the player. Otherwise use Element zero (first) for the station.
-                if (prompts.size() > 1) {
-                    String selected =
-                        (String) JOptionPane.showInputDialog(orWindow,
-                                LocalText.getText("SelectStationForToken",
-                                        action.getPlayerName(),
-                                        selectedHex.toText(),
-                                        action.getCompanyName()),
-                                        LocalText.getText("WhichStation"),
-                                        JOptionPane.PLAIN_MESSAGE, null,
-                                        prompts.toArray(), prompts.get(0));
-                    if (selected == null) return;
-                    station = promptToCityMap.get(selected).getRelatedNumber();
-                } else {
-                    station = promptToCityMap.get(prompts.toArray() [0]).getRelatedNumber();
-                }
-            }
-
-            allowance.setChosenHex(selectedHex.getHexModel());
-            allowance.setChosenStation(station);
-
-            if (orWindow.process(allowance)) {
-                upgradePanel.clear();
-                selectedHex.fixToken();
-            } else {
-                setLocalStep(ORUIManager.SELECT_HEX_FOR_TOKEN);
-            }
+        if (orWindow.process(action)) {
+            upgradePanel.init();
+            map.getSelectedHex().fixToken();
+        } else {
+            setLocalStep(LocalSteps.SelectAHexForToken);
         }
     }
 
@@ -917,6 +818,7 @@ public class ORUIManager implements DialogOwner {
      * attribute in the Upgrade tag.
      * @param action The LayTile PossibleAction.
      */
+    // FIXME: This has to be rewritten with the new tile mechanism
     protected void relayBaseTokens (LayTile action) {
 
         final MapHex hex = action.getChosenHex();
@@ -1022,35 +924,37 @@ public class ORUIManager implements DialogOwner {
         }
     }
 
-    private Station correctionRelayBaseToken(BaseToken token, List<Station> possibleStations){
-        GUIHex selectedHex = map.getSelectedHex();
-
-        PublicCompany company = token.getParent();
-        List<String> prompts = new ArrayList<String>();
-
-        Map<String, Station> promptToStationMap = new HashMap<String, Station>();
-        String prompt;
-        for (Station station:possibleStations) {
-            prompt = LocalText.getText(
-                    "SelectStationForTokenOption",
-                    station.getNumber(),
-                    selectedHex.getHexModel().getConnectionString(station));
-            prompts.add(prompt);
-            promptToStationMap.put(prompt, station);
-        }
-        String selected =
-            (String) JOptionPane.showInputDialog(orWindow,
-                    LocalText.getText("SelectStationForToken",
-                            "",
-                            selectedHex.toText(),
-                            company.getId()),
-                            LocalText.getText("WhichStation"),
-                            JOptionPane.PLAIN_MESSAGE, null,
-                            prompts.toArray(), prompts.get(0));
-        if (selected == null) return null;
-        Station station = promptToStationMap.get(selected);
-        return station;
-    }
+    
+    // FIXME: Might be required for the Correction Relay
+//    private Station correctionRelayBaseToken(BaseToken token, List<Station> possibleStations){
+//        GUIHex selectedHex = map.getSelectedHex();
+//
+//        PublicCompany company = token.getParent();
+//        List<String> prompts = new ArrayList<String>();
+//
+//        Map<String, Station> promptToStationMap = new HashMap<String, Station>();
+//        String prompt;
+//        for (Station station:possibleStations) {
+//            prompt = LocalText.getText(
+//                    "SelectStationForTokenOption",
+//                    station.getNumber(),
+//                    selectedHex.getHex().getConnectionString(station));
+//            prompts.add(prompt);
+//            promptToStationMap.put(prompt, station);
+//        }
+//        String selected =
+//            (String) JOptionPane.showInputDialog(orWindow,
+//                    LocalText.getText("SelectStationForToken",
+//                            "",
+//                            selectedHex.toText(),
+//                            company.getId()),
+//                            LocalText.getText("WhichStation"),
+//                            JOptionPane.PLAIN_MESSAGE, null,
+//                            prompts.toArray(), prompts.get(0));
+//        if (selected == null) return null;
+//        Station station = promptToStationMap.get(selected);
+//        return station;
+//    }
 
 
     /**
@@ -1058,8 +962,11 @@ public class ORUIManager implements DialogOwner {
      *
      * @param action The LayBonusToken action object of the laid token.
      */
-    public void layBonusToken(PossibleAction action) {
+    // FIXME: This has to be rewritten
+    public void layBonusToken(TokenStopUpgrade upgrade) {
 
+        LayToken action = upgrade.getAction();
+        
         // Assumption for now: always BonusToken
         // We might use it later for BaseTokens too.
 
@@ -1069,10 +976,10 @@ public class ORUIManager implements DialogOwner {
         if (selectedHex != null) {
             LayToken executedAction = (LayToken) action;
 
-            executedAction.setChosenHex(selectedHex.getHexModel());
+            executedAction.setChosenHex(selectedHex.getHex());
 
             if (orWindow.process(executedAction)) {
-                upgradePanel.clear();
+                upgradePanel.init();
                 map.selectHex(null);
                 //ensure painting the token (model update currently does not arrive at UI)
                 map.repaintTokens(selectedHex.getBounds());
@@ -1084,7 +991,7 @@ public class ORUIManager implements DialogOwner {
     public void operatingCosts(){
 
         List<String> textOC = new ArrayList<String>();
-        List<OperatingCost> actionOC = possibleActions.getType(OperatingCost.class);
+        List<OperatingCost> actionOC = getPossibleActions().getType(OperatingCost.class);
 
         for (OperatingCost ac:actionOC) {
 
@@ -1153,7 +1060,7 @@ public class ORUIManager implements DialogOwner {
         int cost;
         Owner from;
 
-        List<BuyTrain> buyableTrains = possibleActions.getType(BuyTrain.class);
+        List<BuyTrain> buyableTrains = getPossibleActions().getType(BuyTrain.class);
         for (BuyTrain bTrain : buyableTrains) {
             train = bTrain.getTrain();
             cost = bTrain.getFixedCost();
@@ -1333,7 +1240,7 @@ public class ORUIManager implements DialogOwner {
 
         int amount, index;
         List<String> privatesForSale = new ArrayList<String>();
-        List<BuyPrivate> privates = possibleActions.getType(BuyPrivate.class);
+        List<BuyPrivate> privates = getPossibleActions().getType(BuyPrivate.class);
         String chosenOption;
         BuyPrivate chosenAction = null;
         int minPrice = 0, maxPrice = 0;
@@ -1393,76 +1300,63 @@ public class ORUIManager implements DialogOwner {
 
     }
 
-    public void executeUpgrade() {
-
-        GUIHex selectedHex = map.getSelectedHex();
-
+//    public void executeUpgrade() {
         // map correction override
-        if (mapCorrectionEnabled) {
-            if (selectedHex != null && selectedHex.getProvisionalTile() != null) {
-                if (mapCorrectionAction.getStep() == ActionStep.SELECT_ORIENTATION) {
-                    int orientation = selectedHex.getProvisionalTileRotation().getTrackPointNumber();
-                    mapCorrectionAction.selectOrientation(orientation);
-                } else if (mapCorrectionAction.getStep() == ActionStep.CONFIRM) {
-                    mapCorrectionAction.selectConfirmed();
-                }
-                if (orWindow.process(mapCorrectionAction)) {
-                    selectedHex.fixTile();
-                } else {
-                    selectedHex.removeTile();
-                }
-                map.selectHex(null);
-            }
-            return;
-        }
+        // FIXME: Has to be changed during rewrite
+//        if (mapCorrectionEnabled) {
+//            if (selectedHex != null && selectedHex.getProvisionalTile() != null) {
+//                if (mapCorrectionAction.getStep() == ActionStep.SELECT_ORIENTATION) {
+//                    int orientation = selectedHex.getProvisionalTileRotation().getTrackPointNumber();
+//                    mapCorrectionAction.selectOrientation(orientation);
+//                } else if (mapCorrectionAction.getStep() == ActionStep.CONFIRM) {
+//                    mapCorrectionAction.selectConfirmed();
+//                }
+//                if (orWindow.process(mapCorrectionAction)) {
+//                    selectedHex.fixTile();
+//                } else {
+//                    selectedHex.removeTile();
+//                }
+//                map.selectHex(null);
+//            }
+//            return;
+//        }
 
-        if (tileLayingEnabled) {
-            // TODO: The first two conditions should not be reachable
-            // As the tile lay button only occurs if both hex and tile is selected
-            if (selectedHex == null) {
-                orWindow.displayORUIMessage(LocalText.getText("SelectAHexForTile"));
-            } else if (selectedHex.getProvisionalTile() == null) {
-                orWindow.displayORUIMessage(LocalText.getText("SelectATile"));
-            } else {
-                layTile();
-            }
-        } else if (tokenLayingEnabled) {
-            // TODO: The first two conditions should not be reachable
-            // As the tile lay button only occurs if both hex and tile is selected
-            if (selectedHex == null) {
-                orWindow.displayORUIMessage(LocalText.getText("SelectAHexForToken"));
-            } else if (selectedTokenAllowance == null) {
-                orWindow.displayORUIMessage(LocalText.getText("SelectAToken"));
-            } else if (selectedTokenAllowance instanceof LayBaseToken) {
-                layBaseToken((LayBaseToken)selectedTokenAllowance);
-            } else {
-                layBonusToken(selectedTokenAllowance);
-            }
+//    }
+
+    public void layToken(TokenStopUpgrade upgrade) {
+        LayToken action = upgrade.getAction();
+        if (action instanceof LayBaseToken) {
+            layBaseToken(upgrade);
+        } else if (action instanceof LayBonusToken) {
+            layBonusToken(upgrade);
         }
     }
-
-    public void cancelUpgrade() {
-        GUIHex selectedHex = mapPanel.getMap().getSelectedHex();
+    
+//    public void cancelUpgrade() {
+//        GUIHex selectedHex = mapPanel.getMap().getSelectedHex();
 
         // map correction override
-        if (mapCorrectionEnabled) {
-            if (selectedHex != null) selectedHex.removeTile();
-            mapCorrectionAction.selectCancel();
-            orWindow.process(mapCorrectionAction);
-            map.selectHex(null);
-            return;
-        }
+        // FIXME: for rewrite
+//        if (mapCorrectionEnabled) {
+//            if (selectedHex != null) selectedHex.removeTile();
+//            mapCorrectionAction.selectCancel();
+//            orWindow.process(mapCorrectionAction);
+//            map.selectHex(null);
+//            return;
+//        }
+//
+//    }
+    
+    public void cancelTileUpgrade() {
+        GUIHex selectedHex = mapPanel.getMap().getSelectedHex();
+        if (selectedHex != null) selectedHex.removeTile();
+        orWindow.process(new NullAction(NullAction.SKIP));
+    }
 
-        if (tokenLayingEnabled) {
-            if (selectedHex != null) selectedHex.removeToken();
-            if (!localAction)
-                orWindow.process(new NullAction(NullAction.SKIP));
-        } else if (tileLayingEnabled) {
-            if (selectedHex != null) selectedHex.removeTile();
-            if (!localAction)
-                orWindow.process(new NullAction(NullAction.SKIP));
-        }
-
+    public void cancelTokenUpgrade() {
+        GUIHex selectedHex = mapPanel.getMap().getSelectedHex();
+        if (selectedHex != null) selectedHex.removeToken();
+        orWindow.process(new NullAction(NullAction.SKIP));
     }
 
     /** Default implementation.
@@ -1554,8 +1448,6 @@ public class ORUIManager implements DialogOwner {
 
     public void updateStatus(PossibleAction actionToComplete, boolean myTurn) {
 
-        mapRelatedActions.clear();
-
         orPanel.resetActions();
 
         messagePanel.setMessage(null);
@@ -1582,6 +1474,8 @@ public class ORUIManager implements DialogOwner {
         orPanel.initORCompanyTurn(orComp, orCompIndex);
 
         if (!myTurn) return;
+        
+        PossibleActions possibleActions = getPossibleActions();
 
         privatesCanBeBoughtNow = possibleActions.contains(BuyPrivate.class);
         orPanel.initPrivateBuying(privatesCanBeBoughtNow);
@@ -1589,51 +1483,40 @@ public class ORUIManager implements DialogOwner {
         // initialize operating costs actions
         orPanel.initOperatingCosts(possibleActions.contains(OperatingCost.class));
 
-        // initial deactivation of MapTileCorrection Actions
-        mapCorrectionEnabled = false;
-        mapCorrectionAction = null;
-
         // initial deactivation of revenue calculation
         if (!possibleActions.contains(SetDividend.class)) {
             orPanel.stopRevenueUpdate();
             orPanel.resetCurrentRevenueDisplay();
         }
 
-        if (possibleActions.contains(MapCorrectionAction.class)) {
-            orPanel.initTileLayingStep();
-            orWindow.requestFocus();
-
-            MapCorrectionAction action = (possibleActions.getType(MapCorrectionAction.class)).get(0);
-
-            mapCorrectionEnabled = true;
-            mapCorrectionAction = action;
-            updateUpgradesPanel(action);
-        } else if (orStep == GameDef.OrStep.LAY_TRACK) {
+// FIXME: Rewrite Map Correction
+        //        if (possibleActions.contains(MapCorrectionAction.class)) {
+//            orPanel.initTileLayingStep();
+//            orWindow.requestFocus();
+//
+//            MapCorrectionAction action = (possibleActions.getType(MapCorrectionAction.class)).get(0);
+//
+//            mapCorrectionEnabled = true;
+//            mapCorrectionAction = action;
+//            updateUpgradesPanel(action);
+//        } else if (orStep == GameDef.OrStep.LAY_TRACK) {
+        if (orStep == GameDef.OrStep.LAY_TRACK) {
             //if (possibleActions.contains(LayTile.class)) {
 
             orPanel.initTileLayingStep();
 
             orWindow.requestFocus();
 
-            log.debug("Tiles can be laid");
-            mapRelatedActions.addAll(possibleActions.getType(LayTile.class));
-
             //} else if (possibleActions.contains(LayBaseToken.class)) {
         } else if (orStep == GameDef.OrStep.LAY_TOKEN) {
 
             orWindow.requestFocus();
 
-            // Include bonus tokens
-            allowedTokenLays.clear();
-            allowedTokenLays.addAll(possibleActions.getType(LayToken.class));
-            mapRelatedActions.addAll(allowedTokenLays);
-
             orPanel.initTokenLayingStep();
-
             log.debug("BaseTokens can be laid");
 
         } else if (possibleActions.contains(SetDividend.class)
-                && localStep == SELECT_PAYOUT) {
+                && localStep == LocalSteps.SelectPayout) {
 
             SetDividend action;
             if (actionToComplete != null) {
@@ -1703,8 +1586,8 @@ public class ORUIManager implements DialogOwner {
             orPanel.enableLoanTaking (possibleActions.getType(TakeLoans.class).get(0));
         }
 
-        if (!mapCorrectionEnabled)
-            setMapRelatedActions(mapRelatedActions);
+        
+        setMapRelatedActions(possibleActions);
 
         GameAction undoAction = null;
         GameAction redoAction = null;
@@ -1753,15 +1636,14 @@ public class ORUIManager implements DialogOwner {
 
                 if (tAction instanceof LayBaseToken
                         && ((LayBaseToken)tAction).getType() == LayBaseToken.HOME_CITY) {
-                    // Forced action: select home city
-                    LayBaseToken lbt = (LayBaseToken)tAction;
-                    map.setSelectedHex(map.getHex(lbt.getChosenHex()));
-                    layBaseToken (lbt);
-                    return;
 
+                    // FIXME: Does this work
+                    orWindow.requestFocus();
+                    orPanel.initTokenLayingStep();
+                } else {
+                    SpecialTokenLay stl = tAction.getSpecialProperty();
+                    if (stl != null) orPanel.addSpecialAction(tAction, stl.toMenu());
                 }
-                SpecialTokenLay stl = tAction.getSpecialProperty();
-                if (stl != null) orPanel.addSpecialAction(tAction, stl.toMenu());
             }
         }
 
@@ -1836,10 +1718,10 @@ public class ORUIManager implements DialogOwner {
         }
     }
 
-    public void setLocalStep(int localStep) {
-        log.debug("Setting upgrade step to " + localStep + " "
-                + ORUIManager.messageKey[localStep]);
+    protected void setLocalStep(LocalSteps localStep) {
+        log.debug("Setting upgrade step to " + localStep);
 
+        // TODO: Check if this still fits
         SoundManager.notifyOfORLocalStep(localStep);
 
         this.localStep = localStep;
@@ -1850,189 +1732,70 @@ public class ORUIManager implements DialogOwner {
 
     public void updateUpgradesPanel() {
 
-        if (upgradePanel != null) {
-            log.debug("Initial localStep is " + localStep + " "
-                    + ORUIManager.messageKey[localStep]);
-            switch (localStep) {
-            case INACTIVE:
-                upgradePanel.clearTileUpgrades();
-                upgradePanel.setPossibleTokenLays(null);
-                upgradePanel.setTokenMode(false);
-                upgradePanel.setDoneEnabled(false);
-                upgradePanel.setCancelEnabled(false);
-                break;
-            case SELECT_HEX_FOR_TILE:
-                upgradePanel.setDoneText("LayTile");
-                upgradePanel.setCancelText("NoTile");
-                upgradePanel.setDoneEnabled(false);
-                upgradePanel.setCancelEnabled(true);
-                break;
-            case SELECT_TILE:
-                populateUpgradePanel();
-                upgradePanel.setDoneEnabled(false);
-                break;
-            case ROTATE_OR_CONFIRM_TILE:
-                upgradePanel.setDoneEnabled(true);
-                break;
-            case SELECT_HEX_FOR_TOKEN:
-                upgradePanel.clearTileUpgrades();
-                upgradePanel.setDoneEnabled(false);
-                upgradePanel.setCancelEnabled(true);
-                upgradePanel.setDoneText("LayToken");
-                upgradePanel.setCancelText("NoToken");
-                break;
-            case SELECT_TOKEN:
-                List<LayToken> allowances =
-                    map.getTokenAllowanceForHex(mapPanel.getMap().getSelectedHex().getHexModel());
-                log.debug("Allowed tokens for hex "
-                        + mapPanel.getMap().getSelectedHex().toText()
-                        + " are:");
-                for (LayToken allowance : allowances) {
-                    log.debug("  " + allowance.toString());
-                }
-                upgradePanel.setPossibleTokenLays(allowances);
-                if (allowances.size() > 1) {
-                    upgradePanel.setDoneEnabled(false);
-                    break;
-                } else {
-                    // Only one token possible: skip this step and fall through
-                    tokenSelected(allowances.get(0));
-                    localStep = CONFIRM_TOKEN;
-                }
-            case CONFIRM_TOKEN:
-                upgradePanel.setDoneEnabled(true);
-                break;
-            case MAP_CORRECTION:
-                return; // this is done in their own initialization
-            default:
-                upgradePanel.setDoneEnabled(false);
-                upgradePanel.setCancelEnabled(false);
-                break;
-            }
-        }
-        log.debug("Final localStep is " + localStep + " "
-                + messageKey[localStep]);
-        upgradePanel.showUpgrades(localStep); // ??
-
-    }
-    
-    private void populateUpgradePanel() {
-        HexMap hexMap = getMapPanel().getMap();
-        GUIHex guiHex = hexMap.getSelectedHex();
-        Phase currentPhase = gameUIManager.getCurrentPhase();
-        upgradePanel.clearTileUpgrades();
-        
-        // FIXME: Special tile lays are not covered yet
-        // Skip if colour is not allowed yet
-        for (HexUpgrade upgrade:hexUpgrades.get(guiHex)) {
-            if (upgrade.validate(currentPhase)) {
-                upgradePanel.addUpgrade(upgrade, true);
-            } else if (!upgrade.tileColourNotAllowed(currentPhase)) {
-                upgradePanel.addUpgrade(upgrade,  false);
-            }
-        }
-    }
-
-
-    public void updateUpgradesPanel(MapCorrectionAction action) {
-        setLocalStep(MAP_CORRECTION);
         GUIHex selectedHex = map.getSelectedHex();
 
-        boolean showTilesInUpgrade = true;
-        switch (action.getStep()) {
-        case SELECT_HEX:
-            // done text will be used by token lay
-            upgradePanel.setDoneText("LayTile");
-            upgradePanel.setDoneEnabled(false);
-            upgradePanel.setCancelText("Cancel");
-            upgradePanel.setCancelEnabled(false);
-            upgradePanel.clearTileUpgrades();
-            showTilesInUpgrade = true;
-            // checks if there is still a hex selected (due to errors)
-            if (selectedHex != null) {
-                map.selectHex(null);
-            }
-            break;
-        case SELECT_TILE:
-            upgradePanel.setDoneText("LayTile");
-            upgradePanel.setDoneEnabled(false);
-            upgradePanel.setCancelText("Cancel");
-            upgradePanel.setCancelEnabled(true);
-            // tileUpgrades = action.getTiles(); 
-            // above is removed for now
-            showTilesInUpgrade = true;
-            // checks if there is still a tile displayed (due to errors)
-            if (selectedHex != null && selectedHex.canFixTile()){
-                selectedHex.removeTile();
-            }
-            // activate hex selection
-            map.selectHex(null);
-            map.selectHex(map.getHex(action.getLocation()));
-            break;
-        case SELECT_ORIENTATION:
-            upgradePanel.setDoneText("LayTile");
-            upgradePanel.setDoneEnabled(true);
-            upgradePanel.setCancelText("Cancel");
-            upgradePanel.setCancelEnabled(true);
-            // next step already set to finished => preprinted tile with fixed orientation
-            //            if (action.getNextStep() == MapCorrectionManager.ActionStep.FINISHED) {
-            //                selectedHex.setTileOrientation(action.getOrientation());
-            //                map.repaint(selectedHex.getBounds());
-            //                if (orWindow.process(mapCorrectionAction)) {
-            //                    selectedHex.fixTile();
-            //                } else {
-            //                    selectedHex.removeTile();
-            //                }
-            //                map.selectHex(null);
-            //                return;            }
-
-            //            }
-            showTilesInUpgrade = true;
-            break;
-        case RELAY_BASETOKENS:
-            // define open slots for each station
-            List<Station> possibleStations = new ArrayList<Station>(action.getPossibleStations());
-            Map<Station, Integer> openSlots = new HashMap<Station, Integer>();
-            for (Station station:possibleStations) {
-                openSlots.put(station, station.getBaseSlots());
-            }
-            // ask for the new stations
-            List<Station> chosenStations = new ArrayList<Station>();
-            for (BaseToken token:action.getTokensToRelay()) {
-                Station chosenStation = correctionRelayBaseToken(token, possibleStations);
-                chosenStations.add(chosenStation);
-                // check the number of available slots
-                openSlots.put(chosenStation, openSlots.get(chosenStation) - 1);
-                if (openSlots.get(chosenStation) == 0) {
-                    possibleStations.remove(chosenStation);
+        if (upgradePanel != null) {
+            log.debug("Initial localStep is " + localStep);
+            switch (localStep) {
+            case Inactive:
+                upgradePanel.setState(UpgradesPanel.States.Inactive);
+                upgradePanel.init();
+                break;
+            case SelectAHexForTile:
+                upgradePanel.setState(UpgradesPanel.States.Tile);
+                upgradePanel.init();
+                break;
+            case SelectATile:
+                upgradePanel.init();
+                upgradePanel.addUpgrades(tileUpgrades.get(selectedHex));
+                upgradePanel.showUpgrades();
+                upgradePanel.setDoneEnabled(false);
+                break;
+            case RotateTile:
+                upgradePanel.showUpgrades();
+                upgradePanel.setDoneEnabled(true);
+                break;
+            case SelectAHexForToken:
+                upgradePanel.setState(UpgradesPanel.States.Token);
+                upgradePanel.init();
+                break;
+            case SelectAToken:
+                upgradePanel.init();
+                Set<TokenStopUpgrade> upgrades = tokenUpgrades.get(selectedHex);
+                upgradePanel.addUpgrades(upgrades);
+                upgradePanel.showUpgrades();
+                if (upgrades.size() == 1) {
+                    localStep = LocalSteps.ConfirmToken;
                 }
+                break;
+            case ConfirmToken:
+                upgradePanel.showUpgrades();
+                upgradePanel.setDoneEnabled(true);
+                break;
+            default:
+                upgradePanel.setState(UpgradesPanel.States.Inactive);
+                upgradePanel.init();
             }
-            action.selectRelayBaseTokens(chosenStations);
-            if (orWindow.process(mapCorrectionAction)) {
-                selectedHex.fixTile();
-            } else {
-                selectedHex.removeTile();
-            }
-            map.selectHex(null);
-            return;
-        case CONFIRM:
-            // only wait for laytile or cancel command, for those lays that do not need adjustment of orientation
-            upgradePanel.setDoneText("LayTile");
-            upgradePanel.setDoneEnabled(true);
-            upgradePanel.setCancelText("Cancel");
-            upgradePanel.setCancelEnabled(true);
-            showTilesInUpgrade = true;
         }
+        log.debug("Final localStep is " + localStep);
+    }
+    
+    private void displayRemainingTiles() {
 
-        log.debug("Active map tile correction");
-        if (showTilesInUpgrade) {
-            upgradePanel.showCorrectionTileUpgrades();
+        if (remainingTiles == null) {
+            remainingTiles = new RemainingTilesWindow(orWindow);
         } else {
-            // FIXME: Add code for correction of tokens
-            //upgradePanel.showCorrectionTokenUpgrades(action);
+            remainingTiles.activate();
         }
     }
 
+    private NetworkGraph getCompanyGraph(){
+        NetworkAdapter network = NetworkAdapter.create(gameUIManager.getRoot());
+        return network.getRouteGraph(orComp, true);
+    }
+
+    // Message Panel helper methods
+    // TODO: Remove them 
     public void setMessage(String message) {
         messagePanel.setMessage(message);
     }
@@ -2045,45 +1808,34 @@ public class ORUIManager implements DialogOwner {
         messagePanel.setDetail(detailText);
     }
 
-    public void setLocalAction(boolean value) {
-        localAction = value;
-    }
-
-    // TEMPORARY
-    public ORWindow getORWindow() {
-        return orWindow;
-    }
-
-    // TEMPORARY
-    public MapPanel getMapPanel() {
-        return orWindow.getMapPanel();
-    }
-
-    // TEMPORARY
+    // Further Getters 
+    
     public HexMap getMap() {
         return map;
-    }
-
-    // TEMPORARY
-    public ORPanel getORPanel() {
-        return orPanel;
     }
 
     public GameUIManager getGameUIManager () {
         return gameUIManager;
     }
-
-    public TileManager getTileManager() {
-        return tileManager;
+    
+    public ORWindow getORWindow() {
+        return orWindow;
+    }
+    
+    public ORPanel getORPanel() {
+        return orPanel;
     }
 
-    private void displayRemainingTiles() {
-
-        if (remainingTiles == null) {
-            remainingTiles = new RemainingTilesWindow(orWindow);
-        } else {
-            remainingTiles.activate();
-        }
+   // TODO: Remove helper functions below
+    
+    // FIXME: Getting the possible actions inside ORUIManager methods should be removed
+    // Better transfer them by method args
+    protected PossibleActions getPossibleActions() {
+        return gameUIManager.getGameManager().getPossibleActions();
+    }
+    
+    protected TileManager getTileManager() {
+        return gameUIManager.getRoot().getTileManager();
     }
 
 }

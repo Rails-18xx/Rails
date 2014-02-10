@@ -31,6 +31,9 @@ import rails.game.action.*;
 public class ORWindow extends DockingFrame implements ActionPerformer {
     private static final long serialVersionUID = 1L;
    
+    private static Logger log =
+            LoggerFactory.getLogger(ORWindow.class);
+
     protected final GameUIManager gameUIManager;
     protected ORUIManager orUIManager;
     protected final MapPanel mapPanel;
@@ -40,15 +43,9 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
 
     protected Rectangle lastBounds;
 
-    protected final PossibleActions possibleActions;
-
-    protected static Logger log =
-            LoggerFactory.getLogger(ORWindow.class);
-
     public ORWindow(GameUIManager gameUIManager,SplashWindow splashWindow) {
         super( "yes".equals(Config.get("or.window.dockablePanels")) , splashWindow );
         this.gameUIManager = gameUIManager;
-        this.possibleActions = gameUIManager.getGameManager().getPossibleActions();
 
         splashWindow.notifyOfStep(SplashWindow.STEP_OR_INIT_PANELS);
         
@@ -70,7 +67,8 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
         messagePanel.setParentSlider(messagePanelSlider);
 
         upgradePanel = new UpgradesPanel(orUIManager,isDockingFrameworkEnabled());
-        addMouseListener(upgradePanel);
+        // FIXME: Is this still required
+        // addMouseListener(upgradePanel);
 
         mapPanel = new MapPanel(gameUIManager);
 
@@ -272,6 +270,7 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
         requestFocus();
     }
 
+// Remark: one of the methods to implement the ActionPerformer Interface
     public void updateStatus(boolean myTurn) {
         // Safety check. Do nothing if this method is called outside Operating Rounds,
         // for instance when a token is exchanged during a Stock Round.
@@ -288,7 +287,6 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
     public void finish() {
         lastBounds = getBounds();
         orPanel.finish();
-        upgradePanel.finish();
         messagePanel.setMessage("");
         setTitle(LocalText.getText("MapWindowTitle"));
     }
