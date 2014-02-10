@@ -12,7 +12,7 @@
 		<Payout split="no"/>
 	</CompanyType>
 	
-	<CompanyType name="Minor" class="net.sf.rails.game.PublicCompany">
+	<CompanyType name="Minor" class="net.sf.rails.game.specific._1880.PublicCompany_1880">
 		<ShareUnit percentage="100"/>
 		<Certificate type="President" shares="1"/>
 		<StockPrice market="no"/>
@@ -21,178 +21,173 @@
 		</BaseTokens>
 		<Payout split="no"/>
 		<Trains limit="1" mandatory="no"/>
+		<CanUseSpecialProperties/>
+			<!-- Specialproperties -->
+				<!-- Specialproperty condition="ifNotConnected" when="orTurn"
+					class="rails.game.special.TrainLoan" -->
+				<!-- /Specialproperty--> 
+			<!--  /Specialproperties-->	
 	</CompanyType>
 	
 	<CompanyType name="Private" class="net.sf.rails.game.PrivateCompany"/>
 	
-	<CompanyType name="Major" class="net.sf.rails.game.PublicCompany"
-		capitalisation="incremental">
-		<Capitalisation Type="incremental"/>
-		<!--TileLays>
-			<Number colour="yellow" phase="2+2,3,3+3,4,4+4,6,6e,8,8e,10"
-				number="2"/>
-		</TileLays-->
-		<Float percentage="60"/>
-		<StockPrice par="yes"/>
+	<CompanyType name="Major" class="net.sf.rails.game.specific._1880.PublicCompany_1880">
+		<Float percentage="20"/>
+		<StockPrice par="no"/>
 		<ShareUnit percentage="10"/>
 		<Certificate type="President" shares="2"/>
 		<Certificate shares="1" number="8"/>
 		<BaseTokens>
 			<LayCost method="sequence" cost="0,40,100"/>
 		</BaseTokens>
-		<Capitalisation type="incremental"/>
 		<Trains limit="4,3,2"/>
 		<CanUseSpecialProperties/>
+		
 	</CompanyType>
 	
-	<Company name="WR" longname="Woosong Railway" type="Private" basePrice="5"
-		revenue="0">
-		
-		<!--SpecialProperty condition="ifOwnedByPlayer" Phasenwechsel-Freie Lok -->
-		<ClosingConditions>
-			<Phase>4</Phase>
-			<SpecialProperties condition="ifExercised"/>
-		</ClosingConditions>
+	<Company name="WR" longname="Woosong Railway" type="Private" basePrice="0"
+		revenue="0,0">
+		<NotAgainstLimit />
 	</Company>
-	<Company name="KR" longname="Kaiping Railway" type="Private" basePrice="10"
-		revenue="5">
-		<ClosingConditions>
-			<Phase>4</Phase>
-		</ClosingConditions>
+	<Company name="KR" longname="Kaiping Railway" type="Private" basePrice="0"
+		revenue="5,0">
+		<NotAgainstLimit />
 	</Company>
-	<Company name="YC" longname="Yanda Ferry 
-			Company" type="Private"
-		basePrice="25" revenue="10">
-		<!-- SpecialProperty condition="ifOwnedByPlayer" when="revenuecalcStep" revenue="10" -->
+	<Company name="YC" longname="Yanda Ferry Company" type="Private"
+		basePrice="0" revenue="10,0">
+		<NotAgainstLimit />
 	</Company>
-	<Company name="TL" longname="Taiwan Western Line" type="Private" basePrice="45"
-		revenue="15">
-		<!-- SpecialProperty condition="ifOwnedByPlayer" when="revenuecalcStep" revenue="20" -->
+	<Company name="TL" longname="Taiwan Western Line" type="Private" basePrice="0"
+		revenue="15,0">
+		<NotAgainstLimit />
 	</Company>
-	<Company name="CC" longname="Chinese Rivers Ferry 
-			Company" type="Private"
-		basePrice="70" revenue="20">
-		<SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep"
-			class="net.sf.rails.game.special.SpecialTileLay">
-			<SpecialTileLay location="M15" extra="no" free="yes"/>
-		</SpecialProperty>
+	<Company name="CC" longname="Chinese Rivers Ferry Company" type="Private"
+		basePrice="0" revenue="20,0">
+		<NotAgainstLimit />
 	</Company>
 	<Company name="JO" longname="Jeme Tien Yow Engineer Office" type="Private"
-		basePrice="70" revenue="20">
-		<SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep"
-			class="net.sf.rails.game.specific._1880.BuildingPermit">
-		</SpecialProperty>
+		basePrice="0" revenue="25,0">
+		<NotAgainstLimit />
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByPlayer" when="anyTurn"
+				class="net.sf.rails.game.specific._1880.AddBuildingPermit">
+				<AddedPermit name="D"/>
+			</SpecialProperty>
+		</SpecialProperties>
 	</Company>
 	<Company name="IG" longname="Imperial Qing Government" type="Private"
-		basePrice="160" revenue="20">
+		basePrice="0" revenue="0,0">
+		<NotAgainstLimit />
 		<Info key="ComesWithPresidency" parm="BCR,20"/>
 	</Company>
 	<Company name="RC" longname="Rocket Company" type="Private" basePrice="70"
-		revenue="0">
-		<SpecialProperty condition="ifOwnedByPlayer" when="trainBuyingStep"
-			class="net.sf.rails.game.special.SpecialTrainBuy"/>
+		revenue="0,0">
+		<NotAgainstLimit />
+		<SpecialProperties>
+		<SpecialProperty condition="ifOwnedByPlayer" when="orTurn"  
+					class="net.sf.rails.game.special.SpecialTrainBuy" closedIfExercised="yes">
+					<SpecialTrainBuy traintype="2,2+2,3,3+3,4" deduction="100%" />
 		<!--  Kostenfreie Lok bei Phasenwechsel durch Lokkauf -->
-		<!-- Can exchange Certificate for actual train in one phase 2,2+3,3,3+3,4 
-		as soon as train has been bought -->
 		<!-- The train can be moved upon purchase into one company owned by the 
 		owner of the certificate --> <!-- Company must have space for the new train, but can hand back an older 
 		train to bank (2+2,3,3+3) -->
+		</SpecialProperty>
+		</SpecialProperties>
 		<ClosingConditions>
-			<Phase>5</Phase>
 			<SpecialProperties condition="ifExercised"/>
 		</ClosingConditions>
 	</Company>
 	<Company name="BCR" longname="Baocheng Railway" type="Major" tokens="3"
-		fgColour="FFFFFF" bgColour="0000FF">
+		fgColour="FFFFFF" bgColour="4A4A97">
 		<Home hex="M3"/>
 	</Company>
 	<Company name="JHA" longname="Jingha Railway" type="Major" tokens="3"
-		fgColour="FFFFFF" bgColour="FF0000">
+		fgColour="000000" bgColour="E78B01">
 		<Home hex="F8" city="1"/>
 	</Company>
 	<Company name="JHU" longname="Jinghu 
 			Railway" type="Major" tokens="3"
-		fgColour="FFFFFF" bgColour="FF0000">
+		fgColour="FFFFFF" bgColour="000000">
 		<Home hex="F8" city="2"/>
 	</Company>
 	<Company name="JGG" longname="Jingguang Railway" type="Major" tokens="3"
-		fgColour="FFFFFF" bgColour="FF0000">
+		fgColour="FFFFFF" bgColour="92278A">
 		<Home hex="F8" city="3"/>
 	</Company>
 	<Company name="JLR" longname="Jinglan Railway" type="Major" tokens="3"
-		fgColour="FFFFFF" bgColour="FF0000">
+		fgColour="000000" bgColour="60B495">
 		<Home hex="F8" city="4"/>
 	</Company>
 	<Company name="BZU" longname="Binzhou 
 			Railway" type="Major" tokens="3"
-		fgColour="FFFFFF" bgColour="FF0000">
+		fgColour="000000" bgColour="EFEBC7">
 		<Home hex="B8"/>
 	</Company>
 	<Company name="LHR" longname="Longhai Railway" type="Major" tokens="3"
-		fgColour="FFFFFF" bgColour="FF0000">
+		fgColour="000000" bgColour="C0B4B7">
 		<Home hex="J2"/>
 	</Company>
 	<Company name="SCR" longname="Schichang Railway" type="Major" tokens="3"
-		fgColour="FFFFFF" bgColour="FF0000">
+		fgColour="FFFFFF" bgColour="71B622">
 		<Home hex="N12"/>
 	</Company>
 	<Company name="CKR" longname="Chengkun Railway" type="Major" tokens="3"
-		fgColour="FFFFFF" bgColour="FF0000">
+		fgColour="000000" bgColour="D24026">
 		<Home hex="O5"/>
 	</Company>
 	<Company name="NXR" longname="Ningxi 
 			Railway" type="Major" tokens="3"
-		fgColour="FFFFFF" bgColour="FF0000">
+		fgColour="000000" bgColour="CF8ABC">
 		<Home hex="J6"/>
 	</Company>
 	<Company name="HKR" longname="Hukun Railway" type="Major" tokens="3"
-		fgColour="FFFFFF" bgColour="FF0000">
+		fgColour="FFFFFF" bgColour="A3CE06">
 		<Home hex="K15"/>
 	</Company>
 	<Company name="NJR" longname="Najiang Railway" type="Major" tokens="3"
-		fgColour="FFFFFF" bgColour="FF0000">
+		fgColour="000000" bgColour="DBBC04">
 		<Home hex="K13"/>
 	</Company>
 	<Company name="QSR" longname="Qinshen 
 			Railway" type="Major" tokens="3"
-		fgColour="FFFFFF" bgColour="FF0000">
+		fgColour="000000" bgColour="55B3D7">
 		<Home hex="D12"/>
 	</Company>
 	<Company name="WNR" longname="Wunan Railway" type="Major" tokens="3"
-		fgColour="FFFFFF" bgColour="FF0000">
+		fgColour="000000" bgColour="EDE201">
 		<Home hex="L10"/>
 	</Company>
-	<Company name="1" longname="Chinese Eastern Railway" type="Minor" price="0"
+	<Company name="1" longname="Chinese Eastern Railway" type="Investor" price="0"
 		tokens="1">
 		<Home hex="A3" city="1"/>
 	</Company>
-	<Company name="2" longname="South Manchuria Railway" type="Minor" price="0"
+	<Company name="2" longname="South Manchuria Railway" type="Investor" price="0"
 		tokens="1">
 		<Home hex="E13" city="1"/>
 	</Company>>
-	<Company name="3" longname="Zeng Tai Railway" type="Minor" price="0" tokens="1">
+	<Company name="3" longname="Zeng Tai Railway" type="Investor" price="0" tokens="1">
 		<Home hex="H6" city="1"/>
 	</Company>
-	<Company name="4" longname="Schantung-Eisenbahngesellschaft" type="Minor"
+	<Company name="4" longname="Schantung-Eisenbahngesellschaft" type="Investor"
 		price="0" tokens="1">
 		<Home hex="H14" city="1"/>
 	</Company>
-	<Company name="5" longname="Kowloon-Canton Railway" type="Minor" price="0"
+	<Company name="5" longname="Kowloon-Canton Railway" type="Investor" price="0"
 		tokens="1">
 		<Home hex="Q15" city="1"/>
 	</Company>
-	<Company name="6" longname="Macau Hafen" type="Minor" price="0" tokens="1">
+	<Company name="6" longname="Macau Hafen" type="Investor" price="0" tokens="1">
 		<Home hex="P12" city="1"/>
 	</Company>
-	<Company name="7" longname="Kunming-Hekou Railway" type="Minor" price="0"
+	<Company name="7" longname="Kunming-Hekou Railway" type="Investor" price="0"
 		tokens="1">
 		<Home hex="Q7" city="1"/>
 	</Company>
 	
-	<StartPacket roundClass="net.sf.rails.game.specific._1880.StartRound_1880">
+	<StartPacket name="sellPrivates" roundClass="net.sf.rails.game.specific._1880.StartRound_Privates_1880">
 		<Bidding initial="0" minimum="0" increment="5"/>
-		<Item name="WR" type="Private" basePrice="5"/>
-		<Item name="KR" type="Private" basePrice="10"/>
+		<Item name="WR" type="Private" basePrice="5" noBidsReaction="ReduceAndRebid" />
+		<Item name="KR" type="Private" basePrice="10" noBidsReaction="ReduceAndRebid" />
 		<Item name="YC" type="Private" basePrice="25"/>
 		<Item name="TL" type="Private" basePrice="45"/>
 		<Item name="CC" type="Private" basePrice="70"/>
@@ -201,12 +196,14 @@
 			<SubItem name="BCR" type="Major" president="yes"/>
 		</Item>
 		<Item name="RC" type="Private" basePrice="50"/>
-		<Item name="1" type="Minor" basePrice="0"/>
-		<Item name="2" type="Minor" basePrice="0"/>
-		<Item name="3" type="Minor" basePrice="0"/>
-		<Item name="4" type="Minor" basePrice="0"/>
-		<Item name="5" type="Minor" basePrice="0"/>
-		<Item name="6" type="Minor" basePrice="0"/>
-		<Item name="7" type="Minor" basePrice="0"/>
+	</StartPacket>
+	<StartPacket name="chooseInvestors" roundClass="net.sf.rails.game.specific._1880.StartRound_Investors_1880">
+		<Item name="1" type="Investor" basePrice="0"/>
+		<Item name="2" type="Investor" basePrice="0"/>
+		<Item name="3" type="Investor" basePrice="0"/>
+		<Item name="4" type="Investor" basePrice="0"/>
+		<Item name="5" type="Investor" basePrice="0"/>
+		<Item name="6" type="Investor" basePrice="0"/>
+		<Item name="7" type="Investor" basePrice="0"/>
 	</StartPacket>
 	</CompanyManager>

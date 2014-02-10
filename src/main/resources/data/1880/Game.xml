@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ComponentManager>
-	<Component name="GameManager" class="rails.game.specific._1880.GameManager_1880">
+	<Component name="GameManager" class="net.sf.rails.game.specific._1880.GameManager_1880">
 		<Game name="1880"/>
 		<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Highlight"/>
 		<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest"/>
@@ -8,49 +8,49 @@
 		<GameOption name="LeaveAuctionOnPass" type="toggle" default="no"/>
 		<GameParameters>
 			<PlayerShareLimit percentage="100"/>
-			<StockRound class="rails.game.specific._1880.StockRound_1880"
+			<StockRound class="net.sf.rails.game.specific._1880.StockRound_1880"
 				sequence="SellBuy">
 				<NoSaleInFirstSR/>
 			</StockRound>
 			<OperatingRound
-				class="rails.game.specific._1880.OperatingRound_1880">
+				class="net.sf.rails.game.specific._1880.OperatingRound_1880">
 				<EmergencyTrainBuying mayBuyFromCompany="yes"/>
 			</OperatingRound>
-			<ShareSellingRound class="rails.game.specific._1880.ShareSellingRound_1880">
+			<ShareSellingRound class="net.sf.rails.game.specific._1880.ShareSellingRound_1880">
 			</ShareSellingRound>
 		</GameParameters>
 		<GuiClasses>
 			<GameStatus
-				class="rails.ui.swing.gamespecific._1880.GameStatus_1880"/>
+				class="net.sf.rails.ui.swing.gamespecific._1880.GameStatus_1880"/>
 			<StartRoundWindow
-				class="rails.ui.swing.gamespecific._1880.StartRoundWindow_1880"/>
+				class="net.sf.rails.ui.swing.gamespecific._1880.StartRoundWindow_1880"/>
 			<GameUIManager
-				class="rails.ui.swing.gamespecific._1880.GameUIManager_1880"/>
+				class="net.sf.rails.ui.swing.gamespecific._1880.GameUIManager_1880"/>
 			<ORUIManager
-				class="rails.ui.swing.gamespecific._1880.ORUIManager_1880"/>
-			<StatusWindow class="rails.ui.swing.gamespecific._1880.StatusWindow_1880"/>
+				class="net.sf.rails.ui.swing.gamespecific._1880.ORUIManager_1880"/>
+			<StatusWindow class="net.sf.rails.ui.swing.gamespecific._1880.StatusWindow_1880"/>
 		</GuiClasses>
 		<EndOfGame/>
 	</Component>
-	<Component name="PlayerManager" class="rails.game.PlayerManager">
+	<Component name="PlayerManager" class="net.sf.rails.game.PlayerManager">
 		<Players number="3" cash="600" certLimit="20"/>
 		<Players number="4" cash="480" certLimit="16"/>
 		<Players number="5" cash="400" certLimit="14"/>
 		<Players number="6" cash="340" certLimit="12"/>
 		<Players number="7" cash="300" certLimit="11"/>
 	</Component>
-	<Component name="Bank" class="rails.game.Bank">
+	<Component name="Bank" class="net.sf.rails.game.Bank">
 		<Bank amount="30000"/>
 	</Component>
-	<Component name="TileManager" class="rails.game.TileManager"
+	<Component name="TileManager" class="net.sf.rails.game.TileManager"
 		file="TileSet.xml"/>
-	<Component name="Map" class="rails.game.MapManager" file="Map.xml"/>
-	<Component name="CompanyManager" class="rails.game.CompanyManager"
+	<Component name="Map" class="net.sf.rails.game.MapManager" file="Map.xml"/>
+	<Component name="CompanyManager" class="net.sf.rails.game.CompanyManager"
 		file="CompanyManager.xml"/>
 	<Component name="StockMarket"
-		class="rails.game.specific._1880.StockMarket_1880"
+		class="net.sf.rails.game.specific._1880.StockMarket_1880"
 		file="StockMarket.xml"/>
-	<Component name="TrainManager" class="rails.game.specific._1880.TrainManager_1880">
+	<Component name="TrainManager" class="net.sf.rails.game.specific._1880.TrainManager_1880">
 		<Defaults>
 			<Reach base="stops" countTowns="major"/>
 			<Score towns="yes"/>
@@ -94,7 +94,7 @@
 			<NewPhase phaseName="10"/>
 		</TrainType>
 	</Component>
-	<Component name="PhaseManager" class="rails.game.PhaseManager">
+	<Component name="PhaseManager" class="net.sf.rails.game.PhaseManager">
 		<Phase name="2" realName="A1">
 			<Tiles colour="yellow">
 				<Lays companyType="Major" colour="yellow" number="1"/>
@@ -173,11 +173,11 @@
 		    <Trains limitStep="3"/>
 		</Phase>
 		</Component>
-		<Component name="RevenueManager" class="rails.algorithms.RevenueManager">
-			<Modifier class="rails.game.specific._1880.OffBoardRevenueModifier_1880"/>
-			<Modifier class="rails.game.specific._1880.StockMarketBonusModifier"/>
-			<Modifier class="rails.game.specific._1880.FerryConnectionModifier"/>
-			<Modifier class="rails.game.specific._1880.TaiwanWesternModifier"/>
+		<Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager">
+			<Modifier class="net.sf.rails.game.specific._1880.OffBoardRevenueModifier_1880"/>
+			<Modifier class="net.sf.rails.game.specific._1880.StockMarketBonusModifier"/>
+			<Modifier class="net.sf.rails.game.specific._1880.FerryConnectionModifier"/>
+			<Modifier class="net.sf.rails.game.specific._1880.TaiwanWesternModifier"/>
 		</Component>
 		
 </ComponentManager>
