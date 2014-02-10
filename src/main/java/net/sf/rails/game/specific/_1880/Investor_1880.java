@@ -117,10 +117,10 @@ public class Investor_1880 extends PublicCompany implements RevenueStaticModifie
 
     public boolean isConnectedToLinkedCompany() {
         NetworkGraph nwGraph = NetworkGraph.createMapGraph(getRoot());
-        NetworkCompanyGraph_1880 companyGraph =
-                NetworkCompanyGraph_1880.createMapGraph(nwGraph, this);
+        NetworkGraph companyGraph =
+                NetworkGraph.createRouteGraph(nwGraph, this, true);
         SimpleGraph<NetworkVertex, NetworkEdge> graph =
-                companyGraph.createConnectionGraph(true);
+                companyGraph.getGraph();
         Set<NetworkVertex> verticies = graph.vertexSet();
 
         PublicCompany_1880 linkedCompany =
