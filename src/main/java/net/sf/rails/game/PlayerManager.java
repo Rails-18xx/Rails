@@ -8,9 +8,12 @@ import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.common.parser.Configurable;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
+import net.sf.rails.game.GameManager.PlayerOrderState;
 import net.sf.rails.game.state.ArrayListState;
 import net.sf.rails.game.state.GenericState;
 import net.sf.rails.game.state.IntegerState;
+import net.sf.rails.game.state.State;
+import net.sf.rails.util.Util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +31,8 @@ public class PlayerManager extends RailsManager implements Configurable {
     private List<Player> players;
     private List<String> playerNames;
     private Map<String, Player> playerMap;
+    
+    protected PlayerOrderState playerNamesModel;
     
     // configure data
     private int maxPlayers;
@@ -219,27 +224,67 @@ public class PlayerManager extends RailsManager implements Configurable {
     public Player getPlayerByIndex(int index) {
         return players.get(index % numberOfPlayers);
     }
-
-    // FIXME: This is not undo proof!
+    /**
+    *
+    *@param ascending Boolean to determine if the playerlist will be sorted in ascending or descending order based on their cash
+    *@return Returns the player at index position 0 that is either the player with the most or least cash depending on sort order.
+    */
     public Player reorderPlayersByCash (boolean ascending) {
 
-        final boolean _ascending = ascending;
-        Collections.sort (players, new Comparator<Player>() {
-            public int compare (Player p1, Player p2) {
-                return _ascending ? p1.getCash() - p2.getCash() : p2.getCash() - p1.getCash();
-            }
-        });
+       final boolean _ascending = ascending;
+       List<Player> reorderedPlayers = new ArrayList<Player>(players.);
+       Collections.sort(reorderedPlayers, new Comparator<Player>() {
+           public int compare (Player p1, Player p2) {
+               return _ascending ? p1.getCash() - p2.getCash() : p2.getCash() - p1.getCash();
+           }
+       });
 
-        Player player;
-        for (int i=0; i<players.size(); i++) {
-            player = players.get(i);
-            player.setIndex (i);
-            playerNames.set (i, player.getId());
-            log.debug("New player "+i+" is "+player.getId() +" (cash="+Currency.format(this, player.getCash())+")");
-        }
+       players.clear();
 
-        return players.get(0);
+       Player player;
+       List<String> reorderedPlayerNames = new ArrayList<String>(players.size());
+       for (int i=0; i<reorderedPlayers.size(); i++) {
+           player = reorderedPlayers.get(i);
+           players.add(player);
+           player.setIndex (i);
+           reorderedPlayerNames.add(player.getId());
+           log.debug("New player "+i+" is "+player.getId() +" (cash="+Bank.format(player.getCash())+")");
+       }
+       playerNamesModel.set(reorderedPlayerNames);
+
+       return this.players.get(0);
+    }
+
+    public PlayerOrderState getPlayerNamesModel() {
+       return playerNamesModel;
     }
 
 
+    public class PlayerOrderState extends State {
+
+       protected PlayerOrderState (String name, List<String> playerNames) {
+           super (name, playerNames);
+       }
+
+       protected void set (List<String> playerNames) {
+           super.set (playerNames);
+       }
+
+       @SuppressWarnings("unchecked")
+       @Override
+       public List<String> get() {
+           return (List<String>) super.get();
+       }
+
+       @Override
+       public String getText () {
+           return Util.joinWithDelimiter(get().toArray(new String[0]), ";");
+       }
+    }
+
+    public void setNumOfORs(int i) {
+       numOfORs.set(i);
+       
+    }
+    
 }

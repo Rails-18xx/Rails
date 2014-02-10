@@ -85,7 +85,7 @@ public class StartRound_Privates_1880 extends StartRound_Sequential {
 
     @Override
     protected void finishRound() {
-        getRoot().getPlayerManager().setCurrentPlayer(getRoot().getPlayerManager().reorderPlayersByCash(true));
+        getRoot().getPlayerManager().setCurrentPlayer(getRoot().getGameManager().reorderPlayersByCash(true));
         currentPlayer = getCurrentPlayer();
         getRoot().getPlayerManager().setPriorityPlayer((Player) currentPlayer); // Method doesn't
                                                                // exist in

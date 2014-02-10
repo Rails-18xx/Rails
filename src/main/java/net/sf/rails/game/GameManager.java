@@ -3,6 +3,7 @@ package net.sf.rails.game;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -101,6 +102,9 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     protected Boolean gameOverReportedUI = false;
     protected final BooleanState endedByBankruptcy = BooleanState.create(this, "endedByBankruptcy");
 
+    
+
+    
     /** UI display hints */
     protected GuiHints guiHints;
 
@@ -1430,5 +1434,8 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     protected Player getCurrentPlayer() {
         return getRoot().getPlayerManager().getCurrentPlayer();
     }
+
+
 }
+
 
