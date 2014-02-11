@@ -6,6 +6,7 @@ import java.util.Map;
 
 import net.sf.rails.common.GameOption;
 import net.sf.rails.common.GameOptionsSet;
+import net.sf.rails.common.ResourceLoader;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -69,7 +70,8 @@ public class GameOptionsParser {
 
     public static GameOptionsSet.Builder load(String gameName) throws ConfigurationException {
         GameOptionsParser gop = new GameOptionsParser();
-        String directory =  GameInfoParser.DIRECTORY + File.separator + gameName;
+        // use the Separator provided by Resource-Loader!
+        String directory =  GameInfoParser.DIRECTORY + ResourceLoader.SEPARATOR  + gameName;
         return gop.processOptions(directory);
     }
 

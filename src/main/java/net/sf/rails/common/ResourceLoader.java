@@ -8,10 +8,10 @@ import org.slf4j.LoggerFactory;
 public final class ResourceLoader {
     private static final Logger log = LoggerFactory.getLogger(ResourceLoader.class);
 
-    private static final String PATH_SEPARATOR = "/";
+    public static final String SEPARATOR = "/";
 
     public static InputStream getInputStream(String filename, String directory) {
-        String fullPath = directory + PATH_SEPARATOR + fixFilename(filename);
+        String fullPath = directory + SEPARATOR + fixFilename(filename);
         log.debug("Locate fullPath=" + fullPath);
         return ResourceLoader.class.getClassLoader().getResourceAsStream(fullPath);
     }

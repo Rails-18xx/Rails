@@ -1,62 +1,141 @@
+
+// Gradle Build script for 18xx Rails program (rails.sf.net)
 apply plugin: 'java'
 sourceCompatibility = 1.5
 targetCompatibility = 1.6
 
-def railsMainClass = 'net.sf.rails.uti.RunGame'
-def sourceforgeJnlpPath = 'http://rails.sf.net/webstart'
-def sourceforgeJnlpFileName = 'rails'
+// Addition of shadow plugin to create one jars
+// reference: https://github.com/johnrengelman/shadow
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:0.8'
+    }
+}
+
+apply plugin: 'shadow'
+// exclude the signatures
+shadow {
+    exclude "META-INF/*.DSA"
+    exclude "META-INF/*.RSA"
+}
+
+// Addition of JavaPropfile plugin to read Java property files
+// reference: https://github.com/unsaved/gradle-javaPropFile-plugin
+
+buildscript {
+    repositories { mavenCentral() }
+    dependencies {
+                classpath 'com.admc:gradle-javaPropFile-plugin:latest.integration'
+            }
+        }
+apply plugin: 'javaPropFile'
+
+// use version number from property file
+propFileLoader.load(file("src/main/resources/version.number"))
+
+// Rails variables
+def railsCodebase = 'rails.sourceforge.net'
+def railsAppName = 'Rails 18xx moderator'
+def railsAppVendor = 'Rails project'
+def railsAppDescr = 'Rails is a moderator program for 18xx games'
+def railsMainClass = 'net.sf.rails.util.RunGame'
+
+// Key variables
+def keyAlias = 'rails18xx'
+// def keyAlias = 'stefanfrey'
+
+// Build directories
+def webstartBuildDir = 'webstart/build'
+def webstartDestDir = 'webstart/signed'
+def keystoreFile = '../../keystore/rails.keys'
+
+// Sourceforge variables
+def sourceforgeJnlpPath = "http://${railsCodebase}/webstart"
+def sourceforgeUploadPath = 'web.sourceforge.net/home/project-web/rails/htdocs/webstart'
+def sourceforgeJnlpFileName = 'rails.jnlp'
+def sourceforgeUserName = 'stefanfrey'
 
 dependencies {
-  compile fileTree(dir: "libs/main", include: '**/*.jar')
-  testCompile fileTree(dir: "libs/test", include: '**/*.jar')
+  compile fileTree(dir: 'libs/main', include: "**/*.jar")
+  testCompile fileTree(dir: 'libs/test', include: "**/*.jar")
 }
 
 jar {
+	def manifestClasspath = configurations.runtime.collect{ './' + it.getName() }.join(' ')
     manifest {
-	def manifestClasspath = configurations.runtime.collect { "./" + it.getName() }.join(' ')
-        attributes 'Class-Path': manifestClasspath, 'Main-Class': "$railsMainClass"
+        attributes 'Class-Path': manifestClasspath, 'Main-Class': "${railsMainClass}"
     }
-  
 } 
 
 // The following implements a creation of a Webstart version
 // refer to http://www.apprenticeshipnotes.org/2013/01/generating-webstart-files-using-gradle.html
 // and http://java.dzone.com/articles/java-web-start-jnlp-hello
 
-task copyFiles(type: Copy, dependsOn: [jar]) {
-//	the next line is required if we have several jars
-    from configurations.runtime
-    from("$buildDir/libs")
-    into("webstart/lib")
-    include('*.jar')
-}
-
-
-task signAll(dependsOn: [copyFiles]) << {
-    new File('webstart/signed').mkdirs()
-    def libFiles = fileTree(dir: 'webstart/lib', include:'**/*.jar')
-    libFiles.each {
-        ant.signjar(
-                destDir: 'webstart/signed',
-                alias: 'http://rails.sf.net',
-                jar: it,
-		keystore: '../../keystore/rails.keys',
-		storepass: 'rails18xx',
-                preservelastmodified: 'true',
-		lazy: 'true')
+task createBuildDir << {
+    def dir = new File("${webstartBuildDir}")
+    if (!dir.exists()) {
+      dir.mkdirs()
     }
 }
 
-task generateJnlp(dependsOn: [signAll]) << {
+task (copyJarFiles, type:Copy, dependsOn:[jar, createBuildDir]) {
+//	the next line is required if we have several jars
+    from configurations.runtime
+    from("${buildDir}/libs")
+    into("${webstartBuildDir}")
+    include('*.jar')
+}
+
+task (updateManifest, dependsOn: copyJarFiles) << {
+    def buildFiles = fileTree(dir: "${webstartBuildDir}", include:"**/*.jar")
+    buildFiles.each {
+      ant.jar(destfile: it, update: true) {
+	delegate.manifest {
+	  attribute(name: "Permissions", value: "all-permissions")
+	  attribute(name: "Codebase", value: "${railsCodebase}")
+	  attribute(name: "Application-Name", value: "${railsAppName}") 
+	  attribute(name: "Trusted-Only", value: "true")
+	}
+      }
+    }
+}
+
+task (signAll, dependsOn: updateManifest) << {
+    def libFiles = fileTree(dir: "${webstartBuildDir}", include:"**/*.jar")
+    libFiles.each {
+        ant.signjar(
+                alias: "${keyAlias}",
+                jar: it,
+		keystore: "${keystoreFile}",
+		storepass: "rails18xx",
+                preservelastmodified: "true",
+		lazy: "true")
+    }
+}
+
+task createWebStartDir << {
+    def dir = new File("${webstartDestDir}")
+    if (!dir.exists()) {
+      dir.mkdirs()
+    }
+}
+
+task(copyWebstartFiles, type:Copy, dependsOn: [createWebStartDir, signAll]) {
+    from("${webstartBuildDir}")
+    into("${webstartDestDir}")
+    include('*.jar')
+}
+
+task generateWebstart(dependsOn: copyWebstartFiles) << {
     File jnlpTemplateFile = new File('src/main/resources/webstart/template.jnlp')
     def root = new XmlParser().parse(jnlpTemplateFile)
-    def jnlpFileName = "${sourceforgeJnlpFileName}.jnlp"
+    def jnlpFileName = "${sourceforgeJnlpFileName}"
     
     // Setting values in the jnlp template
     // Setting root values
-    
-    // File CodeBase
-    // root.@codebase = 'file:/'+new File('webstart/signed').absolutePath
     
     // Http CodeBase
     root.@codebase = sourceforgeJnlpPath
@@ -66,11 +145,11 @@ task generateJnlp(dependsOn: [signAll]) << {
     def information = root.information[0]
     def title = information.title[0]
     def vendor = information.vendor[0]
-    title.setValue('Rails program')
-    vendor.setValue('Rails 18xx project')
+    title.setValue("${railsAppName}")
+    vendor.setValue("${railsAppVendor}")
     def descriptionList = information.description
     descriptionList.each {
-        it.setValue('Rails is a moderator program for 18xx games')
+        it.setValue("${railsAppDescr}")
     }
     
     // Setting resources
@@ -78,7 +157,7 @@ task generateJnlp(dependsOn: [signAll]) << {
     def j2se = resource.j2se[0]
     j2se.@version = "1.6+"
     
-    def collection = fileTree(dir:'webstart/lib', include:'**/*.jar')
+    def collection = fileTree(dir:"${webstartBuildDir}", include:"**/*.jar")
     def mainJar = 'rails.jar'
 
     collection.each {
@@ -94,6 +173,19 @@ task generateJnlp(dependsOn: [signAll]) << {
     applicationDesc.'@main-class' = "$railsMainClass"
     
     // Writing the jnlp file filled
-    File jnlpFile = new File('webstart/signed/' + jnlpFileName)
+    File jnlpFile = new File("${webstartDestDir}/" + jnlpFileName)
     new XmlNodePrinter(new PrintWriter(jnlpFile)).print(root)
 }
+
+// upload via ant task
+task uploadWebstart(dependsOn: generateWebstart) << {
+  ant.scp(todir:"${sourceforgeUserName}:${sfpwd}@${sourceforgeUploadPath}") {
+    fileset(dir:"${webstartDestDir}")
+  }
+}
+
+
+task cleanWebstart (type:Delete) {
+  delete "${webstartBuildDir}", "${webstartDestDir}"
+}
+
