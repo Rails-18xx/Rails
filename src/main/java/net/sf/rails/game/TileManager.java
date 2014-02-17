@@ -3,6 +3,7 @@ package net.sf.rails.game;
 import java.util.*;
 
 import net.sf.rails.common.LocalText;
+import net.sf.rails.common.ResourceLoader;
 import net.sf.rails.common.parser.*;
 
 import org.slf4j.Logger;
@@ -49,7 +50,7 @@ public class TileManager extends RailsManager implements Configurable {
         if (tileDefFileName == null)
             throw new ConfigurationException(LocalText.getText("NoTilesXML"));
 
-        String directory = "data/" + getRoot().getGameName();
+        String directory = "data" + ResourceLoader.SEPARATOR + getRoot().getGameName();
         Tag tileDefTop =
             Tag.findTopTagInFile(tileDefFileName, directory, "Tiles", getRoot().getGameOptions());
         if (tileDefTop == null)

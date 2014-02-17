@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.sf.rails.common.LocalText;
+import net.sf.rails.common.ResourceLoader;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
 import net.sf.rails.common.parser.XMLTags;
@@ -63,7 +64,7 @@ public class ComponentManager {
         // Configure the component, from a file, or the embedded XML.
         Tag configElement = componentTag;
         if (file != null) {
-            String directory =  GameInfoParser.DIRECTORY + File.separator + root.getGameName();
+            String directory =  GameInfoParser.DIRECTORY + ResourceLoader.SEPARATOR + root.getGameName();
             configElement = Tag.findTopTagInFile(file, directory, name, root.getGameOptions());
         }
 

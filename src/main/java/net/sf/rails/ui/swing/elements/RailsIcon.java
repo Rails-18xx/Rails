@@ -6,6 +6,7 @@ import java.io.File;
 import javax.swing.ImageIcon;
 
 import net.sf.rails.common.LocalText;
+import net.sf.rails.common.ResourceLoader;
 
 
 /**
@@ -94,7 +95,7 @@ public enum RailsIcon {
         }
         
         //get icon
-        String path = IMAGE_PATH + File.separator + fileName;
+        String path = IMAGE_PATH + ResourceLoader.SEPARATOR + fileName;
         java.net.URL imgURL = getClass().getResource(path);
         if (imgURL != null) {
             return new ImageIcon(imgURL, description);

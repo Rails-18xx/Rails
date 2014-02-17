@@ -12,7 +12,7 @@ public final class ResourceLoader {
 
     public static InputStream getInputStream(String filename, String directory) {
         String fullPath = directory + SEPARATOR + fixFilename(filename);
-        log.debug("Locate fullPath=" + fullPath);
+        log.debug("Locate fullPath (updated) =" + fullPath);
         return ResourceLoader.class.getClassLoader().getResourceAsStream(fullPath);
     }
 

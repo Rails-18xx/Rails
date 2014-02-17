@@ -8,6 +8,7 @@ import net.sf.rails.common.GameOptionsSet;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.common.ReportManager;
+import net.sf.rails.common.ResourceLoader;
 import net.sf.rails.common.parser.ComponentManager;
 import net.sf.rails.common.parser.Configurable;
 import net.sf.rails.common.parser.ConfigurationException;
@@ -117,7 +118,7 @@ public class RailsRoot extends Root implements RailsItem {
     }
     
     public void initGameFromXML() throws ConfigurationException {
-        String directory = "data/" + gameData.getGameName();
+        String directory = "data" + ResourceLoader.SEPARATOR + gameData.getGameName();
         
         Tag componentManagerTag = Tag.findTopTagInFile(
                 GAME_XML_FILE, directory, XMLTags.COMPONENT_MANAGER_ELEMENT_ID, gameData.getGameOptions() );
