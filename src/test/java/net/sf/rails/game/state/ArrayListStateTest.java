@@ -157,6 +157,31 @@ public class ArrayListStateTest {
         // TODO: replace with containsExactly, this does not work yet
         assertThat(stateInit).containsSequence(anotherItem, oneItem);
     }
+    
+    @Test
+    public void testSetTo() {
+        stateInit.setTo(stateDefault.view());
+        assertEquals(stateInit.view(), stateDefault.view());
+
+        stateDefault.add(anotherItem);
+        stateInit.setTo(stateDefault.view());
+        assertEquals(stateInit.view(), stateDefault.view());
+        
+        stateDefault.add(oneItem);
+        stateDefault.remove(anotherItem);
+        stateInit.setTo(stateDefault.view());
+        assertEquals(stateInit.view(), stateDefault.view());
+
+        stateDefault.add(oneItem);
+        stateDefault.add(oneItem);
+        stateInit.setTo(stateDefault.view());
+        assertEquals(stateInit.view(), stateDefault.view());
+        
+        assertInitialStateAfterUndo();
+
+        // and the redo
+        assertEquals(stateInit.view(), stateDefault.view());
+    }
 
     @Test
     public void testContains() {

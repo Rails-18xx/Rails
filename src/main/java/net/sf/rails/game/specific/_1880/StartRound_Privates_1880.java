@@ -5,9 +5,9 @@ import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.Currency;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.Player;
+import net.sf.rails.game.PlayerManager;
 import net.sf.rails.game.PublicCertificate;
 import net.sf.rails.game.StartItem;
-import net.sf.rails.game.state.ChangeStack;
 import rails.game.action.PossibleAction;
 
 public class StartRound_Privates_1880 extends StartRound_Sequential {
@@ -85,11 +85,11 @@ public class StartRound_Privates_1880 extends StartRound_Sequential {
 
     @Override
     protected void finishRound() {
-        getRoot().getPlayerManager().setCurrentPlayer(getRoot().getGameManager().reorderPlayersByCash(true));
-        currentPlayer = getCurrentPlayer();
-        getRoot().getPlayerManager().setPriorityPlayer((Player) currentPlayer); // Method doesn't
-                                                               // exist in
-                                                               // Startround ???
+        PlayerManager pm = getRoot().getPlayerManager();
+        Player firstPlayer = pm.reorderPlayersByCash(true);
+        pm.setCurrentPlayer(firstPlayer);
+        pm.setPriorityPlayer(firstPlayer);
+        currentPlayer = firstPlayer;
         ReportBuffer.add(this, LocalText.getText("PlayersReordered"));
         super.finishRound();
     }
