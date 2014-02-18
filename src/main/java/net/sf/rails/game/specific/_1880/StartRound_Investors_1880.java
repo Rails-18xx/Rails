@@ -69,7 +69,9 @@ public class StartRound_Investors_1880 extends StartRound {
         investor.start();
         investor.setFloated();
         
-        setCurrentPlayerIndex(getCurrentPlayerIndex() + 1);
+        
+        getRoot().getPlayerManager().setNextPlayer();
+        // TODO: replaces setCurrentPlayerIndex(getCurrentPlayerIndex() + 1);
         
         ReportBuffer.add(this, LocalText.getText("ChoosesInvestor",
                 player.getId(),

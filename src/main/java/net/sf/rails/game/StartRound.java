@@ -356,20 +356,24 @@ public abstract class StartRound extends Round {
      * @see GameManager.getCurrentPlayerIndex().
      */
     @Override
+    @Deprecated
     public int getCurrentPlayerIndex() {
         return getRoot().getPlayerManager().getCurrentPlayer().getIndex();
     }
 
+    @Deprecated
     protected void setPriorityPlayer() {
         setCurrentPlayer(getRoot().getPlayerManager().getPriorityPlayer());
         currentPlayer = getCurrentPlayer();
     }
 
+    @Deprecated
     protected void setPlayer(Player player) {
         setCurrentPlayer(player);
         currentPlayer = player;
     }
 
+    @Deprecated
     protected void setNextPlayer() {
         setCurrentPlayerIndex(getCurrentPlayerIndex() + 1);
         currentPlayer = getCurrentPlayer();

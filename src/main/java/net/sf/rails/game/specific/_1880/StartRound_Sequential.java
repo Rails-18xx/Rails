@@ -13,11 +13,12 @@ import net.sf.rails.game.Certificate;
 import net.sf.rails.game.Currency;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.Player;
+import net.sf.rails.game.PlayerManager;
 import net.sf.rails.game.StartItem;
 import net.sf.rails.game.StartPacket;
 import net.sf.rails.game.StartRound;
-import net.sf.rails.game.state.ChangeStack;
-import rails.game.*;
+import net.sf.rails.game.state.ArrayListState;
+import net.sf.rails.game.state.GenericState;
 import rails.game.action.*;
 
 /**
@@ -26,9 +27,12 @@ import rails.game.action.*;
  */
 public class StartRound_Sequential extends StartRound {
 
-    private Player startingPlayer;
-    private StartItem currentItem;
-    private final List<Player> passedPlayers = new Vector<Player>();
+    private final GenericState<Player> startingPlayer =
+            GenericState.create(this, "startingPlayer");
+    private final GenericState<StartItem> currentItem =
+            GenericState.create(this, "currentItem");
+    private final ArrayListState<Player> passedPlayers = 
+            ArrayListState.create(this, "passedPlayers");
 
     /**
      * @param gameManager
@@ -46,11 +50,12 @@ public class StartRound_Sequential extends StartRound {
 
         // crude fix for StartItem hardcoded SetMinimumbid ignoring the initial
         // value out of the XMLs....
+        // FIXME: Is this undo proof?
         for (StartItem item : startPacket.getItems()) {
             item.setMinimumBid(item.getBasePrice());
         }
 
-        startingPlayer = getCurrentPlayer();
+        startingPlayer.set(getRoot().getPlayerManager().getCurrentPlayer());
         setPossibleActions();
     }
 
@@ -58,33 +63,33 @@ public class StartRound_Sequential extends StartRound {
         StartItem firstUnsoldItem = startPacket.getFirstUnsoldItem();
         if (firstUnsoldItem == null) {
             finishRound();
-        } else if (currentItem != firstUnsoldItem) {
-            if (currentItem != null) {
+        } else if (currentItem.value() != firstUnsoldItem) {
+            if (currentItem.value() != null) {
                 setNextStartingPlayer();
             }
-            currentItem = firstUnsoldItem;
-            currentItem.setStatus(StartItem.BIDDABLE);
+            currentItem.set(firstUnsoldItem);
+            currentItem.value().setStatus(StartItem.BIDDABLE);
             passedPlayers.clear();
         }        
     }
 
     private void setNextBiddingPlayer() {
-        int currentPlayerIndex = getCurrentPlayerIndex();
-        int numberOfPlayers = getRoot().getPlayerManager().getNumberOfPlayers();
-
-        for (int i = (currentPlayerIndex + 1); i < (currentPlayerIndex + numberOfPlayers); i++) {
-            if (passedPlayers.contains(getRoot().getPlayerManager().getPlayerByIndex(i)) == false) {
-                setCurrentPlayerIndex(i);
+        
+        List<Player> nextPlayers = getRoot().getPlayerManager().getPlayersAfterCurrent();
+        for (Player p: nextPlayers) {
+            if (!passedPlayers.contains(p)) {
+                // TODO: What happens if all players have passed?
+                getRoot().getPlayerManager().setCurrentPlayer(p);
                 break;
             }
         }
     }
 
     private void setNextStartingPlayer() {
-        Player nextPlayer =
-                getRoot().getPlayerManager().getPlayerByIndex(startingPlayer.getIndex() + 1);
-        startingPlayer = nextPlayer;
-        setCurrentPlayerIndex(nextPlayer.getIndex());
+        PlayerManager pm = getRoot().getPlayerManager();
+        Player nextPlayer = pm.getNextPlayerAfter(startingPlayer.value());
+        startingPlayer.set(nextPlayer);
+        pm.setCurrentPlayer(nextPlayer);
     }
 
     @Override

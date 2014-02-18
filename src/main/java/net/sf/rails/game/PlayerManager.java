@@ -48,7 +48,7 @@ public class PlayerManager extends RailsManager implements Configurable {
     /**
      * nextPlayerMessages collects all messages to be displayed to the next player
      */
-    protected final ArrayListState<String> nextPlayerMessages = ArrayListState.create(this, "nextPlayerMessages");
+    private final ArrayListState<String> nextPlayerMessages = ArrayListState.create(this, "nextPlayerMessages");
     
     /**
      * Used by Configure (via reflection) only
@@ -209,6 +209,26 @@ public class PlayerManager extends RailsManager implements Configurable {
         return playerModel.getPlayerAfter(player);
     }
     
+    /**
+     * @return a list of the next (active) players after the argument player
+     */
+    public ImmutableList<Player> getPlayersAfter(Player player) {
+        ImmutableList.Builder<Player> playersAfter = ImmutableList.builder();
+        Player nextPlayer = playerModel.getPlayerAfter(player);
+        while (nextPlayer != player) {
+            playersAfter.add(nextPlayer);
+            nextPlayer = playerModel.getPlayerAfter(nextPlayer);
+        }
+        return playersAfter.build();
+    }
+    
+    /**
+     * @return a list of the next (active) players after current Player
+     */
+    public ImmutableList<Player> getPlayersAfterCurrent() {
+        return getPlayersAfter(playerModel.currentPlayer.value());
+    }
+    
     @Deprecated
     public int getCurrentPlayerIndex() {
         return getCurrentPlayer().getIndex();
@@ -265,6 +285,8 @@ public class PlayerManager extends RailsManager implements Configurable {
             } while (players.get(nextIndex).isBankrupt());
             return players.get(nextIndex);
         }
+        
+        
         
         // this creates a new order based on the comparator provided
         // last tie-breaker is the old order of players
