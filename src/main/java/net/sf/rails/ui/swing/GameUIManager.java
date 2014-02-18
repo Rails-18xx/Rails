@@ -167,7 +167,7 @@ public class GameUIManager implements DialogOwner {
         }
         saveSuffixSpec = Config.get("save.filename.suffix");
         if (!Util.hasValue(saveSuffixSpec) || saveSuffixSpec.equals(NEXT_PLAYER_SUFFIX)) {
-            saveSuffix = getPlayerNames().get(0);
+            saveSuffix = getPlayers().get(0).getId();
         } else if (saveSuffixSpec.equals(CURRENT_ROUND_SUFFIX))  {
             if (currentRound != null) {
                 saveSuffix = currentRound.getRoundName();
@@ -1119,10 +1119,6 @@ public class GameUIManager implements DialogOwner {
         return railsRoot.getPlayerManager().getPlayers();
     }
     
-    public List<String> getPlayerNames() {
-        return railsRoot.getPlayerManager().getPlayerNames();
-    }
-
     public Player getCurrentPlayer() {
         return railsRoot.getPlayerManager().getCurrentPlayer();
     }

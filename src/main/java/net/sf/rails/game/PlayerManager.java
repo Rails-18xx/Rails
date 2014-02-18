@@ -130,13 +130,6 @@ public class PlayerManager extends RailsManager implements Configurable {
         return playerNames.get(name);
     }
 
-    @Deprecated
-    // FIXME: Check if this is necessary
-    public List<String> getPlayerNames() {
-        // DO NOTHING
-        return null;
-    }
-    
     public int getNumberOfPlayers() {
         return playerModel.players.size();
     }
@@ -193,17 +186,27 @@ public class PlayerManager extends RailsManager implements Configurable {
     
     // FIXME: Rename to setCurrentToNextPlayer
     public Player setNextPlayer() {
-        Player nextPlayer = playerModel.getNextPlayer();
+        Player nextPlayer = getNextPlayer();
         playerModel.currentPlayer.set(nextPlayer);
+        return nextPlayer;
+    }
+    
+    public Player getNextPlayer() {
+        Player currentPlayer = playerModel.currentPlayer.value();
+        Player nextPlayer = playerModel.getPlayerAfter(currentPlayer);
         return nextPlayer;
     }
     
     // TODO: Check if this change is valid to set only non-bankrupt players
     // to be priority players
     public Player setPriorityPlayer() {
-        Player priorityPlayer = playerModel.getNextPlayer();
+        Player priorityPlayer = getNextPlayer();
         playerModel.priorityPlayer.set(priorityPlayer);
         return priorityPlayer;
+    }
+    
+    public Player getNextPlayerAfter(Player player) {
+        return playerModel.getPlayerAfter(player);
     }
     
     @Deprecated
@@ -255,8 +258,8 @@ public class PlayerManager extends RailsManager implements Configurable {
             super(parent, id);
         }
     
-        private Player getNextPlayer() {
-            int nextIndex = players.indexOf(currentPlayer.value());
+        private Player getPlayerAfter(Player player) {
+            int nextIndex = players.indexOf(player);
             do {
                 nextIndex = (nextIndex + 1) % players.size();
             } while (players.get(nextIndex).isBankrupt());
