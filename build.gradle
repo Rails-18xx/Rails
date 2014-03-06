@@ -185,7 +185,7 @@ task uploadWebstart(dependsOn: generateWebstart) << {
 }
 
 
-task cleanWebstart (type:Delete) {
+task cleanWebstart (type:Delete, dependsOn:clean) {
   delete "${webstartBuildDir}", "${webstartDestDir}"
 }
 
