@@ -11,8 +11,6 @@
 	<classpathentry kind="lib" path="libs/main/guava-r09/guava-r09.jar"/>
 	<classpathentry kind="lib" path="libs/main/jgraph5/jgraph.jar"/>
 	<classpathentry kind="lib" path="libs/main/jgrapht-0.7.3/jgrapht-jdk1.5.jar"/>
-	<classpathentry kind="lib" path="libs/main/logback-1.0.4/logback-classic-1.0.4.jar"/>
-	<classpathentry kind="lib" path="libs/main/logback-1.0.4/logback-core-1.0.4.jar"/>
 	<classpathentry kind="lib" path="libs/main/sl4j-1.6.5/slf4j-api-1.6.5.jar"/>
 	<classpathentry kind="lib" path="libs/test/fest-2.0M6/fest-assert-core-2.0M6.jar"/>
 	<classpathentry kind="lib" path="libs/test/fest-2.0M6/fest-util-1.2.1.jar"/>
@@ -39,5 +37,7 @@
 	<classpathentry kind="lib" path="libs/main/batik-1.7/lib/xml-apis-ext.jar"/>
 	<classpathentry kind="lib" path="libs/main/batik-1.7/lib/xml-apis.jar"/>
 	<classpathentry kind="lib" path="libs/main/JLayer1.0.1/jl1.0.1.jar"/>
+	<classpathentry kind="lib" path="libs/main/logback-1.1.1/logback-classic-1.1.1.jar"/>
+	<classpathentry kind="lib" path="libs/main/logback-1.1.1/logback-core-1.1.1.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
