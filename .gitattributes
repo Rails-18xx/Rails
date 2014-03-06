@@ -36,3 +36,5 @@
 *.so            binary
 *.war           binary
 
+# rails specific
+*.18t           binary
