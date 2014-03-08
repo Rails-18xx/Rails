@@ -22,15 +22,4 @@
 		<nature>org.eclipse.jem.beaninfo.BeanInfoNature</nature>
 		<nature>com.soyatec.additional.Nature</nature>
 	</natures>
-	<filteredResources>
-		<filter>
-			<id>1392284766939</id>
-			<name>webstart</name>
-			<type>10</type>
-			<matcher>
-				<id>org.eclipse.ui.ide.multiFilter</id>
-				<arguments>1.0-projectRelativePath-matches-false-false-build</arguments>
-			</matcher>
-		</filter>
-	</filteredResources>
 </projectDescription>

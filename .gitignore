@@ -1,0 +1,12 @@
+# Gradle build
+build/
+.gradle/
+
+# Eclipse build
+classes/
+
+# Log files
+**/18xx.log
+
+# backup files
+**/*.*~

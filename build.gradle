@@ -48,8 +48,8 @@ def keyAlias = 'rails18xx'
 // def keyAlias = 'stefanfrey'
 
 // Build directories
-def webstartBuildDir = 'webstart/build'
-def webstartDestDir = 'webstart/signed'
+def webstartBuildDir = "${buildDir}/webstart/build"
+def webstartDestDir = "${buildDir}/webstart/signed"
 def keystoreFile = '../../keystore/rails.keys'
 
 // Sourceforge variables
