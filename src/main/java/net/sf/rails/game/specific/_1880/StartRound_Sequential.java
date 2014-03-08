@@ -4,7 +4,6 @@
 package net.sf.rails.game.specific._1880;
 
 import java.util.List;
-import java.util.Vector;
 
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
@@ -101,9 +100,9 @@ public class StartRound_Sequential extends StartRound {
         }
 
         if (currentItem != null) {
-            if (getCurrentPlayer().getCash() >= currentItem.getMinimumBid()) {
-                possibleActions.add(new BidStartItem(currentItem,
-                        currentItem.getMinimumBid(), startPacket.getModulus(), true));
+            if (getCurrentPlayer().getCash() >= currentItem.value().getMinimumBid()) {
+                possibleActions.add(new BidStartItem(currentItem.value(),
+                        currentItem.value().getMinimumBid(), startPacket.getModulus(), true));
             }
             possibleActions.add(new NullAction(NullAction.PASS));
         }
@@ -121,11 +120,11 @@ public class StartRound_Sequential extends StartRound {
             return false;
         }
 
-        if (currentItem.getBid(player) > 0) {
-            player.unblockCash(currentItem.getBid(player));
+        if (currentItem.value().getBid(player) > 0) {
+            player.unblockCash(currentItem.value().getBid(player));
         }
              
-        currentItem.setBid(bidAmount, player);
+        currentItem.value().setBid(bidAmount, player);
         player.blockCash(bidAmount);
 
         ReportBuffer.add(this, LocalText.getText("BID_ITEM_LOG",
@@ -135,10 +134,10 @@ public class StartRound_Sequential extends StartRound {
                 Currency.format(this,player.getFreeCash())));        
         
         if ((passedPlayers.size() == (getRoot().getPlayerManager().getNumberOfPlayers() - 1))
-            && (currentItem.getBidder() != null)) {
+            && (currentItem.value().getBidder() != null)) {
         // One player has bid, everyone else has passed.
-            assignItem(currentItem.getBidder(), currentItem,
-                    currentItem.getBid());
+            assignItem(currentItem.value().getBidder(), currentItem.value(),
+                    currentItem.value().getBid());
         } else {
             setNextBiddingPlayer();
         }
@@ -156,7 +155,7 @@ public class StartRound_Sequential extends StartRound {
             }
 
             // Is the current item correct?
-            if (currentItem != bidItem.getStartItem()) {
+            if (currentItem.value() != bidItem.getStartItem()) {
                 errMsg = LocalText.getText("WrongItem", playerName, getCurrentPlayer().getId());
                 break;
             }
@@ -182,8 +181,8 @@ public class StartRound_Sequential extends StartRound {
             }
 
             // Bid must be at least 5 above last bid
-            if (bidItem.getActualBid() < currentItem.getMinimumBid()) {
-                errMsg = LocalText.getText("BidTooLow", "" + currentItem.getMinimumBid());
+            if (bidItem.getActualBid() < currentItem.value().getMinimumBid()) {
+                errMsg = LocalText.getText("BidTooLow", "" + currentItem.value().getMinimumBid());
                 break;
             }
 
@@ -206,7 +205,7 @@ public class StartRound_Sequential extends StartRound {
         if (errMsg != null) {
             DisplayBuffer.add(this, LocalText.getText("InvalidBid",
                     playerName,
-                    currentItem.getName(),
+                    currentItem.value().getName(),
                     errMsg ));
             return false;
         }
@@ -224,27 +223,27 @@ public class StartRound_Sequential extends StartRound {
 
         ReportBuffer.add(this, LocalText.getText("PASSES", playerName));
         
-        if (currentItem.getBid(player) > 0) {
-            player.unblockCash(currentItem.getBid(player));
+        if (currentItem.value().getBid(player) > 0) {
+            player.unblockCash(currentItem.value().getBid(player));
         }
 
-        currentItem.setBid(-1, player);
+        currentItem.value().setBid(-1, player);
         passedPlayers.add(player);
         
         if (passedPlayers.size() == getRoot().getPlayerManager().getNumberOfPlayers()) {
         // All players have passed - reduce price or run an operating round
             ReportBuffer.add(this, LocalText.getText("ALL_PASSED"));
-            if (currentItem.getNoBidsReaction() == StartItem.NoBidsReaction.REDUCE_AND_REBID) {
-                currentItem.reduceBasePriceBy(5); // TODO: Make not 5
+            if (currentItem.value().getNoBidsReaction() == StartItem.NoBidsReaction.REDUCE_AND_REBID) {
+                currentItem.value().reduceBasePriceBy(5); // TODO: Make not 5
                 // If the price was reduced to 0, assign the company to the starting bidder instead
-                if (currentItem.getBasePrice() == 0) {
-                    assignItem((Player) startingPlayer, currentItem, 0);
+                if (currentItem.value().getBasePrice() == 0) {
+                    assignItem((Player) startingPlayer.value(), currentItem.value(), 0);
                 } else {
                     ReportBuffer.add(this, LocalText.getText(
                             "ITEM_PRICE_REDUCED",
-                                    currentItem.getName(),
+                                    currentItem.value().getName(),
                                     Currency.format(this, startPacket.getFirstItem().getBasePrice()) ));
-                    currentItem.setMinimumBid(currentItem.getBasePrice());
+                    currentItem.value().setMinimumBid(currentItem.value().getBasePrice());
                     passedPlayers.clear();
                     setNextBiddingPlayer();
                 }
@@ -253,9 +252,9 @@ public class StartRound_Sequential extends StartRound {
                 finishRound(); // TODO: Can this work?  How will it know to not start second start round?
             }
         } else if ((passedPlayers.size() == (getRoot().getPlayerManager().getNumberOfPlayers() - 1))
-            && (currentItem.getBidder() != null)) {
+            && (currentItem.value().getBidder() != null)) {
         // One player has bid, everyone else has passed.
-            assignItem(currentItem.getBidder(), currentItem, currentItem.getBid()); // Could re-assign starting player...
+            assignItem(currentItem.value().getBidder(), currentItem.value(), currentItem.value().getBid()); // Could re-assign starting player...
         } else {
         // There are other players yet to bid
             setNextBiddingPlayer();     
