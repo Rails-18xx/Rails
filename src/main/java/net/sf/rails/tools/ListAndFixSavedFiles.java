@@ -214,7 +214,7 @@ implements ActionListener, KeyListener {
             // use GameLoader object to load game
             gameLoader = new GameLoader();
             try{
-                gameLoader.createFromFile(filepath);
+                gameLoader.createFromFile(selectedFile);
                 add(gameLoader.getGameDataAsText());
                 //gameLoader.getRoot().start();
                 setReportText(true);

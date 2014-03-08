@@ -63,7 +63,7 @@ public final class TestGameBuilder extends TestCase {
         if (gameFile.exists()) { 
             System.out.println("Found game at " + gameFile.getAbsolutePath());
             GameLoader gameLoader = new GameLoader();
-            if (gameLoader.createFromFile(gameFile.getAbsolutePath())) {
+            if (gameLoader.createFromFile(gameFile)) {
                 root = gameLoader.getRoot();
             }
         }

@@ -6,20 +6,24 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
-import java.io.ObjectStreamClass;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
+
+import javax.swing.JOptionPane;
 
 import net.sf.rails.common.GameData;
 import net.sf.rails.common.GameInfo;
 import net.sf.rails.common.GameOption;
 import net.sf.rails.common.GameOptionsSet;
+import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.GameOptionsParser;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.RailsRoot;
+import net.sf.rails.ui.swing.GameUIManager;
+import net.sf.rails.ui.swing.SplashWindow;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +50,57 @@ public class GameLoader {
     private Exception exception = null;
 
     public GameLoader() {};
+    
+    public static void loadAndStartGame(File gameFile) {
+        SplashWindow splashWindow = new SplashWindow(true, gameFile.getAbsolutePath());
+        splashWindow.notifyOfStep(SplashWindow.STEP_LOAD_GAME);
 
+        // use gameLoader instance to start game
+        GameLoader gameLoader = new GameLoader();
+        if (!gameLoader.createFromFile(gameFile)) {
+            Exception e = gameLoader.getException();
+            log.error("Game load failed", e);
+            if (e instanceof RailsReplayException) {
+                String title = LocalText.getText("LOAD_INTERRUPTED_TITLE");
+                String message = LocalText.getText("LOAD_INTERRUPTED_MESSAGE", e.getMessage());
+                JOptionPane.showMessageDialog(splashWindow.getWindow(), message, title, JOptionPane.ERROR_MESSAGE);
+            } else {
+                String title = LocalText.getText("LOAD_FAILED_TITLE");
+                String message = LocalText.getText("LOAD_FAILED_MESSAGE", e.getMessage());
+                JOptionPane.showMessageDialog(splashWindow.getWindow(), message, title, JOptionPane.ERROR_MESSAGE);
+                // in this case start of game cannot continued
+                return;
+            }
+        }
+        
+        GameUIManager gameUIManager = startGameUIManager(gameLoader.getRoot(), true, splashWindow);
+        
+        // TODO: Check if this is correct
+        gameUIManager.setSaveDirectory(gameFile.getParent());
+        
+        gameUIManager.startLoadedGame();
+        gameUIManager.notifyOfSplashFinalization();
+        splashWindow.finalizeGameInit();
+        splashWindow = null;
+    }
+
+    public static GameUIManager startGameUIManager(RailsRoot game, boolean wasLoaded, SplashWindow splashWindow) {
+        // TODO: Replace that with a Configure method
+        GameManager gameManager = game.getGameManager();
+        String gameUIManagerClassName = gameManager.getClassName(GuiDef.ClassName.GAME_UI_MANAGER);
+        GameUIManager gameUIManager = null;
+        try {
+            Class<? extends GameUIManager> gameUIManagerClass =
+                Class.forName(gameUIManagerClassName).asSubclass(GameUIManager.class);
+            gameUIManager = gameUIManagerClass.newInstance();
+            gameUIManager.init(game, wasLoaded, splashWindow);
+        } catch (Exception e) {
+            log.error("Cannot instantiate class " + gameUIManagerClassName, e);
+            System.exit(1);
+        }
+        return gameUIManager;
+    }
+    
     // FIXME: Rails 2.0 add undefined attribute to allow
     // deviations from undefined to default values
     private GameOptionsSet.Builder loadDefaultGameOptions(String gameName) {
@@ -65,12 +119,14 @@ public class GameLoader {
      * Load the gameData from file
      * @param filepath
      */
+    
     @SuppressWarnings("unchecked")
-    public void loadGameData(String filepath) throws Exception {
-        log.info("Loading game from file " + filepath);
-        String filename = filepath.replaceAll(".*[/\\\\]", "");
-        ois = new RailsObjectInputStream(new FileInputStream(
-                new File(filepath)));
+    public void loadGameData(File gameFile) throws Exception {
+        log.info("Loading game from file " + gameFile.getCanonicalPath());
+        // FIXME: Removed the filename replacement expression
+        // check if this still works
+        // String filename = filepath.replaceAll(".*[/\\\\]", "");
+        ois = new RailsObjectInputStream(new FileInputStream(gameFile));
 
         Object object = ois.readObject();
         String version;
@@ -83,7 +139,7 @@ public class GameLoader {
             version = "pre-1.0.7";
         }
         gameIOData.setVersion(version);
-        log.info("Reading Rails " + version  +" saved file "+filename);
+        log.info("Reading Rails " + version  +" saved file " + gameFile.getName());
 
         if (object instanceof String) {
             String date = (String)object;
@@ -246,14 +302,14 @@ public class GameLoader {
     }
 
     /**
-     * @param the filePath used to create the game
+     * @param gameFile
      * @return false if exception occurred
      */
-    public boolean createFromFile(String filepath)  {
+    public boolean createFromFile(File gameFile)  {
 
         try {
             // 1st: loadGameData
-            loadGameData(filepath);
+            loadGameData(gameFile);
             
             // 2nd: create game
             railsRoot = RailsRoot.create(gameIOData.getGameData());
@@ -279,6 +335,8 @@ public class GameLoader {
      * old game files
      * 
      * See: http://stackoverflow.com/questions/5305473
+     * 
+     * However this approach did not work. I did not investigate it further so far.
      */
     
     public static class RailsObjectInputStream extends ObjectInputStream {

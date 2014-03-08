@@ -27,17 +27,14 @@ import net.sf.rails.common.GameData;
 import net.sf.rails.common.GameInfo;
 import net.sf.rails.common.GameOption;
 import net.sf.rails.common.GameOptionsSet;
-import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.GameInfoParser;
 import net.sf.rails.common.parser.GameOptionsParser;
-import net.sf.rails.game.GameManager;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.sound.SoundManager;
 import net.sf.rails.util.GameLoader;
 import net.sf.rails.util.GameSaver;
-import net.sf.rails.util.RailsReplayException;
 import net.sf.rails.util.SystemOS;
 import net.sf.rails.util.Util;
 
@@ -107,17 +104,6 @@ public class GameSetupController {
         return defaultGame;  
     }
     
-    private void completeGameUIInit(SplashWindow splashWindow) {
-        if (configWindow != null) {
-            configWindow.dispose();
-            configWindow = null;
-        }
-
-        gameUIManager.notifyOfSplashFinalization();
-        splashWindow.finalizeGameInit();
-        splashWindow = null;
-    }
-    
     GameOptionsSet.Builder getAvailableOptions(GameInfo game) {
         if (!gameOptions.containsKey(game)) {
             return loadOptions(game);
@@ -143,60 +129,18 @@ public class GameSetupController {
         return loadGameOptions;
     }
 
-    private void startGameUIManager(RailsRoot game, boolean wasLoaded, SplashWindow splashWindow) {
-        // TODO: Replace that with a Configure method
-        GameManager gameManager = game.getGameManager();
-        String gameUIManagerClassName = gameManager.getClassName(GuiDef.ClassName.GAME_UI_MANAGER);
-        try {
-            Class<? extends GameUIManager> gameUIManagerClass =
-                Class.forName(gameUIManagerClassName).asSubclass(GameUIManager.class);
-            gameUIManager = gameUIManagerClass.newInstance();
-            gameUIManager.init(game, wasLoaded, splashWindow);
-        } catch (Exception e) {
-            log.error("Cannot instantiate class " + gameUIManagerClassName, e);
-            System.exit(1);
-        }
-    }
-
     private void prepareGameUIInit() {
         window.setVisible(false);
-        if (configWindow != null) configWindow.setVisible(false);
+        if (configWindow != null) {
+            configWindow.dispose();
+            configWindow = null;
+        }
     }
-
     
-    /*
-     * loads and start the game given a filename
-     */
-    private void loadAndStartGame(String filePath, String saveDirectory) {
+    private void loadAndStartGame(File gameFile) {
         prepareGameUIInit();
-        SplashWindow splashWindow = new SplashWindow(true,filePath);
-        splashWindow.notifyOfStep(SplashWindow.STEP_LOAD_GAME);
-        // use gameLoader instance to start game
-        GameLoader gameLoader = new GameLoader();
-        if (!gameLoader.createFromFile(filePath)) {
-            Exception e = gameLoader.getException();
-            log.error("Game load failed", e);
-            if (e instanceof RailsReplayException) {
-                String title = LocalText.getText("LOAD_INTERRUPTED_TITLE");
-                String message = LocalText.getText("LOAD_INTERRUPTED_MESSAGE", e.getMessage());
-                JOptionPane.showMessageDialog(window, message, title, JOptionPane.ERROR_MESSAGE);
-            } else {
-                String title = LocalText.getText("LOAD_FAILED_TITLE");
-                String message = LocalText.getText("LOAD_FAILED_MESSAGE", e.getMessage());
-                JOptionPane.showMessageDialog(window, message, title, JOptionPane.ERROR_MESSAGE);
-                // in this case start of game cannot continued
-                return;
-            }
-        }
-        startGameUIManager(gameLoader.getRoot(), true, splashWindow);
-        if (saveDirectory != null) {
-            gameUIManager.setSaveDirectory (saveDirectory);
-        }
-        gameUIManager.startLoadedGame();
-        completeGameUIInit(splashWindow);
+        GameLoader.loadAndStartGame(gameFile);
     }
-
-    
     
     // Action inner classes
     private class NewAction extends AbstractAction {
@@ -246,10 +190,12 @@ public class GameSetupController {
                 System.exit(-1);
             }
             prepareGameUIInit();
-            startGameUIManager (railsRoot, false, splashWindow);
+            gameUIManager = GameLoader.startGameUIManager (railsRoot, false, splashWindow);
             gameUIManager.gameUIInit(true); // true indicates new game
-            completeGameUIInit(splashWindow);
 
+            gameUIManager.notifyOfSplashFinalization();
+            splashWindow.finalizeGameInit();
+            splashWindow = null;
         }
     }
     
@@ -267,7 +213,7 @@ public class GameSetupController {
                 new Thread() {
                     @Override
                     public void run() {
-                        loadAndStartGame(selectedFile.getPath(), selectedFile.getParent());
+                        loadAndStartGame(selectedFile);
                     }
                 }.start();
             } else { // cancel pressed
@@ -323,7 +269,7 @@ public class GameSetupController {
                 new Thread() {
                     @Override
                     public void run() {
-                        loadAndStartGame(selectedFile.getPath(), selectedFile.getParent());
+                        loadAndStartGame(selectedFile);
                     }
                 }.start();
             } else { // cancel pressed
@@ -353,7 +299,7 @@ public class GameSetupController {
                 public void run() {
                     String filePath = SystemOS.get().getConfigurationFolder(GameSaver.autosaveFolder, true).getAbsolutePath() 
                             + File.separator + GameSaver.autosaveFile;
-                    loadAndStartGame(filePath, null);
+                    loadAndStartGame(new File(filePath));
                 }
             }.start();
         }

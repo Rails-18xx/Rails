@@ -295,6 +295,13 @@ public class SplashWindow {
         framesRegisteredToFront.add(frame);
     }
     
+    /**
+     * @return window to allow displaying messages on it
+     */
+    public JWindow getWindow() {
+        return myWin;
+    }
+    
     public void finalizeGameInit() {
         notifyOfStep(STEP_FINALIZE);
         

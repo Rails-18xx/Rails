@@ -927,7 +927,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
         /* followed by actions and comments */
         try{
-            gameLoader.loadGameData(filepath);
+            gameLoader.loadGameData(new File(filepath));
             gameLoader.convertGameData();
         } catch (Exception e)  {
             log.error("Load failed", e);

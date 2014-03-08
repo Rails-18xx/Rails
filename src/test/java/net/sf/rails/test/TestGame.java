@@ -99,7 +99,7 @@ public class TestGame extends TestCase {
         if (gameFile.exists()) {
             log.debug("Found gamefile at " + gameFilename);
             GameLoader gameLoader = new GameLoader();
-            if (gameLoader.createFromFile(gameFilename)) {
+            if (gameLoader.createFromFile(gameFile)) {
                 testReport = gameLoader.getRoot().getReportManager().getReportBuffer().getAsList();
             } else {
                 log.error("Game load failed", gameLoader.getException());
