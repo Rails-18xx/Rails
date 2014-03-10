@@ -50,6 +50,9 @@ import rails.game.action.NullAction;
 import rails.game.action.PossibleAction;
 import rails.game.action.SetDividend;
 import rails.game.action.UseSpecialProperty;
+import rails.game.specific._1880.CloseInvestor_1880;
+import rails.game.specific._1880.ExchangeForCash;
+import rails.game.specific._1880.ForcedRocketExchange;
 
 /**
  * @author Martin

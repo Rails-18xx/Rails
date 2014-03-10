@@ -13,7 +13,6 @@ import javax.swing.JOptionPane;
 
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.specific._1880.StartCompany_1880;
 import net.sf.rails.sound.SoundManager;
 import net.sf.rails.ui.swing.GameStatus;
 import net.sf.rails.ui.swing.GameUIManager;
@@ -24,6 +23,7 @@ import rails.game.action.PossibleAction;
 import rails.game.action.SellShares;
 import rails.game.action.StartCompany;
 import rails.game.correct.CashCorrectionAction;
+import rails.game.specific._1880.StartCompany_1880;
 
 /**
  * @author Martin Brumm

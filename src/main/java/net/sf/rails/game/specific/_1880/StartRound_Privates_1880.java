@@ -9,6 +9,7 @@ import net.sf.rails.game.PublicCertificate;
 import net.sf.rails.game.StartItem;
 import net.sf.rails.game.state.GenericState;
 import rails.game.action.PossibleAction;
+import rails.game.specific._1880.SetupNewPublicDetails_1880;
 
 public class StartRound_Privates_1880 extends StartRound_Sequential {
 

@@ -1,4 +1,4 @@
-package net.sf.rails.game.specific._1880;
+package rails.game.specific._1880;
 
 import java.util.Collections;
 import java.util.HashMap;

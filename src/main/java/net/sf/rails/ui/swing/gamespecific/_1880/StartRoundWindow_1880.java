@@ -8,7 +8,6 @@ package net.sf.rails.ui.swing.gamespecific._1880;
 import javax.swing.JDialog;
 
 import net.sf.rails.common.LocalText;
-import net.sf.rails.game.specific._1880.SetupNewPublicDetails_1880;
 import net.sf.rails.ui.swing.StartRoundWindow;
 import net.sf.rails.ui.swing.elements.NonModalDialog;
 import net.sf.rails.ui.swing.elements.RadioButtonDialog;
@@ -16,6 +15,7 @@ import rails.game.action.BuyStartItem;
 import rails.game.action.PossibleAction;
 import rails.game.action.PossibleActions;
 import rails.game.action.StartItemAction;
+import rails.game.specific._1880.SetupNewPublicDetails_1880;
 
 
 /**

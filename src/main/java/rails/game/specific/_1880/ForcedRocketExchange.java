@@ -1,4 +1,4 @@
-package net.sf.rails.game.specific._1880;
+package rails.game.specific._1880;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.sf.rails.game.Train;
+import net.sf.rails.game.specific._1880.PublicCompany_1880;
 import rails.game.action.PossibleAction;
 import rails.game.action.PossibleORAction;
 

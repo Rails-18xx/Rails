@@ -1,5 +1,6 @@
-package net.sf.rails.game.specific._1880;
+package rails.game.specific._1880;
 
+import net.sf.rails.game.specific._1880.Investor_1880;
 import rails.game.action.PossibleAction;
 import rails.game.action.PossibleORAction;
 

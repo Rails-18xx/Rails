@@ -12,15 +12,15 @@ import java.util.Map;
 
 import javax.swing.JOptionPane;
 
+import rails.game.specific._1880.CloseInvestor_1880;
+import rails.game.specific._1880.ExchangeForCash;
+import rails.game.specific._1880.ForcedRocketExchange;
+import rails.game.specific._1880.SetupNewPublicDetails_1880;
+import rails.game.specific._1880.StartCompany_1880;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.Train;
 import net.sf.rails.game.specific._1880.BuildingRights_1880;
-import net.sf.rails.game.specific._1880.CloseInvestor_1880;
-import net.sf.rails.game.specific._1880.ExchangeForCash;
-import net.sf.rails.game.specific._1880.ForcedRocketExchange;
 import net.sf.rails.game.specific._1880.ParSlotManager_1880;
-import net.sf.rails.game.specific._1880.SetupNewPublicDetails_1880;
-import net.sf.rails.game.specific._1880.StartCompany_1880;
 import net.sf.rails.ui.swing.GameUIManager;
 import net.sf.rails.ui.swing.elements.NonModalDialog;
 import net.sf.rails.ui.swing.elements.RadioButtonDialog;

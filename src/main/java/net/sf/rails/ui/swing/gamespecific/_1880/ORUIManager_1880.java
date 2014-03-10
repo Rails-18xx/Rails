@@ -1,8 +1,8 @@
 package net.sf.rails.ui.swing.gamespecific._1880;
 
-import net.sf.rails.game.specific._1880.CloseInvestor_1880;
-import net.sf.rails.game.specific._1880.ExchangeForCash;
-import net.sf.rails.game.specific._1880.ForcedRocketExchange;
+import rails.game.specific._1880.CloseInvestor_1880;
+import rails.game.specific._1880.ExchangeForCash;
+import rails.game.specific._1880.ForcedRocketExchange;
 import net.sf.rails.ui.swing.ORUIManager;
 
 public class ORUIManager_1880 extends ORUIManager {
