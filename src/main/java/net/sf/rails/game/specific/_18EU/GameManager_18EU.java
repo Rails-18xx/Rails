@@ -61,10 +61,6 @@ public class GameManager_18EU extends GameManager {
 
     @Override
     protected void processBankruptcy () {
-        Player player, newPresident;
-        int numberOfPlayers = getRoot().getPlayerManager().getNumberOfPlayers();
-        int maxShare;
-        int share;
 
         // Assume default case as in 18EU: all assets to Bank/Pool
         Player bankrupter = getCurrentPlayer();
@@ -76,13 +72,11 @@ public class GameManager_18EU extends GameManager {
         }
         for (PublicCompany company : presidencies) {
             // Check if the presidency is dumped on someone
-            newPresident = null;
-            maxShare = 0;
+            Player newPresident = null;
+            int maxShare = 0;
             PlayerManager pm = getRoot().getPlayerManager();
-            for (int index=pm.getCurrentPlayerIndex()+1;
-            index<pm.getCurrentPlayerIndex()+numberOfPlayers; index++) {
-                player = pm.getPlayerByIndex(index%numberOfPlayers);
-                share = player.getPortfolioModel().getShare(company);
+            for (Player player:pm.getNextPlayers()) {
+                int share = player.getPortfolioModel().getShare(company);
                 if (share >= company.getPresidentsShare().getShare()
                         && (share > maxShare)) {
                     maxShare = share;

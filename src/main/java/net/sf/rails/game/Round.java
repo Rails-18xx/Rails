@@ -74,14 +74,6 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
         return getRoot().getPlayerManager().getCurrentPlayer();
     }
 
-    /**
-     * @return Returns the currentPlayerIndex.
-     */
-    @Deprecated
-    public int getCurrentPlayerIndex() {
-        return getCurrentPlayer().getIndex();
-    }
-
     @Deprecated
     public void setCurrentPlayerIndex(int newIndex) {
         getRoot().getPlayerManager().setCurrentPlayerIndex(newIndex);

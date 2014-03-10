@@ -12,6 +12,7 @@ import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
 import net.sf.rails.game.model.RailsModel;
 import net.sf.rails.game.state.ArrayListState;
+import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.GenericState;
 import net.sf.rails.game.state.IntegerState;
 import net.sf.rails.util.Util;
@@ -143,10 +144,6 @@ public class PlayerManager extends RailsManager implements Configurable {
         return playerModel.currentPlayer.value();
     }
     
-    public Player getPriorityPlayer() {
-        return playerModel.priorityPlayer.value();
-    }
-    
     public void setCurrentPlayer(Player player) {
         // transfer messages for the next player to the display buffer
         // TODO: refactor nextPlayerMessages inside DisplayBuffer
@@ -158,6 +155,10 @@ public class PlayerManager extends RailsManager implements Configurable {
             nextPlayerMessages.clear();
         }
         playerModel.currentPlayer.set(player);
+    }
+    
+    public Player getPriorityPlayer() {
+        return playerModel.priorityPlayer.value();
     }
     
     public void setPriorityPlayer(Player player) {
@@ -184,35 +185,44 @@ public class PlayerManager extends RailsManager implements Configurable {
         // DO NOTHING
     }
     
-    // FIXME: Rename to setCurrentToNextPlayer
-    public Player setNextPlayer() {
+    public Player setCurrentToNextPlayer() {
         Player nextPlayer = getNextPlayer();
-        playerModel.currentPlayer.set(nextPlayer);
+        setCurrentPlayer(nextPlayer);
+        return nextPlayer;
+    }
+    
+    public Player setCurrentToPriorityPlayer() {
+        Player priorityPlayer = playerModel.priorityPlayer.value();
+        setCurrentPlayer(priorityPlayer);
+        return priorityPlayer;
+    }
+    
+    public Player setCurrentToNextPlayerAfter(Player player){
+        Player nextPlayer = getNextPlayerAfter(player);
+        setCurrentPlayer(nextPlayer);
         return nextPlayer;
     }
     
     public Player getNextPlayer() {
-        Player currentPlayer = playerModel.currentPlayer.value();
-        Player nextPlayer = playerModel.getPlayerAfter(currentPlayer);
-        return nextPlayer;
-    }
-    
-    // TODO: Check if this change is valid to set only non-bankrupt players
-    // to be priority players
-    public Player setPriorityPlayer() {
-        Player priorityPlayer = getNextPlayer();
-        playerModel.priorityPlayer.set(priorityPlayer);
-        return priorityPlayer;
+        return playerModel.getPlayerAfter(playerModel.currentPlayer.value());
     }
     
     public Player getNextPlayerAfter(Player player) {
         return playerModel.getPlayerAfter(player);
     }
     
+
+    /**
+     * @return a list of the next (active) players after the current player
+     */
+    public ImmutableList<Player> getNextPlayers() {
+        return getNextPlayersAfter(playerModel.currentPlayer.value());
+    }
+    
     /**
      * @return a list of the next (active) players after the argument player
      */
-    public ImmutableList<Player> getPlayersAfter(Player player) {
+    public ImmutableList<Player> getNextPlayersAfter(Player player) {
         ImmutableList.Builder<Player> playersAfter = ImmutableList.builder();
         Player nextPlayer = playerModel.getPlayerAfter(player);
         while (nextPlayer != player) {
@@ -222,16 +232,12 @@ public class PlayerManager extends RailsManager implements Configurable {
         return playersAfter.build();
     }
     
-    /**
-     * @return a list of the next (active) players after current Player
-     */
-    public ImmutableList<Player> getPlayersAfterCurrent() {
-        return getPlayersAfter(playerModel.currentPlayer.value());
-    }
-    
-    @Deprecated
-    public int getCurrentPlayerIndex() {
-        return getCurrentPlayer().getIndex();
+    // TODO: Check if this change is valid to set only non-bankrupt players
+    // to be priority players
+    public Player setPriorityPlayerToNext() {
+        Player priorityPlayer = getNextPlayer();
+        setPriorityPlayer(priorityPlayer);
+        return priorityPlayer;
     }
     
     @Deprecated
@@ -244,11 +250,13 @@ public class PlayerManager extends RailsManager implements Configurable {
     *@param ascending Boolean to determine if the playerlist will be sorted in ascending or descending order based on their cash
     *@return Returns the player at index position 0 that is either the player with the most or least cash depending on sort order.
     */
-    public Player reorderPlayersByCash (final boolean ascending) {
+    public Player reorderPlayersByCash (boolean ascending) {
 
+       final boolean ascending_f = ascending;
+        
        Comparator<Player> cashComparator =  new Comparator<Player>() {
            public int compare (Player p1, Player p2) {
-               return ascending ? p1.getCash() - p2.getCash() : p2.getCash() - p1.getCash();
+               return ascending_f ? p1.getCash() - p2.getCash() : p2.getCash() - p1.getCash();
            }
        };
 
@@ -263,6 +271,10 @@ public class PlayerManager extends RailsManager implements Configurable {
 
        return playerModel.players.get(0);
     }
+    
+    public void reversePlayerOrder(boolean reverse) {
+        playerModel.reverse.set(reverse);
+    }
 
     public PlayerOrderModel getPlayerNamesModel() {
        return playerModel;
@@ -273,20 +285,24 @@ public class PlayerManager extends RailsManager implements Configurable {
         private final ArrayListState<Player> players = ArrayListState.create(this, "players");
         private final GenericState<Player> currentPlayer = GenericState.create(this, "currentPlayer");
         private final GenericState<Player> priorityPlayer = GenericState.create(this, "priorityPlayer");
+        private final BooleanState reverse = BooleanState.create(this, "reverse");
 
         private PlayerOrderModel(PlayerManager parent, String id) {
             super(parent, id);
+            reverse.set(false);
         }
     
         private Player getPlayerAfter(Player player) {
             int nextIndex = players.indexOf(player);
             do {
-                nextIndex = (nextIndex + 1) % players.size();
+                if (reverse.value()) {
+                    nextIndex = (nextIndex - 1 + players.size()) % players.size();
+                } else {
+                    nextIndex = (nextIndex + 1) % players.size();
+                }
             } while (players.get(nextIndex).isBankrupt());
             return players.get(nextIndex);
         }
-        
-        
         
         // this creates a new order based on the comparator provided
         // last tie-breaker is the old order of players
@@ -294,6 +310,10 @@ public class PlayerManager extends RailsManager implements Configurable {
             Ordering<Player> ordering = Ordering.from(comparator);
             List<Player> newOrder = ordering.sortedCopy(players.view());
             players.setTo(newOrder);
+        }
+        
+        public boolean isReverse() {
+            return reverse.value();
         }
         
         @Override

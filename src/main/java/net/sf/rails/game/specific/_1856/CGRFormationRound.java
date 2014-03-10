@@ -126,7 +126,7 @@ public class CGRFormationRound extends SwitchableUIRound {
         while (true) {
 
             while (!companiesToRepayLoans.containsKey(getCurrentPlayer())) {
-                getRoot().getPlayerManager().setNextPlayer();
+                getRoot().getPlayerManager().setCurrentToNextPlayer();
                 if (getCurrentPlayer().equals(startingPlayer)) {
                     return false;
                 }
@@ -388,7 +388,7 @@ public class CGRFormationRound extends SwitchableUIRound {
                 }
             }
 
-            getRoot().getPlayerManager().setNextPlayer();
+            getRoot().getPlayerManager().setCurrentToNextPlayer();
 
         } while (getCurrentPlayer() != startingPlayer);
 

@@ -3,6 +3,9 @@
  */
 package net.sf.rails.game.specific._1880;
 
+import rails.game.action.BidStartItem;
+import rails.game.action.BuyStartItem;
+import rails.game.action.NullAction;
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
@@ -10,33 +13,28 @@ import net.sf.rails.game.GameManager;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCertificate;
 import net.sf.rails.game.StartItem;
-import net.sf.rails.game.StartPacket;
 import net.sf.rails.game.StartRound;
-import net.sf.rails.game.state.ChangeStack;
-import rails.game.*;
-import rails.game.action.*;
+import net.sf.rails.game.state.IntegerState;
 
 /**
  * @author Martin
  * 
+ * Rails 2.0: Ok
+ * 
  */
 public class StartRound_Investors_1880 extends StartRound {
 
-    int investorsPurchased = 0;
+    private final IntegerState investorsPurchased = 
+            IntegerState.create(this, "investorsPurchased");
 
-    /**
-     * @param gameManager
-     */
     public StartRound_Investors_1880(GameManager gameManager, String id) {
-        super(gameManager, id);
-        hasBasePrices = true;
-        hasBidding = false;
-        hasBuying = true;
+        super(gameManager, id, false, true, true);
+        // no bidding involved
     }
 
     @Override
-    public void start(StartPacket startPacket) {
-        super.start(startPacket);
+    public void start() {
+        super.start();
 
         for (StartItem item : startPacket.getItems()) {
             item.setStatus(StartItem.BUYABLE);
@@ -70,8 +68,7 @@ public class StartRound_Investors_1880 extends StartRound {
         investor.setFloated();
         
         
-        getRoot().getPlayerManager().setNextPlayer();
-        // TODO: replaces setCurrentPlayerIndex(getCurrentPlayerIndex() + 1);
+        playerManager.setCurrentToNextPlayer();
         
         ReportBuffer.add(this, LocalText.getText("ChoosesInvestor",
                 player.getId(),
@@ -85,8 +82,8 @@ public class StartRound_Investors_1880 extends StartRound {
             investor.setLinkedCompany(bcr);
         }        
         
-        investorsPurchased += 1;
-        if (investorsPurchased == getRoot().getPlayerManager().getNumberOfPlayers()) {
+        investorsPurchased.add(1);
+        if (investorsPurchased.value() == playerManager.getNumberOfPlayers()) {
             for (StartItem item : startPacket.getItems()) {
                 if (item.isSold() == false) {
                     item.setStatus(StartItem.SOLD);

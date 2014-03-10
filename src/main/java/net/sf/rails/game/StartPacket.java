@@ -19,13 +19,6 @@ import org.slf4j.LoggerFactory;
 public class StartPacket extends RailsAbstractItem {
 
     /**
-     * A Map holding all start packets of a rails.game (yes, there can be more
-     * than one, e.g. 18US).
-     */
-    //private static Map<String, StartPacket> packets =
-    //        new HashMap<String, StartPacket>();
-
-    /**
      * The start packet name. Usually the default name "Initial" is used.
      */
     @SuppressWarnings("unused")

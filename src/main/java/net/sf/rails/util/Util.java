@@ -25,6 +25,14 @@ public final class Util {
     public static boolean hasValue(String s) {
         return s != null && !s.equals("");
     }
+    
+    public static String valueWithDefault(String s, String defaultValue) {
+        if (hasValue(s)) {
+            return s;
+        } else {
+            return defaultValue;
+        }
+    }
 
     public static String appendWithDelimiter(String s1, String s2,
             String delimiter) {

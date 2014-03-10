@@ -14,16 +14,16 @@ public class StartRound_1851 extends StartRound {
      * Constructed via Configure
      */
     public StartRound_1851(GameManager parent, String id) {
-        super(parent, id);
-        hasBidding = false;
+        super(parent, id, false, true, true);
+        // no bidding involved
     }
 
     /**
      * @param startPacket The startpacket to be sold in this start round.
      */
     @Override
-    public void start(StartPacket startPacket) {
-        super.start(startPacket);
+    public void start() {
+        super.start();
 
         if (!setPossibleActions()) {
             /*
@@ -57,7 +57,7 @@ public class StartRound_1851 extends StartRound {
                 item.setStatus(StartItem.BUYABLE);
                 possibleActions.add(action =
                         new BuyStartItem(item, item.getBasePrice(), false));
-                log.debug(getCurrentPlayer().getId() + " may: "
+                log.debug(playerManager.getCurrentPlayer().getId() + " may: "
                           + action.toString());
             }
 
@@ -70,7 +70,7 @@ public class StartRound_1851 extends StartRound {
 
     @Override
     public List<StartItem> getStartItems() {
-        Player currentPlayer = getCurrentPlayer();
+        Player currentPlayer = playerManager.getCurrentPlayer();
         int cashToSpend = currentPlayer.getCash();
         List<StartItem> startItems = startPacket.getItems();
 

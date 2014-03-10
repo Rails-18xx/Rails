@@ -339,7 +339,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
                     playerBidsXOffset - 1, playerBidsYOffset, 1, 1,
                     WIDE_TOP + WIDE_RIGHT);
             for (int i = 0; i < np; i++) {
-                f = playerBids[i] = new Field(round.getBlockedCashModel(i));
+                f = playerBids[i] = new Field(round.getBlockedCashModel(players[i]));
                 addField(f, playerBidsXOffset + i, playerBidsYOffset, 1, 1,
                         WIDE_TOP);
             }
@@ -354,7 +354,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
             f =
                 playerFree[i] =
                     new Field(includeBidding
-                            ? round.getFreeCashModel(i)
+                            ? round.getFreeCashModel(players[i])
                                     : players[i].getWallet());
             addField(f, playerFreeCashXOffset + i, playerFreeCashYOffset, 1, 1,
                     firstBelowTable ? WIDE_TOP : 0);

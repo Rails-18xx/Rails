@@ -8,7 +8,6 @@ import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.Round;
 import net.sf.rails.game.ShareSellingRound;
-import net.sf.rails.game.StartPacket;
 import net.sf.rails.game.StartRound;
 import net.sf.rails.game.StockRound;
 import net.sf.rails.common.GuiDef;
@@ -52,12 +51,8 @@ public class GameManager_1880 extends net.sf.rails.game.GameManager {
     public void nextRound(Round round) {
         if (round instanceof StartRound) { 
             if (((StartRound) round).getStartPacket().areAllSold()) { // This start round was "completed"
-                StartPacket nextStartPacket = getRoot().getCompanyManager().getNextUnfinishedStartPacket();
-                if (nextStartPacket == null) {
-                    startStockRound(); // All start rounds complete - start stock rounds
-                } else {
-                    startStartRound(nextStartPacket); // Start next start round
-                }
+                // check if there are other StartPackets, otherwise stockRounds start 
+                beginStartRound();
             } else {
                 startOperatingRound(runIfStartPacketIsNotCompletelySold());
             }
@@ -70,7 +65,7 @@ public class GameManager_1880 extends net.sf.rails.game.GameManager {
             if ((orControl.isFinalOperatingRoundSequence()) && (getRelativeORNumber() == 3)) {
                 finishGame();
             } else if (getRoot().getCompanyManager().getNextUnfinishedStartPacket() != null) {
-                continueStartRound(getRoot().getCompanyManager().getNextUnfinishedStartPacket());
+                beginStartRound();
             } else if (orControl.isExitingToStockRound() == true) {
                 startStockRound();
             } else {

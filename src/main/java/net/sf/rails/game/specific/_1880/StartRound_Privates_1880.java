@@ -5,16 +5,19 @@ import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.Currency;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.Player;
-import net.sf.rails.game.PlayerManager;
 import net.sf.rails.game.PublicCertificate;
 import net.sf.rails.game.StartItem;
+import net.sf.rails.game.state.GenericState;
 import rails.game.action.PossibleAction;
 
 public class StartRound_Privates_1880 extends StartRound_Sequential {
 
-    private SetupNewPublicDetails_1880 pendingAction = null;
-    private int pendingPlayerIndex = 0;
-    private PublicCertificate pendingCertificate = null;
+    private final GenericState<SetupNewPublicDetails_1880> pendingAction = 
+            GenericState.create(this, "pendingAction");
+    private final GenericState<Player> pendingPlayer = 
+            GenericState.create(this, "pendingPlayer");
+    private final GenericState<PublicCertificate> pendingCertificate = 
+            GenericState.create(this, "pendingCertificate");
 
     public StartRound_Privates_1880(GameManager parent, String Id) {
         super(parent, Id);
@@ -23,13 +26,15 @@ public class StartRound_Privates_1880 extends StartRound_Sequential {
     @Override
     public boolean process(PossibleAction action) {
         if (action instanceof SetupNewPublicDetails_1880) {
+
             SetupNewPublicDetails_1880 castAction =
                     (SetupNewPublicDetails_1880) action;
-            Player player = getCurrentPlayer();
+            Player player = playerManager.getCurrentPlayer();
             
-            transferCertificate(pendingCertificate, player.getPortfolioModel());
+            pendingCertificate.value().moveTo(player);
             ReportBuffer.add(this, LocalText.getText("ALSO_GETS", player.getId(),
-                    pendingCertificate.getName()));
+                    pendingCertificate.value().getName()));
+            
             PublicCompany_1880 company =
                     (PublicCompany_1880) castAction.getCompany();
             company.setBuildingRights(castAction.getBuildRightsString());
@@ -47,8 +52,7 @@ public class StartRound_Privates_1880 extends StartRound_Sequential {
             Currency.wire(bank, 500, company);
             ReportBuffer.add(this, LocalText.getText("FloatsWithCash",company.getId(), Currency.format(this, 500)));
             
-            
-            pendingAction = null;
+            pendingAction.set(null);
             return true;
         }
         return super.process(action);
@@ -61,12 +65,13 @@ public class StartRound_Privates_1880 extends StartRound_Sequential {
                 PublicCertificate certificate =
                         (PublicCertificate) item.getSecondary();
                 if (certificate.isPresidentShare() == true) {
-                    getRoot().getPlayerManager().setCurrentPlayer(player);
-                    pendingAction =
+                    playerManager.setCurrentPlayer(player);
+                    pendingAction.set(
                             new SetupNewPublicDetails_1880(item,
-                                    certificate.getCompany(), 100, 2);
-                    pendingPlayerIndex = player.getIndex();
-                    pendingCertificate = certificate;
+                                    certificate.getCompany(), 100, 2)
+                            );
+                    pendingPlayer.set(player);
+                    pendingCertificate.set(certificate);
                 }
             }
         }
@@ -75,9 +80,9 @@ public class StartRound_Privates_1880 extends StartRound_Sequential {
 
     @Override
     public boolean setPossibleActions() {
-        if (pendingAction != null) {
-            setCurrentPlayerIndex(pendingPlayerIndex);
-            possibleActions.add(pendingAction);
+        if (pendingAction.value() != null) {
+            playerManager.setCurrentPlayer(pendingPlayer.value());
+            possibleActions.add(pendingAction.value());
             return true;
         }
         return super.setPossibleActions();
@@ -85,11 +90,9 @@ public class StartRound_Privates_1880 extends StartRound_Sequential {
 
     @Override
     protected void finishRound() {
-        PlayerManager pm = getRoot().getPlayerManager();
-        Player firstPlayer = pm.reorderPlayersByCash(true);
-        pm.setCurrentPlayer(firstPlayer);
-        pm.setPriorityPlayer(firstPlayer);
-        currentPlayer = firstPlayer;
+        Player firstPlayer = playerManager.reorderPlayersByCash(true);
+        playerManager.setCurrentPlayer(firstPlayer);
+        playerManager.setPriorityPlayer(firstPlayer);
         ReportBuffer.add(this, LocalText.getText("PlayersReordered"));
         super.finishRound();
     }

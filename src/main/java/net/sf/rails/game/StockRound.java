@@ -1457,7 +1457,7 @@ public class StockRound extends Round {
      */
     protected void setNextPlayer() {
 
-        getRoot().getPlayerManager().setNextPlayer();
+        getRoot().getPlayerManager().setCurrentToNextPlayer();
         initPlayer();
     }
 
@@ -1475,7 +1475,7 @@ public class StockRound extends Round {
      * setNextPlayer()!</b>
      */
     protected void setPriority() {
-        getRoot().getPlayerManager().setPriorityPlayer();
+        getRoot().getPlayerManager().setPriorityPlayerToNext();
     }
 
     @Override
@@ -1489,7 +1489,6 @@ public class StockRound extends Round {
     /**
      * @return The index of the player that has the turn.
      */
-    @Override
     public int getCurrentPlayerIndex() {
         return currentPlayer.getIndex();
     }

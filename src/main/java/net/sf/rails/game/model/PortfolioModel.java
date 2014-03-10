@@ -160,16 +160,16 @@ public class PortfolioModel extends RailsModel {
         return certificates.getShareModel(company);
     }
 
-    public ShareDetailsModel getShareDetailsModel(PublicCompany company) {
-        return certificates.getShareDetailsModel(company);
-    }
-
     public ImmutableSet<PrivateCompany> getPrivateCompanies() {
         return privates.getPortfolio().items();
     }
 
     public ImmutableSortedSet<PublicCertificate> getCertificates() {
         return certificates.getPortfolio().items();
+    }
+
+    public ShareDetailsModel getShareDetailsModel(PublicCompany company) {
+        return certificates.getShareDetailsModel(company);
     }
 
     /** Get the number of certificates that count against the certificate limit */

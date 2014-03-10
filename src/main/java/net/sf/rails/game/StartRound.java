@@ -5,123 +5,83 @@ import java.util.List;
 import rails.game.action.*;
 
 import net.sf.rails.common.*;
+import net.sf.rails.util.Util;
 import net.sf.rails.game.state.ArrayListState;
-import net.sf.rails.game.state.GenericState;
 import net.sf.rails.game.state.IntegerState;
 import net.sf.rails.game.state.Model;
 
 
 public abstract class StartRound extends Round {
 
-    protected StartPacket startPacket = null;
-    protected int[] itemIndex;
-    protected final ArrayListState<StartItem> itemsToSell = ArrayListState.create(this, "itemsToSell");
-    protected final GenericState<StartItem> auctionItemState = GenericState.create(this, "auctionItemState");
-    protected final IntegerState numPasses = IntegerState.create(this, "numPasses");
-    protected int numPlayers;
-    protected String variant;
-    protected Player currentPlayer;
+    // static at creation
+    protected final StartPacket startPacket;
+    protected final String variant;
+    
+    // static at start
     protected Player startPlayer;
 
+    
+    // The following have to be initialized by the sub-classes
     /**
      * Should the UI present bidding into and facilities? This value MUST be set
      * in the actual StartRound constructor.
      */
-    protected boolean hasBidding;
+    protected final boolean hasBidding;
 
     /**
      * Should the UI show base prices? Not useful if the items are all equal, as
      * in 1841 and 18EU.
      */
-    protected boolean hasBasePrices = true;
+    protected final boolean hasBasePrices;
     
     /**
      * Is buying allowed in the start round?  Not in the first start round of
      * 1880, for example, where everything is auctioned.
      */
-    protected boolean hasBuying = true;
+    protected final boolean hasBuying;
 
-    /** A company in need for a par price. */
-    PublicCompany companyNeedingPrice = null;
+    // dynamic variables
+    protected final ArrayListState<StartItem> itemsToSell = ArrayListState.create(this, "itemsToSell");
+    protected final IntegerState numPasses = IntegerState.create(this, "numPasses");
 
-    /*----- Initialisation -----*/
-    /**
-     * Will be created dynamically.
-     *
-     */
-    protected StartRound(GameManager parent, String id) {
+    protected StartRound(GameManager parent, String id, boolean hasBidding, boolean hasBasePrices, boolean hasBuying) {
         super (parent, id);
+        this.hasBidding = hasBidding;
+        this.hasBasePrices = hasBasePrices;
+        this.hasBuying = hasBuying;
+        
         this.startPacket = parent.getStartPacket();
 
+        String variant =  GameOption.getValue(this, GameOption.VARIANT);
+        this.variant = Util.valueWithDefault(variant, "");
+        
         guiHints.setVisibilityHint(GuiDef.Panel.STATUS, true);
         guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, false);
         guiHints.setVisibilityHint(GuiDef.Panel.MAP, true);
         guiHints.setActivePanel(GuiDef.Panel.START_ROUND);
     }
     
-    /**
-     * Start the start round.
-     *
-     * @param startPacket The startpacket to be sold in this start round.
-     */
- /*   public void start() {
+    protected StartRound(GameManager parent, String id) {
+        // default case, set bidding, basePrices and buying all to true
+        this(parent, id, true, true, true);
+    }
 
-        this.variant = GameOption.getValue(this, GameOption.VARIANT);
-        if (variant == null) variant = "";
-        numPlayers = getRoot().getPlayerManager().getNumberOfPlayers();
-
-        itemIndex = new int[startPacket.getItems().size()];
-        int index = 0;
-
+    public void start() {
         for (StartItem item : startPacket.getItems()) {
-
             // New: we only include items that have not yet been sold
             // at the start of the current StartRound
             if (!item.isSold()) {
                 itemsToSell.add(item);
-                itemIndex[index++] = item.getIndex();
             }
         }
         numPasses.set(0);
-        auctionItemState.set(null);
-
-        setCurrentPlayerIndex(getRoot().getPlayerManager().getPriorityPlayer().getIndex());
-        currentPlayer = getCurrentPlayer();
-        startPlayer = currentPlayer;
-
-        ReportBuffer.add(this,LocalText.getText("StartOfInitialRound"));
-        ReportBuffer.add(this,LocalText.getText("HasPriority",
-                getCurrentPlayer().getId()));
-    }*/
-
-    public void start(StartPacket startPacket) {
-        this.startPacket = startPacket;
-        this.variant = GameOption.getValue(this, GameOption.VARIANT);
-        if (variant == null) variant = "";
-        numPlayers = getRoot().getPlayerManager().getNumberOfPlayers();
-
-        itemIndex = new int[startPacket.getItems().size()];
-        int index = 0;
-
-        for (StartItem item : startPacket.getItems()) {
-
-            // New: we only include items that have not yet been sold
-            // at the start of the current StartRound
-            if (!item.isSold()) {
-                itemsToSell.add(item);
-                itemIndex[index++] = item.getIndex();
-            }
-        }
-        numPasses.set(0);
-        auctionItemState.set(null);
-
-        setCurrentPlayerIndex(getRoot().getPlayerManager().getPriorityPlayer().getIndex());
-        currentPlayer = getCurrentPlayer();
-        startPlayer = currentPlayer;
+        
+        // init current with priority player
+        startPlayer = playerManager.setCurrentToPriorityPlayer();
 
         ReportBuffer.add(this, LocalText.getText("StartOfInitialRound"));
         ReportBuffer.add(this, LocalText.getText("HasPriority",
-                getCurrentPlayer().getId()));
+                startPlayer.getId()));
     }
     @Override
     public boolean process(PossibleAction action) {
@@ -156,7 +116,7 @@ public abstract class StartRound extends Round {
                     startItemAction.getStartItem().setStatus(
                             StartItem.NEEDS_SHARE_PRICE);
                     // We must set the priority player, though
-                    getRoot().getPlayerManager().setPriorityPlayer();
+                    playerManager.setPriorityPlayerToNext();
                     result = true;
                 } else {
                     result = buy(playerName, buyAction);
@@ -213,7 +173,7 @@ public abstract class StartRound extends Round {
         StartItem item = boughtItem.getStartItem();
         int lastBid = item.getBid();
         String errMsg = null;
-        Player player = getCurrentPlayer();
+        Player player = playerManager.getCurrentPlayer();
         int price = 0;
         int sharePrice = 0;
         String shareCompName = "";
@@ -268,11 +228,10 @@ public abstract class StartRound extends Round {
         // Set priority (only if the item was not auctioned)
         // ASSUMPTION: getting an item in auction mode never changes priority
         if (lastBid == 0) {
-            getRoot().getPlayerManager().setPriorityPlayer();
+            playerManager.setPriorityPlayerToNext();
         }
-        setNextPlayer();
+        playerManager.setCurrentToNextPlayer();
 
-        auctionItemState.set(null);
         numPasses.set(0);
 
         return true;
@@ -350,36 +309,6 @@ public abstract class StartRound extends Round {
     /*----- Setting up the UI for the next action -----*/
 
     /**
-     * Get the currentPlayer index in the player list (starting at 0).
-     *
-     * @return The index of the current Player.
-     * @see GameManager.getCurrentPlayerIndex().
-     */
-    @Override
-    @Deprecated
-    public int getCurrentPlayerIndex() {
-        return getRoot().getPlayerManager().getCurrentPlayer().getIndex();
-    }
-
-    @Deprecated
-    protected void setPriorityPlayer() {
-        setCurrentPlayer(getRoot().getPlayerManager().getPriorityPlayer());
-        currentPlayer = getCurrentPlayer();
-    }
-
-    @Deprecated
-    protected void setPlayer(Player player) {
-        setCurrentPlayer(player);
-        currentPlayer = player;
-    }
-
-    @Deprecated
-    protected void setNextPlayer() {
-        setCurrentPlayerIndex(getCurrentPlayerIndex() + 1);
-        currentPlayer = getCurrentPlayer();
-    }
-
-    /**
      * Get the current list of start items.
      *
      * @return An array of start items, possibly empry.
@@ -417,13 +346,13 @@ public abstract class StartRound extends Round {
     }
 
     // TODO: Maybe this should be a subclass of a readableCashModel
-    public Model getFreeCashModel(int playerIndex) {
-        return getRoot().getPlayerManager().getPlayerByIndex(playerIndex).getFreeCashModel();
+    public Model getFreeCashModel(Player player) {
+        return player.getFreeCashModel();
     }
 
     // TODO: Maybe this should be a subclass of a readableCashModel
-    public Model getBlockedCashModel(int playerIndex) {
-        return getRoot().getPlayerManager().getPlayerByIndex(playerIndex).getBlockedCashModel();
+    public Model getBlockedCashModel(Player player) {
+        return player.getBlockedCashModel();
     }
 
 }

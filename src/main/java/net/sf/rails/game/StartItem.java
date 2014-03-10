@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
  * other attributes are saved. The certificate objects are linked to in the
  * later initialisation step.
  */
+
+// TODO: Check usage of state here
 public class StartItem extends RailsAbstractItem {
 
     // Fixed properties

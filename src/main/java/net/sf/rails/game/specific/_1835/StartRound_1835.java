@@ -14,6 +14,8 @@ import net.sf.rails.game.state.IntegerState;
 /**
  * Implements an 1835-style startpacket sale.
  */
+
+// FIXME: Check if this still works, as this is now done via reverse
 public class StartRound_1835 extends StartRound {
 
     /* To control the player sequence in the Clemens and Snake variants */
@@ -27,23 +29,18 @@ public class StartRound_1835 extends StartRound {
      * Constructor, only to be used in dynamic instantiation.
      */
     public StartRound_1835(GameManager gameManager, String id) {
-        super(gameManager, id);
-        hasBidding = false;
+        super(gameManager, id, false, true, true);
+        // no bidding involved
     }
 
-    /**
-     * Start the 1835-style start round.
-     *
-     * @param startPacket The startpacket to be sold in this start round.
-     */
     @Override
-    public void start(StartPacket startPacket) {
-        super.start(startPacket);
+    public void start() {
+        super.start();
 
         if (variant.equalsIgnoreCase(CLEMENS_VARIANT)) {
-            setCurrentPlayerIndex (numPlayers-1);
+            // reverse order at the start
+            playerManager.reversePlayerOrder(true);
         }
-
 
         if (!setPossibleActions()) {
             /*
@@ -106,7 +103,7 @@ public class StartRound_1835 extends StartRound {
          */
         while (possibleActions.isEmpty()) {
 
-            Player currentPlayer = getCurrentPlayer();
+            Player currentPlayer = playerManager.getCurrentPlayer();
             if (currentPlayer == startPlayer) ReportBuffer.add(this, "");
 
             int cashToSpend = currentPlayer.getCash();
@@ -125,9 +122,8 @@ public class StartRound_1835 extends StartRound {
                     LocalText.getText("CannotBuyAnything",
                             currentPlayer.getId());
                 ReportBuffer.add(this, message);
-                //DisplayBuffer.add(this, message);
                 numPasses.add(1);
-                if (numPasses.value() >= numPlayers) {
+                if (numPasses.value() >= playerManager.getNumberOfPlayers()) {
                     /*
                      * No-one has enough cash left to buy anything, so close the
                      * Start Round.
@@ -142,7 +138,8 @@ public class StartRound_1835 extends StartRound {
 
                     return false;
                 }
-                setNextPlayer();
+                checkPlayerOrder();
+                playerManager.setCurrentToNextPlayer();
             }
         }
 
@@ -152,71 +149,27 @@ public class StartRound_1835 extends StartRound {
         return true;
     }
 
-    /*----- moveStack methods -----*/
-
+    @Override
+    public boolean buy(String playerName, BuyStartItem boughtItem) {
+        boolean result = super.buy(playerName, boughtItem);
+        if (result) {
+            checkPlayerOrder();
+        }
+        return result;
+    }
+    
     @Override
     public boolean bid(String playerName, BidStartItem item) {
-
-        DisplayBuffer.add(this, LocalText.getText("InvalidAction"));
+        // is not allowed in 1835
         return false;
     }
-
-    /**
-     * Set the next player turn.
-     *
-     */
+    
+        
     @Override
-    protected void setNextPlayer() {
-
-        /* Select the player that has the turn. */
-
-        if (gameManager.getStartRoundNumber() == 1) {
-            /*
-             * Some variants have a reversed player order in the first or second
-             * cycle of the first round (a cycle spans one turn of all players).
-             * In such a case we need to keep track of the number of player
-             * turns.
-             */
-            turn.add(1);
-            int turnNumber = turn.value();
-            int cycleNumber = turnNumber / numPlayers;
-            int turnIndex = turnNumber % numPlayers;
-            int newIndex;
-
-            if (variant.equalsIgnoreCase(CLEMENS_VARIANT)) {
-                /* Reverse order in the first cycle only */
-                newIndex =
-                    cycleNumber == 0 ? numPlayers - 1 - turnIndex
-                            : turnIndex;
-            } else if (variant.equalsIgnoreCase(SNAKE_VARIANT)) {
-                /* Reverse order in the second cycle only */
-                newIndex =
-                    cycleNumber == 1 ? numPlayers - 1 - turnIndex
-                            : turnIndex;
-            } else {
-                newIndex = turnIndex;
-            }
-            Player oldPlayer = getCurrentPlayer();
-            setCurrentPlayerIndex(newIndex);
-            Player newPlayer = getCurrentPlayer();
-            log.debug("Game turn has moved from " + oldPlayer.getId()
-                    + " to " + newPlayer.getId()
-                    + " [startRound=" + gameManager.getStartRoundNumber()
-                    + " cycle=" + cycleNumber
-                    + " turn=" + turnNumber
-                    + " newIndex=" + newIndex + "]");
-
-        } else {
-
-            /* In any subsequent Round, the normal order applies. */
-            Player oldPlayer = getCurrentPlayer();
-            super.setNextPlayer();
-            Player newPlayer = getCurrentPlayer();
-            log.debug("Game turn has moved from " + oldPlayer.getId()
-                    + " to " + newPlayer.getId());
-        }
-
-        return;
+    public boolean process(PossibleAction action) {
+        // nothing else to do in 1835, just a reminder
+        boolean result = super.process(action);
+        return result;
     }
 
     /**
@@ -228,7 +181,7 @@ public class StartRound_1835 extends StartRound {
     public boolean pass(NullAction action, String playerName) {
 
         String errMsg = null;
-        Player player = getCurrentPlayer();
+        Player player = playerManager.getCurrentPlayer();
 
         while (true) {
 
@@ -249,21 +202,49 @@ public class StartRound_1835 extends StartRound {
 
         ReportBuffer.add(this, LocalText.getText("PASSES", playerName));
 
-        
-
         numPasses.add(1);
 
-        if (numPasses.value() >= numPlayers) {
+        if (numPasses.value() >= playerManager.getNumberOfPlayers()) {
             // All players have passed.
             ReportBuffer.add(this, LocalText.getText("ALL_PASSED"));
             numPasses.set(0);
             //gameManager.nextRound(this);
             finishRound();
         } else {
-            setNextPlayer();
+            checkPlayerOrder();
+            playerManager.setCurrentToNextPlayer();
         }
 
         return true;
+    }
+
+    // for some variants the player has to be changed in-between 
+    private void checkPlayerOrder() {
+        if (gameManager.getStartRoundNumber() == 1) {
+            /*
+             * Some variants have a reversed player order in the first or second
+             * cycle of the first round (a cycle spans one turn of all players).
+             * In such a case we need to keep track of the number of player
+             * turns.
+             */
+            turn.add(1);
+            // check if the next player would start a new cycle
+            int cycleNumber = (turn.value() +1) / playerManager.getNumberOfPlayers() + 1;
+
+            if (variant.equalsIgnoreCase(CLEMENS_VARIANT)) {
+                /* Reverse order in the first cycle only */
+                if (cycleNumber == 1) {
+                    playerManager.reversePlayerOrder(false);
+                }
+            } else if (variant.equalsIgnoreCase(SNAKE_VARIANT)) {
+                /* Reverse order in the second cycle only */
+                if (cycleNumber == 2) {
+                    playerManager.reversePlayerOrder(true);
+                } else if (cycleNumber == 3) {
+                    playerManager.reversePlayerOrder(false);
+                }
+            }
+        }
     }
 
     @Override

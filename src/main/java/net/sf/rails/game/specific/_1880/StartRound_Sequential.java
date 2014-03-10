@@ -3,7 +3,6 @@
  */
 package net.sf.rails.game.specific._1880;
 
-import java.util.List;
 
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
@@ -12,9 +11,7 @@ import net.sf.rails.game.Certificate;
 import net.sf.rails.game.Currency;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.Player;
-import net.sf.rails.game.PlayerManager;
 import net.sf.rails.game.StartItem;
-import net.sf.rails.game.StartPacket;
 import net.sf.rails.game.StartRound;
 import net.sf.rails.game.state.ArrayListState;
 import net.sf.rails.game.state.GenericState;
@@ -22,6 +19,8 @@ import rails.game.action.*;
 
 /**
  * @author Martin
+ * 
+ * Rails 2.0: OK
  * 
  */
 public class StartRound_Sequential extends StartRound {
@@ -33,19 +32,14 @@ public class StartRound_Sequential extends StartRound {
     private final ArrayListState<Player> passedPlayers = 
             ArrayListState.create(this, "passedPlayers");
 
-    /**
-     * @param gameManager
-     */
     public StartRound_Sequential(GameManager parent, String id) {
-        super(parent, id);
-        hasBasePrices = false;
-        hasBidding = true;
-        hasBuying = false;
+        super(parent, id, true, false, false);
+        // bidding yes, but no base prices and buying
     }
 
     @Override
-    public void start(StartPacket startPacket) {
-        super.start(startPacket);
+    public void start() {
+        super.start();
 
         // crude fix for StartItem hardcoded SetMinimumbid ignoring the initial
         // value out of the XMLs....
@@ -54,7 +48,7 @@ public class StartRound_Sequential extends StartRound {
             item.setMinimumBid(item.getBasePrice());
         }
 
-        startingPlayer.set(getRoot().getPlayerManager().getCurrentPlayer());
+        startingPlayer.set(playerManager.getCurrentPlayer());
         setPossibleActions();
     }
 
@@ -73,34 +67,31 @@ public class StartRound_Sequential extends StartRound {
     }
 
     private void setNextBiddingPlayer() {
-        
-        List<Player> nextPlayers = getRoot().getPlayerManager().getPlayersAfterCurrent();
-        for (Player p: nextPlayers) {
+        for (Player p: playerManager.getNextPlayers()) {
             if (!passedPlayers.contains(p)) {
                 // TODO: What happens if all players have passed?
-                getRoot().getPlayerManager().setCurrentPlayer(p);
+                playerManager.setCurrentPlayer(p);
                 break;
             }
         }
     }
 
     private void setNextStartingPlayer() {
-        PlayerManager pm = getRoot().getPlayerManager();
-        Player nextPlayer = pm.getNextPlayerAfter(startingPlayer.value());
+        Player nextPlayer = playerManager.getNextPlayerAfter(startingPlayer.value());
         startingPlayer.set(nextPlayer);
-        pm.setCurrentPlayer(nextPlayer);
+        playerManager.setCurrentPlayer(nextPlayer);
     }
 
     @Override
     public boolean setPossibleActions() {
         updateBiddingItem();
 
-        if (currentPlayer == startPlayer) {
+        if (playerManager.getCurrentPlayer() == startPlayer) {
             ReportBuffer.add(this,"");
         }
 
         if (currentItem != null) {
-            if (getCurrentPlayer().getCash() >= currentItem.value().getMinimumBid()) {
+            if (playerManager.getCurrentPlayer().getCash() >= currentItem.value().getMinimumBid()) {
                 possibleActions.add(new BidStartItem(currentItem.value(),
                         currentItem.value().getMinimumBid(), startPacket.getModulus(), true));
             }
@@ -112,8 +103,7 @@ public class StartRound_Sequential extends StartRound {
     
     @Override
     protected boolean bid(String playerName, BidStartItem bidItem) {
-        Player player =
-                getRoot().getPlayerManager().getPlayerByName(playerName);
+        Player player = playerManager.getPlayerByName(playerName);
         int bidAmount = bidItem.getActualBid();
 
         if (validateBid(playerName, bidItem) != true) {
@@ -149,14 +139,14 @@ public class StartRound_Sequential extends StartRound {
 
         while (true) {
             // Check player
-            if (!playerName.equals(getCurrentPlayer().getId())) {
-                errMsg = LocalText.getText("WrongPlayer", playerName, getCurrentPlayer().getId());
+            if (!playerName.equals(playerManager.getCurrentPlayer().getId())) {
+                errMsg = LocalText.getText("WrongPlayer", playerName, playerManager.getCurrentPlayer().getId());
                 break;
             }
 
             // Is the current item correct?
             if (currentItem.value() != bidItem.getStartItem()) {
-                errMsg = LocalText.getText("WrongItem", playerName, getCurrentPlayer().getId());
+                errMsg = LocalText.getText("WrongItem", playerName, playerManager.getCurrentPlayer().getId());
                 break;
             }
             
@@ -194,7 +184,7 @@ public class StartRound_Sequential extends StartRound {
             }
 
         // Has the buyer enough cash?
-            if (bidItem.getActualBid() > getCurrentPlayer().getCash()) {
+            if (bidItem.getActualBid() > playerManager.getCurrentPlayer().getCash()) {
                 errMsg = LocalText.getText("BidTooHigh", Currency.format(this, bidItem.getActualBid()));
                 break;
             }
@@ -215,7 +205,7 @@ public class StartRound_Sequential extends StartRound {
 
     @Override
     protected boolean pass(NullAction action, String playerName) {
-        Player player = getRoot().getPlayerManager().getPlayerByName(playerName);
+        Player player = playerManager.getPlayerByName(playerName);
 
         if (validatePass(playerName) != true) {
             return false;
@@ -230,7 +220,7 @@ public class StartRound_Sequential extends StartRound {
         currentItem.value().setBid(-1, player);
         passedPlayers.add(player);
         
-        if (passedPlayers.size() == getRoot().getPlayerManager().getNumberOfPlayers()) {
+        if (passedPlayers.size() == playerManager.getNumberOfPlayers()) {
         // All players have passed - reduce price or run an operating round
             ReportBuffer.add(this, LocalText.getText("ALL_PASSED"));
             if (currentItem.value().getNoBidsReaction() == StartItem.NoBidsReaction.REDUCE_AND_REBID) {
@@ -263,9 +253,9 @@ public class StartRound_Sequential extends StartRound {
     }
 
     private boolean validatePass(String playerName) {
-        if (!playerName.equals(getCurrentPlayer().getId())) {
+        if (!playerName.equals(playerManager.getCurrentPlayer().getId())) {
                 DisplayBuffer.add(this, LocalText.getText("InvalidPass", playerName,
-                        LocalText.getText("WrongPlayer", playerName, getCurrentPlayer().getId())));
+                        LocalText.getText("WrongPlayer", playerName, playerManager.getCurrentPlayer().getId())));
                 return false;
             }
         return true;
