@@ -1,12 +1,16 @@
 package rails.game.specific._1880;
 
+import com.google.common.base.Objects;
+
 import net.sf.rails.game.specific._1880.Investor_1880;
+import net.sf.rails.util.RailsObjects;
 import rails.game.action.PossibleAction;
 import rails.game.action.PossibleORAction;
 
 /**
  * @author Michael Alexander
  * 
+ * Rails 2.0: Updated equals and toString methods
  */
 public class CloseInvestor_1880 extends PossibleORAction {
     
@@ -44,37 +48,35 @@ public class CloseInvestor_1880 extends PossibleORAction {
     }
 
     
-    public String toString() {
-        StringBuffer text = new StringBuffer();
-        text.append("CloseInvestor_1880:");
-        text.append("  Investor " + company.getId());
-        text.append(",  TreasuryToLinkedCompany " + treasuryToLinkedCompany);
-        text.append(",  ReplaceToken " + replaceToken);
-        return text.toString();
-    }
-
-
     @Override
     public boolean equalsAsOption(PossibleAction pa) {
-        if (pa instanceof CloseInvestor_1880) {
-            if ((((CloseInvestor_1880) pa).getInvestor() == company) &&
-                    (((CloseInvestor_1880) pa).getTreasuryToLinkedCompany() == treasuryToLinkedCompany) &&
-                    (((CloseInvestor_1880) pa).getReplaceToken() == replaceToken)) {
-                return true;
-            }
-        }
-        return false;
+        // identity always true
+        if (pa == this) return true;
+        // no further checks required
+        return super.equalsAsOption(pa); 
     }
 
     @Override
     public boolean equalsAsAction(PossibleAction pa) {
-        if (pa instanceof CloseInvestor_1880) {
-            if ((((CloseInvestor_1880) pa).getInvestor() == company) &&
-                    (((CloseInvestor_1880) pa).getTreasuryToLinkedCompany() == treasuryToLinkedCompany) &&
-                    (((CloseInvestor_1880) pa).getReplaceToken() == replaceToken)) {
-                return true;
-            }
-        }
-        return false;
-    }    
+        // first check if equal as option
+        if (!this.equalsAsOption(pa)) return false;
+        
+        // check further attributes
+        CloseInvestor_1880 action = (CloseInvestor_1880)pa; 
+        return Objects.equal(this.treasuryToLinkedCompany, action.treasuryToLinkedCompany)
+                && Objects.equal(this.replaceToken, action.replaceToken)
+        ;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString()
+                + RailsObjects.stringHelper(this)
+                .addToStringOnlyActed("TreasuryToLinkedCompany", treasuryToLinkedCompany)
+                .addToStringOnlyActed("ReplaceToken", replaceToken)
+                .toString()
+        ;
+    }
+
+
 }

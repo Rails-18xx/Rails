@@ -1,8 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/PossibleAction.java,v 1.16 2010/01/31 22:22:29 macfreek Exp $
- *
- * Created on 14-Sep-2006
- * Change Log:
- */
 package rails.game.action;
 
 import java.io.*;
@@ -10,9 +5,12 @@ import java.io.*;
 import net.sf.rails.game.*;
 import net.sf.rails.game.state.ChangeAction;
 import net.sf.rails.game.state.ChangeActionOwner;
+import net.sf.rails.util.RailsObjects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Objects;
 
 
 /**
@@ -21,11 +19,14 @@ import org.slf4j.LoggerFactory;
  * train etc.).
  *
  * @author Erik Vos
+ * 
+ * Rails 2.0: Added updated equals and toString methods 
  */
-// TODO (Rails2.0): Replace this with a new XML version
-// Remove the link getInstance variables and methods
 
-/* Or should this be an interface? We will see. */
+
+// FIXME (Rails2.0): Still relies on getInstance of RailsRoot
+// TODO (Rails2.0): Replace this with a new XML version
+
 public abstract class PossibleAction implements ChangeAction, Serializable {
 
     protected String playerName;
@@ -33,21 +34,22 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
     transient protected Player player;
 
     protected boolean acted = false;
+    
+    transient protected final RailsRoot root;
 
     public static final long serialVersionUID = 3L;
 
     protected static Logger log =
             LoggerFactory.getLogger(PossibleAction.class);
 
-    /**
-     *
-     */
+    // TODO: Replace this by a constructor argument for the player
     public PossibleAction() {
-        Player player = getRoot().getPlayerManager().getCurrentPlayer();
+        player = getRoot().getPlayerManager().getCurrentPlayer();
         if (player != null) {
             playerName = player.getId();
             playerIndex = player.getIndex();
         }
+        root = player.getRoot();
     }
 
     public String getPlayerName() {
@@ -57,6 +59,11 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
     public int getPlayerIndex() {
         return playerIndex;
     }
+    
+    public Player getPlayer() {
+        return player;
+    }
+    
 
     /**
      * Set the name of the player who <b>executed</b> the action (as opposed to
@@ -91,7 +98,12 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
      * @param pa Another PossibleAction to compare with.
      * @return True if the compared PossibleAction object has equal choice options.
      */
-    public abstract boolean equalsAsOption (PossibleAction pa);
+    public boolean equalsAsOption (PossibleAction pa) {
+        if (pa == null) return false;
+        if (!(this.getClass() == pa.getClass())) return false;
+        
+        return (Objects.equal(this.player, pa.player));      
+    }
 
     /** 
      * Compare the chosen actions of two action objects.
@@ -103,7 +115,11 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
      * @param pa Another PossibleAction to compare with.
      * @return True if the compared PossibleAction object has equal selected action values.
      */
-    public abstract boolean equalsAsAction (PossibleAction pa);
+    public boolean equalsAsAction (PossibleAction pa) {
+        return this.equalsAsOption(pa)
+                && Objects.equal(this.acted, pa.acted)
+        ;
+    }
 
     protected RailsRoot getRoot() {
         return RailsRoot.getInstance();
@@ -126,11 +142,20 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
     public ChangeActionOwner getActionOwner() {
         return player;
     }
+    
+    @Override
+    public String toString() {
+        return RailsObjects.stringHelper(this).addBaseText().toString();
+    }
 
-    // FIXME: Rails 2.0 check if playerindex is the correct identifier or prefer name?
+    // TODO: Rails 2.0 check if the combination above works correctly
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
-        player = getRoot().getPlayerManager().getPlayerByIndex(playerIndex);
+        if (playerName != null) {
+            player = getRoot().getPlayerManager().getPlayerByName(playerName);
+        } else {
+            player = getRoot().getPlayerManager().getPlayerByIndex(playerIndex);
+        }
     }
     
 }

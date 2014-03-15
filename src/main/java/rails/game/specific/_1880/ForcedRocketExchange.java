@@ -5,16 +5,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
+
 import net.sf.rails.game.Train;
 import net.sf.rails.game.specific._1880.PublicCompany_1880;
+import net.sf.rails.util.RailsObjects;
 import rails.game.action.PossibleAction;
 import rails.game.action.PossibleORAction;
 
 /**
  * @author Michael Alexander
  * 
+ *  * Rails 2.0: Updated equals and toString methods
+
  */
 public class ForcedRocketExchange extends PossibleORAction {
+    
+    // FIXME: The current implementation does not allow saving the static attributes
+    // FIXME: Do not use strings to indicate companies
     
     private static final long serialVersionUID = 1L;
     private transient List<String> companiesWithSpace = new ArrayList<String>();
@@ -41,7 +50,7 @@ public class ForcedRocketExchange extends PossibleORAction {
     }
 
     public void addCompanyWithNoSpace(PublicCompany_1880 company) {
-        List<Train> trains = (List<Train>) company.getPortfolioModel().getUniqueTrains();
+        List<Train> trains = Lists.newArrayList(company.getPortfolioModel().getUniqueTrains());
         companiesWithNoSpace.put(company.getId(), trains);
     }
 
@@ -65,37 +74,35 @@ public class ForcedRocketExchange extends PossibleORAction {
         this.trainToReplace = trainToReplace;        
     }
 
-    
-    public String toString() {
-        return("ForcedRocketExchange");
-    }
-
-
     @Override
     public boolean equalsAsOption(PossibleAction pa) {
-//        if (pa instanceof ForcedRocketExchange) {
-//            if ((((ForcedRocketExchange) pa).getInvestor() == company) &&
-//                    (((ForcedRocketExchange) pa).getTreasuryToLinkedCompany() == treasuryToLinkedCompany) &&
-//                    (((ForcedRocketExchange) pa).getReplaceToken() == replaceToken)) {
-//                return true;
-//            }
-//        }
-        return true;
+        // identity always true
+        if (pa == this) return true;
+        // TODO: further checks not possible as those values are not stored (see above)
+        return super.equalsAsOption(pa); 
     }
 
     @Override
     public boolean equalsAsAction(PossibleAction pa) {
-//        if (pa instanceof ForcedRocketExchange) {
-//            if ((((ForcedRocketExchange) pa).getInvestor() == company) &&
-//                    (((ForcedRocketExchange) pa).getTreasuryToLinkedCompany() == treasuryToLinkedCompany) &&
-//                    (((ForcedRocketExchange) pa).getReplaceToken() == replaceToken)) {
-//                return true;
-//            }
-//        }
-        return true;
+        // first check if equal as option
+        if (!this.equalsAsOption(pa)) return false;
+        
+        // check further attributes
+        ForcedRocketExchange action = (ForcedRocketExchange)pa; 
+        return Objects.equal(this.companyToReceiveTrain, action.companyToReceiveTrain)
+                && Objects.equal(this.trainToReplace, action.trainToReplace)
+        ;
     }
-
-
-
-
+    
+    @Override
+    public String toString() {
+        // TODO: does not print the static values, as they do not get serialized
+        return super.toString() 
+                + RailsObjects.stringHelper(this)
+                .addToStringOnlyActed("companyToReceiveTrain", companyToReceiveTrain)
+                .addToStringOnlyActed("trainToReplace", trainToReplace)
+                .toString()
+        ;
+    }
+    
 }

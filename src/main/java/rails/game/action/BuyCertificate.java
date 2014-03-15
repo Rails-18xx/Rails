@@ -3,11 +3,17 @@ package rails.game.action;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
+import com.google.common.base.Objects;
+
 import net.sf.rails.game.*;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.model.PortfolioOwner;
+import net.sf.rails.util.RailsObjects;
 
-
+/**
+ * 
+ * Rails 2.0: Updated equals and toString methods
+ */
 public class BuyCertificate extends PossibleAction {
 
     // Server-side settings
@@ -103,31 +109,47 @@ public class BuyCertificate extends PossibleAction {
     }
 
     @Override
-    public boolean equalsAsOption(PossibleAction action) {
-        if (!(action.getClass() == BuyCertificate.class)) return false;
-        BuyCertificate a = (BuyCertificate) action;
-        return a.company == company && a.from == from
-               && a.price == price && a.maximumNumber == maximumNumber;
+    public boolean equalsAsOption(PossibleAction pa) {
+        // identity always true
+        if (pa == this) return true;
+        //  super checks both class identity and super class attributes
+        if (!super.equalsAsOption(pa)) return false; 
+
+        // check further attributes
+        BuyCertificate action = (BuyCertificate)pa; 
+        return Objects.equal(this.certificate, action.certificate)
+                && Objects.equal(this.company, action.company)
+                && Objects.equal(this.sharePerCert, action.sharePerCert)
+                && Objects.equal(this.from, action.from)
+// FIXME: This is commented out to avoid invalidate StartCompany, see there
+//                && Objects.equal(this.price, action.price)
+                && Objects.equal(this.maximumNumber, action.maximumNumber)
+        ;
     }
 
     @Override
-    public boolean equalsAsAction(PossibleAction action) {
-        if (!(action instanceof BuyCertificate)) return false;
-        BuyCertificate a = (BuyCertificate) action;
-        return a.certificate == certificate && a.from == from
-               && a.price == price && a.numberBought == numberBought;
+    public boolean equalsAsAction(PossibleAction pa) {
+        // first check if equal as option
+        if (!this.equalsAsOption(pa)) return false;
+        
+        // check further attributes
+        BuyCertificate action = (BuyCertificate)pa; 
+        return Objects.equal(this.numberBought, action.numberBought);
     }
 
     @Override
     public String toString() {
-        StringBuffer text = new StringBuffer();
-        text.append("BuyCertificate: ");
-        if (acted) text.append("Bought "+numberBought +" of ");
-        if (maximumNumber > 1) text.append ("max."+maximumNumber+" of ");
-        text.append(sharePerCert).append("% ").append(companyName)
-            .append(" from ").append(from.getUniqueName())
-            .append(" price=").append(Currency.format(company, (sharePerCert/company.getShareUnit()) * price));
-        return text.toString();
+        return super.toString() + 
+                RailsObjects.stringHelper(this)
+                    .addToString("certificate", certificate)
+                    .addToString("company", company)
+                    .addToString("sharePerCert", sharePerCert)
+                    .addToString("from", from)
+                    .addToString("price", price)
+                    .addToString("maximumNumber", maximumNumber)
+                    .addToStringOnlyActed("numberBought", numberBought)
+                    .toString()
+        ;
     }
 
     private void readObject(ObjectInputStream in) throws IOException,

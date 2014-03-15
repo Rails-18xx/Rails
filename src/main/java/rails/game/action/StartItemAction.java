@@ -1,18 +1,18 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/StartItemAction.java,v 1.4 2008/12/03 20:15:15 evos Exp $
- *
- * Created on 17-Sep-2006
- * Change Log:
- */
 package rails.game.action;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
+import com.google.common.base.Objects;
+
 import net.sf.rails.game.StartItem;
+import net.sf.rails.util.RailsObjects;
 
 
 /**
  * @author Erik Vos
+ * 
+ * Rails 2.0: updated equals methods, updated toString method
  */
 public abstract class StartItemAction extends PossibleAction {
 
@@ -48,7 +48,33 @@ public abstract class StartItemAction extends PossibleAction {
     public int getStatus() {
         return startItem.getStatus();
     }
+    
+    @Override 
+    public boolean equalsAsOption(PossibleAction pa) {
+        //  super checks both class identity and super class attributes
+        if (!super.equalsAsOption(pa)) return false; 
 
+        // check further attributes
+        StartItemAction action = (StartItemAction)pa; 
+        return Objects.equal(this.startItem, action.startItem);
+    }
+    
+    @Override
+    public boolean equalsAsAction (PossibleAction pa) {
+        // no further test compared to option
+        return this.equalsAsOption(pa);
+    }
+
+    
+    @Override
+    public String toString() {
+        return super.toString() + 
+                RailsObjects.stringHelper(this)
+                .addToString("StartItem", startItem)
+                .toString()
+        ;
+    }
+    
     private void readObject(ObjectInputStream in) throws IOException,
             ClassNotFoundException {
 

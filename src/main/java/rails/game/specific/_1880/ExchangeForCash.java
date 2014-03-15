@@ -4,10 +4,19 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.base.Objects;
+
 import net.sf.rails.game.PrivateCompany;
 import net.sf.rails.game.TrainType;
+import net.sf.rails.util.RailsObjects;
 import rails.game.action.PossibleAction;
 
+/**
+ *
+ * Rails 2.0: Updated equals and toString methods
+ */
+
+// FIXME: No static fields !!!
 public class ExchangeForCash extends PossibleAction {
     private static final Map<String, Integer> CASH_VALUE_MAP = createCashValueMap();
     private static Map<String, Integer> createCashValueMap() {
@@ -27,9 +36,8 @@ public class ExchangeForCash extends PossibleAction {
         return Collections.unmodifiableMap(result);
     }
 
-    /**
-     * 
-     */
+    // FIXME: Why is ownerHasChoice transient?
+    // FIXME: Do not store owner Player/Portfolio by name, instead by transient object
     private static final long serialVersionUID = 1L;
     private transient boolean ownerHasChoice;
     private String ownerName;
@@ -55,27 +63,6 @@ public class ExchangeForCash extends PossibleAction {
         return action;
     }
     
-    @Override
-    public boolean equalsAsOption(PossibleAction pa) {
-        if ((pa instanceof ExchangeForCash) && 
-                (exchangeCompany == ((ExchangeForCash) pa).getExchangeCompany()) &&
-                (value == ((ExchangeForCash) pa).getCashValue()) &&
-                (ownerName == ((ExchangeForCash) pa).getOwnerName())) {
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean equalsAsAction(PossibleAction pa) {
-        if ((pa instanceof ExchangeForCash) && 
-                (exchangeCompany == ((ExchangeForCash) pa).getExchangeCompany()) &&
-                (value == ((ExchangeForCash) pa).getCashValue()) &&
-                (ownerName == ((ExchangeForCash) pa).getOwnerName())) {
-            return true;
-        }
-        return false;
-    }
 
     public String getOwnerName() {
         return ownerName;
@@ -95,5 +82,40 @@ public class ExchangeForCash extends PossibleAction {
 
     public void setExchangeCompany(boolean exchangeCompany) {
         this.exchangeCompany = exchangeCompany;
+    }
+
+    @Override
+    public boolean equalsAsOption(PossibleAction pa) {
+        // identity always true
+        if (pa == this) return true;
+        //  super checks both class identity and super class attributes
+        if (!super.equalsAsOption(pa)) return false; 
+
+        // check further attributes
+        ExchangeForCash action = (ExchangeForCash)pa; 
+        return Objects.equal(this.ownerHasChoice, action.ownerHasChoice)
+                && Objects.equal(this.ownerName, action.ownerName)
+                && Objects.equal(this.value, action.value)
+        ;
+    }
+
+    @Override
+    public boolean equalsAsAction(PossibleAction pa) {
+        // first check if equal as option
+        if (!this.equalsAsOption(pa)) return false;
+        
+        // check further attributes
+        ExchangeForCash action = (ExchangeForCash)pa; 
+        return Objects.equal(this.exchangeCompany, action.exchangeCompany);
+    }
+    
+    @Override
+    public String toString() {
+        return super.toString() 
+                + RailsObjects.stringHelper(this)
+                .addToString("ownerHasChoice", ownerHasChoice)
+                .addToString("ownerName", ownerName)
+                .addToString("value", value)
+        ;
     }
 }

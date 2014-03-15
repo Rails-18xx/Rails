@@ -8,5 +8,4 @@ public interface ChangeReporter {
 
     void informOnRedo();
     
-    void update(ChangeSet changeSet);
 }

@@ -72,7 +72,7 @@ public class ReportWindow extends JFrame implements
         init();
         
         // set initial text
-        editorPane.setText(reportBuffer.toText());
+        editorPane.setText(reportBuffer.getCurrentText());
     }
 
     public void init() {

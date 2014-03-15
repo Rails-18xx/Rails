@@ -1,10 +1,16 @@
 package rails.game.action;
 
+import java.util.Arrays;
+
+import com.google.common.base.Objects;
+
 import net.sf.rails.game.*;
+import net.sf.rails.util.RailsObjects;
 
-import com.google.common.primitives.Ints;
-
-
+/**
+ * 
+ * Rails 2.0: Updated equals and toString methods
+ */
 public class StartCompany extends BuyCertificate {
 
     // Server parameters
@@ -48,31 +54,37 @@ public class StartCompany extends BuyCertificate {
         price = startPrice;
     }
 
+    // FIXME: Attribute price of BuyCertificate now mutable, instead of static
+    // Consider changing the class hierarchy, currently price in BuyCertificate is not checked
     @Override
-    public boolean equalsAsOption(PossibleAction action) {
-        if (!(action.getClass() == StartCompany.class)) return false;
-        StartCompany a = (StartCompany) action;
-        return a.company == company && a.from == from 
-                && (startPrices == null && a.startPrices == null || Ints.asList(startPrices).contains(a.price));
+    public boolean equalsAsOption(PossibleAction pa) {
+        // identity always true
+        if (pa == this) return true;
+        //  super checks both class identity and super class attributes
+        if (!super.equalsAsOption(pa)) return false; 
+
+        // check further attributes
+        StartCompany action = (StartCompany)pa; 
+        return Arrays.equals(this.startPrices, action.startPrices);
+    }
+    
+    @Override
+    public boolean equalsAsAction(PossibleAction pa) {
+        // first check if equal as option
+        if (!this.equalsAsOption(pa)) return false;
+        
+        // check further attributes
+        StartCompany action = (StartCompany)pa; 
+        return Objects.equal(this.price, action.price);
     }
     
     @Override
     public String toString() {
-        log.debug("company= " + company);
-        StringBuilder text = new StringBuilder();
-        text.append("StartCompany: ").append(company != null ? company.getId() : null);
-        if (price > 0) {
-            text.append(" price=").append(Currency.format(company, price));
-            if (numberBought > 1) {
-                text.append(" number=").append(numberBought);
-            }
-        } else {
-            text.append(" prices=");
-            for (int i = 0; i < startPrices.length; i++) {
-                text.append(Currency.format(company, startPrices[i]));
-            }
-        }
-        return text.toString();
+        return super.toString() + 
+                RailsObjects.stringHelper(this)
+                    .addToString("startPrices", Arrays.toString(startPrices))
+                    .toString()
+        ;
     }
 
 }

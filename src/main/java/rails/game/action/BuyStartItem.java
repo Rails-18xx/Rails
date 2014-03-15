@@ -1,15 +1,15 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyStartItem.java,v 1.4 2008/12/03 20:15:15 evos Exp $
- * 
- * Created on 17-Sep-2006
- * Change Log:
- */
 package rails.game.action;
+
+import com.google.common.base.Objects;
 
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.StartItem;
+import net.sf.rails.util.RailsObjects;
 
 /**
  * @author Erik Vos
+ * 
+ * Rails 2.0: Added updated equals and toString methods 
  */
 public class BuyStartItem extends StartItemAction {
 
@@ -27,6 +27,7 @@ public class BuyStartItem extends StartItemAction {
 
     /**
      * 
+     * Rails 2.0: Added updated equals methods
      */
     public BuyStartItem(StartItem startItem, int price, boolean selected,
             boolean setSharePriceOnly) {
@@ -76,30 +77,44 @@ public class BuyStartItem extends StartItemAction {
         return companyNeedingSharePrice;
     }
 
-    public boolean equalsAsOption(PossibleAction action) {
-        if (!(action instanceof BuyStartItem)) return false;
-        BuyStartItem a = (BuyStartItem) action;
-        return a.startItem == startItem && a.itemIndex == itemIndex
-               && a.price == price;
-    }
+    @Override 
+    public boolean equalsAsOption(PossibleAction pa) {
+        // identity always true
+        if (pa == this) return true;
+        //  super checks both class identity and super class attributes
+        if (!super.equalsAsOption(pa)) return false; 
 
-    public boolean equalsAsAction(PossibleAction action) {
-        if (!(action instanceof BuyStartItem)) return false;
-        BuyStartItem a = (BuyStartItem) action;
-        return a.equalsAsOption(this)
-               && a.associatedSharePrice == associatedSharePrice;
+        // check further attributes
+        BuyStartItem action = (BuyStartItem)pa;
+        return Objects.equal(this.price, action.price)
+                && Objects.equal(this.selected, action.selected)
+                && Objects.equal(this.setSharePriceOnly, action.setSharePriceOnly)
+                && Objects.equal(this.sharePriceToSet, action.sharePriceToSet)
+                && Objects.equal(this.companyNeedingSharePrice, action.companyNeedingSharePrice)
+        ;
+    }
+    
+    @Override
+    public boolean equalsAsAction (PossibleAction pa) {
+        // first check if equal as option
+        if (!this.equalsAsOption(pa)) return false;
+        
+        // check further attributes
+        BuyStartItem action = (BuyStartItem)pa; 
+        return Objects.equal(this.associatedSharePrice, action.associatedSharePrice);
     }
 
    public String toString() {
-        StringBuffer b = new StringBuffer();
-        b.append("BuyStartItem ").append(startItemName).append(" price=").append(
-                price).append(" selected=").append(selected);
-
-        if (sharePriceToSet) {
-            b.append(" shareprice=").append(associatedSharePrice).append(
-                    " for company " + companyNeedingSharePrice);
-        }
-        return b.toString();
-    }
+       return super.toString() + 
+               RailsObjects.stringHelper(this)
+               .addToString("price", price)
+               .addToString("selected", selected)
+               .addToString("setSharePriceOnly", setSharePriceOnly)
+               .addToString("sharePriceToSet", sharePriceToSet)
+               .addToString("companyNeedingSharePrice", companyNeedingSharePrice)
+               .addToStringOnlyActed("associatedSharePrice", associatedSharePrice)
+               .toString()
+      ;
+   } 
 
 }

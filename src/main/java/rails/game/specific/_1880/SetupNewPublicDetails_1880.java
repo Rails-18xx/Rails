@@ -3,12 +3,19 @@ package rails.game.specific._1880;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
+import com.google.common.base.Objects;
+
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.StartItem;
+import net.sf.rails.util.RailsObjects;
 import net.sf.rails.util.Util;
 import rails.game.action.PossibleAction;
-import rails.game.action.PossibleORAction;
 import rails.game.action.StartItemAction;
+
+/**
+ * 
+ * Rails 2.0: Updated equals and toString methods
+ */
 
 public class SetupNewPublicDetails_1880 extends StartItemAction {
 
@@ -48,49 +55,6 @@ public class SetupNewPublicDetails_1880 extends StartItemAction {
         return company;
     }
 
-    public String toString() {
-        StringBuffer text = new StringBuffer();
-        text.append("SetupNewPublicDetails_1880:");
-        text.append("  Company " + companyName);
-        text.append("  Price " + price);
-        text.append("  Shares " + shares);
-        text.append("  ParSlotIndex " + parSlotIndex);
-        text.append("  BuildRights " + buildRightsString);
-        return text.toString();
-    }
-
-    @Override
-    public boolean equalsAsOption(PossibleAction pa) {
-        if (pa instanceof SetupNewPublicDetails_1880) {
-            SetupNewPublicDetails_1880 cpa = (SetupNewPublicDetails_1880) pa;
-            if ((cpa.getCompanyName().equals(companyName) == true)
-                && (cpa.getPlayerName().equals(playerName) == true)
-                && (cpa.getPrice() == price)
-                && (cpa.getShares() == shares)
-                && (cpa.getParSlotIndex() == parSlotIndex)
-                && (cpa.getBuildRightsString().equals(buildRightsString) == true)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public boolean equalsAsAction(PossibleAction pa) { // TODO
-        if (pa instanceof SetupNewPublicDetails_1880) {
-            SetupNewPublicDetails_1880 cpa = (SetupNewPublicDetails_1880) pa;
-            if ((cpa.getCompanyName().equals(companyName) == true)
-                && (cpa.getPlayerName().equals(playerName) == true)
-                && (cpa.getPrice() == price)
-                && (cpa.getShares() == shares)
-                && (cpa.getParSlotIndex() == parSlotIndex)
-                && (cpa.getBuildRightsString().equals(buildRightsString) == true)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public int getPrice() {
         return price;
     }
@@ -118,4 +82,47 @@ public class SetupNewPublicDetails_1880 extends StartItemAction {
     public Object getCompanyName() {
         return companyName;
     }
+    
+    @Override
+    public boolean equalsAsOption(PossibleAction pa) {
+        // identity always true
+        if (pa == this) return true;
+        //  super checks both class identity and super class attributes
+        if (!super.equalsAsOption(pa)) return false; 
+
+        // check further attributes
+        SetupNewPublicDetails_1880 action = (SetupNewPublicDetails_1880)pa; 
+        return Objects.equal(this.company, action.company)
+                && Objects.equal(this.price, action.price)
+                && Objects.equal(this.shares, action.shares)
+        ;
+    }
+
+    @Override
+    public boolean equalsAsAction(PossibleAction pa) { // TODO
+        // first check if equal as option
+        if (!this.equalsAsOption(pa)) return false;
+        
+        // check further attributes
+        SetupNewPublicDetails_1880 action = (SetupNewPublicDetails_1880)pa; 
+        return Objects.equal(this.parSlotIndex, action.parSlotIndex)
+                && Objects.equal(this.buildRightsString, action.buildRightsString)
+        ;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + 
+                RailsObjects.stringHelper(this)
+                .addToString("company", company)
+                .addToString("price", price)
+                .addToString("shares", shares)
+                .addToStringOnlyActed("parSlotIndex", parSlotIndex)
+                .addToStringOnlyActed("buildRightsString", buildRightsString)
+                .toString()
+        ;
+    }
+
+
+
 }
