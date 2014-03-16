@@ -5,6 +5,7 @@ import java.util.Map;
 
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.model.CertificatesModel;
+import net.sf.rails.game.state.IntegerState;
 import net.sf.rails.game.state.Ownable;
 import net.sf.rails.game.state.Typable;
 
@@ -21,7 +22,7 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
     /**
      * Share percentage represented by this certificate
      */
-    protected int shares;
+    protected IntegerState shares = IntegerState.create(this, "shares");
     /** President's certificate? */
     protected boolean president;
     /** Count against certificate limits */
@@ -54,7 +55,7 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
     public PublicCertificate(RailsItem parent, String id, int shares, boolean president, 
             boolean available, float certificateCount, int index) {
         super(parent, id, PublicCertificate.class);
-        this.shares = shares;
+        this.shares.set(shares);
         this.president = president;
         this.initiallyAvailable = available;
         this.certificateCount = certificateCount;
@@ -122,7 +123,7 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
      * @return The number of shares.
      */
     public int getShares() {
-        return shares;
+        return (Integer) shares.value();
     }
 
     /**
@@ -132,7 +133,7 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
      * @return The share percentage.
      */
     public int getShare() {
-        return shares * company.getShareUnit();
+        return ((Integer) shares.value()) * company.getShareUnit();
     }
 
     /**
@@ -244,6 +245,11 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
         } else {
             return super.compareTo(other);
         }
+    }
+
+    public void setShares(int numShares) {
+       this.shares.set(numShares);
+        
     }
 
     /**
