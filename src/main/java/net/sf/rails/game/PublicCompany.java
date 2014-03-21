@@ -596,7 +596,8 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
             // Throw away
             // the per-type
             // specification
-
+            
+            // TODO: Move this to PublicCertificate class, as it belongs there
             for (Tag certificateTag : certificateTags) {
                 int shares = certificateTag.getAttributeAsInteger("shares", 1);
 

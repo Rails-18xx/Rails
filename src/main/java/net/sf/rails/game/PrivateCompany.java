@@ -31,6 +31,7 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
     public static final int NO_PRICE_LIMIT = -1;    
 
     
+    // FIXME: See above, this has to be fixed
     protected static int numberOfPrivateCompanies = 0;
     protected int privateNumber; // For internal use
 
@@ -86,6 +87,9 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
     private String parentInfoText;
     private final BooleanState closed = BooleanState.create(this, "closed", false);
     
+    // used for Certificate interface
+    private float certificateCount = 1.0f;
+    
     /**
      * Used by Configure (via reflection) only
      */
@@ -115,6 +119,11 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
                 if (i < revenue.size()-1) {infoText += ", ";};
             }
 
+            Tag certificateTag = tag.getChild("Certificate");
+            if (certificateTag != null) {
+                certificateCount = certificateTag.getAttributeAsFloat("certificateCount", 1.0f);
+            }
+            
             // Blocked hexes (until bought by a company)
             Tag blockedTag = tag.getChild("Blocking");
             if (blockedTag != null) {
@@ -563,9 +572,16 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
         return (RailsRoot)super.getRoot();
     }
 
-    // Certficate method
+    // Certificate Interface
     public String getName() {
         return getId();
     }
-    
+
+    public float getCertificateCount() {
+        return certificateCount;
+    }
+
+    public void setCertificateCount(float certificateCount) {
+        this.certificateCount = certificateCount;
+    }
 }

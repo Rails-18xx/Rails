@@ -25,6 +25,7 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
     protected IntegerState shares = IntegerState.create(this, "shares");
     /** President's certificate? */
     protected boolean president;
+    // FIXME: If this is changable, it should be a state variable, otherwise UNDO problems
     /** Count against certificate limits */
     protected float certificateCount = 1.0f;
     
@@ -170,14 +171,6 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
         return initiallyAvailable;
     }
     
-    public float getCertificateCount() {
-        return certificateCount;
-    }
-
-    public void setCertificateCount(float certificateCount) {
-        this.certificateCount = certificateCount;
-    }
-
     /**
      * @param b
      */
@@ -254,6 +247,16 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
         
     }
 
+    // Certificate Interface
+    public float getCertificateCount() {
+        return certificateCount;
+    }
+
+    @Deprecated
+    public void setCertificateCount(float certificateCount) {
+        this.certificateCount = certificateCount;
+    }
+    
     /**
      * Two certificates are "equal" if they both belong to the same company,
      * represent the same share percentage, and are not a president share.

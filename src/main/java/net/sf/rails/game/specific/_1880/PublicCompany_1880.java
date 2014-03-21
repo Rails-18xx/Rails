@@ -206,7 +206,7 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
      * 
      * To be called from the StartRound_1880 / StockRoundWindow_1880
      */
-    
+    // TODO: Rails 2.0 Check if this is not too complicated and raises problems with undo
     public void setPresidentShares(int percentage) {
         int share = 0;
         
