@@ -1,60 +1,47 @@
 package rails.game.specific._1880;
 
-import java.util.Collections;
-import java.util.HashMap;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.Map;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableMap;
 
 import net.sf.rails.game.PrivateCompany;
 import net.sf.rails.game.TrainType;
+import net.sf.rails.game.state.Owner;
 import net.sf.rails.util.RailsObjects;
+import net.sf.rails.util.Util;
 import rails.game.action.PossibleAction;
 
 /**
- *
- * Rails 2.0: Updated equals and toString methods
+ * Rails 2.0: 
+ * Updated equals and toString methods
  */
 
-// FIXME: No static fields !!!
 public class ExchangeForCash extends PossibleAction {
-    private static final Map<String, Integer> CASH_VALUE_MAP = createCashValueMap();
-    private static Map<String, Integer> createCashValueMap() {
-        Map<String, Integer> result = new HashMap<String, Integer>();
-        result.put("2+2", 40);
-        result.put("3", 70);
-        result.put("3+3", 100);
-        return Collections.unmodifiableMap(result);
-    }
+    private static final Map<String, Integer> CASH_VALUE_MAP = 
+            ImmutableMap.of("2+2", 40, "3", 70, "3+3", 100);
 
-    private static final Map<String, Boolean> CHOICE_MAP = createChoiceMap();
-    private static Map<String, Boolean> createChoiceMap() {
-        Map<String, Boolean> result = new HashMap<String, Boolean>();
-        result.put("2+2", true);
-        result.put("3", true);
-        result.put("3+3", false);
-        return Collections.unmodifiableMap(result);
-    }
-
-    // FIXME: Why is ownerHasChoice transient?
-    // FIXME: Do not store owner Player/Portfolio by name, instead by transient object
+    private static final Map<String, Boolean> CHOICE_MAP = 
+            ImmutableMap.of("2+2", true, "3", true, "3+3", false );
+           
     private static final long serialVersionUID = 1L;
-    private transient boolean ownerHasChoice;
+    private transient Owner owner;
     private String ownerName;
-    private boolean exchangeCompany = false;
     private int value = 0;
-    
-    public ExchangeForCash() {
-        
-    }
+    private transient boolean ownerHasChoice;
+    // TODO: What is the function of exchangeCompany?
+    private boolean exchangeCompany = false;
     
     private ExchangeForCash(PrivateCompany company, int value, boolean ownerHasChoice) {
-        this.ownerName = company.getOwner().getId(); //TODO: Check if GetPortfolio is not needed anymore..
+        this.owner = company.getOwner();
+        this.ownerName = owner.getId();
         this.value = value;
         this.ownerHasChoice = ownerHasChoice;
     }
 
-    static public ExchangeForCash getAction(PrivateCompany company, TrainType soldOutTrainType) {
+    public static ExchangeForCash getAction(PrivateCompany company, TrainType soldOutTrainType) {
         ExchangeForCash action = null;
         String trainName = soldOutTrainType.getName();
         if (CASH_VALUE_MAP.containsKey(trainName) == true) {
@@ -93,10 +80,10 @@ public class ExchangeForCash extends PossibleAction {
 
         // check further attributes
         ExchangeForCash action = (ExchangeForCash)pa; 
-        return Objects.equal(this.ownerHasChoice, action.ownerHasChoice)
-                && Objects.equal(this.ownerName, action.ownerName)
+        return Objects.equal(this.owner, action.owner)
                 && Objects.equal(this.value, action.value)
-        ;
+             // not stored:                && Objects.equal(this.ownerHasChoice, action.ownerHasChoice)
+                ;
     }
 
     @Override
@@ -113,9 +100,18 @@ public class ExchangeForCash extends PossibleAction {
     public String toString() {
         return super.toString() 
                 + RailsObjects.stringHelper(this)
-                .addToString("ownerHasChoice", ownerHasChoice)
-                .addToString("ownerName", ownerName)
+                .addToString("owner", owner)
                 .addToString("value", value)
+                .addToStringOnlyActed("exchangeCompany", exchangeCompany)
         ;
+    }
+    
+    // deserialize to assign owner
+    private void readObject(ObjectInputStream in) throws IOException,
+            ClassNotFoundException {
+        in.defaultReadObject();
+        if (Util.hasValue(ownerName)) {
+            owner = getRoot().getPlayerManager().getPlayerByName(ownerName);
+        } 
     }
 }

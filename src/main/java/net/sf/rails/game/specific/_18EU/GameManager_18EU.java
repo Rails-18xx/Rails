@@ -75,7 +75,7 @@ public class GameManager_18EU extends GameManager {
             Player newPresident = null;
             int maxShare = 0;
             PlayerManager pm = getRoot().getPlayerManager();
-            for (Player player:pm.getNextPlayers()) {
+            for (Player player:pm.getNextPlayers(false)) {
                 int share = player.getPortfolioModel().getShare(company);
                 if (share >= company.getPresidentsShare().getShare()
                         && (share > maxShare)) {

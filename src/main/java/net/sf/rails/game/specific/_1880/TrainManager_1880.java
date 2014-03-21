@@ -2,6 +2,7 @@ package net.sf.rails.game.specific._1880;
 
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
+import net.sf.rails.game.Bank;
 import net.sf.rails.game.Phase;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.Train;
@@ -29,12 +30,12 @@ public class TrainManager_1880 extends TrainManager {
     public void checkTrainAvailability(Train train, Owner from) {
         trainsHaveRusted = false;
         phaseHasChanged = false;
-        if (from != ipo) return;
+        if (from != Bank.getIpo(this)) return;
 
         TrainCertificateType boughtType, nextType;
         boughtType = train.getCertType();
         if (boughtType == (trainCertTypes.get(newTypeIndex.value()))
-            && ipo.getTrainOfType(boughtType) == null) {
+            && Bank.getIpo(this).getPortfolioModel().getTrainOfType(boughtType) == null) {
             // Last train bought, make a new type available.
             newTypeIndex.add(1);
             if (newTypeIndex.value() < lTrainTypes.size()) {

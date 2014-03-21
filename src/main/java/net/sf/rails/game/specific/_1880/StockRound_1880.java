@@ -13,9 +13,6 @@ import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCertificate;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.StockRound;
-
-
-
 import net.sf.rails.game.StockSpace;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.state.Owner;
@@ -36,6 +33,7 @@ import rails.game.action.PossibleAction;
 import rails.game.action.SellShares;
 import rails.game.action.StartCompany;
 import rails.game.action.UseSpecialProperty;
+import rails.game.specific._1880.StartCompany_1880;
 
 
 public class StockRound_1880 extends StockRound {
@@ -406,7 +404,7 @@ public class StockRound_1880 extends StockRound {
         // TODO Auto-generated method stub
         if(super.sellShares(action)) {
             int numberSold=action.getNumber();
-            int sellingfee = -5*numberSold;
+            int sellingfee = 5*numberSold;
             Currency.wire(currentPlayer, sellingfee, bank); //Deduct the Money for selling those Shares !
             return true;
         }
@@ -494,6 +492,15 @@ public class StockRound_1880 extends StockRound {
         }
 
         return true;
+    }
+    
+    // In 1880 all share transfers via ipo
+    @Override
+    protected void executeShareTransfer( PublicCompany company,
+            List<PublicCertificate> certsToSell, 
+            Player dumpedPlayer, int presSharesToSell, int swapShareSize) {
+        
+        executeShareTransferTo(company, certsToSell, dumpedPlayer, presSharesToSell, swapShareSize, ipo );
     }
     
 }

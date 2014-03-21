@@ -259,7 +259,7 @@ public class OperatingRound_1880 extends OperatingRound {
         }
 
         // If this train was not from the ipo, nothing else to do.
-        if (action.getFromOwner() == ipo) {
+        if (action.getFromOwner() == Bank.getIpo(this)) {
             SpecialTrainBuy stb = action.getSpecialProperty();
             if ((stb == null) || (stb.isExercised() == false)) {
                 if (trainTypeCanAffectOR(action.getType()) == true) {
@@ -424,7 +424,7 @@ public class OperatingRound_1880 extends OperatingRound {
         } else {
             result= super.process(action);
             if (operatingCompany.value() instanceof Investor_1880) {
-                Investor_1880 investor = (Investor_1880) (operatingCompany.value());
+                Investor_1880 investor = (Investor_1880)  (operatingCompany.value());
                 if ((action instanceof SetDividend) && (investor.isConnectedToLinkedCompany() == false)) {
                     result = done(null);
                 }

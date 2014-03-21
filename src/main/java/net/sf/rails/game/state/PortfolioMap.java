@@ -2,6 +2,11 @@ package net.sf.rails.game.state;
 
 import java.util.Iterator;
 
+import net.sf.rails.game.Round;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.ImmutableSortedSet;
@@ -17,6 +22,9 @@ import com.google.common.collect.TreeMultimap;
 
 public class PortfolioMap<K extends Comparable<K>, T extends Ownable & Typable<K>> extends Portfolio<T> {
 
+    private static Logger log =
+            LoggerFactory.getLogger(PortfolioMap.class);
+    
     private final TreeMultimap<K, T> portfolio = TreeMultimap.create();
 
     private PortfolioMap(Owner parent, String id, Class<T> type) {
@@ -91,6 +99,7 @@ public class PortfolioMap<K extends Comparable<K>, T extends Ownable & Typable<K
             portfolio.put(item.getType(), item);
         } else {
             portfolio.remove(item.getType(), item);
+            log.debug("Remove " + item + ", type = " + item.getType() + " from " + portfolio.get(item.getType()));
         }
     }
 

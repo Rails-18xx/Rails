@@ -67,7 +67,7 @@ public class StartRound_Sequential extends StartRound {
     }
 
     private void setNextBiddingPlayer() {
-        for (Player p: playerManager.getNextPlayers()) {
+        for (Player p: playerManager.getNextPlayers(false)) {
             if (!passedPlayers.contains(p)) {
                 // TODO: What happens if all players have passed?
                 playerManager.setCurrentPlayer(p);

@@ -119,7 +119,8 @@ public class BuyCertificate extends PossibleAction {
         BuyCertificate action = (BuyCertificate)pa; 
         return Objects.equal(this.certificate, action.certificate)
                 && Objects.equal(this.company, action.company)
-                && Objects.equal(this.sharePerCert, action.sharePerCert)
+// FIXME: This is commented out to avoid invalidate StartCompany_1880
+//                && Objects.equal(this.sharePerCert, action.sharePerCert)
                 && Objects.equal(this.from, action.from)
 // FIXME: This is commented out to avoid invalidate StartCompany, see there
 //                && Objects.equal(this.price, action.price)

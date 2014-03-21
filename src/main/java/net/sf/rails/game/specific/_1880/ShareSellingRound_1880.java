@@ -243,4 +243,14 @@ public class ShareSellingRound_1880 extends ShareSellingRound {
         return true;        
     }
     
+    // In 1880 all share transfers via ipo
+    @Override
+    protected void executeShareTransfer( PublicCompany company,
+            List<PublicCertificate> certsToSell, 
+            Player dumpedPlayer, int presSharesToSell, int swapShareSize) {
+        
+        executeShareTransferTo(company, certsToSell, dumpedPlayer, presSharesToSell, swapShareSize, ipo );
+    }
+
+    
 }

@@ -213,21 +213,32 @@ public class PlayerManager extends RailsManager implements Configurable {
     
 
     /**
+     * @boolean include the current player at the start
      * @return a list of the next (active) players after the current player
+     * (including/excluding the current player at the start)
      */
-    public ImmutableList<Player> getNextPlayers() {
-        return getNextPlayersAfter(playerModel.currentPlayer.value());
+    public ImmutableList<Player> getNextPlayers(boolean include) {
+        return getNextPlayersAfter(playerModel.currentPlayer.value(), include , false);
     }
     
     /**
+     * @param boolean include the argument player at the start
+     * @param boolean include the argument player at the end
      * @return a list of the next (active) players after the argument player
+     * (including / excluding the argument player)
      */
-    public ImmutableList<Player> getNextPlayersAfter(Player player) {
+    public ImmutableList<Player> getNextPlayersAfter(Player player, boolean includeAtStart, boolean includeAtEnd) {
         ImmutableList.Builder<Player> playersAfter = ImmutableList.builder();
+        if (includeAtStart) {
+            playersAfter.add(player);
+        }
         Player nextPlayer = playerModel.getPlayerAfter(player);
         while (nextPlayer != player) {
             playersAfter.add(nextPlayer);
             nextPlayer = playerModel.getPlayerAfter(nextPlayer);
+        }
+        if (includeAtEnd) {
+            playersAfter.add(player);
         }
         return playersAfter.build();
     }

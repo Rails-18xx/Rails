@@ -231,15 +231,17 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
      * C) Id of CertificateType
      * D) Id of Certificate
      */
+    // FIXME: Use this comparator (including the other criterias below to display, the one here only for 
+    // default sorting, otherwise Portfolios (TreeMaps) might be confused
     @Override
     public int compareTo(Ownable other) {
         if (other instanceof PublicCertificate) {
             PublicCertificate otherCert = (PublicCertificate)other;
             // sort by the criteria defined above
             return ComparisonChain.start()
-                    .compare(otherCert.isPresidentShare(), this.isPresidentShare())
-                    .compare(otherCert.getShares(), this.getShares())
-                    .compare(this.getType().getId(), otherCert.getType().getId())
+//                    .compare(otherCert.isPresidentShare(), this.isPresidentShare())
+//                    .compare(otherCert.getShares(), this.getShares())
+//                    .compare(this.getType().getId(), otherCert.getType().getId())
                     .compare(this.getId(), otherCert.getId())
                     .result();
         } else {

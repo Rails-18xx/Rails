@@ -130,7 +130,6 @@ public class Investor_1880 extends PublicCompany implements RevenueStaticModifie
                 Owner holder = token.getOwner();
                 if (!(holder instanceof Stop)) continue;
                 Stop stop = (Stop) holder;
-
                 for (NetworkVertex vertex : verticies) {
                     if (vertex.getType() == NetworkVertex.VertexType.STATION) {
                         if ((stop.getRelatedStation() == vertex.getStation())

@@ -36,6 +36,8 @@
       <Station id="city2" position="203" slots="1" type="City" value="20" />
       <Station id="city3" position="403" slots="1" type="City" value="20" />
       <Station id="city4" position="503" slots="1" type="City" value="20" />
+      <Station id="city5" position="003" slots="1" type="City" />
+      <Station id="city6" position="303" slots="1" type="City" />
       <Track from="city3" gauge="normal" to="side4" />
       <Track from="city2" gauge="normal" to="side2" />
       <Track from="city1" gauge="normal" to="side1" />
