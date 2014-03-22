@@ -1070,7 +1070,7 @@ public class OperatingRound_1880 extends OperatingRound {
                             }
                         } else if (mustBuyTrain) {
                             //TODO : Can't Finance a 2R Train
-                            if (!train.getId().equals("2R")) {
+                            if (!train.getType().getName().equals("2R")) {
                             newEmergencyTrains.put(cost, train);
                             }
                         }
@@ -1141,8 +1141,7 @@ public class OperatingRound_1880 extends OperatingRound {
                             BuyTrain bt = new BuyTrain(train, getRoot().getBank().getPool(), train.getCost());
                             bt.setPresidentMustAddCash(train.getCost() - cash);
                             bt.setForcedBuyIfNoRoute(mustBuyTrain); // TODO TEMPORARY
-                            possibleActions.add(bt);
-                        }
+                            possibleActions.add(bt);                        }
                     }
                 }
             
@@ -1227,7 +1226,7 @@ public class OperatingRound_1880 extends OperatingRound {
         
         if (numberOfTrainsFound >0) {
             for (Train train : trains) {
-                if (train.getId().equals("2R")) rTypeFound++;
+                if (train.getType().getName().equals("2R")) rTypeFound++;
             }
             if (numberOfTrainsFound == rTypeFound) return false;
             return true;

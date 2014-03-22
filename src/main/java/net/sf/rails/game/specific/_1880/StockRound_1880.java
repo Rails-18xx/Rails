@@ -373,9 +373,9 @@ public class StockRound_1880 extends StockRound {
          */
         for (Player p : playerManager.getPlayers()) {
             if (p.getCash() <0 ) {
-                int fine = p.getCash() / 2;
+                int fine = Math.abs(p.getCash() / 2);
                 ReportBuffer.add(this, LocalText.getText("DebtPenaltyStockRound", p.getId(),
-                       Currency.format(this,-fine)));
+                       Currency.format(this,fine)));
                 Currency.wire(p,fine,bank);
             }
         }
