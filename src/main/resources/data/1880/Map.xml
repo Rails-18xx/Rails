@@ -36,8 +36,12 @@
 	<Hex name="F6" tile="-80001" city="Test8" cost="30" />
 	<Hex name="F8" tile="-80004" city="Beijing" orientation="5" label="Beijing"/>
 	<Hex name="F10" tile="-10" city="Tianjin" />
-	<Hex name="F12" tile="-4008" orientation="1" value="-10"/>
-	<Hex name="F14" tile="-4008" orientation="6" value="-10"/>
+	<Hex name="F12" tile="-4008" orientation="1">
+		<RevenueBonus name="Ferry_Dalian_Tianjin" value="-10"> <Vertex id = "1"/> </RevenueBonus>
+	</Hex>
+	<Hex name="F14" tile="-4008" orientation="6">
+		<RevenueBonus name="Ferry_Dalian_South" value="-10"> <Vertex id = "2"/> </RevenueBonus>
+	</Hex>
 	<Hex name="G1" tile="0" cost="20" />
 	<Hex name="G3" tile="-10" city="Baotou" cost="20" />
 	<Hex name="G5" tile="0" cost="50" />
@@ -60,7 +64,7 @@
 	<Hex name="I9" tile="-80020" city="Kaifeng, Zhengzhou" cost="20" />
 	<Hex name="I11" tile="0" />
 	<Hex name="I13" tile="0" />
-	<Hex name="I15" tile="-4009" orientation="2" value="-10"/>
+	<Hex name="I15" tile="-4009" orientation="2"/>
 	<Hex name="J2" tile="-10" city="Lhasa" cost="50"/>
 	<Hex name="J4" tile="0" cost="30"/>
 	<Hex name="J6" tile="-10" cost="30" city="Xian" />
@@ -68,7 +72,9 @@
 	<Hex name="J10" tile="0" />
 	<Hex name="J12" tile="-10" city="Hefei" />
 	<Hex name="J14" tile="-1" cost="20"/>
-	<Hex name="J16" tile="-4008" orientation="6" value="-10"/>
+	<Hex name="J16" tile="-4008" orientation="6">
+		<RevenueBonus name="Ferry_Qingdao_Shanghai" value="-10"> <Vertex id = "2"/> </RevenueBonus>
+	</Hex>
 	<Hex name="K1" tile="-903" orientation="5" value="0,0,0,80" city="Lhasa" />
 	<Hex name="K3" tile="0" cost="30" />
 	<Hex name="K5" tile="-1" cost="30" />

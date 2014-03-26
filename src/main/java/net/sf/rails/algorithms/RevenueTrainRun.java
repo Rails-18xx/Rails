@@ -266,11 +266,13 @@ public class RevenueTrainRun implements Comparable<RevenueTrainRun> {
                 } else {
                     runPrettyPrint.append(",");
                 }
-                if (vertex.isStation()) {
-                    runPrettyPrint.append(revenueAdapter.getVertexValueAsString(vertex, train, revenueAdapter.getPhase()));
-                }  else {
-                    runPrettyPrint.append(vertex.getHex().getOrientationName(vertex.getSide()));
-                }
+                // TODO: Allow more options for pretty print, depending on route structure etc.
+                runPrettyPrint.append(revenueAdapter.getVertexValueAsString(vertex, train, revenueAdapter.getPhase()));
+//                if (vertex.isStation()) {
+//                    runPrettyPrint.append(revenueAdapter.getVertexValueAsString(vertex, train, revenueAdapter.getPhase()));
+//                }  else {
+//                    runPrettyPrint.append(vertex.getHex().getOrientationName(vertex.getSide()));
+//                }
             }
 
             if (currentHexName != null) {

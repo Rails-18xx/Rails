@@ -202,6 +202,11 @@ public final class RevenueAdapter implements Runnable {
         protectedVertices.addAll(bonus.getVertices());
     }
     
+    public void removeRevenueBonus(RevenueBonus bonus) {
+        revenueBonuses.remove(bonus);
+        // TODO: Change protectedVertices to multiSet then you can unprotect vertices
+    }
+    
     public void populateFromRails() {
         // define graph, without HQ
         graph = networkAdapter.getRouteGraph(company, false);
