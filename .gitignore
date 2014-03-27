@@ -4,9 +4,6 @@ build/
 
 # Eclipse build
 classes/
-.settings/
-.project
-.checkstyle
 
 # Log files
 **/18xx.log
