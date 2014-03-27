@@ -174,7 +174,7 @@
 		</Phase>
 		</Component>
 		<Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager">
-			<Modifier class="net.sf.rails.game.specific._1880.OffBoardRevenueModifier_1880"/>
+			<Modifier class="net.sf.rails.game.specific._1880.TranssibModifier"/>
 			<Modifier class="net.sf.rails.game.specific._1880.StockMarketBonusModifier"/>
 			<Modifier class="net.sf.rails.game.specific._1880.FerryConnectionModifier"/>
 			<Modifier class="net.sf.rails.game.specific._1880.TaiwanWesternModifier"/>
