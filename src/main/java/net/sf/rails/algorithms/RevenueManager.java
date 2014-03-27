@@ -34,11 +34,13 @@ public final class RevenueManager extends RailsManager implements Configurable {
     private final ArrayListState<NetworkGraphModifier> graphModifiers = ArrayListState.create(this, "graphModifiers"); 
     private final ArrayListState<RevenueStaticModifier> staticModifiers = ArrayListState.create(this, "staticModifiers");
     private final ArrayListState<RevenueDynamicModifier> dynamicModifiers = ArrayListState.create(this, "dynamicModifiers");
+    private RevenueCalculatorModifier calculatorModifier;
     
     // Variables that store the active modifier (per RevenueAdapter)
     private final ArrayList<RevenueStaticModifier> activeStaticModifiers = new ArrayList<RevenueStaticModifier>();
     private final ArrayList<RevenueDynamicModifier> activeDynamicModifiers = new ArrayList<RevenueDynamicModifier>();
-    private RevenueDynamicModifier activeCalculator;
+    // TODO: Still add that flag if the calculator is active
+    private boolean activeCalculator;
 
     /**
      * Used by Configure (via reflection) only
@@ -84,6 +86,15 @@ public final class RevenueManager extends RailsManager implements Configurable {
                     dynamicModifiers.add((RevenueDynamicModifier)modifier);
                     isModifier = true;
                     log.info("Added as dynamic modifier = " + className);
+                }
+                if (modifier instanceof RevenueCalculatorModifier) {
+                    if (calculatorModifier != null) {
+                        throw new ConfigurationException(LocalText.getText(
+                                "MoreThanOneCalculatorModifier", className));
+                    }
+                    calculatorModifier = (RevenueCalculatorModifier)modifier;
+                    isModifier = true;
+                    log.info("Added as calculator modifier = " + className);
                 }
                 if (!isModifier) {
                     throw new ConfigurationException(LocalText.getText(
@@ -178,24 +189,12 @@ public final class RevenueManager extends RailsManager implements Configurable {
     }
     
     /**
-     * @return true if one of the dynamic modifiers is an calculator of its own
-     */
-    boolean hasDynamicCalculator() {
-        for (RevenueDynamicModifier modifier:activeDynamicModifiers) {
-            if (modifier.providesOwnCalculateRevenue()) {
-                activeCalculator = modifier;
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    /**
      * @param revenueAdapter
      * @return revenue from active calculator
      */
+    // FIXME: This does not fully cover all cases that needs the revenue from the calculator
     int revenueFromDynamicCalculator(RevenueAdapter revenueAdapter) {
-        return activeCalculator.calculateRevenue(revenueAdapter);
+        return calculatorModifier.calculateRevenue(revenueAdapter);
         
     }
 

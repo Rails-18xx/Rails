@@ -12,11 +12,8 @@ import java.util.List;
  * They have to register themselves to the RevenueManager via the GameManager instance.
  *
  * Caveats:
- * Usually only one instance of a dynamic modifier is needed.
  * The interaction between several dynamic modifiers can be complicated.
- * 
- * 
- * @author freystef
+ * The are called in the order of the definition in game.xml.
  */
 
 public interface RevenueDynamicModifier {
@@ -46,18 +43,6 @@ public interface RevenueDynamicModifier {
      * */
     public void adjustOptimalRun(List<RevenueTrainRun> optimalRuns);
 
-    /**
-     * If the modifier uses its own method for revenue calculation 
-     */
-    public boolean providesOwnCalculateRevenue();
-
-    /**
-     * Allows to replace the usual calculation process (evaluate all trains simultaneously)
-     * If several dynamic modifier have their own method, their prediction values are added up.  
-     * @return optimal value
-     */
-    public int calculateRevenue(RevenueAdapter revenueAdpater);
-    
     /** 
      * Allows to append additional text
      * @return String output for display in Rails */
