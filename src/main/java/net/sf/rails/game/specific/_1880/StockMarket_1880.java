@@ -20,6 +20,8 @@ import com.google.common.collect.Iterables;
  * @author Martin
  * 
  */
+
+// FIXME: This seems to be a non-finalized version, fix it for Rails 2.0
 public class StockMarket_1880 extends StockMarket {
 
    
