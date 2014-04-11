@@ -113,10 +113,10 @@ public class MapManager extends RailsManager implements Configurable {
                         hex.addInvalidSide(side);
                         if (hex.isImpassableNeighbour(neighbour)) {
                             hex.addImpassableSide(side);
-                            neighbour.addImpassableSide(side);
+                            neighbour.addImpassableSide(side.opposite());
                         }
                     }
-                } else { // neighbour is nzll
+                } else { // neighbour is null
                     hex.addInvalidSide(side);
                 }
             }

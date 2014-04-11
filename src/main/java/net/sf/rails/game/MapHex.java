@@ -329,6 +329,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
     
     public void addImpassableSide(HexSide side) {
         impassableBuilder.set(side);
+        log.debug("Added impassable " + side + " to " + this);
     }
 
     public HexSidesSet getImpassableSides () {
