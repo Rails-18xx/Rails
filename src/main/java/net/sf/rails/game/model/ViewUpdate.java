@@ -24,6 +24,8 @@ public class ViewUpdate implements Serializable {
 
     public static final long serialVersionUID = 1L;
 
+    public static final String FGCOLOUR = "FGCOLOUR";
+
     public ViewUpdate (String key, Object value) {
         addObject (key, value);
     }

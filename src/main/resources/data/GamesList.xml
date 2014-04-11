@@ -27,6 +27,14 @@ Three variants have been implemented:
 	- Clemens
 	- Snake
 
+The following options are possible:
+	
+	-Bayern floats at values 50% or 20% default=50%
+	-LDIncome values can be 20M or 30M default is 30M
+	-MinorsRequireFloatedBY type=toggle default=no
+	-PrussianReservedIgnored ( Ignores reserved shares at determining sold out status
+	after prussian formation round) type=toggle default=no
+	
 Known limitations:
 	- OBB and PfB do not always close when required. 
 	  Workaround: close minor via the Special menu.

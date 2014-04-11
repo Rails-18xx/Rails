@@ -3,7 +3,10 @@ package rails.game.action;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
+import com.google.common.base.Objects;
+
 import net.sf.rails.game.*;
+import net.sf.rails.util.RailsObjects;
 import net.sf.rails.util.Util;
 
 
@@ -13,6 +16,8 @@ import net.sf.rails.util.Util;
  * train etc.).
  *
  * @author Erik Vos
+ * 
+ * Rails 2.0: Added updated equals and toString methods 
  */
 /* Or should this be an interface? We will see. */
 public abstract class PossibleORAction extends PossibleAction {
@@ -48,6 +53,32 @@ public abstract class PossibleORAction extends PossibleAction {
     public void setCompany(PublicCompany company) {
         this.company = company;
         this.companyName = company.getId();
+    }
+    
+    
+    @Override
+    public boolean equalsAsOption (PossibleAction pa) {
+        //  super checks both class identity and super class attributes
+        if (!super.equalsAsOption(pa)) return false; 
+
+        // check further attributes
+        PossibleORAction action = (PossibleORAction)pa; 
+        return Objects.equal(this.company, action.company);
+    }
+    
+    @Override
+    public boolean equalsAsAction (PossibleAction pa) {
+        // no further test compared to option
+        return this.equalsAsOption(pa);
+    }
+    
+    @Override
+    public String toString () {
+        return super.toString() + 
+                RailsObjects.stringHelper(this)
+                .addToString("company", company)
+                .toString()
+        ;
     }
 
     /** Deserialize */

@@ -933,15 +933,10 @@ public class OperatingRound extends Round implements Observer {
     protected void setTrainsToDiscard() {
 
         // Scan the players in SR sequence, starting with the current player
-        Player player;
-        List<PublicCompany> list;
-        int currentPlayerIndex = getCurrentPlayerIndex();
-        for (int i = currentPlayerIndex; i < currentPlayerIndex
-        + getNumberOfPlayers(); i++) {
-            player = getRoot().getPlayerManager().getPlayerByIndex(i);
+        for (Player player:getRoot().getPlayerManager().getNextPlayers(true)) {
             if (excessTrainCompanies.containsKey(player)) {
                 setCurrentPlayer(player);
-                list = excessTrainCompanies.get(player);
+                List<PublicCompany> list = excessTrainCompanies.get(player);
                 for (PublicCompany comp : list) {
                     possibleActions.add(new DiscardTrain(comp,
                             comp.getPortfolioModel().getUniqueTrains(), true));

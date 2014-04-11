@@ -35,6 +35,14 @@ public final class PrivatesModel extends RailsModel {
         return privates;
     }
     
+    public float getCertificateCount() {
+        float count = 0;
+        for (PrivateCompany p:privates) {
+            count += p.getCertificateCount();
+        }
+        return count;
+    }
+    
     public void moveInto(PrivateCompany p){
         privates.moveInto(p);
     }

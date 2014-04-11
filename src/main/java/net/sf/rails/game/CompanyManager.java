@@ -208,6 +208,15 @@ public class CompanyManager extends RailsManager implements Configurable {
         for (PrivateCompany comp : lPrivateCompanies) {
             comp.finishConfiguration(root);
         }
+        
+    }
+    
+    public void initStartPackets(GameManager gameManager) {
+        // initialize startPackets
+        // TODO: Check if this still works in 2.0
+        for (StartPacket packet: startPackets) {
+            packet.init(gameManager);
+        }
     }
 
     private void createAlias (String alias, String name) {
@@ -311,5 +320,14 @@ public class CompanyManager extends RailsManager implements Configurable {
         }
     }
 
+    public StartPacket getNextUnfinishedStartPacket() {
+      for (StartPacket packet: startPackets) {
+          if (packet.areAllSold() == false) {
+              return packet;
+              
+              }
+          }
+      return null;
+    }
     
 }

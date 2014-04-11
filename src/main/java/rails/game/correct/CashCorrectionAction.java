@@ -4,15 +4,19 @@ package rails.game.correct;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-import rails.game.action.PossibleAction;
+import com.google.common.base.Objects;
 
-import net.sf.rails.game.*;
+import rails.game.action.PossibleAction;
+import net.sf.rails.game.MoneyOwner;
+import net.sf.rails.game.Player;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.util.RailsObjects;
 import net.sf.rails.util.Util;
 
 /**
- * Correction action that changes the cash position of a cashholder.
+ * Correction action that changes the cash position of a MoneyOwner.
  * 
- * @author Stefan Frey
+ * Rails 2.0: updated equals and toString methods
  */
 public class CashCorrectionAction extends CorrectionAction {
 
@@ -83,38 +87,38 @@ public class CashCorrectionAction extends CorrectionAction {
    }
     
     @Override
-    public boolean equalsAsOption(PossibleAction action) {
-        if (!(action instanceof CashCorrectionAction)) return false;
-        CashCorrectionAction a = (CashCorrectionAction) action;
-        return (a.correctCashHolder == this.correctCashHolder &&
-                a.maximumNegative == this.maximumNegative
-        );
+    public boolean equalsAsOption(PossibleAction pa) {
+        // identity always true
+        if (pa == this) return true;
+        //  super checks both class identity and super class attributes
+        if (!super.equalsAsOption(pa)) return false; 
+
+        // check further attributes
+        CashCorrectionAction action = (CashCorrectionAction)pa;
+        return Objects.equal(this.correctCashHolder, action.correctCashHolder)
+                && Objects.equal(this.maximumNegative, action.maximumNegative)
+        ;
     }
     
     @Override
-    public boolean equalsAsAction(PossibleAction action) {
-        if (!(action instanceof CashCorrectionAction)) return false;
-        CashCorrectionAction a = (CashCorrectionAction) action;
-        return (a.correctCashHolder == this.correctCashHolder &&
-                a.correctAmount == this.correctAmount
-        );
+    public boolean equalsAsAction(PossibleAction pa) {
+        // first check if equal as option
+        if (!this.equalsAsOption(pa)) return false;
+        
+        // check further attributes
+        CashCorrectionAction action = (CashCorrectionAction)pa; 
+        return Objects.equal(this.correctAmount, action.correctAmount);
     }
     
     @Override
     public String toString() {
-        StringBuffer b = new StringBuffer("CashCorrectionAction ");
-        if (acted) {
-            b.append(" (acted)");
-            if (correctCashHolder != null)
-                b.append(", correctCashHolder="+correctCashHolder);
-            b.append(", correctAmount="+correctAmount);
-        } else {
-            b.append(" (not acted)");
-            if (correctCashHolder != null)
-                b.append(", correctCashHolder="+correctCashHolder);
-            b.append(", maximumNegative="+maximumNegative);
-        }
-        return b.toString();
+        return super.toString() + 
+                RailsObjects.stringHelper(this)
+                    .addToString("correctCashHolder", correctCashHolder)
+                    .addToString("maximumNegative", maximumNegative)
+                    .addToStringOnlyActed("correctAmount", correctAmount)
+                .toString()
+        ;
     }
 
     /** Deserialize */

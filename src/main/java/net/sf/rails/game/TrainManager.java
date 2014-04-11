@@ -13,7 +13,6 @@ import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.common.parser.Configurable;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
-import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.IntegerState;
 import net.sf.rails.game.state.Owner;
@@ -62,8 +61,6 @@ public class TrainManager extends RailsManager implements Configurable {
     protected boolean trainAvailabilityChanged = false;
 
     protected List<PublicCompany> companiesWithExcessTrains;
-
-    protected Bank bank = null;
     
     /** Required for the sell-train-to-foreigners feature of some games */
     protected final BooleanState anyTrainBought = BooleanState.create(this, "anyTrainBought");
@@ -73,9 +70,6 @@ public class TrainManager extends RailsManager implements Configurable {
     protected final Map<TrainCertificateType, Map<Integer, Phase>> newPhases
             = new HashMap<TrainCertificateType, Map<Integer, Phase>>();
 
-    // Non-game attributes
-    protected PortfolioModel ipo, pool, unavailable;
-    
     // For initialisation only
     boolean trainPriceAtFaceValueIfDifferentPresidents = false;
 
@@ -162,11 +156,6 @@ public class TrainManager extends RailsManager implements Configurable {
 
     public void finishConfiguration (RailsRoot root)
     throws ConfigurationException {
-        bank = root.getBank();
-        // TODO: Can this be changed to use BankPortolios directly?
-        ipo = bank.getIpo().getPortfolioModel();
-        pool = bank.getPool().getPortfolioModel();
-        unavailable = bank.getUnavailable().getPortfolioModel();
 
         Map<Integer, String> newPhaseNames;
         Phase phase;
@@ -192,7 +181,7 @@ public class TrainManager extends RailsManager implements Configurable {
             for (int i = 0; i < (certType.hasInfiniteQuantity() ? 1 : certType.getQuantity()); i++) {
                 train = Train.create(this, getNewUniqueId(certType.getId()), certType, initialType);
                 addTrain(train);
-                unavailable.addTrain(train);
+                Bank.getUnavailable(this).getPortfolioModel().addTrain(train);
             }
             
             // Register any phase changes
@@ -273,12 +262,12 @@ public class TrainManager extends RailsManager implements Configurable {
 
         trainsHaveRusted = false;
         phaseHasChanged = false;
-        if (from != ipo.getParent()) return;
+        if (from != Bank.getIpo(this)) return;
 
         TrainCertificateType boughtType, nextType;
         boughtType = train.getCertType();
         if (boughtType == (trainCertTypes.get(newTypeIndex.value()))
-            && ipo.getTrainOfType(boughtType) == null) {
+            && Bank.getIpo(this).getPortfolioModel().getTrainOfType(boughtType) == null) {
             // Last train bought, make a new type available.
             newTypeIndex.add(1);
             if (newTypeIndex.value() < lTrainTypes.size()) {
@@ -316,8 +305,8 @@ public class TrainManager extends RailsManager implements Configurable {
         type.setAvailable();
 
         BankPortfolio to =
-            (type.getInitialPortfolio().equalsIgnoreCase("Pool") ? bank.getPool()
-                    : bank.getIpo());
+            (type.getInitialPortfolio().equalsIgnoreCase("Pool") ? Bank.getPool(this)
+                    : Bank.getIpo(this));
 
         for (Train train : trainsPerCertType.get(type)) {
             to.getPortfolioModel().addTrain(train);
@@ -329,7 +318,7 @@ public class TrainManager extends RailsManager implements Configurable {
         // check fist if train can obsolete at all
         if (!train.getCertType().isObsoleting()) return false;
         // and if it is in the pool (always rust)
-        if (train.getOwner() == pool.getParent()) return false;
+        if (train.getOwner() == Bank.getPool(this)) return false;
         
         // then check if obsolete type
         if (obsoleteTrainFor == ObsoleteTrainForType.ALL) {
@@ -372,7 +361,7 @@ public class TrainManager extends RailsManager implements Configurable {
 
         for (TrainCertificateType type : trainCertTypes) {
             if (type.isAvailable()) {
-                train = ipo.getTrainOfType(type);
+                train = Bank.getIpo(this).getPortfolioModel().getTrainOfType(type);
                 if (train != null) {
                     availableTrains.add(train);
                 }
@@ -437,5 +426,20 @@ public class TrainManager extends RailsManager implements Configurable {
             anyTrainBought.set(newValue);
         }
     }
+
+    public List<TrainType> parseTrainTypes(String trainTypeName) {
+        List <TrainType> trainTypes = new ArrayList<TrainType>();
+        TrainType trainType;
+        for (String trainTypeSingle : trainTypeName.split(",")) {
+            trainType = getTypeByName(trainTypeSingle);
+            if (trainType!= null) {
+                trainTypes.add(trainType);
+            } else {
+                continue;
+            }
+        }
+        
+        return trainTypes;
+    }  
     
 }

@@ -24,21 +24,15 @@ public class StartRound_18EU extends StartRound {
      * Constructed via Configure
      */
     public StartRound_18EU(GameManager parent, String id) {
-        super(parent, id);
-        hasBidding = true;
-        hasBasePrices = false;
+        super(parent, id, true, false, true);
+        // bidding, but no base prices
     }
 
-    /**
-     * Start the 18EU-style start round.
-     *
-     * @param startPacket The startpacket to be sold in this start round.
-     */
     @Override
     public void start() {
         super.start();
 
-        setStep(SELECT_STEP);
+        currentStep.set(SELECT_STEP);
 
         setPossibleActions();
     }
@@ -47,17 +41,16 @@ public class StartRound_18EU extends StartRound {
     public boolean setPossibleActions() {
 
         possibleActions.clear();
+        
+        Player currentPlayer = playerManager.getCurrentPlayer();
 
-        // Refresh player, may have been reset by Undo/Redo
-        currentPlayer = getCurrentPlayer();
-
-        switch (getStep()) {
+        switch (currentStep.value()) {
         case SELECT_STEP:
             // In the selection step, all not yet sold items are selectable.
             // The current player MUST select an item,
             // and may then bid for it or pass.
 
-            selectingPlayer.set(getCurrentPlayer());
+            selectingPlayer.set(currentPlayer);
             currentBuyPrice.set(100);
 
             for (StartItem item : itemsToSell.view()) {
@@ -90,7 +83,7 @@ public class StartRound_18EU extends StartRound {
                             startPacket.getModulus(), true);
                 possibleActions.add(possibleAction);
             }
-            if (getStep() == OPEN_STEP) {
+            if (currentStep.value() == OPEN_STEP) {
                 possibleActions.add(new NullAction(NullAction.PASS).setLabel("DeclineToBid"));
             } else {
                 possibleActions.add(new NullAction(NullAction.PASS));
@@ -103,12 +96,12 @@ public class StartRound_18EU extends StartRound {
 
     @Override
     protected boolean buy(String playerName, BuyStartItem boughtItem) {
-        StartItem item = boughtItem.getStartItem();
+        StartItem item = boughtItem.getStartItem();                                                                                                                                     
         int status = boughtItem.getStatus();
         String errMsg = null;
-        Player player = getCurrentPlayer();
+        Player player = playerManager.getCurrentPlayer();
         int price = 0;
-
+                                
         while (true) {
 
             // Is the item buyable?
@@ -140,7 +133,7 @@ public class StartRound_18EU extends StartRound {
         assignItem(player, item, price, 0);
         ((PublicCertificate) item.getPrimary()).getCompany().start();
         setNextSelectingPlayer();
-        setStep(SELECT_STEP);
+        currentStep.set(SELECT_STEP);
 
         return true;
 
@@ -159,7 +152,7 @@ public class StartRound_18EU extends StartRound {
         StartItem item = bidItem.getStartItem();
         StartItem auctionedItem = (StartItem) currentAuctionItem.value();
         String errMsg = null;
-        Player player = getCurrentPlayer();
+        Player player = playerManager.getCurrentPlayer();
         int bidAmount = bidItem.getActualBid();
 
         while (true) {
@@ -173,7 +166,7 @@ public class StartRound_18EU extends StartRound {
             } else {
 
                 // If auctioning, must be the right item
-                if ((getStep() == OPEN_STEP || getStep() == BID_STEP)
+                if ((currentStep.value() == OPEN_STEP || currentStep.value() == BID_STEP)
                     && !item.equals(auctionedItem)) {
                     errMsg =
                             LocalText.getText("WrongStartItem",
@@ -221,7 +214,7 @@ public class StartRound_18EU extends StartRound {
 
         
 
-        if (getStep() == SELECT_STEP) {
+        if (currentStep.value() == SELECT_STEP) {
 
             currentAuctionItem.set(item);
             item.setStatus(StartItem.AUCTIONED);
@@ -231,7 +224,7 @@ public class StartRound_18EU extends StartRound {
                 }
             }
             if (bidAmount == -1) {
-                setStep(OPEN_STEP);
+                currentStep.set(OPEN_STEP);
             }
 
             ReportBuffer.add(this, " ");
@@ -243,7 +236,7 @@ public class StartRound_18EU extends StartRound {
         if (bidAmount > 0) {
             item.setBid(bidAmount, player);
             item.setMinimumBid(bidAmount + 5);
-            setStep(BID_STEP);
+            currentStep.set(BID_STEP);
 
             ReportBuffer.add(this, LocalText.getText("BID_ITEM",
                     playerName,
@@ -251,14 +244,14 @@ public class StartRound_18EU extends StartRound {
                     item.getName() ));
         }
 
-        switch (getStep()) {
+        switch (currentStep.value()) {
         case OPEN_STEP:
         case BUY_STEP:
-            setNextPlayer();
+            Player currentPlayer = playerManager.setCurrentToNextPlayer();
             if (currentPlayer == selectingPlayer.value()) {
                 // All have passed, now lower the buy price
                 currentBuyPrice.add(-10);
-                setStep(BUY_STEP);
+                currentStep.set(BUY_STEP);
                 if (currentBuyPrice.value() == 0) {
                     // Forced buy
                     assignItem(currentPlayer, item, 0, 0);
@@ -288,10 +281,10 @@ public class StartRound_18EU extends StartRound {
 
         StartItem auctionedItem = (StartItem) currentAuctionItem.value();
 
-        switch (getStep()) {
+        switch (currentStep.value()) {
         case OPEN_STEP:
         case BUY_STEP:
-            setNextPlayer();
+            Player currentPlayer = playerManager.setCurrentToNextPlayer();
             if (currentPlayer == selectingPlayer.value()) {
                 // All have passed, now lower the buy price
                 currentBuyPrice.add(-10);
@@ -299,7 +292,7 @@ public class StartRound_18EU extends StartRound {
                 ReportBuffer.add(this, LocalText.getText("ITEM_PRICE_REDUCED",
                         auctionedItem.getName(),
                         Currency.format(this, currentBuyPrice.value()) ));
-                setStep(BUY_STEP);
+                currentStep.set(BUY_STEP);
 
                 if (currentBuyPrice.value() == 0) {
                     // Forced buy
@@ -307,24 +300,24 @@ public class StartRound_18EU extends StartRound {
                     auctionedItem.setBid(0, currentPlayer);
 
                     assignItem(currentPlayer, auctionedItem, 0, 0);
-                    setStep(SELECT_STEP);
+                    currentStep.set(SELECT_STEP);
                     setNextSelectingPlayer();
                 }
             }
             break;
 
         case BID_STEP:
-
-            auctionedItem.setBid(-2, currentPlayer);
+            
+            auctionedItem.setBid(-2, playerManager.getCurrentPlayer());
 
             // We are done if the next still bidding player
             // is equal to the current highest bidder.
             setNextBiddingPlayer();
-            if (currentPlayer == auctionedItem.getBidder()) {
+            if (playerManager.getCurrentPlayer() == auctionedItem.getBidder()) {
                 // Finish bidding
                 assignItem(auctionedItem.getBidder(), auctionedItem,
                         auctionedItem.getBid(), 0);
-                setStep(SELECT_STEP);
+                currentStep.set(SELECT_STEP);
                 setNextSelectingPlayer();
             }
         }
@@ -333,25 +326,15 @@ public class StartRound_18EU extends StartRound {
     }
 
     private void setNextBiddingPlayer() {
-
+        
+        Player currentPlayer;
         do {
-            setNextPlayer();
+            currentPlayer = playerManager.setCurrentToNextPlayer();
         } while (((StartItem) currentAuctionItem.value()).getBid(currentPlayer) < 0);
     }
 
     private void setNextSelectingPlayer() {
-        setPlayer((Player) selectingPlayer.value());
-        setNextPlayer();
-    }
-
-    public int getStep() {
-        return currentStep.value();
-    }
-
-    public void setStep(int step) {
-        if (step != currentStep.value()) {
-            currentStep.set(step);
-        }
+        playerManager.setCurrentToNextPlayerAfter(selectingPlayer.value());
     }
 
     @Override

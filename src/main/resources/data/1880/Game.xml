@@ -1,7 +1,11 @@
 <?xml version="1.0"?>
 <ComponentManager>
-	<Component name="GameManager" class="net.sf.rails.game.GameManager">
+	<Component name="GameManager" class="net.sf.rails.game.specific._1880.GameManager_1880">
 		<Game name="1880"/>
+		<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Highlight"/>
+		<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest"/>
+		<GameOption name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
+		<GameOption name="LeaveAuctionOnPass" type="toggle" default="no"/>
 		<GameParameters>
 			<PlayerShareLimit percentage="100"/>
 			<StockRound class="net.sf.rails.game.specific._1880.StockRound_1880"
@@ -10,17 +14,23 @@
 			</StockRound>
 			<OperatingRound
 				class="net.sf.rails.game.specific._1880.OperatingRound_1880">
-				<EmergencyTrainBuying mayBuyFromCompany="no"/>
+				<EmergencyTrainBuying mayBuyFromCompany="yes"/>
 			</OperatingRound>
+			<ShareSellingRound class="net.sf.rails.game.specific._1880.ShareSellingRound_1880">
+			</ShareSellingRound>
 		</GameParameters>
 		<GuiClasses>
-			<StatusWindow class="net.sf.rails.ui.swing.StatusWindow"/>
+			<GameStatus
+				class="net.sf.rails.ui.swing.gamespecific._1880.GameStatus_1880"/>
 			<StartRoundWindow
 				class="net.sf.rails.ui.swing.gamespecific._1880.StartRoundWindow_1880"/>
+			<GameUIManager
+				class="net.sf.rails.ui.swing.gamespecific._1880.GameUIManager_1880"/>
+			<ORUIManager
+				class="net.sf.rails.ui.swing.gamespecific._1880.ORUIManager_1880"/>
+			<StatusWindow class="net.sf.rails.ui.swing.gamespecific._1880.StatusWindow_1880"/>
 		</GuiClasses>
 		<EndOfGame/>
-		
-		<!--  need to implement the 3 OR set limit after purchase of first 8 TrainType -->
 	</Component>
 	<Component name="PlayerManager" class="net.sf.rails.game.PlayerManager">
 		<Players number="3" cash="600" certLimit="20"/>
@@ -40,7 +50,7 @@
 	<Component name="StockMarket"
 		class="net.sf.rails.game.specific._1880.StockMarket_1880"
 		file="StockMarket.xml"/>
-	<Component name="TrainManager" class="net.sf.rails.game.TrainManager">
+	<Component name="TrainManager" class="net.sf.rails.game.specific._1880.TrainManager_1880">
 		<Defaults>
 			<Reach base="stops" countTowns="major"/>
 			<Score towns="yes"/>
@@ -49,7 +59,7 @@
 		<TrainType name="2+2" majorStops="2" minorStops="2" cost="180" quantity="5">
 			<NewPhase phaseName="2+2"/>
 		</TrainType>
-		<TrainType name="3" majorStops="3" cost="180" quantity="6">
+		<TrainType name="3" majorStops="3" cost="180" quantity="5">
 			<NewPhase phaseName="3"/>
 		</TrainType>
 		<TrainType name="3+3" majorStops="3" minorStops="3" cost="300" quantity="5">
@@ -64,71 +74,94 @@
 		<TrainType name="6" majorStops="6" cost="600" quantity="5">
 			<NewPhase phaseName="6"/>
 		</TrainType>
-		<TrainType name="6e" majorStops="-1" cost="700" quantity="5">
+        <TrainType name="2R" majorStops="2" cost="250" quantity="10">
+        </TrainType>
+		<TrainType name="6E" majorStops="6" cost="700" quantity="5">
+            <Score scoreTowns="no" scoreCities="Yes" />
 			<NewPhase phaseName="6e"/>
 		</TrainType>
-		<!-- majorStops="-1" indicates that this not a normally running train-->
-		
 		<!-- The e-type trains are express trains that can ignore towns/cities on their way for a maximum payout-->
 		<TrainType name="8" majorStops="8" cost="800" quantity="2">
+            <Score scoreTowns="no" scoreCities="Yes" />
 			<NewPhase phaseName="8"/>
 		</TrainType>
-		<TrainType name="8e" majorStops="-1" cost="900" quantity="2">
+		<TrainType name="8E" majorStops="8" cost="900" quantity="2">
+		    <Score scoreTowns="no" scoreCities="Yes" />
 			<NewPhase phaseName="8e"/>
-		</TrainType>
-		<!-- majorStops="-1" indicates that this not a normally running train-->
-		
+        </TrainType>
 		<!-- The e-type trains are express trains that can ignore towns/cities on their way for a maximum payout-->
 		<TrainType name="10" majorStops="10" cost="1000" quantity="-1">
-			<NewPhase phaseName="8e"/>
+			<NewPhase phaseName="10"/>
 		</TrainType>
 	</Component>
 	<Component name="PhaseManager" class="net.sf.rails.game.PhaseManager">
 		<Phase name="2" realName="A1">
 			<Tiles colour="yellow">
-				<Lays companyType="Major" colour="yellow" number="2"/>
+				<Lays companyType="Major" colour="yellow" number="1"/>
+				<Lays companyType="Investor" colour="yellow" number="1"/>
 			</Tiles>
 			<OperatingRounds number="-1"/>
 			<Float percentage="20"/>
-			<Trains tradingAllowed="yes"/>
+			<Trains tradingAllowed="no"/>
 			<Stocks avail="5"/>
 		</Phase>
 		<Phase name="2+2" realName="A2">
 		</Phase>
 		<Phase name="3" realName="B1">
-			<Tiles colour="yellow,green"/>
+			<Tiles colour="yellow,green">
+				<Lays companyType="Major" colour="yellow" number="2"/>
+				<Lays companyType="Investor" colour="yellow" number="1"/>
+				<Lays companyType="Major" colour="green" number="1"/>
+				<Lays companyType="Investor" colour="green" number="1"/>
+				</Tiles>
 			<Float percentage="30"/>
+			<Trains tradingAllowed="yes"/>
 			<Stocks avail="10"/>
 			<OffBoardRevenue step="2"/>
+			<Action name="RaisingCertAvailability"/>
 		</Phase>
 		<Phase name="3+3" realName="B2">
 			<OffBoardRevenue step="2"/>
+			<Trains limitStep="2"/>
 		</Phase>
 		<Phase name="4" realName="B3">
+			<Tiles colour="yellow,green">
+				<Lays companyType="Major" colour="yellow" number="2"/>
+				<Lays companyType="Major" colour="green" number="1"/>
+				</Tiles>
+			<Action name="CommunistTakeOver"/>
 			<OffBoardRevenue step="2"/>
-			<Privates close="yes"/>
 			<Investors active="no"/>
-			<Communists active="yes"/>
+			<Privates revenueStep="2"/>
 			<Float percentage="40"/>
 			<Trains limitStep="2" rusted="2"/>
 		</Phase>
 		<Phase name="4+4" realName="C1">
-			<Tiles colour="yellow,green,brown"/>
+			<Tiles colour="yellow,green,brown">
+				<Lays companyType="Major" colour="yellow" number="2"/>
+				<Lays companyType="Major" colour="green" number="1"/>
+				<Lays companyType="Major" colour="brown" number="1"/>
+				</Tiles>
 			<OffBoardRevenue step="3"/>
 			<Trains rusted="2+2"/>
 		</Phase>
 		<Phase name="6" realName="C2">
-			<Communists active="no"/>
+			<Action name="ShanghaiExchangeOpen"/>
 			<Float percentage="60"/>
 			<OffBoardRevenue step="3"/>
-			<Trains limitStep="3" rusted="3"/>
+			<Trains limitStep="2" rusted="3" released="2R"/>
 		</Phase>
 		<Phase name="6e" realName="C3">
 			<OffBoardRevenue step="3"/>
 			<Trains limitStep="3" rusted="3+3"/>
 		</Phase>
 		<Phase name="8" realName="D1">
-			<Tiles colour="yellow,green,brown,grey"/>
+			<Tiles colour="yellow,green,brown,grey">
+				<Lays companyType="Major" colour="yellow" number="2"/>
+				<Lays companyType="Major" colour="green" number="1"/>
+				<Lays companyType="Major" colour="brown" number="1"/>
+				<Lays companyType="Major" colour="grey" number="1"/>
+				</Tiles>
 			<OffBoardRevenue step="4"/>
 			<Trains limitStep="3" rusted="4"/>
 		</Phase>
@@ -136,16 +169,15 @@
 			<OffBoardRevenue step="4"/>
 			<Trains limitStep="3" rusted="4+4"/>
 		</Phase>
-		<Phase name="8e" realName="D3">
+		<Phase name="10" realName="D3">
+		    <Trains limitStep="3"/>
 		</Phase>
-		<Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager">
-			<Modifier class="net.sf.rails.game.specific._1880.OffBoardRevenueModifier"/>
-			<Modifier
-				class="net.sf.rails.game.specific._1880.ExpressTrainRevenueModifier"/>
 		</Component>
-	</Component>
-	<Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager">
-		<Modifier class="net.sf.rails.game.specific._1826.TGVModifier"/>
-	</Component>
-	
+		<Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager">
+			<Modifier class="net.sf.rails.game.specific._1880.TranssibModifier"/>
+			<Modifier class="net.sf.rails.game.specific._1880.StockMarketBonusModifier"/>
+			<Modifier class="net.sf.rails.game.specific._1880.FerryConnectionModifier"/>
+			<Modifier class="net.sf.rails.game.specific._1880.TaiwanWesternModifier"/>
+		</Component>
+		
 </ComponentManager>

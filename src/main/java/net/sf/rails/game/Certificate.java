@@ -13,4 +13,10 @@ public interface Certificate extends RailsItem {
     // returns the name of the certificate
     public String getName();
 
+    public float getCertificateCount();
+
+    // FIXME: Should this really be changeable?
+    @Deprecated
+    public void setCertificateCount(float certificateCount);
+
 }

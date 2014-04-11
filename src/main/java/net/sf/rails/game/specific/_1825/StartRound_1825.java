@@ -16,15 +16,10 @@ public class StartRound_1825 extends StartRound {
      * Constructed via Configure
      */
     public StartRound_1825(GameManager parent, String id) {
-        super(parent, id);
-        hasBidding = false;
+        super(parent, id, false, true, true);
+        // bidding is set to false
     }
 
-    /**
-     * Start the 1825-style start round.
-     *
-     * @param startPacket The startpacket to be sold in this start round.
-     */
     @Override
     public void start() {
         super.start();
@@ -64,7 +59,7 @@ public class StartRound_1825 extends StartRound {
                     item.setStatus(StartItem.BUYABLE);
                     possibleActions.add(action =   
                         new BuyStartItem(item, item.getBasePrice(), false));
-                    log.debug(getCurrentPlayer().getId() + " may: "
+                    log.debug(playerManager.getCurrentPlayer().getId() + " may: "
                             + action.toString());
                     //Found one, no need to find any others
                     itemAvailable = true;
@@ -87,7 +82,7 @@ public class StartRound_1825 extends StartRound {
 
     @Override
     public List<StartItem> getStartItems() {
-        Player currentPlayer = getCurrentPlayer();
+        Player currentPlayer = playerManager.getCurrentPlayer();
         int cashToSpend = currentPlayer.getCash();
         List<StartItem> startItems = startPacket.getItems();
 
@@ -118,13 +113,13 @@ public class StartRound_1825 extends StartRound {
     public boolean pass(NullAction action, String playerName) {
         ReportBuffer.add(this, LocalText.getText("PASSES", playerName));
         numPasses.add(1);
-        if (numPasses.value() >= numPlayers) {
+        if (numPasses.value() >= playerManager.getNumberOfPlayers()) {
             //Everyone has passed
             ReportBuffer.add(this, LocalText.getText("ALL_PASSED"));
             numPasses.set(0);
             finishRound();
         }
-        setNextPlayer();
+        playerManager.setCurrentToNextPlayer();
         return true;
     }
 

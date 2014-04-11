@@ -5,32 +5,30 @@ import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.GameOption;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
+import net.sf.rails.game.state.GenericState;
 
 /**
  * Implements an 1830-style initial auction.
  */
 public class StartRound_1830 extends StartRound {
-    int bidIncrement;
+    protected final int bidIncrement;
+    
+    private final GenericState<StartItem> auctionItemState = 
+            GenericState.create(this, "auctionItemState");
 
     /**
      * Constructed via Configure
      */
     public StartRound_1830(GameManager parent, String id) {
         super(parent, id);
-        hasBidding = true;
         bidIncrement = startPacket.getModulus();
     }
     
-    /**
-     * Start the 1830-style start round.
-     *
-     * @param startPacket The startpacket to be sold in this start round.
-     */
     @Override
     public void start() {
         super.start();
+        auctionItemState.set(null);
         setPossibleActions();
-
     }
 
     @Override
@@ -61,12 +59,12 @@ public class StartRound_1830 extends StartRound {
         boolean passAllowed = true;
 
         possibleActions.clear();
+        Player currentPlayer = playerManager.getCurrentPlayer();
 
         if (currentPlayer == startPlayer) ReportBuffer.add(this, "");
 
         while (possibleActions.isEmpty()) {
 
-            Player currentPlayer = getCurrentPlayer();
 
             for (StartItem item : itemsToSell.view()) {
 
@@ -89,7 +87,7 @@ public class StartRound_1830 extends StartRound {
                     }
                 } else if (item.getStatus() == StartItem.NEEDS_SHARE_PRICE) {
                     /* This status is set in buy() if a share price is missing */
-                    setPlayer(item.getBidder());
+                    playerManager.setCurrentPlayer(item.getBidder());
                     possibleActions.add(new BuyStartItem(item, item.getBid(), false, true));
                     passAllowed = false;
                     break; // No more actions
@@ -99,7 +97,7 @@ public class StartRound_1830 extends StartRound {
                         // If we need a share price, ask for it.
                         PublicCompany comp = item.needsPriceSetting();
                         if (comp != null) {
-                            setPlayer(item.getBidder());
+                            playerManager.setCurrentPlayer(item.getBidder());
                             item.setStatus(StartItem.NEEDS_SHARE_PRICE);
                             BuyStartItem newItem =
                                     new BuyStartItem(item, item.getBasePrice(),
@@ -116,9 +114,8 @@ public class StartRound_1830 extends StartRound {
                                 item.getName()));
                         // Start left of the currently highest bidder
                         if (item.getStatus() != StartItem.AUCTIONED) {
-                            setNextBiddingPlayer(item,
-                                    item.getBidder().getIndex());
-                            currentPlayer = getCurrentPlayer();
+                            setNextBiddingPlayer(item, item.getBidder());
+                            currentPlayer = playerManager.getCurrentPlayer();
                             item.setStatus(StartItem.AUCTIONED);
                             auctionItemState.set(item);
                         }
@@ -154,9 +151,9 @@ public class StartRound_1830 extends StartRound {
             if (possibleActions.isEmpty()) {
                 numPasses.add(1);
                 if (auctionItemState.value() == null) {
-                    setNextPlayer();
+                    playerManager.setCurrentToNextPlayer();
                 } else {
-                    setNextBiddingPlayer((StartItem) auctionItemState.value());
+                    setNextBiddingPlayer(auctionItemState.value());
                 }
             }
         }
@@ -181,7 +178,7 @@ public class StartRound_1830 extends StartRound {
 
         StartItem item = bidItem.getStartItem();
         String errMsg = null;
-        Player player = getCurrentPlayer();
+        Player player = playerManager.getCurrentPlayer();
         int previousBid = 0;
         int bidAmount = bidItem.getActualBid();
 
@@ -260,8 +257,7 @@ public class StartRound_1830 extends StartRound {
                 Currency.format(this, player.getFreeCash()) ));
 
         if (bidItem.getStatus() != StartItem.AUCTIONED) {
-            /* GameManager. */;
-            setNextPlayer();
+            playerManager.setCurrentToNextPlayer();
         } else {
             setNextBiddingPlayer(item);
         }
@@ -270,7 +266,15 @@ public class StartRound_1830 extends StartRound {
         return true;
 
     }
-
+    
+    @Override
+    protected boolean buy(String playerName, BuyStartItem boughtItem) {
+        boolean result = super.buy(playerName, boughtItem);
+        auctionItemState.set(null);
+        return result;
+    }
+    
+    
     /**
      * Process a player's pass.
      * @param playerName The name of the current player (for checking purposes).
@@ -279,8 +283,8 @@ public class StartRound_1830 extends StartRound {
     protected boolean pass(NullAction action, String playerName) {
 
         String errMsg = null;
-        Player player = getCurrentPlayer();
-        StartItem auctionItem = (StartItem) auctionItemState.value();
+        Player player = playerManager.getCurrentPlayer();
+        StartItem auctionItem = auctionItemState.value();
 
         while (true) {
 
@@ -320,7 +324,7 @@ public class StartRound_1830 extends StartRound {
                 auctionItemState.set(null);
                 numPasses.set(0);
                 // Next turn goes to priority holder
-                setPriorityPlayer(); // EV - Added to fix bug 2989440
+                playerManager.setPriorityPlayerToNext(); // EV - Added to fix bug 2989440
             } else {
                 // More than one left: find next bidder
 
@@ -329,14 +333,12 @@ public class StartRound_1830 extends StartRound {
                     player.unblockCash(auctionItem.getBid(player));
                     auctionItem.setBid(-1, player);
                 }
-
-                setNextBiddingPlayer(auctionItem,
-                        getCurrentPlayerIndex());
+                setNextBiddingPlayer(auctionItem);
             }
 
         } else {
 
-            if (numPasses.value() >= numPlayers) {
+            if (numPasses.value() >= playerManager.getNumberOfPlayers()) {
                 // All players have passed.
                 ReportBuffer.add(this, LocalText.getText("ALL_PASSED"));
                 // It the first item has not been sold yet, reduce its price by
@@ -349,14 +351,14 @@ public class StartRound_1830 extends StartRound {
                                     Currency.format(this, startPacket.getFirstItem().getBasePrice()) ));
                     numPasses.set(0);
                     if (startPacket.getFirstItem().getBasePrice() == 0) {
-                        assignItem(getCurrentPlayer(),
+                        assignItem(playerManager.getCurrentPlayer(),
                                 startPacket.getFirstItem(), 0, 0);
-                        getRoot().getPlayerManager().setPriorityPlayer();
+                        getRoot().getPlayerManager().setPriorityPlayerToNext();
                         // startPacket.getFirstItem().getName());
                     } else {
                         //BR: If the first item's price is reduced, but not to 0, 
                         //    we still need to advance to the next player
-                        setNextPlayer();
+                        playerManager.setCurrentToNextPlayer();
                     }
                 } else {
                     numPasses.set(0);
@@ -368,26 +370,25 @@ public class StartRound_1830 extends StartRound {
                 // TODO  Now dead code - should it be reactivated?
 //                setNextBiddingPlayer(auctionItem);
             } else {
-                setNextPlayer();
+                playerManager.setCurrentToNextPlayer();
             }
         }
 
         return true;
     }
 
-    private void setNextBiddingPlayer(StartItem item, int currentIndex) {
-        for (int i = currentIndex + 1; i < currentIndex
-                                           + getRoot().getPlayerManager().getNumberOfPlayers(); i++) {
-            if (item.hasBid(getRoot().getPlayerManager().getPlayerByIndex(i))) {
-                setCurrentPlayerIndex(i);
+    
+    private void setNextBiddingPlayer(StartItem item, Player biddingPlayer) {
+        for (Player player:playerManager.getNextPlayersAfter(biddingPlayer, false, false)) {
+            if (item.hasBid(player)) {
+                playerManager.setCurrentPlayer(player);
                 break;
             }
         }
     }
-
+    
     private void setNextBiddingPlayer(StartItem item) {
-
-        setNextBiddingPlayer(item, getCurrentPlayerIndex());
+        setNextBiddingPlayer(item, playerManager.getCurrentPlayer());
     }
 
     @Override

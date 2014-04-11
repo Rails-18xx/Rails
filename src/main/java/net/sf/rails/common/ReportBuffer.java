@@ -32,10 +32,13 @@ public class ReportBuffer extends RailsAbstractItem implements ChangeReporter {
     private final Deque<ReportSet> futureReports = Lists.newLinkedList();
 
     private final Queue<String> waitQueue = Lists.newLinkedList();
-    
+  
+
     // dynamic data
     private ReportSet.Builder currentReportBuilder;
+    private String currentText;
     private ReportBuffer.Observer observer;
+
 
     private ReportBuffer(ReportManager parent, String id) {
         super(parent, id);
@@ -92,19 +95,26 @@ public class ReportBuffer extends RailsAbstractItem implements ChangeReporter {
     public String getRecentPlayer() {
         return null;
     }
+    
+    public String getCurrentText() {
+        return currentText;
+    }
 
     private void addMessage(String message) {
         if (!Util.hasValue(message)) return;
         currentReportBuilder.addMessage(message);
     }
-   
+
     // ChangeReport methods
 
     public void updateOnClose(ChangeSet current) {
         ReportSet currentSet = currentReportBuilder.build(current);
         pastReports.addLast(currentSet);
         futureReports.clear();
-        update(current);
+        currentText = getAsHtml(current);
+        if (observer != null) {
+            observer.update(currentText);
+        }
         // a new builder
         currentReportBuilder = ReportSet.builder();
     }
@@ -117,13 +127,6 @@ public class ReportBuffer extends RailsAbstractItem implements ChangeReporter {
     public void informOnRedo() {
         ReportSet redoSet = futureReports.pollFirst();
         pastReports.addLast(redoSet);
-    }
-    
-    public void update(ChangeSet current) {
-        String text = getAsHtml(current);
-        if (observer != null) {
-            observer.update(text);
-        }
     }
 
     /**

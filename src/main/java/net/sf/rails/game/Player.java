@@ -14,6 +14,8 @@ import net.sf.rails.game.state.IntegerState;
 
 public class Player extends RailsAbstractItem implements MoneyOwner, PortfolioOwner, ChangeActionOwner, Comparable<Player> {
 
+    // FIXME: Rails 2.0 Do we need the index number?
+    
     // static data (configured)
     private int index = 0;
     

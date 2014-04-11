@@ -160,10 +160,6 @@ public class PortfolioModel extends RailsModel {
         return certificates.getShareModel(company);
     }
 
-    public ShareDetailsModel getShareDetailsModel(PublicCompany company) {
-        return certificates.getShareDetailsModel(company);
-    }
-
     public ImmutableSet<PrivateCompany> getPrivateCompanies() {
         return privates.getPortfolio().items();
     }
@@ -172,14 +168,13 @@ public class PortfolioModel extends RailsModel {
         return certificates.getPortfolio().items();
     }
 
+    public ShareDetailsModel getShareDetailsModel(PublicCompany company) {
+        return certificates.getShareDetailsModel(company);
+    }
+
     /** Get the number of certificates that count against the certificate limit */
     public float getCertificateCount() {
-
-        float number = privates.getPortfolio().size(); // TODO: May not hold for
-                                                       // all games, for example
-                                                       // 1880
-
-        return number + certificates.getCertificateCount();
+        return privates.getCertificateCount() +  certificates.getCertificateCount();
     }
 
     public ImmutableSetMultimap<PublicCompany, PublicCertificate> getCertsPerCompanyMap() {

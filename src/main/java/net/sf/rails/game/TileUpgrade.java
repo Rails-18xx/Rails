@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.parser.ConfigurationException;
@@ -12,12 +13,12 @@ import net.sf.rails.common.parser.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
@@ -410,18 +411,28 @@ public class TileUpgrade {
                 stationMap.put(baseStation, null);
             }
         } else { // more than one base station, assign by side connectivity
+            List<Station> noTrackBaseStations = Lists.newArrayList();
+            TreeSet<Station> targetStations = Sets.newTreeSet(target.getTile().getStations());
             for (Station b:base.getTile().getStations()) {
                 Set<TrackPoint> baseTrack = base.getStationTracks(b);
-                if (baseTrack.isEmpty()) { // if track is empty, keep number
-                    stationMap.put(b, target.getTile().getStation(b.getNumber()));
+                if (baseTrack.isEmpty()) { // if track is empty, keep track to add target later
+                    noTrackBaseStations.add(b);
                 } else {
                     for (Station t:target.getTile().getStations()) {
                         Set<TrackPoint> targetTrack = target.getStationTracks(t);
                         if (checkTrackConnectivity(baseTrack, targetTrack)) {
                             stationMap.put(b, t);
+                            targetStations.remove(t);
                             break;
                         }
                     }
+                }
+            }
+            // any base Stations remaining
+            for (Station b:noTrackBaseStations) {
+                Station t = targetStations.pollFirst();
+                if (t != null) {
+                    stationMap.put(b, t);
                 }
             }
             // check if all base and target stations are assigned

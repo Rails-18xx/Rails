@@ -69,35 +69,33 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
         guiHints.setCurrentRoundType(getClass());
     }
     
+    @Deprecated
     public Player getCurrentPlayer() {
-        // TODO: Check if the null test can be removed
-        if (getRoot().getPlayerManager() != null) return getRoot().getPlayerManager().getCurrentPlayer();
-        return null;
+        return getRoot().getPlayerManager().getCurrentPlayer();
     }
 
-    /**
-     * @return Returns the currentPlayerIndex.
-     */
-    public int getCurrentPlayerIndex() {
-        return getCurrentPlayer().getIndex();
-    }
-
+    @Deprecated
     public void setCurrentPlayerIndex(int newIndex) {
         getRoot().getPlayerManager().setCurrentPlayerIndex(newIndex);
     }
 
+    @Deprecated
     public void setCurrentPlayer(Player player) {
         getRoot().getPlayerManager().setCurrentPlayer(player);
     }
 
+    @Deprecated
     protected List<Player> getPlayers() {
         return getRoot().getPlayerManager().getPlayers();
     }
 
+    @Deprecated
     protected int getNumberOfPlayers() {
         return getRoot().getPlayerManager().getNumberOfPlayers();
     }
 
+    @Deprecated
+    // TODO: Move to PlayerManager
     protected int getNumberOfActivePlayers () {
         int number = 0;
         for (Player player : getPlayers()) {
@@ -382,6 +380,9 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
         return wasInterrupted.value();
     }
 
+    
+    // FIXME: Rails 2.0 simplify this by moveTo
+    @Deprecated
     protected void transferCertificate(Certificate cert, PortfolioModel newHolder) {
         if (cert instanceof PublicCertificate) {
             ((PublicCertificate)cert).moveTo(newHolder.getParent());
@@ -392,6 +393,8 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
     
     // Note: all transferred shares must come from the same old shareholder.
     // TODO: This is not very a very nice implementation
+    // FIXME: Rails 2.0 simplify this by moveTo
+    @Deprecated
     protected void transferCertificates(List<? extends Certificate> certs,
             PortfolioModel newHolder) {
 

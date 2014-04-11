@@ -3,6 +3,7 @@ package net.sf.rails.game.state;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
@@ -107,6 +108,31 @@ public final class ArrayListState<E> extends State implements Iterable<E>  {
         }
     }
 
+    /**
+     * make the list identical to the argument list
+     */
+    public void setTo(List<E> newList) {
+        int index = 0;
+        List<E> copyList = ImmutableList.copyOf(list);
+        for (E element:newList) {
+            if (index < copyList.size()) {
+                if (element.equals(copyList.get(index))) {
+                    // elements are equal, no change required
+                    index++; continue;
+                } else {
+                    // elements are unequal, so remove old element
+                    new ArrayListChange<E>(this, index);
+                }
+            }
+            new ArrayListChange<E>(this, element, index);
+            index++;
+        }
+        // remove all remaining elements if original list is larger
+        for (; index < copyList.size(); index++) {
+            new ArrayListChange<E>(this, index);
+        }
+    }
+    
     /**
      * creates an immutable view of the list
      * @return immutable copy

@@ -93,7 +93,7 @@ public class StockRound extends Round {
         ReportBuffer.add(this, LocalText.getText("StartStockRound",
                 getStockRoundNumber()));
 
-        setCurrentPlayerIndex(getRoot().getPlayerManager().getPriorityPlayer().getIndex());
+        playerManager.setCurrentToPriorityPlayer();
         startingPlayer = getCurrentPlayer(); // For the Report
         ReportBuffer.add(this, LocalText.getText("HasPriority",
                 startingPlayer.getId() ));
@@ -1169,10 +1169,11 @@ public class StockRound extends Round {
         return true;
     }
 
-    protected void executeShareTransfer (PublicCompany company,
-    		List<PublicCertificate> certsToSell,
-            Player dumpedPlayer, int presSharesToSell, int swapShareSize) {
-
+    
+    protected final void executeShareTransferTo( PublicCompany company,
+            List<PublicCertificate> certsToSell, 
+            Player dumpedPlayer, int presSharesToSell, int swapShareSize,
+            PortfolioModel to) {
         PortfolioModel portfolio = currentPlayer.getPortfolioModel();
 
         // Check if the presidency has changed
@@ -1189,7 +1190,7 @@ public class StockRound extends Round {
             }
         }
 
-        transferCertificates (certsToSell, pool);
+        transferCertificates (certsToSell, to);
 
         // Check if we still have the presidency
         if (currentPlayer == company.getPresident()) {
@@ -1207,6 +1208,13 @@ public class StockRound extends Round {
                 }
             }
         }
+    }
+    
+    protected void executeShareTransfer( PublicCompany company,
+            List<PublicCertificate> certsToSell, 
+            Player dumpedPlayer, int presSharesToSell, int swapShareSize) {
+        
+        executeShareTransferTo(company, certsToSell, dumpedPlayer, presSharesToSell, swapShareSize, pool );
     }
 
     protected int getCurrentSellPrice (PublicCompany company) {
@@ -1457,7 +1465,7 @@ public class StockRound extends Round {
      */
     protected void setNextPlayer() {
 
-        getRoot().getPlayerManager().setNextPlayer();
+        getRoot().getPlayerManager().setCurrentToNextPlayer();
         initPlayer();
     }
 
@@ -1475,7 +1483,7 @@ public class StockRound extends Round {
      * setNextPlayer()!</b>
      */
     protected void setPriority() {
-        getRoot().getPlayerManager().setPriorityPlayer();
+        getRoot().getPlayerManager().setPriorityPlayerToNext();
     }
 
     @Override
@@ -1489,7 +1497,6 @@ public class StockRound extends Round {
     /**
      * @return The index of the player that has the turn.
      */
-    @Override
     public int getCurrentPlayerIndex() {
         return currentPlayer.getIndex();
     }

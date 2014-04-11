@@ -4,16 +4,17 @@ package rails.game.correct;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-import rails.game.action.PossibleAction;
+import com.google.common.base.Objects;
 
+import rails.game.action.PossibleAction;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.util.*;
 
 
 /**
  * Action class to request specific correction actions
- * @author freystef
  *
+ * Rails 2.0: updated equals and toString methods
  */
 
 public class CorrectionModeAction extends CorrectionAction {
@@ -43,33 +44,35 @@ public class CorrectionModeAction extends CorrectionAction {
     }
     
     @Override
-    public boolean equalsAsOption(PossibleAction action) {
-        if (!(action instanceof CorrectionModeAction)) return false;
-        CorrectionModeAction a = (CorrectionModeAction) action;
-        return (a.correctionType.equals(this.correctionType) && 
-                    a.isActive() == this.isActive());
+    public boolean equalsAsOption(PossibleAction pa) {
+        // FIXME: Allow the actions of the according type
+        if (pa instanceof CorrectionAction && ((CorrectionAction)pa).getCorrectionType() ==
+                this.correctionType) {
+            return true;
+        }
+        
+        // identity always true
+        if (pa == this) return true;
+        //  super checks both class identity and super class attributes
+        if (!super.equalsAsOption(pa)) return false; 
+
+        // check further attributes
+        CorrectionModeAction action = (CorrectionModeAction)pa;
+        return Objects.equal(this.active, action.active);
     }
 
     @Override
-    public boolean equalsAsAction(PossibleAction action) {
-        return action.equalsAsOption(this);
+    public boolean equalsAsAction(PossibleAction pa) {
+        return this.equalsAsAction(pa);
     }
     
     @Override
     public String toString() {
-        StringBuffer b = new StringBuffer("CorrectionModeAction");
-        if (!acted) {
-            b.append(" (not acted)");
-            if (correctionType != null)
-                b.append(", correctionType="+correctionType);
-                b.append(", current state="+active);
-        } else {
-            b.append(" (acted)");
-            if (correctionType != null)
-                b.append(", correctionType="+correctionType);
-                b.append(", previous state="+active);
-        }
-        return b.toString();
+        return super.toString() + 
+                RailsObjects.stringHelper(this)
+                    .addToString("active", active)
+                .toString()
+        ;
     }
 
     /** Deserialize */

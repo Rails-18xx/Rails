@@ -190,10 +190,10 @@ public class StockRound_1856 extends StockRound {
             } else {
                 // Player has enough cash
                 if (cert1 != null && price1 <= cash) {
-                    possibleActions.add(new BuyCertificate(cgr, 1, ipo.getParent(), price1));
+                    possibleActions.add(new BuyCertificate(cgr, cert1.getShare(), ipo.getParent(), price1));
                 }
                 if (cert2 != null && price2 <= cash) {
-                    possibleActions.add(new BuyCertificate(cgr, 1, pool.getParent(), price2));
+                    possibleActions.add(new BuyCertificate(cgr, cert2.getShare(), pool.getParent(), price2));
                 }
             }
 

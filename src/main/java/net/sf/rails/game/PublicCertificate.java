@@ -5,6 +5,7 @@ import java.util.Map;
 
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.model.CertificatesModel;
+import net.sf.rails.game.state.IntegerState;
 import net.sf.rails.game.state.Ownable;
 import net.sf.rails.game.state.Typable;
 
@@ -21,9 +22,10 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
     /**
      * Share percentage represented by this certificate
      */
-    protected int shares;
+    protected IntegerState shares = IntegerState.create(this, "shares");
     /** President's certificate? */
     protected boolean president;
+    // FIXME: If this is changable, it should be a state variable, otherwise UNDO problems
     /** Count against certificate limits */
     protected float certificateCount = 1.0f;
     
@@ -54,7 +56,7 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
     public PublicCertificate(RailsItem parent, String id, int shares, boolean president, 
             boolean available, float certificateCount, int index) {
         super(parent, id, PublicCertificate.class);
-        this.shares = shares;
+        this.shares.set(shares);
         this.president = president;
         this.initiallyAvailable = available;
         this.certificateCount = certificateCount;
@@ -122,7 +124,7 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
      * @return The number of shares.
      */
     public int getShares() {
-        return shares;
+        return (Integer) shares.value();
     }
 
     /**
@@ -132,7 +134,7 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
      * @return The share percentage.
      */
     public int getShare() {
-        return shares * company.getShareUnit();
+        return ((Integer) shares.value()) * company.getShareUnit();
     }
 
     /**
@@ -169,14 +171,6 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
         return initiallyAvailable;
     }
     
-    public float getCertificateCount() {
-        return certificateCount;
-    }
-
-    public void setCertificateCount(float certificateCount) {
-        this.certificateCount = certificateCount;
-    }
-
     /**
      * @param b
      */
@@ -230,15 +224,17 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
      * C) Id of CertificateType
      * D) Id of Certificate
      */
+    // FIXME: Use this comparator (including the other criterias below to display, the one here only for 
+    // default sorting, otherwise Portfolios (TreeMaps) might be confused
     @Override
     public int compareTo(Ownable other) {
         if (other instanceof PublicCertificate) {
             PublicCertificate otherCert = (PublicCertificate)other;
             // sort by the criteria defined above
             return ComparisonChain.start()
-                    .compare(otherCert.isPresidentShare(), this.isPresidentShare())
-                    .compare(otherCert.getShares(), this.getShares())
-                    .compare(this.getType().getId(), otherCert.getType().getId())
+//                    .compare(otherCert.isPresidentShare(), this.isPresidentShare())
+//                    .compare(otherCert.getShares(), this.getShares())
+//                    .compare(this.getType().getId(), otherCert.getType().getId())
                     .compare(this.getId(), otherCert.getId())
                     .result();
         } else {
@@ -246,6 +242,21 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
         }
     }
 
+    public void setShares(int numShares) {
+       this.shares.set(numShares);
+        
+    }
+
+    // Certificate Interface
+    public float getCertificateCount() {
+        return certificateCount;
+    }
+
+    @Deprecated
+    public void setCertificateCount(float certificateCount) {
+        this.certificateCount = certificateCount;
+    }
+    
     /**
      * Two certificates are "equal" if they both belong to the same company,
      * represent the same share percentage, and are not a president share.

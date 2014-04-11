@@ -194,5 +194,24 @@ public class Bank extends RailsManager implements MoneyOwner, Configurable {
         return cash;
     }
     
+    public static Bank get(RailsItem item) {
+        return item.getRoot().getBank();
+    }
+    
+    public static BankPortfolio getIpo(RailsItem item) {
+        return get(item).ipo;
+    }
+    
+    public static BankPortfolio getPool(RailsItem item) {
+        return get(item).pool;
+    }
+    
+    public static BankPortfolio getScrapHeap(RailsItem item) {
+        return get(item).scrapHeap;
+    }
+    
+    public static BankPortfolio getUnavailable(RailsItem item) {
+        return get(item).unavailable;
+    }
     
 }

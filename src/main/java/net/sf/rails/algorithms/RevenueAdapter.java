@@ -29,11 +29,7 @@ import org.jgrapht.graph.SimpleGraph;
 
 /**
  * RevenueAdapter links the revenue algorithm to Rails.
- *  
- * @author freystef
- *
  */
-
 public final class RevenueAdapter implements Runnable {
 
     protected static Logger log =
@@ -83,7 +79,6 @@ public final class RevenueAdapter implements Runnable {
     private List<NetworkEdge> rcEdges;
     private List<RevenueTrainRun> optimalRun;
     private boolean hasDynamicModifiers;
-    private boolean hasDynamicCalculator;
     
     // revenue listener to communicate results
     private RevenueListener revenueListener;
@@ -202,6 +197,11 @@ public final class RevenueAdapter implements Runnable {
         protectedVertices.addAll(bonus.getVertices());
     }
     
+    public void removeRevenueBonus(RevenueBonus bonus) {
+        revenueBonuses.remove(bonus);
+        // TODO: Change protectedVertices to multiSet then you can unprotect vertices
+    }
+    
     public void populateFromRails() {
         // define graph, without HQ
         graph = networkAdapter.getRouteGraph(company, false);
@@ -298,7 +298,6 @@ public final class RevenueAdapter implements Runnable {
         // check for dynamic modifiers (including an own calculator
         if (revenueManager != null) {
             hasDynamicModifiers = revenueManager.initDynamicModifiers(this);
-            hasDynamicCalculator = revenueManager.hasDynamicCalculator();
         }
         
         // define optimized graph
@@ -585,11 +584,12 @@ public final class RevenueAdapter implements Runnable {
     
     public int calculateRevenue() {
         // allows (one) dynamic modifiers to have their own revenue calculation method
-        if (hasDynamicCalculator) {
-            return revenueManager.revenueFromDynamicCalculator(this);
-        } else { // otherwise standard calculation
+        // TODO: Still to be added 
+//        if (hasDynamicCalculator) {
+//            return revenueManager.revenueFromDynamicCalculator(this);
+//        } else { // otherwise standard calculation
             return calculateRevenue(0, trains.size() - 1);
-        }
+//        }
     }
     
     public int calculateRevenue(int startTrain, int finalTrain) {

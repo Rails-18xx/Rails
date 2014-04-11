@@ -646,6 +646,33 @@ public class GUIHex implements Observer {
         case 4:
             delta_x = (-0.5 + currentToken % 2) * CITY_SIZE * zoomFactor;
             delta_y = (0.5 - currentToken / 2) * CITY_SIZE * zoomFactor;
+            
+        case 6:
+            switch (currentToken)  {
+            case 0:
+                delta_x += (-1) * CITY_SIZE * zoomFactor;
+                delta_y += (-0.5) * CITY_SIZE * zoomFactor;
+                break;
+            case 1:
+                delta_x += (-1) * CITY_SIZE * zoomFactor;
+                delta_y += (0.5) * CITY_SIZE * zoomFactor;
+                break;
+            case 2:
+                delta_y += (1) * CITY_SIZE * zoomFactor;
+                break;
+            case 3:
+                delta_x += (1) * CITY_SIZE * zoomFactor;
+                delta_y += (0.5) * CITY_SIZE * zoomFactor;
+                break;
+            case 4:
+                delta_x += (1) * CITY_SIZE * zoomFactor;
+                delta_y += (-0.5) * CITY_SIZE * zoomFactor;
+                break;
+            case 5:
+                delta_y += (-1) * CITY_SIZE * zoomFactor;
+                break;
+            }
+
         }
         tokenCenter = tokenCenter.translate(delta_x, delta_y);
 

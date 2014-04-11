@@ -77,7 +77,7 @@ public class PhaseManager extends RailsManager implements Configurable {
         setPhase(phaseMap.get(name), lastTrainBuyer);
     }
 
-    protected void setPhase(Phase phase, Owner lastTrainBuyer) {
+    public void setPhase(Phase phase, Owner lastTrainBuyer) {
         if (phase != null) {
             phase.setLastTrainBuyer (lastTrainBuyer);
             currentPhase.set(phase);

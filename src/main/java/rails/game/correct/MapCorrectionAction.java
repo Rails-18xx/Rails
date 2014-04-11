@@ -4,18 +4,28 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.*;
 
+import com.google.common.base.Objects;
+
 import rails.game.action.PossibleAction;
 import rails.game.correct.MapCorrectionManager.*;
-
 import net.sf.rails.game.BaseToken;
 import net.sf.rails.game.MapHex;
 import net.sf.rails.game.MapManager;
 import net.sf.rails.game.Station;
 import net.sf.rails.game.Tile;
 import net.sf.rails.game.TileManager;
+import net.sf.rails.util.RailsObjects;
 import net.sf.rails.util.Util;
 
+/**
+ * Correction action for tile and token lays
+ * 
+ * Rails 2.0: updated equals and toString methods
+ */
 
+// TODO: Add implementation of token lays
+// TODO: Make it compatible to the standard tile and token lays by reworking step-mechanism
+// TODO: Add support for relay of tokens
 public class MapCorrectionAction extends CorrectionAction {
 
     /** The Constant serialVersionUID. */
@@ -180,53 +190,35 @@ public class MapCorrectionAction extends CorrectionAction {
     }
     
     @Override
-    public boolean equalsAsOption(PossibleAction action) {
-        if (!(action instanceof MapCorrectionAction)) return false;
-        // anything is allowed, no restriction
-        return true;
+    public boolean equalsAsOption(PossibleAction pa) {
+        // identity always true
+        if (pa == this) return true;
+        // super checks both class identity and super class attributes
+        return super.equalsAsOption(pa); 
+        // no further checks required
     }
 
     @Override
-    public boolean equalsAsAction(PossibleAction action) {
-        if (!(action instanceof MapCorrectionAction)) return false;
-        MapCorrectionAction a = (MapCorrectionAction) action;
-        return (a.step == this.step
-                && a.location == location
-                && a.tiles.get(0) == tiles.get(0))
-                && a.orientation == orientation;
+    public boolean equalsAsAction(PossibleAction pa) {
+        // first check if equal as option
+        if (!this.equalsAsOption(pa)) return false;
+        
+        // check further attributes
+        MapCorrectionAction action = (MapCorrectionAction)pa; 
+        return Objects.equal(this.location, action.location)
+                && Objects.equal(this.tiles, action.tiles)
+                && Objects.equal(this.orientation, action.orientation)
+        ;
     }
 
     @Override
     public String toString(){
-        StringBuffer b = new StringBuffer("MapCorrectionAction");
-        if (acted) {
-            b.append(" (acted)");
-        } else {
-            b.append(" (not acted)");
-        }
-        b.append(" Step=" + step);
-        ActionStep executedStep;
-        if (nextStep != null) { 
-            b.append(" NextStep=" + nextStep);
-            executedStep = nextStep;
-        } else {
-            executedStep = step;
-        }
-        if (step.ordinal() > ActionStep.SELECT_HEX.ordinal()) 
-            b.append(" Hex=" + location.getId());
-        if (step == ActionStep.SELECT_TILE)
-            b.append(" Possible tiles=" + tiles);
-        if (executedStep.ordinal() >= ActionStep.SELECT_TILE.ordinal())
-            b.append(" Chosen tile=" + tiles);
-        if (executedStep.ordinal() >= ActionStep.SELECT_ORIENTATION.ordinal())
-            b.append(" Orientation=" + orientation);
-        if (step.ordinal() >= ActionStep.RELAY_BASETOKENS.ordinal())
-            b.append(" Tokens to relay=" + tokensToRelay);
-        if (step.ordinal() == ActionStep.RELAY_BASETOKENS.ordinal())
-            b.append(" Possible Stations=" + possibleStations);
-        if (executedStep.ordinal() >= ActionStep.RELAY_BASETOKENS.ordinal())
-            b.append(" Selected stations for relay=" + stationsForRelay);
-        return b.toString();
+        return super.toString() + 
+                RailsObjects.stringHelper(this)
+                .addToStringOnlyActed("location", location)
+                .addToStringOnlyActed("tiles", tiles)
+                .addToStringOnlyActed("orientation", orientation)
+        ;
     }
     
     /** Deserialize */
