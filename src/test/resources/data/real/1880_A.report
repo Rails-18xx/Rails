@@ -1,0 +1,2093 @@
+GameIs,1880
+PlayerIs,1,Volker Schnell
+PlayerIs,2,Martin Brumm
+PlayerIs,3,Dirk Steiner
+PlayerIs,4,Karsten Ockenfels
+PlayerCash,480
+BankHas,28080
+StartOfPhase,2
+BankSizeIs,28080
+StartOfInitialRound
+HasPriority,Volker Schnell
+BID_ITEM_LOG,Volker Schnell,5,WR,475
+PASSES,Martin Brumm
+BID_ITEM_LOG,Dirk Steiner,10,WR,470
+BID_ITEM_LOG,Karsten Ockenfels,15,WR,465
+PASSES,Volker Schnell
+PASSES,Dirk Steiner
+BuysItemFor,Karsten Ockenfels,WR,15
+PASSES,Martin Brumm
+BID_ITEM_LOG,Dirk Steiner,10,KR,470
+PASSES,Karsten Ockenfels
+PASSES,Volker Schnell
+BuysItemFor,Dirk Steiner,KR,10
+BID_ITEM_LOG,Dirk Steiner,25,YC,445
+PASSES,Karsten Ockenfels
+BID_ITEM_LOG,Volker Schnell,30,YC,450
+PASSES,Martin Brumm
+PASSES,Dirk Steiner
+BuysItemFor,Volker Schnell,YC,30
+BID_ITEM_LOG,Karsten Ockenfels,45,TL,420
+BID_ITEM_LOG,Volker Schnell,50,TL,400
+BID_ITEM_LOG,Martin Brumm,55,TL,425
+BID_ITEM_LOG,Dirk Steiner,70,TL,400
+BID_ITEM_LOG,Karsten Ockenfels,75,TL,390
+PASSES,Volker Schnell
+PASSES,Martin Brumm
+BID_ITEM_LOG,Dirk Steiner,80,TL,390
+PASSES,Karsten Ockenfels
+BuysItemFor,Dirk Steiner,TL,80
+BID_ITEM_LOG,Volker Schnell,70,CC,380
+BID_ITEM_LOG,Martin Brumm,75,CC,405
+PASSES,Dirk Steiner
+PASSES,Karsten Ockenfels
+PASSES,Volker Schnell
+BuysItemFor,Martin Brumm,CC,75
+BID_ITEM_LOG,Martin Brumm,100,JO,305
+BID_ITEM_LOG,Dirk Steiner,105,JO,285
+BID_ITEM_LOG,Karsten Ockenfels,110,JO,355
+BID_ITEM_LOG,Volker Schnell,115,JO,335
+BID_ITEM_LOG,Martin Brumm,125,JO,280
+PASSES,Dirk Steiner
+BID_ITEM_LOG,Karsten Ockenfels,130,JO,335
+BID_ITEM_LOG,Volker Schnell,140,JO,310
+PASSES,Martin Brumm
+BID_ITEM_LOG,Karsten Ockenfels,145,JO,320
+BID_ITEM_LOG,Volker Schnell,150,JO,300
+BID_ITEM_LOG,Karsten Ockenfels,155,JO,310
+PASSES,Volker Schnell
+BuysItemFor,Karsten Ockenfels,JO,155
+PASSES,Dirk Steiner
+PASSES,Karsten Ockenfels
+BID_ITEM_LOG,Volker Schnell,160,IG,290
+BID_ITEM_LOG,Martin Brumm,165,IG,240
+BID_ITEM_LOG,Volker Schnell,170,IG,280
+BID_ITEM_LOG,Martin Brumm,175,IG,230
+BID_ITEM_LOG,Volker Schnell,180,IG,270
+BID_ITEM_LOG,Martin Brumm,185,IG,220
+BID_ITEM_LOG,Volker Schnell,190,IG,260
+BID_ITEM_LOG,Martin Brumm,195,IG,210
+BID_ITEM_LOG,Volker Schnell,200,IG,250
+BID_ITEM_LOG,Martin Brumm,205,IG,200
+PASSES,Volker Schnell
+BuysItemFor,Martin Brumm,IG,205
+ALSO_GETS,Martin Brumm,PRES_CERT_NAME,BCR,20
+BuildingRightsChosen,Martin Brumm,A+B+C,BCR
+ParSlotChosen,Martin Brumm,1,BCR
+FloatsWithCash,BCR,500
+BID_ITEM_LOG,Karsten Ockenfels,50,RC,260
+BID_ITEM_LOG,Volker Schnell,55,RC,395
+PASSES,Martin Brumm
+BID_ITEM_LOG,Dirk Steiner,60,RC,330
+PASSES,Karsten Ockenfels
+BID_ITEM_LOG,Volker Schnell,65,RC,385
+PASSES,Dirk Steiner
+BuysItemFor,Volker Schnell,RC,65
+PlayersReordered
+Has,BCR,500
+Has,Martin Brumm,200
+Has,Karsten Ockenfels,310
+Has,Volker Schnell,385
+Has,Dirk Steiner,390
+StartOfInitialRound
+HasPriority,Martin Brumm
+ChoosesInvestor,Martin Brumm,7
+ChoosesInvestor,Karsten Ockenfels,3
+ChoosesInvestor,Volker Schnell,4
+ChoosesInvestor,Dirk Steiner,5
+Has,BCR,500
+Has,3,0
+Has,4,0
+Has,5,0
+Has,7,0
+Has,Martin Brumm,200
+Has,Karsten Ockenfels,310
+Has,Volker Schnell,385
+Has,Dirk Steiner,390
+StartStockRound,1
+HasPriority,Martin Brumm
+BUY_SHARE_LOG,Martin Brumm,10,BCR,IPO,100
+START_COMPANY_LOG,Karsten Ockenfels,JLR,80,240,3,30,BANK
+FloatsWithCash,Jinglan Railway,400
+START_COMPANY_LOG,Volker Schnell,JHU,80,160,2,20,BANK
+FloatsWithCash,Jinghu     Railway,400
+START_COMPANY_LOG,Dirk Steiner,HKR,90,180,2,20,BANK
+FloatsWithCash,Hukun Railway,450
+BUY_SHARE_LOG,Martin Brumm,10,BCR,IPO,100
+PASSES,Karsten Ockenfels
+START_COMPANY_LOG,Volker Schnell,JHA,70,140,2,20,BANK
+FloatsWithCash,Jingha Railway,350
+BUY_SHARE_LOG,Dirk Steiner,10,HKR,IPO,90
+PASSES,Martin Brumm
+PASSES,Karsten Ockenfels
+BUY_SHARE_LOG,Volker Schnell,10,JHU,IPO,80
+BUY_SHARE_LOG,Dirk Steiner,10,HKR,IPO,90
+PASSES,Martin Brumm
+PASSES,Karsten Ockenfels
+PASSES,Volker Schnell
+PASSES,Dirk Steiner
+ 
+END_SR,1
+PRICE_MOVES_LOG,BCR,100,D2,105,D1
+SoldOut,Baocheng Railway,100,D2,105,D1
+PRICE_MOVES_LOG,HKR,90,D4,95,D3
+SoldOut,Hukun Railway,90,D4,95,D3
+Has,Baocheng Railway,500
+Has,Jingha Railway,350
+Has,Jinghu     Railway,400
+Has,Jinglan Railway,400
+Has,Hukun Railway,450
+Has,Zeng Tai Railway,0
+Has,Schantung-Eisenbahngesellschaft,0
+Has,Kowloon-Canton Railway,0
+Has,Kunming-Hekou Railway,0
+Has,Martin Brumm,0
+Has,Karsten Ockenfels,70
+Has,Volker Schnell,5
+Has,Dirk Steiner,30
+START_OR,1.1
+ReceivesFor,Karsten Ockenfels,0,WR
+ReceivesFor,Dirk Steiner,5,KR
+ReceivesFor,Volker Schnell,10,YC
+ReceivesFor,Dirk Steiner,15,TL
+ReceivesFor,Martin Brumm,20,CC
+ReceivesFor,Karsten Ockenfels,25,JO
+ReceivesFor,Martin Brumm,0,IG
+ReceivesFor,Volker Schnell,0,RC
+ 
+CompanyOperates,3,Karsten Ockenfels
+ 
+CompanyOperates,3,Karsten Ockenfels
+LaysTileAt,3,57,H6,W
+CompanyRevenue,3,0
+CompanyDoesNotPayDividend,3
+ 
+CompanyOperates,4,Volker Schnell
+ 
+CompanyOperates,4,Volker Schnell
+LaysTileAt,4,6,H14,NW
+CompanyRevenue,4,0
+CompanyDoesNotPayDividend,4
+ 
+CompanyOperates,5,Dirk Steiner
+ 
+CompanyOperates,5,Dirk Steiner
+LaysTileAt,5,6,P14,SW
+CompanyRevenue,5,40
+CompanyWithholds,5,40
+ 
+CompanyOperates,7,Martin Brumm
+ 
+CompanyOperates,7,Martin Brumm
+LaysTileAt,7,5,P8,NW
+CompanyRevenue,7,50
+CompanyWithholds,7,50
+ 
+CompanyOperates,BCR,Martin Brumm
+LaysTileAt,BCR,5,M3,SW
+LaysTileAt,BCR,8854,N4,SE
+CompanyDoesNotPayDividend,BCR
+PRICE_MOVES_LOG,BCR,105,D1,100,C1
+BuysTrain,BCR,2,IPO,100
+FirstTrainBought,2
+BuysTrain,BCR,2,IPO,100
+BuysTrain,BCR,2,IPO,100
+ 
+CompanyOperates,HKR,Dirk Steiner
+LaysTileAt,HKR,8877,K15,SW
+CompanyDoesNotPayDividend,HKR
+PRICE_MOVES_LOG,HKR,95,D3,90,C3
+BuysTrain,HKR,2,IPO,100
+BuysTrain,HKR,2,IPO,100
+ 
+CompanyOperates,JLR,Karsten Ockenfels
+LaysTileAtFor,JLR,8852,F6,W,30
+CompanyDoesNotPayDividend,JLR
+PRICE_MOVES_LOG,JLR,80,D6,75,C6
+BuysTrain,JLR,2,IPO,100
+BuysTrain,JLR,2,IPO,100
+ 
+CompanyOperates,JHU,Volker Schnell
+BuysTrainUsingSP,JHU,2,IPO,0,RC
+PrivateCloses,RC
+LaysTileAt,JHU,6,F10,NW
+CompanyRevenue,JHU,40
+CompanyPaysOutFull,JHU,40
+Payout,Volker Schnell,12,3,10
+PRICE_MOVES_LOG,JHU,80,D6,85,E6
+BuysTrain,JHU,2,IPO,100
+ 
+CompanyOperates,JHA,Volker Schnell
+LaysTileAt,JHA,5,E9,W
+CompanyDoesNotPayDividend,JHA
+PRICE_MOVES_LOG,JHA,70,D8,65,C8
+BuysTrain,JHA,2,IPO,100
+All 2-trains are sold out, 2+2-trains now available
+ 
+EndOfOperatingRound,1.1
+ORWorthIncrease,Martin Brumm,1.1,10
+ORWorthIncrease,Karsten Ockenfels,1.1,25
+ORWorthIncrease,Volker Schnell,1.1,-43
+ORWorthIncrease,Dirk Steiner,1.1,10
+Has,BCR,200
+Has,JHA,250
+Has,JHU,300
+Has,JLR,170
+Has,HKR,250
+Has,3,0
+Has,4,0
+Has,5,40
+Has,7,50
+Has,Martin Brumm,20
+Has,Karsten Ockenfels,95
+Has,Volker Schnell,27
+Has,Dirk Steiner,50
+StartStockRound,2
+HasPriority,Martin Brumm
+PASSES,Martin Brumm
+BUY_SHARE_LOG,Karsten Ockenfels,10,JLR,IPO,75
+PASSES,Volker Schnell
+PASSES,Dirk Steiner
+PASSES,Martin Brumm
+PASSES,Karsten Ockenfels
+ 
+END_SR,2
+PRICE_MOVES_LOG,BCR,100,C1,100,D2
+SoldOut,Baocheng Railway,100,C1,100,D2
+PRICE_MOVES_LOG,HKR,90,C3,95,C2
+SoldOut,Hukun Railway,90,C3,95,C2
+PRICE_MOVES_LOG,JLR,75,C6,80,C5
+SoldOut,Jinglan Railway,75,C6,80,C5
+Has,Baocheng Railway,200
+Has,Jingha Railway,250
+Has,Jinghu     Railway,300
+Has,Jinglan Railway,170
+Has,Hukun Railway,250
+Has,Zeng Tai Railway,0
+Has,Schantung-Eisenbahngesellschaft,0
+Has,Kowloon-Canton Railway,40
+Has,Kunming-Hekou Railway,50
+Has,Martin Brumm,20
+Has,Karsten Ockenfels,20
+Has,Volker Schnell,27
+Has,Dirk Steiner,50
+START_OR,2.1
+ 
+CompanyOperates,JHA,Volker Schnell
+BuysTrain,JHA,2+2,IPO,180
+FirstTrainBought,2+2
+StartOfPhase,2+2
+ReceivesFor,Karsten Ockenfels,0,WR
+ReceivesFor,Dirk Steiner,5,KR
+ReceivesFor,Volker Schnell,10,YC
+ReceivesFor,Dirk Steiner,15,TL
+ReceivesFor,Martin Brumm,20,CC
+ReceivesFor,Karsten Ockenfels,25,JO
+ReceivesFor,Martin Brumm,0,IG
+ 
+CompanyOperates,3,Karsten Ockenfels
+ 
+CompanyOperates,3,Karsten Ockenfels
+LaysTileAt,3,235,H8,SE
+CompanyRevenue,3,50
+CompanyWithholds,3,50
+ 
+CompanyOperates,4,Volker Schnell
+ 
+CompanyOperates,4,Volker Schnell
+LaysTileAt,4,8856,H12,E
+CompanyRevenue,4,70
+CompanyWithholds,4,70
+ 
+CompanyOperates,5,Dirk Steiner
+ 
+CompanyOperates,5,Dirk Steiner
+LaysTileAtFor,5,8852,O15,SW,30
+CompanyRevenue,5,110
+CompanyWithholds,5,110
+ 
+CompanyOperates,7,Martin Brumm
+ 
+CompanyOperates,7,Martin Brumm
+LaysTileAt,7,8851,P6,E
+CompanyRevenue,7,70
+CompanyWithholds,7,70
+ 
+CompanyOperates,BCR,Martin Brumm
+LaysTileAtFor,BCR,8852,M5,W,30
+LaysTileAt,BCR,57,M7,W
+LAYS_TOKEN_ON,BCR,M7,40
+CompanyRevenue,BCR,120
+CompanyPaysOutFull,BCR,120
+Payout,Martin Brumm,48,4,10
+PRICE_MOVES_LOG,BCR,100,D2,105,E2
+ 
+CompanyOperates,HKR,Dirk Steiner
+LaysTileAt,HKR,6,L14,SW
+CompanyRevenue,HKR,90
+CompanyPaysOutFull,HKR,90
+Payout,Dirk Steiner,36,4,10
+PRICE_MOVES_LOG,HKR,95,C2,100,D2
+BuysTrain,HKR,2+2,IPO,180
+ 
+CompanyOperates,JLR,Karsten Ockenfels
+LaysTileAt,JLR,235,F4,NW
+LAYS_TOKEN_ON,JLR,F4,40
+CompanyRevenue,JLR,90
+CompanyPaysOutFull,JLR,90
+Payout,Karsten Ockenfels,36,4,10
+PRICE_MOVES_LOG,JLR,80,C5,85,D5
+ 
+CompanyOperates,JHU,Volker Schnell
+LaysTileAtFor,JHU,8851,G11,NW,20
+LAYS_TOKEN_ON,JHU,F10,40
+CompanyRevenue,JHU,80
+CompanyPaysOutFull,JHU,80
+Payout,Volker Schnell,24,3,10
+PRICE_MOVES_LOG,JHU,85,E6,90,F6
+ 
+EndOfOperatingRound,2.1
+ORWorthIncrease,Martin Brumm,2.1,78
+ORWorthIncrease,Karsten Ockenfels,2.1,66
+ORWorthIncrease,Volker Schnell,2.1,39
+ORWorthIncrease,Dirk Steiner,2.1,66
+Has,BCR,130
+Has,JHA,70
+Has,JHU,240
+Has,JLR,130
+Has,HKR,70
+Has,3,50
+Has,4,70
+Has,5,120
+Has,7,120
+Has,Martin Brumm,88
+Has,Karsten Ockenfels,81
+Has,Volker Schnell,61
+Has,Dirk Steiner,106
+START_OR,2.2
+ 
+CompanyOperates,JHA,Volker Schnell
+CompanyRevenue,JHA,40
+CompanyPaysOutFull,JHA,40
+Payout,Volker Schnell,8,2,10
+PRICE_MOVES_LOG,JHA,65,C8,70,D8
+ReceivesFor,Karsten Ockenfels,0,WR
+ReceivesFor,Dirk Steiner,5,KR
+ReceivesFor,Volker Schnell,10,YC
+ReceivesFor,Dirk Steiner,15,TL
+ReceivesFor,Martin Brumm,20,CC
+ReceivesFor,Karsten Ockenfels,25,JO
+ReceivesFor,Martin Brumm,0,IG
+ 
+CompanyOperates,3,Karsten Ockenfels
+ 
+CompanyOperates,3,Karsten Ockenfels
+LaysTileAtFor,3,8,H4,NW,20
+CompanyRevenue,3,50
+CompanyWithholds,3,50
+ 
+CompanyOperates,4,Volker Schnell
+ 
+CompanyOperates,4,Volker Schnell
+CompanyRevenue,4,70
+CompanyWithholds,4,70
+ 
+CompanyOperates,5,Dirk Steiner
+ 
+CompanyOperates,5,Dirk Steiner
+CompanyRevenue,5,110
+CompanyWithholds,5,110
+ 
+CompanyOperates,7,Martin Brumm
+ 
+CompanyOperates,7,Martin Brumm
+LaysTileAt,7,57,O5,NW
+CompanyRevenue,7,70
+CompanyWithholds,7,70
+FIConnected,7,BCR
+FIConnectedPayout,Martin Brumm
+FIConnectedTreasuryToCompany,BCR,7,190
+FIConnectedReplaceToken,BCR,7
+FIConnectedMoveCert,Martin Brumm,BCR,7
+ 
+CompanyOperates,BCR,Martin Brumm
+LaysTileAt,BCR,8,M9,W
+LaysTileAt,BCR,57,L10,SW
+CompanyRevenue,BCR,130
+CompanyPaysOutFull,BCR,130
+Payout,Martin Brumm,65,5,10
+PRICE_MOVES_LOG,BCR,105,E2,110,F2
+BuysTrain,BCR,2+2,IPO,180
+ 
+CompanyOperates,HKR,Dirk Steiner
+LaysTileAt,HKR,8852,M15,NW
+LAYS_TOKEN_ON,HKR,L14,40
+CompanyRevenue,HKR,180
+CompanyPaysOutFull,HKR,180
+Payout,Dirk Steiner,72,4,10
+PRICE_MOVES_LOG,HKR,100,D2,105,E2
+ 
+CompanyOperates,JLR,Karsten Ockenfels
+CompanyRevenue,JLR,90
+CompanyPaysOutFull,JLR,90
+Payout,Karsten Ockenfels,36,4,10
+PRICE_MOVES_LOG,JLR,85,D5,90,E5
+ 
+CompanyOperates,JHU,Volker Schnell
+LaysTileAtFor,JHU,5,H10,SE,20
+CompanyRevenue,JHU,130
+CompanyPaysOutFull,JHU,130
+Payout,Volker Schnell,39,3,10
+PRICE_MOVES_LOG,JHU,90,F6,95,G6
+ 
+EndOfOperatingRound,2.2
+ORWorthIncrease,Martin Brumm,2.2,475
+ORWorthIncrease,Karsten Ockenfels,2.2,66
+ORWorthIncrease,Volker Schnell,2.2,62
+ORWorthIncrease,Dirk Steiner,2.2,102
+Has,BCR,140
+Has,JHA,70
+Has,JHU,220
+Has,JLR,130
+Has,HKR,30
+Has,3,80
+Has,4,140
+Has,5,230
+Has,Martin Brumm,223
+Has,Karsten Ockenfels,142
+Has,Volker Schnell,118
+Has,Dirk Steiner,198
+START_OR,2.3
+ 
+CompanyOperates,JHA,Volker Schnell
+CompanyRevenue,JHA,40
+CompanyPaysOutFull,JHA,40
+Payout,Volker Schnell,8,2,10
+PRICE_MOVES_LOG,JHA,70,D8,75,E8
+ReceivesFor,Karsten Ockenfels,0,WR
+ReceivesFor,Dirk Steiner,5,KR
+ReceivesFor,Volker Schnell,10,YC
+ReceivesFor,Dirk Steiner,15,TL
+ReceivesFor,Martin Brumm,20,CC
+ReceivesFor,Karsten Ockenfels,25,JO
+ReceivesFor,Martin Brumm,0,IG
+ 
+CompanyOperates,3,Karsten Ockenfels
+ 
+CompanyOperates,3,Karsten Ockenfels
+LaysTileAtFor,3,6,G3,SW,20
+CompanyRevenue,3,50
+CompanyWithholds,3,50
+ 
+CompanyOperates,4,Volker Schnell
+ 
+CompanyOperates,4,Volker Schnell
+CompanyRevenue,4,70
+CompanyWithholds,4,70
+ 
+CompanyOperates,5,Dirk Steiner
+ 
+CompanyOperates,5,Dirk Steiner
+CompanyRevenue,5,110
+CompanyWithholds,5,110
+ 
+CompanyOperates,BCR,Martin Brumm
+LaysTileAt,BCR,8,K11,SW
+LaysTileAt,BCR,9,J10,NW
+CompanyRevenue,BCR,210
+CompanyPaysOutFull,BCR,210
+Payout,Martin Brumm,105,5,10
+PRICE_MOVES_LOG,BCR,110,F2,115,G2
+All 2+2-trains are sold out, 3-trains now available
+ 
+EndOfOperatingRound,2.3
+ORWorthIncrease,Martin Brumm,2.3,150
+ORWorthIncrease,Karsten Ockenfels,2.3,25
+ORWorthIncrease,Volker Schnell,2.3,18
+ORWorthIncrease,Dirk Steiner,2.3,20
+Has,BCR,140
+Has,JHA,70
+Has,JHU,220
+Has,JLR,130
+Has,HKR,30
+Has,3,110
+Has,4,210
+Has,5,340
+Has,Martin Brumm,348
+Has,Karsten Ockenfels,167
+Has,Volker Schnell,136
+Has,Dirk Steiner,218
+StartStockRound,3
+HasPriority,Volker Schnell
+BUY_SHARE_LOG,Volker Schnell,10,JHU,IPO,95
+START_COMPANY_LOG,Dirk Steiner,NJR,70,210,3,30,BANK
+FloatsWithCash,Najiang Railway,350
+BUY_SHARE_LOG,Martin Brumm,10,JHA,IPO,75
+BUY_SHARE_LOG,Karsten Ockenfels,10,JHA,IPO,75
+PASSES,Volker Schnell
+PASSES,Dirk Steiner
+START_COMPANY_LOG,Martin Brumm,WNR,90,270,3,30,BANK
+FloatsWithCash,Wunan Railway,450
+PASSES,Karsten Ockenfels
+PASSES,Volker Schnell
+PASSES,Dirk Steiner
+PASSES,Martin Brumm
+ 
+END_SR,3
+PRICE_MOVES_LOG,BCR,115,G2,120,G1
+SoldOut,Baocheng Railway,115,G2,120,G1
+PRICE_MOVES_LOG,HKR,105,E2,110,E1
+SoldOut,Hukun Railway,105,E2,110,E1
+PRICE_MOVES_LOG,JHU,95,G6,100,G5
+SoldOut,Jinghu     Railway,95,G6,100,G5
+PRICE_MOVES_LOG,JLR,90,E5,95,E4
+SoldOut,Jinglan Railway,90,E5,95,E4
+Has,Baocheng Railway,140
+Has,Jingha Railway,70
+Has,Jinghu     Railway,220
+Has,Jinglan Railway,130
+Has,Hukun Railway,30
+Has,Najiang Railway,350
+Has,Wunan Railway,450
+Has,Zeng Tai Railway,110
+Has,Schantung-Eisenbahngesellschaft,210
+Has,Kowloon-Canton Railway,340
+Has,Martin Brumm,3
+Has,Karsten Ockenfels,92
+Has,Volker Schnell,41
+Has,Dirk Steiner,8
+START_OR,3.1
+ 
+CompanyOperates,BCR,Martin Brumm
+ 
+CompanyOperates,HKR,Dirk Steiner
+CompanyRevenue,HKR,180
+CompanyPaysOutFull,HKR,180
+Payout,Dirk Steiner,72,4,10
+PRICE_MOVES_LOG,HKR,110,E1,115,F1
+ 
+CompanyOperates,WNR,Martin Brumm
+CompanyDoesNotPayDividend,WNR
+PRICE_MOVES_LOG,WNR,90,D4,85,C4
+BuysTrain,WNR,3,IPO,180
+FirstTrainBought,3
+StartOfPhase,3
+BuysTrain,WNR,2,BCR,1
+BuysTrain,WNR,3,IPO,180
+ 
+CompanyOperates,JLR,Karsten Ockenfels
+LaysTileAt,JLR,8860,F4,W
+CompanyRevenue,JLR,120
+CompanyPaysOutFull,JLR,120
+Payout,Karsten Ockenfels,48,4,10
+PRICE_MOVES_LOG,JLR,95,E4,100,F4
+BuysTrain,JLR,3,IPO,180
+BuysTrain,JLR,3,IPO,180
+ 
+CompanyOperates,JHU,Volker Schnell
+LaysTileAt,JHU,619,F10,SW
+CompanyRevenue,JHU,150
+CompanyPaysOutFull,JHU,150
+Payout,Volker Schnell,60,4,10
+PRICE_MOVES_LOG,JHU,100,G5,105,H5
+BuysTrain,JHU,3,IPO,180
+All 3-trains are sold out, 3+3-trains now available
+WrExchanged,Karsten Ockenfels,70
+PrivateCloses,WR
+ 
+EndOfOperatingRound,3.1
+ORWorthIncrease,Martin Brumm,3.1,0
+ORWorthIncrease,Karsten Ockenfels,3.1,123
+ORWorthIncrease,Volker Schnell,3.1,70
+ORWorthIncrease,Dirk Steiner,3.1,82
+Has,BCR,641
+Has,JHA,70
+Has,JHU,440
+Has,JLR,170
+Has,HKR,480
+Has,NJR,350
+Has,WNR,89
+Has,3,110
+Has,4,210
+Has,5,340
+Has,Martin Brumm,3
+Has,Karsten Ockenfels,210
+Has,Volker Schnell,101
+Has,Dirk Steiner,80
+StartStockRound,4
+HasPriority,Karsten Ockenfels
+SELL_SHARE_LOG,Karsten Ockenfels,10,JHA,70
+PRICE_MOVES_LOG,JHA,75,E8,70,E9
+START_COMPANY_LOG,Karsten Ockenfels,JGG,90,270,3,30,BANK
+FloatsWithCash,Jingguang Railway,450
+BUY_SHARE_LOG,Volker Schnell,10,JHA,IPO,70
+BUY_SHARE_LOG,Dirk Steiner,10,NJR,IPO,70
+PASSES,Martin Brumm
+PASSES,Karsten Ockenfels
+PASSES,Volker Schnell
+SELL_SHARE_LOG,Dirk Steiner,10,HKR,110
+PRICE_MOVES_LOG,HKR,115,F1,110,F2
+BUY_SHARE_LOG,Dirk Steiner,10,NJR,IPO,70
+PASSES,Martin Brumm
+PASSES,Karsten Ockenfels
+PASSES,Volker Schnell
+PASSES,Dirk Steiner
+ 
+END_SR,4
+Has,Baocheng Railway,641
+Has,Jingha Railway,70
+Has,Jinghu     Railway,440
+Has,Jingguang Railway,450
+Has,Jinglan Railway,170
+Has,Hukun Railway,480
+Has,Najiang Railway,700
+Has,Wunan Railway,89
+Has,Zeng Tai Railway,110
+Has,Schantung-Eisenbahngesellschaft,210
+Has,Kowloon-Canton Railway,340
+Has,Martin Brumm,3
+Has,Karsten Ockenfels,5
+Has,Volker Schnell,31
+Has,Dirk Steiner,45
+START_OR,4.1
+ 
+CompanyOperates,JHU,Volker Schnell
+BuysTrain,JHU,3+3,IPO,300
+FirstTrainBought,3+3
+StartOfPhase,3+3
+CompanyDiscardsTrain,JHU,2
+CompanyDiscardsTrain,JLR,2
+ 
+CompanyOperates,JHA,Volker Schnell
+LaysTileAt,JHA,8886,F8,SW
+LAYS_TOKEN_ON,JHA,F10,40
+CompanyRevenue,JHA,160
+CompanyPaysOutFull,JHA,160
+Payout,Martin Brumm,16,1,10
+Payout,Volker Schnell,48,3,10
+PRICE_MOVES_LOG,JHA,70,E9,75,E8
+ 
+CompanyOperates,NJR,Dirk Steiner
+LaysTileAtFor,NJR,5,K13,W,20
+LaysTileAtFor,NJR,8856,L12,SW,20
+CompanyDoesNotPayDividend,NJR
+PRICE_MOVES_LOG,NJR,70,D8,65,C8
+BuysTrain,NJR,3+3,IPO,300
+BuysTrain,NJR,3+3,IPO,300
+BuysTrain,NJR,2,HKR,19
+ReceivesFor,Dirk Steiner,5,KR
+ReceivesFor,Volker Schnell,10,YC
+ReceivesFor,Dirk Steiner,15,TL
+ReceivesFor,Martin Brumm,20,CC
+ReceivesFor,Karsten Ockenfels,25,JO
+ReceivesFor,Martin Brumm,0,IG
+ 
+CompanyOperates,3,Karsten Ockenfels
+ 
+CompanyOperates,3,Karsten Ockenfels
+LaysTileAt,3,619,H6,NW
+CompanyRevenue,3,90
+CompanyWithholds,3,90
+FIConnected,3,JLR
+FIConnectedPayout,Karsten Ockenfels
+FIConnectedTreasuryToCompany,JLR,3,200
+FIConnectedReplaceToken,JLR,3
+FIConnectedMoveCert,Karsten Ockenfels,JLR,3
+ 
+CompanyOperates,4,Volker Schnell
+ 
+CompanyOperates,4,Volker Schnell
+LaysTileAt,4,8866,G11,NW
+CompanyRevenue,4,130
+CompanyWithholds,4,130
+FIConnected,4,JHU
+FIConnectedPayout,Volker Schnell
+FIConnectedTreasuryToCompany,JHU,4,340
+FIConnectedReplaceToken,JHU,4
+FIConnectedMoveCert,Volker Schnell,JHU,4
+ 
+CompanyOperates,5,Dirk Steiner
+ 
+CompanyOperates,5,Dirk Steiner
+LaysTileAt,5,887,O15,NE
+CompanyRevenue,5,120
+CompanyWithholds,5,120
+ 
+CompanyOperates,BCR,Martin Brumm
+LaysTileAt,BCR,619,M7,NW
+CompanyRevenue,BCR,250
+CompanyPaysOutFull,BCR,250
+Payout,Martin Brumm,125,5,10
+PRICE_MOVES_LOG,BCR,120,G1,125,H1
+ 
+CompanyOperates,HKR,Dirk Steiner
+LaysTileAt,HKR,14,L14,NW
+CompanyRevenue,HKR,220
+CompanyPaysOutFull,HKR,220
+Payout,Dirk Steiner,66,3,10
+PRICE_MOVES_LOG,HKR,110,F2,115,G2
+BuysTrain,HKR,3+3,IPO,300
+ 
+CompanyOperates,WNR,Martin Brumm
+LaysTileAt,WNR,235,I9,NE
+LAYS_TOKEN_ON,WNR,I9,40
+CompanyRevenue,WNR,120
+CompanyPaysOutFull,WNR,120
+Payout,Martin Brumm,36,3,10
+PRICE_MOVES_LOG,WNR,85,C4,90,D4
+ 
+CompanyOperates,JGG,Karsten Ockenfels
+LaysTileAt,JGG,9,G7,SW
+LaysTileAtFor,JGG,7,I7,NW,50
+CompanyDoesNotPayDividend,JGG
+PRICE_MOVES_LOG,JGG,90,D4,85,C4
+BuysTrain,JGG,3,JLR,258
+ 
+CompanyOperates,JLR,Karsten Ockenfels
+LaysTileAt,JLR,8865,H8,W
+CompanyRevenue,JLR,230
+CompanyPaysOutFull,JLR,230
+Payout,Karsten Ockenfels,115,5,10
+PRICE_MOVES_LOG,JLR,100,F4,105,G4
+BuysTrain,JLR,3+3,IPO,300
+All 3+3-trains are sold out, 4-trains now available
+ 
+EndOfOperatingRound,4.1
+ORWorthIncrease,Martin Brumm,4.1,222
+ORWorthIncrease,Karsten Ockenfels,4.1,555
+ORWorthIncrease,Volker Schnell,4.1,368
+ORWorthIncrease,Dirk Steiner,4.1,86
+Has,BCR,641
+Has,JHA,30
+Has,JHU,480
+Has,JGG,142
+Has,JLR,328
+Has,HKR,199
+Has,NJR,41
+Has,WNR,49
+Has,5,460
+Has,Martin Brumm,200
+Has,Karsten Ockenfels,195
+Has,Volker Schnell,139
+Has,Dirk Steiner,131
+StartStockRound,5
+HasPriority,Martin Brumm
+SELL_SHARE_LOG,Martin Brumm,10,JHA,70
+PRICE_MOVES_LOG,JHA,75,E8,70,E9
+BUY_SHARE_LOG,Martin Brumm,10,WNR,IPO,90
+BUY_SHARE_LOG,Karsten Ockenfels,10,JGG,IPO,85
+BUY_SHARE_LOG,Volker Schnell,10,JHA,IPO,70
+BUY_SHARE_LOG,Dirk Steiner,10,JHU,IPO,105
+BUY_SHARE_LOG,Martin Brumm,10,JHU,IPO,105
+BUY_SHARE_LOG,Karsten Ockenfels,10,JGG,IPO,85
+BUY_SHARE_LOG,Volker Schnell,10,NJR,IPO,65
+PASSES,Dirk Steiner
+BUY_SHARE_LOG,Martin Brumm,10,NJR,IPO,65
+PASSES,Karsten Ockenfels
+PASSES,Volker Schnell
+PASSES,Dirk Steiner
+PASSES,Martin Brumm
+ 
+END_SR,5
+Has,Baocheng Railway,641
+Has,Jingha Railway,30
+Has,Jinghu     Railway,480
+Has,Jingguang Railway,592
+Has,Jinglan Railway,328
+Has,Hukun Railway,199
+Has,Najiang Railway,41
+Has,Wunan Railway,49
+Has,Kowloon-Canton Railway,460
+Has,Martin Brumm,5
+Has,Karsten Ockenfels,25
+Has,Volker Schnell,4
+Has,Dirk Steiner,26
+START_OR,5.1
+ 
+CompanyOperates,JLR,Karsten Ockenfels
+ 
+CompanyOperates,JHU,Volker Schnell
+LaysTileAt,JHU,619,E9,NE
+CompanyRevenue,JHU,350
+CompanyPaysOutFull,JHU,350
+Payout,Martin Brumm,35,1,10
+Payout,Volker Schnell,175,5,10
+Payout,Dirk Steiner,35,1,10
+PRICE_MOVES_LOG,JHU,105,H5,110,I5
+ 
+CompanyOperates,JHA,Volker Schnell
+LaysTileAt,JHA,8,G13,W
+LaysTileAt,JHA,5,E13,W
+CompanyRevenue,JHA,180
+CompanyPaysOutFull,JHA,180
+Payout,Volker Schnell,72,4,10
+PRICE_MOVES_LOG,JHA,70,E9,75,E8
+BuysTrain,JHA,3,JHU,1
+ 
+CompanyOperates,NJR,Dirk Steiner
+LaysTileAt,NJR,9,M13,NW
+LaysTileAt,NJR,9,N14,NW
+LAYS_TOKEN_ON,NJR,L14,40
+CompanyRevenue,NJR,300
+CompanyPaysOutFull,NJR,300
+Payout,Martin Brumm,30,1,10
+Payout,Volker Schnell,30,1,10
+Payout,Dirk Steiner,150,5,10
+PRICE_MOVES_LOG,NJR,65,C8,70,D8
+ReceivesFor,Dirk Steiner,5,KR
+ReceivesFor,Volker Schnell,10,YC
+ReceivesFor,Dirk Steiner,15,TL
+ReceivesFor,Martin Brumm,20,CC
+ReceivesFor,Karsten Ockenfels,25,JO
+ReceivesFor,Martin Brumm,0,IG
+ 
+CompanyOperates,5,Dirk Steiner
+ 
+CompanyOperates,5,Dirk Steiner
+LaysTileAt,5,15,K13,SE
+CompanyRevenue,5,120
+CompanyWithholds,5,120
+FIConnected,5,HKR
+FIConnectedPayout,Dirk Steiner
+FIConnectedTreasuryToCompany,HKR,5,580
+FIConnectedDontReplaceToken,HKR,5
+FIConnectedMoveCert,Dirk Steiner,HKR,5
+ 
+CompanyOperates,BCR,Martin Brumm
+LaysTileAt,BCR,14,L10,NW
+CompanyRevenue,BCR,260
+CompanyPaysOutFull,BCR,260
+Payout,Martin Brumm,130,5,10
+PRICE_MOVES_LOG,BCR,125,H1,130,I1
+ 
+CompanyOperates,HKR,Dirk Steiner
+LaysTileAt,HKR,8878,K15,SW
+CompanyRevenue,HKR,390
+CompanyPaysOutFull,HKR,390
+Payout,Dirk Steiner,156,4,10
+PRICE_MOVES_LOG,HKR,115,G2,120,H2
+ 
+CompanyOperates,WNR,Martin Brumm
+LaysTileAt,WNR,8863,I9,NW
+CompanyRevenue,WNR,260
+CompanyPaysOutFull,WNR,260
+Payout,Martin Brumm,104,4,10
+PRICE_MOVES_LOG,WNR,90,D4,95,E4
+ 
+CompanyOperates,JGG,Karsten Ockenfels
+LaysTileAt,JGG,14,G3,NW
+LAYS_TOKEN_ON,JGG,H6,40
+CompanyRevenue,JGG,110
+CompanyPaysOutFull,JGG,110
+Payout,Karsten Ockenfels,55,5,10
+PRICE_MOVES_LOG,JGG,85,C4,90,D4
+BuysTrain,JGG,4,IPO,300
+FirstTrainBought,4
+StartOfPhase,4
+TrainsRusted,2
+ 
+EndOfOperatingRound,5.1
+ORWorthIncrease,Martin Brumm,5.1,349
+ORWorthIncrease,Karsten Ockenfels,5.1,105
+ORWorthIncrease,Volker Schnell,5.1,317
+ORWorthIncrease,Dirk Steiner,5.1,786
+Has,BCR,641
+Has,JHA,29
+Has,JHU,481
+Has,JGG,252
+Has,JLR,328
+Has,HKR,779
+Has,NJR,1
+Has,WNR,49
+Has,Martin Brumm,324
+Has,Karsten Ockenfels,105
+Has,Volker Schnell,291
+Has,Dirk Steiner,437
+START_OR,5.2
+ 
+CompanyOperates,JLR,Karsten Ockenfels
+LaysTileAt,JLR,7,F2,E
+LaysTileAt,JLR,8851,G9,NW
+CompanyRevenue,JLR,290
+CompanyWithholds,JLR,290
+BuysTrain,JLR,4,IPO,300
+ 
+CompanyOperates,JHU,Volker Schnell
+LaysTileAt,JHU,15,H10,NE
+CompanyRevenue,JHU,250
+CompanyPaysOutFull,JHU,250
+Payout,Dirk Steiner,25,1,10
+Payout,Martin Brumm,25,1,10
+Payout,Volker Schnell,125,5,10
+BuysTrain,JHU,4,IPO,300
+ 
+CompanyOperates,JHA,Volker Schnell
+LaysTileAt,JHA,7,I11,W
+LaysTileAt,JHA,7,E11,SW
+CompanyRevenue,JHA,210
+CompanyWithholds,JHA,210
+ 
+CompanyOperates,NJR,Dirk Steiner
+LaysTileAt,NJR,15,H14,SE
+CompanyRevenue,NJR,330
+CompanyPaysOutFull,NJR,330
+Payout,Dirk Steiner,165,5,10
+Payout,Martin Brumm,33,1,10
+Payout,Volker Schnell,33,1,10
+ReceivesFor,Dirk Steiner,0,KR
+ReceivesFor,Volker Schnell,0,YC
+ReceivesFor,Dirk Steiner,0,TL
+ReceivesFor,Martin Brumm,0,CC
+ReceivesFor,Karsten Ockenfels,0,JO
+ReceivesFor,Martin Brumm,0,IG
+ 
+CompanyOperates,BCR,Martin Brumm
+LaysTileAt,BCR,15,M3,NW
+CompanyRevenue,BCR,150
+CompanyPaysOutFull,BCR,150
+Payout,Martin Brumm,75,5,10
+BuysTrain,BCR,4,IPO,300
+ 
+CompanyOperates,HKR,Dirk Steiner
+LaysTileAt,HKR,25,K11,NW
+LAYS_TOKEN_ON,HKR,I9,100
+CompanyRevenue,HKR,340
+CompanyWithholds,HKR,340
+ 
+CompanyOperates,WNR,Martin Brumm
+LaysTileAt,WNR,9,M11,NW
+LaysTileAt,WNR,235,N12,SW
+CompanyRevenue,WNR,210
+CompanyWithholds,WNR,210
+BuysTrain,WNR,2+2,BCR,150
+ 
+CompanyOperates,JGG,Karsten Ockenfels
+LaysTileAtFor,JGG,8,E5,E,30
+LaysTileAtFor,JGG,8,E7,SE,30
+CompanyRevenue,JGG,250
+CompanyWithholds,JGG,250
+ 
+EndOfOperatingRound,5.2
+ORWorthIncrease,Martin Brumm,5.2,133
+ORWorthIncrease,Karsten Ockenfels,5.2,0
+ORWorthIncrease,Volker Schnell,5.2,158
+ORWorthIncrease,Dirk Steiner,5.2,190
+Has,BCR,491
+Has,JHA,239
+Has,JHU,181
+Has,JGG,442
+Has,JLR,318
+Has,HKR,1019
+Has,NJR,1
+Has,WNR,109
+Has,Martin Brumm,457
+Has,Karsten Ockenfels,105
+Has,Volker Schnell,449
+Has,Dirk Steiner,627
+START_OR,5.3
+ 
+CompanyOperates,JLR,Karsten Ockenfels
+LaysTileAt,JLR,8866,G9,E
+CompanyRevenue,JLR,440
+CompanyWithholds,JLR,440
+ 
+CompanyOperates,JHU,Volker Schnell
+LaysTileAt,JHU,25,G13,NE
+CompanyRevenue,JHU,400
+CompanyWithholds,JHU,400
+BuysTrain,JHU,4,IPO,300
+All 4-trains are sold out, 4+4-trains now available
+ 
+EndOfOperatingRound,5.3
+ORWorthIncrease,Martin Brumm,5.3,0
+ORWorthIncrease,Karsten Ockenfels,5.3,0
+ORWorthIncrease,Volker Schnell,5.3,0
+ORWorthIncrease,Dirk Steiner,5.3,0
+Has,BCR,491
+Has,JHA,239
+Has,JHU,281
+Has,JGG,442
+Has,JLR,758
+Has,HKR,1019
+Has,NJR,1
+Has,WNR,109
+Has,Martin Brumm,457
+Has,Karsten Ockenfels,105
+Has,Volker Schnell,449
+Has,Dirk Steiner,627
+StartStockRound,6
+HasPriority,Karsten Ockenfels
+BUY_SHARE_LOG,Karsten Ockenfels,10,NJR,IPO,70
+START_COMPANY_LOG,Volker Schnell,QSR,80,240,3,30,BANK
+BUY_SHARE_LOG,Dirk Steiner,10,HKR,IPO,120
+BUY_SHARE_LOG,Martin Brumm,10,WNR,IPO,95
+PASSES,Karsten Ockenfels
+BUY_SHARE_LOG,Volker Schnell,10,JHA,IPO,75
+BUY_SHARE_LOG,Dirk Steiner,10,NJR,IPO,70
+BUY_SHARE_LOG,Martin Brumm,10,NJR,IPO,70
+PASSES,Karsten Ockenfels
+BUY_SHARE_LOG,Volker Schnell,10,QSR,IPO,80
+FloatsWithCash,Qinshen     Railway,400
+START_COMPANY_LOG,Dirk Steiner,NXR,100,300,3,30,BANK
+SELL_SHARES_LOG,Martin Brumm,2,10,20,NJR,130
+START_COMPANY_LOG,Martin Brumm,SCR,100,300,3,30,BANK
+PASSES,Karsten Ockenfels
+SELL_SHARE_LOG,Volker Schnell,10,NJR,65
+BUY_SHARE_LOG,Volker Schnell,10,QSR,IPO,80
+BUY_SHARE_LOG,Dirk Steiner,10,NXR,IPO,100
+FloatsWithCash,Ningxi     Railway,500
+BUY_SHARE_LOG,Martin Brumm,10,JHU,IPO,110
+PASSES,Karsten Ockenfels
+PASSES,Volker Schnell
+SELL_SHARE_LOG,Dirk Steiner,10,JHU,105
+BUY_SHARE_LOG,Dirk Steiner,10,NXR,IPO,100
+SELL_SHARES_LOG,Martin Brumm,2,10,20,JHU,210
+BUY_SHARE_LOG,Martin Brumm,10,SCR,IPO,100
+FloatsWithCash,Schichang Railway,500
+PASSES,Karsten Ockenfels
+PASSES,Volker Schnell
+PASSES,Dirk Steiner
+BUY_SHARE_LOG,Martin Brumm,10,SCR,IPO,100
+PASSES,Karsten Ockenfels
+PASSES,Volker Schnell
+PASSES,Dirk Steiner
+PASSES,Martin Brumm
+ 
+END_SR,6
+Has,Baocheng Railway,491
+Has,Jingha Railway,589
+Has,Jinghu     Railway,281
+Has,Jingguang Railway,442
+Has,Jinglan Railway,758
+Has,Schichang Railway,1000
+Has,Ningxi     Railway,1000
+Has,Hukun Railway,1019
+Has,Najiang Railway,1
+Has,Qinshen     Railway,800
+Has,Wunan Railway,559
+Has,Martin Brumm,2
+Has,Karsten Ockenfels,35
+Has,Volker Schnell,34
+Has,Dirk Steiner,37
+START_OR,6.1
+ 
+CompanyOperates,JHU,Volker Schnell
+ 
+CompanyOperates,QSR,Volker Schnell
+LaysTileAt,QSR,235,D12,SW
+LaysTileAt,QSR,5,C11,W
+CompanyDoesNotPayDividend,QSR
+BuysTrain,QSR,2+2,JHA,300
+BuysTrain,QSR,4+4,IPO,450
+FirstTrainBought,4+4
+StartOfPhase,4+4
+TrainsRusted,2+2
+ 
+CompanyOperates,JHA,Volker Schnell
+LaysTileAt,JHA,31,E11,NW
+CompanyRevenue,JHA,100
+CompanyPaysOutFull,JHA,100
+Payout,Volker Schnell,50,5,10
+BuysTrain,JHA,4+4,IPO,450
+ 
+CompanyOperates,NJR,Dirk Steiner
+LaysTileAt,NJR,63,L14,SW
+CompanyRevenue,NJR,310
+CompanyWithholds,NJR,310
+ReceivesFor,Dirk Steiner,0,KR
+ReceivesFor,Volker Schnell,0,YC
+ReceivesFor,Dirk Steiner,0,TL
+ReceivesFor,Martin Brumm,0,CC
+ReceivesFor,Karsten Ockenfels,0,JO
+ReceivesFor,Martin Brumm,0,IG
+ 
+CompanyOperates,BCR,Martin Brumm
+LaysTileAt,BCR,63,L10,SW
+CompanyRevenue,BCR,180
+CompanyPaysOutFull,BCR,180
+Payout,Martin Brumm,90,5,10
+BuysTrain,BCR,4+4,IPO,450
+ 
+CompanyOperates,NXR,Dirk Steiner
+LaysTileAtFor,NXR,5,J6,SE,30
+LaysTileAtFor,NXR,8858,J8,W,30
+CompanyDoesNotPayDividend,NXR
+BuysTrain,NXR,4+4,IPO,450
+BuysTrain,NXR,3+3,NJR,390
+ 
+CompanyOperates,SCR,Martin Brumm
+LaysTileAt,SCR,63,M7,SW
+LAYS_TOKEN_ON,SCR,M3,40
+CompanyDoesNotPayDividend,SCR
+BuysTrain,SCR,4+4,IPO,450
+All 4+4-trains are sold out, 6-trains now available
+ 
+EndOfOperatingRound,6.1
+ORWorthIncrease,Martin Brumm,6.1,90
+ORWorthIncrease,Karsten Ockenfels,6.1,0
+ORWorthIncrease,Volker Schnell,6.1,50
+ORWorthIncrease,Dirk Steiner,6.1,0
+Has,BCR,41
+Has,JHA,439
+Has,JHU,281
+Has,JGG,442
+Has,JLR,758
+Has,SCR,510
+Has,NXR,100
+Has,HKR,1019
+Has,NJR,701
+Has,QSR,50
+Has,WNR,559
+Has,Martin Brumm,92
+Has,Karsten Ockenfels,35
+Has,Volker Schnell,84
+Has,Dirk Steiner,37
+StartStockRound,7
+HasPriority,Karsten Ockenfels
+PASSES,Karsten Ockenfels
+BUY_SHARE_LOG,Volker Schnell,10,NJR,IPO,70
+PASSES,Dirk Steiner
+BUY_SHARE_LOG,Martin Brumm,10,QSR,IPO,80
+PASSES,Karsten Ockenfels
+PASSES,Volker Schnell
+PASSES,Dirk Steiner
+PASSES,Martin Brumm
+ 
+END_SR,7
+Has,Baocheng Railway,41
+Has,Jingha Railway,439
+Has,Jinghu     Railway,281
+Has,Jingguang Railway,442
+Has,Jinglan Railway,758
+Has,Schichang Railway,510
+Has,Ningxi     Railway,100
+Has,Hukun Railway,1019
+Has,Najiang Railway,701
+Has,Qinshen     Railway,50
+Has,Wunan Railway,559
+Has,Martin Brumm,12
+Has,Karsten Ockenfels,35
+Has,Volker Schnell,14
+Has,Dirk Steiner,37
+START_OR,7.1
+ 
+CompanyOperates,SCR,Martin Brumm
+BuysTrain,SCR,3,WNR,142
+ 
+CompanyOperates,HKR,Dirk Steiner
+LaysTileAt,HKR,8872,I9,SE
+CompanyRevenue,HKR,220
+CompanyWithholds,HKR,220
+BuysTrain,HKR,6,IPO,600
+FirstTrainBought,6
+StartOfPhase,6
+TrainsRusted,3
+BuysTrain,HKR,6,IPO,600
+ 
+CompanyOperates,WNR,Martin Brumm
+LaysTileAt,WNR,63,M3,SW
+CompanyDoesNotPayDividend,WNR
+PRICE_MOVES_LOG,WNR,95,E4,90,D4
+BuysTrain,WNR,6,IPO,600
+ 
+CompanyOperates,JGG,Karsten Ockenfels
+LaysTileAt,JGG,63,H6,SW
+CompanyRevenue,JGG,170
+CompanyWithholds,JGG,170
+PRICE_MOVES_LOG,JGG,90,D4,85,C4
+BuysTrain,JGG,6,IPO,600
+ 
+CompanyOperates,JLR,Karsten Ockenfels
+CompanyRevenue,JLR,360
+CompanyPaysOutFull,JLR,360
+Payout,Karsten Ockenfels,180,5,10
+PRICE_MOVES_LOG,JLR,105,G4,110,H4
+BuysTrain,JLR,6,IPO,600
+All 6-trains are sold out, 6E-trains now available
+ 
+EndOfOperatingRound,7.1
+ORWorthIncrease,Martin Brumm,7.1,0
+ORWorthIncrease,Karsten Ockenfels,7.1,155
+ORWorthIncrease,Volker Schnell,7.1,0
+ORWorthIncrease,Dirk Steiner,7.1,0
+Has,BCR,41
+Has,JHA,439
+Has,JHU,281
+Has,JGG,12
+Has,JLR,158
+Has,SCR,368
+Has,NXR,100
+Has,HKR,39
+Has,NJR,701
+Has,QSR,50
+Has,WNR,101
+Has,Martin Brumm,12
+Has,Karsten Ockenfels,215
+Has,Volker Schnell,14
+Has,Dirk Steiner,37
+StartStockRound,8
+HasPriority,Karsten Ockenfels
+BUY_SHARE_LOG,Karsten Ockenfels,10,JHU,IPO,110
+PASSES,Volker Schnell
+PASSES,Dirk Steiner
+PASSES,Martin Brumm
+BUY_SHARE_LOG,Karsten Ockenfels,10,NXR,IPO,100
+PASSES,Volker Schnell
+PASSES,Dirk Steiner
+PASSES,Martin Brumm
+PASSES,Karsten Ockenfels
+ 
+END_SR,8
+Has,Baocheng Railway,41
+Has,Jingha Railway,439
+Has,Jinghu     Railway,281
+Has,Jingguang Railway,12
+Has,Jinglan Railway,158
+Has,Schichang Railway,368
+Has,Ningxi     Railway,100
+Has,Hukun Railway,39
+Has,Najiang Railway,701
+Has,Qinshen     Railway,50
+Has,Wunan Railway,101
+Has,Martin Brumm,12
+Has,Karsten Ockenfels,5
+Has,Volker Schnell,14
+Has,Dirk Steiner,37
+START_OR,8.1
+ 
+CompanyOperates,JLR,Karsten Ockenfels
+ 
+CompanyOperates,JHU,Volker Schnell
+LaysTileAt,JHU,8887,F8,SW
+CompanyRevenue,JHU,620
+CompanyPaysOutFull,JHU,620
+Payout,Karsten Ockenfels,62,1,10
+Payout,Volker Schnell,310,5,10
+PRICE_MOVES_LOG,JHU,110,I5,120,J5
+ 
+CompanyOperates,QSR,Volker Schnell
+LaysTileAt,QSR,8864,D12,SW
+LAYS_TOKEN_ON,QSR,F8,40
+CompanyRevenue,QSR,220
+CompanyPaysOutFull,QSR,220
+Payout,Volker Schnell,110,5,10
+Payout,Martin Brumm,22,1,10
+PRICE_MOVES_LOG,QSR,80,D6,85,E6
+BuysTrain,QSR,4+4,JHA,10
+ 
+CompanyOperates,JHA,Volker Schnell
+LaysTileAt,JHA,63,F10,SW
+CompanyDoesNotPayDividend,JHA
+PRICE_MOVES_LOG,JHA,75,E8,70,D8
+PresidentAddsCash,JHA,Volker Schnell,251
+BuysTrain,JHA,6E,IPO,700
+FirstTrainBought,6E
+StartOfPhase,6e
+TrainsRusted,3+3
+ 
+CompanyOperates,NJR,Dirk Steiner
+LaysTileAt,NJR,26,I7,SW
+CompanyDoesNotPayDividend,NJR
+PRICE_MOVES_LOG,NJR,70,D8,65,C8
+BuysTrain,NJR,6E,IPO,700
+ReceivesFor,Dirk Steiner,0,KR
+ReceivesFor,Volker Schnell,0,YC
+ReceivesFor,Dirk Steiner,0,TL
+ReceivesFor,Martin Brumm,0,CC
+ReceivesFor,Karsten Ockenfels,0,JO
+ReceivesFor,Martin Brumm,0,IG
+ 
+CompanyOperates,BCR,Martin Brumm
+LaysTileAt,BCR,15,P8,SW
+CompanyRevenue,BCR,380
+CompanyPaysOutFull,BCR,380
+Payout,Martin Brumm,190,5,10
+PRICE_MOVES_LOG,BCR,130,I1,140,J1
+ 
+CompanyOperates,NXR,Dirk Steiner
+LaysTileAt,NXR,8873,H8,SW
+LAYS_TOKEN_ON,NXR,F8,40
+CompanyRevenue,NXR,240
+CompanyPaysOutFull,NXR,240
+Payout,Dirk Steiner,120,5,10
+Payout,Karsten Ockenfels,24,1,10
+PRICE_MOVES_LOG,NXR,100,D2,105,E2
+ 
+CompanyOperates,SCR,Martin Brumm
+LaysTileAt,SCR,8863,N12,NW
+CompanyRevenue,SCR,190
+CompanyPaysOutFull,SCR,190
+Payout,Martin Brumm,95,5,10
+PRICE_MOVES_LOG,SCR,100,D2,105,E2
+BuysTrain,SCR,2R,IPO,250
+FirstTrainBought,2R
+ 
+CompanyOperates,HKR,Dirk Steiner
+LaysTileAtFor,HKR,9,K9,NW,30
+LaysTileAt,HKR,8,O13,NW
+CompanyRevenue,HKR,500
+CompanyPaysOutFull,HKR,500
+Payout,Dirk Steiner,250,5,10
+PRICE_MOVES_LOG,HKR,120,H2,125,I2
+ 
+CompanyOperates,WNR,Martin Brumm
+LaysTileAt,WNR,8872,N12,SE
+LAYS_TOKEN_ON,WNR,H8,100
+CompanyRevenue,WNR,270
+CompanyPaysOutFull,WNR,270
+Payout,Martin Brumm,135,5,10
+PRICE_MOVES_LOG,WNR,90,D4,95,E4
+ 
+CompanyOperates,JGG,Karsten Ockenfels
+LaysTileAt,JGG,611,G3,NE
+CompanyRevenue,JGG,470
+CompanyPaysOutFull,JGG,470
+Payout,Karsten Ockenfels,235,5,10
+PRICE_MOVES_LOG,JGG,85,C4,90,D4
+ 
+EndOfOperatingRound,8.1
+ORWorthIncrease,Martin Brumm,8.1,497
+ORWorthIncrease,Karsten Ockenfels,8.1,351
+ORWorthIncrease,Volker Schnell,8.1,139
+ORWorthIncrease,Dirk Steiner,8.1,390
+Has,BCR,41
+Has,JHA,0
+Has,JHU,281
+Has,JGG,12
+Has,JLR,158
+Has,SCR,118
+Has,NXR,60
+Has,HKR,9
+Has,NJR,1
+Has,QSR,0
+Has,WNR,1
+Has,Martin Brumm,454
+Has,Karsten Ockenfels,326
+Has,Volker Schnell,183
+Has,Dirk Steiner,407
+START_OR,8.2
+ 
+CompanyOperates,JLR,Karsten Ockenfels
+CompanyRevenue,JLR,520
+CompanyPaysOutFull,JLR,520
+Payout,Karsten Ockenfels,260,5,10
+PRICE_MOVES_LOG,JLR,110,H4,115,I4
+ 
+CompanyOperates,JHU,Volker Schnell
+LaysTileAt,JHU,611,E9,SE
+CompanyRevenue,JHU,460
+CompanyPaysOutFull,JHU,460
+Payout,Karsten Ockenfels,46,1,10
+Payout,Volker Schnell,230,5,10
+PRICE_MOVES_LOG,JHU,120,J5,125,J4
+ 
+CompanyOperates,QSR,Volker Schnell
+LaysTileAt,QSR,8874,F4,SW
+CompanyRevenue,QSR,440
+CompanyPaysOutFull,QSR,440
+Payout,Martin Brumm,44,1,10
+Payout,Volker Schnell,220,5,10
+PRICE_MOVES_LOG,QSR,85,E6,90,F6
+ 
+CompanyOperates,JHA,Volker Schnell
+LaysTileAt,JHA,8873,D12,NE
+CompanyRevenue,JHA,290
+CompanyWithholds,JHA,290
+PRICE_MOVES_LOG,JHA,70,D8,65,C8
+BuysTrain,JHA,4,JHU,290
+ 
+CompanyOperates,NJR,Dirk Steiner
+LaysTileAt,NJR,611,H10,NE
+CompanyRevenue,NJR,250
+CompanyPaysOutFull,NJR,250
+Payout,Karsten Ockenfels,25,1,10
+Payout,Dirk Steiner,150,6,10
+Payout,Volker Schnell,25,1,10
+PRICE_MOVES_LOG,NJR,65,C8,70,D8
+All 6E-trains are sold out, 8-trains now available
+ 
+EndOfOperatingRound,8.2
+ORWorthIncrease,Martin Brumm,8.2,49
+ORWorthIncrease,Karsten Ockenfels,8.2,341
+ORWorthIncrease,Volker Schnell,8.2,455
+ORWorthIncrease,Dirk Steiner,8.2,155
+Has,BCR,41
+Has,JHA,0
+Has,JHU,571
+Has,JGG,12
+Has,JLR,158
+Has,SCR,118
+Has,NXR,60
+Has,HKR,9
+Has,NJR,1
+Has,QSR,0
+Has,WNR,1
+Has,Martin Brumm,498
+Has,Karsten Ockenfels,657
+Has,Volker Schnell,658
+Has,Dirk Steiner,557
+StartStockRound,9
+HasPriority,Volker Schnell
+BUY_SHARE_LOG,Volker Schnell,10,JHU,IPO,125
+BUY_SHARE_LOG,Dirk Steiner,10,HKR,IPO,125
+BUY_SHARE_LOG,Martin Brumm,10,HKR,IPO,125
+BUY_SHARE_LOG,Karsten Ockenfels,10,HKR,IPO,125
+BUY_SHARE_LOG,Volker Schnell,10,HKR,IPO,125
+BUY_SHARE_LOG,Dirk Steiner,10,HKR,IPO,125
+BUY_SHARE_LOG,Martin Brumm,10,WNR,IPO,95
+SELL_SHARE_LOG,Karsten Ockenfels,10,JHU,120
+PRICE_MOVES_LOG,JHU,125,J4,120,J5
+START_COMPANY_LOG,Karsten Ockenfels,LHR,100,400,4,40,BANK
+BUY_SHARE_LOG,Volker Schnell,10,QSR,IPO,90
+BUY_SHARE_LOG,Dirk Steiner,10,JHA,IPO,65
+BUY_SHARE_LOG,Martin Brumm,10,JHA,IPO,65
+BUY_SHARE_LOG,Karsten Ockenfels,10,LHR,IPO,100
+BUY_SHARE_LOG,Volker Schnell,10,QSR,IPO,90
+BUY_SHARE_LOG,Dirk Steiner,10,NXR,IPO,105
+BUY_SHARE_LOG,Martin Brumm,10,JHA,IPO,65
+BUY_SHARE_LOG,Karsten Ockenfels,10,LHR,IPO,100
+FloatsWithCash,Longhai Railway,1000
+PASSES,Volker Schnell
+BUY_SHARE_LOG,Dirk Steiner,10,NXR,IPO,105
+BUY_SHARE_LOG,Martin Brumm,10,NXR,IPO,105
+PASSES,Karsten Ockenfels
+SELL_SHARE_LOG,Volker Schnell,10,JHU,115
+BUY_SHARE_LOG,Volker Schnell,10,NXR,IPO,105
+PASSES,Dirk Steiner
+PASSES,Martin Brumm
+PASSES,Karsten Ockenfels
+PASSES,Volker Schnell
+ 
+END_SR,9
+PRICE_MOVES_LOG,HKR,125,I2,130,I1
+SoldOut,Hukun Railway,125,I2,130,I1
+PRICE_MOVES_LOG,NXR,105,E2,110,E1
+SoldOut,Ningxi     Railway,105,E2,110,E1
+Has,Baocheng Railway,41
+Has,Jingha Railway,0
+Has,Jinghu     Railway,571
+Has,Jingguang Railway,12
+Has,Jinglan Railway,158
+Has,Longhai Railway,1000
+Has,Schichang Railway,118
+Has,Ningxi     Railway,60
+Has,Hukun Railway,9
+Has,Najiang Railway,1
+Has,Qinshen     Railway,0
+Has,Wunan Railway,1
+Has,Martin Brumm,43
+Has,Karsten Ockenfels,47
+Has,Volker Schnell,233
+Has,Dirk Steiner,32
+START_OR,9.1
+ 
+CompanyOperates,NJR,Dirk Steiner
+ReceivesFor,Dirk Steiner,0,KR
+ReceivesFor,Volker Schnell,0,YC
+ReceivesFor,Dirk Steiner,0,TL
+ReceivesFor,Martin Brumm,0,CC
+ReceivesFor,Karsten Ockenfels,0,JO
+ReceivesFor,Martin Brumm,0,IG
+ 
+CompanyOperates,BCR,Martin Brumm
+LaysTileAt,BCR,15,O5,NW
+CompanyRevenue,BCR,480
+CompanyPaysOutFull,BCR,480
+Payout,Martin Brumm,240,5,10
+PRICE_MOVES_LOG,BCR,140,J1,150,K1
+ 
+CompanyOperates,NXR,Dirk Steiner
+LaysTileAt,NXR,8871,G9,SW
+CompanyRevenue,NXR,270
+CompanyPaysOutFull,NXR,270
+Payout,Martin Brumm,27,1,10
+Payout,Dirk Steiner,189,7,10
+Payout,Volker Schnell,27,1,10
+Payout,Karsten Ockenfels,27,1,10
+PRICE_MOVES_LOG,NXR,110,E1,115,F1
+BuysTrain,NXR,6,HKR,22
+ 
+CompanyOperates,SCR,Martin Brumm
+LaysTileAt,SCR,20,M13,NW
+CompanyRevenue,SCR,320
+CompanyPaysOutFull,SCR,320
+Payout,Martin Brumm,160,5,10
+PRICE_MOVES_LOG,SCR,105,E2,110,F2
+ 
+CompanyOperates,LHR,Karsten Ockenfels
+CompanyDoesNotPayDividend,LHR
+PRICE_MOVES_LOG,LHR,100,D2,95,C2
+BuysTrain,LHR,2R,IPO,250
+PresidentAddsCash,LHR,Karsten Ockenfels,50
+BuysTrain,LHR,8,IPO,800
+FirstTrainBought,8
+StartOfPhase,8
+TrainsRusted,4
+ 
+CompanyOperates,HKR,Dirk Steiner
+CompanyRevenue,HKR,370
+CompanyPaysOutFull,HKR,370
+Payout,Martin Brumm,37,1,10
+Payout,Dirk Steiner,259,7,10
+Payout,Volker Schnell,37,1,10
+Payout,Karsten Ockenfels,37,1,10
+PRICE_MOVES_LOG,HKR,130,I1,140,J1
+ 
+CompanyOperates,WNR,Martin Brumm
+CompanyRevenue,WNR,270
+CompanyPaysOutFull,WNR,270
+Payout,Martin Brumm,162,6,10
+PRICE_MOVES_LOG,WNR,95,E4,100,F4
+ 
+CompanyOperates,JGG,Karsten Ockenfels
+CompanyRevenue,JGG,290
+CompanyPaysOutFull,JGG,290
+Payout,Karsten Ockenfels,145,5,10
+PRICE_MOVES_LOG,JGG,90,D4,95,E4
+ 
+CompanyOperates,JLR,Karsten Ockenfels
+AddedRights,JLR,D
+CompanyRevenue,JLR,390
+CompanyPaysOutFull,JLR,390
+Payout,Karsten Ockenfels,195,5,10
+PRICE_MOVES_LOG,JLR,115,I4,125,J4
+BuysTrain,JLR,2R,LHR,96
+ 
+CompanyOperates,JHU,Volker Schnell
+CompanyDoesNotPayDividend,JHU
+PRICE_MOVES_LOG,JHU,120,J5,110,I5
+BuysTrain,JHU,2R,IPO,250
+PlayerMustSellShares,Volker Schnell,182
+BuysTrain,JHU,8,IPO,800
+All 8-trains are sold out, 8E-trains now available
+ 
+EndOfOperatingRound,9.1
+ORWorthIncrease,Martin Brumm,9.1,691
+ORWorthIncrease,Karsten Ockenfels,9.1,384
+ORWorthIncrease,Volker Schnell,9.1,-410
+ORWorthIncrease,Dirk Steiner,9.1,528
+Has,BCR,41
+Has,JHA,0
+Has,JHU,0
+Has,JGG,12
+Has,JLR,62
+Has,LHR,96
+Has,SCR,118
+Has,NXR,38
+Has,HKR,31
+Has,NJR,1
+Has,QSR,0
+Has,WNR,1
+Has,Martin Brumm,669
+Has,Karsten Ockenfels,401
+Has,Volker Schnell,-182
+Has,Dirk Steiner,480
+StartStockRound,10
+HasPriority,Dirk Steiner
+DebtPenalty,Volker Schnell,91
+SELL_SHARE_LOG,Dirk Steiner,10,JHA,60
+PRICE_MOVES_LOG,JHA,65,C8,60,C9
+BUY_SHARE_LOG,Dirk Steiner,10,JLR,IPO,125
+SELL_SHARES_LOG,Martin Brumm,2,10,20,JHA,110
+BUY_SHARE_LOG,Martin Brumm,10,JLR,IPO,125
+BUY_SHARE_LOG,Karsten Ockenfels,10,JLR,IPO,125
+PASSES,Volker Schnell
+SELL_SHARE_LOG,Dirk Steiner,10,NJR,65
+PRICE_MOVES_LOG,NJR,70,D8,65,D9
+BUY_SHARE_LOG,Dirk Steiner,10,JLR,IPO,125
+BUY_SHARE_LOG,Martin Brumm,10,JHU,IPO,110
+BUY_SHARE_LOG,Karsten Ockenfels,10,JLR,IPO,125
+PASSES,Volker Schnell
+PASSES,Dirk Steiner
+SELL_SHARE_LOG,Martin Brumm,10,HKR,135
+PRICE_MOVES_LOG,HKR,140,J1,135,J2
+BUY_SHARE_LOG,Martin Brumm,10,JHU,IPO,110
+BUY_SHARE_LOG,Karsten Ockenfels,10,HKR,IPO,135
+PASSES,Volker Schnell
+SELL_SHARE_LOG,Dirk Steiner,10,NJR,60
+BUY_SHARE_LOG,Dirk Steiner,10,JHU,IPO,110
+PASSES,Martin Brumm
+PASSES,Karsten Ockenfels
+PASSES,Volker Schnell
+PASSES,Dirk Steiner
+ 
+END_SR,10
+PRICE_MOVES_LOG,HKR,135,J2,140,J1
+SoldOut,Hukun Railway,135,J2,140,J1
+PRICE_MOVES_LOG,JLR,125,J4,130,J3
+SoldOut,Jinglan Railway,125,J4,130,J3
+PRICE_MOVES_LOG,NXR,115,F1,115,G2
+SoldOut,Ningxi     Railway,115,F1,115,G2
+DebtPenaltyStockRound,Volker Schnell,136
+Has,Baocheng Railway,41
+Has,Jingha Railway,0
+Has,Jinghu     Railway,0
+Has,Jingguang Railway,12
+Has,Jinglan Railway,62
+Has,Longhai Railway,96
+Has,Schichang Railway,118
+Has,Ningxi     Railway,38
+Has,Hukun Railway,31
+Has,Najiang Railway,1
+Has,Qinshen     Railway,0
+Has,Wunan Railway,1
+Has,Martin Brumm,554
+Has,Karsten Ockenfels,16
+Has,Volker Schnell,-409
+Has,Dirk Steiner,290
+START_OR,10.1
+ 
+CompanyOperates,JHU,Volker Schnell
+ 
+CompanyOperates,QSR,Volker Schnell
+CompanyRevenue,QSR,520
+CompanyPaysOutFull,QSR,520
+Payout,Martin Brumm,52,1,10
+Payout,Volker Schnell,364,7,10
+PRICE_MOVES_LOG,QSR,90,F6,95,G6
+ 
+CompanyOperates,JHA,Volker Schnell
+CompanyRevenue,JHA,290
+CompanyPaysOutFull,JHA,290
+Payout,Volker Schnell,145,5,10
+PRICE_MOVES_LOG,JHA,60,C9,65,D9
+ 
+CompanyOperates,NJR,Dirk Steiner
+CompanyRevenue,NJR,260
+CompanyPaysOutFull,NJR,260
+Payout,Dirk Steiner,104,4,10
+Payout,Karsten Ockenfels,26,1,10
+Payout,Volker Schnell,26,1,10
+PRICE_MOVES_LOG,NJR,65,D9,70,E9
+ReceivesFor,Dirk Steiner,0,KR
+ReceivesFor,Volker Schnell,0,YC
+ReceivesFor,Dirk Steiner,0,TL
+ReceivesFor,Martin Brumm,0,CC
+ReceivesFor,Karsten Ockenfels,0,JO
+ReceivesFor,Martin Brumm,0,IG
+ 
+CompanyOperates,BCR,Martin Brumm
+CorrectionModeActivate,Martin Brumm,CORRECT_MAP
+CorrectMapLaysTileAt,8,H2,NE
+CorrectionModeDeactivate,Martin Brumm,CORRECT_MAP
+CorrectionModeActivate,Martin Brumm,CORRECT_CASH
+CorrectCashSubstractMoney,JLR,30
+CorrectionModeDeactivate,Martin Brumm,CORRECT_CASH
+CompanyRevenue,BCR,350
+CompanyPaysOutFull,BCR,350
+Payout,Martin Brumm,175,5,10
+PRICE_MOVES_LOG,BCR,150,K1,160,L1
+BuysTrain,BCR,2R,SCR,40
+ 
+CompanyOperates,NXR,Dirk Steiner
+LaysTileAt,NXR,8888,F8,SW
+CompanyRevenue,NXR,640
+CompanyPaysOutFull,NXR,640
+Payout,Martin Brumm,64,1,10
+Payout,Dirk Steiner,448,7,10
+Payout,Karsten Ockenfels,64,1,10
+Payout,Volker Schnell,64,1,10
+PRICE_MOVES_LOG,NXR,115,G2,120,H2
+ 
+CompanyOperates,SCR,Martin Brumm
+LaysTileAt,SCR,455,L10,SW
+CompanyRevenue,SCR,310
+CompanyWithholds,SCR,310
+PRICE_MOVES_LOG,SCR,110,F2,105,E2
+BuysTrain,SCR,2R,IPO,250
+ 
+CompanyOperates,LHR,Karsten Ockenfels
+LaysTileAtFor,LHR,57,J2,SW,50
+LaysTileAtFor,LHR,8,I3,SW,30
+CompanyRevenue,LHR,270
+CompanyPaysOutFull,LHR,270
+Payout,Karsten Ockenfels,162,6,10
+PRICE_MOVES_LOG,LHR,95,C2,100,D2
+ 
+CompanyOperates,HKR,Dirk Steiner
+CompanyRevenue,HKR,400
+CompanyPaysOutFull,HKR,400
+Payout,Dirk Steiner,280,7,10
+Payout,Karsten Ockenfels,80,2,10
+Payout,Volker Schnell,40,1,10
+PRICE_MOVES_LOG,HKR,140,J1,150,K1
+ 
+CompanyOperates,WNR,Martin Brumm
+CompanyRevenue,WNR,350
+CompanyPaysOutFull,WNR,350
+Payout,Martin Brumm,210,6,10
+PRICE_MOVES_LOG,WNR,100,F4,105,G4
+ 
+CompanyOperates,JGG,Karsten Ockenfels
+CompanyRevenue,JGG,310
+CompanyPaysOutFull,JGG,310
+Payout,Karsten Ockenfels,155,5,10
+PRICE_MOVES_LOG,JGG,95,E4,100,F4
+ 
+CompanyOperates,JLR,Karsten Ockenfels
+LaysTileAt,JLR,16,E7,E
+CompanyRevenue,JLR,540
+CompanyPaysOutFull,JLR,540
+Payout,Dirk Steiner,108,2,10
+Payout,Martin Brumm,54,1,10
+Payout,Karsten Ockenfels,378,7,10
+PRICE_MOVES_LOG,JLR,130,J3,140,K3
+ 
+EndOfOperatingRound,10.1
+ORWorthIncrease,Martin Brumm,10.1,620
+ORWorthIncrease,Karsten Ockenfels,10.1,925
+ORWorthIncrease,Volker Schnell,10.1,689
+ORWorthIncrease,Dirk Steiner,10.1,1025
+Has,BCR,1
+Has,JHA,0
+Has,JHU,0
+Has,JGG,12
+Has,JLR,32
+Has,LHR,16
+Has,SCR,218
+Has,NXR,38
+Has,HKR,31
+Has,NJR,1
+Has,QSR,0
+Has,WNR,1
+Has,Martin Brumm,1109
+Has,Karsten Ockenfels,881
+Has,Volker Schnell,230
+Has,Dirk Steiner,1230
+START_OR,10.2
+ 
+CompanyOperates,JHU,Volker Schnell
+CompanyRevenue,JHU,620
+CompanyPaysOutFull,JHU,620
+Payout,Dirk Steiner,62,1,10
+Payout,Martin Brumm,124,2,10
+Payout,Volker Schnell,310,5,10
+PRICE_MOVES_LOG,JHU,110,I5,120,J5
+All 8E-trains are sold out, 10-trains now available
+FirstTrainBought,8E
+StartOfPhase,8e
+TrainsRusted,4+4
+ 
+EndOfOperatingRound,10.2
+ORWorthIncrease,Martin Brumm,10.2,134
+ORWorthIncrease,Karsten Ockenfels,10.2,0
+ORWorthIncrease,Volker Schnell,10.2,320
+ORWorthIncrease,Dirk Steiner,10.2,72
+Has,BCR,1
+Has,JHA,0
+Has,JHU,0
+Has,JGG,12
+Has,JLR,32
+Has,LHR,16
+Has,SCR,218
+Has,NXR,38
+Has,HKR,31
+Has,NJR,1
+Has,QSR,0
+Has,WNR,1
+Has,Martin Brumm,1233
+Has,Karsten Ockenfels,881
+Has,Volker Schnell,540
+Has,Dirk Steiner,1292
+StartStockRound,11
+HasPriority,Martin Brumm
+PASSES,Martin Brumm
+PASSES,Karsten Ockenfels
+PASSES,Volker Schnell
+PASSES,Dirk Steiner
+ 
+END_SR,11
+PRICE_MOVES_LOG,HKR,150,K1,155,L2
+SoldOut,Hukun Railway,150,K1,155,L2
+PRICE_MOVES_LOG,JLR,140,K3,145,K2
+SoldOut,Jinglan Railway,140,K3,145,K2
+PRICE_MOVES_LOG,NXR,120,H2,125,H1
+SoldOut,Ningxi     Railway,120,H2,125,H1
+Has,Baocheng Railway,1
+Has,Jingha Railway,0
+Has,Jinghu     Railway,0
+Has,Jingguang Railway,12
+Has,Jinglan Railway,32
+Has,Longhai Railway,16
+Has,Schichang Railway,218
+Has,Ningxi     Railway,38
+Has,Hukun Railway,31
+Has,Najiang Railway,1
+Has,Qinshen     Railway,0
+Has,Wunan Railway,1
+Has,Martin Brumm,1233
+Has,Karsten Ockenfels,881
+Has,Volker Schnell,540
+Has,Dirk Steiner,1292
+START_OR,11.1
+ 
+CompanyOperates,JHU,Volker Schnell
+ 
+CompanyOperates,QSR,Volker Schnell
+CompanyDoesNotPayDividend,QSR
+PRICE_MOVES_LOG,QSR,95,G6,90,F6
+PlayerMustSellShares,Volker Schnell,460
+BuysTrain,QSR,10,IPO,1000
+FirstTrainBought,10
+StartOfPhase,10
+DebtPenalty,Volker Schnell,230
+ 
+CompanyOperates,JHA,Volker Schnell
+CompanyRevenue,JHA,310
+CompanyPaysOutFull,JHA,310
+Payout,Volker Schnell,155,5,10
+PRICE_MOVES_LOG,JHA,65,D9,70,E9
+ 
+CompanyOperates,NJR,Dirk Steiner
+CompanyRevenue,NJR,270
+CompanyPaysOutFull,NJR,270
+Payout,Dirk Steiner,108,4,10
+Payout,Karsten Ockenfels,27,1,10
+Payout,Volker Schnell,27,1,10
+PRICE_MOVES_LOG,NJR,70,E9,75,E8
+ReceivesFor,Dirk Steiner,0,KR
+ReceivesFor,Volker Schnell,0,YC
+ReceivesFor,Dirk Steiner,0,TL
+ReceivesFor,Martin Brumm,0,CC
+ReceivesFor,Karsten Ockenfels,0,JO
+ReceivesFor,Martin Brumm,0,IG
+ 
+CompanyOperates,BCR,Martin Brumm
+CompanyRevenue,BCR,240
+CompanyPaysOutFull,BCR,240
+Payout,Martin Brumm,120,5,10
+PRICE_MOVES_LOG,BCR,160,L1,180,M1
+PresidentAddsCash,BCR,Martin Brumm,999
+BuysTrain,BCR,10,IPO,1000
+ 
+CompanyOperates,NXR,Dirk Steiner
+LaysTileAt,NXR,455,H6,SW
+CompanyRevenue,NXR,370
+CompanyPaysOutFull,NXR,370
+Payout,Dirk Steiner,259,7,10
+Payout,Karsten Ockenfels,37,1,10
+Payout,Martin Brumm,37,1,10
+Payout,Volker Schnell,37,1,10
+PRICE_MOVES_LOG,NXR,125,H1,130,I1
+ 
+CompanyOperates,SCR,Martin Brumm
+LaysTileAt,SCR,8875,N12,SW
+CompanyRevenue,SCR,110
+CompanyWithholds,SCR,110
+PRICE_MOVES_LOG,SCR,105,E2,100,D2
+PlayerMustSellShares,Martin Brumm,281
+BuysTrain,SCR,10,IPO,1000
+DebtPenalty,Martin Brumm,140
+ 
+CompanyOperates,LHR,Karsten Ockenfels
+LaysTileAt,LHR,888,F6,NW
+CompanyRevenue,LHR,330
+CompanyPaysOutFull,LHR,330
+Payout,Karsten Ockenfels,198,6,10
+PRICE_MOVES_LOG,LHR,100,D2,105,E2
+ 
+CompanyOperates,HKR,Dirk Steiner
+CompanyRevenue,HKR,490
+CompanyPaysOutFull,HKR,490
+Payout,Dirk Steiner,343,7,10
+Payout,Karsten Ockenfels,98,2,10
+Payout,Volker Schnell,49,1,10
+PRICE_MOVES_LOG,HKR,155,L2,170,M2
+ 
+CompanyOperates,WNR,Martin Brumm
+CompanyRevenue,WNR,390
+CompanyPaysOutFull,WNR,390
+Payout,Martin Brumm,234,6,10
+PRICE_MOVES_LOG,WNR,105,G4,110,H4
+ 
+CompanyOperates,JGG,Karsten Ockenfels
+CompanyRevenue,JGG,370
+CompanyPaysOutFull,JGG,370
+Payout,Karsten Ockenfels,185,5,10
+PRICE_MOVES_LOG,JGG,100,F4,105,G4
+ 
+CompanyOperates,JLR,Karsten Ockenfels
+LaysTileAt,JLR,14,J2,NW
+CompanyRevenue,JLR,600
+CompanyPaysOutFull,JLR,600
+Payout,Dirk Steiner,120,2,10
+Payout,Karsten Ockenfels,420,7,10
+Payout,Martin Brumm,60,1,10
+PRICE_MOVES_LOG,JLR,145,K2,155,L2
+ 
+EndOfOperatingRound,11.1
+ORWorthIncrease,Martin Brumm,11.1,-1245
+ORWorthIncrease,Karsten Ockenfels,11.1,1035
+ORWorthIncrease,Volker Schnell,11.1,-917
+ORWorthIncrease,Dirk Steiner,11.1,950
+Has,BCR,0
+Has,JHA,0
+Has,JHU,0
+Has,JGG,12
+Has,JLR,32
+Has,LHR,16
+Has,SCR,0
+Has,NXR,38
+Has,HKR,31
+Has,NJR,1
+Has,QSR,0
+Has,WNR,1
+Has,Martin Brumm,-127
+Has,Karsten Ockenfels,1846
+Has,Volker Schnell,-422
+Has,Dirk Steiner,2122
+START_OR,11.2
+ 
+CompanyOperates,JHU,Volker Schnell
+CompanyRevenue,JHU,660
+CompanyPaysOutFull,JHU,660
+Payout,Dirk Steiner,66,1,10
+Payout,Martin Brumm,132,2,10
+Payout,Volker Schnell,330,5,10
+PRICE_MOVES_LOG,JHU,120,J5,125,J4
+ 
+CompanyOperates,QSR,Volker Schnell
+CompanyRevenue,QSR,540
+CompanyPaysOutFull,QSR,540
+Payout,Martin Brumm,54,1,10
+Payout,Volker Schnell,378,7,10
+PRICE_MOVES_LOG,QSR,90,F6,95,G6
+ 
+CompanyOperates,JHA,Volker Schnell
+CompanyRevenue,JHA,330
+CompanyPaysOutFull,JHA,330
+Payout,Volker Schnell,165,5,10
+PRICE_MOVES_LOG,JHA,70,E9,75,E8
+ 
+CompanyOperates,NJR,Dirk Steiner
+CompanyRevenue,NJR,280
+CompanyPaysOutFull,NJR,280
+Payout,Dirk Steiner,112,4,10
+Payout,Karsten Ockenfels,28,1,10
+Payout,Volker Schnell,28,1,10
+PRICE_MOVES_LOG,NJR,75,E8,80,E7
+ReceivesFor,Dirk Steiner,0,KR
+ReceivesFor,Volker Schnell,0,YC
+ReceivesFor,Dirk Steiner,0,TL
+ReceivesFor,Martin Brumm,0,CC
+ReceivesFor,Karsten Ockenfels,0,JO
+ReceivesFor,Martin Brumm,0,IG
+ 
+CompanyOperates,BCR,Martin Brumm
+CompanyRevenue,BCR,610
+CompanyPaysOutFull,BCR,610
+Payout,Martin Brumm,305,5,10
+PRICE_MOVES_LOG,BCR,180,M1,200,N1
+ 
+CompanyOperates,NXR,Dirk Steiner
+LaysTileAt,NXR,455,G3,SW
+CompanyRevenue,NXR,390
+CompanyPaysOutFull,NXR,390
+Payout,Dirk Steiner,273,7,10
+Payout,Karsten Ockenfels,39,1,10
+Payout,Martin Brumm,39,1,10
+Payout,Volker Schnell,39,1,10
+PRICE_MOVES_LOG,NXR,130,I1,140,J1
+ 
+CompanyOperates,SCR,Martin Brumm
+LaysTileAt,SCR,619,J6,W
+CompanyRevenue,SCR,580
+CompanyPaysOutFull,SCR,580
+Payout,Martin Brumm,290,5,10
+PRICE_MOVES_LOG,SCR,100,D2,105,E2
+ 
+CompanyOperates,LHR,Karsten Ockenfels
+LaysTileAt,LHR,611,J2,NE
+CompanyRevenue,LHR,370
+CompanyPaysOutFull,LHR,370
+Payout,Karsten Ockenfels,222,6,10
+PRICE_MOVES_LOG,LHR,105,E2,110,F2
+ 
+CompanyOperates,HKR,Dirk Steiner
+CompanyRevenue,HKR,490
+CompanyPaysOutFull,HKR,490
+Payout,Dirk Steiner,343,7,10
+Payout,Karsten Ockenfels,98,2,10
+Payout,Volker Schnell,49,1,10
+PRICE_MOVES_LOG,HKR,170,M2,190,N2
+ 
+CompanyOperates,WNR,Martin Brumm
+CompanyRevenue,WNR,390
+CompanyPaysOutFull,WNR,390
+Payout,Martin Brumm,234,6,10
+PRICE_MOVES_LOG,WNR,110,H4,115,I4
+ 
+CompanyOperates,JGG,Karsten Ockenfels
+CompanyRevenue,JGG,400
+CompanyPaysOutFull,JGG,400
+Payout,Karsten Ockenfels,200,5,10
+PRICE_MOVES_LOG,JGG,105,G4,110,H4
+ 
+CompanyOperates,JLR,Karsten Ockenfels
+LaysTileAtFor,JLR,8,I5,W,20
+CompanyRevenue,JLR,620
+CompanyPaysOutFull,JLR,620
+Payout,Dirk Steiner,124,2,10
+Payout,Karsten Ockenfels,434,7,10
+Payout,Martin Brumm,62,1,10
+PRICE_MOVES_LOG,JLR,155,L2,170,M2
+ 
+EndOfOperatingRound,11.2
+ORWorthIncrease,Martin Brumm,11.2,1246
+ORWorthIncrease,Karsten Ockenfels,11.2,1106
+ORWorthIncrease,Volker Schnell,11.2,1059
+ORWorthIncrease,Dirk Steiner,11.2,1088
+Has,BCR,0
+Has,JHA,0
+Has,JHU,0
+Has,JGG,12
+Has,JLR,12
+Has,LHR,16
+Has,SCR,0
+Has,NXR,38
+Has,HKR,31
+Has,NJR,1
+Has,QSR,0
+Has,WNR,1
+Has,Martin Brumm,989
+Has,Karsten Ockenfels,2867
+Has,Volker Schnell,567
+Has,Dirk Steiner,3040
+START_OR,11.3
+ 
+CompanyOperates,JHU,Volker Schnell
+CompanyRevenue,JHU,680
+CompanyPaysOutFull,JHU,680
+Payout,Dirk Steiner,68,1,10
+Payout,Martin Brumm,136,2,10
+Payout,Volker Schnell,340,5,10
+PRICE_MOVES_LOG,JHU,125,J4,135,K4
+ 
+EndOfOperatingRound,11.3
+ORWorthIncrease,Martin Brumm,11.3,146
+ORWorthIncrease,Karsten Ockenfels,11.3,0
+ORWorthIncrease,Volker Schnell,11.3,350
+ORWorthIncrease,Dirk Steiner,11.3,78
+Has,BCR,0
+Has,JHA,0
+Has,JHU,0
+Has,JGG,12
+Has,JLR,12
+Has,LHR,16
+Has,SCR,0
+Has,NXR,38
+Has,HKR,31
+Has,NJR,1
+Has,QSR,0
+Has,WNR,1
+Has,Martin Brumm,1125
+Has,Karsten Ockenfels,2867
+Has,Volker Schnell,907
+Has,Dirk Steiner,3108
+GameOver
+EoGWinnerDirk Steiner!
+EoGFinalRanking :
+1. 4883 Dirk Steiner
+2. 4077 Karsten Ockenfels
+3. 2570 Martin Brumm
+4. 1922 Volker Schnell
