@@ -1,13 +1,6 @@
-Rails release 1.7.10:
+Rails 2.0 Alpha 5 release:
 
-A new maintenance release for Rails 1.x series
+First alpha release after merging of 1880 from Rails 1.8.x tree.
 
-This release fixes two bugs.
-
-Contributors: Stefan Frey
-
-Bugs reported by theos and Russel J. Alphey
-
-Lists of bugs fixed:
-- fixed bug in starting a company in 18EU if only one start price is possible
-- fixed bug that the ReportWindow does not scroll down at game start
+Remark:
+Bugs from previous 2.0 Alpha releases are still open.
