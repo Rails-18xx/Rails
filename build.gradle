@@ -1,7 +1,7 @@
 
 // Gradle Build script for 18xx Rails program (rails.sf.net)
 apply plugin: 'java'
-sourceCompatibility = 1.5
+sourceCompatibility = 1.6
 targetCompatibility = 1.6
 
 // Addition of shadow plugin to create one jars
