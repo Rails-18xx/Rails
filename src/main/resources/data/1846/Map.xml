@@ -1,0 +1,99 @@
+<Map tileOrientation="EW" letterOrientation="vertical" even="B">
+	<Image file="master/MapImage.svg" x="16" y="15" scale="0.955"/>
+	<!-- Hex name="" tile="" orientation="1,2,3,4,5,6" value="" impassable="" label="V,X,OO,Z,P.etc" cost="10,20,30,40" port="yes/no" -->
+	<!-- Multiple upgrade costs: first value applies to FIRST tile laid
+		(regardless the colour). Any subsequent values apply to 
+		yellow-to-green, green-to-brown etc. upgrades -->
+	<Hex name="A15" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="B8" value="30,50" tile="-903" pic="-939" orientation="1" city="Hamburg">
+		<Access runThrough="yes"/>
+	</Hex>
+	<Hex name="B10" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="B12" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="B14" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="B16" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="B18" port="yes" value="30,50" label="E+20" tile="-800" orientation="0"/>
+	<Hex name="C5" port="yes" value="20,40" label="W+50" tile="-800" orientation="0"/>
+	<Hex name="C7" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="C9" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="C11" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="C13" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="C15" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="C17" port="yes" value="40,60" label="E+30" tile="-800" orientation="0"/>
+	<Hex name="C21" port="yes" value="30,60" label="E+30" tile="-800" orientation="0"/>
+	<Hex name="D6" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="D8" value="30,50" tile="-903" pic="-939" orientation="1" city="Hamburg">
+		<Access runThrough="yes"/>
+	</Hex>
+	<Hex name="D10" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="D12" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="D14" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="D16" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="D18" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="D20" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="D22" port="yes" value="30,60" label="E+30" tile="-800" orientation="0"/>
+	<Hex name="E5" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="E7" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="E9" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="E11" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="E13" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="E15" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="E17" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="E19" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="E21" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="E23" port="yes" value="20,50" label="E+30" tile="-800" orientation="0"/>
+	<Hex name="F4" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="F6" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="F8" value="30,50" tile="-903" pic="-939" orientation="1" city="Hamburg">
+		<Access runThrough="yes"/>
+	</Hex>
+	<Hex name="F10" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="F12" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="F14" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="F16" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="F18" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="F20" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="F22" port="yes" value="30,70" label="E+20" tile="-800" orientation="0"/>
+	<Hex name="G3" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="G5" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="G7" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="G9" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="G11" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="G13" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="G15" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="G17" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="G19" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="G21" port="yes" value="30,70" label="E+20" tile="-800" orientation="0"/>
+	<Hex name="H2" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="H4" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="H6" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="H8" value="30,50" tile="-903" pic="-939" orientation="1" city="Hamburg">
+		<Access runThrough="yes"/>
+	</Hex>
+	<Hex name="H10" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="H12" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="H14" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="H16" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="H18" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="H20" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="H22" port="yes" value="20,40" label="E+30" tile="-800" orientation="0"/>
+	<Hex name="I1" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="I3" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="I5" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="I7" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="I9" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="I11" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="I13" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="I15" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="I17" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="I19" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="I21" port="yes" value="20,40" label="E+30" tile="-800" orientation="0"/>
+	<Hex name="J2" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="J4" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="J6" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="J8" value="30,50" tile="-903" pic="-939" orientation="1" city="Hamburg">
+		<Access runThrough="yes"/>
+	</Hex>
+	<Hex name="J10" port="yes" value="50,70" tile="-800" orientation="0"/>
+	<Hex name="K3" port="yes" tile="-800" city="Cairo" orientation="0"/>
+</Map>
