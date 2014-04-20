@@ -1,0 +1,41 @@
+<StockMarket type="linear">
+	<!-- Note two supported colour specification formats:
+		RGB decimal with commas and RGB hexadecimal without commas -->
+	<StockSpaceType name="red" colour="255,255,0">
+	</StockSpaceType>  
+  <StockSpace name="Liquidation" price="0" type="red">
+  <ClosesCompany/>
+  </StockSpace>
+  <StockSpace name="Acquisition" price="0" type="gray"/>
+  <StockSpace name="Acquisition2" price="0" type="gray"/>
+  <StockSpace name="Acquisition3" price="0" type="gray"/>
+  <StockSpace name="E1" price="40"/>
+  <StockSpace name="F1" price="45"/>
+  <StockSpace name="G1" price="50"/>
+  <StockSpace name="H1" price="55"/>
+  <StockSpace name="I1" price="60"/>
+  <StockSpace name="J1" price="65"/>
+  <StockSpace name="K1" price="70"/>
+  <StockSpace name="L1" price="80"/>
+  <StockSpace name="M1" price="90"/>
+  <StockSpace name="N1" price="100"/>
+  <StockSpace name="O1" price="110"/>
+  <StockSpace name="P1" price="120"/>
+  <StockSpace name="Q1" price="135"/>
+  <StockSpace name="R1" price="150"/>
+  <StockSpace name="S1" price="160"/>
+  <StockSpace name="T1" price="180"/>
+  <StockSpace name="U1" price="200"/>
+  <StockSpace name="V1" price="220"/>
+  <StockSpace name="W1" price="245"/>
+  <StockSpace name="X1" price="270"/>
+  <StockSpace name="Y1" price="300"/>
+  <StockSpace name="Z1" price="330"/>
+  <StockSpace name="AA1" price="360"/>
+  <StockSpace name="AB1" price="400"/>
+  <StockSpace name="AC1" price="440"/>
+  <StockSpace name="AD1" price="490"/>
+  <StockSpace name="AE1" price="540"/>
+  <Stockspace name="AF1" price="600"/>
+  </StockSpace>
+</StockMarket>
