@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<CompanyManager>
+	<CompanyType name="Public" class="rails.game.specific._1856.PublicCompany_1856">
+		<CanBuyPrivates/>
+		<PoolPaysOut/>
+		<ShareUnit percentage="10"/>
+		<Certificate type="President" shares="2"/>
+		<Certificate shares="1" number="8"/>
+		<Capitalisation type="whenBought"/>
+		<BaseTokens>
+			<LayCost method="sequence" cost="0,40,100"/>
+		</BaseTokens>
+		<Trains limit="4,3,2"/>
+		<Loans value="100" perRound="1" interest="10"/>
+		<!-- Number of loans is undefined and handled in the code -->
+        <CanUseSpecialProperties/>
+	</CompanyType>
+
+	<Company name="E&amp;H" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="A20"/>
+	</Company>
+	<Company name="ECR" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="A20"/>
+	</Company>
+	<Company name="ENR" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="A20"/>
+	</Company>
+	<Company name="ESR" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="A20"/>
+	</Company>
+	<Company name="EUR" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="A20"/>
+	</Company>
+	<Company name="FDR" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="A20"/>
+	</Company>
+	<Company name="I&amp;B" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="A20"/>
+	</Company>
+	<Company name="L&amp;D" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="A20"/>
+	</Company>
+	<Company name="L&amp;E" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="A20"/>
+	</Company>
+	<Company name="L&amp;H" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="A20"/>
+	</Company>
+	<Company name="N&amp;B" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="A20"/>
+	</Company>
+	<Company name="N&amp;E" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="A20"/>
+	</Company>
+	<Company name="N&amp;S" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="A20"/>
+	</Company>
+	<Company name="Y&amp;N" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="A20"/>
+	</Company>
+	<Company name="NGC" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="A20"/>
+	</Company>
+	<Company name="SVR" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="A20"/>
+	</Company>
+	<Company name="WNR" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="A20"/>
+	</Company>
+	<Company name="W&amp;F" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="A20"/>
+	</Company>
+	<Company name="WVR" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="A20"/>
+	</Company>
+	<Company name="WstI" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="A20"/>
+	</Company>
+
+</CompanyManager>
