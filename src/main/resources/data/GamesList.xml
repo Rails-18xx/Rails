@@ -222,6 +222,11 @@ Known Issues:
     <Players minimum="2" maximum="4" />
   </Game>
 
+  <Game name="1862">
+    <Note>Prototype - Not Playable</Note>
+    <Description>1862</Description>
+    <Players minimum="2" maximum="8" />
+  </Game>
    	
 	<Credits>&lt;html&gt;Rails is a computer implementation of a number of board games.&lt;br&gt; 
 	These games all have a railroad theme. They are collectively known as "18xx" &lt;br&gt;
