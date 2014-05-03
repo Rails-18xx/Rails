@@ -4,21 +4,19 @@
 	<!-- Multiple upgrade costs: first value applies to FIRST tile laid
 		(regardless the colour). Any subsequent values apply to 
 		yellow-to-green, green-to-brown etc. upgrades -->
-	<Hex name="A15" port="yes" value="10" tile="-800" orientation="0"/>
-	<Hex name="B8" value="30,50" tile="-903" pic="-939" orientation="1" city="Hamburg">
-		<Access runThrough="yes"/>
-	</Hex>
-	<Hex name="B10" port="yes" value="10" tile="-800" orientation="0"/>
-	<Hex name="B12" port="yes" value="10" tile="-800" orientation="0"/>
-	<Hex name="B14" port="yes" value="10" tile="-800" orientation="0"/>
-	<Hex name="B16" port="yes" value="10" tile="-800" orientation="0"/>
-	<Hex name="B18" port="yes" value="30,50" label="E+20" tile="-800" orientation="0"/>
-	<Hex name="C5" port="yes" value="20,40" label="W+50" tile="-800" orientation="0"/>
-	<Hex name="C7" port="yes" value="10" tile="-800" orientation="0"/>
-	<Hex name="C9" port="yes" value="10" tile="-800" orientation="0"/>
-	<Hex name="C11" port="yes" value="10" tile="-800" orientation="0"/>
-	<Hex name="C13" port="yes" value="10" tile="-800" orientation="0"/>
-	<Hex name="C15" port="yes" value="10" tile="-800" orientation="0"/>
+	<Hex name="A15" tile="-7" orientation="3"/>
+	<Hex name="B8" port="yes" value="40,10" tile="-901" pic="-901" orientation="1" city="Holland" />
+	<Hex name="B10" tile="0"/>
+	<Hex name="B12" tile="0"/>
+	<Hex name="B14" tile="0"/>
+	<Hex name="B16" tile="-10" orientation="0" city="Port Huron"/>
+	<Hex name="B18" value="30,50" label="E+20" tile="-901" orientation="4"/>
+	<Hex name="C5" port="yes" value="20,40" label="W+50 Chicago Constructions" tile="-901" orientation="5" />
+	<Hex name="C7" tile="-7" orientation="3"/>
+	<Hex name="C9" tile="-10" orientation="0"/>
+	<Hex name="C11" tile="0" orientation="0"/>
+	<Hex name="C13" tile="0" orientation="0"/>
+	<Hex name="C15" value="40" tile="-800" cost="40" orientation="0"/>
 	<Hex name="C17" port="yes" value="40,60" label="E+30" tile="-800" orientation="0"/>
 	<Hex name="C21" port="yes" value="30,60" label="E+30" tile="-800" orientation="0"/>
 	<Hex name="D6" port="yes" value="10" tile="-800" orientation="0"/>
