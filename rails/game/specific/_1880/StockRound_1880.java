@@ -36,12 +36,6 @@ public class StockRound_1880 extends StockRound {
         super(aGameManager);
     }
 
-    @Override
-    // The sell-in-same-turn-at-decreasing-price option does not apply here
-    protected int getCurrentSellPrice(PublicCompanyI company) {
-        return (super.getCurrentSellPrice(company) - 5);
-    }
-
     /**
      * Share price goes down 1 space for any number of shares sold.
      */
@@ -387,7 +381,6 @@ public class StockRound_1880 extends StockRound {
      */
     @Override
     public boolean sellShares(SellShares action) {
-        // TODO Auto-generated method stub
         if(super.sellShares(action)) {
             int numberSold=action.getNumber();
             gameManager.getCurrentPlayer().addCash(-5*numberSold); //Deduct the Money for selling those Shares !
