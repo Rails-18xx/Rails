@@ -59,12 +59,12 @@ public class StartRound_1830 extends StartRound {
         boolean passAllowed = true;
 
         possibleActions.clear();
-        Player currentPlayer = playerManager.getCurrentPlayer();
 
-        if (currentPlayer == startPlayer) ReportBuffer.add(this, "");
+        if (playerManager.getCurrentPlayer() == startPlayer) ReportBuffer.add(this, "");
 
+        // FIXME: Rails 2.0 Could be an infinite loop if there if no player has enough money to buy an item
         while (possibleActions.isEmpty()) {
-
+            Player currentPlayer = playerManager.getCurrentPlayer();
 
             for (StartItem item : itemsToSell.view()) {
 
@@ -304,8 +304,6 @@ public class StartRound_1830 extends StartRound {
         }
 
         ReportBuffer.add(this, LocalText.getText("PASSES", playerName));
-
-        
 
         numPasses.add(1);
         if (auctionItem != null) {
