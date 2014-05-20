@@ -183,7 +183,7 @@
 					<Attributes cost="900"/>
 					<Exchange cost="750"/>
 				</IfOption>
-				<IfOption name="UnlimitedTopTrains" value="yes">
+				<IfOption name="UnlimitedTopTrains_D" value="yes">
 					<Attributes quantity="-1"/>
 				</IfOption>
 				<Exchange cost="800"/>

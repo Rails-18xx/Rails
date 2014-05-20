@@ -66,7 +66,7 @@
         </TrainType>
 		<TrainType name="8" majorStops="8" cost="800" quantity="4">
             <NewPhase phaseName="8"/>
-            <IfOption name="UnlimitedTopTrains" value="yes">
+            <IfOption name="UnlimitedTopTrains_8" value="yes">
 				<Attributes quantity="-1"/>
 			</IfOption>
         </TrainType>

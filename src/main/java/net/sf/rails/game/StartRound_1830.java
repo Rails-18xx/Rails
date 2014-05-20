@@ -322,7 +322,7 @@ public class StartRound_1830 extends StartRound {
                 auctionItemState.set(null);
                 numPasses.set(0);
                 // Next turn goes to priority holder
-                playerManager.setPriorityPlayerToNext(); // EV - Added to fix bug 2989440
+                playerManager.setCurrentToPriorityPlayer(); // EV - Added to fix bug 2989440
             } else {
                 // More than one left: find next bidder
 
