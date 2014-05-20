@@ -59,7 +59,7 @@
 		<TrainType name="D" majorStops="99" cost="1100" quantity="6">
 			<NewPhase phaseName="D"/>
  			<Exchange cost="800"/>
-			<IfOption name="UnlimitedTopTrains" value="yes">
+			<IfOption name="UnlimitedTopTrains_D" value="yes">
 				<Attributes quantity="-1"/>
 			</IfOption>
 		</TrainType>
