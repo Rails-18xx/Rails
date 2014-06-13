@@ -35,12 +35,15 @@ public class StartRound_1835 extends StartRound {
 
     @Override
     public void start() {
-        super.start();
-
         if (variant.equalsIgnoreCase(CLEMENS_VARIANT)) {
             // reverse order at the start
             playerManager.reversePlayerOrder(true);
+            // set priority to last player
+            Player lastPlayer = playerManager.getNextPlayerAfter(playerManager.getPriorityPlayer());
+            playerManager.setPriorityPlayer(lastPlayer);
         }
+        // then continue with standard start round
+        super.start();
 
         if (!setPossibleActions()) {
             /*
@@ -229,12 +232,15 @@ public class StartRound_1835 extends StartRound {
              */
             turn.add(1);
             // check if the next player would start a new cycle
-            int cycleNumber = (turn.value() +1) / playerManager.getNumberOfPlayers() + 1;
-
+            int cycleNumber = (turn.value()) / playerManager.getNumberOfPlayers();
+            int playerNumber = (turn.value()) % playerManager.getNumberOfPlayers();
+            log.debug("1835 Clements: turn = " + turn.value() + ", cycleNumber = " + cycleNumber + ", playerNumber = " + playerNumber);
             if (variant.equalsIgnoreCase(CLEMENS_VARIANT)) {
                 /* Reverse order in the first cycle only */
-                if (cycleNumber == 1) {
+                if (cycleNumber == 1 && playerNumber == 0) {
                     playerManager.reversePlayerOrder(false);
+                    // move one player ahead as we were one player ahead
+                    playerManager.setCurrentToNextPlayer();
                 }
             } else if (variant.equalsIgnoreCase(SNAKE_VARIANT)) {
                 /* Reverse order in the second cycle only */
