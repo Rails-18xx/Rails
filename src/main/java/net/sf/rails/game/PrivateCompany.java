@@ -115,7 +115,7 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
             // pld: adding revenue to info text
             infoText += "<br>Revenue: ";
             for (int i = 0; i < revenue.size();i++) {
-                infoText += (Currency.format(this, revenue.get(i)));
+                infoText += (Bank.format(this, revenue.get(i)));
                 if (i < revenue.size()-1) {infoText += ", ";};
             }
 

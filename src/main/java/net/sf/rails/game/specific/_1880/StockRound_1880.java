@@ -7,7 +7,6 @@ package net.sf.rails.game.specific._1880;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.Bank;
-import net.sf.rails.game.Currency;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCertificate;
@@ -15,6 +14,7 @@ import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.StockRound;
 import net.sf.rails.game.StockSpace;
 import net.sf.rails.game.model.PortfolioModel;
+import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.Owner;
 import net.sf.rails.game.state.Portfolio;
 
@@ -122,7 +122,7 @@ public class StockRound_1880 extends StockRound {
             Currency.wire(bank, cash, company);
             ReportBuffer.add(this,LocalText.getText("FloatsWithCash",
                     company.getLongName(),
-                    Currency.format(this,cash) ));
+                    Bank.format(this,cash) ));
         } else {
             ReportBuffer.add(this,LocalText.getText("Floats",
                     company.getLongName()));
@@ -348,14 +348,14 @@ public class StockRound_1880 extends StockRound {
                     if (newSpace != oldSpace) {
                         ReportBuffer.add(this,LocalText.getText("SoldOut",
                                 company.getLongName(),
-                                Currency.format(this, oldSpace.getPrice()),
+                                Bank.format(this, oldSpace.getPrice()),
                                 oldSpace.getId(),
-                                Currency.format(this, newSpace.getPrice()),
+                                Bank.format(this, newSpace.getPrice()),
                                 newSpace.getId()));
                     } else {
                         ReportBuffer.add(this,LocalText.getText("SoldOutNoRaise",
                                 company.getLongName(),
-                                Currency.format(this, newSpace.getPrice()),
+                                Bank.format(this, newSpace.getPrice()),
                                 newSpace.getId()));
                     }
                 }
@@ -375,7 +375,7 @@ public class StockRound_1880 extends StockRound {
             if (p.getCash() <0 ) {
                 int fine = Math.abs(p.getCash() / 2);
                 ReportBuffer.add(this, LocalText.getText("DebtPenaltyStockRound", p.getId(),
-                       Currency.format(this,fine)));
+                       Bank.format(this,fine)));
                 Currency.wire(p,fine,bank);
             }
         }
@@ -385,12 +385,12 @@ public class StockRound_1880 extends StockRound {
         for (PublicCompany c : companyManager.getAllPublicCompanies()) {
             if (c.hasFloated() && !c.isClosed()) {
                 ReportBuffer.add(this, LocalText.getText("Has", c.getLongName(),
-                        Currency.format(this, c.getCash())));
+                        Bank.format(this, c.getCash())));
             }
         }
         for (Player p : playerManager.getPlayers()) {
             ReportBuffer.add(this, LocalText.getText("Has", p.getId(),
-                    Currency.format(this, p.getCash())));
+                    Bank.format(this, p.getCash())));
         }
         // Inform GameManager
         gameManager.nextRound(this);

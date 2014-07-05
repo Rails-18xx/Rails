@@ -11,6 +11,7 @@ import net.sf.rails.common.parser.Tag;
 import net.sf.rails.game.model.*;
 import net.sf.rails.game.special.*;
 import net.sf.rails.game.state.*;
+import net.sf.rails.game.state.Currency;
 import net.sf.rails.util.Util;
 
 import org.slf4j.Logger;
@@ -31,7 +32,7 @@ import com.google.common.collect.Sets;
  * shares may or may not have a price on the stock market.
  * 
  */
-public class PublicCompany extends RailsAbstractItem implements Company, MoneyOwner, PortfolioOwner, Comparable<PublicCompany> {
+public class PublicCompany extends RailsAbstractItem implements Company, RailsMoneyOwner, PortfolioOwner, Comparable<PublicCompany> {
     
     private static Logger log = LoggerFactory.getLogger(PublicCompany.class);
 
@@ -113,8 +114,8 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
     protected PriceModel currentPrice;
 
     /** Company treasury, holding cash */
-    protected final WalletMoneyModel treasury = 
-            WalletMoneyModel.create(this, "treasury", false);
+    protected final PurseMoneyModel treasury = 
+            PurseMoneyModel.create(this, "treasury", false);
 
     /** PresidentModel */
     protected final PresidentModel presidentModel = PresidentModel.create(this);
@@ -880,7 +881,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
     public void start(int price) {
         StockSpace startSpace = getRoot().getStockMarket().getStartSpace(price);
         if (startSpace == null) {
-            log.error("Invalid start price " + getRoot().getCurrency().format(price)); // TODO: Do this nicer
+            log.error("Invalid start price " + Bank.format(this, price)); // TODO: Do this nicer
         } else {
             start(startSpace);
         }
@@ -1110,11 +1111,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
 //        }
 //    }
 
-    public int getCash() {
-        return treasury.value();
-    }
-    
-    public WalletMoneyModel getWallet() {
+    public PurseMoneyModel getPurseMoneyModel() {
         return treasury;
     }
 
@@ -1534,7 +1531,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
                     getId(),
                     privateCompany.getId(),
                     from.getId(),
-                    Currency.format(this, price) ));
+                    Bank.format(this, price) ));
         }
 
         // Move the private certificate
@@ -1596,7 +1593,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
 
     public void layTilenNoMapMode(int cost) {
         if (cost > 0) tilesCostThisTurn.change(cost);
-        tilesLaidThisTurn.append(Currency.format(this, cost), ",");
+        tilesLaidThisTurn.append(Bank.format(this, cost), ",");
     }
 
     public StringState getTilesLaidThisTurnModel() {
@@ -1616,7 +1613,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
 
     public void layBaseTokennNoMapMode(int cost) {
         if (cost > 0) tokensCostThisTurn.change(cost);
-        tokensLaidThisTurn.append(Currency.format(this, cost), ",");
+        tokensLaidThisTurn.append(Bank.format(this, cost), ",");
     }
 
     /**
@@ -2006,6 +2003,14 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
         return portfolio.getPersistentSpecialProperties();
     }
 
+    // MoneyOwner interface
+    public Purse getPurse() {
+        return treasury.getPurse();
+    }
+    
+    public int getCash() {
+        return getPurse().value();
+    }
 
     // Comparable interface
     public int compareTo(PublicCompany other) {

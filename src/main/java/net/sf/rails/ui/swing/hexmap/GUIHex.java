@@ -20,8 +20,8 @@ import java.util.Set;
 import net.sf.rails.algorithms.RevenueBonusTemplate;
 import net.sf.rails.game.BaseToken;
 import net.sf.rails.game.BonusToken;
-import net.sf.rails.game.Currency;
 import net.sf.rails.game.HexSide;
+import net.sf.rails.game.Bank;
 import net.sf.rails.game.TileHexUpgrade;
 import net.sf.rails.game.MapHex;
 import net.sf.rails.game.MapOrientation;
@@ -437,7 +437,7 @@ public class GUIHex implements Observer {
         FontMetrics fontMetrics = g.getFontMetrics();
         if (getHex().getTileCost() > 0 ) {
             g.drawString(
-                    Currency.format(getHex(), getHex().getTileCost()),
+                    Bank.format(getHex(), getHex().getTileCost()),
                     rectBound.x
                             + (rectBound.width - fontMetrics.stringWidth(Integer.toString(getHex().getTileCost())))
                             * 3 / 5,
@@ -773,7 +773,7 @@ public class GUIHex implements Observer {
             tt.append("<br><b>Upgrades</b>: ").append(upgrades);
             if (hex.getTileCost() > 0)
                 tt.append("<br>Upgrade cost: "
-                          + Currency.format(hex, hex.getTileCost()));
+                          + Bank.format(hex, hex.getTileCost()));
         }
 
         if (getHex().getDestinations() != null) {

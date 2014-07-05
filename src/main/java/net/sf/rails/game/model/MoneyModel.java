@@ -1,7 +1,7 @@
 package net.sf.rails.game.model;
 
-import net.sf.rails.game.Currency;
 import net.sf.rails.game.RailsItem;
+import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.StringState;
 
 /**

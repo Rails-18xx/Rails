@@ -6,8 +6,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.sf.rails.game.CompanyManager;
-import net.sf.rails.game.Currency;
 import net.sf.rails.game.GameManager;
+import net.sf.rails.game.Bank;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.Train;
 import net.sf.rails.game.TrainManager;
@@ -227,7 +227,7 @@ public class BuyTrain extends PossibleORAction {
         }
         b.append("train (").append(trainUniqueId).append(") from ").append(from.getId());
         if (fixedCost > 0) {
-            b.append(" for ").append(Currency.format(company, fixedCost));
+            b.append(" for ").append(Bank.format(company, fixedCost));
         } else {
             b.append(" for any amount");
         }
@@ -238,14 +238,14 @@ public class BuyTrain extends PossibleORAction {
             b.append(forcedExchange ? " (forced exchange)" : " (exchange)");
         }
         if (presidentMustAddCash) {
-            b.append(" must add cash ").append(Currency.format(company, presidentCashToAdd));
+            b.append(" must add cash ").append(Bank.format(company, presidentCashToAdd));
         } else if (presidentMayAddCash) {
             b.append(" may add cash up to ").append(
-                    Currency.format(company, presidentCashToAdd));
+                    Bank.format(company, presidentCashToAdd));
         }
         if (acted) {
-            b.append(" - paid: ").append(Currency.format(company, pricePaid));
-            if (addedCash > 0) b.append(" pres.cash added: "+Currency.format(company, addedCash));
+            b.append(" - paid: ").append(Bank.format(company, pricePaid));
+            if (addedCash > 0) b.append(" pres.cash added: "+Bank.format(company, addedCash));
             if (exchangedTrain != null) b.append(" exchanged for "+exchangedTrain.getId()+"-train");
         }
 

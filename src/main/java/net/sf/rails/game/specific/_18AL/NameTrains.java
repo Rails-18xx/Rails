@@ -7,7 +7,7 @@ import net.sf.rails.common.LocalText;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Configure;
 import net.sf.rails.common.parser.Tag;
-import net.sf.rails.game.Currency;
+import net.sf.rails.game.Bank;
 import net.sf.rails.game.RailsItem;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.special.SpecialProperty;
@@ -65,7 +65,7 @@ public class NameTrains extends SpecialProperty {
             NamedTrainToken token = Configure.create(tokenClass, this, tokenName);
             tokens.add(token);
             token.configureFromXML(tokenTag);
-            description += token.getLongName() + ": " + Currency.format(this, token.getValue()) + ", ";
+            description += token.getLongName() + ": " + Bank.format(this, token.getValue()) + ", ";
         }
         description = description.replaceFirst(", $", "");
     }

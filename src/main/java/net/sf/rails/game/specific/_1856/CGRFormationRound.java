@@ -7,11 +7,11 @@ import com.google.common.collect.Lists;
 import rails.game.action.*;
 import net.sf.rails.common.*;
 import net.sf.rails.game.*;
-import net.sf.rails.game.Currency;
 import net.sf.rails.game.special.SellBonusToken;
 import net.sf.rails.game.state.ArrayListMultimapState;
 import net.sf.rails.game.state.ArrayListState;
 import net.sf.rails.game.state.BooleanState;
+import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.GenericState;
 import net.sf.rails.game.state.IntegerState;
 import net.sf.rails.game.state.Portfolio;
@@ -141,8 +141,8 @@ public class CGRFormationRound extends SwitchableUIRound {
                     currentCompany.getId(),
                     player.getId(),
                     numberOfLoans,
-                    Currency.format(this, valuePerLoan),
-                    Currency.format(this, numberOfLoans * valuePerLoan));
+                    Bank.format(this, valuePerLoan),
+                    Bank.format(this, numberOfLoans * valuePerLoan));
             ReportBuffer.add(this, " ");
             DisplayBuffer.add(this, " ", false);
             ReportBuffer.add(this, message);
@@ -159,9 +159,9 @@ public class CGRFormationRound extends SwitchableUIRound {
                 message = LocalText.getText("CompanyRepaysLoans",
                         currentCompany.getId(),
                         paymentText,
-                        Currency.format(this, numberOfLoans * valuePerLoan), 
+                        Bank.format(this, numberOfLoans * valuePerLoan), 
                         numberToRepay,
-                        Currency.format(this, valuePerLoan));
+                        Bank.format(this, valuePerLoan));
                 ReportBuffer.add(this, message);
                 DisplayBuffer.add(this, message, false);
             }
@@ -256,7 +256,7 @@ public class CGRFormationRound extends SwitchableUIRound {
                         company.getId(),
                     repayCompanyText,
                         numberRepaid,
-                    Currency.format(this, company.getValuePerLoan()))); // TODO: Make this nicer
+                    Bank.format(this, company.getValuePerLoan()))); // TODO: Make this nicer
             }
             if (repaymentByPresident > 0) {
                 Player president = company.getPresident();
@@ -264,9 +264,9 @@ public class CGRFormationRound extends SwitchableUIRound {
                 ReportBuffer.add(this, LocalText.getText("CompanyRepaysLoansWithPresCash",
                         company.getId(),
                         repayPresidentText,
-                        Currency.format(this, repayment), 
+                        Bank.format(this, repayment), 
                         numberRepaid,
-                        Currency.format(this, company.getValuePerLoan()), 
+                        Bank.format(this, company.getValuePerLoan()), 
                         president.getId()));
             }
         }
@@ -470,7 +470,7 @@ public class CGRFormationRound extends SwitchableUIRound {
                 cgr.start(startSpace);
                 message = LocalText.getText("START_MERGED_COMPANY",
                         PublicCompany_CGR.NAME,
-                        Currency.format(this, startSpace.getPrice()),
+                        Bank.format(this, startSpace.getPrice()),
                         startSpace.getId());
                 DisplayBuffer.add(this, message);
                 ReportBuffer.add(this, message);

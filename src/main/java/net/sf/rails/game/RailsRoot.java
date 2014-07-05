@@ -19,7 +19,6 @@ import net.sf.rails.game.state.Root;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import com.google.common.base.Preconditions;
 
 public class RailsRoot extends Root implements RailsItem {
@@ -58,9 +57,6 @@ public class RailsRoot extends Root implements RailsItem {
     
     // Other Managers
     private ReportManager reportManager;
-
-    // TODO (Rails2.0): Move currency to Bank 
-    private Currency currency;
 
     private RailsRoot(GameData gameData) {
         super();
@@ -180,16 +176,6 @@ public class RailsRoot extends Root implements RailsItem {
         return null;
     }
 
-    // Setters
-    // TODO (Rails2.0): Replace Currency here, move to Bank
-    public void setCurrency(Currency currency) {
-        this.currency = currency;
-    }
-
-    public Currency getCurrency() {
-        return currency;
-    }
-    
     /*----- Getters -----*/
 
     public GameManager getGameManager() {

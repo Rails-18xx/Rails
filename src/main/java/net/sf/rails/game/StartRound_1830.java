@@ -230,7 +230,7 @@ public class StartRound_1830 extends StartRound {
             previousBid = item.getBid(player);
             int available = player.getFreeCash() + previousBid;
             if (bidAmount > available) {
-                errMsg = LocalText.getText("BidTooHigh", Currency.format(this, available));
+                errMsg = LocalText.getText("BidTooHigh", Bank.format(this, available));
                 break;
             }
 
@@ -252,9 +252,9 @@ public class StartRound_1830 extends StartRound {
         player.blockCash(bidAmount);
         ReportBuffer.add(this, LocalText.getText("BID_ITEM_LOG",
                 playerName,
-                Currency.format(this, bidAmount),
+                Bank.format(this, bidAmount),
                 item.getName(),
-                Currency.format(this, player.getFreeCash()) ));
+                Bank.format(this, player.getFreeCash()) ));
 
         if (bidItem.getStatus() != StartItem.AUCTIONED) {
             playerManager.setCurrentToNextPlayer();
@@ -346,7 +346,7 @@ public class StartRound_1830 extends StartRound {
                     ReportBuffer.add(this, LocalText.getText(
                             "ITEM_PRICE_REDUCED",
                                     startPacket.getFirstItem().getName(),
-                                    Currency.format(this, startPacket.getFirstItem().getBasePrice()) ));
+                                    Bank.format(this, startPacket.getFirstItem().getBasePrice()) ));
                     numPasses.set(0);
                     if (startPacket.getFirstItem().getBasePrice() == 0) {
                         assignItem(playerManager.getCurrentPlayer(),

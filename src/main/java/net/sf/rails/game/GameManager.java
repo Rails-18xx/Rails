@@ -1085,7 +1085,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         gameOverPending.set(true);
         ReportBuffer.add(this, LocalText.getText("MaxedSharePriceReportText",
                 company.getId(),
-                Currency.format(this, space.getPrice())));
+                Bank.format(this, space.getPrice())));
         String msgContinue;
         if (gameEndsAfterSetOfORs)
             msgContinue = LocalText.getText("gameOverPlaySetOfORs");
@@ -1093,7 +1093,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             msgContinue = LocalText.getText("gameOverPlayOnlyOR");
         String msg = LocalText.getText("MaxedSharePriceDisplayText",
                 company.getId(),
-                Currency.format(this, space.getPrice()),
+                Bank.format(this, space.getPrice()),
                 msgContinue);
         DisplayBuffer.add(this, msg);
         addToNextPlayerMessages(msg, true);
@@ -1161,7 +1161,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         /* Report final ranking */
         int i = 0;
         for (Player p : rankedPlayers) {
-            b.add((++i) + ". " + Currency.format(this, p.getWorth()) + " "
+            b.add((++i) + ". " + Bank.format(this, p.getWorth()) + " "
                     + p.getId());
         }
 

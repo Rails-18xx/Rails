@@ -11,6 +11,7 @@ import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.state.ArrayListState;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.Creatable;
+import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.Portfolio;
 
 import org.slf4j.Logger;
@@ -357,12 +358,12 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
         for (PublicCompany c : companyManager.getAllPublicCompanies()) {
             if (c.hasFloated() && !c.isClosed()) {
                 ReportBuffer.add(this, LocalText.getText("Has", c.getId(),
-                        Currency.format(this, c.getCash())));
+                        Bank.format(this, c.getCash())));
             }
         }
         for (Player p : playerManager.getPlayers()) {
             ReportBuffer.add(this, LocalText.getText("Has", p.getId(),
-                    Currency.format(this, p.getCashValue())));
+                    Bank.format(this, p.getCashValue())));
         }
         // Inform GameManager
         gameManager.nextRound(this);

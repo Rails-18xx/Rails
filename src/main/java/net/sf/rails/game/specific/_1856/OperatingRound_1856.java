@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rails.game.action.*;
-
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
@@ -13,6 +12,7 @@ import net.sf.rails.game.*;
 import net.sf.rails.game.special.SellBonusToken;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.state.BooleanState;
+import net.sf.rails.game.state.Currency;
 
 import com.google.common.collect.Iterables;
 
@@ -162,7 +162,7 @@ public class OperatingRound_1856 extends OperatingRound {
 
         ReportBuffer.add(this, (LocalText.getText("CompanyMustPayLoanInterest",
                 operatingCompany.value().getId(),
-                Currency.format(this, due))));
+                Bank.format(this, due))));
 
         // Can it be paid from company treasury?
         // TODO: Hard code 10% payment
@@ -239,8 +239,8 @@ public class OperatingRound_1856 extends OperatingRound {
             remainder -= payment;
             ReportBuffer.add(this, LocalText.getText("InterestPaidFromRevenue",
                     operatingCompany.value().getId(),
-                    Currency.format(this, payment),
-                    Currency.format(this, due)));
+                    Bank.format(this, payment),
+                    Bank.format(this, due)));
             // This reduces train income
             amount -= payment;
         }
@@ -338,8 +338,8 @@ public class OperatingRound_1856 extends OperatingRound {
                     DisplayBuffer.add(this, LocalText.getText("MustRepayLoans",
                             operatingCompany.value().getId(),
                             minNumber,
-                            Currency.format(this, operatingCompany.value().getValuePerLoan()),
-                            Currency.format(this, minNumber * operatingCompany.value().getValuePerLoan())));
+                            Bank.format(this, operatingCompany.value().getValuePerLoan()),
+                            Bank.format(this, minNumber * operatingCompany.value().getValuePerLoan())));
                 }
                 possibleActions.add(new RepayLoans(operatingCompany.value(),
                         minNumber, maxNumber, operatingCompany.value().getValuePerLoan()));

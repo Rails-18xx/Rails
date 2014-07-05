@@ -13,7 +13,6 @@ import javax.swing.plaf.FontUIResource;
 
 import net.sf.rails.common.*;
 import net.sf.rails.game.*;
-import net.sf.rails.game.Currency;
 import net.sf.rails.sound.SoundManager;
 import net.sf.rails.ui.swing.elements.*;
 import net.sf.rails.util.Util;
@@ -1181,7 +1180,7 @@ public class GameUIManager implements DialogOwner {
     
     // Forwards the format() method to the server
     public String format(int amount) {
-        return Currency.format(railsRoot, amount);
+        return Bank.format(railsRoot, amount);
     }
 
     /** update fonts settings
