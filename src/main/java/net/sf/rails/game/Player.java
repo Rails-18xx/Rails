@@ -6,13 +6,15 @@ import net.sf.rails.game.model.CountingMoneyModel;
 import net.sf.rails.game.model.MoneyModel;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.model.PortfolioOwner;
-import net.sf.rails.game.model.WalletMoneyModel;
+import net.sf.rails.game.model.PurseMoneyModel;
 import net.sf.rails.game.model.CalculatedMoneyModel.CalculationMethod;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.ChangeActionOwner;
 import net.sf.rails.game.state.IntegerState;
+import net.sf.rails.game.state.MoneyOwner;
+import net.sf.rails.game.state.Purse;
 
-public class Player extends RailsAbstractItem implements MoneyOwner, PortfolioOwner, ChangeActionOwner, Comparable<Player> {
+public class Player extends RailsAbstractItem implements RailsMoneyOwner, PortfolioOwner, ChangeActionOwner, Comparable<Player> {
 
     // FIXME: Rails 2.0 Do we need the index number?
     
@@ -23,7 +25,8 @@ public class Player extends RailsAbstractItem implements MoneyOwner, PortfolioOw
     private final PortfolioModel portfolio = PortfolioModel.create(this);
     private final CertificateCountModel certCount = CertificateCountModel.create(portfolio);
 
-    private final WalletMoneyModel cash = WalletMoneyModel.create(this, "cash", false);
+    private final PurseMoneyModel cash = 
+            PurseMoneyModel.create(this, "cash", false);
     private final CalculatedMoneyModel freeCash;
     private final CountingMoneyModel blockedCash = CountingMoneyModel.create(this, "blockedCash", false);
     private final CalculatedMoneyModel worth;
@@ -205,8 +208,12 @@ public class Player extends RailsAbstractItem implements MoneyOwner, PortfolioOw
     }
 
     // MoneyOwner interface
+    public Purse getPurse() {
+        return cash.getPurse();
+    }
+    
     public int getCash() {
-        return cash.value();
+        return cash.getPurse().value();
     }
 
     // Owner interface
@@ -228,7 +235,7 @@ public class Player extends RailsAbstractItem implements MoneyOwner, PortfolioOw
         return result;
     }
 
-    public WalletMoneyModel getWallet() {
+    public PurseMoneyModel getWallet() {
         return cash;
     }
 

@@ -4,15 +4,14 @@ import java.util.*;
 
 import rails.game.action.DiscardTrain;
 import rails.game.action.PossibleAction;
-
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.*;
-import net.sf.rails.game.Currency;
 import net.sf.rails.game.special.ExchangeForShare;
 import net.sf.rails.game.special.SpecialProperty;
+import net.sf.rails.game.state.Currency;
 
 import com.google.common.collect.Iterables;
 
@@ -259,7 +258,7 @@ public class PrussianFormationRound extends StockRound {
         prussian.start();
         String message = LocalText.getText("START_MERGED_COMPANY",
                 PR_ID,
-                Currency.format(this, prussian.getIPOPrice()),
+                Bank.format(this, prussian.getIPOPrice()),
                 prussian.getStartSpace().toText());
         ReportBuffer.add(this, message);
         if (display) DisplayBuffer.add(this, message);
@@ -343,7 +342,7 @@ public class PrussianFormationRound extends StockRound {
                     company.getId(),
                     PR_ID,
                     company instanceof PrivateCompany ? "no"
-                            : Currency.format(this, ((PublicCompany)company).getCash()),
+                            : Bank.format(this, ((PublicCompany)company).getCash()),
                     company instanceof PrivateCompany ? "no"
                             : ((PublicCompany)company).getPortfolioModel().getTrainList().size());
             ReportBuffer.add(this, message);

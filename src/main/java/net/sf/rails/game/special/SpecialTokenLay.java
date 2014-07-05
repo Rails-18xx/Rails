@@ -85,7 +85,7 @@ public class SpecialTokenLay extends SpecialProperty {
         } else if (tokenClass == BonusToken.class) {
             description = LocalText.getText("LayBonusTokenInfo",
                     tokenName,
-                    Currency.format(this, tokenValue),
+                    Bank.format(this, tokenValue),
                     locationCodes);
         }
     }

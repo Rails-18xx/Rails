@@ -1,7 +1,7 @@
 package net.sf.rails.game.model;
 
 import net.sf.rails.game.Bonus;
-import net.sf.rails.game.Currency;
+import net.sf.rails.game.Bank;
 import net.sf.rails.game.RailsItem;
 import net.sf.rails.game.state.ArrayListState;
 
@@ -37,7 +37,7 @@ public class BonusModel extends RailsModel {
             if (b.length() > 14) {
                 b.append("<br>");
             }
-            b.append(bonus.getIdForView()).append("+").append(Currency.format(getParent(), bonus.getValue()));
+            b.append(bonus.getIdForView()).append("+").append(Bank.format(getParent(), bonus.getValue()));
         }
 
         return b.toString();

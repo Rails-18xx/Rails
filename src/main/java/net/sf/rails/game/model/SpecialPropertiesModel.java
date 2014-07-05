@@ -3,8 +3,8 @@ package net.sf.rails.game.model;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.Bonus;
-import net.sf.rails.game.Currency;
 import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.Bank;
 import net.sf.rails.game.RailsOwner;
 import net.sf.rails.game.special.LocatedBonus;
 import net.sf.rails.game.special.SpecialProperty;
@@ -62,7 +62,7 @@ public class SpecialPropertiesModel extends RailsModel implements Triggerable {
             ReportBuffer.add(this, LocalText.getText("AcquiresBonus",
                     getParent().getId(),
                     locBonus.getName(),
-                    Currency.format(company, locBonus.getValue()),
+                    Bank.format(company, locBonus.getValue()),
                     locBonus.getLocationNameString()));
         }
     }

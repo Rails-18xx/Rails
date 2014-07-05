@@ -5,7 +5,6 @@ import java.util.List;
 
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
-import net.sf.rails.game.Currency;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PlayerManager;
@@ -15,6 +14,7 @@ import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.Round;
 import net.sf.rails.game.ShareSellingRound;
 import net.sf.rails.game.model.PortfolioModel;
+import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.GenericState;
 import net.sf.rails.game.state.Portfolio;
 

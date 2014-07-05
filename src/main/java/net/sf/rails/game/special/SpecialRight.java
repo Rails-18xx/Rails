@@ -9,7 +9,6 @@ import net.sf.rails.common.LocalText;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
 import net.sf.rails.game.*;
-import net.sf.rails.game.Currency;
 import net.sf.rails.util.*;
 
 
@@ -113,7 +112,7 @@ public class SpecialRight extends SpecialProperty implements RevenueStaticModifi
         StringBuilder b = new StringBuilder();
         b.append(cost > 0 ? "Buy '" : "Get '").append(rightName).append("'");
         if (locationNames != null) b.append(" at ").append(locationNames);
-        if (cost > 0) b.append(" for ").append(Currency.format(this, cost));
+        if (cost > 0) b.append(" for ").append(Bank.format(this, cost));
         return b.toString();
     }
     
@@ -121,7 +120,7 @@ public class SpecialRight extends SpecialProperty implements RevenueStaticModifi
     public String toMenu() {
         return LocalText.getText("BuyRight",
                 rightName,
-                Currency.format(this, cost));
+                Bank.format(this, cost));
     }
     
     public String getInfo() {

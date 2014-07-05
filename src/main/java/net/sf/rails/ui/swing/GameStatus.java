@@ -14,6 +14,7 @@ import net.sf.rails.common.LocalText;
 import net.sf.rails.game.*;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.specific._18EU.StartCompany_18EU;
+import net.sf.rails.game.state.MoneyOwner;
 import net.sf.rails.sound.SoundManager;
 import net.sf.rails.ui.swing.elements.*;
 import net.sf.rails.ui.swing.hexmap.HexHighlightMouseListener;
@@ -426,7 +427,7 @@ public class GameStatus extends GridPanel implements ActionListener {
             addField(f, currPriceXOffset, currPriceYOffset + i, 1, 1,
                     WIDE_RIGHT, visible);
 
-            f = compCash[i] = new Field(c.getWallet());
+            f = compCash[i] = new Field(c.getPurseMoneyModel());
             addField(f, compCashXOffset, compCashYOffset + i, 1, 1, 0, visible);
             f =
                 compCashButton[i] =
@@ -572,7 +573,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                 bankCashYOffset - 1, 1, 2, WIDE_TOP, true);
         addField(new Caption(LocalText.getText("CASH")), bankCashXOffset,
                 bankCashYOffset - 1, 1, 1, WIDE_TOP + WIDE_RIGHT, true);
-        bankCash = new Field(bank.getWallet());
+        bankCash = new Field(bank.getPurse());
         addField(bankCash, bankCashXOffset, bankCashYOffset, 1, 1, WIDE_RIGHT, true);
 
         // Trains

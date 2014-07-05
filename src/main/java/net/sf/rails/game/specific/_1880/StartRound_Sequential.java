@@ -8,12 +8,13 @@ import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.Certificate;
-import net.sf.rails.game.Currency;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.Player;
+import net.sf.rails.game.Bank;
 import net.sf.rails.game.StartItem;
 import net.sf.rails.game.StartRound;
 import net.sf.rails.game.state.ArrayListState;
+import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.GenericState;
 import rails.game.action.*;
 
@@ -119,9 +120,9 @@ public class StartRound_Sequential extends StartRound {
 
         ReportBuffer.add(this, LocalText.getText("BID_ITEM_LOG",
                 playerName,
-                Currency.format(this,bidAmount),
+                Bank.format(this,bidAmount),
                 bidItem.getStartItem().getName(),
-                Currency.format(this,player.getFreeCash())));        
+                Bank.format(this,player.getFreeCash())));        
         
         if ((passedPlayers.size() == (getRoot().getPlayerManager().getNumberOfPlayers() - 1))
             && (currentItem.value().getBidder() != null)) {
@@ -185,7 +186,7 @@ public class StartRound_Sequential extends StartRound {
 
         // Has the buyer enough cash?
             if (bidItem.getActualBid() > playerManager.getCurrentPlayer().getCash()) {
-                errMsg = LocalText.getText("BidTooHigh", Currency.format(this, bidItem.getActualBid()));
+                errMsg = LocalText.getText("BidTooHigh", Bank.format(this, bidItem.getActualBid()));
                 break;
             }
 
@@ -232,7 +233,7 @@ public class StartRound_Sequential extends StartRound {
                     ReportBuffer.add(this, LocalText.getText(
                             "ITEM_PRICE_REDUCED",
                                     currentItem.value().getName(),
-                                    Currency.format(this, startPacket.getFirstItem().getBasePrice()) ));
+                                    Bank.format(this, startPacket.getFirstItem().getBasePrice()) ));
                     currentItem.value().setMinimumBid(currentItem.value().getBasePrice());
                     passedPlayers.clear();
                     setNextBiddingPlayer();
@@ -269,7 +270,7 @@ public class StartRound_Sequential extends StartRound {
         ReportBuffer.add(this, LocalText.getText("BuysItemFor",
                 player.getId(),
                 primary.getName(),
-                Currency.format(this, price) ));
+                Bank.format(this, price) ));
         itemAssigned(player, item, price);
     }
     

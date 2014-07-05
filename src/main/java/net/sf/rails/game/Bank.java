@@ -8,19 +8,18 @@ import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.common.parser.Configurable;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
-import net.sf.rails.game.model.WalletMoneyModel;
+import net.sf.rails.game.model.PurseMoneyModel;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.Change;
+import net.sf.rails.game.state.Currency;
+import net.sf.rails.game.state.CurrencyOwner;
 import net.sf.rails.game.state.Observable;
+import net.sf.rails.game.state.Purse;
 import net.sf.rails.game.state.Triggerable;
 import net.sf.rails.game.state.UnknownOwner;
 import net.sf.rails.util.Util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-
-public class Bank extends RailsManager implements MoneyOwner, Configurable {
+public class Bank extends RailsManager implements CurrencyOwner, RailsMoneyOwner, Configurable {
 
     public static final String ID = "BANK";
     
@@ -38,7 +37,7 @@ public class Bank extends RailsManager implements MoneyOwner, Configurable {
     private final Currency currency = Currency.create(this, "currency");
 
     /** The Bank's amount of cash */
-    private final WalletMoneyModel cash = WalletMoneyModel.create(this, "cash", false, currency);
+    private final PurseMoneyModel cash = PurseMoneyModel.create(this, "cash", false, currency);
    
     /** The IPO */
     private final BankPortfolio ipo = BankPortfolio.create(this, IPO_NAME);
@@ -68,17 +67,12 @@ public class Bank extends RailsManager implements MoneyOwner, Configurable {
         };
     }
     
-    protected static Logger log =
-        LoggerFactory.getLogger(Bank.class);
-
     /**
      * Used by Configure (via reflection) only
      */
     public Bank(RailsRoot parent, String id) {
         // FIXME: This is a workaround to keep id to large caps
         super(parent, ID);
-        // feedback to Railsroot
-        parent.setCurrency(currency);
     }
     
     /**
@@ -150,13 +144,6 @@ public class Bank extends RailsManager implements MoneyOwner, Configurable {
     }
 
     /**
-     * @return the currency instance
-     */
-    public Currency getCurrency() {
-        return currency;
-    }
-    
-    /**
      * @return IPO Portfolio
      */
     public BankPortfolio getIpo() {
@@ -185,15 +172,30 @@ public class Bank extends RailsManager implements MoneyOwner, Configurable {
         return LocalText.getText("BANK");
     }
     
-    // MoneyOwner interface
-    public int getCash() {
-        return cash.value();
+    // CurrencyOwner interface
+    public Currency getCurrency() {
+        return currency;
     }
 
-    public WalletMoneyModel getWallet() {
-        return cash;
+    // MoneyOwner interface
+    public Purse getPurse() {
+        return cash.getPurse();
     }
     
+    public int getCash() {
+        return cash.getPurse().value();
+    }
+    
+    public static String format(RailsItem item, Iterable<Integer> amount) {
+        Currency currency = item.getRoot().getBank().getCurrency();
+        return currency.format(amount);
+    }
+
+    public static String format(RailsItem item, int amount) {
+        Currency currency = item.getRoot().getBank().getCurrency();
+        return currency.format(amount);
+    }
+
     public static Bank get(RailsItem item) {
         return item.getRoot().getBank();
     }
@@ -213,5 +215,5 @@ public class Bank extends RailsManager implements MoneyOwner, Configurable {
     public static BankPortfolio getUnavailable(RailsItem item) {
         return get(item).unavailable;
     }
-    
+
 }

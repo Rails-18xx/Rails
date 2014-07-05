@@ -121,7 +121,7 @@ public class SellShares extends PossibleAction {
     public String toString() {
         return "SellShares: "
         + number + " of " + share + "% " + companyName
-        + " at " + Currency.format(company, shareUnits * price) + " apiece"
+        + " at " + Bank.format(company, shareUnits * price) + " apiece"
         + (presidentExchange > 0 ? " (pres.exch. for "+presidentExchange*shareUnit+"% share(s))" : "");
     }
 

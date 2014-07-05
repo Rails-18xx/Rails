@@ -554,7 +554,7 @@ implements ActionListener, KeyListener, RevenueListener {
             f = sharePrice[i] = new Field(c.getCurrentPriceModel());
             addField(f, sharePriceXOffset, sharePriceYOffset + i, 1, 1, 0, visible);
 
-            f = cash[i] = new Field(c.getWallet());
+            f = cash[i] = new Field(c.getPurseMoneyModel());
             addField(f, cashXOffset, cashYOffset + i, 1, 1, WIDE_RIGHT, visible);
 
             if (privatesCanBeBought) {

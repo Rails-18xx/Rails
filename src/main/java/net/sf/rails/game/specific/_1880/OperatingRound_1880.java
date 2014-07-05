@@ -18,12 +18,10 @@ import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.common.GuiDef;
 import net.sf.rails.game.Bank;
 import net.sf.rails.game.BaseToken;
-import net.sf.rails.game.Currency;
 import net.sf.rails.game.GameDef;
 import net.sf.rails.game.GameDef.OrStep;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.MapHex;
-import net.sf.rails.game.MoneyOwner;
 import net.sf.rails.game.OperatingRound;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PrivateCompany;
@@ -39,6 +37,8 @@ import net.sf.rails.game.special.SpecialTileLay;
 import net.sf.rails.game.special.SpecialTrainBuy;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.ChangeStack;
+import net.sf.rails.game.state.Currency;
+import net.sf.rails.game.state.MoneyOwner;
 import net.sf.rails.util.SequenceUtil;
 
 import com.google.common.collect.Iterables;
@@ -506,7 +506,7 @@ public class OperatingRound_1880 extends OperatingRound {
             int penalty = (additionalDebt / 2);
 
             ReportBuffer.add(this, LocalText.getText("DebtPenalty", player.getId(),
-                   Currency.format(this, penalty)));
+                   Bank.format(this, penalty)));
             Currency.wire(player, penalty, getRoot().getBank());
             }
         wasInterrupted.set(true);
@@ -764,28 +764,28 @@ public class OperatingRound_1880 extends OperatingRound {
             if (cost < 0) {
                 errMsg =
                         LocalText.getText("NegativeAmountNotAllowed",
-                                Currency.format(this, cost));
+                                Bank.format(this, cost));
                 break;
             }
             if (cost % 10 != 0) {
                 errMsg =
                         LocalText.getText("AmountMustBeMultipleOf10",
-                                Currency.format(this, cost));
+                                Bank.format(this, cost));
                 break;
             }
             // Does the company have the money?
             if (cost > operatingCompany.value().getCash()) {
                 errMsg =
                         LocalText.getText("NotEnoughMoney", companyName,
-                                Currency.format(this, operatingCompany.value().getCash()),
-                                Currency.format(this, cost));
+                                Bank.format(this, operatingCompany.value().getCash()),
+                                Bank.format(this, cost));
                 break;
             }
             break;
         }
         if (errMsg != null) {
             DisplayBuffer.add(this, LocalText.getText("CannotLayTileOn", companyName,
-                    tile.toText(), hex.getId(), Currency.format(this, cost),
+                    tile.toText(), hex.getId(), Bank.format(this, cost),
                     errMsg));
             return false;
         }
@@ -802,7 +802,7 @@ public class OperatingRound_1880 extends OperatingRound {
             } else {
                 ReportBuffer.add(this, LocalText.getText("LaysTileAtFor",
                         companyName, tile.toText(), hex.getId(),
-                        hex.getOrientationName(orientation), Currency.format(this, cost)));
+                        hex.getOrientationName(orientation), Bank.format(this, cost)));
             }
             hex.upgrade(action);
 

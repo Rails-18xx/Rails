@@ -3,16 +3,16 @@ package net.sf.rails.game.specific._18EU;
 import java.util.*;
 
 import rails.game.action.*;
-
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.*;
-import net.sf.rails.game.Currency;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.state.ArrayListState;
 import net.sf.rails.game.state.BooleanState;
+import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.IntegerState;
+import net.sf.rails.game.state.MoneyOwner;
 import net.sf.rails.game.state.Portfolio;
 
 import com.google.common.collect.ImmutableSet;
@@ -334,7 +334,7 @@ public class StockRound_18EU extends StockRound {
             if ((startSpace = stockMarket.getStartSpace(price)) == null) {
                 errMsg =
                         LocalText.getText("InvalidStartPrice",
-                                Currency.format(this, price),
+                                Bank.format(this, price),
                                 company.getId() );
                 break;
             }
@@ -378,7 +378,7 @@ public class StockRound_18EU extends StockRound {
             DisplayBuffer.add(this, LocalText.getText("CantStart",
                     playerName,
                     companyName,
-                    Currency.format(this, price),
+                    Bank.format(this, price),
                     errMsg ));
             return false;
         }
@@ -405,8 +405,8 @@ public class StockRound_18EU extends StockRound {
         ReportBuffer.add(this, LocalText.getText("START_COMPANY_LOG",
                 playerName,
                 companyName,
-                Currency.format(this, price),
-                Currency.format(this, shares * price),
+                Bank.format(this, price),
+                Bank.format(this, shares * price),
                 shares,
                 cert.getShare(),
                 company.getId() ));
@@ -428,7 +428,7 @@ public class StockRound_18EU extends StockRound {
                     currentPlayer.getId(),
                     minor.getId(),
                     company.getId(),
-                    Currency.format(this, minorCash),
+                    Bank.format(this, minorCash),
                     minorTrains ));
             ReportBuffer.add(this, LocalText.getText("GetShareForMinor",
                     currentPlayer.getId(),
@@ -564,7 +564,7 @@ public class StockRound_18EU extends StockRound {
                     currentPlayer.getId(),
                     minor.getId(),
                     major.getId(),
-                    Currency.format(this, minorCash),
+                    Bank.format(this, minorCash),
                     minorTrains ));
             // FIXME: CHeck if this still works correctly
             ReportBuffer.add(this, LocalText.getText("GetShareForMinor",
@@ -601,7 +601,7 @@ public class StockRound_18EU extends StockRound {
             ReportBuffer.add(this, LocalText.getText("CLOSE_MINOR_LOG",
                     currentPlayer.getId(),
                     minor.getId(),
-                    Currency.format(this, minorCash),
+                    Bank.format(this, minorCash),
                     minorTrains ));
         }
         hasActed.set(true);

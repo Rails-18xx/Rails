@@ -7,9 +7,9 @@ import java.io.ObjectInputStream;
 import com.google.common.base.Objects;
 
 import rails.game.action.PossibleAction;
-import net.sf.rails.game.MoneyOwner;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.state.MoneyOwner;
 import net.sf.rails.util.RailsObjects;
 import net.sf.rails.util.Util;
 

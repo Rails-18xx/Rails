@@ -179,7 +179,7 @@ public class StartRound_18EU extends StartRound {
                 if (bidAmount < item.getMinimumBid()) {
                     errMsg =
                             LocalText.getText("BidTooLow",
-                                    Currency.format(this, item.getMinimumBid()));
+                                    Bank.format(this, item.getMinimumBid()));
                     break;
                 }
 
@@ -196,7 +196,7 @@ public class StartRound_18EU extends StartRound {
                 if (bidAmount > player.getCash()) {
                     errMsg =
                             LocalText.getText("BidTooHigh",
-                                    Currency.format(this, bidAmount));
+                                    Bank.format(this, bidAmount));
                     break;
                 }
             }
@@ -240,7 +240,7 @@ public class StartRound_18EU extends StartRound {
 
             ReportBuffer.add(this, LocalText.getText("BID_ITEM",
                     playerName,
-                    Currency.format(this, bidAmount),
+                    Bank.format(this, bidAmount),
                     item.getName() ));
         }
 
@@ -291,7 +291,7 @@ public class StartRound_18EU extends StartRound {
                 auctionedItem.setMinimumBid(currentBuyPrice.value());
                 ReportBuffer.add(this, LocalText.getText("ITEM_PRICE_REDUCED",
                         auctionedItem.getName(),
-                        Currency.format(this, currentBuyPrice.value()) ));
+                        Bank.format(this, currentBuyPrice.value()) ));
                 currentStep.set(BUY_STEP);
 
                 if (currentBuyPrice.value() == 0) {

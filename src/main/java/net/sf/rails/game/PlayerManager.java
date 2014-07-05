@@ -13,6 +13,7 @@ import net.sf.rails.common.parser.Tag;
 import net.sf.rails.game.model.RailsModel;
 import net.sf.rails.game.state.ArrayListState;
 import net.sf.rails.game.state.BooleanState;
+import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.GenericState;
 import net.sf.rails.game.state.IntegerState;
 import net.sf.rails.util.Util;
@@ -98,7 +99,7 @@ public class PlayerManager extends RailsManager implements Configurable {
         this.playerNames = playerNamesBuilder.build();
         
         ReportBuffer.add(this, LocalText.getText("PlayerCash", cashText));
-        ReportBuffer.add(this, LocalText.getText("BankHas", bank.getWallet().formattedValue()));
+        ReportBuffer.add(this, LocalText.getText("BankHas", Bank.format(this, bank.getCash())));
     }
     
     public void finishConfiguration (RailsRoot root) {
@@ -277,7 +278,7 @@ public class PlayerManager extends RailsManager implements Configurable {
        int p = 0;
        for (Player player:playerModel.players) {
            log.debug("New player "+ String.valueOf(++p) +" is "+player.getId() +
-                   " (cash="+Currency.format(this, player.getCash())+")");
+                   " (cash="+Bank.format(this, player.getCash())+")");
        }
 
        return playerModel.players.get(0);

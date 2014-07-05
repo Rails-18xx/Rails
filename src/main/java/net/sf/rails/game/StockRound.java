@@ -3,12 +3,11 @@ package net.sf.rails.game;
 import java.util.*;
 
 import rails.game.action.*;
-
 import net.sf.rails.common.*;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.special.*;
 import net.sf.rails.game.state.*;
-
+import net.sf.rails.game.state.Currency;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
@@ -676,7 +675,7 @@ public class StockRound extends Round {
                 // Else the given price must be a valid start price
                 if ((startSpace = stockMarket.getStartSpace(price)) == null) {
                     errMsg = LocalText.getText("InvalidStartPrice",
-                            Currency.format(this, price),
+                            Bank.format(this, price),
                             company.getId() );
                     break;
                 }
@@ -696,7 +695,7 @@ public class StockRound extends Round {
             DisplayBuffer.add(this, LocalText.getText("CantStart",
                     playerName,
                     companyName,
-                    Currency.format(this, price),
+                    Bank.format(this, price),
                     errMsg ));
             return false;
         }
@@ -891,7 +890,7 @@ public class StockRound extends Round {
                     share,
                     companyName,
                     from.getName(),
-                    Currency.format(this, cost) ));
+                    Bank.format(this, cost) ));
         } else {
             ReportBuffer.add(this, LocalText.getText("BUY_SHARES_LOG",
                     playerName,
@@ -900,7 +899,7 @@ public class StockRound extends Round {
                     shares,
                     companyName,
                     from.getName(),
-                    Currency.format(this, cost) ));
+                    Bank.format(this, cost) ));
         }
         ReportBuffer.getAllWaiting(this );
 
@@ -1406,14 +1405,14 @@ public class StockRound extends Round {
                     if (newSpace != oldSpace) {
                         ReportBuffer.add(this, LocalText.getText("SoldOut",
                             company.getId(),
-                            Currency.format(this, oldSpace.getPrice()),
+                            Bank.format(this, oldSpace.getPrice()),
                             oldSpace.getId(),
-                            Currency.format(this, newSpace.getPrice()),
+                            Bank.format(this, newSpace.getPrice()),
                             newSpace.getId()));
                     } else {
                         ReportBuffer.add(this, LocalText.getText("SoldOutNoRaise",
                             company.getId(),
-                            Currency.format(this, newSpace.getPrice()),
+                            Bank.format(this, newSpace.getPrice()),
                             newSpace.getId()));
                     }
                 }

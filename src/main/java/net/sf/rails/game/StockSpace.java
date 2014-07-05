@@ -290,7 +290,7 @@ public class StockSpace extends RailsModel implements Comparable<StockSpace> {
 
     @Override
     public String toText() {
-        return Currency.format(getParent(), price);
+        return Bank.format(getParent(), price);
     }
 
     // Comparable method
