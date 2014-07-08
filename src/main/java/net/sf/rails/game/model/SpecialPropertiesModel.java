@@ -10,7 +10,7 @@ import net.sf.rails.game.special.LocatedBonus;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.state.Change;
 import net.sf.rails.game.state.Observable;
-import net.sf.rails.game.state.PortfolioChange;
+import net.sf.rails.game.state.SetChange;
 import net.sf.rails.game.state.PortfolioSet;
 import net.sf.rails.game.state.Triggerable;
 
@@ -48,11 +48,16 @@ public class SpecialPropertiesModel extends RailsModel implements Triggerable {
     public void triggered(Observable observable, Change change) {
         
         // checks if the specialproperty moved into the portfolio carries a LocatedBonus
-        @SuppressWarnings("rawtypes")
-        PortfolioChange pchange = (PortfolioChange)change;
-        if (!pchange.isIntoPortfolio()) return;
 
-        SpecialProperty property = (SpecialProperty)pchange.getItem();
+        if (!(change instanceof SetChange)) {
+            return;
+        }
+        
+        @SuppressWarnings("rawtypes")
+        SetChange sChange = (SetChange)change;
+        if (!sChange.isAddToSet()) return;
+
+        SpecialProperty property = (SpecialProperty)sChange.getElement();
         if (getParent() instanceof PublicCompany && property instanceof LocatedBonus) {
             PublicCompany company = (PublicCompany)getParent();
             LocatedBonus locBonus = (LocatedBonus)property;

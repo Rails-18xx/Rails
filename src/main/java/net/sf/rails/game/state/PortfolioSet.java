@@ -1,11 +1,9 @@
 package net.sf.rails.game.state;
 
 import java.util.Iterator;
-import java.util.SortedSet;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.collect.Sets;
 
 /**
  * PortfolioSet is an implementation of a Portfolio that is based on a SortedSet (TreeSet)
@@ -15,10 +13,11 @@ import com.google.common.collect.Sets;
 
 public final class PortfolioSet<T extends Ownable> extends Portfolio<T> {
 
-    private final SortedSet<T> portfolio = Sets.newTreeSet();
+    private final TreeSetState<T> portfolio = TreeSetState.create(this, "set");
     
     private PortfolioSet(Owner parent, String id, Class<T> type) {
         super(parent, id, type);
+        
     }
     
     public static <T extends Ownable> PortfolioSet<T> create(Owner parent, String id, Class<T> type) {
@@ -26,7 +25,7 @@ public final class PortfolioSet<T extends Ownable> extends Portfolio<T> {
     }
 
     @Override
-    public boolean moveInto(T item) {
+    public boolean add(T item) {
         if (portfolio.contains(item)) return false;
         item.moveTo(getParent());
         return true;
@@ -52,15 +51,6 @@ public final class PortfolioSet<T extends Ownable> extends Portfolio<T> {
         return portfolio.isEmpty();
     }
 
-    @Override
-    void change(T item, boolean intoPortfolio) {
-        if (intoPortfolio) {
-            portfolio.add(item);
-        } else {
-            portfolio.remove(item);
-        }
-    }
-    
     public Iterator<T> iterator() {
         return ImmutableSet.copyOf(portfolio).iterator();
     }
@@ -68,6 +58,16 @@ public final class PortfolioSet<T extends Ownable> extends Portfolio<T> {
     @Override
     public String toText() {
         return portfolio.toString();
+    }
+
+    @Override
+    void include(T item) {
+        portfolio.add(item);
+    }
+
+    @Override
+    void exclude(T item) {
+        portfolio.remove(item);
     }
     
 }

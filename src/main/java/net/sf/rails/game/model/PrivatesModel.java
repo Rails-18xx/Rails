@@ -44,7 +44,7 @@ public final class PrivatesModel extends RailsModel {
     }
     
     public void moveInto(PrivateCompany p){
-        privates.moveInto(p);
+        privates.add(p);
     }
     
     

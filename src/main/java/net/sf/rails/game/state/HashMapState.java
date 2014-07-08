@@ -1,5 +1,6 @@
 package net.sf.rails.game.state;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableList;
@@ -10,12 +11,17 @@ import com.google.common.collect.Maps;
  * 
  * It allows automatic iteration over it values
  */
-public final class HashMapState<K,V> extends MapState<K,V> implements Iterable<V> {
+public final class HashMapState<K,V> extends MapState<K,V> {
+    
+    private final HashMap<K,V> map;
 
     private HashMapState(Item parent, String id, Map<K,V> map) {
         super(parent, id);
-        if (map == null) this.map = Maps.newHashMap();
-        else this.map = Maps.newHashMap(map);
+        if (map == null) {
+            this.map = Maps.newHashMap();
+        } else {
+            this.map = Maps.newHashMap(map);
+        }
     }
 
     /**
@@ -33,6 +39,11 @@ public final class HashMapState<K,V> extends MapState<K,V> implements Iterable<V
      */
     public static <K,V> HashMapState<K,V> create(Item parent, String id, Map<K,V> map){
         return new HashMapState<K,V>(parent, id, map);
+    }
+    
+    @Override
+    protected Map<K,V> getMap() {
+        return map;
     }
 
     /**

@@ -1271,7 +1271,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             commonSpecialProperties = PortfolioSet.create(this, 
                     "CommonSpecialProperties", SpecialProperty.class);
         }
-        return commonSpecialProperties.moveInto(property);
+        return commonSpecialProperties.add(property);
     }
 
     // TODO: Write new SpecialPropertiesModel

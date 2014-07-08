@@ -1,6 +1,6 @@
 package net.sf.rails.game.state;
 
-final class WalletChange<T extends Countable> extends Change {
+public final class WalletChange<T extends Countable> extends Change {
 
     private final Wallet<T> wallet;
     private final T item;
@@ -23,7 +23,8 @@ final class WalletChange<T extends Countable> extends Change {
         wallet.change(item, -amount);
     }
 
-    @Override 
+    @Override
+    public 
     Wallet<T> getState() {
         return wallet;
     }

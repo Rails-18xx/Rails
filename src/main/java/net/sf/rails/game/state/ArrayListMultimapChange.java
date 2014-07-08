@@ -1,6 +1,6 @@
 package net.sf.rails.game.state;
 
-final class ArrayListMultimapChange<K,V> extends Change {
+public final class ArrayListMultimapChange<K,V> extends Change {
     private final ArrayListMultimapState<K,V> state;
     private final K key;
     private final V value;
@@ -33,7 +33,8 @@ final class ArrayListMultimapChange<K,V> extends Change {
         state.change(key, value, index, !addToList);
     }
 
-    @Override ArrayListMultimapState<K,V> getState() {
+    @Override
+    public ArrayListMultimapState<K,V> getState() {
         return state;
     }
 

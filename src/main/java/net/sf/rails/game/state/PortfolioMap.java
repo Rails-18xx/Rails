@@ -2,13 +2,9 @@ package net.sf.rails.game.state;
 
 import java.util.Iterator;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.collect.TreeMultimap;
 
 /**
  * PortfolioMap is an implementation of a portfolio based on a SortedMultimap
@@ -18,12 +14,9 @@ import com.google.common.collect.TreeMultimap;
  * Remark: T has to extend Typable<K> to inform the portfolio about its type 
  */
 
-public class PortfolioMap<K extends Comparable<K>, T extends Ownable & Typable<K>> extends Portfolio<T> {
+public class PortfolioMap<K extends Comparable<K>,T extends Ownable & Typable<K>> extends Portfolio<T> {
 
-    private static Logger log =
-            LoggerFactory.getLogger(PortfolioMap.class);
-    
-    private final TreeMultimap<K, T> portfolio = TreeMultimap.create();
+    private final TreeMultimapState<K,T> portfolio = TreeMultimapState.create(this, "map");
 
     private PortfolioMap(Owner parent, String id, Class<T> type) {
         super(parent, id, type);
@@ -34,7 +27,7 @@ public class PortfolioMap<K extends Comparable<K>, T extends Ownable & Typable<K
     }
 
     @Override
-    public boolean moveInto(T item) {
+    public boolean add(T item) {
         if (portfolio.containsValue(item)) return false;
         item.moveTo(getParent());
         return true;
@@ -81,24 +74,14 @@ public class PortfolioMap<K extends Comparable<K>, T extends Ownable & Typable<K
      * @return all items for the key contained in the portfolio
      */
     public ImmutableSortedSet<T> items(K key) {
-        return ImmutableSortedSet.copyOf(portfolio.get(key));
+        return portfolio.values();
     }
 
     /**
      * @return a SetMultimap view of the Portfolio
      */
     public ImmutableSetMultimap<K, T> view() {
-        return ImmutableSetMultimap.copyOf(portfolio);
-    }
-
-    @Override
-    void change(T item, boolean intoPortfolio) {
-        if (intoPortfolio) {
-            portfolio.put(item.getType(), item);
-        } else {
-            portfolio.remove(item.getType(), item);
-            log.debug("Remove " + item + ", type = " + item.getType() + " from " + portfolio.get(item.getType()));
-        }
+        return portfolio.view();
     }
 
     public Iterator<T> iterator() {
@@ -108,6 +91,16 @@ public class PortfolioMap<K extends Comparable<K>, T extends Ownable & Typable<K
     @Override
     public String toText() {
         return portfolio.toString();
+    }
+
+    @Override
+    void include(T item) {
+        portfolio.put(item.getType(), item);
+    }
+
+    @Override
+    void exclude(T item) {
+        portfolio.remove(item.getType(), item);
     }
 }
 

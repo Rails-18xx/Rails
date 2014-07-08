@@ -646,7 +646,7 @@ public class MapHex extends RailsModel implements RailsOwner, Location, Configur
      */
     public boolean layBonusToken(BonusToken token, PhaseManager phaseManager) {
         Preconditions.checkArgument(token != null, "No token specified");
-        bonusTokens.moveInto(token);
+        bonusTokens.add(token);
         token.prepareForRemoval(phaseManager);
         return true;
     }
@@ -740,7 +740,7 @@ public class MapHex extends RailsModel implements RailsOwner, Location, Configur
     }
 
     public Map<PublicCompany, Stop> getHomes() {
-        return homes.viewMap();
+        return homes.view();
     }
 
     public boolean isHomeFor(PublicCompany company) {

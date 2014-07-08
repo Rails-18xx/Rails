@@ -16,29 +16,29 @@ import com.google.common.collect.Sets;
 
 public abstract class MapState<K,V> extends State implements Iterable<V> {
 
-    protected Map<K,V> map;
-    
     protected MapState(Item parent, String id) {
         super(parent, id);
     }
+    
+    protected abstract Map<K,V> getMap();
 
     /**
-     * Add key,value pair to map
+     * Add key,value pair to getMap()
      * @param key for mapping
      * @param value associated with key 
      * @return previous value associated with specified key, or null if there was no mapping for the key (or null was the value).
      */
     public V put(K key, V value) {
-        // check if the key is in the map
-        if (map.containsKey(key)) {
-            V oldValue = map.get(key);
+        // check if the key is in the getMap()
+        if (getMap().containsKey(key)) {
+            V oldValue = getMap().get(key);
             // check if element already has the specified value
             if (!oldValue.equals(value)) {
                 new MapChange<K,V>(this, key, value);
             }
             return oldValue;
         } else {
-            // if not in map, add tuple and return null
+            // if not in getMap(), add tuple and return null
             new MapChange<K,V>(this, key, value);
             return null;
         }
@@ -46,8 +46,8 @@ public abstract class MapState<K,V> extends State implements Iterable<V> {
 
     /**
      * Adds all (key,value) pairs
-     * @param map that gets added
-     * @throws NullPointerException if map is null
+     * @param getMap() that gets added
+     * @throws NullPointerException if getMap() is null
      */
     public void putAll(Map<K,V> map) {
         checkNotNull(map);
@@ -59,21 +59,21 @@ public abstract class MapState<K,V> extends State implements Iterable<V> {
     /**
      * return value for specified key
      * @param key used to retrieve value
-     * @return value associated with the key, null if map does not contain key
+     * @return value associated with the key, null if getMap() does not contain key
      */
     public V get(K key) {
-        return map.get(key);
+        return getMap().get(key);
     }
 
     /**
      * removes key from mapping
-     * @param key to be removed from map
-     * @return value previously associated with key, null if map did not contain key
+     * @param key to be removed from getMap()
+     * @return value previously associated with key, null if getMap() did not contain key
      */
     public V remove(K key) {
-        // check if map contains key
-        if (!map.containsKey(key)) return null;
-        V old = map.get(key);
+        // check if getMap() contains key
+        if (!getMap().containsKey(key)) return null;
+        V old = getMap().get(key);
         new MapChange<K,V>(this, key);
         return old;
     }
@@ -84,60 +84,60 @@ public abstract class MapState<K,V> extends State implements Iterable<V> {
      * @return true if key is present
      */
     public boolean containsKey(K key) {
-        return map.containsKey(key);
+        return getMap().containsKey(key);
     }
     
     /**
-     * removes all mappings from the map
+     * removes all mappings from the getMap()
      */
     public void clear() {
-        for (K key : ImmutableSet.copyOf(map.keySet())) {
+        for (K key : ImmutableSet.copyOf(getMap().keySet())) {
             remove (key);
         }
     }
     
     /**
-     * checks if map is empty
-     * @return true if map is empty
+     * checks if getMap() is empty
+     * @return true if getMap() is empty
      */
     public boolean isEmpty() {
-        return map.isEmpty();
+        return getMap().isEmpty();
     }
     
     /**
      * @return number of elements
      */
     public int size() {
-        return map.size();
+        return getMap().size();
     }
 
     /**
-     * (re)initializes the state map from another map
-     * @param map used for initialization
+     * (re)initializes the state getMap() from another getMap()
+     * @param getMap() used for initialization
      */
     public void initFromMap(Map<K,V> initMap) {
         // all from initMap get added
         putAll(initMap);
         // remove those only in current map
-        for (K key:ImmutableSet.copyOf(Sets.difference(map.keySet(), initMap.keySet()))) {
+        for (K key:ImmutableSet.copyOf(Sets.difference(getMap().keySet(), initMap.keySet()))) {
             remove(key);
         }
     }
     
     /**
-     * creates an immutable copy of the map
-     * @return immutable version of the map
+     * creates an immutable copy of the getMap()
+     * @return immutable version of the getMap()
      */
-    public ImmutableMap<K,V> viewMap() {
-        return ImmutableMap.copyOf(map);
+    public ImmutableMap<K,V> view() {
+        return ImmutableMap.copyOf(getMap());
     }
     
     /**
      * creates an immutable copy of the keyset
-     * @return immutable keyset of the map
+     * @return immutable keyset of the getMap()
      */
     public ImmutableSet<K> viewKeySet() {
-        return ImmutableSet.copyOf(map.keySet());
+        return ImmutableSet.copyOf(getMap().keySet());
     }
     
     public abstract ImmutableCollection<V> viewValues();
@@ -148,14 +148,14 @@ public abstract class MapState<K,V> extends State implements Iterable<V> {
     
     void change(K key, V value, boolean remove) {
         if (remove) {
-            map.remove(key);
+            getMap().remove(key);
         } else {
-            map.put(key, value);
+            getMap().put(key, value);
         }
     }
     
     @Override
     public String toText() {
-        return map.toString();
+        return getMap().toString();
     }
 }

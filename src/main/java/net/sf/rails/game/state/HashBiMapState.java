@@ -9,7 +9,9 @@ import com.google.common.collect.ImmutableSet;
 /**
  * Stateful version of a BiMap
  */
-public class HashBiMapState<K,V> extends MapState<K,V> {
+public final class HashBiMapState<K,V> extends MapState<K,V> {
+    
+    private HashBiMap<K,V> map;
     
     private HashBiMapState(Item parent, String id, Map<K,V> map) {
         super(parent, id);
@@ -37,6 +39,11 @@ public class HashBiMapState<K,V> extends MapState<K,V> {
         return new HashBiMapState<K,V>(parent, id, map);
     }
 
+    @Override
+    protected Map<K,V> getMap() {
+        return map;
+    }
+    
     // TODO: Check if value is already in map
     //   public V put(K key, V value) 
 
@@ -45,7 +52,7 @@ public class HashBiMapState<K,V> extends MapState<K,V> {
      * @return immutable version of the biMap
      */
     @Override
-    public ImmutableBiMap<K,V> viewMap() {
+    public ImmutableBiMap<K,V> view() {
         return ImmutableBiMap.copyOf(map);
     }
 

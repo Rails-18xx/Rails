@@ -4,7 +4,7 @@ package net.sf.rails.game.state;
  * Change associated with BooleanState
  */
 
-final class BooleanChange extends Change {
+public final class BooleanChange extends Change {
 
     private final BooleanState state;
     private final boolean newValue;
@@ -25,7 +25,8 @@ final class BooleanChange extends Change {
         state.change(oldValue);
     }
 
-    @Override BooleanState getState() {
+    @Override
+    public BooleanState getState() {
         return state;
     }
 

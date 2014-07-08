@@ -42,7 +42,7 @@ public class PortfolioSetTest {
         portfolioB = PortfolioSet.create(ownerB, PORTFOLIO_B_ID , Ownable.class);
         item = OwnableItemImpl.create(root, ITEM_ID);
         anotherItem = OwnableItemImpl.create(root, ANOTHER_ITEM_ID);
-        portfolioA.moveInto(item);
+        portfolioA.add(item);
         StateTestUtils.close(root);
     }
 
@@ -56,19 +56,19 @@ public class PortfolioSetTest {
     }
     
     @Test
-    public void testMoveInto() {
-        // move item to B
-        item.moveTo(ownerB);
-        assertTrue(portfolioB.containsItem(item));
-        assertSame(ownerB, item.getOwner());
-        
-        // undo check
-        assertInitialStateAfterUndo();
-        
-        // redo check
-        assertTrue(portfolioB.containsItem(item));
-        assertSame(ownerB, item.getOwner());
-    }
+        public void testAdd() {
+            // move item to B
+            item.moveTo(ownerB);
+            assertTrue(portfolioB.containsItem(item));
+            assertSame(ownerB, item.getOwner());
+            
+            // undo check
+            assertInitialStateAfterUndo();
+            
+            // redo check
+            assertTrue(portfolioB.containsItem(item));
+            assertSame(ownerB, item.getOwner());
+        }
 
     @Test
     public void testContainsItem() {

@@ -1,12 +1,12 @@
 package net.sf.rails.game.state;
 
-final class HashMultimapChange<K,V> extends Change {
-    final private HashMultimapState<K,V> state;
-    final private K key;
-    final private V value;
-    final private boolean addToMap;
+public final class MultimapChange<K,V> extends Change {
+    private final MultimapState<K,V> state;
+    private final K key;
+    private final V value;
+    private final boolean addToMap;
 
-    HashMultimapChange(HashMultimapState<K,V> state, K key, V value, boolean addToMap) {
+    MultimapChange(MultimapState<K,V> state, K key, V value, boolean addToMap) {
         this.state = state;
         this.key = key;
         this.value = value;
@@ -14,15 +14,19 @@ final class HashMultimapChange<K,V> extends Change {
         super.init(state);
     }
     
-    @Override void execute() {
+    @Override 
+    void execute() {
         state.change(key, value, addToMap);
     }
 
-    @Override void undo() {
+    @Override 
+    void undo() {
         state.change(key, value, !addToMap);
     }
 
-    @Override HashMultimapState<K,V> getState() {
+    @Override
+    public 
+    MultimapState<K,V> getState() {
         return state;
     }
 

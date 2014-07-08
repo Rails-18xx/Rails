@@ -12,6 +12,6 @@ public abstract class Change {
 
     abstract void execute();
     abstract void undo();  
-    abstract State getState();
+    public abstract State getState();
 
 }

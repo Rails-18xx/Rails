@@ -60,21 +60,21 @@ public class HashMapStateTest {
     @Test
     public void testCreate() {
         HashMapState<String, Item> state = HashMapState.create(root, "Test");
-        assertThat(state.viewMap()).isEmpty();
+        assertThat(state.view()).isEmpty();
     }
 
     @Test
     public void testCreateMapOfKV() {
         HashMapState<String, Item> state = HashMapState.create(root, "Test", testMap);
-        assertEquals(state.viewMap(), testMap);
+        assertEquals(state.view(), testMap);
     }
 
     // helper function to check the initial state after undo
     // includes redo, so after returning the state should be unchanged
     private void assertInitialStateAfterUndo() {
         StateTestUtils.closeAndUndo(root);
-        assertThat(state_default.viewMap()).isEmpty();
-        assertEquals(stateInit.viewMap(), initMap);
+        assertThat(state_default.view()).isEmpty();
+        assertEquals(stateInit.view(), initMap);
         StateTestUtils.redo(root);
     }
 
@@ -85,13 +85,13 @@ public class HashMapStateTest {
             state_default.put(key, testMap.get(key));
             stateInit.put(key, testMap.get(key));
         }
-        assertEquals(state_default.viewMap(), testMap);
-        assertEquals(stateInit.viewMap(), testMap);
+        assertEquals(state_default.view(), testMap);
+        assertEquals(stateInit.view(), testMap);
 
         // check undo and redo
         assertInitialStateAfterUndo();
-        assertEquals(state_default.viewMap(), testMap);
-        assertEquals(stateInit.viewMap(), testMap);
+        assertEquals(state_default.view(), testMap);
+        assertEquals(stateInit.view(), testMap);
     }
 
     // includes tests for viewMap
@@ -99,13 +99,13 @@ public class HashMapStateTest {
     public void testPutAll() {
         stateInit.putAll(testMap);
         state_default.putAll(testMap);
-        assertEquals(state_default.viewMap(), testMap);
-        assertEquals(stateInit.viewMap(), testMap);
+        assertEquals(state_default.view(), testMap);
+        assertEquals(stateInit.view(), testMap);
 
         // check undo and redo
         assertInitialStateAfterUndo();
-        assertEquals(testMap, state_default.viewMap());
-        assertEquals(testMap, stateInit.viewMap());
+        assertEquals(testMap, state_default.view());
+        assertEquals(testMap, stateInit.view());
     }
 
     @Test
@@ -160,11 +160,11 @@ public class HashMapStateTest {
     public void testInitFromMap() {
         state_default.put(THIRD_ITEM_ID, thirdItem);
         state_default.initFromMap(testMap);
-        assertEquals(testMap, state_default.viewMap());
+        assertEquals(testMap, state_default.view());
         
         // check undo and redo
         assertInitialStateAfterUndo();
-        assertEquals(ImmutableMap.copyOf(testMap), state_default.viewMap());
+        assertEquals(ImmutableMap.copyOf(testMap), state_default.view());
     }
 
     @Test
