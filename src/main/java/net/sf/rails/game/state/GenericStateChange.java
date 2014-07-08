@@ -1,6 +1,6 @@
 package net.sf.rails.game.state;
 
-final class GenericStateChange<E> extends Change {
+public final class GenericStateChange<E> extends Change {
 
     final private GenericState<E> state;
     final private E previous, next;
@@ -20,7 +20,8 @@ final class GenericStateChange<E> extends Change {
         state.change(previous);
     }
 
-    @Override GenericState<E> getState() {
+    @Override
+    public GenericState<E> getState() {
         return state;
     }
 

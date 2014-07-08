@@ -1509,7 +1509,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         // increase own train costs
         trainsCostThisTurn.change(price);
         // move the train to here
-        portfolio.getTrainsModel().getPortfolio().moveInto(train);
+        portfolio.getTrainsModel().getPortfolio().add(train);
         // check if a private has to be closed on first train buy
         if (privateToCloseOnFirstTrain != null
                 && !privateToCloseOnFirstTrain.isClosed()) {
@@ -1535,7 +1535,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         }
 
         // Move the private certificate
-        portfolio.getPrivatesOwnedModel().getPortfolio().moveInto(privateCompany);
+        portfolio.getPrivatesOwnedModel().getPortfolio().add(privateCompany);
 
         // Move the money
         if (price > 0) {

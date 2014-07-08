@@ -2,8 +2,7 @@ package net.sf.rails.game.state;
 
 import com.google.common.collect.ImmutableSortedSet;
 
-public abstract class Portfolio<T extends Ownable> extends State implements
-        Iterable<T> {
+public abstract class Portfolio<T extends Ownable> extends Model implements Iterable<T> {
 
     private final Class<T> type;
 
@@ -37,14 +36,13 @@ public abstract class Portfolio<T extends Ownable> extends State implements
     }
     
     /**
-     * Move a new item to the portfolio and removes the item from the previous
-     * portfolio
+     * Add a new item to the portfolio and removes the item 
+     * from the previous containing portfolio
      * 
-     * @param item to move
+     * @param item to add to the portfolio
      * @return false if the portfolio already contains the item, otherwise true
      */
-    // FIXME: Rename that to add
-    public abstract boolean moveInto(T item);
+    public abstract boolean add(T item);
     
     /**
      * @param item that is checked if it is in the portfolio
@@ -67,9 +65,10 @@ public abstract class Portfolio<T extends Ownable> extends State implements
      */
     public abstract boolean isEmpty();
     
-    
-    abstract void change(T item, boolean intoPortfolio);
+    abstract void include(T item);
 
+    abstract void exclude(T item);
+    
     /**
      * Moves all items of the portfolio to the new owner
      * @param newOwner

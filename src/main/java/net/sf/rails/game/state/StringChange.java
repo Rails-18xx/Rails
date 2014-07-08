@@ -5,7 +5,7 @@ package net.sf.rails.game.state;
  * @author freystef
  */
 
-final class StringChange extends Change {
+public final class StringChange extends Change {
 
     private final StringState state;
     private final String newValue;
@@ -26,7 +26,8 @@ final class StringChange extends Change {
         state.change(oldValue);
     }
 
-    @Override StringState getState() {
+    @Override
+    public StringState getState() {
         return state;
     }
 

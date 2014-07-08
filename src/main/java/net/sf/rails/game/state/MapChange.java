@@ -3,7 +3,7 @@ package net.sf.rails.game.state;
 /**
  * Change associated with HashMapState
  */
-class MapChange<K,V> extends Change {
+public final class MapChange<K,V> extends Change {
 
     private final MapState<K,V> state;
     private final K key;
@@ -46,7 +46,8 @@ class MapChange<K,V> extends Change {
         state.change(key, oldValue, !existed);
     }
 
-    @Override MapState<K,V> getState() {
+    @Override
+    public MapState<K,V> getState() {
         return state;
     }
 

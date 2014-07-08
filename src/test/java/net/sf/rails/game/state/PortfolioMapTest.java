@@ -46,7 +46,7 @@ public class PortfolioMapTest {
         portfolioSet = PortfolioSet.create(ownerSet, PORTFOLIO_SET_ID , TypeOwnableItemImpl.class);
         item = TypeOwnableItemImpl.create(root, ITEM_ID, TYPE_ID);
         anotherItem = TypeOwnableItemImpl.create(root, ANOTHER_ITEM_ID, ANOTHER_TYPE_ID);
-        portfolioSet.moveInto(item);
+        portfolioSet.add(item);
         StateTestUtils.close(root);
     }
 
@@ -60,16 +60,16 @@ public class PortfolioMapTest {
     }
     
     @Test
-    public void testMoveInto() {
-        portfolioMap.moveInto(item);
-        assertSame(ownerMap, item.getOwner());
-        assertTrue(portfolioMap.containsItem(item));
-        assertFalse(portfolioSet.containsItem(item));
-        // check undo
-        assertInitialStateAfterUndo();
-        // and redo
-        assertTrue(portfolioMap.containsItem(item));
-    }
+        public void testAdd() {
+            portfolioMap.add(item);
+            assertSame(ownerMap, item.getOwner());
+            assertTrue(portfolioMap.containsItem(item));
+            assertFalse(portfolioSet.containsItem(item));
+            // check undo
+            assertInitialStateAfterUndo();
+            // and redo
+            assertTrue(portfolioMap.containsItem(item));
+        }
 
     @Test
     public void testContainsItem() {

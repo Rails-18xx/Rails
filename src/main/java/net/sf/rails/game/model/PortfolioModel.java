@@ -371,7 +371,7 @@ public class PortfolioModel extends RailsModel {
      * Add a train to the train portfolio
      */
     public boolean addTrain(Train train) {
-        return trains.getPortfolio().moveInto(train);
+        return trains.getPortfolio().add(train);
     }
 
     /**
@@ -516,7 +516,7 @@ public class PortfolioModel extends RailsModel {
     }
 
     public boolean addBonusToken(BonusToken token) {
-        return bonusTokens.moveInto(token);
+        return bonusTokens.add(token);
     }
 
     public Portfolio<BonusToken> getTokenHolder() {
