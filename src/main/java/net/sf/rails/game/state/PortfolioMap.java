@@ -2,8 +2,6 @@ package net.sf.rails.game.state;
 
 import java.util.Iterator;
 
-import net.sf.rails.game.Round;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
