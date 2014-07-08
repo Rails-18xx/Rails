@@ -32,7 +32,6 @@ public final class HashMultimapState<K,V> extends State implements Iterable<V> {
      * @param value value to store
      * @return true if key-value pair is added, or false if the key value pair already exists
      */
-    
     public boolean put(K key, V value) {
         if (map.containsEntry(key, value)) return false;
         new HashMultimapChange<K,V>(this, key, value, true);
