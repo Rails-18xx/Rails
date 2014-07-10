@@ -74,7 +74,7 @@ public class PortfolioMap<K extends Comparable<K>,T extends Ownable & Typable<K>
      * @return all items for the key contained in the portfolio
      */
     public ImmutableSortedSet<T> items(K key) {
-        return portfolio.values();
+        return portfolio.get(key);
     }
 
     /**
