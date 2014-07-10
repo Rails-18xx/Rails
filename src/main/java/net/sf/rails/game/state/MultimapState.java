@@ -69,6 +69,7 @@ public abstract class MultimapState<K,V> extends State implements Iterable<V> {
     public boolean isEmpty() {
         return getMap().isEmpty();
     }
+    
     public ImmutableSet<K> keySet() {
         return ImmutableSet.copyOf(getMap().keySet());
     }

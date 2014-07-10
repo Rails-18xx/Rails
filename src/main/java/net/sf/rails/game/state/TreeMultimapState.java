@@ -31,6 +31,16 @@ public final class TreeMultimapState<K extends Comparable<?>, V extends Comparab
     }
     
     @Override
+    public ImmutableSortedSet<V> get(K key) {
+        return ImmutableSortedSet.copyOf(map.get(key));
+    }
+    
+    @Override
+    public ImmutableSortedSet<K> keySet() {
+        return ImmutableSortedSet.copyOf(map.keySet());
+    }
+    
+    @Override
     public ImmutableSortedSet<V> values() {
         return ImmutableSortedSet.copyOf(map.values());
     }
