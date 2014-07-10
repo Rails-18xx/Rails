@@ -117,8 +117,10 @@ public class BuyCertificate extends PossibleAction {
 
         // check further attributes
         BuyCertificate action = (BuyCertificate)pa; 
-        return Objects.equal(this.certificate, action.certificate)
-                && Objects.equal(this.company, action.company)
+        return 
+                // TODO: This is commented out as the certificate is not required anymore
+                // Objects.equal(this.certificate, action.certificate)
+                Objects.equal(this.company, action.company)
 // FIXME: This is commented out to avoid invalidate StartCompany_1880
 //                && Objects.equal(this.sharePerCert, action.sharePerCert)
                 && Objects.equal(this.from, action.from)
