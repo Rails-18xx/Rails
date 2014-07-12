@@ -1,6 +1,3 @@
-/**
- * 
- */
 package rails.game.specific._1880;
 
 import rails.game.action.BuyStartItem;
@@ -13,15 +10,8 @@ import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.StartItem;
 import net.sf.rails.util.RailsObjects;
 import rails.game.action.PossibleAction;
-/**
- * @author Martin Brumm
- *
- *
- * Rails 2.0: Added updated equals methods (however see TODO below)
- *  and updated toString
- */
 
-// TODO: Is this class every used, a first search did not show any calls?
+// FIXME: Is this class every used, a first search did not show any calls?
 public class BuyStartItem_1880 extends BuyStartItem {
 
     public static final long serialVersionUID = 1L;
@@ -163,27 +153,25 @@ public class BuyStartItem_1880 extends BuyStartItem {
     }
 
     @Override
-    public boolean equalsAsOption(PossibleAction pa) {
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
         // identity always true
         if (pa == this) return true;
         //  super checks both class identity and super class attributes
-        if (!super.equalsAsOption(pa)) return false; 
+        if (!super.equalsAs(pa, asOption)) return false; 
 
-        // check further attributes
+        // check asOption attributes
         BuyStartItem_1880 action = (BuyStartItem_1880)pa; 
-        return Objects.equal(this.buildingRights, action.buildingRights);
-    }
-
-    @Override
-    public boolean equalsAsAction(PossibleAction pa) {
-        // first check if equal as option
-        if (!this.equalsAsOption(pa)) return false;
+        boolean options = Objects.equal(this.buildingRights, action.buildingRights);
         
-        // check further attributes
-        BuyStartItem_1880 action = (BuyStartItem_1880)pa; 
-        return Objects.equal(this.associatedBuildingRight, action.associatedBuildingRight) 
+        // finish if asOptions check
+        if (asOption) return options;
+        
+        // check asAction attributes
+        return options
+                && Objects.equal(this.associatedBuildingRight, action.associatedBuildingRight) 
                 && Objects.equal(this.parSlotIndex, action.parSlotIndex)
         ;
+
     }
     
     @Override

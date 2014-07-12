@@ -1,18 +1,15 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/RepayLoans.java,v 1.5 2009/10/29 19:41:30 evos Exp $
- *
- * Created on 17-Sep-2006
- * Change Log:
- */
 package rails.game.action;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-import net.sf.rails.game.PublicCompany;
+import com.google.common.base.Objects;
 
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.util.RailsObjects;
 
 /**
- * @author Erik Vos
+ * Rails 2.0: updated equals and toString methods
  */
 public class RepayLoans extends PossibleAction {
 
@@ -28,9 +25,6 @@ public class RepayLoans extends PossibleAction {
 
     public static final long serialVersionUID = 1L;
 
-    /**
-     *
-     */
     public RepayLoans(PublicCompany company, int minNumber, int maxNumber,
             int price) {
 
@@ -79,35 +73,41 @@ public class RepayLoans extends PossibleAction {
     }
 
     @Override
-    public boolean equalsAsOption(PossibleAction action) {
-        if (!(action instanceof RepayLoans)) return false;
-        RepayLoans a = (RepayLoans) action;
-        return a.company == company
-               && a.minNumber == minNumber
-               && a.maxNumber == maxNumber
-               && a.price == price;
-    }
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
+        // identity always true
+        if (pa == this) return true;
+        //  super checks both class identity and super class attributes
+        if (!super.equalsAs(pa, asOption)) return false; 
 
-    @Override
-    public boolean equalsAsAction(PossibleAction action) {
-        if (!(action instanceof RepayLoans)) return false;
-        RepayLoans a = (RepayLoans) action;
-        return a.company == company
-               && a.numberRepaid == numberRepaid
-               && a.price == price;
+        // check asOption attributes
+        RepayLoans action = (RepayLoans) pa;
+        boolean options = 
+                Objects.equal(this.company, action.company)
+                && Objects.equal(this.minNumber, action.minNumber)
+                && Objects.equal(this.maxNumber, action.maxNumber)
+                && Objects.equal(this.price, action.price)
+        ;
+        
+        // finish if asOptions check
+        if (asOption) return options;
+        
+        // check asAction attributes
+        return options
+                && Objects.equal(this.numberRepaid, action.numberRepaid)
+        ;
     }
 
     @Override
     public String toString() {
-        StringBuffer b = new StringBuffer();
-        b.append ("RepayLoans ").append(company.getId())
-         .append(" minNumber=").append(minNumber)
-         .append(" maxNumber=").append(maxNumber)
-         .append(" value=").append(price);
-        if (acted) {
-            b.append(" numberRepaid="+numberRepaid);
-        }
-        return b.toString();
+        return super.toString() + 
+                RailsObjects.stringHelper(this)
+                    .addToString("company", company)
+                    .addToString("minNumber", minNumber)
+                    .addToString("maxNumber", maxNumber)
+                    .addToString("price", price)
+                    .addToStringOnlyActed("numberRepaid", numberRepaid)
+                    .toString()
+        ;
     }
 
     /** Deserialize */

@@ -10,8 +10,6 @@ import net.sf.rails.util.RailsObjects;
 
 
 /**
- * @author Erik Vos
- * 
  * Rails 2.0: updated equals methods, updated toString method
  */
 public abstract class StartItemAction extends PossibleAction {
@@ -49,28 +47,25 @@ public abstract class StartItemAction extends PossibleAction {
         return startItem.getStatus();
     }
     
-    @Override 
-    public boolean equalsAsOption(PossibleAction pa) {
-        //  super checks both class identity and super class attributes
-        if (!super.equalsAsOption(pa)) return false; 
-
-        // check further attributes
-        StartItemAction action = (StartItemAction)pa; 
-        return Objects.equal(this.startItem, action.startItem);
-    }
-    
     @Override
-    public boolean equalsAsAction (PossibleAction pa) {
-        // no further test compared to option
-        return this.equalsAsOption(pa);
-    }
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
+        //  super checks both class identity and super class attributes
+        if (!super.equalsAs(pa, asOption)) return false; 
 
+        // check asOption attributes
+        StartItemAction action = (StartItemAction)pa; 
+        return Objects.equal(this.startItem, action.startItem)
+                && Objects.equal(this.itemIndex, action.itemIndex)
+        ;
+        // no asAction attributes to be checked
+    }
     
     @Override
     public String toString() {
         return super.toString() + 
                 RailsObjects.stringHelper(this)
-                .addToString("StartItem", startItem)
+                .addToString("startItem", startItem)
+                .addToString("itemIndex", itemIndex)
                 .toString()
         ;
     }

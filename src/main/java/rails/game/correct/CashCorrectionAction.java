@@ -86,28 +86,25 @@ public class CashCorrectionAction extends CorrectionAction {
        correctAmount = amount;
    }
     
-    @Override
-    public boolean equalsAsOption(PossibleAction pa) {
-        // identity always true
-        if (pa == this) return true;
-        //  super checks both class identity and super class attributes
-        if (!super.equalsAsOption(pa)) return false; 
+   @Override
+   protected boolean equalsAs(PossibleAction pa, boolean asOption) {
+       // identity always true
+       if (pa == this) return true;
+       //  super checks both class identity and super class attributes
+       if (!super.equalsAs(pa, asOption)) return false; 
 
-        // check further attributes
+       // check asOption attributes
         CashCorrectionAction action = (CashCorrectionAction)pa;
-        return Objects.equal(this.correctCashHolder, action.correctCashHolder)
+        boolean options =  Objects.equal(this.correctCashHolder, action.correctCashHolder)
                 && Objects.equal(this.maximumNegative, action.maximumNegative)
         ;
-    }
-    
-    @Override
-    public boolean equalsAsAction(PossibleAction pa) {
-        // first check if equal as option
-        if (!this.equalsAsOption(pa)) return false;
         
-        // check further attributes
-        CashCorrectionAction action = (CashCorrectionAction)pa; 
-        return Objects.equal(this.correctAmount, action.correctAmount);
+        // finish if asOptions check
+        if (asOption) return options;
+        
+        return options
+                && Objects.equal(this.correctAmount, action.correctAmount)
+        ;
     }
     
     @Override

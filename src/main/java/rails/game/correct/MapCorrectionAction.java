@@ -190,20 +190,16 @@ public class MapCorrectionAction extends CorrectionAction {
     }
     
     @Override
-    public boolean equalsAsOption(PossibleAction pa) {
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
         // identity always true
         if (pa == this) return true;
-        // super checks both class identity and super class attributes
-        return super.equalsAsOption(pa); 
-        // no further checks required
-    }
+        //  super checks both class identity and super class attributes
+        if (!super.equalsAs(pa, asOption)) return false; 
 
-    @Override
-    public boolean equalsAsAction(PossibleAction pa) {
-        // first check if equal as option
-        if (!this.equalsAsOption(pa)) return false;
-        
-        // check further attributes
+        // finish if asOptions check, no asOption attributes
+        if (asOption) return true;
+
+        // check asAction attributes
         MapCorrectionAction action = (MapCorrectionAction)pa; 
         return Objects.equal(this.location, action.location)
                 && Objects.equal(this.tiles, action.tiles)

@@ -35,8 +35,8 @@ public class StartRound_1835 extends StartRound {
 
     @Override
     public void start() {
-        if (variant.equalsIgnoreCase(CLEMENS_VARIANT)) {
-            // reverse order at the start
+        if (variant.equalsIgnoreCase(CLEMENS_VARIANT) && gameManager.getStartRoundNumber() == 1) {
+            // reverse order at the start (only in the first start Round)
             playerManager.reversePlayerOrder(true);
             // set priority to last player
             Player lastPlayer = playerManager.getNextPlayerAfter(playerManager.getPriorityPlayer());
@@ -147,7 +147,7 @@ public class StartRound_1835 extends StartRound {
         }
 
         /* Pass is always allowed */
-        possibleActions.add(new NullAction(NullAction.PASS));
+        possibleActions.add(new NullAction(NullAction.Mode.PASS));
 
         return true;
     }

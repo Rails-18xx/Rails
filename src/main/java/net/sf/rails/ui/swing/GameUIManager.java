@@ -263,7 +263,7 @@ public class GameUIManager implements DialogOwner {
         gameUIInit(false); // false indicates reload
 
         splashWindow.notifyOfStep(SplashWindow.STEP_INIT_LOADED_GAME);
-        processAction(new NullAction(NullAction.START_GAME));
+        processAction(new NullAction(NullAction.Mode.START_GAME));
         statusWindow.setGameActions();
     }
 
@@ -776,7 +776,7 @@ public class GameUIManager implements DialogOwner {
         + saveDateTimeFormat.format(new Date()) + "_"
         + newPlayer + "."
         + saveExtension;
-        GameAction saveAction = new GameAction(GameAction.SAVE);
+        GameAction saveAction = new GameAction(GameAction.Mode.SAVE);
         saveAction.setFilepath(saveDirectory + "/" + lastSavedFilename);
         log.debug("Autosaving to "+lastSavedFilename);
         processOnServer (saveAction);
@@ -1002,7 +1002,7 @@ public class GameUIManager implements DialogOwner {
              * so the player can select a directory, and change
              * the prefix if so desired.
              */
-            GameAction saveAction = new GameAction(GameAction.SAVE);
+            GameAction saveAction = new GameAction(GameAction.Mode.SAVE);
             saveSuffix = localPlayerName;
             saveGame (saveAction);
             File lastSavedFile = new File (saveAction.getFilepath());

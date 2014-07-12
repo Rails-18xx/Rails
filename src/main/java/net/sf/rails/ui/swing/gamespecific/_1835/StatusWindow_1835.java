@@ -3,7 +3,7 @@ package net.sf.rails.ui.swing.gamespecific._1835;
 import java.util.List;
 
 import rails.game.action.DiscardTrain;
-
+import rails.game.specific._1835.FoldIntoPrussian;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.*;
 import net.sf.rails.game.special.ExchangeForShare;

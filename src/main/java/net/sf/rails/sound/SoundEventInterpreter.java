@@ -1,5 +1,7 @@
 package net.sf.rails.sound;
 
+import java.util.EnumSet;
+
 import rails.game.action.*;
 import net.sf.rails.game.*;
 import net.sf.rails.game.model.PresidentModel;
@@ -108,8 +110,8 @@ public class SoundEventInterpreter {
             //General actions
             
             if (action instanceof NullAction) {
-                if (((NullAction)action).getMode() == NullAction.PASS
-                        || ((NullAction)action).getMode() == NullAction.AUTOPASS) {
+                if (EnumSet.of(NullAction.Mode.PASS, NullAction.Mode.AUTOPASS).contains(
+                        ((NullAction)action).getMode() )) {
                     player.playSFXByConfigKey (SoundConfig.KEY_SFX_GEN_Pass);
                 }
                 

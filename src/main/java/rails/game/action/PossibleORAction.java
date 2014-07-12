@@ -5,24 +5,23 @@ import java.io.ObjectInputStream;
 
 import com.google.common.base.Objects;
 
-import net.sf.rails.game.*;
+import net.sf.rails.game.GameManager;
+import net.sf.rails.game.OperatingRound;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.Round;
 import net.sf.rails.util.RailsObjects;
 import net.sf.rails.util.Util;
-
 
 /**
  * PossibleAction is the superclass of all classes that describe an allowed user
  * action (such as laying a tile or dropping a token on a specific hex, buying a
  * train etc.).
- *
- * @author Erik Vos
  * 
  * Rails 2.0: Added updated equals and toString methods 
  */
-/* Or should this be an interface? We will see. */
 public abstract class PossibleORAction extends PossibleAction {
 
-    // This is a fix to be compatible with Rails 1.x
+    // Rails 2.0: This is a fix to be compatible with Rails 1.x
     private static final long serialVersionUID = -1656570654856705840L;
 
     transient protected PublicCompany company;
@@ -34,6 +33,7 @@ public abstract class PossibleORAction extends PossibleAction {
     public PossibleORAction() {
 
         super();
+        // TODO: The company field should be set from outside and not inside the action classes themselves
         Round round = GameManager.getInstance().getCurrentRound();
         if (round instanceof OperatingRound) {
             company = ((OperatingRound) round).getOperatingCompany();
@@ -57,19 +57,14 @@ public abstract class PossibleORAction extends PossibleAction {
     
     
     @Override
-    public boolean equalsAsOption (PossibleAction pa) {
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
         //  super checks both class identity and super class attributes
-        if (!super.equalsAsOption(pa)) return false; 
+        if (!super.equalsAs(pa, asOption)) return false; 
 
-        // check further attributes
+        // check asOption attributes
         PossibleORAction action = (PossibleORAction)pa; 
         return Objects.equal(this.company, action.company);
-    }
-    
-    @Override
-    public boolean equalsAsAction (PossibleAction pa) {
-        // no further test compared to option
-        return this.equalsAsOption(pa);
+        // no asAction attributes to be checked
     }
     
     @Override

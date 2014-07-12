@@ -1,8 +1,13 @@
 package rails.game.action;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 
-import net.sf.rails.game.*;
+import net.sf.rails.game.CompanyManager;
+import net.sf.rails.game.GameManager;
+import net.sf.rails.game.Player;
+import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.state.ChangeAction;
 import net.sf.rails.game.state.ChangeActionOwner;
 import net.sf.rails.util.RailsObjects;
@@ -17,8 +22,6 @@ import com.google.common.base.Objects;
  * PossibleAction is the superclass of all classes that describe an allowed user
  * action (such as laying a tile or dropping a token on a specific hex, buying a
  * train etc.).
- *
- * @author Erik Vos
  * 
  * Rails 2.0: Added updated equals and toString methods 
  */
@@ -84,6 +87,27 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
         this.acted = true;
     }
 
+    // joint internal method for both equalAs methods
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
+        // compared to null, always false
+        if (pa == null) return false;
+        // not identical class, always false
+        if (!(this.getClass().equals(pa.getClass()))) return false;
+        
+        // check asOption attributes
+        boolean options = Objects.equal(this.player, pa.player)
+                        || pa instanceof NullAction // TODO: Old save files are sometimes wrong to assign Null Actions 
+        ;      
+        
+        // finish if asOptions check
+        if (asOption) return options;
+        
+        return options 
+                && Objects.equal(this.acted, pa.acted)
+        ;
+    }
+    
+    
     /** 
      * Compare the choice options of two action objects, without regard to whatever choice has been made, if any.
      * In other words: only the server-set (prior) attributes must be compared.
@@ -98,11 +122,8 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
      * @param pa Another PossibleAction to compare with.
      * @return True if the compared PossibleAction object has equal choice options.
      */
-    public boolean equalsAsOption (PossibleAction pa) {
-        if (pa == null) return false;
-        if (!(this.getClass() == pa.getClass())) return false;
-        
-        return (Objects.equal(this.player, pa.player));      
+    public final boolean equalsAsOption (PossibleAction pa) {
+        return equalsAs(pa, true);
     }
 
     /** 
@@ -115,10 +136,8 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
      * @param pa Another PossibleAction to compare with.
      * @return True if the compared PossibleAction object has equal selected action values.
      */
-    public boolean equalsAsAction (PossibleAction pa) {
-        return this.equalsAsOption(pa)
-                && Objects.equal(this.acted, pa.acted)
-        ;
+    public final boolean equalsAsAction (PossibleAction pa) {
+        return equalsAs(pa, false);
     }
 
     protected RailsRoot getRoot() {

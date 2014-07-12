@@ -1,19 +1,16 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BuyPrivate.java,v 1.7 2010/01/31 22:22:28 macfreek Exp $
- *
- * Created on 17-Sep-2006
- * Change Log:
- */
 package rails.game.action;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-import net.sf.rails.game.PrivateCompany;
+import com.google.common.base.Objects;
 
+import net.sf.rails.game.PrivateCompany;
+import net.sf.rails.util.RailsObjects;
 
 /**
- * @author Erik Vos
- */
+ * Rails 2.0: Updated equals and toString methods
+*/
 public class BuyPrivate extends PossibleORAction {
 
     // Initial attributes
@@ -27,9 +24,6 @@ public class BuyPrivate extends PossibleORAction {
 
     public static final long serialVersionUID = 1L;
 
-    /**
-     *
-     */
     public BuyPrivate(PrivateCompany privateCompany, int minimumPrice,
             int maximumPrice) {
 
@@ -69,26 +63,38 @@ public class BuyPrivate extends PossibleORAction {
     }
 
     @Override
-    public boolean equalsAsOption(PossibleAction action) {
-        if (!(action instanceof BuyPrivate)) return false;
-        BuyPrivate a = (BuyPrivate) action;
-        return a.privateCompany == privateCompany
-               && a.minimumPrice == minimumPrice
-               && a.maximumPrice == maximumPrice;
-    }
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
+        // identity always true
+        if (pa == this) return true;
+        //  super checks both class identity and super class attributes
+        if (!super.equalsAs(pa, asOption)) return false; 
 
-    @Override
-    public boolean equalsAsAction(PossibleAction action) {
-        if (!(action instanceof BuyPrivate)) return false;
-        BuyPrivate a = (BuyPrivate) action;
-        return a.privateCompany == privateCompany
-               && a.price == price;
+        // check asOption attributes
+        BuyPrivate action = (BuyPrivate)pa; 
+        boolean options =  Objects.equal(this.privateCompany, action.privateCompany)
+                && Objects.equal(this.minimumPrice, action.minimumPrice)
+                && Objects.equal(this.maximumPrice, action.maximumPrice)
+        ;
+        
+        // finish if asOptions check
+        if (asOption) return options;
+        
+        // check asAction attributes
+        return options
+                && Objects.equal(this.price, action.price)
+        ;
     }
 
     @Override
     public String toString() {
-        return "BuyPrivate " + privateCompany.getId() + " holder="
-               + privateCompany.getOwner().getId();
+        return super.toString() + 
+                RailsObjects.stringHelper(this)
+                    .addToString("privateCompany", privateCompany)
+                    .addToString("minimumPrice", minimumPrice)
+                    .addToString("maximumPrice", maximumPrice)
+                    .addToStringOnlyActed("price", price)
+                    .toString()
+        ;
     }
 
     /** Deserialize */

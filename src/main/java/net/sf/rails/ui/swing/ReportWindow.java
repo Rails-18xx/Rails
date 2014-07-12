@@ -207,17 +207,17 @@ public class ReportWindow extends JFrame implements
         boolean undoFlag = false;
         for (GameAction action:gameActions) {
             switch (action.getMode()) {
-            case GameAction.UNDO:
+            case UNDO:
                 undoFlag = true;
                 backwardButton.setPossibleAction(action);
                 backwardButton.setEnabled(true);
                 break;
-            case GameAction.FORCED_UNDO:
+            case FORCED_UNDO:
                 if (undoFlag) break; // only activate forced undo, if no other undo available
                 backwardButton.setPossibleAction(action);
                 backwardButton.setEnabled(true);
                 break;
-            case GameAction.REDO:
+            case REDO:
                 forwardButton.setPossibleAction(action);
                 forwardButton.setEnabled(true);
                 haveRedo = true;
@@ -253,7 +253,7 @@ public class ReportWindow extends JFrame implements
     public void actionPerformed(ActionEvent e) {
         ActionButton button = (ActionButton)e.getSource();
         GameAction action = (GameAction)button.getPossibleActions().get(0);
-        if (action instanceof GameAction && (action.getMode() == GameAction.FORCED_UNDO)) {
+        if (action instanceof GameAction && (action.getMode() == GameAction.Mode.FORCED_UNDO)) {
             activateTimeWarp();
         }
 
@@ -278,11 +278,11 @@ public class ReportWindow extends JFrame implements
     private void gotoIndex(int index) {
         int currentIndex = changeStack.getCurrentIndex();
         if (index > currentIndex) { // move forward
-            GameAction action = new GameAction(GameAction.REDO);
+            GameAction action = new GameAction(GameAction.Mode.REDO);
             action.setmoveStackIndex(index);
             gameUIManager.processAction(action);
         } else if (index < currentIndex) { // move backward
-            GameAction action = new GameAction(GameAction.FORCED_UNDO);
+            GameAction action = new GameAction(GameAction.Mode.FORCED_UNDO);
             action.setmoveStackIndex(index);
             gameUIManager.processAction(action);
         }

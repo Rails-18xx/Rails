@@ -31,20 +31,14 @@ public abstract class CorrectionAction extends PossibleAction {
     }
     
     @Override
-    public boolean equalsAsOption(PossibleAction pa) {
-        // identity always true
-        if (pa == this) return true;
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
         //  super checks both class identity and super class attributes
-        if (!super.equalsAsOption(pa)) return false; 
+        if (!super.equalsAs(pa, asOption)) return false; 
 
-        // check further attributes
+        // check asOption attributes
         CorrectionAction action = (CorrectionAction)pa;
         return Objects.equal(this.correctionType, action.correctionType);
-    }
-    
-    @Override
-    public boolean equalsAsAction(PossibleAction pa) {
-        return this.equalsAsOption(pa);
+        // no action attributes to be checked
     }
     
     @Override

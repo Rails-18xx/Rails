@@ -5,15 +5,18 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.base.Objects;
+
 import net.sf.rails.game.CompanyManager;
 import net.sf.rails.game.PublicCompany;
+import net.sf.rails.util.RailsObjects;
 import net.sf.rails.util.Util;
 
 
 /** This class is needed until we have a means to determine reaching
  * destinations automatically.
- * @author Erik
  *
+ * Rails 2.0: updated equals and toString methods
  */
 public class ReachDestinations extends PossibleORAction {
 
@@ -63,28 +66,35 @@ public class ReachDestinations extends PossibleORAction {
     }
 
     @Override
-    public boolean equalsAsOption(PossibleAction pa) {
-        if (!(pa instanceof ReachDestinations)) return false;
-        ReachDestinations rd = (ReachDestinations) pa;
-        return possibleCompanyNames.equals(rd.getPossibleCompanyNames());
-    }
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
+        // identity always true
+        if (pa == this) return true;
+        //  super checks both class identity and super class attributes
+        if (!super.equalsAs(pa, asOption)) return false; 
 
-     @Override
-    public boolean equalsAsAction(PossibleAction pa) {
-        if (!(pa instanceof ReachDestinations)) return false;
-        ReachDestinations rd = (ReachDestinations) pa;
-        return possibleCompanyNames.equals(rd.possibleCompanyNames)
-                && reachedCompanyNames.equals(rd.reachedCompanyNames);
+        // check asOption attributes
+        ReachDestinations action = (ReachDestinations)pa; 
+        boolean options = 
+                Objects.equal(this.possibleCompanies, action.possibleCompanies)
+        ;
+        
+        // finish if asOptions check
+        if (asOption) return options;
+        
+        // check asAction attributes
+        return options
+                && Objects.equal(this.reachedCompanies, action.reachedCompanies)
+        ;
     }
-
-   @Override
+        
+    @Override
     public String toString() {
-        StringBuffer text = new StringBuffer();
-        text.append("ReachDestinations: ").append(possibleCompanyNames);
-        if (reachedCompanyNames.length() > 0) {
-            text.append(" reached="+reachedCompanyNames);
-        }
-        return text.toString();
+        return super.toString() + 
+                RailsObjects.stringHelper(this)
+                    .addToString("possibleCompanies", possibleCompanies)
+                    .addToStringOnlyActed("reachedCompanies", reachedCompanies)
+                    .toString()
+        ;
     }
 
     private void readObject(ObjectInputStream in) throws IOException,

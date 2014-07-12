@@ -36,7 +36,6 @@ import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.special.SpecialTileLay;
 import net.sf.rails.game.special.SpecialTrainBuy;
 import net.sf.rails.game.state.BooleanState;
-import net.sf.rails.game.state.ChangeStack;
 import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.MoneyOwner;
 import net.sf.rails.util.SequenceUtil;
@@ -321,7 +320,7 @@ public class OperatingRound_1880 extends OperatingRound {
         if (selectedAction instanceof NullAction) {
             NullAction nullAction = (NullAction) action;
             switch (nullAction.getMode()) {
-            case NullAction.DONE: // Making Sure that the NullAction.DONE is in
+            case DONE: // Making Sure that the NullAction.DONE is in
                                   // the Buy_Train Step..
                 if (getStep() != GameDef.OrStep.BUY_TRAIN) {
                     result = done(nullAction);
@@ -387,12 +386,14 @@ public class OperatingRound_1880 extends OperatingRound {
                 }
                 result = done(nullAction);
                 break;
-            case NullAction.PASS:
+            case PASS:
                 result = done(nullAction);
                 break;
-            case NullAction.SKIP:
+            case SKIP:
                 skip(nullAction);
                 result = true;
+                break;
+            default:
                 break;
             }
             return result;

@@ -15,10 +15,8 @@ import net.sf.rails.util.Util;
 import rails.game.action.PossibleAction;
 
 /**
- * Rails 2.0: 
- * Updated equals and toString methods
+ * Rails 2.0: Updated equals and toString methods
  */
-
 public class ExchangeForCash extends PossibleAction {
     private static final Map<String, Integer> CASH_VALUE_MAP = 
             ImmutableMap.of("2+2", 40, "3", 70, "3+3", 100);
@@ -72,30 +70,29 @@ public class ExchangeForCash extends PossibleAction {
     }
 
     @Override
-    public boolean equalsAsOption(PossibleAction pa) {
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
         // identity always true
         if (pa == this) return true;
         //  super checks both class identity and super class attributes
-        if (!super.equalsAsOption(pa)) return false; 
+        if (!super.equalsAs(pa, asOption)) return false; 
 
-        // check further attributes
+        // check asOption attributes
         ExchangeForCash action = (ExchangeForCash)pa; 
-        return Objects.equal(this.owner, action.owner)
+        boolean options = 
+                Objects.equal(this.owner, action.owner)
                 && Objects.equal(this.value, action.value)
              // not stored:                && Objects.equal(this.ownerHasChoice, action.ownerHasChoice)
-                ;
+        ;
+        
+        // finish if asOptions check
+        if (asOption) return options;
+        
+        // check asAction attributes
+        return options
+                && Objects.equal(this.exchangeCompany, action.exchangeCompany)
+        ;
     }
 
-    @Override
-    public boolean equalsAsAction(PossibleAction pa) {
-        // first check if equal as option
-        if (!this.equalsAsOption(pa)) return false;
-        
-        // check further attributes
-        ExchangeForCash action = (ExchangeForCash)pa; 
-        return Objects.equal(this.exchangeCompany, action.exchangeCompany);
-    }
-    
     @Override
     public String toString() {
         return super.toString() 

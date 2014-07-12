@@ -2,13 +2,24 @@ package net.sf.rails.game.specific._18AL;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
-import rails.game.action.*;
+import com.google.common.base.Objects;
 
-import net.sf.rails.game.*;
+import net.sf.rails.game.RailsRoot;
+import net.sf.rails.game.Train;
+import net.sf.rails.game.TrainManager;
+import net.sf.rails.util.RailsObjects;
+import rails.game.action.PossibleAction;
+import rails.game.action.UseSpecialProperty;
 
 
+/**
+ * Rails 2.0: Updated equals and toString methods
+ */
+// TODO: Rails 2.0 This seems a pretty complicated action. Is this really required for the task?
 public class AssignNamedTrains extends UseSpecialProperty {
 
     transient private List<NameableTrain> nameableTrains;
@@ -63,25 +74,9 @@ public class AssignNamedTrains extends UseSpecialProperty {
         }
     }
     
-    public boolean equalsAsAction (PossibleAction action) {
-        if (!(action instanceof AssignNamedTrains)) return false;
-        AssignNamedTrains a = (AssignNamedTrains) action;
-        return Arrays.equals(a.postTrainds, postTrainds);
-    }
-
     @Override
     public String toMenu() {
         return ((NameTrains) specialProperty).toMenu();
-    }
-
-    @Override
-    public String toString() {
-        StringBuffer b = new StringBuffer("AssignNamedTrains ");
-        for (NamedTrainToken token : ((NameTrains) getSpecialProperty()).getTokens()) {
-            b.append(token.toString()).append(",");
-        }
-        b.deleteCharAt(b.length() - 1);
-        return b.toString();
     }
 
     public List<NamedTrainToken> getTokens() {
@@ -112,6 +107,39 @@ public class AssignNamedTrains extends UseSpecialProperty {
                 }
             }
         }
+    }
+
+    @Override
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
+        // identity always true
+        if (pa == this) return true;
+        //  super checks both class identity and super class attributes
+        if (!super.equalsAs(pa, asOption)) return false; 
+
+        // check asOption attributes
+        AssignNamedTrains action = (AssignNamedTrains)pa; 
+        boolean options = 
+                Objects.equal(this.nameableTrains, action.nameableTrains)
+                && Objects.equal(this.preTrainPerToken, action.preTrainPerToken)
+        ;
+        
+        // finish if asOptions check
+        if (asOption) return options;
+        
+        // check asAction attributes
+        return options
+                && Objects.equal(this.postTrainPerToken, action.postTrainPerToken)
+        ;
+    }
+    @Override
+    public String toString() {
+        return super.toString() + 
+                RailsObjects.stringHelper(this)
+                    .addToString("nameableTrains", nameableTrains)
+                    .addToString("preTrainPerToken", preTrainPerToken)
+                    .addToStringOnlyActed("postTrainPerToken", postTrainPerToken)
+                    .toString()
+        ;
     }
 
     /** Deserialize */

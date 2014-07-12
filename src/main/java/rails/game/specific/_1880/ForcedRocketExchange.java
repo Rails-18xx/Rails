@@ -15,17 +15,12 @@ import rails.game.action.PossibleAction;
 import rails.game.action.PossibleORAction;
 
 /**
- * @author Michael Alexander
- * 
- *  * Rails 2.0: Updated equals and toString methods
-
+ * Rails 2.0: Updated equals and toString methods
  */
 public class ForcedRocketExchange extends PossibleORAction {
-    
-    // FIXME: The current implementation does not allow saving the static attributes
-    // FIXME: Do not use strings to indicate companies
-    
     private static final long serialVersionUID = 1L;
+    
+    // FIXME: Do not use strings to indicate companies
     private transient List<String> companiesWithSpace = new ArrayList<String>();
     private transient Map<String, List<Train>> companiesWithNoSpace = new HashMap<String, List<Train>>();
 
@@ -75,25 +70,22 @@ public class ForcedRocketExchange extends PossibleORAction {
     }
 
     @Override
-    public boolean equalsAsOption(PossibleAction pa) {
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
         // identity always true
         if (pa == this) return true;
-        // TODO: further checks not possible as those values are not stored (see above)
-        return super.equalsAsOption(pa); 
-    }
+        //  super checks both class identity and super class attributes
+        if (!super.equalsAs(pa, asOption)) return false; 
 
-    @Override
-    public boolean equalsAsAction(PossibleAction pa) {
-        // first check if equal as option
-        if (!this.equalsAsOption(pa)) return false;
+        // no asOption attributes
+        if (asOption) return true;
         
-        // check further attributes
+        // check asAction attributes
         ForcedRocketExchange action = (ForcedRocketExchange)pa; 
         return Objects.equal(this.companyToReceiveTrain, action.companyToReceiveTrain)
                 && Objects.equal(this.trainToReplace, action.trainToReplace)
         ;
     }
-    
+
     @Override
     public String toString() {
         // TODO: does not print the static values, as they do not get serialized

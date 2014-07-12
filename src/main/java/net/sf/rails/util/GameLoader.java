@@ -117,7 +117,7 @@ public class GameLoader {
     
     /**
      * Load the gameData from file
-     * @param filepath
+     * @param filePath
      */
     
     @SuppressWarnings("unchecked")
@@ -125,7 +125,7 @@ public class GameLoader {
         log.info("Loading game from file " + gameFile.getCanonicalPath());
         // FIXME: Removed the filename replacement expression
         // check if this still works
-        // String filename = filepath.replaceAll(".*[/\\\\]", "");
+        // String filename = filePath.replaceAll(".*[/\\\\]", "");
         ois = new RailsObjectInputStream(new FileInputStream(gameFile));
 
         Object object = ois.readObject();

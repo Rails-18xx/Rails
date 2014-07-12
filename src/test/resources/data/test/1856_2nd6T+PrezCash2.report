@@ -911,7 +911,7 @@ HasMergedShares,POOL,5,2,CGR
  
 CompanyHasShares,CGR,20,5
 IS_NOW_PRES_OF,Alice,CGR
-START_MERGED_COMPANY,CGR,110,G2
+START_MERGED_COMPANY,CGR,110,F1
 Floats,CGR
 CertificateLimit,15,3,6
 ExchangesBaseToken,CGR,GT,P9/1

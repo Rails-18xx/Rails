@@ -44,9 +44,9 @@ public class CorrectionModeAction extends CorrectionAction {
     }
     
     @Override
-    public boolean equalsAsOption(PossibleAction pa) {
-        // FIXME: Allow the actions of the according type
-        if (pa instanceof CorrectionAction && ((CorrectionAction)pa).getCorrectionType() ==
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
+        // FIXME: Always allow the actions of the according type as Option
+        if (asOption && pa instanceof CorrectionAction && ((CorrectionAction)pa).getCorrectionType() ==
                 this.correctionType) {
             return true;
         }
@@ -54,18 +54,15 @@ public class CorrectionModeAction extends CorrectionAction {
         // identity always true
         if (pa == this) return true;
         //  super checks both class identity and super class attributes
-        if (!super.equalsAsOption(pa)) return false; 
+        if (!super.equalsAs(pa, asOption)) return false; 
 
-        // check further attributes
+        // check asOption attributes
         CorrectionModeAction action = (CorrectionModeAction)pa;
+        
         return Objects.equal(this.active, action.active);
+        // no action attributes to be checked
     }
 
-    @Override
-    public boolean equalsAsAction(PossibleAction pa) {
-        return this.equalsAsAction(pa);
-    }
-    
     @Override
     public String toString() {
         return super.toString() + 

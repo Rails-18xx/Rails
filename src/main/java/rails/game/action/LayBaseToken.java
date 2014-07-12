@@ -5,16 +5,18 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.base.Objects;
+
 import net.sf.rails.game.MapHex;
 import net.sf.rails.game.MapManager;
 import net.sf.rails.game.Stop;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.special.SpecialTokenLay;
+import net.sf.rails.util.RailsObjects;
 import net.sf.rails.util.Util;
 
-
 /**
- * @author Erik Vos
+ * Rails 2.0: Updated equals and toString methods
  */
 public class LayBaseToken extends LayToken {
 
@@ -94,37 +96,33 @@ public class LayBaseToken extends LayToken {
     }
 
     @Override
-    public boolean equalsAsOption(PossibleAction action) {
-        if (!(action instanceof LayBaseToken)) return false;
-        LayBaseToken a = (LayBaseToken) action;
-        return (a.locationNames == null && locationNames == null || a.locationNames.equals(locationNames))
-        && a.type == type
-        && a.company == company
-        && a.specialProperty == specialProperty;
-    }
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
+        // identity always true
+        if (pa == this) return true;
+        //  super checks both class identity and super class attributes
+        if (!super.equalsAs(pa, asOption)) return false; 
 
-    @Override
-    public boolean equalsAsAction(PossibleAction action) {
-        if (!(action instanceof LayBaseToken)) return false;
-        LayBaseToken a = (LayBaseToken) action;
-        return a.chosenHex == chosenHex
-        && a.chosenStation == chosenStation
-        && a.type == type
-        && a.company == company
-        && a.specialProperty == specialProperty;
+        // check asOption attributes
+        LayBaseToken action = (LayBaseToken)pa; 
+        boolean options = Objects.equal(this.type, action.type);
+        
+        // finish if asOptions check
+        if (asOption) return options;
+        
+        // check asAction attributes
+        return options
+                && Objects.equal(this.chosenStation, action.chosenStation)
+        ;
     }
 
     @Override
     public String toString() {
-        StringBuffer b = new StringBuffer("LayBaseToken ");
-        if (chosenHex == null) {
-            b.append("type=").append(type).append(" location=").append(
-                    locationNames).append(" spec.prop=").append(specialProperty);
-        } else {
-            b.append("hex=").append(chosenHex.getId()).append(" station=").append(
-                    chosenStation);
-        }
-        return b.toString();
+        return super.toString() + 
+                RailsObjects.stringHelper(this)
+                    .addToString("type", type)
+                    .addToStringOnlyActed("chosenStation", chosenStation)
+                    .toString()
+        ;
     }
 
     /** Deserialize */

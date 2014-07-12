@@ -135,10 +135,10 @@ public class StockRound extends Round {
 
         if (passAllowed) {
             if (hasActed.value()) {
-                possibleActions.add(new NullAction(NullAction.DONE));
+                possibleActions.add(new NullAction(NullAction.Mode.DONE));
             } else {
-                possibleActions.add(new NullAction(NullAction.PASS));
-                possibleActions.add(new NullAction(NullAction.AUTOPASS));
+                possibleActions.add(new NullAction(NullAction.Mode.PASS));
+                possibleActions.add(new NullAction(NullAction.Mode.AUTOPASS));
             }
         }
 
@@ -552,12 +552,14 @@ public class StockRound extends Round {
 
             NullAction nullAction = (NullAction) action;
             switch (nullAction.getMode()) {
-            case NullAction.PASS:
-            case NullAction.DONE:
+            case PASS:
+            case DONE:
                 result = done((NullAction)action, playerName, false);
                 break;
-            case NullAction.AUTOPASS:
+            case AUTOPASS:
                 result = done(null, playerName, true);
+                break;
+            default:
                 break;
             }
 

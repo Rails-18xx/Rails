@@ -96,7 +96,7 @@ public class StartRound_Sequential extends StartRound {
                 possibleActions.add(new BidStartItem(currentItem.value(),
                         currentItem.value().getMinimumBid(), startPacket.getModulus(), true));
             }
-            possibleActions.add(new NullAction(NullAction.PASS));
+            possibleActions.add(new NullAction(NullAction.Mode.PASS));
         }
         
         return true;

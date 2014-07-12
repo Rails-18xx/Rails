@@ -71,7 +71,7 @@ public class AutoLoadPoller extends Thread {
                     log.debug("Read filename "+currentFilename+"; last saved filename "+lastSavedFilename);
                     
                     if (!lastSavedFilename.equals(currentFilename)) {
-                        final GameAction reload = new GameAction (GameAction.RELOAD);
+                        final GameAction reload = new GameAction(GameAction.Mode.RELOAD);
                         reload.setFilepath(saveDirectory+"/"+currentFilename);
                         lastSavedFilename = currentFilename;
                         

@@ -59,7 +59,7 @@ public final class FinalMinorExchangeRound extends StockRound_18EU {
     private boolean setMinorMergeActions() {
 
         if (hasActed.value()) {
-            possibleActions.add(new NullAction(NullAction.DONE));
+            possibleActions.add(new NullAction(NullAction.Mode.DONE));
             return true;
         }
 

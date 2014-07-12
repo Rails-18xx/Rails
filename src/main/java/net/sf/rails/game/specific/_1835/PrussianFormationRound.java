@@ -4,6 +4,7 @@ import java.util.*;
 
 import rails.game.action.DiscardTrain;
 import rails.game.action.PossibleAction;
+import rails.game.specific._1835.FoldIntoPrussian;
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
