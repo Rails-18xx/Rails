@@ -283,9 +283,11 @@ public class OperatingRound_1880 extends OperatingRound {
                 if (action.getType().getName().equals("8")) {
                     orControl.setLastCompanyToOperate(((PublicCompany_1880) operatingCompany.get()));
                     orControl.setFinalOperatingRoundSequence(true);
-                }
+                } 
+                if (!orControl.isFinalOperatingRoundSequence()) {
                 orControl.orExitToStockRound(operatingCompany.get(),
                         GameDef.OrStep.BUY_TRAIN);
+                }
                 setActionForPrivateExchange(action.getType());
                 if (manditoryNextAction == null) {
                     finishOR();
@@ -374,8 +376,10 @@ public class OperatingRound_1880 extends OperatingRound {
                             // Need to make next train available !
                             trainManager.checkTrainAvailability(trainsToDiscard[0],
                                     ipo);
+                            if (!orControl.isFinalOperatingRoundSequence()) {
                             orControl.orExitToStockRound(operatingCompany.get(),
                                     OrStep.BUY_TRAIN);
+                            }    
                             setActionForPrivateExchange(activeTrainTypeToDiscard);
                             if (manditoryNextAction == null) {
                                 finishOR();
