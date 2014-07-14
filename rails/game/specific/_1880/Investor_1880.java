@@ -86,7 +86,9 @@ public class Investor_1880 extends PublicCompany implements RevenueStaticModifie
     }
     
     public boolean canRunTrains() {
-        // By the time communism hits, this company can't run anyway.
+        if (gameManager.getPhaseManager().hasReachedPhase("4")) {
+            return false;
+        }
         return true;       
     }
     
