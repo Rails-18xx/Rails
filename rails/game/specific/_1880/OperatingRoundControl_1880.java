@@ -3,6 +3,7 @@ package rails.game.specific._1880;
 import rails.game.GameDef.OrStep;
 import rails.game.state.BooleanState;
 import rails.game.state.EnumState;
+import rails.game.state.IntegerState;
 import rails.game.GameDef;
 import rails.game.PublicCompanyI;
 
@@ -16,6 +17,7 @@ public class OperatingRoundControl_1880 {
     private BooleanState startedFromStockRound = new BooleanState ("StartingFromStockRound",false);
     private BooleanState finalOperatingRoundSequence = new  BooleanState ("FinalOperatingRoundSequence",false);
     private BooleanState noTrainsToDiscard = new BooleanState ("NoMoreTrainsToDiscard", false);
+    private IntegerState finalOperatingRoundSequenceNumber = new IntegerState ("FinalOperatingRoundNumber",0);
 
     
     public OperatingRoundControl_1880() {
@@ -86,6 +88,7 @@ public class OperatingRoundControl_1880 {
     public void setFinalOperatingRoundSequence(boolean maybe) {
         if (maybe == true) {
         finalOperatingRoundSequence.set(true);
+        finalOperatingRoundSequenceNumber.set(1); 
         }
     }
     
@@ -103,5 +106,18 @@ public class OperatingRoundControl_1880 {
 
     public void setNoTrainsToDiscard(boolean maybe) {
         noTrainsToDiscard.set(maybe);
+    }
+
+    public int getFinalOperatingRoundSequenceNumber() {
+        return finalOperatingRoundSequenceNumber.intValue();
+    }
+
+    public void setFinalOperatingRoundSequenceNumber(
+            IntegerState finalOperatingRoundSequenceNumber) {
+        this.finalOperatingRoundSequenceNumber.set(finalOperatingRoundSequenceNumber);
+    }
+    
+    public void addFinalOperatingRoundSequenceNumber(int value) {
+        this.finalOperatingRoundSequenceNumber.add(value);
     }
 }

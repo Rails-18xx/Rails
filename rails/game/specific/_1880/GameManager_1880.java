@@ -66,7 +66,7 @@ public class GameManager_1880 extends GameManager {
             orControl.startedFromStockRound();
             startOperatingRound(true);
         } else if (round instanceof OperatingRound_1880) {
-            if ((orControl.isFinalOperatingRoundSequence()) && (getRelativeORNumber() == 3)) {
+            if ((orControl.getFinalOperatingRoundSequenceNumber()> 3)) {
                 finishGame();
             } else if (companyManager.getNextUnfinishedStartPacket() != null) {
                 continueStartRound(companyManager.getNextUnfinishedStartPacket());

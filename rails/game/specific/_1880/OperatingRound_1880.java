@@ -23,7 +23,6 @@ import rails.game.GameDef.OrStep;
 import rails.game.GameManagerI;
 import rails.game.MapHex;
 import rails.game.OperatingRound;
-import rails.game.PhaseI;
 import rails.game.Player;
 import rails.game.Portfolio;
 import rails.game.PrivateCompanyI;
@@ -330,9 +329,12 @@ public class OperatingRound_1880 extends OperatingRound {
                 }
                 
                 if (operatingCompany.get() == orControl.lastCompanyToBuyTrain()) {
+                    if (orControl.isFinalOperatingRoundSequence()){
+                        orControl.addFinalOperatingRoundSequenceNumber(1);
+                    }
                     
                     // Need to create the final Jumpoff Point there to end the game !
-                    if ((gameManager.getRelativeORNumber() == 3) && (orControl.isFinalOperatingRoundSequence())) {
+                    if ((orControl.getFinalOperatingRoundSequenceNumber() > 3) ) {
                     finishOR();
                     }
                     
@@ -379,8 +381,12 @@ public class OperatingRound_1880 extends OperatingRound {
                             if (!orControl.isFinalOperatingRoundSequence()) {
                             orControl.orExitToStockRound(operatingCompany.get(),
                                     OrStep.BUY_TRAIN);
-                            }    
+                            } else {
+                                orControl.startNewOR();
+                            }
+                            if (!orControl.isFinalOperatingRoundSequence()) {
                             setActionForPrivateExchange(activeTrainTypeToDiscard);
+                            }
                             if (manditoryNextAction == null) {
                                 finishOR();
                             }
@@ -875,6 +881,7 @@ public class OperatingRound_1880 extends OperatingRound {
         super.finishOR();
     }
 
+    @Override
     protected void finishTurn() {
         if (!operatingCompany.get().isClosed()) {
             operatingCompany.get().setOperated();
