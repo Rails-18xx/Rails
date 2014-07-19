@@ -1579,16 +1579,18 @@ public class PublicCompany extends Company implements PublicCompanyI {
             player = gmgr.getPlayerByIndex(i);
             share = player.getPortfolio().getShare(this);
             if (share > presShare) {
-                // Hand presidency to the first player with a higher share
+                // Hand presidency to the player with the highest share
                 president.getPortfolio().swapPresidentCertificate(this,
                         player.getPortfolio(), 0);
                 ReportBuffer.add(LocalText.getText("IS_NOW_PRES_OF",
                         player.getName(),
                         name ));
-                return;
+                president= getPresident();
+                presShare = share;
+                
             }
         }
-
+        return;
     }
 
     /**
