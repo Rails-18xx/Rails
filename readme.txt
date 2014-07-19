@@ -1,12 +1,19 @@
-Rails release 1.7.12:
+Rails release 1.7.13:
 
 A new maintenance release for Rails 1.x series
 
-This release fixes a single bug.
+   - 1856: The position of the CGR-share on the stockmarket was hardcoded 
+            to the second row on formation. This has now been moved to row 0. 
+            Please check. This will break all 1856 games in progress so caution is advised. 
 
-Contributors: Erik Vos
+    - 1835: Introducing a switch name PrussianReservedIgnored. This switch if
+            toggled to yes on game start will tell rails to ignore unavailable
+            prussian shares (shares that have not yet been converted in the
+            Prussianformation process) in determining if the prussian shares are
+            sold out or not. 
+      		Fixing a bug reported by Pieter Lust regarding the income of prussion minors during formation
+      		Fixing a Bug reported by Mikaela Kumlander regarding the Presidency Changes during Prussion formation.
 
-Bug reported by Volker Schnell
+Contributors: Martin Brumm
 
-1835: after resuming an OR after a PR formation round, a check was missing if the (minor) operating company still exists.
-Fix: finish the turn if the operating company is closed at that point.
+Bug reported by Volker Schnell, Mikaela Kumlander, Pieter Lust
