@@ -215,7 +215,7 @@ public class OperatingRound_1880 extends OperatingRound {
     }
 
     private boolean trainTypeCanAffectOR(TrainType type) {
-        if ((type.getName().equals("2R") == false) && (type.getName().equals("10") == false)) {
+        if ((type.getName().equals("2R") == false) && (type.getName().equals("10") == false) && (type.getName().equals("8e")== false)) {
             return true;
                 }
         return false;
@@ -283,7 +283,7 @@ public class OperatingRound_1880 extends OperatingRound {
                     orControl.setLastCompanyToOperate(((PublicCompany_1880) operatingCompany.get()));
                     orControl.setFinalOperatingRoundSequence(true);
                 } 
-                if (!orControl.isFinalOperatingRoundSequence()) {
+                if (orControl.getFinalOperatingRoundSequenceNumber()<2){
                 orControl.orExitToStockRound(operatingCompany.get(),
                         GameDef.OrStep.BUY_TRAIN);
                 }
@@ -329,7 +329,7 @@ public class OperatingRound_1880 extends OperatingRound {
                 }
                 
                 if (operatingCompany.get() == orControl.lastCompanyToBuyTrain()) {
-                    if (orControl.isFinalOperatingRoundSequence()){
+                    if ((orControl.isFinalOperatingRoundSequence()) && (!orControl.wasStartedFromStockRound())){
                         orControl.addFinalOperatingRoundSequenceNumber(1);
                     }
                     
@@ -378,11 +378,11 @@ public class OperatingRound_1880 extends OperatingRound {
                             // Need to make next train available !
                             trainManager.checkTrainAvailability(trainsToDiscard[0],
                                     ipo);
-                            if (!orControl.isFinalOperatingRoundSequence()) {
+                            if (orControl.getFinalOperatingRoundSequenceNumber()<2) { // The last switch to a stock round happens on the purchase/retirement of the 8-trains.
                             orControl.orExitToStockRound(operatingCompany.get(),
                                     OrStep.BUY_TRAIN);
                             } else {
-                                orControl.startNewOR();
+                                orControl.startedFromOperatingRound();
                             }
                             if (!orControl.isFinalOperatingRoundSequence()) {
                             setActionForPrivateExchange(activeTrainTypeToDiscard);
