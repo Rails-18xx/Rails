@@ -58,7 +58,7 @@
         <Company name="KwB" longname="Karawankenbahn" type="Private" basePrice="170" revenue="25">
                 <Blocking hex="J13"/>
                 <SpecialProperties>
-                        <SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
+                        <SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
                                 <SpecialTileLay location="J13" colour="yellow" extra="no" free="yes"/>
                         </SpecialProperty>
                 </SpecialProperties>
@@ -67,7 +67,7 @@
         <Company name="BrB" longname="Brennerbahn" type="Private" basePrice="140" revenue="15">
                 <Blocking hex="J7"/>
                 <SpecialProperties>
-                        <SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
+                        <SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
                                 <SpecialTileLay location="J7" colour="yellow" extra="no" free="yes"/>
                         </SpecialProperty>
                 </SpecialProperties>
@@ -76,7 +76,7 @@
         <Company name="WB" longname="Wocheinerbahn" type="Private" basePrice="130" revenue="30">
                 <Blocking hex="K12"/>
                 <SpecialProperties>
-                        <SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
+                        <SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
                                 <SpecialTileLay location="K12" colour="yellow" extra="no" free="yes"/>
                         </SpecialProperty>
                 </SpecialProperties>
@@ -84,7 +84,7 @@
         <Company name="AB" longname="Arlbergbahn" type="Private" basePrice="185" revenue="20">
                 <Blocking hex="I6"/>
                 <SpecialProperties>
-                        <SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
+                        <SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
                                 <SpecialTileLay location="I6" colour="yellow" extra="no" free="yes"/>
                         </SpecialProperty>
                 </SpecialProperties>
@@ -93,7 +93,7 @@
         <Company name="KB" longname="Karstbahn" type="Private" basePrice="120" revenue="10">
                 <Blocking hex="K14"/>
                 <SpecialProperties>
-                        <SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
+                        <SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
                                 <SpecialTileLay location="K14" colour="yellow" extra="no" free="yes"/>
                         </SpecialProperty>
                 </SpecialProperties>
@@ -102,7 +102,7 @@
         <Company name="SmB" longname="Semmeringbahn" type="Private" basePrice="150" revenue="5">
                 <Blocking hex="H17"/>
                 <SpecialProperties>
-                        <SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
+                        <SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
                                 <SpecialTileLay location="H17" colour="yellow" extra="no" free="yes"/>
                         </SpecialProperty>
                 </SpecialProperties>
@@ -111,7 +111,7 @@
         <Company name="TB" longname="Tauernbahn" type="Private" basePrice="150" revenue="35">
                 <Blocking hex="J11"/>
                 <SpecialProperties>
-                        <SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
+                        <SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
                                 <SpecialTileLay location="J11" colour="yellow" extra="no" free="yes"/>
                         </SpecialProperty>
                 </SpecialProperties>
@@ -127,7 +127,7 @@
         <Company name="RGTE" longname="Reichenberg-Gablonz-Tannwalder-Eisenbahn" type="Coal" price="100" tokens="1">
                 <Home hex="A14"/>
                 <SpecialProperties>
-                        <SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.ExchangeForShare">
+                        <SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
                                 <ExchangeForShare company="BK" share="10"/>
                         </SpecialProperty>
                 </SpecialProperties>
@@ -135,7 +135,7 @@
         <Company name="EOD" longname="Eisenbahn Oderberg-Dombran" type="Coal" price="100" tokens="1">
                 <Home hex="C20"/>
                 <SpecialProperties>
-                        <SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.ExchangeForShare">
+                        <SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
                                 <ExchangeForShare company="MS" share="10"/>
                         </SpecialProperty>
                 </SpecialProperties>
@@ -143,7 +143,7 @@
         <Company name="EKT" longname="Eisenbahn Karwin-Teschen" type="Coal" price="100" tokens="1">
                 <Home hex="C22"/>
                 <SpecialProperties>
-                        <SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.ExchangeForShare">
+                        <SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
                                 <ExchangeForShare company="MS" share="10"/>
                         </SpecialProperty>
                 </SpecialProperties>
@@ -260,7 +260,8 @@
                         </SpecialProperty>
                 </SpecialProperties>
         </Company>
-        <Company name="U1" longname="Eisenbahn Pest-Waitzen" type="Minor2" price="180" tokens="1" fgColour="FFFFFF" bgColour="FF55AA">
+         <Company name="U1W" longname="Bahnhof Pest" type="Private" basePrice="90" revenue="0"/>
+        <Company name="U1" longname="Eisenbahn Pest-Waitzen" type="Minor2" price="90" tokens="1" fgColour="FFFFFF" bgColour="FF55AA">
                 <Home hex="H23" city="1"/>
                 <SpecialProperties>
                         <SpecialProperty condition="ifStarted" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
@@ -277,7 +278,8 @@
                 </SpecialProperties>
                 <Trains limit="2,2,2"/>
         </Company>
-        <Company name="U3" longname="Eisenbahn Pest-Czegléd" type="Minor2" price="180" tokens="1" fgColour="FFFFFF" bgColour="FF55AA">
+           <Company name="U3C" longname="Bahnhof Czegled" type="Private" basePrice="90" revenue="0"/>      
+        <Company name="U3" longname="Eisenbahn Pest-Czegléd" type="Minor2" price="90" tokens="1" fgColour="FFFFFF" bgColour="FF55AA">
                 <Home hex="H23" city="2"/>
                 <SpecialProperties>
                         <SpecialProperty condition="ifStarted" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
@@ -393,10 +395,14 @@
         <Item name="K3" type="Minor1"/>
         </StartPacket>
         <StartPacket name="Hungary Privates" roundClass="net.sf.rails.game.specific._1837.StartRound_1837">
-        <Item name="U1" type="Minor2" president="yes"/>
-        <Item name="U1" type="Minor2"/>
-        <Item name="U2" type="Minor1"/>
-        <Item name="U3" type="Minor2" president="yes"/>
-        <Item name="U3" type="Minor2"/>
+        <Item name="U1" president="yes" baseprice="90" type="Minor2"/>
+        <Item name="U1W" type="Private" baseprice="90">
+            <SubItem name="U1" type="Minor2" />
+            </Item>
+        <Item name="U2" type="Minor1" baseprice="90"/>
+        <Item name="U3" type="Minor2" baseprice="90" president="yes"/>
+        <Item name="U3C" type="Private" baseprice="90">
+            <SubItem name="U3" type="Minor2"/>
+            </Item>
         </StartPacket>
 </CompanyManager>

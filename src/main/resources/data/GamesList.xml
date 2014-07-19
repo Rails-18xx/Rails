@@ -221,6 +221,13 @@ Known Issues:
     <Description>18Scan</Description>
     <Players minimum="2" maximum="4" />
   </Game>
+    <Game name="1837">
+    <Note>Prototype</Note>
+    <Description> 1837 - Austria
+    (c) 199x Leonhard Ogler
+    </Description>
+    <Players minimum = "3" maximum = "7" />
+    </Game>
 
    	
 	<Credits>&lt;html&gt;Rails is a computer implementation of a number of board games.&lt;br&gt; 

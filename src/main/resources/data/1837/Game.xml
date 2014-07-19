@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ComponentManager>
-        <Component name="GameManager" class=net.sf.rails.game.specific._1837.GameManager_1837">
+        <Component name="GameManager" class="net.sf.rails.game.specific._1837.GameManager_1837">
                 <Game name="1837"/>
                 <GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Highlight"/>
                 <GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Highlight"/>

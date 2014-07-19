@@ -6,11 +6,10 @@ import java.util.List;
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
-import net.sf.rails.game.Currency;
+import net.sf.rails.game.Bank;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.StartItem;
-import net.sf.rails.game.StartPacket;
 import net.sf.rails.game.StartRound;
 import net.sf.rails.game.state.IntegerState;
 import rails.game.action.BidStartItem;
@@ -33,7 +32,23 @@ public class StartRound_1837 extends StartRound {
         bidIncrement = startPacket.getModulus();
     }
 
+    @Override
+    public void start() {
  
+        super.start();
+
+        if (!setPossibleActions()) {
+            /*
+             * If nobody can do anything, keep executing Operating and Start
+             * rounds until someone has got enough money to buy one of the
+             * remaining items. The game mechanism ensures that this will
+             * ultimately be possible.
+             */
+            //gameManager.nextRound(this);
+            finishRound();
+        }
+
+    }
 
     @Override
     public boolean setPossibleActions() {
@@ -174,7 +189,7 @@ public class StartRound_1837 extends StartRound {
                     ReportBuffer.add(this, LocalText.getText(
                             "ITEM_PRICE_REDUCED",
                                     item.getName(),
-                                    Currency.format(this, item.getBasePrice()) ));
+                                  Bank.format(this, item.getBasePrice()) ));
                 }
             }
                    
@@ -191,7 +206,9 @@ public class StartRound_1837 extends StartRound {
                 }
             numRoundsPassed.add(1);
             
-        }            
+        }  else {
+            playerManager.setCurrentToNextPlayer();
+        }
 
         return true;
     }

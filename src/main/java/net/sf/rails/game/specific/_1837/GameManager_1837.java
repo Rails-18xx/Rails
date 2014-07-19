@@ -15,14 +15,14 @@ import net.sf.rails.game.StartRound;
  */
 public class GameManager_1837 extends GameManager {
 
-    private ParSlotManager_1837 parSlotManager;
-    /**
-     * 
-     */
+/*  
+ *   private ParSlotManager_1837 parSlotManager;
+   */ 
     public GameManager_1837(RailsRoot parent, String id) {
         super(parent, id);
-        parSlotManager = new ParSlotManager_1837(parent, "ParSlotControl");
+     //   parSlotManager = new ParSlotManager_1837(parent, "ParSlotControl");
     }
+ 
     
     public void nextRound(Round round) {
         if (round instanceof StartRound) { 
@@ -38,8 +38,8 @@ public class GameManager_1837 extends GameManager {
         }
     }
     
-    public ParSlotManager_1837 getParSlotManager() {
+ /*   public ParSlotManager_1837 getParSlotManager() {
         return parSlotManager;
-    }
-
+   }
+*/
 }

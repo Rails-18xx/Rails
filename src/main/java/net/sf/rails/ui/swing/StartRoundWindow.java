@@ -85,7 +85,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
     private StartItemAction[] actionableItems;
     private StartPacket packet;
     private int[] crossIndex;
-    private StartRound round;
+    protected StartRound round;
     private GameUIManager gameUIManager;
 
     // For the non-modal dialog to ask for a company starting share price.
