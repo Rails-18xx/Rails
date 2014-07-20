@@ -1,4 +1,4 @@
-Rails release 1.8.9-alpha
+Rails release 1.8.9
 
 This is a minor release fixing the following bugs:
  
