@@ -15,15 +15,10 @@ import rails.game.action.PossibleAction;
 import rails.game.action.StartCompany;
 
 /**
- * @author Martin
- *
  * Rails 2.0: Updated equals and toString methods
  */
 public class StartCompany_1880 extends StartCompany {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
 
     private int[] possibleParSlotIndices;
@@ -88,27 +83,25 @@ public class StartCompany_1880 extends StartCompany {
     }
     
     @Override
-    public boolean equalsAsOption(PossibleAction pa) {
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
         // identity always true
         if (pa == this) return true;
         //  super checks both class identity and super class attributes
-        if (!super.equalsAsOption(pa)) return false; 
+        if (!super.equalsAs(pa, asOption)) return false; 
 
-        // check further attributes
+        // check asOption attributes
         StartCompany_1880 action = (StartCompany_1880)pa; 
-        return true;
-// FIXME: deactivated due to test issues, action 421 in 1880 test game
-//                 Arrays.equals(this.possibleParSlotIndices, action.possibleParSlotIndices);
-    }
-    
-    @Override
-    public boolean equalsAsAction(PossibleAction pa) {
-        // first check if equal as option
-        if (!this.equalsAsOption(pa)) return false;
+        boolean options = true;
+        // FIXME: deactivated due to test issues, action 421 in 1880 test game
+        //      Arrays.equals(this.possibleParSlotIndices, action.possibleParSlotIndices);
+        ;
         
-        // check further attributes
-        StartCompany_1880 action = (StartCompany_1880)pa; 
-        return Objects.equal(this.buildingRightsString, action.buildingRightsString)
+        // finish if asOptions check
+        if (asOption) return options;
+        
+        // check asAction attributes
+        return options
+                && Objects.equal(this.buildingRightsString, action.buildingRightsString)
                 && Objects.equal(this.parSlotIndex, action.parSlotIndex)
         ;
     }

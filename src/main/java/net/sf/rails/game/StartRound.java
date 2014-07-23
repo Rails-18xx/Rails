@@ -90,15 +90,11 @@ public abstract class StartRound extends Round {
 
         log.debug("Processing action " + action);
 
-        if (action instanceof NullAction) {
-
+        if (action instanceof NullAction && 
+                ((NullAction)action).getMode() == NullAction.Mode.PASS) {
             String playerName = action.getPlayerName();
             NullAction nullAction = (NullAction) action;
-            switch (nullAction.getMode()) {
-            case NullAction.PASS:
-                result = pass(nullAction, playerName);
-                break;
-            }
+            result = pass(nullAction, playerName);
 
         } else if (action instanceof StartItemAction) {
 

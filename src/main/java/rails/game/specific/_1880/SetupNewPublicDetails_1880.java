@@ -84,28 +84,25 @@ public class SetupNewPublicDetails_1880 extends StartItemAction {
     }
     
     @Override
-    public boolean equalsAsOption(PossibleAction pa) {
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
         // identity always true
         if (pa == this) return true;
         //  super checks both class identity and super class attributes
-        if (!super.equalsAsOption(pa)) return false; 
+        if (!super.equalsAs(pa, asOption)) return false; 
 
-        // check further attributes
+        // check asOption attributes
         SetupNewPublicDetails_1880 action = (SetupNewPublicDetails_1880)pa; 
-        return Objects.equal(this.company, action.company)
+        boolean options = Objects.equal(this.company, action.company)
                 && Objects.equal(this.price, action.price)
                 && Objects.equal(this.shares, action.shares)
         ;
-    }
-
-    @Override
-    public boolean equalsAsAction(PossibleAction pa) { // TODO
-        // first check if equal as option
-        if (!this.equalsAsOption(pa)) return false;
         
-        // check further attributes
-        SetupNewPublicDetails_1880 action = (SetupNewPublicDetails_1880)pa; 
-        return Objects.equal(this.parSlotIndex, action.parSlotIndex)
+        // finish if asOptions check
+        if (asOption) return options;
+        
+        // check asAction attributes
+        return options
+                && Objects.equal(this.parSlotIndex, action.parSlotIndex)
                 && Objects.equal(this.buildRightsString, action.buildRightsString)
         ;
     }

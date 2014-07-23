@@ -3,6 +3,8 @@ package rails.game.action;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
+import rails.game.specific._1880.StartCompany_1880;
+
 import com.google.common.base.Objects;
 
 import net.sf.rails.game.*;
@@ -109,35 +111,33 @@ public class BuyCertificate extends PossibleAction {
     }
 
     @Override
-    public boolean equalsAsOption(PossibleAction pa) {
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
         // identity always true
         if (pa == this) return true;
         //  super checks both class identity and super class attributes
-        if (!super.equalsAsOption(pa)) return false; 
+        if (!super.equalsAs(pa, asOption)) return false; 
 
-        // check further attributes
+        // check asOption attributes
         BuyCertificate action = (BuyCertificate)pa; 
-        return 
+        boolean options = 
                 // TODO: This is commented out as the certificate is not required anymore
                 // Objects.equal(this.certificate, action.certificate)
-                Objects.equal(this.company, action.company)
-// FIXME: This is commented out to avoid invalidate StartCompany_1880
-//                && Objects.equal(this.sharePerCert, action.sharePerCert)
+                Objects.equal(this.company, action.company) 
+                // In StartCompany_1880 the sharePerCert can differ
+                && (Objects.equal(this.sharePerCert, action.sharePerCert) || this instanceof StartCompany_1880)
                 && Objects.equal(this.from, action.from)
-// FIXME: This is commented out to avoid invalidate StartCompany, see there
-//                && Objects.equal(this.price, action.price)
+                // In StartCompany the price can differ
+                && (Objects.equal(this.price, action.price) || this instanceof StartCompany)
                 && Objects.equal(this.maximumNumber, action.maximumNumber)
         ;
-    }
-
-    @Override
-    public boolean equalsAsAction(PossibleAction pa) {
-        // first check if equal as option
-        if (!this.equalsAsOption(pa)) return false;
         
-        // check further attributes
-        BuyCertificate action = (BuyCertificate)pa; 
-        return Objects.equal(this.numberBought, action.numberBought);
+        // finish if asOptions check
+        if (asOption) return options;
+        
+        // check asAction attributes
+        return options
+                && Objects.equal(this.numberBought, action.numberBought)
+        ;
     }
 
     @Override
@@ -157,7 +157,6 @@ public class BuyCertificate extends PossibleAction {
 
     private void readObject(ObjectInputStream in) throws IOException,
             ClassNotFoundException {
-
         //in.defaultReadObject();
         // Custom reading for backwards compatibility
         ObjectInputStream.GetField fields = in.readFields();

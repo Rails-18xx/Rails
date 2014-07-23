@@ -122,7 +122,7 @@ KeyListener, ActionPerformer {
                 ActionEvent.ALT_MASK));
         actionMenuItem.addActionListener(this);
         actionMenuItem.setEnabled(true);
-        actionMenuItem.setPossibleAction(new GameAction(GameAction.SAVE));
+        actionMenuItem.setPossibleAction(new GameAction(GameAction.Mode.SAVE));
         fileMenu.add(actionMenuItem);
 
         actionMenuItem = new ActionMenuItem(LocalText.getText("Reload"));
@@ -132,7 +132,7 @@ KeyListener, ActionPerformer {
                 ActionEvent.ALT_MASK));
         actionMenuItem.addActionListener(this);
         actionMenuItem.setEnabled(true);
-        actionMenuItem.setPossibleAction(new GameAction(GameAction.RELOAD));
+        actionMenuItem.setPossibleAction(new GameAction(GameAction.Mode.RELOAD));
         fileMenu.add(actionMenuItem);
 
         menuItem = new JMenuItem(LocalText.getText("AutoSaveLoad"));
@@ -373,19 +373,21 @@ KeyListener, ActionPerformer {
         if (gameActions != null) {
             for (GameAction na : gameActions) {
                 switch (na.getMode()) {
-                case GameAction.UNDO:
+                case UNDO:
                     undoItem.setEnabled(true);
                     undoItem.setPossibleAction(na);
                     break;
-                case GameAction.FORCED_UNDO:
+                case FORCED_UNDO:
                     forcedUndoItem.setEnabled(true);
                     forcedUndoItem.setPossibleAction(na);
                     break;
-                case GameAction.REDO:
+                case REDO:
                     redoItem.setEnabled(true);
                     redoItem.setPossibleAction(na);
                     redoItem2.setEnabled(true);
                     redoItem2.setPossibleAction(na);
+                    break;
+                default:
                     break;
                 }
             }
@@ -553,23 +555,25 @@ KeyListener, ActionPerformer {
 
             for (NullAction na : inactiveItems) {
                 switch (na.getMode()) {
-                case NullAction.PASS:
+                case PASS:
                     passButton.setRailsIcon(RailsIcon.PASS);
                     passButton.setEnabled(true);
                     passButton.setActionCommand(PASS_CMD);
                     passButton.setMnemonic(KeyEvent.VK_P);
                     passButton.setPossibleAction(na);
                     break;
-                case NullAction.DONE:
+                case DONE:
                     passButton.setRailsIcon(RailsIcon.DONE);
                     passButton.setEnabled(true);
                     passButton.setActionCommand(DONE_CMD);
                     passButton.setMnemonic(KeyEvent.VK_D);
                     passButton.setPossibleAction(na);
                     break;
-                case NullAction.AUTOPASS:
+                case AUTOPASS:
                     autopassButton.setEnabled(true);
                     autopassButton.setPossibleAction(na);
+                    break;
+                default:
                     break;
                 }
             }
@@ -662,19 +666,18 @@ KeyListener, ActionPerformer {
             ;
         } else if (executedAction instanceof GameAction) {
             switch (((GameAction) executedAction).getMode()) {
-            case GameAction.SAVE:
+            case SAVE:
                 gameUIManager.saveGame((GameAction) executedAction);
                 break;
-            case GameAction.RELOAD:
+            case RELOAD:
                 gameUIManager.reloadGame((GameAction) executedAction);
                 break;
-            case GameAction.EXPORT:
+            case EXPORT:
                 gameUIManager.exportGame((GameAction) executedAction);
                 break;
-            case GameAction.UNDO:
-            case GameAction.FORCED_UNDO:
-            case GameAction.REDO:
+            default:
                 process(executedAction);
+                break;
             }
         } else {
             // Unknown action, let UIManager catch it
@@ -705,10 +708,10 @@ KeyListener, ActionPerformer {
 
     public void setPassButton(NullAction action) {
         if (action != null) {
-            int mode = action.getMode();
-            if (mode == NullAction.PASS) {
+            NullAction.Mode mode = action.getMode();
+            if (mode == NullAction.Mode.PASS) {
                 passButton.setRailsIcon(RailsIcon.PASS);
-            } else if (mode == NullAction.DONE) {
+            } else if (mode == NullAction.Mode.DONE) {
                 passButton.setRailsIcon(RailsIcon.DONE);
             }
             passButton.setEnabled(true);

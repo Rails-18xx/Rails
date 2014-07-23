@@ -8,8 +8,6 @@ import rails.game.action.PossibleAction;
 import rails.game.action.PossibleORAction;
 
 /**
- * @author Michael Alexander
- * 
  * Rails 2.0: Updated equals and toString methods
  */
 public class CloseInvestor_1880 extends PossibleORAction {
@@ -49,19 +47,16 @@ public class CloseInvestor_1880 extends PossibleORAction {
 
     
     @Override
-    public boolean equalsAsOption(PossibleAction pa) {
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
         // identity always true
         if (pa == this) return true;
-        // no further checks required
-        return super.equalsAsOption(pa); 
-    }
-
-    @Override
-    public boolean equalsAsAction(PossibleAction pa) {
-        // first check if equal as option
-        if (!this.equalsAsOption(pa)) return false;
+        //  super checks both class identity and super class attributes
+        if (!super.equalsAs(pa, asOption)) return false; 
         
-        // check further attributes
+        // no asOption attributes
+        if (asOption) return true;
+
+        // check asAction attributes
         CloseInvestor_1880 action = (CloseInvestor_1880)pa; 
         return Objects.equal(this.treasuryToLinkedCompany, action.treasuryToLinkedCompany)
                 && Objects.equal(this.replaceToken, action.replaceToken)

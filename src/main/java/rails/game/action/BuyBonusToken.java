@@ -3,14 +3,16 @@ package rails.game.action;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
+import com.google.common.base.Objects;
+
 import net.sf.rails.game.PrivateCompany;
 import net.sf.rails.game.special.SellBonusToken;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.state.Owner;
-
+import net.sf.rails.util.RailsObjects;
 
 /**
- * @author Erik Vos
+ * Rails 2.0: Updated equals and toString methods
  */
 public class BuyBonusToken extends PossibleORAction {
 
@@ -86,27 +88,35 @@ public class BuyBonusToken extends PossibleORAction {
     }
 
     @Override
-    public boolean equalsAsOption(PossibleAction action) {
-        if (!(action instanceof BuyBonusToken)) return false;
-        BuyBonusToken a = (BuyBonusToken) action;
-        return a.privateCompany == privateCompany
-                && a.name.equals(name)
-                && a.price == price
-                && a.value == value
-                && a.locationString.equals(locationString);
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
+        // identity always true
+        if (pa == this) return true;
+        //  super checks both class identity and super class attributes
+        if (!super.equalsAs(pa, asOption)) return false; 
+
+        // check asOption attributes
+        BuyBonusToken action = (BuyBonusToken)pa; 
+        return Objects.equal(this.privateCompany, action.privateCompany)
+                && Objects.equal(this.name, action.name)
+                && Objects.equal(this.price, action.price)
+                && Objects.equal(this.value, action.value)
+                && Objects.equal(this.locationString, action.locationString)
+        ;
+        // no asAction attributes to be checked
     }
 
-    public boolean equalsAsAction(PossibleAction action) {
-        return action.equalsAsOption (this);
-    }
-    
     @Override
     public String toString() {
-        return "BuyBonusToken " + privateCompanyName
-                + " owner=" + sellerName
-                + " price=" + price
-                + " value=" + value
-                + " locations=" + locationString;
+        return super.toString() + 
+                RailsObjects.stringHelper(this)
+                    .addToString("privateCompany", privateCompany)
+                    .addToString("name", name)
+                    .addToString("price", price)
+                    .addToString("value", value)
+                    .addToString("locationString", locationString)
+                    .toString()
+        ;
+
     }
 
     /** Deserialize */

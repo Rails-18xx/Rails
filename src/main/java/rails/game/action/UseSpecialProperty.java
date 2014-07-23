@@ -3,13 +3,17 @@ package rails.game.action;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
+import com.google.common.base.Objects;
+
 import net.sf.rails.game.special.SpecialProperty;
+import net.sf.rails.util.RailsObjects;
 
 
 /**
  * This class can only be used to offer a Special Property to the UI that does
  * NOT need any return parameters. Example: the M&H/NYC swap in 1830.
- * @author Erik Vos
+ * 
+ * Rails 2.0: Updated equals and toString methods
  */
 public class UseSpecialProperty extends PossibleORAction {
 
@@ -37,24 +41,30 @@ public class UseSpecialProperty extends PossibleORAction {
         return specialProperty;
     }
 
-    public boolean equalsAsOption(PossibleAction action) {
-        if (!(action instanceof UseSpecialProperty)) return false;
-        UseSpecialProperty a = (UseSpecialProperty) action;
-        return a.specialProperty == specialProperty;
-    }
-
-    public boolean equalsAsAction(PossibleAction action) {
-        return action.equalsAsOption(this);
-    }
-
-    public String toString() {
-        StringBuffer b = new StringBuffer("UseSpecialProperty: ");
-        if (specialProperty != null) b.append(specialProperty);
-        return b.toString();
-    }
-
     public String toMenu() {
         return specialProperty.toMenu();
+    }
+
+    @Override
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
+        // identity always true
+        if (pa == this) return true;
+        //  super checks both class identity and super class attributes
+        if (!super.equalsAs(pa, asOption)) return false; 
+
+        // check asOption attributes
+        UseSpecialProperty action = (UseSpecialProperty)pa; 
+        return Objects.equal(this.specialProperty, action.specialProperty);
+        // no asAction attributes to be checked
+    }
+    
+    @Override
+    public String toString() {
+        return super.toString() + 
+                RailsObjects.stringHelper(this)
+                    .addToString("specialProperty", specialProperty)
+                    .toString()
+        ;
     }
 
     /** Deserialize */

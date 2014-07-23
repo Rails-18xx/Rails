@@ -303,13 +303,15 @@ public class OperatingRound extends Round implements Observer {
 
             NullAction nullAction = (NullAction) action;
             switch (nullAction.getMode()) {
-            case NullAction.DONE:
-            case NullAction.PASS:
+            case DONE:
+            case PASS:
                 result = done(nullAction);
                 break;
-            case NullAction.SKIP:
+            case SKIP:
                 skip(nullAction);
                 result = true;
+                break;
+            default:
                 break;
             }
 
@@ -379,7 +381,7 @@ public class OperatingRound extends Round implements Observer {
             } else {
                 possibleActions.addAll(getNormalTileLays(true));
                 possibleActions.addAll(getSpecialTileLays(true));
-                possibleActions.add(new NullAction(NullAction.SKIP));
+                possibleActions.add(new NullAction(NullAction.Mode.SKIP));
             }
 
         } else if (step == GameDef.OrStep.LAY_TOKEN) {
@@ -390,7 +392,7 @@ public class OperatingRound extends Round implements Observer {
 
             possibleActions.addAll(currentNormalTokenLays);
             possibleActions.addAll(currentSpecialTokenLays);
-            possibleActions.add(new NullAction(NullAction.SKIP));
+            possibleActions.add(new NullAction(NullAction.Mode.SKIP));
         } else if (step == GameDef.OrStep.CALC_REVENUE) {
             prepareRevenueAndDividendAction();
             if (noMapMode)
@@ -520,7 +522,7 @@ public class OperatingRound extends Round implements Observer {
         }
 
         if (doneAllowed) {
-            possibleActions.add(new NullAction(NullAction.DONE));
+            possibleActions.add(new NullAction(NullAction.Mode.DONE));
         }
 
         for (PossibleAction pa : possibleActions.getList()) {

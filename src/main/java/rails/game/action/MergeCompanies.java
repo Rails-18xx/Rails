@@ -1,8 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/MergeCompanies.java,v 1.9 2010/04/15 19:49:50 evos Exp $
- *
- * Created on 17-Sep-2006
- * Change Log:
- */
 package rails.game.action;
 
 import java.io.IOException;
@@ -11,13 +6,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.google.common.base.Objects;
+
+import net.sf.rails.game.CompanyManager;
+import net.sf.rails.game.MapHex;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.util.RailsObjects;
 import rails.game.action.PossibleAction;
 
-import net.sf.rails.game.*;
-
-
 /**
- * @author Erik Vos
+ * 
+ * Rails 2.0: Updated equals and toString methods
  */
 public class MergeCompanies extends PossibleAction {
 
@@ -102,32 +101,40 @@ public class MergeCompanies extends PossibleAction {
     }
 
     @Override
-    public boolean equalsAsOption(PossibleAction action) {
-        if (!(action instanceof MergeCompanies)) return false;
-        MergeCompanies a = (MergeCompanies) action;
-        return a.mergingCompanyName.equals(mergingCompanyName)
-               && a.targetCompanyNames.equals(targetCompanyNames);
-    }
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
+        // identity always true
+        if (pa == this) return true;
+        //  super checks both class identity and super class attributes
+        if (!super.equalsAs(pa, asOption)) return false; 
 
-    @Override
-    public boolean equalsAsAction(PossibleAction action) {
-        if (!(action instanceof MergeCompanies)) return false;
-        MergeCompanies a = (MergeCompanies) action;
-        return a.mergingCompanyName.equals(mergingCompanyName)
-               && a.selectedTargetCompanyName.equals(selectedTargetCompanyName)
-               && a.replaceToken == replaceToken;
+        // check asOption attributes
+        MergeCompanies action = (MergeCompanies)pa; 
+        boolean options = Objects.equal(this.mergingCompany, action.mergingCompany)
+                && Objects.equal(this.targetCompanies, action.targetCompanies)
+                && Objects.equal(this.canReplaceToken, action.canReplaceToken)
+        ;
+        
+        // finish if asOptions check
+        if (asOption) return options;
+        
+        // check asAction attributes
+        return options
+                && Objects.equal(this.selectedTargetCompany, action.selectedTargetCompany)
+                && Objects.equal(this.replaceToken, action.replaceToken)
+        ;
     }
-
+    
     @Override
     public String toString() {
-        StringBuffer text = new StringBuffer();
-        text.append("MergeCompanies: ").append(mergingCompanyName).append(
-                " targets=").append(targetCompanyNames);
-        if (selectedTargetCompanyName != null) {
-            text.append(" selectedTarget=").append(selectedTargetCompanyName).append(
-                    " replaceToken=").append(replaceToken);
-        }
-        return text.toString();
+        return super.toString() + 
+                RailsObjects.stringHelper(this)
+                    .addToString("mergingCompany", mergingCompany)
+                    .addToString("targetCompanies", targetCompanies)
+                    .addToString("canReplaceToken", canReplaceToken)
+                    .addToStringOnlyActed("selectedTargetCompany", selectedTargetCompany)
+                    .addToStringOnlyActed("replaceToken", replaceToken)
+                    .toString()
+        ;
     }
 
     @SuppressWarnings("unchecked")

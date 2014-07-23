@@ -66,7 +66,7 @@ public class OperatingRound_1889 extends OperatingRound {
                     else {
                         possibleActions.clear();
                         possibleActions.add(layTile);
-                        possibleActions.add(new NullAction(NullAction.SKIP));
+                        possibleActions.add(new NullAction(NullAction.Mode.SKIP));
                         DisplayBuffer.add(this, LocalText.getText("1889PrivateBactive", privB.getOwner()));
 
                     }
@@ -83,7 +83,7 @@ public class OperatingRound_1889 extends OperatingRound {
             if (validateSpecialTileLay(layTile)) {
                 possibleActions.clear();
                 possibleActions.add(layTile);
-                possibleActions.add(new NullAction(NullAction.SKIP));
+                possibleActions.add(new NullAction(NullAction.Mode.SKIP));
                 DisplayBuffer.add(this, LocalText.getText("1889PrivateCactive", previousOwnerName));
             }
         }

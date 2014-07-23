@@ -7,8 +7,6 @@ import net.sf.rails.game.StartItem;
 import net.sf.rails.util.RailsObjects;
 
 /**
- * @author Erik Vos
- * 
  * Rails 2.0: Added updated equals and toString methods 
  */
 public class BuyStartItem extends StartItemAction {
@@ -77,33 +75,31 @@ public class BuyStartItem extends StartItemAction {
         return companyNeedingSharePrice;
     }
 
-    @Override 
-    public boolean equalsAsOption(PossibleAction pa) {
+    @Override
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
         // identity always true
         if (pa == this) return true;
         //  super checks both class identity and super class attributes
-        if (!super.equalsAsOption(pa)) return false; 
+        if (!super.equalsAs(pa, asOption)) return false; 
 
-        // check further attributes
+        // check asOption attributes
         BuyStartItem action = (BuyStartItem)pa;
-        return Objects.equal(this.price, action.price)
+        boolean options = Objects.equal(this.price, action.price)
                 && Objects.equal(this.selected, action.selected)
                 && Objects.equal(this.setSharePriceOnly, action.setSharePriceOnly)
                 && Objects.equal(this.sharePriceToSet, action.sharePriceToSet)
                 && Objects.equal(this.companyNeedingSharePrice, action.companyNeedingSharePrice)
         ;
+
+        // finish if asOptions check
+        if (asOption) return options;
+        
+        // check asAction attributes
+        return options
+                && Objects.equal(this.associatedSharePrice, action.associatedSharePrice)
+        ;
     }
     
-    @Override
-    public boolean equalsAsAction (PossibleAction pa) {
-        // first check if equal as option
-        if (!this.equalsAsOption(pa)) return false;
-        
-        // check further attributes
-        BuyStartItem action = (BuyStartItem)pa; 
-        return Objects.equal(this.associatedSharePrice, action.associatedSharePrice);
-    }
-
    public String toString() {
        return super.toString() + 
                RailsObjects.stringHelper(this)

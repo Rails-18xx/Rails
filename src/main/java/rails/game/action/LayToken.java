@@ -1,19 +1,16 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayToken.java,v 1.10 2010/02/03 20:16:38 evos Exp $
- *
- * Created on 14-Sep-2006
- * Change Log:
- */
 package rails.game.action;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.base.Objects;
+
 import net.sf.rails.game.MapHex;
 import net.sf.rails.game.special.SpecialTokenLay;
-
+import net.sf.rails.util.RailsObjects;
 
 /**
- * @author Erik Vos
+ * Rails 2.0: Updated equals and toString methods
  */
 public abstract class LayToken extends PossibleORAction {
 
@@ -110,4 +107,34 @@ public abstract class LayToken extends PossibleORAction {
         locationNames = b.toString();
     }
 
+    @Override
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
+        //  super checks both class identity and super class attributes
+        if (!super.equalsAs(pa, asOption)) return false; 
+
+        // check asOption attributes
+        LayToken action = (LayToken)pa; 
+        boolean options = (Objects.equal(this.locations, action.locations) || this.locations == null && action.locations.isEmpty())
+                && Objects.equal(this.specialProperty, action.specialProperty)
+        ;
+
+        // finish if asOptions check
+        if (asOption) return options;
+        
+        // check asAction attributes
+        return options
+            && Objects.equal(this.chosenHex, action.chosenHex)
+        ;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + 
+                RailsObjects.stringHelper(this)
+                    .addToString("locations", locations)
+                    .addToString("specialProperty", specialProperty)
+                    .addToStringOnlyActed("chosenHex", chosenHex)
+                    .toString()
+        ;
+    }
 }

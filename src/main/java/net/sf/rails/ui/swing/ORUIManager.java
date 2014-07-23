@@ -1350,13 +1350,13 @@ public class ORUIManager implements DialogOwner {
     public void cancelTileUpgrade() {
         GUIHex selectedHex = mapPanel.getMap().getSelectedHex();
         if (selectedHex != null) selectedHex.removeTile();
-        orWindow.process(new NullAction(NullAction.SKIP));
+        orWindow.process(new NullAction(NullAction.Mode.SKIP));
     }
 
     public void cancelTokenUpgrade() {
         GUIHex selectedHex = mapPanel.getMap().getSelectedHex();
         if (selectedHex != null) selectedHex.removeToken();
-        orWindow.process(new NullAction(NullAction.SKIP));
+        orWindow.process(new NullAction(NullAction.Mode.SKIP));
     }
 
     /** Default implementation.
@@ -1598,8 +1598,10 @@ public class ORUIManager implements DialogOwner {
                 possibleActions.getType(NullAction.class);
             for (NullAction action : actions) {
                 switch (action.getMode()) {
-                case NullAction.DONE:
+                case DONE:
                     orPanel.enableDone(action);
+                    break;
+                default:
                     break;
                 }
             }
@@ -1611,11 +1613,13 @@ public class ORUIManager implements DialogOwner {
                 possibleActions.getType(GameAction.class);
             for (GameAction action : actions) {
                 switch (action.getMode()) {
-                case GameAction.UNDO:
+                case UNDO:
                     undoAction = action;
                     break;
-                case GameAction.REDO:
+                case REDO:
                     redoAction = action;
+                    break;
+                default:
                     break;
                 }
             }

@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.Arrays;
 
-import net.sf.rails.game.Bank;
+import com.google.common.base.Objects;
+import net.sf.rails.util.RailsObjects;
 import net.sf.rails.util.Util;
-
 
 /**
  * Action class that comprises the earnings setting and distribution steps. In
@@ -15,8 +15,7 @@ import net.sf.rails.util.Util;
  * back-end; in that case, the user can only select the earnings distribution
  * method.
  *
- * @author Erik Vos
- *
+ * Rails 2.0: Updated equals and toString methods
  */
 public class SetDividend extends PossibleORAction implements Cloneable {
 
@@ -149,50 +148,43 @@ public class SetDividend extends PossibleORAction implements Cloneable {
     }
 
     @Override
-    public boolean equalsAsOption(PossibleAction action) {
-        if (!(action instanceof SetDividend)) return false;
-        SetDividend a = (SetDividend) action;
-        return a.company == company
-               && a.presetRevenue == presetRevenue
-               && a.mayUserSetRevenue == mayUserSetRevenue
-               && a.requiredCash == requiredCash
-               && Arrays.equals(a.allowedRevenueAllocations,
-                       allowedRevenueAllocations);
-    }
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
+        // identity always true
+        if (pa == this) return true;
+        //  super checks both class identity and super class attributes
+        if (!super.equalsAs(pa, asOption)) return false; 
 
-    @Override
-    public boolean equalsAsAction(PossibleAction action) {
-        if (!(action instanceof SetDividend)) return false;
-        SetDividend a = (SetDividend) action;
-        return a.company == company
-               && a.actualRevenue == actualRevenue
-               && a.revenueAllocation == revenueAllocation;
+        // check asOption attributes
+        SetDividend action = (SetDividend)pa; 
+        boolean options = 
+                Objects.equal(this.presetRevenue, action.presetRevenue)
+                && Objects.equal(this.mayUserSetRevenue, action.mayUserSetRevenue)
+                && Arrays.equals(this.allowedRevenueAllocations, action.allowedRevenueAllocations)
+                && Objects.equal(this.requiredCash, action.requiredCash)
+        ;
+        
+        // finish if asOptions check
+        if (asOption) return options;
+        
+        // check asAction attributes
+        return options
+                && Objects.equal(this.actualRevenue, action.actualRevenue)
+                && Objects.equal(this.revenueAllocation, action.revenueAllocation)
+        ;
     }
 
     @Override
     public String toString() {
-        StringBuffer b = new StringBuffer();
-        b.append(getClass().getSimpleName()).append(": ").append(company.getId());
-        if (mayUserSetRevenue) {
-            b.append(", settable, previous=").append(Bank.format(company, presetRevenue));
-            if (actualRevenue > 0) {
-                b.append(", new=").append(Bank.format(company, actualRevenue));
-            }
-        } else {
-            b.append(", fixed, calculated=").append(Bank.format(company, presetRevenue));
-        }
-        b.append(", allowed=");
-        for (int i : allowedRevenueAllocations) {
-            b.append(allocationNameKeys[i]).append(",");
-        }
-        if (revenueAllocation >= 0) {
-            b.append(" chosen=").append(allocationNameKeys[revenueAllocation]);
-        }
-        if (requiredCash > 0) {
-            b.append(" requiredCash="+requiredCash);
-        }
-
-        return b.toString();
+        return super.toString() + 
+                RailsObjects.stringHelper(this)
+                    .addToString("presetRevenue", presetRevenue)
+                    .addToString("mayUserSetRevenue", mayUserSetRevenue)
+                    .addToString("allowedRevenueAllocations", allowedRevenueAllocations)
+                    .addToString("requiredCash", requiredCash)
+                    .addToStringOnlyActed("actualRevenue", actualRevenue)
+                    .addToStringOnlyActed("revenueAllocation", revenueAllocation)
+                    .toString()
+        ;
     }
 
     /** Deserialize */

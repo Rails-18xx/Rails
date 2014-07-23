@@ -7,7 +7,7 @@ BankHas,10200
 StartOfPhase,2
 BankSizeIs,10200
 StartOfInitialRound
-HasPriority,T1
+HasPriority,T3
 BuysItemFor,T3,M5,80
 FloatsWithCash,M5,80
 BuysItemFor,T2,M1,80
@@ -59,7 +59,6 @@ Has,T2,125
 Has,T3,66
 StartOfInitialRound
 HasPriority,T1
-CannotBuyAnything,T3
 BuysItemFor,T1,PfB,150
 ALSO_GETS,T1,CERT_NAME,BY,10
 FloatsWithCash,BY,460

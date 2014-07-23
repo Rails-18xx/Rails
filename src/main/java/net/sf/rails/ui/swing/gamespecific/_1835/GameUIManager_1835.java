@@ -3,8 +3,8 @@ package net.sf.rails.ui.swing.gamespecific._1835;
 import java.util.ArrayList;
 import java.util.List;
 
+import rails.game.specific._1835.FoldIntoPrussian;
 import net.sf.rails.game.Company;
-import net.sf.rails.game.specific._1835.FoldIntoPrussian;
 import net.sf.rails.ui.swing.GameUIManager;
 import net.sf.rails.ui.swing.elements.*;
 

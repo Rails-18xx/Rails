@@ -7,12 +7,20 @@ import java.util.List;
 
 import rails.game.action.PossibleAction;
 import rails.game.action.StartCompany;
+import net.sf.rails.game.CompanyManager;
+import net.sf.rails.game.MapHex;
+import net.sf.rails.game.MapManager;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.RailsRoot;
+import net.sf.rails.game.Stop;
+import net.sf.rails.util.RailsObjects;
 
-import net.sf.rails.game.*;
-
-import com.google.common.primitives.Ints;
+import com.google.common.base.Objects;
 
 
+/**
+ * Rails 2.0: Updated equals and toString methods
+ */
 public class StartCompany_18EU extends StartCompany {
 
     // Server settings
@@ -102,26 +110,41 @@ public class StartCompany_18EU extends StartCompany {
     }
 
     @Override
-    public boolean equalsAsOption(PossibleAction action) {
-        if (!(action.getClass() == StartCompany_18EU.class)) return false;
-        StartCompany_18EU a = (StartCompany_18EU) action;
-        return a.company == company && a.from == from && Ints.asList(startPrices).contains(a.price);
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
+        // identity always true
+        if (pa == this) return true;
+        //  super checks both class identity and super class attributes
+        if (!super.equalsAs(pa, asOption)) return false; 
+
+        // check asOption attributes
+        StartCompany_18EU action = (StartCompany_18EU)pa; 
+        boolean options = Objects.equal(this.minorsToMerge, action.minorsToMerge)
+                && Objects.equal(this.requestStartSpaces, action.requestStartSpaces)
+                && Objects.equal(this.availableHomeStations, action.availableHomeStations)
+        ;
+        
+        // finish if asOptions check
+        if (asOption) return options;
+        
+        // check asAction attributes
+        return options
+                && Objects.equal(this.chosenMinor, action.chosenMinor)
+                && Objects.equal(this.selectedHomeStation, action.selectedHomeStation)
+        ;
     }
-    
+
     @Override
     public String toString() {
-        StringBuilder text = new StringBuilder(super.toString());
-        if (chosenMinorName != null) {
-            text.append(" minor=" + chosenMinorName);
-        } else if (minorsToMergeNames != null) {
-            text.append(" minors=").append(minorsToMergeNames);
-        }
-        if (selectedHomeStationName != null) {
-            text.append(" home=" + selectedHomeStationName);
-        } else if (availableHomeStationNames != null) {
-            text.append(" homes=" + availableHomeStationNames);
-        }
-        return text.toString();
+        return super.toString() + 
+                RailsObjects.stringHelper(this)
+                    .addToString("minorsToMerge", minorsToMerge)
+                    .addToString("requestStartSpaces", requestStartSpaces)
+                    .addToString("availableHomeStations", availableHomeStations)
+                    .addToStringOnlyActed("chosenMinor", chosenMinor)
+                    .addToStringOnlyActed("selectedHomeStation", selectedHomeStation)
+                    .toString()
+        ;
+
     }
 
     /** Deserialize */

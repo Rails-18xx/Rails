@@ -1,33 +1,37 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/NullAction.java,v 1.10 2010/01/31 22:22:29 macfreek Exp $*/
 package rails.game.action;
 
-public class NullAction extends PossibleAction {
+import java.io.IOException;
+import java.io.ObjectInputStream;
 
-    public static final int DONE = 0;
-    public static final int PASS = 1;
-    public static final int SKIP = 2;
-    public static final int AUTOPASS = 3;
-    public static final int START_GAME = 4; // For use after loading
-    public static final int MAX_MODE = 4;
+import net.sf.rails.util.RailsObjects;
+
+import com.google.common.base.Objects;
+
+/**
+ * 
+ * Rails 2.0: Updated equals and toString methods
+ */
+public class NullAction extends PossibleAction {
+    
+    private static final long serialVersionUID = 2L;
+
+    public static enum Mode { DONE, PASS, SKIP, AUTOPASS, START_GAME }
 
     // optional label that is returned on toString instead of the standard labels defined below
     private String optionalLabel = null;
 
-    // standard labels defined
-    private static String[] name = new String[] { "Done", "Pass", "Skip", "Autopass", "StartGame" };
+    protected transient Mode mode_enum = null;
+    // Remark: it would have been better to store the enum name, however due to backward compatibility not an option
+    protected int mode; 
 
-    protected int mode = -1;
-
-    public static final long serialVersionUID = 2L;
-
-    public NullAction(int mode) {
+    public NullAction(Mode mode) {
         super();
-        if (mode < 0 || mode > MAX_MODE) mode = 0; // For safety
-        this.mode = mode;
+        this.mode_enum = mode;
+        this.mode = mode.ordinal();
     }
 
-    public int getMode() {
-        return mode;
+    public Mode getMode() {
+        return mode_enum;
     }
     
     /** returns the NullAction itself */
@@ -37,21 +41,36 @@ public class NullAction extends PossibleAction {
     }
 
     @Override
-    public boolean equalsAsOption(PossibleAction action) {
-        if (!(action instanceof NullAction)) return false;
-        NullAction a = (NullAction) action;
-        return a.mode == mode;
-    }
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
+        // identity always true
+        if (pa == this) return true;
+        //  super checks both class identity and super class attributes
+        if (!super.equalsAs(pa, asOption)) return false; 
 
-    @Override
-    public boolean equalsAsAction(PossibleAction action) {
-        return equalsAsOption(action);
+        // check asOption attributes
+        NullAction action = (NullAction)pa; 
+        return Objects.equal(this.mode, action.mode)
+                && Objects.equal(this.optionalLabel, action.optionalLabel)
+        ;
+        // no asAction attributes to be checked
     }
 
    @Override
     public String toString() {
-        if (optionalLabel != null) return optionalLabel;
-        return name[mode];
+       return super.toString() + 
+               RailsObjects.stringHelper(this)
+                   .addToString("mode", mode_enum)
+                   .addToString("optionalLabel", optionalLabel)
+                   .toString()
+       ;
     }
-    
+
+   private void readObject(ObjectInputStream in) throws IOException,
+           ClassNotFoundException {
+
+       in.defaultReadObject();
+       // required since Rails 2.0
+       mode_enum = Mode.values()[mode];
+   }
+
 }

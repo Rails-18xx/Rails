@@ -138,7 +138,7 @@ public class CGRFormationRound extends SwitchableUIRound {
             int valuePerLoan = company.getValuePerLoan();
 
             String message = LocalText.getText("CompanyHasLoans",
-                    currentCompany.getId(),
+                    currentCompany.value().getId(),
                     player.getId(),
                     numberOfLoans,
                     Bank.format(this, valuePerLoan),
@@ -157,7 +157,7 @@ public class CGRFormationRound extends SwitchableUIRound {
                 company.addLoans(-numberToRepay);
 
                 message = LocalText.getText("CompanyRepaysLoans",
-                        currentCompany.getId(),
+                        currentCompany.value().getId(),
                         paymentText,
                         Bank.format(this, numberOfLoans * valuePerLoan), 
                         numberToRepay,
