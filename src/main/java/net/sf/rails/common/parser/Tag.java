@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 
@@ -416,4 +417,14 @@ public class Tag {
     public Element getElement() {
         return element;
     }
+    
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this)
+                .add("attributes", attributes)
+                .add("children", children)
+                .toString()
+        ;
+    }
+    
 }
