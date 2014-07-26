@@ -5,6 +5,7 @@ import java.util.List;
 
 import rails.game.action.BuyStartItem;
 import rails.game.action.NullAction;
+import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.GameManager;
@@ -90,5 +91,49 @@ public class StartRound_1837_Minors_KuK extends StartRound_1837_Coal {
             ReportBuffer.add(this, LocalText.getText("HasPriority",
                     startPlayer.getId()));
         }
+    
+    /**
+     * Process a player's pass.
+     *
+     * @param playerName The name of the current player (for checking purposes).
+     */
+    @Override
+    public boolean pass(NullAction action, String playerName) {
+
+        String errMsg = null;
+        Player player = playerManager.getCurrentPlayer();
+
+        while (true) {
+
+            // Check player
+            if (!playerName.equals(player.getId())) {
+                errMsg = LocalText.getText("WrongPlayer", playerName, player.getId());
+                break;
+            }
+            break;
+        }
+
+        if (errMsg != null) {
+            DisplayBuffer.add(this, LocalText.getText("InvalidPass",
+                    playerName,
+                    errMsg ));
+            return false;
+        }
+
+        ReportBuffer.add(this, LocalText.getText("PASSES", playerName));
+
+        numPasses.add(1);
+
+        if (numPasses.value() >= playerManager.getNumberOfPlayers()) {
+            // All players have passed.
+            ReportBuffer.add(this, LocalText.getText("ALL_PASSED"));
+            numPasses.set(0);
+            finishRound();
+        } else {
+            playerManager.setCurrentToNextPlayer();
+        }
+
+        return true;
+    }
 }
         
