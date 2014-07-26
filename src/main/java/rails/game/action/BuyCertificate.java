@@ -50,8 +50,7 @@ public class BuyCertificate extends PossibleAction {
         this.company = company;
         this.sharePerCert = sharePerCert;
         this.from = from.getPortfolioModel();
-        // FIXME: From used to be a Portfolio(model) with unique name to identify
-        // this.fromName = from.getUniqueName();
+        this.fromName = this.from.getUniqueName();
         this.price = price;
         this.maximumNumber = maximumNumber;
 
