@@ -268,9 +268,10 @@ public class StartRound_1837_Coal extends StartRound {
             getRoot().getPlayerManager().setPriorityPlayerToNext();
         }
         playerManager.setCurrentToNextPlayer();
-
+        resetStartPacketPrices(numRoundsPassed.value());
         numPasses.set(0);
         numRoundsPassed.set(0);
+       
         if (startPacket.areAllSold()) {
             finishRound();
         }
@@ -278,6 +279,16 @@ public class StartRound_1837_Coal extends StartRound {
 
     }
 
+
+    private void resetStartPacketPrices(int i) {
+        List<StartItem> startItems =  startPacket.getItems();
+        for(StartItem item: startItems) {
+            if ((!item.isSold())&& (item.getStatus() == StartItem.BUYABLE)){
+            item.reduceBasePriceBy(-(i*10));
+            }
+        }
+        
+    }
 
     @Override
     public String getHelp() {
