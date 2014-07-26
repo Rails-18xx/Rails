@@ -358,7 +358,7 @@
                 <Trains limit="4,4,4,3"/>
         </Company>
         
-        <StartPacket name="Coal Mines" roundClass="net.sf.rails.game.specific._1837.StartRound_1837">
+        <StartPacket name="Coal Mines" roundClass="net.sf.rails.game.specific._1837.StartRound_1837_Coal">
                 <Item name="EKT" type="Coal" basePrice="100" column="1" row="1"/>
                 <Item name="EPP" type="Coal" basePrice="100" column="2" row="1"/>
                 <Item name="BB" type="Coal" basePrice="100" column="3" row="1"/>
@@ -387,19 +387,12 @@
                         <SubItem name="S5" type="Minor1"/>
                 </Item>
         </StartPacket>
-        <StartPacket name="KuK Privates" roundClass="net.sf.rails.game.specific._1837.StartRound_1837">
-        <Item name="K1" type="Minor1"/>
-        <Item name="K2" type="Minor1"/>
-        <Item name="K3" type="Minor1"/>
+        <StartPacket name="KuK Privates" roundClass="net.sf.rails.game.specific._1837.StartRound_1837_Minors_KuK">
+        <Item name="K1" type="Minor1" basePrice="90"/>
+        <Item name="K2" type="Minor1" basePrice="140"/>
+        <Item name="K3" type="Minor1" basePrice="90"/>
         </StartPacket>
-        <StartPacket name="Hungary Privates" roundClass="net.sf.rails.game.specific._1837.StartRound_1837">
-<<<<<<< HEAD
-        <Item name="U1" type="Minor2" president="yes"/>
-        <Item name="U1" type="Minor2"/>
-        <Item name="U2" type="Minor1"/>
-        <Item name="U3" type="Minor2" president="yes"/>
-        <Item name="U3" type="Minor2"/>
-=======
+        <StartPacket name="Hungary Privates" roundClass="net.sf.rails.game.specific._1837.StartRound_1837_Minors_Hungary">
         <Item name="U1" president="yes" basePrice="90" type="Minor2"/>
         <Item name="U1W" type="Private" basePrice="90">
             <SubItem name="U1" type="Minor2" />
@@ -409,6 +402,5 @@
         <Item name="U3C" type="Private" basePrice="90">
             <SubItem name="U3" type="Minor2"/>
             </Item>
->>>>>>> ffc4d8c... change attribute name baseprice to basePrice for startPackets
         </StartPacket>
 </CompanyManager>
