@@ -57,14 +57,12 @@ public class StartRound_1837_Minors_Hungary extends StartRound_1837_Coal {
                     /* Player does have the cash */
                     possibleActions.add(new BuyStartItem(item,
                             item.getBasePrice(), false));
+    
                 }
-            }
-
-            // setNextPlayer();
-      }
-
-        /* Pass is always allowed */
-        possibleActions.add(new NullAction(NullAction.Mode.PASS));
+            }  /* Pass is always allowed */
+            possibleActions.add(new NullAction(NullAction.Mode.PASS));
+                        
+        }
 
         return true;
     }

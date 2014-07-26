@@ -26,6 +26,7 @@ public class StartRound_1837_Minors_KuK extends StartRound_1837_Coal {
 
         List<StartItem> startItems =  startPacket.getItems();
         List<StartItem> buyableItems = new ArrayList<StartItem>();
+        int seeks = 0;
 
         if ((!startPacket.areAllSold()) ){
                  for (StartItem item : startItems) {
@@ -57,12 +58,11 @@ public class StartRound_1837_Minors_KuK extends StartRound_1837_Coal {
                     /* Player does have the cash */
                     possibleActions.add(new BuyStartItem(item,
                             item.getBasePrice(), false));
-                }
-            }
-
-            // setNextPlayer();
-      }
-
+                  }
+    }  /* Pass is always allowed */
+    possibleActions.add(new NullAction(NullAction.Mode.PASS));
+                
+}
         /* Pass is always allowed */
         possibleActions.add(new NullAction(NullAction.Mode.PASS));
 
