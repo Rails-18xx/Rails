@@ -19,7 +19,7 @@ import rails.game.action.NullAction;
 /**
  * Implements an 1837-style startpacket sale.
  */
-public class StartRound_1837 extends StartRound {
+public class StartRound_1837_Coal extends StartRound {
     protected final int bidIncrement;
 
     protected IntegerState numRoundsPassed = IntegerState.create(this,"StartRoundRoundsPassed");
@@ -27,7 +27,7 @@ public class StartRound_1837 extends StartRound {
     /**
      * Constructor, only to be used in dynamic instantiation.
      */
-    public StartRound_1837(GameManager gameManager, String id) {
+    public StartRound_1837_Coal(GameManager gameManager, String id) {
         super(gameManager, id, false, true, true);
         bidIncrement = startPacket.getModulus();
     }
@@ -66,47 +66,53 @@ public class StartRound_1837 extends StartRound {
          * so until bought, so there is no need to check if an item is still
          * buyable.
          */
-        for (StartItem item : startItems) {
-            buyable = false;
-
-            column= item.getColumn();
-            row = item.getRow();
-            
-            if (item.isSold()) {
-                // Already sold: skip but set watermarks
-
-                
-                if (column ==1) {
-                    soldStartItems[0][row-1] = true;
-                } else {
-                    if (column ==2) {
-                        soldStartItems[1][row-1] = true;
-                    } else {
-                        soldStartItems[2][row-1] = true;
-                    }
-                }
-                
-           } else {
-                if (minRow == 0) {
-                    minRow = row;
-                     }
-                if (row == minRow) {
-                    // Allow all items in the top row.
-                    buyable = true;
-                } else { 
-                    // Allow the first item in the next row of a column where the items in higher 
-                    //rows have been bought.
-                    if (soldStartItems[column-1][row-2] == true) {                    
-                    buyable = true;
-                    }
-                }
-           }
-            if (buyable) {
-                item.setStatus(StartItem.BUYABLE);
-                buyableItems.add(item);
+        if ((!startPacket.areAllSold()) ){
+                 for (StartItem item : startItems) {
+                    buyable = false;
+        
+                    column= item.getColumn();
+                    row = item.getRow();
+                    
+                    if (item.isSold()) {
+                        // Already sold: skip but set watermarks
+        
+                        
+                        if (column ==1) {
+                            soldStartItems[0][row-1] = true;
+                        } else {
+                            if (column ==2) {
+                                soldStartItems[1][row-1] = true;
+                            } else {
+                                soldStartItems[2][row-1] = true;
+                            }
+                        }
+                        
+                        } else {
+                            if (minRow == 0) {
+                                minRow = row;
+                                 }
+                            if (row == minRow) {
+                            // Allow all items in the top row.
+                            buyable = true;
+                            } else { 
+                            // Allow the first item in the next row of a column where the items in higher 
+                            //rows have been bought.
+                            if (soldStartItems[column-1][row-2] == true) {                    
+                            buyable = true;
+                                }
+                            }
+                        }
+                        if (buyable) {
+                        item.setStatus(StartItem.BUYABLE);
+                        buyableItems.add(item);
+                        }
+                    } //startItems
+                    possibleActions.clear();
+             } else { // Are all Sold
+                possibleActions.clear();
+                return true;
             }
-        }
-        possibleActions.clear();
+        
 
         /*
          * Repeat until we have found a player with enough money to buy some
@@ -220,7 +226,7 @@ public class StartRound_1837 extends StartRound {
      */
     @Override
     protected boolean buy(String playerName, BuyStartItem boughtItem) {
-        // If the player buys a price reduced paper the other price reduced papers need to be set back to the 
+        // TODO: If the player buys a price reduced paper the other price reduced papers need to be set back to the 
         // base price
         StartItem item = boughtItem.getStartItem();
         int lastBid = item.getBid();
@@ -265,7 +271,9 @@ public class StartRound_1837 extends StartRound {
 
         numPasses.set(0);
         numRoundsPassed.set(0);
-
+        if (startPacket.areAllSold()) {
+            finishRound();
+        }
         return true;
 
     }
