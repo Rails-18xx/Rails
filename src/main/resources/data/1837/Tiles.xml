@@ -43,19 +43,19 @@
 	<Tile colour="white" id="-3007" name="Y city (cent)">
 		<Station id="city1" position="0" slots="1" type="City"/>
 	</Tile>
-	<Tile colour="fixed" id="-37001" name="RGTE">
-		<Station id="city1" position="0" type="Town"/>
+	<Tile colour="fixed" id="-37001">
+		<Station id="city1" position="0" type="Town" name="Mine"/>
 		<Track from="city1" gauge="normal" to="side0"/>
 	</Tile>
-	<Tile colour="fixed" id="-37002" name="ZKB">
-		<Station id="city1" position="0" type="Town"/>
+	<Tile colour="fixed" id="-37002">
+		<Station id="city1" position="0" type="Town" name="Mine"/>
 		<Station id="city2" position="409" type="Town" value="10"/>
 		<Track from="city1" gauge="normal" to="side0"/>
 		<Track from="city2" gauge="normal" to="side4"/>
 		<Track from="city2" gauge="normal" to="side5"/>
 	</Tile>
-	<Tile colour="fixed" id="-37003" name="EHS">
-		<Station id="city1" position="0" type="Town"/>
+	<Tile colour="fixed" id="-37003">
+		<Station id="city1" position="0" type="Town" name="Mine"/>
 		<Track from="city1" gauge="normal" to="side0"/>
 		<Track from="side5" gauge="normal" to="side4"/>
 	</Tile>

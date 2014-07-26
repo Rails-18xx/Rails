@@ -5,4 +5,5 @@
     <GameOption name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
     <GameOption name="NoMapMode" type="toggle" default="no"/>
     <GameOption name="UnlimitedTopTrains" values="No,Yes" default="No"/>
+    <GameOption name="RouteAlgorithm" values="Permissive,Semi-Restrictive,Restrictive" default="Permissive" />
 </GameOptions>
