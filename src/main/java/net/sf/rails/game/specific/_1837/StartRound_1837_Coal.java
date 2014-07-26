@@ -60,6 +60,7 @@ public class StartRound_1837_Coal extends StartRound {
         boolean buyable;
         int minRow = 0;
         boolean[][] soldStartItems = new boolean [3][6];
+        int seeks =0;
                 
         /*
          * First, mark which items are buyable. Once buyable, they always remain
@@ -131,13 +132,10 @@ public class StartRound_1837_Coal extends StartRound {
                     possibleActions.add(new BuyStartItem(item,
                             item.getBasePrice(), false));
                 }
-            }
-
-            // setNextPlayer();
-      }
-
-        /* Pass is always allowed */
-        possibleActions.add(new NullAction(NullAction.Mode.PASS));
+            }  /* Pass is always allowed */
+            possibleActions.add(new NullAction(NullAction.Mode.PASS));
+                        
+        }
 
         return true;
     }

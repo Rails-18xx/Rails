@@ -2,11 +2,6 @@
 <ComponentManager>
         <Component name="GameManager" class="net.sf.rails.game.specific._1837.GameManager_1837">
                 <Game name="1837"/>
-                <GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Highlight"/>
-                <GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Highlight"/>
-                <GameOption name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
-                <GameOption name="NoMapMode" type="toggle" default="no"/>
-                <GameOption name="UnlimitedTopTrains" values="No,Yes" default="No"/>
                 <GameParameters>
                         <PlayerShareLimit percentage="60"/>
                         <BankPoolLimit percentage="50"/>
@@ -22,7 +17,7 @@
                         </OperatingRound>
                 </GameParameters>
                 <GuiClasses>
-                    <StartRoundWindow class="net.sf.rails.ui.swing.gamespecific._1837.StartRoundWindow_1837"/>
+                    <StartRoundWindow class="net.sf.rails.ui.swing.StartRoundWindow"/>
                     <!-- StatusWindow class="rails.ui.swing.gamespecific._1837.StatusWindow_1837"/-->
                     <!-- <GameUIManager class="rails.ui.swing.gamespecific._1837.GameUIManager_1837"/-->
                 </GuiClasses>
