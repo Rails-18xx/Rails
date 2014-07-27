@@ -506,7 +506,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
             // only one NullAction is allowed
             NullAction na = inactiveItems.get(0);
             // nullActions differ in text to display
-            passButton.setRailsIcon(RailsIcon.getByConfigKey(na.toString()));
+            passButton.setRailsIcon(RailsIcon.getByConfigKey(na.getMode().name()));
             passAllowed = true;
             passButton.setPossibleAction(na);
             passButton.setMnemonic(KeyEvent.VK_P);
