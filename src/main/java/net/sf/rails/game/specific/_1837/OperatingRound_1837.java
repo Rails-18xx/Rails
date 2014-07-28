@@ -6,7 +6,9 @@ package net.sf.rails.game.specific._1837;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Table;
 
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
@@ -38,7 +40,7 @@ public class OperatingRound_1837 extends OperatingRound {
      * Registry of percentage of nationals revenue to be denied per player
      * because of having produced revenue in the same OR.
      */
-    private final HashMapState<Player, Integer> deniedIncomeShare = HashMapState.create(this, "deniedIncomeShare");
+    private final Table<Player, PublicCompany, Integer> deniedIncomeShare = HashBasedTable.create();
     /**
      * @param parent
      * @param id
@@ -72,12 +74,12 @@ public class OperatingRound_1837 extends OperatingRound {
         }
     }
     
-    private void addIncomeDenialShare (Player player, int share) {
+    private void addIncomeDenialShare (Player player, PublicCompany company, int share) {
 
-        if (!deniedIncomeShare.containsKey(player)) {
-            deniedIncomeShare.put(player, share);
+        if (!deniedIncomeShare.contains(player, company)) {
+            deniedIncomeShare.put(player, company, share);
         } else {
-            deniedIncomeShare.put(player, share + deniedIncomeShare.get(player));
+            deniedIncomeShare.put(player, company, share + deniedIncomeShare.get(player, company));
         }
         //log.debug("+++ Denied "+share+"% share of PR income to "+player.getName());
     }
@@ -91,19 +93,19 @@ public class OperatingRound_1837 extends OperatingRound {
 
         Map<MoneyOwner, Integer> sharesPerRecipient = super.countSharesPerRecipient();
 
-        if (operatingCompany.value().getId().equalsIgnoreCase(GameManager_1835.PR_ID)) {
-            for (Player player : deniedIncomeShare.viewKeySet()) {
+        if (operatingCompany.value().getId().equalsIgnoreCase(GameManager_1837.SU_ID)) {
+            for (Player player : deniedIncomeShare.rowKeySet()) {
                 if (!sharesPerRecipient.containsKey(player)) continue;
-                int share = deniedIncomeShare.get(player);
+                int share = deniedIncomeShare.get(player,operatingCompany.value());
                 int shares = share / operatingCompany.value().getShareUnit();
                 sharesPerRecipient.put (player, sharesPerRecipient.get(player) - shares);
                 ReportBuffer.add(this, LocalText.getText("NoIncomeForPreviousOperation",
                         player.getId(),
                         share,
-                        GameManager_1835.PR_ID));
-
+                        GameManager_1837.SU_ID));
             }
         }
+        
 
         return sharesPerRecipient;
     }
@@ -119,7 +121,7 @@ public class OperatingRound_1837 extends OperatingRound {
         Set<SpecialProperty> sps = operatingCompany.value().getSpecialProperties();
         if (sps != null && !sps.isEmpty()) {
             ExchangeForShare efs = (ExchangeForShare) Iterables.get(sps, 0);
-            addIncomeDenialShare (operatingCompany.value().getPresident(), efs.getShare());
+            addIncomeDenialShare (operatingCompany.value().getPresident(), operatingCompany.value(), efs.getShare());
         }
     }
 
