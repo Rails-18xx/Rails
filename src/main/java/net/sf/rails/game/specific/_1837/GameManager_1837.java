@@ -9,8 +9,8 @@ import net.sf.rails.game.Player;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.Round;
 import net.sf.rails.game.StartRound;
-import net.sf.rails.game.specific._1835.OperatingRound_1835;
-import net.sf.rails.game.specific._1835.PrussianFormationRound;
+import net.sf.rails.game.specific._1837.OperatingRound_1837;
+
 
 
 /**
@@ -138,7 +138,7 @@ public class GameManager_1837 extends GameManager {
         createRound(SuedBahnFormationRound.class, roundName).start();
     }
 
-    public void startKuKFormationRound(OperatingRound_1835 or) {
+    public void startKuKFormationRound(OperatingRound_1837 or) {
         interruptedRound = or;
         String roundName;
         if (interruptedRound == null) {
