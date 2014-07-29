@@ -20,10 +20,7 @@ import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.special.ExchangeForShare;
 import net.sf.rails.game.special.SpecialProperty;
-import net.sf.rails.game.specific._1835.GameManager_1835;
-import net.sf.rails.game.specific._1835.PrussianFormationRound;
 import net.sf.rails.game.state.BooleanState;
-import net.sf.rails.game.state.HashMapState;
 import net.sf.rails.game.state.MoneyOwner;
 
 /**
@@ -35,7 +32,7 @@ public class OperatingRound_1837 extends OperatingRound {
     private final BooleanState needSuedBahnFormationCall = BooleanState.create(this, "NeedSuedBahnFormationCall");
     private final BooleanState needHungaryFormationCall = BooleanState.create(this, "NeedHungaryFormationCall");
     private final BooleanState needKuKFormationCall = BooleanState.create(this, "NeedKuKFormationCall");
-
+ 
     /**
      * Registry of percentage of nationals revenue to be denied per player
      * because of having produced revenue in the same OR.
@@ -72,6 +69,30 @@ public class OperatingRound_1837 extends OperatingRound {
                 ((GameManager_1837)gameManager).startSuedBahnFormationRound (this);
             }
         }
+        if (phase.getId().equals("4+1")
+                && !companyManager.getPublicCompany(GameManager_1837.KK_ID).hasStarted()
+                && !KuKFormationRound.KuKIsComplete(gameManager)) {
+            if (getStep() == GameDef.OrStep.DISCARD_TRAINS) {
+                // Postpone until trains are discarded
+                needKuKFormationCall.set(true);
+            } else {
+                // Do it immediately
+                ((GameManager_1837)gameManager).startKuKFormationRound (this);
+            }
+         if (phase.getId().equals("4E")
+                    && !companyManager.getPublicCompany(GameManager_1837.HU_ID).hasStarted()
+                    && !HungaryFormationRound.HungaryIsComplete(gameManager)) {
+                if (getStep() == GameDef.OrStep.DISCARD_TRAINS) {
+                    // Postpone until trains are discarded
+                    needHungaryFormationCall.set(true);
+                } else {
+                    // Do it immediately
+                    ((GameManager_1837)gameManager).startHungaryFormationRound (this);
+                }
+            }
+
+        }
+
     }
     
     private void addIncomeDenialShare (Player player, PublicCompany company, int share) {
@@ -128,12 +149,14 @@ public class OperatingRound_1837 extends OperatingRound {
     @Override
     public void resume() {
         PublicCompany suedbahn = companyManager.getPublicCompany(GameManager_1837.SU_ID);
+        PublicCompany hungary = companyManager.getPublicCompany(GameManager_1837.HU_ID);
+        PublicCompany kuk = companyManager.getPublicCompany(GameManager_1837.KK_ID);
 
-        if (suedbahn.hasFloated() && !suedbahn.hasOperated()
+        if ((suedbahn.hasFloated()) && (!suedbahn.hasOperated())
                 // PR has just started. Check if it can operate this round
                 // That's only the case if a CoalTrain has just bought
                 // the first 4-train or or 4E or 4+1-train
-                && operatingCompany.value().getType().getId().equals("Coal") ) {
+                && (operatingCompany.value().getType().getId().equals("Coal")) ) {
             log.debug("S1 has not operated: Suedbahn can operate");
 
             // Insert the Prussian before the first major company
