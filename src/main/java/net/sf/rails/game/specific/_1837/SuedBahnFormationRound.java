@@ -392,7 +392,7 @@ public class SuedBahnFormationRound extends StockRound {
                     /* TODO: the false return value must be impossible. */
                     message = LocalText.getText("ExchangesBaseToken",
                             SU_ID, minor.getId(),
-                            city.getSpecificId());
+                            city.getRelatedNumber());
                     ReportBuffer.add(this, message);
                     if (display) DisplayBuffer.add(this, message);
 
