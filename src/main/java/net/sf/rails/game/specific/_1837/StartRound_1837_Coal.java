@@ -45,8 +45,7 @@ public class StartRound_1837_Coal extends StartRound {
         boolean buyable;
         int minRow = 0;
         boolean[][] soldStartItems = new boolean [3][6];
-        int seeks =0;
-                
+                 
         /*
          * First, mark which items are buyable. Once buyable, they always remain
          * so until bought, so there is no need to check if an item is still

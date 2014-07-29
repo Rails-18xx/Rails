@@ -27,7 +27,7 @@ public class StartRound_1837_Minors_KuK extends StartRound_1837_Coal {
 
         List<StartItem> startItems =  startPacket.getItems();
         List<StartItem> buyableItems = new ArrayList<StartItem>();
-        int seeks = 0;
+
 
         if ((!startPacket.areAllSold()) ){
                  for (StartItem item : startItems) {
