@@ -289,50 +289,50 @@
         </Company>
         <Company name="BH" longname="Bosnisch-Herzegowinische Landesbahn" type="Major" tokens="3" fgColour="000000" bgColour="FF0000">
                 <Home hex="N21"/>
-                <Float percentage="10"/>
-                <Certificate type="President" shares="1"/>
-                <Certificate shares="1" number="8"/>
+                <Float percentage="50"/>
+                <Certificate type="President" shares="2"/>
+                <Certificate shares="1" number="7"/>
                 <Certificate shares="1" number="1" status="reserved"/>
         </Company>
         <Company name="BK" longname="Böhmische Kommerzbahn" type="Major" tokens="3" fgColour="000000" bgColour="0000FF">
                 <Home hex="C12"/>
-                <Float percentage="10"/>
-                <Certificate type="President" shares="1"/>
+                <Float percentage="50"/>
+                <Certificate type="President" shares="2"/>
                 <Certificate shares="1" number="7"/>
                 <Certificate shares="1" number="2" status="reserved"/>
         </Company>
         <Company name="CL" longname="Carl-Ludwigs-Bahn" type="Major" tokens="3" fgColour="000000" bgColour="FFFFFF">
                 <Home hex="C34"/>
-                <Float percentage="10"/>
-                <Certificate type="President" shares="1"/>
-                <Certificate shares="1" number="8"/>
+                <Float percentage="50"/>
+                <Certificate type="President" shares="2"/>
+                <Certificate shares="1" number="7"/>
                 <Certificate shares="1" number="1" status="reserved"/>
         </Company>
         <Company name="GT" longname="Galizische Transversalbahn" type="Major" tokens="3" fgColour="FFFFFF" bgColour="00B000">
                 <Home hex="D37"/>
-                <Float percentage="10"/>
-                <Certificate type="President" shares="1"/>
+                <Float percentage="50"/>
+                <Certificate type="President" shares="2"/>
                 <Certificate shares="1" number="9"/>
         </Company>
         <Company name="MS" longname="Mährisch-schlesische Eisenbahn" type="Major" tokens="3" fgColour="FFFFFF" bgColour="FFFF00">
                 <Home hex="E18"/>
-                <Float percentage="10"/>
-                <Certificate type="President" shares="1"/>
-                <Certificate shares="1" number="7"/>
+                <Float percentage="50"/>
+                <Certificate type="President" shares="2"/>
+                <Certificate shares="1" number="6"/>
                 <Certificate shares="1" number="2" status="reserved"/>
         </Company>
         <Company name="SB" longname="Siebenbürgische Bahn" type="Major" tokens="3" fgColour="FFFFFF" bgColour="88FF48">
                 <Home hex="J37"/>
-                <Float percentage="10"/>
-                <Certificate type="President" shares="1"/>
-                <Certificate shares="1" number="7"/>
+                <Float percentage="50"/>
+                <Certificate type="President" shares="2"/>
+                <Certificate shares="1" number="6"/>
                 <Certificate shares="1" number="2" status="reserved"/>
         </Company>
         <Company name="Th" longname="Theißbahn" type="Major" tokens="3" fgColour="FFFFFF" bgColour="AAFFFF">
                 <Home hex="F29"/>
-                <Float percentage="10"/>
-                <Certificate type="President" shares="1"/>
-                <Certificate shares="1" number="7"/>
+                <Float percentage="50"/>
+                <Certificate type="President" shares="2"/>
+                <Certificate shares="1" number="6"/>
                 <Certificate shares="1" number="2" status="reserved"/>
         </Company>
         <Company name="Sd" longname="Südbahn" type="Major" tokens="5" fgColour="FFFFFF" bgColour="FF5400">
