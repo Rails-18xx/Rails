@@ -4,21 +4,18 @@
  */
 package rails.game.specific._1880;
 
-import java.util.ArrayList;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import rails.common.DisplayBuffer;
 import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.BuyCertificate;
 import rails.game.action.PossibleAction;
 import rails.game.action.SellShares;
 import rails.game.action.StartCompany;
-import rails.game.action.UseSpecialProperty;
 import rails.game.move.CashMove;
-import rails.game.special.SpecialPropertyI;
 import rails.game.specific._1880.PublicCompany_1880;
 
 
@@ -37,13 +34,13 @@ public class StockRound_1880 extends StockRound {
     }
 
     /**
-     * Share price goes down 1 space for any number of shares sold.
+     * Share price goes down 1 space for each number of shares sold.
      */
     @Override
     protected void adjustSharePrice(PublicCompanyI company, int numberSold,
             boolean soldBefore) {
         if (((PublicCompany_1880) company).canStockPriceMove() == true) {      
-            super.adjustSharePrice(company, 1, soldBefore);
+            super.adjustSharePrice(company, numberSold, soldBefore);
         }
     }
 
@@ -111,15 +108,6 @@ public class StockRound_1880 extends StockRound {
     }
 
     /* (non-Javadoc)
-     * @see rails.game.StockRound#processGameSpecificAction(rails.game.action.PossibleAction)
-     */
-    @Override
-    protected boolean processGameSpecificAction(PossibleAction action) {
-        // TODO Auto-generated method stub
-        return super.processGameSpecificAction(action);
-    }
-
-    /* (non-Javadoc)
      * @see rails.game.StockRound#setBuyableCerts()
      */
     @Override
@@ -145,7 +133,6 @@ public class StockRound_1880 extends StockRound {
             from = ipo;
             Map<String, List<PublicCertificateI>> map =
                 from.getCertsPerCompanyMap();
-            int shares;
 
             for (String compName : map.keySet()) {
                 certs = map.get(compName);
@@ -177,8 +164,6 @@ public class StockRound_1880 extends StockRound {
                 stockSpace = comp.getCurrentSpace();
                 if ((stockSpace == null || !stockSpace.isNoCertLimit()) && !mayPlayerBuyCertificate(
                         currentPlayer, comp, cert.getCertificateCount())) continue;
-
-                shares = cert.getShares();
 
                 if (!cert.isPresidentShare()) {
                     price = comp.getMarketPrice() / unitsForPrice; // Always use the market price
