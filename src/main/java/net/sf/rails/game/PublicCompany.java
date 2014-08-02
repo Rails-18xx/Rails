@@ -19,7 +19,9 @@ import org.slf4j.LoggerFactory;
 
 import rails.game.action.SetDividend;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 
@@ -1648,24 +1650,22 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     }
 
     /** Return all possible token lay costs to be incurred for the
-     * company's next token lay. In the "distance" method, this will be an array.
-     * @return
+     * company's next token lay. For the distance method it will be a full list
      */
-    public int[] getBaseTokenLayCosts () {
+    public Set<Integer> getBaseTokenLayCosts () {
 
         if (baseTokenLayCostMethod.equals(BASE_COST_SEQUENCE)) {
-            return new int[] {getBaseTokenLayCost(null)};
+            return ImmutableSet.of(getBaseTokenLayCost(null));
         } else if (baseTokenLayCostMethod.equals(BASE_COST_DISTANCE)) {
             // WARNING: no provision yet for multiple home hexes.
-            int[] distances = getRoot().getMapManager().getCityDistances(homeHexes.get(0));
-            int[] costs = new int[distances.length];
-            int i = 0;
+            Collection<Integer> distances = getRoot().getMapManager().getCityDistances(homeHexes.get(0));
+            ImmutableSet.Builder<Integer> costs = ImmutableSet.builder();
             for (int distance : distances) {
-                costs[i++] = distance * baseTokenLayCost.get(0);
+                costs.add(distance * baseTokenLayCost.get(0));
             }
-            return costs;
+            return costs.build();
         } else {
-            return new int[] {0};
+            return ImmutableSet.of(0);
         }
 
     }
