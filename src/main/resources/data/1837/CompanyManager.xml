@@ -296,7 +296,7 @@
                 <Home hex="C12"/>
                 <Float percentage="50"/>
                 <Certificate type="President" shares="2"/>
-                <Certificate shares="1" number="7"/>
+                <Certificate shares="1" number="6"/>
                 <Certificate shares="1" number="2" status="reserved"/>
         </Company>
         <Company name="CL" longname="Carl-Ludwigs-Bahn" type="Major" tokens="3" fgColour="000000" bgColour="FFFFFF">
@@ -310,7 +310,7 @@
                 <Home hex="D37"/>
                 <Float percentage="50"/>
                 <Certificate type="President" shares="2"/>
-                <Certificate shares="1" number="9"/>
+                <Certificate shares="1" number="8"/>
         </Company>
         <Company name="MS" longname="Mährisch-schlesische Eisenbahn" type="Major" tokens="3" fgColour="FFFFFF" bgColour="FFFF00">
                 <Home hex="E18"/>
