@@ -14,6 +14,7 @@
                         <!--OperatingRound class="rails.game.specific._1837.OperatingRound_1837"-->
                         <OperatingRound class="net.sf.rails.game.OperatingRound">
                                 <EmergencyTrainBuying mustBuyCheapestTrain="no" mayAlwaysBuyNewTrain="yes" mayBuyFromCompany="yes"/>
+                                <RevenueIncrement amount="5"/>
                         </OperatingRound>
                 </GameParameters>
                 <GuiClasses>
