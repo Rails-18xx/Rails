@@ -2645,12 +2645,12 @@ public class OperatingRound extends Round implements Observer {
 
         // LayBaseToken Actions
         if (operatingCompany.value().getNumberOfFreeBaseTokens() != 0) {
-            int[] costsArray = operatingCompany.value().getBaseTokenLayCosts();
+            Set<Integer> baseCosts = operatingCompany.value().getBaseTokenLayCosts();
 
             // change to set to allow for identity and ordering
             Set<Integer> costsSet = new TreeSet<Integer>();
-            for (int cost:costsArray)
-                if (!(cost == 0 && costsArray.length != 1)) // fix for sequence based home token
+            for (int cost:baseCosts)
+                if (!(cost == 0 && baseCosts.size() != 1)) // fix for sequence based home token
                     costsSet.add(cost);
 
             // SpecialTokenLay Actions - workaround for a better handling of those later
