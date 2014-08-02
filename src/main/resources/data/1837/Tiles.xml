@@ -22,7 +22,7 @@
 	<Tile colour="white" id="-10" name="1 city">
 		<Station id="city1" position="302" slots="1" type="City"/>
 	</Tile>
-	<Tile colour="yellow" id="-20" name="2 cities">
+	<Tile colour="fixed" id="-20" name="2 cities">
 		<Station id="city1" position="002" slots="1" type="City"/>
 		<Station id="city2" position="302" slots="1" type="City"/>
 	</Tile>
