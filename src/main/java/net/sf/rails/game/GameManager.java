@@ -145,7 +145,15 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     // TODO: Move that to a better place
     protected Map<String, Object> objectStorage = new HashMap<String, Object>();
     protected Map<String, Integer> storageIds = new HashMap<String, Integer>();
+    private static int revenueSpinnerIncrement;
     
+    /**
+     * @return the revenueSpinnerIncrement
+     */
+    public static int getRevenueSpinnerIncrement() {
+        return revenueSpinnerIncrement;
+    }
+
     protected static Logger log =
         LoggerFactory.getLogger(GameManager.class);
 
@@ -252,6 +260,10 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                     setGameParameter (GameDef.Parm.EMERGENCY_MAY_BUY_FROM_COMPANY,
                             emergencyTag.getAttributeAsBoolean("mayBuyFromCompany",
                                     GameDef.Parm.EMERGENCY_MAY_BUY_FROM_COMPANY.defaultValueAsBoolean()));
+                }
+                Tag revenueIncrementTag = orTag.getChild("RevenueIncrement");
+                if (revenueIncrementTag != null) {
+                    revenueSpinnerIncrement = revenueIncrementTag.getAttributeAsInteger("amount", 10);
                 }
             }
 
