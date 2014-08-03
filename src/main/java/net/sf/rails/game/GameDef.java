@@ -46,6 +46,7 @@ public class GameDef {
         LAY_TOKEN,
         CALC_REVENUE,
         PAYOUT,
+        FREIGHTRUN,
         BUY_TRAIN,
         TRADE_SHARES,
         REPAY_LOANS,
