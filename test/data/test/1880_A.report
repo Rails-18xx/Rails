@@ -575,7 +575,7 @@ SELL_SHARE_LOG,andy,10,SCR,80
 PRICE_MOVES_LOG,SCR,80,E7,75,E8
 BUY_SHARE_LOG,andy,10,JGG,IPO,110
 SELL_SHARES_LOG,marc,2,10,20,HKR,200
-PRICE_MOVES_LOG,HKR,100,F4,95,F5
+PRICE_MOVES_LOG,HKR,100,F4,90,F6
 BUY_SHARE_LOG,marc,10,JHU,IPO,110
 BUY_SHARE_LOG,todd,10,SCR,IPO,75
 PASSES,mike
@@ -709,7 +709,7 @@ StartStockRound,4
 HasPriority,todd
 BUY_SHARE_LOG,todd,10,CKR,IPO,75
 BUY_SHARE_LOG,mike,10,NJR,IPO,115
-BUY_SHARE_LOG,andy,10,HKR,IPO,95
+BUY_SHARE_LOG,andy,10,HKR,IPO,90
 BUY_SHARE_LOG,marc,10,CKR,IPO,75
 PASSES,todd
 BUY_SHARE_LOG,mike,10,NJR,IPO,115
@@ -730,7 +730,7 @@ Has,4,270
 Has,5,360
 Has,mike,10
 Has,marc,34
-Has,andy,8
+Has,andy,13
 Has,todd,55
 START_OR,4.1
  
@@ -740,7 +740,7 @@ CompanyOperates,HKR,andy
 LaysTileAt,HKR,8878,K15,SW
 CompanyRevenue,HKR,130
 CompanyWithholds,HKR,130
-PRICE_MOVES_LOG,HKR,95,F5,90,E5
+PRICE_MOVES_LOG,HKR,90,F6,85,E6
 BuysTrain,HKR,2,JGG,1
 BuysTrain,HKR,3+3,IPO,300
 FirstTrainBought,3+3
@@ -828,7 +828,7 @@ Has,NJR,540
 Has,5,490
 Has,mike,242
 Has,marc,194
-Has,andy,13
+Has,andy,18
 Has,todd,324
 START_OR,4.2
  
@@ -845,7 +845,7 @@ LaysTileAt,HKR,8851,L16,NW
 CompanyRevenue,HKR,160
 CompanyPaysOutFull,HKR,160
 Payout,andy,64,4,10
-PRICE_MOVES_LOG,HKR,90,E5,95,F5
+PRICE_MOVES_LOG,HKR,85,E6,90,F6
  
 CompanyOperates,CKR,marc
 LaysTileAt,CKR,15,O5,NW
@@ -880,7 +880,7 @@ Has,NJR,540
 Has,5,490
 Has,mike,365
 Has,marc,310
-Has,andy,212
+Has,andy,217
 Has,todd,394
 StartStockRound,5
 HasPriority,andy
