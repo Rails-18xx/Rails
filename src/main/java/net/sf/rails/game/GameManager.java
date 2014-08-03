@@ -145,7 +145,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     // TODO: Move that to a better place
     protected Map<String, Object> objectStorage = new HashMap<String, Object>();
     protected Map<String, Integer> storageIds = new HashMap<String, Integer>();
-    private static int revenueSpinnerIncrement;
+    private static int revenueSpinnerIncrement = 10;
     
     /**
      * @return the revenueSpinnerIncrement
