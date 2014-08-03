@@ -63,7 +63,7 @@ public class StockRound_1880 extends StockRound {
     protected void adjustSharePrice(PublicCompany company, int numberSold,
             boolean soldBefore) {
         if (((PublicCompany_1880) company).canStockPriceMove() == true) {      
-            super.adjustSharePrice(company, 1, soldBefore);
+            super.adjustSharePrice(company, numberSold, soldBefore);
         }
     }
 
