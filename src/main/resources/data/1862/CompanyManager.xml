@@ -1,9 +1,6 @@
 <?xml version="1.0"?>
 <CompanyManager>
-	<CompanyType name="Private" class="net.sf.rails.game.PrivateCompany">
-		<Tradeable toCompany="yes" lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
-	</CompanyType>
-	<CompanyType name="Public" class="net.sf.rails.game.specific._1856.PublicCompany_1856">
+	<CompanyType name="Public" class="net.sf.rails.game.specific._1862.PublicCompany_1862">
 		<CanBuyPrivates/>
 		<PoolPaysOut/>
 		<ShareUnit percentage="10"/>
@@ -18,207 +15,65 @@
 		<!-- Number of loans is undefined and handled in the code -->
         <CanUseSpecialProperties/>
 	</CompanyType>
-	<CompanyType name="State" class="net.sf.rails.game.specific._1856.PublicCompany_CGR">
-		<PoolPaysOut/>
-		<ShareUnit percentage="5"/>
-		<Certificate type="President" shares="2" certificateCount="1"/>
-		<Certificate shares="1" number="18" certificateCount="0.5"/>
-		<BaseTokens>
-			<LayCost method="sequence" cost="0,40,100"/>
-		</BaseTokens>
-		<Trains limit="3"/>
-		<Options mustTradeTrainsAtFixedPrice="yes" canClose="no"/>
-	</CompanyType>
-	
-	<Company name="Flos" type="Private" basePrice="20" revenue="5">
-		<Blocking hex="L3"/>
-	</Company>
-	<Company name="W&amp;SR" type="Private" basePrice="40" revenue="10">
-		<Blocking hex="I12"/>
-		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
-				<SpecialTileLay tile="59" location="I12" connected="no" extra="no"/>
-			</SpecialProperty>
-			<SpecialProperty condition="ifOwnedByCompany" when="tokenLayingStep" class="net.sf.rails.game.special.SpecialTokenLay">
-				<SpecialTokenLay location="I12" connected="no" extra="no" free="yes"/>
-			</SpecialProperty>
-		</SpecialProperties>
-		<ClosingConditions>
-			<SpecialProperties condition="ifAnyExercised" when="endOfORTurn"/>
-		</ClosingConditions>
-	</Company>
-	<Company name="TCC" type="Private" basePrice="50" revenue="10">
-		<Blocking hex="H11"/>
-		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
-				<SpecialTileLay location="H11" connected="no" extra="yes"/>
-			</SpecialProperty>
-		</SpecialProperties>
-	</Company>
-	<Company name="Ship" type="Private" basePrice="70" revenue="15">
-		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByCompany" 
-				when="anyTimeDuringORTurn" 
-				class="net.sf.rails.game.special.SpecialTokenLay">
-				<SpecialTokenLay class="net.sf.rails.game.BonusToken" 
-						location="C14,D19,E18,F9,F17,H5,H7,H17,J5,J17,K2,M18,O18" connected="yes" extra="yes">
-					<BonusToken name="Port" value="20" removed="Phase:5"/>
-				</SpecialTokenLay>
-			</SpecialProperty>
-		</SpecialProperties>
-		<ClosingConditions>
-			<SpecialProperties condition="ifExercised"/>
-		</ClosingConditions>
-	</Company>
-	<Company name="Brdg" type="Private" basePrice="100" revenue="20">
-		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByCompany" when="revenueStep" 
-				class="net.sf.rails.game.special.LocatedBonus" transfer="toCompany">
-			<LocatedBonus name="Bridge" location="P17,P19" value="10"/>
-			</SpecialProperty>
-			<SpecialProperty condition="ifOwnedByCompany" when="anyTimeDuringOR" 
-				class="net.sf.rails.game.special.SellBonusToken" transfer="toGameManager">
-			<SellBonusToken name="Bridge" location="P17,P19" price="50" value="10">
-				<IfOption name="UnlimitedBonusTokens" value="yes">
-					<Attributes amount="-1"/>
-				</IfOption>
-				<IfOption name="UnlimitedBonusTokens" value="no">
-					<Attributes amount="3"/>
-				</IfOption>
-			</SellBonusToken>
-			</SpecialProperty>
-		</SpecialProperties>
-	</Company>
-	<Company name="Tunn" type="Private" basePrice="100" revenue="20">
-		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByCompany" when="revenueStep" 
-				class="net.sf.rails.game.special.LocatedBonus" transfer="toCompany">
-			<LocatedBonus name="Tunnel" location="B13" value="10"/>
-			</SpecialProperty>
-			<SpecialProperty condition="ifOwnedByCompany" when="anyTimeDuringOR" 
-				class="net.sf.rails.game.special.SellBonusToken" transfer="toGameManager">
-			<SellBonusToken name="Tunnel" location="B13" price="50" value="10">
-				<IfOption name="UnlimitedBonusTokens" value="yes">
-					<Attributes amount="-1"/>
-				</IfOption>
-				<IfOption name="UnlimitedBonusTokens" value="no">
-					<Attributes amount="3"/>
-				</IfOption>
-			</SellBonusToken>
-			</SpecialProperty>
-		</SpecialProperties>
-	</Company>
-	
-	<Company name="GT"	type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
-		<Home hex="P9"/>
-        <IfOption name="1856AlternateDestinations" value="no">
-			<Destination hex="K8"/>
-        </IfOption>        
-		<IfOption name="1856AlternateDestinations" value="yes">
-			<Destination hex="L13"/> <!-- Burlington -->
-        </IfOption>        
-	</Company>
-	<Company name="THB" type="Public" tokens="2" fgColour="000000" bgColour="B0B040">
-		<IfOption name="1856THBHomeBlocked" value="yes">
-			<Home hex="L15" city="0" blockedForAllCities = "yes"/>
-		</IfOption>
-		<IfOption name="1856THBHomeBlocked" value="no">
-			<Home hex="L15" city="0" blockedForAllCities = "no" />
-		</IfOption>
-        <IfOption name="1856AlternateDestinations" value="no">
-			<Destination hex="J11"/>
-        </IfOption>        
-		<IfOption name="1856AlternateDestinations" value="yes">
-			<Destination hex="H15"/> <!-- Woodstock -->
-        </IfOption>        
-	</Company>
-	<Company name="BBG" type="Public" tokens="3" fgColour="000000" bgColour="FF8080">
-		<Home hex="J15"/>
-        <IfOption name="1856AlternateDestinations" value="no">
-			<Destination hex="N17"/>
-        </IfOption>        
-		<IfOption name="1856AlternateDestinations" value="yes">
-			<Destination hex="N11"/> <!-- Toronto-->
-        </IfOption>        
-	</Company>
-	<Company name="LPS" type="Public" tokens="2" fgColour="000000" bgColour="A0A0F0">
-		<Home hex="C14"/>
-        <IfOption name="1856AlternateDestinations" value="no">
-			<Destination hex="F17"/>
-        </IfOption>        
-		<IfOption name="1856AlternateDestinations" value="yes">
-			<Destination hex="F15"/> <!-- London -->
-        </IfOption>        
-	</Company>
-	<Company name="WGB" type="Public" tokens="2" fgColour="FFFFFF" bgColour="0000FF">
-		<Home hex="J11"/>
-        <IfOption name="1856AlternateDestinations" value="no">
-			<Destination hex="F9"/>
-        </IfOption>        
-		<IfOption name="1856AlternateDestinations" value="yes">
-			<Destination hex="H5"/> <!-- Lake Huron -->
-        </IfOption>        
-	</Company>
-	<Company name="WR"	type="Public" tokens="3" fgColour="FFFFFF" bgColour="808030">
-		<Home hex="O16"/>
-		<Destination hex="L15"/>
-		 <!-- Alternate: Hamilton, this is identical to the standard -->
-	</Company>
-	<Company name="CV"	type="Public" tokens="3" fgColour="FFFFFF" bgColour="800080">
-		<Home hex="N11" city="2"/>
-        <IfOption name="1856AlternateDestinations" value="no">
-			<Destination hex="I14"/>
-        </IfOption>        
-		<IfOption name="1856AlternateDestinations" value="yes">
-			<Destination hex="M4"/> <!-- Barrie -->
-        </IfOption>        
-	</Company>
-	<Company name="CPR" type="Public" tokens="4" fgColour="000000" bgColour="ffa0ff">
-		<Home hex="M4"/>
-        <IfOption name="1856AlternateDestinations" value="no">
-			<Destination hex="N11"/>
-        </IfOption>        
-		<IfOption name="1856AlternateDestinations" value="yes">
-			<Destination hex="P9"/> <!-- Oshawa -->
-        </IfOption>        
-	</Company>
-	<Company name="CA"	type="Public" tokens="3" fgColour="FFFFFF" bgColour="FF0000">
-		<Home hex="D17"/>
-        <IfOption name="1856AlternateDestinations" value="no">
-			<Destination hex="H15"/>
-        </IfOption>        
-		<IfOption name="1856AlternateDestinations" value="yes">
-			<Destination hex="F15"/>  <!-- This is London, Detroit has to be added as the second end of the destination route -->
-		</IfOption>        
-	</Company>
-	<Company name="CGR" type="State" available="no" tokens="10" fgColour="FFFFFF" bgColour="000000">
-	</Company>
-	<Company name="TGB" type="Public" tokens="2" fgColour="FFFFFF" bgColour="FF8000">
-		<Home hex="K8"/>
-        <IfOption name="1856AlternateDestinations" value="no">
-			<Destination hex="H5"/>
-        </IfOption>        
-		<IfOption name="1856AlternateDestinations" value="yes">
-			<Destination hex="N1"/> <!-- This is West Canada Offboard, the second hex (O2) has to be added  -->
-        </IfOption>        
-	</Company>
-	<Company name="GW"	type="Public" tokens="4" fgColour="000000" bgColour="b090b0">
-		<Home hex="F15"/>
-        <IfOption name="1856AlternateDestinations" value="no">
-			<Destination hex="A20"/>
-        </IfOption>        
-		<IfOption name="1856AlternateDestinations" value="yes">
-			<Destination hex="J15"/> <!-- Brantford -->
-        </IfOption>        
-	</Company>
 
-	<StartPacket roundClass="net.sf.rails.game.StartRound_1830">
-		<Bidding initial="5" minimum="5" increment="1"/>
-		<Item name="Flos"     type="Private" basePrice="20"/>
-		<Item name="W&amp;SR" type="Private" basePrice="40"/>
-		<Item name="TCC"      type="Private" basePrice="50"/>
-		<Item name="Ship"     type="Private" basePrice="70"/>
-		<Item name="Brdg"     type="Private" basePrice="100"/>
-		<Item name="Tunn"     type="Private" basePrice="100"/>
-	</StartPacket>
+	<Company name="E&amp;H" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="A20"/>
+	</Company>
+	<Company name="ECR" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="A20"/>
+	</Company>
+	<Company name="ENR" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="A20"/>
+	</Company>
+	<Company name="ESR" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="A20"/>
+	</Company>
+	<Company name="EUR" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="A20"/>
+	</Company>
+	<Company name="FDR" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="A20"/>
+	</Company>
+	<Company name="I&amp;B" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="A20"/>
+	</Company>
+	<Company name="L&amp;D" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="A20"/>
+	</Company>
+	<Company name="L&amp;E" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="A20"/>
+	</Company>
+	<Company name="L&amp;H" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="A20"/>
+	</Company>
+	<Company name="N&amp;B" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="A20"/>
+	</Company>
+	<Company name="N&amp;E" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="A20"/>
+	</Company>
+	<Company name="N&amp;S" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="A20"/>
+	</Company>
+	<Company name="Y&amp;N" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="A20"/>
+	</Company>
+	<Company name="NGC" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="A20"/>
+	</Company>
+	<Company name="SVR" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="A20"/>
+	</Company>
+	<Company name="WNR" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="A20"/>
+	</Company>
+	<Company name="W&amp;F" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="A20"/>
+	</Company>
+	<Company name="WVR" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="A20"/>
+	</Company>
+	<Company name="WstI" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+		<Home hex="A20"/>
+	</Company>
 </CompanyManager>
