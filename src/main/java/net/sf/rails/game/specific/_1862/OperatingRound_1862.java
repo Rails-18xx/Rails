@@ -273,30 +273,11 @@ public class OperatingRound_1862 extends OperatingRound {
      @Override
     protected void setDestinationActions() {
 
-        List<PublicCompany> possibleDestinations = new ArrayList<PublicCompany>();
-        for (PublicCompany comp : operatingCompanies.view()) {
-            if (comp.hasDestination()
-                    && ((PublicCompany_1862)comp).getTrainNumberAvailableAtStart() < 5
-                    && !comp.hasReachedDestination()) {
-                possibleDestinations.add (comp);
-            }
-        }
-        if (possibleDestinations.size() > 0) {
-            possibleActions.add(new ReachDestinations (possibleDestinations));
-        }
     }
 
     @Override
     protected void reachDestination (PublicCompany company) {
 
-        PublicCompany_1862 comp = (PublicCompany_1862) company;
-        int cashInEscrow = comp.getMoneyInEscrow();
-        if (cashInEscrow > 0) {
-            String cashText = Currency.fromBank(cashInEscrow, company);
-            ReportBuffer.add(this, LocalText.getText("ReleasedFromEscrow",
-                    company.getId(),
-                    cashText));
-        }
 
     }
 
@@ -550,12 +531,12 @@ public class OperatingRound_1862 extends OperatingRound {
     @Override
     protected boolean finishTurnSpecials() {
 
-        if (finalLoanRepaymentPending.value()) {
-
-            ((GameManager_1862)gameManager).startCGRFormationRound(this, playerToStartLoanRepayment);
-            return false;
-        }
-
+//        if (finalLoanRepaymentPending.value()) {
+//
+//            ((GameManager_1862)gameManager).startCGRFormationRound(this, playerToStartLoanRepayment);
+//            return false;
+//        }
+//
         return true;
     }
 }

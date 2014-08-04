@@ -39,24 +39,7 @@ public class StockRound_1862 extends StockRound {
 
         if (!company.hasStarted() || company.hasFloated()) return;
 
-        int soldPercentage = company.getSoldPercentage();
 
-        PublicCompany_1862 comp = (PublicCompany_1862) company;
-        int trainNumberAtStart = comp.getTrainNumberAvailableAtStart();
-        int floatPercentage = 10 * trainNumberAtStart;
-
-        log.debug ("Floatpercentage is "+floatPercentage);
-
-        if (soldPercentage >= floatPercentage) {
-            // Company floats.
-            // In 1856 this does not mean that the company will operate,
-            // only that it will be added to the list of companies
-            // being considered for an OR turn.
-            // See OperatingRound_1856 for the actual check.
-            if (!company.hasFloated()) {
-                floatCompany(company);
-            }
-        }
     }
 
     @Override
@@ -88,46 +71,7 @@ public class StockRound_1862 extends StockRound {
 
     @Override
     protected MoneyOwner getSharePriceRecipient(PublicCompany company, Owner from, int price) {
-
-        MoneyOwner recipient;
-
-        if (price != 0
-                && !company.getId().equalsIgnoreCase(PublicCompany_CGR.NAME)
-                && from == ipo.getParent()) {
-
-            PublicCompany_1862 comp = (PublicCompany_1862)company;
-
-            switch (comp.getTrainNumberAvailableAtStart()) {
-            case 2:
-            case 3:
-            case 4:
-                // Note, that the share has not yet been moved
-                if (comp.getSoldPercentage() >= 50
-                        && !comp.hasReachedDestination()) {
-                    recipient = bank;
-                    comp.addMoneyInEscrow(price);
-                    // FIXME (Rails2.0): This used to be addWaiting in ReportBuffer
-                    // potentially the reporting is now incorrect
-                    ReportBuffer.add(this, LocalText.getText("HoldMoneyInEscrow",
-                            Currency.format(this, price),
-                            Currency.format(this, comp.getMoneyInEscrow()),
-                            comp.getId() ));
-                    break;
-                }
-                // fall through
-            case 5:
-                recipient = comp;
-                break;
-            case 6:
-            default:
-                recipient = bank;
-            }
-        } else if (from instanceof BankPortfolio) {
-            recipient = bank;
-        } else {
-            recipient = (MoneyOwner)from;
-        }
-        return recipient;
+        return null;
     }
 
     /** Check for the special condition that the CGR president
