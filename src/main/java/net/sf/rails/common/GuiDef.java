@@ -50,8 +50,7 @@ public class GuiDef {
      * to pass visibility hints to the UI.
      */
     public enum Panel {
-
-        START_ROUND,
+        START_ROUND,     // Also used for Parliament Round in 1862
         STATUS,
         MAP,
         STOCK_MARKET

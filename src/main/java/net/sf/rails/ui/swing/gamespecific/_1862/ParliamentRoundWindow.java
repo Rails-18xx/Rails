@@ -1,20 +1,20 @@
 package net.sf.rails.ui.swing.gamespecific._1862;
 
-
 import java.awt.Color;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyListener;
 
 import javax.swing.JFrame;
 
-import net.sf.rails.ui.swing.ActionPerformer;
 import net.sf.rails.ui.swing.GameUIManager;
 import net.sf.rails.ui.swing.HelpWindow;
 import net.sf.rails.ui.swing.StartRoundWindow;
-import net.sf.rails.ui.swing.elements.DialogOwner;
+import net.sf.rails.ui.swing.elements.NonModalDialog;
+import net.sf.rails.ui.swing.elements.RadioButtonDialog;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
 
@@ -22,19 +22,19 @@ import javax.swing.*;
 
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.*;
-import net.sf.rails.game.special.SpecialProperty;
+import net.sf.rails.game.specific._1862.BidParliamentAction; 
+import net.sf.rails.game.specific._1862.BuyParliamentAction;
+import net.sf.rails.game.specific._1862.ParliamentBiddableItem;
 import net.sf.rails.game.specific._1862.ParliamentRound;
 import net.sf.rails.game.specific._1862.PublicCompany_1862;
-import net.sf.rails.sound.SoundManager;
 import net.sf.rails.ui.swing.elements.*;
-import net.sf.rails.ui.swing.hexmap.HexHighlightMouseListener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import rails.game.action.*;
 
-import com.google.common.collect.Iterables;
+import com.google.common.collect.ImmutableList;
 
 public class ParliamentRoundWindow extends StartRoundWindow {
 
@@ -49,51 +49,21 @@ public class ParliamentRoundWindow extends StartRoundWindow {
     private static final int WIDE_TOP = 4;
     private static final int WIDE_BOTTOM = 8;
 
-    private static final Color buyableColour = new Color (0, 128, 0);
-    private static final Color soldColour = new Color (128, 128, 128);
+    private static final Color buyableColour = new Color(0, 128, 0);
+    private static final Color soldColour = new Color(128, 128, 128);
     private static final Color defaultColour = Color.BLACK;
 
-    private JPanel statusPanel;
-    private JPanel buttonPanel;
+    private StatusPanel statusPanel;
+    private ButtonPanel buttonPanel;
 
-    private GridBagLayout gb;
+    private ParliamentBiddableItem selectedBiddable;
+    
     private GridBagConstraints gbc;
 
-    // Grid elements per function
-    private Caption itemName[];
-    private ClickField itemNameButton[];
-    private int itemNameXOffset, itemNameYOffset;
-    private Field basePrice[];
-    private int basePriceXOffset, basePriceYOffset;
-    private Field minBid[];
-    private int minBidXOffset, minBidYOffset;
-    private Field bidPerPlayer[][];
-    private int bidPerPlayerXOffset, bidPerPlayerYOffset;
-    private Field playerBids[];
-    private int playerBidsXOffset, playerBidsYOffset;
-    private Field playerFree[];
-    private int playerFreeCashXOffset, playerFreeCashYOffset;
-    private Field info[];
-    private int infoXOffset, infoYOffset;
-    private Field itemStatus[]; // Remains invisible, only used for status tooltip
-
-    private Caption[] upperPlayerCaption;
-    private Caption[] lowerPlayerCaption;
-
-    private ActionButton bidButton;
-    private ActionButton buyButton;
-    private JSpinner bidAmount;
-    private SpinnerNumberModel spinnerModel;
-    private ActionButton passButton;
 
     private ImageIcon infoIcon = null;
 
-    private int np; // Number of players
-    private int ni; // Number of start items
     private Player[] players;
-    private PublicCompany_1862[] items;
-    private StartItemAction[] actionableItems;
-    private int[] crossIndex;
     private ParliamentRound round;
     private GameUIManager gameUIManager;
 
@@ -102,14 +72,14 @@ public class ParliamentRoundWindow extends StartRoundWindow {
     protected PossibleAction currentDialogAction = null;
     protected SortedSet<StockSpace> startSpaces = null;
 
-    private PublicCompany_1862 si;
-    private JComponent f;
+    public static final String PAR_DIALOG = "ParDialog";
+    public static final String NUM_SHARES_DIALOG = "NumSharesDialog";
 
     /** @see StartItem.statusName */
-    public static final String[] itemStatusTextKeys =
-        new String[] { "Status_Unavailable", "Status_Biddable", "Status_Buyable",
-        "Status_Selectable", "Status_Auctioned",
-        "Status_NeedingSharePrice", "Status_Sold" };
+    public static final String[] itemStatusTextKeys = new String[] {
+            "Status_Unavailable", "Status_Biddable", "Status_Buyable",
+            "Status_Selectable", "Status_Auctioned",
+            "Status_NeedingSharePrice", "Status_Sold" };
 
     // Current state
     private int playerIndex = -1;
@@ -118,91 +88,265 @@ public class ParliamentRoundWindow extends StartRoundWindow {
     protected PossibleAction immediateAction = null;
 
     private final ButtonGroup itemGroup = new ButtonGroup();
-    private ClickField dummyButton; // To be selected if none else is.
 
-    private boolean includeBidding;
-    private boolean showBasePrices;
+    private ArrayList<ParliamentBiddableItem> biddables;
 
-    /* Keys of dialogs owned by this class */
-    public static final String COMPANY_START_PRICE_DIALOG = "CompanyStartPrice";
 
     protected static Logger log =
             LoggerFactory.getLogger(ParliamentRoundWindow.class);
 
-    public void init(StartRound round, GameUIManager parent) {
-        //super();
-        this.round = (ParliamentRound) round;
-        includeBidding = false; // TODO: round.hasBidding();
-        showBasePrices = round.hasBasePrices();
-        gameUIManager = parent;
-        possibleActions = gameUIManager.getGameManager().getPossibleActions();
+    public class StatusPanel extends JPanel implements ActionListener {
+        private static final long serialVersionUID = 1L;
+        private GridBagLayout gb;
+        private ImmutableList<Player> players;
+        private ArrayList<ParliamentBiddableItem> biddables;
+        private ParliamentRoundWindow parent;
+
+        private Caption[] upperPlayerCaption;
+        private Caption[] lowerPlayerCaption;
+        private Field[] playerCash;
+        private Caption itemName[];
+        private ClickField itemNameButton[];
+        private Field bidPerPlayer[][];
+        private Field info[]; // TODO: Needed?
+        
+        public StatusPanel(ParliamentRoundWindow parent, ImmutableList<Player> players, ArrayList<ParliamentBiddableItem> biddables) {
+            super();
+            this.parent = parent;
+            this.players = players;
+            this.biddables = biddables;
+            
+            gb = new GridBagLayout();
+            setLayout(gb);
+            setBorder(BorderFactory.createEtchedBorder());
+            
+            gbc = new GridBagConstraints();
+            
+            addFields();
+            
+            setOpaque(true);
+        }
+        
+        private void addFields() {
+            addStaticCaptions();
+            addPlayerCaptions();
+            addCompanies();
+        }
+        
+        private void addStaticCaptions() {
+            addField(new Caption(LocalText.getText("ITEM")), 0, 0, 1, 2, WIDE_RIGHT + WIDE_BOTTOM);
+            addField(new Caption(LocalText.getText("PLAYERS")), 1, 0, players.size(), 1, 0);
+            addField(new Caption(LocalText.getText("CASH")), 0, biddables.size()+3, 1, 1, WIDE_RIGHT + WIDE_TOP);
+        }
+        
+        private void addPlayerCaptions() {
+            upperPlayerCaption  = new Caption[players.size()];
+            lowerPlayerCaption  = new Caption[players.size()];
+            playerCash = new Field[players.size()];
+            for (int i = 0; i < players.size(); i++) {
+                upperPlayerCaption[i] = new Caption(players.get(i).getId());
+                lowerPlayerCaption[i] = new Caption(players.get(i).getId());
+                playerCash[i] = new Field(players.get(i).getWallet());
+                addField(upperPlayerCaption[i], i+1, 1, 1, 1, WIDE_BOTTOM);
+                addField(lowerPlayerCaption[i], i+1, biddables.size()+2, 1, 1, WIDE_BOTTOM);
+                addField(playerCash[i], i+1, biddables.size()+3, 1, 1, 0);
+            }            
+        }        
+        
+        private void addCompanies() {
+            itemName = new Caption[biddables.size()];
+            itemNameButton = new ClickField[biddables.size()];
+            bidPerPlayer = new Field[biddables.size()][players.size()];
+            info = new Field[biddables.size()];
+            infoIcon = createInfoIcon();
+
+            for (int i = 0; i < biddables.size(); i++) {
+                PublicCompany_1862 company = biddables.get(i).getCompany();
+                itemName[i] = new Caption(company.getLongName());
+                addField(itemName[i], 0, 2 + i, 1, 1, WIDE_RIGHT);
+                itemNameButton[i] = new ClickField(company.getLongName(), "", "", this, itemGroup);
+                addField(itemNameButton[i], 0, 2 + i, 1, 1, WIDE_RIGHT);
+                itemName[i].setPreferredSize(itemNameButton[i].getPreferredSize());
                 
-        setTitle(LocalText.getText("START_ROUND_TITLE"));
-        getContentPane().setLayout(new BorderLayout());
+                itemName[i].setVisible(false);
+                itemNameButton[i].setVisible(true);
+                String tooltip = "bar"; // TODO:
+                itemName[i].setToolTipText(tooltip);
+                itemNameButton[i].setToolTipText("");
 
-        statusPanel = new JPanel();
-        gb = new GridBagLayout();
-        statusPanel.setLayout(gb);
-        statusPanel.setBorder(BorderFactory.createEtchedBorder());
-        statusPanel.setOpaque(true);
+                itemName[i].setForeground(defaultColour);
+                itemNameButton[i].setForeground(buyableColour);
+                
+                for (int j = 0; j < players.size(); j++) {
+                    bidPerPlayer[i][j] = new Field(biddables.get(i).getBidModels().get(j));
+                    addField(bidPerPlayer[i][j], j+1, i+2, 1, 1, 0);
+                }
+                
+                info[i] = new Field(infoIcon);
+                info[i].setToolTipText("foo");
+                addField(info[i], players.size()+1, i+2, 1, 1, WIDE_LEFT);
 
-        buttonPanel = new JPanel();
+            }
+        }
+        
+        public void actionPerformed(ActionEvent actor) {
+            JComponent source = (JComponent) actor.getSource();
+            for (int i = 0; i < itemNameButton.length; i++) {
+                if (source == itemNameButton[i]) {
+                    parent.biddableSelected(biddables.get(i));
+                }
+            }
+        }
+        
+        private void addField(JComponent comp, int x, int y, int width, int height,
+                int wideGapPositions) {
+            int padTop, padLeft, padBottom, padRight;
+            gbc.gridx = x;
+            gbc.gridy = y;
+            gbc.gridwidth = width;
+            gbc.gridheight = height;
+            gbc.weightx = gbc.weighty = 0.5;
+            gbc.fill = GridBagConstraints.BOTH;
+            padTop = (wideGapPositions & WIDE_TOP) > 0 ? WIDE_GAP : NARROW_GAP;
+            padLeft = (wideGapPositions & WIDE_LEFT) > 0 ? WIDE_GAP : NARROW_GAP;
+            padBottom = (wideGapPositions & WIDE_BOTTOM) > 0 ? WIDE_GAP : NARROW_GAP;
+            padRight = (wideGapPositions & WIDE_RIGHT) > 0 ? WIDE_GAP : NARROW_GAP;
+            gbc.insets = new Insets(padTop, padLeft, padBottom, padRight);
 
-        buyButton = new ActionButton(RailsIcon.AUCTION_BUY);
-        buyButton.setMnemonic(KeyEvent.VK_B);
-        buyButton.addActionListener(this);
-        buyButton.setEnabled(false);
-        buttonPanel.add(buyButton);
+            add(comp, gbc);
+        }
 
-        if (includeBidding) {
+        public void highlightPlayer(int playerIndex) {
+            for (int i = 0; i < players.size(); i++) {
+                if (i == playerIndex) {
+                    upperPlayerCaption[i].setHighlight(true);
+                    lowerPlayerCaption[i].setHighlight(true);
+                } else {
+                    upperPlayerCaption[i].setHighlight(false);
+                    lowerPlayerCaption[i].setHighlight(false);
+                }
+            }
+        }
+        
+        public void resetAllBiddables() {
+            for (int i = 0; i < biddables.size(); i++) {
+                itemNameButton[i].setEnabled(false);
+                itemNameButton[i].setSelected(false);
+                itemName[i].setForeground (
+                        biddables.get(i).hasBeenSold() ? soldColour : defaultColour);
+//                int status = Integer.parseInt(itemStatus[i].getText());
+//                String tooltip = LocalText.getText(itemStatusTextKeys[status]);
+//
+//                itemName[i].setToolTipText(clickable ? "" : tooltip);
+//                itemNameButton[i].setToolTipText(clickable ? tooltip : "");
+            }
+        }
+        
+        
+        public void setBiddablePickable(ParliamentBiddableItem biddable) {
+            for (int i = 0; i < biddables.size(); i++) {
+                if (biddables.get(i) == biddable) {
+                    itemNameButton[i].setEnabled(true);
+                }
+            }
+        }
+        
+        public void setBiddableSelected(ParliamentBiddableItem biddable) {
+            for (int i = 0; i < biddables.size(); i++) {
+                if (biddables.get(i) == biddable) {
+                    itemNameButton[i].setSelected(true);
+                    parent.biddableSelected(biddable);
+                }
+            }
+        }
+
+        public void setBiddableUnSelected(ParliamentBiddableItem biddable) {
+            for (int i = 0; i < biddables.size(); i++) {
+                if (biddables.get(i) == biddable) {
+                    itemNameButton[i].setSelected(false);
+                    parent.biddableSelected(biddable);
+                }
+            }         
+        }
+        
+        
+    }
+    
+    public class ButtonPanel extends JPanel implements ActionListener {
+        private static final long serialVersionUID = 1L;
+        private ActionButton bidButton;
+        private JSpinner bidAmount;
+        private SpinnerNumberModel spinnerModel;
+        private ActionButton passButton;
+        private ParliamentRoundWindow parent;
+
+        public ButtonPanel(ParliamentRoundWindow parent) {
+            super();
+            this.parent = parent;
+            
             bidButton = new ActionButton(RailsIcon.BID);
             bidButton.setMnemonic(KeyEvent.VK_D);
             bidButton.addActionListener(this);
             bidButton.setEnabled(false);
-            buttonPanel.add(bidButton);
-
-            spinnerModel =
-                new SpinnerNumberModel(new Integer(999), new Integer(0),
-                        null, new Integer(1));
+            add(bidButton);
+            
+            spinnerModel = new SpinnerNumberModel(new Integer(999), new Integer(0), null, new Integer(1));
             bidAmount = new JSpinner(spinnerModel);
             bidAmount.setPreferredSize(new Dimension(50, 28));
             bidAmount.setEnabled(false);
-            buttonPanel.add(bidAmount);
+            add(bidAmount);
+
+            passButton = new ActionButton(RailsIcon.PASS);
+            passButton.setMnemonic(KeyEvent.VK_P);
+            passButton.addActionListener(this);
+            passButton.setEnabled(false);            
+            add(passButton);
+
+            setOpaque(true);
         }
 
-        passButton = new ActionButton(RailsIcon.PASS);
-        passButton.setMnemonic(KeyEvent.VK_P);
-        passButton.addActionListener(this);
-        passButton.setEnabled(false);
-        buttonPanel.add(passButton);
+        public void actionPerformed(ActionEvent actor) {
+            if (actor.getSource() == bidButton) {
+                parent.bidPlaced(spinnerModel.getNumber().intValue());
+            } else if (actor.getSource() == passButton) {
+                parent.passPerformed();
+            }
+        }
 
-        buttonPanel.setOpaque(true);
-
-        gbc = new GridBagConstraints();
-
-        players = gameUIManager.getRoot().getPlayerManager().getPlayers().toArray(new Player[0]);
-        np = gameUIManager.getRoot().getPlayerManager().getNumberOfPlayers();
-
-        items = this.round.getStartableCompanies().toArray(new PublicCompany_1862[0]);
-        ni = items.length;
-        PublicCompany_1862 item;
-
+        public void startBidding(int minimumBid, Number bidIncrement) {
+            bidButton.setEnabled(true);
+            spinnerModel.setMinimum(minimumBid);
+            spinnerModel.setStepSize(bidIncrement);
+            spinnerModel.setValue(minimumBid);   
+            bidAmount.setEnabled(true);
+        }
         
-      crossIndex = new int[ni];
-      for (int i = 0; i < ni; i++) {
-            item = items[i];
-            crossIndex[0] = i; // TODO: Fix
+        public void passEnabled(boolean enabled) {
+            passButton.setEnabled(enabled);
         }
 
-        actionableItems = new StartItemAction[ni];
+        public void disableButtons() {
+            bidButton.setEnabled(false);
+            passButton.setEnabled(false);            
+        }
+    }
 
-        infoIcon = createInfoIcon();
+    public void init(StartRound round, GameUIManager parent) {
+        this.round = (ParliamentRound) round;
+        gameUIManager = parent;
+        possibleActions = gameUIManager.getGameManager().getPossibleActions();
+        biddables = this.round.getBiddables();
+        players = gameUIManager.getRoot().getPlayerManager().getPlayers().toArray(new Player[0]);
+        
+        setTitle(LocalText.getText("START_ROUND_TITLE"));
+        getContentPane().setLayout(new BorderLayout());
 
-        init();
+        statusPanel = new StatusPanel(this, gameUIManager.getRoot().getPlayerManager().getPlayers(), biddables);
+        buttonPanel = new ButtonPanel(this);
 
         getContentPane().add(statusPanel, BorderLayout.NORTH);
         getContentPane().add(buttonPanel, BorderLayout.SOUTH);
-        setTitle("Rails: Start Round");
+        setTitle("Rails: Parliament Round");
         setLocation(300, 150);
         setSize(275, 325);
         gameUIManager.setMeVisible(this, true);
@@ -211,14 +355,16 @@ public class ParliamentRoundWindow extends StartRoundWindow {
         addKeyListener(this);
 
         // set closing behavior and listener
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE );
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         final JFrame thisFrame = this;
         final GameUIManager guiMgr = gameUIManager;
-        addWindowListener(new WindowAdapter () {
+        addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                if (JOptionPane.showConfirmDialog(thisFrame, LocalText.getText("CLOSE_WINDOW"), LocalText.getText("Select"), JOptionPane.OK_CANCEL_OPTION)
-                        == JOptionPane.OK_OPTION) {
+                if (JOptionPane.showConfirmDialog(thisFrame,
+                        LocalText.getText("CLOSE_WINDOW"),
+                        LocalText.getText("Select"),
+                        JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
                     thisFrame.dispose();
                     guiMgr.terminate();
                 }
@@ -229,6 +375,7 @@ public class ParliamentRoundWindow extends StartRoundWindow {
             public void componentMoved(ComponentEvent e) {
                 guiMgr.getWindowSettings().set(thisFrame);
             }
+
             @Override
             public void componentResized(ComponentEvent e) {
                 guiMgr.getWindowSettings().set(thisFrame);
@@ -238,426 +385,147 @@ public class ParliamentRoundWindow extends StartRoundWindow {
         gameUIManager.packAndApplySizing(this);
     }
 
-    private void init() {
-        int lastX = -1;
-        int lastY = 1;
-
-        itemName = new Caption[ni];
-        itemNameButton = new ClickField[ni];
-        basePrice = new Field[ni];
-        minBid = new Field[ni];
-        bidPerPlayer = new Field[ni][np];
-        info = new Field[ni];
-        itemStatus = new Field[ni];
-        upperPlayerCaption = new Caption[np];
-        lowerPlayerCaption = new Caption[np];
-        playerBids = new Field[np];
-        playerFree = new Field[np];
-
-        itemNameXOffset = ++lastX;
-        itemNameYOffset = ++lastY;
-        if (showBasePrices) {
-            basePriceXOffset = ++lastX;
-            basePriceYOffset = lastY;
-        }
-        if (includeBidding) {
-            minBidXOffset = ++lastX;
-            minBidYOffset = lastY;
-        }
-        bidPerPlayerXOffset = ++lastX;
-        bidPerPlayerYOffset = lastY;
-
-        infoXOffset = bidPerPlayerXOffset + np;
-        infoYOffset = lastY;
-
-        // Bottom rows
-        lastY += (ni - 1);
-        if (includeBidding) {
-            playerBidsXOffset = bidPerPlayerXOffset;
-            playerBidsYOffset = ++lastY;
-        }
-        playerFreeCashXOffset = bidPerPlayerXOffset;
-        playerFreeCashYOffset = ++lastY;
-
-        addField(new Caption(LocalText.getText("ITEM")), 0, 0, 1, 2,
-                WIDE_RIGHT + WIDE_BOTTOM);
-        addField(new Caption(LocalText.getText("PLAYERS")),
-                bidPerPlayerXOffset, 0, np, 1, 0);
-        for (int i = 0; i < np; i++) {
-            f = upperPlayerCaption[i] = new Caption(players[i].getId());
-            addField(f, bidPerPlayerXOffset + i, 1, 1, 1, WIDE_BOTTOM);
-        }
-
-        for (int i = 0; i < ni; i++) {
-            si = items[i];
-            f = itemName[i] = new Caption(si.getLongName());
-//            HexHighlightMouseListener.addMouseListener(f, 
-//                    gameUIManager.getORUIManager(),
-//                    si); 
-            addField(f, itemNameXOffset, itemNameYOffset + i, 1, 1, WIDE_RIGHT);
-            f =
-                itemNameButton[i] =
-                    new ClickField(si.getLongName(), "", "", this,
-                            itemGroup);
-//            HexHighlightMouseListener.addMouseListener(f, 
-//                    gameUIManager.getORUIManager(),
-//                    si); 
-            addField(f, itemNameXOffset, itemNameYOffset + i, 1, 1, WIDE_RIGHT);
-            // Prevent row height resizing after every buy action
-            itemName[i].setPreferredSize(itemNameButton[i].getPreferredSize());
-
-            if (includeBidding) {
-                f = minBid[i] = new Field(round.getMinimumBidModel(i));
-                addField(f, minBidXOffset, minBidYOffset + i, 1, 1, WIDE_RIGHT);
-            }
-
-//            for (int j = 0; j < np; j++) {
-//                f = bidPerPlayer[i][j] = new Field(round.getBidModel(i, j));
-//                addField(f, bidPerPlayerXOffset + j, bidPerPlayerYOffset + i,
-//                        1, 1, 0);
-//            }
-
-            f = info[i] = new Field (infoIcon);
-            f.setToolTipText("foo");
-//            HexHighlightMouseListener.addMouseListener(f, 
-//                    gameUIManager.getORUIManager(),
-//                    si); 
-            addField (f, infoXOffset, infoYOffset + i, 1, 1, WIDE_LEFT);
-
-            // Invisible field, only used to hold current item status.
-//            f = itemStatus[i] = new Field (si.getStatusModel());
-        }
-
-        // Player money
-        boolean firstBelowTable = true;
-        if (includeBidding) {
-            addField(new Caption(LocalText.getText("BID")),
-                    playerBidsXOffset - 1, playerBidsYOffset, 1, 1,
-                    WIDE_TOP + WIDE_RIGHT);
-            for (int i = 0; i < np; i++) {
-                f = playerBids[i] = new Field(round.getBlockedCashModel(players[i]));
-                addField(f, playerBidsXOffset + i, playerBidsYOffset, 1, 1,
-                        WIDE_TOP);
-            }
-            firstBelowTable = false;
-        }
-
-        addField(new Caption(
-                LocalText.getText(includeBidding ? "FREE" : "CASH")),
-                playerFreeCashXOffset - 1, playerFreeCashYOffset, 1, 1,
-                WIDE_RIGHT + (firstBelowTable ? WIDE_TOP : 0));
-        for (int i = 0; i < np; i++) {
-            f =
-                playerFree[i] =
-                    new Field(includeBidding
-                            ? round.getFreeCashModel(players[i])
-                                    : players[i].getWallet());
-            addField(f, playerFreeCashXOffset + i, playerFreeCashYOffset, 1, 1,
-                    firstBelowTable ? WIDE_TOP : 0);
-        }
-
-        for (int i = 0; i < np; i++) {
-            f = lowerPlayerCaption[i] = new Caption(players[i].getId());
-            addField(f, playerFreeCashXOffset + i, playerFreeCashYOffset + 1,
-                    1, 1, WIDE_TOP);
-        }
-
-        dummyButton = new ClickField("", "", "", this, itemGroup);
-
-    }
-
-    private void addField(JComponent comp, int x, int y, int width, int height,
-            int wideGapPositions) {
-
-        int padTop, padLeft, padBottom, padRight;
-        gbc.gridx = x;
-        gbc.gridy = y;
-        gbc.gridwidth = width;
-        gbc.gridheight = height;
-        gbc.weightx = gbc.weighty = 0.5;
-        gbc.fill = GridBagConstraints.BOTH;
-        padTop = (wideGapPositions & WIDE_TOP) > 0 ? WIDE_GAP : NARROW_GAP;
-        padLeft = (wideGapPositions & WIDE_LEFT) > 0 ? WIDE_GAP : NARROW_GAP;
-        padBottom =
-            (wideGapPositions & WIDE_BOTTOM) > 0 ? WIDE_GAP : NARROW_GAP;
-            padRight = (wideGapPositions & WIDE_RIGHT) > 0 ? WIDE_GAP : NARROW_GAP;
-            gbc.insets = new Insets(padTop, padLeft, padBottom, padRight);
-
-            statusPanel.add(comp, gbc);
-
-    }
 
     public void updateStatus(boolean myTurn) {
-        StartItem item;
-        int i, j;
-
-        for (i = 0; i < ni; i++) {
-//            setItemNameButton(i, false);
-            actionableItems[i] = null;
-        }
-        // Unselect the selected private
-        dummyButton.setSelected(true);
-
         if (!myTurn) return;
 
         // For debugging
         for (PossibleAction action : possibleActions.getList()) {
+            System.out.println(action.getPlayerName() + " may: " + action);
             log.debug(action.getPlayerName() + " may: " + action);
         }
 
-        List<StartItemAction> actions =
-            possibleActions.getType(StartItemAction.class);
-
-        if (actions == null || actions.isEmpty()) {
+        if (possibleActions == null || possibleActions.isEmpty()) {
             close();
             return;
         }
 
-        int nextPlayerIndex =
-            ((PossibleAction) actions.get(0)).getPlayerIndex();
-        setSRPlayerTurn(nextPlayerIndex);
-
-        boolean passAllowed = false;
-        boolean buyAllowed = false;
-        boolean bidAllowed = false;
-
-        boolean selected = false;
-
-        BuyStartItem buyAction;
-
-        for (StartItemAction action : actions) {
-            j = action.getItemIndex();
-            i = crossIndex[j];
-            actionableItems[i] = action;
-            item = action.getStartItem();
-
-            if (action instanceof BuyStartItem) {
-
-                buyAction = (BuyStartItem) action;
-                if (!buyAction.setSharePriceOnly()) {
-
-                    selected = buyAction.isSelected();
-                    if (selected) {
-                        buyButton.setPossibleAction(action);
-                    } else {
-                        //itemNameButton[i].setToolTipText(LocalText.getText("ClickToSelectForBuying"));
-                        itemNameButton[i].setPossibleAction(action);
-                    }
-                    itemNameButton[i].setSelected(selected);
-                    itemNameButton[i].setEnabled(!selected);
-                    setItemNameButton(i, true);
-                    if (includeBidding && showBasePrices)
-                        minBid[i].setText("");
-                    buyAllowed = selected;
-
-                } else {
-                    PossibleAction lastAction = gameUIManager.getLastAction();
-                    if (lastAction instanceof GameAction
-                            && (((GameAction) lastAction).getMode() == GameAction.UNDO || ((GameAction) lastAction).getMode() == GameAction.FORCED_UNDO)) {
-                        // If we come here via an Undo, we should not start
-                        // with a modal dialog, as that would prevent further
-                        // Undos.
-                        // So there is an extra step: let the player press Buy
-                        // first.
-                        setItemNameButton(i, true);
-                        itemNameButton[i].setSelected(true);
-                        itemNameButton[i].setEnabled(false);
-                        buyButton.setPossibleAction(action);
-                        buyAllowed = true;
-
-                    } else {
-                        immediateAction = action;
-                    }
-                }
-
-            } else if (action instanceof BidStartItem) {
-
-                BidStartItem bidAction = (BidStartItem) action;
-                selected = bidAction.isSelected();
-                if (selected) {
-                    bidButton.addPossibleAction(action);
-                    bidButton.setPossibleAction(action);
-                    int mb = bidAction.getMinimumBid();
-                    spinnerModel.setMinimum(mb);
-                    spinnerModel.setStepSize(bidAction.getBidIncrement());
-                    spinnerModel.setValue(mb);
-                } else {
-                    itemNameButton[i].setPossibleAction(action);
-                }
-                bidAllowed = selected;
-                itemNameButton[i].setSelected(selected);
-                itemNameButton[i].setEnabled(!selected);
-                setItemNameButton(i, true);
-                minBid[i].setText(Currency.format(item, item.getMinimumBid()));
-            }
+        List<BuyParliamentAction> buyActions = possibleActions.getType(BuyParliamentAction.class);
+        if ((buyActions != null) && (!buyActions.isEmpty())) {
+            requestParValue(buyActions.get(0));
+            return;
         }
-
-        passAllowed = false;
-
-        List<NullAction> inactiveItems =
-            possibleActions.getType(NullAction.class);
-        if (inactiveItems != null && !inactiveItems.isEmpty()) {
-            // only one NullAction is allowed
-            NullAction na = inactiveItems.get(0);
-            // nullActions differ in text to display
-            passButton.setRailsIcon(RailsIcon.getByConfigKey(na.toString()));
-            passAllowed = true;
-            passButton.setPossibleAction(na);
-            passButton.setMnemonic(KeyEvent.VK_P);
+        
+        statusPanel.resetAllBiddables();
+        
+        List<BidParliamentAction> bidActions = possibleActions.getType(BidParliamentAction.class);
+        for (BidParliamentAction bidAction : bidActions) {
+            statusPanel.setBiddablePickable(bidAction.getBiddable());
         }
-
-        buyButton.setEnabled(buyAllowed);
-        if (includeBidding) {
-            bidButton.setEnabled(bidAllowed);
-            bidAmount.setEnabled(bidAllowed);
+        if (bidActions.size() == 1) {
+            statusPanel.setBiddableSelected(bidActions.get(0).getBiddable());
         }
-        passButton.setEnabled(passAllowed);
+        
+        List<NullAction> inactiveItems = possibleActions.getType(NullAction.class);
+        if ((inactiveItems != null) && (!inactiveItems.isEmpty())) {
+            buttonPanel.passEnabled(true);
+        } else {
+            buttonPanel.passEnabled(false);
+        }
 
         pack(); // to avoid not displaying after label size changes
         requestFocus();
     }
 
-    public boolean processImmediateAction() {
 
-        log.debug("ImmediateAction=" + immediateAction);
-        if (immediateAction != null) {
-            // Make a local copy and discard the original,
-            // so that it's not going to loop.
-            PossibleAction nextAction = immediateAction;
-            immediateAction = null;
-            if (nextAction instanceof StartItemAction) {
-                StartItemAction action = (StartItemAction) nextAction;
-                if (action instanceof BuyStartItem) {
-                    requestStartPrice((BuyStartItem) action);
-                    return false;
+    
+    public void biddableSelected(ParliamentBiddableItem biddable) {
+        selectedBiddable = biddable;
+        int startBid = (biddable.hasBeenBidOn() ? biddable.getCurrentBid() + biddable.getBidIncrement() : biddable.getMinimumBid());
+        buttonPanel.startBidding(startBid, biddable.getBidIncrement());
+    }
+    
+    public void bidPlaced(int i) {
+        for (PossibleAction action : possibleActions.getList()) {
+            if (action instanceof BidParliamentAction) {
+                BidParliamentAction bpa = (BidParliamentAction) action;
+                if (bpa.getBiddable() == selectedBiddable) {
+                    bpa.setActualBid(i);
+                    process(bpa);
+                    break;
                 }
             }
         }
+    }
+    
+    public void passPerformed() {
+        List<NullAction> inactiveItems = possibleActions.getType(NullAction.class);
+        NullAction passAction = inactiveItems.get(0); // Only one is pass.
+        process(passAction);
+    }
+
+    public BidParliamentAction findAction(ParliamentBiddableItem biddable) {
+        for (PossibleAction action : possibleActions.getList()) {
+            if ((action instanceof BidParliamentAction) && 
+                    (((BidParliamentAction) action).getBiddable() == biddable)) {
+                return (BidParliamentAction) action;
+            }
+        }
+        return null;
+    }
+
+    
+    private boolean requestParValue(BuyParliamentAction action) {
+        ArrayList<Integer> parValues = action.getBiddable().getPossibleParValues();
+        String [] pv = new String[parValues.size()];
+        for (int i = 0; i < parValues.size(); i++) {
+            pv[i] = Integer.toString(parValues.get(i));
+        }
+        RadioButtonDialog dialog = new RadioButtonDialog(
+                PAR_DIALOG, this, this, // TODO
+                LocalText.getText("PleaseSelect"),       
+                        action.getPlayerName() + " please select the par value for " + action.getBiddable().getCompany().getLongName(),
+                        pv, 0);
+        setCurrentDialog (dialog, action);
         return true;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    public void actionPerformed(ActionEvent actor) {
-        JComponent source = (JComponent) actor.getSource();
+    private void handleParValue() {
+        RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
+        BuyParliamentAction action = (BuyParliamentAction) currentDialogAction;
 
-        if (source instanceof ClickField) {
-            gbc = gb.getConstraints(source);
-            StartItemAction currentActiveItem =
-                (StartItemAction) ((ClickField) source).getPossibleActions().get(
-                        0);
-            
-            //notify sound manager that click field has been selected
-            SoundManager.notifyOfClickFieldSelection(currentActiveItem);
-            
-            //notify sound manager that click field has been selected
-            SoundManager.notifyOfClickFieldSelection(currentActiveItem);
-
-            if (currentActiveItem instanceof BuyStartItem) {
-                buyButton.setEnabled(true);
-                buyButton.setPossibleAction(currentActiveItem);
-                if (includeBidding) {
-                    bidButton.setEnabled(false);
-                    bidAmount.setEnabled(false);
-                }
-            } else if (currentActiveItem instanceof BidStartItem) {
-                BidStartItem bidAction = (BidStartItem) currentActiveItem;
-                buyButton.setEnabled(false);
-
-                if (bidAction.isSelectForAuction()) {
-                    // In this case, "Pass" becomes "Select, don't buy"
-                    passButton.setPossibleAction(currentActiveItem);
-                    passButton.setEnabled(true);
-                    passButton.setRailsIcon(RailsIcon.SELECT_NO_BID);
-                    passButton.setVisible(true);
-                    //                    if (!repacked) {
-                    pack();
-                    //                        repacked = true;
-                    //                    }
-
-                }
-                if (includeBidding) {
-                    bidButton.setEnabled(true);
-                    bidButton.setPossibleAction(currentActiveItem);
-                    bidAmount.setEnabled(true);
-                    int minBid = bidAction.getMinimumBid();
-                    spinnerModel.setMinimum(minBid);
-                    spinnerModel.setStepSize(bidAction.getBidIncrement());
-                    spinnerModel.setValue(minBid);
-                }
-            }
-        } else if (source instanceof ActionButton) {
-            PossibleAction activeItem =
-                ((ActionButton) source).getPossibleActions().get(0);
-
-            if (source == buyButton) {
-                if (activeItem instanceof BuyStartItem
-                        && ((BuyStartItem) activeItem).hasSharePriceToSet()) {
-                    if (requestStartPrice((BuyStartItem) activeItem)) return;
-                } else {
-                    process(activeItem);
-                }
-            } else if (source == bidButton) {
-
-                ((BidStartItem) activeItem).setActualBid(((Integer) spinnerModel.getValue()));
-                process(activeItem);
-
-            } else if (source == passButton) {
-
-                if (activeItem != null && activeItem instanceof BidStartItem
-                        && ((BidStartItem) activeItem).isSelectForAuction()) {
-                    ((BidStartItem) activeItem).setActualBid(-1);
-                }
-                process(activeItem);
-
-            }
-        }
-
+        int index = dialog.getSelectedOption();
+        if (index >= 0) {
+            action.setParPrice(action.getBiddable().getPossibleParValues().get(index));  
+            requestNumShares(action);
+        } 
     }
-
-    protected boolean requestStartPrice(BuyStartItem activeItem) {
-
-        if (activeItem.hasSharePriceToSet()) {
-            String compName = activeItem.getCompanyToSetPriceFor();
-            StockMarket stockMarket = gameUIManager.getRoot().getStockMarket();
-
-            // Get a sorted prices List
-            // TODO: should be included in BuyStartItem
-            startSpaces = stockMarket.getStartSpaces();
-            String[] options = new String[startSpaces.size()];
-            int i = 0;
-            for (StockSpace space:startSpaces) {
-                options[i++] = gameUIManager.format(space.getPrice());
-            }
-
-            RadioButtonDialog dialog = new RadioButtonDialog(
-                    COMPANY_START_PRICE_DIALOG,
-                    this,
-                    this,
-                    LocalText.getText("PleaseSelect"),
-                    LocalText.getText("WHICH_START_PRICE",
-                            getSRPlayer(),
-                            compName),
-                            options,
-                            -1);
-            setCurrentDialog (dialog, activeItem);
-
-        }
+    
+    private boolean requestNumShares(BuyParliamentAction action) {
+        String [] numShares = new String[3];
+        numShares[0] = "3";
+        numShares[1] = "4";
+        numShares[2] = "5";
+        RadioButtonDialog dialog = new RadioButtonDialog(
+                NUM_SHARES_DIALOG, this, this, // TODO
+                LocalText.getText("PleaseSelect"),       
+                        action.getPlayerName() + " please select number of shares to purchase",
+                        numShares, 0);
+        setCurrentDialog (dialog, action);
         return true;
+    }
+    
+    private void handleNumShares() {
+        RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
+        BuyParliamentAction action = (BuyParliamentAction) currentDialogAction;
+
+        int index = dialog.getSelectedOption();
+        if (index >= 0) {
+            action.setSharesPurchased(index + 3);
+            statusPanel.setBiddableUnSelected(action.getBiddable());
+            process(action);
+        } 
     }
 
     public JDialog getCurrentDialog() {
         return currentDialog;
     }
 
-    public PossibleAction getCurrentDialogAction () {
+    public PossibleAction getCurrentDialogAction() {
         return currentDialogAction;
     }
 
-    public void setCurrentDialog (JDialog dialog, PossibleAction action) {
+    public void setCurrentDialog(JDialog dialog, PossibleAction action) {
         if (currentDialog != null) {
             currentDialog.dispose();
         }
@@ -666,33 +534,24 @@ public class ParliamentRoundWindow extends StartRoundWindow {
         disableButtons();
     }
 
-    public void dialogActionPerformed () {
-
-        if (currentDialog instanceof RadioButtonDialog
-                && currentDialogAction instanceof BuyStartItem) {
-
-            RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
-            BuyStartItem action = (BuyStartItem) currentDialogAction;
-
-            int index = dialog.getSelectedOption();
-            if (index >= 0) {
-                int price = Iterables.get(startSpaces, index).getPrice();
-                action.setAssociatedSharePrice(price);
-                process (action);
-            } else {
-                // No selection done - no action
-                return;
-            }
-
-        } else {
-            return;
+    public void dialogActionPerformed() {
+        String key="";
+        
+        if (currentDialog instanceof NonModalDialog) {
+            key = ((NonModalDialog) currentDialog).getKey();
         }
+        
+        if (PAR_DIALOG.equals(key)) {
+            handleParValue();
+        } else if (NUM_SHARES_DIALOG.equals(key)) {
+            handleNumShares();
+            
+        }
+        return;
     }
 
     protected void disableButtons() {
-        bidButton.setEnabled(false);
-        buyButton.setEnabled(false);
-        passButton.setEnabled(false);
+        buttonPanel.disableButtons();
     }
 
     public void close() {
@@ -700,17 +559,8 @@ public class ParliamentRoundWindow extends StartRoundWindow {
     }
 
     public void setSRPlayerTurn(int selectedPlayerIndex) {
-        int j;
-
-        if ((j = this.playerIndex) >= 0) {
-            upperPlayerCaption[j].setHighlight(false);
-            lowerPlayerCaption[j].setHighlight(false);
-        }
-        this.playerIndex = selectedPlayerIndex;
-        if ((j = this.playerIndex) >= 0) {
-            upperPlayerCaption[j].setHighlight(true);
-            lowerPlayerCaption[j].setHighlight(true);
-        }
+        playerIndex = selectedPlayerIndex;
+        statusPanel.highlightPlayer(playerIndex);
     }
 
     public String getSRPlayer() {
@@ -718,62 +568,6 @@ public class ParliamentRoundWindow extends StartRoundWindow {
             return players[playerIndex].getId();
         else
             return "";
-    }
-
-    private void setItemNameButton(int i, boolean clickable) {
-
-        itemName[i].setVisible(!clickable);
-        itemNameButton[i].setVisible(clickable);
-
-        int status = Integer.parseInt(itemStatus[i].getText());
-        String tooltip = LocalText.getText(itemStatusTextKeys[status]);
-
-        itemName[i].setToolTipText(clickable ? "" : tooltip);
-        itemNameButton[i].setToolTipText(clickable ? tooltip : "");
-
-        itemName[i].setForeground (
-                status == StartItem.SOLD ? soldColour : defaultColour);
-        itemNameButton[i].setForeground (
-                status == StartItem.BUYABLE ? buyableColour : defaultColour);
-    }
-
-    private String getStartItemDescription (StartItem item) {
-        StringBuffer b = new StringBuffer("<html>");
-        b.append (item.getPrimary().toString());
-        if (item.getPrimary() instanceof PrivateCompany) {
-            PrivateCompany priv = (PrivateCompany) item.getPrimary();
-                b.append ("<br>Revenue: ").append(Currency.format(item, priv.getRevenue()));
-            List<MapHex> blockedHexes = priv.getBlockedHexes();
-            if (blockedHexes == null) {
-            } else if (blockedHexes.size() == 1) {
-                    b.append("<br>Blocked hex: ").append(blockedHexes.get(0).getId());
-            } else if (blockedHexes.size() > 1) {
-                b.append("<br>Blocked hexes:");
-                for (MapHex hex : blockedHexes) {
-                        b.append(" ").append(hex.getId());
-                }
-            }
-            if (priv.hasSpecialProperties()) {
-                b.append("<br><b>Special properties:</b>");
-                    for (SpecialProperty sp : priv.getSpecialProperties()) {
-                    b.append("<br>").append(sp.toString());
-                }
-            }
-            // sfy 1889
-            List<String> preventClosingConditions = priv.getPreventClosingConditions();
-            if (!preventClosingConditions.isEmpty()) {
-                b.append("<br><b>Prevent closing conditions:</b>");
-                for (String condition : preventClosingConditions) {
-                    b.append("<br>").append(condition);
-                }
-            }
-
-        }
-        if (item.getSecondary() != null) {
-            b.append("<br><b>Also contains:</b><br>");
-            b.append(item.getSecondary().toString());
-        }
-        return b.toString();
     }
 
     private ImageIcon createInfoIcon() {
@@ -794,4 +588,5 @@ public class ParliamentRoundWindow extends StartRoundWindow {
     public boolean process(PossibleAction action) {
         return gameUIManager.processAction(action);
     }
+    
 }

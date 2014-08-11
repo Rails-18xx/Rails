@@ -4,8 +4,8 @@
 		<CanBuyPrivates/>
 		<PoolPaysOut/>
 		<ShareUnit percentage="10"/>
-		<Certificate type="President" shares="2"/>
-		<Certificate shares="1" number="8"/>
+		<Certificate type="President" shares="3"/>
+		<Certificate shares="1" number="7"/>
 		<Capitalisation type="whenBought"/>
 		<BaseTokens>
 			<LayCost method="sequence" cost="0,40,100"/>
