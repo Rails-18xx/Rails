@@ -391,7 +391,7 @@ public class ParliamentRoundWindow extends StartRoundWindow {
 
         // For debugging
         for (PossibleAction action : possibleActions.getList()) {
-            System.out.println(action.getPlayerName() + " may: " + action);
+//            System.out.println(action.getPlayerName() + " may: " + action);
             log.debug(action.getPlayerName() + " may: " + action);
         }
 
@@ -473,8 +473,8 @@ public class ParliamentRoundWindow extends StartRoundWindow {
         }
         RadioButtonDialog dialog = new RadioButtonDialog(
                 PAR_DIALOG, this, this, // TODO
-                LocalText.getText("PleaseSelect"),       
-                        action.getPlayerName() + " please select the par value for " + action.getBiddable().getCompany().getLongName(),
+                LocalText.getText("PleaseSelect"),
+                LocalText.getText("WHICH_PAR_PRICE", action.getPlayerName(), action.getBiddable().getCompany().getLongName()),
                         pv, 0);
         setCurrentDialog (dialog, action);
         return true;
@@ -499,7 +499,7 @@ public class ParliamentRoundWindow extends StartRoundWindow {
         RadioButtonDialog dialog = new RadioButtonDialog(
                 NUM_SHARES_DIALOG, this, this, // TODO
                 LocalText.getText("PleaseSelect"),       
-                        action.getPlayerName() + " please select number of shares to purchase",
+                LocalText.getText("HOW_MANY_SHARES"),
                         numShares, 0);
         setCurrentDialog (dialog, action);
         return true;

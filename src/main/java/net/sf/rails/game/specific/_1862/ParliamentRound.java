@@ -6,6 +6,7 @@ import java.util.TreeSet;
 
 import rails.game.action.*;
 import net.sf.rails.common.*;
+import net.sf.rails.game.Currency;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCertificate;
@@ -55,6 +56,10 @@ public class ParliamentRound extends StartRound {
         numberOfPasses = 0;
         
         startPlayer = playerManager.setCurrentToPriorityPlayer();
+        
+        ReportBuffer.add(this, LocalText.getText("StartOfParliamentRound"));
+        ReportBuffer.add(this, LocalText.getText("HasPriority", startPlayer.getId()));
+        
         setPossibleActions(); 
     }
 
@@ -104,68 +109,98 @@ public class ParliamentRound extends StartRound {
          
     @Override
     public boolean process(PossibleAction action) {
-        Player player = playerManager.getCurrentPlayer();
         
         if (action instanceof BidParliamentAction) {
-            BidParliamentAction bpa = (BidParliamentAction) action;
-            ParliamentBiddableItem biddable = bpa.getBiddable();
-            biddable.performBid(player, bpa.getActualBid());
-            biddingPlayers.add(player);
-            activeBiddable = biddable;
-            biddable.setCurrentBid(bpa.getActualBid());
-            while (passedPlayers.contains(playerManager.setCurrentToNextPlayer()) == true) {}
-            numberOfPasses = 0;
-            return true;    
+            return processBidParliamentAction((BidParliamentAction) action);    
         } else if (action instanceof NullAction) {
-            biddingPlayers.remove(player);
-            passedPlayers.add(player);
-            numberOfPasses++;
-            if (numberOfPasses == playerManager.getNumberOfPlayers()) {
-                finishRound();
-                return true;
-            } else {
-                while (passedPlayers.contains(playerManager.setCurrentToNextPlayer()) == true) {}
-                return true;
-            }
+            return processNullAction();
         } else if (action instanceof BuyParliamentAction) {
-            BuyParliamentAction bpa = (BuyParliamentAction) action;
-            PublicCompany_1862 company = bpa.getBiddable().getCompany();
-            PublicCertificate cert = company.getPresidentsShare();
-            bpa.getBiddable().sold();
-
-//          company.start(startSpace); 
-            
-            cert.moveTo(player);
-
-            // If more than one certificate is bought at the same time, transfer
-            // these too.
-            for (int i = 3; i < bpa.getSharesPurchased(); i++) {
-                cert = ipo.findCertificate(company, false);
-                cert.moveTo(player);
-            }
-
-            // Pay for these shares
-//            String costText = Currency.wire(player, bpa.getParPrice()*bpa.getSharesPurchased() + 
-//                    bpa.getBiddable().getCurrentBid(), bank);
-            
-            auctionWinningPlayers.add(player);
-            if (auctionWinningPlayers.size() == playerManager.getNumberOfPlayers()) {
-                finishRound();
-                return true;
-            } else {
-                activeBiddable = null;
-                biddingPlayers.clear();
-                passedPlayers.clear();
-                numberOfPasses = 0;
-                playerManager.setCurrentPlayer(player);
-                while (auctionWinningPlayers.contains(playerManager.setCurrentToNextPlayer()) == true) {}
-                return true;
-            }
+            return processBuyParliamentAction((BuyParliamentAction) action);
         }
         
         return false;
     }
+    
+    private boolean processBidParliamentAction(BidParliamentAction action) {
+        Player player = playerManager.getCurrentPlayer();
+        ParliamentBiddableItem biddable = action.getBiddable();
+        biddable.performBid(player, action.getActualBid());
+        biddingPlayers.add(player);
+        activeBiddable = biddable;
+        biddable.setCurrentBid(action.getActualBid());
+        
+        ReportBuffer.add(this, LocalText.getText("BID_ITEM",
+                player.getId(),
+                Currency.format(this, action.getActualBid()),
+                biddable.getCompany().getLongName()));        
+        
+        while (passedPlayers.contains(playerManager.setCurrentToNextPlayer()) == true) {}
+        numberOfPasses = 0;
+        return true;    
+    }
 
+    private boolean processNullAction() {
+        Player player = playerManager.getCurrentPlayer();
+        biddingPlayers.remove(player);
+        passedPlayers.add(player);
+        numberOfPasses++;
+        
+        ReportBuffer.add(this, LocalText.getText("PASSES", player.getId()));
+
+        if (numberOfPasses == playerManager.getNumberOfPlayers()) {
+            finishRound();
+        } else {
+            while (passedPlayers.contains(playerManager.setCurrentToNextPlayer()) == true) {}
+        }
+        return true;        
+    }
+    
+    private boolean processBuyParliamentAction(BuyParliamentAction action) {
+        Player player = playerManager.getCurrentPlayer();
+        PublicCompany_1862 company = action.getBiddable().getCompany();
+        PublicCertificate cert = company.getPresidentsShare();
+        action.getBiddable().sold();
+
+//      company.start(startSpace); 
+        
+        cert.moveTo(player);
+
+        // If more than one certificate is bought at the same time, transfer
+        // these too.
+        for (int i = 3; i < action.getSharesPurchased(); i++) {
+            cert = ipo.findCertificate(company, false);
+            cert.moveTo(player);
+        }
+
+        // Pay for these shares
+        Currency.wire(player, action.getParPrice()*action.getSharesPurchased() + 
+                action.getBiddable().getCurrentBid(), bank);
+        
+        
+        
+        auctionWinningPlayers.add(player);
+        
+        ReportBuffer.add(this, LocalText.getText("WinsAuction",
+                player.getId(), company.getLongName(), Currency.format(this, action.getBiddable().getCurrentBid())));
+        ReportBuffer.add(this, LocalText.getText("START_COMPANY_LOG",
+                player.getId(), company.getLongName(), Currency.format(this, action.getParPrice()),
+                    Currency.format(this,  action.getParPrice() * action.getSharesPurchased()), action.getSharesPurchased(),
+                    action.getSharesPurchased() * 10, LocalText.getText("BANK")));
+        
+        if (auctionWinningPlayers.size() == playerManager.getNumberOfPlayers()) {
+            finishRound();
+        } else {
+            activeBiddable = null;
+            biddingPlayers.clear();
+            passedPlayers.clear();
+            numberOfPasses = 0;
+            playerManager.setCurrentPlayer(player);
+            while (auctionWinningPlayers.contains(playerManager.setCurrentToNextPlayer()) == true) {}
+        }
+        return true;
+    }
+    
+    
     // Needed for "StartRound"
     @Override
     protected boolean bid(String playerName, BidStartItem startItem) {
