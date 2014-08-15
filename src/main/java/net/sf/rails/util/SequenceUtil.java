@@ -7,9 +7,9 @@ import java.util.List;
 
 import net.sf.rails.game.Bank;
 import net.sf.rails.game.Company;
-import net.sf.rails.game.MoneyOwner;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.state.MoneyOwner;
 
 
 

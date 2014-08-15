@@ -6,8 +6,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.sf.rails.game.CompanyManager;
-import net.sf.rails.game.Currency;
-import net.sf.rails.game.GameManager;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.Train;
 import net.sf.rails.game.TrainManager;
@@ -15,11 +13,14 @@ import net.sf.rails.game.TrainType;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.special.SpecialTrainBuy;
 import net.sf.rails.game.state.Owner;
+import net.sf.rails.util.RailsObjects;
 import net.sf.rails.util.Util;
 
 import com.google.common.base.Objects;
 
-
+/**
+ * Rails 2.0: Updated equals and toString methods (however see TODO below)
+*/
 public class BuyTrain extends PossibleORAction {
 
     // Initial settings
@@ -61,9 +62,7 @@ public class BuyTrain extends PossibleORAction {
 
         this (train, train.getType(), from, fixedCost);
     }
-    /**
-    * TODO: Check if from works as before
-    */
+
     public BuyTrain(Train train, TrainType type, Owner from, int fixedCost) {
         this.train = train;
         this.trainUniqueId = train.getId();
@@ -215,61 +214,51 @@ public class BuyTrain extends PossibleORAction {
             this.exchangedTrainUniqueId = exchangedTrain.getId();
     }
 
+    
+    
+    // TODO: Check for and add the missing attributes
+    @Override
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
+        // identity always true
+        if (pa == this) return true;
+        //  super checks both class identity and super class attributes
+        if (!super.equalsAs(pa, asOption)) return false; 
+
+        // check asOption attributes
+        BuyTrain action = (BuyTrain)pa; 
+        boolean options =  Objects.equal(this.getTrain().getType(), action.getTrain().getType()) 
+                // only types have to be equal, and the getTrain() avoids train == null
+                && Objects.equal(this.from, action.from)
+                && (action.fixedCost == 0 || Objects.equal(this.fixedCost, action.pricePaid))
+                && Objects.equal(this.trainsForExchange, action.trainsForExchange)
+        ;
+        
+        // finish if asOptions check
+        if (asOption) return options;
+        
+        // check asAction attributes
+        return options
+                && Objects.equal(this.train, action.train)
+                && Objects.equal(this.pricePaid, action.pricePaid)
+                && Objects.equal(this.addedCash, action.addedCash)
+                && Objects.equal(this.exchangedTrainUniqueId, action.exchangedTrainUniqueId)
+        ;
+    }
+
+    // TODO: Check for and add the missing attributes
     @Override
     public String toString() {
-
-        StringBuffer b = new StringBuffer();
-        b.append(company.getId());
-        if (train != null) { 
-            b.append(": buy ").append(typeName).append("-");
-        } else {
-            b.append(": buy unlimited ");
-        }
-        b.append("train (").append(trainUniqueId).append(") from ").append(from.getId());
-        if (fixedCost > 0) {
-            b.append(" for ").append(Currency.format(company, fixedCost));
-        } else {
-            b.append(" for any amount");
-        }
-        if (specialProperty != null) {
-            b.append(" using ").append(specialProperty.getOriginalCompany().getId());
-        }
-        if (isForExchange()) {
-            b.append(forcedExchange ? " (forced exchange)" : " (exchange)");
-        }
-        if (presidentMustAddCash) {
-            b.append(" must add cash ").append(Currency.format(company, presidentCashToAdd));
-        } else if (presidentMayAddCash) {
-            b.append(" may add cash up to ").append(
-                    Currency.format(company, presidentCashToAdd));
-        }
-        if (acted) {
-            b.append(" - paid: ").append(Currency.format(company, pricePaid));
-            if (addedCash > 0) b.append(" pres.cash added: "+Currency.format(company, addedCash));
-            if (exchangedTrain != null) b.append(" exchanged for "+exchangedTrain.getId()+"-train");
-        }
-
-        return b.toString();
-    }
-
-    @Override
-    public boolean equalsAsOption(PossibleAction action) {
-        if (!(action instanceof BuyTrain)) return false;
-        BuyTrain a = (BuyTrain) action;
-        return a.getTrain().getType() == getTrain().getType() // only types have to be equal
-                && a.from == from 
-                && (a.fixedCost == 0 || a.pricePaid == fixedCost)
-                && Objects.equal(a.trainsForExchange, trainsForExchange);
-    }
-
-    @Override
-    public boolean equalsAsAction(PossibleAction action) {
-        if (!(action instanceof BuyTrain)) return false;
-        BuyTrain a = (BuyTrain) action;
-        return a.getTrain() == getTrain() && a.from == from && a.pricePaid == pricePaid
-               && a.addedCash == addedCash 
-               && (a.exchangedTrainUniqueId == null && exchangedTrainUniqueId == null
-                       || a.exchangedTrainUniqueId.equals(exchangedTrainUniqueId));
+        return super.toString() + 
+                RailsObjects.stringHelper(this)
+                    .addToString("train", train)
+                    .addToString("from", from)
+                    .addToString("fixedCost", fixedCost)
+                    .addToString("trainsForExchange", trainsForExchange)
+                    .addToStringOnlyActed("pricePaid", pricePaid)
+                    .addToStringOnlyActed("addedCash", addedCash)
+                    .addToStringOnlyActed("exchangedTrainUniqueId", exchangedTrainUniqueId)
+                .toString()
+        ;
     }
 
     /** Deserialize */

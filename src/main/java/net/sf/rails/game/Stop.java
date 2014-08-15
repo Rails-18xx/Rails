@@ -64,7 +64,7 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Location {
     // It is better to use the getRelatedNumber()
     @Deprecated
     public String getSpecificId() {
-        return getParent().getId() + "/" + this.getId();
+        return getParent().getId() + "/" + this.getRelatedNumber();
     }
 
     public Station getRelatedStation() {

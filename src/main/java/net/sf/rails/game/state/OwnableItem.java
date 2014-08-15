@@ -31,12 +31,12 @@ public abstract class OwnableItem<T extends Ownable> extends AbstractItem implem
         Preconditions.checkArgument(newPortfolio != null, "No Portfolio available for owner " + newOwner);
         
         // create change for new portfolio
-        new PortfolioChange<T>(newPortfolio, type.cast(this), true);
+        newPortfolio.include(type.cast(this));
         
         //  remove from old portfolio
         if (owner.value() != pm.getUnkownOwner()) {
             Portfolio<T> oldPortfolio = pm.getPortfolio(type, owner.value());
-            new PortfolioChange<T>(oldPortfolio, type.cast(this), false);
+            oldPortfolio.exclude(type.cast(this));
         }
 
         // and change the owner

@@ -59,12 +59,12 @@ public class StartRound_1830 extends StartRound {
         boolean passAllowed = true;
 
         possibleActions.clear();
-        Player currentPlayer = playerManager.getCurrentPlayer();
 
-        if (currentPlayer == startPlayer) ReportBuffer.add(this, "");
+        if (playerManager.getCurrentPlayer() == startPlayer) ReportBuffer.add(this, "");
 
+        // FIXME: Rails 2.0 Could be an infinite loop if there if no player has enough money to buy an item
         while (possibleActions.isEmpty()) {
-
+            Player currentPlayer = playerManager.getCurrentPlayer();
 
             for (StartItem item : itemsToSell.view()) {
 
@@ -159,7 +159,7 @@ public class StartRound_1830 extends StartRound {
         }
 
         if (passAllowed) {
-            possibleActions.add(new NullAction(NullAction.PASS));
+            possibleActions.add(new NullAction(NullAction.Mode.PASS));
         }
 
        return true;
@@ -230,7 +230,7 @@ public class StartRound_1830 extends StartRound {
             previousBid = item.getBid(player);
             int available = player.getFreeCash() + previousBid;
             if (bidAmount > available) {
-                errMsg = LocalText.getText("BidTooHigh", Currency.format(this, available));
+                errMsg = LocalText.getText("BidTooHigh", Bank.format(this, available));
                 break;
             }
 
@@ -252,9 +252,9 @@ public class StartRound_1830 extends StartRound {
         player.blockCash(bidAmount);
         ReportBuffer.add(this, LocalText.getText("BID_ITEM_LOG",
                 playerName,
-                Currency.format(this, bidAmount),
+                Bank.format(this, bidAmount),
                 item.getName(),
-                Currency.format(this, player.getFreeCash()) ));
+                Bank.format(this, player.getFreeCash()) ));
 
         if (bidItem.getStatus() != StartItem.AUCTIONED) {
             playerManager.setCurrentToNextPlayer();
@@ -305,8 +305,6 @@ public class StartRound_1830 extends StartRound {
 
         ReportBuffer.add(this, LocalText.getText("PASSES", playerName));
 
-        
-
         numPasses.add(1);
         if (auctionItem != null) {
 
@@ -324,7 +322,7 @@ public class StartRound_1830 extends StartRound {
                 auctionItemState.set(null);
                 numPasses.set(0);
                 // Next turn goes to priority holder
-                playerManager.setPriorityPlayerToNext(); // EV - Added to fix bug 2989440
+                playerManager.setCurrentToPriorityPlayer(); // EV - Added to fix bug 2989440
             } else {
                 // More than one left: find next bidder
 
@@ -348,7 +346,7 @@ public class StartRound_1830 extends StartRound {
                     ReportBuffer.add(this, LocalText.getText(
                             "ITEM_PRICE_REDUCED",
                                     startPacket.getFirstItem().getName(),
-                                    Currency.format(this, startPacket.getFirstItem().getBasePrice()) ));
+                                    Bank.format(this, startPacket.getFirstItem().getBasePrice()) ));
                     numPasses.set(0);
                     if (startPacket.getFirstItem().getBasePrice() == 0) {
                         assignItem(playerManager.getCurrentPlayer(),

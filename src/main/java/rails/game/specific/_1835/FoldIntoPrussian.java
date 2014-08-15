@@ -1,4 +1,4 @@
-package net.sf.rails.game.specific._1835;
+package rails.game.specific._1835;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -7,13 +7,16 @@ import java.util.Arrays;
 import java.util.List;
 
 import rails.game.action.PossibleAction;
-
-import net.sf.rails.game.*;
+import net.sf.rails.game.Company;
+import net.sf.rails.game.CompanyManager;
+import net.sf.rails.util.RailsObjects;
 import net.sf.rails.util.Util;
 
-import com.google.common.collect.ImmutableSet;
+import com.google.common.base.Objects;
 
-
+/**
+ * Rails 2.0: Updated equals and toString methods
+*/
 public class FoldIntoPrussian extends PossibleAction {
 
     // Server settings
@@ -60,33 +63,46 @@ public class FoldIntoPrussian extends PossibleAction {
         return foldedCompanyNames;
     }
 
+    @Override
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
+        // identity always true
+        if (pa == this) return true;
+        //  super checks both class identity and super class attributes
+        if (!super.equalsAs(pa, asOption)) return false; 
+
+        // check asOption attributes
+        FoldIntoPrussian action = (FoldIntoPrussian)pa; 
+        boolean options = 
+                Objects.equal(this.foldableCompanies, action.foldableCompanies) ||
+                    // additional conditions required as there is no sorting defined in old save files
+                    this.foldableCompanies != null && action.foldableCompanies != null
+                    && this.foldableCompanies.containsAll(action.foldableCompanies)
+                    && action.foldableCompanies.containsAll(this.foldableCompanies)
+        ;
+        
+        // finish if asOptions check
+        if (asOption) return options;
+        
+        // check asAction attributes
+        return options
+                && Objects.equal(this.foldedCompanies, action.foldedCompanies) ||
+                // additional conditions required as there is no sorting defined in old save files
+                this.foldedCompanies != null && action.foldedCompanies != null
+                && this.foldedCompanies.containsAll(action.foldedCompanies)
+                && action.foldedCompanies.containsAll(this.foldedCompanies)
+        ;
+    }
 
     @Override
     public String toString() {
-        StringBuilder text = new StringBuilder("Fold into Prussian:");
-        if (foldableCompanyNames != null) {
-            text.append(" foldable=").append(foldableCompanyNames);
-        }
-        if (foldedCompanyNames != null) {
-            text.append(" folded=").append(foldedCompanyNames);
-        }
-        return text.toString();
+        return super.toString() + 
+                RailsObjects.stringHelper(this)
+                    .addToString("foldableCompanies", foldableCompanies)
+                    .addToStringOnlyActed("foldedCompanies", foldedCompanies)
+                    .toString()
+        ;
     }
     
-    @Override
-    public boolean equalsAsOption(PossibleAction action) {
-        if (!(action instanceof FoldIntoPrussian)) return false;
-        FoldIntoPrussian a = (FoldIntoPrussian) action;
-        return ImmutableSet.copyOf(a.foldableCompanies).equals(ImmutableSet.copyOf(foldableCompanies));
-    }
-
-    @Override
-    public boolean equalsAsAction(PossibleAction action) {
-        if (!(action instanceof FoldIntoPrussian)) return false;
-        FoldIntoPrussian a = (FoldIntoPrussian) action;
-        return a.equalsAsOption(this) && a.foldedCompanyNames.equals(foldedCompanyNames);
-    }
-
     /** Deserialize */
     private void readObject(ObjectInputStream in) throws IOException,
             ClassNotFoundException {

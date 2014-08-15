@@ -658,7 +658,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         ChangeStack changeStack = getRoot().getStateManager().getChangeStack();
         boolean startGameAction = false;
         
-        if (action instanceof NullAction && ((NullAction)action).getMode() == NullAction.START_GAME) {
+        if (action instanceof NullAction && ((NullAction)action).getMode() == NullAction.Mode.START_GAME) {
             // Skip processing at game start after Load.
             // We're only here to create PossibleActions.
             result = true;
@@ -725,13 +725,13 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
         // Add the Undo/Redo possibleActions here.
         if (changeStack.isUndoPossible(getCurrentPlayer())) {
-            possibleActions.add(new GameAction(GameAction.UNDO));
+            possibleActions.add(new GameAction(GameAction.Mode.UNDO));
         }
         if (changeStack.isUndoPossible()) {
-            possibleActions.add(new GameAction(GameAction.FORCED_UNDO));
+            possibleActions.add(new GameAction(GameAction.Mode.FORCED_UNDO));
         }
         if (changeStack.isRedoPossible()) {
-            possibleActions.add(new GameAction(GameAction.REDO));
+            possibleActions.add(new GameAction(GameAction.Mode.REDO));
         }
 
         // logging of game actions activated
@@ -787,17 +787,17 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         ChangeStack changeStack = getRoot().getStateManager().getChangeStack();
         int index = gameAction.getmoveStackIndex();
         switch (gameAction.getMode()) {
-        case GameAction.SAVE:
+        case SAVE:
             result = save(gameAction);
             break;
-        case GameAction.RELOAD:
+        case RELOAD:
             result = reload(gameAction);
             break;
-        case GameAction.UNDO:
+        case UNDO:
             changeStack.undo();
             result = true;
             break;
-        case GameAction.FORCED_UNDO:
+        case FORCED_UNDO:
             if (index == -1) {
                 changeStack.undo();
             } else {
@@ -805,7 +805,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             }
             result = true;
             break;
-        case GameAction.REDO:
+        case REDO:
             if (index == -1) {
                 changeStack.redo();
             } else {
@@ -813,7 +813,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             }
             result = true;
             break;
-        case GameAction.EXPORT:
+        case EXPORT:
             result = export(gameAction);
             break;
         }
@@ -831,10 +831,10 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                 && possibleActions.contains(RepayLoans.class)
                 && (!possibleActions.contains(action.getClass())
                         || (action.getClass() == NullAction.class
-                                && ((NullAction)action).getMode() != NullAction.DONE))) {
+                                && ((NullAction)action).getMode() != NullAction.Mode.DONE))) {
             // Insert "Done"
             log.debug("Action DONE inserted");
-            getCurrentRound().process(new NullAction (NullAction.DONE));
+            getCurrentRound().process(new NullAction (NullAction.Mode.DONE));
             possibleActions.clear();
             getCurrentRound().setPossibleActions();
             if (!isGameOver()) setCorrectionActions();
@@ -859,7 +859,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         boolean doProcess = true;
         if (skipNextDone) {
             if (action instanceof NullAction
-                    && ((NullAction)action).getMode() == NullAction.DONE) {
+                    && ((NullAction)action).getMode() == NullAction.Mode.DONE) {
                 if (currentRound.value() instanceof OperatingRound
                         && ((OperatingRound)currentRound.value()).getStep() == skippedStep) {
                     doProcess = false;
@@ -1085,7 +1085,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         gameOverPending.set(true);
         ReportBuffer.add(this, LocalText.getText("MaxedSharePriceReportText",
                 company.getId(),
-                Currency.format(this, space.getPrice())));
+                Bank.format(this, space.getPrice())));
         String msgContinue;
         if (gameEndsAfterSetOfORs)
             msgContinue = LocalText.getText("gameOverPlaySetOfORs");
@@ -1093,7 +1093,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             msgContinue = LocalText.getText("gameOverPlayOnlyOR");
         String msg = LocalText.getText("MaxedSharePriceDisplayText",
                 company.getId(),
-                Currency.format(this, space.getPrice()),
+                Bank.format(this, space.getPrice()),
                 msgContinue);
         DisplayBuffer.add(this, msg);
         addToNextPlayerMessages(msg, true);
@@ -1161,7 +1161,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         /* Report final ranking */
         int i = 0;
         for (Player p : rankedPlayers) {
-            b.add((++i) + ". " + Currency.format(this, p.getWorth()) + " "
+            b.add((++i) + ". " + Bank.format(this, p.getWorth()) + " "
                     + p.getId());
         }
 
@@ -1271,7 +1271,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             commonSpecialProperties = PortfolioSet.create(this, 
                     "CommonSpecialProperties", SpecialProperty.class);
         }
-        return commonSpecialProperties.moveInto(property);
+        return commonSpecialProperties.add(property);
     }
 
     // TODO: Write new SpecialPropertiesModel

@@ -11,6 +11,7 @@ import net.sf.rails.common.parser.Tag;
 import net.sf.rails.game.model.*;
 import net.sf.rails.game.special.*;
 import net.sf.rails.game.state.*;
+import net.sf.rails.game.state.Currency;
 import net.sf.rails.util.Util;
 
 import org.slf4j.Logger;
@@ -18,7 +19,9 @@ import org.slf4j.LoggerFactory;
 
 import rails.game.action.SetDividend;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 
@@ -31,7 +34,7 @@ import com.google.common.collect.Sets;
  * shares may or may not have a price on the stock market.
  * 
  */
-public class PublicCompany extends RailsAbstractItem implements Company, MoneyOwner, PortfolioOwner, Comparable<PublicCompany> {
+public class PublicCompany extends RailsAbstractItem implements Company, RailsMoneyOwner, PortfolioOwner, Comparable<PublicCompany> {
     
     private static Logger log = LoggerFactory.getLogger(PublicCompany.class);
 
@@ -113,8 +116,8 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
     protected PriceModel currentPrice;
 
     /** Company treasury, holding cash */
-    protected final WalletMoneyModel treasury = 
-            WalletMoneyModel.create(this, "treasury", false);
+    protected final PurseMoneyModel treasury = 
+            PurseMoneyModel.create(this, "treasury", false);
 
     /** PresidentModel */
     protected final PresidentModel presidentModel = PresidentModel.create(this);
@@ -880,7 +883,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
     public void start(int price) {
         StockSpace startSpace = getRoot().getStockMarket().getStartSpace(price);
         if (startSpace == null) {
-            log.error("Invalid start price " + getRoot().getCurrency().format(price)); // TODO: Do this nicer
+            log.error("Invalid start price " + Bank.format(this, price)); // TODO: Do this nicer
         } else {
             start(startSpace);
         }
@@ -1110,11 +1113,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
 //        }
 //    }
 
-    public int getCash() {
-        return treasury.value();
-    }
-    
-    public WalletMoneyModel getWallet() {
+    public PurseMoneyModel getPurseMoneyModel() {
         return treasury;
     }
 
@@ -1512,7 +1511,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
         // increase own train costs
         trainsCostThisTurn.change(price);
         // move the train to here
-        portfolio.getTrainsModel().getPortfolio().moveInto(train);
+        portfolio.getTrainsModel().getPortfolio().add(train);
         // check if a private has to be closed on first train buy
         if (privateToCloseOnFirstTrain != null
                 && !privateToCloseOnFirstTrain.isClosed()) {
@@ -1534,11 +1533,11 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
                     getId(),
                     privateCompany.getId(),
                     from.getId(),
-                    Currency.format(this, price) ));
+                    Bank.format(this, price) ));
         }
 
         // Move the private certificate
-        portfolio.getPrivatesOwnedModel().getPortfolio().moveInto(privateCompany);
+        portfolio.getPrivatesOwnedModel().getPortfolio().add(privateCompany);
 
         // Move the money
         if (price > 0) {
@@ -1596,7 +1595,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
 
     public void layTilenNoMapMode(int cost) {
         if (cost > 0) tilesCostThisTurn.change(cost);
-        tilesLaidThisTurn.append(Currency.format(this, cost), ",");
+        tilesLaidThisTurn.append(Bank.format(this, cost), ",");
     }
 
     public StringState getTilesLaidThisTurnModel() {
@@ -1616,7 +1615,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
 
     public void layBaseTokennNoMapMode(int cost) {
         if (cost > 0) tokensCostThisTurn.change(cost);
-        tokensLaidThisTurn.append(Currency.format(this, cost), ",");
+        tokensLaidThisTurn.append(Bank.format(this, cost), ",");
     }
 
     /**
@@ -1651,24 +1650,22 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
     }
 
     /** Return all possible token lay costs to be incurred for the
-     * company's next token lay. In the "distance" method, this will be an array.
-     * @return
+     * company's next token lay. For the distance method it will be a full list
      */
-    public int[] getBaseTokenLayCosts () {
+    public Set<Integer> getBaseTokenLayCosts () {
 
         if (baseTokenLayCostMethod.equals(BASE_COST_SEQUENCE)) {
-            return new int[] {getBaseTokenLayCost(null)};
+            return ImmutableSet.of(getBaseTokenLayCost(null));
         } else if (baseTokenLayCostMethod.equals(BASE_COST_DISTANCE)) {
             // WARNING: no provision yet for multiple home hexes.
-            int[] distances = getRoot().getMapManager().getCityDistances(homeHexes.get(0));
-            int[] costs = new int[distances.length];
-            int i = 0;
+            Collection<Integer> distances = getRoot().getMapManager().getCityDistances(homeHexes.get(0));
+            ImmutableSet.Builder<Integer> costs = ImmutableSet.builder();
             for (int distance : distances) {
-                costs[i++] = distance * baseTokenLayCost.get(0);
+                costs.add(distance * baseTokenLayCost.get(0));
             }
-            return costs;
+            return costs.build();
         } else {
-            return new int[] {0};
+            return ImmutableSet.of(0);
         }
 
     }
@@ -2006,6 +2003,14 @@ public class PublicCompany extends RailsAbstractItem implements Company, MoneyOw
         return portfolio.getPersistentSpecialProperties();
     }
 
+    // MoneyOwner interface
+    public Purse getPurse() {
+        return treasury.getPurse();
+    }
+    
+    public int getCash() {
+        return getPurse().value();
+    }
 
     // Comparable interface
     public int compareTo(PublicCompany other) {

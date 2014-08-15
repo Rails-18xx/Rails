@@ -74,7 +74,7 @@ public class StartRound_1825 extends StartRound {
             }
             if (soldShares == playerManager.getPlayers().size()){
                 //Enable passing
-                possibleActions.add(new NullAction(NullAction.PASS));
+                possibleActions.add(new NullAction(NullAction.Mode.PASS));
             }
         }
         return true;

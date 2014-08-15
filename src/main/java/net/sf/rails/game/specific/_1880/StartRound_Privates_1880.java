@@ -2,11 +2,12 @@ package net.sf.rails.game.specific._1880;
 
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
-import net.sf.rails.game.Currency;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCertificate;
+import net.sf.rails.game.Bank;
 import net.sf.rails.game.StartItem;
+import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.GenericState;
 import rails.game.action.PossibleAction;
 import rails.game.specific._1880.SetupNewPublicDetails_1880;
@@ -51,7 +52,7 @@ public class StartRound_Privates_1880 extends StartRound_Sequential {
             company.start(castAction.getPrice());
             company.setFloated();
             Currency.wire(bank, 500, company);
-            ReportBuffer.add(this, LocalText.getText("FloatsWithCash",company.getId(), Currency.format(this, 500)));
+            ReportBuffer.add(this, LocalText.getText("FloatsWithCash",company.getId(), Bank.format(this, 500)));
             
             pendingAction.set(null);
             return true;

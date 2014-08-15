@@ -2,16 +2,25 @@ package rails.game.action;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import net.sf.rails.game.*;
+import net.sf.rails.game.MapHex;
+import net.sf.rails.game.MapManager;
+import net.sf.rails.game.Tile;
+import net.sf.rails.game.TileManager;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.special.SpecialTileLay;
+import net.sf.rails.util.RailsObjects;
 import net.sf.rails.util.Util;
 
 import com.google.common.base.Objects;
 
-
+/**
+ * Rails 2.0: Updated equals and toString methods (however see TODO below)
+*/
 public class LayTile extends PossibleORAction {
 
     /* LayTile types */
@@ -224,52 +233,50 @@ public class LayTile extends PossibleORAction {
         return relaidBaseTokens;
     }
 
+    // TODO: Check for and add the missing attributes
     @Override
-    // TODO: This testing could be improved by strengthing the conditions
-    public boolean equalsAsOption(PossibleAction action) {
-        if (!(action.getClass() == LayTile.class)) return false;
-        LayTile a = (LayTile) action;
-        return ((locations == null || locations.isEmpty() || locations.contains(a.chosenHex))
-//              && a.type == type // type is not always stored 
-               && ( Objects.equal(a.tiles, tiles) && specialProperty == null 
-               || Objects.equal(a.specialProperty, specialProperty) && specialProperty != null));
-        // Remark: this test is invalid as sometimes zero values got stored
-//              && a.tileColours == tileColours
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
+        // identity always true
+        if (pa == this) return true;
+        //  super checks both class identity and super class attributes
+        if (!super.equalsAs(pa, asOption)) return false; 
+
+        // check asOption attributes
+        LayTile action = (LayTile)pa; 
+        boolean options = (this.locations == null || this.locations.isEmpty() || this.locations.contains(action.chosenHex))
+                && (this.tiles == null || this.tiles.isEmpty() || Objects.equal(this.tiles, action.tiles) || this.tiles.contains(action.getLaidTile()) )
+//              && Objects.equal(this.type, action.type) // type is not always stored 
+                && Objects.equal(this.specialProperty, action.specialProperty)
+        ;
+
+        // finish if asOptions check
+        if (asOption) return options;
+        
+        // check asAction attributes
+        return options
+            && Objects.equal(this.laidTile, action.laidTile)
+            && Objects.equal(this.chosenHex, action.chosenHex)
+            && Objects.equal(this.orientation, action.orientation)
+            && Objects.equal(this.relaidBaseTokens, action.relaidBaseTokens)
+        ;
+
     }
 
-    @Override
-    public boolean equalsAsAction (PossibleAction action) {
-        if (!(action instanceof LayTile)) return false;
-        LayTile a = (LayTile) action;
-        return (a.laidTileId == laidTileId
-                && a.chosenHexName.equals(chosenHexName)
-                && a.orientation == orientation
-                && (a.relaidBaseTokensString == null && relaidBaseTokensString == null
-                        || a.relaidBaseTokensString.equals(relaidBaseTokensString)));
-    }
-
+    // TODO: Check for and add the missing attributes
     @Override
     public String toString() {
-        StringBuilder b = new StringBuilder("LayTile");
-        if (laidTile == null) {
-            b.append(" type=").append(type);
-            if (locations != null)
-                b.append(" location=").append(locationNames);
-            if (specialProperty != null)
-                b.append(" spec.prop=").append(specialProperty);
-            if (tileColours != null && !tileColours.isEmpty()) {
-                int value;
-                for (String key : tileColours.keySet()) {
-                    value = tileColours.get(key);
-                    b.append(" ").append(key).append(":").append(value);
-                }
-            }
-        } else {
-            b.append(" tile=").append(laidTile.getId()).append(" hex=").append(
-                    chosenHex.getId()).append(" orientation=").append(
-                            orientation).append(" tokens=").append(relaidBaseTokensString);
-        }
-        return b.toString();
+        return super.toString() + 
+                RailsObjects.stringHelper(this)
+                    .addToString("locations", locations)
+                    .addToString("tiles", tiles)
+                    .addToString("type", type)
+                    .addToString("specialProperty", specialProperty)
+                    .addToStringOnlyActed("laidTile", laidTile)
+                    .addToStringOnlyActed("chosenHex", chosenHex)
+                    .addToStringOnlyActed("orientation", orientation)
+                    .addToStringOnlyActed("relaidBaseTokens", relaidBaseTokens)
+                .toString()
+        ;
     }
 
     /** Deserialize */

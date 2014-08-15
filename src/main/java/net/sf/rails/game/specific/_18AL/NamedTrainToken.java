@@ -53,7 +53,7 @@ public class NamedTrainToken extends Token<NamedTrainToken> implements Configura
         hexesString = tag.getAttributeAsString("ifRouteIncludes");
 
         description =
-                longName + " [" + hexesString + "] +" + Currency.format(this, value);
+                longName + " [" + hexesString + "] +" + Bank.format(this, value);
     }
 
     public void finishConfiguration (RailsRoot root)

@@ -1,10 +1,4 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/ExchangeableToken.java,v 1.1 2009/05/04 20:29:15 evos Exp $
- *
- * Created on 20-May-2006
- * Change Log:
- */
 package rails.game.action;
-
 
 import java.io.Serializable;
 
@@ -15,8 +9,10 @@ import com.google.common.base.Objects;
  * of a Base token, to facilitate its replacement even after its company
  * has been closed and all its tokens removed. This class is used in
  * the ExchangeTokens action class.
- * @author Erik Vos
- */
+ * 
+ * Rails 2.0: Added new equals and hashcode classes to allow passing tests of the according action
+*/
+
 public class ExchangeableToken implements Serializable {
     
     private String cityName;
@@ -46,15 +42,30 @@ public class ExchangeableToken implements Serializable {
         this.selected = selected;
     }
     
-    public boolean equalsAsOption(ExchangeableToken other) {
-        return Objects.equal(this.cityName, other.cityName) 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        if (this.getClass() != o.getClass()) return false;
+        
+        ExchangeableToken other = (ExchangeableToken) o;
+        return Objects.equal(this.cityName, other.cityName)
                 && Objects.equal(this.oldCompanyName, other.oldCompanyName);
     }
     
-    public String toString() {
-        return cityName+"["+oldCompanyName+"]"
-            + (selected ? "*" : "");
+    @Override 
+    public int hashCode() {
+        return Objects.hashCode(cityName, oldCompanyName);
     }
     
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this)
+                .add("cityName", cityName)
+                .add("oldCompanyName", oldCompanyName)
+                .add("selected", selected)
+                .toString()
+        ;
+    }
 }
 

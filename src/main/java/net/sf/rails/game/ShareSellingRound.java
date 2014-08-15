@@ -6,9 +6,9 @@ import java.util.List;
 
 import rails.game.action.PossibleAction;
 import rails.game.action.SellShares;
-
 import net.sf.rails.common.*;
 import net.sf.rails.game.model.PortfolioModel;
+import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.IntegerState;
 
 
@@ -37,7 +37,7 @@ public class ShareSellingRound extends StockRound {
                 +sellingPlayer.getId()+" cash="+cashToRaise);
         ReportBuffer.add(this, LocalText.getText("PlayerMustSellShares",
                 sellingPlayer.getId(),
-                Currency.format(this, cashToRaise)));
+                Bank.format(this, cashToRaise)));
         this.parentRound = parentRound;
         currentPlayer = this.sellingPlayer = sellingPlayer;
         this.cashNeedingCompany = cashNeedingCompany;
@@ -383,7 +383,7 @@ public class ShareSellingRound extends StockRound {
             gameManager.finishShareSellingRound();
         } else if (getSellableShares().isEmpty()) {
             DisplayBuffer.add(this, LocalText.getText("YouMustRaiseCashButCannot",
-                    Currency.format(this, cashToRaise.value())));
+                    Bank.format(this, cashToRaise.value())));
             currentPlayer.setBankrupt();
             gameManager.registerBankruptcy();
         }

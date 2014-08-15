@@ -5,11 +5,12 @@ import java.util.List;
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
-import net.sf.rails.game.Currency;
 import net.sf.rails.game.GameManager;
-import net.sf.rails.game.MoneyOwner;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.Bank;
+import net.sf.rails.game.state.Currency;
+import net.sf.rails.game.state.MoneyOwner;
 
 
 public class CashCorrectionManager extends CorrectionManager {
@@ -69,8 +70,8 @@ public class CashCorrectionManager extends CorrectionManager {
                 errMsg =
                     LocalText.getText("NotEnoughMoney", 
                             ch.getId(),
-                            Currency.format(this, ch.getCash()),
-                            Currency.format(this, -amount) 
+                            Bank.format(this, ch.getCash()),
+                            Bank.format(this, -amount) 
                     );
                 break;
             }

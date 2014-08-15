@@ -11,7 +11,6 @@ import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.GameOption;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
-import net.sf.rails.game.Currency;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCertificate;
@@ -20,6 +19,7 @@ import net.sf.rails.game.ShareSellingRound;
 import net.sf.rails.game.StockSpace;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.state.ChangeStack;
+import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.GameDef;
 import rails.game.action.NullAction;
 import rails.game.action.PossibleAction;
@@ -47,7 +47,7 @@ public class ShareSellingRound_1880 extends ShareSellingRound {
 
         setSellableShares();
                    
-        possibleActions.add(new NullAction(NullAction.DONE));
+        possibleActions.add(new NullAction(NullAction.Mode.DONE));
         
         for (PossibleAction pa : possibleActions.getList()) {
             log.debug(currentPlayer.getId() + " may: " + pa.toString());

@@ -3,13 +3,13 @@ package net.sf.rails.game;
 import java.util.*;
 
 import rails.game.action.*;
-
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.state.BooleanState;
+import net.sf.rails.game.state.Currency;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
@@ -65,7 +65,7 @@ public class TreasuryShareRound extends StockRound {
             // TODO Finish the round before it started...
         }
 
-        possibleActions.add(new NullAction(NullAction.DONE));
+        possibleActions.add(new NullAction(NullAction.Mode.DONE));
 
         for (PossibleAction pa : possibleActions.getList()) {
             log.debug(operatingCompany.getId() + " may: " + pa.toString());

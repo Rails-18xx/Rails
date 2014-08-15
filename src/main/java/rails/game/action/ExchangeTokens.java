@@ -1,8 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/ExchangeTokens.java,v 1.3 2010/01/01 14:34:06 evos Exp $
- *
- * Created on 20-May-2006
- * Change Log:
- */
 package rails.game.action;
 
 import java.io.IOException;
@@ -10,9 +5,16 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sf.rails.util.RailsObjects;
+
+import com.google.common.base.Objects;
+
 /**
- * @author Erik Vos
+ * Rails 2.0: Updated equals and toString methods
  */
+
+// FIXME: This stores client settings (action results) in an external object (ExchangeableToken).
+// This is bad practice in Rails. This action is only used in 1856, maybe it should be a specific action there 
 public class ExchangeTokens extends PossibleORAction {
 
     // Server settings
@@ -53,45 +55,30 @@ public class ExchangeTokens extends PossibleORAction {
     }
 
     @Override
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
+        // identity always true
+        if (pa == this) return true;
+        //  super checks both class identity and super class attributes
+        if (!super.equalsAs(pa, asOption)) return false; 
+
+        // check asOption attributes
+        ExchangeTokens action = (ExchangeTokens)pa; 
+        return Objects.equal(this.tokensToExchange, action.tokensToExchange)
+                && Objects.equal(this.minNumberToExchange, action.minNumberToExchange)
+                && Objects.equal(this.maxNumberToExchange, action.maxNumberToExchange)
+        ;
+        // no asAction attributes to be checked
+    }
+
+    @Override
     public String toString() {
-
-        StringBuffer b = new StringBuffer();
-        b.append("ExchangeTokens for "+companyName+":");
-        if (tokensToExchange != null) {
-            for (ExchangeableToken token : tokensToExchange) {
-                b.append(" ").append(token.toString());
-            }
-        } else {
-            b.append ("-none?-");
-            log.error("No exchangable tokens found when expected - error seen during Undo CGR formation");
-        }
-        b.append(" min=").append (minNumberToExchange);
-        b.append(" max=").append (maxNumberToExchange);
-        return b.toString();
-    }
-    
-    @Override
-    public boolean equalsAsOption(PossibleAction action) {
-        if (!(action instanceof ExchangeTokens)) return false;
-        ExchangeTokens a = (ExchangeTokens) action;
-        if (a.company != this.company) return false;
-        // check if all tokensToExchange are equal as option (without selected)
-        for (int i=0; i< tokensToExchange.size(); i++) {
-            if (!(a.tokensToExchange.get(i).equalsAsOption(tokensToExchange.get(i)))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public boolean equalsAsAction(PossibleAction action) {
-        if (!action.equalsAsOption(this)) return false;
-        ExchangeTokens a = (ExchangeTokens) action;
-        for (int i=0; i<tokensToExchange.size(); i++) {
-            if (a.tokensToExchange.get(i).isSelected() != tokensToExchange.get(i).isSelected()) return false;
-        }
-        return true;
+        return super.toString() + 
+                RailsObjects.stringHelper(this)
+                    .addToString("tokensToExchange", tokensToExchange)
+                    .addToString("minNumberToExchange", minNumberToExchange)
+                    .addToString("maxNumberToExchange", maxNumberToExchange)
+                    .toString()
+        ;
     }
 
     /** Deserialize */

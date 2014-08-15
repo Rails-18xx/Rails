@@ -45,6 +45,10 @@ public final class ArrayListMultimapState<K,V> extends State {
         return map.containsEntry(key, value);
     }
     
+    public boolean containsKey(K key) {
+        return map.containsKey(key);
+    }
+    
     public boolean isEmpty() {
         return map.isEmpty();
     }

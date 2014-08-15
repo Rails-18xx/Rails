@@ -204,7 +204,7 @@ public class TrainCertificateType extends RailsAbstractItem implements Configura
 
     public String getInfo() {
         StringBuilder b = new StringBuilder ("<html>");
-        b.append(LocalText.getText("TrainInfo", getId(), Currency.format(this, cost), quantity));
+        b.append(LocalText.getText("TrainInfo", getId(), Bank.format(this, cost), quantity));
         if (b.length() == 6) b.append(LocalText.getText("None"));
 
         return b.toString();

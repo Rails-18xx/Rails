@@ -13,7 +13,6 @@ import net.sf.rails.game.Bank;
 import net.sf.rails.game.BankPortfolio;
 import net.sf.rails.game.BonusToken;
 import net.sf.rails.game.Company;
-import net.sf.rails.game.MoneyOwner;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PrivateCompany;
 import net.sf.rails.game.PublicCertificate;
@@ -23,6 +22,7 @@ import net.sf.rails.game.Train;
 import net.sf.rails.game.TrainCertificateType;
 import net.sf.rails.game.TrainType;
 import net.sf.rails.game.special.SpecialProperty;
+import net.sf.rails.game.state.MoneyOwner;
 import net.sf.rails.game.state.Owner;
 import net.sf.rails.game.state.Portfolio;
 import net.sf.rails.game.state.PortfolioSet;
@@ -371,7 +371,7 @@ public class PortfolioModel extends RailsModel {
      * Add a train to the train portfolio
      */
     public boolean addTrain(Train train) {
-        return trains.getPortfolio().moveInto(train);
+        return trains.getPortfolio().add(train);
     }
 
     /**
@@ -516,7 +516,7 @@ public class PortfolioModel extends RailsModel {
     }
 
     public boolean addBonusToken(BonusToken token) {
-        return bonusTokens.moveInto(token);
+        return bonusTokens.add(token);
     }
 
     public Portfolio<BonusToken> getTokenHolder() {

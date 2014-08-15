@@ -3,7 +3,7 @@ package net.sf.rails.game.state;
 /**
  * Change associated with ArrayListState
  */
-final class ArrayListChange<E> extends Change {
+public final class ArrayListChange<E> extends Change {
     private final ArrayListState<E> state;
     private final E object;
     private final int index;
@@ -39,7 +39,8 @@ final class ArrayListChange<E> extends Change {
         state.change(object, index, !addToList);
     }
 
-    @Override ArrayListState<E> getState() {
+    @Override
+    public ArrayListState<E> getState() {
         return state;
     }
     

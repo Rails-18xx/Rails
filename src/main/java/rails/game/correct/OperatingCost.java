@@ -1,19 +1,21 @@
 package rails.game.correct;
 
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
+import com.google.common.base.Objects;
+
 import rails.game.action.PossibleAction;
 import rails.game.action.PossibleORAction;
-
+import net.sf.rails.util.RailsObjects;
 import net.sf.rails.util.Util;
 
 /**
  * OR action for no map mode 
  * mirrors operating actions like tile and token lays, but
  * only changes the cash position of the public company
- * @author Stefan Frey
+
+ * Rails 2.0: Updated equals and toString methods
  */
 public class OperatingCost extends PossibleORAction {
 
@@ -75,47 +77,43 @@ public class OperatingCost extends PossibleORAction {
        return operatingCostType;
    }
    
-    @Override
-    public boolean equalsAsOption(PossibleAction action) {
-        if (!(action instanceof OperatingCost)) return false;
-        OperatingCost a = (OperatingCost) action;
-        return (a.company == this.company &&
-                a.operatingCostType == this.operatingCostType &&
-                a.suggestedCost == this.suggestedCost &&
-                a.maximumCost == this.maximumCost
-        );
-    }
-    
-    @Override
-    public boolean equalsAsAction(PossibleAction action) {
-        if (!(action instanceof OperatingCost)) return false;
-        OperatingCost a = (OperatingCost) action;
-        return (a.company == this.company &&
-                a.operatingCostType == this.operatingCostType &&
-                a.operatingCost == this.operatingCost
-        );
-    }
-    
-    @Override
-    public String toString() {
-        StringBuffer b = new StringBuffer("OperatingCost");
-        if (!acted) {
-            b.append(" (not acted)");
-            if (company != null)
-                b.append(", company="+company);
-            b.append(", operatingCostType="+operatingCostType);
-            b.append(", suggestedCost="+suggestedCost);
-            b.append(", maximumCost="+maximumCost);
-        } else {
-            b.append(" (acted)");
-            if (company != null)
-                b.append(", company="+company);
-            b.append(", operatingCostType="+operatingCostType);
-            b.append(", operatingCost="+operatingCost);
-        }
-        return b.toString();
-    }
+   @Override
+   protected boolean equalsAs(PossibleAction pa, boolean asOption) {
+       // identity always true
+       if (pa == this) return true;
+       //  super checks both class identity and super class attributes
+       if (!super.equalsAs(pa, asOption)) return false; 
 
+       // check asOption attributes
+       OperatingCost action = (OperatingCost) pa;
+       boolean options = Objects.equal(this.operatingCostType, action.operatingCostType)
+               && Objects.equal(this.suggestedCost, action.suggestedCost)
+               && Objects.equal(this.maximumCost, action.maximumCost)
+               && Objects.equal(this.freeEntryAllowed, action.freeEntryAllowed)
+       ;
+       
+       // finish if asOptions check
+       if (asOption) return options;
+       
+       // check asAction attributes
+       return options
+               && Objects.equal(this.operatingCost, action.operatingCost)
+       ;
+    }
+    
+   @Override
+   public String toString() {
+       return super.toString() + 
+               RailsObjects.stringHelper(this)
+                   .addToString("operatingCostType", operatingCostType)
+                   .addToString("suggestedCost", suggestedCost)
+                   .addToString("maximumCost", maximumCost)
+                   .addToString("freeEntryAllowed", freeEntryAllowed)
+                   .addToStringOnlyActed("operatingCost", operatingCost)
+                   .toString()
+       ;
+   }
+   
     /** Deserialize */
     private void readObject(ObjectInputStream in) throws IOException,
             ClassNotFoundException {

@@ -1,19 +1,17 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/SellShares.java,v 1.7 2010/01/31 22:22:29 macfreek Exp $
- *
- * Created on 17-Sep-2006
- * Change Log:
- */
 package rails.game.action;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-import net.sf.rails.game.*;
+import com.google.common.base.Objects;
+
+import net.sf.rails.game.CompanyManager;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.util.RailsObjects;
 import net.sf.rails.util.Util;
 
-
 /**
- * @author Erik Vos
+ * Rails 2.0: Updated equals and toString methods
  */
 public class SellShares extends PossibleAction {
 
@@ -98,31 +96,39 @@ public class SellShares extends PossibleAction {
     }
 
     @Override
-    public boolean equalsAsOption(PossibleAction action) {
-        if (!(action instanceof SellShares)) return false;
-        SellShares a = (SellShares) action;
-        return a.getCompanyName().equals(companyName)
-        && a.getShareUnits() == shareUnits
-        && a.getNumber() == number
-        && a.getPrice() == price;
-    }
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
+        // identity always true
+        if (pa == this) return true;
+        //  super checks both class identity and super class attributes
+        if (!super.equalsAs(pa, asOption)) return false; 
 
-    @Override
-    public boolean equalsAsAction(PossibleAction action) {
-        if (!(action instanceof SellShares)) return false;
-        SellShares a = (SellShares) action;
-        return a.companyName.equals(companyName)
-        && a.shareUnits == shareUnits
-        && a.number == number
-        && a.price == price;
+        // check asOption attributes
+        SellShares action = (SellShares) pa;
+
+        return Objects.equal(this.company, action.company)
+                && Objects.equal(this.shareUnit, action.shareUnit)
+                && Objects.equal(this.shareUnits, action.shareUnits)
+                && Objects.equal(this.share, action.share)
+                && Objects.equal(this.price, action.price)
+                && Objects.equal(this.number, action.number)
+                && Objects.equal(this.presidentExchange, action.presidentExchange)
+        ;
+        // no asAction attributes to be checked
     }
 
     @Override
     public String toString() {
-        return "SellShares: "
-        + number + " of " + share + "% " + companyName
-        + " at " + Currency.format(company, shareUnits * price) + " apiece"
-        + (presidentExchange > 0 ? " (pres.exch. for "+presidentExchange*shareUnit+"% share(s))" : "");
+        return super.toString() + 
+                RailsObjects.stringHelper(this)
+                    .addToString("company", company)
+                    .addToString("shareUnit", shareUnit)
+                    .addToString("shareUnits", shareUnits)
+                    .addToString("share", share)
+                    .addToString("price", price)
+                    .addToString("number", number)
+                    .addToString("presidentExchange", presidentExchange)
+                    .toString()
+        ;
     }
 
     /** Deserialize */

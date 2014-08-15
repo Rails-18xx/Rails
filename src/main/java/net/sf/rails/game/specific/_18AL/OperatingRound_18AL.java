@@ -6,11 +6,11 @@ import java.util.Set;
 
 import rails.game.action.LayBaseToken;
 import rails.game.action.PossibleAction;
-
 import net.sf.rails.common.GameOption;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.*;
+import net.sf.rails.game.state.Currency;
 
 
 public class OperatingRound_18AL extends OperatingRound {

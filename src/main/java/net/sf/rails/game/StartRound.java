@@ -3,10 +3,10 @@ package net.sf.rails.game;
 import java.util.List;
 
 import rails.game.action.*;
-
 import net.sf.rails.common.*;
 import net.sf.rails.util.Util;
 import net.sf.rails.game.state.ArrayListState;
+import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.IntegerState;
 import net.sf.rails.game.state.Model;
 
@@ -90,15 +90,11 @@ public abstract class StartRound extends Round {
 
         log.debug("Processing action " + action);
 
-        if (action instanceof NullAction) {
-
+        if (action instanceof NullAction && 
+                ((NullAction)action).getMode() == NullAction.Mode.PASS) {
             String playerName = action.getPlayerName();
             NullAction nullAction = (NullAction) action;
-            switch (nullAction.getMode()) {
-            case NullAction.PASS:
-                result = pass(nullAction, playerName);
-                break;
-            }
+            result = pass(nullAction, playerName);
 
         } else if (action instanceof StartItemAction) {
 
@@ -207,7 +203,7 @@ public abstract class StartRound extends Round {
                 if ((stockMarket.getStartSpace(sharePrice)) == null) {
                     errMsg =
                         LocalText.getText("InvalidStartPrice",
-                                    Currency.format(this, sharePrice),
+                                    Bank.format(this, sharePrice),
                                 shareCompName );
                     break;
                 }

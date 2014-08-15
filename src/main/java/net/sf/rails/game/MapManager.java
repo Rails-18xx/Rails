@@ -3,6 +3,7 @@ package net.sf.rails.game;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.SortedSet;
 
 import net.sf.rails.common.Config;
@@ -14,6 +15,7 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Table;
 
 
@@ -24,18 +26,20 @@ public class MapManager extends RailsManager implements Configurable {
 
     private MapOrientation mapOrientation;
 
-    private Map<MapHex.Coordinates, MapHex> hexes;
-    // TODO: Replace with ImmutableTable (Guava R11)
-    private Table<MapHex, HexSide, MapHex> hexTable = HashBasedTable.create();
+    private ImmutableMap<MapHex.Coordinates, MapHex> hexes;
+    private ImmutableTable<MapHex, HexSide, MapHex> hexTable;
 
     private MapHex.Coordinates minimum;
     private MapHex.Coordinates maximum;
 
     // upgrade costs on the map for noMapMode
-    private SortedSet<Integer> possibleTileCosts;
+    private ImmutableSortedSet<Integer> possibleTileCosts;
 
     // Stop property defaults per stop type
-    private Map<String, StopType> defaultStopTypes;
+    private ImmutableMap<String, StopType> defaultStopTypes;
+    
+    // if required: distance table
+    private Table<MapHex, MapHex, Integer> hexDistances;
 
     // Optional map image (SVG file)
     // FIXME: Move to UI class
@@ -102,13 +106,14 @@ public class MapManager extends RailsManager implements Configurable {
         }
 
         // Initialise the neighbours
+        ImmutableTable.Builder<MapHex, HexSide, MapHex> hexTableBuilder = ImmutableTable.builder();
         for (MapHex hex:hexes.values()) {
             for (HexSide side:HexSide.all()){
                 MapHex neighbour = hexes.get(mapOrientation.
                         getAdjacentCoordinates(hex.getCoordinates(), side));
                 if (neighbour != null) {
                     if (hex.isValidNeighbour(neighbour, side)) {
-                        hexTable.put(hex, side, neighbour);
+                        hexTableBuilder.put(hex, side, neighbour);
                     } else {
                         hex.addInvalidSide(side);
                         if (hex.isImpassableNeighbour(neighbour)) {
@@ -121,6 +126,7 @@ public class MapManager extends RailsManager implements Configurable {
                 }
             }
         }
+        hexTable = hexTableBuilder.build();
 
         for (PublicCompany company : root.getCompanyManager().getAllPublicCompanies()) {
             List<MapHex> homeHexes = company.getHomeHexes();
@@ -226,70 +232,58 @@ public class MapManager extends RailsManager implements Configurable {
     /**
      * Calculate the distance between two hexes as in 1835,
      * i.e. as "the crow without a passport flies".
-     * @param hex1
-     * @param hex2
-     * @return
      */
-    // FIXME: Rewrite this code
     public int getHexDistance (MapHex hex1, MapHex hex2) {
-        return 0;
-//        if (distances == null) distances = new HashMap<MapHex, Map<MapHex, Integer>> ();
-//        if (distances.get(hex1) == null) {
-//            distances.put(hex1, new HashMap<MapHex, Integer>());
-//            calculateHexDistances(hex1, hex1, 0);
-//        }
-//        return distances.get(hex1).get(hex2);
+        if (hexDistances == null) {
+            hexDistances = HashBasedTable.create();
+        }
+
+        if (!hexDistances.contains(hex1, hex2)) {
+            calculateHexDistances(hex1, hex1, 0);
+        }
+        return hexDistances.get(hex1, hex2);
     }
-//
-//    private void calculateHexDistances (MapHex hex1, MapHex hex2, int depth) {
+
+    private void calculateHexDistances (MapHex initHex, MapHex currentHex, int depth) {
+        hexDistances.put(initHex, currentHex, depth);
         
-//
-//        if (distances.get(hex1).get(hex2) == null) {
-//            distances.get(hex1).put(hex2, depth);
-//        } else {
-//            if (distances.get(hex1).get(hex2) <= depth) return;
-//            distances.get(hex1).put(hex2, depth);
-//        }
-//
-//        for (MapHex hex3 : getAdjacentHexes(hex2)) {
-//            if (hex3 == null) continue;
-//            if (distances.get(hex1).get(hex3) == null) {
-//                calculateHexDistances (hex1, hex3, depth+1);
-//            } else if (distances.get(hex1).get(hex3) > depth+1) {
-//                calculateHexDistances (hex1, hex3, depth+1);
-//            }
-//        }
-//    }
-//
-//    /**
-//     * Calculate the distances between a given tokenable city hex
-//     * and all other tokenable city hexes.
-//     * <p> The array is cached, so it need be calculated only once.
-//     * @param hex Start hex
-//     * @return Sorted int array containing all occurring distances only once.
-//     */
-    public int[] getCityDistances (MapHex hex) {
-        // FIXME: Rails 2.0 Rewrite this code
+        // check for next hexes
+        depth ++;
+        for (MapHex nextHex:hexTable.row(currentHex).values()) {
+            if (!hexDistances.contains(initHex, nextHex) ||
+                    depth < hexDistances.get(initHex, nextHex)) {
+                calculateHexDistances(initHex, nextHex, depth);
+            }
+        }
+    }
+
+
+    /**
+     * Calculate the distances between a given tokenable city hex
+     * and all other tokenable city hexes.
+     * <p> Distances are cached.
+     * @param hex Start hex
+     * @return Sorted integer list containing all occurring distances only once.
+     */
+    public SortedSet<Integer> getCityDistances (MapHex initHex) {
         
-        return new int[0];
-//        if (!hex.getCurrentTile().hasStations()) return new int[0];
-//        if (uniqueCityDistances == null) uniqueCityDistances = TreeMultimap.create();
-//        if (uniqueCityDistances.containsKey(hex)) return uniqueCityDistances.get(hex);
-//
-//        int distance;
-//        Set<Integer> distancesSet = new TreeSet<Integer> ();
-//        for (MapHex hex2 : mHexes.values()) {
-//            if (!hex2.getCurrentTile().hasStations()) continue;
-//            distance = getHexDistance (hex, hex2);
-//            distancesSet.add(distance);
-//        }
-//        int[] distances = new int[distancesSet.size()];
-//        int i=0;
-//        for (int distance2 : distancesSet) {
-//            distances[i++] = distance2;
-//        }
-//        uniqueCityDistances.put(hex, distances);
-//        return distances;
+        if (hexDistances == null) {
+            hexDistances = HashBasedTable.create();
+        }
+
+        if (!hexDistances.containsRow(initHex)) {
+            calculateHexDistances(initHex, initHex, 0);
+        }
+        
+        ImmutableSortedSet.Builder<Integer> distances = 
+                ImmutableSortedSet.naturalOrder();
+        
+        for (Entry<MapHex, Integer> otherHex:hexDistances.row(initHex).entrySet()) {
+            if (otherHex.getKey().getCurrentTile().hasStations()) {
+                distances.add(otherHex.getValue());
+            }
+        }
+        return distances.build();
     }
 
     public String getMapImageFilepath() {

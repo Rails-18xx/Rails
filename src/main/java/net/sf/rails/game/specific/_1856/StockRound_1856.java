@@ -5,15 +5,15 @@ import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.BankPortfolio;
-import net.sf.rails.game.Currency;
 import net.sf.rails.game.GameManager;
-import net.sf.rails.game.MoneyOwner;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCertificate;
 import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.Bank;
 import net.sf.rails.game.StockRound;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.state.IntegerState;
+import net.sf.rails.game.state.MoneyOwner;
 import net.sf.rails.game.state.Owner;
 
 public class StockRound_1856 extends StockRound {
@@ -109,8 +109,8 @@ public class StockRound_1856 extends StockRound {
                     // FIXME (Rails2.0): This used to be addWaiting in ReportBuffer
                     // potentially the reporting is now incorrect
                     ReportBuffer.add(this, LocalText.getText("HoldMoneyInEscrow",
-                            Currency.format(this, price),
-                            Currency.format(this, comp.getMoneyInEscrow()),
+                            Bank.format(this, price),
+                            Bank.format(this, comp.getMoneyInEscrow()),
                             comp.getId() ));
                     break;
                 }

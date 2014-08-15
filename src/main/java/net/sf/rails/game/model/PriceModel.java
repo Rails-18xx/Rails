@@ -1,7 +1,7 @@
 package net.sf.rails.game.model;
 
-import net.sf.rails.game.Currency;
 import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.Bank;
 import net.sf.rails.game.StockSpace;
 import net.sf.rails.game.state.GenericState;
 
@@ -52,7 +52,7 @@ public final class PriceModel extends RailsModel {
     @Override
     public String toText() {
         if (stockPrice.value() != null) {
-            return Currency.format(getParent(), stockPrice.value().getPrice()) + " ("
+            return Bank.format(getParent(), stockPrice.value().getPrice()) + " ("
                    + stockPrice.value().getId() + ")";
         }
         return "";

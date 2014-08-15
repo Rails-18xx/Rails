@@ -1,23 +1,23 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/LayBonusToken.java,v 1.9 2010/01/31 22:22:28 macfreek Exp $
- *
- * Created on 14-Sep-2006
- * Change Log:
- */
 package rails.game.action;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 
+import com.google.common.base.Objects;
+
 import net.sf.rails.common.parser.ConfigurationException;
-import net.sf.rails.game.*;
+import net.sf.rails.game.BonusToken;
+import net.sf.rails.game.MapHex;
+import net.sf.rails.game.MapManager;
+import net.sf.rails.game.RailsRoot;
+import net.sf.rails.game.Token;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.special.SpecialTokenLay;
 import net.sf.rails.util.Util;
 
-
 /**
- * @author Erik Vos
+ * Rails 2.0: updated equals and toString methods
  */
 public class LayBonusToken extends LayToken {
 
@@ -46,19 +46,16 @@ public class LayBonusToken extends LayToken {
     }
 
     @Override
-    public boolean equalsAsOption(PossibleAction action) {
-        if (!(action instanceof LayBonusToken)) return false;
-        LayBonusToken a = (LayBonusToken) action;
-        return (a.locationNames == null && locationNames == null || a.locationNames.equals(locationNames))
-               && a.company == company && a.specialProperty == specialProperty;
-    }
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
+        // identity always true
+        if (pa == this) return true;
+        //  super checks both class identity and super class attributes
+        if (!super.equalsAs(pa, asOption)) return false; 
 
-    @Override
-    public boolean equalsAsAction(PossibleAction action) {
-        if (!(action instanceof LayBonusToken)) return false;
-        LayBonusToken a = (LayBonusToken) action;
-        return a.chosenHex == chosenHex
-               && a.company == company && a.specialProperty == specialProperty;
+        // check asOption attributes
+        LayBonusToken action = (LayBonusToken)pa; 
+        return Objects.equal(this.token, action.token);
+        // no asAction attributes to be checked
     }
 
     @Override

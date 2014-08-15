@@ -8,7 +8,6 @@ import net.sf.rails.game.*;
 import net.sf.rails.util.RailsObjects;
 
 /**
- * 
  * Rails 2.0: Updated equals and toString methods
  */
 public class StartCompany extends BuyCertificate {
@@ -57,25 +56,26 @@ public class StartCompany extends BuyCertificate {
     // FIXME: Attribute price of BuyCertificate now mutable, instead of static
     // Consider changing the class hierarchy, currently price in BuyCertificate is not checked
     @Override
-    public boolean equalsAsOption(PossibleAction pa) {
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
         // identity always true
         if (pa == this) return true;
         //  super checks both class identity and super class attributes
-        if (!super.equalsAsOption(pa)) return false; 
+        if (!super.equalsAs(pa, asOption)) return false; 
 
-        // check further attributes
+        // check asOption attributes
         StartCompany action = (StartCompany)pa; 
-        return Arrays.equals(this.startPrices, action.startPrices);
-    }
-    
-    @Override
-    public boolean equalsAsAction(PossibleAction pa) {
-        // first check if equal as option
-        if (!this.equalsAsOption(pa)) return false;
+        boolean options = 
+                Arrays.equals(this.startPrices, action.startPrices)
+        ;
         
-        // check further attributes
-        StartCompany action = (StartCompany)pa; 
-        return Objects.equal(this.price, action.price);
+        // finish if asOptions check
+        if (asOption) return options;
+        
+        // check asAction attributes
+        return options
+                && Objects.equal(this.price, action.price)
+        // TODO: price has to be checked here, as this cannot be done in BuyCertificate
+        ;
     }
     
     @Override

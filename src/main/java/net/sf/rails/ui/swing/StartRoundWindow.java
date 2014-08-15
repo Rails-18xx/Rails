@@ -2,6 +2,7 @@ package net.sf.rails.ui.swing;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.SortedSet;
 
@@ -457,7 +458,8 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
                 } else {
                     PossibleAction lastAction = gameUIManager.getLastAction();
                     if (lastAction instanceof GameAction
-                            && (((GameAction) lastAction).getMode() == GameAction.UNDO || ((GameAction) lastAction).getMode() == GameAction.FORCED_UNDO)) {
+                            && EnumSet.of(GameAction.Mode.UNDO, GameAction.Mode.FORCED_UNDO).contains(
+                            ((GameAction) lastAction).getMode() )) {
                         // If we come here via an Undo, we should not start
                         // with a modal dialog, as that would prevent further
                         // Undos.
@@ -492,7 +494,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
                 itemNameButton[i].setSelected(selected);
                 itemNameButton[i].setEnabled(!selected);
                 setItemNameButton(i, true);
-                minBid[i].setText(Currency.format(item, item.getMinimumBid()));
+                minBid[i].setText(Bank.format(item, item.getMinimumBid()));
             }
         }
 
@@ -746,7 +748,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
         b.append (item.getPrimary().toString());
         if (item.getPrimary() instanceof PrivateCompany) {
             PrivateCompany priv = (PrivateCompany) item.getPrimary();
-                b.append ("<br>Revenue: ").append(Currency.format(item, priv.getRevenue()));
+                b.append ("<br>Revenue: ").append(Bank.format(item, priv.getRevenue()));
             List<MapHex> blockedHexes = priv.getBlockedHexes();
             if (blockedHexes == null) {
             } else if (blockedHexes.size() == 1) {

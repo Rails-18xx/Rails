@@ -5,13 +5,15 @@ package net.sf.rails.game.specific._1880;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
+import com.google.common.collect.ImmutableSet;
 
 import net.sf.rails.algorithms.RevenueAdapter;
 import net.sf.rails.algorithms.RevenueStaticModifier;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
 import net.sf.rails.game.CompanyManager;
-import net.sf.rails.game.Currency;
 import net.sf.rails.game.MapHex;
 import net.sf.rails.game.Phase;
 import net.sf.rails.game.PublicCertificate;
@@ -20,6 +22,7 @@ import net.sf.rails.game.RailsItem;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.StockSpace;
 import net.sf.rails.game.state.BooleanState;
+import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.IntegerState;
 import net.sf.rails.game.state.Owner;
 import net.sf.rails.game.state.State;
@@ -339,20 +342,16 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
         return super.getBaseTokenLayCost(hex);
     }
 
-    /* (non-Javadoc)
-     * @see rails.game.PublicCompany#getBaseTokenLayCosts()
-     */
     @Override
-    public int[] getBaseTokenLayCosts() {
+    public Set<Integer> getBaseTokenLayCosts() {
         Phase phase = getRoot().getPhaseManager().getCurrentPhase();
+        // double token costs in phase D
         if (phase.getRealName().startsWith("D")) {
-            int[] result = null;
-            int[] resultPhaseD = null;
-            result = super.getBaseTokenLayCosts();
-            resultPhaseD = result.clone();
-            for ( int i = 0; i < result.length; i++)
-                resultPhaseD[i] = result[i]+ result[i];
-            return resultPhaseD;
+            ImmutableSet.Builder<Integer> doubleCosts = ImmutableSet.builder();
+            for (Integer cost:super.getBaseTokenLayCosts()) {
+                doubleCosts.add(cost * 2);
+            }
+            return doubleCosts.build();
         }
         return super.getBaseTokenLayCosts();
     }

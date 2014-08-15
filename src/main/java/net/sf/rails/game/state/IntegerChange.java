@@ -3,7 +3,7 @@ package net.sf.rails.game.state;
 /**
  * Change associated with IntegerState
  */
-final class IntegerChange extends Change {
+public final class IntegerChange extends Change {
 
     private final IntegerState state;
     private final int newValue;
@@ -24,7 +24,8 @@ final class IntegerChange extends Change {
         state.change(oldValue);
     }
 
-    @Override IntegerState getState() {
+    @Override
+    public IntegerState getState() {
         return state;
     }
 

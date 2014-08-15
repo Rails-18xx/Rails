@@ -1,5 +1,6 @@
 package rails.game.action;
 
+import java.util.EnumSet;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
@@ -67,7 +68,7 @@ public class PossibleActions {
     public boolean containsOnlyPass() {
         if (actions.size() != 1) return false;
         PossibleAction action = actions.get(0);
-        if (action instanceof NullAction && ((NullAction)action).getMode() == NullAction.PASS) {
+        if (action instanceof NullAction && ((NullAction)action).getMode() == NullAction.Mode.PASS) {
             return true;
         } else {
             return false;
@@ -79,9 +80,8 @@ public class PossibleActions {
 
         // Some actions are always allowed
         if (checkedAction instanceof GameAction
-                && (((GameAction)checkedAction).getMode() == GameAction.SAVE
-                        || ((GameAction)checkedAction).getMode() == GameAction.RELOAD
-                        || ((GameAction)checkedAction).getMode() == GameAction.EXPORT)) {
+                && EnumSet.of(GameAction.Mode.SAVE, GameAction.Mode.RELOAD, GameAction.Mode.EXPORT).contains(
+                        ((GameAction)checkedAction).getMode() )) {
             return true;
         }
 

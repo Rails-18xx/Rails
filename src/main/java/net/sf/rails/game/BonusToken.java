@@ -45,7 +45,7 @@ public class BonusToken extends Token<BonusToken> implements Closeable, Configur
         if (!Util.hasValue(name)) {
             throw new ConfigurationException("Bonus token must have a name");
         }
-        description = name + " +" + Currency.format(this, value) + " bonus token";
+        description = name + " +" + Bank.format(this, value) + " bonus token";
 
         removingObjectDesc = bonusTokenTag.getAttributeAsString("removed");
     }

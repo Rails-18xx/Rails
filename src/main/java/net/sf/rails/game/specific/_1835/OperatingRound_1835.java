@@ -4,24 +4,24 @@ import java.util.*;
 
 import rails.game.action.DiscardTrain;
 import rails.game.action.LayTile;
-
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.GameOption;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
-import net.sf.rails.game.Currency;
 import net.sf.rails.game.GameDef;
 import net.sf.rails.game.GameManager;
-import net.sf.rails.game.MoneyOwner;
 import net.sf.rails.game.OperatingRound;
 import net.sf.rails.game.Phase;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PrivateCompany;
 import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.Bank;
 import net.sf.rails.game.special.ExchangeForShare;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.state.BooleanState;
+import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.HashMapState;
+import net.sf.rails.game.state.MoneyOwner;
 import net.sf.rails.game.state.Owner;
 
 import com.google.common.collect.Iterables;
@@ -222,7 +222,7 @@ public class OperatingRound_1835 extends OperatingRound {
                         action.getCompanyName(),
                         action.getLaidTile().toText(),
                         action.getChosenHex().getId(),
-                        Currency.format(this, 0),
+                        Bank.format(this, 0),
                         errMsg ));
                 return false;
             } else {

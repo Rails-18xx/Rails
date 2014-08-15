@@ -1,14 +1,12 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/game/action/BidStartItem.java,v 1.4 2008/12/03 20:15:15 evos Exp $
- * 
- * Created on 17-Sep-2006
- * Change Log:
- */
 package rails.game.action;
 
+import com.google.common.base.Objects;
+
 import net.sf.rails.game.StartItem;
+import net.sf.rails.util.RailsObjects;
 
 /**
- * @author Erik Vos
+ * Rails 2.0: Updated equals and toString methods
  */
 public class BidStartItem extends StartItemAction {
 
@@ -68,27 +66,42 @@ public class BidStartItem extends StartItemAction {
         this.actualBid = actualBid;
     }
 
-    public boolean equalsAsOption(PossibleAction action) {
-        if (!(action instanceof BidStartItem)) return false;
-        BidStartItem a = (BidStartItem) action;
-        return a.startItem == startItem && a.itemIndex == itemIndex
-               && a.minimumBid == minimumBid;
+    @Override
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
+        // identity always true
+        if (pa == this) return true;
+        //  super checks both class identity and super class attributes
+        if (!super.equalsAs(pa, asOption)) return false; 
+
+        // check asOption attributes
+        BidStartItem action = (BidStartItem)pa; 
+        boolean options = 
+                Objects.equal(this.minimumBid, action.minimumBid)
+                && Objects.equal(this.bidIncrement, action.bidIncrement)
+                && Objects.equal(this.selected, action.selected)
+                && Objects.equal(this.selectForAuction, action.selectForAuction)
+        ;
+        
+        // finish if asOptions check
+        if (asOption) return options;
+        
+        // check asAction attributes
+        return options
+                && Objects.equal(this.actualBid, action.actualBid)
+        ;
     }
 
-    public boolean equalsAsAction(PossibleAction action) {
-        if (!(action instanceof BidStartItem)) return false;
-        BidStartItem a = (BidStartItem) action;
-        return a.equalsAsOption(this)
-               && a.actualBid == actualBid;
-    }
-
+   @Override
    public String toString() {
-        StringBuffer b = new StringBuffer();
-        b.append("BidStartItem ").append(startItemName).append(" minbid=").append(
-                minimumBid).append(" selected=").append(selected).append(
-                " selectForAuction=").append(selectForAuction).append(" bid=").append(
-                actualBid);
-        return b.toString();
-    }
+       return super.toString() + 
+               RailsObjects.stringHelper(this)
+                   .addToString("minimumBid", minimumBid)
+                   .addToString("bidIncrement", bidIncrement)
+                   .addToString("selected", selected)
+                   .addToString("selectForAuction", selectForAuction)
+                   .addToStringOnlyActed("actualBid", actualBid)
+                   .toString()
+       ;
+   }
 
 }
