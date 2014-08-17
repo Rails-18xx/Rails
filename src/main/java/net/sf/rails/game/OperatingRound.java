@@ -437,8 +437,8 @@ public class OperatingRound extends Round implements Observer {
                 int currentPlayerIndex = operatingCompany.value().getPresident().getIndex();
                 Player player;
                 int minPrice, maxPrice;
-                List<Player> players = getPlayers();
-                int numberOfPlayers = getNumberOfPlayers();
+                List<Player> players = playerManager.getPlayers();
+                int numberOfPlayers = playerManager.getNumberOfPlayers();
                 for (int i = currentPlayerIndex; i < currentPlayerIndex
                 + numberOfPlayers; i++) {
                     player = players.get(i % numberOfPlayers);
@@ -503,7 +503,7 @@ public class OperatingRound extends Round implements Observer {
                     }
                 }
                 // Are there other step-independent special properties owned by the president?
-                orsps = getCurrentPlayer().getPortfolioModel().getAllSpecialProperties();
+                orsps = playerManager.getCurrentPlayer().getPortfolioModel().getAllSpecialProperties();
                 if (orsps != null) {
                     for (SpecialProperty sp : orsps) {
                         if (!sp.isExercised() && sp.isUsableIfOwnedByPlayer()
@@ -551,7 +551,7 @@ public class OperatingRound extends Round implements Observer {
         ReportBuffer.add(this, LocalText.getText("CompanyOperates",
                 operatingCompany.value().getId(),
                 operatingCompany.value().getPresident().getId()));
-        setCurrentPlayer(operatingCompany.value().getPresident());
+                playerManager.setCurrentPlayer(operatingCompany.value().getPresident());
 
         if (noMapMode && !operatingCompany.value().hasLaidHomeBaseTokens()){
             // Lay base token in noMapMode
@@ -922,7 +922,7 @@ public class OperatingRound extends Round implements Observer {
         // otherwise continue train buying
         if (!checkForExcessTrains()) {
             // Trains may have been discarded by other players
-            setCurrentPlayer (operatingCompany.value().getPresident());
+            playerManager.setCurrentPlayer (operatingCompany.value().getPresident());
             stepObject.set(GameDef.OrStep.BUY_TRAIN);
         }
 
@@ -936,7 +936,7 @@ public class OperatingRound extends Round implements Observer {
         // Scan the players in SR sequence, starting with the current player
         for (Player player:getRoot().getPlayerManager().getNextPlayers(true)) {
             if (excessTrainCompanies.containsKey(player)) {
-                setCurrentPlayer(player);
+                playerManager.setCurrentPlayer(player);
                 List<PublicCompany> list = excessTrainCompanies.get(player);
                 for (PublicCompany comp : list) {
                     possibleActions.add(new DiscardTrain(comp,
@@ -1543,13 +1543,13 @@ public class OperatingRound extends Round implements Observer {
                         companyName,
                         tile.toText(),
                         hex.getId(),
-                        hex.getOrientationName(orientation)));
+                        hex.getOrientationName(HexSide.get(orientation))));
             } else {
                 ReportBuffer.add(this, LocalText.getText("LaysTileAtFor",
                         companyName,
                         tile.toText(),
                         hex.getId(),
-                        hex.getOrientationName(orientation),
+                        hex.getOrientationName(HexSide.get(orientation)),
                         costText ));
             }
             hex.upgrade(action);
@@ -3097,7 +3097,7 @@ public class OperatingRound extends Round implements Observer {
                 }
                 // Scan trains per company per player, operating company president
                 // first
-                int currentPlayerIndex = getCurrentPlayer().getIndex();
+                int currentPlayerIndex = playerManager.getCurrentPlayer().getIndex();
                 for (int i = currentPlayerIndex; i < currentPlayerIndex
                 + numberOfPlayers; i++) {
                     companies = companiesPerPlayer.get(i % numberOfPlayers);
@@ -3191,7 +3191,7 @@ public class OperatingRound extends Round implements Observer {
         b.append("<big>Operating round: ").append(thisOrNumber).append(
         "</big><br>");
         b.append("<br><b>").append(operatingCompany.value().getId()).append(
-        "</b> (president ").append(getCurrentPlayer().getId()).append(
+        "</b> (president ").append(playerManager.getCurrentPlayer().getId()).append(
         ") has the turn.");
         b.append("<br><br>Currently allowed actions:");
         switch (step) {
@@ -3213,6 +3213,25 @@ public class OperatingRound extends Round implements Observer {
         case BUY_TRAIN:
             b.append("<br> - Buy one or more trains");
             b.append("<br> - Press 'Done' to finish your turn");
+            break;
+        case DISCARD_TRAINS:
+            b.append("<br> - Choose the trains to discard");
+            break;
+        case FINAL:
+            b.append("<br> - End the turn");
+            break;
+        case FREIGHTRUN:
+            b.append("<br> - Perform the freightrun/mailrun");
+            break;
+        case INITIAL:
+            break;
+        case REPAY_LOANS:
+            b.append("<br> - Repay an outstanding loan");
+            break;
+        case TRADE_SHARES:
+            b.append("<br> - Buy or sell shares for/from the company");
+            break;
+        default:
             break;
         }
 
