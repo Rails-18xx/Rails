@@ -3079,7 +3079,7 @@ public class OperatingRound extends Round implements Observer {
                 BuyTrain bt;
                 Player p;
                 int index;
-                int numberOfPlayers = getNumberOfPlayers();
+                int numberOfPlayers = playerManager.getNumberOfPlayers();
                 int presidentCash = operatingCompany.value().getPresident().getCashValue();
 
                 // Set up a list per player of presided companies
