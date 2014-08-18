@@ -6,8 +6,6 @@
 	<classpathentry kind="src" path="src/test/resources"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="libs/main/commons-io-2.1/commons-io-2.1.jar"/>
-	<classpathentry kind="lib" path="libs/main/df_1.1.0/dockingFramesCommon.jar"/>
-	<classpathentry kind="lib" path="libs/main/df_1.1.0/dockingFramesCore.jar"/>
 	<classpathentry kind="lib" path="libs/main/jgraph5/jgraph.jar"/>
 	<classpathentry kind="lib" path="libs/main/jgrapht-0.7.3/jgrapht-jdk1.5.jar"/>
 	<classpathentry kind="lib" path="libs/main/sl4j-1.6.5/slf4j-api-1.6.5.jar"/>
@@ -40,5 +38,7 @@
 	<classpathentry kind="lib" path="libs/test/junit-4.11/hamcrest-core-1.3.jar"/>
 	<classpathentry kind="lib" path="libs/test/junit-4.11/junit-4.11.jar"/>
 	<classpathentry kind="lib" path="libs/main/guava-r17/guava-17.0.jar"/>
+	<classpathentry kind="lib" path="libs/main/df_1.1.1/docking-frames-common.jar"/>
+	<classpathentry kind="lib" path="libs/main/df_1.1.1/docking-frames-core.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
