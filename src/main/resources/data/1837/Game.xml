@@ -47,7 +47,7 @@
                 file="StockMarket.xml"/>
         <Component name="TrainManager" class="net.sf.rails.game.TrainManager">
                 <Defaults>
-                        <Reach base="stops" countTowns="yes"/>
+                        <Reach base="stops" countTowns="no"/>
                         <Score towns="yes"/>
                 </Defaults>
                 <TrainType name="1G" majorStops="1" cost="100" quantity="10">
@@ -58,11 +58,18 @@
                 <TrainType name="3" majorStops="3" cost="180" quantity="5">
                         <NewPhase phaseName="3"/>
                 </TrainType>
+                <TrainType name="2G" majorStops="2" cost="230" quantity="6">
+                        <Reach countTowns="no"/>
+                </TrainType>
                 <TrainType name="3+1" majorStops="3" minorStops="1" cost="280" quantity="2">
                         <NewPhase phaseName="3+1"/>
                 </TrainType>
                 <TrainType name="4" majorStops="4" cost="470" quantity="4">
                         <NewPhase phaseName="4"/>
+                </TrainType>
+                                <TrainType name="3G" majorStops="3" cost="590" quantity="2">
+                        <Reach countTowns="no"/>
+                        <NewPhase phaseName="3G"/>
                 </TrainType>
                 <TrainType name="4E" majorStops="4" cost="500" quantity="1">
                         <Reach countTowns="no"/>
@@ -89,13 +96,7 @@
                                 <Attributes quantity="-1"/>
                         </IfOption>
                 </TrainType>
-                <TrainType name="2G" majorStops="2" cost="230" quantity="6">
-                        <Reach countTowns="no"/>
-                </TrainType>
-                <TrainType name="3G" majorStops="3" cost="590" quantity="2">
-                        <Reach countTowns="no"/>
-                        <NewPhase phaseName="3G"/>
-                </TrainType>
+
                 <TrainType name="4G" majorStops="4" cost="1000" quantity="3">
                         <Reach countTowns="no"/>
                         <NewPhase phaseName="4G"/>
