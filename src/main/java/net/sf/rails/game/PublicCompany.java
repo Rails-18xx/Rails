@@ -2016,4 +2016,10 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     public int compareTo(PublicCompany other) {
         return this.getId().compareTo(other.getId());
     }
+
+    //Added to handle FreightRuns (1837/1851) - MBr 2014/08/18
+    public String getLastFreightRevenueModel() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }
