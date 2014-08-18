@@ -328,6 +328,10 @@ public abstract class StartRound extends Round {
     public boolean hasBidding() {
         return hasBidding;
     }
+    
+    public boolean hasBuying() {
+        return hasBuying;
+    }
 
     public boolean hasBasePrices() {
         return hasBasePrices;

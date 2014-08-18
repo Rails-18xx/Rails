@@ -93,7 +93,7 @@ public class StartItem extends RailsAbstractItem {
      * FIXME: Double usage for name and id
      *
      */
-    private StartItem(RailsItem parent, String name, String type, int index, boolean president) {
+    protected StartItem(RailsItem parent, String name, String type, int index, boolean president) {
         super(parent, name);
         this.name = name;
         this.type = type;
@@ -122,7 +122,7 @@ public class StartItem extends RailsAbstractItem {
         return item;
     }
     
-    private void initBasePrice(int basePrice) {
+    protected void initBasePrice(int basePrice) {
         this.basePrice.set(basePrice);
     }
     

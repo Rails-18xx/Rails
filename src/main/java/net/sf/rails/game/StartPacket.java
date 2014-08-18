@@ -26,7 +26,7 @@ public class StartPacket extends RailsAbstractItem {
     /** The name of the class that implements the Start Round for this packet. */
     private String roundClassName;
     /** The start items in this packet. */
-    private List<StartItem> items = new ArrayList<StartItem>();
+    protected List<StartItem> items = new ArrayList<StartItem>();
     /** The minimum initial bidding increment above the share price */
     private int minimumInitialIncrement = 5;
     /** The minimum increment between subsequent bids */
@@ -40,7 +40,7 @@ public class StartPacket extends RailsAbstractItem {
     protected static Logger log =
             LoggerFactory.getLogger(StartPacket.class);
 
-    private StartPacket(RailsItem parent, String id, String roundClassName) {
+    protected StartPacket(RailsItem parent, String id, String roundClassName) {
         super(parent, Util.hasValue(id) ? id : DEFAULT_ID);
         this.roundClassName = roundClassName;
         //packets.put(name, this);
