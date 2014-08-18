@@ -16,64 +16,64 @@
         <CanUseSpecialProperties/>
 	</CompanyType>
 
-	<Company name="E&amp;H" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+	<Company name="E&amp;H" type="Public" tokens="4" fgColour="FF9900" bgColour="FFFF00"> 
 		<Home hex="A20"/>
 	</Company>
-	<Company name="ECR" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+	<Company name="ECR" type="Public" tokens="4" fgColour="9900CC" bgColour="0066FF"> 
 		<Home hex="A20"/>
 	</Company>
-	<Company name="ENR" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+	<Company name="ENR" type="Public" tokens="4" fgColour="0066FF" bgColour="FFFF00"> 
 		<Home hex="A20"/>
 	</Company>
-	<Company name="ESR" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+	<Company name="ESR" type="Public" tokens="4" fgColour="009933" bgColour="66FF33"> 
 		<Home hex="A20"/>
 	</Company>
-	<Company name="EUR" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+	<Company name="EUR" type="Public" tokens="4" fgColour="9900CC" bgColour="FF0000"> 
 		<Home hex="A20"/>
 	</Company>
-	<Company name="FDR" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+	<Company name="FDR" type="Public" tokens="4" fgColour="FF0000" bgColour="FF9900"> 
 		<Home hex="A20"/>
 	</Company>
-	<Company name="I&amp;B" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+	<Company name="I&amp;B" type="Public" tokens="4" fgColour="999999" bgColour="000000"> 
 		<Home hex="A20"/>
 	</Company>
-	<Company name="L&amp;D" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+	<Company name="L&amp;D" type="Public" tokens="4" fgColour="0066FF" bgColour="FF9900"> 
 		<Home hex="A20"/>
 	</Company>
-	<Company name="L&amp;E" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+	<Company name="L&amp;E" type="Public" tokens="4" fgColour="FFFF00" bgColour="FF0000"> 
 		<Home hex="A20"/>
 	</Company>
-	<Company name="L&amp;H" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+	<Company name="L&amp;H" type="Public" tokens="4" fgColour="FF0000" bgColour="0066FF"> 
 		<Home hex="A20"/>
 	</Company>
-	<Company name="N&amp;B" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+	<Company name="N&amp;B" type="Public" tokens="4" fgColour="FF9900" bgColour="999999"> 
 		<Home hex="A20"/>
 	</Company>
-	<Company name="N&amp;E" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+	<Company name="N&amp;E" type="Public" tokens="4" fgColour="009933" bgColour="999999"> 
 		<Home hex="A20"/>
 	</Company>
-	<Company name="N&amp;S" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+	<Company name="N&amp;S" type="Public" tokens="4" fgColour="0066FF" bgColour="66CCFF"> 
 		<Home hex="A20"/>
 	</Company>
-	<Company name="Y&amp;N" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+	<Company name="Y&amp;N" type="Public" tokens="4" fgColour="FF0000" bgColour="000000"> 
 		<Home hex="A20"/>
 	</Company>
-	<Company name="NGC" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+	<Company name="NGC" type="Public" tokens="4" fgColour="000000" bgColour="FFFF00"> 
 		<Home hex="A20"/>
 	</Company>
-	<Company name="SVR" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+	<Company name="SVR" type="Public" tokens="4" fgColour="009933" bgColour="996633"> 
 		<Home hex="A20"/>
 	</Company>
-	<Company name="WNR" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+	<Company name="WNR" type="Public" tokens="4" fgColour="FF0000" bgColour="996633"> 
 		<Home hex="A20"/>
 	</Company>
-	<Company name="W&amp;F" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+	<Company name="W&amp;F" type="Public" tokens="4" fgColour="66FF33" bgColour="009933"> 
 		<Home hex="A20"/>
 	</Company>
-	<Company name="WVR" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+	<Company name="WVR" type="Public" tokens="4" fgColour="000000" bgColour="9900CC"> 
 		<Home hex="A20"/>
 	</Company>
-	<Company name="WstI" type="Public" tokens="4" fgColour="000000" bgColour="40B0A0">
+	<Company name="WstI" type="Public" tokens="4" fgColour="FFFF00" bgColour="9900CC"> 
 		<Home hex="A20"/>
 	</Company>
 </CompanyManager>

@@ -9,6 +9,8 @@ public final class PublicCompany_1862 extends PublicCompany {
 
     public static final int UNAVAILABLE = 0;
     public static final int BIDDABLE = 1;
+    
+    private boolean startable = false;
 
     public static final String[] statusName =
             new String[] { "Unavailable", "Biddable" };
@@ -20,11 +22,15 @@ public final class PublicCompany_1862 extends PublicCompany {
     }
 
     public boolean isStartable() {
-        return true;
+        return startable;
     }
 
     public IntegerState getStatusModel() {
         return status;
+    }
+    
+    public void setStartable(boolean startable) {
+        this.startable = startable;
     }
     
 

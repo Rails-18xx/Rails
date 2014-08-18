@@ -3,15 +3,15 @@
 	<Component name="GameManager" class="net.sf.rails.game.specific._1862.GameManager_1862">
 		<Game name="1862"/>
 		<GameParameters>
-			<StockRound class="net.sf.rails.game.specific._1862.StockRound_1862" 
+			<StockRound
 				sequence="SellBuyOrBuySell">
 				<NoSaleInFirstSR/>
 				<NoSaleOfJustBoughtShare/>
 			</StockRound>
-			<OperatingRound class="net.sf.rails.game.specific._1862.OperatingRound_1862">
+			<OperatingRound>
                 <EmergencyTrainBuying mustBuyCheapestTrain="yes" mayBuyFromCompany="no"/>
 			</OperatingRound>
-			<ShareSellingRound class="net.sf.rails.game.specific._1862.ShareSellingRound_1862"/>
+			<ShareSellingRound/>
 			<PlayerShareLimit percentage="60">
 				<!-- Option "NumberOfPlayers" is automatically set 
 					by the game engine -->
@@ -23,10 +23,6 @@
 			</PlayerShareLimit>			
 			<BankPoolLimit percentage="50"/>
 		</GameParameters>
-		<GuiClasses>
-			<StartRoundWindow
-				class="net.sf.rails.ui.swing.gamespecific._1862.ParliamentRoundWindow"/>
-		</GuiClasses>
 		<EndOfGame>
 			<Bankruptcy/>
 			<BankBreaks limit="0" finish="setOfORs"/>
@@ -46,7 +42,7 @@
 	<Component name="TileManager" class="net.sf.rails.game.TileManager"
 		file="TileSet.xml"/>
 	<Component name="Map" class="net.sf.rails.game.MapManager" file="Map.xml"/>
-	<Component name="CompanyManager" class="net.sf.rails.game.CompanyManager"
+	<Component name="CompanyManager" class="net.sf.rails.game.specific._1862.CompanyManager_1862"
 		file="CompanyManager.xml"/>
 	<Component name="StockMarket" class="net.sf.rails.game.StockMarket"
 		file="StockMarket.xml"/>
