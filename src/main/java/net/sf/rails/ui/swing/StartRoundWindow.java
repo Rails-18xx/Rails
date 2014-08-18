@@ -113,6 +113,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
     private ClickField dummyButton; // To be selected if none else is.
 
     private boolean includeBidding;
+    private boolean includeBuying;
     private boolean showBasePrices;
 
     /* Keys of dialogs owned by this class */
@@ -125,6 +126,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
         //super();
         this.round = round;
         includeBidding = round.hasBidding();
+        includeBuying = round.hasBuying();
         showBasePrices = round.hasBasePrices();
         gameUIManager = parent;
         possibleActions = gameUIManager.getGameManager().getPossibleActions();
@@ -140,11 +142,13 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
 
         buttonPanel = new JPanel();
 
-        buyButton = new ActionButton(RailsIcon.AUCTION_BUY);
-        buyButton.setMnemonic(KeyEvent.VK_B);
-        buyButton.addActionListener(this);
-        buyButton.setEnabled(false);
-        buttonPanel.add(buyButton);
+        if (includeBuying) {
+            buyButton = new ActionButton(RailsIcon.AUCTION_BUY);
+            buyButton.setMnemonic(KeyEvent.VK_B);
+            buyButton.addActionListener(this);
+            buyButton.setEnabled(false);
+            buttonPanel.add(buyButton);
+        }
 
         if (includeBidding) {
             bidButton = new ActionButton(RailsIcon.BID);
@@ -512,7 +516,10 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
             passButton.setMnemonic(KeyEvent.VK_P);
         }
 
-        buyButton.setEnabled(buyAllowed);
+        if (includeBuying) {
+            buyButton.setEnabled(buyAllowed);
+        }
+        
         if (includeBidding) {
             bidButton.setEnabled(bidAllowed);
             bidAmount.setEnabled(bidAllowed);
@@ -571,7 +578,9 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
                 }
             } else if (currentActiveItem instanceof BidStartItem) {
                 BidStartItem bidAction = (BidStartItem) currentActiveItem;
-                buyButton.setEnabled(false);
+                if (includeBuying) {
+                    buyButton.setEnabled(false);
+                }
 
                 if (bidAction.isSelectForAuction()) {
                     // In this case, "Pass" becomes "Select, don't buy"
@@ -632,7 +641,12 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
 
             // Get a sorted prices List
             // TODO: should be included in BuyStartItem
-            startSpaces = stockMarket.getStartSpaces();
+            
+            if (activeItem.containsStartSpaces()) {
+                startSpaces = activeItem.startSpaces();
+            } else {            
+                startSpaces = stockMarket.getStartSpaces();
+            }
             String[] options = new String[startSpaces.size()];
             int i = 0;
             for (StockSpace space:startSpaces) {
@@ -697,7 +711,9 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
 
     protected void disableButtons() {
         bidButton.setEnabled(false);
-        buyButton.setEnabled(false);
+        if (includeBuying) {
+            buyButton.setEnabled(false);
+        }
         passButton.setEnabled(false);
     }
 
