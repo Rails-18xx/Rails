@@ -214,4 +214,8 @@
                         <Trains rusted="3+1"/>
                 </Phase>
         </Component>
+        		<Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager">
+				<Modifier class="net.sf.rails.game.specific._1837.ItalyTileModifier" />
+				<Modifier class="net.sf.rails.game.specific._1837.BzHTileModifier" />
+        </Component>
 </ComponentManager>
