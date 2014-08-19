@@ -8,14 +8,13 @@ public class PublicCompany_1837 extends PublicCompany {
 
     public PublicCompany_1837(RailsItem parent, String id) {
         super(parent, id);
-        // TODO Auto-generated constructor stub
     }
 
     /* (non-Javadoc)
      * @see net.sf.rails.game.PublicCompany#mayBuyTrainType(net.sf.rails.game.Train)
      */
     @Override
-    public boolean mayBuyTrainType(Train train) { // Coal trains in 1837 areonly allowed to buy/operate G-Trains
+    public boolean mayBuyTrainType(Train train) { // Coal trains in 1837 are only allowed to buy/operate G-Trains
         if (this.getType().getId().equals("Coal")){
             if (train.getType().getInfo().contains("G")){
                 return true;

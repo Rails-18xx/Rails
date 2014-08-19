@@ -5,7 +5,7 @@
                         <Phase>5</Phase>
                 </ClosingConditions>
         </CompanyType>
-        <CompanyType name="Coal" class="net.sf.rails.game.PublicCompany_1837">
+        <CompanyType name="Coal" class="net.sf.rails.game.specific._1837.PublicCompany_1837">
                 <ShareUnit percentage="100"/>
                 <Certificate type="President" shares="1"/>
                 <StockPrice market="no"/>
@@ -16,7 +16,7 @@
                 <Trains limit="2,2,1" mandatory="no"/>
                 <CanUseSpecialProperties/>
         </CompanyType>
-        <CompanyType name="Minor1" class="net.sf.rails.game.PublicCompany_1837">
+        <CompanyType name="Minor1" class="net.sf.rails.game.specific._1837.PublicCompany_1837">
                 <ShareUnit percentage="100"/>
                 <Certificate type="President" shares="1"/>
                 <StockPrice market="no"/>
@@ -27,7 +27,7 @@
                 <Trains limit="2,2,1" mandatory="no"/>
                 <CanUseSpecialProperties/>
         </CompanyType>
-        <CompanyType name="Minor2" class="net.sf.rails.game.PublicCompany_1837">
+        <CompanyType name="Minor2" class="net.sf.rails.game.specific._1837.PublicCompany_1837">
                 <ShareUnit percentage="50"/>
                 <Certificate type="President" shares="1"/>
                 <Certificate shares="1" number="1"/>
