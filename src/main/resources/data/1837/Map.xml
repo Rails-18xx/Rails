@@ -24,6 +24,7 @@
         <Hex name="C30" tile="0"/>
         <Hex name="C32" tile="-2"/>
         <Hex name="C34" tile="-3007" city="Lemberg"/>
+        <Hex name="C36" tile="0"/>
         <Hex name="D11" tile="-1"/>
         <Hex name="D13" tile="0"/>
         <Hex name="D15" tile="0"/>
@@ -60,7 +61,7 @@
         <Hex name="F21" tile="0" cost="70"/>
         <Hex name="F23" tile="-1"/>
         <Hex name="F25" tile="0"/>
-        <Hex name="F27" tile="-37003" orientation="1" value="20,40" city="EHS"/>
+        <Hex name="F27" tile="-37003" orientation="2" value="20,40" city="EHS"/>
         <Hex name="F29" tile="-10" city="Kaschau"/>
         <Hex name="F31" tile="-1"/>
         <Hex name="F33" tile="-1"/>
