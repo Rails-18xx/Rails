@@ -9,14 +9,18 @@ import net.sf.rails.common.GameOption;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.Bank;
+import net.sf.rails.game.Certificate;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.Player;
+import net.sf.rails.game.PublicCertificate;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.StartItem;
 import net.sf.rails.game.StartRound;
 import net.sf.rails.game.StockMarket;
 import net.sf.rails.game.StockSpace;
+import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.GenericState;
+import net.sf.rails.game.state.OwnableItem;
 
 /**
  * Implements an 1830-style initial auction.
@@ -62,23 +66,22 @@ public class StartRound_1862 extends StartRound {
 
     @Override
     public boolean process(PossibleAction action) {
-
         if (!super.process(action)) return false;
 
         // Assign any further items that have been bid exactly once
         // and don't need any further player intervention, such
         // as setting a start price
-        StartItem item;
-        while ((item = startPacket.getFirstUnsoldItem()) != null
-                && item.getBidders() == 1 && item.needsPriceSetting() == null) {
-            assignItem(item.getBidder(), item, item.getBid(), 0);
-
-            // Check if this has exhausted the start packet
-            if (startPacket.areAllSold()) {
-                finishRound();
-                break;
-            }
-        }
+//        StartItem item;
+//        while ((item = startPacket.getFirstUnsoldItem()) != null
+//                && item.getBidders() == 1 && item.needsPriceSetting() == null) {
+//            assignItem(item.getBidder(), item, item.getBid(), 0);
+//
+//            // Check if this has exhausted the start packet
+//            if (startPacket.areAllSold()) {
+//                finishRound();
+//                break;
+//            }
+//        }
         return true;
     }
 
@@ -264,9 +267,75 @@ public class StartRound_1862 extends StartRound {
     
     @Override
     protected boolean buy(String playerName, BuyStartItem boughtItem) {
-        boolean result = super.buy(playerName, boughtItem);
+        StartItem item = boughtItem.getStartItem();
+        int lastBid = item.getBid();
+        String errMsg = null;
+        Player player = playerManager.getCurrentPlayer();
+        int price = 0;
+        int sharePrice = 0;
+        String shareCompName = "";
+
+
+        while (true) {
+            if (!boughtItem.setSharePriceOnly()) {
+                if (item.getStatus() != StartItem.BUYABLE) {
+                    errMsg = LocalText.getText("NotForSale");
+                    break;
+                }
+
+                price = item.getBasePrice();
+                if (item.getBid() > price) price = item.getBid();
+
+                if (player.getFreeCash() < price) {
+                    errMsg = LocalText.getText("NoMoney");
+                    break;
+                }
+            } else {
+                price = item.getBid();
+            }
+
+            if (boughtItem.hasSharePriceToSet()) {
+                shareCompName = boughtItem.getCompanyToSetPriceFor();
+                sharePrice = boughtItem.getAssociatedSharePrice();
+                if (sharePrice == 0) {
+                    errMsg =
+                        LocalText.getText("NoSharePriceSet", shareCompName);
+                    break;
+                }
+                // TODO: Add back in when stock market is created
+//                if ((stockMarket.getStartSpace(sharePrice)) == null) {
+//                    errMsg =
+//                        LocalText.getText("InvalidStartPrice",
+//                                    Bank.format(this, sharePrice),
+//                                shareCompName );
+//                    break;
+//                }
+            }
+            break;
+        }
+
+        if (errMsg != null) {
+            System.out.println(errMsg);
+            DisplayBuffer.add(this, LocalText.getText("CantBuyItem",
+                    playerName,
+                    item.getName(),
+                    errMsg ));
+            return false;
+        }
+        
+        assignItem(player, item, price, sharePrice);
+
+        // Set priority (only if the item was not auctioned)
+        // ASSUMPTION: getting an item in auction mode never changes priority
+        if (lastBid == 0) {
+            playerManager.setPriorityPlayerToNext();
+        }
+        playerManager.setCurrentToNextPlayer();
+
+        numPasses.set(0);
         auctionItemState.set(null);
-        return result;
+
+        return true;
     }
     
     
@@ -276,7 +345,6 @@ public class StartRound_1862 extends StartRound {
      */
     @Override
     protected boolean pass(NullAction action, String playerName) {
-        System.out.println("pass");
 
         String errMsg = null;
         Player player = playerManager.getCurrentPlayer();
@@ -354,6 +422,20 @@ public class StartRound_1862 extends StartRound {
     }
 
     
+    protected void assignItem(Player player, StartItem item, int price,
+            int sharePrice) {
+        PublicCertificate primary = (PublicCertificate) item.getPrimary();
+        primary.moveTo(player);
+        String priceText = Currency.toBank(player, price);
+        ReportBuffer.add(this,LocalText.getText("BuysItemFor",
+                player.getId(),
+                primary.getName(),
+                priceText ));
+        
+        item.setSold(player, price);
+    }
+
+    
     private void setNextBiddingPlayer(StartItem_1862 item, Player biddingPlayer) {
         for (Player player:playerManager.getNextPlayersAfter(biddingPlayer, false, false)) {
             if (item.isActivePlayer(player)) {
@@ -369,7 +451,7 @@ public class StartRound_1862 extends StartRound {
 
     @Override
     public String getHelp() {
-        return "1830 Start Round help text";
+        return "1862 Start Round help text";
     }
 
 }
