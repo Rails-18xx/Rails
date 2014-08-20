@@ -52,6 +52,7 @@
                 </Defaults>
                 <TrainType name="1G" majorStops="1" cost="100" quantity="10">
                         <Reach countTowns="no"/>
+                        <Score scoreTowns="yes"/>
                         <NewPhase phaseName="2"/>
                 </TrainType>
                 <TrainType name="2" majorStops="2" cost="90" quantity="14"/>
@@ -60,6 +61,7 @@
                 </TrainType>
                 <TrainType name="2G" majorStops="2" cost="230" quantity="6">
                         <Reach countTowns="no"/>
+                        <Score scoreTowns="yes"/>
                 </TrainType>
                 <TrainType name="3+1" majorStops="3" minorStops="1" cost="280" quantity="2">
                         <NewPhase phaseName="3+1"/>
@@ -67,8 +69,9 @@
                 <TrainType name="4" majorStops="4" cost="470" quantity="4">
                         <NewPhase phaseName="4"/>
                 </TrainType>
-                                <TrainType name="3G" majorStops="3" cost="590" quantity="2">
+                <TrainType name="3G" majorStops="3" cost="590" quantity="2">
                         <Reach countTowns="no"/>
+                        <Score scoreTowns="yes"/>
                         <NewPhase phaseName="3G"/>
                 </TrainType>
                 <TrainType name="4E" majorStops="4" cost="500" quantity="1">
@@ -99,6 +102,7 @@
 
                 <TrainType name="4G" majorStops="4" cost="1000" quantity="3">
                         <Reach countTowns="no"/>
+                        <Score scoreTowns="yes"/>
                         <NewPhase phaseName="4G"/>
                         <IfOption name="UnlimitedTopTrains" value="Yes">
                                 <Attributes quantity="-1"/>
