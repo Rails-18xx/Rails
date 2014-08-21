@@ -3,9 +3,13 @@ package net.sf.rails.game.specific._1837;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsItem;
 import net.sf.rails.game.Train;
+import net.sf.rails.game.state.BooleanState;
 
 public class PublicCompany_1837 extends PublicCompany {
 
+    
+    private final BooleanState hasSplitRevenue = BooleanState.create(this, "HasSplitRevenue");
+    
     public PublicCompany_1837(RailsItem parent, String id) {
         super(parent, id);
     }
@@ -26,4 +30,18 @@ public class PublicCompany_1837 extends PublicCompany {
         return super.mayBuyTrainType(train);
     }
 
+    /* (non-Javadoc)
+     * @see net.sf.rails.game.PublicCompany#payout(int)
+     */
+    public void payout(int amount, boolean b) {
+        if (amount == 0) return;
+
+        // Move the token
+        if (hasStockPrice
+                && (!payoutMustExceedPriceToMove
+                        || amount >= currentPrice.getPrice().getPrice())) {
+           ((StockMarket_1837) getRoot().getStockMarket()).payOut(this, b);
+        }
+
+    }
 }

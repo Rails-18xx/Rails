@@ -38,6 +38,8 @@ public class OperatingRound_1837 extends OperatingRound {
     private final BooleanState needSuedBahnFormationCall = BooleanState.create(this, "NeedSuedBahnFormationCall");
     private final BooleanState needHungaryFormationCall = BooleanState.create(this, "NeedHungaryFormationCall");
     private final BooleanState needKuKFormationCall = BooleanState.create(this, "NeedKuKFormationCall");
+    
+
  
     /**
      * Registry of percentage of nationals revenue to be denied per player
@@ -297,23 +299,6 @@ public class OperatingRound_1837 extends OperatingRound {
     /* (non-Javadoc)
      * @see net.sf.rails.game.OperatingRound#splitRevenue(int)
      */
- @Override   
-    public void splitRevenue(int amount) {
-
-        if (amount > 0) {
-            // Withhold half of it
-            int withheld =
-                    (int) Math.ceil(amount * 0.5);
-            String withheldText = Currency.fromBank(withheld, operatingCompany.value());
-            
-            ReportBuffer.add(this, operatingCompany.value().getId() + LocalText.getText("Receives") + withheldText);
-
-            // Payout the remainder
-            int payed = amount - withheld;
-            payout(payed);
-        }
-
-    }
     
     public void splitRevenue(int amount, boolean roundUp) {
         int withheld = 0;
@@ -334,15 +319,16 @@ public class OperatingRound_1837 extends OperatingRound {
             ReportBuffer.add(this, operatingCompany.value().getId() + LocalText.getText("Receives") + withheldText);
             // Payout the remainder
             int payed = amount - withheld;
-            payout(payed, roundUp);
+            payout(payed, roundUp, true);
         }
 
     }
-  
+
+
     /* 
      * Rounds up or down the individual payments based on the boolean value
      */
-    public void payout(int amount, boolean roundUp) {
+    public void payout(int amount, boolean roundUp, boolean b) {
         if (amount == 0) return;
 
         int part;
@@ -375,7 +361,7 @@ public class OperatingRound_1837 extends OperatingRound {
         }
 
         // Move the token
-        operatingCompany.value().payout(amount);
+        ((PublicCompany_1837) operatingCompany.value()).payout(amount, b);
 
     }
     
@@ -408,7 +394,7 @@ public class OperatingRound_1837 extends OperatingRound {
             ReportBuffer.add(this, LocalText.getText("CompanyPaysOutFull",
                     operatingCompany.value().getId(), Bank.format(this, amount) ));
 
-            payout(amount, false); //1837 is paying out the rounded down amount except to the bank..
+            payout(amount, false, false); //1837 is paying out the rounded down amount except to the bank..
 
         } else if (revenueAllocation == SetDividend.SPLIT) {
 
