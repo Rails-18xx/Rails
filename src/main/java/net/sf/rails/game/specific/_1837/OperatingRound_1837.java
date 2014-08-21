@@ -55,7 +55,6 @@ public class OperatingRound_1837 extends OperatingRound {
      */
     public OperatingRound_1837(GameManager parent, String id) {
         super(parent, id);
-        // TODO Auto-generated constructor stub
     }
 
     /* (non-Javadoc)

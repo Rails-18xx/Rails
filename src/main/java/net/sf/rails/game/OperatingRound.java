@@ -3220,9 +3220,6 @@ public class OperatingRound extends Round implements Observer {
         case FINAL:
             b.append("<br> - End the turn");
             break;
-        case FREIGHTRUN:
-            b.append("<br> - Perform the freightrun/mailrun");
-            break;
         case INITIAL:
             break;
         case REPAY_LOANS:

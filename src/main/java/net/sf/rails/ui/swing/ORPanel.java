@@ -46,7 +46,6 @@ implements ActionListener, KeyListener, RevenueListener {
     private static final String NETWORK_INFO_CMD = "NetworkInfo";
     public static final String TAKE_LOANS_CMD = "TakeLoans";
     public static final String REPAY_LOANS_CMD = "RepayLoans";
-    public static final String FREIGHT_RUN_CMD = "OperateFreightRun";
 
     ORWindow orWindow;
     ORUIManager orUIManager;
@@ -100,16 +99,14 @@ implements ActionListener, KeyListener, RevenueListener {
     private Field newTrainCost[];
     private int rightsXOffset, rightsYOffset;
     private Field rights[];
-    private int freightXOffset, freightYOffset;
     
     private boolean privatesCanBeBought = false;
     private boolean bonusTokensExist = false;
     private boolean hasCompanyLoans = false;
     private boolean hasRights;
-    private boolean hasFreightRun;
 
     private Caption tileCaption, tokenCaption, revenueCaption, trainCaption,
-    privatesCaption, loansCaption, freightRunCaption;
+    privatesCaption, loansCaption;
 
     private ActionButton buttonOC; // sfy: button for operating costs
     private ActionButton button1;
@@ -127,10 +124,6 @@ implements ActionListener, KeyListener, RevenueListener {
     private boolean isRevenueValueToBeSet = false;
     private RevenueAdapter revenueAdapter = null;
     private Thread revenueThread = null;
-
-    //Added for Freightrun handling - MBr 2014/08/18
-    private Field freightRevenue[];
-    private Spinner freightRevenueSelect[];
 
     protected static Logger log =
             LoggerFactory.getLogger(ORPanel.class);
@@ -157,7 +150,6 @@ implements ActionListener, KeyListener, RevenueListener {
         bonusTokensExist = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.DO_BONUS_TOKENS_EXIST);
         hasCompanyLoans = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_ANY_COMPANY_LOANS);
         hasRights = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_ANY_RIGHTS);
-        hasFreightRun = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_FREIGHT_RUNS);
 
         initButtonPanel();
         gbc = new GridBagConstraints();
@@ -431,7 +423,6 @@ implements ActionListener, KeyListener, RevenueListener {
         if (bonusTokensExist) tokenBonus = new Field[nc];
         if (hasCompanyLoans) compLoans = new Field[nc];
         if (hasRights) rights = new Field[nc];
-        if (hasFreightRun) freightRevenue = new Field [nc];
         revenue = new Field[nc];
         revenueSelect = new Spinner[nc];
         decision = new Field[nc];
@@ -518,13 +509,7 @@ implements ActionListener, KeyListener, RevenueListener {
         addField(new Caption("earned"), revXOffset, 1, 1, 1, WIDE_BOTTOM);
         addField(new Caption("payout"), revXOffset + 1, 1, 1, 1, WIDE_BOTTOM
                 + WIDE_RIGHT);
-       
-        if (hasFreightRun) {
-            freightXOffset = currentXOffset += lastXWidth;
-            freightYOffset = leftCompNameYOffset;
-            addField (freightRunCaption =new Caption(("Freight")),
-                    freightXOffset, 0, lastXWidth = 1, 2, WIDE_RIGHT);
-        }
+
         trainsXOffset = currentXOffset += lastXWidth;
         trainsYOffset = leftCompNameYOffset;
         addField(trainCaption = new Caption("Trains"), trainsXOffset, 0,
@@ -639,16 +624,7 @@ implements ActionListener, KeyListener, RevenueListener {
 
             f = decision[i] = new Field(c.getLastRevenueAllocationModel());
             addField(f, revXOffset + 1, revYOffset + i, 1, 1, WIDE_RIGHT,  visible);
-            
-            if (hasFreightRun) {
-                f = freightRevenue[i] = new Field(c.getLastFreightRevenueModel());
-                addField(f,freightXOffset, freightYOffset + i, 1, 1, 0, visible);
-                
-                f = freightRevenueSelect[i] = new Spinner(0, 0, 0, GameManager.getRevenueSpinnerIncrement());
-                f.setPreferredSize(freightRevenue[i].getPreferredSize());
-                addField(f, freightXOffset, freightYOffset + i, 1, 1, 0,  false);
-            }
-            
+
             f = trains[i] = new Field(c.getPortfolioModel().getTrainsModel());
             addField(f, trainsXOffset, trainsYOffset + i, 1, 1, 0,  visible);
 
@@ -1029,17 +1005,11 @@ implements ActionListener, KeyListener, RevenueListener {
 
         for (int i = 0; i < nc; i++) {
             setSelect(revenue[i], revenueSelect[i], false);
-            if (hasFreightRun){
-                setSelect(freightRevenue[i], freightRevenueSelect[i], false);
-            }
         }
     }
 
     public void resetCurrentRevenueDisplay() {
         setSelect(revenue[orCompIndex], revenueSelect[orCompIndex], false);
-        if (hasFreightRun){
-            setSelect(freightRevenue[orCompIndex], freightRevenueSelect[orCompIndex], false);
-        }
     }
 
     /**
@@ -1249,22 +1219,6 @@ implements ActionListener, KeyListener, RevenueListener {
         }
     }
 
-    public void initFreightRunStep(int orCompIndex, SetFreight action) {
-        freightRunCaption.setHighlight(true);
-        setHighlight(freightRevenueSelect[orCompIndex],true);
-        revenueSelect[orCompIndex].setValue(action.getPresetRevenue());
-
-        setSelect(freightRevenue[orCompIndex], freightRevenueSelect[orCompIndex], true);
-
-        button1.setRailsIcon(RailsIcon.SET_FREIGHT_REVENUE);
-        button1.setActionCommand(FREIGHT_RUN_CMD);
-        button1.setPossibleAction(action);
-        button1.setMnemonic(KeyEvent.VK_R);
-        button1.setEnabled(true);
-        button1.setVisible(true);
-        
-    }
-    
     public void initTrainBuying(boolean enabled) {
 
         trainCaption.setHighlight(true);

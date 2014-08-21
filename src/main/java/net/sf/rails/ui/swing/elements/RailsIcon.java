@@ -51,7 +51,6 @@ public enum RailsIcon {
     UNDO ("arrow_undo.png","UNDO"),
     WITHHOLD ("traffic_lights_red.png","WITHHOLD"),
     YES ("accept.png","Yes"),
-    SET_FREIGHT_REVENUE ("coins_in_hand.png", "SET_FREIGHT_REVENUE"),
     
     //no icons by purpose
     END_OF_GAME_CLOSE_ALL_WINDOWS ("","END_OF_GAME_CLOSE_ALL_WINDOWS"),
