@@ -52,19 +52,6 @@ public class OperatingRound_1837 extends OperatingRound {
      */
     public OperatingRound_1837(GameManager parent, String id) {
         super(parent, id);
-
-        steps = new GameDef.OrStep[] {
-                GameDef.OrStep.INITIAL,
-                GameDef.OrStep.LAY_TRACK,
-                GameDef.OrStep.LAY_TOKEN,
-                GameDef.OrStep.CALC_REVENUE,
-                GameDef.OrStep.PAYOUT,
-                GameDef.OrStep.FREIGHTRUN,
-                GameDef.OrStep.BUY_TRAIN,
-                GameDef.OrStep.TRADE_SHARES,
-                GameDef.OrStep.REPAY_LOANS,
-                GameDef.OrStep.FINAL
-        };
     }
 
 

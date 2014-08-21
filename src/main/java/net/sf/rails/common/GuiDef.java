@@ -42,8 +42,7 @@ public class GuiDef {
         HAS_ANY_RIGHTS,
         NO_MAP_MODE,
         REVENUE_SUGGEST,
-        ROUTE_HIGHLIGHT, PLAYER_ORDER_VARIES, 
-        HAS_FREIGHT_RUNS  //For 1837 and 1851
+        ROUTE_HIGHLIGHT, PLAYER_ORDER_VARIES
     }
 
     /**
