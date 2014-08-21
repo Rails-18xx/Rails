@@ -6,13 +6,16 @@ package net.sf.rails.game.specific._1837;
 import java.util.Map;
 import java.util.Set;
 
+import rails.game.action.SetDividend;
+
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Table;
 
-
+import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
+import net.sf.rails.game.Bank;
 import net.sf.rails.game.GameDef;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.OperatingRound;
@@ -22,7 +25,9 @@ import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.special.ExchangeForShare;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.state.BooleanState;
+import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.MoneyOwner;
+import net.sf.rails.util.SequenceUtil;
 
 
 
@@ -36,6 +41,8 @@ public class OperatingRound_1837 extends OperatingRound {
     private final BooleanState needSuedBahnFormationCall = BooleanState.create(this, "NeedSuedBahnFormationCall");
     private final BooleanState needHungaryFormationCall = BooleanState.create(this, "NeedHungaryFormationCall");
     private final BooleanState needKuKFormationCall = BooleanState.create(this, "NeedKuKFormationCall");
+    
+
  
     /**
      * Registry of percentage of nationals revenue to be denied per player
@@ -197,4 +204,218 @@ public class OperatingRound_1837 extends OperatingRound {
         super.resume();
     }
 
+    /* (non-Javadoc)
+     * @see net.sf.rails.game.OperatingRound#validateSetRevenueAndDividend(rails.game.action.SetDividend)
+     */
+    @Override
+    protected String validateSetRevenueAndDividend(SetDividend action) {
+        String errMsg = null;
+        PublicCompany company;
+        String companyName;
+        int amount = 0;
+        int revenueAllocation = -1;
+
+        // Dummy loop to enable a quick jump out.
+        while (true) {
+
+            // Checks
+            // Must be correct company.
+            company = action.getCompany();
+            companyName = company.getId();
+            if (company != operatingCompany.value()) {
+                errMsg =
+                    LocalText.getText("WrongCompany",
+                            companyName,
+                            operatingCompany.value().getId() );
+                break;
+            }
+            // Must be correct step
+            if (getStep() != GameDef.OrStep.CALC_REVENUE) {
+                errMsg = LocalText.getText("WrongActionNoRevenue");
+                break;
+            }
+
+            // Amount must be non-negative multiple of 5
+            amount = action.getActualRevenue();
+            if (amount < 0) {
+                errMsg =
+                    LocalText.getText("NegativeAmountNotAllowed",
+                            String.valueOf(amount));
+                break;
+            }
+            if (amount % 5 != 0) {
+                errMsg =
+                    LocalText.getText("AmountMustBeMultipleOf5",
+                            String.valueOf(amount));
+                break;
+            }
+
+            // Check chosen revenue distribution
+            if (amount > 0) {
+                // Check the allocation type index (see SetDividend for values)
+                revenueAllocation = action.getRevenueAllocation();
+                if (revenueAllocation < 0
+                        || revenueAllocation >= SetDividend.NUM_OPTIONS) {
+                    errMsg =
+                        LocalText.getText("InvalidAllocationTypeIndex",
+                                String.valueOf(revenueAllocation));
+                    break;
+                }
+
+                // Validate the chosen allocation type
+                int[] allowedAllocations =
+                    ((SetDividend) selectedAction).getAllowedAllocations();
+                boolean valid = false;
+                for (int aa : allowedAllocations) {
+                    if (revenueAllocation == aa) {
+                        valid = true;
+                        break;
+                    }
+                }
+                if (!valid) {
+                    errMsg =
+                        LocalText.getText(SetDividend.getAllocationNameKey(revenueAllocation));
+                    break;
+                }
+            } else {
+                // If there is no revenue, use withhold.
+                action.setRevenueAllocation(SetDividend.WITHHOLD);
+            }
+
+            if (amount == 0 && operatingCompany.value().getNumberOfTrains() == 0) {
+                DisplayBuffer.add(this, LocalText.getText("RevenueWithNoTrains",
+                        operatingCompany.value().getId(),
+                        Bank.format(this, 0) ));
+            }
+
+            break;
+        }
+
+        return errMsg;
+    }
+
+    /* (non-Javadoc)
+     * @see net.sf.rails.game.OperatingRound#splitRevenue(int)
+     */
+    
+    public void splitRevenue(int amount, boolean roundUp) {
+        int withheld = 0;
+        if (amount > 0) { 
+            int numberOfShares = operatingCompany.value().getNumberOfShares();
+            if (roundUp) {
+                // Withhold half of it          
+               withheld =
+                    (amount / (2 * numberOfShares)) * numberOfShares;
+             
+            } else {
+                //withhold half of it and make sure the bank gets any remaining rounding victims
+                withheld = 
+                        (int) Math.ceil(amount * 0.5);
+            }
+            String withheldText = Currency.fromBank(withheld, operatingCompany.value());
+            
+            ReportBuffer.add(this, operatingCompany.value().getId() + LocalText.getText("Receives") + withheldText);
+            // Payout the remainder
+            int payed = amount - withheld;
+            payout(payed, roundUp, true);
+        }
+
+    }
+
+
+    /* 
+     * Rounds up or down the individual payments based on the boolean value
+     */
+    public void payout(int amount, boolean roundUp, boolean b) {
+        if (amount == 0) return;
+
+        int part;
+        int shares;
+
+        Map<MoneyOwner, Integer> sharesPerRecipient = countSharesPerRecipient();
+
+        // Calculate, round up or down, report and add the cash
+
+        // Define a precise sequence for the reporting
+        Set<MoneyOwner> recipientSet = sharesPerRecipient.keySet();
+        for (MoneyOwner recipient : SequenceUtil.sortCashHolders(recipientSet)) {
+            if (recipient instanceof Bank) continue;
+            
+            shares = (sharesPerRecipient.get(recipient));
+            if (shares == 0) continue;
+            if (roundUp)  {
+            part = (int) Math.ceil(amount * shares * operatingCompany.value().getShareUnit() / 100.0);
+            }
+            else {
+                part = (int) Math.floor(amount * shares * operatingCompany.value().getShareUnit() / 100.0); 
+            }
+            
+            String partText = Currency.fromBank(part, recipient);
+            ReportBuffer.add(this, LocalText.getText("Payout",
+                    recipient.getId(),
+                    partText,
+                    shares,
+                    operatingCompany.value().getShareUnit()));
+        }
+
+        // Move the token
+        ((PublicCompany_1837) operatingCompany.value()).payout(amount, b);
+
+    }
+    
+ 
+
+        /* (non-Javadoc)
+     * @see net.sf.rails.game.OperatingRound#executeSetRevenueAndDividend(rails.game.action.SetDividend)
+     */
+    @Override
+    protected void executeSetRevenueAndDividend(SetDividend action) {
+
+        int amount = action.getActualRevenue();
+        int revenueAllocation = action.getRevenueAllocation();
+
+        operatingCompany.value().setLastRevenue(amount);
+        operatingCompany.value().setLastRevenueAllocation(revenueAllocation);
+
+        // Pay any debts from treasury, revenue and/or president's cash
+        // The remaining dividend may be less that the original income
+        amount = executeDeductions (action);
+
+        if (amount == 0) {
+
+            ReportBuffer.add(this, LocalText.getText("CompanyDoesNotPayDividend",
+                    operatingCompany.value().getId()));
+            withhold(amount);
+
+        } else if (revenueAllocation == SetDividend.PAYOUT) {
+
+            ReportBuffer.add(this, LocalText.getText("CompanyPaysOutFull",
+                    operatingCompany.value().getId(), Bank.format(this, amount) ));
+
+            payout(amount, false, false); //1837 is paying out the rounded down amount except to the bank..
+
+        } else if (revenueAllocation == SetDividend.SPLIT) {
+
+            ReportBuffer.add(this, LocalText.getText("CompanySplits",
+                    operatingCompany.value().getId(), Bank.format(this, amount) ));
+
+            splitRevenue(amount, false);
+
+        } else if (revenueAllocation == SetDividend.WITHHOLD) {
+
+            ReportBuffer.add(this, LocalText.getText("CompanyWithholds",
+                    operatingCompany.value().getId(),
+                    Bank.format(this, amount) ));
+
+            withhold(amount);
+
+        }
+
+        // Rust any obsolete trains
+        operatingCompany.value().getPortfolioModel().rustObsoleteTrains();
+
+        // We have done the payout step, so continue from there
+        nextStep(GameDef.OrStep.PAYOUT);
+    }
+    
 }
