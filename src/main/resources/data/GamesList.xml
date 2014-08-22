@@ -228,6 +228,7 @@ Known Issues:
    <Players minimum = "3" maximum = "7" />
    </Game>
 
+
    	
 	<Credits>&lt;html&gt;Rails is a computer implementation of a number of board games.&lt;br&gt; 
 	These games all have a railroad theme. They are collectively known as "18xx" &lt;br&gt;

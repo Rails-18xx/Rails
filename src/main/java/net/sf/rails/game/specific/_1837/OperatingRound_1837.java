@@ -6,11 +6,6 @@ package net.sf.rails.game.specific._1837;
 import java.util.Map;
 import java.util.Set;
 
-import rails.game.action.SetDividend;
-
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Table;
 
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
@@ -28,8 +23,11 @@ import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.MoneyOwner;
 import net.sf.rails.util.SequenceUtil;
+import rails.game.action.SetDividend;
 
-
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Table;
 
 
 /**
@@ -37,7 +35,7 @@ import net.sf.rails.util.SequenceUtil;
  *
  */
 public class OperatingRound_1837 extends OperatingRound {
-  
+
     private final BooleanState needSuedBahnFormationCall = BooleanState.create(this, "NeedSuedBahnFormationCall");
     private final BooleanState needHungaryFormationCall = BooleanState.create(this, "NeedHungaryFormationCall");
     private final BooleanState needKuKFormationCall = BooleanState.create(this, "NeedKuKFormationCall");
@@ -57,14 +55,7 @@ public class OperatingRound_1837 extends OperatingRound {
         super(parent, id);
     }
 
-    /* (non-Javadoc)
-     * @see net.sf.rails.game.OperatingRound#payout(int)
-     */
-    @Override
-    public void payout(int amount) {
-        // TODO Auto-generated method stub
-        super.payout(amount);
-    }
+
     @Override
     protected void newPhaseChecks() {
         Phase phase = getCurrentPhase();

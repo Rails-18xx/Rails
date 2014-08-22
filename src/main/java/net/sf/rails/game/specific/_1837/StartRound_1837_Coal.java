@@ -32,7 +32,25 @@ public class StartRound_1837_Coal extends StartRound {
         bidIncrement = startPacket.getModulus();
     }
 
+
+    @Override
+    public void start() {
  
+        super.start();
+
+        if (!setPossibleActions()) {
+            /*
+             * If nobody can do anything, keep executing Operating and Start
+             * rounds until someone has got enough money to buy one of the
+             * remaining items. The game mechanism ensures that this will
+             * ultimately be possible.
+             */
+            //gameManager.nextRound(this);
+            finishRound();
+        }
+
+    }
+
 
     @Override
     public boolean setPossibleActions() {
@@ -177,6 +195,7 @@ public class StartRound_1837_Coal extends StartRound {
                     ReportBuffer.add(this, LocalText.getText(
                             "ITEM_PRICE_REDUCED",
                                     item.getName(),
+
                                     Bank.format(this, item.getBasePrice()) ));
                 }
             }
@@ -194,7 +213,11 @@ public class StartRound_1837_Coal extends StartRound {
                 }
             numRoundsPassed.add(1);
             
-        }            
+
+        }  else {
+            playerManager.setCurrentToNextPlayer();
+        }
+
 
         return true;
     }

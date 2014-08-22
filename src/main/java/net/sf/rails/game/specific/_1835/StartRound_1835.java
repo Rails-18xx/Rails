@@ -35,6 +35,7 @@ public class StartRound_1835 extends StartRound {
 
     @Override
     public void start() {
+
         if (variant.equalsIgnoreCase(CLEMENS_VARIANT) && gameManager.getStartRoundNumber() == 1) {
             // reverse order at the start (only in the first start Round)
             playerManager.reversePlayerOrder(true);

@@ -19,7 +19,6 @@ import net.sf.rails.game.specific._1837.OperatingRound_1837;
  */
 public class GameManager_1837 extends GameManager {
 
-
     private Round previousRound = null;
     private Player KkFormStartingPlayer = null;
     private Player SbFormStartingPlayer = null;
@@ -32,14 +31,13 @@ public class GameManager_1837 extends GameManager {
     public static final String H1_ID = "H1";
     public static final String S1_ID = "S1";
   
-/*  
- *   private ParSlotManager_1837 parSlotManager;
-   */ 
+
 
     public GameManager_1837(RailsRoot parent, String id) {
         super(parent, id);
  
     }
+
     
     public void nextRound(Round round) {
         if (round instanceof StartRound) { 
