@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ComponentManager>
-        <Component name="GameManager" class=net.sf.rails.game.specific._1837.GameManager_1837">
+        <Component name="GameManager" class="net.sf.rails.game.specific._1837.GameManager_1837">
                 <Game name="1837"/>
                 <GameParameters>
                         <PlayerShareLimit percentage="60"/>
@@ -12,15 +12,15 @@
                                 <NoSaleIfNotOperated/>
                         </StockRound>
                         <!--OperatingRound class="rails.game.specific._1837.OperatingRound_1837"-->
-                        <OperatingRound class="net.sf.rails.game.OperatingRound">
+                        <OperatingRound class="net.sf.rails.game.specific._1837.OperatingRound_1837">
                                 <EmergencyTrainBuying mustBuyCheapestTrain="no" mayAlwaysBuyNewTrain="yes" mayBuyFromCompany="yes"/>
                                 <RevenueIncrement amount="5"/>
                         </OperatingRound>
                 </GameParameters>
                 <GuiClasses>
-                    <StartRoundWindow class="net.sf.rails.ui.swing.StartRoundWindow"/>
-                    <!-- StatusWindow class="rails.ui.swing.gamespecific._1837.StatusWindow_1837"/-->
-                    <!-- <GameUIManager class="rails.ui.swing.gamespecific._1837.GameUIManager_1837"/-->
+                    <StartRoundWindow class="net.sf.rails.ui.swing.gamespecific._1837.StartRoundWindow_1837"/>
+                    <StatusWindow class="net.sf.rails.ui.swing.gamespecific._1837.StatusWindow_1837"/>
+                    <GameUIManager class="net.sf.rails.ui.swing.gamespecific._1837.GameUIManager_1837"/>
                 </GuiClasses>
                 <EndOfGame>
                         <BankBreaks limit="0" finish="currentOR"/>
@@ -43,7 +43,7 @@
         <Component name="Map" class="net.sf.rails.game.MapManager" file="Map.xml"/>
         <Component name="CompanyManager" class="net.sf.rails.game.CompanyManager"
                 file="CompanyManager.xml"/>
-        <Component name="StockMarket" class="net.sf.rails.game.StockMarket"
+        <Component name="StockMarket" class="net.sf.rails.game.specific._1837.StockMarket_1837"
                 file="StockMarket.xml"/>
         <Component name="TrainManager" class="net.sf.rails.game.TrainManager">
                 <Defaults>
