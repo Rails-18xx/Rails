@@ -6,11 +6,10 @@ import java.util.List;
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
-import net.sf.rails.game.Currency;
+import net.sf.rails.game.Bank;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.StartItem;
-import net.sf.rails.game.StartPacket;
 import net.sf.rails.game.StartRound;
 import net.sf.rails.game.state.IntegerState;
 import rails.game.action.BidStartItem;
@@ -178,7 +177,7 @@ public class StartRound_1837_Coal extends StartRound {
                     ReportBuffer.add(this, LocalText.getText(
                             "ITEM_PRICE_REDUCED",
                                     item.getName(),
-                                    Currency.format(this, item.getBasePrice()) ));
+                                    Bank.format(this, item.getBasePrice()) ));
                 }
             }
                    
