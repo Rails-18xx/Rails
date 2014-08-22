@@ -756,7 +756,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                         options.add(LocalText.getText("BuyCertificate",
                                 sharePerCert,
                                 companyName,
-                                buy.getFromPortfolio().getId(),
+                                buy.getFromPortfolio().getName(),
                                 gameUIManager.format(sharesPerCert * buy.getPrice()) ));
                         buyActions.add(buy);
                         buyAmounts.add(1);
@@ -765,7 +765,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                                     i,
                                     sharePerCert,
                                     companyName,
-                                    buy.getFromPortfolio().getId(),
+                                    buy.getFromPortfolio().getName(),
                                     gameUIManager.format(i * sharesPerCert
                                             * buy.getPrice()) ));
                             buyActions.add(buy);
