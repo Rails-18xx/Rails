@@ -1,6 +1,9 @@
-Rails 2.0 Alpha 5 release:
+Rails 2.0 Alpha 6 release:
 
-First alpha release after merging of 1880 from Rails 1.8.x tree.
+This release fixes all remaining bugs that caused 18xx test games to fail.
+All test games run, except that for 1880.
+
+Also fixes bug that prevent reloading saved game files.
 
 Remark:
-Bugs from previous 2.0 Alpha releases are still open.
+Most bugs from previous 2.0 Alpha releases are still open.

@@ -32,6 +32,7 @@ public class StartRound_1837_Coal extends StartRound {
         bidIncrement = startPacket.getModulus();
     }
 
+
     @Override
     public void start() {
  
@@ -49,6 +50,7 @@ public class StartRound_1837_Coal extends StartRound {
         }
 
     }
+
 
     @Override
     public boolean setPossibleActions() {
@@ -131,6 +133,7 @@ public class StartRound_1837_Coal extends StartRound {
                     possibleActions.add(new BuyStartItem(item,
                             item.getBasePrice(), false));
                 }
+
             }  /* Pass is always allowed */
             possibleActions.add(new NullAction(NullAction.Mode.PASS));
                         
@@ -192,7 +195,8 @@ public class StartRound_1837_Coal extends StartRound {
                     ReportBuffer.add(this, LocalText.getText(
                             "ITEM_PRICE_REDUCED",
                                     item.getName(),
-                                  Bank.format(this, item.getBasePrice()) ));
+
+                                    Bank.format(this, item.getBasePrice()) ));
                 }
             }
                    
@@ -209,9 +213,11 @@ public class StartRound_1837_Coal extends StartRound {
                 }
             numRoundsPassed.add(1);
             
+
         }  else {
             playerManager.setCurrentToNextPlayer();
         }
+
 
         return true;
     }

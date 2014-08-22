@@ -67,7 +67,11 @@
         <Company name="BrB" longname="Brennerbahn" type="Private" basePrice="140" revenue="15">
                 <Blocking hex="J7"/>
                 <SpecialProperties>
+<<<<<<< HEAD
                         <SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
+=======
+                        <SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
+>>>>>>> rails_2_develop
                                 <SpecialTileLay location="J7" colour="yellow" extra="no" free="yes"/>
                         </SpecialProperty>
                 </SpecialProperties>
@@ -76,7 +80,11 @@
         <Company name="WB" longname="Wocheinerbahn" type="Private" basePrice="130" revenue="30">
                 <Blocking hex="K12"/>
                 <SpecialProperties>
+<<<<<<< HEAD
                         <SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
+=======
+                        <SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
+>>>>>>> rails_2_develop
                                 <SpecialTileLay location="K12" colour="yellow" extra="no" free="yes"/>
                         </SpecialProperty>
                 </SpecialProperties>
@@ -84,7 +92,11 @@
         <Company name="AB" longname="Arlbergbahn" type="Private" basePrice="185" revenue="20">
                 <Blocking hex="I6"/>
                 <SpecialProperties>
+<<<<<<< HEAD
                         <SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
+=======
+                        <SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
+>>>>>>> rails_2_develop
                                 <SpecialTileLay location="I6" colour="yellow" extra="no" free="yes"/>
                         </SpecialProperty>
                 </SpecialProperties>
@@ -93,7 +105,11 @@
         <Company name="KB" longname="Karstbahn" type="Private" basePrice="120" revenue="10">
                 <Blocking hex="K14"/>
                 <SpecialProperties>
+<<<<<<< HEAD
                         <SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
+=======
+                        <SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
+>>>>>>> rails_2_develop
                                 <SpecialTileLay location="K14" colour="yellow" extra="no" free="yes"/>
                         </SpecialProperty>
                 </SpecialProperties>
@@ -102,7 +118,11 @@
         <Company name="SmB" longname="Semmeringbahn" type="Private" basePrice="150" revenue="5">
                 <Blocking hex="H17"/>
                 <SpecialProperties>
+<<<<<<< HEAD
                         <SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
+=======
+                        <SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
+>>>>>>> rails_2_develop
                                 <SpecialTileLay location="H17" colour="yellow" extra="no" free="yes"/>
                         </SpecialProperty>
                 </SpecialProperties>
@@ -111,7 +131,11 @@
         <Company name="TB" longname="Tauernbahn" type="Private" basePrice="150" revenue="35">
                 <Blocking hex="J11"/>
                 <SpecialProperties>
+<<<<<<< HEAD
                         <SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
+=======
+                        <SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" class="rails.game.special.SpecialTileLay">
+>>>>>>> rails_2_develop
                                 <SpecialTileLay location="J11" colour="yellow" extra="no" free="yes"/>
                         </SpecialProperty>
                 </SpecialProperties>
@@ -127,7 +151,11 @@
         <Company name="RGTE" longname="Reichenberg-Gablonz-Tannwalder-Eisenbahn" type="Coal" price="100" tokens="1">
                 <Home hex="A14"/>
                 <SpecialProperties>
+<<<<<<< HEAD
                         <SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
+=======
+                        <SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.ExchangeForShare">
+>>>>>>> rails_2_develop
                                 <ExchangeForShare company="BK" share="10"/>
                         </SpecialProperty>
                 </SpecialProperties>
@@ -135,7 +163,11 @@
         <Company name="EOD" longname="Eisenbahn Oderberg-Dombran" type="Coal" price="100" tokens="1">
                 <Home hex="C20"/>
                 <SpecialProperties>
+<<<<<<< HEAD
                         <SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
+=======
+                        <SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.ExchangeForShare">
+>>>>>>> rails_2_develop
                                 <ExchangeForShare company="MS" share="10"/>
                         </SpecialProperty>
                 </SpecialProperties>
@@ -143,7 +175,11 @@
         <Company name="EKT" longname="Eisenbahn Karwin-Teschen" type="Coal" price="100" tokens="1">
                 <Home hex="C22"/>
                 <SpecialProperties>
+<<<<<<< HEAD
                         <SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
+=======
+                        <SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.ExchangeForShare">
+>>>>>>> rails_2_develop
                                 <ExchangeForShare company="MS" share="10"/>
                         </SpecialProperty>
                 </SpecialProperties>
@@ -260,8 +296,12 @@
                         </SpecialProperty>
                 </SpecialProperties>
         </Company>
+<<<<<<< HEAD
          <Company name="U1W" longname="Bahnhof Pest" type="Private" basePrice="90" revenue="0"/>
         <Company name="U1" longname="Eisenbahn Pest-Waitzen" type="Minor2" price="90" tokens="1" fgColour="FFFFFF" bgColour="FF55AA">
+=======
+        <Company name="U1" longname="Eisenbahn Pest-Waitzen" type="Minor2" price="180" tokens="1" fgColour="FFFFFF" bgColour="FF55AA">
+>>>>>>> rails_2_develop
                 <Home hex="H23" city="1"/>
                 <SpecialProperties>
                         <SpecialProperty condition="ifStarted" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
@@ -278,8 +318,12 @@
                 </SpecialProperties>
                 <Trains limit="2,2,2"/>
         </Company>
+<<<<<<< HEAD
            <Company name="U3C" longname="Bahnhof Czegled" type="Private" basePrice="90" revenue="0"/>      
         <Company name="U3" longname="Eisenbahn Pest-Czegléd" type="Minor2" price="90" tokens="1" fgColour="FFFFFF" bgColour="FF55AA">
+=======
+        <Company name="U3" longname="Eisenbahn Pest-Czegléd" type="Minor2" price="180" tokens="1" fgColour="FFFFFF" bgColour="FF55AA">
+>>>>>>> rails_2_develop
                 <Home hex="H23" city="2"/>
                 <SpecialProperties>
                         <SpecialProperty condition="ifStarted" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">

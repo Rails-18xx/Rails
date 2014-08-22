@@ -146,6 +146,7 @@ public class BuyCertificate extends PossibleAction {
                     .addToString("certificate", certificate)
                     .addToString("company", company)
                     .addToString("sharePerCert", sharePerCert)
+                    .addToString("fromName", fromName)
                     .addToString("from", from)
                     .addToString("price", price)
                     .addToString("maximumNumber", maximumNumber)

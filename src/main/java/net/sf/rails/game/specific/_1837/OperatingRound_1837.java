@@ -6,6 +6,7 @@ package net.sf.rails.game.specific._1837;
 import java.util.Map;
 import java.util.Set;
 
+
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
@@ -28,12 +29,12 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Table;
 
+
 /**
  * @author Martin
  *
  */
 public class OperatingRound_1837 extends OperatingRound {
-
 
     private final BooleanState needSuedBahnFormationCall = BooleanState.create(this, "NeedSuedBahnFormationCall");
     private final BooleanState needHungaryFormationCall = BooleanState.create(this, "NeedHungaryFormationCall");
@@ -192,7 +193,7 @@ public class OperatingRound_1837 extends OperatingRound {
         guiHints.setCurrentRoundType(getClass());
         super.resume();
     }
-    
+
     /* (non-Javadoc)
      * @see net.sf.rails.game.OperatingRound#validateSetRevenueAndDividend(rails.game.action.SetDividend)
      */

@@ -31,14 +31,13 @@ public class GameManager_1837 extends GameManager {
     public static final String H1_ID = "H1";
     public static final String S1_ID = "S1";
   
-/*  
- *   private ParSlotManager_1837 parSlotManager;
-   */ 
+
+
     public GameManager_1837(RailsRoot parent, String id) {
         super(parent, id);
-     //   parSlotManager = new ParSlotManager_1837(parent, "ParSlotControl");
-    }
  
+    }
+
     
     public void nextRound(Round round) {
         if (round instanceof StartRound) { 
@@ -150,8 +149,5 @@ public class GameManager_1837 extends GameManager {
     }
 
     
- /*   public ParSlotManager_1837 getParSlotManager() {
-        return parSlotManager;
-   }
-*/
+
 }

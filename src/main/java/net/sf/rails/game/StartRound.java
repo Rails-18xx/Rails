@@ -13,6 +13,8 @@ import net.sf.rails.game.state.Model;
 
 public abstract class StartRound extends Round {
 
+    // FIXME: StartRounds do not set Priority Player
+    
     // static at creation
     protected final StartPacket startPacket;
     protected final String variant;
