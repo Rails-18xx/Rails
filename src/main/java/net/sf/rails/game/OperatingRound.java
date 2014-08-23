@@ -2516,7 +2516,7 @@ public class OperatingRound extends Round implements Observer {
                 (amount / (2 * numberOfShares)) * numberOfShares;
             String withheldText = Currency.fromBank(withheld, operatingCompany.value());
             
-            ReportBuffer.add(this, operatingCompany.value().getId() + LocalText.getText("Receives") + withheldText);
+            ReportBuffer.add(this, operatingCompany.value().getId() + " "+ LocalText.getText("receives") + " "+ withheldText);
 
             // Payout the remainder
             int payed = amount - withheld;
