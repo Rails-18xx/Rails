@@ -145,7 +145,14 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     // TODO: Move that to a better place
     protected Map<String, Object> objectStorage = new HashMap<String, Object>();
     protected Map<String, Integer> storageIds = new HashMap<String, Integer>();
+    
     private static int revenueSpinnerIncrement = 10;
+    //Used for Storing the PublicCompany to be Founded by a formationround
+    private PublicCompany nationalToFound;
+    
+    private Player NationalFormStartingPlayer = null;
+
+    
     
     /**
      * @return the revenueSpinnerIncrement
@@ -1424,7 +1431,31 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     protected Player getCurrentPlayer() {
         return getRoot().getPlayerManager().getCurrentPlayer();
     }
+    
+    public void setNationalToFound(String national){
+        
+        for (PublicCompany company : this.getAllPublicCompanies()){
+            if (company.getId().equals("national")) {
+                this.nationalToFound = company;  
+            }
+        }
+        
+        
+    }
+    
+    public PublicCompany getNationalToFound() {
+        // TODO Auto-generated method stub
+        return nationalToFound;
+    }
 
+    public void setNationalFormationStartingPlayer(Player currentPlayer) {
+        this.NationalFormStartingPlayer=currentPlayer;
+        
+    }
+    
+    public Player getNationalFormationStartingPlayer() {
+        return this.NationalFormStartingPlayer;
+    }
 
 }
 

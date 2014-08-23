@@ -7,7 +7,6 @@ import java.util.List;
 
 import rails.game.action.DiscardTrain;
 import rails.game.action.FoldIntoNational;
-import rails.game.specific._1835.FoldIntoPrussian;
 import rails.game.specific._1837.FoldIntoHungary;
 import rails.game.specific._1837.FoldIntoKuK;
 import rails.game.specific._1837.FoldIntoSuedbahn;
@@ -16,13 +15,10 @@ import com.google.common.collect.Iterables;
 
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.Company;
+import net.sf.rails.game.NationalFormationRound;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.Round;
 import net.sf.rails.game.special.ExchangeForShare;
-import net.sf.rails.game.specific._1837.GameManager_1837;
-import net.sf.rails.game.specific._1837.SuedBahnFormationRound;
-import net.sf.rails.game.specific._1837.HungaryFormationRound;
-import net.sf.rails.game.specific._1837.KuKFormationRound;
 import net.sf.rails.ui.swing.GameUIManager;
 import net.sf.rails.ui.swing.StatusWindow;
 import net.sf.rails.ui.swing.elements.CheckBoxDialog;
@@ -49,18 +45,15 @@ public class StatusWindow_1837 extends StatusWindow {
         @Override
         public void init (GameUIManager gameUIManager) {
             super.init(gameUIManager);
-            suedbahn = gameUIManager.getRoot().getCompanyManager().getPublicCompany(GameManager_1837.SU_ID);
-            kuk = gameUIManager.getRoot().getCompanyManager().getPublicCompany(GameManager_1837.KK_ID);
-            hungary = gameUIManager.getRoot().getCompanyManager().getPublicCompany(GameManager_1837.HU_ID);
+            suedbahn = gameUIManager.getRoot().getCompanyManager().getPublicCompany("Sd");
+            kuk = gameUIManager.getRoot().getCompanyManager().getPublicCompany("KK");
+            hungary = gameUIManager.getRoot().getCompanyManager().getPublicCompany("Ug");
         }
 
         @Override
         public void updateStatus(boolean myTurn) {
             Round currentRound = gameUIManager.getCurrentRound();
-            if ((!(currentRound instanceof SuedBahnFormationRound)) && 
-                    (!(currentRound instanceof HungaryFormationRound)) && 
-                    (!(currentRound instanceof KuKFormationRound))
-                    ) {
+            if (! (currentRound instanceof NationalFormationRound)) {
                 super.updateStatus(myTurn);
             } else if (possibleActions.contains(FoldIntoHungary.class)) {
                 immediateAction = possibleActions.getType(FoldIntoHungary.class).get(0);
@@ -97,19 +90,19 @@ public class StatusWindow_1837 extends StatusWindow {
             List<Company> foldables = action.getFoldableCompanies();
             NonModalDialog currentDialog;
 
-            if (foldables.get(0).getId().equals("H1")) {
+            if (foldables.get(0).getId().equals("U1")) {
                 // Ask if the Hungary should be started
                 currentDialog = new ConfirmationDialog (GameUIManager_1837.START_HUNGARY_DIALOG,
                         gameUIManager, this,
                         LocalText.getText("Select"),
                         LocalText.getText("MergeMinorConfirm",
                                 getCurrentPlayer().getId(),
-                                GameManager_1837.H1_ID, GameManager_1837.HU_ID),
+                                "U1", "Ug"),
                                 "Yes",
                                 "No"
                 );
             } else {
-                // Ask if any other prePrussians should be folded
+                // Ask if any other preNationals should be folded
                 String[] options = new String[foldables.size()];
                 Company company;
                 for (int i=0; i<options.length; i++) {

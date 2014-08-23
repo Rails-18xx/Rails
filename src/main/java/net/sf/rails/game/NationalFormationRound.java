@@ -1,113 +1,88 @@
-/**
- * 
- */
-package net.sf.rails.game.specific._1837;
+package net.sf.rails.game;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import net.sf.rails.common.DisplayBuffer;
-import net.sf.rails.common.GuiDef;
-import net.sf.rails.common.LocalText;
-import net.sf.rails.common.ReportBuffer;
-import net.sf.rails.game.Bank;
-import net.sf.rails.game.BaseToken;
-import net.sf.rails.game.Company;
-import net.sf.rails.game.GameManager;
-import net.sf.rails.game.MapHex;
-import net.sf.rails.game.Phase;
-import net.sf.rails.game.Player;
-import net.sf.rails.game.PrivateCompany;
-import net.sf.rails.game.PublicCertificate;
-import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.Round;
-import net.sf.rails.game.StockRound;
-import net.sf.rails.game.Stop;
-import net.sf.rails.game.Train;
-import net.sf.rails.game.special.ExchangeForShare;
-import net.sf.rails.game.special.SpecialProperty;
-import net.sf.rails.game.specific._1837.GameManager_1837;
-import net.sf.rails.game.state.Currency;
 import rails.game.action.DiscardTrain;
+import rails.game.action.FoldIntoNational;
 import rails.game.action.PossibleAction;
-import rails.game.specific._1837.FoldIntoHungary;
+import rails.game.specific._1837.FoldIntoKuK;
 
 import com.google.common.collect.Iterables;
 
-/**
- * @author martin
- * @date 27.07.2014 @time 12:51:17
- */
-public class HungaryFormationRound extends StockRound {
+import net.sf.rails.common.DisplayBuffer;
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.ReportBuffer;
+import net.sf.rails.game.special.ExchangeForShare;
+import net.sf.rails.game.special.SpecialProperty;
+import net.sf.rails.game.state.Currency;
 
-    private PublicCompany Hungary;
-    private PublicCompany h1;
+public class NationalFormationRound extends StockRound {
+
+    private static PublicCompany nationalToFound;
+    private PublicCompany nationalStartingMinor;
     private Phase phase;
-
-    private boolean startPr;
+    private boolean startNational;
     private boolean forcedStart;
-    private boolean mergePr;
+    private boolean mergeNational;
     private boolean forcedMerge;
+    private List<Company> foldablePreNationals;
 
-    private List<Company> foldablePreHungarys;
-
-    private enum Step {
-        START,
-        MERGE,
-        DISCARD_TRAINS
-    };
+    protected enum Step {
+            START,
+            MERGE,
+            DISCARD_TRAINS
+        }
 
     Step step;
 
-    private static String HU_ID = GameManager_1837.HU_ID;
-    private static String H1_ID = GameManager_1837.H1_ID;
 
-    /**
-     * Constructed via Configure
-     */
-    public HungaryFormationRound (GameManager parent, String id) {
-        super(parent, id);
-
-        guiHints.setVisibilityHint(GuiDef.Panel.MAP, true);
-        guiHints.setVisibilityHint(GuiDef.Panel.STATUS, true);
+    public static boolean nationalIsComplete(GameManager gameManager, String nationalInFounding) {
+         
+        for (PublicCompany company : gameManager.getAllPublicCompanies()) {
+            if (company.isRelatedToNational(nationalInFounding)) {
+                 if (!company.isClosed()) return false;
+            }
+        }
+        return true;
     }
-    
+
     @Override
     public void start() {
-
-        Hungary = companyManager.getPublicCompany(HU_ID);
+    
+        PublicCompany nationalToFound = gameManager.getNationalToFound();
         phase = getCurrentPhase();
-        startPr = !Hungary.hasStarted();
-        forcedMerge = phase.getId().equals("5");
-        forcedStart = phase.getId().equals("4+4") || forcedMerge;
-        mergePr = !HungaryIsComplete(gameManager);
-
-        ReportBuffer.add(this, LocalText.getText("StartFormationRound", HU_ID));
-        log.debug("StartPr="+startPr+" forcedStart="+forcedStart
-                +" mergePr="+mergePr+" forcedMerge="+forcedMerge);
-
-        step = startPr ? Step.START : Step.MERGE;
-
+        startNational = !nationalToFound.hasStarted();
+        forcedMerge = phase.getId().equals("5"); //TODO Make setable
+        forcedStart = phase.getId().equals("4+4") || forcedMerge;//TODO Make setable
+        mergeNational = !nationalIsComplete(gameManager, nationalToFound.getId());
+    
+        ReportBuffer.add(this, LocalText.getText("StartFormationRound", nationalToFound.getId()));
+        log.debug("StartNational="+startNational+" forcedStart="+forcedStart
+                +" mergeNational="+mergeNational+" forcedMerge="+forcedMerge);
+    
+        step = startNational ? Step.START : Step.MERGE;
+    
         if (step == Step.START) {
-            h1 = companyManager.getPublicCompany(H1_ID);
-            setCurrentPlayer(h1.getPresident());
-            ((GameManager_1837)gameManager).setHungaryFormationStartingPlayer(currentPlayer);
+            nationalStartingMinor = nationalToFound.getFoundingStartCompany();
+            setCurrentPlayer(nationalStartingMinor.getPresident());
+            gameManager.setNationalFormationStartingPlayer(currentPlayer);
             if (forcedStart) {
-                executeStartHungary(true);
+                executeStartNational(true, nationalToFound);
                 step = Step.MERGE;
             }
         }
-
+    
         if (step == Step.MERGE) {
             startingPlayer
-            = ((GameManager_1837)gameManager).getHungaryFormationStartingPlayer();
-            log.debug("Original Hungary starting player was "+startingPlayer.getId());
+            = gameManager.getNationalFormationStartingPlayer();
+            log.debug("Original National starting player was "+startingPlayer.getId());
             setCurrentPlayer(startingPlayer);
             if (forcedMerge) {
                 Set<SpecialProperty> sps;
-                setFoldablePreHungarys();
+                setFoldablePreKuKs();
                 List<Company> foldables = new ArrayList<Company> ();
                 for (PrivateCompany company : gameManager.getAllPrivateCompanies()) {
                     if (company.isClosed()) continue;
@@ -124,9 +99,9 @@ public class HungaryFormationRound extends StockRound {
                     }
                 }
                 executeExchange (foldables, false, true);
-
-                // Check if the PR must discard any trains
-                if (Hungary.getNumberOfTrains() > Hungary.getCurrentTrainLimit()) {
+    
+                // Check if the National must discard any trains
+                if (nationalToFound.getNumberOfTrains() > nationalToFound.getCurrentTrainLimit()) {
                     step = Step.DISCARD_TRAINS;
                 } else {
                     finishRound();
@@ -139,40 +114,41 @@ public class HungaryFormationRound extends StockRound {
 
     @Override
     public boolean setPossibleActions() {
-
+    
         if (step == Step.START) {
-            Player h1Owner = h1.getPresident();
-            startingPlayer = h1Owner;
-            setCurrentPlayer(h1Owner);
-            ReportBuffer.add(this, LocalText.getText("StartingPlayer",
-                    playerManager.getCurrentPlayer().getId()));
-
-            possibleActions.add(new FoldIntoHungary(h1));
-
+            Player startingMinorOwner = nationalStartingMinor.getPresident();
+            startingPlayer = startingMinorOwner;
+            setCurrentPlayer(startingMinorOwner);
+            ReportBuffer.add(this, LocalText.getText("StartingPlayer", 
+                    playerManager.getCurrentPlayer().getId()
+                    ));
+    
+            possibleActions.add(new FoldIntoNational(nationalStartingMinor));
+    
         } else if (step == Step.MERGE) {
-
-            possibleActions.add(new FoldIntoHungary(foldablePreHungarys));
-
+    
+            possibleActions.add(new FoldIntoNational(foldablePreNationals));
+    
         } else if (step == Step.DISCARD_TRAINS) {
-
-            if (Hungary.getNumberOfTrains() > Hungary.getCurrentTrainLimit()) {
-                log.debug("+++ PR has "+Hungary.getNumberOfTrains()+", limit is "+Hungary.getCurrentTrainLimit());
-                possibleActions.add(new DiscardTrain(Hungary,
-                        Hungary.getPortfolioModel().getUniqueTrains(), true));
+    
+            if (nationalToFound.getNumberOfTrains() > nationalToFound.getCurrentTrainLimit()) {
+                log.debug("+++ National " +nationalToFound.getLongName() +" has "+nationalToFound.getNumberOfTrains()+", limit is "+nationalToFound.getCurrentTrainLimit());
+                possibleActions.add(new DiscardTrain(nationalToFound,
+                        nationalToFound.getPortfolioModel().getUniqueTrains(), true));
             }
         }
         return true;
-
+    
     }
 
-    private void setFoldablePreHungarys () {
-
-        foldablePreHungarys = new ArrayList<Company> ();
+    private void setFoldablePreKuKs() {
+    
+        foldablePreNationals = new ArrayList<Company> ();
         SpecialProperty sp;
         for (PrivateCompany company : currentPlayer.getPortfolioModel().getPrivateCompanies()) {
             sp = Iterables.get(company.getSpecialProperties(), 0);
             if (sp instanceof ExchangeForShare) {
-                foldablePreHungarys.add(company);
+                foldablePreNationals.add(company);
             }
         }
         PublicCompany company;
@@ -182,52 +158,52 @@ public class HungaryFormationRound extends StockRound {
             company = cert.getCompany();
             sps = company.getSpecialProperties();
             if (sps != null && !sps.isEmpty() && Iterables.get(sps, 0) instanceof ExchangeForShare) {
-                foldablePreHungarys.add(company);
+                foldablePreNationals.add(company);
             }
         }
     }
 
     @Override
     protected boolean processGameSpecificAction(PossibleAction action) {
-
-        if (action instanceof FoldIntoHungary) {
-
-            FoldIntoHungary a = (FoldIntoHungary) action;
-
+    
+        if (action instanceof FoldIntoKuK) {
+    
+            FoldIntoKuK a = (FoldIntoKuK) action;
+    
             if (step == Step.START) {
-                if (!startHungary(a)) {
+                if (!startKuK(a)) {
                     finishRound();
                 } else {
                     step = Step.MERGE;
                     findNextMergingPlayer(false);
                 }
-
+    
             } else if (step == Step.MERGE) {
-
-                mergeIntoHungary (a);
-
+    
+                mergeIntoKuK (a);
+    
             }
-
+    
             return true;
-
+    
         } else if (action instanceof DiscardTrain) {
-
+    
             discardTrain ((DiscardTrain) action);
             return true;
-
+    
         } else {
             return false;
         }
     }
 
     protected boolean findNextMergingPlayer(boolean skipCurrentPlayer) {
-
+    
         while (true) {
-
+    
             if (skipCurrentPlayer) {
                 setNextPlayer();
                 if (playerManager.getCurrentPlayer() == startingPlayer) {
-                    if (Hungary.getNumberOfTrains() > Hungary.getCurrentTrainLimit()) {
+                    if (nationalToFound.getNumberOfTrains() > nationalToFound.getCurrentTrainLimit()) {
                         step = Step.DISCARD_TRAINS;
                     } else {
                         finishRound();
@@ -235,90 +211,90 @@ public class HungaryFormationRound extends StockRound {
                     return false;
                 }
             }
-
-            setFoldablePreHungarys();
-            if (!foldablePreHungarys.isEmpty()) return true;
+    
+            setFoldablePreKuKs();
+            if (!foldablePreNationals.isEmpty()) return true;
             skipCurrentPlayer = true;
         }
     }
 
-    private boolean startHungary (FoldIntoHungary action) {
-
+    private boolean startKuK(FoldIntoKuK action) {
+    
         // Validate
         String errMsg = null;
-
+    
         List<Company> folded = action.getFoldedCompanies();
         boolean folding = folded != null && !folded.isEmpty();
-
+    
         while (folding) {
-            if (!(H1_ID.equals(action.getFoldedCompanyNames()))) {
+            if (!(nationalStartingMinor.getId().equals(action.getFoldedCompanyNames()))) {
                 errMsg = LocalText.getText("WrongCompany",
                         action.getFoldedCompanyNames(),
-                        GameManager_1837.H1_ID);
+                        nationalStartingMinor.getId());
                 break;
             }
             break;
         }
-
+    
         if (errMsg != null) {
             DisplayBuffer.add(this, LocalText.getText("CannotMerge",
                     action.getFoldedCompanyNames(),
-                    HU_ID,
+                    nationalToFound.getId(),
                     errMsg));
             return false;
         }
-
+    
         // all actions linked during formation round to avoid serious undo problems
         
         // FIXME: changeStack.linkToPreviousMoveSet();
-
-        if (folding) executeStartHungary(false);
-
+    
+        if (folding) executeStartNational(false, nationalToFound);
+    
         return folding;
     }
 
-    private void executeStartHungary (boolean display) {
-
-        Hungary.start();
+    private void executeStartNational(boolean display, PublicCompany comp) {
+    
+        nationalToFound.start();
         String message = LocalText.getText("START_MERGED_COMPANY",
-                HU_ID,
-                Bank.format(this, Hungary.getIPOPrice()),
-                Hungary.getStartSpace().toText());
+                comp.getId(),
+                Bank.format(this, nationalToFound.getIPOPrice()),
+                nationalToFound.getStartSpace().toText());
         ReportBuffer.add(this, message);
         if (display) DisplayBuffer.add(this, message);
-
+    
         // add money from sold shares
         // Move cash and shares where required
-        int capFactor = Hungary.getSoldPercentage() / (Hungary.getShareUnit() * Hungary.getShareUnitsForSharePrice());
-        int cash = capFactor * Hungary.getIPOPrice();
-
+        int capFactor = nationalToFound.getSoldPercentage() / (nationalToFound.getShareUnit() * nationalToFound.getShareUnitsForSharePrice());
+        int cash = capFactor * nationalToFound.getIPOPrice();
+    
         if (cash > 0) {
-            String cashText = Currency.fromBank(cash, Hungary);
+            String cashText = Currency.fromBank(cash, nationalToFound);
             ReportBuffer.add(this, LocalText.getText("FloatsWithCash",
-                Hungary.getId(),
+                nationalToFound.getId(),
                 cashText ));
         } else {
             ReportBuffer.add(this, LocalText.getText("Floats",
-                    Hungary.getId()));
+                    nationalToFound.getId()));
         }
-
-        executeExchange (Arrays.asList(new Company[]{h1}), true, false);
-        Hungary.setFloated();
+    
+        executeExchange (Arrays.asList(new Company[]{nationalStartingMinor}), true, false);
+        nationalToFound.setFloated();
     }
 
-    private boolean mergeIntoHungary (FoldIntoHungary action) {
-
+    private boolean mergeIntoKuK(FoldIntoKuK action) {
+    
         // Validate
         // String errMsg = null;
-
+    
         List<Company> folded = action.getFoldedCompanies();
         boolean folding = folded != null && !folded.isEmpty();
-
+    
         while (folding) {
             // TODO Some validation needed
             break;
         }
-
+    
         // TODO: This is now dead code, but won't be when some sensible validations exist 
         /*
         if (errMsg != null) {
@@ -329,22 +305,21 @@ public class HungaryFormationRound extends StockRound {
             return false; 
         }
         */
-
+    
         // all actions linked during formation round to avoid serious undo problems
         
         // FIMXE: changeStack.linkToPreviousMoveSet();
-
+    
         // Execute
         if (folding) executeExchange (folded, false, false);
-
+    
         findNextMergingPlayer(true);
-
+    
         return folding;
     }
 
-    private void executeExchange (List<Company> companies, boolean president,
-            boolean display) {
-
+    private void executeExchange(List<Company> companies, boolean president, boolean display) {
+    
         ExchangeForShare efs;
         PublicCertificate cert;
         Player player;
@@ -357,14 +332,14 @@ public class HungaryFormationRound extends StockRound {
             }
             // Shortcut, sp should be checked
             efs = (ExchangeForShare) Iterables.get(company.getSpecialProperties(), 0);
-            cert = unavailable.findCertificate(Hungary, efs.getShare()/Hungary.getShareUnit(),
+            cert = unavailable.findCertificate(nationalToFound, efs.getShare()/nationalToFound.getShareUnit(),
                     president);
             cert.moveTo(player);
             //company.setClosed();
             String message = LocalText.getText("MERGE_MINOR_LOG",
                     player.getId(),
                     company.getId(),
-                    HU_ID,
+                    nationalToFound.getId(),
                     company instanceof PrivateCompany ? "no"
                             : Bank.format(this, ((PublicCompany)company).getCash()),
                     company instanceof PrivateCompany ? "no"
@@ -374,72 +349,72 @@ public class HungaryFormationRound extends StockRound {
             message = LocalText.getText("GetShareForMinor",
                     player.getId(),
                     cert.getShare(),
-                    HU_ID,
+                    nationalToFound.getId(),
                     ipo.getParent().getId(),
                     company.getId());
             ReportBuffer.add(this, message);
             if (display) DisplayBuffer.add(this, message);
-
+    
             if (company instanceof PublicCompany) {
-
+    
                 PublicCompany minor = (PublicCompany) company;
-
+    
                 // Replace the home token
                 BaseToken token = Iterables.get(minor.getAllBaseTokens(),0);
                 Stop city = (Stop) token.getOwner();
                 MapHex hex = city.getParent();
                 token.moveTo(minor);
-                if (!hex.hasTokenOfCompany(Hungary) && hex.layBaseToken(Hungary, city)) {
+                if (!hex.hasTokenOfCompany(nationalToFound) && hex.layBaseToken(nationalToFound, city)) {
                     /* TODO: the false return value must be impossible. */
                     message = LocalText.getText("ExchangesBaseToken",
-                            HU_ID, minor.getId(),
+                            nationalToFound.getId(), minor.getId(),
                             city.getRelatedNumber());
                     ReportBuffer.add(this, message);
                     if (display) DisplayBuffer.add(this, message);
-
-                    Hungary.layBaseToken(hex, 0);
+    
+                    nationalToFound.layBaseToken(hex, 0);
                 }
-
+    
                 // Move any cash
                 if (minor.getCash() > 0) {
-                    Currency.wireAll(minor, Hungary);
+                    Currency.wireAll(minor, nationalToFound);
                 }
-
+    
                 // Move any trains
                 // TODO: Simplify code due to trainlist being immutable anyway
                 List<Train> trains = new ArrayList<Train> (minor.getPortfolioModel().getTrainList());
                 for (Train train : trains) {
-                    Hungary.getPortfolioModel().addTrain(train);
+                    nationalToFound.getPortfolioModel().addTrain(train);
                 }
             }
-
+    
             // Close the merged companies
             company.setClosed();
         }
-
+    
     }
 
     public boolean discardTrain(DiscardTrain action) {
-
+    
         Train train = action.getDiscardedTrain();
         PublicCompany company = action.getCompany();
-
+    
         String errMsg = null;
-
+    
         // Dummy loop to enable a quick jump out.
         while (true) {
             // Checks
             // Must be correct step
-            if (company != Hungary) {
-                errMsg = LocalText.getText("WrongCompany", company.getId(), Hungary.getId());
+            if (company != nationalToFound) {
+                errMsg = LocalText.getText("WrongCompany", company.getId(), nationalToFound.getId());
                 break;
             }
-
+    
             if (train == null && action.isForced()) {
                 errMsg = LocalText.getText("NoTrainSpecified");
                 break;
             }
-
+    
             // Does the company own such a train?
             if (!company.getPortfolioModel().getTrainList().contains(train)) {
                 errMsg =
@@ -448,7 +423,7 @@ public class HungaryFormationRound extends StockRound {
                                 train.toText() );
                 break;
             }
-
+    
             break;
         }
         if (errMsg != null) {
@@ -458,24 +433,24 @@ public class HungaryFormationRound extends StockRound {
                     errMsg ));
             return false;
         }
-
+    
         /* End of validation, start of execution */
         
         // FIXME: if (action.isForced()) changeStack.linkToPreviousMoveSet();
-
+    
         pool.addTrain(train);
         ReportBuffer.add(this, LocalText.getText("CompanyDiscardsTrain",
                 company.getId(),
                 train.toText() ));
-
+    
         // We still might have another excess train
         // TODO: would be better to have DiscardTrain discard multiple trains
-        if (Hungary.getNumberOfTrains() > Hungary.getCurrentTrainLimit()) {
+        if (nationalToFound.getNumberOfTrains() > nationalToFound.getCurrentTrainLimit()) {
             step = Step.DISCARD_TRAINS;
         } else {
             finishRound();
         }
-
+    
         return true;
     }
 
@@ -484,30 +459,26 @@ public class HungaryFormationRound extends StockRound {
         Round interruptedRound = gameManager.getInterruptedRound();
         ReportBuffer.add(this, " ");
         if (interruptedRound != null) {
-            ReportBuffer.add(this, LocalText.getText("EndOfFormationRound", HU_ID,
+            ReportBuffer.add(this, LocalText.getText("EndOfFormationRound", nationalToFound.getId(),
                     interruptedRound.getRoundName()));
         } else {
-            ReportBuffer.add(this, LocalText.getText("EndOfFormationRoundNoInterrupt", HU_ID));
+            ReportBuffer.add(this, LocalText.getText("EndOfFormationRoundNoInterrupt", nationalToFound.getId()));
         }
-
-        if (Hungary.hasStarted()) Hungary.checkPresidency();
-        Hungary.setOperated(); // To allow immediate share selling
+    
+        if (nationalToFound.hasStarted()) nationalToFound.checkPresidency();
+        nationalToFound.setOperated(); // To allow immediate share selling
         //        super.finishRound();
         // Inform GameManager
         gameManager.nextRound(this);
     }
 
-    public static boolean HungaryIsComplete(GameManager gameManager) {
-
-        for (PublicCompany company : gameManager.getAllPublicCompanies()) {
-            if (!company.getType().getId().equalsIgnoreCase("Minor")) continue;
-            if (!company.isClosed()) return false;
-        }
-        return true;
+    public NationalFormationRound(GameManager parent, String id) {
+        super(parent, id);
     }
 
     @Override
     public String toString() {
-        return "1837 HungaryFormationRound";
+        return "1837 KuKFormationRound";
     }
+
 }

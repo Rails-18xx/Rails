@@ -295,6 +295,13 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     private String infoText;
     private String parentInfoText;
     private final BooleanState closed = BooleanState.create(this, "closed", false);
+    
+    /**
+     *  Relation to a later to be founded National/Regional Major Company 
+     *  */
+    private String relatedNationalCompany;
+
+    private PublicCompany foundingStartCompany;
 
     /**
      * Used by Configure (via reflection) only
@@ -2015,5 +2022,36 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     // Comparable interface
     public int compareTo(PublicCompany other) {
         return this.getId().compareTo(other.getId());
+    }
+
+    public void setRelatedNationalCompany(String companyName){
+        this.relatedNationalCompany = companyName;
+    }
+
+    public String getRelatedNationalCompany() {
+        return relatedNationalCompany;
+    }
+
+
+    public boolean isRelatedToNational(String nationalInFounding) {
+        if (this.getRelatedNationalCompany().equals(nationalInFounding)){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @return the foundingStartCompany
+     */
+    public PublicCompany getFoundingStartCompany() {
+        
+        return foundingStartCompany;
+    }
+
+    /**
+     * @param foundingStartCompany the foundingStartCompany to set
+     */
+    public void setStartingMinor(PublicCompany foundingStartCompany) {
+        this.foundingStartCompany = foundingStartCompany;
     }
 }
