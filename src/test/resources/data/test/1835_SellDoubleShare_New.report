@@ -166,42 +166,42 @@ CompanyOperates,M1,m3
 LaysTileAt,M1,9,J2,NW
 CompanyRevenue,M1,40
 CompanySplits,M1,40
-M1 receives 20
+RECEIVES,M1,20
 Payout,m3,20,1,100
  
 CompanyOperates,M2,m3
 LaysTileAt,M2,8,F16,W
 CompanyRevenue,M2,50
 CompanySplits,M2,50
-M2 receives 25
+RECEIVES,M2,25
 Payout,m3,25,1,100
  
 CompanyOperates,M3,m4
 LaysTileAt,M3,8,E13,SE
 CompanyRevenue,M3,50
 CompanySplits,M3,50
-M3 receives 25
+RECEIVES,M3,25
 Payout,m4,25,1,100
  
 CompanyOperates,M4,m1
 LaysTileAt,M4,3,F6,SW
 CompanyRevenue,M4,30
 CompanySplits,M4,30
-M4 receives 15
+RECEIVES,M4,15
 Payout,m1,15,1,100
  
 CompanyOperates,M5,m2
 LaysTileAt,M5,8,C19,E
 CompanyRevenue,M5,50
 CompanySplits,M5,50
-M5 receives 25
+RECEIVES,M5,25
 Payout,m2,25,1,100
  
 CompanyOperates,M6,m4
 LaysTileAt,M6,6,A11,NW
 CompanyRevenue,M6,60
 CompanySplits,M6,60
-M6 receives 30
+RECEIVES,M6,30
 Payout,m4,30,1,100
  
 CompanyOperates,BY,m4
@@ -269,41 +269,41 @@ CompanyOperates,M1,m3
 LaysTileAt,M1,4,K3,NW
 CompanyRevenue,M1,40
 CompanySplits,M1,40
-M1 receives 20
+RECEIVES,M1,20
 Payout,m3,20,1,100
  
 CompanyOperates,M2,m3
 LaysTileAt,M2,9,F20,NW
 CompanyRevenue,M2,50
 CompanySplits,M2,50
-M2 receives 25
+RECEIVES,M2,25
 Payout,m3,25,1,100
  
 CompanyOperates,M3,m4
 LaysTileAt,M3,8,E11,NW
 CompanyRevenue,M3,50
 CompanySplits,M3,50
-M3 receives 25
+RECEIVES,M3,25
 Payout,m4,25,1,100
  
 CompanyOperates,M4,m1
 LaysTileAt,M4,8,G7,W
 CompanyRevenue,M4,30
 CompanySplits,M4,30
-M4 receives 15
+RECEIVES,M4,15
 Payout,m1,15,1,100
  
 CompanyOperates,M5,m2
 CompanyRevenue,M5,50
 CompanySplits,M5,50
-M5 receives 25
+RECEIVES,M5,25
 Payout,m2,25,1,100
  
 CompanyOperates,M6,m4
 LaysTileAt,M6,58,B12,SW
 CompanyRevenue,M6,60
 CompanySplits,M6,60
-M6 receives 30
+RECEIVES,M6,30
 Payout,m4,30,1,100
  
 CompanyOperates,BY,m4
@@ -371,21 +371,21 @@ CompanyOperates,M1,m3
 LaysTileAt,M1,8,L4,NW
 CompanyRevenue,M1,40
 CompanySplits,M1,40
-M1 receives 20
+RECEIVES,M1,20
 Payout,m3,20,1,100
  
 CompanyOperates,M2,m3
 LaysTileAt,M2,201,H20,E
 CompanyRevenue,M2,50
 CompanySplits,M2,50
-M2 receives 25
+RECEIVES,M2,25
 Payout,m3,25,1,100
  
 CompanyOperates,M3,m4
 LaysTileAt,M3,8,D10,NE
 CompanyRevenue,M3,60
 CompanySplits,M3,60
-M3 receives 30
+RECEIVES,M3,30
 Payout,m4,30,1,100
 BuysTrain,M3,2,IPO,80
 All 2-trains are sold out, 2+2-trains now available
@@ -394,21 +394,21 @@ CompanyOperates,M4,m1
 LaysTileAt,M4,9,F8,SW
 CompanyRevenue,M4,30
 CompanySplits,M4,30
-M4 receives 15
+RECEIVES,M4,15
 Payout,m1,15,1,100
  
 CompanyOperates,M5,m2
 LaysTileAt,M5,9,D20,NW
 CompanyRevenue,M5,50
 CompanySplits,M5,50
-M5 receives 25
+RECEIVES,M5,25
 Payout,m2,25,1,100
  
 CompanyOperates,M6,m4
 LaysTileAt,M6,58,B14,E
 CompanyRevenue,M6,60
 CompanySplits,M6,60
-M6 receives 30
+RECEIVES,M6,30
 Payout,m4,30,1,100
  
 CompanyOperates,BY,m4
@@ -493,42 +493,42 @@ CompanyOperates,M1,m3
 LaysTileAtFor,M1,202,I3,NE,50
 CompanyRevenue,M1,60
 CompanySplits,M1,60
-M1 receives 30
+RECEIVES,M1,30
 Payout,m3,30,1,100
  
 CompanyOperates,M2,m3
 LaysTileAt,M2,9,E9,SW
 CompanyRevenue,M2,50
 CompanySplits,M2,50
-M2 receives 25
+RECEIVES,M2,25
 Payout,m3,25,1,100
  
 CompanyOperates,M3,m4
 LaysTileAt,M3,4,B16,W
 CompanyRevenue,M3,110
 CompanySplits,M3,110
-M3 receives 55
+RECEIVES,M3,55
 Payout,m4,55,1,100
  
 CompanyOperates,M4,m1
 LaysTileAt,M4,58,F4,E
 CompanyRevenue,M4,30
 CompanySplits,M4,30
-M4 receives 15
+RECEIVES,M4,15
 Payout,m1,15,1,100
  
 CompanyOperates,M5,m2
 LaysTileAt,M5,3,I15,NE
 CompanyRevenue,M5,50
 CompanySplits,M5,50
-M5 receives 25
+RECEIVES,M5,25
 Payout,m2,25,1,100
  
 CompanyOperates,M6,m4
 LaysTileAt,M6,8,B18,SE
 CompanyRevenue,M6,60
 CompanySplits,M6,60
-M6 receives 30
+RECEIVES,M6,30
 Payout,m4,30,1,100
 BuysTrain,M6,2+2,IPO,120
 All 2+2-trains are sold out, 3-trains now available
@@ -621,14 +621,14 @@ CompanyOperates,M1,m3
 LaysTileAt,M1,208,H2,SW
 CompanyRevenue,M1,70
 CompanySplits,M1,70
-M1 receives 35
+RECEIVES,M1,35
 Payout,m3,35,1,100
  
 CompanyOperates,M2,m3
 LaysTileAt,M2,209,E19,NE
 CompanyRevenue,M2,70
 CompanySplits,M2,70
-M2 receives 35
+RECEIVES,M2,35
 Payout,m3,35,1,100
 BuysTrain,M2,3,IPO,180
  
@@ -636,28 +636,28 @@ CompanyOperates,M3,m4
 LaysTileAt,M3,12,F14,E
 CompanyRevenue,M3,140
 CompanySplits,M3,140
-M3 receives 70
+RECEIVES,M3,70
 Payout,m4,70,1,100
  
 CompanyOperates,M4,m1
 LaysTileAt,M4,24,D10,NE
 CompanyRevenue,M4,60
 CompanySplits,M4,60
-M4 receives 30
+RECEIVES,M4,30
 Payout,m1,30,1,100
  
 CompanyOperates,M5,m2
 LaysTileAt,M5,207,H20,NW
 CompanyRevenue,M5,80
 CompanySplits,M5,80
-M5 receives 40
+RECEIVES,M5,40
 Payout,m2,40,1,100
  
 CompanyOperates,M6,m4
 LaysTileAt,M6,12,A11,W
 CompanyRevenue,M6,80
 CompanySplits,M6,80
-M6 receives 40
+RECEIVES,M6,40
 Payout,m4,40,1,100
  
 CompanyOperates,BY,m4
@@ -716,20 +716,20 @@ CompanyOperates,M1,m3
 LaysTileAt,M1,207,I3,W
 CompanyRevenue,M1,80
 CompanySplits,M1,80
-M1 receives 40
+RECEIVES,M1,40
 Payout,m3,40,1,100
  
 CompanyOperates,M2,m3
 LaysTileAt,M2,9,F18,SW
 CompanyRevenue,M2,180
 CompanySplits,M2,180
-M2 receives 90
+RECEIVES,M2,90
 Payout,m3,90,1,100
  
 CompanyOperates,M3,m4
 CompanyRevenue,M3,70
 CompanySplits,M3,70
-M3 receives 35
+RECEIVES,M3,35
 Payout,m4,35,1,100
 BuysTrain,M3,3,IPO,180
 All 3-trains are sold out, 3+3-trains now available
@@ -738,21 +738,21 @@ CompanyOperates,M4,m1
 LaysTileAt,M4,206,G5,SE
 CompanyRevenue,M4,70
 CompanySplits,M4,70
-M4 receives 35
+RECEIVES,M4,35
 Payout,m1,35,1,100
  
 CompanyOperates,M5,m2
 LaysTileAt,M5,9,G17,SW
 CompanyRevenue,M5,80
 CompanySplits,M5,80
-M5 receives 40
+RECEIVES,M5,40
 Payout,m2,40,1,100
  
 CompanyOperates,M6,m4
 LaysTileAt,M6,25,C19,SW
 CompanyRevenue,M6,80
 CompanySplits,M6,80
-M6 receives 40
+RECEIVES,M6,40
 Payout,m4,40,1,100
  
 CompanyOperates,BY,m4
@@ -860,7 +860,7 @@ CompanyOperates,M1,m3
 LaysTileAt,M1,8,K5,NE
 CompanyRevenue,M1,80
 CompanySplits,M1,80
-M1 receives 40
+RECEIVES,M1,40
 Payout,m3,40,1,100
 BuysTrain,M1,2+2,SX,155
  
@@ -868,35 +868,35 @@ CompanyOperates,M2,m3
 LaysTileAt,M2,8,C17,SE
 CompanyRevenue,M2,180
 CompanySplits,M2,180
-M2 receives 90
+RECEIVES,M2,90
 Payout,m3,90,1,100
  
 CompanyOperates,M3,m4
 LaysTileAt,M3,8,C15,NW
 CompanyRevenue,M3,180
 CompanySplits,M3,180
-M3 receives 90
+RECEIVES,M3,90
 Payout,m4,90,1,100
  
 CompanyOperates,M4,m1
 LaysTileAt,M4,23,F8,NE
 CompanyRevenue,M4,70
 CompanySplits,M4,70
-M4 receives 35
+RECEIVES,M4,35
 Payout,m1,35,1,100
  
 CompanyOperates,M5,m2
 LaysTileAt,M5,87,B14,SE
 CompanyRevenue,M5,80
 CompanySplits,M5,80
-M5 receives 40
+RECEIVES,M5,40
 Payout,m2,40,1,100
  
 CompanyOperates,M6,m4
 LaysTileAt,M6,204,B12,SE
 CompanyRevenue,M6,90
 CompanySplits,M6,90
-M6 receives 45
+RECEIVES,M6,45
 Payout,m4,45,1,100
  
 CompanyOperates,BY,m4
@@ -965,35 +965,35 @@ CompanyOperates,M1,m3
 LaysTileAt,M1,56,H4,W
 CompanyRevenue,M1,180
 CompanySplits,M1,180
-M1 receives 90
+RECEIVES,M1,90
 Payout,m3,90,1,100
  
 CompanyOperates,M2,m3
 LaysTileAt,M2,25,C15,E
 CompanyRevenue,M2,180
 CompanySplits,M2,180
-M2 receives 90
+RECEIVES,M2,90
 Payout,m3,90,1,100
  
 CompanyOperates,M3,m4
 LaysTileAtFor,M3,8,E15,SW,50
 CompanyRevenue,M3,180
 CompanySplits,M3,180
-M3 receives 90
+RECEIVES,M3,90
 Payout,m4,90,1,100
  
 CompanyOperates,M4,m1
 LaysTileAt,M4,205,F10,NW
 CompanyRevenue,M4,70
 CompanySplits,M4,70
-M4 receives 35
+RECEIVES,M4,35
 Payout,m1,35,1,100
  
 CompanyOperates,M5,m2
 LaysTileAt,M5,23,L16,SE
 CompanyRevenue,M5,80
 CompanySplits,M5,80
-M5 receives 40
+RECEIVES,M5,40
 Payout,m2,40,1,100
 BuysTrain,M5,2+2,SX,260
  
@@ -1001,7 +1001,7 @@ CompanyOperates,M6,m4
 LaysTileAt,M6,26,B10,NW
 CompanyRevenue,M6,100
 CompanySplits,M6,100
-M6 receives 50
+RECEIVES,M6,50
 Payout,m4,50,1,100
  
 CompanyOperates,BY,m4
@@ -1106,41 +1106,41 @@ CompanyOperates,M1,m3
 LaysTileAt,M1,24,E9,NE
 CompanyRevenue,M1,180
 CompanySplits,M1,180
-M1 receives 90
+RECEIVES,M1,90
 Payout,m3,90,1,100
  
 CompanyOperates,M2,m3
 LaysTileAt,M2,27,D14,NW
 CompanyRevenue,M2,190
 CompanySplits,M2,190
-M2 receives 95
+RECEIVES,M2,95
 Payout,m3,95,1,100
  
 CompanyOperates,M3,m4
 LaysTileAtFor,M3,9,M17,NW,50
 CompanyRevenue,M3,180
 CompanySplits,M3,180
-M3 receives 90
+RECEIVES,M3,90
 Payout,m4,90,1,100
  
 CompanyOperates,M4,m1
 LaysTileAt,M4,24,F18,NE
 CompanyRevenue,M4,70
 CompanySplits,M4,70
-M4 receives 35
+RECEIVES,M4,35
 Payout,m1,35,1,100
  
 CompanyOperates,M5,m2
 LaysTileAt,M5,23,G19,NW
 CompanyRevenue,M5,180
 CompanySplits,M5,180
-M5 receives 90
+RECEIVES,M5,90
 Payout,m2,90,1,100
  
 CompanyOperates,M6,m4
 CompanyRevenue,M6,100
 CompanySplits,M6,100
-M6 receives 50
+RECEIVES,M6,50
 Payout,m4,50,1,100
  
 CompanyOperates,BY,m4
@@ -1235,14 +1235,14 @@ CompanyOperates,M3,m4
 LaysTileAt,M3,20,H18,W
 CompanyRevenue,M3,110
 CompanySplits,M3,110
-M3 receives 55
+RECEIVES,M3,55
 Payout,m4,55,1,100
  
 CompanyOperates,M6,m4
 LaysTileAt,M6,20,G17,NW
 CompanyRevenue,M6,100
 CompanySplits,M6,100
-M6 receives 50
+RECEIVES,M6,50
 Payout,m4,50,1,100
  
 CompanyOperates,BY,m4

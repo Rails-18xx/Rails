@@ -156,7 +156,7 @@ LaysTileAt,L&N,511,F12,W
 LAYS_FREE_TOKEN_ON,L&N,F12
 CompanyRevenue,L&N,160
 CompanySplits,L&N,160
-L&N receives 80
+RECEIVES,L&N,80
 Payout,Alice,48,6,10
 Payout,L&N,32,4,10
 PRICE_MOVES_LOG,L&N,75,C4,82,D4
@@ -214,7 +214,7 @@ CompanyOperates,L&N,Alice
 LaysTileAt,L&N,511,B16,W
 CompanyRevenue,L&N,200
 CompanySplits,L&N,200
-L&N receives 100
+RECEIVES,L&N,100
 Payout,Alice,60,6,10
 Payout,Bob,10,1,10
 Payout,L&N,30,3,10
@@ -261,7 +261,7 @@ LaysTileAtFor,L&N,9,G9,W,40
 LAYS_FREE_TOKEN_ON,L&N,G7
 CompanyRevenue,L&N,320
 CompanySplits,L&N,320
-L&N receives 160
+RECEIVES,L&N,160
 Payout,Alice,96,6,10
 Payout,Bob,16,1,10
 Payout,L&N,48,3,10
@@ -340,7 +340,7 @@ LaysTileAt,TC,9,D10,NW
 LaysTileAtFor,TC,9,C9,NW,40
 CompanyRevenue,TC,220
 CompanySplits,TC,220
-TC receives 110
+RECEIVES,TC,110
 Payout,Alice,22,2,10
 Payout,Charlie,66,6,10
 Payout,Bob,11,1,10
@@ -352,7 +352,7 @@ LaysTileAt,GM&O,9,I5,NW
 LaysTileAt,GM&O,6,F6,SW
 CompanyRevenue,GM&O,260
 CompanySplits,GM&O,260
-GM&O receives 130
+RECEIVES,GM&O,130
 Payout,Alice,26,2,10
 Payout,Charlie,26,2,10
 Payout,Bob,78,6,10
@@ -388,7 +388,7 @@ LaysTileAt,TC,9,B8,NW
 LaysTileAt,TC,8,A7,SE
 CompanyRevenue,TC,220
 CompanySplits,TC,220
-TC receives 110
+RECEIVES,TC,110
 Payout,Alice,22,2,10
 Payout,Charlie,66,6,10
 Payout,Bob,11,1,10
@@ -584,7 +584,7 @@ LaysTileAt,GM&O,611,G7,W
 LAYS_FREE_TOKEN_ON,GM&O,H16
 CompanyRevenue,GM&O,180
 CompanySplits,GM&O,180
-GM&O receives 90
+RECEIVES,GM&O,90
 Payout,Bob,54,6,10
 PRICE_MOVES_LOG,GM&O,70,D6,75,E6
  
