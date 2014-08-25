@@ -1,5 +1,6 @@
 package net.sf.rails.game.specific._1837;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -28,7 +29,7 @@ public class ItalyTileModifier implements NetworkGraphModifier {
         // TODO (Rails 2.0): Add root reference to modifiers
         SimpleGraph<NetworkVertex, NetworkEdge> graph = mapGraph.getGraph();
         RailsRoot root = RailsRoot.getInstance();
-        List<MapHex> italyMapHexes = null;
+        List<MapHex> italyMapHexes = new ArrayList<MapHex> ();
         // 1. check Phase
         // this is a violation of the assumption that the track network only dependents on the map configuration
         // but not on other things (like phases)

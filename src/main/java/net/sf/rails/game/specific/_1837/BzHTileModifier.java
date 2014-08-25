@@ -1,5 +1,6 @@
 package net.sf.rails.game.specific._1837;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -20,7 +21,7 @@ public class BzHTileModifier implements NetworkGraphModifier {
 
     protected static Logger log =
         LoggerFactory.getLogger(BzHTileModifier.class);
-    private List<MapHex> bzhMapHexes;
+    private List<MapHex> bzhMapHexes = new ArrayList<MapHex> ();
 
     public void modifyGraph(NetworkGraph mapGraph) {
         
