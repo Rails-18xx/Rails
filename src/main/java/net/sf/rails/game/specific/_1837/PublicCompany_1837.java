@@ -3,12 +3,9 @@ package net.sf.rails.game.specific._1837;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsItem;
 import net.sf.rails.game.Train;
-import net.sf.rails.game.state.BooleanState;
 
 public class PublicCompany_1837 extends PublicCompany {
 
-    
-    private final BooleanState hasSplitRevenue = BooleanState.create(this, "HasSplitRevenue");
     
     public PublicCompany_1837(RailsItem parent, String id) {
         super(parent, id);

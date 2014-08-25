@@ -45,7 +45,7 @@ public class StockRound_1835 extends StockRound {
             if (currentPlayer.getPortfolioModel().getShare(company) < 55) continue;
             if (isSaleRecorded(currentPlayer, company)) continue;
 
-            for (Player otherPlayer : this.getPlayers()) {
+            for (Player otherPlayer : getRoot().getPlayerManager().getPlayers()) {
                 if (otherPlayer == currentPlayer) continue;
 
                 /* Get the unique player certificates and check which ones can be bought */

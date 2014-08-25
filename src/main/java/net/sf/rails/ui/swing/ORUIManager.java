@@ -323,7 +323,6 @@ public class ORUIManager implements DialogOwner {
             StringBuffer normalTileMessage = new StringBuffer(" ");
 
             List<LayTile> tileLays = getPossibleActions().getType(LayTile.class);
-            int ii = 0;
             for (LayTile tileLay : tileLays) {
                 Map<String, Integer> tileColours;
                 sp = tileLay.getSpecialProperty();

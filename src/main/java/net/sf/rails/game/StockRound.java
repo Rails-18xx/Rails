@@ -1078,9 +1078,10 @@ public class StockRound extends Round {
                 // search for the player with the most shares (fix of bug 2962977)
                 int requiredShares = presCert.getShare();
                 Player potentialDirector = null;
+                Player previousPlayer = getRoot().getPlayerManager().getCurrentPlayer();
                 for (int i = currentIndex + 1; i < currentIndex
                 + numberOfPlayers; i++) {
-                    Player otherPlayer = getRoot().getPlayerManager().getPlayerByIndex(i);
+                    Player otherPlayer = getRoot().getPlayerManager().getNextPlayerAfter(previousPlayer);
                     int otherPlayerShares = otherPlayer.getPortfolioModel().getShare(company);
                     if (otherPlayerShares >= requiredShares) {
                         // Check if he has the right kind of share
@@ -1091,6 +1092,7 @@ public class StockRound extends Round {
                             requiredShares = otherPlayerShares + 1;
                         }
                     }
+                    previousPlayer = otherPlayer;
                 }
                 // The poor sod.
                 dumpedPlayer = potentialDirector;
@@ -1196,9 +1198,10 @@ public class StockRound extends Round {
         // Check if we still have the presidency
         if (currentPlayer == company.getPresident()) {
             Player otherPlayer;
+            Player previousPlayer = currentPlayer;
             int currentIndex = getCurrentPlayerIndex();
             for (int i = currentIndex + 1; i < currentIndex + numberOfPlayers; i++) {
-                otherPlayer = getRoot().getPlayerManager().getPlayerByIndex(i);
+                otherPlayer = getRoot().getPlayerManager().getNextPlayerAfter(previousPlayer);
                 if (otherPlayer.getPortfolioModel().getShare(company) > portfolio.getShare(company)) {
                     portfolio.swapPresidentCertificate(company,
                             otherPlayer.getPortfolioModel(), swapShareSize);
@@ -1207,6 +1210,7 @@ public class StockRound extends Round {
                             company.getId() ));
                     break;
                 }
+                previousPlayer = otherPlayer;
             }
         }
     }
@@ -1489,7 +1493,7 @@ public class StockRound extends Round {
 
     @Override
     public void setCurrentPlayer(Player player) {
-        super.setCurrentPlayer(player);
+        getRoot().getPlayerManager().setCurrentPlayer(player);
         currentPlayer = player;
     }
 

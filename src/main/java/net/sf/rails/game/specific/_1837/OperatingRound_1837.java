@@ -150,8 +150,8 @@ public class OperatingRound_1837 extends OperatingRound {
     @Override
     public void resume() {
         PublicCompany suedbahn = companyManager.getPublicCompany("Sd");
-        PublicCompany hungary = companyManager.getPublicCompany("Ug");
-        PublicCompany kuk = companyManager.getPublicCompany("KK");
+//        PublicCompany hungary = companyManager.getPublicCompany("Ug");
+ //       PublicCompany kuk = companyManager.getPublicCompany("KK");
 
         if ((suedbahn.hasFloated()) && (!suedbahn.hasOperated())
                 // Suedbahn has just started. Check if it can operate this round

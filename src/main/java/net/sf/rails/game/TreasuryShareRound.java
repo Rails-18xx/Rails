@@ -36,7 +36,7 @@ public class TreasuryShareRound extends StockRound {
         log.info("Treasury share trading round started");
         operatingCompany = ((OperatingRound)parentRound).getOperatingCompany();
         sellingPlayer = operatingCompany.getPresident();
-        setCurrentPlayerIndex(sellingPlayer.getIndex());
+        getRoot().getPlayerManager().setCurrentPlayer(sellingPlayer);
         currentPlayer = sellingPlayer;
     }
 

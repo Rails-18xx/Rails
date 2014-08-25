@@ -5,7 +5,6 @@ import java.util.List;
 
 import rails.game.specific._1837.FoldIntoHungary;
 import rails.game.specific._1837.FoldIntoKuK;
-import rails.game.specific._1837.FoldIntoSuedbahn;
 import net.sf.rails.game.Company;
 import net.sf.rails.ui.swing.GameUIManager;
 import net.sf.rails.ui.swing.elements.CheckBoxDialog;
