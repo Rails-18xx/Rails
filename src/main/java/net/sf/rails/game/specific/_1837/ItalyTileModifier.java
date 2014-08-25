@@ -1,7 +1,6 @@
 package net.sf.rails.game.specific._1837;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -9,7 +8,6 @@ import net.sf.rails.algorithms.NetworkEdge;
 import net.sf.rails.algorithms.NetworkGraph;
 import net.sf.rails.algorithms.NetworkGraphModifier;
 import net.sf.rails.algorithms.NetworkVertex;
-import net.sf.rails.game.GameManager;
 import net.sf.rails.game.MapHex;
 import net.sf.rails.game.RailsRoot;
 

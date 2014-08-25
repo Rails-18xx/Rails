@@ -6,7 +6,6 @@ import java.util.Set;
 
 import net.sf.rails.algorithms.NetworkEdge;
 import net.sf.rails.algorithms.NetworkGraph;
-import net.sf.rails.algorithms.NetworkGraphModifier;
 import net.sf.rails.algorithms.NetworkVertex;
 import net.sf.rails.algorithms.RevenueAdapter;
 import net.sf.rails.algorithms.RevenueStaticModifier;

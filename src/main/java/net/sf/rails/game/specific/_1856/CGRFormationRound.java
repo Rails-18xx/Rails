@@ -13,7 +13,6 @@ import net.sf.rails.game.state.ArrayListState;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.GenericState;
-import net.sf.rails.game.state.IntegerState;
 import net.sf.rails.game.state.Portfolio;
 
 // Rails 2.0 refactoring

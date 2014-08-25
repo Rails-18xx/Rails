@@ -122,7 +122,7 @@ public class PrussianFormationRound extends StockRound {
             startingPlayer = m2Owner;
             setCurrentPlayer(m2Owner);
             ReportBuffer.add(this, LocalText.getText("StartingPlayer",
-                    getCurrentPlayer().getId()));
+                    playerManager.getCurrentPlayer().getId()));
 
             possibleActions.add(new FoldIntoPrussian(m2));
 
@@ -203,7 +203,7 @@ public class PrussianFormationRound extends StockRound {
 
             if (skipCurrentPlayer) {
                 setNextPlayer();
-                if (getCurrentPlayer() == startingPlayer) {
+                if (playerManager.getCurrentPlayer() == startingPlayer) {
                     if (prussian.getNumberOfTrains() > prussian.getCurrentTrainLimit()) {
                         step = Step.DISCARD_TRAINS;
                     } else {

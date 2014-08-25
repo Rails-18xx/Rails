@@ -836,7 +836,7 @@ public class OperatingRound_1880 extends OperatingRound {
         int baseCost = hex.getTileCost();
         if ((baseCost == 20) || (baseCost == 50) || (baseCost == 60)) {
             PrivateCompany riverFerry = companyManager.getPrivateCompany("CC");            
-            if (riverFerry.getOwner() == getCurrentPlayer()) { //TODO: Check if Correct !!
+            if (riverFerry.getOwner() == playerManager.getCurrentPlayer()) { //TODO: Check if Correct !!
                 baseCost = baseCost - 20;
             }
         }
@@ -1154,7 +1154,7 @@ public class OperatingRound_1880 extends OperatingRound {
                 Player p;
                 PortfolioModel pfm;
                 int index;
-                int numberOfPlayers = getNumberOfPlayers();
+                int numberOfPlayers = playerManager.getNumberOfPlayers();
                 int presidentCash = operatingCompany.value().getPresident().getCash();
 
                 // Set up a list per player of presided companies
@@ -1174,7 +1174,7 @@ public class OperatingRound_1880 extends OperatingRound {
                 }
                 // Scan trains per company per player, operating company president
                 // first
-                int currentPlayerIndex = getCurrentPlayer().getIndex();
+                int currentPlayerIndex = playerManager.getCurrentPlayer().getIndex();
                 for (int i = currentPlayerIndex; i < currentPlayerIndex
                 + numberOfPlayers; i++) {
                     companies = companiesPerPlayer.get(i % numberOfPlayers);

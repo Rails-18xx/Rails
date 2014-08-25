@@ -367,7 +367,7 @@ public class OperatingRound_1856 extends OperatingRound {
             if (postPhase.getId().equals("6")) {
                 finalLoanRepaymentPending.set(true);
                 playerToStartLoanRepayment
-                    = getRoot().getPlayerManager().getPlayerByIndex(action.getPlayerIndex());
+                    = playerManager.getPlayerByName(action.getPlayerName());
             } else if (postPhase.getId().equals("5")) {
                 // Make Bridge and Tunnel tokens buyable from the Bank.
                 for (SpecialProperty sp : gameManager.getCommonSpecialProperties()) {

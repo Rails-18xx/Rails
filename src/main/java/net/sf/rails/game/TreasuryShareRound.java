@@ -236,7 +236,7 @@ public class TreasuryShareRound extends StockRound {
         // TODO: Might not be needed anymore, replaced by company
         PortfolioModel portfolio = null;
         
-        currentPlayer = getCurrentPlayer();
+        currentPlayer = playerManager.getCurrentPlayer();
 
         // Dummy loop to allow a quick jump out
         while (true) {
@@ -503,7 +503,7 @@ public class TreasuryShareRound extends StockRound {
     // Autopassing does not apply here
     public boolean done(NullAction action, String playerName, boolean hasAutopassed) {
 
-        currentPlayer = getCurrentPlayer();
+        currentPlayer = playerManager.getCurrentPlayer();
 
         if (!playerName.equals(currentPlayer.getId())) {
             DisplayBuffer.add(this, LocalText.getText("WrongPlayer", playerName, currentPlayer.getId()));

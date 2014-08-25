@@ -11,7 +11,6 @@ import net.sf.rails.game.model.CalculatedMoneyModel.CalculationMethod;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.ChangeActionOwner;
 import net.sf.rails.game.state.IntegerState;
-import net.sf.rails.game.state.MoneyOwner;
 import net.sf.rails.game.state.Purse;
 
 public class Player extends RailsAbstractItem implements RailsMoneyOwner, PortfolioOwner, ChangeActionOwner, Comparable<Player> {

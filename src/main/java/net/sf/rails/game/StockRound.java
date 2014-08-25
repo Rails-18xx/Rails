@@ -93,7 +93,7 @@ public class StockRound extends Round {
                 getStockRoundNumber()));
 
         playerManager.setCurrentToPriorityPlayer();
-        startingPlayer = getCurrentPlayer(); // For the Report
+        startingPlayer = playerManager.getCurrentPlayer(); // For the Report
         ReportBuffer.add(this, LocalText.getText("HasPriority",
                 startingPlayer.getId() ));
 
@@ -113,7 +113,7 @@ public class StockRound extends Round {
     public boolean setPossibleActions() {
 
         // fix of the forced undo bug
-        currentPlayer = getCurrentPlayer();
+        currentPlayer = playerManager.getCurrentPlayer();
 
         boolean passAllowed = false;
 
@@ -546,7 +546,7 @@ public class StockRound extends Round {
 
         boolean result = false;
         String playerName = action.getPlayerName();
-        currentPlayer = getCurrentPlayer();
+        currentPlayer = playerManager.getCurrentPlayer();
 
         if (action instanceof NullAction) {
 
@@ -624,7 +624,7 @@ public class StockRound extends Round {
         String companyName = company.getId();
         int cost = 0;
 
-        currentPlayer = getCurrentPlayer();
+        currentPlayer = playerManager.getCurrentPlayer();
 
         // Dummy loop to allow a quick jump out
         while (true) {
@@ -769,7 +769,7 @@ public class StockRound extends Round {
         int price = 0;
         int cost = 0;
 
-        currentPlayer = getCurrentPlayer();
+        currentPlayer = playerManager.getCurrentPlayer();
 
         // Dummy loop to allow a quick jump out
         while (true) {
@@ -1472,7 +1472,7 @@ public class StockRound extends Round {
 
     protected void initPlayer() {
 
-        currentPlayer = getCurrentPlayer();
+        currentPlayer = playerManager.getCurrentPlayer();
         companyBoughtThisTurnWrapper.set(null);
         hasSoldThisTurnBeforeBuying.set(false);
         hasActed.set(false);

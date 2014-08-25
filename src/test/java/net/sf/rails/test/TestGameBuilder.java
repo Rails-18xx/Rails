@@ -13,7 +13,6 @@ import javax.swing.filechooser.FileFilter;
 
 import net.sf.rails.common.Config;
 import net.sf.rails.common.ConfigManager;
-import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.util.GameLoader;
 

@@ -19,9 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import rails.game.action.SetDividend;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 
@@ -1411,13 +1409,14 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
         int presShare = seller.getPortfolioModel().getShare(this);
         int presIndex = seller.getIndex();
-        Player player;
+        Player player, otherPlayer;
         int share;
         PlayerManager pmgr = getRoot().getPlayerManager();
-
+        otherPlayer = seller;
+        
         for (int i = presIndex + 1; i < presIndex
         + pmgr.getNumberOfPlayers(); i++) {
-            player = pmgr.getPlayerByIndex(i);
+            player = pmgr.getNextPlayerAfter(otherPlayer);
             share = player.getPortfolioModel().getShare(this);
             if (share > presShare) {
                 // Presidency must be transferred
@@ -1427,6 +1426,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
                         player.getId(),
                         getId() ));
             }
+            otherPlayer = player;
         }
     }
 
@@ -1438,12 +1438,13 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         int presShare = president.getPortfolioModel().getShare(this);
 
         PlayerManager pmgr = getRoot().getPlayerManager();
-        Player player;
+        Player player, previousPlayer;
         int share;
-
+        previousPlayer = president;
+        
         for (int i = presIndex + 1; i < presIndex
         + pmgr.getNumberOfPlayers(); i++) {
-            player = pmgr.getPlayerByIndex(i);
+            player = pmgr.getNextPlayerAfter(previousPlayer);
             share = player.getPortfolioModel().getShare(this);
             if (share > presShare) {
                 // Hand presidency to the first player with a higher share
@@ -1454,6 +1455,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
                         getId() ));
                 return;
             }
+            previousPlayer = player;
         }
 
     }

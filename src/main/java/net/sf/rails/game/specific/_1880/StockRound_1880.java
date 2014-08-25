@@ -16,23 +16,16 @@ import net.sf.rails.game.StockSpace;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.Owner;
-import net.sf.rails.game.state.Portfolio;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Iterables;
 
-import rails.game.*;
 import rails.game.action.BuyCertificate;
 import rails.game.action.PossibleAction;
 import rails.game.action.SellShares;
 import rails.game.action.StartCompany;
-import rails.game.action.UseSpecialProperty;
 import rails.game.specific._1880.StartCompany_1880;
 
 
@@ -131,15 +124,6 @@ public class StockRound_1880 extends StockRound {
     }
 
     /* (non-Javadoc)
-     * @see rails.game.StockRound#processGameSpecificAction(rails.game.action.PossibleAction)
-     */
-    @Override
-    protected boolean processGameSpecificAction(PossibleAction action) {
-        // TODO Auto-generated method stub
-        return super.processGameSpecificAction(action);
-    }
-
-    /* (non-Javadoc)
      * @see rails.game.StockRound#setBuyableCerts()
      */
     @Override
@@ -164,7 +148,7 @@ public class StockRound_1880 extends StockRound {
             from = ipo;
             ImmutableSetMultimap<PublicCompany, PublicCertificate> map =
                     from.getCertsPerCompanyMap();
-            int shares;
+
 
             for (PublicCompany comp : map.keySet()) {
                 certs = map.get(comp);
@@ -196,8 +180,6 @@ public class StockRound_1880 extends StockRound {
                 stockSpace = comp.getCurrentSpace();
                 if ((stockSpace == null || !stockSpace.isNoCertLimit()) && !mayPlayerBuyCertificate(
                         currentPlayer, comp, cert.getCertificateCount())) continue;
-
-                shares = cert.getShares();
 
                 if (!cert.isPresidentShare()) {
                     price = comp.getMarketPrice() / unitsForPrice; // Always use the market price
@@ -401,7 +383,6 @@ public class StockRound_1880 extends StockRound {
      */
     @Override
     public boolean sellShares(SellShares action) {
-        // TODO Auto-generated method stub
         if(super.sellShares(action)) {
             int numberSold=action.getNumber();
             int sellingfee = 5*numberSold;

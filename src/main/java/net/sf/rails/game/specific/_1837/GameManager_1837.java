@@ -6,8 +6,6 @@ package net.sf.rails.game.specific._1837;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.NationalFormationRound;
 import net.sf.rails.game.Phase;
-import net.sf.rails.game.Player;
-import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.Round;
 import net.sf.rails.game.StartRound;

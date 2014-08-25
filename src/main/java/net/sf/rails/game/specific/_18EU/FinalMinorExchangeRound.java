@@ -37,7 +37,7 @@ public final class FinalMinorExchangeRound extends StockRound_18EU {
         ReportBuffer.add(this, "");
         ReportBuffer.add(this, LocalText.getText("StartFinalMinorExchangeRound"));
 
-        setCurrentPlayerIndex(playerToStartFMERound.getIndex());
+        playerManager.setCurrentPlayer(playerToStartFMERound);
         initPlayer();
         ReportBuffer.add(this, LocalText.getText("HasFirstTurn",
                 playerToStartFMERound.getId() ));
@@ -126,7 +126,7 @@ public final class FinalMinorExchangeRound extends StockRound_18EU {
     @Override
     protected void initPlayer() {
 
-        currentPlayer = getCurrentPlayer();
+        currentPlayer = playerManager.getCurrentPlayer();
         hasActed.set(false);
 
     }

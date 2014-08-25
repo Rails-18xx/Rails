@@ -10,7 +10,6 @@ import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.TrainType;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.util.Util;
-import rails.game.*;
 
 /**
  * Special private ability involving deductions in train buying. The deduction
