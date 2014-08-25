@@ -157,7 +157,7 @@ public class GameStatus_1880 extends GameStatus {
                         options.add(LocalText.getText("BuyCertificate",
                                 sharePerCert,
                                 companyName,
-                                buy.getFromPortfolio().getId(),
+                                buy.getFromPortfolio().getName(),
                                 gameUIManager.format(sharesPerCert * buy.getPrice()) ));
                         buyActions.add(buy);
                         buyAmounts.add(1);
@@ -166,7 +166,7 @@ public class GameStatus_1880 extends GameStatus {
                                     i,
                                     sharePerCert,
                                     companyName,
-                                    buy.getFromPortfolio().getId(),
+                                    buy.getFromPortfolio().getName(),
                                     gameUIManager.format(i * sharesPerCert
                                             * buy.getPrice()) ));
                             buyActions.add(buy);

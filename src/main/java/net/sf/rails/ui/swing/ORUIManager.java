@@ -234,6 +234,7 @@ public class ORUIManager implements DialogOwner {
         for (MapHex hex:layTile.getLocations()) {
             GUIHex guiHex = map.getHex(hex);
             Set<TileHexUpgrade> upgrades = TileHexUpgrade.createLocated(hex, layTile);
+            TileHexUpgrade.validateAndEnable(upgrades, gameUIManager.getCurrentPhase());
             tileUpgrades.putAll(guiHex, upgrades);
         }
     }

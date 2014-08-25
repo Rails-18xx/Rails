@@ -13,16 +13,16 @@
 	<Tile id="-10"><!-- 1 city -->
 		<Upgrade id="5,6"/>
 	</Tile>
-	<Tile id="-20"><!-- 2 OO cities -->
-		<Upgrade id="1052" relayBaseTokens="yes"/>
+	<Tile id="-20" relayBaseTokens="yes"><!-- 2 OO cities -->
+		<Upgrade id="1052"/>
 	</Tile>
 	<Tile id="-5"><!--Dover--></Tile>
 	<Tile id="-7"><!--Preprinted tight bend--></Tile>
 	<Tile id="-41"/>
 	<Tile id="-104"><!--Harwich--></Tile>
-	<Tile id="-25001"><!--London--><Upgrade id="32" relayBaseTokens="yes"></Upgrade></Tile>
-	<Tile id="-25002"><!--Birmingham--><Upgrade id="34" relayBaseTokens="yes"></Upgrade></Tile>
-    <Tile id="-25003"><!--Bristol--><Upgrade id="38" relayBaseTokens="yes"/></Tile>
+	<Tile id="-25001 "relayBaseTokens="yes"><!--London--><Upgrade id="32"/></Tile>
+	<Tile id="-25002" relayBaseTokens="yes"><!--Birmingham--><Upgrade id="34"/></Tile>
+    <Tile id="-25003" relayBaseTokens="yes"><!--Bristol--><Upgrade id="38"/></Tile>
     <Tile id="-25004"/>
     <Tile id="-25005"/>
     <Tile id="-25006"/>

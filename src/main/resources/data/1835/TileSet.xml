@@ -31,8 +31,8 @@
 	<Tile id="-806"><!--Berlin-->
 		<Upgrade id="209"/>
 	</Tile>
-	<Tile id="-807"><!--XX-->
-		<Upgrade id="210,211,212,213,214,215" relayBaseTokens="yes"/>
+	<Tile id="-807" relayBaseTokens="yes"><!--XX-->
+		<Upgrade id="210,211,212,213,214,215"/>
 	</Tile>
 	<Tile id="-808"/>
 	<Tile id="-809"><!--Frankfurt (Y)-->

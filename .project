@@ -22,4 +22,15 @@
 		<nature>org.eclipse.jem.beaninfo.BeanInfoNature</nature>
 		<nature>com.soyatec.additional.Nature</nature>
 	</natures>
+	<filteredResources>
+		<filter>
+			<id>1408789356399</id>
+			<name></name>
+			<type>26</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-projectRelativePath-matches-false-false-build</arguments>
+			</matcher>
+		</filter>
+	</filteredResources>
 </projectDescription>
