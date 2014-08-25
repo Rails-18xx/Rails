@@ -275,6 +275,7 @@
          <Company name="U1W" longname="Bahnhof Pest" type="Private" basePrice="90" revenue="0"/>
         <Company name="U1" longname="Eisenbahn Pest-Waitzen" type="Minor2" price="90" tokens="1" fgColour="FFFFFF" bgColour="FF55AA">
                 <Home hex="H23" city="1"/>
+                <FirstTrainCloses type="Private" name="U1W"/>
                 <SpecialProperties>
                         <SpecialProperty condition="ifStarted" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
                                 <ExchangeForShare company="Ug" share="10"/>
@@ -293,6 +294,7 @@
            <Company name="U3C" longname="Bahnhof Czegled" type="Private" basePrice="90" revenue="0"/>      
         <Company name="U3" longname="Eisenbahn Pest-Czegléd" type="Minor2" price="90" tokens="1" fgColour="FFFFFF" bgColour="FF55AA">
                 <Home hex="H23" city="2"/>
+                <FirstTrainCloses type="Private" name="U3C"/>
                 <SpecialProperties>
                         <SpecialProperty condition="ifStarted" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
                                 <ExchangeForShare company="Ug" share="10"/>
