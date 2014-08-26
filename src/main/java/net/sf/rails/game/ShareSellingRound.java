@@ -301,7 +301,7 @@ public class ShareSellingRound extends StockRound {
                 // More to sell and we are President: see if we can dump it.
                 Player otherPlayer, previousPlayer;
                 previousPlayer = getRoot().getPlayerManager().getCurrentPlayer();
-                for (int i = 1; i <= numberOfPlayers; i++) {
+                for (int i = 0; i <= numberOfPlayers; i++) {
                     otherPlayer = getRoot().getPlayerManager().getNextPlayerAfter(previousPlayer);
                     if (otherPlayer.getPortfolioModel().getShare(company) >= presCert.getShare()) {
                         // Check if he has the right kind of share
