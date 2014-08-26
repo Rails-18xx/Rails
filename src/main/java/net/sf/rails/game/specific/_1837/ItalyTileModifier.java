@@ -21,7 +21,7 @@ public class ItalyTileModifier implements NetworkGraphModifier {
     protected static Logger log =
         LoggerFactory.getLogger(ItalyTileModifier.class);
 
-    @SuppressWarnings("null")
+
     public void modifyGraph(NetworkGraph mapGraph) {
         
         // TODO (Rails 2.0): Add root reference to modifiers
