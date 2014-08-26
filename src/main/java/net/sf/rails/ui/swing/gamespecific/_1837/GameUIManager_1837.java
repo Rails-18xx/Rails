@@ -3,13 +3,23 @@ package net.sf.rails.ui.swing.gamespecific._1837;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
+import rails.game.action.MergeCompanies;
 import rails.game.specific._1837.FoldIntoHungary;
 import rails.game.specific._1837.FoldIntoKuK;
+import net.sf.rails.common.LocalText;
 import net.sf.rails.game.Company;
+import net.sf.rails.game.MapManager;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.Stop;
+import net.sf.rails.game.specific._1837.StartCompany_1837;
+import net.sf.rails.game.specific._18EU.StartCompany_18EU;
 import net.sf.rails.ui.swing.GameUIManager;
 import net.sf.rails.ui.swing.elements.CheckBoxDialog;
 import net.sf.rails.ui.swing.elements.ConfirmationDialog;
 import net.sf.rails.ui.swing.elements.NonModalDialog;
+import net.sf.rails.ui.swing.elements.RadioButtonDialog;
 
 public class GameUIManager_1837 extends GameUIManager {
     // Keys of dialogs owned by this class.
@@ -18,6 +28,10 @@ public class GameUIManager_1837 extends GameUIManager {
     public static final String START_HUNGARY_DIALOG = "StartHungary";
     public static final String MERGE_INTO_HUNGARY_DIALOG = "MergeIntoHungary";
     public static final String START_S5_DIALOG = "StartS5";
+    public static final String SELECT_CONVERTING_MINOR = "SelectConvertingMinor";
+    public static final String SELECT_MERGING_MAJOR = "SelectMergingMajor";
+    public static final String SELECT_HOME_STATION_DIALOG = "SelectHomeStation";
+
 
 
     public GameUIManager_1837() {
@@ -87,8 +101,95 @@ public class GameUIManager_1837 extends GameUIManager {
                 }
                 action.setFoldedCompanies(foldedCompanies);
             }
-            else {
-            
+            else if (SELECT_MERGING_MAJOR.equals(key)) {
+
+                    // A major company has been selected (or not) to merge a minor into.
+                    RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
+                    MergeCompanies action = (MergeCompanies) currentDialogAction;
+                    PublicCompany minor = action.getMergingCompany();
+
+                    int choice = dialog.getSelectedOption();
+                    if (choice < 0) return;
+
+                    PublicCompany major = action.getTargetCompanies().get(choice);
+                    action.setSelectedTargetCompany(major);
+
+                    if (major != null && action.canReplaceToken(choice)) {
+
+                        boolean replaceToken =
+                            JOptionPane.showConfirmDialog(statusWindow, LocalText.getText(
+                                    "WantToReplaceToken",
+                                        minor.getId(),
+                                        major.getId() ),
+                                    LocalText.getText("PleaseSelect"),
+                                    JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
+                        action.setReplaceToken(replaceToken);
+                    }
+
+                } else if (SELECT_CONVERTING_MINOR.equals(key)) {
+
+                    // A minor has been selected (or not) to merge into a starting company before phase 6.
+                    RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
+                    StartCompany_18EU action = (StartCompany_18EU) currentDialogAction;
+                    int choice = dialog.getSelectedOption();
+                    if (choice < 0) {
+                        currentDialogAction = null;
+                    } else {
+                        PublicCompany minor = action.getMinorsToMerge().get(choice);
+                        action.setChosenMinor(minor);
+                    }
+
+                }
+                else if (START_S5_DIALOG.equals(key)
+                            && currentDialogAction instanceof StartCompany_1837) {
+
+                        // A start price has been selected (or not) for a stating major company.
+                        RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
+                        StartCompany_1837 action = (StartCompany_1837) currentDialogAction;
+
+                        int index = dialog.getSelectedOption();
+                        if (index < 0) {
+                            currentDialogAction = null;
+                            return;
+                        }
+                        List<Stop> cities = new ArrayList<Stop>();
+                        MapManager map = getRoot().getMapManager();
+                        for (Stop stop : map.getCurrentStops()) {
+                            if ((stop.getParent().equals("L9") ) || (stop.getParent().equals("L3"))) {
+                                cities.add(stop);
+                            }
+                            
+                        }
+                            String[] options = new String[cities.size()];
+                            for (int i = 0; i < options.length; i++) {
+                                options[i] = cities.get(i).toString();
+                            }
+                            dialog = new RadioButtonDialog (SELECT_HOME_STATION_DIALOG,
+                                    this,
+                                    statusWindow,
+                                    LocalText.getText("PleaseSelect"),
+                                    LocalText.getText(
+                                            "SelectHomeStation",
+                                            action.getCompanyName()),
+                                            options, -1);
+                            setCurrentDialog(dialog, action);
+                            statusWindow.disableButtons();
+                            return;
+
+                } else if (SELECT_HOME_STATION_DIALOG.equals(key)) {
+
+                    RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
+                    StartCompany_1837 action = (StartCompany_1837) currentDialogAction;
+
+
+                        int index = dialog.getSelectedOption();
+                        if (index < 0) {
+                            currentDialogAction = null;
+                            return;
+                        }
+                        action.setHomeStation(action.getAvailableHomeStations().get(index));
+                    }
+                } else {
             // Current dialog not found yet, try the superclass.
             super.dialogActionPerformed(false);
             return;

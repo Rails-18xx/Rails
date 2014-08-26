@@ -241,7 +241,6 @@
                 </SpecialProperties>
         </Company>
         <Company name="S5" longname="Lombardo-Venetianische Eisenbahn" type="Minor1" price="90" tokens="1" fgColour="FFFFFF" bgColour="FF5400">
-                <Home hex="L9"/> <!-- Choice of L3 or L9 -->
                 <SpecialProperties>
                         <SpecialProperty condition="ifStarted" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
                                 <ExchangeForShare company="Sd" share="10"/>
