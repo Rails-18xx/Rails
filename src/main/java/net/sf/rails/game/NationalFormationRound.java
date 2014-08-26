@@ -8,8 +8,6 @@ import java.util.Set;
 import rails.game.action.DiscardTrain;
 import rails.game.action.FoldIntoNational;
 import rails.game.action.PossibleAction;
-import rails.game.specific._1837.FoldIntoKuK;
-
 import com.google.common.collect.Iterables;
 
 import net.sf.rails.common.DisplayBuffer;
@@ -20,6 +18,12 @@ import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.state.Currency;
 
 public class NationalFormationRound extends StockRound {
+
+    public NationalFormationRound(GameManager parent, String id) {
+        super(parent, id);
+        // TODO Auto-generated constructor stub
+    }
+
 
     private static PublicCompany nationalToFound;
     private PublicCompany nationalStartingMinor;
@@ -83,7 +87,7 @@ public class NationalFormationRound extends StockRound {
             setCurrentPlayer(startingPlayer);
             if (forcedMerge) {
                 Set<SpecialProperty> sps;
-                setFoldablePreKuKs();
+                setFoldablePreNationals(nationalToFound.getAlias());
                 List<Company> foldables = new ArrayList<Company> ();
                 for (PrivateCompany company : gameManager.getAllPrivateCompanies()) {
                     if (company.isClosed()) continue;
@@ -110,6 +114,23 @@ public class NationalFormationRound extends StockRound {
             } else {
                 findNextMergingPlayer(false);
             }
+        }
+    }
+
+    private void setFoldablePreNationals(String nationalInFounding2) {
+            
+        foldablePreNationals = new ArrayList<Company> ();
+
+        PublicCompany company;
+        Set<SpecialProperty> sps;
+        for (PublicCertificate cert : currentPlayer.getPortfolioModel().getCertificates()) {
+            company = cert.getCompany();
+            if (company.isRelatedToNational(nationalInFounding2)) {
+                sps = company.getSpecialProperties();
+                if (sps != null && !sps.isEmpty() && Iterables.get(sps, 0) instanceof ExchangeForShare) {
+                    foldablePreNationals.add(company);
+                }
+             }
         }
     }
 
@@ -142,37 +163,16 @@ public class NationalFormationRound extends StockRound {
     
     }
 
-    private void setFoldablePreKuKs() {
-    
-        foldablePreNationals = new ArrayList<Company> ();
-        SpecialProperty sp;
-        for (PrivateCompany company : currentPlayer.getPortfolioModel().getPrivateCompanies()) {
-            sp = Iterables.get(company.getSpecialProperties(), 0);
-            if (sp instanceof ExchangeForShare) {
-                foldablePreNationals.add(company);
-            }
-        }
-        PublicCompany company;
-        Set<SpecialProperty> sps;
-        for (PublicCertificate cert : currentPlayer.getPortfolioModel().getCertificates()) {
-            if (!cert.isPresidentShare()) continue;
-            company = cert.getCompany();
-            sps = company.getSpecialProperties();
-            if (sps != null && !sps.isEmpty() && Iterables.get(sps, 0) instanceof ExchangeForShare) {
-                foldablePreNationals.add(company);
-            }
-        }
-    }
 
     @Override
     protected boolean processGameSpecificAction(PossibleAction action) {
     
-        if (action instanceof FoldIntoKuK) {
+        if (action instanceof FoldIntoNational) {
     
-            FoldIntoKuK a = (FoldIntoKuK) action;
+            FoldIntoNational a = (FoldIntoNational) action;
     
             if (step == Step.START) {
-                if (!startKuK(a)) {
+                if (!startNational(a)) {
                     finishRound();
                 } else {
                     step = Step.MERGE;
@@ -181,7 +181,7 @@ public class NationalFormationRound extends StockRound {
     
             } else if (step == Step.MERGE) {
     
-                mergeIntoKuK (a);
+                mergeIntoNational (a);
     
             }
     
@@ -213,13 +213,13 @@ public class NationalFormationRound extends StockRound {
                 }
             }
     
-            setFoldablePreKuKs();
+            setFoldablePreNationals(nationalToFound.getAlias());
             if (!foldablePreNationals.isEmpty()) return true;
             skipCurrentPlayer = true;
         }
     }
 
-    private boolean startKuK(FoldIntoKuK action) {
+    private boolean startNational(FoldIntoNational action) {
     
         // Validate
         String errMsg = null;
@@ -283,7 +283,7 @@ public class NationalFormationRound extends StockRound {
         nationalToFound.setFloated();
     }
 
-    private boolean mergeIntoKuK(FoldIntoKuK action) {
+    private boolean mergeIntoNational(FoldIntoNational action) {
     
         // Validate
         // String errMsg = null;
@@ -473,9 +473,6 @@ public class NationalFormationRound extends StockRound {
         gameManager.nextRound(this);
     }
 
-    public NationalFormationRound(GameManager parent, String id) {
-        super(parent, id);
-    }
 
     @Override
     public String toString() {
