@@ -65,10 +65,11 @@ public class NationalFormationRound extends StockRound {
     
         step = startNational ? Step.START : Step.MERGE;
     
-        if (step == Step.START) {
-            nationalStartingMinor = nationalToFound.getFoundingStartCompany();
+        if (step == Step.START) { //Attention there might be more than one National in Merge at once..
+            
+            nationalStartingMinor = getRoot().getCompanyManager().getPublicCompany(nationalToFound.getFoundingStartCompany());
             setCurrentPlayer(nationalStartingMinor.getPresident());
-            gameManager.setNationalFormationStartingPlayer(currentPlayer);
+            gameManager.setNationalFormationStartingPlayer( nationalToFound, currentPlayer);
             if (forcedStart) {
                 executeStartNational(true, nationalToFound);
                 step = Step.MERGE;
@@ -77,7 +78,7 @@ public class NationalFormationRound extends StockRound {
     
         if (step == Step.MERGE) {
             startingPlayer
-            = gameManager.getNationalFormationStartingPlayer();
+            = gameManager.getNationalFormationStartingPlayer(nationalToFound);
             log.debug("Original National starting player was "+startingPlayer.getId());
             setCurrentPlayer(startingPlayer);
             if (forcedMerge) {

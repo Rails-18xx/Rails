@@ -128,7 +128,7 @@
                         </SpecialProperty>
                 </SpecialProperties>
         </Company>
-        <Company name="EPP" longname="Eisenbahn Pilsen-Priesen" type="Coal" price="100" tokens="1">
+        <Company name="EPP" longname="Eisenbahn Pilsen-Priesen" type="Coal" price="100" tokens="1" relatedCompany="BK">
                 <Home hex="E12"/>
                 <SpecialProperties>
                         <SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
@@ -136,7 +136,7 @@
                         </SpecialProperty>
                 </SpecialProperties>
         </Company>
-        <Company name="RGTE" longname="Reichenberg-Gablonz-Tannwalder-Eisenbahn" type="Coal" price="100" tokens="1">
+        <Company name="RGTE" longname="Reichenberg-Gablonz-Tannwalder-Eisenbahn" type="Coal" price="100" tokens="1" relatedCompany="BK">
                 <Home hex="A14"/>
                 <SpecialProperties>
                         <SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
@@ -144,7 +144,7 @@
                         </SpecialProperty>
                 </SpecialProperties>
         </Company>
-        <Company name="EOD" longname="Eisenbahn Oderberg-Dombran" type="Coal" price="100" tokens="1">
+        <Company name="EOD" longname="Eisenbahn Oderberg-Dombran" type="Coal" price="100" tokens="1" relatedCompany="MS">
                 <Home hex="C20"/>
                 <SpecialProperties>
                         <SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
@@ -152,7 +152,7 @@
                         </SpecialProperty>
                 </SpecialProperties>
         </Company>
-        <Company name="EKT" longname="Eisenbahn Karwin-Teschen" type="Coal" price="100" tokens="1">
+        <Company name="EKT" longname="Eisenbahn Karwin-Teschen" type="Coal" price="100" tokens="1" relatedCompany="MS">
                 <Home hex="C22"/>
                 <SpecialProperties>
                         <SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
@@ -160,7 +160,7 @@
                         </SpecialProperty>
                 </SpecialProperties>
         </Company>
-        <Company name="MLB" longname="Mosty-Lemberg Bahn" type="Coal" price="100" tokens="1">
+        <Company name="MLB" longname="Mosty-Lemberg Bahn" type="Coal" price="100" tokens="1" relatedCompany="CL">
                 <Home hex="B33"/>
                 <SpecialProperties>
                         <SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
@@ -168,7 +168,7 @@
                         </SpecialProperty>
                 </SpecialProperties>
         </Company>
-        <Company name="ZKB" longname="Zarnesti-Kronstadt Bahn" type="Coal" price="100" tokens="1">
+        <Company name="ZKB" longname="Zarnesti-Kronstadt Bahn" type="Coal" price="100" tokens="1" relatedCompany="CL">
                 <Home hex="J35"/>
                 <SpecialProperties>
                         <SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
@@ -176,7 +176,7 @@
                         </SpecialProperty>
                 </SpecialProperties>
         </Company>
-        <Company name="SPB" longname="Simeria-Petroseni Bahn" type="Coal" price="100" tokens="1">
+        <Company name="SPB" longname="Simeria-Petroseni Bahn" type="Coal" price="100" tokens="1" relatedCompany="SB">
                 <Home hex="K32"/>
                 <SpecialProperties>
                         <SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
@@ -184,15 +184,15 @@
                         </SpecialProperty>
                 </SpecialProperties>
         </Company>
-        <Company name="LRB" longname="Lugoj-Resita Bahn" type="Coal" price="100" tokens="1">
+        <Company name="LRB" longname="Lugoj-Resita Bahn" type="Coal" price="100" tokens="1" relatedCompany="TH">
                 <Home hex="L31"/>
                 <SpecialProperties>
                         <SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
-                                <ExchangeForShare company="Th" share="10"/>
+                                <ExchangeForShare company="TH" share="10"/>
                         </SpecialProperty>
                 </SpecialProperties>
         </Company>
-        <Company name="BB" longname="Bosna-Bahn" type="Coal" price="100" tokens="1">
+        <Company name="BB" longname="Bosna-Bahn" type="Coal" price="100" tokens="1" relatedCompany="BH">
                 <Home hex="P21"/>
                 <SpecialProperties>
                         <SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
@@ -200,11 +200,11 @@
                         </SpecialProperty>
                 </SpecialProperties>
         </Company>
-        <Company name="EHS" longname="Eisenbahn Hatvan-Salgotarjan" type="Coal" price="100" tokens="1">
+        <Company name="EHS" longname="Eisenbahn Hatvan-Salgotarjan" type="Coal" price="100" tokens="1" relatedCompany="TH">
                 <Home hex="F27"/>
                 <SpecialProperties>
                         <SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
-                                <ExchangeForShare company="Th" share="10"/>
+                                <ExchangeForShare company="TH" share="10"/>
                         </SpecialProperty>
                 </SpecialProperties>
         </Company>
@@ -342,27 +342,27 @@
                 <Certificate shares="1" number="6"/>
                 <Certificate shares="1" number="2" status="reserved"/>
         </Company>
-        <Company name="Th" longname="Theißbahn" type="Major" tokens="3" fgColour="FFFFFF" bgColour="AAFFFF">
+        <Company name="TH" longname="Theißbahn" type="Major" tokens="3" fgColour="FFFFFF" bgColour="AAFFFF">
                 <Home hex="F29"/>
                 <Float percentage="50"/>
                 <Certificate type="President" shares="2"/>
                 <Certificate shares="1" number="6"/>
                 <Certificate shares="1" number="2" status="reserved"/>
         </Company>
-        <Company name="Sd" longname="Südbahn" type="Major" tokens="5" fgColour="FFFFFF" bgColour="FF5400">
+        <Company name="Sd" longname="Südbahn" type="Major" tokens="5" fgColour="FFFFFF" bgColour="FF5400" foundingCompany="S1">
                 <Home hex="G18" city="4" mapDisplay="no"/>
                 <Certificate type="President" shares="1" status="reserved"/>
                 <Certificate shares="1" number="5"/>
                 <Certificate shares="1" number="4" status="reserved"/>
                 <Trains limit="4,4,4,3"/>
         </Company>
-        <Company name="KK" longname="k.k. Staatsbahn" type="Major" tokens="5" fgColour="FFFFFF" bgColour="C98A5C">
+        <Company name="KK" longname="k.k. Staatsbahn" type="Major" tokens="5" fgColour="FFFFFF" bgColour="C98A5C" foundingCompany="K1">
                 <Home hex="G18" city="1" mapDisplay="no"/>
                 <Certificate type="President" shares="1" status="reserved"/>
                 <Certificate shares="1" number="7"/>
                 <Certificate shares="1" number="2" status="reserved"/>
         </Company>
-        <Company name="Ug" longname="Ungarische Staatsbahn" type="Major" tokens="5" fgColour="FFFFFF" bgColour="FF55AA">
+        <Company name="Ug" longname="Ungarische Staatsbahn" type="Major" tokens="5" fgColour="FFFFFF" bgColour="FF55AA" foundingCompany="U1">
                 <Home hex="H23" city="1" mapDisplay="no"/>
                 <Certificate type="President" shares="1" status="reserved"/>
                 <Certificate shares="1" number="5"/>
