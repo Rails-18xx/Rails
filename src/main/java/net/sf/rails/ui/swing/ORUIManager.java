@@ -1,17 +1,48 @@
 package net.sf.rails.ui.swing;
 
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
-import net.sf.rails.algorithms.*;
-import net.sf.rails.common.*;
-import net.sf.rails.game.*;
-import net.sf.rails.game.special.*;
+import net.sf.rails.algorithms.NetworkAdapter;
+import net.sf.rails.algorithms.NetworkGraph;
+import net.sf.rails.algorithms.NetworkVertex;
+import net.sf.rails.common.Config;
+import net.sf.rails.common.GameOption;
+import net.sf.rails.common.GuiDef;
+import net.sf.rails.common.LocalText;
+import net.sf.rails.game.BaseToken;
+import net.sf.rails.game.GameDef;
+import net.sf.rails.game.HexSidesSet;
+import net.sf.rails.game.MapHex;
+import net.sf.rails.game.OperatingRound;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.ShareSellingRound;
+import net.sf.rails.game.Station;
+import net.sf.rails.game.Stop;
+import net.sf.rails.game.Tile;
+import net.sf.rails.game.TileHexUpgrade;
+import net.sf.rails.game.TileManager;
+import net.sf.rails.game.TokenStopUpgrade;
+import net.sf.rails.game.TrackConfig;
+import net.sf.rails.game.Train;
+import net.sf.rails.game.special.SpecialProperty;
+import net.sf.rails.game.special.SpecialTileLay;
+import net.sf.rails.game.special.SpecialTokenLay;
 import net.sf.rails.game.state.Owner;
 import net.sf.rails.sound.SoundManager;
-import net.sf.rails.ui.swing.elements.*;
+import net.sf.rails.ui.swing.elements.CheckBoxDialog;
+import net.sf.rails.ui.swing.elements.DialogOwner;
+import net.sf.rails.ui.swing.elements.MessageDialog;
+import net.sf.rails.ui.swing.elements.RadioButtonDialog;
 import net.sf.rails.ui.swing.hexmap.GUIHex;
 import net.sf.rails.ui.swing.hexmap.HexMap;
 import net.sf.rails.util.Util;
@@ -19,8 +50,25 @@ import net.sf.rails.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rails.game.action.*;
-import rails.game.correct.*;
+import rails.game.action.BuyBonusToken;
+import rails.game.action.BuyPrivate;
+import rails.game.action.BuyTrain;
+import rails.game.action.DiscardTrain;
+import rails.game.action.GameAction;
+import rails.game.action.LayBaseToken;
+import rails.game.action.LayBonusToken;
+import rails.game.action.LayTile;
+import rails.game.action.LayToken;
+import rails.game.action.NullAction;
+import rails.game.action.PossibleAction;
+import rails.game.action.PossibleActions;
+import rails.game.action.ReachDestinations;
+import rails.game.action.RepayLoans;
+import rails.game.action.SetDividend;
+import rails.game.action.TakeLoans;
+import rails.game.action.UseSpecialProperty;
+import rails.game.correct.ClosePrivate;
+import rails.game.correct.OperatingCost;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterables;
@@ -30,7 +78,7 @@ import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
 
 // FIXME: Add back corrections mechanisms
-
+// Rails 2.0, Even better add a new mechanism that allows to use the standard mechanism for corrections
 public class ORUIManager implements DialogOwner {
 
     private static Logger log =
@@ -47,7 +95,7 @@ public class ORUIManager implements DialogOwner {
     private RemainingTilesWindow remainingTiles;
 
     private OperatingRound oRound;
-    private PublicCompany[] companies;
+    private List<PublicCompany> companies;
     private PublicCompany orComp;
     private int orCompIndex;
 
@@ -62,8 +110,7 @@ public class ORUIManager implements DialogOwner {
 
     /* Local substeps */
     public static enum LocalSteps {
-        Inactive, SelectAHexForTile, SelectATile, RotateTile, SelectAHexForToken
-        , SelectAToken, ConfirmToken, SetRevenue, SelectPayout }
+        Inactive, SelectHex, SelectUpgrade, RotateTile, SetRevenue, SelectPayout }
 
     /* Keys of dialogs owned by this class */
     public static final String SELECT_DESTINATION_COMPANIES_DIALOG = "SelectDestinationCompanies";
@@ -91,8 +138,7 @@ public class ORUIManager implements DialogOwner {
 
     void initOR(OperatingRound or) {
         oRound = or;
-        companies = (oRound).getOperatingCompanies().toArray(new PublicCompany[0]);
-        map.updateOffBoardToolTips(); // FIXME: This method is deleted
+        companies = or.getOperatingCompanies();
         orWindow.activate(oRound);
     }
 
@@ -108,12 +154,13 @@ public class ORUIManager implements DialogOwner {
     public void setMapRelatedActions(PossibleActions actions) {
 
         GUIHex selectedHex = mapPanel.getMap().getSelectedHex();
-        LocalSteps nextSubStep = LocalSteps.Inactive;
 
         List<LayTile> tileActions = actions.getType(LayTile.class);
-        List<LayToken> tokenActions = actions.getType(LayToken.class);
+        boolean existTileActions = !(tileActions.isEmpty());
+        boolean existTileUpgrades = !(tileUpgrades.isEmpty());
         
-        if (tileActions.isEmpty() & !tileUpgrades.isEmpty()) {
+        // no tile actions, but (old) tile upgrades ==> clean
+        if (!existTileActions && existTileUpgrades) {
             /* Finish tile laying step */
             if (selectedHex != null) {
                 selectedHex.removeTile();
@@ -127,7 +174,22 @@ public class ORUIManager implements DialogOwner {
             tileUpgrades.clear();
         }
 
-        if (tokenActions.isEmpty() && !tokenUpgrades.isEmpty()) {
+        if (existTileActions) {
+            if (existTileUpgrades) {
+                for (GUIHex guiHex:tileUpgrades.keySet()) {
+                    guiHex.setSelectable(false);
+                }
+                tileUpgrades.clear();
+            }
+            defineTileUpgrades(tileActions);
+        }
+
+        List<LayToken> tokenActions = actions.getType(LayToken.class);
+        boolean existTokenActions = !(tokenActions.isEmpty());
+        boolean existTokenUpgrades = !(tokenUpgrades.isEmpty());
+
+        // no token actions, but (old) token upgrades ==> clean
+        if (!existTokenActions && existTokenUpgrades) {
             /* Finish token laying step */
             if (selectedHex != null) {
                 selectedHex.removeToken();
@@ -141,31 +203,20 @@ public class ORUIManager implements DialogOwner {
             tokenUpgrades.clear();
         }
 
-        if (!tileActions.isEmpty()) {
-            nextSubStep = LocalSteps.SelectAHexForTile;
-            if (tileUpgrades != null) {
-                for (GUIHex guiHex:tileUpgrades.keySet()) {
-                    guiHex.setSelectable(false);
-                }
-            }
-
-            tileUpgrades.clear();
-            defineTileUpgrades(tileActions);
-        }
-
-        if (tokenActions.size() > 0) {
-            nextSubStep = LocalSteps.SelectAHexForToken;
-            // if  hexupgrades is not null, then remove indicators
-            if (tokenUpgrades != null) {
+        if (existTokenActions) {
+            if (existTokenUpgrades) {
                 for (GUIHex guiHex:tokenUpgrades.keySet()) {
                     guiHex.setSelectable(false);
                 }
+                tokenUpgrades.clear();
             }
-
-            tokenUpgrades.clear();
             defineTokenUpgrades(tokenActions);
         }
 
+        LocalSteps nextSubStep = LocalSteps.Inactive;
+        if (existTileActions || existTokenActions) {
+            nextSubStep = LocalSteps.SelectHex;
+        }
         setLocalStep(nextSubStep);
     }
     
@@ -312,13 +363,7 @@ public class ORUIManager implements DialogOwner {
         /* Add any extra messages */
         String extraMessage = "";
 
-        // FIXME: Add this text again on rewrite of the Correction Mechanism
-//        if (localStep == ORUIManager.MAP_CORRECTION) {
-//            if (mapCorrectionAction != null)
-//                extraMessage = LocalText.getText("CorrectMap" + mapCorrectionAction.getStep().name());
-//        }
-
-        if (localStep == LocalSteps.SelectAHexForTile) {
+        if (localStep == LocalSteps.SelectAHexForTile || localStep == LocalSteps.SelectAHexForTileToken) {
             /* Compose prompt for tile laying */
             StringBuffer normalTileMessage = new StringBuffer(" ");
 
@@ -357,7 +402,9 @@ public class ORUIManager implements DialogOwner {
                             normalTileMessage);
             }
 
-        } else if (localStep == LocalSteps.SelectAHexForToken) {
+        } 
+        
+        if (localStep == LocalSteps.SelectAHexForToken || localStep == LocalSteps.SelectAHexForTileToken) {
 
             /* Compose prompt for token laying */
             String locations;
@@ -386,19 +433,16 @@ public class ORUIManager implements DialogOwner {
                         normalTokenMessage);
             }
         }
+        
         if (extraMessage.length() > 0) {
             message += "<font color=\"red\">" + extraMessage + "</font>";
         }
 
-        setMessage(message);
-
+        messagePanel.setMessage(message);
     }
 
     /**
      * Processes button presses and menu selection actions
-     *
-     * @param command
-     * @param actions
      */
     // FIXME: Can this be really a list of actions?
     public void processAction(String command, List<PossibleAction> actions) {
@@ -450,10 +494,6 @@ public class ORUIManager implements DialogOwner {
             } else if (actionType == UseSpecialProperty.class) {
 
                 useSpecialProperty ((UseSpecialProperty)actions.get(0));
-
-            } else if (actions.get(0) instanceof CorrectionAction) {
-
-                processCorrectionAction((CorrectionAction)actions.get(0));
 
             } else if (actionType == ClosePrivate.class) {
 
@@ -568,92 +608,27 @@ public class ORUIManager implements DialogOwner {
         }
     }
 
-    public void dialogActionPerformed () {
-
-        JDialog currentDialog = getCurrentDialog();
-        PossibleAction currentDialogAction = getCurrentDialogAction();
-
-        if (currentDialog instanceof CheckBoxDialog
-                && currentDialogAction instanceof ReachDestinations) {
-
-            CheckBoxDialog dialog = (CheckBoxDialog) currentDialog;
-            ReachDestinations action = (ReachDestinations) currentDialogAction;
-
-            boolean[] destined = dialog.getSelectedOptions();
-            String[] options = dialog.getOptions();
-
-            for (int index=0; index < options.length; index++) {
-                if (destined[index]) {
-                    action.addReachedCompany(action.getPossibleCompanies().get(index));
-                }
-            }
-
-            // Prevent that a null action gets processed
-            if (action.getReachedCompanies() == null
-                    || action.getReachedCompanies().isEmpty()) currentDialogAction = null;
-
-        } else {
-            currentDialogAction = null;
-        }
-
-        // Required even if no action is executed, to update the UI, re-enable buttons etc.
-        gameUIManager.processAction(currentDialogAction);
-    }
-
-    public JDialog getCurrentDialog() {
-        return gameUIManager.getCurrentDialog();
-    }
-
-    public PossibleAction getCurrentDialogAction () {
-        return gameUIManager.getCurrentDialogAction();
-    }
-
-    public void setCurrentDialog (JDialog dialog, PossibleAction action) {
-        gameUIManager.setCurrentDialog(dialog, action);
-        if (!(dialog instanceof MessageDialog)) orPanel.disableButtons();
-    }
-
     /**
      * @return True if the map panel expected hex clicks for actions / corrections
      */
     public boolean hexClicked(GUIHex clickedHex, GUIHex selectedHex) {
 
         boolean triggerORPanelRepaint = false;
-
-        // FIXME: Map Correction removed
-//        if (mapCorrectionEnabled) {
-//            triggerORPanelRepaint = true;
-//            boolean checkClickedHex = false;
-//            switch (mapCorrectionAction.getStep()) {
-//            case SELECT_HEX:
-//            case SELECT_TILE: // if tile is selected
-//                checkClickedHex = true;
-//                break;
-//            case SELECT_ORIENTATION:
-//                if (clickedHex == selectedHex) {
-//                    selectedHex.forcedRotateTile();
-//                } else
-//                    checkClickedHex = true;
-//                break;
-//            }
-//            if (checkClickedHex && clickedHex !=null && clickedHex != selectedHex) {
-//                map.selectHex(clickedHex);
-//                mapCorrectionAction.selectHex(clickedHex.getHex());
-//                orWindow.process(mapCorrectionAction);
-//            }
-//        } else if (tokenLayingEnabled) {
+        
+        // if clickedHex == null, then go back to select hex step
+        if (clickedHex == null) {
+            upgradePanel.init();
+            setLocalStep(LocalSteps.SelectHex);
+            return true;
+        }
+    
+        // check for token upgrades
         if (!tokenUpgrades.isEmpty()) {
             triggerORPanelRepaint = true;
-            // if clickedHex == null, then go back to select hex step
-            if (clickedHex == null) {
-                upgradePanel.init();
-                setLocalStep(LocalSteps.SelectAHexForToken);
-                return true;
-            }
             Set<TokenStopUpgrade> upgrades = tokenUpgrades.get(clickedHex);
             if (!upgrades.isEmpty()) {
                 map.selectHex(clickedHex);
-                setLocalStep(LocalSteps.SelectAToken);
+                setLocalStep(LocalSteps.SelectUpgrade);
             } else {
                 JOptionPane.showMessageDialog(mapPanel, LocalText.getText(
                         "NoTokenPossible", clickedHex.toText()));
@@ -690,6 +665,18 @@ public class ORUIManager implements DialogOwner {
         return triggerORPanelRepaint;
     }
 
+    public void cancelTileUpgrade() {
+        GUIHex selectedHex = mapPanel.getMap().getSelectedHex();
+        if (selectedHex != null) selectedHex.removeTile();
+        orWindow.process(new NullAction(NullAction.Mode.SKIP));
+    }
+
+    public void cancelTokenUpgrade() {
+        GUIHex selectedHex = mapPanel.getMap().getSelectedHex();
+        if (selectedHex != null) selectedHex.removeToken();
+        orWindow.process(new NullAction(NullAction.Mode.SKIP));
+    }
+
     public void tileSelected(TileHexUpgrade upgrade) {
         Tile tile = upgrade.getUpgrade().getTargetTile();
         GUIHex hex = map.getSelectedHex();
@@ -703,31 +690,19 @@ public class ORUIManager implements DialogOwner {
             return;
         }
 
-        // FIXME: Solve that during rewrite of Map Correction
-        // map correction override
-//        if (mapCorrectionEnabled) {
-//            // paint tile
-//            hex.forcedDropTile(upgrade, HexSide.defaultRotation());
-//            // inform map correction manager
-//            mapCorrectionAction.selectTile(tile);
-//            orWindow.process(mapCorrectionAction);
-//            return;
-//        }
-
-//        if (hex.dropTile(upgrade)) {
-            /* Lay tile */
         hex.dropTile(upgrade);
         setLocalStep(LocalSteps.RotateTile);
-//        } else {
-//            // FIXME: This should not happen anymore
-//            /* Tile cannot be laid in a valid orientation: refuse it */
-//            JOptionPane.showMessageDialog(mapPanel,
-//            "This tile cannot be laid in a valid orientation.");
-//            upgradePanel.removeUpgrade(upgrade);
-//            setLocalStep(ORUIManager.SELECT_TILE);
-//            upgradePanel.showUpgrades(localStep);
-//        }
     }
+
+    public void layToken(TokenStopUpgrade upgrade) {
+        LayToken action = upgrade.getAction();
+        if (action instanceof LayBaseToken) {
+            layBaseToken(upgrade);
+        } else if (action instanceof LayBonusToken) {
+            layBonusToken(upgrade);
+        }
+    }
+    
 
     void layTile() {
 
@@ -786,7 +761,7 @@ public class ORUIManager implements DialogOwner {
                 selectedHex.fixTile();
             } else {
                 selectedHex.removeTile();
-                setLocalStep(LocalSteps.SelectAHexForTile);
+                setLocalStep(LocalSteps.SelectHex);
             }
             map.selectHex(null);
         }
@@ -805,7 +780,7 @@ public class ORUIManager implements DialogOwner {
             upgradePanel.init();
             map.getSelectedHex().fixToken();
         } else {
-            setLocalStep(LocalSteps.SelectAHexForToken);
+            setLocalStep(LocalSteps.SelectHex);
         }
     }
 
@@ -923,39 +898,6 @@ public class ORUIManager implements DialogOwner {
             }
         }
     }
-
-    
-    // FIXME: Might be required for the Correction Relay
-//    private Station correctionRelayBaseToken(BaseToken token, List<Station> possibleStations){
-//        GUIHex selectedHex = map.getSelectedHex();
-//
-//        PublicCompany company = token.getParent();
-//        List<String> prompts = new ArrayList<String>();
-//
-//        Map<String, Station> promptToStationMap = new HashMap<String, Station>();
-//        String prompt;
-//        for (Station station:possibleStations) {
-//            prompt = LocalText.getText(
-//                    "SelectStationForTokenOption",
-//                    station.getNumber(),
-//                    selectedHex.getHex().getConnectionString(station));
-//            prompts.add(prompt);
-//            promptToStationMap.put(prompt, station);
-//        }
-//        String selected =
-//            (String) JOptionPane.showInputDialog(orWindow,
-//                    LocalText.getText("SelectStationForToken",
-//                            "",
-//                            selectedHex.toText(),
-//                            company.getId()),
-//                            LocalText.getText("WhichStation"),
-//                            JOptionPane.PLAIN_MESSAGE, null,
-//                            prompts.toArray(), prompts.get(0));
-//        if (selected == null) return null;
-//        Station station = promptToStationMap.get(selected);
-//        return station;
-//    }
-
 
     /**
      * Lay Token finished.
@@ -1118,7 +1060,7 @@ public class ORUIManager implements DialogOwner {
                     usingPrivates.substring(2)));
             msgbuf.append("</font>");
         }
-        setMessage(msgbuf.toString());
+        messagePanel.setMessage(msgbuf.toString());
 
         String selectedActionText =
             (String) JOptionPane.showInputDialog(orWindow,
@@ -1199,14 +1141,16 @@ public class ORUIManager implements DialogOwner {
         }
 
         if (train != null) {
+            // FIXME: See below
             // Remember the old off-board revenue step
-            int oldOffBoardRevenueStep =
-                gameUIManager.getCurrentPhase().getOffBoardRevenueStep();
+//            int oldOffBoardRevenueStep =
+//                gameUIManager.getCurrentPhase().getOffBoardRevenueStep();
 
             buyAction.setPricePaid(price);
             buyAction.setExchangedTrain(exchangedTrain);
 
-            if (orWindow.process(selectedAction)) {
+            // FIXME: Is there still a functionality involved that we require?
+//            if (orWindow.process(selectedAction)) {
 
                 // Check if any trains must be discarded
                 // Keep looping until all relevant companies have acted
@@ -1224,16 +1168,16 @@ public class ORUIManager implements DialogOwner {
                     gameUIManager.discardTrains(dt);
                 }
                  */
-            }
+//            }
 
-            int newOffBoardRevenueStep =
-                gameUIManager.getCurrentPhase().getOffBoardRevenueStep();
-            if (newOffBoardRevenueStep != oldOffBoardRevenueStep) {
-                map.updateOffBoardToolTips();
-            }
+            // FIXME: are offboard Revenues still automatically updated
+//            int newOffBoardRevenueStep =
+//                gameUIManager.getCurrentPhase().getOffBoardRevenueStep();
+//            if (newOffBoardRevenueStep != oldOffBoardRevenueStep) {
+//                map.updateOffBoardToolTips();
+//            }
 
         }
-
     }
 
     public void buyPrivate() {
@@ -1300,64 +1244,6 @@ public class ORUIManager implements DialogOwner {
 
     }
 
-//    public void executeUpgrade() {
-        // map correction override
-        // FIXME: Has to be changed during rewrite
-//        if (mapCorrectionEnabled) {
-//            if (selectedHex != null && selectedHex.getProvisionalTile() != null) {
-//                if (mapCorrectionAction.getStep() == ActionStep.SELECT_ORIENTATION) {
-//                    int orientation = selectedHex.getProvisionalTileRotation().getTrackPointNumber();
-//                    mapCorrectionAction.selectOrientation(orientation);
-//                } else if (mapCorrectionAction.getStep() == ActionStep.CONFIRM) {
-//                    mapCorrectionAction.selectConfirmed();
-//                }
-//                if (orWindow.process(mapCorrectionAction)) {
-//                    selectedHex.fixTile();
-//                } else {
-//                    selectedHex.removeTile();
-//                }
-//                map.selectHex(null);
-//            }
-//            return;
-//        }
-
-//    }
-
-    public void layToken(TokenStopUpgrade upgrade) {
-        LayToken action = upgrade.getAction();
-        if (action instanceof LayBaseToken) {
-            layBaseToken(upgrade);
-        } else if (action instanceof LayBonusToken) {
-            layBonusToken(upgrade);
-        }
-    }
-    
-//    public void cancelUpgrade() {
-//        GUIHex selectedHex = mapPanel.getMap().getSelectedHex();
-
-        // map correction override
-        // FIXME: for rewrite
-//        if (mapCorrectionEnabled) {
-//            if (selectedHex != null) selectedHex.removeTile();
-//            mapCorrectionAction.selectCancel();
-//            orWindow.process(mapCorrectionAction);
-//            map.selectHex(null);
-//            return;
-//        }
-//
-//    }
-    
-    public void cancelTileUpgrade() {
-        GUIHex selectedHex = mapPanel.getMap().getSelectedHex();
-        if (selectedHex != null) selectedHex.removeTile();
-        orWindow.process(new NullAction(NullAction.Mode.SKIP));
-    }
-
-    public void cancelTokenUpgrade() {
-        GUIHex selectedHex = mapPanel.getMap().getSelectedHex();
-        if (selectedHex != null) selectedHex.removeToken();
-        orWindow.process(new NullAction(NullAction.Mode.SKIP));
-    }
 
     /** Default implementation.
      * The &lt;Loans&gt; attributes number and value <b>must</b>
@@ -1433,13 +1319,6 @@ public class ORUIManager implements DialogOwner {
 
     }
 
-    protected void processCorrectionAction(CorrectionAction action) {
-
-        gameUIManager.processAction(action);
-
-    }
-
-
     public void updateStatus(boolean myTurn) {
 
         updateStatus(null, myTurn);
@@ -1489,17 +1368,6 @@ public class ORUIManager implements DialogOwner {
             orPanel.resetCurrentRevenueDisplay();
         }
 
-// FIXME: Rewrite Map Correction
-        //        if (possibleActions.contains(MapCorrectionAction.class)) {
-//            orPanel.initTileLayingStep();
-//            orWindow.requestFocus();
-//
-//            MapCorrectionAction action = (possibleActions.getType(MapCorrectionAction.class)).get(0);
-//
-//            mapCorrectionEnabled = true;
-//            mapCorrectionAction = action;
-//            updateUpgradesPanel(action);
-//        } else if (orStep == GameDef.OrStep.LAY_TRACK) {
         if (orStep == GameDef.OrStep.LAY_TRACK) {
             //if (possibleActions.contains(LayTile.class)) {
 
@@ -1532,7 +1400,7 @@ public class ORUIManager implements DialogOwner {
                     action.isAllocationAllowed(SetDividend.SPLIT),
                     action.isAllocationAllowed(SetDividend.PAYOUT));
 
-            setMessage(LocalText.getText("SelectPayout"));
+            messagePanel.setMessage(LocalText.getText("SelectPayout"));
 
         } else if (possibleActions.contains(SetDividend.class)) {
 
@@ -1548,7 +1416,7 @@ public class ORUIManager implements DialogOwner {
                             gameUIManager.format(action.getRequiredCash()))
                             + "</font>";
             }
-            setMessage(message);
+            messagePanel.setMessage(message);
 
         } else if (orStep == GameDef.OrStep.BUY_TRAIN) {
 
@@ -1567,7 +1435,7 @@ public class ORUIManager implements DialogOwner {
                 }
             }
 
-            setMessage(b.toString());
+            messagePanel.setMessage(b.toString());
 
         } else if (possibleActions.contains(DiscardTrain.class)) {
 
@@ -1745,6 +1613,10 @@ public class ORUIManager implements DialogOwner {
                 upgradePanel.setState(UpgradesPanel.States.Inactive);
                 upgradePanel.init();
                 break;
+            case SelectAHexForTileToken:
+                upgradePanel.setState(UpgradesPanel.States.TileToken);
+                upgradePanel.init();
+                break;
             case SelectAHexForTile:
                 upgradePanel.setState(UpgradesPanel.States.Tile);
                 upgradePanel.init();
@@ -1785,7 +1657,6 @@ public class ORUIManager implements DialogOwner {
     }
     
     private void displayRemainingTiles() {
-
         if (remainingTiles == null) {
             remainingTiles = new RemainingTilesWindow(orWindow);
         } else {
@@ -1797,22 +1668,11 @@ public class ORUIManager implements DialogOwner {
         NetworkAdapter network = NetworkAdapter.create(gameUIManager.getRoot());
         return network.getRouteGraph(orComp, true);
     }
-
-    // Message Panel helper methods
-    // TODO: Remove them 
-    public void setMessage(String message) {
-        messagePanel.setMessage(message);
-    }
-
-    public void setInformation(String infoText) {
-        messagePanel.setInformation(infoText);
-    }
-
-    public void setDetail(String detailText) {
-        messagePanel.setDetail(detailText);
-    }
-
+    
     // Further Getters 
+    public MessagePanel getMessagePanel() {
+        return messagePanel;
+    }
     
     public HexMap getMap() {
         return map;
@@ -1830,16 +1690,56 @@ public class ORUIManager implements DialogOwner {
         return orPanel;
     }
 
-   // TODO: Remove helper functions below
-    
     // FIXME: Getting the possible actions inside ORUIManager methods should be removed
     // Better transfer them by method args
     protected PossibleActions getPossibleActions() {
         return gameUIManager.getGameManager().getPossibleActions();
     }
     
-    protected TileManager getTileManager() {
-        return gameUIManager.getRoot().getTileManager();
+    // DialogOwner interface methods
+    public void dialogActionPerformed () {
+
+        JDialog currentDialog = getCurrentDialog();
+        PossibleAction currentDialogAction = getCurrentDialogAction();
+
+        if (currentDialog instanceof CheckBoxDialog
+                && currentDialogAction instanceof ReachDestinations) {
+
+            CheckBoxDialog dialog = (CheckBoxDialog) currentDialog;
+            ReachDestinations action = (ReachDestinations) currentDialogAction;
+
+            boolean[] destined = dialog.getSelectedOptions();
+            String[] options = dialog.getOptions();
+
+            for (int index=0; index < options.length; index++) {
+                if (destined[index]) {
+                    action.addReachedCompany(action.getPossibleCompanies().get(index));
+                }
+            }
+
+            // Prevent that a null action gets processed
+            if (action.getReachedCompanies() == null
+                    || action.getReachedCompanies().isEmpty()) currentDialogAction = null;
+
+        } else {
+            currentDialogAction = null;
+        }
+
+        // Required even if no action is executed, to update the UI, re-enable buttons etc.
+        gameUIManager.processAction(currentDialogAction);
+    }
+
+    public JDialog getCurrentDialog() {
+        return gameUIManager.getCurrentDialog();
+    }
+
+    public PossibleAction getCurrentDialogAction () {
+        return gameUIManager.getCurrentDialogAction();
+    }
+
+    public void setCurrentDialog (JDialog dialog, PossibleAction action) {
+        gameUIManager.setCurrentDialog(dialog, action);
+        if (!(dialog instanceof MessageDialog)) orPanel.disableButtons();
     }
 
 }

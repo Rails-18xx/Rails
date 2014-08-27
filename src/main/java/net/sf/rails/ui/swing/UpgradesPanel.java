@@ -42,7 +42,7 @@ public class UpgradesPanel extends Box {
         void cancel() {};
     }
     
-    public enum States {Inactive, Tile, Token}
+    public enum States {Inactive, Tile, Token, TileToken}
 
     private final ORUIManager orUIManager;
     
@@ -68,6 +68,7 @@ public class UpgradesPanel extends Box {
     private final InactiveState inactiveState = new InactiveState();
     private final TileState tileState = new TileState();
     private final TokenState tokenState = new TokenState();
+    private final TileTokenState tileTokenState = new TileTokenState();
     
     private UpgradesPanel.State state = inactiveState;
 
@@ -165,6 +166,8 @@ public class UpgradesPanel extends Box {
         case Token:
             state = tokenState;
             break;
+        case TileToken:
+            state = tileTokenState;
         }
         state.init();
     }
@@ -263,7 +266,7 @@ public class UpgradesPanel extends Box {
         @Override
         void showUpgrades() {
             if (tileUpgrades.size() == 0) {
-                orUIManager.setMessage(LocalText.getText("NoTiles"));
+                orUIManager.getMessagePanel().setMessage(LocalText.getText("NoTiles"));
                 return;
             }
             for (TileHexUpgrade upgrade : tileUpgrades) {
@@ -444,6 +447,22 @@ public class UpgradesPanel extends Box {
             active = upgrade;
             setDoneEnabled(true);
         }
+        
+    }
+    
+    private class TileTokenState extends State {
+        
+        @Override
+        void init() {
+            setDoneEnabled(false);
+            setCancelEnabled(true);
+            setDoneText("LayToken");
+            setCancelText("Skip");
+        }
+        
+        
+        
+        
         
     }
 }

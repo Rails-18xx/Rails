@@ -923,15 +923,6 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
         return orUIManager;
     }
 
-    public void updateOffBoardToolTips() {
-        // for (GUIHex hex : hexes) {
-        // if (hex.getHexModel().hasOffBoardValues()) {
-        // hex.setToolTip();
-        // }
-        // }
-        // do nothing as tooltip update before display
-    }
-
     /**
      * Mouse Listener methods (hexMap offers listener for all layers)
      */
