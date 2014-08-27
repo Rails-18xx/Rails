@@ -9,6 +9,7 @@ import java.util.List;
 import rails.game.action.DiscardTrain;
 import rails.game.action.MergeCompanies;
 import rails.game.action.PossibleAction;
+import rails.game.action.StartCompany;
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
@@ -33,6 +34,8 @@ import net.sf.rails.game.state.MoneyOwner;
  *
  */
 public class StockRound_1837 extends StockRound {
+
+
 
     protected final ArrayListState<PublicCompany> compWithExcessTrains =
             ArrayListState.create(this, "compWithExcessTrains");
@@ -358,5 +361,14 @@ public class StockRound_1837 extends StockRound {
 
             super.finishRound();
         }
+    }
+    
+    /* (non-Javadoc)
+     * @see net.sf.rails.game.StockRound#startCompany(java.lang.String, rails.game.action.StartCompany)
+     */
+    @Override
+    public boolean startCompany(String playerName, StartCompany action) {
+    
+        return super.startCompany(playerName, action);
     }
 }
