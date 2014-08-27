@@ -124,11 +124,13 @@ public class OperatingRound_1835 extends OperatingRound {
                 if (!sharesPerRecipient.containsKey(player)) continue;
                 int share = deniedIncomeShare.get(player);
                 int shares = share / operatingCompany.value().getShareUnit();
+                if (this.wasInterrupted()) { //Assuming that the interruption was cause by the Prussian Formation Round
                 sharesPerRecipient.put (player, sharesPerRecipient.get(player) - shares);
                 ReportBuffer.add(this, LocalText.getText("NoIncomeForPreviousOperation",
                         player.getId(),
                         share,
                         GameManager_1835.PR_ID));
+                }
 
             }
         }

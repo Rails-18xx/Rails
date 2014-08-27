@@ -1447,17 +1447,18 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
             player = pmgr.getNextPlayerAfter(previousPlayer);
             share = player.getPortfolioModel().getShare(this);
             if (share > presShare) {
-                // Hand presidency to the first player with a higher share
+                // Hand presidency to the player with the highest share
                 president.getPortfolioModel().swapPresidentCertificate(this,
                         player.getPortfolioModel(), 0);
                 ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
                         player.getId(),
                         getId() ));
-                return;
+                presShare = share;
+                president = getPresident();
             }
             previousPlayer = player;
         }
-
+        return;
     }
 
     /**
