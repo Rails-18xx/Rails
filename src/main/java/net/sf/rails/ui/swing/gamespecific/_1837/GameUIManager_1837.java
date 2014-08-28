@@ -30,7 +30,6 @@ public class GameUIManager_1837 extends GameUIManager {
     public static final String START_S5_DIALOG = "StartS5";
     public static final String SELECT_CONVERTING_MINOR = "SelectConvertingMinor";
     public static final String SELECT_MERGING_MAJOR = "SelectMergingMajor";
-    public static final String SELECT_HOME_STATION_DIALOG = "SelectHomeStation";
 
 
 
@@ -154,7 +153,7 @@ public class GameUIManager_1837 extends GameUIManager {
                     return;
                 }
 
-                MapManager map = getRoot().getMapManager();
+ /*               MapManager map = getRoot().getMapManager();
                 for (MapHex hex : map.getHexes()) {
                     if ((hex.getId().equals("L9") ) || (hex.getId().equals("L3"))) {
                         cities.add(hex);
@@ -188,7 +187,7 @@ public class GameUIManager_1837 extends GameUIManager {
                     currentDialogAction = null;
                     return;
                 }
-                action.setHomeHex(cities.get(index));
+                action.setHomeHex(cities.get(index));*/
             } else {
                 // Current dialog not found yet, try the superclass.
                 super.dialogActionPerformed(false);

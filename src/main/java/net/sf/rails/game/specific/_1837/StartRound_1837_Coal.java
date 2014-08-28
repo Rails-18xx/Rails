@@ -286,6 +286,13 @@ public class StartRound_1837_Coal extends StartRound {
 
         assignItem(player, item, price, sharePrice);
 
+        if ((item.hasSecondary()) && (item.getSecondary().getParent().getId().equals("S5"))) {
+            process(pendingAction.value());
+            PublicCompany_1837 company = (PublicCompany_1837) item.getSecondary().getParent();
+            company.start();
+            company.setFloated();
+            return true;
+            }
         // Set priority (only if the item was not auctioned)
         if (lastBid == 0) {
             getRoot().getPlayerManager().setPriorityPlayerToNext();
@@ -294,6 +301,7 @@ public class StartRound_1837_Coal extends StartRound {
         resetStartPacketPrices(numRoundsPassed.value());
         numPasses.set(0);
         numRoundsPassed.set(0);
+
 
         if (startPacket.areAllSold()) {
             finishRound();
@@ -359,12 +367,10 @@ public class StartRound_1837_Coal extends StartRound {
                    (PublicCompany_1837) castAction.getCompany();
             company.setHomeHex(castAction.getSelectedHomeHex());
             ReportBuffer.add(this, LocalText.getText("SetsHomeHex",company.getId(),castAction.getSelectedHomeHex() ));
-            company.start();
-            company.setFloated();
+
 
             
             pendingAction.set(null);
-            return true;
         }
         return super.process(action);
     }

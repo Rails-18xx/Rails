@@ -117,4 +117,11 @@ public class SetHomeHexLocation extends StartItemAction {
     public Object getCompanyName() {
         return companyName;
     }
+
+    public void setHomeHex(String string) {
+        MapManager mapManager = getRoot().getMapManager();
+        MapHex homeHex=mapManager.getHex(string);
+        selectedHomeHex = homeHex;
+        selectedHomeHexName = homeHex.getId();
+    }
 }
