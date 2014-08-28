@@ -297,9 +297,9 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     /**
      *  Relation to a later to be founded National/Regional Major Company 
      *  */
-    private String relatedNationalCompany;
+    private String relatedPublicCompany = null;
 
-    private PublicCompany foundingStartCompany;
+    private String foundingStartCompany = null;
 
     /**
      * Used by Configure (via reflection) only
@@ -345,6 +345,10 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         bgColour = Util.parseColour(bgHexColour);
 
         floatPerc = tag.getAttributeAsInteger("floatPerc", floatPerc);
+        
+        relatedPublicCompany = tag.getAttributeAsString ("relatedCompany", relatedPublicCompany);
+        
+        foundingStartCompany =  tag.getAttributeAsString("foundingCompany", foundingStartCompany);
 
         startSpace = tag.getAttributeAsString("startspace");
         // Set the default price token drop time.
@@ -2028,11 +2032,11 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     }
 
     public void setRelatedNationalCompany(String companyName){
-        this.relatedNationalCompany = companyName;
+        this.relatedPublicCompany = companyName;
     }
 
     public String getRelatedNationalCompany() {
-        return relatedNationalCompany;
+        return relatedPublicCompany;
     }
 
 
@@ -2046,7 +2050,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     /**
      * @return the foundingStartCompany
      */
-    public PublicCompany getFoundingStartCompany() {
+    public String getFoundingStartCompany() {
         
         return foundingStartCompany;
     }
@@ -2054,7 +2058,9 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     /**
      * @param foundingStartCompany the foundingStartCompany to set
      */
-    public void setStartingMinor(PublicCompany foundingStartCompany) {
-        this.foundingStartCompany = foundingStartCompany;
+    public void setStartingMinor(String foundingCompany) {
+        this.foundingStartCompany = foundingCompany;
     }
+    
+    
 }

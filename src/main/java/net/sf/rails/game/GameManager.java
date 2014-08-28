@@ -150,9 +150,10 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     //Used for Storing the PublicCompany to be Founded by a formationround
     private PublicCompany nationalToFound;
     
-    private Player NationalFormStartingPlayer = null;
-
+//    private Player NationalFormStartingPlayer = null;
     
+    private Map< PublicCompany, Player> NationalFormStartingPlayer = new HashMap<PublicCompany, Player>();
+     
     
     /**
      * @return the revenueSpinnerIncrement
@@ -1448,13 +1449,13 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         return nationalToFound;
     }
 
-    public void setNationalFormationStartingPlayer(Player currentPlayer) {
-        this.NationalFormStartingPlayer=currentPlayer;
+    public void setNationalFormationStartingPlayer( PublicCompany nationalToFound2, Player currentPlayer) {
+        this.NationalFormStartingPlayer.put(nationalToFound2, currentPlayer);
         
     }
     
-    public Player getNationalFormationStartingPlayer() {
-        return this.NationalFormStartingPlayer;
+    public Player getNationalFormationStartingPlayer(PublicCompany comp) {
+        return this.NationalFormStartingPlayer.get(comp);
     }
 
 }
