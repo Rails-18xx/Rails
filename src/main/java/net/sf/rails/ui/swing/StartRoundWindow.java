@@ -696,7 +696,9 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
     }
 
     protected void disableButtons() {
+        if (includeBidding){
         bidButton.setEnabled(false);
+        }
         buyButton.setEnabled(false);
         passButton.setEnabled(false);
     }
