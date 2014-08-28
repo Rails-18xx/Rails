@@ -23,18 +23,18 @@ import rails.game.specific._1880.SetupNewPublicDetails_1880;
  */
 public class StartRoundWindow_1880 extends StartRoundWindow {
 
-    
+
     /* Keys of dialogues owned by this class */
     public static final String COMPANY_BUILDING_RIGHT_DIALOG = "CompanyBuildingRight";
     public static final String COMPANY_PAR_SLOT_DIALOG = "CompanyParSlotRight";
-    
+
     protected JDialog currentDialog = null;
     protected PossibleAction currentDialogAction = null;
     protected int[] startPrices = null;
     protected int[] operationOrder = null;
     private static final String[] bRights = {"A+B+C", "B+C+D"};
     private static final String[] parSlots = {"1", "2", "3", "4"};
-    
+
     private static final long serialVersionUID = 1L;
     /**
      * @param round
@@ -42,56 +42,56 @@ public class StartRoundWindow_1880 extends StartRoundWindow {
      */
     public StartRoundWindow_1880() {
     }
-    
 
-   @Override
-   public boolean processImmediateAction() {
-           
-       log.debug("ImmediateAction=" + immediateAction);
-       if (immediateAction != null) {
-           // Make a local copy and discard the original,
-           // so that it's not going to loop.
-          PossibleAction nextAction = immediateAction;
-          immediateAction = null;
-          if (nextAction instanceof StartItemAction) {
-               StartItemAction action = (StartItemAction) nextAction;
-               if (action instanceof BuyStartItem) {
-                   requestStartPrice((BuyStartItem) action);
-                  return false;
-               }
-           }
-       }
-       return true;
-   }
-  
 
-  public void dialogActionPerformed () {
-      String key="";
-      
-      if (currentDialog instanceof NonModalDialog) {
-          key = ((NonModalDialog) currentDialog).getKey();
-      }
-      
-      if (COMPANY_PAR_SLOT_DIALOG.equals(key)) {
-          handleStartSlot();
-      } else if (COMPANY_BUILDING_RIGHT_DIALOG.equals(key)) {
-          handleBuildingRights();
-          
-      }
-      return;
-  }
+    @Override
+    public boolean processImmediateAction() {
 
-public void setCurrentDialog (JDialog dialog, PossibleAction action) {
-      if (currentDialog != null) {
-          currentDialog.dispose();
-      }
-      currentDialog = dialog;
-      currentDialogAction = action;
-      disableButtons();
-  }
-  
+        log.debug("ImmediateAction=" + immediateAction);
+        if (immediateAction != null) {
+            // Make a local copy and discard the original,
+            // so that it's not going to loop.
+            PossibleAction nextAction = immediateAction;
+            immediateAction = null;
+            if (nextAction instanceof StartItemAction) {
+                StartItemAction action = (StartItemAction) nextAction;
+                if (action instanceof BuyStartItem) {
+                    requestStartPrice((BuyStartItem) action);
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+
+    public void dialogActionPerformed () {
+        String key="";
+
+        if (currentDialog instanceof NonModalDialog) {
+            key = ((NonModalDialog) currentDialog).getKey();
+        }
+
+        if (COMPANY_PAR_SLOT_DIALOG.equals(key)) {
+            handleStartSlot();
+        } else if (COMPANY_BUILDING_RIGHT_DIALOG.equals(key)) {
+            handleBuildingRights();
+
+        }
+        return;
+    }
+
+    public void setCurrentDialog (JDialog dialog, PossibleAction action) {
+        if (currentDialog != null) {
+            currentDialog.dispose();
+        }
+        currentDialog = dialog;
+        currentDialogAction = action;
+        disableButtons();
+    }
+
     public void updateStatus(boolean myTurn) {
-         for (PossibleAction action : possibleActions.getList()) {
+        for (PossibleAction action : possibleActions.getList()) {
             if (action instanceof SetupNewPublicDetails_1880) {
                 requestStartSlot((SetupNewPublicDetails_1880) action);
                 return;
@@ -99,19 +99,19 @@ public void setCurrentDialog (JDialog dialog, PossibleAction action) {
         }
         super.updateStatus(myTurn);
     }
-    
-    
+
+
     //-- Start slot
     private boolean requestStartSlot(SetupNewPublicDetails_1880 action) {
         RadioButtonDialog dialog = new RadioButtonDialog(
                 COMPANY_PAR_SLOT_DIALOG, this, this,
                 LocalText.getText("PleaseSelect"),       
-                        LocalText.getText("PickParSlot", action.getPlayerName(), action.getPrice(), action.getCompanyName()),
-                        parSlots, 0);
+                LocalText.getText("PickParSlot", action.getPlayerName(), action.getPrice(), action.getCompanyName()),
+                parSlots, 0);
         setCurrentDialog (dialog, action);
         return true;
     }
-   
+
     private void handleStartSlot() {
         RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
         SetupNewPublicDetails_1880 action =
@@ -124,18 +124,18 @@ public void setCurrentDialog (JDialog dialog, PossibleAction action) {
         } 
     }
 
-    
+
     //-- Building Rights
     private boolean requestBuildingRights(SetupNewPublicDetails_1880 action) {
         RadioButtonDialog dialog = new RadioButtonDialog(
                 COMPANY_BUILDING_RIGHT_DIALOG, this, this,
                 LocalText.getText("PleaseSelect"),       
-                        LocalText.getText("WhichBuildingRight", action.getPlayerName(), action.getCompanyName()),
-                        bRights, 0);
+                LocalText.getText("WhichBuildingRight", action.getPlayerName(), action.getCompanyName()),
+                bRights, 0);
         setCurrentDialog (dialog, action);
         return true;
     }   
-    
+
 
     private void handleBuildingRights() {
         RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
@@ -151,4 +151,4 @@ public void setCurrentDialog (JDialog dialog, PossibleAction action) {
     }
 
 }
-   
+
