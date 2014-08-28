@@ -20,6 +20,7 @@ import rails.game.action.BidStartItem;
 import rails.game.action.BuyStartItem;
 import rails.game.action.NullAction;
 import rails.game.action.PossibleAction;
+import rails.game.action.StartItemAction;
 import rails.game.specific._1837.SetHomeHexLocation;
 
 /**
@@ -27,7 +28,7 @@ import rails.game.specific._1837.SetHomeHexLocation;
  */
 public class StartRound_1837_Coal extends StartRound {
     protected final int bidIncrement;
-    
+
     private final GenericState<SetHomeHexLocation> pendingAction = 
             GenericState.create(this, "pendingAction");
     private final GenericState<Player> pendingPlayer = 
@@ -159,7 +160,7 @@ public class StartRound_1837_Coal extends StartRound {
 
         return true;
     }
-    
+
     /*----- moveStack methods -----*/
 
     @Override
@@ -292,10 +293,10 @@ public class StartRound_1837_Coal extends StartRound {
         numPasses.set(0);
         numRoundsPassed.set(0);
 
-
-        if (startPacket.areAllSold()) {
-            finishRound();
+        if (item.getId().equals("KB")) {
+            return true;
         }
+
         return true;
 
     }
@@ -334,7 +335,7 @@ public class StartRound_1837_Coal extends StartRound {
                     );
             pendingPlayer.set(player);
             pendingCertificate.set(certificate);
-//            item.setSold(player, price);
+            //            item.setSold(player, price);
         }
         else {
             super.assignItem(player, item, price, sharePrice);
@@ -343,33 +344,83 @@ public class StartRound_1837_Coal extends StartRound {
 
     @Override
     public boolean process(PossibleAction action) {
-        if (action instanceof SetHomeHexLocation) {
+        boolean result = false;
 
-            SetHomeHexLocation castAction =
-                    (SetHomeHexLocation) action;
-            Player player = playerManager.getCurrentPlayer();
-            
-            pendingCertificate.value().moveTo(player);
-            ReportBuffer.add(this, LocalText.getText("ALSO_GETS", player.getId(),
-                    pendingCertificate.value().getName()));
-            
-            PublicCompany_1837 company =
-                   (PublicCompany_1837) castAction.getCompany();
-            company.setHomeHex(castAction.getSelectedHomeHex());
-            ReportBuffer.add(this, LocalText.getText("SetsHomeHex",company.getId(),castAction.getSelectedHomeHex() ));
-            company.start();
-            company.setFloated();
+        log.debug("Processing action " + action);
 
-            
-            pendingAction.set(null);
+        if (action instanceof NullAction && 
+                ((NullAction)action).getMode() == NullAction.Mode.PASS) {
+            String playerName = action.getPlayerName();
+            NullAction nullAction = (NullAction) action;
+            result = pass(nullAction, playerName);
+
+        } else if (action instanceof StartItemAction) {
+
+            StartItemAction startItemAction = (StartItemAction) action;
+            String playerName = action.getPlayerName();
+
+            log.debug("Item details: " + startItemAction.toString());
+
+            if (startItemAction instanceof BuyStartItem) {
+
+                BuyStartItem buyAction = (BuyStartItem) startItemAction;
+                if (buyAction.hasSharePriceToSet()
+                        && buyAction.getAssociatedSharePrice() == 0) {
+                    // We still need a share price for this item
+                    startItemAction.getStartItem().setStatus(
+                            StartItem.NEEDS_SHARE_PRICE);
+                    // We must set the priority player, though
+                    playerManager.setPriorityPlayerToNext();
+                    result = true;
+                } else {
+                    result = buy(playerName, buyAction);
+                }
+            } else if  (startItemAction instanceof SetHomeHexLocation) {
+
+                SetHomeHexLocation castAction =
+                        (SetHomeHexLocation) action;
+                Player player = playerManager.getCurrentPlayer();
+
+                pendingCertificate.value().moveTo(player);
+                ReportBuffer.add(this, LocalText.getText("ALSO_GETS", player.getId(),
+                        pendingCertificate.value().getName()));
+
+                PublicCompany_1837 company =
+                        (PublicCompany_1837) castAction.getCompany();
+                company.setHomeHex(castAction.getSelectedHomeHex());
+                ReportBuffer.add(this, LocalText.getText("SetsHomeHex",company.getId(),castAction.getSelectedHomeHex() ));
+                company.start();
+                company.setFloated();
+
+
+                pendingAction.set(null);
+                finishRound();
+                result = true;
+            } else {
+
+                DisplayBuffer.add(this, LocalText.getText("UnexpectedAction",
+                        action.toString()));
+            }
+
+            startPacketChecks();
+
+            if ((startPacket.areAllSold()) && (pendingAction.value()== null)){
+                /*
+                 * If the complete start packet has been sold, start a Stock round,
+                 */
+                possibleActions.clear();
+                finishRound();
+            }
         }
-        return super.process(action);
+
+            return result;
+    } 
+
+
+        @Override
+        public String getHelp() {
+            return "1837 Start Round help text";
+        }
+
+
     }
-
-    @Override
-    public String getHelp() {
-        return "1837 Start Round help text";
-    }
-
-
-}
