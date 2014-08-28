@@ -5,13 +5,11 @@
                 <GameParameters>
                         <PlayerShareLimit percentage="60"/>
                         <BankPoolLimit percentage="50"/>
-                        <!--StockRound class="rails.game.specific._1837.StockRound_1837"   -->
-                        <StockRound class="net.sf.rails.game.StockRound" 
+                        <StockRound class="net.sf.rails.game.specific._1837.StockRound_1837"
                                 sequence="SellBuySell">
                                 <NoSaleInFirstSR/>
                                 <NoSaleIfNotOperated/>
                         </StockRound>
-                        <!--OperatingRound class="rails.game.specific._1837.OperatingRound_1837"-->
                         <OperatingRound class="net.sf.rails.game.specific._1837.OperatingRound_1837">
                                 <EmergencyTrainBuying mustBuyCheapestTrain="no" mayAlwaysBuyNewTrain="yes" mayBuyFromCompany="yes"/>
                                 <RevenueIncrement amount="5"/>

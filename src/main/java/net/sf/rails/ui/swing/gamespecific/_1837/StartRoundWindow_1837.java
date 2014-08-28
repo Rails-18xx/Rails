@@ -5,7 +5,6 @@ import javax.swing.JDialog;
 import rails.game.action.PossibleAction;
 import rails.game.action.StartItemAction;
 import rails.game.specific._1837.SetHomeHexLocation;
-import rails.game.specific._1880.SetupNewPublicDetails_1880;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.ui.swing.StartRoundWindow;
 import net.sf.rails.ui.swing.elements.NonModalDialog;
