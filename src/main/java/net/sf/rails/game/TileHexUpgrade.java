@@ -154,6 +154,7 @@ public class TileHexUpgrade extends MapUpgrade implements Iterable<HexSide>, Com
         return invalids;
     }
     
+    @Override
     public boolean isValid() {
         if (invalids== null) {
             return true;

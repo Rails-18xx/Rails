@@ -25,7 +25,12 @@ public class TokenStopUpgrade extends MapUpgrade implements Comparable<TokenStop
         return action;
     }
 
-    // Location class methods
+    // MapUpgrade abstract methods
+    @Override
+    public boolean isValid() {
+        return true;
+    }
+    
     @Override
     public Stop getLocation() {
         return stop;

@@ -282,8 +282,7 @@ public class SoundEventInterpreter {
             //play hex selection sound if the follow-up step (select tile/token) is active
             //(don't consider whether prior step was "select hex..." because hexes
             // can also be selected during selectTile/Token)
-            else if ( currentStep == LocalSteps.SelectATile 
-                    || currentStep == LocalSteps.SelectAToken) {
+            else if ( currentStep == LocalSteps.SelectUpgrade) {
                 player.playSFXByConfigKey(SoundConfig.KEY_SFX_GEN_Select);
                 
             }

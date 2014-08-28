@@ -14,7 +14,8 @@ public abstract class MapUpgrade {
     public boolean isVisible() {
         return visible;
     }
+
+    public abstract boolean isValid();
     
     public abstract Location getLocation();
-    
 }
