@@ -19,6 +19,7 @@ public class GuiHexUpgrades {
     
     private GuiHexUpgrades() {
         builder = ImmutableSetMultimap.builder();
+        map = ImmutableSetMultimap.of();
     }
     
     public static GuiHexUpgrades create() {
@@ -37,7 +38,7 @@ public class GuiHexUpgrades {
     
     public void build() {
         map = builder.build();
-        builder = null;
+        builder = ImmutableSetMultimap.builder();
     }
     
     public Set<MapUpgrade> getUpgrades(GUIHex hex) {
@@ -56,10 +57,26 @@ public class GuiHexUpgrades {
         return !map.isEmpty();
     }
     
-    public void clear() {
-        map = null;
-        builder = ImmutableSetMultimap.builder();
+    /**
+     * @return null if there is no or multiple Elements, otherwise the single one
+     */
+    public MapUpgrade singleValidElement(GUIHex hex) {
+        MapUpgrade single = null;
+        for (MapUpgrade upgrade:map.get(hex)) {
+            if (upgrade.isValid()) {
+                if (single == null) { // first element => set single to this
+                    single = upgrade;
+                } else { // second element => return null
+                    return null;
+                }
+            }
+        }
+        return single;
     }
     
+    public void clear() {
+        builder = ImmutableSetMultimap.builder();
+        map = ImmutableSetMultimap.of();
+    }
     
 }

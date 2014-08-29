@@ -10,7 +10,6 @@ import net.sf.rails.common.ResourceLoader;
 /**
  * Enumeration that provides a specific ImageIcon
  * Simply use RailsIcon.{IconName}.icon/description 
- * @author freystef
  */
 
 public enum RailsIcon {
@@ -25,11 +24,9 @@ public enum RailsIcon {
     DECLINE_TO_BID ("control_play_blue.png","DeclineToBid"),
     DONE ("accept.png","Done"),
     INFO ("information.png","Info"),
-    LAY_TILE ("add.png","LayTile"),
-    LAY_TOKEN ("add.png","LayToken"),
+    CONFIRM ("add.png","Confirm"),
     NO ("cancel.png","No"),
-    NO_TILE ("control_play_blue.png","NoTile"),
-    NO_TOKEN ("control_play_blue.png","NoToken"),
+    SKIP ("control_play_blue.png","Skip"),
     OK ("accept.png","OK"),
     PANEL_OR ("participation_rate.png","Dockable.orWindow.orPanel"),
     PANEL_OR_BUTTONS ("button.png","Dockable.orWindow.buttonPanel"),

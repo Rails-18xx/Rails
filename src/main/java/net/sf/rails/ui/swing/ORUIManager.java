@@ -109,7 +109,7 @@ public class ORUIManager implements DialogOwner {
 
     /* Local substeps */
     public static enum LocalSteps {
-        Inactive, SelectHex, SelectUpgrade, RotateTile, SetRevenue, SelectPayout }
+        Inactive, SelectHex, SelectUpgrade, RotateTile, ConfirmToken, SetRevenue, SelectPayout }
 
     /* Keys of dialogs owned by this class */
     public static final String SELECT_DESTINATION_COMPANIES_DIALOG = "SelectDestinationCompanies";
@@ -143,8 +143,7 @@ public class ORUIManager implements DialogOwner {
 
     public void finish() {
         orWindow.finish();
-        upgradePanel.setState(UpgradesPanel.States.Inactive);
-        upgradePanel.init();
+        upgradePanel.setInactive();;
         // TODO: Is this still required, do we need to store in ORUIManager the active OperatingCompany?
         if (!(gameUIManager.getCurrentRound() instanceof ShareSellingRound)) {
             orComp = null;
@@ -575,7 +574,7 @@ public class ORUIManager implements DialogOwner {
         
         // if clickedHex == null, then go back to select hex step
         if (clickedHex == null) {
-            upgradePanel.init();
+            upgradePanel.setActive();
             setLocalStep(LocalSteps.SelectHex);
             return true;
         }
@@ -623,8 +622,17 @@ public class ORUIManager implements DialogOwner {
         if (selectedHex != null) selectedHex.removeToken();
         orWindow.process(new NullAction(NullAction.Mode.SKIP));
     }
+    
+    public void upgradeSelected(MapUpgrade upgrade) {
+        if (upgrade instanceof TileHexUpgrade) {
+            tileSelected((TileHexUpgrade)upgrade);
+        }
+        if (upgrade instanceof TokenStopUpgrade) {
+            tokenSelected((TokenStopUpgrade)upgrade);
+        }
+    }
 
-    public void tileSelected(TileHexUpgrade upgrade) {
+    private void tileSelected(TileHexUpgrade upgrade) {
         Tile tile = upgrade.getUpgrade().getTargetTile();
         GUIHex hex = map.getSelectedHex();
         
@@ -639,6 +647,11 @@ public class ORUIManager implements DialogOwner {
 
         hex.dropTile(upgrade);
         setLocalStep(LocalSteps.RotateTile);
+    }
+    
+    private void tokenSelected(TokenStopUpgrade upgrade) {
+        // TODO: Show token on tile
+        setLocalStep(LocalSteps.ConfirmToken);
     }
 
     public void layToken(TokenStopUpgrade upgrade) {
@@ -724,7 +737,7 @@ public class ORUIManager implements DialogOwner {
         log.debug("Token action is: " + action);
 
         if (orWindow.process(action)) {
-            upgradePanel.init();
+            upgradePanel.setActive();
             map.getSelectedHex().fixToken();
         } else {
             setLocalStep(LocalSteps.SelectHex);
@@ -868,7 +881,8 @@ public class ORUIManager implements DialogOwner {
             executedAction.setChosenHex(selectedHex.getHex());
 
             if (orWindow.process(executedAction)) {
-                upgradePanel.init();
+                // FIXME: Should this be setInactive(), please check
+                upgradePanel.setActive();
                 map.selectHex(null);
                 //ensure painting the token (model update currently does not arrive at UI)
                 map.repaintTokens(selectedHex.getBounds());
@@ -1526,7 +1540,22 @@ public class ORUIManager implements DialogOwner {
     protected void setLocalStep(LocalSteps localStep) {
         log.debug("Setting upgrade step to " + localStep);
 
-        // TODO: Check if this still fits
+        if (localStep == LocalSteps.SelectUpgrade) {
+            GUIHex selectedHex = map.getSelectedHex();
+            MapUpgrade single = hexUpgrades.singleValidElement(selectedHex);
+            if (single != null) {
+                upgradePanel.setUpgrades(hexUpgrades.getUpgrades(selectedHex));;
+                upgradePanel.showUpgrades();
+                upgradePanel.upgradeActivated(single);
+                if (single instanceof TileHexUpgrade) {
+                    localStep = LocalSteps.RotateTile;
+                } 
+                if (single instanceof TokenStopUpgrade) {
+                    localStep = LocalSteps.ConfirmToken;
+                }
+            }
+        }
+        
         SoundManager.notifyOfORLocalStep(localStep);
 
         this.localStep = localStep;
@@ -1543,16 +1572,13 @@ public class ORUIManager implements DialogOwner {
             log.debug("Initial localStep is " + localStep);
             switch (localStep) {
             case Inactive:
-                upgradePanel.setState(UpgradesPanel.States.Inactive);
-                upgradePanel.init();
+                upgradePanel.setInactive();
                 break;
             case SelectHex:
-                upgradePanel.setState(UpgradesPanel.States.TileToken);
-                upgradePanel.init();
+                upgradePanel.setActive();
                 break;
             case SelectUpgrade:
-                upgradePanel.init();
-                upgradePanel.addUpgrades(hexUpgrades.getUpgrades(selectedHex));
+                upgradePanel.setUpgrades(hexUpgrades.getUpgrades(selectedHex));;
                 upgradePanel.showUpgrades();
                 upgradePanel.setDoneEnabled(false);
                 break;
@@ -1560,9 +1586,11 @@ public class ORUIManager implements DialogOwner {
                 upgradePanel.showUpgrades();
                 upgradePanel.setDoneEnabled(true);
                 break;
+            case ConfirmToken:
+                upgradePanel.setDoneEnabled(true);
+                break;
             default:
-                upgradePanel.setState(UpgradesPanel.States.Inactive);
-                upgradePanel.init();
+                upgradePanel.setInactive();
             }
         }
         log.debug("Final localStep is " + localStep);

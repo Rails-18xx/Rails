@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.SwingConstants;
 
@@ -46,11 +47,16 @@ public class RailsIconButton extends JButton {
      */
     private RailsIcon railsIcon = null;
     
-    public RailsIconButton(RailsIcon railsIcon) {
+    public RailsIconButton(RailsIcon railsIcon, Action action) {
         super();
+        setAction(action);
         setRailsIcon(railsIcon);
         this.setMargin(new Insets(2,2,2,2));
         railsIconButtons.add(this);
+    }
+
+    public RailsIconButton(RailsIcon railsIcon) {
+        this(railsIcon, null);
     }
 
     public void setRailsIcon(RailsIcon railsIcon) {

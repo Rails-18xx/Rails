@@ -38,7 +38,6 @@ implements ActionListener, KeyListener, RevenueListener {
     private static final String SPLIT_CMD = "Split";
     public static final String PAYOUT_CMD = "Payout";
     public static final String SET_REVENUE_CMD = "SetRevenue";
-    private static final String LAY_TILE_CMD = "LayTile";
     private static final String DONE_CMD = "Done";
     private static final String UNDO_CMD = "Undo";
     private static final String REDO_CMD = "Redo";
@@ -296,9 +295,7 @@ implements ActionListener, KeyListener, RevenueListener {
         buttonOC.setEnabled(false);
         buttonOC.setVisible(false);
 
-        button1 = new ActionButton(RailsIcon.LAY_TILE);
-        button1.setActionCommand(LAY_TILE_CMD);
-        button1.setMnemonic(KeyEvent.VK_T);
+        button1 = new ActionButton(null);
         button1.addActionListener(this);
         button1.setEnabled(false);
 
