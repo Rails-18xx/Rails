@@ -64,7 +64,7 @@ public class PublicCompany extends Company implements PublicCompanyI {
      * 2. Any station (city) numbers are equal for the two home stations.
      * There is no provision yet for two home hexes having different tile station numbers. */
     protected String homeHexNames = null;
-    protected List<MapHex> homeHexes = null;
+    protected List<MapHex> homeHexes = new ArrayList<MapHex>();
     protected int homeCityNumber = 1;
     protected boolean homeAllCitiesBlocked = false;
     protected boolean homeMapDisplay = true;

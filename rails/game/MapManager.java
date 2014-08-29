@@ -281,7 +281,8 @@ public class MapManager implements ConfigurableComponentI {
 
         List<MapHex> homeHexes;
         for (PublicCompanyI company : gameManager.getCompanyManager().getAllPublicCompanies()) {
-            if ((homeHexes = company.getHomeHexes()) != null) {
+            if ((homeHexes = company.getHomeHexes()) != null) { // Check is now redundant due 
+                                                                //to homeHexes being initialised as empty array
                 for (MapHex homeHex : homeHexes) {
                     homeHex.addHome(company, company.getHomeCityNumber());
                 }

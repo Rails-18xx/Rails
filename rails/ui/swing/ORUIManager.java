@@ -960,7 +960,7 @@ public class ORUIManager implements DialogOwner {
          * It's already taken care for, that a choice-between-one is handled automatically.
          * [EV, jun2012]
          */
-        if ((stopsToQuery.size() == 2) && (gameUIManager.getGameManager().getGameName().equals("1835"))) {
+        if (stopsToQuery.size() == 2) {
             Collections.sort(stopsToQuery, new Comparator<Stop>() {
                 public int compare (Stop s1, Stop s2) {
                     List<TokenI> tokens;
