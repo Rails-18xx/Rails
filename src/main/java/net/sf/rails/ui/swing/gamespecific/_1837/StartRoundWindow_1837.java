@@ -87,7 +87,7 @@ public class StartRoundWindow_1837 extends StartRoundWindow {
         }
         super.updateStatus(myTurn);
     }
-    
+
     public void setCurrentDialog (JDialog dialog, PossibleAction action) {
         if (currentDialog != null) {
             currentDialog.dispose();
