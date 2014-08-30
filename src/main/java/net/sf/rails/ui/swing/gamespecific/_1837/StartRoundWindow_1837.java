@@ -61,7 +61,7 @@ public class StartRoundWindow_1837 extends StartRoundWindow {
         RadioButtonDialog dialog = new RadioButtonDialog(
                 COMPANY_START_HEX_DIALOG, this, this,
                 LocalText.getText("PleaseSelect"),       
-                LocalText.getText("StartingHex", action.getPlayerName(), action.getCompanyName()),
+                LocalText.getText("StartingHomeHexS5", action.getPlayerName(), action.getCompanyName()),
                 hexes, 0);
         setCurrentDialog (dialog, action);
         return true;

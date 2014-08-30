@@ -327,15 +327,15 @@ public class StartRound_1837_Coal extends StartRound {
                     player.getId(),
                     primary.getName(),
                     Bank.format(this, price) ));
-            PublicCertificate certificate =
+            PublicCertificate secondary =
                     (PublicCertificate) item.getSecondary();
             playerManager.setCurrentPlayer(player);
             pendingAction.set(
                     new SetHomeHexLocation(item,
-                            certificate.getCompany(), player, price)
+                            secondary.getCompany(), player, price)
                     );
             pendingPlayer.set(player);
-            pendingCertificate.set(certificate);
+            pendingCertificate.set(secondary);
             //            item.setSold(player, price);
         }
         else {
@@ -365,17 +365,7 @@ public class StartRound_1837_Coal extends StartRound {
             if (startItemAction instanceof BuyStartItem) {
 
                 BuyStartItem buyAction = (BuyStartItem) startItemAction;
-                if (buyAction.hasSharePriceToSet()
-                        && buyAction.getAssociatedSharePrice() == 0) {
-                    // We still need a share price for this item
-                    startItemAction.getStartItem().setStatus(
-                            StartItem.NEEDS_SHARE_PRICE);
-                    // We must set the priority player, though
-                    playerManager.setPriorityPlayerToNext();
-                    result = true;
-                } else {
                     result = buy(playerName, buyAction);
-                }
             } else if  (startItemAction instanceof SetHomeHexLocation) {
 
                 SetHomeHexLocation castAction =
@@ -389,9 +379,9 @@ public class StartRound_1837_Coal extends StartRound {
                 PublicCompany_1837 company =
                         (PublicCompany_1837) castAction.getCompany();
                 company.setHomeHex(castAction.getSelectedHomeHex());
-                ReportBuffer.add(this, LocalText.getText("SetsHomeHex",company.getId(),castAction.getSelectedHomeHex() ));
+                ReportBuffer.add(this, LocalText.getText("SetsHomeHexS5",company.getId(),castAction.getSelectedHomeHex().getId() ));
                 company.start();
-                company.setFloated();
+                floatCompany(company);
 
 
                 pendingAction.set(null);
