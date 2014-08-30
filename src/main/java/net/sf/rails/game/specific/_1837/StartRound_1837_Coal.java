@@ -295,11 +295,9 @@ public class StartRound_1837_Coal extends StartRound {
 
         if (item.getId().equals("KB")) {
             return true;
+
         }
 
-        if (startPacket.areAllSold()) {
-            finishRound();
-        }
         return true;
 
     }
@@ -397,6 +395,14 @@ public class StartRound_1837_Coal extends StartRound {
 
 
                 pendingAction.set(null);
+
+                if ((startPacket.areAllSold()) && (pendingAction.value()== null)){
+                    /*
+                     * If the complete start packet has been sold, start a Stock round,
+                     */
+                    possibleActions.clear();
+                    finishRound();
+                }
                 result = true;
             } else {
 
@@ -404,15 +410,7 @@ public class StartRound_1837_Coal extends StartRound {
                         action.toString()));
             }
 
-            startPacketChecks();
 
-            if ((startPacket.areAllSold()) && (pendingAction.value()== null)){
-                /*
-                 * If the complete start packet has been sold, start a Stock round,
-                 */
-                possibleActions.clear();
-                finishRound();
-            }
         }
 
             return result;

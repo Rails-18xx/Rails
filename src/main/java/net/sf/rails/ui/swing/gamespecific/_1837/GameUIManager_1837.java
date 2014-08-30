@@ -27,7 +27,6 @@ public class GameUIManager_1837 extends GameUIManager {
     public static final String MERGE_INTO_KUK_DIALOG = "MergeIntoKuK";
     public static final String START_HUNGARY_DIALOG = "StartHungary";
     public static final String MERGE_INTO_HUNGARY_DIALOG = "MergeIntoHungary";
-    public static final String START_S5_DIALOG = "StartS5";
     public static final String SELECT_CONVERTING_MINOR = "SelectConvertingMinor";
     public static final String SELECT_MERGING_MAJOR = "SelectMergingMajor";
 
@@ -139,55 +138,6 @@ public class GameUIManager_1837 extends GameUIManager {
                     action.setChosenMinor(minor);
                 }
 
-            }
-            else if (START_S5_DIALOG.equals(key)
-                    && currentDialogAction instanceof SetHomeHexLocation) {
-
-                // A start price has been selected (or not) for a stating major company.
-                RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
-                SetHomeHexLocation action = (SetHomeHexLocation) currentDialogAction;
-
-                int index = dialog.getSelectedOption();
-                if (index < 0) {
-                    currentDialogAction = null;
-                    return;
-                }
-
- /*               MapManager map = getRoot().getMapManager();
-                for (MapHex hex : map.getHexes()) {
-                    if ((hex.getId().equals("L9") ) || (hex.getId().equals("L3"))) {
-                        cities.add(hex);
-                    }
-
-                }
-                String[] options = new String[cities.size()];
-                for (int i = 0; i < options.length; i++) {
-                    options[i] = cities.get(i).toString();
-                }
-                dialog = new RadioButtonDialog (SELECT_HOME_STATION_DIALOG,
-                        this,
-                        statusWindow,
-                        LocalText.getText("PleaseSelect"),
-                        LocalText.getText(
-                                "SelectHomeStation",
-                                action.getCompanyName()),
-                                options, -1);
-                setCurrentDialog(dialog, action);
-                statusWindow.disableButtons();
-                return;
-
-            } else if (SELECT_HOME_STATION_DIALOG.equals(key)) {
-
-                RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
-                SetHomeHexLocation action = (SetHomeHexLocation) currentDialogAction;
-
-
-                int index = dialog.getSelectedOption();
-                if (index < 0) {
-                    currentDialogAction = null;
-                    return;
-                }
-                action.setHomeHex(cities.get(index));*/
             } else {
                 // Current dialog not found yet, try the superclass.
                 super.dialogActionPerformed(false);

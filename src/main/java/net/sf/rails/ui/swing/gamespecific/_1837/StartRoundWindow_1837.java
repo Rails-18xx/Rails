@@ -19,11 +19,7 @@ public class StartRoundWindow_1837 extends StartRoundWindow {
     protected JDialog currentDialog = null;
     protected PossibleAction currentDialogAction = null;
 
-
-    
     private static final long serialVersionUID = 1L;
-
-
 
     public StartRoundWindow_1837() {
        
@@ -60,7 +56,7 @@ public class StartRoundWindow_1837 extends StartRoundWindow {
     
     
 
-    //-- Start slot
+    //-- Start Hex for S5
     private boolean requestHomeHex(SetHomeHexLocation action) {
         RadioButtonDialog dialog = new RadioButtonDialog(
                 COMPANY_START_HEX_DIALOG, this, this,
@@ -79,6 +75,7 @@ public class StartRoundWindow_1837 extends StartRoundWindow {
         int index = dialog.getSelectedOption();
         if (index >= 0) {
             action.setHomeHex(hexes[index]);  
+            process(action);
         } 
     }
     
@@ -91,6 +88,7 @@ public class StartRoundWindow_1837 extends StartRoundWindow {
         }
         super.updateStatus(myTurn);
     }
+
     public void setCurrentDialog (JDialog dialog, PossibleAction action) {
         if (currentDialog != null) {
             currentDialog.dispose();
