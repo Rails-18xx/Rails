@@ -75,6 +75,7 @@ public class StartRoundWindow_1837 extends StartRoundWindow {
         int index = dialog.getSelectedOption();
         if (index >= 0) {
             action.setHomeHex(hexes[index]);  
+            process(action);
         } 
     }
     
