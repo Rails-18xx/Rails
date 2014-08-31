@@ -38,7 +38,7 @@ public class MergeCompanies extends PossibleAction {
      * Common constructor.
      */
     public MergeCompanies(PublicCompany mergingCompany,
-            List<PublicCompany> targetCompanies) {
+            List<PublicCompany> targetCompanies, boolean forced) {
         this.mergingCompany = mergingCompany;
         this.mergingCompanyName = mergingCompany.getId();
         this.targetCompanies = targetCompanies;
@@ -63,8 +63,8 @@ public class MergeCompanies extends PossibleAction {
     }
     
     public MergeCompanies(PublicCompany mergingCompany,
-            PublicCompany targetCompany) {
-        this (mergingCompany, Arrays.asList(new PublicCompany[] {targetCompany}));
+            PublicCompany targetCompany, boolean forced) {
+        this (mergingCompany, Arrays.asList(new PublicCompany[] {targetCompany}), forced);
     }
 
     /** Required for deserialization */

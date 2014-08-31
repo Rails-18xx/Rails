@@ -1,8 +1,11 @@
 package net.sf.rails.game.specific._1837;
 
+import net.sf.rails.game.Bank;
+import net.sf.rails.game.PublicCertificate;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsItem;
 import net.sf.rails.game.Train;
+import net.sf.rails.game.state.Owner;
 
 public class PublicCompany_1837 extends PublicCompany {
 
@@ -40,5 +43,22 @@ public class PublicCompany_1837 extends PublicCompany {
            ((StockMarket_1837) getRoot().getStockMarket()).payOut(this, b);
         }
 
+    }
+    /* (non-Javadoc)
+     * @see rails.game.PublicCompany#isSoldOut()
+     */
+    @Override
+    public boolean isSoldOut() {
+        Owner owner;
+        String name;
+
+        for (PublicCertificate cert : certificates.view()) {
+                owner = cert.getOwner();
+                name = cert.getName();
+                if ((owner instanceof Bank || owner == cert.getCompany()) && (!name.equalsIgnoreCase("unavailable"))) {
+                    return false;
+                }
+            }
+            return true;
     }
 }

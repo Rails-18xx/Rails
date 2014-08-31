@@ -12,11 +12,14 @@ import java.util.Map;
 
 
 
+
+
 import rails.game.action.DiscardTrain;
 import rails.game.action.MergeCompanies;
 import rails.game.action.PossibleAction;
 import rails.game.action.StartCompany;
 import net.sf.rails.common.DisplayBuffer;
+import net.sf.rails.common.GameOption;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.Bank;
@@ -34,6 +37,7 @@ import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.IntegerState;
 import net.sf.rails.game.state.MoneyOwner;
+import net.sf.rails.game.state.Owner;
 
 /**
  * @author martin
@@ -69,7 +73,7 @@ public class StockRound_1837 extends StockRound {
 
     }
 
-    
+
     @Override
     public boolean setPossibleActions() {
         if (discardingTrains.value()) {
@@ -91,14 +95,14 @@ public class StockRound_1837 extends StockRound {
 
         for (PublicCompany comp : comps) {
             type = comp.getType().getId();
-                if ((type.equals("Coal"))
-                       && (comp.getPresident() == currentPlayer)) {
+            if ((type.equals("Coal"))
+                    && (comp.getPresident() == currentPlayer)) {
                 for (PublicCompany majorComp : comps) {
                     if ((comp.isRelatedToNational(majorComp.getId())) 
                             && (majorComp.hasStarted()) 
                             && (majorComp.getType().equals("Major"))) {
-                    minors.add(comp);
-                    targetRelation.put(comp,majorComp);
+                        minors.add(comp);
+                        targetRelation.put(comp,majorComp);
                     }
                 }
             }
@@ -106,18 +110,18 @@ public class StockRound_1837 extends StockRound {
         if (minors.isEmpty())  return;
 
         for (PublicCompany minor : minors) {
-            possibleActions.add(new MergeCompanies(minor, targetRelation.get(minor)));
+            possibleActions.add(new MergeCompanies(minor, targetRelation.get(minor), false));
         }
     }
 
- 
-    
+
+
     protected boolean setTrainDiscardActions() {
 
         PublicCompany discardingCompany =
                 discardingCompanies[discardingCompanyIndex.value()];
         log.debug("Company " + discardingCompany.getId()
-                  + " to discard a train");
+                + " to discard a train");
         possibleActions.add(new DiscardTrain(discardingCompany,
                 discardingCompany.getPortfolioModel().getUniqueTrains()));
         // We handle one train at at time.
@@ -125,7 +129,7 @@ public class StockRound_1837 extends StockRound {
         return true;
     }
 
- 
+
     @Override
     protected boolean processGameSpecificAction(PossibleAction action) {
 
@@ -144,7 +148,7 @@ public class StockRound_1837 extends StockRound {
 
         return result;
     }
-    
+
     /**
      * Merge a minor into an already started company. <p>Also covers the
      * actions of the Final Minor Exchange Round, in which minors can also be
@@ -163,7 +167,7 @@ public class StockRound_1837 extends StockRound {
 
         // TODO Validation to be added?
 
-        
+
 
         if (major != null) {
             cert = major.getPortfolioModel().findCertificate(major, false);
@@ -190,63 +194,36 @@ public class StockRound_1837 extends StockRound {
             major.transferAssetsFrom(minor);
         }
 
-        MapHex homeHex = minor.getHomeHexes().get(0);
-        Stop homeStop  = homeHex.getStopOfBaseToken(minor);
+
         minor.setClosed();
 
-        if (major != null && action.getReplaceToken()) {
-            if (homeHex.layBaseToken(major, homeStop)) {
-                major.layBaseToken(homeHex, 0);
-            }   
-        }
 
-        if (major != null) {
-            if (major.getNumberOfTrains() > major.getCurrentTrainLimit()
+
+        if (major.getNumberOfTrains() > major.getCurrentTrainLimit()
                 && !compWithExcessTrains.contains(major)) {
-                compWithExcessTrains.add(major);
-            }
+            compWithExcessTrains.add(major);
         }
 
-        if (cert != null) {
-            ReportBuffer.add(this, "");
-            ReportBuffer.add(this, LocalText.getText("MERGE_MINOR_LOG",
-                    currentPlayer.getId(),
-                    minor.getId(),
-                    major.getId(),
-                    Bank.format(this, minorCash),
-                    minorTrains ));
-            // FIXME: CHeck if this still works correctly
-            ReportBuffer.add(this, LocalText.getText("GetShareForMinor",
-                    currentPlayer.getId(),
-                    cert.getShare(),
-                    major.getId(),
-                    cert.getOwner().getId(),
-                    minor.getId() ));
-            if (major != null) {
-                if (action.getReplaceToken()) {
-                    ReportBuffer.add(this, LocalText.getText("ExchangesBaseToken",
-                            major.getId(),
-                            minor.getId(),
-                            homeHex.getId()));
-                } else {
-                    ReportBuffer.add(this, LocalText.getText("NoBaseTokenExchange",
-                            major.getId(),
-                            minor.getId(),
-                            homeHex.getId()));
-                }
-            }
-            cert.moveTo(currentPlayer);
-            ReportBuffer.add(this, LocalText.getText("MinorCloses", minor.getId()));
-            checkFlotation(major);
 
-        } else {
-            ReportBuffer.add(this, "");
-            ReportBuffer.add(this, LocalText.getText("CLOSE_MINOR_LOG",
-                    currentPlayer.getId(),
-                    minor.getId(),
-                    Bank.format(this, minorCash),
-                    minorTrains ));
-        }
+
+        ReportBuffer.add(this, "");
+        ReportBuffer.add(this, LocalText.getText("MERGE_MINOR_LOG",
+                currentPlayer.getId(),
+                minor.getId(),
+                major.getId(),
+                Bank.format(this, minorCash),
+                minorTrains ));
+        // FIXME: CHeck if this still works correctly
+        ReportBuffer.add(this, LocalText.getText("GetShareForMinor",
+                currentPlayer.getId(),
+                cert.getShare(),
+                major.getId(),
+                cert.getOwner().getId(),
+                minor.getId() ));
+        cert.moveTo(currentPlayer);
+        ReportBuffer.add(this, LocalText.getText("MinorCloses", minor.getId()));
+        checkFlotation(major);
+
         hasActed.set(true);
 
         if (!(this instanceof FinalCoalExchangeRound)) {
@@ -307,7 +284,7 @@ public class StockRound_1837 extends StockRound {
         }
 
         /* End of validation, start of execution */
-        
+
         // FIXME: if (action.isForced()) changeStack.linkToPreviousMoveSet();
         pool.addTrain(train);
         ReportBuffer.add(this, LocalText.getText("CompanyDiscardsTrain",
@@ -340,21 +317,24 @@ public class StockRound_1837 extends StockRound {
             setCurrentPlayer(discardingCompany.getPresident());
         }
     }
-    
+
     @Override
     protected void finishRound() {
         ReportBuffer.add(this, " ");
         ReportBuffer.add(this, LocalText.getText("END_SR",
                 String.valueOf(getStockRoundNumber())));
-        
-        
+
+        // Check if a soldout Company has still Coal companies running independently
+        // if thats the case the Coal companies need to be merged.
+        for (PublicCompany company : gameManager.getCompaniesInRunningOrder()) {
+            if (company.hasStockPrice() && company.isSoldOut()) {
+                forcedMergeCompanyRoutine(company);
+            }
+        }
+
         if (discardingTrains.value()) {
 
-            for (PublicCompany company : gameManager.getCompaniesInRunningOrder()) {
-                if (company.hasStockPrice() && company.isSoldOut()) {
-                    forcedMergeCompanyRoutine(company);
-                }
-            }
+
             super.finishRound();
 
         } else if (!compWithExcessTrains.isEmpty()) {
@@ -377,27 +357,33 @@ public class StockRound_1837 extends StockRound {
             setCurrentPlayer(discardingCompany.getPresident());
 
         } else {
-            for (PublicCompany company : gameManager.getCompaniesInRunningOrder()) {
-                if (company.hasStockPrice() && company.isSoldOut()) {
-                    forcedMergeCompanyRoutine(company);
-                }
-            }
+
             super.finishRound();
-            
+
         }
     }
-    
-    private void forcedMergeCompanyRoutine(PublicCompany company) {
-        // TODO Auto-generated method stub
-        
-    }
 
-    /* (non-Javadoc)
-     * @see net.sf.rails.game.StockRound#startCompany(java.lang.String, rails.game.action.StartCompany)
-     */
-    @Override
-    public boolean startCompany(String playerName, StartCompany action) {
-    
-        return super.startCompany(playerName, action);
+    private void forcedMergeCompanyRoutine(PublicCompany company) {
+        List<PublicCompany> comps =
+                companyManager.getAllPublicCompanies();
+        List<PublicCompany> minors = new ArrayList<PublicCompany>();
+        PublicCompany targetCompany = company;
+        String type;
+
+        for (PublicCompany comp : comps) {
+            type = comp.getType().getId();
+            if (type.equals("Coal")) {
+                if (comp.isClosed()) continue;
+                if (comp.getRelatedNationalCompany().equals(company.getId())) {
+                    minors.add(comp);
+
+                }
+            }
+        }
+        for (PublicCompany minor : minors) {
+            possibleActions.add(new MergeCompanies(minor, targetCompany, true));
+        }
+
+
     }
 }

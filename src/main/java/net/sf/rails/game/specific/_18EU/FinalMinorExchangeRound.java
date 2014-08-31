@@ -97,7 +97,7 @@ public final class FinalMinorExchangeRound extends StockRound_18EU {
         targetCompanies.add(null);
 
         for (PublicCompany minor : minors) {
-            possibleActions.add(new MergeCompanies(minor, targetCompanies));
+            possibleActions.add(new MergeCompanies(minor, targetCompanies, false));
         }
 
         return true;
