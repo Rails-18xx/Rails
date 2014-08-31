@@ -4,7 +4,13 @@
 package net.sf.rails.game.specific._1837;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+
+
+
 
 import rails.game.action.DiscardTrain;
 import rails.game.action.MergeCompanies;
@@ -79,24 +85,28 @@ public class StockRound_1837 extends StockRound {
 
         List<PublicCompany> comps =
                 companyManager.getAllPublicCompanies();
+        Map<PublicCompany,PublicCompany>targetRelation = new HashMap<PublicCompany, PublicCompany>();
         List<PublicCompany> minors = new ArrayList<PublicCompany>();
-        List<PublicCompany> targetCompanies = new ArrayList<PublicCompany>();
         String type;
 
         for (PublicCompany comp : comps) {
             type = comp.getType().getId();
-            if (type.equals("Major") && comp.hasStarted()
-                && !comp.hasOperated()) {
-                targetCompanies.add(comp);
-            } else if (type.equals("Coal")
-                       && comp.getPresident() == currentPlayer) {
-                minors.add(comp);
+                if ((type.equals("Coal"))
+                       && (comp.getPresident() == currentPlayer)) {
+                for (PublicCompany majorComp : comps) {
+                    if ((comp.isRelatedToNational(majorComp.getId())) 
+                            && (majorComp.hasStarted()) 
+                            && (majorComp.getType().equals("Major"))) {
+                    minors.add(comp);
+                    targetRelation.put(comp,majorComp);
+                    }
+                }
             }
         }
-        if (minors.isEmpty() || targetCompanies.isEmpty()) return;
+        if (minors.isEmpty())  return;
 
         for (PublicCompany minor : minors) {
-            possibleActions.add(new MergeCompanies(minor, targetCompanies));
+            possibleActions.add(new MergeCompanies(minor, targetRelation.get(minor)));
         }
     }
 
@@ -333,9 +343,18 @@ public class StockRound_1837 extends StockRound {
     
     @Override
     protected void finishRound() {
-
+        ReportBuffer.add(this, " ");
+        ReportBuffer.add(this, LocalText.getText("END_SR",
+                String.valueOf(getStockRoundNumber())));
+        
+        
         if (discardingTrains.value()) {
 
+            for (PublicCompany company : gameManager.getCompaniesInRunningOrder()) {
+                if (company.hasStockPrice() && company.isSoldOut()) {
+                    forcedMergeCompanyRoutine(company);
+                }
+            }
             super.finishRound();
 
         } else if (!compWithExcessTrains.isEmpty()) {
@@ -358,11 +377,21 @@ public class StockRound_1837 extends StockRound {
             setCurrentPlayer(discardingCompany.getPresident());
 
         } else {
-
+            for (PublicCompany company : gameManager.getCompaniesInRunningOrder()) {
+                if (company.hasStockPrice() && company.isSoldOut()) {
+                    forcedMergeCompanyRoutine(company);
+                }
+            }
             super.finishRound();
+            
         }
     }
     
+    private void forcedMergeCompanyRoutine(PublicCompany company) {
+        // TODO Auto-generated method stub
+        
+    }
+
     /* (non-Javadoc)
      * @see net.sf.rails.game.StockRound#startCompany(java.lang.String, rails.game.action.StartCompany)
      */
