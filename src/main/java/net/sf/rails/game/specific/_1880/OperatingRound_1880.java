@@ -216,7 +216,8 @@ public class OperatingRound_1880 extends OperatingRound {
     }
 
     private boolean trainTypeCanAffectOR(TrainType type) {
-        if ((type.getName().equals("2R") == false) && (type.getName().equals("10") == false) && (type.getName().equals("8E"))) {
+        if ((type.getName().equals("2R") == false) && (type.getName().equals("10") == false)
+                && (type.getName().equals("8E") == false)) {
             return true;
                 }
         return false;
