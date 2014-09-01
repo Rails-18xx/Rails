@@ -8,11 +8,8 @@ import javax.swing.JOptionPane;
 import rails.game.action.MergeCompanies;
 import rails.game.specific._1837.FoldIntoHungary;
 import rails.game.specific._1837.FoldIntoKuK;
-import rails.game.specific._1837.SetHomeHexLocation;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.Company;
-import net.sf.rails.game.MapHex;
-import net.sf.rails.game.MapManager;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.specific._18EU.StartCompany_18EU;
 import net.sf.rails.ui.swing.GameUIManager;
@@ -50,7 +47,6 @@ public class GameUIManager_1837 extends GameUIManager {
 
         String key = "";
         if (currentDialog instanceof NonModalDialog) key = ((NonModalDialog)currentDialog).getKey();
-        List<MapHex> cities = new ArrayList<MapHex>();
 
         // Check for the dialogs that are postprocessed in this class.
         if (START_HUNGARY_DIALOG.equals(key)) {

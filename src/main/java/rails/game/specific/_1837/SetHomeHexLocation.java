@@ -13,12 +13,10 @@ import net.sf.rails.game.MapManager;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.StartItem;
-import net.sf.rails.game.Stop;
 import net.sf.rails.util.RailsObjects;
 import net.sf.rails.util.Util;
 import rails.game.action.PossibleAction;
 import rails.game.action.StartItemAction;
-import rails.game.specific._1880.SetupNewPublicDetails_1880;
 
 /**
  * @author martin
