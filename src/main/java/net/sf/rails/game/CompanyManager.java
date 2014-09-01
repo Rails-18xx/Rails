@@ -47,7 +47,7 @@ public class CompanyManager extends RailsManager implements Configurable {
     private List<CompanyType> lCompanyTypes = new ArrayList<CompanyType>();
 
     /** A list of all start packets (usually one) */
-    private List<StartPacket> startPackets = new ArrayList<StartPacket>();
+    protected List<StartPacket> startPackets = new ArrayList<StartPacket>();
     /** A map of all start packets, keyed by name. Default name is "Initial" */
     private Map<String, StartPacket> startPacketMap
         = new HashMap<String, StartPacket>();

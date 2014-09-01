@@ -160,6 +160,10 @@ public class StartPacket extends RailsAbstractItem {
     public StartItem getItem(int index) {
         return items.get(index);
     }
+    
+    public void addItem(StartItem startItem) {
+        items.add(startItem);        
+    }
 
     /**
      * Get the first start item. This one often gets a special treatment (price

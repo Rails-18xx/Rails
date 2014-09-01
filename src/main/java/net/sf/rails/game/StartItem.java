@@ -36,6 +36,9 @@ public class StartItem extends RailsAbstractItem {
     protected CountingMoneyModel[] bids;
     protected final CountingMoneyModel minimumBid = CountingMoneyModel.create(this, "minimumBid", false);
 
+    // TODO: Does this need to be "States"?
+    protected boolean[] active;    // For each player, are they active for this item?
+
     // Status info for the UI ==> MOVED TO BuyOrBidStartItem
     // TODO REDUNDANT??
     /**
@@ -149,11 +152,12 @@ public class StartItem extends RailsAbstractItem {
         this.players = getRoot().getPlayerManager().getPlayers();
         numberOfPlayers = players.size();
         bids = new CountingMoneyModel[numberOfPlayers];
+        active = new boolean[numberOfPlayers];
         for (int i = 0; i < numberOfPlayers; i++) {
             // TODO: Check if this is correct or that it should be initialized with zero
             bids[i] = CountingMoneyModel.create(this, "bidBy_" + players.get(i).getId(), false);
             bids[i].setSuppressZero(true);
-
+            active[i] = false;
         }
         // TODO Leave this for now, but it should be done
         // in the game-specific StartRound class
@@ -300,23 +304,16 @@ public class StartItem extends RailsAbstractItem {
      * @param bidder The bidding player.
      * special amounts are 0 for 18EU as buy price, -1 as standard pass, -2 and below as pass in 18EU 
      */
-    public void setBid(int amount, Player bidder) {
-        int index = bidder.getIndex();
-        bids[index].set(amount);
-
-        if (amount > 0) {
+    public void setBid(int amount, Player bidder) {        
+        if (amount == -1) {
+            setPass(bidder);
+        } else {
+            int index = bidder.getIndex();
+            bids[index].set(amount);
+            bids[index].setSuppressZero(false);
+            active[index] = true;
             lastBidderIndex.set(index);
             minimumBid.set(amount + 5);
-        } else if (amount == 0) {
-            // Used in 18EU to force making the "bid"
-            // (in fact: buy price) visible
-            // FIXME: is this still required?
-            // bids[index].update();
-        } else if (amount == -1) {
-            // Passed (standard type)
-            bids[index].set(0);
-            // FIXME: is this still required?
-            // bids[index].update();
         }
     }
 
@@ -354,7 +351,7 @@ public class StartItem extends RailsAbstractItem {
     public int getBidders() {
         int bidders = 0;
         for (int i = 0; i < numberOfPlayers; i++) {
-            if (bids[i].value() > 0) bidders++;
+            if (active[i] == true) bidders++;
         }
         return bidders;
     }
@@ -373,6 +370,13 @@ public class StartItem extends RailsAbstractItem {
         }
     }
 
+    public void setPass(Player player) {
+        int index = player.getIndex();
+        active[index] = false;
+        bids[index].set(0);
+        bids[index].setSuppressZero(true);
+    }
+    
     /**
      * Get the minimum allowed next bid. TODO 5 should be configurable.
      *
@@ -393,8 +397,29 @@ public class StartItem extends RailsAbstractItem {
      * @return True if this player has done any bids.
      */
     public boolean hasBid(Player player) {
-        int index = player.getIndex();
-        return bids[index].value() > 0;
+        return active[player.getIndex()];
+    }
+    
+    /**
+     * Check if a player is active on this start item.
+     *
+     * @param playerName The name of the player.
+     * @return True if this player is active.
+     */
+    public boolean isActive(Player player) {
+        return active[player.getIndex()];
+    }
+
+    /**
+     * Set all players to active on this start item.  Used when 
+     * players who did not place a bid are still allowed to
+     * participate in an auction (e.g. 1862)
+     */
+    public void setAllActive() {
+        numberOfPlayers = players.size();
+        for (int i = 0; i < numberOfPlayers; i++) {
+            active[i] = true;
+        }
     }
 
     /**
@@ -422,7 +447,11 @@ public class StartItem extends RailsAbstractItem {
             // Unblock any bid money
             if (bids[i].value() > 0) {
                 players.get(i).unblockCash(bids[i].value());
-                if (index != i) bids[i].set(0);
+                if (index != i) {
+                    bids[i].set(0);
+                    bids[i].setSuppressZero(true);
+                }
+                active[i] = false;
             }
         }
         bids[index].set(buyPrice);
