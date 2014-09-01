@@ -2,7 +2,6 @@ package net.sf.rails.game.specific._1862;
 
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.RailsItem;
-import net.sf.rails.game.StartItem;
 import net.sf.rails.game.StartPacket;
 
 public class StartPacket_1862 extends StartPacket {

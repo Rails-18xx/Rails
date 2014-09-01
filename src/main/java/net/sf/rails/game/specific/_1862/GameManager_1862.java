@@ -16,28 +16,28 @@ public class GameManager_1862 extends GameManager {
         super(parent, id);
     }
 
-    @Override
-    protected void beginStartRound() {
-        StartPacket startPacket = ((CompanyManager_1862) (getRoot().getCompanyManager())).getStartPacket();
-        this.startPacket.set(startPacket);
+//    @Override
+//    protected void beginStartRound() {
+//        StartPacket startPacket = ((CompanyManager_1862) (getRoot().getCompanyManager())).getStartPacket();
+//        this.startPacket.set(startPacket);
+//        
+//        if (startPacket != null) {
+//            this.startPacket.set(startPacket);
+//            createStartRound(startPacket);
+//        } else {
+//            startStockRound();
+//        }
+//        
+//        createStartRound();
+//    }
         
-        if (startPacket != null) {
-            this.startPacket.set(startPacket);
-            createStartRound(startPacket);
-        } else {
-            startStockRound();
-        }
-        
-        createStartRound();
-    }
-    
-    protected void createStartRound() {
-        String parlamentRoundClassName = "net.sf.rails.game.specific._1862.StartRound_1862";  // TODO: Get from some better place?
-        StartRound startRound = createRound (StartRound.class, parlamentRoundClassName,    
-                "startRound_" + startRoundNumber.value());
-        startRoundNumber.add(1);
-        startRound.start();
-    }
+//    protected void createStartRound() {
+//        String parlamentRoundClassName = "net.sf.rails.game.specific._1862.StartRound_1862";  // TODO: Get from some better place?
+//        StartRound startRound = createRound (StartRound.class, parlamentRoundClassName,    
+//                "startRound_" + startRoundNumber.value());
+//        startRoundNumber.add(1);
+//        startRound.start();
+//    }
     
     @Override
     public void nextRound(Round round) {
