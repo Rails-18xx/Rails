@@ -402,7 +402,7 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
         closingPhase = i;
     }
 
-    protected void unblockHexes() {
+    public void unblockHexes() {
         if (blockedHexes != null) {
             for (MapHex hex : blockedHexes) {
                 hex.setBlockedForTileLays(false);
