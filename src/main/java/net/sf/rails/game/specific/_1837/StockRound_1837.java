@@ -303,8 +303,9 @@ public class StockRound_1837 extends StockRound {
         // Check if a soldout Company has still Coal companies running
         // independently
         // if thats the case the Coal companies need to be merged.
+        String Test=null;
         for (PublicCompany company : gameManager.getCompaniesInRunningOrder()) {
-            if (company.hasStockPrice() && company.isSoldOut()) {
+            if ((company.hasStockPrice()) && (company.isSoldOut())) {
                 forcedMergeCompanyRoutine(company);
             }
         }

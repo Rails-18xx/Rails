@@ -1,6 +1,7 @@
 package net.sf.rails.game.specific._1837;
 
 import net.sf.rails.game.Bank;
+import net.sf.rails.game.BankPortfolio;
 import net.sf.rails.game.PublicCertificate;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsItem;
@@ -55,7 +56,7 @@ public class PublicCompany_1837 extends PublicCompany {
         for (PublicCertificate cert : certificates.view()) {
                 owner = cert.getOwner();
                 name = cert.getName();
-                if ((owner instanceof Bank || owner == cert.getCompany()) && (!name.equalsIgnoreCase("unavailable"))) {
+                if ((owner instanceof BankPortfolio || owner == cert.getCompany()) && (!name.equalsIgnoreCase("unavailable"))) {
                     return false;
                 }
             }
