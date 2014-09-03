@@ -579,18 +579,15 @@ public class ORUIManager implements DialogOwner {
             return true;
         }
     
+        if (localStep == LocalSteps.RotateTile
+                && clickedHex == selectedHex) {
+            rotateTile(selectedHex);
+            return true;
+        }
+
         if (hexUpgrades.hasElements()) {
             triggerORPanelRepaint = true;
             
-            if (localStep == LocalSteps.RotateTile
-                    && clickedHex == selectedHex) {
-                selectedHex.rotateTile();
-                //directly inform sound framework of "rotate tile" local step
-                //as notification via "set local step" does not occur
-                SoundManager.notifyOfORLocalStep(localStep);
-                return true;
-            }
-
             if (selectedHex != null && clickedHex != selectedHex) {
                 selectedHex.removeTile();
                 map.selectHex(null);
@@ -611,16 +608,21 @@ public class ORUIManager implements DialogOwner {
         return triggerORPanelRepaint;
     }
 
-    public void cancelTileUpgrade() {
-        GUIHex selectedHex = mapPanel.getMap().getSelectedHex();
-        if (selectedHex != null) selectedHex.removeTile();
+    
+    public void skipUpgrade(MapUpgrade upgrade) {
+        if (upgrade != null) {
+            GUIHex selectedHex = mapPanel.getMap().getSelectedHex();
+            if (selectedHex != null) {
+                if (upgrade instanceof TileHexUpgrade) {
+                    selectedHex.removeTile();
+                }
+                if (upgrade instanceof TokenStopUpgrade) {
+                    selectedHex.removeToken();
+                }
+           }
+        }
         orWindow.process(new NullAction(NullAction.Mode.SKIP));
-    }
-
-    public void cancelTokenUpgrade() {
-        GUIHex selectedHex = mapPanel.getMap().getSelectedHex();
-        if (selectedHex != null) selectedHex.removeToken();
-        orWindow.process(new NullAction(NullAction.Mode.SKIP));
+        
     }
     
     public void upgradeSelected(MapUpgrade upgrade) {
@@ -631,20 +633,23 @@ public class ORUIManager implements DialogOwner {
             tokenSelected((TokenStopUpgrade)upgrade);
         }
     }
+    
+    public void upgradeSelectedAgain(MapUpgrade upgrade) {
+        if (upgrade instanceof TileHexUpgrade) {
+            GUIHex selectedHex = mapPanel.getMap().getSelectedHex();
+            rotateTile(selectedHex);
+        }
+    }
+
+    private void rotateTile(GUIHex hex) {
+        hex.rotateTile();
+        //directly inform sound framework of "rotate tile" local step
+        //as notification via "set local step" does not occur
+        SoundManager.notifyOfORLocalStep(localStep);
+    }
 
     private void tileSelected(TileHexUpgrade upgrade) {
-        Tile tile = upgrade.getUpgrade().getTargetTile();
         GUIHex hex = map.getSelectedHex();
-        
-        // if tile already selected, then it is identical as if the hex was clicked again
-        // this activates the rotation step
-        // FIXME: Check if this still works
-        if (localStep == LocalSteps.RotateTile && hex.getProvisionalTile() == tile) {
-            hexClicked(hex, hex);
-            upgradePanel.showUpgrades();
-            return;
-        }
-
         hex.dropTile(upgrade);
         setLocalStep(LocalSteps.RotateTile);
     }
@@ -1544,10 +1549,10 @@ public class ORUIManager implements DialogOwner {
             GUIHex selectedHex = map.getSelectedHex();
             MapUpgrade single = hexUpgrades.singleValidElement(selectedHex);
             if (single != null) {
-                upgradePanel.setUpgrades(hexUpgrades.getUpgrades(selectedHex));;
-                upgradePanel.showUpgrades();
-                upgradePanel.upgradeActivated(single);
+                upgradePanel.setSelect(hexUpgrades.getUpgrades(selectedHex));
+                upgradePanel.activateUpgrade(single);
                 if (single instanceof TileHexUpgrade) {
+                    selectedHex.dropTile((TileHexUpgrade)single);
                     localStep = LocalSteps.RotateTile;
                 } 
                 if (single instanceof TokenStopUpgrade) {
@@ -1578,16 +1583,13 @@ public class ORUIManager implements DialogOwner {
                 upgradePanel.setActive();
                 break;
             case SelectUpgrade:
-                upgradePanel.setUpgrades(hexUpgrades.getUpgrades(selectedHex));;
-                upgradePanel.showUpgrades();
-                upgradePanel.setDoneEnabled(false);
+                upgradePanel.setSelect(hexUpgrades.getUpgrades(selectedHex));
                 break;
             case RotateTile:
-                upgradePanel.showUpgrades();
-                upgradePanel.setDoneEnabled(true);
+                upgradePanel.setConfirm();
                 break;
             case ConfirmToken:
-                upgradePanel.setDoneEnabled(true);
+                upgradePanel.setConfirm();
                 break;
             default:
                 upgradePanel.setInactive();

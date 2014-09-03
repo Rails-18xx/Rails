@@ -61,8 +61,8 @@ public class UpgradesPanel extends Box {
     private final Border border = new EtchedBorder();
     
     // TODO: Replace this with an action based approach
-    private final RailsIconButton doneButton;
-    private final RailsIconButton cancelButton;
+    private final RailsIconButton confirmButton;
+    private final RailsIconButton skipButton;
     
     private Dimension preferredSize;
 
@@ -103,27 +103,29 @@ public class UpgradesPanel extends Box {
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setSize(getPreferredSize());
 
-        Action doneAction = new AbstractAction() {
+        Action confirmAction = new AbstractAction() {
             public void actionPerformed(ActionEvent arg0) {
-                doneActivated();
+                confirmUpgrade();
             }
         };
         
-        doneAction.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_D);
+        confirmAction.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_D);
 
-        Action cancelAction = new AbstractAction() {
+        Action skipAction = new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
-                cancelActivated();
+                skipUpgrade();
             }
         };
-        cancelAction.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_C);
+        skipAction.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_C);
 
-        doneButton = new RailsIconButton(RailsIcon.CONFIRM, doneAction);
-        cancelButton = new RailsIconButton(RailsIcon.SKIP, cancelAction);
-        
+        confirmButton = new RailsIconButton(RailsIcon.CONFIRM, confirmAction);
+        confirmButton.setEnabled(false);
+        skipButton = new RailsIconButton(RailsIcon.SKIP, skipAction);
+        skipButton.setEnabled(false);
+         
         if (omitButtons) {
-            doneButton.setVisible(false);
-            cancelButton.setVisible(false);
+            confirmButton.setVisible(false);
+            skipButton.setVisible(false);
         }
         
         setButtons();
@@ -156,14 +158,11 @@ public class UpgradesPanel extends Box {
     }
 
     public RailsIconButton[] getButtons() {
-        return new RailsIconButton[] { doneButton, cancelButton };
+        return new RailsIconButton[] { confirmButton, skipButton };
     }
     
-    public void setUpgrades(Set<MapUpgrade> upgrades) {
-        this.upgrades = upgrades;
-    }
     
-    public void showUpgrades() {
+    private void showUpgrades() {
         upgradePanel.removeAll();
         // reset to the number of elements
         GridLayout panelLayout = (GridLayout) upgradePanel.getLayout();
@@ -185,11 +184,6 @@ public class UpgradesPanel extends Box {
                 upgradePanel.add(label);
             }
         }
-
-        setButtons();
-
-        // repaint();
-        revalidate();
     }
     
     // FIXME: How to change the background of the selected token?
@@ -202,65 +196,80 @@ public class UpgradesPanel extends Box {
 //        }
 //    }
 
-    public void setDoneEnabled(boolean enabled) {
-        doneButton.setEnabled(enabled);
-    }
-
-    public void setCancelEnabled(boolean enabled) {
-        cancelButton.setEnabled(enabled);
-    }
-
     private void setButtons() {
         if (omitButtons) {
             // only set externally managed buttons to visible if at least
             // one of them is enabled
             boolean isVisible =
-                    doneButton.isEnabled() || cancelButton.isEnabled();
-            doneButton.setVisible(isVisible);
-            cancelButton.setVisible(isVisible);
+                    confirmButton.isEnabled() || skipButton.isEnabled();
+            confirmButton.setVisible(isVisible);
+            skipButton.setVisible(isVisible);
         } else {
-            upgradePanel.add(doneButton);
-            upgradePanel.add(cancelButton);
+            upgradePanel.add(confirmButton);
+            upgradePanel.add(skipButton);
+            revalidate();
         }
     }
 
     
     public void setInactive() {
         upgradePanel.removeAll();
-        setDoneEnabled(false);
-        setCancelEnabled(false);
+        confirmButton.setEnabled(false);
+        skipButton.setEnabled(false);
         setButtons();
     }
     
     public void setActive() {
+        activeUpgrade = null;
         upgradePanel.removeAll();
         upgrades = ImmutableSet.of();
-        activeUpgrade = null;
-        setDoneEnabled(false);
-        setCancelEnabled(true);
+        confirmButton.setEnabled(false);
+        skipButton.setEnabled(true);
         setButtons();
     }
     
-    private void doneActivated() {
+    public void activateUpgrade(MapUpgrade upgrade) {
+        activeUpgrade = upgrade;
+    }
+    
+    public void setSelect(Set<MapUpgrade> upgrades) {
+        this.upgrades = upgrades;
+        activeUpgrade = null;
+        showUpgrades();
+        confirmButton.setEnabled(false);
+        skipButton.setEnabled(true);
+        setButtons();
+    }
+
+    public void setConfirm() {
+        if (activeUpgrade instanceof TileHexUpgrade) {
+            showUpgrades(); // show rotated tiles in panel
+        }
+        confirmButton.setEnabled(true);
+        skipButton.setEnabled(true);
+        setButtons();
+    }
+    
+    private void confirmUpgrade() {
         if (activeUpgrade instanceof TileHexUpgrade) {
             orUIManager.layTile();
         } else if (activeUpgrade instanceof TokenStopUpgrade) {
             orUIManager.layToken((TokenStopUpgrade)activeUpgrade);
         }
     }
-    private void cancelActivated() {
-        if (activeUpgrade instanceof TileHexUpgrade) {
-            orUIManager.cancelTileUpgrade();;
-        } else if (activeUpgrade instanceof TokenStopUpgrade) {
-            orUIManager.cancelTokenUpgrade();
-        }
+
+    private void skipUpgrade() {
+        orUIManager.skipUpgrade(activeUpgrade);
     }
     
     public void upgradeActivated(MapUpgrade upgrade) {
-        activeUpgrade = upgrade;
-        orUIManager.upgradeSelected(upgrade);
+        if (activeUpgrade == upgrade) {
+            orUIManager.upgradeSelectedAgain(upgrade);
+        } else {
+            activeUpgrade = upgrade;
+            orUIManager.upgradeSelected(upgrade);
+        }
     }
-    
 
     private UpgradeLabel createTileLabel(TileHexUpgrade upgrade) {   
         UpgradeLabel label;

@@ -730,7 +730,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         
         // TODO: SetPossibleAction can contain state changes (like initTurn)
         // Remove that and move closing the ChangeStack after the processing of the action
-        if (!(action instanceof GameAction) && !(startGameAction)) {
+        if (result && !(action instanceof GameAction) && !(startGameAction)) {
             changeStack.close(action);
         }
         

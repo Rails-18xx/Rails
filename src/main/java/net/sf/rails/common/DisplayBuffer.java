@@ -82,7 +82,7 @@ public class DisplayBuffer extends RailsModel {
      * Shortcut to add a message to DisplayBuffer
      */
     public static void add(RailsItem item, String message) {
-        item.getRoot().getReportManager().getDisplayBuffer().add(message, false);
+        item.getRoot().getReportManager().getDisplayBuffer().add(message, true);
     }
     
     /**
