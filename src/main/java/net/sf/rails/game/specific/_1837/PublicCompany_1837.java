@@ -56,7 +56,7 @@ public class PublicCompany_1837 extends PublicCompany {
         for (PublicCertificate cert : certificates.view()) {
                 owner = cert.getOwner();
                 name = cert.getName();
-                if ((owner instanceof BankPortfolio || owner == cert.getCompany()) && (!name.equalsIgnoreCase("unavailable"))) {
+                if ((owner instanceof BankPortfolio || owner == cert.getCompany()) && (!owner.getId().equalsIgnoreCase("unavailable"))) {
                     return false;
                 }
             }
