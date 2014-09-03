@@ -16,6 +16,7 @@ import net.sf.rails.game.NationalFormationRound;
 import net.sf.rails.game.OperatingRound;
 import net.sf.rails.game.Phase;
 import net.sf.rails.game.Player;
+import net.sf.rails.game.PrivateCompany;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.special.ExchangeForShare;
 import net.sf.rails.game.special.SpecialProperty;
@@ -59,6 +60,11 @@ public class OperatingRound_1837 extends OperatingRound {
     @Override
     protected void newPhaseChecks() {
         Phase phase = getCurrentPhase();
+        if (phase.getId().equals(„3“)) {
+          for(PrivateCompany comp:gameManager.getAllPrivateCompanies())  {
+              comp.unblockHexes();
+          }
+        } 
         if (phase.getId().equals("4")
                 && !companyManager.getPublicCompany("Sd").hasStarted()
                 && !NationalFormationRound.nationalIsComplete(gameManager, "Sd")) {
