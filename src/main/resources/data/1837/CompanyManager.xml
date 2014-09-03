@@ -305,21 +305,21 @@
                 <Float percentage="50"/>
                 <Certificate type="President" shares="2"/>
                 <Certificate shares="1" number="7"/>
-                <Certificate shares="1" number="1" status="reserved"/>
+                <Certificate shares="1" number="1" available="false"/>
         </Company>
         <Company name="BK" longname="Böhmische Kommerzbahn" type="Major" tokens="3" fgColour="000000" bgColour="0000FF">
                 <Home hex="C12"/>
                 <Float percentage="50"/>
                 <Certificate type="President" shares="2"/>
                 <Certificate shares="1" number="6"/>
-                <Certificate shares="1" number="2" status="reserved"/>
+                <Certificate shares="1" number="2" available="false"/>
         </Company>
         <Company name="CL" longname="Carl-Ludwigs-Bahn" type="Major" tokens="3" fgColour="000000" bgColour="FFFFFF">
                 <Home hex="C34"/>
                 <Float percentage="50"/>
                 <Certificate type="President" shares="2"/>
                 <Certificate shares="1" number="7"/>
-                <Certificate shares="1" number="1" status="reserved"/>
+                <Certificate shares="1" number="1" available="false"/>
         </Company>
         <Company name="GT" longname="Galizische Transversalbahn" type="Major" tokens="3" fgColour="FFFFFF" bgColour="00B000">
                 <Home hex="D37"/>
@@ -332,40 +332,40 @@
                 <Float percentage="50"/>
                 <Certificate type="President" shares="2"/>
                 <Certificate shares="1" number="6"/>
-                <Certificate shares="1" number="2" status="reserved"/>
+                <Certificate shares="1" number="2" available="false"/>
         </Company>
         <Company name="SB" longname="Siebenbürgische Bahn" type="Major" tokens="3" fgColour="FFFFFF" bgColour="88FF48">
                 <Home hex="J37"/>
                 <Float percentage="50"/>
                 <Certificate type="President" shares="2"/>
                 <Certificate shares="1" number="6"/>
-                <Certificate shares="1" number="2" status="reserved"/>
+                <Certificate shares="1" number="2" available="false"/>
         </Company>
         <Company name="TH" longname="Theißbahn" type="Major" tokens="3" fgColour="FFFFFF" bgColour="AAFFFF">
                 <Home hex="F29"/>
                 <Float percentage="50"/>
                 <Certificate type="President" shares="2"/>
                 <Certificate shares="1" number="6"/>
-                <Certificate shares="1" number="2" status="reserved"/>
+                <Certificate shares="1" number="2" available="false"/>
         </Company>
         <Company name="Sd" longname="Südbahn" type="National" tokens="5" fgColour="FFFFFF" bgColour="FF5400" foundingCompany="S1">
                 <Home hex="G18" city="4" mapDisplay="no"/>
                 <Certificate type="President" shares="1" status="reserved"/>
                 <Certificate shares="1" number="5"/>
-                <Certificate shares="1" number="4" status="reserved"/>
+                <Certificate shares="1" number="4" available="false"/>
                 <Trains limit="4,4,4,3"/>
         </Company>
         <Company name="KK" longname="k.k. Staatsbahn" type="National" tokens="3" fgColour="FFFFFF" bgColour="C98A5C" foundingCompany="K1">
                 <Home hex="G18" city="1" mapDisplay="no"/>
                 <Certificate type="President" shares="1" status="reserved"/>
                 <Certificate shares="1" number="7"/>
-                <Certificate shares="1" number="2" status="reserved"/>
+                <Certificate shares="1" number="2" available="false"/>
         </Company>
         <Company name="Ug" longname="Ungarische Staatsbahn" type="National" tokens="3" fgColour="FFFFFF" bgColour="FF55AA" foundingCompany="U1">
                 <Home hex="H23" city="1" mapDisplay="no"/>
                 <Certificate type="President" shares="1" status="reserved"/>
                 <Certificate shares="1" number="5"/>
-                <Certificate shares="1" number="4" status="reserved"/>
+                <Certificate shares="1" number="4" available="false"/>
         </Company>
         
         <StartPacket name="Coal Mines" roundClass="net.sf.rails.game.specific._1837.StartRound_1837_Coal">
