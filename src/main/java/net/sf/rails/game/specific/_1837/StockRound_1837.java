@@ -154,17 +154,11 @@ public class StockRound_1837 extends StockRound {
         MoneyOwner cashDestination = null; // Bank
 
         // TODO Validation to be added?
-
         if (major != null) {
-            cert = major.getPortfolioModel().findCertificate(major, false);
-            if (cert != null) {
-                // Assets go to the major company.
+            cert = unavailable.findCertificate(major, false);
                 cashDestination = major;
-            } else {
-                cert = pool.findCertificate(major, false);
-                // If null, player gets nothing in return
-            }
         }
+        //TODO: what happens if the major hasnt operated/founded/Started sofar in the FinalCoalExchangeRound ?
 
         // Transfer the minor assets
         int minorCash = minor.getCash();

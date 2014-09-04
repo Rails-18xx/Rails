@@ -351,21 +351,21 @@
         <Company name="Sd" longname="Südbahn" type="National" tokens="5" fgColour="FFFFFF" bgColour="FF5400" foundingCompany="S1">
                 <Home hex="G18" city="4" mapDisplay="no"/>
                 <Certificate type="President" shares="1" status="reserved"/>
-                <Certificate shares="1" number="5"/>
-                <Certificate shares="1" number="4" available="false"/>
+                <Certificate shares="1" number="4"/>
+                <Certificate shares="1" number="5" available="false"/>
                 <Trains limit="4,4,4,3"/>
         </Company>
         <Company name="KK" longname="k.k. Staatsbahn" type="National" tokens="3" fgColour="FFFFFF" bgColour="C98A5C" foundingCompany="K1">
                 <Home hex="G18" city="1" mapDisplay="no"/>
                 <Certificate type="President" shares="1" status="reserved"/>
-                <Certificate shares="1" number="7"/>
-                <Certificate shares="1" number="2" available="false"/>
+                <Certificate shares="1" number="6"/>
+                <Certificate shares="1" number="3" available="false"/>
         </Company>
         <Company name="Ug" longname="Ungarische Staatsbahn" type="National" tokens="3" fgColour="FFFFFF" bgColour="FF55AA" foundingCompany="U1">
                 <Home hex="H23" city="1" mapDisplay="no"/>
                 <Certificate type="President" shares="1" status="reserved"/>
-                <Certificate shares="1" number="5"/>
-                <Certificate shares="1" number="4" available="false"/>
+                <Certificate shares="1" number="4"/>
+                <Certificate shares="1" number="5" available="false"/>
         </Company>
         
         <StartPacket name="Coal Mines" roundClass="net.sf.rails.game.specific._1837.StartRound_1837_Coal">

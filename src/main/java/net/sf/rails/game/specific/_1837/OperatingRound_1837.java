@@ -60,7 +60,7 @@ public class OperatingRound_1837 extends OperatingRound {
     @Override
     protected void newPhaseChecks() {
         Phase phase = getCurrentPhase();
-        if (phase.getId().equals(„3“)) {
+        if (phase.getId().equals("3")) {
           for(PrivateCompany comp:gameManager.getAllPrivateCompanies())  {
               comp.unblockHexes();
           }
