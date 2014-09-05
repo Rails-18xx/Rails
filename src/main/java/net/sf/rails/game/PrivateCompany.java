@@ -407,6 +407,7 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
             for (MapHex hex : blockedHexes) {
                 hex.setBlockedForTileLays(null);
             }
+            blockedHexes.clear(); // TODO: Redo Save ????
         }
     }
 
