@@ -70,7 +70,7 @@
         <Hex name="F39" tile="-37007" city="Czernowitz"/>
         <Hex name="G10" tile="-7"/>
         <Hex name="G12" tile="-1"/>
-        <Hex name="G14" tile="-20" city="Linz/Wels"/>
+        <Hex name="G14" tile="-20" city="Linz/Wels" label="OO"/>
         <Hex name="G16" tile="0" cost="50"/>
         <Hex name="G18" tile="-37012" city="Wien"/>
         <Hex name="G20" tile="-37008" city="Preßburg" cost="50"/>
@@ -89,12 +89,12 @@
         <Hex name="H15" tile="0" cost="70"/>
         <Hex name="H17" tile="0" cost="110"/>
         <Hex name="H19" tile="-2"/>
-        <Hex name="H21" tile="-20" city="Raab/Tatabanya"/>
+        <Hex name="H21" tile="-20" city="Raab/Tatabanya" label="OO"/>
         <Hex name="H23" tile="-37010" city="Buda/Pest"/>
         <Hex name="H25" tile="0"/>
         <Hex name="H27" tile="-37109"/>
         <Hex name="H29" tile="0"/>
-        <Hex name="H31" tile="-20" city="Debrecin/Großwardein"/>
+        <Hex name="H31" tile="-20" city="Debrecin/Großwardein" label="OO"/>
         <Hex name="H33" tile="0" cost="70"/>
         <Hex name="H35" tile="-10" city="Klausenburg"/>
         <Hex name="H37" tile="-1" cost="70"/>
@@ -128,7 +128,7 @@
         <Hex name="J23" tile="0" cost="50"/>
         <Hex name="J25" tile="-1"/>
         <Hex name="J27" tile="-37008" city="Szegedin"/>
-        <Hex name="J29" tile="-20" city="Arad/Temesvar"/>
+        <Hex name="J29" tile="-20" city="Arad/Temesvar" label="OO"/>
         <Hex name="J31" tile="0"/>
         <Hex name="J33" tile="0" cost="70"/>
         <Hex name="J35" tile="-37002" orientation="1" value="25,50" city="ZKB"/>

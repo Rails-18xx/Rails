@@ -61,17 +61,16 @@ public class FinalCoalExchangeRound extends StockRound_1837 {
         List<PublicCompany> comps =
             companyManager.getAllPublicCompanies();
         List<PublicCompany> minors = new ArrayList<PublicCompany>();
-        List<PublicCompany> targetCompanies = new ArrayList<PublicCompany>();
+        PublicCompany targetCompany = null;
         String type;
 
         for (PublicCompany comp : comps) {
             type = comp.getType().getId();
-            if (type.equals("Major") && comp.hasStarted() && !comp.isClosed()) {
-                targetCompanies.add(comp);
-            } else if (type.equals("Coal")) {
+             if (type.equals("Coal")) {
                 if (comp.isClosed()) continue;
                 if (comp.getPresident() == currentPlayer) {
                     minors.add(comp);
+                    targetCompany = companyManager.getPublicCompany(comp.getRelatedNationalCompany());
                 }
             }
         }
@@ -84,13 +83,14 @@ public class FinalCoalExchangeRound extends StockRound_1837 {
                     if (comp.isClosed()) continue;
                     if (comp.getPresident() == currentPlayer) {
                         minors.add(comp);
+                        targetCompany = companyManager.getPublicCompany(comp.getRelatedNationalCompany());
                     }
                 }
             }
         }
 
         for (PublicCompany minor : minors) {
-            possibleActions.add(new MergeCompanies(minor, targetCompanies));
+            possibleActions.add(new MergeCompanies(minor, targetCompany, true));
         }
 
         return true;

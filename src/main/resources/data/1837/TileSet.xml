@@ -15,7 +15,7 @@
         <Tile id="-10"><!-- 1 city -->
                 <Upgrade id="5,57"/>
         </Tile>
-        <Tile id="-20"><!-- 2 cities -->
+        <Tile id="-20" relayBaseTokens="yes"><!-- 2 cities -->
                 <Upgrade id="404"/>
         </Tile>
         <Tile id="-42"/>

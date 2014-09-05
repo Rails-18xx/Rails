@@ -41,6 +41,8 @@ public abstract class StartRound extends Round {
      * 1880, for example, where everything is auctioned.
      */
     protected final boolean hasBuying;
+    
+    private String StartRoundName="Start of Initial StartRound";
 
     // dynamic variables
     protected final ArrayListState<StartItem> itemsToSell = ArrayListState.create(this, "itemsToSell");
@@ -351,6 +353,19 @@ public abstract class StartRound extends Round {
     // TODO: Maybe this should be a subclass of a readableCashModel
     public Model getBlockedCashModel(Player player) {
         return player.getBlockedCashModel();
+    }
+    /**
+     * @return the startRoundName
+     */
+    public String getStartRoundName() {
+        return StartRoundName;
+    }
+
+    /**
+     * @param startRoundName the startRoundName to set
+     */
+    public void setStartRoundName(String startRoundName) {
+        StartRoundName = startRoundName;
     }
 
 }

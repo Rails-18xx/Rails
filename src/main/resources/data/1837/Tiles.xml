@@ -8,35 +8,35 @@
 		<Station id="city1" position="102" type="Town"/>
 		<Station id="city2" position="302" type="Town"/>
 	</Tile>
-	<Tile colour="fixed" id="-3" name="MF 3">
+	<Tile colour="white" id="-3" name="MF 3">
 		<Station id="city1" position="252" type="Town" value="10"/>
 		<Track from="city1" gauge="normal" to="side2"/>
 		<Track from="city1" gauge="normal" to="side3"/>
 	</Tile>
-	<Tile colour="fixed" id="-7" name="MF 7">
+	<Tile colour="white" id="-7" name="MF 7">
 		<Track from="side2" gauge="normal" to="side1"/>
 	</Tile>
-	<Tile colour="fixed" id="-8" name="MF 8">
+	<Tile colour="white" id="-8" name="MF 8">
 		<Track from="side2" gauge="normal" to="side0"/>
 	</Tile>
 	<Tile colour="white" id="-10" name="1 city">
 		<Station id="city1" position="302" slots="1" type="City"/>
 	</Tile>
-	<Tile colour="fixed" id="-20" name="2 cities">
-		<Station id="city1" position="002" slots="1" type="City"/>
-		<Station id="city2" position="302" slots="1" type="City"/>
+	<Tile colour="white" id="-20" name="2 cities">
+		<Station id="city1" position="208" slots="1" type="City"/>
+		<Station id="city2" position="508" slots="1" type="City"/>
 	</Tile>
-	<Tile colour="fixed" id="-42" name="-42">
+	<Tile colour="white" id="-42" name="-42">
 		<Track from="side3" gauge="normal" to="side0"/>
 		<Track from="side3" gauge="normal" to="side5"/>
 		<Track from="side0" gauge="normal" to="side5"/>
 	</Tile>
-	<Tile colour="fixed" id="-58" name="MF 58">
+	<Tile colour="white" id="-58" name="MF 58">
 		<Station id="city1" position="301" type="Town" value="10"/>
 		<Track from="city1" gauge="normal" to="side2"/>
 		<Track from="city1" gauge="normal" to="side4"/>
 	</Tile>
-	<Tile colour="fixed" id="-800" name="Rostock">
+	<Tile colour="white" id="-800" name="Rostock">
 		<Station id="city1" position="302" type="Town" value="10"/>
 		<Track from="city1" gauge="normal" to="side3"/>
 	</Tile>

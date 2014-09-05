@@ -222,6 +222,8 @@ public class ReportWindow extends JFrame implements
                 forwardButton.setEnabled(true);
                 haveRedo = true;
                 break;
+            default:
+                break;
             }
         }
         if (!haveRedo) deactivateTimeWarp();

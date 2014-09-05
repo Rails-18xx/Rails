@@ -2,6 +2,7 @@ package net.sf.rails.ui.swing;
 
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
 import javax.swing.border.*;
 
@@ -100,8 +101,9 @@ class ConfigWindow extends JFrame {
         
         JLabel userLabel = new JLabel(LocalText.getText("CONFIG_SELECT_PROFILE"));
         profilePanel.add(userLabel);
+       String[] profiles = cm.getProfiles().toArray(new String[cm.getProfiles().size()]);
 
-        final JComboBox comboBoxProfile = new JComboBox(cm.getProfiles().toArray());
+        final JComboBox<String> comboBoxProfile = new JComboBox<String>(profiles);
         comboBoxProfile.setSelectedItem(activeProfile);
         comboBoxProfile.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent arg0) {
@@ -250,7 +252,7 @@ class ConfigWindow extends JFrame {
             } else {
                 allowedValues = (String[])item.allowedValues.toArray();
             }
-            final JComboBox comboBox = new JComboBox(allowedValues);
+            final JComboBox<String> comboBox = new JComboBox<String>(allowedValues);
             comboBox.setSelectedItem(configValue);
             comboBox.setToolTipText(toolTip);
             comboBox.addFocusListener(new FocusListener() {

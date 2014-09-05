@@ -12,10 +12,12 @@ import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.Bank;
 import net.sf.rails.game.GameDef;
 import net.sf.rails.game.GameManager;
+import net.sf.rails.game.MapHex;
 import net.sf.rails.game.NationalFormationRound;
 import net.sf.rails.game.OperatingRound;
 import net.sf.rails.game.Phase;
 import net.sf.rails.game.Player;
+import net.sf.rails.game.PrivateCompany;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.special.ExchangeForShare;
 import net.sf.rails.game.special.SpecialProperty;
@@ -26,6 +28,7 @@ import net.sf.rails.util.SequenceUtil;
 import rails.game.action.SetDividend;
 
 import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Table;
 
@@ -59,6 +62,11 @@ public class OperatingRound_1837 extends OperatingRound {
     @Override
     protected void newPhaseChecks() {
         Phase phase = getCurrentPhase();
+        if (phase.getId().equals("3")) {
+          for(PrivateCompany comp:gameManager.getAllPrivateCompanies())  {
+              comp.unblockHexes();
+          }
+        } 
         if (phase.getId().equals("4")
                 && !companyManager.getPublicCompany("Sd").hasStarted()
                 && !NationalFormationRound.nationalIsComplete(gameManager, "Sd")) {
@@ -407,5 +415,45 @@ public class OperatingRound_1837 extends OperatingRound {
         // We have done the payout step, so continue from there
         nextStep(GameDef.OrStep.PAYOUT);
     }
+
+
+    /* (non-Javadoc)
+     * @see net.sf.rails.game.OperatingRound#gameSpecificTileLayAllowed(net.sf.rails.game.PublicCompany, net.sf.rails.game.MapHex, int)
+     */
+    @Override
+    protected boolean gameSpecificTileLayAllowed(PublicCompany company,
+            MapHex hex, int orientation) {
+        boolean result = false;
+        // Check if the Hex is blocked ?
+        for (PrivateCompany privComp : gameManager.getAllPrivateCompanies()) {
+            boolean isBlocked = hex.isBlockedForTileLays(privComp);
+            if (isBlocked) {
+                result = true;
+                break;
+            }
+        }
+
+        if (result == true) {
+            // Check if the Owner of the PublicCompany is owner of the Private Company that blocks
+            // the hex (1837)
+
+            ImmutableSet<PrivateCompany> compPrivatesOwned =
+                    company.getPresident().getPortfolioModel().getPrivateCompanies();
+
+            for (PrivateCompany privComp : compPrivatesOwned) {
+                // Check if the Hex is blocked by any of the privates owned by
+                // this PublicCompany
+                if (hex.isBlockedForTileLays(privComp)) {
+                    result = false;
+                }
+            }
+
+        }
+
+        return result;
+    }
+
+
+
     
 }

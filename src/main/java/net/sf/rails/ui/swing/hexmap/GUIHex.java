@@ -470,12 +470,14 @@ public class GUIHex implements Observer {
             }
         }
 
-        if (getHex().isBlockedForTileLays()) {
+ //       if (getHex().isBlockedForTileLays()) {
             List<PrivateCompany> privates =
                     //GameManager.getInstance().getCompanyManager().getAllPrivateCompanies();
             		hexMap.getOrUIManager().getGameUIManager().getRoot()
             			.getCompanyManager().getAllPrivateCompanies();
+          
             for (PrivateCompany p : privates) {
+                
                 List<MapHex> blocked = p.getBlockedHexes();
                 if (blocked != null) {
                     for (MapHex hex : blocked) {
@@ -492,7 +494,7 @@ public class GUIHex implements Observer {
                     }
                 }
             }
-        }
+  //    }
 
         if (hex.isReservedForCompany()
         		&& hex.isPreprintedTileCurrent()) {

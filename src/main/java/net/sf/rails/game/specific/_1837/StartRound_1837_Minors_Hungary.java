@@ -3,6 +3,7 @@ package net.sf.rails.game.specific._1837;
 import java.util.ArrayList;
 import java.util.List;
 
+import rails.game.action.BidStartItem;
 import rails.game.action.BuyStartItem;
 import rails.game.action.NullAction;
 import net.sf.rails.common.DisplayBuffer;
@@ -11,14 +12,51 @@ import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.StartItem;
+import net.sf.rails.game.StartRound;
 
-public class StartRound_1837_Minors_Hungary extends StartRound_1837_Coal {
+public class StartRound_1837_Minors_Hungary extends StartRound {
 
     public StartRound_1837_Minors_Hungary(GameManager gameManager, String id) {
-        super(gameManager, id);
-        // TODO Auto-generated constructor stub
+        super(gameManager, id, false, true, true);
+        this.setStartRoundName("Minor Hungary StartRound");
     }
+ 
+    
+    /* (non-Javadoc)
+     * @see net.sf.rails.game.specific._1837.StartRound_1837_Coal#start()
+     */
+    @Override
+    public void start() {
 
+        for (StartItem item : startPacket.getItems()) {
+            // New: we only include items that have not yet been sold
+            // at the start of the current StartRound
+            if (!item.isSold()) {
+                itemsToSell.add(item);
+            }
+        }
+        numPasses.set(0);
+        
+        // init current with priority player
+        startPlayer = playerManager.setCurrentToPriorityPlayer();
+
+        ReportBuffer.add(this, LocalText.getText("StartOfStartRound",getStartRoundName()));
+        ReportBuffer.add(this, LocalText.getText("HasPriority",
+                startPlayer.getId()));
+
+        if (!setPossibleActions()) {
+            /*
+             * If nobody can do anything, keep executing Operating and Start
+             * rounds until someone has got enough money to buy one of the
+             * remaining items. The game mechanism ensures that this will
+             * ultimately be possible.
+             */
+            finishRound();
+        }
+
+        }
+   
+    
     /* (non-Javadoc)
      * @see net.sf.rails.game.specific._1837.StartRound_1837_Coal#setPossibleActions()
      */
@@ -71,27 +109,7 @@ public class StartRound_1837_Minors_Hungary extends StartRound_1837_Coal {
         return true;
     }
 
-    /* (non-Javadoc)
-     * @see net.sf.rails.game.specific._1837.StartRound_1837_Coal#start()
-     */
-    @Override
-    public void start() {
-           for (StartItem item : startPacket.getItems()) {
-                // New: we only include items that have not yet been sold
-                // at the start of the current StartRound
-                if (!item.isSold()) {
-                    itemsToSell.add(item);
-                }
-            }
-            numPasses.set(0);
-            
-            // init current with priority player
-            startPlayer = playerManager.setCurrentToPriorityPlayer();
-
-            ReportBuffer.add(this, LocalText.getText("StartOfInitialRound"));
-            ReportBuffer.add(this, LocalText.getText("HasPriority",
-                    startPlayer.getId()));
-        }
+ 
     
     /**
      * Process a player's pass.
@@ -135,6 +153,13 @@ public class StartRound_1837_Minors_Hungary extends StartRound_1837_Coal {
         }
 
         return true;
+    }
+
+
+    @Override
+    protected boolean bid(String playerName, BidStartItem startItem) {
+        // TODO Auto-generated method stub
+        return false;
     }
 }
         
