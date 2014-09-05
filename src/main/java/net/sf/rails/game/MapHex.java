@@ -16,6 +16,9 @@ import net.sf.rails.game.state.HashBiMapState;
 import net.sf.rails.game.state.HashMapState;
 import net.sf.rails.game.state.PortfolioSet;
 import net.sf.rails.util.*;
+import net.sf.rails.game.PrivateCompany;
+import net.sf.rails.game.PublicCompany;
+
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -222,9 +225,14 @@ public class MapHex extends RailsModel implements RailsOwner, Location, Configur
      * changed to state variable to fix undo bug #2954645
      * null as default implies false - see isBlocked()
      */
-    private final BooleanState isBlockedForTileLays = 
-            BooleanState.create(this, "isBlockedForTileLays");
-
+//    private final BooleanState isBlockedForTileLays = 
+//            BooleanState.create(this, "isBlockedForTileLays");
+    
+    /*
+     * new Method to block access to a hex by a private Company
+     */
+    private PrivateCompany isBlockedForTileLays = null;
+    
     /**
      * Is the hex blocked for home tokens? <p>
      * NOTE:<br>
@@ -760,18 +768,16 @@ public class MapHex extends RailsModel implements RailsOwner, Location, Configur
     /**
      * @return Returns false if no tiles may yet be laid on this hex.
      */
-    public boolean isBlockedForTileLays() {
-        if (isBlockedForTileLays == null)
-            return false;
-        else
-            return isBlockedForTileLays.value();
+    
+    public boolean isBlockedForTileLays(PrivateCompany company) {
+       return company.blockedForTileLays(this);
     }
 
     /**
-     * @param isBlocked The isBlocked to set (state variable)
+     * @param company TODO
      */
-    public void setBlockedForTileLays(boolean isBlocked) {
-        isBlockedForTileLays.set(isBlocked);
+    public void setBlockedForTileLays(PrivateCompany company) {
+        isBlockedForTileLays = company ;
     }
 
     /**

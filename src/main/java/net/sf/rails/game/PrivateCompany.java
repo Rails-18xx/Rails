@@ -266,7 +266,7 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
             for (String hexName : blockedHexesString.split(",")) {
                 MapHex hex = mapManager.getHex(hexName);
                 blockedHexes.add(hex);
-                hex.setBlockedForTileLays(true);
+                hex.setBlockedForTileLays(this);
             }
         }
 
@@ -405,7 +405,7 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
     public void unblockHexes() {
         if (blockedHexes != null) {
             for (MapHex hex : blockedHexes) {
-                hex.setBlockedForTileLays(false);
+                hex.setBlockedForTileLays(null);
             }
         }
     }
@@ -584,4 +584,13 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
     public void setCertificateCount(float certificateCount) {
         this.certificateCount = certificateCount;
     }
+    
+    public boolean blockedForTileLays(MapHex mapHex) {
+        if (blockedHexes.contains(mapHex)) {
+            return true;
+        }
+        return false;
+    }
+
+
 }
