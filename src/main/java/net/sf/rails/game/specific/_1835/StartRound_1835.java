@@ -35,6 +35,7 @@ public class StartRound_1835 extends StartRound {
 
     @Override
     public void start() {
+
         if (variant.equalsIgnoreCase(CLEMENS_VARIANT) && gameManager.getStartRoundNumber() == 1) {
             // reverse order at the start (only in the first start Round)
             playerManager.reversePlayerOrder(true);
@@ -234,20 +235,27 @@ public class StartRound_1835 extends StartRound {
             // check if the next player would start a new cycle
             int cycleNumber = (turn.value()) / playerManager.getNumberOfPlayers();
             int playerNumber = (turn.value()) % playerManager.getNumberOfPlayers();
-            log.debug("1835 Clements: turn = " + turn.value() + ", cycleNumber = " + cycleNumber + ", playerNumber = " + playerNumber);
+            log.debug("1835 variant = " + variant + ", turn = " + turn.value() + ", cycleNumber = " + cycleNumber + ", playerNumber = " + playerNumber);
             if (variant.equalsIgnoreCase(CLEMENS_VARIANT)) {
-                /* Reverse order in the first cycle only */
+                /*  */
                 if (cycleNumber == 1 && playerNumber == 0) {
+                    // restore player Order
                     playerManager.reversePlayerOrder(false);
                     // move one player ahead as we were one player ahead
                     playerManager.setCurrentToNextPlayer();
                 }
             } else if (variant.equalsIgnoreCase(SNAKE_VARIANT)) {
-                /* Reverse order in the second cycle only */
-                if (cycleNumber == 2) {
+                /* Reverse order in the second cycle (this is cycleNr = 1) */
+                if (cycleNumber == 1 && playerNumber == 0) {
                     playerManager.reversePlayerOrder(true);
-                } else if (cycleNumber == 3) {
+                    // set priority to last player
+                    Player lastPlayer = playerManager.getNextPlayerAfter(playerManager.getCurrentPlayer());
+                    playerManager.setCurrentPlayer(lastPlayer);
+                } else if (cycleNumber == 2 && playerNumber == 0) {
+                    // restore player Order
                     playerManager.reversePlayerOrder(false);
+                    // move one player ahead as we were one player ahead
+                    playerManager.setCurrentToNextPlayer();
                 }
             }
         }

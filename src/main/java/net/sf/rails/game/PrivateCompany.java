@@ -10,7 +10,10 @@ import net.sf.rails.common.parser.Tag;
 import net.sf.rails.game.special.SellBonusToken;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.state.BooleanState;
+import net.sf.rails.game.state.Change;
+import net.sf.rails.game.state.Observable;
 import net.sf.rails.game.state.PortfolioSet;
+import net.sf.rails.game.state.Triggerable;
 import net.sf.rails.util.*;
 
 import org.slf4j.Logger;
@@ -130,6 +133,18 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
                 blockedHexesString =
                     blockedTag.getAttributeAsString("hex");
                 infoText += "<br>Blocking: "+blockedHexesString;
+                
+                // add triggerable to unblock
+                this.triggeredOnOwnerChange(
+                        new Triggerable() {
+                            public void triggered(Observable observable, Change change) {
+                                // if newOwner is a (public) company then unblock
+                                if (getOwner() instanceof Company) {
+                                    PrivateCompany.this.unblockHexes();
+                                }
+                            }
+                        }
+                );
             }
 
             // Extra info text(usually related to extra-share special properties)
@@ -251,7 +266,7 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
             for (String hexName : blockedHexesString.split(",")) {
                 MapHex hex = mapManager.getHex(hexName);
                 blockedHexes.add(hex);
-                hex.setBlockedForTileLays(true);
+                hex.setBlockedForTileLays(this);
             }
         }
 
@@ -387,26 +402,12 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
         closingPhase = i;
     }
 
-    /**
-     * FIXME: We have a side effect as soon as private company moves to a public company, this has to be considered somewhere else
-     */
-//    public void setHolder(PortfolioModel portfolio) {
-//        this.portfolio = portfolio;
-//
-//        /*
-//         * If this private is blocking map hexes, unblock these hexes as soon as
-//         * it is bought by a company.
-//         */
-//        if (portfolio.getOwner() instanceof Company) {
-//            unblockHexes();
-//        }
-//    }
-
-    protected void unblockHexes() {
+    public void unblockHexes() {
         if (blockedHexes != null) {
             for (MapHex hex : blockedHexes) {
-                hex.setBlockedForTileLays(false);
+                hex.setBlockedForTileLays(null);
             }
+            blockedHexes.clear(); // TODO: Redo Save ????
         }
     }
 
@@ -584,4 +585,13 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
     public void setCertificateCount(float certificateCount) {
         this.certificateCount = certificateCount;
     }
+    
+    public boolean blockedForTileLays(MapHex mapHex) {
+        if (blockedHexes.contains(mapHex)) {
+            return true;
+        }
+        return false;
+    }
+
+
 }

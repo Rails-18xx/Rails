@@ -93,7 +93,7 @@ public class StockRound extends Round {
                 getStockRoundNumber()));
 
         playerManager.setCurrentToPriorityPlayer();
-        startingPlayer = getCurrentPlayer(); // For the Report
+        startingPlayer = playerManager.getCurrentPlayer(); // For the Report
         ReportBuffer.add(this, LocalText.getText("HasPriority",
                 startingPlayer.getId() ));
 
@@ -113,7 +113,7 @@ public class StockRound extends Round {
     public boolean setPossibleActions() {
 
         // fix of the forced undo bug
-        currentPlayer = getCurrentPlayer();
+        currentPlayer = playerManager.getCurrentPlayer();
 
         boolean passAllowed = false;
 
@@ -546,7 +546,7 @@ public class StockRound extends Round {
 
         boolean result = false;
         String playerName = action.getPlayerName();
-        currentPlayer = getCurrentPlayer();
+        currentPlayer = playerManager.getCurrentPlayer();
 
         if (action instanceof NullAction) {
 
@@ -624,7 +624,7 @@ public class StockRound extends Round {
         String companyName = company.getId();
         int cost = 0;
 
-        currentPlayer = getCurrentPlayer();
+        currentPlayer = playerManager.getCurrentPlayer();
 
         // Dummy loop to allow a quick jump out
         while (true) {
@@ -769,7 +769,7 @@ public class StockRound extends Round {
         int price = 0;
         int cost = 0;
 
-        currentPlayer = getCurrentPlayer();
+        currentPlayer = playerManager.getCurrentPlayer();
 
         // Dummy loop to allow a quick jump out
         while (true) {
@@ -1078,9 +1078,10 @@ public class StockRound extends Round {
                 // search for the player with the most shares (fix of bug 2962977)
                 int requiredShares = presCert.getShare();
                 Player potentialDirector = null;
+                Player previousPlayer = getRoot().getPlayerManager().getCurrentPlayer();
                 for (int i = currentIndex + 1; i < currentIndex
                 + numberOfPlayers; i++) {
-                    Player otherPlayer = getRoot().getPlayerManager().getPlayerByIndex(i);
+                    Player otherPlayer = getRoot().getPlayerManager().getNextPlayerAfter(previousPlayer);
                     int otherPlayerShares = otherPlayer.getPortfolioModel().getShare(company);
                     if (otherPlayerShares >= requiredShares) {
                         // Check if he has the right kind of share
@@ -1091,6 +1092,7 @@ public class StockRound extends Round {
                             requiredShares = otherPlayerShares + 1;
                         }
                     }
+                    previousPlayer = otherPlayer;
                 }
                 // The poor sod.
                 dumpedPlayer = potentialDirector;
@@ -1196,9 +1198,10 @@ public class StockRound extends Round {
         // Check if we still have the presidency
         if (currentPlayer == company.getPresident()) {
             Player otherPlayer;
+            Player previousPlayer = currentPlayer;
             int currentIndex = getCurrentPlayerIndex();
             for (int i = currentIndex + 1; i < currentIndex + numberOfPlayers; i++) {
-                otherPlayer = getRoot().getPlayerManager().getPlayerByIndex(i);
+                otherPlayer = getRoot().getPlayerManager().getNextPlayerAfter(previousPlayer);
                 if (otherPlayer.getPortfolioModel().getShare(company) > portfolio.getShare(company)) {
                     portfolio.swapPresidentCertificate(company,
                             otherPlayer.getPortfolioModel(), swapShareSize);
@@ -1207,6 +1210,7 @@ public class StockRound extends Round {
                             company.getId() ));
                     break;
                 }
+                previousPlayer = otherPlayer;
             }
         }
     }
@@ -1472,7 +1476,7 @@ public class StockRound extends Round {
 
     protected void initPlayer() {
 
-        currentPlayer = getCurrentPlayer();
+        currentPlayer = playerManager.getCurrentPlayer();
         companyBoughtThisTurnWrapper.set(null);
         hasSoldThisTurnBeforeBuying.set(false);
         hasActed.set(false);
@@ -1489,7 +1493,7 @@ public class StockRound extends Round {
 
     @Override
     public void setCurrentPlayer(Player player) {
-        super.setCurrentPlayer(player);
+        getRoot().getPlayerManager().setCurrentPlayer(player);
         currentPlayer = player;
     }
 

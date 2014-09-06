@@ -26,8 +26,8 @@
 	<Tile id="-912" />
 
 	<!-- Atlanta (D4) -->
-	<Tile id="-30" >
-		<Upgrade id="1451" relayBaseTokens="yes"/>
+	<Tile id="-30" relayBaseTokens="yes">
+		<Upgrade id="1451"/>
 	</Tile>
 	
 	<!-- Savannah (Cotton Port) -->

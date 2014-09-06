@@ -127,9 +127,9 @@ public class TileHexUpgrade extends MapUpgrade implements Iterable<HexSide>, Com
     
     public boolean validate(Phase phase) {
         invalids = EnumSet.noneOf(Validation.class);
-        if (hexIsBlocked()) {
-           invalids.add(Validation.HEX_BLOCKED);
-        }
+//        if (hexIsBlocked()) {
+//           invalids.add(Validation.HEX_BLOCKED);
+//        }
         if (noTileAvailable()) {
             invalids.add(Validation.NO_TILES_LEFT);
         } 
@@ -155,6 +155,9 @@ public class TileHexUpgrade extends MapUpgrade implements Iterable<HexSide>, Com
     }
     
     public boolean isValid() {
+        if (invalids== null) {
+            return true;
+        }
         return invalids.isEmpty();
     }
     
@@ -162,9 +165,9 @@ public class TileHexUpgrade extends MapUpgrade implements Iterable<HexSide>, Com
         return rotations.isEmpty();
     }
     
-    public boolean hexIsBlocked() {
-        return hex.isBlockedForTileLays();
-    }
+//    public boolean hexIsBlocked() {
+//        return hex.isBlockedForTileLays();
+//    }
 
     public boolean noTileAvailable() {
         return upgrade.getTargetTile().getFreeCount() == 0;

@@ -18,7 +18,6 @@ import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.ShareSellingRound;
 import net.sf.rails.game.StockSpace;
 import net.sf.rails.game.model.PortfolioModel;
-import net.sf.rails.game.state.ChangeStack;
 import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.GameDef;
 import rails.game.action.NullAction;
@@ -62,7 +61,7 @@ public class ShareSellingRound_1880 extends ShareSellingRound {
      */
     @Override
     public boolean process(PossibleAction action) {
-        currentPlayer = getCurrentPlayer();
+        currentPlayer = playerManager.getCurrentPlayer();
         
         if (action instanceof NullAction) {
              gameManager.finishShareSellingRound();
@@ -157,9 +156,10 @@ public class ShareSellingRound_1880 extends ShareSellingRound {
                 }
                 // More to sell and we are President: see if we can dump it.
                 Player otherPlayer;
+                Player player = playerManager.getCurrentPlayer();
                 for (int i = currentIndex + 1; i < currentIndex
                 + numberOfPlayers; i++) {
-                    otherPlayer = getRoot().getPlayerManager().getPlayerByIndex(i);
+                    otherPlayer = playerManager.getNextPlayerAfter(player);
                     if (otherPlayer.getPortfolioModel().getShare(company) >= presCert.getShare()) {
                         // Check if he has the right kind of share
                         if (numberToSell > 1
@@ -172,6 +172,7 @@ public class ShareSellingRound_1880 extends ShareSellingRound {
                             break;
                         }
                     }
+                    player = otherPlayer;
                 }
             }
             // Check if we could sell them all

@@ -18,11 +18,8 @@ import org.slf4j.LoggerFactory;
  */
 public class StartPacket extends RailsAbstractItem {
 
-    /**
-     * The start packet name. Usually the default name "Initial" is used.
-     */
-    @SuppressWarnings("unused")
-    private String name; // For identification if there is more than one.
+    private static final Logger log = LoggerFactory.getLogger(StartPacket.class);
+
     /** The name of the class that implements the Start Round for this packet. */
     private String roundClassName;
     /** The start items in this packet. */
@@ -36,9 +33,6 @@ public class StartPacket extends RailsAbstractItem {
 
     /** Default name */
     public static final String DEFAULT_ID = "Initial";
-
-    protected static Logger log =
-            LoggerFactory.getLogger(StartPacket.class);
 
     protected StartPacket(RailsItem parent, String id, String roundClassName) {
         super(parent, Util.hasValue(id) ? id : DEFAULT_ID);
@@ -73,9 +67,10 @@ public class StartPacket extends RailsAbstractItem {
             modulus = biddingTag.getAttributeAsInteger("increment", modulus);
         }
         List<Tag> itemTags = tag.getChildren("Item");
-
+        
         int index = 0;
         for (Tag itemTag : itemTags) {
+
             // Extract the attributes of the Start Packet Item (certificate)
             String itemName = itemTag.getAttributeAsString("name");
             if (itemName == null)
@@ -85,7 +80,7 @@ public class StartPacket extends RailsAbstractItem {
                 throw new ConfigurationException("No item type");
             boolean president =
                     Util.hasValue(itemTag.getAttributeAsString("president", ""));
-
+           
             int basePrice = itemTag.getAttributeAsInteger("basePrice", 0);
             StartItem item = StartItem.create(this, itemName, itemType, basePrice, index++, president);
             items.add(item);
@@ -115,6 +110,7 @@ public class StartPacket extends RailsAbstractItem {
                 }
 
             }
+            log.debug("ItemTag = " + itemTag);
         }
     }
 

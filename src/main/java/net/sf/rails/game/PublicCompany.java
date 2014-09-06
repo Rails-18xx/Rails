@@ -19,9 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import rails.game.action.SetDividend;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 
@@ -295,6 +293,13 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     private String infoText;
     private String parentInfoText;
     private final BooleanState closed = BooleanState.create(this, "closed", false);
+    
+    /**
+     *  Relation to a later to be founded National/Regional Major Company 
+     *  */
+    private String relatedPublicCompany = null;
+
+    private String foundingStartCompany = null;
 
     /**
      * Used by Configure (via reflection) only
@@ -340,6 +345,10 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         bgColour = Util.parseColour(bgHexColour);
 
         floatPerc = tag.getAttributeAsInteger("floatPerc", floatPerc);
+        
+        relatedPublicCompany = tag.getAttributeAsString ("relatedCompany", relatedPublicCompany);
+        
+        foundingStartCompany =  tag.getAttributeAsString("foundingCompany", foundingStartCompany);
 
         startSpace = tag.getAttributeAsString("startspace");
         // Set the default price token drop time.
@@ -1404,13 +1413,14 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
         int presShare = seller.getPortfolioModel().getShare(this);
         int presIndex = seller.getIndex();
-        Player player;
+        Player player, otherPlayer;
         int share;
         PlayerManager pmgr = getRoot().getPlayerManager();
-
+        otherPlayer = seller;
+        
         for (int i = presIndex + 1; i < presIndex
         + pmgr.getNumberOfPlayers(); i++) {
-            player = pmgr.getPlayerByIndex(i);
+            player = pmgr.getNextPlayerAfter(otherPlayer);
             share = player.getPortfolioModel().getShare(this);
             if (share > presShare) {
                 // Presidency must be transferred
@@ -1420,6 +1430,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
                         player.getId(),
                         getId() ));
             }
+            otherPlayer = player;
         }
     }
 
@@ -1431,24 +1442,27 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         int presShare = president.getPortfolioModel().getShare(this);
 
         PlayerManager pmgr = getRoot().getPlayerManager();
-        Player player;
+        Player player, previousPlayer;
         int share;
-
+        previousPlayer = president;
+        
         for (int i = presIndex + 1; i < presIndex
         + pmgr.getNumberOfPlayers(); i++) {
-            player = pmgr.getPlayerByIndex(i);
+            player = pmgr.getNextPlayerAfter(previousPlayer);
             share = player.getPortfolioModel().getShare(this);
             if (share > presShare) {
-                // Hand presidency to the first player with a higher share
+                // Hand presidency to the player with the highest share
                 president.getPortfolioModel().swapPresidentCertificate(this,
                         player.getPortfolioModel(), 0);
                 ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
                         player.getId(),
                         getId() ));
-                return;
+                presShare = share;
+                president = getPresident();
             }
+            previousPlayer = player;
         }
-
+        return;
     }
 
     /**
@@ -2016,4 +2030,37 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     public int compareTo(PublicCompany other) {
         return this.getId().compareTo(other.getId());
     }
+
+    public void setRelatedNationalCompany(String companyName){
+        this.relatedPublicCompany = companyName;
+    }
+
+    public String getRelatedNationalCompany() {
+        return relatedPublicCompany;
+    }
+
+
+    public boolean isRelatedToNational(String nationalInFounding) {
+        if (this.getRelatedNationalCompany().equals(nationalInFounding)){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @return the foundingStartCompany
+     */
+    public String getFoundingStartCompany() {
+        
+        return foundingStartCompany;
+    }
+
+    /**
+     * @param foundingStartCompany the foundingStartCompany to set
+     */
+    public void setStartingMinor(String foundingCompany) {
+        this.foundingStartCompany = foundingCompany;
+    }
+    
+    
 }

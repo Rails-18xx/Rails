@@ -1,8 +1,5 @@
 package net.sf.rails.game.state;
 
-import net.sf.rails.game.Bank;
-import net.sf.rails.game.RailsRoot;
-
 /**
  * The class that represents a Currency
  */

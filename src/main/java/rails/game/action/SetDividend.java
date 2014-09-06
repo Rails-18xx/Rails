@@ -5,7 +5,6 @@ import java.io.ObjectInputStream;
 import java.util.Arrays;
 
 import com.google.common.base.Objects;
-
 import net.sf.rails.util.RailsObjects;
 import net.sf.rails.util.Util;
 

@@ -248,6 +248,7 @@ public class BuyTrain extends PossibleORAction {
     // TODO: Check for and add the missing attributes
     @Override
     public String toString() {
+
         return super.toString() + 
                 RailsObjects.stringHelper(this)
                     .addToString("train", train)

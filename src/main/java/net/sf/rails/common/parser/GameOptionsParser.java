@@ -1,6 +1,5 @@
 package net.sf.rails.common.parser;
 
-import java.io.File;
 import java.util.List;
 import java.util.Map;
 

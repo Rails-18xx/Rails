@@ -225,10 +225,10 @@ BuysTrain,JHA,2,IPO,100
 All 2-trains are sold out, 2+2-trains now available
  
 EndOfOperatingRound,1.1
-ORWorthIncrease,Martin Brumm,1.1,10
-ORWorthIncrease,Karsten Ockenfels,1.1,25
+ORWorthIncrease,Martin Brumm,1.1,0
+ORWorthIncrease,Karsten Ockenfels,1.1,10
 ORWorthIncrease,Volker Schnell,1.1,-43
-ORWorthIncrease,Dirk Steiner,1.1,10
+ORWorthIncrease,Dirk Steiner,1.1,0
 Has,BCR,200
 Has,JHA,250
 Has,JHU,300
@@ -347,10 +347,10 @@ Payout,Volker Schnell,24,3,10
 PRICE_MOVES_LOG,JHU,85,E6,90,F6
  
 EndOfOperatingRound,2.1
-ORWorthIncrease,Martin Brumm,2.1,78
-ORWorthIncrease,Karsten Ockenfels,2.1,66
-ORWorthIncrease,Volker Schnell,2.1,39
-ORWorthIncrease,Dirk Steiner,2.1,66
+ORWorthIncrease,Martin Brumm,2.1,88
+ORWorthIncrease,Karsten Ockenfels,2.1,81
+ORWorthIncrease,Volker Schnell,2.1,49
+ORWorthIncrease,Dirk Steiner,2.1,76
 Has,BCR,130
 Has,JHA,70
 Has,JHU,240
@@ -441,10 +441,10 @@ Payout,Volker Schnell,39,3,10
 PRICE_MOVES_LOG,JHU,90,F6,95,G6
  
 EndOfOperatingRound,2.2
-ORWorthIncrease,Martin Brumm,2.2,475
-ORWorthIncrease,Karsten Ockenfels,2.2,66
-ORWorthIncrease,Volker Schnell,2.2,62
-ORWorthIncrease,Dirk Steiner,2.2,102
+ORWorthIncrease,Martin Brumm,2.2,265
+ORWorthIncrease,Karsten Ockenfels,2.2,81
+ORWorthIncrease,Volker Schnell,2.2,82
+ORWorthIncrease,Dirk Steiner,2.2,112
 Has,BCR,140
 Has,JHA,70
 Has,JHU,220
@@ -503,7 +503,7 @@ All 2+2-trains are sold out, 3-trains now available
 EndOfOperatingRound,2.3
 ORWorthIncrease,Martin Brumm,2.3,150
 ORWorthIncrease,Karsten Ockenfels,2.3,25
-ORWorthIncrease,Volker Schnell,2.3,18
+ORWorthIncrease,Volker Schnell,2.3,28
 ORWorthIncrease,Dirk Steiner,2.3,20
 Has,BCR,140
 Has,JHA,70
@@ -596,10 +596,10 @@ WrExchanged,Karsten Ockenfels,70
 PrivateCloses,WR
  
 EndOfOperatingRound,3.1
-ORWorthIncrease,Martin Brumm,3.1,0
-ORWorthIncrease,Karsten Ockenfels,3.1,123
-ORWorthIncrease,Volker Schnell,3.1,70
-ORWorthIncrease,Dirk Steiner,3.1,82
+ORWorthIncrease,Martin Brumm,3.1,-15
+ORWorthIncrease,Karsten Ockenfels,3.1,138
+ORWorthIncrease,Volker Schnell,3.1,80
+ORWorthIncrease,Dirk Steiner,3.1,92
 Has,BCR,641
 Has,JHA,70
 Has,JHU,440
@@ -753,10 +753,10 @@ BuysTrain,JLR,3+3,IPO,300
 All 3+3-trains are sold out, 4-trains now available
  
 EndOfOperatingRound,4.1
-ORWorthIncrease,Martin Brumm,4.1,222
-ORWorthIncrease,Karsten Ockenfels,4.1,555
-ORWorthIncrease,Volker Schnell,4.1,368
-ORWorthIncrease,Dirk Steiner,4.1,86
+ORWorthIncrease,Martin Brumm,4.1,242
+ORWorthIncrease,Karsten Ockenfels,4.1,300
+ORWorthIncrease,Volker Schnell,4.1,228
+ORWorthIncrease,Dirk Steiner,4.1,76
 Has,BCR,641
 Has,JHA,30
 Has,JHU,480
@@ -887,10 +887,10 @@ StartOfPhase,4
 TrainsRusted,2
  
 EndOfOperatingRound,5.1
-ORWorthIncrease,Martin Brumm,5.1,349
+ORWorthIncrease,Martin Brumm,5.1,374
 ORWorthIncrease,Karsten Ockenfels,5.1,105
-ORWorthIncrease,Volker Schnell,5.1,317
-ORWorthIncrease,Dirk Steiner,5.1,786
+ORWorthIncrease,Volker Schnell,5.1,337
+ORWorthIncrease,Dirk Steiner,5.1,576
 Has,BCR,641
 Has,JHA,29
 Has,JHU,481
@@ -916,8 +916,8 @@ CompanyOperates,JHU,Volker Schnell
 LaysTileAt,JHU,15,H10,NE
 CompanyRevenue,JHU,250
 CompanyPaysOutFull,JHU,250
-Payout,Dirk Steiner,25,1,10
 Payout,Martin Brumm,25,1,10
+Payout,Dirk Steiner,25,1,10
 Payout,Volker Schnell,125,5,10
 BuysTrain,JHU,4,IPO,300
  
@@ -931,8 +931,8 @@ CompanyOperates,NJR,Dirk Steiner
 LaysTileAt,NJR,15,H14,SE
 CompanyRevenue,NJR,330
 CompanyPaysOutFull,NJR,330
-Payout,Dirk Steiner,165,5,10
 Payout,Martin Brumm,33,1,10
+Payout,Dirk Steiner,165,5,10
 Payout,Volker Schnell,33,1,10
 ReceivesFor,Dirk Steiner,0,KR
 ReceivesFor,Volker Schnell,0,YC
@@ -1206,8 +1206,8 @@ BuysTrain,JLR,6,IPO,600
 All 6-trains are sold out, 6E-trains now available
  
 EndOfOperatingRound,7.1
-ORWorthIncrease,Martin Brumm,7.1,0
-ORWorthIncrease,Karsten Ockenfels,7.1,155
+ORWorthIncrease,Martin Brumm,7.1,-25
+ORWorthIncrease,Karsten Ockenfels,7.1,180
 ORWorthIncrease,Volker Schnell,7.1,0
 ORWorthIncrease,Dirk Steiner,7.1,0
 Has,BCR,41
@@ -1261,8 +1261,8 @@ CompanyOperates,JHU,Volker Schnell
 LaysTileAt,JHU,8887,F8,SW
 CompanyRevenue,JHU,620
 CompanyPaysOutFull,JHU,620
-Payout,Karsten Ockenfels,62,1,10
 Payout,Volker Schnell,310,5,10
+Payout,Karsten Ockenfels,62,1,10
 PRICE_MOVES_LOG,JHU,110,I5,120,J5
  
 CompanyOperates,QSR,Volker Schnell
@@ -1346,9 +1346,9 @@ Payout,Karsten Ockenfels,235,5,10
 PRICE_MOVES_LOG,JGG,85,C4,90,D4
  
 EndOfOperatingRound,8.1
-ORWorthIncrease,Martin Brumm,8.1,497
-ORWorthIncrease,Karsten Ockenfels,8.1,351
-ORWorthIncrease,Volker Schnell,8.1,139
+ORWorthIncrease,Martin Brumm,8.1,547
+ORWorthIncrease,Karsten Ockenfels,8.1,356
+ORWorthIncrease,Volker Schnell,8.1,214
 ORWorthIncrease,Dirk Steiner,8.1,390
 Has,BCR,41
 Has,JHA,0
@@ -1400,17 +1400,17 @@ CompanyOperates,NJR,Dirk Steiner
 LaysTileAt,NJR,611,H10,NE
 CompanyRevenue,NJR,250
 CompanyPaysOutFull,NJR,250
+Payout,Volker Schnell,25,1,10
 Payout,Karsten Ockenfels,25,1,10
 Payout,Dirk Steiner,150,6,10
-Payout,Volker Schnell,25,1,10
 PRICE_MOVES_LOG,NJR,65,C8,70,D8
 All 6E-trains are sold out, 8-trains now available
  
 EndOfOperatingRound,8.2
 ORWorthIncrease,Martin Brumm,8.2,49
-ORWorthIncrease,Karsten Ockenfels,8.2,341
-ORWorthIncrease,Volker Schnell,8.2,455
-ORWorthIncrease,Dirk Steiner,8.2,155
+ORWorthIncrease,Karsten Ockenfels,8.2,366
+ORWorthIncrease,Volker Schnell,8.2,505
+ORWorthIncrease,Dirk Steiner,8.2,180
 Has,BCR,41
 Has,JHA,0
 Has,JHU,571
@@ -1562,10 +1562,10 @@ BuysTrain,JHU,8,IPO,800
 All 8-trains are sold out, 8E-trains now available
  
 EndOfOperatingRound,9.1
-ORWorthIncrease,Martin Brumm,9.1,691
-ORWorthIncrease,Karsten Ockenfels,9.1,384
-ORWorthIncrease,Volker Schnell,9.1,-410
-ORWorthIncrease,Dirk Steiner,9.1,528
+ORWorthIncrease,Martin Brumm,9.1,746
+ORWorthIncrease,Karsten Ockenfels,9.1,414
+ORWorthIncrease,Volker Schnell,9.1,-450
+ORWorthIncrease,Dirk Steiner,9.1,553
 Has,BCR,41
 Has,JHA,0
 Has,JHU,0
@@ -1734,10 +1734,10 @@ Payout,Karsten Ockenfels,378,7,10
 PRICE_MOVES_LOG,JLR,130,J3,140,K3
  
 EndOfOperatingRound,10.1
-ORWorthIncrease,Martin Brumm,10.1,620
-ORWorthIncrease,Karsten Ockenfels,10.1,925
-ORWorthIncrease,Volker Schnell,10.1,689
-ORWorthIncrease,Dirk Steiner,10.1,1025
+ORWorthIncrease,Martin Brumm,10.1,630
+ORWorthIncrease,Karsten Ockenfels,10.1,1020
+ORWorthIncrease,Volker Schnell,10.1,719
+ORWorthIncrease,Dirk Steiner,10.1,1085
 Has,BCR,1
 Has,JHA,0
 Has,JHU,0
@@ -1769,9 +1769,9 @@ StartOfPhase,8e
 TrainsRusted,4+4
  
 EndOfOperatingRound,10.2
-ORWorthIncrease,Martin Brumm,10.2,134
+ORWorthIncrease,Martin Brumm,10.2,144
 ORWorthIncrease,Karsten Ockenfels,10.2,0
-ORWorthIncrease,Volker Schnell,10.2,320
+ORWorthIncrease,Volker Schnell,10.2,360
 ORWorthIncrease,Dirk Steiner,10.2,72
 Has,BCR,1
 Has,JHA,0
@@ -1917,9 +1917,9 @@ PRICE_MOVES_LOG,JLR,145,K2,155,L2
  
 EndOfOperatingRound,11.1
 ORWorthIncrease,Martin Brumm,11.1,-1245
-ORWorthIncrease,Karsten Ockenfels,11.1,1035
-ORWorthIncrease,Volker Schnell,11.1,-917
-ORWorthIncrease,Dirk Steiner,11.1,950
+ORWorthIncrease,Karsten Ockenfels,11.1,1130
+ORWorthIncrease,Volker Schnell,11.1,-947
+ORWorthIncrease,Dirk Steiner,11.1,1010
 Has,BCR,0
 Has,JHA,0
 Has,JHU,0
@@ -2033,10 +2033,10 @@ Payout,Martin Brumm,62,1,10
 PRICE_MOVES_LOG,JLR,155,L2,170,M2
  
 EndOfOperatingRound,11.2
-ORWorthIncrease,Martin Brumm,11.2,1246
-ORWorthIncrease,Karsten Ockenfels,11.2,1106
-ORWorthIncrease,Volker Schnell,11.2,1059
-ORWorthIncrease,Dirk Steiner,11.2,1088
+ORWorthIncrease,Martin Brumm,11.2,1311
+ORWorthIncrease,Karsten Ockenfels,11.2,1236
+ORWorthIncrease,Volker Schnell,11.2,1109
+ORWorthIncrease,Dirk Steiner,11.2,1183
 Has,BCR,0
 Has,JHA,0
 Has,JHU,0
@@ -2064,9 +2064,9 @@ Payout,Volker Schnell,340,5,10
 PRICE_MOVES_LOG,JHU,125,J4,135,K4
  
 EndOfOperatingRound,11.3
-ORWorthIncrease,Martin Brumm,11.3,146
+ORWorthIncrease,Martin Brumm,11.3,156
 ORWorthIncrease,Karsten Ockenfels,11.3,0
-ORWorthIncrease,Volker Schnell,11.3,350
+ORWorthIncrease,Volker Schnell,11.3,390
 ORWorthIncrease,Dirk Steiner,11.3,78
 Has,BCR,0
 Has,JHA,0
@@ -2087,7 +2087,7 @@ Has,Dirk Steiner,3108
 GameOver
 EoGWinnerDirk Steiner!
 EoGFinalRanking :
-1. 4883 Dirk Steiner
-2. 4077 Karsten Ockenfels
-3. 2570 Martin Brumm
-4. 1922 Volker Schnell
+1. 6213 Dirk Steiner
+2. 5867 Karsten Ockenfels
+3. 4015 Martin Brumm
+4. 3032 Volker Schnell

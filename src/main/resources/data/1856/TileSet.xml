@@ -15,8 +15,8 @@
 	<Tile id="-11"><!-- Barrie/London yellow -->
 		<Upgrade id="121"/>
 	</Tile>
-	<Tile id="-20"><!-- 2 OO cities -->
-		<Upgrade id="59" relayBaseTokens="yes"/>
+	<Tile id="-20" relayBaseTokens="yes"><!-- 2 OO cities -->
+		<Upgrade id="59"/>
 	</Tile>
 	<Tile id="-56001"><!-- Toronto -->
 		<Upgrade id="120"/>

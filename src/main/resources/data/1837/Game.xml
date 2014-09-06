@@ -1,0 +1,223 @@
+<?xml version="1.0"?>
+<ComponentManager>
+        <Component name="GameManager" class="net.sf.rails.game.specific._1837.GameManager_1837">
+                <Game name="1837"/>
+                <GameParameters>
+                        <PlayerShareLimit percentage="60"/>
+                        <BankPoolLimit percentage="50"/>
+                        <StockRound class="net.sf.rails.game.specific._1837.StockRound_1837"
+                                sequence="SellBuySell">
+                                <NoSaleInFirstSR/>
+                                <NoSaleIfNotOperated/>
+                        </StockRound>
+                        <OperatingRound class="net.sf.rails.game.specific._1837.OperatingRound_1837">
+                                <EmergencyTrainBuying mustBuyCheapestTrain="no" mayAlwaysBuyNewTrain="yes" mayBuyFromCompany="yes"/>
+                                <RevenueIncrement amount="5"/>
+                        </OperatingRound>
+                </GameParameters>
+                <GuiClasses>
+                    <StartRoundWindow class="net.sf.rails.ui.swing.gamespecific._1837.StartRoundWindow_1837"/>
+                    <StatusWindow class="net.sf.rails.ui.swing.gamespecific._1837.StatusWindow_1837"/>
+                    <GameUIManager class="net.sf.rails.ui.swing.gamespecific._1837.GameUIManager_1837"/>
+                </GuiClasses>
+                <EndOfGame>
+                        <BankBreaks limit="0" finish="currentOR"/>
+                        <!-- "Runs out"; when "broken", -1 is the limit -->
+                </EndOfGame>
+        </Component>
+        <Component name="PlayerManager" class="net.sf.rails.game.PlayerManager">
+                <Players number="3" cash="730" certLimit="28"/>
+                <Players number="4" cash="555" certLimit="21"/>
+                <Players number="5" cash="450" certLimit="17"/>
+                <Players number="6" cash="380" certLimit="14"/>
+                <Players number="7" cash="330" certLimit="12"/>
+        </Component>
+        <Component name="Bank" class="net.sf.rails.game.Bank">
+                <Bank amount="14268"/>
+                <Money format="@K"/>
+        </Component>
+        <Component name="TileManager" class="net.sf.rails.game.TileManager"
+                file="TileSet.xml"/>
+        <Component name="Map" class="net.sf.rails.game.MapManager" file="Map.xml"/>
+        <Component name="CompanyManager" class="net.sf.rails.game.CompanyManager"
+                file="CompanyManager.xml"/>
+        <Component name="StockMarket" class="net.sf.rails.game.specific._1837.StockMarket_1837"
+                file="StockMarket.xml"/>
+        <Component name="TrainManager" class="net.sf.rails.game.TrainManager">
+                <Defaults>
+                        <Reach base="stops" countTowns="no"/>
+                        <Score towns="yes"/>
+                </Defaults>
+                <TrainType name="1G" majorStops="1" cost="100" quantity="10">
+                        <Reach countTowns="no"/>
+                        <Score scoreTowns="yes"/>
+                        <NewPhase phaseName="2"/>
+                </TrainType>
+                <TrainType name="2" majorStops="2" cost="90" quantity="14"/>
+                <TrainType name="3" majorStops="3" cost="180" quantity="5">
+                        <NewPhase phaseName="3"/>
+                </TrainType>
+                <TrainType name="2G" majorStops="2" cost="230" quantity="6">
+                        <Reach countTowns="no"/>
+                        <Score scoreTowns="yes"/>
+                </TrainType>
+                <TrainType name="3+1" majorStops="3" minorStops="1" cost="280" quantity="2">
+                        <NewPhase phaseName="3+1"/>
+                </TrainType>
+                <TrainType name="4" majorStops="4" cost="470" quantity="4">
+                        <NewPhase phaseName="4"/>
+                </TrainType>
+                <TrainType name="3G" majorStops="3" cost="590" quantity="2">
+                        <Reach countTowns="no"/>
+                        <Score scoreTowns="yes"/>
+                        <NewPhase phaseName="3G"/>
+                </TrainType>
+                <TrainType name="4E" majorStops="4" cost="500" quantity="1">
+                        <Reach countTowns="no"/>
+                        <Score towns="no"/>
+                        <NewPhase phaseName="4E"/>
+                </TrainType>
+                <TrainType name="4+1" majorStops="4" minorStops="1" cost="530" quantity="1">
+                        <NewPhase phaseName="4+1"/>
+                </TrainType>
+                <TrainType name="4+2" majorStops="4" minorStops="2" cost="560" quantity="1"/>
+                <TrainType name="5" majorStops="5" cost="800" quantity="2">
+                        <NewPhase phaseName="5"/>
+                </TrainType>
+                <TrainType name="5E" majorStops="5" cost="830" quantity="1">
+                        <Reach countTowns="no"/>
+                        <Score towns="no"/>
+                </TrainType>
+                <TrainType name="5+2" majorStops="5" minorStops="2" cost="860" quantity="1">
+                        <NewPhase phaseName="5+2"/>
+                </TrainType>
+                <TrainType name="5+3" majorStops="5" minorStops="3" cost="900" quantity="1"/>
+                <TrainType name="5+4" majorStops="5" minorStops="4" cost="960" quantity="1">
+                        <IfOption name="UnlimitedTopTrains" value="Yes">
+                                <Attributes quantity="-1"/>
+                        </IfOption>
+                </TrainType>
+
+                <TrainType name="4G" majorStops="4" cost="1000" quantity="3">
+                        <Reach countTowns="no"/>
+                        <Score scoreTowns="yes"/>
+                        <NewPhase phaseName="4G"/>
+                        <IfOption name="UnlimitedTopTrains" value="Yes">
+                                <Attributes quantity="-1"/>
+                        </IfOption>
+                </TrainType>
+                <!-- TBD: Add support for 1837's trade-in rule, which says a
+                     company that is at its train limit may trade in any train
+                     to the bank pool for half face value, but only if that
+                     company then replaces it by buying another train.
+                     (However, companies that get "caught" when the train limit
+                     falls must still discard one without compensation.) -->
+                <!-- TBD: Another rule that needs to be enforced in 1837: If
+                     minor or coal company A merges into major company B and
+                     causes B to exceed its train limit, any trains discarded
+                     must be from A, even if they are better than B's own. -->
+        </Component>
+        <Component name="PhaseManager" class="net.sf.rails.game.PhaseManager">
+                <Phase name="2" realName="1">
+                        <!-- Wish list: This "phase change" ought not be needed.
+                             It is triggered by the first purchase of a 1G-train
+                             and makes 2-trains available.  (I doubt it will be
+                             a problem, since all ten coal companies need to buy
+                             1G trains on their first turn in order to run.) -->
+                        <Tiles colour="yellow"/>
+                        <Trains released="2"/>
+                        <OperatingRounds number="1"/>
+                </Phase>
+                <Phase name="3" realName="2">
+                        <Tiles colour="yellow,green"/>
+                        <Trains tradingAllowed="yes" limitStep="2" released="2G"/>
+                        <!-- Wish list: The 2G trains ought not be available
+                             until both the first 3-train and the last 1G-train
+                             have been purchased. -->
+                        <!-- TBD: Private companies no longer block tile-laying
+                                  in their hex by other players. -->
+                        <!-- Open Bosnia-Herzegovina for building: -->
+                        <LayTile hex="L17" tile="0"/>
+                        <LayTile hex="L19" tile="-1"/>
+                        <LayTile hex="L21" tile="0"/>
+                        <LayTile hex="M18" tile="0" cost="70"/>
+                        <LayTile hex="M20" tile="0" cost="70"/>
+                        <LayTile hex="M22" tile="0" cost="70"/>
+                        <LayTile hex="N19" tile="0" cost="70"/>
+                        <LayTile hex="N21" tile="-10" city="Sarajevo"/>
+                        <OperatingRounds number="2"/>
+                </Phase>
+                <Phase name="3+1" realName="2">
+                        <Trains limitStep="3"/>
+                </Phase>
+                <Phase name="4" realName="2">
+                        <!-- Wish list: The 3G trains ought not be available
+                             until both the first 4-train and the last 2G-train
+                             have been purchased. -->
+                        <Trains rusted="2" released="3G"/>
+                        <!-- Clear out Italy, make it off-limits, and place
+                             green tile 426 on Bozen: -->
+                        <LayTile hex="K4" tile="-37004" removeToken="yes"/>
+                        <LayTile hex="K6" tile="426" orientation="3"/>
+                        <LayTile hex="K8" tile="-37004" removeToken="yes"/>
+                        <LayTile hex="K10" tile="-37004" removeToken="yes"/>
+                        <LayTile hex="L3" tile="-37004" removeToken="yes"/>
+                        <LayTile hex="L5" tile="-37004" removeToken="yes"/>
+                        <LayTile hex="L7" tile="-37004" removeToken="yes"/>
+                        <LayTile hex="L9" tile="-37004" removeToken="yes"/>
+                        <LayTile hex="M4" tile="-37004" removeToken="yes"/>
+                        <LayTile hex="M6" tile="-37004" removeToken="yes"/>
+                        <LayTile hex="M8" tile="-37004" removeToken="yes"/>
+                        <!-- TBD: S1-S5 must all convert, forming Sd. -->
+                        <!-- TBD: K1 may convert, forming KK.  If it doesn't, it
+                                  gets the option again at the start of each
+                                  round.  If and when K1 converts, then K2-K3
+                                  get the option to convert, and get it again at
+                                  the start of each round until forced to
+                                  convert upon the first 4+1 train purchase. -->
+                </Phase>
+                <Phase name="3G" realName="2">
+                        <Trains rusted="1G"/>
+                </Phase>
+                <Phase name="4E" realName="2">
+                        <!-- TBD: U1 director may convert, forming Ug.  If he
+                                  doesn't, he gets the option again at the start
+                                  of each round.  If and when U1 converts, then
+                                  U2-U3 directors get the option to convert, and
+                                  get it again (after KK) at the start of each
+                                  round until forced to convert upon the first
+                                  5 train purchase.  Non-director shareholders
+                                  of U1 and U3 have no choice, they convert when
+                                  the director of that minor converts. -->
+                </Phase>
+                <Phase name="4+1" realName="2">
+                        <!-- TBD: K1-K3 must all convert, forming KK, if they
+                                  haven't already. -->
+                </Phase>
+                <Phase name="5" realName="3">
+                        <Tiles colour="yellow,green,brown"/>
+                        <!-- Wish list: The 4G trains ought not be available
+                             until both the first 5-train and the last 3G-train
+                             have been purchased. -->
+                        <Trains rusted="3" limitStep="4" released="4G"/>
+                        <!--Privates close="yes"/-->
+                        <Info key="PhaseClosesAllPrivates"/>
+                        <!-- TBD: U1-U3 must all convert, forming Ug, if they
+                                  haven't already. -->
+                        <!-- TBD: All coal companies must convert even if their
+                                  major companies haven't formed. -->
+                        <OffBoardRevenue step="2"/>
+                        <OperatingRounds number="3"/>
+                </Phase>
+                <Phase name="4G" realName="3">
+                        <Trains rusted="2G"/>
+                </Phase>
+                <Phase name="5+2" realName="3">
+                        <Trains rusted="3+1"/>
+                </Phase>
+        </Component>
+        		<Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager">
+				<Modifier class="net.sf.rails.game.specific._1837.ItalyTileModifier" />
+				<Modifier class="net.sf.rails.game.specific._1837.BzHTileModifier" />
+        </Component>
+</ComponentManager>

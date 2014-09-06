@@ -134,7 +134,7 @@ public class TrackConfig{
      */
     public static String getConnectionString(MapHex hex, Tile tile, int rotation,
             Station station) {
-                return getConnectionString(hex, tile, rotation, station);
+                return getConnectionString(hex, tile, HexSide.get(rotation), station);
             }
 
     /**

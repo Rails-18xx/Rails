@@ -234,6 +234,7 @@ public class ORUIManager implements DialogOwner {
         for (MapHex hex:layTile.getLocations()) {
             GUIHex guiHex = map.getHex(hex);
             Set<TileHexUpgrade> upgrades = TileHexUpgrade.createLocated(hex, layTile);
+            TileHexUpgrade.validateAndEnable(upgrades, gameUIManager.getCurrentPhase());
             tileUpgrades.putAll(guiHex, upgrades);
         }
     }
@@ -322,7 +323,6 @@ public class ORUIManager implements DialogOwner {
             StringBuffer normalTileMessage = new StringBuffer(" ");
 
             List<LayTile> tileLays = getPossibleActions().getType(LayTile.class);
-            int ii = 0;
             for (LayTile tileLay : tileLays) {
                 Map<String, Integer> tileColours;
                 sp = tileLay.getSpecialProperty();

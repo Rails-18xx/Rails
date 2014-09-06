@@ -87,7 +87,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
     private StartItemAction[] actionableItems;
     private StartPacket packet;
     private int[] crossIndex;
-    private StartRound round;
+    protected StartRound round;
     private GameUIManager gameUIManager;
 
     // For the non-modal dialog to ask for a company starting share price.
@@ -511,7 +511,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
             // only one NullAction is allowed
             NullAction na = inactiveItems.get(0);
             // nullActions differ in text to display
-            passButton.setRailsIcon(RailsIcon.getByConfigKey(na.toString()));
+            passButton.setRailsIcon(RailsIcon.getByConfigKey(na.getMode().name()));
             passAllowed = true;
             passButton.setPossibleAction(na);
             passButton.setMnemonic(KeyEvent.VK_P);
@@ -714,7 +714,9 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
     }
 
     protected void disableButtons() {
+        if (includeBidding){
         bidButton.setEnabled(false);
+        }
         if (includeBuying) {
             buyButton.setEnabled(false);
         }

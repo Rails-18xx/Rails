@@ -127,7 +127,7 @@ public class OperatingRound_18EU extends OperatingRound {
             Player p;
             PortfolioModel pf;
             int index;
-            int numberOfPlayers = getNumberOfPlayers();
+            int numberOfPlayers = playerManager.getNumberOfPlayers();
 
             // Set up a list per player of presided companies
             List<List<PublicCompany>> companiesPerPlayer =
@@ -272,7 +272,7 @@ public class OperatingRound_18EU extends OperatingRound {
 
     @Override
     public void resume() {
-        if (getCurrentPlayer().isBankrupt()) {
+        if (playerManager.getCurrentPlayer().isBankrupt()) {
             // Do not complete the train buying action
             savedAction = null;
             finishTurn();

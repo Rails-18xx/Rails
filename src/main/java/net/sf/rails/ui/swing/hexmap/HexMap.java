@@ -15,7 +15,6 @@ import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,10 +37,6 @@ import net.sf.rails.util.Util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import rails.game.action.LayBaseToken;
-import rails.game.action.LayBonusToken;
-import rails.game.action.LayToken;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;

@@ -547,7 +547,7 @@ public class GameUIManager implements DialogOwner {
 
             log.debug("Updating Start round window");
             startRoundWindow.updateStatus(myTurn);
-            startRoundWindow.setSRPlayerTurn(startRound.getCurrentPlayer().getIndex());
+            startRoundWindow.setSRPlayerTurn(getRoot().getPlayerManager().getCurrentPlayer().getIndex());
 
         } else if (StatusWindow.class.isAssignableFrom(activeWindow.getClass())) {
             //        } else {

@@ -146,6 +146,22 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     protected Map<String, Object> objectStorage = new HashMap<String, Object>();
     protected Map<String, Integer> storageIds = new HashMap<String, Integer>();
     
+    private static int revenueSpinnerIncrement = 10;
+    //Used for Storing the PublicCompany to be Founded by a formationround
+    private PublicCompany nationalToFound;
+    
+//    private Player NationalFormStartingPlayer = null;
+    
+    private Map< PublicCompany, Player> NationalFormStartingPlayer = new HashMap<PublicCompany, Player>();
+     
+    
+    /**
+     * @return the revenueSpinnerIncrement
+     */
+    public static int getRevenueSpinnerIncrement() {
+        return revenueSpinnerIncrement;
+    }
+
     protected static Logger log =
         LoggerFactory.getLogger(GameManager.class);
 
@@ -252,6 +268,10 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                     setGameParameter (GameDef.Parm.EMERGENCY_MAY_BUY_FROM_COMPANY,
                             emergencyTag.getAttributeAsBoolean("mayBuyFromCompany",
                                     GameDef.Parm.EMERGENCY_MAY_BUY_FROM_COMPANY.defaultValueAsBoolean()));
+                }
+                Tag revenueIncrementTag = orTag.getChild("RevenueIncrement");
+                if (revenueIncrementTag != null) {
+                    revenueSpinnerIncrement = revenueIncrementTag.getAttributeAsInteger("amount", 10);
                 }
             }
 
@@ -1412,7 +1432,31 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     protected Player getCurrentPlayer() {
         return getRoot().getPlayerManager().getCurrentPlayer();
     }
+    
+    public void setNationalToFound(String national){
+        
+        for (PublicCompany company : this.getAllPublicCompanies()){
+            if (company.getId().equals("national")) {
+                this.nationalToFound = company;  
+            }
+        }
+        
+        
+    }
+    
+    public PublicCompany getNationalToFound() {
+        // TODO Auto-generated method stub
+        return nationalToFound;
+    }
 
+    public void setNationalFormationStartingPlayer( PublicCompany nationalToFound2, Player currentPlayer) {
+        this.NationalFormStartingPlayer.put(nationalToFound2, currentPlayer);
+        
+    }
+    
+    public Player getNationalFormationStartingPlayer(PublicCompany comp) {
+        return this.NationalFormStartingPlayer.get(comp);
+    }
 
 }
 

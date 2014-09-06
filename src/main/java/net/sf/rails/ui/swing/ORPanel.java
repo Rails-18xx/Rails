@@ -99,7 +99,7 @@ implements ActionListener, KeyListener, RevenueListener {
     private Field newTrainCost[];
     private int rightsXOffset, rightsYOffset;
     private Field rights[];
-
+    
     private boolean privatesCanBeBought = false;
     private boolean bonusTokensExist = false;
     private boolean hasCompanyLoans = false;
@@ -613,7 +613,8 @@ implements ActionListener, KeyListener, RevenueListener {
 
             f = revenue[i] = new Field(c.getLastRevenueModel());
             addField(f, revXOffset, revYOffset + i, 1, 1, 0, visible);
-            f = revenueSelect[i] = new Spinner(0, 0, 0, 10);
+          
+            f = revenueSelect[i] = new Spinner(0, 0, 0, GameManager.getRevenueSpinnerIncrement());
             //align spinner size with field size 
             //(so that changes to visibility don't affect panel sizing)
             f.setPreferredSize(revenue[i].getPreferredSize());

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GameOptions>
+	<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Highlight"/>
+    <GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Highlight"/>
+    <GameOption name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
+    <GameOption name="NoMapMode" type="toggle" default="no"/>
+    <GameOption name="UnlimitedTopTrains" values="No,Yes" default="No"/>
+    <GameOption name="RouteAlgorithm" values="Permissive,Semi-Restrictive,Restrictive" default="Permissive" />
+</GameOptions>

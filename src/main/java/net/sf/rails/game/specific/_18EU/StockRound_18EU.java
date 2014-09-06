@@ -85,7 +85,7 @@ public class StockRound_18EU extends StockRound {
         List<Stop> freeStops = null;
         if (mustMergeMinor) {
             minors = new ArrayList<PublicCompany>();
-            for (PublicCertificate c : getCurrentPlayer().getPortfolioModel().getCertificates()) {
+            for (PublicCertificate c : playerManager.getCurrentPlayer().getPortfolioModel().getCertificates()) {
                 if (c.getCompany().getType().getId().equalsIgnoreCase("Minor")) {
                     minors.add(c.getCompany());
                 }
@@ -245,7 +245,7 @@ public class StockRound_18EU extends StockRound {
         if (minors.isEmpty() || targetCompanies.isEmpty()) return;
 
         for (PublicCompany minor : minors) {
-            possibleActions.add(new MergeCompanies(minor, targetCompanies));
+            possibleActions.add(new MergeCompanies(minor, targetCompanies, false));
         }
     }
 
@@ -287,7 +287,7 @@ public class StockRound_18EU extends StockRound {
         StartCompany_18EU startAction = null;
         Stop selectedHomeCity = null;
 
-        currentPlayer = getCurrentPlayer();
+        currentPlayer = playerManager.getCurrentPlayer();
 
         // Dummy loop to allow a quick jump out
         while (true) {

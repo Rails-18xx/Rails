@@ -45,7 +45,7 @@ public class ShareSellingRound extends StockRound {
         
         this.dumpOtherCompaniesAllowed = dumpOtherCompaniesAllowed;
         log.debug("Forced selling, dumpOtherCompaniesAllowed = " + dumpOtherCompaniesAllowed);
-        setCurrentPlayerIndex(sellingPlayer.getIndex());
+        getRoot().getPlayerManager().setCurrentPlayer(sellingPlayer);
         getSellableShares();
     }
 
@@ -235,7 +235,7 @@ public class ShareSellingRound extends StockRound {
         int presSharesToSell = 0;
         int numberToSell = action.getNumber();
         int shareUnits = action.getShareUnits();
-        int currentIndex = getCurrentPlayerIndex();
+
 
         // Dummy loop to allow a quick jump out
         while (true) {
@@ -299,10 +299,10 @@ public class ShareSellingRound extends StockRound {
                     break;
                 }
                 // More to sell and we are President: see if we can dump it.
-                Player otherPlayer;
-                for (int i = currentIndex + 1; i < currentIndex
-                + numberOfPlayers; i++) {
-                    otherPlayer = getRoot().getPlayerManager().getPlayerByIndex(i);
+                Player otherPlayer, previousPlayer;
+                previousPlayer = getRoot().getPlayerManager().getCurrentPlayer();
+                for (int i = 0; i <= numberOfPlayers; i++) {
+                    otherPlayer = getRoot().getPlayerManager().getNextPlayerAfter(previousPlayer);
                     if (otherPlayer.getPortfolioModel().getShare(company) >= presCert.getShare()) {
                         // Check if he has the right kind of share
                         if (numberToSell > 1
@@ -315,6 +315,7 @@ public class ShareSellingRound extends StockRound {
                             break;
                         }
                     }
+                    previousPlayer = otherPlayer;
                 }
             }
             // Check if we could sell them all
