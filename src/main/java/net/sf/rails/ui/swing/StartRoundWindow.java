@@ -5,6 +5,7 @@ import java.awt.event.*;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.swing.*;
 
@@ -643,7 +644,10 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
             // TODO: should be included in BuyStartItem
             
             if (activeItem.containsStartSpaces()) {
-                startSpaces = activeItem.startSpaces();
+                startSpaces = new TreeSet<StockSpace>();
+                for (String s : activeItem.startSpaces()) {
+                    startSpaces.add(stockMarket.getStockSpace(s));
+                }
             } else {            
                 startSpaces = stockMarket.getStartSpaces();
             }

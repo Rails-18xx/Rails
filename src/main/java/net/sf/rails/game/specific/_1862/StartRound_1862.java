@@ -50,12 +50,12 @@ public class StartRound_1862 extends StartRound_AuctionOnly {
     }
 
     @Override
-    protected SortedSet<StockSpace> getStartSpaces(int maxCash) {
-        SortedSet<StockSpace> startSpaces = new TreeSet<StockSpace>();
+    protected SortedSet<String> getStartSpaces(int maxCash) {
+        SortedSet<String> startSpaces = new TreeSet<String>();
 
         for (StockSpace s : stockMarket.getStartSpaces()) {
             if ((s.getPrice() * 3) <= maxCash) {
-                startSpaces.add(s);
+                startSpaces.add(s.getId());
             }
         }
         return startSpaces;

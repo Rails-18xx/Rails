@@ -24,6 +24,7 @@ public class CompanyManager_1862 extends CompanyManager {
         List<StartItem> items = originalPacket.getItems();
         
         for (StartItem item : items) {
+            item.setMinimumBid(0);
             PublicCompany_1862 company = (PublicCompany_1862) getPublicCompany(item.getName());
             if (company.isStartable()) {
                 item.setSecondary(company.getPresidentsShare());

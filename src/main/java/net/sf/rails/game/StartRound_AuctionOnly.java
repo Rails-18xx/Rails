@@ -117,7 +117,7 @@ public abstract class StartRound_AuctionOnly extends StartRound {
     /*
      * The possible start spaces allowed for a company.
      */
-    protected abstract SortedSet<StockSpace> getStartSpaces(int i);
+    protected abstract SortedSet<String> getStartSpaces(int i);
 
 
     @Override

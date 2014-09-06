@@ -20,7 +20,7 @@ public class BuyStartItem extends StartItemAction {
     protected boolean sharePriceToSet = false;
     protected String companyNeedingSharePrice = null;
     private boolean setSharePriceOnly = false;
-    private SortedSet<StockSpace> startSpaces = null;
+    private SortedSet<String> startSpaces = null;
 
     // Client-provided fields
     private int associatedSharePrice;
@@ -125,11 +125,11 @@ public class BuyStartItem extends StartItemAction {
         }
     }
 
-    public SortedSet<StockSpace> startSpaces() {
+    public SortedSet<String> startSpaces() {
         return startSpaces;
     }
 
-    public void setStartSpaces(SortedSet<StockSpace> startSpaces) {
+    public void setStartSpaces(SortedSet<String> startSpaces) {
         this.startSpaces = startSpaces;
     }
 
