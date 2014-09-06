@@ -5,6 +5,7 @@ import java.util.SortedSet;
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
+import net.sf.rails.game.state.ArrayListState;
 import rails.game.action.BidStartItem;
 import rails.game.action.BuyStartItem;
 import rails.game.action.NullAction;
@@ -16,6 +17,8 @@ import rails.game.action.StartItemAction;
  */
 
 public abstract class StartRound_AuctionOnly extends StartRound {
+    private final ArrayListState<Player> auctionWinners = 
+            ArrayListState.create(this, "auctionWinners");
 
     protected StartRound_AuctionOnly(GameManager parent, String id) {
         super(parent, id);
@@ -24,6 +27,7 @@ public abstract class StartRound_AuctionOnly extends StartRound {
     @Override
     public void start() {
         super.start();
+        auctionWinners.clear();
         setPossibleActions();
     }
 
@@ -243,8 +247,8 @@ public abstract class StartRound_AuctionOnly extends StartRound {
         if (currentAuctionItem() != null) {
             // An item is currently up for bid
             StartItem auctionItem = currentAuctionItem();
-            if (numPasses.value() >= auctionItem.getBidders() - 1) {
-                // Only one bidder is left
+            if (auctionItem.getBidders() == 2) {
+                // Only one bidder is left after this pass
                 int price = auctionItem.getBid();
                 log.debug("Highest bidder is "
                           + auctionItem.getBidder().getId());
@@ -259,6 +263,13 @@ public abstract class StartRound_AuctionOnly extends StartRound {
                 player.unblockCash(auctionItem.getBid(player));
                 auctionItem.setBid(-1, player);
                 setNextBiddingPlayer(auctionItem);
+            }
+        } else { 
+            // Nothing is up for bid
+            if ((numPasses.value() + auctionWinners.size()) == playerManager.getNumberOfPlayers()) {
+                finishRound();
+            } else {
+                setNextBiddingPlayer();
             }
         }
         return true;
@@ -293,6 +304,17 @@ public abstract class StartRound_AuctionOnly extends StartRound {
     @Override
     protected boolean buy(String playerName, BuyStartItem boughtItem) {
         boolean result = super.buy(playerName, boughtItem);
+        if (result == true) {
+            Player player = playerManager.getPlayerByName(playerName);
+            auctionWinners.add(player);
+            if (auctionWinners.size() == playerManager.getNumberOfPlayers()) {
+                finishRound();
+            }
+            playerManager.setCurrentPlayer(player);
+            while (auctionWinners.contains(playerManager.getCurrentPlayer())) {
+                playerManager.setCurrentToNextPlayer();
+            }
+        }
         return result;
     }
 

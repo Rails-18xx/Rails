@@ -21,24 +21,8 @@ import net.sf.rails.game.state.Currency;
 public class StartRound_1862 extends StartRound_AuctionOnly {
     protected final int bidIncrement;
 
-    // TODO: Get correct ones when stock market is created
-
-    private static SortedSet<StockSpace> baseStartSpaces;
+    // TODO: Fix when stock market is created
     private final static int MIN_START_SPACE_PRICE = 54;
-    static {
-        StockMarket stockMarket =
-                new StockMarket(RailsRoot.getInstance(), "foo");
-
-        baseStartSpaces = new TreeSet<StockSpace>();
-        baseStartSpaces.add(StockSpace.create(stockMarket, "54", 54, null));
-        baseStartSpaces.add(StockSpace.create(stockMarket, "58", 58, null));
-        baseStartSpaces.add(StockSpace.create(stockMarket, "62", 62, null));
-        baseStartSpaces.add(StockSpace.create(stockMarket, "68", 68, null));
-        baseStartSpaces.add(StockSpace.create(stockMarket, "74", 74, null));
-        baseStartSpaces.add(StockSpace.create(stockMarket, "82", 82, null));
-        baseStartSpaces.add(StockSpace.create(stockMarket, "90", 90, null));
-        baseStartSpaces.add(StockSpace.create(stockMarket, "100", 100, null));
-    }
 
     /**
      * Constructed via Configure
@@ -70,7 +54,7 @@ public class StartRound_1862 extends StartRound_AuctionOnly {
     protected SortedSet<StockSpace> getStartSpaces(int maxCash) {
         SortedSet<StockSpace> startSpaces = new TreeSet<StockSpace>();
 
-        for (StockSpace s : baseStartSpaces) {
+        for (StockSpace s : stockMarket.getStartSpaces()) {
             if ((s.getPrice() * 3) <= maxCash) {
                 startSpaces.add(s);
             }
