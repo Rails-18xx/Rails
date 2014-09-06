@@ -82,13 +82,8 @@ public abstract class StartRound_AuctionOnly extends StartRound {
         }
 
         if (possibleActions.isEmpty()) {
-            numPasses.add(1); // TODO
-            // if (getCurrentlyAuctioningItem() == null) {
-            // playerManager.setCurrentToNextPlayer();
-            // } else {
+            numPasses.add(1); 
             setNextBiddingPlayer();
-            // }
-
         }
         return true;
 
@@ -258,7 +253,7 @@ public abstract class StartRound_AuctionOnly extends StartRound {
                     assignItem(auctionItem.getBidder(), auctionItem, price, 0);
                 }
                 numPasses.set(0);
-                playerManager.setCurrentToPriorityPlayer(); // TODO: Check
+//                playerManager.setCurrentToPriorityPlayer(); // TODO: I think this can be removed.
             } else {
                 player.unblockCash(auctionItem.getBid(player));
                 auctionItem.setBid(-1, player);
@@ -334,6 +329,21 @@ public abstract class StartRound_AuctionOnly extends StartRound {
     
     private void setNextBiddingPlayer() {
         playerManager.setCurrentToNextPlayer();
+        while (auctionWinners.contains(playerManager.getCurrentPlayer())) {
+            playerManager.setCurrentToNextPlayer();
+        }
     }
 
+    @Override
+    protected void finishRound() {
+        for (StartItem item : itemsToSell.view()) {
+            if (item.getStatus() == StartItem.BIDDABLE) {
+              PublicCertificate primary = (PublicCertificate) item.getPrimary();
+              primary.moveTo(ipo);
+            }
+        }
+        super.finishRound();
+    }
+
+    
 }

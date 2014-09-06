@@ -1,10 +1,6 @@
 <?xml version="1.0"?>
 <CompanyManager>
 
-    <CompanyType name="DummyPrivate" class="net.sf.rails.game.PrivateCompany" >
-		<Certificate certificateCount = "0" />
-	</CompanyType>
-        
     <CompanyType name="Public" class="net.sf.rails.game.specific._1862.PublicCompany_1862">
 		<CanBuyPrivates/>
 		<PoolPaysOut/>
@@ -21,8 +17,6 @@
         <CanUseSpecialProperties/>
 	</CompanyType>
 	
-    <Company name="E&amp;H" type="DummyPrivate" basePrice="0" />
-        
 	<Company name="E&amp;H" type="Public" tokens="4" fgColour="FF9900" bgColour="FFFF00"> 
 		<Home hex="A20"/>
 	</Company>
@@ -83,11 +77,5 @@
 	<Company name="WstI" type="Public" tokens="4" fgColour="FFFF00" bgColour="9900CC"> 
 		<Home hex="A20"/>
 	</Company>
-	
-	<StartPacket name="sellPrivates" roundClass="net.sf.rails.game.specific._1862.StartRound_1862">
-		<Bidding initial="0" minimum="0" increment="5"/>
-		<Item name="E&amp;H" type="DummyPrivate" basePrice="0" />
-	</StartPacket>
-	
 	
 </CompanyManager>

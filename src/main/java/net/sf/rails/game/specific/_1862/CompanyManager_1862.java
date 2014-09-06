@@ -14,12 +14,17 @@ public class CompanyManager_1862 extends CompanyManager {
         super(parent, id);
     } 
 
+//    <StartPacket name="sellPrivates" roundClass="net.sf.rails.game.specific._1862.StartRound_1862">
+//    <Bidding initial="0" minimum="0" increment="5"/>
+//    <Item name="E&amp;H" type="DummyPrivate" basePrice="0" />
+//</StartPacket>
+
+    
     public StartPacket getNextUnfinishedStartPacket() {
-        StartPacket originalPacket = startPackets.get(0);
         StartPacket newPacket =
-                StartPacket.create(originalPacket.getParent(),
-                        originalPacket.getId() + (startNumber++),
-                        originalPacket.getRoundClassName());
+                StartPacket.create(this,
+                        "StartPacket" + (startNumber++),
+                        "net.sf.rails.game.specific._1862.StartRound_1862"); // TODO: Clean this up
 
         int index = 0;
         for (PublicCompany c : getAllPublicCompanies()) {
