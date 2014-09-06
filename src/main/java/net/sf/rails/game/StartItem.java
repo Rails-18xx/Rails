@@ -144,6 +144,16 @@ public class StartItem extends RailsAbstractItem {
     }
 
     /**
+     * Add a secondary certificate, that "comes with" the primary certificate
+     * after initialization.
+     *
+     * @param secondary The secondary certificate.
+     */
+    public void setSecondary(Certificate secondary) {
+        this.secondary = secondary;
+    }
+    
+    /**
      * Initialisation, to be called after all XML parsing has completed, and
      * after IPO initialisation.
      */

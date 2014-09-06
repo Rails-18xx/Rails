@@ -8,10 +8,9 @@ import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCertificate;
-import net.sf.rails.game.RailsRoot;
+import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.StartItem;
 import net.sf.rails.game.StartRound_AuctionOnly;
-import net.sf.rails.game.StockMarket;
 import net.sf.rails.game.StockSpace;
 import net.sf.rails.game.state.Currency;
 
@@ -32,9 +31,9 @@ public class StartRound_1862 extends StartRound_AuctionOnly {
         bidIncrement = startPacket.getModulus();
     }
 
-    protected void assignItem(Player player, StartItem item, int price,
-            int sharePrice) {
-        PublicCertificate primary = (PublicCertificate) item.getPrimary();
+    protected void assignItem(Player player, StartItem item, int price, int sharePrice) {
+        PublicCompany company = companyManager.getPublicCompany(item.getName());
+        PublicCertificate primary = company.getPresidentsShare();
         primary.moveTo(player);
         String priceText = Currency.toBank(player, price + (3 * sharePrice));
         ReportBuffer.add(

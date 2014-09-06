@@ -334,16 +334,4 @@ public abstract class StartRound_AuctionOnly extends StartRound {
         }
     }
 
-    @Override
-    protected void finishRound() {
-        for (StartItem item : itemsToSell.view()) {
-            if (item.getStatus() == StartItem.BIDDABLE) {
-              PublicCertificate primary = (PublicCertificate) item.getPrimary();
-              primary.moveTo(ipo);
-            }
-        }
-        super.finishRound();
-    }
-
-    
 }

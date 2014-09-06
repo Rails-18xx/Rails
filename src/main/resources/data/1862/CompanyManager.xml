@@ -1,6 +1,32 @@
 <?xml version="1.0"?>
 <CompanyManager>
+    
+    <CompanyType name="ParliamentCharter" class="net.sf.rails.game.specific._1862.ParliamentCharter">
+		<ShareUnit percentage="100"/>
+		<Certificate type="President" shares="1"/>
+    </CompanyType>
 
+    <Company name="E&amp;H" type="ParliamentCharter"/>
+	<Company name="ECR" type="ParliamentCharter"/>
+	<Company name="ENR" type="ParliamentCharter"/>
+	<Company name="ESR" type="ParliamentCharter"/>
+	<Company name="EUR" type="ParliamentCharter"/>
+	<Company name="FDR" type="ParliamentCharter"/>
+	<Company name="I&amp;B" type="ParliamentCharter"/>
+	<Company name="L&amp;D" type="ParliamentCharter"/>
+	<Company name="L&amp;E" type="ParliamentCharter"/>
+	<Company name="L&amp;H" type="ParliamentCharter"/>
+	<Company name="N&amp;B" type="ParliamentCharter"/>
+	<Company name="N&amp;E" type="ParliamentCharter"/>
+	<Company name="N&amp;S" type="ParliamentCharter"/>
+	<Company name="Y&amp;N" type="ParliamentCharter"/>
+	<Company name="NGC" type="ParliamentCharter"/>
+	<Company name="SVR" type="ParliamentCharter"/>
+	<Company name="WNR" type="ParliamentCharter"/>
+	<Company name="W&amp;F" type="ParliamentCharter"/>
+	<Company name="WVR" type="ParliamentCharter"/>
+	<Company name="WstI" type="ParliamentCharter"/>
+    
     <CompanyType name="Public" class="net.sf.rails.game.specific._1862.PublicCompany_1862">
 		<CanBuyPrivates/>
 		<PoolPaysOut/>
@@ -77,5 +103,29 @@
 	<Company name="WstI" type="Public" tokens="4" fgColour="FFFF00" bgColour="9900CC"> 
 		<Home hex="A20"/>
 	</Company>
+	
+	<StartPacket roundClass="net.sf.rails.game.specific._1862.StartRound_1862">
+		<Bidding initial="0" minimum="0" increment="5"/>
+		<Item name="E&amp;H" type="ParliamentCharter" basePrice="0"/>
+		<Item name="ECR" type="ParliamentCharter" basePrice="0"/>
+		<Item name="ENR" type="ParliamentCharter" basePrice="0"/>
+		<Item name="ESR" type="ParliamentCharter" basePrice="0"/>
+		<Item name="EUR" type="ParliamentCharter" basePrice="0"/>
+		<Item name="FDR" type="ParliamentCharter" basePrice="0"/>
+		<Item name="I&amp;B" type="ParliamentCharter" basePrice="0"/>
+		<Item name="L&amp;D" type="ParliamentCharter" basePrice="0"/>
+		<Item name="L&amp;E" type="ParliamentCharter" basePrice="0"/>
+		<Item name="L&amp;H" type="ParliamentCharter" basePrice="0"/>
+		<Item name="N&amp;B" type="ParliamentCharter" basePrice="0"/>
+		<Item name="N&amp;E" type="ParliamentCharter" basePrice="0"/>
+		<Item name="N&amp;S" type="ParliamentCharter" basePrice="0"/>
+		<Item name="Y&amp;N" type="ParliamentCharter" basePrice="0"/>
+		<Item name="NGC" type="ParliamentCharter" basePrice="0"/>
+		<Item name="SVR" type="ParliamentCharter" basePrice="0"/>
+		<Item name="WNR" type="ParliamentCharter" basePrice="0"/>
+		<Item name="W&amp;F" type="ParliamentCharter" basePrice="0"/>
+		<Item name="WVR" type="ParliamentCharter" basePrice="0"/>
+		<Item name="WstI" type="ParliamentCharter" basePrice="0"/>
+	</StartPacket>
 	
 </CompanyManager>

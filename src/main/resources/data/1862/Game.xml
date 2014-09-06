@@ -44,7 +44,7 @@
 	<Component name="Map" class="net.sf.rails.game.MapManager" file="Map.xml"/>
 	<Component name="CompanyManager" class="net.sf.rails.game.specific._1862.CompanyManager_1862"
 		file="CompanyManager.xml"/>
-	<Component name="StockMarket" class="net.sf.rails.game.specific._1862.StockMarket_1862"
+	<Component name="StockMarket" class="net.sf.rails.game.StockMarket"
 		file="StockMarket.xml"/>
 	<Component name="TrainManager" class="net.sf.rails.game.TrainManager">
 		<Defaults>

@@ -57,24 +57,12 @@
 	<StockSpace name="D9" price="45" type="yellow"/>
 	<StockSpace name="D10" price="40" type="orange"/>
 	<StockSpace name="D11" price="35" type="orange"/>
-	<StockSpace name="E1" price="100" >
-		<StartSpace/>
-	</StockSpace>
-	<StockSpace name="E2" price="90" >
-		<StartSpace/>
-	</StockSpace>
-	<StockSpace name="E3" price="80" >
-		<StartSpace/>
-	</StockSpace>
-	<StockSpace name="E4" price="75" >
-		<StartSpace/>
-	</StockSpace>
-	<StockSpace name="E5" price="70" >
-		<StartSpace/>
-	</StockSpace>
-	<StockSpace name="E6" price="65" >
-		<StartSpace/>
-	</StockSpace>
+	<StockSpace name="E1" price="100" />
+	<StockSpace name="E2" price="90" />
+	<StockSpace name="E3" price="80" />
+	<StockSpace name="E4" price="75" />
+	<StockSpace name="E5" price="70" />
+	<StockSpace name="E6" price="65" />
 	<StockSpace name="E7" price="60" />
 	<StockSpace name="E8" price="55" />
 	<StockSpace name="E9" price="50" type="yellow"/>
@@ -141,4 +129,31 @@
 	<StockSpace name="S2" price="400" />
 	<StockSpace name="T1" price="450" />
 	<StockSpace name="T2" price="425" />
+	
+	
+	<StockSpace name="U1" price="100" >
+		<StartSpace/>
+	</StockSpace>
+	<StockSpace name="U2" price="90" >
+		<StartSpace/>
+	</StockSpace>
+	<StockSpace name="U3" price="82" >
+		<StartSpace/>
+	</StockSpace>
+	<StockSpace name="U4" price="74" >
+		<StartSpace/>
+	</StockSpace>
+	<StockSpace name="U5" price="68" >
+		<StartSpace/>
+	</StockSpace>
+	<StockSpace name="U6" price="62" >
+		<StartSpace/>
+	</StockSpace>
+	<StockSpace name="U7" price="58" >
+		<StartSpace/>
+	</StockSpace>
+	<StockSpace name="U8" price="54" >
+		<StartSpace/>
+	</StockSpace>
+	
 </StockMarket>

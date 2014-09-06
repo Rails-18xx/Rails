@@ -1,7 +1,8 @@
 package net.sf.rails.game.specific._1862;
 
+import java.util.List;
+
 import net.sf.rails.game.CompanyManager;
-import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.StartItem;
 import net.sf.rails.game.StartPacket;
@@ -14,30 +15,22 @@ public class CompanyManager_1862 extends CompanyManager {
         super(parent, id);
     } 
 
-//    <StartPacket name="sellPrivates" roundClass="net.sf.rails.game.specific._1862.StartRound_1862">
-//    <Bidding initial="0" minimum="0" increment="5"/>
-//    <Item name="E&amp;H" type="DummyPrivate" basePrice="0" />
-//</StartPacket>
-
-    
     public StartPacket getNextUnfinishedStartPacket() {
-        StartPacket newPacket =
-                StartPacket.create(this,
-                        "StartPacket" + (startNumber++),
-                        "net.sf.rails.game.specific._1862.StartRound_1862"); // TODO: Clean this up
-
-        int index = 0;
-        for (PublicCompany c : getAllPublicCompanies()) {
-            if (((PublicCompany_1862) c).isStartable()) {
-                StartItem si =
-                        StartItem.create(newPacket, c.getLongName(), "Public",
-                                0, index++, true);
-                si.init(gameManager);
-                si.setMinimumBid(0);
-                newPacket.addItem(si);
+        StartPacket originalPacket = startPackets.get(0);
+        
+        StartPacket newPacket = StartPacket.create(originalPacket.getParent(), originalPacket.getId() + (startNumber++), 
+                originalPacket.getRoundClassName());
+        
+        List<StartItem> items = originalPacket.getItems();
+        
+        for (StartItem item : items) {
+            PublicCompany_1862 company = (PublicCompany_1862) getPublicCompany(item.getName());
+            if (company.isStartable()) {
+                item.setSecondary(company.getPresidentsShare());
+                newPacket.addItem(item);
             }
         }
-
+        
         return newPacket;
     }
 }
