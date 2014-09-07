@@ -1,8 +1,8 @@
 package net.sf.rails.ui.swing;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -13,7 +13,6 @@ import java.util.Set;
 
 import javax.swing.Action;
 import javax.swing.AbstractAction;
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -23,6 +22,7 @@ import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedSet;
 
 import rails.game.action.LayBaseToken;
 import rails.game.action.LayBonusToken;
@@ -30,6 +30,7 @@ import rails.game.action.LayToken;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.BonusToken;
 import net.sf.rails.game.HexSide;
+import net.sf.rails.game.MapHex;
 import net.sf.rails.game.MapUpgrade;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.TileHexUpgrade;
@@ -45,13 +46,12 @@ import net.sf.rails.ui.swing.hexmap.GUITile;
 import net.sf.rails.ui.swing.hexmap.HexHighlightMouseListener;
 
 
-public class UpgradesPanel extends Box {
+public class UpgradesPanel extends JPanel {
     private static final long serialVersionUID = 1L;
 
     private static final int UPGRADE_TILE_ZOOM_STEP = 10;
     private static final Color DEFAULT_LABEL_BG_COLOUR = new JLabel("").getBackground();
     private static final Color SELECTED_LABEL_BG_COLOUR = new Color(255, 220, 150);
-    private static final int DEFAULT_NB_PANEL_ELEMENTS = 15;
 
     private final ORUIManager orUIManager;
     
@@ -63,8 +63,6 @@ public class UpgradesPanel extends Box {
     // TODO: Replace this with an action based approach
     private final RailsIconButton confirmButton;
     private final RailsIconButton skipButton;
-    
-    private Dimension preferredSize;
 
     /**
      * If set, done/cancel buttons are not added to the pane. Instead, the
@@ -76,32 +74,36 @@ public class UpgradesPanel extends Box {
 
     private Set<MapUpgrade> upgrades = ImmutableSet.of();
     
+    // current selected upgrade
     private MapUpgrade activeUpgrade = null;
 
     public UpgradesPanel(ORUIManager orUIManager, boolean omitButtons) {
-        super(BoxLayout.Y_AXIS);
-
+        this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+        
         this.orUIManager = orUIManager;
         this.omitButtons = omitButtons;
+        //this.setBackground(Color.DARK_GRAY);
+        //this.setBorder(border);
 
-        preferredSize =
-                new Dimension(
-                        (int) Math.round(110 * (2 + GUIGlobals.getFontsScale()) / 3),
-                        200);
-        setSize(preferredSize);
+        int width = (int) Math.round(110 * (2 + GUIGlobals.getFontsScale()) / 3);
+        int height = 200;
+        
+        this.setPreferredSize(new Dimension(width, height + 50));
+        this.setMaximumSize(new Dimension(width, height + 50));
         setVisible(true);
 
         upgradePanel = new JPanel();
 
         upgradePanel.setOpaque(true);
+        upgradePanel.setLayout(new BoxLayout(upgradePanel, BoxLayout.PAGE_AXIS));
         upgradePanel.setBackground(Color.DARK_GRAY);
-        upgradePanel.setBorder(border);
-        upgradePanel.setLayout(new GridLayout(DEFAULT_NB_PANEL_ELEMENTS, 1));
 
         scrollPane = new JScrollPane(upgradePanel);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setSize(getPreferredSize());
+        scrollPane.setPreferredSize(new Dimension(width, height));
+        scrollPane.setMinimumSize(new Dimension(width, height));
+        
 
         Action confirmAction = new AbstractAction() {
             public void actionPerformed(ActionEvent arg0) {
@@ -117,32 +119,34 @@ public class UpgradesPanel extends Box {
             }
         };
         skipAction.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_C);
+        
 
         confirmButton = new RailsIconButton(RailsIcon.CONFIRM, confirmAction);
         confirmButton.setEnabled(false);
+
         skipButton = new RailsIconButton(RailsIcon.SKIP, skipAction);
         skipButton.setEnabled(false);
          
         if (omitButtons) {
             confirmButton.setVisible(false);
             skipButton.setVisible(false);
+        } else {
+            Dimension buttonDimension = new Dimension(Short.MAX_VALUE, 25);
+            confirmButton.setMaximumSize(buttonDimension);
+            confirmButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+            skipButton.setMaximumSize(buttonDimension);
+            skipButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+            add(confirmButton);
+            add(skipButton);
         }
+        add(scrollPane);
         
         setButtons();
+        
+        revalidate();
 
-        add(scrollPane);
     }
     
-    @Override
-    public Dimension getPreferredSize() {
-        return preferredSize;
-    }
-
-    @Override
-    public void setPreferredSize(Dimension preferredSize) {
-        this.preferredSize = preferredSize;
-    }
-
     /**
      * @return Default zoom step for conventional panes or, for dockable panes,
      * the zoom step used in the map. Map zoom step can only be used for
@@ -162,40 +166,6 @@ public class UpgradesPanel extends Box {
     }
     
     
-    private void showUpgrades() {
-        upgradePanel.removeAll();
-        // reset to the number of elements
-        GridLayout panelLayout = (GridLayout) upgradePanel.getLayout();
-        panelLayout.setRows(DEFAULT_NB_PANEL_ELEMENTS);
-        
-        if (upgrades.size() == 0) {
-            orUIManager.getMessagePanel().setMessage(LocalText.getText("NoTiles"));
-            return;
-        }
-        
-        for (MapUpgrade upgrade:upgrades) {
-            JLabel label = null;
-            if (upgrade instanceof TileHexUpgrade) {
-                label = createTileLabel((TileHexUpgrade)upgrade);
-            } else if (upgrade instanceof TokenStopUpgrade) {
-                label = createTokenLabel((TokenStopUpgrade)upgrade);
-            }
-            if (label != null) {
-                upgradePanel.add(label);
-            }
-        }
-    }
-    
-    // FIXME: How to change the background of the selected token?
-//    public void setSelectedToken() {
-//        if (tokenLabels.isEmpty()) return;
-//        int index = -1;
-//        for (ActionLabel tokenLabel : tokenLabels) {
-//            tokenLabel.setBackground(++index == selectedTokenndex
-//                    ? SELECTED_LABEL_BG_COLOUR : DEFAULT_LABEL_BG_COLOUR);
-//        }
-//    }
-
     private void setButtons() {
         if (omitButtons) {
             // only set externally managed buttons to visible if at least
@@ -204,25 +174,27 @@ public class UpgradesPanel extends Box {
                     confirmButton.isEnabled() || skipButton.isEnabled();
             confirmButton.setVisible(isVisible);
             skipButton.setVisible(isVisible);
-        } else {
-            upgradePanel.add(confirmButton);
-            upgradePanel.add(skipButton);
-            revalidate();
         }
     }
-
     
-    public void setInactive() {
+    private void resetUpgrades() {
         upgradePanel.removeAll();
+        activeUpgrade = null;
+        upgrades = ImmutableSet.of();
+        // set scrollposition to top and show again
+        scrollPane.getVerticalScrollBar().setValue(0);
+        scrollPane.repaint();
+    }
+
+    public void setInactive() {
+        resetUpgrades();
         confirmButton.setEnabled(false);
         skipButton.setEnabled(false);
         setButtons();
     }
     
     public void setActive() {
-        activeUpgrade = null;
-        upgradePanel.removeAll();
-        upgrades = ImmutableSet.of();
+        resetUpgrades();
         confirmButton.setEnabled(false);
         skipButton.setEnabled(true);
         setButtons();
@@ -233,8 +205,8 @@ public class UpgradesPanel extends Box {
     }
     
     public void setSelect(Set<MapUpgrade> upgrades) {
-        this.upgrades = upgrades;
-        activeUpgrade = null;
+        resetUpgrades();
+        this.upgrades = ImmutableSortedSet.copyOf(upgrades);
         showUpgrades();
         confirmButton.setEnabled(false);
         skipButton.setEnabled(true);
@@ -242,9 +214,8 @@ public class UpgradesPanel extends Box {
     }
 
     public void setConfirm() {
-        if (activeUpgrade instanceof TileHexUpgrade) {
-            showUpgrades(); // show rotated tiles in panel
-        }
+        upgradePanel.removeAll();
+        showUpgrades();
         confirmButton.setEnabled(true);
         skipButton.setEnabled(true);
         setButtons();
@@ -271,11 +242,33 @@ public class UpgradesPanel extends Box {
         }
     }
 
+    private void showUpgrades() {
+        
+        for (MapUpgrade upgrade:upgrades) {
+            JLabel label = null;
+            if (upgrade instanceof TileHexUpgrade) {
+                label = createTileLabel((TileHexUpgrade)upgrade);
+            } else if (upgrade instanceof TokenStopUpgrade) {
+                label = createTokenLabel((TokenStopUpgrade)upgrade);
+            }
+            if (upgrade == activeUpgrade) {
+                label.setBackground(SELECTED_LABEL_BG_COLOUR);
+            }
+            label.setMaximumSize(new Dimension(
+                    Short.MAX_VALUE, (int)label.getPreferredSize().getHeight()));
+            label.setAlignmentX(Component.CENTER_ALIGNMENT);
+            upgradePanel.add(label);
+        }
+        scrollPane.revalidate();
+        scrollPane.repaint();
+    }
+    
     private UpgradeLabel createTileLabel(TileHexUpgrade upgrade) {   
         UpgradeLabel label;
+        ImageIcon icon = createHexIcon(upgrade);
         if (upgrade.isValid()) {
             // enabled tiles
-            label = createHexLabel(upgrade, null, null);
+            label = UpgradeLabel.create(icon, upgrade, null, null);
             final TileHexUpgrade upgrade_final = upgrade;
             label.addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
@@ -288,7 +281,7 @@ public class UpgradesPanel extends Box {
             for (Validation invalid : upgrade.getInvalids()) {
                 invalidText.append(invalid.toString() + "<br>");
             }
-            label = createHexLabel(upgrade,
+            label = UpgradeLabel.create(icon, upgrade,
                     LocalText.getText("TILE_INVALID"),
                     invalidText.toString());
             label.setEnabled(false);
@@ -299,22 +292,20 @@ public class UpgradesPanel extends Box {
                         upgrade.getUpgrade().getTargetTile(), true);
             }
         }
+        label.setOpaque(true);
         return label;
     }
 
-    private UpgradeLabel createHexLabel(TileHexUpgrade hexUpgrade,
-            String toolTipHeaderLine, String toolTipBody) {
-
+    private ImageIcon createHexIcon(TileHexUpgrade hexUpgrade) {
+    
         // target: get a buffered image of the tile
         BufferedImage hexImage = null;
 
         GUIHex selectedGUIHex = orUIManager.getMap().getHex(hexUpgrade.getLocation());
         if (selectedGUIHex != null) {
             // if tile is already selected, choose the current rotation
-            TileUpgrade upgrade = hexUpgrade.getUpgrade();
             HexSide rotation;
-            if (selectedGUIHex.canFixTile()
-                && selectedGUIHex.getProvisionalTile() == upgrade.getTargetTile()) {
+            if (hexUpgrade == activeUpgrade) {
                 rotation = selectedGUIHex.getProvisionalTileRotation();
             } else { // otherwise in the first valid rotation, returns null if no valid rotation
                 rotation = hexUpgrade.getRotations().getNext(HexSide.defaultRotation());
@@ -324,6 +315,7 @@ public class UpgradesPanel extends Box {
                     rotation = HexSide.defaultRotation();
                 }
             }
+            TileUpgrade upgrade = hexUpgrade.getUpgrade();
             GUITile tempGUITile =
                     new GUITile(upgrade.getTargetTile(), selectedGUIHex);
             tempGUITile.setRotation(rotation);
@@ -338,10 +330,9 @@ public class UpgradesPanel extends Box {
                 (int) (hexIcon.getIconWidth() * GUIHex.NORMAL_SCALE * 0.8),
                 (int) (hexIcon.getIconHeight() * GUIHex.NORMAL_SCALE * 0.8),
                 Image.SCALE_SMOOTH));
-
-        return UpgradeLabel.create(hexIcon, hexUpgrade, toolTipHeaderLine,
-                        toolTipBody);
+        return hexIcon;
     }
+   
 
     private ActionLabel createTokenLabel(TokenStopUpgrade upgrade) {
         Color fgColour = null;
@@ -353,13 +344,21 @@ public class UpgradesPanel extends Box {
             PublicCompany comp = ((LayBaseToken) action).getCompany();
             fgColour = comp.getFgColour();
             bgColour = comp.getBgColour();
-            description = text = comp.getId();
+            text = comp.getId();
+            description = "<html>" + text;
             if (action.getSpecialProperty() != null) {
                 description +=
                         " ("
                                 + action.getSpecialProperty().getOriginalCompany().getId()
                                 + ")";
             }
+            MapHex hex = upgrade.getLocation().getParent();
+            if (hex.getStops().size() != 1) {
+                description += "<br> <font size=-2>";
+                description += hex.getConnectionString(upgrade.getLocation().getRelatedStation());
+                description += "</font>";
+            }
+            description += "</html>";
         } else if (action instanceof LayBonusToken) {
             fgColour = Color.BLACK;
             bgColour = Color.WHITE;
@@ -369,8 +368,7 @@ public class UpgradesPanel extends Box {
             text = "+" + token.getValue();
         }
         TokenIcon icon = new TokenIcon(25, fgColour, bgColour, text);
-        ActionLabel tokenLabel = new ActionLabel(icon);
-        tokenLabel.setName(description);
+        final ActionLabel tokenLabel = new ActionLabel(icon);
         tokenLabel.setText(description);
         tokenLabel.setBackground(DEFAULT_LABEL_BG_COLOUR);
         tokenLabel.setOpaque(true);

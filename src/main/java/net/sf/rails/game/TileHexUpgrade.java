@@ -1,6 +1,7 @@
 package net.sf.rails.game;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -19,7 +20,7 @@ import com.google.common.collect.ImmutableSet;
 /**
  * A HexTileUpgrade combines a TileUpgrade with a MapHex and valid Rotations
  */
-public class TileHexUpgrade extends MapUpgrade implements Iterable<HexSide>, Comparable<TileHexUpgrade> {
+public class TileHexUpgrade extends MapUpgrade implements Iterable<HexSide> {
     private static final Logger log =
             LoggerFactory.getLogger(TileHexUpgrade.class);
     
@@ -154,14 +155,6 @@ public class TileHexUpgrade extends MapUpgrade implements Iterable<HexSide>, Com
         return invalids;
     }
     
-    @Override
-    public boolean isValid() {
-        if (invalids== null) {
-            return true;
-        }
-        return invalids.isEmpty();
-    }
-    
     public boolean noValidRotation() {
         return rotations.isEmpty();
     }
@@ -239,9 +232,38 @@ public class TileHexUpgrade extends MapUpgrade implements Iterable<HexSide>, Com
                 .result();
     }
     
-    // Location interface method
+    // MapUpgrade interface method
+    @Override
+    public boolean isValid() {
+        if (invalids== null) {
+            return true;
+        }
+        return invalids.isEmpty();
+    }
+    
+    @Override
     public MapHex getLocation() {
         return hex;
+    }
+    
+    @Override
+    public int getCompareId() {
+        return 2;
+    }
+    
+    @Override
+    public Comparator<MapUpgrade> getComparator() {
+        return new Comparator<MapUpgrade>() {
+            @Override
+            public int compare(MapUpgrade u1, MapUpgrade u2) {
+                if (u1 instanceof TileHexUpgrade && u2 instanceof TileHexUpgrade) {
+                    Tile t1 = ((TileHexUpgrade) u1).getUpgrade().getTargetTile();
+                    Tile t2 = ((TileHexUpgrade) u2).getUpgrade().getTargetTile();
+                    return t1.compareTo(t2);
+                }
+                return 0;
+            }
+        };
     }
     
     /**

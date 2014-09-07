@@ -643,6 +643,7 @@ public class ORUIManager implements DialogOwner {
 
     private void rotateTile(GUIHex hex) {
         hex.rotateTile();
+        upgradePanel.setConfirm();
         //directly inform sound framework of "rotate tile" local step
         //as notification via "set local step" does not occur
         SoundManager.notifyOfORLocalStep(localStep);
@@ -1115,8 +1116,8 @@ public class ORUIManager implements DialogOwner {
             buyAction.setPricePaid(price);
             buyAction.setExchangedTrain(exchangedTrain);
 
-            // FIXME: Is there still a functionality involved that we require?
-//            if (orWindow.process(selectedAction)) {
+            if (orWindow.process(selectedAction)) {
+                // FIXME: Rails 2.0 Is there still a functionality involved that we require?
 
                 // Check if any trains must be discarded
                 // Keep looping until all relevant companies have acted
@@ -1134,9 +1135,9 @@ public class ORUIManager implements DialogOwner {
                     gameUIManager.discardTrains(dt);
                 }
                  */
-//            }
+            }
 
-            // FIXME: are offboard Revenues still automatically updated
+            // FIXME: Rails 2.0 are offboard Revenues still automatically updated
 //            int newOffBoardRevenueStep =
 //                gameUIManager.getCurrentPhase().getOffBoardRevenueStep();
 //            if (newOffBoardRevenueStep != oldOffBoardRevenueStep) {
