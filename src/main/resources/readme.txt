@@ -1,9 +1,12 @@
-Rails 2.0 Alpha 6 release:
+Rails 2.0 Alpha 7 release:
 
-This release fixes all remaining bugs that caused 18xx test games to fail.
-All test games run, except that for 1880.
+- New Tile laying UI nearly 100% complete. 
+- Combined Tile and Token laying possible.
+- Token laying UI needs some more work.
 
-Also fixes bug that prevent reloading saved game files.
+- Integrate current development of 1837 (see separate mail by Martin Brumm)
+- First integration of initial development for 1862 (by Michael Alexander)
 
-Remark:
-Most bugs from previous 2.0 Alpha releases are still open.
+Remarks:
+- All automatic test games run.
+- Most reported bugs from previous 2.0 Alpha releases are still open.
