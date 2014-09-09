@@ -216,11 +216,6 @@ public class TileHexUpgrade extends MapUpgrade implements Iterable<HexSide> {
         return rotations;
     }
     
-    public String toString() {
-        return Objects.toStringHelper(this).add("Hex", hex.toString()).
-                add("Upgrade", upgrade).add("rotations", rotations).toString();
-    }
-
     public Iterator<HexSide> iterator() {
         return rotations.iterator();
     }
@@ -231,7 +226,7 @@ public class TileHexUpgrade extends MapUpgrade implements Iterable<HexSide> {
                 .compare(this.getUpgrade().getTargetTile(), other.getUpgrade().getTargetTile())
                 .result();
     }
-    
+
     // MapUpgrade interface method
     @Override
     public boolean isValid() {
@@ -264,6 +259,15 @@ public class TileHexUpgrade extends MapUpgrade implements Iterable<HexSide> {
                 return 0;
             }
         };
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this)
+                .add("Hex", hex.toString())
+                .add("Upgrade", upgrade)
+                .add("rotations", rotations)
+                .toString();
     }
     
     /**

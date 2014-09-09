@@ -67,12 +67,13 @@ public class TokenStopUpgrade extends MapUpgrade {
                     if (base2) {
                         type2 = ((LayBaseToken)ts2.action).getType();
                     }
-
+                    
                     return ComparisonChain.start()
                             .compare(base1, base2)
                             .compare(type2, type1)
                             .compare(ts1.stop.getRelatedStation().getValue(), ts2.stop.getRelatedStation().getValue())
                             .compare(ts2.stop.getTokenSlotsLeft(), ts1.stop.getTokenSlotsLeft())
+                            .compare(ts1.stop.getRelatedNumber(), ts2.stop.getRelatedNumber())
                             .result();
                 }
                 return 0;

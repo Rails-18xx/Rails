@@ -1584,6 +1584,7 @@ public class ORUIManager implements DialogOwner {
                 upgradePanel.setActive();
                 break;
             case SelectUpgrade:
+                log.debug("Possible Upgrades = " + hexUpgrades.getUpgrades(selectedHex));
                 upgradePanel.setSelect(hexUpgrades.getUpgrades(selectedHex));
                 break;
             case RotateTile:

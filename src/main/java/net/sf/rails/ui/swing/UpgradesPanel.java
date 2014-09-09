@@ -246,14 +246,17 @@ public class UpgradesPanel extends JPanel {
         
         for (MapUpgrade upgrade:upgrades) {
             JLabel label = null;
+            
             if (upgrade instanceof TileHexUpgrade) {
                 label = createTileLabel((TileHexUpgrade)upgrade);
             } else if (upgrade instanceof TokenStopUpgrade) {
                 label = createTokenLabel((TokenStopUpgrade)upgrade);
             }
+            
             if (upgrade == activeUpgrade) {
                 label.setBackground(SELECTED_LABEL_BG_COLOUR);
             }
+            
             label.setMaximumSize(new Dimension(
                     Short.MAX_VALUE, (int)label.getPreferredSize().getHeight()));
             label.setAlignmentX(Component.CENTER_ALIGNMENT);
