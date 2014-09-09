@@ -42,6 +42,7 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Location {
     private Stop(MapHex hex, String id, Station station) {
         super(hex, id);
         relatedStation.set(station);
+        tokens.addModel(hex);
         if (station != null) {
             legacyNumber.set(station.getNumber());
         }
