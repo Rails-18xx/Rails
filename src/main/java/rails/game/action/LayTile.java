@@ -17,11 +17,13 @@ import net.sf.rails.util.RailsObjects;
 import net.sf.rails.util.Util;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.Ordering;
 
 /**
  * Rails 2.0: Updated equals and toString methods (however see TODO below)
 */
-public class LayTile extends PossibleORAction {
+public class LayTile extends PossibleORAction implements Comparable<LayTile> {
 
     /* LayTile types */
     public final static int GENERIC = 0; // Stop-gap only
@@ -354,5 +356,14 @@ public class LayTile extends PossibleORAction {
             b.append(hex.getId());
         }
         locationNames = b.toString();
+    }
+
+    @Override
+    public int compareTo(LayTile o) {
+        return ComparisonChain.start()
+                .compare(this.type, o.type)
+                .compare(this.specialProperty, o.specialProperty, Ordering.natural().nullsLast())
+                .result()
+        ;
     }
 }

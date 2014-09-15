@@ -5,6 +5,7 @@ import javax.swing.JLabel;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 
+import rails.game.action.LayTile;
 import net.sf.rails.game.MapUpgrade;
 import net.sf.rails.game.TileHexUpgrade;
 import net.sf.rails.game.Station;
@@ -23,7 +24,7 @@ public class UpgradeLabel extends JLabel {
         super(hexIcon);
         this.upgrade = upgrade;
         Tile tile = upgrade.getUpgrade().getTargetTile();
-        this.setText(labelText(tile, true));
+        this.setText(labelText(upgrade, true));
         this.setToolTipText(toolTipText(tile, toolTipHeaderLine, toolTipBody));
         this.setOpaque(true);
         this.setVisible(true);
@@ -43,11 +44,13 @@ public class UpgradeLabel extends JLabel {
         return upgrade;
     }
 
-    private String labelText(Tile tile, boolean vertical) {
-        StringBuffer text = new StringBuffer();
+    private String labelText(TileHexUpgrade upgrade, boolean vertical) {
+        Tile tile = upgrade.getUpgrade().getTargetTile();
+
+        StringBuilder text = new StringBuilder();
         // TODO: Check if this still works, as toText is always defined 
         // if (rails.util.Util.hasValue(tile.getExternalId())) {
-            text.append("<HTML><BODY>" + tile.toText());
+            text.append("<HTML>" + tile.toText());
             if (!tile.isUnlimited()) {
                 if (vertical) {
                     text.append("<BR>");
@@ -56,7 +59,14 @@ public class UpgradeLabel extends JLabel {
                 }
                 text.append(" (" + tile.getFreeCount() + ")");
             }
-            text.append("</BODY></HTML>");
+            LayTile action = upgrade.getAction();
+            if (action.getSpecialProperty() != null) {
+                text.append(
+                        "<BR> <font color=red> ["
+                                + action.getSpecialProperty().getOriginalCompany().getId()
+                                + "] </font>" );
+            }
+            text.append("</HTML>");
         //}
         return text.toString();
     }

@@ -18,7 +18,8 @@ import com.google.common.base.Preconditions;
 
 
 
-public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> implements Configurable {
+public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
+    implements Configurable {
 
     // copied from SpecialProperty
     public enum Priority {

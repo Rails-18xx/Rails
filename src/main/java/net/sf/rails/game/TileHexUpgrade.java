@@ -220,13 +220,6 @@ public class TileHexUpgrade extends MapUpgrade implements Iterable<HexSide> {
         return rotations.iterator();
     }
 
-    public int compareTo(TileHexUpgrade other) {
-        return ComparisonChain.start()
-                .compare(other.isValid(), this.isValid())
-                .compare(this.getUpgrade().getTargetTile(), other.getUpgrade().getTargetTile())
-                .result();
-    }
-
     // MapUpgrade interface method
     @Override
     public boolean isValid() {
@@ -252,9 +245,14 @@ public class TileHexUpgrade extends MapUpgrade implements Iterable<HexSide> {
             @Override
             public int compare(MapUpgrade u1, MapUpgrade u2) {
                 if (u1 instanceof TileHexUpgrade && u2 instanceof TileHexUpgrade) {
-                    Tile t1 = ((TileHexUpgrade) u1).getUpgrade().getTargetTile();
-                    Tile t2 = ((TileHexUpgrade) u2).getUpgrade().getTargetTile();
-                    return t1.compareTo(t2);
+                    TileHexUpgrade tu1 = (TileHexUpgrade) u1;
+                    TileHexUpgrade tu2 = (TileHexUpgrade) u2;
+                    return ComparisonChain.start()
+                            .compare(tu1.getAction(), tu2.getAction())
+                            .compare(tu1.getUpgrade().getTargetTile(), tu2.getUpgrade().getTargetTile())
+                            .compare(tu1.getLocation().getId(), tu2.getLocation().getId())
+                            .result()
+                    ;
                 }
                 return 0;
             }

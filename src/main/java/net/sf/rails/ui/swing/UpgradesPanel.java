@@ -26,6 +26,7 @@ import com.google.common.collect.ImmutableSortedSet;
 
 import rails.game.action.LayBaseToken;
 import rails.game.action.LayBonusToken;
+import rails.game.action.LayTile;
 import rails.game.action.LayToken;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.BonusToken;
@@ -351,9 +352,9 @@ public class UpgradesPanel extends JPanel {
             description = "<html>" + text;
             if (action.getSpecialProperty() != null) {
                 description +=
-                        " ("
+                        "<font color=red> ["
                                 + action.getSpecialProperty().getOriginalCompany().getId()
-                                + ")";
+                                + "] </font>";
             }
             MapHex hex = upgrade.getLocation().getParent();
             if (hex.getStops().size() != 1) {
