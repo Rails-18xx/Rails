@@ -23,7 +23,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
 
-public class TileUpgrade {
+public class TileUpgrade implements Upgrade {
 
     private static final Logger log = 
             LoggerFactory.getLogger(TileUpgrade.class);

@@ -23,15 +23,12 @@ import net.sf.rails.game.BaseToken;
 import net.sf.rails.game.GameDef;
 import net.sf.rails.game.HexSidesSet;
 import net.sf.rails.game.MapHex;
-import net.sf.rails.game.MapUpgrade;
 import net.sf.rails.game.OperatingRound;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.ShareSellingRound;
 import net.sf.rails.game.Station;
 import net.sf.rails.game.Stop;
 import net.sf.rails.game.Tile;
-import net.sf.rails.game.TileHexUpgrade;
-import net.sf.rails.game.TokenStopUpgrade;
 import net.sf.rails.game.TrackConfig;
 import net.sf.rails.game.Train;
 import net.sf.rails.game.special.SpecialProperty;
@@ -46,6 +43,9 @@ import net.sf.rails.ui.swing.elements.MessageDialog;
 import net.sf.rails.ui.swing.elements.RadioButtonDialog;
 import net.sf.rails.ui.swing.hexmap.GUIHex;
 import net.sf.rails.ui.swing.hexmap.HexMap;
+import net.sf.rails.ui.swing.hexmap.HexUpgrade;
+import net.sf.rails.ui.swing.hexmap.TileHexUpgrade;
+import net.sf.rails.ui.swing.hexmap.TokenHexUpgrade;
 import net.sf.rails.util.Util;
 
 import org.slf4j.Logger;
@@ -185,7 +185,7 @@ public class ORUIManager implements DialogOwner {
         // show selectable hexes if highlight is active
         if (gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.ROUTE_HIGHLIGHT)) {
             for (GUIHex hex:hexUpgrades.getHexes()) {
-                for (MapUpgrade upgrade:hexUpgrades.getUpgrades(hex)) {
+                for (HexUpgrade upgrade:hexUpgrades.getUpgrades(hex)) {
                     if (upgrade.isValid()) {
                         hex.setSelectable(true);
                         break;
@@ -289,23 +289,23 @@ public class ORUIManager implements DialogOwner {
     }
 
     private void addGenericTokenLays(LayToken action) {
+        // FIXME: TokenHex Rewrite
         PublicCompany company = action.getCompany();
         NetworkGraph graph = getCompanyGraph(action.getCompany());
         for (Stop stop:graph.getTokenableStops(company)) {
             MapHex hex = stop.getParent();
-            TokenStopUpgrade upgrade = TokenStopUpgrade.create(stop, action);
+            TokenHexUpgrade upgrade = TokenHexUpgrade.create(hex, action);
             GUIHex guiHex = map.getHex(hex);
             hexUpgrades.put(guiHex, upgrade);
         }
     }
     
     private void addLocatedTokenLays(LayToken action) {
+        // FIXME: TokenHex Rewrite
         for (MapHex hex:action.getLocations()) {
-            for (Stop stop:hex.getStops()) {
-                TokenStopUpgrade upgrade = TokenStopUpgrade.create(stop, action);
-                GUIHex guiHex = map.getHex(hex);
-                hexUpgrades.put(guiHex, upgrade);
-            }
+            TokenHexUpgrade upgrade = TokenHexUpgrade.create(hex, action);
+            GUIHex guiHex = map.getHex(hex);
+            hexUpgrades.put(guiHex, upgrade);
         }
     }
     
@@ -609,14 +609,14 @@ public class ORUIManager implements DialogOwner {
     }
 
     
-    public void skipUpgrade(MapUpgrade upgrade) {
+    public void skipUpgrade(HexUpgrade upgrade) {
         if (upgrade != null) {
             GUIHex selectedHex = mapPanel.getMap().getSelectedHex();
             if (selectedHex != null) {
                 if (upgrade instanceof TileHexUpgrade) {
                     selectedHex.removeTile();
                 }
-                if (upgrade instanceof TokenStopUpgrade) {
+                if (upgrade instanceof TokenHexUpgrade) {
                     selectedHex.removeToken();
                 }
            }
@@ -625,16 +625,16 @@ public class ORUIManager implements DialogOwner {
         
     }
     
-    public void upgradeSelected(MapUpgrade upgrade) {
+    public void upgradeSelected(HexUpgrade upgrade) {
         if (upgrade instanceof TileHexUpgrade) {
             tileSelected((TileHexUpgrade)upgrade);
         }
-        if (upgrade instanceof TokenStopUpgrade) {
-            tokenSelected((TokenStopUpgrade)upgrade);
+        if (upgrade instanceof TokenHexUpgrade) {
+            tokenSelected((TokenHexUpgrade)upgrade);
         }
     }
     
-    public void upgradeSelectedAgain(MapUpgrade upgrade) {
+    public void upgradeSelectedAgain(HexUpgrade upgrade) {
         if (upgrade instanceof TileHexUpgrade) {
             GUIHex selectedHex = mapPanel.getMap().getSelectedHex();
             rotateTile(selectedHex);
@@ -655,12 +655,12 @@ public class ORUIManager implements DialogOwner {
         setLocalStep(LocalSteps.RotateTile);
     }
     
-    private void tokenSelected(TokenStopUpgrade upgrade) {
+    private void tokenSelected(TokenHexUpgrade upgrade) {
         // TODO: Show token on tile
         setLocalStep(LocalSteps.ConfirmToken);
     }
 
-    public void layToken(TokenStopUpgrade upgrade) {
+    public void layToken(TokenHexUpgrade upgrade) {
         LayToken action = upgrade.getAction();
         if (action instanceof LayBaseToken) {
             layBaseToken(upgrade);
@@ -733,12 +733,13 @@ public class ORUIManager implements DialogOwner {
         }
     }
 
-    public void layBaseToken(TokenStopUpgrade upgrade) {
-        Stop stop = upgrade.getLocation();
+    public void layBaseToken(TokenHexUpgrade upgrade) {
+        MapHex hex = upgrade.getHex();
         LayBaseToken action = (LayBaseToken) upgrade.getAction();
         
-        action.setChosenHex(stop.getParent());
-        action.setChosenStation(stop.getRelatedNumber());
+        action.setChosenHex(hex);
+        //
+        action.setChosenStation(upgrade.getSelectedStop().getRelatedNumber());
         
         log.debug("Token action is: " + action);
 
@@ -871,7 +872,7 @@ public class ORUIManager implements DialogOwner {
      * @param action The LayBonusToken action object of the laid token.
      */
     // FIXME: This has to be rewritten
-    public void layBonusToken(TokenStopUpgrade upgrade) {
+    public void layBonusToken(TokenHexUpgrade upgrade) {
 
         LayToken action = upgrade.getAction();
         
@@ -1548,7 +1549,7 @@ public class ORUIManager implements DialogOwner {
 
         if (localStep == LocalSteps.SelectUpgrade) {
             GUIHex selectedHex = map.getSelectedHex();
-            MapUpgrade single = hexUpgrades.singleValidElement(selectedHex);
+            HexUpgrade single = hexUpgrades.singleValidElement(selectedHex);
             if (single != null) {
                 upgradePanel.setSelect(hexUpgrades.getUpgrades(selectedHex));
                 upgradePanel.activateUpgrade(single);
@@ -1556,7 +1557,7 @@ public class ORUIManager implements DialogOwner {
                     selectedHex.dropTile((TileHexUpgrade)single);
                     localStep = LocalSteps.RotateTile;
                 } 
-                if (single instanceof TokenStopUpgrade) {
+                if (single instanceof TokenHexUpgrade) {
                     localStep = LocalSteps.ConfirmToken;
                 }
             }

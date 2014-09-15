@@ -22,7 +22,6 @@ import net.sf.rails.game.BaseToken;
 import net.sf.rails.game.BonusToken;
 import net.sf.rails.game.HexSide;
 import net.sf.rails.game.Bank;
-import net.sf.rails.game.TileHexUpgrade;
 import net.sf.rails.game.MapHex;
 import net.sf.rails.game.MapOrientation;
 import net.sf.rails.game.PrivateCompany;

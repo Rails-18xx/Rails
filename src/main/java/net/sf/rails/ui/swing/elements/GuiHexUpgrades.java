@@ -2,8 +2,8 @@ package net.sf.rails.ui.swing.elements;
 
 import java.util.Set;
 
-import net.sf.rails.game.MapUpgrade;
 import net.sf.rails.ui.swing.hexmap.GUIHex;
+import net.sf.rails.ui.swing.hexmap.HexUpgrade;
 
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.SetMultimap;
@@ -13,9 +13,9 @@ import com.google.common.collect.SetMultimap;
  */
 public class GuiHexUpgrades {
 
-    private SetMultimap<GUIHex, MapUpgrade> map;
+    private SetMultimap<GUIHex, HexUpgrade> map;
     
-    private ImmutableSetMultimap.Builder<GUIHex, MapUpgrade> builder;
+    private ImmutableSetMultimap.Builder<GUIHex, HexUpgrade> builder;
     
     private GuiHexUpgrades() {
         builder = ImmutableSetMultimap.builder();
@@ -26,12 +26,12 @@ public class GuiHexUpgrades {
         return new GuiHexUpgrades();
     }
     
-    public void put(GUIHex hex, MapUpgrade upgrade) {
+    public void put(GUIHex hex, HexUpgrade upgrade) {
         builder.put(hex, upgrade);
     }
 
-    public void putAll(GUIHex hex, Set<? extends MapUpgrade> upgrades) {
-        for (MapUpgrade upgrade:upgrades) {
+    public void putAll(GUIHex hex, Set<? extends HexUpgrade> upgrades) {
+        for (HexUpgrade upgrade:upgrades) {
             builder.put(hex, upgrade);
         }
     }
@@ -41,7 +41,7 @@ public class GuiHexUpgrades {
         builder = ImmutableSetMultimap.builder();
     }
     
-    public Set<MapUpgrade> getUpgrades(GUIHex hex) {
+    public Set<HexUpgrade> getUpgrades(GUIHex hex) {
         return map.get(hex);
     }
     
@@ -60,9 +60,9 @@ public class GuiHexUpgrades {
     /**
      * @return null if there is no or multiple Elements, otherwise the single one
      */
-    public MapUpgrade singleValidElement(GUIHex hex) {
-        MapUpgrade single = null;
-        for (MapUpgrade upgrade:map.get(hex)) {
+    public HexUpgrade singleValidElement(GUIHex hex) {
+        HexUpgrade single = null;
+        for (HexUpgrade upgrade:map.get(hex)) {
             if (upgrade.isValid()) {
                 if (single == null) { // first element => set single to this
                     single = upgrade;

@@ -1,17 +1,28 @@
-package net.sf.rails.game;
+package net.sf.rails.ui.swing.hexmap;
 
 import java.util.Comparator;
 
+import net.sf.rails.game.MapHex;
+
 import com.google.common.base.Objects;
 import com.google.common.collect.ComparisonChain;
-
-/** MapUpgrade is an abstract class used for objects that represent possible upgrades to the map
- * Upgrades always have a target location.
+/** 
+ * HexUpgrade is an abstract class used for objects that represent possible upgrades to hexes.
  */
-public abstract class MapUpgrade implements Comparable<MapUpgrade> {
+public abstract class HexUpgrade implements Comparable<HexUpgrade> {
     
+    protected final MapHex hex;
+
     private boolean visible = true;
     
+    protected HexUpgrade(MapHex hex) {
+        this.hex = hex;
+    }
+    
+    public MapHex getHex() {
+        return hex;
+    }
+
     public void setVisible(boolean visible) {
         this.visible = visible;
     }
@@ -22,18 +33,15 @@ public abstract class MapUpgrade implements Comparable<MapUpgrade> {
 
     public abstract boolean isValid();
     
-    public abstract Location getLocation();
-    
-    
     /**
      * @return integer used for sorting (lows first)
      */
     public abstract int getCompareId();
     
-    public abstract Comparator<MapUpgrade> getComparator();
+    public abstract Comparator<HexUpgrade> getComparator();
 
     @Override
-    public int compareTo(MapUpgrade other) {
+    public int compareTo(HexUpgrade other) {
         return ComparisonChain.start()
                 .compare(this.getCompareId(), other.getCompareId())
                 .compare(other.isValid(), this.isValid())

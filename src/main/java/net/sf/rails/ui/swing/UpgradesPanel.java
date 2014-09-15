@@ -32,12 +32,8 @@ import net.sf.rails.common.LocalText;
 import net.sf.rails.game.BonusToken;
 import net.sf.rails.game.HexSide;
 import net.sf.rails.game.MapHex;
-import net.sf.rails.game.MapUpgrade;
 import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.TileHexUpgrade;
-import net.sf.rails.game.TileHexUpgrade.Validation;
 import net.sf.rails.game.TileUpgrade;
-import net.sf.rails.game.TokenStopUpgrade;
 import net.sf.rails.ui.swing.elements.ActionLabel;
 import net.sf.rails.ui.swing.elements.UpgradeLabel;
 import net.sf.rails.ui.swing.elements.RailsIcon;
@@ -45,6 +41,10 @@ import net.sf.rails.ui.swing.elements.RailsIconButton;
 import net.sf.rails.ui.swing.hexmap.GUIHex;
 import net.sf.rails.ui.swing.hexmap.GUITile;
 import net.sf.rails.ui.swing.hexmap.HexHighlightMouseListener;
+import net.sf.rails.ui.swing.hexmap.HexUpgrade;
+import net.sf.rails.ui.swing.hexmap.TileHexUpgrade;
+import net.sf.rails.ui.swing.hexmap.TokenHexUpgrade;
+import net.sf.rails.ui.swing.hexmap.TileHexUpgrade.Validation;
 
 
 public class UpgradesPanel extends JPanel {
@@ -73,10 +73,10 @@ public class UpgradesPanel extends JPanel {
      */
     private boolean omitButtons;
 
-    private Set<MapUpgrade> upgrades = ImmutableSet.of();
+    private Set<HexUpgrade> upgrades = ImmutableSet.of();
     
     // current selected upgrade
-    private MapUpgrade activeUpgrade = null;
+    private HexUpgrade activeUpgrade = null;
 
     public UpgradesPanel(ORUIManager orUIManager, boolean omitButtons) {
         this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
@@ -201,11 +201,11 @@ public class UpgradesPanel extends JPanel {
         setButtons();
     }
     
-    public void activateUpgrade(MapUpgrade upgrade) {
+    public void activateUpgrade(HexUpgrade upgrade) {
         activeUpgrade = upgrade;
     }
     
-    public void setSelect(Set<MapUpgrade> upgrades) {
+    public void setSelect(Set<HexUpgrade> upgrades) {
         resetUpgrades();
         this.upgrades = ImmutableSortedSet.copyOf(upgrades);
         showUpgrades();
@@ -225,8 +225,8 @@ public class UpgradesPanel extends JPanel {
     private void confirmUpgrade() {
         if (activeUpgrade instanceof TileHexUpgrade) {
             orUIManager.layTile();
-        } else if (activeUpgrade instanceof TokenStopUpgrade) {
-            orUIManager.layToken((TokenStopUpgrade)activeUpgrade);
+        } else if (activeUpgrade instanceof TokenHexUpgrade) {
+            orUIManager.layToken((TokenHexUpgrade)activeUpgrade);
         }
     }
 
@@ -234,7 +234,7 @@ public class UpgradesPanel extends JPanel {
         orUIManager.skipUpgrade(activeUpgrade);
     }
     
-    public void upgradeActivated(MapUpgrade upgrade) {
+    public void upgradeActivated(HexUpgrade upgrade) {
         if (activeUpgrade == upgrade) {
             orUIManager.upgradeSelectedAgain(upgrade);
         } else {
@@ -245,13 +245,13 @@ public class UpgradesPanel extends JPanel {
 
     private void showUpgrades() {
         
-        for (MapUpgrade upgrade:upgrades) {
+        for (HexUpgrade upgrade:upgrades) {
             JLabel label = null;
             
             if (upgrade instanceof TileHexUpgrade) {
                 label = createTileLabel((TileHexUpgrade)upgrade);
-            } else if (upgrade instanceof TokenStopUpgrade) {
-                label = createTokenLabel((TokenStopUpgrade)upgrade);
+            } else if (upgrade instanceof TokenHexUpgrade) {
+                label = createTokenLabel((TokenHexUpgrade)upgrade);
             }
             
             if (upgrade == activeUpgrade) {
@@ -305,7 +305,7 @@ public class UpgradesPanel extends JPanel {
         // target: get a buffered image of the tile
         BufferedImage hexImage = null;
 
-        GUIHex selectedGUIHex = orUIManager.getMap().getHex(hexUpgrade.getLocation());
+        GUIHex selectedGUIHex = orUIManager.getMap().getHex(hexUpgrade.getHex());
         if (selectedGUIHex != null) {
             // if tile is already selected, choose the current rotation
             HexSide rotation;
@@ -338,7 +338,7 @@ public class UpgradesPanel extends JPanel {
     }
    
 
-    private ActionLabel createTokenLabel(TokenStopUpgrade upgrade) {
+    private ActionLabel createTokenLabel(TokenHexUpgrade upgrade) {
         Color fgColour = null;
         Color bgColour = null;
         String text = null;
@@ -356,10 +356,10 @@ public class UpgradesPanel extends JPanel {
                                 + action.getSpecialProperty().getOriginalCompany().getId()
                                 + "] </font>";
             }
-            MapHex hex = upgrade.getLocation().getParent();
+            MapHex hex = upgrade.getHex();
             if (hex.getStops().size() != 1) {
                 description += "<br> <font size=-2>";
-                description += hex.getConnectionString(upgrade.getLocation().getRelatedStation());
+                description += hex.getConnectionString(upgrade.getSelectedStop().getRelatedStation());
                 description += "</font>";
             }
             description += "</html>";
@@ -378,7 +378,7 @@ public class UpgradesPanel extends JPanel {
         tokenLabel.setOpaque(true);
         tokenLabel.setVisible(true);
         tokenLabel.setBorder(border);
-        final TokenStopUpgrade upgrade_final = upgrade;
+        final TokenHexUpgrade upgrade_final = upgrade;
         tokenLabel.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 upgradeActivated(upgrade_final);

@@ -41,7 +41,7 @@ import com.google.common.collect.Sets.SetView;
 /**
  * Represents a Hex on the Map from the Model side.
  */
-public class MapHex extends RailsModel implements RailsOwner, Location, Configurable {
+public class MapHex extends RailsModel implements RailsOwner, Configurable {
     
     private static final Logger log =
             LoggerFactory.getLogger(MapHex.class);

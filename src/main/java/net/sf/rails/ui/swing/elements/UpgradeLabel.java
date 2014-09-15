@@ -6,10 +6,10 @@ import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 
 import rails.game.action.LayTile;
-import net.sf.rails.game.MapUpgrade;
-import net.sf.rails.game.TileHexUpgrade;
 import net.sf.rails.game.Station;
 import net.sf.rails.game.Tile;
+import net.sf.rails.ui.swing.hexmap.HexUpgrade;
+import net.sf.rails.ui.swing.hexmap.TileHexUpgrade;
 
 /** JLabel extension to allow attaching the internal hex ID */
 public class UpgradeLabel extends JLabel {
@@ -17,7 +17,7 @@ public class UpgradeLabel extends JLabel {
 
     private static final Border BORDER = new EtchedBorder();
 
-    private final MapUpgrade upgrade;
+    private final HexUpgrade upgrade;
 
     private UpgradeLabel(ImageIcon hexIcon, TileHexUpgrade upgrade,
             String toolTipHeaderLine, String toolTipBody) {
@@ -40,7 +40,7 @@ public class UpgradeLabel extends JLabel {
         return UpgradeLabel.create(icon, upgrade, null, null);
     }
 
-    public MapUpgrade getUpgrade() {
+    public HexUpgrade getUpgrade() {
         return upgrade;
     }
 

@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
  * FIXME: Use other mechanism (TokenManager) to store token ids
  * FIXME: UniqueId and id are a double structure
  */
-public abstract class Token<T extends Token<T>> extends RailsOwnableItem<T> {
+public abstract class Token<T extends Token<T>> extends RailsOwnableItem<T> implements Upgrade {
 
     protected String description = "";
     protected String uniqueId;

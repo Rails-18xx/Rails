@@ -1,6 +1,9 @@
-package net.sf.rails.game;
+package net.sf.rails.ui.swing.hexmap;
 
 import java.util.Comparator;
+
+import net.sf.rails.game.MapHex;
+import net.sf.rails.game.Stop;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ComparisonChain;
@@ -8,34 +11,33 @@ import com.google.common.collect.ComparisonChain;
 import rails.game.action.LayBaseToken;
 import rails.game.action.LayToken;
 
-public class TokenStopUpgrade extends MapUpgrade {
+public class TokenHexUpgrade extends HexUpgrade {
 
     // static fields
-    private final Stop stop;
     private final LayToken action;
     
-    private TokenStopUpgrade(Stop stop, LayToken action) {
-        this.stop = stop;
+    private TokenHexUpgrade(MapHex hex, LayToken action) {
+        super(hex);
         this.action = action;
     }
     
-    public static TokenStopUpgrade create(Stop stop, LayToken action) {
-        return new TokenStopUpgrade(stop, action);
+    public static TokenHexUpgrade create(MapHex hex, LayToken action) {
+        return new TokenHexUpgrade(hex, action);
     }
 
     public LayToken getAction() {
         return action;
     }
+    
+    // FIXME
+    public Stop getSelectedStop() {
+        return null;
+    }
 
-    // MapUpgrade abstract methods
+    // HexUpgrade abstract methods
     @Override
     public boolean isValid() {
         return true;
-    }
-    
-    @Override
-    public Stop getLocation() {
-        return stop;
     }
     
     @Override
@@ -48,14 +50,14 @@ public class TokenStopUpgrade extends MapUpgrade {
      * followed by valuable stations, with less token slots left
      */
     @Override
-    public Comparator<MapUpgrade> getComparator () {
-        return new Comparator<MapUpgrade>() {
+    public Comparator<HexUpgrade> getComparator () {
+        return new Comparator<HexUpgrade>() {
             
             @Override
-            public int compare(MapUpgrade u1, MapUpgrade u2) {
-                if (u1 instanceof TokenStopUpgrade && u2 instanceof TokenStopUpgrade) {
-                    TokenStopUpgrade ts1 = (TokenStopUpgrade) u1;
-                    TokenStopUpgrade ts2 = (TokenStopUpgrade) u2;
+            public int compare(HexUpgrade u1, HexUpgrade u2) {
+                if (u1 instanceof TokenHexUpgrade && u2 instanceof TokenHexUpgrade) {
+                    TokenHexUpgrade ts1 = (TokenHexUpgrade) u1;
+                    TokenHexUpgrade ts2 = (TokenHexUpgrade) u2;
 
                     boolean base1 = ts1.action instanceof LayBaseToken;
                     boolean base2 = ts2.action instanceof LayBaseToken;
@@ -71,9 +73,9 @@ public class TokenStopUpgrade extends MapUpgrade {
                     return ComparisonChain.start()
                             .compare(base1, base2)
                             .compare(type2, type1)
-                            .compare(ts1.stop.getRelatedStation().getValue(), ts2.stop.getRelatedStation().getValue())
-                            .compare(ts2.stop.getTokenSlotsLeft(), ts1.stop.getTokenSlotsLeft())
-                            .compare(ts1.stop.getRelatedNumber(), ts2.stop.getRelatedNumber())
+//                            .compare(ts1.stop.getRelatedStation().getValue(), ts2.stop.getRelatedStation().getValue())
+//                            .compare(ts2.stop.getTokenSlotsLeft(), ts1.stop.getTokenSlotsLeft())
+//                            .compare(ts1.stop.getRelatedNumber(), ts2.stop.getRelatedNumber())
                             .result();
                 }
                 return 0;
@@ -84,7 +86,7 @@ public class TokenStopUpgrade extends MapUpgrade {
     @Override
     public String toString() {
         return Objects.toStringHelper(this)
-                .add("stop", stop)
+//                .add("stop", stop)
                 .add("action", action)
                 .toString();
     }

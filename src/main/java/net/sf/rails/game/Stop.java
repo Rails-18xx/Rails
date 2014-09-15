@@ -27,7 +27,7 @@ import com.google.common.collect.ImmutableSet;
  * during upgrades; but even then it is attempted to retain the old Stop numbers
  * as much as possible.
  */
-public class Stop extends RailsAbstractItem implements RailsOwner, Location {
+public class Stop extends RailsAbstractItem implements RailsOwner {
     private final PortfolioSet<BaseToken> tokens = 
             PortfolioSet.create(this, "tokens", BaseToken.class);
     private final GenericState<Station> relatedStation = 

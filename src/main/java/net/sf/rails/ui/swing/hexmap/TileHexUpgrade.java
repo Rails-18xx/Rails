@@ -1,4 +1,4 @@
-package net.sf.rails.game;
+package net.sf.rails.ui.swing.hexmap;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -7,6 +7,14 @@ import java.util.Iterator;
 import java.util.Set;
 
 import net.sf.rails.common.LocalText;
+import net.sf.rails.game.HexSide;
+import net.sf.rails.game.HexSidesSet;
+import net.sf.rails.game.MapHex;
+import net.sf.rails.game.Phase;
+import net.sf.rails.game.Station;
+import net.sf.rails.game.Tile;
+import net.sf.rails.game.TileColour;
+import net.sf.rails.game.TileUpgrade;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +28,7 @@ import com.google.common.collect.ImmutableSet;
 /**
  * A HexTileUpgrade combines a TileUpgrade with a MapHex and valid Rotations
  */
-public class TileHexUpgrade extends MapUpgrade implements Iterable<HexSide> {
+public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
     private static final Logger log =
             LoggerFactory.getLogger(TileHexUpgrade.class);
     
@@ -38,7 +46,6 @@ public class TileHexUpgrade extends MapUpgrade implements Iterable<HexSide> {
     }
 
     // static fields
-    private final MapHex hex;
     private final TileUpgrade upgrade;
     private final LayTile action;
 
@@ -49,7 +56,7 @@ public class TileHexUpgrade extends MapUpgrade implements Iterable<HexSide> {
     
     
     private TileHexUpgrade(MapHex hex, TileUpgrade upgrade, LayTile action) {
-        this.hex = hex;
+        super(hex);
         this.upgrade = upgrade;
         this.action = action;
         log.debug("New TileHexUpgrade, hex = " + hex + ", upgrade = " + upgrade + ", action = " + action);
@@ -220,7 +227,7 @@ public class TileHexUpgrade extends MapUpgrade implements Iterable<HexSide> {
         return rotations.iterator();
     }
 
-    // MapUpgrade interface method
+    // HexUpgrade interface method
     @Override
     public boolean isValid() {
         if (invalids== null) {
@@ -230,27 +237,22 @@ public class TileHexUpgrade extends MapUpgrade implements Iterable<HexSide> {
     }
     
     @Override
-    public MapHex getLocation() {
-        return hex;
-    }
-    
-    @Override
     public int getCompareId() {
         return 2;
     }
     
     @Override
-    public Comparator<MapUpgrade> getComparator() {
-        return new Comparator<MapUpgrade>() {
+    public Comparator<HexUpgrade> getComparator() {
+        return new Comparator<HexUpgrade>() {
             @Override
-            public int compare(MapUpgrade u1, MapUpgrade u2) {
+            public int compare(HexUpgrade u1, HexUpgrade u2) {
                 if (u1 instanceof TileHexUpgrade && u2 instanceof TileHexUpgrade) {
                     TileHexUpgrade tu1 = (TileHexUpgrade) u1;
                     TileHexUpgrade tu2 = (TileHexUpgrade) u2;
                     return ComparisonChain.start()
                             .compare(tu1.getAction(), tu2.getAction())
                             .compare(tu1.getUpgrade().getTargetTile(), tu2.getUpgrade().getTargetTile())
-                            .compare(tu1.getLocation().getId(), tu2.getLocation().getId())
+                            .compare(tu1.getHex().getId(), tu2.getHex().getId())
                             .result()
                     ;
                 }
