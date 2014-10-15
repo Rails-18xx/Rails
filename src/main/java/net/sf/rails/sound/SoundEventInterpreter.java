@@ -275,16 +275,15 @@ public class SoundEventInterpreter {
     public void notifyOfORLocalStep(ORUIManager.LocalSteps currentStep) {
         if (SoundConfig.isSFXEnabled()) {
             //play rotate sound if tile has been rotated or is now ready for rotations
-            if (currentStep == LocalSteps.RotateTile) {
-                player.playSFXByConfigKey(SoundConfig.KEY_SFX_OR_RotateTile);
-            }
+//            if (currentStep == LocalSteps.ConfirmUpgrade) {
+//                player.playSFXByConfigKey(SoundConfig.KEY_SFX_OR_RotateTile);
+//            }
             
             //play hex selection sound if the follow-up step (select tile/token) is active
             //(don't consider whether prior step was "select hex..." because hexes
             // can also be selected during selectTile/Token)
-            else if ( currentStep == LocalSteps.SelectUpgrade) {
+            if ( currentStep == LocalSteps.SelectUpgrade) {
                 player.playSFXByConfigKey(SoundConfig.KEY_SFX_GEN_Select);
-                
             }
         }
     }

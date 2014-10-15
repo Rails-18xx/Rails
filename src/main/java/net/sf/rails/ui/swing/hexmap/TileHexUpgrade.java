@@ -15,10 +15,6 @@ import net.sf.rails.game.Station;
 import net.sf.rails.game.Tile;
 import net.sf.rails.game.TileColour;
 import net.sf.rails.game.TileUpgrade;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import rails.game.action.LayTile;
 
 import com.google.common.base.Objects;
@@ -29,11 +25,8 @@ import com.google.common.collect.ImmutableSet;
  * A HexTileUpgrade combines a TileUpgrade with a MapHex and valid Rotations
  */
 public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
-    private static final Logger log =
-            LoggerFactory.getLogger(TileHexUpgrade.class);
     
-    
-    public enum Validation {
+    public enum Invalids implements HexUpgrade.Invalids {
         NO_VALID_ORIENTATION, HEX_BLOCKED, NO_TILES_LEFT,
         NOT_ALLOWED_FOR_HEX, NOT_ALLOWED_FOR_PHASE, COLOUR_NOT_ALLOWED, 
         NO_ROUTE_TO_NEW_TRACK;
@@ -49,25 +42,26 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
     private final TileUpgrade upgrade;
     private final LayTile action;
 
-    // result fields
+    // validation fields
     private HexSidesSet rotations;
     private boolean permissiveRoutePossible;
-    private EnumSet<Validation> invalids;
+    private final EnumSet<Invalids> invalids = EnumSet.noneOf(Invalids.class);
     
+    // ui fields
+    private HexSide selectedRotation;
     
-    private TileHexUpgrade(MapHex hex, TileUpgrade upgrade, LayTile action) {
+    private TileHexUpgrade(GUIHex hex, TileUpgrade upgrade, LayTile action) {
         super(hex);
         this.upgrade = upgrade;
         this.action = action;
-        log.debug("New TileHexUpgrade, hex = " + hex + ", upgrade = " + upgrade + ", action = " + action);
     }
     
-    public static Set<TileHexUpgrade> create(MapHex hex, HexSidesSet connected, Collection<Station> stations,
+    public static Set<TileHexUpgrade> create(GUIHex hex, HexSidesSet connected, Collection<Station> stations,
             LayTile action, String routeAlgorithm) {
         
         // use that to define available upgrades
         ImmutableSet.Builder<TileHexUpgrade> upgrades = ImmutableSet.builder();
-        for (TileUpgrade upgrade:hex.getCurrentTile().getTileUpgrades()) {
+        for (TileUpgrade upgrade:hex.getHex().getCurrentTile().getTileUpgrades()) {
             TileHexUpgrade hexUpgrade = new TileHexUpgrade(hex, upgrade, action);
             if (routeAlgorithm.equalsIgnoreCase("PERMISSIVE")) {
                 hexUpgrade.findValidRotations(connected, stations, false);
@@ -86,18 +80,18 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
         return upgrades.build();
     }
     
-    public static Set<TileHexUpgrade> createLocated(MapHex hex, LayTile action) {
+    public static Set<TileHexUpgrade> createLocated(GUIHex hex, LayTile action) {
         ImmutableSet.Builder<TileHexUpgrade> upgrades = ImmutableSet.builder();
 
         if (action.getTiles() == null || action.getTiles().isEmpty()) {
-            for (TileUpgrade upgrade:hex.getCurrentTile().getTileUpgrades()) {
+            for (TileUpgrade upgrade:hex.getHex().getCurrentTile().getTileUpgrades()) {
                 TileHexUpgrade hexUpgrade = new TileHexUpgrade(hex, upgrade, action);
                 hexUpgrade.findValidRotations(null, null, true);
                 upgrades.add(hexUpgrade);
             }
         } else {
             for (Tile targetTile:action.getTiles()) {
-                TileUpgrade upgrade = hex.getCurrentTile().getSpecificUpgrade(targetTile);
+                TileUpgrade upgrade = hex.getHex().getCurrentTile().getSpecificUpgrade(targetTile);
                 TileHexUpgrade hexUpgrade = new TileHexUpgrade(hex, upgrade, action);
                 hexUpgrade.findValidRotations(null, null, true);
                 upgrades.add(hexUpgrade);
@@ -106,60 +100,61 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
         return upgrades.build();
     }
 
-    public void findValidRotations(HexSidesSet connectedSides, Collection<Station> stations, boolean restrictive) {
+    private void findValidRotations(HexSidesSet connectedSides, Collection<Station> stations, boolean restrictive) {
+        MapHex modelHex = hex.getHex();
+
         // encode HexSides according to the tile current orientation
         if (connectedSides != null) {
-            connectedSides = HexSidesSet.rotated(connectedSides, hex.getCurrentTileRotation());
+            connectedSides = HexSidesSet.rotated(connectedSides, modelHex.getCurrentTileRotation());
         }
         // check invalid sides
         HexSidesSet invalidSides = null;
-        if (hex.getInvalidSides() != null) {
-            invalidSides = HexSidesSet.rotated(hex.getInvalidSides(), hex.getCurrentTileRotation());
+        if (modelHex.getInvalidSides() != null) {
+            invalidSides = HexSidesSet.rotated(modelHex.getInvalidSides(), modelHex.getCurrentTileRotation());
         }
 
         if (requiresConnection()) {
             HexSidesSet permissive = upgrade.getAllowedRotations(connectedSides, invalidSides,
-                    hex.getCurrentTileRotation(), stations, false);
+                    modelHex.getCurrentTileRotation(), stations, false);
             if (restrictive) {
                 rotations = upgrade.getAllowedRotations(connectedSides, invalidSides,
-                    hex.getCurrentTileRotation(), stations, true);
+                    modelHex.getCurrentTileRotation(), stations, true);
                 permissiveRoutePossible = !permissive.isEmpty();
             } else {
                 rotations = permissive;
             }
         } else {
             rotations = upgrade.getAllowedRotations(null, invalidSides,
-                    hex.getCurrentTileRotation(), stations, restrictive);
+                    modelHex.getCurrentTileRotation(), stations, restrictive);
         }
+        // initialize selected Rotation
+        selectedRotation = rotations.getNext(HexSide.defaultRotation());
     }
     
-    public boolean validate(Phase phase) {
-        invalids = EnumSet.noneOf(Validation.class);
-//        if (hexIsBlocked()) {
-//           invalids.add(Validation.HEX_BLOCKED);
+    private boolean validate(Phase phase) {
+        invalids.clear();
+
+        //        if (hexIsBlocked()) {
+//           invalids.add(Invalids.HEX_BLOCKED);
 //        }
         if (noTileAvailable()) {
-            invalids.add(Validation.NO_TILES_LEFT);
+            invalids.add(Invalids.NO_TILES_LEFT);
         } 
         if (notAllowedForHex()) {
-            invalids.add(Validation.NOT_ALLOWED_FOR_HEX);
+            invalids.add(Invalids.NOT_ALLOWED_FOR_HEX);
         }
         if (notAllowedForPhase(phase)) {
-            invalids.add(Validation.NOT_ALLOWED_FOR_PHASE);
+            invalids.add(Invalids.NOT_ALLOWED_FOR_PHASE);
         }
         if (tileColourNotAllowed(phase)) {
-            invalids.add(Validation.COLOUR_NOT_ALLOWED);
+            invalids.add(Invalids.COLOUR_NOT_ALLOWED);
         }
         if (noRouteToNewTrack()) {
-            invalids.add(Validation.NO_ROUTE_TO_NEW_TRACK);
+            invalids.add(Invalids.NO_ROUTE_TO_NEW_TRACK);
         } else if (noValidRotation()) {
-            invalids.add(Validation.NO_VALID_ORIENTATION);
+            invalids.add(Invalids.NO_VALID_ORIENTATION);
         }  
         return invalids.isEmpty();
-    }
-    
-    public EnumSet<Validation> getInvalids() {
-        return invalids;
     }
     
     public boolean noValidRotation() {
@@ -175,7 +170,7 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
     }
     
     public boolean notAllowedForHex() {
-        return !upgrade.isAllowedForHex(hex);
+        return !upgrade.isAllowedForHex(hex.getHex());
     }
     
     public boolean notAllowedForPhase(Phase phase) {
@@ -193,7 +188,7 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
     public boolean requiresConnection() {
         // Yellow Tile on Company Home
         if (upgrade.getTargetTile().getColourText().equalsIgnoreCase(TileColour.YELLOW.name())
-                && hex.isHomeFor(action.getCompany())) {
+                && hex.getHex().isHomeFor(action.getCompany())) {
             return false;
         // Special Property with specified hexes and require connection 
          // TODO: Do we require the second test
@@ -223,17 +218,45 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
         return rotations;
     }
     
+    public HexSide getCurrentRotation() {
+        return selectedRotation;
+    }
+    
     public Iterator<HexSide> iterator() {
         return rotations.iterator();
     }
 
     // HexUpgrade interface method
+    
+    @Override
+    public boolean hasSingleSelection() {
+        return rotations.onlySingle();
+    }
+    
+    @Override
+    public void firstSelection() {
+        selectedRotation = rotations.getNext(HexSide.defaultRotation());
+    }
+    
+    @Override
+    public void nextSelection() {
+        selectedRotation =  rotations.getNext(selectedRotation.next());
+    }
+
+    @Override
+    public Set<HexUpgrade.Invalids> getInvalids() {
+        return ImmutableSet.<HexUpgrade.Invalids>copyOf(invalids);
+    }
+    
     @Override
     public boolean isValid() {
-        if (invalids== null) {
-            return true;
-        }
         return invalids.isEmpty();
+    }
+
+    @Override
+    public String getToolTip() {
+        // TODO: Add text
+     return LocalText.getText("TileHexUpgrade.ToolTip");
     }
     
     @Override
@@ -252,7 +275,7 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
                     return ComparisonChain.start()
                             .compare(tu1.getAction(), tu2.getAction())
                             .compare(tu1.getUpgrade().getTargetTile(), tu2.getUpgrade().getTargetTile())
-                            .compare(tu1.getHex().getId(), tu2.getHex().getId())
+                            .compare(tu1.getHex().getHex().getId(), tu2.getHex().getHex().getId())
                             .result()
                     ;
                 }
@@ -271,9 +294,9 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
     }
     
     /**
-     * sets both validation and enable for upgrades
+     * sets both validation and visibility for upgrades
      */
-    public static void validateAndEnable(Iterable<TileHexUpgrade> upgrades, Phase current) {
+    public static void validates(Iterable<TileHexUpgrade> upgrades, Phase current) {
         for (TileHexUpgrade upgrade:upgrades) {
             if (upgrade.validate(current)) {
                 upgrade.setVisible(true);
@@ -284,5 +307,6 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
             }
         }
     }
+
     
 }

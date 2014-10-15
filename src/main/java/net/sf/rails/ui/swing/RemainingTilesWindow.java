@@ -83,8 +83,8 @@ public class RemainingTilesWindow extends JFrame implements WindowListener,
             BufferedImage hexImage = GameUIManager.getImageLoader().getTile(picId, 10);
             ImageIcon hexIcon = new ImageIcon(hexImage);
             hexIcon.setImage(hexIcon.getImage().getScaledInstance(
-                    (int) (hexIcon.getIconWidth() * GUIHex.NORMAL_SCALE * 0.8),
-                    (int) (hexIcon.getIconHeight() * GUIHex.NORMAL_SCALE * 0.8),
+                    (int) (hexIcon.getIconWidth() * 0.8),
+                    (int) (hexIcon.getIconHeight() * 0.8),
                     Image.SCALE_SMOOTH));
 
 //            HexLabel hexLabel = new HexLabel(hexIcon, tile);

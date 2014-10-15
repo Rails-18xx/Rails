@@ -9,7 +9,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.util.Set;
+import java.util.Map;
+import java.util.NavigableSet;
 
 import javax.swing.Action;
 import javax.swing.AbstractAction;
@@ -21,20 +22,20 @@ import javax.swing.JScrollPane;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedSet;
 
 import rails.game.action.LayBaseToken;
 import rails.game.action.LayBonusToken;
-import rails.game.action.LayTile;
 import rails.game.action.LayToken;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.BonusToken;
 import net.sf.rails.game.HexSide;
 import net.sf.rails.game.MapHex;
 import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.TileUpgrade;
+import net.sf.rails.game.Tile;
 import net.sf.rails.ui.swing.elements.ActionLabel;
+import net.sf.rails.ui.swing.elements.GUIHexUpgrades;
 import net.sf.rails.ui.swing.elements.UpgradeLabel;
 import net.sf.rails.ui.swing.elements.RailsIcon;
 import net.sf.rails.ui.swing.elements.RailsIconButton;
@@ -42,9 +43,9 @@ import net.sf.rails.ui.swing.hexmap.GUIHex;
 import net.sf.rails.ui.swing.hexmap.GUITile;
 import net.sf.rails.ui.swing.hexmap.HexHighlightMouseListener;
 import net.sf.rails.ui.swing.hexmap.HexUpgrade;
+import net.sf.rails.ui.swing.hexmap.HexUpgrade.Invalids;
 import net.sf.rails.ui.swing.hexmap.TileHexUpgrade;
 import net.sf.rails.ui.swing.hexmap.TokenHexUpgrade;
-import net.sf.rails.ui.swing.hexmap.TileHexUpgrade.Validation;
 
 
 public class UpgradesPanel extends JPanel {
@@ -72,11 +73,11 @@ public class UpgradesPanel extends JPanel {
      * Required for Docking approach
      */
     private boolean omitButtons;
-
-    private Set<HexUpgrade> upgrades = ImmutableSet.of();
     
-    // current selected upgrade
-    private HexUpgrade activeUpgrade = null;
+    private GUIHexUpgrades hexUpgrades;
+
+    private Map<HexUpgrade, JLabel> upgradeLabels;
+    
 
     public UpgradesPanel(ORUIManager orUIManager, boolean omitButtons) {
         this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
@@ -108,7 +109,7 @@ public class UpgradesPanel extends JPanel {
 
         Action confirmAction = new AbstractAction() {
             public void actionPerformed(ActionEvent arg0) {
-                confirmUpgrade();
+                UpgradesPanel.this.orUIManager.confirmUpgrade();
             }
         };
         
@@ -116,7 +117,7 @@ public class UpgradesPanel extends JPanel {
 
         Action skipAction = new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
-                skipUpgrade();
+                UpgradesPanel.this.orUIManager.skipUpgrade();;
             }
         };
         skipAction.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_C);
@@ -148,6 +149,11 @@ public class UpgradesPanel extends JPanel {
 
     }
     
+    public void setHexUpgrades(GUIHexUpgrades hexUpgrades) {
+        this.hexUpgrades = hexUpgrades;
+    }
+    
+    
     /**
      * @return Default zoom step for conventional panes or, for dockable panes,
      * the zoom step used in the map. Map zoom step can only be used for
@@ -178,72 +184,66 @@ public class UpgradesPanel extends JPanel {
         }
     }
     
-    private void resetUpgrades() {
+    private void resetUpgrades(boolean skip) {
+        hexUpgrades.setActiveHex(null);
         upgradePanel.removeAll();
-        activeUpgrade = null;
-        upgrades = ImmutableSet.of();
+        upgradeLabels = null;
         // set scrollposition to top and show again
         scrollPane.getVerticalScrollBar().setValue(0);
         scrollPane.repaint();
+
+        confirmButton.setEnabled(false);
+        skipButton.setEnabled(skip);
+        setButtons();
     }
 
     public void setInactive() {
-        resetUpgrades();
-        confirmButton.setEnabled(false);
-        skipButton.setEnabled(false);
-        setButtons();
+        resetUpgrades(false);
     }
     
     public void setActive() {
-        resetUpgrades();
-        confirmButton.setEnabled(false);
-        skipButton.setEnabled(true);
-        setButtons();
+        resetUpgrades(true);
     }
     
-    public void activateUpgrade(HexUpgrade upgrade) {
-        activeUpgrade = upgrade;
-    }
-    
-    public void setSelect(Set<HexUpgrade> upgrades) {
-        resetUpgrades();
-        this.upgrades = ImmutableSortedSet.copyOf(upgrades);
+    public void setSelect(GUIHex hex) {
+        hexUpgrades.setActiveHex(hex);
         showUpgrades();
-        confirmButton.setEnabled(false);
-        skipButton.setEnabled(true);
-        setButtons();
-    }
 
-    public void setConfirm() {
-        upgradePanel.removeAll();
-        showUpgrades();
-        confirmButton.setEnabled(true);
-        skipButton.setEnabled(true);
-        setButtons();
-    }
-    
-    private void confirmUpgrade() {
-        if (activeUpgrade instanceof TileHexUpgrade) {
-            orUIManager.layTile();
-        } else if (activeUpgrade instanceof TokenHexUpgrade) {
-            orUIManager.layToken((TokenHexUpgrade)activeUpgrade);
-        }
-    }
-
-    private void skipUpgrade() {
-        orUIManager.skipUpgrade(activeUpgrade);
-    }
-    
-    public void upgradeActivated(HexUpgrade upgrade) {
-        if (activeUpgrade == upgrade) {
-            orUIManager.upgradeSelectedAgain(upgrade);
+        HexUpgrade activeUpgrade = hexUpgrades.getActiveUpgrade();
+        if (activeUpgrade != null) {
+            activeUpgrade.firstSelection();
+            activeUpgrade.getHex().update();
+            confirmButton.setEnabled(true);
         } else {
-            activeUpgrade = upgrade;
-            orUIManager.upgradeSelected(upgrade);
+            confirmButton.setEnabled(false);
+        }
+        setButtons();
+    }
+   
+    public void nextSelection() {
+        HexUpgrade activeUpgrade = hexUpgrades.getActiveUpgrade();
+        if (activeUpgrade.hasSingleSelection()) {
+            nextUpgrade();
+        } else {
+            activeUpgrade.nextSelection();
+            activeUpgrade.getHex().update();
         }
     }
 
+    public void nextUpgrade() {
+        if (activeUpgrade == null) {
+            setActiveUpgrade(upgrades.first());
+        } else {
+            setActiveUpgrade(upgrades.higher(activeUpgrade));
+        }
+    }
+    
+    private void setActiveUpgrade(HexUpgrade upgrade) {
+    }
+    
     private void showUpgrades() {
+        
+        ImmutableMap.Builder<HexUpgrade, JLabel> upgradeLabelBuilder = ImmutableMap.builder(); 
         
         for (HexUpgrade upgrade:upgrades) {
             JLabel label = null;
@@ -262,7 +262,11 @@ public class UpgradesPanel extends JPanel {
                     Short.MAX_VALUE, (int)label.getPreferredSize().getHeight()));
             label.setAlignmentX(Component.CENTER_ALIGNMENT);
             upgradePanel.add(label);
+            upgradeLabelBuilder.put(upgrade, label);
+            
         }
+        upgradeLabels = upgradeLabelBuilder.build();
+        
         scrollPane.revalidate();
         scrollPane.repaint();
     }
@@ -276,13 +280,13 @@ public class UpgradesPanel extends JPanel {
             final TileHexUpgrade upgrade_final = upgrade;
             label.addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
-                    upgradeActivated(upgrade_final);
+                    setActiveUpgrade(upgrade_final);
                 }
             });
         } else {
             // not-enabled tiles (currently invalid)
             StringBuilder invalidText = new StringBuilder();
-            for (Validation invalid : upgrade.getInvalids()) {
+            for (Invalids invalid : upgrade.getInvalids()) {
                 invalidText.append(invalid.toString() + "<br>");
             }
             label = UpgradeLabel.create(icon, upgrade,
@@ -305,34 +309,24 @@ public class UpgradesPanel extends JPanel {
         // target: get a buffered image of the tile
         BufferedImage hexImage = null;
 
-        GUIHex selectedGUIHex = orUIManager.getMap().getHex(hexUpgrade.getHex());
+        GUIHex selectedGUIHex = hexUpgrade.getHex();
         if (selectedGUIHex != null) {
-            // if tile is already selected, choose the current rotation
-            HexSide rotation;
-            if (hexUpgrade == activeUpgrade) {
-                rotation = selectedGUIHex.getProvisionalTileRotation();
-            } else { // otherwise in the first valid rotation, returns null if no valid rotation
-                rotation = hexUpgrade.getRotations().getNext(HexSide.defaultRotation());
-                if (rotation == null) {
-                    // fallback if no valid orientation exists:
-                    // get the image in the standard orientation
-                    rotation = HexSide.defaultRotation();
-                }
+            HexSide rotation = hexUpgrade.getCurrentRotation();
+            if (rotation == null) {
+                // fallback if no valid orientation exists:
+                // get the image in the standard orientation
+                rotation = HexSide.defaultRotation();
             }
-            TileUpgrade upgrade = hexUpgrade.getUpgrade();
-            GUITile tempGUITile =
-                    new GUITile(upgrade.getTargetTile(), selectedGUIHex);
-            tempGUITile.setRotation(rotation);
-            // tile has been rotated to valid orientation
+            Tile tile = hexUpgrade.getUpgrade().getTargetTile();
             // get unscaled image for this orientation
-            hexImage = tempGUITile.getTileImage(getZoomStep());
+            hexImage = GUITile.getTileImage(tile, rotation, getZoomStep());
         }
 
         // Cheap n' Easy rescaling.
         ImageIcon hexIcon = new ImageIcon(hexImage);
         hexIcon.setImage(hexIcon.getImage().getScaledInstance(
-                (int) (hexIcon.getIconWidth() * GUIHex.NORMAL_SCALE * 0.8),
-                (int) (hexIcon.getIconHeight() * GUIHex.NORMAL_SCALE * 0.8),
+                (int) (hexIcon.getIconWidth() * 0.8),
+                (int) (hexIcon.getIconHeight() * 0.8),
                 Image.SCALE_SMOOTH));
         return hexIcon;
     }
@@ -356,8 +350,8 @@ public class UpgradesPanel extends JPanel {
                                 + action.getSpecialProperty().getOriginalCompany().getId()
                                 + "] </font>";
             }
-            MapHex hex = upgrade.getHex();
-            if (hex.getStops().size() != 1) {
+            MapHex hex = upgrade.getHex().getHex();
+            if (upgrade.isValid() && !upgrade.hasSingleSelection()) {
                 description += "<br> <font size=-2>";
                 description += hex.getConnectionString(upgrade.getSelectedStop().getRelatedStation());
                 description += "</font>";
@@ -381,7 +375,7 @@ public class UpgradesPanel extends JPanel {
         final TokenHexUpgrade upgrade_final = upgrade;
         tokenLabel.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                upgradeActivated(upgrade_final);
+                setActiveUpgrade(upgrade_final);
             }
         });
         tokenLabel.addPossibleAction(action);

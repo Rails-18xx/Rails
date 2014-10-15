@@ -2,10 +2,11 @@ package net.sf.rails.game;
 
 import java.util.Map;
 
+import com.google.common.collect.ImmutableMap;
+
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
 import net.sf.rails.ui.swing.hexmap.GUIHex;
-import net.sf.rails.ui.swing.hexmap.HexMap;
 import net.sf.rails.ui.swing.hexmap.GUIHex.HexPoint;
 
 
@@ -115,37 +116,6 @@ public enum MapOrientation {
         return letterAHasEvenNumbers;
     }
 
-    /**
-     * Returns rotation to be applied to {@link MapOrientation#NS}-oriented
-     * tile to achieve this orientation.
-     * 
-     * <p>The rotation has to be done around center point of the tile.</p>
-     * 
-     * <p>This function returns {@literal 0} for {@link MapOrientation#NS}
-     * since {@code NS}-oriented tile does not need any rotation to be
-     * transformed into {@code NS}-oriented tile.</p>
-     * 
-     * @return Rotation to be applied to {@link MapOrientation#NS}-oriented
-     *         tile to achieve this orientation.
-     */
-    
-    public static final double DEG30 = Math.PI / 6.0;
-    
-    private double rotationInRadians(HexSide rotation) {
-        switch(this) {
-        case NS:
-            return (2 * rotation.getTrackPointNumber()) * DEG30;
-        case EW:
-            return (2 * rotation.getTrackPointNumber() + 1) * DEG30;
-        default:
-            throw new AssertionError(this);
-        }
-    }
-    
-    public static double rotationInRadians(HexMap hexMap, HexSide rotation) {
-        return hexMap.getMapManager().getMapOrientation().rotationInRadians(rotation);
-    }
-    
     public String getUIClassName() {
         // FIXME: Rails 2.0, move this to some default .xml!
         switch(this) {
@@ -183,7 +153,9 @@ public enum MapOrientation {
     
     public static final double SQRT3 = Math.sqrt(3.0);
     
-    public void setGUIVertices(Map<HexSide, HexPoint> coordinates, double cx, double cy, double scale) {
+    public Map<HexSide, HexPoint> setGUIVertices( double cx, double cy, double scale) {
+        
+        ImmutableMap.Builder<HexSide, HexPoint> coordinates = ImmutableMap.builder();
         
         switch(this) {
         case NS:
@@ -221,5 +193,46 @@ public enum MapOrientation {
         default:
             throw new AssertionError(this);
         }
+        return coordinates.build();
     }
+    
+    public static final double DEG30 = Math.PI / 6.0;
+
+    private double rotationInRadians(HexSide rotation) {
+        switch(this) {
+        case NS:
+            return (2 * rotation.getTrackPointNumber()) * DEG30;
+        case EW:
+            return (2 * rotation.getTrackPointNumber() + 1) * DEG30;
+        default:
+            throw new AssertionError(this);
+        }
+    }
+    
+    /**
+     * Returns rotation to be applied to {@link MapOrientation#NS}-oriented
+     * tile to achieve this orientation.
+     * 
+     * <p>The rotation has to be done around center point of the tile.</p>
+     * 
+     * <p>This function returns {@literal 0} for {@link MapOrientation#NS}
+     * since {@code NS}-oriented tile does not need any rotation to be
+     * transformed into {@code NS}-oriented tile.</p>
+     * 
+     * @return Rotation to be applied to {@link MapOrientation#NS}-oriented
+     *         tile to achieve this orientation.
+     */
+    
+    public static double rotationInRadians(RailsItem item, HexSide rotation) {
+        return item.getRoot().getMapManager().getMapOrientation().rotationInRadians(rotation);
+    }
+    
+    /**
+     * @return orientation of the map (NS or EW)
+     */
+    public static MapOrientation get(RailsItem item) {
+        return item.getRoot().getMapManager().getMapOrientation();
+    }
+    
+    
 }

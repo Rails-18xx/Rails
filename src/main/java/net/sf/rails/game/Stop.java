@@ -10,6 +10,7 @@ import net.sf.rails.game.state.IntegerState;
 import net.sf.rails.game.state.PortfolioSet;
 import net.sf.rails.util.Util;
 
+import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.ImmutableSet;
 
 
@@ -27,7 +28,7 @@ import com.google.common.collect.ImmutableSet;
  * during upgrades; but even then it is attempted to retain the old Stop numbers
  * as much as possible.
  */
-public class Stop extends RailsAbstractItem implements RailsOwner {
+public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<Stop> {
     private final PortfolioSet<BaseToken> tokens = 
             PortfolioSet.create(this, "tokens", BaseToken.class);
     private final GenericState<Station> relatedStation = 
@@ -208,6 +209,16 @@ public class Stop extends RailsAbstractItem implements RailsOwner {
     }
 
     @Override
+    public int compareTo(Stop o) {
+        return ComparisonChain.start()
+                .compare(o.getRelatedStation().getValue(), this.getRelatedStation().getValue())
+                .compare(o.getTokenSlotsLeft(), this.getTokenSlotsLeft())
+                .compare(this.getId(), o.getId())
+                .result()
+        ;
+    }
+
+    @Override
     public String toText() {
         StringBuffer b = new StringBuffer();
         b.append("Hex ").append(getParent().getId());
@@ -222,5 +233,6 @@ public class Stop extends RailsAbstractItem implements RailsOwner {
         b.append(")");
         return b.toString();
     }
+
 
 }

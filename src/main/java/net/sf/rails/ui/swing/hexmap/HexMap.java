@@ -661,7 +661,7 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
                 ImmutableMap.builder();
         
         for (MapHex hex:mapManager.getHexes()) {
-            GUIHex guiHex = GUIHex.create(this, hex, scale);
+            GUIHex guiHex = new GUIHex(this, hex, scale);
             hexMapBuilder.put(hex, guiHex);
         }
         hex2gui = hexMapBuilder.build();
@@ -669,7 +669,7 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
 
     protected void scaleHexesGUI() {
         for (GUIHex hex:hex2gui.values()) {
-            hex.scaleHex(scale, zoomFactor);
+            hex.setDimensions(scale, zoomFactor);
         }
     }
 
@@ -778,14 +778,11 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
 
         if (selectedHex == clickedHex) return;
         if (selectedHex != null) {
-            selectedHex.setSelected(false);
-            log.debug("Hex " + selectedHex.toText()
-                      + " deselected and repainted");
+            selectedHex.setState(GUIHex.State.SELECTED);
         }
 
         if (clickedHex != null) {
-            clickedHex.setSelected(true);
-            log.debug("Hex " + clickedHex.toText() + " selected and repainted");
+            clickedHex.setState(GUIHex.State.SELECTED);
         }
         selectedHex = clickedHex;
 

@@ -48,6 +48,10 @@ public class HexSidesSet implements Iterable<HexSide> {
         return null;
     }
     
+    public boolean onlySingle() {
+        return sides.cardinality() == 1;
+    }
+    
     public boolean isEmpty() {
         return sides.isEmpty();
     }

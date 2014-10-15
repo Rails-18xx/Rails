@@ -1,45 +1,138 @@
 package net.sf.rails.ui.swing.hexmap;
 
+import java.util.Collection;
 import java.util.Comparator;
+import java.util.EnumSet;
+import java.util.NavigableSet;
+import java.util.Set;
 
+import net.sf.rails.common.LocalText;
 import net.sf.rails.game.MapHex;
 import net.sf.rails.game.Stop;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 import rails.game.action.LayBaseToken;
 import rails.game.action.LayToken;
 
 public class TokenHexUpgrade extends HexUpgrade {
 
+    public enum Invalids implements HexUpgrade.Invalids {
+        HEX_BLOCKED, HEX_RESERVED;
+
+        @Override
+        public String toString() {
+            return LocalText.getText("TOKEN_" + this.name());
+        }
+        
+    }
+
     // static fields
     private final LayToken action;
+    private final ImmutableSet<Stop> stops;
+
+    // validation fields
+    private final NavigableSet<Stop> allowed = Sets.newTreeSet();
+    private final EnumSet<Invalids> invalids = EnumSet.noneOf(Invalids.class);
+
+    // ui fields
+    private Stop selectedStop;
     
-    private TokenHexUpgrade(MapHex hex, LayToken action) {
+    private TokenHexUpgrade(GUIHex hex, Collection<Stop> stops, LayToken action) {
         super(hex);
         this.action = action;
+        this.stops = ImmutableSet.copyOf(stops);
     }
     
-    public static TokenHexUpgrade create(MapHex hex, LayToken action) {
-        return new TokenHexUpgrade(hex, action);
+    public static TokenHexUpgrade create(GUIHex hex, Collection<Stop> stops, LayToken action) {
+        return new TokenHexUpgrade(hex, stops, action);
     }
 
     public LayToken getAction() {
         return action;
     }
     
-    // FIXME
+    public Set<Stop> getStops() {
+        return stops;
+    }
+    
     public Stop getSelectedStop() {
-        return null;
+        return selectedStop;
+    }
+    
+    private boolean validate() {
+        invalids.clear();
+        allowed.addAll(stops);
+        
+        // laying home hex is always allowed
+        if (!hex.getHex().isHomeFor(action.getCompany())) {
+            if (hexBlocked()) {
+                invalids.add(Invalids.HEX_BLOCKED);
+            }
+            if (hexReserved()) {
+                invalids.add(Invalids.HEX_RESERVED);
+            }
+        }
+
+        selectedStop = allowed.first();
+        
+        return invalids.isEmpty();
+    }
+    
+    public boolean hexBlocked() {
+        return hex.getHex().getBlockedForTokenLays() == MapHex.BlockedToken.ALWAYS;
+    }
+    
+    public boolean hexReserved() {
+        for (Stop stop:stops) {
+            if (hex.getHex().isBlockedForReservedHomes(stop)) {
+                allowed.remove(stop);
+            }
+        }
+        return allowed.isEmpty();
     }
 
     // HexUpgrade abstract methods
+    
     @Override
-    public boolean isValid() {
-        return true;
+    public boolean hasSingleSelection() {
+        return allowed.size() == 1;
+    }
+
+    @Override
+    public void firstSelection() {
+        selectedStop = allowed.first();
     }
     
+    @Override
+    public void nextSelection() {
+        Stop next = allowed.higher(selectedStop);
+        if (next == null) {
+            selectedStop =  allowed.first();
+        } else {
+            selectedStop = next;
+        }
+    }
+
+    @Override
+    public Set<HexUpgrade.Invalids> getInvalids() {
+        return ImmutableSet.<HexUpgrade.Invalids>copyOf(invalids);
+    }
+    
+    @Override
+    public boolean isValid() {
+        return invalids.isEmpty();
+    }
+
+    @Override
+    public String getToolTip() {
+        // TODO: Add text
+        return LocalText.getText("TokenHexUpgrade.ToolTip");
+    }
+
     @Override
     public int getCompareId() {
         return 1;
@@ -73,9 +166,6 @@ public class TokenHexUpgrade extends HexUpgrade {
                     return ComparisonChain.start()
                             .compare(base1, base2)
                             .compare(type2, type1)
-//                            .compare(ts1.stop.getRelatedStation().getValue(), ts2.stop.getRelatedStation().getValue())
-//                            .compare(ts2.stop.getTokenSlotsLeft(), ts1.stop.getTokenSlotsLeft())
-//                            .compare(ts1.stop.getRelatedNumber(), ts2.stop.getRelatedNumber())
                             .result();
                 }
                 return 0;
@@ -86,11 +176,17 @@ public class TokenHexUpgrade extends HexUpgrade {
     @Override
     public String toString() {
         return Objects.toStringHelper(this)
-//                .add("stop", stop)
+                .add("stops", stops)
                 .add("action", action)
                 .toString();
     }
-    
 
-    
+    /**
+     * sets both validation and visibility for upgrades
+     */
+    public static void validates(TokenHexUpgrade upgrade) {
+        if (upgrade.validate()) {
+            upgrade.setVisible(true);
+        }
+    }
 }

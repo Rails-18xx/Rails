@@ -34,12 +34,7 @@ import net.sf.rails.game.state.Observer;
 import net.sf.rails.ui.swing.GUIGlobals;
 import net.sf.rails.ui.swing.GUIToken;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
 
 
 /**
@@ -48,34 +43,23 @@ import com.google.common.collect.Maps;
 
 public class GUIHex implements Observer {
 
-    private static final Logger log =
-            LoggerFactory.getLogger(GUIHex.class);
+    public static enum State { 
+        
+        NORMAL(1.0), SELECTABLE(0.9), SELECTED(0.8); 
+        
+        private final double scale;
     
-    public static final double NORMAL_SCALE = 1.0;
-    private static final double SELECTABLE_SCALE = 0.9;
-    private static final double SELECTED_SCALE = 0.8;
-
-    private static final int NORMAL_TOKEN_SIZE = 15;
-    private static final double TILE_GRID_SCALE = 14.0;
-    private static final double CITY_SIZE = 16.0;
-
-    private static final Color BAR_COLOUR = Color.BLUE;
-    private static final int BAR_WIDTH = 5;
-
-    private static final Color selectedColor = Color.red;
-    private static final Color selectableColor = Color.red;
-    private static final Color highlightedFillColor = new Color(255,255,255,128);
-    private static final Color highlightedBorderColor = Color.BLACK;
-    private static final Stroke highlightedBorderStroke = new BasicStroke(3);
-
-    /**
-     * Defines by how much the hex bounds have to be increased in each direction
-     * for obtaining the dirty rectangle (markings could got beyond hex limits)
-     */
-    private static final int marksDirtyMargin = 4;
+        State(double scale) {
+            this.scale = scale;
+        }
+        
+        private double getScale() {
+            return scale;
+        }
+    }
     
     /**
-     * Class that describes x-y coordinates for GUIHexes
+     * Static class that describes x-y coordinates for GUIHexes
      */
     public static class HexPoint {
         private final Point2D point;
@@ -130,108 +114,156 @@ public class GUIHex implements Observer {
         }
         
     }
+    
+    /**
+     * Static class for GUIHex Dimensions 
+     */
+    private static class Dimensions {
+        private final double selectedStrokeWidth;
+        private final double selectableStrokeWidth;
+        private final double zoomFactor;
+        private final double tokenDiameter;
+        
+        private final Map<HexSide, HexPoint> points;
+        private final HexPoint center;
+        
+        private final GeneralPath hexagon;
+        private final GeneralPath innerHexagonSelected;
+        private final GeneralPath innerHexagonSelectable;
+        
+        private final Rectangle rectBound;
+        // The area which would have to be repainted if any hex marking is changed
+        private final Rectangle marksDirtyRectBound;
+        
+        private Dimensions(HexMap hexMap, MapHex hex, double scale, double zoomFactor) {
+            this.zoomFactor = zoomFactor;
 
-    // Fields
-    private final HexMap hexMap; // Containing this hex
+            double cx = hexMap.calcXCoordinates(hex.getCoordinates().getCol(), hexMap.tileXOffset);
+            double cy = hexMap.calcYCoordinates(hex.getCoordinates().getRow(), hexMap.tileYOffset);
+            points = hexMap.getMapManager().getMapOrientation().setGUIVertices(cx, cy, scale);
+            
+            tokenDiameter = NORMAL_TOKEN_SIZE * zoomFactor;
+
+            hexagon = makePolygon();
+
+            center = HexPoint.middle(points.get(HexSide.defaultRotation()), 
+                    points.get(HexSide.defaultRotation().opposite()));
+            
+            //inner hexagons are drawn outlined (not filled)
+            //for this draw, the stroke width is half the scale reduction 
+            //the scale factor is multiplied by the average of hex width / height in order
+            //to get a good estimate for which for stroke width the hex borders are touched
+            //by the stroke
+            double hexDrawScale = 1 - (1 - State.SELECTED.getScale()) / 2; 
+            innerHexagonSelected = defineInnerHexagon(hexDrawScale);
+            selectedStrokeWidth = (float) ( 1 - hexDrawScale ) *
+                    ( hexagon.getBounds().width + hexagon.getBounds().height ) / 2;
+            
+            hexDrawScale = 1 - (1 - State.SELECTABLE.getScale()) / 2; 
+            innerHexagonSelectable = defineInnerHexagon(hexDrawScale);
+            selectableStrokeWidth = (float) ( 1 - hexDrawScale ) *
+                    ( hexagon.getBounds().width + hexagon.getBounds().height ) / 2;
+        
+            rectBound = hexagon.getBounds();
+            marksDirtyRectBound = new Rectangle (
+                    rectBound.x - marksDirtyMargin,
+                    rectBound.y - marksDirtyMargin,
+                    rectBound.width + marksDirtyMargin * 2,
+                    rectBound.height + marksDirtyMargin * 2
+            );
+        }
+        
+        // Replace with Path2D
+        private GeneralPath makePolygon() {
+            GeneralPath polygon = new GeneralPath(GeneralPath.WIND_EVEN_ODD, 6);
+            
+            HexPoint start = points.get(HexSide.defaultRotation());
+            polygon.moveTo((float) start.getX(), (float) start.getY());
+
+            for (HexSide side:HexSide.allExceptDefault()) {
+                HexPoint point = points.get(side);
+                polygon.lineTo((float) point.getX(), (float) point.getY());
+            }
+            polygon.closePath();
+            return polygon;
+        }
+
+        private GeneralPath defineInnerHexagon(double innerScale) {
+
+            AffineTransform at =
+                    AffineTransform.getScaleInstance(innerScale, innerScale);
+            GeneralPath innerHexagon = (GeneralPath) hexagon.createTransformedShape(at);
+
+            // Translate innerHexagon to make it concentric.
+            Rectangle2D innerBounds = innerHexagon.getBounds2D();
+            HexPoint innerCenter = new HexPoint(
+                    innerBounds.getX() + innerBounds.getWidth() / 2.0, 
+                    innerBounds.getY() + innerBounds.getHeight() / 2.0
+            );
+            HexPoint difference = HexPoint.difference(center, innerCenter);
+            
+            at = AffineTransform.getTranslateInstance(difference.getX(), difference.getY());
+            innerHexagon.transform(at);
+
+            return innerHexagon;
+        }
+
+    }
+    
+    // STATIC CONSTANTS
+    private static final int NORMAL_TOKEN_SIZE = 15;
+    private static final double TILE_GRID_SCALE = 14.0;
+    private static final double CITY_SIZE = 16.0;
+
+    private static final Color BAR_COLOUR = Color.BLUE;
+    private static final int BAR_WIDTH = 5;
+
+    private static final Color selectedColor = Color.red;
+    private static final Color selectableColor = Color.red;
+    
+    private static final Color highlightedFillColor = new Color(255,255,255,128);
+    private static final Color highlightedBorderColor = Color.BLACK;
+    private static final Stroke highlightedBorderStroke = new BasicStroke(3);
+
+    
+    // Defines by how much the hex bounds have to be increased in each direction
+    // for obtaining the dirty rectangle (markings could got beyond hex limits)
+    private static final int marksDirtyMargin = 4;
+    
+    // positions of offStation Tokens
+    private static final int[] offStationTokenX = new int[] { -11, 0 };
+    private static final int[] offStationTokenY = new int[] { -19, 0 };
+
+    // static fields
+    private final HexMap hexMap;
     private final MapHex hex;
+    
+    // dynamic fields
+    private Dimensions dimensions;
 
-    private final Map<HexSide, HexPoint> points = 
-            Maps.newHashMapWithExpectedSize(6);
+    private State state;
+    
+    private HexUpgrade upgrade;
 
-    private GUITile currentGUITile = null;
-    private GUITile provisionalGUITile = null;
-    private TileHexUpgrade upgrade;
-
-    private GeneralPath innerHexagonSelected;
-    private double selectedStrokeWidth;
-    private GeneralPath innerHexagonSelectable;
-    private double selectableStrokeWidth;
-    private HexPoint center;
-    private double zoomFactor = 1.0;
-    private double tokenDiameter = NORMAL_TOKEN_SIZE;
-
-    private GeneralPath hexagon;
-    private Rectangle rectBound;
     private List<HexSide> barSides;
-    private String toolTip;
 
-    /**
-     * The area which would have to be repainted if any hex marking is changed
-     */
-    private Rectangle marksDirtyRectBound;
-
-    private boolean selected;
-    private boolean selectable;
-    /**
-     * A counter instead of a boolean is used here in order to be able to correctly
-     * handle racing conditions for mouse events.
-     */
+    // A counter instead of a boolean is used here in order to be able to correctly
+    // handle racing conditions for mouse events.
     private int highlightCounter = 0;
 
-    private GUIHex(HexMap hexMap, MapHex hex) {
+    public GUIHex(HexMap hexMap, MapHex hex, double scale) {
         this.hexMap = hexMap;
         this.hex = hex;
         hex.addObserver(this);
-        initFromHexModel();
+        this.setDimensions(scale, 1.0);
+        this.state = State.NORMAL;
     }
     
-    public static GUIHex create(HexMap hexMap, MapHex hex, double scale) {
-        GUIHex guiHex = new GUIHex(hexMap, hex);
-        guiHex.scaleHex(scale, 1.0);
-        return guiHex;
+    public void setDimensions(double scale, double zoomFactor) {
+        dimensions = new Dimensions(hexMap, hex, scale, zoomFactor);
     }
 
-    public void scaleHex (double scale, double zoomFactor) {
-        this.zoomFactor = zoomFactor;
-
-        double cx = hexMap.calcXCoordinates(hex.getCoordinates().getCol(), hexMap.tileXOffset);
-        double cy = hexMap.calcYCoordinates(hex.getCoordinates().getRow(), hexMap.tileYOffset);
-        hexMap.getMapManager().getMapOrientation().setGUIVertices(points, cx, cy, scale);
-        
-        tokenDiameter = NORMAL_TOKEN_SIZE * zoomFactor;
-
-        hexagon = makePolygon();
-        setBounds(hexagon.getBounds());
-
-        center = HexPoint.middle(points.get(HexSide.defaultRotation()), 
-                points.get(HexSide.defaultRotation().opposite()));
-        
-        //inner hexagons are drawn outlined (not filled)
-        //for this draw, the stroke width is half the scale reduction 
-        //the scale factor is multiplied by the average of hex width / height in order
-        //to get a good estimate for which for stroke width the hex borders are touched
-        //by the stroke
-        double hexDrawScale = 1 - (1 - SELECTED_SCALE) / 2; 
-        innerHexagonSelected = defineInnerHexagon(hexDrawScale);
-        selectedStrokeWidth = (float) ( 1 - hexDrawScale ) *
-                ( hexagon.getBounds().width + hexagon.getBounds().height ) / 2;
-        
-        hexDrawScale = 1 - (1 - SELECTABLE_SCALE) / 2; 
-        innerHexagonSelectable = defineInnerHexagon(hexDrawScale);
-        selectableStrokeWidth = (float) ( 1 - hexDrawScale ) *
-                ( hexagon.getBounds().width + hexagon.getBounds().height ) / 2;
-    }
-
-    private GeneralPath defineInnerHexagon(double innerScale) {
-
-        AffineTransform at =
-                AffineTransform.getScaleInstance(innerScale, innerScale);
-        GeneralPath innerHexagon = (GeneralPath) hexagon.createTransformedShape(at);
-
-        // Translate innerHexagon to make it concentric.
-        Rectangle2D innerBounds = innerHexagon.getBounds2D();
-        HexPoint innerCenter = new HexPoint(
-                innerBounds.getX() + innerBounds.getWidth() / 2.0, 
-                innerBounds.getY() + innerBounds.getHeight() / 2.0
-        );
-        HexPoint difference = HexPoint.difference(center, innerCenter);
-        
-        at = AffineTransform.getTranslateInstance(difference.getX(), difference.getY());
-        innerHexagon.transform(at);
-
-        return innerHexagon;
-    }
-
+    // TODO: rename to getModel()
     public MapHex getHex() {
         return this.hex;
     }
@@ -245,21 +277,17 @@ public class GUIHex implements Observer {
     }
 
     public Point2D getSidePoint2D(HexSide side){
-        HexPoint middle = HexPoint.middle(
-                points.get(side), points.get(side.next()));
+        HexPoint middle = HexPoint.middle(dimensions.points.get(side), 
+                dimensions.points.get(side.next()));
         return middle.get2D();
     }
 
     public Point2D getCenterPoint2D() {
-        return center.get2D();
+        return dimensions.center.get2D();
     }
 
-    private void initFromHexModel() {
-        currentGUITile = new GUITile(hex.getCurrentTile(), this);
-        currentGUITile.setRotation(hex.getCurrentTileRotation());
-        toolTip = null;
-    }
-
+    
+    // TODO: Make this based on MapHex model
     public void addBar(HexSide side) {
         if (barSides == null) {
             barSides = Lists.newArrayListWithCapacity(2);
@@ -268,73 +296,36 @@ public class GUIHex implements Observer {
     }
 
     public Rectangle getBounds() {
-        return rectBound;
+        return dimensions.rectBound;
     }
     
     public Rectangle getMarksDirtyBounds() {
-        return marksDirtyRectBound;
-    }
-
-    public void setBounds(Rectangle rectBound) {
-        this.rectBound = rectBound;
-        marksDirtyRectBound = new Rectangle (
-                rectBound.x - marksDirtyMargin,
-                rectBound.y - marksDirtyMargin,
-                rectBound.width + marksDirtyMargin * 2,
-                rectBound.height + marksDirtyMargin * 2
-                );
+        return dimensions.marksDirtyRectBound;
     }
 
     public boolean contains(Point2D.Double point) {
-        return (hexagon.contains(point));
+        return (dimensions.hexagon.contains(point));
     }
 
     public boolean contains(Point point) {
-        return (hexagon.contains(point));
+        return (dimensions.hexagon.contains(point));
     }
 
     public boolean intersects(Rectangle2D r) {
-        return (hexagon.intersects(r));
+        return (dimensions.hexagon.intersects(r));
     }
 
-    public void setSelected(boolean selected) {
-        //trigger hexmap marks repaint if selected-status changes
-        if (this.selected != selected) {
+    public void setState(State state) {
+        if (this.state != state) {
+            //trigger hexmap marks repaint if status changes
             hexMap.repaintMarks(getMarksDirtyBounds());
             hexMap.repaintTiles(getBounds()); // tile is drawn smaller if selected
         }
-
-        this.selected = selected;
-        if (selected) {
-            currentGUITile.setScale(SELECTED_SCALE);
-        } else {
-            currentGUITile.setScale(isSelectable() ? SELECTABLE_SCALE : NORMAL_SCALE);
-            provisionalGUITile = null;
-        }
+        this.state = state;
     }
-
-    public boolean isSelected() {
-        return selected;
-    }
-
-    public void setSelectable(boolean selectable) {
-        //trigger hexmap repaint if selectable-status changes
-        if (this.selectable != selectable) {
-            hexMap.repaintMarks(getMarksDirtyBounds());
-            hexMap.repaintTiles(getBounds()); // tile is drawn smaller if selectable
-        }
-
-        this.selectable = selectable;
-        if (selectable) {
-            currentGUITile.setScale(SELECTABLE_SCALE);
-        } else {
-            currentGUITile.setScale(NORMAL_SCALE);
-            provisionalGUITile = null;
-        }
-    }
-
-    public boolean isSelectable() {
-        return selectable;
+    
+    public State getState() {
+        return state;
     }
 
     /**
@@ -363,27 +354,44 @@ public class GUIHex implements Observer {
         return (highlightCounter > 0);
     }
     
-    private GeneralPath makePolygon() {
-        GeneralPath polygon = new GeneralPath(GeneralPath.WIND_EVEN_ODD, 6);
-        
-        HexPoint start = points.get(HexSide.defaultRotation());
-        polygon.moveTo((float) start.getX(), (float) start.getY());
+    public void setUpgrade(HexUpgrade upgrade) {
+        this.upgrade = upgrade;
+        hexMap.repaintTiles(getBounds());
+        hexMap.repaintTokens(getBounds()); // needed if new tile has new token placement spot
+    }
+    
+    public HexUpgrade getUpgrade() {
+        return upgrade;
+    }
 
-        for (HexSide side:HexSide.allExceptDefault()) {
-            HexPoint point = points.get(side);
-            polygon.lineTo((float) point.getX(), (float) point.getY());
+    /**
+     * @return the current tile shown on the map (if an upgrade is shown the upgrade target tile is returned)
+     */
+    private Tile getVisibleTile() {
+        if (upgrade instanceof TileHexUpgrade) {
+            return ((TileHexUpgrade)upgrade).getUpgrade().getTargetTile();
+        } else {
+            return hex.getCurrentTile();
         }
-        polygon.closePath();
-        return polygon;
+    }
+    
+    /**
+     * @return the current tile rotation (if an upgrade is shown the rotation of that tile is returned)
+     */
+    private HexSide getVisibleRotation() {
+        if (upgrade instanceof TileHexUpgrade) {
+            return ((TileHexUpgrade)upgrade).getCurrentRotation();
+        } else {
+            return hex.getCurrentTileRotation();
+        }
     }
 
     private boolean isTilePainted() {
-        return provisionalGUITile != null && hexMap.isTilePainted(provisionalGUITile.getTile()) 
-                || currentGUITile != null && hexMap.isTilePainted(currentGUITile.getTile());
+        Tile visibleTile = getVisibleTile();
+        return visibleTile != null && hexMap.isTilePainted(visibleTile); 
     }
     
     public void paintTile(Graphics2D g) {
-
         if (isTilePainted()) {
             GUIGlobals.setRenderingHints(g);
             paintOverlay(g);
@@ -397,28 +405,28 @@ public class GUIHex implements Observer {
     public void paintMarks(Graphics2D g) {
         GUIGlobals.setRenderingHints(g);
 
-        if (isSelected()) {
+        if (state == State.SELECTED) {
             Stroke oldStroke = g.getStroke();                
-            g.setStroke(new BasicStroke((float) selectedStrokeWidth));
+            g.setStroke(new BasicStroke((float) dimensions.selectedStrokeWidth));
             g.setColor(selectedColor);                
-            g.draw(innerHexagonSelected);            
+            g.draw(dimensions.innerHexagonSelected);            
             g.setStroke(oldStroke);                
-        } else if (isSelectable()) {
+        } else if (state == State.SELECTABLE) {
             Stroke oldStroke = g.getStroke();                
-            g.setStroke(new BasicStroke((float) selectableStrokeWidth));
+            g.setStroke(new BasicStroke((float) dimensions.selectableStrokeWidth));
             g.setColor(selectableColor);
-            g.draw(innerHexagonSelectable);            
+            g.draw(dimensions.innerHexagonSelectable);            
             g.setStroke(oldStroke);                
         }
 
         //highlight on top of tiles
         if (isHighlighted()) {
             g.setColor(highlightedFillColor);
-            g.fill(hexagon);
+            g.fill(dimensions.hexagon);
             Stroke oldStroke = g.getStroke();                
             g.setStroke(highlightedBorderStroke);
             g.setColor(highlightedBorderColor);
-            g.draw(hexagon);
+            g.draw(dimensions.hexagon);
             g.setStroke(oldStroke);
         }
 
@@ -437,11 +445,11 @@ public class GUIHex implements Observer {
         if (getHex().getTileCost() > 0 ) {
             g.drawString(
                     Bank.format(getHex(), getHex().getTileCost()),
-                    rectBound.x
-                            + (rectBound.width - fontMetrics.stringWidth(Integer.toString(getHex().getTileCost())))
+                    dimensions.rectBound.x
+                            + (dimensions.rectBound.width - fontMetrics.stringWidth(Integer.toString(getHex().getTileCost())))
                             * 3 / 5,
-                    rectBound.y
-                            + ((fontMetrics.getHeight() + rectBound.height) * 9 / 15));
+                    dimensions.rectBound.y
+                            + ((fontMetrics.getHeight() + dimensions.rectBound.height) * 9 / 15));
         }
 
         Map<PublicCompany, Stop> homes = getHex().getHomes();
@@ -484,11 +492,11 @@ public class GUIHex implements Observer {
                         	String text = "(" + p.getId() + ")";
                             g.drawString(
                                   text,
-                                  rectBound.x
-                                  + (rectBound.width - fontMetrics.stringWidth(text))
+                                  dimensions.rectBound.x
+                                  + (dimensions.rectBound.width - fontMetrics.stringWidth(text))
                                   * 1 / 2,
-                                  rectBound.y
-                                  + ((fontMetrics.getHeight() + rectBound.height) * 5 / 15));
+                                  dimensions.rectBound.y
+                                  + ((fontMetrics.getHeight() + dimensions.rectBound.height) * 5 / 15));
                         }
                     }
                 }
@@ -500,31 +508,27 @@ public class GUIHex implements Observer {
         	String text = "[" + hex.getReservedForCompany() + "]";
             g.drawString(
                   text,
-                  rectBound.x
-                  + (rectBound.width - fontMetrics.stringWidth(text))
+                  dimensions.rectBound.x
+                  + (dimensions.rectBound.width - fontMetrics.stringWidth(text))
                   * 1 / 2,
-                  rectBound.y
-                  + ((fontMetrics.getHeight() + rectBound.height) * 5 / 25));
+                  dimensions.rectBound.y
+                  + ((fontMetrics.getHeight() + dimensions.rectBound.height) * 5 / 25));
         }
 
     }
 
     private void paintOverlay(Graphics2D g2) {
-        if (provisionalGUITile != null) {
-            if (hexMap.isTilePainted(provisionalGUITile.getTile())) {
-                provisionalGUITile.paintTile(g2, center);
-            }
-        } else {
-            if (hexMap.isTilePainted(currentGUITile.getTile())) {
-                currentGUITile.paintTile(g2, center);
-            }
-        }
+        Tile visibleTile = this.getVisibleTile();
+        HexSide visibleRotation = this.getVisibleRotation();
+        
+        GUITile.paintTile(g2, dimensions.center, this, visibleTile, visibleRotation, 
+                state.getScale(), hexMap.getZoomStep());
     }
 
     public void paintBars(Graphics2D g) {
         if (barSides == null) return;
         for (HexSide startPoint : barSides) {
-            drawBar(g, points.get(startPoint), points.get(startPoint.next()));
+            drawBar(g, dimensions.points.get(startPoint), dimensions.points.get(startPoint.next()));
         }
     }
 
@@ -543,31 +547,26 @@ public class GUIHex implements Observer {
     private void paintStationTokens(Graphics2D g2) {
         for (Stop stop:getHex().getStops()) {
             int j = 0;
-            log.debug("Stop = " + stop + ",BaseTokens = " + stop.getBaseTokens());
             for (BaseToken token:stop.getBaseTokens()) {
                 HexPoint origin = getTokenCenter(j++, stop);
                 PublicCompany company = token.getParent();
-                log.debug("Paint token of " + company + " on " + stop);
-                drawBaseToken(g2, company, origin, tokenDiameter);
+                drawBaseToken(g2, company, origin, dimensions.tokenDiameter);
             }
         }
     }
-
-    private static int[] offStationTokenX = new int[] { -11, 0 };
-    private static int[] offStationTokenY = new int[] { -19, 0 };
 
     // FIXME: Where to paint more than one offStationTokens?
     private void paintOffStationTokens(Graphics2D g2) {
         int i = 0;
         for (BaseToken token : hex.getOffStationTokens()) {
-            HexPoint origin = center.translate(offStationTokenX[i], offStationTokenY[i]);
+            HexPoint origin = dimensions.center.translate(offStationTokenX[i], offStationTokenY[i]);
                 PublicCompany co = token.getParent();
-                drawBaseToken(g2, co, origin, tokenDiameter);
+                drawBaseToken(g2, co, origin, dimensions.tokenDiameter);
             if (++i > 1) return;
         }
         
         for (BonusToken token : hex.getBonusTokens())  {
-            HexPoint origin = center.translate(offStationTokenX[i], offStationTokenY[i]);
+            HexPoint origin = dimensions.center.translate(offStationTokenX[i], offStationTokenY[i]);
             drawBonusToken(g2, token, origin);
             if (++i > 1) return;
             
@@ -578,7 +577,7 @@ public class GUIHex implements Observer {
 
         GUIToken token = new GUIToken(
                 co.getFgColour(), co.getBgColour(), co.getId(), center, diameter);
-        // token.setBounds((int)Math.round(center.getX()-0.5*diameter), (int) Math.round(center.getY()-0.5*diameter),
+        // token.setBounds((int)Math.round(dimensions.center.getX()-0.5*diameter), (int) Math.round(dimensions.center.getY()-0.5*diameter),
         //        diameter, diameter);
 
         token.drawToken(g2);
@@ -587,7 +586,7 @@ public class GUIHex implements Observer {
 
     private void drawHome (Graphics2D g2, PublicCompany co, HexPoint origin) {
 
-        GUIToken.drawTokenText(co.getId(), g2, Color.BLACK, origin, tokenDiameter);
+        GUIToken.drawTokenText(co.getId(), g2, Color.BLACK, origin, dimensions.tokenDiameter);
     }
 
     private void drawBonusToken(Graphics2D g2, BonusToken bt, HexPoint origin) {
@@ -595,24 +594,6 @@ public class GUIHex implements Observer {
                 new GUIToken(Color.BLACK, Color.WHITE, "+" + bt.getValue(),
                         origin, 15);
         token.drawToken(g2);
-    }
-
-    public TileHexUpgrade getUpgrade() {
-        return upgrade;
-    }
-    
-    public void rotateTile() {
-        if (provisionalGUITile != null) {
-            provisionalGUITile.rotate(upgrade, currentGUITile);
-        }
-        hexMap.repaintTiles(getBounds()); // provisional tile part of the tiles layer
-    }
-
-    public void forcedRotateTile() {
-        if (provisionalGUITile != null) {
-            provisionalGUITile.setRotation(provisionalGUITile.getRotation().next());
-        }
-        hexMap.repaintTiles(getBounds()); // provisional tile resides in tile layer
     }
 
     private HexPoint getTokenCenter(int currentToken, Stop stop) {
@@ -623,7 +604,7 @@ public class GUIHex implements Observer {
         if (positionCode != 0) {
             // FIXME: Check if we need both x and y 
             // or only y as in Rails1.x
-            double initial = TILE_GRID_SCALE * zoomFactor;
+            double initial = TILE_GRID_SCALE * dimensions.zoomFactor;
             double r = MapOrientation.DEG30 * (positionCode / 50);
             tokenCenter = new HexPoint(0, initial).rotate(r);
         } else {
@@ -634,43 +615,43 @@ public class GUIHex implements Observer {
         double delta_x = 0, delta_y = 0;
         switch (stop.getSlots()) {
         case 2:
-            delta_x = (-0.5 + currentToken) * CITY_SIZE * zoomFactor;
+            delta_x = (-0.5 + currentToken) * CITY_SIZE * dimensions.zoomFactor;
             break;
         case 3:
             if (currentToken < 2) {
-                delta_x = (-0.5 + currentToken) * CITY_SIZE * zoomFactor;
-                delta_y = -3 + 0.25 * MapOrientation.SQRT3 * CITY_SIZE * zoomFactor;
+                delta_x = (-0.5 + currentToken) * CITY_SIZE * dimensions.zoomFactor;
+                delta_y = -3 + 0.25 * MapOrientation.SQRT3 * CITY_SIZE * dimensions.zoomFactor;
             } else {
-               delta_y = -(3 + 0.5 * CITY_SIZE * zoomFactor);
+               delta_y = -(3 + 0.5 * CITY_SIZE * dimensions.zoomFactor);
             }
             break;
         case 4:
-            delta_x = (-0.5 + currentToken % 2) * CITY_SIZE * zoomFactor;
-            delta_y = (0.5 - currentToken / 2) * CITY_SIZE * zoomFactor;
+            delta_x = (-0.5 + currentToken % 2) * CITY_SIZE * dimensions.zoomFactor;
+            delta_y = (0.5 - currentToken / 2) * CITY_SIZE * dimensions.zoomFactor;
             
         case 6:
             switch (currentToken)  {
             case 0:
-                delta_x += (-1) * CITY_SIZE * zoomFactor;
-                delta_y += (-0.5) * CITY_SIZE * zoomFactor;
+                delta_x += (-1) * CITY_SIZE * dimensions.zoomFactor;
+                delta_y += (-0.5) * CITY_SIZE * dimensions.zoomFactor;
                 break;
             case 1:
-                delta_x += (-1) * CITY_SIZE * zoomFactor;
-                delta_y += (0.5) * CITY_SIZE * zoomFactor;
+                delta_x += (-1) * CITY_SIZE * dimensions.zoomFactor;
+                delta_y += (0.5) * CITY_SIZE * dimensions.zoomFactor;
                 break;
             case 2:
-                delta_y += (1) * CITY_SIZE * zoomFactor;
+                delta_y += (1) * CITY_SIZE * dimensions.zoomFactor;
                 break;
             case 3:
-                delta_x += (1) * CITY_SIZE * zoomFactor;
-                delta_y += (0.5) * CITY_SIZE * zoomFactor;
+                delta_x += (1) * CITY_SIZE * dimensions.zoomFactor;
+                delta_y += (0.5) * CITY_SIZE * dimensions.zoomFactor;
                 break;
             case 4:
-                delta_x += (1) * CITY_SIZE * zoomFactor;
-                delta_y += (-0.5) * CITY_SIZE * zoomFactor;
+                delta_x += (1) * CITY_SIZE * dimensions.zoomFactor;
+                delta_y += (-0.5) * CITY_SIZE * dimensions.zoomFactor;
                 break;
             case 5:
-                delta_y += (-1) * CITY_SIZE * zoomFactor;
+                delta_y += (-1) * CITY_SIZE * dimensions.zoomFactor;
                 break;
             }
 
@@ -680,21 +661,16 @@ public class GUIHex implements Observer {
         // Correct for the tile base and actual rotations
         HexSide rotation = hex.getCurrentTileRotation();
 
-        double radians = MapOrientation.rotationInRadians(hexMap, rotation);
+        double radians = MapOrientation.rotationInRadians(hex, rotation);
         tokenCenter = tokenCenter.rotate(radians);
         
-        tokenCenter = center.translate(tokenCenter.getX(), - tokenCenter.getY());
-        log.debug("Token Center p=" + tokenCenter + " for currentToken=" + currentToken);
+        tokenCenter = dimensions.center.translate(tokenCenter.getX(), - tokenCenter.getY());
         return tokenCenter;
     }
 
-    public String toText() {
-        return hex.toText();
-    }
-
     public String getToolTip() {
-        if (toolTip != null)
-            return toolTip;
+        if (upgrade != null)
+            return upgrade.getToolTip();
         else
             return getDefaultToolTip();
     }
@@ -789,81 +765,32 @@ public class GUIHex implements Observer {
         tt.append("</html>");
         return tt.toString();
     }
-
-    // FIXME: Can this still return false?
-    public boolean dropTile(TileHexUpgrade upgrade) {
-        this.upgrade = upgrade;
-
-        provisionalGUITile = new GUITile(upgrade.getUpgrade().getTargetTile(),this);
-        provisionalGUITile.setRotation(upgrade.getRotations().getNext(HexSide.defaultRotation()));
-        if (provisionalGUITile != null) {
-            provisionalGUITile.setScale(SELECTED_SCALE);
-            toolTip = "Click to rotate";
-            hexMap.repaintMarks(getBounds());
-            hexMap.repaintTiles(getBounds()); // provisional tile resides in tile layer
-        }
-        return (provisionalGUITile != null);
-    }
-
-    /** forces the tile to drop */
-    public void forcedDropTile(TileHexUpgrade upgrade, HexSide orientation) {
-        provisionalGUITile = new GUITile(upgrade.getUpgrade().getTargetTile(), this);
-        provisionalGUITile.setRotation(orientation);
-        provisionalGUITile.setScale(SELECTED_SCALE);
-        toolTip = "Click to rotate";
-        hexMap.repaintTiles(getBounds()); // provisional tile resides in tile layer
-    }
-
-    public void removeTile() {
-        provisionalGUITile = null;
-        setSelected(false);
-        toolTip = null;
-    }
-
-    public boolean canFixTile() {
-        return provisionalGUITile != null;
-    }
-
-    public Tile getProvisionalTile() {
-        return provisionalGUITile.getTile();
-    }
-
-    public HexSide getProvisionalTileRotation() {
-        return provisionalGUITile.getRotation();
-    }
-
-    public void fixTile() {
-
-        setSelected(false);
-        toolTip = null;
-    }
-
-    public void removeToken() {
-        setSelected(false);
-        toolTip = null;
-        hexMap.repaintTokens(getBounds());
-    }
-
-    public void fixToken() {
-        setSelected(false);
-        toolTip = null;
-    }
-
     
+    public void update() {
+        hexMap.repaintTiles(getBounds());
+        hexMap.repaintTokens(getBounds()); // needed if new tile has new token placement spot
+    }
+    
+    public String toText() {
+        return hex.toText();
+    }
+
+
+    // Observer methods
+    @Override
+    public void update(String text) {
+        update();
+    }
+    
+    @Override
+    public Observable getObservable() {
+        return hex;
+    }
+
+    // Object methods
+    @Override
     public String toString () {
         return toText() + " (" + hex.getCurrentTile().toText() + ")";
     }
 
-    // Observer methods
-    public void update(String text) {
-        initFromHexModel();
-        hexMap.repaintTiles(getBounds());
-        hexMap.repaintTokens(getBounds()); // needed if new tile has new token placement spot
-        provisionalGUITile = null;
-        log.debug("GUIHex " + hex.toText() + " updated");
-}
-    
-    public Observable getObservable() {
-        return hex;
-    }
 }

@@ -10,7 +10,6 @@ import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.common.parser.*;
 import net.sf.rails.game.TileUpgrade.Rotation;
 import net.sf.rails.game.model.RailsModel;
-import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.GenericState;
 import net.sf.rails.game.state.HashBiMapState;
 import net.sf.rails.game.state.HashMapState;
@@ -811,47 +810,65 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         if (isHomeFor(company)) {
             // Company can always lay a home base
             return false;
-        } else if (isBlockedForTokenLays.value() == BlockedToken.ALWAYS) {
-            return true;
-        } else if (isBlockedForTokenLays.value() == BlockedToken.NEVER) {
+        }
+        
+        switch (isBlockedForTokenLays.value()) {
+            case ALWAYS:
+                return true;
+            case NEVER:
+                return false;
+            case RESERVE_SLOT:
+                return isBlockedForReservedHomes(stopToLay);
+        }
+        
+        return false;
+    }
+    
+    public boolean isBlockedForReservedHomes(Stop stopToLay) {
+        // if no slots are reserved or home is empty
+        if (isBlockedForTokenLays.value() != BlockedToken.RESERVE_SLOT || homes.isEmpty()) {
             return false;
-        } else if (!homes.isEmpty()) {
-            // check if the city is potential home for other companies
-            int allBlockCompanies = 0;
-            int anyBlockCompanies = 0;
-            int cityBlockCompanies = 0;
-            for (PublicCompany comp : homes.viewKeySet()) {
-                if (comp.hasLaidHomeBaseTokens() || comp.isClosed()) continue;
-                // home base not laid yet
-                Stop homeStop = homes.get(comp);
-                if (homeStop == null) {
-                    if (comp.isHomeBlockedForAllCities()) {
-                        allBlockCompanies ++; // undecided companies that block all cities
-                    } else {
-                        anyBlockCompanies ++; // undecided companies that block any cities
-                    }
-                } else if (stopToLay == homeStop) {
-                    cityBlockCompanies ++; // companies which are located in the city in question
+        }
+        
+        // check if the city is potential home for other companies
+        int allBlockCompanies = 0;
+        int anyBlockCompanies = 0;
+        int cityBlockCompanies = 0;
+        for (PublicCompany comp : homes.viewKeySet()) {
+            if (comp.hasLaidHomeBaseTokens() || comp.isClosed()) continue;
+            // home base not laid yet
+            Stop homeStop = homes.get(comp);
+            if (homeStop == null) {
+                if (comp.isHomeBlockedForAllCities()) {
+                    allBlockCompanies ++; // undecided companies that block all cities
                 } else {
-                    anyBlockCompanies ++; // companies which are located somewhere else
+                    anyBlockCompanies ++; // undecided companies that block any cities
                 }
-            }
-            log.debug("IsBlockedForTokenLays: allBlockCompanies = " + allBlockCompanies +
-                    ", anyBlockCompanies = " + anyBlockCompanies + " , cityBlockCompanies = " + cityBlockCompanies);
-            // check if there are sufficient individual city slots
-            if (allBlockCompanies + cityBlockCompanies + 1 > stopToLay.getTokenSlotsLeft()) {
-                return true; // the additional token exceeds the number of available slots
-            }
-            // check if the overall hex slots are sufficient
-            int allTokenSlotsLeft = 0;
-            for (Stop stop:stops) {
-                allTokenSlotsLeft += stop.getTokenSlotsLeft();
-            }
-            if (allBlockCompanies + anyBlockCompanies  + cityBlockCompanies + 1 > allTokenSlotsLeft) {
-                return true; // all located companies plus the additonal token exceeds the available slots
+            } else if (stopToLay == homeStop) {
+                cityBlockCompanies ++; // companies which are located in the city in question
+            } else {
+                anyBlockCompanies ++; // companies which are located somewhere else
             }
         }
+        log.debug("IsBlockedForTokenLays: allBlockCompanies = " + allBlockCompanies +
+                ", anyBlockCompanies = " + anyBlockCompanies + " , cityBlockCompanies = " + cityBlockCompanies);
+        // check if there are sufficient individual city slots
+        if (allBlockCompanies + cityBlockCompanies + 1 > stopToLay.getTokenSlotsLeft()) {
+            return true; // the additional token exceeds the number of available slots
+        }
+        // check if the overall hex slots are sufficient
+        int allTokenSlotsLeft = 0;
+        for (Stop stop:stops) {
+            allTokenSlotsLeft += stop.getTokenSlotsLeft();
+        }
+        if (allBlockCompanies + anyBlockCompanies  + cityBlockCompanies + 1 > allTokenSlotsLeft) {
+            return true; // all located companies plus the additonal token exceeds the available slots
+        }
         return false;
+    }
+    
+    public BlockedToken getBlockedForTokenLays() {
+        return isBlockedForTokenLays.value();
     }
 
     public boolean hasValuesPerPhase() {
