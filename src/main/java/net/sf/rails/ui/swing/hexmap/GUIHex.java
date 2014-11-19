@@ -670,7 +670,7 @@ public class GUIHex implements Observer {
 
     public String getToolTip() {
         if (upgrade != null)
-            return upgrade.getToolTip();
+            return upgrade.getUpgradeToolTip();
         else
             return getDefaultToolTip();
     }

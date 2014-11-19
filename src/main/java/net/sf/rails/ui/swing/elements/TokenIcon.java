@@ -1,4 +1,4 @@
-package net.sf.rails.ui.swing;
+package net.sf.rails.ui.swing.elements;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -8,11 +8,12 @@ import java.awt.geom.Ellipse2D;
 
 import javax.swing.Icon;
 
+import net.sf.rails.ui.swing.GUIToken;
 import net.sf.rails.ui.swing.hexmap.GUIHex.HexPoint;
 
 
 /** Class TokenIcon is used to draw a token on the Upgrade chart. */
-class TokenIcon implements Icon {
+public class TokenIcon implements Icon {
 
     public static final int DEFAULT_DIAMETER = 21;
 

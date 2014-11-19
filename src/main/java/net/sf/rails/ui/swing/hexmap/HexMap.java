@@ -20,6 +20,7 @@ import java.util.Map;
 
 import javax.swing.JComponent;
 import javax.swing.JLayeredPane;
+import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 
 import net.sf.rails.common.Config;
@@ -927,9 +928,10 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
     public synchronized void mouseClicked(MouseEvent arg0) {
         Point point = arg0.getPoint();
         GUIHex clickedHex = getHexContainingPoint(point);
+        boolean rightClick = SwingUtilities.isRightMouseButton(arg0);
 
         // if no action/correction was expected on the map panel
-        if (!orUIManager.hexClicked(clickedHex, selectedHex)) {
+        if (!orUIManager.hexClicked(clickedHex, selectedHex, rightClick)) {
 
             // force the tool tip popup to appear immediately
             ToolTipManager ttm = ToolTipManager.sharedInstance();

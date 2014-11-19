@@ -1,14 +1,20 @@
 package net.sf.rails.ui.swing.hexmap;
 
+import java.awt.Color;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.NavigableSet;
 import java.util.Set;
 
+import javax.swing.Icon;
+
 import net.sf.rails.common.LocalText;
+import net.sf.rails.game.BonusToken;
 import net.sf.rails.game.MapHex;
+import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.Stop;
+import net.sf.rails.ui.swing.elements.TokenIcon;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ComparisonChain;
@@ -16,6 +22,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 import rails.game.action.LayBaseToken;
+import rails.game.action.LayBonusToken;
 import rails.game.action.LayToken;
 
 public class TokenHexUpgrade extends HexUpgrade {
@@ -126,9 +133,53 @@ public class TokenHexUpgrade extends HexUpgrade {
     public boolean isValid() {
         return invalids.isEmpty();
     }
+    
+    @Override
+    public Icon getUpgradeIcon(int zoomStep) {
+        Color fgColour = null;
+        Color bgColour = null;
+        String label = null;
+        if (action instanceof LayBaseToken) {
+            PublicCompany comp = ((LayBaseToken) action).getCompany();
+            fgColour = comp.getFgColour();
+            bgColour = comp.getBgColour();
+            label = comp.getId();
+        } else if (action instanceof LayBonusToken) {
+            fgColour = Color.BLACK;
+            bgColour = Color.WHITE;
+            BonusToken token = (BonusToken) action.getSpecialProperty().getToken();
+            label = "+" + token.getValue();
+        }
+        TokenIcon icon = new TokenIcon(25, fgColour, bgColour, label);
+        return icon;
+    }
+    
+    @Override
+    public String getUpgradeText() {
+        String text = null;
+        if (action instanceof LayBaseToken) {
+            text = "<html>";
+            if (action.getSpecialProperty() != null) {
+                text +=
+                        "<font color=red> ["
+                                + action.getSpecialProperty().getOriginalCompany().getId()
+                                + "] </font>";
+            }
+            if (isValid() && !hasSingleSelection()) {
+                text += "<br> <font size=-2>";
+                text += hex.getHex().getConnectionString(selectedStop.getRelatedStation());
+                text += "</font>";
+            }
+            text += "</html>";
+        } else if (action instanceof LayBonusToken) {
+            BonusToken token = (BonusToken) action.getSpecialProperty().getToken();
+            text = token.getId();
+        }
+        return text;
+    }
 
     @Override
-    public String getToolTip() {
+    public String getUpgradeToolTip() {
         // TODO: Add text
         return LocalText.getText("TokenHexUpgrade.ToolTip");
     }

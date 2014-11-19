@@ -568,12 +568,16 @@ public class ORUIManager implements DialogOwner {
     /**
      * @return True if the map panel expected hex clicks for actions / corrections
      */
-    public boolean hexClicked(GUIHex clickedHex, GUIHex selectedHex) {
+    public boolean hexClicked(GUIHex clickedHex, GUIHex selectedHex, boolean rightClick) {
         // if selectedHex is clicked again ==> change Upgrade, or Upgrade-Selection
         if (selectedHex == clickedHex) {
             switch (localStep) {
                 case SelectUpgrade:
-                    upgradePanel.nextSelection();
+                    if (rightClick) { // right-click => next upgrade
+                        upgradePanel.nextUpgrade();
+                    } else {
+                        upgradePanel.nextSelection();
+                    }
                     return true;
                 default: // should not occur (as a hex is selected), however let us define that in case
                     return false;

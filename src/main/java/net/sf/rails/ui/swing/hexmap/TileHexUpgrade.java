@@ -1,10 +1,15 @@
 package net.sf.rails.ui.swing.hexmap;
 
+import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.Set;
+
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.HexSide;
@@ -254,9 +259,92 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
     }
 
     @Override
-    public String getToolTip() {
-        // TODO: Add text
-     return LocalText.getText("TileHexUpgrade.ToolTip");
+    public Icon getUpgradeIcon(int zoomStep) {
+        HexSide imageRotation;
+        if (selectedRotation == null) {
+            imageRotation = HexSide.defaultRotation();
+        } else {
+            imageRotation = selectedRotation;
+        }
+        
+        // get unscaled image for this orientation
+        BufferedImage hexImage = GUITile.getTileImage(upgrade.getTargetTile(), imageRotation, zoomStep);
+
+        // Cheap n' Easy rescaling.
+        ImageIcon hexIcon = new ImageIcon(hexImage);
+        hexIcon.setImage(hexIcon.getImage().getScaledInstance(
+                (int) (hexIcon.getIconWidth() * 0.8),
+                (int) (hexIcon.getIconHeight() * 0.8),
+                Image.SCALE_SMOOTH));
+        return hexIcon;
+    }
+    
+    @Override
+    public String getUpgradeText() {
+        Tile tile = upgrade.getTargetTile();
+
+        StringBuilder text = new StringBuilder();
+        text.append("<HTML>" + tile.toText());
+        if (!tile.isUnlimited()) {
+            // line break before # of available tiles
+            text.append("<BR>");
+            text.append(" (" + tile.getFreeCount() + ")");
+        }
+        // text for special property
+        if (action.getSpecialProperty() != null) {
+            text.append(
+                    "<BR> <font color=red> ["
+                            + action.getSpecialProperty().getOriginalCompany().getId()
+                            + "] </font>" );
+        }
+        text.append("</HTML>");
+        return text.toString();
+    }
+    
+    @Override
+    public String getUpgradeToolTip() {
+
+        StringBuilder tt = new StringBuilder("<html>");
+        
+        if (!isValid()) {
+            tt.append(invalidToolTip());
+        }
+        
+        Tile tile = upgrade.getTargetTile();
+        tt.append("<b>Tile</b>: ").append(tile.toText());
+        if (tile.hasStations()) {
+            int cityNumber = 0;
+            // Tile has stations, but
+            for (Station st : tile.getStations()) {
+                cityNumber++; // = city.getNumber();
+                tt.append("<br>  ").append(st.toText()).append(
+                        cityNumber) // .append("/").append(st.getNumber())
+                .append(": value ");
+                tt.append(st.getValue());
+                if (st.getBaseSlots() > 0) {
+                    tt.append(", ").append(st.getBaseSlots()).append(
+                            " slots");
+                }
+            }
+        }
+        tt.append("</html>");
+        return tt.toString();
+    }
+    
+    private String invalidToolTip() {
+        StringBuilder tt = new StringBuilder();
+
+        tt.append("<b><u>");
+        tt.append(LocalText.getText("TILE_INVALID")); 
+        tt.append("</u></b><br>");
+
+        tt.append("<b>");
+        for (Invalids invalid : invalids) {
+            tt.append(invalid.toString() + "<br>");
+        }
+        tt.append("</b>");
+
+        return tt.toString();
     }
     
     @Override
