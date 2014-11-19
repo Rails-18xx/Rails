@@ -1,11 +1,7 @@
-Rails 2.0 Alpha 7 release:
+Rails 2.0 Alpha 8 release:
 
-- New Tile laying UI nearly 100% complete. 
-- Combined Tile and Token laying possible.
-- Token laying UI needs some more work.
-
-- Integrate current development of 1837 (see separate mail by Martin Brumm)
-- First integration of initial development for 1862 (by Michael Alexander)
+- Finalized combined Tile and Token lay
+- Improved UI for Tile and Token lay
 
 Remarks:
 - All automatic test games run.
