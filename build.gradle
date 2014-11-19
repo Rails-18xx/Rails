@@ -26,13 +26,15 @@ shadow {
 // reference: https://github.com/unsaved/gradle-javaPropFile-plugin
 
 buildscript {
-    repositories { mavenCentral() }
+    repositories { jcenter() }  // Before plugin v. 1.0.0 use mavenCentral()
     dependencies {
-                classpath 'com.admc:gradle-javaPropFile-plugin:latest.integration'
-            }
-        }
-apply plugin: 'javaPropFile'
-
+        classpath 'com.admc:gradle-javaPropFile-plugin:1.0.0'
+        // For strictly repeatable builds, replace 'latest.integration'
+        // with the latest literal GA version label.
+    }
+}
+apply plugin: 'com.admc.javaPropFile'
+        
 // use version number from property file
 propFileLoader.load(file("src/main/resources/version.number"))
 
