@@ -75,7 +75,7 @@ public class GameManager_1835 extends GameManager {
             // after a round
             roundName = "PrussianFormationRound_after_" + previousRound.getId();
         } else {
-            roundName = "PrussianFormationRound_in_" + or.getId();
+            roundName = "PrussianFormationRound_in_" + or.getId() + "_after_" + getCurrentPhase().getId();
         }
     	createRound(PrussianFormationRound.class, roundName).start();
     }
