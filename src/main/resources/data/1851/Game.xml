@@ -3,7 +3,13 @@
 	<Component name="GameManager" class="net.sf.rails.game.GameManager">
 		<Game name="1851"/>
 		<GameParameters>
-			<PlayerShareLimit percentage="60"/>
+			<PlayerShareLimit percentage="60">
+				<IfOption name="NumberOfPlayers" value="2">
+					<IfOption name="TwoPlayersCertLimit70Percent" value="yes">
+						<Attributes percentage="70"/>
+					</IfOption>
+				</IfOption>
+			</PlayerShareLimit>
 			<BankPoolLimit percentage="50"/>
 			<TreasuryShareLimit percentage="50"/>
 			<StockRound sequence="SellBuy">
@@ -20,6 +26,7 @@
 		</EndOfGame>
 	</Component>
 	<Component name="PlayerManager" class="net.sf.rails.game.PlayerManager">
+		<Players number="2" cash="650" certLimit="21"/>
 		<Players number="3" cash="500" certLimit="15"/>
 		<Players number="4" cash="430" certLimit="12"/>
 		<Players number="5" cash="400" certLimit="10"/>

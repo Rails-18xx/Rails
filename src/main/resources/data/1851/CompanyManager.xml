@@ -65,13 +65,17 @@
 			<SubItem name="L&amp;N" type="Public" president="yes"/>
 		</Item>
 		<Item name="M&amp;C" type="Private" basePrice="50"/>
-		<Item name="ET&amp;WNC" type="Private" basePrice="80"/>
+		<IfOption name="NumberOfPlayers" value="3">
+			<Item name="ET&amp;WNC" type="Private" basePrice="80"/>
+		</IfOption>
 		<IfOption name="NumberOfPlayers" value="4">
+			<Item name="ET&amp;WNC" type="Private" basePrice="80"/>
 			<Item name="O&amp;W" type="Private" basePrice="210">
 				<SubItem name="L&amp;N" type="Public"/>
 			</Item>
 		</IfOption>
 		<IfOption name="NumberOfPlayers" value="5">
+			<Item name="ET&amp;WNC" type="Private" basePrice="80"/>
 			<Item name="O&amp;W" type="Private" basePrice="210">
 				<SubItem name="L&amp;N" type="Public"/>
 			</Item>

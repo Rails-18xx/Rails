@@ -7,4 +7,5 @@
 	<GameOption name="NoMapMode" type="toggle" default="no" />
 	<GameOption name="UnlimitedTopTrains" parm="8" type="toggle" default="no"/>
 	<GameOption name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
+	<GameOption name="TwoPlayersCertLimit70Percent" type="toggle" default="no"/>
 </GameOptions>

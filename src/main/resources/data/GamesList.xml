@@ -50,7 +50,7 @@ Known limitations:
 Limitation:
 - No random assignment of private companies (players should do this off-line and enter the result)
 		</Description>
-		<Players minimum="3" maximum="5"/>
+		<Players minimum="2" maximum="5"/>
 	</Game>
 
 	<Game name="1856">
