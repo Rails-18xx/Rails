@@ -3,6 +3,7 @@ package net.sf.rails.sound;
 import rails.game.action.PossibleAction;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.ui.swing.ORUIManager;
+import net.sf.rails.ui.swing.hexmap.HexUpgrade;
 
 /**
  * This is a singleton class as there should never be two
@@ -64,5 +65,9 @@ public class SoundManager {
     }
     public static void notifyOfClickFieldSelection(PossibleAction clickFieldAction) {
         getInstance().eventInterpreter.notifyOfClickFieldSelection(clickFieldAction);
+    }
+    
+    public static void notifyOfSelectUpgrade(HexUpgrade upgrade) {
+        getInstance().eventInterpreter.notifyOfSelectUpgrade(upgrade);
     }
 }

@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.NavigableSet;
 import java.util.Set;
 
+import net.sf.rails.sound.SoundManager;
 import net.sf.rails.ui.swing.hexmap.GUIHex;
 import net.sf.rails.ui.swing.hexmap.HexUpgrade;
 
@@ -119,6 +120,7 @@ public class GUIHexUpgrades {
             activeUpgrade.nextSelection();
             upgradeToLabels.get(activeUpgrade).updateIcon();
             activeHex.update();
+            SoundManager.notifyOfSelectUpgrade(activeUpgrade);
         }
     }
     

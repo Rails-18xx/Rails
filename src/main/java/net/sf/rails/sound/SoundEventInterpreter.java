@@ -8,6 +8,8 @@ import net.sf.rails.game.model.PresidentModel;
 import net.sf.rails.game.state.*;
 import net.sf.rails.ui.swing.ORUIManager;
 import net.sf.rails.ui.swing.ORUIManager.LocalSteps;
+import net.sf.rails.ui.swing.hexmap.HexUpgrade;
+import net.sf.rails.ui.swing.hexmap.TileHexUpgrade;
 
 /**
  * Converts processed actions and model updates to triggers for playing sounds.
@@ -301,4 +303,13 @@ public class SoundEventInterpreter {
             }
         }
     }
+    
+    public void notifyOfSelectUpgrade(HexUpgrade upgrade) {
+        if (SoundConfig.isSFXEnabled()) {
+            if (upgrade instanceof TileHexUpgrade) {
+                player.playSFXByConfigKey(SoundConfig.KEY_SFX_OR_RotateTile);
+            }
+        }
+    }
+    
 }
