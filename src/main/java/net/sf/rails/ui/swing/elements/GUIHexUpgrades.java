@@ -114,7 +114,7 @@ public class GUIHexUpgrades {
     
     public void nextSelection() {
         if (activeUpgrade.hasSingleSelection()) {
-            nextUpgrade();
+            // do nothing
         } else {
             activeUpgrade.nextSelection();
             upgradeToLabels.get(activeUpgrade).updateIcon();
