@@ -127,6 +127,7 @@ public class GUIHexUpgrades {
     public void nextUpgrade() {
         HexUpgrade nextUpgrade = getNextUpgrade(activeUpgrade);
         changeActiveUpgrade(nextUpgrade);
+        SoundManager.notifyOfSelectUpgrade(activeUpgrade);
     }
     
     public void setUpgrade(HexUpgrade upgrade) {
