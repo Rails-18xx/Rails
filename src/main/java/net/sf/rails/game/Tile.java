@@ -48,6 +48,9 @@ public class Tile extends RailsModel implements Comparable<Tile> {
      */
     private String sortingId;
     
+    // if tile is painted on the map (for UI reasons)
+    private boolean prepainted;
+    
     private TileColour colour;
     private ImmutableSortedMap<Integer, Station> stations;
 
@@ -240,11 +243,15 @@ public class Tile extends RailsModel implements Comparable<Tile> {
     public void finishConfiguration(RailsRoot root, int sortingDigits)
             throws ConfigurationException {
 
+        prepainted = true;
         try {
             int externalNb = Integer.parseInt(externalId);
             NumberFormat nf = NumberFormat.getInstance();
             nf.setMinimumIntegerDigits(sortingDigits);
             sortingId = nf.format(externalNb);
+           if (externalNb > 0) {
+               prepainted = false;
+           }
         } catch (NumberFormatException e) {
            sortingId = externalId; 
         }
@@ -270,6 +277,10 @@ public class Tile extends RailsModel implements Comparable<Tile> {
         return pictureId;
     }
     
+    public boolean isPrepainted() {
+        return prepainted;
+    }
+
     public boolean hasTracks(HexSide side) {
         return trackConfig.hasSideTracks(side);
     }
@@ -406,7 +417,7 @@ public class Tile extends RailsModel implements Comparable<Tile> {
     public boolean isFixed() {
         return quantity == Quantity.FIXED;
     }
-
+    
     /** Return the number of free tiles */
     public int getFreeCount() {
         switch (quantity) {

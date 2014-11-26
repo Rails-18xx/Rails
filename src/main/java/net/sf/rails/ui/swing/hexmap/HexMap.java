@@ -31,7 +31,6 @@ import net.sf.rails.game.MapHex;
 import net.sf.rails.game.MapManager;
 import net.sf.rails.game.Phase;
 import net.sf.rails.game.Tile;
-import net.sf.rails.game.TileColour;
 import net.sf.rails.ui.swing.GameUIManager;
 import net.sf.rails.ui.swing.ORUIManager;
 import net.sf.rails.util.Util;
@@ -721,10 +720,8 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
         return displayMapImage;
     }
 
-    // TODO: This test is based on a numeric id
     public boolean isTilePainted(Tile tile) {
-        return !displayMapImage || 
-                (tile.getColour().getNumber() >= TileColour.YELLOW.getNumber());
+        return !(displayMapImage && tile.isPrepainted());
     }
 
     public void zoom(boolean in) {
