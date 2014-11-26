@@ -207,7 +207,9 @@ public class UpgradesPanel extends JPanel {
         upgradePanel.revalidate();
         upgradePanel.repaint();
         UpgradeLabel active = hexUpgrades.getActiveLabel();
-        upgradePanel.scrollRectToVisible(active.getBounds());
+        if (active != null) {
+            upgradePanel.scrollRectToVisible(active.getBounds());
+        }
     }
     
     private void showLabels() {
