@@ -52,7 +52,7 @@
 	
 	<!-- Green tiles -->
 	<Tile id="14" quantity="3">
-		<Upgrade id="63" hex="!I12"/>
+		<Upgrade id="63" hex="-I12"/>
 		<Upgrade id="9220" hex="I12"/>
 	</Tile>
 	<Tile id="15" quantity="2">
