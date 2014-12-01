@@ -42,57 +42,57 @@ public class GameStatus extends GridPanel implements ActionListener {
     protected StatusWindow parent;
 
     // Grid elements per function
-    protected Field certPerPlayer[][];
+    protected FieldLegacy certPerPlayer[][];
     protected ClickField certPerPlayerButton[][];
     protected int certPerPlayerXOffset, certPerPlayerYOffset;
-    protected Field certInIPO[];
+    protected FieldLegacy certInIPO[];
     protected ClickField certInIPOButton[];
     protected int certInIPOXOffset, certInIPOYOffset;
-    protected Field certInPool[];
+    protected FieldLegacy certInPool[];
     protected ClickField certInPoolButton[];
     protected int certInPoolXOffset, certInPoolYOffset;
-    protected Field certInTreasury[];
+    protected FieldLegacy certInTreasury[];
     protected ClickField certInTreasuryButton[];
     protected int certInTreasuryXOffset, certInTreasuryYOffset;
-    protected Field parPrice[];
+    protected FieldLegacy parPrice[];
     protected int parPriceXOffset, parPriceYOffset;
-    protected Field currPrice[];
+    protected FieldLegacy currPrice[];
     protected int currPriceXOffset, currPriceYOffset;
-    protected Field compCash[];
+    protected FieldLegacy compCash[];
     protected ClickField compCashButton[];
     protected int compCashXOffset, compCashYOffset;
-    protected Field compRevenue[];
+    protected FieldLegacy compRevenue[];
     protected int compRevenueXOffset, compRevenueYOffset;
-    protected Field compTrains[];
+    protected FieldLegacy compTrains[];
     protected int compTrainsXOffset, compTrainsYOffset;
-    protected Field compTokens[];
+    protected FieldLegacy compTokens[];
     protected int compTokensXOffset, compTokensYOffset;
-    protected Field compPrivates[];
+    protected FieldLegacy compPrivates[];
     protected int compPrivatesXOffset, compPrivatesYOffset;
-    protected Field compLoans[];
+    protected FieldLegacy compLoans[];
     protected int compLoansXOffset, compLoansYOffset;
     protected int rightsXOffset, rightsYOffset;
-    protected Field rights[];
-    protected Field playerCash[];
+    protected FieldLegacy rights[];
+    protected FieldLegacy playerCash[];
     protected ClickField playerCashButton[];
     protected int playerCashXOffset, playerCashYOffset;
-    protected Field playerPrivates[];
+    protected FieldLegacy playerPrivates[];
     protected int playerPrivatesXOffset, playerPrivatesYOffset;
-    protected Field playerWorth[];
+    protected FieldLegacy playerWorth[];
     protected int playerWorthXOffset, playerWorthYOffset;
-    protected Field playerORWorthIncrease[];
+    protected FieldLegacy playerORWorthIncrease[];
     protected int playerORWorthIncreaseXOffset, playerORWorthIncreaseYOffset;
-    protected Field playerCertCount[];
+    protected FieldLegacy playerCertCount[];
     protected int playerCertCountXOffset, playerCertCountYOffset;
     protected int certLimitXOffset, certLimitYOffset;
     protected int phaseXOffset, phaseYOffset;
-    protected Field bankCash;
+    protected FieldLegacy bankCash;
     protected int bankCashXOffset, bankCashYOffset;
-    protected Field poolTrains;
+    protected FieldLegacy poolTrains;
     protected int poolTrainsXOffset, poolTrainsYOffset;
-    protected Field newTrains;
+    protected FieldLegacy newTrains;
     protected int newTrainsXOffset, newTrainsYOffset;
-    protected Field futureTrains;
+    protected FieldLegacy futureTrains;
     protected int futureTrainsXOffset, futureTrainsYOffset, futureTrainsWidth;
     protected int rightCompCaptionXOffset;
 
@@ -168,33 +168,33 @@ public class GameStatus extends GridPanel implements ActionListener {
         ipo = bank.getIpo().getPortfolioModel();
         pool = bank.getPool().getPortfolioModel();
 
-        certPerPlayer = new Field[nc][np];
+        certPerPlayer = new FieldLegacy[nc][np];
         certPerPlayerButton = new ClickField[nc][np];
-        certInIPO = new Field[nc];
+        certInIPO = new FieldLegacy[nc];
         certInIPOButton = new ClickField[nc];
-        certInPool = new Field[nc];
+        certInPool = new FieldLegacy[nc];
         certInPoolButton = new ClickField[nc];
         if (compCanHoldOwnShares) {
-            certInTreasury = new Field[nc];
+            certInTreasury = new FieldLegacy[nc];
             certInTreasuryButton = new ClickField[nc];
         }
-        parPrice = new Field[nc];
-        currPrice = new Field[nc];
-        compCash = new Field[nc];
+        parPrice = new FieldLegacy[nc];
+        currPrice = new FieldLegacy[nc];
+        compCash = new FieldLegacy[nc];
         compCashButton = new ClickField[nc];
-        compRevenue = new Field[nc];
-        compTrains = new Field[nc];
-        compTokens = new Field[nc];
-        compPrivates = new Field[nc];
-        compLoans = new Field[nc];
-        if (hasRights) rights = new Field[nc];
+        compRevenue = new FieldLegacy[nc];
+        compTrains = new FieldLegacy[nc];
+        compTokens = new FieldLegacy[nc];
+        compPrivates = new FieldLegacy[nc];
+        compLoans = new FieldLegacy[nc];
+        if (hasRights) rights = new FieldLegacy[nc];
 
-        playerCash = new Field[np];
+        playerCash = new FieldLegacy[np];
         playerCashButton = new ClickField[np];
-        playerPrivates = new Field[np];
-        playerWorth = new Field[np];
-        playerORWorthIncrease = new Field[np];
-        playerCertCount = new Field[np];
+        playerPrivates = new FieldLegacy[np];
+        playerWorth = new FieldLegacy[np];
+        playerORWorthIncrease = new FieldLegacy[np];
+        playerCertCount = new FieldLegacy[np];
         upperPlayerCaption = new Caption[np];
         lowerPlayerCaption = new Caption[np];
 
@@ -349,7 +349,7 @@ public class GameStatus extends GridPanel implements ActionListener {
             for (int j = 0; j < np; j++) {
                 f =
                     certPerPlayer[i][j] =
-                        new Field(
+                        new FieldLegacy(
                                 players[j].getPortfolioModel().getShareModel(
                                         c));
                 int wideGapPosition = ((j==0)? WIDE_LEFT : 0) + ((j==np-1)? WIDE_RIGHT : 0);
@@ -365,7 +365,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                 addField(f, certPerPlayerXOffset + j, certPerPlayerYOffset + i,
                         1, 1, wideGapPosition, false);
             }
-            f = certInIPO[i] = new Field(ipo.getShareModel(c));
+            f = certInIPO[i] = new FieldLegacy(ipo.getShareModel(c));
             addField(f, certInIPOXOffset, certInIPOYOffset + i, 1, 1, 0, visible);
             // TODO: Simplify the assignment (using f as correct local variable)
             certInIPO[i].setToolTipModel(ipo.getShareDetailsModel(c));
@@ -381,7 +381,7 @@ public class GameStatus extends GridPanel implements ActionListener {
             //no size alignment as button size could also be smaller than the field's one
             //certInIPO[i].setPreferredSize(certInIPOButton[i].getPreferredSize());
 
-            f = certInPool[i] = new Field(pool.getShareModel(c));
+            f = certInPool[i] = new FieldLegacy(pool.getShareModel(c));
             // TODO: Simplify the assignment (using f as correct local variable)
             certInPool[i].setToolTipModel(pool.getShareDetailsModel(c));
             addField(f, certInPoolXOffset, certInPoolYOffset + i, 1, 1,
@@ -401,7 +401,7 @@ public class GameStatus extends GridPanel implements ActionListener {
             if (compCanHoldOwnShares) {
                 f =
                     certInTreasury[i] =
-                        new Field(c.getPortfolioModel().getShareModel(c));
+                        new FieldLegacy(c.getPortfolioModel().getShareModel(c));
                 // TODO: Simplify the assignment (using f as correct local variable)
                 certInTreasury[i].setToolTipModel(c.getPortfolioModel().getShareDetailsModel(c));
                 addField(f, certInTreasuryXOffset, certInTreasuryYOffset + i,
@@ -419,15 +419,15 @@ public class GameStatus extends GridPanel implements ActionListener {
             }
 
             if (this.hasParPrices) {
-                f = parPrice[i] = new Field(c.getParPriceModel());
+                f = parPrice[i] = new FieldLegacy(c.getParPriceModel());
                 addField(f, parPriceXOffset, parPriceYOffset + i, 1, 1, 0, visible);
             }
 
-            f = currPrice[i] = new Field(c.getCurrentPriceModel());
+            f = currPrice[i] = new FieldLegacy(c.getCurrentPriceModel());
             addField(f, currPriceXOffset, currPriceYOffset + i, 1, 1,
                     WIDE_RIGHT, visible);
 
-            f = compCash[i] = new Field(c.getPurseMoneyModel());
+            f = compCash[i] = new FieldLegacy(c.getPurseMoneyModel());
             addField(f, compCashXOffset, compCashYOffset + i, 1, 1, 0, visible);
             f =
                 compCashButton[i] =
@@ -439,19 +439,19 @@ public class GameStatus extends GridPanel implements ActionListener {
             addField(f, compCashXOffset, compCashYOffset + i, 1, 1,
                     WIDE_RIGHT, false);
 
-            f = compRevenue[i] = new Field(c.getLastRevenueModel());
+            f = compRevenue[i] = new FieldLegacy(c.getLastRevenueModel());
             addField(f, compRevenueXOffset, compRevenueYOffset + i, 1, 1, 0, visible);
 
-            f = compTrains[i] = new Field(c.getPortfolioModel().getTrainsModel());
+            f = compTrains[i] = new FieldLegacy(c.getPortfolioModel().getTrainsModel());
             addField(f, compTrainsXOffset, compTrainsYOffset + i, 1, 1, 0, visible);
 
-            f = compTokens[i] = new Field(c.getBaseTokensModel());
+            f = compTokens[i] = new FieldLegacy(c.getBaseTokensModel());
             addField(f, compTokensXOffset, compTokensYOffset + i, 1, 1, 0, visible);
 
             if (this.compCanBuyPrivates) {
                 f =
                     compPrivates[i] =
-                        new Field(
+                        new FieldLegacy(
                                 c.getPortfolioModel().getPrivatesOwnedModel());
                 HexHighlightMouseListener.addMouseListener(f,
                         gameUIManager.getORUIManager(),
@@ -461,15 +461,15 @@ public class GameStatus extends GridPanel implements ActionListener {
             }
             if (hasCompanyLoans) {
                 if (c.getLoanValueModel() != null) {
-                    f = compLoans[i] = new Field (c.getLoanValueModel());
+                    f = compLoans[i] = new FieldLegacy (c.getLoanValueModel());
                 } else {
-                    f = compLoans[i] = new Field ("");
+                    f = compLoans[i] = new FieldLegacy ("");
                 }
                 addField (f, compLoansXOffset, compLoansYOffset+i, 1, 1, 0, visible);
             }
 
             if (hasRights) {
-                f = rights[i] = new Field (c.getRightsModel());
+                f = rights[i] = new FieldLegacy (c.getRightsModel());
                 addField (f, rightsXOffset, rightsYOffset + i, 1, 1, 0, visible);
             }
 
@@ -488,7 +488,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         addField(new Caption(LocalText.getText("CASH")), 0, playerCashYOffset,
                 1, 1, WIDE_TOP , true);
         for (int i = 0; i < np; i++) {
-            f = playerCash[i] = new Field(players[i].getWallet());
+            f = playerCash[i] = new FieldLegacy(players[i].getWallet());
             int wideGapPosition = WIDE_TOP + 
                     ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
             addField(f, playerCashXOffset + i, playerCashYOffset, 1, 1,
@@ -509,7 +509,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         for (int i = 0; i < np; i++) {
             f =
                 playerPrivates[i] =
-                    new Field(
+                    new FieldLegacy(
                             players[i].getPortfolioModel().getPrivatesOwnedModel());
             HexHighlightMouseListener.addMouseListener(f,
                     gameUIManager.getORUIManager(),
@@ -522,7 +522,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         addField(new Caption(LocalText.getText("WORTH")), 0,
                 playerWorthYOffset, 1, 1, 0, true);
         for (int i = 0; i < np; i++) {
-            f = playerWorth[i] = new Field(players[i].getWorthModel());
+            f = playerWorth[i] = new FieldLegacy(players[i].getWorthModel());
             int wideGapPosition = ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
             addField(f, playerWorthXOffset + i, playerWorthYOffset, 1, 1, wideGapPosition, true);
         }
@@ -530,7 +530,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         addField(new Caption(LocalText.getText("ORWORTHINCR")), 0,
                 playerORWorthIncreaseYOffset, 1, 1, 0, true);
         for (int i = 0; i < np; i++) {
-            f = playerORWorthIncrease[i] = new Field(players[i].getLastORWorthIncrease());
+            f = playerORWorthIncrease[i] = new FieldLegacy(players[i].getLastORWorthIncrease());
             int wideGapPosition = ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
             addField(f, playerORWorthIncreaseXOffset + i, playerORWorthIncreaseYOffset, 1, 1, wideGapPosition, true);
         }
@@ -540,7 +540,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         for (int i = 0; i < np; i++) {
             f =
                 playerCertCount[i] =
-                    new Field(players[i].getCertCountModel(), false, true);
+                    new FieldLegacy(players[i].getCertCountModel(), false, true);
             int wideGapPosition = WIDE_TOP + 
                     ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
             addField(f, playerCertCountXOffset + i, playerCertCountYOffset, 1,
@@ -557,14 +557,14 @@ public class GameStatus extends GridPanel implements ActionListener {
         // Certificate Limit
         addField(new Caption(LocalText.getText("LIMIT")), certLimitXOffset - 1,
                 certLimitYOffset, 1, 1, WIDE_TOP, true);
-        addField(new Field(gameUIManager.getRoot().getPlayerManager().getPlayerCertificateLimitModel()),
+        addField(new FieldLegacy(gameUIManager.getRoot().getPlayerManager().getPlayerCertificateLimitModel()),
                 certLimitXOffset,
                 certLimitYOffset, 1, 1, WIDE_TOP + WIDE_RIGHT, true);
 
         // Phase
         addField(new Caption(LocalText.getText("PHASE")), phaseXOffset - 1,
                 phaseYOffset, 1, 1, WIDE_TOP, true);
-        addField(new Field(gameUIManager.getRoot().getPhaseManager().getCurrentPhaseModel()),
+        addField(new FieldLegacy(gameUIManager.getRoot().getPhaseManager().getCurrentPhaseModel()),
                 phaseXOffset,
                 phaseYOffset, 1, 1, WIDE_TOP, true);
 
@@ -573,7 +573,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                 bankCashYOffset - 1, 1, 2, WIDE_TOP, true);
         addField(new Caption(LocalText.getText("CASH")), bankCashXOffset,
                 bankCashYOffset - 1, 1, 1, WIDE_TOP + WIDE_RIGHT, true);
-        bankCash = new Field(bank.getPurse());
+        bankCash = new FieldLegacy(bank.getPurse());
         addField(bankCash, bankCashXOffset, bankCashYOffset, 1, 1, WIDE_RIGHT, true);
 
         // Trains
@@ -581,13 +581,13 @@ public class GameStatus extends GridPanel implements ActionListener {
                 poolTrainsXOffset - 1, poolTrainsYOffset - 1, 1, 2, WIDE_TOP, true);
         addField(new Caption(LocalText.getText("USED")), poolTrainsXOffset,
                 poolTrainsYOffset - 1, 1, 1, WIDE_TOP, true);
-        poolTrains = new Field(pool.getTrainsModel());
+        poolTrains = new FieldLegacy(pool.getTrainsModel());
         addField(poolTrains, poolTrainsXOffset, poolTrainsYOffset, 1, 1, 0, true);
 
         // New trains
         addField(new Caption(LocalText.getText("NEW")), newTrainsXOffset,
                 newTrainsYOffset - 1, 1, 1, WIDE_TOP, true);
-        newTrains = new Field(ipo.getTrainsModel());
+        newTrains = new FieldLegacy(ipo.getTrainsModel());
         addField(newTrains, newTrainsXOffset, newTrainsYOffset, 1, 1, 0, true);
 
         dummyButton = new ClickField("", "", "", this, buySellGroup);
@@ -595,7 +595,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         // Future trains
         addField(new Caption(LocalText.getText("Future")), futureTrainsXOffset,
                 futureTrainsYOffset - 1, futureTrainsWidth, 1, WIDE_TOP, true);
-        futureTrains = new Field(bank.getUnavailable().getPortfolioModel().getTrainsModel(), true, false);
+        futureTrains = new FieldLegacy(bank.getUnavailable().getPortfolioModel().getTrainsModel(), true, false);
         futureTrains.setPreferredSize(new Dimension (1,1)); // To enable auto word wrap
         addField(futureTrains, futureTrainsXOffset, futureTrainsYOffset,
                 futureTrainsWidth, 1, 0, true);
@@ -1135,7 +1135,7 @@ public class GameStatus extends GridPanel implements ActionListener {
             playerCashButton[i].addPossibleAction(action);
     }
 
-    protected void syncToolTipText (Field field, ClickField clickField) {
+    protected void syncToolTipText (FieldLegacy field, ClickField clickField) {
         String baseText = field.getToolTipText();
         clickField.setToolTipText(Util.hasValue(baseText) ? baseText : null);
     }
