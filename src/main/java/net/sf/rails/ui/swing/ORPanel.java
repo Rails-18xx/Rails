@@ -70,34 +70,34 @@ implements ActionListener, KeyListener, RevenueListener {
     private int leftCompNameXOffset, leftCompNameYOffset;
     private Caption rightCompName[];
     private int rightCompNameXOffset, rightCompNameYOffset;
-    private FieldLegacy president[];
+    private Field president[];
     private int presidentXOffset, presidentYOffset;
-    private FieldLegacy sharePrice[];
+    private Field sharePrice[];
     private int sharePriceXOffset, sharePriceYOffset;
-    private FieldLegacy cash[];
+    private Field cash[];
     private int cashXOffset, cashYOffset;
-    private FieldLegacy privates[];
+    private Field privates[];
     private int privatesXOffset, privatesYOffset;
-    private FieldLegacy newPrivatesCost[];
-    private FieldLegacy[] compLoans;
+    private Field newPrivatesCost[];
+    private Field[] compLoans;
     private int loansXOffset, loansYOffset;
-    private FieldLegacy tiles[];
+    private Field tiles[];
     private int tilesXOffset, tilesYOffset;
-    private FieldLegacy tileCost[];
-    private FieldLegacy tokens[];
-    private FieldLegacy tokenCost[];
-    private FieldLegacy tokensLeft[];
-    private FieldLegacy tokenBonus[];
+    private Field tileCost[];
+    private Field tokens[];
+    private Field tokenCost[];
+    private Field tokensLeft[];
+    private Field tokenBonus[];
     private int tokensXOffset, tokensYOffset;
-    private FieldLegacy revenue[];
+    private Field revenue[];
     private Spinner revenueSelect[];
-    private FieldLegacy decision[];
+    private Field decision[];
     private int revXOffset, revYOffset;
-    private FieldLegacy trains[];
+    private Field trains[];
     private int trainsXOffset, trainsYOffset;
-    private FieldLegacy newTrainCost[];
+    private Field newTrainCost[];
     private int rightsXOffset, rightsYOffset;
-    private FieldLegacy rights[];
+    private Field rights[];
     
     private boolean privatesCanBeBought = false;
     private boolean bonusTokensExist = false;
@@ -407,24 +407,24 @@ implements ActionListener, KeyListener, RevenueListener {
     private void initFields() {
         leftCompName = new Caption[nc];
         rightCompName = new Caption[nc];
-        president = new FieldLegacy[nc];
-        sharePrice = new FieldLegacy[nc];
-        cash = new FieldLegacy[nc];
-        trains = new FieldLegacy[nc];
-        privates = new FieldLegacy[nc];
-        tiles = new FieldLegacy[nc];
-        tileCost = new FieldLegacy[nc];
-        tokens = new FieldLegacy[nc];
-        tokenCost = new FieldLegacy[nc];
-        tokensLeft = new FieldLegacy[nc];
-        if (bonusTokensExist) tokenBonus = new FieldLegacy[nc];
-        if (hasCompanyLoans) compLoans = new FieldLegacy[nc];
-        if (hasRights) rights = new FieldLegacy[nc];
-        revenue = new FieldLegacy[nc];
+        president = new Field[nc];
+        sharePrice = new Field[nc];
+        cash = new Field[nc];
+        trains = new Field[nc];
+        privates = new Field[nc];
+        tiles = new Field[nc];
+        tileCost = new Field[nc];
+        tokens = new Field[nc];
+        tokenCost = new Field[nc];
+        tokensLeft = new Field[nc];
+        if (bonusTokensExist) tokenBonus = new Field[nc];
+        if (hasCompanyLoans) compLoans = new Field[nc];
+        if (hasRights) rights = new Field[nc];
+        revenue = new Field[nc];
         revenueSelect = new Spinner[nc];
-        decision = new FieldLegacy[nc];
-        newTrainCost = new FieldLegacy[nc];
-        newPrivatesCost = new FieldLegacy[nc];
+        decision = new Field[nc];
+        newTrainCost = new Field[nc];
+        newPrivatesCost = new Field[nc];
 
         leftCompNameXOffset = 0;
         leftCompNameYOffset = 2;
@@ -545,19 +545,19 @@ implements ActionListener, KeyListener, RevenueListener {
                 president[i] =
                     //                            new Field(c.hasStarted() && !c.isClosed()
                     //                                    ? c.getPresident().getNameAndPriority() : "");
-                    new FieldLegacy(c.getPresidentModel());
+                    new Field(c.getPresidentModel());
             addField(f, presidentXOffset, presidentYOffset + i, 1, 1, 0, visible);
 
-            f = sharePrice[i] = new FieldLegacy(c.getCurrentPriceModel());
+            f = sharePrice[i] = new Field(c.getCurrentPriceModel());
             addField(f, sharePriceXOffset, sharePriceYOffset + i, 1, 1, 0, visible);
 
-            f = cash[i] = new FieldLegacy(c.getPurseMoneyModel());
+            f = cash[i] = new Field(c.getPurseMoneyModel());
             addField(f, cashXOffset, cashYOffset + i, 1, 1, WIDE_RIGHT, visible);
 
             if (privatesCanBeBought) {
                 f =
                     privates[i] =
-                        new FieldLegacy(
+                        new Field(
                                         c.getPortfolioModel().getPrivatesOwnedModel());
                 HexHighlightMouseListener.addMouseListener(f,
                         orUIManager,c.getPortfolioModel());
@@ -566,7 +566,7 @@ implements ActionListener, KeyListener, RevenueListener {
 
                 f =
                     newPrivatesCost[i] =
-                        new FieldLegacy(c.getPrivatesSpentThisTurnModel());
+                        new Field(c.getPrivatesSpentThisTurnModel());
                 addField(f, privatesXOffset + 1, privatesYOffset + i, 1, 1,
                         WIDE_RIGHT, visible);
             }
@@ -574,41 +574,41 @@ implements ActionListener, KeyListener, RevenueListener {
             if (hasCompanyLoans) {
                 //if (c.canLoan()) {
                 if (c.getLoanValueModel() != null) {
-                    f = compLoans[i] = new FieldLegacy (c.getLoanValueModel());
+                    f = compLoans[i] = new Field (c.getLoanValueModel());
                 } else {
-                    f = compLoans[i] = new FieldLegacy ("");
+                    f = compLoans[i] = new Field ("");
                 }
                 addField (f, loansXOffset, loansYOffset + i, 1, 1, WIDE_RIGHT, visible);
             }
 
             if (hasRights) {
-                f = rights[i] = new FieldLegacy (c.getRightsModel());
+                f = rights[i] = new Field (c.getRightsModel());
                 addField (f, rightsXOffset, rightsYOffset + i, 1, 1, WIDE_RIGHT, visible);
             }
 
-            f = tiles[i] = new FieldLegacy(c.getTilesLaidThisTurnModel());
+            f = tiles[i] = new Field(c.getTilesLaidThisTurnModel());
             addField(f, tilesXOffset, tilesYOffset + i, 1, 1, 0, visible);
 
-            f = tileCost[i] = new FieldLegacy(c.getTilesCostThisTurnModel());
+            f = tileCost[i] = new Field(c.getTilesCostThisTurnModel());
             addField(f, tilesXOffset + 1, tilesYOffset + i, 1, 1, WIDE_RIGHT, visible);
 
-            f = tokens[i] = new FieldLegacy(c.getTokensLaidThisTurnModel());
+            f = tokens[i] = new Field(c.getTokensLaidThisTurnModel());
             addField(f, tokensXOffset, tokensYOffset + i, 1, 1, 0, visible);
 
-            f = tokenCost[i] = new FieldLegacy(c.getTokensCostThisTurnModel());
+            f = tokenCost[i] = new Field(c.getTokensCostThisTurnModel());
             addField(f, tokensXOffset + 1, tokensYOffset + i, 1, 1, 0, visible);
 
-            f = tokensLeft[i] = new FieldLegacy(c.getBaseTokensModel());
+            f = tokensLeft[i] = new Field(c.getBaseTokensModel());
             addField(f, tokensXOffset + 2, tokensYOffset + i, 1, 1,
                     bonusTokensExist ? 0 : WIDE_RIGHT, visible);
 
             if (bonusTokensExist) {
-                f = tokenBonus[i] = new FieldLegacy(c.getBonusTokensModel());
+                f = tokenBonus[i] = new Field(c.getBonusTokensModel());
                 addField(f, tokensXOffset + 3, tokensYOffset + i, 1, 1,
                         WIDE_RIGHT, visible);
             }
 
-            f = revenue[i] = new FieldLegacy(c.getLastRevenueModel());
+            f = revenue[i] = new Field(c.getLastRevenueModel());
             addField(f, revXOffset, revYOffset + i, 1, 1, 0, visible);
           
             f = revenueSelect[i] = new Spinner(0, 0, 0, GameManager.getRevenueSpinnerIncrement());
@@ -619,13 +619,13 @@ implements ActionListener, KeyListener, RevenueListener {
             // deactived below, as this caused problems by gridpanel rowvisibility function -- sfy
             //            revenue[i].addDependent(revenueSelect[i]);
 
-            f = decision[i] = new FieldLegacy(c.getLastRevenueAllocationModel());
+            f = decision[i] = new Field(c.getLastRevenueAllocationModel());
             addField(f, revXOffset + 1, revYOffset + i, 1, 1, WIDE_RIGHT,  visible);
 
-            f = trains[i] = new FieldLegacy(c.getPortfolioModel().getTrainsModel());
+            f = trains[i] = new Field(c.getPortfolioModel().getTrainsModel());
             addField(f, trainsXOffset, trainsYOffset + i, 1, 1, 0,  visible);
 
-            f = newTrainCost[i] = new FieldLegacy(c.getTrainsSpentThisTurnModel());
+            f = newTrainCost[i] = new Field(c.getTrainsSpentThisTurnModel());
             addField(f, trainsXOffset + 1, trainsYOffset + i, 1, 1, WIDE_RIGHT,  visible);
 
             f = rightCompName[i] = new Caption(c.getId());

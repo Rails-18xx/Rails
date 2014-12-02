@@ -13,7 +13,7 @@ import javax.swing.*;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.Tile;
 import net.sf.rails.game.TileManager;
-import net.sf.rails.ui.swing.elements.FieldLegacy;
+import net.sf.rails.ui.swing.elements.Field;
 import net.sf.rails.ui.swing.hexmap.GUIHex;
 
 import org.slf4j.Logger;
@@ -92,9 +92,9 @@ public class RemainingTilesWindow extends JFrame implements WindowListener,
 //            hexLabel.setHorizontalTextPosition(Field.CENTER);
 //            hexLabel.setVisible(true);
 //            tilePanel.add(hexLabel);
-            FieldLegacy label = new FieldLegacy(tile.getCountModel(), hexIcon, FieldLegacy.CENTER);
-            label.setVerticalTextPosition(FieldLegacy.BOTTOM);
-            label.setHorizontalTextPosition(FieldLegacy.CENTER);
+            Field label = new Field(tile.getCountModel(), hexIcon, Field.CENTER);
+            label.setVerticalTextPosition(Field.BOTTOM);
+            label.setHorizontalTextPosition(Field.CENTER);
             label.setVisible(true);
             tilePanel.add(label);
 

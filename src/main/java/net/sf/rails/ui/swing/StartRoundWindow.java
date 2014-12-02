@@ -55,19 +55,19 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
     private Caption itemName[];
     private ClickField itemNameButton[];
     private int itemNameXOffset, itemNameYOffset;
-    private FieldLegacy basePrice[];
+    private Field basePrice[];
     private int basePriceXOffset, basePriceYOffset;
-    private FieldLegacy minBid[];
+    private Field minBid[];
     private int minBidXOffset, minBidYOffset;
-    private FieldLegacy bidPerPlayer[][];
+    private Field bidPerPlayer[][];
     private int bidPerPlayerXOffset, bidPerPlayerYOffset;
-    private FieldLegacy playerBids[];
+    private Field playerBids[];
     private int playerBidsXOffset, playerBidsYOffset;
-    private FieldLegacy playerFree[];
+    private Field playerFree[];
     private int playerFreeCashXOffset, playerFreeCashYOffset;
-    private FieldLegacy info[];
+    private Field info[];
     private int infoXOffset, infoYOffset;
-    private FieldLegacy itemStatus[]; // Remains invisible, only used for status tooltip
+    private Field itemStatus[]; // Remains invisible, only used for status tooltip
 
     private Caption[] upperPlayerCaption;
     private Caption[] lowerPlayerCaption;
@@ -240,15 +240,15 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
 
         itemName = new Caption[ni];
         itemNameButton = new ClickField[ni];
-        basePrice = new FieldLegacy[ni];
-        minBid = new FieldLegacy[ni];
-        bidPerPlayer = new FieldLegacy[ni][np];
-        info = new FieldLegacy[ni];
-        itemStatus = new FieldLegacy[ni];
+        basePrice = new Field[ni];
+        minBid = new Field[ni];
+        bidPerPlayer = new Field[ni][np];
+        info = new Field[ni];
+        itemStatus = new Field[ni];
         upperPlayerCaption = new Caption[np];
         lowerPlayerCaption = new Caption[np];
-        playerBids = new FieldLegacy[np];
-        playerFree = new FieldLegacy[np];
+        playerBids = new Field[np];
+        playerFree = new Field[np];
 
         itemNameXOffset = ++lastX;
         itemNameYOffset = ++lastY;
@@ -312,22 +312,22 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
             itemName[i].setPreferredSize(itemNameButton[i].getPreferredSize());
 
             if (showBasePrices) {
-                f = basePrice[i] = new FieldLegacy(si.getBasePriceModel());
+                f = basePrice[i] = new Field(si.getBasePriceModel());
                 addField(f, basePriceXOffset, basePriceYOffset + i, 1, 1, 0);
             }
 
             if (includeBidding) {
-                f = minBid[i] = new FieldLegacy(round.getMinimumBidModel(i));
+                f = minBid[i] = new Field(round.getMinimumBidModel(i));
                 addField(f, minBidXOffset, minBidYOffset + i, 1, 1, WIDE_RIGHT);
             }
 
             for (int j = 0; j < np; j++) {
-                f = bidPerPlayer[i][j] = new FieldLegacy(round.getBidModel(i, j));
+                f = bidPerPlayer[i][j] = new Field(round.getBidModel(i, j));
                 addField(f, bidPerPlayerXOffset + j, bidPerPlayerYOffset + i,
                         1, 1, 0);
             }
 
-            f = info[i] = new FieldLegacy (infoIcon);
+            f = info[i] = new Field (infoIcon);
             f.setToolTipText(getStartItemDescription(si));
             HexHighlightMouseListener.addMouseListener(f, 
                     gameUIManager.getORUIManager(),
@@ -335,7 +335,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
             addField (f, infoXOffset, infoYOffset + i, 1, 1, WIDE_LEFT);
 
             // Invisible field, only used to hold current item status.
-            f = itemStatus[i] = new FieldLegacy (si.getStatusModel());
+            f = itemStatus[i] = new Field (si.getStatusModel());
         }
 
         // Player money
@@ -345,7 +345,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
                     playerBidsXOffset - 1, playerBidsYOffset, 1, 1,
                     WIDE_TOP + WIDE_RIGHT);
             for (int i = 0; i < np; i++) {
-                f = playerBids[i] = new FieldLegacy(round.getBlockedCashModel(players[i]));
+                f = playerBids[i] = new Field(round.getBlockedCashModel(players[i]));
                 addField(f, playerBidsXOffset + i, playerBidsYOffset, 1, 1,
                         WIDE_TOP);
             }
@@ -359,7 +359,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
         for (int i = 0; i < np; i++) {
             f =
                 playerFree[i] =
-                    new FieldLegacy(includeBidding
+                    new Field(includeBidding
                             ? round.getFreeCashModel(players[i])
                                     : players[i].getWallet());
             addField(f, playerFreeCashXOffset + i, playerFreeCashYOffset, 1, 1,

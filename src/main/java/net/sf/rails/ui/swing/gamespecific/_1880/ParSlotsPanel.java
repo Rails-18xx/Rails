@@ -13,7 +13,7 @@ import net.sf.rails.game.state.StringState;
 import net.sf.rails.ui.swing.GameUIManager;
 import net.sf.rails.ui.swing.GridPanel;
 import net.sf.rails.ui.swing.elements.Caption;
-import net.sf.rails.ui.swing.elements.FieldLegacy;
+import net.sf.rails.ui.swing.elements.Field;
 
 public class ParSlotsPanel extends GridPanel {
     private static final long serialVersionUID = 1L;
@@ -43,9 +43,9 @@ public class ParSlotsPanel extends GridPanel {
             addField(new Caption("$" + (100 - (10 * i))), 0, (1 + 4*i), 1, 4, WIDE_BOTTOM, true);
             for (int j = 0; j < 4; j++) {
                 ParSlotModel parSlotModel = parSlotManager.getModelAtSlot((i*4)+j);
-                addField(new FieldLegacy(parSlotModel), 1, (i * 4) + j + 1, 1, 1, WIDE_LEFT + WIDE_RIGHT, true);
+                addField(new Field(parSlotModel), 1, (i * 4) + j + 1, 1, 1, WIDE_LEFT + WIDE_RIGHT, true);
                 StringState lastTrainState = parSlotManager.getLastTrainStateAtSlot((i*4)+j);
-                addField(new FieldLegacy(lastTrainState), 2, (i * 4) + j + 1, 1, 1, WIDE_LEFT + WIDE_RIGHT, true);
+                addField(new Field(lastTrainState), 2, (i * 4) + j + 1, 1, 1, WIDE_LEFT + WIDE_RIGHT, true);
             }
         }
     }

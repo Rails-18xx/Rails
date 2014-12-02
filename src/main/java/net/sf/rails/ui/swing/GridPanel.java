@@ -34,7 +34,7 @@ import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.Observable;
 import net.sf.rails.game.state.Observer;
 import net.sf.rails.ui.swing.elements.ClickField;
-import net.sf.rails.ui.swing.elements.FieldLegacy;
+import net.sf.rails.ui.swing.elements.Field;
 import net.sf.rails.util.Util;
 
 import org.slf4j.Logger;
@@ -207,7 +207,7 @@ implements ActionListener, KeyListener {
                 if (fields[i][j] instanceof JLabel) {
                     text = ((JLabel)fields[i][j]).getText();
                     b.append (text == null ? "" : text);
-                    if (fields[i][j] instanceof FieldLegacy) {
+                    if (fields[i][j] instanceof Field) {
                         tip = fields[i][j].getToolTipText();
                         if (Util.hasValue(tip)) {
                             b.append("{").append(tip).append("}");

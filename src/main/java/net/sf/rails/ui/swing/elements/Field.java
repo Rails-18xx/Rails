@@ -16,7 +16,7 @@ import com.google.common.base.Objects;
 
 
 // TODO: Make the color and font options work again
-public class FieldLegacy extends JLabel implements Observer {
+public class Field extends JLabel implements Observer {
 
     private static final long serialVersionUID = 1L;
 
@@ -32,7 +32,7 @@ public class FieldLegacy extends JLabel implements Observer {
     private boolean pull = false;
     private boolean html = false;
 
-    public FieldLegacy(String text) {
+    public Field(String text) {
         super(text.equals("0%") ? "" : text);
         this.setBackground(NORMAL_BG_COLOUR);
         this.setHorizontalAlignment(SwingConstants.CENTER);
@@ -40,7 +40,7 @@ public class FieldLegacy extends JLabel implements Observer {
         this.setOpaque(true);
     }
 
-    public FieldLegacy(ImageIcon info) {
+    public Field(ImageIcon info) {
         super(info);
         this.setBackground(NORMAL_BG_COLOUR);
         this.setHorizontalAlignment(SwingConstants.CENTER);
@@ -49,7 +49,7 @@ public class FieldLegacy extends JLabel implements Observer {
     }
 
     // TODO: Remove the pull option
-    public FieldLegacy(Observable observable, boolean html, boolean pull) {
+    public Field(Observable observable, boolean html, boolean pull) {
         this(""); // create empty field first
         this.observable = observable;
         this.html = html;
@@ -59,11 +59,11 @@ public class FieldLegacy extends JLabel implements Observer {
         this.setText(observable.toText());
     }
 
-    public FieldLegacy(Observable observable) {
+    public Field(Observable observable) {
         this(observable, false, false);
     }
 
-    public FieldLegacy(Observable observable, ImageIcon icon, int position) {
+    public Field(Observable observable, ImageIcon icon, int position) {
         this(observable);
         setIcon(icon);
         setHorizontalAlignment(position);
