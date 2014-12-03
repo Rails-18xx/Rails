@@ -5,6 +5,9 @@
 		<Access type="town" runTo="yes" runThrough="yes" loop="yes" score="minor"/>
 	</Defaults>
 	<!-- The above defaults are redundant, these settings are the system defaults anyway -->
+	<IfOption name="Variant" value="Coalfields">
+		<Image file="1830/MapImage_Coalfields.svg" x="15" y="14" scale="0.1632"/>
+	</IfOption>
 	<Hex name="A9" tile="-901" orientation="0" value="30,50" city="Canadian West"/>
 	<Hex name="A11" tile="-902" orientation="1" value="30,50" city="Canadian West"/>
 	<Hex name="A17" tile="-7" orientation="1" city="Montreal"/>
