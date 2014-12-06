@@ -5,6 +5,9 @@
 		<Access type="town" runTo="yes" runThrough="yes" loop="yes" score="minor"/>
 	</Defaults>
 	<!-- The above defaults are redundant, these settings are the system defaults anyway -->
+	<IfOption name="Variant" value="Basegame">
+		<Image file="1830/MapImage_Basegame.svg" x="15" y="14" scale="0.1632"/>
+	</IfOption>
 	<IfOption name="Variant" value="Coalfields">
 		<Image file="1830/MapImage_Coalfields.svg" x="15" y="14" scale="0.1632"/>
 	</IfOption>
