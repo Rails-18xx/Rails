@@ -209,9 +209,9 @@
      borderopacity="1"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.20000001"
-     inkscape:cx="816.60557"
-     inkscape:cy="1824.5698"
+     inkscape:zoom="0.1966401"
+     inkscape:cx="2203.1562"
+     inkscape:cy="1968.0625"
      inkscape:document-units="px"
      inkscape:current-layer="layer7"
      showgrid="false"
@@ -237,7 +237,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -2256,7 +2256,7 @@
            d="M 98,0 294,0 392,170 294,340 98,340 0,170 z"
            id="path18-1"
            inkscape:connector-curvature="0"
-           style="fill:none;stroke:#000000;stroke-width:1;stroke-linejoin:round" />
+           style="fill:none;stroke:#000000;stroke-width:2.00000001;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none" />
       </g>
       <g
          transform="matrix(0.73082561,0,0,0.73082561,-3426.7191,1469.7285)"
@@ -3167,24 +3167,6 @@
            x="113.81602"
            y="1691.6666">Burlington</tspan></text>
     </g>
-    <text
-       style="font-size:30px;font-style:oblique;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:100%;writing-mode:lr-tb;text-anchor:middle;fill:#000000;stroke:#000000;stroke-width:1;display:inline;font-family:Sans;-inkscape-font-specification:Sans Oblique"
-       x="3919.4175"
-       y="578.55981"
-       font-size="51"
-       id="text22-1-3-9-5-09-0-9-1-8-9-7"
-       sodipodi:linespacing="100%">
-      <tspan
-         y="578.55981"
-         x="3919.4175"
-         id="tspan5758"
-         sodipodi:role="line">Champlain &amp;</tspan>
-      <tspan
-         id="tspan5760"
-         y="608.55981"
-         x="3919.4175"
-         sodipodi:role="line">St.Lawrence</tspan>
-    </text>
     <g
        id="g4994-4-5-4-6"
        transform="matrix(0.99975983,0.02191503,-0.02191503,0.99975983,3381.754,5298.2405)">
@@ -3383,7 +3365,7 @@
          d="m 4836.3081,-18.689465 169.7409,98 -0.1295,196.224295 -169.8705,98.2243 -169.7409,-98 0.1295,-196.224295 z"
          id="path4-3-1-35"
          inkscape:connector-curvature="0"
-         style="fill:#ff0000;stroke:#ff0000;stroke-width:1;stroke-linejoin:round;display:inline" />
+         style="fill:#ff0000;stroke:#000000;stroke-width:2.00000000999999990;stroke-linejoin:round;display:inline;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <path
          d="m 4836.3081,-18.689465 169.7409,98 -0.1295,196.224295 -169.8705,98.2243 -169.7409,-98 0.1295,-196.224295 z"
          id="path6-6-1"
@@ -3575,7 +3557,7 @@
        d="m 1813.3294,2590.1267 169.741,-98 169.8705,98.2244 0.1295,196.2243 -169.741,98 -169.8705,-98.2243 z"
        id="path4-348-37-8-2-5-3-4-0-7-3-1-2-9-9-2-3-84" />
     <path
-       style="fill:#ff0000;fill-opacity:1;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="fill:#ff0000;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
        d="m 625.01293,3080.1269 -169.741,97.7757 -0.67365,197.3474 170.67365,97.1012 -0.0799,197.4301 169.95041,96.57 170,-97.5513 0,-196.4487 -170.12953,-98.0001 -0.12951,-196.2243 z"
        id="path6440"
        inkscape:connector-curvature="0" />
@@ -4367,7 +4349,7 @@
          id="path6-8"
          d="M 98,0 294,0 392,170 294,340 98,340 0,170 z"
          inkscape:connector-curvature="0"
-         style="fill:none;stroke:#000000;stroke-width:1;stroke-linejoin:round" />
+         style="fill:none;stroke:#000000;stroke-width:2.00000001;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none" />
       <path
          id="path2565"
          style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:4.50926638;stroke-linecap:butt;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
@@ -6168,6 +6150,38 @@
          y="2058.957"
          style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:89.99999762%;writing-mode:lr-tb;text-anchor:middle;fill:#00000f;fill-opacity:0.94117647;stroke:#000000;stroke-width:1.5;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;font-family:Sans;-inkscape-font-specification:Sans"
          id="tspan3996">NH</tspan>
+    </text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
+       d="m 1813.3162,121.55102 -0.8953,309.03875 170.571,99.25714 169.429,-99.25716 170.9395,98.78433 168.6073,-98.89636 0.1295,-308.93338 -171.5088,0.12498 -168.1026,-0.15958 -186.315,-1.16983 z"
+       id="path6440-1-1"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccccccccc" />
+    <text
+       style="font-size:30px;font-style:oblique;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:100%;writing-mode:lr-tb;text-anchor:middle;fill:#000000;stroke:#000000;stroke-width:1;display:inline;font-family:Sans;-inkscape-font-specification:Sans Oblique"
+       x="3908.866"
+       y="585.26178"
+       font-size="51"
+       id="text22-1-3-9-5-09-0-9-1-8-9-7"
+       sodipodi:linespacing="100%">
+      <tspan
+         y="585.26178"
+         x="3908.866"
+         sodipodi:role="line"
+         id="tspan3918">Champlain &amp;</tspan>
+    </text>
+    <text
+       style="font-size:30px;font-style:oblique;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:100%;writing-mode:lr-tb;text-anchor:middle;fill:#000000;stroke:#000000;stroke-width:1;display:inline;font-family:Sans;-inkscape-font-specification:Sans Oblique"
+       x="3908.5686"
+       y="614.65063"
+       font-size="51"
+       id="text22-1-3-9-5-09-0-9-1-8-9-7-1"
+       sodipodi:linespacing="100%">
+      <tspan
+         id="tspan5760-4"
+         y="614.65063"
+         x="3908.5686"
+         sodipodi:role="line">St. Lawrence</tspan>
     </text>
   </g>
 </svg>
