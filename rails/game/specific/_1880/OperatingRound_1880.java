@@ -474,8 +474,11 @@ public class OperatingRound_1880 extends OperatingRound {
         if ((getStep() == GameDef.OrStep.BUY_TRAIN)
             && (operatingCompany.get() instanceof Investor_1880)) {
             // Only way to get here is if this is a connected investor...
+            Investor_1880 investor = (Investor_1880) (operatingCompany.get());
+            if (investor.isConnectedToLinkedCompany() ) {
             possibleActions.add(new CloseInvestor_1880((Investor_1880) operatingCompany.get()));
             return true;
+            }
         }
 
         return super.setPossibleActions();
