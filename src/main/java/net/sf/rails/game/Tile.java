@@ -178,6 +178,20 @@ public class Tile extends RailsModel implements Comparable<Tile> {
         /* Picture id */
         pictureId = setTag.getAttributeAsString("pic", getId());
 
+        /* prepainted */
+        try {
+            int intNb = Integer.parseInt(getId());
+            if (intNb <= 0) {
+               prepainted = true;
+           } else {
+               prepainted = false;
+           }
+        } catch (NumberFormatException e) {
+            // assume that it is not pre-painted to be save if id is non-numerical
+            prepainted = false;
+        }
+
+        
         /* Quantity */
         count = setTag.getAttributeAsInteger("quantity", 0);
         /* Value '99' and '-1' mean 'unlimited' */
@@ -243,15 +257,11 @@ public class Tile extends RailsModel implements Comparable<Tile> {
     public void finishConfiguration(RailsRoot root, int sortingDigits)
             throws ConfigurationException {
 
-        prepainted = true;
         try {
             int externalNb = Integer.parseInt(externalId);
             NumberFormat nf = NumberFormat.getInstance();
             nf.setMinimumIntegerDigits(sortingDigits);
             sortingId = nf.format(externalNb);
-           if (externalNb > 0) {
-               prepainted = false;
-           }
         } catch (NumberFormatException e) {
            sortingId = externalId; 
         }
