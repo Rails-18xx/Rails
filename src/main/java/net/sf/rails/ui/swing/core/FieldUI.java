@@ -1,5 +1,7 @@
 package net.sf.rails.ui.swing.core;
 
+import java.awt.Color;
+
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
@@ -11,41 +13,96 @@ public class FieldUI extends ItemUI {
     
     private final JComponent component;
     
-    private final Observer text;
-    private final Observer tooltip;
-    private final Observer color;
+    private final Observer textObserver;
+    private final Observer tooltipObserver;
+    private final Observer colorObserver;
     
-    private FieldUI(ItemUI parent, String id, JComponent component, Observer text, Observer tooltip, Observer color) {
+    private FieldUI(ItemUI parent, String id, JComponent component, String text, String tooltip, 
+            Color backgroundColor, Color foregroundColor,
+            Observer textObserver, Observer tooltipObserver, Observer colorObserver) {
         super(parent, id);
+        
         this.component = component;
-        this.text = text;
-        this.tooltip = tooltip;
-        this.color = color;
+        
+        this.textObserver = textObserver;
+        this.tooltipObserver = tooltipObserver;
+        this.colorObserver = colorObserver;
+        
+        // initialize text
+        String initText = null;
         if (text != null) {
-            text.getObservable().addObserver(text);
+            initText = text;
+        } else if (textObserver != null) {
+            initText = textObserver.getObservable().toText();
         }
+ 
+        if (initText != null) {
+            if (component instanceof JLabel) {
+                ((JLabel)component).setText(text);
+            }
+        }
+        
+        // initialize tooltip
+        String initTooltip = null;
         if (tooltip != null) {
-            tooltip.getObservable().addObserver(tooltip);
+            initTooltip = tooltip;
+        } else if (tooltipObserver != null) {
+            initTooltip = tooltipObserver.getObservable().toText();
         }
-        if (color != null) {
-            color.getObservable().addObserver(color);
+        
+        if (initTooltip != null) {
+            component.setToolTipText(initTooltip);
+        }
+        
+        // initialize background color
+        Color initBackgroundColor = null;
+        if (backgroundColor != null) {
+            initBackgroundColor = backgroundColor;
+        } else if (colorObserver != null) {
+            initBackgroundColor = ((ColorModel)colorObserver.getObservable()).getBackground();
+        }
+
+        if (initBackgroundColor != null) {
+            component.setBackground(initBackgroundColor);
+        }
+        
+        // initialize foreground color
+        Color initForegroundColor = null;
+        if (foregroundColor != null) {
+            initForegroundColor = foregroundColor;
+        } else if (colorObserver != null) {
+            initForegroundColor = ((ColorModel)colorObserver.getObservable()).getForeground();
+        }
+
+        if (initForegroundColor != null) {
+            component.setForeground(initForegroundColor);
+        }
+        
+        // add observers
+        if (textObserver != null) {
+            textObserver.getObservable().addObserver(textObserver);
+        }
+        if (tooltipObserver != null) {
+            tooltipObserver.getObservable().addObserver(tooltipObserver);
+        }
+        if (colorObserver != null) {
+            colorObserver.getObservable().addObserver(colorObserver);
         }
     }
-    
     
     public JComponent getUI() {
         return component;
     }
     
     public void clearObservers() {
-         if (text != null) {
-             text.getObservable().removeObserver(text);
+         if (textObserver != null) {
+             textObserver.getObservable().removeObserver(textObserver);
          }
-         if (tooltip != null) {
-             tooltip.getObservable().removeObserver(tooltip);
+         if (tooltipObserver != null) {
+             tooltipObserver.getObservable().removeObserver(tooltipObserver);
          }
-         if (color != null) {
-             color.getObservable().removeObserver(color);
+         if (colorObserver != null) {
+             colorObserver.getObservable().removeObserver(colorObserver);
          }
     }
 
@@ -60,6 +117,11 @@ public class FieldUI extends ItemUI {
         
         private final JComponent component;
 
+        private String text;
+        private String tooltip;
+        private Color backgroundColor;
+        private Color foregroundColor;
+        
         private Observer textObserver;
         private Observer tooltipObserver;
         private Observer colorObserver;
@@ -71,10 +133,15 @@ public class FieldUI extends ItemUI {
         }
         
         public FieldUI build() {
-            return new FieldUI(parent, id, component, textObserver, tooltipObserver, colorObserver);
+            return new FieldUI(parent, id, component, text, tooltip, backgroundColor, foregroundColor,
+                    textObserver, tooltipObserver, colorObserver);
         }
 
-        public void setTextObservable(final Observable observable) {
+        public void setText(String text) {
+            this.text = text;
+        }
+        
+        public void setText(final Observable observable) {
             textObserver = new Observer() {
 
                 @Override
@@ -91,8 +158,12 @@ public class FieldUI extends ItemUI {
             };
             observable.addObserver(textObserver);
         }
+        
+        public void setTooltip(String tooltip) {
+            this.tooltip = tooltip;
+        }
 
-        public void setTooltipObservable(final Observable observable) {
+        public void setTooltip(final Observable observable) {
             tooltipObserver = new Observer() {
 
                 @Override
@@ -106,6 +177,14 @@ public class FieldUI extends ItemUI {
                 }
             };
             observable.addObserver(tooltipObserver);
+        }
+        
+        public void setBackgroundColor(Color color) {
+            this.backgroundColor = color;
+        }
+        
+        public void setForegroundColor(Color color) {
+            this.foregroundColor = color;
         }
 
         public void setColorModel(final ColorModel model) {
