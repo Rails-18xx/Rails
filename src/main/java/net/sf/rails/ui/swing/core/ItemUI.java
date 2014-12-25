@@ -15,20 +15,20 @@ public abstract class ItemUI {
     private final RootUI root;
     
     protected ItemUI(ItemUI parent, String id){
-        Preconditions.checkNotNull(parent, "parent cannot be null");
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(id), "id cannot be null or empty");
+        if (this  instanceof RootUI) {
+            // only used for RootUI
+            this.root = (RootUI)this;
+        } else {
+            // all others, check preconditions
+            Preconditions.checkNotNull(parent, "parent cannot be null");
+            Preconditions.checkArgument(!Strings.isNullOrEmpty(id), "id cannot be null or empty");
+            this.root = parent.getRoot();
+        }
         this.id = id;
         this.parent = parent;
-        this.root = parent.getRoot();
         root.addItem(this);
-    }
+   }
 
-    // only used for RootUI
-    protected ItemUI() {
-        this.id = RootUI.ID;
-        this.parent = null;
-        this.root = (RootUI)this;
-    }
 
     public ItemUI getParent() {
         return parent;
