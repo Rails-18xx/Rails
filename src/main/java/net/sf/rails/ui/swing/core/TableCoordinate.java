@@ -1,6 +1,6 @@
 package net.sf.rails.ui.swing.core;
 
-import net.sf.rails.game.RailsItem;
+import net.sf.rails.game.state.Item;
 
 /**
  * TableCoordinate is used as an identifier is used to index column or rows in a grid table
@@ -10,7 +10,7 @@ public class TableCoordinate {
     private final String id;
     private boolean visible;
 
-    public TableCoordinate(String id) {
+    private TableCoordinate(String id) {
         this.id = id;
         this.visible = true;
     }
@@ -36,7 +36,11 @@ public class TableCoordinate {
         return setVisible(false);
     }
     
-    public static TableCoordinate from(RailsItem item) {
+    public static TableCoordinate from(Object column) {
+        return new TableCoordinate(column.toString());
+    }
+    
+    public static TableCoordinate from(Item item) {
         return new TableCoordinate(item.getFullURI());
     }
     

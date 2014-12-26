@@ -3,6 +3,9 @@ package net.sf.rails.ui.swing.core;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.sf.rails.game.state.Accessor1D;
+import net.sf.rails.game.state.Item;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -35,9 +38,21 @@ public class TableAxis {
         
         private Builder() {}
     
-        public Builder addLast(TableCoordinate coordinate) {
+        public Builder add(TableCoordinate coordinate) {
             Preconditions.checkArgument(!axis.contains(coordinate), PRECON_COORD_CONTAINED, coordinate);
             axis.addLast(coordinate);
+            return this;
+        }
+        
+        public Builder add(Object column) {
+            axis.add(TableCoordinate.from(column));
+            return this;
+        }
+         
+        public <R extends Item> Builder add(Iterable<R> items, Accessor1D<String, R> accessor) {
+            for (R item:items) {
+                axis.add(TableCoordinate.from(item));
+            }
             return this;
         }
 
