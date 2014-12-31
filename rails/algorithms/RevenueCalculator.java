@@ -38,6 +38,7 @@ abstract class RevenueCalculator {
     protected final int[] trainMaxBonuses;
     protected final boolean[] trainIgnoreMinors;
     protected final boolean[] trainIsH; // true => train is H-train
+    protected final boolean[] trainIsE; // true => train is E-train
     
     // dynamic train data
     protected final int[] trainCurrentValue;
@@ -134,6 +135,7 @@ abstract class RevenueCalculator {
         trainMaxBonuses = new int[nbTrains]; // only required for revenue prediction
         trainIgnoreMinors = new boolean[nbTrains];
         trainIsH = new boolean[nbTrains];
+        trainIsE = new boolean[nbTrains];
         
         trainCurrentValue = new int[nbTrains];
         trainMajors = new int[nbTrains];
@@ -196,12 +198,13 @@ abstract class RevenueCalculator {
 //        edgeNbTravelSets[edgeId] = 0;
     }
     
-    final void setTrain(int id, int majors, int minors, boolean ignoreMinors, boolean isHTrain) {
+    final void setTrain(int id, int majors, int minors, boolean ignoreMinors, boolean isHTrain, boolean isETrain) {
         trainMaxMajors[id] = majors;
         trainMaxMinors[id] = minors;
         trainMaxBonuses[id] = 0;
         trainIgnoreMinors[id] = ignoreMinors;
         trainIsH[id] = isHTrain;
+        trainIsE[id] = isETrain;
     }
     
     final void setVisitSet(int[] vertices) {

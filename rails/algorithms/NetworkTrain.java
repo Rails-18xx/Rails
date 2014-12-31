@@ -17,18 +17,20 @@ public final class NetworkTrain implements Comparable<NetworkTrain>{
     private final int multiplyMajors;
     private final int multiplyMinors;
     private final boolean isHTrain;
+    private final boolean isETrain;
     private String trainName;
     private final TrainI railsTrain;
     
     
     private NetworkTrain(int majors, int minors, boolean ignoreMinors,
-            int multiplyMajors, int multiplyMinors, boolean isHTrain, String trainName, TrainI train) {
+            int multiplyMajors, int multiplyMinors, boolean isHTrain, boolean isETrain, String trainName, TrainI train) {
         this.majors = majors;
         this.minors = minors;
         this.ignoreMinors = ignoreMinors;
         this.multiplyMajors = multiplyMajors;
         this.multiplyMinors = multiplyMinors;
         this.isHTrain = isHTrain;
+        this.isETrain = isETrain;
         this.trainName = trainName;
         this.railsTrain = train;
         log.info("Created NetworkTrain " + this.toString() + " / " + this.attributes());
@@ -47,10 +49,11 @@ public final class NetworkTrain implements Comparable<NetworkTrain>{
             ignoreMinors = true;
         }
         boolean isHTrain = railsTrain.isHTrain();
+        boolean isETrain = railsTrain.isETrain();
         String trainName = railsTrain.getName();
 
         return new NetworkTrain(majors, minors, ignoreMinors, multiplyMajors, multiplyMinors,
-                isHTrain, trainName, railsTrain); 
+                isHTrain, isETrain, trainName, railsTrain); 
     }
     
     public static NetworkTrain createFromString(String trainString) {
@@ -58,6 +61,7 @@ public final class NetworkTrain implements Comparable<NetworkTrain>{
         int cities = 0; int towns = 0;
         boolean ignoreTowns = false; int multiplyCities = 1; int multiplyTowns = 1;
         boolean isHTrain = false;
+        boolean isETrain = false;
         if (t.equals("D")) {
             log.info("RA: found Diesel train");
             cities = 99;
@@ -75,6 +79,7 @@ public final class NetworkTrain implements Comparable<NetworkTrain>{
             log.info("RA: found Express train");
             cities = Integer.parseInt(t.replace("E", ""));
             ignoreTowns = true;
+            isETrain = true;
             multiplyTowns = 0;
         } else if (t.contains("D")) {
             log.info("RA: found Double Express train");
@@ -91,12 +96,12 @@ public final class NetworkTrain implements Comparable<NetworkTrain>{
             cities = Integer.parseInt(t);
         }
         NetworkTrain train = new NetworkTrain(cities, towns, ignoreTowns, multiplyCities, 
-                multiplyTowns, isHTrain, t, null); 
+                multiplyTowns, isHTrain, isETrain, t, null); 
         return train;
     }
     
     void addToRevenueCalculator(RevenueCalculator rc, int trainId) {
-        rc.setTrain(trainId, majors, minors, ignoreMinors, isHTrain);
+        rc.setTrain(trainId, majors, minors, ignoreMinors, isHTrain, isETrain);
     }
 
     int getMajors(){
@@ -135,6 +140,10 @@ public final class NetworkTrain implements Comparable<NetworkTrain>{
         trainName = name;
     }
     
+    public boolean isETrain() {
+        return isETrain;
+    }
+
     public String getTrainName() {
         return trainName;
     }

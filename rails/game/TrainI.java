@@ -43,6 +43,11 @@ public interface TrainI extends Moveable {
      */
     public boolean isHTrain();
 
+    /**
+     * @return true => Express train (examples 1880)
+     */
+    public boolean isETrain();
+
     public void setType (TrainType type);
     /**
      * @return Returns the train type.
@@ -76,4 +81,6 @@ public interface TrainI extends Moveable {
     
     public boolean isTradeable();
     public void setTradeable(boolean tradeable);
+
+ 
 }
