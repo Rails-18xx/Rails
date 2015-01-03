@@ -37,10 +37,10 @@ public class GridTable extends ItemUI {
         
         public Builder addField(TableCoordinate row, TableCoordinate col, FieldUI field) {
             if (!rows.contains(row)) {
-                rows.addLast(row);
+                rows.add(row);
             }
             if (!cols.contains(col)) {
-                cols.addLast(col);
+                cols.add(col);
             }
             table.put(row, col, field);
             return this;
