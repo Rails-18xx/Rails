@@ -18,13 +18,13 @@ public class TableAxis {
     private static final String PRECON_COORD_CONTAINED = "Coordinate %s already contained in TableAxis";
     private static final String PRECON_COORD_MISSING = "Coordinate %s is missing in TableAxis, but was expected";
     
-    private final ImmutableList<TableCoordinate> axis;
+    private final ImmutableList<TableSimpleCoordinate> axis;
     
-    private TableAxis(List<TableCoordinate> axis) {
+    private TableAxis(List<TableSimpleCoordinate> axis) {
         this.axis = ImmutableList.copyOf(axis);
     }
     
-    public ImmutableList<TableCoordinate> getAxis() {
+    public ImmutableList<TableSimpleCoordinate> getAxis() {
         return axis;
     }
     
@@ -34,35 +34,33 @@ public class TableAxis {
     
     public static class Builder {
         
-        private final LinkedList<TableCoordinate> axis = Lists.newLinkedList();
+        private final LinkedList<TableSimpleCoordinate> axis = Lists.newLinkedList();
         
         private Builder() {}
     
-        public Builder add(TableCoordinate coordinate) {
+        public Builder add(TableSimpleCoordinate coordinate) {
             Preconditions.checkArgument(!axis.contains(coordinate), PRECON_COORD_CONTAINED, coordinate);
             axis.addLast(coordinate);
             return this;
         }
         
         public Builder add(Object column) {
-            axis.add(TableCoordinate.from(column));
+            axis.add(TableSimpleCoordinate.from(column));
             return this;
         }
          
-        public <R extends Item> Builder add(Iterable<R> items, Accessor1D<String, R> accessor) {
-            for (R item:items) {
-                axis.add(TableCoordinate.from(item));
-            }
+        public <R extends Item> Builder add(Iterable<R> items) {
+            axis.add(TableMultiCoordinate.from(items));
             return this;
         }
 
-        public Builder addFirst(TableCoordinate coordinate) {
+        public Builder addFirst(TableSimpleCoordinate coordinate) {
             Preconditions.checkArgument(!axis.contains(coordinate), PRECON_COORD_CONTAINED, coordinate);
             axis.addFirst(coordinate);
             return this;
         }
 
-        public Builder addBefore(TableCoordinate coordinate, TableCoordinate before) {
+        public Builder addBefore(TableSimpleCoordinate coordinate, TableSimpleCoordinate before) {
             Preconditions.checkArgument(!axis.contains(coordinate), PRECON_COORD_CONTAINED, coordinate);
             Preconditions.checkArgument(axis.contains(before), PRECON_COORD_MISSING, before);
             int index = axis.indexOf(before);
@@ -70,7 +68,7 @@ public class TableAxis {
             return this;
         }
 
-        public Builder addAfter(TableCoordinate coordinate, TableCoordinate after) {
+        public Builder addAfter(TableSimpleCoordinate coordinate, TableSimpleCoordinate after) {
             Preconditions.checkArgument(!axis.contains(coordinate), PRECON_COORD_CONTAINED, coordinate);
             Preconditions.checkArgument(axis.contains(after), PRECON_COORD_MISSING, after);
             int index = axis.indexOf(after);
@@ -78,7 +76,7 @@ public class TableAxis {
             return this;
         }
         
-        public boolean contains(TableCoordinate coordinate) {
+        public boolean contains(TableSimpleCoordinate coordinate) {
             return axis.contains(coordinate);
         }
         

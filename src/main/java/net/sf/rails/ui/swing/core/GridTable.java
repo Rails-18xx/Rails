@@ -11,12 +11,12 @@ import com.google.common.collect.Table;
 
 public class GridTable extends ItemUI {
     
-    private final Table<TableCoordinate, TableCoordinate, FieldUI> table;
+    private final Table<TableSimpleCoordinate, TableSimpleCoordinate, FieldUI> table;
     
     private final TableAxis rows;
     private final TableAxis cols;
     
-    private GridTable(ItemUI parent, String id, Table<TableCoordinate, TableCoordinate, FieldUI> table, TableAxis rows, TableAxis cols) {
+    private GridTable(ItemUI parent, String id, Table<TableSimpleCoordinate, TableSimpleCoordinate, FieldUI> table, TableAxis rows, TableAxis cols) {
         super(parent, id);
         this.table = table;
         this.rows = rows;
@@ -29,13 +29,13 @@ public class GridTable extends ItemUI {
     
     public static class Builder {
         
-        private final ImmutableTable.Builder<TableCoordinate, TableCoordinate, FieldUI> table= ImmutableTable.builder();
+        private final ImmutableTable.Builder<TableSimpleCoordinate, TableSimpleCoordinate, FieldUI> table= ImmutableTable.builder();
         private final TableAxis.Builder rows = TableAxis.builder();
         private final TableAxis.Builder cols = TableAxis.builder();
         
         private Builder() {}
         
-        public Builder addField(TableCoordinate row, TableCoordinate col, FieldUI field) {
+        public Builder addField(TableSimpleCoordinate row, TableSimpleCoordinate col, FieldUI field) {
             if (!rows.contains(row)) {
                 rows.add(row);
             }
