@@ -9,7 +9,7 @@ import net.sf.rails.game.state.ColorModel;
 import net.sf.rails.game.state.Observable;
 import net.sf.rails.game.state.Observer;
 
-public class FieldUI extends ItemUI {
+public class GridField extends ItemUI {
     
     private final JComponent component;
     
@@ -17,7 +17,7 @@ public class FieldUI extends ItemUI {
     private final Observer tooltipObserver;
     private final Observer colorObserver;
     
-    private FieldUI(ItemUI parent, String id, JComponent component, String text, String tooltip, 
+    private GridField(ItemUI parent, String id, JComponent component, String text, String tooltip, 
             Color backgroundColor, Color foregroundColor,
             Observer textObserver, Observer tooltipObserver, Observer colorObserver) {
         super(parent, id);
@@ -132,8 +132,8 @@ public class FieldUI extends ItemUI {
             this.component = component;
         }
         
-        public FieldUI build() {
-            return new FieldUI(parent, id, component, text, tooltip, backgroundColor, foregroundColor,
+        public GridField build() {
+            return new GridField(parent, id, component, text, tooltip, backgroundColor, foregroundColor,
                     textObserver, tooltipObserver, colorObserver);
         }
 

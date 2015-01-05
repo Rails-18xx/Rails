@@ -4,7 +4,7 @@ import java.util.List;
 
 import net.sf.rails.game.Player;
 import net.sf.rails.game.StartItem;
-import net.sf.rails.ui.swing.core.TableAxis;
+import net.sf.rails.ui.swing.core.GridAxis;
 
 /**
  * StartRoundStatus creates a status panel for the StartRound
@@ -14,7 +14,7 @@ public class StartRoundStatus {
     private enum Cols {ITEM, BASE, MINIMUM, INFO}
     
     public void create(List<Player> players, List<StartItem> items) {
-        TableAxis cols = TableAxis.builder()
+        GridAxis cols = GridAxis.builder()
                 .add(Cols.ITEM).add(Cols.BASE).add(Cols.MINIMUM).add(players).add(Cols.INFO)
                 .build();
     }

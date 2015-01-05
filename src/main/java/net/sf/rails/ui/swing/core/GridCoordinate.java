@@ -7,12 +7,12 @@ import net.sf.rails.game.state.Item;
 /**
  * Abstract base class for coordinates used in GridTables
  */
-public class TableCoordinate {
+public class GridCoordinate {
 
     private final String id;
     private boolean visible;
 
-    protected TableCoordinate(String id) {
+    protected GridCoordinate(String id) {
         this.id = id;
         this.visible = true;
     }
@@ -25,16 +25,16 @@ public class TableCoordinate {
         return visible;
     }
     
-    public TableCoordinate setVisible(boolean visible) {
+    public GridCoordinate setVisible(boolean visible) {
         this.visible = visible;
         return this;
     }
     
-    public TableCoordinate show() {
+    public GridCoordinate show() {
         return setVisible(true);
     }
     
-    public TableCoordinate hide() {
+    public GridCoordinate hide() {
         return setVisible(false);
     }
     
@@ -44,7 +44,7 @@ public class TableCoordinate {
         if (other == null) return false;
         if (other.getClass() != this.getClass()) return false;
         
-        return Objects.equal(this.id, ((TableCoordinate)other).id);
+        return Objects.equal(this.id, ((GridCoordinate)other).id);
     }
     
     @Override
@@ -52,20 +52,20 @@ public class TableCoordinate {
         return Objects.hashCode(id);
     }
     
-    public static TableSimpleCoordinate from(Object column) {
-        return new TableSimpleCoordinate(column.toString());
+    public static GridSimpleCoordinate from(Object column) {
+        return new GridSimpleCoordinate(column.toString());
     }
    
-    public static TableSingleCoordinate from(Item item) {
-        return new TableSingleCoordinate(item, item.getFullURI());
+    public static GridSingleCoordinate from(Item item) {
+        return new GridSingleCoordinate(item, item.getFullURI());
     }
 
-    public static TableMultiCoordinate from(Iterable<Item> items) {
+    public static GridMultiCoordinate from(Iterable<Item> items) {
         StringBuilder id = new StringBuilder();
         for (Item item:items) {
             id.append(item.getFullURI());
         }
-        return new TableMultiCoordinate(items, id.toString());
+        return new GridMultiCoordinate(items, id.toString());
     }
     
 }

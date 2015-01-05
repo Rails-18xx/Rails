@@ -3,13 +3,13 @@ package net.sf.rails.ui.swing.core;
 import net.sf.rails.game.state.Item;
 
 /**
- * A TableSingleCoordinate is a coordinate built from one Item
+ * A GridSingleCoordinate is a coordinate built from one Item
  */
-public class TableSingleCoordinate extends TableCoordinate {
+public class GridSingleCoordinate extends GridCoordinate {
     
     private final Item item;
 
-    protected TableSingleCoordinate(Item item, String id) {
+    protected GridSingleCoordinate(Item item, String id) {
         super(id);
         this.item = item;
     }
