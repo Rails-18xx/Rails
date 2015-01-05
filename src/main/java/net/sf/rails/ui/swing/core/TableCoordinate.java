@@ -1,5 +1,7 @@
 package net.sf.rails.ui.swing.core;
 
+import com.google.common.base.Objects;
+
 import net.sf.rails.game.state.Item;
 
 /**
@@ -34,6 +36,20 @@ public class TableCoordinate {
     
     public TableCoordinate hide() {
         return setVisible(false);
+    }
+    
+    @Override
+    public boolean equals(Object other) {
+        if (other == this) return true;
+        if (other == null) return false;
+        if (other.getClass() != this.getClass()) return false;
+        
+        return Objects.equal(this.id, ((TableCoordinate)other).id);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
     
     public static TableSimpleCoordinate from(Object column) {
