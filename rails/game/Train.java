@@ -180,4 +180,8 @@ public class Train implements TrainI {
         return b.toString();
     }
 
+    public boolean isETrain() {
+        return false;
+    }
+
 }

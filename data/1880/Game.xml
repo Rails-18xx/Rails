@@ -84,7 +84,7 @@
 		
 		<!-- The e-type trains are express trains that can ignore towns/cities on their way for a maximum payout-->
 		<TrainType name="8" majorStops="8" cost="800" quantity="2">
-            <Score scoreTowns="no" scoreCities="Yes" />
+            <Score scoreTowns="Yes" scoreCities="Yes" />
 			<NewPhase phaseName="8"/>
 		</TrainType>
 		<TrainType name="8E" majorStops="8" cost="900" quantity="2">
