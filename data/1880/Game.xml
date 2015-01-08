@@ -182,6 +182,7 @@
 			<Modifier class="rails.game.specific._1880.FerryConnectionModifier"/>
 			<Modifier class="rails.game.specific._1880.TaiwanWesternModifier"/>
             <Modifier class="rails.game.specific._1880.TransSibModifier"/>
+            <Modifier class="rails.game.specific._1880.ExpressTrainModifier"/>
 		</Component>
 		
 </ComponentManager>

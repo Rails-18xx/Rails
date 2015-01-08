@@ -81,6 +81,7 @@ public final class NetworkTrain implements Comparable<NetworkTrain>{
             ignoreTowns = true;
             isETrain = true;
             multiplyTowns = 0;
+            cities = 99; //for now in 1880, specific RevenueDynamicModifiers needed !!
         } else if (t.contains("D")) {
             log.info("RA: found Double Express train");
             cities = Integer.parseInt(t.replace("D",  ""));
