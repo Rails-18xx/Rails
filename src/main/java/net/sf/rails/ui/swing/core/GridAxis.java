@@ -1,5 +1,6 @@
 package net.sf.rails.ui.swing.core;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,12 +13,14 @@ import com.google.common.collect.Lists;
 /**
  * GridAxis is used as the set of column or rows coordinates for a table
  */
-public class GridAxis {
+public class GridAxis implements Iterator<GridCoordinate> {
 
     private static final String PRECON_COORD_CONTAINED = "Coordinate %s already contained in GridAxis";
     private static final String PRECON_COORD_MISSING = "Coordinate %s is missing in GridAxis, but was expected";
     
     private final ImmutableList<GridCoordinate> axis;
+    
+    private int current = 0;
     
     private GridAxis(List<GridCoordinate> axis) {
         this.axis = ImmutableList.copyOf(axis);
@@ -27,6 +30,32 @@ public class GridAxis {
         return axis;
     }
     
+    public int size() {
+        return axis.size();
+    }
+    
+    public GridCoordinate first() {
+        current = 0;
+        return next();
+    }
+    
+    // Iterator interface
+    @Override
+    public boolean hasNext() {
+        return (current < axis.size());
+    }
+
+    @Override
+    public GridCoordinate next() {
+        return axis.get(current++);
+    }
+
+    @Override
+    public void remove() {
+        throw new UnsupportedOperationException();
+        
+    }
+
     public static Builder builder() {
         return new Builder();
     }
@@ -43,13 +72,23 @@ public class GridAxis {
             return this;
         }
         
-        public Builder add(Object column) {
-            axis.add(GridCoordinate.from(column));
+        public Builder add(String id) {
+            axis.add(GridCoordinate.from(id));
             return this;
         }
-         
-        public <R extends Item> Builder add(Iterable<R> items) {
-            axis.add(GridMultiCoordinate.from(items));
+        
+        public Builder add(Enum<?> e) {
+            axis.add(GridCoordinate.from(e));
+            return this;
+        }
+        
+        public Builder add(Item item) {
+            axis.add(GridCoordinate.from(item));
+            return this;
+        }
+        
+        public <T extends Item> Builder add(Iterable<T> items, Class<T> clazz) {
+            axis.add(GridMultiCoordinate.from(items, clazz));
             return this;
         }
 

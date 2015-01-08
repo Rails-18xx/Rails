@@ -7,14 +7,20 @@ import net.sf.rails.game.state.Item;
  */
 public class GridMultiCoordinate extends GridCoordinate {
 
-    private final Iterable<Item> items;
+    private final Iterable<? extends Item> items;
+    private final Class<? extends Item> clazz;
     
-    protected GridMultiCoordinate(Iterable<Item> items, String id) {
+    protected GridMultiCoordinate(Iterable<? extends Item> items, Class<? extends Item> clazz, String id) {
         super(id);
         this.items = items;
+        this.clazz = clazz;
     }
     
-    public Iterable<Item> getItems() {
+    public Class<? extends Item> getItemClass() {
+        return clazz;
+    }
+    
+    public Iterable<? extends Item> getItems() {
         return items;
     }
     
