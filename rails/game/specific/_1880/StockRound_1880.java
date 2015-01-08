@@ -94,6 +94,10 @@ public class StockRound_1880 extends StockRound {
         }
        
         company.setFloated(); 
+        //If someone floats a company with 40% share and investor the usual routines fails, this will be handled below
+        if (((PublicCompany_1880) company).checkToFullyCapitalize()) {
+            cash = 5* price;
+        }
 
         if (cash > 0) {
             new CashMove(bank, company, cash);

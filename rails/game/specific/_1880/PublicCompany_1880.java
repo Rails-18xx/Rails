@@ -317,11 +317,13 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
         checkToFullyCapitalize();
     }
     
-    private void checkToFullyCapitalize() {
+    protected  boolean checkToFullyCapitalize() {
         if ((hasFloated() == true) && (sharesInIpo() <= 5) && (fullCapitalAvailable.booleanValue() == true) && (getFloatPercentage() != 60)) {
             fullyCapitalized.set(true);
             addCash(extraCapital);  // TODO: Should this be a "MOVE" instead?
+            return true;
         }
+        return false;
     }
     
     public ModelObject getRightsModel () {
