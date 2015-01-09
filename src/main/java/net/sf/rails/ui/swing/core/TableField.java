@@ -9,7 +9,7 @@ import net.sf.rails.game.state.ColorModel;
 import net.sf.rails.game.state.Observable;
 import net.sf.rails.game.state.Observer;
 
-public class TableField extends ItemUI {
+public class TableField {
 
     private final JComponent component;
     
@@ -17,10 +17,8 @@ public class TableField extends ItemUI {
     private final Observer tooltipObserver;
     private final Observer colorObserver;
     
-    private TableField(ItemUI parent, String id, JComponent component, String text, String tooltip, 
-            Color backgroundColor, Color foregroundColor,
+    private TableField(JComponent component, String text, String tooltip, GridColors colors,
             Observer textObserver, Observer tooltipObserver, Observer colorObserver) {
-        super(parent, id);
         
         this.component = component;
         
@@ -56,8 +54,8 @@ public class TableField extends ItemUI {
         
         // initialize background color
         Color initBackgroundColor = null;
-        if (backgroundColor != null) {
-            initBackgroundColor = backgroundColor;
+        if (colors != null && colors.background != null) {
+            initBackgroundColor = colors.background;
         } else if (colorObserver != null) {
             initBackgroundColor = ((ColorModel)colorObserver.getObservable()).getBackground();
         }
@@ -65,11 +63,11 @@ public class TableField extends ItemUI {
         if (initBackgroundColor != null) {
             component.setBackground(initBackgroundColor);
         }
-        
+
         // initialize foreground color
         Color initForegroundColor = null;
-        if (foregroundColor != null) {
-            initForegroundColor = foregroundColor;
+        if (colors != null && colors.foreground != null) {
+            initForegroundColor = colors.foreground;
         } else if (colorObserver != null) {
             initForegroundColor = ((ColorModel)colorObserver.getObservable()).getForeground();
         }
@@ -106,42 +104,37 @@ public class TableField extends ItemUI {
          }
     }
 
-    public static Builder buildLabel(ItemUI parent, String id) {
-        return new Builder(parent, id, new JLabel());
+    public static Builder builder(JComponent component) {
+        return new Builder(component);
     }
     
-    public static class Builder {
-        
-        private final ItemUI parent;
-        private final String id;
+    static class Builder {
         
         private final JComponent component;
 
         private String text;
         private String tooltip;
-        private Color backgroundColor;
-        private Color foregroundColor;
+        private GridColors colors;
         
         private Observer textObserver;
         private Observer tooltipObserver;
         private Observer colorObserver;
         
-        private Builder(ItemUI parent, String id, JComponent component) {
-            this.parent = parent;
-            this.id = id;
+        private Builder(JComponent component) {
             this.component = component;
         }
         
-        public TableField build() {
-            return new TableField(parent, id, component, text, tooltip, backgroundColor, foregroundColor,
+        TableField build() {
+            return new TableField(component, text, tooltip, colors,
                     textObserver, tooltipObserver, colorObserver);
         }
 
-        public void setText(String text) {
+        Builder setText(String text) {
             this.text = text;
+            return this;
         }
         
-        public void setText(final Observable observable) {
+        Builder setText(final Observable observable) {
             textObserver = new Observer() {
 
                 @Override
@@ -157,13 +150,15 @@ public class TableField extends ItemUI {
                 }
             };
             observable.addObserver(textObserver);
+            return this;
         }
         
-        public void setTooltip(String tooltip) {
+        Builder setTooltip(String tooltip) {
             this.tooltip = tooltip;
+            return this;
         }
 
-        public void setTooltip(final Observable observable) {
+        Builder setTooltip(final Observable observable) {
             tooltipObserver = new Observer() {
 
                 @Override
@@ -177,17 +172,15 @@ public class TableField extends ItemUI {
                 }
             };
             observable.addObserver(tooltipObserver);
+            return this;
         }
         
-        public void setBackgroundColor(Color color) {
-            this.backgroundColor = color;
+        Builder setColors(GridColors colors) {
+            this.colors = colors;
+            return this;
         }
         
-        public void setForegroundColor(Color color) {
-            this.foregroundColor = color;
-        }
-
-        public void setColorModel(final ColorModel model) {
+        Builder setColors(final ColorModel model) {
             colorObserver = new Observer() {
 
                 @Override
@@ -202,6 +195,7 @@ public class TableField extends ItemUI {
                 }
             };
             model.addObserver(colorObserver);
+            return this;
         }
     }
 

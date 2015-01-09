@@ -4,8 +4,6 @@ import net.sf.rails.game.state.ColorModel;
 import net.sf.rails.game.state.Item;
 import net.sf.rails.game.state.Observable;
 
-import java.awt.Color;
-
 public abstract class Accessor1D<T extends Item> {
 
     private final Class<T> clazz;
@@ -49,18 +47,18 @@ public abstract class Accessor1D<T extends Item> {
     }
     
     
-    public static abstract class AColor<T extends Item> extends Accessor1D<T> {
+    public static abstract class AColors<T extends Item> extends Accessor1D<T> {
 
-        protected AColor(Class<T> clazz) {
+        protected AColors(Class<T> clazz) {
             super(clazz);
         }
    
-        public Color get(Item item) {
+        public GridColors get(Item item) {
             T castItem = getClassT().cast(item);
             return access(castItem);
         }
         
-        protected abstract Color access(T item); 
+        protected abstract GridColors access(T item); 
  
     }
     
