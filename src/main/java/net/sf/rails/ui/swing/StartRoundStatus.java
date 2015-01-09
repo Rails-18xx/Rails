@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.sf.rails.game.Player;
 import net.sf.rails.game.StartItem;
+import net.sf.rails.ui.swing.accessors.PlayerAccessors;
 import net.sf.rails.ui.swing.core.GridAxis;
 import net.sf.rails.ui.swing.core.GridTable;
 
@@ -27,6 +28,7 @@ public class StartRoundStatus {
                 .build();
         
         GridTable table = GridTable.builder(rows, cols)
+                //.add(PlayerAccessors.NAME)
                 .build();
     }
 
