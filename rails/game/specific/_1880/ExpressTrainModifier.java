@@ -4,8 +4,6 @@ package rails.game.specific._1880;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-
 import rails.algorithms.NetworkTrain;
 import rails.algorithms.NetworkVertex;
 import rails.algorithms.RevenueAdapter;
@@ -17,10 +15,6 @@ import rails.algorithms.RevenueTrainRun;
      *
      */
     public class ExpressTrainModifier implements RevenueDynamicModifier {
-
-        
-        protected static Logger log =
-                Logger.getLogger(ExpressTrainModifier.class.getPackage().getName());
 
         private boolean hasExpress;
 
@@ -96,7 +90,6 @@ import rails.algorithms.RevenueTrainRun;
                          evaluationValue -= value;
                      }
                  }
-                 log.info("EvaluationValue:"+ evaluationValue);
                  return evaluationValue;
             }
                         

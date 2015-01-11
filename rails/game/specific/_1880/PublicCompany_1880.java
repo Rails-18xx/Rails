@@ -11,7 +11,6 @@ import rails.algorithms.RevenueStaticModifier;
 import rails.common.parser.ConfigurationException;
 import rails.common.parser.Tag;
 import rails.common.GuiDef;
-import rails.common.LocalText;
 import rails.game.*;
 import rails.game.model.ModelObject;
 import rails.game.move.MoveableHolder;
@@ -322,9 +321,6 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
         if ((hasFloated() == true) && (sharesInIpo() <= 5) && (fullCapitalAvailable.booleanValue() == true) && (getFloatPercentage() != 60)) {
             fullyCapitalized.set(true);
             addCash(extraCapital);  // TODO: Should this be a "MOVE" instead?
-            ReportBuffer.add(LocalText.getText("ReceivesCashforRestShares",
-                    this.getName(),
-                    Bank.format(extraCapital) ));
             return true;
         }
         return false;
