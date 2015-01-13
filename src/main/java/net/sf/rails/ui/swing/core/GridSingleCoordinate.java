@@ -1,5 +1,7 @@
 package net.sf.rails.ui.swing.core;
 
+import com.google.common.collect.ImmutableSet;
+
 import net.sf.rails.game.state.Item;
 
 /**
@@ -16,6 +18,11 @@ public class GridSingleCoordinate extends GridCoordinate {
 
     public Item getItem() {
         return item;
+    }
+
+    @Override
+    public ImmutableSet<TableCoordinate> toTableCoordinates() {
+        return ImmutableSet.of(TableCoordinate.from(this));
     }
 
 }

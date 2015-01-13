@@ -4,7 +4,8 @@ import java.util.List;
 
 import net.sf.rails.game.Player;
 import net.sf.rails.game.StartItem;
-import net.sf.rails.ui.swing.accessors.PlayerAccessors;
+import net.sf.rails.ui.swing.accessors.PlayerACCs;
+import net.sf.rails.ui.swing.accessors.StartItemACCs;
 import net.sf.rails.ui.swing.core.GridAxis;
 import net.sf.rails.ui.swing.core.GridTable;
 
@@ -15,7 +16,6 @@ public class StartRoundStatus {
     
     private enum Rows {HEADER, BID, FREE, FOOTER}
     private enum Cols {ITEM, BASE, MINIMUM, INFO}
-    
     
     public void create(List<StartItem> items, List<Player> players) {
         
@@ -28,7 +28,10 @@ public class StartRoundStatus {
                 .build();
         
         GridTable table = GridTable.builder(rows, cols)
-                //.add(PlayerAccessors.NAME)
+                .row().add("Item").add("Base Price").add("Min. Bid").add(PlayerACCs.NAME)
+                .row().add(StartItemACCs.NAME).add(StartItemACCs.BASE_PRICE).add(StartItemACCs.MIN_BID).add(StartItemACCs.CUR_BID)
+                .row().add("").add("").add("Bid").add(PlayerACCs.BLOCKED)
+                .row().add("").add("").add("Free").add(PlayerACCs.FREE)
                 .build();
     }
 

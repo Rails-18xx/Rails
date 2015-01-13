@@ -2,7 +2,6 @@ package net.sf.rails.ui.swing.core;
 
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 
 import net.sf.rails.game.state.Item;
 
@@ -13,47 +12,28 @@ import com.google.common.collect.Lists;
 /**
  * GridAxis is used as the set of column or rows coordinates for a table
  */
-public class GridAxis implements Iterator<GridCoordinate> {
+public class GridAxis implements Iterable<GridCoordinate> {
 
     private static final String PRECON_COORD_CONTAINED = "Coordinate %s already contained in GridAxis";
     private static final String PRECON_COORD_MISSING = "Coordinate %s is missing in GridAxis, but was expected";
     
-    private final ImmutableList<GridCoordinate> axis;
+    private final ImmutableList<GridCoordinate> coordinates;
     
-    private int current = 0;
-    
-    private GridAxis(List<GridCoordinate> axis) {
-        this.axis = ImmutableList.copyOf(axis);
+    private GridAxis(Iterable<GridCoordinate> axis) {
+        this.coordinates = ImmutableList.copyOf(axis);
     }
     
     public ImmutableList<GridCoordinate> getAxis() {
-        return axis;
+        return coordinates;
     }
     
     public int size() {
-        return axis.size();
+        return coordinates.size();
     }
     
-    public GridCoordinate first() {
-        current = 0;
-        return next();
-    }
-    
-    // Iterator interface
     @Override
-    public boolean hasNext() {
-        return (current < axis.size());
-    }
-
-    @Override
-    public GridCoordinate next() {
-        return axis.get(current++);
-    }
-
-    @Override
-    public void remove() {
-        throw new UnsupportedOperationException();
-        
+    public Iterator<GridCoordinate> iterator() {
+        return coordinates.iterator();
     }
 
     public static Builder builder() {
@@ -124,4 +104,5 @@ public class GridAxis implements Iterator<GridCoordinate> {
         
     }
 
+    
 }

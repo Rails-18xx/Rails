@@ -1,13 +1,14 @@
 package net.sf.rails.ui.swing.core;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableSet;
 
 import net.sf.rails.game.state.Item;
 
 /**
  * Abstract base class for coordinates used in GridTables
  */
-public class GridCoordinate {
+public abstract class GridCoordinate {
 
     private final String id;
     private boolean visible;
@@ -25,18 +26,17 @@ public class GridCoordinate {
         return visible;
     }
     
-    public GridCoordinate setVisible(boolean visible) {
-        this.visible = visible;
+    public GridCoordinate show() {
+        visible = true;
         return this;
     }
     
-    public GridCoordinate show() {
-        return setVisible(true);
+    public GridCoordinate hide() {
+        visible = false;
+        return this;
     }
     
-    public GridCoordinate hide() {
-        return setVisible(false);
-    }
+    public abstract ImmutableSet<TableCoordinate> toTableCoordinates();
     
     @Override
     public boolean equals(Object other) {

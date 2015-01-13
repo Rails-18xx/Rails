@@ -3,6 +3,7 @@ package net.sf.rails.ui.swing.core;
 import java.awt.Color;
 
 import net.sf.rails.game.state.Item;
+import net.sf.rails.game.state.Observable;
 
 public abstract class Accessor2D<T extends Item, S extends Item> {
     
@@ -34,7 +35,23 @@ public abstract class Accessor2D<T extends Item, S extends Item> {
             return access(castItemT, castItemS);
         }
         
-        public abstract String access(T itemT, S itemS);
+        protected abstract String access(T itemT, S itemS);
+        
+    }
+
+    public static abstract class AObservable<T extends Item, S extends Item> extends Accessor2D<T,S> {
+        
+        protected AObservable(Class<T> clazzT, Class<S> clazzS) {
+            super(clazzT, clazzS);
+        }
+        
+        public Observable get(Item itemT, Item itemS) {
+            T castItemT = getClassT().cast(itemT);
+            S castItemS = getClassS().cast(itemS);
+            return access(castItemT, castItemS);
+        }
+        
+        protected abstract Observable access(T itemT, S itemS);
         
     }
     
@@ -50,7 +67,7 @@ public abstract class Accessor2D<T extends Item, S extends Item> {
             return access(castItemT, castItemS);
         }
         
-        public abstract Color access(T itemT, S itemS);
+        protected abstract Color access(T itemT, S itemS);
         
     }
     

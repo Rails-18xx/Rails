@@ -1,5 +1,7 @@
 package net.sf.rails.ui.swing.core;
 
+import java.util.Iterator;
+
 import net.sf.rails.game.state.Item;
 import net.sf.rails.game.state.Observable;
 
@@ -22,6 +24,18 @@ public class GridTable {
         this.cols = builder.cols;
     }
     
+    ImmutableTable<GridCoordinate, GridCoordinate, GridField> getFields() {
+        return fields;
+    }
+    
+    GridAxis getRows() {
+        return rows;
+    }
+    
+    GridAxis getCols() {
+        return cols;
+    }
+    
     public static Builder builder(GridAxis rows, GridAxis cols) {
         return new Builder(rows, cols);
     }
@@ -34,32 +48,26 @@ public class GridTable {
         private final GridAxis rows;
         private final GridAxis cols;
         
+        private final Iterator<GridCoordinate> rowIterator;
+        private Iterator<GridCoordinate> colIterator;
         private GridCoordinate currentRow;
-        private GridCoordinate currentCol;
         private GridField currentField;
         
         private Builder(GridAxis rows, GridAxis cols) {
             this.rows = rows;
             this.cols = cols;
+            rowIterator = rows.iterator();
         }
 
         public Builder row() {
-            if (currentRow == null) {
-                currentRow = rows.first();
-            } else {
-                currentRow = rows.next();
-            }
-            currentCol = null; 
+            currentRow = rowIterator.next();
+            colIterator = cols.iterator();
             return this;
         }
         
         private Builder addField(GridField field) {
-            if (currentCol == null) {
-                currentCol = cols.first();
-            } else {
-                currentCol = cols.next();
-            }
             currentField = field;
+            GridCoordinate currentCol = colIterator.next();
             fields.put(currentRow, currentCol, currentField);
             return this;
         }
