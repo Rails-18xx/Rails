@@ -12,7 +12,7 @@ public abstract class Accessor1D<T extends Item> {
         this.clazz = clazz;
     }
     
-    public Class<T> getClassT() {
+    public Class<T> getItemClass() {
         return clazz;
     }
     
@@ -23,7 +23,7 @@ public abstract class Accessor1D<T extends Item> {
         }
         
         public String get(Item item) {
-            T castItem = getClassT().cast(item);
+            T castItem = getItemClass().cast(item);
             return access(castItem);
         }
         
@@ -38,7 +38,7 @@ public abstract class Accessor1D<T extends Item> {
         }
         
         public Observable get(Item item) {
-            T castItem = getClassT().cast(item);
+            T castItem = getItemClass().cast(item);
             return access(castItem);
         }
         
@@ -54,7 +54,7 @@ public abstract class Accessor1D<T extends Item> {
         }
    
         public GridColors get(Item item) {
-            T castItem = getClassT().cast(item);
+            T castItem = getItemClass().cast(item);
             return access(castItem);
         }
         
@@ -69,7 +69,7 @@ public abstract class Accessor1D<T extends Item> {
         }
    
         public ColorModel get(Item item) {
-            T castItem = getClassT().cast(item);
+            T castItem = getItemClass().cast(item);
             return access(castItem);
         }
         

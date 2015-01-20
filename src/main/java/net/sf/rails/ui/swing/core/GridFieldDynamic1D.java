@@ -2,12 +2,14 @@ package net.sf.rails.ui.swing.core;
 
 import javax.swing.JComponent;
 
+import com.google.common.base.Preconditions;
+
 import net.sf.rails.game.state.ColorModel;
 import net.sf.rails.game.state.Item;
 import net.sf.rails.game.state.Observable;
 
 class GridFieldDynamic1D extends GridField {
-    
+
     private Accessor1D<? extends Item> textAccessor;
     private Accessor1D<? extends Item> tooltipAccessor;
     private Accessor1D<? extends Item> colorAccessor;
@@ -25,8 +27,21 @@ class GridFieldDynamic1D extends GridField {
         this.colorAccessor = color;
         return this;
     }
+    
+    @Override
+    TableField toTableField(JComponent component, Item rowItem, Item colItem) {
+        Preconditions.checkArgument(rowItem == null ^ colItem == null, "Expected to be either rowItem or colItem to be null");
+        
+        Item item = (rowItem != null) ? rowItem : colItem;
+        Preconditions.checkArgument(item.getClass() == textAccessor.getItemClass(), 
+                "Expected item class to equal accessor class. However item class is %s, accessor class is %s",
+                item.getClass(), textAccessor.getItemClass());
+        
+        return buildTableField(component, item);
+    }
+        
 
-    TableField buildTableField(JComponent component, Item item) {
+    private TableField buildTableField(JComponent component, Item item) {
         TableField.Builder builder = TableField.builder(component);
 
         buildDefaults(builder);
@@ -60,4 +75,5 @@ class GridFieldDynamic1D extends GridField {
 
         return builder.build();
     }
+
 }

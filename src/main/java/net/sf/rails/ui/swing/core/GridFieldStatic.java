@@ -3,6 +3,7 @@ package net.sf.rails.ui.swing.core;
 import javax.swing.JComponent;
 
 import net.sf.rails.game.state.ColorModel;
+import net.sf.rails.game.state.Item;
 import net.sf.rails.game.state.Observable;
 
 class GridFieldStatic extends GridField {
@@ -29,11 +30,17 @@ class GridFieldStatic extends GridField {
         return this;
     }
     
-    TableField buildTableField(JComponent component) {
+    @Override
+    TableField toTableField(JComponent component, Item rowItem, Item colItem) {
+        return buildTableField(component);
+    }
+    
+    private TableField buildTableField(JComponent component) {
         TableField.Builder builder = TableField.builder(component);
         return buildDefaults(builder)
                 .setText(textObservable).setTooltip(tooltipObservable).setColors(colorModel)
                 .build();
     }
+
     
 }

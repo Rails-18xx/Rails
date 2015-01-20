@@ -1,5 +1,7 @@
 package net.sf.rails.ui.swing.core;
 
+import javax.swing.JComponent;
+
 import net.sf.rails.game.state.Item;
 import net.sf.rails.game.state.Observable;
 
@@ -23,6 +25,8 @@ abstract class GridField {
         this.colors = colors;
         return this;
     }
+    
+    abstract TableField toTableField(JComponent component, Item rowItem, Item colItem);
     
     TableField.Builder buildDefaults(TableField.Builder builder) {
         return builder.setText(text).setTooltip(tooltip).setColors(colors);

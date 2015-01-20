@@ -5,7 +5,7 @@ import com.google.common.collect.Table;
 
 public class TableUI extends ItemUI {
     
-    private final Table<TableCoordinate, TableCoordinate, TableField> fields =
+    private final Table<TableCoordinate,TableCoordinate,TableField> fields =
             HashBasedTable.create();
 
     private TableAxis rows;
@@ -29,6 +29,7 @@ public class TableUI extends ItemUI {
         TableUI table = new TableUI(parent, id);
         table.setRows(TableAxis.from(gridTable.getRows()));
         table.setCols(TableAxis.from(gridTable.getCols()));
+        
         return table;
     }
     
