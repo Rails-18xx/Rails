@@ -2,6 +2,9 @@ package net.sf.rails.ui.swing.core;
 
 import java.util.Iterator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.sf.rails.game.state.Item;
 import net.sf.rails.game.state.Observable;
 
@@ -18,6 +21,8 @@ public class GridTable {
     private final GridAxis rows;
     private final GridAxis cols;
     
+    private static Logger log = LoggerFactory.getLogger(GridTable.class);
+
     private GridTable(Builder builder) {
         this.fields = builder.fields.build();
         this.rows = builder.rows;
@@ -69,6 +74,7 @@ public class GridTable {
             currentField = field;
             GridCoordinate currentCol = colIterator.next();
             fields.put(currentRow, currentCol, currentField);
+            log.debug("Add field at {},{} ", currentRow, currentCol);
             return this;
         }
         

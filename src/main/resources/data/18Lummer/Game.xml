@@ -21,6 +21,9 @@
                 <EmergencyTrainBuying mustBuyCheapestTrain="no" mayBuyFromCompany="yes"/>
             </OperatingRound>
 		</GameParameters>
+		<GuiClasses>
+			<StartRoundWindow class="net.sf.rails.ui.swing.StartRoundWindowNG"/>
+		</GuiClasses>
 		<EndOfGame>
 			<Bankruptcy/>
 			<BankBreaks limit="0" finish="setOfORs"/>

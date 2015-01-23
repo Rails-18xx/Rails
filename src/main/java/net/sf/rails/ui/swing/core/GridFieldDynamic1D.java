@@ -1,7 +1,5 @@
 package net.sf.rails.ui.swing.core;
 
-import javax.swing.JComponent;
-
 import com.google.common.base.Preconditions;
 
 import net.sf.rails.game.state.ColorModel;
@@ -10,7 +8,7 @@ import net.sf.rails.game.state.Observable;
 
 class GridFieldDynamic1D extends GridField {
 
-    private Accessor1D<? extends Item> textAccessor;
+    private final Accessor1D<? extends Item> textAccessor;
     private Accessor1D<? extends Item> tooltipAccessor;
     private Accessor1D<? extends Item> colorAccessor;
     
@@ -29,7 +27,7 @@ class GridFieldDynamic1D extends GridField {
     }
     
     @Override
-    TableField toTableField(JComponent component, Item rowItem, Item colItem) {
+    TableField toTableField(Item rowItem, Item colItem) {
         Preconditions.checkArgument(rowItem == null ^ colItem == null, "Expected to be either rowItem or colItem to be null");
         
         Item item = (rowItem != null) ? rowItem : colItem;
@@ -37,14 +35,12 @@ class GridFieldDynamic1D extends GridField {
                 "Expected item class to equal accessor class. However item class is %s, accessor class is %s",
                 item.getClass(), textAccessor.getItemClass());
         
-        return buildTableField(component, item);
+        return buildTableField( item);
     }
         
 
-    private TableField buildTableField(JComponent component, Item item) {
-        TableField.Builder builder = TableField.builder(component);
-
-        buildDefaults(builder);
+    private TableField buildTableField(Item item) {
+        TableField.Builder builder = buildDefaults();
         
         if (textAccessor instanceof Accessor1D.AText) {
             String text = ((Accessor1D.AText<?>)textAccessor).get(item);

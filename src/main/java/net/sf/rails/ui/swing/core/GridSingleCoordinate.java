@@ -11,8 +11,8 @@ public class GridSingleCoordinate extends GridCoordinate {
     
     private final Item item;
 
-    protected GridSingleCoordinate(Item item, String id) {
-        super(id);
+    GridSingleCoordinate(Item item) {
+        super(item.getURI());
         this.item = item;
     }
 

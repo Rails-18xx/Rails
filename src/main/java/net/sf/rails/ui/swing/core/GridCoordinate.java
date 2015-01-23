@@ -52,6 +52,11 @@ public abstract class GridCoordinate {
         return Objects.hashCode(id);
     }
     
+    @Override
+    public String toString() {
+        return "#" + id;
+    }
+    
     public static GridSimpleCoordinate from(String id) {
         return new GridSimpleCoordinate(id);
     }
@@ -61,15 +66,11 @@ public abstract class GridCoordinate {
     }
     
     public static GridSingleCoordinate from(Item item) {
-        return new GridSingleCoordinate(item, item.getFullURI());
+        return new GridSingleCoordinate(item);
     }
     
     public static <T extends Item> GridMultiCoordinate from(Iterable<T> items, Class<T> clazz) {
-        StringBuilder id = new StringBuilder();
-        for (Item item:items) {
-            id.append(item.getFullURI());
-        }
-        return new GridMultiCoordinate(items, clazz, id.toString());
+        return new GridMultiCoordinate(items, clazz);
     }
     
 }

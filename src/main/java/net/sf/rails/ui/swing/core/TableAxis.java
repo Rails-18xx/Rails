@@ -1,8 +1,10 @@
 package net.sf.rails.ui.swing.core;
 
+import java.util.Iterator;
+
 import com.google.common.collect.ImmutableSet;
 
-class TableAxis {
+class TableAxis implements Iterable<TableCoordinate> {
 
     private final ImmutableSet<TableCoordinate> coordinates;
     
@@ -14,6 +16,12 @@ class TableAxis {
         return coordinates;
     }
     
+    // Iterable Interface
+    @Override
+    public Iterator<TableCoordinate> iterator() {
+        return coordinates.iterator();
+    }
+
     static TableAxis from(GridAxis gridAxis) {
         ImmutableSet.Builder<TableCoordinate> coordinates = ImmutableSet.builder();
         
@@ -23,5 +31,6 @@ class TableAxis {
         
         return new TableAxis(coordinates.build());
     }
+
 }
  

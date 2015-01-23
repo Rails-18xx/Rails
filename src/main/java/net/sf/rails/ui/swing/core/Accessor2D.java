@@ -1,7 +1,6 @@
 package net.sf.rails.ui.swing.core;
 
-import java.awt.Color;
-
+import net.sf.rails.game.state.ColorModel;
 import net.sf.rails.game.state.Item;
 import net.sf.rails.game.state.Observable;
 
@@ -15,11 +14,11 @@ public abstract class Accessor2D<T extends Item, S extends Item> {
         this.clazzS = clazzS;
     }
     
-    public Class<T> getClassT() {
+    public Class<T> getItemTClass() {
         return clazzT;
     }
     
-    public Class<S> getClassS() {
+    public Class<S> getItemSClass() {
         return clazzS;
     }
     
@@ -30,8 +29,8 @@ public abstract class Accessor2D<T extends Item, S extends Item> {
         }
         
         public String get(Item itemT, Item itemS) {
-            T castItemT = getClassT().cast(itemT);
-            S castItemS = getClassS().cast(itemS);
+            T castItemT = getItemTClass().cast(itemT);
+            S castItemS = getItemSClass().cast(itemS);
             return access(castItemT, castItemS);
         }
         
@@ -46,8 +45,8 @@ public abstract class Accessor2D<T extends Item, S extends Item> {
         }
         
         public Observable get(Item itemT, Item itemS) {
-            T castItemT = getClassT().cast(itemT);
-            S castItemS = getClassS().cast(itemS);
+            T castItemT = getItemTClass().cast(itemT);
+            S castItemS = getItemSClass().cast(itemS);
             return access(castItemT, castItemS);
         }
         
@@ -55,21 +54,37 @@ public abstract class Accessor2D<T extends Item, S extends Item> {
         
     }
     
-   public static abstract class AColor<T extends Item, S extends Item> extends Accessor2D<T,S> {
+    public static abstract class AColors<T extends Item, S extends Item> extends Accessor2D<T,S> {
         
-        protected AColor(Class<T> clazzT, Class<S> clazzS) {
+        protected AColors(Class<T> clazzT, Class<S> clazzS) {
             super(clazzT, clazzS);
         }
         
-        public Color get(Item itemT, Item itemS) {
-            T castItemT = getClassT().cast(itemT);
-            S castItemS = getClassS().cast(itemS);
+        public GridColors get(Item itemT, Item itemS) {
+            T castItemT = getItemTClass().cast(itemT);
+            S castItemS = getItemSClass().cast(itemS);
             return access(castItemT, castItemS);
         }
         
-        protected abstract Color access(T itemT, S itemS);
+        protected abstract GridColors access(T itemT, S itemS);
         
     }
-    
-    
+
+    public static abstract class AColorModel<T extends Item, S extends Item> extends Accessor2D<T,S> {
+        
+        protected AColorModel(Class<T> clazzT, Class<S> clazzS) {
+            super(clazzT, clazzS);
+        }
+        
+        public ColorModel get(Item itemT, Item itemS) {
+            T castItemT = getItemTClass().cast(itemT);
+            S castItemS = getItemSClass().cast(itemS);
+            return access(castItemT, castItemS);
+        }
+        
+        protected abstract ColorModel access(T itemT, S itemS);
+        
+    }
+
+
 }

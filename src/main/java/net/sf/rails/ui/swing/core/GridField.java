@@ -1,6 +1,7 @@
 package net.sf.rails.ui.swing.core;
 
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 
 import net.sf.rails.game.state.Item;
 import net.sf.rails.game.state.Observable;
@@ -26,9 +27,14 @@ abstract class GridField {
         return this;
     }
     
-    abstract TableField toTableField(JComponent component, Item rowItem, Item colItem);
+    JComponent getComponent() {
+        return new JLabel();
+    }
     
-    TableField.Builder buildDefaults(TableField.Builder builder) {
+    abstract TableField toTableField(Item rowItem, Item colItem);
+    
+    final TableField.Builder buildDefaults() {
+        TableField.Builder builder = TableField.builder(getComponent());
         return builder.setText(text).setTooltip(tooltip).setColors(colors);
     }
     

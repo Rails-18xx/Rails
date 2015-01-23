@@ -46,7 +46,6 @@ public abstract class Accessor1D<T extends Item> {
         
     }
     
-    
     public static abstract class AColors<T extends Item> extends Accessor1D<T> {
 
         protected AColors(Class<T> clazz) {
@@ -74,8 +73,6 @@ public abstract class Accessor1D<T extends Item> {
         }
         
         protected abstract ColorModel access(T item); 
-        
-        
         
     }
     

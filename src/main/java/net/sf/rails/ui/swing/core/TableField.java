@@ -17,33 +17,32 @@ public class TableField {
     private final Observer tooltipObserver;
     private final Observer colorObserver;
     
-    private TableField(JComponent component, String text, String tooltip, GridColors colors,
-            Observer textObserver, Observer tooltipObserver, Observer colorObserver) {
+    private TableField(Builder builder) {
         
-        this.component = component;
+        this.component = builder.component;
         
-        this.textObserver = textObserver;
-        this.tooltipObserver = tooltipObserver;
-        this.colorObserver = colorObserver;
+        this.textObserver = builder.textObserver;
+        this.tooltipObserver = builder.tooltipObserver;
+        this.colorObserver = builder.colorObserver;
         
         // initialize text
         String initText = null;
-        if (text != null) {
-            initText = text;
+        if (builder.text != null) {
+            initText = builder.text;
         } else if (textObserver != null) {
             initText = textObserver.getObservable().toText();
         }
  
         if (initText != null) {
             if (component instanceof JLabel) {
-                ((JLabel)component).setText(text);
+                ((JLabel)component).setText(initText);
             }
         }
         
         // initialize tooltip
         String initTooltip = null;
-        if (tooltip != null) {
-            initTooltip = tooltip;
+        if (builder.tooltip != null) {
+            initTooltip = builder.tooltip;
         } else if (tooltipObserver != null) {
             initTooltip = tooltipObserver.getObservable().toText();
         }
@@ -54,8 +53,8 @@ public class TableField {
         
         // initialize background color
         Color initBackgroundColor = null;
-        if (colors != null && colors.background != null) {
-            initBackgroundColor = colors.background;
+        if (builder.colors != null && builder.colors.background != null) {
+            initBackgroundColor = builder.colors.background;
         } else if (colorObserver != null) {
             initBackgroundColor = ((ColorModel)colorObserver.getObservable()).getBackground();
         }
@@ -66,8 +65,8 @@ public class TableField {
 
         // initialize foreground color
         Color initForegroundColor = null;
-        if (colors != null && colors.foreground != null) {
-            initForegroundColor = colors.foreground;
+        if (builder.colors != null && builder.colors.foreground != null) {
+            initForegroundColor = builder.colors.foreground;
         } else if (colorObserver != null) {
             initForegroundColor = ((ColorModel)colorObserver.getObservable()).getForeground();
         }
@@ -76,16 +75,6 @@ public class TableField {
             component.setForeground(initForegroundColor);
         }
         
-        // add observers
-        if (textObserver != null) {
-            textObserver.getObservable().addObserver(textObserver);
-        }
-        if (tooltipObserver != null) {
-            tooltipObserver.getObservable().addObserver(tooltipObserver);
-        }
-        if (colorObserver != null) {
-            colorObserver.getObservable().addObserver(colorObserver);
-        }
     }
     
     public JComponent getUI() {
@@ -125,8 +114,7 @@ public class TableField {
         }
         
         TableField build() {
-            return new TableField(component, text, tooltip, colors,
-                    textObserver, tooltipObserver, colorObserver);
+            return new TableField(this);
         }
 
         Builder setText(String text) {

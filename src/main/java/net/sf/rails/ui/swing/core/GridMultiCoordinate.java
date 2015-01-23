@@ -12,8 +12,8 @@ public class GridMultiCoordinate extends GridCoordinate {
     private final Iterable<? extends Item> items;
     private final Class<? extends Item> clazz;
     
-    protected GridMultiCoordinate(Iterable<? extends Item> items, Class<? extends Item> clazz, String id) {
-        super(id);
+    GridMultiCoordinate(Iterable<? extends Item> items, Class<? extends Item> clazz) {
+        super(clazz.getName());
         this.items = items;
         this.clazz = clazz;
     }

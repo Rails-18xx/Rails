@@ -1,7 +1,5 @@
 package net.sf.rails.ui.swing.core;
 
-import javax.swing.JComponent;
-
 import net.sf.rails.game.state.ColorModel;
 import net.sf.rails.game.state.Item;
 import net.sf.rails.game.state.Observable;
@@ -31,15 +29,23 @@ class GridFieldStatic extends GridField {
     }
     
     @Override
-    TableField toTableField(JComponent component, Item rowItem, Item colItem) {
-        return buildTableField(component);
+    TableField toTableField(Item rowItem, Item colItem) {
+        return buildTableField();
     }
     
-    private TableField buildTableField(JComponent component) {
-        TableField.Builder builder = TableField.builder(component);
-        return buildDefaults(builder)
-                .setText(textObservable).setTooltip(tooltipObservable).setColors(colorModel)
-                .build();
+    private TableField buildTableField() {
+        TableField.Builder builder = buildDefaults();
+        
+        if (textObservable != null) {
+            builder.setText(textObservable);
+        }
+        if (tooltipObservable != null) {
+            builder.setTooltip(tooltipObservable);
+        }
+        if (colorModel != null) {
+            builder.setColors(colorModel);
+        }
+        return builder.build();
     }
 
     
