@@ -1,5 +1,10 @@
 package net.sf.rails.ui.swing.core;
 
+import javax.swing.JPanel;
+
+import net.java.dev.designgridlayout.DesignGridLayout;
+import net.java.dev.designgridlayout.IRow;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +24,20 @@ public class TableUI {
         this.rows = rows;
         this.cols = cols;
         this.fields = fields;
+    }
+    
+    public JPanel convertToPanel() {
+        
+        JPanel panel = new JPanel();
+        DesignGridLayout layout = new DesignGridLayout(panel);
+        
+        for (TableCoordinate tableRow:rows) {
+            IRow layoutRow =layout.row().grid();
+            for (TableCoordinate tableCol:cols) {
+                layoutRow.add(fields.get(tableRow, tableCol).getUI());
+            }
+        }
+        return panel;
     }
     
     public static TableUI from(GridTable gridTable) {

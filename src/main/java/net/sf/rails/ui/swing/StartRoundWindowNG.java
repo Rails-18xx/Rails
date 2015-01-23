@@ -17,6 +17,10 @@ public class StartRoundWindowNG extends StartRoundWindow {
         List<Player> players = parent.getPlayers();
         
         StartRoundStatus status = new StartRoundStatus(startItems, players);
+        
+        this.add(status.getPanel());
+        this.pack();
+        this.setVisible(true);
     }
 
     
