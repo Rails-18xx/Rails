@@ -1,0 +1,120 @@
+<?xml version="1.0"?>
+<CompanyManager>
+	<CompanyType name="Private" class="net.sf.rails.game.PrivateCompany">
+		<ClosingConditions>
+            <Phase>5</Phase>
+		</ClosingConditions>
+		<Tradeable toCompany="yes" lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
+		<Tradeable toPlayer="yes"/>	
+	</CompanyType>
+	<CompanyType name="Public" class="net.sf.rails.game.PublicCompany">
+		<CanBuyPrivates/>
+		<PoolPaysOut/>
+		<Float percentage="60"/>
+		<ShareUnit percentage="10"/>
+		<BaseTokens>
+			<!-- HomeBase lay options: "whenStarted", "whenFloated", "firstOR" (default) -->
+			<HomeBase lay="firstOR"/>
+			<!-- LayCost methods: only "sequence" (1830 style) implemented so far (default) -->
+			<LayCost method="sequence" cost="0,40,100"/>
+		</BaseTokens>
+		<Certificate type="President" shares="2"/>
+		<Certificate shares="1" number="8"/>
+		<Trains limit="4,3,2"/>
+        <CanUseSpecialProperties/>
+	</CompanyType>
+	<Company name="P-1" type="Private" basePrice="20" revenue="0"
+			longname="Private 1">
+		<Blocking hex="F5"/>
+<!-- 		TODO Special: Extra Tile on F6 -->
+	</Company>
+	<Company name="P-2" type="Private" basePrice="40" revenue="5"
+			longname="Private 2">
+		<Blocking hex="F15,G16"/>
+<!-- 		TODO Special: Extra Token in hex without track -->
+	</Company>
+	<Company name="P-3" type="Private" basePrice="70" revenue="10"
+		longname="Private 3">
+		<Blocking hex="F9"/>
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByPlayer" when="anyTurn" class="net.sf.rails.game.special.ExchangeForShare">
+				<ExchangeForShare company="DV" share="10"/>
+			</SpecialProperty>
+		</SpecialProperties>
+	</Company>
+	<Company name="P-4" type="Private" basePrice="110" revenue="10"
+		longname="Private 4">
+		<Blocking hex="F19"/>
+		<Info key="ComesWithCertificate" parm="NCS,10"/>
+	</Company>
+	<Company name="P-5" type="Private" basePrice="160" revenue="10"
+		longname="Private 5">
+		<Blocking hex="E4,E6"/>
+		<Info key="ComesWithPresidency" parm="HIS,20"/>
+		<Tradeable toCompany="no"/>
+	</Company>
+	<Company name="P-6" type="Private" basePrice="200" revenue="15"
+		longname="Private 6">
+		<Blocking hex="J3,K2"/>
+		<Info key="ComesWithPresidency" parm="NFL,30"/>
+		<Tradeable toCompany="no"/>
+	</Company>
+	
+	<!-- Note two supported colour specification formats:
+	     RGB decimal with commas and RGB hexadecimal without commas -->
+	<Company name="AS" type="Public" tokens="4" fgColour="" bgColour="36,28,237"
+			longname="Almelo Salzbergen">
+		<Home hex="E16"/>
+	</Company>	     
+	<Company name="NCS" type="Public" tokens="4" fgColour="" bgColour=""
+			longname="Nederlandsche Centraal Spoorweg">
+		<Home hex="F13"/>
+	</Company>
+	<Company name="DV" type="Public" tokens="4" fgColour="" bgColour=""
+			longname="De Veluwe">
+		<Home hex="G8"/>
+	</Company>
+	<Company name="MES" type="Public" tokens="3" fgColour="" bgColour=""
+			longname="M. tot Exploitatie van Staatsspoorwegen">
+		<Home hex="J7"/>
+	</Company>
+	<Company name="HIS" type="Public" tokens="3" fgColour="" bgColour=""
+			longname="Hollandsche IJzeren Spoorwegen">
+		<Home hex="E6" city="1" />
+		<FirstTrainCloses type="Private" name="P-5"/>
+	</Company>
+	<Company name="NZO" type="Public" tokens="3" fgColour="" bgColour=""
+			longname="Nederlandsche Zuid-Ooster Spoorweg">
+		<Home hex="H13"/>
+	</Company>
+	<Company name="ZHE" type="Public" tokens="2" fgColour="" bgColour=""
+			longname="Zuid-Hollandsche Electrische Spoorweg">
+		<Home hex="G2"/>
+	</Company>
+	<Company name="NRS" type="Public" tokens="2" fgColour="" bgColour=""
+			longname="Nederlandsche Rhijnspoorweg">
+		<Home hex="E6" city="2" />
+	</Company>
+	<Company name="NFL" type="Public" tokens="2" fgColour="" bgColour=""
+			longname="Noord-Friesche Locaalspoorweg">
+		<Home hex="B15" />
+		<FirstTrainCloses type="Private" name="P-6"/>
+	</Company>
+	
+	<StartPacket roundClass="net.sf.rails.game.StartRound_1830">
+		<Bidding initial="5" minimum="5" increment="1"/>
+		<Item name="P-1" type="Private" basePrice="20"/>
+		<Item name="P-2" type="Private" basePrice="40"/> 
+<!-- TODO: P-2 is reduceable -->
+		<Item name="P-3" type="Private" basePrice="70"/>
+		<Item name="P-4" type="Private" basePrice="110">
+			<SubItem name="NCS" type="Public" />
+		</Item>		
+		<Item name="P-5" type="Private" basePrice="160">
+			<SubItem name="HIS" type="Public" president="yes"/>
+		</Item>
+		<Item name="P-6" type="Private" basePrice="200">
+			<SubItem name="NFL" type="Public" president="yes"/>
+		</Item>
+	</StartPacket>
+</CompanyManager>
