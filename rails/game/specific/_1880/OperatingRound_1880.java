@@ -359,9 +359,7 @@ public class OperatingRound_1880 extends OperatingRound {
                                 orControl.setLastCompanyToOperate(((PublicCompany_1880) operatingCompany.get()));
                                 orControl.setFinalOperatingRoundSequence(true);
                             }
-                            if (activeTrainTypeToDiscard.getName().equals("8E")) {
-                                orControl.setNoTrainsToDiscard(true);
-                            }
+
                             TrainI[] trainsToDiscard =
                                     bank.getIpo().getTrainsPerType(
                                             activeTrainTypeToDiscard);
@@ -378,6 +376,10 @@ public class OperatingRound_1880 extends OperatingRound {
                             // Need to make next train available !
                             trainManager.checkTrainAvailability(trainsToDiscard[0],
                                     ipo);
+                            if (activeTrainTypeToDiscard.getName().equals("8E")) {
+                                orControl.setNoTrainsToDiscard(true);
+                                break;
+                            }
                             if (orControl.getFinalOperatingRoundSequenceNumber()<2) { // The last switch to a stock round happens on the purchase/retirement of the 8-trains.
                             orControl.orExitToStockRound(operatingCompany.get(),
                                     OrStep.BUY_TRAIN);

@@ -75,7 +75,7 @@ public class GameManager_1880 extends GameManager {
             } else {
                 orControl.startedFromOperatingRound();
                 relativeORNumber.add(1);
-                startOperatingRound(true);
+                startOperatingRound(false);
             }
             
         }

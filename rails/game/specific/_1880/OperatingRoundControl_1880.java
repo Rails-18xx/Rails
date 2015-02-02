@@ -66,7 +66,7 @@ public class OperatingRoundControl_1880 {
 
     public void startNewOR() {
         exitingToStockRound.set(false);
-        nextStep.set(OrStep.INITIAL);        
+        nextStep.set(OrStep.INITIAL); 
     }
 
     public boolean wasStartedFromStockRound() {
