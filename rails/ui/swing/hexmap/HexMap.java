@@ -954,6 +954,16 @@ public abstract class HexMap implements MouseListener,
         if (hexAtMousePosition != null) hexAtMousePosition.removeHighlightRequest();
         if (newHex != null) newHex.addHighlightRequest();
         
+        //provide for upgrade tiles highlighting (remaining tiles window)
+        if ("yes".equals(Config.get("map.highlightHexes"))) {
+            RemainingTilesWindow rtw = orUIManager.getRemainingTilesWindows();
+            if (rtw != null) {
+                List<TileI> upgrades = null;
+                if (newHex != null) upgrades = newHex.getHexModel().getCurrentTile().getAllUpgrades(newHex.getHexModel());
+                rtw.setHighlightedTiles(upgrades);
+            }
+        }
+        
         //display tool tip
         setToolTipText(newHex != null ? newHex.getToolTip() : null);
         
@@ -967,6 +977,12 @@ public abstract class HexMap implements MouseListener,
         if (hexAtMousePosition != null) {
             hexAtMousePosition.removeHighlightRequest();
             hexAtMousePosition = null;
+        }
+        
+        //provide for upgrade tiles highlighting (remaining tiles window)
+        if ("yes".equals(Config.get("map.highlightHexes"))) {
+            RemainingTilesWindow rtw = orUIManager.getRemainingTilesWindows();
+            if (rtw != null) rtw.setHighlightedTiles(null);
         }
     }
 

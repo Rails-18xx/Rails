@@ -23,6 +23,7 @@ map.autoscroll=yes
 map.defaultZoomFitOption=none
 map.displayCurrentRoutes=no
 map.highlightHexes=no
+map.highlightUpgrades=no
 map.image.display=no
 map.zoomstep=10
 

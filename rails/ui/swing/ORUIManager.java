@@ -2064,6 +2064,14 @@ public class ORUIManager implements DialogOwner {
         return orPanel;
     }
 
+    public RemainingTilesWindow getRemainingTilesWindows() {
+        return remainingTiles;
+    }
+    
+    public void setRemainingTilesWindows(RemainingTilesWindow rtw) {
+        remainingTiles = rtw;
+    }
+    
     public GameUIManager getGameUIManager () {
         return gameUIManager;
     }
