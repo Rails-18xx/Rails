@@ -76,8 +76,8 @@
 		</TrainType>
         <TrainType name="2R" majorStops="2" cost="250" quantity="10">
         </TrainType>
-		<TrainType name="6E" majorStops="6" cost="700" quantity="5">
-            <Score scoreTowns="no" scoreCities="Yes" />
+		<TrainType name="6E" majorStops="99" cost="700" quantity="5">
+            <Score scoreTowns="yes" scoreCities="Yes" />
 			<NewPhase phaseName="6e"/>
 		</TrainType>
 		<!-- majorStops="-1" indicates that this not a normally running train-->
@@ -87,8 +87,8 @@
             <Score scoreTowns="Yes" scoreCities="Yes" />
 			<NewPhase phaseName="8"/>
 		</TrainType>
-		<TrainType name="8E" majorStops="8" cost="900" quantity="2">
-		    <Score scoreTowns="no" scoreCities="Yes" />
+		<TrainType name="8E" majorStops="99" cost="900" quantity="2">
+		    <Score scoreTowns="yes" scoreCities="Yes" />
 			<NewPhase phaseName="8e"/>
         </TrainType>
 				<!-- majorStops="-1" indicates that this not a normally running train-->
@@ -178,7 +178,7 @@
 		</Component>
 		<Component name="RevenueManager" class="rails.algorithms.RevenueManager">
 			<Modifier class="rails.game.specific._1880.OffBoardRevenueModifier_1880"/>
-			<Modifier class="rails.game.specific._1880.StockMarketBonusModifier"/>
+			<Modifier class="rails.game.specific._1880.NewStockMarketBonusModifier"/>
 			<Modifier class="rails.game.specific._1880.FerryConnectionModifier"/>
 			<Modifier class="rails.game.specific._1880.TaiwanWesternModifier"/>
             <Modifier class="rails.game.specific._1880.TransSibModifier"/>
