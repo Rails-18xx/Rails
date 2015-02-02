@@ -62,40 +62,40 @@
 	
 	<!-- Note two supported colour specification formats:
 	     RGB decimal with commas and RGB hexadecimal without commas -->
-	<Company name="AS" type="Public" tokens="4" fgColour="" bgColour="36,28,237"
+	<Company name="AS" type="Public" tokens="4" fgColour="255,255,255" bgColour="36,28,237"
 			longname="Almelo Salzbergen">
 		<Home hex="E16"/>
 	</Company>	     
-	<Company name="NCS" type="Public" tokens="4" fgColour="" bgColour=""
+	<Company name="NCS" type="Public" tokens="4" fgColour="255,255,255" bgColour="80,166,0"
 			longname="Nederlandsche Centraal Spoorweg">
 		<Home hex="F13"/>
 	</Company>
-	<Company name="DV" type="Public" tokens="4" fgColour="" bgColour=""
+	<Company name="DV" type="Public" tokens="4" fgColour="255,255,255" bgColour="57,54,54"
 			longname="De Veluwe">
 		<Home hex="G8"/>
 	</Company>
-	<Company name="MES" type="Public" tokens="3" fgColour="" bgColour=""
+	<Company name="MES" type="Public" tokens="3" fgColour="0,0,0" bgColour="239,173,0"
 			longname="M. tot Exploitatie van Staatsspoorwegen">
 		<Home hex="J7"/>
 	</Company>
-	<Company name="HIS" type="Public" tokens="3" fgColour="" bgColour=""
+	<Company name="HIS" type="Public" tokens="3" fgColour="255,255,255" bgColour="146,49,46"
 			longname="Hollandsche IJzeren Spoorwegen">
 		<Home hex="E6" city="1" />
 		<FirstTrainCloses type="Private" name="P-5"/>
 	</Company>
-	<Company name="NZO" type="Public" tokens="3" fgColour="" bgColour=""
+	<Company name="NZO" type="Public" tokens="3" fgColour="0,0,0" bgColour="242,255,255"
 			longname="Nederlandsche Zuid-Ooster Spoorweg">
 		<Home hex="H13"/>
 	</Company>
-	<Company name="ZHE" type="Public" tokens="2" fgColour="" bgColour=""
+	<Company name="ZHE" type="Public" tokens="2" fgColour="0,0,0" bgColour="186,200,255"
 			longname="Zuid-Hollandsche Electrische Spoorweg">
 		<Home hex="G2"/>
 	</Company>
-	<Company name="NRS" type="Public" tokens="2" fgColour="" bgColour=""
+	<Company name="NRS" type="Public" tokens="2" fgColour="0,0,0" bgColour="144,234,235"
 			longname="Nederlandsche Rhijnspoorweg">
 		<Home hex="E6" city="2" />
 	</Company>
-	<Company name="NFL" type="Public" tokens="2" fgColour="" bgColour=""
+	<Company name="NFL" type="Public" tokens="2" fgColour="0,0,0" bgColour="140,0,236"
 			longname="Noord-Friesche Locaalspoorweg">
 		<Home hex="B15" />
 		<FirstTrainCloses type="Private" name="P-6"/>
