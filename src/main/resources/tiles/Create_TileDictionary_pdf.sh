@@ -1,13 +1,13 @@
 # !/bin/bash
 # author Stefan Frey
-# requires installed tools: mmv and imagemagick (montage command)
+# requires installed tools: mmv and imagemagick (montage, mogrify commands)
 # use whereis to retrieve path information
 
 # creates temporary directory
 mkdir svg_catalog_tmp
 
 # convert svg to png
-java -jar ../lib/batik-1.7/batik-rasterizer.jar -d svg_catalog_tmp/ -w 400 -h 400 -dpi 400 -m image/png svg/ 
+/usr/bin/mogrify -path svg_catalog_tmp -density 100 -crop "450x380+0+0" +repage -format png svg/*.svg 
 
 # rename to have all filenames in -xxxxx.png notation
 /usr/bin/mmv 'svg_catalog_tmp/tile0.png' 'svg_catalog_tmp/m00000.png'
