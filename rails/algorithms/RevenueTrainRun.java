@@ -20,6 +20,10 @@ import rails.ui.swing.hexmap.HexMap;
  * Each object defines the run of one train
  *
  */
+
+// TODO Rails 2.0: Rewrite this using Guava
+// Make the vertex of the base token a specific member
+// Then avoid duplication of vertices
 public class RevenueTrainRun implements Comparable<RevenueTrainRun> {
 
     private static final int PRETTY_PRINT_LENGTH = 100;
@@ -52,6 +56,13 @@ public class RevenueTrainRun implements Comparable<RevenueTrainRun> {
      */
     public boolean hasAValidRun() {
         return vertices.size() >= 2;
+    }
+    
+    /**
+     * returns the vertex of the initial base token of the train run
+    */
+    public NetworkVertex getBaseVertex() {
+        return vertices.get(0);
     }
     
     /**

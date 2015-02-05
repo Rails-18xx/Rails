@@ -20,7 +20,7 @@ public class StockMarketBonusModifier implements RevenueDynamicModifier {
         company = revenueAdapter.getCompany();
         if (company instanceof PublicCompany_1880) {
             value = company.getCurrentSpace().getType().hasAddRevenue()*10;
-            return true;
+            return value != 0;
         }
         return false;
     }

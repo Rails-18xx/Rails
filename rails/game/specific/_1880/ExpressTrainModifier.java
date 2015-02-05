@@ -4,18 +4,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import rails.algorithms.NetworkTrain;
 import rails.algorithms.NetworkVertex;
 import rails.algorithms.RevenueAdapter;
 import rails.algorithms.RevenueDynamicModifier;
 import rails.algorithms.RevenueTrainRun;
-import rails.common.LocalText;
 
-    /**
-     * @author Martin Brumm - 2015-01-08
-     *
-     */
     public class ExpressTrainModifier implements RevenueDynamicModifier {
+        
+        protected static Logger log =
+                Logger.getLogger(ExpressTrainModifier.class);
 
         private boolean hasExpress;
 
@@ -46,15 +46,14 @@ import rails.common.LocalText;
             // check for valid run first
             if (!run.hasAValidRun()) return new ArrayList<NetworkVertex>();
             
-            NetworkVertex baseVertex = run.getFirstVertex();
+            NetworkVertex baseVertex = run.getBaseVertex();
    
-            // create a copy of runlist, Collections.sorts has side effects
-            List<NetworkVertex> nextVertices = new ArrayList<NetworkVertex>(
-                    run.getRunVertices().subList(1, run.getRunVertices().size())); 
-            
-            
-            Collections.sort(nextVertices); // Sort the Vertices by Value
-            List<NetworkVertex> expressVertices = nextVertices.subList(0, Math.min(nextVertices.size(),length-1));
+            // create a sorted list of the run vertices
+            List<NetworkVertex> otherVertices = new ArrayList<NetworkVertex>(run.getUniqueVertices()); 
+            otherVertices.remove(baseVertex);
+            Collections.sort(otherVertices);
+
+            List<NetworkVertex> expressVertices = otherVertices.subList(0, Math.min(otherVertices.size(),length-1));
             expressVertices.add(0, baseVertex);
             
             return expressVertices;
@@ -71,7 +70,10 @@ import rails.common.LocalText;
                     /*  We Found a run with an express Train, now we have to make sure that the result gets trimmed
                          to the maximum allowed stations, cause so far its a Diesel Train !
                      */
-                    int expressRunValue = NetworkVertex.sum(extractExpressRun(run, 6));
+                    if (optimalRuns) log.debug("Express Long Run = " + run.getRunVertices());
+                    List<NetworkVertex> expressRun = extractExpressRun(run, 6);
+                    if (optimalRuns) log.debug("Express Best Run = " + expressRun);
+                    int expressRunValue = NetworkVertex.sum(expressRun);
                     value += expressRunValue - run.getRunValue();
 
                 }
@@ -86,37 +88,27 @@ import rails.common.LocalText;
             return value;
         }
 
-        // this does not work yet, requires adjustments in underlying revenue code
-        // TODO: Rails 2.0
-//        private void adjustExpressRun(RevenueTrainRun run, List<NetworkVertex> expressVertices) {
-//            for (NetworkVertex vertex:new ArrayList<NetworkVertex>(run.getRunVertices())) {
-//                if (!expressVertices.contains(vertex)) {
-//                   run.getRunVertices().remove(vertex);
-//                }
-//            }
-//        }
-
         public void adjustOptimalRun(List<RevenueTrainRun> optimalRuns) {
             // this does not work yet, requires adjustments in underlying revenue code
             // TODO: Rails 2.0
             
-//            //Find out which Express Train is involved
-//            for (RevenueTrainRun run:optimalRuns) {
-//                
-//                if ((run.getTrain().getRailsTrainType() != null) 
-//                        && (run.getTrain().getRailsTrainType().getCertificateType().getName().equals("6E"))) {
-//                    /*  We Found a run with an express Train, now we have to make sure that the result gets trimmed
-//                         to the maximum allowed stations, cause so far its a Diesel Train !
-//                     */
-//                    adjustExpressRun(run, extractExpressRun(run, 6));
-//                }
-//                if ((run.getTrain().getRailsTrainType() != null) 
-//                        && (run.getTrain().getRailsTrainType().getCertificateType().getName().equals("8E"))) {
-//                    // We Found a run with an express Train, now we have to make sure that the result gets trimmed
-//                    // to the maximum allowed stations, cause so far its a Diesel Train !
-//                    adjustExpressRun(run, extractExpressRun(run, 8));
-//                }
-//            }
+            //Find out which Express Train is involved
+            for (RevenueTrainRun run:optimalRuns) {
+                
+                if ((run.getTrain().getRailsTrainType() != null) 
+                        && (run.getTrain().getRailsTrainType().getCertificateType().getName().equals("6E"))) {
+                    /*  We Found a run with an express Train, now we have to make sure that the result gets trimmed
+                         to the maximum allowed stations, cause so far its a Diesel Train !
+                     */
+                    run.getRunVertices().retainAll(extractExpressRun(run, 6));
+                }
+                if ((run.getTrain().getRailsTrainType() != null) 
+                        && (run.getTrain().getRailsTrainType().getCertificateType().getName().equals("8E"))) {
+                    // We Found a run with an express Train, now we have to make sure that the result gets trimmed
+                    // to the maximum allowed stations, cause so far its a Diesel Train !
+                    run.getRunVertices().retainAll(extractExpressRun(run, 8));
+                }
+            }
             
         }
 
@@ -129,7 +121,7 @@ import rails.common.LocalText;
         }
 
         public String prettyPrint(RevenueAdapter revenueAdapter) {
-            return LocalText.getText("1880ExpressAdjustment", evaluationValue(revenueAdapter.getOptimalRun(), true));
+            return null;
         }
 
  
