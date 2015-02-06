@@ -1,0 +1,102 @@
+<!-- 18NL Map file , based on Helmut Ohleys pdf files, available on http://www.ohley.de/18nl/download.htm
+  Download on 2015/Feb/06 -->
+<Map tileOrientation="EW" letterOrientation="vertical" even="A">
+	<Hex name="A12" tile="-800" orientation="0" />
+	<Hex name="A16" tile="-901" orientation="0" value="30,50" city="NE" />
+
+	<!-- tile -104 created for 18NL (numbering based on John Tamplin) -->
+	<Hex name="B5" tile="-104" orientation="0" />
+	<Hex name="B13" tile="0" />
+	<!--  tile -3020 created for 18NL (Rails numbering) -->
+	<Hex name="B15" tile="-3020" />
+	<Hex name="B17" tile="-902" orientation="0" value="30,50" city="NE" />
+	<Hex name="B19" tile="-901" orientation="0" value="30,50" city="NE" />
+
+	<Hex name="C6" tile="0" />
+	<Hex name="C8" tile="-1" />
+	<Hex name="C14" tile="0" />
+	<Hex name="C16" tile="0" />
+	<Hex name="C18" tile="-1" />
+	
+	<Hex name="D5" tile="-1" />
+	<Hex name="D7" tile="0" />
+	<Hex name="D13" tile="0" />
+	<Hex name="D15" tile="-1" />
+	<Hex name="D17" tile="0" />
+	
+	<Hex name="E4" tile="-10" cost="80" />
+	<!--  tile -3021 created for 18NL (Rails numbering) -->
+	<Hex name="E6" tile="-3021" orientation="0" cost="80" />
+	<Hex name="E12" tile="-1" />
+	<Hex name="E14" tile="0" />
+	<Hex name="E16" tile="-10" />
+	<Hex name="E18" tile="-1" />
+	<Hex name="E20" tile="-902" orientation="0" value="10,70" city="E1" />
+	
+	<Hex name="F3" tile="-1" cost="80" />
+	<Hex name="F5" tile="0" cost="80" />
+	<Hex name="F7" tile="-1" />
+	<Hex name="F9" tile="-10" />
+	<Hex name="F11" tile="0" />
+	<!--  tile -3022 created for 18NL (Rails numbering) -->
+	<Hex name="F13" tile="-3022" orientation="0" />
+	<Hex name="F15" tile="-10" />
+	<Hex name="F17" tile="0" />
+	<Hex name="F19" tile="-20" />
+	<!-- 	Check value (should be "--", see Lotringen in 1835) -->
+	<Hex name="F21" tile="-902" orientation="0" value="0,40" city="E2" />
+	
+	<!--  tile -3023 created for 18NL (Rails numbering) -->
+	<Hex name="G2" tile="-3023" />
+	<Hex name="G4" tile="-1" />
+	<Hex name="G6" tile="0" />
+	<Hex name="G8" tile="-10" />
+	<Hex name="G10" tile="0" />
+	<Hex name="G12" tile="0" />
+	<Hex name="G14" tile="0" />
+	<Hex name="G16" tile="0" />
+	<Hex name="G18" tile="0" />
+	
+	<Hex name="H1" tile="0" cost="80" />
+	<!--  tile -3024 created for 18NL (Rails numbering) -->
+	<Hex name="H3" tile="-3024" cost="80" />
+	<Hex name="H5" tile="0" cost="80" />
+	<Hex name="H7" tile="0" cost="80" />
+	<Hex name="H9" tile="0" cost="80" />
+	<Hex name="H11" tile="-1" cost="80" />
+	<Hex name="H13" tile="-20" cost="80" />
+	<Hex name="H15" tile="-1" />
+	<Hex name="H17" tile="0" />
+	
+	<Hex name="I2" tile="0" cost="120" />
+	<Hex name="I4" tile="-20" cost="80" />
+	<Hex name="I6" tile="0" cost="80" />
+	<Hex name="I8" tile="0" cost="80" />
+	<Hex name="I10" tile="-20" />
+	<Hex name="I12" tile="0" cost="80" />
+	<Hex name="I14" tile="-903" orientation="0" value="40,70" city="E3" />
+
+	<Hex name="J1" tile="0" cost="120" />
+	<Hex name="J3" tile="0" />
+	<Hex name="J5" tile="-10" />
+	<Hex name="J7" tile="-10" />
+	<Hex name="J9" tile="0" />
+	<Hex name="J11" tile="0" />
+	<Hex name="J13" tile="0" />
+	
+	<Hex name="K2" tile="0" cost="80" />
+	<Hex name="K6" tile="-7" orientation="0" />
+	<Hex name="K8" tile="0" />
+	<Hex name="K10" tile="-10" />
+	<Hex name="K12" tile="0" />
+	<Hex name="K14" tile="0" />
+	
+	<Hex name="L1" tile="-901" orientation="0" value="40,80" city="SW" />
+	<Hex name="L3" tile="-901" orientation="0" value="40,80" city="SW" />
+	<Hex name="L9" tile="-7" orientation="0" />
+	<Hex name="L11" tile="0" />
+	<Hex name="L13" tile="0" />
+	
+	<Hex name="M12" tile="-902" orientation="0" value="30,60" city="SE" />
+</Map>
+j
