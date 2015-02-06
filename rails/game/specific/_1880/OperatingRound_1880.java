@@ -378,7 +378,8 @@ public class OperatingRound_1880 extends OperatingRound {
                                     ipo);
                             if (activeTrainTypeToDiscard.getName().equals("8E")) {
                                 orControl.setNoTrainsToDiscard(true);
-                                break;
+                                result = done();
+                                return result;
                             }
                             if (orControl.getFinalOperatingRoundSequenceNumber()<2) { // The last switch to a stock round happens on the purchase/retirement of the 8-trains.
                             orControl.orExitToStockRound(operatingCompany.get(),
