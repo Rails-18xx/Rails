@@ -322,7 +322,7 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
         if ((hasFloated() == true) && (sharesInIpo() <= 5) && (fullCapitalAvailable.booleanValue() == true) && (getFloatPercentage() != 60)) {
             fullyCapitalized.set(true);
             addCash(extraCapital);  // TODO: Should this be a "MOVE" instead?
-            ReportBuffer.add(LocalText.getText("ReceivesCashforRestShares",
+            ReportBuffer.add(LocalText.getText("ReceivesCashforRemainingShares",
                     this.getName(),
                     Bank.format(extraCapital) ));
             return true;
