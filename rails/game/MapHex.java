@@ -909,6 +909,16 @@ StationHolder, TokenHolder {
             return false;
         }
         Stop city = mStops.get(station);
+        
+        if ( city == null) {
+            log.error("No valid Station/City on the hex available available");
+            //Make sure its the homebase lay then there should be a tokenspace (at least in 1880)
+            if (isHomeFor(company)){
+                //this fixes the problem with a company opening in brown when the home hexes
+                //of the Peking Cities have merged into one station
+              city = mStops.get(1);
+            }
+        }
 
         BaseToken token = company.getFreeToken();
         if (token == null) {
