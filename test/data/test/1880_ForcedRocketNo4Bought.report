@@ -400,6 +400,7 @@ CompanyOperates,JGG,andy
 BuysTrain,JGG,3,IPO,180
 FirstTrainBought,3
 StartOfPhase,3
+ReceivesCashforRemainingShares,HKR,400
  
 CompanyOperates,HKR,andy
 CompanyRevenue,HKR,0

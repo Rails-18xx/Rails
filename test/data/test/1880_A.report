@@ -619,6 +619,9 @@ PRICE_MOVES_LOG,CKR,80,D6,75,C6
 BuysTrain,CKR,3,IPO,180
 FirstTrainBought,3
 StartOfPhase,3
+ReceivesCashforRemainingShares,BCR,500
+ReceivesCashforRemainingShares,JGG,500
+ReceivesCashforRemainingShares,SCR,350
 BuysTrain,CKR,3,IPO,180
  
 CompanyOperates,SCR,mike
@@ -711,8 +714,10 @@ BUY_SHARE_LOG,todd,10,CKR,IPO,75
 BUY_SHARE_LOG,mike,10,NJR,IPO,115
 BUY_SHARE_LOG,andy,10,HKR,IPO,90
 BUY_SHARE_LOG,marc,10,CKR,IPO,75
+ReceivesCashforRemainingShares,CKR,400
 PASSES,todd
 BUY_SHARE_LOG,mike,10,NJR,IPO,115
+ReceivesCashforRemainingShares,NJR,500
 PASSES,andy
 PASSES,marc
 PASSES,todd
