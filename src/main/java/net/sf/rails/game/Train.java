@@ -116,6 +116,13 @@ public class Train extends RailsOwnableItem<Train> implements Creatable {
         return false;
     }
 
+    /**
+     * @return true => train is express train; false =>
+     */
+    public boolean isETrain() {
+        return false;
+    }
+
     public boolean isAssigned() {
         return type.value() != null;
     }

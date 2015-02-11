@@ -40,6 +40,7 @@
 		<Certificate type="President" shares="2"/>
 		<Certificate shares="1" number="8"/>
 		<BaseTokens>
+			<HomeBase lay="whenFloated"/>
 			<LayCost method="sequence" cost="0,40,100"/>
 		</BaseTokens>
 		<Trains limit="4,3,2"/>

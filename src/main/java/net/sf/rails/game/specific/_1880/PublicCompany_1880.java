@@ -13,6 +13,7 @@ import net.sf.rails.algorithms.RevenueAdapter;
 import net.sf.rails.algorithms.RevenueStaticModifier;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
+import net.sf.rails.game.Bank;
 import net.sf.rails.game.CompanyManager;
 import net.sf.rails.game.MapHex;
 import net.sf.rails.game.Phase;
@@ -27,6 +28,8 @@ import net.sf.rails.game.state.IntegerState;
 import net.sf.rails.game.state.Owner;
 import net.sf.rails.game.state.State;
 import net.sf.rails.common.GuiDef;
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.ReportBuffer;
 
 
 /**
@@ -306,11 +309,16 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
         checkToFullyCapitalize();
     }
     
-    private void checkToFullyCapitalize() {
+    protected boolean checkToFullyCapitalize() {
         if ((hasFloated() == true) && (sharesInIpo() <= 5) && (fullCapitalAvailable.value() == true) && (getFloatPercentage() != 60)) {
             fullyCapitalized.set(true);
             Currency.wire(getRoot().getBank(),extraCapital,this);  
+            ReportBuffer.add(this, LocalText.getText("ReceivesCashforRemainingShares",
+                    this.getLongName(),
+                    Bank.format(this, extraCapital) ));
+            return true;
         }
+        return false;
     }
     
    public State getRightsModel () {

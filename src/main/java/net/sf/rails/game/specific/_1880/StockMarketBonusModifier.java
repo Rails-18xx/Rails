@@ -9,22 +9,24 @@ import net.sf.rails.common.LocalText;
 import net.sf.rails.game.PublicCompany;
 
 /**
- * StockMarketBonus is a fixed addition to the revenue, however it is easy to implement
- * as a dynamic ex-post modifier
+ * StockMarketBonus is a fixed addition to the revenue, however it is easy to
+ * implement as a dynamic ex-post modifier
  */
 
 public class StockMarketBonusModifier implements RevenueDynamicModifier {
 
     private int bonusValue;
-    
+
     public boolean prepareModifier(RevenueAdapter revenueAdapter) {
-        PublicCompany company = revenueAdapter.getCompany(); 
-        if (!(company instanceof PublicCompany_1880)) return false;
-        
-        bonusValue = company.getCurrentSpace().getType().hasAddRevenue() * 10; 
-        return true;
+        PublicCompany company = revenueAdapter.getCompany();
+        if (company instanceof PublicCompany_1880) {
+            bonusValue =
+                    company.getCurrentSpace().getType().hasAddRevenue() * 10;
+            return true;
+        }
+        return false;
     }
-    
+
     public int predictionValue() {
         return bonusValue;
     }
@@ -33,8 +35,7 @@ public class StockMarketBonusModifier implements RevenueDynamicModifier {
         return bonusValue;
     }
 
-    public void adjustOptimalRun(List<RevenueTrainRun> optimalRuns) {        
-    }
+    public void adjustOptimalRun(List<RevenueTrainRun> optimalRuns) {}
 
     public boolean providesOwnCalculateRevenue() {
         return false;

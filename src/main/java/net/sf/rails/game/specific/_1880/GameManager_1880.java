@@ -71,7 +71,7 @@ public class GameManager_1880 extends net.sf.rails.game.GameManager {
             } else {
                 orControl.startedFromOperatingRound();
                 relativeORNumber.add(1);
-                startOperatingRound(true);
+                startOperatingRound(false);
             }
             
         }

@@ -343,6 +343,17 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         return maximum;
     }
 
+    
+    /**
+     * Return the sum of vertex values
+     */
+    public static int sum(Collection<NetworkVertex> vertices) {
+        int sum = 0;
+        for (NetworkVertex vertex:vertices) {
+            sum += vertex.getValue();
+        }
+        return sum;
+    }
 
     /**
      * Returns the number of specified vertex type in a vertex collection

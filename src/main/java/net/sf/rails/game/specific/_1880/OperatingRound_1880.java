@@ -357,9 +357,7 @@ public class OperatingRound_1880 extends OperatingRound {
                                 orControl.setLastCompanyToOperate(((PublicCompany_1880) operatingCompany.value()));
                                 orControl.setFinalOperatingRoundSequence(true);
                             }
-                            if (activeTrainTypeToDiscard.getName().equals("8E")) {
-                                orControl.setNoTrainsToDiscard(true);
-                            }
+                           
                             Train[] trainsToDiscard =
                                     bank.getIpo().getPortfolioModel().getTrainsPerType(
                                             activeTrainTypeToDiscard);
@@ -376,6 +374,11 @@ public class OperatingRound_1880 extends OperatingRound {
                             // Need to make next train available !
                             trainManager.checkTrainAvailability(trainsToDiscard[0],
                                     ipo.getParent());
+                            if (activeTrainTypeToDiscard.getName().equals("8E")) {
+                                orControl.setNoTrainsToDiscard(true);
+                                result = done(nullAction);
+                                return result;
+                            }
                             orControl.orExitToStockRound(operatingCompany.value(),
                                     OrStep.BUY_TRAIN);
                             setActionForPrivateExchange(activeTrainTypeToDiscard);
@@ -469,8 +472,11 @@ public class OperatingRound_1880 extends OperatingRound {
         if ((getStep() == GameDef.OrStep.BUY_TRAIN)
             && (operatingCompany.value() instanceof Investor_1880)) {
             //Only way to get here is if this is a connected Investor...
-            possibleActions.add(new CloseInvestor_1880 ((Investor_1880) operatingCompany.value()));
+            Investor_1880 investor = (Investor_1880) (operatingCompany.value());
+            if (investor.isConnectedToLinkedCompany() ) {
+            possibleActions.add(new CloseInvestor_1880((Investor_1880) operatingCompany.value()));
             return true;
+            }
         }
 
         return super.setPossibleActions();
