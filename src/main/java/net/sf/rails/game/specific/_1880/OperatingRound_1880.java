@@ -332,7 +332,7 @@ public class OperatingRound_1880 extends OperatingRound {
                 if (operatingCompany.value() == orControl.lastCompanyToBuyTrain()) {
                     
                     // Need to create the final Jumpoff Point there to end the game !
-                    if ((gameManager.getRelativeORNumber() == 3) && (orControl.isFinalOperatingRoundSequence())){
+                    if ((gameManager.getRelativeORNumber() == 4) && (orControl.isFinalOperatingRoundSequence())){
                     finishOR();
                     }
                     
