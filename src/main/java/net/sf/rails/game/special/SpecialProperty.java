@@ -7,32 +7,29 @@ import net.sf.rails.common.parser.Configurable;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Configure;
 import net.sf.rails.common.parser.Tag;
-import net.sf.rails.game.*;
+import net.sf.rails.game.Company;
+import net.sf.rails.game.GameDef;
+import net.sf.rails.game.GameManager;
+import net.sf.rails.game.PrivateCompany;
+import net.sf.rails.game.RailsItem;
+import net.sf.rails.game.RailsOwnableItem;
+import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.state.BooleanState;
-import net.sf.rails.util.*;
+import net.sf.rails.util.Util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
+public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> implements Configurable {
 
+    protected static Logger log = LoggerFactory.getLogger(SpecialProperty.class);
 
-public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
-    implements Configurable {
+    protected static final String STORAGE_NAME = "SpecialProperty";
 
-    // copied from SpecialProperty
-    public enum Priority {
-        LAST,
-        ASKUSER,
-        FIRST;
-    };
-    
-    public static final Priority DEFAULT_PRIORITY = Priority.FIRST;
-    
+    protected final BooleanState exercised = BooleanState.create(this, "exercised");
     protected Company originalCompany;
-    protected int closingValue = 0;
-    private final BooleanState exercised = BooleanState.create(this, "exercised");
     
     /* Usability conditions. Not all of these are already being used. */
     protected boolean usableIfOwnedByPlayer = false;
@@ -49,44 +46,39 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty>
     protected boolean isORProperty = false;
     protected boolean isSRProperty = false;
     
-    /** Priority indicates whether or not the UI should assign priority to
-     * the execution of a PossibleAction. For instance, if the same tile can
-     * be laid on a hex using this special property, and by not using it, 
-     * this attribute indicates which option will be used.
-     * TODO A third value means: ask the user (NOT YET IMPLEMENTED).
-     */
-    protected Priority priority = DEFAULT_PRIORITY;
-    
     /** Optional descriptive text, for display in menus and info text.
      * Subclasses may put real text in it.
      */
     protected String description = "";
 
     protected int uniqueId;
-    
-    protected static final String STORAGE_NAME = "SpecialProperty";
-
-    protected static Logger log =
-        LoggerFactory.getLogger(SpecialProperty.class);
 
     protected SpecialProperty(RailsItem parent, String id) {
         super(parent, convertId(id) , SpecialProperty.class);
         uniqueId = Integer.valueOf(id);
         getRoot().getGameManager().storeObject(STORAGE_NAME, this);
     }
+
+    // TODO: Rails 2.0: Move this to a new SpecialPropertyManager
     
     // convert to the full id used 
     private static String convertId(String id) {
         return STORAGE_NAME + "_" + id;
     }
-
-    /** 
-     * @return Special Property unique_id 
-     */
-    public static String createUniqueId() {
+    
+    // return new storage id
+    private static String createUniqueId() {
         return String.valueOf(GameManager.getInstance().getStorageId(STORAGE_NAME) + 1);
         // increase unique id to allow loading old save files (which increase by 1)
         // TODO: remove that legacy issue
+    }
+
+    // return special property by unique id
+    public static SpecialProperty getByUniqueId(int id) {
+        id -= 1;
+        // decrease retrieval id to allow loading old save files (which increase by 1)
+        // TODO: remove that legacy issue
+        return (SpecialProperty)GameManager.getInstance().retrieveObject(STORAGE_NAME, id);
     }
 
    public void configureFromXML(Tag tag) throws ConfigurationException {
@@ -114,31 +106,14 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty>
         // sfy 1889
         permanent = tag.getAttributeAsBoolean("permanent", false);  
         
-        String priorityString = tag.getAttributeAsString("priority");
-        if (Util.hasValue(priorityString)) {
-            try {
-                priority = Priority.valueOf(priorityString.toUpperCase());
-            } catch (IllegalArgumentException e) {
-                throw new ConfigurationException ("Illegal value for SpecialProperty priority: "+priorityString, e);
-            }
-        }
-        
     }
     
-    public void finishConfiguration (RailsRoot root)
-    throws ConfigurationException {
-
+    public void finishConfiguration (RailsRoot root) throws ConfigurationException {
+        // do nothing specific
     }
 
     public int getUniqueId() {
         return uniqueId;
-    }
-
-    public static SpecialProperty getByUniqueId(int id) {
-        id -= 1;
-        // decrease retrieval id to allow loading old save files (which increase by 1)
-        // TODO: remove that legacy issue
-        return (SpecialProperty)GameManager.getInstance().retrieveObject(STORAGE_NAME, id);
     }
 
     // Sets the first (time) owner
@@ -241,10 +216,6 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty>
     public abstract boolean isExecutionable(); 
     
 
-    public int getClosingValue() {
-        return closingValue;
-    }
-
     public boolean isSRProperty() {
         return isSRProperty;
     }
@@ -256,32 +227,6 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty>
     public String getTransferText() {
         return transferText;
     }
-
-    public Priority getPriority() {
-        return priority;
-    }
-
-    public void setPriority(Priority priority) {
-        this.priority = priority;
-    }
-
-    /**
-     * Move the special property to another holder.
-     * Only to be used for special properties that have the "transfer" attribute.
-     */
-    // FIXME: This is not used anymore, however we have to check for transfer attribute somewhere
-//    public void moveTo(PortfolioHolder newOwner) {
-//        if (transferText.equals("")) return;
-//        Owners.move(this, newOwner);
-//    }
-
-    
-    // FIXME: The toString() methods are removed, change calls to those
-//    @Override
-//    public String toString() {
-//        return getClass().getSimpleName() + " of private "
-//               + originalCompany.getId();
-//    }
 
     /**
      * Default menu item text, should be by all special properties that can

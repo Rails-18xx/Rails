@@ -22,12 +22,12 @@
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany"
 				when="anyTimeDuringORTurn"
-				class="net.sf.rails.game.special.SpecialTokenLay">
-				<SpecialTokenLay class="net.sf.rails.game.BonusToken"
+				class="net.sf.rails.game.special.SpecialBonusTokenLay">
+				<SpecialBonusTokenLay class="net.sf.rails.game.BonusToken"
 					location="E6,G4,G6,H3,H5" connected="yes" extra="yes">
 					<BonusToken name="Coalfield" value="10"
 						removed="Phase:6" />
-				</SpecialTokenLay>
+				</SpecialBonusTokenLay>
 			</SpecialProperty>
 		</SpecialProperties>
 	</Company>

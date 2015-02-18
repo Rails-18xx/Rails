@@ -33,7 +33,7 @@ import net.sf.rails.game.TrackConfig;
 import net.sf.rails.game.Train;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.special.SpecialTileLay;
-import net.sf.rails.game.special.SpecialTokenLay;
+import net.sf.rails.game.special.SpecialBaseTokenLay;
 import net.sf.rails.game.state.Owner;
 import net.sf.rails.sound.SoundManager;
 import net.sf.rails.ui.swing.elements.CheckBoxDialog;
@@ -375,7 +375,7 @@ public class ORUIManager implements DialogOwner {
 
             for (LayBaseToken tokenLay : tokenLays) {
                 sp = tokenLay.getSpecialProperty();
-                if (sp != null && sp instanceof SpecialTokenLay) {
+                if (sp != null && sp instanceof SpecialBaseTokenLay) {
                     extraMessage += "<br>" + sp.getHelp();
                 } else if ((locations = tokenLay.getLocationNameString()) != null) {
                     if (normalTokenMessage.length() > 1) {
@@ -1452,7 +1452,7 @@ public class ORUIManager implements DialogOwner {
                     orWindow.requestFocus();
                     orPanel.initTokenLayingStep();
                 } else {
-                    SpecialTokenLay stl = tAction.getSpecialProperty();
+                    SpecialProperty stl = tAction.getSpecialProperty();
                     if (stl != null) orPanel.addSpecialAction(tAction, stl.toMenu());
                 }
             }

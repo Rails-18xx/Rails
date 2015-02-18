@@ -14,7 +14,7 @@ import net.sf.rails.algorithms.RevenueStaticModifier;
  * An object of class Bonus represent extra income for the owning company,
  * usually connected to certain map locations.
  * <p>Currently, Bonus objects will be created in the following cases:
- * <br>1. when a SpecialTokenLay containing a BonusToken
+ * <br>1. when a SpecialBaseTokenLay containing a BonusToken
  * is exercised,
  * <br>2. when a private having a LocatedBonus special property is bought by
  * a public company,

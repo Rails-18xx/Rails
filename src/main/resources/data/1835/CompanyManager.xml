@@ -34,8 +34,8 @@
 	
 	<Company name="NF"	longname="N&#252;rnberg-F&#252;rth" type="Private" basePrice="100" revenue="5">
 		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByPlayer" when="orTurn" class="net.sf.rails.game.special.SpecialTokenLay">
-				<SpecialTokenLay location="L14" extra="yes" free="yes"/>
+			<SpecialProperty condition="ifOwnedByPlayer" when="orTurn" class="net.sf.rails.game.special.SpecialBaseTokenLay">
+				<SpecialBaseTokenLay location="L14" extra="yes" free="yes"/>
 			</SpecialProperty>
 		</SpecialProperties>
 		<ClosingConditions>
@@ -63,8 +63,8 @@
 			<SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
 				<SpecialTileLay location="L6" colour="green" extra="yes" free="yes" />
 			</SpecialProperty>
-			<SpecialProperty condition="ifOwnedByPlayer" when="orTurn" class="net.sf.rails.game.special.SpecialTokenLay">
-				<SpecialTokenLay location="L6" extra="yes" free="yes"/>
+			<SpecialProperty condition="ifOwnedByPlayer" when="orTurn" class="net.sf.rails.game.special.SpecialBaseTokenLay">
+				<SpecialBaseTokenLay location="L6" extra="yes" free="yes"/>
 			</SpecialProperty>
 		</SpecialProperties>
 		<ClosingConditions>

@@ -147,7 +147,7 @@ public class TokenHexUpgrade extends HexUpgrade {
         } else if (action instanceof LayBonusToken) {
             fgColour = Color.BLACK;
             bgColour = Color.WHITE;
-            BonusToken token = (BonusToken) action.getSpecialProperty().getToken();
+            BonusToken token = ((LayBonusToken)action).getSpecialProperty().getToken();
             label = "+" + token.getValue();
         }
         TokenIcon icon = new TokenIcon(25, fgColour, bgColour, label);
@@ -172,7 +172,7 @@ public class TokenHexUpgrade extends HexUpgrade {
             }
             text += "</html>";
         } else if (action instanceof LayBonusToken) {
-            BonusToken token = (BonusToken) action.getSpecialProperty().getToken();
+            BonusToken token = ((LayBonusToken)action).getSpecialProperty().getToken();
             text = token.getId();
         }
         return text;

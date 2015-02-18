@@ -13,8 +13,8 @@ import java.util.TreeMap;
 import net.sf.rails.common.*;
 import net.sf.rails.common.parser.*;
 import net.sf.rails.game.model.PortfolioModel;
+import net.sf.rails.game.special.SpecialBonusTokenLay;
 import net.sf.rails.game.special.SpecialProperty;
-import net.sf.rails.game.special.SpecialTokenLay;
 import net.sf.rails.game.state.*;
 import net.sf.rails.util.GameLoader;
 import net.sf.rails.util.GameSaver;
@@ -427,8 +427,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
         loop:   for (PrivateCompany company : cm.getAllPrivateCompanies()) {
             for (SpecialProperty sp : company.getSpecialProperties()) {
-                if (sp instanceof SpecialTokenLay
-                        && ((SpecialTokenLay)sp).getToken() instanceof BonusToken) {
+                if (sp instanceof SpecialBonusTokenLay) {
                     guiParameters.put(GuiDef.Parm.DO_BONUS_TOKENS_EXIST, true);
                     break loop;
                 }

@@ -39,8 +39,8 @@
 			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
 				<SpecialTileLay tile="59" location="I12" connected="no" extra="no"/>
 			</SpecialProperty>
-			<SpecialProperty condition="ifOwnedByCompany" when="tokenLayingStep" class="net.sf.rails.game.special.SpecialTokenLay">
-				<SpecialTokenLay location="I12" connected="no" extra="no" free="yes"/>
+			<SpecialProperty condition="ifOwnedByCompany" when="tokenLayingStep" class="net.sf.rails.game.special.SpecialBaseTokenLay">
+				<SpecialBaseTokenLay location="I12" connected="no" extra="no" free="yes"/>
 			</SpecialProperty>
 		</SpecialProperties>
 		<ClosingConditions>
@@ -59,11 +59,11 @@
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany" 
 				when="anyTimeDuringORTurn" 
-				class="net.sf.rails.game.special.SpecialTokenLay">
-				<SpecialTokenLay class="net.sf.rails.game.BonusToken" 
+				class="net.sf.rails.game.special.SpecialBonusTokenLay">
+				<SpecialBonusTokenLay class="net.sf.rails.game.BonusToken" 
 						location="C14,D19,E18,F9,F17,H5,H7,H17,J5,J17,K2,M18,O18" connected="yes" extra="yes">
 					<BonusToken name="Port" value="20" removed="Phase:5"/>
-				</SpecialTokenLay>
+				</SpecialBonusTokenLay>
 			</SpecialProperty>
 		</SpecialProperties>
 		<ClosingConditions>

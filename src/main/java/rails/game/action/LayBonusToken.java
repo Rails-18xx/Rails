@@ -12,8 +12,8 @@ import net.sf.rails.game.MapHex;
 import net.sf.rails.game.MapManager;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.Token;
+import net.sf.rails.game.special.SpecialBonusTokenLay;
 import net.sf.rails.game.special.SpecialProperty;
-import net.sf.rails.game.special.SpecialTokenLay;
 import net.sf.rails.util.Util;
 
 /**
@@ -30,7 +30,7 @@ public class LayBonusToken extends LayToken {
 
     public static final long serialVersionUID = 1L;
 
-    public LayBonusToken(SpecialTokenLay specialProperty, BonusToken token) {
+    public LayBonusToken(SpecialBonusTokenLay specialProperty, BonusToken token) {
         super(specialProperty);
         this.token = token;
         this.tokenId = token.getUniqueId();
@@ -43,6 +43,11 @@ public class LayBonusToken extends LayToken {
 
     public BonusToken getToken() {
         return token;
+    }
+    
+    @Override
+    public SpecialBonusTokenLay getSpecialProperty() {
+        return (SpecialBonusTokenLay)specialProperty;
     }
 
     @Override
@@ -89,7 +94,7 @@ public class LayBonusToken extends LayToken {
         }
         if (specialPropertyId > 0) {
             specialProperty =
-                    (SpecialTokenLay) SpecialProperty.getByUniqueId(specialPropertyId);
+                    (SpecialBonusTokenLay) SpecialProperty.getByUniqueId(specialPropertyId);
         }
         if (chosenHexName != null && chosenHexName.length() > 0) {
             chosenHex = mmgr.getHex(chosenHexName);

@@ -513,10 +513,10 @@ public class OperatingRound extends Round implements Observer {
                     for (SpecialProperty sp : orsps) {
                         if (!sp.isExercised() && sp.isUsableIfOwnedByCompany()
                             && sp.isUsableDuringOR(step)) {
-                            if (sp instanceof SpecialTokenLay) {
+                            if (sp instanceof SpecialBaseTokenLay) {
                                 if (getStep() != GameDef.OrStep.LAY_TOKEN) {
                                     possibleActions.add(new LayBaseToken(
-                                            (SpecialTokenLay) sp));
+                                            (SpecialBaseTokenLay) sp));
                                 }
                             } else if (!(sp instanceof SpecialTileLay)) {
                                 possibleActions.add(new UseSpecialProperty(sp));
@@ -532,10 +532,10 @@ public class OperatingRound extends Round implements Observer {
                     for (SpecialProperty sp : orsps) {
                         if (!sp.isExercised() && sp.isUsableIfOwnedByPlayer()
                             && sp.isUsableDuringOR(step)) {
-                            if (sp instanceof SpecialTokenLay) {
+                            if (sp instanceof SpecialBaseTokenLay) {
                                 if (getStep() != GameDef.OrStep.LAY_TOKEN) {
                                     possibleActions.add(new LayBaseToken(
-                                            (SpecialTokenLay) sp));
+                                            (SpecialBaseTokenLay) sp));
                                 }
                             } else {
                                 possibleActions.add(new UseSpecialProperty(sp));
@@ -1897,7 +1897,7 @@ public class OperatingRound extends Round implements Observer {
 
         String errMsg = null;
         int cost = 0;
-        SpecialTokenLay stl = null;
+        SpecialBaseTokenLay stl = null;
         boolean extra = false;
 
         MapHex hex = action.getChosenHex();
@@ -2096,11 +2096,10 @@ public class OperatingRound extends Round implements Observer {
         // if (operatingCompany.get().getType().getName().equals("Minor"))
         // return;
 
-        for (SpecialTokenLay stl : getSpecialProperties(SpecialTokenLay.class)) {
+        for (SpecialBaseTokenLay stl : getSpecialProperties(SpecialBaseTokenLay.class)) {
             // If the special tile lay is not extra, it is only allowed if
             // normal tile lays are also (still) allowed
-            if (stl.getTokenClass().equals(BaseToken.class)
-                && (stl.isExtra() || !currentNormalTokenLays.isEmpty())) {
+            if (stl.isExtra() || !currentNormalTokenLays.isEmpty()) {
 
                 // If this STL is location specific, check if there
                 // isn't already a token of this company or if it is blocked
@@ -2131,9 +2130,8 @@ public class OperatingRound extends Round implements Observer {
     public boolean layBonusToken(LayBonusToken action) {
 
         String errMsg = null;
-        int cost = 0;
-        SpecialTokenLay stl = null;
-        boolean extra = false;
+        int cost = 0; // currently costs are always zero
+        SpecialBonusTokenLay stl = null;
 
         MapHex hex = action.getChosenHex();
         BonusToken token = action.getToken();
@@ -2150,19 +2148,6 @@ public class OperatingRound extends Round implements Observer {
                 break;
             }
             stl = action.getSpecialProperty();
-            if (stl != null) extra = stl.isExtra();
-
-            cost = 0; // Let's assume for now that bonus tokens are always
-            // free
-            if (stl != null && stl.isFree()) cost = 0;
-
-            // Does the company have the money?
-            if (cost > operatingCompany.value().getCash()) {
-                errMsg =
-                        LocalText.getText("NotEnoughMoney",
-                                operatingCompany.value().getId());
-                break;
-            }
             break;
         }
         if (errMsg != null) {
@@ -2190,9 +2175,6 @@ public class OperatingRound extends Round implements Observer {
             if (stl != null) {
                 stl.setExercised();
                 currentSpecialTokenLays.remove(action);
-                log.debug("This was a special token lay, "
-                          + (extra ? "" : " not") + " extra");
-
             }
 
         }
@@ -2274,11 +2256,8 @@ public class OperatingRound extends Round implements Observer {
      */
     protected void setBonusTokenLays() {
 
-        for (SpecialTokenLay stl : getSpecialProperties(SpecialTokenLay.class)) {
-            if (stl.getTokenClass().equals(BonusToken.class)) {
-                possibleActions.add(new LayBonusToken(stl,
-                        (BonusToken) stl.getToken()));
-            }
+        for (SpecialBonusTokenLay stl : getSpecialProperties(SpecialBonusTokenLay.class)) {
+                possibleActions.add(new LayBonusToken(stl, stl.getToken()));
         }
     }
 
@@ -2711,12 +2690,13 @@ public class OperatingRound extends Round implements Observer {
                                                            // based home token
                     costsSet.add(cost);
 
-            // SpecialTokenLay Actions - workaround for a better handling of
+            // SpecialBaseTokenLay Actions - workaround for a better handling of
             // those later
-            for (SpecialTokenLay stl : getSpecialProperties(SpecialTokenLay.class)) {
+            for (SpecialBaseTokenLay stl : getSpecialProperties(SpecialBaseTokenLay.class)) {
                 log.debug("Special tokenlay property: " + stl);
-                if (stl.getTokenClass().equals(BaseToken.class) && stl.isFree())
+                if (stl.isFree()) {
                     costsSet.add(0);
+                }
             }
 
             for (int cost : costsSet) {

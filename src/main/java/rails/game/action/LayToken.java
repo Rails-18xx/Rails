@@ -6,7 +6,9 @@ import java.util.List;
 import com.google.common.base.Objects;
 
 import net.sf.rails.game.MapHex;
-import net.sf.rails.game.special.SpecialTokenLay;
+import net.sf.rails.game.special.SpecialBaseTokenLay;
+import net.sf.rails.game.special.SpecialBonusTokenLay;
+import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.util.RailsObjects;
 
 /**
@@ -24,7 +26,7 @@ public abstract class LayToken extends PossibleORAction {
      * Special property that will be fulfilled by this token lay. If null, this
      * is a normal token lay.
      */
-    transient protected SpecialTokenLay specialProperty = null;
+    transient protected SpecialProperty specialProperty = null;
     protected int specialPropertyId;
 
     /*--- Postconditions ---*/
@@ -47,7 +49,14 @@ public abstract class LayToken extends PossibleORAction {
 
     }
 
-    public LayToken(SpecialTokenLay specialProperty) {
+    public LayToken(SpecialBaseTokenLay specialProperty) {
+        this.locations = specialProperty.getLocations();
+        if (locations != null) buildLocationNameString();
+        this.specialProperty = specialProperty;
+        this.specialPropertyId = specialProperty.getUniqueId();
+    }
+    
+    public LayToken(SpecialBonusTokenLay specialProperty) {
         this.locations = specialProperty.getLocations();
         if (locations != null) buildLocationNameString();
         this.specialProperty = specialProperty;
@@ -78,14 +87,12 @@ public abstract class LayToken extends PossibleORAction {
     /**
      * @return Returns the specialProperty.
      */
-    public SpecialTokenLay getSpecialProperty() {
-        return specialProperty;
-    }
+    public abstract SpecialProperty getSpecialProperty();
 
     /**
      * @param specialProperty The specialProperty to set.
      */
-    public void setSpecialProperty(SpecialTokenLay specialProperty) {
+    public void setSpecialProperty(SpecialBaseTokenLay specialProperty) {
         this.specialProperty = specialProperty;
         // TODO this.specialPropertyUniqueId = specialProperty.getUniqueId();
     }

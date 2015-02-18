@@ -58,8 +58,6 @@ public class SpecialTileLay extends SpecialProperty {
         extra = tileLayTag.getAttributeAsBoolean("extra", extra);
         free = tileLayTag.getAttributeAsBoolean("free", free);
         connected = tileLayTag.getAttributeAsBoolean("connected", connected); /* sfy 1889 extension */
-        closingValue =
-            tileLayTag.getAttributeAsInteger("closingValue", closingValue);
 
         if (tileId != null) {
             description = LocalText.getText("LayNamedTileInfo",

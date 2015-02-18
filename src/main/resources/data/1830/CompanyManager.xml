@@ -51,8 +51,8 @@
 			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
 				<SpecialTileLay location="F16" extra="no" free="no" tile="57" />
 			</SpecialProperty>
-			<SpecialProperty condition="ifOwnedByCompany" when="tokenLayingStep" class="net.sf.rails.game.special.SpecialTokenLay">
-				<SpecialTokenLay location="F16" extra="no" free="yes"/>
+			<SpecialProperty condition="ifOwnedByCompany" when="tokenLayingStep" class="net.sf.rails.game.special.SpecialBaseTokenLay">
+				<SpecialBaseTokenLay location="F16" extra="no" free="yes"/>
 			</SpecialProperty>
 		</SpecialProperties>
 	</Company>

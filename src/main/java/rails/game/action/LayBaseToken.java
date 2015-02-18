@@ -11,7 +11,7 @@ import net.sf.rails.game.MapHex;
 import net.sf.rails.game.MapManager;
 import net.sf.rails.game.Stop;
 import net.sf.rails.game.special.SpecialProperty;
-import net.sf.rails.game.special.SpecialTokenLay;
+import net.sf.rails.game.special.SpecialBaseTokenLay;
 import net.sf.rails.util.RailsObjects;
 import net.sf.rails.util.Util;
 
@@ -61,7 +61,7 @@ public class LayBaseToken extends LayToken {
      * 
      * @param specialProperty The special property that allows laying an extra or unconnected base token.
      */
-    public LayBaseToken(SpecialTokenLay specialProperty) {
+    public LayBaseToken(SpecialBaseTokenLay specialProperty) {
         super(specialProperty);
         type = SPECIAL_PROPERTY;
     }
@@ -93,6 +93,11 @@ public class LayBaseToken extends LayToken {
 
     public int getType() {
         return type;
+    }
+    
+    @Override
+    public SpecialBaseTokenLay getSpecialProperty() {
+        return (SpecialBaseTokenLay)specialProperty;
     }
 
     @Override
@@ -141,7 +146,7 @@ public class LayBaseToken extends LayToken {
 
         if (specialPropertyId > 0) {
             specialProperty =
-                (SpecialTokenLay) SpecialProperty.getByUniqueId(specialPropertyId);
+                (SpecialBaseTokenLay) SpecialProperty.getByUniqueId(specialPropertyId);
         }
         if (chosenHexName != null && chosenHexName.length() > 0) {
             chosenHex = mmgr.getHex(chosenHexName);
