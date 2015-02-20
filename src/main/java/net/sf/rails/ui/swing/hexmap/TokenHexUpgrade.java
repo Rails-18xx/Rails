@@ -73,9 +73,9 @@ public class TokenHexUpgrade extends HexUpgrade {
     private boolean validate() {
         invalids.clear();
         allowed.addAll(stops);
-        
-        // laying home hex is always allowed
-        if (!hex.getHex().isHomeFor(action.getCompany())) {
+
+        // LayBonusToken always and layHome is always allowed
+        if (!(action instanceof LayBonusToken || hex.getHex().isHomeFor(action.getCompany()))) {
             if (hexBlocked()) {
                 invalids.add(Invalids.HEX_BLOCKED);
             }

@@ -284,6 +284,9 @@ public class ORUIManager implements DialogOwner {
                 break;
                 default:
                 }
+            } else if (layToken instanceof LayBonusToken) {
+                // Assumption: BonusTokens are always located
+                addLocatedTokenLays(layToken);
             }
         }
     }
@@ -308,6 +311,7 @@ public class ORUIManager implements DialogOwner {
             hexUpgrades.put(guiHex, upgrade);
         }
     }
+    
     
     public void updateMessage() {
 
@@ -414,18 +418,6 @@ public class ORUIManager implements DialogOwner {
 
                 setDividend(command, (SetDividend) actions.get(0));
 
-            } else if (actionType == LayBonusToken.class) {
-
-                prepareBonusToken((LayBonusToken) actions.get(0));
-
-            } else if (actionType == LayBaseToken.class) {
-
-                /* Only used outside the token laying step */
-                // Can currently handle only one location!
-                // FIXME: This has to be redefined to be able to use all types of token lays
-//                LayBaseToken lbt = (LayBaseToken) actions.get(0);
-//                map.selectHex(map.getHex(lbt.getLocations().get(0)));
-//                layBaseToken (lbt);
 
             } else if (actionType == BuyBonusToken.class) {
 
@@ -516,25 +508,6 @@ public class ORUIManager implements DialogOwner {
             // The revenue allocation has been selected
             orWindow.process(action);
         }
-    }
-
-    // FIXME: Rewrite of Bonus Tokens
-    private void prepareBonusToken(LayBonusToken action) {
-
-        // 
-//        orWindow.requestFocus();
-//
-//        allowedTokenLays.clear();
-//        allowedTokenLays.add(action);
-//        setMapRelatedActions(allowedTokenLays);
-//        setLocalAction(true);
-//
-//        log.debug("BonusTokens can be laid");
-//
-//        mapPanel.setAllowedTokenLays(allowedTokenLays);
-//
-//        orPanel.initTokenLayingStep();
-
     }
 
     private void buyBonusToken (BuyBonusToken action) {
@@ -1436,27 +1409,29 @@ public class ORUIManager implements DialogOwner {
 
         orPanel.initSpecialActions();
 
-        // Bonus tokens (and sometimes base tokens) can be laid anytime,
-        // so we must also handle these outside the token laying step.
-        if (possibleActions.contains(LayToken.class)
-                && orStep != GameDef.OrStep.LAY_TOKEN) {
-
-            List<LayToken> tokenActions =
-                possibleActions.getType(LayToken.class);
-            for (LayToken tAction : tokenActions) {
-
-                if (tAction instanceof LayBaseToken
-                        && ((LayBaseToken)tAction).getType() == LayBaseToken.HOME_CITY) {
-
-                    // FIXME: Does this work
-                    orWindow.requestFocus();
-                    orPanel.initTokenLayingStep();
-                } else {
-                    SpecialProperty stl = tAction.getSpecialProperty();
-                    if (stl != null) orPanel.addSpecialAction(tAction, stl.toMenu());
-                }
-            }
-        }
+        // TODO: Rails 2.0, this should not be required anymore as tile and token lays are possible anytime now
+       
+//        // Bonus tokens (and sometimes base tokens) can be laid anytime,
+//        // so we must also handle these outside the token laying step.
+//        if (possibleActions.contains(LayToken.class)
+//                && orStep != GameDef.OrStep.LAY_TOKEN) {
+//
+//            List<LayToken> tokenActions =
+//                possibleActions.getType(LayToken.class);
+//            for (LayToken tAction : tokenActions) {
+//
+//                if (tAction instanceof LayBaseToken
+//                        && ((LayBaseToken)tAction).getType() == LayBaseToken.HOME_CITY) {
+//
+//                    // FIXME: Does this work
+//                    orWindow.requestFocus();
+//                    orPanel.initTokenLayingStep();
+//                } else {
+//                    SpecialProperty stl = tAction.getSpecialProperty();
+//                    if (stl != null) orPanel.addSpecialAction(tAction, stl.toMenu());
+//                }
+//            }
+//        }
 
         // Can bonus tokens be bought?
         if (possibleActions.contains(BuyBonusToken.class)) {
