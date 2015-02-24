@@ -84,9 +84,13 @@ public class TokenHexUpgrade extends HexUpgrade {
             }
         }
 
-        selectedStop = allowed.first();
-        
-        return invalids.isEmpty();
+        if (allowed.isEmpty() || !invalids.isEmpty()) {
+            selectedStop = null;
+            return false;
+        } else {
+            selectedStop = allowed.first();
+            return true;
+        }
     }
     
     public boolean hexBlocked() {
