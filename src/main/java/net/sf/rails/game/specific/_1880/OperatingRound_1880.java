@@ -330,12 +330,14 @@ public class OperatingRound_1880 extends OperatingRound {
                 }
                 
                 if (operatingCompany.value() == orControl.lastCompanyToBuyTrain()) {
-                    
+                    if ((orControl.isFinalOperatingRoundSequence()) && (!orControl.wasStartedFromStockRound())){
+                        orControl.addFinalOperatingRoundSequenceNumber(1);
+                    }
                     // Need to create the final Jumpoff Point there to end the game !
-                    if ((gameManager.getRelativeORNumber() == 4) && (orControl.isFinalOperatingRoundSequence())){
+                    if ((orControl.getFinalOperatingRoundSequenceNumber() > 3) ) {
                     finishOR();
                     }
-                    
+                     
                     if ((trainPurchasedThisTurn.value() == false) && (!orControl.noTrainsToDiscard())) {
                         // The current Company is the Company that has bought
                         // the last train and that purchase was not in this OR..
@@ -379,14 +381,20 @@ public class OperatingRound_1880 extends OperatingRound {
                                 result = done(nullAction);
                                 return result;
                             }
-                            orControl.orExitToStockRound(operatingCompany.value(),
-                                    OrStep.BUY_TRAIN);
-                            setActionForPrivateExchange(activeTrainTypeToDiscard);
-                            if (manditoryNextAction == null) {
-                                finishOR();
+                            if (orControl.getFinalOperatingRoundSequenceNumber()<2) { // The last switch to a stock round happens on the purchase/retirement of the 8-trains.
+                                orControl.orExitToStockRound(operatingCompany.value(),
+                                        OrStep.BUY_TRAIN);
+                                } else {
+                                    orControl.startedFromOperatingRound();
+                                }
+                                if (!orControl.isFinalOperatingRoundSequence()) {
+                                setActionForPrivateExchange(activeTrainTypeToDiscard);
+                                }
+                                if (manditoryNextAction == null) {
+                                    finishOR();
+                                }
                             }
-                        }
-                        return true;
+                            return true;
                     }
                 }
                 result = done(nullAction);

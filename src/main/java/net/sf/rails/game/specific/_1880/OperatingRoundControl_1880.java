@@ -7,6 +7,7 @@ import net.sf.rails.game.RailsAbstractItem;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.GenericState;
+import net.sf.rails.game.state.IntegerState;
 
 public class OperatingRoundControl_1880 extends RailsAbstractItem {
     
@@ -17,7 +18,8 @@ public class OperatingRoundControl_1880 extends RailsAbstractItem {
     private BooleanState exitingToStockRound = BooleanState.create(this, "ExitedToStockRound", false);
     private BooleanState startedFromStockRound = BooleanState.create (this,"StartingFromStockRound",false);
     private BooleanState finalOperatingRoundSequence = BooleanState.create (this,"FinalOperatingRoundSequence",false);
-    private BooleanState noTrainsToDiscard = BooleanState.create(this, "NoMoreTrainsToDiscard", false);
+    private BooleanState noTrainsToDiscard = BooleanState.create(this,"NoMoreTrainsToDiscard", false);
+    private IntegerState finalOperatingRoundSequenceNumber = IntegerState.create(this,"FinalOperatingRoundNumber",0);
 
     
     public OperatingRoundControl_1880(RailsRoot parent, String string) {
@@ -89,6 +91,7 @@ public class OperatingRoundControl_1880 extends RailsAbstractItem {
     public void setFinalOperatingRoundSequence(boolean maybe) {
         if (maybe == true) {
         finalOperatingRoundSequence.set(true);
+        finalOperatingRoundSequenceNumber.set(1); 
         }
     }
     
@@ -106,5 +109,18 @@ public class OperatingRoundControl_1880 extends RailsAbstractItem {
 
     public void setNoTrainsToDiscard(boolean maybe) {
         noTrainsToDiscard.set(maybe);
+    }
+
+    public int getFinalOperatingRoundSequenceNumber() {
+        return finalOperatingRoundSequenceNumber.value();
+    }
+
+    public void setFinalOperatingRoundSequenceNumber(
+            IntegerState finalOperatingRoundSequenceNumber) {
+        this.finalOperatingRoundSequenceNumber.set(finalOperatingRoundSequenceNumber.value());
+    }
+    
+    public void addFinalOperatingRoundSequenceNumber(int value) {
+        this.finalOperatingRoundSequenceNumber.add(value);
     }
 }
