@@ -3,7 +3,9 @@ package net.sf.rails.ui.swing.elements;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Image;
 
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
@@ -26,7 +28,7 @@ public class UpgradeLabel extends JLabel {
         this.upgrade = upgrade;
         this.zoomStep = zoomStep;
         
-        this.setIcon(upgrade.getUpgradeIcon(zoomStep));
+        updateIcon();
         this.setText(upgrade.getUpgradeText());
         this.setToolTipText(upgrade.getUpgradeToolTip());
         
@@ -51,7 +53,13 @@ public class UpgradeLabel extends JLabel {
     }
     
     public void updateIcon() {
-        this.setIcon(upgrade.getUpgradeIcon(zoomStep));
+        ImageIcon hexIcon = new ImageIcon(upgrade.getUpgradeImage(zoomStep));
+        hexIcon.setImage(hexIcon.getImage().getScaledInstance(
+                (int) (hexIcon.getIconWidth() * 0.8),
+                (int) (hexIcon.getIconHeight() * 0.8),
+                Image.SCALE_SMOOTH));
+ 
+        this.setIcon(hexIcon);
     }
 
     public HexUpgrade getUpgrade() {

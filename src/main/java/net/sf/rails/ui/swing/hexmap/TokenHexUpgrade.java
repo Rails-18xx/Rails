@@ -1,13 +1,15 @@
 package net.sf.rails.ui.swing.hexmap;
 
 import java.awt.Color;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.NavigableSet;
 import java.util.Set;
 
-import javax.swing.Icon;
+import javax.swing.JLabel;
 
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.BonusToken;
@@ -28,7 +30,7 @@ import rails.game.action.LayToken;
 public class TokenHexUpgrade extends HexUpgrade {
 
     public enum Invalids implements HexUpgrade.Invalids {
-        HEX_BLOCKED, HEX_RESERVED;
+        HEX_BLOCKED, HEX_RESERVED, NOT_ENOUGH_CASH;
 
         @Override
         public String toString() {
@@ -69,7 +71,7 @@ public class TokenHexUpgrade extends HexUpgrade {
     public Stop getSelectedStop() {
         return selectedStop;
     }
-    
+
     private boolean validate() {
         invalids.clear();
         allowed.addAll(stops);
@@ -81,6 +83,9 @@ public class TokenHexUpgrade extends HexUpgrade {
             }
             if (hexReserved()) {
                 invalids.add(Invalids.HEX_RESERVED);
+            }
+            if (notEnoughCash()) {
+                invalids.add(Invalids.NOT_ENOUGH_CASH);
             }
         }
 
@@ -104,6 +109,10 @@ public class TokenHexUpgrade extends HexUpgrade {
             }
         }
         return allowed.isEmpty();
+    }
+    
+    public boolean notEnoughCash() {
+        return action.getCompany().getCash() < this.getCost(); 
     }
 
     // HexUpgrade abstract methods
@@ -139,7 +148,12 @@ public class TokenHexUpgrade extends HexUpgrade {
     }
     
     @Override
-    public Icon getUpgradeIcon(int zoomStep) {
+    public int getCost() {
+        return action.getPotentialCost(hex.getHex());
+    }
+    
+    @Override
+    public Image getUpgradeImage(int zoomStep) {
         Color fgColour = null;
         Color bgColour = null;
         String label = null;
@@ -154,8 +168,13 @@ public class TokenHexUpgrade extends HexUpgrade {
             BonusToken token = ((LayBonusToken)action).getSpecialProperty().getToken();
             label = "+" + token.getValue();
         }
-        TokenIcon icon = new TokenIcon(25, fgColour, bgColour, label);
-        return icon;
+        
+        TokenIcon icon = new TokenIcon(40, fgColour, bgColour, label);
+        BufferedImage tokenImage = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+        icon.paintIcon(new JLabel(), tokenImage.getGraphics(), 0, 0);
+        
+        return tokenImage;
+
     }
     
     @Override
@@ -181,12 +200,40 @@ public class TokenHexUpgrade extends HexUpgrade {
         }
         return text;
     }
-
+    
     @Override
     public String getUpgradeToolTip() {
-        // TODO: Add text
-        return LocalText.getText("TokenHexUpgrade.ToolTip");
+        StringBuilder tt = new StringBuilder("<html>");
+        if (!isValid()) {
+            tt.append(invalidToolTip());
+        } else {
+            // TODO: Add text
+            if (action instanceof LayBaseToken) {
+                tt.append(LocalText.getText("LAY_TOKEN_VALID"));
+            }
+        }
+        tt.append("</html>");
+        return tt.toString();
     }
+
+    // FIXME: Move that to an Invalids class (indentical code in TileHexUpgrade)
+    private String invalidToolTip() {
+        StringBuilder tt = new StringBuilder();
+
+        tt.append("<b><u>");
+        tt.append(LocalText.getText("LAY_TOKEN_INVALID")); 
+        tt.append("</u></b><br>");
+
+        tt.append("<b>");
+        for (Invalids invalid : invalids) {
+            tt.append(invalid.toString() + "<br>");
+        }
+        tt.append("</b>");
+
+        return tt.toString();
+    }
+
+
 
     @Override
     public int getCompareId() {

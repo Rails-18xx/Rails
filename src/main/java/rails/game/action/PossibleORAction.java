@@ -48,6 +48,13 @@ public abstract class PossibleORAction extends PossibleAction {
     public String getCompanyName() {
         return company.getId();
     }
+    
+    /**
+     * @return costs of executing the action, default for an ORAction is zero
+     */
+    public int getCost() {
+        return 0;
+    }
 
     /** To be used in the client (to enable safety check in the server) */
     public void setCompany(PublicCompany company) {

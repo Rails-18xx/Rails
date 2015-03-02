@@ -8,9 +8,6 @@ import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.HexSide;
 import net.sf.rails.game.HexSidesSet;
@@ -257,9 +254,15 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
     public boolean isValid() {
         return invalids.isEmpty();
     }
+    
+    @Override
+    // FIXME: Action does not return correct costs so far
+    public int getCost() {
+        return action.getCost();
+    }
 
     @Override
-    public Icon getUpgradeIcon(int zoomStep) {
+    public Image getUpgradeImage(int zoomStep) {
         HexSide imageRotation;
         if (selectedRotation == null) {
             imageRotation = HexSide.defaultRotation();
@@ -270,13 +273,7 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
         // get unscaled image for this orientation
         BufferedImage hexImage = GUITile.getTileImage(upgrade.getTargetTile(), imageRotation, zoomStep);
 
-        // Cheap n' Easy rescaling.
-        ImageIcon hexIcon = new ImageIcon(hexImage);
-        hexIcon.setImage(hexIcon.getImage().getScaledInstance(
-                (int) (hexIcon.getIconWidth() * 0.8),
-                (int) (hexIcon.getIconHeight() * 0.8),
-                Image.SCALE_SMOOTH));
-        return hexIcon;
+        return hexImage;
     }
     
     @Override

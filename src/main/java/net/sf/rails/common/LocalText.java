@@ -40,7 +40,7 @@ public class LocalText extends ResourceBundle {
 
     public static String getText(String key, Object... parameters) {
         /* If the text is not found, return the key in brackets */
-        return getTextExecute(key, "<" + key + ">", true, parameters);
+        return getTextExecute(key, "[" + key + "]", true, parameters);
     }
         
     public static String getTextWithDefault(String key, String defaultText) {

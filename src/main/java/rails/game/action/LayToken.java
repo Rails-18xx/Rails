@@ -113,7 +113,9 @@ public abstract class LayToken extends PossibleORAction {
         }
         locationNames = b.toString();
     }
-
+    
+    public abstract int getPotentialCost(MapHex hex);
+ 
     @Override
     protected boolean equalsAs(PossibleAction pa, boolean asOption) {
         //  super checks both class identity and super class attributes

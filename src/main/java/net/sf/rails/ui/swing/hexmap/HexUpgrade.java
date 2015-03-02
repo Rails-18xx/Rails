@@ -1,9 +1,8 @@
 package net.sf.rails.ui.swing.hexmap;
 
+import java.awt.Image;
 import java.util.Comparator;
 import java.util.Set;
-
-import javax.swing.Icon;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ComparisonChain;
@@ -45,11 +44,14 @@ public abstract class HexUpgrade implements Comparable<HexUpgrade> {
 
     public abstract boolean isValid();
     
-    public abstract Icon getUpgradeIcon(int zoomStep);
+    public abstract int getCost();
+
+    public abstract Image getUpgradeImage(int zoomStep);
     
     public abstract String getUpgradeText();
     
     public abstract String getUpgradeToolTip();
+    
     
     /**
      * @return integer used for sorting (lows first)

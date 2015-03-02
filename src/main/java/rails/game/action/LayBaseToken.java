@@ -95,9 +95,25 @@ public class LayBaseToken extends LayToken {
         return type;
     }
     
+    
     @Override
     public SpecialBaseTokenLay getSpecialProperty() {
         return (SpecialBaseTokenLay)specialProperty;
+    }
+    
+    @Override
+    public int getPotentialCost(MapHex hex) {
+        if (hex == null) {
+            return 0;
+        } else {
+            return company.getBaseTokenLayCost(hex);
+        }
+              
+    }
+
+    @Override
+    public int getCost() {
+        return getPotentialCost(chosenHex);
     }
 
     @Override

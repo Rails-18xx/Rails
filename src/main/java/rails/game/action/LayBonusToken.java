@@ -49,6 +49,11 @@ public class LayBonusToken extends LayToken {
     public SpecialBonusTokenLay getSpecialProperty() {
         return (SpecialBonusTokenLay)specialProperty;
     }
+    
+    @Override
+    public int getPotentialCost(MapHex hex) {
+        return 0;
+    }
 
     @Override
     protected boolean equalsAs(PossibleAction pa, boolean asOption) {
