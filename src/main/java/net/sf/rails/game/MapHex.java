@@ -252,10 +252,6 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
     private final PortfolioSet<BonusToken> bonusTokens = 
             PortfolioSet.create(this, "bonusTokens", BonusToken.class);
     
-    /** OffStation BaseTokens */
-    private final PortfolioSet<BaseToken> offStationTokens = 
-            PortfolioSet.create(this, "offStationTokens", BaseToken.class);
-
     private MapHex(MapManager parent, String id, Coordinates coordinates) {
         super(parent, id);
         this.coordinates = coordinates;
@@ -666,10 +662,6 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         return tokens.build();
     }
 
-    public PortfolioSet<BaseToken> getOffStationTokens() {
-        return offStationTokens;
-    }
-    
     public PortfolioSet<BonusToken> getBonusTokens() {
         return bonusTokens;
     }

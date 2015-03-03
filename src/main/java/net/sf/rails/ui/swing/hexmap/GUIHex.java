@@ -561,13 +561,6 @@ public class GUIHex implements Observer {
     // FIXME: Where to paint more than one offStationTokens?
     private void paintOffStationTokens(Graphics2D g2) {
         int i = 0;
-        for (BaseToken token : hex.getOffStationTokens()) {
-            HexPoint origin = dimensions.center.translate(offStationTokenX[i], offStationTokenY[i]);
-                PublicCompany co = token.getParent();
-                drawBaseToken(g2, co, origin, dimensions.tokenDiameter);
-            if (++i > 1) return;
-        }
-        
         for (BonusToken token : hex.getBonusTokens())  {
             HexPoint origin = dimensions.center.translate(offStationTokenX[i], offStationTokenY[i]);
             drawBonusToken(g2, token, origin);
