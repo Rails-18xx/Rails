@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import rails.game.action.LayBaseToken;
+import rails.game.action.LayBonusToken;
 import net.sf.rails.algorithms.RevenueBonusTemplate;
 import net.sf.rails.game.BaseToken;
 import net.sf.rails.game.BonusToken;
@@ -546,6 +548,13 @@ public class GUIHex implements Observer {
                 PublicCompany company = token.getParent();
                 drawBaseToken(g2, company, origin, dimensions.tokenDiameter);
             }
+            // check for temporary token
+            if (upgrade instanceof TokenHexUpgrade && ((TokenHexUpgrade) upgrade).getAction() instanceof LayBaseToken) {
+                TokenHexUpgrade tokenUpgrade = (TokenHexUpgrade) upgrade;
+                HexPoint origin = getTokenCenter(j++, tokenUpgrade.getSelectedStop());
+                PublicCompany company = tokenUpgrade.getAction().getCompany();
+                drawBaseToken(g2, company, origin, dimensions.tokenDiameter);
+            }
         }
     }
 
@@ -564,6 +573,12 @@ public class GUIHex implements Observer {
             drawBonusToken(g2, token, origin);
             if (++i > 1) return;
             
+        }
+        // check for temporary token
+        if (upgrade instanceof TokenHexUpgrade && ((TokenHexUpgrade) upgrade).getAction() instanceof LayBonusToken) {
+            HexPoint origin = dimensions.center.translate(offStationTokenX[i], offStationTokenY[i]);
+            BonusToken token = ((LayBonusToken)((TokenHexUpgrade) upgrade).getAction()).getToken();
+            drawBonusToken(g2, token, origin);
         }
     }
 

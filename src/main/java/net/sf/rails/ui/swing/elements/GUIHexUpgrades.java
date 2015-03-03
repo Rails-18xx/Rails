@@ -119,7 +119,7 @@ public class GUIHexUpgrades {
             // do nothing
         } else {
             activeUpgrade.nextSelection();
-            upgradeToLabels.get(activeUpgrade).updateIcon();
+            upgradeToLabels.get(activeUpgrade).update();
             activeHex.update();
             SoundManager.notifyOfSelectUpgrade(activeUpgrade);
         }
@@ -181,7 +181,7 @@ public class GUIHexUpgrades {
                 if (activeUpgrade != null) {
                     upgradeToLabels.get(activeUpgrade).setSelected(false);
                 }
-                upgradeToLabels.get(upgrade).updateIcon();
+                upgradeToLabels.get(upgrade).update();
                 upgradeToLabels.get(upgrade).setSelected(true);
                 activeUpgrade = upgrade;
                 activeHex.setUpgrade(upgrade);
@@ -189,7 +189,7 @@ public class GUIHexUpgrades {
             } else {
                 // activate identical upgrade ==> next selection of that upgrade
                 upgrade.nextSelection();
-                upgradeToLabels.get(upgrade).updateIcon();
+                upgradeToLabels.get(upgrade).update();
                 activeHex.update();
             }
         }

@@ -28,9 +28,7 @@ public class UpgradeLabel extends JLabel {
         this.upgrade = upgrade;
         this.zoomStep = zoomStep;
         
-        updateIcon();
-        this.setText(upgrade.getUpgradeText());
-        this.setToolTipText(upgrade.getUpgradeToolTip());
+        update();
         
         this.setOpaque(true);
         this.setVisible(true);
@@ -52,7 +50,7 @@ public class UpgradeLabel extends JLabel {
         }
     }
     
-    public void updateIcon() {
+    public void update() {
         ImageIcon hexIcon = new ImageIcon(upgrade.getUpgradeImage(zoomStep));
         hexIcon.setImage(hexIcon.getImage().getScaledInstance(
                 (int) (hexIcon.getIconWidth() * 0.8),
@@ -60,6 +58,8 @@ public class UpgradeLabel extends JLabel {
                 Image.SCALE_SMOOTH));
  
         this.setIcon(hexIcon);
+        this.setText(upgrade.getUpgradeText());
+        this.setToolTipText(upgrade.getUpgradeToolTip());
     }
 
     public HexUpgrade getUpgrade() {
