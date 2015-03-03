@@ -12,6 +12,7 @@ import java.util.Set;
 import javax.swing.JLabel;
 
 import net.sf.rails.common.LocalText;
+import net.sf.rails.game.Bank;
 import net.sf.rails.game.BonusToken;
 import net.sf.rails.game.MapHex;
 import net.sf.rails.game.PublicCompany;
@@ -34,7 +35,7 @@ public class TokenHexUpgrade extends HexUpgrade {
 
         @Override
         public String toString() {
-            return LocalText.getText("TOKEN_" + this.name());
+            return LocalText.getText("TOKEN_UPGRADE_INVALID_" + this.name());
         }
         
     }
@@ -182,6 +183,10 @@ public class TokenHexUpgrade extends HexUpgrade {
         String text = null;
         if (action instanceof LayBaseToken) {
             text = "<html>";
+            if (action.getPotentialCost(hex.getHex()) != 0) {
+                String cost = Bank.format(action.getCompany(), action.getPotentialCost(hex.getHex()));
+                text += LocalText.getText("TOKEN_UPGRADE_COST", cost);
+            }
             if (action.getSpecialProperty() != null) {
                 text +=
                         "<font color=red> ["
@@ -207,9 +212,8 @@ public class TokenHexUpgrade extends HexUpgrade {
         if (!isValid()) {
             tt.append(invalidToolTip());
         } else {
-            // TODO: Add text
             if (action instanceof LayBaseToken) {
-                tt.append(LocalText.getText("LAY_TOKEN_VALID"));
+                tt.append(LocalText.getText("TOKEN_UPGRADE_TT_VALID", action.getCompany()));
             }
         }
         tt.append("</html>");
@@ -221,7 +225,7 @@ public class TokenHexUpgrade extends HexUpgrade {
         StringBuilder tt = new StringBuilder();
 
         tt.append("<b><u>");
-        tt.append(LocalText.getText("LAY_TOKEN_INVALID")); 
+        tt.append(LocalText.getText("TOKEN_UPGRADE_TT_INVALID")); 
         tt.append("</u></b><br>");
 
         tt.append("<b>");
