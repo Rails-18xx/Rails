@@ -42,21 +42,6 @@ import com.google.common.collect.Lists;
  */
 
 public class GUIHex implements Observer {
-
-    public static enum State { 
-        
-        NORMAL(1.0), SELECTABLE(0.9), SELECTED(0.8); 
-        
-        private final double scale;
-    
-        State(double scale) {
-            this.scale = scale;
-        }
-        
-        private double getScale() {
-            return scale;
-        }
-    }
     
     /**
      * Static class that describes x-y coordinates for GUIHexes
@@ -115,12 +100,66 @@ public class GUIHex implements Observer {
         
     }
     
+    public static enum State { 
+        
+        NORMAL(1.0, Color.black), SELECTABLE(0.9, Color.red), SELECTED(0.8, Color.red), INVALIDS (0.9, Color.pink); 
+        
+        private final double scale;
+        private final Color color;
+ 
+        private State(double scale, Color color) {
+            this.scale = scale;
+            this.color = color;
+        }
+
+        private double getScale() {
+            return scale;
+        }
+        
+        private Color getColor() {
+            return color;
+        }
+        
+        private double getHexDrawScale() {
+            return 1 - (1 - scale) / 2; 
+        }
+        
+        private GeneralPath getInnerHexagon(GeneralPath hexagon, HexPoint center) {
+            //inner hexagons are drawn outlined (not filled)
+            //for this draw, the stroke width is half the scale reduction 
+            //the scale factor is multiplied by the average of hex width / height in order
+            //to get a good estimate for which for stroke width the hex borders are touched
+            //by the stroke
+
+            AffineTransform at =
+                    AffineTransform.getScaleInstance(getHexDrawScale(), getHexDrawScale());
+            GeneralPath innerHexagon = (GeneralPath) hexagon.createTransformedShape(at);
+
+            // Translate innerHexagon to make it concentric.
+            Rectangle2D innerBounds = innerHexagon.getBounds2D();
+            HexPoint innerCenter = new HexPoint(
+                    innerBounds.getX() + innerBounds.getWidth() / 2.0, 
+                    innerBounds.getY() + innerBounds.getHeight() / 2.0
+            );
+            HexPoint difference = HexPoint.difference(center, innerCenter);
+            
+            at = AffineTransform.getTranslateInstance(difference.getX(), difference.getY());
+            innerHexagon.transform(at);
+
+            return innerHexagon;
+        }
+      
+
+        private double getStrokeWidth(GeneralPath hexagon) {
+            return ( 1 - getHexDrawScale() ) *
+                    ( hexagon.getBounds().width + hexagon.getBounds().height ) / 2;
+        }
+    }
+    
     /**
      * Static class for GUIHex Dimensions 
      */
     private static class Dimensions {
-        private final double selectedStrokeWidth;
-        private final double selectableStrokeWidth;
         private final double zoomFactor;
         private final double tokenDiameter;
         
@@ -128,8 +167,6 @@ public class GUIHex implements Observer {
         private final HexPoint center;
         
         private final GeneralPath hexagon;
-        private final GeneralPath innerHexagonSelected;
-        private final GeneralPath innerHexagonSelectable;
         
         private final Rectangle rectBound;
         // The area which would have to be repainted if any hex marking is changed
@@ -148,22 +185,7 @@ public class GUIHex implements Observer {
 
             center = HexPoint.middle(points.get(HexSide.defaultRotation()), 
                     points.get(HexSide.defaultRotation().opposite()));
-            
-            //inner hexagons are drawn outlined (not filled)
-            //for this draw, the stroke width is half the scale reduction 
-            //the scale factor is multiplied by the average of hex width / height in order
-            //to get a good estimate for which for stroke width the hex borders are touched
-            //by the stroke
-            double hexDrawScale = 1 - (1 - State.SELECTED.getScale()) / 2; 
-            innerHexagonSelected = defineInnerHexagon(hexDrawScale);
-            selectedStrokeWidth = (float) ( 1 - hexDrawScale ) *
-                    ( hexagon.getBounds().width + hexagon.getBounds().height ) / 2;
-            
-            hexDrawScale = 1 - (1 - State.SELECTABLE.getScale()) / 2; 
-            innerHexagonSelectable = defineInnerHexagon(hexDrawScale);
-            selectableStrokeWidth = (float) ( 1 - hexDrawScale ) *
-                    ( hexagon.getBounds().width + hexagon.getBounds().height ) / 2;
-        
+
             rectBound = hexagon.getBounds();
             marksDirtyRectBound = new Rectangle (
                     rectBound.x - marksDirtyMargin,
@@ -188,26 +210,7 @@ public class GUIHex implements Observer {
             return polygon;
         }
 
-        private GeneralPath defineInnerHexagon(double innerScale) {
-
-            AffineTransform at =
-                    AffineTransform.getScaleInstance(innerScale, innerScale);
-            GeneralPath innerHexagon = (GeneralPath) hexagon.createTransformedShape(at);
-
-            // Translate innerHexagon to make it concentric.
-            Rectangle2D innerBounds = innerHexagon.getBounds2D();
-            HexPoint innerCenter = new HexPoint(
-                    innerBounds.getX() + innerBounds.getWidth() / 2.0, 
-                    innerBounds.getY() + innerBounds.getHeight() / 2.0
-            );
-            HexPoint difference = HexPoint.difference(center, innerCenter);
-            
-            at = AffineTransform.getTranslateInstance(difference.getX(), difference.getY());
-            innerHexagon.transform(at);
-
-            return innerHexagon;
-        }
-
+  
     }
     
     // STATIC CONSTANTS
@@ -218,9 +221,6 @@ public class GUIHex implements Observer {
     private static final Color BAR_COLOUR = Color.BLUE;
     private static final int BAR_WIDTH = 5;
 
-    private static final Color selectedColor = Color.red;
-    private static final Color selectableColor = Color.red;
-    
     private static final Color highlightedFillColor = new Color(255,255,255,128);
     private static final Color highlightedBorderColor = Color.BLACK;
     private static final Stroke highlightedBorderStroke = new BasicStroke(3);
@@ -405,17 +405,11 @@ public class GUIHex implements Observer {
     public void paintMarks(Graphics2D g) {
         GUIGlobals.setRenderingHints(g);
 
-        if (state == State.SELECTED) {
+        if (state != State.NORMAL) {
             Stroke oldStroke = g.getStroke();                
-            g.setStroke(new BasicStroke((float) dimensions.selectedStrokeWidth));
-            g.setColor(selectedColor);                
-            g.draw(dimensions.innerHexagonSelected);            
-            g.setStroke(oldStroke);                
-        } else if (state == State.SELECTABLE) {
-            Stroke oldStroke = g.getStroke();                
-            g.setStroke(new BasicStroke((float) dimensions.selectableStrokeWidth));
-            g.setColor(selectableColor);
-            g.draw(dimensions.innerHexagonSelectable);            
+            g.setStroke(new BasicStroke((float) state.getStrokeWidth(dimensions.hexagon)));
+            g.setColor(state.getColor());                
+            g.draw(state.getInnerHexagon(dimensions.hexagon, dimensions.center));            
             g.setStroke(oldStroke);                
         }
 

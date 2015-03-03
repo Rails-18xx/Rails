@@ -186,11 +186,21 @@ public class ORUIManager implements DialogOwner {
         // show selectable hexes if highlight is active
         if (gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.ROUTE_HIGHLIGHT)) {
             for (GUIHex hex:hexUpgrades.getHexes()) {
+                boolean invalids = false;
                 for (HexUpgrade upgrade:hexUpgrades.getUpgrades(hex)) {
                     if (upgrade.isValid()) {
                         hex.setState(GUIHex.State.SELECTABLE);
+                        invalids = false;
                         break;
+                    } else {
+                        if (upgrade.isVisible() && !upgrade.isValid()) {
+                            invalids = true;
+                        }
                     }
+                }
+                // end of single hex-loop
+                if (invalids) {
+                    hex.setState(GUIHex.State.INVALIDS);
                 }
             }
         }

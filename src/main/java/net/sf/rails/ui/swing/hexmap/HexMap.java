@@ -776,11 +776,17 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
 
         if (selectedHex == clickedHex) return;
         if (selectedHex != null) {
-            selectedHex.setState(GUIHex.State.SELECTABLE);
+            // Hexes with only invalids do not change state
+            if (selectedHex.getState() != GUIHex.State.INVALIDS) {
+                selectedHex.setState(GUIHex.State.SELECTABLE);
+            }
         }
 
         if (clickedHex != null) {
-            clickedHex.setState(GUIHex.State.SELECTED);
+            // Hexes with only invalids do not change state
+            if (clickedHex.getState() != GUIHex.State.INVALIDS) {
+                clickedHex.setState(GUIHex.State.SELECTED);
+            }
         }
         selectedHex = clickedHex;
 
