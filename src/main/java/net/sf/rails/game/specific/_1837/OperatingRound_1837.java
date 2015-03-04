@@ -420,35 +420,37 @@ public class OperatingRound_1837 extends OperatingRound {
     /* (non-Javadoc)
      * @see net.sf.rails.game.OperatingRound#gameSpecificTileLayAllowed(net.sf.rails.game.PublicCompany, net.sf.rails.game.MapHex, int)
      */
+   
     @Override
     protected boolean gameSpecificTileLayAllowed(PublicCompany company,
             MapHex hex, int orientation) {
-        boolean result = false;
-        // Check if the Hex is blocked ?
-        for (PrivateCompany privComp : gameManager.getAllPrivateCompanies()) {
-            boolean isBlocked = hex.isBlockedForTileLays(privComp);
-            if (isBlocked) {
-                result = true;
-                break;
-            }
-        }
-
-        if (result == true) {
-            // Check if the Owner of the PublicCompany is owner of the Private Company that blocks
-            // the hex (1837)
-
-            ImmutableSet<PrivateCompany> compPrivatesOwned =
-                    company.getPresident().getPortfolioModel().getPrivateCompanies();
-
-            for (PrivateCompany privComp : compPrivatesOwned) {
-                // Check if the Hex is blocked by any of the privates owned by
-                // this PublicCompany
-                if (hex.isBlockedForTileLays(privComp)) {
-                    result = false;
-                }
-            }
-
-        }
+        boolean result = true;
+        // FIXME: Removed hex.isBlockedForTileLays removed in Rails 2.0 beta preparation, needs fix
+//        // Check if the Hex is blocked ?
+//        for (PrivateCompany privComp : gameManager.getAllPrivateCompanies()) {
+//            boolean isBlocked = hex.isBlockedForTileLays(privComp);
+//            if (isBlocked) {
+//                result = true;
+//                break;
+//            }
+//        }
+//
+//        if (result == true) {
+//            // Check if the Owner of the PublicCompany is owner of the Private Company that blocks
+//            // the hex (1837)
+//
+//            ImmutableSet<PrivateCompany> compPrivatesOwned =
+//                    company.getPresident().getPortfolioModel().getPrivateCompanies();
+//
+//            for (PrivateCompany privComp : compPrivatesOwned) {
+//                // Check if the Hex is blocked by any of the privates owned by
+//                // this PublicCompany
+//                if (hex.isBlockedForTileLays(privComp)) {
+//                    result = false;
+//                }
+//            }
+//
+//        }
 
         return result;
     }

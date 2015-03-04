@@ -13,6 +13,7 @@ import net.sf.rails.game.HexSide;
 import net.sf.rails.game.HexSidesSet;
 import net.sf.rails.game.MapHex;
 import net.sf.rails.game.Phase;
+import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.Station;
 import net.sf.rails.game.Tile;
 import net.sf.rails.game.TileColour;
@@ -29,7 +30,7 @@ import com.google.common.collect.ImmutableSet;
 public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
     
     public enum Invalids implements HexUpgrade.Invalids {
-        NO_VALID_ORIENTATION, HEX_BLOCKED, NO_TILES_LEFT,
+        NO_VALID_ORIENTATION, HEX_BLOCKED, HEX_RESERVED, NO_TILES_LEFT,
         NOT_ALLOWED_FOR_HEX, NOT_ALLOWED_FOR_PHASE, COLOUR_NOT_ALLOWED, 
         NO_ROUTE_TO_NEW_TRACK;
 
@@ -136,9 +137,12 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
     private boolean validate(Phase phase) {
         invalids.clear();
 
-        //        if (hexIsBlocked()) {
-//           invalids.add(Invalids.HEX_BLOCKED);
-//        }
+        if (hexIsBlocked()) {
+            invalids.add(Invalids.HEX_BLOCKED);
+        }
+        if (hexIsReserved(action.getCompany())) {
+            invalids.add(Invalids.HEX_RESERVED);
+        }
         if (noTileAvailable()) {
             invalids.add(Invalids.NO_TILES_LEFT);
         } 
@@ -163,9 +167,13 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
         return rotations.isEmpty();
     }
     
-//    public boolean hexIsBlocked() {
-//        return hex.isBlockedForTileLays();
-//    }
+    public boolean hexIsBlocked() {
+        return hex.getHex().isBlockedByPrivateCompany();
+    }
+    
+    public boolean hexIsReserved(PublicCompany company) {
+        return hex.getHex().isReservedForCompany() && hex.getHex().getReservedForCompany() != company;
+    }
 
     public boolean noTileAvailable() {
         return upgrade.getTargetTile().getFreeCount() == 0;

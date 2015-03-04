@@ -473,35 +473,21 @@ public class GUIHex implements Observer {
             }
         }
 
- //       if (getHex().isBlockedForTileLays()) {
-            List<PrivateCompany> privates =
-                    //GameManager.getInstance().getCompanyManager().getAllPrivateCompanies();
-            		hexMap.getOrUIManager().getGameUIManager().getRoot()
-            			.getCompanyManager().getAllPrivateCompanies();
-          
-            for (PrivateCompany p : privates) {
-                
-                List<MapHex> blocked = p.getBlockedHexes();
-                if (blocked != null) {
-                    for (MapHex hex : blocked) {
-                        if (getHex().equals(hex)) {
-                        	String text = "(" + p.getId() + ")";
-                            g.drawString(
-                                  text,
-                                  dimensions.rectBound.x
-                                  + (dimensions.rectBound.width - fontMetrics.stringWidth(text))
-                                  * 1 / 2,
-                                  dimensions.rectBound.y
-                                  + ((fontMetrics.getHeight() + dimensions.rectBound.height) * 5 / 15));
-                        }
-                    }
-                }
-            }
-  //    }
+        if (hex.isBlockedByPrivateCompany()) {
+           PrivateCompany p = hex.getBlockingPrivateCompany();
+           String text = "(" + p.getId() + ")";
+           g.drawString(
+                   text,
+                   dimensions.rectBound.x
+                   + (dimensions.rectBound.width - fontMetrics.stringWidth(text))
+                   * 1 / 2,
+                   dimensions.rectBound.y
+                   + ((fontMetrics.getHeight() + dimensions.rectBound.height) * 5 / 15));
+        }
 
         if (hex.isReservedForCompany()
         		&& hex.isPreprintedTileCurrent()) {
-        	String text = "[" + hex.getReservedForCompany() + "]";
+        	String text = "[" + hex.getReservedForCompany().getId() + "]";
             g.drawString(
                   text,
                   dimensions.rectBound.x

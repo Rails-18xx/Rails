@@ -165,7 +165,8 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
     private List<Integer> tileCost;
 
     private String stopName;
-    private String reservedForCompany = null;
+    private String reservedForCompanyName = null;
+    private PublicCompany reservedForCompany = null;
 
     /** Values if this is an off-board hex */
     private List<Integer> valuesPerPhase = null;
@@ -214,17 +215,8 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
     private final HashMapState<PublicCompany, Stop> homes =
             HashMapState.create(this, "homes");
 
-    /*
-     * changed to state variable to fix undo bug #2954645
-     * null as default implies false - see isBlocked()
-     */
-//    private final BooleanState isBlockedForTileLays = 
-//            BooleanState.create(this, "isBlockedForTileLays");
-    
-    /*
-     * new Method to block access to a hex by a private Company
-     */
-    private PrivateCompany isBlockedForTileLays = null;
+    private final GenericState<PrivateCompany> blockingPrivateCompany =
+            GenericState.create(this, "blockingPrivateCompany");
     
     /**
      * Is the hex blocked for home tokens? <p>
@@ -286,7 +278,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
                 isBlockedForTokenLays.set(BlockedToken.NEVER);
             }
         }
-        reservedForCompany = tag.getAttributeAsString("reserved");
+        reservedForCompanyName = tag.getAttributeAsString("reserved");
 
         // revenue bonus
         List<Tag> bonusTags = tag.getChildren("RevenueBonus");
@@ -307,6 +299,8 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
     public void finishConfiguration (RailsRoot root) {
         currentTile.set(root.getTileManager().getTile(preprintedTileId));
         currentTileRotation.set(preprintedTileRotation);
+        
+        reservedForCompany = getRoot().getCompanyManager().getPublicCompany(reservedForCompanyName);
 
         // We need completely new objects, not just references to the Tile's
         // stations.
@@ -755,18 +749,24 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
     }
 
     /**
-     * @return Returns false if no tiles may yet be laid on this hex.
+     * @return true if the hex is blocked by private company
      */
+    public boolean isBlockedByPrivateCompany() {
+       return blockingPrivateCompany.value() != null;
+    }
     
-    public boolean isBlockedForTileLays(PrivateCompany company) {
-       return company.blockedForTileLays(this);
+    /**
+     * @return blocking private company
+     */
+    public PrivateCompany getBlockingPrivateCompany() {
+        return blockingPrivateCompany.value();
     }
 
     /**
-     * @param company TODO
+     * @param private company that blocks the hex (use argument null to unblock)
      */
-    public void setBlockedForTileLays(PrivateCompany company) {
-        isBlockedForTileLays = company ;
+    public void setBlockingPrivateCompany(PrivateCompany company) {
+        blockingPrivateCompany.set(company) ;
     }
 
     /**
@@ -881,7 +881,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         return stopName;
     }
 
-    public String getReservedForCompany() {
+    public PublicCompany getReservedForCompany() {
         return reservedForCompany;
     }
 

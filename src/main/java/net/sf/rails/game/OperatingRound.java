@@ -1852,40 +1852,12 @@ public class OperatingRound extends Round implements Observer {
         boolean result = true;
 
         result = gameSpecificTileLayAllowed(company, hex, orientation);
-        // !hex.isBlockedForTileLays()
         return result;
     }
 
     protected boolean gameSpecificTileLayAllowed(PublicCompany company,
             MapHex hex, int orientation) {
-        boolean result = false;
-        // Check if the Hex is blocked ?
-        for (PrivateCompany privComp : gameManager.getAllPrivateCompanies()) {
-            boolean isBlocked = hex.isBlockedForTileLays(privComp);
-            if (isBlocked) {
-                result = true;
-                break;
-            }
-        }
-
-        if (result == true) {
-            // Check if the Company is owner of the Private Company that blocks
-            // the hex (1830)
-
-            ImmutableSet<PrivateCompany> compPrivatesOwned =
-                    company.getPortfolioModel().getPrivateCompanies();
-
-            for (PrivateCompany privComp : compPrivatesOwned) {
-                // Check if the Hex is blocked by any of the privates owned by
-                // this PublicCompany
-                if (hex.isBlockedForTileLays(privComp)) {
-                    result = false;
-                }
-            }
-
-        }
-
-        return result;
+        return hex.isBlockedByPrivateCompany();  
     }
 
     /*
