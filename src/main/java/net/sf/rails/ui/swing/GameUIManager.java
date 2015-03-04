@@ -13,6 +13,7 @@ import javax.swing.plaf.FontUIResource;
 
 import net.sf.rails.common.*;
 import net.sf.rails.game.*;
+import net.sf.rails.game.PlayerManager;
 import net.sf.rails.game.state.Observer;
 import net.sf.rails.sound.SoundManager;
 import net.sf.rails.ui.swing.elements.*;
@@ -1274,17 +1275,14 @@ public class GameUIManager implements DialogOwner {
         return currentGuiPlayerNames;
     }
     
-/*    public class PlayerOrderView implements Observer {
+   public class PlayerOrderView implements Observer {
         PlayerOrderView () {
-            railsRoot.getGameManager().getPlayerNamesModel().addObserver(this);
+            railsRoot.getPlayerManager().getPlayerNamesModel().addObserver(this);
         }
 
         public void update(Observable o, Object arg) {
-            if (o instanceof GameManager.PlayerOrderState && arg instanceof String) {
-                List<String> newPlayerNames = Arrays.asList(((String)arg).split(";"));
+               List<String> newPlayerNames = Arrays.asList(((String)arg).split(";"));
                 updatePlayerOrder (newPlayerNames);
-            }
-
         }
 
         public void deRegister() {
@@ -1303,5 +1301,6 @@ public class GameUIManager implements DialogOwner {
             // TODO Auto-generated method stub
             return null;
         }
-        */
+   }
+
 }

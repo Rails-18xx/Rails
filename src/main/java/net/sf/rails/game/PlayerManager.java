@@ -16,6 +16,7 @@ import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.GenericState;
 import net.sf.rails.game.state.IntegerState;
+import net.sf.rails.game.state.Observable;
 import net.sf.rails.util.Util;
 
 import org.slf4j.Logger;
