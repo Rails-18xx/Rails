@@ -814,5 +814,9 @@ KeyListener, ActionPerformer {
 
     public void keyTyped(KeyEvent e) {}
 
+    public void updatePlayerOrder(List<String> newPlayerNames) {
+       gameStatus.updatePlayerOrder(newPlayerNames);
+    }
+
 
 }

@@ -15,6 +15,7 @@ import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.sound.SoundManager;
 import net.sf.rails.ui.swing.elements.*;
 import net.sf.rails.ui.swing.hexmap.HexHighlightMouseListener;
+import net.sf.rails.util.Util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,8 +70,10 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
     private int infoXOffset, infoYOffset;
     private Field itemStatus[]; // Remains invisible, only used for status tooltip
 
-    private Caption[] upperPlayerCaption;
-    private Caption[] lowerPlayerCaption;
+    private int playerCaptionXOffset, upperPlayerCaptionYOffset, lowerPlayerCaptionYOffset;
+    private Cell[] upperPlayerCaption;
+    private Cell[] lowerPlayerCaption;
+    private JComponent[][] fields;
 
     private ActionButton bidButton;
     private ActionButton buyButton;
@@ -236,7 +239,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
 
     private void init() {
         int lastX = -1;
-        int lastY = 1;
+        int lastY = 0;
 
         itemName = new Caption[ni];
         itemNameButton = new ClickField[ni];
@@ -245,10 +248,12 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
         bidPerPlayer = new Field[ni][np];
         info = new Field[ni];
         itemStatus = new Field[ni];
-        upperPlayerCaption = new Caption[np];
-        lowerPlayerCaption = new Caption[np];
+        upperPlayerCaption = new Cell[np];
+        lowerPlayerCaption = new Cell[np];
         playerBids = new Field[np];
         playerFree = new Field[np];
+        
+        upperPlayerCaptionYOffset = ++lastY;
 
         itemNameXOffset = ++lastX;
         itemNameYOffset = ++lastY;
@@ -260,7 +265,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
             minBidXOffset = ++lastX;
             minBidYOffset = lastY;
         }
-        bidPerPlayerXOffset = ++lastX;
+        bidPerPlayerXOffset = playerCaptionXOffset = ++lastX;
         bidPerPlayerYOffset = lastY;
 
         infoXOffset = bidPerPlayerXOffset + np;
@@ -274,6 +279,10 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
         }
         playerFreeCashXOffset = bidPerPlayerXOffset;
         playerFreeCashYOffset = ++lastY;
+        
+        lowerPlayerCaptionYOffset = ++lastY;
+        
+        fields = new JComponent[1+infoXOffset] [2+lastY];
 
         addField(new Caption(LocalText.getText("ITEM")), 0, 0, 1, 2,
                 WIDE_RIGHT + WIDE_BOTTOM);
@@ -287,10 +296,10 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
                     minBidXOffset, 0, 1, 2, WIDE_BOTTOM + WIDE_RIGHT);
         }
         addField(new Caption(LocalText.getText("PLAYERS")),
-                bidPerPlayerXOffset, 0, np, 1, 0);
+                playerCaptionXOffset, 0, np, 1, 0);
         for (int i = 0; i < np; i++) {
             f = upperPlayerCaption[i] = new Caption(players[i].getId());
-            addField(f, bidPerPlayerXOffset + i, 1, 1, 1, WIDE_BOTTOM);
+            addField(f, playerCaptionXOffset + i, upperPlayerCaptionYOffset, 1, 1, WIDE_BOTTOM);
         }
 
         for (int i = 0; i < ni; i++) {
@@ -394,6 +403,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
             gbc.insets = new Insets(padTop, padLeft, padBottom, padRight);
 
             statusPanel.add(comp, gbc);
+            fields[x][y] = comp;
 
     }
 
@@ -822,4 +832,37 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
     public boolean process(PossibleAction action) {
         return gameUIManager.processAction(action);
     }
+
+    public void updatePlayerOrder(List<String> newPlayerNames) {
+        int[] xref = new int[np];
+        List<String> oldPlayerNames = gameUIManager.getCurrentGuiPlayerNames();
+       for (int i=0; i<np; i++) {
+            xref[i] = oldPlayerNames.indexOf(newPlayerNames.get(i));
+        }
+       log.debug("SRW: old player list: "+Util.joinWithDelimiter(oldPlayerNames.toArray(new String[0]), ","));
+       log.debug("SRW: new player list: "+Util.joinWithDelimiter(newPlayerNames.toArray(new String[0]), ","));
+
+
+        JComponent[] cells = new Cell[np];
+        GridBagConstraints[] constraints = new GridBagConstraints[np];
+        JComponent f;
+        for (int y=upperPlayerCaptionYOffset; y<=lowerPlayerCaptionYOffset; y++) {
+         for (int i=0, x=playerCaptionXOffset; i<np; i++, x++) {
+                cells[i] = fields[x][y];
+                constraints[i] = gb.getConstraints(cells[i]);
+               statusPanel.remove(cells[i]);
+            }
+            for (int i=0, x=playerCaptionXOffset; i<np; i++, x++) {
+               f = fields[x][y] = cells[xref[i]];
+               statusPanel.add (f, constraints[i]);
+            }
+        }
+        for (int i=0, x=playerCaptionXOffset; i<np; i++, x++) {
+            upperPlayerCaption[i] = (Cell) fields[x][upperPlayerCaptionYOffset];
+            lowerPlayerCaption[i] = (Cell) fields[x][lowerPlayerCaptionYOffset];
+        }
+
+        gameUIManager.packAndApplySizing(this);
+    }
+        
 }

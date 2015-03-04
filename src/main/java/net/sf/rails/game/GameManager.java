@@ -8,10 +8,12 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import net.sf.rails.common.*;
 import net.sf.rails.common.parser.*;
+import net.sf.rails.game.PlayerManager.PlayerOrderModel;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.special.SpecialBonusTokenLay;
 import net.sf.rails.game.special.SpecialProperty;
@@ -153,6 +155,8 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 //    private Player NationalFormStartingPlayer = null;
     
     private Map< PublicCompany, Player> NationalFormStartingPlayer = new HashMap<PublicCompany, Player>();
+    
+    protected PlayerOrderModel playerNamesModel;
      
     
     /**

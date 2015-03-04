@@ -6,7 +6,7 @@ import java.awt.Color;
 import javax.swing.*;
 import javax.swing.border.Border;
 
-public class Caption extends JLabel {
+public class Caption extends Cell {
     private static final long serialVersionUID = 1L;
 
     private Border labelBorder = BorderFactory.createEmptyBorder(1, 2, 1, 2);
