@@ -35,7 +35,7 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
 
         @Override
         public String toString() {
-            return LocalText.getText("TILE_" + this.name());
+            return LocalText.getText("TILE_UPGRADE_INVALID_" + this.name());
         }
         
     }
@@ -332,7 +332,7 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
         StringBuilder tt = new StringBuilder();
 
         tt.append("<b><u>");
-        tt.append(LocalText.getText("TILE_INVALID")); 
+        tt.append(LocalText.getText("TILE_UPGRADE_TT_INVALID")); 
         tt.append("</u></b><br>");
 
         tt.append("<b>");
