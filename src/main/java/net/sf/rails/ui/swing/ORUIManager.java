@@ -218,39 +218,41 @@ public class ORUIManager implements DialogOwner {
         for (LayTile layTile:actions) {
             switch (layTile.getType()) {
             case (LayTile.GENERIC):
-                addGenericTileLays(layTile);
+                addConnectedTileLays(layTile);
                 break;
             case (LayTile.SPECIAL_PROPERTY):
-                SpecialProperty sp = layTile.getSpecialProperty();
-                if (sp == null || !(sp instanceof SpecialTileLay) ||
-                        ((SpecialTileLay)sp).requiresConnection()) {
-                    break;
-                }
-                // else fall through
-            case (LayTile.LOCATION_SPECIFIC):
-                if (layTile.getLocations() != null) {
-                    addLocatedTileLays(layTile);
+                SpecialTileLay sp = (SpecialTileLay)layTile.getSpecialProperty();
+                if (sp.requiresConnection()) {
+                    addConnectedTileLays(layTile);
                 } else {
-                    addGenericTileLays(layTile);
+                    addLocatedTileLays(layTile);
                 }
+                break;
+            case (LayTile.LOCATION_SPECIFIC):
+                addLocatedTileLays(layTile);
+                break;
             default:
             }
         }
 
     }
 
-    private void addGenericTileLays(LayTile layTile) {
+    private void addConnectedTileLays(LayTile layTile) {
         NetworkGraph graph = getCompanyGraph(layTile.getCompany());
         Map<MapHex, HexSidesSet> mapHexSides = graph.getReachableSides();
         Multimap<MapHex, Station> mapHexStations = graph.getPassableStations();
         
+        boolean allLocations = (layTile.getLocations() == null || layTile.getLocations().isEmpty());
+        
         for (MapHex hex:Sets.union(mapHexSides.keySet(), mapHexStations.keySet())) {
-            GUIHex guiHex = map.getHex(hex);
-            String routeAlgorithm = GameOption.getValue(gameUIManager.getRoot(), "RouteAlgorithm");
-            Set<TileHexUpgrade> upgrades = TileHexUpgrade.create(guiHex, mapHexSides.get(hex), 
-                    mapHexStations.get(hex), layTile, routeAlgorithm);
-            TileHexUpgrade.validates(upgrades, gameUIManager.getCurrentPhase());
-            hexUpgrades.putAll(guiHex, upgrades);
+            if (allLocations || layTile.getLocations().contains(hex)) {
+                GUIHex guiHex = map.getHex(hex);
+                String routeAlgorithm = GameOption.getValue(gameUIManager.getRoot(), "RouteAlgorithm");
+                Set<TileHexUpgrade> upgrades = TileHexUpgrade.create(guiHex, mapHexSides.get(hex), 
+                        mapHexStations.get(hex), layTile, routeAlgorithm);
+                TileHexUpgrade.validates(upgrades, gameUIManager.getCurrentPhase());
+                hexUpgrades.putAll(guiHex, upgrades);
+            }
         }
         
         // scroll map to center over companies network
