@@ -105,7 +105,7 @@
 			longname="Erie Railroad">
 	<!--	city = 0 implies that this is not yet decided (OO-tiles), blocks means that 
 			in each city one slot has to be available -->
-		<Home hex="E11" city="0" allCitiesBlocked="yes"/>
+		<Home hex="E11" city="0"/>
 	</Company>
     <IfOption name="Variant" value="Simple">
         <Company name="L&amp;N" type="Public" tokens="3" fgColour="FFE600" bgColour="FF0000"
@@ -136,7 +136,7 @@
 	<IfOption name="Variant" value="Pere Marquette">
 		<Company name="PM" type="Public" tokens="3" fgColour="FFFF00" bgColour="000080"
 				longname="Pere Marquette">
-			<Home hex="E5" city="0" allCitiesBlocked="yes" />
+			<Home hex="E5" city="0"/>
 		</Company>
 	</IfOption>
 	<Company name="PRR" type="Public" tokens="4" fgColour="FFFFFF" bgColour="008000"

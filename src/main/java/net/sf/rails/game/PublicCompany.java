@@ -84,7 +84,6 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     protected String homeHexNames = null;
     protected List<MapHex> homeHexes = null;
     protected int homeCityNumber = 1;
-    protected boolean homeAllCitiesBlocked = false;
 
     /** Destination hex * */
     protected String destinationHexName = null;
@@ -377,7 +376,6 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         if (homeBaseTag != null) {
             homeHexNames = homeBaseTag.getAttributeAsString("hex");
             homeCityNumber = homeBaseTag.getAttributeAsInteger("city", 1);
-            homeAllCitiesBlocked = homeBaseTag.getAttributeAsBoolean("allCitiesBlocked", false);
         }
 
         Tag destinationTag = tag.getChild("Destination");
@@ -815,15 +813,6 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     public void setHomeCityNumber(int number) {
         this.homeCityNumber = number;
     }
-
-    /**
-     * @return true -> requires an open slot in each city of the hex, false -> one slot on the hex
-     *
-     */
-    public boolean isHomeBlockedForAllCities() {
-        return homeAllCitiesBlocked;
-    }
-
 
     /**
      * @return Returns the destinationHex.
