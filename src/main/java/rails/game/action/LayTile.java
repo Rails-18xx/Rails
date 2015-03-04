@@ -234,6 +234,14 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
     public Map<String, Integer> getRelaidBaseTokens() {
         return relaidBaseTokens;
     }
+    
+    public int getPotentialCost(MapHex hex) {
+        if (specialProperty instanceof SpecialTileLay && specialProperty.isFree()) {
+            return 0;
+        }
+        return hex.getTileCost();
+    }
+
 
     // TODO: Check for and add the missing attributes
     @Override

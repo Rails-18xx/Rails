@@ -13,7 +13,6 @@ import net.sf.rails.game.HexSide;
 import net.sf.rails.game.HexSidesSet;
 import net.sf.rails.game.MapHex;
 import net.sf.rails.game.Phase;
-import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.Station;
 import net.sf.rails.game.Tile;
 import net.sf.rails.game.TileColour;
@@ -32,7 +31,7 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
     public enum Invalids implements HexUpgrade.Invalids {
         NO_VALID_ORIENTATION, HEX_BLOCKED, HEX_RESERVED, NO_TILES_LEFT,
         NOT_ALLOWED_FOR_HEX, NOT_ALLOWED_FOR_PHASE, COLOUR_NOT_ALLOWED, 
-        NO_ROUTE_TO_NEW_TRACK;
+        NO_ROUTE_TO_NEW_TRACK, NOT_ENOUGH_CASH;
 
         @Override
         public String toString() {
@@ -140,7 +139,7 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
         if (hexIsBlocked()) {
             invalids.add(Invalids.HEX_BLOCKED);
         }
-        if (hexIsReserved(action.getCompany())) {
+        if (hexIsReserved()) {
             invalids.add(Invalids.HEX_RESERVED);
         }
         if (noTileAvailable()) {
@@ -159,7 +158,10 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
             invalids.add(Invalids.NO_ROUTE_TO_NEW_TRACK);
         } else if (noValidRotation()) {
             invalids.add(Invalids.NO_VALID_ORIENTATION);
-        }  
+        }
+        if (notEnoughCash()) {
+            invalids.add(Invalids.NOT_ENOUGH_CASH);
+        }
         return invalids.isEmpty();
     }
     
@@ -171,8 +173,8 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
         return hex.getHex().isBlockedByPrivateCompany();
     }
     
-    public boolean hexIsReserved(PublicCompany company) {
-        return hex.getHex().isReservedForCompany() && hex.getHex().getReservedForCompany() != company;
+    public boolean hexIsReserved() {
+        return hex.getHex().isReservedForCompany() && hex.getHex().getReservedForCompany() != action.getCompany();
     }
 
     public boolean noTileAvailable() {
@@ -195,6 +197,10 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
         return noValidRotation() && permissiveRoutePossible;
     }
     
+    public boolean notEnoughCash() {
+        return action.getCompany().getCash() < this.getCost(); 
+    }
+
     public boolean requiresConnection() {
         // Yellow Tile on Company Home
         if (upgrade.getTargetTile().getColourText().equalsIgnoreCase(TileColour.YELLOW.name())
@@ -264,9 +270,8 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
     }
     
     @Override
-    // FIXME: Action does not return correct costs so far
     public int getCost() {
-        return action.getCost();
+        return action.getPotentialCost(hex.getHex());
     }
 
     @Override
