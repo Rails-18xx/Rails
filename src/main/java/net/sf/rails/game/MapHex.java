@@ -197,12 +197,6 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
      */
     private StopType stopType = null;
     
-    /**
-     * Optional cache for city distances
-     */
-    private SortedSet<Integer> uniqueCityDistances;
-    private Map<MapHex, Integer> cityDistances;
-    
     ////////////////////////
     // dynamic fields
     ////////////////////////
@@ -333,6 +327,8 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
     public void addImpassableSide(HexSide side) {
         impassableBuilder.set(side);
         log.debug("Added impassable " + side + " to " + this);
+        // all impassable sides are invalids
+        addInvalidSide(side);
     }
 
     public HexSidesSet getImpassableSides () {
@@ -341,6 +337,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
     
     public void addInvalidSide(HexSide side) {
         invalidBuilder.set(side);
+        log.debug("Added invalid " + side + " to " + this);
     }
     
     public HexSidesSet getInvalidSides() {
