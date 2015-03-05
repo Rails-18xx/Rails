@@ -42,7 +42,6 @@
 		<Track from="city1" gauge="normal" to="side4"/>
 		<Track from="city1" gauge="normal" to="side3"/>
 		<Track from="city1" gauge="normal" to="side1"/>
-		<Track from="side2" gauge="normal" to="side2"/>
 	</Tile>
 	<Tile colour="fixed" id="-143" name="-143">
 		<Station id="city1" position="0" type="Town" value="10"/>
