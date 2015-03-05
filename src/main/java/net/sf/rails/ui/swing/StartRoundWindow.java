@@ -197,7 +197,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
 
         infoIcon = createInfoIcon();
 
-        init();
+        initCells();
 
         getContentPane().add(statusPanel, BorderLayout.NORTH);
         getContentPane().add(buttonPanel, BorderLayout.SOUTH);
@@ -237,7 +237,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
         gameUIManager.packAndApplySizing(this);
     }
 
-    private void init() {
+    private void initCells() {
         int lastX = -1;
         int lastY = 0;
 
@@ -298,7 +298,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
         addField(new Caption(LocalText.getText("PLAYERS")),
                 playerCaptionXOffset, 0, np, 1, 0);
         for (int i = 0; i < np; i++) {
-            f = upperPlayerCaption[i] = new Caption(players[i].getId());
+            f = upperPlayerCaption[i] = new Caption(players[i].getNameAndPriority());
             addField(f, playerCaptionXOffset + i, upperPlayerCaptionYOffset, 1, 1, WIDE_BOTTOM);
         }
 
@@ -376,7 +376,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
         }
 
         for (int i = 0; i < np; i++) {
-            f = lowerPlayerCaption[i] = new Caption(players[i].getId());
+            f = lowerPlayerCaption[i] = new Caption(players[i].getNameAndPriority());
             addField(f, playerFreeCashXOffset + i, playerFreeCashYOffset + 1,
                     1, 1, WIDE_TOP);
         }
