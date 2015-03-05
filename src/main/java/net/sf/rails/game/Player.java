@@ -17,10 +17,9 @@ public class Player extends RailsAbstractItem implements RailsMoneyOwner, Portfo
 
     // FIXME: Rails 2.0 Do we need the index number?
     
-    // static data (configured)
-    private int index = 0;
     
     // dynamic data (states and models)
+    private final IntegerState index = IntegerState.create(this, "index");
     private final PortfolioModel portfolio = PortfolioModel.create(this);
     private final CertificateCountModel certCount = CertificateCountModel.create(portfolio);
 
@@ -36,7 +35,7 @@ public class Player extends RailsAbstractItem implements RailsMoneyOwner, Portfo
 
     private Player(PlayerManager parent, String id, int index) {
         super(parent, id);
-        this.index = index;
+        this.index.set(index);
 
         blockedCash.setSuppressZero(true);
         lastORWorthIncrease.setDisplayNegative(true);
@@ -191,11 +190,11 @@ public class Player extends RailsAbstractItem implements RailsMoneyOwner, Portfo
     }
 
     public int getIndex() {
-        return index;
+        return index.value();
     }
 
     public void setIndex(int index) {
-        this.index = index;
+        this.index.set(index);
     }
 
     public void setBankrupt () {
