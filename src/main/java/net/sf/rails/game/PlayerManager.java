@@ -323,6 +323,10 @@ public class PlayerManager extends RailsManager implements Configurable {
             Ordering<Player> ordering = Ordering.from(comparator);
             List<Player> newOrder = ordering.sortedCopy(players.view());
             players.setTo(newOrder);
+            for (int i=0; i<newOrder.size(); i++) {
+                Player player = newOrder.get(i);
+                player.setIndex(i);
+            }
         }
         
         public boolean isReverse() {
