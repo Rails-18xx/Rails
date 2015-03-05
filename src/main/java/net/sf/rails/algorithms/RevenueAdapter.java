@@ -263,7 +263,6 @@ public final class RevenueAdapter implements Runnable {
         
         // check each vertex hex for a potential revenue bonus
         for (MapHex hex:hexes) {
-            
             List<RevenueBonusTemplate> bonuses = new ArrayList<RevenueBonusTemplate>();
             List<RevenueBonusTemplate> hexBonuses = hex.getRevenueBonuses();
             if (hexBonuses != null) bonuses.addAll(hexBonuses);
@@ -271,7 +270,10 @@ public final class RevenueAdapter implements Runnable {
             if (tileBonuses != null) bonuses.addAll(tileBonuses);
 
             for (RevenueBonusTemplate bonus:bonuses) {
-                addRevenueBonus(bonus.toRevenueBonus(hex, root, graph));
+                RevenueBonus bonusConverted = bonus.toRevenueBonus(hex, root, graph);
+                if (bonusConverted != null) {
+                    addRevenueBonus(bonusConverted);
+                }
             }
         }
         log.info("RA: RevenueBonuses = " + revenueBonuses);
