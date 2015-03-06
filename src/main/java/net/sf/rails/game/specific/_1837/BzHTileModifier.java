@@ -46,7 +46,7 @@ public class BzHTileModifier implements NetworkGraphModifier {
 
         // 3 ... and remove them from the graph
         graph.removeAllVertices(bzhVertices);
-        log.debug("Birmingham inactive, index of phase = " + phaseIndex);
+        log.debug("Bosnia Herzegovina inactive, index of phase = " + phaseIndex);
         
     }
 
