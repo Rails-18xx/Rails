@@ -6,11 +6,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableSet;
 
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.Train;
 import net.sf.rails.game.TrainManager;
+import net.sf.rails.game.TrainType;
 import net.sf.rails.util.RailsObjects;
 
 /**
@@ -53,6 +55,14 @@ public class DiscardTrain extends PossibleORAction {
     public Set<Train> getOwnedTrains() {
         return ownedTrains;
     }
+    
+    private Set<TrainType> getOwnedTrainTypes() {
+        ImmutableSet.Builder<TrainType> types = ImmutableSet.builder();
+        for (Train train:ownedTrains) {
+            types.add(train.getType());
+        }
+        return types.build();
+    }
 
     public void setDiscardedTrain(Train train) {
         discardedTrain = train;
@@ -76,7 +86,8 @@ public class DiscardTrain extends PossibleORAction {
 
         // check asOption attributes
         DiscardTrain action = (DiscardTrain)pa; 
-        boolean options = Objects.equal(this.ownedTrains, action.ownedTrains)
+        // TODO: only the types have to be identical, due Rails 1.x backward compatibility
+        boolean options = Objects.equal(this.getOwnedTrainTypes(), action.getOwnedTrainTypes())
                 && Objects.equal(this.forced, action.forced)
         ;
 
@@ -84,8 +95,9 @@ public class DiscardTrain extends PossibleORAction {
         if (asOption) return options;
         
         // check asAction attributes
+        // TODO: only the types have to be identical, due Rails 1.x backward compatibility
         return options
-                && Objects.equal(this.discardedTrain, action.discardedTrain)
+                && Objects.equal(this.discardedTrain.getType(), action.discardedTrain.getType())
         ;
     }
 

@@ -1,10 +1,7 @@
 package net.sf.rails.game.model;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import net.sf.rails.common.LocalText;
@@ -35,6 +32,7 @@ import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.Sets;
 
 
 // FIXME: Solve id, name and uniquename clashes
@@ -349,17 +347,15 @@ public class PortfolioModel extends RailsModel {
 
     /** Returns one train of any type held */
     public Set<Train> getUniqueTrains() {
-
-        Set<Train> trainsFound = new HashSet<Train>();
-        Map<TrainType, Object> trainTypesFound =
-                new HashMap<TrainType, Object>();
+        ImmutableSortedSet.Builder<Train> trainsFound = ImmutableSortedSet.naturalOrder();
+        Set<TrainType> trainTypesFound = Sets.newHashSet();
         for (Train train : trains.getPortfolio()) {
-            if (!trainTypesFound.containsKey(train.getType())) {
+            if (!trainTypesFound.contains(train.getType())) {
                 trainsFound.add(train);
-                trainTypesFound.put(train.getType(), null);
+                trainTypesFound.add(train.getType());
             }
         }
-        return trainsFound;
+        return trainsFound.build();
 
     }
 
