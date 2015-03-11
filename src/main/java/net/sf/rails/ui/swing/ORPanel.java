@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/ORPanel.java,v 1.71 2010/06/17 22:10:53 stefanfrey Exp $*/
 package net.sf.rails.ui.swing;
 
 import java.awt.*;
@@ -1096,7 +1095,6 @@ implements ActionListener, KeyListener, RevenueListener {
         button3.setEnabled(false);
 
         updateCurrentRoutes(false);
-
     }
     
     public void initTileLayingStep() {
@@ -1106,6 +1104,7 @@ implements ActionListener, KeyListener, RevenueListener {
         setHighlight(tileCost[orCompIndex],true);
         button1.setVisible(false);
 
+        setCompanyVisibility(false);
     }
 
     public void initTokenLayingStep() {
@@ -1119,6 +1118,7 @@ implements ActionListener, KeyListener, RevenueListener {
         button1.setVisible(false);
         button3.setEnabled(false);
 
+        setCompanyVisibility(false);
     }
 
     public void initRevenueEntryStep(int orCompIndex, SetDividend action) {
@@ -1138,6 +1138,9 @@ implements ActionListener, KeyListener, RevenueListener {
 
         //indicate interest in setting revenue values (and not only displaying routes)
         updateCurrentRoutes(true);
+
+        setCompanyVisibility(false);
+
     }
 
     public void revenueUpdate(int bestRevenue, boolean finalResult) {
@@ -1215,6 +1218,8 @@ implements ActionListener, KeyListener, RevenueListener {
         } else {
             button3.setVisible(false);
         }
+
+        setCompanyVisibility(false);
     }
 
     public void initTrainBuying(boolean enabled) {
@@ -1228,6 +1233,8 @@ implements ActionListener, KeyListener, RevenueListener {
         button1.setMnemonic(KeyEvent.VK_T);
         button1.setEnabled(enabled);
         button1.setVisible(true);
+
+        setCompanyVisibility(true);
     }
 
     // operating costs sfy
@@ -1382,4 +1389,13 @@ implements ActionListener, KeyListener, RevenueListener {
             buttonPanel.add(buttons[i],index);
         }
     }
+
+    private void setCompanyVisibility(boolean showAll) {
+        for (int i = 0; i < nc; i++) {
+            boolean visible = rowVisibilityObservers[i].lastValue() && (showAll || (i == orCompIndex));
+            setRowVisibility(i + leftCompNameYOffset, visible);
+        }
+    }
+    
+
 }
