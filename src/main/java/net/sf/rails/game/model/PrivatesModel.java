@@ -17,6 +17,8 @@ public final class PrivatesModel extends RailsModel {
     private PrivatesModel(RailsOwner parent, String id) {
         super(parent, id);
         privates = PortfolioSet.create(parent, "privates", PrivateCompany.class);
+        // PrivatesModel is an indirect owner of privates, so add it to the state
+        privates.addModel(this);
     }
     
     /**
