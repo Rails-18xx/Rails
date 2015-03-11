@@ -10,6 +10,7 @@ import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.Currency;
+import net.sf.rails.game.state.Portfolio;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
@@ -346,8 +347,7 @@ public class TreasuryShareRound extends StockRound {
         PublicCertificate cert2;
         for (int i = 0; i < number; i++) {
             cert2 = from.findCertificate(company, sharePerCert/shareUnit, false);
-            // TODO: Check if this still works
-            transferCertificate(cert2, company.getPortfolioModel());
+            cert2.moveTo(company);
         }
 
         hasBought.set(true);
@@ -478,7 +478,7 @@ public class TreasuryShareRound extends StockRound {
                 cashText ));
 
         // Transfer the sold certificates
-        transferCertificates (certsToSell, pool);
+        Portfolio.moveAll(certsToSell, pool.getParent());
         /*
         for (PublicCertificate cert2 : certsToSell) {
             if (cert2 != null) {

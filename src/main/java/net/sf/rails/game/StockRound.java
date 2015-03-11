@@ -1193,7 +1193,8 @@ public class StockRound extends Round {
             }
         }
 
-        transferCertificates (certsToSell, to);
+        // Transfer the sold certificates
+        Portfolio.moveAll(certsToSell, to.getParent());
 
         // Check if we still have the presidency
         if (currentPlayer == company.getPresident()) {
@@ -1332,7 +1333,7 @@ public class StockRound extends Round {
             ipoHasShare ? ipo.findCertificate(publicCompany,
                     false) : pool.findCertificate(publicCompany,
                             false);
-            transferCertificate(cert, player.getPortfolioModel());
+            cert.moveTo(player);
             ReportBuffer.add(this, LocalText.getText("SwapsPrivateForCertificate",
                     player.getId(),
                     privateCompany.getId(),

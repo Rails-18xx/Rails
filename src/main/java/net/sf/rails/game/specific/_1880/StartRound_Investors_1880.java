@@ -62,7 +62,7 @@ public class StartRound_Investors_1880 extends StartRound {
             return false;
         }
 
-        transferCertificate(certificate, player.getPortfolioModel());
+        certificate.moveTo(player);
         boughtItem.getStartItem().setSold(player, 0);
         investor.start();
         investor.setFloated();

@@ -339,7 +339,7 @@ public class StartRound_1837_Coal extends StartRound {
             && (item.getSecondary().getParent().getId().equals("S5"))) {
             Certificate primary = item.getPrimary();
             Currency.toBank(player, price);
-            transferCertificate(primary, player.getPortfolioModel());
+            primary.moveTo(player);
             ReportBuffer.add(
                     this,
                     LocalText.getText("BuysItemFor", player.getId(),

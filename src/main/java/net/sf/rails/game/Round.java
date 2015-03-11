@@ -380,32 +380,7 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
     public boolean wasInterrupted () {
         return wasInterrupted.value();
     }
-
     
-    // FIXME: Rails 2.0 simplify this by moveTo
-    @Deprecated
-    protected void transferCertificate(Certificate cert, PortfolioModel newHolder) {
-        if (cert instanceof PublicCertificate) {
-            ((PublicCertificate)cert).moveTo(newHolder.getParent());
-        } else if (cert instanceof PrivateCompany) {
-            newHolder.addPrivateCompany((PrivateCompany)cert);
-        }
-    }
-    
-    // Note: all transferred shares must come from the same old shareholder.
-    // TODO: This is not very a very nice implementation
-    // FIXME: Rails 2.0 simplify this by moveTo
-    @Deprecated
-    protected void transferCertificates(List<? extends Certificate> certs,
-            PortfolioModel newHolder) {
-
-        for (Certificate cert : certs) {
-            if (cert != null) {
-                transferCertificate(cert, newHolder);
-            }
-        }
-    }
-
     public GameManager getGameManager() {
         return gameManager;
     }

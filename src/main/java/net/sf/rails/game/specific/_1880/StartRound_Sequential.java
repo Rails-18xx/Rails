@@ -265,7 +265,7 @@ public class StartRound_Sequential extends StartRound {
     protected void assignItem(Player player, StartItem item, int price) {
         Certificate primary = item.getPrimary();
         Currency.toBank(player, price);
-        transferCertificate(primary, player.getPortfolioModel());
+        primary.moveTo(player);
         item.setSold(player, price);
         ReportBuffer.add(this, LocalText.getText("BuysItemFor",
                 player.getId(),
