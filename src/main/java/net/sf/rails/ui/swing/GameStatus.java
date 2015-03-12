@@ -1,17 +1,26 @@
 package net.sf.rails.ui.swing;
 
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
-import java.util.*;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
+import javax.swing.JComponent;
+import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 
 import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
-import net.sf.rails.game.*;
+import net.sf.rails.game.Bank;
+import net.sf.rails.game.Player;
+import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.specific._18EU.StartCompany_18EU;
 import net.sf.rails.game.state.MoneyOwner;
@@ -23,7 +32,15 @@ import net.sf.rails.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rails.game.action.*;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
+import rails.game.action.BuyCertificate;
+import rails.game.action.NullAction;
+import rails.game.action.PossibleAction;
+import rails.game.action.PossibleActions;
+import rails.game.action.SellShares;
+import rails.game.action.StartCompany;
 import rails.game.correct.CashCorrectionAction;
 
 
@@ -119,12 +136,11 @@ public class GameStatus extends GridPanel implements ActionListener {
     // Company (from treasury): -1.
     protected int actorIndex = -2;
 
-    protected ButtonGroup buySellGroup = new ButtonGroup();
+    protected final ButtonGroup buySellGroup = new ButtonGroup();
     protected ClickField dummyButton; // To be selected if none else is.
 
-    protected Map<PublicCompany, Integer> companyIndex =
-        new HashMap<PublicCompany, Integer>();
-    protected Map<Player, Integer> playerIndex = new HashMap<Player, Integer>();
+    protected final Map<PublicCompany, Integer> companyIndex = Maps.newHashMap();
+    protected final Map<Player, Integer> playerIndex = Maps.newHashMap();
 
     protected static Logger log =
         LoggerFactory.getLogger(GameStatus.class);
@@ -198,6 +214,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         upperPlayerCaption = new Caption[np];
         lowerPlayerCaption = new Caption[np];
 
+        // FIXME: Is this an artifact?
         MouseListener companyCaptionMouseClickListener = gameUIManager.getORUIManager().getORPanel().getCompanyCaptionMouseClickListener();
 
         int lastX = 0;
@@ -674,9 +691,9 @@ public class GameStatus extends GridPanel implements ActionListener {
 
             } else if (actions.get(0) instanceof SellShares) {
 
-                List<String> options = new ArrayList<String>();
-                List<SellShares> sellActions = new ArrayList<SellShares>();
-                List<Integer> sellAmounts = new ArrayList<Integer>();
+                List<String> options = Lists.newArrayList();
+                List<SellShares> sellActions = Lists.newArrayList();
+                List<Integer> sellAmounts = Lists.newArrayList();
                 SellShares sale;
                 for (PossibleAction action : actions) {
                     sale = (SellShares) action;
@@ -731,10 +748,9 @@ public class GameStatus extends GridPanel implements ActionListener {
             } else if (actions.get(0) instanceof BuyCertificate) {
                 boolean startCompany = false;
 
-                List<String> options = new ArrayList<String>();
-                List<BuyCertificate> buyActions =
-                    new ArrayList<BuyCertificate>();
-                List<Integer> buyAmounts = new ArrayList<Integer>();
+                List<String> options = Lists.newArrayList();
+                List<BuyCertificate> buyActions = Lists.newArrayList();
+                List<Integer> buyAmounts = Lists.newArrayList();
                 BuyCertificate buy;
                 String companyName = "";
                 String playerName = "";
@@ -792,7 +808,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                         options.add(LocalText.getText("BuyCertificate",
                                 sharePerCert,
                                 companyName,
-                                buy.getFromPortfolio().getName(),
+                                buy.getFromPortfolio().getParent().getId(),
                                 gameUIManager.format(sharesPerCert * buy.getPrice()) ));
                         buyActions.add(buy);
                         buyAmounts.add(1);
@@ -801,7 +817,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                                     i,
                                     sharePerCert,
                                     companyName,
-                                    buy.getFromPortfolio().getName(),
+                                    buy.getFromPortfolio().getParent().getId(),
                                     gameUIManager.format(i * sharesPerCert
                                             * buy.getPrice()) ));
                             buyActions.add(buy);
