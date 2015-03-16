@@ -129,7 +129,7 @@ public class StockRound_18EU extends StockRound {
                 }
 
                 comp = cert.getCompany();
-                if (isSaleRecorded(currentPlayer, comp)) continue;
+                if (currentPlayer.soldThisRound(comp).value()) continue;
                 if (maxAllowedNumberOfSharesToBuy(currentPlayer, comp,
                         cert.getShare()) < 1) continue;
                 shares = cert.getShares();
@@ -180,7 +180,7 @@ public class StockRound_18EU extends StockRound {
             certs = map.get(comp);
             // if (certs.isEmpty()) continue; // TODO: Check if this removal is correct
             cert = Iterables.get(certs, 0);
-            if (isSaleRecorded(currentPlayer, comp)) continue;
+            if (currentPlayer.soldThisRound(comp).value()) continue;
             if (maxAllowedNumberOfSharesToBuy(currentPlayer, comp,
                     cert.getShare()) < 1) continue;
             price = comp.getMarketPrice();
@@ -202,7 +202,7 @@ public class StockRound_18EU extends StockRound {
                 certs = company.getPortfolioModel().getCertificates(company);
                 if (certs.isEmpty()) continue;
                 cert = Iterables.get(certs, 0);
-                if (isSaleRecorded(currentPlayer, company)) continue;
+                if (currentPlayer.soldThisRound(company).value()) continue;
                 if (!checkAgainstHoldLimit(currentPlayer, company, 1)) continue;
                 if (maxAllowedNumberOfSharesToBuy(currentPlayer, company,
                         cert.getShare()) < 1) continue;

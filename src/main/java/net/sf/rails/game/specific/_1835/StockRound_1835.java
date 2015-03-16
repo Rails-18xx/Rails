@@ -43,8 +43,8 @@ public class StockRound_1835 extends StockRound {
             if (!company.hasFloated()) continue;
             if (company.getPresident() != currentPlayer) continue;
             if (currentPlayer.getPortfolioModel().getShare(company) < 55) continue;
-            if (isSaleRecorded(currentPlayer, company)) continue;
-
+            if (currentPlayer.soldThisRound(company).value()) continue;
+            
             for (Player otherPlayer : getRoot().getPlayerManager().getPlayers()) {
                 if (otherPlayer == currentPlayer) continue;
 

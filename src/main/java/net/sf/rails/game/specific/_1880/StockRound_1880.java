@@ -166,7 +166,7 @@ public class StockRound_1880 extends StockRound {
 
                 comp = cert.getCompany();
                 unitsForPrice = comp.getShareUnitsForSharePrice();
-                if (isSaleRecorded(currentPlayer, comp)) continue;
+                if (currentPlayer.soldThisRound(comp).value()) continue;
                 if (maxAllowedNumberOfSharesToBuy(currentPlayer, comp,
                         cert.getShare()) < 1 ) continue;
                 //Make sure that only 50  percent of shares are sold until all Certs are to become avail upon Phase change
@@ -232,7 +232,7 @@ public class StockRound_1880 extends StockRound {
 
             /* Checks if the player can buy any shares of this company */
             if (maxNumberOfSharesToBuy < 1) continue;
-            if (isSaleRecorded(currentPlayer, comp)) continue;
+            if (currentPlayer.soldThisRound(comp).value()) continue;
             if ((comp.sharesOwnedByPlayers() ==50) && (!((PublicCompany_1880) comp).getAllCertsAvail())) continue;
             if (companyBoughtThisTurn != null) {
                 if (comp != companyBoughtThisTurn) continue;
@@ -294,7 +294,7 @@ public class StockRound_1880 extends StockRound {
                             company);
                 if (certs == null || certs.isEmpty()) continue;
                 cert = Iterables.get(certs, 0);
-                if (isSaleRecorded(currentPlayer, company)) continue;
+                if (currentPlayer.soldThisRound(company).value()) continue;
                 if (!checkAgainstHoldLimit(currentPlayer, company, 1)) continue;
                 if (maxAllowedNumberOfSharesToBuy(currentPlayer, company,
                         cert.getShare()) < 1) continue;

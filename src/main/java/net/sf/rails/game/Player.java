@@ -1,5 +1,9 @@
 package net.sf.rails.game;
 
+import java.util.Map;
+
+import com.google.common.collect.Maps;
+
 import net.sf.rails.game.model.CalculatedMoneyModel;
 import net.sf.rails.game.model.CertificateCountModel;
 import net.sf.rails.game.model.CountingMoneyModel;
@@ -32,6 +36,7 @@ public class Player extends RailsAbstractItem implements RailsMoneyOwner, Portfo
 
     private final BooleanState bankrupt = BooleanState.create(this, "isBankrupt");
     private final IntegerState worthAtORStart = IntegerState.create(this, "worthAtORStart");
+    private final Map<PublicCompany, BooleanState> soldThisRound = Maps.newHashMap();
 
     private Player(PlayerManager parent, String id, int index) {
         super(parent, id);
@@ -90,8 +95,13 @@ public class Player extends RailsAbstractItem implements RailsMoneyOwner, Portfo
         return (PlayerManager)super.getParent();
     }
     
-    public void finishConfiguration() {
+    public void finishConfiguration(RailsRoot root) {
         portfolio.finishConfiguration();
+        
+        // create soldThisRound states
+        for (PublicCompany company:root.getCompanyManager().getAllPublicCompanies()) {
+            soldThisRound.put(company, BooleanState.create(this, "soldThisRound_" + company.getId()));
+        }
     }
 
     public String getNameAndPriority() {
@@ -203,6 +213,16 @@ public class Player extends RailsAbstractItem implements RailsMoneyOwner, Portfo
 
     public boolean isBankrupt () {
     	return bankrupt.value();
+    }
+    
+    public void resetSoldThisRound() {
+        for (BooleanState state:soldThisRound.values()) {
+            state.set(false);
+        }
+    }
+    
+    public BooleanState soldThisRound(PublicCompany company) {
+        return soldThisRound.get(company);
     }
 
     // MoneyOwner interface

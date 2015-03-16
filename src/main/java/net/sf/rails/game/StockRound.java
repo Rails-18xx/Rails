@@ -45,10 +45,6 @@ public class StockRound extends Round {
      */
     protected HashSetState<PublicCompany> sellObligationLifted = null;
 
-    /* Transient data needed for rule enforcing */
-    /** HashMap per player containing a HashMap per company */
-    protected HashMultimapState<Player, PublicCompany> playersThatSoldThisRound = 
-            HashMultimapState.create(this, "playersThatSoldThisRound");
 
     /* Rule constants */
     static protected final int SELL_BUY_SELL = 0;
@@ -100,7 +96,7 @@ public class StockRound extends Round {
         initPlayer();
 
         raiseIfSoldOut = true;
-
+        
     }
 
     /*----- General methods -----*/
@@ -203,7 +199,7 @@ public class StockRound extends Round {
                 }
 
                 unitsForPrice = comp.getShareUnitsForSharePrice();
-                if (isSaleRecorded(currentPlayer, comp)) continue;
+                if (currentPlayer.soldThisRound(comp).value()) continue;
                 if (maxAllowedNumberOfSharesToBuy(currentPlayer, comp,
                         cert.getShare()) < 1 ) continue;
 
@@ -271,7 +267,7 @@ public class StockRound extends Round {
 
             /* Checks if the player can buy any shares of this company */
             if (maxNumberOfSharesToBuy < 1) continue;
-            if (isSaleRecorded(currentPlayer, comp)) continue;
+            if (currentPlayer.soldThisRound(comp).value()) continue;
             if (companyBoughtThisTurn != null) {
                 // If a cert was bought before, only brown zone ones can be
                 // bought again in the same turn
@@ -332,7 +328,7 @@ public class StockRound extends Round {
                 certs = company.getPortfolioModel().getCertificates(company);
                 if (certs.isEmpty()) continue;
                 cert = Iterables.get(certs, 0);
-                if (isSaleRecorded(currentPlayer, company)) continue;
+                if (currentPlayer.soldThisRound(company).value()) continue;
                 if (!checkAgainstHoldLimit(currentPlayer, company, 1)) continue;
                 if (maxAllowedNumberOfSharesToBuy(currentPlayer, company,
                         cert.getShare()) < 1) continue;
@@ -789,7 +785,7 @@ public class StockRound extends Round {
             }
 
             // The player may not have sold the company this round.
-            if (isSaleRecorded(currentPlayer, company)) {
+            if (currentPlayer.soldThisRound(company).value()) {
                 errMsg =
                     LocalText.getText("AlreadySoldThisTurn",
                             currentPlayer.getId(),
@@ -981,14 +977,6 @@ public class StockRound extends Round {
         Portfolio.moveAll(unavailable.getCertificates(company), ipo.getParent());
     }
 
-    protected void recordSale(Player player, PublicCompany company) {
-        playersThatSoldThisRound.put(player, company);
-    }
-
-    protected boolean isSaleRecorded(Player player, PublicCompany company) {
-        return playersThatSoldThisRound.containsEntry(player, company);
-    }
-
     public boolean sellShares(SellShares action)
     // NOTE: Don't forget to keep ShareSellingRound.sellShares() in sync
     {
@@ -1162,7 +1150,7 @@ public class StockRound extends Round {
         }
 
         // Remember that the player has sold this company this round.
-        recordSale(currentPlayer, company);
+        currentPlayer.soldThisRound(company).set(true);
 
         if (companyBoughtThisTurnWrapper.value() == null)
             hasSoldThisTurnBeforeBuying.set(true);
@@ -1425,6 +1413,12 @@ public class StockRound extends Round {
                 }
             }
         }
+        
+        // reset soldThisRound
+        for (Player player:playerManager.getPlayers()) {
+            player.resetSoldThisRound();
+        }
+
 
         super.finishRound();
     }
