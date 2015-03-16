@@ -95,8 +95,9 @@ public class Investor_1880 extends PublicCompany implements RevenueStaticModifie
         // check if running company is this company, otherwise quit
         if (revenueAdapter.getCompany() == this) {
             TrainManager trainManager=getRoot().getTrainManager();
-            Train[] test = (Train[]) trainManager.getAvailableNewTrains().toArray();
-            revenueAdapter.addTrainByString(test[0].getId());
+            Set<Train> NewTrains = trainManager.getAvailableNewTrains();
+            Train [] NewTrainArray = NewTrains.toArray(new Train[NewTrains.size()]);
+            revenueAdapter.addTrainByString( NewTrainArray[0].getType().getName());
         }
         return false;
     }
