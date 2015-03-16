@@ -43,12 +43,6 @@ public class StockRound_1880 extends StockRound {
         super(parent, id);
     }
 
-    @Override
-    // The sell-in-same-turn-at-decreasing-price option does not apply here
-    protected int getCurrentSellPrice(PublicCompany company) {
-        return (super.getCurrentSellPrice(company) - 5);
-    }
-
     /**
      * Share price goes down 1 space for any number of shares sold.
      */
