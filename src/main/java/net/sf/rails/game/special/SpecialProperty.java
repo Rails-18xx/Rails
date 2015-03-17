@@ -9,7 +9,6 @@ import net.sf.rails.common.parser.Configure;
 import net.sf.rails.common.parser.Tag;
 import net.sf.rails.game.Company;
 import net.sf.rails.game.GameDef;
-import net.sf.rails.game.GameManager;
 import net.sf.rails.game.PrivateCompany;
 import net.sf.rails.game.RailsItem;
 import net.sf.rails.game.RailsOwnableItem;
@@ -57,28 +56,6 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
         super(parent, convertId(id) , SpecialProperty.class);
         uniqueId = Integer.valueOf(id);
         getRoot().getGameManager().storeObject(STORAGE_NAME, this);
-    }
-
-    // TODO: Rails 2.0: Move this to a new SpecialPropertyManager
-    
-    // convert to the full id used 
-    private static String convertId(String id) {
-        return STORAGE_NAME + "_" + id;
-    }
-    
-    // return new storage id
-    private static String createUniqueId() {
-        return String.valueOf(GameManager.getInstance().getStorageId(STORAGE_NAME) + 1);
-        // increase unique id to allow loading old save files (which increase by 1)
-        // TODO: remove that legacy issue
-    }
-
-    // return special property by unique id
-    public static SpecialProperty getByUniqueId(int id) {
-        id -= 1;
-        // decrease retrieval id to allow loading old save files (which increase by 1)
-        // TODO: remove that legacy issue
-        return (SpecialProperty)GameManager.getInstance().retrieveObject(STORAGE_NAME, id);
     }
 
    public void configureFromXML(Tag tag) throws ConfigurationException {
@@ -248,6 +225,28 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
     }
     
  
+    // TODO: Rails 2.0: Move this to a new SpecialPropertyManager
+    
+    // convert to the full id used 
+    private static String convertId(String id) {
+        return STORAGE_NAME + "_" + id;
+    }
+    
+    // return new storage id
+    private static String createUniqueId(RailsItem item) {
+        return String.valueOf(item.getRoot().getGameManager().getStorageId(STORAGE_NAME) + 1);
+        // increase unique id to allow loading old save files (which increase by 1)
+        // TODO: remove that legacy issue
+    }
+
+    // return special property by unique id
+    public static SpecialProperty getByUniqueId(RailsItem item, int id) {
+        id -= 1;
+        // decrease retrieval id to allow loading old save files (which increase by 1)
+        // TODO: remove that legacy issue
+        return (SpecialProperty)item.getRoot().getGameManager().retrieveObject(STORAGE_NAME, id);
+    }
+
     /**
      * @param company the company that owns the SpecialProperties
      * @param tag with XML to create SpecialProperties
@@ -269,7 +268,7 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
               if (!Util.hasValue(className))
                   throw new ConfigurationException(
                   "Missing class in private special property");
-              String uniqueId = SpecialProperty.createUniqueId();
+              String uniqueId = SpecialProperty.createUniqueId(company);
               SpecialProperty sp = Configure.create(SpecialProperty.class, className, company, uniqueId);
               sp.setOriginalCompany(company);
               sp.configureFromXML(spTag);

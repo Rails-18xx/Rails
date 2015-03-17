@@ -461,15 +461,6 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             gameParameters.put(parm, parm.defaultValue());
         }
     }
-
-    /**
-     * @return instance of GameManager
-     */
-    // TODO: This is a workaround
-    // Better to replace all getInstance() calls
-    public static GameManager getInstance () {
-        return RailsRoot.getInstance().getGameManager();
-    }
     
     public PossibleActions getPossibleActions() {
         return possibleActions;

@@ -16,7 +16,7 @@ public class BaseToken extends Token<BaseToken> {
     }
     
     public static BaseToken create(PublicCompany company) {
-        String uniqueId = Token.createUniqueId();
+        String uniqueId = Token.createUniqueId(company);
         return new BaseToken(company, uniqueId);
     }
 

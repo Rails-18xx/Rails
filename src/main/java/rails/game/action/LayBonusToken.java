@@ -95,11 +95,11 @@ public class LayBonusToken extends LayToken {
         }
 
         if (tokenId != null) {
-            token = Token.getByUniqueId(BonusToken.class, tokenId);
+            token = Token.getByUniqueId(getRoot(), BonusToken.class, tokenId);
         }
         if (specialPropertyId > 0) {
             specialProperty =
-                    (SpecialBonusTokenLay) SpecialProperty.getByUniqueId(specialPropertyId);
+                    (SpecialBonusTokenLay) SpecialProperty.getByUniqueId(getRoot(), specialPropertyId);
         }
         if (chosenHexName != null && chosenHexName.length() > 0) {
             chosenHex = mmgr.getHex(chosenHexName);

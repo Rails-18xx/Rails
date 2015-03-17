@@ -341,7 +341,7 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
         
         if (specialPropertyId > 0) {
             specialProperty =
-                (SpecialTileLay) SpecialProperty.getByUniqueId(specialPropertyId);
+                (SpecialTileLay) SpecialProperty.getByUniqueId(getRoot(), specialPropertyId);
         }
         // FIXME: Rewrite this with Rails1.x version flag
         if (laidTileId != 0) {

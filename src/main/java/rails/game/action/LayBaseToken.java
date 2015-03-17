@@ -162,7 +162,7 @@ public class LayBaseToken extends LayToken {
 
         if (specialPropertyId > 0) {
             specialProperty =
-                (SpecialBaseTokenLay) SpecialProperty.getByUniqueId(specialPropertyId);
+                (SpecialBaseTokenLay) SpecialProperty.getByUniqueId(getRoot(), specialPropertyId);
         }
         if (chosenHexName != null && chosenHexName.length() > 0) {
             chosenHex = mmgr.getHex(chosenHexName);

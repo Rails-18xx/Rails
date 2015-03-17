@@ -136,7 +136,7 @@ public class BuyBonusToken extends PossibleORAction {
         }
         if (specialPropertyId > 0) {
             specialProperty =
-                    (SellBonusToken) SpecialProperty.getByUniqueId(specialPropertyId);
+                    (SellBonusToken) SpecialProperty.getByUniqueId(getRoot() ,specialPropertyId);
         }
     }
 

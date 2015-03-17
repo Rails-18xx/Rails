@@ -368,7 +368,7 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
             }
         }
         for (SellBonusToken sbt : moveToGM) {
-            GameManager.getInstance().getCommonSpecialPropertiesPortfolio().add(sbt);
+            getRoot().getGameManager().getCommonSpecialPropertiesPortfolio().add(sbt);
             log.debug("SP "+sbt.getId()+" is now a common property");
         }
     }

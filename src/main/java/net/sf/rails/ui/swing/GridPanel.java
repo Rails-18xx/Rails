@@ -26,9 +26,9 @@ import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 
 import net.sf.rails.common.Config;
-import net.sf.rails.game.GameManager;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.Round;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.Observable;
@@ -223,7 +223,7 @@ implements ActionListener, KeyListener {
     
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_F1) {
-            HelpWindow.displayHelp(GameManager.getInstance().getHelp());
+            HelpWindow.displayHelp(RailsRoot.getInstance().getGameManager().getHelp());
             e.consume();
         }
     }

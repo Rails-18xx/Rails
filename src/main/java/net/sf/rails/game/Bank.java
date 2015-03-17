@@ -61,7 +61,7 @@ public class Bank extends RailsManager implements CurrencyOwner, RailsMoneyOwner
                 if (cash.value() <= 0 && !broken.value()) {
                     broken.set(true);
                     cash.setText(LocalText.getText("BROKEN"));
-                    GameManager.getInstance().registerBrokenBank();
+                    getRoot().getGameManager().registerBrokenBank();
                 }
             }
         };

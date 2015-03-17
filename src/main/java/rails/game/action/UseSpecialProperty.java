@@ -74,7 +74,7 @@ public class UseSpecialProperty extends PossibleORAction {
         in.defaultReadObject();
 
         if (specialPropertyId > 0) {
-            specialProperty = SpecialProperty.getByUniqueId(specialPropertyId);
+            specialProperty = SpecialProperty.getByUniqueId(getRoot(), specialPropertyId);
         }
     }
 

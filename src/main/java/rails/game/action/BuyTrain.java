@@ -319,7 +319,7 @@ public class BuyTrain extends PossibleORAction {
 
         if (specialPropertyId > 0) {
             specialProperty =
-                    (SpecialTrainBuy) SpecialProperty.getByUniqueId(specialPropertyId);
+                    (SpecialTrainBuy) SpecialProperty.getByUniqueId(getRoot(), specialPropertyId);
         }
 
         if (Util.hasValue(exchangedTrainUniqueId)) {

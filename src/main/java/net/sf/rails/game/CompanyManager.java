@@ -81,7 +81,7 @@ public class CompanyManager extends RailsManager implements Configurable {
      */
     public void configureFromXML(Tag tag) throws ConfigurationException {
 
-        gameManager = GameManager.getInstance();
+        gameManager = getRoot().getGameManager();
 
         /** A map with all company types, by type name */
         // Localised here as it has no permanent use

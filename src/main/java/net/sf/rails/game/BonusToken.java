@@ -25,7 +25,7 @@ public class BonusToken extends Token<BonusToken> implements Closeable, Configur
     }
     
     public static BonusToken create(RailsItem parent) {
-        String uniqueId = Token.createUniqueId();
+        String uniqueId = Token.createUniqueId(parent);
         BonusToken token = new BonusToken(parent, uniqueId);
         return token;
     }

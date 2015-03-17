@@ -21,7 +21,7 @@ public abstract class Token<T extends Token<T>> extends RailsOwnableItem<T> impl
     protected Token(RailsItem parent, String id, Class<T> clazz) {
         super(parent, id, clazz);
         uniqueId = id;
-        GameManager.getInstance().storeObject(STORAGE_NAME, this);
+        parent.getRoot().getGameManager().storeObject(STORAGE_NAME, this);
     }
     
     @Override
@@ -34,19 +34,21 @@ public abstract class Token<T extends Token<T>> extends RailsOwnableItem<T> impl
         return (RailsRoot)super.getRoot();
     }
     
-    /** 
-     * @return Token unique_id 
-     */
-    protected static String createUniqueId() {
-        return STORAGE_NAME + "_" + GameManager.getInstance().getStorageId(STORAGE_NAME);
-    }
-
     public String getUniqueId() {
         return uniqueId;
     }
 
-    public static <T extends Token<T>> T getByUniqueId(Class<T> clazz, String id) {
+    // TODO: Rails 2.0 Move it to Token manager 
+    
+    /** 
+     * @return Token unique_id 
+     */
+    protected static String createUniqueId(RailsItem item) {
+        return STORAGE_NAME + "_" + item.getRoot().getGameManager().getStorageId(STORAGE_NAME);
+    }
+
+    public static <T extends Token<T>> T getByUniqueId(RailsItem item, Class<T> clazz, String id) {
         int i = Integer.valueOf(id.replace(STORAGE_NAME + "_", ""));
-        return clazz.cast(GameManager.getInstance().retrieveObject(STORAGE_NAME, i));
+        return clazz.cast(item.getRoot().getGameManager().retrieveObject(STORAGE_NAME, i));
     }
 }
