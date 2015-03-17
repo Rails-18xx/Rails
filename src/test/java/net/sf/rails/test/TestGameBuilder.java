@@ -94,8 +94,10 @@ public final class TestGameBuilder extends TestCase {
                     + "." + Config.get("report.filename.extension"); 
             File reportFile = new File(reportFilename);
             
-            if (!reportFile.exists() || overrideReport)
+            if (!reportFile.exists() || overrideReport) {
                 prepareGameReport(gameFile, reportFilename);
+                RailsRoot.clearInstance();
+            }
         }
         
         return gameName;
