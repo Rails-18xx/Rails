@@ -126,7 +126,7 @@ public class GameLoader {
         // FIXME: Removed the filename replacement expression
         // check if this still works
         // String filename = filePath.replaceAll(".*[/\\\\]", "");
-        ois = new RailsObjectInputStream(new FileInputStream(gameFile));
+        ois = new RailsObjectInputStream(this, new FileInputStream(gameFile));
 
         Object object = ois.readObject();
         String version;
@@ -331,18 +331,27 @@ public class GameLoader {
     }
     
     /**
-     * A subclass of ObjectInputStream that allows to use new package names and still load
-     * old game files
+     * A subclass of ObjectInputStream for Rails
+     *  
+     * 1. Allows to add context information (here the railsRoot) 
+     * Took the idea from http://www.cordinc.com/blog/2011/05/injecting-context-in-java-seri.html
      * 
+     * 2. Should allow to use new package names and still load old game files
      * See: http://stackoverflow.com/questions/5305473
-     * 
      * However this approach did not work. I did not investigate it further so far.
+     * See code below
      */
-    
     public static class RailsObjectInputStream extends ObjectInputStream {
 
-        public RailsObjectInputStream(InputStream in) throws IOException {
+        private final GameLoader loader;
+        
+        public RailsObjectInputStream(GameLoader loader, InputStream in) throws IOException {
             super(in);
+            this.loader = loader;
+        }
+        
+        public RailsRoot getRoot() {
+            return loader.getRoot();
         }
         
 //        @Override

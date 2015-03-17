@@ -10,6 +10,7 @@ import net.sf.rails.game.Player;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.state.ChangeAction;
 import net.sf.rails.game.state.ChangeActionOwner;
+import net.sf.rails.util.GameLoader.RailsObjectInputStream;
 import net.sf.rails.util.RailsObjects;
 
 import org.slf4j.Logger;
@@ -26,8 +27,6 @@ import com.google.common.base.Objects;
  * Rails 2.0: Added updated equals and toString methods 
  */
 
-
-// FIXME (Rails2.0): Still relies on getInstance of RailsRoot
 // TODO (Rails2.0): Replace this with a new XML version
 
 public abstract class PossibleAction implements ChangeAction, Serializable {
@@ -38,7 +37,7 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
 
     protected boolean acted = false;
     
-    transient protected final RailsRoot root;
+    transient protected RailsRoot root;
 
     public static final long serialVersionUID = 3L;
 
@@ -47,12 +46,12 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
 
     // TODO: Replace this by a constructor argument for the player
     public PossibleAction() {
+        root = RailsRoot.getInstance();
         player = getRoot().getPlayerManager().getCurrentPlayer();
         if (player != null) {
             playerName = player.getId();
             playerIndex = player.getIndex();
         }
-        root = player.getRoot();
     }
 
     public String getPlayerName() {
@@ -141,15 +140,15 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
     }
 
     protected RailsRoot getRoot() {
-        return RailsRoot.getInstance();
+        return root;
     }
     
     protected GameManager getGameManager() {
-        return GameManager.getInstance();
+        return root.getGameManager();
     }
 
     protected CompanyManager getCompanyManager () {
-        return RailsRoot.getInstance().getCompanyManager();
+        return root.getCompanyManager();
     }
 
     /** Default version of an Menu item text. To be overridden where useful. */
@@ -170,6 +169,11 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
     // TODO: Rails 2.0 check if the combination above works correctly
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
+        
+        if (in instanceof RailsObjectInputStream) {
+            root = ((RailsObjectInputStream) in).getRoot();
+        }
+        
         if (playerName != null) {
             player = getRoot().getPlayerManager().getPlayerByName(playerName);
         } else {
