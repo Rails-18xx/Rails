@@ -2,10 +2,14 @@ package net.sf.rails.game.state;
 
 public interface ChangeReporter {
     
-    void updateOnClose(ChangeSet current);
+    public void init(ChangeStack stack);
     
-    void informOnUndo();
+    public void updateOnClose();
+    
+    public void informOnUndo();
 
-    void informOnRedo();
+    public void informOnRedo();
+    
+    public void updateAfterUndoRedo();
     
 }

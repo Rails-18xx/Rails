@@ -7,6 +7,7 @@ import net.sf.rails.game.RailsAbstractItem;
 import net.sf.rails.game.RailsItem;
 import net.sf.rails.game.state.ChangeReporter;
 import net.sf.rails.game.state.ChangeSet;
+import net.sf.rails.game.state.ChangeStack;
 import net.sf.rails.util.Util;
 
 import com.google.common.collect.ImmutableList;
@@ -30,13 +31,14 @@ public class ReportBuffer extends RailsAbstractItem implements ChangeReporter {
     // static data
     private final Deque<ReportSet> pastReports = Lists.newLinkedList();
     private final Deque<ReportSet> futureReports = Lists.newLinkedList();
-
+  
+    // TODO: Remove waitQueue, see functions below
     private final Queue<String> waitQueue = Lists.newLinkedList();
   
+    private ChangeStack changeStack; // initialized via init()
 
     // dynamic data
     private ReportSet.Builder currentReportBuilder;
-    private String currentText;
     private ReportBuffer.Observer observer;
 
 
@@ -71,14 +73,16 @@ public class ReportBuffer extends RailsAbstractItem implements ChangeReporter {
     }
     
     private String getAsHtml(ChangeSet currentChangeSet) {
+        
+        // FIXME (Rails2.0): Add commments back
+        //     s.append("<span style='color:green;font-size:80%;font-style:italic;'>");
+
         StringBuilder s = new StringBuilder();
         s.append("<html>");
         for (ReportSet rs:Iterables.concat(pastReports, futureReports)) {
             String text = rs.getAsHtml(currentChangeSet);
             if (text == null) continue;
             s.append("<p>");
-            // FIXME (Rails2.0): Add commments back
-            //     s.append("<span style='color:green;font-size:80%;font-style:italic;'>");
             if (text != null) s.append(text);
             s.append("</p>");
         }
@@ -97,38 +101,57 @@ public class ReportBuffer extends RailsAbstractItem implements ChangeReporter {
     }
     
     public String getCurrentText() {
-        return currentText;
+        return getAsHtml(changeStack.getClosedChangeSet());
     }
 
     private void addMessage(String message) {
         if (!Util.hasValue(message)) return;
         currentReportBuilder.addMessage(message);
     }
+    
+    private void updateObserver() {
+        if (observer != null) {
+            observer.update(getCurrentText());
+        }
+    }
 
     // ChangeReport methods
-
-    public void updateOnClose(ChangeSet current) {
+    @Override
+    public void init(ChangeStack changeStack) {
+        this.changeStack = changeStack;
+    }
+    
+    @Override
+    public void updateOnClose() {
+        ChangeSet current = changeStack.getClosedChangeSet();
         ReportSet currentSet = currentReportBuilder.build(current);
         pastReports.addLast(currentSet);
         futureReports.clear();
-        currentText = getAsHtml(current);
-        if (observer != null) {
-            observer.update(currentText);
-        }
+        
         // a new builder
         currentReportBuilder = ReportSet.builder();
+ 
+        // update observer (ReportWindow)
+        updateObserver();
     }
 
+    @Override
     public void informOnUndo() {
         ReportSet undoSet = pastReports.pollLast();
         futureReports.addFirst(undoSet);
     }
     
+    @Override
     public void informOnRedo() {
         ReportSet redoSet = futureReports.pollFirst();
         pastReports.addLast(redoSet);
     }
-
+    
+    @Override
+    public void updateAfterUndoRedo() {
+        updateObserver();
+    }
+ 
     /**
      * Shortcut to add a message to DisplayBuffer
      */

@@ -1,25 +1,32 @@
 package net.sf.rails.game.state;
 
 import net.sf.rails.game.state.ChangeReporter;
-import net.sf.rails.game.state.ChangeSet;
 import net.sf.rails.game.state.ChangeStack;
 
 public class ChangeReporterImpl implements ChangeReporter {
 
-    public void linkToChangeStack(ChangeStack changeStack) {
+    @Override
+    public void init(ChangeStack changeStack) {
+        // do nothing
+    }
+    
+    @Override
+    public void updateOnClose() {
         // do nothing
     }
 
-    public void updateOnClose(ChangeSet current) {
-        // do nothing
-    }
+    @Override
     public void informOnUndo() {
         // do nothing
     }
+
+    @Override
     public void informOnRedo() {
         // do nothing
     }
-    public void update(ChangeSet changeSet) {
+ 
+    @Override
+    public void updateAfterUndoRedo() {
         // do nothing
     }
 

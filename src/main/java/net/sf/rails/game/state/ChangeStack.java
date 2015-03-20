@@ -23,8 +23,9 @@ public class ChangeStack {
     private final Deque<ChangeSet> undoStack = Lists.newLinkedList();
     private final Deque<ChangeSet> redoStack = Lists.newLinkedList();
     
+    private ChangeReporter reporter; // assigned once
+
     // dynamic fields
-    private ChangeReporter reporter; // however only assigned once
     private ImmutableList.Builder<Change> changeBuilder;
 
     private ChangeStack(StateManager stateManager) {
@@ -47,13 +48,14 @@ public class ChangeStack {
      */
     public void addChangeReporter(ChangeReporter reporter) {
         this.reporter = reporter;
+        reporter.init(this);
         log.debug("Added ChangeReporter " + reporter);
     }
 
     /**
      * @return the previous (closed) changeSet, null if empty
      */
-    public ChangeSet getPreviousChangeSet() {
+    public ChangeSet getClosedChangeSet() {
         return undoStack.peekLast();
     }
     
@@ -86,8 +88,9 @@ public class ChangeStack {
             redoStack.clear();
 
             if (reporter != null) {
-                reporter.updateOnClose(closeSet);
+                reporter.updateOnClose();
             }
+            
             // restart builders
             restart();
             // inform direct and indirect observers
@@ -104,8 +107,6 @@ public class ChangeStack {
         // update the observers of states and models
         log.debug("ChangeStack: update Observers");
         stateManager.updateObservers(states);
-        // FIXME: Rails 2.0 is this still required?
-        //reporter.update();
     }
     
     // is undo possible (protect first index) 
@@ -126,6 +127,10 @@ public class ChangeStack {
         ChangeSet undoSet = executeUndo();
         restart();
         updateObservers(undoSet.getStates());
+
+        if (reporter != null) {
+            reporter.updateAfterUndoRedo();
+        }
     }
     
     /**
@@ -141,6 +146,9 @@ public class ChangeStack {
         }
         restart();
         updateObservers(states.build());
+        if (reporter != null) {
+            reporter.updateAfterUndoRedo();
+        }
     }
 
     private ChangeSet executeUndo() {
@@ -176,6 +184,9 @@ public class ChangeStack {
         ChangeSet redoSet = executeRedo();
         restart();
         updateObservers(redoSet.getStates());
+        if (reporter != null) {
+            reporter.updateAfterUndoRedo();
+        }
     }
 
     public void redo(int index) {
@@ -188,6 +199,9 @@ public class ChangeStack {
         }
         restart();
         updateObservers(states.build());
+        if (reporter != null) {
+            reporter.updateAfterUndoRedo();
+        }
     }
     
     private ChangeSet executeRedo() {

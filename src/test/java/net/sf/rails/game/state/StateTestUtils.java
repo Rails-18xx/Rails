@@ -33,7 +33,7 @@ class StateTestUtils {
     }
     
     public static ChangeSet getPreviousChangeSet(Root root) {
-        return root.getStateManager().getChangeStack().getPreviousChangeSet();
+        return root.getStateManager().getChangeStack().getClosedChangeSet();
         
     }
      

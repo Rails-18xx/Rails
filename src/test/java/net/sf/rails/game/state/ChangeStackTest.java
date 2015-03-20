@@ -39,20 +39,20 @@ public class ChangeStackTest {
         
         // next changeset
         StateTestUtils.close(root);
-        set_1 = changeStack.getPreviousChangeSet();
+        set_1 = changeStack.getClosedChangeSet();
         state.set(false);
         
         // next changeset
         StateTestUtils.close(root);
-        set_2 = changeStack.getPreviousChangeSet();
+        set_2 = changeStack.getClosedChangeSet();
         state.set(true);
         StateTestUtils.close(root);
-        set_3 = changeStack.getPreviousChangeSet();
+        set_3 = changeStack.getClosedChangeSet();
     }
 
     @Test
     public void testGetCurrentChangeSet() {
-        assertSame(set_3, changeStack.getPreviousChangeSet());
+        assertSame(set_3, changeStack.getClosedChangeSet());
         // on the stack are set2, set1 (thus index 2)
         assertEquals(3, changeStack.getCurrentIndex());
     }
@@ -60,7 +60,7 @@ public class ChangeStackTest {
     @Test
     public void testcloseAndNew() {
         changeStack.close(changeAction);
-        assertSame(set_3, changeStack.getPreviousChangeSet());
+        assertSame(set_3, changeStack.getClosedChangeSet());
         // number on stack has not changed
         assertEquals(3, changeStack.getCurrentIndex());
     }
@@ -71,12 +71,12 @@ public class ChangeStackTest {
         // undo set 3
         changeStack.undo();
         assertEquals(2, changeStack.getCurrentIndex());
-        assertSame(set_2, changeStack.getPreviousChangeSet());
+        assertSame(set_2, changeStack.getClosedChangeSet());
         assertFalse(state.value());
         // undo set 2
         changeStack.undo();
         assertEquals(1, changeStack.getCurrentIndex());
-        assertSame(set_1, changeStack.getPreviousChangeSet());
+        assertSame(set_1, changeStack.getClosedChangeSet());
         assertTrue(state.value());
         // undo set 1 => should fail
         try{
@@ -86,7 +86,7 @@ public class ChangeStackTest {
             assertThat(e).isInstanceOf(IllegalStateException.class);
         }
         assertEquals(1, changeStack.getCurrentIndex());
-        assertSame(set_1, changeStack.getPreviousChangeSet());
+        assertSame(set_1, changeStack.getClosedChangeSet());
         assertTrue(state.value());
     }
     
@@ -107,13 +107,13 @@ public class ChangeStackTest {
         // redo set_2
         changeStack.redo();
         assertEquals(2, changeStack.getCurrentIndex());
-        assertSame(set_2, changeStack.getPreviousChangeSet());
+        assertSame(set_2, changeStack.getClosedChangeSet());
         assertFalse(state.value());
 
         // redo set_3
         changeStack.redo();
         assertEquals(3, changeStack.getCurrentIndex());
-        assertSame(set_3, changeStack.getPreviousChangeSet());
+        assertSame(set_3, changeStack.getClosedChangeSet());
         assertTrue(state.value());
 
         // then it should do nothing
@@ -124,7 +124,7 @@ public class ChangeStackTest {
             assertThat(e).isInstanceOf(IllegalStateException.class);
         }
         assertEquals(3, changeStack.getCurrentIndex());
-        assertSame(set_3, changeStack.getPreviousChangeSet());
+        assertSame(set_3, changeStack.getClosedChangeSet());
         assertTrue(state.value());
         
         // can we still undo?
