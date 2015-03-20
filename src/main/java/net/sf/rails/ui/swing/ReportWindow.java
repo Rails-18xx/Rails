@@ -268,7 +268,7 @@ public class ReportWindow extends JFrame implements
             URL url = e.getURL();
 //          String protocol = e.getURL().getProtocol();
             int index = url.getPort();
-            gotoIndex(index + 1);
+            gotoIndex(index);
             toFront();
         }
     }
