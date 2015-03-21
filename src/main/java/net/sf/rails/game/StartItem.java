@@ -534,6 +534,7 @@ public class StartItem extends RailsAbstractItem {
         return basePrice;
     }
 
+    // FIXME: Rails 2.0 Change argument to Player player
     public Model getBidForPlayerModel(int index) {
         return bids[index];
     }

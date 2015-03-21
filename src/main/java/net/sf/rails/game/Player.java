@@ -103,7 +103,8 @@ public class Player extends RailsAbstractItem implements RailsMoneyOwner, Portfo
             soldThisRound.put(company, BooleanState.create(this, "soldThisRound_" + company.getId()));
         }
     }
-
+    
+    // FIXME: Rails 2.0 This has to be changed to a state variable
     public String getNameAndPriority() {
         return getId() + (getParent().getPriorityPlayer() == this ? " PD" : "");
     }
