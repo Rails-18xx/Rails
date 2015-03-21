@@ -1075,18 +1075,17 @@ public class GameUIManager implements DialogOwner {
 
         if (jfc.showSaveDialog(statusWindow) == JFileChooser.APPROVE_OPTION) {
             File selectedFile = jfc.getSelectedFile();
-        }
+            try {
+                PrintWriter pw = new PrintWriter(selectedFile);
 
-        try {
-            PrintWriter pw = new PrintWriter(filename);
+                for (String line : status) pw.println(line) ;
 
-            for (String line : status) pw.println(line) ;
+                pw.close();
 
-            pw.close();
-
-        } catch (IOException e) {
-            log.error("Save failed", e);
-            getDisplayBuffer().add(LocalText.getText("SaveFailed", e.getMessage()));
+            } catch (IOException e) {
+                log.error("Save failed", e);
+                getDisplayBuffer().add(LocalText.getText("SaveFailed", e.getMessage()));
+            }
         }
     }
 
