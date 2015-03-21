@@ -883,7 +883,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         skipNextDone = false;
         skippedStep = null;
 
-            ChangeStack changeStack = getRoot().getStateManager().getChangeStack();
+        ChangeStack changeStack = getRoot().getStateManager().getChangeStack();
 
         if (doProcess && !processCorrectionActions(action) && !getCurrentRound().process(action)) {
             String msg = "Player "+action.getPlayerName()+"\'s action \""
@@ -893,12 +893,13 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             DisplayBuffer.add(this, msg);
             return false;
         }
+        executedActions.add(action);
+
         possibleActions.clear();
         getCurrentRound().setPossibleActions();
-            changeStack.close(action);
+        changeStack.close(action);
 
         if (!isGameOver()) setCorrectionActions();
-        executedActions.add(action);
         
         log.debug("Turn: "+getCurrentPlayer().getId());
         return true;
