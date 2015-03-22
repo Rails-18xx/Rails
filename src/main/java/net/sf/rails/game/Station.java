@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
  * int number: The number inside the string (e.g. 1)
  * 
  */
-public class Station extends TrackPoint {
+public class Station extends TrackPoint implements Comparable<Station> {
 
     private static final Logger log =
             LoggerFactory.getLogger(Station.class);
@@ -177,8 +177,12 @@ public class Station extends TrackPoint {
     public String toText() {
         return type.toText() + " " + number;
     }
-
     
+    // Comparable method
+    @Override
+    public int compareTo(Station other) {
+        return this.getId().compareTo(other.getId());
+    }
     
     @Override
     public String toString() {

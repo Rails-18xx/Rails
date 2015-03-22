@@ -10,7 +10,7 @@ import net.sf.rails.common.parser.ConfigurationException;
 /**
  * Abstract class to be extended by classes that are Points on a hex tile
  */
-public abstract class TrackPoint implements Comparable<TrackPoint> {
+public abstract class TrackPoint {
 
     public static enum Type {SIDE, STATION};
     
@@ -30,11 +30,6 @@ public abstract class TrackPoint implements Comparable<TrackPoint> {
     @Override
     public int hashCode() {
         return getTrackPointNumber();
-    }
-    
-    // Comparable methods
-    public int compareTo(TrackPoint other) {
-        return ((Integer)this.getTrackPointNumber()).compareTo(other.getTrackPointNumber());
     }
     
     // Patterns for Track tags
