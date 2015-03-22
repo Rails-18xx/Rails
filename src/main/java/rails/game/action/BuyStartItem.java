@@ -6,7 +6,6 @@ import com.google.common.base.Objects;
 
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.StartItem;
-import net.sf.rails.game.StockSpace;
 import net.sf.rails.util.RailsObjects;
 
 /**

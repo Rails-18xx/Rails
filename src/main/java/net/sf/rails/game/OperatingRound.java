@@ -14,12 +14,10 @@ import rails.game.action.*;
 import rails.game.correct.ClosePrivate;
 import rails.game.correct.OperatingCost;
 import net.sf.rails.common.*;
-import net.sf.rails.game.model.PrivatesModel;
 import net.sf.rails.game.special.*;
 import net.sf.rails.game.state.*;
 import net.sf.rails.util.SequenceUtil;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**

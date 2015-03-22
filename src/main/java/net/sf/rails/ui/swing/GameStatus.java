@@ -1,6 +1,5 @@
 package net.sf.rails.ui.swing;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -24,7 +23,6 @@ import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.specific._18EU.StartCompany_18EU;
-import net.sf.rails.game.state.ColorModel;
 import net.sf.rails.game.state.MoneyOwner;
 import net.sf.rails.sound.SoundManager;
 import net.sf.rails.ui.swing.elements.*;

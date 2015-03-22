@@ -1,7 +1,6 @@
 package net.sf.rails.game.specific._1835;
 
 import net.sf.rails.common.GameOption;
-import net.sf.rails.game.Bank;
 import net.sf.rails.game.BankPortfolio;
 import net.sf.rails.game.PublicCertificate;
 import net.sf.rails.game.PublicCompany;

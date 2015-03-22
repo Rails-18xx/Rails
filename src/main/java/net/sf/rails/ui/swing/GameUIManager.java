@@ -13,7 +13,6 @@ import javax.swing.plaf.FontUIResource;
 
 import net.sf.rails.common.*;
 import net.sf.rails.game.*;
-import net.sf.rails.game.PlayerManager;
 import net.sf.rails.game.state.Observer;
 import net.sf.rails.sound.SoundManager;
 import net.sf.rails.ui.swing.elements.*;

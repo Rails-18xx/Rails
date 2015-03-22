@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.NavigableSet;
 import java.util.Set;
 
-import net.sf.rails.sound.SoundEventInterpreter;
 import net.sf.rails.sound.SoundManager;
 import net.sf.rails.ui.swing.hexmap.GUIHex;
 import net.sf.rails.ui.swing.hexmap.HexUpgrade;

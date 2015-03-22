@@ -14,7 +14,6 @@ import net.sf.rails.common.LocalText;
 import net.sf.rails.game.Tile;
 import net.sf.rails.game.TileManager;
 import net.sf.rails.ui.swing.elements.Field;
-import net.sf.rails.ui.swing.hexmap.GUIHex;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
