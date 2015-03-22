@@ -214,9 +214,6 @@ public class GameStatus extends GridPanel implements ActionListener {
         upperPlayerCaption = new Caption[np];
         lowerPlayerCaption = new Caption[np];
 
-        // FIXME: Is this an artifact?
-        MouseListener companyCaptionMouseClickListener = gameUIManager.getORUIManager().getORPanel().getCompanyCaptionMouseClickListener();
-
         int lastX = 0;
         int lastY = 1;
         certPerPlayerXOffset = ++lastX;

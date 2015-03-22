@@ -11,7 +11,6 @@ import net.sf.rails.game.MapOrientation;
  */
 
 public class EWHexMap extends HexMap {
-    private static final long serialVersionUID = 1L;
 
     public EWHexMap() {
         // tile x-reference in EW is left side

@@ -50,11 +50,9 @@ public class PublicCompany_1837 extends PublicCompany {
     @Override
     public boolean isSoldOut() {
         Owner owner;
-        String name;
 
         for (PublicCertificate cert : certificates.view()) {
                 owner = cert.getOwner();
-                name = cert.getName();
                 if ((owner instanceof BankPortfolio || owner == cert.getCompany()) && (!owner.getId().equalsIgnoreCase("unavailable"))) {
                     return false;
                 }

@@ -1,4 +1,3 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/util/MakeGameTileSets.java,v 1.9 2010/01/31 22:22:37 macfreek Exp $*/
 package net.sf.rails.tools;
 
 import java.io.File;
@@ -23,7 +22,6 @@ import org.w3c.dom.*;
  */
 public class MakeGameTileSets {
 
-    private static List<String> directories = new ArrayList<String>();
     private static String tilesFilePath = "Tiles.xml";
 
     public static void main(String[] args) {

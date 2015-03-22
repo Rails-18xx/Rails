@@ -11,7 +11,6 @@ import net.sf.rails.game.MapOrientation;
  */
 
 public class NSHexMap extends HexMap {
-    private static final long serialVersionUID = 1L;
 
     public NSHexMap() {
         // tile x-reference in NS is 1/3 of the baseline 

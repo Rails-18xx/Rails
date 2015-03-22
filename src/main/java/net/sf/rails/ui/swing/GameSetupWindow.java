@@ -417,7 +417,7 @@ public class GameSetupWindow extends JDialog {
             JCheckBox checkbox = (JCheckBox) optionComponents.get(option);
             return checkbox.isSelected() ? "yes" : "no";
         } else {
-            JComboBox<?> dropdown = (JComboBox<?>) optionComponents.get(option);
+            JComboBox dropdown = (JComboBox) optionComponents.get(option);
             return (String) dropdown.getSelectedItem();
         }
     }

@@ -16,17 +16,11 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-
-
 /**
  * A profile storing configuration settings
  */
 
 public final class ConfigProfile implements Comparable<ConfigProfile> {
-    private static final Logger log =
-            LoggerFactory.getLogger(ConfigItem.class);
     
     // available profile types
     public enum Type {SYSTEM(0), PREDEFINED(1), USER(2);

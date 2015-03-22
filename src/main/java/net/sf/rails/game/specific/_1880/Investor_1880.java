@@ -10,13 +10,13 @@ import net.sf.rails.algorithms.NetworkVertex;
 import net.sf.rails.algorithms.RevenueAdapter;
 import net.sf.rails.algorithms.RevenueStaticModifier;
 import net.sf.rails.common.parser.ConfigurationException;
+import net.sf.rails.game.BaseToken;
 import net.sf.rails.game.CompanyManager;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsItem;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.Stop;
-import net.sf.rails.game.Token;
 import net.sf.rails.game.Train;
 import net.sf.rails.game.TrainManager;
 import net.sf.rails.game.state.Owner;
@@ -126,7 +126,7 @@ public class Investor_1880 extends PublicCompany implements RevenueStaticModifie
         PublicCompany_1880 linkedCompany =
                 (PublicCompany_1880) ((Investor_1880) this).getLinkedCompany();
         if (linkedCompany != null) {
-            for (Token token : linkedCompany.getLaidBaseTokens()) {
+            for (BaseToken token : linkedCompany.getLaidBaseTokens()) {
                 Owner holder = token.getOwner();
                 if (!(holder instanceof Stop)) continue;
                 Stop stop = (Stop) holder;

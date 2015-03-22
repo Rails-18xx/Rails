@@ -85,7 +85,6 @@ public class StockRound_1825 extends StockRound {
     public void setSellableShares() {
         if (!mayCurrentPlayerSellAnything()) return;
 
-        String compName;
         int price;
         int number;
         int maxShareToSell;
@@ -118,7 +117,6 @@ public class StockRound_1825 extends StockRound {
              */
             // Take care for max. 4 share units per share
             int[] shareCountPerUnit = new int[5];
-            compName = company.getId();
             for (PublicCertificate c : playerPortfolio.getCertificates(company)) {
                 if (c.isPresidentShare()) {
                     shareCountPerUnit[1] += c.getShares();

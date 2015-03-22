@@ -40,7 +40,7 @@ public final class RevenueManager extends RailsManager implements Configurable {
     private final ArrayList<RevenueStaticModifier> activeStaticModifiers = new ArrayList<RevenueStaticModifier>();
     private final ArrayList<RevenueDynamicModifier> activeDynamicModifiers = new ArrayList<RevenueDynamicModifier>();
     // TODO: Still add that flag if the calculator is active
-    private boolean activeCalculator;
+//    private boolean activeCalculator;
 
     /**
      * Used by Configure (via reflection) only
