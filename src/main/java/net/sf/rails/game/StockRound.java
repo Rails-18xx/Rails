@@ -199,7 +199,7 @@ public class StockRound extends Round {
                 }
 
                 unitsForPrice = comp.getShareUnitsForSharePrice();
-                if (currentPlayer.soldThisRound(comp).value()) continue;
+                if (currentPlayer.hasSoldThisRound(comp)) continue;
                 if (maxAllowedNumberOfSharesToBuy(currentPlayer, comp,
                         cert.getShare()) < 1 ) continue;
 
@@ -267,7 +267,7 @@ public class StockRound extends Round {
 
             /* Checks if the player can buy any shares of this company */
             if (maxNumberOfSharesToBuy < 1) continue;
-            if (currentPlayer.soldThisRound(comp).value()) continue;
+            if (currentPlayer.hasSoldThisRound(comp)) continue;
             if (companyBoughtThisTurn != null) {
                 // If a cert was bought before, only brown zone ones can be
                 // bought again in the same turn
@@ -328,7 +328,7 @@ public class StockRound extends Round {
                 certs = company.getPortfolioModel().getCertificates(company);
                 if (certs.isEmpty()) continue;
                 cert = Iterables.get(certs, 0);
-                if (currentPlayer.soldThisRound(company).value()) continue;
+                if (currentPlayer.hasSoldThisRound(company)) continue;
                 if (!checkAgainstHoldLimit(currentPlayer, company, 1)) continue;
                 if (maxAllowedNumberOfSharesToBuy(currentPlayer, company,
                         cert.getShare()) < 1) continue;
@@ -785,7 +785,7 @@ public class StockRound extends Round {
             }
 
             // The player may not have sold the company this round.
-            if (currentPlayer.soldThisRound(company).value()) {
+            if (currentPlayer.hasSoldThisRound(company)) {
                 errMsg =
                     LocalText.getText("AlreadySoldThisTurn",
                             currentPlayer.getId(),
@@ -1150,7 +1150,7 @@ public class StockRound extends Round {
         }
 
         // Remember that the player has sold this company this round.
-        currentPlayer.soldThisRound(company).set(true);
+        currentPlayer.setSoldThisRound(company);
 
         if (companyBoughtThisTurnWrapper.value() == null)
             hasSoldThisTurnBeforeBuying.set(true);

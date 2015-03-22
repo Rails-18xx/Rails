@@ -9,6 +9,7 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 
+import net.sf.rails.game.state.ColorModel;
 import net.sf.rails.game.state.Observable;
 import net.sf.rails.game.state.Observer;
 
@@ -84,6 +85,23 @@ public class Field extends JLabel implements Observer {
         setToolTipText(toolTipModel.toText());
     }
     
+    public void setColorModel(final ColorModel colorModel) {
+        Observer colorObserver = new Observer() {
+            public void update(String text) {
+                if (colorModel.getBackground() != null) {
+                    Field.this.setBackground(colorModel.getBackground());
+                }
+                if (colorModel.getForeground() != null) {
+                    Field.this.setForeground(colorModel.getForeground());
+                }
+            }
+            public Observable getObservable() {
+                return colorModel;
+            }
+        };
+        colorModel.addObserver(colorObserver);
+        colorObserver.update(null);
+    }
 
     public void setHighlight(boolean highlight) {
         setBackground(highlight ? HIGHLIGHT_BG_COLOUR : normalBgColour);

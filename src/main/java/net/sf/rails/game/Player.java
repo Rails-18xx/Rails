@@ -12,6 +12,7 @@ import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.model.PortfolioOwner;
 import net.sf.rails.game.model.PurseMoneyModel;
 import net.sf.rails.game.model.CalculatedMoneyModel.CalculationMethod;
+import net.sf.rails.game.model.SoldThisRoundModel;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.ChangeActionOwner;
 import net.sf.rails.game.state.IntegerState;
@@ -36,7 +37,7 @@ public class Player extends RailsAbstractItem implements RailsMoneyOwner, Portfo
 
     private final BooleanState bankrupt = BooleanState.create(this, "isBankrupt");
     private final IntegerState worthAtORStart = IntegerState.create(this, "worthAtORStart");
-    private final Map<PublicCompany, BooleanState> soldThisRound = Maps.newHashMap();
+    private final Map<PublicCompany, SoldThisRoundModel> soldThisRound = Maps.newHashMap();
 
     private Player(PlayerManager parent, String id, int index) {
         super(parent, id);
@@ -100,7 +101,7 @@ public class Player extends RailsAbstractItem implements RailsMoneyOwner, Portfo
         
         // create soldThisRound states
         for (PublicCompany company:root.getCompanyManager().getAllPublicCompanies()) {
-            soldThisRound.put(company, BooleanState.create(this, "soldThisRound_" + company.getId()));
+            soldThisRound.put(company, SoldThisRoundModel.create(this, company));
         }
     }
     
@@ -217,12 +218,20 @@ public class Player extends RailsAbstractItem implements RailsMoneyOwner, Portfo
     }
     
     public void resetSoldThisRound() {
-        for (BooleanState state:soldThisRound.values()) {
+        for (SoldThisRoundModel state:soldThisRound.values()) {
             state.set(false);
         }
     }
     
-    public BooleanState soldThisRound(PublicCompany company) {
+    public boolean hasSoldThisRound(PublicCompany company) {
+        return soldThisRound.get(company).value();
+    }
+    
+    public void setSoldThisRound(PublicCompany company) {
+        soldThisRound.get(company).set(true);
+    }
+    
+    public SoldThisRoundModel getSoldThisRoundModel(PublicCompany company) {
         return soldThisRound.get(company);
     }
 
