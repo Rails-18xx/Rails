@@ -456,6 +456,9 @@ public class GUIHex implements Observer {
 
                 // Only draw the company name if there isn't yet a token of that company
                 if (hex.hasTokenOfCompany(company)) continue;
+                // Do not draw if hex is never blocked for token lays 
+                if (hex.getBlockedForTokenLays() == MapHex.BlockedToken.NEVER) continue;
+                
                 Stop homeCity = homes.get(company);
                 if (homeCity.getRelatedStation() == null) { // not yet decided where the token will be
                     // find a free slot
