@@ -31,7 +31,7 @@ import rails.game.action.LayToken;
 public class TokenHexUpgrade extends HexUpgrade {
 
     public enum Invalids implements HexUpgrade.Invalids {
-        HEX_BLOCKED, HEX_RESERVED, NOT_ENOUGH_CASH;
+        HEX_BLOCKED, HEX_RESERVED, NOT_ENOUGH_CASH, CONTAINS_TOKEN;
 
         @Override
         public String toString() {
@@ -78,7 +78,7 @@ public class TokenHexUpgrade extends HexUpgrade {
         allowed.addAll(stops);
 
         // LayBonusToken always and layHome is always allowed
-        if (!(action instanceof LayBonusToken || hex.getHex().isHomeFor(action.getCompany()))) {
+        if (!(action instanceof LayBonusToken || ((LayBaseToken)action).getType() == LayBaseToken.HOME_CITY)) {
             if (hexBlocked()) {
                 invalids.add(Invalids.HEX_BLOCKED);
             }
@@ -87,6 +87,9 @@ public class TokenHexUpgrade extends HexUpgrade {
             }
             if (notEnoughCash()) {
                 invalids.add(Invalids.NOT_ENOUGH_CASH);
+            }
+            if (containsToken()) {
+                invalids.add(Invalids.CONTAINS_TOKEN);
             }
         }
 
@@ -114,6 +117,10 @@ public class TokenHexUpgrade extends HexUpgrade {
     
     public boolean notEnoughCash() {
         return action.getCompany().getCash() < this.getCost(); 
+    }
+    
+    public boolean containsToken() {
+        return hex.getHex().hasTokenOfCompany(action.getCompany());
     }
 
     // HexUpgrade abstract methods
