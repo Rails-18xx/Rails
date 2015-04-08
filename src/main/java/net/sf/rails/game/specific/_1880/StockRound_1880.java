@@ -372,6 +372,12 @@ public class StockRound_1880 extends StockRound {
             ReportBuffer.add(this, LocalText.getText("Has", p.getId(),
                     Bank.format(this, p.getCash())));
         }
+        // reset soldThisRound
+        for (Player player:playerManager.getPlayers()) {
+            player.resetSoldThisRound();
+        }
+
+
         // Inform GameManager
         gameManager.nextRound(this);
     }
