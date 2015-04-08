@@ -333,33 +333,23 @@ public class ORUIManager implements DialogOwner {
         
         if (localStep == LocalSteps.Inactive) return;
 
-        String message = LocalText.getText(localStep.toString());
-        SpecialProperty sp;
-
-        /* Add any extra messages */
+        String message = "<font color='red'>" + LocalText.getText(localStep.toString()) + "</font>";
         String extraMessage = "";
 
         List<LayTile> tileLays = getPossibleActions().getType(LayTile.class);
-        if (localStep == LocalSteps.SelectHex && !tileLays.isEmpty()) {
+        if (!tileLays.isEmpty()) {
             /* Compose prompt for tile laying */
-            StringBuffer normalTileMessage = new StringBuffer(" ");
 
             for (LayTile tileLay : tileLays) {
                 Map<String, Integer> tileColours;
-                sp = tileLay.getSpecialProperty();
-                /*
-                 * A LayTile object contais either: 1. a special property
-                 * (specifying a location) 2. a location (perhaps a list of?)
-                 * where a specified set of tiles may be laid, or 3. a map
-                 * specifying how many tiles of any colour may be laid
-                 * "anywhere". The last option is only a stopgap as we can't yet
-                 * determine connectivity.
-                 */
+                SpecialProperty sp = tileLay.getSpecialProperty();
+                // For special tile lays add special message
                 if (sp != null && sp instanceof SpecialTileLay) {
                     SpecialTileLay stl = (SpecialTileLay) sp;
-                    extraMessage += "<br>" + stl.getHelp();
+                    extraMessage += "<BR>" + stl.getHelp();
                 } else if ((tileColours = tileLay.getTileColours()) != null) {
                     int number;
+                    StringBuilder normalTileMessage = new StringBuilder();
                     for (String colour : tileColours.keySet()) {
                         number = tileColours.get(colour);
                         if (normalTileMessage.length() > 1) {
@@ -369,46 +359,41 @@ public class ORUIManager implements DialogOwner {
                         normalTileMessage.append(number).append(" ").append(
                                 colour);
                     }
+                    message += "<BR>" + LocalText.getText("TileColours", normalTileMessage);
                 }
             }
-            if (normalTileMessage.length() > 1) {
-                message +=
-                    " "
-                    + LocalText.getText("TileColours",
-                            normalTileMessage);
-            }
-
         } 
-        
+
         List<LayBaseToken> tokenLays =
                 getPossibleActions().getType(LayBaseToken.class);
         
-        if (localStep == LocalSteps.SelectHex && !tokenLays.isEmpty()) {
+        if (!tokenLays.isEmpty()) {
 
             /* Compose prompt for token laying */
             String locations;
-            StringBuffer normalTokenMessage = new StringBuffer(" ");
+            StringBuilder normalTokenMessage = new StringBuilder();
 
             for (LayBaseToken tokenLay : tokenLays) {
-                sp = tokenLay.getSpecialProperty();
+                SpecialProperty sp = tokenLay.getSpecialProperty();
                 if (sp != null && sp instanceof SpecialBaseTokenLay) {
-                    extraMessage += "<br>" + sp.getHelp();
+                    extraMessage += "<BR>" + sp.getHelp();
                 } else if ((locations = tokenLay.getLocationNameString()) != null) {
                     if (normalTokenMessage.length() > 1) {
                         normalTokenMessage.append(" ").append(
                                 LocalText.getText("OR")).append(" ");
                     }
                     normalTokenMessage.append(locations);
-                }
-            }
-            if (normalTokenMessage.length() > 1) {
-                message += " " + LocalText.getText("NormalToken",
-                        normalTokenMessage);
+                    message += "<BR>" + LocalText.getText("NormalLocatedToken",
+                            normalTokenMessage);
+                } else {
+                   message += "<BR> " + LocalText.getText("NormalToken",
+                           normalTokenMessage);
+               }
             }
         }
-        
+ 
         if (extraMessage.length() > 0) {
-            message += "<font color=\"red\">" + extraMessage + "</font>";
+            message += "<font color='orange'>" + extraMessage + "</font>";
         }
 
         messagePanel.setMessage(message);
@@ -1234,7 +1219,7 @@ public class ORUIManager implements DialogOwner {
         }
     }
 
-    /** Used to process some special properties from the 'Special' menu */
+    /** Used to process some < properties from the 'Special' menu */
     /* In fact currently not used */
     protected void useSpecialProperty (UseSpecialProperty action) {
 
