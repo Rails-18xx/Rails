@@ -1,5 +1,5 @@
 #Property file that contains version number and the develop indicator
-version=2.0.beta1
+version=2.0.beta2
 # the following string "@DEVELOP@" is replaced by an empty string in the release version
 # this is done automatically by gradle
 develop=@DEVELOP@

@@ -1,8 +1,15 @@
-Rails 2.0 Beta 1 release:
+Rails 2.0 Beta 2 release:
 
-- Full rule compliant tile laying (including special tile lays)
-- Full rule compliant token laying (including special, home, and bonus tokens)
+Improvements:
+- Company panel of OR window shows only acting company during tile/token/revenue steps. All companies shown at train buying
+- Indicate for each player what company were already sold during share rounds
+- Fixed information in message panel during tile/token lays
+
+GitHub features:
+- Roadmap and further docs availaible on gitHub wiki
+- Rails 2 development branch is mirrored at gitHub repo
+- Sourceforge remains leading repo
 
 Remarks:
 - All automated test games run.
-- Some reported bugs from previous 2.0 Alpha releases are still open.
+- Some reported bugs from previous 2.0 Alpha/Beta releases are still open.
