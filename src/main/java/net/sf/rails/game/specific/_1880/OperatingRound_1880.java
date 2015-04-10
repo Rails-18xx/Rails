@@ -286,8 +286,10 @@ public class OperatingRound_1880 extends OperatingRound {
                     orControl.setLastCompanyToOperate(((PublicCompany_1880) operatingCompany.value()));
                     orControl.setFinalOperatingRoundSequence(true);
                 }
+                if (orControl.getFinalOperatingRoundSequenceNumber()<2){
                 orControl.orExitToStockRound(operatingCompany.value(),
                         GameDef.OrStep.BUY_TRAIN);
+                }
                 setActionForPrivateExchange(action.getType());
                 if (manditoryNextAction == null) {
                     finishOR();
