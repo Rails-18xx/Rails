@@ -234,8 +234,6 @@ implements ActionListener, KeyListener {
 
     public void setRowVisibility (int rowIndex, boolean value) {
         
-        log.debug("rowIndex = " + rowIndex + "value = " + value); 
-
         for (int j=0; j < fields.length; j++) {
             if (fields[j][rowIndex] != null) {
                 fields[j][rowIndex].setVisible(value);
