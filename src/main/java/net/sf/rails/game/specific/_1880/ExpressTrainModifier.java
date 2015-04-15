@@ -53,7 +53,7 @@ import net.sf.rails.algorithms.RevenueTrainRun;
             // create a sorted list of the run vertices
             List<NetworkVertex> otherVertices = new ArrayList<NetworkVertex>(run.getUniqueVertices()); 
             otherVertices.remove(baseVertex);
-            Collections.sort(otherVertices);
+            Collections.sort(otherVertices, new NetworkVertex.ValueOrder());
 
             List<NetworkVertex> expressVertices = otherVertices.subList(0, Math.min(otherVertices.size(),length-1));
             expressVertices.add(0, baseVertex);
@@ -83,7 +83,10 @@ import net.sf.rails.algorithms.RevenueTrainRun;
                         && (run.getTrain().getRailsTrainType().getCertificateType().getId().equals("8E"))) {
                     // We Found a run with an express Train, now we have to make sure that the result gets trimmed
                     // to the maximum allowed stations, cause so far its a Diesel Train !
-                    int expressRunValue = NetworkVertex.sum(extractExpressRun(run, 8));
+                    if (optimalRuns) log.debug("Express Long Run = " + run.getRunVertices());
+                    List<NetworkVertex> expressRun = extractExpressRun(run, 8);
+                    if (optimalRuns) log.debug("Express Best Run = " + expressRun);
+                    int expressRunValue = NetworkVertex.sum(expressRun);
                     value += expressRunValue - run.getRunValue();
                 }
             }
