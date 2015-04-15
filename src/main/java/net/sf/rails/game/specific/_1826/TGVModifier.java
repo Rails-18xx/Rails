@@ -48,7 +48,7 @@ public class TGVModifier implements RevenueDynamicModifier {
         }
     }
 
-    public int predictionValue() {
+    public int predictionValue(List<RevenueTrainRun> runs) {
         // nothing to do here
         return 0;
     }

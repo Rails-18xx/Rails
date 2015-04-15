@@ -47,7 +47,7 @@ public class PullmanRevenueModifier implements RevenueDynamicModifier {
         return maximum; 
     }
     
-    public int predictionValue() {
+    public int predictionValue(List<RevenueTrainRun> runs) {
         return maxValue;
     }
 

@@ -45,7 +45,7 @@ public class DoubleHeadingModifier implements RevenueDynamicModifier {
     /** 
      * the prediction value itself is zero, as the add value stems from the train above
      */
-    public int predictionValue() {
+    public int predictionValue(List<RevenueTrainRun> runs) {
         return 0;
     }
 

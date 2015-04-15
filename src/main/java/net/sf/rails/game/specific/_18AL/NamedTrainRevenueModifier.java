@@ -101,7 +101,7 @@ public class NamedTrainRevenueModifier implements RevenueStaticModifier, Revenue
         return true;
     }
 
-    public int predictionValue() {
+    public int predictionValue(List<RevenueTrainRun> runs) {
         return bonusMaximum;
     }
 

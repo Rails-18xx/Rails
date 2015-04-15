@@ -637,7 +637,7 @@ public final class RevenueAdapter implements Runnable {
     int dynamicPrediction() {
         int value = 0;
         if (hasDynamicModifiers) {
-            value = revenueManager.predictionValue();
+            value = revenueManager.predictionValue(this.getCurrentRun());
         }
         return value;
     }

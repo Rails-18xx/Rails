@@ -215,7 +215,8 @@ public final class RevenueManager extends RailsManager implements Configurable {
      * @return total value of dynamic modifiers
      */
     int evaluationValue(List<RevenueTrainRun> run, boolean optimal) {
-         // allow dynamic modifiers to change the optimal run
+        // this allows dynamic modifiers to change the optimal run
+        // however this is forbidden outside the optimal run!
          int value = 0;
          for (RevenueDynamicModifier modifier:activeDynamicModifiers) {
              value += modifier.evaluationValue(run, optimal);
@@ -226,10 +227,11 @@ public final class RevenueManager extends RailsManager implements Configurable {
     /**
      * @return total prediction value of dynamic modifiers
      */
-    int predictionValue() {
+    int predictionValue(List<RevenueTrainRun> run) {
+        // do not change the optimal run!
          int value = 0;
          for (RevenueDynamicModifier modifier:activeDynamicModifiers) {
-             value += modifier.predictionValue();
+             value += modifier.predictionValue(run);
          }
          return value;
      }

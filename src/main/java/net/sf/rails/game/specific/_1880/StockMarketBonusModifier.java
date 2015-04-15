@@ -27,7 +27,7 @@ public class StockMarketBonusModifier implements RevenueDynamicModifier {
         return false;
     }
 
-    public int predictionValue() {
+    public int predictionValue(List<RevenueTrainRun> runs) {
         return bonusValue;
     }
 

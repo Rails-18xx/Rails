@@ -14,9 +14,11 @@ import net.sf.rails.algorithms.RevenueDynamicModifier;
 import net.sf.rails.algorithms.RevenueTrainRun;
 
     public class ExpressTrainModifier implements RevenueDynamicModifier {
-
         
-        protected static Logger log =
+        private static final String TRAIN_6E = "6E";
+        private static final String TRAIN_8E = "8E";
+        
+        private static Logger log =
                 LoggerFactory.getLogger(ExpressTrainModifier.class);
 
         private boolean hasExpress;
@@ -26,11 +28,8 @@ import net.sf.rails.algorithms.RevenueTrainRun;
             hasExpress = false;
             List<NetworkTrain> trains = revenueAdapter.getTrains();
             for (NetworkTrain train:trains) {
-                if ((train.getRailsTrainType() != null) 
-                        && ((train.getRailsTrainType().getCertificateType().getId().equals("6E")) 
-                        ||(train.getRailsTrainType().getCertificateType().getId().equals("8E")))) {
+                if (TRAIN_6E.equals(train.getTrainName()) || TRAIN_8E.equals(train.getTrainName())) {
                     hasExpress = true;
-                    // We have an express Train
                     break;
                 }
             }
@@ -38,11 +37,7 @@ import net.sf.rails.algorithms.RevenueTrainRun;
         }
 
 
-        public int predictionValue() {
-            return 0;
-        }
-
-        // TODO: Rails 2.0 rewrite this by using Guava
+         // TODO: Rails 2.0 rewrite this by using Guava
         private List<NetworkVertex> extractExpressRun(RevenueTrainRun run, int length) {
             
             // check for valid run first
@@ -61,28 +56,17 @@ import net.sf.rails.algorithms.RevenueTrainRun;
             return expressVertices;
         }
         
-        
-        public int evaluationValue(List<RevenueTrainRun> runs, boolean optimalRuns) {
+        private int valueChange(List<RevenueTrainRun> runs, boolean optimalRuns) {
             int value = 0;
             //Find out which Express Train is involved
             for (RevenueTrainRun run:runs) {
-
-                if ((run.getTrain().getRailsTrainType() != null) 
-                        && (run.getTrain().getRailsTrainType().getCertificateType().getId().equals("6E"))) {
-                    /*  We Found a run with an express Train, now we have to make sure that the result gets trimmed
-                         to the maximum allowed stations, cause so far its a Diesel Train !
-                     */
+                if (TRAIN_6E.equals(run.getTrain().getTrainName())) {
                     if (optimalRuns) log.debug("Express Long Run = " + run.getRunVertices());
                     List<NetworkVertex> expressRun = extractExpressRun(run, 6);
                     if (optimalRuns) log.debug("Express Best Run = " + expressRun);
                     int expressRunValue = NetworkVertex.sum(expressRun);
                     value += expressRunValue - run.getRunValue();
-
-                }
-                if ((run.getTrain().getRailsTrainType() != null) 
-                        && (run.getTrain().getRailsTrainType().getCertificateType().getId().equals("8E"))) {
-                    // We Found a run with an express Train, now we have to make sure that the result gets trimmed
-                    // to the maximum allowed stations, cause so far its a Diesel Train !
+                } else if (TRAIN_8E.equals(run.getTrain().getTrainName())) {
                     if (optimalRuns) log.debug("Express Long Run = " + run.getRunVertices());
                     List<NetworkVertex> expressRun = extractExpressRun(run, 8);
                     if (optimalRuns) log.debug("Express Best Run = " + expressRun);
@@ -92,25 +76,22 @@ import net.sf.rails.algorithms.RevenueTrainRun;
             }
             return value;
         }
+        
+        public int predictionValue(List<RevenueTrainRun> runs) {
+            return valueChange(runs, false);
+        }
+       
+        public int evaluationValue(List<RevenueTrainRun> runs, boolean optimalRuns) {
+            return valueChange(runs, optimalRuns);
+        }
 
         public void adjustOptimalRun(List<RevenueTrainRun> optimalRuns) {
-            // this does not work yet, requires adjustments in underlying revenue code
-            // TODO: Rails 2.0
-            
             //Find out which Express Train is involved
             for (RevenueTrainRun run:optimalRuns) {
-                
-                if ((run.getTrain().getRailsTrainType() != null) 
-                        && (run.getTrain().getRailsTrainType().getCertificateType().getId().equals("6E"))) {
-                    /*  We Found a run with an express Train, now we have to make sure that the result gets trimmed
-                         to the maximum allowed stations, cause so far its a Diesel Train !
-                     */
+                if (TRAIN_6E.equals(run.getTrain().getTrainName())) {
                     run.getRunVertices().retainAll(extractExpressRun(run, 6));
                 }
-                if ((run.getTrain().getRailsTrainType() != null) 
-                        && (run.getTrain().getRailsTrainType().getCertificateType().getId().equals("8E"))) {
-                    // We Found a run with an express Train, now we have to make sure that the result gets trimmed
-                    // to the maximum allowed stations, cause so far its a Diesel Train !
+                if (TRAIN_8E.equals(run.getTrain().getTrainName())) {
                     run.getRunVertices().retainAll(extractExpressRun(run, 8));
                 }
             }

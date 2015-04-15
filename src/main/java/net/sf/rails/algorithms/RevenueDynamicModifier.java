@@ -25,9 +25,10 @@ public interface RevenueDynamicModifier {
     /** 
      * Allows to change the value for the prediction
      * If several dynamic modifiers are active simultaneously, their prediction values are added up.  
+     * @param runs Current run of the revenue calculator
      * @return value used to change the prediction
      */
-    public int predictionValue();
+    public int predictionValue(List<RevenueTrainRun> runs);
     
     /** 
      * Allows to change the value for the supplied runs from the revenue calculator

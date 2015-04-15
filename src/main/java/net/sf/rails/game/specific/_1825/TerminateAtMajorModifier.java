@@ -15,7 +15,7 @@ public class TerminateAtMajorModifier implements RevenueDynamicModifier {
         return true;
     }
 
-    public int predictionValue() {
+    public int predictionValue(List<RevenueTrainRun> runs) {
         // cannot be predicted
         return 0;
     }
