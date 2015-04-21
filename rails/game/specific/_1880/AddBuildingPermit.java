@@ -14,8 +14,8 @@ import rails.game.special.SpecialProperty;
  */
 public class AddBuildingPermit extends SpecialProperty {
 
-    String name = "SpecialTrainBuy";
-    String addedPermitName = ""; // Default: all train types
+    String name = "AddBuildingPhasePermit";
+    String addedPermitName = "D"; // Default: Phase D
 
     public void configureFromXML(Tag tag) throws ConfigurationException {
         
