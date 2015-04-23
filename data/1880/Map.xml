@@ -11,7 +11,7 @@
 	<Hex name="B8" tile="-10" city="Harbin" />
 	<Hex name="B10" tile="0" />
 	<Hex name="B12" tile="-2" />
-	<Hex name="B14" tile="-80001" city="testa"/>
+	<Hex name="B14" tile="-80001" city="Hunchun"/>
 	<Hex name="C3" tile="0" cost="30" />
 	<Hex name="C5" tile="0" cost="30" />
 	<Hex name="C7" tile="-1" />
@@ -23,18 +23,18 @@
 	<Hex name="D6" tile="0" cost="30"/>
 	<Hex name="D8" tile="0" cost="30"/>
 	<Hex name="D10" tile="0" />
-	<Hex name="D12" tile="-80020" city="Shenyang, Fushun" />
+	<Hex name="D12" tile="-80020" city="Shenyang, Fushun" unlaidHomeBlocksTokens="yes" />
 	<Hex name="D14" tile="-1" />
 	<Hex name="E3" tile="0" cost="30" />
 	<Hex name="E5" tile="0" cost="30" />
 	<Hex name="E7" tile="0" cost="30" />
-	<Hex name="E9" tile="-80001" city="Test" />
+	<Hex name="E9" tile="-80001" city="Chengde" />
 	<Hex name="E11" tile="0" impassable="E13" />
 	<Hex name="E13" tile="-10" city="Dalian" impassable="E11" />
 	<Hex name="E15" tile="0" />
 	<Hex name="F2" tile="0" />
 	<Hex name="F4" tile="-80020" city="Hohhot, Datong" />
-	<Hex name="F6" tile="-80001" city="Test8" cost="30" />
+	<Hex name="F6" tile="-80001" city="ZhangJiakou" cost="30" />
 	<Hex name="F8" tile="-80004" city="Beijing" orientation="5" label="Beijing"/>
 	<Hex name="F10" tile="-10" city="Tianjin" />
 	<Hex name="F12" tile="-4008" orientation="1" value="-10"/>
@@ -50,7 +50,7 @@
 	<Hex name="H2" tile="0" cost="30"/>
 	<Hex name="H4" tile="0" cost="20" />
 	<Hex name="H6" tile="-10" city="Taiyuan" />
-	<Hex name="H8" tile="-80002"  city="Test9, Test10"/>
+	<Hex name="H8" tile="-80002" city="Shijiazhuang, Hengshui"/>
 	<Hex name="H10" tile="-10" city="Jinan" cost="20" />
 	<Hex name="H12" tile="-2" />
 	<Hex name="H14" tile="-10" city="Qingdao" />
@@ -84,7 +84,7 @@
 	<Hex name="L8" tile="0" cost="50"/>
 	<Hex name="L10" tile="-10" city="Wuhan" cost="20"/>
 	<Hex name="L12" tile="-2" cost="20"/>
-	<Hex name="L14" tile="-80001" city="Test6" />
+	<Hex name="L14" tile="-80001" city="Hangzhou" />
 	<Hex name="L16" tile="-1" />
 	<Hex name="M1" tile="0" cost="40"/>
 	<Hex name="M3" tile="-10" city="Chengdu" />
@@ -95,11 +95,11 @@
 	<Hex name="M13" tile="0" />
 	<Hex name="M15" tile="-1" />
 	<Hex name="N2" tile="0" cost="40" />
-	<Hex name="N4" tile="-80002" city="Test4,Test5" cost="20"/>
+	<Hex name="N4" tile="-80002" city="Zaoton, Yibin" cost="20"/>
 	<Hex name="N6" tile="0" cost="20"/>
 	<Hex name="N8" tile="0" cost="30"/>
-	<Hex name="N10" tile="-80001" city="Test3" />
-	<Hex name="N12" tile="-80020" orientation="4" city="Changsha, Nanchang" />
+	<Hex name="N10" tile="-80001" city="Changde" />
+	<Hex name="N12" tile="-80020" orientation="4" city="Changsha, Nanchang" unlaidHomeBlocksTokens="yes" />
 	<Hex name="N14" tile="0" />
 	<Hex name="N16" tile="-903" pic="-9031" orientation="2" value="30,30,0,0" city="Taiwan">
 	<Access score="minor" />
@@ -107,7 +107,7 @@
 	<Hex name="O1" tile="0" cost="60" />
 	<Hex name="O3" tile="-2" cost="20"/>
 	<Hex name="O5" tile="-10" city="Kunming" />
-	<Hex name="O7" tile="-80001" city="Test2" cost="30" />
+	<Hex name="O7" tile="-80001" city="Baise" cost="30" />
 	<Hex name="O9" tile="0" cost="30" />
 	<Hex name="O11" tile="-2" />
 	<Hex name="O13" tile="0" />
