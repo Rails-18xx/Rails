@@ -3,16 +3,16 @@
 	<StockSpaceType name="yellow" colour="255,255,100">
 	<Revenue5/>
 	</StockSpaceType>
-	<StockSpaceType name="umbra" colour="255,255,0">
+	<StockSpaceType name="umbra" colour="138,126,102">
 	<Revenue10 />
 	</StockSpaceType>
-	<StockSpaceType name="orange" colour="100,255,255">
+	<StockSpaceType name="orange" colour="255,165,0">
 	<Revenue15 />
 	</StockSpaceType>
-	<StockSpaceType name="sepia" colour="0,255,255">
+	<StockSpaceType name="sepia" colour="100,59,15">
 	<Revenue20 />
 	</StockSpaceType>
-	<StockSpaceType name="brown" colour="0,255,255">
+	<StockSpaceType name="brown" colour="165,42,42">
 	<Revenue40 />
 	</StockSpaceType>
 	<StockSpace name="A3" price="70" />
