@@ -463,10 +463,16 @@ public class OperatingRound_1880 extends OperatingRound {
          */
         if (getStep() == GameDef.OrStep.INITIAL) {
             initTurn();
+            //Somehow an investor was still allowed to place a tile in Phase 4 ?
+            if (operatingCompany.get() instanceof Investor_1880){
+                if (gameManager.getPhaseManager().hasReachedPhase("4")) {
+                    nextStep(GameDef.OrStep.BUY_TRAIN);
+                } 
+            }
             if (operatingCompany.get() instanceof PublicCompany_1880) {
                 if ((noMapMode)
                         || (!((PublicCompany_1880) operatingCompany.get()).hasBuildingRightForPhase(gameManager.getCurrentPhase()))) {
-                    nextStep(GameDef.OrStep.LAY_TRACK);
+                    nextStep(GameDef.OrStep.LAY_TOKEN);
                 } else {
                     initNormalTileLays(); // new: only called once per turn ?
                     setStep(GameDef.OrStep.LAY_TRACK);
