@@ -466,7 +466,7 @@ public class OperatingRound_1880 extends OperatingRound {
             //Somehow an investor was still allowed to place a tile in Phase 4 ?
             if (operatingCompany.get() instanceof Investor_1880){
                 if (gameManager.getPhaseManager().hasReachedPhase("4")) {
-                    nextStep(GameDef.OrStep.BUY_TRAIN);
+                    setStep(GameDef.OrStep.BUY_TRAIN);
                 } 
             }
             if (operatingCompany.get() instanceof PublicCompany_1880) {
