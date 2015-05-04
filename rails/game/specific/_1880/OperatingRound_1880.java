@@ -472,7 +472,7 @@ public class OperatingRound_1880 extends OperatingRound {
             if (operatingCompany.get() instanceof PublicCompany_1880) {
                 if ((noMapMode)
                         || (!((PublicCompany_1880) operatingCompany.get()).hasBuildingRightForPhase(gameManager.getCurrentPhase()))) {
-                    nextStep(GameDef.OrStep.LAY_TOKEN);
+                    nextStep(GameDef.OrStep.LAY_TRACK);
                 } else {
                     initNormalTileLays(); // new: only called once per turn ?
                     setStep(GameDef.OrStep.LAY_TRACK);
