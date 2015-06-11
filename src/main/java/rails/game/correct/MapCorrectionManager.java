@@ -2,6 +2,7 @@ package rails.game.correct;
 
 import java.util.*;
 
+import rails.game.action.LayTile;
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
@@ -34,8 +35,10 @@ public final class MapCorrectionManager extends CorrectionManager {
             if (activeTileAction == null)
                 activeTileAction = new MapCorrectionAction();
             actions.add(activeTileAction);
+            // FIXME: This is a workaround to get the LayTile action created from inside the CorrectionManager
+            LayTile action = new LayTile(LayTile.CORRECTION);
+            getParent().getPossibleActions().add(action);
         }
-
         return actions;
     }
 
@@ -132,10 +135,11 @@ public final class MapCorrectionManager extends CorrectionManager {
         switch (nextStep) {
         case SELECT_TILE:
             // create list of possible up and downgrades
-            List<Tile> possibleTiles = tmgr.getAllUpgrades(preprintedTile, hex);
-            if (preprintedTile == hex.getCurrentTile())
-                possibleTiles.remove(hex.getCurrentTile()); // remove preprinted tile if still laid
-            action.setTiles(possibleTiles);
+            // REMARK: This is commented out for Rails 2.0
+//            List<Tile> possibleTiles = tmgr.getAllUpgrades(preprintedTile, hex);
+//            if (preprintedTile == hex.getCurrentTile())
+//                possibleTiles.remove(hex.getCurrentTile()); // remove preprinted tile if still laid
+//            action.setTiles(possibleTiles);
             break;
         case SELECT_ORIENTATION:
             // default orientation for preprinted files

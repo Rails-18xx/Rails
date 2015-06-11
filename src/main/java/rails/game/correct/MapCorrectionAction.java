@@ -21,11 +21,11 @@ import net.sf.rails.util.Util;
  * Correction action for tile and token lays
  * 
  * Rails 2.0: updated equals and toString methods
+ *
+ * Deprecated since version 2.0
+ * It is replaced by LayTile and LayToken actions in the UI
  */
-
-// TODO: Add implementation of token lays
-// TODO: Make it compatible to the standard tile and token lays by reworking step-mechanism
-// TODO: Add support for relay of tokens
+@Deprecated
 public class MapCorrectionAction extends CorrectionAction {
 
     /** The Constant serialVersionUID. */

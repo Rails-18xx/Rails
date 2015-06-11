@@ -101,6 +101,17 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
         }
         return upgrades.build();
     }
+    
+    public static Set<TileHexUpgrade> createCorrection(GUIHex hex, LayTile action) {
+        ImmutableSet.Builder<TileHexUpgrade> upgrades = ImmutableSet.builder();
+
+        for (TileUpgrade upgrade:hex.getHex().getCurrentTile().getTileUpgrades()) {
+            TileHexUpgrade hexUpgrade = new TileHexUpgrade(hex, upgrade, action);
+            hexUpgrade.findValidRotations(null, null, true);
+            upgrades.add(hexUpgrade);
+        }
+        return upgrades.build();
+    }
 
     private void findValidRotations(HexSidesSet connectedSides, Collection<Station> stations, boolean restrictive) {
         MapHex modelHex = hex.getHex();
@@ -198,6 +209,10 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
     }
     
     public boolean notEnoughCash() {
+        // correction action does not require cash 
+        if (action.getType() == LayTile.CORRECTION) {
+            return false;
+        }
         return action.getCompany().getCash() < this.getCost(); 
     }
 
@@ -406,5 +421,4 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
         }
     }
 
-    
 }

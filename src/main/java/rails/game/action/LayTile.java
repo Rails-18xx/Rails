@@ -27,10 +27,9 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
 
     /* LayTile types */
     public final static int GENERIC = 0; // Stop-gap only
-    public final static int LOCATION_SPECIFIC = 1; // Valid hex and allowed
-    // tiles
-    public final static int SPECIAL_PROPERTY = 2; // Directed by a special
-    // property
+    public final static int LOCATION_SPECIFIC = 1; // Valid hex and allowed tiles
+    public final static int SPECIAL_PROPERTY = 2; // Directed by a special property
+    public final static int CORRECTION = 99; // Correction tile lays
 
     protected int type = 0;
 
@@ -80,6 +79,10 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
 
     public static final long serialVersionUID = 1L;
 
+    public LayTile(int type) {
+        this.type = type;
+    }
+    
     public LayTile(Map<String, Integer> tileColours) {
         type = GENERIC;
         setTileColours (tileColours);
@@ -99,10 +102,8 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
                 tiles.add(tile);
             }
         }
-
-
     }
-
+    
     /**
      * @return Returns the chosenHex.
      */

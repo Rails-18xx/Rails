@@ -84,6 +84,7 @@ public class ORUIManager implements DialogOwner {
             LoggerFactory.getLogger(ORUIManager.class);
 
     protected GameUIManager gameUIManager;
+    protected NetworkAdapter networkAdapter;
 
     protected ORWindow orWindow;
     protected ORPanel orPanel;
@@ -121,6 +122,7 @@ public class ORUIManager implements DialogOwner {
 
     void setGameUIManager (GameUIManager gameUIManager) {
         this.gameUIManager = gameUIManager;
+        this.networkAdapter = NetworkAdapter.create(gameUIManager.getRoot());
     }
 
     void init(ORWindow orWindow) {
@@ -231,6 +233,8 @@ public class ORUIManager implements DialogOwner {
             case (LayTile.LOCATION_SPECIFIC):
                 addLocatedTileLays(layTile);
                 break;
+            case (LayTile.CORRECTION):
+                addCorrectionTileLays(layTile);
             default:
             }
         }
@@ -238,7 +242,7 @@ public class ORUIManager implements DialogOwner {
     }
 
     private void addConnectedTileLays(LayTile layTile) {
-        NetworkGraph graph = getCompanyGraph(layTile.getCompany());
+        NetworkGraph graph = networkAdapter.getRouteGraph(layTile.getCompany(), true);
         Map<MapHex, HexSidesSet> mapHexSides = graph.getReachableSides();
         Multimap<MapHex, Station> mapHexStations = graph.getPassableStations();
         
@@ -273,6 +277,14 @@ public class ORUIManager implements DialogOwner {
             hexUpgrades.putAll(guiHex, upgrades);
         }
     }
+    
+    private void addCorrectionTileLays(LayTile layTile) {
+        for (GUIHex hex:map.getHexes()) {
+            Set<TileHexUpgrade> upgrades = TileHexUpgrade.createCorrection(hex, layTile);
+            TileHexUpgrade.validates(upgrades, gameUIManager.getCurrentPhase());
+            hexUpgrades.putAll(hex, upgrades);
+        }
+    }
 
     private void defineTokenUpgrades(List<LayToken> actions) {
 
@@ -305,7 +317,7 @@ public class ORUIManager implements DialogOwner {
 
     private void addGenericTokenLays(LayToken action) {
         PublicCompany company = action.getCompany();
-        NetworkGraph graph = getCompanyGraph(company);
+        NetworkGraph graph = networkAdapter.getRouteGraph(company, true);
         Multimap<MapHex, Stop> hexStops = graph.getTokenableStops(company);
         for (MapHex hex:hexStops.keySet()) {
             GUIHex guiHex = map.getHex(hex);
@@ -323,7 +335,6 @@ public class ORUIManager implements DialogOwner {
             hexUpgrades.put(guiHex, upgrade);
         }
     }
-    
     
     public void updateMessage() {
 
@@ -1525,11 +1536,6 @@ public class ORUIManager implements DialogOwner {
         }
     }
 
-    private NetworkGraph getCompanyGraph(PublicCompany company){
-        NetworkAdapter network = NetworkAdapter.create(gameUIManager.getRoot());
-        return network.getRouteGraph(company, true);
-    }
-    
     // Further Getters 
     public MessagePanel getMessagePanel() {
         return messagePanel;

@@ -47,6 +47,7 @@ import com.jgraph.layout.organic.JGraphFastOrganicLayout;
 /**
  * NetworkGraph mirrors the structure of a 18xx track
  *
+ * TODO: Rewrite this by separating the creation code from the data code
  */
 public class NetworkGraph {
 

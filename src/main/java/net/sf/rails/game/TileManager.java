@@ -152,24 +152,6 @@ public class TileManager extends RailsManager implements Configurable {
         return tileSet;
     }
 
-    /** returns the set of all possible upgrade tiles */
-    public List<Tile> getAllUpgrades(Tile tile, MapHex hex) {
-        TreeSet<Tile> tileSet = new TreeSet<Tile>();
-        return new ArrayList<Tile>(recursiveUpgrades(tile, hex, tileSet));
-    }
-
-    private TreeSet<Tile> recursiveUpgrades(Tile tile, MapHex hex, TreeSet<Tile> tileSet) {
-
-        tileSet.add(tile);
-
-        List<Tile> directUpgrades = tile.getAllUpgrades(hex);
-        for (Tile upgrade:directUpgrades)
-            if (!tileSet.contains(upgrade))
-                tileSet = recursiveUpgrades(upgrade, hex, tileSet);
-
-        return tileSet;
-    }
-
     public ImmutableMap<String, StopType> getDefaultStopTypes() {
         return defaultStopTypes;
     }
