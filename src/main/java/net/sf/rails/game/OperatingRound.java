@@ -242,8 +242,16 @@ public class OperatingRound extends Round implements Observer {
         selectedAction = action;
 
         if (selectedAction instanceof LayTile) {
-
-            result = layTile((LayTile) selectedAction);
+            
+            LayTile layTileAction = (LayTile)selectedAction;
+            
+            switch (layTileAction.getType()) {
+            case (LayTile.CORRECTION):
+                result = layTileCorrection(layTileAction);
+                break;
+            default:
+                result = layTile(layTileAction);
+            }
 
         } else if (selectedAction instanceof LayBaseToken) {
 
@@ -1584,6 +1592,40 @@ public class OperatingRound extends Round implements Observer {
             nextStep();
         }
 
+        return true;
+    }
+    
+    public boolean layTileCorrection(LayTile action) {
+
+        Tile tile = action.getLaidTile();
+        MapHex hex = action.getChosenHex();
+        int orientation = action.getOrientation();
+
+        String errMsg = null;
+        // tiles have external id defined
+        if (tile != null
+                && tile != hex.getCurrentTile()
+                && tile.getFreeCount() == 0) {
+            errMsg =
+                    LocalText.getText("TileNotAvailable",
+                            tile.toText());
+        }
+
+        if (errMsg != null) {
+            DisplayBuffer.add(this, LocalText.getText("CorrectMapCannotLayTile",
+                    tile.toText(),
+                    hex.getId(),
+                    errMsg ));
+            ;
+            return false;
+        }
+
+        // lays tile
+        hex.upgrade(action);
+
+        String msg = LocalText.getText("CorrectMapLaysTileAt",
+                tile.toText(), hex.getId(), hex.getOrientationName(orientation));
+        ReportBuffer.add(this, msg);
         return true;
     }
 
