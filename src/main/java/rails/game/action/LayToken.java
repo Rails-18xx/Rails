@@ -46,7 +46,6 @@ public abstract class LayToken extends PossibleORAction {
             this.locations = locations;
             buildLocationNameString();
         }
-
     }
 
     public LayToken(SpecialBaseTokenLay specialProperty) {
@@ -67,6 +66,10 @@ public abstract class LayToken extends PossibleORAction {
     	this.locations = new ArrayList<MapHex>(1);
     	locations.add(hex);
         buildLocationNameString();
+    }
+    
+    public LayToken() {
+        this.locations = null;
     }
 
     /**

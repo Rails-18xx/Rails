@@ -17,6 +17,7 @@ import net.sf.rails.game.BonusToken;
 import net.sf.rails.game.MapHex;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.Stop;
+import net.sf.rails.game.TileUpgrade;
 import net.sf.rails.ui.swing.elements.TokenIcon;
 
 import com.google.common.base.Objects;
@@ -26,6 +27,7 @@ import com.google.common.collect.Sets;
 
 import rails.game.action.LayBaseToken;
 import rails.game.action.LayBonusToken;
+import rails.game.action.LayTile;
 import rails.game.action.LayToken;
 
 public class TokenHexUpgrade extends HexUpgrade {
@@ -60,7 +62,7 @@ public class TokenHexUpgrade extends HexUpgrade {
     public static TokenHexUpgrade create(GUIHex hex, Collection<Stop> stops, LayToken action) {
         return new TokenHexUpgrade(hex, stops, action);
     }
-
+    
     public LayToken getAction() {
         return action;
     }
@@ -276,9 +278,13 @@ public class TokenHexUpgrade extends HexUpgrade {
                         type2 = ((LayBaseToken)ts2.action).getType();
                     }
                     
+                    PublicCompany company1 = ts1.action.getCompany();
+                    PublicCompany company2 = ts2.action.getCompany();
+                    
                     return ComparisonChain.start()
                             .compare(base1, base2)
                             .compare(type2, type1)
+                            .compare(company1, company2)
                             .result();
                 }
                 return 0;

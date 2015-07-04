@@ -2,6 +2,7 @@ package rails.game.correct;
 
 import java.util.*;
 
+import rails.game.action.LayBaseToken;
 import rails.game.action.LayTile;
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
@@ -32,12 +33,20 @@ public final class MapCorrectionManager extends CorrectionManager {
         List<CorrectionAction> actions = super.createCorrections();
 
         if (isActive()) {
-            if (activeTileAction == null)
+            if (activeTileAction == null) {
                 activeTileAction = new MapCorrectionAction();
+            }
             actions.add(activeTileAction);
-            // FIXME: This is a workaround to get the LayTile action created from inside the CorrectionManager
-            LayTile action = new LayTile(LayTile.CORRECTION);
-            getParent().getPossibleActions().add(action);
+            // FIXME: This is a workaround to get the LayTile and LayToken actions created from inside the CorrectionManager
+            LayTile tileAction = new LayTile(LayTile.CORRECTION);
+            getParent().getPossibleActions().add(tileAction);
+            for (PublicCompany company:getRoot().getCompanyManager().getAllPublicCompanies()) {
+                if (!company.isClosed() && company.hasLaidHomeBaseTokens() && company.getNumberOfFreeBaseTokens() > 0) {
+                    LayBaseToken tokenAction = new LayBaseToken(LayBaseToken.CORRECTION);
+                    tokenAction.setCompany(company);
+                    getParent().getPossibleActions().add(tokenAction);
+                }
+            }
         }
         return actions;
     }

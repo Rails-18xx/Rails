@@ -71,6 +71,7 @@ import rails.game.action.UseSpecialProperty;
 import rails.game.correct.ClosePrivate;
 import rails.game.correct.OperatingCost;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
@@ -293,7 +294,7 @@ public class ORUIManager implements DialogOwner {
                 LayBaseToken layBaseToken = (LayBaseToken)layToken;
                 switch (layBaseToken.getType()) {
                 case (LayBaseToken.GENERIC):
-                    addGenericTokenLays(layToken);
+                    addGenericTokenLays(layBaseToken);
                     break;
                 case (LayBaseToken.LOCATION_SPECIFIC):
                 case (LayBaseToken.SPECIAL_PROPERTY):
@@ -306,6 +307,8 @@ public class ORUIManager implements DialogOwner {
                 case (LayBaseToken.HOME_CITY):
                     addLocatedTokenLays(layBaseToken);
                 break;
+                case (LayTile.CORRECTION):
+                    addCorrectionTokenLays(layBaseToken);
                 default:
                 }
             } else if (layToken instanceof LayBonusToken) {
@@ -333,6 +336,23 @@ public class ORUIManager implements DialogOwner {
             TokenHexUpgrade upgrade = TokenHexUpgrade.create(guiHex, hex.getStops(), action);
             TokenHexUpgrade.validates(upgrade);
             hexUpgrades.put(guiHex, upgrade);
+        }
+    }
+
+    private void addCorrectionTokenLays(LayToken action) {
+        for (GUIHex guiHex:map.getHexes()) {
+            MapHex hex = guiHex.getHex();
+            List<Stop> tokenableStops = Lists.newArrayList();
+            for (Stop stop:hex.getStops()) {
+                if (stop.isTokenableFor(action.getCompany())) {
+                    tokenableStops.add(stop);
+                }
+            }
+            if (!tokenableStops.isEmpty()) {
+                TokenHexUpgrade upgrade = TokenHexUpgrade.create(guiHex, tokenableStops, action);
+                TokenHexUpgrade.validates(upgrade);
+                hexUpgrades.put(guiHex, upgrade);
+            }
         }
     }
     

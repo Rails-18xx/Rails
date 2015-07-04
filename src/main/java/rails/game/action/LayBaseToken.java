@@ -26,6 +26,7 @@ public class LayBaseToken extends LayToken {
     public final static int SPECIAL_PROPERTY = 2; // Directed by a special
     public final static int HOME_CITY = 3; // If city on home hex is undefined in 1st turn
     // property
+    public final static int CORRECTION = 99; // Correction token lays
 
     protected int type = 0;
 
@@ -38,6 +39,11 @@ public class LayBaseToken extends LayToken {
 
     public static final long serialVersionUID = 1L;
 
+    public LayBaseToken(int type) {
+        super();
+        this.type = type;
+    }
+    
     /**
      * Lay a base token on one of a given list of locations.
      * <p>This constructor is only intended to be used for normal lays of non-home tokens
@@ -77,6 +83,8 @@ public class LayBaseToken extends LayToken {
         setChosenHex (hex);
         type = HOME_CITY;
     }
+    
+    
 
     @Deprecated
     public int getChosenStation() {
