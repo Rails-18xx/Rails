@@ -230,7 +230,7 @@ public class OperatingRound extends Round implements Observer {
         /*--- Common OR checks ---*/
         /* Check operating company */
         if (action instanceof PossibleORAction
-            && !(action instanceof DiscardTrain)) {
+            && !(action instanceof DiscardTrain) && !action.isCorrection()) {
             PublicCompany company = ((PossibleORAction) action).getCompany();
             if (company != operatingCompany.value()) {
                 DisplayBuffer.add(this, LocalText.getText("WrongCompany",
@@ -1914,8 +1914,9 @@ public class OperatingRound extends Round implements Observer {
 
         MapHex hex = action.getChosenHex();
         Stop stop = action.getChosenStop();
-
-        String companyName = operatingCompany.value().getId();
+        
+        PublicCompany company = action.getCompany();
+        String companyName = company.getId();
 
         // Dummy loop to enable a quick jump out.
         while (true) {
@@ -1925,17 +1926,18 @@ public class OperatingRound extends Round implements Observer {
             // token lay)
             if (getStep() != GameDef.OrStep.LAY_TOKEN
                 && action.getType() != LayBaseToken.HOME_CITY
-                && action.getType() != LayBaseToken.SPECIAL_PROPERTY) {
+                && action.getType() != LayBaseToken.SPECIAL_PROPERTY
+                && action.getType() != LayBaseToken.CORRECTION) {
                 errMsg = LocalText.getText("WrongActionNoTokenLay");
                 break;
             }
 
-            if (operatingCompany.value().getNumberOfFreeBaseTokens() == 0) {
+            if (company.getNumberOfFreeBaseTokens() == 0) {
                 errMsg = LocalText.getText("HasNoTokensLeft", companyName);
                 break;
             }
 
-            if (!isTokenLayAllowed(operatingCompany.value(), hex, stop)) {
+            if (!isTokenLayAllowed(company, hex, stop)) {
                 errMsg = LocalText.getText("BaseTokenSlotIsReserved");
                 break;
             }
@@ -1950,7 +1952,7 @@ public class OperatingRound extends Round implements Observer {
              * cities on one tile may hold tokens of the same company; this case
              * is not yet covered.
              */
-            if (hex.hasTokenOfCompany(operatingCompany.value())) {
+            if (hex.hasTokenOfCompany(company)) {
                 errMsg =
                         LocalText.getText("TileAlreadyHasToken", hex.getId(),
                                 companyName);
@@ -1970,15 +1972,15 @@ public class OperatingRound extends Round implements Observer {
                 if (stl != null) extra = stl.isExtra();
             }
 
-            cost = operatingCompany.value().getBaseTokenLayCost(hex);
+            cost = company.getBaseTokenLayCost(hex);
             if (stl != null && stl.isFree()) cost = 0;
 
             // Does the company have the money?
-            if (cost > operatingCompany.value().getCash()) {
+            if (cost > company.getCash()) {
                 errMsg =
                         LocalText.getText("NotEnoughMoney", companyName,
                                 Bank.format(this,
-                                        operatingCompany.value().getCash()),
+                                        company.getCash()),
                                 Bank.format(this, cost));
                 break;
             }
@@ -1994,27 +1996,30 @@ public class OperatingRound extends Round implements Observer {
 
         /* End of validation, start of execution */
 
-        if (hex.layBaseToken(operatingCompany.value(), stop)) {
+        if (hex.layBaseToken(company, stop)) {
             /* TODO: the false return value must be impossible. */
 
-            operatingCompany.value().layBaseToken(hex, cost);
+            company.layBaseToken(hex, cost);
 
             // If this is a home base token lay, stop here
             if (action.getType() == LayBaseToken.HOME_CITY) {
                 return true;
             }
 
+            StringBuilder text = new StringBuilder();
+            if (action.isCorrection()) {
+                text.append(LocalText.getText("CorrectionPrefix"));
+            }
             if (cost > 0) {
                 String costText =
-                        Currency.toBank(operatingCompany.value(), cost);
-                ReportBuffer.add(
-                        this,
-                        LocalText.getText("LAYS_TOKEN_ON", companyName,
+                        Currency.toBank(company, cost);
+                text.append(LocalText.getText("LAYS_TOKEN_ON", companyName,
                                 hex.getId(), costText));
             } else {
-                ReportBuffer.add(this, LocalText.getText("LAYS_FREE_TOKEN_ON",
+                text.append(LocalText.getText("LAYS_FREE_TOKEN_ON",
                         companyName, hex.getId()));
             }
+            ReportBuffer.add(this, text.toString());
 
             // Was a special property used?
             if (stl != null) {
@@ -2025,8 +2030,10 @@ public class OperatingRound extends Round implements Observer {
 
             }
 
-            // Jump out if we aren't in the token laying step
-            if (getStep() != GameDef.OrStep.LAY_TOKEN) return true;
+            // Jump out if we aren't in the token laying step or it is a correction lay
+            if (getStep() != GameDef.OrStep.LAY_TOKEN || action.isCorrection()) { 
+                return true;
+            }
 
             if (!extra) {
                 currentNormalTokenLays.clear();

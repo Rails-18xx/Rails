@@ -145,6 +145,11 @@ public class LayBaseToken extends LayToken {
     }
 
     @Override
+    public boolean isCorrection() {
+        return (type == LayBaseToken.CORRECTION);
+    }
+    
+    @Override
     public String toString() {
         return super.toString() + 
                 RailsObjects.stringHelper(this)

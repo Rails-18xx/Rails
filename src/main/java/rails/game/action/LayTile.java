@@ -366,6 +366,11 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
         }
         locationNames = b.toString();
     }
+    
+    @Override
+    public boolean isCorrection() {
+        return (type == LayTile.CORRECTION);
+    }
 
     @Override
     public int compareTo(LayTile o) {

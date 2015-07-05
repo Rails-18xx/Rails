@@ -150,6 +150,13 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
     protected CompanyManager getCompanyManager () {
         return root.getCompanyManager();
     }
+    
+    /**
+     * @return true if it is an action to correct the game state
+     */
+    public boolean isCorrection() {
+        return false;
+    }
 
     /** Default version of an Menu item text. To be overridden where useful. */
     public String toMenu() {
