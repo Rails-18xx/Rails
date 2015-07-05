@@ -74,6 +74,13 @@ public class PossibleActions {
             return false;
         }
     }
+    
+    public boolean containsCorrections() {
+        for (PossibleAction action:actions) {
+            if (action.isCorrection()) return true;
+        }
+        return false;
+    }
 
     /** Check if a given action exists in the current list of possible actions */
     public boolean validate(PossibleAction checkedAction) {

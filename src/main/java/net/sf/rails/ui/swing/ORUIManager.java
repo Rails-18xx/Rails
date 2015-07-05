@@ -367,11 +367,17 @@ public class ORUIManager implements DialogOwner {
         String message = "<font color='red'>" + LocalText.getText(localStep.toString()) + "</font>";
         String extraMessage = "";
 
+        // Activity Messages
+        boolean correctionActive = false;
         List<LayTile> tileLays = getPossibleActions().getType(LayTile.class);
         if (!tileLays.isEmpty()) {
             /* Compose prompt for tile laying */
 
             for (LayTile tileLay : tileLays) {
+                if (tileLay.isCorrection()) {
+                    correctionActive = true;
+                    continue;
+                }
                 Map<String, Integer> tileColours;
                 SpecialProperty sp = tileLay.getSpecialProperty();
                 // For special tile lays add special message
@@ -405,6 +411,10 @@ public class ORUIManager implements DialogOwner {
             StringBuilder normalTokenMessage = new StringBuilder();
 
             for (LayBaseToken tokenLay : tokenLays) {
+                if (tokenLay.isCorrection()) {
+                    correctionActive = true;
+                    continue;
+                }
                 SpecialProperty sp = tokenLay.getSpecialProperty();
                 if (sp != null && sp instanceof SpecialBaseTokenLay) {
                     extraMessage += "<BR>" + sp.getHelp();
@@ -421,6 +431,10 @@ public class ORUIManager implements DialogOwner {
                            normalTokenMessage);
                }
             }
+        }
+        
+        if (correctionActive) {
+            message += "<BR>" + LocalText.getText("CorrectMapActive");
         }
  
         if (extraMessage.length() > 0) {
@@ -643,7 +657,13 @@ public class ORUIManager implements DialogOwner {
     }
     
     public void skipUpgrade() {
-        orWindow.process(new NullAction(NullAction.Mode.SKIP));
+        if (getPossibleActions().containsCorrections()) {
+            // skip on corrections => return to Select Hex
+            map.selectHex(null);
+            setLocalStep(LocalSteps.SelectHex);
+        } else {
+            orWindow.process(new NullAction(NullAction.Mode.SKIP));
+        }
     }
     
     private void layTile(TileHexUpgrade upgrade) {
