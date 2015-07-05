@@ -8,6 +8,8 @@ import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -24,9 +26,9 @@ import org.w3c.dom.*;
  */
 public class ConvertTilesXML {
 
-    private static String inputFilePath = "TileDictionary.xml";
+    private static String inputFilePath = "src/main/resources/tiles/TileDictionary.xml";
 
-    private static String outputFilePath = "Tiles.xml";
+    private static String outputFilePath = "src/main/resources/tiles/Tiles.xml";
 
     private static Map<String, String> colourMap, gaugeMap, sidesMap, cityMap;
     private static Map<String, String[]> stationMap;
@@ -63,6 +65,7 @@ public class ConvertTilesXML {
         stationMap.put("jtDoubleCity", new String[] { "City", "2" });
         stationMap.put("jtTripleCity", new String[] { "City", "3" });
         stationMap.put("jtQuadrupleCity", new String[] { "City", "4" });
+        stationMap.put("jtHextupleCity", new String[] { "City", "6" });
         stationMap.put("jtNone", new String[] { "", "0" });
         // Note: an additional station type is "Pass".
 
@@ -177,11 +180,13 @@ public class ConvertTilesXML {
             outputDoc = impl.createDocument(null, "Tiles", null);
 
             convertXML(inputTopElement, outputDoc);
-
-            TransformerFactory.newInstance().newTransformer().transform(
-                    new DOMSource(outputDoc),
-                    new StreamResult(new FileOutputStream(new File(
-                            outputFilePath))));
+            
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            transformerFactory.setAttribute("indent-number", 5);
+            Transformer transformer = transformerFactory.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.transform(new DOMSource(outputDoc),
+                    new StreamResult(new FileOutputStream(new File(outputFilePath))));
 
         } catch (Exception e) {
             throw new ConfigurationException("Document build error", e);
