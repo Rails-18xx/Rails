@@ -26,6 +26,7 @@ public class BaseTokensModel extends RailsModel {
     private BaseTokensModel(PublicCompany parent, String id) {
         super(parent, id);
         freeBaseTokens = PortfolioSet.create(parent, "freeBaseTokens", BaseToken.class);
+        freeBaseTokens.addModel(this);
     }
 
     public static BaseTokensModel create(PublicCompany parent, String id){
