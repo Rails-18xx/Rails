@@ -6,6 +6,8 @@ import java.util.*;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -22,8 +24,14 @@ import org.w3c.dom.*;
  */
 public class MakeGameTileSets {
 
-    private static String tilesFilePath = "Tiles.xml";
-
+    private static final String TILES_DIRECTORY = "tiles";
+    private static final String TILES_FILENAME = "Tiles.xml";
+    private static final String HANDMADE_TILES_FILENAME = "HandmadeTiles.xml";
+    
+    private static final String GAMES_DATA_DIRECTORY = "data";
+    private static final String GAMES_OUTPUT_DIRECTORY = "src/main/resources/data";
+    private static final String GAMES_TILES_FILENAME = "Tiles.xml";
+ 
     public static void main(String[] args) {
 
         try {
@@ -36,12 +44,11 @@ public class MakeGameTileSets {
 
                 List<String> games = new ArrayList<String>();
 
-                File gamesDir = new File("../data");
+                File gamesDir = new File(GAMES_DATA_DIRECTORY);
                 if (gamesDir.exists() && gamesDir.isDirectory()) {
                     File[] files = gamesDir.listFiles();
                     for (int i = 0; i < files.length; i++) {
-                        if (files[i].isDirectory()
-                            && !files[i].getName().equalsIgnoreCase("CVS")) {
+                        if (files[i].isDirectory()) {
                             games.add(files[i].getName());
                         }
                     }
@@ -61,22 +68,26 @@ public class MakeGameTileSets {
 
     }
 
-    private MakeGameTileSets(String[] games) throws ConfigurationException {
-
-        String directory = "tiles";
+    private void addToTileMap(Map<String, Element> tileMap, String fileName) throws ConfigurationException  {
+        
         // the last arguments refers to the fact that no GameOptions are required
         Element inputTopElement =
-                Tag.findTopTagInFile(tilesFilePath, directory, "Tiles", null).getElement();
+                Tag.findTopTagInFile(fileName, TILES_DIRECTORY, "Tiles", null).getElement();
 
-        Map<String, Element> tileMap = new HashMap<String, Element>();
-        Element tileSpec;
-        String tileName;
         NodeList tList = inputTopElement.getElementsByTagName("Tile");
         for (int i = 0; i < tList.getLength(); i++) {
-            tileSpec = (Element) tList.item(i);
-            tileName = tileSpec.getAttribute("id");
+            Element tileSpec = (Element) tList.item(i);
+            String tileName = tileSpec.getAttribute("id");
             tileMap.put(tileName, tileSpec);
         }
+    }
+    
+    private MakeGameTileSets(String[] games) throws ConfigurationException {
+
+        Map<String, Element> tileMap = new HashMap<String, Element>();
+        // first add tiles from Tile Designer, then from handmade
+        addToTileMap(tileMap, TILES_FILENAME);
+        addToTileMap(tileMap, HANDMADE_TILES_FILENAME);
 
         for (int i = 0; i < games.length; i++) {
             System.out.println("Preparing "+games[i]);
@@ -90,7 +101,7 @@ public class MakeGameTileSets {
             throws ConfigurationException {
 
         // FIXME: Check if this path does indeed work?
-        String directory = "../data/" + gameName;
+        String directory = GAMES_DATA_DIRECTORY + "/" + gameName;
 
         // Open and read the tile set for this rails.game
         String tileSetPath = "TileSet.xml";
@@ -106,7 +117,7 @@ public class MakeGameTileSets {
                 Tag.findTopTagInFile(mapPath, directory, "Map", null).getElement();
         NodeList hexes = mapHexes.getElementsByTagName("Hex");
 
-        String tilesPath = "../data/" + gameName + "/Tiles.xml";
+        String tilesPath = GAMES_OUTPUT_DIRECTORY + "/" + gameName + "/" + GAMES_TILES_FILENAME;
         Document outputDoc;
         String tileName;
 
@@ -164,8 +175,13 @@ public class MakeGameTileSets {
 
             }
 
-            TransformerFactory.newInstance().newTransformer().transform(
-                    new DOMSource(outputDoc),
+            System.out.println("XML output to " + tilesPath);
+            
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            transformerFactory.setAttribute("indent-number", 5);
+            Transformer transformer = transformerFactory.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.transform(new DOMSource(outputDoc),
                     new StreamResult(new FileOutputStream(new File(tilesPath))));
 
         } catch (Exception e) {

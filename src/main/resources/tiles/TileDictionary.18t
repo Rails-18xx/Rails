@@ -15748,10 +15748,6 @@ object TTilesWrapper
       Level = tlGreen
       Connections = <
         item
-          Position1 = tp3SideD
-          Position2 = tp3SideD
-        end
-        item
           Position1 = tp3SideE
           Position2 = tp4SideE
         end
@@ -15770,10 +15766,6 @@ object TTilesWrapper
         item
           Position1 = tp3SideA
           Position2 = tp4SideA
-        end
-        item
-          Position1 = tp3SideF
-          Position2 = tp4SideF
         end
         item
           Position1 = tp3SideF
@@ -16145,10 +16137,6 @@ object TTilesWrapper
       Connections = <
         item
           Position1 = tpCenter
-          Position2 = tpCenter
-        end
-        item
-          Position1 = tpCenter
           Position2 = tp4SideA
         end
         item
@@ -16397,7 +16385,7 @@ object TTilesWrapper
     end
     item
       Code = 455
-      LongName = '495'
+      LongName = '455'
       Level = tlGray
       Connections = <
         item
@@ -16477,11 +16465,7 @@ object TTilesWrapper
           Position2 = tpCenter
         end
         item
-          Position1 = tp4SideA
-          Position2 = tpCenter
-        end
-        item
-          Position1 = tp4SideA
+          Position1 = tpCenter
           Position2 = tp4SideD
         end
         item

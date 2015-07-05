@@ -56,6 +56,22 @@
     <Tile colour="fixed" id="-4005" name="water half-tile (N)"/>
     <Tile colour="white" id="-25017" name="empty half-tile (W)"/>
     <Tile colour="white" id="-25018" name="empty half-tile (N)"/>
+	<Tile colour="yellow" id="-80004" name="Beijing">
+		<Station id="city1" position="103" slots="1" type="City"
+			value="20" />
+		<Station id="city2" position="203" slots="1" type="City"
+			value="20" />
+		<Station id="city3" position="403" slots="1" type="City"
+			value="20" />
+		<Station id="city4" position="503" slots="1" type="City"
+			value="20" />
+		<Station id="city5" position="003" slots="1" type="City" />
+		<Station id="city6" position="303" slots="1" type="City" />
+		<Track from="city3" gauge="normal" to="side4" />
+		<Track from="city2" gauge="normal" to="side2" />
+		<Track from="city1" gauge="normal" to="side1" />
+		<Track from="city4" gauge="normal" to="side5" />
+	</Tile>
 	<Tile colour="brown" id="8887" name="Beijing">
 		<Station id="city1" position="0" slots="6" type="City" city="Beijing" value="60" />
 		<Track from="city1" gauge="normal" to="side5" />
