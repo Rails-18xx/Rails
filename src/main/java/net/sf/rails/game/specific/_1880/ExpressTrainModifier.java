@@ -1,11 +1,13 @@
 package net.sf.rails.game.specific._1880;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Ordering;
 
 import net.sf.rails.algorithms.NetworkTrain;
 import net.sf.rails.algorithms.NetworkVertex;
@@ -37,25 +39,36 @@ import net.sf.rails.algorithms.RevenueTrainRun;
         }
 
 
-         // TODO: Rails 2.0 rewrite this by using Guava
         private List<NetworkVertex> extractExpressRun(RevenueTrainRun run, int length) {
             
             // check for valid run first
             if (!run.hasAValidRun()) return new ArrayList<NetworkVertex>();
             
-            NetworkVertex baseVertex = run.getBaseVertex();
-   
             // create a sorted list of the run vertices
-            List<NetworkVertex> otherVertices = new ArrayList<NetworkVertex>(run.getUniqueVertices()); 
-            otherVertices.remove(baseVertex);
-            Collections.sort(otherVertices, new NetworkVertex.ValueOrder());
-
-            List<NetworkVertex> expressVertices = otherVertices.subList(0, Math.min(otherVertices.size(),length-1));
-            expressVertices.add(0, baseVertex);
+            List<NetworkVertex> sortedVertices = 
+                    Ordering.from(new NetworkVertex.ValueOrder()).immutableSortedCopy(run.getUniqueVertices());
+          
+            ImmutableList.Builder<NetworkVertex> expressVertices = ImmutableList.builder();
+            NetworkVertex baseVertex = run.getBaseVertex();
+            expressVertices.add(baseVertex);
             
-            return expressVertices;
+            int inRunNumber = 1;
+            for (NetworkVertex vertex:sortedVertices) {
+                if (vertex != baseVertex) {
+                    if (!vertex.isStation()) {
+                        // keep ferry malus vertices
+                        expressVertices.add(vertex);
+                    } else if (inRunNumber < length) { 
+                        // add vertices until length is reached
+                        expressVertices.add(vertex);
+                        inRunNumber ++;
+                    }
+                }
+            }
+
+            return expressVertices.build();
         }
-        
+     
         private int valueChange(List<RevenueTrainRun> runs, boolean optimalRuns) {
             int value = 0;
             //Find out which Express Train is involved
@@ -64,13 +77,13 @@ import net.sf.rails.algorithms.RevenueTrainRun;
                     if (optimalRuns) log.debug("Express Long Run = " + run.getRunVertices());
                     List<NetworkVertex> expressRun = extractExpressRun(run, 6);
                     if (optimalRuns) log.debug("Express Best Run = " + expressRun);
-                    int expressRunValue = NetworkVertex.sum(expressRun);
+                    int expressRunValue = run.getRunValueForVertices(expressRun);
                     value += expressRunValue - run.getRunValue();
                 } else if (TRAIN_8E.equals(run.getTrain().getTrainName())) {
                     if (optimalRuns) log.debug("Express Long Run = " + run.getRunVertices());
                     List<NetworkVertex> expressRun = extractExpressRun(run, 8);
                     if (optimalRuns) log.debug("Express Best Run = " + expressRun);
-                    int expressRunValue = NetworkVertex.sum(expressRun);
+                    int expressRunValue = run.getRunValueForVertices(expressRun);
                     value += expressRunValue - run.getRunValue();
                 }
             }

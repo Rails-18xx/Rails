@@ -91,10 +91,15 @@ public class RevenueTrainRun implements Comparable<RevenueTrainRun> {
         return train;
     }
 
-    public int getRunValue() {
+    /**
+     * @param listOfVertices defines a sublist of vertices that are used to calculate the run value
+     * @return total value of the vertices in the list
+     * This includes all revenue bonuses defined in the calculator
+     */
+    public int getRunValueForVertices(List<NetworkVertex> listOfVertices) {
         int value = 0;
         NetworkVertex startVertex = null;
-        for (NetworkVertex vertex : vertices) {
+        for (NetworkVertex vertex : listOfVertices) {
             if (startVertex == vertex) continue;
             if (startVertex == null) startVertex = vertex;
             value +=
@@ -103,12 +108,16 @@ public class RevenueTrainRun implements Comparable<RevenueTrainRun> {
         }
         // check revenueBonuses (complex)
         for (RevenueBonus bonus : revenueAdapter.getRevenueBonuses()) {
-            if (bonus.checkComplexBonus(vertices, train.getRailsTrain(),
+            if (bonus.checkComplexBonus(listOfVertices, train.getRailsTrain(),
                     revenueAdapter.getPhase())) {
                 value += bonus.getValue();
             }
         }
         return value;
+    }
+    
+    public int getRunValue() {
+        return getRunValueForVertices(vertices);
     }
 
     boolean hasButtomRun() {
