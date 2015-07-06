@@ -15,6 +15,13 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ComparisonChain;
 
 
+/**
+ * Rails 2.x TODO:
+ * Create an abstraction that defines a CertificateType (currently attributes president, shares, certificateCount)
+ * Each certificate belongs to a Certificate Type and a Company
+ * Then clean up the current mess, including the static map, which is only for backward compatibility for early 1.x versions
+ */
+
 public class PublicCertificate extends RailsOwnableItem<PublicCertificate> implements Certificate, Cloneable, Typable<PublicCompany> {
 
     /** From which public company is this a certificate */
@@ -31,9 +38,6 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
     
     /** Availability at the start of the game */
     protected boolean initiallyAvailable;
-
-    /** A key identifying the certificate's unique type */
-    protected String certTypeId;
 
     /** A key identifying the certificate's unique ID */
     protected String certId;
@@ -164,41 +168,30 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
         this.initiallyAvailable = initiallyAvailable;
     }
 
-    /**
-     * @param b
-     */
     public boolean isInitiallyAvailable() {
         return initiallyAvailable;
     }
     
-    /**
-     * @param b
-     */
     public void setPresident(boolean b) {
         president = b;
     }
 
-    /**
-     * @return
-     */
     public PublicCompany getCompany() {
         return company;
     }
 
-    /**
-     * @param companyI
-     */
     public void setCompany(PublicCompany companyI) {
         company = companyI;
-        certTypeId = company.getId() + "_" + getShare() + "%";
-        if (president) certTypeId += "_P";
     }
 
     public String getTypeId() {
+        String certTypeId = company.getId() + "_" + getShare() + "%";
+        if (president) certTypeId += "_P";
         return certTypeId;
     }
 
     // Typable interface
+    @Override
     public PublicCompany getType() {
         return company;
     }
@@ -259,25 +252,5 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
         this.certificateCount = certificateCount;
     }
     
-    /**
-     * Two certificates are "equal" if they both belong to the same company,
-     * represent the same share percentage, and are not a president share.
-     *
-     * @param cert Public company certificate to compare with.
-     * @return True if the certs are "equal" in the defined sense.
-     * 
-     * FIXME: This cannot work as long as HashCode is not defined accordingly
-     */
-//    public boolean equals(PublicCertificate cert) {
-//        return (cert != null && getCompany() == cert.getCompany()
-//                && isPresidentShare() == cert.isPresidentShare() && getShares() == cert.getShares());
-//    }
-
-    // TODO: Check if this was required somewhere
-//    @Override
-//    public String toString() {
-//        return "PublicCertificate: " + getId();
-//    }
-
 
 }

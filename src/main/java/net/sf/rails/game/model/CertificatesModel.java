@@ -36,7 +36,6 @@ public class CertificatesModel extends RailsModel implements Iterable<PublicCert
         certificates = PortfolioMap.create(parent, "certificates", PublicCertificate.class);
         // so make this model updating
         certificates.addModel(this);
-        
     }
     
     public static CertificatesModel create(RailsOwner parent) {
