@@ -46,10 +46,13 @@ public final class GenericState<E> extends State {
 
     /**
      * For observable objects it returns toText(), for others toString()
+     * If GenericState is set to null returns empty string
      */
     @Override
     public String toText() {
-        if (object instanceof Observable) {
+        if (object == null) {
+            return "";
+        } else if (object instanceof Observable) {
             return ((Observable)object).toText();
         } else {
             return object.toString();

@@ -1,9 +1,4 @@
-/**
- * 
- */
 package net.sf.rails.ui.swing.gamespecific._1880;
-
-
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.JOptionPane;
+
+import com.google.common.collect.Lists;
 
 import rails.game.specific._1880.CloseInvestor_1880;
 import rails.game.specific._1880.ExchangeForCash;
@@ -20,16 +17,13 @@ import rails.game.specific._1880.StartCompany_1880;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.Train;
 import net.sf.rails.game.specific._1880.BuildingRights_1880;
-import net.sf.rails.game.specific._1880.ParSlotManager_1880;
+import net.sf.rails.game.specific._1880.GameManager_1880;
+import net.sf.rails.game.specific._1880.ParSlot;
+import net.sf.rails.game.specific._1880.ParSlotManagerNG;
 import net.sf.rails.ui.swing.GameUIManager;
 import net.sf.rails.ui.swing.elements.NonModalDialog;
 import net.sf.rails.ui.swing.elements.RadioButtonDialog;
 
-/**
- * @author Martin Brumm
- * @date 5-2-2012
- * 
- */
 public class GameUIManager_1880 extends GameUIManager {
     public static final String COMPANY_SELECT_BUILDING_RIGHT = "SelectBuildingRight";
     public static final String COMPANY_SELECT_PRESIDENT_SHARE_SIZE = "SelectPresidentShareSize";
@@ -132,17 +126,18 @@ public class GameUIManager_1880 extends GameUIManager {
             int selectedPrice = startPrices[index];
             action.setStartPrice(selectedPrice);
             
-            int[] parSlots = ParSlotManager_1880.filterByPrice(action.getPossibleParSlotIndices(), selectedPrice);
-            String[] parSlotStrings = new String[parSlots.length];
-            for (int i = 0; i < parSlots.length; i++) {
-                parSlotStrings[i] = Integer.toString(parSlots[i] + 1);
+            ParSlotManagerNG parSlotManager = ((GameManager_1880) getGameManager()).getParSlotManager();
+            List<ParSlot> parSlots = parSlotManager.filterByPrice(action.getPossibleParSlotIndices(), selectedPrice);
+            List<String> parSlotStrings = Lists.newArrayList();
+            for (ParSlot slot:parSlots) {
+                parSlotStrings.add(String.valueOf(slot.getIndex() + 1));
             }
             dialog = new RadioButtonDialog(
                     COMPANY_SELECT_PAR_SLOT_INDEX, 
                         this, statusWindow,
                         LocalText.getText("PleaseSelect"),       
                             LocalText.getText("PickParSlot", action.getPlayerName(), selectedPrice, 
-                                    action.getCompanyName()), parSlotStrings, 0);
+                                    action.getCompanyName()), parSlotStrings.toArray(new String[0]), 0);
             setCurrentDialog(dialog, action);
             statusWindow.disableButtons();
             return;
@@ -159,8 +154,10 @@ public class GameUIManager_1880 extends GameUIManager {
             }
             
             int price = action.getPrice();
-            int[] parSlots = ParSlotManager_1880.filterByPrice(action.getPossibleParSlotIndices(), price);
-            action.setParSlotIndex(parSlots[index]);
+       
+            ParSlotManagerNG parSlotManager = ((GameManager_1880) getGameManager()).getParSlotManager();
+            List<ParSlot> parSlots = parSlotManager.filterByPrice(action.getPossibleParSlotIndices(), price);
+            action.setParSlotIndex(parSlots.get(index).getIndex());
 
           int freePlayerCash = getRoot().getPlayerManager().getCurrentPlayer().getFreeCash();
           if (freePlayerCash >= (price*4)) { //enough Cash for 40 Percent 

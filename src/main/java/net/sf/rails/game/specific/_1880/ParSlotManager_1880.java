@@ -53,11 +53,11 @@ public class ParSlotManager_1880 extends RailsManager {
         return results;
     }
 
-    public void setCompanyAtSlot(PublicCompany_1880 company, int parSlotIndex) {
+    public void setCompanyAtIndex(PublicCompany_1880 company, int parSlotIndex) {
         companies[parSlotIndex].setCompany(company);
     }
     
-    public ParSlotModel getModelAtSlot(int slot) {
+    public ParSlotModel getSlotAtIndex(int slot) {
         return companies[slot];
     }
     
@@ -80,10 +80,6 @@ public class ParSlotManager_1880 extends RailsManager {
             }
         }
         return prices.toArray(new Integer[prices.size()]);
-    }
-
-    public static int getPriceForSlot(int i) {
-        return SLOTS_PRICE_MAP.get(i);
     }
 
     public static int[] filterByPrice(int[] possibleParSlotIndices, int selectedPrice) {

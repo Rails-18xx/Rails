@@ -61,6 +61,7 @@ public class TableField {
 
         if (initBackgroundColor != null) {
             component.setBackground(initBackgroundColor);
+            component.setOpaque(true);
         }
 
         // initialize foreground color

@@ -1,6 +1,3 @@
-/**
- * 
- */
 package net.sf.rails.game.specific._1880;
 
 import java.util.ArrayList;
@@ -53,14 +50,10 @@ import rails.game.specific._1880.CloseInvestor_1880;
 import rails.game.specific._1880.ExchangeForCash;
 import rails.game.specific._1880.ForcedRocketExchange;
 
-/**
- * @author Martin
- * 
- */
 public class OperatingRound_1880 extends OperatingRound {
 
     private OperatingRoundControl_1880 orControl;
-    private ParSlotManager_1880 parSlotManager;
+    private ParSlotManagerNG parSlotManager;
 
     List<Investor_1880> investorsToClose = new ArrayList<Investor_1880>();
     PossibleAction manditoryNextAction = null;

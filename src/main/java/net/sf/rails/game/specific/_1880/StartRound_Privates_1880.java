@@ -41,7 +41,7 @@ public class StartRound_Privates_1880 extends StartRound_Sequential {
                     (PublicCompany_1880) castAction.getCompany();
             company.setBuildingRights(castAction.getBuildRightsString());
             
-            ((GameManager_1880) gameManager).getParSlotManager().setCompanyAtSlot(
+            ((GameManager_1880) gameManager).getParSlotManager().setCompanyAtIndex(
                     company, castAction.getParSlotIndex());
             ReportBuffer.add(this, LocalText.getText("BuildingRightsChosen",
                     player.getId(), castAction.getBuildRightsString(),

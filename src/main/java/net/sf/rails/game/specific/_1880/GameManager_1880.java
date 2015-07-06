@@ -1,6 +1,3 @@
-/**
- * 
- */
 package net.sf.rails.game.specific._1880;
 
 import net.sf.rails.game.Player;
@@ -13,18 +10,12 @@ import net.sf.rails.game.StockRound;
 import net.sf.rails.common.GuiDef;
 
 
-/**
- * @author Martin Brumm
- * @date 21.1.2012
- * 
- */
-
 public class GameManager_1880 extends net.sf.rails.game.GameManager {
 
     protected Class<? extends ShareSellingRound> shareSellingRoundClass
     = ShareSellingRound_1880.class;
 
-    private ParSlotManager_1880 parSlotManager;    
+    private ParSlotManagerNG parSlotManager;    
     private OperatingRoundControl_1880 orControl;
     
     /**
@@ -34,7 +25,7 @@ public class GameManager_1880 extends net.sf.rails.game.GameManager {
     public GameManager_1880(RailsRoot parent, String id) {
         super(parent, id);
         orControl = new OperatingRoundControl_1880(parent, "OrControl");
-        parSlotManager = new ParSlotManager_1880(parent, "ParSlotControl");
+        parSlotManager = new ParSlotManagerNG(this, "ParSlotControl");
     }
 
     @Override
@@ -113,7 +104,7 @@ public class GameManager_1880 extends net.sf.rails.game.GameManager {
         super.finishShareSellingRound();
     }
     
-    public ParSlotManager_1880 getParSlotManager() {
+    public ParSlotManagerNG getParSlotManager() {
         return parSlotManager;
     }
 

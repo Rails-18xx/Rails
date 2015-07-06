@@ -16,11 +16,14 @@ import net.sf.rails.game.StockSpace;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.Owner;
-import java.util.Arrays;
+
 import java.util.List;
+
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Ordering;
+import com.google.common.primitives.Ints;
 
 import rails.game.action.BuyCertificate;
 import rails.game.action.PossibleAction;
@@ -186,21 +189,13 @@ public class StockRound_1880 extends StockRound {
                                 from.getParent(), price));
                     }
                 } else if (!comp.hasStarted()) {
-                    ParSlotManager_1880 parSlotManager = ((GameManager_1880) gameManager).getParSlotManager();
-                    Integer[] prices = parSlotManager.getAvailablePrices(playerCash/2);
-                    if (prices.length > 0) {
-                        Arrays.sort(prices);
-                        int[] convertedPrices = new int[prices.length];
-                        for (int i = 0; i < prices.length; i++) {
-                            convertedPrices[i] = prices[i];
-                        }
-                        StartCompany_1880 action = new StartCompany_1880(comp, convertedPrices);
-                        Integer[] parSlotIndicies = parSlotManager.getAvailableSlots(playerCash/2);
-                        int[] convertedSlots = new int [parSlotIndicies.length];
-                        for (int i = 0; i < parSlotIndicies.length; i++) {
-                            convertedSlots[i] = parSlotIndicies[i];
-                        }
-                        action.setPossibleParSlotIndices(convertedSlots);
+                    ParSlotManagerNG parSlotManager = ((GameManager_1880) gameManager).getParSlotManager();
+                    List<Integer> prices = parSlotManager.getAvailablePrices(playerCash/2);
+                    if (prices.size() > 0) {
+                        List<Integer> prices_sorted = Ordering.natural().immutableSortedCopy(prices);
+                        StartCompany_1880 action = new StartCompany_1880(comp, Ints.toArray(prices_sorted));
+                        List<Integer> slotIndices = parSlotManager.getAvailaibleIndices(playerCash/2);
+                        action.setPossibleParSlotIndices(Ints.toArray(slotIndices));
                         possibleActions.add(action);
                     }
                 }
@@ -466,7 +461,7 @@ public class StockRound_1880 extends StockRound {
         Player player = playerManager.getPlayerByName(playerName);
         PublicCompany_1880 company = (PublicCompany_1880) action.getCompany();
         company.setBuildingRights(action.getBuildingRights());
-        ((GameManager_1880) gameManager).getParSlotManager().setCompanyAtSlot(company, action.getParSlotIndex());
+        ((GameManager_1880) gameManager).getParSlotManager().setCompanyAtIndex(company, action.getParSlotIndex());
 
         // If this player's investor doesn't have a linked company yet - this is it
         Investor_1880 investor = Investor_1880.getInvestorForPlayer(companyManager, player);

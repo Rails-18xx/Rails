@@ -90,9 +90,18 @@ public class GridTable {
             return addField(GridField.createFrom(text));
         }
 
+        public Builder color(Accessor1D.AColorModel<? extends Item> color) {
+            if (currentField instanceof GridFieldDynamic1D) {
+                ((GridFieldDynamic1D)currentField).setColor(color);
+            }
+            return this;
+        }
+
         public Builder add(Accessor2D<? extends Item,? extends Item> text) {
             return addField(GridField.createFrom(text));
         }
+        
+        
         
         public GridTable build() {
             return new GridTable(this);
