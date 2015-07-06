@@ -30,8 +30,8 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
     
     public enum Invalids implements HexUpgrade.Invalids {
         NO_VALID_ORIENTATION, HEX_BLOCKED, HEX_RESERVED, NO_TILES_LEFT,
-        NOT_ALLOWED_FOR_HEX, NOT_ALLOWED_FOR_PHASE, COLOUR_NOT_ALLOWED, 
-        NO_ROUTE_TO_NEW_TRACK, NOT_ENOUGH_CASH;
+        NOT_ALLOWED_FOR_HEX, NOT_ALLOWED_FOR_PHASE, COLOUR_NOT_ALLOWED,
+        COLOUR_RIGHT_MISSING, NO_ROUTE_TO_NEW_TRACK, NOT_ENOUGH_CASH;
 
         @Override
         public String toString() {
@@ -165,6 +165,9 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
         if (tileColourNotAllowed(phase)) {
             invalids.add(Invalids.COLOUR_NOT_ALLOWED);
         }
+        if (tileColourRightMissing()) {
+            invalids.add(Invalids.COLOUR_RIGHT_MISSING);
+        }
         if (noRouteToNewTrack()) {
             invalids.add(Invalids.NO_ROUTE_TO_NEW_TRACK);
         } else if (noValidRotation()) {
@@ -202,6 +205,14 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
     
     public boolean tileColourNotAllowed(Phase phase) {
         return !phase.isTileColourAllowed(upgrade.getTargetTile().getColourText());
+    }
+    
+    public boolean tileColourRightMissing() {
+        if (action.getTileColours() == null) {
+            return false;
+        }
+        Integer tileLays = action.getTileColours().get(upgrade.getTargetTile().getColourText());
+        return (tileLays == null || tileLays == 0);
     }
     
     public boolean noRouteToNewTrack() {
