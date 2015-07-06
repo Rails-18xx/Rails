@@ -620,7 +620,7 @@ public class ORUIManager implements DialogOwner {
         }
         
         // otherwise a clickedHex is defined ==> select the hex if upgrades are provided
-        if (hexUpgrades.contains(clickedHex)) {
+        if (hexUpgrades.containsVisible(clickedHex)) {
             switch (localStep) {
                 case SelectHex:
                 case SelectUpgrade:

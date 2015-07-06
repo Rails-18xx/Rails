@@ -59,6 +59,15 @@ public class GUIHexUpgrades {
         return allUpgrades.containsKey(hex);
     }
     
+    public boolean containsVisible(GUIHex hex) {
+        for (HexUpgrade upgrade:allUpgrades.get(hex)) {
+            if (upgrade.isVisible()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     public Set<GUIHex> getHexes() {
         return allUpgrades.keySet();
     }
