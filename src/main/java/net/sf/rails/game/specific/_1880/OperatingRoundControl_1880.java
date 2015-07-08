@@ -11,44 +11,35 @@ import net.sf.rails.game.state.IntegerState;
 
 public class OperatingRoundControl_1880 extends RailsAbstractItem {
     
-    private PublicCompany lastCompanyToBuyTrain;
-    private PublicCompany firstCompanyToRun;
-    private PublicCompany lastCompanyToOperate;
-    private GenericState<GameDef.OrStep> nextStep;
-    private BooleanState exitingToStockRound = BooleanState.create(this, "ExitedToStockRound", false);
-    private BooleanState startedFromStockRound = BooleanState.create (this,"StartingFromStockRound",false);
-    private BooleanState finalOperatingRoundSequence = BooleanState.create (this,"FinalOperatingRoundSequence",false);
-    private BooleanState noTrainsToDiscard = BooleanState.create(this,"NoMoreTrainsToDiscard", false);
-    private IntegerState finalOperatingRoundSequenceNumber = IntegerState.create(this,"FinalOperatingRoundNumber",0);
+    private final GenericState<PublicCompany> lastCompanyToBuyTrain = GenericState.create(this, "lastCompanyToBuyTrain");
+    private final GenericState<PublicCompany> firstCompanyToRun = GenericState.create(this, "firstCompanyToRun");
+    private final GenericState<PublicCompany> lastCompanyToOperate = GenericState.create(this, "lastCompanyToOperate");
+    private final GenericState<GameDef.OrStep> nextStep;
+    private final BooleanState exitingToStockRound = BooleanState.create(this, "ExitedToStockRound", false);
+    private final BooleanState startedFromStockRound = BooleanState.create (this,"StartingFromStockRound",false);
+    private final BooleanState finalOperatingRoundSequence = BooleanState.create (this,"FinalOperatingRoundSequence",false);
+    private final BooleanState noTrainsToDiscard = BooleanState.create(this,"NoMoreTrainsToDiscard", false);
+    private final IntegerState finalOperatingRoundSequenceNumber = IntegerState.create(this,"FinalOperatingRoundNumber",0);
 
     
     public OperatingRoundControl_1880(RailsRoot parent, String string) {
         super(parent,string);
-        lastCompanyToBuyTrain = null;
-        firstCompanyToRun = null;   
-        lastCompanyToOperate = null;
-        
-        if (nextStep == null) {
-            nextStep =
-                    GenericState.create(this, "ORStep",
-                            GameDef.OrStep.INITIAL);
-        }
-        exitingToStockRound.set(false);
-        startedFromStockRound.set(false);
+        nextStep = GenericState.create(this, "ORStep",
+                        GameDef.OrStep.INITIAL);
     }
 
     public void orExitToStockRound(PublicCompany company, OrStep step) {
-        firstCompanyToRun = company;
+        firstCompanyToRun.set(company);
         nextStep.set(step);
         exitingToStockRound.set(true);
     }
     
     public PublicCompany lastCompanyToBuyTrain() {
-        return lastCompanyToBuyTrain;
+        return lastCompanyToBuyTrain.value();
     }
 
     public void trainPurchased(PublicCompany company) {
-        lastCompanyToBuyTrain = company;
+        lastCompanyToBuyTrain.set(company);
     }
     
     public boolean isExitingToStockRound() {
@@ -60,7 +51,7 @@ public class OperatingRoundControl_1880 extends RailsAbstractItem {
     }
     
     public PublicCompany getFirstCompanyToRun() {
-        return firstCompanyToRun;
+        return firstCompanyToRun.value();
     }
     
     public OrStep getNextStep() {
@@ -96,11 +87,11 @@ public class OperatingRoundControl_1880 extends RailsAbstractItem {
     }
     
     public PublicCompany lastCompanyToOperate() {
-        return lastCompanyToOperate;
+        return lastCompanyToOperate.value();
     }
     
     public void setLastCompanyToOperate(PublicCompany company) {
-        lastCompanyToOperate = company;
+        lastCompanyToOperate.set(company);
     }
 
     public boolean noTrainsToDiscard() {

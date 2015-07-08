@@ -32,8 +32,10 @@ import net.sf.rails.game.TrainType;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.special.SpecialTileLay;
 import net.sf.rails.game.special.SpecialTrainBuy;
+import net.sf.rails.game.state.ArrayListState;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.Currency;
+import net.sf.rails.game.state.GenericState;
 import net.sf.rails.game.state.MoneyOwner;
 import net.sf.rails.util.SequenceUtil;
 
@@ -55,10 +57,10 @@ public class OperatingRound_1880 extends OperatingRound {
     private OperatingRoundControl_1880 orControl;
     private ParSlotManagerNG parSlotManager;
 
-    List<Investor_1880> investorsToClose = new ArrayList<Investor_1880>();
-    PossibleAction manditoryNextAction = null;
+    private final ArrayListState<Investor_1880> investorsToClose = ArrayListState.create(this, "investorsToClose");
+    private final BooleanState trainPurchasedThisTurn = BooleanState.create(this, "trainPurchaseThisTurn");
     private PublicCompany firstCompanyBeforePrivates;
-    private BooleanState trainPurchasedThisTurn = BooleanState.create(this, "trainPurchaseThisTurn");
+    PossibleAction manditoryNextAction = null;
     
     /**
      * @param gameManager
