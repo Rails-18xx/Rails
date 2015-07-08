@@ -10,8 +10,8 @@ class GridFieldStatic extends GridField {
     private Observable tooltipObservable;
     private ColorModel colorModel;
     
-    GridFieldStatic(Observable text) {
-        this.textObservable = text;
+    GridFieldStatic(Observable observable) {
+        this.textObservable = observable;
     }
     
     GridFieldStatic(String text) {

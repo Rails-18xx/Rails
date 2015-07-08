@@ -104,7 +104,7 @@ public class ParSlotManagerNG extends RailsManager {
             if (slot.getCompany().value() == company) {
                 slot.getLastTrain().set("X");
             } else {
-                slot.getLastTrain().set("");
+                slot.getLastTrain().set(" ");
             }
         }
     }

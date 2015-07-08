@@ -25,6 +25,12 @@ public class TableField {
         this.tooltipObserver = builder.tooltipObserver;
         this.colorObserver = builder.colorObserver;
         
+        // initialize format
+        component.setBorder(builder.format.getBorder());
+        if (component instanceof JLabel) {
+            ((JLabel)component).setHorizontalAlignment(builder.format.getHorizontalAlignment());
+        }
+        
         // initialize text
         String initText = null;
         if (builder.text != null) {
@@ -52,7 +58,7 @@ public class TableField {
         }
         
         // initialize background color
-        Color initBackgroundColor = null;
+        Color initBackgroundColor = builder.format.getColors().background;
         if (builder.colors != null && builder.colors.background != null) {
             initBackgroundColor = builder.colors.background;
         } else if (colorObserver != null) {
@@ -65,7 +71,7 @@ public class TableField {
         }
 
         // initialize foreground color
-        Color initForegroundColor = null;
+        Color initForegroundColor = builder.format.getColors().foreground;
         if (builder.colors != null && builder.colors.foreground != null) {
             initForegroundColor = builder.colors.foreground;
         } else if (colorObserver != null) {
@@ -105,6 +111,7 @@ public class TableField {
         private String text;
         private String tooltip;
         private GridColors colors;
+        private GridFieldFormat format;
         
         private Observer textObserver;
         private Observer tooltipObserver;
@@ -186,6 +193,12 @@ public class TableField {
             model.addObserver(colorObserver);
             return this;
         }
+        
+        Builder setFormat(GridFieldFormat format) {
+            this.format = format;
+            return this;
+        }
+        
     }
 
     

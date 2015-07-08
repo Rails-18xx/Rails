@@ -1,5 +1,6 @@
 package net.sf.rails.ui.swing.core;
 
+import java.awt.Color;
 import java.util.Iterator;
 
 import org.slf4j.Logger;
@@ -16,6 +17,8 @@ import com.google.common.collect.ImmutableTable;
  */
 
 public class GridTable {
+    
+    public static enum TYPE {HEADER, INNER}
     
     private final ImmutableTable<GridCoordinate, GridCoordinate, GridField> fields;
     private final GridAxis rows;
@@ -53,6 +56,9 @@ public class GridTable {
         private final GridAxis rows;
         private final GridAxis cols;
         
+        private GridFieldFormat headerFormat = GridFieldFormat.builder().build();
+        private GridFieldFormat innerFormat = GridFieldFormat.builder().setBackground(Color.WHITE).build();
+        
         private final Iterator<GridCoordinate> rowIterator;
         private Iterator<GridCoordinate> colIterator;
         private GridCoordinate currentRow;
@@ -63,14 +69,25 @@ public class GridTable {
             this.cols = cols;
             rowIterator = rows.iterator();
         }
-
+        
+        public Builder setHeaderFormat(GridFieldFormat format) {
+            this.headerFormat = format;
+            return this;
+        }
+ 
+        public Builder setInnerFormat(GridFieldFormat format) {
+            this.innerFormat = format;
+            return this;
+        }
+ 
         public Builder row() {
             currentRow = rowIterator.next();
             colIterator = cols.iterator();
             return this;
         }
         
-        private Builder addField(GridField field) {
+        private Builder addField(GridField field, GridFieldFormat format) {
+            field.setFormat(format);
             currentField = field;
             GridCoordinate currentCol = colIterator.next();
             fields.put(currentRow, currentCol, currentField);
@@ -79,15 +96,29 @@ public class GridTable {
         }
         
         public Builder add(String text) {
-            return addField(GridField.createFrom(text));
+            return addField(GridField.createFrom(text), headerFormat);
         }
         
-        public Builder add(Observable text) {
-            return addField(GridField.createFrom(text));
+        public Builder add(Observable observable) {
+            return addField(GridField.createFrom(observable), headerFormat);
         }
         
-        public Builder add(Accessor1D<? extends Item> text) {
-            return addField(GridField.createFrom(text));
+        public Builder add(Accessor1D<? extends Item> accessor) {
+            return addField(GridField.createFrom(accessor), innerFormat);
+        }
+
+        public Builder add(Accessor2D<? extends Item,? extends Item> accessor) {
+            return addField(GridField.createFrom(accessor), innerFormat);
+        }
+        
+        public Builder innerFormat() {
+            currentField.setFormat(innerFormat);
+            return this;
+        }
+        
+        public Builder headerFormat() {
+            currentField.setFormat(headerFormat);
+            return this;
         }
 
         public Builder color(Accessor1D.AColorModel<? extends Item> color) {
@@ -97,11 +128,6 @@ public class GridTable {
             return this;
         }
 
-        public Builder add(Accessor2D<? extends Item,? extends Item> text) {
-            return addField(GridField.createFrom(text));
-        }
-        
-        
         
         public GridTable build() {
             return new GridTable(this);

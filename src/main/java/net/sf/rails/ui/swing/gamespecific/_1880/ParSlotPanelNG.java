@@ -12,7 +12,7 @@ import net.sf.rails.ui.swing.core.TableUI;
 
 public class ParSlotPanelNG {
         
-    private enum Rows {HEADER}
+    private static enum Rows {HEADER}
     private enum Cols {PRICE,COMPANY,LAST_TRAIN}
 
     private final JPanel panel;
@@ -31,7 +31,7 @@ public class ParSlotPanelNG {
 
         GridTable gridTable = GridTable.builder(rows, cols)
                 .row().add("Price").add("Slot").add("Last Train")
-                .row().add(ParSlotACCs.PRICE).add(ParSlotACCs.COMPANY).color(ParSlotACCs.COMPANY_COLORS).add(ParSlotACCs.LAST_TRAIN)
+                .row().add(ParSlotACCs.PRICE).headerFormat().add(ParSlotACCs.COMPANY).color(ParSlotACCs.COMPANY_COLORS).add(ParSlotACCs.LAST_TRAIN)
                 .build();
 
         TableUI table = TableUI.from(gridTable);

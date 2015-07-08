@@ -11,6 +11,7 @@ abstract class GridField {
     private String text;
     private String tooltip;
     private GridColors colors;
+    private GridFieldFormat format;
     
     GridField setText(String text) {
         this.text = text;
@@ -27,6 +28,11 @@ abstract class GridField {
         return this;
     }
     
+    GridField setFormat(GridFieldFormat format) {
+        this.format = format;
+        return this;
+    }
+    
     JComponent getComponent() {
         return new JLabel();
     }
@@ -35,7 +41,7 @@ abstract class GridField {
     
     final TableField.Builder buildDefaults() {
         TableField.Builder builder = TableField.builder(getComponent());
-        return builder.setText(text).setTooltip(tooltip).setColors(colors);
+        return builder.setText(text).setTooltip(tooltip).setColors(colors).setFormat(format);
     }
     
     static GridFieldStatic createFrom(String text) {
@@ -53,7 +59,5 @@ abstract class GridField {
     static GridFieldDynamic2D createFrom(Accessor2D<? extends Item,? extends Item> text) {
         return new GridFieldDynamic2D(text);
     }
-    
-    
     
 }
