@@ -2,6 +2,7 @@ package net.sf.rails.ui.swing.gamespecific._1880;
 
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
 import net.sf.rails.game.specific._1880.ParSlot;
@@ -30,13 +31,15 @@ public class ParSlotPanelNG {
                 .build();
 
         GridTable gridTable = GridTable.builder(rows, cols)
-                .row().add("Price").add("Slot").add("Last Train")
+                .row().add("Price").add("Slot").add("<html>Last<br>Train</html>")
                 .row().add(ParSlotACCs.PRICE).headerFormat().add(ParSlotACCs.COMPANY).color(ParSlotACCs.COMPANY_COLORS).add(ParSlotACCs.LAST_TRAIN)
                 .build();
 
         TableUI table = TableUI.from(gridTable);
 
         panel = table.convertToPanel();
+        panel.setBorder(BorderFactory.createEtchedBorder());
+
     }
 
     public JPanel getPanel() {
