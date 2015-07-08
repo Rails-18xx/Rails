@@ -28,6 +28,7 @@ public class Field extends JLabel implements Observer {
 
     private Observable observable;
     private Observer toolTipObserver;
+    private Observer colorObserver;
     private Color normalBgColour = NORMAL_BG_COLOUR;
 
     private boolean pull = false;
@@ -85,18 +86,21 @@ public class Field extends JLabel implements Observer {
         setToolTipText(toolTipModel.toText());
     }
     
-    public void setColorModel(final ColorModel colorModel) {
-        Observer colorObserver = new Observer() {
+    public void setColorModel(ColorModel colorModel) {
+        final ColorModel storeModel = colorModel;
+        colorObserver = new Observer() {
             public void update(String text) {
-                if (colorModel.getBackground() != null) {
-                    Field.this.setBackground(colorModel.getBackground());
+                if (storeModel.getBackground() != null) {
+                    setBackground(storeModel.getBackground());
+                } else {
+                    setBackground(NORMAL_BG_COLOUR);
                 }
-                if (colorModel.getForeground() != null) {
-                    Field.this.setForeground(colorModel.getForeground());
+                if (storeModel.getForeground() != null) {
+                    setForeground(storeModel.getForeground());
                 }
             }
             public Observable getObservable() {
-                return colorModel;
+                return storeModel;
             }
         };
         colorModel.addObserver(colorObserver);
