@@ -1,5 +1,10 @@
 package net.sf.rails.game.specific._1880;
 
+import java.util.List;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
+
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.GameManager;
@@ -95,7 +100,14 @@ public class StartRound_Privates_1880 extends StartRound_Sequential {
         Player firstPlayer = playerManager.reorderPlayersByCash(true);
         playerManager.setCurrentPlayer(firstPlayer);
         playerManager.setPriorityPlayer(firstPlayer);
-        ReportBuffer.add(this, LocalText.getText("PlayersReordered"));
+   
+        // report new player order
+        List<String> playerNames = Lists.newArrayList();
+        for (Player player:playerManager.getPlayers()) {
+            playerNames.add(player.getId());
+        }
+        String players = Joiner.on(", ").join(playerNames);
+        ReportBuffer.add(this, LocalText.getText("PlayersReordered", players));
         super.finishRound();
     }
 
