@@ -235,7 +235,7 @@ public class GameUIManager_1880 extends GameUIManager {
     public void closeInvestor(CloseInvestor_1880 action) {
         String[] cashOptions = new String[2];
         cashOptions[0] = LocalText.getText("GiveToCompany", action.getInvestor().getCash(), action.getInvestor().getLinkedCompany().getId());
-        cashOptions[1] = LocalText.getText("GiveToPresident", (action.getInvestor().getCash()/5), action.getInvestor().getPresident());
+        cashOptions[1] = LocalText.getText("GiveToPresident", (action.getInvestor().getCash()/5), action.getInvestor().getPresident().getId());
         
         String cashChoice =
                 (String) JOptionPane.showInputDialog(orWindow,
