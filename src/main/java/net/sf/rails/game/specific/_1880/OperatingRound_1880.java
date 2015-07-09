@@ -462,8 +462,8 @@ public class OperatingRound_1880 extends OperatingRound {
          * right for this phase. Only Majors need to be prechecked.
          */
         if (getStep() == GameDef.OrStep.INITIAL) {
-            initTurn();
            if (operatingCompany.value() instanceof PublicCompany_1880)  {
+            initTurn();
             if ((noMapMode)
                 || (!((PublicCompany_1880) operatingCompany.value()).hasBuildingRightForPhase(gameManager.getCurrentPhase()))) {
                 nextStep(GameDef.OrStep.LAY_TRACK);
