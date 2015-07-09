@@ -204,7 +204,7 @@ public final class RevenueAdapter implements Runnable {
     
     public void populateFromRails() {
         // define graph, without HQ
-        graph = networkAdapter.getRouteGraph(company, false);
+        graph = networkAdapter.getRouteGraphCached(company, false);
         
         // initialize vertices
         NetworkVertex.initAllRailsVertices(graph, company, phase);

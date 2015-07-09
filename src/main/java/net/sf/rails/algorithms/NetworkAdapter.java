@@ -11,9 +11,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * This class coordinates the creation of company related graphs
- * 
- * TODO: NetworkAdapter should be changed to a NetworkManager and include functionality currently in NetworkGraph
- * e.g. NetworkGraphModifier
  */
 public class NetworkAdapter {
 
@@ -21,6 +18,14 @@ public class NetworkAdapter {
             LoggerFactory.getLogger(NetworkAdapter.class);
 
     private final RailsRoot root;
+    
+    private NetworkGraph mapGraph;
+    private NetworkGraph routeGraph;
+    private NetworkGraph revenueGraph;
+    private NetworkMultigraph multiGraph;
+
+    private PublicCompany company;
+    private boolean addHQ;
     
     private NetworkAdapter(RailsRoot root) {
         this.root = root;
@@ -31,20 +36,49 @@ public class NetworkAdapter {
     }
     
     public NetworkGraph getMapGraph() {
-        return NetworkGraph.createMapGraph(root);
+        mapGraph = NetworkGraph.createMapGraph(root);
+        log.info("MapGraph created");
+        return mapGraph;
     }
         
     public NetworkGraph getRouteGraph(PublicCompany company, boolean addHQ) {
-        return NetworkGraph.createRouteGraph(getMapGraph(), company, addHQ);
+        routeGraph = NetworkGraph.createRouteGraph(getMapGraph(), company, addHQ);
+        this.company = company;
+        this.addHQ = addHQ;
+        log.info("RouteGraph created");
+        return routeGraph;
     }
     
-    public NetworkGraph getRevenueGraph(PublicCompany company, Collection<NetworkVertex> protectedVertices) {
-        return NetworkGraph.createOptimizedGraph(getRouteGraph(company, false), protectedVertices);
+    public NetworkGraph getRouteGraphCached(PublicCompany company, boolean addHQ) {
+        if (routeGraph == null || company != this.company || addHQ != this.addHQ) {
+            if (mapGraph != null) {
+                routeGraph = NetworkGraph.createRouteGraph(mapGraph, company, addHQ);
+            } else {
+                getRouteGraph(company, addHQ);
+            }
+        }
+        return routeGraph;
+    }
+    
+    public NetworkGraph getRevenueGraph(PublicCompany company,
+            Collection<NetworkVertex> protectedVertices) {
+        if (revenueGraph == null) {
+            revenueGraph = NetworkGraph.createOptimizedGraph(getRouteGraphCached(company, false),
+                    protectedVertices);
+            log.info("RevenueGraph created");
+        }
+        
+        return revenueGraph;
     }
     
     public NetworkMultigraph getMultigraph(PublicCompany company,
             Collection<NetworkVertex> protectedVertices) {
-        return NetworkMultigraph.create(getRevenueGraph(company, protectedVertices), protectedVertices);
+        if (multiGraph == null) {
+            multiGraph = NetworkMultigraph.create(
+                    getRevenueGraph(company, protectedVertices), protectedVertices);
+            log.info("MultiGraph created");
+        }
+        return multiGraph;
     }
     
 }
