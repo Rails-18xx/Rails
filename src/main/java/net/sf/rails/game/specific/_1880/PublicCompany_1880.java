@@ -110,7 +110,7 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
     }
 
     public void addBuildingPermit(String permitName) {
-        buildingRights.set(buildingRights.getText() + "+" + permitName);
+        buildingRights.set(buildingRights.toText() + "+" + permitName);
     }
 
     
@@ -321,7 +321,7 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
         return false;
     }
     
-   public State getRightsModel () {
+   public BuildingRights_1880 getRightsModel () {
         return buildingRights;
     }
     

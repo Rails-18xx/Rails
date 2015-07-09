@@ -12,6 +12,7 @@ import net.sf.rails.game.model.*;
 import net.sf.rails.game.special.*;
 import net.sf.rails.game.state.*;
 import net.sf.rails.game.state.Currency;
+import net.sf.rails.game.state.Observable;
 import net.sf.rails.util.Util;
 
 import org.slf4j.Logger;
@@ -1862,7 +1863,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         return currentLoanValue;
     }
 
-    public State getRightsModel () {
+    public Observable getRightsModel () {
         return rights;
     }
 

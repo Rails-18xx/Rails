@@ -15,6 +15,7 @@ import rails.game.specific._1880.ForcedRocketExchange;
 import rails.game.specific._1880.SetupNewPublicDetails_1880;
 import rails.game.specific._1880.StartCompany_1880;
 import net.sf.rails.common.LocalText;
+import net.sf.rails.game.Phase;
 import net.sf.rails.game.Train;
 import net.sf.rails.game.specific._1880.BuildingRights_1880;
 import net.sf.rails.game.specific._1880.GameManager_1880;
@@ -79,7 +80,8 @@ public class GameUIManager_1880 extends GameUIManager {
             }
             
             action.setNumberBought(shares);
-            possibleBuildingRights = BuildingRights_1880.getRightsForPresidentShareSize(shares);                
+            possibleBuildingRights = 
+                    BuildingRights_1880.getRightsForPresidentShareSize(shares).toArray(new String[0]);                
 
             dialog = new RadioButtonDialog (COMPANY_SELECT_BUILDING_RIGHT,
                     this,
@@ -98,8 +100,9 @@ public class GameUIManager_1880 extends GameUIManager {
             RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
             StartCompany_1880 action = (StartCompany_1880) currentDialogAction;
 
-            String[] possibleBuildingRights = BuildingRights_1880.getRightsForPresidentShareSize(action.getNumberBought());                
-
+            String[] possibleBuildingRights = 
+                    BuildingRights_1880.getRightsForPresidentShareSize(action.getNumberBought()).toArray(new String[0]);                
+ 
             int index = dialog.getSelectedOption();
             if (index < 0) {
                 currentDialogAction = null;
@@ -211,25 +214,6 @@ public class GameUIManager_1880 extends GameUIManager {
         // Dialog action found and processed, let the superclass initiate processing.
         super.dialogActionPerformed(true);
     
-    }
-    
-    public void setupNewPublicDetails(SetupNewPublicDetails_1880 action) {
-        RadioButtonDialog dialog;
-        String[] rightsOptions = BuildingRights_1880.getRightsForPresidentShareSize(action.getShares());
-        
-        dialog = new RadioButtonDialog (NEW_COMPANY_SELECT_BUILDING_RIGHT,
-                this,
-                statusWindow,
-                LocalText.getText("PleaseSelect"),
-                LocalText.getText(
-                        "WhichBuildingRight",action.getPlayerName(),
-                        action.getCompanyName()),
-                        rightsOptions, 0);
-            setCurrentDialog(dialog, action);
-            statusWindow.disableButtons();
-        setCurrentDialog(dialog, action);
-        statusWindow.disableButtons();
-        return;
     }
     
     public void closeInvestor(CloseInvestor_1880 action) {

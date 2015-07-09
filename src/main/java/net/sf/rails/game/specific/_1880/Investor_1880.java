@@ -162,7 +162,7 @@ public class Investor_1880 extends PublicCompany implements RevenueStaticModifie
         return investors;
     }
 
-    public State getRightsModel() {
+    public BuildingRights_1880 getRightsModel() {
         return buildingRights;
     }
 

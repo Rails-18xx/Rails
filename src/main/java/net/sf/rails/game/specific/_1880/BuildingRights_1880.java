@@ -1,96 +1,72 @@
 package net.sf.rails.game.specific._1880;
 
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.ImmutableBiMap;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Ordering;
+
 import net.sf.rails.game.Phase;
 import net.sf.rails.game.RailsItem;
-import net.sf.rails.game.state.State;
+import net.sf.rails.game.model.RailsModel;
+import net.sf.rails.game.state.HashSetState;
 
-/**
- * @author Michael Alexander
- * 
- */
-
-public class BuildingRights_1880 extends State {
+public class BuildingRights_1880 extends RailsModel {
     
-    private static final Map<Integer, String> RIGHTS_TEXT_MAP = createMap();
-
-    private static Map<Integer, String> createMap() {
-        Map<Integer, String> result = new HashMap<Integer, String>();
-        result.put(0, "A");
-        result.put(1, "B");
-        result.put(2, "C");
-        result.put(3, "D");
-        return Collections.unmodifiableMap(result);
-    }
+    private static final BiMap<Integer, String> RIGHTS_TEXT_MAP = 
+            ImmutableBiMap.of(0, "A", 1, "B", 2, "C", 3, "D");
     
-    private final static int NUM_RIGHTS = 4;
+    private static final Map<Integer, Integer> NB_RIGHTS_TO_PRESIDENT_SHARE = 
+            ImmutableMap.of(2, 3, 3, 2, 4, 1);
     
-    private BitSet buildingRights = new BitSet(NUM_RIGHTS); 
+    private final HashSetState<String> buildingRights = 
+            HashSetState.create(this, "buildingRights"); 
     
-    public BuildingRights_1880(RailsItem parent, String name) {
-        super(parent, name);
-        for (int i = 0; i < NUM_RIGHTS; i++) {
-            buildingRights.clear(i);
-        }
+    public BuildingRights_1880(RailsItem parent, String id) {
+        super(parent, id);
     }    
     
-    public String getText() {
-        return super.toText();
-    }
-    
-    public String toText() {
-        String result ="";
-         for (int i = 0; i< NUM_RIGHTS; i++) {
-             if (buildingRights.get(i))  {
-                 result += RIGHTS_TEXT_MAP.get(i);
-             }
-         }
-        return result;
-    }
-
-    public void set(String string) {
-        for (int i = 0; i < NUM_RIGHTS; i++) {
-            if (string.contains(RIGHTS_TEXT_MAP.get(i))) {
-                buildingRights.set(i);
-            } else {
-                buildingRights.clear(i);
+    public void set(String rights) {
+        // clear old rights first
+        buildingRights.clear();
+        // ... then add new rights
+        for (String right: Splitter.on("+").split(rights))
+            if (RIGHTS_TEXT_MAP.containsValue(right)) {
+                buildingRights.add(right);
             }
-        }
     }
     
     public boolean canBuildInPhase(Phase phase) {
-        boolean canBuild = false;
-        for (int i = 0; i < NUM_RIGHTS; i++) {
-            if (phase.getRealName().startsWith(RIGHTS_TEXT_MAP.get(i))) {
-                canBuild = buildingRights.get(i);
-                break;
-            }
-        }
-        return canBuild;
+        // the phase (e.g. "A2") contains the required building right as the first character 
+        String phase_1st = phase.getRealName().substring(0, 1);
+        return buildingRights.contains(phase_1st);
     }
 
-    public static String[] getRightsForPresidentShareSize(int shares) {
-        List<String> options = new ArrayList<String>();        
-        for (int i = 0; i < NUM_RIGHTS; i++) {
-            options.add(RIGHTS_TEXT_MAP.get(i));
-        }
-        if (shares <= 3) {
-            for (int i = 0; i < (NUM_RIGHTS - 1); i++) {
-                options.add(RIGHTS_TEXT_MAP.get(i) + "+" + RIGHTS_TEXT_MAP.get(i+1));
-            }            
-        }
-        if (shares <= 2) {
-            for (int i = 0; i < (NUM_RIGHTS - 2); i++) {
-                options.add(RIGHTS_TEXT_MAP.get(i) + "+" + RIGHTS_TEXT_MAP.get(i+1) + "+" + RIGHTS_TEXT_MAP.get(i+2));
-            }                        
-        }
+    @Override
+    public String toText() {
+        return Joiner.on("").join(Ordering.natural().immutableSortedCopy(buildingRights));
+    }
+    
+    public static List<String> getRightsForPresidentShareSize(int shares) {
         
-        return options.toArray(new String[options.size()]);
+        int nb_rights = NB_RIGHTS_TO_PRESIDENT_SHARE.get(shares);
+        
+        ImmutableList.Builder<String> options = ImmutableList.builder();
+        int i = 0;
+        while (i + nb_rights <= RIGHTS_TEXT_MAP.size()) {
+            List<String> option = Lists.newArrayList();
+            for (int k=0; k < nb_rights; k++) {
+                option.add(RIGHTS_TEXT_MAP.get(k+i));
+            }
+            options.add(Joiner.on("+").join(option));
+            i++;
+        }
+        return options.build();
     }
 }
