@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- FIXME: This seems to be a non-finalized version, fix it for Rails 2.0 -->
 <StockMarket type="rectangular">
-	<UpOrDownRight />
 	<StockSpaceType name="yellow" colour="255,255,100">
 	<Revenue5/>
 	</StockSpaceType>
