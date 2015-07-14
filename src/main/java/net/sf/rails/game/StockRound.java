@@ -1001,7 +1001,7 @@ public class StockRound extends Round {
         while (true) {
 
             // Check everything
-            if (getStockRoundNumber() == 1 && noSaleInFirstSR()) {
+            if (checkFirstRoundSellRestriction()) {
                 errMsg = LocalText.getText("FirstSRNoSell");
                 break;
             }
@@ -1500,6 +1500,22 @@ public class StockRound extends Round {
     public int getCurrentPlayerIndex() {
         return currentPlayer.getIndex();
     }
+    
+    /**
+     * @return true if first round sell restriction is active
+     */
+    private boolean checkFirstRoundSellRestriction() {
+        if (noSaleInFirstSR() && getStockRoundNumber() == 1) {
+            // depending on GameOption restriction is either valid during the first (true) Stock Round or the first Round 
+            if (GameOption.getValue(this, "FirstRoundSellRestriction").equals("First Stock Round")) {
+                return true;
+            } else if (GameOption.getValue(this, "FirstRoundSellRestriction").equals("First Round")) {
+                // if all players have passed it is not the first round
+                return !gameManager.getFirstAllPlayersPassed();
+            }
+        }
+        return false;
+    }
 
     /**
      * Can the current player do any selling?
@@ -1508,12 +1524,15 @@ public class StockRound extends Round {
      */
     public boolean mayCurrentPlayerSellAnything() {
 
-        if (getStockRoundNumber() == 1 && noSaleInFirstSR()) return false;
-
+        if (checkFirstRoundSellRestriction()) {
+            return false;
+        }
+ 
         if (companyBoughtThisTurnWrapper.value() != null
                 && (sequenceRule == SELL_BUY_OR_BUY_SELL
-                        && hasSoldThisTurnBeforeBuying.value() || sequenceRule == SELL_BUY))
-            return false;
+                        && hasSoldThisTurnBeforeBuying.value() || sequenceRule == SELL_BUY)) {
+                return false;
+        }
         return true;
     }
 

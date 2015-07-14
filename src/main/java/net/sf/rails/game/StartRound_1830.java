@@ -338,7 +338,7 @@ public class StartRound_1830 extends StartRound {
 
             if (numPasses.value() >= playerManager.getNumberOfPlayers()) {
                 // All players have passed.
-                ReportBuffer.add(this, LocalText.getText("ALL_PASSED"));
+                gameManager.reportAllPlayersPassed();
                 // It the first item has not been sold yet, reduce its price by
                 // 5.
                 if (startPacket.getFirstUnsoldItem() == startPacket.getFirstItem()) {

@@ -7,6 +7,7 @@
 	<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
 	<GameOption name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
 	<GameOption name="NoMapMode" type="toggle" default="no" />
+	<GameOption name="FirstRoundSellRestriction" values="First Round,First Stock Round" default="First Round" />
 	<GameOption name="BYFloatsAt" values="50%,20%" default="50%"/>
 	<GameOption name="LDIncome" values="20M,30M" default="20M"/>
 	<GameOption name="MinorsRequireFloatedBY" type="toggle" default="no"/>

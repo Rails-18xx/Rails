@@ -3,4 +3,5 @@
 	<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
 	<GameOption name="RouteAlgorithm" values="Permissive,Semi-Restrictive,Restrictive" default="Permissive" />
 	<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
+	<GameOption name="FirstRoundSellRestriction" values="First Round,First Stock Round" default="First Round" />
 </GameOptions>

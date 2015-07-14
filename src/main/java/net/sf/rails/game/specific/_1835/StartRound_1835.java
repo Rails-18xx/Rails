@@ -128,6 +128,8 @@ public class StartRound_1835 extends StartRound {
                 ReportBuffer.add(this, message);
                 numPasses.add(1);
                 if (numPasses.value() >= playerManager.getNumberOfPlayers()) {
+                    // All players have passed.
+                    gameManager.reportAllPlayersPassed();
                     /*
                      * No-one has enough cash left to buy anything, so close the
                      * Start Round.
@@ -210,7 +212,7 @@ public class StartRound_1835 extends StartRound {
 
         if (numPasses.value() >= playerManager.getNumberOfPlayers()) {
             // All players have passed.
-            ReportBuffer.add(this, LocalText.getText("ALL_PASSED"));
+            gameManager.reportAllPlayersPassed();
             numPasses.set(0);
             //gameManager.nextRound(this);
             finishRound();

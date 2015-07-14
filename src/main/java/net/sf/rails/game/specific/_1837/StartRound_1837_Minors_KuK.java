@@ -140,7 +140,7 @@ public class StartRound_1837_Minors_KuK extends StartRound {
 
         if (numPasses.value() >= playerManager.getNumberOfPlayers()) {
             // All players have passed.
-            ReportBuffer.add(this, LocalText.getText("ALL_PASSED"));
+            gameManager.reportAllPlayersPassed();
             numPasses.set(0);
             finishRound();
         } else {

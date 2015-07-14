@@ -115,7 +115,7 @@ public class StartRound_1825 extends StartRound {
         numPasses.add(1);
         if (numPasses.value() >= playerManager.getNumberOfPlayers()) {
             //Everyone has passed
-            ReportBuffer.add(this, LocalText.getText("ALL_PASSED"));
+            gameManager.reportAllPlayersPassed();
             numPasses.set(0);
             finishRound();
         }

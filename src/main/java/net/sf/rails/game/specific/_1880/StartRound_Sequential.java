@@ -239,6 +239,7 @@ public class StartRound_Sequential extends StartRound {
                     setNextBiddingPlayer();
                 }
             } else {
+                gameManager.reportAllPlayersPassed();
                 passedPlayers.clear();
                 finishRound(); // TODO: Can this work?  How will it know to not start second start round?
             }

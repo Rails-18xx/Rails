@@ -7,6 +7,7 @@
 	<GameOption name="NoMapMode" type="toggle" default="no" />
 	<GameOption name="BeginnerGame" type="toggle" default="no" />
 	<GameOption name="UnlimitedTopTrains" parm="D" type="toggle" default="yes"/>
+	<GameOption name="FirstRoundSellRestriction" values="First Round,First Stock Round" default="First Stock Round" />
 	<GameOption name="TwoPlayersCertLimit70Percent" type="toggle" default="no"/>
 	<GameOption name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
 </GameOptions>

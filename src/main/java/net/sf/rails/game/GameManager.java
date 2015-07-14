@@ -95,6 +95,9 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     protected final IntegerState relativeORNumber = IntegerState.create(this, "relativeORNumber");
     protected final IntegerState numOfORs = IntegerState.create(this, "numOfORs");
 
+    protected final BooleanState firstAllPlayersPassed = BooleanState.create(this, "firstAllPlayersPassed");
+    
+    
     /** GameOver pending, a last OR or set of ORs must still be completed */
     protected final BooleanState gameOverPending = BooleanState.create(this, "gameOverPending");
     /** GameOver is executed, no more moves */
@@ -608,6 +611,15 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
     public void newPhaseChecks (Round round) {
 
+    }
+    
+    public void reportAllPlayersPassed() {
+        ReportBuffer.add(this, LocalText.getText("ALL_PASSED"));
+        firstAllPlayersPassed.set(true);
+    }
+    
+    public boolean getFirstAllPlayersPassed() {
+        return firstAllPlayersPassed.value();
     }
 
     public String getORId () {
