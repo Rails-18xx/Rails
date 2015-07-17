@@ -462,6 +462,11 @@ public class StockRound_1880 extends StockRound {
         PublicCompany_1880 company = (PublicCompany_1880) action.getCompany();
         company.setBuildingRights(action.getBuildingRights());
         ((GameManager_1880) gameManager).getParSlotManager().setCompanyAtIndex(company, action.getParSlotIndex());
+        
+        // report about company opening
+        ReportBuffer.add(this, LocalText.getText("1880StartCompanyBuildingRights", company, action.getBuildingRights()));
+        ReportBuffer.add(this, LocalText.getText("1880StartCompanyParSlotIndex", company, action.getParSlotIndex()));
+        
 
         // If this player's investor doesn't have a linked company yet - this is it
         Investor_1880 investor = Investor_1880.getInvestorForPlayer(companyManager, player);
