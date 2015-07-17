@@ -70,8 +70,8 @@ public class StartRound_1837_Minors_Hungary extends StartRound {
             for (StartItem item : startItems) {
                 if (!item.isSold()) {
                     //25 % papers of U1 and U3 can only be bought if the President has been sold.
-                    if (item.getName().equals("U1W") && (!(startItems.get(0).isSold()))) continue;
-                    if (item.getName().equals("U3C") && (!(startItems.get(3).isSold()))) continue;
+                    if (item.getId().equals("U1W") && (!(startItems.get(0).isSold()))) continue;
+                    if (item.getId().equals("U3C") && (!(startItems.get(3).isSold()))) continue;
                    item.setStatus(StartItem.BUYABLE);
                    buyableItems.add(item);
                    }

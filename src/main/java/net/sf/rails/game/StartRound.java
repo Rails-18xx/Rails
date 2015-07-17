@@ -218,7 +218,7 @@ public abstract class StartRound extends Round {
         if (errMsg != null) {
             DisplayBuffer.add(this, LocalText.getText("CantBuyItem",
                     playerName,
-                    item.getName(),
+                    item.getId(),
                     errMsg ));
             return false;
         }
@@ -341,8 +341,8 @@ public abstract class StartRound extends Round {
         return hasBasePrices;
     }
 
-    public Model getBidModel(int privateIndex, int playerIndex) {
-        return (itemsToSell.get(privateIndex)).getBidForPlayerModel(playerIndex);
+    public Model getBidModel(int privateIndex, Player player) {
+        return (itemsToSell.get(privateIndex)).getBidForPlayerModel(player);
     }
 
     public Model getMinimumBidModel(int privateIndex) {

@@ -28,7 +28,7 @@ public abstract class StartItemAction extends PossibleAction {
 
         super();
         this.startItem = startItem;
-        this.startItemName = startItem.getName();
+        this.startItemName = startItem.getId();
         this.itemIndex = startItem.getIndex();
     }
 
@@ -74,8 +74,6 @@ public abstract class StartItemAction extends PossibleAction {
             ClassNotFoundException {
 
         in.defaultReadObject();
-
-        startItem = StartItem.getByName(startItemName);
-
+        startItem = root.getCompanyManager().getStartItemById(startItemName);
     }
 }

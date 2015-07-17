@@ -121,7 +121,7 @@ public class StartRound_Sequential extends StartRound {
         ReportBuffer.add(this, LocalText.getText("BID_ITEM_LOG",
                 playerName,
                 Bank.format(this,bidAmount),
-                bidItem.getStartItem().getName(),
+                bidItem.getStartItem().getId(),
                 Bank.format(this,player.getFreeCash())));        
         
         if ((passedPlayers.size() == (getRoot().getPlayerManager().getNumberOfPlayers() - 1))
@@ -196,7 +196,7 @@ public class StartRound_Sequential extends StartRound {
         if (errMsg != null) {
             DisplayBuffer.add(this, LocalText.getText("InvalidBid",
                     playerName,
-                    currentItem.value().getName(),
+                    currentItem.value().getId(),
                     errMsg ));
             return false;
         }
@@ -218,7 +218,7 @@ public class StartRound_Sequential extends StartRound {
             player.unblockCash(currentItem.value().getBid(player));
         }
 
-        currentItem.value().setBid(-1, player);
+        currentItem.value().setPass(player);
         passedPlayers.add(player);
         
         if (passedPlayers.size() == playerManager.getNumberOfPlayers()) {
@@ -232,7 +232,7 @@ public class StartRound_Sequential extends StartRound {
                 } else {
                     ReportBuffer.add(this, LocalText.getText(
                             "ITEM_PRICE_REDUCED",
-                                    currentItem.value().getName(),
+                                    currentItem.value().getId(),
                                     Bank.format(this, startPacket.getFirstItem().getBasePrice()) ));
                     currentItem.value().setMinimumBid(currentItem.value().getBasePrice());
                     passedPlayers.clear();

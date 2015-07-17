@@ -145,7 +145,7 @@ public abstract class StartRound_AuctionOnly extends StartRound {
         ReportBuffer.add(
                 this,
                 LocalText.getText("BID_ITEM_LOG", playerName,
-                        Bank.format(this, bidAmount), item.getName(),
+                        Bank.format(this, bidAmount), item.getId(),
                         Bank.format(this, player.getFreeCash())));
 
         setNextBiddingPlayer(item);
@@ -223,7 +223,7 @@ public abstract class StartRound_AuctionOnly extends StartRound {
 
         if (errMsg != null) {
             DisplayBuffer.add(this, LocalText.getText("InvalidBid", playerName,
-                    item.getName(), errMsg));
+                    item.getId(), errMsg));
             return false;
         }
         return true;
@@ -256,7 +256,7 @@ public abstract class StartRound_AuctionOnly extends StartRound {
 //                playerManager.setCurrentToPriorityPlayer(); // TODO: I think this can be removed.
             } else {
                 player.unblockCash(auctionItem.getBid(player));
-                auctionItem.setBid(-1, player);
+                auctionItem.setPass(player);
                 setNextBiddingPlayer(auctionItem);
             }
         } else { 

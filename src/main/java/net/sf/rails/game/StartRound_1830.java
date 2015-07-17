@@ -106,12 +106,12 @@ public class StartRound_1830 extends StartRound {
                             break; // No more actions possible!
                         } else {
                             // ERROR, this should have been detected in process()!
-                            log.error("??? Wrong place to assign item "+item.getName());
+                            log.error("??? Wrong place to assign item "+item.getId());
                             assignItem(item.getBidder(), item, item.getBid(), 0);
                         }
                     } else if (item.getBidders() > 1) {
                         ReportBuffer.add(this, LocalText.getText("TO_AUCTION",
-                                item.getName()));
+                                item.getId()));
                         // Start left of the currently highest bidder
                         if (item.getStatus() != StartItem.AUCTIONED) {
                             setNextBiddingPlayer(item, item.getBidder());
@@ -240,7 +240,7 @@ public class StartRound_1830 extends StartRound {
         if (errMsg != null) {
             DisplayBuffer.add(this, LocalText.getText("InvalidBid",
                     playerName,
-                    item.getName(),
+                    item.getId(),
                     errMsg ));
             return false;
         }
@@ -253,7 +253,7 @@ public class StartRound_1830 extends StartRound {
         ReportBuffer.add(this, LocalText.getText("BID_ITEM_LOG",
                 playerName,
                 Bank.format(this, bidAmount),
-                item.getName(),
+                item.getId(),
                 Bank.format(this, player.getFreeCash()) ));
 
         if (bidItem.getStatus() != StartItem.AUCTIONED) {
@@ -329,7 +329,7 @@ public class StartRound_1830 extends StartRound {
                 if (GameOption.getAsBoolean(this, "LeaveAuctionOnPass")) {
                     // Game option: player to leave auction after a pass (default no).
                     player.unblockCash(auctionItem.getBid(player));
-                    auctionItem.setBid(-1, player);
+                    auctionItem.setPass(player);
                 }
                 setNextBiddingPlayer(auctionItem);
             }
@@ -345,7 +345,7 @@ public class StartRound_1830 extends StartRound {
                     startPacket.getFirstItem().reduceBasePriceBy(5);
                     ReportBuffer.add(this, LocalText.getText(
                             "ITEM_PRICE_REDUCED",
-                                    startPacket.getFirstItem().getName(),
+                                    startPacket.getFirstItem().getId(),
                                     Bank.format(this, startPacket.getFirstItem().getBasePrice()) ));
                     numPasses.set(0);
                     if (startPacket.getFirstItem().getBasePrice() == 0) {

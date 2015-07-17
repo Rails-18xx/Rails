@@ -32,7 +32,7 @@ public class StartRound_1862 extends StartRound_AuctionOnly {
     }
 
     protected void assignItem(Player player, StartItem item, int price, int sharePrice) {
-        PublicCompany company = companyManager.getPublicCompany(item.getName());
+        PublicCompany company = companyManager.getPublicCompany(item.getId());
         PublicCertificate primary = company.getPresidentsShare();
         primary.moveTo(player);
         String priceText = Currency.toBank(player, price + (3 * sharePrice));

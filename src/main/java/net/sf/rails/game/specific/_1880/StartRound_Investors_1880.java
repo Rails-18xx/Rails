@@ -100,7 +100,7 @@ public class StartRound_Investors_1880 extends StartRound {
         if (item.getStatus() != StartItem.BUYABLE) {
             DisplayBuffer.add(this,LocalText.getText("CantBuyItem",
                     playerName,
-                    item.getName(),
+                    item.getId(),
                     LocalText.getText("NotForSale") ));
             return false;
         }

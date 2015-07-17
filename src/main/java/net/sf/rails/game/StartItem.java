@@ -1,13 +1,19 @@
 package net.sf.rails.game;
 
-import java.util.*;
+
+import java.util.List;
+import java.util.Map;
 
 import net.sf.rails.game.model.CountingMoneyModel;
+import net.sf.rails.game.state.BooleanState;
+import net.sf.rails.game.state.GenericState;
 import net.sf.rails.game.state.IntegerState;
 import net.sf.rails.game.state.Model;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Maps;
 
 /**
  * Each object of this class represents a "start packet item", which consist of
@@ -17,11 +23,9 @@ import org.slf4j.LoggerFactory;
  * later initialisation step.
  */
 
-// TODO: Check usage of state here
 public class StartItem extends RailsAbstractItem {
 
     // Fixed properties
-    protected String name = null;
     protected Certificate primary = null;
     protected Certificate secondary = null;
     protected final CountingMoneyModel basePrice = CountingMoneyModel.create(this, "basePrice", false);
@@ -30,17 +34,11 @@ public class StartItem extends RailsAbstractItem {
     protected int index;
 
     // Bids
-    protected final IntegerState lastBidderIndex = IntegerState.create(this, "lastBidder", -1);
-    protected List<Player> players;
-    protected int numberOfPlayers;
-    protected CountingMoneyModel[] bids;
+    protected final GenericState<Player> lastBidder = GenericState.create(this, "lastBidder");
+    protected final Map<Player, CountingMoneyModel> bids = Maps.newHashMap();
     protected final CountingMoneyModel minimumBid = CountingMoneyModel.create(this, "minimumBid", false);
+    protected final Map<Player, BooleanState> active = Maps.newHashMap();
 
-    // TODO: Does this need to be "States"?
-    protected boolean[] active;    // For each player, are they active for this item?
-
-    // Status info for the UI ==> MOVED TO BuyOrBidStartItem
-    // TODO REDUNDANT??
     /**
      * Status of the start item (buyable? biddable?) regardless whether the
      * current player has the amount of (unblocked) cash to buy it or to bid on
@@ -70,20 +68,12 @@ public class StartItem extends RailsAbstractItem {
     protected String type2 = null;
     protected boolean president2 = false;
 
-    // Static properties
-    //protected static Portfolio ipo;
-    //protected static Portfolio unavailable;
-    //protected static CompanyManager compMgr;
-    //protected static int nextIndex = 0;
-    
     public enum NoBidsReaction {
         REDUCE_AND_REBID,
         RUN_OPERATING_ROUND
     };
 
     protected NoBidsReaction noBidsReaction = NoBidsReaction.RUN_OPERATING_ROUND;
-
-    protected static Map<String, StartItem> startItemMap;
 
     protected static Logger log =
             LoggerFactory.getLogger(StartItem.class);
@@ -92,20 +82,12 @@ public class StartItem extends RailsAbstractItem {
      * The constructor, taking the properties of the "primary" (often teh only)
      * certificate. The parameters are only stored, real initialisation is done
      * by the init() method.
-     * 
-     * FIXME: Double usage for name and id
-     *
      */
-    protected StartItem(RailsItem parent, String name, String type, int index, boolean president) {
-        super(parent, name);
-        this.name = name;
+    protected StartItem(RailsItem parent, String id, String type, int index, boolean president) {
+        super(parent, id);
         this.type = type;
         this.index = index;
         this.president = president;
-
-        if (startItemMap == null)
-            startItemMap = new HashMap<String, StartItem>();
-        startItemMap.put(name, this);
 
         minimumBid.setSuppressZero(true);
 
@@ -159,15 +141,13 @@ public class StartItem extends RailsAbstractItem {
      */
     public void init(GameManager gameManager) {
 
-        this.players = getRoot().getPlayerManager().getPlayers();
-        numberOfPlayers = players.size();
-        bids = new CountingMoneyModel[numberOfPlayers];
-        active = new boolean[numberOfPlayers];
-        for (int i = 0; i < numberOfPlayers; i++) {
+        List<Player> players = getRoot().getPlayerManager().getPlayers();
+        for (Player p: players) {
             // TODO: Check if this is correct or that it should be initialized with zero
-            bids[i] = CountingMoneyModel.create(this, "bidBy_" + players.get(i).getId(), false);
-            bids[i].setSuppressZero(true);
-            active[i] = false;
+            CountingMoneyModel bid = CountingMoneyModel.create(this, "bidBy_" + p.getId(), false);
+            bid.setSuppressZero(true);
+            bids.put(p, bid);
+            active.put(p, BooleanState.create(this, "active_" + p.getId()));
         }
         // TODO Leave this for now, but it should be done
         // in the game-specific StartRound class
@@ -178,7 +158,7 @@ public class StartItem extends RailsAbstractItem {
 
         CompanyManager compMgr = getRoot().getCompanyManager();
 
-        Company company = compMgr.getCompany(type, name);
+        Company company = compMgr.getCompany(type, getId());
         if (company instanceof PrivateCompany) {
             primary = (Certificate) company;
         } else {
@@ -296,15 +276,6 @@ public class StartItem extends RailsAbstractItem {
         basePrice.change(-amount);
     }
 
-    /**
-     * Get the start item name (which is the company name of the primary
-     * certificate).
-     *
-     * @return The start item name.
-     */
-    public String getName() {
-        return name;
-    }
 
     /**
      * Register a bid. <p> This method does <b>not</b> check off the amount of
@@ -312,32 +283,26 @@ public class StartItem extends RailsAbstractItem {
      *
      * @param amount The bid amount.
      * @param bidder The bidding player.
-     * amount of -1 indicates a pass 
      */
-    public void setBid(int amount, Player bidder) {        
-        if (amount == -1) {
-            setPass(bidder);
-        } else if (amount > 0) {
-            int index = bidder.getIndex();
-            bids[index].set(amount);
-            bids[index].setSuppressZero(false);
-            active[index] = true;
-            lastBidderIndex.set(index);
-            minimumBid.set(amount + 5);
-        }
+    public void setBid(int amount, Player bidder) {
+        CountingMoneyModel bid = bids.get(bidder);
+        bid.set(amount);
+        bid.setSuppressZero(false);
+        active.get(bidder).set(true);
+        lastBidder.set(bidder);
+        minimumBid.set(amount + 5);
     }
-
+    
     /**
      * Get the currently highest bid amount.
      *
      * @return The bid amount (0 if there have been no bids yet).
      */
     public int getBid() {
-        int index = lastBidderIndex.value();
-        if (index < 0) {
+        if (lastBidder.value() == null) {
             return 0;
         } else {
-            return bids[index].value();
+            return bids.get(lastBidder.value()).value();
         }
     }
 
@@ -348,8 +313,7 @@ public class StartItem extends RailsAbstractItem {
      * @return The bid amount for this player (default 0).
      */
     public int getBid(Player player) {
-        int index = player.getIndex();
-        return bids[index].value();
+        return bids.get(player).value();
     }
 
     /**
@@ -360,8 +324,10 @@ public class StartItem extends RailsAbstractItem {
      */
     public int getBidders() {
         int bidders = 0;
-        for (int i = 0; i < numberOfPlayers; i++) {
-            if (active[i] == true) bidders++;
+        for (Player bidder:active.keySet()) {
+            if (active.get(bidder).value() == true) {
+                bidders++;
+            }
         }
         return bidders;
     }
@@ -372,19 +338,14 @@ public class StartItem extends RailsAbstractItem {
      * @return The player object that did the highest bid.
      */
     public Player getBidder() {
-        int index = lastBidderIndex.value();
-        if (index < 0) {
-            return null;
-        } else {
-            return players.get(lastBidderIndex.value());
-        }
+        return lastBidder.value();
     }
 
     public void setPass(Player player) {
-        int index = player.getIndex();
-        active[index] = false;
-        bids[index].set(0);
-        bids[index].setSuppressZero(true);
+        active.get(player).set(false);
+        CountingMoneyModel bid = bids.get(player);
+        bid.set(0);
+        bid.setSuppressZero(true);
     }
     
     /**
@@ -407,28 +368,17 @@ public class StartItem extends RailsAbstractItem {
      * @return True if this player has done any bids.
      */
     public boolean hasBid(Player player) {
-        return active[player.getIndex()];
+        return active.get(player).value();
     }
     
-    /**
-     * Check if a player is active on this start item.
-     *
-     * @param playerName The name of the player.
-     * @return True if this player is active.
-     */
-    public boolean isActive(Player player) {
-        return active[player.getIndex()];
-    }
-
     /**
      * Set all players to active on this start item.  Used when 
      * players who did not place a bid are still allowed to
      * participate in an auction (e.g. 1862)
      */
     public void setAllActive() {
-        numberOfPlayers = players.size();
-        for (int i = 0; i < numberOfPlayers; i++) {
-            active[i] = true;
+        for (Player p:active.keySet()) {
+            active.get(p).set(true);
         }
     }
 
@@ -449,22 +399,25 @@ public class StartItem extends RailsAbstractItem {
     public void setSold(Player player, int buyPrice) {
         status.set(SOLD);
 
-        int index = player.getIndex();
-        lastBidderIndex.set(index);
+        
+        lastBidder.set(player);
 
         // For display purposes, set all lower bids to zero
-        for (int i = 0; i < numberOfPlayers; i++) {
+        for (Player p:bids.keySet()) {
+            CountingMoneyModel bid = bids.get(p);
             // Unblock any bid money
-            if (bids[i].value() > 0) {
-                players.get(i).unblockCash(bids[i].value());
-                if (index != i) {
-                    bids[i].set(0);
-                    bids[i].setSuppressZero(true);
+            if (bid.value() > 0) {
+                p.unblockCash(bid.value());
+                if (p != player) {
+                    bid.set(0);
+                    bid.setSuppressZero(true);
+                } else {
+                    // for winning bidder set bid to buyprice
+                    bid.set(buyPrice);
                 }
-                active[i] = false;
+                active.get(p).set(false);;
             }
         }
-        bids[index].set(buyPrice);
         minimumBid.set(0);
     }
 
@@ -534,17 +487,12 @@ public class StartItem extends RailsAbstractItem {
         return basePrice;
     }
 
-    // FIXME: Rails 2.0 Change argument to Player player
-    public Model getBidForPlayerModel(int index) {
-        return bids[index];
+    public Model getBidForPlayerModel(Player player) {
+        return bids.get(player);
     }
 
     public Model getMinimumBidModel() {
         return minimumBid;
-    }
-
-    public static StartItem getByName(String name) {
-        return startItemMap.get(name);
     }
 
     public String getType() {
@@ -558,18 +506,6 @@ public class StartItem extends RailsAbstractItem {
     public NoBidsReaction getNoBidsReaction() {
         return noBidsReaction;
     }
-    // FIXME: This is not a good idea as long as hashCode has not been changed
-//    public boolean equals(StartItem item) {
-//        log.debug("Item " + item.getType() + "/" + item.getName()
-//                  + " is compared with " + type + "/" + name);
-//        return this.name.equals(item.getName())
-//               && this.type.equals(item.getType());
-//    }
-
-//    @Override
-//    public String toString() {
-//        return ("StartItem "+name+" status="+statusName[status.value()]);
-//    }
 
     public String getText () {
         return toString();

@@ -330,4 +330,19 @@ public class CompanyManager extends RailsManager implements Configurable {
       return null;
     }
     
+    /**
+     * @param id of the startItem
+     * @return the startItem with that id
+     */
+    public StartItem getStartItemById(String id) {
+        for (StartPacket packet:startPackets) {
+            for (StartItem item:packet.getItems()) {
+                if (item.getId().equals(id)) {
+                    return item;
+                }
+            }
+        }
+        return null;
+    }
+    
 }

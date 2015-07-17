@@ -230,7 +230,7 @@ public class StartRound_1837_Coal extends StartRound {
                     ReportBuffer.add(
                             this,
                             LocalText.getText("ITEM_PRICE_REDUCED",
-                                    item.getName(),
+                                    item.getId(),
 
                                     Bank.format(this, item.getBasePrice())));
                 }
@@ -292,7 +292,7 @@ public class StartRound_1837_Coal extends StartRound {
 
         if (errMsg != null) {
             DisplayBuffer.add(this, LocalText.getText("CantBuyItem",
-                    playerName, item.getName(), errMsg));
+                    playerName, item.getId(), errMsg));
             return false;
         }
 

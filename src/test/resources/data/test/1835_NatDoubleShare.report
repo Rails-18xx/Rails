@@ -32,6 +32,7 @@ FloatsWithCash,M4,160
 CannotBuyAnything,T1
 CannotBuyAnything,T2
 CannotBuyAnything,T3
+ALL_PASSED
 Has,M1,80
 Has,M2,170
 Has,M3,80

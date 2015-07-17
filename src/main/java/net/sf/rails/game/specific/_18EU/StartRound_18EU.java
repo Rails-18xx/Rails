@@ -123,7 +123,7 @@ public class StartRound_18EU extends StartRound {
         if (errMsg != null) {
             DisplayBuffer.add(this, LocalText.getText("CantBuyItem",
                     playerName,
-                    item.getName(),
+                    item.getId(),
                     errMsg ));
             return false;
         }
@@ -170,8 +170,8 @@ public class StartRound_18EU extends StartRound {
                     && !item.equals(auctionedItem)) {
                     errMsg =
                             LocalText.getText("WrongStartItem",
-                                    item.getName(),
-                                    auctionedItem.getName() );
+                                    item.getId(),
+                                    auctionedItem.getId() );
                     break;
                 }
 
@@ -207,7 +207,7 @@ public class StartRound_18EU extends StartRound {
         if (errMsg != null) {
             DisplayBuffer.add(this, LocalText.getText("InvalidBid",
                     playerName,
-                    item.getName(),
+                    item.getId(),
                     errMsg ));
             return false;
         }
@@ -230,7 +230,7 @@ public class StartRound_18EU extends StartRound {
             ReportBuffer.add(this, " ");
             ReportBuffer.add(this, LocalText.getText("SelectForAuctioning",
                     playerName,
-                    item.getName() ));
+                    item.getId() ));
         }
 
         if (bidAmount > 0) {
@@ -241,7 +241,7 @@ public class StartRound_18EU extends StartRound {
             ReportBuffer.add(this, LocalText.getText("BID_ITEM",
                     playerName,
                     Bank.format(this, bidAmount),
-                    item.getName() ));
+                    item.getId() ));
         }
 
         switch (currentStep.value()) {
@@ -290,7 +290,7 @@ public class StartRound_18EU extends StartRound {
                 currentBuyPrice.add(-10);
                 auctionedItem.setMinimumBid(currentBuyPrice.value());
                 ReportBuffer.add(this, LocalText.getText("ITEM_PRICE_REDUCED",
-                        auctionedItem.getName(),
+                        auctionedItem.getId(),
                         Bank.format(this, currentBuyPrice.value()) ));
                 currentStep.set(BUY_STEP);
 
@@ -308,7 +308,7 @@ public class StartRound_18EU extends StartRound {
 
         case BID_STEP:
             
-            auctionedItem.setBid(-2, playerManager.getCurrentPlayer());
+            auctionedItem.setPass(playerManager.getCurrentPlayer());
 
             // We are done if the next still bidding player
             // is equal to the current highest bidder.
@@ -330,7 +330,7 @@ public class StartRound_18EU extends StartRound {
         Player currentPlayer;
         do {
             currentPlayer = playerManager.setCurrentToNextPlayer();
-        } while (((StartItem) currentAuctionItem.value()).getBid(currentPlayer) < 0);
+        } while (((StartItem) currentAuctionItem.value()).getBid(currentPlayer) != 0);
     }
 
     private void setNextSelectingPlayer() {

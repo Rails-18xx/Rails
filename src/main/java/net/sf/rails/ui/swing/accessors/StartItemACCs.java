@@ -12,7 +12,7 @@ public class StartItemACCs {
             new Accessor1D.AText<StartItem>(StartItem.class) {
         @Override
         protected String access(StartItem item) {
-            return item.getName();
+            return item.getId();
         }
     };
 
@@ -36,7 +36,7 @@ public class StartItemACCs {
             new Accessor2D.AObservable<StartItem,Player>(StartItem.class, Player.class) {
         @Override
         protected Observable access(StartItem item, Player player) {
-            return item.getBidForPlayerModel(player.getIndex());
+            return item.getBidForPlayerModel(player);
         }
     };
     

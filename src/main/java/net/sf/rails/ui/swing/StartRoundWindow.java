@@ -304,14 +304,14 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
 
         for (int i = 0; i < ni; i++) {
             si = items[i];
-            f = itemName[i] = new Caption(si.getName());
+            f = itemName[i] = new Caption(si.getId());
             HexHighlightMouseListener.addMouseListener(f, 
                     gameUIManager.getORUIManager(),
                     si); 
             addField(f, itemNameXOffset, itemNameYOffset + i, 1, 1, WIDE_RIGHT);
             f =
                 itemNameButton[i] =
-                    new ClickField(si.getName(), "", "", this,
+                    new ClickField(si.getId(), "", "", this,
                             itemGroup);
             HexHighlightMouseListener.addMouseListener(f, 
                     gameUIManager.getORUIManager(),
@@ -331,7 +331,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
             }
 
             for (int j = 0; j < np; j++) {
-                f = bidPerPlayer[i][j] = new Field(round.getBidModel(i, j));
+                f = bidPerPlayer[i][j] = new Field(round.getBidModel(i, players[j]));
                 addField(f, bidPerPlayerXOffset + j, bidPerPlayerYOffset + i,
                         1, 1, 0);
             }
