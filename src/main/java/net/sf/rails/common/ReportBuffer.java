@@ -3,6 +3,9 @@ package net.sf.rails.common;
 import java.util.Deque;
 import java.util.Queue;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.sf.rails.game.RailsAbstractItem;
 import net.sf.rails.game.RailsItem;
 import net.sf.rails.game.state.ChangeReporter;
@@ -21,9 +24,9 @@ import com.google.common.collect.Lists;
  * Also used for regression testing comparing the output of the report buffer.
  */
 
-// FIXME (Rails2.0): Replace the CommentItems by an action based implementation
-
 public class ReportBuffer extends RailsAbstractItem implements ChangeReporter {
+
+    private static final Logger log = LoggerFactory.getLogger(ReportBuffer.class);
     
     /** Indicator string to find the active message position in the parsed html document */
     public static final String ACTIVE_MESSAGE_INDICATOR = "(**)";
@@ -107,6 +110,7 @@ public class ReportBuffer extends RailsAbstractItem implements ChangeReporter {
     private void addMessage(String message) {
         if (!Util.hasValue(message)) return;
         currentReportBuilder.addMessage(message);
+        log.debug("ReportBuffer: " + message);
     }
     
     private void updateObserver() {
