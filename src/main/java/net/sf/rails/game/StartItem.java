@@ -312,12 +312,12 @@ public class StartItem extends RailsAbstractItem {
      *
      * @param amount The bid amount.
      * @param bidder The bidding player.
-     * special amounts are 0 for 18EU as buy price, -1 as standard pass, -2 and below as pass in 18EU 
+     * amount of -1 indicates a pass 
      */
     public void setBid(int amount, Player bidder) {        
         if (amount == -1) {
             setPass(bidder);
-        } else {
+        } else if (amount > 0) {
             int index = bidder.getIndex();
             bids[index].set(amount);
             bids[index].setSuppressZero(false);
