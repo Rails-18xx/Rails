@@ -218,6 +218,8 @@ public class StartRound_18EU extends StartRound {
 
             currentAuctionItem.set(item);
             item.setStatus(StartItem.AUCTIONED);
+            item.setAllActive();
+
             for (StartItem item2 : itemsToSell.view()) {
                 if (item2 != item && !item2.isSold()) {
                     item2.setStatus(StartItem.UNAVAILABLE);
@@ -226,7 +228,7 @@ public class StartRound_18EU extends StartRound {
             if (bidAmount == -1) {
                 currentStep.set(OPEN_STEP);
             }
-
+ 
             ReportBuffer.add(this, " ");
             ReportBuffer.add(this, LocalText.getText("SelectForAuctioning",
                     playerName,
@@ -330,7 +332,7 @@ public class StartRound_18EU extends StartRound {
         Player currentPlayer;
         do {
             currentPlayer = playerManager.setCurrentToNextPlayer();
-        } while (((StartItem) currentAuctionItem.value()).getBid(currentPlayer) != 0);
+        } while (((StartItem) currentAuctionItem.value()).isActive(currentPlayer) == false);
     }
 
     private void setNextSelectingPlayer() {

@@ -365,11 +365,12 @@ public class StartItem extends RailsAbstractItem {
      * Check if a player has done any bids on this start item.
      *
      * @param playerName The name of the player.
-     * @return True if this player has done any bids.
+     * @return True if this player is active for this startItem
      */
-    public boolean hasBid(Player player) {
+    public boolean isActive(Player player) {
         return active.get(player).value();
     }
+    
     
     /**
      * Set all players to active on this start item.  Used when 

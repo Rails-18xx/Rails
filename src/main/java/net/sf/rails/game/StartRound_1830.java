@@ -378,7 +378,7 @@ public class StartRound_1830 extends StartRound {
     
     private void setNextBiddingPlayer(StartItem item, Player biddingPlayer) {
         for (Player player:playerManager.getNextPlayersAfter(biddingPlayer, false, false)) {
-            if (item.hasBid(player)) {
+            if (item.isActive(player)) {
                 playerManager.setCurrentPlayer(player);
                 break;
             }
