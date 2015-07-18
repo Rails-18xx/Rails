@@ -26,16 +26,11 @@ import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.IntegerState;
 import net.sf.rails.game.state.Owner;
-import net.sf.rails.game.state.State;
 import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 
 
-/**
- * @author Martin
- *
- */
 public class PublicCompany_1880 extends PublicCompany implements RevenueStaticModifier {
 
 

@@ -50,7 +50,7 @@ public class BuildingRights_1880 extends RailsModel {
 
     @Override
     public String toText() {
-        return Joiner.on("").join(Ordering.natural().immutableSortedCopy(buildingRights));
+        return Joiner.on("+").join(Ordering.natural().immutableSortedCopy(buildingRights));
     }
     
     public static List<String> getRightsForPresidentShareSize(int shares) {
