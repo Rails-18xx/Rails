@@ -530,7 +530,7 @@ KeyListener, ActionPerformer {
         // Request turn
         if (possibleActions.contains(RequestTurn.class)) {
             for (RequestTurn action : possibleActions.getType(RequestTurn.class)) {
-                ActionMenuItem item = new ActionMenuItem(action.toString());
+                ActionMenuItem item = new ActionMenuItem(action.toMenu());
                 item.addActionListener(this);
                 item.setEnabled(false);
                 item.addPossibleAction(action);

@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 
 import com.google.common.base.Objects;
 
+import net.sf.rails.common.LocalText;
 import net.sf.rails.game.Player;
 import net.sf.rails.util.RailsObjects;
 
@@ -27,6 +28,12 @@ public class RequestTurn extends PossibleAction {
 
     public String getRequestingPlayerName() {
         return requestingPlayerName;
+    }
+    
+    
+    @Override
+    public String toMenu() {
+        return LocalText.getText("RequestTurn", requestingPlayerName);
     }
 
     @Override
