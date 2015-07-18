@@ -98,8 +98,8 @@ public class TrainType implements Cloneable {
         townCountIndicator =
             countTowns.equals("no") ? NO_TOWN_COUNT : minorStops > 0
                     ? TOWN_COUNT_MINOR : TOWN_COUNT_MAJOR;
-        cityScoreFactor = scoreCities.equals("double") ? 2 : 1;
-        townScoreFactor = scoreTowns.equals("yes") ? 1 : 0;
+        cityScoreFactor = scoreCities.equalsIgnoreCase("double") ? 2 : 1;
+        townScoreFactor = scoreTowns.equalsIgnoreCase("yes") ? 1 : 0;
         // Actually we should meticulously check all values....
 
     }
