@@ -447,6 +447,7 @@ public class GameStatus extends GridPanel implements ActionListener {
             }
 
             f = currPrice[i] = new Field(c.getCurrentPriceModel());
+            ((Field) f).setColorModel(c.getCurrentPriceModel());
             addField(f, currPriceXOffset, currPriceYOffset + i, 1, 1,
                     WIDE_RIGHT, visible);
 

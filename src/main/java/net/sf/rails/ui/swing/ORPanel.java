@@ -548,6 +548,7 @@ implements ActionListener, KeyListener, RevenueListener {
             addField(f, presidentXOffset, presidentYOffset + i, 1, 1, 0, visible);
 
             f = sharePrice[i] = new Field(c.getCurrentPriceModel());
+            ((Field) f).setColorModel(c.getCurrentPriceModel());
             addField(f, sharePriceXOffset, sharePriceYOffset + i, 1, 1, 0, visible);
 
             f = cash[i] = new Field(c.getPurseMoneyModel());

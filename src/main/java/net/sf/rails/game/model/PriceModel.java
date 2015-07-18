@@ -1,11 +1,14 @@
 package net.sf.rails.game.model;
 
+import java.awt.Color;
+
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.Bank;
 import net.sf.rails.game.StockSpace;
+import net.sf.rails.game.state.ColorModel;
 import net.sf.rails.game.state.GenericState;
 
-public final class PriceModel extends RailsModel {
+public final class PriceModel extends ColorModel {
 
     // FIXME: Remove duplication of company and parent
     private final PublicCompany company;
@@ -38,16 +41,19 @@ public final class PriceModel extends RailsModel {
         return company;
     }
 
-    // FIXME: This is a reference to the usage of ViewUpdate
-    // TODO: The color reference has to be taken care of, remove view update
-//    public Object getUpdate() {
-//        if (stockPrice != null) {
-//            return new ViewUpdate(getText())
-//                    .addObject(ViewUpdate.BGCOLOUR, stockPrice.getColour());
-//        } else {
-//            return getText();
-//        }
-//    }
+    @Override
+    public Color getBackground() {
+        if (stockPrice.value() != null) {
+            return stockPrice.value().getColour();
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public Color getForeground() {
+        return null;
+    }
 
     @Override
     public String toText() {
