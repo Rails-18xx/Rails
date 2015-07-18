@@ -385,7 +385,8 @@ public class StockRound_1880 extends StockRound {
         if(super.sellShares(action)) {
             int numberSold=action.getNumber();
             int sellingfee = 5*numberSold;
-            Currency.wire(currentPlayer, sellingfee, bank); //Deduct the Money for selling those Shares !
+            String feeText = Currency.wire(currentPlayer, sellingfee, bank); //Deduct the Money for selling those Shares !
+            ReportBuffer.add(this, LocalText.getText("1880BrokerageFee", currentPlayer.getId(), feeText, numberSold));
             return true;
         }
         else
