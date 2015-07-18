@@ -49,7 +49,7 @@ public class GameManager_1880 extends net.sf.rails.game.GameManager {
             orControl.startedFromStockRound();
             startOperatingRound(true);
         } else if (round instanceof OperatingRound_1880) {
-            if ((orControl.isFinalOperatingRoundSequence()) && (getRelativeORNumber() == 3)) {
+            if (orControl.getFinalOperatingRoundSequenceNumber()> 3) {
                 finishGame();
             } else if (getRoot().getCompanyManager().getNextUnfinishedStartPacket() != null) {
                 beginStartRound();
