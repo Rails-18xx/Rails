@@ -114,7 +114,11 @@ public class LayBaseToken extends LayToken {
         if (hex == null) {
             return 0;
         } else {
-            return company.getBaseTokenLayCost(hex);
+            if (specialProperty != null && ((SpecialBaseTokenLay)specialProperty).isFree()) {
+                return 0;
+            } else {
+                return company.getBaseTokenLayCost(hex);
+            }
         }
               
     }

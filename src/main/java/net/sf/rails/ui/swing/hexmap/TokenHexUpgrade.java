@@ -17,7 +17,6 @@ import net.sf.rails.game.BonusToken;
 import net.sf.rails.game.MapHex;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.Stop;
-import net.sf.rails.game.TileUpgrade;
 import net.sf.rails.ui.swing.elements.TokenIcon;
 
 import com.google.common.base.Objects;
@@ -195,10 +194,12 @@ public class TokenHexUpgrade extends HexUpgrade {
             if (action.getPotentialCost(hex.getHex()) != 0) {
                 String cost = Bank.format(action.getCompany(), action.getPotentialCost(hex.getHex()));
                 text += LocalText.getText("TOKEN_UPGRADE_COST", cost);
+            } else {
+                text += LocalText.getText("TOKEN_UPGRADE_FOR_FREE");
             }
             if (action.getSpecialProperty() != null) {
                 text +=
-                        "<font color=red> ["
+                        "<br> <font color=red> ["
                                 + action.getSpecialProperty().getOriginalCompany().getId()
                                 + "] </font>";
             }
