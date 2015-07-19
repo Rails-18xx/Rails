@@ -153,21 +153,17 @@ public class OperatingRound extends Round implements Observer {
                 // Bank Portfolios are not MoneyOwners!
                 if (priv.getOwner() instanceof MoneyOwner) {
                     MoneyOwner recipient = (MoneyOwner) priv.getOwner();
-                    int revenue = priv.getRevenueByPhase(getCurrentPhase()); // sfy
-                                                                             // 1889:
-                                                                             // revenue
-                                                                             // by
-                                                                             // phase
-                    if (count++ == 0) ReportBuffer.add(this, "");
-
-                    String revText = Currency.fromBank(revenue, recipient);
-                    ReportBuffer.add(this, LocalText.getText("ReceivesFor",
-                            recipient.getId(), revText, priv.getId()));
+                    int revenue = priv.getRevenueByPhase(getCurrentPhase());
+                    
+                    if (revenue != 0) {
+                        if (count++ == 0) ReportBuffer.add(this, "");
+                        String revText = Currency.fromBank(revenue, recipient);
+                        ReportBuffer.add(this, LocalText.getText("ReceivesFor",
+                                recipient.getId(), revText, priv.getId()));
+                    }
                 }
-
             }
         }
-
     }
 
     @Override

@@ -35,7 +35,6 @@ import net.sf.rails.game.special.SpecialTrainBuy;
 import net.sf.rails.game.state.ArrayListState;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.Currency;
-import net.sf.rails.game.state.GenericState;
 import net.sf.rails.game.state.MoneyOwner;
 import net.sf.rails.util.SequenceUtil;
 
