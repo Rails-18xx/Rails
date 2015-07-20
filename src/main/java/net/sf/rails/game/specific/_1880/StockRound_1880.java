@@ -189,7 +189,7 @@ public class StockRound_1880 extends StockRound {
                                 from.getParent(), price));
                     }
                 } else if (!comp.hasStarted()) {
-                    ParSlotManagerNG parSlotManager = ((GameManager_1880) gameManager).getParSlotManager();
+                    ParSlotManager parSlotManager = ((GameManager_1880) gameManager).getParSlotManager();
                     List<Integer> prices = parSlotManager.getAvailablePrices(playerCash/2);
                     if (prices.size() > 0) {
                         List<Integer> prices_sorted = Ordering.natural().immutableSortedCopy(prices);

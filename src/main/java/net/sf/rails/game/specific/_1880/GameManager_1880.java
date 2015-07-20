@@ -15,13 +15,13 @@ public class GameManager_1880 extends net.sf.rails.game.GameManager {
     protected Class<? extends ShareSellingRound> shareSellingRoundClass
     = ShareSellingRound_1880.class;
 
-    private final ParSlotManagerNG parSlotManager;    
+    private final ParSlotManager parSlotManager;    
     private final OperatingRoundControl_1880 orControl;
     
     public GameManager_1880(RailsRoot parent, String id) {
         super(parent, id);
         orControl = new OperatingRoundControl_1880(parent, "OrControl");
-        parSlotManager = new ParSlotManagerNG(this, "ParSlotControl");
+        parSlotManager = new ParSlotManager(this, "ParSlotControl");
     }
 
     @Override
@@ -100,7 +100,7 @@ public class GameManager_1880 extends net.sf.rails.game.GameManager {
         super.finishShareSellingRound();
     }
     
-    public ParSlotManagerNG getParSlotManager() {
+    public ParSlotManager getParSlotManager() {
         return parSlotManager;
     }
 

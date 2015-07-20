@@ -20,7 +20,7 @@ import net.sf.rails.game.Train;
 import net.sf.rails.game.specific._1880.BuildingRights_1880;
 import net.sf.rails.game.specific._1880.GameManager_1880;
 import net.sf.rails.game.specific._1880.ParSlot;
-import net.sf.rails.game.specific._1880.ParSlotManagerNG;
+import net.sf.rails.game.specific._1880.ParSlotManager;
 import net.sf.rails.ui.swing.GameUIManager;
 import net.sf.rails.ui.swing.elements.NonModalDialog;
 import net.sf.rails.ui.swing.elements.RadioButtonDialog;
@@ -129,7 +129,7 @@ public class GameUIManager_1880 extends GameUIManager {
             int selectedPrice = startPrices[index];
             action.setStartPrice(selectedPrice);
             
-            ParSlotManagerNG parSlotManager = ((GameManager_1880) getGameManager()).getParSlotManager();
+            ParSlotManager parSlotManager = ((GameManager_1880) getGameManager()).getParSlotManager();
             List<ParSlot> parSlots = parSlotManager.filterByPrice(action.getPossibleParSlotIndices(), selectedPrice);
             List<String> parSlotStrings = Lists.newArrayList();
             for (ParSlot slot:parSlots) {
@@ -158,7 +158,7 @@ public class GameUIManager_1880 extends GameUIManager {
             
             int price = action.getPrice();
        
-            ParSlotManagerNG parSlotManager = ((GameManager_1880) getGameManager()).getParSlotManager();
+            ParSlotManager parSlotManager = ((GameManager_1880) getGameManager()).getParSlotManager();
             List<ParSlot> parSlots = parSlotManager.filterByPrice(action.getPossibleParSlotIndices(), price);
             action.setParSlotIndex(parSlots.get(index).getIndex());
 

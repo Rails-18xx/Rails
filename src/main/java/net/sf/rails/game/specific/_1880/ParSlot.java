@@ -20,7 +20,7 @@ public class ParSlot extends RailsAbstractItem {
     private final StringState lastTrain = StringState.create(this, "lastTrain");
     private final ColorModel companyColors;
     
-    protected ParSlot(ParSlotManagerNG parent, String id, int price, int index) {
+    protected ParSlot(ParSlotManager parent, String id, int price, int index) {
         super(parent, id);
         this.price = price;
         this.index = index;

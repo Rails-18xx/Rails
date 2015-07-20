@@ -6,19 +6,19 @@ import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
 import net.sf.rails.game.specific._1880.ParSlot;
-import net.sf.rails.game.specific._1880.ParSlotManagerNG;
+import net.sf.rails.game.specific._1880.ParSlotManager;
 import net.sf.rails.ui.swing.core.GridAxis;
 import net.sf.rails.ui.swing.core.GridTable;
 import net.sf.rails.ui.swing.core.TableUI;
 
-public class ParSlotPanelNG {
+public class ParSlotPanel {
         
     private static enum Rows {HEADER}
     private enum Cols {PRICE,COMPANY,LAST_TRAIN}
 
     private final JPanel panel;
 
-    public ParSlotPanelNG(ParSlotManagerNG parSlotManager) {
+    public ParSlotPanel(ParSlotManager parSlotManager) {
         
         List<ParSlot> slots = parSlotManager.getParSlots();
 

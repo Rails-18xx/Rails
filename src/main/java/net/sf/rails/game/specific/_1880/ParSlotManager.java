@@ -13,14 +13,14 @@ import net.sf.rails.game.RailsManager;
 /**
  * The ParSlotManager stores the available ParSlots
  */
-public class ParSlotManagerNG extends RailsManager {
+public class ParSlotManager extends RailsManager {
 
     private static final ImmutableList<Integer> PAR_PRICES = ImmutableList.of(100, 90, 80, 70);
     private static final int nb_slots = 4;
     
     private final ImmutableList<ParSlot> parSlots;
     
-    protected ParSlotManagerNG(GameManager parent, String id) {
+    protected ParSlotManager(GameManager parent, String id) {
         super(parent, id);
  
         // create parSlots

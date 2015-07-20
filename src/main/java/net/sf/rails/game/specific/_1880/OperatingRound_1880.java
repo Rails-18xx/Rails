@@ -54,7 +54,7 @@ import rails.game.specific._1880.ForcedRocketExchange;
 public class OperatingRound_1880 extends OperatingRound {
 
     private OperatingRoundControl_1880 orControl;
-    private ParSlotManagerNG parSlotManager;
+    private ParSlotManager parSlotManager;
 
     private final ArrayListState<Investor_1880> investorsToClose = ArrayListState.create(this, "investorsToClose");
     private final BooleanState trainPurchasedThisTurn = BooleanState.create(this, "trainPurchaseThisTurn");
