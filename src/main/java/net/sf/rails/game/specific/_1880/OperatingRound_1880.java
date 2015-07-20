@@ -1021,15 +1021,6 @@ public class OperatingRound_1880 extends OperatingRound {
         return true;
     }
     
-    public boolean discardTrain(DiscardTrain action) {
-        if (super.discardTrain(action) == false) {
-            return false;
-        }
-        
-        action.getDiscardedTrain().moveTo(scrapHeap);
-        return true;
-    }
-
     /* (non-Javadoc)
      * @see rails.game.OperatingRound#setBuyableTrains()
      */

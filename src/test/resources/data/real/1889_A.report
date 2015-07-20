@@ -478,7 +478,7 @@ PrivateCloses,D
 PrivateCloses,E
 PrivateCloses,F
 PrivateCloses,G
-CompanyDiscardsTrain,IR,3
+CompanyDiscardsTrain,IR,3,Pool
  
 CompanyOperates,IR,Phil
 LaysTileAt,IR,611,C4,SE

@@ -313,7 +313,7 @@ PrivateCloses,C&StL
 PrivateCloses,D&H
 PrivateCloses,M&H
 PrivateCloses,C&A
-CompanyDiscardsTrain,NYNH,3
+CompanyDiscardsTrain,NYNH,3,Pool
  
 CompanyOperates,B&O,Charlie
 LaysTileAt,B&O,27,H14,E

@@ -591,10 +591,7 @@ public class StockRound_18EU extends StockRound {
             checkFlotation(major);
 
             if (pullmannToDiscard != null) {
-                pool.addTrain(pullmannToDiscard);
-                ReportBuffer.add(this, LocalText.getText("CompanyDiscardsTrain",
-                        major.getId(),
-                        pullmannToDiscard.toText() ));
+                pullmannToDiscard.discard();
             }
         } else {
             ReportBuffer.add(this, "");
@@ -686,12 +683,7 @@ public class StockRound_18EU extends StockRound {
         }
 
         /* End of validation, start of execution */
-        
-        // FIXME: if (action.isForced()) changeStack.linkToPreviousMoveSet();
-        pool.addTrain(train);
-        ReportBuffer.add(this, LocalText.getText("CompanyDiscardsTrain",
-                companyName,
-                train.toText() ));
+        train.discard();
 
         finishTurn();
 

@@ -506,7 +506,7 @@ PrivateCloses,B
 PrivateCloses,C
 PrivateCloses,D
 PrivateCloses,F
-CompanyDiscardsTrain,TR,3
+CompanyDiscardsTrain,TR,3,Pool
 BuysTrain,SR,5,IPO,450
  
 CompanyOperates,UR,bernd

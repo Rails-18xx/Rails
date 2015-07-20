@@ -1029,6 +1029,6 @@ PrivateCloses,TCC
 PrivateCloses,Ship
 PrivateCloses,Brdg
 PrivateCloses,Tunn
-CompanyDiscardsTrain,LPS,3
+CompanyDiscardsTrain,LPS,3,Pool
  
 CompanyOperates,THB,Bill

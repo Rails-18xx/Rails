@@ -480,8 +480,8 @@ PrivateCloses,M&C
 PrivateCloses,ET&WNC
 PrivateCloses,O&W
 PrivateCloses,CNO&TP
-CompanyDiscardsTrain,L&N,3
-CompanyDiscardsTrain,TC,3
+CompanyDiscardsTrain,L&N,3,Pool
+CompanyDiscardsTrain,TC,3,Pool
  
 CompanyOperates,Dixie,Bob
 LaysTileAtFor,Dixie,202,H16,NW,40

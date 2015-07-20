@@ -182,11 +182,7 @@ public class OperatingRound_18EU extends OperatingRound {
         if (mustDiscardPullmann) {
             Train pullmann = operatingCompany.value().getPortfolioModel().getTrainOfType(pullmannType);
             if (pullmann != null) {  // must be non-null
-                pool.addTrain(pullmann);
-                ReportBuffer.add(this, LocalText.getText("CompanyDiscardsTrain",
-                        operatingCompany.value().getId(),
-                        pullmann.toText() ));
-
+                pullmann.discard();
             }
         }
 
@@ -206,10 +202,7 @@ public class OperatingRound_18EU extends OperatingRound {
                 }
             }
             if (hasPullmann && !hasNonPullmann) {
-                pool.addTrain(pullmann);
-                ReportBuffer.add(this, LocalText.getText("CompanyDiscardsTrain",
-                        seller.getId(),
-                        pullmann.toText() ));
+                pullmann.discard();
             }
         }
 

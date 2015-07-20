@@ -252,13 +252,8 @@ public class StockRound_1837 extends StockRound {
 
         /* End of validation, start of execution */
 
-        // FIXME: if (action.isForced()) changeStack.linkToPreviousMoveSet();
-        pool.addTrain(train);
-        ReportBuffer.add(
-                this,
-                LocalText.getText("CompanyDiscardsTrain", companyName,
-                        train.toText()));
-
+        train.discard();
+        
         finishTurn();
 
         return true;

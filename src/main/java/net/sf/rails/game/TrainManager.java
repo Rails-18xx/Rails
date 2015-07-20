@@ -44,6 +44,9 @@ public class TrainManager extends RailsManager implements Configurable {
     protected TrainType defaultType = null; // Only required locally and in ChoiceType
     
     private boolean removeTrain = false;
+    
+    protected String discardToString = "pool";
+    protected BankPortfolio discardTo;
 
     // defines obsolescence
     public enum ObsoleteTrainForType {ALL, EXCEPT_TRIGGERING}
@@ -144,6 +147,12 @@ public class TrainManager extends RailsManager implements Configurable {
                 throw new ConfigurationException(e);
             }
         }
+        
+        // Trains discard
+        Tag discardTag = tag.getChild("DiscardTrain");
+        if (discardTag != null) {
+            discardToString = discardTag.getAttributeAsString("to");
+        }
 
         // Are trains sold to foreigners?
         Tag removeTrainTag = tag.getChild("RemoveTrainBeforeSR");
@@ -203,6 +212,15 @@ public class TrainManager extends RailsManager implements Configurable {
         // By default, set the first train type to "available".
         newTypeIndex.set(0);
         makeTrainAvailable(trainCertTypes.get(newTypeIndex.value()));
+        
+        // Discard Trains To where?
+        if (discardToString.equalsIgnoreCase("pool")) {
+            discardTo = root.getBank().getPool();
+        } else if (discardToString.equalsIgnoreCase("scrapheap")) {
+            discardTo = root.getBank().getScrapHeap();
+        } else {
+            throw new ConfigurationException ("Discard to only allow to pool or scrapheap");
+        }
 
         // Trains "bought by foreigners" (1844, 1824)
         if (removeTrain) {
@@ -426,6 +444,10 @@ public class TrainManager extends RailsManager implements Configurable {
             anyTrainBought.set(newValue);
         }
     }
+    
+    public BankPortfolio discardTo() {
+        return discardTo;
+    }
 
     public List<TrainType> parseTrainTypes(String trainTypeName) {
         List <TrainType> trainTypes = new ArrayList<TrainType>();
@@ -443,3 +465,4 @@ public class TrainManager extends RailsManager implements Configurable {
     }  
     
 }
+ 

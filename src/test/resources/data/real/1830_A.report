@@ -427,7 +427,7 @@ BuysTrain,C&O,4,IPO,300
 FirstTrainBought,4
 StartOfPhase,4
 TrainsObsolete.ALL,2
-CompanyDiscardsTrain,NYC,2
+CompanyDiscardsTrain,NYC,2,ScrapHeap
  
 CompanyOperates,N&W,Chris
 LaysTileAt,N&W,8,M11,NW
@@ -662,7 +662,7 @@ PrivateCloses,C&StL
 PrivateCloses,D&H
 PrivateCloses,C&A
 PrivateCloses,B&O
-CompanyDiscardsTrain,C&O,3
+CompanyDiscardsTrain,C&O,3,Pool
  
 CompanyOperates,NYC,Si
 LaysTileAt,NYC,62,G19,NE

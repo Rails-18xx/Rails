@@ -653,9 +653,7 @@ public class CGRFormationRound extends SwitchableUIRound {
                 }
             }
             for (Train train : trainsToDiscard) {
-                pool.addTrain(train);
-                ReportBuffer.add(this, LocalText.getText("CompanyDiscardsTrain",
-                        cgr.toText(), train.toText()));
+                train.discard();
             }
         }
 
@@ -806,16 +804,8 @@ public class CGRFormationRound extends SwitchableUIRound {
         /* End of validation, start of execution */
         // new: link always, see below commented
         
-        // FIXME:changeStack.linkToPreviousMoveSet();
-
         if (train != null) {
-
-            //            if (action.isForced()) moveStack.linkToPreviousMoveSet();
-            pool.addTrain(train);
-            ReportBuffer.add(this, LocalText.getText("CompanyDiscardsTrain",
-                    companyName,
-                    train.toText() ));
-
+            train.discard();
         } else {
             cgrHasDiscardedTrains.set(true);
         }

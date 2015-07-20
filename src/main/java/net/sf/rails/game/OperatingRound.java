@@ -14,6 +14,7 @@ import rails.game.action.*;
 import rails.game.correct.ClosePrivate;
 import rails.game.correct.OperatingCost;
 import net.sf.rails.common.*;
+import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.special.*;
 import net.sf.rails.game.state.*;
 import net.sf.rails.util.SequenceUtil;
@@ -942,12 +943,8 @@ public class OperatingRound extends Round implements Observer {
             train.setType(null);
         }
 
-        (train.isObsolete() ? scrapHeap : pool).addTrain(train);
-        ReportBuffer.add(
-                this,
-                LocalText.getText("CompanyDiscardsTrain", companyName,
-                        train.toText()));
-
+        train.discard();
+       
         // Check if any more companies must discard trains,
         // otherwise continue train buying
         if (!checkForExcessTrains()) {

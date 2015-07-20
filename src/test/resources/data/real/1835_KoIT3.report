@@ -1175,14 +1175,14 @@ FirstTrainBought,5
 StartOfPhase,5
 PhaseClosesAllPrivates,
 PrivateCloses,PfB
-CompanyDiscardsTrain,BY,3
+CompanyDiscardsTrain,BY,3,Pool
 StartFormationRound,PR
 MERGE_MINOR_LOG,Lonny,M5,PR,0,1
 GetShareForMinor,Lonny,5,PR,IPO,M5
 MERGE_MINOR_LOG,Stefan,M6,PR,280,1
 GetShareForMinor,Stefan,5,PR,IPO,M6
 ExchangesBaseToken,PR,M6,C11/1
-CompanyDiscardsTrain,PR,3
+CompanyDiscardsTrain,PR,3,Pool
  
 EndOfFormationRound,PR,OperatingRound 5.1
  

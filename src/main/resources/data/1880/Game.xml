@@ -51,6 +51,7 @@
 		class="net.sf.rails.game.specific._1880.StockMarket_1880"
 		file="StockMarket.xml"/>
 	<Component name="TrainManager" class="net.sf.rails.game.specific._1880.TrainManager_1880">
+		<DiscardTrain to="scrapheap"/>
 		<Defaults>
 			<Reach base="stops" countTowns="major"/>
 			<Score towns="yes"/>

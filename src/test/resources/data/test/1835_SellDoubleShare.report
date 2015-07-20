@@ -1275,8 +1275,8 @@ StartOfPhase,5
 PhaseClosesAllPrivates,
 PrivateCloses,OBB
 PrivateCloses,PfB
-CompanyDiscardsTrain,BA,3
-CompanyDiscardsTrain,SX,3
+CompanyDiscardsTrain,BA,3,Pool
+CompanyDiscardsTrain,SX,3,Pool
 StartFormationRound,PR
 MERGE_MINOR_LOG,m4,M3,PR,260,1
 GetShareForMinor,m4,5,PR,IPO,M3

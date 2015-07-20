@@ -1,5 +1,7 @@
 package net.sf.rails.game;
 
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.Creatable;
@@ -7,8 +9,6 @@ import net.sf.rails.game.state.GenericState;
 import net.sf.rails.game.state.Ownable;
 
 import com.google.common.collect.ComparisonChain;
-
-
 
 public class Train extends RailsOwnableItem<Train> implements Creatable {
 
@@ -148,6 +148,18 @@ public class Train extends RailsOwnableItem<Train> implements Creatable {
 
     public boolean canBeExchanged() {
         return certificateType.nextCanBeExchanged();
+    }
+    
+    public void discard() {
+        BankPortfolio discardTo;
+        if (isObsolete()) {
+            discardTo = Bank.getScrapHeap(this);
+        } else {
+            discardTo = getRoot().getTrainManager().discardTo();
+        }
+        String discardText =  LocalText.getText("CompanyDiscardsTrain", getOwner().getId(), this.toText(), discardTo.getId());
+        ReportBuffer.add(this, discardText);
+        this.moveTo(discardTo);
     }
 
     @Override

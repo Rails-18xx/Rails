@@ -313,16 +313,7 @@ public class PortfolioModel extends RailsModel {
 
         return swapped;
     }
-
     
-    
-    public void discardTrain(Train train) {
-        train.moveTo(getRoot().getBank().getPool());
-
-        ReportBuffer.add(this, LocalText.getText("CompanyDiscardsTrain",
-                getParent().getId(), train.toText()));
-    }
-
     public int getNumberOfTrains() {
         return trains.getPortfolio().size();
     }

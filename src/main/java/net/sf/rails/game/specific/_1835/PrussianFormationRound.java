@@ -438,13 +438,8 @@ public class PrussianFormationRound extends StockRound {
 
         /* End of validation, start of execution */
         
-        // FIXME: if (action.isForced()) changeStack.linkToPreviousMoveSet();
-
-        pool.addTrain(train);
-        ReportBuffer.add(this, LocalText.getText("CompanyDiscardsTrain",
-                company.getId(),
-                train.toText() ));
-
+        train.discard();
+        
         // We still might have another excess train
         // TODO: would be better to have DiscardTrain discard multiple trains
         if (prussian.getNumberOfTrains() > prussian.getCurrentTrainLimit()) {
