@@ -123,7 +123,8 @@ public class GUIHexUpgrades {
     }
     
     public void nextSelection() {
-        if (activeUpgrade.hasSingleSelection()) {
+        // activeUpgrade can be null, if none of the upgrades in the hex is valid
+        if (activeUpgrade == null || activeUpgrade.hasSingleSelection()) {
             // do nothing
         } else {
             activeUpgrade.nextSelection();
