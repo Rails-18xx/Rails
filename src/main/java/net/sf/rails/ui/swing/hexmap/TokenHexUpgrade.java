@@ -26,7 +26,6 @@ import com.google.common.collect.Sets;
 
 import rails.game.action.LayBaseToken;
 import rails.game.action.LayBonusToken;
-import rails.game.action.LayTile;
 import rails.game.action.LayToken;
 
 public class TokenHexUpgrade extends HexUpgrade {

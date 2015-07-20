@@ -690,7 +690,18 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
     public ImmutableSet<Stop> getStops() {
         return stops.viewValues();
     }
-
+    
+    public ImmutableSet<Stop> getTokenableStops(PublicCompany company) {
+        ImmutableSet.Builder<Stop> tokenableStops = ImmutableSet.builder();
+        for (Stop stop:stops) {
+            if (stop.isTokenableFor(company)) {
+                tokenableStops.add(stop);
+            }
+        }
+        return tokenableStops.build();
+    }
+    
+    
     public Stop getRelatedStop(Station station) {
         return stops.get(station);
     }

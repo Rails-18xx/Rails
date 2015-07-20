@@ -333,7 +333,8 @@ public class ORUIManager implements DialogOwner {
     private void addLocatedTokenLays(LayToken action) {
         for (MapHex hex:action.getLocations()) {
             GUIHex guiHex = map.getHex(hex);
-            TokenHexUpgrade upgrade = TokenHexUpgrade.create(guiHex, hex.getStops(), action);
+            TokenHexUpgrade upgrade = TokenHexUpgrade.create(
+                    guiHex, hex.getTokenableStops(action.getCompany()), action);
             TokenHexUpgrade.validates(upgrade);
             hexUpgrades.put(guiHex, upgrade);
         }
