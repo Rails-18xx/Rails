@@ -33,9 +33,9 @@ public class BuildingRights_1880 extends RailsModel {
     }    
     
     public void set(String rights) {
-        // clear old rights first
+        // clear old rightsModel first
         buildingRights.clear();
-        // ... then add new rights
+        // ... then add new rightsModel
         for (String right: Splitter.on("+").split(rights))
             if (RIGHTS_TEXT_MAP.containsValue(right)) {
                 buildingRights.add(right);

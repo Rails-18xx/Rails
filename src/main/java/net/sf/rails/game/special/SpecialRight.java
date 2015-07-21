@@ -147,7 +147,8 @@ public class SpecialRight extends SpecialProperty implements NetworkGraphModifie
     @Override
     public void modifyRouteGraph(NetworkGraph routeGraph, PublicCompany company) {
         // 1. check operating company if it has the right then it is excluded from the removal
-        if (company.hasRight(rightName)) return;
+        // TODO: Only use one right for all companies instead of one per company
+        if (this.getOriginalCompany() != company || company.hasRight(this)) return;
         
         SimpleGraph<NetworkVertex, NetworkEdge> graph = routeGraph.getGraph();
         

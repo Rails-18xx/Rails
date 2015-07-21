@@ -282,8 +282,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
     protected BooleanState canSharePriceVary;
 
-    /** Rights */
-    protected HashMapState<String, String> rights = null;
+    protected RightsModel rightsModel = null; // init if required
     // created in finishConfiguration
 
     // used for Company interface
@@ -702,16 +701,16 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         infoText += parentInfoText;
         parentInfoText = "";
 
-        // Can companies acquire special rights (such as in 1830 Coalfields)?
+        // Can companies acquire special rightsModel (such as in 1830 Coalfields)?
         // TODO: Can this be simplified?
         if (portfolio.hasSpecialProperties()) {
             for (SpecialProperty sp : portfolio.getPersistentSpecialProperties()) {
                 if (sp instanceof SpecialRight) {
                     getRoot().getGameManager().setGuiParameter (GuiDef.Parm.HAS_ANY_RIGHTS, true);
-                    // Initialize rights here to prevent overhead if not used,
-                    // but if rights are used, the GUI needs it from the start.
-                    if (rights == null) {
-                        rights = HashMapState.create(this, "rights");
+                    // Initialize rightsModel here to prevent overhead if not used,
+                    // but if rightsModel are used, the GUI needs it from the start.
+                    if (rightsModel == null) {
+                        rightsModel = RightsModel.create(this, "rightsModel");
                     }
                     // TODO: This is only a workaround for the missing finishConfiguration of special properties (SFY)
                     sp.finishConfiguration(root);
@@ -1864,26 +1863,22 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     }
 
     public Observable getRightsModel () {
-        return rights;
+        return rightsModel;
     }
 
     public boolean canClose() {
         return canClose;
     }
 
-    public void setRight (String nameOfRight, String value) {
-        if (rights == null) {
-            rights = HashMapState.create(this, "rights");
+    public void setRight (SpecialRight right) {
+        if (rightsModel == null) {
+            rightsModel = RightsModel.create(this, "RightsModel");
         }
-        rights.put(nameOfRight, value);
+        rightsModel.add(right);
     }
 
-    public boolean hasRight (String nameOfRight) {
-        return rights != null && rights.containsKey(nameOfRight);
-    }
-
-    public String getRight (String nameOfRight) {
-        return rights != null ? rights.get(nameOfRight) : null;
+    public boolean hasRight(SpecialRight right) {
+        return rightsModel.contains(right);
     }
 
     @Override

@@ -52,8 +52,8 @@ public class GameUIManager_1880 extends GameUIManager {
  *                                        |
  *           Player chooses Building Right based on percentage of president share
  *           
- *           - 20 percent share will allow to choose from all Building Rights (A+B+C, B+C+D and 2 Phase and single Phase rights)
- *           - 30 percent share will allow to choose from 2 Phase Building Rights (A+B, B+C, C+D and all single Phase rights)
+ *           - 20 percent share will allow to choose from all Building Rights (A+B+C, B+C+D and 2 Phase and single Phase rightsModel)
+ *           - 30 percent share will allow to choose from 2 Phase Building Rights (A+B, B+C, C+D and all single Phase rightsModel)
  *           - 40 percent share will limit the player to a building right for one Phase (A, B, C, D) 
  */
         

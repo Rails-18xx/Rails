@@ -1386,6 +1386,7 @@ public class OperatingRound extends Round implements Observer {
         String errMsg = null;
         String rightName = "";
         String rightValue = "";
+        SpecialRight right = null;
         int cost = 0;
 
         SpecialProperty sp = action.getSpecialProperty();
@@ -1395,8 +1396,7 @@ public class OperatingRound extends Round implements Observer {
                 errMsg = "Wrong right property class: " + sp.toString();
                 break;
             }
-
-            SpecialRight right = (SpecialRight) sp;
+            right = (SpecialRight) sp;
             rightName = right.getName();
             rightValue = right.getValue();
             cost = right.getCost();
@@ -1417,7 +1417,7 @@ public class OperatingRound extends Round implements Observer {
             return false;
         }
 
-        operatingCompany.value().setRight(rightName, rightValue);
+        operatingCompany.value().setRight(right);
         // TODO: Creates a zero cost transfer if cost == 0
         String costText = Currency.toBank(operatingCompany.value(), cost);
 

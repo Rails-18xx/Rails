@@ -36,7 +36,7 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
 
     /** 
      *  Buildingrights belong to Phases in 1880 the player will be asked to choose which combination
-     *   he wants and subsequently his company will be granted the appropriate rights. Further the value
+     *   he wants and subsequently his company will be granted the appropriate rightsModel. Further the value
      *  of the presidents share depends on the building right.
      *  A Player has the maximum of 3 phases without the use of a special power of a certain private paper.
      *  Example : A) Player chooses to build in Phase A+B+C (or B+C+D) this will lead to a president share value of 20%

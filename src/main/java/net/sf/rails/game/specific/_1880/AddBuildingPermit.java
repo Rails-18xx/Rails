@@ -49,7 +49,7 @@ public class AddBuildingPermit extends SpecialProperty {
     }
 
     public String toString() {
-        return "Add \"" + addedPermitName + "\"building rights to company";
+        return "Add \"" + addedPermitName + "\"building rightsModel to company";
     }
     
     @Override
