@@ -1,18 +1,30 @@
 package net.sf.rails.game.special;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
+import org.jgrapht.graph.SimpleGraph;
+
+import net.sf.rails.algorithms.NetworkEdge;
+import net.sf.rails.algorithms.NetworkGraph;
+import net.sf.rails.algorithms.NetworkGraphModifier;
 import net.sf.rails.algorithms.NetworkVertex;
-import net.sf.rails.algorithms.RevenueAdapter;
-import net.sf.rails.algorithms.RevenueStaticModifier;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
-import net.sf.rails.game.*;
-import net.sf.rails.util.*;
+import net.sf.rails.game.Bank;
+import net.sf.rails.game.MapHex;
+import net.sf.rails.game.MapManager;
+import net.sf.rails.game.Player;
+import net.sf.rails.game.PrivateCompany;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.RailsItem;
+import net.sf.rails.game.RailsRoot;
+import net.sf.rails.util.Util;
 
 
-public class SpecialRight extends SpecialProperty implements RevenueStaticModifier {
+public class SpecialRight extends SpecialProperty implements NetworkGraphModifier {
 
     /** The public company of which a share can be obtained. */
     private String rightName;
@@ -56,7 +68,7 @@ public class SpecialRight extends SpecialProperty implements RevenueStaticModifi
         super.finishConfiguration(root);
         
         // add them to the call list of the RevenueManager
-        root.getRevenueManager().addStaticModifier(this);
+        root.getRevenueManager().addGraphModifier(this);
         
         if (locationNames != null) {
             locations = new ArrayList<MapHex>();
@@ -127,27 +139,24 @@ public class SpecialRight extends SpecialProperty implements RevenueStaticModifi
         return toMenu();
     }
 
-    /** 
-     *  modify revenue calculation of the special rights
-     *  TODO: if owner would be known or only one rights object pretty print would be possible
-     *  TODO: check if calculation is only modified or the whole graph (including tile and token lays)
-     */
-    public boolean modifyCalculator(RevenueAdapter revenueAdapter) {
-        // 1. check operating company if it has the right then it is excluded from the removal
-        if (revenueAdapter.getCompany().hasRight(rightName)) return false;
-        
-        // 2. find vertices to hex and remove the station
-        Set<NetworkVertex> verticesToRemove = NetworkVertex.getVerticesByHexes(revenueAdapter.getVertices(), locations);
-        for (NetworkVertex v:verticesToRemove) {
-            if (v.isStation()) revenueAdapter.getGraph().removeVertex(v);
-        }
-        
-        // nothing to print, as the owner is unknown
-        return false;
+    @Override
+    public void modifyMapGraph(NetworkGraph mapGraph) {
+        // Do nothing
     }
 
-    public String prettyPrint(RevenueAdapter revenueAdapter) {
-        // nothing to print
-        return null;
+    @Override
+    public void modifyRouteGraph(NetworkGraph routeGraph, PublicCompany company) {
+        // 1. check operating company if it has the right then it is excluded from the removal
+        if (company.hasRight(rightName)) return;
+        
+        SimpleGraph<NetworkVertex, NetworkEdge> graph = routeGraph.getGraph();
+        
+        // 2. find vertices to hex and remove the station
+        Set<NetworkVertex> verticesToRemove = NetworkVertex.getVerticesByHexes(graph.vertexSet(), locations);
+        // 3 ... and remove them from the graph
+        graph.removeAllVertices(verticesToRemove);
     }
+
+ 
+
 }

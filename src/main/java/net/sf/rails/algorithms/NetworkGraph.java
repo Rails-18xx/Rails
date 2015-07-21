@@ -48,6 +48,7 @@ import com.jgraph.layout.organic.JGraphFastOrganicLayout;
  * NetworkGraph mirrors the structure of a 18xx track
  *
  * TODO: Rewrite this by separating the creation code from the data code
+ * TODO: Rails 2.0 add a NetworkManager
  */
 public class NetworkGraph {
 
@@ -295,7 +296,7 @@ public class NetworkGraph {
         
         // add graph modifiers
         if (revenueManager != null) {
-            revenueManager.initGraphModifiers(this);
+            revenueManager.activateMapGraphModifiers(this);
         }
 
     }
@@ -381,6 +382,12 @@ public class NetworkGraph {
 
     private void initRouteGraph(NetworkGraph mapGraph, PublicCompany company, boolean addHQ) {
         
+        // add graph modifiers
+        RevenueManager revenueManager = company.getRoot().getRevenueManager();
+        if (revenueManager != null) {
+            revenueManager.activateRouteGraphModifiers(mapGraph, company);
+        }
+
         // set sinks on mapgraph
         NetworkVertex.initAllRailsVertices(mapGraph, company, null);
         
@@ -415,7 +422,6 @@ public class NetworkGraph {
 
         // if addHQ is not set remove HQ vertex
         if (!addHQ) graph.removeVertex(hqVertex);
-        
     }
     
     public List<NetworkVertex> getCompanyBaseTokenVertexes(PublicCompany company) {

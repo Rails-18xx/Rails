@@ -7,6 +7,7 @@ import net.sf.rails.algorithms.NetworkGraph;
 import net.sf.rails.algorithms.NetworkGraphModifier;
 import net.sf.rails.algorithms.NetworkVertex;
 import net.sf.rails.game.MapHex;
+import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsRoot;
 
 import org.slf4j.Logger;
@@ -19,7 +20,8 @@ public class BirminghamTileModifier implements NetworkGraphModifier {
     protected static Logger log =
         LoggerFactory.getLogger(BirminghamTileModifier.class);
 
-    public void modifyGraph(NetworkGraph mapGraph) {
+    @Override
+    public void modifyMapGraph(NetworkGraph mapGraph) {
         
         // TODO (Rails 2.0): Add root reference to modifiers
         SimpleGraph<NetworkVertex, NetworkEdge> graph = mapGraph.getGraph();
@@ -42,6 +44,11 @@ public class BirminghamTileModifier implements NetworkGraphModifier {
         graph.removeAllVertices(birmingVertices);
         log.debug("Birmingham inactive, index of phase = " + phaseIndex);
         
+    }
+
+    @Override
+    public void modifyRouteGraph(NetworkGraph mapGraph, PublicCompany company) {
+        // do nothing
     }
 
 }

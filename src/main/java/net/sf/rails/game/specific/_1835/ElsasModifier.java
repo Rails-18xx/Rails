@@ -7,6 +7,7 @@ import net.sf.rails.algorithms.NetworkGraph;
 import net.sf.rails.algorithms.NetworkGraphModifier;
 import net.sf.rails.algorithms.NetworkVertex;
 import net.sf.rails.game.MapHex;
+import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsRoot;
 
 import org.jgrapht.graph.SimpleGraph;
@@ -17,7 +18,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Analogue to the BirminghamTileModifier in 1851
  * Removes Elsas from the map if value is equal to zero
- * @author freystef
  */
 
 public class ElsasModifier implements NetworkGraphModifier {
@@ -25,7 +25,8 @@ public class ElsasModifier implements NetworkGraphModifier {
     private static final Logger log =
             LoggerFactory.getLogger(ElsasModifier.class);
 
-    public void modifyGraph(NetworkGraph mapGraph) {
+    @Override
+    public void modifyMapGraph(NetworkGraph mapGraph) {
         
         RailsRoot root = RailsRoot.getInstance();
         SimpleGraph<NetworkVertex, NetworkEdge> graph = mapGraph.getGraph();
@@ -42,4 +43,10 @@ public class ElsasModifier implements NetworkGraphModifier {
             log.debug("Elsas is inactive");
         }
     }
+    
+    @Override
+    public void modifyRouteGraph(NetworkGraph mapGraph, PublicCompany company) {
+        // do nothing
+    }
+
 }

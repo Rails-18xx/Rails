@@ -8,6 +8,7 @@ import net.sf.rails.common.LocalText;
 import net.sf.rails.common.parser.Configurable;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
+import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsManager;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.state.ArrayListState;
@@ -160,11 +161,18 @@ public final class RevenueManager extends RailsManager implements Configurable {
         return result;
     }
 
-    void initGraphModifiers(NetworkGraph graphBuilder) {
+    void activateMapGraphModifiers(NetworkGraph graph) {
         for (NetworkGraphModifier modifier:graphModifiers.view()) {
-            modifier.modifyGraph(graphBuilder);
+            modifier.modifyMapGraph(graph);
         }
     }
+    
+    void activateRouteGraphModifiers(NetworkGraph graph, PublicCompany company) {
+        for (NetworkGraphModifier modifier:graphModifiers.view()) {
+            modifier.modifyRouteGraph(graph, company);
+        }
+    }
+    
     
     void initStaticModifiers(RevenueAdapter revenueAdapter) {
         activeStaticModifiers.clear();

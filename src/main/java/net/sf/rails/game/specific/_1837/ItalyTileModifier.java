@@ -9,6 +9,7 @@ import net.sf.rails.algorithms.NetworkGraph;
 import net.sf.rails.algorithms.NetworkGraphModifier;
 import net.sf.rails.algorithms.NetworkVertex;
 import net.sf.rails.game.MapHex;
+import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsRoot;
 
 import org.slf4j.Logger;
@@ -22,7 +23,8 @@ public class ItalyTileModifier implements NetworkGraphModifier {
         LoggerFactory.getLogger(ItalyTileModifier.class);
 
 
-    public void modifyGraph(NetworkGraph mapGraph) {
+    @Override
+    public void modifyMapGraph(NetworkGraph mapGraph) {
         
         // TODO (Rails 2.0): Add root reference to modifiers
         SimpleGraph<NetworkVertex, NetworkEdge> graph = mapGraph.getGraph();
@@ -49,5 +51,11 @@ public class ItalyTileModifier implements NetworkGraphModifier {
         log.debug("Italy inactive, index of phase = " + phaseIndex);
         
     }
+    
+    @Override
+    public void modifyRouteGraph(NetworkGraph mapGraph, PublicCompany company) {
+        // do nothing
+    }
+
 
 }
