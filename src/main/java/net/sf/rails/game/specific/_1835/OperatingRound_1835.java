@@ -193,6 +193,9 @@ public class OperatingRound_1835 extends OperatingRound {
             log.debug("M2 has operated: PR cannot operate");
 
         }
+        
+        // Check if the operating company still exists
+        if (operatingCompany.value().isClosed()) finishTurn();
 
         guiHints.setCurrentRoundType(getClass());
         super.resume();
