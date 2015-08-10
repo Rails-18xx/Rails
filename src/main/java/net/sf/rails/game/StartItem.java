@@ -412,13 +412,12 @@ public class StartItem extends RailsAbstractItem {
                 if (p != player) {
                     bid.set(0);
                     bid.setSuppressZero(true);
-                } else {
-                    // for winning bidder set bid to buyprice
-                    bid.set(buyPrice);
                 }
                 active.get(p).set(false);;
             }
         }
+        // for winning bidder set bid to buyprice
+        bids.get(player).set(buyPrice);
         minimumBid.set(0);
     }
 
