@@ -1,6 +1,7 @@
 package net.sf.rails.game.model;
 
 import net.sf.rails.game.RailsItem;
+import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.StringState;
 
@@ -19,7 +20,7 @@ public abstract class MoneyModel extends RailsModel {
     private final Currency currency;
     
     // Format Options (with defaults)
-    private boolean suppressZero = false;
+    private final BooleanState suppressZero = BooleanState.create(this, "suppressZero");
     private boolean suppressInitialZero = false;
     private boolean addPlus = false;
     private boolean displayNegative = false;
@@ -35,10 +36,10 @@ public abstract class MoneyModel extends RailsModel {
     
     /**
      * @param suppressZero true: displays an empty string instead of a zero value
-     * This is not a state variable, so do not change after the MoneyModel is used
+     * This is a state variable, thus can be changed after initialization
      */
     public void setSuppressZero(boolean suppressZero) {
-        this.suppressZero = suppressZero;
+        this.suppressZero.set(suppressZero);
     }
 
     /**
@@ -99,7 +100,7 @@ public abstract class MoneyModel extends RailsModel {
         }
         int amount = this.value();
         if (amount == 0
-            && (suppressZero 
+            && (suppressZero.value() 
                     || suppressInitialZero
                         && !initialised())) {
             return "";
