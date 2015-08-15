@@ -12,6 +12,8 @@ public final class ShareModel extends RailsModel {
     private ShareModel(CertificatesModel parent, PublicCompany company) {
         super(parent, "shareModel_" + company.getId());
         this.company = company;
+        // have share model observe floatation status of company
+        company.getFloatedModel().addModel(this);
     }
 
     public static ShareModel create(CertificatesModel certModel, PublicCompany company) {
