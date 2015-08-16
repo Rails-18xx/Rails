@@ -235,7 +235,7 @@ task cleanWebstart (type:Delete, dependsOn:clean) {
   delete "${webstartBuildDir}", "${webstartDestDir}"
 }
 
-launch4j {
-    mainClassName = "${railsMainClass}"
-h}	
+// launch4j {
+//    mainClassName = "${railsMainClass}"
+//}	
         
