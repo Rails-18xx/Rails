@@ -1,10 +1,7 @@
+// Gradle Build script for 18xx Rails program (rails.sf.net)
+
 import org.apache.tools.ant.filters.*
 import java.text.SimpleDateFormat
-
-// Gradle Build script for 18xx Rails program (rails.sf.net)
-apply plugin: 'java'
-sourceCompatibility = 1.6
-targetCompatibility = 1.6
 
 // Addition of shadow plugin to create one jars
 // reference: https://github.com/johnrengelman/shadow
@@ -15,13 +12,6 @@ buildscript {
     dependencies {
         classpath 'com.github.jengelman.gradle.plugins:shadow:0.8'
     }
-}
-
-apply plugin: 'shadow'
-// exclude the signatures
-shadow {
-    exclude "META-INF/*.DSA"
-    exclude "META-INF/*.RSA"
 }
 
 // Addition of JavaProfile plugin to read Java property files
@@ -35,23 +25,35 @@ buildscript {
         // with the latest literal GA version label.
     }
 }
-apply plugin: 'com.admc.javaPropFile'
-        
+
+
 // Addition of launch4j gradle plugin
 // refer to https://github.com/TheBoegl/gradle-launch4j
 
-//buildscript {
-//  repositories {
-//    maven {
-//      url "https://plugins.gradle.org/m2/"
-//    }
-//  }
-//  dependencies {
-//    classpath "gradle.plugin.edu.sc.seis.gradle:launch4j:1.1.3"
-//  }
-// }
+buildscript {
+  repositories {
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+  }
+  dependencies {
+    classpath "gradle.plugin.edu.sc.seis.gradle:launch4j:1.3.0"
+  }
+}
 
-// apply plugin: "edu.sc.seis.launch4j"
+repositories {
+  mavenCentral()
+}
+
+apply plugin: 'java'
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
+
+apply plugin: "edu.sc.seis.launch4j"
+
+apply plugin: 'shadow'
+
+apply plugin: 'com.admc.javaPropFile'
 
         
 // Rails variables
@@ -235,7 +237,14 @@ task cleanWebstart (type:Delete, dependsOn:clean) {
   delete "${webstartBuildDir}", "${webstartDestDir}"
 }
 
-// launch4j {
-//    mainClassName = "${railsMainClass}"
-//}	
+launch4j {
+    mainClassName = "${railsMainClass}"
+}	
+        
+// exclude the signatures
+shadow {
+    exclude "META-INF/*.DSA"
+    exclude "META-INF/*.RSA"
+}
+
         
