@@ -382,7 +382,9 @@ public class GameSetupController {
 
         public void actionPerformed(ActionEvent arg0) {
             window.initPlayersPane(window.getSelectedGame());
-            window.initOptions(window.getSelectedGame());
+            if (window.areOptionsVisible()) {
+                window.initOptions(window.getSelectedGame());
+            }
             window.pack();
         }
     }
