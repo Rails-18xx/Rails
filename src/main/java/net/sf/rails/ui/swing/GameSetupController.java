@@ -419,16 +419,18 @@ public class GameSetupController {
             List<String> players = window.getPlayers();
             window.setPlayers(players);
 
+            // check if the next player has to be enabled
             int nextPlayerNr = players.size();
+            
             if (nextPlayerNr < window.getSelectedGame().getMaxPlayers()) {
                 if (!window.isPlayerEnabled(nextPlayerNr)) {
                     window.enablePlayer(nextPlayerNr);
                     window.setFocus(nextPlayerNr);
                 }
             }
-
-            if (nextPlayerNr + 1 < window.getSelectedGame().getMaxPlayers()) {
-                window.disablePlayer(nextPlayerNr + 1);
+            
+            while (++nextPlayerNr < window.getSelectedGame().getMaxPlayers()) {
+                window.disablePlayer(nextPlayerNr);
             }
             
             return true;

@@ -322,7 +322,7 @@ public class GameSetupWindow extends JDialog {
             
             player.number.setText(LocalText.getText("PlayerName", Integer.toString(i + 1)));
             player.name.setInputVerifier(controller.playerNameVerifier);
-
+ 
             /*
              * Prefill with any configured player names. This can be useful to
              * speed up testing purposes.
@@ -333,14 +333,26 @@ public class GameSetupWindow extends JDialog {
             if (i < minPlayers) {
                 player.name.setBorder(BorderFactory.createLineBorder(Color.RED));
             }
-            if (i <= minPlayers || i <= prefilledPlayers.size()) {
+            if (i < minPlayers || i <= prefilledPlayers.size()) {
                 player.name.setEnabled(true);
                 player.number.setForeground(Color.BLACK);
             } else {
                 player.name.setEnabled(false);
                 player.number.setForeground(Color.GRAY);
             }
-
+            
+            // allow activation of the next field by mouse click
+            final int playerNr = i;
+            player.name.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (playerNr == getPlayerCount()) {
+                        enablePlayer(playerNr);
+                        setFocus(playerNr);
+                    }
+                }
+            });
+            
             playersPane.add(player.number);
             playersPane.add(player.name);
             players.add(player);
