@@ -14,14 +14,16 @@ public final class PriceModel extends ColorModel {
     private final PublicCompany company;
 
     private final GenericState<StockSpace> stockPrice = GenericState.create(this, "stockPrice");
+    private boolean showCoordinates = true;
     
-    private PriceModel(PublicCompany parent, String id) {
+    private PriceModel(PublicCompany parent, String id, boolean showCoordinates) {
         super(parent, id);
         company = parent;
+        this.showCoordinates = showCoordinates;
     }
 
-    public static PriceModel create(PublicCompany parent, String id){
-        return new PriceModel(parent, id);
+    public static PriceModel create(PublicCompany parent, String id, boolean showCoordinates){
+        return new PriceModel(parent, id, showCoordinates);
     }
     
     @Override
@@ -57,11 +59,14 @@ public final class PriceModel extends ColorModel {
 
     @Override
     public String toText() {
+        String text = "";
         if (stockPrice.value() != null) {
-            return Bank.format(getParent(), stockPrice.value().getPrice()) + " ("
-                   + stockPrice.value().getId() + ")";
+            text =  Bank.format(getParent(), stockPrice.value().getPrice());
+            if (showCoordinates) {
+                text += " (" + stockPrice.value().getId() + ")";
+            }
         }
-        return "";
+        return text;
     }
 
 }
