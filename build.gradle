@@ -169,7 +169,7 @@ task createWebStartDir << {
     }
 }
 
-task(generateWebstartFiles, type:Copy, dependsOn: [createWebStartDir, signAll]) {
+task(generateWebStartFiles, type:Copy, dependsOn: [createWebStartDir, signAll]) {
     from("${webstartBuildDir}")
     into("${webstartDestDir}")
     include('*.jar')
