@@ -58,7 +58,7 @@ apply plugin: 'com.admc.javaPropFile'
         
 // Rails variables
 def railsCodebase = 'rails.sourceforge.net'
-def railsAppName = 'Rails 18xx moderator'
+def railsAppName = 'Rails'
 def railsMainClass = 'net.sf.rails.util.RunGame'
 
 // Key variables
@@ -169,13 +169,13 @@ task createWebStartDir << {
     }
 }
 
-task(copyWebstartFiles, type:Copy, dependsOn: [createWebStartDir, signAll]) {
+task(generateWebstartFiles, type:Copy, dependsOn: [createWebStartDir, signAll]) {
     from("${webstartBuildDir}")
     into("${webstartDestDir}")
     include('*.jar')
 }
 
-task generateWebstart(dependsOn: copyWebstartFiles) << {
+task generateWebStartJnlp() << {
     File jnlpTemplateFile = new File("${buildFilesDir}/template.jnlp")
     def root = new XmlParser().parse(jnlpTemplateFile)
     def jnlpFileName = "${sourceforgeJnlpFileName}"
@@ -219,12 +219,11 @@ task generateWebstart(dependsOn: copyWebstartFiles) << {
 }
 
 // upload via ant task
-task uploadWebstart(dependsOn: generateWebstart) << {
+task uploadWebstart() << {
   ant.scp(todir:"${sourceforgeUserName}:${sfpwd}@${sourceforgeUploadPath}") {
     fileset(dir:"${webstartDestDir}")
   }
 }
-
 
 task cleanWebstart (type:Delete, dependsOn:clean) {
   delete "${webstartBuildDir}", "${webstartDestDir}"
