@@ -777,7 +777,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
 
     private String getStartItemDescription (StartItem item) {
         StringBuffer b = new StringBuffer("<html>");
-        b.append (item.getPrimary().toString());
+        b.append(item.getPrimary().toText());
         if (item.getPrimary() instanceof PrivateCompany) {
             PrivateCompany priv = (PrivateCompany) item.getPrimary();
                 b.append ("<br>Revenue: ").append(Bank.format(item, priv.getRevenue()));
