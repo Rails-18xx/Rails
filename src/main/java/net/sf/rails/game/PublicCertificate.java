@@ -246,11 +246,16 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
     public float getCertificateCount() {
         return certificateCount;
     }
-
+    
     @Deprecated
     public void setCertificateCount(float certificateCount) {
         this.certificateCount = certificateCount;
     }
-    
 
+    // Item interface
+    @Override
+    public String toText() {
+        return getName();
+    }
+    
 }

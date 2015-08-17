@@ -794,7 +794,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
             if (priv.hasSpecialProperties()) {
                 b.append("<br><b>Special properties:</b>");
                     for (SpecialProperty sp : priv.getSpecialProperties()) {
-                    b.append("<br>").append(sp.toString());
+                    b.append("<br>").append(sp.getInfo());
                 }
             }
             // sfy 1889
@@ -809,7 +809,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
         }
         if (item.getSecondary() != null) {
             b.append("<br><b>Also contains:</b><br>");
-            b.append(item.getSecondary().toString());
+            b.append(item.getSecondary().toText());
         }
         return b.toString();
     }
