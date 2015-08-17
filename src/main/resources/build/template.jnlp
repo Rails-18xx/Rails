@@ -1,12 +1,12 @@
-<!-- Based on http://docs.oracle.com/javase/7/docs/technotes/guides/javaws/developersguide/syntax.html -->
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Based on http://docs.oracle.com/javase/7/docs/technotes/guides/javaws/developersguide/syntax.html -->
 <!-- codebase and href set by build.gradle -->
 <jnlp spec="6.0+" codebase="" href="">
   <information>
   <!-- title set by build.gradle -->
     <title></title>
     <vendor>Rails project</vendor>
-    <homepage href="rails.sf.net"/>
+    <homepage href="http://rails.sf.net"/>
 
     <description kind="one-line">Rails 18xx moderator</description>
     <description kind="short">Rails is a moderator program for 18xx games</description>
@@ -14,7 +14,7 @@
     For 3-6 players and set in the 19th century, these games allow players to step into the shoes of the robber barons and railroad tycoons of the time period..
     </description>
     
-    <icon href="images/yellow_station.png"/>
+    <icon href="http://rails.sf.net/images/Rails512.png"/>
    
    <association mime-type="application-x/Rails18xx"  extensions="rails"/> 
    <offline-allowed/>
@@ -22,7 +22,7 @@
       <desktop/>
       <menu submenu="Games"/>
     </shortcut>
-   <update check="always" policy="prompt-update">
+   <update check="always" policy="prompt-update"/>
 
   </information>
   <security>
