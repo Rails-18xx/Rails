@@ -592,5 +592,10 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
         return false;
     }
 
-
+    // Item interface
+    @Override
+    public String toText() {
+        return getName();
+    }
+    
 }

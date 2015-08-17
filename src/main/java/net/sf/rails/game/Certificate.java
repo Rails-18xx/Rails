@@ -20,5 +20,6 @@ public interface Certificate extends Ownable {
     // FIXME: Should this really be changeable?
     @Deprecated
     public void setCertificateCount(float certificateCount);
-
+    
+    
 }
