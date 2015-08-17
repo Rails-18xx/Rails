@@ -59,8 +59,6 @@ apply plugin: 'com.admc.javaPropFile'
 // Rails variables
 def railsCodebase = 'rails.sourceforge.net'
 def railsAppName = 'Rails 18xx moderator'
-def railsAppVendor = 'Rails project'
-def railsAppDescr = 'Rails is a moderator program for 18xx games'
 def railsMainClass = 'net.sf.rails.util.RunGame'
 
 // Key variables
@@ -194,11 +192,6 @@ task generateWebstart(dependsOn: copyWebstartFiles) << {
     def title = information.title[0]
     def vendor = information.vendor[0]
     title.setValue("${railsAppName}")
-    vendor.setValue("${railsAppVendor}")
-    def descriptionList = information.description
-    descriptionList.each {
-        it.setValue("${railsAppDescr}")
-    }
     
     // Setting resources
     def resource = root.resources[0]
