@@ -1,22 +1,29 @@
+<!-- Based on http://docs.oracle.com/javase/7/docs/technotes/guides/javaws/developersguide/syntax.html -->
 <?xml version="1.0" encoding="utf-8"?>
-<jnlp spec="1.0+" codebase="" href="">
+<!-- codebase and href set by build.gradle -->
+<jnlp spec="6.0+" codebase="" href="">
   <information>
-    <title>
+  <!-- title set by build.gradle -->
+    <title></title>
+    <vendor>Rails project</vendor>
+    <homepage href="rails.sf.net"/>
 
-    </title>
-    <vendor>
-
-    </vendor>
-    <description kind="one-line">
-
+    <description kind="one-line">Rails 18xx moderator</description>
+    <description kind="short">Rails is a moderator program for 18xx games</description>
+    <description kind="tooltip">Rails is a Java game engine intended to play any of the 18xx series of turn-based board games.
+    For 3-6 players and set in the 19th century, these games allow players to step into the shoes of the robber barons and railroad tycoons of the time period..
     </description>
-    <description kind="short">
+    
+    <icon href="images/yellow_station.png"/>
+   
+   <association mime-type="application-x/Rails18xx"  extensions="rails"/> 
+   <offline-allowed/>
+   <shortcut online="false" install="true">
+      <desktop/>
+      <menu submenu="Games"/>
+    </shortcut>
+   <update check="always" policy="prompt-update">
 
-    </description>
-    <description kind="tooltip">
-
-    </description>
-    <offline-allowed/>
   </information>
   <security>
     <all-permissions/>
@@ -24,5 +31,6 @@
   <resources>
     <j2se version="" initial-heap-size="128m" max-heap-size="512m"/>
   </resources>
+  <!-- main-class set by build.gradle -->
   <application-desc main-class=""/>
 </jnlp>
