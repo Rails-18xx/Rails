@@ -226,29 +226,38 @@ public class StartRound_1837_Coal extends StartRound {
             ReportBuffer.add(this, LocalText.getText("ALL_PASSED"));
             for (StartItem item : startPacket.getItems()) {
                 if ((item.getStatus() == 2) && (item.getBasePrice() != 0)) {
+                    if (item.getBasePrice() >=10) {
                     item.reduceBasePriceBy(10);
+                    } else { //Assumption only 5 G remain
+                        item.reduceBasePriceBy(5);
+                    }
                     ReportBuffer.add(
                             this,
                             LocalText.getText("ITEM_PRICE_REDUCED",
                                     item.getId(),
-
                                     Bank.format(this, item.getBasePrice())));
                 }
             }
 
             numPasses.set(0);
-            if (startPacket.getFirstUnsoldItem().getBasePrice() == 0) {
-                assignItem(playerManager.getCurrentPlayer(),
-                        startPacket.getFirstUnsoldItem(), 0, 0);
-                getRoot().getPlayerManager().setPriorityPlayerToNext();
-            } else {
-                // BR: If the first item's price is reduced, but not to 0,
-                // we still need to advance to the next player
-                playerManager.setCurrentToNextPlayer();
-
-            }
             numRoundsPassed.add(1);
-
+            playerManager.setCurrentToNextPlayer();
+            //need to changed to step through the list and find if theres an unsold item 
+            //with price equals 0. the first unsold might not be the one we are looking for.
+            for (StartItem unsoldItem : startPacket.getUnsoldItems()) {
+            
+            if (unsoldItem.getBasePrice() == 0) {
+                assignItem(playerManager.getCurrentPlayer(),
+                        unsoldItem, 0, 0);
+                playerManager.setCurrentToNextPlayer();
+                getRoot().getPlayerManager().setPriorityPlayerToNext();
+                resetStartPacketPrices(numRoundsPassed.value());
+                numRoundsPassed.set(0);
+                //Todo: Startroundwindow doesnt show the actual player that has acquired the item for the price of 0
+                
+                return true;
+                } 
+            }
         } else {
             playerManager.setCurrentToNextPlayer();
         }
@@ -264,9 +273,7 @@ public class StartRound_1837_Coal extends StartRound {
      */
     @Override
     protected boolean buy(String playerName, BuyStartItem boughtItem) {
-        // TODO: If the player buys a price reduced paper the other price
-        // reduced papers need to be set back to the
-        // base price
+
         StartItem item = boughtItem.getStartItem();
         int lastBid = item.getBid();
         String errMsg = null;
@@ -320,7 +327,10 @@ public class StartRound_1837_Coal extends StartRound {
         List<StartItem> startItems = startPacket.getItems();
         for (StartItem item : startItems) {
             if ((!item.isSold()) && (item.getStatus() == StartItem.BUYABLE)) {
-                item.reduceBasePriceBy(-(i * 10));
+                item.reduceBasePriceBy(-(i * 10));// Attention there is at least one certificate that has a price not based on 10G.
+             if (item.getId() =="AB") {
+                 item.reduceBasePriceBy(5);
+             }
             }
         }
 
