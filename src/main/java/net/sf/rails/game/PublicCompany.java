@@ -318,8 +318,8 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         bonusValue.setBonuses(bonuses);
 
         if (hasStockPrice) {
-            parPrice = PriceModel.create(this, "ParPrice");
-            currentPrice = PriceModel.create(this, "currentPrice");
+            parPrice = PriceModel.create(this, "ParPrice", false);
+            currentPrice = PriceModel.create(this, "currentPrice", true);
             canSharePriceVary = BooleanState.create(this, "canSharePriceVary", true);
         }
     }
