@@ -236,6 +236,7 @@ task cleanWebstart (type:Delete, dependsOn:clean) {
 
 launch4j {
     mainClassName = "${railsMainClass}"
+    jar = "${buildDir}/libs/${project.name}-${project.version}-all.jar"
     outfile = "${project.name}-${project.version}.exe"
     icon = "../../${buildFilesDir}/${railsIcon}"
     version = project.version.replace("alpha","98.").replace("beta","99.")
