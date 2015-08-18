@@ -58,8 +58,11 @@ apply plugin: 'com.admc.javaPropFile'
         
 // Rails variables
 def railsCodebase = 'rails.sourceforge.net'
-def railsAppName = 'Rails'
 def railsMainClass = 'net.sf.rails.util.RunGame'
+def railsVendor = 'Rails project'
+def railsHomepage = 'http://rails.sf.net'
+def railsDescription = 'Rails is a moderator program for 18xx games'
+def railsIcon = 'rails.ico'
 
 // Key variables
 def keyAlias = 'rails18xx'
@@ -142,7 +145,7 @@ task (updateManifest, dependsOn: copyJarFiles) << {
 	delegate.manifest {
 	  attribute(name: "Permissions", value: "all-permissions")
 	  attribute(name: "Codebase", value: "${railsCodebase}")
-	  attribute(name: "Application-Name", value: "${railsAppName}") 
+	  attribute(name: "Application-Name", value: "${name}") 
 	  attribute(name: "Trusted-Only", value: "true")
 	}
       }
@@ -189,9 +192,15 @@ task generateWebStartJnlp() << {
 
     // Setting information values
     def information = root.information[0]
+    
     def title = information.title[0]
+    title.setValue("${name}")
+    
     def vendor = information.vendor[0]
-    title.setValue("${railsAppName}")
+    vendor.setValue("${railsVendor}")
+    
+    def homepage = information.homepage[0]
+    homepage.@href = "${railsHomepage}"
     
     // Setting resources
     def resource = root.resources[0]
@@ -231,6 +240,15 @@ task cleanWebstart (type:Delete, dependsOn:clean) {
 
 launch4j {
     mainClassName = "${railsMainClass}"
+    outfile = "${project.name}-${project.version}.exe"
+    icon = "../../${buildFilesDir}/${railsIcon}"
+    version = project.version.replace("alpha","98.").replace("beta","99.")
+    textVersion = "${project.version}"
+    copyright = "GPL"
+    companyName = "${railsVendor}"
+    description = "${railsDescription}"
+    productName = "${project.name}"
+    internalName = "${project.name}"
 }	
         
 // exclude the signatures
@@ -238,5 +256,3 @@ shadow {
     exclude "META-INF/*.DSA"
     exclude "META-INF/*.RSA"
 }
-
-        
