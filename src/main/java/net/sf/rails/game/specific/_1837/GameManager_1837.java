@@ -8,6 +8,7 @@ import net.sf.rails.game.NationalFormationRound;
 import net.sf.rails.game.Phase;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.Round;
+import net.sf.rails.game.StartPacket;
 import net.sf.rails.game.StartRound;
 import net.sf.rails.game.specific._1837.OperatingRound_1837;
 
@@ -71,6 +72,22 @@ public class GameManager_1837 extends GameManager {
 
 
     
+    /* (non-Javadoc)
+     * @see net.sf.rails.game.GameManager#runIfStartPacketIsNotCompletelySold()
+     */
+    @Override
+    protected boolean runIfStartPacketIsNotCompletelySold() {
+        //After the first Startpacket sold out there will be Operation Rounds
+        StartPacket nextStartPacket = getRoot().getCompanyManager().getNextUnfinishedStartPacket();
+        if (nextStartPacket.getId() == "Coal Mines") {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+
     public void startHungaryFormationRound(OperatingRound_1837 or) {
         interruptedRound = or;
         String roundName;
