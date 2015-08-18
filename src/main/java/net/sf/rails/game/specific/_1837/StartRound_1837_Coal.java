@@ -169,6 +169,12 @@ public class StartRound_1837_Coal extends StartRound {
                 }
 
             } /* Pass is always allowed */
+            // No its not if there is a startItem with a price of zero the player has to buy that.
+            for (StartItem item : buyableItems) {
+                if (item.getBasePrice() == 0) {
+                    return true;
+                }
+            }
             possibleActions.add(new NullAction(NullAction.Mode.PASS));
 
         }
@@ -242,23 +248,7 @@ public class StartRound_1837_Coal extends StartRound {
             numPasses.set(0);
             numRoundsPassed.add(1);
             playerManager.setCurrentToNextPlayer();
-            //need to changed to step through the list and find if theres an unsold item 
-            //with price equals 0. the first unsold might not be the one we are looking for.
-            for (StartItem unsoldItem : startPacket.getUnsoldItems()) {
-            
-            if (unsoldItem.getBasePrice() == 0) {
-                assignItem(playerManager.getCurrentPlayer(),
-                        unsoldItem, 0, 0);
-                playerManager.setCurrentToNextPlayer();
-                getRoot().getPlayerManager().setPriorityPlayerToNext();
-                resetStartPacketPrices(numRoundsPassed.value());
-                numRoundsPassed.set(0);
-                //Todo: Startroundwindow doesnt show the actual player that has acquired the item for the price of 0
-                
-                return true;
-                } 
-            }
-        } else {
+       } else {
             playerManager.setCurrentToNextPlayer();
         }
 
