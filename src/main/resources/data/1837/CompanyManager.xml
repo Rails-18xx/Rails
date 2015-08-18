@@ -348,20 +348,20 @@
                 <Certificate shares="1" number="6"/>
                 <Certificate shares="1" number="2" available="false"/>
         </Company>
-        <Company name="Sd" longname="Südbahn" type="National" tokens="5" fgColour="FFFFFF" bgColour="FF5400" foundingCompany="S1">
+        <Company name="Sd" longname="Südbahn" type="National" tokens="5" fgColour="FFFFFF" bgColour="FF5400" startspace="K4" foundingCompany="S1">
                 <Home hex="G18" city="4" mapDisplay="no"/>
                 <Certificate type="President" shares="1" status="reserved"/>
                 <Certificate shares="1" number="4"/>
                 <Certificate shares="1" number="5" available="false"/>
                 <Trains limit="4,4,4,3"/>
         </Company>
-        <Company name="KK" longname="k.k. Staatsbahn" type="National" tokens="3" fgColour="FFFFFF" bgColour="C98A5C" foundingCompany="K1">
+        <Company name="KK" longname="k.k. Staatsbahn" type="National" tokens="3" fgColour="FFFFFF" bgColour="C98A5C" startspace="I4" foundingCompany="K1">
                 <Home hex="G18" city="1" mapDisplay="no"/>
                 <Certificate type="President" shares="1" status="reserved"/>
                 <Certificate shares="1" number="6"/>
                 <Certificate shares="1" number="3" available="false"/>
         </Company>
-        <Company name="Ug" longname="Ungarische Staatsbahn" type="National" tokens="3" fgColour="FFFFFF" bgColour="FF55AA" foundingCompany="U1">
+        <Company name="Ug" longname="Ungarische Staatsbahn" type="National" tokens="3" fgColour="FFFFFF" bgColour="FF55AA" startspace="M4" foundingCompany="U1">
                 <Home hex="H23" city="1" mapDisplay="no"/>
                 <Certificate type="President" shares="1" status="reserved"/>
                 <Certificate shares="1" number="4"/>
