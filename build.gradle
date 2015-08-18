@@ -3,16 +3,7 @@
 import org.apache.tools.ant.filters.*
 import java.text.SimpleDateFormat
 
-// Addition of shadow plugin to create one jars
-// reference: https://github.com/johnrengelman/shadow
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:0.8'
-    }
-}
+
 
 // Addition of JavaProfile plugin to read Java property files
 // reference: https://github.com/unsaved/gradle-javaPropFile-plugin
@@ -41,6 +32,13 @@ buildscript {
   }
 }
 
+// Addition of shadow plugin to create one jars
+// reference: https://github.com/johnrengelman/shadow
+plugins {
+  id 'java' // or 'groovy' Must be explicitly applied
+  id 'com.github.johnrengelman.shadow' version '1.2.2'
+}
+
 repositories {
   mavenCentral()
 }
@@ -50,8 +48,6 @@ sourceCompatibility = 1.6
 targetCompatibility = 1.6
 
 apply plugin: "edu.sc.seis.launch4j"
-
-apply plugin: 'shadow'
 
 apply plugin: 'com.admc.javaPropFile'
 
@@ -194,7 +190,7 @@ task generateWebStartJnlp() << {
     def information = root.information[0]
     
     def title = information.title[0]
-    title.setValue("${name}")
+    title.setValue("${project.name}")
     
     def vendor = information.vendor[0]
     vendor.setValue("${railsVendor}")
@@ -252,7 +248,7 @@ launch4j {
 }	
         
 // exclude the signatures
-shadow {
-    exclude "META-INF/*.DSA"
-    exclude "META-INF/*.RSA"
-}
+//shadow {
+//    exclude "META-INF/*.DSA"
+//    exclude "META-INF/*.RSA"
+//}
