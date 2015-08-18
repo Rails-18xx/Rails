@@ -1,9 +1,9 @@
 # Gradle build
-build/
+/build/
 .gradle/
 
 # Eclipse build
-classes/
+/classes/
 
 # Log files
 **/18xx.log
