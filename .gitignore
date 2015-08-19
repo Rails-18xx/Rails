@@ -10,3 +10,9 @@
 
 # backup files
 **/*.*~
+
+# icon thumbnail files
+**/.directory
+
+# failed Rails test files
+**/*.failed
