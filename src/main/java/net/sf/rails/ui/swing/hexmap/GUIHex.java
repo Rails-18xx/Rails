@@ -619,7 +619,7 @@ public class GUIHex implements Observer {
         case 4:
             delta_x = (-0.5 + currentToken % 2) * CITY_SIZE * dimensions.zoomFactor;
             delta_y = (0.5 - currentToken / 2) * CITY_SIZE * dimensions.zoomFactor;
-            
+            break;
         case 6:
             switch (currentToken)  {
             case 0:
