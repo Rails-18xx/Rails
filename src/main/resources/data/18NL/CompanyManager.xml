@@ -89,7 +89,7 @@
 	</Company>
 	<Company name="ZHE" type="Public" tokens="2" fgColour="0,0,0" bgColour="186,200,255"
 			longname="Zuid-Hollandsche Electrische Spoorweg">
-		<Home hex="G2"/>
+		<Home hex="G2" city="2" />
 	</Company>
 	<Company name="NRS" type="Public" tokens="2" fgColour="0,0,0" bgColour="144,234,235"
 			longname="Nederlandsche Rhijnspoorweg">
@@ -98,6 +98,8 @@
 	<Company name="NFL" type="Public" tokens="2" fgColour="0,0,0" bgColour="140,0,236"
 			longname="Noord-Friesche Locaalspoorweg">
 		<Home hex="B15" />
+		<Certificate type="President" shares="3"/>
+		<Certificate shares="1" number="7"/>
 		<FirstTrainCloses type="Private" name="P-6"/>
 	</Company>
 	

@@ -1,6 +1,6 @@
 use File::Copy;
-$dirWID = "TDwithID";
-$dirWOID = "TDwoID";
+$dirWID = "TDwithID/TileDictionary";
+$dirWOID = "TDwoID/TileDictionary";
 $dirSVG = "svg";
 $dirHandMade = "handmade";
 

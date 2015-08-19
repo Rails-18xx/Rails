@@ -114,11 +114,19 @@ Not yet implemented:
 	<Game name="18Kaas">
 		<Note>Fully playable</Note>
 		<Description>18Kaas (Netherlands)
-(c) 1992 ERJO GAMES
-
-Should work, but has not been extensively tested. Limitations as with 1830.
+		Same restrictions as 1830
+		(c) 1992 ERJO GAMES
 		</Description>
 		<Players minimum="3" maximum="6"/>
+	</Game>
+
+	<Game name="18NL">
+		<Note>Fully playable</Note>
+		<Description>18NL Niederland (Netherlands)
+		Same restrictions as 1830
+		Copyright 1999 Helmut Ohley
+		</Description>
+		<Players minimum="2" maximum="6"/>
 	</Game>
     
 	 <Game name="18TN">
