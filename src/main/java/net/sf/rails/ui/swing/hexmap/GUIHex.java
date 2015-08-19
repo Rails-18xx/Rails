@@ -720,7 +720,7 @@ public class GUIHex implements Observer {
                         int oldsize = tt.length();
                         for (BaseToken token : tokens) {
                             if (tt.length() > oldsize) tt.append(",");
-                            tt.append(token.getId());
+                            tt.append(token.getParent().getId());
                         }
                         tt.append(")");
                     }
