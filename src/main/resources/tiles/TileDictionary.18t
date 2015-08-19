@@ -547,30 +547,6 @@ object TTilesWrapper
         end>
     end
     item
-      Code = 1012
-      LongName = '12/1830nl'
-      Category = 'X'
-      Level = tlGreen
-      Connections = <
-        item
-          Position1 = tpCenter
-          Position2 = tp4SideB
-        end
-        item
-          Position1 = tpCenter
-          Position2 = tp4SideC
-        end
-        item
-          Position1 = tpCenter
-          Position2 = tp4SideD
-        end>
-      Junctions = <
-        item
-          JunType = jtDoubleCity
-          Revenue = 50
-        end>
-    end
-    item
       Code = 2012
       LongName = '12/1831'
       Category = 'C'
@@ -615,30 +591,6 @@ object TTilesWrapper
         item
           JunType = jtCity
           Revenue = 30
-        end>
-    end
-    item
-      Code = 1013
-      LongName = '13/1830nl'
-      Category = 'X'
-      Level = tlGreen
-      Connections = <
-        item
-          Position1 = tpCenter
-          Position2 = tp4SideA
-        end
-        item
-          Position1 = tpCenter
-          Position2 = tp4SideC
-        end
-        item
-          Position1 = tpCenter
-          Position2 = tp4SideE
-        end>
-      Junctions = <
-        item
-          JunType = jtDoubleCity
-          Revenue = 50
         end>
     end
     item
@@ -1216,34 +1168,6 @@ object TTilesWrapper
         item
           JunType = jtDoubleCity
           Revenue = 40
-        end>
-    end
-    item
-      Code = 1038
-      LongName = '38/1830nl'
-      Category = 'X'
-      Level = tlBrown
-      Connections = <
-        item
-          Position1 = tpCenter
-          Position2 = tp4SideF
-        end
-        item
-          Position1 = tpCenter
-          Position2 = tp4SideA
-        end
-        item
-          Position1 = tpCenter
-          Position2 = tp4SideC
-        end
-        item
-          Position1 = tpCenter
-          Position2 = tp4SideE
-        end>
-      Junctions = <
-        item
-          JunType = jtDoubleCity
-          Revenue = 70
         end>
     end
     item
@@ -3437,30 +3361,6 @@ object TTilesWrapper
         end>
     end
     item
-      Code = 1091
-      LongName = '91/1830nl'
-      Category = 'X'
-      Level = tlGreen
-      Connections = <
-        item
-          Position1 = tpCenter
-          Position2 = tp4SideF
-        end
-        item
-          Position1 = tpCenter
-          Position2 = tp4SideC
-        end
-        item
-          Position1 = tpCenter
-          Position2 = tp4SideD
-        end>
-      Junctions = <
-        item
-          JunType = jtDoubleCity
-          Revenue = 50
-        end>
-    end
-    item
       Code = 2091
       LongName = '91/1869AM'
       Level = tlGreen
@@ -3523,30 +3423,6 @@ object TTilesWrapper
         end>
     end
     item
-      Code = 1092
-      LongName = '92/1830nl'
-      Category = 'X'
-      Level = tlGreen
-      Connections = <
-        item
-          Position1 = tpCenter
-          Position2 = tp4SideF
-        end
-        item
-          Position1 = tpCenter
-          Position2 = tp4SideC
-        end
-        item
-          Position1 = tpCenter
-          Position2 = tp4SideE
-        end>
-      Junctions = <
-        item
-          JunType = jtDoubleCity
-          Revenue = 50
-        end>
-    end
-    item
       Code = 2092
       LongName = '92/1869AM'
       Level = tlGreen
@@ -3604,26 +3480,6 @@ object TTilesWrapper
         item
           JunType = jtDoubleCity
           Revenue = 20
-        end>
-    end
-    item
-      Code = 1093
-      LongName = '93/1830nl'
-      Category = 'Z'
-      Level = tlBrown
-      Connections = <
-        item
-          Position1 = tpCenter
-          Position2 = tp4SideB
-        end
-        item
-          Position1 = tpCenter
-          Position2 = tp4SideD
-        end>
-      Junctions = <
-        item
-          JunType = jtCity
-          Revenue = 70
         end>
     end
     item
@@ -17396,6 +17252,323 @@ object TTilesWrapper
         item
           JunType = jtCity
           Revenue = 40
+        end>
+    end
+    item
+      Code = -1059
+      LongName = 'NL E6'
+      Category = 'X'
+      CategoryPosition = tp3SideC
+      Level = tlMapUpgradableToGreen
+      Connections = <
+        item
+          Position1 = tp2CornerE
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tp2CornerB
+          Position2 = tp4SideB
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Position = tp2CornerE
+          Revenue = 40
+          RevenuePosition = tp2SideF
+        end
+        item
+          JunType = jtCity
+          Position = tp2CornerB
+          Revenue = 40
+          RevenuePosition = tp2SideF
+        end>
+    end
+    item
+      Code = -2059
+      LongName = 'NL H3'
+      Category = 'X'
+      CategoryPosition = tp3SideC
+      Level = tlMapUpgradableToGreen
+      Connections = <
+        item
+          Position1 = tp4SideD
+          Position2 = tp2CornerE
+        end
+        item
+          Position1 = tp4SideB
+          Position2 = tp2CornerB
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Position = tp2CornerE
+          Revenue = 30
+          RevenuePosition = tp2SideF
+        end
+        item
+          JunType = jtCity
+          Position = tp2CornerB
+          Revenue = 30
+          RevenuePosition = tp2SideF
+        end>
+    end
+    item
+      Code = -1759
+      LongName = 'NL B15'
+      Category = 'Z'
+      CategoryPosition = tp3SideD
+      Level = tlMapUpgradableToBrown
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideE
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Revenue = 10
+          RevenuePosition = tp3SideA
+        end>
+    end
+    item
+      Code = -1101
+      LongName = 'NL F13'
+      Connections = <
+        item
+          Position1 = tp4SideE
+          Position2 = tpCenter
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tp4SideE
+          Position2 = tp2CornerD
+        end
+        item
+          Position1 = tp2CornerD
+          Position2 = tp4SideB
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Revenue = 20
+        end>
+    end
+    item
+      Code = 1012
+      LongName = 'NL X green'
+      Category = 'X'
+      CategoryPosition = tp3SideC
+      Level = tlGreen
+      Connections = <
+        item
+          Position1 = tp4SideF
+          Position2 = tpCenter
+        end
+        item
+          Position1 = tp4SideA
+          Position2 = tpCenter
+        end
+        item
+          Position1 = tp4SideB
+          Position2 = tpCenter
+        end>
+      Junctions = <
+        item
+          JunType = jtDoubleCity
+          Revenue = 50
+          RevenuePosition = tp3SideD
+        end>
+    end
+    item
+      Code = 1013
+      LongName = 'NL X green'
+      Category = 'X'
+      CategoryPosition = tp3SideC
+      Level = tlGreen
+      Connections = <
+        item
+          Position1 = tp4SideF
+          Position2 = tpCenter
+        end
+        item
+          Position1 = tp4SideB
+          Position2 = tpCenter
+        end
+        item
+          Position1 = tp4SideD
+          Position2 = tpCenter
+        end>
+      Junctions = <
+        item
+          JunType = jtDoubleCity
+          Revenue = 50
+          RevenuePosition = tp3SideA
+        end>
+    end
+    item
+      Code = 1205
+      LongName = 'NL X green'
+      Category = 'X'
+      CategoryPosition = tp3SideC
+      Level = tlGreen
+      Connections = <
+        item
+          Position1 = tp4SideA
+          Position2 = tpCenter
+        end
+        item
+          Position1 = tp4SideB
+          Position2 = tpCenter
+        end
+        item
+          Position1 = tp4SideD
+          Position2 = tpCenter
+        end>
+      Junctions = <
+        item
+          JunType = jtDoubleCity
+          Revenue = 50
+          RevenuePosition = tp3SideE
+        end>
+    end
+    item
+      Code = 2206
+      LongName = 'NL X green'
+      Category = 'X'
+      CategoryPosition = tp3SideC
+      Level = tlGreen
+      Connections = <
+        item
+          Position1 = tp4SideA
+          Position2 = tpCenter
+        end
+        item
+          Position1 = tp4SideF
+          Position2 = tpCenter
+        end
+        item
+          Position1 = tp4SideD
+          Position2 = tpCenter
+        end>
+      Junctions = <
+        item
+          JunType = jtDoubleCity
+          Revenue = 50
+          RevenuePosition = tp3SideE
+        end>
+    end
+    item
+      Code = 2218
+      LongName = 'NL X brown'
+      Category = 'X'
+      CategoryPosition = tp3SideC
+      Level = tlBrown
+      Connections = <
+        item
+          Position1 = tp4SideA
+          Position2 = tpCenter
+        end
+        item
+          Position1 = tp4SideB
+          Position2 = tpCenter
+        end
+        item
+          Position1 = tp4SideE
+          Position2 = tpCenter
+        end
+        item
+          Position1 = tp4SideD
+          Position2 = tpCenter
+        end>
+      Junctions = <
+        item
+          JunType = jtDoubleCity
+          Revenue = 70
+          RevenuePosition = tp3SideF
+        end>
+    end
+    item
+      Code = 1219
+      LongName = 'NL X brown'
+      Category = 'X'
+      CategoryPosition = tp3SideC
+      Level = tlBrown
+      Connections = <
+        item
+          Position1 = tp4SideD
+          Position2 = tpCenter
+        end
+        item
+          Position1 = tp4SideF
+          Position2 = tpCenter
+        end
+        item
+          Position1 = tp4SideA
+          Position2 = tpCenter
+        end
+        item
+          Position1 = tp4SideB
+          Position2 = tpCenter
+        end>
+      Junctions = <
+        item
+          JunType = jtDoubleCity
+          Revenue = 70
+          RevenuePosition = tp3SideE
+        end>
+    end
+    item
+      Code = 1336
+      LongName = 'NL Z brown'
+      Category = 'Z'
+      CategoryPosition = tp3SideD
+      Level = tlBrown
+      Connections = <
+        item
+          Position1 = tp4SideE
+          Position2 = tpCenter
+        end
+        item
+          Position1 = tp4SideC
+          Position2 = tpCenter
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Revenue = 70
+          RevenuePosition = tp3SideA
+        end>
+    end
+    item
+      Code = -3059
+      LongName = 'NL G2'
+      Category = 'X'
+      CategoryPosition = tp3SideC
+      Level = tlMapUpgradableToGreen
+      Connections = <
+        item
+          Position1 = tp4SideF
+          Position2 = tp2SideA
+        end
+        item
+          Position1 = tp4SideE
+          Position2 = tp2SideD
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Position = tp2SideD
+          Revenue = 30
+          RevenuePosition = tp2CornerF
+        end
+        item
+          JunType = jtCity
+          Position = tp2SideA
+          Revenue = 30
+          RevenuePosition = tp2CornerF
         end>
     end>
 end
