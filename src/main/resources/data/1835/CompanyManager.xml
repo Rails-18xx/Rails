@@ -60,7 +60,7 @@
 	</Company>
 	<Company name="PfB" longname="Pfalzbahnen" type="Private" basePrice="150" revenue="15">
 		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
+			<SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" closesPrivate="no" class="net.sf.rails.game.special.SpecialTileLay">
 				<SpecialTileLay location="L6" colour="green" extra="yes" free="yes" />
 			</SpecialProperty>
 			<SpecialProperty condition="ifOwnedByPlayer" when="orTurn" class="net.sf.rails.game.special.SpecialBaseTokenLay">
@@ -69,8 +69,8 @@
 		</SpecialProperties>
 		<ClosingConditions>
             <Phase>5</Phase>
-			<SpecialProperties condition="ifAllExercised"/>
-			<CloseManually/> <!-- Workaround, may be needed if a tile or token is not laid via this special property -->
+            <!-- Any exercised, but tile lay does not close, so only token lay remains -->
+			<SpecialProperties condition="ifAnyExercised"/>
 		</ClosingConditions>
 	</Company>
 	<Company name="LD" longname="Leipzig-Dresdner Bahn" type="Private" basePrice="190">

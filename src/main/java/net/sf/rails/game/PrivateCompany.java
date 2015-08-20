@@ -46,9 +46,10 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
     // Closing conditions
     protected int closingPhase;
     // Closing when special properties are used
-    protected boolean closeIfAllExercised = false;
-    protected boolean closeIfAnyExercised = false;
-    protected boolean closeAtEndOfTurn = false; // E.g. 1856 W&SR
+    protected boolean closeIfAllExercised = false; // all exercised => closing
+    protected boolean closeIfAnyExercised = false; // any exercised => closing
+    protected boolean closeAtEndOfTurn = false; // closing at end of OR turn, E.g. 1856 W&SR
+
     // Prevent closing conditions sfy 1889
     protected List<String> preventClosingConditions = new ArrayList<String>();
     // Close at start of phase
