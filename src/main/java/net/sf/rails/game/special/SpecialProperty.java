@@ -42,6 +42,11 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
     protected String whenText = "";
     protected String transferText = "";
     protected boolean permanent = false;
+    // if exercising contributes to closing, if private has the closing conditions set, thus default is true
+    // allows to exclude special properties that do not close privates that are closeable
+    protected boolean closesPrivate = true;
+    
+    
     protected boolean isORProperty = false;
     protected boolean isSRProperty = false;
     
@@ -80,8 +85,9 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
 
         transferText = tag.getAttributeAsString("transfer", "");
         
-        // sfy 1889
-        permanent = tag.getAttributeAsBoolean("permanent", false);  
+        permanent = tag.getAttributeAsBoolean("permanent", permanent); 
+        
+        closesPrivate = tag.getAttributeAsBoolean("closesPrivate", closesPrivate);
         
     }
     
@@ -181,7 +187,7 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
     public void setExercised (boolean value) {
         if (permanent) return; // sfy 1889 
         exercised.set(value);
-        if (value && originalCompany instanceof PrivateCompany) {
+        if (value && closesPrivate && originalCompany instanceof PrivateCompany) {
             ((PrivateCompany)originalCompany).checkClosingIfExercised(false);
         }
     }
