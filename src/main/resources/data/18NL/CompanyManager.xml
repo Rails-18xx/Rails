@@ -26,12 +26,16 @@
 	<Company name="P-1" type="Private" basePrice="20" revenue="0"
 			longname="Private 1">
 		<Blocking hex="F5"/>
-<!-- 		TODO Special: Extra Tile on F6 -->
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
+				<SpecialTileLay colour="yellow" location="F5" extra="yes" free="no" discount="20" />
+			</SpecialProperty>
+		</SpecialProperties>
 	</Company>
 	<Company name="P-2" type="Private" basePrice="40" revenue="5"
 			longname="Private 2">
 		<Blocking hex="F15,G16"/>
-<!-- 		TODO Special: Extra Token in hex without track -->
+		
 	</Company>
 	<Company name="P-3" type="Private" basePrice="70" revenue="10"
 		longname="Private 3">

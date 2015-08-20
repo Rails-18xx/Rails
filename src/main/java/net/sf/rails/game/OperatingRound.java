@@ -1508,6 +1508,9 @@ public class OperatingRound extends Round implements Observer {
                 cost = 0;
             } else {
                 cost = hex.getTileCost();
+                if (stl != null) {
+                    cost = Math.max(0, cost-stl.getDiscount());
+                }
             }
 
             // Amount must be non-negative multiple of 10
@@ -1835,8 +1838,9 @@ public class OperatingRound extends Round implements Observer {
         for (String colour : layableColours) {
             if (hexes != null) {
                 for (MapHex hex : hexes) {
+                    int cost = Math.max(0, hex.getTileCost() - stl.getDiscount());
                     // Check if the company can pay any costs (if not free)
-                    if (!stl.isFree() && cash < hex.getTileCost()) continue;
+                    if (!stl.isFree() && cash < cost) continue;
 
                     // At least one hex does not have that colour yet
                     // TODO: Check if this can be rewritten in a simpler fashion
