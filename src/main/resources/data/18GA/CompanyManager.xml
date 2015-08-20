@@ -36,10 +36,6 @@
 	<Company name="W&amp;S" type="Private" basePrice="70" revenue="15"
 		longname="Waycross and Southern Railroad">
 		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep"
-				class="net.sf.rails.game.special.SpecialTileLay">
-				<SpecialTileLay location="I9" extra="no" free="no" tile="57"/>
-			</SpecialProperty>
 			<SpecialProperty condition="ifOwnedByCompany" when="tokenLayingStep"
 				class="net.sf.rails.game.special.SpecialBaseTokenLay">
 				<SpecialBaseTokenLay location="I9" extra="no" free="yes"/>
