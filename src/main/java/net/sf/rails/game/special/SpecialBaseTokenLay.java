@@ -17,6 +17,7 @@ public class SpecialBaseTokenLay extends SpecialProperty {
     private boolean extra = false;
     private boolean free = false;
     private boolean connected = false;
+    private boolean requiresTile = false;
 
     /**
      * Used by Configure (via reflection) only
@@ -43,6 +44,7 @@ public class SpecialBaseTokenLay extends SpecialProperty {
         extra = tokenLayTag.getAttributeAsBoolean("extra", extra);
         free = tokenLayTag.getAttributeAsBoolean("free", free);
         connected = tokenLayTag.getAttributeAsBoolean("connected", connected);
+        requiresTile = tokenLayTag.getAttributeAsBoolean("requiresTile", requiresTile);
 
         description = LocalText.getText("LayBaseTokenInfo",
                 locationCodes,
@@ -65,6 +67,10 @@ public class SpecialBaseTokenLay extends SpecialProperty {
 
     public boolean isFree() {
         return free;
+    }
+    
+    public boolean requiresTile() {
+        return requiresTile;
     }
 
     public List<MapHex> getLocations() {
