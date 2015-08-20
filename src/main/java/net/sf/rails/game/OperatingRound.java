@@ -2123,12 +2123,11 @@ public class OperatingRound extends Round implements Observer {
                 if (locations != null && !locations.isEmpty()) {
                     boolean canLay = false;
                     for (MapHex location : locations) {
-                        // TODO: The zero has been hardcoded below, is it always
-                        // valid?
-                        if (!location.hasTokenOfCompany(company)
-                            && !location.isBlockedForTokenLays(company,
-                                    location.getRelatedStop(0))) {
-                            canLay = true;
+                        if (location.hasTokenOfCompany(company)) {
+                            continue;
+                        }
+                        for (Stop stop:location.getStops()) {
+                            canLay = !location.isBlockedForTokenLays(company, stop);
                         }
                     }
                     if (!canLay) continue;

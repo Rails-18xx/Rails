@@ -35,6 +35,11 @@
 	<Company name="P-2" type="Private" basePrice="40" revenue="5"
 			longname="Private 2">
 		<Blocking hex="F15,G16"/>
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByCompany" when="tokenLayingStep" class="net.sf.rails.game.special.SpecialBaseTokenLay">
+				<SpecialBaseTokenLay location="E4,E16,F9,F15,F19,H13,I4,I10,J5,J7,K10" extra="no" free="yes" requiresNoTile = "yes"/>
+			</SpecialProperty>
+		</SpecialProperties>
 		
 	</Company>
 	<Company name="P-3" type="Private" basePrice="70" revenue="10"
