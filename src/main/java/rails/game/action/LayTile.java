@@ -237,8 +237,12 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
     }
     
     public int getPotentialCost(MapHex hex) {
-        if (specialProperty instanceof SpecialTileLay && specialProperty.isFree()) {
-            return 0;
+        if (specialProperty != null) {
+            if (specialProperty.isFree()) {
+                return 0; 
+            } else {
+                return Math.max(0, hex.getTileCost() - specialProperty.getDiscount());
+            }
         }
         return hex.getTileCost();
     }

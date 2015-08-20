@@ -1,6 +1,7 @@
 package net.sf.rails.game.special;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import net.sf.rails.common.LocalText;
@@ -19,6 +20,7 @@ public class SpecialTileLay extends SpecialProperty {
     private String name = null;
     private boolean extra = false;
     private boolean free = false;
+    private int discount = 0;
     private boolean connected = false;
     
     /** Tile colours that can be laid with this special property.
@@ -57,7 +59,8 @@ public class SpecialTileLay extends SpecialProperty {
 
         extra = tileLayTag.getAttributeAsBoolean("extra", extra);
         free = tileLayTag.getAttributeAsBoolean("free", free);
-        connected = tileLayTag.getAttributeAsBoolean("connected", connected); /* sfy 1889 extension */
+        connected = tileLayTag.getAttributeAsBoolean("connected", connected);
+        discount = tileLayTag.getAttributeAsInteger("discount", discount);
 
         if (tileId != null) {
             description = LocalText.getText("LayNamedTileInfo",
@@ -65,17 +68,18 @@ public class SpecialTileLay extends SpecialProperty {
                     name != null ? name : "",
                             locationCodes,
                             (extra ? LocalText.getText("extra"):LocalText.getText("notExtra")),
-                            (free ? LocalText.getText("noCost") : LocalText.getText("normalCost")),
+                            (free ? LocalText.getText("noCost") : discount != 0 ? LocalText.getText("discount", discount) : 
+                                LocalText.getText("normalCost")),
                             (connected ? LocalText.getText("connected") : LocalText.getText("unconnected"))
-                            /* sfy 1889 extension */
             );
         } else {
             description = LocalText.getText("LayTileInfo",
                     locationCodes,
+                    (tileColours != null ? Arrays.toString(tileColours).replaceAll("[\\[\\]]", ""): ""),
                     (extra ? LocalText.getText("extra"):LocalText.getText("notExtra")),
-                    (free ? LocalText.getText("noCost") : LocalText.getText("normalCost")),
+                    (free ? LocalText.getText("noCost") : discount != 0 ? LocalText.getText("discount", discount) : 
+                        LocalText.getText("normalCost")),
                     (connected ? LocalText.getText("connected") : LocalText.getText("unconnected"))
-                    /* sfy 1889 extension */
             );
         }
 
@@ -115,7 +119,11 @@ public class SpecialTileLay extends SpecialProperty {
     public boolean isFree() {
         return free;
     }
-    // sfy 1889
+    
+    public int getDiscount() {
+        return discount;
+    }
+
     public boolean requiresConnection() {
         return connected;
     }
