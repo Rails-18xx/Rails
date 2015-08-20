@@ -82,7 +82,8 @@ public class StartPacket extends RailsAbstractItem {
                     Util.hasValue(itemTag.getAttributeAsString("president", ""));
            
             int basePrice = itemTag.getAttributeAsInteger("basePrice", 0);
-            StartItem item = StartItem.create(this, itemName, itemType, basePrice, index++, president);
+            boolean reduceable = itemTag.getAttributeAsBoolean("reduceable", false); 
+            StartItem item = StartItem.create(this, itemName, itemType, basePrice, reduceable, index++, president);
             items.add(item);
 
             // Optional attributes

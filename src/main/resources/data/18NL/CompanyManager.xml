@@ -115,8 +115,8 @@
 	<StartPacket roundClass="net.sf.rails.game.StartRound_1830">
 		<Bidding initial="5" minimum="5" increment="1"/>
 		<Item name="P-1" type="Private" basePrice="20"/>
-		<Item name="P-2" type="Private" basePrice="40"/> 
-<!-- TODO: P-2 is reduceable -->
+		<!-- P-2 is reducable, as P-1 has no revenue -->
+		<Item name="P-2" type="Private" basePrice="40" reduceable="yes"/> 
 		<Item name="P-3" type="Private" basePrice="70"/>
 		<Item name="P-4" type="Private" basePrice="110">
 			<SubItem name="NCS" type="Public" />
