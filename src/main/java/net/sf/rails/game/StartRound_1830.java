@@ -275,105 +275,104 @@ public class StartRound_1830 extends StartRound {
     }
     
     
-    /**
-     * Process a player's pass.
-     * @param playerName The name of the current player (for checking purposes).
-     */
-    @Override
-    protected boolean pass(NullAction action, String playerName) {
-
-        String errMsg = null;
-        Player player = playerManager.getCurrentPlayer();
-        StartItem auctionItem = auctionItemState.value();
-
-        while (true) {
-
-            // Check player
-            if (!playerName.equals(player.getId())) {
-                errMsg = LocalText.getText("WrongPlayer", playerName, player.getId());
+        /**
+         * Process a player's pass.
+         * @param playerName The name of the current player (for checking purposes).
+         */
+        @Override
+        protected boolean pass(NullAction action, String playerName) {
+    
+            String errMsg = null;
+            Player player = playerManager.getCurrentPlayer();
+            StartItem auctionItem = auctionItemState.value();
+    
+            while (true) {
+    
+                // Check player
+                if (!playerName.equals(player.getId())) {
+                    errMsg = LocalText.getText("WrongPlayer", playerName, player.getId());
+                    break;
+                }
                 break;
             }
-            break;
-        }
-
-        if (errMsg != null) {
-            DisplayBuffer.add(this, LocalText.getText("InvalidPass",
-                    playerName,
-                    errMsg ));
-            return false;
-        }
-
-        ReportBuffer.add(this, LocalText.getText("PASSES", playerName));
-
-        numPasses.add(1);
-        if (auctionItem != null) {
-
-            if (numPasses.value() >= auctionItem.getBidders() - 1) {
-                // All but the highest bidder have passed.
-                int price = auctionItem.getBid();
-
-                log.debug("Highest bidder is "
-                          + auctionItem.getBidder().getId());
-                if (auctionItem.needsPriceSetting() != null) {
-                    auctionItem.setStatus(StartItem.NEEDS_SHARE_PRICE);
-                } else {
-                    assignItem(auctionItem.getBidder(), auctionItem, price, 0);
-                }
-                auctionItemState.set(null);
-                numPasses.set(0);
-                // Next turn goes to priority holder
-                playerManager.setCurrentToPriorityPlayer(); // EV - Added to fix bug 2989440
-            } else {
-                // More than one left: find next bidder
-
-                if (GameOption.getAsBoolean(this, "LeaveAuctionOnPass")) {
-                    // Game option: player to leave auction after a pass (default no).
-                    player.unblockCash(auctionItem.getBid(player));
-                    auctionItem.setPass(player);
-                }
-                setNextBiddingPlayer(auctionItem);
+    
+            if (errMsg != null) {
+                DisplayBuffer.add(this, LocalText.getText("InvalidPass",
+                        playerName,
+                        errMsg ));
+                return false;
             }
-
-        } else {
-
-            if (numPasses.value() >= playerManager.getNumberOfPlayers()) {
-                // All players have passed.
-                gameManager.reportAllPlayersPassed();
-                // It the first item has not been sold yet, reduce its price by
-                // 5.
-                if (startPacket.getFirstUnsoldItem() == startPacket.getFirstItem()) {
-                    startPacket.getFirstItem().reduceBasePriceBy(5);
-                    ReportBuffer.add(this, LocalText.getText(
-                            "ITEM_PRICE_REDUCED",
-                                    startPacket.getFirstItem().getId(),
-                                    Bank.format(this, startPacket.getFirstItem().getBasePrice()) ));
-                    numPasses.set(0);
-                    if (startPacket.getFirstItem().getBasePrice() == 0) {
-                        assignItem(playerManager.getCurrentPlayer(),
-                                startPacket.getFirstItem(), 0, 0);
-                        getRoot().getPlayerManager().setPriorityPlayerToNext();
-                        // startPacket.getFirstItem().getName());
+    
+            ReportBuffer.add(this, LocalText.getText("PASSES", playerName));
+    
+            numPasses.add(1);
+            if (auctionItem != null) {
+    
+                if (numPasses.value() >= auctionItem.getBidders() - 1) {
+                    // All but the highest bidder have passed.
+                    int price = auctionItem.getBid();
+    
+                    log.debug("Highest bidder is "
+                              + auctionItem.getBidder().getId());
+                    if (auctionItem.needsPriceSetting() != null) {
+                        auctionItem.setStatus(StartItem.NEEDS_SHARE_PRICE);
                     } else {
-                        //BR: If the first item's price is reduced, but not to 0, 
-                        //    we still need to advance to the next player
-                        playerManager.setCurrentToNextPlayer();
+                        assignItem(auctionItem.getBidder(), auctionItem, price, 0);
                     }
-                } else {
+                    auctionItemState.set(null);
                     numPasses.set(0);
-                    //gameManager.nextRound(this);
-                    finishRound();
-
+                    // Next turn goes to priority holder
+                    playerManager.setCurrentToPriorityPlayer(); // EV - Added to fix bug 2989440
+                } else {
+                    // More than one left: find next bidder
+    
+                    if (GameOption.getAsBoolean(this, "LeaveAuctionOnPass")) {
+                        // Game option: player to leave auction after a pass (default no).
+                        player.unblockCash(auctionItem.getBid(player));
+                        auctionItem.setPass(player);
+                    }
+                    setNextBiddingPlayer(auctionItem);
                 }
-//            } else if (auctionItem != null) {
-                // TODO  Now dead code - should it be reactivated?
-//                setNextBiddingPlayer(auctionItem);
+    
             } else {
-                playerManager.setCurrentToNextPlayer();
+    
+                if (numPasses.value() >= playerManager.getNumberOfPlayers()) {
+                    // All players have passed.
+                    gameManager.reportAllPlayersPassed();
+                    // It the first item has not been sold yet, reduce its price by 5.
+                    if (startPacket.getFirstItem() == startPacket.getFirstUnsoldItem() || startPacket.getFirstUnsoldItem().getReduceable()) {
+                        startPacket.getFirstUnsoldItem().reduceBasePriceBy(5);
+                        ReportBuffer.add(this, LocalText.getText(
+                                "ITEM_PRICE_REDUCED",
+                                        startPacket.getFirstUnsoldItem().getId(),
+                                        Bank.format(this, startPacket.getFirstUnsoldItem().getBasePrice()) ));
+                        numPasses.set(0);
+                        if (startPacket.getFirstUnsoldItem().getBasePrice() == 0) {
+                            assignItem(playerManager.getCurrentPlayer(),
+                                    startPacket.getFirstUnsoldItem(), 0, 0);
+                            getRoot().getPlayerManager().setPriorityPlayerToNext();
+                            // startPacket.getFirstItem().getName());
+                        } else {
+                            //BR: If the first item's price is reduced, but not to 0, 
+                            //    we still need to advance to the next player
+                            playerManager.setCurrentToNextPlayer();
+                        }
+                    } else {
+                        numPasses.set(0);
+                        //gameManager.nextRound(this);
+                        finishRound();
+    
+                    }
+    //            } else if (auctionItem != null) {
+                    // TODO  Now dead code - should it be reactivated?
+    //                setNextBiddingPlayer(auctionItem);
+                } else {
+                    playerManager.setCurrentToNextPlayer();
+                }
             }
+    
+            return true;
         }
-
-        return true;
-    }
 
     
     private void setNextBiddingPlayer(StartItem item, Player biddingPlayer) {

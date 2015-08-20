@@ -29,10 +29,11 @@ public class StartItem extends RailsAbstractItem {
     protected Certificate primary = null;
     protected Certificate secondary = null;
     protected final CountingMoneyModel basePrice = CountingMoneyModel.create(this, "basePrice", false);
+    protected boolean reduceable;
     protected int row = 0;
     protected int column = 0;
     protected int index;
-
+    
     // Bids
     protected final GenericState<Player> lastBidder = GenericState.create(this, "lastBidder");
     protected final Map<Player, CountingMoneyModel> bids = Maps.newHashMap();
@@ -101,14 +102,19 @@ public class StartItem extends RailsAbstractItem {
      * share.
      * @return a fully intialized StartItem 
      */
-    public static StartItem create(RailsItem parent, String name, String type, int price, int index, boolean president){
+    public static StartItem create(RailsItem parent, String name, String type, int price, boolean reduceable, int index, boolean president){
         StartItem item = new StartItem(parent, name, type, index, president);
         item.initBasePrice(price);
+        item.setReducePrice(reduceable);
         return item;
     }
     
     protected void initBasePrice(int basePrice) {
         this.basePrice.set(basePrice);
+    }
+    
+    protected void setReducePrice(boolean reduceable) {
+        this.reduceable = reduceable;
     }
     
     /**
@@ -270,6 +276,10 @@ public class StartItem extends RailsAbstractItem {
      */
     public int getBasePrice() {
         return basePrice.value();
+    }
+    
+    public boolean getReduceable() {
+        return reduceable;
     }
 
     public void reduceBasePriceBy(int amount) {
