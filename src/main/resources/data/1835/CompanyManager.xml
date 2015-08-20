@@ -64,7 +64,7 @@
 				<SpecialTileLay location="L6" colour="green" extra="yes" free="yes" />
 			</SpecialProperty>
 			<SpecialProperty condition="ifOwnedByPlayer" when="orTurn" class="net.sf.rails.game.special.SpecialBaseTokenLay">
-				<SpecialBaseTokenLay location="L6" extra="yes" free="yes"/>
+				<SpecialBaseTokenLay location="L6" extra="yes" free="yes" requiresTile="yes" />
 			</SpecialProperty>
 		</SpecialProperties>
 		<ClosingConditions>

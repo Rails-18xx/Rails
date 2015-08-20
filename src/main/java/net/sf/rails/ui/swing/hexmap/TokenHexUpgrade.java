@@ -17,6 +17,8 @@ import net.sf.rails.game.BonusToken;
 import net.sf.rails.game.MapHex;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.Stop;
+import net.sf.rails.game.special.SpecialBaseTokenLay;
+import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.ui.swing.elements.TokenIcon;
 
 import com.google.common.base.Objects;
@@ -31,7 +33,7 @@ import rails.game.action.LayToken;
 public class TokenHexUpgrade extends HexUpgrade {
 
     public enum Invalids implements HexUpgrade.Invalids {
-        HEX_BLOCKED, HEX_RESERVED, NOT_ENOUGH_CASH, CONTAINS_TOKEN;
+        HEX_BLOCKED, HEX_RESERVED, NOT_ENOUGH_CASH, CONTAINS_TOKEN, REQUIRES_TILE;
 
         @Override
         public String toString() {
@@ -91,6 +93,9 @@ public class TokenHexUpgrade extends HexUpgrade {
             if (containsToken()) {
                 invalids.add(Invalids.CONTAINS_TOKEN);
             }
+            if (requiresTile()) {
+                invalids.add(Invalids.REQUIRES_TILE);
+            }
         }
 
         if (allowed.isEmpty() || !invalids.isEmpty()) {
@@ -121,6 +126,16 @@ public class TokenHexUpgrade extends HexUpgrade {
     
     public boolean containsToken() {
         return hex.getHex().hasTokenOfCompany(action.getCompany());
+    }
+    
+    public boolean requiresTile() {
+        SpecialProperty property = action.getSpecialProperty();
+        if (property instanceof SpecialBaseTokenLay) {
+            if (((SpecialBaseTokenLay)property).requiresTile()) {
+                return hex.getHex().isPreprintedTileCurrent();
+            }
+        }
+        return false;
     }
 
     // HexUpgrade abstract methods
