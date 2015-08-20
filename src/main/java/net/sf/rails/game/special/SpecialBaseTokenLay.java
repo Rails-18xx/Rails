@@ -11,6 +11,7 @@ import net.sf.rails.game.RailsRoot;
 import net.sf.rails.util.Util;
 
 public class SpecialBaseTokenLay extends SpecialProperty {
+    
     private String locationCodes = null;
     private List<MapHex> locations = null;
     
@@ -18,6 +19,7 @@ public class SpecialBaseTokenLay extends SpecialProperty {
     private boolean free = false;
     private boolean connected = false;
     private boolean requiresTile = false;
+    private boolean requiresNoTile = false;
 
     /**
      * Used by Configure (via reflection) only
@@ -45,6 +47,7 @@ public class SpecialBaseTokenLay extends SpecialProperty {
         free = tokenLayTag.getAttributeAsBoolean("free", free);
         connected = tokenLayTag.getAttributeAsBoolean("connected", connected);
         requiresTile = tokenLayTag.getAttributeAsBoolean("requiresTile", requiresTile);
+        requiresNoTile = tokenLayTag.getAttributeAsBoolean("requiresNoTile", requiresNoTile);
 
         description = LocalText.getText("LayBaseTokenInfo",
                 locationCodes,
@@ -71,6 +74,10 @@ public class SpecialBaseTokenLay extends SpecialProperty {
     
     public boolean requiresTile() {
         return requiresTile;
+    }
+    
+    public boolean requiresNoTile() {
+        return requiresNoTile;
     }
 
     public List<MapHex> getLocations() {

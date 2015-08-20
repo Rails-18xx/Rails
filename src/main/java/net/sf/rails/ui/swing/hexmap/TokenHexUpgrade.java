@@ -33,7 +33,7 @@ import rails.game.action.LayToken;
 public class TokenHexUpgrade extends HexUpgrade {
 
     public enum Invalids implements HexUpgrade.Invalids {
-        HEX_BLOCKED, HEX_RESERVED, NOT_ENOUGH_CASH, CONTAINS_TOKEN, REQUIRES_TILE;
+        HEX_BLOCKED, HEX_RESERVED, NOT_ENOUGH_CASH, CONTAINS_TOKEN, REQUIRES_TILE, REQUIRES_NO_TILE;
 
         @Override
         public String toString() {
@@ -96,6 +96,9 @@ public class TokenHexUpgrade extends HexUpgrade {
             if (requiresTile()) {
                 invalids.add(Invalids.REQUIRES_TILE);
             }
+            if (requiresNoTile()) {
+                invalids.add(Invalids.REQUIRES_NO_TILE);
+            }
         }
 
         if (allowed.isEmpty() || !invalids.isEmpty()) {
@@ -133,6 +136,16 @@ public class TokenHexUpgrade extends HexUpgrade {
         if (property instanceof SpecialBaseTokenLay) {
             if (((SpecialBaseTokenLay)property).requiresTile()) {
                 return hex.getHex().isPreprintedTileCurrent();
+            }
+        }
+        return false;
+    }
+
+    public boolean requiresNoTile() {
+        SpecialProperty property = action.getSpecialProperty();
+        if (property instanceof SpecialBaseTokenLay) {
+            if (((SpecialBaseTokenLay)property).requiresNoTile()) {
+                return !hex.getHex().isPreprintedTileCurrent();
             }
         }
         return false;
