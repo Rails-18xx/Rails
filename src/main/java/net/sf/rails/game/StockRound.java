@@ -1185,23 +1185,27 @@ public class StockRound extends Round {
         Portfolio.moveAll(certsToSell, to.getParent());
 
         // Check if we still have the presidency
-        if (currentPlayer == company.getPresident()) {
-            Player otherPlayer;
-            Player previousPlayer = currentPlayer;
-            int currentIndex = getCurrentPlayerIndex();
-            for (int i = currentIndex + 1; i < currentIndex + numberOfPlayers; i++) {
-                otherPlayer = getRoot().getPlayerManager().getNextPlayerAfter(previousPlayer);
-                if (otherPlayer.getPortfolioModel().getShare(company) > portfolio.getShare(company)) {
-                    portfolio.swapPresidentCertificate(company,
-                            otherPlayer.getPortfolioModel(), swapShareSize);
-                    ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
-                            otherPlayer.getId(),
-                            company.getId() ));
-                    break;
-                }
-                previousPlayer = otherPlayer;
-            }
-        }
+        // TODO: Is this not a duplication of the code before the transfer of the shares? (see above)
+        // After removal of the code all tests are still running
+        // => Thus the code is obsolete and can be removed soon  (Rails 2.0 beta4)
+         
+//        if (currentPlayer == company.getPresident()) {
+//            Player otherPlayer;
+//            Player previousPlayer = currentPlayer;
+//            int currentIndex = getCurrentPlayerIndex();
+//            for (int i = currentIndex + 1; i < currentIndex + numberOfPlayers; i++) {
+//                otherPlayer = getRoot().getPlayerManager().getNextPlayerAfter(previousPlayer);
+//                if (otherPlayer.getPortfolioModel().getShare(company) > portfolio.getShare(company)) {
+//                    portfolio.swapPresidentCertificate(company,
+//                            otherPlayer.getPortfolioModel(), swapShareSize);
+//                    ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
+//                            otherPlayer.getId(),
+//                            company.getId() ));
+//                    break;
+//                }
+//                previousPlayer = otherPlayer;
+//            }
+//        }
     }
     
     protected void executeShareTransfer( PublicCompany company,

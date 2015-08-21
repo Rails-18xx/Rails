@@ -1393,65 +1393,32 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         }
     }
 
-    /**
-     * Check if the presidency has changed for a <b>selling</b> player.
-     */
-    public void checkPresidencyOnSale(Player seller) {
-
-        if (seller != getPresident()) return;
-
-        int presShare = seller.getPortfolioModel().getShare(this);
-        int presIndex = seller.getIndex();
-        Player player, otherPlayer;
-        int share;
-        PlayerManager pmgr = getRoot().getPlayerManager();
-        otherPlayer = seller;
-        
-        for (int i = presIndex + 1; i < presIndex
-        + pmgr.getNumberOfPlayers(); i++) {
-            player = pmgr.getNextPlayerAfter(otherPlayer);
-            share = player.getPortfolioModel().getShare(this);
-            if (share > presShare) {
-                // Presidency must be transferred
-                seller.getPortfolioModel().swapPresidentCertificate(this,
-                        player.getPortfolioModel(), 0);
-                ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
-                        player.getId(),
-                        getId() ));
-            }
-            otherPlayer = player;
-        }
-    }
-
-    /** A generic presidency check. Perhaps it can replace the above two methods. */
     public void checkPresidency () {
 
-        Player president = getPresident();
-        int presIndex = president.getIndex();
-        int presShare = president.getPortfolioModel().getShare(this);
-
-        PlayerManager pmgr = getRoot().getPlayerManager();
-        Player player, previousPlayer;
-        int share;
-        previousPlayer = president;
+        // check if there is a new potential president
+        Player nextPotentialPresident = findNextPotentialPresident();
+        if (nextPotentialPresident == null) return;
         
-        for (int i = presIndex + 1; i < presIndex
-        + pmgr.getNumberOfPlayers(); i++) {
-            player = pmgr.getNextPlayerAfter(previousPlayer);
-            share = player.getPortfolioModel().getShare(this);
-            if (share > presShare) {
-                // Hand presidency to the player with the highest share
-                president.getPortfolioModel().swapPresidentCertificate(this,
-                        player.getPortfolioModel(), 0);
-                ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
-                        player.getId(),
-                        getId() ));
-                presShare = share;
-                president = getPresident();
+        // Hand presidency to the player with the highest share
+        getPresident().getPortfolioModel().swapPresidentCertificate(this, nextPotentialPresident.getPortfolioModel(), 2);
+        ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
+                nextPotentialPresident.getId(),
+                getId() ));
+    }
+    
+    public Player findNextPotentialPresident() {
+        
+        int requiredShares = getPresident().getPortfolioModel().getShare(this) + 1;
+        Player potentialDirector = null;
+        
+        for (Player player:getRoot().getPlayerManager().getNextPlayersAfter(getPresident(), false, false)) {
+            int otherPlayerShares = player.getPortfolioModel().getShare(this);
+            if (otherPlayerShares >= requiredShares) {
+                potentialDirector = player;
+                requiredShares = otherPlayerShares + 1;
             }
-            previousPlayer = player;
         }
-        return;
+        return potentialDirector;
     }
 
     /**
