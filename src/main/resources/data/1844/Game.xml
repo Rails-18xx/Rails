@@ -1,0 +1,147 @@
+<?xml version="1.0"?>
+<ComponentManager>
+	<Component name="GameManager" class="net.sf.rails.game.specific._1844.GameManager_1844">
+		<Game name="1844"/>
+		<GameParameters>
+			<PlayerShareLimit percentage="100"/> 
+			<!--  Players can own 100 Percent, they can however buy only 50% from the IPO rest must be out of Bank pool -->
+			<StockRound class="net.sf.rails.game.specific._1844.StockRound_1844"
+				sequence="SellBuy">
+				<NoSaleInFirstSR/>
+			</StockRound>
+			<OperatingRound
+				class="net.sf.rails.game.specific._1844.OperatingRound_1844">
+				<EmergencyTrainBuying mayBuyFromCompany="No"/>
+			</OperatingRound>
+			<ShareSellingRound class="net.sf.rails.game.specific._1844.ShareSellingRound_1844">
+			</ShareSellingRound>
+					<EndOfGame>
+			<Bankruptcy/>
+			<BankBreaks limit="0" finish="setOfORs"/>
+			<!-- "Runs out"; when "broken", -1 is the limit -->
+		</EndOfGame>
+		</GameParameters>
+		<GuiClasses>
+			<GameStatus
+				class="net.sf.rails.ui.swing.gamespecific._1844.GameStatus_1844"/>
+			<StartRoundWindow
+				class="net.sf.rails.ui.swing.gamespecific._1844.StartRoundWindow_1844"/>
+			<GameUIManager
+				class="net.sf.rails.ui.swing.gamespecific._1844.GameUIManager_1844"/>
+			<ORUIManager
+				class="net.sf.rails.ui.swing.gamespecific._1844.ORUIManager_1844"/>
+			<StatusWindow class="net.sf.rails.ui.swing.gamespecific._1844.StatusWindow_1844"/>
+		</GuiClasses>
+		<EndOfGame/>
+	</Component>
+	<Component name="PlayerManager" class="net.sf.rails.game.PlayerManager">
+		<Players number="3" cash="800" certLimit="24"/>
+		<Players number="4" cash="620" certLimit="18"/>
+		<Players number="5" cash="510" certLimit="15"/>
+		<Players number="6" cash="440" certLimit="13"/>
+		<Players number="7" cash="400" certLimit="11"/>
+	</Component>
+	<Component name="Bank" class="net.sf.rails.game.Bank">
+		<Bank amount="12000"/>
+	</Component>
+	<Component name="TileManager" class="net.sf.rails.game.TileManager"
+		file="TileSet.xml"/>
+	<Component name="Map" class="net.sf.rails.game.MapManager" file="Map.xml"/>
+	<Component name="CompanyManager" class="net.sf.rails.game.CompanyManager"
+		file="CompanyManager.xml"/>
+	<Component name="StockMarket"
+		class="net.sf.rails.game.specific._1844.StockMarket_1844"
+		file="StockMarket.xml"/>
+	<Component name="TrainManager" class="net.sf.rails.game.specific._1844.TrainManager_1844">
+		<DiscardTrain to="scrapheap"/>
+		<Defaults>
+			<Reach base="stops" countTowns="major"/>
+			<Score towns="yes"/>
+		</Defaults>
+		<TrainType name="2" majorStops="2" cost="100" quantity="10"/>
+		<TrainType name="2H" majorStops="2" cost="100" quantity="10"/>
+		<TrainType name="3" majorStops="3" cost="180" quantity="5">
+			<NewPhase phaseName="3"/>
+		</TrainType>		
+		<TrainType name="3H" majorStops="3" cost="100" quantity="10"/>
+		<TrainType name="4" majorStops="4" cost="300" quantity="5">
+			<NewPhase phaseName="4"/>
+		</TrainType>
+		<TrainType name="4H" majorStops="2" cost="100" quantity="10"/>
+		<TrainType name="5" majorStops="2" cost="100" quantity="10">
+			<NewPhase phaseName="5"/>
+		</TrainType>
+		<TrainType name="5H" majorStops="2" cost="100" quantity="10"/>
+		<TrainType name="6" majorStops="6" cost="600" quantity="5">
+			<NewPhase phaseName="6"/>
+		</TrainType>
+ 		<TrainType name="6H" majorStops="99" cost="700" quantity="5"/>
+		<TrainType name="8" majorStops="8" cost="800" quantity="2">
+			<NewPhase phaseName="8"/>
+		</TrainType>
+		<!-- The e-type trains are express trains that can ignore towns/cities on their way for a maximum payout-->
+		<TrainType name="8E" majorStops="99" cost="900" quantity="2">
+			<NewPhase phaseName="8e"/>
+        </TrainType>
+	</Component>
+	<Component name="PhaseManager" class="net.sf.rails.game.PhaseManager">
+		<Phase name="2" realName="A">
+			<Tiles colour="yellow">
+				<Lays companyType="Major" colour="yellow" number="1"/>
+			</Tiles>
+			<OperatingRounds number="-1"/>
+			<Float percentage="50"/>
+			<Trains tradingAllowed="no"/>
+			<Stocks avail="10"/>
+		</Phase>
+		<Phase name="3" realName="B">
+			<Tiles colour="yellow,green">
+				<Lays companyType="Major" colour="yellow" number="1"/>
+				<Lays companyType="Major" colour="green" number="1"/>
+				<Lays companyType="Minor" colour="yellow" number="1"/>
+				<Lays companyType="Minor" colour="green" number="1"/>
+				</Tiles>
+			<Trains tradingAllowed="yes" converted="2"/>
+			<OffBoardRevenue step="2"/>
+		</Phase>
+		<Phase name="4" realName="C">
+			<Tiles colour="yellow,green">
+				<Lays companyType="Major" colour="yellow" number="1"/>
+				<Lays companyType="Major" colour="green" number="1"/>
+				<Lays companyType="Minor" colour="yellow" number="1"/>
+				<Lays companyType="Minor" colour="green" number="1"/>			
+				</Tiles>
+			<OffBoardRevenue step="2"/>
+			<Float percentage="40"/>
+			<Trains limitStep="2" rusted="2H" converted="3"/>
+		</Phase>
+		<Phase name="5" realName="D">
+			<Tiles colour="yellow,green,brown">
+				<Lays companyType="Major" colour="yellow" number="1"/>
+				<Lays companyType="Major" colour="green" number="1"/>
+				<Lays companyType="Major" colour="brown" number="1"/>
+				</Tiles>
+			<OffBoardRevenue step="3"/>
+		</Phase>
+		<Phase name="6" realName="E">
+			<Action name="ShanghaiExchangeOpen"/>
+			<Float percentage="60"/>
+			<OffBoardRevenue step="3"/>
+			<Trains limitStep="2" rusted="3H" converted="4"/>
+		</Phase>
+		<Phase name="8" realName="F">
+			<Tiles colour="yellow,green,brown,grey">
+				<Lays companyType="Major" colour="yellow" number="1"/>
+				<Lays companyType="Major" colour="green" number="1"/>
+				<Lays companyType="Major" colour="brown" number="1"/>
+				<Lays companyType="Major" colour="grey" number="1"/>
+				</Tiles>
+			<OffBoardRevenue step="4"/>
+			<Trains limitStep="3" rusted="4H" converted="5"/>
+		</Phase>
+		</Component>
+		<Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager">
+			<Modifier class="net.sf.rails.game.specific._1844.Red2RedModifier"/>
+			<Modifier class="net.sf.rails.game.specific._1844.ExpressTrainModifier"/>
+		</Component>
+</ComponentManager>
