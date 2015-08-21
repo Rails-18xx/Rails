@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <GameOptions>
+<<<<<<< Upstream, based on origin/rails_2_develop
 <GameOption name="Variant" values="1st Edition, 2nd Edition" default="1st Edition" />
+=======
+>>>>>>> 638b5f3 Game options Basic Setup for 1844
 	<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Highlight"/>
 	<GameOption name="RouteAlgorithm" values="Permissive,Semi-Restrictive,Restrictive" default="Permissive" />
 	<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest"/>
