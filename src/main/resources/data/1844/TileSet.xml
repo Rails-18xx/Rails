@@ -4,6 +4,7 @@
 		<Upgrade id="7,8,9" />
 	</Tile>
 	<Tile id="-1"><!-- 1 town -->
+<<<<<<< Upstream, based on origin/rails_2_develop
 		<Upgrade id="3,4,58" />
 	</Tile>
 	<Tile id="-7"/>
@@ -218,4 +219,168 @@
 	<Tile id="FO-3-457" quantity="1" />
 	<Tile id="FO-4-458" quantity="1" />
 	<Tile id="FO-4-457" quantity="1" />
+=======
+		<Upgrade id="8850,8851,8852" />
+	</Tile>
+	<Tile id="-10"><!-- 1 city -->
+		<Upgrade id="5,6,57"/>
+	</Tile>
+		<Tile id="-20" relayBaseTokens="yes"><!-- 2 OO cities -->
+		<Upgrade id="59"/>
+	</Tile>
+	<Tile id="-901"/>
+	<Tile id="-902"/>
+	<Tile id="-903"/>
+	<Tile id="-912"/>
+	<Tile id="-44001"/>
+	<Tile id="-44010"/>
+	<Tile id="-44011"/>
+	<Tile id="-44012"/>
+	<Tile id="-44013"/>
+	<Tile id="-44020"/>
+	<Tile id="-44021"/>
+	<Tile id="-44103"/>
+	<Tile id="-44104"/>
+	<Tile id="-44106"/>
+	<Tile id="-44112"/>
+	<Tile id="-44113"/>
+	<Tile id="-44201"/>
+	<Tile id="-44202"/>
+	<Tile id="-44205"/>
+	<Tile id="-44206"/>
+	<Tile id="-44207"/>
+	<Tile id="-44212"/>
+	<Tile id="-44213"/>
+	<!-- Yellow -->
+	<Tile id="3" quantity="4">
+		<Upgrade id="14,15,619" />
+	</Tile>
+	<Tile id="4" quantity="4">
+		</Tile>
+	<Upgrade id="14,15,619" />
+	<Tile id="5" quantity="5">
+		<Upgrade id="14,15,619" />
+	</Tile>
+	<Tile id="6" quantity="5">
+		<Upgrade id="14,15,619" />
+	</Tile>
+	<Tile id="7" quantity="5">
+		<Upgrade id="18,26,27,28,29" />
+	</Tile>
+	<Tile id="8" quantity="13">
+		<Upgrade id="16,17,19,23,24,25,28,29" />
+	</Tile>
+	<Tile id="9" quantity="11">
+		<Upgrade id="18,19,20,23,24,26,27" />
+	</Tile>
+	<Tile id="57" quantity="5">
+	<Upgrade id="14,15,619,907,908" />
+	</Tile>
+	<Tile id="58" quantity="4">
+	<Upgrade id="14,15,619" />
+	</Tile>
+	<!-- Green -->
+	<Tile id="14" quantity="4"/>
+	<Tile id="15" quantity="7"/>
+	<Tile id="619" quantity="4"/>
+	<Tile id="16" quantity="2" >
+		<Upgrade id="43" />
+	</Tile>
+	<Tile id="18" quantity="1" >
+		<Upgrade id="43" />
+	</Tile>
+	<Tile id="19" quantity="2" >
+		<Upgrade id="45,46" />
+	</Tile>
+	<Tile id="20" quantity="2" >
+		<Upgrade id="47" />
+	</Tile>
+	<Tile id="23" quantity="6" >
+		<Upgrade id="41,43,45,47" />
+	</Tile>
+	<Tile id="24" quantity="7" >
+		<Upgrade id="42,43,46,47" />
+	</Tile>
+	<Tile id="25" quantity="2" >
+		<Upgrade id="40,45,46" />
+	</Tile>
+	<Tile id="26" quantity="2" >
+		<Upgrade id="44,45,41" />
+	</Tile>
+	<Tile id="27" quantity="2" >
+		<Upgrade id="42,44,46" />
+	</Tile>
+	<Tile id="28" quantity="2" >
+		<Upgrade id="39,70,46" />
+	</Tile>
+	<Tile id="29" quantity="2" >
+		<Upgrade id="39,70,45" />
+	</Tile>
+	<Tile id="59" quantity="2" >
+		<Upgrade id="64,65,66,67,68" />
+	</Tile>
+	<Tile id="87" quantity="2" >
+		<Upgrade id="911" />
+	</Tile>
+	<Tile id="88" quantity="2" >
+		<Upgrade id="911" />
+	</Tile>
+	<Tile id="204" quantity="2" >
+		<Upgrade id="911" />
+	</Tile>
+	<Tile id="901" quantity="1" >
+		<Upgrade id="902" />
+	</Tile>
+	<Tile id="904" quantity="1" >
+		<Upgrade id="905" />
+	</Tile>
+	<Tile id="907" quantity="1" >
+		<Upgrade id="909" />
+	</Tile>
+	<Tile id="908" quantity="1" >
+		<Upgrade id="909" />
+	</Tile>
+	<!-- Brown -->
+	<Tile id="39" quantity="1" />
+	<Tile id="40" quantity="1" />
+	<Tile id="41" quantity="1" />
+	<Tile id="42" quantity="1" />
+	<Tile id="43" quantity="1" />
+	<Tile id="44" quantity="1" />
+	<Tile id="45" quantity="1" />
+	<Tile id="46" quantity="1" />
+	<Tile id="47" quantity="1" />
+	<Tile id="64" quantity="1" />
+	<Tile id="65" quantity="1" />
+	<Tile id="66" quantity="1" />
+	<Tile id="67" quantity="1" />
+	<Tile id="68" quantity="1" />
+	<Tile id="70" quantity="1" />
+	<Tile id="902" quantity="1" >
+		<Upgrade id="903"/>
+	</Tile>
+	<Tile id="905" quantity="1" >
+		<Upgrade id="906"/>
+	</Tile>
+	<Tile id="909" quantity="1" >
+		<Upgrade id="910"/>
+	</Tile>
+	<Tile id="911" quantity="1" >
+		<Upgrade id="912"/>
+	</Tile>
+	<!-- Grey -->
+	<Tile id="903" quantity="1" />
+	<Tile id="906" quantity="1" />
+	<Tile id="910" quantity="1" />
+	<Tile id="912" quantity="1" />
+	<Tile id="915" quantity="2" />
+	<!-- Tunnel -->
+	<Tile id="457" quantity="12" />
+	<Tile id="458" quantity="12" />
+	<!--  Furka-Oberalp -->
+	<Tile id="FO-1" quantity="1" />
+	<Tile id="FO-2" quantity="1" />
+	<Tile id="FO-3" quantity="1" />
+	<Tile id="FO-4" quantity="1" />
+>>>>>>> 5d8a867 1844 Tileset gamespecific tiles are missing their upgrade information, will be added next.
 </TileManager>
