@@ -49,7 +49,7 @@
 	<Hex name="E24" tile="0" cost="20"/>
 	<Hex name="E26" tile="0"/>	
 	<Hex name="E28" tile="-44212" orientation="2" value="10,20,30,40"/>
-	<Hex name="F5" tile="0"/>	
+	<Hex name="F5" tile="-902" orientation="3" value="10,30,50,70" label="E-W+50"/>	
 	<Hex name="F7" tile="0"/>
 	<Hex name="F9" tile="-44011" cost="20" orientation="4"/>
 	<Hex name="F11" tile="0" impassible="E10" cost="20"/>
@@ -62,7 +62,7 @@
 	<Hex name="F25" tile="0" cost="60"/>
 	<Hex name="F27" tile="-1" cost="20"/>
 	<Hex name="F29" tile="0"/>
-	<Hex name="F35" tile="0"/>
+	<Hex name="F35" tile="-901" orientation="3" value="20,40,60,80" label="E-W+80"/>
 	<Hex name="G6" tile="0" impassible="H7,G8"/>
 	<Hex name="G8" tile="0" impassible="G6,F7"/>	
 	<Hex name="G10" tile="-20"/>
@@ -120,7 +120,7 @@
 	<Hex name="J25" tile="0" cost="60"/>
 	<Hex name="J29" tile="0" cost="60"/>	
 	<Hex name="J31" tile="0" cost="30"/>	
-	<Hex name="J33" tile="0"/>
+	<Hex name="J33" tile="-902" orientation="5" value="10,30,50,70" label="E-W+90"/>
 	<Hex name="K2" tile="-44021"/>
 	<Hex name="K8" tile="0" cost="60"/>	
 	<Hex name="K10" tile="-1" cost="20"/>
@@ -130,16 +130,17 @@
 	<Hex name="K22" tile="-10" cost="20" />
 	<Hex name="K24" tile="-10" cost="20" />
 	<Hex name="K32" tile="-44201" orientation="5"/>
-	<Hex name="L1" tile="0"/>
+	<Hex name="L1" tile="-901" orientation="0" value="30,50,70,90" label="E-W+90"/>
 	<Hex name="L9" tile="0" cost="60"/>
 	<Hex name="L11" tile="0" cost="60"/>
 	<Hex name="L13" tile="-1" cost="30"/>
 	<Hex name="L15" tile="-44212" orientation="5"/>
-	<Hex name="L17" tile="0"/>
+	<Hex name="L17" tile="-901" orientation="5" value="40,50,70,90" label="N-S+40"/>
+	<!-- Attention Run from L17 to N21/N23 is not valid as they are the same offboard Area -->
 	<Hex name="L23" tile="-10" cost="20" />
-	<Hex name="M10" tile="0"/>
+	<Hex name="M10" tile="-902" value="0,30,50,70" label="N-S+40"/>
 	<Hex name="M22" tile="-44011"/>
 	<Hex name="M24" tile="-44212" orientation="5"/>
-	<Hex name="N21" tile="0"/>
-	<Hex name="N23" tile="0"/>			
+	<Hex name="N21" tile="-901" orientation="0" value="40,50,70,90" label="N-S+40"/>
+	<Hex name="N23" tile="-901" orientation="5" value="40,50,70,90" label="N-S+40"/>			
 </Map>
