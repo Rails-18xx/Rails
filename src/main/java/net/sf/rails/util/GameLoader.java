@@ -322,7 +322,7 @@ public class GameLoader {
 
             
         } catch (Exception e) {
-            log.debug("Exception during createFromFile in gameLoader ", e);
+            log.warn("Exception during createFromFile in gameLoader ", e);
             exception = e;
             return false;
         }

@@ -178,8 +178,9 @@ public class GameSetupController {
                 GameData gameData = GameData.create(selectedGame, selectedOptions, players);
                 railsRoot = RailsRoot.create(gameData);
             } catch (ConfigurationException e) {
-                // TODO: Fix this behavior, give more information?
-                // Simply exit
+                log.warn("Exception during game creation ", e);
+                JOptionPane.showMessageDialog(window, "Exception during game creation", "",
+                        JOptionPane.ERROR_MESSAGE);
                 System.exit(-1);
             }
 
