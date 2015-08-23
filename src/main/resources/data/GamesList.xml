@@ -236,6 +236,12 @@ Known Issues:
    <Players minimum = "3" maximum = "7" />
    </Game>
 
+   <Game name="1844">
+   <Note>Prototype</Note>
+   <Description> 1844 - Switzerland
+   (c) 2004 Helmut Ohley    </Description>
+   <Players minimum = "3" maximum = "7" />
+   </Game>
 
   <Game name="1862">
     <Note>Prototype - Not Playable</Note>
