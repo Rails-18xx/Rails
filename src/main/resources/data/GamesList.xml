@@ -66,6 +66,15 @@ Limitation:
        	<Players minimum="2" maximum="6"/>
 	</Game>
 
+    <Game name="1880">
+        <Note>Fully Playable</Note>
+        <Description>1880 - China
+        (c) 2010 Double O Games  Mayfair Games, Inc.
+        Designed by Leonhard Ogler and Helmut Ohley
+		</Description>
+        <Players minimum="3" maximum="7"/>
+    </Game>
+
 	<Game name="1889">
 		<Note>Fully playable</Note>
 		<Description>1889 - History of Shikoku Railways
@@ -215,15 +224,6 @@ Known Issues:
     <Players minimum="2" maximum="5" />
   </Game>
 
-    <Game name="1880">
-        <Note>Prototype</Note>
-        <Description>1880 - China
-        (c) 2010 Double O Games  Mayfair Games, Inc.
-        Designed by Leonhard Ogler and Helmut Ohley
-        Limitations:
-        All aspects not present in 1880 have not been implemented yet.</Description>
-        <Players minimum="3" maximum="7"/>
-    </Game>
    <Game name="18Scan">
     <Note>Prototype</Note>
     <Description>18Scan</Description>
