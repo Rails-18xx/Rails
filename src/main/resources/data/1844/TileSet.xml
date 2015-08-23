@@ -5,6 +5,7 @@
 	</Tile>
 	<Tile id="-1"><!-- 1 town -->
 <<<<<<< Upstream, based on origin/rails_2_develop
+<<<<<<< Upstream, based on origin/rails_2_develop
 		<Upgrade id="3,4,58" />
 	</Tile>
 	<Tile id="-7"/>
@@ -221,6 +222,9 @@
 	<Tile id="FO-4-457" quantity="1" />
 =======
 		<Upgrade id="8850,8851,8852" />
+=======
+		<Upgrade id="3,4,58" />
+>>>>>>> 264a926 1844 completed Map and Tileset.xml
 	</Tile>
 	<Tile id="-10"><!-- 1 city -->
 		<Upgrade id="5,6,57"/>
@@ -233,24 +237,54 @@
 	<Tile id="-903"/>
 	<Tile id="-912"/>
 	<Tile id="-44001"/>
-	<Tile id="-44010"/>
-	<Tile id="-44011"/>
-	<Tile id="-44012"/>
-	<Tile id="-44013"/>
-	<Tile id="-44020"/>
+	<Tile id="-44010"> <!--  Zurich Tile with Z -->
+		<Upgrade id="44005,44006,44057" />
+	</Tile>
+	<Tile id="-44011">
+		<Upgrade id="5,6,57" />
+	</Tile>
+	<Tile id="-44012"> <!--  Bern Tile with B -->
+		<Upgrade id="44105,44106,44157" />
+	</Tile>
+	<Tile id="-44013">
+		<Upgrade id="901"/>
+	</Tile>
+	<Tile id="-44020">
+		<Upgrade id="14,15,619" />
+	</Tile>
 	<Tile id="-44021"/>
-	<Tile id="-44103"/>
+	<Tile id="-44103">
+	<Upgrade id="457,458"></Upgrade>
+	</Tile>
 	<Tile id="-44104"/>
-	<Tile id="-44106"/>
-	<Tile id="-44112"/>
-	<Tile id="-44113"/>
+	<Tile id="-44106">
+	<Upgrade id="457,458"></Upgrade>
+	</Tile>
+	<Tile id="-44113">
+	<Upgrade id="457,458"></Upgrade>
+	</Tile>
 	<Tile id="-44201"/>
 	<Tile id="-44202"/>
 	<Tile id="-44205"/>
 	<Tile id="-44206"/>
 	<Tile id="-44207"/>
 	<Tile id="-44212"/>
-	<Tile id="-44213"/>
+	<Tile id="-44213">
+	<Upgrade id="457,458"></Upgrade>
+	</Tile>
+	<!--  Furka-Oberalp Inital Mountain Tiles -->
+	<Tile id="-44401">
+		<Upgrade id="457,458,FO-1" />
+	</Tile>
+	<Tile id="-44402">
+		<Upgrade id="457,458,FO-4" />
+	</Tile>
+	<Tile id="-44403">
+		<Upgrade id="457,458,FO-3" />
+	</Tile>
+	<Tile id="-44404">
+		<Upgrade id="457,458,FO-2" />
+	</Tile>
 	<!-- Yellow -->
 	<Tile id="3" quantity="4">
 		<Upgrade id="14,15,619" />
@@ -375,12 +409,41 @@
 	<Tile id="912" quantity="1" />
 	<Tile id="915" quantity="2" />
 	<!-- Tunnel -->
-	<Tile id="457" quantity="12" />
-	<Tile id="458" quantity="12" />
+	<Tile id="457" quantity="12" >
+		<Upgrade id="FO-1-457, FO-2-457,FO-3-457,FO-4-457" />
+	</Tile>
+	<Tile id="458" quantity="12" >
+		<Upgrade id="FO-1-458, FO-2-4581,FO-2-4582,FO-2-4583,FO-3-458,FO-4-458" />
+	</Tile>
 	<!--  Furka-Oberalp -->
+<<<<<<< Upstream, based on origin/rails_2_develop
 	<Tile id="FO-1" quantity="1" />
 	<Tile id="FO-2" quantity="1" />
 	<Tile id="FO-3" quantity="1" />
 	<Tile id="FO-4" quantity="1" />
 >>>>>>> 5d8a867 1844 Tileset gamespecific tiles are missing their upgrade information, will be added next.
+=======
+	<Tile id="FO-1" quantity="1" >
+		<Upgrade id="FO-1-458" />
+	</Tile>
+	<Tile id="FO-2" quantity="1" >
+		<Upgrade id="FO-2-4581,FO-2-4582,FO-2-4583,FO-2-457" />
+	</Tile>
+	<Tile id="FO-3" quantity="1" >
+		<Upgrade id="FO-3-458, FO-3-457" />
+	</Tile>
+	<Tile id="FO-4" quantity="1" >
+		<Upgrade id="FO-4-458,FO-4-457" />
+	</Tile>
+	<!--  Furka-Oberalp with Tunnel Overlay -->
+	<Tile id="FO-1-458" quantity="1" />
+	<Tile id="FO-2-457" quantity="1" />
+	<Tile id="FO-2-4581" quantity="1" />
+	<Tile id="FO-2-4582" quantity="1" />
+	<Tile id="FO-2-4583" quantity="1" />
+	<Tile id="FO-3-458" quantity="1" />
+	<Tile id="FO-3-457" quantity="1" />
+	<Tile id="FO-4-458" quantity="1" />
+	<Tile id="FO-4-457" quantity="1" />
+>>>>>>> 264a926 1844 completed Map and Tileset.xml
 </TileManager>

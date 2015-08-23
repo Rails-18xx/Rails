@@ -75,7 +75,11 @@
 	<Hex name="G22" tile="-838" orientation="5"/>
 	<Hex name="G24" tile="0" cost="90"/>
 	<Hex name="G26" tile="0" cost="60"/>	
+<<<<<<< Upstream, based on origin/rails_2_develop
 	<Hex name="G28" tile="-44115" orientation="1" cost="20"/>
+=======
+	<Hex name="G28" tile="-44011" orientation="3" cost="20"/>
+>>>>>>> 264a926 1844 completed Map and Tileset.xml
 	<Hex name="G30" tile="-10" cost="30"/>
 	<Hex name="G32" tile="0" cost="30"/>	
 	<Hex name="G34" tile="0" cost="30"/>	
@@ -86,9 +90,15 @@
 	<Hex name="H13" tile="0" cost="60"/>
 	<Hex name="H15" tile="-10" cost="20"/>
 	<Hex name="H17" tile="0" cost="30"/>
+<<<<<<< Upstream, based on origin/rails_2_develop
 	<Hex name="H19" tile="-44404" orientation="0"/>
 	<Hex name="H21" tile="-44403" orientation="0"/>
 	<Hex name="H23" tile="-44402" orientation="3"/>
+=======
+	<Hex name="H19" tile="-44404" orientation="2"/>
+	<Hex name="H21" tile="-44403" orientation="2"/>
+	<Hex name="H23" tile="-44402" orientation="0"/>
+>>>>>>> 264a926 1844 completed Map and Tileset.xml
 	<Hex name="H25" tile="0" cost="60"/>
 	<Hex name="H27" tile="0" cost="30"/>
 	<Hex name="H29" tile="-44106"/>	
@@ -99,9 +109,15 @@
 	<Hex name="I8" tile="-10" cost="20"/>	
 	<Hex name="I10" tile="0" cost="30"/>
 	<Hex name="I12" tile="-1" cost="30" impassible="J13"/>
+<<<<<<< Upstream, based on origin/rails_2_develop
 	<Hex name="I14" tile="-44103" orientation="0"/>
 	<Hex name="I16" tile="-44203" orientation="5"/>
 	<Hex name="I18" tile="-44401" orientation="0"/>
+=======
+	<Hex name="I14" tile="-44103" orientation="2"/>
+	<Hex name="I16" tile="-44213"/>
+	<Hex name="I18" tile="-44401" orientation="3"/>
+>>>>>>> 264a926 1844 completed Map and Tileset.xml
 	<Hex name="I20" tile="0" cost="90"/>
 	<Hex name="I22" tile="0" cost="90"/>
 	<Hex name="I24" tile="0" cost="60"/>
