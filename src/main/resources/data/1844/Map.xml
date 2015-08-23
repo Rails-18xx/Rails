@@ -74,7 +74,7 @@
 	<Hex name="G22" tile="-44202"/>
 	<Hex name="G24" tile="0" cost="90"/>
 	<Hex name="G26" tile="0" cost="60"/>	
-	<Hex name="G28" tile="-44012" orientation="3" cost="20"/>
+	<Hex name="G28" tile="-44011" orientation="3" cost="20"/>
 	<Hex name="G30" tile="-10" cost="30"/>
 	<Hex name="G32" tile="0" cost="30"/>	
 	<Hex name="G34" tile="0" cost="30"/>	
@@ -85,9 +85,9 @@
 	<Hex name="H13" tile="0" cost="60"/>
 	<Hex name="H15" tile="-10" cost="20"/>
 	<Hex name="H17" tile="0" cost="30"/>
-	<Hex name="H19" tile="-44104" orientation="2"/>
-	<Hex name="H21" tile="-44103" orientation="2"/>
-	<Hex name="H23" tile="-44103" orientation="0"/>
+	<Hex name="H19" tile="-44404" orientation="2"/>
+	<Hex name="H21" tile="-44403" orientation="2"/>
+	<Hex name="H23" tile="-44402" orientation="0"/>
 	<Hex name="H25" tile="0" cost="60"/>
 	<Hex name="H27" tile="0" cost="30"/>
 	<Hex name="H29" tile="-44106"/>	
@@ -100,7 +100,7 @@
 	<Hex name="I12" tile="-1" cost="30" impassible="J13"/>
 	<Hex name="I14" tile="-44103" orientation="2"/>
 	<Hex name="I16" tile="-44213"/>
-	<Hex name="I18" tile="-44112" orientation="3"/>
+	<Hex name="I18" tile="-44401" orientation="3"/>
 	<Hex name="I20" tile="0" cost="90"/>
 	<Hex name="I22" tile="0" cost="90"/>
 	<Hex name="I24" tile="0" cost="60"/>
