@@ -19,7 +19,11 @@
 	<Hex name="B21" tile="-10" cost="20"/>
 	<Hex name="B23" tile="0" />
 	<Hex name="B25" tile="-1" />
+<<<<<<< Upstream, based on origin/rails_2_develop
 	<Hex name="C10" tile="-9121" orientation="0" value="10,30,50,70" label="E-W+50"/>
+=======
+	<Hex name="C10" tile="-9121" orientation="4" value="10,30,50,70" label="E-W+50"/>
+>>>>>>> ce29729 The chosen tile for the split 2 access paths offboard map hex did already exist, renamed the tile and updated the tileset.
 	<Hex name="C12" tile="0"/>
 	<Hex name="C14" tile="-10" cost="20" impassable="D12"/>
 	<Hex name="C16" tile="-1" impassable="D12"/>
