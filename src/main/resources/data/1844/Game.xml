@@ -29,7 +29,7 @@
 			<GameUIManager
 				class="net.sf.rails.ui.swing.gamespecific._1844.GameUIManager_1844"/>
 			<ORUIManager
-				class="net.sf.rails.ui.swing.gamespecific._1844.ORUIManager_1844"/>
+				class="net.sf.rails.ui.swing.ORUIManager"/>
 			<StatusWindow class="net.sf.rails.ui.swing.gamespecific._1844.StatusWindow_1844"/>
 		</GuiClasses>
 		<EndOfGame/>
@@ -50,7 +50,7 @@
 	<Component name="CompanyManager" class="net.sf.rails.game.CompanyManager"
 		file="CompanyManager.xml"/>
 	<Component name="StockMarket"
-		class="net.sf.rails.game.specific._1844.StockMarket_1844"
+		class="net.sf.rails.game.StockMarket"
 		file="StockMarket.xml"/>
 	<Component name="TrainManager" class="net.sf.rails.game.specific._1844.TrainManager_1844">
 		<DiscardTrain to="scrapheap"/>
