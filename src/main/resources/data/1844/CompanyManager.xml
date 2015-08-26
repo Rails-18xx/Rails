@@ -59,6 +59,11 @@
 		<Payout split="no"/>
 		<!-- Kein Lokzwang -->
 	</CompanyType>
+	<CompanyType name="Major" class="net.sf.rails.game.specific._1844.PublicCompany_1844">
+		<PoolPaysOut/>
+		<StockPrice par="yes"/>
+	</CompanyType>	
+	
 	<Company name="T1" baseprice="50" type="Tunnel"></Company>
 	<Company name="T2" baseprice="50" type="Tunnel"></Company>
 	<Company name="T3" baseprice="50" type="Tunnel"></Company>
@@ -99,7 +104,7 @@
 		<SpecialProperties>
 		<SpecialProperty condition="ifOwnedByPlayer" when="orTurn"  
 					class="net.sf.rails.game.special.SpecialTileLay" closedIfExercised="yes">
-					<SpecialTileLay  />
+					<SpecialTileLay  location="I18,H19,H21,H23"/>
 		</SpecialProperty>
 		</SpecialProperties>
 		<ClosingConditions>
@@ -139,63 +144,74 @@
 		fgColour="FFFFFF" bgColour="4A4A97">
 		<Home hex="K12"/>
 	</Company>
-	<Company name="FNM" longname="Ferrovie Nord Milano" type="Historical" tokens="flex"
+	<Company name="FNM" longname="Ferrovie Nord Milano" type="Historical" tokens="-1"
 		fgColour="000000" bgColour="E78B01">
 		<Home hex="M22"/>
 		<Destination hex="G22"/>
 	</Company>
-	<Company name="RhB" longname="Rhätische Bahn" type="Historical" tokens="flex"
+	<Company name="RhB" longname="Rhätische Bahn" type="Historical" tokens="-1"
 		fgColour="000000" bgColour="E78B01">
 		<Home hex="G28"/>
 		<Destination hex="J15"/>
 	</Company>
-	<Company name="BLS" longname="Bern - Lötschberg - Simplon" type="Historical" tokens="flex"
+	<Company name="BLS" longname="Bern - Lötschberg - Simplon" type="Historical" tokens="-1"
 		fgColour="000000" bgColour="E78B01">
-		<Home hex="F13" city=""/>
+		<Home hex="F13" />
 		<Destination hex="J15"/>
 	</Company>
-	<Company name="STB" longname="Sensetalbahn" type="Historical" tokens="flex"
+	<Company name="STB" longname="Sensetalbahn" type="Historical" tokens="-1"
 		fgColour="000000" bgColour="E78B01">
 		<Home hex="D17" city="1"/>
 		<Destination hex="H15"/>
 	</Company>
-	<Company name="AB" longname="Appenzeller Bahn" type="Historical" tokens="flex"
+	<Company name="AB" longname="Appenzeller Bahn" type="Historical" tokens="-1"
 		fgColour="000000" bgColour="E78B01">
 		<Home hex="D27"/>
 		<Destination hex="C22"/>
 	</Company>
-	<Company name="MOB" longname="Montreux - Oberland bernois" type="Historical" tokens="flex"
+	<Company name="MOB" longname="Montreux - Oberland bernois" type="Historical" tokens="-1"
 		fgColour="000000" bgColour="E78B01">
 		<Home hex="I8"/>
 		<Destination hex="H15"/>
 	</Company>
-	<Company name="NOB" longname="Schweizerische Nordostbahn" type="Pre-SBB" tokens="2"
+	<Company name="NOB" longname="Schweizerische Nordostbahn" type="VOR-SBB" tokens="2"
 		fgColour="FFFFFF" bgColour="000000">
 		<Home hex="D21"/>
 		<Destination hex="D17"/>
 	</Company>
-	<Company name="SCB" longname="Schweizerische Centralbahn" type="Pre-SBB" tokens="2"
+	<Company name="SCB" longname="Schweizerische Centralbahn" type="VOR-SBB" tokens="2"
 		fgColour="FFFFFF" bgColour="000000">
 		<Home hex="C14"/>
 		<Destination hex="F19"/>
 	</Company>
-	<Company name="VSB" longname="Vereinigte Schweizer Bahnen" type="Pre-SBB" tokens="2"
+	<Company name="VSB" longname="Vereinigte Schweizer Bahnen" type="VOR-SBB" tokens="2"
 		fgColour="FFFFFF" bgColour="000000">
 		<Home hex="C26"/>
 		<Destination hex="F27"/>
 	</Company>
-	<Company name="JS" longname="Jura - Simplon" type="Pre-SBB" tokens="2"
+	<Company name="JS" longname="Jura - Simplon" type="VOR-SBB" tokens="2"
 		fgColour="FFFFFF" bgColour="000000">
 		<Home hex="I6" city="1"/>
 		<Destination hex="F9"/>
 	</Company>
-	<Company name="GB" longname="Goothardbahn" type="Pre-SBB" tokens="2"
+	<Company name="GB" longname="Goothardbahn" type="VOR-SBB" tokens="2"
 		fgColour="FFFFFF" bgColour="000000">
 		<Home hex="G20"/>
 		<Destination hex="H21"/>
 	</Company>
 	<Company name="SBB" longname="Schweizerische Bundesbahnen" type="Major" available="no" tokens="10" startspace="I6"
-		fgColour="FFFFFF" bgColour="92278A">
+		fgColour="FFFFFF" bgColour="92278A" >
+		<InitialTrain type="5H" cost="0" tradeable="no"/>
+		<ShareUnit percentage="5" sharePriceUnits="2"/>
+		<Certificate type="President" shares="2"/>
+		<Certificate shares="2" number="4" status="reserved"/>
+		<Certificate shares="1" number="10" status="reserved"/>
+		<BaseTokens>
+			<HomeBase lay="whenFloated"/>
+			<LayCost method="sequence" cost="0,40,100"/>
+		</BaseTokens>
+		<Trains limit="4,4,4" mandatory="yes"/>
+		<Payout split="no"/>
 	</Company>
 	
 	<StartPacket name="sellPrivates" roundClass="net.sf.rails.game.StartRound_1830">
